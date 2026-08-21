@@ -1,0 +1,16 @@
+{
+  "overlay": "phys1000_arm_b_25pct",
+  "description": "ARM B of the owner-approved two-arm relaunch (21 August 2026): phys1000_arm_a_25pct with ONE change - the seed - making it the SEED-VARIANCE REPLICATION the decision log has asked for twice and never had (E.replication.n_replications is 30 with a provisional planning figure of 5, recorded as 'the value must come from measured seed variance, which is cheap'; the 9.45 household-clustered sampler's design-effect price is 'recorded so a later comparison does not mistake cluster variance for a mechanism' - and no seed-variance measurement exists yet). The seed moves BOTH the subsample draw and MATSim's global.randomSeed, which is what a replication is: a fresh 25% household draw plus fresh mobsim/replanning randomness under an otherwise identical run identity (same network build, same fraction, same thread stack, same iteration horizon). Against arm A it yields the first per-mode error bar this project has - the noise floor under every modelled-vs-observed ridership delta, which the calibration (C5) needs before any fit difference can be called signal. RUN.machine.seed is declared 'held at the master seed unless replications are being drawn'; this is that clause being exercised. NOT a second base arm: C5 and the close-out read arm A; this arm's product is the variance measurement.",
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 1000,
+    "RUN.machine.threads": 8,
+    "RUN.machine.event_handler_threads": 4,
+    "RUN.machine.replanning_threads": 20,
+    "RUN.machine.xmx": "30g",
+    "RUN.machine.seed": 20260811,
+    "RUN.controler.write_events_interval": 100,
+    "RUN.controler.write_plans_interval": 100,
+    "RUN.controler.create_graphs": false
+  }
+}

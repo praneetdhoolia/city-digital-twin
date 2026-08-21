@@ -51,6 +51,7 @@ otherwise cost you an hour:
 | **Iteration wall time: the declared knobs and their measurements** | **§9.59** — PassingQ link dynamics (a correctness repair of 9.54's declared PCE-0 semantics that FIFO violated), the events-pipeline and replanning-pool knobs, the probe measurements, and the honest statement against the 10x ask |
 | **Non-household lifts (the reported gap, now mechanised)** | **§9.60** — M0 physical waiting at the meeting point; M1 re-targets unbound observed-rate escort tours to driverless-household passengers; pairing/boarding/sampling integrity; dossier [`design/non-household-lifts.md`](design/non-household-lifts.md) |
 | **Deliverable 0b: assumptions replaced by held data** | **§9.61** — G15 tertiary full-time split (per SA1, observed), the light-vehicle day-type factors (SAT:SUN split, external weekend scaling, departure shift - all measured from the classified hourly counts), the chain-timing scaffold speeds declared, and the ranked remainder |
+| **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (owner-approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6095,6 +6096,59 @@ each from data ALREADY IN THE PACKAGE:
 
 Every change regenerates B1/B2/plans and lands inside the §9.58/§9.59
 family boundary — nothing after it compares to anything before it.
+
+---
+
+## 9.62 The two-arm relaunch: arm A is the base arm, arm B is the seed replication (21 August 2026)
+
+**Owner approval, 21 August 2026 (the day's third directive): run two
+concurrent arms with a tight watch — measured every 50 iterations, every
+ridership figure evaluated against the observed references, next actions
+derived when the runs finish.** This consumes the approval; none is
+standing after these two arms.
+
+**The launch enacts §9.59's two-arm pattern**, with the arms declared as
+committed overlays (`phys1000_arm_a_25pct`, `phys1000_arm_b_25pct`):
+qsim 8 + events 4 per arm, replanning at the declared 20, and
+**`RUN.machine.xmx` 30g per arm, not 40g** — the driver pins `-Xms` to
+`-Xmx` (§9.59's heap pre-sizing), so two 40g arms would commit 80 GiB on
+a 63.5 GiB machine, which is the measured §9.5 three-arm pagefile
+failure; the record's own sizing (a 25% run peaks ~27 GiB under this
+pattern) says two fit. `create_graphs` is off — the §9.59 field exercised
+for the first time. **Run identity note:** qsim threads 8 differs from
+the timing probes' 10; free at this boundary because no completed run
+exists in the §9.58–§9.61 family, and both arms carry one identity, so
+they compare to each other.
+
+**Arm A** (S2 × WEEKDAY, 25% × 1000, master seed 20260810) **is the base
+arm** — the active lane's relaunch. C5, the §9.50 report, the #30 walk
+re-baseline, the emergent ride share vs 20.60 and the #48/#31 ledgers all
+read this arm and only this arm.
+
+**Arm B is arm A with one change: `RUN.machine.seed` 20260811** — the
+field's own declaration ("held at the master seed unless replications are
+being drawn") exercised for the first time. It is the **seed-variance
+measurement this log has demanded twice and never had**:
+`E.replication.n_replications` is 30 with a provisional planning figure
+of 5 "until measured seed variance exists", and §9.45's cluster-sampling
+note records that no such measurement exists to separate cluster variance
+from mechanism. The seed moves both the 25% household draw and MATSim's
+`global.randomSeed`, which is what a replication is. Against arm A it
+yields the first per-mode error bar — the noise floor under every
+modelled-vs-observed delta, which any later calibration claim needs
+before a fit difference can be called signal. **Arm B is not a second
+base arm and nothing in the close-out reads it alone**; its product is
+the A-vs-B spread.
+
+**The watch** samples both runs' own telemetry (`telemetry.jsonl`,
+`modestats.csv`, `ride_pairing.csv`, `stopwatch.csv`) every ~50
+iterations against the 67-row calibration split only — the holdout stays
+closed. Everything it prints is **diagnostics until `_run.json` exists**
+(§9.12 rule, unchanged). Tripwires that stop an arm early are the
+measured failure classes: a dead JVM, iteration wall time beyond 3× the
+rolling median (the it-110 class), stuck counts rising after the early
+iterations, capacity refusals, or working sets approaching the machine's
+memory.
 
 ---
 
