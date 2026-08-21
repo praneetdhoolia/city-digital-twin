@@ -84,37 +84,37 @@
   "by_day": {
     "WEEKDAY": {
       "persons": 621722,
-      "legs": 2377602,
-      "activities": 2999324,
+      "legs": 2377576,
+      "activities": 2999298,
       "tours": 1103707,
-      "bytes": 42988152,
-      "escort_ride_denied": 115535,
+      "bytes": 42988424,
+      "escort_ride_denied": 115555,
       "seed_mode_share": {
         "bike": 0.1136,
         "car": 0.1975,
         "motorbike": 0.002,
-        "pt": 0.2627,
-        "ride": 0.1238,
+        "pt": 0.2628,
+        "ride": 0.1237,
         "truck": 0.038,
         "walk": 0.2624
       },
       "activity_types": {
         "business": 23997,
         "education": 67633,
-        "escort": 231792,
+        "escort": 231761,
         "home": 1725429,
         "other": 472552,
-        "shopping": 242770,
+        "shopping": 242775,
         "work": 235151
       }
     },
     "SAT": {
       "persons": 506425,
-      "legs": 1922151,
-      "activities": 2428576,
+      "legs": 1922150,
+      "activities": 2428575,
       "tours": 880064,
-      "bytes": 34881122,
-      "escort_ride_denied": 67147,
+      "bytes": 34881908,
+      "escort_ride_denied": 67153,
       "seed_mode_share": {
         "bike": 0.1138,
         "car": 0.1965,
@@ -127,7 +127,7 @@
       "activity_types": {
         "business": 2765,
         "education": 2375,
-        "escort": 128609,
+        "escort": 128608,
         "home": 1386489,
         "other": 565791,
         "shopping": 292541,
@@ -136,11 +136,11 @@
     },
     "SUN": {
       "persons": 469987,
-      "legs": 1678270,
-      "activities": 2148257,
+      "legs": 1678269,
+      "activities": 2148256,
       "tours": 769959,
-      "bytes": 31291932,
-      "escort_ride_denied": 48829,
+      "bytes": 31292035,
+      "escort_ride_denied": 48826,
       "seed_mode_share": {
         "bike": 0.1124,
         "car": 0.1925,
@@ -153,7 +153,7 @@
       "activity_types": {
         "business": 1846,
         "education": 782,
-        "escort": 91635,
+        "escort": 91634,
         "home": 1239946,
         "other": 581494,
         "shopping": 203322,

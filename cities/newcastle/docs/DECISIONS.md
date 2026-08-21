@@ -52,6 +52,7 @@ otherwise cost you an hour:
 | **Non-household lifts (the reported gap, now mechanised)** | **§9.60** — M0 physical waiting at the meeting point; M1 re-targets unbound observed-rate escort tours to driverless-household passengers; pairing/boarding/sampling integrity; dossier [`design/non-household-lifts.md`](design/non-household-lifts.md) |
 | **Deliverable 0b: assumptions replaced by held data** | **§9.61** — G15 tertiary full-time split (per SA1, observed), the light-vehicle day-type factors (SAT:SUN split, external weekend scaling, departure shift - all measured from the classified hourly counts), the chain-timing scaffold speeds declared, and the ranked remainder |
 | **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (owner-approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
+| **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6149,6 +6150,56 @@ measured failure classes: a dead JVM, iteration wall time beyond 3× the
 rolling median (the it-110 class), stuck counts rising after the early
 iterations, capacity refusals, or working sets approaching the machine's
 memory.
+
+---
+
+## 9.63 Both relaunch arms crashed at replanning: overlapping lift re-targets interleaved a driver's tours (21 August 2026, issue #65)
+
+**The event.** Both §9.62 arms died within 440 s at their first
+replanning — MATSim's `ChooseRandomLegModeForSubtour` threw `Subtour
+contains a mix of chain- and non-chainbased modes` on both seeds
+(20260810 and 20260811). Systematic, not stochastic.
+
+**The measurement.** 152 of 155,623 persons in arm A's input plans carry
+a closed subtour mixing chain-based (`car`, `bike`) with non-chain modes
+(car+pt 68, car+walk 38, bike+walk 24, bike+pt 20, two triples — no
+`ride` in any, exonerating the M0 waiting path). The pre-§9.60 demand
+has ZERO such persons in 155,349, so the §9.60/§9.61 regeneration
+introduced the class. The B2 tables show the mechanism: **1,191 WEEKDAY
+persons (305 SAT, 137 SUN) held INTERLEAVED tours** — e.g. person 62708,
+tours 2 and 5 both 3-leg lift tours at `trip_seq` 8,9,12 and 10,11,13.
+Mode is drawn per tour, so interleaved tours emit alternating modes, and
+coincident escort stops (within SubtourModeChoice's 100 m coordDistance)
+close a mixed subtour.
+
+**The cause** (`bind_nonhousehold_lifts`, the §9.60 M1 pass): when one
+driver's day held two unbound HX tours and both were re-targeted, the
+second binding's busy-interval check read the first tour's ORIGINAL rows
+— its re-targeted times lived only in `replaced` and were never
+consulted — so two lifts could overlap, and the chronological
+re-sequencing splice then interleaved their legs. The 1% probes passed
+because ~6 affected persons at that fraction × SubtourModeChoice's ~10%
+per-iteration touch gave the crash no reliable chance to fire —
+**verified-at-1% is not verified**, which the §9.10 rule already said.
+
+**The repair** (in the same pass): the busy check consults the
+re-targeted times of already-replaced sibling tours; and a post-splice
+assertion refuses to write any demand in which a person's tours are
+non-contiguous in `trip_seq` — with one mode per tour and every tour
+anchored at home, contiguity structurally excludes the mixed-subtour
+class. B2/plans regenerated: **0 interleaved persons on all three day
+types**; weekday lift bindings 55,280 → **55,249** of 55,614 (31
+formerly-overlapping bindings now correctly skipped as infeasible), SAT
+30,442, SUN 21,803. Free at the family boundary — no completed run
+exists in the §9.58–§9.61 family; §9.62's identity is otherwise
+unchanged and both arms relaunch on the repaired demand.
+
+**Recorded softness, not chased here:** a re-targeted lift tour's mode
+is still drawn from the seed split, so a bound driver can hold a
+walk-mode lift tour the pairing engine can never realise as a ride. The
+realised pairing rate is measured and reported at the arm (§9.48
+pattern), so this dilutes binding efficacy visibly rather than silently;
+it belongs with the #48 measurement lane, not this repair.
 
 ---
 
