@@ -201,8 +201,8 @@ P5–P7 ⬜.
 
 | | |
 |---|---|
-| PRs | **the session PR (this branch) OPEN at handoff** — carries §9.68–§9.71; merging it and deleting the branch both sides is the FIRST item of unfinished business; 23 prior merged (incl. #67), 2 closed unmerged |
-| Toolchain | 3 pinned, unchanged; 14 Java sources compile (RidePairingEngine touched: comma-list liftHousehold) |
+| PRs | **the session PR merged as #69** (§9.68–§9.71) and the branch is deleted both sides — the handoff is complete; **24 merged**, 2 closed unmerged, none open |
+| Toolchain | 3 pinned, unchanged; 13 Java sources compile (RidePairingEngine touched: comma-list liftHousehold) |
 | Registry | **341 fields**; ledger **0** `--strict`; G2 13/13 |
 | Package | **436 manifest files**; `check_manifest` OK; `check_package` ALL PASSED (2 standing warnings) |
 | Machine | **free**; no run in progress |
