@@ -100,7 +100,7 @@
       "layer": "A",
       "units": "lanes_per_direction",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "literature",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"

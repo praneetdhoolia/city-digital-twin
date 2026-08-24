@@ -192,8 +192,8 @@ demand/plans/B2_escort_bindings_WEEKDAY.csv,processed,2642323,125475,src/build/b
 demand/plans/B2_lift_bindings_SAT.csv,processed,2119980,27808,src/build/build_activity_chains.py,,,,,d49358c29d645873bc901721249a975f9da3e3c5a76d426cd4976090c3404bac
 demand/plans/B2_lift_bindings_SUN.csv,processed,1509605,19808,src/build/build_activity_chains.py,,,,,713b1eb7e839c23ca8f050b45c30eef9f3770ea556a866611511f80f3a78e95b
 demand/plans/B2_lift_bindings_WEEKDAY.csv,processed,3737461,49030,src/build/build_activity_chains.py,,,,,4eb6cd49cfbca880540ec1dfda8d3aa61bfc76048d98f45fc0a4ebeb9cbcde2c
-demand/plans/_activity_chains_report.json,processed,19840,,src/build/build_activity_chains.py,,,,,5d1009ff770a7ed41cf5e3780ebae57dc12f80a37a63bd7576b90d705341b781
-demand/plans/matsim/_plans_report.json,processed,4155,,src/build/build_matsim_plans.py,,,,,9e9104c9f88b6bb60e2ed012d05950a8389263eed2d9662767b10994ce416fc0
+demand/plans/_activity_chains_report.json,processed,19115,,src/build/build_activity_chains.py,,,,,df3e6ea38b86ced6ad604a5fb5000bccb6372522646c7434886cbc140bf8a07e
+demand/plans/matsim/_plans_report.json,processed,3992,,src/build/build_matsim_plans.py,,,,,d0cc4e80e6af53e6b888d853323171a2e5780b87db9b00b3a1972cdcf736147d
 demand/plans/matsim/population_SAT.xml.gz,processed,33820111,,src/build/build_matsim_plans.py,,,,,b8e5d083b1aa5a927a97dd0b0f6c6fb5a748144b63d6f88491f2e1b8e80a2221
 demand/plans/matsim/population_SUN.xml.gz,processed,30401853,,src/build/build_matsim_plans.py,,,,,52fdea57b57b2e8e9a2b6de64d5e4648f54e791c82f75ea39d321dcc76b76696
 demand/plans/matsim/population_WEEKDAY.xml.gz,processed,41602171,,src/build/build_matsim_plans.py,,,,,d914029b6d86d70a9527ce432f480c9d417f9c3acb87eb63c936e0314caa3766
@@ -221,7 +221,7 @@ scenarios/S3.json,processed,1340,,cities/newcastle/build/build_scenario_configs.
 scenarios/S4.json,processed,1351,,cities/newcastle/build/build_scenario_configs.py,,,,,1743c796dbcb51cab005910b11c58543fa6f360a9bf2f8426cbfb47bf4aea4fe
 scenarios/S5.json,processed,1343,,cities/newcastle/build/build_scenario_configs.py,,,,,a9ace48e84b7da4dba47d7139208335b10c330f22c5fa97007ca670228cff012
 scenarios/S6.json,processed,1293,,cities/newcastle/build/build_scenario_configs.py,,,,,757ec3bb7a9e434d791b3ea3dcbbb7b8cdbd3a5483f182916b0c0324e714b4a4
-scenarios/matsim/_run_inputs_report.json,processed,39791,,src/build/build_matsim_run_inputs.py,,,,,ea187a70dc8f41d26a03411182cbc1b3040449ba90f65199a645c29e5ab99770
+scenarios/matsim/_run_inputs_report.json,processed,38261,,src/build/build_matsim_run_inputs.py,,,,,da1b5561188a2141a529e440c189489b956937e36c8724b37a9c3e75ef89c105
 scenarios/matsim/S0/network.xml.gz,processed,6925377,,src/build/build_matsim_run_inputs.py,,,,,c36a941ddafa4fa4b17d7010fbedcb4b337c114dd7b8a849dbf82ea81c499cb6
 scenarios/matsim/S0/parking_prices.tsv,processed,301766,,src/build/build_matsim_run_inputs.py,,,,,f270dd3e5f985e389c27a353f4736794acbeca92a0182582082e91cf597f732b
 scenarios/matsim/S0/SAT/config.xml,processed,10170,,src/build/build_matsim_run_inputs.py,,,,,5f31c4df7a931538824356fc6cd910864ea84995ce8562a6891b6978d644e1c6
