@@ -1283,7 +1283,12 @@ if _registry is not None:
         # first and the record after.
         import re as _re
         _dec = open(_city.path('docs', 'DECISIONS.md'), encoding='utf-8').read()
-        _have = set(_re.findall(r'^#{2,4}\s+(\d+(?:\.\d+[a-z]?)*)', _dec, _re.M))
+        # Headings appear both bare ('## 12.') and with the section mark
+        # ('## SS9.75 -', the style the 25 Aug entries introduced); the 9.73-
+        # 9.75 records were invisible to the bare pattern and the first field
+        # citing them exposed it, so both spellings are harvested.
+        _have = set(_re.findall(r'^#{2,4}\s+§?(\d+(?:\.\d+[a-z]?)*)',
+                                _dec, _re.M))
         _have |= set(_re.findall(r'^\*\*(\d+\.\d+[a-z]?)\s*[-—]', _dec, _re.M))
         _dangling = {}
         for _k, _f in sorted(_fields.items()):

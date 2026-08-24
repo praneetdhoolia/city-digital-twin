@@ -27,25 +27,25 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 341 fields are made of
+## What the 352 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 22 | computed from observed data in this package |
+| `measured` | 31 | computed from observed data in this package |
 | `derived` | 30 | follows from another registry field by identity |
-| `literature` | 43 | a published value, not specific to this city |
-| `assumed` | 137 | chosen without direct empirical support |
-| `definition` | 105 | fixed by the formulation, not an empirical quantity |
+| `literature` | 52 | a published value, not specific to this city |
+| `assumed` | 131 | chosen without direct empirical support |
+| `definition` | 104 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 321 | usable point value |
+| `active` | 333 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
-| `unobtained` | 5 | the datum does not exist in the package; must be swept, never pinned |
+| `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
 
-### The 5 fields with no value
+### The 4 fields with no value
 
 These carry `value: null` and the resolver refuses to return a point value for them. They are the project's honest edge: what it does not know, declared rather than guessed.
 
@@ -55,29 +55,34 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `A.signals.scats_phasing` | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
-| `RUN.sumo.replications` | 5 - 30 | NO VALUE: proposal 5.2 asks for at least 30, DECISIONS.md 9.5 shows the specified load does not fit on this machine, and nobody has decided what to cu |
 
-### The 13 fields held fixed
+### The 19 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
+- `A.crossings.freight_road_names` - The IDENTITY of the freight-rail/road interaction set, not a tunable: DECISIONS.md 9.70 established from ARTC/TfNSW/PWCS/NCIG documents that the coal chain is grade-separated every
+- `A.crossings.link_match_radius_m` - A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link
 - `A.signals.scats_match_radius_m` - A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score r
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
 - `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
+- `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
+- `B.taxi.fare_per_km_taxi_aud` - The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not mode
+- `B.taxi.flagfall_taxi_aud` - The legal instrument itself: the Point to Point Transport (Fares) Order 2025 urban Hiring Charge, and clause 2(g)(ii) names the Newcastle Transport District an Urban Area. A regula
 - `C.asc.bus` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.car_passenger` - Constrained, not calibrated. DECISIONS.md 9.8 solves this constant so the modelled ride:car leg ratio reproduces the OBSERVED passenger:driver ratio (0.3503, HTS). That is the seco
 - `C.asc.cycle` - Constrained, not calibrated - the second branch DECISIONS.md 8.5 permits. THE DEPARTURE IS LOGGED AT 9.28, before any run on the changed specification. The shipped -1.35 stays as t
 - `C.asc.light_rail` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.rail` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.walk` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
-- `E.coupling.outer_loop_tolerance_s` - A convergence tolerance is a numerical control, not a quantity of Newcastle: it decides how many outer-loop iterations are paid for, not what the answer is, PROVIDED it stays well 
+- `E.s2b.lr_segment_count` - MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this fie
+- `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 94 fields*
+*`cities/newcastle/registry/A_supply.json` - 111 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -96,6 +101,15 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.corridor.report_sample_n` | `12` | edges | `definition` | - |
 | `A.corridor.shape_coverage_tolerance_m` | `500.0` | metres | `definition` | - |
 | `A.corridor.trunk_buffer_m` | `60.0` | metres | `assumed` | 40 - 100 |
+| `A.crossings.closed_flow_capacity_veh_h` | `0.0` | vehicles_per_hour | `definition` | - |
+| `A.crossings.closed_freespeed_ms` | `0.1` | metres_per_second | `definition` | - |
+| `A.crossings.closure_duration_s` | `240` | seconds | `assumed` | 60 - 600 |
+| `A.crossings.closure_window_h` | `[0.0, 24.0]` | hours | `definition` | - |
+| `A.crossings.closures_per_day` | `30` | closures_per_day | `assumed` | 10 - 60 |
+| `A.crossings.corridor_exclusion_m` | `500.0` | metres | `definition` | - |
+| `A.crossings.freight_road_names` | `["Saint James Road", "Clyde Street"]` | road_names | `literature` | **held fixed** |
+| `A.crossings.link_match_radius_m` | `30.0` | metres | `assumed` | **held fixed** |
+| `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
 | `A.lightrail.capacity_seated` | `60` | persons_per_vehicle | `assumed` | 50 - 80 |
 | `A.lightrail.capacity_standing` | `210` | persons_per_vehicle | `derived` | derived: capacity_standing = capacity_total - capacity_seated |
 | `A.lightrail.capacity_total` | `270` | persons_per_vehicle | `observed` | - |
@@ -103,7 +117,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.lightrail.dwell_charging_s` | *(null - unobtained)* | seconds_per_intermediate_stop | `assumed` | 10 - 35 |
 | `A.lightrail.dwell_fixed_s` | `8.0` | seconds_per_stop | `assumed` | 5 - 15 |
 | `A.lightrail.dwell_sweep_grid` | `[0.0, 10.0, 20.0, 35.0]` | seconds_per_intermediate_stop | `definition` | - |
-| `A.lightrail.line_speed_kmh` | `40.0` | km_per_hour | `assumed` | 30 - 50 |
+| `A.lightrail.line_speed_kmh` | `40.0` | km_per_hour | `measured` | 30 - 50 |
 | `A.lightrail.tsp_enabled` | `false` | boolean | `assumed` | `False`, `True` |
 | `A.network.bicycle_excluded_classes` | `["motorway", "motorway_link"]` | osm_highway_classes | `definition` | - |
 | `A.network.freespeed_factor` | `1.0` | factor | `definition` | - |
@@ -160,8 +174,16 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.signals.junction_match_m` | `60.0` | metres | `assumed` | 30 - 100 |
 | `A.signals.min_green_s` | `6.0` | seconds | `assumed` | 4 - 10 |
 | `A.signals.n_corridor_intersections` | `14` | count | `observed` | - |
+| `A.signals.representation` | `implicit_delay` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
+| `A.signals.saturation_flow_veh_h_lane` | `1900.0` | vehicles_per_hour_per_lane | `literature` | 1800 - 2050 |
 | `A.signals.scats_match_radius_m` | `60` | metres | `assumed` | **held fixed** |
 | `A.signals.scats_phasing` | *(null - unobtained)* | phase_plan | `assumed` | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
+| `A.signals.tsp.compensation_enabled` | `true` | boolean | `literature` | `True`, `False` |
+| `A.signals.tsp.detection_distance_m` | `120.0` | metres | `assumed` | 60 - 250 |
+| `A.signals.tsp.extension_window_s` | `12.0` | seconds | `assumed` | 5 - 20 |
+| `A.signals.tsp.lateness_threshold_s` | `60.0` | seconds | `assumed` | 0 - 300 |
+| `A.signals.tsp.mode` | `green_extension` | enum | `literature` | `off`, `green_extension`, `extension_recall`, `conditional` |
+| `A.signals.tsp.priority_budget_share` | `0.2` | share_of_cycle | `literature` | 0.1 - 0.3 |
 | `A.transit.bus_capacity_seated` | `44` | persons_per_vehicle | `literature` | 40 - 51 |
 | `A.transit.bus_capacity_standing` | `18` | persons_per_vehicle | `literature` | 14 - 22 |
 | `A.transit.corridor_mode_label` | `lr` | enum | `observed` | - |
@@ -268,6 +290,68 @@ Distance from the alignment within which a road edge is classified corridor trun
 
 ***assumed** · status **active** · DECISIONS.md §3.4*
 
+#### `A.crossings.closed_flow_capacity_veh_h`
+
+Link flow capacity while the boom is down. Zero by definition of a closed gate - not a tunable.
+
+***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `A.crossings.closed_freespeed_ms`
+
+The freespeed FLOOR written during a closure. A numerical guard, not a model value: freespeed zero makes link travel time infinite and breaks router arithmetic, so the closure is expressed through zero flow capacity while freespeed stays epsilon-positive.
+
+***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `A.crossings.closure_duration_s`
+
+How long one closure holds the crossing shut. ASSUMED and swept against the official "up to ten minutes" bound; the point value is a mid-band working value, never a claim.
+
+***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
+
+#### `A.crossings.closure_window_h`
+
+The day window closures are spread across. The freight network operates around the clock (ARTC 24/7 operations, 9.70), so the window is the whole day; narrowing it would assert a pattern no published log supports.
+
+***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `A.crossings.closures_per_day`
+
+How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented.
+
+***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
+
+#### `A.crossings.corridor_exclusion_m`
+
+The Stewart Avenue guard (9.75): the builder REFUSES to emit a closure within this distance of the tram alignment, because the corridor light-rail crossing is a T-aspect signal site owned by the signal build (#73) and must never be double-treated as a boom-gate closure. The nearest legitimate crossing sits kilometres away, so the value only needs to separate the corridor from the suburbs.
+
+***definition** · status **active** · DECISIONS.md §9.75, 9.76*
+
+#### `A.crossings.freight_road_names`
+
+The road names of the boom-gated level crossings where rail freight meets the modelled road network (issue #68). The builder locates each crossing from OSM railway=level_crossing nodes carrying a boom-barrier tag and matches links through the network's own osm:way:name - the names select, geometry decides, and no coordinate is typed anywhere. Values are the NETWORK's own osm:way:name spellings ("Saint James Road" - TfNSW documents abbreviate it "St James Road").
+
+***literature** · status **active** · DECISIONS.md §9.70, 9.76*
+
+> **Held fixed.** The IDENTITY of the freight-rail/road interaction set, not a tunable: DECISIONS.md 9.70 established from ARTC/TfNSW/PWCS/NCIG documents that the coal chain is grade-separated everywhere except these two boom-gated crossings (St James Road on the shared Main North at Adamstown; Clyde Street on the ARTC freight lines at Islington Junction). The corridor Stewart Avenue crossing is a T-aspect signal site and is EXCLUDED by rule (9.75).
+>
+> *Departure requires: documented evidence of another at-grade freight-road interaction inside the study area*
+
+#### `A.crossings.link_match_radius_m`
+
+How close a car link named by A.crossings.freight_road_names must pass to the crossing node cluster to be the crossing link.
+
+***assumed** · status **active** · DECISIONS.md §9.76*
+
+> **Held fixed.** A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link distances realised are under 10 m, so no output varies across any reasonable value.
+>
+> *Departure requires: a crossing whose matched distance approaches the radius*
+
+#### `A.crossings.node_cluster_m`
+
+OSM maps a double-track crossing as one node per track a few metres apart; nodes closer than this are one physical crossing.
+
+***definition** · status **active** · DECISIONS.md §9.76*
+
 #### `A.lightrail.capacity_seated`
 
 Seats on a light rail vehicle. Only the split is assumed - the total it is taken from is observed.
@@ -316,9 +400,9 @@ The points at which the UNOBTAINED A.lightrail.dwell_charging_s is sampled for t
 
 #### `A.lightrail.line_speed_kmh`
 
-Light rail running speed between stops, used in the run-time decomposition.
+Light rail running speed between stops, used in the run-time decomposition. The value is the regulated 40 km/h ceiling measured from the held Speed Zones join along the corridor trunk; achieved running speed sits at or below it, which the sweep expresses.
 
-***assumed** · status **active** · DECISIONS.md §4.2*
+***measured** · status **active** · DECISIONS.md §9.76*
 
 #### `A.lightrail.tsp_enabled`
 
@@ -680,7 +764,7 @@ Proxy signal delay per corridor intersection, used to decompose scheduled run ti
 
 #### `A.signals.junction_match_m`
 
-Radius for matching an A2 intersection to a SUMO junction.
+How close an A2 intersection's clustered OSM signal nodes must sit to a network node for the two to be the same junction. Was the SUMO junction pairing radius; now the native signal generator's cluster-to-network match radius (same quantity, same tolerance).
 
 ***assumed** · status **active** · DECISIONS.md §5*
 
@@ -696,6 +780,18 @@ Signalised intersections on the corridor. All 14 match a signalised junction in 
 
 ***observed** · status **active** · DECISIONS.md §5*
 
+#### `A.signals.representation`
+
+Which representation carries the corridor signal effect. implicit_delay: A.signals.delay_per_intersection_s inside scheduled run times and metered link capacities (the shipped state). explicit_signals: the signals contrib runs the generated fixed-time plans, approaches are re-capacitated to saturation flow, the schedule transform removes the implicit delay from the same movements, and the harness runs the signals stack. THE SWITCH IS THE DOUBLE-COUNT GUARD: code paths check it rather than trusting discipline.
+
+***assumed** · status **active** · DECISIONS.md §9.75, 9.76*
+
+#### `A.signals.saturation_flow_veh_h_lane`
+
+Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1).
+
+***literature** · status **active** · DECISIONS.md §9.76*
+
 #### `A.signals.scats_match_radius_m`
 
 Radius within which an intersection in A2_signal_control_corridor.csv is matched to a signal in the TfNSW Traffic Lights Location inventory, to recover its SCATS site number and installation date. The corridor intersections are clusters of OSM traffic-signal nodes and carry no identifier of their own; the TfNSW inventory is the only observed source of both. Measured match distances on the 14 corridor intersections range from 1 to 26 m.
@@ -708,9 +804,45 @@ Radius within which an intersection in A2_signal_control_corridor.csv is matched
 
 #### `A.signals.scats_phasing`
 
-SCATS phase data for the Hunter/Scott corridor. NOT OBTAINED - a formal TfNSW request is outstanding. It determines corridor run time more than any other single input: the swing between no priority and full priority is 38% (S2 vs S2b). Every program in the SUMO corridor is labelled timing_source=assumed. THIS FIELD HAS NO POINT VALUE AND THE RESOLVER WILL NOT INVENT ONE: select a sweep member explicitly.
+SCATS phase data for the Hunter/Scott corridor. NOT OBTAINED - a formal TfNSW request is outstanding. It determines corridor run time more than any other single input: the swing between no priority and full priority is 38% (S2 vs S2b). Every generated signal plan is labelled timing_source=assumed (A2 proxy). THIS FIELD HAS NO POINT VALUE AND THE RESOLVER WILL NOT INVENT ONE: select a sweep member explicitly.
 
 ***assumed** · status **unobtained** · DECISIONS.md §0, 5, 13 · proposal §6.2, 7.2*
+
+#### `A.signals.tsp.compensation_enabled`
+
+Whether green borrowed for the tram is returned to the phase it came from in the next cycle.
+
+***literature** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.compensationEnabled`*
+
+#### `A.signals.tsp.detection_distance_m`
+
+How far upstream a tram is detected.
+
+***assumed** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.detectionDistanceM`*
+
+#### `A.signals.tsp.extension_window_s`
+
+How long a green may be held for a detected tram.
+
+***assumed** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.extensionWindowS`*
+
+#### `A.signals.tsp.lateness_threshold_s`
+
+Schedule delay beyond which conditional priority grants; read only when A.signals.tsp.mode = conditional. Delay comes from the vehicle's own VehicleArrivesAtFacility events, not from an assumed speed.
+
+***assumed** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.latenessThresholdS`*
+
+#### `A.signals.tsp.mode`
+
+The tram-priority controller's regime. Which NLR mechanism TfNSW actually configures is not public (dossier 02 2 [gap]), so the regime is a swept modelling choice, never a claim about the operated system. off = fixed time everywhere (the S2 base).
+
+***literature** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.mode`*
+
+#### `A.signals.tsp.priority_budget_share`
+
+The most green the controller may borrow for the tram in one cycle, as a share of cycle time.
+
+***literature** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.priorityBudgetShare`*
 
 #### `A.transit.bus_capacity_seated`
 
@@ -816,7 +948,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 75 fields*
+*`cities/newcastle/registry/B_demand.json` - 81 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -896,6 +1028,12 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.remode_unpaired` | `true` | boolean | `definition` | - |
 | `B.ride.wait_for_driver` | `true` | boolean | `definition` | - |
 | `B.seed.master` | `20260810` | integer_seed | `definition` | - |
+| `B.taxi.daily_trips_band` | `[15000, 25000]` | trips_per_day | `literature` | **held fixed** |
+| `B.taxi.fare_per_km_rideshare_aud` | `1.5` | AUD_per_km | `literature` | 1.2 - 1.8 |
+| `B.taxi.fare_per_km_taxi_aud` | `2.52` | AUD_per_km | `measured` | **held fixed** |
+| `B.taxi.flagfall_rideshare_aud` | `1.95` | AUD | `literature` | 1.5 - 2.5 |
+| `B.taxi.flagfall_taxi_aud` | `5.0` | AUD | `measured` | **held fixed** |
+| `B.taxi.rideshare_trip_share` | `0.66` | share_of_p2p_trips | `literature` | 0.4 - 0.8 |
 | `B.walk.pce` | `0.0` | passenger_car_equivalents | `definition` | - |
 
 #### `B.activity.act_duration_min`
@@ -930,7 +1068,7 @@ Days each day type represents when composing a week.
 
 #### `B.activity.departure_profile`
 
-Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled "assumed, NSW-typical shapes", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice.
+Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled "assumed, NSW-typical shapes", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice. MEASURED CONSTRAINT since 25 Aug 2026 (9.76, #63 item 6): measure_departure_constraint.py compares the realised B2 departure-hour distribution these shapes generate against the observed RMS light-vehicle hourly profile (params/C6_departure_profile_check.json). First reading: WEEKDAY overlap 0.858 with peak hours MATCHING at 16:00; SAT/SUN overlap ~0.88 but the modelled weekend peaks sit 3-4 h LATER than the observed 11:00 - the weekend shapes skew late, a recorded finding, not a fit.
 
 ***assumed** · status **active** · DECISIONS.md §9, 15*
 
@@ -1430,6 +1568,54 @@ The one seed everything synthetic derives from. CLAUDE.md forbids unseeded rando
 
 ***definition** · status **active** · DECISIONS.md §9.1*
 
+#### `B.taxi.daily_trips_band`
+
+The inferred central band of daily point-to-point trips in the study area (IPART 2025 incidence x usage-rate assumptions; HTS Hunter "Other" ceiling 35,000/weekday). The 4.6.8 evidence base, STATUS batch table.
+
+***literature** · status **active** · DECISIONS.md §9.42, 9.76*
+
+> **Held fixed.** A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
+>
+> *Departure requires: the levy trip counts, if ever requested*
+
+#### `B.taxi.fare_per_km_rideshare_aud`
+
+Rideshare distance rate, literature band, swept.
+
+***literature** · status **active** · DECISIONS.md §9.76*
+
+#### `B.taxi.fare_per_km_taxi_aud`
+
+Taxi distance rate, urban maximum, first 12 km, from 1 July 2025 (archived with provenance).
+
+***measured** · status **active** · DECISIONS.md §9.76*
+
+> **Held fixed.** The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not modelled - a stated simplification, not a hidden one.
+>
+> *Departure requires: a new Fares Order, or trip-length evidence that the 12 km tail binds*
+
+#### `B.taxi.flagfall_rideshare_aud`
+
+Rideshare base fare, literature band, swept.
+
+***literature** · status **active** · DECISIONS.md §9.76*
+
+#### `B.taxi.flagfall_taxi_aud`
+
+Taxi flag fall, urban maximum, from 1 July 2025 (archived: data/raw/p2p/tfnsw_p2p_fares_order_june_2025.pdf). Rank-and-hail maxima; the peak-time surcharge, night rates and the $1.32 levy are recorded in the provenance and deliberately NOT added - the mode charges the base schedule and the simplification is stated.
+
+***measured** · status **active** · DECISIONS.md §9.76*
+
+> **Held fixed.** The legal instrument itself: the Point to Point Transport (Fares) Order 2025 urban Hiring Charge, and clause 2(g)(ii) names the Newcastle Transport District an Urban Area. A regulated maximum is not a free parameter; what IS free - the taxi/rideshare mix - is swept through B.taxi.rideshare_trip_share.
+>
+> *Departure requires: a new Fares Order*
+
+#### `B.taxi.rideshare_trip_share`
+
+The rideshare share of point-to-point trips, used to BLEND the measured taxi schedule with the literature rideshare rates into the one priced mode: fare = (1-s) x taxi + s x rideshare. The blend is what makes one taxi mode honest about being two services.
+
+***literature** · status **active** · DECISIONS.md §9.76*
+
 #### `B.walk.pce`
 
 Road capacity a network-simulated pedestrian consumes: zero, by definition - a walker moves along the network beside the carriageway (the sidewalk, expressed in queue arithmetic), physically present on every link (real LinkEnter/LinkLeave events, speed-capped at the declared walking speed) while neither impeding nor being impeded by motor traffic. Not a tunable: a pedestrian who consumed road capacity would be walking in the traffic lane.
@@ -1493,7 +1679,7 @@ Points evaluated along each parameter's declared sweep interval in one coordinat
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 55 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 57 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
@@ -1535,6 +1721,8 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `literature` | 4 - 8 |
 | `C.scoring.utility_of_line_switch` | *(null - unobtained)* | utils | `derived` | derived: utilityOfLineSwitch = -(C.transfer.penalty_min / 60) * trip_weighted_V |
 | `C.scoring.waiting_pt` | *(null - unobtained)* | utils_per_hour | `derived` | derived: waitingPt = performing - trip_weighted_VOT * beta_wait * marginalUtili |
+| `C.taxi.asc` | `0.0` | utility | `assumed` | -2 - 0 |
+| `C.taxi.wait_min` | `5.0` | minutes | `assumed` | 2 - 12 |
 | `C.time_weights.beta_bike_mode` | `1.21` | ratio_to_ivt | `literature` | 1 - 1.3 |
 | `C.time_weights.beta_headway` | `0.5` | ratio_to_ivt | `literature` | 0.35 - 0.65 |
 | `C.time_weights.beta_ivt` | `1.0` | ratio_to_ivt | `definition` | - |
@@ -1811,6 +1999,18 @@ Disutility of waiting for public transport, per hour. Distinct from RUN.scoring.
 
 > **Derived from** `C.scoring.performing_utils_per_h`, `C.vot.trip_weighted`, `C.scoring.marginal_utility_of_money`, `C.time_weights.beta_wait`: waitingPt = performing - trip_weighted_VOT * beta_wait * marginalUtilityOfMoney, the same identity as the per-mode travel rate applied to the waiting weight
 
+#### `C.taxi.asc`
+
+The taxi mode constant net of the derived wait cost. Zero says: beyond fare and wait, no extra penalty is asserted.
+
+***assumed** · status **active** · DECISIONS.md §9.76*
+
+#### `C.taxi.wait_min`
+
+The booking/wait time a point-to-point trip carries before the vehicle arrives. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch.
+
+***assumed** · status **active** · DECISIONS.md §9.76*
+
 #### `C.time_weights.beta_bike_mode`
 
 Weight on BIKE travel time relative to in-vehicle time. Value from Melbourne AToM, estimated on VISTA n=14,959. MUST BE >= C.time_weights.beta_walk_mode: cycling time being dearer per hour than walking time is the finding of 9.28, not an incidental ordering - the model had it inverted (walk 2.0, bike 1.3) and that inversion conceded every short trip to bike. Replaces a bare literal 1.3 typed into src/build/build_matsim_run_inputs.py that carried no registry field, no source, no sweep and no consumer while governing bike's mode share.
@@ -1981,14 +2181,13 @@ Frontage-level retail vacancy. NOT OBTAINED and not currently consumed by any me
 
 ## Scenario configuration (E1)
 
-*`cities/newcastle/registry/E_scenario.json` - 27 fields*
+*`cities/newcastle/registry/E_scenario.json` - 26 fields*
 
 The scenario matrix and the coupling controls. Per-scenario variant references stay in scenarios/S*.json, which bind a scenario to its network, schedule, land use, parking, signals, demand and parameter sets; this layer holds the values those configs share.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
 | `E.bus.signal_delay_share` | `0.5` | share | `assumed` | 0.3 - 1 |
-| `E.coupling.outer_loop_tolerance_s` | `5.0` | seconds | `assumed` | **held fixed** |
 | `E.lightrail.extension_detour_factor` | `1.15` | factor | `assumed` | 1 - 1.4 |
 | `E.matrix.day_types` | `["WEEKDAY", "SAT", "SUN"]` | enum | `definition` | - |
 | `E.matrix.reference_scenario` | `S2` | enum | `definition` | - |
@@ -1996,12 +2195,12 @@ The scenario matrix and the coupling controls. Per-scenario variant references s
 | `E.replication.n_replications` | `30` | count | `definition` | 5 - 30 |
 | `E.s0.heavy_rail_detour_factor` | `1.1` | factor | `assumed` | 1 - 1.3 |
 | `E.s0.station_dwell_s` | `30.0` | seconds | `assumed` | 20 - 60 |
-| `E.s1.first_hour` | `5` | hour_of_day | `assumed` | 4 - 7 |
+| `E.s1.first_hour` | `4` | hour_of_day | `measured` | 4 - 7 |
 | `E.s1.headway_s` | `600` | seconds | `definition` | - |
-| `E.s1.last_hour` | `24` | hour_of_day | `assumed` | 22 - 27 |
+| `E.s1.last_hour` | `27` | hour_of_day | `measured` | 22 - 28 |
 | `E.s1.shuttle_dwell_s` | `18.0` | seconds | `assumed` | 10 - 30 |
-| `E.s1.shuttle_speed_kmh` | `26.0` | km_per_hour | `assumed` | 18 - 40 |
-| `E.s2b.lr_segment_count` | `5.0` | segments | `assumed` | 4 - 8 |
+| `E.s1.shuttle_speed_kmh` | `26.0` | km_per_hour | `measured` | 18 - 40 |
+| `E.s2b.lr_segment_count` | `5.0` | segments | `measured` | **held fixed** |
 | `E.s2b.signal_delay_removed_share` | `0.75` | share | `assumed` | 0.5 - 1 |
 | `E.s2c.signal_delay_removed_share` | `0.6` | share | `assumed` | 0.4 - 0.9 |
 | `E.s3.brt_dwell_s` | `12.0` | seconds | `assumed` | 8 - 25 |
@@ -2009,7 +2208,7 @@ The scenario matrix and the coupling controls. Per-scenario variant references s
 | `E.s3.headway_s` | `450` | seconds | `assumed` | 300 - 900 |
 | `E.schedule.bus_route_type` | `3` | gtfs_route_type | `definition` | - |
 | `E.schedule.min_segment_s` | `30.0` | seconds | `definition` | - |
-| `E.schedule.weekend_headway_factor` | `1.5` | factor | `assumed` | 1 - 3 |
+| `E.schedule.weekend_headway_factor` | `1.875` | factor | `measured` | 1 - 3 |
 | `E.vehicle.emu_accel_ms2` | `0.7` | metres_per_second_squared | `literature` | 0.5 - 1 |
 | `E.vehicle.emu_decel_ms2` | `0.8` | metres_per_second_squared | `literature` | 0.6 - 1.1 |
 | `E.vehicle.tram_accel_ms2` | `1.2` | metres_per_second_squared | `literature` | 0.8 - 1.5 |
@@ -2022,16 +2221,6 @@ Share of A.signals.delay_per_intersection_s borne by an S1 or S3 bus at each cor
 ***assumed** · status **active** · DECISIONS.md §4.3, 9.34, 15*
 
 > **Sweep basis.** what share of the per-intersection signal delay a bus suffers relative to the value measured for the tram. A bus stops in the traffic lane and rejoins, so it is not obviously less delayed than a tram; 0.5 is a judgement and the upper bound treats it as equal.
-
-#### `E.coupling.outer_loop_tolerance_s`
-
-Corridor run-time stability tolerance for the MATSim-SUMO outer loop. Proposal 5.2 defers this explicitly - run the loop "until the corridor run time is stable within a tolerance to be defined at calibration". P4 deliverable 7 defines it: the loop is converged when end-to-end corridor run time changes by less than this between successive outer iterations. Derived from the resolution of the target and the size of the declared sensitivities rather than chosen - see the held_fixed rule. The SUMO run harness and the loop itself are P5; this is the number they must honour.
-
-***assumed** · status **active** · DECISIONS.md §15 · proposal §5.2*
-
-> **Held fixed.** A convergence tolerance is a numerical control, not a quantity of Newcastle: it decides how many outer-loop iterations are paid for, not what the answer is, PROVIDED it stays well below the smallest difference the study reports. So it is held fixed rather than swept, and it is bounded from above by three measured quantities. (1) The corridor run time is validated against V208/V209, which are SCHEDULED times: every segment in A4_segment_runtime_decomposition.csv is a whole multiple of 60 s and direction 0 sums to exactly the 720 s target, so the target itself is known only to plus or minus 30 s. (2) The charging dwell assumption is worth 11% of end-to-end run time, about 79 s - the smallest declared corridor sensitivity in the project. (3) The signal priority sweep (S2 against S2b) moves run time 38%, about 274 s. At 5 s - 0.69% of the 720 s run time - the loop is an order of magnitude inside the smallest of those and well inside the resolution of the target it is judged against, so a converged loop cannot contribute materially to any reported difference.
->
-> *Departure requires: A SELF-POLICING BOUND, not a preference: if any reported scenario comparison ever turns on a corridor run-time difference smaller than TWICE this tolerance, the difference is not resolvable by the loop that produced it. The tolerance must then be tightened and both scenarios re-run before the comparison is reported.*
 
 #### `E.lightrail.extension_detour_factor`
 
@@ -2087,9 +2276,7 @@ Dwell at each restored S0 station. A bare 30.0 added inside the leg-time express
 
 First hour of the S1 shuttle service day.
 
-***assumed** · status **active** · DECISIONS.md §4.3, 9.34, 15*
-
-> **Sweep basis.** service span start. Newcastle bus services begin between about 04:30 and 06:00 depending on the route.
+***measured** · status **active** · DECISIONS.md §4.3, 9.34, 15, 9.76*
 
 #### `E.s1.headway_s`
 
@@ -2101,9 +2288,7 @@ S1 shuttle headway. TEN MINUTES IS THE ANNOUNCED POLICY, not an assumption: the 
 
 Last hour in which an S1 shuttle departs.
 
-***assumed** · status **active** · DECISIONS.md §4.3, 9.34, 15*
-
-> **Sweep basis.** service span end, expressed on the same 30 h clock as the qsim window so a late trip can still arrive.
+***measured** · status **active** · DECISIONS.md §4.3, 9.34, 15, 9.76*
 
 #### `E.s1.shuttle_dwell_s`
 
@@ -2115,19 +2300,19 @@ Dwell at each S1 shuttle stop. Like the speed, this had a live call-site value o
 
 #### `E.s1.shuttle_speed_kmh`
 
-Average running speed of the S1 Wickham bus shuttle between stops, excluding dwell. TWO VALUES EXISTED: the call site passed 26.0 while the function signature defaulted to 28.0, so the default was dead code that looked like the specification. The operative 26.0 is declared here and the signature no longer carries a default at all.
+Average running speed of the S1 Wickham bus shuttle between stops, excluding dwell. TWO VALUES EXISTED: the call site passed 26.0 while the function signature defaulted to 28.0, so the default was dead code that looked like the specification. The operative 26.0 is declared here and the signature no longer carries a default at all. CONFIRMED 25 Aug 2026 against the operated era3 route 110 shuttle (median running speed 26.0 km/h at the declared dwell).
 
-***assumed** · status **active** · DECISIONS.md §4.3, 9.34, 15 · proposal §3.4*
-
-> **Sweep basis.** a bus in mixed traffic on an urban main street. The lower bound is congested Hunter Street, the upper is free-flowing. No timetable exists for a service that never ran, so nothing measures it - and S1 is a counterfactual the study reports against S2, so its run time is part of the comparison.
+***measured** · status **active** · DECISIONS.md §4.3, 9.34, 15, 9.76 · proposal §3.4*
 
 #### `E.s2b.lr_segment_count`
 
-Segments over which the S2b signal-priority saving is divided to give a per-segment delta. A bare divisor 5.0 in the S2b expression until this change. DERIVING IT FROM THE FEED IS OUTSTANDING WORK: if the segment count and this value disagree, S2b removes the wrong total amount of delay.
+How many inter-stop segments the light-rail alignment has - the divisor that turns the S2b whole-line signal-delay saving into a per-segment quantity. MEASURED 25 Aug 2026 from the mapped route profile (6 stops), closing the "deriving it from the feed is outstanding work" note the assumed declaration carried.
 
-***assumed** · status **active** · DECISIONS.md §5, 15*
+***measured** · status **active** · DECISIONS.md §5, 15, 9.76*
 
-> **Sweep basis.** the number of stop-to-stop segments the corridor signal delay is spread across. It SHOULD be derived from the mapped light rail feed rather than declared - the feed knows how many segments it has - and it is recorded as assumed because it is not yet.
+> **Held fixed.** MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this field's old description demanded. Not a free parameter; it changes only if the alignment or its stops change.
+>
+> *Departure requires: a changed light-rail stop pattern in the mapped feed*
 
 #### `E.s2b.signal_delay_removed_share`
 
@@ -2183,11 +2368,9 @@ Floor on a rebuilt stop-to-stop segment time. A GUARD, not a modelling value: a 
 
 #### `E.schedule.weekend_headway_factor`
 
-Headway multiplier applied to the invented S1 and S3 services on Saturday and Sunday. A bare 1.5 in an expression until this change.
+Headway multiplier applied to the invented S1 and S3 services on Saturday and Sunday. Was assumed 1.5; now the measured NLR weekend factor 1.875 (the closest operated analogue in the study area), still swept.
 
-***assumed** · status **active** · DECISIONS.md §4.3, 9.34, 15*
-
-> **Sweep basis.** how much less frequent a weekend service is than a weekday one. The real feeds carry their own weekend timetables and this factor applies ONLY to the invented S1 and S3 services, for which no weekend timetable exists to read.
+***measured** · status **active** · DECISIONS.md §4.3, 9.34, 15, 9.76*
 
 #### `E.vehicle.emu_accel_ms2`
 
@@ -2223,7 +2406,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 62 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 66 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration carries a null value because no justified value has been measured; the resolver will not invent one.
 
@@ -2251,8 +2434,11 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.mode_choice.subtour_behavior` | `betweenAllAndFewerConstraints` | enum | `literature` | `betweenAllAndFewerConstraints`, `fromSpecifiedModesToSpecifiedModes` |
 | `RUN.monitor.enabled` | `true` | boolean | `definition` | - |
 | `RUN.monitor.live_poll_s` | `0.5` | seconds | `definition` | - |
+| `RUN.monitor.pace_band_s` | `[217, 253]` | seconds_per_iteration | `measured` | **held fixed** |
 | `RUN.monitor.poll_s` | `3` | seconds | `definition` | - |
 | `RUN.monitor.port` | `8731` | tcp_port | `definition` | - |
+| `RUN.monitor.progress_interval_s` | `30` | seconds | `definition` | - |
+| `RUN.monitor.solo_check_iterations` | `[2, 5]` | iteration_range | `definition` | - |
 | `RUN.monitor.stall_s` | `300` | seconds | `definition` | - |
 | `RUN.qsim.car_vehicle` | `{"length_m": 7.5, "width_m": 1.0, "pce": 1.0}` | metres/metres/passenger_car_equivalents | `definition` | - |
 | `RUN.qsim.end_time_h` | `30` | hours | `definition` | - |
@@ -2290,6 +2476,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
+| `RUN.travel_time.bin_size_s` | `900` | seconds | `literature` | 60 - 900 |
 | `RUN.travel_time.separate_modes` | `false` | boolean | `definition` | - |
 
 #### `RUN.controler.compression_type`
@@ -2428,6 +2615,16 @@ How often the live view re-reads status WHILE THE MOBSIM IS SWEEPING. The mobsim
 
 ***definition** · status **active** · DECISIONS.md §9.36*
 
+#### `RUN.monitor.pace_band_s`
+
+The measured s/iteration band a healthy 25% x 1000 WEEKDAY arm paces inside on this machine (median 234 s through iteration 135 on the arm itself; 217-253 s across the closed family's solo iterations 2-5, DECISIONS.md 9.72). _progress.json reports median/last/solo-iteration pace against it, so a slow launch is visible from one file instead of a log read. Measured on the 9.58-9.63 family; a new family re-measures it.
+
+***measured** · status **active** · DECISIONS.md §9.72, 9.76*
+
+> **Held fixed.** A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechanises the conditional-replication rule - arm B launches only if arm A's solo iterations 2-5 land inside this band. Changing it changes what the digest FLAGS, never what the model does; it is re-measured per comparability family rather than swept.
+>
+> *Departure requires: a new family's measured pace, recorded in DECISIONS.md*
+
 #### `RUN.monitor.poll_s`
 
 How often the page re-reads status. Well under a single iteration at any usable sample fraction (9.8 s at 1%, 56.4 s at 25%), so no iteration passes unseen.
@@ -2439,6 +2636,18 @@ How often the page re-reads status. Well under a single iteration at any usable 
 Loopback port for the live run view. Bound on 127.0.0.1 only. If it is taken - a second concurrent run - the next free port is used and the actual url is printed, so parallel runs do not collide.
 
 ***definition** · status **active** · DECISIONS.md §9.19*
+
+#### `RUN.monitor.progress_interval_s`
+
+How often the machine-readable _progress.json digest is refreshed (issue #76). An OBSERVER cadence like RUN.monitor.poll_s: the digest is written by a harness daemon thread that reads the run directory and is structurally unable to touch the mobsim (the telemetry isolation rule, DECISIONS.md 9.36), so this affects how stale the digest can be and nothing else. 30 s sits under the slowest measured iteration (217-253 s at 25% on the all-physical model), so no iteration completes unseen.
+
+***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `RUN.monitor.solo_check_iterations`
+
+Which solo iterations the conditional-replication rule reads (DECISIONS.md 9.72: arm B launches only if arm A's SOLO ITERATIONS 2-5 pace inside RUN.monitor.pace_band_s). Iterations 0-1 warm caches and are excluded by the rule itself; the digest evaluates exactly this window.
+
+***definition** · status **active** · DECISIONS.md §9.72, 9.76*
 
 #### `RUN.monitor.stall_s`
 
@@ -2690,138 +2899,14 @@ Which modes contribute observed link travel times. Only car is physically simula
 
 ***definition** · status **active** · DECISIONS.md §9.29, 15 · MATSim `travelTimeCalculator.analyzedModes`*
 
+#### `RUN.travel_time.bin_size_s`
+
+The travel-time calculator's aggregation bin. At the shipped 900 s (MATSim's default, now declared instead of implicit) behaviour is unchanged; a time-varying network event shorter than a bin is invisible to the router, which is why the crossings activation (#68) lowers it.
+
+***literature** · status **active** · DECISIONS.md §9.76 · MATSim `travelTimeCalculator.travelTimeBinSize`*
+
 #### `RUN.travel_time.separate_modes`
 
 Whether travel times are accumulated per mode rather than once for the network. False with analysedModes=car is the pairing that makes `ride` read the car travel time it is routed on - the mechanism at the centre of issue 28. Declared so that pairing is visible and swept together, not typed into two adjacent lines of a template.
 
 ***definition** · status **active** · DECISIONS.md §9.29, 15 · MATSim `travelTimeCalculator.separateModes`*
-
-## SUMO corridor (build and microsimulation)
-
-*`cities/newcastle/registry/RUN_sumo.json` - 17 fields*
-
-The corridor half of proposal 5.1: SUMO answers what the system physically does given riders, and what it costs other road users. Two things are declared here that the package does not have. The netconvert options that are MODELLING CHOICES are separated from those that are geometry handling, so a choice cannot hide inside a flag list - `tls_default_type` in particular stands in for the unobtained SCATS phasing. And the fields a SUMO RUN would need are declared even though no SUMO run harness exists: the corridor nets are built and have never been simulated.
-
-| Field | Value | Units | Provenance | Sweep |
-|---|---|---|---|---|
-| `RUN.sumo.bbox_margin_m` | `300.0` | metres | `assumed` | 100 - 800 |
-| `RUN.sumo.begin_h` | `0` | hours | `definition` | - |
-| `RUN.sumo.crossings_enabled` | `false` | boolean | `definition` | - |
-| `RUN.sumo.end_h` | `30` | hours | `definition` | - |
-| `RUN.sumo.junctions_join` | `true` | boolean | `assumed` | `True`, `False` |
-| `RUN.sumo.lefthand` | `true` | boolean | `definition` | - |
-| `RUN.sumo.netconvert_options` | `["--osm.turn-lanes", "true", "--osm.elevation", "false", "--geometry.remove", "true", "--roundabouts.guess"...` | cli_flags | `definition` | - |
-| `RUN.sumo.no_turnarounds` | `true` | boolean | `assumed` | `True`, `False` |
-| `RUN.sumo.outer_loop_max_iterations` | `3` | iterations | `literature` | 2 - 5 |
-| `RUN.sumo.projection` | `+proj=utm +zone=56 +south +ellps=GRS80 +units=m +no_defs` | proj4 | `definition` | - |
-| `RUN.sumo.replications` | *(null - unobtained)* | count | `assumed` | 5 - 30 |
-| `RUN.sumo.seed` | `20260810` | integer_seed | `definition` | - |
-| `RUN.sumo.spreadtype` | `roadCenter` | enum | `definition` | - |
-| `RUN.sumo.step_length_s` | `1.0` | seconds | `assumed` | 0.1 - 1 |
-| `RUN.sumo.tls_default_type` | `actuated` | enum | `assumed` | `actuated`, `static` |
-| `RUN.sumo.tls_guess_signals` | `true` | boolean | `assumed` | `True`, `False` |
-| `RUN.sumo.tls_join` | `true` | boolean | `assumed` | `True`, `False` |
-
-#### `RUN.sumo.bbox_margin_m`
-
-Margin added around the corridor edge extent when clipping the OSM input for netconvert. Too small and turning traffic has nowhere to come from; too large and the corridor net stops being a corridor. Taken from the A1 edge endpoints rather than re-read from OSM, so the clip follows the built network.
-
-***assumed** · status **active** · DECISIONS.md §3.6, 15*
-
-#### `RUN.sumo.begin_h`
-
-Microsimulation start. Declared; no SUMO run harness exists yet.
-
-***definition** · status **active** · DECISIONS.md §15*
-
-#### `RUN.sumo.crossings_enabled`
-
-Pedestrian crossings and sidewalks in the SUMO corridor. FALSE BECAUSE THE OPTION SEGFAULTS netconvert 1.27.1 on this extract (exit 139), not because it was judged unnecessary - DECISIONS.md 3.6. CONSEQUENCE: there are no pedestrians in the SUMO corridor, so pedestrian delay MUST NOT be modelled there. Walk and frontage throughput are MATSim's job on A6. A toolchain change that fixes the segfault is a model change and belongs in DECISIONS.md 14.
-
-***definition** · status **active** · DECISIONS.md §3.6 · proposal §3.3 B1, A6*
-
-#### `RUN.sumo.end_h`
-
-Microsimulation end, matching B.activity.day_horizon_s and RUN.qsim.end_time_h so the two tools cover the same day. Declared; no SUMO run harness exists yet.
-
-***definition** · status **active** · DECISIONS.md §15*
-
-#### `RUN.sumo.junctions_join`
-
-Merge clustered approach nodes into one junction. Interacts with A.signals.junction_match_m: joining moves a junction centroid, which is why the A2 match radius is 60 m rather than A2's own 45 m clustering radius.
-
-***assumed** · status **active** · DECISIONS.md §5, 15*
-
-#### `RUN.sumo.lefthand`
-
-Left-hand traffic. NOT optional and not cosmetic: with it off, netconvert builds right-hand connections and every turning movement on the corridor is wrong.
-
-***definition** · status **active** · DECISIONS.md §3.6*
-
-#### `RUN.sumo.netconvert_options`
-
-The netconvert options that are geometry handling rather than modelling choices. Every option that IS a modelling choice is a separate registry field - lefthand, junctions_join, tls_guess_signals, tls_join, tls_default_type, no_turnarounds, spreadtype, crossings_enabled - so that a choice cannot hide inside a flag list.
-
-***definition** · status **active** · DECISIONS.md §3.6*
-
-#### `RUN.sumo.no_turnarounds`
-
-Suppress U-turns at junctions. Left on because uncontrolled U-turns on a trunk corridor are an artefact of the network build rather than observed behaviour.
-
-***assumed** · status **active** · DECISIONS.md §5, 15*
-
-#### `RUN.sumo.outer_loop_max_iterations`
-
-Maximum MATSim-SUMO outer iterations. Proposal 5.2 says 2-3 outer iterations to convergence. The loop stops when corridor run time is stable within E.coupling.outer_loop_tolerance_s - WHICH HAS NEVER BEEN DEFINED (issue 8), so this cap is currently the only thing that would terminate it.
-
-***literature** · status **active** · DECISIONS.md §15 · proposal §5.2*
-
-#### `RUN.sumo.projection`
-
-The projection of EPSG:28356, stated as proj4 because netconvert takes a proj4 definition rather than an EPSG code. The datum label follows the repo's correction in DECISIONS.md 2.6 (GDA94, not GDA2020).
-
-***definition** · status **active** · DECISIONS.md §2.6, 3.6*
-
-#### `RUN.sumo.replications`
-
-Seeded SUMO replications per scenario. NO VALUE: proposal 5.2 asks for at least 30, DECISIONS.md 9.5 shows the specified load does not fit on this machine, and nobody has decided what to cut (issue 6). Declaring it null means a SUMO harness cannot be built on an unexamined default.
-
-***assumed** · status **unobtained** · DECISIONS.md §9.5, 15 · proposal §5.2*
-
-#### `RUN.sumo.seed`
-
-netconvert seed. Held at the master seed; netconvert output is byte-identical on rebuild, and check_package.py asserts it.
-
-***definition** · status **active** · DECISIONS.md §3.6*
-
-#### `RUN.sumo.spreadtype`
-
-How lanes are spread about the reference geometry. roadCenter keeps the centreline as the road centre, which is what the A1 geometry represents.
-
-***definition** · status **active** · DECISIONS.md §3.6*
-
-#### `RUN.sumo.step_length_s`
-
-Microsimulation time step. DECLARED BUT NOT YET CONSUMED: no SUMO run harness exists. Proposal 5.1 gives SUMO the supply and operations layer - run time, dwell, reliability variance, car delay, frontage throughput - and none of it has been executed.
-
-***assumed** · status **active** · DECISIONS.md §15*
-
-> **Sweep basis.** 1.0 s is the SUMO default; sub-second steps resolve car-following and signal response more finely at proportionally higher cost
-
-#### `RUN.sumo.tls_default_type`
-
-Signal controller type netconvert assigns. A real modelling choice standing in for information the project does not have: the corridor run time swings 38% between no priority and full priority, and this field is part of that uncertainty rather than a build detail.
-
-***assumed** · status **active** · DECISIONS.md §5, 15*
-
-#### `RUN.sumo.tls_guess_signals`
-
-Infer signalised junctions from OSM traffic-signal nodes.
-
-***assumed** · status **active** · DECISIONS.md §5, 15*
-
-#### `RUN.sumo.tls_join`
-
-Join adjacent traffic lights into one controller. Affects how many independent signal programs the corridor carries, and therefore what the A2 timings are applied to.
-
-***assumed** · status **active** · DECISIONS.md §5, 15*

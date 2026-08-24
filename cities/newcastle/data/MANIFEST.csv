@@ -42,6 +42,8 @@ data/raw/opal/tap_time_loc_20160808-14.csv,raw,9013406,225080,cities/newcastle/e
 data/raw/osm_attic/overpass_attic_hunter_scott_2016-01-01.json,raw,3026,,,,,,,64e1cecb8ede442f7550608e4f033528c65450e33a931bd38eada5801636568d
 data/raw/osm_attic/overpass_attic_hunter_scott_2017-01-01.json,raw,3792,,,,,,,990fc72649b34be92f59c6e026a3f790990be8827712512debab1f66baff9991
 data/raw/osm_attic/provenance_osm_attic.json,raw,1968,,,,,,,604f58ac796fe33744dd86cbf9dced93a1a8bb9c37d124bf018d7ea99dac02f5
+data/raw/p2p/provenance_p2p.json,raw,1848,,,,,,,e32597da576f875cef8a1e24e1c486695085751f3c7231c70002918eabd55f31
+data/raw/p2p/tfnsw_p2p_fares_order_june_2025.pdf,raw,109913,,,,,,,52d2a362180c9612eb632e541110004453caac45d93da119b571a3980f0312b6
 data/raw/planning_tia/PPSHCC-137_643_hunter_st_tia.pdf,raw,10969263,,,,,,,e351b84f7372e4f3967fa46cd09de8b1aa2c22f2ec4689a2d82ee5b3bfcdf51c
 data/raw/planning_tia/provenance_planning_tia.json,raw,2854,,,,,,,a091187517730925f21d90c985ba8fea86d18fa8072b2094ad4b9817abeb267b
 data/raw/signals/tfnsw_traffic_lights_location.xlsx,raw,366965,,,"TfNSW Traffic Lights Location (statewide signal inventory: SCATS Equipment_ID, cross streets, suburb, install date, coordinates; June 2026)",https://opendata.transport.nsw.gov.au/data/dataset/93ba5c23-f46c-45d7-98ed-96022b7ea626/resource/406ac670-b3ad-4474-9284-c03d444a1aec/download/traffic-lights-location-data-june-2026.xlsx,CC-BY 4.0,2026-08-12,00c8913f1fcb6f790843dd37464c8e609ad1f5475a753ac7739a8dc16d5ec99f
@@ -210,6 +212,7 @@ params/C2_osm_defaults.json,processed,8777,,src/build/build_params.py,,,,,a27fe4
 params/C3_count_comparison.json,processed,1523,,src/build/build_params.py,,,,,4ebc5a451b9babcfcb60865be4e03cc39760c7f15cf17ec414c116a1c4efc5d3
 params/C4_mode_constraints.json,processed,5914,,src/build/build_params.py,,,,,c262dfd72c27bf682b02c63117be04222863bdaec3d05810b303fddbf0e8afc0
 params/C5_calibration.json,processed,1921,,src/build/build_params.py,,,,,093b930b75142f3f7ea110d1a0970c5880d0c081c296667524a6f51c908a37e0
+params/C6_departure_profile_check.json,processed,5267,,src/build/build_params.py,,,,,18c51c652eb65a974f16bdf604c8cc3424d8a7ac303cfb1ccaad23e28aa8140a
 scenarios/E1_parking_variants.csv,processed,209,2,cities/newcastle/build/build_scenario_configs.py,,,,,141f11e14f90a3d4fdad12a84b094b3d44f8f74725eb066934f494d105101e7b
 scenarios/E1_road_variants.csv,processed,565,4,cities/newcastle/build/build_scenario_configs.py,,,,,f699e93969423e97b54903469105ce617741b84881bb0f4afc20064c5e1a48e9
 scenarios/E1_scenarios.csv,processed,7334,10,cities/newcastle/build/build_scenario_configs.py,,,,,6814a84f5bb16c4be7bee62453516a586c190fd8554abcaae1d48f3eaa84f024
@@ -376,6 +379,9 @@ networks/osm/signals.osm,raw,3250042,,cities/newcastle/extract/overpass.py,,,,,4
 networks/osm/water.osm,raw,12324895,,cities/newcastle/extract/overpass.py,,,,,c7dbfeb3f92749ca4eeaabd940419f7ec72d8badd2232d8499fa3620ae09ed92
 networks/matsim/_matsim_build_report.json,processed,13343,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,7db82857c88146410caf6b1d242119a44f8069fb0974bbcba8538711be923652
 networks/matsim/base/network.xml.gz,processed,6694664,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,a1f0f8ad964fa280b01d33f9e287514a8eb0e20d62eb45b6d2d76be970f02360
+networks/matsim/crossings/_crossings_report.json,processed,4874,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3390c62afdeecfab61552ca0d050a0baedc39babb5537281f95f005fff45444c
+networks/matsim/crossings/crossing_change_events.xml,processed,121308,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,4d6c5a4fee509bf6461d194f85fde712c47ddc954e071c79397519528f0c9818
+networks/matsim/schedules/_dwell_report.json,processed,2217,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,5c46572a13121eafd55db82723ccc5a1e936e3c3454f2c49289cbe257a96c40d
 networks/matsim/schedules/base2026/network.xml.gz,processed,6464071,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0cc3e56fbe80c637980b2b402f0761fdddc2687123f214357a7d9610848321eb
 networks/matsim/schedules/base2026/transitSchedule.xml.gz,processed,1971464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,ac0ba3b2ac28a75ea944617ea12b7c87181995c59074ad2e2ee6771774ca0beb
 networks/matsim/schedules/base2026/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
@@ -399,28 +405,85 @@ networks/matsim/schedules/S1/transitSchedule.xml.gz,processed,1961140,,src/build
 networks/matsim/schedules/S1/transitVehicles.xml.gz,processed,11998,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b5725a47ca416a9b1b10cad0f709fa683bbb20978566fa526317a520027f979e
 networks/matsim/schedules/S2/network.xml.gz,processed,6464071,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0cc3e56fbe80c637980b2b402f0761fdddc2687123f214357a7d9610848321eb
 networks/matsim/schedules/S2/transitSchedule.xml.gz,processed,1976560,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b31e17bef5f70add948ab275783eaf003514e3274f3fa52258f4f63ad8727838
+networks/matsim/schedules/S2/transitSchedule_dwell.xml.gz,processed,1899060,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,6a8ea449c4ec61fb579faec49bf495f0929ed6a78e94f134f51f2e295cda676f
 networks/matsim/schedules/S2/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
 networks/matsim/schedules/S2a/network.xml.gz,processed,6464071,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0cc3e56fbe80c637980b2b402f0761fdddc2687123f214357a7d9610848321eb
 networks/matsim/schedules/S2a/transitSchedule.xml.gz,processed,1976974,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,c9222c73bbc47111669bdc08c62b4d8c10114219d51321be1f228c2cf9b03a81
+networks/matsim/schedules/S2a/transitSchedule_dwell.xml.gz,processed,1880390,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,61ecf899ec5ac6105ad6bc3161c6ad89eaa58e97df01c510e26368553ffb34ac
 networks/matsim/schedules/S2a/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
 networks/matsim/schedules/S2b/network.xml.gz,processed,6464006,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,33e11af60ba03e1a7cf8e022fa5832c15aaebff65325182f894eee7ef5e49071
 networks/matsim/schedules/S2b/transitSchedule.xml.gz,processed,1997559,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,9a155d64463aa31bb30774e4633bd5a4557bb76b269ef1a2cd4d06543b3773fb
+networks/matsim/schedules/S2b/transitSchedule_dwell.xml.gz,processed,1909718,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,5b822f0f2815916bc0832ac4fc6d3bb403a2895099e58bf1f802ac4723a68ebf
 networks/matsim/schedules/S2b/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
 networks/matsim/schedules/S2c/network.xml.gz,processed,6463971,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,620c6262fbdfbcadf8f896fd3a4203bc5c8d07090f2068e30a53f4912e5c5198
 networks/matsim/schedules/S2c/transitSchedule.xml.gz,processed,1988363,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,7c066d4d50fb5d6c29c4c6547c9dda665d6f0cc4a8babab60cfa41c10c4725bb
+networks/matsim/schedules/S2c/transitSchedule_dwell.xml.gz,processed,1909154,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,f6f65e9c0456346c36289007fa6b85b783eb47c75f24aa6795b9f1a11cc5e4ec
 networks/matsim/schedules/S2c/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
 networks/matsim/schedules/S3/network.xml.gz,processed,6462000,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,9bc8deb959ef6bd31ed641219b975458ee7ec4c822a0dc6fef81d0823a1a1949
 networks/matsim/schedules/S3/transitSchedule.xml.gz,processed,2012247,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,80f1eb9dcf70b5ec1dd2a621dcad89d545f8ef22a117087387fb0e2eeb6dde3b
 networks/matsim/schedules/S3/transitVehicles.xml.gz,processed,12492,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,fa1a1c0ddd19efc98797d281acc1521481108251e9a78ea57c6ec9fa33c17828
 networks/matsim/schedules/S4/network.xml.gz,processed,6464338,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,5cdb71bdf738f42a53543a582bdbd9cb65f23b092465a055b12d813039b14b52
 networks/matsim/schedules/S4/transitSchedule.xml.gz,processed,1975946,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,e71b4f648fc1f730a59fd4f615e1345b46f165413e9de8e869f4171b2771ea98
+networks/matsim/schedules/S4/transitSchedule_dwell.xml.gz,processed,1881606,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,d833ddf37e9a62aae43b1cac0a32724032cceec3e4a42e6c51f5aefdf743c3d4
 networks/matsim/schedules/S4/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
 networks/matsim/schedules/S5/network.xml.gz,processed,6464634,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,f24073455cf041b2b9f6b5f3a91491b4bd1b97dd1921df43bdf833ea56303045
 networks/matsim/schedules/S5/transitSchedule.xml.gz,processed,1954710,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,304395ac4b94558b60a02af0a6b2c44d12a3434a02dfcb17aed62057df64c8bc
+networks/matsim/schedules/S5/transitSchedule_dwell.xml.gz,processed,1869900,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3ade62fb11921c7d6dc57e28c0fe99091c0ce053c1078fc989feadae8e23a073
 networks/matsim/schedules/S5/transitVehicles.xml.gz,processed,12250,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4
 networks/matsim/schedules/S6/network.xml.gz,processed,6461963,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,702437ba162543669b792b02235ee173aea822c62576651cf762fb823ac2cbb2
 networks/matsim/schedules/S6/transitSchedule.xml.gz,processed,1976614,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,e081957b94389b45df3a4ccc01a171fb8bb99cc9ae701739683aef86631d39af
 networks/matsim/schedules/S6/transitVehicles.xml.gz,processed,10596,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,4f786707baa4b8e592747f5fe3d142ddecda8675ab64ee250630136b7f8df5a3
+networks/matsim/signals/_signals_report.json,processed,9629,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,98fc6f4652c61ee89b522e9066ee66ee8e75b85a31b3ee475024324c7f664c48
+networks/matsim/signals/S0/signal_control.xml,processed,7799,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,e5333a35cd0875b7d5637a527fe4cb757b56fd3ea55a4a4e4435f2ddf8955a25
+networks/matsim/signals/S0/signal_groups.xml,processed,4253,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b2c723613c3df1e0c4e32fa23cddb6dd577c7d45a5737c1123950f83bc61ddfd
+networks/matsim/signals/S0/signal_systems.xml,processed,4221,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,07bdaa4355481de5702c708a75901a1a1923c7f26bff380f6731df2fbf24b94b
+networks/matsim/signals/S0/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S0/transitSchedule_signals.xml.gz,processed,1888491,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,1d8fcd15c1930b6e53b522f7d5fdbbb39c5d864c95b5458f3b851a5fe4b2eb6a
+networks/matsim/signals/S1/signal_control.xml,processed,7799,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,e5333a35cd0875b7d5637a527fe4cb757b56fd3ea55a4a4e4435f2ddf8955a25
+networks/matsim/signals/S1/signal_groups.xml,processed,4253,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b2c723613c3df1e0c4e32fa23cddb6dd577c7d45a5737c1123950f83bc61ddfd
+networks/matsim/signals/S1/signal_systems.xml,processed,4221,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,07bdaa4355481de5702c708a75901a1a1923c7f26bff380f6731df2fbf24b94b
+networks/matsim/signals/S1/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S1/transitSchedule_signals.xml.gz,processed,1879972,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,99634aad9a30cb02fefa17ea30e5ffca03c57aa15d19441d711f6bc8945bfd16
+networks/matsim/signals/S2/signal_control.xml,processed,9464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0211cbdd6567046a4755276c381255c1238f900f22b9634028715e0152206e92
+networks/matsim/signals/S2/signal_groups.xml,processed,5750,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,c5bef38273b50379017ad9292a0aadc3eec7354c90dc771ad314a9f2b52d2b0d
+networks/matsim/signals/S2/signal_systems.xml,processed,5451,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3c17f7d09228757e2e2c2ba8cd436c32d092592fb38a9293d58005566bed1a1f
+networks/matsim/signals/S2/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S2/transitSchedule_signals.xml.gz,processed,1899103,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,90e27e09be2af8c8513b964de5d9d76cd183db3ad74e03284655f3856aff33ed
+networks/matsim/signals/S2a/signal_control.xml,processed,9464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0211cbdd6567046a4755276c381255c1238f900f22b9634028715e0152206e92
+networks/matsim/signals/S2a/signal_groups.xml,processed,5750,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,c5bef38273b50379017ad9292a0aadc3eec7354c90dc771ad314a9f2b52d2b0d
+networks/matsim/signals/S2a/signal_systems.xml,processed,5451,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3c17f7d09228757e2e2c2ba8cd436c32d092592fb38a9293d58005566bed1a1f
+networks/matsim/signals/S2a/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S2a/transitSchedule_signals.xml.gz,processed,1880403,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,30ad3d97da52eacb87b49342cd6b2d76be049a6ac2006fe1d71d48295acb57f0
+networks/matsim/signals/S2b/signal_control.xml,processed,9198,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,647a7ff1b81eec290ebe74e91ac5c83111fe07a9d689253eb357161ce2e8c12e
+networks/matsim/signals/S2b/signal_groups.xml,processed,5750,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,c5bef38273b50379017ad9292a0aadc3eec7354c90dc771ad314a9f2b52d2b0d
+networks/matsim/signals/S2b/signal_systems.xml,processed,5451,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3c17f7d09228757e2e2c2ba8cd436c32d092592fb38a9293d58005566bed1a1f
+networks/matsim/signals/S2b/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S2b/transitSchedule_signals.xml.gz,processed,1909708,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,a82cf176a589a493887f1134fc4f19b4ac015dae347daca09072883f43e0e6b3
+networks/matsim/signals/S2c/signal_control.xml,processed,9464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0211cbdd6567046a4755276c381255c1238f900f22b9634028715e0152206e92
+networks/matsim/signals/S2c/signal_groups.xml,processed,5750,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,c5bef38273b50379017ad9292a0aadc3eec7354c90dc771ad314a9f2b52d2b0d
+networks/matsim/signals/S2c/signal_systems.xml,processed,5451,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3c17f7d09228757e2e2c2ba8cd436c32d092592fb38a9293d58005566bed1a1f
+networks/matsim/signals/S2c/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S2c/transitSchedule_signals.xml.gz,processed,1909158,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,93564bb0767a69058c64c79820e6624c2ebaf1621548b3af967216f968d3f491
+networks/matsim/signals/S3/signal_control.xml,processed,7542,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,a4d614a0f7a5a4682b4e4abba69e1cb429f7bc30eae19ce3f0a372ecca855dda
+networks/matsim/signals/S3/signal_groups.xml,processed,4253,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b2c723613c3df1e0c4e32fa23cddb6dd577c7d45a5737c1123950f83bc61ddfd
+networks/matsim/signals/S3/signal_systems.xml,processed,4221,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,07bdaa4355481de5702c708a75901a1a1923c7f26bff380f6731df2fbf24b94b
+networks/matsim/signals/S3/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S3/transitSchedule_signals.xml.gz,processed,1926178,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,5a069ad0047bf6e97f7c11224fd04688ba316c54a0ec542af9598d85e1ca6ca9
+networks/matsim/signals/S4/signal_control.xml,processed,9464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0211cbdd6567046a4755276c381255c1238f900f22b9634028715e0152206e92
+networks/matsim/signals/S4/signal_groups.xml,processed,5793,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,78d47739266a6879800ea23d8dc8bd0d1173e6f10f0b5a4d9251cdce3de5ebbd
+networks/matsim/signals/S4/signal_systems.xml,processed,5509,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,8486af092a1b2945f1ffc97801f658968b6caaf4c6730bcbefe16f757909dae0
+networks/matsim/signals/S4/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S4/transitSchedule_signals.xml.gz,processed,1881647,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b7e6964b64b7a75dd92563eba8a7e5c0834f598ab8092083d513c342fbd6b31f
+networks/matsim/signals/S5/signal_control.xml,processed,9464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0211cbdd6567046a4755276c381255c1238f900f22b9634028715e0152206e92
+networks/matsim/signals/S5/signal_groups.xml,processed,5793,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,78d47739266a6879800ea23d8dc8bd0d1173e6f10f0b5a4d9251cdce3de5ebbd
+networks/matsim/signals/S5/signal_systems.xml,processed,5509,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,8486af092a1b2945f1ffc97801f658968b6caaf4c6730bcbefe16f757909dae0
+networks/matsim/signals/S5/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S5/transitSchedule_signals.xml.gz,processed,1869961,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,cd31508d440bd9606784d05413d2b970b60adf56de2b9938029145e0fe761dbd
+networks/matsim/signals/S6/signal_control.xml,processed,7799,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,e5333a35cd0875b7d5637a527fe4cb757b56fd3ea55a4a4e4435f2ddf8955a25
+networks/matsim/signals/S6/signal_groups.xml,processed,4253,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,b2c723613c3df1e0c4e32fa23cddb6dd577c7d45a5737c1123950f83bc61ddfd
+networks/matsim/signals/S6/signal_systems.xml,processed,4221,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,07bdaa4355481de5702c708a75901a1a1923c7f26bff380f6731df2fbf24b94b
+networks/matsim/signals/S6/signals_capacity_patch.csv,processed,2301,50,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678
+networks/matsim/signals/S6/transitSchedule_signals.xml.gz,processed,1884028,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,78350d428f474b5eef8494859601f5a6fb2342f32fc10e5ebc5aa1cf2296d3de
 networks/matsim/variants/net_base2026/network.xml.gz,processed,6634028,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,22e58a2808c3327ee4059040c40ed5a81dcf99ebadbbdb647493000204982bf7
 networks/matsim/variants/net_base2026_broadmeadow_extension/network.xml.gz,processed,6636008,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,54edbf16ae293b3ad07f260be987a6099452ad9346fa433e13d535f84610ac00
 networks/matsim/variants/net_base2026_hunter_st_full_capacity/network.xml.gz,processed,6634020,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,c8fe5ca6b8b71ed556cb0cd5948458845e24efe3b4398f3ff8fb2ab8b47e6bf1

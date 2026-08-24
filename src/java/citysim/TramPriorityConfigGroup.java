@@ -171,7 +171,18 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
     @Override
     public void checkConsistency(final Config config) {
         super.checkConsistency(config);
-        require(!this.mode.isEmpty(), "mode", "SIG.priority.mode");
+        // The group is materialised on EVERY stack (this MATSim refuses an
+        // unmaterialised module outright - measured on the first detached
+        // smoke probe), so a config in which nothing ever set a tramPriority
+        // value is a legitimate non-signal run, not a lost binding. Only a
+        // PARTIALLY bound module is the defect the checks below refuse.
+        if (this.mode.isEmpty() && this.extensionWindowS == UNSET
+                && this.detectionDistanceM == UNSET
+                && this.priorityBudgetShare == UNSET
+                && this.latenessThresholdS == UNSET) {
+            return;
+        }
+        require(!this.mode.isEmpty(), "mode", "A.signals.tsp.mode");
         if (!MODE_OFF.equals(this.mode)
                 && !MODE_GREEN_EXTENSION.equals(this.mode)
                 && !MODE_EXTENSION_RECALL.equals(this.mode)
@@ -188,15 +199,15 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
             return;
         }
         require(this.extensionWindowS >= 0.0, "extensionWindowS",
-                "SIG.priority.extension_window_s");
+                "A.signals.tsp.extension_window_s");
         require(this.detectionDistanceM >= 0.0, "detectionDistanceM",
-                "SIG.priority.detection_distance_m");
+                "A.signals.tsp.detection_distance_m");
         require(this.priorityBudgetShare >= 0.0
                         && this.priorityBudgetShare <= 1.0,
-                "priorityBudgetShare", "SIG.priority.budget_share");
+                "priorityBudgetShare", "A.signals.tsp.priority_budget_share");
         if (MODE_CONDITIONAL.equals(this.mode)) {
             require(this.latenessThresholdS >= 0.0, "latenessThresholdS",
-                    "SIG.priority.lateness_threshold_s");
+                    "A.signals.tsp.lateness_threshold_s");
         }
     }
 

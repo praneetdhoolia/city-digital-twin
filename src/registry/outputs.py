@@ -56,7 +56,35 @@ def _schema(kind):
     except KeyError:
         raise OutputError('no output contract for kind %r' % kind)
     with io.open(os.path.join(OUTPUT_SCHEMA_DIR, name), encoding='utf-8') as f:
-        return json.load(f)
+        schema = json.load(f)
+    return _inject_city_vocabulary(schema)
+
+
+def _inject_city_vocabulary(schema):
+    """Constrain `scenario` and `day` to the CITY'S OWN declared vocabulary.
+
+    The schema files used to enumerate one city's S0..S6 and WEEKDAY/SAT/SUN
+    as closed enums, so the fixture city's own run record failed the portable
+    contract (issue #62 finding A1). The files are city-free now; the enum is
+    injected here from `city.json` at validation time, which keeps the check
+    exactly as strict for the active city and correct for any other. If the
+    city descriptor cannot be read the injection is skipped - a weaker check,
+    never a wrong one.
+    """
+    try:
+        import city  # noqa: PLC0415  (lazy: keep this module import-light)
+        desc = city.descriptor()
+        vocab = {'scenario': list(desc['intervention']['scenarios']),
+                 'day': list(desc['day_types'])}
+    except Exception:                                    # noqa: BLE001
+        return schema
+    for key, values in vocab.items():
+        prop = (schema.get('properties') or {}).get(key)
+        if isinstance(prop, dict) and 'enum' not in prop:
+            prop = dict(prop)
+            prop['enum'] = values
+            schema['properties'][key] = prop
+    return schema
 
 
 def _semantic_errors(kind, doc):

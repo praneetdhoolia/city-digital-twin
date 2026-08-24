@@ -250,7 +250,7 @@ Thunig et al. 2019) modelled signals at 22 inner-city intersections inside a
 supports this natively — only systems listed in `signal_systems.xml` are
 signalised. For this project the focus area is exactly the **14 corridor
 intersections** already inventoried in
-`cities/newcastle/data/processed/network/A2_signal_control_corridor.csv`.
+`cities/newcastle/data/processed/corridor/A2_signal_control_corridor.csv`.
 
 Time step: signals and sensors run at 1 s; QSim `timeStepSize` stays 1 s
 (the default). Computational cost is localised — per-second updates per

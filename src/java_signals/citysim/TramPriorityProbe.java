@@ -169,12 +169,16 @@ public final class TramPriorityProbe {
         final SignalSystemsConfigGroup signalsConfig =
                 new SignalSystemsConfigGroup();
         signalsConfig.setUseSignalSystems(true);
+        // assemble() registers TramPriorityConfigGroup itself on every
+        // stack (the unmaterialised-module refusal, measured); the probe
+        // sets its values on the MATERIALISED instance after the load - the
+        // same values the run-input builder writes into a real config.
+        final Controler controler = CitysimControler.assemble(
+                dir.resolve("config.xml").toString(),
+                List.of(signalsConfig));
         final TramPriorityConfigGroup tramPriority =
-                new TramPriorityConfigGroup();
-        // set programmatically BEFORE assemble: the written config carries no
-        // tramPriority module, so these instance values survive the load -
-        // the same mechanism the real run uses, only the source differs
-        // (there, the run-input builder writes the module into the file)
+                org.matsim.core.config.ConfigUtils.addOrGetModule(
+                        controler.getConfig(), TramPriorityConfigGroup.class);
         tramPriority.setMode(mode);
         if (!TramPriorityConfigGroup.MODE_OFF.equals(mode)) {
             tramPriority.setExtensionWindowS(10.0);
@@ -182,10 +186,6 @@ public final class TramPriorityProbe {
             tramPriority.setPriorityBudgetShare(0.25);
             tramPriority.setCompensationEnabled(true);
         }
-
-        final Controler controler = CitysimControler.assemble(
-                dir.resolve("config.xml").toString(),
-                List.of(signalsConfig, tramPriority));
         final Scenario scenario = controler.getScenario();
         scenario.addScenarioElement(SignalsData.ELEMENT_NAME,
                 buildTramSignalsData(signalsConfig));

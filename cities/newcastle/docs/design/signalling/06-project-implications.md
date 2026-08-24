@@ -44,7 +44,7 @@ Cite the documented SCATS parameter ranges
 ([01-scats-mechanics.md](01-scats-mechanics.md) §10,
 [03-data-availability.md](03-data-availability.md) §4) in the sweep bases of
 the existing fields; fix the known outstanding derivation
-(`E.s2b.n_segments` should come from the mapped feed); optionally re-anchor
+(`E.s2b.lr_segment_count` should come from the mapped feed); optionally re-anchor
 `A.signals.delay_per_intersection_s` against Webster's formula
 ([05-algorithms.md](05-algorithms.md) §6) at the swept cycle values instead of
 a bare proxy. No model change; sharpens the band's justification.
@@ -93,7 +93,7 @@ apply; **none of it precedes the 4.6.9 lane**):
    (rungs 2–4); reliability variance already limited by issue #6. The
    `RUN.sumo.*` registry section and the SUMO corridor artefacts retire with
    it (retired-by-decision, not deleted from history; manifest regenerated).
-2. **Registry updates** (rung 1): sweep-basis citations; `E.s2b.n_segments`
+2. **Registry updates** (rung 1): sweep-basis citations; `E.s2b.lr_segment_count`
    derived from the feed; every value stays declared, `check_hardcoding`
    count must not grow.
 3. **Decision required — LX purchase** (~AU$200/region,

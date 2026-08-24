@@ -63,10 +63,14 @@ public final class CitysimSignalsControler {
         }
         final SignalSystemsConfigGroup signalsConfig =
                 new SignalSystemsConfigGroup();
-        final TramPriorityConfigGroup tramPriority =
-                new TramPriorityConfigGroup();
+        // TramPriorityConfigGroup is registered by assemble() itself on EVERY
+        // stack: the tramPriority module is emitted into every config (its
+        // fields are registry-bound, so the reach probe must see them move),
+        // and this MATSim REFUSES an unmaterialised module at the consistency
+        // check - measured on the first detached smoke probe, which is why
+        // the group lives in src/java/ rather than here.
         final Controler controler = CitysimControler.assemble(
-                args[0], List.of(signalsConfig, tramPriority));
+                args[0], List.of(signalsConfig));
 
         // The contrib refuses fast capacity update at module-install time
         // ("Fast flow capacity update does not support signals"); failing

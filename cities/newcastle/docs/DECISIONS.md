@@ -36,15 +36,15 @@ otherwise cost you an hour:
 | **Corrections to the proposal's own stated premises** | §2 (incl. **§2.6 — EPSG:28356 is GDA94, not GDA2020**) |
 | **Road / active network, lanes, speeds, gradient** | §3, §9.28, §9.33, §9.34 |
 | **pt2matsim is not reproducible run to run** | **§3.5** — one build of the network per comparison |
-| **Light rail vehicle, dwell, charging** | §4, §9.18, §9.30 |
-| **Signals, SCATS** | §5, §9.24; refusal documented in §9.21; **§9.75 the signalling dossier ([`design/signalling/`](design/signalling/README.md)), the public operated-data discovery (TIA route, #78) and the directed by recorded decision native build (#73)** — `scats_phasing` stays `unobtained` |
-| **SUMO descoped; MATSim the single simulator** | **§9.74** — decision required 25 Aug; S-b native via #73 (a band regardless), reliability variance a stated limitation, deliverable 7/§9.16 retired, P5 5.1/5.2 deleted; execution is #72 |
+| **Light rail vehicle, dwell, charging** | §4, §9.18, §9.30; **§9.76 the dwell is native** — concurrent-with-boarding decided, derived offsets, anchors preserved (#74) |
+| **Signals, SCATS** | §5, §9.24; refusal documented in §9.21; **§9.75 the signalling dossier ([`design/signalling/`](design/signalling/README.md)), the public operated-data discovery (TIA route, #78) and the directed by recorded decision native build (#73)**; **§9.76 the build itself** — explicit plans + tram-priority controller, probes passing, PPSHCC-137 archived — `scats_phasing` stays `unobtained` |
+| **SUMO descoped; MATSim the single simulator** | **§9.74** — decision required 25 Aug; S-b native via #73 (a band regardless), reliability variance a stated limitation, deliverable 7/§9.16 retired, P5 5.1/5.2 deleted; **execution DONE §9.76 (#72)** |
 | **Framework choice re-examined (MATSim vs the 2026 field)** | **§9.73** — migration rejected on a documented survey; the pinned jar embeds MATSim 2027.0-2026w25 (verified); DSim watch-only |
 | **Parking supply, price, max stay** | §6, **§9.31** |
 | **Land use, POI, frontage** | §7 |
 | **Behavioural parameters, mode constants, VOT** | §8; **§8.5 is the rule on ASCs** — read before touching a constant |
 | **Transfer penalty** | **§9.32** — not estimable from this package; the 3–15 min sweep stands |
-| **Taxi / rideshare as modes** | §9.21 declined for want of a target; **§9.42 re-opened on new evidence** — inferred from open sources, no data request lodged; **§9.75 directed by recorded decision for the next-session batch, superseding the after-deliverable-5 sequencing** (#49) |
+| **Taxi / rideshare as modes** | §9.21 declined for want of a target; **§9.42 re-opened on new evidence**; §9.75 directed by recorded decision; **§9.76 BUILT INERT** — one blended priced mode on the archived Fares Order 2025 (which corrects §9.42's fare figures), band a constraint never a target (#49) |
 | **Synthetic population (B1), activity chains (B2)** | §9, §9.1, §9.2, §9.15; **§9.46 binds the escort tour to the person escorted** (it was not, §9.44); **§9.47 repairs the age structure** — phantom elderly commuters, missing 75+, universal child students |
 | **MATSim plans, C1 translation, what does not survive it** | §9.3 |
 | **Run cost, memory, threads** | §9.5; **§9.56 the events-pipeline threads** — the all-physical model's wall-time knob, verified result-identical |
@@ -57,6 +57,8 @@ otherwise cost you an hour:
 | **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
 | **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
+| **Batch 4.7 built inert: crossings, dwell, signals, taxi, harness safety; the activation checklist** | **§9.76** — the overnight build record; ONE boundary; warm-restart validity ruling OPEN; detached launch verified (#70) |
+| **Level crossings (freight-road interactions)** | §9.70 designed; **§9.76 built** — derived from OSM barrier tags, Stewart Avenue exclusion asserted, swept never pinned (#68) |
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (standing directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
 | **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
 | **The project is `city-digital-twin`** | **§9.67** — renamed from the earlier Newcastle-specific repository name (standing directive 24 Aug): the framework is city-agnostic and the old name violated its own no-place-names rule; GitHub repo renamed (redirects stand), schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay tracked by the open naming issue |
@@ -6829,6 +6831,271 @@ untouched; the TIA numbers are cited evidence, not acquired inputs (that is
 
 ---
 
+## §9.76 — Batch 4.7 BUILT, inert: the all-modes batch lands as code, data and probes; the descope executed; the harness safety set live (25 Aug 2026, overnight session; issues #49, #62, #63, #68, #70, #72–#78)
+
+**Directive.** The session's `/goal` ordered the 25 Aug batch (§9.75)
+implemented overnight — signals, taxi and the full simulation factors first,
+the free TIA harvest for SCATS, and every other runless issue worked — with
+everything model-changing built INERT per the one-boundary rule. That is what
+happened; **no scenario ran, no target moved, the 67/143 split is untouched,
+and nothing below is a result.** The 4.6.9 ordering decision (run-first vs
+fold-in) remains open and is untouched by any of it.
+
+**The harness safety set is LIVE (no model change, no boundary):**
+
+- **Warm restart (4.7.1, #75).** `--warm-start <dead_run_dir>` starts a NEW
+  runner-named run from the dead run's newest `ITERS/it.N` plans with
+  `firstIteration` aligned; `warm_started_from` is written into `_meta.json`
+  and `_run.json` and resume matching refuses to cross it. **Caveat, recorded
+  as the issue demanded: a warm-started run is NOT bit-identical to an
+  uninterrupted one** — the RNG stream and travel-time memory reset at the
+  checkpoint. **Whether a warm-completed arm counts as a valid arm or a
+  diagnostic is an OPEN project decision**; until it is taken, the provenance
+  link makes either ruling applicable after the fact, and the cross-run index
+  labels warm runs distinctly.
+- **Progress digest (4.7.2, #76).** `_progress.json`, written by an observer
+  daemon beside the live view (the 9.36 isolation discipline: atomic replace
+  with bounded retry, failures surfaced in the next write, structurally unable
+  to reach the mobsim): every mode individually, drift vs the declared
+  tolerance via the one `summarise_run.relaxation` implementation, pace vs the
+  new declared `RUN.monitor.pace_band_s` ([217, 253] s/it — the §9.72 band as
+  a field, held fixed as a monitoring reference), and `solo_in_band` over the
+  declared `RUN.monitor.solo_check_iterations` [2, 5] — the conditional-
+  replication rule, mechanised. Contract: `outputs/progress.schema.json`.
+  **Verified live inside a real run** (the detached smoke probe below).
+- **Cross-run index (4.7.3, #77).** `build_run_index.py` → `results/INDEX.md`
+  + `.csv`: one row per directory with status, record, relaxed, comparability
+  FAMILY and per-mode fit. Families are DECLARED once in
+  `docs/audit/run_families.json` (F1 pilot → F5 ride/walk repairs, each with
+  its decisions refs), never re-derived; one 18 Aug dead launch is left
+  explicitly unattributed rather than guessed. The probe/arm boundary is the
+  declared sweep floor of `RUN.controler.last_iteration`, not a constant.
+- **Detached launch (#70) — built AND verified.** `run.py --detach` registers
+  the run as a Task Scheduler one-shot whose lifetime is independent of the
+  launching shell. Verified by the issue's own criterion: smoke probe
+  `20260825T033850_2it_1pct` progressed past `PersonPrepareForSim` through
+  both iterations to rc=0 with `_run.json` written, the launching context
+  gone throughout — passing through exactly the minutes-scale window where
+  both §9.72 launches died. (An earlier attempt the same night,
+  `aborted_20260825T033406_2it_1pct`, failed rc=1 in 10 s on a REAL defect
+  the detachment surfaced — see the unmaterialised-module lesson below — and
+  closed itself out correctly with the launcher gone: the death-reporting
+  path is verified too.) The first arm-scale detached launch should still be
+  watched; §9.72's attribution stays open as history.
+
+**The descope is EXECUTED (4.7.4, #72; §9.74's mechanics; §14 row).** The 17
+`RUN.sumo.*` fields, the SUMO fetch, the corridor package checks, 12 manifest
+rows, the `sumo_param` binding, the basemap's SUMO lane layer and the city's
+SUMO corridor builder are gone; the A2↔E1 signal-variant contract check
+survives (it was never about SUMO — the native build reads the same table).
+`E.coupling.outer_loop_tolerance_s` retired with deliverable 7 (§9.16's
+derivation stands in the record). The basemap loses its corridor lane
+geometry — stated, not silent.
+
+**The model-changing set is BUILT INERT (4.7.5–4.7.8).** Nothing consumes any
+of it until the batched family boundary; the assembled §9.68/§9.69 run inputs
+are byte-untouched, and the one emitted-config difference (below) is read by
+nothing on the standard stack.
+
+- **Level crossings (4.7.5, #68).** `build_level_crossings.py` derives the two
+  boom-gated freight crossings from OSM `railway=level_crossing` barrier tags
+  clustered and matched to car links through the network's own `osm:way:name`
+  against the DECLARED road names (`A.crossings.freight_road_names`,
+  literature-held: the network spells it "Saint James Road" — TfNSW documents
+  abbreviate). 9 new `A.crossings.*` fields; closures/day 30 swept [10, 60]
+  and duration 240 s swept [60, 600] are ASSUMED AND SWEPT (logs unpublished,
+  §9.70; the official "up to ten minutes" is the sweep top); closures spread
+  uniformly per site and PHASE-OFFSET between sites (any richer pattern would
+  be invented); each link restored to ITS OWN recorded capacity/freespeed.
+  **The Stewart Avenue rule (§9.75) is ASSERTED**: the builder refuses any
+  closure within 500 m of an A2 corridor intersection — the emitted sites sit
+  3,798 m and 2,282 m away. `RUN.travel_time.bin_size_s` is declared at
+  MATSim's own 900 s default (inert) with the ≤300 s activation basis in its
+  sweep — a closure shorter than a bin is invisible to the router.
+- **Charging dwell (4.7.6, #74).** `build_charging_dwell_offsets.py` derives
+  `transitSchedule_dwell.xml.gz` per scenario from each scenario's OWN mapped
+  schedule (never the mapper, §3.5): every INTERMEDIATE intervention-mode stop
+  holds `departureOffset = arrivalOffset + max(existing gap, the scenario's
+  resolved dwell)` with `awaitDeparture` on. Arrival offsets untouched, so the
+  12.00 min anchor is unchanged by construction, and the builder refuses a
+  hold that does not fit the timeline. **DECISION: charging is CONCURRENT with
+  boarding** — dwell = max(board, charge), the point of charge-at-stop; the
+  additive reading would need a custom `TransitStopHandler` and would
+  double-count boarding. S2/S2b/S2c hold 8 stops at 20 s, S4 18, S5 24; S2a
+  (0 s) is the identity, which is what S2a means. The field stays swept 10–35.
+- **Explicit signals + tram priority (4.7.7, #73; rungs 2+4).** Everything the
+  §9.75 traps demanded, together:
+  * `build_matsim_signals.py` generates `signal_systems/groups/control.xml`
+    for the 14 intersections per scenario from the A2 declared values against
+    each scenario's own mapped network. The A2 clusters are stop-line OSM
+    nodes the network build simplifies away (measured: 12 of 14 keep none),
+    so a system is the SET of car-carrying network nodes within the declared
+    `junction_match_m` — the SUMO junctions-join semantics, ported with the
+    retiming arithmetic. Approaches classify corridor/cross by the corridor's
+    own derived axis; sites with no cross-street car approach are recognised
+    as MID-BLOCK crossing signals (8 of 14 were installed for the light rail,
+    §9.24) with their own one-car-phase structure.
+  * **Phase structure is link-level and says so**: observed turn-lane coverage
+    on the corridor trunk is 46 of 280 edges (16%), so movement-level lanes
+    would be invented geometry — corridor approaches take the A2 split's
+    45+15, cross approaches 30+10, the tram group ties to the corridor phase
+    (the T-aspect moves with parallel traffic, dossier 02 §2). Lanes and
+    protected turns stay OPEN on #73.
+  * **The double-count rule lands as artefacts, both halves at once**:
+    `signals_capacity_patch.csv` re-raises every signalised approach to the
+    declared `A.signals.saturation_flow_veh_h_lane` (1900, literature, swept
+    1800–2050) × lanes, and `transitSchedule_signals.xml.gz` removes the
+    variant's OWN embedded per-intersection tram delay (A2
+    `mean_delay_to_tram_s`; removing the generic 26 s everywhere
+    over-subtracted on S2b — measured, refused by the builder) from arrival
+    offsets, derived from the dwell variant. `A.signals.representation`
+    (categorical `implicit_delay`/`explicit_signals`) is the switch code
+    CHECKS: the emitter adds the signals module, the harness swaps stack and
+    entry point, and `build_scenario_schedules.py` now REFUSES to bake the
+    implicit delay under `explicit_signals`.
+  * **Per-green discharge check (dossier 04 §6.2)**: worst approach 7.1–7.9
+    veh/green at 25%, ~0.3 at 1% — in the report, per approach, so nobody
+    trusts an explicit-arm effect the discretisation cannot carry.
+  * **The Java run stack**: `TramPriorityController`
+    (`CitysimTramPriority`) wraps the generated fixed-time plan; detection
+    from the events stream on the system's own tram-group links (transit
+    vehicles identified by `TransitDriverStartsEvent`, never id convention);
+    green extension bounded by the declared per-cycle budget;
+    `extension_recall` truncates after min green; `conditional` gates on the
+    vehicle's own `VehicleArrivesAtFacility` delay; borrowed green REPAID to
+    its phase next cycle (the Melbourne compensation rule). Deterministic —
+    no wall clock, no Random. Parameters arrive only through the emitted
+    `tramPriority` module from the declared `A.signals.tsp.*` fields.
+  * **Both §9.75 toy probes PASS on the Maven stack**: the
+    `QSignalsNetworkFactory` single-binding probe (red gates the buffer under
+    the full citysim component reordering, per-green discharge counted, the
+    `TolerantAgentSource` walk path alive) and the priority probe (a REAL
+    `TransitSchedule` tram: extension granted, tram clears in the extended
+    green 32 s vs 60 s fixed-time, compensation repaid next cycle).
+  * **Recorded consequences for activation**: the contrib requires
+    `qsim.usingFastCapacityUpdate=false`; S3's priority controller currently
+    has no tram-group members (BRT bus detection is open on #73); and the
+    `tramPriority` module now emits into EVERY config — its fields are
+    registry-bound, so the reach probe must see them move — and is read by
+    nothing on the standard stack. **The unmaterialised-module lesson**: this
+    MATSim REFUSES a config module no registered ConfigGroup materialises
+    ("Unmaterialized config group: tramPriority", measured on the first
+    detached smoke probe), so `TramPriorityConfigGroup` lives in `src/java/`
+    and registers on every stack while the controller stays signals-side.
+- **Taxi (4.7.8, #49; supersedes nothing — §9.75 already resequenced it).**
+  ONE priced point-to-point mode blending two services at the declared
+  `B.taxi.rideshare_trip_share` (0.66, IPART 2025 last-trip split, swept
+  0.4–0.8): the MEASURED urban taxi schedule — the Point to Point Transport
+  (Fares) Order 2025, archived at `data/raw/p2p/` with provenance: flagfall
+  $5.00, $2.52/km first 12 km, and clause 2(g)(ii) naming the Newcastle
+  Transport District URBAN — blended with literature rideshare rates
+  ($1.95 + $1.50/km, swept). **A premise correction rides with it: the §9.42
+  dossier's "$5.17 flagfall / $2.61/km" is NOT in the instrument** —
+  corrected in the dossier against the archived order. Mechanics: per-km fare
+  as `monetaryDistanceRate` (native), flagfall through the new `fare` module
+  to `FareChargeHandler` (deferred `PersonMoneyEvent`s, the
+  ParkingChargeHandler discipline), wait/booking time folded into the mode
+  constant at the trip-weighted VOT (`C.taxi.wait_min`, 5 min swept 2–12),
+  the ASC swept over the negative half-axis (`C.taxi.asc` — no target
+  exists), travel time bound to the congested network like ride (#28's
+  lesson), and the realised volume REPORTED against `B.taxi.daily_trips_band`
+  [15k, 25k] as a CONSTRAINT, never a target. `fit.py` folds bike+taxi
+  against HTS "Other" exactly as car+motorbike folds. INERT: everything gates
+  on `taxi` entering the declared choice/routing vocabularies at the
+  boundary; the default emission is verified unchanged.
+
+**Registry sharpening and 0b moves (4.7.9, #63) — six fields onto
+measurement, one candidate rejected on evidence, one new falsifier:**
+
+- `E.s2b.lr_segment_count` assumed 5.0 [4, 8] → **measured 5** from the mapped
+  route profile (6 stops), closing its own "outstanding work" note.
+- `E.schedule.weekend_headway_factor` assumed 1.5 → **measured 1.875**: the
+  operated NLR's own weekend factor (median daytime headways 8 → 15 min, SAT
+  and SUN alike, base2026 feed); still swept — the S1/S3 services it scales
+  are invented.
+- `E.s1.shuttle_speed_kmh` — **the assumption is CONFIRMED by measurement**:
+  the operated 2015–2019 era3 route 110 shuttle (426 trips, shape distances)
+  ran a dwell-inclusive median 23.4 km/h ≡ 26.0 km/h running speed at the
+  declared dwell. Value unchanged, source now measured.
+- `E.s1.first_hour`/`last_hour` → measured 4 and 27 against the operated span
+  04:03–27:35 (the old sweep top understated the operated span; 27 → 28).
+- `A.lightrail.line_speed_kmh` assumed 40 → the **measured regulated
+  ceiling**: 40 km/h over 73.4% of corridor-trunk regulated length in the
+  held Speed Zones join; sweep retained because running speed sits at or
+  below a ceiling. (Never derived from GTFS — unidentifiable, #63's own
+  caveat.)
+- `A.parking.capacity_default` — derivation ATTEMPTED and REJECTED: the 4,880
+  observed OSM capacities are tagged micro-features (median 1 space), not an
+  estimator for the systematically larger untagged facilities. Stays
+  assumed+swept, with the verdict recorded so nobody re-attempts it blind.
+- **The departure-profile constraint (#63 item 6)**:
+  `measure_departure_constraint.py` compares the realised B2 departure-hour
+  distribution (person trips, freight excluded) against the observed RMS
+  light-vehicle profile → `params/C6_departure_profile_check.json`. First
+  reading: WEEKDAY overlap 0.858 with peaks MATCHING at 16:00; **SAT/SUN
+  modelled peaks sit at 15:00/14:00 against the observed 11:00 — the assumed
+  weekend shapes skew 3–4 h late.** A recorded, falsifiable finding on 144
+  previously unexaminable numbers; a constraint, never a target.
+- Sweep-basis citations (§9.75's rung 1): `scats_phasing`,
+  `delay_per_intersection_s` and `min_green_s` now cite the operated TIA
+  evidence and the TTD/dossier bases.
+
+**The SCATS acquisition (#78) — DECIDED by the session's directive: the free
+TIA route, no LX purchase.** PPSHCC-137 is ARCHIVED (`data/raw/planning_tia/`,
+sha256-recorded, 245 pp) with the licence position stated:
+validation/sweep-basis evidence only, never merged into a CC-BY artefact, no
+registry value set from it — `A.signals.scats_phasing` STAYS `unobtained`.
+**A correction to §9.75's record rides with the archive: the TIA's site is
+643 Hunter Street, Newcastle West — not "121 Hunter St" as first recorded**
+(the document's own title page; both dossier files corrected). The companion
+PPSHCC-306 could not be fetched (its attachment URL needs a per-document
+timestamp); the systematic corridor harvest stays a standing opportunistic
+lane on the closed issue's record. Two further dossier defects fixed while in
+there: file 04's stale A2 path and file 06's wrong field name.
+
+**City-agnosticism (#62, finding A1 — half landed).** The output schemas no
+longer enumerate one city's scenarios and day types: the files are city-free
+and `outputs.py` injects the enum from `city.json` at validation time —
+exactly as strict for the active city, correct for any other, weaker-never-
+wrong if the descriptor is unreadable. The `light_rail_boardings` key rename
+and findings A2/A5/B1/B4/B5 remain open on #62. The fixture test's scored-
+mode extraction now reads actual `modeParams` parametersets (the flat
+`<param name="mode">` read miscounted the new tramPriority regime as a mode).
+
+**What activation at the family boundary requires, so it is a checklist and
+not archaeology:** flip `A.signals.representation` → `explicit_signals`; add
+`taxi` to `RUN.mode_choice.modes` and `RUN.routing.network_modes`; lower
+`RUN.travel_time.bin_size_s` to ≤300; set `qsim.usingFastCapacityUpdate=false`
+for signal runs (the contrib refuses otherwise); regenerate the run-input
+sets consuming `transitSchedule_signals.xml.gz` (which carries the dwell
+transform), the crossings change events and the capacity patch; author the
+boundary's DECISIONS entry naming the new family. ONE boundary (§9.75), and
+the 4.6.9 ordering decision still governs when.
+
+**Toolchain (§14 rows).** SUMO 1.27.1 OUT; Apache Maven 3.9.9 IN
+(sha256-pinned); the signals RUN STACK in: `org.matsim:matsim` +
+`org.matsim.contrib:signals` at **2027.0-2026w25** — exactly the version the
+shaded jar embeds (§9.73) — resolved by the committed `run-stack-pom.xml`
+into `.tools/run-stack/lib` (201 jars, every one sha256-recorded in
+`toolchain.json`; visualisation-only dependencies excluded). Signal runs use
+that stack and `citysim.CitysimSignalsControler`; nothing else changed
+stacks, and the two never share a classpath.
+
+**Also live from this session**: the sandbox allowlist gained the NSW
+planning portal, the Maven repositories (repo1.maven.org, repo.osgeo.org)
+and the TfNSW corporate + IPART domains — each tied to a provenance record
+or the pinned toolchain; `_launch/` wrappers under `results/` are the
+detached launcher's artefacts.
+
+**What this deliberately does not do:** no scenario ran (two 1% smoke probes
+verified plumbing; both are labelled probes in the index and neither is a
+result); no family boundary was crossed; the assembled 4.6.9 run inputs are
+byte-identical; `E.replication.n_replications` and the 4.6.9 re-approval and
+ordering decisions remain the project's to take; the §8.5-held constants
+stayed held.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -7327,6 +7594,8 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | **TOOLCHAIN CHANGE: SUMO 1.27.1 removed; Apache Maven 3.9.9 and the MATSim signals run stack pinned (§9.76; #72, #73; overnight fifth session).** The SUMO component leaves `.tools/toolchain.json` (the §9.74 descope executed — no completed run ever consumed a SUMO artefact, so nothing is invalidated); Maven 3.9.9 is pinned by sha256 from Maven Central; the committed `src/java/run-stack-pom.xml` resolves `org.matsim:matsim` + `org.matsim.contrib:signals` at **2027.0-2026w25** — exactly the version the pinned shaded jar embeds (§9.73) — into `.tools/run-stack/lib` (201 jars, each sha256-recorded; visualisation-only dependencies excluded). Signal-enabled runs execute `citysim.CitysimSignalsControler` on that stack; every other run executes the unchanged shaded-jar stack, and the two never share a classpath. `bootstrap_toolchain.py --verify` re-hashes both and compiles both class trees. |
+| 2026-08-25 | **Batch 4.7 BUILT, INERT (§9.76; #49 #62 #63 #68 #70 #72–#78; overnight fifth session).** Harness safety set LIVE (warm restart with the recorded non-bit-identity caveat; the `_progress.json` digest with the declared pace band and solo-check window; the cross-run index over declared families; the detached Task Scheduler launch path VERIFIED past `PersonPrepareForSim` with the launcher gone). Model-changing set BUILT INERT for ONE boundary: level-crossing closures derived from OSM barrier tags with the Stewart Avenue exclusion asserted; native charging dwell (concurrent-with-boarding DECIDED) holding intermediate stops with anchors preserved; explicit corridor signals + tram-priority controller with both §9.75 toy probes PASSING, the double-count rule landed as artefacts (saturation re-capacitation + per-variant embedded-delay schedule removal) and the per-green discharge check reported; taxi as one blended priced mode on the archived Fares Order 2025 (flagfall $5.00 / $2.52/km urban — correcting the dossier's $5.17/$2.61, values not in the instrument). Six 0b fields moved onto measurement (weekend headway 1.875; shuttle speed CONFIRMED at 26; spans; the LR regulated ceiling; the segment count) and the departure-profile constraint filed its first finding (weekend shapes skew 3–4 h late). PPSHCC-137 archived with provenance under the decided free-TIA route (site corrected to 643 Hunter St). The assembled 4.6.9 run inputs are byte-identical; no run, no result, no boundary crossed. |
 | 2026-08-25 | **Build reports record city-relative paths, and the record's vocabulary is normalised (fourth session, follow-up; no model value changed).** Three committed build reports (`_matsim_build_report.json`, `_corridor_attributes_report.json`, `_plans_report.json`) and the calibration report carried this machine's absolute checkout path in `feed`/provenance strings — the §9.67 entry had noted them as true-until-rename. The four producing scripts now pass those paths through `city.rel()` (the module that already renders manifest paths city-relative), the committed reports were normalised to the same city-relative form, `CALIBRATION_REPORT.md` was regenerated by its generator, and the manifest re-hashed. The role word "owner" is retired from the living record, GitHub issues, PR bodies and comments in favour of decision-required/standing-directive phrasing; issue labels normalised (phase + `awaiting-implementation`/`awaiting-run`/`decision-needed`); the `/handoff` and `/onboard` skills made city-generic (`cities/<city>` via `CITYSIM_CITY`). The local working-copy folder renamed to `work/city-digital-twin`. **No model, data or target value changed; the 67/143 split is untouched; nothing here is a result.** |
 | 2026-08-25 | **The signalling dossier lands, operated SCATS data is discovered public, and the all-modes-first batch is set (§9.75; issues #49/#68/#72–#78; fourth session).** A ten-file SCATS/Newcastle-signalling research dossier lands at `design/signalling/` (every claim tagged documented/commonly-claimed/gap; `A.signals.scats_phasing` STAYS `unobtained` for the 14 modelled sites). Discovery: planning-portal TIA PPSHCC-137 republishes TfNSW-supplied SCATS interpreted history for TCS 923 and TCS 1138 (24 h × 15-min, 19 Jul 2022) — operated cycles 72–81 s corridor-adjacent / 104–113 s arterial vs the assumed 110 s swept 80–140 s: sweep-basis evidence (neither is a modelled site), and a free third acquisition route parked with the LX-purchase decision on #78. Standing directive: the next session implements corridor signals + tram priority + lanes natively (#73, with the Maven run-stack toolchain change), taxi as a priced mode (#49 — supersedes §9.42's after-deliverable-5 sequencing), level crossings (#68), native charging dwell (#74), the descope execution (#72), warm restart (#75), the progress digest (#76) and the cross-run index (#77) — activating as ONE family boundary; the 4.6.9-first-vs-fold-in ordering is stated in §9.75. **No code built, no model, data, registry or target value changed, the 67/143 split is untouched, nothing here is a result.** |
 | 2026-08-25 | **SUMO is descoped by recorded decision — MATSim is the single simulator (§9.74; issue #72; the fifth premise correction, superseding proposal §5's twin-simulator architecture).** Every SUMO-deferred corridor question except two has an adequate native representation (crossings #68, dwell #74, taxi #49, lane loss via E1, frontage volumes from physical walk); the residual lands as: S-b answered natively when #73 builds (a swept band regardless, per §7.2/§9.21), reliability variance descoped as a stated limitation (the ≥30-replication load never fit this machine — #6's record), deliverable 7/§9.16 retired with the outer loop, P5 tasks 5.1/5.2 deleted (the standing 5.2 DELETE proposal thereby decided) and 5.3 resolved to stays-swept-never-pinned. Mechanical retirement (registry `RUN.sumo.*`, the toolchain fetch, package checks, manifest) is #72, a logged toolchain change when executed. **Nothing deleted from history, no registry value changed in this record, no run invalidated (none ever consumed a SUMO artefact), no target moved, nothing here is a result.** |

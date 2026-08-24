@@ -21,26 +21,11 @@
     },
     "scenario": {
       "type": "string",
-      "enum": [
-        "S0",
-        "S1",
-        "S2",
-        "S2a",
-        "S2b",
-        "S2c",
-        "S3",
-        "S4",
-        "S5",
-        "S6"
-      ]
+      "description": "Validated against the CITY'S OWN declared intervention.scenarios at write time (src/registry/outputs.py injects the enum from city.json; issue #62 A1) - the portable schema file itself names no city's vocabulary."
     },
     "day": {
       "type": "string",
-      "enum": [
-        "WEEKDAY",
-        "SAT",
-        "SUN"
-      ]
+      "description": "Validated against the CITY'S OWN declared day_types at write time (src/registry/outputs.py injects the enum from city.json; issue #62 A1) - the portable schema file itself names no city's vocabulary."
     },
     "fraction": {
       "type": "number",

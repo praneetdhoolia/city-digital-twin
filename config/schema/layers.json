@@ -4,14 +4,8 @@
   "contract": "A city must produce every artefact below, at the same city-relative path, before the framework can run against it. The producing script may be entirely different - that is what a jurisdiction adapter is for - but the path and the columns the framework reads are the contract.",
   "caveat": "`columns_in_reference_city` is the header of the reference city's own copy, not a proven minimum: a column here may be incidental. Narrowing it to the columns framework code actually reads is not done. Recorded when the reference artefact is on disk and carried forward from the committed document when it is not, so the document regenerates identically on a checkout without the bulk data. Whether an artefact is PRESENT locally is a report, not part of this contract, and is never stored here.",
   "n_artefacts": 126,
-  "n_paths_built_at_runtime": 12,
+  "n_paths_built_at_runtime": 14,
   "artefacts": {
-    "build": {
-      "kind": "directory",
-      "read_by": [
-        "tests/check_package.py"
-      ]
-    },
     "build/build_landuse_parking.py": {
       "kind": "file",
       "read_by": [
@@ -429,6 +423,7 @@
     "data/processed/network/A1_corridor_road_edges.csv": {
       "kind": "file",
       "read_by": [
+        "src/analyse/frontage_volumes.py",
         "tests/check_package.py"
       ],
       "columns_in_reference_city": [
@@ -692,6 +687,17 @@
         "depart_shift_h",
         "stations",
         "station_days"
+      ]
+    },
+    "data/processed/observed/light_hourly_profile.csv": {
+      "kind": "file",
+      "read_by": [
+        "src/calibrate/measure_departure_constraint.py"
+      ],
+      "columns_in_reference_city": [
+        "day_type",
+        "hour",
+        "share"
       ]
     },
     "data/processed/observed/traffic_aadt.csv": {
@@ -987,7 +993,8 @@
       "kind": "directory",
       "read_by": [
         "src/build/build_activity_chains.py",
-        "src/build/build_matsim_plans.py"
+        "src/build/build_matsim_plans.py",
+        "src/calibrate/measure_departure_constraint.py"
       ]
     },
     "demand/plans/B2_activity_trips.csv": {
@@ -1188,6 +1195,12 @@
         "src/calibrate/report.py"
       ]
     },
+    "docs/audit/run_families.json": {
+      "kind": "file",
+      "read_by": [
+        "src/analyse/build_run_index.py"
+      ]
+    },
     "docs/reference/CONFIG_REFERENCE.md": {
       "kind": "file",
       "read_by": [
@@ -1260,18 +1273,6 @@
       ]
     },
     "networks/osm/water.osm": {
-      "kind": "file",
-      "read_by": [
-        "src/analyse/build_basemap.py"
-      ]
-    },
-    "networks/sumo": {
-      "kind": "directory",
-      "read_by": [
-        "tests/check_package.py"
-      ]
-    },
-    "networks/sumo/net_base2026/corridor.net.xml": {
       "kind": "file",
       "read_by": [
         "src/analyse/build_basemap.py"
@@ -1425,6 +1426,12 @@
       "read_by": [
         "src/calibrate/calibrate.py",
         "src/calibrate/report.py"
+      ]
+    },
+    "params/C6_departure_profile_check.json": {
+      "kind": "file",
+      "read_by": [
+        "src/calibrate/measure_departure_constraint.py"
       ]
     },
     "scenarios/*.csv": {

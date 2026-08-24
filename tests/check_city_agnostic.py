@@ -364,16 +364,32 @@ def run_checks(reference):
           'the parking max stay is the fixture city\'s')
 
     # 4. the MODE VOCABULARY follows the city. Three modes, not five.
-    # `mode` keys both the SCORED modeParams sets and the teleported
-    # routing-helper sets; the vocabulary assertion is about the former, so
-    # helper modes (non_network_walk, the access stub - DECISIONS.md 9.54)
-    # are excluded rather than counted as a fourth scored mode.
+    # `mode` keys the SCORED modeParams sets, the teleported routing-helper
+    # sets AND, since #73, the tramPriority module's regime parameter - the
+    # vocabulary assertion is about the first, so the sets are read from the
+    # scoring parametersets rather than from every <param name="mode"> line
+    # (the flat read counted the priority regime 'green_extension' as a
+    # scored mode). Helper modes (non_network_walk, the access stub -
+    # DECISIONS.md 9.54) stay excluded rather than counted as a fourth mode.
     helper_modes = {'non_network_walk'}
-    modes = sorted(set(fx['mode']) - helper_modes)
+
+    def scored_modes(xml):
+        out = set()
+        in_set = False
+        for line in xml.splitlines():
+            if '<parameterset type="modeParams">' in line:
+                in_set = True
+            elif '</parameterset>' in line:
+                in_set = False
+            elif in_set and '<param name="mode"' in line:
+                out.add(line.split('value="', 1)[1].split('"', 1)[0])
+        return out
+
+    modes = sorted(scored_modes(fixture_xml) - helper_modes)
     check(modes == sorted(IDENTITY['modes']),
           'the scored modes are the fixture city\'s %s, not the reference '
           'city\'s %s' % (sorted(IDENTITY['modes']),
-                          sorted(set(rf['mode']) - helper_modes)))
+                          sorted(scored_modes(reference_xml) - helper_modes)))
     check(fx['modes'] == [','.join(IDENTITY['modes'])],
           'the mode-choice mode list is the fixture city\'s')
 

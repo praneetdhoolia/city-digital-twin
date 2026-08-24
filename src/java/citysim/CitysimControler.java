@@ -114,14 +114,24 @@ public final class CitysimControler {
         final TelemetryConfigGroup telemetry = new TelemetryConfigGroup();
         final RidePairingConfigGroup ridePairing = new RidePairingConfigGroup();
         final FareConfigGroup fare = new FareConfigGroup();
+        // Registered on EVERY stack even though only the signals entry point
+        // reads it: the tramPriority module is emitted into every config (its
+        // fields are registry-bound so the reach probe must see them move),
+        // and this MATSim REFUSES an unmaterialised module at the consistency
+        // check - "Unmaterialized config group: tramPriority", measured on
+        // the first detached smoke probe. The group class has no signals
+        // imports, so the base compile stays clean; the CONTROLLER that acts
+        // on it exists only in src/java_signals/.
+        final TramPriorityConfigGroup tramPriority = new TramPriorityConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[4 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[5 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
         groups[3] = fare;
+        groups[4] = tramPriority;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[4 + i] = extraGroups.get(i);
+            groups[5 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
