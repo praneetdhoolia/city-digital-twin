@@ -704,6 +704,18 @@
         "identity": "a passenger rides in a vehicle already counted, so a ride leg contributes zero - valid only while the modelled ride:car ratio matches the observed passenger:driver ratio"
       }
     },
+    "B.census.thin_cell_min_journeys": {
+      "value": 100,
+      "units": "journeys",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.77",
+      "description": "Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. A flag on how a comparison is LABELLED, never a value that reaches the model; declared so the threshold is visible and changeable in one place.",
+      "consumers": [
+        "src/analyse/measure_demographic_modes.py"
+      ]
+    },
     "B.counts.station_match_radius_m": {
       "value": 120.0,
       "units": "metres",
