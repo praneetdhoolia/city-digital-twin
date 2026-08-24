@@ -978,7 +978,7 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
     return legs, anchors
 
 
-def bind_escort_tours(n_hx, candidates, claimed):
+def bind_escort_tours(n_hx, candidates, claimed, pending):
     """Choose which household trips up to `n_hx` escort tours are bound to.
 
     Deterministic - no draw. Priority reflects who actually needs conveying:
@@ -993,12 +993,14 @@ def bind_escort_tours(n_hx, candidates, claimed):
     distribution exactly as before - lone-person households (26.2%) have
     nobody to bind to and must keep their observed escort rate.
 
-    Under `round_trip` directions (DECISIONS.md 9.68) a candidate consumes TWO
-    HX tours - a drop-off serving the member's outward anchor and a pick-up
-    serving the member's return leg - and only 2-leg member tours (those with
-    a known return departure and no intermediate stop) are bindable: a
-    partially covered tour cannot hold a fully-pairable ride and would spend
-    supply on a binding that changes no choice.
+    Under `round_trip` directions (DECISIONS.md 9.68) a direct 2-leg member
+    tour is covered by a drop-off AND a pick-up. The two serve tours need
+    not belong to one escorter: most escorting persons draw exactly one HX
+    tour, so the pick-up is queued on `pending` (household scope, like
+    `claimed`) and the NEXT escort slot in the household serves it - the
+    same escorter's second tour, or another member's. Pending pick-ups are
+    served before new drops; leftover budget still binds one-way (the 9.46
+    behaviour), so no supply is wasted when no round trip is completable.
     """
     def pri(c):
         if not c['licence'] and c['purpose'] == 'HE':
@@ -1012,34 +1014,48 @@ def bind_escort_tours(n_hx, candidates, claimed):
     max_pri = 2 if ESCORT_SCOPE == 'unlicensed_or_education' else 3
     round_trip = ESCORT_DIRECTIONS == 'round_trip'
     fixed = []
+
+    def gap_ok(dep):
+        return all(abs(dep - f['serve_dep_s']) >= ESCORT_MIN_GAP_S
+                   for f in fixed)
+
+    # 1. serve pick-ups already owed to covered members (9.68)
+    while pending and len(fixed) < n_hx:
+        pk = pending[0]
+        if not gap_ok(pk['serve_dep_s']):
+            break   # keep it for the household's next escort slot
+        pending.pop(0)
+        fixed.append(pk)
+    # 2. new bindings
     for c in sorted(candidates, key=lambda c: (pri(c), c['member'], c['tour_id'])):
-        need = 2 if round_trip else 1
-        if len(fixed) + need > n_hx:
+        if len(fixed) >= n_hx:
             break
         if pri(c) > max_pri:
             break
-        if round_trip and c.get('ret_dep_s') is None:
-            continue
         key = (c['member'], c['tour_id'])
         if key in claimed:
             continue
-        deps = [c['dep_s']] + ([c['ret_dep_s']] if round_trip else [])
-        if any(abs(d - f['serve_dep_s']) < ESCORT_MIN_GAP_S
-               for f in fixed for d in deps):
+        if not gap_ok(c['dep_s']):
             continue
         claimed.add(key)
         fixed.append(dict(direction='drop', start_s=c['dep_s'],
                           serve_dep_s=c['dep_s'], k=c['k'], dx=c['dx'],
                           dy=c['dy'], priority=pri(c), member=c['member'],
                           member_tour=c['tour_id']))
-        if round_trip:
+        if round_trip and c.get('ret_dep_s') is not None:
             # pick-up: the serving leg is the RETURN (stop -> home); start_s
-            # here is an estimate for ordering only - build_day pins the tour
-            # so that the return leg departs at the member's own return time
-            fixed.append(dict(direction='pickup', start_s=c['ret_dep_s'],
-                              serve_dep_s=c['ret_dep_s'], k=c['k'],
-                              dx=c['dx'], dy=c['dy'], priority=pri(c),
-                              member=c['member'], member_tour=c['tour_id']))
+            # is an ordering estimate - build_day pins the tour so the return
+            # leg departs at the member's own return time. Served by this
+            # escorter's next slot if the budget allows, else queued for the
+            # household's next escort slot.
+            pk = dict(direction='pickup', start_s=c['ret_dep_s'],
+                      serve_dep_s=c['ret_dep_s'], k=c['k'],
+                      dx=c['dx'], dy=c['dy'], priority=pri(c),
+                      member=c['member'], member_tour=c['tour_id'])
+            if len(fixed) < n_hx and gap_ok(pk['serve_dep_s']):
+                fixed.append(pk)
+            else:
+                pending.append(pk)
     return fixed
 
 
@@ -2140,7 +2156,8 @@ def main(seed=SEED, max_persons=None, day_types=None):
         tours_hist = collections.Counter()
         esc = dict(requested=0, bound=0, unbound=0,
                    by_priority=collections.Counter(),
-                   bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0)
+                   bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0,
+                   pickups_unserved=0)
         hh_bindings = []   # 9.68: placed household serve-tour coverage rows
         for h in hh_order:
             members = hh_members[h]
@@ -2155,6 +2172,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
                 pass1, pass2 = members, []
             candidates = []
             claimed = set()
+            pending = []   # 9.68: pick-ups owed, served by later escort slots
             legs_of = {}
             for i in pass1 + pass2:
                 hxy = home.get(hid[i])
@@ -2172,7 +2190,8 @@ def main(seed=SEED, max_persons=None, day_types=None):
                 may_escort = person['licence'] or not ESCORT_REQUIRES_LICENCE
                 if pre['HX'] > 0 and ESCORT_BINDING and may_escort:
                     esc['requested'] += pre['HX']
-                    fixed = bind_escort_tours(pre['HX'], candidates, claimed)
+                    fixed = bind_escort_tours(pre['HX'], candidates, claimed,
+                                              pending)
                     pre['HX'] -= len(fixed)
                     esc['bound'] += len(fixed)
                     esc['unbound'] += pre['HX']
@@ -2208,6 +2227,9 @@ def main(seed=SEED, max_persons=None, day_types=None):
                         ret_dep_s=ret))
                 if legs:
                     legs_of[i] = legs
+            # 9.68: pick-ups no escort slot in this household could serve -
+            # their member tours stay one-way covered, counted not hidden
+            esc['pickups_unserved'] += len(pending)
             for i in sorted(legs_of):
                 legs = legs_of[i]
                 n_travel += 1
@@ -2302,6 +2324,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
                                 if 'HX' in meandist else None),
                 # 9.68: serve tours allocated per passenger tour, by direction.
                 directions=ESCORT_DIRECTIONS,
+                pickups_unserved=esc['pickups_unserved'],
                 member_tours_covered_round_trip=sum(
                     1 for c in collections.Counter(
                         (b['member_person_id'], b['member_tour_id'])
