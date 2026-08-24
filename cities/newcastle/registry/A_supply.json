@@ -282,7 +282,7 @@
           "proxy_partial_priority",
           "proxy_full_priority"
         ],
-        "basis": "proposal 7.2 fallback: infer effective signal delay from GTFS-Realtime run-time distributions and treat cycle time and priority as SWEPT parameters rather than fixed inputs"
+        "basis": "proposal 7.2 fallback: treat cycle time and priority as SWEPT parameters rather than fixed inputs. Sweep-basis evidence (25 Aug 2026, 9.75/9.76): operated SCATS interpreted history republished in planning-portal TIA PPSHCC-137 (archived, data/raw/planning_tia/) shows corridor-adjacent TCS 1138 running 72-81 s cycles and parallel-arterial TCS 923 running 104-113 s against the assumed 110 s swept 80-140 s - supporting the sweep's lower half for corridor sites and the assumed value for arterials. Neither site is one of the 14 modelled intersections, so this is a prior, not a measurement; documented SCATS user limits are ~30-150 s (dossier 03/09)."
       },
       "status": "unobtained",
       "decisions_ref": "0, 5, 13",
@@ -294,10 +294,13 @@
       "value": 26.0,
       "units": "seconds",
       "source": "assumed",
-      "sweep": [
-        15.0,
-        40.0
-      ],
+      "sweep": {
+        "interval": [
+          15.0,
+          40.0
+        ],
+        "basis": "Uniform-arrival delay at the assumed timings is (1-g/C)^2 x C/2 ~ 24.75 s at C=110 with the corridor split (dossier 06 1) - the assumed 26 s sits on that identity. The operated TIA evidence (72-81 s corridor cycles, PPSHCC-137) implies SHORTER per-intersection delays on the corridor, supporting the sweep's lower half; 40 s is a saturated arterial at the sweep-top cycle."
+      },
       "status": "active",
       "decisions_ref": "5",
       "description": "Proxy signal delay per corridor intersection, used to decompose scheduled run time in the absence of SCATS phasing. Downstream of A.signals.scats_phasing.",
@@ -321,10 +324,13 @@
       "value": 6.0,
       "units": "seconds",
       "source": "assumed",
-      "sweep": [
-        4.0,
-        10.0
-      ],
+      "sweep": {
+        "interval": [
+          4.0,
+          10.0
+        ],
+        "basis": "TfNSW Traffic Signal Design TTD 2018/002 actuated practice: minimum green 5 s vehicle / 6 s pedestrian (dossier 03/09); SYLVIA and Laemmer default 5 s. The declared 6 s is the pedestrian-safe value; the band brackets the practice range."
+      },
       "status": "active",
       "decisions_ref": "5",
       "description": "Minimum green time in a generated SUMO signal program.",
