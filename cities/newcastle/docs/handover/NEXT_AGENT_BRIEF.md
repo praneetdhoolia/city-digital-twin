@@ -1,19 +1,21 @@
-# Brief for the next agent — THE RIDE COLLAPSE IS DIAGNOSED AND REPAIRED IN THE BUILD; THE NEXT ARM MEASURES WHAT IT BOUGHT
+# Brief for the next agent — THE REPAIRED ARM IS READY BUT LAUNCH-BLOCKED: LAUNCH IT FROM AN OWNER-OWNED SHELL
 
-*Updated 24 August 2026, second session (the owner's `/goal`: every mode's
-ridership as close to real life as possible, ride first, all traffic forms
-at observed values, everything fixable fixed before the next run).
-**§9.68** the ride collapse decomposed on the completed arms and repaired
-in the demand build (round-trip serve bindings, coherent seeds, direct
-bound tours) · **§9.69** the missing short-trip mass gets its observed
-distribution (HTS Sydney 2012/13 Table 4.4.7) · **§9.70** the coal chain
-deliberately NOT simulated (dedicated grade-separated track); the two real
-level-crossing interactions are #68 · **§9.71** the pre-LR cross-section
-measured from OSM history (2 → 1 lanes/direction — B3's counterfactual
-onto evidence) and the VoT set checked against EPV Jan 2025. The demand
-package is REGENERATED and probe-verified: **a NEW comparability family —
-the §9.58–§9.63 family closed with its two completed arms as the
-pre-repair record.** This is a HANDOVER, not a source of truth: where it
+*Updated 24 August 2026, third session. The owner's `/goal` (make any
+remaining fixes, then run and monitor) authorised the 4.6.9 post-repair
+base arm — and **both detached launch attempts died silently within
+minutes** (§9.72, issue #70: ~54 s in mid `PersonPrepareForSim`, then
+~2 min in before config emission; no error artefact either time;
+attribution open, agent-session process reaping suspected). The owner
+ended the campaign at `/handoff`; both dead launches are closed out as
+`aborted_*` (§9.66 scheme). **No model, data or registry value changed
+this session** — the §9.68/§9.69 regenerated demand stands
+probe-verified: the arm is launch-blocked, not model-blocked. Second
+session's record (**§9.68** ride collapse decomposed and repaired ·
+**§9.69** short-trip mass onto its observed distribution · **§9.70**
+coal chain scoped out · **§9.71** pre-LR cross-section 2 → 1 + the EPV
+Jan 2025 check) stands as written; **the comparability family is
+§9.68/§9.69 onward**, with the §9.58–§9.63 family closed as the
+pre-repair record. This is a HANDOVER, not a source of truth: where it
 disagrees with [`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md)
 or [`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win.*
 
@@ -34,9 +36,19 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 **⚠ OWNER DIRECTIVES, standing:**
 
 1. **NO MULTI-HOUR RUNS WITHOUT EXPLICIT APPROVAL — none is standing.**
-   The §9.62 two-arm approval was consumed by the completed campaign; the
-   24 Aug `/goal` authorised BUILD work, not a run. Measured cost:
+   The third-session `/goal` approval was consumed by the two dead
+   launches and the owner's end-run instruction (§9.72). Measured cost:
    ~240 s/it/arm two-arm, ~233 s single → **~65–67 h per 25%×1000 arm**.
+1a. **LAUNCH CONSTRAINT (§9.72, #70): launch arms from an OWNER-OWNED
+   shell** (a plain terminal or a Task Scheduler job created outside the
+   agent session) — session-spawned launches died silently by BOTH
+   detachment routes tried (`Start-Process`, WMI `Win32_Process.Create`).
+   A launch is verified only when `matsim.log` progresses PAST
+   `PersonPrepareForSim` into iterations with the launching context gone.
+1b. **CONDITIONAL REPLICATION (owner, 24 Aug, standing): arm B launches
+   ONLY if arm A's solo iterations 2–5 pace at the closed family's
+   217–253 s/it band** (~233 s/it single-arm, §9.59). Slower → arm A
+   runs alone.
 2. **The prime goal (owner, 21 + 24 Aug): all forms of ridership as close
    to real life as possible ON THEIR OWN; no hardcoding or Newcastle bias;
    every issue spotted logged on GitHub; all traffic forms at observed or
@@ -49,12 +61,15 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
    `<launch>_<iterations>it_<pct>pct` and status-tracks them in
    `_meta.json`; `_run.json` stays the only result gate.
 
-**Start from `main`. No run is in progress; the machine is free.**
+**Start from `main`. No run is in progress; the machine is free. If this
+session's PR is still open, merging it and deleting the branch both sides
+is the first item of unfinished business.**
 
 **⚠ DECISIONS WAITING ON THE OWNER:**
-- **Approve the next base arm** on the repaired demand (task 4.6.9,
+- **Re-approve the next base arm** on the repaired demand (task 4.6.9,
   ~65–67 h at 25%×1000; the §9.68/§9.69 repairs are built and
-  probe-verified but UNMEASURED at convergence).
+  probe-verified but UNMEASURED at convergence). The launch itself must
+  satisfy the §0.1a constraint (owner-owned shell, #70).
 - **`E.replication.n_replications`** — seed floor measured ≤0.11 pp/mode
   at n=2 (§9.64); 3–5 supportable; the value is the owner's.
 - Flagged, not changed (§9.71): `C.vot.by_purpose.HE` 9.3 and
@@ -112,11 +127,14 @@ recorded). Seed noise floor ≤0.11 pp/mode (n=2).
 §3  THE ACTIVE LANE — in order
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **Bring the owner the §0 decisions** — chiefly the next-arm approval:
-   without it nothing else can be measured.
+1. **Bring the owner the §0 decisions** — chiefly the next-arm
+   RE-approval (the third session's approval was consumed by the §9.72
+   launch deaths): without it nothing else can be measured.
 2. **Launch the next base arm** (4.6.9) on the regenerated demand —
-   25% × 1000 × WEEKDAY (+ replication per the owner's n_replications
-   choice). It re-baselines EVERY mode at once: ride vs 20.6, walk vs
+   25% × 1000 × WEEKDAY — **from an owner-owned shell (§0.1a, #70)**, and
+   verify it past `PersonPrepareForSim` into iterations before calling it
+   launched. Arm B (seed 20260811) only under the §0.1b pace condition.
+   It re-baselines EVERY mode at once: ride vs 20.6, walk vs
    13.4, bike vs 3.2, driver vs 59.0, the LR boardings, occupancy.
 3. **PT composition on the corridor** — why demand rides buses past the
    tram (frequency? the transfer point? access stubs?): the diagnostic
@@ -201,14 +219,14 @@ P5–P7 ⬜.
 
 | | |
 |---|---|
-| PRs | **the session PR (this branch) OPEN at handoff** — carries §9.68–§9.71; merging it and deleting the branch both sides is the FIRST item of unfinished business; 23 prior merged (incl. #67), 2 closed unmerged |
-| Toolchain | 3 pinned, unchanged; 14 Java sources compile (RidePairingEngine touched: comma-list liftHousehold) |
+| PRs | #69 merged (§9.68–§9.71, branch cleaned up both sides); **THIS session's PR (docs-only: §9.72, the two aborted launch close-outs, #70) OPEN at handoff** — merging it and deleting the branch both sides is the first item of unfinished business; 24 prior merged, 2 closed unmerged |
+| Toolchain | 3 pinned, unchanged; 13 Java sources compile (RidePairingEngine touched: comma-list liftHousehold) |
 | Registry | **341 fields**; ledger **0** `--strict`; G2 13/13 |
 | Package | **436 manifest files**; `check_manifest` OK; `check_package` ALL PASSED (2 standing warnings) |
 | Machine | **free**; no run in progress |
 | Run cost | ~240 s/it/arm two-arm, ~233 s single → ~65–67 h per 25%×1000 arm |
-| Runs | the two CLOSED-family arms (valid, pre-repair record) · the §9.68 verification probe `20260824T210040_2it_1pct` (probe, not a result) · prior probes and nine `aborted_*` as recorded on the board |
-| Open issues | **8**: #48 (repair built, converged measurement open) · #30 (mechanism built, re-measure open) · #49 (Tier C + taxi; evidence complete) · #50 (mode × age acquisition) · #62 · #63 (0b remainder) · #66 (stall watch) · #68 (NEW: level crossings) |
+| Runs | the two CLOSED-family arms (valid, pre-repair record) · the §9.68 verification probe `20260824T210040_2it_1pct` (probe, not a result) · prior probes and **eleven** `aborted_*` as recorded on the board — the newest two are the §9.72 silent launch deaths (`aborted_20260824T212729_1000it_25pct`, `aborted_20260824T225951_1000it_25pct`) |
+| Open issues | **9**: #70 (NEW: session-spawned runs die silently — the launch constraint) · #48 (repair built, converged measurement open) · #30 (mechanism built, re-measure open) · #49 (Tier C + taxi; evidence complete) · #50 (mode × age acquisition) · #62 · #63 (0b remainder) · #66 (stall watch) · #68 (level crossings, designed) |
 | **Results** | **Nothing new is a result.** The pre-repair report card (MAE 10.65 pp) stands as the closed family's record; the repairs are probe-verified builds; no counterfactual has run; nothing is a finding about the light rail. |
 
 ---
@@ -237,27 +255,37 @@ needs its own stated-cost approval.
 ═══════════════════════════════════════════════════════════════════════════════
 §8  TRAPS — new ones first, each paid for
 ═══════════════════════════════════════════════════════════════════════════════
-1. **Survivorship bias in converged-run diagnostics.** "100% of surviving
+1. **A detached launch from the agent session is not a launch.** Both
+   routes tried — `Start-Process` with logs AND WMI `Win32_Process.Create`
+   — had their whole process tree killed silently within minutes of the
+   tool call ending (§9.72, #70; attribution open). This SUPERSEDES the
+   old trap-4 advice for RUNS: `Start-Process` detachment is measured
+   insufficient. Launch arms from an owner-owned shell and verify
+   `matsim.log` past `PersonPrepareForSim` with the launching context
+   gone. Cost: two dead arm launches and the campaign evening.
+2. **Survivorship bias in converged-run diagnostics.** "100% of surviving
    ride requests pair" read as "supply is fine" cost the §9.64 session
    the correct lever: selection had already killed every plan whose
    requests could NOT pair. Decompose over the SEARCH-phase population
    (plan memories, per-iteration counters), never the survivors.
-2. **A seed probability can BE a converged ceiling.** The uniform seed
+3. **A seed probability can BE a converged ceiling.** The uniform seed
    gave serve tours car with p=0.2; outbound pairing converged at 0.196.
    When a two-sided coordination needs both agents' selected plans to
    align, MATSim's independent selection cannot climb past the seed —
    check coherence-critical seeds explicitly.
-3. **Per-person budgets break paired allocations.** Requiring drop+pickup
+4. **Per-person budgets break paired allocations.** Requiring drop+pickup
    from one escorter's drawn budget would have collapsed household
    binding (most draw exactly one HX tour) — the pending-ledger pattern
    (household scope, like `claimed`) is the fix. Cost: one killed regen.
-4. **The Bash tool's 10-min cap kills backgrounded builds silently** —
+5. **The Bash tool's 10-min cap kills backgrounded builds silently** —
    launch long builds detached (`Start-Process` + log) and chain
    downstream steps on pid exit + output freshness, not on hope. Cost:
-   one B2 build killed mid-lift-pass and restarted.
-5. **`git add -A` in the repo root can commit a stray task artefact** —
+   one B2 build killed mid-lift-pass and restarted. **For RUNS this is
+   superseded by trap 1** — a build that outlives the session is at the
+   same risk.
+6. **`git add -A` in the repo root can commit a stray task artefact** —
    check `git status` before wide adds (cost: one revert commit).
-6. Carried, all still live: `os.kill(pid,0)` on Windows TERMINATES;
+7. Carried, all still live: `os.kill(pid,0)` on Windows TERMINATES;
    a slow mobsim is not a dead run; the #66 stall hits both arms at one
    wall-clock; verified-at-1% is not verified (assertions, not probes);
    `bind_nonhousehold_lifts` busy checks read re-targeted sibling times;
@@ -292,7 +320,8 @@ P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ (regenerated 24 Aug on §9.68/§9.69) ·
 4.4: evidence complete, build owner-sequenced. 4.5: campaign ✅. **4.6
 (the owner's 24 Aug goal): 4.6.1–4.6.6, 4.6.10, 4.6.11 ✅ · 4.6.7 (#68)
 designed ⬜ · 4.6.8 (taxi) evidence-complete ⬜ · 4.6.9 (the next arm)
-⬜ AWAITING OWNER APPROVAL.** P5 0/5 · P6 0/5 · P7 0/4; the four
+⬜ AWAITING OWNER RE-APPROVAL, launch-blocked by #70's constraint
+(§9.72).** P5 0/5 · P6 0/5 · P7 0/4; the four
 deletion/rework proposals (5.2/5.3/6.1/6.2) still await the owner.
 
 ### 4. Simulator vs real life
@@ -303,11 +332,12 @@ verification, not a fit. Full rows:
 [`docs/audit/CALIBRATION_REPORT.md`](../audit/CALIBRATION_REPORT.md) ·
 `_ride_choice.json` and `_mode_by_demographics.json` beside it.
 
-### 5. Issue ledger — 43 filed (numbers shared with PRs), 35 closed, 8 open
-#48 (evidence 24 Aug, converged measurement open) · #30 (evidence 24 Aug,
+### 5. Issue ledger — 44 filed (numbers shared with PRs), 35 closed, 9 open
+#70 (NEW 24 Aug third session — the launch constraint, §9.72) · #48
+(evidence 24 Aug, converged measurement open) · #30 (evidence 24 Aug,
 re-measure open) · #49 (evidence 24 Aug) · #50 (modelled half DONE 24 Aug)
 · #62 (21 Aug) · #63 (two items measured 24 Aug) · #66 (monitoring) ·
-#68 (NEW 24 Aug). #65 closed with PR #67's merge.
+#68 (24 Aug, designed). #65 closed with PR #67's merge.
 
 ### 6. PR history, and the next PR
 23 merged PRs tell the build story (#1–#3 foundations · #38 audit+rebuild
@@ -315,10 +345,12 @@ re-measure open) · #49 (evidence 24 Aug) · #50 (modelled half DONE 24 Aug)
 freight · #47 calibration decision · #52 motorbike · #53 all-physical ·
 #56 stack landing · #58 accounting · #59 events threads · #61 PR-only
 convention · #64 walk wedge + lifts + knobs · #67 two-arm campaign + C5 +
-runner-named runs + rename). **The session PR (open at this handoff)
-carries §9.68–§9.71.** The next PR after it merges: the post-repair base
-arm's launch-watch-close-out (`P4: Run the repaired-demand base arm and
-re-measure every mode (#48, #30)`) — gated on the owner's approval.
+runner-named runs + rename · **#69 the ride-lever answer: §9.68–§9.71**).
+**This session's PR (open at this handoff) is docs-only: §9.72, the two
+aborted launch close-outs, issue #70.** The next PR after it merges: the
+post-repair base arm's launch-watch-close-out (`P4: Run the
+repaired-demand base arm and re-measure every mode (#48, #30)`) — gated
+on the owner's RE-approval and the #70 launch constraint.
 
 ---
 
@@ -326,7 +358,7 @@ re-measure every mode (#48, #30)`) — gated on the owner's approval.
 
 ```
 cities/newcastle/docs/STATUS.md                    the board; batch 4.6 is the lane
-cities/newcastle/docs/DECISIONS.md §9.68–§9.71     this session, cross-linked
+cities/newcastle/docs/DECISIONS.md §9.68–§9.72     the last two sessions, cross-linked
 results/20260821T175907_1000it_25pct/_fit.json     the pre-repair report card
 results/20260821T175907_1000it_25pct/_ride_choice.json   the decomposition
 cities/newcastle/demand/plans/_activity_chains_report.json  band + coverage diagnostics
