@@ -1,9 +1,10 @@
 # DECISIONS.md — modelling choices and their rationale
 
-**NewcastleLRSIM** — counterfactual microsimulation of the Newcastle Light Rail
+**city-digital-twin** (renamed from *NewcastleLRSIM* 24 Aug 2026, §9.67) —
+counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No scenario has been run to a
 reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.47, 18 August 2026
+**Started:** 10 August 2026 · **last entry:** §9.67, 24 August 2026
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -55,6 +56,8 @@ otherwise cost you an hour:
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
 | **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (owner directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
+| **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
+| **The project is `city-digital-twin`** | **§9.67** — renamed from `NewcastleLRSIM` (owner directive 24 Aug): the framework is city-agnostic and the old name violated its own no-place-names rule; GitHub repo renamed (redirects stand), schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay tracked by the open naming issue |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6321,6 +6324,79 @@ references; this table is the bridge. Run-internal records (`_run.json`
 | `_aborted_20260821/phys1000_25pct` (§9.57 stop) | `_aborted_20260821/20260821T010821_1000it_25pct` |
 | `_aborted_20260821/phys1000a_25pct_smc_crash` | `_aborted_20260821/20260821T172050_1000it_25pct` |
 | `_aborted_20260821/phys1000b_25pct_smc_crash` | `_aborted_20260821/20260821T172453_1000it_25pct` |
+
+*(Superseded the same day for the dead runs: §9.66 dissolved the
+`_aborted_<date>` parents, so each quarantined path above now lives at
+`results/aborted_<new name>`.)*
+
+## 9.66 Every run carries an auto-updated status card, and a dead run's name says so (24 August 2026, owner directive)
+
+**The decision.** Every run directory carries **`_meta.json`** — a small
+status card written by `run_matsim.py` at LAUNCH and updated automatically
+at every transition, so runs can be observed, and considered or
+disregarded, without opening a log. Contents (schema-checked against
+`config/schema/outputs/meta.schema.json` through the same
+`outputs.write_checked` contract as every other output): `status`
+(`running` / `completed` / `failed` / `aborted`), the identifying
+parameters (scenario, day, fraction **and `sample_pct`**, iterations, seed,
+threads, xmx, overrides, controler hash), `started`, `ended`, `wall_s`,
+`rc`, and the harness `pid`.
+
+**Transitions.** rc=0 → `completed`. rc≠0 → `failed`. An interrupt the
+harness can still catch (Ctrl+C, a terminating exception) → `aborted`,
+written in a `finally`-style handler before the signal propagates. A hard
+kill the harness cannot see is settled by **reconciliation**: at every
+harness start, any run whose meta says `running` under a pid that no longer
+exists is marked `aborted` (pid liveness via `OpenProcess`/`WaitForSingleObject`
+on Windows — `os.kill(pid, 0)` there TERMINATES the target and must never
+be used). A live concurrent arm has a live pid and is untouched.
+
+**Dead runs are named so a directory listing says what happened**: the
+harness renames a failed or aborted run to
+**`aborted_<launch>_<iterations>it_<pct>pct`** in place, at the top level
+of `results/` — the old `results/_aborted_<date>/` quarantine parents hid
+exactly the data the name now shows and are **dissolved** (owner: *"not
+aborted_number, that hides the other data"*). The prefix is the disregard
+label; the precise cause (`failed` vs `aborted`) lives in the metadata. If
+the rename loses to a Windows directory lock (a `tail -f` monitor holds
+one — trap ledger), the metadata still carries the truth and the rename is
+reported, not raised.
+
+**What this does not change.** `_run.json`, written only on success,
+**remains the result gate** — "a run without `_run.json` is not a result"
+stands; `_meta.json` is observational and is never read by resume
+detection, the fit, or the calibration loop. Backfill: all 35 existing runs
+received a meta card derived from their own records (`_run.json`,
+`_config.json`, log first/last timestamps — nothing invented; backfilled
+cards carry a `note` saying so), the nine dead runs moved to
+`results/aborted_<name>`, and the two §9.63 SMC crashes are `failed`
+(the JVM exited non-zero) while the owner-stopped and found-dead runs are
+`aborted`.
+
+## 9.67 The project is city-digital-twin (24 August 2026, owner directive)
+
+**Renamed from `NewcastleLRSIM` to `city-digital-twin`.** The owner's goal
+(§9.51, the brief §1) has been a digital twin of ANY city; the framework
+half of the repository is city-agnostic by hard constraint, and its own
+naming rule — no place name in the framework — was violated by the
+repository's own name, as it had been once before ("Project Wickham",
+§14 2026-08-13, renamed then only as far as the next place name up).
+
+**What changed.** The GitHub repository is renamed (GitHub redirects the
+old URL; PR #67, the issues and the stars survive); the local remote now
+points at `city-digital-twin`. In-tree, the identity-bearing statements
+changed: `README.md`, `.claude/CLAUDE.md` (title and the Naming rule),
+`STATUS.md`, this file's header, the registry module docstring, and the
+nine `config/schema/` `$id` URLs and titles. **What did not change:**
+historical narrative (this log, session records, audit evaluations, the
+proposal's working title — history is not rewritten); generated data
+reports carrying the machine's absolute path (regenerable, manifest-hashed,
+and true until the local folder is renamed); and the two tracked codename
+identifiers — the `CITYSIM_*` env prefix and the `src/java/citysim/`
+package — which stay with the open naming issue (renaming a compiled entry
+point invalidates run records and is not done as a side effect). The local
+working-copy folder (`work/NewcastleLRSIM`) is the owner's to rename;
+nothing in the repository depends on its name.
 
 ---
 

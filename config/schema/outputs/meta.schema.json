@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "_meta.json - the run status card",
+  "description": "Written by src/run/run_matsim.py when a run LAUNCHES and updated automatically at every transition: completed on rc=0, failed on rc!=0, aborted on interrupt or when a later harness invocation finds the recorded pid gone. It exists so runs can be observed, and considered or disregarded, without opening a log: status + the identifying parameters + started/ended. It is NOT a result and NOT the result gate - `_run.json` (written only on success) remains what makes a run a result; a directory whose meta says anything but completed is dead, and the harness renames it aborted_<name> so the name says so too.",
+  "type": "object",
+  "required": [
+    "status",
+    "scenario",
+    "day",
+    "fraction",
+    "sample_pct",
+    "iterations",
+    "seed",
+    "started"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "completed",
+        "failed",
+        "aborted"
+      ],
+      "description": "running: launched, harness alive. completed: rc=0. failed: the JVM exited non-zero. aborted: interrupted, killed, or found dead by reconciliation."
+    },
+    "scenario": {
+      "type": "string"
+    },
+    "day": {
+      "type": "string"
+    },
+    "fraction": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1.0
+    },
+    "sample_pct": {
+      "type": "number",
+      "description": "fraction x 100, so a person scanning results/ never has to convert."
+    },
+    "iterations": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "seed": {
+      "type": "integer"
+    },
+    "threads": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "xmx": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "overrides": {
+      "type": "object"
+    },
+    "controler_sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "started": {
+      "type": "string",
+      "description": "Launch wall-clock time, ISO local (yyyy-mm-ddThh:mm:ss)."
+    },
+    "ended": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Transition-out time; null while running."
+    },
+    "wall_s": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "rc": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Process return code; null while running and for runs killed before one existed."
+    },
+    "pid": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "The harness pid, so reconciliation can tell a live concurrent run from a dead one."
+    },
+    "note": {
+      "type": "string",
+      "description": "Free-text provenance, e.g. for metadata backfilled onto runs that predate this contract."
+    }
+  },
+  "additionalProperties": true
+}

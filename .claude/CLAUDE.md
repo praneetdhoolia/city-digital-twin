@@ -1,4 +1,4 @@
-# NewcastleLRSIM — project conventions
+# city-digital-twin — project conventions
 
 Repo-level guidance for any Claude Code session working in this repository.
 This file lives in `.claude/`, which Claude Code loads automatically. The repo
@@ -125,7 +125,8 @@ more transparent about its assumptions than the business case it examines.
   suburb's own zones and stops, **Newcastle Interchange at Wickham** (the
   transfer `beta_transfer_penalty_min` prices), and **S1, the bus-shuttle
   scenario** that starts there. Anywhere else it is a stale project codename —
-  the repo, the model and the registry are `NewcastleLRSIM` / `newcastle`.
+  the repo and the framework are `city-digital-twin` (renamed from
+  `NewcastleLRSIM`, 24 Aug 2026) and the city registry is `newcastle`.
   Naming the whole project after one suburb also contradicts the hard constraint
   directly below: **no place name belongs in the framework**, only in
   `cities/<city>/`. Two codename identifiers survive in code and are

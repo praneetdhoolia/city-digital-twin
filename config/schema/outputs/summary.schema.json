@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/praneetdhoolia/NewcastleLRSIM/config/schema/outputs/summary.schema.json",
+  "$id": "https://github.com/praneetdhoolia/city-digital-twin/config/schema/outputs/summary.schema.json",
   "title": "_summary.json - what the run did, and whether it can be believed",
   "description": "Written by src/analyse/summarise_run.py when a run completes, beside the human-readable SUMMARY.md. It answers three questions a completed run should never leave hanging: what was run, did it relax, and did its own accounting close. It is DELIBERATELY NOT a model result: it carries no mode share, no patronage, no fit statistic and no comparison against a validation target. Those come from extract_metrics.py -> fit.py -> report.py, which are the only route to a reportable number (DECISIONS.md 12.1). Everything here is about the RUN's state, not about Newcastle.",
   "type": "object",

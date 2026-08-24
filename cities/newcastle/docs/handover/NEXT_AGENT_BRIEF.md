@@ -153,8 +153,9 @@ P5–P7 ⬜.
   REPORTED (§9.60); the fit's 32 unscorable targets are named, never
   padded.
 - **A run without `_run.json` is not a result**; the two valid arms carry
-  theirs, the three quarantine directories under
-  `results/_aborted_20260821/` do not.
+  theirs, the nine `results/aborted_*` directories do not (§9.66 — each
+  carries a `_meta.json` stating status/started/ended; the prefix means
+  disregard).
 - **The §8.5-held mode constants are unreachable by calibration BY
   CONSTRUCTION** — do not "fix" ride by touching them without the owner.
 
@@ -172,7 +173,7 @@ P5–P7 ⬜.
 | Package | **429 manifest files** + `params/C5_calibration.json` (committed); `check_manifest` OK |
 | Machine | **free**; no run in progress |
 | Run cost | ~240 s/it/arm two-arm (measured §9.64), ~233 s single (§9.59) → ~65–67 h per 1000-iteration arm |
-| Runs | **`20260821T175907_1000it_25pct` (arm A, ex `phys1000a_25pct`) + `20260821T180310_1000it_25pct` (arm B, ex `phys1000b_25pct`): the family's two VALID runs** (rc=0, relaxed 0.031 pp, accounting closes, `_run.json`/`_fit.json`/`SUMMARY.md`) · **every run directory renamed 24 Aug to the runner scheme — map in DECISIONS.md §9.65; the runner names new runs itself, `--tag` is gone** · quarantined (renamed in place): `_aborted_20260821/20260821T010821_1000it_25pct`, `_aborted_20260821/20260821T172050_1000it_25pct`, `_aborted_20260821/20260821T172453_1000it_25pct` · probes as recorded on the board |
+| Runs | **`20260821T175907_1000it_25pct` (arm A, ex `phys1000a_25pct`) + `20260821T180310_1000it_25pct` (arm B, ex `phys1000b_25pct`): the family's two VALID runs** (rc=0, relaxed 0.031 pp, accounting closes, `_run.json`/`_fit.json`/`SUMMARY.md`) · **every run directory renamed 24 Aug to the runner scheme — map in DECISIONS.md §9.65; the runner names new runs itself, `--tag` is gone; every run carries an auto-updated `_meta.json` status card (§9.66)** · dead runs sit at `results/aborted_<name>` (this session's three: `aborted_20260821T010821_1000it_25pct`, `aborted_20260821T172050_1000it_25pct`, `aborted_20260821T172453_1000it_25pct`) · probes as recorded on the board |
 | Open issues | **8**: #48 (ride choice — THE lane) · #30 (walk generation) · #49 (Tier C + taxi) · #50 (modelled table now derivable) · #62 (city-agnostic contract) · #63 (0b backlog) · #65 (repaired in-tree, closes with this PR) · #66 (machine stall, monitoring) |
 | **Results** | **The base model's report card exists (MAE 10.65 pp, C5 feasible=False, violations stated). No counterfactual has run. Nothing is a finding about the light rail.** |
 

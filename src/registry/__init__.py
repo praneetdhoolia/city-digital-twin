@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""The NewcastleLRSIM input registry: one resolved surface for every controllable value.
+"""The city-digital-twin input registry: one resolved surface for every controllable value.
 
 Every value the model consumes that is not read from an immutable raw download
 is declared in `cities/<city>/registry/*.json` with its units, its provenance and

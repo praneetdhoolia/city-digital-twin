@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/praneetdhoolia/NewcastleLRSIM/config/schema/city.schema.json",
+  "$id": "https://github.com/praneetdhoolia/city-digital-twin/config/schema/city.schema.json",
   "title": "City descriptor",
   "description": "What a city must declare before any of its inputs can be built or run. This is the identity half of the input contract; `required_fields.json` is the value half and `layers.json` is the artefact half. The rule this schema exists to enforce is the repository's oldest hard constraint: a study extent is DERIVED from a boundary dataset and a named selector, never typed in as a rectangle. A typed rectangle cannot be wrong in a way anyone notices - one clipped 87 of 1,500 core SA1s out of the road network and survived three phases.",
   "type": "object",

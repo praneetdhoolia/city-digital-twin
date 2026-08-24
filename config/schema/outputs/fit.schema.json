@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/praneetdhoolia/NewcastleLRSIM/config/schema/outputs/fit.schema.json",
+  "$id": "https://github.com/praneetdhoolia/city-digital-twin/config/schema/outputs/fit.schema.json",
   "title": "_fit.json - fit against the CALIBRATION targets only",
   "description": "Written by src/calibrate/fit.py. Structurally cannot contain a holdout value: load_targets() filters split == 'calibration' at read time and raises if anything else survives. EVERY FIT STATISTIC NAMES THE TARGET IDS IT WAS COMPUTED OVER - a statistic that does not name its targets is not reportable, because 'fits 67 targets' is a much stronger claim than this data supports (DECISIONS.md 12.1).",
   "type": "object",

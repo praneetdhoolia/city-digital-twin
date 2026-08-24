@@ -350,10 +350,107 @@ def find_completed(scenario, day, fraction, iterations, seed, overrides,
     return fallback
 
 
+META = '_meta.json'
+
+
+def _now():
+    return time.strftime('%Y-%m-%dT%H:%M:%S')
+
+
+def write_meta(run_dir, doc):
+    outputs.write_checked(os.path.join(run_dir, META), doc, 'meta')
+
+
+def update_meta(run_dir, **changes):
+    """Best-effort status transition: observability must never kill a run."""
+    path = os.path.join(run_dir, META)
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+        doc.update(changes)
+        write_meta(run_dir, doc)
+    except Exception as e:                                   # noqa: BLE001
+        print('run metadata not updated (%s): %s' % (path, e), flush=True)
+
+
+def _pid_alive(pid):
+    """Is this pid a live process? Never signals anything.
+
+    On Windows `os.kill(pid, 0)` TERMINATES the process (os.kill there only
+    wraps TerminateProcess and the CTRL events), so liveness is asked of the
+    kernel handle instead.
+    """
+    if os.name == 'nt':
+        import ctypes
+        k32 = ctypes.windll.kernel32
+        handle = k32.OpenProcess(0x00100000, 0, int(pid))    # SYNCHRONIZE
+        if not handle:
+            return False
+        rc = k32.WaitForSingleObject(handle, 0)
+        k32.CloseHandle(handle)
+        return rc == 0x102                                   # WAIT_TIMEOUT: alive
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except OSError:
+        return False
+
+
+def mark_dead(run_dir, status, rc=None, wall_s=None):
+    """Record a run's death in its metadata and rename it aborted_<name>.
+
+    The prefix is a label so a person scanning `results/` can disregard the
+    directory without opening it; the PRECISE status (failed vs aborted) lives
+    in `_meta.json`. If the rename loses to a Windows directory lock (a
+    `tail -f` monitor is enough to hold one), the metadata still carries the
+    truth and the rename is reported, not raised.
+    """
+    update_meta(run_dir, status=status, ended=_now(), rc=rc, wall_s=wall_s)
+    parent, name = os.path.split(os.path.abspath(run_dir))
+    if name.startswith('aborted_'):
+        return run_dir
+    target = os.path.join(parent, 'aborted_' + name)
+    n = 2
+    while os.path.exists(target):
+        target = os.path.join(parent, 'aborted_%s-%d' % (name, n))
+        n += 1
+    try:
+        os.rename(run_dir, target)
+        return target
+    except OSError as e:
+        print('could not rename %s -> %s (%s); its status is recorded in %s'
+              % (run_dir, os.path.basename(target),
+                 e, os.path.join(name, META)), flush=True)
+        return run_dir
+
+
+def reconcile_stale():
+    """Mark as aborted any run that claims to be running under a dead harness.
+
+    A hard kill leaves no chance to update the metadata, so the next harness
+    invocation settles it: status `running` with the recorded pid gone means
+    the run is dead. A live concurrent arm has a live pid and is left alone.
+    """
+    for path in glob.glob(os.path.join(RESULTS, '*', META)):
+        run_dir = os.path.dirname(path)
+        try:
+            doc = json.load(open(path, encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        if doc.get('status') != 'running':
+            continue
+        if doc.get('pid') and _pid_alive(doc['pid']):
+            continue
+        dead = mark_dead(run_dir, 'aborted')
+        print('reconciled: %s claimed to be running under a dead harness; '
+              'marked aborted -> %s' % (os.path.basename(run_dir),
+                                        os.path.basename(dead)), flush=True)
+
+
 def run(scenario, day, cfg, overrides, force=False):
     src_dir = os.path.join(SETS, scenario, day)
     if not os.path.isdir(src_dir):
         raise SystemExit('no run inputs at %s' % src_dir)
+    reconcile_stale()
 
     fraction = cfg.get('RUN.sample.fraction')
     try:
@@ -396,6 +493,16 @@ def run(scenario, day, cfg, overrides, force=False):
     run_dir = os.path.join(RESULTS, name)
     record = os.path.join(run_dir, '_run.json')
     os.makedirs(run_dir, exist_ok=True)
+    # The status card, written at LAUNCH and updated at every transition, so a
+    # run can be observed - and considered or disregarded - without opening a
+    # log. It is not the result gate: `_run.json`, written only on success,
+    # stays that.
+    write_meta(run_dir, dict(
+        status='running', scenario=scenario, day=day, fraction=fraction,
+        sample_pct=float('%g' % (fraction * 100)), iterations=iterations,
+        seed=seed, threads=threads, xmx=xmx, overrides=overrides or {},
+        controler_sha256=controler, started=_now(), ended=None, wall_s=None,
+        rc=None, pid=os.getpid()))
 
     # `iterations`, `threads` and every other declared value reach the config
     # through `cfg`, not through this call: they are registry fields, and the
@@ -418,13 +525,24 @@ def run(scenario, day, cfg, overrides, force=False):
     print('live view: %s' % (view_url or 'disabled (RUN.monitor.enabled)'),
           flush=True)
     t0 = time.time()
-    with open(log, 'w', encoding='utf-8', errors='replace') as lf:
-        rc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
-                              cwd=run_dir).wait()
+    try:
+        with open(log, 'w', encoding='utf-8', errors='replace') as lf:
+            rc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
+                                  cwd=run_dir).wait()
+    except BaseException:
+        # Ctrl+C or a harness kill that still unwinds: record the abort and
+        # rename before propagating. A kill this except cannot see is settled
+        # by reconcile_stale() on the next invocation.
+        mark_dead(run_dir, 'aborted', wall_s=round(time.time() - t0, 1))
+        raise
     wall = time.time() - t0
     if rc != 0:
-        print('FAILED rc=%d after %.0fs - see %s' % (rc, wall, log), flush=True)
-        return dict(name=name, rc=rc, wall_s=round(wall, 1))
+        dead = mark_dead(run_dir, 'failed', rc=rc, wall_s=round(wall, 1))
+        print('FAILED rc=%d after %.0fs - see %s'
+              % (rc, wall, os.path.join(dead, 'matsim.log')), flush=True)
+        return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
+    update_meta(run_dir, status='completed', ended=_now(), rc=0,
+                wall_s=round(wall, 1))
 
     per = iteration_times(log)
     steady = sorted(v for k, v in per.items() if k > 0)
