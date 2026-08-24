@@ -1,20 +1,21 @@
-# Brief for the next agent — THE BASE ARMS ARE RUN; THE MODEL HAS ITS REPORT CARD; THE NEXT LEVER IS THE OWNER'S
+# Brief for the next agent — THE RIDE COLLAPSE IS DIAGNOSED AND REPAIRED IN THE BUILD; THE NEXT ARM MEASURES WHAT IT BOUGHT
 
-*Updated 24 August 2026, twice. The campaign session (21–24 Aug):
-**§9.62** the owner-approved two-arm launch (arm A base, arm B seed
-replication) · **§9.63** both arms crashed at replanning 1 (the M1
-lift-overlap defect, #65), repaired and relaunched the same afternoon ·
-**§9.64** both arms COMPLETED (rc=0, relaxed, accounting closes) — C5
-exists, the fit is measured, ride's collapse is diagnosed as choice not
-physics, and the seed noise floor is ≤0.11 pp/mode. The close-out session
-(24 Aug, same PR): **§9.65** the runner names every run
-(`<launch>_<N>it_<pct>pct`, `--tag` gone, resume by recorded parameters) ·
-**§9.66** every run carries an auto-updated `_meta.json` status card and a
-dead run is `aborted_<name>` (quarantine parents dissolved) · **§9.67**
-the project is **city-digital-twin** (repo renamed, redirects stand).
-This is a HANDOVER, not a source of truth: where it disagrees with
-[`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md) or
-[`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win.*
+*Updated 24 August 2026, second session (the owner's `/goal`: every mode's
+ridership as close to real life as possible, ride first, all traffic forms
+at observed values, everything fixable fixed before the next run).
+**§9.68** the ride collapse decomposed on the completed arms and repaired
+in the demand build (round-trip serve bindings, coherent seeds, direct
+bound tours) · **§9.69** the missing short-trip mass gets its observed
+distribution (HTS Sydney 2012/13 Table 4.4.7) · **§9.70** the coal chain
+deliberately NOT simulated (dedicated grade-separated track); the two real
+level-crossing interactions are #68 · **§9.71** the pre-LR cross-section
+measured from OSM history (2 → 1 lanes/direction — B3's counterfactual
+onto evidence) and the VoT set checked against EPV Jan 2025. The demand
+package is REGENERATED and probe-verified: **a NEW comparability family —
+the §9.58–§9.63 family closed with its two completed arms as the
+pre-repair record.** This is a HANDOVER, not a source of truth: where it
+disagrees with [`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md)
+or [`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win.*
 
 ---
 
@@ -25,7 +26,7 @@ This is a HANDOVER, not a source of truth: where it disagrees with
 **Run `/onboard`**; at session end, `/handoff`. The checks:
 
 ```bash
-python src/setup/bootstrap_toolchain.py --verify   # ~1 min, compiles 14 Java sources
+python src/setup/bootstrap_toolchain.py --verify   # ~1 min, compiles the Java
 python tests/check_manifest.py                     # committed subset intact
 python src/registry/check_hardcoding.py --strict   # must exit 0
 ```
@@ -33,30 +34,32 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 **⚠ OWNER DIRECTIVES, standing:**
 
 1. **NO MULTI-HOUR RUNS WITHOUT EXPLICIT APPROVAL — none is standing.**
-   The two-arm §9.62 approval was CONSUMED by the completed campaign.
-   Measured cost on this family: **~240 s/iteration median per arm under
-   the two-arm pattern → ~67.4 h/arm** (§9.64); single-arm ~233 s (§9.59).
-2. **DO ONE THING RIGHT rather than bloating the repo.**
+   The §9.62 two-arm approval was consumed by the completed campaign; the
+   24 Aug `/goal` authorised BUILD work, not a run. Measured cost:
+   ~240 s/it/arm two-arm, ~233 s single → **~65–67 h per 25%×1000 arm**.
+2. **The prime goal (owner, 21 + 24 Aug): all forms of ridership as close
+   to real life as possible ON THEIR OWN; no hardcoding or Newcastle bias;
+   every issue spotted logged on GitHub; all traffic forms at observed or
+   academically studied values.**
 3. **Every mode individually in every numbers table** — never a "public
-   transport" umbrella row (Tier R makes this mechanical).
+   transport" umbrella row.
 4. **Never commit directly to `main`; the session's ONE PR opens at
-   `/handoff`**, is watched to merge, and the branch deleted both sides.
-5. **The prime goal (owner, 21 Aug): all forms of ridership as close to
-   real life as possible ON THEIR OWN; no hardcoding or Newcastle bias;
-   every issue spotted logged on GitHub.**
-6. **Never hand-name a run (owner, 24 Aug).** The harness names every run
-   `<launch>_<iterations>it_<pct>pct` and status-tracks it in `_meta.json`;
-   a dead run is `aborted_<name>`. Judge consider/disregard from the
-   metadata; `_run.json` stays the only result gate (§9.65/§9.66).
+   `/handoff`**, is watched to merge, branch deleted both sides.
+5. **Never hand-name a run.** The harness names runs
+   `<launch>_<iterations>it_<pct>pct` and status-tracks them in
+   `_meta.json`; `_run.json` stays the only result gate.
 
 **Start from `main`. No run is in progress; the machine is free.**
 
-**⚠ TWO DECISIONS WAIT ON THE OWNER (§9.64) — bring them before building:**
-- **Which demand-side scoring lever answers ride's collapse.** M2 (driver
-  detours) is a NO-GO on the evidence; the §8.5-held constants stay held;
-  the candidate space is the declared-and-swept scoring priors.
-- **`E.replication.n_replications`** — the seed floor is measured
-  (≤0.11 pp/mode at n=2); 3–5 is supportable; the value is the owner's.
+**⚠ DECISIONS WAITING ON THE OWNER:**
+- **Approve the next base arm** on the repaired demand (task 4.6.9,
+  ~65–67 h at 25%×1000; the §9.68/§9.69 repairs are built and
+  probe-verified but UNMEASURED at convergence).
+- **`E.replication.n_replications`** — seed floor measured ≤0.11 pp/mode
+  at n=2 (§9.64); 3–5 supportable; the value is the owner's.
+- Flagged, not changed (§9.71): `C.vot.by_purpose.HE` 9.3 and
+  `C.vot.concession_factor` 0.75 sit outside their sweeps against EPV
+  Jan 2025's only comparators.
 
 ---
 
@@ -68,55 +71,61 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 > actually predicts the correct ridership per mode must be CHECKED, not
 > assumed. Every form of transport should be IN ACTION physically.**
 
-**"In action physically" is DONE and survived a 1000-iteration campaign**
-(§2). **"Checked" now has its first answer, and the answer is honest: the
-uncalibrated base does NOT yet predict ridership per mode** — MAE 10.65 pp
-over the five held mode shares, and the light rail realises 1,260 of its
-observed 3,417 weekday boardings (§9.64). Note the direction: the standing
-risk is rail OVER-forecast (9 of 10), and this base UNDER-realises the LR —
-every flattering error stays reported, never absorbed (§9.50).
+"In action physically" is DONE and campaign-proven (§9.64). "Checked" has
+its first honest answer — the pre-repair base missed by MAE 10.65 pp with
+passenger at −99.6% of its observed value — **and now, for the first time,
+a mechanically complete counter-move**: the decomposition (§9.68) showed
+the collapse was one-directional lift supply + seed decoherence, both
+repaired in the build and verified in a probe (return legs pair 347/347
+vs 2/2,818 before). **What the repairs BUY at convergence is unmeasured**
+— that is the next arm's job, and the honest expectation is a large but
+partial recovery (round-trip coverage is bounded by the observed serve
+rate: ~51k of ~150k weekday passenger tours).
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§2  THE MODES — the base arm's measured state (fit, Newcastle LGA, §9.64)
+§2  THE MODES — the CLOSED family's record (arm A fit, Newcastle LGA, §9.64)
 ═══════════════════════════════════════════════════════════════════════════════
 
-| mode | modelled | observed | error | state |
+The last converged measurement — the PRE-repair baseline every next-arm
+comparison is made against (vs its own observed value, not pp):
+
+| mode | modelled | observed | vs observed | diagnosis, and what changed since |
 |---|---|---|---|---|
-| Vehicle driver | 73.19 | 59.0 | +14.19 | overshoot carries displaced ride |
-| Vehicle passenger | **0.09** | 20.6 | **−20.51** | physical machinery works (100% of survivors board, 0 refusals); the CHOICE collapses — the central open problem |
-| Walk only | 7.28 | 13.4 | −6.12 | wedge repaired (was 0.71); the deficit is #30's short-trip generation (mean 5.56 km vs 0.70 observed, 7.9×) |
-| Bike | 11.21 | 3.2 | +8.01 | likely carries displaced child/carless ride demand |
-| PT aggregate | 8.22 | 3.8 | +4.42 | split: bus 6.13 · rail 0.77 · **tram 0.02** · ferry 0.02 — composition wrong on the corridor |
-| Motorbike | 0.21 | (locked carve, §9.52) | — | not a choice mode |
-| Truck | — | swept, never pinned | — | freight physical (§9.49) |
+| Vehicle driver | 73.19 | 59.0 | +24% | carries displaced ride; §9.68 repairs the supply side |
+| Vehicle passenger | 0.09 | 20.6 | **−99.6%** | §9.68: returns unserved (0.0079 pairing) + seed p(car)=0.2 was the 0.196 ceiling — REPAIRED in build, unmeasured at convergence |
+| Walk only | 7.28 | 13.4 | −46% | §9.69: the ≤1 km trip mass was never generated (4.45% vs 18.8% observed) — REPAIRED in build |
+| Bike | 11.21 | 3.2 | +250% | #50 table: children ride 46–50% bike / 0% ride — displaced child ride demand; §9.68 covers exactly that population first |
+| PT aggregate | 8.22 | 3.8 | +116% | bus 6.13 / rail 0.77 / tram 0.02 / ferry 0.02 — composition wrong on the corridor; UNTOUCHED this session (lane open) |
+| Light rail | 1,260 | 3,417 boardings | −63% | the corridor composition lane; EPV bus–LR transfer 3.8 equiv-min (§9.71) is an official anchor inside the 3–15 sweep |
+| Motorbike | 0.21 | locked carve | — | not a choice mode (§9.52) |
+| Truck | swept | never pinned | — | freight physical (§9.49); Mayfield cap 1,268/day recorded as an upper-bound constraint (§9.70) |
 
-Occupancy realises 0.0013 vs 0.3503 (stated violation in C5). Counts:
-−91.8% mean with 6 modelled-zero stations — statistically identical to the
-previous family (−91.05%), the recorded no-through-demand structure.
+Occupancy 0.0013 vs 0.3503 (the §9.68 probe's pairing-implied occupancy
+is 0.12 at seed state). Counts −91.8% structural (no-through-demand,
+recorded). Seed noise floor ≤0.11 pp/mode (n=2).
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§3  THE ACTIVE LANE — in order (§9.64's derivation)
+§3  THE ACTIVE LANE — in order
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **Bring the owner the two §0 decisions** (ride lever; n_replications).
-2. **Ride-choice decomposition** — measure where ride plans die:
-   never-proposed vs proposed-and-scored-out vs unpairable-re-moded. Cheap
-   (reads the completed arms' events/plans; no new run). This one gap
-   plausibly explains most of driver's +14 and bike's +8.
-3. **#30's generation mechanism** — the walk short-trip mass, now with a
-   valid baseline (7.28 vs 13.4; noise floor 0.03 pp at this metric).
-4. **PT composition on the corridor** — why demand rides buses past the
-   tram (frequency? transfer sweep point? access stubs?): the diagnostic
-   that matters most to the study's own question.
-5. **A real calibration search** within declared sweeps against the C5
-   baseline (the 4.2.4 machinery, now unblocked) — AFTER the structural
-   lanes above, or it calibrates the wrong model.
-6. Then by recorded order: #49 Tier C + taxi (4.4, owner-sequenced), #50's
-   modelled table (now derivable from arm A), #62, #63.
+1. **Bring the owner the §0 decisions** — chiefly the next-arm approval:
+   without it nothing else can be measured.
+2. **Launch the next base arm** (4.6.9) on the regenerated demand —
+   25% × 1000 × WEEKDAY (+ replication per the owner's n_replications
+   choice). It re-baselines EVERY mode at once: ride vs 20.6, walk vs
+   13.4, bike vs 3.2, driver vs 59.0, the LR boardings, occupancy.
+3. **PT composition on the corridor** — why demand rides buses past the
+   tram (frequency? the transfer point? access stubs?): the diagnostic
+   closest to the study's own question, cheap to start on the CLOSED
+   arms' events while the new arm runs.
+4. **#68 level crossings** (designed §9.70) — build it BEFORE the arm
+   after next, or accept another family boundary.
+5. Then by recorded order: #49 Tier C + taxi 4.4 (evidence complete on
+   the issue), #63 remainder, #62.
 
 ---
 
@@ -124,27 +133,38 @@ previous family (−91.05%), the recorded no-through-demand structure.
 §4  WHAT IS DONE — do not redo any of it
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **§9.49–§9.57** (20–21 Aug, PRs #56/#58/#59): freight physical ·
-  constrain-and-report decision · motorbike · physical boarding · walk/bike
-  physical · emergent ride · events accounting · events threads.
-- **§9.58–§9.61** (21 Aug, PR #64): the walk wedge repaired four ways
-  (refusals → 0) · every wall-time knob measured · non-household lifts
-  (M0 waiting + M1 re-target) · 0b: four assumptions became measurements ·
-  #49 Tier R · #62/#63 filed.
-- **§9.62–§9.64** (21–24 Aug, PR #67): the two-arm campaign — overlays
-  `phys1000_arm_a/b_25pct` · the #65 lift-overlap repair (busy check reads
-  re-targeted sibling times + a contiguity assertion in
-  `bind_nonhousehold_lifts`; weekday bindings 55,249/55,614) · **both arms
-  complete and valid** · fit + C5 + calibration report · seed floor
-  measured · M2 no-go · #14/#9/#28/#31 closed on evidence.
-- **§9.65–§9.67** (24 Aug, same PR): runner-named run directories (all 35
-  renamed, maps in the entries) · `_meta.json` status cards on every run,
-  backfilled from their own records · dead runs at `results/aborted_<name>`
-  · the repository renamed **city-digital-twin** (GitHub redirects; the
-  local working folder may still be `work/NewcastleLRSIM` — its name binds
-  nothing).
+- **§9.49–§9.67** (20–24 Aug, PRs #56/#58/#59/#64/#67): everything
+  physical; the walk wedge; lifts M0/M1; the two-arm campaign; C5;
+  runner-named, status-carded runs; the city-digital-twin rename.
+- **§9.68** (24 Aug, this PR): `src/analyse/decompose_ride_choice.py` +
+  `_ride_choice.json` on arm A (absent 76,986 / scored-out 109 /
+  selected 531); round-trip binding in BOTH binder passes
+  (`B.activity.escort_binding_directions`, household pending-pickup
+  ledger, non-household all-or-nothing two-driver pairs, same driver
+  preferred); `escort_binding_direct_tour`; `B.mode.serve_tour_seed=car`
+  (guarded: carless escorts keep the uninformed draw) and
+  `bound_passenger_seed=ride`; `liftHousehold` comma-list through
+  `RidePairingEngine` and `sample_population`; `B2_escort_bindings_<day>.csv`
+  new, `B2_lift_bindings_<day>.csv` gains `direction`.
+- **§9.69** (24 Aug, this PR): the two-component gravity mixture —
+  `short_trip_band_share` (literature, Table 4.4.7), `short_trip_band_km`
+  (held fixed), `short_trip_mean_km` (derived from the held walk mean);
+  weights solved per purpose, long kernels re-solved; build report shows
+  every band target hit EXACTLY with every mean preserved.
+- **§9.70** (24 Aug, this PR): coal chain scoped OUT on observed
+  infrastructure (ARTC/PWCS/NCIG, ~110 movements/day on dedicated track);
+  #68 filed for the two level crossings; Mayfield truck cap a constraint.
+- **§9.71** (24 Aug, this PR): `pre_lr_lanes_per_dir` 2 → 1 from the
+  Overpass attic record (raw responses + provenance landed under
+  `data/raw/osm_attic/`, ODbL); EPV Jan 2025 check recorded.
+- **#50's modelled table** (`src/analyse/mode_by_demographics.py`,
+  `_mode_by_demographics.json` on arm A).
+- **Regeneration + verification**: B2/plans/30 run-input sets; manifest
+  436; `check_package` ALL PASSED; G2 13/13; probe
+  `20260824T210040_2it_1pct` rc=0, accounting closes, pair rate 0.9988
+  at it-2 with returns 347/347.
 
-**Phases:** P0–P3 ✅ · P4 🟡 (**8 of 9** — deliverable 0/0b open, #63) ·
+**Phases:** P0–P3 ✅ · P4 🟡 (8 of 9 — deliverable 0/0b open, #63) ·
 P5–P7 ⬜.
 
 ---
@@ -154,172 +174,162 @@ P5–P7 ⬜.
 ═══════════════════════════════════════════════════════════════════════════════
 
 - **No multi-hour run without owner approval. None standing.**
-- **The comparability family is §9.58–§9.63** (the §9.63 demand repair is
-  part of it — the completed arms ran ON the repaired demand). Nothing in
-  it compares to `phys50_25pct`, the aborted `phys1000_25pct`, or
-  anything older. NEVER compare across families or fractions;
-  `target_lga_pct`, never `all_residents_pct`.
+- **The comparability family is §9.68/§9.69 onward** — the regenerated
+  demand. The two completed arms (`20260821T175907_1000it_25pct`,
+  `20260821T180310_1000it_25pct`) are the CLOSED §9.58–§9.63 family's
+  record: compare the next arm's fit against their table as
+  before-vs-after, never as same-family runs. NEVER compare across
+  families or fractions; `target_lga_pct`, never `all_residents_pct`.
 - **THE 67/143 SPLIT IS PRE-REGISTERED** — `fit.py` enforces; need a
   holdout? SAY SO AND STOP.
-- **One build of the network per comparison** (§3.5); `RUN.machine.threads`
-  (qsim, now 8 on this family's arms) and `replanning_threads` are run
-  identity; `event_handler_threads` is not (§9.56).
-- **No invented data**: who-drives-whom stays unobserved; the lift split is
-  REPORTED (§9.60); the fit's 32 unscorable targets are named, never
-  padded.
-- **A run without `_run.json` is not a result**; the two valid arms carry
-  theirs, the nine `results/aborted_*` directories do not (§9.66 — each
-  carries a `_meta.json` stating status/started/ended; the prefix means
-  disregard).
-- **The §8.5-held mode constants are unreachable by calibration BY
-  CONSTRUCTION** — do not "fix" ride by touching them without the owner.
+- **One build of the network per comparison** (§3.5); threads are run
+  identity (§9.56/§9.59).
+- **No invented data**: who-drives-whom stays unobserved (the round-trip
+  allocation re-aims the observed rate, adds no tour); closure logs for
+  #68 are unpublished — swept, never pinned.
+- **A run without `_run.json` is not a result**; `aborted_*` means
+  disregard.
+- **The §8.5-held mode constants stay held** — §9.68 measured that the
+  ASC was never the lever (109 flippable persons); do not re-open it
+  without the post-repair arm's evidence.
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§6  EXACT STATE — 24 August 2026, session close
+§6  EXACT STATE — 24 August 2026, second session close
 ═══════════════════════════════════════════════════════════════════════════════
 
 | | |
 |---|---|
-| PRs | **PR #67 OPEN** (`praneetdhoolia/two-arm-relaunch-watch`) — carries §9.62–§9.67; merging it (and deleting the branch both sides) is the FIRST item of unfinished business; 22 prior merged, 2 closed unmerged (#39, #57) |
-| Toolchain | 3 pinned, unchanged; 14 Java sources compile |
-| Registry | **334 fields**; ledger **0** `--strict`; G2 13/13 |
-| Package | **429 manifest files** + `params/C5_calibration.json` (committed); `check_manifest` OK |
+| PRs | **the session PR (this branch) OPEN at handoff** — carries §9.68–§9.71; merging it and deleting the branch both sides is the FIRST item of unfinished business; 23 prior merged (incl. #67), 2 closed unmerged |
+| Toolchain | 3 pinned, unchanged; 14 Java sources compile (RidePairingEngine touched: comma-list liftHousehold) |
+| Registry | **341 fields**; ledger **0** `--strict`; G2 13/13 |
+| Package | **436 manifest files**; `check_manifest` OK; `check_package` ALL PASSED (2 standing warnings) |
 | Machine | **free**; no run in progress |
-| Run cost | ~240 s/it/arm two-arm (measured §9.64), ~233 s single (§9.59) → ~65–67 h per 1000-iteration arm |
-| Runs | **`20260821T175907_1000it_25pct` (arm A, ex `phys1000a_25pct`) + `20260821T180310_1000it_25pct` (arm B, ex `phys1000b_25pct`): the family's two VALID runs** (rc=0, relaxed 0.031 pp, accounting closes, `_run.json`/`_fit.json`/`SUMMARY.md`) · **every run directory renamed 24 Aug to the runner scheme — map in DECISIONS.md §9.65; the runner names new runs itself, `--tag` is gone; every run carries an auto-updated `_meta.json` status card (§9.66)** · dead runs sit at `results/aborted_<name>` (this session's three: `aborted_20260821T010821_1000it_25pct`, `aborted_20260821T172050_1000it_25pct`, `aborted_20260821T172453_1000it_25pct`) · probes as recorded on the board |
-| Open issues | **8**: #48 (ride choice — THE lane) · #30 (walk generation) · #49 (Tier C + taxi) · #50 (modelled table now derivable) · #62 (city-agnostic contract) · #63 (0b backlog) · #65 (repaired in-tree, closes with this PR) · #66 (machine stall, monitoring) |
-| **Results** | **The base model's report card exists (MAE 10.65 pp, C5 feasible=False, violations stated). No counterfactual has run. Nothing is a finding about the light rail.** |
+| Run cost | ~240 s/it/arm two-arm, ~233 s single → ~65–67 h per 25%×1000 arm |
+| Runs | the two CLOSED-family arms (valid, pre-repair record) · the §9.68 verification probe `20260824T210040_2it_1pct` (probe, not a result) · prior probes and nine `aborted_*` as recorded on the board |
+| Open issues | **8**: #48 (repair built, converged measurement open) · #30 (mechanism built, re-measure open) · #49 (Tier C + taxi; evidence complete) · #50 (mode × age acquisition) · #62 · #63 (0b remainder) · #66 (stall watch) · #68 (NEW: level crossings) |
+| **Results** | **Nothing new is a result.** The pre-repair report card (MAE 10.65 pp) stands as the closed family's record; the repairs are probe-verified builds; no counterfactual has run; nothing is a finding about the light rail. |
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
 §7  DECISIONS TAKEN — do not re-litigate
 ═══════════════════════════════════════════════════════════════════════════════
-• Iteration horizon = 1000 (§9.43, §9.57). • §8.5 = CONSTRAIN-AND-REPORT
-(§9.50); ASCs stay priors; **C5 exists, feasible=False with five stated
-violations (§9.64)**. • RIDE IS EMERGENT (§9.55); M0+M1 built (§9.60);
-**M2 NO-GO on the §9.64 evidence; M3 rejected**. • The §9.58 network/model
-family stands (motorway-only exclusion, reverse complements, activity
-pinning, person-only SubtourModeChoice). • PassingQ; replanning 20; events
-4; oneThreadPerHandler NEVER (§9.59). • The §9.61 measured day-type
-factors stay measured. • **The seed floor is ≤0.11 pp/mode (n=2, §9.64)**
-— n_replications value awaits the owner. • Freight swept never pinned;
-SCATS refused; Opal swept 3–15 min; dwell swept. • Two concurrent arms are
-a PROVEN pattern (§9.62/§9.64) but each campaign still needs its own
-stated-cost approval.
+• Iteration horizon = 1000 (§9.43); the innovation-cutoff residual is
+declared uncertainty — the measured search creep at cutoff on the closed
+arms was ~0.26 pp/100 it decaying, and an evidence-triggered cutoff is the
+eventual instrument, deferred until the structure settles. • §8.5 =
+constrain-and-report; C5 exists feasible=False; **the ASC is measured NOT
+to be ride's lever (§9.68)**. • RIDE IS EMERGENT; M0+M1+round-trip built;
+M2 stays un-built (round-trip answers returns within the observed rate);
+M3 rejected. • The §9.58 network family stands; PassingQ; replanning 20;
+events 4. • Seed floor ≤0.11 pp/mode; n_replications awaits the owner.
+• Coal trains deliberately NOT simulated (§9.70 — dedicated track; adding
+them would fabricate an interaction). • `pre_lr_lanes_per_dir` = 1
+(measured §9.71; sweep keeps 2). • Freight swept never pinned; SCATS
+refused; Opal swept 3–15 min (EPV's bus–LR 3.8 equiv-min is an anchor
+INSIDE it); dwell swept. • Two concurrent arms are proven; each campaign
+needs its own stated-cost approval.
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
 §8  TRAPS — new ones first, each paid for
 ═══════════════════════════════════════════════════════════════════════════════
-1. **`os.kill(pid, 0)` on Windows TERMINATES the process** — it wraps
-   TerminateProcess for any signal that is not a CTRL event. Liveness is
-   asked via `OpenProcess`/`WaitForSingleObject` (see `_pid_alive` in
-   `run_matsim.py`); never "ping" a pid with os.kill here (cost: nearly a
-   reconciliation pass that would have shot live runs).
-2. **A slow mobsim is not a dead run.** During the #66 stall the log went
-   quiet 36 min while the qsim crawled through the pre-dawn sim-hours —
-   check the `SIMULATION (NEW QSim) AT <time>` markers' sim-time progress
-   before declaring a stall or killing anything (cost: one false alarm,
-   correctly walked back).
-3. **The machine-level stall (#66) hits BOTH arms at the same wall-clock
-   time** (~35 min, self-recovered, lost=0, once in 2×67 h). It is not a
-   model event; correlate with Task Scheduler/Defender if it recurs.
-4. **Verified-at-1% is not verified.** The #65 crash class touched ~0.1%
-   of persons; a 1%-sample probe had ~6 of them and passed twice. A
-   structural invariant needs an ASSERTION in the builder (the contiguity
-   check now in `bind_nonhousehold_lifts`), not a probe (cost: two
-   crashed 25% launches).
-5. **`bind_nonhousehold_lifts` must consult re-targeted sibling times** —
-   the stale-rows class behind #65; the assertion guards it now, but any
-   new pass that rewrites tours must preserve trip_seq contiguity per
-   person (cost: one afternoon).
-6. **The driver pins -Xms to -Xmx** — size per-arm heaps for concurrency
-   (two 40g arms would commit 80 GiB on 63.5; 30g each is the proven
-   §9.62 stack).
-7. Carried: `build_matsim_run_inputs.py` subset OVERWRITES the report —
-   regenerate ALL scenarios in one invocation. Timing probes never share
-   the machine. PowerShell here-strings mangle — use `-F`/`--body-file`.
-   `decideOnLink` silently accepts out-of-subnetwork activity links —
-   re-verify `ActivityLinkAssigner` coverage on any mode/exclusion change.
-   "Fix #NN" in a PR body closes the issue — write "the #NN fix" unless
-   closure is intended. The G2 test asserts the `numberOfThreads`
-   MULTISET. A `tail -f` monitor holds a Windows lock on the run
-   directory. 1% timing says NOTHING about 25%. Car vehicles carry the
-   BARE person id. CLEAR a re-moded leg's route. `render_docs`/
-   `render_schema` after registry edits. `pkill` fails — `Stop-Process`
-   then VERIFY. Branch `<git-handle>/<kebab>`, no attribution, STATUS in
-   the same commit.
+1. **Survivorship bias in converged-run diagnostics.** "100% of surviving
+   ride requests pair" read as "supply is fine" cost the §9.64 session
+   the correct lever: selection had already killed every plan whose
+   requests could NOT pair. Decompose over the SEARCH-phase population
+   (plan memories, per-iteration counters), never the survivors.
+2. **A seed probability can BE a converged ceiling.** The uniform seed
+   gave serve tours car with p=0.2; outbound pairing converged at 0.196.
+   When a two-sided coordination needs both agents' selected plans to
+   align, MATSim's independent selection cannot climb past the seed —
+   check coherence-critical seeds explicitly.
+3. **Per-person budgets break paired allocations.** Requiring drop+pickup
+   from one escorter's drawn budget would have collapsed household
+   binding (most draw exactly one HX tour) — the pending-ledger pattern
+   (household scope, like `claimed`) is the fix. Cost: one killed regen.
+4. **The Bash tool's 10-min cap kills backgrounded builds silently** —
+   launch long builds detached (`Start-Process` + log) and chain
+   downstream steps on pid exit + output freshness, not on hope. Cost:
+   one B2 build killed mid-lift-pass and restarted.
+5. **`git add -A` in the repo root can commit a stray task artefact** —
+   check `git status` before wide adds (cost: one revert commit).
+6. Carried, all still live: `os.kill(pid,0)` on Windows TERMINATES;
+   a slow mobsim is not a dead run; the #66 stall hits both arms at one
+   wall-clock; verified-at-1% is not verified (assertions, not probes);
+   `bind_nonhousehold_lifts` busy checks read re-targeted sibling times;
+   -Xms pins to -Xmx; subset run-input builds OVERWRITE the report;
+   PowerShell here-strings mangle (use `--body-file`); "Fix #NN" closes
+   issues; `tail -f` holds a Windows directory lock; car vehicles carry
+   the bare person id; CLEAR a re-moded leg's route; `render_docs` after
+   registry edits; branch `<git-handle>/<kebab>`, no attribution.
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§9  STATE OF THE PROJECT — THE SIX QUESTIONS (24 August 2026, close)
+§9  STATE OF THE PROJECT — THE SIX QUESTIONS (24 August 2026, second close)
 ═══════════════════════════════════════════════════════════════════════════════
 
 ### 1. Goals & achievement
-Research goal (proposal §1/§3): hypotheses A1–A6, B1–B4 — **none tested**
-(no counterfactual has run). Operational goal: physical half **COMPLETE
-and campaign-proven**; checked half **has its first honest answer** — the
-uncalibrated base misses per-mode ridership by MAE 10.65 pp and realises
-37% of LR patronage (§9.64). Proposal §8 deliverables: model 🟡 · data 🟡
-(429 files) · calibration report 🟡 (**C5 + report exist**, feasible=False
-stated) · paper ⬜ · explorer 🟡 · method note 🟡.
+Research goal (proposal §1/§3): A1–A6, B1–B4 — **none tested** (no
+counterfactual has run); B3's counterfactual input moved onto evidence
+(§9.71). Operational goal: physical half COMPLETE; checked half has the
+pre-repair report card (MAE 10.65 pp) AND a built, probe-verified repair
+awaiting its converged measurement. Proposal §8 deliverables: model 🟡 ·
+data 🟡 (436 files) · calibration report 🟡 (C5, feasible=False) ·
+paper ⬜ · explorer 🟡 · method note 🟡.
 
 ### 2. Phases — 4 of 8, P4 nearly closed
-P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ (regenerated 21 Aug, §9.63 repair) ·
+P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ (regenerated 24 Aug on §9.68/§9.69) ·
 **P4 🟡 (8 of 9 — deliverable 0/0b open, #63)** · P5–P7 ⬜. Home:
 [`STATUS.md`](../STATUS.md) phase table.
 
 ### 3. Tasks
-4.1: 9/9 ✅. 4.2: **all eight done-and-evaluated** (4.2.4 delivered 24 Aug
-— C5 from the completed base arm). 4.3 (0b) started; backlog is #63. 4.4
-owner-sequenced. Batch 4.5: 4.5.0 ✅ (the campaign, §9.62–§9.64); 4.5.1
-build ✅ + measured (ride collapse → the #48 choice lane); 4.5.2 Tier R ✅
-(Tier C open); 4.5.3 measured on the new family (mechanism open); 4.5.4
-inventory done (modelled table now derivable). P5 0/5 · P6 0/5 · P7 0/4;
-the four deletion/rework proposals (5.2/5.3/6.1/6.2) still await the owner.
+4.1: 9/9 ✅. 4.2: all eight ✅. 4.3 (0b): §9.61 + §9.71 done; backlog #63.
+4.4: evidence complete, build owner-sequenced. 4.5: campaign ✅. **4.6
+(the owner's 24 Aug goal): 4.6.1–4.6.6, 4.6.10, 4.6.11 ✅ · 4.6.7 (#68)
+designed ⬜ · 4.6.8 (taxi) evidence-complete ⬜ · 4.6.9 (the next arm)
+⬜ AWAITING OWNER APPROVAL.** P5 0/5 · P6 0/5 · P7 0/4; the four
+deletion/rework proposals (5.2/5.3/6.1/6.2) still await the owner.
 
 ### 4. Simulator vs real life
-The §2 table above IS the latest valid fit (arm A, pre-calibration
-constrained base, 35 of 67 targets scorable, MAE 10.65 pp; LR 1,260 vs
-3,417 boardings; occupancy 0.0013 vs 0.3503; counts −91.8% structural).
-Seed replication (arm B): every mode within 0.11 pp — the gaps are signal.
-Full rows: `results/20260821T175907_1000it_25pct/_fit.json` (arm A; ex
-`phys1000a_25pct`, renamed §9.65) and
-[`docs/audit/CALIBRATION_REPORT.md`](../audit/CALIBRATION_REPORT.md).
+The §2 table above is the latest CONVERGED fit (arm A, closed family,
+pre-calibration, pre-repair). The §9.68 probe is a 2-iteration
+verification, not a fit. Full rows:
+`results/20260821T175907_1000it_25pct/_fit.json` ·
+[`docs/audit/CALIBRATION_REPORT.md`](../audit/CALIBRATION_REPORT.md) ·
+`_ride_choice.json` and `_mode_by_demographics.json` beside it.
 
-### 5. Issue ledger — 42 filed (numbers shared with PRs), 34 closed, 8 open
-#48 (ride choice — the lane, evidence 24 Aug) · #30 (walk generation,
-re-baselined 24 Aug) · #49 (Tier C + taxi, owner-sequenced) · #50
-(modelled table derivable, 24 Aug) · #62/#63 (framework/0b backlogs,
-21 Aug) · #65 (repaired in-tree, closes with this PR) · #66 (stall,
-monitoring, 24 Aug). Closed this session with evidence + REOPEN IF:
-#14, #9, #28, #31.
+### 5. Issue ledger — 43 filed (numbers shared with PRs), 35 closed, 8 open
+#48 (evidence 24 Aug, converged measurement open) · #30 (evidence 24 Aug,
+re-measure open) · #49 (evidence 24 Aug) · #50 (modelled half DONE 24 Aug)
+· #62 (21 Aug) · #63 (two items measured 24 Aug) · #66 (monitoring) ·
+#68 (NEW 24 Aug). #65 closed with PR #67's merge.
 
 ### 6. PR history, and the next PR
-22 merged PRs tell the build story (#1–#3 foundations · #38 audit+rebuild ·
-#40 ride pairing · #43 escort+age · #44 first repaired-demand run · #46
+23 merged PRs tell the build story (#1–#3 foundations · #38 audit+rebuild
+· #40 ride pairing · #43 escort+age · #44 first repaired-demand run · #46
 freight · #47 calibration decision · #52 motorbike · #53 all-physical ·
 #56 stack landing · #58 accounting · #59 events threads · #61 PR-only
-convention · #64 walk wedge + lifts + knobs). **PR #67, OPEN, carries
-§9.62–§9.67: the two-arm campaign, the #65 repair, C5, the runner-named
-and status-carded runs, and the city-digital-twin rename.** The next PR
-after it merges: the ride-choice decomposition + whichever scoring lever
-the owner picks (`P4: Diagnose and answer the ride choice collapse (#48)`).
+convention · #64 walk wedge + lifts + knobs · #67 two-arm campaign + C5 +
+runner-named runs + rename). **The session PR (open at this handoff)
+carries §9.68–§9.71.** The next PR after it merges: the post-repair base
+arm's launch-watch-close-out (`P4: Run the repaired-demand base arm and
+re-measure every mode (#48, #30)`) — gated on the owner's approval.
 
 ---
 
 ### Bootstrap reading, in this order
 
 ```
-cities/newcastle/docs/STATUS.md                 the board; §3 above is the lane
-cities/newcastle/docs/DECISIONS.md §9.62–§9.64  this session, cross-linked
-results/20260821T175907_1000it_25pct/_fit.json  the report card, full rows (arm A, renamed §9.65)
-cities/newcastle/docs/audit/CALIBRATION_REPORT.md   the generated report
-issues #48 #30 #63                              the open lanes
-.claude/CLAUDE.md                               conventions + hard constraints
+cities/newcastle/docs/STATUS.md                    the board; batch 4.6 is the lane
+cities/newcastle/docs/DECISIONS.md §9.68–§9.71     this session, cross-linked
+results/20260821T175907_1000it_25pct/_fit.json     the pre-repair report card
+results/20260821T175907_1000it_25pct/_ride_choice.json   the decomposition
+cities/newcastle/demand/plans/_activity_chains_report.json  band + coverage diagnostics
+issues #48 #30 #68 #63                             the open lanes
+.claude/CLAUDE.md                                  conventions + hard constraints
 ```
