@@ -1,0 +1,20 @@
+{
+  "source": "Overpass API attic (historical) queries against OpenStreetMap",
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "retrieved": "2026-08-24T21:05:00+10:00",
+  "licence": "ODbL 1.0 (OpenStreetMap contributors) - share-alike; anything published from these files keeps the ODbL label",
+  "purpose": "Measure the pre-light-rail Hunter Street / Scott Street cross-section as OSM recorded it before construction started (~Sep 2017), for A.corridor.pre_lr_lanes_per_dir (hypothesis B3's counterfactual; DECISIONS.md 9.71).",
+  "files": {
+    "overpass_attic_hunter_scott_2017-01-01.json": {
+      "query": "[date:\"2017-01-01T00:00:00Z\"][out:json][timeout:120];way[\"highway\"][\"name\"~\"Hunter Street|Scott Street\"](-32.94,151.73,-32.91,151.80);out tags;",
+      "note": "pre-construction state; 22 ways, 21 named street segments after excluding one service alley"
+    },
+    "overpass_attic_hunter_scott_2016-01-01.json": {
+      "query": "[date:\"2016-01-01T00:00:00Z\"][out:json][timeout:120];way[\"highway\"][\"name\"~\"Hunter Street|Scott Street\"](-32.94,151.73,-32.91,151.80);out tags;",
+      "note": "cross-check one year earlier; fully consistent with the 2017 state"
+    }
+  },
+  "finding": "Every lane-tagged segment (9 of 21 in 2017, 43% coverage) carried lanes=2 with oneway=no - one lane per direction; zero segments tagged 4 lanes or lanes:forward/backward at either date. The only oneway elements are the pedestrianised Hunter Street Mall pair (living_street).",
+  "caveats": "OSM lanes tags record marked through-lanes as mappers saw them; 57% of segments carry no lane tag and are silent, not contradictory. The bounding box is the query's own search window over central Newcastle, recorded here as provenance, not a modelling extent.",
+  "endpoint_behaviour": "overpass-api.de rate-limits back-to-back attic queries (Dispatcher_Client rate_limited); the kumi.systems mirror does not serve attic data (Internal Server Error)."
+}
