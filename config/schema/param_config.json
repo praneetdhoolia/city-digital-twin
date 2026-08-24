@@ -24,9 +24,12 @@
         "subtourModeChoice",
         "travelTimeCalculator",
         "transitRouter",
+        "signalsystems",
         "parking",
+        "fare",
         "telemetry",
         "ridePairing",
+        "tramPriority",
         "routing"
       ],
       "parameter_sets": {

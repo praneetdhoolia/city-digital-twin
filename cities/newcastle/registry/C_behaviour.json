@@ -120,6 +120,42 @@
       "baseline_ref": "params/C1_sensitivity_sweep_grid.csv:is_baseline",
       "description": "Behavioural penalty for an interchange, ON TOP of the measured Newcastle Interchange walk time (mean 112 s, max 284 s over 51 stop pairs). The whole policy question is whether forcing a transfer at Wickham is worth the CBD distribution it buys: 5 min gives a broadly favourable result, 12 min a net disbenefit for external origins. NO HEADLINE MAY BE REPORTED AT A SINGLE VALUE. It is assumed rather than estimated only because journey-linked Opal is unobtained."
     },
+    "C.taxi.wait_min": {
+      "value": 5.0,
+      "units": "minutes",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          2.0,
+          12.0
+        ],
+        "basis": "No published wait/response-time distribution exists for Newcastle p2p. The band spans a rank pickup (~2 min) to a quiet-suburb booked wait (~12 min). Enters the mode CONSTANT as a scheduling-time cost at the trip-weighted VOT, because a teleported mode has no physical wait."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "The booking/wait time a point-to-point trip carries before the vehicle arrives. Folded into the taxi mode constant at emit time (wait_min/60 x trip-weighted VOT x marginalUtilityOfMoney) - the same derivation discipline as utilityOfLineSwitch."
+    },
+    "C.taxi.asc": {
+      "value": 0.0,
+      "units": "utility",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          -2.0,
+          0.0
+        ],
+        "basis": "No target exists for the taxi share (the STATUS declined table: HTS \"Other\" is one bucket) so the alternative-specific constant is unidentifiable - it is swept over the negative half-axis (unobserved inconveniences only) and the realised volume is REPORTED against B.taxi.daily_trips_band, never fitted."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "The taxi mode constant net of the derived wait cost. Zero says: beyond fare and wait, no extra penalty is asserted."
+    },
     "C.walk.decay_beta_per_m": {
       "value": 0.0018,
       "units": "per_metre",

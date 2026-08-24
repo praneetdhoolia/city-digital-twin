@@ -264,6 +264,23 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
             'no parking price table at %s. Regenerate the run inputs with '
             'build_matsim_run_inputs.py.' % price_src)
 
+    # Explicit corridor signals (#73): under the explicit representation the
+    # run consumes the generated signal data model for ITS scenario. The
+    # files are checked here, in 0.1 s, rather than in the JVM.
+    signal_paths = {}
+    if cfg.get('A.signals.representation') == 'explicit_signals':
+        sig_dir = city.path('networks', 'matsim', 'signals', scenario)
+        for key, name in (('signal_systems', 'signal_systems.xml'),
+                          ('signal_groups', 'signal_groups.xml'),
+                          ('signal_control', 'signal_control.xml')):
+            p = os.path.join(sig_dir, name)
+            if not os.path.exists(p):
+                raise SystemExit(
+                    'A.signals.representation is explicit_signals but %s is '
+                    'missing. Run cities/<city>/build/build_matsim_signals.py '
+                    'first.' % p)
+            signal_paths[key] = fwd(p)
+
     # Both capacity factors are identities on the sample fraction, and NEITHER
     # is a choice. Checked here, in 0.1 s, rather than in the JVM a second
     # later: MATSim's GlobalConfigGroup.checkConsistency throws when the two
@@ -295,7 +312,8 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         vehicles=fwd(veh_dst),
         mode_vehicles=fwd(mode_veh),
         parking_prices=fwd(price_src),
-        fraction=fraction)
+        fraction=fraction,
+        **signal_paths)
     config_path = build_inputs.write_config(
         os.path.join(run_dir, 'config.xml'), cfg, scoring, day, paths)
 
@@ -647,13 +665,31 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
                                        seed, overrides, cfg, warm=warm)
     snapshot = cfg.write_snapshot(os.path.join(run_dir, '_config.json'))
     log = os.path.join(run_dir, 'matsim.log')
-    classpath = os.pathsep.join([JAR, CLASSES])
+    # THE STACK FOLLOWS THE REPRESENTATION (#73, DECISIONS 9.73/9.76): the
+    # signals contrib is not in the shaded jar and must never share a
+    # classpath with it, so an explicit-signals run executes the Maven-built
+    # run stack and the signals entry point; everything else runs exactly the
+    # stack it always ran.
+    main_class = MAIN
+    if cfg.get('A.signals.representation') == 'explicit_signals':
+        stack_jars = sorted(glob.glob(os.path.join(
+            REPO, '.tools', 'run-stack', 'lib', '*.jar')))
+        classes_signals = os.path.join(REPO, '.tools', 'classes-signals')
+        if not stack_jars or not os.path.isdir(classes_signals):
+            raise SystemExit(
+                'A.signals.representation is explicit_signals but the '
+                'signals run stack is not built. Run: python '
+                'src/setup/bootstrap_toolchain.py --run-stack')
+        classpath = os.pathsep.join([classes_signals] + stack_jars)
+        main_class = 'citysim.CitysimSignalsControler'
+    else:
+        classpath = os.pathsep.join([JAR, CLASSES])
     # -Xms equal to -Xmx: the 9.57 arm grew the heap 7 -> 27 GB across the run
     # with full-GC stalls visible during the it-110 routing pathology; a
     # pre-sized heap removes the growth path. Wall-time only - the JVM heap
     # schedule cannot change a model output.
     cmd = [JAVA, '-Xms%s' % xmx, '-Xmx%s' % xmx, '-XX:+UseParallelGC',
-           '-cp', classpath, MAIN, config_path]
+           '-cp', classpath, main_class, config_path]
     # The live view, announced before MATSim starts so the url is on screen for
     # the whole run rather than after it. It reads the run directory and never
     # writes to it.

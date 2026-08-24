@@ -85,11 +85,43 @@ public final class CitysimControler {
             System.err.println("usage: citysim.CitysimControler <config.xml>");
             System.exit(2);
         }
+        assemble(args[0], java.util.List.of()).run();
+    }
+
+    /**
+     * Build the citysim Controler exactly as {@code main} always has, and
+     * RETURN it without running it.
+     *
+     * <p>Extracted (issue #73) so the signal-enabled entry point in
+     * {@code src/java_signals/} can take the SAME assembly — every rebinding,
+     * every QSim component reordering, byte for byte — and add the signals
+     * contrib wiring on top before calling {@code run()}. The extraction is
+     * behaviour-preserving: {@code main} is now
+     * {@code assemble(args[0], List.of()).run()}, nothing else moved.
+     *
+     * <p>{@code extraGroups} are additional custom config groups registered
+     * BEFORE the config file is parsed, exactly like the three citysim groups
+     * below — an unrecognised parameter in one of their modules then fails the
+     * run instead of being ignored. This class never imports the signals
+     * contrib: src/java compiles against the shaded pt2matsim jar alone
+     * (DECISIONS.md 9.73), so the extras arrive as plain
+     * {@link org.matsim.core.config.ConfigGroup}s.
+     */
+    public static Controler assemble(
+            final String configPath,
+            final java.util.List<org.matsim.core.config.ConfigGroup> extraGroups) {
         final ParkingConfigGroup parking = new ParkingConfigGroup();
         final TelemetryConfigGroup telemetry = new TelemetryConfigGroup();
         final RidePairingConfigGroup ridePairing = new RidePairingConfigGroup();
-        final Config config =
-                ConfigUtils.loadConfig(args[0], parking, telemetry, ridePairing);
+        final org.matsim.core.config.ConfigGroup[] groups =
+                new org.matsim.core.config.ConfigGroup[3 + extraGroups.size()];
+        groups[0] = parking;
+        groups[1] = telemetry;
+        groups[2] = ridePairing;
+        for (int i = 0; i < extraGroups.size(); i++) {
+            groups[3 + i] = extraGroups.get(i);
+        }
+        final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
         // schedule, so it is named relatively there and resolved here. MATSim
         // resolves its own input paths against the config's directory; this
@@ -97,7 +129,8 @@ public final class CitysimControler {
         if (!parking.getPriceFile().isEmpty()) {
             final File declared = new File(parking.getPriceFile());
             if (!declared.isAbsolute()) {
-                final File base = new File(args[0]).getAbsoluteFile().getParentFile();
+                final File base =
+                        new File(configPath).getAbsoluteFile().getParentFile();
                 parking.setPriceFile(new File(base, parking.getPriceFile()).getPath());
             }
         }
@@ -253,6 +286,6 @@ public final class CitysimControler {
                 }
             });
         }
-        controler.run();
+        return controler;
     }
 }

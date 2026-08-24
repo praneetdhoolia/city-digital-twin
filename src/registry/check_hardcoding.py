@@ -461,6 +461,11 @@ MEASUREMENT_OWNED_KEYS = {
         'the radius that joins an observed traffic count station to a network '
         'link. It decides what the VALIDATION compares, never what the model '
         'simulates, so being read only by src/analyse is correct',
+    'B.taxi.daily_trips_band':
+        'a CONSTRAINT, never a target (9.8/9.13, 9.76): the modelled taxi '
+        'volume is REPORTED against this band and nothing is fitted to it - '
+        'being read only by the measurement layer is the field\'s entire '
+        'design, the same class as the C4 occupancy constraint',
 }
 
 

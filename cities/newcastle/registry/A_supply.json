@@ -288,7 +288,7 @@
       "decisions_ref": "0, 5, 13",
       "proposal_ref": "6.2, 7.2",
       "baseline_ref": "scenarios/S2.json:signal_variant_ref",
-      "description": "SCATS phase data for the Hunter/Scott corridor. NOT OBTAINED - a formal TfNSW request is outstanding. It determines corridor run time more than any other single input: the swing between no priority and full priority is 38% (S2 vs S2b). Every program in the SUMO corridor is labelled timing_source=assumed. THIS FIELD HAS NO POINT VALUE AND THE RESOLVER WILL NOT INVENT ONE: select a sweep member explicitly."
+      "description": "SCATS phase data for the Hunter/Scott corridor. NOT OBTAINED - a formal TfNSW request is outstanding. It determines corridor run time more than any other single input: the swing between no priority and full priority is 38% (S2 vs S2b). Every generated signal plan is labelled timing_source=assumed (A2 proxy). THIS FIELD HAS NO POINT VALUE AND THE RESOLVER WILL NOT INVENT ONE: select a sweep member explicitly."
     },
     "A.signals.delay_per_intersection_s": {
       "value": 26.0,
@@ -329,7 +329,7 @@
       "decisions_ref": "5",
       "description": "Minimum green time in a generated SUMO signal program.",
       "consumers": [
-        "cities/newcastle/build/build_sumo_corridor.py"
+        "cities/newcastle/build/build_matsim_signals.py"
       ]
     },
     "A.signals.junction_match_m": {
@@ -342,10 +342,146 @@
       ],
       "status": "active",
       "decisions_ref": "5",
-      "description": "Radius for matching an A2 intersection to a SUMO junction.",
+      "description": "How close an A2 intersection's clustered OSM signal nodes must sit to a network node for the two to be the same junction. Was the SUMO junction pairing radius; now the native signal generator's cluster-to-network match radius (same quantity, same tolerance).",
       "consumers": [
-        "cities/newcastle/build/build_sumo_corridor.py"
+        "cities/newcastle/build/build_matsim_signals.py"
       ]
+    },
+    "A.signals.representation": {
+      "value": "implicit_delay",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "implicit_delay",
+          "explicit_signals"
+        ],
+        "basis": "ONE REPRESENTATION PER EFFECT (the signalling dossier 04 7.5, DECISIONS 9.75/9.76): either the implicit per-intersection delay shapes the schedule and metered link capacities stand, OR explicit signals meter saturation-flow approaches and the implicit delay comes OUT of the same movements. Never both. The batch boundary flips this to explicit_signals; until then everything signal-explicit stays inert."
+      },
+      "status": "active",
+      "decisions_ref": "9.75, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_matsim_signals.py",
+        "src/run/run_matsim.py",
+        "cities/newcastle/build/build_scenario_schedules.py"
+      ],
+      "description": "Which representation carries the corridor signal effect. implicit_delay: A.signals.delay_per_intersection_s inside scheduled run times and metered link capacities (the shipped state). explicit_signals: the signals contrib runs the generated fixed-time plans, approaches are re-capacitated to saturation flow, the schedule transform removes the implicit delay from the same movements, and the harness runs the signals stack. THE SWITCH IS THE DOUBLE-COUNT GUARD: code paths check it rather than trusting discipline."
+    },
+    "A.signals.saturation_flow_veh_h_lane": {
+      "value": 1900.0,
+      "units": "vehicles_per_hour_per_lane",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          1800.0,
+          2050.0
+        ],
+        "basis": "HCM/Austroads urban saturation flow band ~1800-2050 veh/h/lane (dossier 04 6.1; 05 6 uses s=1800). No Newcastle stop-line survey exists, so the class band is swept."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_matsim_signals.py"
+      ],
+      "description": "Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1)."
+    },
+    "A.signals.tsp.mode": {
+      "value": "green_extension",
+      "units": "enum",
+      "source": "literature",
+      "sweep": {
+        "categorical": [
+          "off",
+          "green_extension",
+          "extension_recall",
+          "conditional"
+        ],
+        "basis": "The Melbourne/VicRoads tram-priority ladder (dossier 05 8): partial priority (green extension, the PU practice default) keeps nearly all tram benefit at a fraction of the cost to general traffic; extension_recall adds red truncation / phase recall (AU); conditional gates on lateness (PC/AC, PTIPS-faithful). Sweeping the mode replaces the scalar E.s2b.signal_delay_removed_share as the priority-aggressiveness axis on the explicit arm."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.mode",
+      "description": "The tram-priority controller's regime. Which NLR mechanism TfNSW actually configures is not public (dossier 02 2 [gap]), so the regime is a swept modelling choice, never a claim about the operated system. off = fixed time everywhere (the S2 base)."
+    },
+    "A.signals.tsp.extension_window_s": {
+      "value": 12.0,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          5.0,
+          20.0
+        ],
+        "basis": "The standing S2b assumption (A2 tsp_max_extension_s = 12) bracketed by practice: short extensions ~5 s barely carry a tram through, ~20 s approaches a whole phase at the operated 72-81 s corridor cycles (PPSHCC-137 evidence)."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.extensionWindowS",
+      "description": "How long a green may be held for a detected tram."
+    },
+    "A.signals.tsp.detection_distance_m": {
+      "value": 120.0,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          60.0,
+          250.0
+        ],
+        "basis": "The standing S2b assumption (A2 tsp_detection_distance_m = 120); the Melbourne two-detector scheme puts the mid-link detector ~60 m past the previous stop, and 250 m is a whole corridor block. MATSim has no intra-link position, so detection is realised at the tram approach link boundary nearest this distance - an approximation the controller documents."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.detectionDistanceM",
+      "description": "How far upstream a tram is detected."
+    },
+    "A.signals.tsp.priority_budget_share": {
+      "value": 0.2,
+      "units": "share_of_cycle",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.1,
+          0.3
+        ],
+        "basis": "VicRoads partial-priority practice budgets priority phases at most 20% of the cycle, taken from the nominal split of the biggest competing phase (dossier 05 8). Swept around that operated value."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.priorityBudgetShare",
+      "description": "The most green the controller may borrow for the tram in one cycle, as a share of cycle time."
+    },
+    "A.signals.tsp.compensation_enabled": {
+      "value": true,
+      "units": "boolean",
+      "source": "literature",
+      "sweep": {
+        "categorical": [
+          true,
+          false
+        ],
+        "basis": "The Melbourne machinery returns borrowed green to cut phases in the following cycle - without compensation the plan's long-run splits drift and any later adaptive layer pollutes its own statistics (dossier 05 8)."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.compensationEnabled",
+      "description": "Whether green borrowed for the tram is returned to the phase it came from in the next cycle."
+    },
+    "A.signals.tsp.lateness_threshold_s": {
+      "value": 60.0,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          300.0
+        ],
+        "basis": "Conditional (PTIPS-style) priority grants only to late trams; the operated threshold is not public (dossier 02 2 [gap]). 0 makes conditional identical to its unconditional parent; 300 s effectively disables priority at NLR headways."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.latenessThresholdS",
+      "description": "Schedule delay beyond which conditional priority grants; read only when A.signals.tsp.mode = conditional. Delay comes from the vehicle's own VehicleArrivesAtFacility events, not from an assumed speed."
     },
     "A.crossings.freight_road_names": {
       "value": [

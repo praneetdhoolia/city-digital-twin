@@ -1,0 +1,26 @@
+{
+  "source": "Transport for NSW - Point to Point Transport (Fares) Order 2025",
+  "retrieved": "2026-08-25T03:20:00+10:00",
+  "licence": "NSW Government publication (statutory instrument under the Point to Point Transport (Taxis and Hire Vehicles) Act 2016); factual regulated maxima cited with attribution",
+  "purpose": "The MEASURED taxi fare schedule for the point-to-point priced mode (issue #49, task 4.7.8; DECISIONS.md 9.76). Clause 2(g) names the Newcastle Transport District an URBAN Area explicitly, settling the urban-vs-country premise (the 4.4 dossier first recorded country-rate-era values).",
+  "files": {
+    "tfnsw_p2p_fares_order_june_2025.pdf": {
+      "url": "https://www.transport.nsw.gov.au/system/files/media/documents/2025/Point-to-Point-Transport-Fares-Order-June-2025.pdf",
+      "sha256": "52d2a362180c9612eb632e541110004453caac45d93da119b571a3980f0312b6",
+      "bytes": 109913,
+      "pages": 4,
+      "document": "Point to Point Transport (Fares) Order 2025, effective 1 July 2025 (Sally Webb, Deputy Secretary, for TfNSW)",
+      "extracted_values": {
+        "urban_hiring_charge_aud": 5.00,
+        "urban_distance_rate_aud_per_km_first_12km": 2.52,
+        "urban_distance_rate_aud_per_km_after_12km": 2.29,
+        "urban_night_distance_rate_aud_per_km_first_12km": 3.00,
+        "urban_peak_time_hiring_surcharge_aud": 2.56,
+        "urban_waiting_time_aud_per_min": 1.092,
+        "passenger_service_levy_aud": 1.32,
+        "urban_area_includes": "Newcastle Transport District (clause 2(g)(ii))"
+      },
+      "note": "Maximum RANK-AND-HAIL fares; booked services (rideshare) are unregulated, so rideshare rates stay literature+swept. The earlier design dossier recorded flagfall $5.17 / $2.61/km - values not in this order; corrected in the dossier in the same change that landed this record."
+    }
+  }
+}

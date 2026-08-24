@@ -90,6 +90,7 @@ def score_mode_share(targets, metrics, out):
                        'a PT trip is counted as PT in a linked mode share)'))
             continue
         modelled = share.get(mode, 0.0)
+        matsim_mode = mode
         if mode == 'car':
             # The HTS 'Vehicle driver' category CONTAINS motorcyclists (its
             # data document places them there, not in Other), and the model
@@ -98,9 +99,18 @@ def score_mode_share(targets, metrics, out):
             # Comparing car alone would under-read the model by exactly the
             # declared carve.
             modelled += share.get('motorbike', 0.0)
+            matsim_mode = 'car+motorbike'
+        if mode == 'bike' and 'taxi' in share:
+            # HTS 'Other' holds taxi/rideshare alongside bicycle (the data
+            # document's own list, stated on MODE_TO_HTS above). While taxi
+            # was unmodelled the bike row alone was the comparable quantity;
+            # once the priced mode exists (#49, 9.76) the comparable modelled
+            # quantity is bike + taxi, exactly the car+motorbike fold.
+            modelled += share.get('taxi', 0.0)
+            matsim_mode = 'bike+taxi'
         e = scale_error(modelled, float(t['value']))
         e.update(target_id=t['target_id'], hts_category=t['note'],
-                 matsim_mode=(mode if mode != 'car' else 'car+motorbike'))
+                 matsim_mode=matsim_mode)
         errs.append(e)
         used.append(t['target_id'])
     for t in targets:
@@ -380,9 +390,9 @@ def main():
                 'linked_pt_share_of_target_lga_trips_pct') or {}).items()):
             print('  %-18s modelled %6.2f  observed      - (only the pt '
                   'aggregate is held)' % (k, v))
-        if split:
-            print('  %-18s not modelled (issue #49, task 4.4)'
-                  % 'taxi/rideshare')
+        if split and split.get('not_modelled'):
+            print('  %-18s not modelled (issue #49; activates at the 9.76 '
+                  'batch boundary)' % 'taxi/rideshare')
     c = out['counts']
     if c['n']:
         print('\ntraffic counts (%d stations, light-vehicle basis):' % c['n'])
