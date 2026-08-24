@@ -1008,7 +1008,10 @@
       "sweep_basis": "the whole profile may be reweighted by a quarter either way per hour, then renormalised. There is no Newcastle observation to bracket it: the HTS held is aggregate and reports journeys by purpose, not departure hour. A proportional sweep is the honest expression of \"NSW-typical shape, magnitude unknown\".",
       "status": "active",
       "decisions_ref": "9, 15",
-      "description": "Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled \"assumed, NSW-typical shapes\", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice."
+      "description": "Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled \"assumed, NSW-typical shapes\", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice. MEASURED CONSTRAINT since 25 Aug 2026 (9.76, #63 item 6): measure_departure_constraint.py compares the realised B2 departure-hour distribution these shapes generate against the observed RMS light-vehicle hourly profile (params/C6_departure_profile_check.json). First reading: WEEKDAY overlap 0.858 with peak hours MATCHING at 16:00; SAT/SUN overlap ~0.88 but the modelled weekend peaks sit 3-4 h LATER than the observed 11:00 - the weekend shapes skew late, a recorded finding, not a fit.",
+      "consumers": [
+        "src/calibrate/measure_departure_constraint.py"
+      ]
     },
     "B.mode.serve_tour_seed": {
       "value": "car",

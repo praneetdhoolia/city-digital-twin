@@ -829,14 +829,17 @@
     "A.lightrail.line_speed_kmh": {
       "value": 40.0,
       "units": "km_per_hour",
-      "source": "assumed",
-      "sweep": [
-        30.0,
-        50.0
-      ],
+      "source": "measured",
+      "sweep": {
+        "interval": [
+          30.0,
+          50.0
+        ],
+        "basis": "MEASURED CEILING (25 Aug 2026, 9.76; #63 route i): the TfNSW regulated speed zone along the corridor trunk - already joined onto A1_corridor_road_edges - is 40 km/h over 73.4% of regulated length (2,994 m) and 50 km/h over the western remainder, and the documented NLR operating limit is 40 (signalling dossier 02 2). The field is the inter-stop RUNNING speed in the run-time decomposition, for which the regulated 40 is an upper bound: acceleration and braking shortfalls land in the swept dwell/signal terms, which is why the sweep stays. Never derive this from GTFS alone - scheduled time = dist/v + dwell + signal is unidentifiable without pinning the swept terms."
+      },
       "status": "active",
-      "decisions_ref": "4.2",
-      "description": "Light rail running speed between stops, used in the run-time decomposition.",
+      "decisions_ref": "9.76",
+      "description": "Light rail running speed between stops, used in the run-time decomposition. The value is the regulated 40 km/h ceiling measured from the held Speed Zones join along the corridor trunk; achieved running speed sits at or below it, which the sweep expresses.",
       "consumers": [
         "cities/newcastle/build/build_scenario_schedules.py"
       ]

@@ -125,7 +125,20 @@ public final class TramPriorityProbe {
                 && ext.firstTramRedS != null
                 && ext.tramLeaveS <= ext.firstTramRedS;
 
-        final boolean ok = offVerbatim && extended && offGated && extCleared;
+        // compensation, end to end: cycle 1 borrowed 10 s from the road
+        // stage (green 30-58 became 40-58), so with the ledger on, cycle 2
+        // must hand them back by opening the road stage 10 s EARLY - at
+        // absolute 60+20=80 instead of the plan's 60+30=90. The off run's
+        // road stage must show the plan's own 90, untouched.
+        final Double extRoadOnset2 = ext.roadOnsetIn(60.0, 120.0);
+        final Double offRoadOnset2 = off.roadOnsetIn(60.0, 120.0);
+        final boolean compensated = extRoadOnset2 != null
+                && extRoadOnset2 == 80.0;
+        final boolean offUnperturbed = offRoadOnset2 != null
+                && offRoadOnset2 == 90.0;
+
+        final boolean ok = offVerbatim && extended && offGated && extCleared
+                && compensated && offUnperturbed;
         final StringBuilder json = new StringBuilder();
         json.append("{\"probe\": \"TramPriorityProbe\"");
         json.append(", \"plan_tram_drop_s\": ").append(PLAN_TRAM_DROP_S);
@@ -135,12 +148,16 @@ public final class TramPriorityProbe {
                 .append(off.tramLeaveS);
         json.append(", \"ext_tram_cleared_junction_s\": ")
                 .append(ext.tramLeaveS);
+        json.append(", \"off_cycle2_road_onset_s\": ").append(offRoadOnset2);
+        json.append(", \"ext_cycle2_road_onset_s\": ").append(extRoadOnset2);
         json.append(", \"off_runs_plan_verbatim\": ").append(offVerbatim);
         json.append(", \"extension_granted\": ").append(extended);
         json.append(", \"off_tram_gated_until_next_green\": ")
                 .append(offGated);
         json.append(", \"ext_tram_cleared_in_extended_green\": ")
                 .append(extCleared);
+        json.append(", \"borrowed_time_repaid_next_cycle\": ")
+                .append(compensated);
         json.append(", \"pass\": ").append(ok);
         json.append("}");
         System.out.println(json);
@@ -267,6 +284,14 @@ public final class TramPriorityProbe {
                 Id.create("d1", Departure.class), 20.0);
         d1.setVehicleId(Id.create("tram1", Vehicle.class));
         tramRoute.addDeparture(d1);
+        // a second departure keeps the mobsim alive across the next cycle
+        // boundary (t=60), which is where the compensation ledger pays a
+        // borrowed-from stage back - without it the toy empties out and the
+        // repayment cycle never runs
+        final Departure d2 = tf.createDeparture(
+                Id.create("d2", Departure.class), 90.0);
+        d2.setVehicleId(Id.create("tram2", Vehicle.class));
+        tramRoute.addDeparture(d2);
         final TransitLine line =
                 tf.createTransitLine(Id.create("tramLine", TransitLine.class));
         line.addRoute(tramRoute);
@@ -283,6 +308,9 @@ public final class TramPriorityProbe {
         scenario.getTransitVehicles().addVehicle(
                 scenario.getTransitVehicles().getFactory().createVehicle(
                         Id.create("tram1", Vehicle.class), tramType));
+        scenario.getTransitVehicles().addVehicle(
+                scenario.getTransitVehicles().getFactory().createVehicle(
+                        Id.create("tram2", Vehicle.class), tramType));
         new MatsimVehicleWriter(scenario.getTransitVehicles())
                 .writeFile(dir.resolve("transitVehicles.xml").toString());
 
@@ -384,6 +412,7 @@ public final class TramPriorityProbe {
 
         Double firstTramRedS;
         Double tramLeaveS;
+        private final List<Double> roadGreenOnsetsS = new ArrayList<>();
         private final Set<Id<Vehicle>> transitVehicles =
                 new java.util.TreeSet<>();
 
@@ -395,6 +424,20 @@ public final class TramPriorityProbe {
                     && event.getNewState() == SignalGroupState.RED) {
                 this.firstTramRedS = event.getTime();
             }
+            if ("road".equals(event.getSignalGroupId().toString())
+                    && event.getNewState() == SignalGroupState.GREEN) {
+                this.roadGreenOnsetsS.add(event.getTime());
+            }
+        }
+
+        /** First observed road-stage onset inside [fromS, toS), if any. */
+        Double roadOnsetIn(final double fromS, final double toS) {
+            for (final Double t : this.roadGreenOnsetsS) {
+                if (t >= fromS && t < toS) {
+                    return t;
+                }
+            }
+            return null;
         }
 
         @Override
@@ -415,6 +458,7 @@ public final class TramPriorityProbe {
         public void reset(final int iteration) {
             this.firstTramRedS = null;
             this.tramLeaveS = null;
+            this.roadGreenOnsetsS.clear();
             this.transitVehicles.clear();
         }
     }
