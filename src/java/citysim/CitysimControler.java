@@ -113,13 +113,15 @@ public final class CitysimControler {
         final ParkingConfigGroup parking = new ParkingConfigGroup();
         final TelemetryConfigGroup telemetry = new TelemetryConfigGroup();
         final RidePairingConfigGroup ridePairing = new RidePairingConfigGroup();
+        final FareConfigGroup fare = new FareConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[3 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[4 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
+        groups[3] = fare;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[3 + i] = extraGroups.get(i);
+            groups[4 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -154,6 +156,18 @@ public final class CitysimControler {
                         .to(networkTravelTime());
                 addTravelDisutilityFactoryBinding(TransportMode.ride)
                         .to(carTravelDisutilityFactoryKey());
+                // taxi (issue #49, 4.7.8): the same mechanism as ride - a
+                // network-routed teleported mode inherits FREE-FLOW times
+                // unless bound to the congested network travel time, and a
+                // taxi that out-runs the traffic it rides in is #28's defect
+                // with a meter. Bound only when the config's routing
+                // vocabulary carries the mode, so a config without taxi
+                // behaves exactly as before.
+                if (config.routing().getNetworkModes().contains("taxi")) {
+                    addTravelTimeBinding("taxi").to(networkTravelTime());
+                    addTravelDisutilityFactoryBinding("taxi")
+                            .to(carTravelDisutilityFactoryKey());
+                }
                 // Network-simulated unmotorised modes (DECISIONS.md 9.54):
                 // the router's speed cap comes from the SAME vehicle type the
                 // qsim loads, so estimate and physics cannot drift. Bound only
@@ -193,6 +207,23 @@ public final class CitysimControler {
                     bind(ParkingChargeHandler.class).in(Singleton.class);
                     addEventHandlerBinding().to(ParkingChargeHandler.class);
                     addControllerListenerBinding().to(ParkingChargeHandler.class);
+                }
+            });
+        }
+        if (fare.isEnabled()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    // The point-to-point flagfall (issue #49): one instance in
+                    // both roles, accumulating per-departure charges as an
+                    // event handler and emitting the deferred PersonMoneyEvents
+                    // as a controler listener - the ParkingChargeHandler
+                    // discipline. Installed only when the emitted config names
+                    // a mode and a flagfall, so a config without the fare
+                    // module behaves exactly as before.
+                    bind(FareChargeHandler.class).in(Singleton.class);
+                    addEventHandlerBinding().to(FareChargeHandler.class);
+                    addControllerListenerBinding().to(FareChargeHandler.class);
                 }
             });
         }
