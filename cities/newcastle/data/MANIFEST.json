@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-24T13:28:59",
+  "generated": "2026-08-24T19:24:10",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 430,
-  "total_bytes": 4338626729,
+  "total_bytes": 4338624317,
   "total_gib": 4.04,
   "by_stage": {
     "raw": 74,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2712252464,
-    "processed": 1626374265
+    "processed": 1626371853
   },
   "files": [
     {
@@ -2261,9 +2261,9 @@
     },
     {
       "path": "demand/plans/_activity_chains_report.json",
-      "bytes": 17931,
+      "bytes": 17257,
       "rows": null,
-      "sha256": "1c7d42200055975a5ea37dea6b26bb15e5e2a47ae0ec31bb2832f6fffd3109bd",
+      "sha256": "644dd09ef4cf9bd7be46fb84a4a4228c52e30e53aa5ba0b0c94475a9b63b2a45",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",
@@ -2273,9 +2273,9 @@
     },
     {
       "path": "demand/plans/matsim/_plans_report.json",
-      "bytes": 4154,
+      "bytes": 3991,
       "rows": null,
-      "sha256": "2f60d7f37809791fe816dc58de4f8160562c6364f310d672455f204d49b39e6f",
+      "sha256": "d444030d4b0e8ba5d77bfbaffad7fcb8809828f0273f644bed7eda18cef72bb9",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2441,9 +2441,9 @@
     },
     {
       "path": "params/C5_calibration.json",
-      "bytes": 1966,
+      "bytes": 1921,
       "rows": null,
-      "sha256": "c9f9e8a868a22a0a1fccef949d6951527adbbe82867d7432234245d62ea715b0",
+      "sha256": "093b930b75142f3f7ea110d1a0970c5880d0c081c296667524a6f51c908a37e0",
       "stage": "processed",
       "produced_by": "src/build/build_params.py",
       "source": "",
@@ -2609,9 +2609,9 @@
     },
     {
       "path": "scenarios/matsim/_run_inputs_report.json",
-      "bytes": 39791,
+      "bytes": 38261,
       "rows": null,
-      "sha256": "ea187a70dc8f41d26a03411182cbc1b3040449ba90f65199a645c29e5ab99770",
+      "sha256": "da1b5561188a2141a529e440c189489b956937e36c8724b37a9c3e75ef89c105",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "",

@@ -315,7 +315,10 @@ def write_constrained_base(scenario, day, run_config, tag):
              'out. Counts were scored, not optimised against (9.14). No '
              'holdout row was read.')
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    json.dump(result, open(OUT, 'w'), indent=2)
+    # newline='\n': see the identical note at the search writer below - a
+    # default-mode Windows write breaks CI's manifest integrity on this
+    # committed, hashed file.
+    json.dump(result, open(OUT, 'w', newline='\n'), indent=2)
     print('constrained base from %s (objective %.4f, feasible=%s) -> %s'
           % (tag, obj, ok, OUT))
     for v in why:
@@ -501,7 +504,11 @@ def main():
              'and reported but not optimised against (DECISIONS.md 9.14). The '
              'C4 constraints were feasibility conditions, never targets.')
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    json.dump(result, open(OUT, 'w'), indent=2)
+    # newline='\n': C5 is committed and manifest-hashed; a Windows default-mode
+    # write puts CRLF in the working tree, the manifest hashes those bytes, and
+    # CI (which checks out the gitattributes-normalised LF bytes) then fails
+    # manifest integrity - measured on PR #67.
+    json.dump(result, open(OUT, 'w', newline='\n'), indent=2)
     print('\nbest %s at objective %.4f -> %s' % (best_tag, best_obj, OUT))
 
 
