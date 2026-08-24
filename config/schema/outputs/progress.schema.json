@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "progress.schema.json",
+  "title": "Per-iteration run progress digest (_progress.json)",
+  "description": "The machine-readable status of a run in flight (issue #76). Written by an OBSERVER on a harness daemon thread - never from inside the mobsim (the telemetry isolation rule, DECISIONS.md 9.36) - and replaced atomically as iterations complete. It reports the state of the RUN and refuses to report a finding: nothing in it is a result. Per-mode shares are reported for every mode individually, never as an aggregate row.",
+  "type": "object",
+  "required": ["written_at", "name", "state", "mode_share_last_iteration", "pace"],
+  "properties": {
+    "written_at": {"type": "string"},
+    "name": {"type": "string"},
+    "state": {"enum": ["starting", "running", "stalled", "finished", "failed"]},
+    "stalled": {"type": "boolean", "description": "true when matsim.log has gone untouched longer than the declared RUN.monitor.stall_s"},
+    "scenario": {"type": ["string", "null"]},
+    "day": {"type": ["string", "null"]},
+    "fraction": {"type": ["number", "null"]},
+    "seed": {"type": ["integer", "null"]},
+    "iteration": {"type": ["integer", "null"]},
+    "target": {"type": ["integer", "null"]},
+    "remaining": {"type": ["integer", "null"]},
+    "eta_s": {"type": ["number", "null"]},
+    "elapsed_s": {"type": ["number", "null"]},
+    "innovation_off_at": {"type": ["integer", "null"]},
+    "log_age_s": {"type": ["number", "null"]},
+    "mode_share_last_iteration": {
+      "type": "object",
+      "description": "The newest modestats.csv row: one key per mode, every mode individually. Shares are MATSim's own per-iteration selected-plan fractions - neither chosen modes at convergence nor completed trips, so never a result (DECISIONS.md 9.12).",
+      "additionalProperties": {"type": ["number", "null"]}
+    },
+    "relaxation": {
+      "type": ["object", "null"],
+      "description": "summarise_run.relaxation's verdict block - the single implementation, so the digest, the live view and the finished summary cannot disagree. Carries the drift trajectory against the declared RUN.relaxation.drift_tolerance_pp."
+    },
+    "pace": {
+      "type": "object",
+      "description": "s/iteration against the declared RUN.monitor.pace_band_s. solo_in_band mechanises the conditional-replication rule (DECISIONS.md 9.72): arm B launches only if arm A's solo iterations 2-5 pace inside the closed family's band.",
+      "required": ["median_s", "last_s", "band_s"],
+      "properties": {
+        "median_s": {"type": ["number", "null"]},
+        "last_s": {"type": ["number", "null"]},
+        "band_s": {"type": ["array", "null"], "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "median_in_band": {"type": ["boolean", "null"]},
+        "last_in_band": {"type": ["boolean", "null"]},
+        "solo_iterations_s": {"type": "object", "additionalProperties": {"type": ["number", "null"]}},
+        "solo_in_band": {"type": ["boolean", "null"]}
+      }
+    },
+    "warm_started_from": {"type": ["object", "null"]},
+    "rc": {"type": ["integer", "null"]},
+    "write_failures": {"type": "object", "description": "present when earlier digest writes failed; the observer surfaces its own failures rather than raising into the run"}
+  },
+  "additionalProperties": true
+}

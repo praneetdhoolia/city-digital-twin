@@ -537,6 +537,53 @@
       ],
       "description": "How often the live view re-reads status WHILE THE MOBSIM IS SWEEPING. The mobsim runs a 30 h simulated day in about 15 s of wall clock, so the shipped RUN.monitor.poll_s of 3 s would sample the whole day five times and the peak would build and dissipate between two reads. 0.5 s matches the rate at which the run publishes windows at RUN.telemetry.live_interval_s = 3600 simulated seconds. Between mobsims the page falls back to RUN.monitor.poll_s, because nothing it shows changes during replanning and scoring."
     },
+    "RUN.monitor.progress_interval_s": {
+      "value": 30,
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/progress_digest.py"
+      ],
+      "description": "How often the machine-readable _progress.json digest is refreshed (issue #76). An OBSERVER cadence like RUN.monitor.poll_s: the digest is written by a harness daemon thread that reads the run directory and is structurally unable to touch the mobsim (the telemetry isolation rule, DECISIONS.md 9.36), so this affects how stale the digest can be and nothing else. 30 s sits under the slowest measured iteration (217-253 s at 25% on the all-physical model), so no iteration completes unseen."
+    },
+    "RUN.monitor.pace_band_s": {
+      "value": [
+        217,
+        253
+      ],
+      "units": "seconds_per_iteration",
+      "source": "measured",
+      "held_fixed": {
+        "rule": "A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechanises the conditional-replication rule - arm B launches only if arm A's solo iterations 2-5 land inside this band. Changing it changes what the digest FLAGS, never what the model does; it is re-measured per comparability family rather than swept.",
+        "decisions_ref": "9.72, 9.76",
+        "departure_requires": "a new family's measured pace, recorded in DECISIONS.md"
+      },
+      "status": "active",
+      "decisions_ref": "9.72, 9.76",
+      "consumers": [
+        "src/analyse/progress_digest.py"
+      ],
+      "description": "The measured s/iteration band a healthy 25% x 1000 WEEKDAY arm paces inside on this machine (median 234 s through iteration 135 on the arm itself; 217-253 s across the closed family's solo iterations 2-5, DECISIONS.md 9.72). _progress.json reports median/last/solo-iteration pace against it, so a slow launch is visible from one file instead of a log read. Measured on the 9.58-9.63 family; a new family re-measures it."
+    },
+    "RUN.monitor.solo_check_iterations": {
+      "value": [
+        2,
+        5
+      ],
+      "units": "iteration_range",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.72, 9.76",
+      "consumers": [
+        "src/analyse/progress_digest.py"
+      ],
+      "description": "Which solo iterations the conditional-replication rule reads (DECISIONS.md 9.72: arm B launches only if arm A's SOLO ITERATIONS 2-5 pace inside RUN.monitor.pace_band_s). Iterations 0-1 warm caches and are excluded by the rule itself; the digest evaluates exactly this window."
+    },
     "RUN.scoring.brain_exp_beta": {
       "value": 1.0,
       "units": "logit_scale",
@@ -719,6 +766,22 @@
       "decisions_ref": "9.29, 15",
       "matsim_param": "travelTimeCalculator.analyzedModes",
       "description": "Which modes contribute observed link travel times. Only car is physically simulated (RUN.qsim.main_mode), so only car can contribute one. See RUN.travel_time.separate_modes: the two are one decision in two parameters."
+    },
+    "RUN.travel_time.bin_size_s": {
+      "value": 900,
+      "units": "seconds",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          60,
+          900
+        ],
+        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Declared now at the default so the binding is explicit and inert; the value moves only at the batched family boundary (9.76)."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "travelTimeCalculator.travelTimeBinSize",
+      "description": "The travel-time calculator's aggregation bin. At the shipped 900 s (MATSim's default, now declared instead of implicit) behaviour is unchanged; a time-varying network event shorter than a bin is invisible to the router, which is why the crossings activation (#68) lowers it."
     },
     "RUN.telemetry.live_interval_s": {
       "value": 3600,

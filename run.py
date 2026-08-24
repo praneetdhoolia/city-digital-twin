@@ -125,6 +125,17 @@ def main():
                          'runner names every run directory itself '
                          '(<launch>_<iterations>it_<pct>pct); a forced re-run gets '
                          'a fresh directory, nothing is overwritten')
+    ap.add_argument('--warm-start', metavar='DEAD_RUN_DIR',
+                    help='continue a crashed run from its newest written plans '
+                         'checkpoint. Starts a NEW runner-named run; the link is '
+                         'recorded as warm_started_from (issue #75, DECISIONS.md '
+                         '9.76 states the validity caveat)')
+    ap.add_argument('--detach', action='store_true',
+                    help='launch the run under the Windows Task Scheduler so its '
+                         'lifetime is independent of this shell (issue #70: '
+                         'session-spawned runs died with their launching '
+                         'context). Prints the run poll command and returns '
+                         'immediately')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, checked against the declared sweep')
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
@@ -148,6 +159,9 @@ def main():
         defaulted = True
         print(DEFAULT_BANNER)
 
+    if a.detach:
+        return _detach()
+
     overrides = registry.parse_set(a.config_set)
     for flag, key in (('fraction', 'RUN.sample.fraction'),
                       ('iterations', 'RUN.controler.last_iteration'),
@@ -157,6 +171,11 @@ def main():
         value = getattr(a, flag)
         if value is not None:
             overrides[key] = value
+
+    warm = None
+    if a.warm_start:
+        warm = run_matsim.resolve_warm_start(a.warm_start)
+        overrides['RUN.controler.first_iteration'] = warm['iteration']
 
     cfg = run_matsim.resolve(a.scenario, a.day, run_config, overrides)
 
@@ -177,7 +196,7 @@ def main():
 
     doc = run_matsim.run(a.scenario, a.day, cfg,
                          dict(run_matsim.parse_override(s) for s in a.set),
-                         a.force)
+                         a.force, warm=warm)
     if doc.get('rc') != 0:
         return 1
 
@@ -206,6 +225,57 @@ def _extract(run_dir):
     subprocess.check_call([sys.executable,
                            os.path.join(HERE, 'src', 'analyse', 'extract_metrics.py'),
                            '--run', run_dir])
+
+
+def _detach():
+    """Launch this same invocation under the Task Scheduler and return (#70).
+
+    Two session-spawned launches of the 4.6.9 arm died silently within minutes
+    of launch, both times taking the whole process tree with them and leaving
+    no error artefact (DECISIONS.md 9.72). The suspected mechanism is the
+    launching context reaping its children when it ends. A Task Scheduler
+    one-shot job runs under the user's account in a process tree the scheduler
+    owns, so the run's lifetime is provably independent of this shell.
+
+    A detached launch is REGISTERED here and VERIFIED only by the run itself:
+    per issue #70, the launch counts as working only once `matsim.log` has
+    progressed past `PersonPrepareForSim` into iterations with this launching
+    context gone. This function prints exactly what to watch.
+    """
+    import subprocess
+    import time
+    if os.name != 'nt':
+        raise SystemExit('--detach uses the Windows Task Scheduler; on this '
+                         'platform use nohup/setsid instead.')
+    stamp = time.strftime('%Y%m%dT%H%M%S')
+    task = 'citysim_run_%s' % stamp
+    launch_dir = os.path.join(HERE, 'results', '_launch')
+    os.makedirs(launch_dir, exist_ok=True)
+    log = os.path.join(launch_dir, '%s.log' % task)
+    wrapper = os.path.join(launch_dir, '%s.cmd' % task)
+
+    args = [x for x in sys.argv[1:] if x != '--detach']
+    quoted = ' '.join('"%s"' % x if (' ' in x or not x) else x for x in args)
+    with open(wrapper, 'w', encoding='ascii', newline='\r\n') as f:
+        f.write('@echo off\r\n')
+        f.write('cd /d "%s"\r\n' % HERE)
+        f.write('"%s" run.py %s > "%s" 2>&1\r\n' % (sys.executable, quoted, log))
+        # the task deletes itself once the run ends, so a finished launch
+        # leaves no scheduled-task residue behind
+        f.write('schtasks /delete /tn %s /f >nul 2>&1\r\n' % task)
+
+    # /sc once needs a start time; it is a fallback only - /run fires it now.
+    st = time.strftime('%H:%M', time.localtime(time.time() + 120))
+    subprocess.check_call(['schtasks', '/create', '/tn', task,
+                           '/tr', '"%s"' % wrapper, '/sc', 'once', '/st', st,
+                           '/f'])
+    subprocess.check_call(['schtasks', '/run', '/tn', task])
+    print('\ndetached launch registered and started as scheduled task %s' % task)
+    print('launcher log: %s' % log)
+    print('the run directory will appear under results/ named by the runner.')
+    print('VERIFY per issue #70: matsim.log must progress past '
+          'PersonPrepareForSim into iterations after this shell is closed.')
+    return 0
 
 
 if __name__ == '__main__':

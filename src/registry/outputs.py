@@ -33,10 +33,12 @@ KINDS = {
     'config': 'config_snapshot.schema.json',
     'summary': 'summary.schema.json',
     'meta': 'meta.schema.json',
+    'progress': 'progress.schema.json',
 }
 FILENAMES = {'_run.json': 'run', '_metrics.json': 'metrics',
              '_fit.json': 'fit', '_config.json': 'config',
-             '_summary.json': 'summary', '_meta.json': 'meta'}
+             '_summary.json': 'summary', '_meta.json': 'meta',
+             '_progress.json': 'progress'}
 
 
 class OutputError(Exception):

@@ -60,6 +60,7 @@ CLASSES = os.path.join(REPO, '.tools', 'classes')
 # src/java/citysim/). The pinned jar is unchanged - this ADDS classes beside it.
 MAIN = 'citysim.CitysimControler'
 JAVA_SRC = os.path.join(REPO, 'src', 'java')
+JAVA_SIGNALS_SRC = os.path.join(REPO, 'src', 'java_signals')
 
 
 def controler_sha256():
@@ -77,10 +78,16 @@ def controler_sha256():
     committed and reviewable.
     """
     h = hashlib.sha256()
-    for p in sorted(glob.glob(os.path.join(JAVA_SRC, '*', '*.java'))):
-        h.update(os.path.basename(p).encode('utf-8'))
-        with open(p, 'rb') as f:
-            h.update(f.read())
+    # src/java_signals/ (the signals run stack, issue #73) is hashed alongside
+    # src/java/: a change to either changes what a signal-enabled run executes,
+    # and hashing both unconditionally is conservative - a resume refused on a
+    # source change that could not have mattered costs a re-run, a resume
+    # granted on one that did produces an untraceable result.
+    for tree in (JAVA_SRC, JAVA_SIGNALS_SRC):
+        for p in sorted(glob.glob(os.path.join(tree, '*', '*.java'))):
+            h.update(os.path.basename(p).encode('utf-8'))
+            with open(p, 'rb') as f:
+                h.update(f.read())
     return h.hexdigest()
 
 
@@ -110,7 +117,84 @@ def set_mode_param(text, mode, name, value):
     return new
 
 
-def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg):
+def resolve_warm_start(source):
+    """The newest written plans checkpoint of a dead run, for `--warm-start`.
+
+    A crashed 1000-iteration arm used to cost the whole arm: plans are written
+    every `RUN.controler.write_plans_interval` iterations but the harness never
+    fed them back (issue #75). This finds the newest `output/ITERS/it.N/
+    N.plans.xml.gz` in the dead run directory and returns what the caller needs
+    to start a NEW runner-named run from it. `output/output_plans.xml.gz` is
+    deliberately not used: it is only written at a clean shutdown, so a run
+    that has one did not crash and needs no warm start.
+
+    THE CAVEAT IS STRUCTURAL, NOT FIXABLE HERE: a warm-started run is not
+    bit-identical to an uninterrupted one - the RNG stream and the travel-time
+    memory reset at the restart even though the plans carry over. Whether a
+    warm-completed arm counts as a valid arm or a diagnostic is a project
+    decision (DECISIONS.md 9.76); the provenance link written into `_meta.json`
+    and `_run.json` (`warm_started_from`) is what makes that ruling possible
+    after the fact.
+    """
+    source = os.path.abspath(source)
+    meta_path = os.path.join(source, META)
+    if not os.path.exists(meta_path):
+        raise SystemExit('%s carries no %s - not a run directory' % (source, META))
+    meta = json.load(open(meta_path, encoding='utf-8'))
+    if os.path.exists(os.path.join(source, '_run.json')):
+        raise SystemExit(
+            '%s completed (its _run.json exists). Warm restart is crash '
+            'recovery; re-running a completed run is --force.' % source)
+    candidates = []
+    for d in glob.glob(os.path.join(source, 'output', 'ITERS', 'it.*')):
+        try:
+            n = int(os.path.basename(d).split('.', 1)[1])
+        except (IndexError, ValueError):
+            continue
+        p = os.path.join(d, '%d.plans.xml.gz' % n)
+        if os.path.exists(p):
+            candidates.append((n, p))
+    if not candidates:
+        raise SystemExit(
+            '%s holds no written plans checkpoint (output/ITERS/it.N/'
+            'N.plans.xml.gz). It died before the first plans write, so a cold '
+            'start loses nothing.' % source)
+    n, plans = max(candidates)
+    return dict(run=os.path.basename(source), iteration=n, plans=plans,
+                meta=meta)
+
+
+def check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
+                             overrides):
+    """Refuse a warm start whose parent run is a different experiment.
+
+    The checkpoint plans are already sampled at the parent's fraction and
+    already carry the parent's demand, so every identity parameter must match:
+    scenario, day, fraction, seed, and threads (the mobsim partitions by thread
+    count - DECISIONS.md 9.56/9.59 make threads run identity, not a knob). Raw
+    `--set` overrides must match too, or the resumed run continues a different
+    model than the one that wrote the plans.
+    """
+    m = warm['meta']
+    for key, ours in (('scenario', scenario), ('day', day),
+                      ('fraction', fraction), ('seed', seed),
+                      ('threads', threads)):
+        theirs = m.get(key)
+        if theirs is not None and theirs != ours:
+            raise SystemExit(
+                'warm start refused: %s ran %s=%r, this invocation resolves '
+                '%r. A checkpoint is only a checkpoint of its own '
+                'parameters.' % (warm['run'], key, theirs, ours))
+    if (m.get('overrides') or {}) != (overrides or {}):
+        raise SystemExit(
+            'warm start refused: %s ran with raw overrides %r, this '
+            'invocation carries %r. The checkpoint plans embody the '
+            "parent's model; resume it with the same overrides."
+            % (warm['run'], m.get('overrides') or {}, overrides or {}))
+
+
+def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg,
+                 warm=None):
     """EMIT this run's config from this run's resolution, not patch the shipped one.
 
     It used to read the committed `config.xml` and rewrite six parameters into
@@ -132,7 +216,22 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
     plans_dst = os.path.join(run_dir, 'plans.xml.gz')
     veh_src = os.path.join(src_dir, 'transitVehicles.xml.gz')
     veh_dst = os.path.join(run_dir, 'transitVehicles.xml.gz')
-    if fraction >= 1.0:
+    if warm is not None:
+        # The checkpoint plans are ALREADY SAMPLED at the parent's fraction
+        # (check_warm_compatibility enforced the match), so the subsampler must
+        # not run again - a second pass would sample the sample. The file is
+        # copied into the run directory so the new run is self-contained even
+        # after the dead parent is cleaned up or pruned.
+        shutil.copyfile(warm['plans'], plans_dst)
+        n_in = n_out = n_hhless = None
+        if fraction >= 1.0 or not cfg.get('RUN.sample.transit_capacity_scaling'):
+            shutil.copyfile(veh_src, veh_dst)
+            scaled = []
+        else:
+            scaled = scale_transit_capacity(
+                veh_src, veh_dst, fraction,
+                cfg.get('RUN.sample.transit_capacity_floor'))
+    elif fraction >= 1.0:
         n_in = n_out = n_hhless = None
         plans_dst, veh_dst = plans_src, veh_src
         scaled = []
@@ -311,8 +410,28 @@ def start_live_view(run_dir, cfg):
         return None
 
 
+def start_progress_digest(run_dir, cfg):
+    """Start the `_progress.json` writer beside the live view (issue #76).
+
+    Gated on the same observer switch, running on the same terms: a daemon
+    thread that reads the run directory, writes one file atomically, and can
+    never stop a run. The import is deferred because the digest is optional
+    and the run is not.
+    """
+    if not cfg.get('RUN.monitor.enabled'):
+        return None
+    try:
+        import progress_digest                            # noqa: PLC0415
+        return progress_digest.serve(
+            run_dir, cfg.get('RUN.monitor.progress_interval_s'),
+            band=cfg.get('RUN.monitor.pace_band_s'), background=True)
+    except Exception as exc:                              # noqa: BLE001
+        print('progress digest unavailable: %s' % exc, flush=True)
+        return None
+
+
 def find_completed(scenario, day, fraction, iterations, seed, overrides,
-                   controler=None):
+                   controler=None, warm_key=None):
     """The completed run with these parameters, if one exists.
 
     Identity lives in the run record, not in the directory name: the name is a
@@ -341,6 +460,10 @@ def find_completed(scenario, day, fraction, iterations, seed, overrides,
                 and doc.get('iterations') == iterations
                 and doc.get('seed') == seed
                 and (doc.get('overrides') or {}) == (overrides or {})
+                # A warm-started run and a cold one with the same parameters
+                # are DIFFERENT results (the RNG stream and travel-time memory
+                # reset at the checkpoint), so neither may resume the other.
+                and (doc.get('warm_started_from') or None) == (warm_key or None)
                 and doc.get('rc') == 0):
             doc['name'] = os.path.basename(os.path.dirname(record))
             if controler is None or doc.get('controler_sha256') == controler:
@@ -446,7 +569,7 @@ def reconcile_stale():
                                         os.path.basename(dead)), flush=True)
 
 
-def run(scenario, day, cfg, overrides, force=False):
+def run(scenario, day, cfg, overrides, force=False, warm=None):
     src_dir = os.path.join(SETS, scenario, day)
     if not os.path.isdir(src_dir):
         raise SystemExit('no run inputs at %s' % src_dir)
@@ -462,9 +585,19 @@ def run(scenario, day, cfg, overrides, force=False):
     xmx = cfg.get('RUN.machine.xmx')
     seed = cfg.get('RUN.machine.seed')
 
+    warm_key = None
+    if warm is not None:
+        check_warm_compatibility(warm, scenario, day, fraction, seed, threads,
+                                 overrides)
+        warm_key = dict(run=warm['run'], iteration=warm['iteration'])
+        print('warm start: continuing %s from its iteration-%d plans '
+              '(firstIteration=%d). A warm-started run is NOT bit-identical '
+              'to an uninterrupted one - see DECISIONS.md 9.76.'
+              % (warm['run'], warm['iteration'], warm['iteration']), flush=True)
+
     controler = controler_sha256()
     prior = find_completed(scenario, day, fraction, iterations, seed, overrides,
-                           controler)
+                           controler, warm_key)
     if prior is not None and not force:
         if prior.get('controler_sha256') == controler:
             print('resume: %s already complete' % prior['name'], flush=True)
@@ -497,18 +630,21 @@ def run(scenario, day, cfg, overrides, force=False):
     # run can be observed - and considered or disregarded - without opening a
     # log. It is not the result gate: `_run.json`, written only on success,
     # stays that.
-    write_meta(run_dir, dict(
+    meta = dict(
         status='running', scenario=scenario, day=day, fraction=fraction,
         sample_pct=float('%g' % (fraction * 100)), iterations=iterations,
         seed=seed, threads=threads, xmx=xmx, overrides=overrides or {},
         controler_sha256=controler, started=_now(), ended=None, wall_s=None,
-        rc=None, pid=os.getpid()))
+        rc=None, pid=os.getpid())
+    if warm_key:
+        meta['warm_started_from'] = warm_key
+    write_meta(run_dir, meta)
 
     # `iterations`, `threads` and every other declared value reach the config
     # through `cfg`, not through this call: they are registry fields, and the
     # emitter reads them from the same resolution the snapshot records.
     config_path, sample = build_config(src_dir, run_dir, scenario, day, fraction,
-                                       seed, overrides, cfg)
+                                       seed, overrides, cfg, warm=warm)
     snapshot = cfg.write_snapshot(os.path.join(run_dir, '_config.json'))
     log = os.path.join(run_dir, 'matsim.log')
     classpath = os.pathsep.join([JAR, CLASSES])
@@ -524,6 +660,9 @@ def run(scenario, day, cfg, overrides, force=False):
     view_url = start_live_view(run_dir, cfg)
     print('live view: %s' % (view_url or 'disabled (RUN.monitor.enabled)'),
           flush=True)
+    # The machine-readable digest, refreshed beside the live view so an agent
+    # or a script reads ONE file (_progress.json) instead of matsim.log.
+    start_progress_digest(run_dir, cfg)
     t0 = time.time()
     try:
         with open(log, 'w', encoding='utf-8', errors='replace') as lf:
@@ -553,6 +692,8 @@ def run(scenario, day, cfg, overrides, force=False):
                config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
                controler_sha256=controler,
                **sample)
+    if warm_key:
+        doc['warm_started_from'] = warm_key
     # The run record must meet its declared contract before it is written; a
     # completed run without a config snapshot cannot state what produced it.
     try:
@@ -607,6 +748,13 @@ def main():
     ap.add_argument('--xmx', help='shorthand for --set RUN.machine.xmx=...')
     ap.add_argument('--seed', type=int, help='shorthand for --set RUN.machine.seed=...')
     ap.add_argument('--force', action='store_true')
+    ap.add_argument('--warm-start', metavar='DEAD_RUN_DIR',
+                    help='continue a crashed run from its newest written plans '
+                         'checkpoint (output/ITERS/it.N). Starts a NEW '
+                         'runner-named run with firstIteration aligned to the '
+                         'checkpoint; the provenance link is recorded as '
+                         'warm_started_from. NOT bit-identical to an '
+                         'uninterrupted run (DECISIONS.md 9.76)')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, e.g. RUN.sample.fraction=0.10. Checked '
                          'against the declared sweep; a held-fixed field is refused')
@@ -627,8 +775,18 @@ def main():
         if value is not None:
             overrides[key] = value
 
+    warm = None
+    if a.warm_start:
+        warm = resolve_warm_start(a.warm_start)
+        # firstIteration aligned to the checkpoint, so innovation-cutoff
+        # fractions and strategy schedules line up with the parent's timeline.
+        # Injected through the registry's own set layer, so it is validated,
+        # recorded in _config.json and reaches the config like any override.
+        overrides['RUN.controler.first_iteration'] = warm['iteration']
+
     cfg = resolve(a.scenario, a.day, a.run_config, overrides)
-    run(a.scenario, a.day, cfg, dict(parse_override(s) for s in a.set), a.force)
+    run(a.scenario, a.day, cfg, dict(parse_override(s) for s in a.set), a.force,
+        warm=warm)
 
 
 if __name__ == '__main__':

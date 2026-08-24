@@ -347,6 +347,140 @@
         "cities/newcastle/build/build_sumo_corridor.py"
       ]
     },
+    "A.crossings.freight_road_names": {
+      "value": [
+        "Saint James Road",
+        "Clyde Street"
+      ],
+      "units": "road_names",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "The IDENTITY of the freight-rail/road interaction set, not a tunable: DECISIONS.md 9.70 established from ARTC/TfNSW/PWCS/NCIG documents that the coal chain is grade-separated everywhere except these two boom-gated crossings (St James Road on the shared Main North at Adamstown; Clyde Street on the ARTC freight lines at Islington Junction). The corridor Stewart Avenue crossing is a T-aspect signal site and is EXCLUDED by rule (9.75).",
+        "decisions_ref": "9.70, 9.76",
+        "departure_requires": "documented evidence of another at-grade freight-road interaction inside the study area"
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The road names of the boom-gated level crossings where rail freight meets the modelled road network (issue #68). The builder locates each crossing from OSM railway=level_crossing nodes carrying a boom-barrier tag and matches links through the network's own osm:way:name - the names select, geometry decides, and no coordinate is typed anywhere. Values are the NETWORK's own osm:way:name spellings (\"Saint James Road\" - TfNSW documents abbreviate it \"St James Road\")."
+    },
+    "A.crossings.closures_per_day": {
+      "value": 30,
+      "units": "closures_per_day",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          10,
+          60
+        ],
+        "basis": "Closure logs are not published (9.70). The band spans a passenger-dominated day at Adamstown (2-4 trains/h over ~18 operating hours, most closures brief) up to a heavy mixed-traffic day; the ~110 daily coal movements do NOT cross these roads (grade-separated since 2006) and so do not bound this. Swept, never pinned."
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented."
+    },
+    "A.crossings.closure_duration_s": {
+      "value": 240,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          60,
+          600
+        ],
+        "basis": "TfNSW (Lower Hunter Freight Corridor Draft SEA, 2021): commuters experience delays \"up to ten minutes\", especially with freight in both directions - the sweep top. A single boom cycle for one passenger train bounds the bottom at about a minute."
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "How long one closure holds the crossing shut. ASSUMED and swept against the official \"up to ten minutes\" bound; the point value is a mid-band working value, never a claim."
+    },
+    "A.crossings.closure_window_h": {
+      "value": [
+        0.0,
+        24.0
+      ],
+      "units": "hours",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The day window closures are spread across. The freight network operates around the clock (ARTC 24/7 operations, 9.70), so the window is the whole day; narrowing it would assert a pattern no published log supports."
+    },
+    "A.crossings.closed_flow_capacity_veh_h": {
+      "value": 0.0,
+      "units": "vehicles_per_hour",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "Link flow capacity while the boom is down. Zero by definition of a closed gate - not a tunable."
+    },
+    "A.crossings.closed_freespeed_ms": {
+      "value": 0.1,
+      "units": "metres_per_second",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The freespeed FLOOR written during a closure. A numerical guard, not a model value: freespeed zero makes link travel time infinite and breaks router arithmetic, so the closure is expressed through zero flow capacity while freespeed stays epsilon-positive."
+    },
+    "A.crossings.link_match_radius_m": {
+      "value": 30.0,
+      "units": "metres",
+      "source": "assumed",
+      "held_fixed": {
+        "rule": "A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link distances realised are under 10 m, so no output varies across any reasonable value.",
+        "decisions_ref": "9.76",
+        "departure_requires": "a crossing whose matched distance approaches the radius"
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "How close a car link named by A.crossings.freight_road_names must pass to the crossing node cluster to be the crossing link."
+    },
+    "A.crossings.node_cluster_m": {
+      "value": 50.0,
+      "units": "metres",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "OSM maps a double-track crossing as one node per track a few metres apart; nodes closer than this are one physical crossing."
+    },
+    "A.crossings.corridor_exclusion_m": {
+      "value": 500.0,
+      "units": "metres",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.75, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The Stewart Avenue guard (9.75): the builder REFUSES to emit a closure within this distance of the tram alignment, because the corridor light-rail crossing is a T-aspect signal site owned by the signal build (#73) and must never be double-treated as a boom-gate closure. The nearest legitimate crossing sits kilometres away, so the value only needs to separate the corridor from the suburbs."
+    },
     "A.lightrail.dwell_charging_s": {
       "value": null,
       "units": "seconds_per_intermediate_stop",
