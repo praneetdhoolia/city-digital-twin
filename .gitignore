@@ -10,6 +10,8 @@ cities/*/data/raw/**
 !cities/*/data/raw/provenance_*.json
 !cities/*/data/raw/osm_attic/
 !cities/*/data/raw/osm_attic/*.json
+!cities/*/data/raw/planning_tia/
+!cities/*/data/raw/planning_tia/provenance_*.json
 !cities/*/data/raw/_s3_historical_gtfs_listing.txt
 
 # --- raw Overpass extracts (~156 MB) ---
@@ -44,12 +46,14 @@ cities/*/data/processed/network/*.jsonl
 cities/*/data/processed/zones/*.gpkg
 
 # --- P2 network build outputs (regenerate with build_matsim_network /
-#     build_sumo_corridor). The build reports ARE committed: they carry the
+#     build_level_crossings). The build reports ARE committed: they carry the
 #     mapping quality, the variant deltas and the signal pairing. ---
 cities/*/networks/matsim/**
 !cities/*/networks/matsim/_matsim_build_report.json
+!cities/*/networks/matsim/crossings/
+cities/*/networks/matsim/crossings/**
+!cities/*/networks/matsim/crossings/_crossings_report.json
 cities/*/networks/sumo/**
-!cities/*/networks/sumo/_sumo_build_report.json
 
 # --- TfNSW Speed Zones raw download (62 MB zip + a 436 MB dbf, regenerate with
 #     the city's extract_speed_zones.py). The clipped study-area layer IS
@@ -64,7 +68,7 @@ cities/*/data/raw/speedzones/*.zip
 cities/*/networks/osm_pre_issue32/
 cities/*/networks/osm/_tiles/
 
-# --- pinned toolchain (JDK, pt2matsim, SUMO), ~1.4 GiB, fetched by
+# --- pinned toolchain (JDK, pt2matsim, Maven, signals run stack), fetched by
 #     src/setup/bootstrap_toolchain.py and pinned by sha256 in toolchain.json ---
 .tools/
 

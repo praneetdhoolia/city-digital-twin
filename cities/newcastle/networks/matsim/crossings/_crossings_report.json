@@ -1,0 +1,166 @@
+{
+  "purpose": "freight level-crossing closures (issue #68, DECISIONS.md 9.70/9.76)",
+  "derivation": "OSM railway=level_crossing nodes with a boom-barrier tag, clustered, matched to car links by the network's own osm:way:name against the declared road names. No typed coordinate.",
+  "sites": [
+    {
+      "road_name": "Saint James Road",
+      "x": 380390.4662890298,
+      "y": 6355375.462431805,
+      "osm_nodes": [
+        "1843667520",
+        "355012892"
+      ],
+      "barriers": [
+        "double_half"
+      ],
+      "nearest_corridor_intersection": "NLR_SIG_01",
+      "dist_to_corridor_m": 3797.6,
+      "links": [
+        {
+          "id": "134833",
+          "way": "170545514",
+          "dist_m": 1.6,
+          "base_capacity_veh_h": 1400.0,
+          "base_freespeed_ms": 16.666666666666668
+        },
+        {
+          "id": "134834",
+          "way": "170545514",
+          "dist_m": 1.6,
+          "base_capacity_veh_h": 1400.0,
+          "base_freespeed_ms": 16.666666666666668
+        },
+        {
+          "id": "134835",
+          "way": "170545514",
+          "dist_m": 0.0,
+          "base_capacity_veh_h": 1400.0,
+          "base_freespeed_ms": 16.666666666666668
+        },
+        {
+          "id": "134836",
+          "way": "170545514",
+          "dist_m": 0.0,
+          "base_capacity_veh_h": 1400.0,
+          "base_freespeed_ms": 16.666666666666668
+        },
+        {
+          "id": "134837",
+          "way": "170545514",
+          "dist_m": 1.6,
+          "base_capacity_veh_h": 1400.0,
+          "base_freespeed_ms": 16.666666666666668
+        },
+        {
+          "id": "134838",
+          "way": "170545514",
+          "dist_m": 1.6,
+          "base_capacity_veh_h": 1400.0,
+          "base_freespeed_ms": 16.666666666666668
+        }
+      ]
+    },
+    {
+      "road_name": "Clyde Street",
+      "x": 382265.05015784915,
+      "y": 6357823.439734364,
+      "osm_nodes": [
+        "1843582673",
+        "2502264548",
+        "2502264561",
+        "287012172"
+      ],
+      "barriers": [
+        "half"
+      ],
+      "nearest_corridor_intersection": "NLR_SIG_01",
+      "dist_to_corridor_m": 2282.5,
+      "links": [
+        {
+          "id": "9593",
+          "way": "1319590810",
+          "dist_m": 5.2,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9594",
+          "way": "1319590810",
+          "dist_m": 5.2,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9595",
+          "way": "1319590810",
+          "dist_m": 2.1,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9596",
+          "way": "1319590810",
+          "dist_m": 2.1,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9597",
+          "way": "1319590811",
+          "dist_m": 0.1,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9598",
+          "way": "1319590811",
+          "dist_m": 0.1,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9599",
+          "way": "1319590811",
+          "dist_m": 1.7,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9600",
+          "way": "1319590811",
+          "dist_m": 1.7,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9601",
+          "way": "1319590811",
+          "dist_m": 5.5,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        },
+        {
+          "id": "9602",
+          "way": "1319590811",
+          "dist_m": 5.5,
+          "base_capacity_veh_h": 1200.0,
+          "base_freespeed_ms": 13.88888888888889
+        }
+      ]
+    }
+  ],
+  "parameters": {
+    "closures_per_day": 30,
+    "closure_duration_s": 240,
+    "closure_window_h": [
+      0.0,
+      24.0
+    ],
+    "closed_flow_capacity_veh_h": 0.0,
+    "closed_freespeed_ms": 0.1,
+    "timing_source": "assumed (closure logs unpublished; swept, 9.70)",
+    "spacing": "uniform per site across the window, sites phase-offset from each other - any richer pattern would be invented"
+  },
+  "stewart_avenue_rule": "asserted: every emitted site is >500 m from every A2 corridor intersection (9.75)",
+  "activation": "INERT until the batched family boundary: nothing consumes this file until network.timeVariantNetwork and the change events path are wired at activation, with RUN.travel_time.bin_size_s <= 300 s so the router can see a closure (issue #68)."
+}

@@ -68,6 +68,11 @@
         "github.com",
         "api.github.com",
         "repo.matsim.org",
+        "repo1.maven.org",
+        "repo.osgeo.org",
+        "apps.planningportal.nsw.gov.au",
+        "www.planningportal.nsw.gov.au",
+        "planningportal.nsw.gov.au",
         "pypi.org",
         "files.pythonhosted.org"
       ]

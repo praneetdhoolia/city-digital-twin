@@ -24,7 +24,8 @@ survives this research intact, with one material addition: the data is
   (found 25 Aug 2026): development traffic impact assessments exhibited on
   the NSW Planning Portal attach TfNSW-supplied **TCS plans and SCATS
   Interpreted History** as appendices. A verified Newcastle instance
-  (PPSHCC-137, 121 Hunter Street) carries full 24 h × 15-min operated
+  (PPSHCC-137, 643 Hunter Street, Newcastle West — first recorded here as "121
+Hunter Street"; corrected against the archived document) carries full 24 h × 15-min operated
   statistics for TCS 923 and TCS 1138 — see
   [08-operated-signal-data-discovery.md](08-operated-signal-data-discovery.md).
   Per-intersection and opportunistic, but free and citable.

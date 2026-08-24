@@ -37,7 +37,14 @@ The channel is per-intersection and opportunistic — it yields data only where
 someone has recently sought development consent nearby — but it is free,
 public, and citable.
 
-## 2. The specific find: PPSHCC-137 (121 Hunter Street, Newcastle)
+## 2. The specific find: PPSHCC-137 (643 Hunter Street, Newcastle West)
+
+*(Correction, 25 Aug 2026, made when the document was archived: this file
+first recorded the site as "121 Hunter Street". The document's own title page
+says **643 Hunter Street, Newcastle West** — consistent with its two study
+intersections both being at Steel St, at the corridor's western end. Archived
+copy: `data/raw/planning_tia/PPSHCC-137_643_hunter_st_tia.pdf`, sha256
+`e351b84f…`, with `provenance_planning_tia.json`.)*
 
 **[documented]** Traffic impact assessment prepared for Next Level Seven Pty
 Ltd, dated 1 September 2022 (report ref 22106-R01V03-220901), exhibited as
