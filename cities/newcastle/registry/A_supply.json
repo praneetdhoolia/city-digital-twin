@@ -354,7 +354,7 @@
       ]
     },
     "A.signals.representation": {
-      "value": "implicit_delay",
+      "value": "explicit_signals",
       "units": "enum",
       "source": "assumed",
       "sweep": {
@@ -362,13 +362,14 @@
           "implicit_delay",
           "explicit_signals"
         ],
-        "basis": "ONE REPRESENTATION PER EFFECT (the signalling dossier 04 7.5, DECISIONS 9.75/9.76): either the implicit per-intersection delay shapes the schedule and metered link capacities stand, OR explicit signals meter saturation-flow approaches and the implicit delay comes OUT of the same movements. Never both. The batch boundary flips this to explicit_signals; until then everything signal-explicit stays inert."
+        "basis": "ONE REPRESENTATION PER EFFECT (the signalling dossier 04 7.5, DECISIONS 9.75/9.76): either the implicit per-intersection delay shapes the schedule and metered link capacities stand, OR explicit signals meter saturation-flow approaches and the implicit delay comes OUT of the same movements. Never both. Flipped to explicit_signals at the 9.77 activation boundary; implicit_delay remains the sweep's other arm and reproduces the pre-boundary family's inputs."
       },
       "status": "active",
-      "decisions_ref": "9.75, 9.76",
+      "decisions_ref": "9.75, 9.76, 9.77",
       "consumers": [
         "cities/newcastle/build/build_matsim_signals.py",
         "src/run/run_matsim.py",
+        "src/build/build_matsim_run_inputs.py",
         "cities/newcastle/build/build_scenario_schedules.py"
       ],
       "description": "Which representation carries the corridor signal effect. implicit_delay: A.signals.delay_per_intersection_s inside scheduled run times and metered link capacities (the shipped state). explicit_signals: the signals contrib runs the generated fixed-time plans, approaches are re-capacitated to saturation flow, the schedule transform removes the implicit delay from the same movements, and the harness runs the signals stack. THE SWITCH IS THE DOUBLE-COUNT GUARD: code paths check it rather than trusting discipline."
@@ -408,6 +409,20 @@
       "decisions_ref": "9.76",
       "matsim_param": "tramPriority.mode",
       "description": "The tram-priority controller's regime. Which NLR mechanism TfNSW actually configures is not public (dossier 02 2 [gap]), so the regime is a swept modelling choice, never a claim about the operated system. off = fixed time everywhere (the S2 base)."
+    },
+    "A.signals.tsp.priority_group": {
+      "value": "tram",
+      "units": "enum",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.77",
+      "matsim_param": "tramPriority.priorityGroupId",
+      "description": "Which signal group the priority controller serves and watches for detections - the stage that carries the priority-detected transit vehicle. 'tram' for the light-rail variants (trams run on their own intervention-mode links with their own T-aspect group); 'corridor' for the BRT variant, whose buses run in the corridor car lanes so the priority stage IS the corridor stage and detection fires for every scheduled transit vehicle entering a corridor approach (link-level bus priority - the BRT trunk and any local bus on the same approach, which is what a link-level detector would see). Structural per scenario, set by the scenario overlay; not a tunable.",
+      "consumers": [
+        "src/java/citysim/TramPriorityConfigGroup.java",
+        "src/java_signals/citysim/TramPriorityController.java"
+      ]
     },
     "A.signals.tsp.extension_window_s": {
       "value": 12.0,
@@ -488,6 +503,25 @@
       "decisions_ref": "9.76",
       "matsim_param": "tramPriority.latenessThresholdS",
       "description": "Schedule delay beyond which conditional priority grants; read only when A.signals.tsp.mode = conditional. Delay comes from the vehicle's own VehicleArrivesAtFacility events, not from an assumed speed."
+    },
+    "A.crossings.representation": {
+      "value": "change_events",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "change_events"
+        ],
+        "basis": "Whether the freight-rail level-crossing closures (9.70, issue #68) reach the model at all. absent: the crossings are not represented (the pre-9.77 state - closures were a stated, unmodelled limitation). change_events: the derived crossing_change_events.xml enters every run input as a time-variant network, closing the crossing links for the swept closure pattern. The closure PATTERN stays swept on its own fields (closures_per_day, closure_duration_s); this switch is the representation gate, mirroring A.signals.representation's one-gate discipline."
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76, 9.77",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/run/run_matsim.py"
+      ],
+      "description": "The representation gate for the two boom-gated freight level crossings. Flipped to change_events at the 9.77 activation boundary: run inputs then carry network.timeVariantNetwork=true and the change-events file, and RUN.travel_time.bin_size_s must be <= the shortest closure the router should see (declared 300 at the same boundary). Under absent the emission is byte-identical to the pre-#68 state."
     },
     "A.crossings.freight_road_names": {
       "value": [

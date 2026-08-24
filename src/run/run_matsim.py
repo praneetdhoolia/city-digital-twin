@@ -280,6 +280,18 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
                     'missing. Run cities/<city>/build/build_matsim_signals.py '
                     'first.' % p)
             signal_paths[key] = fwd(p)
+    # Level crossings (#68): the closures enter this run's re-emitted config
+    # only under the declared representation gate - same rule as the shipped
+    # assembly, checked here in 0.1 s rather than in the JVM.
+    if cfg.get('A.crossings.representation') == 'change_events':
+        p = city.path('networks', 'matsim', 'crossings',
+                      'crossing_change_events.xml')
+        if not os.path.exists(p):
+            raise SystemExit(
+                'A.crossings.representation is change_events but %s is '
+                'missing. Run cities/<city>/build/build_level_crossings.py '
+                'first.' % p)
+        signal_paths['change_events'] = fwd(p)
 
     # Both capacity factors are identities on the sample fraction, and NEITHER
     # is a choice. Checked here, in 0.1 s, rather than in the JVM a second

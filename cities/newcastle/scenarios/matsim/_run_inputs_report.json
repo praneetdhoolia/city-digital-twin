@@ -17,6 +17,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1275,
@@ -148,6 +149,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -276,6 +278,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -425,6 +428,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -574,6 +578,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -726,6 +731,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -875,6 +881,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -1005,6 +1012,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1271,
@@ -1156,6 +1164,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1271,
@@ -1308,6 +1317,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1268,
@@ -1518,6 +1528,10 @@
       "non_network_walk": {
         "constant": 0.0,
         "marginalUtilityOfTraveling": -11.6392
+      },
+      "taxi": {
+        "constant": -1.4134,
+        "marginalUtilityOfTraveling": -10.9608
       }
     },
     "not_representable": [

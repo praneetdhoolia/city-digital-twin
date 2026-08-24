@@ -48,9 +48,13 @@ import org.matsim.vehicles.Vehicle;
  * given back in cycle N+1 out of the tram stage's slack, so the plan's
  * long-run splits are conserved.
  *
- * <p><b>The tram group.</b> The stage that carries the tram is the signal
- * group whose id string equals {@code "tram"}. A system without such a group
- * runs pure fixed time under this controller — identically to
+ * <p><b>The priority group.</b> The stage that carries the priority vehicle
+ * is the signal group whose id equals the declared
+ * {@code tramPriority.priorityGroupId} ({@code "tram"} for the light-rail
+ * variants; {@code "corridor"} for the BRT variant, whose buses run in the
+ * corridor car lanes and whose priority stage IS the corridor stage — issue
+ * #73). A system without such a group runs pure fixed time under this
+ * controller — identically to
  * {@code DefaultPlanbasedSignalSystemController}, whose delegation arithmetic
  * this class reimplements (cycle position {@code (t - offset) mod cycle},
  * onsets and droppings scheduled at the plan's seconds).
@@ -167,12 +171,17 @@ public final class TramPriorityController extends AbstractSignalController
         this.ledger.clear();
         this.budgetUsedS = 0;
 
-        // The tram stage and its approach links exist only if the modelled
-        // control declared a group literally named "tram"; without one this
-        // controller is pure fixed time and never registers for detection.
+        // The priority stage and its approach links exist only if the plan
+        // carries a group whose id equals the declared priorityGroupId
+        // ("tram" for the light-rail variants, "corridor" for the BRT variant
+        // whose buses run in the corridor car lanes - issue #73, S3
+        // remainder); without one this controller is pure fixed time and
+        // never registers for detection.
+        final String priorityGid = this.params.getPriorityGroupId().isEmpty()
+                ? TRAM_GROUP_ID : this.params.getPriorityGroupId();
         this.tramGroupId = null;
         for (final Id<SignalGroup> gid : this.planSeconds.keySet()) {
-            if (TRAM_GROUP_ID.equals(gid.toString())) {
+            if (priorityGid.equals(gid.toString())) {
                 this.tramGroupId = gid;
             }
         }

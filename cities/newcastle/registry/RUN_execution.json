@@ -292,13 +292,14 @@
         "ride",
         "pt",
         "bike",
-        "walk"
+        "walk",
+        "taxi"
       ],
       "units": "enum",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.6",
+      "decisions_ref": "9.6, 9.77",
       "matsim_param": "subtourModeChoice.modes",
       "description": "Modes subtour mode choice may switch between. IF RIDE IS OMITTED, MATSim defaults to car,pt,bike,walk and a ride subtour becomes an ABSORBING STATE - ride sat at 0.18311 in every iteration to five decimals, and 18.6% of legs were an input wearing the costume of a result."
     },
@@ -390,13 +391,14 @@
         "truck",
         "motorbike",
         "walk",
-        "bike"
+        "bike",
+        "taxi"
       ],
       "units": "enum",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.6",
+      "decisions_ref": "9.6, 9.77",
       "matsim_param": "routing.networkModes",
       "description": "Modes routed on the road graph. Ride must be here AND permitted on the links (143,891 of them): declaring it a network mode that no link permits gives 'checking 0 nodes and 0 links' and a throw in PrepareForSim."
     },
@@ -768,7 +770,7 @@
       "description": "Which modes contribute observed link travel times. Only car is physically simulated (RUN.qsim.main_mode), so only car can contribute one. See RUN.travel_time.separate_modes: the two are one decision in two parameters."
     },
     "RUN.travel_time.bin_size_s": {
-      "value": 900,
+      "value": 300,
       "units": "seconds",
       "source": "literature",
       "sweep": {
@@ -776,12 +778,12 @@
           60,
           900
         ],
-        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Declared now at the default so the binding is explicit and inert; the value moves only at the batched family boundary (9.76)."
+        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded."
       },
       "status": "active",
-      "decisions_ref": "9.76",
+      "decisions_ref": "9.76, 9.77",
       "matsim_param": "travelTimeCalculator.travelTimeBinSize",
-      "description": "The travel-time calculator's aggregation bin. At the shipped 900 s (MATSim's default, now declared instead of implicit) behaviour is unchanged; a time-varying network event shorter than a bin is invisible to the router, which is why the crossings activation (#68) lowers it."
+      "description": "The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s default to 300 s at the 9.77 activation boundary so the router can see a level-crossing closure (60-600 s swept) that is shorter than a bin. 300 s is the largest bin that resolves the sweep's central 240 s closure."
     },
     "RUN.telemetry.live_interval_s": {
       "value": 3600,

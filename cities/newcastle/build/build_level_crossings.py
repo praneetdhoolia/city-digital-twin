@@ -261,11 +261,14 @@ def main():
                               {'startTime': hhmmss(start)})
         for sl in site['links']:
             ET.SubElement(close, 'link', {'refId': sl['link']['id']})
-        ET.SubElement(close, 'freespeed',
-                      {'type': 'absolute', 'value': '%g' % CLOSED_FREESPEED})
+        # schema order is flowCapacity THEN freespeed (networkChangeEvents.xsd
+        # sequence) - MATSim's validating reader refuses the reverse, measured
+        # on the first activated probe (9.77)
         ET.SubElement(close, 'flowCapacity',
                       {'type': 'absolute',
                        'value': '%g' % (CLOSED_FLOW / 3600.0)})
+        ET.SubElement(close, 'freespeed',
+                      {'type': 'absolute', 'value': '%g' % CLOSED_FREESPEED})
         n_events += 1
         # restoration must return each link to ITS OWN recorded values; with
         # several links per event that needs one event per distinct value set,
@@ -274,12 +277,12 @@ def main():
             r = ET.SubElement(root, 'networkChangeEvent',
                               {'startTime': hhmmss(end)})
             ET.SubElement(r, 'link', {'refId': sl['link']['id']})
-            ET.SubElement(r, 'freespeed',
-                          {'type': 'absolute',
-                           'value': '%g' % sl['link']['freespeed']})
             ET.SubElement(r, 'flowCapacity',
                           {'type': 'absolute',
                            'value': '%g' % (sl['link']['capacity'] / 3600.0)})
+            ET.SubElement(r, 'freespeed',
+                          {'type': 'absolute',
+                           'value': '%g' % sl['link']['freespeed']})
             n_events += 1
 
     ET.indent(root)

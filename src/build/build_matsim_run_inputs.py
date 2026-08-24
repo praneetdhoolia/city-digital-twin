@@ -126,14 +126,22 @@ def day_of_route(route_id):
     return m.group(1) if m else None
 
 
-def split_schedule(src_dir, dst_dir, day, cfg):
+def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
     """Filter a mapped schedule to one day type. No re-mapping, ever.
+
+    `src_schedule` names an alternative DERIVED schedule to filter (the
+    signals/dwell transform of the same mapped build - never a re-map): under
+    `A.signals.representation == explicit_signals` the caller passes the
+    scenario's `transitSchedule_signals.xml.gz`, which carries the dwell
+    transform (#74) and the implicit-delay removal (#73) over the identical
+    route link sequences.
 
     Returns counts so the caller can assert that link sequences were copied
     rather than regenerated.
     """
     os.makedirs(dst_dir, exist_ok=True)
-    with gzip.open(os.path.join(src_dir, 'transitSchedule.xml.gz'), 'rb') as f:
+    src = src_schedule or os.path.join(src_dir, 'transitSchedule.xml.gz')
+    with gzip.open(src, 'rb') as f:
         tree = ET.parse(f)
     root = tree.getroot()
 
@@ -672,6 +680,84 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
     return dict(applied)
 
 
+def patch_signal_capacities(net_path, patch_csv):
+    """The re-capacitation half of the double-count rule (#73), applied to the
+    emitted run network.
+
+    Under `explicit_signals` every signalised approach link takes the declared
+    saturation flow x lanes from the generated patch
+    (`signals_capacity_patch.csv`, per scenario), replacing the metered
+    capacity that carried the intersection effect under `implicit_delay` - one
+    representation per effect, both halves together (DECISIONS.md 9.76).
+    Applied AFTER the E1 variant patch so a variant's lane arithmetic cannot
+    silently overwrite the saturation re-raise. A patch row whose link is not
+    in the network is refused: it means the patch was generated against a
+    different build than the one being assembled (3.5).
+    """
+    cap_of = {}
+    for r in csv.DictReader(open(patch_csv, encoding='utf-8')):
+        cap_of[r['link']] = float(r['capacity_saturation_veh_h'])
+    with gzip.open(net_path, 'rt', encoding='utf-8') as f:
+        xml = f.read()
+    patched = set()
+
+    def recap(m):
+        s = m.group(0)
+        head_end = s.index('>')
+        head = s[:head_end]
+        a = dict(ATTR_RE.findall(head))
+        cap = cap_of.get(a.get('id'))
+        if cap is None:
+            return s
+        a['capacity'] = '%.1f' % cap
+        patched.add(a['id'])
+        return ('<link ' + ' '.join('%s="%s"' % kv for kv in a.items())
+                + s[head_end:])
+
+    body = LINK_BLOCK_RE.sub(recap, xml)
+    missing = sorted(set(cap_of) - patched)
+    if missing:
+        raise SystemExit(
+            '%d signal capacity-patch link(s) are not in %s (first: %s). The '
+            'patch was generated against a different network build - '
+            're-run build_matsim_signals.py on this build (DECISIONS.md 3.5).'
+            % (len(missing), net_path, missing[:3]))
+    with gzip_writer(net_path) as f:
+        f.write(body)
+    return len(patched)
+
+
+def check_change_event_links(net_path, events_xml):
+    """Refuse a change-events file that names links this network lacks.
+
+    MATSim would only warn, and a warned-away closure looks exactly like an
+    open crossing. The crossings are derived on the BASE network; every
+    scenario's mapped network keeps road link ids, and this check is where
+    that assumption is enforced rather than assumed.
+    """
+    wanted = set()
+    for _, el in ET.iterparse(events_xml, events=('end',)):
+        if el.tag.endswith('link'):
+            wanted.add(el.get('refId'))
+        el.clear()
+    if not wanted:
+        raise SystemExit('%s names no links' % events_xml)
+    present = set()
+    with gzip.open(net_path, 'rb') as fh:
+        for _, el in ET.iterparse(fh, events=('end',)):
+            if el.tag == 'link':
+                if el.get('id') in wanted:
+                    present.add(el.get('id'))
+                el.clear()
+    missing = sorted(wanted - present)
+    if missing:
+        raise SystemExit(
+            '%d crossing change-event link(s) missing from %s (first: %s) - '
+            'the crossings were derived on a different network build.'
+            % (len(missing), net_path, missing[:3]))
+    return len(wanted)
+
+
 ZONES_SA1 = _city.path('data/processed/zones/zones_SA1.gpkg')
 
 
@@ -1015,6 +1101,30 @@ def config_runtime(cfg, scoring, day, paths):
             runtime[target] = (paths[key], 'path', note)
         runtime['signalsystems.useSignalsystems'] = (
             True, 'derived', 'A.signals.representation == explicit_signals')
+        # The contrib refuses fast capacity update at module-install time
+        # ("Fast flow capacity update does not support signals"). Written
+        # here so every signal config states it, rather than each run
+        # discovering it in the JVM (DECISIONS.md 9.76 activation checklist).
+        runtime['qsim.usingFastCapacityUpdate'] = (
+            False, 'derived',
+            'the signals contrib refuses fast capacity update; forced false '
+            'while A.signals.representation == explicit_signals')
+
+    # Level crossings (#68): the closures reach the router only as a
+    # time-variant network, and only when the declared representation gate
+    # says so - under `absent` the emission is byte-identical to pre-#68.
+    if cfg.get('A.crossings.representation') == 'change_events':
+        if 'change_events' not in paths:
+            raise SystemExit(
+                'A.crossings.representation is change_events but the caller '
+                'supplied no change_events path. Run the city\'s '
+                'build_level_crossings.py and pass its output.')
+        runtime['network.timeVariantNetwork'] = (
+            True, 'derived', 'A.crossings.representation == change_events')
+        runtime['network.inputChangeEventsFile'] = (
+            paths['change_events'], 'path',
+            'derived freight level-crossing closures '
+            '(build_level_crossings.py)')
     return runtime
 
 
@@ -1108,6 +1218,21 @@ def main(day_types=None, scenarios=None, set_overrides=None):
     excluded_of_mode = {mode: frozenset(base_cfg.get(key))
                         for mode, key in LAWFUL_COMPANIONS}
 
+    # The two representation gates (DECISIONS.md 9.77 activation boundary).
+    # Under the inert values every branch below is skipped and the assembly
+    # is byte-identical to the pre-boundary emission.
+    explicit_signals = (base_cfg.get('A.signals.representation')
+                        == 'explicit_signals')
+    crossings_on = (base_cfg.get('A.crossings.representation')
+                    == 'change_events')
+    change_events_xml = _city.path(
+        'networks/matsim/crossings/crossing_change_events.xml')
+    if crossings_on and not os.path.exists(change_events_xml):
+        raise SystemExit(
+            'A.crossings.representation is change_events but %s does not '
+            'exist. Run the city\'s build_level_crossings.py first.'
+            % change_events_xml)
+
     # Recorded so the HARNESS can recompute the C1 translation against its own
     # resolution without re-reading the HTS. Without this the derived scoring
     # would be frozen at build time, and a run overlay moving the transfer
@@ -1127,10 +1252,33 @@ def main(day_types=None, scenarios=None, set_overrides=None):
         touched = patch_network(os.path.join(sched_dir, 'network.xml.gz'),
                                 net_dst, pat, drop, excluded_of_mode,
                                 base_cfg.get('A.transit.walk_speed_ms'))
+        # Explicit signals (#73): the scenario's generated signal data model,
+        # the saturation-flow re-capacitation and the transformed schedule
+        # (dwell #74 + implicit-delay removal) all come from ONE derived set
+        # per scenario - build_matsim_signals.py against this build.
+        sig_dir = os.path.join(MATSIM, 'signals', sid)
+        sig_sched = None
+        recap_links = 0
+        if explicit_signals:
+            for name in ('signal_systems.xml', 'signal_groups.xml',
+                         'signal_control.xml', 'signals_capacity_patch.csv',
+                         'transitSchedule_signals.xml.gz'):
+                if not os.path.exists(os.path.join(sig_dir, name)):
+                    raise SystemExit(
+                        'A.signals.representation is explicit_signals but '
+                        '%s is missing for %s. Run the city\'s '
+                        'build_matsim_signals.py first.'
+                        % (os.path.join(sig_dir, name), sid))
+            recap_links = patch_signal_capacities(
+                net_dst, os.path.join(sig_dir, 'signals_capacity_patch.csv'))
+            sig_sched = os.path.join(sig_dir, 'transitSchedule_signals.xml.gz')
+        if crossings_on:
+            check_change_event_links(net_dst, change_events_xml)
         price_dst = os.path.join(OUT, sid, PARK_PRICE_FILE)
         parking = write_parking_prices(net_dst, price_dst)
         entry = dict(road_variant=ref, patch_rows=len(pat),
-                     links_touched=touched, parking=parking, days={})
+                     links_touched=touched, parking=parking,
+                     signal_capacity_links=recap_links, days={})
         for d in day_types:
             # RESOLVED PER SCENARIO AND DAY TYPE. The scenario and day overlays
             # are layers of the registry, so S2b's signal priority and Sunday's
@@ -1140,7 +1288,8 @@ def main(day_types=None, scenarios=None, set_overrides=None):
             check_scoring_order(cfg)
             scoring = scoring_from_c1(cfg, c1, purpose_share)
             dst = os.path.join(OUT, sid, d)
-            counts = split_schedule(sched_dir, dst, d, cfg)
+            counts = split_schedule(sched_dir, dst, d, cfg,
+                                    src_schedule=sig_sched)
             write_mode_vehicles(os.path.join(dst, 'vehicles.xml'), cfg)
             paths = dict(
                 output='output',
@@ -1152,6 +1301,20 @@ def main(day_types=None, scenarios=None, set_overrides=None):
                 mode_vehicles='vehicles.xml',
                 parking_prices=os.path.relpath(price_dst, dst).replace('\\', '/'),
                 fraction=cfg.get('RUN.sample.fraction'))
+            if explicit_signals:
+                paths.update(
+                    signal_systems=os.path.relpath(
+                        os.path.join(sig_dir, 'signal_systems.xml'),
+                        dst).replace('\\', '/'),
+                    signal_groups=os.path.relpath(
+                        os.path.join(sig_dir, 'signal_groups.xml'),
+                        dst).replace('\\', '/'),
+                    signal_control=os.path.relpath(
+                        os.path.join(sig_dir, 'signal_control.xml'),
+                        dst).replace('\\', '/'))
+            if crossings_on:
+                paths['change_events'] = os.path.relpath(
+                    change_events_xml, dst).replace('\\', '/')
             write_config(os.path.join(dst, 'config.xml'), cfg, scoring, d, paths)
             entry['days'][d] = counts
             report.setdefault('scoring', scoring)

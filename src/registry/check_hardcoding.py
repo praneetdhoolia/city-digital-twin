@@ -466,6 +466,11 @@ MEASUREMENT_OWNED_KEYS = {
         'volume is REPORTED against this band and nothing is fitted to it - '
         'being read only by the measurement layer is the field\'s entire '
         'design, the same class as the C4 occupancy constraint',
+    'B.census.thin_cell_min_journeys':
+        'the reporting flag that marks an observed census cell too thin to '
+        'constrain anything (issue #50, 9.77). It decides how a comparison '
+        'is LABELLED, never what the model simulates, so being read only by '
+        'src/analyse is correct',
 }
 
 
@@ -737,9 +742,14 @@ def config_reach():
         scoring = builder.scoring_from_c1(
             cfg, json.load(io.open(builder.PARAMS, encoding='utf-8')),
             builder.hts_purpose_share())
+        # The signal and crossing paths are read only under their declared
+        # representation gates (9.77); supplying them unconditionally keeps
+        # the probe valid on either side of the boundary.
         runtime = builder.config_runtime(cfg, scoring, city_doc['day_types'][0], dict(
             output='output', network='n', plans='p', schedule='s', vehicles='v',
             mode_vehicles='m', parking_prices='k',
+            signal_systems='ss', signal_groups='sg', signal_control='sc',
+            change_events='ce',
             fraction=cfg.get('RUN.sample.fraction')))
     except Exception as exc:                              # noqa: BLE001
         return [], [], 'could not resolve a probe configuration: %s' % exc

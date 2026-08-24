@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 352 fields are made of
+## What the 355 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 30 | follows from another registry field by identity |
 | `literature` | 52 | a published value, not specific to this city |
-| `assumed` | 131 | chosen without direct empirical support |
-| `definition` | 104 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 132 | chosen without direct empirical support |
+| `definition` | 106 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 333 | usable point value |
+| `active` | 336 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -82,7 +82,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 111 fields*
+*`cities/newcastle/registry/A_supply.json` - 113 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -110,6 +110,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.crossings.freight_road_names` | `["Saint James Road", "Clyde Street"]` | road_names | `literature` | **held fixed** |
 | `A.crossings.link_match_radius_m` | `30.0` | metres | `assumed` | **held fixed** |
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
+| `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
 | `A.lightrail.capacity_seated` | `60` | persons_per_vehicle | `assumed` | 50 - 80 |
 | `A.lightrail.capacity_standing` | `210` | persons_per_vehicle | `derived` | derived: capacity_standing = capacity_total - capacity_seated |
 | `A.lightrail.capacity_total` | `270` | persons_per_vehicle | `observed` | - |
@@ -174,7 +175,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.signals.junction_match_m` | `60.0` | metres | `assumed` | 30 - 100 |
 | `A.signals.min_green_s` | `6.0` | seconds | `assumed` | 4 - 10 |
 | `A.signals.n_corridor_intersections` | `14` | count | `observed` | - |
-| `A.signals.representation` | `implicit_delay` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
+| `A.signals.representation` | `explicit_signals` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
 | `A.signals.saturation_flow_veh_h_lane` | `1900.0` | vehicles_per_hour_per_lane | `literature` | 1800 - 2050 |
 | `A.signals.scats_match_radius_m` | `60` | metres | `assumed` | **held fixed** |
 | `A.signals.scats_phasing` | *(null - unobtained)* | phase_plan | `assumed` | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
@@ -184,6 +185,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.signals.tsp.lateness_threshold_s` | `60.0` | seconds | `assumed` | 0 - 300 |
 | `A.signals.tsp.mode` | `green_extension` | enum | `literature` | `off`, `green_extension`, `extension_recall`, `conditional` |
 | `A.signals.tsp.priority_budget_share` | `0.2` | share_of_cycle | `literature` | 0.1 - 0.3 |
+| `A.signals.tsp.priority_group` | `tram` | enum | `definition` | - |
 | `A.transit.bus_capacity_seated` | `44` | persons_per_vehicle | `literature` | 40 - 51 |
 | `A.transit.bus_capacity_standing` | `18` | persons_per_vehicle | `literature` | 14 - 22 |
 | `A.transit.corridor_mode_label` | `lr` | enum | `observed` | - |
@@ -351,6 +353,12 @@ How close a car link named by A.crossings.freight_road_names must pass to the cr
 OSM maps a double-track crossing as one node per track a few metres apart; nodes closer than this are one physical crossing.
 
 ***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `A.crossings.representation`
+
+The representation gate for the two boom-gated freight level crossings. Flipped to change_events at the 9.77 activation boundary: run inputs then carry network.timeVariantNetwork=true and the change-events file, and RUN.travel_time.bin_size_s must be <= the shortest closure the router should see (declared 300 at the same boundary). Under absent the emission is byte-identical to the pre-#68 state.
+
+***assumed** · status **active** · DECISIONS.md §9.70, 9.76, 9.77*
 
 #### `A.lightrail.capacity_seated`
 
@@ -784,7 +792,7 @@ Signalised intersections on the corridor. All 14 match a signalised junction in 
 
 Which representation carries the corridor signal effect. implicit_delay: A.signals.delay_per_intersection_s inside scheduled run times and metered link capacities (the shipped state). explicit_signals: the signals contrib runs the generated fixed-time plans, approaches are re-capacitated to saturation flow, the schedule transform removes the implicit delay from the same movements, and the harness runs the signals stack. THE SWITCH IS THE DOUBLE-COUNT GUARD: code paths check it rather than trusting discipline.
 
-***assumed** · status **active** · DECISIONS.md §9.75, 9.76*
+***assumed** · status **active** · DECISIONS.md §9.75, 9.76, 9.77*
 
 #### `A.signals.saturation_flow_veh_h_lane`
 
@@ -843,6 +851,12 @@ The tram-priority controller's regime. Which NLR mechanism TfNSW actually config
 The most green the controller may borrow for the tram in one cycle, as a share of cycle time.
 
 ***literature** · status **active** · DECISIONS.md §9.76 · MATSim `tramPriority.priorityBudgetShare`*
+
+#### `A.signals.tsp.priority_group`
+
+Which signal group the priority controller serves and watches for detections - the stage that carries the priority-detected transit vehicle. 'tram' for the light-rail variants (trams run on their own intervention-mode links with their own T-aspect group); 'corridor' for the BRT variant, whose buses run in the corridor car lanes so the priority stage IS the corridor stage and detection fires for every scheduled transit vehicle entering a corridor approach (link-level bus priority - the BRT trunk and any local bus on the same approach, which is what a link-level detector would see). Structural per scenario, set by the scenario overlay; not a tunable.
+
+***definition** · status **active** · DECISIONS.md §9.77 · MATSim `tramPriority.priorityGroupId`*
 
 #### `A.transit.bus_capacity_seated`
 
@@ -948,7 +962,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 81 fields*
+*`cities/newcastle/registry/B_demand.json` - 82 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -983,6 +997,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.weekend_to_weekday` | `0.7521` | ratio | `measured` | 0.709 - 0.816 |
 | `B.bike.pce` | `0.2` | passenger_car_equivalents | `literature` | 0.1 - 0.4 |
 | `B.bike.speed_ms` | `4.2` | m/s | `literature` | 3.1 - 5.5 |
+| `B.census.thin_cell_min_journeys` | `100` | journeys | `definition` | - |
 | `B.counts.heavy_vehicle_share` | `0.0652` | share_of_vehicles | `measured` | 0.0129 - 0.1529 |
 | `B.counts.station_match_radius_m` | `120.0` | metres | `assumed` | 60 - 120 |
 | `B.counts.vehicles_per_car_leg` | `1.0` | vehicles_per_leg | `derived` | derived: observed vehicle trips ARE driver trips at occupancy 1.3503, so a car  |
@@ -1241,6 +1256,12 @@ Cycling speed, carried by the bike vehicle type as its maximum velocity: a cycli
 ***literature** · status **active** · DECISIONS.md §9.54*
 
 > **Sweep basis.** Carried over verbatim from the retired RUN.routing.teleported_bike_speed_ms (9.54): the disagreement between published MATSim practice and ATAP cycling speeds is unresolved and stays swept, not repinned. The quantity is unchanged - the speed a cyclist rides at - only its consumer moved from the teleportation formula to the vehicle type's maximumVelocity.
+
+#### `B.census.thin_cell_min_journeys`
+
+Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. A flag on how a comparison is LABELLED, never a value that reaches the model; declared so the threshold is visible and changeable in one place.
+
+***definition** · status **active** · DECISIONS.md §9.77*
 
 #### `B.counts.heavy_vehicle_share`
 
@@ -2429,7 +2450,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.mode_choice.chain_based_modes` | `["car", "bike"]` | enum | `definition` | - |
 | `RUN.mode_choice.consider_car_availability` | `true` | boolean | `definition` | - |
 | `RUN.mode_choice.coord_distance_m` | `100.0` | metres | `literature` | 0 - 100 |
-| `RUN.mode_choice.modes` | `["car", "ride", "pt", "bike", "walk"]` | enum | `definition` | - |
+| `RUN.mode_choice.modes` | `["car", "ride", "pt", "bike", "walk", "taxi"]` | enum | `definition` | - |
 | `RUN.mode_choice.proba_random_single_trip_mode` | `0.5` | probability | `literature` | 0 - 0.5 |
 | `RUN.mode_choice.subtour_behavior` | `betweenAllAndFewerConstraints` | enum | `literature` | `betweenAllAndFewerConstraints`, `fromSpecifiedModesToSpecifiedModes` |
 | `RUN.monitor.enabled` | `true` | boolean | `definition` | - |
@@ -2458,7 +2479,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.routing.access_walk_beeline_factor` | `1.6902` | ratio | `measured` | 1.294 - 1.794 |
 | `RUN.routing.access_walk_speed_ms` | `1.25` | m/s | `derived` | derived: the same physical walking speed - the access/egress stub walk to and f |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
-| `RUN.routing.network_modes` | `["car", "ride", "truck", "motorbike", "walk", "bike"]` | enum | `definition` | - |
+| `RUN.routing.network_modes` | `["car", "ride", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.sample.flow_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling  |
 | `RUN.sample.fraction` | `0.01` | share_of_population | `assumed` | 0.01 - 0.4 |
 | `RUN.sample.storage_capacity_exponent` | `1.0` | exponent | `derived` | derived: storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim e |
@@ -2476,7 +2497,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
-| `RUN.travel_time.bin_size_s` | `900` | seconds | `literature` | 60 - 900 |
+| `RUN.travel_time.bin_size_s` | `300` | seconds | `literature` | 60 - 900 |
 | `RUN.travel_time.separate_modes` | `false` | boolean | `definition` | - |
 
 #### `RUN.controler.compression_type`
@@ -2587,7 +2608,7 @@ Distance within which two activity coordinates count as the same subtour locatio
 
 Modes subtour mode choice may switch between. IF RIDE IS OMITTED, MATSim defaults to car,pt,bike,walk and a ride subtour becomes an ABSORBING STATE - ride sat at 0.18311 in every iteration to five decimals, and 18.6% of legs were an input wearing the costume of a result.
 
-***definition** · status **active** · DECISIONS.md §9.6 · MATSim `subtourModeChoice.modes`*
+***definition** · status **active** · DECISIONS.md §9.6, 9.77 · MATSim `subtourModeChoice.modes`*
 
 #### `RUN.mode_choice.proba_random_single_trip_mode`
 
@@ -2771,7 +2792,7 @@ Clear MATSim built-in default teleportation parameters. Required once walk and b
 
 Modes routed on the road graph. Ride must be here AND permitted on the links (143,891 of them): declaring it a network mode that no link permits gives 'checking 0 nodes and 0 links' and a throw in PrepareForSim.
 
-***definition** · status **active** · DECISIONS.md §9.6 · MATSim `routing.networkModes`*
+***definition** · status **active** · DECISIONS.md §9.6, 9.77 · MATSim `routing.networkModes`*
 
 #### `RUN.sample.flow_capacity_factor`
 
@@ -2901,9 +2922,9 @@ Which modes contribute observed link travel times. Only car is physically simula
 
 #### `RUN.travel_time.bin_size_s`
 
-The travel-time calculator's aggregation bin. At the shipped 900 s (MATSim's default, now declared instead of implicit) behaviour is unchanged; a time-varying network event shorter than a bin is invisible to the router, which is why the crossings activation (#68) lowers it.
+The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s default to 300 s at the 9.77 activation boundary so the router can see a level-crossing closure (60-600 s swept) that is shorter than a bin. 300 s is the largest bin that resolves the sweep's central 240 s closure.
 
-***literature** · status **active** · DECISIONS.md §9.76 · MATSim `travelTimeCalculator.travelTimeBinSize`*
+***literature** · status **active** · DECISIONS.md §9.76, 9.77 · MATSim `travelTimeCalculator.travelTimeBinSize`*
 
 #### `RUN.travel_time.separate_modes`
 

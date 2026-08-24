@@ -407,10 +407,12 @@ def main():
     print('  %s LGA mode share: %s' % (TARGET_LGA, ms['target_lga_pct']))
     print('  PT boardings %s of which light rail %s'
           % (doc['pt']['total_pt_boardings'], doc['pt']['light_rail_boardings']))
+    nm = doc['pt_split'].get('not_modelled') or []
     print('  pt split (linked trips, %s residents): %s | boardings by submode: '
-          '%s | taxi/rideshare: not modelled'
+          '%s%s'
           % (TARGET_LGA, doc['pt_split']['linked_pt_trips_target_lga'],
-             doc['pt_split']['boardings_by_submode']))
+             doc['pt_split']['boardings_by_submode'],
+             (' | not modelled: ' + '/'.join(nm)) if nm else ''))
     for m, g in sorted(doc['trip_geometry']['by_mode'].items()):
         print('  trip geometry %-5s mean %6.2f km / %6.2f min  (median %5.2f km)'
               % (m, g['mean_distance_km'], g['mean_time_min'],

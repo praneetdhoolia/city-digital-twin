@@ -58,6 +58,7 @@ otherwise cost you an hour:
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
 | **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
 | **Batch 4.7 built inert: crossings, dwell, signals, taxi, harness safety; the activation checklist** | **§9.76** — the overnight build record; ONE boundary; warm-restart validity ruling OPEN; detached launch verified (#70) |
+| **THE ACTIVATION BOUNDARY CROSSED: signals, crossings, dwell and taxi LIVE; family F6** | **§9.77** — the §9.76 checklist executed by directive; F5 closes UNMEASURED (recorded cost); the crossings-XML schema-order defect and the stale metrics line, both probe-caught; S3 bus-keyed priority via `A.signals.tsp.priority_group`; the 4.6.9 arm becomes an F6 arm, approval still required |
 | **Level crossings (freight-road interactions)** | §9.70 designed; **§9.76 built** — derived from OSM barrier tags, Stewart Avenue exclusion asserted, swept never pinned (#68) |
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (standing directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
 | **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
@@ -7093,6 +7094,94 @@ result); no family boundary was crossed; the assembled 4.6.9 run inputs are
 byte-identical; `E.replication.n_replications` and the 4.6.9 re-approval and
 ordering decisions remain the project's to take; the §8.5-held constants
 stayed held.
+
+---
+
+## §9.77 — The activation boundary is CROSSED: explicit signals, crossings, native dwell and taxi are LIVE in the assembled inputs; S3 gets bus-keyed priority; family F6 declared (25 Aug 2026, sixth session; issues #49, #68, #73)
+
+**Directive.** The session's `/goal` ordered every runless GitHub issue
+implemented — signals, taxi and the full simulation factors first, the free
+planning-portal TIA route for SCATS — and that directive RESOLVES the §9.75
+ordering question by consequence: no run is authorised, so the
+run-the-repairs-arm-first option (which needed a ~65–67 h launch) is not
+available to this session, and the batch activates first. **The cost of that
+order is recorded, not hidden: family F5 (§9.68/§9.69) closes UNMEASURED — the
+ride-repair and short-trip-mixture effects will never be attributed separately
+from the §9.76 batch.** The F5 inputs stay regenerable by construction
+(`A.signals.representation=implicit_delay`, `A.crossings.representation=absent`,
+taxi out of the two `RUN` vocabularies, regenerate), so the repairs-first
+measurement is revivable if it is ever worth an arm.
+
+**The checklist executed (§9.76's closing block, item by item):**
+
+- `A.signals.representation` → `explicit_signals`. The run-input assembly now
+  consumes, per scenario: the generated signal data model (systems, groups,
+  control), `signals_capacity_patch.csv` applied to the emitted run network
+  AFTER the E1 variant patch (a missing patch link is a refusal — it means a
+  different network build), and `transitSchedule_signals.xml.gz` — which
+  carries the dwell transform (#74) — as the schedule the day-type filter
+  reads. `qsim.usingFastCapacityUpdate=false` is written into every signal
+  config by the emitter (the contrib refuses it true).
+- **A new gate, `A.crossings.representation`** (categorical
+  `absent`/`change_events`, mirroring the signals switch): under
+  `change_events` every config carries `network.timeVariantNetwork=true` and
+  the derived closures file, and the assembly refuses a change-event link the
+  scenario network lacks. Flipped to `change_events` at this boundary.
+- `RUN.travel_time.bin_size_s` 900 → **300** (the largest bin that resolves
+  the central 240 s closure; basis unchanged).
+- `taxi` into `RUN.mode_choice.modes` AND `RUN.routing.network_modes`; the
+  inert §9.76 plumbing (blended fares, `fare` module, car-bodied vehicle,
+  congested network travel time, ASC) engaged without further change.
+- The 30 run-input sets regenerated; the boundary is ONE boundary, and
+  **family F6 is declared in `docs/audit/run_families.json` in this change.**
+
+**Two defects found by the activation probe, not by reading (both fixed):**
+
+1. **The crossings XML violated the MATSim schema** — `networkChangeEvents.xsd`
+   requires `flowCapacity` BEFORE `freespeed` inside an event;
+   `build_level_crossings.py` emitted the reverse and MATSim's validating
+   reader refused the whole network load. Measured on the first activated
+   probe (`aborted_20260825T094456_2it_1pct`, rc=1 in 4 s); element order
+   swapped, file regenerated (540 events, 16 links, 2 sites — unchanged
+   content, valid order).
+2. **The console metrics line hardcoded "taxi/rideshare: not modelled"** while
+   the JSON's `not_modelled` row was computed correctly — the print now reads
+   the document it summarises.
+
+**The activated stack is VERIFIED at plumbing scale** (probe
+`20260825T094638_2it_1pct`, 1%×2, rc=0, F6): the signals contrib engages
+(controllers instantiated per system; S2 correctly fixed-time under
+`S2_base`'s `tsp_enabled=0`), the change events load, and **taxi is chosen,
+routed and priced on the congested network** — 1.44% of Newcastle-LGA trips at
+1%, mean 14.94 km / 18.25 min (car-like speeds, exactly the #28 lesson's
+intent). A 1% probe verifies PLUMBING ONLY (§9.76's discharge warning: ~0.3
+veh/green at 1% — no signal EFFECT is trustworthy below arm scale), and
+nothing here is a result.
+
+**S3's priority is now bus-keyed (#73 remainder 2).** The priority stage is a
+declared field, not a literal: `A.signals.tsp.priority_group` (definition;
+`tram` in the base, `corridor` in S3's overlay) reaches
+`tramPriority.priorityGroupId`, `TramPriorityController` resolves the
+configured group and watches ITS links for detections, and
+`TramPriorityConfigGroup.checkConsistency` refuses a bound module that never
+named one. For S3 that means link-level bus priority: detection fires for
+every SCHEDULED transit vehicle entering a corridor approach — the BRT trunk
+and any local bus on the same approach, which is what a link-level detector
+would see; stated, not hidden. **The toy probe grew the matching third case**
+(the same signalised toy with the priority group named `corridor` and the
+scheduled vehicle a bus): extension granted through the configured id (first
+red 40 s vs plan 30 s), vehicle cleared in the extended green — PASS, alongside
+the two §9.75 cases which still pass byte-identically.
+
+**Movement-level lanes stay OPEN on #73** (turn-lane coverage still 16%; the
+refusal to invent geometry stands).
+
+**What this deliberately does not do:** no arm ran; the pre-repair report card
+(§9.64) remains the latest measurement; nothing is a finding about the light
+rail. The 4.6.9 arm — now an F6 arm on the activated inputs — still requires
+its own fresh stated-cost approval (~65–67 h at 25%×1000), and
+`E.replication.n_replications` and the warm-restart validity ruling remain
+open.
 
 ---
 

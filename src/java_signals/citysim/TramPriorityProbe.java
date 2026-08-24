@@ -106,9 +106,20 @@ public final class TramPriorityProbe {
         writeToyInputs(dir);
 
         final Observation off = run(dir,
-                TramPriorityConfigGroup.MODE_OFF);
+                TramPriorityConfigGroup.MODE_OFF,
+                TramPriorityController.TRAM_GROUP_ID);
         final Observation ext = run(dir,
-                TramPriorityConfigGroup.MODE_GREEN_EXTENSION);
+                TramPriorityConfigGroup.MODE_GREEN_EXTENSION,
+                TramPriorityController.TRAM_GROUP_ID);
+        // The S3 remainder (issue #73): the priority group is CONFIGURED, not
+        // the literal "tram" - a BRT bus in the corridor car lanes is served
+        // by a group named "corridor". Same toy, the priority stage renamed,
+        // the same scheduled transit vehicle (detection is
+        // TransitDriverStartsEvent-based and mode-blind by design): the
+        // extension must be granted through the configured id.
+        final Observation bus = run(dir,
+                TramPriorityConfigGroup.MODE_GREEN_EXTENSION,
+                "corridor");
 
         // with the plan verbatim the tram stage drops exactly at the plan's
         // second; with green extension it drops strictly later
@@ -137,8 +148,14 @@ public final class TramPriorityProbe {
         final boolean offUnperturbed = offRoadOnset2 != null
                 && offRoadOnset2 == 90.0;
 
+        final boolean busExtended = bus.firstTramRedS != null
+                && bus.firstTramRedS > PLAN_TRAM_DROP_S;
+        final boolean busCleared = bus.tramLeaveS != null
+                && bus.firstTramRedS != null
+                && bus.tramLeaveS <= bus.firstTramRedS;
+
         final boolean ok = offVerbatim && extended && offGated && extCleared
-                && compensated && offUnperturbed;
+                && compensated && offUnperturbed && busExtended && busCleared;
         final StringBuilder json = new StringBuilder();
         json.append("{\"probe\": \"TramPriorityProbe\"");
         json.append(", \"plan_tram_drop_s\": ").append(PLAN_TRAM_DROP_S);
@@ -158,14 +175,20 @@ public final class TramPriorityProbe {
                 .append(extCleared);
         json.append(", \"borrowed_time_repaid_next_cycle\": ")
                 .append(compensated);
+        json.append(", \"corridor_group_first_red_s\": ")
+                .append(bus.firstTramRedS);
+        json.append(", \"bus_keyed_extension_granted\": ").append(busExtended);
+        json.append(", \"bus_cleared_in_extended_green\": ").append(busCleared);
         json.append(", \"pass\": ").append(ok);
         json.append("}");
         System.out.println(json);
         System.exit(ok ? 0 : 1);
     }
 
-    /** One controler run of the toy under the given tramPriority mode. */
-    private static Observation run(final Path dir, final String mode) {
+    /** One controler run of the toy under the given tramPriority mode, with
+     *  the priority stage carried by the signal group named {@code groupId}. */
+    private static Observation run(final Path dir, final String mode,
+                                   final String groupId) {
         final SignalSystemsConfigGroup signalsConfig =
                 new SignalSystemsConfigGroup();
         signalsConfig.setUseSignalSystems(true);
@@ -181,6 +204,7 @@ public final class TramPriorityProbe {
                         controler.getConfig(), TramPriorityConfigGroup.class);
         tramPriority.setMode(mode);
         if (!TramPriorityConfigGroup.MODE_OFF.equals(mode)) {
+            tramPriority.setPriorityGroupId(groupId);
             tramPriority.setExtensionWindowS(10.0);
             tramPriority.setDetectionDistanceM(100.0);
             tramPriority.setPriorityBudgetShare(0.25);
@@ -188,14 +212,14 @@ public final class TramPriorityProbe {
         }
         final Scenario scenario = controler.getScenario();
         scenario.addScenarioElement(SignalsData.ELEMENT_NAME,
-                buildTramSignalsData(signalsConfig));
+                buildTramSignalsData(signalsConfig, groupId));
         final Signals.Configurator configurator =
                 new Signals.Configurator(controler);
         configurator.addSignalControllerFactory(
                 TramPriorityController.IDENTIFIER,
                 TramPriorityController.Factory.class);
 
-        final Observation obs = new Observation();
+        final Observation obs = new Observation(groupId);
         controler.addOverridingModule(new AbstractModule() {
             @Override
             public void install() {
@@ -337,18 +361,19 @@ public final class TramPriorityProbe {
     }
 
     /**
-     * One system at the link1/cross junction: the tram stage IS the group
-     * literally named "tram" (that name is the controller's contract), green
-     * 0-30; the cross stage "road" green 30-58; cycle 60; controlled by
+     * One system at the link1/cross junction: the priority stage is the group
+     * named {@code priorityGroupId} ("tram" for the light-rail contract,
+     * "corridor" for the S3 bus-keyed contract), green 0-30; the cross stage
+     * "road" green 30-58; cycle 60; controlled by
      * {@link TramPriorityController#IDENTIFIER}.
      */
     private static SignalsData buildTramSignalsData(
-            final SignalSystemsConfigGroup cfg) {
+            final SignalSystemsConfigGroup cfg, final String priorityGroupId) {
         final Id<SignalSystem> sysId = Id.create("sys1", SignalSystem.class);
         final Id<Signal> sigTram = Id.create("sigTram", Signal.class);
         final Id<Signal> sigCross = Id.create("sigCross", Signal.class);
         final Id<SignalGroup> tramGrp = Id.create(
-                TramPriorityController.TRAM_GROUP_ID, SignalGroup.class);
+                priorityGroupId, SignalGroup.class);
         final Id<SignalGroup> roadGrp = Id.create("road", SignalGroup.class);
         final SignalsData data = SignalUtils.createSignalsData(cfg);
 
@@ -410,16 +435,21 @@ public final class TramPriorityProbe {
             SignalGroupStateChangedEventHandler, LinkLeaveEventHandler,
             TransitDriverStartsEventHandler {
 
+        private final String priorityGroupId;
         Double firstTramRedS;
         Double tramLeaveS;
         private final List<Double> roadGreenOnsetsS = new ArrayList<>();
         private final Set<Id<Vehicle>> transitVehicles =
                 new java.util.TreeSet<>();
 
+        Observation(final String priorityGroupId) {
+            this.priorityGroupId = priorityGroupId;
+        }
+
         @Override
         public void handleEvent(final SignalGroupStateChangedEvent event) {
             if (this.firstTramRedS == null
-                    && TramPriorityController.TRAM_GROUP_ID.equals(
+                    && this.priorityGroupId.equals(
                             event.getSignalGroupId().toString())
                     && event.getNewState() == SignalGroupState.RED) {
                 this.firstTramRedS = event.getTime();
