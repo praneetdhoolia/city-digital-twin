@@ -4,7 +4,7 @@
 counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No scenario has been run to a
 reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.67, 24 August 2026
+**Started:** 10 August 2026 · **last entry:** §9.70, 24 August 2026
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -58,6 +58,9 @@ otherwise cost you an hour:
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (owner directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
 | **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
 | **The project is `city-digital-twin`** | **§9.67** — renamed from `NewcastleLRSIM` (owner directive 24 Aug): the framework is city-agnostic and the old name violated its own no-place-names rule; GitHub repo renamed (redirects stand), schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay tracked by the open naming issue |
+| **The ride collapse decomposed and repaired: round-trip bindings, coherent seeds** | **§9.68** — of 77,626 ride-available persons 76,986 held NO ride plan (the ASC could flip 109); return legs paired at 0.0079, intermediate at 0.0, and the uniform seed's 0.2 car probability WAS the 0.196 outbound ceiling; §9.64's "supply not binding" was survivorship bias; repair: `escort_binding_directions=round_trip`, direct bound tours, serve tours seed car, covered passengers seed ride, `liftHousehold` a list; the §9.58–§9.63 family closes |
+| **The short-trip mass gets its observed distribution** | **§9.69** — HTS Sydney 2012/13 Table 4.4.7 (only published AU distance-band-by-purpose table): 18.8% of trips ≤1 km vs the model's 4.45%; two-component gravity mixture per purpose, short kernel mean = the held observed walk mean (derived), weight solved to the band shares, long kernel re-solved so every observed mean stays exact |
+| **Freight rail: coal chain deliberately not simulated; two crossings named** | **§9.70** — ~110 coal-train movements/day run on dedicated track grade-separated since 2006 (ARTC/PWCS/NCIG observed); adding them would fabricate an interaction; the REAL road interactions: St James Rd Adamstown + Clyde St Islington level crossings (closures "up to ten minutes", logs unpublished → swept closure parameters, backlog) and the Mayfield truck cap 1,268/day as an upper-bound constraint |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6397,6 +6400,157 @@ package — which stay with the open naming issue (renaming a compiled entry
 point invalidates run records and is not done as a side effect). The local
 working-copy folder (`work/NewcastleLRSIM`) is the owner's to rename;
 nothing in the repository depends on its name.
+
+## 9.68 The ride collapse decomposed: one-directional supply and seed decoherence, not preference — and the repair (24 August 2026, issues #48, #31, #28)
+
+**The owner's goal (24 Aug): every mode's ridership as close to real life
+as possible; begin with ride; fix everything fixable before the next run.**
+
+**The decomposition (arm A, `src/analyse/decompose_ride_choice.py`, reads
+the completed run - no new run).** Of 77,626 ride-available choice persons,
+**531 selected ride, 109 held a scored-out ride plan in final memory, and
+76,986 (99.2%) held NO ride plan at all** - proposed during search,
+re-moded, scored catastrophically, evicted. The ASC lever the §9.64 lane
+contemplated could flip at most the 109: **it is not the lever.**
+
+**Why every ride plan died (ride_pairing.csv, iterations 200-799):**
+outbound legs paired at **0.196**, return legs at **0.0079**, intermediate
+legs at **0.0** - and an unpaired leg re-modes to a physical walk averaging
+5.56 km (§9.55). A ride subtour needs every leg paired; with returns
+unserved, every proposed ride tour carried a multi-hour walk home and lost
+to anything. Three structural causes, each measured:
+
+1. **Every binding served the outward anchor only.** Both binder passes
+   (§9.46 household, §9.60 non-household) bound a serve tour to the
+   passenger's outward trip; nothing anywhere served a return leg. Weekday
+   supply was exhausted doing it (55,249 of 55,614 unbound HX tours).
+2. **The uniform seed gave a bound driver's serve tour `car` with p=0.2 -
+   and 0.196 was the realised outbound pairing ceiling.** The seed
+   probability WAS the ceiling: a serve tour seeded walk/pt/bike/ride
+   cannot serve the passenger booked onto it, and MATSim's independent
+   per-agent selection rarely rediscovers the coherent two-sided state.
+3. **A drawn intermediate stop (p=0.15) on a bound serve tour replaced the
+   serving leg** with two legs matching neither endpoint under the declared
+   `both_links` rule - one in seven bindings unpairable by construction.
+
+**The §9.64 reading "supply is not the binding constraint" was
+survivorship bias**: 100% of *surviving* requests paired because selection
+had already killed every plan whose requests could not. The binding
+constraint was one-directional supply allocation plus seed decoherence.
+**M2 (driver-detour lifts) stays un-built** - round-trip re-allocation
+answers the return gap without adding a driver-kilometre beyond the
+observed rate.
+
+**The repair (all demand-build, no new observation, no added tour):**
+
+- **`B.activity.escort_binding_directions` = `round_trip`** (assumed,
+  swept vs `outbound_only`): both binder passes allocate the same
+  observed-rate serve tours as drop-off + pick-up pairs per direct 2-leg
+  passenger tour - half the passengers, both directions, all-or-nothing
+  (a one-way binding cannot change any choice). The non-household pass
+  prefers the same driver's second unbound tour for the pick-up.
+- **`B.activity.escort_binding_direct_tour` = true** (derived): a BOUND
+  serve tour suppresses the intermediate-stop draw.
+- **`B.mode.serve_tour_seed` = `car`** (derived) and
+  **`B.mode.bound_passenger_seed` = `ride`** (assumed, swept vs
+  `uninformed`): bound serve tours seed as the one mode that can serve;
+  round-trip-covered passenger tours seed at the coherent two-sided state.
+  Seeds only - SubtourModeChoice remains free, ChangeExpBeta keeps or
+  abandons.
+- **`liftHousehold` becomes a comma-separated list** (two serving
+  households possible); `RidePairingEngine` searches all of them,
+  `sample_population` unions the whole chain into one sampling cluster.
+  `B2_escort_bindings_<day>.csv` (new) records household-side coverage by
+  direction; `B2_lift_bindings_<day>.csv` gains a `direction` column.
+
+**Family boundary.** These are demand changes: the §9.58-§9.63 family
+CLOSES with the two completed arms as its record; nothing run on the
+regenerated demand compares to them. The #65 contiguity assertion guards
+the new splice paths unchanged.
+
+## 9.69 The missing short-trip mass gets its observed distribution (24 August 2026, issue #30)
+
+**The gap (re-measured §9.64):** 4.45% of generated legs under 1 km, walk
+mean trip 5.56 km vs 0.70 observed. The loss site was GENERATION
+(placement, scoring and mode choice were exonerated on #30), and the
+missing piece was a citable observed distance-band distribution.
+
+**The observation found:** Bureau of Transport Statistics, *Household
+Travel Survey Report: Sydney 2012/13* (Nov 2014, ISBN 978-0-7313-2869-7) -
+the only Australian government-published trips-by-distance-band table
+located (the modern HTS releases publish no distance bands at any
+geography, checked against the Feb-2026 data dictionary). Table 4.4.7
+(by purpose, linked trips): up-to-1-km shares - commute 5.9%, work
+business 9.0%, education 15.8%, shopping 27.7%, personal/social/other
+25.5%, serve passenger 15.7%, **all purposes 18.8%**. Table 4.4.6 (by
+mode): walk is 70.9% of all up-to-1-km trips; 74.6% of walk-only trips
+are up to 1 km; walk-only mean 0.78 km - a negative exponential with the
+package's held Newcastle walk mean (0.70 km) reproduces the Sydney bands
+within ~1.5 pp, and the Victoria Walks/VISTA Melbourne distributions
+(median 630 m, 63% of sub-1-km trips walked) independently replicate
+level and decay. Declared as `B.activity.short_trip_band_share`
+(literature, ±25% - the Sydney-to-regional transfer), with the band edge
+held fixed as part of the observation's identity.
+
+**The mechanism:** the gravity draw becomes a two-component mixture per
+purpose - a short kernel over the same attractors whose mean is the
+observed walk-only trip length already held in the package
+(`B.activity.short_trip_mean_km`, DERIVED from
+`C.constraint.trip_length_km.walk` - no new number), and the existing
+per-(purpose x LGA) solved decay. The mixture weight is solved per purpose
+against the observed band share, and the long kernel is re-solved so every
+observed mean stays met exactly (verified on synthetic geometry: means
+exact, bands hit, weight clamps to 0 where the base already exceeds the
+target). Intermediate stops draw the blended kernels automatically. What
+walk share this buys is the next arm's measurement, not this entry's -
+the mechanism targets an observed trip-length distribution, never a mode
+share (V207 is untouched; proposal §9's ASC-absorption threat does not
+arise).
+
+## 9.70 Freight rail: the coal chain is deliberately not simulated, and the two real road interactions are named (24 August 2026)
+
+**Owner directive (24 Aug): exhaustively include all forms of traffic -
+cargo trains among them - at observed or academically studied values.**
+Researched from ARTC's 2025 Hunter Valley Corridor Capacity Strategy, the
+NCIG Sustainability Report 2024, PWCS performance reports, Port of
+Newcastle trade reports and TfNSW's Lower Hunter Freight Corridor
+assessments.
+
+**The decision: Hunter Valley coal trains are NOT added to the simulated
+rail network, because the observed infrastructure keeps them off it.**
+~55 loaded + ~55 empty trains/day (ARTC 2025: "one train every 26
+minutes", peak provision 72; PWCS unloaded 10,920 trains in 2025, NCIG
+5,979 in FY24) run on a **dedicated double-track coal line from Maitland
+to Port Waratah**, grade-separated from the modelled passenger line since
+the 2006 Sandgate Flyover, diverging to Kooragang between Warabrook and
+Sandgate. Adding them to the passenger network would fabricate an
+interaction the real network does not have. Where sharing IS real -
+Maitland-Branxton west of the study corridor - the HVCCS records that
+passenger services get priority, so modelled passenger times are
+unaffected. Recorded as a stated scope decision, not a gap.
+
+**The two real road interactions, named and carried as work:**
+
+1. **Level crossings.** TfNSW names exactly two significant crossings in
+   the urban area: **St James Road, Adamstown** (shared Main North:
+   interstate intermodal + southern coal + passenger) and **Clyde
+   Street, Islington** (ARTC freight lines at Islington Junction).
+   Officially documented road closures "up to ten minutes" when freight
+   crosses (LHFC Draft SEA, 2021). Closure logs are NOT published, so
+   the treatment must be closures/day x duration as assumed, swept
+   parameters on time-varying link capacity - designed, declared as
+   backlog (the crossings themselves are locatable from OSM
+   `railway=level_crossing` nodes, no typed coordinate).
+2. **Port truck traffic** already sits inside the §9.49 physical truck
+   tier; the Mayfield precinct cap (462,104 movements/yr, 1,268/day -
+   the only published number, a cap not an observation) is recorded as
+   an upper-bound CONSTRAINT on the freight tier at the port gateway,
+   never a target.
+
+Non-coal rail freight (interstate intermodal through the shared line,
+grain 2.95 Mt in 2025, Gunnedah-line services) has no published
+per-day count on the shared urban section; it enters only through the
+level-crossing mechanism above, whose frequency is swept.
 
 ---
 
