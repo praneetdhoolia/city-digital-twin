@@ -1,9 +1,10 @@
 # DECISIONS.md — modelling choices and their rationale
 
-**NewcastleLRSIM** — counterfactual microsimulation of the Newcastle Light Rail
+**city-digital-twin** (renamed from *NewcastleLRSIM* 24 Aug 2026, §9.67) —
+counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No scenario has been run to a
 reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.47, 18 August 2026
+**Started:** 10 August 2026 · **last entry:** §9.67, 24 August 2026
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -51,6 +52,12 @@ otherwise cost you an hour:
 | **Iteration wall time: the declared knobs and their measurements** | **§9.59** — PassingQ link dynamics (a correctness repair of 9.54's declared PCE-0 semantics that FIFO violated), the events-pipeline and replanning-pool knobs, the probe measurements, and the honest statement against the 10x ask |
 | **Non-household lifts (the reported gap, now mechanised)** | **§9.60** — M0 physical waiting at the meeting point; M1 re-targets unbound observed-rate escort tours to driverless-household passengers; pairing/boarding/sampling integrity; dossier [`design/non-household-lifts.md`](design/non-household-lifts.md) |
 | **Deliverable 0b: assumptions replaced by held data** | **§9.61** — G15 tertiary full-time split (per SA1, observed), the light-vehicle day-type factors (SAT:SUN split, external weekend scaling, departure shift - all measured from the classified hourly counts), the chain-timing scaffold speeds declared, and the ranked remainder |
+| **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (owner-approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
+| **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
+| **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
+| **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (owner directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
+| **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
+| **The project is `city-digital-twin`** | **§9.67** — renamed from `NewcastleLRSIM` (owner directive 24 Aug): the framework is city-agnostic and the old name violated its own no-place-names rule; GitHub repo renamed (redirects stand), schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay tracked by the open naming issue |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6098,6 +6105,301 @@ family boundary — nothing after it compares to anything before it.
 
 ---
 
+## 9.62 The two-arm relaunch: arm A is the base arm, arm B is the seed replication (21 August 2026)
+
+**Owner approval, 21 August 2026 (the day's third directive): run two
+concurrent arms with a tight watch — measured every 50 iterations, every
+ridership figure evaluated against the observed references, next actions
+derived when the runs finish.** This consumes the approval; none is
+standing after these two arms.
+
+**The launch enacts §9.59's two-arm pattern**, with the arms declared as
+committed overlays (`phys1000_arm_a_25pct`, `phys1000_arm_b_25pct`):
+qsim 8 + events 4 per arm, replanning at the declared 20, and
+**`RUN.machine.xmx` 30g per arm, not 40g** — the driver pins `-Xms` to
+`-Xmx` (§9.59's heap pre-sizing), so two 40g arms would commit 80 GiB on
+a 63.5 GiB machine, which is the measured §9.5 three-arm pagefile
+failure; the record's own sizing (a 25% run peaks ~27 GiB under this
+pattern) says two fit. `create_graphs` is off — the §9.59 field exercised
+for the first time. **Run identity note:** qsim threads 8 differs from
+the timing probes' 10; free at this boundary because no completed run
+exists in the §9.58–§9.61 family, and both arms carry one identity, so
+they compare to each other.
+
+**Arm A** (S2 × WEEKDAY, 25% × 1000, master seed 20260810) **is the base
+arm** — the active lane's relaunch. C5, the §9.50 report, the #30 walk
+re-baseline, the emergent ride share vs 20.60 and the #48/#31 ledgers all
+read this arm and only this arm.
+
+**Arm B is arm A with one change: `RUN.machine.seed` 20260811** — the
+field's own declaration ("held at the master seed unless replications are
+being drawn") exercised for the first time. It is the **seed-variance
+measurement this log has demanded twice and never had**:
+`E.replication.n_replications` is 30 with a provisional planning figure
+of 5 "until measured seed variance exists", and §9.45's cluster-sampling
+note records that no such measurement exists to separate cluster variance
+from mechanism. The seed moves both the 25% household draw and MATSim's
+`global.randomSeed`, which is what a replication is. Against arm A it
+yields the first per-mode error bar — the noise floor under every
+modelled-vs-observed delta, which any later calibration claim needs
+before a fit difference can be called signal. **Arm B is not a second
+base arm and nothing in the close-out reads it alone**; its product is
+the A-vs-B spread.
+
+**The watch** samples both runs' own telemetry (`telemetry.jsonl`,
+`modestats.csv`, `ride_pairing.csv`, `stopwatch.csv`) every ~50
+iterations against the 67-row calibration split only — the holdout stays
+closed. Everything it prints is **diagnostics until `_run.json` exists**
+(§9.12 rule, unchanged). Tripwires that stop an arm early are the
+measured failure classes: a dead JVM, iteration wall time beyond 3× the
+rolling median (the it-110 class), stuck counts rising after the early
+iterations, capacity refusals, or working sets approaching the machine's
+memory.
+
+---
+
+## 9.63 Both relaunch arms crashed at replanning: overlapping lift re-targets interleaved a driver's tours (21 August 2026, issue #65)
+
+**The event.** Both §9.62 arms died within 440 s at their first
+replanning — MATSim's `ChooseRandomLegModeForSubtour` threw `Subtour
+contains a mix of chain- and non-chainbased modes` on both seeds
+(20260810 and 20260811). Systematic, not stochastic.
+
+**The measurement.** 152 of 155,623 persons in arm A's input plans carry
+a closed subtour mixing chain-based (`car`, `bike`) with non-chain modes
+(car+pt 68, car+walk 38, bike+walk 24, bike+pt 20, two triples — no
+`ride` in any, exonerating the M0 waiting path). The pre-§9.60 demand
+has ZERO such persons in 155,349, so the §9.60/§9.61 regeneration
+introduced the class. The B2 tables show the mechanism: **1,191 WEEKDAY
+persons (305 SAT, 137 SUN) held INTERLEAVED tours** — e.g. person 62708,
+tours 2 and 5 both 3-leg lift tours at `trip_seq` 8,9,12 and 10,11,13.
+Mode is drawn per tour, so interleaved tours emit alternating modes, and
+coincident escort stops (within SubtourModeChoice's 100 m coordDistance)
+close a mixed subtour.
+
+**The cause** (`bind_nonhousehold_lifts`, the §9.60 M1 pass): when one
+driver's day held two unbound HX tours and both were re-targeted, the
+second binding's busy-interval check read the first tour's ORIGINAL rows
+— its re-targeted times lived only in `replaced` and were never
+consulted — so two lifts could overlap, and the chronological
+re-sequencing splice then interleaved their legs. The 1% probes passed
+because ~6 affected persons at that fraction × SubtourModeChoice's ~10%
+per-iteration touch gave the crash no reliable chance to fire —
+**verified-at-1% is not verified**, which the §9.10 rule already said.
+
+**The repair** (in the same pass): the busy check consults the
+re-targeted times of already-replaced sibling tours; and a post-splice
+assertion refuses to write any demand in which a person's tours are
+non-contiguous in `trip_seq` — with one mode per tour and every tour
+anchored at home, contiguity structurally excludes the mixed-subtour
+class. B2/plans regenerated: **0 interleaved persons on all three day
+types**; weekday lift bindings 55,280 → **55,249** of 55,614 (31
+formerly-overlapping bindings now correctly skipped as infeasible), SAT
+30,442, SUN 21,803. Free at the family boundary — no completed run
+exists in the §9.58–§9.61 family; §9.62's identity is otherwise
+unchanged and both arms relaunch on the repaired demand.
+
+**Recorded softness, not chased here:** a re-targeted lift tour's mode
+is still drawn from the seed split, so a bound driver can hold a
+walk-mode lift tour the pairing engine can never realise as a ride. The
+realised pairing rate is measured and reported at the arm (§9.48
+pattern), so this dilutes binding efficacy visibly rather than silently;
+it belongs with the #48 measurement lane, not this repair.
+
+---
+
+## 9.64 The first converged all-physical arms: C5 exists, ride collapses under scoring, and the seed noise floor is measured (24 August 2026, issues #48, #31, #30, #28, #14, #9)
+
+**Both §9.62 arms completed** — 1000 iterations each, rc=0, ~67.4 h wall
+apiece (the §9.59 estimate was ~65 h; the #66 stall and two-arm
+contention account for the rest). Arm A: `relaxed: true` at max drift
+**0.031 pp** (tolerance 0.5; the cutoff snap 4.23 pp reported
+separately), events-based conservation closes on every mode. These are
+the FIRST valid runs of the §9.58–§9.63 family.
+
+**The fit (arm A, 35 of 67 calibration targets scorable, MAE 10.65 pp):**
+driver **73.19 / 59.0 (+14.19)** · passenger **0.09 / 20.6 (−20.51)** ·
+walk-only **7.28 / 13.4 (−6.12)** · bike **11.21 / 3.2 (+8.01)** · pt
+**8.22 / 3.8 (+4.42)**. Submodes (Tier R): bus 6.13, rail 0.77 + combos,
+tram 0.02, ferry 0.02. **Light rail: modelled 1,260 weekday boardings
+(B: 1,212) against the observed 3,417/day — the intervention under study
+realises ~37% of its patronage in the uncalibrated base.** Counts:
+mean −91.8% with 6 modelled-zero stations — statistically unchanged from
+`bind1000_25pct`'s −91.05%, the recorded no-through-demand structure,
+not a new defect. Trip-length constraints: walk mean **5.56 km vs 0.70
+observed (7.9×)** — #30's generation diagnosis reproduces on the
+physical family; bike 1.66×, car 1.07×, pt 0.44×.
+
+**The central finding — ride collapses under scoring, not under
+physics.** Through iteration ~799 the arms carried ~6,800 ride legs at
+pairing rates 0.08–0.20; at the innovation cutoff selection kept ~540,
+of which **100% pair and board**. The §9.53/§9.60 machinery works —
+what died is the CHOICE: with waiting priced at the declared 0 utils/h,
+a paired ride still loses to self-driving for the licensed and to
+bike/pt/walk for the carless. The observed 20.6 passenger share sits
+recognisably in the overshoots (+14 driver, +8 bike, +4.4 pt).
+Occupancy 0.0013 vs 0.3503. **M2 (driver detours) is a NO-GO on this
+evidence** — supply is not the binding constraint when 100% of surviving
+requests are served; the binding constraint is demand-side scoring, and
+which lever to pull (the §8.5-held constants stay held) is the owner's
+next decision. The next diagnostic is a decomposition of where ride
+plans die: never-proposed vs proposed-and-scored-out vs
+unpairable-re-moded.
+
+**C5 EXISTS (deliverable 5, closing #14 and #9).**
+`params/C5_calibration.json` written by `--constrained-base` from arm A
+under the §9.50 branch: every parameter at its declared value, objective
+10.65, **feasible=False with five stated violations** (occupancy + four
+trip-length ranges) — reported, never absorbed. #9 closes as decided by
+§9.50: ASCs stay priors. `docs/audit/CALIBRATION_REPORT.md` regenerated.
+
+**The seed noise floor is measured (arm B's product, n=2):** per-mode
+|A−B| at fit level 0.00–0.11 pp (MAE 10.65 vs 10.66), LR boardings
+1,260 vs 1,212 (±3.9%). Every gap in the table above is signal.
+`E.replication.n_replications` (30, provisional planning figure 5) can
+now be set from data — at this variance even 3 replications resolve
+sub-pp mode-share effects; the value choice awaits the owner with the
+measurement recorded here.
+
+## 9.65 Run directories are named by the runner, never by hand (24 August 2026, owner directive)
+
+**The decision.** A run directory is named by `run_matsim.py` at launch as
+`<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct` — dated, sortable
+and self-describing. The `--tag` flag is removed from `run.py`,
+`run_matsim.py`, `calibrate.py` and `solve_asc_ride.py`: nobody, agent
+included, hand-names a run any more. The owner asked for exactly this
+(24 Aug): human-readable names, chosen by the runner and not by the agent —
+the old codenames (`phys1000a_25pct`, `bind1000_25pct`, …) required session
+context to decode and encoded neither the date nor the true parameters
+(`rp50_declared` was 50 *iterations* at a 1% sample, not a 50% sample).
+
+**What identity means now.** The launch stamp is a **label**, not identity.
+A run's identity stays the parameter set in `_run.json` (scenario, day,
+fraction, iterations, seed, `--set` overrides, controler source hash), and
+resume detection now scans the records and matches on it — re-invoking with
+the same parameters is still a no-op, `--force` still forces, and a
+parameter match with a **changed controler** now starts a fresh directory
+and leaves the stale one in place rather than deleting it (deleting a
+result is never the harness's call; the old behaviour overwrote in place).
+The calibration loop locates a candidate by the overrides recorded in
+`_run.json` rather than by a tag it invented, and writes the runner's
+directory name into its history and `best_tag`. The wall clock enters the
+directory NAME only; no model input or output depends on it, so the
+determinism constraint is untouched.
+
+**The renames (applied 24 Aug to everything on disk; quarantined runs
+renamed in place inside their `_aborted_*` parents).** Documents dated
+before this entry — §9.44–§9.64, the audit evaluations, `C5_calibration.json`'s
+`best_tag`, the calibration report — keep the old names as historical
+references; this table is the bridge. Run-internal records (`_run.json`
+`name`, `SUMMARY.md`) also keep the name they were written under.
+
+| old | new |
+|---|---|
+| `phys1000a_25pct` (arm A, **the C5 base run**) | `20260821T175907_1000it_25pct` |
+| `phys1000b_25pct` (arm B, the seed replication) | `20260821T180310_1000it_25pct` |
+| `bind1000_25pct` | `20260818T235351_1000it_25pct` |
+| `conv1000_10pct` | `20260816T022250_1000it_10pct` |
+| `conv1000_25pct` | `20260817T011703_1000it_25pct` |
+| `phys50_25pct` | `20260820T202754_50it_25pct` |
+| `evthreads_timing` | `20260821T003843_5it_25pct` |
+| `phys_timing2_base` / `_evt` / `_async` / `_fifo` | `20260821T131322` / `T141252` / `T144513` / `T152035` `_5it_25pct` |
+| `wedge_probe` / `wedge_probe2` | `20260821T130340_2it_1pct` / `20260821T130835_2it_1pct` |
+| `lift_probe` | `20260821T155944_2it_1pct` |
+| `allmodes_probe` | `20260820T175133_2it_1pct` |
+| `jointride_probe` | `20260820T165314_2it_1pct` |
+| `motorbike_smoke` | `20260820T162958_2it_1pct` |
+| `freight_smoke` | `20260820T150002_2it_1pct` |
+| `evthreads_ab` / `evthreads_ab2` | `20260820T230351_2it_1pct` / `20260820T230710_2it_1pct` |
+| `ride_pairing_probe` | `20260818T194826_3it_1pct` |
+| `rp25_declared` / `rp25_control` / `rp25_stress` | `20260818T211301` / `T212802` / `T214527` `_10it_25pct` |
+| `rp50_declared` | `20260818T205739_50it_1pct` |
+| `smoke_postrebuild` | `20260816T015048_2it_1pct` |
+| `_aborted_20260816/conv1000_10pct_postbatch` | `_aborted_20260816/20260816T020351_1000it_10pct` |
+| `_aborted_20260816/S2_WEEKDAY_f025_i1000_s20260810` | `_aborted_20260816/20260816T020436_1000it_25pct` |
+| `_aborted_20260816/conv1500_10pct_stopped` | `_aborted_20260816/20260818T080732_1500it_10pct` |
+| `_aborted_20260818/bind1000_25pct` | `_aborted_20260818/20260818T233911_1000it_25pct` |
+| `_aborted_20260820/S2_WEEKDAY_f025_i1000_s20260810` | `_aborted_20260820/20260818T162538_1000it_25pct` |
+| `_aborted_20260820/base1000_25pct` | `_aborted_20260820/20260820T151516_1000it_25pct` |
+| `_aborted_20260821/phys1000_25pct` (§9.57 stop) | `_aborted_20260821/20260821T010821_1000it_25pct` |
+| `_aborted_20260821/phys1000a_25pct_smc_crash` | `_aborted_20260821/20260821T172050_1000it_25pct` |
+| `_aborted_20260821/phys1000b_25pct_smc_crash` | `_aborted_20260821/20260821T172453_1000it_25pct` |
+
+*(Superseded the same day for the dead runs: §9.66 dissolved the
+`_aborted_<date>` parents, so each quarantined path above now lives at
+`results/aborted_<new name>`.)*
+
+## 9.66 Every run carries an auto-updated status card, and a dead run's name says so (24 August 2026, owner directive)
+
+**The decision.** Every run directory carries **`_meta.json`** — a small
+status card written by `run_matsim.py` at LAUNCH and updated automatically
+at every transition, so runs can be observed, and considered or
+disregarded, without opening a log. Contents (schema-checked against
+`config/schema/outputs/meta.schema.json` through the same
+`outputs.write_checked` contract as every other output): `status`
+(`running` / `completed` / `failed` / `aborted`), the identifying
+parameters (scenario, day, fraction **and `sample_pct`**, iterations, seed,
+threads, xmx, overrides, controler hash), `started`, `ended`, `wall_s`,
+`rc`, and the harness `pid`.
+
+**Transitions.** rc=0 → `completed`. rc≠0 → `failed`. An interrupt the
+harness can still catch (Ctrl+C, a terminating exception) → `aborted`,
+written in a `finally`-style handler before the signal propagates. A hard
+kill the harness cannot see is settled by **reconciliation**: at every
+harness start, any run whose meta says `running` under a pid that no longer
+exists is marked `aborted` (pid liveness via `OpenProcess`/`WaitForSingleObject`
+on Windows — `os.kill(pid, 0)` there TERMINATES the target and must never
+be used). A live concurrent arm has a live pid and is untouched.
+
+**Dead runs are named so a directory listing says what happened**: the
+harness renames a failed or aborted run to
+**`aborted_<launch>_<iterations>it_<pct>pct`** in place, at the top level
+of `results/` — the old `results/_aborted_<date>/` quarantine parents hid
+exactly the data the name now shows and are **dissolved** (owner: *"not
+aborted_number, that hides the other data"*). The prefix is the disregard
+label; the precise cause (`failed` vs `aborted`) lives in the metadata. If
+the rename loses to a Windows directory lock (a `tail -f` monitor holds
+one — trap ledger), the metadata still carries the truth and the rename is
+reported, not raised.
+
+**What this does not change.** `_run.json`, written only on success,
+**remains the result gate** — "a run without `_run.json` is not a result"
+stands; `_meta.json` is observational and is never read by resume
+detection, the fit, or the calibration loop. Backfill: all 35 existing runs
+received a meta card derived from their own records (`_run.json`,
+`_config.json`, log first/last timestamps — nothing invented; backfilled
+cards carry a `note` saying so), the nine dead runs moved to
+`results/aborted_<name>`, and the two §9.63 SMC crashes are `failed`
+(the JVM exited non-zero) while the owner-stopped and found-dead runs are
+`aborted`.
+
+## 9.67 The project is city-digital-twin (24 August 2026, owner directive)
+
+**Renamed from `NewcastleLRSIM` to `city-digital-twin`.** The owner's goal
+(§9.51, the brief §1) has been a digital twin of ANY city; the framework
+half of the repository is city-agnostic by hard constraint, and its own
+naming rule — no place name in the framework — was violated by the
+repository's own name, as it had been once before ("Project Wickham",
+§14 2026-08-13, renamed then only as far as the next place name up).
+
+**What changed.** The GitHub repository is renamed (GitHub redirects the
+old URL; PR #67, the issues and the stars survive); the local remote now
+points at `city-digital-twin`. In-tree, the identity-bearing statements
+changed: `README.md`, `.claude/CLAUDE.md` (title and the Naming rule),
+`STATUS.md`, this file's header, the registry module docstring, and the
+nine `config/schema/` `$id` URLs and titles. **What did not change:**
+historical narrative (this log, session records, audit evaluations, the
+proposal's working title — history is not rewritten); generated data
+reports carrying the machine's absolute path (regenerable, manifest-hashed,
+and true until the local folder is renamed); and the two tracked codename
+identifiers — the `CITYSIM_*` env prefix and the `src/java/citysim/`
+package — which stay with the open naming issue (renaming a compiled entry
+point invalidates run records and is not done as a side effect). The local
+working-copy folder (`work/NewcastleLRSIM`) is the owner's to rename;
+nothing in the repository depends on its name.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -6596,6 +6898,9 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-24 | **Runs name, describe and status-track themselves, and the project is city-digital-twin (§9.65–§9.67; owner directives).** The run harness now names every run directory itself — `<launch yyyymmddThhmmss>_<iterations>it_<pct>pct` — and `--tag` is gone from every caller; run identity moved fully into the `_run.json` parameter set (resume scans records, prefers a matching controler hash, and no longer deletes a stale run on a controler change). Every run carries **`_meta.json`**, a schema-checked status card (`running`/`completed`/`failed`/`aborted` + started/ended/parameters) written at launch and updated automatically at every transition, with stale `running` states reconciled by pid at the next harness start; a dead run is renamed **`aborted_<name>`** in place and the `results/_aborted_<date>/` quarantine parents are dissolved. All 35 existing run directories were renamed (maps in §9.65/§9.66) and backfilled with metadata derived from their own records — nothing invented, backfilled cards say so. **The repository is renamed `NewcastleLRSIM` → `city-digital-twin`** (GitHub redirects stand; schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay with the open naming issue). The board's stale open-issue count was corrected against live GitHub (8 open, 42 filed, 34 closed). **No model or data value changed, no run was made, no target moved, the 67/143 split is untouched and nothing here is a result.** |
+| 2026-08-24 | **The first converged all-physical arms complete, and C5 exists (§9.64; issues #48/#31/#30/#28/#14/#9).** Both §9.62 arms ran 1000 iterations to `relaxed: true` (drift 0.031 pp) with events-based conservation closing on every mode — the first valid runs of the §9.58–§9.63 family, ~67.4 h each under the two-arm pattern. Fit (35 of 67 calibration targets scorable, MAE 10.65 pp): driver +14.19, **passenger −20.51**, walk-only −6.12, bike +8.01, pt +4.42; submodes split per Tier R (tram 0.02%); **light rail 1,260 modelled weekday boardings vs 3,417 observed**. The central measurement: **ride collapses under SCORING, not physics** — ~6,800 ride legs/iteration until the cutoff, ~540 after selection, 100% of survivors paired and physically boarded, 0 capacity refusals across 1000 iterations — so M2 (driver detours) is a NO-GO and the next lever is demand-side choice (owner decision). `params/C5_calibration.json` written from arm A under the §9.50 constrain-and-report branch (objective 10.65, **feasible=False, five violations STATED**); the calibration report regenerated; #14/#9 CLOSED. **The seed noise floor is measured from arm B (n=2): ≤0.11 pp per mode, LR boardings ±3.9%** — the `E.replication.n_replications` input the record has waited for. The count fit (−91.8%, 6 modelled-zero stations) is statistically unchanged from the previous family (−91.05%): the recorded no-through-demand structure, not a new defect. No target moved; the 67/143 split untouched; the fit rows are the base model's report card — **nothing here is a finding about the light rail** (no counterfactual has run). |
+| 2026-08-21 | **The two-arm relaunch launched, crashed on both seeds, and was repaired the same afternoon (§9.62, §9.63; issue #65).** The owner approved the §9.59 two-arm pattern: arm A `phys1000a_25pct` (the base arm, master seed) + arm B `phys1000b_25pct` (`RUN.machine.seed` 20260811 — the field's replication clause exercised for the first time), qsim 8 + events 4 + xmx 30g per arm (the driver pins -Xms to -Xmx; two 40g heaps would commit 80 GiB on 63.5). Both arms died at their FIRST replanning: MATSim refuses a subtour mixing chain- and non-chainbased modes, and 152 sampled persons carried one — the §9.60 M1 pass checked a second lift binding against a sibling tour's STALE pre-retarget times, two lifts per driver could overlap, and the chronological splice interleaved their tours (1,191 WEEKDAY / 305 SAT / 137 SUN persons; per-tour modes then alternated inside one home-anchored loop). The 1% probes could not have caught it (~6 affected persons at that fraction — verified-at-1% is not verified, §9.10's rule again). Repair: the busy check consults re-targeted sibling times, and a post-splice assertion refuses to write a demand whose tours are non-contiguous in trip_seq. B2/plans/run-inputs regenerated: 0 interleaved persons, 0 mixed subtours in all 621,722 weekday plans; weekday lift bindings 55,280 → **55,249** (31 overlaps now correctly skipped). Free at the family boundary — no completed run existed. No target moved; the 67/143 split untouched; nothing is a result. |
 | 2026-08-21 | **Deliverable 0b: three assumptions became measurements from data already held, and the chain-timing constants surfaced (§9.61; issue #63).** G15 was in the package all along (the "not in the package" claim in `build_population.py` and the age-structure dossier was FALSE): the 18+ tertiary full-time split is now OBSERVED per SA1 and the assumed field is retired. The hourly permanent counts settle what the AADT aggregates could not: **SAT:SUN = 1.1473** (assumed 1.1875), external weekend scaling **0.8429/0.7347** (assumed 0.4/0.3 — weekend boundary demand roughly doubles), and the 1 h weekend departure shift measured EQUAL to its assumption (12 stations, 33,753 clean station-days, the §9.49 method verbatim); three assumed fields retired, the build refuses to run without the measured artefact. The B2 scaffold speeds (26/16 km/h + 240 s) left their expressions for declared, swept fields. B1/B2/plans regenerated on the full population; manifest 429; `check_package` ALL PASSED. The remaining ranked backlog (two attended acquisitions, the Overpass attic query, ~25 reclassifications) is issue #63. No target moved; the 67/143 split untouched; nothing is a result. |
 | 2026-08-21 | **The non-household-lift gap gets its physical mechanism (§9.60; issues #48/#31/#28; owner /goal directive supersedes §9.55's report-only stance).** M0: a booked passenger physically WAITS at the meeting point for the driver's car, bounded by the declared pairing window, and a timeout completes on the Tier-1 clock counted from the timeout — no new number; the old missed(gone/absent) boarding classes measure 0 at the verification probe. M1: unbound serve-passenger tours — generated at the OBSERVED 10–19.5% rate, un-placeable by the §9.46 household binder — are re-targeted to driverless-household passengers in the declared scope (same SA1, swept): **WEEKDAY binds 55,280 of 55,614 (99.4%)**; the serving leg departs at the passenger's own departure from their O to their D, so the unchanged pairing rule matches it and the unchanged JointRideEngine physically boards it. ADDS NO TRIP; the binding is an eligibility, never a guarantee; ride stays emergent; sampling co-clusters bound household pairs (the §9.45 class one level up). M2 (bounded driver detours) designed and deferred to the converged arm's measurement; M3 (declared allowance) rejected as teleportation/invented data. Who-drives-whom stays unobserved — the household/non-household split is REPORTED, never fitted. No target moved; the 67/143 split untouched; nothing is a result. |
 | 2026-08-21 | **Every wall-time knob declared and probed, and the 10× ask answered by measurement (§9.59).** The §9.57 arm's forensics: mobsim 64% / replanning 26% / prepare 8% of a 226 s median; 134.5M events per iteration; the it-110 outlier explained (one PlanRouter pass poisoned by the walk-gridlock knot ran 7,594 s). FIFO link dynamics — MATSim's silent default — let a 1.25 m/s pedestrian hold a link's queue head against the cars behind it, contradicting §9.54's declared PCE-0 semantics: **`qsim.linkDynamics = PassingQ` declared on correctness**, at a measured ~42 s/iteration price over FIFO. Probes (25% × 5, one at a time): `replanning_threads` = 20 is the one clean win (replanning 76→33 s); events 12 buys nothing over 4; `synchronizeOnSimSteps=false` is a 65 s REGRESSION; `oneThreadPerHandler` is measured FATAL — each verdict recorded on its declared field. The declared stack runs ~233 s/iteration → **~65 h/arm**; `-Xms` pre-sizes the heap; `create_graphs` declared for long arms. The repaired model is not faster than the wedged one — it simulates MORE (the aborted 11.6k legs/iteration now walk their whole day). **~10× per iteration is not reachable without shrinking the physical work; the available multiplier is two concurrent arms** (family throughput doubles; iteration count survives contention, duration does not). No target moved; nothing is a result. |

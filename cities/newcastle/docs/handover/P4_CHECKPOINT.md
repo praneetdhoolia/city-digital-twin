@@ -212,14 +212,15 @@ long: the bar is **structurally prevented, not remembered**.
 # a committed overlay - the reproducible way to vary a run
 python src/run/run_matsim.py --scenario S2 --day WEEKDAY --run-config ride_cost_10pct
 
-# a one-off, still checked against the sweep and held-fixed rules
+# a one-off, still checked against the sweep and held-fixed rules; the RUNNER
+# names the directory (<launch>_<iterations>it_<pct>pct), never the caller
 python src/run/run_matsim.py --scenario S2 --day WEEKDAY \
-    --fraction 0.25 --iterations 250 --threads 8 --xmx 40g --tag my_run
+    --fraction 0.25 --iterations 250 --threads 8 --xmx 40g
 
 # the declared pipeline - the ONLY route to a reportable number
-python src/analyse/extract_metrics.py --run <tag>
-python src/calibrate/fit.py           --run <tag>
-python src/calibrate/report.py        --run <tag> --out docs/audit/CALIBRATION_REPORT.md
+python src/analyse/extract_metrics.py --run <run dir name>
+python src/calibrate/fit.py           --run <run dir name>
+python src/calibrate/report.py        --run <run dir name> --out docs/audit/CALIBRATION_REPORT.md
 
 # watch a run in flight (the url is also printed by run_matsim.py itself)
 # (the live run view was removed on 13 August and is being rebuilt)

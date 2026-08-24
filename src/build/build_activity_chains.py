@@ -1000,9 +1000,21 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
                                        ctx_d['hy'], ctx_d['hz'], SA1)
             if arr_home > DAY_HORIZON_S:
                 continue
-            # the driver's other tours are already placed and immovable here
-            other = [rows[j] for j in rows_of[d_pid]
-                     if rows[j]['tour_id'] != d_tid]
+            # the driver's other tours are already placed and immovable here.
+            # A sibling tour this same pass has re-targeted is busy at its NEW
+            # times - its stale originals are still in `rows`, and reading them
+            # let two lifts overlap and the splice interleave their legs,
+            # which emits a mixed chain/non-chain subtour SubtourModeChoice
+            # refuses (issue #65: both relaunch arms crashed at replanning 1)
+            other_rows = {}
+            for j in rows_of[d_pid]:
+                tid = rows[j]['tour_id']
+                if tid != d_tid and (d_pid, tid) not in replaced:
+                    other_rows.setdefault(tid, []).append(rows[j])
+            for (r_pid, r_tid), rep in replaced.items():
+                if r_pid == d_pid and r_tid != d_tid:
+                    other_rows[r_tid] = rep
+            other = [r for tour in other_rows.values() for r in tour]
             busy = collections.defaultdict(lambda: [float('inf'), 0])
             for r in other:
                 iv = busy[r['tour_id']]
@@ -1057,6 +1069,22 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
             for seq, r in enumerate(day_rows, start=1):
                 r['trip_seq'] = seq
             by_person[d_pid] = day_rows
+        # The invariant the splice must preserve: a person's tours stay
+        # CONTIGUOUS in trip_seq. With one mode per tour and every tour
+        # anchored at home, contiguity is what structurally excludes the
+        # mixed chain/non-chain subtours SubtourModeChoice refuses (#65).
+        for p, day_rows in by_person.items():
+            prev, seen_tours = None, set()
+            for r in day_rows:
+                t = r['tour_id']
+                if t != prev:
+                    if t in seen_tours:
+                        raise SystemExit(
+                            'bind_nonhousehold_lifts: interleaved tours for '
+                            'person %s on %s - refusing to write a demand '
+                            'that crashes SubtourModeChoice (#65)' % (p, day))
+                    seen_tours.add(t)
+                    prev = t
         seen = set()
         with open(path, 'w', newline='', encoding='utf-8') as fh:
             w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',

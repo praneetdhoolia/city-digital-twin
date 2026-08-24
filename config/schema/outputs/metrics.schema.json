@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/praneetdhoolia/NewcastleLRSIM/config/schema/outputs/metrics.schema.json",
+  "$id": "https://github.com/praneetdhoolia/city-digital-twin/config/schema/outputs/metrics.schema.json",
   "title": "_metrics.json - modelled quantities",
   "description": "Written by src/analyse/extract_metrics.py. MODELLED QUANTITIES ONLY: this document reads no validation target, so it cannot see the 67/143 split and cannot leak a holdout value. Scoring is src/calibrate/fit.py.",
   "type": "object",

@@ -6,6 +6,13 @@ fraction, writing everything derived into the run directory so the committed
 inputs are never modified in place. A run is identified by its own parameters,
 so re-invoking with the same ones is a no-op rather than a repeat.
 
+**The RUNNER names the run directory** (owner directive, 24 Aug 2026):
+`<launch yyyymmddThhmmss>_<iterations>it_<sample percentage>pct`, e.g.
+`20260821T220310_1000it_25pct`. Nobody passes a name in. The launch stamp is
+a LABEL, not identity: identity stays the parameter set recorded in
+`_run.json`, which is what resume detection matches on — so the wall clock in
+the name cannot make two runs of the same parameters different results.
+
 **Resumable, not restartable.** MATSim has no mid-run checkpoint, so "resume"
 here means: a completed run is detected and skipped. A run that died leaves no
 `_run.json` and is repeated from the start.
@@ -58,12 +65,12 @@ JAVA_SRC = os.path.join(REPO, 'src', 'java')
 def controler_sha256():
     """Hash the committed source of the entry point this run will execute.
 
-    The run name is built from the scenario and the registry values, so it
-    cannot see the controler. That was harmless while the controler only
-    rebound ride availability; issue #28 made it decide how `ride` gets its
-    travel time, which moves every mode share. A result produced before that
-    change and one produced after are different results with the same name, so
-    the run record carries this and `main` refuses to resume across a change.
+    A run's identity (the parameter set in `_run.json`) cannot see the
+    controler. That was harmless while the controler only rebound ride
+    availability; issue #28 made it decide how `ride` gets its travel time,
+    which moves every mode share. A result produced before that change and one
+    produced after are different results with the same parameters, so the run
+    record carries this and resume detection refuses to match across a change.
 
     Sources are hashed, not the compiled classes: javac output is not
     guaranteed byte-identical across JDK builds, and the source is what is
@@ -304,10 +311,146 @@ def start_live_view(run_dir, cfg):
         return None
 
 
-def run(scenario, day, cfg, overrides, tag=None, force=False):
+def find_completed(scenario, day, fraction, iterations, seed, overrides,
+                   controler=None):
+    """The completed run with these parameters, if one exists.
+
+    Identity lives in the run record, not in the directory name: the name is a
+    launch-time label, so resume has to compare what was actually run. Only a
+    run that finished (rc=0, record written) can be resumed; a dead run leaves
+    no `_run.json` and is invisible here, exactly as before.
+
+    A record whose controler hash matches `controler` is preferred over one
+    whose does not: the same parameter set legitimately exists across model
+    families (the 18 Aug pilot arm and the 21 Aug base arm share every
+    parameter), and only the hash tells them apart. Newest first, so a forced
+    re-run supersedes what it re-ran. The returned record's `name` is set to
+    the directory that actually holds it - directories are renameable labels,
+    and a record must never point a caller at a name its directory no longer
+    carries.
+    """
+    fallback = None
+    for record in sorted(glob.glob(os.path.join(RESULTS, '*', '_run.json')),
+                         reverse=True):
+        try:
+            doc = json.load(open(record, encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        if (doc.get('scenario') == scenario and doc.get('day') == day
+                and doc.get('fraction') == fraction
+                and doc.get('iterations') == iterations
+                and doc.get('seed') == seed
+                and (doc.get('overrides') or {}) == (overrides or {})
+                and doc.get('rc') == 0):
+            doc['name'] = os.path.basename(os.path.dirname(record))
+            if controler is None or doc.get('controler_sha256') == controler:
+                return doc
+            if fallback is None:
+                fallback = doc
+    return fallback
+
+
+META = '_meta.json'
+
+
+def _now():
+    return time.strftime('%Y-%m-%dT%H:%M:%S')
+
+
+def write_meta(run_dir, doc):
+    outputs.write_checked(os.path.join(run_dir, META), doc, 'meta')
+
+
+def update_meta(run_dir, **changes):
+    """Best-effort status transition: observability must never kill a run."""
+    path = os.path.join(run_dir, META)
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+        doc.update(changes)
+        write_meta(run_dir, doc)
+    except Exception as e:                                   # noqa: BLE001
+        print('run metadata not updated (%s): %s' % (path, e), flush=True)
+
+
+def _pid_alive(pid):
+    """Is this pid a live process? Never signals anything.
+
+    On Windows `os.kill(pid, 0)` TERMINATES the process (os.kill there only
+    wraps TerminateProcess and the CTRL events), so liveness is asked of the
+    kernel handle instead.
+    """
+    if os.name == 'nt':
+        import ctypes
+        k32 = ctypes.windll.kernel32
+        handle = k32.OpenProcess(0x00100000, 0, int(pid))    # SYNCHRONIZE
+        if not handle:
+            return False
+        rc = k32.WaitForSingleObject(handle, 0)
+        k32.CloseHandle(handle)
+        return rc == 0x102                                   # WAIT_TIMEOUT: alive
+    try:
+        os.kill(int(pid), 0)
+        return True
+    except OSError:
+        return False
+
+
+def mark_dead(run_dir, status, rc=None, wall_s=None):
+    """Record a run's death in its metadata and rename it aborted_<name>.
+
+    The prefix is a label so a person scanning `results/` can disregard the
+    directory without opening it; the PRECISE status (failed vs aborted) lives
+    in `_meta.json`. If the rename loses to a Windows directory lock (a
+    `tail -f` monitor is enough to hold one), the metadata still carries the
+    truth and the rename is reported, not raised.
+    """
+    update_meta(run_dir, status=status, ended=_now(), rc=rc, wall_s=wall_s)
+    parent, name = os.path.split(os.path.abspath(run_dir))
+    if name.startswith('aborted_'):
+        return run_dir
+    target = os.path.join(parent, 'aborted_' + name)
+    n = 2
+    while os.path.exists(target):
+        target = os.path.join(parent, 'aborted_%s-%d' % (name, n))
+        n += 1
+    try:
+        os.rename(run_dir, target)
+        return target
+    except OSError as e:
+        print('could not rename %s -> %s (%s); its status is recorded in %s'
+              % (run_dir, os.path.basename(target),
+                 e, os.path.join(name, META)), flush=True)
+        return run_dir
+
+
+def reconcile_stale():
+    """Mark as aborted any run that claims to be running under a dead harness.
+
+    A hard kill leaves no chance to update the metadata, so the next harness
+    invocation settles it: status `running` with the recorded pid gone means
+    the run is dead. A live concurrent arm has a live pid and is left alone.
+    """
+    for path in glob.glob(os.path.join(RESULTS, '*', META)):
+        run_dir = os.path.dirname(path)
+        try:
+            doc = json.load(open(path, encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        if doc.get('status') != 'running':
+            continue
+        if doc.get('pid') and _pid_alive(doc['pid']):
+            continue
+        dead = mark_dead(run_dir, 'aborted')
+        print('reconciled: %s claimed to be running under a dead harness; '
+              'marked aborted -> %s' % (os.path.basename(run_dir),
+                                        os.path.basename(dead)), flush=True)
+
+
+def run(scenario, day, cfg, overrides, force=False):
     src_dir = os.path.join(SETS, scenario, day)
     if not os.path.isdir(src_dir):
         raise SystemExit('no run inputs at %s' % src_dir)
+    reconcile_stale()
 
     fraction = cfg.get('RUN.sample.fraction')
     try:
@@ -319,32 +462,47 @@ def run(scenario, day, cfg, overrides, tag=None, force=False):
     xmx = cfg.get('RUN.machine.xmx')
     seed = cfg.get('RUN.machine.seed')
 
-    name = tag or '%s_%s_f%s_i%d_s%d' % (scenario, day, ('%g' % fraction).replace('.', ''),
-                                         iterations, seed)
-    if overrides and not tag:
-        name += '_' + '_'.join('%s%s' % (k.replace('.', ''), v)
-                               for k, v in sorted(overrides.items()))
+    controler = controler_sha256()
+    prior = find_completed(scenario, day, fraction, iterations, seed, overrides,
+                           controler)
+    if prior is not None and not force:
+        if prior.get('controler_sha256') == controler:
+            print('resume: %s already complete' % prior['name'], flush=True)
+            return prior
+        # A run's parameters cannot see the controler's own source. Without
+        # this check a completed run would be handed back after the model's
+        # behaviour had changed - silently, and with no way to tell the two
+        # apart afterwards. Issue #28 changed how `ride` gets its travel time
+        # and moved every mode share, so a stale result reused here would be
+        # indistinguishable from a real one. The stale directory is left in
+        # place - deleting a result is never this script's call.
+        print('re-running: %s has the same parameters but a changed controler\n'
+              '  recorded %s\n  current  %s'
+              % (prior['name'], (prior.get('controler_sha256') or 'not recorded')[:16],
+                 controler[:16]), flush=True)
+
+    # The RUNNER names the directory: launch stamp + iterations + sample
+    # percentage. The stamp is a label for humans sorting `results/`; run
+    # identity is the parameter set matched above.
+    stamp = time.strftime('%Y%m%dT%H%M%S')
+    name = '%s_%dit_%spct' % (stamp, iterations, '%g' % (fraction * 100))
+    n = 2
+    while os.path.exists(os.path.join(RESULTS, name)):
+        name = '%s_%dit_%spct-%d' % (stamp, iterations, '%g' % (fraction * 100), n)
+        n += 1
     run_dir = os.path.join(RESULTS, name)
     record = os.path.join(run_dir, '_run.json')
-    controler = controler_sha256()
-    if os.path.exists(record) and not force:
-        prior = json.load(open(record, encoding='utf-8'))
-        if prior.get('controler_sha256') == controler:
-            print('resume: %s already complete' % name, flush=True)
-            return prior
-        # The run name is built from the scenario and the registry values, which
-        # cannot see the controler's own source. Without this check a completed
-        # run would be handed back after the model's behaviour had changed -
-        # silently, and with no way to tell the two apart afterwards. Issue #28
-        # changed how `ride` gets its travel time and moved every mode share, so
-        # a stale result reused here would be indistinguishable from a real one.
-        print('re-running %s: the controler changed since it was produced\n'
-              '  recorded %s\n  current  %s'
-              % (name, (prior.get('controler_sha256') or 'not recorded')[:16],
-                 controler[:16]), flush=True)
-    if os.path.exists(run_dir):
-        shutil.rmtree(run_dir, ignore_errors=True)
     os.makedirs(run_dir, exist_ok=True)
+    # The status card, written at LAUNCH and updated at every transition, so a
+    # run can be observed - and considered or disregarded - without opening a
+    # log. It is not the result gate: `_run.json`, written only on success,
+    # stays that.
+    write_meta(run_dir, dict(
+        status='running', scenario=scenario, day=day, fraction=fraction,
+        sample_pct=float('%g' % (fraction * 100)), iterations=iterations,
+        seed=seed, threads=threads, xmx=xmx, overrides=overrides or {},
+        controler_sha256=controler, started=_now(), ended=None, wall_s=None,
+        rc=None, pid=os.getpid()))
 
     # `iterations`, `threads` and every other declared value reach the config
     # through `cfg`, not through this call: they are registry fields, and the
@@ -367,13 +525,24 @@ def run(scenario, day, cfg, overrides, tag=None, force=False):
     print('live view: %s' % (view_url or 'disabled (RUN.monitor.enabled)'),
           flush=True)
     t0 = time.time()
-    with open(log, 'w', encoding='utf-8', errors='replace') as lf:
-        rc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
-                              cwd=run_dir).wait()
+    try:
+        with open(log, 'w', encoding='utf-8', errors='replace') as lf:
+            rc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
+                                  cwd=run_dir).wait()
+    except BaseException:
+        # Ctrl+C or a harness kill that still unwinds: record the abort and
+        # rename before propagating. A kill this except cannot see is settled
+        # by reconcile_stale() on the next invocation.
+        mark_dead(run_dir, 'aborted', wall_s=round(time.time() - t0, 1))
+        raise
     wall = time.time() - t0
     if rc != 0:
-        print('FAILED rc=%d after %.0fs - see %s' % (rc, wall, log), flush=True)
-        return dict(name=name, rc=rc, wall_s=round(wall, 1))
+        dead = mark_dead(run_dir, 'failed', rc=rc, wall_s=round(wall, 1))
+        print('FAILED rc=%d after %.0fs - see %s'
+              % (rc, wall, os.path.join(dead, 'matsim.log')), flush=True)
+        return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
+    update_meta(run_dir, status='completed', ended=_now(), rc=0,
+                wall_s=round(wall, 1))
 
     per = iteration_times(log)
     steady = sorted(v for k, v in per.items() if k > 0)
@@ -437,7 +606,6 @@ def main():
                     help='shorthand for --set RUN.machine.threads=...')
     ap.add_argument('--xmx', help='shorthand for --set RUN.machine.xmx=...')
     ap.add_argument('--seed', type=int, help='shorthand for --set RUN.machine.seed=...')
-    ap.add_argument('--tag')
     ap.add_argument('--force', action='store_true')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, e.g. RUN.sample.fraction=0.10. Checked '
@@ -460,8 +628,7 @@ def main():
             overrides[key] = value
 
     cfg = resolve(a.scenario, a.day, a.run_config, overrides)
-    run(a.scenario, a.day, cfg, dict(parse_override(s) for s in a.set),
-        a.tag, a.force)
+    run(a.scenario, a.day, cfg, dict(parse_override(s) for s in a.set), a.force)
 
 
 if __name__ == '__main__':

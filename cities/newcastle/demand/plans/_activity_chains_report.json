@@ -491,8 +491,8 @@
           "scope": "same_zone",
           "drivers_unbound": 55614,
           "passenger_candidates": 158021,
-          "bound": 55280,
-          "skipped_infeasible": 213147
+          "bound": 55249,
+          "skipped_infeasible": 215164
         }
       }
     },
@@ -542,8 +542,8 @@
           "scope": "same_zone",
           "drivers_unbound": 30490,
           "passenger_candidates": 145929,
-          "bound": 30443,
-          "skipped_infeasible": 42598
+          "bound": 30442,
+          "skipped_infeasible": 42440
         }
       }
     },
@@ -593,8 +593,8 @@
           "scope": "same_zone",
           "drivers_unbound": 21833,
           "passenger_candidates": 130557,
-          "bound": 21804,
-          "skipped_infeasible": 22003
+          "bound": 21803,
+          "skipped_infeasible": 22116
         }
       }
     }
