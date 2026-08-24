@@ -86,8 +86,7 @@ def evaluate(value, args, overrides):
     # the pre-registry positional signature and could not execute at all.
     cfg = run_matsim.resolve(args.scenario, args.day, args.run_config, overrides)
     doc = run_matsim.run(args.scenario, args.day, cfg,
-                         {'ride.constant': '%g' % value},
-                         tag='asc_ride_%g_i%d' % (value, args.iterations))
+                         {'ride.constant': '%g' % value})
     run_dir = os.path.join(run_matsim.RESULTS, doc['name'])
     shares = shares_of(run_dir)
     return dict(asc_car_passenger=value, shares=shares, ride_per_car=ratio(shares),

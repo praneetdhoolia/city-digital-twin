@@ -54,6 +54,7 @@ otherwise cost you an hour:
 | **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (owner-approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
 | **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
+| **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (owner directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6256,6 +6257,70 @@ trip-length ranges) — reported, never absorbed. #9 closes as decided by
 now be set from data — at this variance even 3 replications resolve
 sub-pp mode-share effects; the value choice awaits the owner with the
 measurement recorded here.
+
+## 9.65 Run directories are named by the runner, never by hand (24 August 2026, owner directive)
+
+**The decision.** A run directory is named by `run_matsim.py` at launch as
+`<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct` — dated, sortable
+and self-describing. The `--tag` flag is removed from `run.py`,
+`run_matsim.py`, `calibrate.py` and `solve_asc_ride.py`: nobody, agent
+included, hand-names a run any more. The owner asked for exactly this
+(24 Aug): human-readable names, chosen by the runner and not by the agent —
+the old codenames (`phys1000a_25pct`, `bind1000_25pct`, …) required session
+context to decode and encoded neither the date nor the true parameters
+(`rp50_declared` was 50 *iterations* at a 1% sample, not a 50% sample).
+
+**What identity means now.** The launch stamp is a **label**, not identity.
+A run's identity stays the parameter set in `_run.json` (scenario, day,
+fraction, iterations, seed, `--set` overrides, controler source hash), and
+resume detection now scans the records and matches on it — re-invoking with
+the same parameters is still a no-op, `--force` still forces, and a
+parameter match with a **changed controler** now starts a fresh directory
+and leaves the stale one in place rather than deleting it (deleting a
+result is never the harness's call; the old behaviour overwrote in place).
+The calibration loop locates a candidate by the overrides recorded in
+`_run.json` rather than by a tag it invented, and writes the runner's
+directory name into its history and `best_tag`. The wall clock enters the
+directory NAME only; no model input or output depends on it, so the
+determinism constraint is untouched.
+
+**The renames (applied 24 Aug to everything on disk; quarantined runs
+renamed in place inside their `_aborted_*` parents).** Documents dated
+before this entry — §9.44–§9.64, the audit evaluations, `C5_calibration.json`'s
+`best_tag`, the calibration report — keep the old names as historical
+references; this table is the bridge. Run-internal records (`_run.json`
+`name`, `SUMMARY.md`) also keep the name they were written under.
+
+| old | new |
+|---|---|
+| `phys1000a_25pct` (arm A, **the C5 base run**) | `20260821T175907_1000it_25pct` |
+| `phys1000b_25pct` (arm B, the seed replication) | `20260821T180310_1000it_25pct` |
+| `bind1000_25pct` | `20260818T235351_1000it_25pct` |
+| `conv1000_10pct` | `20260816T022250_1000it_10pct` |
+| `conv1000_25pct` | `20260817T011703_1000it_25pct` |
+| `phys50_25pct` | `20260820T202754_50it_25pct` |
+| `evthreads_timing` | `20260821T003843_5it_25pct` |
+| `phys_timing2_base` / `_evt` / `_async` / `_fifo` | `20260821T131322` / `T141252` / `T144513` / `T152035` `_5it_25pct` |
+| `wedge_probe` / `wedge_probe2` | `20260821T130340_2it_1pct` / `20260821T130835_2it_1pct` |
+| `lift_probe` | `20260821T155944_2it_1pct` |
+| `allmodes_probe` | `20260820T175133_2it_1pct` |
+| `jointride_probe` | `20260820T165314_2it_1pct` |
+| `motorbike_smoke` | `20260820T162958_2it_1pct` |
+| `freight_smoke` | `20260820T150002_2it_1pct` |
+| `evthreads_ab` / `evthreads_ab2` | `20260820T230351_2it_1pct` / `20260820T230710_2it_1pct` |
+| `ride_pairing_probe` | `20260818T194826_3it_1pct` |
+| `rp25_declared` / `rp25_control` / `rp25_stress` | `20260818T211301` / `T212802` / `T214527` `_10it_25pct` |
+| `rp50_declared` | `20260818T205739_50it_1pct` |
+| `smoke_postrebuild` | `20260816T015048_2it_1pct` |
+| `_aborted_20260816/conv1000_10pct_postbatch` | `_aborted_20260816/20260816T020351_1000it_10pct` |
+| `_aborted_20260816/S2_WEEKDAY_f025_i1000_s20260810` | `_aborted_20260816/20260816T020436_1000it_25pct` |
+| `_aborted_20260816/conv1500_10pct_stopped` | `_aborted_20260816/20260818T080732_1500it_10pct` |
+| `_aborted_20260818/bind1000_25pct` | `_aborted_20260818/20260818T233911_1000it_25pct` |
+| `_aborted_20260820/S2_WEEKDAY_f025_i1000_s20260810` | `_aborted_20260820/20260818T162538_1000it_25pct` |
+| `_aborted_20260820/base1000_25pct` | `_aborted_20260820/20260820T151516_1000it_25pct` |
+| `_aborted_20260821/phys1000_25pct` (§9.57 stop) | `_aborted_20260821/20260821T010821_1000it_25pct` |
+| `_aborted_20260821/phys1000a_25pct_smc_crash` | `_aborted_20260821/20260821T172050_1000it_25pct` |
+| `_aborted_20260821/phys1000b_25pct_smc_crash` | `_aborted_20260821/20260821T172453_1000it_25pct` |
 
 ---
 

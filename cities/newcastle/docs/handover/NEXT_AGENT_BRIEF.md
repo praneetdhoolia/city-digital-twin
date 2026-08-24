@@ -172,7 +172,7 @@ P5–P7 ⬜.
 | Package | **429 manifest files** + `params/C5_calibration.json` (committed); `check_manifest` OK |
 | Machine | **free**; no run in progress |
 | Run cost | ~240 s/it/arm two-arm (measured §9.64), ~233 s single (§9.59) → ~65–67 h per 1000-iteration arm |
-| Runs | **`phys1000a_25pct` + `phys1000b_25pct`: the family's two VALID runs** (rc=0, relaxed 0.031 pp, accounting closes, `_run.json`/`_fit.json`/`SUMMARY.md`) · quarantined: `_aborted_20260821/{phys1000_25pct, phys1000a_25pct_smc_crash, phys1000b_25pct_smc_crash}` · probes as recorded on the board |
+| Runs | **`20260821T175907_1000it_25pct` (arm A, ex `phys1000a_25pct`) + `20260821T180310_1000it_25pct` (arm B, ex `phys1000b_25pct`): the family's two VALID runs** (rc=0, relaxed 0.031 pp, accounting closes, `_run.json`/`_fit.json`/`SUMMARY.md`) · **every run directory renamed 24 Aug to the runner scheme — map in DECISIONS.md §9.65; the runner names new runs itself, `--tag` is gone** · quarantined (renamed in place): `_aborted_20260821/20260821T010821_1000it_25pct`, `_aborted_20260821/20260821T172050_1000it_25pct`, `_aborted_20260821/20260821T172453_1000it_25pct` · probes as recorded on the board |
 | Open issues | **8**: #48 (ride choice — THE lane) · #30 (walk generation) · #49 (Tier C + taxi) · #50 (modelled table now derivable) · #62 (city-agnostic contract) · #63 (0b backlog) · #65 (repaired in-tree, closes with this PR) · #66 (machine stall, monitoring) |
 | **Results** | **The base model's report card exists (MAE 10.65 pp, C5 feasible=False, violations stated). No counterfactual has run. Nothing is a finding about the light rail.** |
 
@@ -267,7 +267,8 @@ The §2 table above IS the latest valid fit (arm A, pre-calibration
 constrained base, 35 of 67 targets scorable, MAE 10.65 pp; LR 1,260 vs
 3,417 boardings; occupancy 0.0013 vs 0.3503; counts −91.8% structural).
 Seed replication (arm B): every mode within 0.11 pp — the gaps are signal.
-Full rows: `results/phys1000a_25pct/_fit.json` and
+Full rows: `results/20260821T175907_1000it_25pct/_fit.json` (arm A; ex
+`phys1000a_25pct`, renamed §9.65) and
 [`docs/audit/CALIBRATION_REPORT.md`](../audit/CALIBRATION_REPORT.md).
 
 ### 5. Issue ledger — 42 filed (numbers shared with PRs), 34 closed, 8 open
@@ -296,7 +297,7 @@ lever the owner picks (`P4: Diagnose and answer the ride choice collapse
 ```
 cities/newcastle/docs/STATUS.md                 the board; §3 above is the lane
 cities/newcastle/docs/DECISIONS.md §9.62–§9.64  this session, cross-linked
-results/phys1000a_25pct/_fit.json               the report card, full rows
+results/20260821T175907_1000it_25pct/_fit.json  the report card, full rows (arm A, renamed §9.65)
 cities/newcastle/docs/audit/CALIBRATION_REPORT.md   the generated report
 issues #48 #30 #63                              the open lanes
 .claude/CLAUDE.md                               conventions + hard constraints

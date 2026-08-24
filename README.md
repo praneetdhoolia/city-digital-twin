@@ -24,9 +24,16 @@ python run.py --run-config smoke   # a plumbing test: 1% sample, 2 iterations
 A real run names its own overlay, or its own iteration count:
 
 ```bash
-python run.py --run-config ride_fix_10pct --tag my_run
-python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000 --tag s3_sat
+python run.py --run-config ride_fix_10pct
+python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000
 ```
+
+**The runner names the run directory** —
+`results/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct`, e.g.
+`results/20260821T220310_1000it_25pct` — so every run is dated, sortable and
+self-describing. Re-invoking with the same parameters resumes the completed run
+(identity is the parameter set in `_run.json`, not the name); `--force` starts a
+fresh directory and overwrites nothing.
 
 | Flag | What it does |
 |---|---|
@@ -34,7 +41,6 @@ python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000 --tag s3
 | `--day` | `WEEKDAY`, `SAT` or `SUN` |
 | `--run-config TAG` | a committed run overlay — **the reproducible way to vary a run** |
 | `--fraction` `--iterations` `--threads` `--xmx` `--seed` | registry overrides, checked against each field's declared sweep |
-| `--tag NAME` | names the run directory. **Always tag a re-run** — an untagged re-run overwrites the previous one |
 | `--set KEY=VALUE` | a raw MATSim config override, e.g. `ride.constant=-3.4` |
 | `--dry-run` `--list` `--no-metrics` `--force` | resolve-only, list, skip metric extraction, ignore an existing run record |
 

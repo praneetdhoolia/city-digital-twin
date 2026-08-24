@@ -6,7 +6,10 @@
     python run.py --list                     what can be run: scenarios, day types, overlays
     python run.py --dry-run                  resolve every input and print it; execute nothing
     python run.py --run-config ride_fix_10pct        a committed run overlay
-    python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000 --tag s3_sat
+    python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000
+
+The run directory is named by the runner, never by the caller:
+`results/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct`.
 
 This is a front door, not a second harness. Everything below it is
 `src/run/run_matsim.py`, which owns the run identity, the subsample, the config
@@ -117,10 +120,11 @@ def main():
     ap.add_argument('--threads', type=int)
     ap.add_argument('--xmx', help='JVM heap, e.g. 26g')
     ap.add_argument('--seed', type=int)
-    ap.add_argument('--tag', help='name the run directory. ALWAYS tag a re-run: an '
-                                  'untagged re-run overwrites the previous directory')
     ap.add_argument('--force', action='store_true',
-                    help='re-run even if a complete run record already exists')
+                    help='re-run even if a complete run record already exists. The '
+                         'runner names every run directory itself '
+                         '(<launch>_<iterations>it_<pct>pct); a forced re-run gets '
+                         'a fresh directory, nothing is overwritten')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, checked against the declared sweep')
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
@@ -173,7 +177,7 @@ def main():
 
     doc = run_matsim.run(a.scenario, a.day, cfg,
                          dict(run_matsim.parse_override(s) for s in a.set),
-                         a.tag, a.force)
+                         a.force)
     if doc.get('rc') != 0:
         return 1
 

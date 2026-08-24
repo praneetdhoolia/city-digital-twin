@@ -410,36 +410,66 @@ def main():
     best_obj, best_tag = None, None
     base = 'cal_%s_%s_%s' % (a.scenario, a.day, a.run_config)
 
-    def evaluate(tag, overrides):
-        """One candidate: run, extract, fit, score. Resumable by tag."""
-        run_dir = os.path.join(_city.REPO, 'results', tag)
-        fit_path = os.path.join(run_dir, '_fit.json')
-        if not os.path.exists(fit_path):
-            # the declared pipeline, invoked exactly as a reader would by hand:
-            # run_matsim.py -> extract_metrics.py -> fit.py
+    def find_run(overrides):
+        """The completed run carrying exactly these --set overrides.
+
+        The runner names every run directory itself (launch stamp, iterations,
+        sample pct - the 24 Aug 2026 owner directive), so a candidate is located
+        by what was actually run - the overrides in its `_run.json` - never by a
+        name this loop invented.
+        """
+        import glob
+        want = {k: '%s' % v for k, v in overrides.items()}
+        # newest first: a forced re-run supersedes what it re-ran
+        for record in sorted(glob.glob(
+                os.path.join(_city.REPO, 'results', '*', '_run.json')),
+                reverse=True):
+            try:
+                doc = json.load(open(record, encoding='utf-8'))
+            except (OSError, ValueError):
+                continue
+            if (doc.get('scenario') == a.scenario and doc.get('day') == a.day
+                    and (doc.get('overrides') or {}) == want
+                    and doc.get('rc') == 0):
+                return os.path.dirname(record)
+        return None
+
+    def evaluate(label, overrides):
+        """One candidate: run, extract, fit, score. Resumable by its overrides."""
+        # the declared pipeline, invoked exactly as a reader would by hand:
+        # run_matsim.py -> extract_metrics.py -> fit.py
+        run_dir = find_run(overrides)
+        if run_dir is None:
             sets = []
             for k, v in sorted(overrides.items()):
                 sets += ['--set', '%s=%s' % (k, v)]
-            steps = [
-                [sys.executable, 'src/run/run_matsim.py',
-                 '--scenario', a.scenario, '--day', a.day,
-                 '--run-config', a.run_config, '--tag', tag] + sets,
-                [sys.executable, 'src/analyse/extract_metrics.py', '--run', tag],
-                [sys.executable, 'src/calibrate/fit.py', '--run', tag],
-            ]
-            for cmd in steps:
-                r = subprocess.run(cmd)
+            r = subprocess.run([sys.executable, 'src/run/run_matsim.py',
+                                '--scenario', a.scenario, '--day', a.day,
+                                '--run-config', a.run_config] + sets)
+            if r.returncode != 0:
+                raise SystemExit('run_matsim.py failed (%d) for candidate %s'
+                                 % (r.returncode, label))
+            run_dir = find_run(overrides)
+            if run_dir is None:
+                raise SystemExit('candidate %s ran but no completed run record '
+                                 'carries its overrides' % label)
+        name = os.path.basename(run_dir)
+        fit_path = os.path.join(run_dir, '_fit.json')
+        if not os.path.exists(fit_path):
+            for step in ('src/analyse/extract_metrics.py', 'src/calibrate/fit.py'):
+                r = subprocess.run([sys.executable, step, '--run', name])
                 if r.returncode != 0:
                     raise SystemExit('%s failed (%d) for candidate %s'
-                                     % (cmd[1], r.returncode, tag))
+                                     % (step, r.returncode, label))
         f = json.load(open(fit_path, encoding='utf-8'))
         audit_no_holdout(f)
         obj, parts = objective(f, comps)
         ok, why = feasible(f)
-        rec = dict(tag=tag, overrides=dict(overrides), objective=obj,
-                   components=parts, feasible=ok, constraint_violations=why)
+        rec = dict(tag=name, candidate=label, overrides=dict(overrides),
+                   objective=obj, components=parts, feasible=ok,
+                   constraint_violations=why)
         history.append(rec)
-        print('   %-58s obj %8.4f %s' % (tag, obj, '' if ok else '  INFEASIBLE'))
+        print('   %-58s obj %8.4f %s' % (label, obj, '' if ok else '  INFEASIBLE'))
         return rec
 
     for rnd in range(max_rounds):
