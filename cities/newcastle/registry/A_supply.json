@@ -226,18 +226,18 @@
       ]
     },
     "A.corridor.pre_lr_lanes_per_dir": {
-      "value": 2,
+      "value": 1,
       "units": "lanes_per_direction",
-      "source": "assumed",
+      "source": "literature",
       "sweep": [
         1,
         2
       ],
-      "sweep_basis": "both values are plausible from the historical record; neither is observed",
+      "sweep_basis": "MEASURED from OSM history (Overpass attic, [date:2017-01-01] pre-construction, cross-checked at 2016-01-01; DECISIONS 9.71): every lane-tagged Hunter/Scott segment in the corridor - 9 of 21 named segments, 43% coverage - carried lanes=2 with oneway=no, i.e. ONE lane per direction; no segment showed 4 lanes or per-direction tags at either date. The point value moves to the tagged 1; the sweep keeps 2 as the upper sensitivity because 57% of segments are untagged and OSM lanes record marked through-lanes as mappers saw them, not the kerb-to-kerb layout. OSM-derived: ODbL 1.0 applies to anything published from it.",
       "status": "active",
-      "decisions_ref": "3.4",
+      "decisions_ref": "3.4, 9.71",
       "proposal_ref": "3.3 B3",
-      "description": "Hunter/Scott cross-section BEFORE the light rail. THIS IS THE COUNTERFACTUAL HYPOTHESIS B3 RESTS ON and it is assumed, not observed. It must be reported as swept and never as a point estimate.",
+      "description": "Hunter/Scott cross-section BEFORE the light rail. THIS IS THE COUNTERFACTUAL HYPOTHESIS B3 RESTS ON. Was assumed at 2; the OSM attic record (9.71) supports 1 lane per direction on every tagged pre-construction segment, so the point is the tagged value with 2 the swept upper sensitivity. Still reported as swept, never as a bare point estimate.",
       "consumers": [
         "cities/newcastle/build/build_corridor_road_attributes.py"
       ]

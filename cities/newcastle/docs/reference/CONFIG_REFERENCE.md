@@ -34,8 +34,8 @@ Three things are refused at every layer:
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 22 | computed from observed data in this package |
 | `derived` | 30 | follows from another registry field by identity |
-| `literature` | 42 | a published value, not specific to this city |
-| `assumed` | 138 | chosen without direct empirical support |
+| `literature` | 43 | a published value, not specific to this city |
+| `assumed` | 137 | chosen without direct empirical support |
 | `definition` | 105 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
@@ -92,7 +92,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.corridor.nearest_node_max_rings` | `8` | rings | `assumed` | 3 - 20 |
 | `A.corridor.off_corridor_penalty` | `12.0` | dimensionless_cost_multiplier | `assumed` | 6 - 20 |
 | `A.corridor.parallel_buffer_m` | `1500.0` | metres | `assumed` | 1000 - 2500 |
-| `A.corridor.pre_lr_lanes_per_dir` | `2` | lanes_per_direction | `assumed` | 1 - 2 |
+| `A.corridor.pre_lr_lanes_per_dir` | `1` | lanes_per_direction | `literature` | 1 - 2 |
 | `A.corridor.report_sample_n` | `12` | edges | `definition` | - |
 | `A.corridor.shape_coverage_tolerance_m` | `500.0` | metres | `definition` | - |
 | `A.corridor.trunk_buffer_m` | `60.0` | metres | `assumed` | 40 - 100 |
@@ -244,11 +244,11 @@ Distance within which a road is treated as a parallel route that may absorb dive
 
 #### `A.corridor.pre_lr_lanes_per_dir`
 
-Hunter/Scott cross-section BEFORE the light rail. THIS IS THE COUNTERFACTUAL HYPOTHESIS B3 RESTS ON and it is assumed, not observed. It must be reported as swept and never as a point estimate.
+Hunter/Scott cross-section BEFORE the light rail. THIS IS THE COUNTERFACTUAL HYPOTHESIS B3 RESTS ON. Was assumed at 2; the OSM attic record (9.71) supports 1 lane per direction on every tagged pre-construction segment, so the point is the tagged value with 2 the swept upper sensitivity. Still reported as swept, never as a bare point estimate.
 
-***assumed** · status **active** · DECISIONS.md §3.4 · proposal §3.3 B3*
+***literature** · status **active** · DECISIONS.md §3.4, 9.71 · proposal §3.3 B3*
 
-> **Sweep basis.** both values are plausible from the historical record; neither is observed
+> **Sweep basis.** MEASURED from OSM history (Overpass attic, [date:2017-01-01] pre-construction, cross-checked at 2016-01-01; DECISIONS 9.71): every lane-tagged Hunter/Scott segment in the corridor - 9 of 21 named segments, 43% coverage - carried lanes=2 with oneway=no, i.e. ONE lane per direction; no segment showed 4 lanes or per-direction tags at either date. The point value moves to the tagged 1; the sweep keeps 2 as the upper sensitivity because 57% of segments are untagged and OSM lanes record marked through-lanes as mappers saw them, not the kerb-to-kerb layout. OSM-derived: ODbL 1.0 applies to anything published from it.
 
 #### `A.corridor.report_sample_n`
 

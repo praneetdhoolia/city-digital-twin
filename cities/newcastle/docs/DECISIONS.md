@@ -4,7 +4,7 @@
 counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No scenario has been run to a
 reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.70, 24 August 2026
+**Started:** 10 August 2026 · **last entry:** §9.71, 24 August 2026
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -60,6 +60,7 @@ otherwise cost you an hour:
 | **The project is `city-digital-twin`** | **§9.67** — renamed from `NewcastleLRSIM` (owner directive 24 Aug): the framework is city-agnostic and the old name violated its own no-place-names rule; GitHub repo renamed (redirects stand), schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay tracked by the open naming issue |
 | **The ride collapse decomposed and repaired: round-trip bindings, coherent seeds** | **§9.68** — of 77,626 ride-available persons 76,986 held NO ride plan (the ASC could flip 109); return legs paired at 0.0079, intermediate at 0.0, and the uniform seed's 0.2 car probability WAS the 0.196 outbound ceiling; §9.64's "supply not binding" was survivorship bias; repair: `escort_binding_directions=round_trip`, direct bound tours, serve tours seed car, covered passengers seed ride, `liftHousehold` a list; the §9.58–§9.63 family closes |
 | **The short-trip mass gets its observed distribution** | **§9.69** — HTS Sydney 2012/13 Table 4.4.7 (only published AU distance-band-by-purpose table): 18.8% of trips ≤1 km vs the model's 4.45%; two-component gravity mixture per purpose, short kernel mean = the held observed walk mean (derived), weight solved to the band shares, long kernel re-solved so every observed mean stays exact |
+| **Pre-LR cross-section measured from OSM history; VoT set checked against EPV 2025** | **§9.71** — Overpass attic: every lane-tagged pre-2017 Hunter/Scott segment was ONE lane per direction; `pre_lr_lanes_per_dir` 2 → 1 (B3's counterfactual onto evidence, sweep keeps 2); EPV Jan 2025: HW/WB/distance-rate supported, HE and concession divergent (flagged, unchanged), bus–LR transfer 3.8 equiv-min lands inside the 3–15 sweep |
 | **Freight rail: coal chain deliberately not simulated; two crossings named** | **§9.70** — ~110 coal-train movements/day run on dedicated track grade-separated since 2006 (ARTC/PWCS/NCIG observed); adding them would fabricate an interaction; the REAL road interactions: St James Rd Adamstown + Clyde St Islington level crossings (closures "up to ten minutes", logs unpublished → swept closure parameters, backlog) and the Mayfield truck cap 1,268/day as an upper-bound constraint |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
@@ -6551,6 +6552,51 @@ Non-coal rail freight (interstate intermodal through the shared line,
 grain 2.95 Mt in 2025, Gunnedah-line services) has no published
 per-day count on the shared urban section; it enters only through the
 level-crossing mechanism above, whose frequency is swept.
+
+## 9.71 Two 0b items measured: the pre-LR cross-section from OSM history, and the VoT set checked against EPV January 2025 (24 August 2026, issue #63)
+
+**The pre-LR corridor was 1 lane per direction everywhere OSM tagged it —
+the assumed 2 is contradicted.** Overpass attic queries at
+`[date:"2017-01-01"]` (pre-construction) and `[date:"2016-01-01"]`
+(cross-check), landed under `data/raw/osm_attic/` with provenance and the
+exact query strings: of 21 named Hunter/Scott segments in the corridor,
+**9 carry a `lanes` tag and every one is `lanes=2` + `oneway=no` — one
+lane per direction**; zero segments tagged 4 lanes or per-direction lanes
+at either date; the only one-way elements are the pedestrianised Hunter
+Street Mall pair. `A.corridor.pre_lr_lanes_per_dir` moves **2 → 1**
+(source `assumed` → `literature`), the sweep keeps 2 as the upper
+sensitivity (57% of segments untagged; OSM records marked through-lanes,
+not kerb-to-kerb). **This is the B3 counterfactual moving onto evidence:
+the assumed value had doubled the pre-LR corridor's capacity.** The E1
+pre-LR variants regenerate from the declaration before any P5 scenario
+run; nothing already run used the variant networks. ODbL 1.0 applies to
+anything published from the attic files.
+
+**The VoT set against TfNSW Economic Parameter Values, January 2025**
+(v2025.1, June-2024 dollars; the 0b "EPV check" item) — recorded, not
+absorbed; no scoring value changes without its own decision:
+
+- **Supported inside the declared ±30%:** HW 18.6 (EPV private/commute
+  $20.62), WB 55.4 (business $66.90), trip-weighted 16.96 (behavioural
+  all-modes $18.74), and `C.scoring.monetary_distance_rate` 0.18 AUD/km —
+  consistent with EPV's *perceived* cost basis (fuel incl. taxes, 21–22
+  c/km urban stop-start), which is the basis EPV itself prescribes for
+  demand modelling; the full resource VOC (~50 c/km) is a different
+  quantity for CBA, not for scoring.
+- **Divergent:** HE 9.3 — EPV assigns education the FULL private $20.62
+  (122% above; outside the sweep). Marginal: HS/HO/NHB 15.2 vs $20.62
+  (35.7% above the point, just outside ±30%). Caveat recorded with them:
+  EPV's CBA table deliberately flattens purposes, while its own Appendix
+  A1 endorses purpose-differentiated values for demand models — so these
+  are divergences from the CBA convention, not necessarily from
+  behavioural practice. `C.vot.concession_factor` 0.75: the only EPV
+  datum (Sydney Trains concession VoT ratio) implies **0.48**, outside
+  the [0.6, 0.9] sweep — flagged for the owner with the sweep unmoved.
+- **A gift for the PT-composition lane:** EPV Table 2.7 publishes
+  transfer penalties in equivalent in-vehicle minutes — bus–LR **3.8**,
+  train–LR **4.1**, bus–bus 14.8, train–bus 13.7 — an official anchor
+  inside the declared 3–15 min transfer sweep when the corridor
+  composition diagnostic (§9.64 lane 4) reaches the transfer point.
 
 ---
 
