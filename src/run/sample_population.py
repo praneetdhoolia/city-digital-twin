@@ -125,11 +125,14 @@ def lift_cluster_map(src):
                 continue
             l = LIFT_RE.search(line)
             if l and hid is not None:
-                a, b = find(hid), find(l.group(1))
-                if a != b:
-                    # canonical: the numerically smaller root wins
-                    lo, hi = sorted((a, b), key=lambda v: (len(v), v))
-                    parent[hi] = lo
+                # comma-separated since 9.68: a round-trip pair may be served
+                # by drivers from two households - union them all
+                for lift_hh in l.group(1).split(','):
+                    a, b = find(hid), find(lift_hh.strip())
+                    if a != b:
+                        # canonical: the numerically smaller root wins
+                        lo, hi = sorted((a, b), key=lambda v: (len(v), v))
+                        parent[hi] = lo
             if line.startswith('\t</person>'):
                 hid = None
     return {h: find(h) for h in list(parent)}

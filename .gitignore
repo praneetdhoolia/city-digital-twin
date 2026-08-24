@@ -8,6 +8,8 @@
 # --- immutable third-party downloads (~1.8 GiB) ---
 cities/*/data/raw/**
 !cities/*/data/raw/provenance_*.json
+!cities/*/data/raw/osm_attic/
+!cities/*/data/raw/osm_attic/*.json
 !cities/*/data/raw/_s3_historical_gtfs_listing.txt
 
 # --- raw Overpass extracts (~156 MB) ---

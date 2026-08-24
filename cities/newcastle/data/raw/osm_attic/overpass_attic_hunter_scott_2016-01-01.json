@@ -1,0 +1,188 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-08-24T10:35:03Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "way",
+  "id": 3505881,
+  "tags": {
+    "lanes": "2",
+    "highway": "secondary",
+    "surface": "asphalt",
+    "maxspeed": "50",
+    "name": "Hunter Street",
+    "oneway": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 18054127,
+  "tags": {
+    "name": "Hunter Street",
+    "highway": "residential"
+  }
+},
+{
+  "type": "way",
+  "id": 25028472,
+  "tags": {
+    "highway": "residential",
+    "surface": "asphalt",
+    "maxspeed": "50",
+    "name": "Hunter Street",
+    "oneway": "no"
+  }
+},
+{
+  "type": "way",
+  "id": 31731520,
+  "tags": {
+    "oneway": "yes",
+    "name": "Hunter Street",
+    "maxspeed": "50",
+    "highway": "residential"
+  }
+},
+{
+  "type": "way",
+  "id": 31731521,
+  "tags": {
+    "highway": "living_street",
+    "name": "Hunter Street",
+    "oneway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 31738378,
+  "tags": {
+    "lanes": "2",
+    "surface": "asphalt",
+    "maxspeed": "50",
+    "oneway": "no",
+    "name": "Hunter Street",
+    "highway": "secondary"
+  }
+},
+{
+  "type": "way",
+  "id": 45620093,
+  "tags": {
+    "name": "Hunter Street",
+    "highway": "residential"
+  }
+},
+{
+  "type": "way",
+  "id": 50875885,
+  "tags": {
+    "name": "Hunter Street",
+    "highway": "residential"
+  }
+},
+{
+  "type": "way",
+  "id": 58756396,
+  "tags": {
+    "service": "alley",
+    "highway": "service",
+    "name": "Scott Street"
+  }
+},
+{
+  "type": "way",
+  "id": 58855106,
+  "tags": {
+    "name": "Scott Street",
+    "maxspeed": "50",
+    "highway": "tertiary"
+  }
+},
+{
+  "type": "way",
+  "id": 80503133,
+  "tags": {
+    "motor_vehicle": "yes",
+    "oneway": "no",
+    "surface": "asphalt",
+    "lanes": "2",
+    "maxspeed": "50",
+    "name": "Scott Street",
+    "highway": "secondary"
+  }
+},
+{
+  "type": "way",
+  "id": 170990204,
+  "tags": {
+    "name": "Hunter Street",
+    "highway": "secondary"
+  }
+},
+{
+  "type": "way",
+  "id": 172992332,
+  "tags": {
+    "name": "Hunter Street",
+    "highway": "residential"
+  }
+},
+{
+  "type": "way",
+  "id": 172992333,
+  "tags": {
+    "oneway": "yes",
+    "name": "Hunter Street",
+    "highway": "living_street"
+  }
+},
+{
+  "type": "way",
+  "id": 190524729,
+  "tags": {
+    "name": "Hunter Street",
+    "highway": "secondary"
+  }
+},
+{
+  "type": "way",
+  "id": 190524730,
+  "tags": {
+    "motor_vehicle": "yes",
+    "lanes": "2",
+    "oneway": "no",
+    "surface": "asphalt",
+    "maxspeed": "50",
+    "name": "Hunter Street",
+    "highway": "secondary"
+  }
+},
+{
+  "type": "way",
+  "id": 380459173,
+  "tags": {
+    "name": "Scott Street",
+    "maxspeed": "40",
+    "highway": "tertiary"
+  }
+},
+{
+  "type": "way",
+  "id": 380459177,
+  "tags": {
+    "lanes": "2",
+    "surface": "asphalt",
+    "maxspeed": "50",
+    "highway": "secondary",
+    "name": "Hunter Street",
+    "oneway": "no"
+  }
+}
+
+  ]
+}

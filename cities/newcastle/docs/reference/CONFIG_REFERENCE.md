@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 334 fields are made of
+## What the 341 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 22 | computed from observed data in this package |
-| `derived` | 27 | follows from another registry field by identity |
-| `literature` | 40 | a published value, not specific to this city |
-| `assumed` | 136 | chosen without direct empirical support |
+| `derived` | 30 | follows from another registry field by identity |
+| `literature` | 43 | a published value, not specific to this city |
+| `assumed` | 137 | chosen without direct empirical support |
 | `definition` | 105 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 314 | usable point value |
+| `active` | 321 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 5 | the datum does not exist in the package; must be swept, never pinned |
@@ -57,13 +57,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 | `RUN.sumo.replications` | 5 - 30 | NO VALUE: proposal 5.2 asks for at least 30, DECISIONS.md 9.5 shows the specified load does not fit on this machine, and nobody has decided what to cu |
 
-### The 12 fields held fixed
+### The 13 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
 - `A.signals.scats_match_radius_m` - A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score r
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
+- `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
 - `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
 - `C.asc.bus` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
@@ -91,7 +92,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.corridor.nearest_node_max_rings` | `8` | rings | `assumed` | 3 - 20 |
 | `A.corridor.off_corridor_penalty` | `12.0` | dimensionless_cost_multiplier | `assumed` | 6 - 20 |
 | `A.corridor.parallel_buffer_m` | `1500.0` | metres | `assumed` | 1000 - 2500 |
-| `A.corridor.pre_lr_lanes_per_dir` | `2` | lanes_per_direction | `assumed` | 1 - 2 |
+| `A.corridor.pre_lr_lanes_per_dir` | `1` | lanes_per_direction | `literature` | 1 - 2 |
 | `A.corridor.report_sample_n` | `12` | edges | `definition` | - |
 | `A.corridor.shape_coverage_tolerance_m` | `500.0` | metres | `definition` | - |
 | `A.corridor.trunk_buffer_m` | `60.0` | metres | `assumed` | 40 - 100 |
@@ -243,11 +244,11 @@ Distance within which a road is treated as a parallel route that may absorb dive
 
 #### `A.corridor.pre_lr_lanes_per_dir`
 
-Hunter/Scott cross-section BEFORE the light rail. THIS IS THE COUNTERFACTUAL HYPOTHESIS B3 RESTS ON and it is assumed, not observed. It must be reported as swept and never as a point estimate.
+Hunter/Scott cross-section BEFORE the light rail. THIS IS THE COUNTERFACTUAL HYPOTHESIS B3 RESTS ON. Was assumed at 2; the OSM attic record (9.71) supports 1 lane per direction on every tagged pre-construction segment, so the point is the tagged value with 2 the swept upper sensitivity. Still reported as swept, never as a bare point estimate.
 
-***assumed** · status **active** · DECISIONS.md §3.4 · proposal §3.3 B3*
+***literature** · status **active** · DECISIONS.md §3.4, 9.71 · proposal §3.3 B3*
 
-> **Sweep basis.** both values are plausible from the historical record; neither is observed
+> **Sweep basis.** MEASURED from OSM history (Overpass attic, [date:2017-01-01] pre-construction, cross-checked at 2016-01-01; DECISIONS 9.71): every lane-tagged Hunter/Scott segment in the corridor - 9 of 21 named segments, 43% coverage - carried lanes=2 with oneway=no, i.e. ONE lane per direction; no segment showed 4 lanes or per-direction tags at either date. The point value moves to the tagged 1; the sweep keeps 2 as the upper sensitivity because 57% of segments are untagged and OSM lanes record marked through-lanes as mappers saw them, not the kerb-to-kerb layout. OSM-derived: ODbL 1.0 applies to anything published from it.
 
 #### `A.corridor.report_sample_n`
 
@@ -815,7 +816,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 68 fields*
+*`cities/newcastle/registry/B_demand.json` - 75 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -829,6 +830,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.departure_profile` | `{"HE": [0.0, 0.0, 0.0, 0.0, 0.002, 0.01, 0.06, 0.23, 0.27, 0.09, 0.035, 0.03, 0.035, 0.04, 0.075, 0.06, 0.0...` | probability_by_hour | `assumed` | plus/minus 25% |
 | `B.activity.detour_factor` | `1.3376` | ratio | `measured` | 1.25 - 1.423 |
 | `B.activity.duration_cv` | `0.3` | coefficient_of_variation | `assumed` | 0.2 - 0.45 |
+| `B.activity.escort_binding_direct_tour` | `true` | boolean | `derived` | derived: under the declared `both_links` pairing rule the serving leg must repr |
+| `B.activity.escort_binding_directions` | `round_trip` | enum | `assumed` | `outbound_only`, `round_trip` |
 | `B.activity.escort_binding_enabled` | `true` | boolean | `definition` | - |
 | `B.activity.escort_binding_min_gap_s` | `2700` | seconds | `assumed` | 900 - 5400 |
 | `B.activity.escort_binding_nonhh_scope` | `same_zone` | enum | `assumed` | `household_only`, `same_zone` |
@@ -842,6 +845,9 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.plan_access_s` | `240` | seconds | `assumed` | 120 - 480 |
 | `B.activity.plan_speed_car_kmh` | `26.0` | km/h | `assumed` | 20 - 32 |
 | `B.activity.plan_speed_nocar_kmh` | `16.0` | km/h | `assumed` | 10 - 22 |
+| `B.activity.short_trip_band_km` | `1.0` | km_network | `literature` | **held fixed** |
+| `B.activity.short_trip_band_share` | `{"HW": 0.059, "WB": 0.09, "HE": 0.158, "HS": 0.277, "HO": 0.255, "HX": 0.157}` | share_of_trips | `literature` | plus/minus 25% |
+| `B.activity.short_trip_mean_km` | `0.7` | km_network | `derived` | derived: the short-trip destination kernel realises the observed mean walk-only |
 | `B.activity.weekend_to_weekday` | `0.7521` | ratio | `measured` | 0.709 - 0.816 |
 | `B.bike.pce` | `0.2` | passenger_car_equivalents | `literature` | 0.1 - 0.4 |
 | `B.bike.speed_ms` | `4.2` | m/s | `literature` | 3.1 - 5.5 |
@@ -865,8 +871,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.max_speed_kmh` | `100.0` | km/h | `definition` | - |
 | `B.freight.pce` | `2.0` | passenger_car_equivalents | `literature` | 1.5 - 3.5 |
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
+| `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
+| `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
 | `B.motorbike.trip_share` | `0.0036` | share_of_trips | `assumed` | 0 - 0.01 |
@@ -941,6 +949,20 @@ Straight-line to network distance, routed over the observed A1 road graph. Repla
 Spread of activity duration around its mean.
 
 ***assumed** · status **active** · DECISIONS.md §9.2*
+
+#### `B.activity.escort_binding_direct_tour`
+
+Whether a serve (HX) tour that is BOUND to a passenger trip suppresses the intermediate-stop draw, keeping its serving leg identical to the passenger's leg. Unbound serve tours are unaffected.
+
+***derived** · status **active** · DECISIONS.md §9.68*
+
+> **Derived from** `B.ride.pairing_rule`, `B.activity.p_intermediate_stop`: under the declared `both_links` pairing rule the serving leg must reproduce the passenger leg's two endpoints exactly, and a drawn intermediate stop inserted into a BOUND serve tour replaces that leg with two legs matching neither endpoint pair - it structurally unmakes the co-location the binding exists to create. At the declared p_intermediate_stop.HX of 0.15, one in seven bound serve tours was unpairable by construction. Unbound serve tours keep the drawn distribution unchanged.
+
+#### `B.activity.escort_binding_directions`
+
+How bound serve tours distribute over escorted passenger tours: one serving tour per passenger outward trip, or a drop-off and pick-up pair covering the passenger's whole 2-leg tour. Applies to both the 9.46 household binder and the 9.60 non-household re-targeting pass.
+
+***assumed** · status **active** · DECISIONS.md §9.68*
 
 #### `B.activity.escort_binding_enabled`
 
@@ -1033,6 +1055,30 @@ Door-to-door planning speed for a person without car availability, used by the B
 ***assumed** · status **active** · DECISIONS.md §9.61*
 
 > **Sweep basis.** a blend of walk, cycle and bus door-to-door speeds for a person without a car. Same scaffold-only role, same 9.61 declaration rationale, as plan_speed_car_kmh.
+
+#### `B.activity.short_trip_band_km`
+
+The network-distance edge of the short-trip band whose observed share short_trip_band_share carries. Converted to straight-line by the measured detour factor where the solver compares it against centroid distances.
+
+***literature** · status **active** · DECISIONS.md §9.69*
+
+> **Held fixed.** the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - the band share and its edge are one observation and move together.
+>
+> *Departure requires: a logged decision*
+
+#### `B.activity.short_trip_band_share`
+
+Observed share of trips at or under short_trip_band_km network km, per purpose. Bureau of Transport Statistics, Household Travel Survey Report: Sydney 2012/13 (Nov 2014, ISBN 978-0-7313-2869-7), Table 4.4.7 'Trips by distance category and purpose (average weekday) - 2012/13', linked door-to-door trips: commute 148/2525, work business 117/1294, education 245/1554, shopping 739/2667, HO = personal business + social/recreation + other = (169+967+267)/(926+4028+557), serve passenger 480/3065. The destination-draw mixture weight is SOLVED against these so the generated distance distribution carries the observed short-trip mass while the per-(purpose x LGA) observed means stay met exactly (9.69); the model's own generated share was 4.45% of legs under 1 km against the table's 18.8% all-purpose (issue #30).
+
+***literature** · status **active** · DECISIONS.md §9.69*
+
+#### `B.activity.short_trip_mean_km`
+
+Mean trip length of the short-trip destination kernel, taken from the observed Newcastle-LGA mean walk-only trip length already held as C.constraint.trip_length_km.walk.
+
+***derived** · status **active** · DECISIONS.md §9.69*
+
+> **Derived from** `C.constraint.trip_length_km.walk`: the short-trip destination kernel realises the observed mean walk-only trip length - the short-trip mass IS overwhelmingly the walked mass (HTS Sydney 2012/13 Table 4.4.6: walk is 70.9% of all trips up to 1 km and 74.6% of walk-only trips are up to 1 km), so the one observed short-distance mean the package already holds is the kernel's mean. No new number is introduced; the build converts network to straight-line by the measured detour factor.
 
 #### `B.activity.weekend_to_weekday`
 
@@ -1206,6 +1252,12 @@ Internal heavy-vehicle trips generated per resident light-vehicle trip, applied 
 
 > **Sweep basis.** The default restates the MEASURED median heavy share of classified station flow (B.counts.heavy_vehicle_share, 0.0652) as a ratio to light vehicles: 0.0652 / (1 - 0.0652). What is ASSUMED is the transfer from a flow share at count stations to a trip share of the resident vehicle-trip base - trucks travel further per trip than cars, so a flow share overstates a trip share by an unobserved factor, and no freight OD survey exists for this or any comparable city in the package. The lower bound is zero, which turns the internal freight layer off entirely so its whole effect is measurable as a sweep member; the upper bound is roughly the classified stations' upper-quartile share expressed the same way.
 
+#### `B.mode.bound_passenger_seed`
+
+Seed mode for a passenger tour whose BOTH directions are covered by serve-tour bindings (round-trip coverage). Tours with partial or no coverage keep the uninformed draw. Consumed by build_matsim_plans.py.
+
+***assumed** · status **active** · DECISIONS.md §9.68*
+
 #### `B.mode.seed_split`
 
 The mode split the co-evolution STARTS from, conditioned only on car availability from B1. UNIFORM OVER THE USABLE MODES AND DELIBERATELY A BAD GUESS: it starts the search far from the observed point so that arriving there is evidence about the model rather than about the seed. It is a definition, not an assumption, because "uniform over what a person can use" is fully determined by B1 car availability and has no free share to sweep. What is swept is the CHOICE of seed - see B.mode.seed_split_informed.
@@ -1219,6 +1271,14 @@ The informed seed the uniform one replaced, retained so the seed-independence cl
 ***assumed** · status **active** · DECISIONS.md §9.6, 9.7*
 
 > **Sweep basis.** the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes "the result does not depend on the seed" a claim that can be tested rather than asserted (DECISIONS.md 9.6).
+
+#### `B.mode.serve_tour_seed`
+
+Seed mode for a serve (HX) tour that is BOUND to a passenger trip (household 9.46 or non-household 9.60 binding). Consumed by build_matsim_plans.py where tour seed modes are drawn.
+
+***derived** · status **active** · DECISIONS.md §9.68*
+
+> **Derived from** `B.ride.pairing_enabled`, `B.mode.seed_split`: the pairing engine pairs ride legs with CAR legs only, so a bound serve tour seeded with any other mode cannot serve the passenger booked onto it - the tour's reason to exist. MEASURED (9.68): under the uniform seed a bound driver's serve tour started as car with probability 0.2, and 0.196 was the outbound pairing ceiling the first converged arm actually realised - the seed probability WAS the ceiling. This forces only the SEED of bound serve tours; SubtourModeChoice remains free to move them, and unbound serve tours keep the uniform draw.
 
 #### `B.motorbike.length_m`
 

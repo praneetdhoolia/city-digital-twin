@@ -144,6 +144,16 @@ SEED_MODE_SWEEP = {'seed_mode': tuple(
 # not depend on the seed" can be tested rather than asserted (DECISIONS.md 9.6);
 # selected with --seed-mode informed.
 SEED_MODE_SPLIT_INFORMED = _seed_table('B.mode.seed_split_informed')
+
+# DECISIONS.md 9.68. A BOUND serve tour seeds as the mode that can actually
+# serve its booked passenger (the pairing engine pairs ride legs with CAR
+# legs only - measured: the uniform seed's 0.2 car probability WAS the
+# converged arm's 0.196 outbound pairing ceiling), and a passenger tour
+# covered by serve tours in BOTH directions seeds at the coherent two-sided
+# state. Seeds only: SubtourModeChoice remains free to move both.
+SERVE_TOUR_SEED = CFG.get('B.mode.serve_tour_seed')
+BOUND_PASSENGER_SEED = CFG.get('B.mode.bound_passenger_seed')
+EMPTY_SET = frozenset()
 HTS_FILE = _city.path('data/processed/hts/hts_mode.csv')
 HTS_YEAR = '2024/25'
 HTS_TARGET_LGA = _city.target_lga()
@@ -322,13 +332,36 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # construction) and carries the driver's household id as `liftHousehold`,
     # which widens citysim.RidePairingEngine's candidate search to that
     # household. The binding is an eligibility, not a guarantee.
-    lift_hh = {}
+    lift_hh = {}          # passenger pid -> [driver household ids, ordered]
+    lift_cover = {}       # (passenger pid, tour_id) -> set of directions
     lifts = os.path.join(PLANS, 'B2_lift_bindings_%s.csv' % day)
     if os.path.exists(lifts):
         with open(lifts, encoding='utf-8') as fh:
             for r in csv.DictReader(fh):
-                lift_hh[int(r['passenger_person_id'])] = \
-                    int(r['driver_household_id'])
+                p = int(r['passenger_person_id'])
+                hh = int(r['driver_household_id'])
+                lift_hh.setdefault(p, [])
+                if hh not in lift_hh[p]:
+                    lift_hh[p].append(hh)
+                # pre-9.68 tables carry no direction column; treat as 'drop'
+                lift_cover.setdefault(
+                    (p, int(r['passenger_tour_id'])), set()).add(
+                        r.get('direction') or 'drop')
+    # 9.68: household escort coverage - which member tours the placed
+    # household serve tours cover, by direction. A tour covered in BOTH
+    # directions seeds as B.mode.bound_passenger_seed.
+    escort_cover = {}
+    escorts = os.path.join(PLANS, 'B2_escort_bindings_%s.csv' % day)
+    if os.path.exists(escorts):
+        with open(escorts, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                escort_cover.setdefault(
+                    (int(r['member_person_id']), int(r['member_tour_id'])),
+                    set()).add(r['direction'])
+    covered_by_pid = {}
+    for (p, tid), dirs in list(escort_cover.items()) + list(lift_cover.items()):
+        if {'drop', 'pickup'} <= dirs:
+            covered_by_pid.setdefault(p, set()).add(tid)
     u_buf = {'buf': rng.random(1 << 20), 'i': 0}
 
     def u():
@@ -419,16 +452,48 @@ def write_day(day, attrs, rng, report, seed_table=None):
                                     for r in rows))
 
             # one mode per tour keeps chain-based modes conserved from the start
+            serve_tours = set()
+            covered_tours = set()
+            if not external:
+                for r in rows:
+                    # a BOUND serve tour carries a serving placement on one of
+                    # its legs ('escorted' from the 9.46 household binder,
+                    # 'lift_pickup'/'lift_serve' from the 9.60 pass)
+                    if r['dest_placement'] in ('escorted', 'lift_pickup',
+                                               'lift_serve'):
+                        serve_tours.add(int(r['tour_id']))
+                covered_tours = covered_by_pid.get(pid, EMPTY_SET)
             tour_mode = {}
             for r in rows:
                 tid = int(r['tour_id'])
                 if tid not in tour_mode:
-                    tour_mode[tid] = ('truck' if tier == 'freight' else
-                                      'car' if tier == 'through' else
-                                      'motorbike' if moto else
-                                      pick_mode(car_av, u, seed_table,
-                                                ride_available=bool(ride_av),
-                                                bike_available=bool(bike_av)))
+                    if tier == 'freight':
+                        m = 'truck'
+                    elif tier == 'through':
+                        m = 'car'
+                    elif moto:
+                        m = 'motorbike'
+                    elif tid in serve_tours and car_av:
+                        # 9.68 B.mode.serve_tour_seed: the pairing engine
+                        # pairs ride legs with CAR legs only - a bound serve
+                        # tour seeded with any other mode cannot serve the
+                        # passenger booked onto it. Seed only; SubtourModeChoice
+                        # stays free to move it. A LICENSED-BUT-CARLESS escort
+                        # (a parent walking a child to school) keeps the
+                        # uninformed draw - seeding car would put an illegal
+                        # plan in memory (the 9.15 class).
+                        m = SERVE_TOUR_SEED
+                    elif (tid in covered_tours and ride_av
+                            and BOUND_PASSENGER_SEED != 'uninformed'):
+                        # 9.68 B.mode.bound_passenger_seed: a tour covered by
+                        # serve tours in BOTH directions starts at the coherent
+                        # two-sided state; selection keeps or abandons it.
+                        m = BOUND_PASSENGER_SEED
+                    else:
+                        m = pick_mode(car_av, u, seed_table,
+                                      ride_available=bool(ride_av),
+                                      bike_available=bool(bike_av))
+                    tour_mode[tid] = m
             tours += len(tour_mode)
 
             w.write('\t<person id="%d">\n' % pid)
@@ -461,11 +526,13 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 w.write('\t\t\t<attribute name="householdId" '
                         'class="java.lang.String">%d</attribute>\n' % hh_id)
             if not external and pid in lift_hh:
-                # 9.60: consumed by citysim.RidePairingEngine - the DRIVER's
-                # household this passenger's pairing may also search.
+                # 9.60: consumed by citysim.RidePairingEngine - the DRIVER
+                # household(s) this passenger's pairing may also search.
+                # Comma-separated since 9.68: a round-trip pair may be served
+                # by drivers from two different households.
                 w.write('\t\t\t<attribute name="liftHousehold" '
-                        'class="java.lang.String">%d</attribute>\n'
-                        % lift_hh[pid])
+                        'class="java.lang.String">%s</attribute>\n'
+                        % ','.join('%d' % h for h in lift_hh[pid]))
             if tier in ('through', 'freight') or moto:
                 # locks SubtourModeChoice to {car} / {truck} / {motorbike} for
                 # this agent - a volume anchored on an observation must stay

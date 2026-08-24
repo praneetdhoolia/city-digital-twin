@@ -451,15 +451,23 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             // DECISIONS.md 9.60: a bound lift widens the search to the
             // driver's household - own household first, so the binding can
             // never displace an intra-household pairing at equal gap.
+            // Comma-separated since 9.68: a round-trip pair may be served by
+            // drivers from two different households.
             final String lift = liftHousehold.get(ride.person);
             if (lift != null) {
-                final List<DriverLeg> liftCandidates = driversByHousehold
-                        .getOrDefault(lift, Collections.emptyList());
-                if (!liftCandidates.isEmpty()) {
-                    final List<DriverLeg> merged = new ArrayList<>(
-                            candidates.size() + liftCandidates.size());
-                    merged.addAll(candidates);
-                    merged.addAll(liftCandidates);
+                List<DriverLeg> merged = null;
+                for (final String liftHh : lift.split(",")) {
+                    final List<DriverLeg> liftCandidates = driversByHousehold
+                            .getOrDefault(liftHh.trim(),
+                                          Collections.emptyList());
+                    if (!liftCandidates.isEmpty()) {
+                        if (merged == null) {
+                            merged = new ArrayList<>(candidates);
+                        }
+                        merged.addAll(liftCandidates);
+                    }
+                }
+                if (merged != null) {
                     candidates = merged;
                 }
             }

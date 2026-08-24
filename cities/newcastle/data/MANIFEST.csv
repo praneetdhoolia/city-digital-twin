@@ -39,6 +39,9 @@ data/raw/opal/station_entries_exits_2016_2023_typical_day.xlsx,raw,183811,,citie
 data/raw/opal/station_entries_exits_monthly.csv,raw,980339,15706,cities/newcastle/extract/fetch_open_data.py,"TfNSW Train/Metro/LR station monthly usage (Opal batch, from Nov 2024)",https://opendata.transport.nsw.gov.au/data/dataset/3977df59-a1fa-422e-91ff-cfaeac355cc9/resource/f8bb2918-0540-4bb3-9ccf-f7aef04d4249/download/entry_exit.csv,CC-BY 4.0,2026-08-12,289de76e35e381db8855f0620e1555577ae37983d27ecad290771d3804300939
 data/raw/opal/tap_time_loc_20160725-31.csv,raw,8603209,215630,cities/newcastle/extract/fetch_open_data.py,"Opal tap on/off by time and location, 25-31 Jul 2016 (era 2)",https://opendata.transport.nsw.gov.au/data/dataset/4789edda-acb9-4eba-acc1-327db1a13843/resource/ce1e431d-30a2-4f73-b1dd-d1944a203ca3/download/time-loc_20160725-31_2.csv,CC-BY 4.0,2026-08-12,e1ecf135e10d4d76fb8f4e50efaa443ed052a7fe6df575b2bde5aa6934074f7e
 data/raw/opal/tap_time_loc_20160808-14.csv,raw,9013406,225080,cities/newcastle/extract/fetch_open_data.py,"Opal tap on/off by time and location, 8-14 Aug 2016 (era 2)",https://opendata.transport.nsw.gov.au/data/dataset/4789edda-acb9-4eba-acc1-327db1a13843/resource/91a8e531-b2f8-4d0f-9d82-79e45c56ce27/download/time-loc_20160808-14.csv,CC-BY 4.0,2026-08-12,58429edc78c3266ee5830ac623280c3acecc88b6efff393ca72912cd3a9c7a7f
+data/raw/osm_attic/overpass_attic_hunter_scott_2016-01-01.json,raw,3026,,,,,,,64e1cecb8ede442f7550608e4f033528c65450e33a931bd38eada5801636568d
+data/raw/osm_attic/overpass_attic_hunter_scott_2017-01-01.json,raw,3792,,,,,,,990fc72649b34be92f59c6e026a3f790990be8827712512debab1f66baff9991
+data/raw/osm_attic/provenance_osm_attic.json,raw,1968,,,,,,,604f58ac796fe33744dd86cbf9dced93a1a8bb9c37d124bf018d7ea99dac02f5
 data/raw/signals/tfnsw_traffic_lights_location.xlsx,raw,366965,,,"TfNSW Traffic Lights Location (statewide signal inventory: SCATS Equipment_ID, cross streets, suburb, install date, coordinates; June 2026)",https://opendata.transport.nsw.gov.au/data/dataset/93ba5c23-f46c-45d7-98ed-96022b7ea626/resource/406ac670-b3ad-4474-9284-c03d444a1aec/download/traffic-lights-location-data-june-2026.xlsx,CC-BY 4.0,2026-08-12,00c8913f1fcb6f790843dd37464c8e609ad1f5475a753ac7739a8dc16d5ec99f
 data/raw/signals/tfnsw_traffic_lights_location_documentation.pdf,raw,225687,,,TfNSW Traffic Lights Location field documentation,https://opendata.transport.nsw.gov.au/data/dataset/93ba5c23-f46c-45d7-98ed-96022b7ea626/resource/b8e2dd7c-c136-4cfd-9d67-fd6107d2a583/download/traffic-lights-location-v1.pdf,CC-BY 4.0,2026-08-12,dde5ac68e28781c3574e68555a8bb2e31698a4ec38800bf4b7d4353f4178ac32
 data/raw/speedzones/Speed_Zones.dbf,raw,436688066,,,,,,,skipped_large
@@ -180,17 +183,20 @@ schedules/scenarios/S4.zip,processed,9456689,8,cities/newcastle/build/build_scen
 schedules/scenarios/S5.zip,processed,9470864,8,cities/newcastle/build/build_scenario_schedules.py,,,,,b9eb892561dad2693998982714934f68511c9860b58097fbb9409e1fa2b2df9c
 schedules/scenarios/S6.zip,processed,9411374,8,cities/newcastle/build/build_scenario_schedules.py,,,,,8fa2d6af8fa1a5228985c1b799337e6b5f3702005751103a9ce01d5704f7b1b6
 schedules/scenarios/_scenario_schedule_report.json,processed,3399,,cities/newcastle/build/build_scenario_schedules.py,,,,,eebfe1b532aa6a5b4d272abab1d5091611116362a96d9c0e67c3c69cfcd8b81d
-demand/plans/B2_activity_trips_SAT.csv,processed,257340716,1922150,src/build/build_activity_chains.py,,,,,4cf08fd2bb3902730407fee94beeab2efce6c376b0a122d4bf83bc7e16674ca4
-demand/plans/B2_activity_trips_SUN.csv,processed,224546620,1678269,src/build/build_activity_chains.py,,,,,cb7d3abb572b4297084b50ace41f1dc1e549f6103853448c8c8a2a226b1d0367
-demand/plans/B2_activity_trips_WEEKDAY.csv,processed,327472119,2377576,src/build/build_activity_chains.py,,,,,skipped_large
-demand/plans/B2_lift_bindings_SAT.csv,processed,2137756,30442,src/build/build_activity_chains.py,,,,,3441831d8bcb4850d79edc58c8279ab3a248343b72eac9860e35a71ae58f6ba4
-demand/plans/B2_lift_bindings_SUN.csv,processed,1530620,21803,src/build/build_activity_chains.py,,,,,642eeb5f545309940ed590f59692e868e44422e46e64743eceb622d247d4b906
-demand/plans/B2_lift_bindings_WEEKDAY.csv,processed,3879307,55249,src/build/build_activity_chains.py,,,,,7b0c784ec6815a2b8a4440ccca274c81b91b2b2fb067fe81dd0cb366714dc4fc
-demand/plans/_activity_chains_report.json,processed,17257,,src/build/build_activity_chains.py,,,,,644dd09ef4cf9bd7be46fb84a4a4228c52e30e53aa5ba0b0c94475a9b63b2a45
-demand/plans/matsim/_plans_report.json,processed,3991,,src/build/build_matsim_plans.py,,,,,d444030d4b0e8ba5d77bfbaffad7fcb8809828f0273f644bed7eda18cef72bb9
-demand/plans/matsim/population_SAT.xml.gz,processed,34881908,,src/build/build_matsim_plans.py,,,,,26eacf24641cc8cf2a4d78e5896870916d8529b040493b09c8be8f6b37ffa376
-demand/plans/matsim/population_SUN.xml.gz,processed,31292035,,src/build/build_matsim_plans.py,,,,,d92d90b808321fd5bb5dc71ac58bc26c46a7239ac0cd3d1bfb51f3a9eebe5a28
-demand/plans/matsim/population_WEEKDAY.xml.gz,processed,42988424,,src/build/build_matsim_plans.py,,,,,8472021508ce88ae478a2af18b87bc98c30e146e245f43a3be993857c8b271f3
+demand/plans/B2_activity_trips_SAT.csv,processed,254898135,1903521,src/build/build_activity_chains.py,,,,,ee1ca8f1f0d5fcb8b0d74e325d7631518dade9387174f00f74b01ffc04bf4ff2
+demand/plans/B2_activity_trips_SUN.csv,processed,222770205,1664677,src/build/build_activity_chains.py,,,,,2c16c2591e018d42b57742f5f91658067efc8420901623f50f49daa265f72237
+demand/plans/B2_activity_trips_WEEKDAY.csv,processed,322740574,2343321,src/build/build_activity_chains.py,,,,,skipped_large
+demand/plans/B2_escort_bindings_SAT.csv,processed,1439230,68801,src/build/build_activity_chains.py,,,,,3fe6937c544cde38e9f50210aff63f14e0f25a7e1adff4f985ede75c230535b9
+demand/plans/B2_escort_bindings_SUN.csv,processed,1017867,48817,src/build/build_activity_chains.py,,,,,2865fc40b51543e0c1ddbbcf9354981d8a54a85d6ab3ff63fe9c4b712312015e
+demand/plans/B2_escort_bindings_WEEKDAY.csv,processed,2642323,125475,src/build/build_activity_chains.py,,,,,de23f825fcdacb14edc206bdea69da083f798ccb4be18b06dc9f70fa589a12a0
+demand/plans/B2_lift_bindings_SAT.csv,processed,2119980,27808,src/build/build_activity_chains.py,,,,,d49358c29d645873bc901721249a975f9da3e3c5a76d426cd4976090c3404bac
+demand/plans/B2_lift_bindings_SUN.csv,processed,1509605,19808,src/build/build_activity_chains.py,,,,,713b1eb7e839c23ca8f050b45c30eef9f3770ea556a866611511f80f3a78e95b
+demand/plans/B2_lift_bindings_WEEKDAY.csv,processed,3737461,49030,src/build/build_activity_chains.py,,,,,4eb6cd49cfbca880540ec1dfda8d3aa61bfc76048d98f45fc0a4ebeb9cbcde2c
+demand/plans/_activity_chains_report.json,processed,19115,,src/build/build_activity_chains.py,,,,,df3e6ea38b86ced6ad604a5fb5000bccb6372522646c7434886cbc140bf8a07e
+demand/plans/matsim/_plans_report.json,processed,3992,,src/build/build_matsim_plans.py,,,,,d0cc4e80e6af53e6b888d853323171a2e5780b87db9b00b3a1972cdcf736147d
+demand/plans/matsim/population_SAT.xml.gz,processed,33820111,,src/build/build_matsim_plans.py,,,,,b8e5d083b1aa5a927a97dd0b0f6c6fb5a748144b63d6f88491f2e1b8e80a2221
+demand/plans/matsim/population_SUN.xml.gz,processed,30401853,,src/build/build_matsim_plans.py,,,,,52fdea57b57b2e8e9a2b6de64d5e4648f54e791c82f75ea39d321dcc76b76696
+demand/plans/matsim/population_WEEKDAY.xml.gz,processed,41602171,,src/build/build_matsim_plans.py,,,,,d914029b6d86d70a9527ce432f480c9d417f9c3acb87eb63c936e0314caa3766
 demand/population/B1_households.csv,processed,20719465,246845,src/build/build_population.py,,,,,d3bb588f1094a9d0a8b61b957f14493664aae7b67d996a66f20ee613d0938d50
 demand/population/B1_synthetic_population.csv,processed,65341162,612687,src/build/build_population.py,,,,,549b938c9739d6b2a50c06c477d273245a8fc692d715f44988618aba9b84a39c
 demand/population/_population_report.json,processed,1483,,src/build/build_population.py,,,,,9be0511e3704575e4f928b0a69a0cc0b9a5ef9e2eb28f1642d1277b97c2cd142
