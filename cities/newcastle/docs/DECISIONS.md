@@ -53,6 +53,7 @@ otherwise cost you an hour:
 | **Deliverable 0b: assumptions replaced by held data** | **§9.61** — G15 tertiary full-time split (per SA1, observed), the light-vehicle day-type factors (SAT:SUN split, external weekend scaling, departure shift - all measured from the classified hourly counts), the chain-timing scaffold speeds declared, and the ranked remainder |
 | **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (owner-approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
+| **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
@@ -6200,6 +6201,61 @@ walk-mode lift tour the pairing engine can never realise as a ride. The
 realised pairing rate is measured and reported at the arm (§9.48
 pattern), so this dilutes binding efficacy visibly rather than silently;
 it belongs with the #48 measurement lane, not this repair.
+
+---
+
+## 9.64 The first converged all-physical arms: C5 exists, ride collapses under scoring, and the seed noise floor is measured (24 August 2026, issues #48, #31, #30, #28, #14, #9)
+
+**Both §9.62 arms completed** — 1000 iterations each, rc=0, ~67.4 h wall
+apiece (the §9.59 estimate was ~65 h; the #66 stall and two-arm
+contention account for the rest). Arm A: `relaxed: true` at max drift
+**0.031 pp** (tolerance 0.5; the cutoff snap 4.23 pp reported
+separately), events-based conservation closes on every mode. These are
+the FIRST valid runs of the §9.58–§9.63 family.
+
+**The fit (arm A, 35 of 67 calibration targets scorable, MAE 10.65 pp):**
+driver **73.19 / 59.0 (+14.19)** · passenger **0.09 / 20.6 (−20.51)** ·
+walk-only **7.28 / 13.4 (−6.12)** · bike **11.21 / 3.2 (+8.01)** · pt
+**8.22 / 3.8 (+4.42)**. Submodes (Tier R): bus 6.13, rail 0.77 + combos,
+tram 0.02, ferry 0.02. **Light rail: modelled 1,260 weekday boardings
+(B: 1,212) against the observed 3,417/day — the intervention under study
+realises ~37% of its patronage in the uncalibrated base.** Counts:
+mean −91.8% with 6 modelled-zero stations — statistically unchanged from
+`bind1000_25pct`'s −91.05%, the recorded no-through-demand structure,
+not a new defect. Trip-length constraints: walk mean **5.56 km vs 0.70
+observed (7.9×)** — #30's generation diagnosis reproduces on the
+physical family; bike 1.66×, car 1.07×, pt 0.44×.
+
+**The central finding — ride collapses under scoring, not under
+physics.** Through iteration ~799 the arms carried ~6,800 ride legs at
+pairing rates 0.08–0.20; at the innovation cutoff selection kept ~540,
+of which **100% pair and board**. The §9.53/§9.60 machinery works —
+what died is the CHOICE: with waiting priced at the declared 0 utils/h,
+a paired ride still loses to self-driving for the licensed and to
+bike/pt/walk for the carless. The observed 20.6 passenger share sits
+recognisably in the overshoots (+14 driver, +8 bike, +4.4 pt).
+Occupancy 0.0013 vs 0.3503. **M2 (driver detours) is a NO-GO on this
+evidence** — supply is not the binding constraint when 100% of surviving
+requests are served; the binding constraint is demand-side scoring, and
+which lever to pull (the §8.5-held constants stay held) is the owner's
+next decision. The next diagnostic is a decomposition of where ride
+plans die: never-proposed vs proposed-and-scored-out vs
+unpairable-re-moded.
+
+**C5 EXISTS (deliverable 5, closing #14 and #9).**
+`params/C5_calibration.json` written by `--constrained-base` from arm A
+under the §9.50 branch: every parameter at its declared value, objective
+10.65, **feasible=False with five stated violations** (occupancy + four
+trip-length ranges) — reported, never absorbed. #9 closes as decided by
+§9.50: ASCs stay priors. `docs/audit/CALIBRATION_REPORT.md` regenerated.
+
+**The seed noise floor is measured (arm B's product, n=2):** per-mode
+|A−B| at fit level 0.00–0.11 pp (MAE 10.65 vs 10.66), LR boardings
+1,260 vs 1,212 (±3.9%). Every gap in the table above is signal.
+`E.replication.n_replications` (30, provisional planning figure 5) can
+now be set from data — at this variance even 3 replications resolve
+sub-pp mode-share effects; the value choice awaits the owner with the
+measurement recorded here.
 
 ---
 

@@ -1,0 +1,46 @@
+{
+  "generated": "2026-08-24T03:25:16Z",
+  "scenario": "S2",
+  "day": "WEEKDAY",
+  "run_config": "phys1000_arm_a_25pct",
+  "branch": "constrain-and-report (DECISIONS.md 8.5 second branch, 9.50)",
+  "decisions_ref": "9.50",
+  "objective_components": {
+    "mode_share.mean_abs_pp": 1.0
+  },
+  "independent_targets": 4,
+  "free_parameters": [],
+  "search_declined": {
+    "movable": {
+      "A.parking.max_stay_min": {
+        "value": 120.0,
+        "lo": 60.0,
+        "hi": 180.0
+      },
+      "C.scoring.activity_minimal_duration_s": {
+        "value": 900.0,
+        "lo": 300.0,
+        "hi": 1800.0
+      }
+    },
+    "reason": "the loop can legitimately move only these parameters, at ~21 full 25% x 1000 runs; neither reaches the structural misfits (9.25, 9.28), so the search was DECLINED with the cost stated rather than run for its appearance (9.50)"
+  },
+  "best_tag": "phys1000a_25pct",
+  "best_objective": 10.65,
+  "objective_parts": {
+    "mode_share.mean_abs_pp": 10.65
+  },
+  "calibrated": {},
+  "constraints": {
+    "feasible": false,
+    "violations": [
+      "vehicle occupancy 0.0013 passengers/driver is outside the observed range [0.2493, 0.394]",
+      "bike trip length 8.62 km is outside the observed range",
+      "car trip length 10.94 km is outside the observed range",
+      "pt trip length 10.40 km is outside the observed range",
+      "walk trip length 5.56 km is outside the observed range"
+    ]
+  },
+  "history": [],
+  "note": "CONSTRAINED, not fitted (DECISIONS.md 9.50). Every parameter kept its declared registry value; the mode constants stay at their 8.5 priors, held fixed; asc_car_passenger is NOT re-solved against the 9.48 occupancy excess, which is reported above as a constraint violation instead of being absorbed. The fit is one reference run of the 9.49 demand family, reported as it came out. Counts were scored, not optimised against (9.14). No holdout row was read."
+}
