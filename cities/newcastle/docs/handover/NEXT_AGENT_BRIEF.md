@@ -1,14 +1,19 @@
 # Brief for the next agent — THE BASE ARMS ARE RUN; THE MODEL HAS ITS REPORT CARD; THE NEXT LEVER IS THE OWNER'S
 
-*Updated 24 August 2026 (the two-arm campaign session, 21–24 Aug). The
-session: **§9.62** the owner-approved two-arm launch (arm A base, arm B
-seed replication) · **§9.63** both arms crashed at replanning 1 (the M1
+*Updated 24 August 2026, twice. The campaign session (21–24 Aug):
+**§9.62** the owner-approved two-arm launch (arm A base, arm B seed
+replication) · **§9.63** both arms crashed at replanning 1 (the M1
 lift-overlap defect, #65), repaired and relaunched the same afternoon ·
 **§9.64** both arms COMPLETED (rc=0, relaxed, accounting closes) — C5
 exists, the fit is measured, ride's collapse is diagnosed as choice not
-physics, and the seed noise floor is ≤0.11 pp/mode. This is a HANDOVER,
-not a source of truth: where it disagrees with [`STATUS.md`](../STATUS.md),
-[`DECISIONS.md`](../DECISIONS.md) or
+physics, and the seed noise floor is ≤0.11 pp/mode. The close-out session
+(24 Aug, same PR): **§9.65** the runner names every run
+(`<launch>_<N>it_<pct>pct`, `--tag` gone, resume by recorded parameters) ·
+**§9.66** every run carries an auto-updated `_meta.json` status card and a
+dead run is `aborted_<name>` (quarantine parents dissolved) · **§9.67**
+the project is **city-digital-twin** (repo renamed, redirects stand).
+This is a HANDOVER, not a source of truth: where it disagrees with
+[`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md) or
 [`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win.*
 
 ---
@@ -39,6 +44,10 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 5. **The prime goal (owner, 21 Aug): all forms of ridership as close to
    real life as possible ON THEIR OWN; no hardcoding or Newcastle bias;
    every issue spotted logged on GitHub.**
+6. **Never hand-name a run (owner, 24 Aug).** The harness names every run
+   `<launch>_<iterations>it_<pct>pct` and status-tracks it in `_meta.json`;
+   a dead run is `aborted_<name>`. Judge consider/disregard from the
+   metadata; `_run.json` stays the only result gate (§9.65/§9.66).
 
 **Start from `main`. No run is in progress; the machine is free.**
 
@@ -122,12 +131,18 @@ previous family (−91.05%), the recorded no-through-demand structure.
   (refusals → 0) · every wall-time knob measured · non-household lifts
   (M0 waiting + M1 re-target) · 0b: four assumptions became measurements ·
   #49 Tier R · #62/#63 filed.
-- **§9.62–§9.64** (21–24 Aug, this session's PR): the two-arm campaign —
-  overlays `phys1000_arm_a/b_25pct` · the #65 lift-overlap repair (busy
-  check reads re-targeted sibling times + a contiguity assertion in
+- **§9.62–§9.64** (21–24 Aug, PR #67): the two-arm campaign — overlays
+  `phys1000_arm_a/b_25pct` · the #65 lift-overlap repair (busy check reads
+  re-targeted sibling times + a contiguity assertion in
   `bind_nonhousehold_lifts`; weekday bindings 55,249/55,614) · **both arms
   complete and valid** · fit + C5 + calibration report · seed floor
   measured · M2 no-go · #14/#9/#28/#31 closed on evidence.
+- **§9.65–§9.67** (24 Aug, same PR): runner-named run directories (all 35
+  renamed, maps in the entries) · `_meta.json` status cards on every run,
+  backfilled from their own records · dead runs at `results/aborted_<name>`
+  · the repository renamed **city-digital-twin** (GitHub redirects; the
+  local working folder may still be `work/NewcastleLRSIM` — its name binds
+  nothing).
 
 **Phases:** P0–P3 ✅ · P4 🟡 (**8 of 9** — deliverable 0/0b open, #63) ·
 P5–P7 ⬜.
@@ -167,7 +182,7 @@ P5–P7 ⬜.
 
 | | |
 |---|---|
-| PRs | This session's PR (`praneetdhoolia/two-arm-relaunch-watch`) opens at this handoff; 22 prior merged, 2 closed unmerged (#39, #57) |
+| PRs | **PR #67 OPEN** (`praneetdhoolia/two-arm-relaunch-watch`) — carries §9.62–§9.67; merging it (and deleting the branch both sides) is the FIRST item of unfinished business; 22 prior merged, 2 closed unmerged (#39, #57) |
 | Toolchain | 3 pinned, unchanged; 14 Java sources compile |
 | Registry | **334 fields**; ledger **0** `--strict`; G2 13/13 |
 | Package | **429 manifest files** + `params/C5_calibration.json` (committed); `check_manifest` OK |
@@ -200,27 +215,32 @@ stated-cost approval.
 ═══════════════════════════════════════════════════════════════════════════════
 §8  TRAPS — new ones first, each paid for
 ═══════════════════════════════════════════════════════════════════════════════
-1. **A slow mobsim is not a dead run.** During the #66 stall the log went
+1. **`os.kill(pid, 0)` on Windows TERMINATES the process** — it wraps
+   TerminateProcess for any signal that is not a CTRL event. Liveness is
+   asked via `OpenProcess`/`WaitForSingleObject` (see `_pid_alive` in
+   `run_matsim.py`); never "ping" a pid with os.kill here (cost: nearly a
+   reconciliation pass that would have shot live runs).
+2. **A slow mobsim is not a dead run.** During the #66 stall the log went
    quiet 36 min while the qsim crawled through the pre-dawn sim-hours —
    check the `SIMULATION (NEW QSim) AT <time>` markers' sim-time progress
    before declaring a stall or killing anything (cost: one false alarm,
    correctly walked back).
-2. **The machine-level stall (#66) hits BOTH arms at the same wall-clock
+3. **The machine-level stall (#66) hits BOTH arms at the same wall-clock
    time** (~35 min, self-recovered, lost=0, once in 2×67 h). It is not a
    model event; correlate with Task Scheduler/Defender if it recurs.
-3. **Verified-at-1% is not verified.** The #65 crash class touched ~0.1%
+4. **Verified-at-1% is not verified.** The #65 crash class touched ~0.1%
    of persons; a 1%-sample probe had ~6 of them and passed twice. A
    structural invariant needs an ASSERTION in the builder (the contiguity
    check now in `bind_nonhousehold_lifts`), not a probe (cost: two
    crashed 25% launches).
-4. **`bind_nonhousehold_lifts` must consult re-targeted sibling times** —
+5. **`bind_nonhousehold_lifts` must consult re-targeted sibling times** —
    the stale-rows class behind #65; the assertion guards it now, but any
    new pass that rewrites tours must preserve trip_seq contiguity per
    person (cost: one afternoon).
-5. **The driver pins -Xms to -Xmx** — size per-arm heaps for concurrency
+6. **The driver pins -Xms to -Xmx** — size per-arm heaps for concurrency
    (two 40g arms would commit 80 GiB on 63.5; 30g each is the proven
    §9.62 stack).
-6. Carried: `build_matsim_run_inputs.py` subset OVERWRITES the report —
+7. Carried: `build_matsim_run_inputs.py` subset OVERWRITES the report —
    regenerate ALL scenarios in one invocation. Timing probes never share
    the machine. PowerShell here-strings mangle — use `-F`/`--body-file`.
    `decideOnLink` silently accepts out-of-subnetwork activity links —
@@ -285,11 +305,11 @@ monitoring, 24 Aug). Closed this session with evidence + REOPEN IF:
 #40 ride pairing · #43 escort+age · #44 first repaired-demand run · #46
 freight · #47 calibration decision · #52 motorbike · #53 all-physical ·
 #56 stack landing · #58 accounting · #59 events threads · #61 PR-only
-convention · #64 walk wedge + lifts + knobs). **This session's PR carries
-§9.62–§9.64: the two-arm campaign, the #65 repair, C5 and the close-out.**
-The next PR after it: the ride-choice decomposition + whichever scoring
-lever the owner picks (`P4: Diagnose and answer the ride choice collapse
-(#48)`).
+convention · #64 walk wedge + lifts + knobs). **PR #67, OPEN, carries
+§9.62–§9.67: the two-arm campaign, the #65 repair, C5, the runner-named
+and status-carded runs, and the city-digital-twin rename.** The next PR
+after it merges: the ride-choice decomposition + whichever scoring lever
+the owner picks (`P4: Diagnose and answer the ride choice collapse (#48)`).
 
 ---
 
