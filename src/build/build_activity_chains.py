@@ -196,6 +196,15 @@ ESCORT_DIRECTIONS = CFG.get('B.activity.escort_binding_directions')
 # leg with two legs matching neither endpoint of the passenger's leg.
 # Derived, not swept; unbound HX tours keep the drawn distribution.
 ESCORT_DIRECT_TOUR = CFG.get('B.activity.escort_binding_direct_tour')
+# DECISIONS.md 9.69 (issue #30): the observed short-trip mass. The gravity
+# draw becomes a two-component mixture per purpose - a short kernel whose
+# mean is the observed walk-only trip length (derived, no new number) and
+# the existing solved decay - with the weight SOLVED so the share of trips
+# at or under the published band edge matches the observed per-purpose band
+# share, while the per-(purpose x LGA) observed means stay met exactly.
+SHORT_BAND_SHARE = CFG.get('B.activity.short_trip_band_share')
+SHORT_BAND_KM = CFG.get('B.activity.short_trip_band_km')
+SHORT_MEAN_KM = CFG.get('B.activity.short_trip_mean_km')
 # Share of an under-12's drawn secondary tours that are actually made alone.
 # Applied as per-tour thinning, not as a scaling of the count.
 CHILD_TOUR_RETENTION = CFG.get('B.activity.child_tour_retention')
@@ -449,17 +458,90 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
             beta = 0.5 * (lo + hi)
         return beta, realised(beta)
 
+    # ---- 9.69: the short-trip kernel, one per purpose over the same
+    # attractors. Its mean is the observed walk-only trip length (derived,
+    # B.activity.short_trip_mean_km); the bisection runs WITHOUT the 0.8 km
+    # floor the long solve applies, because short is this kernel's job.
+    short_mean_target = SHORT_MEAN_KM / DETOUR_FACTOR
+    band_straight = SHORT_BAND_KM / DETOUR_FACTOR
+    in_band = DKM <= band_straight
+
+    def norm_w(mat):
+        s = mat.sum(axis=1, keepdims=True)
+        return np.divide(mat, np.where(s > 0, s, 1.0))
+
+    def kernel(p, beta_vec):
+        return norm_w(ATTR[p][None, :] * np.exp(-beta_vec[:, None] * DKM))
+
+    def solve_short(p):
+        lo, hi = 0.005, 12.0
+
+        def realised(beta):
+            w = norm_w(ATTR[p][None, :] * np.exp(-beta * DKM))
+            return float((pw * (w * DKM).sum(axis=1)).sum())
+
+        if realised(hi) > short_mean_target:
+            # even the strongest decay cannot reach the walk mean on this
+            # attractor surface (zone granularity bounds it from below);
+            # take the closest and let the diag state the gap
+            return hi, realised(hi)
+        for _ in range(40):
+            mid = 0.5 * (lo + hi)
+            if realised(mid) > short_mean_target:
+                lo = mid
+            else:
+                hi = mid
+        b = 0.5 * (lo + hi)
+        return b, realised(b)
+
+    def band_of(w):
+        return float((pw * np.where(in_band, w, 0.0).sum(axis=1)).sum())
+
     lgas = sorted(set(zone_lga)) if zone_lga is not None else []
     beta_of_zone = {}
+    mix_of = {}
+    short_beta = {}
     for p in PURPOSES:
         target = max(meandist.get(p, 8.0), 0.8) / DETOUR_FACTOR
+        b_short, short_mean_got = solve_short(p)
+        short_beta[p] = b_short
+        w_short_mat = kernel(p, np.full(X.size, b_short))
+        p_short_band = band_of(w_short_mat)
+        band_target = SHORT_BAND_SHARE.get(p)
+        # iterate: the mixture weight moves the mean the long kernel must
+        # carry, and the long kernel's band share moves the weight; a few
+        # rounds converge because both maps are monotone
+        mix = 0.0
         beta, got = solve(p, target)
+        if band_target is not None:
+            for _ in range(4):
+                w_long_mat = kernel(p, np.full(X.size, beta))
+                p_long_band = band_of(w_long_mat)
+                denom = p_short_band - p_long_band
+                mix = (0.0 if denom <= 0 else
+                       min(1.0, max(0.0, (band_target - p_long_band) / denom)))
+                if mix >= 1.0 or mix <= 0.0:
+                    break
+                long_target = (target - mix * short_mean_got) / (1.0 - mix)
+                beta, got = solve(p, max(long_target, 0.8 / DETOUR_FACTOR))
         out[p] = beta
+        mix_of[p] = mix
+        mixed_mean = (1.0 - mix) * got + mix * short_mean_got
         diag[p] = dict(beta=round(beta, 5),
                        target_straight_km=round(target, 2),
-                       realised_straight_km=round(got, 2),
+                       realised_straight_km=round(mixed_mean, 2),
                        hts_network_km=round(meandist.get(p, float('nan')), 2),
-                       realised_network_km=round(got * DETOUR_FACTOR, 2))
+                       realised_network_km=round(mixed_mean * DETOUR_FACTOR, 2),
+                       short_mix=round(mix, 4),
+                       short_beta=round(b_short, 5),
+                       short_kernel_mean_km=round(
+                           short_mean_got * DETOUR_FACTOR, 2),
+                       band_target_share=band_target,
+                       band_realised_share=(
+                           None if band_target is None else round(
+                               (1.0 - mix) * band_of(kernel(
+                                   p, np.full(X.size, beta)))
+                               + mix * p_short_band, 4)))
         by_lga = {}
         zone_beta = np.full(X.size, beta)
         for lga in lgas:
@@ -469,22 +551,31 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
                 by_lga[lga] = dict(beta=round(beta, 5), fallback='aggregate',
                                    hts_network_km=None)
                 continue
+            # the LGA's long kernel carries what the mixture leaves of the
+            # LGA's own observed mean, under the purpose-level mix
             t_lga = max(obs, 0.8) / DETOUR_FACTOR
-            b_lga, got_lga = solve(p, t_lga, rows)
+            t_lga_long = (t_lga if mix <= 0.0 or mix >= 1.0 else
+                          max((t_lga - mix * short_mean_got) / (1.0 - mix),
+                              0.8 / DETOUR_FACTOR))
+            b_lga, got_lga = solve(p, t_lga_long, rows)
             zone_beta[rows] = b_lga
+            mixed_lga = (1.0 - mix) * got_lga + mix * short_mean_got
             by_lga[lga] = dict(beta=round(b_lga, 5),
                                target_straight_km=round(t_lga, 2),
-                               realised_straight_km=round(got_lga, 2),
+                               realised_straight_km=round(mixed_lga, 2),
                                hts_network_km=round(obs, 2),
-                               realised_network_km=round(got_lga * DETOUR_FACTOR, 2))
+                               realised_network_km=round(
+                                   mixed_lga * DETOUR_FACTOR, 2))
         if lgas:
             diag[p]['by_lga'] = by_lga
         beta_of_zone[p] = zone_beta
     CUM = {}
     for p in PURPOSES:
-        w = ATTR[p][None, :] * np.exp(-beta_of_zone[p][:, None] * DKM)
-        s = w.sum(axis=1, keepdims=True)
-        w = np.divide(w, np.where(s > 0, s, 1.0))
+        w = kernel(p, beta_of_zone[p])
+        mix = mix_of.get(p, 0.0)
+        if mix > 0.0:
+            w = (1.0 - mix) * w + mix * kernel(
+                p, np.full(X.size, short_beta[p]))
         CUM[p] = np.cumsum(w, axis=1).astype(np.float32)
     del DKM
     return CUM, diag

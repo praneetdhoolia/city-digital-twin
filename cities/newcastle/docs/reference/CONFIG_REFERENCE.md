@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 338 fields are made of
+## What the 341 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 22 | computed from observed data in this package |
-| `derived` | 29 | follows from another registry field by identity |
-| `literature` | 40 | a published value, not specific to this city |
+| `derived` | 30 | follows from another registry field by identity |
+| `literature` | 42 | a published value, not specific to this city |
 | `assumed` | 138 | chosen without direct empirical support |
 | `definition` | 105 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 318 | usable point value |
+| `active` | 321 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 5 | the datum does not exist in the package; must be swept, never pinned |
@@ -57,13 +57,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 | `RUN.sumo.replications` | 5 - 30 | NO VALUE: proposal 5.2 asks for at least 30, DECISIONS.md 9.5 shows the specified load does not fit on this machine, and nobody has decided what to cu |
 
-### The 12 fields held fixed
+### The 13 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
 - `A.signals.scats_match_radius_m` - A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score r
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
+- `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
 - `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
 - `C.asc.bus` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
@@ -815,7 +816,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 72 fields*
+*`cities/newcastle/registry/B_demand.json` - 75 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -844,6 +845,9 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.plan_access_s` | `240` | seconds | `assumed` | 120 - 480 |
 | `B.activity.plan_speed_car_kmh` | `26.0` | km/h | `assumed` | 20 - 32 |
 | `B.activity.plan_speed_nocar_kmh` | `16.0` | km/h | `assumed` | 10 - 22 |
+| `B.activity.short_trip_band_km` | `1.0` | km_network | `literature` | **held fixed** |
+| `B.activity.short_trip_band_share` | `{"HW": 0.059, "WB": 0.09, "HE": 0.158, "HS": 0.277, "HO": 0.255, "HX": 0.157}` | share_of_trips | `literature` | plus/minus 25% |
+| `B.activity.short_trip_mean_km` | `0.7` | km_network | `derived` | derived: the short-trip destination kernel realises the observed mean walk-only |
 | `B.activity.weekend_to_weekday` | `0.7521` | ratio | `measured` | 0.709 - 0.816 |
 | `B.bike.pce` | `0.2` | passenger_car_equivalents | `literature` | 0.1 - 0.4 |
 | `B.bike.speed_ms` | `4.2` | m/s | `literature` | 3.1 - 5.5 |
@@ -1051,6 +1055,30 @@ Door-to-door planning speed for a person without car availability, used by the B
 ***assumed** · status **active** · DECISIONS.md §9.61*
 
 > **Sweep basis.** a blend of walk, cycle and bus door-to-door speeds for a person without a car. Same scaffold-only role, same 9.61 declaration rationale, as plan_speed_car_kmh.
+
+#### `B.activity.short_trip_band_km`
+
+The network-distance edge of the short-trip band whose observed share short_trip_band_share carries. Converted to straight-line by the measured detour factor where the solver compares it against centroid distances.
+
+***literature** · status **active** · DECISIONS.md §9.69*
+
+> **Held fixed.** the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - the band share and its edge are one observation and move together.
+>
+> *Departure requires: a logged decision*
+
+#### `B.activity.short_trip_band_share`
+
+Observed share of trips at or under short_trip_band_km network km, per purpose. Bureau of Transport Statistics, Household Travel Survey Report: Sydney 2012/13 (Nov 2014, ISBN 978-0-7313-2869-7), Table 4.4.7 'Trips by distance category and purpose (average weekday) - 2012/13', linked door-to-door trips: commute 148/2525, work business 117/1294, education 245/1554, shopping 739/2667, HO = personal business + social/recreation + other = (169+967+267)/(926+4028+557), serve passenger 480/3065. The destination-draw mixture weight is SOLVED against these so the generated distance distribution carries the observed short-trip mass while the per-(purpose x LGA) observed means stay met exactly (9.69); the model's own generated share was 4.45% of legs under 1 km against the table's 18.8% all-purpose (issue #30).
+
+***literature** · status **active** · DECISIONS.md §9.69*
+
+#### `B.activity.short_trip_mean_km`
+
+Mean trip length of the short-trip destination kernel, taken from the observed Newcastle-LGA mean walk-only trip length already held as C.constraint.trip_length_km.walk.
+
+***derived** · status **active** · DECISIONS.md §9.69*
+
+> **Derived from** `C.constraint.trip_length_km.walk`: the short-trip destination kernel realises the observed mean walk-only trip length - the short-trip mass IS overwhelmingly the walked mass (HTS Sydney 2012/13 Table 4.4.6: walk is 70.9% of all trips up to 1 km and 74.6% of walk-only trips are up to 1 km), so the one observed short-distance mean the package already holds is the kernel's mean. No new number is introduced; the build converts network to straight-line by the measured detour factor.
 
 #### `B.activity.weekend_to_weekday`
 

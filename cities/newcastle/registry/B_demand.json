@@ -195,6 +195,62 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.short_trip_band_share": {
+      "value": {
+        "HW": 0.059,
+        "WB": 0.09,
+        "HE": 0.158,
+        "HS": 0.277,
+        "HO": 0.255,
+        "HX": 0.157
+      },
+      "units": "share_of_trips",
+      "source": "literature",
+      "sweep": {
+        "proportional": 0.25,
+        "basis": "the shares are Sydney GCCSA, not Hunter - the same HTS instrument as every observed mean this build already targets, and the only Australian government-published trips-by-distance-band-by-purpose table found (a Hunter-specific one does not exist; the modern HTS releases publish no distance bands at any geography, checked against the Feb-2026 data dictionary). A 25% proportional sweep covers the Sydney-to-regional transfer: denser Sydney plausibly makes MORE short trips, so the lower half of the sweep is the operative direction. All HTSs under-report short walk trips (Fairnie et al. 2016 via Eady and Burtt 2019), so the value is a lower bound on the true short-trip mass."
+      },
+      "status": "active",
+      "decisions_ref": "9.69",
+      "description": "Observed share of trips at or under short_trip_band_km network km, per purpose. Bureau of Transport Statistics, Household Travel Survey Report: Sydney 2012/13 (Nov 2014, ISBN 978-0-7313-2869-7), Table 4.4.7 'Trips by distance category and purpose (average weekday) - 2012/13', linked door-to-door trips: commute 148/2525, work business 117/1294, education 245/1554, shopping 739/2667, HO = personal business + social/recreation + other = (169+967+267)/(926+4028+557), serve passenger 480/3065. The destination-draw mixture weight is SOLVED against these so the generated distance distribution carries the observed short-trip mass while the per-(purpose x LGA) observed means stay met exactly (9.69); the model's own generated share was 4.45% of legs under 1 km against the table's 18.8% all-purpose (issue #30).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.short_trip_band_km": {
+      "value": 1.0,
+      "units": "km_network",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - the band share and its edge are one observation and move together.",
+        "decisions_ref": "9.69"
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.69",
+      "description": "The network-distance edge of the short-trip band whose observed share short_trip_band_share carries. Converted to straight-line by the measured detour factor where the solver compares it against centroid distances.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.short_trip_mean_km": {
+      "value": 0.7,
+      "units": "km_network",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.walk"
+        ],
+        "identity": "the short-trip destination kernel realises the observed mean walk-only trip length - the short-trip mass IS overwhelmingly the walked mass (HTS Sydney 2012/13 Table 4.4.6: walk is 70.9% of all trips up to 1 km and 74.6% of walk-only trips are up to 1 km), so the one observed short-distance mean the package already holds is the kernel's mean. No new number is introduced; the build converts network to straight-line by the measured detour factor."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.69",
+      "description": "Mean trip length of the short-trip destination kernel, taken from the observed Newcastle-LGA mean walk-only trip length already held as C.constraint.trip_length_km.walk.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.escort_binding_directions": {
       "value": "round_trip",
       "units": "enum",
