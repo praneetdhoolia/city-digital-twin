@@ -2,7 +2,7 @@
 
 A city-agnostic transport digital-twin framework, applied first as a counterfactual
 microsimulation of the **Newcastle (NSW) light rail** — MATSim for the five-LGA
-regional demand model, SUMO for the corridor. (Renamed from *NewcastleLRSIM*,
+regional demand model, SUMO for the corridor. (Renamed from the earlier Newcastle-specific repository name,
 24 Aug 2026: the framework models any city; one city's study lives under
 `cities/<city>/`.)
 It exists because that estimate was never produced and the business case is not

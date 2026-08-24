@@ -86,7 +86,7 @@ Ride-to-car trip length: modelled **0.717** against observed **0.961**. A ratio 
 
 ## Parameter provenance
 
-From `C:\Users\Praneet Dhoolia\work\NewcastleLRSIM\cities\newcastle\params/C5_calibration.json`, written by `calibrate.py`.
+From `params/C5_calibration.json`, written by `calibrate.py`.
 
 | | |
 |---|---|

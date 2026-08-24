@@ -10,7 +10,7 @@ assessment on the NSW Planning Portal. Tags as elsewhere: **[documented]**,
 
 **Status of the numbers below: evidence, not inputs.** Nothing here has been
 acquired into `data/raw/`, joined to a layer, or used to change a registry
-value. Bringing any of it into the package is an owner decision that must
+value. Bringing any of it into the package is an decision required that must
 follow the provenance rules (immutable raw download + `provenance_*.json`,
 manifest regeneration) and a licence check (planning-portal documents are
 public records exhibited under the EP&A Act; the SCATS data inside them was
@@ -125,7 +125,7 @@ Implications for the registry's assumed values (`A.signals`, cycle 110 s swept
    republished interpreted history. Zero cost, public provenance, but
    coverage is accidental. A systematic pass over Newcastle DA/SSD documents
    (City of Newcastle DA tracker + Planning Portal major projects) for the
-   corridor intersections is a bounded, legitimate task — **owner decision
+   corridor intersections is a bounded, legitimate task — **decision required
    whether to spend the effort; if adopted, each PDF lands under `data/raw/`
    with provenance like any acquisition.**
 3. **The sweep's lower bound gains empirical support** (§4). Worth citing in

@@ -146,7 +146,7 @@ Conclusion: **the documentation hunt is closed.** The public corpus above is
 sufficient to specify SCATS-like behaviour for MATSim
 ([05-algorithms.md](05-algorithms.md)) with every parameter carrying a citable
 basis; the only purchase that would materially improve the model is the LX
-file, and that is a data acquisition decision (owner), not a documentation
+file, and that is a data acquisition decision (decision required), not a documentation
 gap.
 
 Post-scriptum (25 Aug 2026): on the *data* side the second listed item is

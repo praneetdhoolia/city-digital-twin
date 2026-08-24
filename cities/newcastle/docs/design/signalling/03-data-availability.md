@@ -54,8 +54,8 @@ labour-intensive, no open platform yet). Approximate prices:
 
 For roughly $200–600 the project could replace its single most result-driving
 assumption (110 s cycle, 45|15|30|10 split, swept 80–140 s) with the corridor's
-real strategic configuration. **Open questions before buying** (owner
-decision, not made here): whether the restrictive licence is compatible with
+real strategic configuration. **Open questions before buying** (decision
+required, not made here): whether the restrictive licence is compatible with
 this project's publication and reproducibility posture (the manifest publishes
 hashes and provenance for every input; a non-redistributable input breaks the
 "anyone can regenerate the package" property unless quarantined as a
@@ -106,7 +106,7 @@ dossier is absorbed:
    §4 caveats). Worth citing in the field's `sweep_basis`.
 3. A new, cheap acquisition option exists (the LX file) that would move
    `scats_phasing` from `unobtained` to `measured` for the strategic layer —
-   licence review first; owner decision.
+   licence review first; decision required.
 4. TTD 2018/002's actuated parameters (min green, gap, headway, waste) are
    the right priors for any explicit signal model in MATSim
    ([04-matsim-implementation.md](04-matsim-implementation.md)) and should be

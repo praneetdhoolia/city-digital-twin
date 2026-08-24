@@ -5,22 +5,22 @@
     "parallel_buffer_m": 1500.0,
     "alignment_source": {
       "base2026": {
-        "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/raw/base2026/lightrail.zip",
+        "feed": "schedules/raw/base2026/lightrail.zip",
         "mode": "shape",
         "points": 550
       },
       "S2c": {
-        "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S2c.zip",
+        "feed": "schedules/scenarios/S2c.zip",
         "mode": "shape",
         "points": 310
       },
       "S4": {
-        "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S4.zip",
+        "feed": "schedules/scenarios/S4.zip",
         "mode": "shape",
         "points": 844
       },
       "S5": {
-        "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S5.zip",
+        "feed": "schedules/scenarios/S5.zip",
         "mode": "shape",
         "points": 1330
       }

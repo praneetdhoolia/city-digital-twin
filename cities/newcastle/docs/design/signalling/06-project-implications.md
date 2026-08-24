@@ -88,7 +88,7 @@ comparator arm).
 To be actioned when this dossier is absorbed (family-boundary and PR rules
 apply; **none of it precedes the 4.6.9 lane**):
 
-1. **DECISIONS entry for the SUMO descope** (B7, owner): must state where each
+1. **DECISIONS entry for the SUMO descope** (B7 — decision required): must state where each
    SUMO-unique deliverable lands — S-b as a swept band (rung 0) or explicit
    (rungs 2–4); reliability variance already limited by issue #6. The
    `RUN.sumo.*` registry section and the SUMO corridor artefacts retire with
@@ -96,7 +96,7 @@ apply; **none of it precedes the 4.6.9 lane**):
 2. **Registry updates** (rung 1): sweep-basis citations; `E.s2b.n_segments`
    derived from the feed; every value stays declared, `check_hardcoding`
    count must not grow.
-3. **Owner decision — LX purchase** (~AU$200/region,
+3. **Decision required — LX purchase** (~AU$200/region,
    [03-data-availability.md](03-data-availability.md) §3): the only path that
    makes the strategic layer *measured*. Licence review first — a
    non-redistributable input conflicts with the package-reproducibility gate

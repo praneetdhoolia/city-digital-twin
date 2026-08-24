@@ -1,8 +1,8 @@
 # Mode individualisation — every mode's own observed share, and the three tiers of "distinct"
 
-**Evidence dossier for issues #49 and #50 (owner directives, DECISIONS.md
+**Evidence dossier for issues #49 and #50 (standing directives, DECISIONS.md
 §9.51 priorities 2 and 4). Research record — measured anchors and costed
-tiers; the build order is the owner's call.**
+tiers; the build order is an open decision.**
 
 The directives: *all 9+ modes distinguished and unique — never under a `pt`
 or `Other` umbrella; motorbike and taxi/rideshare individualised* (#49), and
@@ -98,7 +98,7 @@ mode × sex comparison; file the mode × age acquisition as its own tracked
 item. **New observables enter as constraints, never targets** (§9.8/§9.13);
 the 67/143 split does not move.
 
-## 4. Suggested order, for the owner to confirm
+## 4. Suggested order, for confirmation
 
 1. **Tier R now** (no break, days) — ends the umbrella in reporting.
 2. The **mode × sex comparison + acquisition list** for #50 (no break).

@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-24T21:10:41",
+  "generated": "2026-08-25T02:06:53",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 436,
-  "total_bytes": 4331264972,
+  "total_bytes": 4331263523,
   "total_gib": 4.03,
   "by_stage": {
     "raw": 77,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2712261250,
-    "processed": 1619003722
+    "processed": 1619002273
   },
   "files": [
     {
@@ -1337,9 +1337,9 @@
     },
     {
       "path": "data/processed/network/_corridor_attributes_report.json",
-      "bytes": 4549,
+      "bytes": 4273,
       "rows": null,
-      "sha256": "c064775b116c1ceb3e28b6c65d5316036b8d08fdc98ac2bf6609d06fa9ddd013",
+      "sha256": "9259183872f01ec995ff7550469f4893caae19e2c4281e63b8d580b89cfdad3d",
       "stage": "processed",
       "produced_by": "src/build/build_network_layers.py + attach_gradient.py",
       "source": "",
@@ -2345,9 +2345,9 @@
     },
     {
       "path": "demand/plans/matsim/_plans_report.json",
-      "bytes": 3992,
+      "bytes": 3854,
       "rows": null,
-      "sha256": "d0cc4e80e6af53e6b888d853323171a2e5780b87db9b00b3a1972cdcf736147d",
+      "sha256": "bdf472f6bb995763d69d92b83da246dceb5f04567eff3cf21f3fea6a690a85a8",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -4493,9 +4493,9 @@
     },
     {
       "path": "networks/matsim/_matsim_build_report.json",
-      "bytes": 14378,
+      "bytes": 13343,
       "rows": null,
-      "sha256": "9f2543275d66597b5abfcc76ff6bb9b9b24bc5c0964d4e0f71e31447361f7af4",
+      "sha256": "7db82857c88146410caf6b1d242119a44f8069fb0974bbcba8538711be923652",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",

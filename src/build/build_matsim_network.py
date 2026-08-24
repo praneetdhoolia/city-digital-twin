@@ -434,7 +434,7 @@ def build_schedule(name, zip_path, base_net, threads):
     t_map = time.time() - t1
 
     stats = schedule_stats(mapped_sched)
-    stats.update(feed=zip_path, gtfs_seconds=round(t_gtfs, 1),
+    stats.update(feed=_city.rel(zip_path), gtfs_seconds=round(t_gtfs, 1),
                  mapping_seconds=round(t_map, 1),
                  network_bytes=os.path.getsize(mapped_net),
                  schedule_bytes=os.path.getsize(mapped_sched))

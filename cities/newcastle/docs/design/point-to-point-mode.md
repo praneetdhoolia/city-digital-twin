@@ -1,10 +1,10 @@
 # Point-to-point (taxi + rideshare) mode — evidence dossier and task definition
 
 *18 August 2026. The "no separate taxi/rideshare mode" decision (STATUS declined
-table; DECISIONS.md) was **re-opened by the project owner on 18 Aug 2026 on new
+table; DECISIONS.md) was **re-opened by recorded decision on 18 Aug 2026 on new
 evidence**: IPART now surveys Newcastle and Hunter as its own point-to-point
 region, and the passenger service levy means every p2p trip in NSW is counted.
-Owner direction: infer inputs from open sources (labelled, swept), do not lodge
+Recorded direction: infer inputs from open sources (labelled, swept), do not lodge
 data requests. The formal DECISIONS.md entry is written when the mode is built.*
 
 **Nothing below is observed for this study area unless marked measured. Every

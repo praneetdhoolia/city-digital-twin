@@ -1225,7 +1225,7 @@
       "sweep": null,
       "status": "active",
       "decisions_ref": "9.55",
-      "description": "Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 owner directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. False keeps Tier 1's teleport for the unpaired, for comparability within one build. Consumed by citysim.RidePairingEngine.",
+      "description": "Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 standing directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. False keeps Tier 1's teleport for the unpaired, for comparability within one build. Consumed by citysim.RidePairingEngine.",
       "matsim_param": "ridePairing.remodeUnpaired"
     },
     "B.ride.wait_for_driver": {
@@ -1289,7 +1289,7 @@
       "sweep": null,
       "status": "active",
       "decisions_ref": "9.53",
-      "description": "Whether a PAIRED ride passenger physically BOARDS the driver's vehicle in the mobsim (a real PersonEntersVehicleEvent, every link ridden, alighting at the shared destination link) instead of inheriting the driver's clock by teleport. Selects a mechanism under the 9.51 owner directive (every ride physically in a car); false restores the 9.44 Tier-1 behaviour exactly, so the two are comparable within one build. A booked passenger whose car has already left falls back to Tier 1 and is counted - a miss is the measured window layer of the realisation gap wearing its physical face, reported never hidden. Consumed by citysim.JointRideEngine via citysim.RidePairingEngine's bookings.",
+      "description": "Whether a PAIRED ride passenger physically BOARDS the driver's vehicle in the mobsim (a real PersonEntersVehicleEvent, every link ridden, alighting at the shared destination link) instead of inheriting the driver's clock by teleport. Selects a mechanism under the 9.51 standing directive (every ride physically in a car); false restores the 9.44 Tier-1 behaviour exactly, so the two are comparable within one build. A booked passenger whose car has already left falls back to Tier 1 and is counted - a miss is the measured window layer of the realisation gap wearing its physical face, reported never hidden. Consumed by citysim.JointRideEngine via citysim.RidePairingEngine's bookings.",
       "matsim_param": "ridePairing.physicalBoarding"
     },
     "B.motorbike.trip_share": {

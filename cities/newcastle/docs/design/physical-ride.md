@@ -1,7 +1,7 @@
 # Physical ride — the mechanism options, their recorded costs, and what must be measured before choosing
 
-**Evidence dossier for issue #48 (owner directive, DECISIONS.md §9.51 priority 1).
-Research record — no mechanism is chosen here; the choice is the owner's, and
+**Evidence dossier for issue #48 (standing directive, DECISIONS.md §9.51 priority 1).
+Research record — no mechanism is chosen here; the choice is the project's, and
 three of the four options below still need a measured probe before they can be
 costed honestly.**
 
@@ -31,7 +31,7 @@ must re-mode, which caps ride at what the driver supply supports.
    is a driver or is teleported; multi-occupant private vehicles need one of
    the extensions below or a custom engine.
 2. **socnetsim (joint plans) was measured at ~10× runtime** on this model
-   (`CourtesyEventsGenerator`, 16.7 M events) and reverted by owner
+   (`CourtesyEventsGenerator`, 16.7 M events) and reverted by decision
    instruction. The directive re-opens the question; it does not repeal the
    price. A 1000-iteration 25% arm at 10× is ~15 days — that number is what
    any re-adoption must confront.
@@ -106,7 +106,7 @@ mode. Measured bounds: 15.31% of current ride trips are OD-coincident at any
 time — the pairing ceiling under household-only service is therefore FAR
 below the observed 20.6% ride share, because **real life contains
 non-household lifts and the package holds no observation of them**. The
-owner must choose, explicitly:
+an explicit decision must choose:
 
 - **(i)** ride = household-servable only → modelled ride lands well UNDER
   the observed 20.6%, and the gap is REPORTED as the unobserved
@@ -116,7 +116,7 @@ owner must choose, explicitly:
   requires it be swept wide and stated as unvalidatable).
 
 Option (i) is the one consistent with this project's rules; it must be put
-to the owner with the number measured (what share of ride demand CAN pair
+for decision with the number measured (what share of ride demand CAN pair
 once mode co-assignment is forced — unmeasured today).
 
 ## 5. Recommended research sequence (measurements, not builds)
@@ -129,7 +129,7 @@ once mode co-assignment is forced — unmeasured today).
    no run.)
 3. Probe C's engine at 1% × 3 (the only new Java); probe B only if C's
    probe fails structurally.
-4. Bring the owner: the mechanism (likely C), the re-moding policy (i vs
+4. Surface for decision: the mechanism (likely C), the re-moding policy (i vs
    ii), and the run plan with costs. **Then** build.
 
 *Nothing in this dossier is a result. No run was made for it; every number

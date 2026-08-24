@@ -76,7 +76,7 @@
       "artificial_link_refs": 2871,
       "artificial_share_pct": 0.54,
       "departures": 3770,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S0.zip",
+      "feed": "schedules/scenarios/S0.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 15.8,
       "modes": {
@@ -99,7 +99,7 @@
       "artificial_link_refs": 2227,
       "artificial_share_pct": 0.42,
       "departures": 4251,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S1.zip",
+      "feed": "schedules/scenarios/S1.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 17.7,
       "modes": {
@@ -122,7 +122,7 @@
       "artificial_link_refs": 2247,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S2.zip",
+      "feed": "schedules/scenarios/S2.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 17.0,
       "modes": {
@@ -146,7 +146,7 @@
       "artificial_link_refs": 2247,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S2a.zip",
+      "feed": "schedules/scenarios/S2a.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.5,
       "modes": {
@@ -170,7 +170,7 @@
       "artificial_link_refs": 2227,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S2b.zip",
+      "feed": "schedules/scenarios/S2b.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.7,
       "modes": {
@@ -194,7 +194,7 @@
       "artificial_link_refs": 2227,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S2c.zip",
+      "feed": "schedules/scenarios/S2c.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.5,
       "modes": {
@@ -218,7 +218,7 @@
       "artificial_link_refs": 2247,
       "artificial_share_pct": 0.42,
       "departures": 4431,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S3.zip",
+      "feed": "schedules/scenarios/S3.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.6,
       "modes": {
@@ -241,7 +241,7 @@
       "artificial_link_refs": 2247,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S4.zip",
+      "feed": "schedules/scenarios/S4.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.7,
       "modes": {
@@ -265,7 +265,7 @@
       "artificial_link_refs": 2247,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S5.zip",
+      "feed": "schedules/scenarios/S5.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.8,
       "modes": {
@@ -289,7 +289,7 @@
       "artificial_link_refs": 2227,
       "artificial_share_pct": 0.42,
       "departures": 3719,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/scenarios/S6.zip",
+      "feed": "schedules/scenarios/S6.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 14.9,
       "modes": {
@@ -312,7 +312,7 @@
       "artificial_link_refs": 2247,
       "artificial_share_pct": 0.42,
       "departures": 4269,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/base2026.zip",
+      "feed": "schedules/base2026.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.2,
       "modes": {
@@ -336,7 +336,7 @@
       "artificial_link_refs": 2920,
       "artificial_share_pct": 0.63,
       "departures": 5387,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/era1_pre2014_reconstructed.zip",
+      "feed": "schedules/era1_pre2014_reconstructed.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.6,
       "modes": {
@@ -359,7 +359,7 @@
       "artificial_link_refs": 2463,
       "artificial_share_pct": 0.53,
       "departures": 5387,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/era2_2016_rail_truncated.zip",
+      "feed": "schedules/era2_2016_rail_truncated.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.2,
       "modes": {
@@ -382,7 +382,7 @@
       "artificial_link_refs": 1638,
       "artificial_share_pct": 0.28,
       "departures": 3967,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/era3_2018_keolis_interchange.zip",
+      "feed": "schedules/era3_2018_keolis_interchange.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.5,
       "modes": {
@@ -405,7 +405,7 @@
       "artificial_link_refs": 1586,
       "artificial_share_pct": 0.27,
       "departures": 4182,
-      "feed": "C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\schedules/era4_2019_lr_open.zip",
+      "feed": "schedules/era4_2019_lr_open.zip",
       "gtfs_seconds": 0.0,
       "mapping_seconds": 16.1,
       "modes": {

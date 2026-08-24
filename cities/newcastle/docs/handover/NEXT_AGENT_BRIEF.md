@@ -1,13 +1,13 @@
-# Brief for the next agent — THE OWNER HAS SET BATCH 4.7 (ALL MODES FIRST); TWO OWNER CALLS DECIDE THE ORDER
+# Brief for the next agent — BATCH 4.7 IS SET (ALL MODES FIRST); TWO OPEN DECISIONS DECIDE THE ORDER
 
 *Updated 25 August 2026, fourth session — a research-and-decisions session:
 **no model, data or registry value changed, no run was made.** MATSim was
 re-affirmed against the 2026 field and the embedded MATSim version recorded
-(§9.73); **SUMO was descoped by owner decision — MATSim is the single
+(§9.73); **SUMO was descoped by recorded decision — MATSim is the single
 simulator** (§9.74; execution is #72); the ten-file signalling dossier landed
 at [`design/signalling/`](../design/signalling/README.md) with operated SCATS
 history for two non-modelled Newcastle sites discovered public (#78); and
-**the owner ticked batch 4.7** — corridor signals + tram priority + lanes
+**batch 4.7 was ticked** — corridor signals + tram priority + lanes
 (#73), taxi (#49, resequenced), level crossings (#68), native charging dwell
 (#74), descope execution (#72), warm restart (#75), progress digest (#76),
 cross-run index (#77), sweep-basis sharpening (4.7.9) — to be implemented
@@ -31,12 +31,12 @@ python tests/check_manifest.py                     # committed subset intact
 python src/registry/check_hardcoding.py --strict   # must exit 0
 ```
 
-**⚠ OWNER DIRECTIVES, standing:**
+**⚠ STANDING DIRECTIVES:**
 
 1. **NO MULTI-HOUR RUNS WITHOUT EXPLICIT APPROVAL — none is standing.**
    Measured cost: ~240 s/it/arm two-arm, ~233 s single → **~65–67 h per
    25%×1000 arm**.
-1a. **LAUNCH CONSTRAINT (§9.72, #70): launch arms from an OWNER-OWNED
+1a. **LAUNCH CONSTRAINT (§9.72, #70): launch arms from a user-controlled
    shell** — session-spawned launches died silently by BOTH detachment
    routes tried. A launch is verified only when `matsim.log` progresses PAST
    `PersonPrepareForSim` into iterations with the launching context gone.
@@ -57,15 +57,15 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 session's PR is still open, merging it and deleting the branch both sides is
 the first item of unfinished business.**
 
-**⚠ DECISIONS WAITING ON THE OWNER:**
+**⚠ DECISIONS REQUIRED:**
 - **Re-approve the 4.6.9 arm** (~65–67 h at 25%×1000; §9.72's approval is
-  spent; #70's owner-shell constraint applies) **and pick the order against
+  spent; #70's launch-shell constraint applies) **and pick the order against
   batch 4.7**: run the repairs arm FIRST (clean attribution of §9.68/§9.69,
   then one batch boundary) vs fold the batch in first (saves one arm,
   confounds the repair measurement). §9.75 states the tension; either way
   the batch activates as ONE boundary.
 - **`E.replication.n_replications`** — seed floor ≤0.11 pp/mode at n=2
-  (§9.64); 3–5 supportable; the value is the owner's.
+  (§9.64); 3–5 supportable; the value awaits a decision.
 - **Operated SCATS data (#78)**: the ~AU$200 LX purchase (licence vs the
   reproducibility gate — quarantine as validation-only or don't buy) and
   the free TIA-harvest lane. Recommended now regardless: archive TIA
@@ -120,7 +120,7 @@ state). Counts −91.8% structural. Seed noise floor ≤0.11 pp/mode (n=2).
 §3  THE ACTIVE LANE — batch 4.7, in build order
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **Bring the owner the §0 decisions** — chiefly the 4.6.9 re-approval AND
+1. **Surface the §0 decisions** — chiefly the 4.6.9 re-approval AND
    the ordering call (repairs-arm-first vs fold-in).
 2. **Build the harness safety set first: 4.7.1 warm restart (#75), 4.7.2
    progress digest (#76), 4.7.3 run index (#77)** — no model change, no
@@ -131,7 +131,7 @@ state). Counts −91.8% structural. Seed noise floor ≤0.11 pp/mode (n=2).
    (#74), 4.7.7 signals+priority+lanes (#73), 4.7.8 taxi (#49)** — code,
    registry fields, derivations and toy probes, WITHOUT touching the
    assembled 4.6.9 run inputs; activation happens at the single batch
-   boundary per the owner's ordering call. 4.7.7 is the big one: Maven run
+   boundary per the project's ordering call. 4.7.7 is the big one: Maven run
    stack (§14 entry), saturation-flow re-capacitation (double-count rule),
    per-green discharge check, `QSignalsNetworkFactory` toy probe.
 5. **4.7.9 sweep-basis sharpening + 4.7.10 frontage analyser** — cheap,
@@ -177,7 +177,7 @@ retired §9.74) · P5–P7 ⬜.
 §5  WHAT INVALIDATES YOUR WORK
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **No multi-hour run without owner approval. None standing.**
+- **No multi-hour run without explicit approval. None standing.**
 - **The comparability family is §9.68/§9.69 onward**; the two completed
   arms (`20260821T175907_1000it_25pct`, `20260821T180310_1000it_25pct`) are
   the CLOSED family's record — before-vs-after only. NEVER compare across
@@ -239,7 +239,7 @@ deliverable 7 retired. • **Taxi resequenced into 4.7 (§9.75)** — supersedes
 • Iteration horizon 1000 (§9.43). • §8.5 constrain-and-report; C5
 feasible=False; the ASC is not ride's lever (§9.68). • RIDE IS EMERGENT;
 M2 un-built; M3 rejected. • PassingQ; replanning 20; events 4. • Seed floor
-≤0.11 pp/mode; n_replications awaits the owner. • Coal trains NOT simulated
+≤0.11 pp/mode; n_replications awaits a decision. • Coal trains NOT simulated
 (§9.70). • `pre_lr_lanes_per_dir` = 1 (§9.71). • Freight swept never
 pinned; SCATS refused (§9.21) and `scats_phasing` unobtained; Opal swept
 3–15 min; dwell swept 10–35 s. • Two concurrent arms proven; every campaign
@@ -255,7 +255,7 @@ needs its own stated-cost approval.
    tree; caught and restored at handoff. `git status` after every move.
 2. **A detached launch from the agent session is not a launch** (§9.72,
    #70): both routes tried died silently within minutes. Launch from an
-   owner-owned shell; verify past `PersonPrepareForSim`. Cost: two dead
+   interactive shell outside the agent session; verify past `PersonPrepareForSim`. Cost: two dead
    launches and a campaign evening.
 3. **Survivorship bias in converged-run diagnostics** — decompose over the
    SEARCH-phase population, never the survivors (cost: the §9.64 wrong
@@ -303,11 +303,11 @@ P5–P7 ⬜ (P5's SUMO tasks deleted/reworked §9.74). Home:
 ### 3. Tasks
 4.1/4.2/4.5 ✅. 4.3 (0b): §9.61+§9.71 done; backlog #63 (4.7.9 takes the
 sweep-basis items). 4.6: 4.6.1–4.6.6, 4.6.10, 4.6.11 ✅ · 4.6.7 → 4.7.5 ·
-4.6.8 → 4.7.8 (resequenced §9.75) · **4.6.9 ⬜ AWAITING OWNER RE-APPROVAL +
+4.6.8 → 4.7.8 (resequenced §9.75) · **4.6.9 ⬜ AWAITING RE-APPROVAL +
 the ordering call**. **Batch 4.7 (NEW, §9.75): 4.7.1–4.7.10 all ⬜ — the
 next session's work, harness set first, model set built inert.** P5 0/2
 remaining (5.4, 5.5) · P6 0/5 · P7 0/4; deletion/rework proposals: 5.2/5.3
-RESOLVED by §9.74; 6.1/6.2 still await the owner (4.7.10 informs 6.1).
+RESOLVED by §9.74; 6.1/6.2 still await a decision (4.7.10 informs 6.1).
 
 ### 4. Simulator vs real life
 The §2 table is the latest CONVERGED fit (arm A, closed family,
@@ -318,7 +318,7 @@ pre-calibration, pre-repair). Nothing measured since. Full rows:
 
 ### 5. Issue ledger — 51 filed (numbers shared with PRs), 35 closed, 16 open
 **#72–#78 NEW 25 Aug** (descope execution · signals+priority+lanes · dwell ·
-warm restart · digest · index · SCATS data acquisition, owner) · #70 (launch
+warm restart · digest · index · SCATS data acquisition — decision required) · #70 (launch
 constraint) · #48/#30 (repairs built, converged measurement open) · #49
 (taxi → 4.7.8) · #50 (mode × age acquisition) · #62 · #63 · #66 (stall
 watch) · #68 (crossings → 4.7.5; boom gates verified in OSM).
@@ -334,7 +334,7 @@ session's PR (open at this handoff): §9.73–§9.75, the signalling dossier,
 issues #72–#78, batch 4.7 on the board.** The next PR after it merges:
 batch 4.7's build (`P4: Build the all-modes batch — signals, taxi,
 crossings, dwell, harness safety (#73 #49 #68 #74 #72 #75 #76 #77)`) — with
-the 4.6.9 ordering per the owner's call.
+the 4.6.9 ordering per an open decision.
 
 ---
 
