@@ -1,0 +1,19 @@
+{
+  "source": "NSW Planning Portal - public exhibition documents (EP&A Act), state development application document store",
+  "endpoint": "https://apps.planningportal.nsw.gov.au/prweb/PRRestService/DocMgmt/v1/PublicDocuments/",
+  "retrieved": "2026-08-25T02:21:00+10:00",
+  "licence": "Public record exhibited under the EP&A Act (NSW). The SCATS Interpreted History inside the TIA was supplied by TfNSW to the applicant's traffic consultant; republication terms for third-party reuse are NOT stated in the document. Handling decision (DECISIONS.md 9.76): the archived PDF is validation/sweep-basis evidence only - it is never merged into a CC-BY artefact, and no registry value is set from it for the 14 modelled intersections.",
+  "purpose": "Archive against link rot the one verified public instance of operated SCATS data for Newcastle (design/signalling/08-operated-signal-data-discovery.md; issue #78 route 2, adopted by user direction 25 Aug 2026). Operated cycle-time evidence for the A.signals sweep basis: corridor-adjacent TCS 1138 (Hunter/Steel) 72-81 s, parallel arterial TCS 923 (King/Steel) 104-113 s, vs the assumed 110 s swept 80-140 s.",
+  "files": {
+    "PPSHCC-137_643_hunter_st_tia.pdf": {
+      "url": "https://apps.planningportal.nsw.gov.au/prweb/PRRestService/DocMgmt/v1/PublicDocuments/DATA-WORKATTACH-FILE%20PEC-DPE-EP-WORK%20PPSHCC-137!20230328T025624.102%20GMT",
+      "sha256": "e351b84f7372e4f3967fa46cd09de8b1aa2c22f2ec4689a2d82ee5b3bfcdf51c",
+      "bytes": 10969263,
+      "pages": 245,
+      "document": "Traffic Impact Assessment, 643 Hunter Street, Newcastle West; The Transport Planning Partnership for Next Level Seven Pty Ltd; TTPP ref 22106, V03, 1 September 2022; exhibited as PPSHCC-137",
+      "note": "Appendix E: TCS plans for TCS 923 (King/Steel) and TCS 1138 (Hunter/Steel). Appendix F: SCATS Interpreted History, 24 h of 15-minute periodic statistics for both sites, Tuesday 19 July 2022. Appendix G: pedestrian call proportions. NEITHER site is one of the 14 modelled corridor intersections (A2 scats_site_id list) - evidence for the sweep basis, never a registry value. The signalling dossier's file 08 recorded the site address as '121 Hunter St'; the document itself says 643 Hunter Street, Newcastle West (corrected in the dossier in the same change that landed this record)."
+    }
+  },
+  "verification": "PDF header %PDF-1.7; 245 pages extracted; TTPP reference 22106 on the quality record page; Appendix E/F markers and TCS site ids 923 and 1138 located in the text layer.",
+  "channel_note": "Channel is per-intersection and opportunistic: TIAs republish TfNSW-supplied SCATS material for the intersections each development assessed. A systematic harvest over corridor-adjacent DA/SSD exhibits is the standing #78 route-2 lane; each further find lands in this directory with its own entry here."
+}

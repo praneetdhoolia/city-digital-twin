@@ -1,0 +1,41 @@
+{
+  "description": "The comparability families of this city's runs, declared once so the cross-run index (issue #77, src/analyse/build_run_index.py) can label every run directory mechanically instead of each reader re-deriving the boundaries from DECISIONS.md. A family boundary is a recorded model/data/network change after which nothing compares to what ran before it (DECISIONS.md 3.5 and the per-boundary entries below). Runs are assigned to the newest family whose from_launch stamp is <= their launch stamp; the overrides block wins where the record attributes a run explicitly or the launch date alone cannot settle it. THIS FILE IS A RECORD OF DECIDED BOUNDARIES, not a place to invent one - a new family is declared here in the same change as its DECISIONS.md entry.",
+  "families": {
+    "F1-postrebuild-prerepair": {
+      "label": "post-rebuild, pre-repair (the 9.43 pilot family)",
+      "decisions_ref": "9.42, 9.43",
+      "from_launch": "20260816T000000",
+      "note": "The issue #32 rebuild made everything before 16 Aug incomparable and results/ was already empty. Pilot arms conv1000_10pct / conv1000_25pct are this family's record."
+    },
+    "F2-ride-binding": {
+      "label": "ride sampler + escort binding + age structure (9.44-9.47)",
+      "decisions_ref": "9.44, 9.45, 9.46, 9.47",
+      "from_launch": "20260818T190000",
+      "note": "The 18 Aug triple break. bind1000_25pct (20260818T235351) is the family's last and only completed arm."
+    },
+    "F3-all-physical": {
+      "label": "freight + all-physical modes (9.49-9.55)",
+      "decisions_ref": "9.49, 9.52, 9.53, 9.55",
+      "from_launch": "20260820T000000",
+      "note": "Freight changed the demand AND the model. No completed 1000-iteration arm: the 9.50 base arm was stopped by instruction, the 9.57 attempt stopped at iteration 136."
+    },
+    "F4-walk-wedge": {
+      "label": "walk-wedge network repairs + lifts + PassingQ (9.58-9.63) - CLOSED",
+      "decisions_ref": "9.58, 9.59, 9.60, 9.61, 9.63",
+      "from_launch": "20260821T100000",
+      "note": "The CLOSED family whose record is the two completed arms 20260821T175907 / 20260821T180310 (9.64) - the pre-repair baseline every next-arm comparison is made against."
+    },
+    "F5-ride-walk-repairs": {
+      "label": "round-trip ride bindings + short-trip mixture (9.68-9.69) - CURRENT",
+      "decisions_ref": "9.68, 9.69",
+      "from_launch": "20260824T000000",
+      "note": "B2/plans/run inputs regenerated 24 Aug on the repaired mechanisms. No converged arm yet: the 4.6.9 arm is launch-blocked (9.72). The 25 Aug batch (issues #73/#49/#68/#74) is BUILT INERT inside this family and activates as ONE new boundary (9.75) - declared here only when it activates."
+    }
+  },
+  "overrides": {
+    "aborted_20260818T162538_1000it_25pct": {
+      "family": null,
+      "note": "Dead launch, no artefacts, launched 18 Aug 16:25 - the record does not state whether the 9.44/9.45 landings preceded it that day, so its family is left unattributed rather than guessed."
+    }
+  }
+}

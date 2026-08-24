@@ -194,9 +194,6 @@
       "type": "string",
       "description": "The pt2matsim PublicTransitMapping config path this field writes to. Same grammar as matsim_param."
     },
-    "sumo_param": {
-      "type": "string"
-    },
     "derived_from": {
       "type": "object",
       "additionalProperties": false,

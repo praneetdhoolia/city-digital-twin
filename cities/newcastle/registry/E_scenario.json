@@ -69,33 +69,21 @@
         "cities/newcastle/build/build_scenario_configs.py"
       ]
     },
-    "E.coupling.outer_loop_tolerance_s": {
-      "value": 5.0,
-      "units": "seconds",
-      "source": "assumed",
-      "status": "active",
-      "decisions_ref": "15",
-      "proposal_ref": "5.2",
-      "description": "Corridor run-time stability tolerance for the MATSim-SUMO outer loop. Proposal 5.2 defers this explicitly - run the loop \"until the corridor run time is stable within a tolerance to be defined at calibration\". P4 deliverable 7 defines it: the loop is converged when end-to-end corridor run time changes by less than this between successive outer iterations. Derived from the resolution of the target and the size of the declared sensitivities rather than chosen - see the held_fixed rule. The SUMO run harness and the loop itself are P5; this is the number they must honour.",
-      "held_fixed": {
-        "rule": "A convergence tolerance is a numerical control, not a quantity of Newcastle: it decides how many outer-loop iterations are paid for, not what the answer is, PROVIDED it stays well below the smallest difference the study reports. So it is held fixed rather than swept, and it is bounded from above by three measured quantities. (1) The corridor run time is validated against V208/V209, which are SCHEDULED times: every segment in A4_segment_runtime_decomposition.csv is a whole multiple of 60 s and direction 0 sums to exactly the 720 s target, so the target itself is known only to plus or minus 30 s. (2) The charging dwell assumption is worth 11% of end-to-end run time, about 79 s - the smallest declared corridor sensitivity in the project. (3) The signal priority sweep (S2 against S2b) moves run time 38%, about 274 s. At 5 s - 0.69% of the 720 s run time - the loop is an order of magnitude inside the smallest of those and well inside the resolution of the target it is judged against, so a converged loop cannot contribute materially to any reported difference.",
-        "decisions_ref": "9.16",
-        "departure_requires": "A SELF-POLICING BOUND, not a preference: if any reported scenario comparison ever turns on a corridor run-time difference smaller than TWICE this tolerance, the difference is not resolvable by the loop that produced it. The tolerance must then be tightened and both scenarios re-run before the comparison is reported."
-      }
-    },
     "E.s1.shuttle_speed_kmh": {
       "value": 26.0,
       "units": "km_per_hour",
-      "source": "assumed",
-      "sweep": [
-        18.0,
-        40.0
-      ],
-      "sweep_basis": "a bus in mixed traffic on an urban main street. The lower bound is congested Hunter Street, the upper is free-flowing. No timetable exists for a service that never ran, so nothing measures it - and S1 is a counterfactual the study reports against S2, so its run time is part of the comparison.",
+      "source": "measured",
+      "sweep": {
+        "interval": [
+          18.0,
+          40.0
+        ],
+        "basis": "MEASURED against the operated 2015-2019 corridor shuttle (25 Aug 2026, 9.76): era3 route 110 \"Customs House to Newcastle Interchange (Loop Service)\", 426 trips, shape-based distances - dwell-INCLUSIVE median 23.4 km/h, which at the declared per-stop dwell is a running speed of 26.0 km/h: the assumed value is CONFIRMED, not moved. Swept because S1 is still an invented service whose operating conditions differ from the pre-tram street."
+      },
       "status": "active",
-      "decisions_ref": "4.3, 9.34, 15",
+      "decisions_ref": "4.3, 9.34, 15, 9.76",
       "proposal_ref": "3.4",
-      "description": "Average running speed of the S1 Wickham bus shuttle between stops, excluding dwell. TWO VALUES EXISTED: the call site passed 26.0 while the function signature defaulted to 28.0, so the default was dead code that looked like the specification. The operative 26.0 is declared here and the signature no longer carries a default at all."
+      "description": "Average running speed of the S1 Wickham bus shuttle between stops, excluding dwell. TWO VALUES EXISTED: the call site passed 26.0 while the function signature defaulted to 28.0, so the default was dead code that looked like the specification. The operative 26.0 is declared here and the signature no longer carries a default at all. CONFIRMED 25 Aug 2026 against the operated era3 route 110 shuttle (median running speed 26.0 km/h at the declared dwell)."
     },
     "E.s1.shuttle_dwell_s": {
       "value": 18.0,
@@ -122,29 +110,33 @@
       "description": "S1 shuttle headway. TEN MINUTES IS THE ANNOUNCED POLICY, not an assumption: the December 2012 announcement specified a ten-minute shuttle, and E1_scenarios.csv already describes S1 as \"10 minute headway, 8 stops, mixed traffic\". Held as a definition of the scenario - changing it would be modelling a different policy, not testing a range."
     },
     "E.s1.first_hour": {
-      "value": 5,
+      "value": 4,
       "units": "hour_of_day",
-      "source": "assumed",
-      "sweep": [
-        4,
-        7
-      ],
-      "sweep_basis": "service span start. Newcastle bus services begin between about 04:30 and 06:00 depending on the route.",
+      "source": "measured",
+      "sweep": {
+        "interval": [
+          4,
+          7
+        ],
+        "basis": "MEASURED analogue (9.76): the operated era3 route 110 shuttle's first departure was 04:03. Swept because the S1 service is invented."
+      },
       "status": "active",
-      "decisions_ref": "4.3, 9.34, 15",
+      "decisions_ref": "4.3, 9.34, 15, 9.76",
       "description": "First hour of the S1 shuttle service day."
     },
     "E.s1.last_hour": {
-      "value": 24,
+      "value": 27,
       "units": "hour_of_day",
-      "source": "assumed",
-      "sweep": [
-        22,
-        27
-      ],
-      "sweep_basis": "service span end, expressed on the same 30 h clock as the qsim window so a late trip can still arrive.",
+      "source": "measured",
+      "sweep": {
+        "interval": [
+          22,
+          28
+        ],
+        "basis": "MEASURED analogue (9.76): the operated era3 route 110 shuttle's last departure was 27:35 (03:35 next day) - the old assumed 24 with sweep top 27 UNDERSTATED the operated span; the sweep top moves to 28 to contain the measurement. Swept because the S1 service is invented."
+      },
       "status": "active",
-      "decisions_ref": "4.3, 9.34, 15",
+      "decisions_ref": "4.3, 9.34, 15, 9.76",
       "description": "Last hour in which an S1 shuttle departs."
     },
     "E.s3.brt_speed_kmh": {
@@ -318,17 +310,19 @@
       "description": "Floor on a rebuilt stop-to-stop segment time. A GUARD, not a modelling value: a scenario that shortened a segment below this would produce a timetable with two stops at the same second, which GTFS readers and pt2matsim both mishandle. Declared so the guard is visible rather than typed into the arithmetic it guards."
     },
     "E.schedule.weekend_headway_factor": {
-      "value": 1.5,
+      "value": 1.875,
       "units": "factor",
-      "source": "assumed",
-      "sweep": [
-        1.0,
-        3.0
-      ],
-      "sweep_basis": "how much less frequent a weekend service is than a weekday one. The real feeds carry their own weekend timetables and this factor applies ONLY to the invented S1 and S3 services, for which no weekend timetable exists to read.",
+      "source": "measured",
+      "sweep": {
+        "interval": [
+          1.0,
+          3.0
+        ],
+        "basis": "MEASURED local analogue (25 Aug 2026, 9.76): the operated NLR in the held base2026 feed runs median daytime (07-19h) headways of 8 min weekday and 15 min Saturday AND Sunday - a factor of 1.875 (means give 2.0). The S1 shuttle and S3 BRT are INVENTED services with no weekend timetable to read, so the factor stays swept around the measured local value rather than pinned; the old assumed 1.5 sat below every measured reading."
+      },
       "status": "active",
-      "decisions_ref": "4.3, 9.34, 15",
-      "description": "Headway multiplier applied to the invented S1 and S3 services on Saturday and Sunday. A bare 1.5 in an expression until this change."
+      "decisions_ref": "4.3, 9.34, 15, 9.76",
+      "description": "Headway multiplier applied to the invented S1 and S3 services on Saturday and Sunday. Was assumed 1.5; now the measured NLR weekend factor 1.875 (the closest operated analogue in the study area), still swept."
     },
     "E.bus.signal_delay_share": {
       "value": 0.5,
@@ -355,15 +349,15 @@
     "E.s2b.lr_segment_count": {
       "value": 5.0,
       "units": "segments",
-      "source": "assumed",
-      "sweep": [
-        4.0,
-        8.0
-      ],
-      "sweep_basis": "the number of stop-to-stop segments the corridor signal delay is spread across. It SHOULD be derived from the mapped light rail feed rather than declared - the feed knows how many segments it has - and it is recorded as assumed because it is not yet.",
+      "source": "measured",
       "status": "active",
-      "decisions_ref": "5, 15",
-      "description": "Segments over which the S2b signal-priority saving is divided to give a per-segment delta. A bare divisor 5.0 in the S2b expression until this change. DERIVING IT FROM THE FEED IS OUTSTANDING WORK: if the segment count and this value disagree, S2b removes the wrong total amount of delay."
+      "decisions_ref": "5, 15, 9.76",
+      "description": "How many inter-stop segments the light-rail alignment has - the divisor that turns the S2b whole-line signal-delay saving into a per-segment quantity. MEASURED 25 Aug 2026 from the mapped route profile (6 stops), closing the \"deriving it from the feed is outstanding work\" note the assumed declaration carried.",
+      "held_fixed": {
+        "rule": "MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this field's old description demanded. Not a free parameter; it changes only if the alignment or its stops change.",
+        "decisions_ref": "9.76",
+        "departure_requires": "a changed light-rail stop pattern in the mapped feed"
+      }
     }
   }
 }

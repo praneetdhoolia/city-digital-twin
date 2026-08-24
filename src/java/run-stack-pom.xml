@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  The signals RUN STACK resolver (issue #73; DECISIONS.md 9.73/9.76 and 14).
+
+  One job: hand Maven the two pinned artefacts - org.matsim:matsim and
+  org.matsim.contrib:signals at EXACTLY the version the shaded pt2matsim jar
+  embeds (2027.0-2026w25, verified from the jar's own pom.properties, 9.73) -
+  and copy their runtime closure into .tools/run-stack/lib. Signal-enabled
+  runs use that directory as their classpath; nothing else does, and the
+  shaded jar is never on the same classpath (the 9.73 rule).
+
+  This pom is consumed ONLY by src/setup/bootstrap_toolchain.py
+  (dependency:copy-dependencies). It builds nothing and deploys nothing.
+
+  Visualisation-only dependencies of the signals contrib (OTFVis, JOGL,
+  jxmapviewer, matsim-examples) are excluded: the run stack drives signals in
+  a headless mobsim, no class from those trees is ever loaded, and the natives
+  they carry are the bulk of the tree. If a future change loads
+  OTFVisWithSignalsLiveModule, remove the exclusions and re-pin (a 14 entry).
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>citysim</groupId>
+  <artifactId>run-stack</artifactId>
+  <version>1</version>
+  <packaging>pom</packaging>
+
+  <properties>
+    <matsim.version>2027.0-2026w25</matsim.version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>matsim</id>
+      <url>https://repo.matsim.org/repository/matsim/</url>
+    </repository>
+    <repository>
+      <id>osgeo</id>
+      <url>https://repo.osgeo.org/repository/release/</url>
+    </repository>
+  </repositories>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.matsim</groupId>
+      <artifactId>matsim</artifactId>
+      <version>${matsim.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.matsim.contrib</groupId>
+      <artifactId>signals</artifactId>
+      <version>${matsim.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.matsim.contrib</groupId>
+          <artifactId>otfvis</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.matsim</groupId>
+          <artifactId>matsim-examples</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jogamp.jogl</groupId>
+          <artifactId>jogl-all</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jogamp.gluegen</groupId>
+          <artifactId>gluegen-rt</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jxmapviewer</groupId>
+          <artifactId>jxmapviewer2</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+  </dependencies>
+</project>

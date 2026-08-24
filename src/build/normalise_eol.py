@@ -27,7 +27,7 @@ CITY_ROOTS = ['data/processed', 'params', 'scenarios', 'demand', 'extract', 'bui
               'overlays', 'registry']
 # P2 build outputs: the reports are committed, so they are hashed over LF bytes
 # like everything else. The XML networks under them are gitignored bulk.
-CITY_ROOTS += ['networks/matsim', 'networks/sumo']
+CITY_ROOTS += ['networks/matsim']
 # DECISIONS.md, STATUS.md and CLAUDE.md are deliberately absent: they live under
 # docs/ and .claude/, both already walked by REPO_ROOTS. README.md and run.py are
 # the only files left at the repo root, so they are the only ones named here.

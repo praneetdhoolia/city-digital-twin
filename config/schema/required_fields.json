@@ -4,15 +4,15 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it.",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 341,
+  "n_fields": 352,
   "n_by_layer": {
-    "A": 94,
-    "B": 75,
-    "C": 55,
+    "A": 111,
+    "B": 81,
+    "C": 57,
     "CAL": 6,
     "D": 5,
-    "E": 27,
-    "RUN": 79
+    "E": 26,
+    "RUN": 66
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -132,6 +132,87 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.crossings.closed_flow_capacity_veh_h": {
+      "layer": "A",
+      "units": "vehicles_per_hour",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.closed_freespeed_ms": {
+      "layer": "A",
+      "units": "metres_per_second",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.closure_duration_s": {
+      "layer": "A",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.closure_window_h": {
+      "layer": "A",
+      "units": "hours",
+      "type": "array",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.closures_per_day": {
+      "layer": "A",
+      "units": "closures_per_day",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.corridor_exclusion_m": {
+      "layer": "A",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.freight_road_names": {
+      "layer": "A",
+      "units": "road_names",
+      "type": "array",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.link_match_radius_m": {
+      "layer": "A",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.node_cluster_m": {
+      "layer": "A",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.lightrail.capacity_seated": {
       "layer": "A",
       "units": "persons_per_vehicle",
@@ -199,7 +280,7 @@
       "layer": "A",
       "units": "km_per_hour",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
@@ -708,6 +789,24 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.signals.representation": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.saturation_flow_veh_h_lane": {
+      "layer": "A",
+      "units": "vehicles_per_hour_per_lane",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.signals.scats_match_radius_m": {
       "layer": "A",
       "units": "metres",
@@ -724,6 +823,60 @@
       "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": true,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.tsp.compensation_enabled": {
+      "layer": "A",
+      "units": "boolean",
+      "type": "boolean",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.tsp.detection_distance_m": {
+      "layer": "A",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.tsp.extension_window_s": {
+      "layer": "A",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.tsp.lateness_threshold_s": {
+      "layer": "A",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.tsp.mode": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.tsp.priority_budget_share": {
+      "layer": "A",
+      "units": "share_of_cycle",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
     "A.transit.bus_capacity_seated": {
@@ -1527,6 +1680,60 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.taxi.daily_trips_band": {
+      "layer": "B",
+      "units": "trips_per_day",
+      "type": "array",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.fare_per_km_rideshare_aud": {
+      "layer": "B",
+      "units": "AUD_per_km",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.fare_per_km_taxi_aud": {
+      "layer": "B",
+      "units": "AUD_per_km",
+      "type": "number",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.flagfall_rideshare_aud": {
+      "layer": "B",
+      "units": "AUD",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.flagfall_taxi_aud": {
+      "layer": "B",
+      "units": "AUD",
+      "type": "number",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.rideshare_trip_share": {
+      "layer": "B",
+      "units": "share_of_p2p_trips",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.walk.pce": {
       "layer": "B",
       "units": "passenger_car_equivalents",
@@ -1860,6 +2067,24 @@
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json"
     },
+    "C.taxi.asc": {
+      "layer": "C",
+      "units": "utility",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json"
+    },
+    "C.taxi.wait_min": {
+      "layer": "C",
+      "units": "minutes",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json"
+    },
     "C.time_weights.beta_bike_mode": {
       "layer": "C",
       "units": "ratio_to_ivt",
@@ -2139,15 +2364,6 @@
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"
     },
-    "E.coupling.outer_loop_tolerance_s": {
-      "layer": "E",
-      "units": "seconds",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "E_scenario.json"
-    },
     "E.lightrail.extension_detour_factor": {
       "layer": "E",
       "units": "factor",
@@ -2215,7 +2431,7 @@
       "layer": "E",
       "units": "hour_of_day",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"
@@ -2233,7 +2449,7 @@
       "layer": "E",
       "units": "hour_of_day",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"
@@ -2251,7 +2467,7 @@
       "layer": "E",
       "units": "km_per_hour",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"
@@ -2260,7 +2476,7 @@
       "layer": "E",
       "units": "segments",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"
@@ -2332,7 +2548,7 @@
       "layer": "E",
       "units": "factor",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"
@@ -2571,6 +2787,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.monitor.pace_band_s": {
+      "layer": "RUN",
+      "units": "seconds_per_iteration",
+      "type": "array",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.monitor.poll_s": {
       "layer": "RUN",
       "units": "seconds",
@@ -2584,6 +2809,24 @@
       "layer": "RUN",
       "units": "tcp_port",
       "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.monitor.progress_interval_s": {
+      "layer": "RUN",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.monitor.solo_check_iterations": {
+      "layer": "RUN",
+      "units": "iteration_range",
+      "type": "array",
       "source_in_reference_city": "definition",
       "sweep_required": false,
       "unobtained_in_reference_city": false,
@@ -2877,159 +3120,6 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
-    "RUN.sumo.bbox_margin_m": {
-      "layer": "RUN",
-      "units": "metres",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.begin_h": {
-      "layer": "RUN",
-      "units": "hours",
-      "type": "number",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.crossings_enabled": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.end_h": {
-      "layer": "RUN",
-      "units": "hours",
-      "type": "number",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.junctions_join": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.lefthand": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.netconvert_options": {
-      "layer": "RUN",
-      "units": "cli_flags",
-      "type": "array",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.no_turnarounds": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.outer_loop_max_iterations": {
-      "layer": "RUN",
-      "units": "iterations",
-      "type": "number",
-      "source_in_reference_city": "literature",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.projection": {
-      "layer": "RUN",
-      "units": "proj4",
-      "type": "string",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.replications": {
-      "layer": "RUN",
-      "units": "count",
-      "type": "null",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": true,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.seed": {
-      "layer": "RUN",
-      "units": "integer_seed",
-      "type": "number",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.spreadtype": {
-      "layer": "RUN",
-      "units": "enum",
-      "type": "string",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.step_length_s": {
-      "layer": "RUN",
-      "units": "seconds",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.tls_default_type": {
-      "layer": "RUN",
-      "units": "enum",
-      "type": "string",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.tls_guess_signals": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
-    "RUN.sumo.tls_join": {
-      "layer": "RUN",
-      "units": "boolean",
-      "type": "boolean",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "RUN_sumo.json"
-    },
     "RUN.telemetry.live_interval_s": {
       "layer": "RUN",
       "units": "seconds",
@@ -3072,6 +3162,15 @@
       "type": "array",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.travel_time.bin_size_s": {
+      "layer": "RUN",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },

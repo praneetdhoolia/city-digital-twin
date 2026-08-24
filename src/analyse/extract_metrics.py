@@ -42,6 +42,7 @@ import sys as _sys
 _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                                   '..', '..', 'src'))
 import city as _city  # noqa: E402
+import registry as _registry  # noqa: E402
 import argparse
 import collections
 import csv
@@ -303,13 +304,19 @@ def pt_submode_split(run_dir, person_lga, mode_share_doc):
         linked_pt_trips_target_lga=dict(sorted(trips_target.items())),
         linked_pt_share_of_target_lga_trips_pct=pct_of_all_target(trips_target),
         unknown_route_boardings=sum(unknown_routes.values()),
-        not_modelled=['taxi', 'rideshare'],
+        # taxi is a mode of its own once the batch activates (#49, 4.7.8):
+        # when the run's trips carry it, the mode_share table already reports
+        # it individually and the not-modelled row would be a lie.
+        not_modelled=([] if 'taxi' in (mode_share_doc.get('target_lga_pct')
+                                       or {})
+                      else ['taxi', 'rideshare']),
         note='Every mode reported individually (owner directive, 20 Aug 2026). '
              'The observed HTS target holds only the pt AGGREGATE (plus the '
              'light-rail boardings target), so per-submode rows are reported '
              'against no target and say so; a multi-submode linked trip is '
-             'its own row rather than a hierarchy nobody declared. '
-             'taxi/rideshare are NOT modelled (issue #49, task 4.4).')
+             'its own row rather than a hierarchy nobody declared. taxi, '
+             'when modelled, is reported against B.taxi.daily_trips_band as '
+             'a CONSTRAINT, never a target (issue #49, 9.76).')
 
 
 def link_volumes(run_dir, fraction):
@@ -345,6 +352,26 @@ def link_volumes(run_dir, fraction):
                                              key=lambda r: r['station_key']))
 
 
+def taxi_volume(run_dir, fraction):
+    """The modelled point-to-point volume against its declared CONSTRAINT.
+
+    B.taxi.daily_trips_band is a constraint, never a target (9.8/9.13): the
+    modelled daily taxi trips (scaled to the full population) are REPORTED
+    against it and nothing is fitted to it. When the run models no taxi, the
+    block says so instead of disappearing."""
+    trips = sum(1 for t in rows(run_dir, 'output_trips')
+                if t['main_mode'] == 'taxi')
+    band = _registry.load().get('B.taxi.daily_trips_band')
+    scaled = round(trips / fraction) if fraction else None
+    return dict(modelled_taxi_trips=trips,
+                scaled_daily_trips=scaled,
+                constraint_band_daily_trips=list(band),
+                inside_band=(band[0] <= scaled <= band[1]) if trips else None,
+                modelled=trips > 0,
+                note='a CONSTRAINT, never a target (B.taxi.daily_trips_band, '
+                     '9.76): reported against, not fitted')
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--run', required=True, help='a results/<name> directory')
@@ -364,6 +391,7 @@ def main():
                pt_split=pt_submode_split(run_dir, person_lga, ms),
                trip_geometry=trip_geometry(run_dir, person_lga),
                pt=pt_boardings(run_dir, fraction),
+               taxi=taxi_volume(run_dir, fraction),
                counts=link_volumes(run_dir, fraction),
                corrections=dict(
                    vehicles_per_leg=c3['vehicles_per_leg'],

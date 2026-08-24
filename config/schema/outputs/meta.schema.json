@@ -101,6 +101,24 @@
     "note": {
       "type": "string",
       "description": "Free-text provenance, e.g. for metadata backfilled onto runs that predate this contract."
+    },
+    "warm_started_from": {
+      "type": "object",
+      "description": "Present only on a warm-started run (issue #75): the dead parent run and the plans checkpoint iteration this run continued from.",
+      "required": [
+        "run",
+        "iteration"
+      ],
+      "properties": {
+        "run": {
+          "type": "string"
+        },
+        "iteration": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": true

@@ -75,6 +75,19 @@ DWELL_FIXED = CFG.get('A.lightrail.dwell_fixed_s')
 DWELL_CHARGING = _registry.load(
     scenario=CFG.get('E.matrix.reference_scenario')).get('A.lightrail.dwell_charging_s')
 SIGNAL_DELAY_PER_INT = CFG.get('A.signals.delay_per_intersection_s')
+# ONE REPRESENTATION PER EFFECT (#73, dossier 04 7.5): this builder IS the
+# implicit representation - it bakes the per-intersection signal delay into
+# the scheduled times that then get mapped. Under the explicit representation
+# the mapped schedule stays as it is and build_matsim_signals.py DERIVES the
+# delay-stripped variant from it; rebuilding the GTFS here would re-run the
+# mapper (forbidden, 3.5) and put the delay back in a second form.
+if CFG.get('A.signals.representation') == 'explicit_signals':
+    raise SystemExit(
+        'A.signals.representation is explicit_signals: the scenario GTFS is '
+        'not rebuilt under the explicit representation. The explicit arm '
+        'derives its schedule from the already-mapped one '
+        '(build_matsim_signals.py); flipping the field back to implicit_delay '
+        'is a family-boundary decision, not a convenience.')
 # Path-length multipliers, service guards and the GTFS vocabulary, declared.
 # Each was a bare number inside an arithmetic expression - the form no
 # module-level constant scan can see, and the form this repository's scenario

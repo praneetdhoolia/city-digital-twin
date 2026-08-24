@@ -309,12 +309,9 @@ PENDING_CONSUMER = {
         'P6, and UNOBTAINED. Hypothesis B2 depends on it, no frontage-level '
         'retail audit is published for the corridor, so it is swept rather '
         'than pinned and nothing consumes it before P6',
-    'RUN.sumo.outer_loop_max_iterations':
-        'P5. SUMO has been built six times and simulated zero times, '
-        'deliberately, so the MATSim-SUMO outer loop it bounds has never run',
 }
 
-TOOL_BINDINGS = ('matsim_param', 'sumo_param',
+TOOL_BINDINGS = ('matsim_param',
                  'pt2matsim_osm_param', 'pt2matsim_mapper_param')
 
 # --------------------------------------------------------------------------
@@ -386,11 +383,15 @@ STRUCTURAL = {
         'comes from RUN.machine.threads',
     'src/run/run_matsim.py:setp(count)':
         'how many regex matches to replace. A re.sub argument',
+    'src/analyse/progress_digest.py:REPLACE_ATTEMPTS':
+        'atomic-replace retry count on a Windows directory lock - I/O '
+        'mechanics, the RunTelemetry.MOVE_ATTEMPTS discipline, not a model '
+        'value',
+    'src/analyse/progress_digest.py:REPLACE_BACKOFF_S':
+        'the backoff between those retries. Same class as REPLACE_ATTEMPTS',
     'src/registry/param_config.py:SECONDS_PER_UNIT':
         'how many seconds are in an hour and a minute. The definition of the '
         'units themselves, not a value about any city',
-    '<city>/build/build_sumo_corridor.py:_indent(level)':
-        'XML pretty-printing indent depth',
     '<city>/build/build_scenario_schedules.py:'
     'scale_lr_runtime(delta_per_intermediate_s)':
         'a NEUTRAL default of zero: "change nothing unless a caller asks". Each '
@@ -460,6 +461,11 @@ MEASUREMENT_OWNED_KEYS = {
         'the radius that joins an observed traffic count station to a network '
         'link. It decides what the VALIDATION compares, never what the model '
         'simulates, so being read only by src/analyse is correct',
+    'B.taxi.daily_trips_band':
+        'a CONSTRAINT, never a target (9.8/9.13, 9.76): the modelled taxi '
+        'volume is REPORTED against this band and nothing is fitted to it - '
+        'being read only by the measurement layer is the field\'s entire '
+        'design, the same class as the C4 occupancy constraint',
 }
 
 

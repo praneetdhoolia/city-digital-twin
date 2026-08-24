@@ -311,7 +311,7 @@ MODES_ATTR_RE = re.compile(r'modes="([^"]*)"')
 # the car network because no mode-specific route layer is part of the one
 # mapped build (3.5 forbids a remap); the road rules still hold: walk and
 # bike are excluded from the declared prohibited classes.
-CAR_COMPANION_MODES = ('ride', 'truck', 'motorbike')
+CAR_COMPANION_MODES = ('ride', 'truck', 'motorbike', 'taxi')
 LAWFUL_COMPANIONS = (('walk', 'A.network.pedestrian_excluded_classes'),
                      ('bike', 'A.network.bicycle_excluded_classes'))
 HIGHWAY_ATTR_RE = re.compile(r'name="osm:way:highway"[^>]*>([^<]+)<')
@@ -394,7 +394,15 @@ def write_mode_vehicles(dst_path, cfg):
         'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
         'xsi:schemaLocation="http://www.matsim.org/files/dtd '
         'http://www.matsim.org/files/dtd/vehicleDefinitions_v2.0.xsd">',
-    ] + car_bodied('car') + car_bodied('ride') + [
+    ] + car_bodied('car') + car_bodied('ride') + (
+        # taxi (issue #49): a taxi IS a car by identity - the passenger rides
+        # in one - and like `ride` it is network-routed but never a qsim main
+        # mode, so the type exists for PrepareForSim and is inert beyond
+        # loading. Emitted only when the declared routing vocabulary carries
+        # the mode (INERT until the batch boundary adds it).
+        car_bodied('taxi') if 'taxi' in cfg.get('RUN.routing.network_modes')
+        else []
+    ) + [
         '\t<vehicleType id="truck">',
         '\t\t<length meter="%s" />' % cfg.get('B.freight.length_m'),
         '\t\t<width meter="%s" />' % car['width_m'],
@@ -820,6 +828,19 @@ def scoring_from_c1(cfg, c1, purpose_share):
             constant=0.0,
             marginalUtilityOfTraveling=traveling(cfg.get('C.time_weights.beta_walk_mode'))),
     }
+    # taxi (issue #49, 4.7.8): the point-to-point priced mode, scored only
+    # when the declared choice vocabulary carries it (INERT until the batch
+    # boundary adds 'taxi' to RUN.mode_choice.modes). Its constant folds the
+    # declared wait/booking time in at the trip-weighted VOT - a teleported
+    # mode has no physical wait, so the wait is priced, not simulated - and
+    # its per-km fare enters as monetaryDistanceRate in config_runtime. The
+    # ASC is swept, never fitted: no taxi target exists, and the realised
+    # volume is reported against B.taxi.daily_trips_band as a CONSTRAINT.
+    if 'taxi' in cfg.get('RUN.mode_choice.modes'):
+        wait_cost = (cfg.get('C.taxi.wait_min') / 60.0) * vot_avg * mm
+        modes['taxi'] = dict(
+            constant=round(cfg.get('C.taxi.asc') - wait_cost, 4),
+            marginalUtilityOfTraveling=traveling(1.0))
     tp = c1['transfer_penalty']['base']
     return dict(
         performing_utils_per_h=perf,
@@ -948,6 +969,52 @@ def config_runtime(cfg, scoring, day, paths):
             'min(C.scoring.activity_minimal_duration_s, typical duration) per activity',
             _param_config.HHMMSS, 'seconds'),
     }
+    # taxi (issue #49): the fare reaches scoring in two parts. The per-km
+    # part is native (monetaryDistanceRate on the taxi modeParams; negative,
+    # AUD per METRE); the flagfall is a per-trip charge no scoring parameter
+    # expresses, so it goes through the `fare` module to FareChargeHandler
+    # (the ParkingChargeHandler PersonMoneyEvent pattern). Both are BLENDS of
+    # the measured taxi schedule and the literature rideshare rates at the
+    # declared rideshare share - one mode honestly carrying two services.
+    if 'taxi' in cfg.get('RUN.mode_choice.modes'):
+        s_ride = cfg.get('B.taxi.rideshare_trip_share')
+        blend_km = ((1 - s_ride) * cfg.get('B.taxi.fare_per_km_taxi_aud')
+                    + s_ride * cfg.get('B.taxi.fare_per_km_rideshare_aud'))
+        blend_flag = ((1 - s_ride) * cfg.get('B.taxi.flagfall_taxi_aud')
+                      + s_ride * cfg.get('B.taxi.flagfall_rideshare_aud'))
+        runtime['scoring.modeParams[taxi].monetaryDistanceRate'] = (
+            round(-blend_km / 1000.0, 8), 'derived',
+            '-((1-B.taxi.rideshare_trip_share) x B.taxi.fare_per_km_taxi_aud '
+            '+ share x B.taxi.fare_per_km_rideshare_aud) / 1000, AUD per '
+            'metre')
+        runtime['fare.flagfallAud'] = (
+            round(blend_flag, 4), 'derived',
+            '(1-B.taxi.rideshare_trip_share) x B.taxi.flagfall_taxi_aud + '
+            'share x B.taxi.flagfall_rideshare_aud')
+        runtime['fare.mode'] = (
+            'taxi', 'derived', 'the mode FareChargeHandler charges')
+
+    # Explicit corridor signals (#73): the signals contrib's module and its
+    # three data files enter ONLY when the declared representation says so -
+    # A.signals.representation is the one-representation-per-effect switch
+    # (dossier 04 7.5), and under implicit_delay the config carries no signal
+    # module at all, byte-identical to the pre-#73 emission.
+    if cfg.get('A.signals.representation') == 'explicit_signals':
+        for target, key, note in (
+                ('signalsystems.signalsystems', 'signal_systems',
+                 'generated signal systems (build_matsim_signals.py)'),
+                ('signalsystems.signalgroups', 'signal_groups',
+                 'generated signal groups'),
+                ('signalsystems.signalcontrol', 'signal_control',
+                 'generated fixed-time/priority control plans')):
+            if key not in paths:
+                raise SystemExit(
+                    'A.signals.representation is explicit_signals but the '
+                    'caller supplied no %r path. Run '
+                    'build_matsim_signals.py and pass its outputs.' % key)
+            runtime[target] = (paths[key], 'path', note)
+        runtime['signalsystems.useSignalsystems'] = (
+            True, 'derived', 'A.signals.representation == explicit_signals')
     return runtime
 
 

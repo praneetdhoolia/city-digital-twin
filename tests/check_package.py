@@ -362,9 +362,11 @@ else:
             check(all(vlinks[k] == base_links[k] for k in vlinks),
                   '%s: as-built variant is identical to the base network' % ref)
 
-# ---- 11. P2 network build: SUMO corridor ----
-SUMO = _city.path('networks/sumo')
-SREPORT = os.path.join(SUMO, '_sumo_build_report.json')
+# ---- 11. P2 signal control: the A2 <-> E1 contract ----
+# (The SUMO corridor checks that lived here retired with the simulator on the
+# 9.74 descope, issue #72. The A2/E1 contract below was never about SUMO and
+# stays: every scenario's signal variant must be DEFINED before anything can
+# consume it - the native signal build, #73, reads the same table.)
 a2 = rows(_city.path('data/processed/corridor/A2_signal_control_corridor.csv'))
 a2_by_variant = collections.defaultdict(list)
 for r in a2:
@@ -373,35 +375,6 @@ want_sig = {r['signal_variant_ref'] for r in rows(_city.path('scenarios/E1_scena
 check(want_sig <= set(a2_by_variant),
       'every E1 signal_variant_ref defined in A2 (missing %s)'
       % sorted(want_sig - set(a2_by_variant)))
-
-if not os.path.exists(SREPORT):
-    check(False, 'SUMO corridor built (run cities/<city>/build/build_sumo_corridor.py)', warn=True)
-else:
-    srep = json.load(open(SREPORT, encoding='utf-8'))
-    check(srep.get('lefthand') is True, 'SUMO corridor built for left-hand traffic')
-    for ref, v in sorted(srep.get('road_variants', {}).items()):
-        net = os.path.join(SUMO, ref, 'corridor.net.xml')
-        check(os.path.exists(net) and os.path.getsize(net) > 1000,
-              'SUMO net present: %s' % ref)
-        check(v['edges'] > 0 and v['junctions'] > 0,
-              '%s: SUMO net has edges and junctions (%d / %d)'
-              % (ref, v['edges'], v['junctions']))
-        for sref, t in sorted(v.get('signal_variants', {}).items()):
-            check(not t['pairing']['unmatched'],
-                  '%s/%s: every A2 intersection matched a signalised junction'
-                  % (ref, sref))
-            check(t['programs_retimed'] == t['matched_junctions'],
-                  '%s/%s: every matched junction retimed to the A2 cycle' % (ref, sref))
-            check(t['matched_junctions'] == len(a2_by_variant.get(sref, [])),
-                  '%s/%s: all %d A2 intersections present in the net'
-                  % (ref, sref, len(a2_by_variant.get(sref, []))))
-            target = float(t['cycle_time_s'])
-            off = [c for c in t['realised_cycle_s'] if abs(float(c) - target) > 2]
-            check(not off,
-                  '%s/%s: realised cycle within 2 s of the A2 %.0f s cycle (%s)'
-                  % (ref, sref, target, t['realised_cycle_s']))
-            check(os.path.exists(os.path.join(SUMO, ref, 'tls_%s.add.xml' % sref)),
-                  '%s/%s: TLS additional file present' % (ref, sref))
 
 # ---- 12. corridor attribute provenance ----
 corridor = rows(_city.path('data/processed/network/A1_corridor_road_edges.csv'))
@@ -472,8 +445,13 @@ if not os.path.exists(TOOLCHAIN):
 else:
     tcm = json.load(open(TOOLCHAIN, encoding='utf-8'))
     comps = {c['component']: c for c in tcm['components']}
-    check({'jdk', 'pt2matsim', 'sumo'} <= set(comps),
-          'all three tools recorded in the toolchain manifest')
+    # SUMO left the toolchain on the 9.74 descope (#72); Maven and the signals
+    # run stack joined it for #73. Only jdk+pt2matsim+maven are REQUIRED - the
+    # run stack is fetched on demand and recorded when present.
+    check({'jdk', 'pt2matsim', 'maven'} <= set(comps),
+          'the pinned tools recorded in the toolchain manifest')
+    check('sumo' not in comps,
+          'SUMO is out of the toolchain (descoped 9.74, issue #72)')
     check(all(c.get('sha256') and c.get('version') and c.get('url')
               for c in comps.values()),
           'every tool pinned by version, source URL and sha256')
@@ -1305,7 +1283,12 @@ if _registry is not None:
         # first and the record after.
         import re as _re
         _dec = open(_city.path('docs', 'DECISIONS.md'), encoding='utf-8').read()
-        _have = set(_re.findall(r'^#{2,4}\s+(\d+(?:\.\d+[a-z]?)*)', _dec, _re.M))
+        # Headings appear both bare ('## 12.') and with the section mark
+        # ('## SS9.75 -', the style the 25 Aug entries introduced); the 9.73-
+        # 9.75 records were invisible to the bare pattern and the first field
+        # citing them exposed it, so both spellings are harvested.
+        _have = set(_re.findall(r'^#{2,4}\s+§?(\d+(?:\.\d+[a-z]?)*)',
+                                _dec, _re.M))
         _have |= set(_re.findall(r'^\*\*(\d+\.\d+[a-z]?)\s*[-—]', _dec, _re.M))
         _dangling = {}
         for _k, _f in sorted(_fields.items()):
@@ -1458,75 +1441,17 @@ if _registry is not None:
 
 
 
-    # ---- the SUMO corridor layer reads the registry ----
-    # build_sumo_corridor.py no longer holds its own constants. The options that
-    # are MODELLING CHOICES are named fields rather than entries in a flag list,
-    # so a choice cannot hide inside one (DECISIONS.md 15).
-    for _key in ('RUN.sumo.lefthand', 'RUN.sumo.tls_default_type',
-                 'RUN.sumo.junctions_join', 'RUN.sumo.tls_guess_signals',
-                 'RUN.sumo.tls_join', 'RUN.sumo.no_turnarounds',
-                 'RUN.sumo.crossings_enabled', 'RUN.sumo.spreadtype'):
-        check(_key in _fields,
-              'the netconvert modelling choice %s is a named registry field, not a '
-              'flag buried in a list' % _key)
-
-    # left-hand traffic is not cosmetic: with it off every turning movement is wrong
-    check(_fields.get('RUN.sumo.lefthand', {}).get('value') is True,
-          'SUMO builds left-hand traffic')
-
-    # the crossings segfault is a recorded TOOL DEFECT, not a modelling judgement
-    _cross = _fields.get('RUN.sumo.crossings_enabled', {})
-    check(_cross.get('value') is False and 'segfault' in _cross.get('description', '').lower(),
-          'pedestrian crossings are off because --osm.crossings segfaults netconvert '
-          '1.27.1, and the field says so - so pedestrian delay is not modelled in SUMO '
-          '(DECISIONS.md 3.6)')
-
-    # the assembled option list must reproduce what the literal list used to be:
-    # the registry refactor is inert, and the corridor nets rebuild byte-identically
-    _expected_opts = ['--lefthand', '--osm.turn-lanes', 'true', '--osm.elevation', 'false',
-                      '--geometry.remove', 'true', '--roundabouts.guess', 'true',
-                      '--ramps.guess', 'true', '--junctions.join', 'true',
-                      '--tls.guess-signals', 'true', '--tls.join', 'true',
-                      '--tls.default-type', 'actuated', '--no-turnarounds', 'true',
-                      '--default.spreadtype', 'roadCenter']
-    try:
-        # the corridor builder is the CITY's, not the framework's
-        sys.path.insert(0, os.path.join('src', 'build'))
-        sys.path.insert(0, os.path.join('src', 'setup'))
-        sys.path.insert(0, _city.path('build'))
-        import build_sumo_corridor as _bsc
-        check(_bsc.PLAIN_OPTS == _expected_opts,
-              'the registry assembles netconvert options identical to the literal list '
-              'they replaced, in the same order - so the corridor nets rebuild unchanged')
-        check(_bsc.SEED == _fields['RUN.sumo.seed']['value']
-              and _bsc.BBOX_MARGIN_M == _fields['RUN.sumo.bbox_margin_m']['value']
-              and _bsc.MIN_GREEN_S == _fields['A.signals.min_green_s']['value'],
-              'the SUMO build reads its seed, corridor margin and minimum green from '
-              'the registry')
-    except Exception as _e:
-        check(False, 'the SUMO build imports and reads the registry (%s)' % _e)
-
-    # a SUMO RUN is declared but does not exist: the nets have never been simulated
-    check(_fields.get('RUN.sumo.replications', {}).get('status') == 'unobtained',
-          'SUMO replications carry no value - proposal 5.2 asks for at least 30, the '
-          'measured run budget does not fit, and the cut has not been made (issue 6)')
-    # P4 deliverable 7 defined this (DECISIONS.md 9.16). The check is the
-    # INVERSION of the one it replaces, which asserted the tolerance was still
-    # null so a loop could not be built on an unexamined default: now it must
-    # carry a value, a rule holding it fixed, and the self-policing bound that
-    # says what to do if a comparison ever turns on a difference it cannot
-    # resolve. A number without that bound would be exactly the unexamined
-    # default the old check existed to prevent.
-    _tol = _fields.get('E.coupling.outer_loop_tolerance_s', {})
-    check(isinstance(_tol.get('value'), (int, float)) and _tol['value'] > 0
-          and 'held_fixed' in _tol
-          and 'departure_requires' in _tol.get('held_fixed', {})
-          and _tol.get('status') == 'active',
-          'the MATSim-SUMO outer-loop tolerance is DEFINED (%s s), held fixed with a '
-          'stated rule, and carries the bound that forces a re-run if a reported '
-          'comparison ever turns on a difference smaller than twice it (issue 8, '
-          'P4 deliverable 7)' % _tol.get('value'))
-
+    # ---- the SUMO registry section is RETIRED (9.74 descope, issue #72) ----
+    # The simulator left the study; its 17 RUN.sumo.* fields, the netconvert
+    # option checks and the MATSim<->SUMO outer-loop tolerance (deliverable 7,
+    # retired with the loop it governed) left the registry with it. Asserted so
+    # a stale checkout cannot half-carry the old section.
+    _stale_sumo = sorted(k for k in _fields if k.startswith('RUN.sumo.'))
+    check(not _stale_sumo,
+          'no RUN.sumo.* field survives the 9.74 descope (%s)' % _stale_sumo[:3])
+    check('E.coupling.outer_loop_tolerance_s' not in _fields,
+          'the MATSim-SUMO outer-loop tolerance retired with the outer loop '
+          '(deliverable 7, 9.74; its derivation stands in DECISIONS.md 9.16)')
 
     # A `consumers` entry is a MACHINE-READABLE CLAIM that a named file reads the
     # field. An untrue one is worse than none: it makes a value look wired up when
@@ -1546,7 +1471,7 @@ if _registry is not None:
                 # verify by text - `check_hardcoding` question 7 verifies it far
                 # better, by changing the value and watching the config move.
                 _bound = any(_v.get(_b) for _b in
-                             ('matsim_param', 'sumo_param', 'pt2matsim_osm_param',
+                             ('matsim_param', 'pt2matsim_osm_param',
                               'pt2matsim_mapper_param'))
                 if not (_bound and _c == 'src/registry/param_config.py'):
                     _lies.append('%s -> %s (does not reference the key)' % (_k, _c))

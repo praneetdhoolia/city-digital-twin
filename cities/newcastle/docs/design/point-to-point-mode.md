@@ -16,7 +16,7 @@ inferred value carries its band and enters the registry with a sweep.**
 |---|---|---|---|
 | Taxi fleet, greater Newcastle | ~175 vehicles (13cabs, the largest Hunter provider); 6,164 licences state-wide | literature | 13cabs company statements; TfNSW taxi licensing review, Mar 2026 |
 | Rideshare fleet | unpublished anywhere | — | would be assumed + swept (fleet size barely matters for a teleported mode) |
-| Taxi fares (urban max, from 1 Jul 2025) | flagfall $5.17; $2.61/km first 12 km then $2.37/km; night $3.10/$2.82 | **measured** | TfNSW Point to Point Transport (Fares) Order 2025 |
+| Taxi fares (urban max, from 1 Jul 2025) | flagfall **$5.00**; **$2.52/km** first 12 km then $2.29/km; night $3.00/$2.73; peak surcharge $2.56; waiting $1.092/min; levy $1.32 *(corrected 25 Aug 2026 against the archived order - this row first said $5.17/$2.61, values not in the instrument; archived at `data/raw/p2p/` with provenance. Clause 2(g)(ii) names the Newcastle Transport District an **Urban** Area explicitly.)* | **measured** | TfNSW Point to Point Transport (Fares) Order 2025 |
 | Rideshare fares, Newcastle | base ~$1.80–2.10; ~$1.40–1.60/km; per-minute and booking fee unresolved; surge unknowable | literature | aggregator estimates; sweep wide |
 | P2P use incidence, state-wide 2025 | 48% used rideshare, 39% taxi in past 6 months; taxis ahead of rideshare in regional areas; Newcastle rideshare grew ~18%/yr (2018 survey) | literature | IPART annual p2p survey 2025 (Newcastle & Hunter regional table in the full paper — PDF fetch timed out, extract on next pass) |
 

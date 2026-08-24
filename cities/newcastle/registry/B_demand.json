@@ -1008,7 +1008,10 @@
       "sweep_basis": "the whole profile may be reweighted by a quarter either way per hour, then renormalised. There is no Newcastle observation to bracket it: the HTS held is aggregate and reports journeys by purpose, not departure hour. A proportional sweep is the honest expression of \"NSW-typical shape, magnitude unknown\".",
       "status": "active",
       "decisions_ref": "9, 15",
-      "description": "Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled \"assumed, NSW-typical shapes\", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice."
+      "description": "Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled \"assumed, NSW-typical shapes\", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice. MEASURED CONSTRAINT since 25 Aug 2026 (9.76, #63 item 6): measure_departure_constraint.py compares the realised B2 departure-hour distribution these shapes generate against the observed RMS light-vehicle hourly profile (params/C6_departure_profile_check.json). First reading: WEEKDAY overlap 0.858 with peak hours MATCHING at 16:00; SAT/SUN overlap ~0.88 but the modelled weekend peaks sit 3-4 h LATER than the observed 11:00 - the weekend shapes skew late, a recorded finding, not a fit.",
+      "consumers": [
+        "src/calibrate/measure_departure_constraint.py"
+      ]
     },
     "B.mode.serve_tour_seed": {
       "value": "car",
@@ -1338,6 +1341,111 @@
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ]
+    },
+    "B.taxi.flagfall_taxi_aud": {
+      "value": 5.0,
+      "units": "AUD",
+      "source": "measured",
+      "held_fixed": {
+        "rule": "The legal instrument itself: the Point to Point Transport (Fares) Order 2025 urban Hiring Charge, and clause 2(g)(ii) names the Newcastle Transport District an Urban Area. A regulated maximum is not a free parameter; what IS free - the taxi/rideshare mix - is swept through B.taxi.rideshare_trip_share.",
+        "decisions_ref": "9.76",
+        "departure_requires": "a new Fares Order"
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Taxi flag fall, urban maximum, from 1 July 2025 (archived: data/raw/p2p/tfnsw_p2p_fares_order_june_2025.pdf). Rank-and-hail maxima; the peak-time surcharge, night rates and the $1.32 levy are recorded in the provenance and deliberately NOT added - the mode charges the base schedule and the simplification is stated."
+    },
+    "B.taxi.fare_per_km_taxi_aud": {
+      "value": 2.52,
+      "units": "AUD_per_km",
+      "source": "measured",
+      "held_fixed": {
+        "rule": "The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not modelled - a stated simplification, not a hidden one.",
+        "decisions_ref": "9.76",
+        "departure_requires": "a new Fares Order, or trip-length evidence that the 12 km tail binds"
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Taxi distance rate, urban maximum, first 12 km, from 1 July 2025 (archived with provenance)."
+    },
+    "B.taxi.flagfall_rideshare_aud": {
+      "value": 1.95,
+      "units": "AUD",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          1.5,
+          2.5
+        ],
+        "basis": "Booked services are unregulated; aggregator estimates for Newcastle put the rideshare base at ~$1.80-2.10 (point-to-point-mode.md). Surge is unknowable and unmodelled - stated."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Rideshare base fare, literature band, swept."
+    },
+    "B.taxi.fare_per_km_rideshare_aud": {
+      "value": 1.5,
+      "units": "AUD_per_km",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          1.2,
+          1.8
+        ],
+        "basis": "Aggregator estimates ~$1.40-1.60/km for Newcastle rideshare (point-to-point-mode.md); per-minute components folded into the per-km band rather than modelled separately - stated."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Rideshare distance rate, literature band, swept."
+    },
+    "B.taxi.rideshare_trip_share": {
+      "value": 0.66,
+      "units": "share_of_p2p_trips",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.4,
+          0.8
+        ],
+        "basis": "IPART 2025 point-to-point survey, Lower Hunter & Greater Newcastle stratum: last-trip split 34% taxi / 66% rideshare. One survey wave, self-reported - swept broadly around it."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "The rideshare share of point-to-point trips, used to BLEND the measured taxi schedule with the literature rideshare rates into the one priced mode: fare = (1-s) x taxi + s x rideshare. The blend is what makes one taxi mode honest about being two services."
+    },
+    "B.taxi.daily_trips_band": {
+      "value": [
+        15000,
+        25000
+      ],
+      "units": "trips_per_day",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.",
+        "decisions_ref": "9.42, 9.75, 9.76",
+        "departure_requires": "the levy trip counts, if ever requested"
+      },
+      "status": "active",
+      "decisions_ref": "9.42, 9.76",
+      "consumers": [
+        "src/analyse/extract_metrics.py"
+      ],
+      "description": "The inferred central band of daily point-to-point trips in the study area (IPART 2025 incidence x usage-rate assumptions; HTS Hunter \"Other\" ceiling 35,000/weekday). The 4.6.8 evidence base, STATUS batch table."
     },
     "B.freight.trip_ratio": {
       "value": 0.0697,

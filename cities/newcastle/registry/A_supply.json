@@ -282,22 +282,25 @@
           "proxy_partial_priority",
           "proxy_full_priority"
         ],
-        "basis": "proposal 7.2 fallback: infer effective signal delay from GTFS-Realtime run-time distributions and treat cycle time and priority as SWEPT parameters rather than fixed inputs"
+        "basis": "proposal 7.2 fallback: treat cycle time and priority as SWEPT parameters rather than fixed inputs. Sweep-basis evidence (25 Aug 2026, 9.75/9.76): operated SCATS interpreted history republished in planning-portal TIA PPSHCC-137 (archived, data/raw/planning_tia/) shows corridor-adjacent TCS 1138 running 72-81 s cycles and parallel-arterial TCS 923 running 104-113 s against the assumed 110 s swept 80-140 s - supporting the sweep's lower half for corridor sites and the assumed value for arterials. Neither site is one of the 14 modelled intersections, so this is a prior, not a measurement; documented SCATS user limits are ~30-150 s (dossier 03/09)."
       },
       "status": "unobtained",
       "decisions_ref": "0, 5, 13",
       "proposal_ref": "6.2, 7.2",
       "baseline_ref": "scenarios/S2.json:signal_variant_ref",
-      "description": "SCATS phase data for the Hunter/Scott corridor. NOT OBTAINED - a formal TfNSW request is outstanding. It determines corridor run time more than any other single input: the swing between no priority and full priority is 38% (S2 vs S2b). Every program in the SUMO corridor is labelled timing_source=assumed. THIS FIELD HAS NO POINT VALUE AND THE RESOLVER WILL NOT INVENT ONE: select a sweep member explicitly."
+      "description": "SCATS phase data for the Hunter/Scott corridor. NOT OBTAINED - a formal TfNSW request is outstanding. It determines corridor run time more than any other single input: the swing between no priority and full priority is 38% (S2 vs S2b). Every generated signal plan is labelled timing_source=assumed (A2 proxy). THIS FIELD HAS NO POINT VALUE AND THE RESOLVER WILL NOT INVENT ONE: select a sweep member explicitly."
     },
     "A.signals.delay_per_intersection_s": {
       "value": 26.0,
       "units": "seconds",
       "source": "assumed",
-      "sweep": [
-        15.0,
-        40.0
-      ],
+      "sweep": {
+        "interval": [
+          15.0,
+          40.0
+        ],
+        "basis": "Uniform-arrival delay at the assumed timings is (1-g/C)^2 x C/2 ~ 24.75 s at C=110 with the corridor split (dossier 06 1) - the assumed 26 s sits on that identity. The operated TIA evidence (72-81 s corridor cycles, PPSHCC-137) implies SHORTER per-intersection delays on the corridor, supporting the sweep's lower half; 40 s is a saturated arterial at the sweep-top cycle."
+      },
       "status": "active",
       "decisions_ref": "5",
       "description": "Proxy signal delay per corridor intersection, used to decompose scheduled run time in the absence of SCATS phasing. Downstream of A.signals.scats_phasing.",
@@ -321,15 +324,18 @@
       "value": 6.0,
       "units": "seconds",
       "source": "assumed",
-      "sweep": [
-        4.0,
-        10.0
-      ],
+      "sweep": {
+        "interval": [
+          4.0,
+          10.0
+        ],
+        "basis": "TfNSW Traffic Signal Design TTD 2018/002 actuated practice: minimum green 5 s vehicle / 6 s pedestrian (dossier 03/09); SYLVIA and Laemmer default 5 s. The declared 6 s is the pedestrian-safe value; the band brackets the practice range."
+      },
       "status": "active",
       "decisions_ref": "5",
       "description": "Minimum green time in a generated SUMO signal program.",
       "consumers": [
-        "cities/newcastle/build/build_sumo_corridor.py"
+        "cities/newcastle/build/build_matsim_signals.py"
       ]
     },
     "A.signals.junction_match_m": {
@@ -342,10 +348,280 @@
       ],
       "status": "active",
       "decisions_ref": "5",
-      "description": "Radius for matching an A2 intersection to a SUMO junction.",
+      "description": "How close an A2 intersection's clustered OSM signal nodes must sit to a network node for the two to be the same junction. Was the SUMO junction pairing radius; now the native signal generator's cluster-to-network match radius (same quantity, same tolerance).",
       "consumers": [
-        "cities/newcastle/build/build_sumo_corridor.py"
+        "cities/newcastle/build/build_matsim_signals.py"
       ]
+    },
+    "A.signals.representation": {
+      "value": "implicit_delay",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "implicit_delay",
+          "explicit_signals"
+        ],
+        "basis": "ONE REPRESENTATION PER EFFECT (the signalling dossier 04 7.5, DECISIONS 9.75/9.76): either the implicit per-intersection delay shapes the schedule and metered link capacities stand, OR explicit signals meter saturation-flow approaches and the implicit delay comes OUT of the same movements. Never both. The batch boundary flips this to explicit_signals; until then everything signal-explicit stays inert."
+      },
+      "status": "active",
+      "decisions_ref": "9.75, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_matsim_signals.py",
+        "src/run/run_matsim.py",
+        "cities/newcastle/build/build_scenario_schedules.py"
+      ],
+      "description": "Which representation carries the corridor signal effect. implicit_delay: A.signals.delay_per_intersection_s inside scheduled run times and metered link capacities (the shipped state). explicit_signals: the signals contrib runs the generated fixed-time plans, approaches are re-capacitated to saturation flow, the schedule transform removes the implicit delay from the same movements, and the harness runs the signals stack. THE SWITCH IS THE DOUBLE-COUNT GUARD: code paths check it rather than trusting discipline."
+    },
+    "A.signals.saturation_flow_veh_h_lane": {
+      "value": 1900.0,
+      "units": "vehicles_per_hour_per_lane",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          1800.0,
+          2050.0
+        ],
+        "basis": "HCM/Austroads urban saturation flow band ~1800-2050 veh/h/lane (dossier 04 6.1; 05 6 uses s=1800). No Newcastle stop-line survey exists, so the class band is swept."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_matsim_signals.py"
+      ],
+      "description": "Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1)."
+    },
+    "A.signals.tsp.mode": {
+      "value": "green_extension",
+      "units": "enum",
+      "source": "literature",
+      "sweep": {
+        "categorical": [
+          "off",
+          "green_extension",
+          "extension_recall",
+          "conditional"
+        ],
+        "basis": "The Melbourne/VicRoads tram-priority ladder (dossier 05 8): partial priority (green extension, the PU practice default) keeps nearly all tram benefit at a fraction of the cost to general traffic; extension_recall adds red truncation / phase recall (AU); conditional gates on lateness (PC/AC, PTIPS-faithful). Sweeping the mode replaces the scalar E.s2b.signal_delay_removed_share as the priority-aggressiveness axis on the explicit arm."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.mode",
+      "description": "The tram-priority controller's regime. Which NLR mechanism TfNSW actually configures is not public (dossier 02 2 [gap]), so the regime is a swept modelling choice, never a claim about the operated system. off = fixed time everywhere (the S2 base)."
+    },
+    "A.signals.tsp.extension_window_s": {
+      "value": 12.0,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          5.0,
+          20.0
+        ],
+        "basis": "The standing S2b assumption (A2 tsp_max_extension_s = 12) bracketed by practice: short extensions ~5 s barely carry a tram through, ~20 s approaches a whole phase at the operated 72-81 s corridor cycles (PPSHCC-137 evidence)."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.extensionWindowS",
+      "description": "How long a green may be held for a detected tram."
+    },
+    "A.signals.tsp.detection_distance_m": {
+      "value": 120.0,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          60.0,
+          250.0
+        ],
+        "basis": "The standing S2b assumption (A2 tsp_detection_distance_m = 120); the Melbourne two-detector scheme puts the mid-link detector ~60 m past the previous stop, and 250 m is a whole corridor block. MATSim has no intra-link position, so detection is realised at the tram approach link boundary nearest this distance - an approximation the controller documents."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.detectionDistanceM",
+      "description": "How far upstream a tram is detected."
+    },
+    "A.signals.tsp.priority_budget_share": {
+      "value": 0.2,
+      "units": "share_of_cycle",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.1,
+          0.3
+        ],
+        "basis": "VicRoads partial-priority practice budgets priority phases at most 20% of the cycle, taken from the nominal split of the biggest competing phase (dossier 05 8). Swept around that operated value."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.priorityBudgetShare",
+      "description": "The most green the controller may borrow for the tram in one cycle, as a share of cycle time."
+    },
+    "A.signals.tsp.compensation_enabled": {
+      "value": true,
+      "units": "boolean",
+      "source": "literature",
+      "sweep": {
+        "categorical": [
+          true,
+          false
+        ],
+        "basis": "The Melbourne machinery returns borrowed green to cut phases in the following cycle - without compensation the plan's long-run splits drift and any later adaptive layer pollutes its own statistics (dossier 05 8)."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.compensationEnabled",
+      "description": "Whether green borrowed for the tram is returned to the phase it came from in the next cycle."
+    },
+    "A.signals.tsp.lateness_threshold_s": {
+      "value": 60.0,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          300.0
+        ],
+        "basis": "Conditional (PTIPS-style) priority grants only to late trams; the operated threshold is not public (dossier 02 2 [gap]). 0 makes conditional identical to its unconditional parent; 300 s effectively disables priority at NLR headways."
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "matsim_param": "tramPriority.latenessThresholdS",
+      "description": "Schedule delay beyond which conditional priority grants; read only when A.signals.tsp.mode = conditional. Delay comes from the vehicle's own VehicleArrivesAtFacility events, not from an assumed speed."
+    },
+    "A.crossings.freight_road_names": {
+      "value": [
+        "Saint James Road",
+        "Clyde Street"
+      ],
+      "units": "road_names",
+      "source": "literature",
+      "held_fixed": {
+        "rule": "The IDENTITY of the freight-rail/road interaction set, not a tunable: DECISIONS.md 9.70 established from ARTC/TfNSW/PWCS/NCIG documents that the coal chain is grade-separated everywhere except these two boom-gated crossings (St James Road on the shared Main North at Adamstown; Clyde Street on the ARTC freight lines at Islington Junction). The corridor Stewart Avenue crossing is a T-aspect signal site and is EXCLUDED by rule (9.75).",
+        "decisions_ref": "9.70, 9.76",
+        "departure_requires": "documented evidence of another at-grade freight-road interaction inside the study area"
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The road names of the boom-gated level crossings where rail freight meets the modelled road network (issue #68). The builder locates each crossing from OSM railway=level_crossing nodes carrying a boom-barrier tag and matches links through the network's own osm:way:name - the names select, geometry decides, and no coordinate is typed anywhere. Values are the NETWORK's own osm:way:name spellings (\"Saint James Road\" - TfNSW documents abbreviate it \"St James Road\")."
+    },
+    "A.crossings.closures_per_day": {
+      "value": 30,
+      "units": "closures_per_day",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          10,
+          60
+        ],
+        "basis": "Closure logs are not published (9.70). The band spans a passenger-dominated day at Adamstown (2-4 trains/h over ~18 operating hours, most closures brief) up to a heavy mixed-traffic day; the ~110 daily coal movements do NOT cross these roads (grade-separated since 2006) and so do not bound this. Swept, never pinned."
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented."
+    },
+    "A.crossings.closure_duration_s": {
+      "value": 240,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          60,
+          600
+        ],
+        "basis": "TfNSW (Lower Hunter Freight Corridor Draft SEA, 2021): commuters experience delays \"up to ten minutes\", especially with freight in both directions - the sweep top. A single boom cycle for one passenger train bounds the bottom at about a minute."
+      },
+      "status": "active",
+      "decisions_ref": "9.70, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "How long one closure holds the crossing shut. ASSUMED and swept against the official \"up to ten minutes\" bound; the point value is a mid-band working value, never a claim."
+    },
+    "A.crossings.closure_window_h": {
+      "value": [
+        0.0,
+        24.0
+      ],
+      "units": "hours",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The day window closures are spread across. The freight network operates around the clock (ARTC 24/7 operations, 9.70), so the window is the whole day; narrowing it would assert a pattern no published log supports."
+    },
+    "A.crossings.closed_flow_capacity_veh_h": {
+      "value": 0.0,
+      "units": "vehicles_per_hour",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "Link flow capacity while the boom is down. Zero by definition of a closed gate - not a tunable."
+    },
+    "A.crossings.closed_freespeed_ms": {
+      "value": 0.1,
+      "units": "metres_per_second",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The freespeed FLOOR written during a closure. A numerical guard, not a model value: freespeed zero makes link travel time infinite and breaks router arithmetic, so the closure is expressed through zero flow capacity while freespeed stays epsilon-positive."
+    },
+    "A.crossings.link_match_radius_m": {
+      "value": 30.0,
+      "units": "metres",
+      "source": "assumed",
+      "held_fixed": {
+        "rule": "A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link distances realised are under 10 m, so no output varies across any reasonable value.",
+        "decisions_ref": "9.76",
+        "departure_requires": "a crossing whose matched distance approaches the radius"
+      },
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "How close a car link named by A.crossings.freight_road_names must pass to the crossing node cluster to be the crossing link."
+    },
+    "A.crossings.node_cluster_m": {
+      "value": 50.0,
+      "units": "metres",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "OSM maps a double-track crossing as one node per track a few metres apart; nodes closer than this are one physical crossing."
+    },
+    "A.crossings.corridor_exclusion_m": {
+      "value": 500.0,
+      "units": "metres",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.75, 9.76",
+      "consumers": [
+        "cities/newcastle/build/build_level_crossings.py"
+      ],
+      "description": "The Stewart Avenue guard (9.75): the builder REFUSES to emit a closure within this distance of the tram alignment, because the corridor light-rail crossing is a T-aspect signal site owned by the signal build (#73) and must never be double-treated as a boom-gate closure. The nearest legitimate crossing sits kilometres away, so the value only needs to separate the corridor from the suburbs."
     },
     "A.lightrail.dwell_charging_s": {
       "value": null,
@@ -553,14 +829,17 @@
     "A.lightrail.line_speed_kmh": {
       "value": 40.0,
       "units": "km_per_hour",
-      "source": "assumed",
-      "sweep": [
-        30.0,
-        50.0
-      ],
+      "source": "measured",
+      "sweep": {
+        "interval": [
+          30.0,
+          50.0
+        ],
+        "basis": "MEASURED CEILING (25 Aug 2026, 9.76; #63 route i): the TfNSW regulated speed zone along the corridor trunk - already joined onto A1_corridor_road_edges - is 40 km/h over 73.4% of regulated length (2,994 m) and 50 km/h over the western remainder, and the documented NLR operating limit is 40 (signalling dossier 02 2). The field is the inter-stop RUNNING speed in the run-time decomposition, for which the regulated 40 is an upper bound: acceleration and braking shortfalls land in the swept dwell/signal terms, which is why the sweep stays. Never derive this from GTFS alone - scheduled time = dist/v + dwell + signal is unidentifiable without pinning the swept terms."
+      },
       "status": "active",
-      "decisions_ref": "4.2",
-      "description": "Light rail running speed between stops, used in the run-time decomposition.",
+      "decisions_ref": "9.76",
+      "description": "Light rail running speed between stops, used in the run-time decomposition. The value is the regulated 40 km/h ceiling measured from the held Speed Zones join along the corridor trunk; achieved running speed sits at or below it, which the sweep expresses.",
       "consumers": [
         "cities/newcastle/build/build_scenario_schedules.py"
       ]

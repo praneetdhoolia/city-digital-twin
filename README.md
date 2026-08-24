@@ -1,15 +1,16 @@
 # city-digital-twin
 
 A city-agnostic transport digital-twin framework, applied first as a counterfactual
-microsimulation of the **Newcastle (NSW) light rail** — MATSim for the five-LGA
-regional demand model, SUMO for the corridor. (Renamed from the earlier Newcastle-specific repository name,
-24 Aug 2026: the framework models any city; one city's study lives under
-`cities/<city>/`.)
+microsimulation of the **Newcastle (NSW) light rail** — MATSim end to end, for the
+five-LGA regional demand model and the corridor alike (SUMO was descoped 25 Aug 2026:
+MATSim is the single simulator, DECISIONS.md §9.74). (Renamed from the earlier
+Newcastle-specific repository name, 24 Aug 2026: the framework models any city; one
+city's study lives under `cities/<city>/`.)
 It exists because that estimate was never produced and the business case is not
 inspectable.
 
 > **Nothing in this repository is a result.** No scenario has been run to a reportable
-> state. The network, the mapped schedules, the SUMO corridor, the synthetic population,
+> state. The network, the mapped schedules, the synthetic population,
 > the activity chains and the 30 assembled scenario × day-type run-input sets are all
 > **inputs**. See [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) for the board and the next action.
 
@@ -69,7 +70,8 @@ python src/run/prune_run.py --run results/<name>      # reclaim the per-iteratio
 
 ```bash
 pip install requests pandas numpy shapely pyproj lxml geopandas pyogrio rasterio openpyxl
-python src/setup/bootstrap_toolchain.py     # JDK 25, pt2matsim 26.6, SUMO 1.27.1 -> .tools/
+python src/setup/bootstrap_toolchain.py     # JDK 25, pt2matsim 26.6, Maven 3.9.9 -> .tools/
+python src/setup/bootstrap_toolchain.py --run-stack   # + the MATSim signals run stack (signal runs only)
 python tests/check_manifest.py              # the committed subset is intact
 ```
 
@@ -146,7 +148,7 @@ cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific i
   data/raw/                  immutable downloads + provenance_*.json
   data/processed/            zones, census, hts, observed, network, corridor, landuse
   data/MANIFEST.csv          every file: hash, rows, producing script, source, licence
-  networks/                  OSM extracts, the MATSim network and variants, SUMO corridor
+  networks/                  OSM extracts, the MATSim network and variants
   schedules/                 GTFS era feeds + scenarios/S0..S6 variants
   demand/                    synthetic population (B1) and plans (B2 tours, MATSim plans)
   params/                    C1 behavioural parameters + the sensitivity sweep grid
@@ -201,7 +203,7 @@ python cities/newcastle/build/build_validation_targets.py
 # --- P2 network build (needs the toolchain) ---
 python cities/newcastle/build/build_corridor_road_attributes.py
 python src/build/build_matsim_network.py        # MATSim network + 15 mapped schedules
-python cities/newcastle/build/build_sumo_corridor.py     # SUMO corridor, 4 road variants
+python cities/newcastle/build/build_matsim_signals.py    # explicit corridor signal data (#73)
 
 # --- P3 demand synthesis (needs the P2 build above) ---
 python src/build/measure_network_factors.py     # C2: detour factor, day-type split

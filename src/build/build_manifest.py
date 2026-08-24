@@ -23,7 +23,7 @@ import city as _city  # noqa: E402
 
 ROOT = _city.CITY_DIR
 SCAN = ['data/raw', 'data/processed', 'schedules', 'demand', 'params',
-        'scenarios', 'networks/osm', 'networks/matsim', 'networks/sumo']
+        'scenarios', 'networks/osm', 'networks/matsim']
 SKIP_EXT = {'.pyc'}
 PROVENANCE_FILES = ['data/raw/provenance_open_data.json',
                     'data/raw/provenance_abs_dem.json',
@@ -75,7 +75,6 @@ LINEAGE = {
     'scenarios/matsim': 'src/build/build_matsim_run_inputs.py',
     'schedules': CITY_BUILD + 'build_era_feeds.py',
     'networks/matsim': 'src/build/build_matsim_network.py (pt2matsim 26.6)',
-    'networks/sumo': CITY_BUILD + 'build_sumo_corridor.py (SUMO netconvert 1.27.1)',
 }
 
 # Every adapter's own `produces` declaration overlays the map above, so an
@@ -90,7 +89,7 @@ for _spec in _city.descriptor().get('adapters', {}).values():
             LINEAGE[_prefix] = 'cities/%s/%s' % (_city.CITY, _spec['script'])
 
 # P2 build intermediates: large, regenerable, and not part of the package.
-SKIP_DIRS = ('networks/matsim/_work', 'networks/sumo/_work')
+SKIP_DIRS = ('networks/matsim/_work',)
 
 
 def sha256(p, limit=None):
