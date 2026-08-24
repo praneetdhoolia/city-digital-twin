@@ -4,7 +4,7 @@
 counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No scenario has been run to a
 reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.72, 24 August 2026
+**Started:** 10 August 2026 · **last entry:** §9.75, 25 August 2026
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -37,12 +37,14 @@ otherwise cost you an hour:
 | **Road / active network, lanes, speeds, gradient** | §3, §9.28, §9.33, §9.34 |
 | **pt2matsim is not reproducible run to run** | **§3.5** — one build of the network per comparison |
 | **Light rail vehicle, dwell, charging** | §4, §9.18, §9.30 |
-| **Signals, SCATS** | §5, §9.24; refusal documented in §9.21 |
+| **Signals, SCATS** | §5, §9.24; refusal documented in §9.21; **§9.75 the signalling dossier ([`design/signalling/`](design/signalling/README.md)), the public operated-data discovery (TIA route, #78) and the owner-directed native build (#73)** — `scats_phasing` stays `unobtained` |
+| **SUMO descoped; MATSim the single simulator** | **§9.74** — owner decision 25 Aug; S-b native via #73 (a band regardless), reliability variance a stated limitation, deliverable 7/§9.16 retired, P5 5.1/5.2 deleted; execution is #72 |
+| **Framework choice re-examined (MATSim vs the 2026 field)** | **§9.73** — migration rejected on a documented survey; the pinned jar embeds MATSim 2027.0-2026w25 (verified); DSim watch-only |
 | **Parking supply, price, max stay** | §6, **§9.31** |
 | **Land use, POI, frontage** | §7 |
 | **Behavioural parameters, mode constants, VOT** | §8; **§8.5 is the rule on ASCs** — read before touching a constant |
 | **Transfer penalty** | **§9.32** — not estimable from this package; the 3–15 min sweep stands |
-| **Taxi / rideshare as modes** | §9.21 declined for want of a target; **§9.42 re-opened on new evidence** — inferred from open sources, no data request lodged, nothing built before deliverable 5 |
+| **Taxi / rideshare as modes** | §9.21 declined for want of a target; **§9.42 re-opened on new evidence** — inferred from open sources, no data request lodged; **§9.75 owner-directed for the next-session batch, superseding the after-deliverable-5 sequencing** (#49) |
 | **Synthetic population (B1), activity chains (B2)** | §9, §9.1, §9.2, §9.15; **§9.46 binds the escort tour to the person escorted** (it was not, §9.44); **§9.47 repairs the age structure** — phantom elderly commuters, missing 75+, universal child students |
 | **MATSim plans, C1 translation, what does not survive it** | §9.3 |
 | **Run cost, memory, threads** | §9.5; **§9.56 the events-pipeline threads** — the all-physical model's wall-time knob, verified result-identical |
@@ -6660,6 +6662,173 @@ results (`_run.json` absent by definition); the 67/143 split is untouched.
 
 ---
 
+## §9.73 — The simulator stack re-examined: MATSim re-affirmed, and the embedded MATSim version recorded (25 Aug 2026, fourth session)
+
+The owner's `/goal` asked whether MATSim is still the best tool or whether a
+materially better or faster framework exists. Answered by a documented survey
+(web-researched 25 Aug 2026, sources in the session's research record), not by
+habit:
+
+- **BEAM** (LBNL, built on MATSim): ~10× *slower* per iteration at comparable
+  scale (reported ~56 min/it for 315k agents), actor-model concurrency
+  undermines seeded determinism, no documented Windows path.
+- **POLARIS** (Argonne) — the one serious rival: reported 1–2 orders faster
+  (mesoscopic, not like-for-like with a per-agent queue mobsim carrying
+  physical walk/bike), actively developed, Windows-viable. Fails this
+  project's gates: distribution by licence request rather than a public repo
+  (fatal for a study whose premise is being more transparent than the
+  business case it examines), determinism and GTFS-fidelity unverified, and
+  the 13 custom `citysim` Java sources would be rewritten into a C++ core
+  with a gated contribution process.
+- **SimMobility / mobiliti / TRANSIMS**: dormant, HPC-proof-of-concept, or
+  dead. **DTALite and the GPU simulators (MOSS, LPSim)**: fast trip
+  *assignment*, no co-evolutionary activity-based demand, no
+  transit-schedule fidelity, no custom modes. **Commercial (Aimsun, PTV,
+  Caliper)**: capable and seedable but closed — a third party cannot rerun
+  the study without buying the licence.
+- MATSim's own trajectory is healthy (annual year-named releases through
+  2026, an active association and institutional development); the **DSim**
+  distributed-mobsim prototype (reported ~119× over QSim) is recorded as
+  watch-only; Hermes (~2.5×) drops signals and dynamic vehicle handling and
+  is presumed incompatible with the ride-pairing engine — not adopted.
+
+**Decision: MATSim stands. Migration is rejected** — every faster framework
+drops something this study cannot lose, and a migration would invalidate
+every run and port all custom code for a speed problem better attacked by
+concurrent arms and, later, surrogate-guided sweeps.
+
+**The embedded MATSim version is now recorded:** the pinned
+`pt2matsim-26.6-shaded.jar` carries `org.matsim:matsim` **`2027.0-2026w25`**
+(verified 25 Aug 2026 from the jar's own `META-INF/maven` metadata) — a
+current-generation 2026-week-25 weekly snapshot, not a 16.x-era MATSim as
+previously assumed in conversation. The jar digest is unchanged; nothing was
+re-pinned. Consequence for any future contrib adoption (#73): contribs must
+match this version and must not share a classpath with the shaded jar — a
+separate Maven-built run stack, which is a §14 toolchain change when it lands.
+
+**What this deliberately does not do:** no toolchain change, no re-pin, no
+model or data value changed; nothing here is a result.
+
+---
+
+## §9.74 — SUMO descoped by owner decision: MATSim is the single simulator (25 Aug 2026; the fifth premise correction — supersedes proposal §5's twin-simulator architecture)
+
+**Owner decision (25 Aug 2026): the study is "officially free of SUMO".**
+Recorded here as a decision with its consequences; executed mechanically as
+issue #72 (deliberately not bundled with this record). Nothing is rewritten
+in history: the SUMO corridor artefacts, their build scripts and their
+DECISIONS entries stay in the record as what they are — built six times,
+simulated zero times.
+
+**Evidence basis.** The 25 Aug absorption research established that every
+SUMO-deferred corridor question except two has an adequate native MATSim
+representation: level crossings via core `NetworkChangeEvents` (#68),
+charging dwell via mapped-schedule `departureOffset` + `awaitDepartureTime`
+(#74, the §3.5 derivation rule), taxi as a priced mode (§9.42, #49), the
+Hunter St lane loss via the E1 patches, and frontage volumes from the
+physically simulated walk events. SUMO's unique residual was (a)
+signal-accurate S2b and (b) reliability variance from ≥30 seeded
+replications — and `RUN.sumo.replications` has been `unobtained`/null since
+§9.5 measured that load does not fit this machine (issue #6's record).
+
+**Where each SUMO-unique deliverable lands:**
+
+1. **S-b (transit signal priority)**: answered natively — the owner has
+   directed an explicit corridor signal + tram-priority build in MATSim
+   (§9.75, #73). Until that lands, S2b remains the scalar
+   `E.s2b.signal_delay_removed_share` sweep, and every corridor number stays
+   a band per §7.2/§9.21 either way.
+2. **Reliability variance** (GJT standard deviation across micro
+   replications): **descoped as a stated limitation** — it was never
+   affordable on this machine, and the method note (deliverable 6) reports
+   it as such.
+3. **Deliverable 7 / §9.16** (the 5 s MATSim↔SUMO outer-loop tolerance):
+   **retired with the loop it governed.** The §9.16 derivation stands in the
+   record as the analysis it was.
+4. **P5 tasks 5.1 and 5.2 are deleted** (5.2's standing DELETE proposal is
+   thereby decided); **5.3 resolves to its REWORK form** — the charging
+   dwell stays swept, never pinned, and lives natively (#74).
+5. **Pedestrian delay/LOS is formally out of scope** (it was already barred
+   from SUMO by the §3.6 segfault); pedestrian *volumes* stay in scope from
+   the physical walk events.
+
+**What this deliberately does not do:** it does not delete anything from
+history or from `data/raw/`; it does not change a registry value in this
+change (that is #72's execution, a logged toolchain change when it happens);
+it does not invalidate any run — no completed run ever consumed a SUMO
+artefact; and it does not weaken the sweep discipline — the signal
+assumption set (`A.signals.*`, the S2b/S2c/bus delay shares) is untouched
+and remains the operative representation until #73 lands.
+
+---
+
+## §9.75 — The signalling dossier, the operated-SCATS-data discovery, and the owner's all-modes-first batch (25 Aug 2026; issues #49, #68, #72–#78)
+
+**The dossier.** A ten-file research dossier on SCATS and Newcastle
+signalling landed at
+[`design/signalling/`](design/signalling/README.md) (moved from a temporary
+holding area; design-dossier class, the point-to-point-mode precedent). Its
+epistemic discipline matches the project's: every claim tagged
+`[documented]` / `[commonly claimed]` / `[gap]`. Substance: SCATS mechanics
+head-to-toe from the public corpus (functional closure checklist in file 09);
+the MATSim signals contrib mapped in detail (data model, SYLVIA, Lämmer, the
+custom-controller seam, the two regional-scale traps); the algorithms in
+pseudo-code; and the data-availability map (open / refused / purchasable).
+**`A.signals.scats_phasing` stays `unobtained` for the 14 modelled
+intersections** — the dossier changes the evidence base, not that status.
+
+**The discovery (file 08).** Operated SCATS interpreted history for two
+Newcastle intersections is legitimately public inside planning-portal TIA
+PPSHCC-137 (121 Hunter St, exhibited 2023): 24 h of 15-minute per-phase,
+per-group and cycle statistics for **TCS 923 (King/Steel)** and **TCS 1138
+(Hunter/Steel)**, Tuesday 19 July 2022. Operated cycles: corridor-adjacent
+**72–81 s**, parallel arterial **104–113 s**, against the assumed 110 s swept
+80–140 s — evidence that supports the sweep's lower half and the assumed
+value's realism for arterials, and **not a registry change**: neither site is
+one of the 14 modelled intersections (A2 `scats_site_id` list). This opens a
+free third acquisition route (TIA harvest) beside "refused" (§9.21) and
+"purchasable ~AU$200–600"; both routes are parked as owner decisions on
+issue #78, with an immediate recommendation to archive the TIA PDF against
+link rot.
+
+**The owner's batch (directive, 25 Aug): all modes covered first.** The
+next session implements, as one work programme: corridor signals + tram
+priority + lanes natively in MATSim (#73 — signal rungs 2+4 of the dossier's
+ladder; the Maven run-stack build rides with it as a logged toolchain
+change), **taxi/rideshare as a priced mode (#49 — this supersedes §9.42's
+"nothing built before deliverable 5" sequencing by owner direction)**, level
+crossings (#68), native charging dwell (#74), the SUMO descope execution
+(#72), warm restart (#75), the run progress digest (#76), the cross-run
+index (#77), and the rung-1 registry sharpening (sweep-basis citations from
+the dossier and the TIA evidence; `E.s2b.n_segments` derived from the mapped
+feed). Rung 3 of the ladder (a SCATS strategic emulator) is **not** ticked.
+
+**Constraints carried into the batch (from the dossier, each already paid
+for elsewhere):** the double-count rule — explicit signals meter
+saturation-flow approaches, and the implicit `A.signals` delay must come out
+of the same movements, one representation per effect; the sample-size
+discretisation trap — a 10–25% sample discharges 0–2 vehicles per short
+green, so the batch adds a per-green discharge-count check before any signal
+effect is trusted; the `QSignalsNetworkFactory` single-binding risk against
+the hand-assembled `citysim` QSim — a toy probe precedes any scenario; and
+Stewart Avenue is a T-aspect signal site, never a boom-gate closure — #68
+and #73 must not double-treat it.
+
+**Sequencing tension, stated for the owner rather than resolved here:** the
+recorded order runs the 4.6.9 arm first (measuring the §9.68/§9.69 repairs
+in isolation, ~65–67 h) and then activates this batch as ONE new family
+boundary; folding the batch in before that arm runs would save one arm but
+confound the ride/walk repair measurement with the signals/taxi/crossings
+changes. The 4.6.9 approval remains spent (§9.72); whichever order the owner
+picks, the batch activates as a single boundary, not several.
+
+**What this deliberately does not do:** no code was built this session; no
+registry value, scenario, run input or target changed; the 67/143 split is
+untouched; the TIA numbers are cited evidence, not acquired inputs (that is
+#78); nothing here is a result.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -7158,6 +7327,9 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | **The signalling dossier lands, operated SCATS data is discovered public, and the owner sets the all-modes-first batch (§9.75; issues #49/#68/#72–#78; fourth session).** A ten-file SCATS/Newcastle-signalling research dossier lands at `design/signalling/` (every claim tagged documented/commonly-claimed/gap; `A.signals.scats_phasing` STAYS `unobtained` for the 14 modelled sites). Discovery: planning-portal TIA PPSHCC-137 republishes TfNSW-supplied SCATS interpreted history for TCS 923 and TCS 1138 (24 h × 15-min, 19 Jul 2022) — operated cycles 72–81 s corridor-adjacent / 104–113 s arterial vs the assumed 110 s swept 80–140 s: sweep-basis evidence (neither is a modelled site), and a free third acquisition route parked with the LX-purchase decision on #78. Owner directive: the next session implements corridor signals + tram priority + lanes natively (#73, with the Maven run-stack toolchain change), taxi as a priced mode (#49 — supersedes §9.42's after-deliverable-5 sequencing), level crossings (#68), native charging dwell (#74), the descope execution (#72), warm restart (#75), the progress digest (#76) and the cross-run index (#77) — activating as ONE family boundary; the 4.6.9-first-vs-fold-in ordering is stated for the owner in §9.75. **No code built, no model, data, registry or target value changed, the 67/143 split is untouched, nothing here is a result.** |
+| 2026-08-25 | **SUMO is descoped by owner decision — MATSim is the single simulator (§9.74; issue #72; the fifth premise correction, superseding proposal §5's twin-simulator architecture).** Every SUMO-deferred corridor question except two has an adequate native representation (crossings #68, dwell #74, taxi #49, lane loss via E1, frontage volumes from physical walk); the residual lands as: S-b answered natively when #73 builds (a swept band regardless, per §7.2/§9.21), reliability variance descoped as a stated limitation (the ≥30-replication load never fit this machine — #6's record), deliverable 7/§9.16 retired with the outer loop, P5 tasks 5.1/5.2 deleted (the standing 5.2 DELETE proposal thereby decided) and 5.3 resolved to stays-swept-never-pinned. Mechanical retirement (registry `RUN.sumo.*`, the toolchain fetch, package checks, manifest) is #72, a logged toolchain change when executed. **Nothing deleted from history, no registry value changed in this record, no run invalidated (none ever consumed a SUMO artefact), no target moved, nothing here is a result.** |
+| 2026-08-25 | **MATSim re-affirmed against the 2026 field, and the embedded MATSim version recorded (§9.73; fourth session).** A documented survey (BEAM ~10× slower with actor nondeterminism; POLARIS fast but licence-gated, C++, determinism/GTFS-fidelity unverified; SimMobility/mobiliti/TRANSIMS dormant; DTALite/GPU assignment-only; commercial closed) rejects migration — every faster framework drops co-evolutionary demand, transit fidelity, open reproducibility or Windows. The pinned `pt2matsim-26.6-shaded.jar` is verified from its own Maven metadata to embed `org.matsim:matsim` **2027.0-2026w25** (current-generation weekly, not 16.x); digest unchanged, nothing re-pinned; DSim recorded watch-only. **No toolchain, model or data value changed; nothing here is a result.** |
 | 2026-08-24 | **Two silent launch deaths end the first post-repair arm attempt; no model or data value changed (§9.72; issue #70; third session).** The owner's `/goal` authorised the 4.6.9 base arm; two detached launches (`Start-Process`, then WMI `Win32_Process.Create`) both died silently — ~54 s in mid `PersonPrepareForSim`, and ~2 min in before config emission — with no error artefact, and the owner ended the campaign at `/handoff`. Both closed out as `aborted_*` with cause-stating `_meta.json` (§9.66 scheme). Attribution open (#70; agent-session process reaping suspected); operative rule: launch arms from an owner-owned shell and verify past `PersonPrepareForSim`. Owner directives recorded: no run approval standing (the `/goal` approval is spent); arm B launches only if arm A's solo iterations 2–5 pace at the closed family's 217–253 s/it band. No target moved, the 67/143 split is untouched, nothing here is a result. |
 | 2026-08-24 | **The ride collapse decomposed and repaired in the demand build, the short-trip mass gets its observed distribution, and two 0b items become measurements — a NEW comparability family (§9.68–§9.71; issues #48/#31/#30/#63/#68; owner /goal directive).** The decomposition read the completed arms (no new run): 76,986 of 77,626 ride-available persons held NO ride plan in final memory (an ASC could flip 109), return legs paired at 0.0079 and intermediate at 0.0 across the search — the §9.64 "supply is not binding" reading was survivorship bias, and the uniform seed's 0.2 car probability WAS the 0.196 outbound pairing ceiling. Repairs, all declared and swept: round-trip serve-tour allocation in both binder passes (household pending-pickup ledger; non-household all-or-nothing pairs), direct bound tours, serve tours seeded car, round-trip-covered passengers seeded ride, `liftHousehold` a comma list unioned into one sampling cluster. The gravity draw becomes a two-component mixture per purpose against HTS Sydney 2012/13 Table 4.4.7 band shares (18.8% of trips ≤1 km observed vs 4.45% generated), short kernel mean = the held observed walk mean, every observed per-(purpose × LGA) mean still met exactly. B2/plans/30 run-input sets regenerated (WEEKDAY: 26,638 household + 24,515 non-household round-trip-covered tours; band shares exact on every purpose); 1% probe rc=0, accounting closes, **return legs pair 347/347 at it-2** (old family: 2 of 2,818), pairing occupancy 0.12 vs the converged 0.0013; `check_package` ALL PASSED, manifest 436. Freight rail researched: the coal chain (~110 movements/day, ARTC/PWCS/NCIG) runs on dedicated grade-separated track and is deliberately NOT simulated; the two real road interactions (Adamstown + Islington level crossings) are #68. 0b: `A.corridor.pre_lr_lanes_per_dir` measured from OSM history **2 → 1** (every tagged pre-2017 segment one lane/direction; attic responses landed with provenance, ODbL) — hypothesis B3's counterfactual onto evidence; the VoT set checked against EPV Jan 2025 (HE and concession divergent, flagged, values unchanged). #50's modelled mode × demographics table delivered from arm A. **The §9.58–§9.63 family CLOSES with the two completed arms as its record; nothing run on the regenerated demand compares to them. No target moved, the 67/143 split is untouched, and nothing here is a result.** |
 | 2026-08-24 | **Runs name, describe and status-track themselves, and the project is city-digital-twin (§9.65–§9.67; owner directives).** The run harness now names every run directory itself — `<launch yyyymmddThhmmss>_<iterations>it_<pct>pct` — and `--tag` is gone from every caller; run identity moved fully into the `_run.json` parameter set (resume scans records, prefers a matching controler hash, and no longer deletes a stale run on a controler change). Every run carries **`_meta.json`**, a schema-checked status card (`running`/`completed`/`failed`/`aborted` + started/ended/parameters) written at launch and updated automatically at every transition, with stale `running` states reconciled by pid at the next harness start; a dead run is renamed **`aborted_<name>`** in place and the `results/_aborted_<date>/` quarantine parents are dissolved. All 35 existing run directories were renamed (maps in §9.65/§9.66) and backfilled with metadata derived from their own records — nothing invented, backfilled cards say so. **The repository is renamed `NewcastleLRSIM` → `city-digital-twin`** (GitHub redirects stand; schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay with the open naming issue). The board's stale open-issue count was corrected against live GitHub (8 open, 42 filed, 34 closed). **No model or data value changed, no run was made, no target moved, the 67/143 split is untouched and nothing here is a result.** |

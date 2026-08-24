@@ -1,23 +1,21 @@
-# Brief for the next agent — THE REPAIRED ARM IS READY BUT LAUNCH-BLOCKED: LAUNCH IT FROM AN OWNER-OWNED SHELL
+# Brief for the next agent — THE OWNER HAS SET BATCH 4.7 (ALL MODES FIRST); TWO OWNER CALLS DECIDE THE ORDER
 
-*Updated 24 August 2026, third session. The owner's `/goal` (make any
-remaining fixes, then run and monitor) authorised the 4.6.9 post-repair
-base arm — and **both detached launch attempts died silently within
-minutes** (§9.72, issue #70: ~54 s in mid `PersonPrepareForSim`, then
-~2 min in before config emission; no error artefact either time;
-attribution open, agent-session process reaping suspected). The owner
-ended the campaign at `/handoff`; both dead launches are closed out as
-`aborted_*` (§9.66 scheme). **No model, data or registry value changed
-this session** — the §9.68/§9.69 regenerated demand stands
-probe-verified: the arm is launch-blocked, not model-blocked. Second
-session's record (**§9.68** ride collapse decomposed and repaired ·
-**§9.69** short-trip mass onto its observed distribution · **§9.70**
-coal chain scoped out · **§9.71** pre-LR cross-section 2 → 1 + the EPV
-Jan 2025 check) stands as written; **the comparability family is
-§9.68/§9.69 onward**, with the §9.58–§9.63 family closed as the
-pre-repair record. This is a HANDOVER, not a source of truth: where it
-disagrees with [`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md)
-or [`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win.*
+*Updated 25 August 2026, fourth session — a research-and-decisions session:
+**no model, data or registry value changed, no run was made.** MATSim was
+re-affirmed against the 2026 field and the embedded MATSim version recorded
+(§9.73); **SUMO was descoped by owner decision — MATSim is the single
+simulator** (§9.74; execution is #72); the ten-file signalling dossier landed
+at [`design/signalling/`](../design/signalling/README.md) with operated SCATS
+history for two non-modelled Newcastle sites discovered public (#78); and
+**the owner ticked batch 4.7** — corridor signals + tram priority + lanes
+(#73), taxi (#49, resequenced), level crossings (#68), native charging dwell
+(#74), descope execution (#72), warm restart (#75), progress digest (#76),
+cross-run index (#77), sweep-basis sharpening (4.7.9) — to be implemented
+next session, activating as **ONE family boundary**. The §9.72 record stands:
+the 4.6.9 arm is launch-blocked, not model-blocked, and its approval is
+SPENT. This is a HANDOVER, not a source of truth: where it disagrees with
+[`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md) or
+[`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win.*
 
 ---
 
@@ -36,45 +34,44 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 **⚠ OWNER DIRECTIVES, standing:**
 
 1. **NO MULTI-HOUR RUNS WITHOUT EXPLICIT APPROVAL — none is standing.**
-   The third-session `/goal` approval was consumed by the two dead
-   launches and the owner's end-run instruction (§9.72). Measured cost:
-   ~240 s/it/arm two-arm, ~233 s single → **~65–67 h per 25%×1000 arm**.
+   Measured cost: ~240 s/it/arm two-arm, ~233 s single → **~65–67 h per
+   25%×1000 arm**.
 1a. **LAUNCH CONSTRAINT (§9.72, #70): launch arms from an OWNER-OWNED
-   shell** (a plain terminal or a Task Scheduler job created outside the
-   agent session) — session-spawned launches died silently by BOTH
-   detachment routes tried (`Start-Process`, WMI `Win32_Process.Create`).
-   A launch is verified only when `matsim.log` progresses PAST
+   shell** — session-spawned launches died silently by BOTH detachment
+   routes tried. A launch is verified only when `matsim.log` progresses PAST
    `PersonPrepareForSim` into iterations with the launching context gone.
-1b. **CONDITIONAL REPLICATION (owner, 24 Aug, standing): arm B launches
-   ONLY if arm A's solo iterations 2–5 pace at the closed family's
-   217–253 s/it band** (~233 s/it single-arm, §9.59). Slower → arm A
-   runs alone.
-2. **The prime goal (owner, 21 + 24 Aug): all forms of ridership as close
-   to real life as possible ON THEIR OWN; no hardcoding or Newcastle bias;
-   every issue spotted logged on GitHub; all traffic forms at observed or
-   academically studied values.**
+1b. **CONDITIONAL REPLICATION (standing): arm B launches ONLY if arm A's
+   solo iterations 2–5 pace at the closed family's 217–253 s/it band.**
+2. **The prime goal: all forms of ridership as close to real life as
+   possible ON THEIR OWN; no hardcoding or Newcastle bias; every issue
+   logged on GitHub; all traffic forms at observed or academically studied
+   values.** The 25 Aug corollary: **all modes covered first** — batch 4.7.
 3. **Every mode individually in every numbers table** — never a "public
    transport" umbrella row.
 4. **Never commit directly to `main`; the session's ONE PR opens at
    `/handoff`**, is watched to merge, branch deleted both sides.
-5. **Never hand-name a run.** The harness names runs
-   `<launch>_<iterations>it_<pct>pct` and status-tracks them in
+5. **Never hand-name a run.** `<launch>_<iterations>it_<pct>pct`, status in
    `_meta.json`; `_run.json` stays the only result gate.
 
 **Start from `main`. No run is in progress; the machine is free. If this
-session's PR is still open, merging it and deleting the branch both sides
-is the first item of unfinished business.**
+session's PR is still open, merging it and deleting the branch both sides is
+the first item of unfinished business.**
 
 **⚠ DECISIONS WAITING ON THE OWNER:**
-- **Re-approve the next base arm** on the repaired demand (task 4.6.9,
-  ~65–67 h at 25%×1000; the §9.68/§9.69 repairs are built and
-  probe-verified but UNMEASURED at convergence). The launch itself must
-  satisfy the §0.1a constraint (owner-owned shell, #70).
-- **`E.replication.n_replications`** — seed floor measured ≤0.11 pp/mode
-  at n=2 (§9.64); 3–5 supportable; the value is the owner's.
+- **Re-approve the 4.6.9 arm** (~65–67 h at 25%×1000; §9.72's approval is
+  spent; #70's owner-shell constraint applies) **and pick the order against
+  batch 4.7**: run the repairs arm FIRST (clean attribution of §9.68/§9.69,
+  then one batch boundary) vs fold the batch in first (saves one arm,
+  confounds the repair measurement). §9.75 states the tension; either way
+  the batch activates as ONE boundary.
+- **`E.replication.n_replications`** — seed floor ≤0.11 pp/mode at n=2
+  (§9.64); 3–5 supportable; the value is the owner's.
+- **Operated SCATS data (#78)**: the ~AU$200 LX purchase (licence vs the
+  reproducibility gate — quarantine as validation-only or don't buy) and
+  the free TIA-harvest lane. Recommended now regardless: archive TIA
+  PPSHCC-137 against link rot.
 - Flagged, not changed (§9.71): `C.vot.by_purpose.HE` 9.3 and
-  `C.vot.concession_factor` 0.75 sit outside their sweeps against EPV
-  Jan 2025's only comparators.
+  `C.vot.concession_factor` 0.75 sit outside their sweeps vs EPV Jan 2025.
 
 ---
 
@@ -86,16 +83,12 @@ is the first item of unfinished business.**
 > actually predicts the correct ridership per mode must be CHECKED, not
 > assumed. Every form of transport should be IN ACTION physically.**
 
-"In action physically" is DONE and campaign-proven (§9.64). "Checked" has
-its first honest answer — the pre-repair base missed by MAE 10.65 pp with
-passenger at −99.6% of its observed value — **and now, for the first time,
-a mechanically complete counter-move**: the decomposition (§9.68) showed
-the collapse was one-directional lift supply + seed decoherence, both
-repaired in the build and verified in a probe (return legs pair 347/347
-vs 2/2,818 before). **What the repairs BUY at convergence is unmeasured**
-— that is the next arm's job, and the honest expectation is a large but
-partial recovery (round-trip coverage is bounded by the observed serve
-rate: ~51k of ~150k weekday passenger tours).
+"In action physically" is DONE and campaign-proven (§9.64). "Checked" has the
+pre-repair answer (MAE 10.65 pp, passenger −99.6%) and a built,
+probe-verified counter-move (§9.68/§9.69) whose converged effect is
+UNMEASURED — the 4.6.9 arm's job. **New since 24 Aug: MATSim is the single
+simulator (§9.74)** — every corridor supply effect (signals, priority, dwell,
+crossings, lane loss) now lands natively, which is what batch 4.7 builds.
 
 ---
 
@@ -109,41 +102,42 @@ comparison is made against (vs its own observed value, not pp):
 | mode | modelled | observed | vs observed | diagnosis, and what changed since |
 |---|---|---|---|---|
 | Vehicle driver | 73.19 | 59.0 | +24% | carries displaced ride; §9.68 repairs the supply side |
-| Vehicle passenger | 0.09 | 20.6 | **−99.6%** | §9.68: returns unserved (0.0079 pairing) + seed p(car)=0.2 was the 0.196 ceiling — REPAIRED in build, unmeasured at convergence |
-| Walk only | 7.28 | 13.4 | −46% | §9.69: the ≤1 km trip mass was never generated (4.45% vs 18.8% observed) — REPAIRED in build |
-| Bike | 11.21 | 3.2 | +250% | #50 table: children ride 46–50% bike / 0% ride — displaced child ride demand; §9.68 covers exactly that population first |
-| PT aggregate | 8.22 | 3.8 | +116% | bus 6.13 / rail 0.77 / tram 0.02 / ferry 0.02 — composition wrong on the corridor; UNTOUCHED this session (lane open) |
-| Light rail | 1,260 | 3,417 boardings | −63% | the corridor composition lane; EPV bus–LR transfer 3.8 equiv-min (§9.71) is an official anchor inside the 3–15 sweep |
+| Vehicle passenger | 0.09 | 20.6 | **−99.6%** | §9.68 repairs BUILT in the demand, unmeasured at convergence |
+| Walk only | 7.28 | 13.4 | −46% | §9.69 short-trip mixture BUILT, unmeasured at convergence |
+| Bike | 11.21 | 3.2 | +250% | displaced child ride demand (#50 table); §9.68 covers that population first |
+| PT aggregate | 8.22 | 3.8 | +116% | bus 6.13 / rail 0.77 / tram 0.02 / ferry 0.02 — corridor composition lane open |
+| Light rail | 1,260 | 3,417 boardings | −63% | corridor composition; EPV bus–LR transfer 3.8 equiv-min anchors inside the 3–15 sweep; #73 makes the signal side mechanical |
 | Motorbike | 0.21 | locked carve | — | not a choice mode (§9.52) |
-| Truck | swept | never pinned | — | freight physical (§9.49); Mayfield cap 1,268/day recorded as an upper-bound constraint (§9.70) |
+| Truck | swept | never pinned | — | freight physical (§9.49); Mayfield cap 1,268/day a constraint (§9.70) |
+| Taxi/rideshare | not modelled | 15–25k trips/day band | — | becomes a priced mode in 4.7.8 (#49, §9.75); band is a constraint, never a target |
 
-Occupancy 0.0013 vs 0.3503 (the §9.68 probe's pairing-implied occupancy
-is 0.12 at seed state). Counts −91.8% structural (no-through-demand,
-recorded). Seed noise floor ≤0.11 pp/mode (n=2).
+Occupancy 0.0013 vs 0.3503 (repair probe's pairing-implied 0.12 at seed
+state). Counts −91.8% structural. Seed noise floor ≤0.11 pp/mode (n=2).
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§3  THE ACTIVE LANE — in order
+§3  THE ACTIVE LANE — batch 4.7, in build order
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **Bring the owner the §0 decisions** — chiefly the next-arm
-   RE-approval (the third session's approval was consumed by the §9.72
-   launch deaths): without it nothing else can be measured.
-2. **Launch the next base arm** (4.6.9) on the regenerated demand —
-   25% × 1000 × WEEKDAY — **from an owner-owned shell (§0.1a, #70)**, and
-   verify it past `PersonPrepareForSim` into iterations before calling it
-   launched. Arm B (seed 20260811) only under the §0.1b pace condition.
-   It re-baselines EVERY mode at once: ride vs 20.6, walk vs
-   13.4, bike vs 3.2, driver vs 59.0, the LR boardings, occupancy.
-3. **PT composition on the corridor** — why demand rides buses past the
-   tram (frequency? the transfer point? access stubs?): the diagnostic
-   closest to the study's own question, cheap to start on the CLOSED
-   arms' events while the new arm runs.
-4. **#68 level crossings** (designed §9.70) — build it BEFORE the arm
-   after next, or accept another family boundary.
-5. Then by recorded order: #49 Tier C + taxi 4.4 (evidence complete on
-   the issue), #63 remainder, #62.
+1. **Bring the owner the §0 decisions** — chiefly the 4.6.9 re-approval AND
+   the ordering call (repairs-arm-first vs fold-in).
+2. **Build the harness safety set first: 4.7.1 warm restart (#75), 4.7.2
+   progress digest (#76), 4.7.3 run index (#77)** — no model change, no
+   boundary, and 4.7.1 must exist before ANY 65 h arm runs.
+3. **4.7.4 descope execution (#72)** — registry/toolchain/checks/manifest;
+   a logged §14 toolchain change; invalidates nothing.
+4. **Build the model-changing set INERT: 4.7.5 crossings (#68), 4.7.6 dwell
+   (#74), 4.7.7 signals+priority+lanes (#73), 4.7.8 taxi (#49)** — code,
+   registry fields, derivations and toy probes, WITHOUT touching the
+   assembled 4.6.9 run inputs; activation happens at the single batch
+   boundary per the owner's ordering call. 4.7.7 is the big one: Maven run
+   stack (§14 entry), saturation-flow re-capacitation (double-count rule),
+   per-green discharge check, `QSignalsNetworkFactory` toy probe.
+5. **4.7.9 sweep-basis sharpening + 4.7.10 frontage analyser** — cheap,
+   docs/registry/analysis only.
+6. Still cheap and open on the CLOSED arms while anything runs: the PT
+   corridor composition diagnostic (why demand rides buses past the tram).
 
 ---
 
@@ -151,39 +145,31 @@ recorded). Seed noise floor ≤0.11 pp/mode (n=2).
 §4  WHAT IS DONE — do not redo any of it
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **§9.49–§9.67** (20–24 Aug, PRs #56/#58/#59/#64/#67): everything
-  physical; the walk wedge; lifts M0/M1; the two-arm campaign; C5;
-  runner-named, status-carded runs; the city-digital-twin rename.
-- **§9.68** (24 Aug, this PR): `src/analyse/decompose_ride_choice.py` +
-  `_ride_choice.json` on arm A (absent 76,986 / scored-out 109 /
-  selected 531); round-trip binding in BOTH binder passes
-  (`B.activity.escort_binding_directions`, household pending-pickup
-  ledger, non-household all-or-nothing two-driver pairs, same driver
-  preferred); `escort_binding_direct_tour`; `B.mode.serve_tour_seed=car`
-  (guarded: carless escorts keep the uninformed draw) and
-  `bound_passenger_seed=ride`; `liftHousehold` comma-list through
-  `RidePairingEngine` and `sample_population`; `B2_escort_bindings_<day>.csv`
-  new, `B2_lift_bindings_<day>.csv` gains `direction`.
-- **§9.69** (24 Aug, this PR): the two-component gravity mixture —
-  `short_trip_band_share` (literature, Table 4.4.7), `short_trip_band_km`
-  (held fixed), `short_trip_mean_km` (derived from the held walk mean);
-  weights solved per purpose, long kernels re-solved; build report shows
-  every band target hit EXACTLY with every mean preserved.
-- **§9.70** (24 Aug, this PR): coal chain scoped OUT on observed
-  infrastructure (ARTC/PWCS/NCIG, ~110 movements/day on dedicated track);
-  #68 filed for the two level crossings; Mayfield truck cap a constraint.
-- **§9.71** (24 Aug, this PR): `pre_lr_lanes_per_dir` 2 → 1 from the
-  Overpass attic record (raw responses + provenance landed under
-  `data/raw/osm_attic/`, ODbL); EPV Jan 2025 check recorded.
-- **#50's modelled table** (`src/analyse/mode_by_demographics.py`,
-  `_mode_by_demographics.json` on arm A).
-- **Regeneration + verification**: B2/plans/30 run-input sets; manifest
-  436; `check_package` ALL PASSED; G2 13/13; probe
-  `20260824T210040_2it_1pct` rc=0, accounting closes, pair rate 0.9988
-  at it-2 with returns 347/347.
+- **§9.49–§9.72** (20–24 Aug, PRs #56/#58/#59/#64/#67/#69/#71): everything
+  physical; the walk wedge; lifts; the two-arm campaign; C5; runner-named
+  runs; the rename; the ride-lever decomposition + repairs (§9.68/§9.69);
+  coal chain scoped out (§9.70); pre-LR lanes 2→1 + EPV check (§9.71); the
+  §9.72 launch-death record.
+- **§9.73 (25 Aug): the framework survey is DONE — do not re-run it.**
+  MATSim re-affirmed; POLARIS/BEAM/GPU/commercial verdicts recorded; the
+  pinned jar verified to embed MATSim **2027.0-2026w25**; DSim watch-only.
+- **§9.74 (25 Aug): the SUMO descope is DECIDED** — do not re-litigate;
+  #72 executes it. Deliverable 7/§9.16 retired; P5 5.1/5.2 deleted; 5.3
+  resolved to stays-swept.
+- **§9.75 (25 Aug): the signalling dossier is COMPLETE** at
+  [`design/signalling/`](../design/signalling/README.md) — SCATS mechanics
+  head-to-toe (file 09's closure checklist), the MATSim signals contrib
+  mapped (file 04), algorithms in pseudo-code (file 05), data-availability
+  map (files 03/07/08). Do not re-research SCATS; read the dossier.
+  `scats_phasing` STAYS `unobtained` for the 14 modelled sites.
+- **Issues #72–#78 filed 25 Aug** carrying the batch's scope; #49 and #68
+  updated with the resequencing and the Stewart-Ave/boom-gate evidence.
+- **Regeneration + verification (24 Aug)**: B2/plans/30 run-input sets on
+  §9.68/§9.69; manifest 436; `check_package` ALL PASSED; probe
+  `20260824T210040_2it_1pct` rc=0, returns pair 347/347.
 
-**Phases:** P0–P3 ✅ · P4 🟡 (8 of 9 — deliverable 0/0b open, #63) ·
-P5–P7 ⬜.
+**Phases:** P0–P3 ✅ · P4 🟡 (deliverable 0/0b open #63; deliverable 7
+retired §9.74) · P5–P7 ⬜.
 
 ---
 
@@ -192,62 +178,71 @@ P5–P7 ⬜.
 ═══════════════════════════════════════════════════════════════════════════════
 
 - **No multi-hour run without owner approval. None standing.**
-- **The comparability family is §9.68/§9.69 onward** — the regenerated
-  demand. The two completed arms (`20260821T175907_1000it_25pct`,
-  `20260821T180310_1000it_25pct`) are the CLOSED §9.58–§9.63 family's
-  record: compare the next arm's fit against their table as
-  before-vs-after, never as same-family runs. NEVER compare across
+- **The comparability family is §9.68/§9.69 onward**; the two completed
+  arms (`20260821T175907_1000it_25pct`, `20260821T180310_1000it_25pct`) are
+  the CLOSED family's record — before-vs-after only. NEVER compare across
   families or fractions; `target_lga_pct`, never `all_residents_pct`.
+- **Batch 4.7's model changes activate as ONE family boundary** (§9.75) —
+  building them inert is fine; activating them piecemeal creates
+  uncomparable fragments. The boundary's DECISIONS entry is authored at
+  activation.
+- **The signals build has four recorded traps (§9.75)**: the double-count
+  rule (explicit signals meter saturation-flow approaches; the implicit
+  `A.signals` delay comes OUT of the same movements — one representation
+  per effect); the sample-discretisation check (0–2 vehicles per short
+  green at 25% — verify per-green discharge before trusting any effect);
+  the `QSignalsNetworkFactory` single-binding toy probe before any
+  scenario; Stewart Avenue is a T-aspect signal site, never a boom-gate
+  closure (#68 and #73 must not double-treat it).
 - **THE 67/143 SPLIT IS PRE-REGISTERED** — `fit.py` enforces; need a
   holdout? SAY SO AND STOP.
 - **One build of the network per comparison** (§3.5); threads are run
-  identity (§9.56/§9.59).
-- **No invented data**: who-drives-whom stays unobserved (the round-trip
-  allocation re-aims the observed rate, adds no tour); closure logs for
-  #68 are unpublished — swept, never pinned.
+  identity (§9.56/§9.59). Per-day-type/variant schedules derive from the
+  mapped schedule — the dwell work (4.7.6) uses exactly this rule.
+- **No invented data**: the TIA numbers are cited evidence, not inputs,
+  until acquired with provenance (#78); who-drives-whom stays unobserved;
+  crossing closure logs are unpublished — swept, never pinned.
 - **A run without `_run.json` is not a result**; `aborted_*` means
   disregard.
-- **The §8.5-held mode constants stay held** — §9.68 measured that the
-  ASC was never the lever (109 flippable persons); do not re-open it
-  without the post-repair arm's evidence.
+- **The §8.5-held mode constants stay held** (§9.68 measured the ASC is not
+  ride's lever).
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§6  EXACT STATE — 24 August 2026, second session close
+§6  EXACT STATE — 25 August 2026, fourth session close
 ═══════════════════════════════════════════════════════════════════════════════
 
 | | |
 |---|---|
-| PRs | #69 merged (§9.68–§9.71, branch cleaned up both sides); **THIS session's PR (docs-only: §9.72, the two aborted launch close-outs, #70) OPEN at handoff** — merging it and deleting the branch both sides is the first item of unfinished business; 24 prior merged, 2 closed unmerged |
-| Toolchain | 3 pinned, unchanged; 13 Java sources compile (RidePairingEngine touched: comma-list liftHousehold) |
-| Registry | **341 fields**; ledger **0** `--strict`; G2 13/13 |
-| Package | **436 manifest files**; `check_manifest` OK; `check_package` ALL PASSED (2 standing warnings) |
+| PRs | **THIS session's PR (docs + issues: §9.73–§9.75, the dossier landing, batch 4.7) OPEN at handoff** — merging it and deleting the branch both sides is the first item of unfinished business; 25 prior merged, 2 closed unmerged |
+| Toolchain | 3 pinned, unchanged this session (SUMO's removal is #72, next session); 13 Java sources compile; the jar embeds MATSim 2027.0-2026w25 (§9.73) |
+| Registry | **341 fields**, unchanged; ledger **0** `--strict`; G2 13/13 |
+| Package | **436 manifest files**, unchanged; `check_manifest` OK; `check_package` ALL PASSED (24 Aug, 2 standing warnings) |
 | Machine | **free**; no run in progress |
 | Run cost | ~240 s/it/arm two-arm, ~233 s single → ~65–67 h per 25%×1000 arm |
-| Runs | the two CLOSED-family arms (valid, pre-repair record) · the §9.68 verification probe `20260824T210040_2it_1pct` (probe, not a result) · prior probes and **eleven** `aborted_*` as recorded on the board — the newest two are the §9.72 silent launch deaths (`aborted_20260824T212729_1000it_25pct`, `aborted_20260824T225951_1000it_25pct`) |
-| Open issues | **9**: #70 (NEW: session-spawned runs die silently — the launch constraint) · #48 (repair built, converged measurement open) · #30 (mechanism built, re-measure open) · #49 (Tier C + taxi; evidence complete) · #50 (mode × age acquisition) · #62 · #63 (0b remainder) · #66 (stall watch) · #68 (level crossings, designed) |
-| **Results** | **Nothing new is a result.** The pre-repair report card (MAE 10.65 pp) stands as the closed family's record; the repairs are probe-verified builds; no counterfactual has run; nothing is a finding about the light rail. |
+| Runs | unchanged from §9.72's record: two CLOSED-family arms (valid) · the §9.68 probe · prior probes · eleven `aborted_*` |
+| Open issues | **16**: #72–#78 (NEW, §9.75) · #70 · #48 · #30 · #49 · #50 · #62 · #63 · #66 · #68 |
+| **Results** | **Nothing new is a result.** No run this session; the pre-repair report card stands as the closed family's record; no counterfactual has run; nothing is a finding about the light rail. |
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
 §7  DECISIONS TAKEN — do not re-litigate
 ═══════════════════════════════════════════════════════════════════════════════
-• Iteration horizon = 1000 (§9.43); the innovation-cutoff residual is
-declared uncertainty — the measured search creep at cutoff on the closed
-arms was ~0.26 pp/100 it decaying, and an evidence-triggered cutoff is the
-eventual instrument, deferred until the structure settles. • §8.5 =
-constrain-and-report; C5 exists feasible=False; **the ASC is measured NOT
-to be ride's lever (§9.68)**. • RIDE IS EMERGENT; M0+M1+round-trip built;
-M2 stays un-built (round-trip answers returns within the observed rate);
-M3 rejected. • The §9.58 network family stands; PassingQ; replanning 20;
-events 4. • Seed floor ≤0.11 pp/mode; n_replications awaits the owner.
-• Coal trains deliberately NOT simulated (§9.70 — dedicated track; adding
-them would fabricate an interaction). • `pre_lr_lanes_per_dir` = 1
-(measured §9.71; sweep keeps 2). • Freight swept never pinned; SCATS
-refused; Opal swept 3–15 min (EPV's bus–LR 3.8 equiv-min is an anchor
-INSIDE it); dwell swept. • Two concurrent arms are proven; each campaign
+• **MATSim stands; migration rejected on a documented survey (§9.73).**
+• **SUMO descoped; MATSim the single simulator (§9.74)** — S-b native via
+#73 (a band regardless), reliability variance a stated limitation,
+deliverable 7 retired. • **Taxi resequenced into 4.7 (§9.75)** — supersedes
+§9.42's after-deliverable-5 gate; still a priced mode, never a fleet sim.
+• **Signal ladder: rungs 2+4 ticked, rung 3 (SCATS emulator) NOT ticked.**
+• Iteration horizon 1000 (§9.43). • §8.5 constrain-and-report; C5
+feasible=False; the ASC is not ride's lever (§9.68). • RIDE IS EMERGENT;
+M2 un-built; M3 rejected. • PassingQ; replanning 20; events 4. • Seed floor
+≤0.11 pp/mode; n_replications awaits the owner. • Coal trains NOT simulated
+(§9.70). • `pre_lr_lanes_per_dir` = 1 (§9.71). • Freight swept never
+pinned; SCATS refused (§9.21) and `scats_phasing` unobtained; Opal swept
+3–15 min; dwell swept 10–35 s. • Two concurrent arms proven; every campaign
 needs its own stated-cost approval.
 
 ---
@@ -255,113 +250,101 @@ needs its own stated-cost approval.
 ═══════════════════════════════════════════════════════════════════════════════
 §8  TRAPS — new ones first, each paid for
 ═══════════════════════════════════════════════════════════════════════════════
-1. **A detached launch from the agent session is not a launch.** Both
-   routes tried — `Start-Process` with logs AND WMI `Win32_Process.Create`
-   — had their whole process tree killed silently within minutes of the
-   tool call ending (§9.72, #70; attribution open). This SUPERSEDES the
-   old trap-4 advice for RUNS: `Start-Process` detachment is measured
-   insufficient. Launch arms from an owner-owned shell and verify
-   `matsim.log` past `PersonPrepareForSim` with the launching context
-   gone. Cost: two dead arm launches and the campaign evening.
-2. **Survivorship bias in converged-run diagnostics.** "100% of surviving
-   ride requests pair" read as "supply is fine" cost the §9.64 session
-   the correct lever: selection had already killed every plan whose
-   requests could NOT pair. Decompose over the SEARCH-phase population
-   (plan memories, per-iteration counters), never the survivors.
-3. **A seed probability can BE a converged ceiling.** The uniform seed
-   gave serve tours car with p=0.2; outbound pairing converged at 0.196.
-   When a two-sided coordination needs both agents' selected plans to
-   align, MATSim's independent selection cannot climb past the seed —
-   check coherence-critical seeds explicitly.
-4. **Per-person budgets break paired allocations.** Requiring drop+pickup
-   from one escorter's drawn budget would have collapsed household
-   binding (most draw exactly one HX tour) — the pending-ledger pattern
-   (household scope, like `claimed`) is the fix. Cost: one killed regen.
-5. **The Bash tool's 10-min cap kills backgrounded builds silently** —
-   launch long builds detached (`Start-Process` + log) and chain
-   downstream steps on pid exit + output freshness, not on hope. Cost:
-   one B2 build killed mid-lift-pass and restarted. **For RUNS this is
-   superseded by trap 1** — a build that outlives the session is at the
-   same risk.
-6. **`git add -A` in the repo root can commit a stray task artefact** —
-   check `git status` before wide adds (cost: one revert commit).
-7. Carried, all still live: `os.kill(pid,0)` on Windows TERMINATES;
-   a slow mobsim is not a dead run; the #66 stall hits both arms at one
-   wall-clock; verified-at-1% is not verified (assertions, not probes);
-   `bind_nonhousehold_lifts` busy checks read re-targeted sibling times;
-   -Xms pins to -Xmx; subset run-input builds OVERWRITE the report;
-   PowerShell here-strings mangle (use `--body-file`); "Fix #NN" closes
-   issues; `tail -f` holds a Windows directory lock; car vehicles carry
-   the bare person id; CLEAR a re-moded leg's route; `render_docs` after
-   registry edits; branch `<git-handle>/<kebab>`, no attribution.
+1. **A directory move can silently delete a tracked framework file.** The
+   dossier's move out of `docs/` deleted `docs/README.md` in the working
+   tree; caught and restored at handoff. `git status` after every move.
+2. **A detached launch from the agent session is not a launch** (§9.72,
+   #70): both routes tried died silently within minutes. Launch from an
+   owner-owned shell; verify past `PersonPrepareForSim`. Cost: two dead
+   launches and a campaign evening.
+3. **Survivorship bias in converged-run diagnostics** — decompose over the
+   SEARCH-phase population, never the survivors (cost: the §9.64 wrong
+   lever).
+4. **A seed probability can BE a converged ceiling** (0.2 car seed = the
+   0.196 pairing ceiling) — check coherence-critical seeds explicitly.
+5. **Per-person budgets break paired allocations** — pending-ledger pattern
+   (cost: one killed regen).
+6. **The Bash tool's 10-min cap kills backgrounded builds silently** —
+   detach long builds; for RUNS superseded by trap 2.
+7. **`git add -A` in the repo root can commit a stray task artefact** —
+   check `git status` before wide adds.
+8. Carried, all still live: `os.kill(pid,0)` on Windows TERMINATES; a slow
+   mobsim is not a dead run; the #66 stall hits both arms at one
+   wall-clock; verified-at-1% is not verified; `bind_nonhousehold_lifts`
+   busy checks read re-targeted sibling times; -Xms pins to -Xmx; subset
+   run-input builds OVERWRITE the report; PowerShell here-strings mangle
+   (use `--body-file`); "Fix #NN" closes issues; `tail -f` holds a Windows
+   directory lock; car vehicles carry the bare person id; CLEAR a re-moded
+   leg's route; `render_docs` after registry edits; branch
+   `<git-handle>/<kebab>`, no attribution.
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§9  STATE OF THE PROJECT — THE SIX QUESTIONS (24 August 2026, second close)
+§9  STATE OF THE PROJECT — THE SIX QUESTIONS (25 August 2026, fourth close)
 ═══════════════════════════════════════════════════════════════════════════════
 
 ### 1. Goals & achievement
 Research goal (proposal §1/§3): A1–A6, B1–B4 — **none tested** (no
-counterfactual has run); B3's counterfactual input moved onto evidence
-(§9.71). Operational goal: physical half COMPLETE; checked half has the
-pre-repair report card (MAE 10.65 pp) AND a built, probe-verified repair
-awaiting its converged measurement. Proposal §8 deliverables: model 🟡 ·
-data 🟡 (436 files) · calibration report 🟡 (C5, feasible=False) ·
-paper ⬜ · explorer 🟡 · method note 🟡.
+counterfactual has run). B3's counterfactual input is on evidence (§9.71);
+S-b's home moved from SUMO to the native #73 build (§9.74/§9.75).
+Operational goal: physical half COMPLETE; checked half awaits the 4.6.9
+arm on the built §9.68/§9.69 repairs. Proposal §8 deliverables: model 🟡 ·
+data 🟡 (436 files) · calibration report 🟡 (C5, feasible=False) · paper ⬜
+· explorer 🟡 · method note 🟡 (gains the reliability-variance limitation,
+§9.74).
 
 ### 2. Phases — 4 of 8, P4 nearly closed
-P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ (regenerated 24 Aug on §9.68/§9.69) ·
-**P4 🟡 (8 of 9 — deliverable 0/0b open, #63)** · P5–P7 ⬜. Home:
+P0 ✅ · P1 ✅ · P2 ✅ · P3 ✅ (regenerated 24 Aug on §9.68/§9.69) · **P4 🟡
+(8 of 9 — deliverable 0/0b open #63; deliverable 7 RETIRED §9.74)** ·
+P5–P7 ⬜ (P5's SUMO tasks deleted/reworked §9.74). Home:
 [`STATUS.md`](../STATUS.md) phase table.
 
 ### 3. Tasks
-4.1: 9/9 ✅. 4.2: all eight ✅. 4.3 (0b): §9.61 + §9.71 done; backlog #63.
-4.4: evidence complete, build owner-sequenced. 4.5: campaign ✅. **4.6
-(the owner's 24 Aug goal): 4.6.1–4.6.6, 4.6.10, 4.6.11 ✅ · 4.6.7 (#68)
-designed ⬜ · 4.6.8 (taxi) evidence-complete ⬜ · 4.6.9 (the next arm)
-⬜ AWAITING OWNER RE-APPROVAL, launch-blocked by #70's constraint
-(§9.72).** P5 0/5 · P6 0/5 · P7 0/4; the four
-deletion/rework proposals (5.2/5.3/6.1/6.2) still await the owner.
+4.1/4.2/4.5 ✅. 4.3 (0b): §9.61+§9.71 done; backlog #63 (4.7.9 takes the
+sweep-basis items). 4.6: 4.6.1–4.6.6, 4.6.10, 4.6.11 ✅ · 4.6.7 → 4.7.5 ·
+4.6.8 → 4.7.8 (resequenced §9.75) · **4.6.9 ⬜ AWAITING OWNER RE-APPROVAL +
+the ordering call**. **Batch 4.7 (NEW, §9.75): 4.7.1–4.7.10 all ⬜ — the
+next session's work, harness set first, model set built inert.** P5 0/2
+remaining (5.4, 5.5) · P6 0/5 · P7 0/4; deletion/rework proposals: 5.2/5.3
+RESOLVED by §9.74; 6.1/6.2 still await the owner (4.7.10 informs 6.1).
 
 ### 4. Simulator vs real life
-The §2 table above is the latest CONVERGED fit (arm A, closed family,
-pre-calibration, pre-repair). The §9.68 probe is a 2-iteration
-verification, not a fit. Full rows:
+The §2 table is the latest CONVERGED fit (arm A, closed family,
+pre-calibration, pre-repair). Nothing measured since. Full rows:
 `results/20260821T175907_1000it_25pct/_fit.json` ·
 [`docs/audit/CALIBRATION_REPORT.md`](../audit/CALIBRATION_REPORT.md) ·
-`_ride_choice.json` and `_mode_by_demographics.json` beside it.
+`_ride_choice.json` · `_mode_by_demographics.json`.
 
-### 5. Issue ledger — 44 filed (numbers shared with PRs), 35 closed, 9 open
-#70 (NEW 24 Aug third session — the launch constraint, §9.72) · #48
-(evidence 24 Aug, converged measurement open) · #30 (evidence 24 Aug,
-re-measure open) · #49 (evidence 24 Aug) · #50 (modelled half DONE 24 Aug)
-· #62 (21 Aug) · #63 (two items measured 24 Aug) · #66 (monitoring) ·
-#68 (24 Aug, designed). #65 closed with PR #67's merge.
+### 5. Issue ledger — 51 filed (numbers shared with PRs), 35 closed, 16 open
+**#72–#78 NEW 25 Aug** (descope execution · signals+priority+lanes · dwell ·
+warm restart · digest · index · SCATS data acquisition, owner) · #70 (launch
+constraint) · #48/#30 (repairs built, converged measurement open) · #49
+(taxi → 4.7.8) · #50 (mode × age acquisition) · #62 · #63 · #66 (stall
+watch) · #68 (crossings → 4.7.5; boom gates verified in OSM).
 
 ### 6. PR history, and the next PR
-23 merged PRs tell the build story (#1–#3 foundations · #38 audit+rebuild
-· #40 ride pairing · #43 escort+age · #44 first repaired-demand run · #46
-freight · #47 calibration decision · #52 motorbike · #53 all-physical ·
-#56 stack landing · #58 accounting · #59 events threads · #61 PR-only
+25 merged PRs tell the build story (#1–#3 foundations · #38 audit+rebuild ·
+#40 ride pairing · #43 escort+age · #44 first repaired-demand run · #46
+freight · #47 calibration decision · #52 motorbike · #53 all-physical · #56
+stack landing · #58 accounting · #59 events threads · #61 PR-only
 convention · #64 walk wedge + lifts + knobs · #67 two-arm campaign + C5 +
-runner-named runs + rename · **#69 the ride-lever answer: §9.68–§9.71**).
-**This session's PR (open at this handoff) is docs-only: §9.72, the two
-aborted launch close-outs, issue #70.** The next PR after it merges: the
-post-repair base arm's launch-watch-close-out (`P4: Run the
-repaired-demand base arm and re-measure every mode (#48, #30)`) — gated
-on the owner's RE-approval and the #70 launch constraint.
+rename · #69 the ride-lever answer · #71 the launch-death record). **This
+session's PR (open at this handoff): §9.73–§9.75, the signalling dossier,
+issues #72–#78, batch 4.7 on the board.** The next PR after it merges:
+batch 4.7's build (`P4: Build the all-modes batch — signals, taxi,
+crossings, dwell, harness safety (#73 #49 #68 #74 #72 #75 #76 #77)`) — with
+the 4.6.9 ordering per the owner's call.
 
 ---
 
 ### Bootstrap reading, in this order
 
 ```
-cities/newcastle/docs/STATUS.md                    the board; batch 4.6 is the lane
-cities/newcastle/docs/DECISIONS.md §9.68–§9.72     the last two sessions, cross-linked
+cities/newcastle/docs/STATUS.md                    the board; batch 4.7 is the lane
+cities/newcastle/docs/DECISIONS.md §9.73–§9.75     this session's record
+cities/newcastle/docs/design/signalling/README.md  the dossier (read 06 then 04 before #73)
 results/20260821T175907_1000it_25pct/_fit.json     the pre-repair report card
-results/20260821T175907_1000it_25pct/_ride_choice.json   the decomposition
-cities/newcastle/demand/plans/_activity_chains_report.json  band + coverage diagnostics
-issues #48 #30 #68 #63                             the open lanes
+issues #72–#78, #48, #30, #68                      the open lanes
 .claude/CLAUDE.md                                  conventions + hard constraints
 ```
