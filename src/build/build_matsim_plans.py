@@ -473,12 +473,15 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         m = 'car'
                     elif moto:
                         m = 'motorbike'
-                    elif tid in serve_tours:
+                    elif tid in serve_tours and car_av:
                         # 9.68 B.mode.serve_tour_seed: the pairing engine
                         # pairs ride legs with CAR legs only - a bound serve
                         # tour seeded with any other mode cannot serve the
                         # passenger booked onto it. Seed only; SubtourModeChoice
-                        # stays free to move it.
+                        # stays free to move it. A LICENSED-BUT-CARLESS escort
+                        # (a parent walking a child to school) keeps the
+                        # uninformed draw - seeding car would put an illegal
+                        # plan in memory (the 9.15 class).
                         m = SERVE_TOUR_SEED
                     elif (tid in covered_tours and ride_av
                             and BOUND_PASSENGER_SEED != 'uninformed'):
