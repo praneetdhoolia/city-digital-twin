@@ -53,6 +53,9 @@ cities/*/networks/matsim/**
 !cities/*/networks/matsim/crossings/
 cities/*/networks/matsim/crossings/**
 !cities/*/networks/matsim/crossings/_crossings_report.json
+!cities/*/networks/matsim/schedules/
+cities/*/networks/matsim/schedules/**
+!cities/*/networks/matsim/schedules/_dwell_report.json
 cities/*/networks/sumo/**
 
 # --- TfNSW Speed Zones raw download (62 MB zip + a 436 MB dbf, regenerate with

@@ -1,0 +1,63 @@
+{
+  "purpose": "native charging dwell in the transit schedule (issue #74)",
+  "rule": "departureOffset = arrivalOffset + max(existing gap, A.lightrail.dwell_charging_s) at INTERMEDIATE intervention-mode stops; arrival offsets untouched, so end-to-end scheduled run time is unchanged by construction",
+  "concurrency": "CONCURRENT with boarding: dwell = max(board, charge) - charge-at-stop happens during passenger exchange, so plain offsets suffice and boarding time is not double-counted (decision, DECISIONS.md 9.76)",
+  "derivation": "from each scenario's own already-mapped schedule; the mapper is never re-run (DECISIONS.md 3.5)",
+  "activation": "INERT until the batched family boundary re-derives the run-input sets from transitSchedule_dwell.xml.gz",
+  "scenarios": {
+    "S0": {
+      "skipped": "no resolved dwell"
+    },
+    "S1": {
+      "skipped": "no resolved dwell"
+    },
+    "S2": {
+      "dwell_charging_s": 20.0,
+      "routes_touched": 2,
+      "stops_held": 8,
+      "max_hold_s": 20,
+      "output": "networks/matsim/schedules/S2/transitSchedule_dwell.xml.gz"
+    },
+    "S2a": {
+      "dwell_charging_s": 0.0,
+      "routes_touched": 0,
+      "stops_held": 0,
+      "max_hold_s": 0,
+      "output": "networks/matsim/schedules/S2a/transitSchedule_dwell.xml.gz"
+    },
+    "S2b": {
+      "dwell_charging_s": 20.0,
+      "routes_touched": 2,
+      "stops_held": 8,
+      "max_hold_s": 20,
+      "output": "networks/matsim/schedules/S2b/transitSchedule_dwell.xml.gz"
+    },
+    "S2c": {
+      "dwell_charging_s": 20.0,
+      "routes_touched": 2,
+      "stops_held": 8,
+      "max_hold_s": 20,
+      "output": "networks/matsim/schedules/S2c/transitSchedule_dwell.xml.gz"
+    },
+    "S3": {
+      "skipped": "no resolved dwell"
+    },
+    "S4": {
+      "dwell_charging_s": 20.0,
+      "routes_touched": 3,
+      "stops_held": 18,
+      "max_hold_s": 20,
+      "output": "networks/matsim/schedules/S4/transitSchedule_dwell.xml.gz"
+    },
+    "S5": {
+      "dwell_charging_s": 20.0,
+      "routes_touched": 3,
+      "stops_held": 24,
+      "max_hold_s": 20,
+      "output": "networks/matsim/schedules/S5/transitSchedule_dwell.xml.gz"
+    },
+    "S6": {
+      "skipped": "no resolved dwell"
+    }
+  }
+}
