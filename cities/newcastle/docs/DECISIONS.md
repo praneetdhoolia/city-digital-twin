@@ -4,7 +4,7 @@
 counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No scenario has been run to a
 reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.71, 24 August 2026
+**Started:** 10 August 2026 · **last entry:** §9.72, 24 August 2026
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -61,6 +61,7 @@ otherwise cost you an hour:
 | **The ride collapse decomposed and repaired: round-trip bindings, coherent seeds** | **§9.68** — of 77,626 ride-available persons 76,986 held NO ride plan (the ASC could flip 109); return legs paired at 0.0079, intermediate at 0.0, and the uniform seed's 0.2 car probability WAS the 0.196 outbound ceiling; §9.64's "supply not binding" was survivorship bias; repair: `escort_binding_directions=round_trip`, direct bound tours, serve tours seed car, covered passengers seed ride, `liftHousehold` a list; the §9.58–§9.63 family closes |
 | **The short-trip mass gets its observed distribution** | **§9.69** — HTS Sydney 2012/13 Table 4.4.7 (only published AU distance-band-by-purpose table): 18.8% of trips ≤1 km vs the model's 4.45%; two-component gravity mixture per purpose, short kernel mean = the held observed walk mean (derived), weight solved to the band shares, long kernel re-solved so every observed mean stays exact |
 | **Pre-LR cross-section measured from OSM history; VoT set checked against EPV 2025** | **§9.71** — Overpass attic: every lane-tagged pre-2017 Hunter/Scott segment was ONE lane per direction; `pre_lr_lanes_per_dir` 2 → 1 (B3's counterfactual onto evidence, sweep keeps 2); EPV Jan 2025: HW/WB/distance-rate supported, HE and concession divergent (flagged, unchanged), bus–LR transfer 3.8 equiv-min lands inside the 3–15 sweep |
+| **Run launches, silent deaths of, and the conditional replication rule** | **§9.72** — two detached launches of the 4.6.9 arm died silently (attribution open, #70); launch arms from an owner-owned shell, verify past `PersonPrepareForSim`; no run approval standing; arm B only if arm A solo paces at 217–253 s/it |
 | **Freight rail: coal chain deliberately not simulated; two crossings named** | **§9.70** — ~110 coal-train movements/day run on dedicated track grade-separated since 2006 (ARTC/PWCS/NCIG observed); adding them would fabricate an interaction; the REAL road interactions: St James Rd Adamstown + Clyde St Islington level crossings (closures "up to ten minutes", logs unpublished → swept closure parameters, backlog) and the Mayfield truck cap 1,268/day as an upper-bound constraint |
 | **Sample fraction — why 1% is unusable** | **§9.10, §9.12** — never compare across fractions. **§9.45: the sampling UNIT is the household**, not the person, or every household mechanism varies with the fraction |
 | **`ride`: the constant, the constraint, the free-flow defect** | §9.8, §9.11, §9.12, §9.17, §9.26; **§9.44 pairs a passenger to a household driver** — and measures that fewer than 1 ride trip in 1,000 can physically be carried; **§9.46 is the demand-side repair**; **§9.48 measures the repair on the re-measure arm — pairing 0.00004 → 0.0130, and the defect changes sign** |
@@ -6600,6 +6601,65 @@ absorbed; no scoring value changes without its own decision:
 
 ---
 
+## 9.72 Two silent launch deaths end the first post-repair arm attempt; the owner's conditional replication rule (24 August 2026, third session, issue #70)
+
+**What happened.** The owner's `/goal` (third session, 24 Aug: *"make any
+fixes that can be done before the next run, then run and monitor"*)
+authorised the post-repair base arm (task 4.6.9). Two launch attempts both
+died silently within minutes, and the owner then ended the campaign at
+`/handoff`:
+
+- **Attempt 1** — `python run.py --seed 20260810 --threads 8 --xmx 30g`,
+  detached via PowerShell `Start-Process` with redirected logs (the §9.68
+  trap-4 pattern). Run `20260824T212729_1000it_25pct` started 21:27:29;
+  `matsim.log` froze at 21:28:23 — **~54 s after launch**, mid
+  `PersonPrepareForSim` at person ~65,536; launcher and JVM both gone. No
+  MATSim exception, no `hs_err_pid*`, empty stderr. Closed out as
+  `results/aborted_20260824T212729_1000it_25pct`, `_meta.json` status
+  `failed`.
+- **Attempt 2** — the same command via WMI `Win32_Process.Create`
+  (parented to the WMI provider service, outside the launching tool's
+  process tree). Run `20260824T225951_1000it_25pct` started 22:59:51; the
+  tree died **within ~2 minutes, before config emission finished** — no
+  `matsim.log` was ever written. Closed out as
+  `results/aborted_20260824T225951_1000it_25pct`, status `aborted` (the
+  owner ended the run).
+
+**Attribution: OPEN.** Two different detachment routes died the same way —
+silently, tree-wide, zero error artefacts. That matches neither OOM (no
+`hs_err`), nor a MATSim defect (attempt 2 died before MATSim started), nor
+the §9.36/#66 stall (processes gone, not hung). The prime suspect is the
+agent-session sandbox reaping processes spawned from tool calls — including
+WMI-created ones — shortly after a call or turn ends; the second death was
+also coincident with a user interrupt. Not proven; recorded as
+unattributed with both timelines. Issue **#70** tracks the fix.
+
+**Operative consequence (until #70 closes or the deaths are attributed):**
+launch convergence arms from a shell the OWNER owns — a plain terminal, or
+a Task Scheduler job created outside the agent session — never from agent
+tool calls, by any detachment route. A launch is verified only when
+`matsim.log` progresses PAST `PersonPrepareForSim` into iterations with
+the launching context gone. A 1% probe does not cover this class: the
+§9.68 probe survived because it finished inside its launching context.
+
+**Owner directives recorded this session:**
+
+1. The `/goal` run approval was consumed by the two dead attempts and the
+   owner's end-run instruction. **No run approval is standing**; the next
+   arm needs a fresh stated-cost yes (~65–67 h at 25%×1000).
+2. **Conditional replication rule (standing):** arm B (the seed
+   replication) launches ONLY if arm A's early iterations, running alone,
+   pace at the prior campaign's per-iteration time — compare iterations
+   2–5 against the closed family's 217–253 s/it band (~233 s/it
+   single-arm, §9.59). If slower, arm A runs alone.
+
+**What this deliberately does not do:** no model, data, registry or target
+value changed; the regenerated §9.68/§9.69 demand package is untouched and
+stays probe-verified; the two aborted directories are launch records, not
+results (`_run.json` absent by definition); the 67/143 split is untouched.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -7098,6 +7158,7 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-24 | **Two silent launch deaths end the first post-repair arm attempt; no model or data value changed (§9.72; issue #70; third session).** The owner's `/goal` authorised the 4.6.9 base arm; two detached launches (`Start-Process`, then WMI `Win32_Process.Create`) both died silently — ~54 s in mid `PersonPrepareForSim`, and ~2 min in before config emission — with no error artefact, and the owner ended the campaign at `/handoff`. Both closed out as `aborted_*` with cause-stating `_meta.json` (§9.66 scheme). Attribution open (#70; agent-session process reaping suspected); operative rule: launch arms from an owner-owned shell and verify past `PersonPrepareForSim`. Owner directives recorded: no run approval standing (the `/goal` approval is spent); arm B launches only if arm A's solo iterations 2–5 pace at the closed family's 217–253 s/it band. No target moved, the 67/143 split is untouched, nothing here is a result. |
 | 2026-08-24 | **The ride collapse decomposed and repaired in the demand build, the short-trip mass gets its observed distribution, and two 0b items become measurements — a NEW comparability family (§9.68–§9.71; issues #48/#31/#30/#63/#68; owner /goal directive).** The decomposition read the completed arms (no new run): 76,986 of 77,626 ride-available persons held NO ride plan in final memory (an ASC could flip 109), return legs paired at 0.0079 and intermediate at 0.0 across the search — the §9.64 "supply is not binding" reading was survivorship bias, and the uniform seed's 0.2 car probability WAS the 0.196 outbound pairing ceiling. Repairs, all declared and swept: round-trip serve-tour allocation in both binder passes (household pending-pickup ledger; non-household all-or-nothing pairs), direct bound tours, serve tours seeded car, round-trip-covered passengers seeded ride, `liftHousehold` a comma list unioned into one sampling cluster. The gravity draw becomes a two-component mixture per purpose against HTS Sydney 2012/13 Table 4.4.7 band shares (18.8% of trips ≤1 km observed vs 4.45% generated), short kernel mean = the held observed walk mean, every observed per-(purpose × LGA) mean still met exactly. B2/plans/30 run-input sets regenerated (WEEKDAY: 26,638 household + 24,515 non-household round-trip-covered tours; band shares exact on every purpose); 1% probe rc=0, accounting closes, **return legs pair 347/347 at it-2** (old family: 2 of 2,818), pairing occupancy 0.12 vs the converged 0.0013; `check_package` ALL PASSED, manifest 436. Freight rail researched: the coal chain (~110 movements/day, ARTC/PWCS/NCIG) runs on dedicated grade-separated track and is deliberately NOT simulated; the two real road interactions (Adamstown + Islington level crossings) are #68. 0b: `A.corridor.pre_lr_lanes_per_dir` measured from OSM history **2 → 1** (every tagged pre-2017 segment one lane/direction; attic responses landed with provenance, ODbL) — hypothesis B3's counterfactual onto evidence; the VoT set checked against EPV Jan 2025 (HE and concession divergent, flagged, values unchanged). #50's modelled mode × demographics table delivered from arm A. **The §9.58–§9.63 family CLOSES with the two completed arms as its record; nothing run on the regenerated demand compares to them. No target moved, the 67/143 split is untouched, and nothing here is a result.** |
 | 2026-08-24 | **Runs name, describe and status-track themselves, and the project is city-digital-twin (§9.65–§9.67; owner directives).** The run harness now names every run directory itself — `<launch yyyymmddThhmmss>_<iterations>it_<pct>pct` — and `--tag` is gone from every caller; run identity moved fully into the `_run.json` parameter set (resume scans records, prefers a matching controler hash, and no longer deletes a stale run on a controler change). Every run carries **`_meta.json`**, a schema-checked status card (`running`/`completed`/`failed`/`aborted` + started/ended/parameters) written at launch and updated automatically at every transition, with stale `running` states reconciled by pid at the next harness start; a dead run is renamed **`aborted_<name>`** in place and the `results/_aborted_<date>/` quarantine parents are dissolved. All 35 existing run directories were renamed (maps in §9.65/§9.66) and backfilled with metadata derived from their own records — nothing invented, backfilled cards say so. **The repository is renamed `NewcastleLRSIM` → `city-digital-twin`** (GitHub redirects stand; schema `$id`s and identity docs updated; `CITYSIM_*`/`citysim` stay with the open naming issue). The board's stale open-issue count was corrected against live GitHub (8 open, 42 filed, 34 closed). **No model or data value changed, no run was made, no target moved, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-08-24 | **The first converged all-physical arms complete, and C5 exists (§9.64; issues #48/#31/#30/#28/#14/#9).** Both §9.62 arms ran 1000 iterations to `relaxed: true` (drift 0.031 pp) with events-based conservation closing on every mode — the first valid runs of the §9.58–§9.63 family, ~67.4 h each under the two-arm pattern. Fit (35 of 67 calibration targets scorable, MAE 10.65 pp): driver +14.19, **passenger −20.51**, walk-only −6.12, bike +8.01, pt +4.42; submodes split per Tier R (tram 0.02%); **light rail 1,260 modelled weekday boardings vs 3,417 observed**. The central measurement: **ride collapses under SCORING, not physics** — ~6,800 ride legs/iteration until the cutoff, ~540 after selection, 100% of survivors paired and physically boarded, 0 capacity refusals across 1000 iterations — so M2 (driver detours) is a NO-GO and the next lever is demand-side choice (owner decision). `params/C5_calibration.json` written from arm A under the §9.50 constrain-and-report branch (objective 10.65, **feasible=False, five violations STATED**); the calibration report regenerated; #14/#9 CLOSED. **The seed noise floor is measured from arm B (n=2): ≤0.11 pp per mode, LR boardings ±3.9%** — the `E.replication.n_replications` input the record has waited for. The count fit (−91.8%, 6 modelled-zero stations) is statistically unchanged from the previous family (−91.05%): the recorded no-through-demand structure, not a new defect. No target moved; the 67/143 split untouched; the fit rows are the base model's report card — **nothing here is a finding about the light rail** (no counterfactual has run). |
