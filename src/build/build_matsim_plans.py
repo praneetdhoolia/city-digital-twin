@@ -622,13 +622,13 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
                 hts_mode_share_pct_source=(
                     'derived from %s, %s, LGA rows: trips-weighted over the five '
                     'study-area LGAs, unlinked, walk includes the walk stage of a '
-                    'PT trip' % (HTS_FILE, HTS_YEAR)),
+                    'PT trip' % (_city.rel(HTS_FILE), HTS_YEAR)),
                 hts_calibration_target_pct=hts_linked,
                 hts_calibration_target_source=(
                     'derived from %s, %s, %s LGA, published MODE_SHARE column '
                     '(linked trips). This is the basis of validation targets '
                     'V202-V207 and the one a MATSim mode share is comparable to '
-                    '(DECISIONS.md 12.1)' % (HTS_FILE, HTS_YEAR, HTS_TARGET_LGA)),
+                    '(DECISIONS.md 12.1)' % (_city.rel(HTS_FILE), HTS_YEAR, HTS_TARGET_LGA)),
                 typical_duration_s=TYPICAL_DURATION_S,
                 typical_duration_sweep=TYPICAL_DURATION_SWEEP,
                 note='Seed modes are initial conditions for MATSim co-evolution, '

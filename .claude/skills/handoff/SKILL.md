@@ -14,18 +14,21 @@ Run the phases **in order** — later phases summarise what earlier phases
 settle. If a phase finds nothing to do, say so and move on; do not manufacture
 work.
 
+Throughout, `<city>` is the active city — `CITYSIM_CITY`, default
+`newcastle`.
+
 ## Phase 0 — Ground truth before touching anything
 
-1. Read `cities/newcastle/docs/STATUS.md` (the board), the topical index at
-   the top of `cities/newcastle/docs/DECISIONS.md`, and
-   `cities/newcastle/docs/handover/NEXT_AGENT_BRIEF.md`.
+1. Read `cities/<city>/docs/STATUS.md` (the board), the topical index at
+   the top of `cities/<city>/docs/DECISIONS.md`, and
+   `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md`.
 2. `gh issue list --state open` and note each issue's last-updated date.
 3. `git status` — inventory uncommitted work; `git log main..HEAD --oneline`
    if on a branch.
 4. Confirm **no run is in progress** (no MATSim java process). If one is,
    stop: a handover written mid-run will be stale on arrival.
 5. Inventory this session: decisions taken, measurements produced, defects
-   found, owner directives given. This list drives every later phase —
+   found, directives given. This list drives every later phase —
    write it down first, then verify each item against an artefact
    (a file, a diff, a run record) before recording it anywhere. **Reproduce
    before attributing; never record a number you cannot point at.**
@@ -55,15 +58,15 @@ docs (a figure the session's work made wrong); dead branches
 
 | class | the one home |
 |---|---|
-| Board (state, plan, checklists) | `cities/newcastle/docs/STATUS.md` |
-| Decisions, measurements, rationale | `cities/newcastle/docs/DECISIONS.md` (+ its §14 change log and topical index) |
-| Handover | `cities/newcastle/docs/handover/NEXT_AGENT_BRIEF.md` — **rewritten in place**, never a second brief |
-| Session narrative | `cities/newcastle/docs/handover/SESSION_LOG.md` (archive; append-only) |
-| Audit / evaluation reports | `cities/newcastle/docs/audit/<YYYY-MM-DD>/<topic>.md` — a dated folder per audit day. Existing flat files stay where links point; generator-owned files (e.g. `CALIBRATION_REPORT.md`) stay at their generator's path |
-| Design dossiers (evidence for a build decision) | `cities/newcastle/docs/design/` |
+| Board (state, plan, checklists) | `cities/<city>/docs/STATUS.md` |
+| Decisions, measurements, rationale | `cities/<city>/docs/DECISIONS.md` (+ its §14 change log and topical index) |
+| Handover | `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md` — **rewritten in place**, never a second brief |
+| Session narrative | `cities/<city>/docs/handover/SESSION_LOG.md` (archive; append-only) |
+| Audit / evaluation reports | `cities/<city>/docs/audit/<YYYY-MM-DD>/<topic>.md` — a dated folder per audit day. Existing flat files stay where links point; generator-owned files (e.g. `CALIBRATION_REPORT.md`) stay at their generator's path |
+| Design dossiers (evidence for a build decision) | `cities/<city>/docs/design/` |
 | Everything generated | regenerate via `src/registry/render_docs.py`, `render_schema.py`, `src/calibrate/report.py`, `src/build/build_manifest.py` |
 
-A genuinely new *class* of document is an owner decision — propose it in the
+A genuinely new *class* of document requires an explicit decision — propose it in the
 PR body, do not create it unilaterally.
 
 ## Phase 2 — GitHub issue grooming (evidence only)
@@ -138,7 +141,7 @@ Then the standing requirements:
 - Completed sections flip from **instructions to record**: what ran, what it
   measured, where it is recorded — so the next agent cannot redo it.
 - The next lane is stated with its **verdict and cost**, ranked by value
-  against the goal; anything pending an owner decision says so explicitly.
+  against the goal; anything pending a decision says so explicitly.
 - Consumed approvals are marked **spent**; standing directives are restated.
 - New traps the session paid for join §-traps with what they cost.
 - The brief stays a *pointer*, not a copy: where it disagrees with
@@ -163,12 +166,11 @@ paths — renderers break them into dead URLs).
 in the **same commit** as the work it describes, commit message states what
 changed in the model/data/record (not which script ran), no attribution
 trailers or session links. **One title scheme for every GitHub artefact — issues and PRs alike**
-(owner-set 21 Aug 2026, applied retroactively to all of them):
+(project convention, 21 Aug 2026, applied retroactively to all of them):
 `P<phase>: <concise plain-English summary>` (≤~72 chars), task numbers or
 issue cross-refs in parens at the END (e.g. `P4: Add freight as a physical
-truck mode (#24)`), never as prefixes. Banned from titles: "Owner
-directive:", "Audit …:", "P4 handover:", "P4 board:", "Tooling:", DECISIONS
-§-refs. **Every handoff lands via a PR — never a direct commit to `main`** (owner
+truck mode (#24)`), never as prefixes. Banned from titles: "Directive:", "Audit …:", "P4 handover:", "P4 board:", "Tooling:", DECISIONS
+§-refs. **Every handoff lands via a PR — never a direct commit to `main`** (project
 rule, 21 Aug 2026; it superseded the earlier docs-only-close-outs-on-main
 convention). **The PR is opened HERE, at /handoff — not earlier, when a
 piece of work finished**: session work accumulates as commits on the

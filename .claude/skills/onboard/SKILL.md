@@ -16,21 +16,24 @@ Run the phases in order. The output of this skill is a briefing to the user
 (Phase 6) — do not start work the brief assigns until the briefing is given
 and the environment checks pass.
 
+Throughout, `<city>` is the active city — `CITYSIM_CITY`, default
+`newcastle` — per the framework rule that nothing city-specific is assumed.
+
 ## Phase 0 — The reading, in order
 
 1. `.claude/CLAUDE.md` — conventions and hard constraints (loaded
    automatically; re-read the hard-constraints list deliberately).
-2. `cities/newcastle/docs/handover/NEXT_AGENT_BRIEF.md` — the handover:
-   goal, done-do-not-redo, active lane, traps, owner directives.
-3. `cities/newcastle/docs/STATUS.md` — the board: phase table, deliverable
+2. `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md` — the handover:
+   goal, done-do-not-redo, active lane, traps, standing directives.
+3. `cities/<city>/docs/STATUS.md` — the board: phase table, deliverable
    checklist, numbered plan, runs on disk, run economics.
-4. `cities/newcastle/docs/DECISIONS.md` — start at its topical index ("How
+4. `cities/<city>/docs/DECISIONS.md` — start at its topical index ("How
    to find something in this file"); read the sections the brief and board
    point at (the newest §9.x family and the top of the §14 change log).
-5. `cities/newcastle/docs/design/newcastle-lr-proposal.md` §1, §3, §7, §8 —
+5. `cities/<city>/docs/design/newcastle-lr-proposal.md` §1, §3, §7, §8 —
    the research goal, hypotheses A1–A6/B1–B4, phases, deliverables.
 6. Only as needed after that: the audit reports under
-   `cities/newcastle/docs/audit/` and design dossiers under `docs/design/`.
+   `cities/<city>/docs/audit/` and design dossiers under `docs/design/`.
 
 ## Phase 1 — Environment verification (the brief's §0, always)
 
@@ -68,7 +71,7 @@ Answer all six exhaustively, every number traceable to its source:
 3. **Tasks per phase.** The numbered plan (STATUS.md "The plan"): per batch,
    how many done, how many done *and evaluated* (a task without its
    measurement is not evaluated), which are open, which is the active lane,
-   which are proposed for deletion/rework and awaiting the owner.
+   which are proposed for deletion/rework and awaiting a decision.
 4. **Simulator vs real life.** The latest valid run's fit against the
    calibration targets: per-mode modelled/observed/error, occupancy,
    trip-geometry ratios, counts, patronage — labelled pre- or
@@ -79,7 +82,7 @@ Answer all six exhaustively, every number traceable to its source:
    updating, or is queued work.
 6. **PR history and the next PR.** One line per merged PR; what the next PR
    should achieve per the recorded value order, and whether that choice is
-   pending an owner decision.
+   pending a decision.
 
 ## Phase 4 — The constraints that invalidate work (recite, don't rediscover)
 
@@ -110,7 +113,7 @@ Report to the user, in this order and with numbers:
 2. Environment check results (Phase 1) and anything they block.
 3. Gaps found (Phase 5).
 4. **The active lane** — the single next task per the brief, its cost, and
-   whether it needs an owner decision or approval before starting.
+   whether it needs a decision or approval before starting.
 
 Then stop. Do not begin the active lane until the user (or a standing
 directive in the brief) says to.

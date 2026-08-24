@@ -4,7 +4,7 @@
 
 **Status:** Proposal — v1, for review
 **Date:** August 2026
-**Working title:** NewcastleLRSIM (Newcastle Light Rail counterfactual microsimulation)
+**Working title:** Newcastle Light Rail counterfactual microsimulation (now the Newcastle study of `city-digital-twin`; renamed 24 Aug 2026)
 
 ---
 

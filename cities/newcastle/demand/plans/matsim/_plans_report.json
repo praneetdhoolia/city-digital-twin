@@ -61,7 +61,7 @@
     "pt": 3.39,
     "bike_other": 1.55
   },
-  "hts_mode_share_pct_source": "derived from C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\data/processed/hts/hts_mode.csv, 2024/25, LGA rows: trips-weighted over the five study-area LGAs, unlinked, walk includes the walk stage of a PT trip",
+  "hts_mode_share_pct_source": "derived from data/processed/hts/hts_mode.csv, 2024/25, LGA rows: trips-weighted over the five study-area LGAs, unlinked, walk includes the walk stage of a PT trip",
   "hts_calibration_target_pct": {
     "car": 59.0,
     "ride": 20.6,
@@ -69,7 +69,7 @@
     "pt": 3.8,
     "bike_other": 3.2
   },
-  "hts_calibration_target_source": "derived from C:\\Users\\Praneet Dhoolia\\work\\NewcastleLRSIM\\cities\\newcastle\\data/processed/hts/hts_mode.csv, 2024/25, Newcastle LGA, published MODE_SHARE column (linked trips). This is the basis of validation targets V202-V207 and the one a MATSim mode share is comparable to (DECISIONS.md 12.1)",
+  "hts_calibration_target_source": "derived from data/processed/hts/hts_mode.csv, 2024/25, Newcastle LGA, published MODE_SHARE column (linked trips). This is the basis of validation targets V202-V207 and the one a MATSim mode share is comparable to (DECISIONS.md 12.1)",
   "typical_duration_s": {
     "home": 43200,
     "work": 28800,

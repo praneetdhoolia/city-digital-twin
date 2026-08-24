@@ -1,6 +1,6 @@
 # Non-household lifts — closing the reported gap physically
 
-*21 August 2026. The owner directed (superseding the §9.55 report-only
+*21 August 2026. A standing directive ordered (superseding the §9.55 report-only
 stance): FIX the non-household-lift gap. This dossier records the option
 analysis and the mechanism built (DECISIONS.md §9.60). Nothing here is a
 result; every number below is an input, a measured diagnostic of an aborted

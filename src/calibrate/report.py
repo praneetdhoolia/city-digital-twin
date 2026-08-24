@@ -211,7 +211,7 @@ def section_provenance(w):
           % CAL)
         return
     c = json.load(open(CAL, encoding='utf-8'))
-    w('From `%s`, written by `calibrate.py`.\n\n' % CAL)
+    w('From `%s`, written by `calibrate.py`.\n\n' % _city.rel(CAL))
     w('| | |\n|---|---|\n')
     w('| Objective | %s |\n' % ', '.join('`%s` x%.3g' % (k, v)
                                          for k, v in sorted(c['objective_components'].items())))

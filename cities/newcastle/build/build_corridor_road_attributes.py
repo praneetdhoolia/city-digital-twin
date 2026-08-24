@@ -517,7 +517,7 @@ def build():
         corridor_definition=dict(
             trunk_buffer_m=CORRIDOR_TRUNK_M, cross_buffer_m=CORRIDOR_CROSS_M,
             parallel_buffer_m=PARALLEL_M,
-            alignment_source={k: dict(feed=p, mode=m, points=len(align[k]))
+            alignment_source={k: dict(feed=_city.rel(p), mode=m, points=len(align[k]))
                               for k, (p, m) in ALIGNMENT_FEEDS.items()},
             trunk_streets=TRUNK_STREETS,
             extension_variants=list(EXTENSION_VARIANTS),

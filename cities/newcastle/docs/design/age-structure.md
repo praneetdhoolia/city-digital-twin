@@ -190,7 +190,7 @@ D1–D3 distorts.
 - **G15 harvest** for the tertiary full/part-time split: consumable but
   second-order (it decides HE tour-making for the ≈38%-attending 20–24 band
   only within its full-time fraction). Declared as an assumed, swept field
-  instead — owner directive: do one thing right, do not harvest ahead of need.
+  instead — standing directive: do one thing right, do not harvest ahead of need.
 - **Within-group attendance shape** (a 15-year-old vs a 19-year-old): G01
   publishes 15–19 as one group; splitting it by single year would be invention.
   The flat group rate is stated as a limitation.

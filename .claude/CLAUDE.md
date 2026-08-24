@@ -126,7 +126,7 @@ more transparent about its assumptions than the business case it examines.
   transfer `beta_transfer_penalty_min` prices), and **S1, the bus-shuttle
   scenario** that starts there. Anywhere else it is a stale project codename —
   the repo and the framework are `city-digital-twin` (renamed from
-  `NewcastleLRSIM`, 24 Aug 2026) and the city registry is `newcastle`.
+  the earlier Newcastle-specific repository name, 24 Aug 2026) and the city registry is `newcastle`.
   Naming the whole project after one suburb also contradicts the hard constraint
   directly below: **no place name belongs in the framework**, only in
   `cities/<city>/`. Two codename identifiers survive in code and are
@@ -139,15 +139,15 @@ more transparent about its assumptions than the business case it examines.
   wins: `git branch -m …` before committing. A SessionStart hook surfaces this each
   session.
 - **NEVER commit directly to `main` — every change, including a docs-only
-  close-out, lands via a pull request** (owner rule, 21 Aug 2026; it
+  close-out, lands via a pull request** (project rule, 21 Aug 2026; it
   supersedes the earlier "docs-only close-outs land directly on `main`"
   convention). Work on `<git-handle>/<kebab>` branches and merge through a
   PR, with no exception for size or urgency. The repository's root commit
   (`ba95e7a`) is the single structural exception — a root cannot arrive by
   PR. Direct commits made before this rule stay in history as they are
-  (owner, 21 Aug 2026 — do not rewrite `main`).
+  (decision, 21 Aug 2026 — do not rewrite `main`).
 - **The session's PR is opened at `/handoff`, not when a piece of work
-  finishes** (owner rule, 21 Aug 2026). During a session, work accumulates
+  finishes** (project rule, 21 Aug 2026). During a session, work accumulates
   as commits on the session branch; `/handoff` closes the session out and
   opens ONE pull request carrying it. After opening the PR, the agent
   **arms a watch for the merge**: when the PR merges and the remote branch
@@ -163,8 +163,7 @@ more transparent about its assumptions than the business case it examines.
   dependent work stays as commits on one branch until the prior PR merges,
   or ships in the same PR. **Issue and PR titles follow one scheme**:
   `P<phase>: <concise plain-English summary>` (≤~72 chars), task numbers or
-  issue cross-refs in parens at the end — never internal idiom ("Owner
-  directive:", "Audit …:", "handover:", "board:", "Tooling:") and never
+  issue cross-refs in parens at the end — never internal idiom ("Directive:", "Audit …:", "handover:", "board:", "Tooling:") and never
   DECISIONS §-refs in a title. PR bodies follow conventional large-project
   GitHub style (Summary / Changes / Testing / Breaking changes; neutral
   voice — the internal idiom of `DECISIONS.md` stays out of GitHub

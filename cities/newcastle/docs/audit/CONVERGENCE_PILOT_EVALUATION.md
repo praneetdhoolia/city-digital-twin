@@ -19,7 +19,7 @@ a statement about the run, not about the city.*
 | tag | `conv1000_10pct` | `conv1000_25pct` | `conv1500_10pct` |
 | fraction × iterations | 10% × 1000 | 25% × 1000 | 10% × 1500 |
 | agents | 54,617 | 136,068 | — |
-| wall clock | 10 h 59 m | 30 h 47 m | stopped by the owner |
+| wall clock | 10 h 59 m | 30 h 47 m | stopped by instruction |
 | median iteration | 33.3 s | 90.2 s | — |
 | exit / accounting / telemetry | 0 / closes / clean | 0 / closes / clean | — |
 | stuck agents | 0.022% of departures | 0.023% | — |
