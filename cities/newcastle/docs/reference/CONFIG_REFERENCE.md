@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 334 fields are made of
+## What the 338 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 22 | computed from observed data in this package |
-| `derived` | 27 | follows from another registry field by identity |
+| `derived` | 29 | follows from another registry field by identity |
 | `literature` | 40 | a published value, not specific to this city |
-| `assumed` | 136 | chosen without direct empirical support |
+| `assumed` | 138 | chosen without direct empirical support |
 | `definition` | 105 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 314 | usable point value |
+| `active` | 318 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 5 | the datum does not exist in the package; must be swept, never pinned |
@@ -815,7 +815,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 68 fields*
+*`cities/newcastle/registry/B_demand.json` - 72 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -829,6 +829,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.departure_profile` | `{"HE": [0.0, 0.0, 0.0, 0.0, 0.002, 0.01, 0.06, 0.23, 0.27, 0.09, 0.035, 0.03, 0.035, 0.04, 0.075, 0.06, 0.0...` | probability_by_hour | `assumed` | plus/minus 25% |
 | `B.activity.detour_factor` | `1.3376` | ratio | `measured` | 1.25 - 1.423 |
 | `B.activity.duration_cv` | `0.3` | coefficient_of_variation | `assumed` | 0.2 - 0.45 |
+| `B.activity.escort_binding_direct_tour` | `true` | boolean | `derived` | derived: under the declared `both_links` pairing rule the serving leg must repr |
+| `B.activity.escort_binding_directions` | `round_trip` | enum | `assumed` | `outbound_only`, `round_trip` |
 | `B.activity.escort_binding_enabled` | `true` | boolean | `definition` | - |
 | `B.activity.escort_binding_min_gap_s` | `2700` | seconds | `assumed` | 900 - 5400 |
 | `B.activity.escort_binding_nonhh_scope` | `same_zone` | enum | `assumed` | `household_only`, `same_zone` |
@@ -865,8 +867,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.max_speed_kmh` | `100.0` | km/h | `definition` | - |
 | `B.freight.pce` | `2.0` | passenger_car_equivalents | `literature` | 1.5 - 3.5 |
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
+| `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
+| `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
 | `B.motorbike.trip_share` | `0.0036` | share_of_trips | `assumed` | 0 - 0.01 |
@@ -941,6 +945,20 @@ Straight-line to network distance, routed over the observed A1 road graph. Repla
 Spread of activity duration around its mean.
 
 ***assumed** · status **active** · DECISIONS.md §9.2*
+
+#### `B.activity.escort_binding_direct_tour`
+
+Whether a serve (HX) tour that is BOUND to a passenger trip suppresses the intermediate-stop draw, keeping its serving leg identical to the passenger's leg. Unbound serve tours are unaffected.
+
+***derived** · status **active** · DECISIONS.md §9.68*
+
+> **Derived from** `B.ride.pairing_rule`, `B.activity.p_intermediate_stop`: under the declared `both_links` pairing rule the serving leg must reproduce the passenger leg's two endpoints exactly, and a drawn intermediate stop inserted into a BOUND serve tour replaces that leg with two legs matching neither endpoint pair - it structurally unmakes the co-location the binding exists to create. At the declared p_intermediate_stop.HX of 0.15, one in seven bound serve tours was unpairable by construction. Unbound serve tours keep the drawn distribution unchanged.
+
+#### `B.activity.escort_binding_directions`
+
+How bound serve tours distribute over escorted passenger tours: one serving tour per passenger outward trip, or a drop-off and pick-up pair covering the passenger's whole 2-leg tour. Applies to both the 9.46 household binder and the 9.60 non-household re-targeting pass.
+
+***assumed** · status **active** · DECISIONS.md §9.68*
 
 #### `B.activity.escort_binding_enabled`
 
@@ -1206,6 +1224,12 @@ Internal heavy-vehicle trips generated per resident light-vehicle trip, applied 
 
 > **Sweep basis.** The default restates the MEASURED median heavy share of classified station flow (B.counts.heavy_vehicle_share, 0.0652) as a ratio to light vehicles: 0.0652 / (1 - 0.0652). What is ASSUMED is the transfer from a flow share at count stations to a trip share of the resident vehicle-trip base - trucks travel further per trip than cars, so a flow share overstates a trip share by an unobserved factor, and no freight OD survey exists for this or any comparable city in the package. The lower bound is zero, which turns the internal freight layer off entirely so its whole effect is measurable as a sweep member; the upper bound is roughly the classified stations' upper-quartile share expressed the same way.
 
+#### `B.mode.bound_passenger_seed`
+
+Seed mode for a passenger tour whose BOTH directions are covered by serve-tour bindings (round-trip coverage). Tours with partial or no coverage keep the uninformed draw. Consumed by build_matsim_plans.py.
+
+***assumed** · status **active** · DECISIONS.md §9.68*
+
 #### `B.mode.seed_split`
 
 The mode split the co-evolution STARTS from, conditioned only on car availability from B1. UNIFORM OVER THE USABLE MODES AND DELIBERATELY A BAD GUESS: it starts the search far from the observed point so that arriving there is evidence about the model rather than about the seed. It is a definition, not an assumption, because "uniform over what a person can use" is fully determined by B1 car availability and has no free share to sweep. What is swept is the CHOICE of seed - see B.mode.seed_split_informed.
@@ -1219,6 +1243,14 @@ The informed seed the uniform one replaced, retained so the seed-independence cl
 ***assumed** · status **active** · DECISIONS.md §9.6, 9.7*
 
 > **Sweep basis.** the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes "the result does not depend on the seed" a claim that can be tested rather than asserted (DECISIONS.md 9.6).
+
+#### `B.mode.serve_tour_seed`
+
+Seed mode for a serve (HX) tour that is BOUND to a passenger trip (household 9.46 or non-household 9.60 binding). Consumed by build_matsim_plans.py where tour seed modes are drawn.
+
+***derived** · status **active** · DECISIONS.md §9.68*
+
+> **Derived from** `B.ride.pairing_enabled`, `B.mode.seed_split`: the pairing engine pairs ride legs with CAR legs only, so a bound serve tour seeded with any other mode cannot serve the passenger booked onto it - the tour's reason to exist. MEASURED (9.68): under the uniform seed a bound driver's serve tour started as car with probability 0.2, and 0.196 was the outbound pairing ceiling the first converged arm actually realised - the seed probability WAS the ceiling. This forces only the SEED of bound serve tours; SubtourModeChoice remains free to move them, and unbound serve tours keep the uniform draw.
 
 #### `B.motorbike.length_m`
 

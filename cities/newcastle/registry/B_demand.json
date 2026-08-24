@@ -195,6 +195,43 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.escort_binding_directions": {
+      "value": "round_trip",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "outbound_only",
+          "round_trip"
+        ],
+        "basis": "The observed Serve-passenger rate counts serve journeys and says nothing about how they distribute over passengers, so the allocation is an assumed choice, declared and swept rather than silently made. `outbound_only` is the 9.46/9.60 state: every binding serves the passenger's outward anchor trip and nothing serves the trip home - MEASURED consequence on the first converged all-physical arm (9.68): outbound legs paired at 0.196, return legs at 0.008, intermediate at 0.0 across iterations 200-799, so a ride subtour always contained an unpairable leg that re-moded to a mean 5.56 km walk, and 76,986 of 77,626 ride-available persons held NO ride plan in final memory - the 9.64 'choice collapse' was this allocation, not a preference. `round_trip` allocates the same observed-rate serve tours in drop-off + pick-up pairs per passenger tour (half the passengers, both directions), the only allocation under which a bound passenger can hold a fully-pairable ride tour."
+      },
+      "status": "active",
+      "decisions_ref": "9.68",
+      "description": "How bound serve tours distribute over escorted passenger tours: one serving tour per passenger outward trip, or a drop-off and pick-up pair covering the passenger's whole 2-leg tour. Applies to both the 9.46 household binder and the 9.60 non-household re-targeting pass.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.escort_binding_direct_tour": {
+      "value": true,
+      "units": "boolean",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "B.ride.pairing_rule",
+          "B.activity.p_intermediate_stop"
+        ],
+        "identity": "under the declared `both_links` pairing rule the serving leg must reproduce the passenger leg's two endpoints exactly, and a drawn intermediate stop inserted into a BOUND serve tour replaces that leg with two legs matching neither endpoint pair - it structurally unmakes the co-location the binding exists to create. At the declared p_intermediate_stop.HX of 0.15, one in seven bound serve tours was unpairable by construction. Unbound serve tours keep the drawn distribution unchanged."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.68",
+      "description": "Whether a serve (HX) tour that is BOUND to a passenger trip suppresses the intermediate-stop draw, keeping its serving leg identical to the passenger's leg. Unbound serve tours are unaffected.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.escort_binding_min_gap_s": {
       "value": 2700,
       "units": "seconds",
@@ -916,6 +953,43 @@
       "status": "active",
       "decisions_ref": "9, 15",
       "description": "Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled \"assumed, NSW-typical shapes\", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice."
+    },
+    "B.mode.serve_tour_seed": {
+      "value": "car",
+      "units": "enum",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "B.ride.pairing_enabled",
+          "B.mode.seed_split"
+        ],
+        "identity": "the pairing engine pairs ride legs with CAR legs only, so a bound serve tour seeded with any other mode cannot serve the passenger booked onto it - the tour's reason to exist. MEASURED (9.68): under the uniform seed a bound driver's serve tour started as car with probability 0.2, and 0.196 was the outbound pairing ceiling the first converged arm actually realised - the seed probability WAS the ceiling. This forces only the SEED of bound serve tours; SubtourModeChoice remains free to move them, and unbound serve tours keep the uniform draw."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.68",
+      "description": "Seed mode for a serve (HX) tour that is BOUND to a passenger trip (household 9.46 or non-household 9.60 binding). Consumed by build_matsim_plans.py where tour seed modes are drawn.",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ]
+    },
+    "B.mode.bound_passenger_seed": {
+      "value": "ride",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "ride",
+          "uninformed"
+        ],
+        "basis": "MATSim's co-evolution has no joint replanning: a passenger's ride plan scores well only in iterations where the driver's SELECTED plan happens to hold the serving tour in car at the bound time, so the coherent two-sided state is sampled with vanishing probability from an uninformed seed (measured 9.68: 531 of 77,626 ride-available persons selected ride after 1000 iterations). Seeding the round-trip-covered passenger's tour as ride starts the search AT the coherent state and lets ChangeExpBeta abandon it if it scores badly - the seed biases where search starts, never what selection keeps. `uninformed` restores the uniform draw as the sensitivity."
+      },
+      "status": "active",
+      "decisions_ref": "9.68",
+      "description": "Seed mode for a passenger tour whose BOTH directions are covered by serve-tour bindings (round-trip coverage). Tours with partial or no coverage keep the uninformed draw. Consumed by build_matsim_plans.py.",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ]
     },
     "B.mode.seed_split": {
       "value": {

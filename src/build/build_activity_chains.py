@@ -184,6 +184,18 @@ ESCORT_MIN_GAP_S = CFG.get('B.activity.escort_binding_min_gap_s')
 # 'same_zone' binds within the shared home zone. Assumed and swept: nothing
 # observes who-drives-whom, so the matching scope is declared, never implied.
 ESCORT_NONHH_SCOPE = CFG.get('B.activity.escort_binding_nonhh_scope')
+# DECISIONS.md 9.68: how bound serve tours distribute over passenger tours.
+# 'outbound_only' is the 9.46/9.60 state - every binding serves the outward
+# anchor and nothing serves the trip home, measured on the first converged
+# arm as a 0.008 return pairing rate that made every ride subtour carry an
+# unpairable leg. 'round_trip' allocates the same observed-rate serve tours
+# as drop-off + pick-up pairs per 2-leg passenger tour. Assumed and swept.
+ESCORT_DIRECTIONS = CFG.get('B.activity.escort_binding_directions')
+# DECISIONS.md 9.68: a BOUND serve tour suppresses the intermediate-stop
+# draw - under both_links pairing an intermediate stop replaces the serving
+# leg with two legs matching neither endpoint of the passenger's leg.
+# Derived, not swept; unbound HX tours keep the drawn distribution.
+ESCORT_DIRECT_TOUR = CFG.get('B.activity.escort_binding_direct_tour')
 # Share of an under-12's drawn secondary tours that are actually made alone.
 # Applied as per-tour thinning, not as a scaling of the count.
 CHILD_TOUR_RETENTION = CFG.get('B.activity.child_tour_retention')
@@ -638,7 +650,8 @@ def draw_hour(profile, shift, u):
     return (23 + shift) % 24
 
 
-def draw_tour_spec(purpose, hz, CUM, store, zone_arr, u, fixed_dest=None):
+def draw_tour_spec(purpose, hz, CUM, store, zone_arr, u, fixed_dest=None,
+                   direct=False):
     """The stochastic content of one tour - destination chain, in-zone
     placements and activity durations - drawn exactly once, so that moving the
     tour's start in the timeline (to flow around an immovable escort tour)
@@ -646,9 +659,12 @@ def draw_tour_spec(purpose, hz, CUM, store, zone_arr, u, fixed_dest=None):
 
     `fixed_dest` is the escort binding (DECISIONS.md 9.46): the primary
     destination is the escorted household member's own drawn destination, not a
-    draw from the attractor distribution. Intermediate stops still chain off it
-    at the ordinary rate - a driver who drops a passenger may link another stop
-    before returning.
+    draw from the attractor distribution. `direct` (DECISIONS.md 9.68,
+    B.activity.escort_binding_direct_tour) suppresses the intermediate-stop
+    draw for a BOUND serve tour: under the declared both_links pairing rule an
+    intermediate stop replaces the serving leg with two legs matching neither
+    endpoint of the passenger's leg, unmaking the co-location the binding
+    exists to create. Unbound tours keep the drawn distribution.
     """
     X, Y, ZX, ZY, RAD, SA1 = zone_arr
     if fixed_dest is None:
@@ -662,7 +678,7 @@ def draw_tour_spec(purpose, hz, CUM, store, zone_arr, u, fixed_dest=None):
         primary_k, dx, dy = fixed_dest
         how = 'escorted'
     chain = [(purpose, primary_k, dx, dy, how)]
-    if u() < P_INTERMEDIATE_STOP.get(purpose, 0.15):
+    if not direct and u() < P_INTERMEDIATE_STOP.get(purpose, 0.15):
         stop_purpose = 'HS' if u() < 0.5 else 'HO'
         k = min(int(np.searchsorted(CUM[stop_purpose][primary_k], u())),
                 X.size - 1)
@@ -724,7 +740,7 @@ def time_tour(spec, t_start, person, hx, hy, hz, SA1):
 
 
 def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
-              fixed_tours=()):
+              fixed_tours=(), bound_log=None):
     """One person's tours for one day type.
 
     Returns (legs, anchors). Every tour starts and ends at the person's home,
@@ -773,21 +789,34 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
     placed = []   # (start_s, arr_home_s, spec, legs)
     for ft in sorted(fixed_tours, key=lambda f: f['start_s']):
         spec = draw_tour_spec('HX', hz, CUM, store, zone_arr, u,
-                              fixed_dest=(ft['k'], ft['dx'], ft['dy']))
-        if ft['start_s'] > DAY_HORIZON_S - 3600:
+                              fixed_dest=(ft['k'], ft['dx'], ft['dy']),
+                              direct=ESCORT_DIRECT_TOUR)
+        if ft.get('direction', 'drop') == 'pickup':
+            # pin the RETURN leg's departure to the member's own return time:
+            # probe the tour at 0 to learn the return leg's offset, then start
+            # the tour so the driver arrives at the stop just before it
+            probe, _ = time_tour(spec, 0, person, hx, hy, hz, SA1)
+            t_fixed = ft['serve_dep_s'] - probe[-1]['dep_time_s']
+        else:
+            t_fixed = ft['start_s']
+        if t_fixed < 0 or t_fixed > DAY_HORIZON_S - 3600:
             dropped[0] += 1
             continue
-        legs_f, arr_home = time_tour(spec, ft['start_s'], person, hx, hy, hz, SA1)
+        legs_f, arr_home = time_tour(spec, t_fixed, person, hx, hy, hz, SA1)
         if arr_home > DAY_HORIZON_S:
             dropped[0] += 1
             continue
-        if any(ft['start_s'] < e and arr_home > s for s, e, _, _ in placed):
+        if any(t_fixed < e and arr_home > s for s, e, _, _ in placed):
             # the binder keeps bound departures escort_binding_min_gap_s apart,
             # but a drawn intermediate stop can stretch one binding into the
             # next; a bound time may not move, so the collision drops, not shifts
             dropped[0] += 1
             continue
-        placed.append((ft['start_s'], arr_home, spec, legs_f))
+        placed.append((t_fixed, arr_home, spec, legs_f))
+        if bound_log is not None and ft.get('member') is not None:
+            bound_log.append(dict(member=ft['member'],
+                                  member_tour=ft['member_tour'],
+                                  direction=ft.get('direction', 'drop')))
     fixed_intervals = [(s, e) for s, e, _, _ in placed]
 
     shift = WEEKEND_DEPARTURE_SHIFT_H[day]
@@ -872,6 +901,13 @@ def bind_escort_tours(n_hx, candidates, claimed):
     An HX tour that finds no candidate stays UNBOUND and draws from the
     distribution exactly as before - lone-person households (26.2%) have
     nobody to bind to and must keep their observed escort rate.
+
+    Under `round_trip` directions (DECISIONS.md 9.68) a candidate consumes TWO
+    HX tours - a drop-off serving the member's outward anchor and a pick-up
+    serving the member's return leg - and only 2-leg member tours (those with
+    a known return departure and no intermediate stop) are bindable: a
+    partially covered tour cannot hold a fully-pairable ride and would spend
+    supply on a binding that changes no choice.
     """
     def pri(c):
         if not c['licence'] and c['purpose'] == 'HE':
@@ -883,20 +919,36 @@ def bind_escort_tours(n_hx, candidates, claimed):
         return 3
 
     max_pri = 2 if ESCORT_SCOPE == 'unlicensed_or_education' else 3
+    round_trip = ESCORT_DIRECTIONS == 'round_trip'
     fixed = []
     for c in sorted(candidates, key=lambda c: (pri(c), c['member'], c['tour_id'])):
-        if len(fixed) >= n_hx:
+        need = 2 if round_trip else 1
+        if len(fixed) + need > n_hx:
             break
         if pri(c) > max_pri:
             break
+        if round_trip and c.get('ret_dep_s') is None:
+            continue
         key = (c['member'], c['tour_id'])
         if key in claimed:
             continue
-        if any(abs(c['dep_s'] - f['start_s']) < ESCORT_MIN_GAP_S for f in fixed):
+        deps = [c['dep_s']] + ([c['ret_dep_s']] if round_trip else [])
+        if any(abs(d - f['serve_dep_s']) < ESCORT_MIN_GAP_S
+               for f in fixed for d in deps):
             continue
         claimed.add(key)
-        fixed.append(dict(start_s=c['dep_s'], k=c['k'], dx=c['dx'], dy=c['dy'],
-                          priority=pri(c)))
+        fixed.append(dict(direction='drop', start_s=c['dep_s'],
+                          serve_dep_s=c['dep_s'], k=c['k'], dx=c['dx'],
+                          dy=c['dy'], priority=pri(c), member=c['member'],
+                          member_tour=c['tour_id']))
+        if round_trip:
+            # pick-up: the serving leg is the RETURN (stop -> home); start_s
+            # here is an estimate for ordering only - build_day pins the tour
+            # so that the return leg departs at the member's own return time
+            fixed.append(dict(direction='pickup', start_s=c['ret_dep_s'],
+                              serve_dep_s=c['ret_dep_s'], k=c['k'],
+                              dx=c['dx'], dy=c['dy'], priority=pri(c),
+                              member=c['member'], member_tour=c['tour_id']))
     return fixed
 
 
@@ -942,8 +994,12 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
         if r['agent_tier'] == 'core':
             rows_of[r['person_id']].append(ix)
 
+    round_trip = ESCORT_DIRECTIONS == 'round_trip'
+    out['directions'] = ESCORT_DIRECTIONS
+    out['passenger_tours_not_direct'] = 0
+    out['passenger_tours_round_trip'] = 0
     drivers = []      # (home_sa1, person_id, tour_id)
-    passengers = []   # (pri, home_sa1, person_id, tour_id, anchor row index)
+    passengers = []   # (pri, home_sa1, person_id, tour_id, anchor ix, ret ix)
     for person_id, ixs in rows_of.items():
         ctx = pctx.get(person_id)
         if ctx is None:
@@ -960,8 +1016,19 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
                 pri = (0 if not ctx['licence'] and r['tour_purpose'] == 'HE'
                        else 1 if not ctx['licence']
                        else 2 if r['tour_purpose'] == 'HE' else 3)
+                ret_ix = None
+                if round_trip:
+                    # 9.68: only a direct out-and-back can be covered in both
+                    # directions; a tour with an intermediate stop would keep
+                    # an unpairable leg however many serve tours it consumed
+                    tixs = [j for j in ixs
+                            if rows[j]['tour_id'] == r['tour_id']]
+                    if len(tixs) != 2:
+                        out['passenger_tours_not_direct'] += 1
+                        continue
+                    ret_ix = next(j for j in tixs if j != ix)
                 passengers.append((pri, ctx['sa1'], person_id,
-                                   int(r['tour_id']), ix))
+                                   int(r['tour_id']), ix, ret_ix))
     out['drivers_unbound'] = len(drivers)
     out['passenger_candidates'] = len(passengers)
 
@@ -972,88 +1039,149 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
     used = set()
     bindings = []
     replaced = {}                 # (driver_pid, tour_id) -> new leg rows
-    for pri, sa1, p_pid, p_tid, ix in sorted(
+
+    def fit_serve_tour(d_pid, d_tid, chain, serve_dep, tentative):
+        """Time a direct serve tour so its SERVING leg (the second leg)
+        departs at `serve_dep`; None if the driver's day cannot hold it.
+
+        The driver's other tours are already placed and immovable here. A
+        sibling tour this pass has re-targeted is busy at its NEW times - its
+        stale originals are still in `rows`, and reading them let two lifts
+        overlap and the splice interleave their legs, which emits a mixed
+        chain/non-chain subtour SubtourModeChoice refuses (issue #65: both
+        relaunch arms crashed at replanning 1). `tentative` carries a
+        drop-off this same passenger's allocation holds but has not yet
+        committed, so a round-trip pair is checked as a whole (9.68).
+        """
+        ctx_d = pctx[d_pid]
+        spec = dict(purpose='HX', chain=chain, durs=[300, 300])
+        person_d = dict(cav=ctx_d['cav'])
+        probe, _ = time_tour(spec, 0, person_d, ctx_d['hx'], ctx_d['hy'],
+                             ctx_d['hz'], SA1)
+        t_start = serve_dep - int(probe[1]['dep_time_s'])
+        if t_start < 0:
+            return None
+        legs, arr_home = time_tour(spec, t_start, person_d, ctx_d['hx'],
+                                   ctx_d['hy'], ctx_d['hz'], SA1)
+        if arr_home > DAY_HORIZON_S:
+            return None
+        other_rows = {}
+        for j in rows_of[d_pid]:
+            tid = rows[j]['tour_id']
+            if tid != d_tid and (d_pid, tid) not in replaced:
+                other_rows.setdefault(tid, []).append(rows[j])
+        for (r_pid, r_tid), rep in replaced.items():
+            if r_pid == d_pid and r_tid != d_tid:
+                other_rows[r_tid] = rep
+        for (r_pid, r_tid), rep in tentative.items():
+            if r_pid == d_pid and r_tid != d_tid:
+                other_rows[r_tid] = rep
+        other = [r for tour in other_rows.values() for r in tour]
+        busy = collections.defaultdict(lambda: [float('inf'), 0])
+        for r in other:
+            iv = busy[r['tour_id']]
+            iv[0] = min(iv[0], int(r['dep_time_s']))
+            iv[1] = max(iv[1], int(r['arr_time_s']))
+        if any(t_start < e + 600 and arr_home > s - 600
+               for s, e in busy.values()):
+            out['skipped_infeasible'] += 1
+            return None
+        tail_s = DAY_HORIZON_S - 24 * 3600
+        early = any(int(r['dep_time_s']) < tail_s for r in other)
+        if early and t_start >= 24 * 3600:
+            out['skipped_infeasible'] += 1
+            return None
+        return legs
+
+    def as_rows(legs, d_pid, d_tid):
+        new_rows = []
+        for leg in legs:
+            leg = dict(leg)
+            leg['person_id'] = d_pid
+            leg['day_type'] = day
+            leg['tour_id'] = d_tid
+            leg['tour_purpose'] = 'HX'
+            leg['party_size'] = 1
+            leg['agent_tier'] = 'core'
+            leg['time_flexibility_band'] = 'fixed'
+            for c in ('origin_x', 'origin_y', 'dest_x', 'dest_y'):
+                leg[c] = round(float(leg[c]), 1)
+            leg['straight_dist_km'] = round(leg['straight_dist_km'], 3)
+            new_rows.append(leg)
+        return new_rows
+
+    def commit(d_pid, d_tid, legs, direction, serve_row, serve_dep,
+               p_pid, p_tid, pri):
+        used.add((d_pid, d_tid))
+        replaced[(d_pid, d_tid)] = as_rows(legs, d_pid, d_tid)
+        bindings.append(dict(
+            passenger_person_id=p_pid, passenger_tour_id=p_tid,
+            passenger_dep_s=serve_dep, priority=pri, direction=direction,
+            origin_x=serve_row['origin_x'], origin_y=serve_row['origin_y'],
+            dest_x=serve_row['dest_x'], dest_y=serve_row['dest_y'],
+            driver_person_id=d_pid,
+            driver_household_id=pctx[d_pid]['hid'],
+            driver_tour_id=d_tid))
+        out['bound'] += 1
+
+    for pri, sa1, p_pid, p_tid, ix, ret_ix in sorted(
             passengers, key=lambda t: (t[0], t[1], int(t[2]), t[3])):
         anchor = rows[ix]
         dep_p = int(anchor['dep_time_s'])
-        for d_pid, d_tid in by_zone.get(sa1, ()):
+        k_o = zi.get(anchor['origin_sa1'])
+        k_d = zi.get(anchor['dest_sa1'])
+        if k_o is None or k_d is None:
+            continue
+        drop_chain = [
+            ('HX', k_o, float(anchor['origin_x']),
+             float(anchor['origin_y']), 'lift_pickup'),
+            ('HX', k_d, float(anchor['dest_x']),
+             float(anchor['dest_y']), 'lift_serve')]
+        if round_trip:
+            ret = rows[ret_ix]
+            ret_dep = int(ret['dep_time_s'])
+            k_h = zi.get(ret['dest_sa1'])
+            if k_h is None:
+                continue
+            pick_chain = [
+                ('HX', k_d, float(ret['origin_x']),
+                 float(ret['origin_y']), 'lift_pickup'),
+                ('HX', k_h, float(ret['dest_x']),
+                 float(ret['dest_y']), 'lift_serve')]
+        zone_tours = by_zone.get(sa1, ())
+        for d_pid, d_tid in zone_tours:
             if (d_pid, d_tid) in used:
                 continue
-            ctx_d = pctx[d_pid]
-            k_o = zi.get(anchor['origin_sa1'])
-            k_d = zi.get(anchor['dest_sa1'])
-            if k_o is None or k_d is None:
+            drop_legs = fit_serve_tour(d_pid, d_tid, drop_chain, dep_p, {})
+            if drop_legs is None:
                 continue
-            spec = dict(purpose='HX', chain=[
-                ('HX', k_o, float(anchor['origin_x']),
-                 float(anchor['origin_y']), 'lift_pickup'),
-                ('HX', k_d, float(anchor['dest_x']),
-                 float(anchor['dest_y']), 'lift_serve')],
-                durs=[300, 300])
-            person_d = dict(cav=ctx_d['cav'])
-            probe, _ = time_tour(spec, 0, person_d, ctx_d['hx'], ctx_d['hy'],
-                                 ctx_d['hz'], SA1)
-            t_start = dep_p - int(probe[1]['dep_time_s'])
-            if t_start < 0:
+            if not round_trip:
+                commit(d_pid, d_tid, drop_legs, 'drop', anchor, dep_p,
+                       p_pid, p_tid, pri)
+                break
+            # 9.68 round trip: the pick-up must also place, or neither does -
+            # a one-way binding cannot change any choice and would spend a
+            # serve tour on it. The same driver's other unbound tour is
+            # preferred (one liftHousehold, and the person who drives you out
+            # is the person who fetches you back), then any same-zone driver.
+            tentative = {(d_pid, d_tid): as_rows(drop_legs, d_pid, d_tid)}
+            cands = [t for t in zone_tours
+                     if t not in used and t != (d_pid, d_tid)]
+            cands.sort(key=lambda t: (t[0] != d_pid, int(t[0]), int(t[1])))
+            second = None
+            for d2_pid, d2_tid in cands:
+                pick_legs = fit_serve_tour(d2_pid, d2_tid, pick_chain,
+                                           ret_dep, tentative)
+                if pick_legs is not None:
+                    second = (d2_pid, d2_tid, pick_legs)
+                    break
+            if second is None:
                 continue
-            legs, arr_home = time_tour(spec, t_start, person_d, ctx_d['hx'],
-                                       ctx_d['hy'], ctx_d['hz'], SA1)
-            if arr_home > DAY_HORIZON_S:
-                continue
-            # the driver's other tours are already placed and immovable here.
-            # A sibling tour this same pass has re-targeted is busy at its NEW
-            # times - its stale originals are still in `rows`, and reading them
-            # let two lifts overlap and the splice interleave their legs,
-            # which emits a mixed chain/non-chain subtour SubtourModeChoice
-            # refuses (issue #65: both relaunch arms crashed at replanning 1)
-            other_rows = {}
-            for j in rows_of[d_pid]:
-                tid = rows[j]['tour_id']
-                if tid != d_tid and (d_pid, tid) not in replaced:
-                    other_rows.setdefault(tid, []).append(rows[j])
-            for (r_pid, r_tid), rep in replaced.items():
-                if r_pid == d_pid and r_tid != d_tid:
-                    other_rows[r_tid] = rep
-            other = [r for tour in other_rows.values() for r in tour]
-            busy = collections.defaultdict(lambda: [float('inf'), 0])
-            for r in other:
-                iv = busy[r['tour_id']]
-                iv[0] = min(iv[0], int(r['dep_time_s']))
-                iv[1] = max(iv[1], int(r['arr_time_s']))
-            if any(t_start < e + 600 and arr_home > s - 600
-                   for s, e in busy.values()):
-                out['skipped_infeasible'] += 1
-                continue
-            tail_s = DAY_HORIZON_S - 24 * 3600
-            early = any(int(r['dep_time_s']) < tail_s for r in other)
-            if early and t_start >= 24 * 3600:
-                out['skipped_infeasible'] += 1
-                continue
-            used.add((d_pid, d_tid))
-            new_rows = []
-            for leg in legs:
-                leg = dict(leg)
-                leg['person_id'] = d_pid
-                leg['day_type'] = day
-                leg['tour_id'] = d_tid
-                leg['tour_purpose'] = 'HX'
-                leg['party_size'] = 1
-                leg['agent_tier'] = 'core'
-                leg['time_flexibility_band'] = 'fixed'
-                for c in ('origin_x', 'origin_y', 'dest_x', 'dest_y'):
-                    leg[c] = round(float(leg[c]), 1)
-                leg['straight_dist_km'] = round(leg['straight_dist_km'], 3)
-                new_rows.append(leg)
-            replaced[(d_pid, d_tid)] = new_rows
-            bindings.append(dict(
-                passenger_person_id=p_pid, passenger_tour_id=p_tid,
-                passenger_dep_s=dep_p, priority=pri,
-                origin_x=anchor['origin_x'], origin_y=anchor['origin_y'],
-                dest_x=anchor['dest_x'], dest_y=anchor['dest_y'],
-                driver_person_id=d_pid,
-                driver_household_id=pctx[d_pid]['hid'],
-                driver_tour_id=d_tid))
-            out['bound'] += 1
+            commit(d_pid, d_tid, drop_legs, 'drop', anchor, dep_p,
+                   p_pid, p_tid, pri)
+            commit(second[0], second[1], second[2], 'pickup', ret, ret_dep,
+                   p_pid, p_tid, pri)
+            out['passenger_tours_round_trip'] += 1
             break
 
     if replaced:
@@ -1102,9 +1230,9 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
     with open(bpath, 'w', newline='', encoding='utf-8') as fh:
         w = csv.DictWriter(fh, fieldnames=[
             'passenger_person_id', 'passenger_tour_id', 'passenger_dep_s',
-            'priority', 'origin_x', 'origin_y', 'dest_x', 'dest_y',
-            'driver_person_id', 'driver_household_id', 'driver_tour_id'],
-            lineterminator='\n')
+            'priority', 'direction', 'origin_x', 'origin_y', 'dest_x',
+            'dest_y', 'driver_person_id', 'driver_household_id',
+            'driver_tour_id'], lineterminator='\n')
         w.writeheader()
         for b in sorted(bindings,
                         key=lambda b: (int(b['passenger_person_id']),
@@ -1922,6 +2050,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
         esc = dict(requested=0, bound=0, unbound=0,
                    by_priority=collections.Counter(),
                    bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0)
+        hh_bindings = []   # 9.68: placed household serve-tour coverage rows
         for h in hh_order:
             members = hh_members[h]
             # Escort binding (DECISIONS.md 9.46): members without an HX draw
@@ -1958,16 +2087,34 @@ def main(seed=SEED, max_persons=None, day_types=None):
                     esc['unbound'] += pre['HX']
                     for f in fixed:
                         esc['by_priority'][f['priority']] += 1
+                placed_bindings = []
                 legs, tour_anchors = build_day(person, d, rates, CUM, store,
                                                zone_arr, u, pre, dropped,
-                                               fixed_tours=fixed)
+                                               fixed_tours=fixed,
+                                               bound_log=placed_bindings)
+                for b in placed_bindings:
+                    # 9.68: which member tours the PLACED serve tours cover,
+                    # by direction - consumed by build_matsim_plans.py to seed
+                    # round-trip-covered passenger tours as ride
+                    hh_bindings.append(dict(
+                        member_person_id=b['member'],
+                        member_tour_id=b['member_tour'],
+                        direction=b['direction'],
+                        driver_person_id=int(pid[i])))
                 for a in tour_anchors:
                     if a['purpose'] == 'HX':
                         continue
+                    tlegs = [l for l in legs if l['tour_id'] == a['tour_id']]
+                    # a member tour is round-trip bindable only when it is a
+                    # direct out-and-back: the return leg's departure is then
+                    # the pick-up serve time (9.68)
+                    ret = (tlegs[-1]['dep_time_s']
+                           if len(tlegs) == 2 else None)
                     candidates.append(dict(
                         member=int(pid[i]), tour_id=a['tour_id'],
                         purpose=a['purpose'], dep_s=a['dep_s'], k=a['k'],
-                        dx=a['dx'], dy=a['dy'], licence=bool(lic[i])))
+                        dx=a['dx'], dy=a['dy'], licence=bool(lic[i]),
+                        ret_dep_s=ret))
                 if legs:
                     legs_of[i] = legs
             for i in sorted(legs_of):
@@ -2015,6 +2162,17 @@ def main(seed=SEED, max_persons=None, day_types=None):
         for leg in frt_legs:
             w.writerow(leg)
         fh.close()
+        # 9.68: which member tours the placed household serve tours cover, by
+        # direction. build_matsim_plans.py seeds a member tour covered in BOTH
+        # directions as ride; a tour dropped at placement never appears here.
+        epath = os.path.join(OUT, 'B2_escort_bindings_%s.csv' % d)
+        with open(epath, 'w', newline='', encoding='utf-8') as efh:
+            ew = csv.DictWriter(efh, fieldnames=[
+                'member_person_id', 'member_tour_id', 'direction',
+                'driver_person_id'], lineterminator='\n')
+            ew.writeheader()
+            for b in hh_bindings:
+                ew.writerow(b)
         # DECISIONS.md 9.60: the second-pass binder re-targets unbound HX
         # tours to passengers no household driver can serve. Runs on the
         # closed file, draws nothing, and preserves every non-core row.
@@ -2051,6 +2209,16 @@ def main(seed=SEED, max_persons=None, day_types=None):
                     if esc['unbound_n'] else None),
                 hts_network_km=(round(meandist['HX'], 2)
                                 if 'HX' in meandist else None),
+                # 9.68: serve tours allocated per passenger tour, by direction.
+                directions=ESCORT_DIRECTIONS,
+                member_tours_covered_round_trip=sum(
+                    1 for c in collections.Counter(
+                        (b['member_person_id'], b['member_tour_id'])
+                        for b in hh_bindings).values() if c >= 2),
+                member_tours_covered_one_way=sum(
+                    1 for c in collections.Counter(
+                        (b['member_person_id'], b['member_tour_id'])
+                        for b in hh_bindings).values() if c == 1),
                 # DECISIONS.md 9.60: unbound HX tours re-targeted to serve
                 # non-household passengers. Reported, never tuned.
                 nonhousehold=lift))
