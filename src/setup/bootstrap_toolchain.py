@@ -1,27 +1,41 @@
 #!/usr/bin/env python
-"""Fetch and pin the P2 network-build toolchain.
+"""Fetch and pin the model toolchain.
 
-P2 needs three things this repository does not carry and cannot regenerate: a
-JVM, the pt2matsim converter, and SUMO's `netconvert`. All three land under
-`.tools/` (gitignored, ~700 MB unpacked) and every one is pinned by version
-**and** by sha256, so a rebuilt toolchain is the same toolchain.
+The build and run stack needs things this repository does not carry and cannot
+regenerate: a JVM, the pt2matsim converter, and - for explicit corridor
+signals (issue #73) - the MATSim signals contrib with its dependency tree.
+Everything lands under `.tools/` (gitignored) and every component is pinned by
+version **and** by sha256, so a rebuilt toolchain is the same toolchain.
 
     JDK        Eclipse Temurin 25 - pt2matsim 26.6's pom sets <release>25</release>,
                so a 21 JDK will not load its classes.
     pt2matsim  the published *shaded* jar. It carries MATSim and every transitive
                dependency and declares PublicTransitMapper as its Main-Class, so
-               neither Maven nor a build step is required.
-    SUMO       the eclipse-sumo wheel, installed into an isolated venv purely to
-               obtain netconvert. SUMO publishes no GitHub release assets; the
-               wheel is the only pinnable Windows distribution.
+               neither Maven nor a build step is required for the DEFAULT run
+               stack. It embeds org.matsim:matsim 2027.0-2026w25 (verified from
+               its own Maven metadata, DECISIONS.md 9.73).
+    maven      Apache Maven, used for ONE job: resolving the signals run stack.
+    run stack  org.matsim:matsim + org.matsim.contrib:signals at EXACTLY the
+               version the shaded jar embeds, plus their transitive closure,
+               copied into `.tools/run-stack/lib`. The signals contrib is not in
+               the shaded jar, and a contrib must not share a classpath with it
+               (9.73) - so signal-enabled runs use this stack and nothing else
+               does. Every resolved jar's sha256 is recorded in toolchain.json.
+
+SUMO was REMOVED from this toolchain on the 9.74 descope (issue #72): MATSim
+is the single simulator, and no completed run ever consumed a SUMO artefact.
+A stale `.tools/sumo-venv` from an earlier bootstrap is inert and may be
+deleted by hand.
 
 Writes `.tools/toolchain.json`: version, source URL, sha256 and retrieval date
 for each component - the provenance record for the tools, mirroring what
-`data/raw/provenance_*.json` does for the data.
+`data/raw/provenance_*.json` does for the data. Changing any pin is a
+toolchain change: re-run, re-hash and record it in DECISIONS.md 14.
 
 Usage:
     python src/setup/bootstrap_toolchain.py            # fetch what is missing
     python src/setup/bootstrap_toolchain.py --verify   # check digests, fetch nothing
+    python src/setup/bootstrap_toolchain.py --run-stack  # also build the signals run stack
 """
 import os
 import sys
@@ -39,7 +53,7 @@ TOOLS = '.tools'
 
 # ---------------------------------------------------------------------------
 # Pins. Changing any of these is a toolchain change: re-run, re-hash and record
-# it in DECISIONS.md - a different netconvert can move a corridor result.
+# it in DECISIONS.md 14 - a different jar can move a result.
 # ---------------------------------------------------------------------------
 JDK_VERSION = '25.0.4+7'
 JDK_URL = ('https://github.com/adoptium/temurin25-binaries/releases/download/'
@@ -51,12 +65,22 @@ PT2MATSIM_VERSION = '26.6'
 PT2MATSIM_URL = ('https://repo.matsim.org/repository/matsim/org/matsim/pt2matsim/'
                  '26.6/pt2matsim-26.6-shaded.jar')
 
-SUMO_VERSION = '1.27.1'
+MAVEN_VERSION = '3.9.9'
+MAVEN_URL = ('https://repo1.maven.org/maven2/org/apache/maven/apache-maven/'
+             '%s/apache-maven-%s-bin.zip' % (MAVEN_VERSION, MAVEN_VERSION))
+MAVEN_SHA256 = '4ec3f26fb1a692473aea0235c300bd20f0f9fe741947c82c1234cefd76ac3a3c'
+
+# The signals run stack matches the MATSim the shaded jar embeds, EXACTLY:
+# 9.73 verified 2027.0-2026w25 from the jar's own pom.properties, and a contrib
+# from any other train would put two MATSim versions one classpath apart.
+MATSIM_STACK_VERSION = '2027.0-2026w25'
 
 LICENCES = {
     'jdk': 'GPLv2 with Classpath Exception (Eclipse Temurin)',
     'pt2matsim': 'GPL-2.0 (pt2matsim); bundles MATSim, GPL-2.0',
-    'sumo': 'EPL-2.0 (Eclipse SUMO)',
+    'maven': 'Apache-2.0 (Apache Maven)',
+    'run-stack': 'GPL-2.0 (MATSim, signals contrib) + transitive dependencies, '
+                 'each under its own licence',
 }
 
 
@@ -120,69 +144,101 @@ def install_pt2matsim():
                 sha256=digest, jar=jar.replace('\\', '/'), licence=LICENCES['pt2matsim'])
 
 
-def install_sumo():
-    venv = os.path.join(TOOLS, 'sumo-venv')
-    py = venv_python(venv)
-    if not py:
-        print('   venv    %s' % venv)
-        subprocess.check_call([sys.executable, '-m', 'venv', venv])
-        py = venv_python(venv)
-    if not netconvert_path():
-        print('   pip     eclipse-sumo==%s' % SUMO_VERSION)
-        subprocess.check_call([py, '-m', 'pip', 'install', '--quiet', '--no-input',
-                               'eclipse-sumo==%s' % SUMO_VERSION])
-    nc = netconvert_path()
-    if not nc:
-        raise SystemExit('netconvert not found after installing eclipse-sumo')
-    return dict(component='sumo', version=SUMO_VERSION,
-                url='https://pypi.org/project/eclipse-sumo/%s/' % SUMO_VERSION,
-                sha256=sha256(nc), netconvert=nc.replace('\\', '/'),
-                sumo_home=sumo_home().replace('\\', '/'), licence=LICENCES['sumo'])
+def maven_archive():
+    return os.path.join(TOOLS, 'dl', MAVEN_URL.split('/')[-1])
 
 
-def venv_python(venv):
-    for cand in (os.path.join(venv, 'Scripts', 'python.exe'),
-                 os.path.join(venv, 'bin', 'python')):
+def maven_path():
+    for cand in (os.path.join(TOOLS, 'maven', 'bin', 'mvn.cmd'),
+                 os.path.join(TOOLS, 'maven', 'bin', 'mvn')):
         if os.path.exists(cand):
             return cand
     return ''
 
 
-def _site_dirs():
-    venv = os.path.join(TOOLS, 'sumo-venv')
-    for sub in (('Lib', 'site-packages'), ('lib', 'site-packages')):
-        d = os.path.join(venv, *sub)
-        if os.path.isdir(d):
-            yield d
-    lib = os.path.join(venv, 'lib')
-    if os.path.isdir(lib):
-        for d in sorted(os.listdir(lib)):
-            sp = os.path.join(lib, d, 'site-packages')
-            if os.path.isdir(sp):
-                yield sp
+def install_maven():
+    home = os.path.join(TOOLS, 'maven')
+    digest = download(MAVEN_URL, maven_archive(), MAVEN_SHA256)
+    if not maven_path():
+        print('   unpack  Maven %s' % MAVEN_VERSION)
+        stage = os.path.join(TOOLS, '_maven_stage')
+        shutil.rmtree(stage, ignore_errors=True)
+        with zipfile.ZipFile(maven_archive()) as z:
+            z.extractall(stage)
+        cands = [d for d in sorted(os.listdir(stage))
+                 if os.path.isdir(os.path.join(stage, d))]
+        shutil.rmtree(home, ignore_errors=True)
+        shutil.move(os.path.join(stage, cands[0]), home)
+        shutil.rmtree(stage, ignore_errors=True)
+    return dict(component='maven', version=MAVEN_VERSION, url=MAVEN_URL,
+                sha256=digest, home=home.replace('\\', '/'),
+                licence=LICENCES['maven'])
 
 
-def sumo_home():
-    for sp in _site_dirs():
-        h = os.path.join(sp, 'sumo')
-        if os.path.isdir(h):
-            return h
-    return ''
+RUN_STACK_POM = os.path.join('src', 'java', 'run-stack-pom.xml')
+RUN_STACK_LIB = os.path.join(TOOLS, 'run-stack', 'lib')
 
 
-def netconvert_path():
-    h = sumo_home()
-    if not h:
-        return ''
-    for cand in (os.path.join(h, 'bin', 'netconvert.exe'),
-                 os.path.join(h, 'bin', 'netconvert')):
-        if os.path.exists(cand):
-            return cand
-    return ''
+def run_stack_jars():
+    return sorted(glob.glob(os.path.join(RUN_STACK_LIB, '*.jar')))
+
+
+def build_run_stack():
+    """Resolve the signals run stack with the pinned Maven and record it.
+
+    One Maven invocation, one job: copy `org.matsim:matsim` +
+    `org.matsim.contrib:signals` at MATSIM_STACK_VERSION and their transitive
+    runtime closure into `.tools/run-stack/lib`. Every jar's sha256 goes into
+    toolchain.json, so --verify can re-hash the whole stack without touching
+    the network. The local Maven repository is kept inside `.tools/` so the
+    user's own ~/.m2 is never involved (isolation, and reproducibility from a
+    clone).
+    """
+    mvn = maven_path()
+    if not mvn:
+        raise SystemExit('maven missing - run without flags first')
+    if not os.path.exists(RUN_STACK_POM):
+        raise SystemExit('no %s - the run-stack pom is committed; restore it'
+                         % RUN_STACK_POM)
+    os.makedirs(RUN_STACK_LIB, exist_ok=True)
+    env = dict(os.environ)
+    env['JAVA_HOME'] = os.path.abspath(os.path.join(TOOLS, 'jdk'))
+    repo_local = os.path.abspath(os.path.join(TOOLS, 'run-stack', 'm2'))
+    out_dir = os.path.abspath(RUN_STACK_LIB)
+    print('   mvn     dependency:copy-dependencies (matsim %s + signals)'
+          % MATSIM_STACK_VERSION)
+    cmd = [mvn, '-B', '-q', '-f', RUN_STACK_POM,
+           '-Dmaven.repo.local=%s' % repo_local,
+           '-DoutputDirectory=%s' % out_dir,
+           '-DincludeScope=runtime',
+           'dependency:copy-dependencies']
+    out = subprocess.run(cmd, capture_output=True, text=True, env=env)
+    if out.returncode != 0:
+        print(out.stdout[-4000:] if out.stdout else '')
+        print(out.stderr[-4000:] if out.stderr else '')
+        raise SystemExit('maven dependency resolution FAILED')
+    jars = run_stack_jars()
+    if not jars:
+        raise SystemExit('run stack resolved no jars - check %s' % RUN_STACK_POM)
+    digest_index = {os.path.basename(j): sha256(j) for j in jars}
+    agg = hashlib.sha256()
+    for name in sorted(digest_index):
+        agg.update(name.encode('utf-8'))
+        agg.update(digest_index[name].encode('utf-8'))
+    print('   ok      %d jars -> %s  stack sha256=%s'
+          % (len(jars), RUN_STACK_LIB, agg.hexdigest()[:16]))
+    return dict(component='run-stack', version=MATSIM_STACK_VERSION,
+                url='https://repo.matsim.org/repository/matsim/ (via %s)'
+                    % RUN_STACK_POM,
+                sha256=agg.hexdigest(), lib=RUN_STACK_LIB.replace('\\', '/'),
+                jar_count=len(jars), jars=digest_index,
+                licence=LICENCES['run-stack'])
 
 
 JAVA_SRC = os.path.join('src', 'java')
+JAVA_SIGNALS_SRC = os.path.join('src', 'java_signals')
 CLASSES = os.path.join(TOOLS, 'classes')
+CLASSES_SIGNALS = os.path.join(TOOLS, 'classes-signals')
 
 
 def javac_path():
@@ -225,6 +281,40 @@ def compile_java():
     return True
 
 
+def compile_java_signals():
+    """Compile the signal-enabled entry point against the RUN STACK.
+
+    `src/java_signals/` holds the classes that import the signals contrib
+    (issue #73). They CANNOT compile against the shaded jar - the contrib is
+    not in it, and must not share a classpath with it (9.73) - so they compile
+    against `.tools/run-stack/lib` together with the base `src/java/` sources,
+    into their own class directory. A checkout without the run stack skips
+    this quietly: the default (non-signal) harness never needs it.
+    """
+    javac = javac_path()
+    jars = run_stack_jars()
+    if not javac or not jars:
+        print('skip javac (signals): run stack not built '
+              '(python src/setup/bootstrap_toolchain.py --run-stack)')
+        return False
+    srcs = sorted(glob.glob(os.path.join(JAVA_SRC, '*', '*.java'))
+                  + glob.glob(os.path.join(JAVA_SIGNALS_SRC, '*', '*.java')))
+    signal_srcs = [s for s in srcs if s.startswith(JAVA_SIGNALS_SRC)]
+    if not signal_srcs:
+        print('no java sources under %s' % JAVA_SIGNALS_SRC)
+        return False
+    os.makedirs(CLASSES_SIGNALS, exist_ok=True)
+    cp = os.pathsep.join(jars)
+    cmd = [javac, '-cp', cp, '-d', CLASSES_SIGNALS] + srcs
+    out = subprocess.run(cmd, capture_output=True, text=True)
+    if out.returncode != 0:
+        print('\njavac (signals) FAILED\n%s' % (out.stderr or out.stdout))
+        raise SystemExit(1)
+    print('javac      %d source(s) -> %s (signals stack)'
+          % (len(srcs), CLASSES_SIGNALS))
+    return True
+
+
 def java_path():
     for cand in (os.path.join(TOOLS, 'jdk', 'bin', 'java.exe'),
                  os.path.join(TOOLS, 'jdk', 'bin', 'java')):
@@ -244,13 +334,34 @@ def load_manifest():
 
 
 def require():
-    """Return (java, jar, netconvert, sumo_home) or exit with instructions."""
-    j, p, n = java_path(), pt2matsim_jar(), netconvert_path()
-    if not (j and p and n):
+    """Return (java, jar) or exit with instructions."""
+    j, p = java_path(), pt2matsim_jar()
+    if not (j and p):
         raise SystemExit(
-            'toolchain incomplete (java=%s pt2matsim=%s netconvert=%s)\n'
-            'run: python src/setup/bootstrap_toolchain.py' % (bool(j), bool(p), bool(n)))
-    return j, p, n, sumo_home()
+            'toolchain incomplete (java=%s pt2matsim=%s)\n'
+            'run: python src/setup/bootstrap_toolchain.py' % (bool(j), bool(p)))
+    return j, p
+
+
+def _verify_run_stack(component):
+    """Re-hash every recorded run-stack jar; True when all match."""
+    recorded = component.get('jars') or {}
+    bad = 0
+    for name, want in sorted(recorded.items()):
+        path = os.path.join(RUN_STACK_LIB, name)
+        if not os.path.exists(path):
+            print('  MISSING  run-stack %s' % name)
+            bad += 1
+        elif sha256(path) != want:
+            print('  MISMATCH run-stack %s' % name)
+            bad += 1
+    extra = set(os.path.basename(j) for j in run_stack_jars()) - set(recorded)
+    for name in sorted(extra):
+        print('  EXTRA    run-stack %s (not in the recorded stack)' % name)
+        bad += 1
+    print('  %-8s %-9s %d jar(s)' % ('ok' if not bad else 'FAILED',
+                                     'run-stack', len(recorded)))
+    return bad
 
 
 def verify():
@@ -259,10 +370,15 @@ def verify():
         print('no .tools/toolchain.json - run without --verify first')
         return 1
     bad = 0
+    has_run_stack = False
     for c in man['components']:
+        if c['component'] == 'run-stack':
+            has_run_stack = True
+            bad += _verify_run_stack(c)
+            continue
         target = {'jdk': jdk_archive(),
                   'pt2matsim': c.get('jar'),
-                  'sumo': c.get('netconvert')}[c['component']]
+                  'maven': maven_archive()}.get(c['component'])
         if not target or not os.path.exists(target):
             print('  MISSING  %-9s %s' % (c['component'], target))
             bad += 1
@@ -276,6 +392,8 @@ def verify():
     # an honest statement that this checkout can actually run.
     if not bad:
         compile_java()
+        if has_run_stack:
+            compile_java_signals()
     print('toolchain %s' % ('OK' if not bad else 'FAILED'))
     return 1 if bad else 0
 
@@ -284,6 +402,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--verify', action='store_true',
                     help='check recorded digests, download nothing')
+    ap.add_argument('--run-stack', action='store_true',
+                    help='also resolve the signals run stack (Maven, one-off '
+                         '~300 MB; needed only for signal-enabled runs, #73)')
     a = ap.parse_args()
     if a.verify:
         raise SystemExit(verify())
@@ -294,11 +415,20 @@ def main():
     comps.append(install_jdk())
     print('pt2matsim:')
     comps.append(install_pt2matsim())
-    print('SUMO:')
-    comps.append(install_sumo())
+    print('Maven:')
+    comps.append(install_maven())
+    if a.run_stack:
+        print('signals run stack:')
+        comps.append(build_run_stack())
+    else:
+        # keep an already-built stack's record rather than dropping it
+        prior = load_manifest()
+        for c in (prior or {}).get('components', []):
+            if c['component'] == 'run-stack' and run_stack_jars():
+                comps.append(c)
 
     man = dict(
-        purpose='P2 network-build toolchain',
+        purpose='model toolchain (network build + run stacks)',
         retrieved=datetime.date.today().isoformat(),
         platform=sys.platform,
         components=comps)
@@ -307,12 +437,14 @@ def main():
         f.write('\n')
 
     compile_java()
+    if any(c['component'] == 'run-stack' for c in comps):
+        compile_java_signals()
 
     print('\njava       %s' % java_path())
     print('pt2matsim  %s' % pt2matsim_jar())
-    print('netconvert %s' % netconvert_path())
-    print('SUMO_HOME  %s' % sumo_home())
-    for cmd in ([java_path(), '-version'], [netconvert_path(), '--version']):
+    print('maven      %s' % maven_path())
+    print('run stack  %s (%d jars)' % (RUN_STACK_LIB, len(run_stack_jars())))
+    for cmd in ([java_path(), '-version'],):
         try:
             out = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
             line = (out.stdout or out.stderr).strip().splitlines()[0]

@@ -162,12 +162,6 @@
       "reason": "No frontage-level audit is published for the corridor. Hypothesis B2 depends on it.",
       "handled_by": "sweep",
       "field": "D.retail.vacancy_rate"
-    },
-    {
-      "input": "A justified SUMO replication count",
-      "reason": "Seed variance across corridor replications has not been measured.",
-      "handled_by": "declared per run",
-      "field": "RUN.sumo.replications"
     }
   ]
 }

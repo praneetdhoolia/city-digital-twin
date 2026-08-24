@@ -111,7 +111,7 @@ MODE_SELECTOR = re.compile(r'\[([a-z_]+)\]')
 
 def _foreign_mode(field, modes):
     """Does this field's binding name a mode this city does not run?"""
-    for bind in ('matsim_param', 'sumo_param', 'pt2matsim_osm_param',
+    for bind in ('matsim_param', 'pt2matsim_osm_param',
                  'pt2matsim_mapper_param'):
         for sel in MODE_SELECTOR.findall(str(field.get(bind) or '')):
             if sel != '*' and sel in ALL_MODE_NAMES and sel not in modes:

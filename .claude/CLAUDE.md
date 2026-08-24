@@ -7,7 +7,7 @@ root holds exactly one document: [`README.md`](../README.md), the usage guide.
 ## What this is
 
 A counterfactual microsimulation of the **Newcastle Light Rail** as a transport
-intervention — MATSim for the regional demand model, SUMO for the corridor — built to be
+intervention — MATSim end to end (SUMO descoped 25 Aug 2026, DECISIONS.md §9.74) — built to be
 more transparent about its assumptions than the business case it examines.
 
 - [`docs/design/newcastle-lr-proposal.md`](../cities/newcastle/docs/design/newcastle-lr-proposal.md) is the **research design**: what
@@ -27,7 +27,7 @@ more transparent about its assumptions than the business case it examines.
   `run.py`, reproduce the data package. It is the only document at the repo root;
   every other one is under [`docs/`](../docs/README.md).
 - Current stage: **P3 demand synthesis complete. No scenario has been run. Nothing in
-  the repo is a result.** The MATSim network, the 15 mapped schedules, the SUMO corridor,
+  the repo is a result.** The MATSim network, the 15 mapped schedules,
   the synthetic population, the activity chains and the 30 assembled scenario x day-type
   run input sets are all *inputs*, not outputs.
 
@@ -91,11 +91,11 @@ more transparent about its assumptions than the business case it examines.
 - **The three unobtained inputs stay unobtained.** SCATS signal phasing, journey-linked
   Opal, and measured charging dwell are handled **by sweep, not by
   assumption-as-fact** (`DECISIONS.md` §0, §13). Do not quietly pin one to a point value.
-- **The toolchain is pinned, and a toolchain change is a model change.** JDK, pt2matsim
-  and SUMO are fetched by [`src/setup/bootstrap_toolchain.py`](../src/setup/bootstrap_toolchain.py)
+- **The toolchain is pinned, and a toolchain change is a model change.** The JDK,
+  pt2matsim, Maven and the MATSim signals run stack are fetched by [`src/setup/bootstrap_toolchain.py`](../src/setup/bootstrap_toolchain.py)
   into `.tools/` (gitignored) and pinned by sha256 in `.tools/toolchain.json`. Changing a
   version means re-running, re-hashing and logging it in `DECISIONS.md` §14 — a different
-  `netconvert` can move a corridor result.
+  jar can move a result.
 - **One build of the network per comparison.** pt2matsim's schedule mapping is not
   reproducible run to run (`DECISIONS.md` §3.5): ~18% of route link sequences differ
   between identical builds, while stop-to-link assignment is stable. Never compare a

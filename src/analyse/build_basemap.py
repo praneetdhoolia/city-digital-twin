@@ -50,7 +50,6 @@ RAILWAYS = _city.path('networks/osm/railways.osm')
 WATER = _city.path('networks/osm/water.osm')
 GREEN = _city.path('networks/osm/green.osm')
 LGA = _city.path('data/processed/zones/zones_LGA.gpkg')
-SUMO_NET = _city.path('networks/sumo/net_base2026/corridor.net.xml')
 
 # area layers: the tag values that make a filled polygon, per source file
 AREA_SELECT = {
@@ -216,55 +215,6 @@ def read_railways(simplify):
     return ways
 
 
-def read_sumo_lanes():
-    """Individual lane centrelines from the SUMO corridor network.
-
-    This is the only true lane-level geometry available: netconvert resolves
-    each edge into per-lane polylines with a width, a speed and a mode
-    permission set, which is what an HD map format (OpenDRIVE, Lanelet2) carries
-    and what a rendered basemap needs to draw a carriageway rather than a wire.
-    It exists because P2 already built the corridor four times; nothing is
-    fetched for it.
-
-    Coverage is the CORRIDOR ONLY - about 10 x 9 km around the Newcastle CBD,
-    which is the part of the study area the light rail question is about. Beyond
-    it the region layers carry a lane *count* but not lane geometry, so lanes
-    there are drawn as a carriageway width rather than as separate lanes.
-
-    Internal junction lanes (ids beginning ':') are skipped: they are the
-    turning paths inside an intersection, and drawing them fills every junction
-    with a solid blob.
-    """
-    import re
-    txt = open(SUMO_NET, encoding='utf-8').read()
-    m = re.search(r'netOffset="(-?[0-9.]+),(-?[0-9.]+)"', txt)
-    ox, oy = (-float(m.group(1)), -float(m.group(2))) if m else (0.0, 0.0)
-    out = []
-    edge_re = re.compile(r'<edge id="([^"]+)"[^>]*?(?: type="([^"]*)")?[^>]*>')
-    lane_re = re.compile(r'<lane id="([^"]+)"[^>]*?shape="([^"]+)"[^>]*/>')
-    for lm in lane_re.finditer(txt):
-        lid, shape = lm.group(1), lm.group(2)
-        if lid.startswith(':'):
-            continue
-        seg = txt[max(0, lm.start() - 1200):lm.start()]
-        w = re.search(r'width="([0-9.]+)"', lm.group(0))
-        # SUMO's own default when a lane declares no width
-        width = float(w.group(1)) if w else 3.2
-        rail = 'allow="tram' in lm.group(0) or 'allow="rail' in lm.group(0)
-        pts = []
-        for pair in shape.split(' '):
-            if ',' not in pair:
-                continue
-            a, b = pair.split(',')[:2]
-            pts.append((float(a) + ox, float(b) + oy))
-        if len(pts) > 1:
-            # lanes byte carries the width in decimetres so the renderer can
-            # draw the carriageway in metres; flag rail-only lanes as 255
-            out.append((255 if rail else max(1, min(254, int(round(width * 10)))),
-                        pts))
-    return out
-
-
 def read_areas(path, select, tol):
     """Closed ways carrying any of the selected tags, as polygons in the city CRS.
 
@@ -362,10 +312,6 @@ def main():
         print('reading %s areas ...' % name, flush=True)
         groups[name] = read_areas(path, select,
                                   simplify_tolerance_m(name) if simplify else 0)
-    if os.path.exists(SUMO_NET):
-        print('reading SUMO lane geometry ...', flush=True)
-        groups['lanes'] = read_sumo_lanes()
-
     xs, ys = [], []
     for lines in groups.values():
         for _, pts in lines:
@@ -384,8 +330,7 @@ def main():
 
     payload = {'bbox': bbox, 'origin': list(origin), 'units': 'cm_from_origin',
                'layers': layers, 'stats': stats,
-               'source': {'roads': ROADS_GEOM, 'rail': RAILWAYS, 'coast': LGA,
-                          'lanes': SUMO_NET}}
+               'source': {'roads': ROADS_GEOM, 'rail': RAILWAYS, 'coast': LGA}}
     os.makedirs(os.path.dirname(os.path.abspath(a.out)), exist_ok=True)
     with open(a.out, 'w', encoding='utf-8') as w:
         json.dump(payload, w, separators=(',', ':'))
