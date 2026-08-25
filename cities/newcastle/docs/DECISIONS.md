@@ -8085,6 +8085,38 @@ bound population pairs at 0.7552 by iteration 1 and **0.9964 by iteration 2**
 bike, taxi and walk outright. `ride_pairing.csv` now carries the funnel and the
 gap distribution so the two populations can never again be read as one.
 
+### Correction, same day: the first implementation of this fix did nothing
+
+The restore above was first written as `ride.leg.setMode(ride)` at AfterMobsim,
+holding the `Leg` reference the pairing had collected at BeforeMobsim. **That
+version was a no-op, and the arm it ran on proves it**: arm
+`20260826T051938` returned ride-leg counts byte-identical to the unfixed F6 arm
+— 87,019 / 28,228 / 25,889 — while its log reported 61,409 legs "restored".
+
+A `Leg` object cannot be held across the mobsim. The re-mode nulls the route so
+the walk is routed on the walk network; a null route is precisely what makes
+`PersonPrepareForSim` run `PlanRouter` over that trip; and
+`TripRouter.insertTrip` **replaces the trip's plan elements with new `Leg`
+objects**. The restore therefore wrote to an orphan.
+
+It was caught in ten minutes, at iteration 3, by comparing the new arm's counts
+against the old one's rather than trusting the log line — the same discipline
+that refused the window hypothesis. The arm was stopped and is recorded as
+`results/aborted_20260826T051938_1000it_25pct`.
+
+The corrected restore **re-finds** the leg in the person's selected plan by the
+endpoints the pairing recorded, and logs restored-of-attempted so the count can
+never again be a claim about intent rather than effect. Probe
+`20260826T053412` holds ride legs at **3,435 / 3,441 / 3,443** across three
+iterations where the broken version fell to 1,062 / 834, with 2,508 of 2,508,
+2,637 of 2,637 and 2,592 of 2,592 legs actually restored.
+
+The aggregate pair rate now sits near 0.25 rather than climbing to 0.996, and
+that is the CORRECT consequence: structurally unpairable legs are retained and
+keep failing, so they are abandoned by scoring over many iterations instead of
+being deleted in one. That is what "emergent from the physical driver supply"
+was always supposed to mean.
+
 ### Family F7
 
 The engine change alters what the model does, so nothing compares across it.

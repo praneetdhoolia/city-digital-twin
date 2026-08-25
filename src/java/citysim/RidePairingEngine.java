@@ -679,17 +679,52 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         if (!enabled()) {
             return;
         }
+        // The leg object CANNOT be held across the mobsim. The re-mode nulls
+        // the route so the walk is routed on the walk network, and a null route
+        // is exactly what makes PersonPrepareForSim run PlanRouter over that
+        // trip - and TripRouter.insertTrip REPLACES the trip's plan elements
+        // with new Leg objects. A restore through the old reference therefore
+        // writes to an orphan and changes nothing: measured on arm
+        // 20260826T051938, whose ride-leg counts came back byte-identical to
+        // the unfixed arm (87,019 / 28,228 / 25,889) while the log cheerfully
+        // reported 61,409 legs "restored".
+        //
+        // So the leg is RE-FOUND in the selected plan by the endpoints the
+        // pairing recorded, and the count logged is what was actually restored.
+        int restored = 0;
         for (final RideLeg ride : remodedThisMobsim) {
-            ride.leg.setMode(TransportMode.ride);
-            org.matsim.core.router.TripStructureUtils.setRoutingMode(
-                    ride.leg, TransportMode.ride);
-            ride.leg.setRoute(ride.route);
+            final Person person =
+                    scenario.getPopulation().getPersons().get(ride.person);
+            if (person == null || person.getSelectedPlan() == null) {
+                continue;
+            }
+            for (final PlanElement pe : person.getSelectedPlan().getPlanElements()) {
+                if (!(pe instanceof Leg)) {
+                    continue;
+                }
+                final Leg leg = (Leg) pe;
+                if (!TransportMode.walk.equals(leg.getMode())) {
+                    continue;
+                }
+                final Route route = leg.getRoute();
+                if (route == null
+                        || !ride.from.equals(route.getStartLinkId())
+                        || !ride.to.equals(route.getEndLinkId())) {
+                    continue;
+                }
+                leg.setMode(TransportMode.ride);
+                org.matsim.core.router.TripStructureUtils.setRoutingMode(
+                        leg, TransportMode.ride);
+                leg.setRoute(ride.route);
+                restored++;
+                break;                          // one forced leg, one restore
+            }
         }
         if (!remodedThisMobsim.isEmpty()) {
             org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
-                    .info("ridePairing: {} forced-walk leg(s) restored to ride "
-                          + "after the mobsim - the walk was scored, the "
-                          + "alternative kept", remodedThisMobsim.size());
+                    .info("ridePairing: {} of {} forced-walk leg(s) restored to "
+                          + "ride after the mobsim - the walk was scored, the "
+                          + "alternative kept", restored, remodedThisMobsim.size());
         }
         remodedThisMobsim.clear();
     }
