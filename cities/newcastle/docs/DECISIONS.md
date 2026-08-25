@@ -7216,6 +7216,15 @@ while every trip's main_mode stays `pt` and conservation closes per submode.
 only). Plan-level SubtourModeChoice still offers `pt`; the submodes are
 route-choice alternatives, which is what the jar supports.
 
+**One more probe-caught defect (the S3 scenario probe, not the toy):** under
+`priorityGroupId=corridor` the 8 mid-block crossing systems carry ONLY the
+corridor group, so `longestCompetingGreen` was null and the compensation
+ledger threw on the null key (rc=1 at 29 s). Guarded: with no competing stage
+the extension eats the unmodelled pedestrian interruption within the same
+budget and owes nobody. The S3 1%×2 probe then completes with all 14
+`CitysimTramPriority` controllers instantiated — the bus-priority path is
+verified in the scenario, not only in the toy.
+
 **0b source upgrades (#63, seven fields; conservative by instruction, every
 non-move recorded in the session log of the change):**
 `A.signals.min_green_s` → literature (TfNSW TTD 2018/002, the dossier's own
