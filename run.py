@@ -23,7 +23,8 @@ bare `python run.py` does not quietly pick one in code. It selects the
 committed `default_25pct` overlay - 25% sample, 1000 iterations, the 9.7
 working horizon - which names its sweep member and its provenance like any
 other overlay, and the banner below says exactly what was chosen and why it is
-provisional (issue #5). Expect ~16 hours of wall clock.
+provisional (issue #5). What that costs in wall clock is the CITY's measurement,
+not this file's: the banner reads it out of the overlay it selected.
 
 **Nothing this produces is a result** until the model has a calibrated base;
 see docs/STATUS.md.
@@ -42,22 +43,60 @@ import run_matsim                    # noqa: E402
 
 DEFAULT_OVERLAY = 'default_25pct'
 
-DEFAULT_BANNER = """
-+---------------------------------------------------------------------------+
-|  DEFAULT RUN - the committed `default_25pct` overlay.                      |
-|                                                                            |
-|  No overlay and no --iterations were given, so this runs S2 x WEEKDAY at   |
-|  a 25% sample for 1000 iterations (the DECISIONS.md 9.7 working horizon).  |
-|  Expect roughly 16 HOURS of wall clock and a ~40 GiB heap. Run ONE large   |
-|  run at a time - concurrent arms paged this machine once already.          |
-|                                                                            |
-|  The iteration count is PROVISIONAL: RUN.controler.last_iteration is       |
-|  unobtained, and issue #5 re-measures relaxation on the rebuilt inputs.    |
-|  NOTHING THIS PRODUCES IS A RESULT until the model has a calibrated base.  |
-|                                                                            |
-|  For a quick plumbing test instead:  python run.py --run-config smoke      |
-+---------------------------------------------------------------------------+
-"""
+def _default_banner(overlay_tag, scenario, day):
+    """The default-run banner, composed from the overlay that was just selected.
+
+    Nothing here is restated. A sample fraction, an iteration count, a heap size
+    or a duration typed into this file is one city's measurement living in the
+    framework's front door, and it goes stale where no check can see it: this
+    banner advertised "roughly 16 HOURS" for the same run that had been measured
+    at ~65 h since 21 August, because a sentence in a banner is pinned to
+    nothing. The overlay's own `description` is the thing that always knows, and
+    it is the city's to write.
+    """
+    import json
+    path = os.path.join(registry.OVERLAY_DIRS['run'], overlay_tag + '.json')
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+    except Exception as exc:                   # a missing overlay is the caller's problem, not a crash here
+        return '\nDEFAULT RUN - overlay `%s` could not be read (%s)\n' % (overlay_tag, exc)
+
+    sets = doc.get('set', {})
+    lines = ['',
+             'DEFAULT RUN - the committed `%s` overlay.' % overlay_tag,
+             '',
+             'No overlay and no --iterations were given, so this runs %s x %s at'
+             % (scenario, day),
+             'the values that overlay declares:']
+    for key in sorted(sets):
+        lines.append('    %-38s %s' % (key, sets[key]))
+    lines += ['',
+              'Why those values, and what they cost on THIS city\'s machine, is the',
+              'overlay\'s own account of itself:',
+              '']
+    lines += ['    ' + chunk for chunk in _wrap(doc.get('description', ''), 72)]
+    lines += ['',
+              'The iteration count is PROVISIONAL: RUN.controler.last_iteration is',
+              'unobtained, and issue #5 re-measures relaxation on the rebuilt inputs.',
+              'NOTHING THIS PRODUCES IS A RESULT until the model has a calibrated base.',
+              '',
+              'For a quick plumbing test instead:  python run.py --run-config smoke',
+              '']
+    return '\n'.join(lines)
+
+
+def _wrap(text, width):
+    """Wrap without importing textwrap for one call; keeps the banner dependency-free."""
+    words, line, out = text.split(), '', []
+    for w in words:
+        if line and len(line) + 1 + len(w) > width:
+            out.append(line)
+            line = w
+        else:
+            line = (line + ' ' + w).strip()
+    if line:
+        out.append(line)
+    return out
 
 
 def listing():
@@ -157,7 +196,7 @@ def main():
     if run_config is None and a.iterations is None:
         run_config = DEFAULT_OVERLAY
         defaulted = True
-        print(DEFAULT_BANNER)
+        print(_default_banner(run_config, a.scenario, a.day))
 
     if a.detach:
         return _detach()
