@@ -8010,10 +8010,99 @@ argument parser into the registry where it binds everything.
 
 ---
 
+## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
+
+The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
+iteration 200** under the session's goal directive: stop if car bias, near-zero
+ride, or any over-chosen mode persists. Every clause held. Whole-scenario leg
+shares moved from the seed to iteration 200 as car 30.81 -> 54.33, walk 44.25 ->
+15.96, ride 4.35 -> **0.41**, taxi 0.00 -> 9.47, bike 8.86 -> 11.38, pt 7.74 ->
+4.46. Its record is `results/aborted_20260825T135734_1000it_25pct`, status
+`aborted`, cause stated. **Its 200 iterations are diagnostic evidence, not a
+result**: no `_run.json`, unconverged, innovation still on.
+
+### What the arm measured
+
+`RidePairingEngine` re-moded an unpaired ride leg to a network walk, per the
+§9.55 ruling that a ride no household driver can serve is not a ride trip. But
+it did so by **mutating the plan** — `setMode(walk)`, `setRoute(null)`, and the
+`continue` skipped the restore the paired path uses. Pairing failure therefore
+DESTROYED an alternative while pairing success created none.
+
+That is a one-way ratchet, and it ran regardless of what the scores said:
+
+| iteration | ride legs | paired | unpaired | occupancy |
+|---|---:|---:|---:|---:|
+| 0 | 87,019 | 25,610 | 61,409 | 0.1410 |
+| 1 | 28,228 | 22,188 | 6,040 | — |
+| 50 | 12,306 | 7,320 | 4,986 | 0.0370 |
+| 199 | 6,841 | 2,394 | 4,447 | 0.0075 |
+
+**58,791 legs — 95.7% of the 61,409 that failed to pair at iteration 0 — were
+gone by iteration 1 and never returned.** Occupancy decayed exponentially with a
+36-iteration half-life toward the pre-repair arm's converged 0.0013. The seed
+(`B.mode.bound_passenger_seed`) was the only reason it started anywhere else.
+
+The damage was not confined to ride. At iteration 0 those 61,409 destroyed legs
+were **23.5% of all walk legs**, each a ~9.7 km forced walk scoring about −26
+utils. That manufactured pool is the feedstock replanning converted into taxi
+(0 -> 9.47%) and bike, which is why taxi gained more than ride lost.
+
+### Why it is a defect and not the ruling
+
+§9.55 says an unservable ride walks and **scores accordingly**. It does not say
+the plan must be rewritten so the alternative can never be re-evaluated. MATSim's
+design is that plans persist and are re-scored; a mobsim-boundary listener
+deleting one breaks that contract.
+
+**The walk is now an EXECUTION, not an amputation.** The leg's mode and route are
+restored at `AfterMobsim`, after the mobsim has emitted the events scoring reads,
+so the agent is charged in full for the walk it actually made while the plan
+keeps `ride` for co-evolution to re-select when driver supply returns. The
+surviving ride share stays emergent from the physical driver supply. **No
+parameter was added, moved or swept; `B.ride.remode_unpaired` stays `true`.**
+
+### The window was a red herring, and measuring said so
+
+A first funnel put 61% of misses on the pairing window, which would have argued
+for moving `B.ride.pairing_window_min` (assumed, swept [5, 60]) — a parameter
+change made to fix a symptom. **Measuring the gaps refused it.** Of 1,529 window
+misses only 112 had an endpoint-matching driver at ANY hour, median **253.7
+minutes** away; ONE was within 30 minutes and 13 within an hour. Widening 15 ->
+60 would have recovered 13 legs of 1,529.
+
+The funnel had asked "was anyone in the window?" before "was anyone going there
+at all?", so it labelled as a timing miss every passenger whose household drove
+somewhere else entirely. **Ordered geometry-first, ~90% of misses are passengers
+no household driver was ever going to serve** — the uniform seed's random ride
+legs, which have no driver by construction and SHOULD fail. They now die by
+scoring rather than by deletion.
+
+**The aggregate pair rate was therefore meaningless**: it averaged ~2,260
+structurally unpairable seed legs against ~930 genuinely bound ones. Split, the
+bound population pairs at 0.7552 by iteration 1 and **0.9964 by iteration 2**
+(probe `20260826T051545_2it_1pct`), and at that rate ride's expected score beats
+bike, taxi and walk outright. `ride_pairing.csv` now carries the funnel and the
+gap distribution so the two populations can never again be read as one.
+
+### Family F7
+
+The engine change alters what the model does, so nothing compares across it.
+**F7-ride-alternative-retained** is declared from launch stamp 20260826T060000.
+F6's only arm is the aborted diagnostic above; it never produced a converged arm,
+exactly as F5 never did.
+
+**Nothing here is a result.** No converged arm exists in F7, and the fit is
+unchanged from the pre-repair F4 report card until one runs.
+
+
+---
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-26 | **A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (§9.81; issues #48, #49, #30; ninth session).** The first F6 arm was stopped by instruction at iteration 200 with car 54.33%, ride 0.41% and taxi 9.47% (whole-scenario legs). `RidePairingEngine` was MUTATING THE PLAN when a ride leg failed to pair - 95.7% of the 61,409 iteration-0 misses were gone by iteration 1 and never returned, an exponential decay with a 36-iteration half-life toward the pre-repair 0.0013 occupancy. Those destroyed legs were 23.5% of all walk legs as ~9.7 km forced walks, the pool replanning turned into taxi. The forced walk is now an EXECUTION, restored at AfterMobsim so the walk is still scored and the alternative is still there; §9.55 is kept, no parameter moved. A window hypothesis was REFUSED BY MEASUREMENT (median gap 253.7 min; widening 15->60 would recover 13 legs of 1,529), and the funnel reordered geometry-first. Family **F7** declared. Nothing here is a result. |
 | 2026-08-25 | **The front door shows the model's fit, a dead run states its cause, and two documents stop duplicating the record (§9.80; issue #84; eighth session).** `README.md` described the package and never said whether the model reproduces the city, and described the corridor's signals only as an input that could not be obtained - nine days after §9.77 made signal control mechanical. New `src/analyse/build_fit_figures.py` generates the modelled-against-observed panels (mode share, the trip-length constraint, the 30 counts) from the run the calibrated base was written from - selected via `C5_calibration.json`'s `best_tag`, so the figures and the calibration report always describe the same arm - as dependency-free SVG carrying no wall-clock, which is what lets `--check` gate them in `check_package.py`. **CORRECTION: the light rail's 1,260 boardings had been reported as a -63% error against V001/V002, targets `fit.py` marks UNSCORABLE** because 2019-20 is a pre-pandemic market against a 2026 base (§12.1); the modelled figure is a LEVEL, the gap is not a fit statistic, and the framing had propagated through `CORRIDOR_PT_COMPOSITION.md` and three handover briefs - corrected there, banned in the generator, written into both skills and the handover contract, filed as #84. **`_meta.json` now REQUIRES a `cause` on `failed`/`aborted`**, read from the run's own `matsim.log` by new `src/run/run_failure.py` (terminating exception + `Caused by` chain + the line it came from); all fourteen dead runs backfilled from their logs, the three 25 August probe failures independently reproducing the §9.77 narrative; `results/INDEX.md` prints every cause. `check_doc_currency.py` gains `decimals` and a `text` claim kind (a stale NAME was structurally exempt), ten new README claims, and one stale-statement ban covering every phrasing of "the package is not built yet" - the §9.79 ban named one wording and the same false claim survived under another. **`P4_CHECKPOINT.md` retired as a live document and frozen as the 12 August record it was**: it restated `STATUS.md`'s job, had drifted on deliverables, issues, manifest, registry, mode share, relaxation, counts, walk ratio and SUMO scope, and held nothing the record does not. `docs/README.md` (five output schemas against seven, two `tests/` checks against four) and `.claude/CLAUDE.md` (four premise corrections against five) corrected. **No model or data value changed, no registry field moved, no run was launched, no target moved, the 67/143 split is untouched, and nothing here is a result.** |
 | 2026-08-25 | **The living documents are pinned to the artefacts, and a stale counts attribution is filed (§9.79; issue #82; seventh session).** An `/onboard` gap scan found `README.md` three phases out of date - a 376-row manifest against 489, a 210-field registry against 356, a road network 7,070 edges short, 612,680 agents against 612,687 - plus two statements that were false rather than stale (`networks/osm/` described as empty and the #32 re-harvest as pending, nine days after it ran and closed). `STATUS.md` carried the same figures and disagreed with its own P3 phase row; `.claude/CLAUDE.md` put the hardcoding ledger at 95 when it is 0. The mechanism was DUPLICATION: two documents holding one figures table, and the two session skills each holding their own copy of the six state-of-the-project questions. New: `tests/check_doc_currency.py` (portable harness, `--strict` gates CI) over `cities/<city>/tests/doc_currency.json` (22 city-owned claims), pinning every live figure to the artefact that decides it and banning two named false statements; `docs/HANDOVER_CONTRACT.md` defines the six questions, the trust order, the environment gate and the facts-that-expire rule ONCE for both skills. **A dated record stays frozen - only live-state cells are pinned.** Found while checking and filed rather than fixed: the calibration report justified unfitted counts by the absence of a through tier that §9.41 built and §9.64 measured as making no difference - the generator now states the supersession and the -91.8% residual across 30 stations (6 modelled-zero) is issue #82. **No model or data value changed, no run was launched, no target moved, the 67/143 split is untouched, nothing here is a result.** |
 | 2026-08-25 | **THE ACTIVATION BOUNDARY IS CROSSED — family F6 (§9.77; #73 #68 #74 #49; sixth session).** The §9.76 checklist executed as ONE boundary by the session's directive: `A.signals.representation=explicit_signals` (generated fixed-time plans at the 14 corridor intersections in every set; signalised approaches re-capacitated to saturation flow on the emitted run networks; each variant's OWN embedded tram delay removed from the schedule the day-type filter reads — the dwell transform riding inside it); a new declared gate `A.crossings.representation=change_events` puts the two freight level crossings into every config as a time-variant network (540 events, 16 links); `RUN.travel_time.bin_size_s` 900 → 300; `qsim.usingFastCapacityUpdate=false` written into every signal config; `taxi` into `RUN.mode_choice.modes`, `RUN.routing.network_modes` AND `city.json` — the §9.76 inert plumbing (blended Fares Order 2025 rates, the `fare` module, congested-network travel time) engaged unchanged. All 30 run-input sets regenerated; **family F5 closes UNMEASURED (the recorded cost of activate-first; its inputs regenerable from the declared switches)**. S3's priority is bus-keyed via the new `A.signals.tsp.priority_group` (`corridor` in S3's overlay). Three defects were caught by PROBES, not reading: the crossings XML violated the schema's element order (flowCapacity before freespeed); the S3 mid-block systems NPE'd the priority ledger on a null payee; a console line hardcoded a not-modelled row. Verified at plumbing scale only (S2 + S3, 1%×2, rc=0; all 14 S3 `CitysimTramPriority` controllers instantiate). **No arm ran, no target moved, the 67/143 split is untouched, nothing here is a result; the first F6 arm still requires its own stated-cost approval.** |

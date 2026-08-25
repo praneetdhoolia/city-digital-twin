@@ -153,7 +153,14 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             // driver left ten minutes early, and those two want opposite
             // answers: the first should abandon ride on its score, the second
             // is a departure-time coordination MATSim does not model.
-            + "miss_no_candidate,miss_window,miss_endpoints,miss_capacity\n";
+            + "miss_no_candidate,miss_window,miss_endpoints,miss_capacity,"
+            // For a leg that missed ONLY on timing, how far off was the nearest
+            // driver making a geometrically matching trip? A window miss can be
+            // a near miss the declared tolerance just failed to reach, or a
+            // driver hours away who was never going to serve it, and widening
+            // the tolerance is only defensible against the first. The buckets
+            // are minutes of |driver departure - passenger departure|.
+            + "gap_le30,gap_le45,gap_le60,gap_le120,gap_gt120,gap_median_min\n";
 
     private final Scenario scenario;
     private final OutputDirectoryHierarchy io;
@@ -252,6 +259,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private int missWindow = 0;
     private int missEndpoints = 0;
     private int missCapacity = 0;
+
+    /** Minutes off the nearest ENDPOINT-MATCHING driver, for legs that missed
+     *  only on timing. Kept as a list so the median is measured, not assumed. */
+    private final List<Double> missGapMinutes = new ArrayList<>();
 
     /** One realised car leg: where it ran, when it left, how long it took. */
     private static final class Realised {
@@ -371,6 +382,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         missWindow = 0;
         missEndpoints = 0;
         missCapacity = 0;
+        missGapMinutes.clear();
 
         index();
 
@@ -505,6 +517,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             int sawCandidate = 0;
             boolean sawInWindow = false;
             boolean sawEndpoints = false;
+            // The nearest driver making a geometrically matching trip, whatever
+            // the clock said. This is what decides whether a window miss was a
+            // near miss or a driver who was never going to serve it.
+            double nearestMatchingGap = Double.MAX_VALUE;
             for (final DriverLeg driver : candidates) {
                 if (driver.person.equals(ride.person)) {
                     continue;                       // you cannot drive yourself
@@ -512,6 +528,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 sawCandidate++;
                 final double gap = Math.abs(driver.departure - ride.departure);
                 if (gap > window) {
+                    if (endpointsMatch(rule, driver, ride) && gap < nearestMatchingGap) {
+                        nearestMatchingGap = gap;
+                    }
                     continue;
                 }
                 sawInWindow = true;
@@ -532,14 +551,24 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 if (refusedForCapacity) {
                     capacityRefusals++;
                 }
+                // GEOMETRY BEFORE TIMING. Asking "was anyone in the window?"
+                // first labelled as a timing miss every passenger whose
+                // household drove somewhere else entirely: measured 1,529 such
+                // legs of which only 112 had an endpoint-matching driver at ANY
+                // hour, median 253.7 minutes away. Widening the window would
+                // have recovered 13. The question that separates a fixable miss
+                // from a hopeless one is whether a matching TRIP exists at all.
+                final boolean matchedEver =
+                        sawEndpoints || nearestMatchingGap < Double.MAX_VALUE;
                 if (sawCandidate == 0) {
                     missNoCandidate++;              // no household car leg at all
+                } else if (!matchedEver) {
+                    missEndpoints++;                // the household drove elsewhere
                 } else if (!sawInWindow) {
-                    missWindow++;                   // a driver, but not at that time
-                } else if (!sawEndpoints) {
-                    missEndpoints++;                // right time, wrong trip
+                    missWindow++;                   // the right trip, the wrong hour
+                    missGapMinutes.add(nearestMatchingGap / 60.0);
                 } else {
-                    missCapacity++;                 // right trip, car full
+                    missCapacity++;                 // right trip, right hour, car full
                 }
                 unpaired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
                 if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
@@ -663,6 +692,27 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                           + "alternative kept", remodedThisMobsim.size());
         }
         remodedThisMobsim.clear();
+    }
+
+    /** How many timing misses were within `minutes` of a matching driver. */
+    private int gapAtMost(final double minutes) {
+        int n = 0;
+        for (final Double g : missGapMinutes) {
+            if (g <= minutes) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** Median minutes off, or 0 when nothing missed on timing alone. */
+    private double gapMedian() {
+        if (missGapMinutes.isEmpty()) {
+            return 0.0;
+        }
+        final List<Double> s = new ArrayList<>(missGapMinutes);
+        Collections.sort(s);
+        return s.get(s.size() / 2);
     }
 
     private static boolean endpointsMatch(final String rule, final DriverLeg driver,
@@ -828,6 +878,13 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 .append(',').append(missWindow)
                 .append(',').append(missEndpoints)
                 .append(',').append(missCapacity)
+                .append(',').append(gapAtMost(30.0))
+                .append(',').append(gapAtMost(45.0))
+                .append(',').append(gapAtMost(60.0))
+                .append(',').append(gapAtMost(120.0))
+                .append(',').append(missGapMinutes.size() - gapAtMost(120.0))
+                .append(',').append(String.format(java.util.Locale.ROOT, "%.1f",
+                                                  gapMedian()))
                 .append('\n');
         try {
             Files.write(Paths.get(io.getOutputFilename(OUT_FILE)),
