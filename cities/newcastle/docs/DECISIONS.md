@@ -154,6 +154,15 @@ September 2025 — 89 months. That yields a full 12-month clean baseline
 (March 2019 – February 2020) of **3,417 boardings/day**, now the primary
 calibration target. This materially strengthens the identification strategy.
 
+> **Superseded on this last point (§12.1, and see §9.80).** The series is real
+> and the correction to proposal §6.4 stands. Calling it *the primary calibration
+> target* does not: §12.1 later established that March 2019 – February 2020 is a
+> pre-pandemic PT market against a 2026 base year, so `fit.py` marks V001/V002
+> **unscorable** and the modelled boardings are reported as a level. This
+> sentence is the origin of a "−63% error" that was quoted for three handovers
+> against a target nothing scores (issue #84). The record is left as written; the
+> live position is §12.1.
+
 **2.2 — The 1 July 2024 series break is real, and it is compounded by a second,
 undocumented break.** NISC 1 bus boardings fall from ~292,000 (October 2024) to
 ~89,000 (October 2025). That is far larger than a methodology restatement should
