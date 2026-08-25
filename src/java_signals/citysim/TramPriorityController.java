@@ -417,7 +417,15 @@ public final class TramPriorityController extends AbstractSignalController
             this.workingOnset.put(gid, this.workingOnset.get(gid) + delta);
         }
         this.budgetUsedS += delta;
-        this.ledger.merge(this.longestCompetingGreen, delta, Integer::sum);
+        // A system whose plan carries ONLY the priority group (the mid-block
+        // crossing structure under priorityGroupId=corridor, S3) has no
+        // competing stage to owe: the extension eats the unmodelled
+        // pedestrian interruption, bounded by the same budget, and there is
+        // nobody to repay - measured, the null key NPE'd the ledger on the
+        // first S3 probe (9.78).
+        if (this.longestCompetingGreen != null) {
+            this.ledger.merge(this.longestCompetingGreen, delta, Integer::sum);
+        }
         return true;
     }
 
@@ -479,8 +487,11 @@ public final class TramPriorityController extends AbstractSignalController
         }
         this.workingOnset.put(this.tramGroupId, newTramOnset);
         this.budgetUsedS += recallS;
-        this.ledger.merge(paidBy != null ? paidBy : this.longestCompetingGreen,
-                recallS, Integer::sum);
+        final Id<SignalGroup> payer =
+                paidBy != null ? paidBy : this.longestCompetingGreen;
+        if (payer != null) {
+            this.ledger.merge(payer, recallS, Integer::sum);
+        }
         return true;
     }
 
