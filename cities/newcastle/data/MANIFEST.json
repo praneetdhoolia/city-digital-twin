@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-25T10:57:40",
+  "generated": "2026-08-25T11:43:28",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 489,
-  "total_bytes": 4252387682,
+  "total_bytes": 4252385273,
   "total_gib": 3.96,
   "by_stage": {
     "raw": 81,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1529042554
+    "processed": 1529040145
   },
   "files": [
     {
@@ -2393,9 +2393,9 @@
     },
     {
       "path": "demand/plans/matsim/_plans_report.json",
-      "bytes": 4019,
+      "bytes": 3856,
       "rows": null,
-      "sha256": "b6bc9ca4c866d58b07bf77e912694bf276adc17d6ca50c96f0be64cca2b2a3ea",
+      "sha256": "057a2009f41110b5841e86fd8d968d7e887d7c3064c4c25d1874d0e14008c0ab",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2741,9 +2741,9 @@
     },
     {
       "path": "scenarios/matsim/_run_inputs_report.json",
-      "bytes": 44643,
+      "bytes": 42907,
       "rows": null,
-      "sha256": "0a484cf3f2f16aac778c5c52302c373704e49d43561e296ed8c48cd03d44dd32",
+      "sha256": "6399460a6c0322d99f4cbe17615df148dba42b77441970654176a56685eb653d",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "",
@@ -5273,9 +5273,9 @@
     },
     {
       "path": "networks/matsim/signals/S0/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5333,9 +5333,9 @@
     },
     {
       "path": "networks/matsim/signals/S1/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5393,9 +5393,9 @@
     },
     {
       "path": "networks/matsim/signals/S2/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5453,9 +5453,9 @@
     },
     {
       "path": "networks/matsim/signals/S2a/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5513,9 +5513,9 @@
     },
     {
       "path": "networks/matsim/signals/S2b/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5573,9 +5573,9 @@
     },
     {
       "path": "networks/matsim/signals/S2c/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5633,9 +5633,9 @@
     },
     {
       "path": "networks/matsim/signals/S3/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5693,9 +5693,9 @@
     },
     {
       "path": "networks/matsim/signals/S4/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5753,9 +5753,9 @@
     },
     {
       "path": "networks/matsim/signals/S5/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -5813,9 +5813,9 @@
     },
     {
       "path": "networks/matsim/signals/S6/signals_capacity_patch.csv",
-      "bytes": 2301,
+      "bytes": 2250,
       "rows": 50,
-      "sha256": "62574cb68252c584e5cdc852c487adbaa1bcf04f2ece9b7c9494471d77250678",
+      "sha256": "9ab19ffb96cf6f2bd59436d057fb41673a423943a60b7b3279b319ac7d82ec09",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
