@@ -147,7 +147,13 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             + "car_legs,occupancy_from_pairings,"
             + "driver_time_realised,driver_time_routed,"
             + "mean_driver_minus_baseline_s,capacity_refusals,"
-            + "households_with_ride,ride_legs_no_household,elapsed_ms\n";
+            + "households_with_ride,ride_legs_no_household,elapsed_ms,"
+            // WHY a leg missed, as an ordered funnel. A pair rate alone cannot
+            // separate a passenger no driver could ever serve from one whose
+            // driver left ten minutes early, and those two want opposite
+            // answers: the first should abandon ride on its score, the second
+            // is a departure-time coordination MATSim does not model.
+            + "miss_no_candidate,miss_window,miss_endpoints,miss_capacity\n";
 
     private final Scenario scenario;
     private final OutputDirectoryHierarchy io;
@@ -238,6 +244,14 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      *  back at AfterMobsim. See {@link #notifyAfterMobsim}: the forced walk is
      *  an execution, not an amputation. */
     private final List<RideLeg> remodedThisMobsim = new ArrayList<>();
+
+    /** Why unpaired legs missed, this iteration, as an ordered funnel:
+     *  no candidate driver leg at all / none inside the window / none whose
+     *  endpoints matched / all refused for capacity. Reset per pairing pass. */
+    private int missNoCandidate = 0;
+    private int missWindow = 0;
+    private int missEndpoints = 0;
+    private int missCapacity = 0;
 
     /** One realised car leg: where it ran, when it left, how long it took. */
     private static final class Realised {
@@ -353,6 +367,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         inFlight.clear();
         bookings.clear();
         remodedThisMobsim.clear();
+        missNoCandidate = 0;
+        missWindow = 0;
+        missEndpoints = 0;
+        missCapacity = 0;
 
         index();
 
@@ -483,17 +501,24 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             DriverLeg best = null;
             double bestGap = Double.MAX_VALUE;
             boolean refusedForCapacity = false;
+            // The funnel, so a miss can say WHICH gate closed on it.
+            int sawCandidate = 0;
+            boolean sawInWindow = false;
+            boolean sawEndpoints = false;
             for (final DriverLeg driver : candidates) {
                 if (driver.person.equals(ride.person)) {
                     continue;                       // you cannot drive yourself
                 }
+                sawCandidate++;
                 final double gap = Math.abs(driver.departure - ride.departure);
                 if (gap > window) {
                     continue;
                 }
+                sawInWindow = true;
                 if (!endpointsMatch(rule, driver, ride)) {
                     continue;
                 }
+                sawEndpoints = true;
                 if (driver.carrying >= capacity) {
                     refusedForCapacity = true;
                     continue;
@@ -506,6 +531,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             if (best == null) {
                 if (refusedForCapacity) {
                     capacityRefusals++;
+                }
+                if (sawCandidate == 0) {
+                    missNoCandidate++;              // no household car leg at all
+                } else if (!sawInWindow) {
+                    missWindow++;                   // a driver, but not at that time
+                } else if (!sawEndpoints) {
+                    missEndpoints++;                // right time, wrong trip
+                } else {
+                    missCapacity++;                 // right trip, car full
                 }
                 unpaired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
                 if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
@@ -790,6 +824,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 .append(String.format(java.util.Locale.ROOT, "%.3f", meanDelta))
                 .append(',').append(capacityRefusals).append(',').append(households)
                 .append(',').append(noHousehold).append(',').append(elapsedMs)
+                .append(',').append(missNoCandidate)
+                .append(',').append(missWindow)
+                .append(',').append(missEndpoints)
+                .append(',').append(missCapacity)
                 .append('\n');
         try {
             Files.write(Paths.get(io.getOutputFilename(OUT_FILE)),
