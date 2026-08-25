@@ -2,9 +2,15 @@
 
 **city-digital-twin** (renamed 24 Aug 2026 from the earlier Newcastle-specific name, §9.67) —
 counterfactual microsimulation of the Newcastle Light Rail
-**Stage:** P4 calibration, in progress. **No scenario has been run to a
-reportable state, and nothing in this repository is a result.**
-**Started:** 10 August 2026 · **last entry:** §9.75, 25 August 2026
+**Stage:** P4 calibration, in progress. **No counterfactual has been run and
+nothing in this repository is a finding about the light rail.** The base model
+has run and been measured; that measurement is a calibration diagnostic (the
+figures in [`README.md`](../../../README.md), the full rows in
+[`audit/CALIBRATION_REPORT.md`](audit/CALIBRATION_REPORT.md)), not a result.
+**Started:** 10 August 2026 · **the newest entry is the last `## 9.x` section
+before `## 10.`, and the last row of §14** — stated as a place rather than a
+number, because a number here has to be rewritten to stay true and twice was
+not (it read §9.75 while §9.79 was in the file).
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -18,8 +24,8 @@ This file records every value in the data package whose `source` field reads
 
 ## How to find something in this file
 
-This file is **4,300+ lines and append-only**. Two things about its layout will
-otherwise cost you an hour:
+This file is **long and append-only** — several thousand lines. Two things about
+its layout will otherwise cost you an hour:
 
 1. **The section numbers are not in file order.** `§15` (the input registry) sits
    **before** `§14` (the change log), which is last. There is no `§16`.
@@ -56,10 +62,11 @@ otherwise cost you an hour:
 | **Deliverable 0b: assumptions replaced by held data** | **§9.61** — G15 tertiary full-time split (per SA1, observed), the light-vehicle day-type factors (SAT:SUN split, external weekend scaling, departure shift - all measured from the classified hourly counts), the chain-timing scaffold speeds declared, and the ranked remainder |
 | **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
-| **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
+| **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR **1,260 boardings as a LEVEL** — the 3,417 target is unscorable against a 2026 base (§12.1, §9.80), never quote a per-cent error against it; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
 | **Batch 4.7 built inert: crossings, dwell, signals, taxi, harness safety; the activation checklist** | **§9.76** — the overnight build record; ONE boundary; warm-restart validity ruling OPEN; detached launch verified (#70) |
 | **THE ACTIVATION BOUNDARY CROSSED: signals, crossings, dwell and taxi LIVE; family F6** | **§9.77** — the §9.76 checklist executed by directive; F5 closes UNMEASURED (recorded cost); the crossings-XML schema-order defect and the stale metrics line, both probe-caught; S3 bus-keyed priority via `A.signals.tsp.priority_group`; the 4.6.9 arm becomes an F6 arm, approval still required |
 | **The runless lanes closed: Tier C submodes, 0b upgrades, the corridor answer, the sex-structure finding** | **§9.78** — PT submodes score-distinct via raptor mode mapping (bytecode-verified; the main-mode-identifier crash pre-empted); seven 0b source moves incl. CWANZ bike 0.493 (plans regenerated inside F6); COVERAGE carries the bus-over-tram composition (98.3% of corridor demand needs an interchange the buses don't); modelled mode split sex-invariant vs G62's real structure; the TIA sweep EMPTY; #66's capture armed |
+| **The front door draws the fit; a dead run states its cause; two documents stop duplicating the record** | **§9.80** — `build_fit_figures.py` generates the README's modelled-vs-observed panels from the calibrated base's own run (`--check` gates them); the LR "−63%" **CORRECTED** — it was an error quoted against an unscorable target (#84); `_meta.json` now REQUIRES a `cause`, read from the run's own `matsim.log` by `run_failure.py`, all 14 dead runs backfilled; the currency check gains decimals and strings; `P4_CHECKPOINT.md` frozen as archive |
 | **The documents drifted from the artefacts; document currency becomes a gate** | **§9.79** - `README.md` three phases stale (manifest 376 vs 489, registry 210 vs 356, road edges 43,112 vs 50,182) and two statements outright false; the cause was DUPLICATION; new `tests/check_doc_currency.py` + city-owned `doc_currency.json` pin every live figure to its artefact and gate CI; `docs/HANDOVER_CONTRACT.md` de-duplicates the two skills; **dated records stay frozen**; the superseded counts attribution becomes #82 |
 | **Level crossings (freight-road interactions)** | §9.70 designed; **§9.76 built** — derived from OSM barrier tags, Stewart Avenue exclusion asserted, swept never pinned (#68) |
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (standing directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
@@ -7378,6 +7385,118 @@ result.
 
 ---
 
+## 9.80 The front door shows the model's fit, a dead run says why it died, and two documents stop duplicating the record (25 August 2026, eighth session; issue #84)
+
+`README.md` described the package — 489 files, 50,182 edges, 356 fields — and
+said nothing whatever about whether the model reproduces the city it models. A
+reader could not learn, without opening an audit document, that the base arm puts
+vehicle passengers at 0.09% against an observed 20.60%. It also described the
+corridor's traffic signals only as an input that could not be obtained, nine days
+after §9.77 made signal control **mechanical** in every assembled run-input set.
+Both are the same defect: the front door was a description of inputs, and the
+project had moved on to measurement.
+
+**The figures are generated, not written.** New
+`src/analyse/build_fit_figures.py` draws three panels — scored mode share, the
+trip-length constraint against its observed range, and the 30 traffic counts on
+log axes against the line of perfect agreement — as SVG, in a light and a dark
+variant, with no plotting dependency and no wall-clock stamp. Four properties
+were chosen deliberately:
+
+- **It draws the calibrated base's own run.** Not the newest directory (usually a
+  two-iteration probe, never a result), and not a hand-named tag:
+  `params/C5_calibration.json`'s `best_tag` selects it, so the figures and
+  `docs/audit/CALIBRATION_REPORT.md` always describe the same arm and both follow
+  the base forward when a new one is calibrated.
+- **No wall-clock, anywhere.** A figure that restamps itself on every
+  regeneration churns the diff and cannot be checked; the provenance is the run,
+  and the run does not move. `--check` therefore proves the committed figures
+  still describe the run they name, and `check_package.py` runs it.
+- **Hand-written SVG rather than a plotting library.** matplotlib is present on
+  this machine but is not in the declared dependency set, and its SVG output is
+  not byte-stable across versions — which would make `--check` a source of false
+  failures rather than a gate.
+- **It refuses to draw what the fit refused to score** — below.
+
+**THE CORRECTION: the light rail's boardings were being reported as a −63%
+error against a target the model's own fit declines to score.** `fit.py` marks
+V001/V002 (3,417 boardings/day) *unscorable* and states the reason: March 2019 –
+February 2020 is a pre-pandemic PT market, PT mode share roughly halved before
+the 2026 base year (§12.1), and V002 is V001 ÷ 30.4 rather than an independent
+datum. The modelled 1,260 is a **level**; the gap between it and that observation
+is not a fit statistic. The framing had propagated into
+`docs/audit/CORRIDOR_PT_COMPOSITION.md` and through three consecutive handover
+briefs, and it is the same class of error §9.79 corrected in
+`src/calibrate/report.py`: a comparison whose stated justification the record had
+already withdrawn. Corrected in the audit document, banned in the generator
+(unscored observations are recorded as context, with their reason, in
+`FIGURES.json`), and written into both session skills and the handover contract.
+**No target moved and the split is untouched** — what changed is what may be said
+about a number, never the number. Filed as **#84** so the same claim can be
+hunted wherever else it survives.
+
+**A dead run now says why it died.** `_meta.json` recorded `status: failed`,
+`rc: 1` and nothing else, so the reason survived only in whoever was watching:
+three failed 25 August probes reached the next session as directories that could
+not explain themselves, their causes present only as narrative in §9.77. New
+`src/run/run_failure.py` reads the **terminating exception out of the run's own
+`matsim.log`** — the last `Exception in thread`, its `Caused by` chain, and the
+line it was read from — so the cause is evidence rather than recollection, and a
+log that says nothing yields a cause that says the log said nothing. The meta
+contract now **requires** `cause` on `failed` and `aborted` (schema condition plus
+a semantic rule in `outputs.py`, because jsonschema is optional); `mark_dead`
+writes it on every death path, with the caller's knowledge as the headline where
+it has some (an interrupt, a reconciled dead harness) and the log's last word
+beside it. All fourteen dead runs were backfilled **from their own logs**, and
+the three the parser recovered match the narrative independently: the
+unmaterialised `tramPriority` config group, the crossings XML's element-order
+violation, and the S3 mid-block null-payee NPE. `results/INDEX.md` prints every
+cause. Their §9.66 backfill notes are untouched.
+
+**The currency check can now see decimals and strings.** `check_doc_currency.py`
+compared integers only, so a fit statistic written as `10.65 pp` and the run id a
+figure claims to draw were both structurally exempt — and a stale *name* is
+exactly as wrong as a stale count. A claim may now declare `decimals`, and a new
+`text` kind compares a captured string against one from an artefact. Ten new
+claims pin the README's results section, including the run directory and its
+comparability family. Verified to exit 1 on an injected regression of each kind.
+
+**The stale-statement ban was too narrow to catch its own case.** §9.79 banned
+the wording *"layers pending the #32 re-harvest"*; the same false claim survived
+in `STATUS.md`'s resume instructions as *"It cannot pass until the harvest above
+is re-run"*, and was found by hand on 25 August — which is the work the check
+exists to abolish. The two bans are now one pattern covering every phrasing of
+"the package is not built yet".
+
+**`P4_CHECKPOINT.md` is retired as a live document and frozen as the 12 August
+record it always was.** It duplicated the phase board and the deliverable
+checklist that are `STATUS.md`'s job, and thirteen days later six of its
+deliverables, twelve of its issues, its manifest count (364), its registry count
+(171), its whole mode-share table, its relaxation verdict, its counts residual,
+its walk ratio, its SUMO scope and its branch line were all superseded. Every
+fact in it that is still true is recorded in `DECISIONS.md` — the machine and the
+absent GPU path (§9.5), the visual-only Overpass layers, `consumers` being a read
+log, `modestats.csv` versus `_metrics.json` — so **nothing needed migrating**.
+The body is preserved unedited; a header states that it is an archive, lists what
+superseded what, and points at the live sources. `STATUS.md` no longer sends
+readers to it. This is the §9.79 mechanism observed a second time: **a document
+that restates another document's job will drift, and refreshing it only resets
+the clock.** Both session skills now carry the rule — find the duplicate, migrate
+what is unique, freeze the rest.
+
+`docs/README.md` carried the same class of drift: it named five output schemas
+against seven, two `tests/` checks against four, and a Java tree that had since
+split in two. Corrected. `.claude/CLAUDE.md` said the record holds *four*
+premise corrections; §9.74 is the fifth.
+
+**What this deliberately does not do**: no model or data value changed; no
+registry field was added or moved; no run was launched; no target moved; the
+67/143 split is untouched; the traffic counts remain a reported constraint and
+are still not fitted; the figures are a pre-calibration diagnostic of a CLOSED
+family's arm and nothing here is a result.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -7876,6 +7995,7 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | **The front door shows the model's fit, a dead run states its cause, and two documents stop duplicating the record (§9.80; issue #84; eighth session).** `README.md` described the package and never said whether the model reproduces the city, and described the corridor's signals only as an input that could not be obtained - nine days after §9.77 made signal control mechanical. New `src/analyse/build_fit_figures.py` generates the modelled-against-observed panels (mode share, the trip-length constraint, the 30 counts) from the run the calibrated base was written from - selected via `C5_calibration.json`'s `best_tag`, so the figures and the calibration report always describe the same arm - as dependency-free SVG carrying no wall-clock, which is what lets `--check` gate them in `check_package.py`. **CORRECTION: the light rail's 1,260 boardings had been reported as a -63% error against V001/V002, targets `fit.py` marks UNSCORABLE** because 2019-20 is a pre-pandemic market against a 2026 base (§12.1); the modelled figure is a LEVEL, the gap is not a fit statistic, and the framing had propagated through `CORRIDOR_PT_COMPOSITION.md` and three handover briefs - corrected there, banned in the generator, written into both skills and the handover contract, filed as #84. **`_meta.json` now REQUIRES a `cause` on `failed`/`aborted`**, read from the run's own `matsim.log` by new `src/run/run_failure.py` (terminating exception + `Caused by` chain + the line it came from); all fourteen dead runs backfilled from their logs, the three 25 August probe failures independently reproducing the §9.77 narrative; `results/INDEX.md` prints every cause. `check_doc_currency.py` gains `decimals` and a `text` claim kind (a stale NAME was structurally exempt), ten new README claims, and one stale-statement ban covering every phrasing of "the package is not built yet" - the §9.79 ban named one wording and the same false claim survived under another. **`P4_CHECKPOINT.md` retired as a live document and frozen as the 12 August record it was**: it restated `STATUS.md`'s job, had drifted on deliverables, issues, manifest, registry, mode share, relaxation, counts, walk ratio and SUMO scope, and held nothing the record does not. `docs/README.md` (five output schemas against seven, two `tests/` checks against four) and `.claude/CLAUDE.md` (four premise corrections against five) corrected. **No model or data value changed, no registry field moved, no run was launched, no target moved, the 67/143 split is untouched, and nothing here is a result.** |
 | 2026-08-25 | **The living documents are pinned to the artefacts, and a stale counts attribution is filed (§9.79; issue #82; seventh session).** An `/onboard` gap scan found `README.md` three phases out of date - a 376-row manifest against 489, a 210-field registry against 356, a road network 7,070 edges short, 612,680 agents against 612,687 - plus two statements that were false rather than stale (`networks/osm/` described as empty and the #32 re-harvest as pending, nine days after it ran and closed). `STATUS.md` carried the same figures and disagreed with its own P3 phase row; `.claude/CLAUDE.md` put the hardcoding ledger at 95 when it is 0. The mechanism was DUPLICATION: two documents holding one figures table, and the two session skills each holding their own copy of the six state-of-the-project questions. New: `tests/check_doc_currency.py` (portable harness, `--strict` gates CI) over `cities/<city>/tests/doc_currency.json` (22 city-owned claims), pinning every live figure to the artefact that decides it and banning two named false statements; `docs/HANDOVER_CONTRACT.md` defines the six questions, the trust order, the environment gate and the facts-that-expire rule ONCE for both skills. **A dated record stays frozen - only live-state cells are pinned.** Found while checking and filed rather than fixed: the calibration report justified unfitted counts by the absence of a through tier that §9.41 built and §9.64 measured as making no difference - the generator now states the supersession and the -91.8% residual across 30 stations (6 modelled-zero) is issue #82. **No model or data value changed, no run was launched, no target moved, the 67/143 split is untouched, nothing here is a result.** |
 | 2026-08-25 | **THE ACTIVATION BOUNDARY IS CROSSED — family F6 (§9.77; #73 #68 #74 #49; sixth session).** The §9.76 checklist executed as ONE boundary by the session's directive: `A.signals.representation=explicit_signals` (generated fixed-time plans at the 14 corridor intersections in every set; signalised approaches re-capacitated to saturation flow on the emitted run networks; each variant's OWN embedded tram delay removed from the schedule the day-type filter reads — the dwell transform riding inside it); a new declared gate `A.crossings.representation=change_events` puts the two freight level crossings into every config as a time-variant network (540 events, 16 links); `RUN.travel_time.bin_size_s` 900 → 300; `qsim.usingFastCapacityUpdate=false` written into every signal config; `taxi` into `RUN.mode_choice.modes`, `RUN.routing.network_modes` AND `city.json` — the §9.76 inert plumbing (blended Fares Order 2025 rates, the `fare` module, congested-network travel time) engaged unchanged. All 30 run-input sets regenerated; **family F5 closes UNMEASURED (the recorded cost of activate-first; its inputs regenerable from the declared switches)**. S3's priority is bus-keyed via the new `A.signals.tsp.priority_group` (`corridor` in S3's overlay). Three defects were caught by PROBES, not reading: the crossings XML violated the schema's element order (flowCapacity before freespeed); the S3 mid-block systems NPE'd the priority ledger on a null payee; a console line hardcoded a not-modelled row. Verified at plumbing scale only (S2 + S3, 1%×2, rc=0; all 14 S3 `CitysimTramPriority` controllers instantiate). **No arm ran, no target moved, the 67/143 split is untouched, nothing here is a result; the first F6 arm still requires its own stated-cost approval.** |
 | 2026-08-25 | **The runless lanes close out (§9.78; #49 #50 #62 #63 #66; sixth session).** Tier C: PT submodes SCORE-DISTINCT via SwissRailRaptor mode mapping (verified against the pinned jar's bytecode; the stock main-mode identifier's interchange crash pre-empted by `PtSubmodeMainModeIdentifier`; probe shows zero `pt` legs — bus 1,414 / rail 450 / tram 10 / ferry 3 — with trip labels and per-submode conservation intact; behind `RUN.routing.pt_submode_scoring`, folded into F6 while it has no arms). Seven 0b source upgrades: `min_green_s` → literature (TfNSW TTD 2018/002), five tolerances/search bounds → definition, and **`B.population.bike_available_rate` assumed 0.5 → literature 0.493** (CWANZ NSW 2025, p.72) with the B plans regenerated on the cited value. The corridor-composition question ANSWERED on arm A (a diagnostic, not a result): COVERAGE carries the bus-over-tram split — 98.3% of corridor-band demand has an end the 6-stop alignment cannot reach without the interchange the through-running buses avoid; the transfer penalty prices it; frequency exonerated. The demographic measurement recorded (#50): the modelled split is sex-invariant against G62's real sex structure; NO mode × age cell exists in the held data. The systematic TIA sweep came back EMPTY (19 applications; PPSHCC-137 stays the only SCATS evidence; PPSHCC-306 corrected to East End 105–121 Hunter St). #66's settlement mechanised (Defender/TaskScheduler capture on the stall transition). #62's six strata landed: `light_rail_boardings` → `intervention_boardings` (an ACCEPTED schema break — pre-rename run records cannot be scored, the `target_lga_pct` precedent), manifest lineage into the city descriptor (manifest byte-identical), currency/base-year tokenised (the agnostic fixture passes at AUD_2031), layers.json parameterised, `check_package` split into a portable harness over city-owned expectations (1,433 checks, nothing dropped), the reader-shape contract + Newcastle adapter (HTS/counts readers byte-identical; the census family recorded as remaining source-shaped). **No target moved, the 67/143 split is untouched, nothing here is a result.** |
