@@ -26,7 +26,9 @@ import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.Route;
 import org.matsim.core.controler.OutputDirectoryHierarchy;
+import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
+import org.matsim.core.controler.listener.AfterMobsimListener;
 import org.matsim.core.controler.listener.BeforeMobsimListener;
 import org.matsim.core.router.StageActivityTypeIdentifier;
 import org.matsim.core.utils.misc.OptionalTime;
@@ -118,7 +120,8 @@ import org.matsim.core.utils.misc.OptionalTime;
  * share is a finding about the DEMAND, not about this class.
  */
 public final class RidePairingEngine implements BeforeMobsimListener,
-        PersonDepartureEventHandler, PersonArrivalEventHandler {
+        AfterMobsimListener, PersonDepartureEventHandler,
+        PersonArrivalEventHandler {
 
     /** Person attribute written by build_matsim_plans.py; absent on the
      *  household-less external and through boundary tiers. */
@@ -230,6 +233,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
 
     private boolean headerWritten = false;
     private int writeFailures = 0;
+
+    /** Legs re-moded to walk for THIS mobsim only, with the ride route to give
+     *  back at AfterMobsim. See {@link #notifyAfterMobsim}: the forced walk is
+     *  an execution, not an amputation. */
+    private final List<RideLeg> remodedThisMobsim = new ArrayList<>();
 
     /** One realised car leg: where it ran, when it left, how long it took. */
     private static final class Realised {
@@ -344,6 +352,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         current = new HashMap<>();
         inFlight.clear();
         bookings.clear();
+        remodedThisMobsim.clear();
 
         index();
 
@@ -502,13 +511,29 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
                     // DECISIONS.md 9.55: a ride trip no household driver can
                     // physically serve is not a ride trip - it WALKS, on the
-                    // network, this iteration (the car route's links are
-                    // traversed at walking speed; ReRoute re-routes it as
-                    // walk next innovation). A long forced walk scores
+                    // network, THIS ITERATION. A long forced walk scores
                     // terribly, so co-evolution reassigns the tour, and ride
                     // becomes emergent: only what the driver supply carries
                     // survives. No parameter invented; the constraint is the
                     // price.
+                    //
+                    // The walk is an EXECUTION, not an amputation. The mode is
+                    // given back at AfterMobsim (notifyAfterMobsim), because
+                    // scoring is event-driven: the agent is still charged for
+                    // the walk it actually made, while the plan keeps `ride`
+                    // as an alternative co-evolution can re-select when the
+                    // driver's selected plan serves it again. Mutating the
+                    // plan permanently made pairing failure IRREVERSIBLE while
+                    // pairing success created nothing - a one-way ratchet.
+                    // Measured on 20260825T135734: 87,019 ride legs at
+                    // iteration 0, 61,409 unpaired, and 58,791 of them gone by
+                    // iteration 1 - 95.7% - never to return; paired legs then
+                    // eroded 25,610 -> 7,320 on timing misses alone, an
+                    // exponential decay with a 36-iteration half-life heading
+                    // to the pre-repair 0.0013 occupancy. Whether ride is
+                    // worth choosing is for the score to decide over many
+                    // iterations, not for one missed pairing to settle.
+                    remodedThisMobsim.add(ride);
                     ride.leg.setMode(TransportMode.walk);
                     org.matsim.core.router.TripStructureUtils.setRoutingMode(
                             ride.leg, TransportMode.walk);
@@ -569,6 +594,42 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     }
 
     // ---- the rules --------------------------------------------------------
+
+    /**
+     * Give back every leg the pairing forced to walk for this mobsim.
+     *
+     * <p>Scoring is event-driven and this runs once the mobsim has emitted its
+     * events, so the agent keeps the score of the walk it actually made -
+     * DECISIONS.md 9.55's price is paid in full, and the surviving ride share
+     * stays emergent from the physical driver supply. What the agent does NOT
+     * keep is a plan with ride amputated out of it: the mode and the route the
+     * pairing set aside go back on the leg, so the alternative is still there
+     * to be re-selected when the driver's selected plan serves it again.
+     *
+     * <p>Without this, one missed pairing deleted the alternative for good
+     * while a successful pairing created nothing - a one-way ratchet that ran
+     * to zero whatever the scores said. The measurement is in the re-mode
+     * comment above.
+     */
+    @Override
+    public void notifyAfterMobsim(final AfterMobsimEvent event) {
+        if (!enabled()) {
+            return;
+        }
+        for (final RideLeg ride : remodedThisMobsim) {
+            ride.leg.setMode(TransportMode.ride);
+            org.matsim.core.router.TripStructureUtils.setRoutingMode(
+                    ride.leg, TransportMode.ride);
+            ride.leg.setRoute(ride.route);
+        }
+        if (!remodedThisMobsim.isEmpty()) {
+            org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                    .info("ridePairing: {} forced-walk leg(s) restored to ride "
+                          + "after the mobsim - the walk was scored, the "
+                          + "alternative kept", remodedThisMobsim.size());
+        }
+        remodedThisMobsim.clear();
+    }
 
     private static boolean endpointsMatch(final String rule, final DriverLeg driver,
                                           final RideLeg ride) {
