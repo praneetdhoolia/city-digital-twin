@@ -159,6 +159,14 @@ python -m compileall -q src tests
 # if a data artefact changed:  normalise_eol → python src/build/build_manifest.py → normalise_eol
 ```
 
+**The normalise_eol sandwich is NOT optional when a committed data artefact
+changed** — running `build_manifest.py` bare hashes CRLF bytes on disk while
+git stores LF, so the local full-package check passes and **CI's
+committed-files check fails on the PR** (breached 21 Aug and again 25 Aug:
+two regenerated build reports failed PR #81's manifest check on exactly this).
+If `git add` prints a "CRLF will be replaced by LF" warning for a
+manifest-listed file, the sandwich was skipped — stop and run it.
+
 Then verify doc links you added or moved actually resolve (no `…`-abbreviated
 paths — renderers break them into dead URLs).
 
@@ -175,9 +183,26 @@ rule, 21 Aug 2026; it superseded the earlier docs-only-close-outs-on-main
 convention). **The PR is opened HERE, at /handoff — not earlier, when a
 piece of work finished**: session work accumulates as commits on the
 session branch, and this phase opens the ONE pull request that carries it.
-After opening it, **arm a watch for the merge** (poll the PR state); when
-it merges and the remote branch is gone, delete the local branch — **the
-handoff is complete only then**. If the session ends before the merge, the
+
+**After opening the PR, VERIFY IT IS GREEN before anything else** — this is
+a gate, not a courtesy:
+
+```bash
+gh pr checks <n> --watch        # wait for every CI check to finish
+gh pr view <n> --json mergeable,mergeStateStatus
+```
+
+Every check must PASS and the PR must be MERGEABLE (mergeStateStatus not
+BEHIND/DIRTY/UNSTABLE). A failing check is **this session's defect to fix
+now**: diagnose from the failed job's log (`gh run view <id> --log-failed`),
+fix on the session branch, push, and re-watch until green. Never hand over,
+arm the merge watch, or end the session on a red or conflicted PR — a PR
+that cannot merge is not a handover, it is unfinished work wearing one's
+clothes. (Breached 25 Aug 2026: PR #81 was opened, the watch armed and the
+session reported closed while CI's manifest check was failing.) Only once
+green: **arm a watch for the merge** (poll the PR state); when it merges and
+the remote branch is gone, delete the local branch — **the handoff is
+complete only then**. If the session ends before the merge, the
 open PR is the next session's first item of unfinished business. **One PR,
 based on `main` — never stacked on an unmerged work branch** (a stacked PR merges into its base branch, not `main`; this
 stranded five PRs on 20 Aug 2026 until a landing PR carried the union), and
@@ -202,6 +227,9 @@ after verifying their tips carry no content absent from `main`.
 - [ ] Does the brief answer all six state-of-the-project questions
       (Phase 5), so that `/onboard` can reconstruct the whole picture from
       `main` alone?
+- [ ] Is the PR **green and mergeable** — every CI check passed
+      (`gh pr checks`), mergeStateStatus clean — with any failure fixed and
+      pushed before the session reports itself closed?
 - [ ] Is the PR opened, the merge watch armed, and branch deletion queued
       for after the merge? The handoff is complete only when the PR is
       merged and the branch is gone on both sides.
