@@ -7435,6 +7435,16 @@ already withdrawn. Corrected in the audit document, banned in the generator
 about a number, never the number. Filed as **#84** so the same claim can be
 hunted wherever else it survives.
 
+**The calibration report was silent on patronage, and the silence is part of how
+this happened.** It reported only what scored, which is correct as far as it
+goes, but it left the study's most policy-relevant number unmentioned - so the
+number was quoted from elsewhere, wrongly. `report.py` now carries a patronage
+section that states the modelled level and tabulates every patronage-family
+observation in the calibration half with the reason it identifies nothing,
+including the bus and share rows, which are algebraically the same datum. It
+still scores nothing: deliverable 3 asks for honest reporting of where fit is
+poor, and "there is no target for the headline number" is exactly that.
+
 **A dead run now says why it died.** `_meta.json` recorded `status: failed`,
 `rc: 1` and nothing else, so the reason survived only in whoever was watching:
 three failed 25 August probes reached the next session as directories that could

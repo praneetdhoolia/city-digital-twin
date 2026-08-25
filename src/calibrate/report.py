@@ -158,6 +158,51 @@ def section_counts(w, fits, tags):
         w('No count station scored in these runs.\n')
 
 
+def section_patronage(w, fits, tags):
+    """The intervention's own boardings — the number the study is about.
+
+    Reported as a LEVEL, and only as a level while nothing scores it. The report
+    used to omit patronage entirely, and the vacuum filled itself: the modelled
+    boardings were quoted elsewhere as a percentage error against a target
+    `fit.py` marks unscorable, and that framing survived three handovers
+    (DECISIONS.md 9.80, issue #84). Stating the level beside the reason no
+    target applies is what keeps the number from acquiring a denominator it has
+    not earned.
+    """
+    w('\n## The intervention\'s patronage\n\n')
+    for t, f in zip(tags, fits):
+        p = f.get('patronage') or {}
+        level = p.get('intervention_boardings',
+                      p.get('modelled_lr_weekday_boardings'))
+        if level is None:
+            continue
+        w('**`%s`** — the intervention carries **%s boardings** on the '
+          'simulated day.\n\n' % (t, '{:,}'.format(level)))
+        if p.get('targets'):
+            w('Scored against %s.\n\n' % ', '.join('`%s`' % x
+                                                   for x in p['targets']))
+            continue
+        boardings = [u for u in f.get('unscorable', [])
+                     if 'boardings' in str(u.get('metric', '')).lower()]
+        w('**No patronage target scored this run, so this is a level and not an '
+          'error.** Every patronage-family observation in the calibration half '
+          'is listed below with the reason it identifies nothing here; a '
+          'percentage difference against any of them would be a statistic the '
+          'fit itself declines to compute. The bus and share rows are included '
+          'because the published share is algebraically the two boarding '
+          'series, so they stand or fall together.\n\n')
+        if boardings:
+            w('| target | metric | period | why it does not score |\n'
+              '|---|---|---|---|\n')
+            for u in sorted(boardings, key=lambda x: x['target_id']):
+                w('| `%s` | `%s` | %s | %s |\n'
+                  % (u['target_id'], u.get('metric', ''), u.get('note', ''),
+                     u.get('reason', '')))
+        else:
+            w('No patronage observation is in the calibration half at all.\n')
+        w('\n')
+
+
 def section_unscorable(w, fits, tags):
     w('\n## What could not be scored, and why\n\n')
     f = fits[0]
@@ -295,6 +340,7 @@ def main():
     section_runs(w, fits, tags)
     section_mode_share(w, fits, tags)
     section_counts(w, fits, tags)
+    section_patronage(w, fits, tags)
     section_constraints(w, fits, tags)
     section_unscorable(w, fits, tags)
     section_provenance(w)

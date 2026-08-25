@@ -50,6 +50,21 @@ Five shares that sum to one carry four independent numbers. That is the ceiling 
 **The model routes no traffic at all over 6 station(s):** `V086`, `V099`, `V103`, `V107`, `V109`, `V112`. These are scored at −100%, not dropped: a modelled zero is a result, and the worst one in the set (issue #19). Dropping them flattered the fit by removing exactly where the model fails hardest.
 
 
+## The intervention's patronage
+
+**`phys1000a_25pct`** — the intervention carries **1,260 boardings** on the simulated day.
+
+**No patronage target scored this run, so this is a level and not an error.** Every patronage-family observation in the calibration half is listed below with the reason it identifies nothing here; a percentage difference against any of them would be a statistic the fit itself declines to compute. The bus and share rows are included because the published share is algebraically the two boarding series, so they stand or fall together.
+
+| target | metric | period | why it does not score |
+|---|---|---|---|
+| `V001` | `lr_boardings_monthly_mean` | 2019-03..2020-02 | Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023) |
+| `V002` | `lr_boardings_daily_mean` | 2019-03..2020-02 | Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023) |
+| `V003` | `lr_boardings_monthly_mean` | 2025-07..latest | monthly total: needs WEEKDAY, SAT and SUN runs composed over a calendar month. A single day-type run cannot be compared with it |
+| `V023` | `bus_boardings_monthly_mean` | 2019-03..2020-02 | Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023) |
+| `V024` | `lr_share_of_local_pt_boardings` | 2019-03..2020-02 | Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023) |
+
+
 ## Constraints — checked, never fitted
 
 These are observables the model is held against but **never optimised towards**. They are not part of the 67, they are not targets, and they are reported apart from the fit so they cannot be counted as evidence of it. A model can satisfy every one of them and still fit badly.
