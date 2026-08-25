@@ -704,6 +704,18 @@
         "identity": "a passenger rides in a vehicle already counted, so a ride leg contributes zero - valid only while the modelled ride:car ratio matches the observed passenger:driver ratio"
       }
     },
+    "B.census.thin_cell_min_journeys": {
+      "value": 100,
+      "units": "journeys",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.77",
+      "description": "Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. A flag on how a comparison is LABELLED, never a value that reaches the model; declared so the threshold is visible and changeable in one place.",
+      "consumers": [
+        "src/analyse/measure_demographic_modes.py"
+      ]
+    },
     "B.counts.station_match_radius_m": {
       "value": 120.0,
       "units": "metres",
@@ -733,16 +745,16 @@
       ]
     },
     "B.population.bike_available_rate": {
-      "value": 0.5,
+      "value": 0.493,
       "units": "share",
-      "source": "assumed",
+      "source": "literature",
       "sweep": [
         0.3,
         1.0
       ],
-      "sweep_basis": "The census carries no bicycle-ownership variable, so any rate is assumed. The upper bound 1.0 is the previous silent behaviour (bike available to everyone), retained in the sweep so the constraint's own effect is measurable; the lower bound allows for household access well below half. Re-size against the observed 3.2% bike share only AFTER the post-rebuild run re-measures the modelled share - the old 5x was measured on a model that no longer exists (issue #29).",
+      "sweep_basis": "The census carries no bicycle-ownership variable; the published NSW anchor is CWANZ, Walking & Cycling Participation Survey - New South Wales Report, 2025 (Painted Dog Research; fieldwork 11 Mar - 9 Apr 2025; NSW n=700; cwanz.com.au/wp-content/uploads/2025/10/251001-CWANZ-National-Walking-and-Cycling-Participation-Survey-Report-NSW.pdf), p.72 'Household Bicycle Ownership' (Q46, bicycles IN WORKING ORDER): total bicycle ownership 49.3% - the report's own headline, the proportion of NSW residents owning at least 1 traditional bicycle, e-bike or e-rideable. Same page: 46.6% of households hold at least one working traditional bicycle in 2025 (100 - 53.4 zero-bike), 53.1% in the reweighted 2023 wave - both inside the sweep. What stays ASSUMED is the transfer from statewide ownership to per-person availability in this study area (the 9.52/9.49 transfer pattern). The upper bound 1.0 is the previous silent behaviour (bike available to everyone), retained so the constraint's own effect is measurable; the lower bound allows for availability well below the ownership rate. Re-size against the observed 3.2% bike share only AFTER the post-rebuild run re-measures the modelled share - the old 5x was measured on a model that no longer exists (issue #29).",
       "status": "active",
-      "decisions_ref": "9.39",
+      "decisions_ref": "9.39, 9.78",
       "description": "Share of synthetic persons with a bicycle available to them. Until this field existed, car was the only mode whose ownership was modelled while bike was silently available to everyone - a structural bias against car in the choice set itself, undeclared anywhere (issue #29, SPEC_AUDIT A3). Drawn deterministically per person in build_matsim_plans.py and consumed by the same availability calculator that enforces rideAvail. External boundary agents keep bike available: they are household-less by construction, so no ownership identity exists to derive a denial from, and the choice is recorded in DECISIONS.md 9.39.",
       "consumers": [
         "src/build/build_matsim_plans.py"

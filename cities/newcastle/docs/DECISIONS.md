@@ -58,6 +58,8 @@ otherwise cost you an hour:
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
 | **The first converged all-physical arms: C5, ride's collapse, the seed floor** | **§9.64** — both arms complete (rc=0, relaxed, accounting closes); fit MAE 10.65 pp (driver +14.2, passenger −20.5, walk −6.1, bike +8.0, pt +4.4); LR 1,260 vs 3,417 boardings; ride collapses under SCORING not physics (100% of surviving requests pair) → M2 no-go; C5 written feasible=False (#14, #9 close); seed noise ≤0.11 pp/mode |
 | **Batch 4.7 built inert: crossings, dwell, signals, taxi, harness safety; the activation checklist** | **§9.76** — the overnight build record; ONE boundary; warm-restart validity ruling OPEN; detached launch verified (#70) |
+| **THE ACTIVATION BOUNDARY CROSSED: signals, crossings, dwell and taxi LIVE; family F6** | **§9.77** — the §9.76 checklist executed by directive; F5 closes UNMEASURED (recorded cost); the crossings-XML schema-order defect and the stale metrics line, both probe-caught; S3 bus-keyed priority via `A.signals.tsp.priority_group`; the 4.6.9 arm becomes an F6 arm, approval still required |
+| **The runless lanes closed: Tier C submodes, 0b upgrades, the corridor answer, the sex-structure finding** | **§9.78** — PT submodes score-distinct via raptor mode mapping (bytecode-verified; the main-mode-identifier crash pre-empted); seven 0b source moves incl. CWANZ bike 0.493 (plans regenerated inside F6); COVERAGE carries the bus-over-tram composition (98.3% of corridor demand needs an interchange the buses don't); modelled mode split sex-invariant vs G62's real structure; the TIA sweep EMPTY; #66's capture armed |
 | **Level crossings (freight-road interactions)** | §9.70 designed; **§9.76 built** — derived from OSM barrier tags, Stewart Avenue exclusion asserted, swept never pinned (#68) |
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (standing directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
 | **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
@@ -7096,6 +7098,200 @@ stayed held.
 
 ---
 
+## §9.77 — The activation boundary is CROSSED: explicit signals, crossings, native dwell and taxi are LIVE in the assembled inputs; S3 gets bus-keyed priority; family F6 declared (25 Aug 2026, sixth session; issues #49, #68, #73)
+
+**Directive.** The session's `/goal` ordered every runless GitHub issue
+implemented — signals, taxi and the full simulation factors first, the free
+planning-portal TIA route for SCATS — and that directive RESOLVES the §9.75
+ordering question by consequence: no run is authorised, so the
+run-the-repairs-arm-first option (which needed a ~65–67 h launch) is not
+available to this session, and the batch activates first. **The cost of that
+order is recorded, not hidden: family F5 (§9.68/§9.69) closes UNMEASURED — the
+ride-repair and short-trip-mixture effects will never be attributed separately
+from the §9.76 batch.** The F5 inputs stay regenerable by construction
+(`A.signals.representation=implicit_delay`, `A.crossings.representation=absent`,
+taxi out of the two `RUN` vocabularies, regenerate), so the repairs-first
+measurement is revivable if it is ever worth an arm.
+
+**The checklist executed (§9.76's closing block, item by item):**
+
+- `A.signals.representation` → `explicit_signals`. The run-input assembly now
+  consumes, per scenario: the generated signal data model (systems, groups,
+  control), `signals_capacity_patch.csv` applied to the emitted run network
+  AFTER the E1 variant patch (a missing patch link is a refusal — it means a
+  different network build), and `transitSchedule_signals.xml.gz` — which
+  carries the dwell transform (#74) — as the schedule the day-type filter
+  reads. `qsim.usingFastCapacityUpdate=false` is written into every signal
+  config by the emitter (the contrib refuses it true).
+- **A new gate, `A.crossings.representation`** (categorical
+  `absent`/`change_events`, mirroring the signals switch): under
+  `change_events` every config carries `network.timeVariantNetwork=true` and
+  the derived closures file, and the assembly refuses a change-event link the
+  scenario network lacks. Flipped to `change_events` at this boundary.
+- `RUN.travel_time.bin_size_s` 900 → **300** (the largest bin that resolves
+  the central 240 s closure; basis unchanged).
+- `taxi` into `RUN.mode_choice.modes` AND `RUN.routing.network_modes`; the
+  inert §9.76 plumbing (blended fares, `fare` module, car-bodied vehicle,
+  congested network travel time, ASC) engaged without further change.
+- The 30 run-input sets regenerated; the boundary is ONE boundary, and
+  **family F6 is declared in `docs/audit/run_families.json` in this change.**
+
+**Two defects found by the activation probe, not by reading (both fixed):**
+
+1. **The crossings XML violated the MATSim schema** — `networkChangeEvents.xsd`
+   requires `flowCapacity` BEFORE `freespeed` inside an event;
+   `build_level_crossings.py` emitted the reverse and MATSim's validating
+   reader refused the whole network load. Measured on the first activated
+   probe (`aborted_20260825T094456_2it_1pct`, rc=1 in 4 s); element order
+   swapped, file regenerated (540 events, 16 links, 2 sites — unchanged
+   content, valid order).
+2. **The console metrics line hardcoded "taxi/rideshare: not modelled"** while
+   the JSON's `not_modelled` row was computed correctly — the print now reads
+   the document it summarises.
+
+**The activated stack is VERIFIED at plumbing scale** (probe
+`20260825T094638_2it_1pct`, 1%×2, rc=0, F6): the signals contrib engages
+(controllers instantiated per system; S2 correctly fixed-time under
+`S2_base`'s `tsp_enabled=0`), the change events load, and **taxi is chosen,
+routed and priced on the congested network** — 1.44% of Newcastle-LGA trips at
+1%, mean 14.94 km / 18.25 min (car-like speeds, exactly the #28 lesson's
+intent). A 1% probe verifies PLUMBING ONLY (§9.76's discharge warning: ~0.3
+veh/green at 1% — no signal EFFECT is trustworthy below arm scale), and
+nothing here is a result.
+
+**S3's priority is now bus-keyed (#73 remainder 2).** The priority stage is a
+declared field, not a literal: `A.signals.tsp.priority_group` (definition;
+`tram` in the base, `corridor` in S3's overlay) reaches
+`tramPriority.priorityGroupId`, `TramPriorityController` resolves the
+configured group and watches ITS links for detections, and
+`TramPriorityConfigGroup.checkConsistency` refuses a bound module that never
+named one. For S3 that means link-level bus priority: detection fires for
+every SCHEDULED transit vehicle entering a corridor approach — the BRT trunk
+and any local bus on the same approach, which is what a link-level detector
+would see; stated, not hidden. **The toy probe grew the matching third case**
+(the same signalised toy with the priority group named `corridor` and the
+scheduled vehicle a bus): extension granted through the configured id (first
+red 40 s vs plan 30 s), vehicle cleared in the extended green — PASS, alongside
+the two §9.75 cases which still pass byte-identically.
+
+**Movement-level lanes stay OPEN on #73** (turn-lane coverage still 16%; the
+refusal to invent geometry stands).
+
+**What this deliberately does not do:** no arm ran; the pre-repair report card
+(§9.64) remains the latest measurement; nothing is a finding about the light
+rail. The 4.6.9 arm — now an F6 arm on the activated inputs — still requires
+its own fresh stated-cost approval (~65–67 h at 25%×1000), and
+`E.replication.n_replications` and the warm-restart validity ruling remain
+open.
+
+---
+
+## §9.78 — The runless lanes closed out: score-distinct PT submodes (Tier C), seven 0b source upgrades incl. the CWANZ-cited bike availability, the corridor-composition answer, the demographic sex-structure finding, the empty TIA sweep, the stall capture armed (25 Aug 2026, sixth session; issues #49, #50, #63, #66, #78-record)
+
+**Tier C — the PT submodes are SCORE-DISTINCT (#49), verified against the
+pinned jar's own bytecode.** SwissRailRaptor (confirmed the default and only
+transit router in 2027.0-2026w25) supports `useModeMappingForPassengers` +
+`modeMapping` parametersets (`routeMode` → `passengerMode`); router pricing
+reads a per-mode marginal utility from `scoring.modeParams`, so the mapping
+makes route choice itself respond to the per-submode constants C1 has
+declared since P4 opened (asc_bus −1.05, asc_lr −0.75, asc_rail −0.65 — the
+§9.3 `not_representable` loss, now representable). Landed behind the declared
+switch `RUN.routing.pt_submode_scoring` (categorical
+`per_submode`/`aggregate`, default `per_submode`): the emitter writes the
+raptor module and one modeParams per scheduled submode;
+`RUN.transit.transit_modes` carries the submodes (the QSim serves a departure
+only for a declared transit mode); `split_schedule` REFUSES a route
+transportMode outside the declared vocabulary (an unmapped mode's passenger
+mode is a silent null in the jar). **Two jar-measured traps pre-empted**: the
+stock `AnalysisMainModeIdentifier` THROWS on a bus+rail interchange trip
+(133 such trips in the probe alone) — a new `PtSubmodeMainModeIdentifier`
+folds submode legs back to `pt` for trip labelling, so the HTS aggregate and
+every existing pt comparison hold unchanged; and the raptor config group must
+be registered at config load (the §9.76 unmaterialised-module refusal).
+Probe-verified (S2 1%×2, rc=0): PersonDeparture legs bus 1,414 / rail 450 /
+tram 10 / ferry 3 and ZERO `pt` legs — the umbrella is gone at leg level —
+while every trip's main_mode stays `pt` and conservation closes per submode.
+**Stated limits**: C1 declares no ferry constant (ferry keeps the aggregate's
+−1.05, stated in the report) and one beta_ivt (submodes differ in constants
+only). Plan-level SubtourModeChoice still offers `pt`; the submodes are
+route-choice alternatives, which is what the jar supports.
+
+**One more probe-caught defect (the S3 scenario probe, not the toy):** under
+`priorityGroupId=corridor` the 8 mid-block crossing systems carry ONLY the
+corridor group, so `longestCompetingGreen` was null and the compensation
+ledger threw on the null key (rc=1 at 29 s). Guarded: with no competing stage
+the extension eats the unmodelled pedestrian interruption within the same
+budget and owes nobody. The S3 1%×2 probe then completes with all 14
+`CitysimTramPriority` controllers instantiated — the bus-priority path is
+verified in the scenario, not only in the toy.
+
+**0b source upgrades (#63, seven fields; conservative by instruction, every
+non-move recorded in the session log of the change):**
+`A.signals.min_green_s` → literature (TfNSW TTD 2018/002, the dossier's own
+table); `A.signals.scats_match_radius_m`, `A.crossings.link_match_radius_m`,
+`A.osm.harvest_tile_deg`, `A.corridor.dedupe_tolerance_m`,
+`A.corridor.nearest_node_max_rings` → definition (join tolerances and search
+bounds whose outputs are invariant or refusal-guarded — each keeps its
+held-fixed caution); and **`B.population.bike_available_rate` assumed 0.5 →
+literature 0.493** — CWANZ *Walking & Cycling Participation Survey, NSW
+Report 2025* (Painted Dog Research, NSW n=700, p.72: 49.3% total bicycle
+ownership; 46.6% of households ≥1 working traditional bicycle 2025, 53.1%
+2023 reweighted), sweep [0.3, 1.0] retained, the ownership→per-person
+transfer stated as the step that stays assumed. **The B plans were
+regenerated on the cited value in the same change** (all three day types;
+weekday 620,553 persons / 2,343,321 legs) — inside F6, which has no arms, so
+no boundary is created. The `C.scoring.activity_typical_duration_s` ↔
+`B.activity.act_duration_min` derived-identity candidate was checked and
+REFUSED: different vocabularies, different consumers, values disagree where
+comparable (work 480 vs 465 min) — independent quantities.
+
+**The corridor-composition question has its answer (the §9.64 lane), measured
+on arm A (closed F4 family, pre-repair — a diagnostic, not a result):
+COVERAGE carries the bus-over-tram composition; the transfer penalty prices
+it; frequency is exonerated.** Of 2,140 realised PT trips touching the tram's
+own 300 m walk band, only 36 (1.7%) have BOTH ends inside it — the 6-stop,
+2.5 km alignment structurally requires an interchange for 98.3% of corridor
+demand while 485 parallel bus patterns run through (74.6% of corridor bus
+trips are one-seat rides). Within sight of the platforms boardings run 10.8
+bus : 1 tram. Tram users paid 61.1 min door-to-door vs 52.3 for corridor bus
+at EQUAL in-vehicle time — the gap is wait plus the extra boarding, priced at
+`utilityOfLineSwitch` −2.2614 (≈12 min in-vehicle). Tram headway (11.4
+min/direction) is denser than almost any single bus route — the bus
+advantage is aggregate coverage, not line frequency. Full tables:
+`docs/audit/CORRIDOR_PT_COMPOSITION.md`; re-measures on the first F6 arm.
+
+**The demographic measurement (#50) is on the record** (`docs/audit/
+DEMOGRAPHIC_MODES.md`): the held data carries exactly ONE demographic mode
+observation (G62 JTW mode × sex; NO mode × age cell exists anywhere in the
+package), and against it the modelled split is nearly SEX-INVARIANT (M/F
+≤0.5 pp apart on every mode) while the observation has real sex structure
+(bus F ≈2× M, motorbike M ≈10× F, passenger F ≈1.5× M — the COVID-robust
+part of G62). The mechanism decision is deliberately deferred to the first
+F6 arm's re-measure; new observables stay constraints, never targets.
+
+**The systematic TIA sweep came back EMPTY — recorded so nobody repeats it
+blind** (the §9.76 standing lane on #78's record): PPSHCC-306 resolved (the
+per-document-timestamp blocker solved via the case page's server-rendered
+listing) and scanned — no SCATS content, and a dossier correction rides
+along (it is the s8.2 review of East End Stages 3–4 at 105–121 Hunter St,
+not the 643 Hunter St site); 19 applications examined, 13 documents scanned;
+the portal's own search confirms PPSHCC-137 remains the ONLY SCATS
+Interpreted History for Newcastle today. Nothing archived because nothing
+qualifies; watch items (700 Hunter St SSD EIS, DA2025/00512) in
+`design/signalling/tia-harvest-log.md`. `A.signals.scats_phasing` STAYS
+`unobtained`.
+
+**The #66 settlement condition is mechanised**: the progress-digest observer
+captures Defender + Task Scheduler event history on the transition INTO a
+stall, over exactly the window since its own last healthy observation — the
+next arm that hits the ~10:00 pattern attributes itself.
+
+**What this deliberately does not do**: no arm ran; nothing is a result; the
+F6 arm approval, `E.replication.n_replications` and the warm-restart ruling
+remain open; the 67/143 split is untouched.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -7594,6 +7790,8 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | **THE ACTIVATION BOUNDARY IS CROSSED — family F6 (§9.77; #73 #68 #74 #49; sixth session).** The §9.76 checklist executed as ONE boundary by the session's directive: `A.signals.representation=explicit_signals` (generated fixed-time plans at the 14 corridor intersections in every set; signalised approaches re-capacitated to saturation flow on the emitted run networks; each variant's OWN embedded tram delay removed from the schedule the day-type filter reads — the dwell transform riding inside it); a new declared gate `A.crossings.representation=change_events` puts the two freight level crossings into every config as a time-variant network (540 events, 16 links); `RUN.travel_time.bin_size_s` 900 → 300; `qsim.usingFastCapacityUpdate=false` written into every signal config; `taxi` into `RUN.mode_choice.modes`, `RUN.routing.network_modes` AND `city.json` — the §9.76 inert plumbing (blended Fares Order 2025 rates, the `fare` module, congested-network travel time) engaged unchanged. All 30 run-input sets regenerated; **family F5 closes UNMEASURED (the recorded cost of activate-first; its inputs regenerable from the declared switches)**. S3's priority is bus-keyed via the new `A.signals.tsp.priority_group` (`corridor` in S3's overlay). Three defects were caught by PROBES, not reading: the crossings XML violated the schema's element order (flowCapacity before freespeed); the S3 mid-block systems NPE'd the priority ledger on a null payee; a console line hardcoded a not-modelled row. Verified at plumbing scale only (S2 + S3, 1%×2, rc=0; all 14 S3 `CitysimTramPriority` controllers instantiate). **No arm ran, no target moved, the 67/143 split is untouched, nothing here is a result; the first F6 arm still requires its own stated-cost approval.** |
+| 2026-08-25 | **The runless lanes close out (§9.78; #49 #50 #62 #63 #66; sixth session).** Tier C: PT submodes SCORE-DISTINCT via SwissRailRaptor mode mapping (verified against the pinned jar's bytecode; the stock main-mode identifier's interchange crash pre-empted by `PtSubmodeMainModeIdentifier`; probe shows zero `pt` legs — bus 1,414 / rail 450 / tram 10 / ferry 3 — with trip labels and per-submode conservation intact; behind `RUN.routing.pt_submode_scoring`, folded into F6 while it has no arms). Seven 0b source upgrades: `min_green_s` → literature (TfNSW TTD 2018/002), five tolerances/search bounds → definition, and **`B.population.bike_available_rate` assumed 0.5 → literature 0.493** (CWANZ NSW 2025, p.72) with the B plans regenerated on the cited value. The corridor-composition question ANSWERED on arm A (a diagnostic, not a result): COVERAGE carries the bus-over-tram split — 98.3% of corridor-band demand has an end the 6-stop alignment cannot reach without the interchange the through-running buses avoid; the transfer penalty prices it; frequency exonerated. The demographic measurement recorded (#50): the modelled split is sex-invariant against G62's real sex structure; NO mode × age cell exists in the held data. The systematic TIA sweep came back EMPTY (19 applications; PPSHCC-137 stays the only SCATS evidence; PPSHCC-306 corrected to East End 105–121 Hunter St). #66's settlement mechanised (Defender/TaskScheduler capture on the stall transition). #62's six strata landed: `light_rail_boardings` → `intervention_boardings` (an ACCEPTED schema break — pre-rename run records cannot be scored, the `target_lga_pct` precedent), manifest lineage into the city descriptor (manifest byte-identical), currency/base-year tokenised (the agnostic fixture passes at AUD_2031), layers.json parameterised, `check_package` split into a portable harness over city-owned expectations (1,433 checks, nothing dropped), the reader-shape contract + Newcastle adapter (HTS/counts readers byte-identical; the census family recorded as remaining source-shaped). **No target moved, the 67/143 split is untouched, nothing here is a result.** |
 | 2026-08-25 | **TOOLCHAIN CHANGE: SUMO 1.27.1 removed; Apache Maven 3.9.9 and the MATSim signals run stack pinned (§9.76; #72, #73; overnight fifth session).** The SUMO component leaves `.tools/toolchain.json` (the §9.74 descope executed — no completed run ever consumed a SUMO artefact, so nothing is invalidated); Maven 3.9.9 is pinned by sha256 from Maven Central; the committed `src/java/run-stack-pom.xml` resolves `org.matsim:matsim` + `org.matsim.contrib:signals` at **2027.0-2026w25** — exactly the version the pinned shaded jar embeds (§9.73) — into `.tools/run-stack/lib` (201 jars, each sha256-recorded; visualisation-only dependencies excluded). Signal-enabled runs execute `citysim.CitysimSignalsControler` on that stack; every other run executes the unchanged shaded-jar stack, and the two never share a classpath. `bootstrap_toolchain.py --verify` re-hashes both and compiles both class trees. |
 | 2026-08-25 | **Batch 4.7 BUILT, INERT (§9.76; #49 #62 #63 #68 #70 #72–#78; overnight fifth session).** Harness safety set LIVE (warm restart with the recorded non-bit-identity caveat; the `_progress.json` digest with the declared pace band and solo-check window; the cross-run index over declared families; the detached Task Scheduler launch path VERIFIED past `PersonPrepareForSim` with the launcher gone). Model-changing set BUILT INERT for ONE boundary: level-crossing closures derived from OSM barrier tags with the Stewart Avenue exclusion asserted; native charging dwell (concurrent-with-boarding DECIDED) holding intermediate stops with anchors preserved; explicit corridor signals + tram-priority controller with both §9.75 toy probes PASSING, the double-count rule landed as artefacts (saturation re-capacitation + per-variant embedded-delay schedule removal) and the per-green discharge check reported; taxi as one blended priced mode on the archived Fares Order 2025 (flagfall $5.00 / $2.52/km urban — correcting the dossier's $5.17/$2.61, values not in the instrument). Six 0b fields moved onto measurement (weekend headway 1.875; shuttle speed CONFIRMED at 26; spans; the LR regulated ceiling; the segment count) and the departure-profile constraint filed its first finding (weekend shapes skew 3–4 h late). PPSHCC-137 archived with provenance under the decided free-TIA route (site corrected to 643 Hunter St). The assembled 4.6.9 run inputs are byte-identical; no run, no result, no boundary crossed. |
 | 2026-08-25 | **Build reports record city-relative paths, and the record's vocabulary is normalised (fourth session, follow-up; no model value changed).** Three committed build reports (`_matsim_build_report.json`, `_corridor_attributes_report.json`, `_plans_report.json`) and the calibration report carried this machine's absolute checkout path in `feed`/provenance strings — the §9.67 entry had noted them as true-until-rename. The four producing scripts now pass those paths through `city.rel()` (the module that already renders manifest paths city-relative), the committed reports were normalised to the same city-relative form, `CALIBRATION_REPORT.md` was regenerated by its generator, and the manifest re-hashed. The role word "owner" is retired from the living record, GitHub issues, PR bodies and comments in favour of decision-required/standing-directive phrasing; issue labels normalised (phase + `awaiting-implementation`/`awaiting-run`/`decision-needed`); the `/handoff` and `/onboard` skills made city-generic (`cities/<city>` via `CITYSIM_CITY`). The local working-copy folder renamed to `work/city-digital-twin`. **No model, data or target value changed; the 67/143 split is untouched; nothing here is a result.** |

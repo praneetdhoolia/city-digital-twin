@@ -52,8 +52,13 @@ document `PPSHCC-137` on the NSW Planning Portal (245 pp., ~10.9 MB):
 
 https://apps.planningportal.nsw.gov.au/prweb/PRRestService/DocMgmt/v1/PublicDocuments/DATA-WORKATTACH-FILE%20PEC-DPE-EP-WORK%20PPSHCC-137!20230328T025624.102%20GMT
 
-(Retrieved and read in full 25 Aug 2026. A related Section 8.2 review for the
-same site is exhibited as PPSHCC-306.)
+(Retrieved and read in full 25 Aug 2026. *Correction, 25 Aug 2026, second
+pass: PPSHCC-306 was first described here as a Section 8.2 review "for the
+same site". It is not — it is the s8.2 review (RE2024/00002) of the East End
+Stages 3–4 project at 105–121 Hunter Street, Newcastle, at the corridor's
+eastern end. Its traffic attachments were fetched and scanned on the
+systematic pass and contain no SCATS data; see
+[tia-harvest-log.md](tia-harvest-log.md).*)
 
 Contents relevant here:
 

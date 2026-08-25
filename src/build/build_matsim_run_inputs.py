@@ -126,14 +126,22 @@ def day_of_route(route_id):
     return m.group(1) if m else None
 
 
-def split_schedule(src_dir, dst_dir, day, cfg):
+def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
     """Filter a mapped schedule to one day type. No re-mapping, ever.
+
+    `src_schedule` names an alternative DERIVED schedule to filter (the
+    signals/dwell transform of the same mapped build - never a re-map): under
+    `A.signals.representation == explicit_signals` the caller passes the
+    scenario's `transitSchedule_signals.xml.gz`, which carries the dwell
+    transform (#74) and the implicit-delay removal (#73) over the identical
+    route link sequences.
 
     Returns counts so the caller can assert that link sequences were copied
     rather than regenerated.
     """
     os.makedirs(dst_dir, exist_ok=True)
-    with gzip.open(os.path.join(src_dir, 'transitSchedule.xml.gz'), 'rb') as f:
+    src = src_schedule or os.path.join(src_dir, 'transitSchedule.xml.gz')
+    with gzip.open(src, 'rb') as f:
         tree = ET.parse(f)
     root = tree.getroot()
 
@@ -142,6 +150,7 @@ def split_schedule(src_dir, dst_dir, day, cfg):
     mixed_routes = 0
     vehicles_used = set()
     stops_served = set()
+    transport_modes = set()   # the kept routes' own scheduled submodes
     for line in list(root.findall('transitLine')):
         for route in list(line.findall('transitRoute')):
             # Filter DEPARTURES, not routes. pt2matsim groups trips into a
@@ -168,6 +177,9 @@ def split_schedule(src_dir, dst_dir, day, cfg):
                 mixed_routes += 1
             kept_routes += 1
             kept_dep += len(keep_here)
+            tm = (route.findtext('transportMode') or '').strip()
+            if tm:
+                transport_modes.add(tm)
             for stop in route.findall('./routeProfile/stop'):
                 stops_served.add(stop.get('refId'))
             for dep in keep_here:
@@ -176,6 +188,22 @@ def split_schedule(src_dir, dst_dir, day, cfg):
                     vehicles_used.add(v)
         if not line.findall('transitRoute'):
             root.remove(line)
+
+    # Under the per_submode representation (9.78) every kept route's
+    # transportMode must be in the declared vocabulary: SwissRailRaptor's
+    # mode mapping hands an unmapped route a NULL passenger mode (a plain
+    # map get in RaptorStaticConfig, read from the pinned jar), which is the
+    # unpatched-vehicle-type defect class - a metro or cable car in a future
+    # feed must fail HERE, by name, not deep in the JVM.
+    mapped = pt_passenger_submodes(cfg)
+    if mapped:
+        stray = sorted(transport_modes - set(mapped))
+        if stray:
+            raise SystemExit(
+                '%s carries transportMode(s) %s outside the declared '
+                'RUN.transit.transit_modes vocabulary. Declare them (and '
+                'their C1 treatment) before mapping PT submodes '
+                '(DECISIONS.md 9.78).' % (src, stray))
 
     # Dropping two thirds of the routes orphans the stops and the transfer
     # relations that only they used, and SwissRailRaptor dereferences a null
@@ -267,6 +295,7 @@ def split_schedule(src_dir, dst_dir, day, cfg):
     return dict(routes_kept=kept_routes, routes_dropped=dropped_routes,
                 departures=kept_dep, departures_dropped=dropped_dep,
                 routes_kept_under_a_foreign_day_id=mixed_routes,
+                transport_modes=sorted(transport_modes),
                 vehicles=kept_veh,
                 vehicle_capacity_patched=patched_types,
                 vehicle_types_unpatched=unpatched_types,
@@ -672,6 +701,84 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
     return dict(applied)
 
 
+def patch_signal_capacities(net_path, patch_csv):
+    """The re-capacitation half of the double-count rule (#73), applied to the
+    emitted run network.
+
+    Under `explicit_signals` every signalised approach link takes the declared
+    saturation flow x lanes from the generated patch
+    (`signals_capacity_patch.csv`, per scenario), replacing the metered
+    capacity that carried the intersection effect under `implicit_delay` - one
+    representation per effect, both halves together (DECISIONS.md 9.76).
+    Applied AFTER the E1 variant patch so a variant's lane arithmetic cannot
+    silently overwrite the saturation re-raise. A patch row whose link is not
+    in the network is refused: it means the patch was generated against a
+    different build than the one being assembled (3.5).
+    """
+    cap_of = {}
+    for r in csv.DictReader(open(patch_csv, encoding='utf-8')):
+        cap_of[r['link']] = float(r['capacity_saturation_veh_h'])
+    with gzip.open(net_path, 'rt', encoding='utf-8') as f:
+        xml = f.read()
+    patched = set()
+
+    def recap(m):
+        s = m.group(0)
+        head_end = s.index('>')
+        head = s[:head_end]
+        a = dict(ATTR_RE.findall(head))
+        cap = cap_of.get(a.get('id'))
+        if cap is None:
+            return s
+        a['capacity'] = '%.1f' % cap
+        patched.add(a['id'])
+        return ('<link ' + ' '.join('%s="%s"' % kv for kv in a.items())
+                + s[head_end:])
+
+    body = LINK_BLOCK_RE.sub(recap, xml)
+    missing = sorted(set(cap_of) - patched)
+    if missing:
+        raise SystemExit(
+            '%d signal capacity-patch link(s) are not in %s (first: %s). The '
+            'patch was generated against a different network build - '
+            're-run build_matsim_signals.py on this build (DECISIONS.md 3.5).'
+            % (len(missing), net_path, missing[:3]))
+    with gzip_writer(net_path) as f:
+        f.write(body)
+    return len(patched)
+
+
+def check_change_event_links(net_path, events_xml):
+    """Refuse a change-events file that names links this network lacks.
+
+    MATSim would only warn, and a warned-away closure looks exactly like an
+    open crossing. The crossings are derived on the BASE network; every
+    scenario's mapped network keeps road link ids, and this check is where
+    that assumption is enforced rather than assumed.
+    """
+    wanted = set()
+    for _, el in ET.iterparse(events_xml, events=('end',)):
+        if el.tag.endswith('link'):
+            wanted.add(el.get('refId'))
+        el.clear()
+    if not wanted:
+        raise SystemExit('%s names no links' % events_xml)
+    present = set()
+    with gzip.open(net_path, 'rb') as fh:
+        for _, el in ET.iterparse(fh, events=('end',)):
+            if el.tag == 'link':
+                if el.get('id') in wanted:
+                    present.add(el.get('id'))
+                el.clear()
+    missing = sorted(wanted - present)
+    if missing:
+        raise SystemExit(
+            '%d crossing change-event link(s) missing from %s (first: %s) - '
+            'the crossings were derived on a different network build.'
+            % (len(missing), net_path, missing[:3]))
+    return len(wanted)
+
+
 ZONES_SA1 = _city.path('data/processed/zones/zones_SA1.gpkg')
 
 
@@ -758,6 +865,42 @@ def _weight_sweep(cfg, strategy):
     return [round(weight * (1.0 - share), 6), round(weight * (1.0 + share), 6)]
 
 
+# The C1 constant each scheduled PT submode carries once the declared
+# RUN.routing.pt_submode_scoring representation maps it to a passenger mode
+# of its own name (issue #49 Tier C, DECISIONS.md 9.78). The keys are the
+# schedule's per-route transportMode vocabulary - pt2matsim writes the GTFS
+# route type as bus/tram/rail/ferry, so like FLEET_CAPACITY's these are tool
+# structure, not a city value; the values are C1's own alternative names.
+# FERRY IS ABSENT DELIBERATELY: C1 declares no ferry constant, so a ferry
+# keeps the pt aggregate's constant and the report SAYS so - stating the gap
+# is the rule, inventing a value would be the violation this project cannot
+# absorb.
+PT_SUBMODE_ASC = {'bus': 'asc_bus', 'tram': 'asc_lr', 'rail': 'asc_rail'}
+
+
+def pt_passenger_submodes(cfg):
+    """The scheduled submode vocabulary, from the declared transit modes.
+
+    The non-`pt` entries of RUN.transit.transit_modes: `pt` is the plan-level
+    umbrella every PT trip keeps, the rest are the transportModes the mapper
+    wrote per route (bus/tram/rail/ferry across the five TfNSW feeds).
+    Derived from the declared field rather than re-parsed from each schedule
+    so the builder and the run harness cannot disagree about the vocabulary;
+    `split_schedule` still refuses a schedule whose routes carry a
+    transportMode outside it, which is where a metro or a cable car would
+    otherwise sail through to SwissRailRaptor's mode mapping and take a null
+    passenger mode (RaptorStaticConfig.getPassengerMode is a plain map get -
+    read from the pinned jar, DECISIONS.md 9.78).
+
+    Empty under the `aggregate` representation, which is what keeps every
+    per-submode branch below inert and the emission byte-identical to the
+    pre-9.78 state on that arm.
+    """
+    if cfg.get('RUN.routing.pt_submode_scoring') != 'per_submode':
+        return []
+    return [m for m in cfg.get('RUN.transit.transit_modes') if m != 'pt']
+
+
 def scoring_from_c1(cfg, c1, purpose_share):
     """Translate the C1 nested-logit parameters into MATSim scoring.
 
@@ -828,6 +971,25 @@ def scoring_from_c1(cfg, c1, purpose_share):
             constant=0.0,
             marginalUtilityOfTraveling=traveling(cfg.get('C.time_weights.beta_walk_mode'))),
     }
+    # PT submodes score-distinct (issue #49 Tier C, DECISIONS.md 9.78):
+    # under the declared per_submode representation each scheduled
+    # transportMode routes as a passenger mode of its own name (the
+    # swissRailRaptor mapping config_runtime emits), so its legs are scored
+    # with the constant C1 declares FOR THAT SUBMODE - the constants that
+    # collapse into the single pt entry above under `aggregate`. The pt
+    # entry itself stays: it is the plan-level mode subtour mode choice runs
+    # over, and the raptor's direct-walk fallback still produces pt-routed
+    # trips. Time is priced at the one declared beta_ivt for every submode
+    # because C1 declares no per-submode in-vehicle time weight; a submode
+    # without a C1 constant (ferry) keeps the pt aggregate's, and the
+    # not_representable list below states it.
+    submodes = pt_passenger_submodes(cfg)
+    for sm in submodes:
+        asc_key = PT_SUBMODE_ASC.get(sm)
+        modes[sm] = dict(
+            constant=(asc[asc_key][0] if asc_key
+                      else modes['pt']['constant']),
+            marginalUtilityOfTraveling=traveling(w['beta_ivt']['base']))
     # taxi (issue #49, 4.7.8): the point-to-point priced mode, scored only
     # when the declared choice vocabulary carries it (INERT until the batch
     # boundary adds 'taxi' to RUN.mode_choice.modes). Its constant folds the
@@ -842,6 +1004,29 @@ def scoring_from_c1(cfg, c1, purpose_share):
             constant=round(cfg.get('C.taxi.asc') - wait_cost, 4),
             marginalUtilityOfTraveling=traveling(1.0))
     tp = c1['transfer_penalty']['base']
+    # What survives the translation and what does not is REPRESENTATION-
+    # dependent now (9.78): under per_submode the asc_lr/asc_rail collapse is
+    # gone from this list because it is gone from the config; under aggregate
+    # it is stated instead of silently absorbed. Ferry's missing constant is
+    # a gap in C1 itself and is stated on the arm that would otherwise hide
+    # it behind a value nobody declared.
+    if submodes:
+        no_c1_constant = sorted(sm for sm in submodes
+                                if sm not in PT_SUBMODE_ASC)
+        submode_notes = [
+            'per-submode constant for %s: C1 declares none, so it keeps the '
+            'pt aggregate\'s constant (asc_bus=%s) - stated, not invented. '
+            'Every submode shares the one declared beta_ivt time weight; '
+            'only the constants differ'
+            % ('/'.join(no_c1_constant), asc['asc_bus'][0])
+        ] if no_c1_constant else []
+    else:
+        submode_notes = [
+            'per-submode constants (asc_bus=%s, asc_lr=%s, asc_rail=%s): '
+            'RUN.routing.pt_submode_scoring is `aggregate`, so every PT leg '
+            'scores as one pt mode carrying asc_bus and the bus/tram/rail '
+            'distinction reaches scoring through nothing (DECISIONS.md 9.3)'
+            % (asc['asc_bus'][0], asc['asc_lr'][0], asc['asc_rail'][0])]
     return dict(
         performing_utils_per_h=perf,
         performing_sweep=list(cfg.sweep('C.scoring.performing_utils_per_h')),
@@ -863,7 +1048,9 @@ def scoring_from_c1(cfg, c1, purpose_share):
         transfer_penalty_sweep=[c1['transfer_penalty']['low'],
                                 c1['transfer_penalty']['high']],
         modes=modes,
-        not_representable=[
+        pt_submode_scoring=cfg.get('RUN.routing.pt_submode_scoring'),
+        pt_submodes=list(submodes),
+        not_representable=submode_notes + [
             'nesting_coefficient_pt=%s and the nested-logit structure: MATSim '
             'mode choice is a co-evolutionary search with no nest parameter'
             % c1['nesting']['nesting_coefficient_pt'],
@@ -994,6 +1181,30 @@ def config_runtime(cfg, scoring, day, paths):
         runtime['fare.mode'] = (
             'taxi', 'derived', 'the mode FareChargeHandler charges')
 
+    # PT submodes score-distinct (issue #49 Tier C, DECISIONS.md 9.78):
+    # under the declared per_submode representation the swissRailRaptor
+    # module maps each scheduled route transportMode to a passenger mode of
+    # the same name. Module name, parameter and parameterset structure were
+    # verified against the PINNED jar's bytecode, not memory (the recorded
+    # trap): ch.sbb.matsim.config.SwissRailRaptorConfigGroup - module
+    # `swissRailRaptor`, boolean `useModeMappingForPassengers`, parameterset
+    # `modeMapping` carrying `routeMode`/`passengerMode`; RaptorUtils.
+    # createStaticConfig copies the mappings into the router, and
+    # createParameters prices each passenger mode from its own scoring
+    # modeParams entry - which is why scoring_from_c1 emits one per submode.
+    # Under `aggregate` no module is emitted and the config is byte-identical
+    # to the pre-9.78 emission.
+    submodes = pt_passenger_submodes(cfg)
+    if submodes:
+        runtime['swissRailRaptor.useModeMappingForPassengers'] = (
+            True, 'derived',
+            "RUN.routing.pt_submode_scoring == 'per_submode'")
+        runtime['swissRailRaptor.modeMapping[*].passengerMode'] = (
+            {sm: sm for sm in submodes}, 'derived',
+            'each scheduled transportMode routes as a passenger mode of the '
+            'same name; vocabulary = RUN.transit.transit_modes minus the pt '
+            'umbrella')
+
     # Explicit corridor signals (#73): the signals contrib's module and its
     # three data files enter ONLY when the declared representation says so -
     # A.signals.representation is the one-representation-per-effect switch
@@ -1015,6 +1226,30 @@ def config_runtime(cfg, scoring, day, paths):
             runtime[target] = (paths[key], 'path', note)
         runtime['signalsystems.useSignalsystems'] = (
             True, 'derived', 'A.signals.representation == explicit_signals')
+        # The contrib refuses fast capacity update at module-install time
+        # ("Fast flow capacity update does not support signals"). Written
+        # here so every signal config states it, rather than each run
+        # discovering it in the JVM (DECISIONS.md 9.76 activation checklist).
+        runtime['qsim.usingFastCapacityUpdate'] = (
+            False, 'derived',
+            'the signals contrib refuses fast capacity update; forced false '
+            'while A.signals.representation == explicit_signals')
+
+    # Level crossings (#68): the closures reach the router only as a
+    # time-variant network, and only when the declared representation gate
+    # says so - under `absent` the emission is byte-identical to pre-#68.
+    if cfg.get('A.crossings.representation') == 'change_events':
+        if 'change_events' not in paths:
+            raise SystemExit(
+                'A.crossings.representation is change_events but the caller '
+                'supplied no change_events path. Run the city\'s '
+                'build_level_crossings.py and pass its output.')
+        runtime['network.timeVariantNetwork'] = (
+            True, 'derived', 'A.crossings.representation == change_events')
+        runtime['network.inputChangeEventsFile'] = (
+            paths['change_events'], 'path',
+            'derived freight level-crossing closures '
+            '(build_level_crossings.py)')
     return runtime
 
 
@@ -1108,6 +1343,21 @@ def main(day_types=None, scenarios=None, set_overrides=None):
     excluded_of_mode = {mode: frozenset(base_cfg.get(key))
                         for mode, key in LAWFUL_COMPANIONS}
 
+    # The two representation gates (DECISIONS.md 9.77 activation boundary).
+    # Under the inert values every branch below is skipped and the assembly
+    # is byte-identical to the pre-boundary emission.
+    explicit_signals = (base_cfg.get('A.signals.representation')
+                        == 'explicit_signals')
+    crossings_on = (base_cfg.get('A.crossings.representation')
+                    == 'change_events')
+    change_events_xml = _city.path(
+        'networks/matsim/crossings/crossing_change_events.xml')
+    if crossings_on and not os.path.exists(change_events_xml):
+        raise SystemExit(
+            'A.crossings.representation is change_events but %s does not '
+            'exist. Run the city\'s build_level_crossings.py first.'
+            % change_events_xml)
+
     # Recorded so the HARNESS can recompute the C1 translation against its own
     # resolution without re-reading the HTS. Without this the derived scoring
     # would be frozen at build time, and a run overlay moving the transfer
@@ -1127,10 +1377,33 @@ def main(day_types=None, scenarios=None, set_overrides=None):
         touched = patch_network(os.path.join(sched_dir, 'network.xml.gz'),
                                 net_dst, pat, drop, excluded_of_mode,
                                 base_cfg.get('A.transit.walk_speed_ms'))
+        # Explicit signals (#73): the scenario's generated signal data model,
+        # the saturation-flow re-capacitation and the transformed schedule
+        # (dwell #74 + implicit-delay removal) all come from ONE derived set
+        # per scenario - build_matsim_signals.py against this build.
+        sig_dir = os.path.join(MATSIM, 'signals', sid)
+        sig_sched = None
+        recap_links = 0
+        if explicit_signals:
+            for name in ('signal_systems.xml', 'signal_groups.xml',
+                         'signal_control.xml', 'signals_capacity_patch.csv',
+                         'transitSchedule_signals.xml.gz'):
+                if not os.path.exists(os.path.join(sig_dir, name)):
+                    raise SystemExit(
+                        'A.signals.representation is explicit_signals but '
+                        '%s is missing for %s. Run the city\'s '
+                        'build_matsim_signals.py first.'
+                        % (os.path.join(sig_dir, name), sid))
+            recap_links = patch_signal_capacities(
+                net_dst, os.path.join(sig_dir, 'signals_capacity_patch.csv'))
+            sig_sched = os.path.join(sig_dir, 'transitSchedule_signals.xml.gz')
+        if crossings_on:
+            check_change_event_links(net_dst, change_events_xml)
         price_dst = os.path.join(OUT, sid, PARK_PRICE_FILE)
         parking = write_parking_prices(net_dst, price_dst)
         entry = dict(road_variant=ref, patch_rows=len(pat),
-                     links_touched=touched, parking=parking, days={})
+                     links_touched=touched, parking=parking,
+                     signal_capacity_links=recap_links, days={})
         for d in day_types:
             # RESOLVED PER SCENARIO AND DAY TYPE. The scenario and day overlays
             # are layers of the registry, so S2b's signal priority and Sunday's
@@ -1140,7 +1413,8 @@ def main(day_types=None, scenarios=None, set_overrides=None):
             check_scoring_order(cfg)
             scoring = scoring_from_c1(cfg, c1, purpose_share)
             dst = os.path.join(OUT, sid, d)
-            counts = split_schedule(sched_dir, dst, d, cfg)
+            counts = split_schedule(sched_dir, dst, d, cfg,
+                                    src_schedule=sig_sched)
             write_mode_vehicles(os.path.join(dst, 'vehicles.xml'), cfg)
             paths = dict(
                 output='output',
@@ -1152,6 +1426,20 @@ def main(day_types=None, scenarios=None, set_overrides=None):
                 mode_vehicles='vehicles.xml',
                 parking_prices=os.path.relpath(price_dst, dst).replace('\\', '/'),
                 fraction=cfg.get('RUN.sample.fraction'))
+            if explicit_signals:
+                paths.update(
+                    signal_systems=os.path.relpath(
+                        os.path.join(sig_dir, 'signal_systems.xml'),
+                        dst).replace('\\', '/'),
+                    signal_groups=os.path.relpath(
+                        os.path.join(sig_dir, 'signal_groups.xml'),
+                        dst).replace('\\', '/'),
+                    signal_control=os.path.relpath(
+                        os.path.join(sig_dir, 'signal_control.xml'),
+                        dst).replace('\\', '/'))
+            if crossings_on:
+                paths['change_events'] = os.path.relpath(
+                    change_events_xml, dst).replace('\\', '/')
             write_config(os.path.join(dst, 'config.xml'), cfg, scoring, d, paths)
             entry['days'][d] = counts
             report.setdefault('scoring', scoring)

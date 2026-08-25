@@ -45,14 +45,20 @@ TARGETS = _city.path('data/processed/validation/validation_targets.csv')
 C3 = _city.path('params/C3_count_comparison.json')
 C4 = _city.path('params/C4_mode_constraints.json')
 
-# MATSim mode -> the HTS category it is comparable with. `bike` carries HTS
-# "Other", which also holds taxi/rideshare/carshare, wheelchair, bicycle and
-# aircraft - the HTS data document's own list. Motorcycle is NOT in it: it sits
-# inside Vehicle driver/passenger, so the car and ride targets silently contain
-# motorcycles. An imperfect map, stated here rather than hidden in a lookup.
-MODE_TO_HTS = {'car': 'Vehicle driver', 'ride': 'Vehicle passenger',
-               'pt': 'Public transport', 'walk': 'Walk only', 'bike': 'Other'}
-BASE_YEAR_HTS = '2024/25'
+# MATSim mode -> the survey category it is comparable with, in the CITY'S OWN
+# survey labels via its reader-shape adapter (issue #62 A5) - the validation
+# targets carry those labels, so the match must speak them. `bike` carries the
+# survey's "Other", which for the NSW HTS also holds taxi/rideshare/carshare,
+# wheelchair, bicycle and aircraft - the data document's own list. Motorcycle
+# is NOT in it: it sits inside Vehicle driver/passenger, so the car and ride
+# targets silently contain motorcycles. An imperfect map, stated here rather
+# than hidden in a lookup.
+_SURVEY = _city.readers().mode_category_labels()
+MODE_TO_HTS = {'car': _SURVEY['car_driver'], 'ride': _SURVEY['car_passenger'],
+               'pt': _SURVEY['public_transport'], 'walk': _SURVEY['walk_only'],
+               'bike': _SURVEY['other']}
+# The survey vintage of the base year, in the survey's own spelling.
+BASE_YEAR_HTS = _city.readers().survey_vintage()
 
 
 def load_targets():
@@ -126,9 +132,14 @@ def score_mode_share(targets, metrics, out):
 
 
 def score_patronage(targets, metrics, out):
-    """Light rail and bus boardings. Only the contemporary LR target applies."""
+    """Intervention and bus boardings. Only the contemporary LR target applies.
+
+    Reads `pt.intervention_boardings` (renamed from `light_rail_boardings`,
+    issue #62 A1) - a _metrics.json written before the rename cannot be scored;
+    re-run extract_metrics.py on that run to re-derive it.
+    """
     used, errs = [], []
-    lr_daily = metrics['pt']['light_rail_boardings']
+    lr_daily = metrics['pt']['intervention_boardings']
     for t in targets:
         m, period = t['metric'], t['period']
         if m == 'lr_boardings_monthly_mean' and period.startswith('2025-07'):
@@ -150,7 +161,7 @@ def score_patronage(targets, metrics, out):
                 if period.startswith('2019') else
                        'no modelled counterpart in a single day-type run'))
     return dict(targets=used, n=len(used), errors=errs,
-                modelled_lr_weekday_boardings=lr_daily)
+                modelled_intervention_weekday_boardings=lr_daily)
 
 
 def score_counts(targets, metrics, corrections, out):

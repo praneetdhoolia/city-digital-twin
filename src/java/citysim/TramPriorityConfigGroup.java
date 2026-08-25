@@ -36,6 +36,7 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
     public static final String MODE_CONDITIONAL = "conditional";
 
     private String mode = "";
+    private String priorityGroupId = "";
     private double extensionWindowS = UNSET;
     private double detectionDistanceM = UNSET;
     private double priorityBudgetShare = UNSET;
@@ -65,6 +66,31 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
     @StringSetter("mode")
     public void setMode(final String value) {
         this.mode = value == null ? "" : value.trim();
+    }
+
+    /**
+     * The id of the signal group that carries the priority-detected transit
+     * vehicle — the stage the controller deforms, and whose signals' links it
+     * watches for detections (issue #73, S3 remainder).
+     *
+     * <p>{@code "tram"} for the light-rail variants, whose trams run on their
+     * own intervention-mode links and carry their own T-aspect group;
+     * {@code "corridor"} for the BRT variant, whose buses run in the corridor
+     * car lanes — the priority stage IS the corridor stage, and detection then
+     * fires for every scheduled transit vehicle entering a corridor approach
+     * (link-level bus priority: the BRT trunk and any local bus on the same
+     * approach, which is what a link-level detector would see). Declared as
+     * {@code A.signals.tsp.priority_group}; no usable Java default, per this
+     * class's contract.
+     */
+    @StringGetter("priorityGroupId")
+    public String getPriorityGroupId() {
+        return this.priorityGroupId;
+    }
+
+    @StringSetter("priorityGroupId")
+    public void setPriorityGroupId(final String value) {
+        this.priorityGroupId = value == null ? "" : value.trim();
     }
 
     /**
@@ -176,7 +202,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
         // smoke probe), so a config in which nothing ever set a tramPriority
         // value is a legitimate non-signal run, not a lost binding. Only a
         // PARTIALLY bound module is the defect the checks below refuse.
-        if (this.mode.isEmpty() && this.extensionWindowS == UNSET
+        if (this.mode.isEmpty() && this.priorityGroupId.isEmpty()
+                && this.extensionWindowS == UNSET
                 && this.detectionDistanceM == UNSET
                 && this.priorityBudgetShare == UNSET
                 && this.latenessThresholdS == UNSET) {
@@ -198,6 +225,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
             // regime uses).
             return;
         }
+        require(!this.priorityGroupId.isEmpty(), "priorityGroupId",
+                "A.signals.tsp.priority_group");
         require(this.extensionWindowS >= 0.0, "extensionWindowS",
                 "A.signals.tsp.extension_window_s");
         require(this.detectionDistanceM >= 0.0, "detectionDistanceM",

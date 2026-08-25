@@ -1,0 +1,83 @@
+{
+  "title": "Reader shapes - the framework-facing schema of the demand-side inputs",
+  "issue": "#62 A5",
+  "contract": "The framework's demand and measurement readers consume three families of jurisdiction-published data: census attributes, household-travel-survey aggregates, and classified traffic counts. Each jurisdiction publishes them in its own vocabulary (ABS G-table column names, NSW HTS labels, RMS period labels). This document declares the shape the FRAMEWORK reads - the fields and vocabulary its own code depends on - and each city supplies a thin adapter at cities/<city>/extract/reader_shapes.py that maps its published shapes to this schema AT READ TIME. The framework resolves the adapter through src/city.py (city.readers()), the only module that knows where a city lives; no artefact is rewritten and raw downloads stay immutable.",
+  "adapter_location": "cities/<city>/extract/reader_shapes.py, resolved by city.readers(). A city without one cannot run the readers listed under each family's consumed_by.",
+  "families": {
+    "hts_mode_share": {
+      "status": "adapted",
+      "consumed_by": [
+        "src/build/build_matsim_plans.py (hts_mode_share)",
+        "src/calibrate/fit.py (mode-share target matching)"
+      ],
+      "adapter_functions": {
+        "mode_share_table()": "Returns one row per (area_name, mode_category) for the base-year survey vintage at the survey's target-geography level, as a list of dicts with the columns below.",
+        "mode_category_labels()": "framework mode_category -> the label the city's survey (and its derived validation targets) print for it. Used to match target rows, which carry the survey's own wording.",
+        "survey_vintage()": "The survey-vintage label of the base year, exactly as the city's published files and validation targets spell it (e.g. a financial year)."
+      },
+      "columns": {
+        "area_name": "the survey area's name, matching city.json mode_share_target.filter_value for the target geography",
+        "mode_category": "one of the framework categories below",
+        "trips": "unlinked trip count for the category in this area (weighting quantity; null where the survey publishes shares only)",
+        "linked_share_pct": "the published LINKED main-mode share, percent (null where only trips are published)"
+      },
+      "mode_categories": [
+        "car_driver",
+        "car_passenger",
+        "walk_only",
+        "walk_linked",
+        "public_transport",
+        "other"
+      ],
+      "note": "The linked/unlinked distinction is load-bearing: a MATSim main-mode share is the linked concept (DECISIONS.md 12.1). walk_linked is the walk stage of a PT journey and is 0.0 by construction in a linked share.",
+      "hts_readers_still_source_shaped": [
+        "src/build/build_activity_chains.py (hts_purpose.csv and hts_mode.csv with NSW labels, FINANCIAL_YEAR selection)",
+        "src/build/build_matsim_run_inputs.py (hts_purpose.csv)",
+        "src/calibrate/measure_mode_constraints.py (hts_mode.csv occupancy and trip-geometry columns)",
+        "src/analyse/measure_demographic_modes.py (hts_mode.csv / hts_purpose.csv)"
+      ]
+    },
+    "classified_counts": {
+      "status": "adapted",
+      "consumed_by": [
+        "src/build/measure_network_factors.py (measure_day_type)"
+      ],
+      "adapter_functions": {
+        "total_volume_counts()": "Returns the total-vehicle-volume count observations - the rows whose classification means ALL vehicles (however the agency spells that) - as a pandas DataFrame with exactly the columns below, one row per published observation (no adapter-side aggregation)."
+      },
+      "columns": {
+        "station_key": "the counting station's stable identifier",
+        "year": "observation year",
+        "period": "one of: weekday, weekend - normalised from the agency's period vocabulary",
+        "volume": "mean daily traffic count for the period"
+      },
+      "note": "Only the fields the framework reads are declared. Heavy-vehicle classes are consumed by city-owned measurement (the freight profile adapter), not by the framework."
+    },
+    "census_attributes": {
+      "status": "DECLARED, ADAPTER PENDING - these readers remain source-shaped",
+      "consumed_by_still_source_shaped": [
+        "src/build/build_population.py (ABS G01/G04A+B/G15/G17A+B/G34/G35/G36/G43/G46A+B/G60A+B column names, age-band spellings and sex-split table pairs)",
+        "src/build/build_zone_attractions.py (ABS G01/G36 and W09A+B place-of-work tables)",
+        "src/build/measure_network_factors.py (measure_work_attendance: ABS G62)"
+      ],
+      "fields_the_framework_reads": {
+        "per_residence_zone": [
+          "population by single-year age and sex (grouped bands accepted at the distribution tail)",
+          "household count by family composition",
+          "motor vehicles per dwelling distribution",
+          "dwelling structure distribution",
+          "labour force status conditional on age band and sex (employed FT/PT, unemployed, not in labour force)",
+          "education attendance by age group",
+          "full-time share of adult education attendees",
+          "personal income band by sex",
+          "occupation by sex",
+          "share of employed persons who travelled to work on census day (sweep lower bound only)"
+        ],
+        "per_workplace_zone": [
+          "jobs by industry division at place of work"
+        ]
+      },
+      "reason_left": "The population synthesiser consumes the ABS tables' own banding, dual column spellings and sex-split table pairs at ~40 read sites; normalising them is a data-pipeline rebuild, not a read-time mapping, and is deliberately NOT done in the same change that adapts the two thin families (issue #62 A5). The declared field list above is the target shape for that rebuild."
+    }
+  }
+}

@@ -127,6 +127,7 @@ def build_fixture(reference):
 
     # 1. the descriptor: same SHAPE, different identity.
     doc = _read(os.path.join(ref_dir, 'city.json'))
+    ref_base_year = doc['base_year']
     doc['id'] = FIXTURE
     doc['name'] = 'Contract fixture city'
     doc['description'] = ('NOT A STUDY AND NOT A PLACE. Built by '
@@ -163,6 +164,15 @@ def build_fixture(reference):
         layer['fields'] = {k: f for k, f in layer.get('fields', {}).items()
                            if not _foreign_mode(f, IDENTITY['modes'])}
         for key, field in layer['fields'].items():
+            # A unit string carrying the reference city's base year (e.g.
+            # AUD_2026_per_hour) is re-denominated to the fixture's own base
+            # year, exactly as a real second city's registry would be - the
+            # tokenised contract ({currency}_{base_year}_...) expands with
+            # EACH city's own values (issue #62 B5).
+            if isinstance(field.get('units'), str):
+                field['units'] = re.sub(r'(?<!\d)%d(?!\d)' % ref_base_year,
+                                        str(IDENTITY['base_year']),
+                                        field['units'])
             if key in PERTURB:
                 field['value'] = PERTURB[key]
             if key == 'B.seed.master' or key.endswith('.seed'):

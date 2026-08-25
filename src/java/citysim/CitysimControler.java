@@ -123,15 +123,28 @@ public final class CitysimControler {
         // imports, so the base compile stays clean; the CONTROLLER that acts
         // on it exists only in src/java_signals/.
         final TramPriorityConfigGroup tramPriority = new TramPriorityConfigGroup();
+        // The swissRailRaptor module (#49 Tier C, DECISIONS.md 9.78) needs its
+        // typed group registered BEFORE the config is parsed, exactly like
+        // tramPriority above: MATSim's UnmaterializedConfigGroupChecker throws
+        // a RuntimeException for any module left as a generic ConfigGroup
+        // (read from the pinned jar), and nothing materialises the raptor
+        // group until the router is first built - after the check. Registered
+        // on every stack, whether or not the emitted config carries the
+        // module: with no module in the file this only installs the group's
+        // own defaults (mode mapping off), and an unrecognised parameter in
+        // an emitted module then fails the run instead of being ignored.
+        final ch.sbb.matsim.config.SwissRailRaptorConfigGroup swissRailRaptor =
+                new ch.sbb.matsim.config.SwissRailRaptorConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[5 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[6 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
         groups[3] = fare;
         groups[4] = tramPriority;
+        groups[5] = swissRailRaptor;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[5 + i] = extraGroups.get(i);
+            groups[6 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -161,6 +174,21 @@ public final class CitysimControler {
             public void install() {
                 bind(PermissibleModesCalculator.class)
                         .to(AvailabilityModesCalculator.class);
+                // #49 Tier C (DECISIONS.md 9.78): with pt-submode mapping a
+                // passenger leg's mode is the scheduled bus/tram/rail/ferry,
+                // and the stock DefaultAnalysisMainModeIdentifier either
+                // mislabels the trip or throws outright - two distinct
+                // submodes in one trip is an IllegalStateException, read
+                // from the pinned jar's bytecode. The replacement folds the
+                // declared transit modes back to `pt` for every main_mode
+                // analysis (trips CSV, modestats), keeping the linked-trip
+                // vocabulary identical on both sides of the switch; the
+                // submode split is read from the boarded routes (Tier R),
+                // never from this label. Under the aggregate representation
+                // the fold is an identity map, so binding unconditionally
+                // changes nothing there.
+                bind(org.matsim.core.router.AnalysisMainModeIdentifier.class)
+                        .to(PtSubmodeMainModeIdentifier.class);
                 // Issue #28: without these, `ride` routes on free-flow times.
                 addTravelTimeBinding(TransportMode.ride)
                         .to(networkTravelTime());

@@ -292,13 +292,14 @@
         "ride",
         "pt",
         "bike",
-        "walk"
+        "walk",
+        "taxi"
       ],
       "units": "enum",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.6",
+      "decisions_ref": "9.6, 9.77",
       "matsim_param": "subtourModeChoice.modes",
       "description": "Modes subtour mode choice may switch between. IF RIDE IS OMITTED, MATSim defaults to car,pt,bike,walk and a ride subtour becomes an ABSORBING STATE - ride sat at 0.18311 in every iteration to five decimals, and 18.6% of legs were an input wearing the costume of a result."
     },
@@ -390,15 +391,34 @@
         "truck",
         "motorbike",
         "walk",
-        "bike"
+        "bike",
+        "taxi"
       ],
       "units": "enum",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.6",
+      "decisions_ref": "9.6, 9.77",
       "matsim_param": "routing.networkModes",
       "description": "Modes routed on the road graph. Ride must be here AND permitted on the links (143,891 of them): declaring it a network mode that no link permits gives 'checking 0 nodes and 0 links' and a throw in PrepareForSim."
+    },
+    "RUN.routing.pt_submode_scoring": {
+      "value": "per_submode",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "per_submode",
+          "aggregate"
+        ],
+        "basis": "the two representations the pinned MATSim (2027.0-2026w25) supports, verified against the jar's bytecode rather than memory: per_submode uses the `swissRailRaptor` config module's `useModeMappingForPassengers` with one `modeMapping` parameterset (routeMode -> passengerMode) per scheduled transportMode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup), so each submode's legs carry its own mode and score with C1's own per-submode constants; aggregate is the pre-9.78 state - one `pt` passenger mode carrying asc_bus for bus, tram, rail and ferry alike, the collapse DECISIONS.md 9.3 recorded as not representable."
+      },
+      "status": "active",
+      "decisions_ref": "9.78",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Under per_submode the emitter writes the swissRailRaptor module and one scoring modeParams block per submode: bus takes C1's asc_bus, tram asc_lr, rail asc_rail; FERRY HAS NO C1 CONSTANT and keeps the pt aggregate's, stated in the run-inputs report rather than invented. Time is priced at the one declared beta_ivt for every submode - C1 declares no per-submode time weight. The router prices each submode from its own scoring entry (RaptorUtils.createParameters reads scoring.getModes() per mode - verified in the jar), so the constants and any swept divergence reach ROUTE choice as well as plan scoring. Plan-level choice stays `pt`: subtourModeChoice.modes never carries a submode, only the router assigns submode legs, and citysim.PtSubmodeMainModeIdentifier folds them back to `pt` for every main_mode analysis, keeping the HTS aggregate comparison unchanged. A MODEL CHANGE: part of the #48 batched family boundary."
     },
     "RUN.machine.threads": {
       "value": 10,
@@ -679,15 +699,19 @@
     },
     "RUN.transit.transit_modes": {
       "value": [
-        "pt"
+        "pt",
+        "bus",
+        "tram",
+        "rail",
+        "ferry"
       ],
       "units": "mode_names",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "15",
+      "decisions_ref": "15, 9.78",
       "matsim_param": "transit.transitModes",
-      "description": "The mode string the transit schedule is served under. One value, because the study scores public transport as a single mode and distinguishes tram from bus from rail by vehicle type inside it, not by mode."
+      "description": "The mode strings the mobsim serves transit passengers under, and - minus the `pt` umbrella - the city's scheduled submode vocabulary. `pt` is the plan-level mode every PT trip keeps; bus/tram/rail/ferry are the mapped fleet's own per-route transportModes (the values Tier R already reads from the schedules). The submodes are here because TransitQSimEngine.handleDeparture serves ONLY leg modes in this set (verified in the pinned jar), so a passenger leg mapped to `tram` under RUN.routing.pt_submode_scoring=per_submode would otherwise fall through to teleportation - and because the emitter derives its swissRailRaptor modeMapping vocabulary from this declared list rather than a literal (split_schedule refuses a schedule route whose transportMode is outside it). Under `aggregate` the submode entries are inert: no leg ever carries them. Was one value (`pt`) while the study scored public transport as a single mode; superseded at the 9.78 Tier C boundary."
     },
     "RUN.controler.overwrite_files": {
       "value": "failIfDirectoryExists",
@@ -768,7 +792,7 @@
       "description": "Which modes contribute observed link travel times. Only car is physically simulated (RUN.qsim.main_mode), so only car can contribute one. See RUN.travel_time.separate_modes: the two are one decision in two parameters."
     },
     "RUN.travel_time.bin_size_s": {
-      "value": 900,
+      "value": 300,
       "units": "seconds",
       "source": "literature",
       "sweep": {
@@ -776,12 +800,12 @@
           60,
           900
         ],
-        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Declared now at the default so the binding is explicit and inert; the value moves only at the batched family boundary (9.76)."
+        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded."
       },
       "status": "active",
-      "decisions_ref": "9.76",
+      "decisions_ref": "9.76, 9.77",
       "matsim_param": "travelTimeCalculator.travelTimeBinSize",
-      "description": "The travel-time calculator's aggregation bin. At the shipped 900 s (MATSim's default, now declared instead of implicit) behaviour is unchanged; a time-varying network event shorter than a bin is invisible to the router, which is why the crossings activation (#68) lowers it."
+      "description": "The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s default to 300 s at the 9.77 activation boundary so the router can see a level-crossing closure (60-600 s swept) that is shorter than a bin. 300 s is the largest bin that resolves the sweep's central 240 s closure."
     },
     "RUN.telemetry.live_interval_s": {
       "value": 3600,

@@ -1,9 +1,20 @@
 #!/usr/bin/env python
-"""Integrity checks over the assembled data package.
+"""Integrity checks over the assembled data package: the PORTABLE HARNESS.
 
 Verifies that every artefact the proposal's Appendix A calls for exists, that
 the GTFS variants are internally consistent, and that cross-layer references
 resolve. Exits non-zero on failure so it can gate the next phase.
+
+THE SPLIT RULE (issue #62 B4). This file carries the STRUCTURAL checks - the
+rules any city's package must satisfy: referential integrity, GTFS/DTD
+validity, sweep discipline, registry well-formedness, fit-scoring behaviour.
+Everything that is ONE CITY's expectation - a pre-registered number (67/143),
+an artefact list, a vocabulary token (`lightrail`), a registry field key that
+exists only for this city's modes - is read from the city-owned expectations
+file at cities/<city>/tests/package_expectations.json (EXP below), or derived
+from the city descriptor (city.json) where it is already declared there. A
+check whose LOGIC is still city-shaped is a remaining item for #62, not a
+licence to add new constants here.
 """
 
 # City-relative paths resolve through src/city.py: `data/...` names a
@@ -25,6 +36,18 @@ import zipfile
 import collections
 import time
 
+# The city-owned half of this check suite (see THE SPLIT RULE above).
+EXP = json.load(open(_city.path('tests/package_expectations.json'),
+                     encoding='utf-8'))
+DESC = _city.descriptor()
+# Vocabulary the descriptor already declares is derived, not repeated in EXP.
+DAY_TYPES = list(DESC['day_types'])
+SCENARIO_IDS = list((DESC.get('intervention') or {}).get('scenarios') or [])
+ZONE_ID = DESC['zone_system']['id_column']
+# The parking price column is denominated in the city's own currency - the
+# layers contract records it as price_{currency}_hr (issue #62 A2).
+PRICE_COL = 'price_%s_hr' % DESC['currency'].lower()
+
 FAIL = []
 WARN = []
 OK = []
@@ -41,47 +64,15 @@ def rows(p):
 
 
 # ---- 1. required artefacts, keyed to the Appendix A schemas ----
-REQUIRED = {
-    'A1 road network': _city.path('data/processed/network/A1_road_edges.csv'),
-    'A2 signals': _city.path('data/processed/network/A2_signal_nodes_osm.csv'),
-    'A2 turn restrictions': _city.path('data/processed/network/A2_turn_restrictions_osm.csv'),
-    'A2 corridor signal control': _city.path('data/processed/corridor/A2_signal_control_corridor.csv'),
-    'A3 route extras': _city.path('data/processed/schedule_extras/A3_route_extras.csv'),
-    'A3 stop extras': _city.path('data/processed/schedule_extras/A3_stop_extras.csv'),
-    'A3 transfer extras': _city.path('data/processed/schedule_extras/A3_transfer_extras.csv'),
-    'A4 vehicle spec': _city.path('data/processed/corridor/A4_vehicle_spec.csv'),
-    'A4 dwell model': _city.path('data/processed/corridor/A4_stop_dwell_model.csv'),
-    'A5 parking': _city.path('data/processed/landuse/A5_parking_facilities.csv'),
-    'A6 active transport': _city.path('data/processed/network/A6_footway_edges.csv'),
-    'B1 population': _city.path('demand/population/B1_synthetic_population.csv'),
-    'B1 households': _city.path('demand/population/B1_households.csv'),
-    'B2 activity trips (weekday)': _city.path('demand/plans/B2_activity_trips_WEEKDAY.csv'),
-    'B2 activity trips (Saturday)': _city.path('demand/plans/B2_activity_trips_SAT.csv'),
-    'B2 activity trips (Sunday)': _city.path('demand/plans/B2_activity_trips_SUN.csv'),
-    'B5 counts': _city.path('data/processed/observed/traffic_aadt.csv'),
-    'C1 parameters': _city.path('params/C1_behavioural_parameters.csv'),
-    'C1 sweep grid': _city.path('params/C1_sensitivity_sweep_grid.csv'),
-    'D1 frontages': _city.path('data/processed/landuse/D1_frontage_segments.csv'),
-    'D1 POI': _city.path('data/processed/landuse/D1_poi.csv'),
-    'D1 employment': _city.path('data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv'),
-    'D1 zone attractions': _city.path('data/processed/landuse/D1_zone_attractions_SA1.csv'),
-    'A1 corridor road edges': _city.path('data/processed/network/A1_corridor_road_edges.csv'),
-    'A1 road variant patches': _city.path('data/processed/network/A1_road_variant_patches.csv'),
-    'A2 turn restrictions resolved':
-        _city.path('data/processed/network/A2_turn_restrictions_resolved.csv'),
-    'E1 scenarios': _city.path('scenarios/E1_scenarios.csv'),
-    'E1 road variants': _city.path('scenarios/E1_road_variants.csv'),
-    'Validation targets': _city.path('data/processed/validation/validation_targets.csv'),
-    'Manifest': _city.path('data/MANIFEST.json'),
-    'Decisions log': _city.path('docs/DECISIONS.md'),
-    'Data dictionary': _city.path('docs/reference/DATA_DICTIONARY.md'),
-}
+REQUIRED = {k: _city.path(p) for k, p in EXP['required_artefacts'].items()}
 for k, p in REQUIRED.items():
     check(os.path.exists(p) and os.path.getsize(p) > 100, '%s present (%s)' % (k, p))
 
 # ---- 2. GTFS variants ----
 GTFS = sorted(glob.glob(_city.path('schedules/*.zip'))) + sorted(glob.glob(_city.path('schedules/scenarios/*.zip')))
-check(len(GTFS) >= 14, 'at least 14 GTFS feeds present (found %d)' % len(GTFS))
+check(len(GTFS) >= EXP['min_gtfs_feeds'],
+      'at least %d GTFS feeds present (found %d)'
+      % (EXP['min_gtfs_feeds'], len(GTFS)))
 for p in GTFS:
     try:
         z = zipfile.ZipFile(p)
@@ -133,11 +124,11 @@ for r in rows(_city.path('scenarios/E1_scenarios.csv')):
           'scenario %s parking_variant_ref defined' % r['scenario_id'])
 
 # ---- 4. cross-layer referential integrity ----
-zl = {r['SA1_CODE21'] for r in rows(_city.path('data/processed/zones/zones_SA1.csv'))}
-za = {r['SA1_CODE21'] for r in rows(_city.path('data/processed/landuse/D1_zone_attractions_SA1.csv'))}
-check(za <= zl, 'zone attractions reference known SA1s')
+zl = {r[ZONE_ID] for r in rows(_city.path('data/processed/zones/zones_SA1.csv'))}
+za = {r[ZONE_ID] for r in rows(_city.path('data/processed/landuse/D1_zone_attractions_SA1.csv'))}
+check(za <= zl, 'zone attractions reference known residence zones')
 
-core = {r['SA1_CODE21'] for r in rows(_city.path('data/processed/zones/zones_SA1.csv'))
+core = {r[ZONE_ID] for r in rows(_city.path('data/processed/zones/zones_SA1.csv'))
         if r['zone_tier'] == 'core'}
 hh_sa1 = set()
 with open(_city.path('demand/population/B1_households.csv'), encoding='utf-8') as f:
@@ -157,19 +148,24 @@ for k in ('roads', 'footways'):
 # ---- 6. parameter sweep completeness ----
 sw = rows(_city.path('params/C1_sensitivity_sweep_grid.csv'))
 tp = sorted({float(r['beta_transfer_penalty_min']) for r in sw})
-check(min(tp) <= 3.0 and max(tp) >= 15.0,
-      'transfer penalty swept across the full 3-15 min range (%s)' % tp)
+_tp_span = EXP['transfer_penalty_span_min']
+check(min(tp) <= _tp_span[0] and max(tp) >= _tp_span[1],
+      'transfer penalty swept across the full %g-%g min range (%s)'
+      % (_tp_span[0], _tp_span[1], tp))
 check(sum(int(r['is_baseline']) for r in sw) == 1, 'exactly one baseline sweep point')
-ch = sorted({float(r['dwell_charging_s']) for r in sw})
-check(0.0 in ch, 'charging dwell sweep includes 0 (the S2a case)')
+if EXP.get('charging_dwell_grid_includes_zero'):
+    ch = sorted({float(r['dwell_charging_s']) for r in sw})
+    check(0.0 in ch, 'charging dwell sweep includes 0 (the disabled arm)')
 
 # ---- 7. validation split fixed ----
-# The split is pre-registered at 67/143 and fixed before any scenario is run
+# The split is pre-registered and fixed before any scenario is run
 # (DECISIONS.md 12, proposal s9). It is asserted exactly, not loosely: the point
 # of pre-registering it is that it cannot drift, and a target value being
 # corrected (as the road_aadt values were, DECISIONS.md 12.2) must not move a
-# single target between the two sets.
-CALIBRATION_N, HOLDOUT_N = 67, 143
+# single target between the two sets. The numbers are the city's own
+# pre-registration (EXP).
+CALIBRATION_N = EXP['validation_split']['calibration']
+HOLDOUT_N = EXP['validation_split']['holdout']
 vt = rows(_city.path('data/processed/validation/validation_targets.csv'))
 sp = collections.Counter(r['split'] for r in vt)
 check(sp['calibration'] == CALIBRATION_N and sp['holdout'] == HOLDOUT_N,
@@ -304,9 +300,9 @@ else:
     orphan_nodes = base_nodes - used
     check(not orphan_nodes, 'no orphan MATSim nodes (%d unattached)' % len(orphan_nodes))
 
-    check(len(mrep.get('schedules', {})) == 15,
-          'all 15 feeds mapped (5 era + 10 scenario), found %d'
-          % len(mrep.get('schedules', {})))
+    check(len(mrep.get('schedules', {})) == EXP['mapped_schedules'],
+          'all %d feeds mapped (era + scenario), found %d'
+          % (EXP['mapped_schedules'], len(mrep.get('schedules', {}))))
     for feed, st in sorted(mrep.get('schedules', {}).items()):
         check(st['stops_without_link'] == 0,
               '%s: every GTFS stop maps to a network link (%d unmapped)'
@@ -410,7 +406,7 @@ for _f, _label in (('kerbside_source', 'kerbside use'),
 # are overwhelmingly observed; the S4/S5 extension corridors are derived from
 # assumed stop sitings (DECISIONS.md 3.4), so their tagging rate is reported
 # rather than asserted.
-trunk = [r for r in corridor if 'corridor_trunk:base2026' in r['corridor_class']]
+trunk = [r for r in corridor if EXP['corridor_trunk_class'] in r['corridor_class']]
 ext = [r for r in corridor if r['is_corridor_trunk'] == '1' and r not in trunk]
 check(bool(trunk), 'as-built corridor trunk edges identified (%d)' % len(trunk))
 obs = sum(1 for r in trunk if r['num_lanes_source'] == 'osm')
@@ -458,15 +454,15 @@ else:
 
 
 # ---- 12. P3 demand: activity chains (B2) ----
-DAY_TYPES = ['WEEKDAY', 'SAT', 'SUN']
+# DAY_TYPES comes from the city descriptor (top of file), not a typed list.
 CHAIN_REPORT = _city.path('demand/plans/_activity_chains_report.json')
 if not os.path.exists(CHAIN_REPORT):
     check(False, 'B2 activity chains built (run src/build/build_activity_chains.py)',
           warn=True)
 else:
     crep = json.load(open(CHAIN_REPORT, encoding='utf-8'))
-    zl = {r['SA1_CODE21'] for r in rows(_city.path('data/processed/zones/zone_lookup_SA1.csv'))}
-    core_tier = {r['SA1_CODE21'] for r in
+    zl = {r[ZONE_ID] for r in rows(_city.path('data/processed/zones/zone_lookup_SA1.csv'))}
+    core_tier = {r[ZONE_ID] for r in
                  rows(_city.path('data/processed/zones/zone_lookup_SA1.csv'))
                  if r['zone_tier'] == 'core'}
 
@@ -591,7 +587,8 @@ else:
 
     # trip rate must stay tied to the HTS, not drift with the assumptions
     wk = crep.get('realised_week_trip_rate', 0)
-    hts = crep.get('hts_rate_per_person_day', 3.473)
+    hts = crep.get('hts_rate_per_person_day',
+                   EXP['hts_rate_fallback_per_person_day'])
     check(abs(wk - hts) / hts < 0.06,
           'realised week trip rate %.3f within 6%% of the HTS %.3f' % (wk, hts))
     for pnt, d in crep.get('decay', {}).items():
@@ -613,7 +610,7 @@ else:
     hts_share = prep.get('hts_mode_share_pct', {})
     tgt_share = prep.get('hts_calibration_target_pct', {})
     check(bool(tgt_share) and 'linked' in prep.get('hts_calibration_target_source', ''),
-          'the HTS calibration target is recorded as the linked Newcastle-LGA '
+          'the HTS calibration target is recorded as the linked target-LGA '
           'aggregate, derived from the HTS file rather than typed in')
     check(bool(prep.get('hts_mode_share_pct_source')),
           'the five-LGA unlinked HTS aggregate records which aggregation it is')
@@ -703,8 +700,9 @@ else:
     mrep2 = json.load(open(_city.path('networks/matsim/_matsim_build_report.json'),
                            encoding='utf-8'))
     sc = rrep.get('scenarios', {})
-    check(len(sc) == 10, 'run inputs assembled for all 10 scenarios (found %d)'
-          % len(sc))
+    check(set(sc) == set(SCENARIO_IDS),
+          'run inputs assembled for all %d declared scenarios (found %d)'
+          % (len(SCENARIO_IDS), len(sc)))
     for sid, v in sorted(sc.items()):
         days = v.get('days', {})
         check(set(days) == set(DAY_TYPES),
@@ -963,13 +961,10 @@ if os.path.exists(RUN_REPORT):
 # test one intervention, and a day type that lost it is a run that measures
 # nothing. This asserts the line is present with departures, per scenario per
 # day type, which is the check that would have caught the light rail vanishing
-# from every weekday run (DECISIONS.md 9.9).
-INTERVENTION = {
-    'S0': None,                       # counterfactual: no tram is correct
-    'S1': 'S1SHUTTLE', 'S2': 'lightrail', 'S2a': 'lightrail', 'S2b': 'lightrail',
-    'S2c': 'lightrail', 'S3': 'BRT', 'S4': 'lightrail', 'S5': 'lightrail',
-    'S6': None,
-}
+# from every weekday run (DECISIONS.md 9.9). Which line token each scenario
+# must carry (None for a counterfactual with no intervention) is the city's
+# own declaration (EXP).
+INTERVENTION = EXP['intervention_line_tokens']
 LINE_RE = re.compile(r'<transitLine id="([^"]+)"[^>]*>')
 if os.path.exists(RUN_REPORT):
     for sid, token in sorted(INTERVENTION.items()):
@@ -1123,10 +1118,11 @@ if _registry is not None:
           'every non-observed value cites a DECISIONS.md section%s'
           % ('' if not _no_ref else ': ' + ', '.join(sorted(_no_ref)[:4])))
 
-    # the three unobtained inputs stay unpinned (DECISIONS.md 0, 13; issue 15)
+    # the unobtained inputs stay unpinned (DECISIONS.md 0, 13; issue 15).
+    # WHICH inputs are unobtained is the city descriptor's own declaration.
     _unobtained = sorted(k for k, f in _fields.items() if f['status'] == 'unobtained')
-    for _key in ('A.signals.scats_phasing', 'A.lightrail.dwell_charging_s',
-                 'B.opal.journey_linked'):
+    for _key in sorted(u['field'] for u in DESC.get('unobtained', [])
+                       if u.get('field')):
         check(_key in _unobtained,
               'the unobtained input %s is declared unobtained, not pinned' % _key)
     _pinned = [k for k in _unobtained if _fields[k].get('value') is not None]
@@ -1147,8 +1143,9 @@ if _registry is not None:
           'the resolver refuses to return a point value for an unobtained input%s'
           % ('' if not _leaked else ': ' + ', '.join(_leaked)))
 
-    # DECISIONS.md 8.5: the mode constants are not tunable
-    for _key in ('C.asc.light_rail', 'C.asc.bus', 'C.asc.rail'):
+    # DECISIONS.md 8.5: the mode constants are not tunable. Which ASC fields
+    # exist depends on the city's modes, so the list is the city's own (EXP).
+    for _key in EXP['held_fixed_asc_fields']:
         check('held_fixed' in _fields.get(_key, {}),
               '%s is held fixed, so ASC absorption cannot happen through an overlay '
               '(DECISIONS.md 8.5, proposal 9)' % _key)
@@ -1157,7 +1154,8 @@ if _registry is not None:
     for _label, _kw in (('an unknown field', dict(set={'C.asc.hovercraft': '1'})),
                         ('a value outside its sweep',
                          dict(set={'RUN.sample.fraction': '0.95'})),
-                        ('a held-fixed constant', dict(set={'C.asc.light_rail': '-2.0'}))):
+                        ('a held-fixed constant',
+                         dict(set={EXP['held_fixed_asc_fields'][0]: '-2.0'}))):
         try:
             _registry.load(**_kw)
             check(False, 'the resolver rejects %s' % _label)
@@ -1221,19 +1219,7 @@ if _registry is not None:
     # the SWEEP ENDS and the ASCs as well as the bases: the three ranges that had
     # already drifted apart (crowding seated and standing, gradient uphill) were
     # invisible to a base-only comparison.
-    _C1_PAIRS = {
-        'C.transfer.beta_transfer_penalty_min': ('transfer_penalty', 'base'),
-        'C.gradient.uphill_penalty_per_pct': ('weights', 'beta_gradient_uphill', 'base'),
-        'C.gradient.downhill_penalty_per_pct': ('weights', 'beta_gradient_downhill', 'base'),
-        'C.crowding.seated_multiplier': ('weights', 'beta_crowding_seated', 'base'),
-        'C.crowding.standing_multiplier': ('weights', 'beta_crowding_standing', 'base'),
-        'C.time_weights.beta_ivt': ('weights', 'beta_ivt', 'base'),
-        'C.time_weights.beta_wait': ('weights', 'beta_wait', 'base'),
-        'C.time_weights.beta_walk_access': ('weights', 'beta_walk_access', 'base'),
-        'C.time_weights.beta_walk_egress': ('weights', 'beta_walk_egress', 'base'),
-        'C.time_weights.beta_headway': ('weights', 'beta_headway', 'base'),
-        'C.time_weights.beta_reliability': ('weights', 'beta_reliability', 'base'),
-    }
+    _C1_PAIRS = {k: tuple(v) for k, v in EXP['c1_value_pairs'].items()}
     if os.path.exists(_city.path('params/C1_parameters.json')):
         _c1 = json.load(open(_city.path('params/C1_parameters.json'), encoding='utf-8'))
         _bad = []
@@ -1257,11 +1243,7 @@ if _registry is not None:
         # held_fixed under DECISIONS.md 8.5, and a held_fixed rule protecting a
         # value the model does not read protects nothing - which is what
         # deliverable 5 would have discovered after estimating them (#14).
-        _ASC_PAIRS = {'C.asc.car_driver': 'asc_car_driver',
-                      'C.asc.car_passenger': 'asc_car_passenger',
-                      'C.asc.bus': 'asc_bus', 'C.asc.light_rail': 'asc_lr',
-                      'C.asc.rail': 'asc_rail', 'C.asc.walk': 'asc_walk',
-                      'C.asc.cycle': 'asc_cycle'}
+        _ASC_PAIRS = dict(EXP['c1_asc_pairs'])
         _abad = []
         for _k, _name in sorted(_ASC_PAIRS.items()):
             _node = _c1.get('asc', {}).get(_name)
@@ -1310,9 +1292,7 @@ if _registry is not None:
         _OSMD = _city.path('params/C2_osm_defaults.json')
         if os.path.exists(_OSMD):
             _m = json.load(open(_OSMD, encoding='utf-8'))
-            _pairs = (('A.road.lanes_default', 'lanes_per_direction'),
-                      ('A.road.speed_default', 'speed_limit_kmh'),
-                      ('A.active.footway_width_default', 'footway_width_m'))
+            _pairs = tuple((a, b) for a, b in EXP['osm_default_pairs'])
             _obad = []
             for _k, _blk in _pairs:
                 _rv = _fields.get(_k, {}).get('value') or {}
@@ -1341,18 +1321,7 @@ if _registry is not None:
         # The declared SWEEP must reach C1 too. A narrowed range - which is
         # exactly what an estimate for #25 would produce - has to move the
         # parameter set, or the estimate would be recorded and change nothing.
-        _SWEEP_PAIRS = {
-            'C.transfer.beta_transfer_penalty_min': ('transfer_penalty', 'low', 'high'),
-            'C.crowding.seated_multiplier': ('weights', 'beta_crowding_seated'),
-            'C.crowding.standing_multiplier': ('weights', 'beta_crowding_standing'),
-            'C.gradient.uphill_penalty_per_pct': ('weights', 'beta_gradient_uphill'),
-            'C.gradient.downhill_penalty_per_pct': ('weights', 'beta_gradient_downhill'),
-            'C.time_weights.beta_wait': ('weights', 'beta_wait'),
-            'C.time_weights.beta_walk_access': ('weights', 'beta_walk_access'),
-            'C.time_weights.beta_walk_egress': ('weights', 'beta_walk_egress'),
-            'C.time_weights.beta_headway': ('weights', 'beta_headway'),
-            'C.time_weights.beta_reliability': ('weights', 'beta_reliability'),
-        }
+        _SWEEP_PAIRS = {k: tuple(v) for k, v in EXP['c1_sweep_pairs'].items()}
         _sbad = []
         for _k, _path in sorted(_SWEEP_PAIRS.items()):
             _sw = _fields.get(_k, {}).get('sweep')
@@ -1388,14 +1357,14 @@ if _registry is not None:
         check(_tpbase in _grid,
               'the transfer-penalty base is a member of its own grid, so exactly one '
               'grid row can be the baseline')
-        _dgrid = _fields.get('A.lightrail.dwell_sweep_grid', {}).get('value') or []
-        _dsw = _fields.get('A.lightrail.dwell_charging_s', {}).get('sweep')
+        _dgrid = _fields.get(EXP['dwell_grid_field'], {}).get('value') or []
+        _dsw = _fields.get(EXP['dwell_charging_field'], {}).get('sweep')
         check(bool(_dgrid) and isinstance(_dsw, list)
               and all(_dsw[0] <= _p <= _dsw[1] for _p in _dgrid if _p > 0),
               'every non-zero charging-dwell grid point lies inside the declared '
               'sweep %s - the 0 s member is the disabled arm, not a sweep point of '
               'an unobtained quantity' % (_dsw,))
-        check(_fields.get('A.lightrail.dwell_charging_s', {}).get('value') is None,
+        check(_fields.get(EXP['dwell_charging_field'], {}).get('value') is None,
               'declaring a sampling grid for the charging dwell did NOT pin the '
               'field: it stays unobtained with a null value (DECISIONS.md 0, 13)')
 
@@ -1520,9 +1489,12 @@ if True:
 
         _all_splits = {r['split'] for r in rows(
             _city.path('data/processed/validation/validation_targets.csv'))}
-        check(_all_splits == {'calibration', 'holdout'} and len(_tg) == 67,
-              'the 67/143 pre-registered split is intact and fit.py sees exactly '
-              'the 67 (%d of %d rows)' % (len(_tg), 210))
+        check(_all_splits == {'calibration', 'holdout'}
+              and len(_tg) == CALIBRATION_N,
+              'the %d/%d pre-registered split is intact and fit.py sees exactly '
+              'the %d (%d of %d rows)'
+              % (CALIBRATION_N, HOLDOUT_N, CALIBRATION_N, len(_tg),
+                 CALIBRATION_N + HOLDOUT_N))
 
         _road = [t for t in _tg if t['metric'] == 'road_aadt']
         _key = lambda t: t['note'].split('station_key=')[1].split(';')[0]
@@ -1587,10 +1559,12 @@ if True:
         # become a target. The 67/143 split is pre-registered.
         _c4 = json.load(open(_city.path('params/C4_mode_constraints.json'), encoding='utf-8'))
         _tg = (_c4.get('trip_geometry') or {}).get('modes') or {}
-        check(set(_tg) == {'car', 'ride', 'pt', 'walk', 'bike'},
-              'C4 carries observed trip length and time for all five MATSim modes, '
-              'measured from the HTS TRIP_AVG_DISTANCE/TRIP_AVG_TIME columns that '
-              'nothing used before 9.13 (%d modes)' % len(_tg))
+        check(set(_tg) == set(EXP['c4_trip_geometry_modes']),
+              'C4 carries observed trip length and time for the %d survey-'
+              'observable MATSim modes, measured from the HTS '
+              'TRIP_AVG_DISTANCE/TRIP_AVG_TIME columns that nothing used '
+              'before 9.13 (%d modes)'
+              % (len(EXP['c4_trip_geometry_modes']), len(_tg)))
         check(all(g['avg_distance_sweep'][0] <= g['avg_distance_km']
                   <= g['avg_distance_sweep'][1]
                   and g['avg_time_sweep'][0] <= g['avg_time_min']
@@ -1706,8 +1680,8 @@ if _registry is not None and os.path.exists(PRICE_ZONES):
     _dens = {}
     for _r in _att:
         _a = float(_r['area_km2'])
-        _dens[_r['SA1_CODE21']] = (float(_r['jobs']) / _a) if _a > 0 else 0.0
-    _core = sorted(_dens[_r['SA1_CODE21']] for _r in _att if _r['zone_tier'] == 'core')
+        _dens[_r[ZONE_ID]] = (float(_r['jobs']) / _a) if _a > 0 else 0.0
+    _core = sorted(_dens[_r[ZONE_ID]] for _r in _att if _r['zone_tier'] == 'core')
 
     def _pct(v, q):
         _pos = (len(v) - 1) * (q / 100.0)
@@ -1721,39 +1695,41 @@ if _registry is not None and os.path.exists(PRICE_ZONES):
           'every zone carries a parking price row (%d of %d)' % (len(_pz), len(_att)))
     _bad = []
     for _r in _pz:
-        _w = min(1.0, max(0.0, (_dens[_r['SA1_CODE21']] - _thr) / (_sat - _thr)))
-        if abs(float(_r['price_aud_hr']) - round(_pmax * _w, 4)) > 5e-4:
-            _bad.append(_r['SA1_CODE21'])
+        _w = min(1.0, max(0.0, (_dens[_r[ZONE_ID]] - _thr) / (_sat - _thr)))
+        if abs(float(_r[PRICE_COL]) - round(_pmax * _w, 4)) > 5e-4:
+            _bad.append(_r[ZONE_ID])
     check(not _bad,
           'every zone parking price re-derives EXACTLY from the registry and the '
           "city's own job-density percentiles - a typed price, a re-drawn extent "
           'or an edited artefact cannot survive this (%d zones, %d mismatched)'
           % (len(_pz), len(_bad)))
-    _npriced = sum(1 for _r in _pz if float(_r['price_aud_hr']) > 0)
+    _npriced = sum(1 for _r in _pz if float(_r[PRICE_COL]) > 0)
     check(0 < _npriced < len(_pz),
           'the price ramp prices SOME zones and not all of them (%d of %d) - a '
           'threshold that catches everything or nothing is not a threshold'
           % (_npriced, len(_pz)))
 
-    # No place name survives in the priced geography: the zone id IS the id the
-    # ABS publishes, and `honeysuckle`, `cbd_core`, `cbd_fringe` and
-    # `beach_east` were names for boxes somebody drew.
-    _src = open(_city.path('build/build_landuse_parking.py'), encoding='utf-8').read()
+    # No place name survives in the priced geography: the zone id IS the id
+    # the statistical agency publishes. The regression tokens - the name of
+    # the dead rectangle table and the hand-drawn zone names it held - are the
+    # city's own history (EXP), as is the parking build script's path.
+    _src = open(_city.path(EXP['parking_build_script']), encoding='utf-8').read()
     # Comments are stripped first, deliberately. The names below SHOULD still be
     # discussed in the source - a defect that is explained does not come back
     # by accident - so the test is that they no longer appear in CODE.
-    _a5 = '\n'.join(_l for _l in _src[_src.index('A5 parking'):].splitlines()
-                    if not _l.lstrip().startswith('#'))
-    check('PARK_ZONES' not in _a5,
-          'the hand-drawn PARK_ZONES rectangles are gone from the parking build - '
+    _a5 = '\n'.join(
+        _l for _l in _src[_src.index(EXP['parking_section_marker']):].splitlines()
+        if not _l.lstrip().startswith('#'))
+    check(EXP['parking_dead_zone_table'] not in _a5,
+          'the hand-drawn %s rectangles are gone from the parking build - '
           'one of the four could never match a facility and nobody saw it for '
-          'three phases (issue #33)')
-    for _dead in ('cbd_core', 'cbd_fringe', 'honeysuckle', 'beach_east'):
+          'three phases (issue #33)' % EXP['parking_dead_zone_table'])
+    for _dead in EXP['parking_dead_zone_names']:
         check(_dead not in _a5,
               'the parking price carries no hand-drawn zone named %r' % _dead)
 
     _fac = rows(_city.path('data/processed/landuse/A5_parking_facilities.csv'))
-    _zprice = {_r['SA1_CODE21']: float(_r['price_aud_hr']) for _r in _pz}
+    _zprice = {_r[ZONE_ID]: float(_r[PRICE_COL]) for _r in _pz}
     _wrong = [_r for _r in _fac
               if int(_r['is_priced']) and _zprice.get(_r['parking_zone'], 0.0) <= 0]
     check(not _wrong,

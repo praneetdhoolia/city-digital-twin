@@ -82,16 +82,17 @@
       "description": "Boardings by line, scaled to full population by 1/fraction.",
       "required": [
         "total_pt_boardings",
-        "light_rail_boardings"
+        "intervention_boardings"
       ],
       "properties": {
         "total_pt_boardings": {
           "type": "number",
           "minimum": 0
         },
-        "light_rail_boardings": {
+        "intervention_boardings": {
           "type": "number",
-          "minimum": 0
+          "minimum": 0,
+          "description": "Boardings attributed to the city's declared intervention mode (city.json intervention.mode, matched against each boarded route's own scheduled transportMode). RENAMED from `light_rail_boardings` (issue #62 A1): one city's intervention was hard-named in the portable contract. BREAKING: a _metrics.json written before the rename fails this schema and cannot be scored by src/calibrate/fit.py - the same accepted class of break as newcastle_lga_pct -> target_lga_pct. Historical run artefacts are not rewritten; re-run extract_metrics.py to re-derive."
         },
         "by_line": {
           "type": "object",

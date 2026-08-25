@@ -15,9 +15,11 @@
     "epsg": 28356,
     "datum": "GDA94",
     "zone": "MGA Zone 56",
-    "units": "m"
+    "units": "m",
+    "coord_suffix": "mga56"
   },
   "base_year": 2026,
+  "currency": "AUD",
   "seed": 20260810,
 
   "boundary": {
@@ -34,10 +36,11 @@
   "zone_system": {
     "residence": "SA1",
     "external": "SA2",
-    "workplace": "DZN"
+    "workplace": "DZN",
+    "id_column": "SA1_CODE21"
   },
 
-  "modes": ["car", "ride", "pt", "bike", "walk"],
+  "modes": ["car", "ride", "pt", "bike", "walk", "taxi"],
   "day_types": ["WEEKDAY", "SAT", "SUN"],
 
   "mode_share_target": {
@@ -105,6 +108,15 @@
                    "data/processed/observed/freight_day_factors.csv"],
       "description": "Heavy-vehicle hourly departure profile and weekend day factors, MEASURED from the classified RMS permanent hourly counts at study-area stations (DECISIONS.md 9.49)."
     }
+  },
+
+  "lineage": {
+    "data/processed/corridor": "build/build_corridor_layers.py",
+    "data/processed/landuse": "build/build_landuse_parking.py + src/build/build_zone_attractions.py",
+    "data/processed/validation": "build/build_validation_targets.py",
+    "schedules": "build/build_era_feeds.py",
+    "schedules/scenarios": "build/build_scenario_schedules.py",
+    "scenarios": "build/build_scenario_configs.py"
   },
 
   "sources": [

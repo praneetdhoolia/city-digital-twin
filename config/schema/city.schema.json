@@ -87,6 +87,10 @@
             "m",
             "ft"
           ]
+        },
+        "coord_suffix": {
+          "type": "string",
+          "description": "The suffix this city's projected coordinate columns carry (e.g. `mga56` for `x_mga56`/`y_mga56`). Used to tokenise the generated layers contract (issue #62 A2) so another projection's column names satisfy its own contract."
         }
       }
     },
@@ -94,6 +98,11 @@
       "type": "integer",
       "minimum": 1900,
       "maximum": 2200
+    },
+    "currency": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}$",
+      "description": "ISO 4217 code of the currency every monetary registry value and column is denominated in. Used to tokenise the generated contracts (required_fields.json unit strings, layers.json column names - issue #62 B5/A2) so a city declaring EUR values passes its own contract."
     },
     "seed": {
       "type": "integer",
@@ -170,6 +179,10 @@
         },
         "workplace": {
           "type": "string"
+        },
+        "id_column": {
+          "type": "string",
+          "description": "The column name this city's zone artefacts key the residence-level zone id by (e.g. the ABS `SA1_CODE21`). Used to tokenise the generated layers contract (issue #62 A2) so another zone system's column name satisfies its own contract."
         }
       }
     },
@@ -274,6 +287,14 @@
             "type": "string"
           }
         }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "description": "City-relative artefact prefix -> the script(s) that build it, for the manifest's lineage graph (issue #62 B1). A value names one script, or several joined by ` + `; each token is city-relative (`build/...`) unless it names a framework script (`src/...`). Acquisition lineage is NOT declared here - it derives from `adapters[*].produces`.",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
       }
     },
     "sources": {

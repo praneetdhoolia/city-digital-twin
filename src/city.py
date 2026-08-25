@@ -156,6 +156,43 @@ def base_year():
     return descriptor()['base_year']
 
 
+_MODULES = {}
+
+
+def module(rel_path):
+    """Import a CITY-OWNED Python module by its city-relative path.
+
+    How framework code reaches code a city supplies - the same resolution
+    rule as `path()`, applied to behaviour instead of bytes. Cached per
+    (city, path) so repeated calls share one module instance.
+    """
+    import importlib.util
+    key = (CITY, rel_path)
+    if key not in _MODULES:
+        full = path(rel_path)
+        if not os.path.exists(full):
+            raise CityError('city %r supplies no module %s (expected %s)'
+                            % (CITY, rel_path, full))
+        name = 'cities.%s.%s' % (CITY, rel_path.replace('/', '.')
+                                 .removesuffix('.py'))
+        spec = importlib.util.spec_from_file_location(name, full)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _MODULES[key] = mod
+    return _MODULES[key]
+
+
+def readers():
+    """This city's reader-shape adapter (issue #62 A5).
+
+    `cities/<city>/extract/reader_shapes.py` maps the city's published
+    census/HTS/count shapes to the framework-facing schema declared in
+    `config/schema/reader_shapes.json`, at read time. The location is part of
+    the contract, like `city.json` and `registry/`.
+    """
+    return module('extract/reader_shapes.py')
+
+
 def geometry(name):
     """A declared geometry document from this city's `geometry/` directory.
 

@@ -26,10 +26,16 @@
       "note": "The CLOSED family whose record is the two completed arms 20260821T175907 / 20260821T180310 (9.64) - the pre-repair baseline every next-arm comparison is made against."
     },
     "F5-ride-walk-repairs": {
-      "label": "round-trip ride bindings + short-trip mixture (9.68-9.69) - CURRENT",
+      "label": "round-trip ride bindings + short-trip mixture (9.68-9.69) - CLOSED UNMEASURED",
       "decisions_ref": "9.68, 9.69",
       "from_launch": "20260824T000000",
-      "note": "B2/plans/run inputs regenerated 24 Aug on the repaired mechanisms. No converged arm yet: the 4.6.9 arm is launch-blocked (9.72). The 25 Aug batch (issues #73/#49/#68/#74) is BUILT INERT inside this family and activates as ONE new boundary (9.75) - declared here only when it activates."
+      "note": "B2/plans/run inputs regenerated 24 Aug on the repaired mechanisms. NO CONVERGED ARM EVER RAN IN THIS FAMILY: the 4.6.9 arm was launch-blocked (9.72), and the 9.77 activation closed the family before it was measured. Its byte-identical inputs are regenerable by setting A.signals.representation=implicit_delay and A.crossings.representation=absent and removing taxi from the two RUN vocabularies, should the repairs-first ordering ever be revived. The 25 Aug batch was BUILT INERT inside this family (9.76)."
+    },
+    "F6-all-modes-activated": {
+      "label": "explicit signals + tram/bus priority + crossings + native dwell + taxi (9.77) - CURRENT",
+      "decisions_ref": "9.76, 9.77",
+      "from_launch": "20260825T090000",
+      "note": "The 9.77 activation boundary: A.signals.representation=explicit_signals (signal plans at the 14 corridor intersections, saturation-flow re-capacitation, each variant's own embedded tram delay removed from the schedule), A.crossings.representation=change_events (the two freight level crossings as a time-variant network), taxi in both RUN vocabularies (one blended priced mode), travel-time bin 300 s, usingFastCapacityUpdate=false, dwell carried by the signals-transformed schedules. ONE boundary per 9.75/9.76; run inputs regenerated 25 Aug. The same-session 9.78 lanes FOLD IN while the family has no arms (still one boundary): score-distinct PT submodes (RUN.routing.pt_submode_scoring=per_submode) and the CWANZ-cited bike availability 0.493 with its plans regeneration. The 9.76 detached probe 20260825T033850 (launched 03:38) is F5; the activated probes from 09:44 on are F6."
     }
   },
   "overrides": {

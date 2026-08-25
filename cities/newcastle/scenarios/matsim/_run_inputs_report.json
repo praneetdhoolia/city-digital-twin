@@ -17,6 +17,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1275,
@@ -24,6 +25,11 @@
           "departures": 1908,
           "departures_dropped": 1862,
           "routes_kept_under_a_foreign_day_id": 38,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 1908,
           "vehicle_capacity_patched": [
             [
@@ -61,6 +67,11 @@
           "departures": 995,
           "departures_dropped": 2775,
           "routes_kept_under_a_foreign_day_id": 118,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 995,
           "vehicle_capacity_patched": [
             [
@@ -98,6 +109,11 @@
           "departures": 867,
           "departures_dropped": 2903,
           "routes_kept_under_a_foreign_day_id": 126,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 867,
           "vehicle_capacity_patched": [
             [
@@ -148,6 +164,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -155,6 +172,11 @@
           "departures": 2115,
           "departures_dropped": 2136,
           "routes_kept_under_a_foreign_day_id": 39,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 2115,
           "vehicle_capacity_patched": [
             [
@@ -192,6 +214,11 @@
           "departures": 1132,
           "departures_dropped": 3119,
           "routes_kept_under_a_foreign_day_id": 113,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 1132,
           "vehicle_capacity_patched": [
             [
@@ -229,6 +256,11 @@
           "departures": 1004,
           "departures_dropped": 3247,
           "routes_kept_under_a_foreign_day_id": 123,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 1004,
           "vehicle_capacity_patched": [
             [
@@ -276,6 +308,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -283,6 +316,12 @@
           "departures": 2139,
           "departures_dropped": 2130,
           "routes_kept_under_a_foreign_day_id": 39,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 2139,
           "vehicle_capacity_patched": [
             [
@@ -327,6 +366,12 @@
           "departures": 1128,
           "departures_dropped": 3141,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1128,
           "vehicle_capacity_patched": [
             [
@@ -371,6 +416,12 @@
           "departures": 1002,
           "departures_dropped": 3267,
           "routes_kept_under_a_foreign_day_id": 122,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1002,
           "vehicle_capacity_patched": [
             [
@@ -425,6 +476,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -432,6 +484,12 @@
           "departures": 2139,
           "departures_dropped": 2130,
           "routes_kept_under_a_foreign_day_id": 39,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 2139,
           "vehicle_capacity_patched": [
             [
@@ -476,6 +534,12 @@
           "departures": 1128,
           "departures_dropped": 3141,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1128,
           "vehicle_capacity_patched": [
             [
@@ -520,6 +584,12 @@
           "departures": 1002,
           "departures_dropped": 3267,
           "routes_kept_under_a_foreign_day_id": 122,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1002,
           "vehicle_capacity_patched": [
             [
@@ -574,6 +644,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -581,6 +652,12 @@
           "departures": 2139,
           "departures_dropped": 2130,
           "routes_kept_under_a_foreign_day_id": 39,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 2139,
           "vehicle_capacity_patched": [
             [
@@ -625,6 +702,12 @@
           "departures": 1128,
           "departures_dropped": 3141,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1128,
           "vehicle_capacity_patched": [
             [
@@ -669,6 +752,12 @@
           "departures": 1002,
           "departures_dropped": 3267,
           "routes_kept_under_a_foreign_day_id": 122,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1002,
           "vehicle_capacity_patched": [
             [
@@ -726,6 +815,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -733,6 +823,12 @@
           "departures": 2139,
           "departures_dropped": 2130,
           "routes_kept_under_a_foreign_day_id": 39,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 2139,
           "vehicle_capacity_patched": [
             [
@@ -777,6 +873,12 @@
           "departures": 1128,
           "departures_dropped": 3141,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1128,
           "vehicle_capacity_patched": [
             [
@@ -821,6 +923,12 @@
           "departures": 1002,
           "departures_dropped": 3267,
           "routes_kept_under_a_foreign_day_id": 122,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1002,
           "vehicle_capacity_patched": [
             [
@@ -875,6 +983,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -882,6 +991,11 @@
           "departures": 2191,
           "departures_dropped": 2240,
           "routes_kept_under_a_foreign_day_id": 38,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 2191,
           "vehicle_capacity_patched": [
             [
@@ -919,6 +1033,11 @@
           "departures": 1184,
           "departures_dropped": 3247,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 1184,
           "vehicle_capacity_patched": [
             [
@@ -956,6 +1075,11 @@
           "departures": 1056,
           "departures_dropped": 3375,
           "routes_kept_under_a_foreign_day_id": 123,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 1056,
           "vehicle_capacity_patched": [
             [
@@ -1005,6 +1129,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1271,
@@ -1012,6 +1137,12 @@
           "departures": 2139,
           "departures_dropped": 2130,
           "routes_kept_under_a_foreign_day_id": 40,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 2139,
           "vehicle_capacity_patched": [
             [
@@ -1056,6 +1187,12 @@
           "departures": 1128,
           "departures_dropped": 3141,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1128,
           "vehicle_capacity_patched": [
             [
@@ -1100,6 +1237,12 @@
           "departures": 1002,
           "departures_dropped": 3267,
           "routes_kept_under_a_foreign_day_id": 123,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1002,
           "vehicle_capacity_patched": [
             [
@@ -1156,6 +1299,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1271,
@@ -1163,6 +1307,12 @@
           "departures": 2139,
           "departures_dropped": 2130,
           "routes_kept_under_a_foreign_day_id": 40,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 2139,
           "vehicle_capacity_patched": [
             [
@@ -1207,6 +1357,12 @@
           "departures": 1128,
           "departures_dropped": 3141,
           "routes_kept_under_a_foreign_day_id": 114,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1128,
           "vehicle_capacity_patched": [
             [
@@ -1251,6 +1407,12 @@
           "departures": 1002,
           "departures_dropped": 3267,
           "routes_kept_under_a_foreign_day_id": 123,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail",
+            "tram"
+          ],
           "vehicles": 1002,
           "vehicle_capacity_patched": [
             [
@@ -1308,6 +1470,7 @@
         "priced_links": 22577,
         "priced_zones": 160
       },
+      "signal_capacity_links": 49,
       "days": {
         "WEEKDAY": {
           "routes_kept": 1268,
@@ -1315,6 +1478,11 @@
           "departures": 1887,
           "departures_dropped": 1832,
           "routes_kept_under_a_foreign_day_id": 37,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 1887,
           "vehicle_capacity_patched": [
             [
@@ -1352,6 +1520,11 @@
           "departures": 980,
           "departures_dropped": 2739,
           "routes_kept_under_a_foreign_day_id": 113,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 980,
           "vehicle_capacity_patched": [
             [
@@ -1389,6 +1562,11 @@
           "departures": 852,
           "departures_dropped": 2867,
           "routes_kept_under_a_foreign_day_id": 121,
+          "transport_modes": [
+            "bus",
+            "ferry",
+            "rail"
+          ],
           "vehicles": 852,
           "vehicle_capacity_patched": [
             [
@@ -1518,9 +1696,37 @@
       "non_network_walk": {
         "constant": 0.0,
         "marginalUtilityOfTraveling": -11.6392
+      },
+      "bus": {
+        "constant": -1.05,
+        "marginalUtilityOfTraveling": -10.9608
+      },
+      "tram": {
+        "constant": -0.75,
+        "marginalUtilityOfTraveling": -10.9608
+      },
+      "rail": {
+        "constant": -0.65,
+        "marginalUtilityOfTraveling": -10.9608
+      },
+      "ferry": {
+        "constant": -1.05,
+        "marginalUtilityOfTraveling": -10.9608
+      },
+      "taxi": {
+        "constant": -1.4134,
+        "marginalUtilityOfTraveling": -10.9608
       }
     },
+    "pt_submode_scoring": "per_submode",
+    "pt_submodes": [
+      "bus",
+      "tram",
+      "rail",
+      "ferry"
+    ],
     "not_representable": [
+      "per-submode constant for ferry: C1 declares none, so it keeps the pt aggregate's constant (asc_bus=-1.05) - stated, not invented. Every submode shares the one declared beta_ivt time weight; only the constants differ",
       "nesting_coefficient_pt=0.65 and the nested-logit structure: MATSim mode choice is a co-evolutionary search with no nest parameter",
       "per-purpose value of time: MATSim scores per mode, so a trip-weighted average (16.96 AUD/h) is used in place of the six purpose-specific values",
       "crowding multipliers (beta_crowding_*): require an explicit capacity-dependent scoring extension, not enabled here",

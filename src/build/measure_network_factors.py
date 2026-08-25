@@ -55,7 +55,6 @@ import registry as _registry  # noqa: E402
 CFG = _registry.load()
 
 LU = _city.path('data/processed/landuse')
-OBS = _city.path('data/processed/observed')
 CEN = _city.path('data/processed/census')
 OUT = _city.path('params/C2_network_factors.json')
 SEED = CFG.get('B.seed.master')
@@ -269,20 +268,27 @@ def measure_active_detour(n_pairs, seed, target_m, label):
 
 
 def measure_day_type():
-    """Weekday vs weekend traffic, from the observed RMS counts."""
-    t = pd.read_csv(os.path.join(OBS, 'traffic_aadt.csv'),
-                    low_memory=False)
-    t = t[t.classification_type.isin(['ALL VEHICLES', 'UNCLASSIFIED'])]
+    """Weekday vs weekend traffic, from the observed classified counts.
+
+    Read through the city's reader-shape adapter (issue #62 A5): the agency's
+    period and classification vocabulary lives in
+    cities/<city>/extract/reader_shapes.py, and this function sees only the
+    declared columns of config/schema/reader_shapes.json.
+    """
+    t = _city.readers().total_volume_counts()
     piv = t.pivot_table(index=['station_key', 'year'], columns='period',
-                        values='traffic_count', aggfunc='mean')
-    piv = piv.dropna(subset=['WEEKDAYS', 'WEEKENDS'])
-    r = (piv['WEEKENDS'] / piv['WEEKDAYS']).replace([np.inf, -np.inf], np.nan).dropna()
+                        values='volume', aggfunc='mean')
+    piv = piv.dropna(subset=['weekday', 'weekend'])
+    r = (piv['weekend'] / piv['weekday']).replace([np.inf, -np.inf], np.nan).dropna()
     r = r[(r > 0.2) & (r < 2.0)]
     med = float(r.median())
     return dict(
         weekend_to_weekday=round(med, 4),
         sweep=[round(float(r.quantile(0.25)), 3), round(float(r.quantile(0.75)), 3)],
         station_years=int(len(r)),
+        # the source string is provenance PROSE and is kept byte-identical to
+        # the committed C2 artefact; naming the agency in a provenance record
+        # is documentation, not a value (issue #62 A5)
         source='measured - RMS traffic counts, WEEKENDS vs WEEKDAYS period',
         note='vehicle volume, not person trips: it fixes the weekday/weekend '
              'ratio but says nothing about how the weekend splits between '

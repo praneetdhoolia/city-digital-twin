@@ -49,7 +49,7 @@
       "informed"
     ]
   },
-  "bike_available_rate": 0.5,
+  "bike_available_rate": 0.493,
   "bike_available_sweep": [
     0.3,
     1.0
@@ -87,16 +87,16 @@
       "legs": 2343321,
       "activities": 2963874,
       "tours": 1100353,
-      "bytes": 41602171,
+      "bytes": 41600670,
       "escort_ride_denied": 111018,
       "seed_mode_share": {
-        "bike": 0.0896,
-        "car": 0.3076,
+        "bike": 0.0884,
+        "car": 0.3079,
         "motorbike": 0.0021,
-        "pt": 0.2072,
-        "ride": 0.1484,
+        "pt": 0.2076,
+        "ride": 0.1485,
         "truck": 0.0381,
-        "walk": 0.207
+        "walk": 0.2075
       },
       "activity_types": {
         "business": 24001,
@@ -113,16 +113,16 @@
       "legs": 1903521,
       "activities": 2409534,
       "tours": 878330,
-      "bytes": 33820111,
+      "bytes": 33818784,
       "escort_ride_denied": 66187,
       "seed_mode_share": {
-        "bike": 0.0977,
-        "car": 0.2721,
+        "bike": 0.0964,
+        "car": 0.2724,
         "motorbike": 0.0028,
-        "pt": 0.2249,
-        "ride": 0.1548,
+        "pt": 0.2253,
+        "ride": 0.155,
         "truck": 0.0224,
-        "walk": 0.2252
+        "walk": 0.2257
       },
       "activity_types": {
         "business": 2765,
@@ -139,16 +139,16 @@
       "legs": 1664677,
       "activities": 2134288,
       "tours": 768752,
-      "bytes": 30401853,
+      "bytes": 30400573,
       "escort_ride_denied": 48404,
       "seed_mode_share": {
-        "bike": 0.1001,
-        "car": 0.2539,
+        "bike": 0.0988,
+        "car": 0.2542,
         "motorbike": 0.003,
-        "pt": 0.2299,
-        "ride": 0.1593,
+        "pt": 0.2303,
+        "ride": 0.1595,
         "truck": 0.0228,
-        "walk": 0.2309
+        "walk": 0.2313
       },
       "activity_types": {
         "business": 1849,

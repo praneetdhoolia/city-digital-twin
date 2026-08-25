@@ -18,8 +18,10 @@ until DECISIONS.md 9.13. It is a CONSTRAINT, never a validation target: the
 67/143 split is pre-registered and this is not part of it.
 
 **PT boardings.** Every pt leg with a `transit_line` is one boarding, which is
-what an Opal tap-on is. Legs are scaled by 1/fraction to full population. Light
-rail is identified from the line id, not by guessing at names.
+what an Opal tap-on is. Legs are scaled by 1/fraction to full population. The
+intervention's boardings are attributed by each boarded route's scheduled
+`transportMode` against the city's declared `intervention.mode`, not by
+guessing at line names.
 
 **Link volumes.** `vol_car` from `output_links.csv`, summed over the links a
 count station maps to (both directions, since the counts are two-way), scaled by
@@ -186,9 +188,9 @@ def pt_boardings(run_dir, fraction):
     `transportMode` matched against the city's declared `intervention.mode`
     (city.json) - never by a name heuristic over line ids, which counted a
     line as light rail if its id happened to contain "lr" and missed any
-    tram line named otherwise. The JSON keys keep their historical names
-    because the output schema requires them; the attribution is the part that
-    was wrong.
+    tram line named otherwise. The JSON keys are intervention-generic
+    (`intervention_boardings`, renamed from `light_rail_boardings` - issue
+    #62 A1): the output schema names no city's intervention.
     """
     route_mode = transit_route_modes(run_dir)
     intervention_mode = (_city.descriptor().get('intervention') or {}).get('mode')
@@ -208,8 +210,8 @@ def pt_boardings(run_dir, fraction):
     return dict(scale=scale,
                 intervention_mode=intervention_mode,
                 total_pt_boardings=round(total * scale),
-                light_rail_boardings=round(sum(lr.values()) * scale),
-                light_rail_lines=sorted(lr),
+                intervention_boardings=round(sum(lr.values()) * scale),
+                intervention_lines=sorted(lr),
                 by_line={k: round(v * scale) for k, v in by_line.most_common(40)})
 
 
@@ -405,12 +407,15 @@ def main():
           % (rec['name'], ms['all_residents_trips'], ms['target_lga_trips'],
              _city.target_lga()))
     print('  %s LGA mode share: %s' % (TARGET_LGA, ms['target_lga_pct']))
-    print('  PT boardings %s of which light rail %s'
-          % (doc['pt']['total_pt_boardings'], doc['pt']['light_rail_boardings']))
+    print('  PT boardings %s of which the intervention (%s) %s'
+          % (doc['pt']['total_pt_boardings'], doc['pt']['intervention_mode'],
+             doc['pt']['intervention_boardings']))
+    nm = doc['pt_split'].get('not_modelled') or []
     print('  pt split (linked trips, %s residents): %s | boardings by submode: '
-          '%s | taxi/rideshare: not modelled'
+          '%s%s'
           % (TARGET_LGA, doc['pt_split']['linked_pt_trips_target_lga'],
-             doc['pt_split']['boardings_by_submode']))
+             doc['pt_split']['boardings_by_submode'],
+             (' | not modelled: ' + '/'.join(nm)) if nm else ''))
     for m, g in sorted(doc['trip_geometry']['by_mode'].items()):
         print('  trip geometry %-5s mean %6.2f km / %6.2f min  (median %5.2f km)'
               % (m, g['mean_distance_km'], g['mean_time_min'],

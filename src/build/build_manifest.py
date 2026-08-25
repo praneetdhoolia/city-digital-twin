@@ -7,6 +7,7 @@ hashes everything, counts rows, and merges the per-stage provenance records.
 """
 import os
 import csv
+import glob
 import json
 import hashlib
 import datetime
@@ -25,68 +26,53 @@ ROOT = _city.CITY_DIR
 SCAN = ['data/raw', 'data/processed', 'schedules', 'demand', 'params',
         'scenarios', 'networks/osm', 'networks/matsim']
 SKIP_EXT = {'.pyc'}
-PROVENANCE_FILES = ['data/raw/provenance_open_data.json',
-                    'data/raw/provenance_abs_dem.json',
-                    'schedules/raw/provenance.json']
-PROVENANCE_FILES = [os.path.join(ROOT, p) for p in PROVENANCE_FILES]
+# Per-stage provenance records: whatever the city's own adapters landed, found
+# by convention rather than by a hardcoded list of one city's file names.
+PROVENANCE_FILES = (sorted(glob.glob(os.path.join(ROOT, 'data', 'raw',
+                                                  'provenance*.json')))
+                    + sorted(glob.glob(os.path.join(ROOT, 'schedules', 'raw',
+                                                    'provenance*.json'))))
 
-
-def _observed_adapter():
-    """The city's own adapter for the observed layer, from its descriptor."""
-    adapters = _city.descriptor().get('adapters', {})
-    spec = adapters.get('observed') or {}
-    return spec.get('script', 'extract/observed')
-
-
-EXTRACT = 'cities/%s/extract/' % _city.CITY
-# Builders that encode THIS CITY's intervention, corridor or history live
-# with the city; the generic pipeline stays in src/build/.
-CITY_BUILD = 'cities/%s/build/' % _city.CITY
-
-# which script produced what, for the lineage graph
+# Which script produced what, for the lineage graph. THE FRAMEWORK HALF ONLY:
+# the generic pipeline scripts under src/build/. Everything a particular city
+# acquires or builds for itself is declared by that city - its `adapters` block
+# (acquisition) and its `lineage` block (city-owned builders) in city.json -
+# and merged in below. No acquisition script and no city build script is named
+# here (issue #62 B1).
 LINEAGE = {
-    'networks/osm': EXTRACT + 'overpass.py',
-    'schedules/raw': EXTRACT + 'fetch_gtfs.py',
-    'data/raw/opal': EXTRACT + 'fetch_open_data.py',
-    'data/raw/counts': EXTRACT + 'fetch_open_data.py',
-    'data/raw/hts': EXTRACT + 'fetch_open_data.py',
-    'data/raw/boundaries': EXTRACT + 'fetch_abs_dem.py',
-    'data/raw/census': EXTRACT + 'fetch_abs_dem.py',
-    'data/raw/dem': EXTRACT + 'fetch_abs_dem.py',
-    'data/processed/zones': EXTRACT + 'extract_zones.py',
-    'data/processed/census': EXTRACT + 'extract_census.py',
-    'data/processed/hts': EXTRACT + 'extract_hts.py',
-    # The adapter that produces this layer is named by the city's own
-    # descriptor: `slice_newcastle.py` was one city's file name in framework
-    # code, and a second city's adapter is called something else.
-    'data/processed/observed': _observed_adapter(),
     'data/processed/network': 'src/build/build_network_layers.py + attach_gradient.py',
-    'data/processed/corridor': CITY_BUILD + 'build_corridor_layers.py',
-    'data/processed/landuse': CITY_BUILD + 'build_landuse_parking.py + '
-                              'src/build/build_zone_attractions.py',
     'data/processed/schedule_extras': 'src/build/build_gtfs_extras.py',
-    'data/processed/validation': CITY_BUILD + 'build_validation_targets.py',
-    'schedules/scenarios': CITY_BUILD + 'build_scenario_schedules.py',
     'demand/population': 'src/build/build_population.py',
     'demand/plans': 'src/build/build_activity_chains.py',
     'demand/plans/matsim': 'src/build/build_matsim_plans.py',
     'params': 'src/build/build_params.py',
-    'scenarios': CITY_BUILD + 'build_scenario_configs.py',
     'scenarios/matsim': 'src/build/build_matsim_run_inputs.py',
-    'schedules': CITY_BUILD + 'build_era_feeds.py',
     'networks/matsim': 'src/build/build_matsim_network.py (pt2matsim 26.6)',
 }
+
+
+def _city_script(token):
+    """A lineage token to its repo-relative form: city-relative scripts gain
+    the cities/<city>/ prefix, framework scripts (src/...) pass through."""
+    token = token.strip()
+    return token if token.startswith('src/') else 'cities/%s/%s' % (_city.CITY, token)
+
+
+# The city's own `lineage` block: city-relative artefact prefix -> the
+# script(s) that build it (`build/...` for that city's builders; a ` + `-joined
+# entry names each contributing script, framework ones included).
+for _prefix, _entry in (_city.descriptor().get('lineage') or {}).items():
+    LINEAGE[_prefix] = ' + '.join(_city_script(t) for t in _entry.split(' + '))
 
 # Every adapter's own `produces` declaration overlays the map above, so an
 # adapter that produces a SPECIFIC FILE inside a directory another adapter
 # owns (extract_freight_profile.py writing two CSVs into the observed layer)
 # is attributed to the script that actually wrote it - longest prefix wins in
-# lineage_for(). For the adapters already listed above this writes back the
-# identical string, so no manifest row churns.
+# lineage_for().
 for _spec in _city.descriptor().get('adapters', {}).values():
     if _spec.get('script'):
         for _prefix in _spec.get('produces', []):
-            LINEAGE[_prefix] = 'cities/%s/%s' % (_city.CITY, _spec['script'])
+            LINEAGE[_prefix] = _city_script(_spec['script'])
 
 # P2 build intermediates: large, regenerable, and not part of the package.
 SKIP_DIRS = ('networks/matsim/_work',)
