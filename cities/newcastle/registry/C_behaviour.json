@@ -781,10 +781,12 @@
           "C.asc.car_driver",
           "C.asc.car_passenger",
           "C.asc.bus",
+          "C.asc.light_rail",
+          "C.asc.rail",
           "C.asc.walk",
           "C.asc.cycle"
         ],
-        "identity": "constant[m] = the C1 alternative-specific constant for the mode m maps to, translated in src/build/build_matsim_run_inputs.py: car<-asc_car_driver, ride<-asc_car_passenger, pt<-asc_bus, walk<-asc_walk, bike<-asc_cycle"
+        "identity": "constant[m] = the C1 alternative-specific constant for the mode m maps to, translated in src/build/build_matsim_run_inputs.py: car<-asc_car_driver, ride<-asc_car_passenger, pt<-asc_bus, walk<-asc_walk, bike<-asc_cycle; under RUN.routing.pt_submode_scoring=per_submode (9.78) additionally bus<-asc_bus, tram<-asc_lr, rail<-asc_rail, and ferry keeps the pt aggregate's asc_bus because C1 declares no ferry constant - stated in the run-inputs report, never invented"
       },
       "description": "The MATSim alternative-specific constant per scored mode. Computed, because C1 is a nested-logit specification over named alternatives and MATSim scores over its own mode vocabulary - the mapping between them is the translation, and it is stated here rather than left implicit in a builder. The C.asc.* fields remain the declared quantities and are what a calibration moves; DECISIONS.md 8.5 holds them fixed."
     },

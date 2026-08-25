@@ -124,8 +124,11 @@ public final class RunTelemetry implements
     private final Map<String, Integer> stuckByMode = new TreeMap<>();
 
     /** Transit vehicle id -> its declared type (Bus, Rail, Tram, Ferry). The
-     *  passenger's leg mode is `pt` for all four, so the split the light rail
-     *  study needs cannot come from leg mode and comes from the fleet instead. */
+     *  passenger's leg mode is `pt` for all four under the aggregate
+     *  representation, so the split the light rail study needs comes from the
+     *  fleet instead - and stays fleet-derived under pt-submode mapping
+     *  (DECISIONS.md 9.78), where the leg-mode maps above simply gain
+     *  bus/tram/rail/ferry keys of their own. */
     private final Map<Id<Vehicle>, String> transitType = new HashMap<>();
     private final Map<String, Integer> enRouteByVehicleType = new TreeMap<>();
 

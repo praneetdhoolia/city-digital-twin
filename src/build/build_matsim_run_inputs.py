@@ -150,6 +150,7 @@ def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
     mixed_routes = 0
     vehicles_used = set()
     stops_served = set()
+    transport_modes = set()   # the kept routes' own scheduled submodes
     for line in list(root.findall('transitLine')):
         for route in list(line.findall('transitRoute')):
             # Filter DEPARTURES, not routes. pt2matsim groups trips into a
@@ -176,6 +177,9 @@ def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
                 mixed_routes += 1
             kept_routes += 1
             kept_dep += len(keep_here)
+            tm = (route.findtext('transportMode') or '').strip()
+            if tm:
+                transport_modes.add(tm)
             for stop in route.findall('./routeProfile/stop'):
                 stops_served.add(stop.get('refId'))
             for dep in keep_here:
@@ -184,6 +188,22 @@ def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
                     vehicles_used.add(v)
         if not line.findall('transitRoute'):
             root.remove(line)
+
+    # Under the per_submode representation (9.78) every kept route's
+    # transportMode must be in the declared vocabulary: SwissRailRaptor's
+    # mode mapping hands an unmapped route a NULL passenger mode (a plain
+    # map get in RaptorStaticConfig, read from the pinned jar), which is the
+    # unpatched-vehicle-type defect class - a metro or cable car in a future
+    # feed must fail HERE, by name, not deep in the JVM.
+    mapped = pt_passenger_submodes(cfg)
+    if mapped:
+        stray = sorted(transport_modes - set(mapped))
+        if stray:
+            raise SystemExit(
+                '%s carries transportMode(s) %s outside the declared '
+                'RUN.transit.transit_modes vocabulary. Declare them (and '
+                'their C1 treatment) before mapping PT submodes '
+                '(DECISIONS.md 9.78).' % (src, stray))
 
     # Dropping two thirds of the routes orphans the stops and the transfer
     # relations that only they used, and SwissRailRaptor dereferences a null
@@ -275,6 +295,7 @@ def split_schedule(src_dir, dst_dir, day, cfg, src_schedule=None):
     return dict(routes_kept=kept_routes, routes_dropped=dropped_routes,
                 departures=kept_dep, departures_dropped=dropped_dep,
                 routes_kept_under_a_foreign_day_id=mixed_routes,
+                transport_modes=sorted(transport_modes),
                 vehicles=kept_veh,
                 vehicle_capacity_patched=patched_types,
                 vehicle_types_unpatched=unpatched_types,
@@ -844,6 +865,42 @@ def _weight_sweep(cfg, strategy):
     return [round(weight * (1.0 - share), 6), round(weight * (1.0 + share), 6)]
 
 
+# The C1 constant each scheduled PT submode carries once the declared
+# RUN.routing.pt_submode_scoring representation maps it to a passenger mode
+# of its own name (issue #49 Tier C, DECISIONS.md 9.78). The keys are the
+# schedule's per-route transportMode vocabulary - pt2matsim writes the GTFS
+# route type as bus/tram/rail/ferry, so like FLEET_CAPACITY's these are tool
+# structure, not a city value; the values are C1's own alternative names.
+# FERRY IS ABSENT DELIBERATELY: C1 declares no ferry constant, so a ferry
+# keeps the pt aggregate's constant and the report SAYS so - stating the gap
+# is the rule, inventing a value would be the violation this project cannot
+# absorb.
+PT_SUBMODE_ASC = {'bus': 'asc_bus', 'tram': 'asc_lr', 'rail': 'asc_rail'}
+
+
+def pt_passenger_submodes(cfg):
+    """The scheduled submode vocabulary, from the declared transit modes.
+
+    The non-`pt` entries of RUN.transit.transit_modes: `pt` is the plan-level
+    umbrella every PT trip keeps, the rest are the transportModes the mapper
+    wrote per route (bus/tram/rail/ferry across the five TfNSW feeds).
+    Derived from the declared field rather than re-parsed from each schedule
+    so the builder and the run harness cannot disagree about the vocabulary;
+    `split_schedule` still refuses a schedule whose routes carry a
+    transportMode outside it, which is where a metro or a cable car would
+    otherwise sail through to SwissRailRaptor's mode mapping and take a null
+    passenger mode (RaptorStaticConfig.getPassengerMode is a plain map get -
+    read from the pinned jar, DECISIONS.md 9.78).
+
+    Empty under the `aggregate` representation, which is what keeps every
+    per-submode branch below inert and the emission byte-identical to the
+    pre-9.78 state on that arm.
+    """
+    if cfg.get('RUN.routing.pt_submode_scoring') != 'per_submode':
+        return []
+    return [m for m in cfg.get('RUN.transit.transit_modes') if m != 'pt']
+
+
 def scoring_from_c1(cfg, c1, purpose_share):
     """Translate the C1 nested-logit parameters into MATSim scoring.
 
@@ -914,6 +971,25 @@ def scoring_from_c1(cfg, c1, purpose_share):
             constant=0.0,
             marginalUtilityOfTraveling=traveling(cfg.get('C.time_weights.beta_walk_mode'))),
     }
+    # PT submodes score-distinct (issue #49 Tier C, DECISIONS.md 9.78):
+    # under the declared per_submode representation each scheduled
+    # transportMode routes as a passenger mode of its own name (the
+    # swissRailRaptor mapping config_runtime emits), so its legs are scored
+    # with the constant C1 declares FOR THAT SUBMODE - the constants that
+    # collapse into the single pt entry above under `aggregate`. The pt
+    # entry itself stays: it is the plan-level mode subtour mode choice runs
+    # over, and the raptor's direct-walk fallback still produces pt-routed
+    # trips. Time is priced at the one declared beta_ivt for every submode
+    # because C1 declares no per-submode in-vehicle time weight; a submode
+    # without a C1 constant (ferry) keeps the pt aggregate's, and the
+    # not_representable list below states it.
+    submodes = pt_passenger_submodes(cfg)
+    for sm in submodes:
+        asc_key = PT_SUBMODE_ASC.get(sm)
+        modes[sm] = dict(
+            constant=(asc[asc_key][0] if asc_key
+                      else modes['pt']['constant']),
+            marginalUtilityOfTraveling=traveling(w['beta_ivt']['base']))
     # taxi (issue #49, 4.7.8): the point-to-point priced mode, scored only
     # when the declared choice vocabulary carries it (INERT until the batch
     # boundary adds 'taxi' to RUN.mode_choice.modes). Its constant folds the
@@ -928,6 +1004,29 @@ def scoring_from_c1(cfg, c1, purpose_share):
             constant=round(cfg.get('C.taxi.asc') - wait_cost, 4),
             marginalUtilityOfTraveling=traveling(1.0))
     tp = c1['transfer_penalty']['base']
+    # What survives the translation and what does not is REPRESENTATION-
+    # dependent now (9.78): under per_submode the asc_lr/asc_rail collapse is
+    # gone from this list because it is gone from the config; under aggregate
+    # it is stated instead of silently absorbed. Ferry's missing constant is
+    # a gap in C1 itself and is stated on the arm that would otherwise hide
+    # it behind a value nobody declared.
+    if submodes:
+        no_c1_constant = sorted(sm for sm in submodes
+                                if sm not in PT_SUBMODE_ASC)
+        submode_notes = [
+            'per-submode constant for %s: C1 declares none, so it keeps the '
+            'pt aggregate\'s constant (asc_bus=%s) - stated, not invented. '
+            'Every submode shares the one declared beta_ivt time weight; '
+            'only the constants differ'
+            % ('/'.join(no_c1_constant), asc['asc_bus'][0])
+        ] if no_c1_constant else []
+    else:
+        submode_notes = [
+            'per-submode constants (asc_bus=%s, asc_lr=%s, asc_rail=%s): '
+            'RUN.routing.pt_submode_scoring is `aggregate`, so every PT leg '
+            'scores as one pt mode carrying asc_bus and the bus/tram/rail '
+            'distinction reaches scoring through nothing (DECISIONS.md 9.3)'
+            % (asc['asc_bus'][0], asc['asc_lr'][0], asc['asc_rail'][0])]
     return dict(
         performing_utils_per_h=perf,
         performing_sweep=list(cfg.sweep('C.scoring.performing_utils_per_h')),
@@ -949,7 +1048,9 @@ def scoring_from_c1(cfg, c1, purpose_share):
         transfer_penalty_sweep=[c1['transfer_penalty']['low'],
                                 c1['transfer_penalty']['high']],
         modes=modes,
-        not_representable=[
+        pt_submode_scoring=cfg.get('RUN.routing.pt_submode_scoring'),
+        pt_submodes=list(submodes),
+        not_representable=submode_notes + [
             'nesting_coefficient_pt=%s and the nested-logit structure: MATSim '
             'mode choice is a co-evolutionary search with no nest parameter'
             % c1['nesting']['nesting_coefficient_pt'],
@@ -1079,6 +1180,30 @@ def config_runtime(cfg, scoring, day, paths):
             'share x B.taxi.flagfall_rideshare_aud')
         runtime['fare.mode'] = (
             'taxi', 'derived', 'the mode FareChargeHandler charges')
+
+    # PT submodes score-distinct (issue #49 Tier C, DECISIONS.md 9.78):
+    # under the declared per_submode representation the swissRailRaptor
+    # module maps each scheduled route transportMode to a passenger mode of
+    # the same name. Module name, parameter and parameterset structure were
+    # verified against the PINNED jar's bytecode, not memory (the recorded
+    # trap): ch.sbb.matsim.config.SwissRailRaptorConfigGroup - module
+    # `swissRailRaptor`, boolean `useModeMappingForPassengers`, parameterset
+    # `modeMapping` carrying `routeMode`/`passengerMode`; RaptorUtils.
+    # createStaticConfig copies the mappings into the router, and
+    # createParameters prices each passenger mode from its own scoring
+    # modeParams entry - which is why scoring_from_c1 emits one per submode.
+    # Under `aggregate` no module is emitted and the config is byte-identical
+    # to the pre-9.78 emission.
+    submodes = pt_passenger_submodes(cfg)
+    if submodes:
+        runtime['swissRailRaptor.useModeMappingForPassengers'] = (
+            True, 'derived',
+            "RUN.routing.pt_submode_scoring == 'per_submode'")
+        runtime['swissRailRaptor.modeMapping[*].passengerMode'] = (
+            {sm: sm for sm in submodes}, 'derived',
+            'each scheduled transportMode routes as a passenger mode of the '
+            'same name; vocabulary = RUN.transit.transit_modes minus the pt '
+            'umbrella')
 
     # Explicit corridor signals (#73): the signals contrib's module and its
     # three data files enter ONLY when the declared representation says so -

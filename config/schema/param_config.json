@@ -24,6 +24,7 @@
         "subtourModeChoice",
         "travelTimeCalculator",
         "transitRouter",
+        "swissRailRaptor",
         "signalsystems",
         "parking",
         "fare",
@@ -36,6 +37,10 @@
         "activityParams": {
           "key_param": "activityType",
           "comment": "One block per activity type. Membership comes from the field that supplies typical durations."
+        },
+        "modeMapping": {
+          "key_param": "routeMode",
+          "comment": "One block per scheduled route transportMode, mapping it to the passenger mode SwissRailRaptor assigns its legs. MATSim's own vocabulary, verified against the pinned jar's bytecode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup$ModeMappingForPassengersParameterSet: parameterset type `modeMapping`, params `routeMode` and `passengerMode` in the `swissRailRaptor` module). Membership comes from the city's declared transit-mode vocabulary."
         },
         "modeParams": {
           "key_param": "mode",
