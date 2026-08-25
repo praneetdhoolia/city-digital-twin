@@ -323,16 +323,16 @@
     "A.signals.min_green_s": {
       "value": 6.0,
       "units": "seconds",
-      "source": "assumed",
+      "source": "literature",
       "sweep": {
         "interval": [
           4.0,
           10.0
         ],
-        "basis": "TfNSW Traffic Signal Design TTD 2018/002 actuated practice: minimum green 5 s vehicle / 6 s pedestrian (dossier 03/09); SYLVIA and Laemmer default 5 s. The declared 6 s is the pedestrian-safe value; the band brackets the practice range."
+        "basis": "TfNSW Traffic Signal Design TTD 2018/002 (Traffic Signals in Microsimulation Modelling) actuated practice: minimum green 5 s vehicle / 6 s pedestrian (dossier 01 table, URL in dossier 01; dossier 03/09); SYLVIA and Laemmer default 5 s. The declared 6 s IS the standard's pedestrian minimum, so the value is a published one, not a guess; the band brackets the practice range."
       },
       "status": "active",
-      "decisions_ref": "5",
+      "decisions_ref": "5, 9.78",
       "description": "Minimum green time in a generated SUMO signal program.",
       "consumers": [
         "cities/newcastle/build/build_matsim_signals.py"
@@ -620,14 +620,14 @@
     "A.crossings.link_match_radius_m": {
       "value": 30.0,
       "units": "metres",
-      "source": "assumed",
+      "source": "definition",
       "held_fixed": {
         "rule": "A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link distances realised are under 10 m, so no output varies across any reasonable value.",
         "decisions_ref": "9.76",
         "departure_requires": "a crossing whose matched distance approaches the radius"
       },
       "status": "active",
-      "decisions_ref": "9.76",
+      "decisions_ref": "9.76, 9.78",
       "consumers": [
         "cities/newcastle/build/build_level_crossings.py"
       ],
@@ -1241,14 +1241,14 @@
     "A.signals.scats_match_radius_m": {
       "value": 60,
       "units": "metres",
-      "source": "assumed",
+      "source": "definition",
       "held_fixed": {
         "rule": "A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score reads it - only the identity written into scats_site_id. It is held fixed rather than swept because a sweep could not change the join: all 14 corridor intersections match inside 26 m, so every radius from the 45 m OSM clustering distance up to about 100 m yields the identical assignment, and widening it past that would begin attaching an intersection to its neighbour rather than resolving a real ambiguity. Declaring a sweep interval over which the output is constant would be the defect this project has already hit three times.",
         "decisions_ref": "9.24",
         "departure_requires": "a re-measured match-distance distribution showing a corridor intersection falling outside this radius, or a corridor extension into an area where signals sit closer together than the radius"
       },
       "status": "active",
-      "decisions_ref": "9.24",
+      "decisions_ref": "9.24, 9.78",
       "description": "Radius within which an intersection in A2_signal_control_corridor.csv is matched to a signal in the TfNSW Traffic Lights Location inventory, to recover its SCATS site number and installation date. The corridor intersections are clusters of OSM traffic-signal nodes and carry no identifier of their own; the TfNSW inventory is the only observed source of both. Measured match distances on the 14 corridor intersections range from 1 to 26 m.",
       "consumers": [
         "cities/newcastle/build/build_corridor_layers.py"
@@ -1285,14 +1285,15 @@
     "A.osm.harvest_tile_deg": {
       "value": 0.4,
       "units": "degrees",
-      "source": "assumed",
-      "sweep": [
-        0.2,
-        0.8
-      ],
-      "sweep_basis": "MEASURED as a ceiling, not chosen: the whole corrected extent in one query returns 504 Gateway Timeout from the endpoint, twice on the roads layer, while the 0.85 x 0.65 degree rectangle it replaced always succeeded. 0.4 keeps every tile well inside what is known to work.",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "An ACQUISITION TILING SIZE, not a model parameter: tiles are merged and de-duplicated by element id, and Overpass returns a whole way when any part of it matches, so the harvested set depends only on the derived extent, never on the tiling. The former sweep [0.2, 0.8] declared a range over which the merged output is identical by construction; the operational bound is kept here instead - the whole corrected extent in one query returns 504 Gateway Timeout from the endpoint, twice on the roads layer, while the 0.85 x 0.65 degree rectangle it replaced always succeeded, and 0.4 keeps every tile well inside what is known to work.",
+        "decisions_ref": "9.78",
+        "departure_requires": "an endpoint whose timeout ceiling changes, measured the same way as the 9.35 ceiling"
+      },
       "status": "active",
-      "decisions_ref": "9.35",
+      "decisions_ref": "9.35, 9.78",
       "description": "Maximum side of an Overpass harvest tile. The corrected study extent is 2.02x the rectangle it replaced and will not fetch in one request, so each layer is tiled and merged, de-duplicating by element id because Overpass returns a whole way when any part of it matches.",
       "consumers": [
         "cities/newcastle/extract/overpass.py"
@@ -1674,27 +1675,29 @@
     "A.corridor.dedupe_tolerance_m": {
       "value": 1.0,
       "units": "metres",
-      "source": "assumed",
-      "sweep": [
-        0.1,
-        5.0
-      ],
-      "sweep_basis": "how close two consecutive shape points must be before one is dropped. GTFS consumers dislike near-duplicates; too large a tolerance starts removing real geometry.",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A NUMERICAL HYGIENE TOLERANCE, not a model parameter: it exists because GTFS consumers dislike consecutive near-duplicate shape points, and at 1 m - on shapes densified at A.corridor.densify_step_m = 25 m - no real geometry is at stake. The former sweep [0.1, 5.0] was a declared range over a file-hygiene choice; its upper caution (too large a tolerance starts removing real geometry) is why the value is held at 1 m rather than swept.",
+        "decisions_ref": "9.78",
+        "departure_requires": "a shape whose real geometry carries consecutive points closer than the tolerance"
+      },
       "status": "active",
-      "decisions_ref": "9.34, 15",
+      "decisions_ref": "9.34, 15, 9.78",
       "description": "Tolerance for dropping consecutive near-duplicate points from a shape."
     },
     "A.corridor.nearest_node_max_rings": {
       "value": 8,
       "units": "rings",
-      "source": "assumed",
-      "sweep": [
-        3,
-        20
-      ],
-      "sweep_basis": "how far the spatial index expands when no node is found in the first cell. Too few and an anchor off the graph finds nothing; too many is slow. No measurement bears on it.",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A SEARCH BOUND, not a model parameter: the grid search returns the same nearest node for every max_rings large enough to reach it, and fails to find one (returns nothing) rather than returning a different node when too small - so no output varies across the bound, only whether the search succeeds and how long it takes. The former sweep [3, 20] declared a range over which the found node is identical by construction.",
+        "decisions_ref": "9.78",
+        "departure_requires": "an anchor whose nearest node lies beyond the bound, i.e. a snap failure attributable to it"
+      },
       "status": "active",
-      "decisions_ref": "9.34, 15",
+      "decisions_ref": "9.34, 15, 9.78",
       "description": "Maximum grid rings searched when snapping a coordinate to the nearest road-graph node."
     },
     "A.corridor.report_sample_n": {

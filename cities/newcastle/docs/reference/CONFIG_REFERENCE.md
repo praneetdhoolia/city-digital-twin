@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 355 fields are made of
+## What the 356 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 30 | follows from another registry field by identity |
-| `literature` | 52 | a published value, not specific to this city |
-| `assumed` | 132 | chosen without direct empirical support |
-| `definition` | 106 | fixed by the formulation, not an empirical quantity |
+| `literature` | 54 | a published value, not specific to this city |
+| `assumed` | 126 | chosen without direct empirical support |
+| `definition` | 111 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 336 | usable point value |
+| `active` | 337 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,12 +56,15 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### The 19 fields held fixed
+### The 22 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
+- `A.corridor.dedupe_tolerance_m` - A NUMERICAL HYGIENE TOLERANCE, not a model parameter: it exists because GTFS consumers dislike consecutive near-duplicate shape points, and at 1 m - on shapes densified at A.corrid
+- `A.corridor.nearest_node_max_rings` - A SEARCH BOUND, not a model parameter: the grid search returns the same nearest node for every max_rings large enough to reach it, and fails to find one (returns nothing) rather th
 - `A.crossings.freight_road_names` - The IDENTITY of the freight-rail/road interaction set, not a tunable: DECISIONS.md 9.70 established from ARTC/TfNSW/PWCS/NCIG documents that the coal chain is grade-separated every
 - `A.crossings.link_match_radius_m` - A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link
+- `A.osm.harvest_tile_deg` - An ACQUISITION TILING SIZE, not a model parameter: tiles are merged and de-duplicated by element id, and Overpass returns a whole way when any part of it matches, so the harvested 
 - `A.signals.scats_match_radius_m` - A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score r
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
@@ -91,10 +94,10 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 3 |
 | `A.corridor.attribute_search_cutoff_m` | `2000.0` | metres | `assumed` | 500 - 5000 |
 | `A.corridor.cross_buffer_m` | `40.0` | metres | `assumed` | 25 - 60 |
-| `A.corridor.dedupe_tolerance_m` | `1.0` | metres | `assumed` | 0.1 - 5 |
+| `A.corridor.dedupe_tolerance_m` | `1.0` | metres | `definition` | **held fixed** |
 | `A.corridor.densify_step_m` | `25.0` | metres | `assumed` | 5 - 50 |
 | `A.corridor.extension_lane_take` | `1` | lanes | `assumed` | 0 - 1 |
-| `A.corridor.nearest_node_max_rings` | `8` | rings | `assumed` | 3 - 20 |
+| `A.corridor.nearest_node_max_rings` | `8` | rings | `definition` | **held fixed** |
 | `A.corridor.off_corridor_penalty` | `12.0` | dimensionless_cost_multiplier | `assumed` | 6 - 20 |
 | `A.corridor.parallel_buffer_m` | `1500.0` | metres | `assumed` | 1000 - 2500 |
 | `A.corridor.pre_lr_lanes_per_dir` | `1` | lanes_per_direction | `literature` | 1 - 2 |
@@ -108,7 +111,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.crossings.closures_per_day` | `30` | closures_per_day | `assumed` | 10 - 60 |
 | `A.crossings.corridor_exclusion_m` | `500.0` | metres | `definition` | - |
 | `A.crossings.freight_road_names` | `["Saint James Road", "Clyde Street"]` | road_names | `literature` | **held fixed** |
-| `A.crossings.link_match_radius_m` | `30.0` | metres | `assumed` | **held fixed** |
+| `A.crossings.link_match_radius_m` | `30.0` | metres | `definition` | **held fixed** |
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
 | `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
 | `A.lightrail.capacity_seated` | `60` | persons_per_vehicle | `assumed` | 50 - 80 |
@@ -137,7 +140,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.osm.buildings_margin_m` | `3500.0` | metres | `assumed` | 2000 - 6000 |
 | `A.osm.harvest_attempts` | `12` | count | `definition` | - |
 | `A.osm.harvest_margin_m` | `5000.0` | metres | `assumed` | 2000 - 15000 |
-| `A.osm.harvest_tile_deg` | `0.4` | degrees | `assumed` | 0.2 - 0.8 |
+| `A.osm.harvest_tile_deg` | `0.4` | degrees | `definition` | **held fixed** |
 | `A.parking.capacity_default` | `{"onstreet": 12, "offstreet_public": 60, "offstreet_private": 40}` | spaces_per_facility | `assumed` | 5 - 100 |
 | `A.parking.charged_end_hour` | *(null - unobtained)* | hour_of_day | `derived` | derived: chargedEndHour = A.parking.charged_hours_by_day_type[day][1], or 0.0 w |
 | `A.parking.charged_hours_by_day_type` | `{"WEEKDAY": [8.0, 18.0], "SAT": [8.0, 13.0], "SUN": null}` | hour_of_day | `assumed` | plus/minus 25% |
@@ -173,11 +176,11 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.schedule_mapping.travel_cost_type` | `linkLength` | cost_basis | `definition` | - |
 | `A.signals.delay_per_intersection_s` | `26.0` | seconds | `assumed` | 15 - 40 |
 | `A.signals.junction_match_m` | `60.0` | metres | `assumed` | 30 - 100 |
-| `A.signals.min_green_s` | `6.0` | seconds | `assumed` | 4 - 10 |
+| `A.signals.min_green_s` | `6.0` | seconds | `literature` | 4 - 10 |
 | `A.signals.n_corridor_intersections` | `14` | count | `observed` | - |
 | `A.signals.representation` | `explicit_signals` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
 | `A.signals.saturation_flow_veh_h_lane` | `1900.0` | vehicles_per_hour_per_lane | `literature` | 1800 - 2050 |
-| `A.signals.scats_match_radius_m` | `60` | metres | `assumed` | **held fixed** |
+| `A.signals.scats_match_radius_m` | `60` | metres | `definition` | **held fixed** |
 | `A.signals.scats_phasing` | *(null - unobtained)* | phase_plan | `assumed` | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
 | `A.signals.tsp.compensation_enabled` | `true` | boolean | `literature` | `True`, `False` |
 | `A.signals.tsp.detection_distance_m` | `120.0` | metres | `assumed` | 60 - 250 |
@@ -228,9 +231,11 @@ Distance within which a turn restriction or cross street is treated as on the co
 
 Tolerance for dropping consecutive near-duplicate points from a shape.
 
-***assumed** · status **active** · DECISIONS.md §9.34, 15*
+***definition** · status **active** · DECISIONS.md §9.34, 15, 9.78*
 
-> **Sweep basis.** how close two consecutive shape points must be before one is dropped. GTFS consumers dislike near-duplicates; too large a tolerance starts removing real geometry.
+> **Held fixed.** A NUMERICAL HYGIENE TOLERANCE, not a model parameter: it exists because GTFS consumers dislike consecutive near-duplicate shape points, and at 1 m - on shapes densified at A.corridor.densify_step_m = 25 m - no real geometry is at stake. The former sweep [0.1, 5.0] was a declared range over a file-hygiene choice; its upper caution (too large a tolerance starts removing real geometry) is why the value is held at 1 m rather than swept.
+>
+> *Departure requires: a shape whose real geometry carries consecutive points closer than the tolerance*
 
 #### `A.corridor.densify_step_m`
 
@@ -250,9 +255,11 @@ Lanes removed per direction where an S4/S5 extension runs in the carriageway.
 
 Maximum grid rings searched when snapping a coordinate to the nearest road-graph node.
 
-***assumed** · status **active** · DECISIONS.md §9.34, 15*
+***definition** · status **active** · DECISIONS.md §9.34, 15, 9.78*
 
-> **Sweep basis.** how far the spatial index expands when no node is found in the first cell. Too few and an anchor off the graph finds nothing; too many is slow. No measurement bears on it.
+> **Held fixed.** A SEARCH BOUND, not a model parameter: the grid search returns the same nearest node for every max_rings large enough to reach it, and fails to find one (returns nothing) rather than returning a different node when too small - so no output varies across the bound, only whether the search succeeds and how long it takes. The former sweep [3, 20] declared a range over which the found node is identical by construction.
+>
+> *Departure requires: an anchor whose nearest node lies beyond the bound, i.e. a snap failure attributable to it*
 
 #### `A.corridor.off_corridor_penalty`
 
@@ -342,7 +349,7 @@ The road names of the boom-gated level crossings where rail freight meets the mo
 
 How close a car link named by A.crossings.freight_road_names must pass to the crossing node cluster to be the crossing link.
 
-***assumed** · status **active** · DECISIONS.md §9.76*
+***definition** · status **active** · DECISIONS.md §9.76, 9.78*
 
 > **Held fixed.** A JOIN TOLERANCE, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides whether a crossing node and a named link are the same place, and the nearest-link distances realised are under 10 m, so no output varies across any reasonable value.
 >
@@ -532,9 +539,11 @@ Margin around the DISSOLVED LGA boundary for the OSM harvest. The extent is deri
 
 Maximum side of an Overpass harvest tile. The corrected study extent is 2.02x the rectangle it replaced and will not fetch in one request, so each layer is tiled and merged, de-duplicating by element id because Overpass returns a whole way when any part of it matches.
 
-***assumed** · status **active** · DECISIONS.md §9.35*
+***definition** · status **active** · DECISIONS.md §9.35, 9.78*
 
-> **Sweep basis.** MEASURED as a ceiling, not chosen: the whole corrected extent in one query returns 504 Gateway Timeout from the endpoint, twice on the roads layer, while the 0.85 x 0.65 degree rectangle it replaced always succeeded. 0.4 keeps every tile well inside what is known to work.
+> **Held fixed.** An ACQUISITION TILING SIZE, not a model parameter: tiles are merged and de-duplicated by element id, and Overpass returns a whole way when any part of it matches, so the harvested set depends only on the derived extent, never on the tiling. The former sweep [0.2, 0.8] declared a range over which the merged output is identical by construction; the operational bound is kept here instead - the whole corrected extent in one query returns 504 Gateway Timeout from the endpoint, twice on the roads layer, while the 0.85 x 0.65 degree rectangle it replaced always succeeded, and 0.4 keeps every tile well inside what is known to work.
+>
+> *Departure requires: an endpoint whose timeout ceiling changes, measured the same way as the 9.35 ceiling*
 
 #### `A.parking.capacity_default`
 
@@ -780,7 +789,7 @@ How close an A2 intersection's clustered OSM signal nodes must sit to a network 
 
 Minimum green time in a generated SUMO signal program.
 
-***assumed** · status **active** · DECISIONS.md §5*
+***literature** · status **active** · DECISIONS.md §5, 9.78*
 
 #### `A.signals.n_corridor_intersections`
 
@@ -804,7 +813,7 @@ Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signa
 
 Radius within which an intersection in A2_signal_control_corridor.csv is matched to a signal in the TfNSW Traffic Lights Location inventory, to recover its SCATS site number and installation date. The corridor intersections are clusters of OSM traffic-signal nodes and carry no identifier of their own; the TfNSW inventory is the only observed source of both. Measured match distances on the 14 corridor intersections range from 1 to 26 m.
 
-***assumed** · status **active** · DECISIONS.md §9.24*
+***definition** · status **active** · DECISIONS.md §9.24, 9.78*
 
 > **Held fixed.** A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score reads it - only the identity written into scats_site_id. It is held fixed rather than swept because a sweep could not change the join: all 14 corridor intersections match inside 26 m, so every radius from the 45 m OSM clustering distance up to about 100 m yields the identical assignment, and widening it past that would begin attaching an intersection to its neighbour rather than resolving a real ambiguity. Declaring a sweep interval over which the output is constant would be the defect this project has already hit three times.
 >
@@ -1030,7 +1039,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.network_factors.n_pairs` | `600` | zone_pairs | `assumed` | 200 - 5000 |
 | `B.opal.journey_linked` | *(null - unobtained)* | dataset | `assumed` | `tap_sequence_matching_model` |
 | `B.population.age_bands` | `[[0, 4], [5, 11], [12, 17], [18, 24], [25, 34], [35, 44], [45, 54], [55, 64], [65, 74], [75, 84], [85, 120]]` | years | `definition` | - |
-| `B.population.bike_available_rate` | `0.5` | share | `assumed` | 0.3 - 1 |
+| `B.population.bike_available_rate` | `0.493` | share | `literature` | 0.3 - 1 |
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.licence_rate_by_age_band` | `[0, 0, 0, 0.62, 0.88, 0.93, 0.94, 0.93, 0.88, 0.72, 0.45]` | probability | `literature` | plus/minus 10% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
@@ -1505,9 +1514,9 @@ Age banding for population synthesis. Follows the census table structure.
 
 Share of synthetic persons with a bicycle available to them. Until this field existed, car was the only mode whose ownership was modelled while bike was silently available to everyone - a structural bias against car in the choice set itself, undeclared anywhere (issue #29, SPEC_AUDIT A3). Drawn deterministically per person in build_matsim_plans.py and consumed by the same availability calculator that enforces rideAvail. External boundary agents keep bike available: they are household-less by construction, so no ownership identity exists to derive a denial from, and the choice is recorded in DECISIONS.md 9.39.
 
-***assumed** · status **active** · DECISIONS.md §9.39*
+***literature** · status **active** · DECISIONS.md §9.39, 9.78*
 
-> **Sweep basis.** The census carries no bicycle-ownership variable, so any rate is assumed. The upper bound 1.0 is the previous silent behaviour (bike available to everyone), retained in the sweep so the constraint's own effect is measurable; the lower bound allows for household access well below half. Re-size against the observed 3.2% bike share only AFTER the post-rebuild run re-measures the modelled share - the old 5x was measured on a model that no longer exists (issue #29).
+> **Sweep basis.** The census carries no bicycle-ownership variable; the published NSW anchor is CWANZ, Walking & Cycling Participation Survey - New South Wales Report, 2025 (Painted Dog Research; fieldwork 11 Mar - 9 Apr 2025; NSW n=700; cwanz.com.au/wp-content/uploads/2025/10/251001-CWANZ-National-Walking-and-Cycling-Participation-Survey-Report-NSW.pdf), p.72 'Household Bicycle Ownership' (Q46, bicycles IN WORKING ORDER): total bicycle ownership 49.3% - the report's own headline, the proportion of NSW residents owning at least 1 traditional bicycle, e-bike or e-rideable. Same page: 46.6% of households hold at least one working traditional bicycle in 2025 (100 - 53.4 zero-bike), 53.1% in the reweighted 2023 wave - both inside the sweep. What stays ASSUMED is the transfer from statewide ownership to per-person availability in this study area (the 9.52/9.49 transfer pattern). The upper bound 1.0 is the previous silent behaviour (bike available to everyone), retained so the constraint's own effect is measurable; the lower bound allows for availability well below the ownership rate. Re-size against the observed 3.2% bike share only AFTER the post-rebuild run re-measures the modelled share - the old 5x was measured on a model that no longer exists (issue #29).
 
 #### `B.population.build_sample_share`
 
@@ -1986,7 +1995,7 @@ The MATSim alternative-specific constant per scored mode. Computed, because C1 i
 
 ***derived** · status **computed** · DECISIONS.md §8.5, 9.8 · MATSim `scoring.modeParams[*].constant`*
 
-> **Derived from** `C.asc.car_driver`, `C.asc.car_passenger`, `C.asc.bus`, `C.asc.walk`, `C.asc.cycle`: constant[m] = the C1 alternative-specific constant for the mode m maps to, translated in src/build/build_matsim_run_inputs.py: car<-asc_car_driver, ride<-asc_car_passenger, pt<-asc_bus, walk<-asc_walk, bike<-asc_cycle
+> **Derived from** `C.asc.car_driver`, `C.asc.car_passenger`, `C.asc.bus`, `C.asc.light_rail`, `C.asc.rail`, `C.asc.walk`, `C.asc.cycle`: constant[m] = the C1 alternative-specific constant for the mode m maps to, translated in src/build/build_matsim_run_inputs.py: car<-asc_car_driver, ride<-asc_car_passenger, pt<-asc_bus, walk<-asc_walk, bike<-asc_cycle; under RUN.routing.pt_submode_scoring=per_submode (9.78) additionally bus<-asc_bus, tram<-asc_lr, rail<-asc_rail, and ferry keeps the pt aggregate's asc_bus because C1 declares no ferry constant - stated in the run-inputs report, never invented
 
 #### `C.scoring.monetary_distance_rate`
 
@@ -2427,7 +2436,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 66 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 67 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration carries a null value because no justified value has been measured; the resolver will not invent one.
 
@@ -2480,6 +2489,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.routing.access_walk_speed_ms` | `1.25` | m/s | `derived` | derived: the same physical walking speed - the access/egress stub walk to and f |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
 | `RUN.routing.network_modes` | `["car", "ride", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
+| `RUN.routing.pt_submode_scoring` | `per_submode` | enum | `assumed` | `per_submode`, `aggregate` |
 | `RUN.sample.flow_capacity_factor` | *(null - unobtained)* | share_of_capacity | `derived` | derived: flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling  |
 | `RUN.sample.fraction` | `0.01` | share_of_population | `assumed` | 0.01 - 0.4 |
 | `RUN.sample.storage_capacity_exponent` | `1.0` | exponent | `derived` | derived: storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim e |
@@ -2493,7 +2503,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.scoring.learning_rate` | `1.0` | share | `literature` | 0.5 - 1 |
 | `RUN.scoring.waiting_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -6 - 0 |
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
-| `RUN.transit.transit_modes` | `["pt"]` | mode_names | `definition` | - |
+| `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
@@ -2794,6 +2804,12 @@ Modes routed on the road graph. Ride must be here AND permitted on the links (14
 
 ***definition** · status **active** · DECISIONS.md §9.6, 9.77 · MATSim `routing.networkModes`*
 
+#### `RUN.routing.pt_submode_scoring`
+
+Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Under per_submode the emitter writes the swissRailRaptor module and one scoring modeParams block per submode: bus takes C1's asc_bus, tram asc_lr, rail asc_rail; FERRY HAS NO C1 CONSTANT and keeps the pt aggregate's, stated in the run-inputs report rather than invented. Time is priced at the one declared beta_ivt for every submode - C1 declares no per-submode time weight. The router prices each submode from its own scoring entry (RaptorUtils.createParameters reads scoring.getModes() per mode - verified in the jar), so the constants and any swept divergence reach ROUTE choice as well as plan scoring. Plan-level choice stays `pt`: subtourModeChoice.modes never carries a submode, only the router assigns submode legs, and citysim.PtSubmodeMainModeIdentifier folds them back to `pt` for every main_mode analysis, keeping the HTS aggregate comparison unchanged. A MODEL CHANGE: part of the #48 batched family boundary.
+
+***assumed** · status **active** · DECISIONS.md §9.78*
+
 #### `RUN.sample.flow_capacity_factor`
 
 Road flow capacity scaled to the sample. DERIVED: equals RUN.sample.fraction exactly, which is the standard MATSim rule and is not a free choice. Set by the harness at run time. NOTE the SHIPPED scenario config carries 1.0, so running scenarios/matsim/<S>/<DAY>/config.xml DIRECTLY simulates a sampled demand against full supply - the harness must be used.
@@ -2896,9 +2912,9 @@ Simulated seconds between live telemetry snapshots while the mobsim runs. The bo
 
 #### `RUN.transit.transit_modes`
 
-The mode string the transit schedule is served under. One value, because the study scores public transport as a single mode and distinguishes tram from bus from rail by vehicle type inside it, not by mode.
+The mode strings the mobsim serves transit passengers under, and - minus the `pt` umbrella - the city's scheduled submode vocabulary. `pt` is the plan-level mode every PT trip keeps; bus/tram/rail/ferry are the mapped fleet's own per-route transportModes (the values Tier R already reads from the schedules). The submodes are here because TransitQSimEngine.handleDeparture serves ONLY leg modes in this set (verified in the pinned jar), so a passenger leg mapped to `tram` under RUN.routing.pt_submode_scoring=per_submode would otherwise fall through to teleportation - and because the emitter derives its swissRailRaptor modeMapping vocabulary from this declared list rather than a literal (split_schedule refuses a schedule route whose transportMode is outside it). Under `aggregate` the submode entries are inert: no leg ever carries them. Was one value (`pt`) while the study scored public transport as a single mode; superseded at the 9.78 Tier C boundary.
 
-***definition** · status **active** · DECISIONS.md §15 · MATSim `transit.transitModes`*
+***definition** · status **active** · DECISIONS.md §15, 9.78 · MATSim `transit.transitModes`*
 
 #### `RUN.transit.use_transit`
 

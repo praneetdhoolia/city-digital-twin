@@ -37,7 +37,7 @@
     "workplace": "DZN"
   },
 
-  "modes": ["car", "ride", "pt", "bike", "walk"],
+  "modes": ["car", "ride", "pt", "bike", "walk", "taxi"],
   "day_types": ["WEEKDAY", "SAT", "SUN"],
 
   "mode_share_target": {
