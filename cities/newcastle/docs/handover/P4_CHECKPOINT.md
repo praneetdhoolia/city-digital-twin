@@ -1,10 +1,44 @@
-# P4 checkpoint — the long-form handoff
+# P4 checkpoint — a FROZEN record of 12 August 2026
 
-**Rewritten 12 August 2026, after every phase was re-verified against the
-package and the three open decisions were taken (§9.22).** [`STATUS.md`](../STATUS.md) is the short live status and holds the
-**verified phase board and the full deliverable checklist**; this is the
-full picture for someone picking the work up cold. Where the two disagree,
-`STATUS.md` is newer.
+> ## ⛔ ARCHIVE. Do not read this as current state.
+>
+> **This is what P4 looked like on 12 August 2026 (§9.22), preserved unedited.**
+> Thirteen days and roughly forty `DECISIONS.md` entries later, most of the
+> numbers below are superseded and several of its instructions are now wrong.
+> It is kept because a dated record is frozen — never rewritten to match today's
+> artefacts — and retired as a *live* document on 25 August 2026 (§9.80).
+>
+> **The live answers, and nothing else, are here:**
+>
+> | For | Read |
+> |---|---|
+> | Phase board, deliverables, the numbered plan, run costs | [`STATUS.md`](../STATUS.md) |
+> | Every value that is not observed, and every decision | [`DECISIONS.md`](../DECISIONS.md) |
+> | Where the session picks up | [`NEXT_AGENT_BRIEF.md`](NEXT_AGENT_BRIEF.md) |
+> | The model's fit against observation | [`CALIBRATION_REPORT.md`](../audit/CALIBRATION_REPORT.md) and the figures in [`README.md`](../../../../README.md) |
+>
+> **Known superseded below** — the list is illustrative, not exhaustive, which is
+> itself the reason this file is no longer a source:
+>
+> | This file says | Superseded by |
+> |---|---|
+> | nine deliverables, **six met** | **eight of nine** met (§9.64) |
+> | **12 open issues**, none awaiting a decision | see `gh issue list --state open`; three decisions are open |
+> | manifest **364** files · registry **171** fields · `check_package` **~960** checks | the live counts are in [`STATUS.md`](../STATUS.md), pinned by `tests/check_doc_currency.py` |
+> | the 10% × 250-iteration mode-share table (car 32.54, ride 50.03) | the converged 25% × 1000 arms (§9.64) and the figures in [`README.md`](../../../../README.md) |
+> | *"the model has not relaxed, and 250 is still too low"* | issue #5 settled: 1000 iterations, both arms relaxed (§9.43) |
+> | counts mean error **−69.9%**, one modelled zero | **−91.8%**, six modelled zero — now issue #82 |
+> | walk trips at **5.05×** their observed length | **7.94×** (§9.64) |
+> | deliverable 5 blocked, *"three ways forward, the user's call"* | decided §9.50, delivered §9.64 (constrain-and-report) |
+> | the live view *"was deleted and is being rebuilt"* | rebuilt and wired (§9.36) |
+> | SUMO scope, deliverable 7, the outer loop | **SUMO descoped; MATSim is the single simulator** (§9.74) |
+> | *"30.6 GiB of superseded runs in `results/ride_sufficiency_*`"* | those directories are gone; `results/INDEX.md` labels every run that exists |
+> | the branch it was written on, *"nothing has been pushed"* | merged long since |
+>
+> Its traps (§4) and its errors-made list (§5) are the parts that aged best, and
+> both are carried forward in [`NEXT_AGENT_BRIEF.md`](NEXT_AGENT_BRIEF.md) §5 and
+> §8. Nothing in this file is unique to it: every fact it holds that is still
+> true is recorded in `DECISIONS.md`.
 
 ---
 

@@ -33,7 +33,14 @@ Two claim kinds:
 
   number   a regex with ONE capture group, matched against a value DERIVED FROM
            AN ARTEFACT. The claim is the number in the document; the truth is
-           measured, never declared twice.
+           measured, never declared twice. Integers by default; a claim that
+           sets `decimals` compares to that many places, so a fit statistic
+           written as "10.65 pp" is checkable rather than exempt.
+  text     a regex with ONE capture group, matched against a STRING derived
+           from an artefact. The number claims cannot see a stale NAME, and a
+           figure captioned with the run it no longer draws is exactly as wrong
+           as a stale count.
+
   absent   a regex that must NOT appear - for a statement that was true once and
            is now false in a way no number would catch ("the re-harvest has not
            been re-run"). Carries the reason it is banned.
@@ -49,6 +56,7 @@ import csv
 import json
 import re
 import sys
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
@@ -117,8 +125,12 @@ def truth_registry_fields(city_root: Path, spec: dict) -> int:
     return total
 
 
-def truth_json_number(city_root: Path, spec: dict) -> int:
-    """A number under a dotted key path in a committed JSON report."""
+def truth_json_number(city_root: Path, spec: dict) -> float:
+    """A number under a dotted key path in a committed JSON report.
+
+    Returned unrounded: how many places the DOCUMENT states is the claim's
+    business (`decimals`), not the artefact's.
+    """
     path = city_root / spec["file"]
     if not path.exists():
         raise Skip(f"{spec['file']} absent")
@@ -127,7 +139,9 @@ def truth_json_number(city_root: Path, spec: dict) -> int:
         if not isinstance(node, dict) or part not in node:
             raise Skip(f"{spec['file']} has no key {spec['key']}")
         node = node[part]
-    return int(node)
+    if not isinstance(node, (int, float)) or isinstance(node, bool):
+        raise Skip(f"{spec['file']} key {spec['key']} is not a number")
+    return node
 
 
 def truth_csv_value_count(city_root: Path, spec: dict) -> int:
@@ -144,6 +158,21 @@ def truth_csv_value_count(city_root: Path, spec: dict) -> int:
     if not rows or spec["column"] not in rows[0]:
         raise Skip(f"{spec['file']} has no column {spec['column']}")
     return sum(1 for r in rows if r[spec["column"]] == spec["value"])
+
+
+def truth_json_text(city_root: Path, spec: dict) -> str:
+    """A string under a dotted key path in a committed JSON report."""
+    path = city_root / spec["file"]
+    if not path.exists():
+        raise Skip(f"{spec['file']} absent")
+    node = json.loads(path.read_text(encoding="utf-8"))
+    for part in spec["key"].split("."):
+        if not isinstance(node, dict) or part not in node:
+            raise Skip(f"{spec['file']} has no key {spec['key']}")
+        node = node[part]
+    if not isinstance(node, str):
+        raise Skip(f"{spec['file']} key {spec['key']} is not a string")
+    return node
 
 
 def truth_path_count(city_root: Path, spec: dict) -> int:
@@ -165,18 +194,78 @@ RESOLVERS = {
     "path_count": truth_path_count,
 }
 
+TEXT_RESOLVERS = {
+    "json_text": truth_json_text,
+}
+
 
 # ------------------------------------------------------------------------ checking
 
 
-def _as_int(raw: str) -> int | None:
-    """Parse a number as a document writes it: 489, 1,500, **50,182**."""
-    cleaned = raw.replace(",", "").replace("*", "").strip()
-    return int(cleaned) if cleaned.isdigit() else None
+def _as_number(raw: str) -> Decimal | None:
+    """Parse a number as a document writes it: 489, 1,500, **50,182**, -91.8.
+
+    The typographic minus (U+2212) is accepted alongside the hyphen: prose uses
+    it, and a claim that silently failed to parse a negative would report
+    UNPARSEABLE forever rather than checking anything.
+    """
+    cleaned = (raw.replace(",", "").replace("*", "")
+               .replace("−", "-").strip())
+    try:
+        return Decimal(cleaned)
+    except InvalidOperation:
+        return None
 
 
-def check_number(doc_text: str, doc_name: str, claim: dict, truth: int) -> list[dict]:
+def _expected(truth: float | int, claim: dict) -> Decimal:
+    """The artefact's value at the precision the document states it to."""
+    places = claim.get("decimals")
+    value = Decimal(str(truth))
+    if places is None:
+        return value
+    return value.quantize(Decimal(1).scaleb(-int(places)),
+                          rounding=ROUND_HALF_UP)
+
+
+def _show(value: Decimal) -> str:
+    return f"{value:,}"
+
+
+def check_number(doc_text: str, doc_name: str, claim: dict,
+                 truth: float | int) -> list[dict]:
     """Every occurrence of the claim's pattern must carry the measured value."""
+    expected = _expected(truth, claim)
+    pattern = re.compile(claim["pattern"])
+    found = list(pattern.finditer(doc_text))
+    if not found:
+        return [{
+            "claim": claim["id"], "doc": doc_name, "kind": "PATTERN NOT FOUND",
+            "detail": "the claim's pattern matches nothing - the document was "
+                      "reworded and this claim needs re-aiming or retiring",
+            "expected": _show(expected),
+        }]
+    problems = []
+    for match in found:
+        stated = _as_number(match.group(1))
+        line = doc_text[: match.start()].count("\n") + 1
+        if stated is None:
+            problems.append({
+                "claim": claim["id"], "doc": doc_name, "line": line,
+                "kind": "UNPARSEABLE", "detail": repr(match.group(1)),
+                "expected": _show(expected),
+            })
+        elif stated != expected:
+            problems.append({
+                "claim": claim["id"], "doc": doc_name, "line": line,
+                "kind": "DRIFTED", "stated": _show(stated),
+                "expected": _show(expected), "detail": claim.get("note", ""),
+            })
+    return problems
+
+
+def check_text(doc_text: str, doc_name: str, claim: dict,
+               truth: str) -> list[dict]:
+    """Every occurrence of the claim's pattern must name the measured string."""
     pattern = re.compile(claim["pattern"])
     found = list(pattern.finditer(doc_text))
     if not found:
@@ -188,17 +277,11 @@ def check_number(doc_text: str, doc_name: str, claim: dict, truth: int) -> list[
         }]
     problems = []
     for match in found:
-        stated = _as_int(match.group(1))
-        line = doc_text[: match.start()].count("\n") + 1
-        if stated is None:
+        stated = match.group(1).strip()
+        if stated != truth:
             problems.append({
-                "claim": claim["id"], "doc": doc_name, "line": line,
-                "kind": "UNPARSEABLE", "detail": repr(match.group(1)),
-                "expected": truth,
-            })
-        elif stated != truth:
-            problems.append({
-                "claim": claim["id"], "doc": doc_name, "line": line,
+                "claim": claim["id"], "doc": doc_name,
+                "line": doc_text[: match.start()].count("\n") + 1,
                 "kind": "DRIFTED", "stated": stated, "expected": truth,
                 "detail": claim.get("note", ""),
             })
@@ -250,6 +333,22 @@ def run() -> tuple[list[dict], list[dict], int]:
             problems += check_absent(doc_text, claim["doc"], claim)
             continue
 
+        if claim["kind"] == "text":
+            resolver = TEXT_RESOLVERS.get(claim["truth"]["kind"])
+            if resolver is None:
+                raise SystemExit(
+                    f"claim {claim['id']}: unknown text truth kind "
+                    f"{claim['truth']['kind']!r}. Known: "
+                    f"{', '.join(sorted(TEXT_RESOLVERS))}")
+            try:
+                truth_text = resolver(city_root, claim["truth"])
+            except Skip as exc:
+                skipped.append({"claim": claim["id"], "why": str(exc)})
+                continue
+            checked += 1
+            problems += check_text(doc_text, claim["doc"], claim, truth_text)
+            continue
+
         resolver = RESOLVERS.get(claim["truth"]["kind"])
         if resolver is None:
             raise SystemExit(
@@ -294,8 +393,8 @@ def main() -> int:
                 where = f":{p['line']}" if "line" in p else ""
                 if p["kind"] == "DRIFTED":
                     print(f"    {doc}{where}  {p['claim']}")
-                    print(f"        states {p['stated']:,}  artefact says "
-                          f"{p['expected']:,}")
+                    print(f"        states {p['stated']}  artefact says "
+                          f"{p['expected']}")
                 else:
                     print(f"    {doc}{where}  {p['claim']}  [{p['kind']}]")
                 if p.get("detail"):

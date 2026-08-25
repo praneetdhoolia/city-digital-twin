@@ -68,6 +68,14 @@ Handoff:
 documents superseded by a DECISIONS entry; **stale statements in living documents — a
 figure this session's work made wrong**; dead branches (`git branch --merged main`).
 
+**A document that duplicates the board or the record is the defect, not the
+drift.** `README.md` drifted three phases because one figures table lived in two
+files; `P4_CHECKPOINT.md` drifted thirteen days because it restated a phase board
+that was already `STATUS.md`'s job (§9.79, §9.80). When you find a living document
+whose content belongs to another, do not refresh it — **check whether anything in
+it is unique, migrate what is, and freeze the rest as the dated record it is**,
+with a header that says so and points at the live source.
+
 **Where a document class lives — never invent a new home:**
 
 | Class | The one home |
@@ -161,6 +169,12 @@ dropped:
   measured, where it is recorded — so the next agent cannot redo finished work.
 - **Consumed approvals are marked SPENT**, standing directives are restated, and new
   traps join §8 with what they cost.
+- **A COUNT DERIVED FROM GITHUB LIVES IN §0 AND NOWHERE ELSE.** "28 merged PRs",
+  "10 open issues", "45 run directories" are true at the moment of writing and
+  are read after the next merge. Put each one in the §0 table beside the command
+  that re-derives it, and let §6 and §9 refer to §0 rather than restating the
+  number. The seventh-session brief stated "28 merged PRs" in §6; it was 29
+  before the next agent finished its environment gate.
 
 The brief stays a **pointer**, not a copy: where it disagrees with STATUS, DECISIONS
 or CLAUDE.md, those win — and its header says so.
@@ -174,6 +188,11 @@ python src/registry/check_hardcoding.py --strict   # must exit 0
 python tests/check_doc_currency.py --strict        # must exit 0
 python tests/check_manifest.py
 python -m compileall -q src tests
+python src/run/run_failure.py --check              # every dead run says why
+# if a run finished, died, or the calibrated base moved:
+python src/analyse/build_run_index.py
+python src/analyse/build_fit_figures.py            # the front door's figures
+python src/calibrate/report.py --run <run dir>     # and its calibration report
 # if the registry changed:
 python src/registry/render_docs.py && python src/registry/render_schema.py
 # if a data artefact changed:
@@ -253,6 +272,13 @@ verifying their tips carry nothing absent from `main`.
 - [ ] Does `python tests/check_doc_currency.py --strict` exit 0 — no living document
       states a figure its artefact no longer supports?
 - [ ] Did any fact acquire a **second** home this session?
+- [ ] Is every GitHub-derived count (PRs merged, issues open, run directories) in
+      **§0 with its command**, and stated nowhere else as settled prose?
+- [ ] If a run finished or died: does `python src/run/run_failure.py --check` exit 0,
+      and does `results/INDEX.md` name it?
+- [ ] If the calibrated base moved: were the front door's figures and the calibration
+      report **regenerated in this same change**
+      (`build_fit_figures.py --check` exits 0)?
 - [ ] Did anything get a new documentation *class* it shouldn't have?
 - [ ] Is every issue action (close / update / open) backed by evidence in the repo?
 - [ ] Do STATUS, DECISIONS and the brief agree with each other?

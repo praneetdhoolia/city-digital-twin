@@ -2,9 +2,18 @@
 
 **DIAGNOSTIC MEASUREMENT OF AN EXISTING RUN — NOT A RESULT ABOUT THE LIGHT
 RAIL.** On the closed pre-repair family the light rail carried 1,260
-weekday boardings against the observed 3,417 (−63%) while the PT aggregate
-overshot (+116% relative; DECISIONS.md §9.64) — the modelled demand rides
-buses past the tram. This document quantifies *why*, on one completed run,
+weekday boardings while the PT aggregate overshot its own scored target
+(+116% relative; DECISIONS.md §9.64) — the modelled demand rides buses past
+the tram.
+
+> **The 1,260 is not an error of −63%, and this document said so until
+> 25 August 2026 (§9.80).** The 3,417 boardings/day it was measured against is
+> the March 2019 – February 2020 series, and `fit.py` **marks that target
+> unscorable**: PT mode share roughly halved between that vintage and the
+> 2024/25 market a 2026 base calibrates to (DECISIONS.md §12.1), so V001/V002
+> identify nothing about this run. The modelled level is reported here as a
+> LEVEL. The gap between it and a pre-pandemic observation is not a fit
+> statistic and must not be quoted as one. This document quantifies *why*, on one completed run,
 so the candidate explanations each carry a number before the next family
 runs. Nothing here compares scenario against scenario:
 
@@ -173,8 +182,9 @@ almost nowhere by itself.
 - It does **not** say the light rail "fails" — this is the uncalibrated,
   pre-repair base with the PT aggregate itself +116% relative, no signal
   priority, no boarding-load dwell, no taxi/rideshare competitor, and the
-  §9.68 ride repair absent. The observed 3,417/day is achieved by the real
-  system under conditions this arm does not model.
+  §9.68 ride repair absent. The 3,417/day sometimes quoted beside it is a
+  2019–20 observation the fit refuses to score against a 2026 base (§12.1),
+  achieved by the real system under conditions this arm does not model.
 - It **does** say that any repair aiming at the tram share must move one of
   the measured levers: the effective interchange cost at Newcastle
   Interchange, the tram's connective reach (through-routing/feeders in the

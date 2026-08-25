@@ -1,17 +1,16 @@
 {
   "description": "Newcastle's LIVE-STATE documentation claims - the CITY-OWNED half of tests/check_doc_currency.py. Each entry pins one number written into a document to the artefact that decides it, so a figure cannot silently outlive the thing it describes. A second city supplies its own copy at cities/<city>/tests/doc_currency.json; the harness in tests/ names no city, no document and no number.",
-
   "what_belongs_here": "ONLY live-state cells - a table row or sentence that must equal the artefact TODAY. A dated record is frozen and must never be claimed: DECISIONS.md 14 saying 'manifest 436' on 24 August is history, and STATUS.md's dated task rows are the same. Claiming a record would force the project to rewrite its own past to keep a check green, which is the exact opposite of the reproducibility rule.",
-
   "why_these_two_documents": "README.md is the front door and STATUS.md is the board - both are long-lived, both are read for current state, and both drifted. NEXT_AGENT_BRIEF.md is deliberately absent: /handoff rewrites it wholesale every session, so pinned patterns there would break by design and train readers to ignore the check. The brief's numbers are covered because /handoff sources them from STATUS.md, which is checked.",
-
   "claims": [
     {
       "id": "readme.manifest-files",
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Files in the manifest \\| \\*\\*([\\d,]+)\\*\\*",
-      "truth": { "kind": "manifest_files" },
+      "truth": {
+        "kind": "manifest_files"
+      },
       "note": "regenerate with python src/build/build_manifest.py (inside the normalise_eol sandwich)"
     },
     {
@@ -19,7 +18,11 @@
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\u2192 ([\\d,]+) synthetic agents",
-      "truth": { "kind": "json_number", "file": "demand/population/_population_report.json", "key": "persons" },
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/population/_population_report.json",
+        "key": "persons"
+      },
       "note": "B1's own report is the source; the census total beside it is an input, not a claim about the build"
     },
     {
@@ -27,7 +30,10 @@
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Road network \\| ([\\d,]+) edges",
-      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A1_road_edges.csv" },
+      "truth": {
+        "kind": "manifest_artefact_rows",
+        "path": "data/processed/network/A1_road_edges.csv"
+      },
       "note": "grew at the issue #32 re-harvest; the pre-rebuild figure survived in prose for nine days"
     },
     {
@@ -35,14 +41,19 @@
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Active network \\| ([\\d,]+) edges",
-      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A6_footway_edges.csv" }
+      "truth": {
+        "kind": "manifest_artefact_rows",
+        "path": "data/processed/network/A6_footway_edges.csv"
+      }
     },
     {
       "id": "readme.registry-fields",
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Input registry \\| ([\\d,]+) controllable fields",
-      "truth": { "kind": "registry_fields" },
+      "truth": {
+        "kind": "registry_fields"
+      },
       "note": "every registry addition moves this; regenerate CONFIG_REFERENCE.md in the same change"
     },
     {
@@ -50,7 +61,9 @@
       "kind": "number",
       "doc": "README.md",
       "pattern": "the ([\\d,]+) declared values, with units",
-      "truth": { "kind": "registry_fields" },
+      "truth": {
+        "kind": "registry_fields"
+      },
       "note": "the same count restated in the repo map - the duplication is why it drifted"
     },
     {
@@ -58,7 +71,10 @@
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Validation \\| ([\\d,]+) targets",
-      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/validation/validation_targets.csv" },
+      "truth": {
+        "kind": "manifest_artefact_rows",
+        "path": "data/processed/validation/validation_targets.csv"
+      },
       "note": "the 67/143 split inside this total is PRE-REGISTERED and must never move"
     },
     {
@@ -66,36 +82,52 @@
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Zones \\| ([\\d,]+) core SA1",
-      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "core" }
+      "truth": {
+        "kind": "csv_value_count",
+        "file": "data/processed/zones/zones_SA1.csv",
+        "column": "zone_tier",
+        "value": "core"
+      }
     },
     {
       "id": "readme.external-sa1",
       "kind": "number",
       "doc": "README.md",
       "pattern": "\\| Zones \\| [\\d,]+ core SA1 \\+ ([\\d,]+) external SA1",
-      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "external" }
+      "truth": {
+        "kind": "csv_value_count",
+        "file": "data/processed/zones/zones_SA1.csv",
+        "column": "zone_tier",
+        "value": "external"
+      }
     },
     {
       "id": "readme.core-dzn",
       "kind": "number",
       "doc": "README.md",
       "pattern": "external SA1, ([\\d,]+) core DZN",
-      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_DZN.csv", "column": "zone_tier", "value": "core" }
+      "truth": {
+        "kind": "csv_value_count",
+        "file": "data/processed/zones/zones_DZN.csv",
+        "column": "zone_tier",
+        "value": "core"
+      }
     },
     {
       "id": "readme.osm-harvest-not-run",
       "kind": "absent",
       "doc": "README.md",
-      "pattern": "networks/osm/`? is currently empty|re-harvest has not been re-run",
-      "reason": "The issue #32 re-harvest RAN on 16 August 2026 and #32 is closed: networks/osm/ holds its 10 layers and check_package.py passes. This warning told every new reader the package was broken for nine days after it was fixed."
+      "pattern": "layers pending the #32 re-harvest|cannot pass until the harvest|harvest above is\\s+re-run|networks/osm/`? is currently empty|re-harvest has not been re-run",
+      "reason": "The issue #32 re-harvest RAN on 16 August 2026 and #32 is closed: networks/osm/ holds its 10 layers and check_package.py passes at 1,433 checks. Every phrasing of 'the package is not built yet' is banned together, because the first ban named ONE wording and the same false statement survived in the resume instructions under another - found by hand on 25 August, which is exactly the work this check exists to stop being hand work."
     },
-
     {
       "id": "status.data-package-files",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Open data package \\|[^|]*?\\*\\*([\\d,]+)\\*\\* files",
-      "truth": { "kind": "manifest_files" },
+      "truth": {
+        "kind": "manifest_files"
+      },
       "note": "proposal 8 deliverable 2; drifted to 376 while the manifest held 489"
     },
     {
@@ -103,7 +135,11 @@
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\u2192 ([\\d,]+) synthetic agents",
-      "truth": { "kind": "json_number", "file": "demand/population/_population_report.json", "key": "persons" },
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/population/_population_report.json",
+        "key": "persons"
+      },
       "note": "STATUS carried 612,680 here and 612,687 in its own P3 phase row - the board disagreed with itself"
     },
     {
@@ -111,42 +147,66 @@
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Road network \\| ([\\d,]+) edges",
-      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A1_road_edges.csv" }
+      "truth": {
+        "kind": "manifest_artefact_rows",
+        "path": "data/processed/network/A1_road_edges.csv"
+      }
     },
     {
       "id": "status.active-edges",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Active network \\| ([\\d,]+) edges",
-      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A6_footway_edges.csv" }
+      "truth": {
+        "kind": "manifest_artefact_rows",
+        "path": "data/processed/network/A6_footway_edges.csv"
+      }
     },
     {
       "id": "status.core-sa1",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Zones \\| ([\\d,]+) core SA1",
-      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "core" }
+      "truth": {
+        "kind": "csv_value_count",
+        "file": "data/processed/zones/zones_SA1.csv",
+        "column": "zone_tier",
+        "value": "core"
+      }
     },
     {
       "id": "status.external-sa1",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Zones \\| [\\d,]+ core SA1 \\+ ([\\d,]+) external SA1",
-      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "external" }
+      "truth": {
+        "kind": "csv_value_count",
+        "file": "data/processed/zones/zones_SA1.csv",
+        "column": "zone_tier",
+        "value": "external"
+      }
     },
     {
       "id": "status.core-dzn",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "external SA1, ([\\d,]+) core DZN",
-      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_DZN.csv", "column": "zone_tier", "value": "core" }
+      "truth": {
+        "kind": "csv_value_count",
+        "file": "data/processed/zones/zones_DZN.csv",
+        "column": "zone_tier",
+        "value": "core"
+      }
     },
     {
       "id": "status.p1-raw-downloads",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\*\\*([\\d,]+) immutable raw downloads\\*\\*",
-      "truth": { "kind": "manifest_files", "path_prefix": "data/raw/" },
+      "truth": {
+        "kind": "manifest_files",
+        "path_prefix": "data/raw/"
+      },
       "note": "P1's OWN delivery. The row used to claim the whole-package total (391), which later phases grew past."
     },
     {
@@ -154,7 +214,11 @@
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Run inputs assembled \\| \\*\\*([\\d,]+)\\*\\*",
-      "truth": { "kind": "path_count", "glob": "scenarios/matsim/*/*", "dirs_only": true },
+      "truth": {
+        "kind": "path_count",
+        "glob": "scenarios/matsim/*/*",
+        "dirs_only": true
+      },
       "note": "scenario x day-type; 10 scenarios x 3 day types"
     },
     {
@@ -162,14 +226,136 @@
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
       "pattern": "\\| Input registry \\| \\*\\*([\\d,]+) fields\\*\\*",
-      "truth": { "kind": "registry_fields" }
+      "truth": {
+        "kind": "registry_fields"
+      }
     },
     {
       "id": "status.osm-harvest-pending",
       "kind": "absent",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "layers pending the #32 re-harvest",
-      "reason": "Issue #32 is CLOSED and the re-harvest ran 16 August 2026 - STATUS's own P1 phase row records it. The deliverable row went on describing the package as incomplete."
+      "pattern": "layers pending the #32 re-harvest|cannot pass until the harvest|harvest above is\\s+re-run|networks/osm/`? is currently empty|re-harvest has not been re-run",
+      "reason": "The issue #32 re-harvest RAN on 16 August 2026 and #32 is closed: networks/osm/ holds its 10 layers and check_package.py passes at 1,433 checks. Every phrasing of 'the package is not built yet' is banned together, because the first ban named ONE wording and the same false statement survived in the resume instructions under another - found by hand on 25 August, which is exactly the work this check exists to stop being hand work."
+    },
+    {
+      "id": "readme.figures-run",
+      "kind": "text",
+      "doc": "README.md",
+      "pattern": "the calibrated base was written from \\u2014 `([^`]+)`",
+      "truth": {
+        "kind": "json_text",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "run.directory"
+      },
+      "note": "the figures follow the calibrated base forward; the caption must name the run they actually draw"
+    },
+    {
+      "id": "readme.figures-family",
+      "kind": "text",
+      "doc": "README.md",
+      "pattern": "comparability family `([^`]+)`",
+      "truth": {
+        "kind": "json_text",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "run.family"
+      },
+      "note": "a run's family is what makes it comparable; naming the wrong one invites a cross-family comparison"
+    },
+    {
+      "id": "readme.fit-targets-available",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "Of ([\\d,]+) calibration",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "targets.available"
+      },
+      "note": "the 67/143 split is PRE-REGISTERED and must never move"
+    },
+    {
+      "id": "readme.fit-targets-scored",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\*\\*([\\d,]+) are scored\\*\\*",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "targets.scored"
+      },
+      "note": "scored is not the same as fitted (DECISIONS.md 12.1)"
+    },
+    {
+      "id": "readme.fit-mae",
+      "kind": "number",
+      "doc": "README.md",
+      "decimals": 2,
+      "pattern": "mode shares is \\*\\*([\\d.,]+) percentage points\\*\\*",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "mode_share.mean_abs_pp"
+      },
+      "note": "the objective the calibrated base was written at; moves with every new arm"
+    },
+    {
+      "id": "readme.trip-length-inside",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "never fitted to\\. \\*\\*([\\d,]+) of",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "trip_length_constraint.modes_inside_observed_range"
+      },
+      "note": "a constraint, never a target - reported so it cannot be quietly fitted"
+    },
+    {
+      "id": "readme.count-stations",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "Across \\*\\*([\\d,]+)\\*\\* count stations",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "counts_constraint.stations"
+      }
+    },
+    {
+      "id": "readme.count-mean-error",
+      "kind": "number",
+      "doc": "README.md",
+      "decimals": 1,
+      "pattern": "the mean error is\\n\\*\\*(-?[\\d.,]+)%\\*\\*",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "counts_constraint.mean_pct_error"
+      },
+      "note": "the unexplained count residual; tracked as an open issue, never fitted"
+    },
+    {
+      "id": "readme.count-zero-stations",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "and \\*\\*([\\d,]+)\\*\\* stations model to zero",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "counts_constraint.modelled_zero_stations"
+      }
+    },
+    {
+      "id": "readme.intervention-boardings",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "light rail at \\*\\*([\\d,]+)\\*\\* weekday",
+      "truth": {
+        "kind": "json_number",
+        "file": "docs/reference/figures/FIGURES.json",
+        "key": "not_scored.intervention_boardings.modelled_per_weekday"
+      },
+      "note": "MODELLED only. The nearest observation is a pre-pandemic vintage fit.py refuses to score, so this must never be written as an error"
     }
   ]
 }

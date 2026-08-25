@@ -397,6 +397,17 @@ STRUCTURAL = {
         'comes from RUN.machine.threads',
     'src/run/run_matsim.py:setp(count)':
         'how many regex matches to replace. A re.sub argument',
+    'src/run/run_failure.py:MESSAGE_CHARS':
+        'how much of a Java exception message is quoted into a dead run\'s '
+        '`cause` before it is elided. A display length on text READ OUT of a '
+        'finished run\'s log; it decides nothing about the transport system, '
+        'and the full message stays in matsim.log at the line the record names',
+    'src/analyse/build_fit_figures.py:LAYOUT':
+        'page geometry for the fit figures - margins, gutters, bar heights and '
+        'font sizes, in SVG user units. The generator READS a finished run and '
+        'draws it; the same class as run_view.py:RAMP_MIN. No number here can '
+        'reach a model, an input or a result, and every VALUE in the pictures '
+        'comes from the run\'s own _fit.json',
     'src/analyse/progress_digest.py:REPLACE_ATTEMPTS':
         'atomic-replace retry count on a Windows directory lock - I/O '
         'mechanics, the RunTelemetry.MOVE_ATTEMPTS discipline, not a model '

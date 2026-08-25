@@ -124,6 +124,10 @@ def scan_run(name, fams, overrides):
         'warm_started_from': ('%s@it%s' % (warm['run'], warm['iteration'])
                               if warm else ''),
         'controler_sha256': (src.get('controler_sha256') or '')[:12],
+        # Why a dead run died, from its own _meta.json (src/run/run_failure.py
+        # reads it out of matsim.log). Carried here so the index answers
+        # "can I disregard this directory?" without opening the run.
+        'cause': meta.get('cause') or '',
     }
     modes = []
     if fit:
@@ -142,7 +146,7 @@ def scan_run(name, fams, overrides):
 CSV_COLUMNS = ['name', 'class', 'status', 'run_record', 'relaxed', 'family',
                'scenario', 'day', 'fraction', 'iterations', 'seed', 'threads',
                'median_iteration_s', 'fit_mae_pp', 'warm_started_from',
-               'controler_sha256', 'family_note']
+               'controler_sha256', 'cause', 'family_note']
 
 
 def build():
@@ -200,6 +204,18 @@ def build():
                     f.write('| %s | %s | %s | %s | %s |\n'
                             % (m['mode'], m['hts_category'], m['modelled'],
                                m['observed'], m['pct_error']))
+        dead = [r for r in rows if r['status'] in ('failed', 'aborted')]
+        if dead:
+            f.write('\n## Why the dead runs died\n\n'
+                    'Read from each run\'s own `matsim.log` by '
+                    '`src/run/run_failure.py`, not remembered. A terminal run '
+                    'record without a cause is a directory nobody can rule '
+                    'out, so `_meta.json` requires one.\n\n')
+            f.write('| run | status | cause |\n|---|---|---|\n')
+            for r in dead:
+                cause = (r['cause'] or '**no cause recorded**').replace('|', r'\|')
+                f.write('| %s | %s | %s |\n'
+                        % (r['name'], r['status'], cause))
         notes = [r for r in rows if r['family_note']]
         if notes:
             f.write('\n## Attribution notes\n\n')
