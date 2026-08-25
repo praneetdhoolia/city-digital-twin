@@ -8117,6 +8117,29 @@ keep failing, so they are abandoned by scoring over many iterations instead of
 being deleted in one. That is what "emergent from the physical driver supply"
 was always supposed to mean.
 
+### Second correction: a trip has ONE routing mode, so the restore replaces the trip
+
+The re-found-leg restore then killed arm `20260826T053741` at iteration 1:
+`RuntimeException: Found a trip whose legs have different routingModes`
+(agents 223559, 539119, 522667). Re-routing a forced walk can produce a
+MULTI-LEG trip, and MATSim requires every leg of a trip to carry the same
+routing mode; setting one leg back to `ride` and leaving its siblings on `walk`
+is an inconsistent plan. **The 1% probe could not have caught this** - no
+matching agent there held a multi-leg walk trip - which is trap 13's
+"verified-at-1% is not verified" in its exact form.
+
+The restore now replaces the whole trip through `TripRouter.insertTrip`, with a
+single `ride` leg carrying the route the pairing set aside, matched on the
+trip's origin and destination link ids and guarded so it only ever replaces a
+trip whose legs are ALL walk.
+
+**Validated at 25% x 2 before relaunch** (`20260826T055023`, completed rc 0):
+zero routing-mode errors, 61,409 of 61,409 / 63,712 of 63,712 / 62,718 of
+62,718 legs restored, and ride legs held at **87,019 / 85,873 / 86,118** where
+the unfixed F6 arm fell to 28,228 / 25,889. Two failed attempts, both caught in
+minutes by measuring rather than by trusting a log line; from here a scale
+validation runs before any long arm.
+
 ### Family F7
 
 The engine change alters what the model does, so nothing compares across it.

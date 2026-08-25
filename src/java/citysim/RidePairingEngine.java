@@ -691,6 +691,13 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         //
         // So the leg is RE-FOUND in the selected plan by the endpoints the
         // pairing recorded, and the count logged is what was actually restored.
+        // The restore replaces the whole TRIP, never one leg of it. Re-routing a
+        // forced walk can yield a MULTI-LEG trip, and MATSim requires every leg
+        // of a trip to carry the same routingMode: setting one leg back to ride
+        // and leaving its siblings on walk killed arm 20260826T053741 at
+        // iteration 1 with "Found a trip whose legs have different
+        // routingModes" (agents 223559, 539119, 522667). The 1% probe had not
+        // caught it because no matching agent there held a multi-leg walk trip.
         int restored = 0;
         for (final RideLeg ride : remodedThisMobsim) {
             final Person person =
@@ -698,27 +705,31 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             if (person == null || person.getSelectedPlan() == null) {
                 continue;
             }
-            for (final PlanElement pe : person.getSelectedPlan().getPlanElements()) {
-                if (!(pe instanceof Leg)) {
-                    continue;
+            final Plan plan = person.getSelectedPlan();
+            org.matsim.core.router.TripStructureUtils.Trip target = null;
+            for (final org.matsim.core.router.TripStructureUtils.Trip trip
+                    : org.matsim.core.router.TripStructureUtils.getTrips(plan)) {
+                final Id<Link> from = trip.getOriginActivity().getLinkId();
+                final Id<Link> to = trip.getDestinationActivity().getLinkId();
+                if (ride.from.equals(from) && ride.to.equals(to)
+                        && isAllWalk(trip)) {
+                    target = trip;
+                    break;
                 }
-                final Leg leg = (Leg) pe;
-                if (!TransportMode.walk.equals(leg.getMode())) {
-                    continue;
-                }
-                final Route route = leg.getRoute();
-                if (route == null
-                        || !ride.from.equals(route.getStartLinkId())
-                        || !ride.to.equals(route.getEndLinkId())) {
-                    continue;
-                }
-                leg.setMode(TransportMode.ride);
-                org.matsim.core.router.TripStructureUtils.setRoutingMode(
-                        leg, TransportMode.ride);
-                leg.setRoute(ride.route);
-                restored++;
-                break;                          // one forced leg, one restore
             }
+            if (target == null) {
+                continue;
+            }
+            final Leg leg = org.matsim.core.population.PopulationUtils
+                    .createLeg(TransportMode.ride);
+            leg.setRoute(ride.route);
+            org.matsim.core.router.TripStructureUtils.setRoutingMode(
+                    leg, TransportMode.ride);
+            org.matsim.core.router.TripRouter.insertTrip(
+                    plan, target.getOriginActivity(),
+                    Collections.singletonList(leg),
+                    target.getDestinationActivity());
+            restored++;
         }
         if (!remodedThisMobsim.isEmpty()) {
             org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
@@ -727,6 +738,21 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                           + "alternative kept", restored, remodedThisMobsim.size());
         }
         remodedThisMobsim.clear();
+    }
+
+    /** Every leg of the trip is a walk leg - i.e. this is a trip the pairing
+     *  forced, not some other walk the agent was always going to make. */
+    private static boolean isAllWalk(
+            final org.matsim.core.router.TripStructureUtils.Trip trip) {
+        if (trip.getLegsOnly().isEmpty()) {
+            return false;
+        }
+        for (final Leg leg : trip.getLegsOnly()) {
+            if (!TransportMode.walk.equals(leg.getMode())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** How many timing misses were within `minutes` of a matching driver. */
