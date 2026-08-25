@@ -135,10 +135,12 @@ absolute error over the five scored mode shares is **10.65 percentage points**.
   <img alt="Modelled against observed mode share: vehicle driver +14.19 pp, vehicle passenger -20.51 pp, walk -6.12 pp, public transport +4.42 pp, bike +8.01 pp" src="cities/newcastle/docs/reference/figures/fit_mode_share.light.svg">
 </picture>
 
-Two errors dominate and both are structural rather than a matter of tuning: the
-model puts almost nobody in a car as a passenger, and it walks too little. Both
-have since been repaired in the inputs and **neither repair has been measured** —
-that is what the next arm is for.
+The errors come in two near-mirror pairs, which is what makes them structural
+rather than a matter of tuning: passengers become drivers (−20.51 against
++14.19), and walking trips become cycling trips (−6.12 against +8.01). Both
+pairs have since been repaired in the inputs — round-trip passenger bindings and
+an observed short-trip distance distribution — and **neither repair has been
+measured**. That is what the next arm is for.
 
 **Trip length** — a constraint, checked and reported, never fitted to. **1 of 5**
 modes falls inside its observed range.
@@ -151,8 +153,10 @@ modes falls inside its observed range.
 **Traffic counts** — scored and reported, deliberately **not** optimised against:
 tuning the network to these would compensate for whatever the model is still
 missing rather than diagnose it. Across **30** count stations the mean error is
-**-91.8%**, and **6** stations model to zero. The residual is unexplained and
-tracked as an open issue.
+**-91.8%**, and **6** stations model to zero. The residual is unexplained — the
+explanation the record used to give was retired when the boundary through-traffic
+tier was built and measured as making no difference — and it is tracked as
+[issue #82](https://github.com/praneetdhoolia/city-digital-twin/issues/82).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_counts.dark.svg">
