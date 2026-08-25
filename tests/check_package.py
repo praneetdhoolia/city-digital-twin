@@ -1208,6 +1208,29 @@ if _registry is not None:
               % (os.path.basename(os.path.dirname(_rec)),
                  '' if not _problems else ': ' + _problems[0][:80]))
 
+    # a dead run must be able to say why it died: a status card reading
+    # `failed, rc=1` and nothing else is a directory nobody can rule out.
+    for _card in sorted(glob.glob(os.path.join('results', '*', '_meta.json'))):
+        _problems = _outputs.validate_file(_card)
+        check(not _problems, 'status card %s meets the meta contract%s'
+              % (os.path.basename(os.path.dirname(_card)),
+                 '' if not _problems else ': ' + _problems[0][:80]))
+
+    # the front door's figures cannot drift from the run they claim to draw
+    _figures = _city.path('docs', 'reference', 'figures', 'FIGURES.json')
+    if os.path.exists(_figures):
+        import subprocess as _sp
+        _rc = _sp.call([sys.executable,
+                        os.path.join('src', 'analyse', 'build_fit_figures.py'),
+                        '--check'], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
+        check(_rc == 0,
+              'docs/reference/figures/ is current with the calibrated base\'s run '
+              '(regenerate: python src/analyse/build_fit_figures.py)')
+    else:
+        check(False, 'docs/reference/figures/ has not been generated - the front '
+                     'door shows no modelled-against-observed figures '
+                     '(python src/analyse/build_fit_figures.py)', warn=True)
+
     # C1 is now GENERATED from the registry rather than mirrored against it
     # (DECISIONS.md 9.32). Until then these checks passed while the registry
     # reached nothing: `build_params.py` typed the same numbers in, so setting

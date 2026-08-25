@@ -668,12 +668,14 @@ against live GitHub state, and the six state-of-the-project answers. At
 session end, **run `/handoff`** to close out. The manual sequence, for a
 session without the skills:
 
-**For P4 specifically, read [`docs/handover/P4_CHECKPOINT.md`](handover/P4_CHECKPOINT.md)** —
-the long-form handoff: what has been measured and is true, the traps, the errors
-already made and how to drive the harness. **This file stays the source of truth
-for the phase board and the deliverable checklist**; the checkpoint does not
-repeat them. The dated build narrative is in
-[`docs/handover/SESSION_LOG.md`](handover/SESSION_LOG.md) — archive only.
+**Pick the work up from [`docs/handover/NEXT_AGENT_BRIEF.md`](handover/NEXT_AGENT_BRIEF.md)**,
+which `/handoff` rewrites in place every session. Two files under `handover/` are
+**archive only and must not be read as current state**: the dated build narrative
+in [`docs/handover/SESSION_LOG.md`](handover/SESSION_LOG.md), and
+[`docs/handover/P4_CHECKPOINT.md`](handover/P4_CHECKPOINT.md) — a frozen 12 August
+record, retired as a live document on 25 August (§9.80) because it duplicated
+this board and `DECISIONS.md` and had drifted from both. **This file stays the
+source of truth for the phase board and the deliverable checklist.**
 
 1. Read this file, then [`DECISIONS.md`](DECISIONS.md) §0 (status summary) and
    [`CLAUDE.md`](../../../.claude/CLAUDE.md) (conventions and hard constraints).
@@ -681,9 +683,13 @@ repeat them. The dated build narrative is in
 3. `python src/setup/bootstrap_toolchain.py --verify` — confirms the toolchain and
    **compiles the Java**, or run it without `--verify` to fetch it (~1.4 GiB).
 4. `python tests/check_package.py` — needs the full local package, the built networks
-   **and** the P3 demand artefacts. **It cannot pass until the harvest above is
-   re-run.** Run it before declaring any phase complete.
+   **and** the P3 demand artefacts, so it runs on a workstation and never in CI.
+   Run it before declaring any phase complete.
 5. `python src/registry/render_docs.py` and `python src/registry/render_schema.py` after
-   any change to `cities/<city>/registry/`, or
-   `check_package.py` will report the reference as stale.
-6. Branch as `<git-handle>/<short-kebab-description>` (never `claude/*`).
+   any change to `cities/<city>/registry/`, and
+   `python src/analyse/build_fit_figures.py` after a new calibrated base, or
+   `check_package.py` will report the reference or the figures as stale.
+6. `python tests/check_doc_currency.py --strict` and
+   `python src/registry/check_hardcoding.py --strict` — both gate CI and both
+   must exit 0 before any commit.
+7. Branch as `<git-handle>/<short-kebab-description>` (never `claude/*`).

@@ -22,10 +22,12 @@ src/city.py             resolves which city's inputs a run reads - the ONLY modu
 src/build/              generic layer construction: network, population, plans, run inputs
 src/run/                the run harness
 src/calibrate/          fit statistic, calibration loop, report generator
-src/analyse/            metric extraction, live run view, replay
+src/analyse/            metric extraction, fit figures, live run view, replay
 src/registry/           the registry resolver, its validators and the contract generators
-src/java/citysim/       MATSim entry point: parking charging, ride availability, telemetry
-tests/                  check_manifest.py (CI) and check_package.py (local, full package)
+src/java/citysim/       MATSim entry point: parking, fares, ride pairing, telemetry
+src/java_signals/citysim/  the signals entry point and its tram/bus priority controller
+tests/                  check_manifest.py, check_doc_currency.py, check_city_agnostic.py
+                        (CI) and check_package.py (local, full package)
 config/schema/          THE PORTABLE CONTRACT - see below
 cities/<city>/          one city's everything, including its own docs
 ```
@@ -49,8 +51,12 @@ must supply, so a new city fails a check rather than failing halfway through a b
 | [`layers.json`](../config/schema/layers.json) | which city-relative artefacts the framework will ask for, found by reading its own `city.path(...)` calls | `python src/registry/render_schema.py` |
 
 Plus [`outputs/`](../config/schema/outputs/) — the schemas a run's own records must
-satisfy: the run record, the resolved config snapshot, the metrics, the fit and the
-summary.
+satisfy: the status card (`_meta.json`), the run record, the resolved config
+snapshot, the per-iteration progress digest, the metrics, the fit and the summary.
+They are checked at WRITE time, so a malformed record fails where it is produced.
+Two of those rules are about meaning rather than shape: a fit block must name the
+targets it was computed over, and **a run that died must say why** — a status card
+reading `failed, rc=1` and nothing else is a directory nobody can rule out.
 
 ```bash
 python src/registry/check_city.py --all       # every city, against all of the above
@@ -60,13 +66,25 @@ python src/registry/render_schema.py --check  # the generated halves are not sta
 ## Two rules that keep this honest
 
 1. **A generated document is never edited by hand.** `required_fields.json`,
-   `layers.json`, and each city's `CONFIG_REFERENCE.md`, `DATA_DICTIONARY.md` and
-   `CALIBRATION_REPORT.md` are outputs of committed scripts. `check_package.py`
-   re-runs `render_docs.py --check` and fails on drift.
+   `layers.json`, and each city's `CONFIG_REFERENCE.md`, `DATA_DICTIONARY.md`,
+   `CALIBRATION_REPORT.md` and `docs/reference/figures/` are outputs of committed
+   scripts. `check_package.py` re-runs `render_docs.py --check` and
+   `build_fit_figures.py --check` and fails on drift.
+
+   **And a number written into a hand-authored document is a claim about an
+   artefact.** `tests/check_doc_currency.py` pins every live figure in the front
+   door and the board to the artefact that decides it, over each city's own
+   `tests/doc_currency.json`, and bans named statements that the artefacts have
+   made false. `--strict` gates CI. A DATED RECORD is exempt and frozen; only
+   live-state cells are pinned.
 2. **A framework that names one city is not a framework.** `check_city.py` reads
    every framework source file looking for the selected city's name and the names in
    its boundary selector, and reports each hit. That count is meant to go down, and
    it is reported rather than suppressed because the repository still has instances.
 
-**Nothing in this repository is a result.** No scenario has been run to a reportable
-state — see [`cities/newcastle/docs/STATUS.md`](../cities/newcastle/docs/STATUS.md).
+**No counterfactual has been run, and nothing here is a finding about any city's
+intervention.** The base model has run and been measured; that measurement is a
+calibration diagnostic, drawn on the front page of
+[`../README.md`](../README.md) and set out in full in each city's calibration
+report — see [`cities/newcastle/docs/STATUS.md`](../cities/newcastle/docs/STATUS.md)
+for the board.

@@ -52,7 +52,11 @@ artefact or a run record. Where evidence is missing, the answer is the word
    calibration targets — per-mode modelled / observed / error, occupancy, trip
    geometry, counts, patronage — labelled pre- or post-calibration and
    diagnostics or results. **If no valid run exists, say so.** Never infer a
-   result from the inputs.
+   result from the inputs. **And never state an error against a target the fit
+   marked unscorable**: `_fit.json`'s `unscorable` list carries the reason each
+   one identifies nothing, so a modelled level beside such an observation is a
+   level, not an error. The patronage comparison was quoted as an error through
+   three briefs before anyone read the reason.
 5. **Issue ledger.** Totals filed / closed / open, and per open issue: what it
    tracks, its last evidence date, and whether it needs evaluation, updating, or is
    queued work.
@@ -86,6 +90,15 @@ These expire by nature — the list is not exhaustive:
 | Which local/remote branches survive | `git branch -a` · `git status` |
 | Whether an approval is still valid | **approvals are spent on use** — assume none stands |
 | Any documented count | `python tests/check_doc_currency.py --strict` |
+| Whether the front door draws the current base | `python src/analyse/build_fit_figures.py --check` |
+| Whether a dead run can say why it died | `python src/run/run_failure.py --check` |
+
+**A GitHub-derived count belongs in §0 and nowhere else.** "28 merged PRs", "10
+open issues", "45 run directories" are the expiring class by construction, and a
+brief that also states one in §6 or §9 has made a settled claim out of a
+perishable one. Write it once, in §0, beside its command; let the later sections
+point at §0. (Breached by the seventh-session brief, which said 28 merged PRs in
+§6 and was wrong before its reader finished the environment gate.)
 
 ## The brief's required shape
 

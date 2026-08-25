@@ -122,6 +122,15 @@ def _semantic_errors(kind, doc):
             total = sum(pct.values())
             if abs(total - 100.0) > 0.5:
                 errors.append('mode_share.target_lga_pct sums to %.2f, not 100.' % total)
+    if kind == 'meta':
+        # Enforced here as well as in the schema, because jsonschema is optional
+        # and this rule is about meaning: a run record that says a run died and
+        # cannot say why is exactly the artefact that made three failed probes
+        # uninterpretable a session later.
+        if doc.get('status') in ('failed', 'aborted') and not doc.get('cause'):
+            errors.append('a %s run carries no cause: a dead run must say why it '
+                          'died, read from its own log (src/run/run_failure.py).'
+                          % doc.get('status'))
     if kind == 'run':
         if doc.get('rc') == 0 and not doc.get('config_snapshot'):
             errors.append('a completed run carries no config_snapshot: it cannot state what '

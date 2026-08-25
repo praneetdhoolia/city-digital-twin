@@ -2,35 +2,79 @@
 
 A city-agnostic transport digital-twin framework, applied first as a counterfactual
 microsimulation of the **Newcastle (NSW) light rail** — MATSim end to end, for the
-five-LGA regional demand model and the corridor alike (SUMO was descoped 25 Aug 2026:
-MATSim is the single simulator, DECISIONS.md §9.74). (Renamed from the earlier
-Newcastle-specific repository name, 24 Aug 2026: the framework models any city; one
-city's study lives under `cities/<city>/`.)
-It exists because that estimate was never produced and the business case is not
-inspectable.
+five-LGA regional demand model and the corridor alike.
 
-> **Nothing in this repository is a result.** No scenario has been run to a reportable
-> state. The network, the mapped schedules, the synthetic population,
-> the activity chains and the 30 assembled scenario × day-type run-input sets are all
-> **inputs**. See [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) for the board and the next action.
+The NSW Auditor-General found that the light rail's benefits were never estimated
+against the alternatives that were available in 2013. This repository builds the
+model that would answer that question, and holds itself to a stricter standard of
+disclosure than the business case it examines: **every value that was not observed
+is declared, given a sweep range, and recorded with the reason it was chosen.**
+
+> **No counterfactual has been run, and nothing here is a finding about the light
+> rail.** The base model *has* run and been measured — that measurement is
+> [below](#does-it-reproduce-the-city-not-yet), and it is a calibration diagnostic,
+> not a result. See [`STATUS.md`](cities/newcastle/docs/STATUS.md) for the board and
+> the next action.
 
 ---
+
+## What it models
+
+Every person-transport mode is **physically simulated or explicitly priced** — none
+is a share assumed at the outset — and every corridor mechanism that a light rail
+imposes on the street is represented rather than netted out.
+
+| Modes | How |
+|---|---|
+| Car, motorbike | Physical on the road network, with parking charged on arrival |
+| Vehicle passenger (`ride`) | A passenger **physically in a driver's car**, paired to a real household or escort trip; unpaired demand re-modes rather than teleporting |
+| Freight (`truck`) | Physical, at declared PCE, seeded from each cordon station's own observed heavy-vehicle share |
+| Bus, heavy rail, light rail, ferry | Scheduled transit on the mapped GTFS, **scored as distinct submodes** so a bus and a tram are not interchangeable in route choice |
+| Bike, walk | Physical on the active network, with gradient and directional walk-speed factors |
+| Taxi / rideshare | One blended priced mode on the published 2025 fares, checked against an inferred trips-per-day band as a **constraint, never a target** |
+
+| Corridor mechanisms | How |
+|---|---|
+| Traffic signals | **Explicit signal control at the 14 corridor intersections** — generated phase plans, declared minimum greens and saturation flows, run on MATSim's signals contrib. The real SCATS phasing was refused (see [below](#what-could-not-be-obtained)), so the plans are declared and swept, never presented as observed |
+| Transit priority | Green extension with a declared priority budget and repayment, keyed to the **tram** in the light-rail scenarios and to the **bus** in the bus-priority counterfactual |
+| Level crossings | Freight-train closures at two named crossings, as time-varying link capacity |
+| Light rail charging dwell | Native, concurrent with boarding — the wire-free design's cost in run time |
+| Lane, kerbside and turn changes | Per scenario, patched onto the network by OSM way id |
+
+Ten scenarios (S0–S6, including three S2 variants) × three day types give the **30
+assembled run-input sets**. The light rail's road-space externality is present in
+the same run as the tram: a model that simulated the tram without the lane loss
+would report a gain that the street never saw.
+
+---
+
+## Set it up
+
+```bash
+pip install requests pandas numpy shapely pyproj lxml geopandas pyogrio rasterio openpyxl
+python src/setup/bootstrap_toolchain.py             # JDK 25, pt2matsim 26.6, Maven -> .tools/
+python src/setup/bootstrap_toolchain.py --run-stack # + the MATSim signals run stack
+python tests/check_manifest.py                      # the committed subset is intact
+```
+
+Python 3.11+. The toolchain is ~1.4 GiB, gitignored, and **pinned by sha256** —
+`--verify` re-checks the digests and compiles the Java without downloading. Signal
+runs need the `--run-stack` half: the signals contrib is not in the shaded jar and
+must never share a classpath with it. **A toolchain change is a model change.**
 
 ## Run a scenario
 
 ```bash
 python run.py --list        # what is runnable: scenarios, day types, run overlays
 python run.py --dry-run     # resolve every input, print it, execute nothing
-python run.py               # the DEFAULT run: S2, weekday, 25% sample, 1000 iterations
 python run.py --run-config smoke   # a plumbing test: 1% sample, 2 iterations
+python run.py --detach      # the DEFAULT arm: S2, weekday, 25% sample, 1000 iterations
 ```
 
-The default arm is a **multi-hour run**, and how many hours depends on the model it
-runs: [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) carries the
-measured seconds-per-iteration for each stack under *Measured run costs*. Read it
-before launching, and launch detached with `--detach`.
-
-A real run names its own overlay, or its own iteration count:
+**The default arm is a multi-hour run** — tens of hours, and how many depends on the
+model it runs. [`STATUS.md`](cities/newcastle/docs/STATUS.md) carries the measured
+seconds-per-iteration for each stack under *Measured run costs*; read it before
+launching, and launch with `--detach`.
 
 ```bash
 python run.py --run-config ride_fix_10pct
@@ -38,51 +82,99 @@ python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000
 ```
 
 **The runner names the run directory** —
-`results/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct`, e.g.
-`results/20260821T175907_1000it_25pct` — so every run is dated, sortable and
-self-describing. Re-invoking with the same parameters resumes the completed run
-(identity is the parameter set in `_run.json`, not the name); `--force` starts a
-fresh directory and overwrites nothing.
+`results/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct` — so every run is
+dated, sortable and self-describing. Re-invoking with the same parameters resumes
+the completed run (identity is the parameter set in `_run.json`, not the name);
+`--force` starts a fresh directory and overwrites nothing.
 
 | Flag | What it does |
 |---|---|
-| `--scenario` | `S0`–`S6` (default `S2`). `--list` shows which have assembled inputs |
+| `--scenario` | `S0`–`S6` and the S2 variants (default `S2`). `--list` shows which have assembled inputs |
 | `--day` | `WEEKDAY`, `SAT` or `SUN` |
 | `--run-config TAG` | a committed run overlay — **the reproducible way to vary a run** |
 | `--fraction` `--iterations` `--threads` `--xmx` `--seed` | registry overrides, checked against each field's declared sweep |
 | `--set KEY=VALUE` | a raw MATSim config override, e.g. `ride.constant=-3.4` |
+| `--detach` | launch past `PersonPrepareForSim` and return; the run outlives the shell |
 | `--dry-run` `--list` `--no-metrics` `--force` | resolve-only, list, skip metric extraction, ignore an existing run record |
 
-**`run.py` still does not invent an iteration count in code.**
-`RUN.controler.last_iteration` is declared `unobtained` in the registry — 100 and 250
-are both *measured* to be too low and no justified value has been established — so a
-bare `python run.py` falls back to the committed `default_25pct` overlay: 25% sample,
-1,000 iterations (the `DECISIONS.md` §9.7 working horizon), selected as a named sweep
-member with its provenance in the overlay file, and announced by a banner that says
-the count stays provisional until issue #5 re-measures relaxation. Nothing it
-produces is a result until the model has a calibrated base. The refusal is still the
-house style: the point value lives in a committed, justified overlay, never in the
-script.
+**`run.py` does not invent an iteration count in code.**
+`RUN.controler.last_iteration` is declared in the registry, so a bare `python run.py`
+falls back to the committed `default_25pct` overlay — a named sweep member with its
+provenance in the overlay file, not a number in a script.
 
 After a run:
 
 ```bash
-python src/analyse/run_view.py --run results/<name>   # live + replay view, congestion map
-python src/run/prune_run.py --run results/<name>      # reclaim the per-iteration output
+python src/analyse/extract_metrics.py --run results/<name>
+python src/calibrate/fit.py           --run results/<name>   # calibration half only
+python src/analyse/run_view.py        --run results/<name>   # live + replay, congestion map
+python src/analyse/build_run_index.py                        # results/INDEX.md
+python src/run/prune_run.py           --run results/<name>   # reclaim per-iteration output
 ```
 
-### Before the first run
+A run without `_run.json` is not a result, and a run under 250 iterations is a
+plumbing probe, never evidence.
+
+---
+
+## Does it reproduce the city? Not yet
+
+The figures below are drawn by
+[`src/analyse/build_fit_figures.py`](src/analyse/build_fit_figures.py) from the run
+the calibrated base was written from — `20260821T175907_1000it_25pct`, S2 × WEEKDAY,
+25% sample, 1,000 iterations, comparability family `F4-walk-wedge`. They are a
+**pre-calibration diagnostic of the base arm**, they predate the ride and walk
+repairs now in the model, and they compare no scenario against any other.
+
+**Mode share** — the only block that carries the fit statistic. Of 67 calibration
+targets, **35 are scored** and 32 could not be, each with a stated reason; mean
+absolute error over the five scored mode shares is **10.65 percentage points**.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_mode_share.dark.svg">
+  <img alt="Modelled against observed mode share: vehicle driver +14.19 pp, vehicle passenger -20.51 pp, walk -6.12 pp, public transport +4.42 pp, bike +8.01 pp" src="cities/newcastle/docs/reference/figures/fit_mode_share.light.svg">
+</picture>
+
+Two errors dominate and both are structural rather than a matter of tuning: the
+model puts almost nobody in a car as a passenger, and it walks too little. Both
+have since been repaired in the inputs and **neither repair has been measured** —
+that is what the next arm is for.
+
+**Trip length** — a constraint, checked and reported, never fitted to. **1 of 5**
+modes falls inside its observed range.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_trip_length.dark.svg">
+  <img alt="Modelled mean trip length against the observed range, by mode: only ride falls inside its range" src="cities/newcastle/docs/reference/figures/fit_trip_length.light.svg">
+</picture>
+
+**Traffic counts** — scored and reported, deliberately **not** optimised against:
+tuning the network to these would compensate for whatever the model is still
+missing rather than diagnose it. Across **30** count stations the mean error is
+**-91.8%**, and **6** stations model to zero. The residual is unexplained and
+tracked as an open issue.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_counts.dark.svg">
+  <img alt="Modelled against observed weekday traffic counts on log axes: every station falls below the line of perfect agreement" src="cities/newcastle/docs/reference/figures/fit_counts.light.svg">
+</picture>
+
+**On light rail patronage.** The arm puts the light rail at **1,260** weekday
+boardings. The nearest published observation — 3,417 boardings/day — is the
+March 2019 to February 2020 market, and `fit.py` **refuses to score it**: PT mode
+share roughly halved between that vintage and the 2024/25 base the model calibrates
+to, so the difference between the two numbers is not an error statistic. It is
+recorded as unscored, with the reason, in
+[`FIGURES.json`](cities/newcastle/docs/reference/figures/FIGURES.json).
+
+Full rows, every unscorable target and the parameter provenance:
+[`CALIBRATION_REPORT.md`](cities/newcastle/docs/audit/CALIBRATION_REPORT.md).
+Regenerate the figures and the report together after a new arm:
 
 ```bash
-pip install requests pandas numpy shapely pyproj lxml geopandas pyogrio rasterio openpyxl
-python src/setup/bootstrap_toolchain.py     # JDK 25, pt2matsim 26.6, Maven 3.9.9 -> .tools/
-python src/setup/bootstrap_toolchain.py --run-stack   # + the MATSim signals run stack (signal runs only)
-python tests/check_manifest.py              # the committed subset is intact
+python src/analyse/build_fit_figures.py          # --check verifies they are current
+python src/calibrate/report.py --run <run dir>
 ```
-
-Python 3.11+. The toolchain is ~1.4 GiB, gitignored, and **pinned by sha256** —
-`--verify` re-checks the digests and compiles the Java entry point without downloading.
-A toolchain change is a model change.
 
 ---
 
@@ -104,11 +196,11 @@ A toolchain change is a model change.
 
 Every derived file above is regenerable from the immutable raw downloads by a
 committed script, and every one is listed in the manifest with its hash, row count,
-producing script, source, licence and retrieval date. Two checks stand behind that
-claim: `python tests/check_manifest.py` verifies the committed subset and runs in CI,
-and `python tests/check_package.py` verifies the full package locally, where the bulk
-data actually is. [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md)
-holds the procedure and the current state of the build.
+producing script, source, licence and retrieval date. Three checks stand behind that
+claim: `tests/check_manifest.py` verifies the committed subset in CI,
+`tests/check_package.py` verifies the full package locally where the bulk data
+actually is, and `tests/check_doc_currency.py` verifies that the numbers written into
+this page still equal the artefacts they describe.
 
 ---
 
@@ -118,12 +210,13 @@ holds the procedure and the current state of the build.
 |---|---|
 | [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) | **The board** — phase state, deliverables, next action. Read first |
 | [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) | **Every value that is not observed**, with its rationale and sweep range. Start at its own index |
+| [`cities/newcastle/docs/design/newcastle-lr-proposal.md`](cities/newcastle/docs/design/newcastle-lr-proposal.md) | The research design: hypotheses, identification strategy, deliverables |
 | [`docs/README.md`](docs/README.md) | The **framework's** documentation and the portable input contract |
-| [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Conventions and hard constraints for anyone (human or agent) changing this repo |
+| [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repo |
 
-**Read [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) before using any of this.** It records
-every assumed value, its sweep range, and four corrections to premises stated in the
-research proposal.
+**Read [`DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) before using any of
+this.** It records every assumed value, its sweep range, and five corrections to
+premises stated in the research proposal.
 
 ---
 
@@ -140,10 +233,12 @@ src/city.py                  resolves which city's inputs a run reads
 src/build/                   layer construction (the reproduction pipeline)
 src/run/                     the run harness
 src/calibrate/               fit and calibration
-src/analyse/                 metrics, run view, replay
+src/analyse/                 metrics, figures, run view, replay
 src/registry/                the registry resolver, validators and docs generator
-tests/                       check_manifest.py + check_doc_currency.py (CI),
-                             check_package.py (local, the full package)
+src/java/citysim/            MATSim entry point: parking, fares, ride pairing, telemetry
+src/java_signals/citysim/    the signals entry point and its tram/bus priority controller
+tests/                       check_manifest.py, check_doc_currency.py,
+                             check_city_agnostic.py (CI); check_package.py (local)
 results/                     run outputs (gitignored)
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
@@ -179,7 +274,7 @@ downloads, seeded (`20260810`) and deterministic — with one measured exception
 **pt2matsim's schedule mapping is not reproducible run to run**. About 18% of transit
 route link sequences differ between identical builds while 100% of stop-to-link
 assignments hold, so **any scenario comparison must use a single build of the network**
-([`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) §3.5).
+([`DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) §3.5).
 
 ```bash
 # --- acquisition (network-bound, ~2 GiB) ---
@@ -213,7 +308,8 @@ python cities/newcastle/build/build_validation_targets.py
 # --- P2 network build (needs the toolchain) ---
 python cities/newcastle/build/build_corridor_road_attributes.py
 python src/build/build_matsim_network.py        # MATSim network + 15 mapped schedules
-python cities/newcastle/build/build_matsim_signals.py    # explicit corridor signal data (#73)
+python cities/newcastle/build/build_matsim_signals.py    # explicit corridor signal data
+python cities/newcastle/build/build_level_crossings.py   # level-crossing closure events
 
 # --- P3 demand synthesis (needs the P2 build above) ---
 python src/build/measure_network_factors.py     # C2: detour factor, day-type split
@@ -243,19 +339,25 @@ in anything published. Per-file provenance is in
 
 ---
 
-## What is not here
+## What could not be obtained
 
-Three inputs the research design named as critical could not be obtained from open
-sources. **They are handled by parameter sweep, never pinned to a point value:**
+Three inputs the research design named as critical are not available from open
+sources. **Each is handled by parameter sweep and never pinned to a point value** —
+the model runs the mechanism, and the headline is reported as a band across the
+range rather than as a single number:
 
-- **SCATS signal phasing** — refused by TfNSW policy. Corridor run time swings 38%
-  between no priority and full priority; the largest single uncertainty in the model.
-- **Journey-linked Opal** — needed to *estimate* the transfer penalty rather than sweep
-  it across 3–15 minutes.
-- **Measured charging dwell** — assumed 20 s per intermediate stop, worth 11% of
-  end-to-end run time.
+- **SCATS signal phasing** — **refused by TfNSW policy**, documented and citable.
+  The published inventory gives each signal's identity, location and install date;
+  no phase plan, cycle time or split. The corridor's signals are therefore modelled
+  explicitly from *declared* plans, and corridor run time swings 38% between no
+  priority and full priority — the largest single uncertainty in the model.
+- **Journey-linked Opal** — not published. Estimating the transfer penalty needs
+  tap-on/tap-off *timing*; every Opal source held is a monthly aggregate and the
+  stop-level tap data is holdout. Swept across 3–15 minutes.
+- **Measured charging dwell** — no published figure. Swept, never pinned.
 
 Also absent: pedestrian counts (none published for Newcastle — hypothesis B1 has no
 observable without them), frontage-level retail floorspace and vacancy, parking meter
 transactions, and a 2014 timetable to validate the era-1 reconstruction. The full list
-and priority order is in [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) §13.
+and priority order is in
+[`DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) §13.

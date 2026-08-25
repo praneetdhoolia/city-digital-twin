@@ -1,0 +1,184 @@
+{
+  "generated_by": "src/analyse/build_fit_figures.py",
+  "note": "Regenerate; do not edit. Carries no wall-clock stamp: the provenance is the run, and the run does not move.",
+  "run": {
+    "directory": "20260821T175907_1000it_25pct",
+    "tag": "phys1000a_25pct",
+    "family": "F4-walk-wedge",
+    "scenario": "S2",
+    "day": "WEEKDAY",
+    "fraction": 0.25,
+    "iterations": 1000,
+    "state": "pre-calibration diagnostic of the base arm; not a scenario comparison and not a finding about the intervention"
+  },
+  "targets": {
+    "available": 67,
+    "scored": 35,
+    "unscored": 32
+  },
+  "mode_share": {
+    "mean_abs_pp": 10.65,
+    "n_scored": 5,
+    "rows": [
+      {
+        "hts_category": "Vehicle driver",
+        "matsim_mode": "car+motorbike",
+        "modelled_pct": 73.19,
+        "observed_pct": 59.0,
+        "error_pp": 14.19,
+        "target_id": "V204"
+      },
+      {
+        "hts_category": "Vehicle passenger",
+        "matsim_mode": "ride",
+        "modelled_pct": 0.09,
+        "observed_pct": 20.6,
+        "error_pp": -20.51,
+        "target_id": "V205"
+      },
+      {
+        "hts_category": "Walk only",
+        "matsim_mode": "walk",
+        "modelled_pct": 7.28,
+        "observed_pct": 13.4,
+        "error_pp": -6.12,
+        "target_id": "V207"
+      },
+      {
+        "hts_category": "Public transport",
+        "matsim_mode": "pt",
+        "modelled_pct": 8.22,
+        "observed_pct": 3.8,
+        "error_pp": 4.42,
+        "target_id": "V203"
+      },
+      {
+        "hts_category": "Other",
+        "matsim_mode": "bike",
+        "modelled_pct": 11.21,
+        "observed_pct": 3.2,
+        "error_pp": 8.01,
+        "target_id": "V202"
+      }
+    ]
+  },
+  "trip_length_constraint": {
+    "geography": "Newcastle LGA, both trip ends",
+    "modes_inside_observed_range": 1,
+    "modes": [
+      {
+        "mode": "pt",
+        "modelled_km": 10.4002,
+        "observed_km": 23.4,
+        "observed_sweep_km": [
+          15.9,
+          24.5
+        ],
+        "inside_observed_range": false,
+        "ratio": 0.4445
+      },
+      {
+        "mode": "car",
+        "modelled_km": 10.9357,
+        "observed_km": 10.2,
+        "observed_sweep_km": [
+          6.6,
+          10.8
+        ],
+        "inside_observed_range": false,
+        "ratio": 1.0721
+      },
+      {
+        "mode": "ride",
+        "modelled_km": 7.8432,
+        "observed_km": 9.8,
+        "observed_sweep_km": [
+          5.6,
+          9.8
+        ],
+        "inside_observed_range": true,
+        "ratio": 0.8003
+      },
+      {
+        "mode": "bike",
+        "modelled_km": 8.6151,
+        "observed_km": 5.2,
+        "observed_sweep_km": [
+          3.1,
+          5.2
+        ],
+        "inside_observed_range": false,
+        "ratio": 1.6567
+      },
+      {
+        "mode": "walk",
+        "modelled_km": 5.5612,
+        "observed_km": 0.7,
+        "observed_sweep_km": [
+          0.7,
+          1.1
+        ],
+        "inside_observed_range": false,
+        "ratio": 7.9446
+      }
+    ]
+  },
+  "occupancy_constraint": {
+    "modelled_passenger_per_driver": 0.0013,
+    "observed": 0.3503,
+    "observed_sweep": [
+      0.2493,
+      0.394
+    ],
+    "inside_observed_range": false,
+    "modelled_vehicle_occupancy": 1.0013,
+    "note": "a constraint, not a validation target; it is not counted in any fit statistic"
+  },
+  "counts_constraint": {
+    "stations": 30,
+    "mean_pct_error": -91.8,
+    "mean_abs_pct_error": 92.7,
+    "modelled_zero_stations": 6
+  },
+  "not_scored": {
+    "intervention_boardings": {
+      "modelled_per_weekday": 1260,
+      "scored": false,
+      "unscored_targets": {
+        "V001": {
+          "metric": "lr_boardings_monthly_mean",
+          "period": "2019-03..2020-02",
+          "reason": "Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023)"
+        },
+        "V002": {
+          "metric": "lr_boardings_daily_mean",
+          "period": "2019-03..2020-02",
+          "reason": "Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023)"
+        },
+        "V003": {
+          "metric": "lr_boardings_monthly_mean",
+          "period": "2025-07..latest",
+          "reason": "monthly total: needs WEEKDAY, SAT and SUN runs composed over a calendar month. A single day-type run cannot be compared with it"
+        },
+        "V023": {
+          "metric": "bus_boardings_monthly_mean",
+          "period": "2019-03..2020-02",
+          "reason": "Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023)"
+        },
+        "V024": {
+          "metric": "lr_share_of_local_pt_boardings",
+          "period": "2019-03..2020-02",
+          "reason": "Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023)"
+        }
+      }
+    }
+  },
+  "figures": [
+    "fit_counts.dark.svg",
+    "fit_counts.light.svg",
+    "fit_mode_share.dark.svg",
+    "fit_mode_share.light.svg",
+    "fit_trip_length.dark.svg",
+    "fit_trip_length.light.svg"
+  ]
+}

@@ -60,6 +60,8 @@ python src/setup/bootstrap_toolchain.py --verify   # ~2 min, compiles both class
 python tests/check_manifest.py
 python src/registry/check_hardcoding.py --strict   # must exit 0
 python tests/check_doc_currency.py --strict        # must exit 0
+python src/run/run_failure.py --check              # every dead run says WHY it died
+python src/analyse/build_fit_figures.py --check    # the front door draws the current base
 ```
 
 Then establish, by measurement rather than assumption:
@@ -92,6 +94,8 @@ tired:
 
 ```bash
 python tests/check_doc_currency.py     # every pinned live figure vs its artefact
+python src/run/run_failure.py --check  # a dead run that cannot say why it died
+python src/analyse/build_fit_figures.py --check   # figures vs the calibrated base
 ```
 
 A `PATTERN NOT FOUND` result means a document was reworded and a claim needs
@@ -110,6 +114,14 @@ Then the classes no checker covers yet:
 - **An open PR** that should merge or close before new work starts.
 - **A "done" task with no measurement** — done is not evaluated, and the plan
   distinguishes them.
+- **A number in the brief that GitHub disagrees with.** Counts of merged PRs, open
+  issues and run directories expire; the contract puts them in §0 with their
+  re-derive command, and any that leaked into §6 or §9 as settled prose is a
+  finding to report.
+- **A living document that duplicates the board or the record.** Both figures the
+  doc-currency gate exists for began this way - one table in two files. If you find
+  a second home for a fact, say so; the fix is to freeze or retire the copy, not to
+  refresh it.
 
 Each gap goes in the briefing. **Fixing them is scoped work the user decides on, not
 something to do silently during onboarding.**
@@ -124,6 +136,13 @@ would settle it.
 Verify as you go rather than transcribing: for question 4, read the fit artefact
 itself (`results/<run>/_fit.json`) rather than the brief's summary of it — that is
 where a mode's number is either confirmed or found stale.
+
+**Check what the fit REFUSED to score before quoting any comparison.** A target in
+`_fit.json`'s `unscorable` list carries the reason it identifies nothing, and a
+modelled level set beside such an observation is not an error statistic. The
+patronage figure is the standing example: the model's boardings against a
+pre-pandemic vintage was quoted as "-63%" through three briefs before anyone
+opened the reason (§9.80).
 
 ## Phase 5 — The constraints that invalidate work
 

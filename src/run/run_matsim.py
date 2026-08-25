@@ -48,6 +48,7 @@ import registry  # noqa: E402
 sys.path.insert(0, os.path.join(HERE, '..', 'build'))
 import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
+import run_failure  # noqa: E402
 import summarise_run  # noqa: E402
 from registry import outputs  # noqa: E402
 
@@ -548,7 +549,7 @@ def _pid_alive(pid):
         return False
 
 
-def mark_dead(run_dir, status, rc=None, wall_s=None):
+def mark_dead(run_dir, status, rc=None, wall_s=None, cause=None):
     """Record a run's death in its metadata and rename it aborted_<name>.
 
     The prefix is a label so a person scanning `results/` can disregard the
@@ -556,8 +557,25 @@ def mark_dead(run_dir, status, rc=None, wall_s=None):
     in `_meta.json`. If the rename loses to a Windows directory lock (a
     `tail -f` monitor is enough to hold one), the metadata still carries the
     truth and the rename is reported, not raised.
+
+    IT ALSO RECORDS WHY. A card that says `failed, rc=1` and nothing else leaves
+    the reason with whoever happened to be watching; three 25 August probe
+    failures reached the next session as directories that could not explain
+    themselves. The cause is READ FROM THE RUN'S OWN LOG (`run_failure.py`), so
+    it is evidence rather than recollection. Where the caller knows something
+    the log cannot - an interrupt, a dead harness - that is the headline and the
+    log's last word is kept beside it.
     """
-    update_meta(run_dir, status=status, ended=_now(), rc=rc, wall_s=wall_s)
+    found = run_failure.diagnose(run_dir, status, rc)
+    from_log = found.pop('cause')
+    changes = dict(status=status, ended=_now(), rc=rc, wall_s=wall_s,
+                   cause=cause or from_log)
+    if cause and from_log:
+        found['log_says'] = from_log
+    detail = {k: v for k, v in found.items() if v not in (None, [], '')}
+    if detail:
+        changes['cause_detail'] = detail
+    update_meta(run_dir, **changes)
     parent, name = os.path.split(os.path.abspath(run_dir))
     if name.startswith('aborted_'):
         return run_dir
@@ -593,7 +611,10 @@ def reconcile_stale():
             continue
         if doc.get('pid') and _pid_alive(doc['pid']):
             continue
-        dead = mark_dead(run_dir, 'aborted')
+        dead = mark_dead(run_dir, 'aborted',
+                         cause='the harness that launched this run is no longer '
+                               'running and the run never reported an end; '
+                               'settled by a later harness invocation')
         print('reconciled: %s claimed to be running under a dead harness; '
               'marked aborted -> %s' % (os.path.basename(run_dir),
                                         os.path.basename(dead)), flush=True)
@@ -720,7 +741,9 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         # Ctrl+C or a harness kill that still unwinds: record the abort and
         # rename before propagating. A kill this except cannot see is settled
         # by reconcile_stale() on the next invocation.
-        mark_dead(run_dir, 'aborted', wall_s=round(time.time() - t0, 1))
+        mark_dead(run_dir, 'aborted', wall_s=round(time.time() - t0, 1),
+                  cause='the harness was interrupted before MATSim returned '
+                        '(Ctrl+C, or a kill this process still unwound)')
         raise
     wall = time.time() - t0
     if rc != 0:

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="378" viewBox="0 0 760 378" font-family='-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' role="img" aria-label="Trip length against the observed range">
+<text x="20" y="38" font-size="15" fill="#e6edf3" font-weight="600">Mean trip length - modelled against the observed range</text>
+<text x="20" y="52" font-size="11.5" fill="#9198a1">Newcastle LGA, both trip ends. 1 of 5 modes fall inside their observed range.</text>
+<text x="20" y="67" font-size="11.5" fill="#9198a1">A CONSTRAINT, checked and reported: it is never fitted to and enters no fit statistic.</text>
+<rect x="20" y="79" width="11" height="11" fill="#6cb6ff" rx="2"/>
+<text x="37" y="88" font-size="11.5" fill="#e6edf3">modelled</text>
+<rect x="90" y="79" width="11" height="11" fill="#f0883e" rx="2"/>
+<text x="107" y="88" font-size="11.5" fill="#e6edf3">observed mean</text>
+<rect x="192" y="79" width="11" height="11" fill="#2a313c" rx="2"/>
+<text x="209" y="88" font-size="11.5" fill="#e6edf3">observed range</text>
+<line x1="196" y1="106" x2="196" y2="346" stroke="#3d444d" stroke-width="1"/>
+<text x="196" y="361" font-size="11.5" fill="#9198a1" text-anchor="middle">0 km</text>
+<line x1="306" y1="106" x2="306" y2="346" stroke="#3d444d" stroke-width="1"/>
+<text x="306" y="361" font-size="11.5" fill="#9198a1" text-anchor="middle">6.25 km</text>
+<line x1="416" y1="106" x2="416" y2="346" stroke="#3d444d" stroke-width="1"/>
+<text x="416" y="361" font-size="11.5" fill="#9198a1" text-anchor="middle">12.5 km</text>
+<line x1="526" y1="106" x2="526" y2="346" stroke="#3d444d" stroke-width="1"/>
+<text x="526" y="361" font-size="11.5" fill="#9198a1" text-anchor="middle">18.75 km</text>
+<line x1="636" y1="106" x2="636" y2="346" stroke="#3d444d" stroke-width="1"/>
+<text x="636" y="361" font-size="11.5" fill="#9198a1" text-anchor="middle">25 km</text>
+<text x="20" y="123" font-size="13" fill="#e6edf3" font-weight="600">pt</text>
+<text x="20" y="138" font-size="11.5" fill="#ff8189">OUTSIDE observed range</text>
+<rect x="475.84" y="115" width="151.36" height="18" fill="#2a313c" rx="3"/>
+<line x1="607.84" y1="115" x2="607.84" y2="133" stroke="#f0883e" stroke-width="2.5"/>
+<circle cx="379.04" cy="124" r="5" fill="#6cb6ff"/>
+<text x="740" y="123" font-size="13" fill="#ff8189" text-anchor="end" font-weight="600">10.40 km</text>
+<text x="740" y="138" font-size="11.5" fill="#9198a1" text-anchor="end">x0.44 observed</text>
+<text x="20" y="169" font-size="13" fill="#e6edf3" font-weight="600">car</text>
+<text x="20" y="184" font-size="11.5" fill="#ff8189">OUTSIDE observed range</text>
+<rect x="312.16" y="161" width="73.92" height="18" fill="#2a313c" rx="3"/>
+<line x1="375.52" y1="161" x2="375.52" y2="179" stroke="#f0883e" stroke-width="2.5"/>
+<circle cx="388.47" cy="170" r="5" fill="#6cb6ff"/>
+<text x="740" y="169" font-size="13" fill="#ff8189" text-anchor="end" font-weight="600">10.94 km</text>
+<text x="740" y="184" font-size="11.5" fill="#9198a1" text-anchor="end">x1.07 observed</text>
+<text x="20" y="215" font-size="13" fill="#e6edf3" font-weight="600">ride</text>
+<text x="20" y="230" font-size="11.5" fill="#9198a1">inside observed range</text>
+<rect x="294.56" y="207" width="73.92" height="18" fill="#2a313c" rx="3"/>
+<line x1="368.48" y1="207" x2="368.48" y2="225" stroke="#f0883e" stroke-width="2.5"/>
+<circle cx="334.04" cy="216" r="5" fill="#6cb6ff"/>
+<text x="740" y="215" font-size="13" fill="#e6edf3" text-anchor="end" font-weight="600">7.84 km</text>
+<text x="740" y="230" font-size="11.5" fill="#9198a1" text-anchor="end">x0.80 observed</text>
+<text x="20" y="261" font-size="13" fill="#e6edf3" font-weight="600">bike</text>
+<text x="20" y="276" font-size="11.5" fill="#ff8189">OUTSIDE observed range</text>
+<rect x="250.56" y="253" width="36.96" height="18" fill="#2a313c" rx="3"/>
+<line x1="287.52" y1="253" x2="287.52" y2="271" stroke="#f0883e" stroke-width="2.5"/>
+<circle cx="347.63" cy="262" r="5" fill="#6cb6ff"/>
+<text x="740" y="261" font-size="13" fill="#ff8189" text-anchor="end" font-weight="600">8.62 km</text>
+<text x="740" y="276" font-size="11.5" fill="#9198a1" text-anchor="end">x1.66 observed</text>
+<text x="20" y="307" font-size="13" fill="#e6edf3" font-weight="600">walk</text>
+<text x="20" y="322" font-size="11.5" fill="#ff8189">OUTSIDE observed range</text>
+<rect x="208.32" y="299" width="7.04" height="18" fill="#2a313c" rx="3"/>
+<line x1="208.32" y1="299" x2="208.32" y2="317" stroke="#f0883e" stroke-width="2.5"/>
+<circle cx="293.88" cy="308" r="5" fill="#6cb6ff"/>
+<text x="740" y="307" font-size="13" fill="#ff8189" text-anchor="end" font-weight="600">5.56 km</text>
+<text x="740" y="322" font-size="11.5" fill="#9198a1" text-anchor="end">x7.94 observed</text>
+</svg>
