@@ -11,6 +11,7 @@ describes one city's study rather than the framework.
 | [`../README.md`](../README.md) | **The only document at the repo root.** Install, run a scenario, reproduce a city's package |
 | [`../.claude/CLAUDE.md`](../.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repository |
 | **this file** | What the framework is, and where the portable input contract lives |
+| [`HANDOVER_CONTRACT.md`](HANDOVER_CONTRACT.md) | **How a session opens and closes**: the trust order, the six state-of-the-project questions, the facts that expire between writing a handover and reading one, and the environment gate. One definition, read by both the `/onboard` and `/handoff` skills |
 | [`../cities/newcastle/docs/`](../cities/newcastle/docs/) | The Newcastle light rail study: `STATUS.md` (board), `DECISIONS.md` (every value that is not observed), `design/`, `audit/`, `handover/`, `reference/` |
 
 ## What the framework is

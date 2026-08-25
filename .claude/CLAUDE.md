@@ -78,6 +78,16 @@ more transparent about its assumptions than the business case it examines.
   in [`data/MANIFEST.csv`](../cities/newcastle/data/MANIFEST.csv) with its hash, row count, producing script,
   source, licence and retrieval date. Regenerate the manifest
   (`python src/build/build_manifest.py`) whenever a data artefact changes.
+- **A number in a living document is part of the change that moved it.** If your
+  change alters a count a document states — manifest rows, registry fields, network
+  edges, agents, assembled sets — fix that document **in the same commit**, and run
+  `python tests/check_doc_currency.py --strict`. It is not a courtesy: the front-door
+  `README.md` spent nine days and three phases advertising a 376-row manifest against
+  489 on disk, a 210-field registry against 356, a road network 7,070 edges short, and
+  a warning that the OSM harvest still had to be run after it had been run. Every one
+  of those was correct when written, and none was wrong in a way a reader could see.
+  **The distinction the check is built on: a DATED RECORD is frozen and must never be
+  rewritten to keep a check green; a LIVE-STATE CELL must equal its artefact today.**
 - **Determinism.** Everything synthetic is seeded (`20260810`). Do not introduce
   unseeded randomness, wall-clock dependence or dict/set-ordering dependence into a build
   script.
@@ -205,15 +215,33 @@ more transparent about its assumptions than the business case it examines.
 | `python tests/check_manifest.py` | CI (`.github/workflows/test.yml`) + local | committed files only |
 | `python -m compileall -q src tests` | CI | nothing |
 | JSON validity of provenance / scenario / params files | CI | nothing |
-| `python src/registry/check_hardcoding.py` | local, **before every commit** | committed files only |
+| `python src/registry/check_hardcoding.py --strict` | **CI** + local, before every commit | committed files only |
+| `python tests/check_doc_currency.py --strict` | **CI** + local, before every commit | committed files only |
+| `python src/registry/check_city.py --all` · `render_schema.py --check` | CI | nothing |
+| `python tests/check_city_agnostic.py` | CI | nothing |
 | `python tests/check_package.py` | **local only** | the full ~2.3 GiB package |
 
 **`check_hardcoding.py` is the ledger for the rule above it: every value declared,
 nothing decided in a script.** It reports declared-but-unwired fields, config
 template literals, numeric constants in the build layer, and coordinates typed
-into code. It reports rather than fails by default — the count is currently **95**
-and is worked down, not silenced. `--strict` exits 1 and is the eventual gate.
-**If your change adds an item, the change is not finished.**
+into code. **It is at 0, `--strict` gates CI, and it stays at 0** — an item is
+worked down, never silenced. **If your change adds an item, the change is not
+finished.**
+
+**`check_doc_currency.py` is the same refusal pointed at prose: a number written
+into a living document is a claim about an artefact, and it must still be true.**
+It pins each live-state figure in `README.md` and `STATUS.md` to the artefact that
+decides it — the manifest, the registry, a zone layer, a build report — and fails
+when the two disagree. The claims are city-owned
+([`cities/<city>/tests/doc_currency.json`](../cities/newcastle/tests/doc_currency.json));
+the harness names no city, document or number.
+
+**Only LIVE-STATE cells are pinned; the record is deliberately exempt.** A dated
+`DECISIONS.md` §14 row saying *"manifest 436"* is history and must never be
+rewritten to keep a check green — that would be the reproducibility rule running
+backwards. If your change moves an artefact, the document that describes it moves
+in the same commit; if a claim's pattern stops matching because you reworded the
+line, re-aim the claim rather than deleting it.
 
 CI deliberately runs nothing that downloads a source dataset or executes a scenario:
 those depend on ABS/TfNSW/Overpass availability and on compute, not on the diff. Run

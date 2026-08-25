@@ -21,9 +21,14 @@ inspectable.
 ```bash
 python run.py --list        # what is runnable: scenarios, day types, run overlays
 python run.py --dry-run     # resolve every input, print it, execute nothing
-python run.py               # the DEFAULT run: S2, weekday, 25% sample, 1000 iterations (~16 h)
+python run.py               # the DEFAULT run: S2, weekday, 25% sample, 1000 iterations
 python run.py --run-config smoke   # a plumbing test: 1% sample, 2 iterations
 ```
+
+The default arm is a **multi-hour run**, and how many hours depends on the model it
+runs: [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) carries the
+measured seconds-per-iteration for each stack under *Measured run costs*. Read it
+before launching, and launch detached with `--detach`.
 
 A real run names its own overlay, or its own iteration count:
 
@@ -34,7 +39,7 @@ python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000
 
 **The runner names the run directory** —
 `results/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct`, e.g.
-`results/20260821T220310_1000it_25pct` — so every run is dated, sortable and
+`results/20260821T175907_1000it_25pct` — so every run is dated, sortable and
 self-describing. Re-invoking with the same parameters resumes the completed run
 (identity is the parameter set in `_run.json`, not the name); `--force` starts a
 fresh directory and overwrites nothing.
@@ -85,21 +90,25 @@ A toolchain change is a model change.
 
 | | |
 |---|---|
-| Files in the manifest | **376** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
+| Files in the manifest | **489** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
 | Package on disk | ~4.7 GB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
-| Population | 611,915 (2021 Census) → 612,680 synthetic agents |
-| Road network | 43,112 edges, 9,207 km, gradient-attached |
-| Active network | 35,653 edges, 6,325 km, directional walk-speed factors |
+| Population | 611,915 (2021 Census) → 612,687 synthetic agents |
+| Road network | 50,182 edges, 11,434 km, gradient-attached |
+| Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 210 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
+| Input registry | 356 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
-⚠ **`networks/osm/` is currently empty.** The issue #32 re-harvest has not been re-run,
-so `tests/check_package.py` cannot pass and the manifest carries 376 files rather than
-386. [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) holds the procedure and the checks.
+Every derived file above is regenerable from the immutable raw downloads by a
+committed script, and every one is listed in the manifest with its hash, row count,
+producing script, source, licence and retrieval date. Two checks stand behind that
+claim: `python tests/check_manifest.py` verifies the committed subset and runs in CI,
+and `python tests/check_package.py` verifies the full package locally, where the bulk
+data actually is. [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md)
+holds the procedure and the current state of the build.
 
 ---
 
@@ -133,11 +142,12 @@ src/run/                     the run harness
 src/calibrate/               fit and calibration
 src/analyse/                 metrics, run view, replay
 src/registry/                the registry resolver, validators and docs generator
-tests/                       check_manifest.py (CI) and check_package.py (local)
+tests/                       check_manifest.py + check_doc_currency.py (CI),
+                             check_package.py (local, the full package)
 results/                     run outputs (gitignored)
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 210 declared values, with units, provenance, sweeps
+  registry/                  the 356 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

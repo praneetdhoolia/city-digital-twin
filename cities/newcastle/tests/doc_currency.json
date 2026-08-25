@@ -1,0 +1,175 @@
+{
+  "description": "Newcastle's LIVE-STATE documentation claims - the CITY-OWNED half of tests/check_doc_currency.py. Each entry pins one number written into a document to the artefact that decides it, so a figure cannot silently outlive the thing it describes. A second city supplies its own copy at cities/<city>/tests/doc_currency.json; the harness in tests/ names no city, no document and no number.",
+
+  "what_belongs_here": "ONLY live-state cells - a table row or sentence that must equal the artefact TODAY. A dated record is frozen and must never be claimed: DECISIONS.md 14 saying 'manifest 436' on 24 August is history, and STATUS.md's dated task rows are the same. Claiming a record would force the project to rewrite its own past to keep a check green, which is the exact opposite of the reproducibility rule.",
+
+  "why_these_two_documents": "README.md is the front door and STATUS.md is the board - both are long-lived, both are read for current state, and both drifted. NEXT_AGENT_BRIEF.md is deliberately absent: /handoff rewrites it wholesale every session, so pinned patterns there would break by design and train readers to ignore the check. The brief's numbers are covered because /handoff sources them from STATUS.md, which is checked.",
+
+  "claims": [
+    {
+      "id": "readme.manifest-files",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Files in the manifest \\| \\*\\*([\\d,]+)\\*\\*",
+      "truth": { "kind": "manifest_files" },
+      "note": "regenerate with python src/build/build_manifest.py (inside the normalise_eol sandwich)"
+    },
+    {
+      "id": "readme.synthetic-agents",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\u2192 ([\\d,]+) synthetic agents",
+      "truth": { "kind": "json_number", "file": "demand/population/_population_report.json", "key": "persons" },
+      "note": "B1's own report is the source; the census total beside it is an input, not a claim about the build"
+    },
+    {
+      "id": "readme.road-edges",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Road network \\| ([\\d,]+) edges",
+      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A1_road_edges.csv" },
+      "note": "grew at the issue #32 re-harvest; the pre-rebuild figure survived in prose for nine days"
+    },
+    {
+      "id": "readme.active-edges",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Active network \\| ([\\d,]+) edges",
+      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A6_footway_edges.csv" }
+    },
+    {
+      "id": "readme.registry-fields",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Input registry \\| ([\\d,]+) controllable fields",
+      "truth": { "kind": "registry_fields" },
+      "note": "every registry addition moves this; regenerate CONFIG_REFERENCE.md in the same change"
+    },
+    {
+      "id": "readme.registry-fields-repo-map",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "the ([\\d,]+) declared values, with units",
+      "truth": { "kind": "registry_fields" },
+      "note": "the same count restated in the repo map - the duplication is why it drifted"
+    },
+    {
+      "id": "readme.validation-targets",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Validation \\| ([\\d,]+) targets",
+      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/validation/validation_targets.csv" },
+      "note": "the 67/143 split inside this total is PRE-REGISTERED and must never move"
+    },
+    {
+      "id": "readme.core-sa1",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Zones \\| ([\\d,]+) core SA1",
+      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "core" }
+    },
+    {
+      "id": "readme.external-sa1",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Zones \\| [\\d,]+ core SA1 \\+ ([\\d,]+) external SA1",
+      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "external" }
+    },
+    {
+      "id": "readme.core-dzn",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "external SA1, ([\\d,]+) core DZN",
+      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_DZN.csv", "column": "zone_tier", "value": "core" }
+    },
+    {
+      "id": "readme.osm-harvest-not-run",
+      "kind": "absent",
+      "doc": "README.md",
+      "pattern": "networks/osm/`? is currently empty|re-harvest has not been re-run",
+      "reason": "The issue #32 re-harvest RAN on 16 August 2026 and #32 is closed: networks/osm/ holds its 10 layers and check_package.py passes. This warning told every new reader the package was broken for nine days after it was fixed."
+    },
+
+    {
+      "id": "status.data-package-files",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Open data package \\|[^|]*?\\*\\*([\\d,]+)\\*\\* files",
+      "truth": { "kind": "manifest_files" },
+      "note": "proposal 8 deliverable 2; drifted to 376 while the manifest held 489"
+    },
+    {
+      "id": "status.synthetic-agents",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\u2192 ([\\d,]+) synthetic agents",
+      "truth": { "kind": "json_number", "file": "demand/population/_population_report.json", "key": "persons" },
+      "note": "STATUS carried 612,680 here and 612,687 in its own P3 phase row - the board disagreed with itself"
+    },
+    {
+      "id": "status.road-edges",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Road network \\| ([\\d,]+) edges",
+      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A1_road_edges.csv" }
+    },
+    {
+      "id": "status.active-edges",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Active network \\| ([\\d,]+) edges",
+      "truth": { "kind": "manifest_artefact_rows", "path": "data/processed/network/A6_footway_edges.csv" }
+    },
+    {
+      "id": "status.core-sa1",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Zones \\| ([\\d,]+) core SA1",
+      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "core" }
+    },
+    {
+      "id": "status.external-sa1",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Zones \\| [\\d,]+ core SA1 \\+ ([\\d,]+) external SA1",
+      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_SA1.csv", "column": "zone_tier", "value": "external" }
+    },
+    {
+      "id": "status.core-dzn",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "external SA1, ([\\d,]+) core DZN",
+      "truth": { "kind": "csv_value_count", "file": "data/processed/zones/zones_DZN.csv", "column": "zone_tier", "value": "core" }
+    },
+    {
+      "id": "status.p1-raw-downloads",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\*\\*([\\d,]+) immutable raw downloads\\*\\*",
+      "truth": { "kind": "manifest_files", "path_prefix": "data/raw/" },
+      "note": "P1's OWN delivery. The row used to claim the whole-package total (391), which later phases grew past."
+    },
+    {
+      "id": "status.run-input-sets",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Run inputs assembled \\| \\*\\*([\\d,]+)\\*\\*",
+      "truth": { "kind": "path_count", "glob": "scenarios/matsim/*/*", "dirs_only": true },
+      "note": "scenario x day-type; 10 scenarios x 3 day types"
+    },
+    {
+      "id": "status.registry-fields",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "\\| Input registry \\| \\*\\*([\\d,]+) fields\\*\\*",
+      "truth": { "kind": "registry_fields" }
+    },
+    {
+      "id": "status.osm-harvest-pending",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "layers pending the #32 re-harvest",
+      "reason": "Issue #32 is CLOSED and the re-harvest ran 16 August 2026 - STATUS's own P1 phase row records it. The deliverable row went on describing the package as incomplete."
+    }
+  ]
+}

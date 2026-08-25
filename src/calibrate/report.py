@@ -73,11 +73,23 @@ def section_scope(w, fits):
       '**four mode-share degrees of freedom**, one patronage level, and the '
       'counts.\n' % (f['scored'], f['calibration_targets_available'],
                      f['calibration_targets_available']))
+    # The reason recorded here was superseded once and must not silently revert.
+    # §9.14/§9.15 justified leaving counts unfitted by the ABSENCE of a through
+    # tier; §9.41 then built one at the cordon's own observed volumes, which
+    # retires that reason. §9.64 measured the counts again on the first converged
+    # all-physical arm and they did not move (-91.8% against bind1000_25pct's
+    # -91.05%), so the decision stands on a DIFFERENT footing now: an unexplained
+    # residual, not a known-absent tier. Stating the old reason after the fix
+    # would credit the model with a diagnosis nobody has made.
     w('\n**Traffic counts are scored and reported here but were not optimised '
-      'against.** DECISIONS.md §9.14 and §9.15: the external tier carries no '
-      'boundary through traffic, so every boundary-adjacent count is biased low '
-      'by construction, and tuning the core network against them would '
-      'compensate for demand the model does not contain.\n')
+      'against.** The original reason (DECISIONS.md §9.14, §9.15) was that the '
+      'external tier carried no boundary through traffic, so boundary-adjacent '
+      'counts were biased low by construction. §9.41 added that through tier at '
+      'the cordon\'s own observed volumes, and §9.64 re-measured: the count '
+      'error did not move. The residual is therefore **unexplained**, and '
+      'tuning the core network against these stations would compensate for '
+      'whatever the model is still missing rather than diagnose it. They stay a '
+      'reported constraint, never a target.\n')
 
 
 def section_runs(w, fits, tags):
