@@ -154,8 +154,6 @@ SEED_MODE_SPLIT_INFORMED = _seed_table('B.mode.seed_split_informed')
 SERVE_TOUR_SEED = CFG.get('B.mode.serve_tour_seed')
 BOUND_PASSENGER_SEED = CFG.get('B.mode.bound_passenger_seed')
 EMPTY_SET = frozenset()
-HTS_FILE = _city.path('data/processed/hts/hts_mode.csv')
-HTS_YEAR = '2024/25'
 HTS_TARGET_LGA = _city.target_lga()
 
 
@@ -177,21 +175,26 @@ def hts_mode_share():
     the one a fit is computed against; the unlinked one is kept only because it
     is what the P3 seed was compared to, and dropping it would make that
     comparison unreproducible.
+
+    Read through the city's reader-shape adapter (issue #62 A5): the survey's
+    own labels and vintage spelling live in
+    cities/<city>/extract/reader_shapes.py, and this function sees only the
+    declared mode categories of config/schema/reader_shapes.json.
     """
-    h = pd.read_csv(HTS_FILE)
-    h = h[(h['FINANCIAL_YEAR'] == HTS_YEAR) & (h['geography'] == 'lga')].copy()
-    h['mode'] = (h['TRAVEL_MODE'].str.replace('*', '', regex=False)
-                 .str.strip().str.lower())
-    t = h.groupby('mode')['TRIPS_BY_MODE'].sum()
-    tot = t.sum()
-    unlinked = {'car': 100 * t['vehicle driver'] / tot,
-                'ride': 100 * t['vehicle passenger'] / tot,
-                'walk': 100 * (t['walk only'] + t['walk linked']) / tot,
-                'pt': 100 * t['public transport'] / tot,
+    table = _city.readers().mode_share_table()
+    t = collections.Counter()
+    for r in table:
+        t[r['mode_category']] += r['trips'] or 0.0
+    tot = sum(t.values())
+    unlinked = {'car': 100 * t['car_driver'] / tot,
+                'ride': 100 * t['car_passenger'] / tot,
+                'walk': 100 * (t['walk_only'] + t['walk_linked']) / tot,
+                'pt': 100 * t['public_transport'] / tot,
                 'bike_other': 100 * t['other'] / tot}
-    n = h[h['area_name'] == HTS_TARGET_LGA].set_index('mode')['MODE_SHARE']
-    linked = {'car': float(n['vehicle driver']), 'ride': float(n['vehicle passenger']),
-              'walk': float(n['walk only']), 'pt': float(n['public transport']),
+    n = {r['mode_category']: r['linked_share_pct'] for r in table
+         if r['area_name'] == HTS_TARGET_LGA}
+    linked = {'car': float(n['car_driver']), 'ride': float(n['car_passenger']),
+              'walk': float(n['walk_only']), 'pt': float(n['public_transport']),
               'bike_other': float(n['other'])}
     return ({k: round(v, 2) for k, v in unlinked.items()},
             {k: round(v, 2) for k, v in linked.items()})

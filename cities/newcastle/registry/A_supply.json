@@ -420,8 +420,7 @@
       "matsim_param": "tramPriority.priorityGroupId",
       "description": "Which signal group the priority controller serves and watches for detections - the stage that carries the priority-detected transit vehicle. 'tram' for the light-rail variants (trams run on their own intervention-mode links with their own T-aspect group); 'corridor' for the BRT variant, whose buses run in the corridor car lanes so the priority stage IS the corridor stage and detection fires for every scheduled transit vehicle entering a corridor approach (link-level bus priority - the BRT trunk and any local bus on the same approach, which is what a link-level detector would see). Structural per scenario, set by the scenario overlay; not a tunable.",
       "consumers": [
-        "src/java/citysim/TramPriorityConfigGroup.java",
-        "src/java_signals/citysim/TramPriorityController.java"
+        "src/java/citysim/TramPriorityConfigGroup.java"
       ]
     },
     "A.signals.tsp.extension_window_s": {

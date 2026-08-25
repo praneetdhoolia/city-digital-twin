@@ -278,6 +278,19 @@ def identity_referenced_keys(fields):
     return found
 
 
+def descriptor_referenced_keys():
+    """Field keys the city DESCRIPTOR names in its `unobtained` block.
+
+    check_city.py and the package checks read those keys through the
+    descriptor rather than spelling them in Python (issue #62 B4: the
+    unobtained list is the city's declaration, not a framework constant) - so
+    a key named there is wired through a declaration, exactly as
+    schema_referenced_keys() treats param_config.json.
+    """
+    return {u.get('field') for u in _city.descriptor().get('unobtained', [])
+            if u.get('field')}
+
+
 # --------------------------------------------------------------------------
 # Fields DECLARED AHEAD OF THE CODE THAT WILL CONSUME THEM, each named against
 # the phase or issue that will wire it.
@@ -305,10 +318,11 @@ PENDING_CONSUMER = {
         'the constraint that would enforce it is not adopted: eqasim\'s '
         'PassengerConstraint is a trip-level biconditional that consults no '
         'driver, and adopting it would pin the ride share to the B2 seed',
-    'D.retail.vacancy_rate':
-        'P6, and UNOBTAINED. Hypothesis B2 depends on it, no frontage-level '
-        'retail audit is published for the corridor, so it is swept rather '
-        'than pinned and nothing consumes it before P6',
+    # D.retail.vacancy_rate left this register when the descriptor's
+    # unobtained block became the wiring route (issue #62 B4): it is declared
+    # unobtained in city.json exactly as the SCATS phasing and journey-linked
+    # Opal are, and carries the same handling - swept, never pinned. Nothing
+    # consumes it before P6 (hypothesis B2), which its DECISIONS record states.
 }
 
 TOOL_BINDINGS = ('matsim_param',
@@ -791,12 +805,16 @@ def audit():
             pass
     fields, _ = _registry.load_registry()
     uses = key_uses(corpus, set(fields))
-    # Two more ways a field reaches the model without its key being spelled in
-    # Python: named by the portable config schema, or named as an input to
-    # another field's declared derived_from identity.
+    # Three more ways a field reaches the model without its key being spelled
+    # in Python: named by the portable config schema, named as an input to
+    # another field's declared derived_from identity, or named by the city
+    # descriptor's own unobtained declaration (read via city.descriptor()).
     for key in schema_referenced_keys() | identity_referenced_keys(fields):
         if key in fields:
             uses.setdefault(key, set()).add('config/schema/param_config.json')
+    for key in descriptor_referenced_keys():
+        if key in fields:
+            uses.setdefault(key, set()).add('<city>/city.json')
     reaching, inert, error = config_reach()
     defects, owned = report_only(fields, uses)
     led = dict(

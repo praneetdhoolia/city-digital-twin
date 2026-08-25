@@ -104,6 +104,25 @@ def check_descriptor(city_dir, name):
     return doc
 
 
+def _expand_units(units, doc):
+    """Expand the contract's {currency}/{base_year} tokens with THIS city's own.
+
+    The generated contract tokenises the reference city's currency and base
+    year out of its unit strings (issue #62 B5), so a candidate city is held to
+    its OWN declared denomination - EUR_2030_per_hour for a EUR/2030 city -
+    rather than to the reference city's. A token this city cannot expand
+    (no `currency` in its city.json) is left in place, so the comparison
+    fails loudly instead of comparing against a half-expanded string.
+    """
+    if not isinstance(units, str) or not doc:
+        return units
+    if doc.get('currency'):
+        units = units.replace('{currency}', doc['currency'])
+    if doc.get('base_year') is not None:
+        units = units.replace('{base_year}', str(doc['base_year']))
+    return units
+
+
 def check_fields(city_dir, name, doc):
     """Every required key is declared, with the right units and value type."""
     required = read_json(os.path.join(SCHEMA_DIR, 'required_fields.json'))['fields']
@@ -146,10 +165,12 @@ def check_fields(city_dir, name, doc):
               % (name, len(extra), ', '.join(extra[:5])), note=True)
 
     bad_units = [k for k in sorted(set(required) & set(fields))
-                 if fields[k].get('units') != required[k]['units']]
+                 if fields[k].get('units') != _expand_units(required[k]['units'],
+                                                            doc)]
     for k in bad_units[:10]:
         check(False, '%s: %s declared in %r, contract says %r'
-              % (name, k, fields[k].get('units'), required[k]['units']))
+              % (name, k, fields[k].get('units'),
+                 _expand_units(required[k]['units'], doc)))
     check(not bad_units, '%s: every field carries its contracted units' % name)
 
     # the registry's own rules: a swept source must carry a sweep
@@ -192,7 +213,25 @@ def check_overlays(city_dir, name, doc):
               '%s: day type %s has an overlay' % (name, d))
 
 
-def check_layers(city_dir, name):
+def _expand_layer_path(path, doc):
+    """A {scenario}/{day_type} template row to THIS city's own concrete paths.
+
+    The generated contract keys scenario- and day-stamped artefacts by token
+    (issue #62 A2); each city's declared vocabulary instantiates them, so the
+    presence report below speaks in the candidate city's scenarios rather than
+    the reference city's.
+    """
+    outs = [path]
+    if doc and '{scenario}' in path:
+        outs = [p.replace('{scenario}', s) for p in outs
+                for s in (doc.get('intervention') or {}).get('scenarios') or []]
+    if doc and '{day_type}' in path:
+        outs = [p.replace('{day_type}', d) for p in outs
+                for d in doc.get('day_types') or []]
+    return outs or [path]
+
+
+def check_layers(city_dir, name, doc):
     """Which contracted artefacts this city actually has.
 
     Absence is reported, not failed: a city part-way through its build is a
@@ -200,7 +239,14 @@ def check_layers(city_dir, name):
     until a re-harvest. What matters is that the list is explicit.
     """
     layers = read_json(os.path.join(SCHEMA_DIR, 'layers.json'))['artefacts']
-    concrete = {p: a for p, a in layers.items() if a['kind'] != 'pattern'}
+    concrete = {}
+    for p, a in layers.items():
+        if '{' in p:
+            for x in _expand_layer_path(p, doc):
+                if '{' not in x:
+                    concrete[x] = a
+        elif a['kind'] != 'pattern':
+            concrete[p] = a
     absent = sorted(p for p in concrete
                     if not os.path.exists(os.path.join(city_dir, p)))
     check(True, '%s: %d of %d contracted artefacts present'
@@ -339,7 +385,7 @@ def check_city(name):
     doc = check_descriptor(city_dir, name)
     check_fields(city_dir, name, doc)
     check_overlays(city_dir, name, doc)
-    check_layers(city_dir, name)
+    check_layers(city_dir, name, doc)
     check_no_cwd_relative_output(name)
     check_framework_is_city_free(name, doc)
 

@@ -86,9 +86,31 @@ def required_mode(field, modes):
 # --------------------------------------------------------------------------
 # required_fields.json
 # --------------------------------------------------------------------------
+def tokenise_units(units, desc):
+    """One city's currency and base year out of a portable unit string.
+
+    The reference city's registry declares `AUD_per_hour` and
+    `AUD_2026_per_hour`; baked into the contract they obliged every city to
+    denominate in AUD at base year 2026 (issue #62 B5). The city's declared
+    `currency` (city.json, ISO 4217) and `base_year` become `{currency}` and
+    `{base_year}` tokens, which check_city.py expands with EACH CANDIDATE
+    CITY'S OWN values - so a EUR/2030 registry passes its own contract with
+    exactly the same strictness.
+    """
+    if not isinstance(units, str):
+        return units
+    currency = desc.get('currency')
+    if currency:
+        units = re.sub(r'(?<![A-Za-z])%s(?![A-Za-z])' % re.escape(currency),
+                       '{currency}', units)
+    units = re.sub(r'(?<!\d)%d(?!\d)' % desc['base_year'], '{base_year}', units)
+    return units
+
+
 def build_fields():
     fields, origin = registry.load_registry()
-    modes = _city.descriptor().get('modes', [])
+    desc = _city.descriptor()
+    modes = desc.get('modes', [])
     out = {}
     for key in sorted(fields):
         f = fields[key]
@@ -96,7 +118,7 @@ def build_fields():
         mode = required_mode(f, modes)
         out[key] = {
             'layer': key.split('.')[0],
-            'units': f.get('units'),
+            'units': tokenise_units(f.get('units'), desc),
             'type': TYPES.get(type(value), 'unknown'),
             'source_in_reference_city': f.get('source'),
             'sweep_required': f.get('source') in SWEPT_SOURCES,
@@ -115,7 +137,11 @@ def build_fields():
                      'units and value type. A field whose source is measured, derived, '
                      'literature or assumed MUST additionally carry a sweep, a '
                      'held_fixed rule or a derived_from identity - field.schema.json '
-                     'enforces that, and check_city.py tests it.'),
+                     'enforces that, and check_city.py tests it. Unit strings carry '
+                     '{currency} and {base_year} tokens where the reference city\'s '
+                     'currency or base year appeared: each candidate city\'s own '
+                     'city.json values expand them, so a EUR/2030 registry passes '
+                     'its own contract (issue #62 B5).'),
         'no_prose': ("Field DESCRIPTIONS are deliberately absent. They are the "
                      "reference city's own wording and would put one city's prose - its "
                      "suburbs, its agencies, its datasets - inside the portable half of "
@@ -182,6 +208,74 @@ def framework_paths():
     return found, dynamic
 
 
+def _token_sub(text, tokens, placeholder):
+    """Replace any of `tokens` (whole, non-alphanumeric-bounded) in `text`."""
+    if not tokens:
+        return text
+    pat = '|'.join(re.escape(t) for t in sorted(tokens, key=len, reverse=True))
+    return re.sub(r'(?<![A-Za-z0-9])(?:%s)(?![A-Za-z0-9])' % pat,
+                  placeholder, text)
+
+
+def templated_path(rel_path, desc):
+    """A scenario- or day-stamped path to its template form (issue #62 A2).
+
+    `schedules/scenarios/S0.zip` is one city's scenario vocabulary baked into
+    the portable contract; the contract row is `schedules/scenarios/
+    {scenario}.zip`, instantiated by each city's own `intervention.scenarios`
+    (and `{day_type}` by its `day_types`). Longest id first, bounded by
+    non-alphanumerics, so `S2` cannot match inside `S2c`.
+    """
+    out = _token_sub(rel_path,
+                     (desc.get('intervention') or {}).get('scenarios') or [],
+                     '{scenario}')
+    return _token_sub(out, desc.get('day_types') or [], '{day_type}')
+
+
+def tokenise_columns(cols, desc):
+    """One city's identifiers out of a recorded reference header (issue #62 A2).
+
+    The zone-id column ({zone_id}), the projected-coordinate suffix
+    ({coord_suffix}), the currency code ({currency}, case-insensitive) and any
+    scenario id ({scenario}) become tokens a candidate city expands with its
+    own city.json declarations. Not tokenised - and so still the reference
+    city's naming: secondary zone levels (SA2_*), lowercase level names inside
+    compound columns (home_sa1), and agency vocabulary; the caveat says so.
+    """
+    zone_id = (desc.get('zone_system') or {}).get('id_column')
+    suffix = (desc.get('crs') or {}).get('coord_suffix')
+    currency = desc.get('currency')
+    scenarios = (desc.get('intervention') or {}).get('scenarios') or []
+    out = []
+    for c in cols:
+        if zone_id and c == zone_id:
+            out.append('{zone_id}')
+            continue
+        if suffix:
+            c = re.sub(r'(?<![A-Za-z0-9])%s(?![A-Za-z0-9])' % re.escape(suffix),
+                       '{coord_suffix}', c)
+        if currency:
+            c = re.sub(r'(?<![A-Za-z0-9])%s(?![A-Za-z0-9])'
+                       % re.escape(currency), '{currency}', c, flags=re.I)
+        c = _token_sub(c, scenarios, '{scenario}')
+        out.append(c)
+    return out
+
+
+def expand_template(path, desc):
+    """Every concrete path a template row names for THIS city."""
+    outs = [path]
+    if '{scenario}' in path:
+        outs = [p.replace('{scenario}', s) for p in outs
+                for s in (desc.get('intervention') or {}).get('scenarios') or []]
+    if '{day_type}' in path:
+        outs = [p.replace('{day_type}', d) for p in outs
+                for d in desc.get('day_types') or []]
+    # a city with no vocabulary for a token has no path to check - report the
+    # template itself (absent) rather than vacuous presence
+    return outs or [path]
+
+
 def columns_of(rel_path):
     """The header of the reference city's copy, if it has one and it is tabular."""
     full = _city.path(rel_path)
@@ -217,26 +311,48 @@ def build_layers():
                 'artefacts', {})
         except Exception:                                  # noqa: BLE001
             prior = {}
+    desc = _city.descriptor()
     found, dynamic = framework_paths()
-    artefacts = {}
+
+    # Scenario- and day-stamped reads collapse to ONE template row keyed by
+    # {scenario}/{day_type}: the row set is generated from the city's declared
+    # vocabulary rather than enumerating one city's (issue #62 A2).
+    grouped = {}
     for rel_path in sorted(found):
-        prev = prior.get(rel_path, {})
-        if any(ch in rel_path for ch in '*?%'):
+        key = templated_path(rel_path, desc)
+        g = grouped.setdefault(key, {'read_by': set(), 'concrete': []})
+        g['read_by'] |= found[rel_path]
+        g['concrete'].append(rel_path)
+
+    artefacts = {}
+    for key in sorted(grouped):
+        g = grouped[key]
+        prev = prior.get(key, {})
+        is_template = key != g['concrete'][0] or len(g['concrete']) > 1
+        if any(ch in key for ch in '*?%{'):
             kind = 'pattern'
-        elif os.path.exists(_city.path(rel_path)):
-            kind = 'directory' if os.path.isdir(_city.path(rel_path)) else 'file'
+        elif os.path.exists(_city.path(key)):
+            kind = 'directory' if os.path.isdir(_city.path(key)) else 'file'
         else:
             kind = prev.get('kind', 'file')
         entry = {
             'kind': kind,
-            'read_by': sorted(found[rel_path]),
+            'read_by': sorted(g['read_by']),
         }
-        cols = columns_of(rel_path)
+        if is_template:
+            entry['instantiated_by'] = (
+                'city.json intervention.scenarios / day_types: one artefact '
+                'per {scenario} / {day_type} value')
+        cols = None
+        for rel_path in g['concrete']:
+            cols = columns_of(rel_path)
+            if cols:
+                break
         if cols:
-            entry['columns_in_reference_city'] = cols
+            entry['columns_in_reference_city'] = tokenise_columns(cols, desc)
         elif prev.get('columns_in_reference_city'):
             entry['columns_in_reference_city'] = prev['columns_in_reference_city']
-        artefacts[rel_path] = entry
+        artefacts[key] = entry
     return {
         'generated_by': 'src/registry/render_schema.py',
         'generated_from': 'static reads of city.path(...) under src/ and tests/',
@@ -244,11 +360,20 @@ def build_layers():
                      'city-relative path, before the framework can run against it. '
                      'The producing script may be entirely different - that is what a '
                      'jurisdiction adapter is for - but the path and the columns the '
-                     'framework reads are the contract.'),
+                     'framework reads are the contract. Paths and columns carry '
+                     'tokens ({scenario}, {day_type}, {zone_id}, {coord_suffix}, '
+                     '{currency}) that each city expands with its OWN city.json '
+                     'declarations (intervention.scenarios, day_types, '
+                     'zone_system.id_column, crs.coord_suffix, currency) - the '
+                     'contract enumerates no city\'s vocabulary (issue #62 A2).'),
         'caveat': ('`columns_in_reference_city` is the header of the reference '
                    'city\'s own copy, not '
                    'a proven minimum: a column here may be incidental. Narrowing it to '
-                   'the columns framework code actually reads is not done. Recorded '
+                   'the columns framework code actually reads is not done, and the '
+                   'tokenisation is not complete either: secondary zone levels '
+                   '(SA2_*), lowercase level names inside compound columns '
+                   '(home_sa1) and agency vocabulary are still the reference '
+                   'city\'s naming. Recorded '
                    'when the reference artefact is on disk and carried forward from '
                    'the committed document when it is not, so the document '
                    'regenerates identically on a checkout without the bulk data. '
@@ -290,9 +415,13 @@ def main():
     fields, layers = build_fields(), build_layers()
     rc = write(FIELDS_OUT, fields, a.check) | write(LAYERS_OUT, layers, a.check)
     if not a.check:
-        # presence is a local report, never document content (see build_layers)
-        present = sum(1 for p in layers['artefacts']
-                      if os.path.exists(_city.path(p)))
+        # presence is a local report, never document content (see build_layers).
+        # A template row is present when EVERY path it expands to is.
+        desc = _city.descriptor()
+        present = sum(
+            1 for p in layers['artefacts']
+            if all(os.path.exists(_city.path(x))
+                   for x in expand_template(p, desc)))
         print('required_fields.json: %d fields (%s)'
               % (fields['n_fields'],
                  ', '.join('%s %d' % kv for kv in fields['n_by_layer'].items())))

@@ -1,0 +1,121 @@
+{
+  "description": "Newcastle's data-package expectations - the CITY-OWNED half of tests/check_package.py (issue #62 B4). The harness in tests/ carries the structural checks (referential integrity, GTFS validity, DTD validity, sweep discipline, registry rules); everything here is ONE CITY's expectation - a pre-registered number, an artefact list, a vocabulary token or a registry field key that another city would declare differently. A second city supplies its own copy of this file at cities/<city>/tests/package_expectations.json. Values were extracted verbatim from tests/check_package.py; the checks they parameterise are unchanged.",
+
+  "required_artefacts": {
+    "A1 road network": "data/processed/network/A1_road_edges.csv",
+    "A2 signals": "data/processed/network/A2_signal_nodes_osm.csv",
+    "A2 turn restrictions": "data/processed/network/A2_turn_restrictions_osm.csv",
+    "A2 corridor signal control": "data/processed/corridor/A2_signal_control_corridor.csv",
+    "A3 route extras": "data/processed/schedule_extras/A3_route_extras.csv",
+    "A3 stop extras": "data/processed/schedule_extras/A3_stop_extras.csv",
+    "A3 transfer extras": "data/processed/schedule_extras/A3_transfer_extras.csv",
+    "A4 vehicle spec": "data/processed/corridor/A4_vehicle_spec.csv",
+    "A4 dwell model": "data/processed/corridor/A4_stop_dwell_model.csv",
+    "A5 parking": "data/processed/landuse/A5_parking_facilities.csv",
+    "A6 active transport": "data/processed/network/A6_footway_edges.csv",
+    "B1 population": "demand/population/B1_synthetic_population.csv",
+    "B1 households": "demand/population/B1_households.csv",
+    "B2 activity trips (weekday)": "demand/plans/B2_activity_trips_WEEKDAY.csv",
+    "B2 activity trips (Saturday)": "demand/plans/B2_activity_trips_SAT.csv",
+    "B2 activity trips (Sunday)": "demand/plans/B2_activity_trips_SUN.csv",
+    "B5 counts": "data/processed/observed/traffic_aadt.csv",
+    "C1 parameters": "params/C1_behavioural_parameters.csv",
+    "C1 sweep grid": "params/C1_sensitivity_sweep_grid.csv",
+    "D1 frontages": "data/processed/landuse/D1_frontage_segments.csv",
+    "D1 POI": "data/processed/landuse/D1_poi.csv",
+    "D1 employment": "data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv",
+    "D1 zone attractions": "data/processed/landuse/D1_zone_attractions_SA1.csv",
+    "A1 corridor road edges": "data/processed/network/A1_corridor_road_edges.csv",
+    "A1 road variant patches": "data/processed/network/A1_road_variant_patches.csv",
+    "A2 turn restrictions resolved": "data/processed/network/A2_turn_restrictions_resolved.csv",
+    "E1 scenarios": "scenarios/E1_scenarios.csv",
+    "E1 road variants": "scenarios/E1_road_variants.csv",
+    "Validation targets": "data/processed/validation/validation_targets.csv",
+    "Manifest": "data/MANIFEST.json",
+    "Decisions log": "docs/DECISIONS.md",
+    "Data dictionary": "docs/reference/DATA_DICTIONARY.md"
+  },
+
+  "min_gtfs_feeds": 14,
+  "mapped_schedules": 15,
+
+  "validation_split": {
+    "calibration": 67,
+    "holdout": 143
+  },
+
+  "transfer_penalty_span_min": [3.0, 15.0],
+  "charging_dwell_grid_includes_zero": true,
+
+  "corridor_trunk_class": "corridor_trunk:base2026",
+
+  "intervention_line_tokens": {
+    "S0": null,
+    "S1": "S1SHUTTLE",
+    "S2": "lightrail",
+    "S2a": "lightrail",
+    "S2b": "lightrail",
+    "S2c": "lightrail",
+    "S3": "BRT",
+    "S4": "lightrail",
+    "S5": "lightrail",
+    "S6": null
+  },
+
+  "held_fixed_asc_fields": ["C.asc.light_rail", "C.asc.bus", "C.asc.rail"],
+
+  "c1_value_pairs": {
+    "C.transfer.beta_transfer_penalty_min": ["transfer_penalty", "base"],
+    "C.gradient.uphill_penalty_per_pct": ["weights", "beta_gradient_uphill", "base"],
+    "C.gradient.downhill_penalty_per_pct": ["weights", "beta_gradient_downhill", "base"],
+    "C.crowding.seated_multiplier": ["weights", "beta_crowding_seated", "base"],
+    "C.crowding.standing_multiplier": ["weights", "beta_crowding_standing", "base"],
+    "C.time_weights.beta_ivt": ["weights", "beta_ivt", "base"],
+    "C.time_weights.beta_wait": ["weights", "beta_wait", "base"],
+    "C.time_weights.beta_walk_access": ["weights", "beta_walk_access", "base"],
+    "C.time_weights.beta_walk_egress": ["weights", "beta_walk_egress", "base"],
+    "C.time_weights.beta_headway": ["weights", "beta_headway", "base"],
+    "C.time_weights.beta_reliability": ["weights", "beta_reliability", "base"]
+  },
+
+  "c1_asc_pairs": {
+    "C.asc.car_driver": "asc_car_driver",
+    "C.asc.car_passenger": "asc_car_passenger",
+    "C.asc.bus": "asc_bus",
+    "C.asc.light_rail": "asc_lr",
+    "C.asc.rail": "asc_rail",
+    "C.asc.walk": "asc_walk",
+    "C.asc.cycle": "asc_cycle"
+  },
+
+  "c1_sweep_pairs": {
+    "C.transfer.beta_transfer_penalty_min": ["transfer_penalty", "low", "high"],
+    "C.crowding.seated_multiplier": ["weights", "beta_crowding_seated"],
+    "C.crowding.standing_multiplier": ["weights", "beta_crowding_standing"],
+    "C.gradient.uphill_penalty_per_pct": ["weights", "beta_gradient_uphill"],
+    "C.gradient.downhill_penalty_per_pct": ["weights", "beta_gradient_downhill"],
+    "C.time_weights.beta_wait": ["weights", "beta_wait"],
+    "C.time_weights.beta_walk_access": ["weights", "beta_walk_access"],
+    "C.time_weights.beta_walk_egress": ["weights", "beta_walk_egress"],
+    "C.time_weights.beta_headway": ["weights", "beta_headway"],
+    "C.time_weights.beta_reliability": ["weights", "beta_reliability"]
+  },
+
+  "osm_default_pairs": [
+    ["A.road.lanes_default", "lanes_per_direction"],
+    ["A.road.speed_default", "speed_limit_kmh"],
+    ["A.active.footway_width_default", "footway_width_m"]
+  ],
+
+  "dwell_grid_field": "A.lightrail.dwell_sweep_grid",
+  "dwell_charging_field": "A.lightrail.dwell_charging_s",
+
+  "c4_trip_geometry_modes": ["car", "ride", "pt", "walk", "bike"],
+
+  "hts_rate_fallback_per_person_day": 3.473,
+
+  "parking_build_script": "build/build_landuse_parking.py",
+  "parking_section_marker": "A5 parking",
+  "parking_dead_zone_table": "PARK_ZONES",
+  "parking_dead_zone_names": ["cbd_core", "cbd_fringe", "honeysuckle", "beach_east"]
+}
