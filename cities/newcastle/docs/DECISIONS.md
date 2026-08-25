@@ -60,6 +60,7 @@ otherwise cost you an hour:
 | **Batch 4.7 built inert: crossings, dwell, signals, taxi, harness safety; the activation checklist** | **§9.76** — the overnight build record; ONE boundary; warm-restart validity ruling OPEN; detached launch verified (#70) |
 | **THE ACTIVATION BOUNDARY CROSSED: signals, crossings, dwell and taxi LIVE; family F6** | **§9.77** — the §9.76 checklist executed by directive; F5 closes UNMEASURED (recorded cost); the crossings-XML schema-order defect and the stale metrics line, both probe-caught; S3 bus-keyed priority via `A.signals.tsp.priority_group`; the 4.6.9 arm becomes an F6 arm, approval still required |
 | **The runless lanes closed: Tier C submodes, 0b upgrades, the corridor answer, the sex-structure finding** | **§9.78** — PT submodes score-distinct via raptor mode mapping (bytecode-verified; the main-mode-identifier crash pre-empted); seven 0b source moves incl. CWANZ bike 0.493 (plans regenerated inside F6); COVERAGE carries the bus-over-tram composition (98.3% of corridor demand needs an interchange the buses don't); modelled mode split sex-invariant vs G62's real structure; the TIA sweep EMPTY; #66's capture armed |
+| **The documents drifted from the artefacts; document currency becomes a gate** | **§9.79** - `README.md` three phases stale (manifest 376 vs 489, registry 210 vs 356, road edges 43,112 vs 50,182) and two statements outright false; the cause was DUPLICATION; new `tests/check_doc_currency.py` + city-owned `doc_currency.json` pin every live figure to its artefact and gate CI; `docs/HANDOVER_CONTRACT.md` de-duplicates the two skills; **dated records stay frozen**; the superseded counts attribution becomes #82 |
 | **Level crossings (freight-road interactions)** | §9.70 designed; **§9.76 built** — derived from OSM barrier tags, Stewart Avenue exclusion asserted, swept never pinned (#68) |
 | **Run directories are named by the runner, never by hand** | **§9.65** — `<launch>_<iterations>it_<pct>pct` (standing directive 24 Aug); `--tag` removed; resume matches the recorded parameter set, not the name; all 35 existing directories renamed, mapping in the entry |
 | **Every run carries an auto-updated status card; dead runs are `aborted_<name>`** | **§9.66** — `_meta.json` (status/started/ended/parameters, schema-checked) written at launch and updated at every transition; a dead run is renamed `aborted_<launch>_<iterations>it_<pct>pct` in place — the `_aborted_<date>` quarantine parents are dissolved; stale `running` states reconciled by pid at the next harness start; `_run.json` stays the result gate |
@@ -7292,6 +7293,91 @@ remain open; the 67/143 split is untouched.
 
 ---
 
+## 9.79 The documents drifted away from the artefacts, and nothing was checking (25 August 2026, seventh session; issue #82)
+
+**Decision:** a number written into a living document is a claim about an
+artefact and is now checked mechanically, exactly as a number written into a
+script already was. Taken 25 August 2026, by directive, after an `/onboard`
+gap scan found the front-door `README.md` three phases out of date.
+
+### What was wrong
+
+`check_hardcoding.py` has refused a value decided in a script since P4. Nothing
+made the equivalent refusal of a value decided in PROSE, and the prose had been
+quietly rotting:
+
+| document | stated | artefact | wrong since |
+|---|---:|---:|---|
+| `README.md` files in the manifest | 376 | **489** | the 16 Aug rebuild |
+| `README.md` synthetic agents | 612,680 | **612,687** | the age-structure repair |
+| `README.md` road network edges | 43,112 | **50,182** | the #32 re-harvest |
+| `README.md` active network edges | 35,653 | **40,195** | the #32 re-harvest |
+| `README.md` registry fields | 210 | **356** | many entries |
+| `STATUS.md` deliverable 2 files | 376 | **489** | the 16 Aug rebuild |
+| `STATUS.md` synthetic agents | 612,680 | **612,687** | disagreed with its OWN P3 row |
+| `STATUS.md` road / active edges | 43,112 / 35,653 | **50,182 / 40,195** | the #32 re-harvest |
+| `.claude/CLAUDE.md` hardcoding ledger | 95 | **0** | the ledger reached 0 |
+
+Two statements were false rather than merely stale: `README.md` warned that
+`networks/osm/` was empty and `check_package.py` could not pass - nine days
+after the re-harvest filled it and #32 closed - and `STATUS.md`'s deliverable 2
+described 10 OSM layers as "pending the #32 re-harvest" while its own P1 phase
+row recorded that re-harvest as done. A new reader was being told the package
+was broken.
+
+**The mechanism is duplication.** `README.md` and `STATUS.md` carried the SAME
+figures table. One home was updated at the rebuild and the other was not, and
+nothing could see the divergence. The `/onboard` and `/handoff` skills had
+likewise each grown their own copy of the six state-of-the-project questions.
+
+### What changed
+
+- **`tests/check_doc_currency.py`** - a portable harness that pins each
+  live-state figure to the artefact that decides it and fails when they
+  disagree. `--strict` exits 1 and **gates CI**. Truths are derived from
+  `MANIFEST.csv` and the registry, both committed, so it needs no bulk data:
+  a claim whose artefact is absent is SKIPPED, the way `check_manifest.py`
+  already treats gitignored rows.
+- **`cities/<city>/tests/doc_currency.json`** - the city-owned claims (22 for
+  Newcastle). The harness names no city, no document and no number; a second
+  city supplies its own. Same split as `check_package.py` and
+  `package_expectations.json` (#62 B4).
+- **A second claim kind, `absent`** - a regex that must NOT appear, for a
+  statement that was true once and is now false in a way no number would catch.
+  Both stale warnings above are pinned this way.
+- Every figure in the table above corrected; the two false statements replaced.
+- **`docs/HANDOVER_CONTRACT.md`** - the six questions, the trust order, the
+  environment gate and the expiry rule, defined ONCE and read by both skills,
+  which now reference it instead of each carrying a copy.
+- `src/calibrate/report.py`'s counts rationale corrected - see below.
+
+### The distinction the check is built on
+
+**A dated record is FROZEN; a live-state cell must equal its artefact today.**
+Section 14 saying "manifest 436" on 24 August is history and must never be
+rewritten to keep a check green - that would be the reproducibility rule running
+backwards. Only live-state cells in `README.md` and `STATUS.md` are pinned.
+`NEXT_AGENT_BRIEF.md` is deliberately exempt: `/handoff` rewrites it wholesale
+every session, so pinned patterns there would break by design and train readers
+to ignore the check.
+
+### A stale attribution found while checking, and filed rather than fixed
+
+The calibration report justified leaving traffic counts unfitted with 9.14/9.15
+- *the external tier carries no boundary through traffic*. **9.41 built that
+through tier** on 15 August, and **9.64 re-measured the counts and they did not
+move** (-91.8% against `bind1000_25pct`'s -91.05%), yet still attributed them to
+"the recorded no-through-demand structure". The generator's prose now states the
+supersession; the residual - -91.8% across 30 stations, 6 of them carrying no
+modelled traffic at all - is **unexplained and owned by issue #82**.
+
+**What this deliberately does not do**: no model or data value changed; no run
+was launched; no target moved; the 67/143 split is untouched; the counts are NOT
+fitted and remain a reported constraint, never a target; nothing here is a
+result.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -7790,6 +7876,7 @@ argument parser into the registry where it binds everything.
 
 | Date | Change |
 |---|---|
+| 2026-08-25 | **The living documents are pinned to the artefacts, and a stale counts attribution is filed (§9.79; issue #82; seventh session).** An `/onboard` gap scan found `README.md` three phases out of date - a 376-row manifest against 489, a 210-field registry against 356, a road network 7,070 edges short, 612,680 agents against 612,687 - plus two statements that were false rather than stale (`networks/osm/` described as empty and the #32 re-harvest as pending, nine days after it ran and closed). `STATUS.md` carried the same figures and disagreed with its own P3 phase row; `.claude/CLAUDE.md` put the hardcoding ledger at 95 when it is 0. The mechanism was DUPLICATION: two documents holding one figures table, and the two session skills each holding their own copy of the six state-of-the-project questions. New: `tests/check_doc_currency.py` (portable harness, `--strict` gates CI) over `cities/<city>/tests/doc_currency.json` (22 city-owned claims), pinning every live figure to the artefact that decides it and banning two named false statements; `docs/HANDOVER_CONTRACT.md` defines the six questions, the trust order, the environment gate and the facts-that-expire rule ONCE for both skills. **A dated record stays frozen - only live-state cells are pinned.** Found while checking and filed rather than fixed: the calibration report justified unfitted counts by the absence of a through tier that §9.41 built and §9.64 measured as making no difference - the generator now states the supersession and the -91.8% residual across 30 stations (6 modelled-zero) is issue #82. **No model or data value changed, no run was launched, no target moved, the 67/143 split is untouched, nothing here is a result.** |
 | 2026-08-25 | **THE ACTIVATION BOUNDARY IS CROSSED — family F6 (§9.77; #73 #68 #74 #49; sixth session).** The §9.76 checklist executed as ONE boundary by the session's directive: `A.signals.representation=explicit_signals` (generated fixed-time plans at the 14 corridor intersections in every set; signalised approaches re-capacitated to saturation flow on the emitted run networks; each variant's OWN embedded tram delay removed from the schedule the day-type filter reads — the dwell transform riding inside it); a new declared gate `A.crossings.representation=change_events` puts the two freight level crossings into every config as a time-variant network (540 events, 16 links); `RUN.travel_time.bin_size_s` 900 → 300; `qsim.usingFastCapacityUpdate=false` written into every signal config; `taxi` into `RUN.mode_choice.modes`, `RUN.routing.network_modes` AND `city.json` — the §9.76 inert plumbing (blended Fares Order 2025 rates, the `fare` module, congested-network travel time) engaged unchanged. All 30 run-input sets regenerated; **family F5 closes UNMEASURED (the recorded cost of activate-first; its inputs regenerable from the declared switches)**. S3's priority is bus-keyed via the new `A.signals.tsp.priority_group` (`corridor` in S3's overlay). Three defects were caught by PROBES, not reading: the crossings XML violated the schema's element order (flowCapacity before freespeed); the S3 mid-block systems NPE'd the priority ledger on a null payee; a console line hardcoded a not-modelled row. Verified at plumbing scale only (S2 + S3, 1%×2, rc=0; all 14 S3 `CitysimTramPriority` controllers instantiate). **No arm ran, no target moved, the 67/143 split is untouched, nothing here is a result; the first F6 arm still requires its own stated-cost approval.** |
 | 2026-08-25 | **The runless lanes close out (§9.78; #49 #50 #62 #63 #66; sixth session).** Tier C: PT submodes SCORE-DISTINCT via SwissRailRaptor mode mapping (verified against the pinned jar's bytecode; the stock main-mode identifier's interchange crash pre-empted by `PtSubmodeMainModeIdentifier`; probe shows zero `pt` legs — bus 1,414 / rail 450 / tram 10 / ferry 3 — with trip labels and per-submode conservation intact; behind `RUN.routing.pt_submode_scoring`, folded into F6 while it has no arms). Seven 0b source upgrades: `min_green_s` → literature (TfNSW TTD 2018/002), five tolerances/search bounds → definition, and **`B.population.bike_available_rate` assumed 0.5 → literature 0.493** (CWANZ NSW 2025, p.72) with the B plans regenerated on the cited value. The corridor-composition question ANSWERED on arm A (a diagnostic, not a result): COVERAGE carries the bus-over-tram split — 98.3% of corridor-band demand has an end the 6-stop alignment cannot reach without the interchange the through-running buses avoid; the transfer penalty prices it; frequency exonerated. The demographic measurement recorded (#50): the modelled split is sex-invariant against G62's real sex structure; NO mode × age cell exists in the held data. The systematic TIA sweep came back EMPTY (19 applications; PPSHCC-137 stays the only SCATS evidence; PPSHCC-306 corrected to East End 105–121 Hunter St). #66's settlement mechanised (Defender/TaskScheduler capture on the stall transition). #62's six strata landed: `light_rail_boardings` → `intervention_boardings` (an ACCEPTED schema break — pre-rename run records cannot be scored, the `target_lga_pct` precedent), manifest lineage into the city descriptor (manifest byte-identical), currency/base-year tokenised (the agnostic fixture passes at AUD_2031), layers.json parameterised, `check_package` split into a portable harness over city-owned expectations (1,433 checks, nothing dropped), the reader-shape contract + Newcastle adapter (HTS/counts readers byte-identical; the census family recorded as remaining source-shaped). **No target moved, the 67/143 split is untouched, nothing here is a result.** |
 | 2026-08-25 | **TOOLCHAIN CHANGE: SUMO 1.27.1 removed; Apache Maven 3.9.9 and the MATSim signals run stack pinned (§9.76; #72, #73; overnight fifth session).** The SUMO component leaves `.tools/toolchain.json` (the §9.74 descope executed — no completed run ever consumed a SUMO artefact, so nothing is invalidated); Maven 3.9.9 is pinned by sha256 from Maven Central; the committed `src/java/run-stack-pom.xml` resolves `org.matsim:matsim` + `org.matsim.contrib:signals` at **2027.0-2026w25** — exactly the version the pinned shaded jar embeds (§9.73) — into `.tools/run-stack/lib` (201 jars, each sha256-recorded; visualisation-only dependencies excluded). Signal-enabled runs execute `citysim.CitysimSignalsControler` on that stack; every other run executes the unchanged shaded-jar stack, and the two never share a classpath. `bootstrap_toolchain.py --verify` re-hashes both and compiles both class trees. |

@@ -38,6 +38,24 @@ jobs:
       - name: Every committed data file matches its MANIFEST.csv hash and size
         run: python tests/check_manifest.py
 
+  doc_currency:
+    name: living documents match the artefacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      # The counterpart of the hardcoding gate, pointed at prose. A number written
+      # into README.md or STATUS.md is a claim about an artefact, and until 25 Aug
+      # 2026 nothing checked that the claim still held: the front door advertised a
+      # 376-row manifest against 489 on disk, a 210-field registry against 356, and
+      # a warning that the OSM harvest had not been run nine days after it ran.
+      # Truths are derived from the MANIFEST and the registry, both committed, so
+      # this needs no bulk data and no dependencies beyond the standard library.
+      - name: No live figure has outlived its artefact
+        run: python tests/check_doc_currency.py --strict
+
   city:
     name: city contract (schema, required fields, artefacts)
     runs-on: ubuntu-latest

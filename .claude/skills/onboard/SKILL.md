@@ -1,119 +1,158 @@
 ---
 name: onboard
-description: Start-of-session onboarding — rebuild the complete project picture from the repo and GitHub (goals, phases, tasks, simulator-vs-reality, issues, PRs), verify the environment, and state the active lane. Use at the start of any session, especially with no prior context. The counterpart of /handoff.
+description: Rebuilds the complete picture of the city-digital-twin project from the repository and GitHub alone - goals, phases, tasks, simulator-vs-reality fit, issues, PRs - verifies the environment, scans for drift between documents and artefacts, and states the single active lane. Use at the START of any session in this repository, especially with no prior context, whenever the user runs /onboard, asks "where are we", "what's the state", "catch me up", or "what should I work on next". The counterpart of /handoff.
 ---
 
 # /onboard — reconstruct the whole picture from `main` alone
 
-Assume zero session memory. Everything below is read from the repository and
-GitHub; nothing is taken from recollection. Where a document disagrees with
-another, the precedence is: `.claude/CLAUDE.md` (constraints) →
-`DECISIONS.md` (record) → `STATUS.md` (board) → `NEXT_AGENT_BRIEF.md`
-(pointer). **Trust order: artefact > document > brief.** The brief says this
-about itself — verify anything load-bearing against the artefact it cites.
+Assume **zero session memory**. Everything is read from the repository and GitHub;
+nothing is taken from recollection, and nothing is taken from the brief without
+checking it.
 
-Run the phases in order. The output of this skill is a briefing to the user
-(Phase 6) — do not start work the brief assigns until the briefing is given
-and the environment checks pass.
+The rules this shares with `/handoff` — the trust order, the six questions, the
+facts that expire, the environment gate — live in one place:
+**[`docs/HANDOVER_CONTRACT.md`](../../../docs/HANDOVER_CONTRACT.md). Read it as part
+of Phase 0.** It is the definition; this file is the procedure.
 
-Throughout, `<city>` is the active city — `CITYSIM_CITY`, default
-`newcastle` — per the framework rule that nothing city-specific is assumed.
+The deliverable is the Phase 6 briefing. **Do not start the work the brief assigns**
+until the briefing is delivered and the gates pass.
+
+Throughout, `<city>` is the active city — `CITYSIM_CITY`, default `newcastle`.
+
+Copy this checklist and tick it off as you go:
+
+```
+Onboarding:
+- [ ] Phase 0  Read, in order
+- [ ] Phase 1  Environment gate
+- [ ] Phase 2  Live state from GitHub
+- [ ] Phase 3  Drift scan (mechanical first)
+- [ ] Phase 4  The six questions
+- [ ] Phase 5  Constraints recited
+- [ ] Phase 6  Briefing delivered
+```
 
 ## Phase 0 — The reading, in order
 
-1. `.claude/CLAUDE.md` — conventions and hard constraints (loaded
-   automatically; re-read the hard-constraints list deliberately).
-2. `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md` — the handover:
-   goal, done-do-not-redo, active lane, traps, standing directives.
-3. `cities/<city>/docs/STATUS.md` — the board: phase table, deliverable
-   checklist, numbered plan, runs on disk, run economics.
-4. `cities/<city>/docs/DECISIONS.md` — start at its topical index ("How
-   to find something in this file"); read the sections the brief and board
-   point at (the newest §9.x family and the top of the §14 change log).
-5. `cities/<city>/docs/design/newcastle-lr-proposal.md` §1, §3, §7, §8 —
-   the research goal, hypotheses A1–A6/B1–B4, phases, deliverables.
-6. Only as needed after that: the audit reports under
-   `cities/<city>/docs/audit/` and design dossiers under `docs/design/`.
+1. `.claude/CLAUDE.md` — loaded automatically; **re-read the hard-constraints list
+   deliberately**, it is the part sessions skim.
+2. [`docs/HANDOVER_CONTRACT.md`](../../../docs/HANDOVER_CONTRACT.md) — the trust
+   order and the six questions.
+3. `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md` — **start at its §0 VERIFY
+   FIRST block and re-derive every fact in it before reading on.** The brief is a
+   pointer, not a source; treat §0 as claims to test.
+4. `cities/<city>/docs/STATUS.md` — the board: phase table, deliverable checklist,
+   numbered plan, runs on disk, run economics.
+5. `cities/<city>/docs/DECISIONS.md` — start at its topical index (*"How to find
+   something in this file"* — sections are **not** in file order and §9 holds
+   unrelated topics). Read what the brief and board point at: the newest §9.x
+   family and the top of the §14 change log.
+6. `cities/<city>/docs/design/newcastle-lr-proposal.md` §1, §3, §7, §8 — the
+   research goal, hypotheses A1–A6/B1–B4, phases, deliverables.
+7. Only as needed after that: `cities/<city>/docs/audit/` and `docs/design/`.
 
-## Phase 1 — Environment verification (the brief's §0, always)
+## Phase 1 — Environment gate
+
+Run the gate from the contract, plus anything extra the brief's §0 lists:
 
 ```bash
-python src/setup/bootstrap_toolchain.py --verify   # pins + compiles the Java
-python tests/check_manifest.py                     # committed subset intact
+python src/setup/bootstrap_toolchain.py --verify   # ~2 min, compiles both class trees
+python tests/check_manifest.py
 python src/registry/check_hardcoding.py --strict   # must exit 0
+python tests/check_doc_currency.py --strict        # must exit 0
 ```
 
-Also: `git status` / current branch (work starts from `main` unless the
-brief says otherwise); confirm whether a run is in progress (MATSim java
-process, `results/` mtimes) before assuming the machine is free.
+Then establish, by measurement rather than assumption:
+
+- `git status` and the current branch. Work starts from `main` unless the brief says
+  otherwise; if the harness put you on a `claude/*` branch, rename it now
+  (`<git-handle>/<kebab>`).
+- **Is a run in progress?** Look for a MATSim `java` process and check `results/`
+  mtimes. Do not assume the machine is free — and note that a `java` process you
+  started yourself (a probe) is not a run.
+
+**A failing gate is this session's first work item.** Report it in Phase 6 and say
+what it blocks.
 
 ## Phase 2 — The live state from GitHub, not from documents
 
-1. `gh issue list --state open` — for each open issue: title, last comment
-   date, whether its numbers predate the latest DECISIONS entry (if so it
-   needs updating, which is /handoff work to flag, not silently absorb).
-2. `gh pr list --state all` — the merged sequence tells the project's story;
-   any OPEN PR is unfinished business to surface before new work starts.
-3. Cross-check: does the brief's issue/PR ledger match what GitHub actually
-   shows? A mismatch is a finding — report it, do not paper over it.
+1. `gh issue list --state open` — per issue: title, last-updated date, and whether
+   its numbers predate the newest `DECISIONS.md` entry. If they do it needs
+   updating: **flag it, do not silently absorb it.**
+2. `gh pr list --state all` — the merged sequence is the project's story. **Any OPEN
+   PR is unfinished business** and is surfaced before any new work.
+3. **Cross-check the brief's ledger against what GitHub actually shows.** A mismatch
+   is a finding to report, never something to paper over. Expect the brief to be
+   wrong about its own PR — it was written before that PR's fate was known.
 
-## Phase 3 — The six state-of-the-project questions
+## Phase 3 — Drift scan (mechanical first, then judgement)
 
-Answer all six exhaustively, every number traceable to its source:
+Run the mechanical check before looking by hand — it is faster and it does not get
+tired:
 
-1. **Goals & achievement.** The research goal (proposal §1: the untested
-   Auditor-General claims; hypotheses A1–A6, B1–B4, secondary S-a–S-d) and
-   the operational goal (brief §1: the digital twin, "CHECKED, not
-   assumed"). Against them: what is built, what is *measured* to work, and
-   the state of each of the six project deliverables (proposal §8).
-2. **Phases.** P0–P7 with each one's state and the evidence for it
-   (STATUS.md phase table, verified against the artefacts it cites).
-3. **Tasks per phase.** The numbered plan (STATUS.md "The plan"): per batch,
-   how many done, how many done *and evaluated* (a task without its
-   measurement is not evaluated), which are open, which is the active lane,
-   which are proposed for deletion/rework and awaiting a decision.
-4. **Simulator vs real life.** The latest valid run's fit against the
-   calibration targets: per-mode modelled/observed/error, occupancy,
-   trip-geometry ratios, counts, patronage — labelled pre- or
-   post-calibration, diagnostics or results. If no run exists, say so;
-   never infer results from inputs.
-5. **Issue ledger.** Totals filed/closed/open; per open issue: what it
-   tracks, its last evidence date, and whether it needs evaluation,
-   updating, or is queued work.
-6. **PR history and the next PR.** One line per merged PR; what the next PR
-   should achieve per the recorded value order, and whether that choice is
-   pending a decision.
+```bash
+python tests/check_doc_currency.py     # every pinned live figure vs its artefact
+```
 
-## Phase 4 — The constraints that invalidate work (recite, don't rediscover)
+A `PATTERN NOT FOUND` result means a document was reworded and a claim needs
+re-aiming; that is a real finding, not noise.
 
-From CLAUDE.md and the brief, confirm you can state without looking: no
-multi-hour run without explicit approval (say the cost, get a yes); no
-invented data; the 67/143 holdout split is never opened or peeked; never
-compare across sample fractions or network builds; one arm at a time; raw
-data immutable; every assumed value declared in the registry with a sweep;
-run outputs need `_run.json` to be results; branch naming and
-no-attribution rules. Then read the brief's traps section — each one has
-already cost a day.
+Then the classes no checker covers yet:
 
-## Phase 5 — Gap scan
+- **A board line contradicted by an artefact** that is not pinned — a count, a
+  state, a "pending" that has since happened.
+- **A stale statement** — prose that was true once and is now false (a closed issue
+  described as open, a retired tool described as current).
+- **Uncommitted work in the tree** that no document mentions.
+- **An in-progress or crashed run nobody closed out** (a run directory with no
+  `_run.json` and no `_meta.json` cause).
+- **An open issue whose numbers predate the newest DECISIONS entry.**
+- **An open PR** that should merge or close before new work starts.
+- **A "done" task with no measurement** — done is not evaluated, and the plan
+  distinguishes them.
 
-- Board lines contradicted by artefacts (stale figures, wrong counts).
-- Uncommitted work in the tree that no document mentions.
-- An in-progress or crashed run nobody closed out.
-- Open issues whose numbers are older than the newest DECISIONS entry.
-- An open PR that should merge or close before new work.
+Each gap goes in the briefing. **Fixing them is scoped work the user decides on, not
+something to do silently during onboarding.**
 
-Each gap goes in the briefing; fixing them is scoped work, not something to
-do silently during onboarding.
+## Phase 4 — The six state-of-the-project questions
+
+Answer all six exhaustively, per
+[`docs/HANDOVER_CONTRACT.md`](../../../docs/HANDOVER_CONTRACT.md). Every number
+traceable to its source; anything you cannot evidence is **UNVERIFIED** plus what
+would settle it.
+
+Verify as you go rather than transcribing: for question 4, read the fit artefact
+itself (`results/<run>/_fit.json`) rather than the brief's summary of it — that is
+where a mode's number is either confirmed or found stale.
+
+## Phase 5 — The constraints that invalidate work
+
+Confirm you can state these **without looking them up**, then read the brief's traps
+section — each trap has already cost a day:
+
+- **No multi-hour run without explicit approval.** State the cost, get a yes.
+  Approvals are **spent on use**; none is ever standing.
+- **No invented data.** An unmeasured value is assumed or modelled, labelled as
+  such, and recorded in `DECISIONS.md` with a sweep.
+- **The 67/143 holdout split is never opened or peeked.** Need a holdout? Say so and
+  stop.
+- **Never compare across families, sample fractions or network builds.**
+- **One arm at a time**; raw data is immutable; every assumed value is declared in
+  the registry with a sweep.
+- **A run without `_run.json` is not a result.**
+- Branch `<git-handle>/<kebab>`, never `claude/*`; no attribution trailers, no
+  session links; **never commit directly to `main`.**
 
 ## Phase 6 — The briefing (the deliverable)
 
-Report to the user, in this order and with numbers:
-1. The six answers from Phase 3, compressed but complete.
-2. Environment check results (Phase 1) and anything they block.
-3. Gaps found (Phase 5).
-4. **The active lane** — the single next task per the brief, its cost, and
-   whether it needs a decision or approval before starting.
+Report to the user in this order, with numbers:
 
-Then stop. Do not begin the active lane until the user (or a standing
-directive in the brief) says to.
+1. **The six answers** — compressed but complete, every mode individually in any
+   table (never an umbrella row).
+2. **Environment gate results** and anything they block.
+3. **Gaps found**, mechanical ones first.
+4. **The active lane** — the single next task per the brief, its cost, and whether
+   it needs a decision or an approval before it can start.
+
+Then **stop**. Do not begin the active lane until the user says to, or a standing
+directive in the brief already authorises it.
