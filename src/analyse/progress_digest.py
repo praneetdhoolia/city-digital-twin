@@ -155,6 +155,55 @@ def write_once(run_dir, band=None, solo_iters=None):
     return doc
 
 
+def capture_machine_context(run_dir, since_epoch_s):
+    """Snapshot the machine-level suspects when a stall begins (issue #66).
+
+    The 22 Aug recurrence hit BOTH concurrent arms at the same wall-clock
+    time while they were in different iterations, which excludes any cause
+    inside MATSim; the named candidates are OS scheduled maintenance,
+    antivirus scanning and memory-standby trimming. The issue's own
+    settlement condition is "correlate the event window with Windows Task
+    Scheduler / Defender scan history the next time it fires" - so the
+    observer captures exactly that window, bounded by the daemon's OWN last
+    healthy observation (no invented lookback constant). Instrumentation
+    only: never raises, never touches the mobsim, wall-clock timestamps are
+    legitimate here because the artefact records the MACHINE, not the model.
+    """
+    if os.name != 'nt':
+        return None
+    import subprocess
+    start = time.strftime('%Y-%m-%dT%H:%M:%S',
+                          time.localtime(since_epoch_s))
+    out = {'captured_at': time.strftime('%Y-%m-%dT%H:%M:%S'),
+           'window_start': start, 'logs': {}}
+    for name, log in (('defender',
+                       'Microsoft-Windows-Windows Defender/Operational'),
+                      ('task_scheduler',
+                       'Microsoft-Windows-TaskScheduler/Operational')):
+        cmd = ("Get-WinEvent -FilterHashtable @{LogName='%s';"
+               "StartTime=[datetime]'%s'} -ErrorAction Stop | "
+               "Select-Object -First 200 TimeCreated, Id, "
+               "@{n='Message';e={$_.Message.Substring(0, "
+               "[Math]::Min(300, $_.Message.Length))}} | ConvertTo-Json"
+               % (log, start))
+        try:
+            r = subprocess.run(['powershell', '-NoProfile', '-Command', cmd],
+                               capture_output=True, text=True, timeout=60)
+            out['logs'][name] = (json.loads(r.stdout) if r.returncode == 0
+                                 and r.stdout.strip() else
+                                 {'error': (r.stderr or 'no events').strip()
+                                  [:500]})
+        except Exception as e:                               # noqa: BLE001
+            out['logs'][name] = {'error': str(e)[:500]}
+    path = os.path.join(run_dir, '_machine_context_%s.json'
+                        % time.strftime('%Y%m%dT%H%M%S'))
+    try:
+        _write_atomic(path, out)
+    except Exception:                                        # noqa: BLE001
+        return None
+    return path
+
+
 def serve(run_dir, interval_s, band=None, solo_iters=None, background=True):
     """Refresh `_progress.json` on a daemon thread until the run finishes.
 
@@ -166,11 +215,23 @@ def serve(run_dir, interval_s, band=None, solo_iters=None, background=True):
     solo_iters = solo_iters or solo_check_iterations()
 
     def loop():
+        last_healthy_wall = time.time()
+        was_stalled = False
         while True:
             try:
                 doc = digest(run_dir, band=band, solo_iters=solo_iters)
                 if failures['n']:
                     doc['write_failures'] = dict(failures)
+                # issue #66: on the transition INTO a stall, capture the
+                # Defender / Task Scheduler history for exactly the window
+                # since the daemon's last healthy observation
+                stalled = bool(doc.get('stalled'))
+                if stalled and not was_stalled:
+                    doc['machine_context'] = capture_machine_context(
+                        run_dir, last_healthy_wall)
+                if not stalled:
+                    last_healthy_wall = time.time()
+                was_stalled = stalled
                 if not _write_atomic(os.path.join(run_dir, PROGRESS), doc):
                     failures['n'] += 1
                     failures['last'] = 'atomic replace lost to a directory lock'
