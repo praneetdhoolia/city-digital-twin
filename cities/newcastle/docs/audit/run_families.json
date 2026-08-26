@@ -42,6 +42,12 @@
       "decisions_ref": "9.81",
       "from_launch": "20260826T060000",
       "note": "RidePairingEngine re-moded an unpaired ride leg to a network walk BY MUTATING THE PLAN, so pairing failure destroyed the alternative while pairing success created none - a one-way ratchet measured on the aborted F6 arm 20260825T135734: 95.7% of the 61,409 iteration-0 misses gone by iteration 1, occupancy decaying with a 36-iteration half-life toward the pre-repair 0.0013. The forced walk is now an EXECUTION: the leg's mode and route are restored at AfterMobsim, after the events scoring reads, so the walk is still charged in full and 9.55 is kept intact while the plan retains ride for co-evolution to re-select. NO PARAMETER CHANGED - B.ride.remode_unpaired stays true and B.ride.pairing_window_min stays 15.0, a window widening having been refused by measurement (median gap to an endpoint-matching driver 253.7 min). ride_pairing.csv additionally gains the miss funnel and gap distribution, which is reporting only. F6 produced no converged arm, exactly as F5 did not."
+    },
+    "F8-escort-coherence": {
+      "label": "the escort and the escorted stop taking different modes (9.82) - CURRENT",
+      "decisions_ref": "9.82",
+      "from_launch": "20260826T230000",
+      "note": "B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, 125,475 weekday rows from census household structure and the HTS escort rates) and MATSim replans the two agents independently, so SubtourModeChoice - which moves one agent at a time - cannot propose the two-sided state and the pair cannot recohere once lost. Measured on the F7 arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride, so the escort tours run largely empty and ride is suppressed while car and bike are inflated. EscortCoherenceListener PROPOSES the coherent plan back to a member who has drifted off ride; ChangeExpBeta scores it like any other plan and keeps it only if it earns its place, and the driver is never touched. NO MODE'S UTILITY CHANGES and nothing is fitted: the one new field, B.ride.escort_coherence_rate (0.10, swept [0.0, 0.5]), is a SEARCH rate whose ZERO RECOVERS F7 EXACTLY. Carries the 9.81 ride-alternative restore unchanged. Validated at 25% x 2 (20260826T220340, rc 0) before launch."
     }
   },
   "overrides": {

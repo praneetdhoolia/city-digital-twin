@@ -8153,10 +8153,95 @@ unchanged from the pre-repair F4 report card until one runs.
 
 ---
 
+## 9.82 The escort drives and the escorted cycles: a pair the replanner cannot rejoin (26 August 2026, ninth session; issues #48, #50, #30)
+
+The §9.81 arm `20260826T060938` was stopped by instruction at iteration 200. The
+§9.81 restore had **worked** — ride legs held at 87,019 / 85,873 / 86,118 across
+the first three iterations where the unfixed F6 arm fell to 28,228 / 25,889 —
+and it was **not sufficient**. Realised shares at the gate (events stream,
+it.190): car 47.90, walk 23.17, bike 9.97, taxi 8.36, pt 6.09, **ride 0.95**,
+truck 3.38. Bike and taxi still over-chosen.
+
+### The fix repaired a real defect that was not the one holding ridership down
+
+Across every checkpoint, F7 and the unfixed F6 arm agreed to within **0.15 pp**
+on car, bike, taxi and pt, while ride and walk traded an equal and opposite
+~10 pp. That is what a clean single-cause repair looks like, and it is precisely
+how it was possible to see that a second, independent cause remained.
+
+### What the arm measured
+
+From its own selected plans at iteration 150:
+
+| | |
+|---|---|
+| trips arriving at an `escort` activity that are **car** | **84.53%** |
+| escort-bound members (93,528 in B2) actually on **ride** | **11.45%** |
+
+**The drivers are still driving. The passengers have gone.** A parent drives to
+the school and the child has independently decided to cycle, so tens of
+thousands of escort car trips run each iteration carrying nobody. One mechanism
+suppresses `ride` and inflates `car` and `bike` together — which is exactly the
+trio that stayed wrong.
+
+*(The 11.45% counts all legs of escort-bound members, not only their bound tour,
+so it is diluted; the 84.53%-against-11.45% asymmetry is the finding, not the
+second figure's precision.)*
+
+### Why no per-agent strategy can repair it
+
+B2 generates escort travel as a PAIR — `B2_escort_bindings_<DAY>.csv`, 125,475
+rows for a weekday, from census household structure and the HTS escort rates.
+MATSim replans the two agents independently and `SubtourModeChoice` moves one
+agent at a time, so the two-sided state **cannot be proposed by any per-agent
+strategy** and cannot recohere once lost. This is the same structural gap
+`B.mode.bound_passenger_seed` already documents for the seed, showing up again
+after the seed's advantage has been replanned away.
+
+### What was built, and the line it does not cross
+
+`EscortCoherenceListener` finds, after replanning, car legs arriving at an
+`escort` activity and the household members whose own trip shares those
+endpoints inside the declared pairing window, and **proposes** the coherent plan
+back to a member who is not on `ride`.
+
+**It proposes and never imposes.** The plan is scored like any other and
+`ChangeExpBeta` keeps it only if it earns its place: a member whose ride keeps
+failing to pair walks a long way, scores badly and abandons it, exactly as
+before. The driver is never touched — if the escort cycles, no ride is offered
+to anyone.
+
+The only assertion is that **two people travelling together travel by the same
+means**, which is a physical identity rather than a calibration. No mode's
+utility changes and nothing is fitted to any target. The one declared field,
+`B.ride.escort_coherence_rate`, is a SEARCH parameter — how often an unreachable
+alternative is offered — and **its zero recovers the previous behaviour exactly**,
+which is what makes the mechanism's effect measurable rather than assumed.
+
+The coupling is discovered from the selected plans, so no plans regeneration and
+no new run input; the run emits its config from the registry, so the 30 assembled
+sets are untouched.
+
+**Validated at 25% x 2 before launch** (`20260826T220340`, completed rc 0): zero
+routing-mode errors, the listener firing at 10.2% and 10.3% against the declared
+0.10, and ride legs at 87,019 / 85,873 / **87,348** against 86,118 for the same
+two iterations without it.
+
+### Family F8
+
+**F8-escort-coherence** is declared from launch stamp 20260826T230000. F7's only
+arm is the aborted diagnostic above.
+
+**Nothing here is a result.** No converged arm exists in F8.
+
+
+---
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-26 | **The escort drives and the escorted cycles (§9.82; issues #48, #50, #30; ninth session).** The §9.81 arm was stopped at its iteration-200 gate: the ride-alternative restore WORKED (ride legs 87,019 / 85,873 / 86,118 against the unfixed 28,228 / 25,889) and was NOT SUFFICIENT - realised car 47.90, bike 9.97, taxi 8.36, ride 0.95. F7 and the unfixed arm agreed within 0.15 pp on car, bike, taxi and pt while ride and walk traded ~10 pp, which is how the second cause became visible. Measured at iteration 150: **84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride** - the escort tours run empty, suppressing ride and inflating car and bike together. B2 generates escort travel as a pair and SubtourModeChoice moves one agent at a time, so no per-agent strategy can propose the two-sided state. `EscortCoherenceListener` PROPOSES the coherent plan back and ChangeExpBeta decides; the driver is never touched. The only assertion is that two people travelling together travel by the same means. `B.ride.escort_coherence_rate` is a SEARCH rate whose zero recovers the previous behaviour exactly. Registry 356 -> 357, reach 92/92. Family **F8** declared. Nothing here is a result. |
 | 2026-08-26 | **A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (§9.81; issues #48, #49, #30; ninth session).** The first F6 arm was stopped by instruction at iteration 200 with car 54.33%, ride 0.41% and taxi 9.47% (whole-scenario legs). `RidePairingEngine` was MUTATING THE PLAN when a ride leg failed to pair - 95.7% of the 61,409 iteration-0 misses were gone by iteration 1 and never returned, an exponential decay with a 36-iteration half-life toward the pre-repair 0.0013 occupancy. Those destroyed legs were 23.5% of all walk legs as ~9.7 km forced walks, the pool replanning turned into taxi. The forced walk is now an EXECUTION, restored at AfterMobsim so the walk is still scored and the alternative is still there; §9.55 is kept, no parameter moved. A window hypothesis was REFUSED BY MEASUREMENT (median gap 253.7 min; widening 15->60 would recover 13 legs of 1,529), and the funnel reordered geometry-first. Family **F7** declared. Nothing here is a result. |
 | 2026-08-25 | **The front door shows the model's fit, a dead run states its cause, and two documents stop duplicating the record (§9.80; issue #84; eighth session).** `README.md` described the package and never said whether the model reproduces the city, and described the corridor's signals only as an input that could not be obtained - nine days after §9.77 made signal control mechanical. New `src/analyse/build_fit_figures.py` generates the modelled-against-observed panels (mode share, the trip-length constraint, the 30 counts) from the run the calibrated base was written from - selected via `C5_calibration.json`'s `best_tag`, so the figures and the calibration report always describe the same arm - as dependency-free SVG carrying no wall-clock, which is what lets `--check` gate them in `check_package.py`. **CORRECTION: the light rail's 1,260 boardings had been reported as a -63% error against V001/V002, targets `fit.py` marks UNSCORABLE** because 2019-20 is a pre-pandemic market against a 2026 base (§12.1); the modelled figure is a LEVEL, the gap is not a fit statistic, and the framing had propagated through `CORRIDOR_PT_COMPOSITION.md` and three handover briefs - corrected there, banned in the generator, written into both skills and the handover contract, filed as #84. **`_meta.json` now REQUIRES a `cause` on `failed`/`aborted`**, read from the run's own `matsim.log` by new `src/run/run_failure.py` (terminating exception + `Caused by` chain + the line it came from); all fourteen dead runs backfilled from their logs, the three 25 August probe failures independently reproducing the §9.77 narrative; `results/INDEX.md` prints every cause. `check_doc_currency.py` gains `decimals` and a `text` claim kind (a stale NAME was structurally exempt), ten new README claims, and one stale-statement ban covering every phrasing of "the package is not built yet" - the §9.79 ban named one wording and the same false claim survived under another. **`P4_CHECKPOINT.md` retired as a live document and frozen as the 12 August record it was**: it restated `STATUS.md`'s job, had drifted on deliverables, issues, manifest, registry, mode share, relaxation, counts, walk ratio and SUMO scope, and held nothing the record does not. `docs/README.md` (five output schemas against seven, two `tests/` checks against four) and `.claude/CLAUDE.md` (four premise corrections against five) corrected. **No model or data value changed, no registry field moved, no run was launched, no target moved, the 67/143 split is untouched, and nothing here is a result.** |
 | 2026-08-25 | **The living documents are pinned to the artefacts, and a stale counts attribution is filed (§9.79; issue #82; seventh session).** An `/onboard` gap scan found `README.md` three phases out of date - a 376-row manifest against 489, a 210-field registry against 356, a road network 7,070 edges short, 612,680 agents against 612,687 - plus two statements that were false rather than stale (`networks/osm/` described as empty and the #32 re-harvest as pending, nine days after it ran and closed). `STATUS.md` carried the same figures and disagreed with its own P3 phase row; `.claude/CLAUDE.md` put the hardcoding ledger at 95 when it is 0. The mechanism was DUPLICATION: two documents holding one figures table, and the two session skills each holding their own copy of the six state-of-the-project questions. New: `tests/check_doc_currency.py` (portable harness, `--strict` gates CI) over `cities/<city>/tests/doc_currency.json` (22 city-owned claims), pinning every live figure to the artefact that decides it and banning two named false statements; `docs/HANDOVER_CONTRACT.md` defines the six questions, the trust order, the environment gate and the facts-that-expire rule ONCE for both skills. **A dated record stays frozen - only live-state cells are pinned.** Found while checking and filed rather than fixed: the calibration report justified unfitted counts by the absence of a through tier that §9.41 built and §9.64 measured as making no difference - the generator now states the supersession and the -91.8% residual across 30 stations (6 modelled-zero) is issue #82. **No model or data value changed, no run was launched, no target moved, the 67/143 split is untouched, nothing here is a result.** |
