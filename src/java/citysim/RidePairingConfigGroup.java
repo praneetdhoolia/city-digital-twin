@@ -46,6 +46,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private boolean remodeUnpaired = false;
     private boolean waitForDriver = false;
     private double windowMinutes = UNSET;
+    private double escortCoherenceRate = UNSET;
     private String rule = "";
     private double pickupDwellSeconds = UNSET;
     private int maxPassengersPerVehicle = -1;
@@ -162,6 +163,31 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     }
 
     /**
+     * How often a DECOHERED escort pair is re-proposed as a ride.
+     *
+     * <p>B2 generates escort travel as a pair, and MATSim replans the two
+     * agents independently, so the two-sided state cannot be proposed by any
+     * per-agent strategy and cannot recohere once lost. This is the rate at
+     * which {@link EscortCoherenceListener} offers the coherent plan back to
+     * the escorted member; the plan is then scored like any other and kept
+     * only if it earns its place.
+     *
+     * <p><b>Zero recovers today's behaviour exactly</b>, which is what makes
+     * the effect of this mechanism measurable rather than assumed. It is a
+     * search parameter - how often an unreachable alternative is offered - and
+     * never a preference: nothing here changes any mode's utility.
+     */
+    @StringGetter("escortCoherenceRate")
+    public double getEscortCoherenceRate() {
+        return this.escortCoherenceRate;
+    }
+
+    @StringSetter("escortCoherenceRate")
+    public void setEscortCoherenceRate(final double value) {
+        this.escortCoherenceRate = value;
+    }
+
+    /**
      * Which endpoints of the driver's leg must coincide with the passenger's.
      *
      * <p>{@link #RULE_BOTH_LINKS} is the only rule under which handing the
@@ -234,6 +260,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
             return;
         }
         require(this.windowMinutes >= 0.0, "windowMinutes", "B.ride.pairing_window_min");
+        require(this.escortCoherenceRate >= 0.0, "escortCoherenceRate",
+                "B.ride.escort_coherence_rate");
         require(this.pickupDwellSeconds >= 0.0, "pickupDwellSeconds",
                 "B.ride.pickup_dwell_s");
         require(this.maxPassengersPerVehicle >= 1, "maxPassengersPerVehicle",

@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 356 fields are made of
+## What the 357 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 30 | follows from another registry field by identity |
 | `literature` | 54 | a published value, not specific to this city |
-| `assumed` | 126 | chosen without direct empirical support |
+| `assumed` | 127 | chosen without direct empirical support |
 | `definition` | 111 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 337 | usable point value |
+| `active` | 338 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -971,7 +971,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 82 fields*
+*`cities/newcastle/registry/B_demand.json` - 83 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1043,6 +1043,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.licence_rate_by_age_band` | `[0, 0, 0, 0.62, 0.88, 0.93, 0.94, 0.93, 0.88, 0.72, 0.45]` | probability | `literature` | plus/minus 10% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
+| `B.ride.escort_coherence_rate` | `0.1` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.max_passengers_per_vehicle` | `4` | persons | `assumed` | 1 - 4 |
 | `B.ride.pairing_enabled` | `true` | boolean | `definition` | - |
 | `B.ride.pairing_rule` | `both_links` | enum | `assumed` | `both_links`, `origin_link`, `dest_link`, `window_only` |
@@ -1537,6 +1538,12 @@ Whether `ride` is withheld from a person with nobody to drive them. MATSim's sta
 ***derived** · status **active** · DECISIONS.md §8.5, 9.10, 15 · proposal §9*
 
 > **Derived from** `B.seed.master`: a person may be a car passenger only if their B1 household holds at least one vehicle AND contains at least one OTHER licence holder who could drive them; computed from B1_synthetic_population.csv household_id, household_vehicles and licence_holder, so it is derived from the synthetic population rather than chosen
+
+#### `B.ride.escort_coherence_rate`
+
+Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together.
+
+***assumed** · status **active** · DECISIONS.md §9.82 · MATSim `ridePairing.escortCoherenceRate`*
 
 #### `B.ride.max_passengers_per_vehicle`
 

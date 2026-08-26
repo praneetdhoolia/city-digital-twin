@@ -275,6 +275,14 @@ public final class CitysimControler {
                     bind(RidePairingEngine.class).in(Singleton.class);
                     addEventHandlerBinding().to(RidePairingEngine.class);
                     addControllerListenerBinding().to(RidePairingEngine.class);
+
+                    // Escort and escorted are ONE journey (DECISIONS.md 9.82).
+                    // Per-agent replanning splits the pair and cannot rejoin
+                    // it; this offers the coherent plan back so the score can
+                    // decide. Inert at escortCoherenceRate = 0.
+                    bind(EscortCoherenceListener.class).in(Singleton.class);
+                    addControllerListenerBinding()
+                            .to(EscortCoherenceListener.class);
                 }
             });
         }

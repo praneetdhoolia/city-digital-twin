@@ -1148,7 +1148,7 @@
         0.1,
         0.5
       ],
-      "sweep_basis": "width of the distance band a destination is drawn from, as a share either side of the observed trip length. Wide enough that every origin has candidates, narrow enough that the measurement stays at the mode’s own length scale.",
+      "sweep_basis": "width of the distance band a destination is drawn from, as a share either side of the observed trip length. Wide enough that every origin has candidates, narrow enough that the measurement stays at the mode\u2019s own length scale.",
       "status": "active",
       "decisions_ref": "9.2, 15",
       "description": "Half-width of the distance band used when drawing a destination for the network-factor measurement."
@@ -1554,6 +1554,25 @@
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ]
+    },
+    "B.ride.escort_coherence_rate": {
+      "value": 0.1,
+      "units": "share_per_iteration",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          0.5
+        ],
+        "basis": "A SEARCH parameter, not a preference: how often a DECOHERED escort pair is offered the coherent plan back, never how attractive riding is. ZERO RECOVERS TODAY'S BEHAVIOUR EXACTLY, which is what makes the mechanism's effect measurable rather than assumed, and is the reason the interval starts there. The upper bound is where re-proposal would start to dominate the declared innovation weights (SubtourModeChoice 0.1, ReRoute 0.15) and the search would be re-proposing faster than it explores. The value is not fitted to any target and cannot be: the proposed plan is scored like any other and ChangeExpBeta keeps it only if it earns its place, so this field moves how QUICKLY a coherent pair can be rediscovered, not whether it survives."
+      },
+      "status": "active",
+      "decisions_ref": "9.82",
+      "consumers": [
+        "src/java/citysim/EscortCoherenceListener.java"
+      ],
+      "matsim_param": "ridePairing.escortCoherenceRate",
+      "description": "Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together."
     }
   }
 }
