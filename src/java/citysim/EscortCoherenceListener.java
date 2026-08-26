@@ -72,6 +72,9 @@ public final class EscortCoherenceListener implements ReplanningListener {
 
     /** The activity an escort trip exists to reach. */
     public static final String ESCORT_ACTIVITY = "escort";
+    /** Written by build_matsim_plans.py: `always` or `never`. */
+    public static final String CAR_AVAIL = "carAvail";
+    public static final String CAR_ALWAYS = "always";
 
     private final Scenario scenario;
     private final RidePairingConfigGroup cfg;
@@ -141,6 +144,15 @@ public final class EscortCoherenceListener implements ReplanningListener {
                 if (plan == null) {
                     continue;
                 }
+                // Only someone who cannot drive themselves. Offering `ride` to
+                // a licensed car-available adult would second-guess a choice
+                // they are entitled to make, and it is not the population the
+                // defect is about: at licence = 0 the model puts 48.8% of
+                // trips on a bicycle and 0.5% on ride (DEMOGRAPHIC_MODES.md).
+                final Object avail = member.getAttributes().getAttribute(CAR_AVAIL);
+                if (avail != null && CAR_ALWAYS.equals(avail.toString())) {
+                    continue;
+                }
                 Trip target = null;
                 for (final Trip trip : TripStructureUtils.getTrips(plan)) {
                     if (isAllMode(trip, TransportMode.ride)) {
@@ -187,11 +199,37 @@ public final class EscortCoherenceListener implements ReplanningListener {
                 if (inCopy == null) {
                     continue;
                 }
-                final Leg leg = PopulationUtils.createLeg(TransportMode.ride);
-                TripStructureUtils.setRoutingMode(leg, TransportMode.ride);
-                TripRouter.insertTrip(copy, inCopy.getOriginActivity(),
-                                      Collections.singletonList(leg),
-                                      inCopy.getDestinationActivity());
+                // THE WHOLE SUBTOUR, never one trip of it. MATSim refuses a
+                // subtour mixing chain-based modes (car, bike) with
+                // non-chain-based ones, because the vehicle would be stranded:
+                // re-moding a single trip to ride left [car, ride] and killed
+                // arm 20260826T222352 at iteration 2 with
+                // "Subtour contains a mix of chain- and non-chainbased modes"
+                // (persons 93508, 451935). That is this project's own trap 13,
+                // the 9.63/#65 failure, met again. An escorted member is
+                // dropped AND collected, which is what the drop/pickup pairs
+                // in B2_escort_bindings say, so the coherent proposal is the
+                // whole subtour rather than half of it.
+                final List<Trip> subtourTrips = subtourContaining(copy, inCopy);
+                if (subtourTrips.isEmpty()) {
+                    continue;
+                }
+                boolean built = true;
+                for (final Trip t : subtourTrips) {
+                    final Leg leg = PopulationUtils.createLeg(TransportMode.ride);
+                    TripStructureUtils.setRoutingMode(leg, TransportMode.ride);
+                    try {
+                        TripRouter.insertTrip(copy, t.getOriginActivity(),
+                                              Collections.singletonList(leg),
+                                              t.getDestinationActivity());
+                    } catch (final RuntimeException ex) {
+                        built = false;
+                        break;
+                    }
+                }
+                if (!built) {
+                    continue;
+                }
                 member.addPlan(copy);
                 member.setSelectedPlan(copy);
                 trim(member);
@@ -203,6 +241,20 @@ public final class EscortCoherenceListener implements ReplanningListener {
                      + "re-proposed as ride at rate {} - proposed, never imposed",
                      decohered, proposed, rate);
         }
+    }
+
+    /** The trips of the subtour that contains `trip`, or empty if unresolved. */
+    private static List<Trip> subtourContaining(final Plan plan, final Trip trip) {
+        for (final TripStructureUtils.Subtour st
+                : TripStructureUtils.getSubtours(plan)) {
+            for (final Trip t : st.getTrips()) {
+                if (t.getOriginActivity() == trip.getOriginActivity()
+                        && t.getDestinationActivity() == trip.getDestinationActivity()) {
+                    return new ArrayList<>(st.getTrips());
+                }
+            }
+        }
+        return Collections.emptyList();
     }
 
     /** Every leg of the trip carries `mode`. */

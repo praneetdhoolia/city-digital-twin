@@ -8227,6 +8227,44 @@ routing-mode errors, the listener firing at 10.2% and 10.3% against the declared
 0.10, and ride legs at 87,019 / 85,873 / **87,348** against 86,118 for the same
 two iterations without it.
 
+### Correction: a subtour has ONE mode class, and a two-iteration probe cannot see replanning
+
+The first build of this listener re-moded ONE trip of a subtour to `ride` and
+left its siblings on `car`. MATSim refuses a subtour mixing chain-based modes
+(`car`, `bike`) with non-chain-based ones - the vehicle would be stranded - and
+arm `20260826T222352` died at **iteration 2** with `Subtour contains a mix of
+chain- and non-chainbased modes: [car, ride]` (persons 93508, 451935). That is
+this project's own **trap 13**, the §9.63/#65 mixed-subtour failure, met again.
+
+**The 25% x 2 validation had passed rc=0 on the same code, and could not have
+caught it.** Innovation switches off at
+`RUN.replanning.fraction_to_disable_innovation x lastIteration`, so a
+two-iteration probe runs its LAST replanning with `SubtourModeChoice` already
+disabled (0.8 x 2 = 1.6) and never sees the plans the listener modified. Three
+probes have now been structurally blind in this session for the same reason -
+too small, or too short, to contain the case - so the fix is a committed
+artefact rather than a flag: **`probe_replanning_25pct`** runs eight iterations
+at the arm's own 25%, keeping innovation on through 6.4.
+
+Two repairs:
+
+- **The whole SUBTOUR is converted, never one trip of it.** This is also the
+  more faithful model: an escorted member is dropped AND collected, which is
+  exactly what the drop/pickup pairs in `B2_escort_bindings_<DAY>.csv` record.
+- **Only a member who cannot drive themselves is offered `ride`**
+  (`carAvail != always`). Offering it to a licensed car-available adult would
+  second-guess a choice they are entitled to make, and it is not the population
+  the defect is about: at `licence = 0` the model puts **48.8%** of trips on a
+  bicycle and **0.5%** on ride.
+
+Probe `20260826T224343_8it_25pct`, completed rc 0, zero mixed-subtour errors:
+ride legs held at 85-86k throughout and **the pair rate stopped falling** -
+0.2943 at iteration 0 down to a trough of 0.2125 at iteration 6, then back to
+0.2387 and 0.2526 - with the decohered count falling each iteration (4,349 ->
+3,862 -> 3,523 -> 3,296). In F7 the same rate fell monotonically to 0.157 by
+iteration 200. Eight iterations settles nothing about convergence; the reversal
+of direction is what the probe establishes.
+
 ### Family F8
 
 **F8-escort-coherence** is declared from launch stamp 20260826T230000. F7's only

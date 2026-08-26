@@ -1,0 +1,16 @@
+{
+  "overlay": "probe_replanning_25pct",
+  "description": "A PLUMBING PROBE FOR CHANGES TO THE REPLANNING LOOP, NOT A MODELLING RUN. Eight iterations at the 25% working fraction exists because the `smoke` overlay cannot exercise what it was being asked to: MATSim switches innovation off at RUN.replanning.fraction_to_disable_innovation x lastIteration, so a 2-iteration probe runs its LAST replanning with innovation already disabled (0.8 x 2 = 1.6) and SubtourModeChoice never sees plans a listener modified. That blind spot let a mixed chain/non-chain subtour reach arm 20260826T222352, which died at ITERATION 2 with `Subtour contains a mix of chain- and non-chainbased modes` after a 25% x 2 probe had passed rc=0 on the same code (DECISIONS.md 9.82). At eight iterations innovation stays on through 6.4, so several innovating replannings run against the modified plans. THE FRACTION IS THE ARM'S OWN 25% ON PURPOSE: a 1% probe had already missed a multi-leg-trip defect for the same reason - the population is too small to contain the case (trap 13, `verified-at-1% is not verified`). NOTHING PRODUCED UNDER THIS OVERLAY IS A RESULT and no mode share, patronage or count from it may be quoted, compared or fitted: eight iterations is two orders of magnitude short of relaxation, and DECISIONS.md 9.7 shows even 250 is too low. Expect roughly 35-40 minutes and a ~40 GiB heap.",
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 8,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "40g"
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This overlay is not one: it tests that a change to the replanning loop survives several innovating replannings at the fraction the arm will use. The value is deliberately far below the range so that any output carrying it is obviously not a result, and check_package.py can identify probe runs by it."
+  }
+}
