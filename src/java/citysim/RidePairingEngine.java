@@ -26,7 +26,9 @@ import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.api.core.v01.population.Route;
 import org.matsim.core.controler.OutputDirectoryHierarchy;
+import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
+import org.matsim.core.controler.listener.AfterMobsimListener;
 import org.matsim.core.controler.listener.BeforeMobsimListener;
 import org.matsim.core.router.StageActivityTypeIdentifier;
 import org.matsim.core.utils.misc.OptionalTime;
@@ -118,7 +120,8 @@ import org.matsim.core.utils.misc.OptionalTime;
  * share is a finding about the DEMAND, not about this class.
  */
 public final class RidePairingEngine implements BeforeMobsimListener,
-        PersonDepartureEventHandler, PersonArrivalEventHandler {
+        AfterMobsimListener, PersonDepartureEventHandler,
+        PersonArrivalEventHandler {
 
     /** Person attribute written by build_matsim_plans.py; absent on the
      *  household-less external and through boundary tiers. */
@@ -144,7 +147,20 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             + "car_legs,occupancy_from_pairings,"
             + "driver_time_realised,driver_time_routed,"
             + "mean_driver_minus_baseline_s,capacity_refusals,"
-            + "households_with_ride,ride_legs_no_household,elapsed_ms\n";
+            + "households_with_ride,ride_legs_no_household,elapsed_ms,"
+            // WHY a leg missed, as an ordered funnel. A pair rate alone cannot
+            // separate a passenger no driver could ever serve from one whose
+            // driver left ten minutes early, and those two want opposite
+            // answers: the first should abandon ride on its score, the second
+            // is a departure-time coordination MATSim does not model.
+            + "miss_no_candidate,miss_window,miss_endpoints,miss_capacity,"
+            // For a leg that missed ONLY on timing, how far off was the nearest
+            // driver making a geometrically matching trip? A window miss can be
+            // a near miss the declared tolerance just failed to reach, or a
+            // driver hours away who was never going to serve it, and widening
+            // the tolerance is only defensible against the first. The buckets
+            // are minutes of |driver departure - passenger departure|.
+            + "gap_le30,gap_le45,gap_le60,gap_le120,gap_gt120,gap_median_min\n";
 
     private final Scenario scenario;
     private final OutputDirectoryHierarchy io;
@@ -230,6 +246,23 @@ public final class RidePairingEngine implements BeforeMobsimListener,
 
     private boolean headerWritten = false;
     private int writeFailures = 0;
+
+    /** Legs re-moded to walk for THIS mobsim only, with the ride route to give
+     *  back at AfterMobsim. See {@link #notifyAfterMobsim}: the forced walk is
+     *  an execution, not an amputation. */
+    private final List<RideLeg> remodedThisMobsim = new ArrayList<>();
+
+    /** Why unpaired legs missed, this iteration, as an ordered funnel:
+     *  no candidate driver leg at all / none inside the window / none whose
+     *  endpoints matched / all refused for capacity. Reset per pairing pass. */
+    private int missNoCandidate = 0;
+    private int missWindow = 0;
+    private int missEndpoints = 0;
+    private int missCapacity = 0;
+
+    /** Minutes off the nearest ENDPOINT-MATCHING driver, for legs that missed
+     *  only on timing. Kept as a list so the median is measured, not assumed. */
+    private final List<Double> missGapMinutes = new ArrayList<>();
 
     /** One realised car leg: where it ran, when it left, how long it took. */
     private static final class Realised {
@@ -344,6 +377,12 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         current = new HashMap<>();
         inFlight.clear();
         bookings.clear();
+        remodedThisMobsim.clear();
+        missNoCandidate = 0;
+        missWindow = 0;
+        missEndpoints = 0;
+        missCapacity = 0;
+        missGapMinutes.clear();
 
         index();
 
@@ -474,17 +513,31 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             DriverLeg best = null;
             double bestGap = Double.MAX_VALUE;
             boolean refusedForCapacity = false;
+            // The funnel, so a miss can say WHICH gate closed on it.
+            int sawCandidate = 0;
+            boolean sawInWindow = false;
+            boolean sawEndpoints = false;
+            // The nearest driver making a geometrically matching trip, whatever
+            // the clock said. This is what decides whether a window miss was a
+            // near miss or a driver who was never going to serve it.
+            double nearestMatchingGap = Double.MAX_VALUE;
             for (final DriverLeg driver : candidates) {
                 if (driver.person.equals(ride.person)) {
                     continue;                       // you cannot drive yourself
                 }
+                sawCandidate++;
                 final double gap = Math.abs(driver.departure - ride.departure);
                 if (gap > window) {
+                    if (endpointsMatch(rule, driver, ride) && gap < nearestMatchingGap) {
+                        nearestMatchingGap = gap;
+                    }
                     continue;
                 }
+                sawInWindow = true;
                 if (!endpointsMatch(rule, driver, ride)) {
                     continue;
                 }
+                sawEndpoints = true;
                 if (driver.carrying >= capacity) {
                     refusedForCapacity = true;
                     continue;
@@ -498,17 +551,52 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 if (refusedForCapacity) {
                     capacityRefusals++;
                 }
+                // GEOMETRY BEFORE TIMING. Asking "was anyone in the window?"
+                // first labelled as a timing miss every passenger whose
+                // household drove somewhere else entirely: measured 1,529 such
+                // legs of which only 112 had an endpoint-matching driver at ANY
+                // hour, median 253.7 minutes away. Widening the window would
+                // have recovered 13. The question that separates a fixable miss
+                // from a hopeless one is whether a matching TRIP exists at all.
+                final boolean matchedEver =
+                        sawEndpoints || nearestMatchingGap < Double.MAX_VALUE;
+                if (sawCandidate == 0) {
+                    missNoCandidate++;              // no household car leg at all
+                } else if (!matchedEver) {
+                    missEndpoints++;                // the household drove elsewhere
+                } else if (!sawInWindow) {
+                    missWindow++;                   // the right trip, the wrong hour
+                    missGapMinutes.add(nearestMatchingGap / 60.0);
+                } else {
+                    missCapacity++;                 // right trip, right hour, car full
+                }
                 unpaired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
                 if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
                     // DECISIONS.md 9.55: a ride trip no household driver can
                     // physically serve is not a ride trip - it WALKS, on the
-                    // network, this iteration (the car route's links are
-                    // traversed at walking speed; ReRoute re-routes it as
-                    // walk next innovation). A long forced walk scores
+                    // network, THIS ITERATION. A long forced walk scores
                     // terribly, so co-evolution reassigns the tour, and ride
                     // becomes emergent: only what the driver supply carries
                     // survives. No parameter invented; the constraint is the
                     // price.
+                    //
+                    // The walk is an EXECUTION, not an amputation. The mode is
+                    // given back at AfterMobsim (notifyAfterMobsim), because
+                    // scoring is event-driven: the agent is still charged for
+                    // the walk it actually made, while the plan keeps `ride`
+                    // as an alternative co-evolution can re-select when the
+                    // driver's selected plan serves it again. Mutating the
+                    // plan permanently made pairing failure IRREVERSIBLE while
+                    // pairing success created nothing - a one-way ratchet.
+                    // Measured on 20260825T135734: 87,019 ride legs at
+                    // iteration 0, 61,409 unpaired, and 58,791 of them gone by
+                    // iteration 1 - 95.7% - never to return; paired legs then
+                    // eroded 25,610 -> 7,320 on timing misses alone, an
+                    // exponential decay with a 36-iteration half-life heading
+                    // to the pre-repair 0.0013 occupancy. Whether ride is
+                    // worth choosing is for the score to decide over many
+                    // iterations, not for one missed pairing to settle.
+                    remodedThisMobsim.add(ride);
                     ride.leg.setMode(TransportMode.walk);
                     org.matsim.core.router.TripStructureUtils.setRoutingMode(
                             ride.leg, TransportMode.walk);
@@ -569,6 +657,124 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     }
 
     // ---- the rules --------------------------------------------------------
+
+    /**
+     * Give back every leg the pairing forced to walk for this mobsim.
+     *
+     * <p>Scoring is event-driven and this runs once the mobsim has emitted its
+     * events, so the agent keeps the score of the walk it actually made -
+     * DECISIONS.md 9.55's price is paid in full, and the surviving ride share
+     * stays emergent from the physical driver supply. What the agent does NOT
+     * keep is a plan with ride amputated out of it: the mode and the route the
+     * pairing set aside go back on the leg, so the alternative is still there
+     * to be re-selected when the driver's selected plan serves it again.
+     *
+     * <p>Without this, one missed pairing deleted the alternative for good
+     * while a successful pairing created nothing - a one-way ratchet that ran
+     * to zero whatever the scores said. The measurement is in the re-mode
+     * comment above.
+     */
+    @Override
+    public void notifyAfterMobsim(final AfterMobsimEvent event) {
+        if (!enabled()) {
+            return;
+        }
+        // The leg object CANNOT be held across the mobsim. The re-mode nulls
+        // the route so the walk is routed on the walk network, and a null route
+        // is exactly what makes PersonPrepareForSim run PlanRouter over that
+        // trip - and TripRouter.insertTrip REPLACES the trip's plan elements
+        // with new Leg objects. A restore through the old reference therefore
+        // writes to an orphan and changes nothing: measured on arm
+        // 20260826T051938, whose ride-leg counts came back byte-identical to
+        // the unfixed arm (87,019 / 28,228 / 25,889) while the log cheerfully
+        // reported 61,409 legs "restored".
+        //
+        // So the leg is RE-FOUND in the selected plan by the endpoints the
+        // pairing recorded, and the count logged is what was actually restored.
+        // The restore replaces the whole TRIP, never one leg of it. Re-routing a
+        // forced walk can yield a MULTI-LEG trip, and MATSim requires every leg
+        // of a trip to carry the same routingMode: setting one leg back to ride
+        // and leaving its siblings on walk killed arm 20260826T053741 at
+        // iteration 1 with "Found a trip whose legs have different
+        // routingModes" (agents 223559, 539119, 522667). The 1% probe had not
+        // caught it because no matching agent there held a multi-leg walk trip.
+        int restored = 0;
+        for (final RideLeg ride : remodedThisMobsim) {
+            final Person person =
+                    scenario.getPopulation().getPersons().get(ride.person);
+            if (person == null || person.getSelectedPlan() == null) {
+                continue;
+            }
+            final Plan plan = person.getSelectedPlan();
+            org.matsim.core.router.TripStructureUtils.Trip target = null;
+            for (final org.matsim.core.router.TripStructureUtils.Trip trip
+                    : org.matsim.core.router.TripStructureUtils.getTrips(plan)) {
+                final Id<Link> from = trip.getOriginActivity().getLinkId();
+                final Id<Link> to = trip.getDestinationActivity().getLinkId();
+                if (ride.from.equals(from) && ride.to.equals(to)
+                        && isAllWalk(trip)) {
+                    target = trip;
+                    break;
+                }
+            }
+            if (target == null) {
+                continue;
+            }
+            final Leg leg = org.matsim.core.population.PopulationUtils
+                    .createLeg(TransportMode.ride);
+            leg.setRoute(ride.route);
+            org.matsim.core.router.TripStructureUtils.setRoutingMode(
+                    leg, TransportMode.ride);
+            org.matsim.core.router.TripRouter.insertTrip(
+                    plan, target.getOriginActivity(),
+                    Collections.singletonList(leg),
+                    target.getDestinationActivity());
+            restored++;
+        }
+        if (!remodedThisMobsim.isEmpty()) {
+            org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                    .info("ridePairing: {} of {} forced-walk leg(s) restored to "
+                          + "ride after the mobsim - the walk was scored, the "
+                          + "alternative kept", restored, remodedThisMobsim.size());
+        }
+        remodedThisMobsim.clear();
+    }
+
+    /** Every leg of the trip is a walk leg - i.e. this is a trip the pairing
+     *  forced, not some other walk the agent was always going to make. */
+    private static boolean isAllWalk(
+            final org.matsim.core.router.TripStructureUtils.Trip trip) {
+        if (trip.getLegsOnly().isEmpty()) {
+            return false;
+        }
+        for (final Leg leg : trip.getLegsOnly()) {
+            if (!TransportMode.walk.equals(leg.getMode())) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** How many timing misses were within `minutes` of a matching driver. */
+    private int gapAtMost(final double minutes) {
+        int n = 0;
+        for (final Double g : missGapMinutes) {
+            if (g <= minutes) {
+                n++;
+            }
+        }
+        return n;
+    }
+
+    /** Median minutes off, or 0 when nothing missed on timing alone. */
+    private double gapMedian() {
+        if (missGapMinutes.isEmpty()) {
+            return 0.0;
+        }
+        final List<Double> s = new ArrayList<>(missGapMinutes);
+        Collections.sort(s);
+        return s.get(s.size() / 2);
+    }
 
     private static boolean endpointsMatch(final String rule, final DriverLeg driver,
                                           final RideLeg ride) {
@@ -729,6 +935,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 .append(String.format(java.util.Locale.ROOT, "%.3f", meanDelta))
                 .append(',').append(capacityRefusals).append(',').append(households)
                 .append(',').append(noHousehold).append(',').append(elapsedMs)
+                .append(',').append(missNoCandidate)
+                .append(',').append(missWindow)
+                .append(',').append(missEndpoints)
+                .append(',').append(missCapacity)
+                .append(',').append(gapAtMost(30.0))
+                .append(',').append(gapAtMost(45.0))
+                .append(',').append(gapAtMost(60.0))
+                .append(',').append(gapAtMost(120.0))
+                .append(',').append(missGapMinutes.size() - gapAtMost(120.0))
+                .append(',').append(String.format(java.util.Locale.ROOT, "%.1f",
+                                                  gapMedian()))
                 .append('\n');
         try {
             Files.write(Paths.get(io.getOutputFilename(OUT_FILE)),
