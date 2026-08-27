@@ -263,10 +263,26 @@ public final class EscortCoherenceListener implements ReplanningListener {
         }
     }
 
-    /** The trips of the subtour that contains `trip`, or empty if unresolved. */
-    private static List<Trip> subtourContaining(final Plan plan, final Trip trip) {
+    /** The trips of the subtour that contains `trip`, or empty if unresolved.
+     *
+     * <p>Computed under THE SAME subtour structure SubtourModeChoice
+     * enforces - {@code getSubtours(plan, coordDistance)} with the run's own
+     * {@code subtourModeChoice.coordDistance} - because the two structures
+     * genuinely differ: with coordDistance 100, activities within 100 m of
+     * each other merge subtours, so a conversion that is whole-subtour under
+     * the default structure is a PARTIAL conversion under the enforced one.
+     * Measured cost of getting this wrong (DECISIONS.md 9.84): the first F9
+     * arm died at iteration 16 on "Subtour contains a mix of chain- and
+     * non-chainbased modes" - person 148091 holding [ride, bike] - after a
+     * joint proposal converted a default-structure subtour that the merged
+     * structure did not recognise as whole. The escort path carried the same
+     * latent flaw through 163 F8 iterations; escorted school-run geometry
+     * simply never triggered the merge. */
+    private List<Trip> subtourContaining(final Plan plan, final Trip trip) {
+        final double coordDist =
+                scenario.getConfig().subtourModeChoice().getCoordDistance();
         for (final TripStructureUtils.Subtour st
-                : TripStructureUtils.getSubtours(plan)) {
+                : TripStructureUtils.getSubtours(plan, coordDist)) {
             for (final Trip t : st.getTrips()) {
                 if (t.getOriginActivity() == trip.getOriginActivity()
                         && t.getDestinationActivity() == trip.getDestinationActivity()) {
