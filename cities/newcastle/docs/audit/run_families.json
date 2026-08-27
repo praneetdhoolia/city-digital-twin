@@ -1,59 +1,65 @@
 {
-  "description": "The comparability families of this city's runs, declared once so the cross-run index (issue #77, src/analyse/build_run_index.py) can label every run directory mechanically instead of each reader re-deriving the boundaries from DECISIONS.md. A family boundary is a recorded model/data/network change after which nothing compares to what ran before it (DECISIONS.md 3.5 and the per-boundary entries below). Runs are assigned to the newest family whose from_launch stamp is <= their launch stamp; the overrides block wins where the record attributes a run explicitly or the launch date alone cannot settle it. THIS FILE IS A RECORD OF DECIDED BOUNDARIES, not a place to invent one - a new family is declared here in the same change as its DECISIONS.md entry.",
-  "families": {
-    "F1-postrebuild-prerepair": {
-      "label": "post-rebuild, pre-repair (the 9.43 pilot family)",
-      "decisions_ref": "9.42, 9.43",
-      "from_launch": "20260816T000000",
-      "note": "The issue #32 rebuild made everything before 16 Aug incomparable and results/ was already empty. Pilot arms conv1000_10pct / conv1000_25pct are this family's record."
-    },
-    "F2-ride-binding": {
-      "label": "ride sampler + escort binding + age structure (9.44-9.47)",
-      "decisions_ref": "9.44, 9.45, 9.46, 9.47",
-      "from_launch": "20260818T190000",
-      "note": "The 18 Aug triple break. bind1000_25pct (20260818T235351) is the family's last and only completed arm."
-    },
-    "F3-all-physical": {
-      "label": "freight + all-physical modes (9.49-9.55)",
-      "decisions_ref": "9.49, 9.52, 9.53, 9.55",
-      "from_launch": "20260820T000000",
-      "note": "Freight changed the demand AND the model. No completed 1000-iteration arm: the 9.50 base arm was stopped by instruction, the 9.57 attempt stopped at iteration 136."
-    },
-    "F4-walk-wedge": {
-      "label": "walk-wedge network repairs + lifts + PassingQ (9.58-9.63) - CLOSED",
-      "decisions_ref": "9.58, 9.59, 9.60, 9.61, 9.63",
-      "from_launch": "20260821T100000",
-      "note": "The CLOSED family whose record is the two completed arms 20260821T175907 / 20260821T180310 (9.64) - the pre-repair baseline every next-arm comparison is made against."
-    },
-    "F5-ride-walk-repairs": {
-      "label": "round-trip ride bindings + short-trip mixture (9.68-9.69) - CLOSED UNMEASURED",
-      "decisions_ref": "9.68, 9.69",
-      "from_launch": "20260824T000000",
-      "note": "B2/plans/run inputs regenerated 24 Aug on the repaired mechanisms. NO CONVERGED ARM EVER RAN IN THIS FAMILY: the 4.6.9 arm was launch-blocked (9.72), and the 9.77 activation closed the family before it was measured. Its byte-identical inputs are regenerable by setting A.signals.representation=implicit_delay and A.crossings.representation=absent and removing taxi from the two RUN vocabularies, should the repairs-first ordering ever be revived. The 25 Aug batch was BUILT INERT inside this family (9.76)."
-    },
-    "F6-all-modes-activated": {
-      "label": "explicit signals + tram/bus priority + crossings + native dwell + taxi (9.77) - CURRENT",
-      "decisions_ref": "9.76, 9.77",
-      "from_launch": "20260825T090000",
-      "note": "The 9.77 activation boundary: A.signals.representation=explicit_signals (signal plans at the 14 corridor intersections, saturation-flow re-capacitation, each variant's own embedded tram delay removed from the schedule), A.crossings.representation=change_events (the two freight level crossings as a time-variant network), taxi in both RUN vocabularies (one blended priced mode), travel-time bin 300 s, usingFastCapacityUpdate=false, dwell carried by the signals-transformed schedules. ONE boundary per 9.75/9.76; run inputs regenerated 25 Aug. The same-session 9.78 lanes FOLD IN while the family has no arms (still one boundary): score-distinct PT submodes (RUN.routing.pt_submode_scoring=per_submode) and the CWANZ-cited bike availability 0.493 with its plans regeneration. The 9.76 detached probe 20260825T033850 (launched 03:38) is F5; the activated probes from 09:44 on are F6."
-    },
-    "F7-ride-alternative-retained": {
-      "label": "the unpaired-ride fallback stops deleting the plan's ride alternative (9.81) - CURRENT",
-      "decisions_ref": "9.81",
-      "from_launch": "20260826T060000",
-      "note": "RidePairingEngine re-moded an unpaired ride leg to a network walk BY MUTATING THE PLAN, so pairing failure destroyed the alternative while pairing success created none - a one-way ratchet measured on the aborted F6 arm 20260825T135734: 95.7% of the 61,409 iteration-0 misses gone by iteration 1, occupancy decaying with a 36-iteration half-life toward the pre-repair 0.0013. The forced walk is now an EXECUTION: the leg's mode and route are restored at AfterMobsim, after the events scoring reads, so the walk is still charged in full and 9.55 is kept intact while the plan retains ride for co-evolution to re-select. NO PARAMETER CHANGED - B.ride.remode_unpaired stays true and B.ride.pairing_window_min stays 15.0, a window widening having been refused by measurement (median gap to an endpoint-matching driver 253.7 min). ride_pairing.csv additionally gains the miss funnel and gap distribution, which is reporting only. F6 produced no converged arm, exactly as F5 did not."
-    },
-    "F8-escort-coherence": {
-      "label": "the escort and the escorted stop taking different modes (9.82) - CURRENT",
-      "decisions_ref": "9.82",
-      "from_launch": "20260826T230000",
-      "note": "B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, 125,475 weekday rows from census household structure and the HTS escort rates) and MATSim replans the two agents independently, so SubtourModeChoice - which moves one agent at a time - cannot propose the two-sided state and the pair cannot recohere once lost. Measured on the F7 arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride, so the escort tours run largely empty and ride is suppressed while car and bike are inflated. EscortCoherenceListener PROPOSES the coherent plan back to a member who has drifted off ride; ChangeExpBeta scores it like any other plan and keeps it only if it earns its place, and the driver is never touched. NO MODE'S UTILITY CHANGES and nothing is fitted: the one new field, B.ride.escort_coherence_rate (0.10, swept [0.0, 0.5]), is a SEARCH rate whose ZERO RECOVERS F7 EXACTLY. Carries the 9.81 ride-alternative restore unchanged. Validated at 25% x 2 (20260826T220340, rc 0) before launch. CORRECTION within the family: the first build re-moded one trip of a subtour and died at iteration 2 on a mixed chain/non-chain subtour (arm 20260826T222352); the listener now converts the WHOLE subtour and only offers ride to a member who cannot drive themselves. Validated by probe_replanning_25pct (20260826T224343, rc 0, eight iterations so innovation stays on through 6.4) after the 25% x 2 probe proved structurally blind to replanning."
-    }
+ "description": "The comparability families of this city's runs, declared once so the cross-run index (issue #77, src/analyse/build_run_index.py) can label every run directory mechanically instead of each reader re-deriving the boundaries from DECISIONS.md. A family boundary is a recorded model/data/network change after which nothing compares to what ran before it (DECISIONS.md 3.5 and the per-boundary entries below). Runs are assigned to the newest family whose from_launch stamp is <= their launch stamp; the overrides block wins where the record attributes a run explicitly or the launch date alone cannot settle it. THIS FILE IS A RECORD OF DECIDED BOUNDARIES, not a place to invent one - a new family is declared here in the same change as its DECISIONS.md entry.",
+ "families": {
+  "F1-postrebuild-prerepair": {
+   "label": "post-rebuild, pre-repair (the 9.43 pilot family)",
+   "decisions_ref": "9.42, 9.43",
+   "from_launch": "20260816T000000",
+   "note": "The issue #32 rebuild made everything before 16 Aug incomparable and results/ was already empty. Pilot arms conv1000_10pct / conv1000_25pct are this family's record."
   },
-  "overrides": {
-    "aborted_20260818T162538_1000it_25pct": {
-      "family": null,
-      "note": "Dead launch, no artefacts, launched 18 Aug 16:25 - the record does not state whether the 9.44/9.45 landings preceded it that day, so its family is left unattributed rather than guessed."
-    }
+  "F2-ride-binding": {
+   "label": "ride sampler + escort binding + age structure (9.44-9.47)",
+   "decisions_ref": "9.44, 9.45, 9.46, 9.47",
+   "from_launch": "20260818T190000",
+   "note": "The 18 Aug triple break. bind1000_25pct (20260818T235351) is the family's last and only completed arm."
+  },
+  "F3-all-physical": {
+   "label": "freight + all-physical modes (9.49-9.55)",
+   "decisions_ref": "9.49, 9.52, 9.53, 9.55",
+   "from_launch": "20260820T000000",
+   "note": "Freight changed the demand AND the model. No completed 1000-iteration arm: the 9.50 base arm was stopped by instruction, the 9.57 attempt stopped at iteration 136."
+  },
+  "F4-walk-wedge": {
+   "label": "walk-wedge network repairs + lifts + PassingQ (9.58-9.63) - CLOSED",
+   "decisions_ref": "9.58, 9.59, 9.60, 9.61, 9.63",
+   "from_launch": "20260821T100000",
+   "note": "The CLOSED family whose record is the two completed arms 20260821T175907 / 20260821T180310 (9.64) - the pre-repair baseline every next-arm comparison is made against."
+  },
+  "F5-ride-walk-repairs": {
+   "label": "round-trip ride bindings + short-trip mixture (9.68-9.69) - CLOSED UNMEASURED",
+   "decisions_ref": "9.68, 9.69",
+   "from_launch": "20260824T000000",
+   "note": "B2/plans/run inputs regenerated 24 Aug on the repaired mechanisms. NO CONVERGED ARM EVER RAN IN THIS FAMILY: the 4.6.9 arm was launch-blocked (9.72), and the 9.77 activation closed the family before it was measured. Its byte-identical inputs are regenerable by setting A.signals.representation=implicit_delay and A.crossings.representation=absent and removing taxi from the two RUN vocabularies, should the repairs-first ordering ever be revived. The 25 Aug batch was BUILT INERT inside this family (9.76)."
+  },
+  "F6-all-modes-activated": {
+   "label": "explicit signals + tram/bus priority + crossings + native dwell + taxi (9.77) - CURRENT",
+   "decisions_ref": "9.76, 9.77",
+   "from_launch": "20260825T090000",
+   "note": "The 9.77 activation boundary: A.signals.representation=explicit_signals (signal plans at the 14 corridor intersections, saturation-flow re-capacitation, each variant's own embedded tram delay removed from the schedule), A.crossings.representation=change_events (the two freight level crossings as a time-variant network), taxi in both RUN vocabularies (one blended priced mode), travel-time bin 300 s, usingFastCapacityUpdate=false, dwell carried by the signals-transformed schedules. ONE boundary per 9.75/9.76; run inputs regenerated 25 Aug. The same-session 9.78 lanes FOLD IN while the family has no arms (still one boundary): score-distinct PT submodes (RUN.routing.pt_submode_scoring=per_submode) and the CWANZ-cited bike availability 0.493 with its plans regeneration. The 9.76 detached probe 20260825T033850 (launched 03:38) is F5; the activated probes from 09:44 on are F6."
+  },
+  "F7-ride-alternative-retained": {
+   "label": "the unpaired-ride fallback stops deleting the plan's ride alternative (9.81) - CURRENT",
+   "decisions_ref": "9.81",
+   "from_launch": "20260826T060000",
+   "note": "RidePairingEngine re-moded an unpaired ride leg to a network walk BY MUTATING THE PLAN, so pairing failure destroyed the alternative while pairing success created none - a one-way ratchet measured on the aborted F6 arm 20260825T135734: 95.7% of the 61,409 iteration-0 misses gone by iteration 1, occupancy decaying with a 36-iteration half-life toward the pre-repair 0.0013. The forced walk is now an EXECUTION: the leg's mode and route are restored at AfterMobsim, after the events scoring reads, so the walk is still charged in full and 9.55 is kept intact while the plan retains ride for co-evolution to re-select. NO PARAMETER CHANGED - B.ride.remode_unpaired stays true and B.ride.pairing_window_min stays 15.0, a window widening having been refused by measurement (median gap to an endpoint-matching driver 253.7 min). ride_pairing.csv additionally gains the miss funnel and gap distribution, which is reporting only. F6 produced no converged arm, exactly as F5 did not."
+  },
+  "F8-escort-coherence": {
+   "label": "the escort and the escorted stop taking different modes (9.82)",
+   "decisions_ref": "9.82",
+   "from_launch": "20260826T230000",
+   "note": "B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, 125,475 weekday rows from census household structure and the HTS escort rates) and MATSim replans the two agents independently, so SubtourModeChoice - which moves one agent at a time - cannot propose the two-sided state and the pair cannot recohere once lost. Measured on the F7 arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride, so the escort tours run largely empty and ride is suppressed while car and bike are inflated. EscortCoherenceListener PROPOSES the coherent plan back to a member who has drifted off ride; ChangeExpBeta scores it like any other plan and keeps it only if it earns its place, and the driver is never touched. NO MODE'S UTILITY CHANGES and nothing is fitted: the one new field, B.ride.escort_coherence_rate (0.10, swept [0.0, 0.5]), is a SEARCH rate whose ZERO RECOVERS F7 EXACTLY. Carries the 9.81 ride-alternative restore unchanged. Validated at 25% x 2 (20260826T220340, rc 0) before launch. CORRECTION within the family: the first build re-moded one trip of a subtour and died at iteration 2 on a mixed chain/non-chain subtour (arm 20260826T222352); the listener now converts the WHOLE subtour and only offers ride to a member who cannot drive themselves. Validated by probe_replanning_25pct (20260826T224343, rc 0, eight iterations so innovation stays on through 6.4) after the 25% x 2 probe proved structurally blind to replanning."
+  },
+  "F9-joint-demand-gradient-gates": {
+   "label": "the demand ceiling mechanism, gradient link speed and the age gates (9.84) - CURRENT",
+   "decisions_ref": "9.84",
+   "from_launch": "20260827T120000",
+   "note": "Three root-cause builds activating as ONE boundary under the renewed gate-loop goal (9.84). (1) bind_joint_tours, the third B2 binder pass: adult joint household travel generated as PAIRS - a companion tour mirrors a licensed co-member driver tour (same endpoints and times, party_size 2, dest_placement joint), volume anchored on the DERIVED occupancy ratio (B.activity.joint_tour_passenger_ratio = C.constraint.vehicle_occupancy - 1 = 0.3503) times the observed HTS driver share, with escort/lift-covered trips counted first; companions seed ride, drivers seed car; EscortCoherenceListener gains a JOINT path at B.ride.joint_coherence_rate whose ZERO recovers the escort-only behaviour. The demand, plans and every run-input set regenerate, which is what breaks comparability with F6/F7/F8. (2) Gradient reaches walk and bike link travel time on BOTH router and mobsim sides behind A.gradient.representation=link_speed: grade_pct stamped per link from A1/A6 node elevations (81.9% of walk/bike links matched, clamp declared), Tobler 1993 for walk and Parkin & Rotheram 2010 for bike, every constant declared and swept; GradientSignalsNetworkFactory ports the signals node logic verbatim so signals and gradient survive together, lanes refused loudly. (3) Age availability gates: B.taxi.min_unaccompanied_age 18 [0,18] and B.population.bike_min_age 12 [0,16], assumed, labelled, ZERO DISABLES, consumed by AvailabilityModesCalculator via the new modeAvailability module. The 9.60 non-household scope stays same_zone - measured as 98% consumed, driver supply is the binding constraint. Registry 357 to 370. NOTHING in the family is a result until an arm carries _run.json."
   }
+ },
+ "overrides": {
+  "aborted_20260818T162538_1000it_25pct": {
+   "family": null,
+   "note": "Dead launch, no artefacts, launched 18 Aug 16:25 - the record does not state whether the 9.44/9.45 landings preceded it that day, so its family is left unattributed rather than guessed."
+  }
+ }
 }

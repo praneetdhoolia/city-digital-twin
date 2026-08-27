@@ -1148,7 +1148,7 @@
         0.1,
         0.5
       ],
-      "sweep_basis": "width of the distance band a destination is drawn from, as a share either side of the observed trip length. Wide enough that every origin has candidates, narrow enough that the measurement stays at the mode\u2019s own length scale.",
+      "sweep_basis": "width of the distance band a destination is drawn from, as a share either side of the observed trip length. Wide enough that every origin has candidates, narrow enough that the measurement stays at the mode’s own length scale.",
       "status": "active",
       "decisions_ref": "9.2, 15",
       "description": "Half-width of the distance band used when drawing a destination for the network-factor measurement."
@@ -1231,7 +1231,10 @@
       "status": "active",
       "decisions_ref": "9.44",
       "description": "How many passengers one driver's leg may carry. Without a cap a single driver would serve every passenger their household offered - the same unbounded-supply defect that rideAvail removed on the availability side, where an unconstrained model put 5.9 people in every car (9.10). Consumed by src/java/citysim/RidePairingEngine.",
-      "matsim_param": "ridePairing.maxPassengersPerVehicle"
+      "matsim_param": "ridePairing.maxPassengersPerVehicle",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
     },
     "B.ride.remode_unpaired": {
       "value": true,
@@ -1573,6 +1576,113 @@
       ],
       "matsim_param": "ridePairing.escortCoherenceRate",
       "description": "Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together."
+    },
+    "B.activity.joint_tour_passenger_ratio": {
+      "value": 0.3503,
+      "units": "passenger_trips_per_driver_trip",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.vehicle_occupancy"
+        ],
+        "identity": "the measured persons-per-vehicle minus one: HTS 2024/25 driver and passenger trip counts give 1.3503 occupants per car driver trip, i.e. 0.3503 passenger trips per driver trip. The joint binder supplies coordinated two-person travel ELIGIBILITY up to this ratio - the driver share it multiplies is the observed Vehicle-driver share already read by hts_car_driver_share(), and the escort- and lift-bound trips already generated count toward it first. No new number is introduced, and the REALISED passenger share stays emergent: mode choice and the physical pairing still decide whether an eligible companion actually rides (9.84)."
+      },
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.84",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "How many coordinated passenger trips per expected car-driver trip the demand generator may create joint-travel eligibility for, before mode choice. 9.83 measured the demand ceiling: every B2 trip carried party_size=1, escort-bound travel was 5.4% of trips against an observed 20.6% vehicle-passenger share, and occupancy sat at 1.0013 against the measured 1.3503 - the generator structurally could not supply the observed joint travel. This field sizes the joint-tour binder pass that closes that structural gap."
+    },
+    "B.activity.joint_tour_purposes": {
+      "value": [
+        "HS",
+        "HO"
+      ],
+      "units": "enum_list",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          [
+            "HO"
+          ],
+          [
+            "HS",
+            "HO"
+          ],
+          [
+            "HS",
+            "HO",
+            "WB"
+          ]
+        ],
+        "basis": "No held table records which activities household members attend together, so the shareable-purpose set is declared and swept rather than silently chosen. Joint discretionary travel concentrates in shopping and social/recreation; commute joint travel is rare in the one observed cell (G62 car-as-passenger is 3.35% of journeys to work), so HW and HE stay excluded in every option and the escort mechanism keeps carrying education."
+      },
+      "status": "active",
+      "decisions_ref": "9.84",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "Tour purposes a household companion may join as a joint tour: both the driver tour being joined and the companion tour being re-aimed must carry a purpose in this set."
+    },
+    "B.ride.joint_coherence_rate": {
+      "value": 0.1,
+      "units": "share_per_iteration",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          0.5
+        ],
+        "basis": "The same SEARCH parameter as B.ride.escort_coherence_rate, pointed at joint (non-escort) household pairs: how often a decohered driver-companion pair is offered the coherent state back, never how attractive riding is. ZERO RECOVERS THE ESCORT-ONLY BEHAVIOUR EXACTLY, so the joint extension is measurable on its own. The upper bound mirrors the escort rate: above it, re-proposal would dominate the declared innovation weights and the search would re-propose faster than it explores. Not fitted to any target and cannot be - ChangeExpBeta keeps a proposed plan only if it earns its place."
+      },
+      "status": "active",
+      "decisions_ref": "9.84",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java"
+      ],
+      "matsim_param": "ridePairing.jointCoherenceRate",
+      "description": "Rate at which a joint-tour driver and their bound household companion are re-offered the coherent car+ride state after per-agent replanning has split them. The joint binder (9.84) generates two-person travel as a PAIR, and SubtourModeChoice moves one agent at a time - the 9.82 defect class, which is why the same propose-never-impose listener carries it."
+    },
+    "B.taxi.min_unaccompanied_age": {
+      "value": 18,
+      "units": "years",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0,
+          18
+        ],
+        "basis": "No mode-by-age observation exists in the held data (issue #50: hts_mode.csv carries no age cell), and NSW point-to-point law sets no statutory minimum, so the age below which an agent cannot hail a taxi alone is assumed and swept over its whole range. ZERO DISABLES THE GATE and recovers the ungated F8 behaviour exactly, which is what makes the gate effect measurable. Measured motivation (9.83/#49): 0-4 year olds took 19.5% of their trips by taxi on the F7 arm - children hailed at roughly 2.5x the adult rate - and moving every under-18 bike and taxi trip off those modes bounds the two gates together at 19% of the Other excess."
+      },
+      "status": "active",
+      "decisions_ref": "9.84",
+      "consumers": [
+        "src/java/citysim/ModeAvailabilityConfigGroup.java"
+      ],
+      "matsim_param": "modeAvailability.taxiMinAge",
+      "description": "Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49)."
+    },
+    "B.population.bike_min_age": {
+      "value": 12,
+      "units": "years",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0,
+          16
+        ],
+        "basis": "No mode-by-age observation is held (issue #50), so the age below which an agent cannot cycle INDEPENDENTLY is assumed and swept. ZERO DISABLES THE GATE and recovers the ungated behaviour exactly. The independent-mobility literature (school-travel licence studies) puts unaccompanied cycling onset around 10-12; the sweep runs the gate from off to 16 so its whole effect is measurable. Measured motivation (9.83/#50): 0-4 year olds took 31.1% of their trips by bike on the F7 arm."
+      },
+      "status": "active",
+      "decisions_ref": "9.84",
+      "consumers": [
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
+        "src/build/build_matsim_plans.py"
+      ],
+      "matsim_param": "modeAvailability.bikeMinAge",
+      "description": "Minimum age at which bike is in an agent's choice set, composing with the CWANZ ownership draw (B.population.bike_available_rate): a drawn bike still needs a rider old enough to ride it unaccompanied."
     }
   }
 }

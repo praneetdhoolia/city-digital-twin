@@ -47,6 +47,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private boolean waitForDriver = false;
     private double windowMinutes = UNSET;
     private double escortCoherenceRate = UNSET;
+    private double jointCoherenceRate = UNSET;
     private String rule = "";
     private double pickupDwellSeconds = UNSET;
     private int maxPassengersPerVehicle = -1;
@@ -188,6 +189,30 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     }
 
     /**
+     * How often a DECOHERED joint (non-escort) household pair is re-proposed
+     * as a ride (DECISIONS.md 9.84).
+     *
+     * <p>The 9.84 joint binder generates two-person household travel as a
+     * PAIR - a driver's tour and a companion's mirror of it - and per-agent
+     * replanning splits them exactly as it split the escort pairs (the 9.82
+     * defect class). This is the rate at which
+     * {@link EscortCoherenceListener} offers the coherent state back to a
+     * household member whose trip shares a car leg's endpoints, whatever
+     * activity that car leg arrives at. <b>Zero recovers the escort-only
+     * behaviour exactly</b>, so the joint extension is measurable on its
+     * own. A search parameter, never a preference.
+     */
+    @StringGetter("jointCoherenceRate")
+    public double getJointCoherenceRate() {
+        return this.jointCoherenceRate;
+    }
+
+    @StringSetter("jointCoherenceRate")
+    public void setJointCoherenceRate(final double value) {
+        this.jointCoherenceRate = value;
+    }
+
+    /**
      * Which endpoints of the driver's leg must coincide with the passenger's.
      *
      * <p>{@link #RULE_BOTH_LINKS} is the only rule under which handing the
@@ -262,6 +287,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         require(this.windowMinutes >= 0.0, "windowMinutes", "B.ride.pairing_window_min");
         require(this.escortCoherenceRate >= 0.0, "escortCoherenceRate",
                 "B.ride.escort_coherence_rate");
+        require(this.jointCoherenceRate >= 0.0, "jointCoherenceRate",
+                "B.ride.joint_coherence_rate");
         require(this.pickupDwellSeconds >= 0.0, "pickupDwellSeconds",
                 "B.ride.pickup_dwell_s");
         require(this.maxPassengersPerVehicle >= 1, "maxPassengersPerVehicle",

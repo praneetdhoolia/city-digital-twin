@@ -53,16 +53,42 @@ public final class AvailabilityModesCalculator implements PermissibleModesCalcul
     public static final String RIDE_ATTRIBUTE = "rideAvail";
     public static final String BIKE_ATTRIBUTE = "bikeAvail";
     public static final String LOCKED_ATTRIBUTE = "lockedMode";
+    public static final String AGE_ATTRIBUTE = "age";
     /** The one value that removes a mode; anything else leaves it available. */
     public static final String NEVER = "never";
     public static final String RIDE = "ride";
     public static final String BIKE = "bike";
+    public static final String TAXI = "taxi";
 
     private final PermissibleModesCalculator delegate;
+    private final int taxiMinAge;
+    private final int bikeMinAge;
 
     @Inject
     public AvailabilityModesCalculator(final Config config) {
         this.delegate = new PermissibleModesCalculatorImpl(config);
+        // The age gates (DECISIONS.md 9.84, issues #49/#50): taxi was gated
+        // by NOTHING and `age` was written on every person and consulted by
+        // nothing - 0-4 year olds hailed 19.5% and cycled 31.1% of their
+        // trips on the F7 arm. Both thresholds are declared, swept,
+        // labelled-assumed registry fields; an absent module leaves both
+        // gates off, so a population run under an older config behaves as
+        // before.
+        final ModeAvailabilityConfigGroup gates = (ModeAvailabilityConfigGroup)
+                config.getModules().get(ModeAvailabilityConfigGroup.NAME);
+        this.taxiMinAge = gates == null ? 0 : gates.getTaxiMinAge();
+        this.bikeMinAge = gates == null ? 0 : gates.getBikeMinAge();
+    }
+
+    private static int age(final Person person) {
+        final Object value =
+                person.getAttributes().getAttribute(AGE_ATTRIBUTE);
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        // an agent without an age (a boundary tier run under an older
+        // population) is not a child; the gates must not bite it
+        return Integer.MAX_VALUE;
     }
 
     private static boolean never(final Person person, final String attribute) {
@@ -84,14 +110,19 @@ public final class AvailabilityModesCalculator implements PermissibleModesCalcul
             // the agent's definition, not a preference
             return Collections.singletonList(mode);
         }
+        final int years = (this.taxiMinAge > 0 || this.bikeMinAge > 0)
+                ? age(person) : Integer.MAX_VALUE;
         final boolean noRide = never(person, RIDE_ATTRIBUTE);
-        final boolean noBike = never(person, BIKE_ATTRIBUTE);
-        if (!noRide && !noBike) {
+        final boolean noBike = never(person, BIKE_ATTRIBUTE)
+                || years < this.bikeMinAge;
+        final boolean noTaxi = years < this.taxiMinAge;
+        if (!noRide && !noBike && !noTaxi) {
             return modes;
         }
         final Collection<String> out = new ArrayList<>(modes.size());
         for (final String mode : modes) {
-            if ((noRide && RIDE.equals(mode)) || (noBike && BIKE.equals(mode))) {
+            if ((noRide && RIDE.equals(mode)) || (noBike && BIKE.equals(mode))
+                    || (noTaxi && TAXI.equals(mode))) {
                 continue;
             }
             out.add(mode);

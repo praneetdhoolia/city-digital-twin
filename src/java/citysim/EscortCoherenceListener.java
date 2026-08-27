@@ -93,7 +93,9 @@ public final class EscortCoherenceListener implements ReplanningListener {
 
     @Override
     public void notifyReplanning(final ReplanningEvent event) {
-        if (cfg == null || !cfg.isEnabled() || cfg.getEscortCoherenceRate() <= 0.0) {
+        if (cfg == null || !cfg.isEnabled()
+                || (cfg.getEscortCoherenceRate() <= 0.0
+                    && cfg.getJointCoherenceRate() <= 0.0)) {
             return;
         }
         index();
@@ -102,6 +104,13 @@ public final class EscortCoherenceListener implements ReplanningListener {
                                       + 7919L * event.getIteration());
         final double window = cfg.getWindowMinutes() * 60.0;
         final double rate = cfg.getEscortCoherenceRate();
+        // DECISIONS.md 9.84: the joint extension. The 9.84 binder generates
+        // adult joint travel as a PAIR, which decoheres exactly as the
+        // escort pairs did (the 9.82 defect class) - so the same
+        // propose-never-impose offer covers any household car leg whose
+        // endpoints a co-member's trip shares, whatever activity it arrives
+        // at. Zero recovers the escort-only behaviour exactly.
+        final double jointRate = cfg.getJointCoherenceRate();
         int proposed = 0;
         int decohered = 0;
 
@@ -113,18 +122,20 @@ public final class EscortCoherenceListener implements ReplanningListener {
             final List<double[]> escortRuns = new ArrayList<>();
             final List<Id<Link>[]> escortEnds = new ArrayList<>();
             final List<Id<Person>> escortDrivers = new ArrayList<>();
+            final List<Boolean> escortFlags = new ArrayList<>();
             for (final Person driver : members) {
                 final Plan plan = driver.getSelectedPlan();
                 if (plan == null) {
                     continue;
                 }
                 for (final Trip trip : TripStructureUtils.getTrips(plan)) {
-                    if (!ESCORT_ACTIVITY.equals(
-                            trip.getDestinationActivity().getType())) {
+                    final boolean escort = ESCORT_ACTIVITY.equals(
+                            trip.getDestinationActivity().getType());
+                    if (!escort && jointRate <= 0.0) {
                         continue;
                     }
                     if (!isAllMode(trip, TransportMode.car)) {
-                        continue;      // the escort chose something else: fine
+                        continue;      // the driver chose something else: fine
                     }
                     @SuppressWarnings("unchecked")
                     final Id<Link>[] ends = new Id[] {
@@ -132,6 +143,7 @@ public final class EscortCoherenceListener implements ReplanningListener {
                         trip.getDestinationActivity().getLinkId()};
                     escortEnds.add(ends);
                     escortDrivers.add(driver.getId());
+                    escortFlags.add(escort);
                     escortRuns.add(new double[] {
                         departure(trip, plan)});
                 }
@@ -144,16 +156,20 @@ public final class EscortCoherenceListener implements ReplanningListener {
                 if (plan == null) {
                     continue;
                 }
-                // Only someone who cannot drive themselves. Offering `ride` to
-                // a licensed car-available adult would second-guess a choice
-                // they are entitled to make, and it is not the population the
-                // defect is about: at licence = 0 the model puts 48.8% of
-                // trips on a bicycle and 0.5% on ride (DEMOGRAPHIC_MODES.md).
+                // On the ESCORT path, only someone who cannot drive
+                // themselves: offering `ride` to a licensed car-available
+                // adult would second-guess a choice they are entitled to
+                // make, and it is not the population that defect is about
+                // (at licence = 0 the model puts 48.8% of trips on a bicycle
+                // and 0.5% on ride, DEMOGRAPHIC_MODES.md). On the JOINT path
+                // (9.84) car-available adults ARE the generated population -
+                // an adult companion in the household car - so the offer
+                // extends to them there, and ChangeExpBeta still decides.
                 final Object avail = member.getAttributes().getAttribute(CAR_AVAIL);
-                if (avail != null && CAR_ALWAYS.equals(avail.toString())) {
-                    continue;
-                }
+                final boolean carAvailable =
+                        avail != null && CAR_ALWAYS.equals(avail.toString());
                 Trip target = null;
+                boolean targetEscort = false;
                 for (final Trip trip : TripStructureUtils.getTrips(plan)) {
                     if (isAllMode(trip, TransportMode.ride)) {
                         continue;                  // already coherent
@@ -165,10 +181,14 @@ public final class EscortCoherenceListener implements ReplanningListener {
                         if (escortDrivers.get(i).equals(member.getId())) {
                             continue;              // you cannot escort yourself
                         }
+                        if (escortFlags.get(i) && carAvailable) {
+                            continue;              // escort path: unlicensed only
+                        }
                         if (from.equals(escortEnds.get(i)[0])
                                 && to.equals(escortEnds.get(i)[1])
                                 && Math.abs(dep - escortRuns.get(i)[0]) <= window) {
                             target = trip;
+                            targetEscort = escortFlags.get(i);
                             break;
                         }
                     }
@@ -180,7 +200,7 @@ public final class EscortCoherenceListener implements ReplanningListener {
                     continue;
                 }
                 decohered++;
-                if (rng.nextDouble() >= rate) {
+                if (rng.nextDouble() >= (targetEscort ? rate : jointRate)) {
                     continue;                      // re-proposed only sometimes
                 }
                 final Plan copy = PopulationUtils.createPlan(member);
@@ -237,9 +257,9 @@ public final class EscortCoherenceListener implements ReplanningListener {
             }
         }
         if (decohered > 0) {
-            LOG.info("escortCoherence: {} decohered escort pair(s) seen, {} "
-                     + "re-proposed as ride at rate {} - proposed, never imposed",
-                     decohered, proposed, rate);
+            LOG.info("escortCoherence: {} decohered escort/joint pair(s) seen, "
+                     + "{} re-proposed as ride at rates {}/{} - proposed, "
+                     + "never imposed", decohered, proposed, rate, jointRate);
         }
     }
 
