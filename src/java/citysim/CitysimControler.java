@@ -184,6 +184,16 @@ public final class CitysimControler {
             public void install() {
                 bind(PermissibleModesCalculator.class)
                         .to(AvailabilityModesCalculator.class);
+                // The stock SubtourModeChoice's single-trip path
+                // (probaForRandomSingleTripMode) never consults the
+                // calculator bound above, so every per-person availability
+                // rule was porous on half the mode innovations - measured as
+                // 747 under-18 taxi trips at probe iteration 8 (DECISIONS.md
+                // 9.84, #49/#50; the 9.15 class). The gated strategy refuses
+                // an impermissible draw by reverting the one trip it changed;
+                // when nothing is impermissible it changes nothing.
+                addPlanStrategyBinding("SubtourModeChoice")
+                        .toProvider(GatedSubtourModeChoice.class);
                 // #49 Tier C (DECISIONS.md 9.78): with pt-submode mapping a
                 // passenger leg's mode is the scheduled bus/tram/rail/ferry,
                 // and the stock DefaultAnalysisMainModeIdentifier either

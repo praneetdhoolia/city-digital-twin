@@ -8585,6 +8585,34 @@ the CWANZ ownership draw). Consumed by `AvailabilityModesCalculator` against
 the person's own `age` attribute through the new `modeAvailability` config
 module. No threshold is fitted to any target.
 
+### The availability contract was porous on half the innovations: MATSim's single-trip path never consults the calculator
+
+The first F9 probe (`20260827T152032_8it_25pct`, 8 × 25%, rc 0) measured the
+age gates and found bike under-12 at exactly **zero** but taxi under-18 at
+**747 trips — 5.5% of all taxi, spread uniformly over ages 0–17**. The
+cause is a STOCK seam, read from the pinned jar's bytecode: with
+`subtourModeChoice.probaForRandomSingleTripMode` at the declared 0.5, half
+of all mode innovations run through `ChooseRandomSingleLegMode`, which is
+constructed from the raw non-chain mode array and **never consults
+`PermissibleModesCalculator`** — the calculator gates only the subtour
+choice-set path. Every per-person availability rule this project has built
+on that calculator was porous there: the same seam has leaked `ride` to
+persons with nobody to drive them since §9.11, invisibly, because an
+unpaired ride re-modes to physical walk and prices itself out; bike never
+leaked because bike is chain-based and the single-trip path deals only in
+non-chain modes.
+
+**`GatedSubtourModeChoice`** closes it at the citysim seam: the stock
+strategy chain, with one addition — after the stock algorithm runs, a trip
+now carrying a mode the calculator does not permit is REVERTED to its
+pre-innovation main mode. The single-trip path changes exactly one trip, so
+the revert restores the valid pre-innovation plan and the refused draw is a
+no-op; the subtour path draws from the filtered choice set and can never
+trigger it. **When nothing is impermissible the wrapper changes nothing** —
+stock behaviour recovered exactly. No draw is re-rolled and no distribution
+reweighted: an illegal proposal is refused, never replaced. Verified on a
+second probe before any arm.
+
 ### A probe blindness found on the way: `--max-persons` cannot see households
 
 `build_activity_chains.py --max-persons N` samples `persons.iloc[::step]` — a
