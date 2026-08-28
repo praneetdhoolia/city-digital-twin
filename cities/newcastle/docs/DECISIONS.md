@@ -89,6 +89,7 @@ its layout will otherwise cost you an hour:
 | **SCATS stops being an assumed constant and becomes an algorithm (family F12)** | **§9.88** — every arm to date ran 14 corridor intersections on a FIXED 110 s plan, because the unreleased phase data was handled by sweeping a cycle time. `citysim.ScatsSignalController` implements the published logic instead: degree of saturation measured at every stop line from `LinkLeaveEvent`, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, clearances preserved. **Offsets deliberately NOT adapted** — that library is the unreleased artefact and no algorithm replaces it. Two defects recorded: DS measured against FULL-SCALE capacity read 0.000 at a 1% sample (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic cannot survive a variable cycle. Transit priority lives inside the controller, and **compensation becomes intrinsic** — a starved stage’s DS rises and the next split repays it |
 | **The ferry gets a derived target instead of no target at all** | **§9.89** — no Newcastle ferry patronage is published anywhere (the Opal all-modes Ferry row is NSW-wide and Sydney-dominated), so §9.87 left mode 10 of 12 ungateable. The census G62 one-method count (40 of 1,501 PT journeys, 2.665%) sets the share WITHIN PT, which the HTS 3.8% scales to **0.1013%**. Defensible for THIS mode because the Stockton crossing is captive (a ~20 km road detour) and a within-PT share is far less lockdown-sensitive than a level. Sweep stays wide, 0 to 2x; the value is labelled `derived`, never `observed` |
 | **A crossing closes for every train that crosses it, and the timetable says which** | **§9.90** — `A.crossings.closures_per_day` was 30, assumed, uniform across 24 h and identical at both sites. The city’s OWN mapped rail timetable was already in the package: `build_level_crossings.py` now counts every scheduled service whose mapped route traverses the rail links at each crossing and times each closure from that service’s stop time. **Adamstown 110/weekday, Islington 204** (541 → 3,014 change events), peaked at 17h rather than flat — and the shape matters more than the count, because uniform closures land where there is no traffic to delay. Freight stays declared and swept at ZERO on §9.70’s grade separation. Mode 12 gets a target: **314 closures/weekday**, so with §9.89 all twelve modes are gateable |
+| **The gate fires at iteration 50, and the first defect is in the yardstick** | **§9.91** — ten of twelve modes past 20%, taxi DIVERGING (1.20% → 7.75% against a 0.19% target). The target was the defect: §9.87 sized taxi from the census JOURNEY-TO-WORK share, and taxi is overwhelmingly not a commute mode. `B.taxi.daily_trips_band` (IPART 2025, 15,000–25,000 point-to-point trips/day) gives **0.9916%**, ~5× higher, and **bike takes the residual 2.2084%** because the two share one survey category. Measured on the arm rather than reasoned: taxi costs 27.13 AUD per median 13.1 km trip, taxi plans score −128 vs −44, the flagfall fires, and taxi is 7.52% even among agents holding a car AND a licence — so scoring is not the culprit and it is not captive demand. Taxi is **seeded at exactly 0.0** and arrives entirely through innovation. Also recorded: the held-fixed fare rule’s own departure condition is now MET (median taxi trip 13.1 km against its “far under 12 km” premise), and `ride` legs are **23.33% zero-distance** against car’s 1.09% |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -8604,6 +8605,125 @@ carry a target and none is ungateable** - which was the point.
 
 ---
 
+## 9.91 The gate fires at iteration 50, and the first defect found is in the yardstick (29 August 2026, thirteenth session; issues #49, #84, #48)
+
+The F12 arm reached iteration 50 with **ten of twelve modes past the 20% bar**
+and was stopped. Taxi was not merely past it, it was **diverging**: 1.20% at
+iteration 1, 7.75% at iteration 50, against a target of 0.19%.
+
+### The reading
+
+| mode | modelled | target | deviation | trend it. 1 → 50 |
+|---|---:|---:|---:|---|
+| car | 40.5301 | 58.1631 | −30.3% | −39.6 → −30.3, converging |
+| ride | 7.2143 | 20.6000 | −65.0% | −53.7 → −65.0, **worsening** |
+| walk | 26.0547 | 13.4000 | +94.4% | +169.1 → +94.4, converging |
+| bike | 9.1408 | 3.0131 | +203.4% | worsening |
+| motorbike | 0.1589 | 0.2406 | −34.0% | |
+| taxi | 7.7482 | 0.1869 | **+4045.6%** | **diverging** |
+| bus | 8.3717 | 1.3039 | +542.1% | |
+| heavy_rail | 2.0771 | 2.0922 | **−0.7%** | the only mode inside the bar |
+| light_rail | 0.2570 | 0.4039 | −36.4% | |
+| ferry | 0.1532 | 0.1013 | +51.2% | |
+| truck | 7.6812 | 15.4698 | −50.3% | |
+| freight_train | 314 | 314 | representation | not a fit |
+
+### The defect was in the target, not only the model
+
+The taxi target of 0.1869% came from §9.87 splitting the HTS "Other" category
+by the **census journey-to-work** share. That is the wrong instrument, and it
+is wrong by about fivefold. The census counts journeys **to work**, and
+taxi/rideshare is overwhelmingly not a commute mode - it carries nights out,
+airport runs, medical trips and the carless. Sizing it by commuting understates
+it by roughly the ratio of those two populations.
+
+The city had already declared a better source, and §9.87 overlooked it:
+**`B.taxi.daily_trips_band`**, the IPART 2025 point-to-point incidence band of
+**15,000-25,000 trips a day across the study area**. Against 2,017,000
+study-area weekday trips that is **0.744%-1.240%**, and the target becomes the
+midpoint, **0.9916%**.
+
+**Bike moves with it, because it must.** Bicycle and taxi/rideshare sit in ONE
+survey category, so neither can be set alone: bike now takes the residual,
+**2.2084%**. The residual also carries wheelchair, carshare and aircraft, so it
+slightly OVER-states cycling - a direction worth stating, because it means
+bike's measured excess is if anything understated.
+
+One assumption joins a study-area count to a target-LGA share, and it is
+declared rather than buried: `CAL.taxi.lga_concentration`, point value **1.0**,
+swept **upward only** to 2.0. The target LGA holds the regional CBD, the base
+hospital, the nightlife precinct and the airport link, so the true
+concentration is more likely above 1.0 than below - the neutral value is
+deliberately the unflattering one.
+
+**This does not make the model right.** Taxi still reads far above 0.9916%. It
+removes a defect in the yardstick before the model is judged against it, which
+is the order the work has to happen in.
+
+### What the model's own taxi behaviour was measured to be
+
+Everything below was measured on the stopped arm rather than reasoned from the
+config, because the arithmetic and the outcome disagreed and one of them had to
+be wrong.
+
+- **Scoring is not the culprit.** A median taxi trip is **13,072 m** costing
+  **27.13 AUD** against car's 2.35 AUD for the same distance, and plans
+  containing a taxi leg score **mean −128.2 / median −81.2** against **−44.0 /
+  +44.1** for plans without one. Taxi is priced, and it is priced heavily.
+- **The flagfall binds.** 42,835 taxi departures produced ~42,835 `personMoney`
+  events inside a total of 70,657 (the remainder being parking).
+- **It is not unmet carless demand.** Taxi is **7.52% of trips among agents
+  holding BOTH a car and a licence**, against 8.06% for the carless. A mode
+  absorbing genuine captive demand would not look like that.
+- **It is not degenerate short trips.** Only 0.72% of taxi trips are
+  zero-distance, against 23.33% of `ride` legs - which is its own finding, filed
+  below.
+- **Taxi is seeded at exactly 0.0.** The demand model generates no taxi trips at
+  all; every one of them arrives through mode-choice innovation and is then
+  retained.
+
+The remaining candidate is the one term in the taxi price that emits no event
+and so has never been proven to bind: `monetaryDistanceRate`, applied inside
+scoring, worth 24.14 AUD of the 27.13. Reading the code cannot settle it -
+`RUN.mode_choice.proba_random_single_trip_mode` sits at the very top of its
+declared sweep [0.0, 0.5] and would also inflate a rarely-good mode, so two
+mechanisms remain live. The overlay `taxi_fare_stress_1pct` separates them by
+multiplying both fare rates by twenty: if taxi collapses the rate binds, and if
+taxi still climbs the rate is inert.
+
+### A held-fixed rule whose own departure condition has now been met
+
+`B.taxi.fare_per_km_taxi_aud` is HELD FIXED, and its recorded justification
+reads: *"The corridor and CBD trips this mode competes for sit far under 12 km,
+so the $2.29 beyond-12 km tail is recorded, not modelled."* The measured median
+taxi trip in this arm is **13,072 m**, and the mean is **18,295 m**. The
+premise is false in the model's own output, and the field's stated departure
+condition - *"trip-length evidence that the 12 km tail binds"* - is therefore
+**met**. Recorded here rather than acted on in the same breath: the tail makes
+taxi MORE expensive, so changing it now would confound the diagnostic that is
+currently running.
+
+### Filed, not fixed here
+
+**`ride` legs are 23.33% zero-distance** (9,306 of 39,888) against 1.09% for
+car. Whatever produces a degenerate ride leg is doing so at twenty times the
+rate of any other network mode, and the ride collapse this session is
+diagnosing runs through the same mechanism.
+
+**`miss_endpoints` dominates the pairing failures** at 27,807, against
+`miss_window` 4,981 and `miss_capacity` 1,432 - and `B.ride.pairing_rule` is
+`both_links`, an ASSUMED value and the strictest of four declared members. It
+is NOT relaxed in this entry, deliberately: loosening an endpoint rule until
+more pairs match would raise `ride` by inventing shared travel the demand model
+never declared, which is the "no biasing" line rather than a repair.
+
+**§9.85's repair is working**, and this is the first arm to show it:
+`paired_by_identity` climbs **29 → 8,883** and `pair_rate` has **stopped
+decaying** - 0.5563 → 0.4585 at iteration 20, then back up to 0.4794 by
+iteration 50. That was the stated success criterion, and it is met.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -9276,6 +9396,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-29 | **The iteration-50 gate fires on ten of twelve modes, and the taxi target is corrected from a commute source to a point-to-point one (§9.91; issues #49/#84/#48; thirteenth session).** The F12 arm was stopped at iteration 50 with taxi DIVERGING — 1.20% → 7.75% against a 0.19% target — and ten modes past the 20% bar; only heavy rail was inside it at −0.7%. **The first defect found was in the yardstick, not the model**: §9.87 sized taxi by splitting HTS "Other" with the census JOURNEY-TO-WORK share, and taxi/rideshare is overwhelmingly a non-commute mode, so the target was about fivefold low. `B.taxi.daily_trips_band` — the IPART 2025 point-to-point band of 15,000–25,000 trips/day across the study area, already declared and overlooked — gives **0.9916%** of resident trips, and **bike takes the residual 2.2084%** because bicycle and taxi sit in ONE survey category and cannot be set independently. One declared assumption joins the study-area count to the LGA share (`CAL.taxi.lga_concentration` 1.0, swept upward only). Measured on the arm rather than reasoned, because arithmetic and outcome disagreed: a median taxi trip is 13,072 m costing 27.13 AUD against car’s 2.35; plans with a taxi leg score mean −128.2 against −44.0; the flagfall fires (42,835 events); taxi is **7.52% even among agents holding both a car and a licence**, so it is not captive demand; and taxi is **seeded at exactly 0.0**, arriving entirely through innovation. The one unproven term is `monetaryDistanceRate` (24.14 of the 27.13 AUD), which emits no event — separated by the committed diagnostic overlay `taxi_fare_stress_1pct`. Two findings filed not fixed: the held-fixed fare rule’s OWN departure condition is now met (its "far under 12 km" premise against a 13.1 km median), and `ride` legs are 23.33% zero-distance against car’s 1.09%. `B.ride.pairing_rule` deliberately NOT relaxed — loosening an endpoint rule until more pairs match would invent shared travel the demand never declared. **§9.85’s repair is confirmed working in its first arm**: `paired_by_identity` 29 → 8,883 and `pair_rate` stopped decaying (0.4585 → 0.4794). Nothing here is a result. |
 | 2026-08-28 | **Level-crossing closures stop being assumed and are derived from the mapped rail timetable (§9.90; issue #68; thirteenth session, amended `/goal` directive).** `A.crossings.closures_per_day` was 30 per site, assumed, swept 10–60, spread uniformly across 24 hours and identical at both crossings — and every arm since §9.77 ran it. The data to derive it was already in the package: a crossing closes for every train that crosses, and the city’s own mapped timetable says which. `build_level_crossings.py` now finds the mapped RAIL links at each site (held-fixed 40 m join; measured 29.6 m and 8.0 m), counts every scheduled service traversing them and times each closure from that service’s stop time at its nearest rail stop: **Saint James Road (Adamstown) 110/weekday and Clyde Street (Islington) 204**, against 30 each — 541 → 3,014 network change events. The SHAPE is the bigger correction: uniform closures put most of their closures where there is no traffic to delay, while the derived pattern peaks at 17h (9 and 14) where the road is busiest. Freight is separated out as `A.crossings.freight_closures_per_day`, point value **zero on recorded evidence** (§9.70: the coal chain is grade-separated since 2006 and does not cross these roads at grade), swept 0–30 because ARTC publishes no log for non-coal movements. `A.crossings.closure_source` keeps `assumed_uniform` as a member that reproduces every earlier arm exactly. The builder REFUSES a site with no rail link or no scheduled movement rather than emitting a silent zero that would delete the crossing while reporting success. Mode 12 gains a target — **314 closures/weekday, derived** — so with §9.89 all twelve modes now carry one and none is ungateable. Part of family F12. Nothing here is a result. |
 | 2026-08-28 | **SCATS becomes an implemented algorithm and the ferry gets a derived target; family F12 opens (§9.88, §9.89; issue #73; thirteenth session, amended `/goal` directive).** The directive was amended mid-session to forbid leaving an unavailable input SWEPT where it can be DERIVED, naming SCATS as the worked example. Every arm to date ran 14 corridor intersections on a fixed 110 s plan; `ScatsSignalController` now implements the published control logic — degree of saturation measured at every signalised stop line, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, the intersection’s own clearances preserved. **Offsets are deliberately not adapted**: that library is exactly the unreleased artefact and no algorithm replaces it, so corridor coordination stays a stated limitation rather than a fabricated input. Two defects recorded: DS measured against FULL-SCALE saturation read 0.000 at a 1% sample and drove every cycle to the floor (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic silently reinterprets past boundaries once the cycle length varies. Transit priority composes inside the same controller, and its compensation ledger becomes unnecessary — a stage that gave up green shows higher DS and the next split repays it. Probes `20260828T230050_2it_1pct` (14 systems re-timing, 110→104→98 s against criticalDS 0.564→0.282→0.141) and `20260828T230739_2it_1pct` on S2b (SCATS + green_extension together), both rc=0, accounting closes. Seven fields declared and bound; `fixed_time` kept and reproduces every earlier arm exactly; `run_matsim.py` refuses a regime that disagrees with the committed control file. **§9.89**: ferry stops being unobtained — the census G62 one-method count (40 of 1,501 PT journeys) sets its share within PT, scaled by the HTS level to **0.1013%**, `derived` with a wide 0–2x sweep, so mode 10 of 12 can finally be gated. **New comparability family F12: signal control decides corridor travel time, so nothing before compares to anything after. Nothing here is a result.** |
 | 2026-08-28 | **Twelve modes get twelve individual targets, and the acceptance bar stops being typed into a script (§9.87; issues #49/#84; thirteenth session, `/goal` monitoring directive).** The NSW HTS publishes SIX categories against TWELVE simulated modes: bus, light rail, heavy rail and ferry shared ONE 3.8% Public Transport row, and a fold lets an excess in one member hide behind a deficit in the other. The acquired data document’s own category lists **evidence** `fit.py`’s existing folds rather than leaving them assumed. New city builder `build_mode_targets.py` writes `mode_targets_by_mode.csv` — car 58.1631, ride 20.6000, walk 13.4000, bike 3.0131, motorbike 0.2406, taxi 0.1869, bus 1.3039, heavy_rail 2.0922, light_rail 0.4039, ferry **unobtained**, truck 15.4698 on the classified-count denominator, freight_train **not simulated** — each row carrying the derivation it came from. **The PT split is taken on CURRENT Opal/station boardings (2025-07..2026-06), not on the 2021 census enumerated inside the Delta lockdown; the census composition sets each sweep’s far end, because the disagreement between them is real uncertainty rather than a source to choose between.** Ferry is declared `unobtained` and swept — no Newcastle ferry patronage exists in any acquired artefact, and the NSW-wide Opal ferry series identifies nothing here. Person-trip targets sum to 99.4037%; the missing 0.596 pp is resident truck-driving, named rather than folded into car. Five fields declared: three derivation choices with sweeps, plus `CAL.gate.stop_deviation_pct` 20 and `CAL.gate.pass_deviation_pct` 10 as `definition`. New framework reader `src/analyse/report_mode_ridership.py` prints all twelve modes individually with a timestamp, never an umbrella row. **Deliberately NOT added to `validation_targets.csv`** — a disaggregation scored beside its own parents would double-count and disturb the 67/143 split; `fit.py` is untouched. Ledger 0, currency 0, manifest 494, registry 377. Nothing here is a result. |
