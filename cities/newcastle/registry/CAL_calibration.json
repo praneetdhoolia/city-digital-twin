@@ -98,6 +98,60 @@
       "consumers": [
         "src/calibrate/calibrate.py"
       ]
+    },
+    "CAL.pt_split.window_months": {
+      "value": 12,
+      "units": "months",
+      "source": "assumed",
+      "sweep": [
+        6,
+        24
+      ],
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
+    },
+    "CAL.mode_split.commute_transfer_tolerance": {
+      "value": 0.25,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.1,
+        0.5
+      ],
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%."
+    },
+    "CAL.truck.count_year_from": {
+      "value": 2023,
+      "units": "year",
+      "source": "assumed",
+      "sweep": [
+        2019,
+        2025
+      ],
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year)."
+    },
+    "CAL.gate.stop_deviation_pct": {
+      "value": 20.0,
+      "units": "per cent",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading."
+    },
+    "CAL.gate.pass_deviation_pct": {
+      "value": 10.0,
+      "units": "per cent",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything."
     }
   }
 }

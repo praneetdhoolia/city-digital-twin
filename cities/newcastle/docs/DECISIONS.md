@@ -85,6 +85,7 @@ its layout will otherwise cost you an hour:
 | **The joint-tour binder, the gradient channel and the age gates (family F9)** | **§9.84** — the demand ceiling's mechanism: adult joint household travel generated as pairs, anchored on the measured occupancy ratio and the observed driver share, eligibility only; gradient into walk/bike link travel time on both router and mobsim sides; taxi/bike age gates, zero disables; the §9.60 scope lever measured as spent (98% consumed at `same_zone`); `--max-persons` probes are blind to household mechanisms |
 | **A declared pair is re-found by a clock the model itself moves (family F10)** | **§9.85** — the B2 binding tables name the driver and `build_matsim_plans.py` read that identity for SEEDING and then threw it away, so `RidePairingEngine` re-discovered declared pairs from geometry and a 15-minute window while MATSim's `TimeAllocationMutator` — at an UNDECLARED ±1800 s default — moved the two members apart independently. The driver is present, on car, on the same trip, and refused on the clock. `boundDriver` carries the identity; the tolerance for a declared pair is DERIVED from the mutation range |
 | **A hired car is a car on the road: taxi stops being a ghost in the mobsim (family F11)** | **§9.86** — `taxi` was routed on the network, permitted on 143,891 links, bound to the congested car travel time and given a car-bodied vehicle type, but was NOT in `RUN.qsim.main_mode`, so MATSim teleported it: **39,892 of 39,923 legs per iteration** never touched the carriageway (#88). One enum value fixes it; the body restates `RUN.qsim.car_vehicle` rather than inventing a second one. Probe-measured: 197 of 197 taxi departures now enter traffic, 29,994 link traversals. **Deadheading stays unmodelled and unassumed.** `ride`’s remaining 44.5% teleport is a DEMAND failure, not a mobsim one — never close it with a phantom vehicle per passenger |
+| **Twelve modes get twelve targets: a folded survey category cannot answer a per-mode question** | **§9.87** — the HTS publishes SIX categories and this city simulates TWELVE modes, so four modes shared one 3.8% Public Transport row and a fold could hide an excess behind a deficit. The data document’s own lists EVIDENCE `fit.py`’s folds (bike+taxi → Other; motorbike appears in no other category, so it can only be a Vehicle driver). `build_mode_targets.py` disaggregates every level with census G62 composition and current Opal/station boardings, writes `mode_targets_by_mode.csv`, and is read by `report_mode_ridership.py`. **PT splits on CURRENT boardings, not the lockdown-vintage 2021 census — the census sets the sweep’s far end instead.** Ferry stays **unobtained and swept**: nothing is published for this city. The person-trip targets sum to 99.4037%, and the missing 0.596 pp is resident truck-driving, written out as a named deduction rather than folded into car. **NOT added to `validation_targets.csv`** — it would double-count and disturb the 67/143 split |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -8255,6 +8256,121 @@ probe, both stopped on instruction.
 
 ---
 
+## 9.87 A folded target cannot answer a per-mode question: twelve modes get twelve targets (28 August 2026, thirteenth session; issues #49, #84, #88)
+
+The standing directive is that **every mode is checked against real life on its
+own**, and that every numbers table lists each mode individually. The model
+could not answer that, and neither could the record: the NSW Household Travel
+Survey publishes **six categories**, and this city simulates **twelve modes**.
+
+### What the survey actually says
+
+Quoted from the acquired data document
+(`data/raw/hts/hts_data_document_2020_2024.pdf`), not paraphrased:
+
+> Vehicle Driver · Vehicle Passenger · **Public Transport (includes Train,
+> Metro, Bus, Light Rail, Ferry)** · Walk linked · Walk only · **Other
+> (includes Taxi/rideshare/carshare, wheelchair, bicycle, aircraft)**
+>
+> ⁴ "Other" mode category from 2020/21 is not comparable to previous waves as
+> it does not include Light Rail and Ferry. These modes are now included under
+> the Public Transport mode
+
+Two things this settles that were previously taken on trust:
+
+1. **`fit.py`'s folds are correct**, and now evidenced rather than assumed.
+   `bike+taxi → Other` is the document's own list. `car+motorbike → Vehicle
+   driver` follows because motorbike appears in **none** of the other five
+   categories, so it can only be a vehicle driver.
+2. **Four modes share ONE target.** bus, light rail, heavy rail and ferry are
+   a single 3.8% Public Transport row. A fold cannot say which of the four is
+   wrong, and it lets an excess in one hide behind a deficit in another —
+   which is exactly what the gate loop exists to catch.
+
+### The disaggregation, and what each piece rests on
+
+`cities/newcastle/build/build_mode_targets.py` writes one row per mode to
+`data/processed/validation/mode_targets_by_mode.csv`. Every number is an HTS
+level, a count measured from an acquired artefact, or the product of the two.
+
+| mode | target % | from |
+|---|---:|---|
+| car | 58.1631 | HTS Vehicle driver 59.0 × census G62 car-as-driver 157,832 of 160,103 |
+| ride | 20.6000 | HTS Vehicle passenger, **read directly** |
+| walk | 13.4000 | HTS Walk only, **read directly** |
+| bike | 3.0131 | HTS Other 3.2 × G62 bicycle 903 of 959 |
+| motorbike | 0.2406 | HTS Vehicle driver × G62 motorbike/scooter 653 of 160,103 |
+| taxi | 0.1869 | HTS Other × G62 taxi/rideshare 56 of 959 |
+| bus | 1.3039 | HTS Public transport 3.8 × Opal boardings 34.31% |
+| heavy_rail | 2.0922 | HTS Public transport × station entries 55.06% |
+| light_rail | 0.4039 | HTS Public transport × station entries 10.63% |
+| ferry | **unobtained** | nothing published for this city — swept, never pinned |
+| truck | 15.4698 | TfNSW classified weekday counts, heavy share of all vehicles |
+| freight_train | **not simulated** | §9.70 — the modelled zero is the decision |
+
+The person-trip targets sum to **99.4037%**, and the missing 0.596 pp is not a
+rounding slip: it is the **resident truck-driving** slice of HTS Vehicle
+driver (G62 truck, 1,618 of 160,103 driver journeys). This city represents road
+freight as its own vehicle subpopulation rather than as a resident's person
+trip, so that travel cannot appear on the person-trip denominator at all. It is
+written out as a named deduction rather than folded into car, which would have
+inflated the car target by 0.6 pp and made the model's car deficit look worse
+than it is.
+
+### Why the PT split is taken on boardings and not on the census
+
+The 2021 Census was enumerated on **10 August 2021, inside the Delta lockdown**,
+which suppressed public-transport commuting specifically. Its PT composition
+(bus 78.5%, train 15.4%, tram 3.5%, ferry 2.7% of one-method PT journeys)
+disagrees sharply with current patronage (bus 34.3%, heavy rail 55.1%, light
+rail 10.6% over 2025-07..2026-06). **The disagreement is real uncertainty, not
+a source to pick between**: the point value is the current boardings — actual,
+current-vintage patronage — and the census figure sets the far end of each
+mode's sweep. Nothing is averaged, and nothing is discarded.
+
+### Ferry stays unobtained, and that is the honest answer
+
+No Newcastle ferry patronage exists in any acquired artefact. The Opal
+all-modes series carries a Ferry row but it is **NSW-wide and Sydney-dominated**,
+so it identifies nothing here; the station entries/exits publication carries
+Train and Light rail only. The one city-specific observation — the census
+one-method count of 40 journeys — is lockdown-vintage. So ferry takes the same
+treatment as SCATS phasing, journey-linked Opal and charging dwell (§0, §13):
+**value null, status `unobtained`, swept 0 to twice the census-implied figure,
+and never pinned to a point value.** The gate reading prints the ferry's
+modelled level and refuses to print a deviation, because there is nothing to
+deviate from.
+
+### Three modelling choices, declared
+
+`CAL.pt_split.window_months` (12, swept 6–24) · `CAL.mode_split.commute_transfer_tolerance`
+(0.25, swept 0.1–0.5 — the half-width of the interval placed on any target that
+applies a **commute** composition to an **all-purpose** level, because commuting
+is not a random sample of travel) · `CAL.truck.count_year_from` (2023, swept
+2019–2025). Plus the acceptance criterion itself, which was previously typed
+into a script: `CAL.gate.stop_deviation_pct` (20) and
+`CAL.gate.pass_deviation_pct` (10), both `definition` — they state the bar, they
+do not model anything, and sweeping them would sweep the question.
+
+### These targets are deliberately NOT added to `validation_targets.csv`
+
+They are a **disaggregation of targets already in that file**. Scoring them
+beside their own parents would count one observation twice, move the reported
+MAE for a reason that is not a model change, and disturb the 67/143 split.
+`fit.py` is untouched; this is a second, finer view of the same observation,
+read by `src/analyse/report_mode_ridership.py`.
+
+### A parse bug caught on the way — worth the trap list
+
+A scratch measurement of the PT window sorted month labels (`Sep-2025`,
+`Jun-2026`) as **strings**, so it read the alphabetically-last label as the
+chronologically-last month and computed the split over the wrong twelve months
+(bus 45.8% instead of 34.3%). The builder parses to `YYYY-MM` first and
+disagreed with it, which is how the bug surfaced. **A confident number from a
+throwaway script is not a measurement until something else reproduces it.**
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -8927,6 +9043,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-28 | **Twelve modes get twelve individual targets, and the acceptance bar stops being typed into a script (§9.87; issues #49/#84; thirteenth session, `/goal` monitoring directive).** The NSW HTS publishes SIX categories against TWELVE simulated modes: bus, light rail, heavy rail and ferry shared ONE 3.8% Public Transport row, and a fold lets an excess in one member hide behind a deficit in the other. The acquired data document’s own category lists **evidence** `fit.py`’s existing folds rather than leaving them assumed. New city builder `build_mode_targets.py` writes `mode_targets_by_mode.csv` — car 58.1631, ride 20.6000, walk 13.4000, bike 3.0131, motorbike 0.2406, taxi 0.1869, bus 1.3039, heavy_rail 2.0922, light_rail 0.4039, ferry **unobtained**, truck 15.4698 on the classified-count denominator, freight_train **not simulated** — each row carrying the derivation it came from. **The PT split is taken on CURRENT Opal/station boardings (2025-07..2026-06), not on the 2021 census enumerated inside the Delta lockdown; the census composition sets each sweep’s far end, because the disagreement between them is real uncertainty rather than a source to choose between.** Ferry is declared `unobtained` and swept — no Newcastle ferry patronage exists in any acquired artefact, and the NSW-wide Opal ferry series identifies nothing here. Person-trip targets sum to 99.4037%; the missing 0.596 pp is resident truck-driving, named rather than folded into car. Five fields declared: three derivation choices with sweeps, plus `CAL.gate.stop_deviation_pct` 20 and `CAL.gate.pass_deviation_pct` 10 as `definition`. New framework reader `src/analyse/report_mode_ridership.py` prints all twelve modes individually with a timestamp, never an umbrella row. **Deliberately NOT added to `validation_targets.csv`** — a disaggregation scored beside its own parents would double-count and disturb the 67/143 split; `fit.py` is untouched. Ledger 0, currency 0, manifest 494, registry 377. Nothing here is a result. |
 | 2026-08-28 | **A hired car is a car on the road: taxi becomes a physically simulated mode, and family F11 opens (§9.86; issue #88; thirteenth session, `/goal` precondition).** `taxi` was network-routed, link-permitted, congestion-bound and car-bodied but absent from `RUN.qsim.main_mode`, so the mobsim teleported it — **39,892 of 39,923 legs per iteration**, ~40,000 vehicle-trips of road space missing from every link and count station while `car` read −19.4% and the `bike+taxi` fold read +471.2%. The fix is one registry enum; nothing else needed building. The taxi body restates `RUN.qsim.car_vehicle` exactly rather than declaring a second one, and **empty running (deadheading) stays unobserved rather than becoming an assumed multiplier**. Probe `20260828T220751_2it_1pct` rc=0, accounting closes: **197 of 197 taxi departures enter traffic, 29,994 link traversals**, all 2,300,485 link-entry events attributed to a vehicle class. Also measured there: `ride` is 1,166 of 2,101 legs physically boarded (44.5% teleported) — a DEMAND failure §9.85 addresses, never to be closed with a phantom vehicle per passenger; §9.85’s `boundDriver` is live (`paired_by_identity` 98 at iteration 2, `pair_rate` 0.5410 → 0.5030 → 0.5224, not decaying). **New comparability family F11: network loading changed, so nothing before it compares to anything after. Nothing here is a result.** |
 | 2026-08-28 | **The joint binding does not survive translation, and the pair is re-found with the clock the model itself moves (§9.85; issues #48, #86, #49, #50; twelfth session).** The F9 gate-2 arm was stopped on the iteration-100 gate with all five scored categories past 20% — Other +471.2%, pt +123.4%, driver −19.4%, ride −76.3%, walk +55.2%, mean abs error 10.864 pp — and §9.84's driver-side pass measured INERT against the previous arm at equal depth (10.920 → 10.864, ride 4.91 → 4.87). The located cause: all three B2 binding tables NAME the driver, `build_matsim_plans.py` read that identity for seeding and DISCARDED it, so `RidePairingEngine` re-discovered every declared pair from geometry plus a 15-minute window — while MATSim's `TimeAllocationMutator`, at an UNDECLARED ±1800 s default, moved the two members apart independently. Measured: 73.8% (joint) / 67.4% (escort) / 80.5% (lift) of bound ride legs still had their declared driver on the same OD BY CAR, but only 60.6% / 42.6% / 64.5% fell inside the window. The driver is present, driving the same trip, and refused on the clock — which is why §9.82's and §9.84's repairs were both inert, each re-identifying through the window the drift had already exceeded. Built as family **F10**: `boundDriver` carries the identity for all three tables (158,898 persons); `RUN.replanning.time_mutation_range_s` is declared and swept; `B.ride.bound_pairing_window_min` is DERIVED from it, relaxing IDENTIFICATION only, with the inferred window unchanged at 15 min and a bound window narrower than it REFUSED. Caught before it could report a false success: `JointRideEngine` still bounded the physical wait by the narrow window, so the pair rate would have risen while nobody boarded (trap 6/7) — `Booking` now carries its own tolerance. At iteration 0, before any drift, `paired_by_identity` is 7 of 62,359. Registry 370 → **372**, ledger 0, doc-currency 0. **Nothing here is a result**: no arm has reached a gate on this boundary and the repair's effect is not yet measured. |
 | 2026-08-27 | **The demand ceiling gets its mechanism, gradient gets its channel, and the age gates close (§9.84; issues #86, #48, #49, #50, #21; eleventh session).** Three root-cause builds under the renewed gate-loop `/goal`, forming family **F9**: `bind_joint_tours` generates adult joint household travel as pairs — companion tours mirroring a co-member driver's tour, `party_size` 2, volume anchored on the measured occupancy ratio (0.3503 passengers per driver trip, derived) times the observed driver share with escort/lift coverage counted first, eligibility only, realisation emergent; gradient reaches walk/bike link travel time on BOTH router and mobsim sides (`grade_pct` stamped from A1/A6 node elevations, 81.9% of walk/bike links matched; Tobler for walk, Parkin & Rotheram for bike, all constants declared and swept; `GradientSignalsNetworkFactory` ports the signals node logic so signals and gradient survive together); and the taxi/bike age gates land as declared, swept, zero-disables fields. One §0 decision settled by measurement WITHOUT a run: the §9.60 non-household scope lever was already 98% consumed at `same_zone` — the binding constraint is driver supply, so the scope stays. Found: `--max-persons` probes stride-sample one member per household and are structurally BLIND to every intra-household mechanism. Registry 357 → **370**, ledger 0, reach 102/102. The scored share was not written into the generator; occupancy keeps its constraint role. Nothing here is a result. |

@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 372 fields are made of
+## What the 377 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 32 | follows from another registry field by identity |
 | `literature` | 59 | a published value, not specific to this city |
-| `assumed` | 135 | chosen without direct empirical support |
-| `definition` | 111 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 138 | chosen without direct empirical support |
+| `definition` | 113 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 353 | usable point value |
+| `active` | 358 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1777,18 +1777,41 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 6 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 11 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
+| `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
+| `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt_split.window_months` | `12` | months | `assumed` | 6 - 24 |
 | `CAL.search.convergence_delta` | `0.25` | percentage_points | `assumed` | 0.1 - 1 |
 | `CAL.search.max_rounds` | `3` | count | `assumed` | 1 - 6 |
 | `CAL.search.points_per_parameter` | `3` | count | `assumed` | 3 - 7 |
+| `CAL.truck.count_year_from` | `2023` | year | `assumed` | 2019 - 2025 |
+
+#### `CAL.gate.pass_deviation_pct`
+
+The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything.
+
+***definition** · status **active** · DECISIONS.md §9.87*
+
+#### `CAL.gate.stop_deviation_pct`
+
+The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading.
+
+***definition** · status **active** · DECISIONS.md §9.87*
+
+#### `CAL.mode_split.commute_transfer_tolerance`
+
+The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%.
+
+***assumed** · status **active** · DECISIONS.md §9.87*
 
 #### `CAL.objective.components`
 
@@ -1812,6 +1835,12 @@ How many independent numbers the objective actually contains. The loop refuses t
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
 
+#### `CAL.pt_split.window_months`
+
+How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode.
+
+***assumed** · status **active** · DECISIONS.md §9.87*
+
 #### `CAL.search.convergence_delta`
 
 A coordinate pass that improves the objective by less than this ends the search. In the units of the objective, which is mean absolute mode-share error in percentage points. Below roughly 0.1 pp the search would be chasing seed noise rather than parameter effects, which DECISIONS.md 9.7 measured at the same order.
@@ -1829,6 +1858,12 @@ Maximum coordinate-descent passes over the free parameters. The loop stops earli
 Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Three is the smallest number that can show curvature. Each point is a full run, so this multiplies wall clock directly.
 
 ***assumed** · status **active** · DECISIONS.md §9.16*
+
+#### `CAL.truck.count_year_from`
+
+The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year).
+
+***assumed** · status **active** · DECISIONS.md §9.87*
 
 ## Behavioural parameters (C1)
 
