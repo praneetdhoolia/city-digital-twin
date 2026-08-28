@@ -161,8 +161,13 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
                 // travel time is captured now, so a timeout completes the leg
                 // on the Tier-1 clock counted from the moment of giving up -
                 // waiting costs what waiting costs.
+                // 9.85: the deadline is the tolerance the BOOKING was made
+                // under, which the booking now carries - windowMinutes for
+                // an inferred pair, the wider bound window for a pair the
+                // demand declared. Reading the narrow window here would
+                // time out exactly the pairings the binding recovers.
                 this.waiting.put(agent, new Waiting(linkId, booking.driver(),
-                        now + this.cfg.getWindowMinutes() * 60.0,
+                        now + booking.waitSeconds(),
                         fallbackTravelTime(agent)));
                 return true;
             }

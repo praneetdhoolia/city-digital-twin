@@ -342,6 +342,19 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # construction) and carries the driver's household id as `liftHousehold`,
     # which widens citysim.RidePairingEngine's candidate search to that
     # household. The binding is an eligibility, not a guarantee.
+    # 9.85: the DECLARED driver identity, from every binding table that
+    # names one. All three have always carried it and this builder has
+    # always discarded it, so citysim.RidePairingEngine had to RE-DISCOVER
+    # a declared pair from geometry and the clock - which MATSim's own
+    # TimeAllocationMutator then breaks, moving the two members
+    # independently at a range the registry did not declare until 9.85.
+    bound_driver = {}     # passenger pid -> [driver pids, ordered]
+
+    def bind(passenger, driver):
+        bound_driver.setdefault(passenger, [])
+        if driver not in bound_driver[passenger]:
+            bound_driver[passenger].append(driver)
+
     lift_hh = {}          # passenger pid -> [driver household ids, ordered]
     lift_cover = {}       # (passenger pid, tour_id) -> set of directions
     lifts = os.path.join(PLANS, 'B2_lift_bindings_%s.csv' % day)
@@ -350,6 +363,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
             for r in csv.DictReader(fh):
                 p = int(r['passenger_person_id'])
                 hh = int(r['driver_household_id'])
+                bind(p, int(r['driver_person_id']))
                 lift_hh.setdefault(p, [])
                 if hh not in lift_hh[p]:
                     lift_hh[p].append(hh)
@@ -365,6 +379,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
     if os.path.exists(escorts):
         with open(escorts, encoding='utf-8') as fh:
             for r in csv.DictReader(fh):
+                bind(int(r['member_person_id']),
+                     int(r['driver_person_id']))
                 escort_cover.setdefault(
                     (int(r['member_person_id']), int(r['member_tour_id'])),
                     set()).add(r['direction'])
@@ -389,6 +405,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 joint_driver.setdefault(
                     int(r['driver_person_id']), set()).add(
                         int(r['driver_tour_id']))
+                bind(int(r['companion_person_id']),
+                     int(r['driver_person_id']))
     u_buf = {'buf': rng.random(1 << 20), 'i': 0}
 
     def u():
@@ -571,6 +589,21 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 w.write('\t\t\t<attribute name="liftHousehold" '
                         'class="java.lang.String">%s</attribute>\n'
                         % ','.join('%d' % h for h in lift_hh[pid]))
+            if not external and pid in bound_driver:
+                # 9.85: the DECLARED driver(s) this passenger was generated
+                # to travel with - joint companion, escorted member or
+                # bound lift passenger alike, since the defect and its
+                # repair are identical in all three. Consumed by
+                # citysim.RidePairingEngine. The binding is an IDENTITY,
+                # not a proximity: the engine may recognise this pair after
+                # replanning has moved either member's clock, which the
+                # geometric+window search cannot do. It remains an
+                # ELIGIBILITY - endpoints, vehicle capacity and physical
+                # boarding still decide whether the pairing is made, and
+                # the gap is waiting time the passenger pays for in score.
+                w.write('\t\t\t<attribute name="boundDriver" '
+                        'class="java.lang.String">%s</attribute>\n'
+                        % ','.join('%d' % d for d in bound_driver[pid]))
             if tier in ('through', 'freight') or moto:
                 # locks SubtourModeChoice to {car} / {truck} / {motorbike} for
                 # this agent - a volume anchored on an observation must stay

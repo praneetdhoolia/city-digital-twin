@@ -82,46 +82,19 @@
   "typical_duration_sweep": 0.25,
   "note": "Seed modes are initial conditions for MATSim co-evolution, drawn per tour so chain-based modes stay conserved. The default seed is UNINFORMED - uniform over the modes each person can use, conditioned only on B1 car availability - so that the HTS mode share is a target the model has to reach rather than one it is handed (DECISIONS.md 9.6). Run with --seed-mode informed to reproduce the P3 seed.",
   "by_day": {
-    "WEEKDAY": {
-      "persons": 620553,
-      "legs": 2343321,
-      "activities": 2963874,
-      "tours": 1100353,
-      "bytes": 40606206,
-      "escort_ride_denied": 111018,
-      "seed_mode_share": {
-        "bike": 0.0709,
-        "car": 0.3413,
-        "motorbike": 0.0021,
-        "pt": 0.1782,
-        "ride": 0.1907,
-        "truck": 0.0381,
-        "walk": 0.1788
-      },
-      "seed_ride_covered_share": 0.102,
-      "activity_types": {
-        "business": 24001,
-        "education": 67471,
-        "escort": 224453,
-        "home": 1720906,
-        "other": 456959,
-        "shopping": 235701,
-        "work": 234383
-      }
-    },
     "SAT": {
       "persons": 506013,
       "legs": 1903521,
       "activities": 2409534,
       "tours": 878330,
-      "bytes": 32583614,
+      "bytes": 33464703,
       "escort_ride_denied": 66187,
       "seed_mode_share": {
-        "bike": 0.0734,
-        "car": 0.326,
+        "bike": 0.0732,
+        "car": 0.3254,
         "motorbike": 0.0028,
-        "pt": 0.1789,
-        "ride": 0.217,
+        "pt": 0.1795,
+        "ride": 0.2171,
         "truck": 0.0224,
         "walk": 0.1795
       },
@@ -141,16 +114,16 @@
       "legs": 1664677,
       "activities": 2134288,
       "tours": 768752,
-      "bytes": 29253328,
+      "bytes": 29999419,
       "escort_ride_denied": 48404,
       "seed_mode_share": {
-        "bike": 0.0746,
-        "car": 0.3098,
+        "bike": 0.0752,
+        "car": 0.3099,
         "motorbike": 0.003,
-        "pt": 0.1831,
-        "ride": 0.2232,
+        "pt": 0.1827,
+        "ride": 0.223,
         "truck": 0.0228,
-        "walk": 0.1835
+        "walk": 0.1833
       },
       "seed_ride_covered_share": 0.1227,
       "activity_types": {

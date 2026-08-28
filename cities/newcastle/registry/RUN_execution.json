@@ -205,6 +205,20 @@
       "matsim_param": "replanning.maxAgentPlanMemorySize",
       "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle."
     },
+    "RUN.replanning.time_mutation_range_s": {
+      "value": 1800.0,
+      "units": "seconds",
+      "source": "literature",
+      "sweep": [
+        600.0,
+        1800.0
+      ],
+      "sweep_basis": "MATSim ships 1800 s and this model inherited it SILENTLY - the value reached the mobsim through no declaration at all until 9.85, which is exactly the undeclared modelling choice this registry exists to prevent. It is swept rather than pinned because it is MEASURED to be load-bearing on a quantity that is not its own: it sets how far the two members of a DECLARED joint pair drift apart, and at 1800 s the measured median gap between a companion and their declared driver is 10.3 min with p90 at 45.1 min, against a pairing tolerance of 15 min. The lower bound is the coarsest bin the travel-time calculator resolves (RUN.travel_time.bin_size_s = 300) doubled; the upper is MATSim's own default. Narrowing it is NOT a way to buy pairings - B.ride.bound_pairing_window_min is derived from it, so the tolerance follows the drift rather than chasing it.",
+      "status": "active",
+      "decisions_ref": "9.85",
+      "matsim_param": "timeAllocationMutator.mutationRange",
+      "description": "The half-width of the uniform departure-time mutation TimeAllocationMutator applies. A property of the MATSim search, not an observable of Newcastle - but a CONTROLLABLE one, and it was reaching the model as a framework default that no layer stated and no sweep covered. It is declared here because it is the mechanism measured (9.85) to decohere the joint household pairs the B2 binder generates: the mutator moves each member independently, so a pair generated to depart together drifts apart at this scale."
+    },
     "RUN.replanning.fraction_to_disable_innovation": {
       "value": 0.8,
       "units": "share_of_iterations",

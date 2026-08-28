@@ -46,6 +46,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private boolean remodeUnpaired = false;
     private boolean waitForDriver = false;
     private double windowMinutes = UNSET;
+    private double boundWindowMinutes = UNSET;
     private double escortCoherenceRate = UNSET;
     private double jointCoherenceRate = UNSET;
     private String rule = "";
@@ -161,6 +162,40 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     @StringSetter("windowMinutes")
     public void setWindowMinutes(final double value) {
         this.windowMinutes = value;
+    }
+
+    /**
+     * The tolerance for a pair the DEMAND DECLARES, rather than one the
+     * engine has to infer (DECISIONS.md 9.85).
+     *
+     * <p>{@link #getWindowMinutes()} answers "are these two people making
+     * the same trip?" from geometry and the clock, because for an
+     * arbitrary pair of household members that is the only evidence there
+     * is. For a companion and the driver named on their joint binding
+     * there is better evidence: B2 generated the two tours AS A PAIR, and
+     * since 9.85 the population carries the driver's identity on the
+     * companion as {@code boundDriver}. Identity has already answered the
+     * question the window exists to answer, so what this tolerance bounds
+     * is only how far MATSim's OWN replanning has moved the two apart
+     * since - which is why {@code B.ride.bound_pairing_window_min} is
+     * DERIVED from {@code RUN.replanning.time_mutation_range_s} and not a
+     * free value.
+     *
+     * <p>It relaxes IDENTIFICATION only. Endpoints, vehicle capacity and
+     * physical boarding decide as before whether the pairing is made, and
+     * the realised gap becomes waiting time the passenger pays for in
+     * score - so an implausible pairing is refused by the scoring rather
+     * than by a threshold. Setting it equal to {@code windowMinutes}
+     * recovers the pre-9.85 behaviour exactly.
+     */
+    @StringGetter("boundWindowMinutes")
+    public double getBoundWindowMinutes() {
+        return this.boundWindowMinutes;
+    }
+
+    @StringSetter("boundWindowMinutes")
+    public void setBoundWindowMinutes(final double value) {
+        this.boundWindowMinutes = value;
     }
 
     /**
@@ -285,6 +320,13 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
             return;
         }
         require(this.windowMinutes >= 0.0, "windowMinutes", "B.ride.pairing_window_min");
+        require(this.boundWindowMinutes >= 0.0, "boundWindowMinutes",
+                "B.ride.bound_pairing_window_min");
+        // A declared pair may not be recognised on LOOSER evidence than an
+        // inferred one: that would make the binding a way to buy pairings
+        // rather than a way to keep the ones the demand already stated.
+        require(this.boundWindowMinutes >= this.windowMinutes,
+                "boundWindowMinutes", "B.ride.bound_pairing_window_min");
         require(this.escortCoherenceRate >= 0.0, "escortCoherenceRate",
                 "B.ride.escort_coherence_rate");
         require(this.jointCoherenceRate >= 0.0, "jointCoherenceRate",

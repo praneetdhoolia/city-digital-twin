@@ -1187,6 +1187,24 @@
       "description": "How far apart a passenger's and a driver's PLANNED departures may be and still be treated as one trip. This is the tolerance the pairing is allowed, NOT a modelled waiting time: Tier 1 does not move the passenger's departure, because shifting it would cascade through the rest of that person's day and the blast radius of the change is deliberately bounded. Who adapts is nonetheless DECLARED rather than left open - the passenger does, since the driver's plan cascades further - and the unmodelled sub-window adjustment is a stated limitation, not a silent one. Consumed by src/java/citysim/RidePairingEngine.",
       "matsim_param": "ridePairing.windowMinutes"
     },
+    "B.ride.bound_pairing_window_min": {
+      "value": 30.0,
+      "units": "minutes",
+      "source": "derived",
+      "status": "active",
+      "decisions_ref": "9.85",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java"
+      ],
+      "matsim_param": "ridePairing.boundWindowMinutes",
+      "description": "The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly.",
+      "derived_from": {
+        "fields": [
+          "RUN.replanning.time_mutation_range_s"
+        ],
+        "identity": "bound_pairing_window_min = time_mutation_range_s / 60"
+      }
+    },
     "B.ride.pairing_rule": {
       "value": "both_links",
       "units": "enum",
