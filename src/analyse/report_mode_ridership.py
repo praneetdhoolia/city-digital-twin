@@ -94,16 +94,26 @@ def load_targets():
 
 
 def pt_submode_trips(run_dir, iteration, person_lga):
-    """Target-LGA linked pt trips, keyed by the submodes the trip boarded.
+    """Target-LGA linked pt trips, allocated to ONE primary submode each.
 
-    A trip that boards more than one submode is counted once for EACH submode
-    it used, because the question a per-mode target asks is "how many trips
-    used this mode", not "how many trips used only this mode". The count of
-    such trips is returned so the double-count is visible rather than implied.
+    A linked public-transport trip may board several submodes - a bus to the
+    station and then a train - and the earlier version of this function counted
+    it once for EVERY submode it used. That was wrong, and measurably so: only
+    14,785 of 29,761 pt trips board a single submode, so the submode shares
+    summed to nearly twice the pt share while the TARGETS sum to exactly the pt
+    level. Bus took the worst of it, because bus is what people ride to the
+    train.
+
+    Each trip is now allocated to the submode carrying the greatest in-vehicle
+    distance on that trip - the main mode by distance, which is the same rule
+    the survey's own linked-trip vocabulary uses, and the bus-to-the-station leg
+    stops being counted as a bus trip. The shares then sum to pt, which is what
+    makes them comparable with targets that sum to the pt level.
     """
     route_mode = em.transit_route_modes(run_dir)
     stem = 'ITERS/it.%d/%d.legs' % (iteration, iteration)
-    submodes = collections.defaultdict(set)
+    # (person, trip) -> submode -> in-vehicle metres on that submode
+    ridden = collections.defaultdict(collections.Counter)
     unknown = 0
     with em.open_output(run_dir, stem) as fh:
         for l in csv.DictReader(fh, delimiter=';'):
@@ -115,7 +125,16 @@ def pt_submode_trips(run_dir, iteration, person_lga):
             if sm is None:
                 unknown += 1
                 continue
-            submodes[(l['person'], l['trip_id'])].add(sm)
+            try:
+                metres = float(l.get('distance') or 0.0)
+            except ValueError:
+                metres = 0.0
+            ridden[(l['person'], l['trip_id'])][sm] += metres
+    submodes = {}
+    for key, per_mode in ridden.items():
+        # greatest in-vehicle distance wins; ties break on the submode name so
+        # two runs of one build cannot disagree
+        submodes[key] = max(sorted(per_mode.items()), key=lambda kv: kv[1])[0]
 
     per_submode = collections.Counter()
     multi = 0
@@ -126,14 +145,14 @@ def pt_submode_trips(run_dir, iteration, person_lga):
                 continue
             if person_lga.get(t['person']) != em.TARGET_LGA:
                 continue
-            sms = submodes.get((t['person'], t['trip_id']))
-            if not sms:
+            key = (t['person'], t['trip_id'])
+            primary = submodes.get(key)
+            if primary is None:
                 per_submode['pt:no_boarding'] += 1
                 continue
-            if len(sms) > 1:
+            if len(ridden[key]) > 1:
                 multi += 1
-            for sm in sms:
-                per_submode[SUBMODE_TO_TARGET.get(sm, sm)] += 1
+            per_submode[SUBMODE_TO_TARGET.get(primary, primary)] += 1
     return per_submode, multi, unknown
 
 
@@ -290,8 +309,8 @@ def report(run_dir, iteration):
         print('pt trips that boarded nothing (raptor direct-walk fallback): %d'
               % sub['pt:no_boarding'])
     if multi:
-        print('pt trips boarding more than one submode, counted once per '
-              'submode used: %d' % multi)
+        print('pt trips boarding more than one submode, each allocated to '
+              'its longest-ridden submode: %d' % multi)
     if unknown:
         print('pt legs whose route did not resolve to a submode: %d' % unknown)
 
