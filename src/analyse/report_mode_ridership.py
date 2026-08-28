@@ -158,6 +158,22 @@ def crossing_closures(run_dir):
     return len(re.findall(r'<flowCapacity[^>]*value="0(?:\.0*)?"', body))
 
 
+def crossing_movements():
+    """Train movements per weekday the crossing closures represent.
+
+    Read from the city's crossings report rather than recomputed: the closure
+    file is generated from the timetable, so this is the same number the
+    target is derived from - which is exactly why the comparison below is
+    labelled a representation rather than a fit.
+    """
+    path = _city.path('networks/matsim/crossings/_crossings_report.json')
+    if not _os.path.exists(path):
+        return None
+    doc = json.load(open(path, encoding='utf-8'))
+    per_site = doc.get('closures_per_site') or {}
+    return float(sum(per_site.values())) if per_site else None
+
+
 def road_vehicle_share(counts_all):
     """Heavy vehicles as a share of modelled road vehicle trips.
 
@@ -190,6 +206,7 @@ def report(run_dir, iteration):
             all_counts[t['main_mode']] += 1
     truck_pct, road_tot = road_vehicle_share(all_counts)
     closures = crossing_closures(run_dir)
+    movements = crossing_movements()
 
     modelled = {}
     trips = {}
@@ -202,7 +219,12 @@ def report(run_dir, iteration):
             modelled[mode] = truck_pct
             trips[mode] = all_counts.get('truck', 0)
         elif mode == 'freight_train':
-            modelled[mode] = None
+            # The modelled quantity is the number of train movements the run's
+            # closures REPRESENT, and it equals the target by construction:
+            # the closures are generated FROM the timetable the target is
+            # derived from. That is a representation, not a fit, and the gate
+            # column says so rather than parading a 0% as if it were one.
+            modelled[mode] = movements
             trips[mode] = closures if closures is not None else 0
         else:
             modelled[mode] = lga_pct.get(mode, 0.0)
@@ -239,7 +261,18 @@ def report(run_dir, iteration):
                      'unobtained', 'n/a', trips[mode],
                      'NO TARGET - swept, never pinned'))
             continue
+        if m is None:
+            print('%-15s %10s %10.4f %11s %12d  %s'
+                  % ('%d %s' % (i, mode), '-', t['target'], 'n/a',
+                     trips[mode], 'NO MODELLED COUNTERPART'))
+            continue
         dev = 100.0 * (m - t['target']) / t['target']
+        if mode == 'freight_train':
+            flag = 'representation, not a fit (closures ARE the timetable)'
+            print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
+                     flag))
+            continue
         if abs(dev) >= GATE_STOP_PCT:
             flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
             breaches.append((mode, m, t['target'], dev))
