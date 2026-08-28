@@ -85,6 +85,8 @@ SCHEDULE = _city.path(
     'scenarios/matsim/%s/WEEKDAY/transitSchedule.xml.gz'
     % _city.descriptor()['intervention']['base_scenario'])
 RAIL_MATCH_M = CFG.get('A.crossings.rail_match_radius_m')
+CLOSURE_DURATION_PASSENGER_S = CFG.get(
+    'A.crossings.closure_duration_passenger_s')
 
 
 def boom_crossing_nodes():
@@ -221,6 +223,23 @@ def rail_movements(site, rail_links, schedule_text, fac):
         for dep in re.finditer(r'<departure[^>]*departureTime="([^"]+)"', body):
             times.append(hhmmss_to_s(dep.group(1)) + nearest[1])
     return sorted(times)
+
+
+def merge_spans(spans):
+    """Overlapping or touching closures become one closure.
+
+    The boom does not lift between two trains that arrive inside one closure,
+    and a model that lifts it would let traffic through a crossing that is
+    shut. Touching spans merge too: a reopen and a reclose at the same second
+    is not a gap anything can drive through.
+    """
+    out = []
+    for start, end in sorted(spans):
+        if out and start <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], end)
+        else:
+            out.append([start, end])
+    return [(a, b) for a, b in out]
 
 
 def hhmmss_to_s(text):
@@ -363,25 +382,40 @@ def main():
     n_events = 0
     events = []
     for si, site in enumerate(sites):
+        spans = []
         if derived:
-            # Every scheduled train that crosses, at the time it crosses.
+            # One closure per scheduled train, at the time it crosses, for the
+            # PASSENGER duration - the per-train figure, not the coal-train
+            # one (9.90).
             for start in site['closure_times_s']:
-                start = min(max(start, w0), w1 - CLOSURE_DURATION_S)
-                events.append((start, site))
+                start = min(max(start, w0), w1 - CLOSURE_DURATION_PASSENGER_S)
+                spans.append((start, start + CLOSURE_DURATION_PASSENGER_S))
             # Non-timetabled freight on top, spread evenly because no movement
-            # log is published - zero by default on 9.70's grade separation.
-            for i in range(int(FREIGHT_CLOSURES)):
-                start = w0 + (i + 0.5) * ((w1 - w0)
-                                          / max(1, int(FREIGHT_CLOSURES)))
-                events.append((min(start, w1 - CLOSURE_DURATION_S), site))
+            # log is published - zero by default on 9.70's grade separation -
+            # and at the FREIGHT duration, which is what that 240 s describes.
+            nf = int(FREIGHT_CLOSURES)
+            for i in range(nf):
+                start = w0 + (i + 0.5) * ((w1 - w0) / max(1, nf))
+                start = min(start, w1 - CLOSURE_DURATION_S)
+                spans.append((start, start + CLOSURE_DURATION_S))
         else:
             for i in range(n):
                 start = w0 + (i + 0.5 + si / max(1, len(sites))) * interval
                 if start + CLOSURE_DURATION_S > w1:
                     start = w1 - CLOSURE_DURATION_S
-                events.append((start, site))
-    for start, site in sorted(events, key=lambda t: t[0]):
-        end = start + CLOSURE_DURATION_S
+                spans.append((start, start + CLOSURE_DURATION_S))
+        # A boom that is already down STAYS down. Two trains inside one
+        # closure are one closure, not two, and emitting them separately would
+        # reopen the road between them - and would hand MATSim two change
+        # events on one link at overlapping times, which its time-variant
+        # network refuses outright ("Expected number of change events (408)
+        # differs from the number of events found (375)", measured on the
+        # first derived probe). Merging is both the physical truth and the
+        # thing that makes the accounting close.
+        site['closure_spans_s'] = merge_spans(spans)
+        for start, end in site['closure_spans_s']:
+            events.append((start, end, site))
+    for start, end, site in sorted(events, key=lambda t: (t[0], t[1])):
         close = ET.SubElement(root, 'networkChangeEvent',
                               {'startTime': hhmmss(start)})
         for sl in site['links']:
@@ -423,6 +457,12 @@ def main():
         freight_closures_per_day=FREIGHT_CLOSURES,
         closures_per_site={s['road_name']: len(s.get('closure_times_s', []))
                            for s in sites},
+        closure_spans_per_site={s['road_name']: len(s.get('closure_spans_s', []))
+                                for s in sites},
+        closed_seconds_per_site={
+            s['road_name']: round(sum(b - a for a, b
+                                      in s.get('closure_spans_s', [])), 1)
+            for s in sites},
         sites=[{k: v for k, v in s.items() if k != 'links'} |
                {'links': [dict(id=sl['link']['id'], way=sl['link']['way'],
                                dist_m=sl['dist_m'],

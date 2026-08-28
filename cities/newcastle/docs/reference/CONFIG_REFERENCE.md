@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 387 fields are made of
+## What the 388 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 32 | follows from another registry field by identity |
-| `literature` | 63 | a published value, not specific to this city |
+| `literature` | 64 | a published value, not specific to this city |
 | `assumed` | 143 | chosen without direct empirical support |
 | `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 368 | usable point value |
+| `active` | 369 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -85,7 +85,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 131 fields*
+*`cities/newcastle/registry/A_supply.json` - 132 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -106,6 +106,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.corridor.trunk_buffer_m` | `60.0` | metres | `assumed` | 40 - 100 |
 | `A.crossings.closed_flow_capacity_veh_h` | `0.0` | vehicles_per_hour | `definition` | - |
 | `A.crossings.closed_freespeed_ms` | `0.1` | metres_per_second | `definition` | - |
+| `A.crossings.closure_duration_passenger_s` | `60.0` | s | `literature` | 30 - 120 |
 | `A.crossings.closure_duration_s` | `240` | seconds | `assumed` | 60 - 600 |
 | `A.crossings.closure_source` | `schedule_derived` | enum | `assumed` | `assumed_uniform`, `schedule_derived` |
 | `A.crossings.closure_window_h` | `[0.0, 24.0]` | hours | `definition` | - |
@@ -329,9 +330,15 @@ The freespeed FLOOR written during a closure. A numerical guard, not a model val
 
 ***definition** · status **active** · DECISIONS.md §9.76*
 
+#### `A.crossings.closure_duration_passenger_s`
+
+How long the boom stays down for ONE scheduled PASSENGER train. Under the schedule-derived closure source a closure is emitted per train, so the duration has to be a per-train figure - and the 240 s of A.crossings.closure_duration_s is not one. That value is anchored on the TfNSW statement that closures run "up to ten minutes", which describes a long coal train, and applying it per passenger train would hold the Islington boom down 204 x 240 s = 13.6 hours a weekday, which is not what that crossing does. A boom-gate closure decomposes into a warning/lead time before arrival, the train transit itself, and a short lag before the booms lift; a two-to-four-car Hunter Line set clears the crossing in seconds, so the lead and lag dominate. 60 s is that sum at standard operation and is swept 30-120 s because neither the operated lead time nor the boom lag is published for these two sites.
+
+***literature** · status **active** · DECISIONS.md §9.90*
+
 #### `A.crossings.closure_duration_s`
 
-How long one closure holds the crossing shut. ASSUMED and swept against the official "up to ten minutes" bound; the point value is a mid-band working value, never a claim.
+Closure duration for a FREIGHT movement, and for every closure under the assumed_uniform member of A.crossings.closure_source. Retained at its recorded basis - the TfNSW "up to ten minutes" statement describes a long coal train, not a passenger set - while passenger closures take A.crossings.closure_duration_passenger_s (9.90). How long one closure holds the crossing shut. ASSUMED and swept against the official "up to ten minutes" bound; the point value is a mid-band working value, never a claim.
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
 

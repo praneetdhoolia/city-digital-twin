@@ -384,8 +384,8 @@ networks/osm/signals.osm,raw,3250042,,cities/newcastle/extract/overpass.py,,,,,4
 networks/osm/water.osm,raw,12324895,,cities/newcastle/extract/overpass.py,,,,,c7dbfeb3f92749ca4eeaabd940419f7ec72d8badd2232d8499fa3620ae09ed92
 networks/matsim/_matsim_build_report.json,processed,13343,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,7db82857c88146410caf6b1d242119a44f8069fb0974bbcba8538711be923652
 networks/matsim/base/network.xml.gz,processed,6694664,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,a1f0f8ad964fa280b01d33f9e287514a8eb0e20d62eb45b6d2d76be970f02360
-networks/matsim/crossings/_crossings_report.json,processed,10272,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,49a9a63dd09fb50b76937f7144ea22d200ca6a5ad33c78989f88f2203b43e6fe
-networks/matsim/crossings/crossing_change_events.xml,processed,675738,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,8ae0b37a1a435270133c437546ca9180c66510efb5da1d352aec19a65dc9cb45
+networks/matsim/crossings/_crossings_report.json,processed,24863,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,2912b6b90f6db5406de19f3815de467a56587674a578ac9593cef103c1fdffb1
+networks/matsim/crossings/crossing_change_events.xml,processed,547104,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,4bc1a07d9901c9b265e4754407c42e54b0c817fc13ed2fb8662e008bdb6f0e54
 networks/matsim/schedules/_dwell_report.json,processed,2217,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,5c46572a13121eafd55db82723ccc5a1e936e3c3454f2c49289cbe257a96c40d
 networks/matsim/schedules/base2026/network.xml.gz,processed,6464071,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0cc3e56fbe80c637980b2b402f0761fdddc2687123f214357a7d9610848321eb
 networks/matsim/schedules/base2026/transitSchedule.xml.gz,processed,1971464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,ac0ba3b2ac28a75ea944617ea12b7c87181995c59074ad2e2ee6771774ca0beb
