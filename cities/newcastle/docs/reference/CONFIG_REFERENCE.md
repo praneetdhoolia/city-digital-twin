@@ -1194,8 +1194,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.licence_rate_by_age_band` | `[0, 0, 0, 0.62, 0.88, 0.93, 0.94, 0.93, 0.88, 0.72, 0.45]` | probability | `literature` | plus/minus 10% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
 | `B.ride.bound_pairing_window_min` | `30.0` | minutes | `derived` | derived: bound_pairing_window_min = time_mutation_range_s / 60 |
-| `B.ride.escort_coherence_rate` | `0.1` | share_per_iteration | `assumed` | 0 - 0.5 |
-| `B.ride.joint_coherence_rate` | `0.1` | share_per_iteration | `assumed` | 0 - 0.5 |
+| `B.ride.escort_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
+| `B.ride.joint_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.max_passengers_per_vehicle` | `4` | persons | `assumed` | 1 - 4 |
 | `B.ride.pairing_enabled` | `true` | boolean | `definition` | - |
 | `B.ride.pairing_rule` | `both_links` | enum | `assumed` | `both_links`, `origin_link`, `dest_link`, `window_only` |
@@ -1722,15 +1722,15 @@ The tolerance applied when the passenger and the driver are a DECLARED pair - a 
 
 #### `B.ride.escort_coherence_rate`
 
-Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together.
+Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together. RAISED 0.1 -> 0.4 in 9.93, and the reason is SEARCH COMPLETENESS rather than fit: the listener PROPOSES the coherent plan and ChangeExpBeta still decides on score, so a higher rate cannot make a bad plan win - it can only reduce the chance that a good two-sided plan is never offered at all. The state it restores is unreachable by ANY per-agent strategy, so the only thing a low rate buys is a smaller chance of finding it. Measured on the paired 1% diagnostics at iteration 40: ride 16.7991% -> 18.1689%, bike 7.6523% -> 6.9696%, occupancy_from_pairings 0.2282 -> 0.2505 and ride legs retained 3,833 -> 4,099, while pair_rate barely moved (0.5025 -> 0.5067) - the listener is keeping more coherent pairs in PLANS, which is its design. Recorded this explicitly because the move improves a fit and could be mistaken for tuning: the argument stands on the mechanism, and 0.0 still recovers the pre-9.82 behaviour exactly.
 
-***assumed** · status **active** · DECISIONS.md §9.82 · MATSim `ridePairing.escortCoherenceRate`*
+***assumed** · status **active** · DECISIONS.md §9.82, 9.93 · MATSim `ridePairing.escortCoherenceRate`*
 
 #### `B.ride.joint_coherence_rate`
 
-Rate at which a joint-tour driver and their bound household companion are re-offered the coherent car+ride state after per-agent replanning has split them. The joint binder (9.84) generates two-person travel as a PAIR, and SubtourModeChoice moves one agent at a time - the 9.82 defect class, which is why the same propose-never-impose listener carries it.
+Rate at which a joint-tour driver and their bound household companion are re-offered the coherent car+ride state after per-agent replanning has split them. The joint binder (9.84) generates two-person travel as a PAIR, and SubtourModeChoice moves one agent at a time - the 9.82 defect class, which is why the same propose-never-impose listener carries it. RAISED 0.1 -> 0.4 in 9.93, and the reason is SEARCH COMPLETENESS rather than fit: the listener PROPOSES the coherent plan and ChangeExpBeta still decides on score, so a higher rate cannot make a bad plan win - it can only reduce the chance that a good two-sided plan is never offered at all. The state it restores is unreachable by ANY per-agent strategy, so the only thing a low rate buys is a smaller chance of finding it. Measured on the paired 1% diagnostics at iteration 40: ride 16.7991% -> 18.1689%, bike 7.6523% -> 6.9696%, occupancy_from_pairings 0.2282 -> 0.2505 and ride legs retained 3,833 -> 4,099, while pair_rate barely moved (0.5025 -> 0.5067) - the listener is keeping more coherent pairs in PLANS, which is its design. Recorded this explicitly because the move improves a fit and could be mistaken for tuning: the argument stands on the mechanism, and 0.0 still recovers the pre-9.82 behaviour exactly.
 
-***assumed** · status **active** · DECISIONS.md §9.84 · MATSim `ridePairing.jointCoherenceRate`*
+***assumed** · status **active** · DECISIONS.md §9.84, 9.93 · MATSim `ridePairing.jointCoherenceRate`*
 
 #### `B.ride.max_passengers_per_vehicle`
 
