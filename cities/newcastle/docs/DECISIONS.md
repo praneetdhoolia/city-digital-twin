@@ -86,6 +86,8 @@ its layout will otherwise cost you an hour:
 | **A declared pair is re-found by a clock the model itself moves (family F10)** | **§9.85** — the B2 binding tables name the driver and `build_matsim_plans.py` read that identity for SEEDING and then threw it away, so `RidePairingEngine` re-discovered declared pairs from geometry and a 15-minute window while MATSim's `TimeAllocationMutator` — at an UNDECLARED ±1800 s default — moved the two members apart independently. The driver is present, on car, on the same trip, and refused on the clock. `boundDriver` carries the identity; the tolerance for a declared pair is DERIVED from the mutation range |
 | **A hired car is a car on the road: taxi stops being a ghost in the mobsim (family F11)** | **§9.86** — `taxi` was routed on the network, permitted on 143,891 links, bound to the congested car travel time and given a car-bodied vehicle type, but was NOT in `RUN.qsim.main_mode`, so MATSim teleported it: **39,892 of 39,923 legs per iteration** never touched the carriageway (#88). One enum value fixes it; the body restates `RUN.qsim.car_vehicle` rather than inventing a second one. Probe-measured: 197 of 197 taxi departures now enter traffic, 29,994 link traversals. **Deadheading stays unmodelled and unassumed.** `ride`’s remaining 44.5% teleport is a DEMAND failure, not a mobsim one — never close it with a phantom vehicle per passenger |
 | **Twelve modes get twelve targets: a folded survey category cannot answer a per-mode question** | **§9.87** — the HTS publishes SIX categories and this city simulates TWELVE modes, so four modes shared one 3.8% Public Transport row and a fold could hide an excess behind a deficit. The data document’s own lists EVIDENCE `fit.py`’s folds (bike+taxi → Other; motorbike appears in no other category, so it can only be a Vehicle driver). `build_mode_targets.py` disaggregates every level with census G62 composition and current Opal/station boardings, writes `mode_targets_by_mode.csv`, and is read by `report_mode_ridership.py`. **PT splits on CURRENT boardings, not the lockdown-vintage 2021 census — the census sets the sweep’s far end instead.** Ferry stays **unobtained and swept**: nothing is published for this city. The person-trip targets sum to 99.4037%, and the missing 0.596 pp is resident truck-driving, written out as a named deduction rather than folded into car. **NOT added to `validation_targets.csv`** — it would double-count and disturb the 67/143 split |
+| **SCATS stops being an assumed constant and becomes an algorithm (family F12)** | **§9.88** — every arm to date ran 14 corridor intersections on a FIXED 110 s plan, because the unreleased phase data was handled by sweeping a cycle time. `citysim.ScatsSignalController` implements the published logic instead: degree of saturation measured at every stop line from `LinkLeaveEvent`, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, clearances preserved. **Offsets deliberately NOT adapted** — that library is the unreleased artefact and no algorithm replaces it. Two defects recorded: DS measured against FULL-SCALE capacity read 0.000 at a 1% sample (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic cannot survive a variable cycle. Transit priority lives inside the controller, and **compensation becomes intrinsic** — a starved stage’s DS rises and the next split repays it |
+| **The ferry gets a derived target instead of no target at all** | **§9.89** — no Newcastle ferry patronage is published anywhere (the Opal all-modes Ferry row is NSW-wide and Sydney-dominated), so §9.87 left mode 10 of 12 ungateable. The census G62 one-method count (40 of 1,501 PT journeys, 2.665%) sets the share WITHIN PT, which the HTS 3.8% scales to **0.1013%**. Defensible for THIS mode because the Stockton crossing is captive (a ~20 km road detour) and a within-PT share is far less lockdown-sensitive than a level. Sweep stays wide, 0 to 2x; the value is labelled `derived`, never `observed` |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -8371,6 +8373,163 @@ throwaway script is not a measurement until something else reproduces it.**
 
 ---
 
+## 9.88 SCATS stops being an assumed constant and becomes an algorithm (28 August 2026, thirteenth session; issue #73)
+
+The `/goal` directive was amended mid-session to forbid the handling this
+project had used for three unobtainable inputs: **an unavailable value may no
+longer be left SWEPT if it can be derived**, and it named signalling as the
+worked example - *if SCATS signalling is not available, exhaustively research
+and implement its various algorithms.*
+
+### What was actually wrong
+
+`A.signals.scats_phasing` is `unobtained` with a null value, and the fallback
+was a swept fixed cycle time. So every arm this project has ever run drove all
+**14 corridor intersections on a fixed 110 s plan with fixed splits**
+(corridor 0-56 s, cross 64-102 s, offset 0, identical at every intersection).
+That is not an approximation of SCATS. A SCATS intersection re-times itself
+every cycle against measured saturation, and the difference between the two
+lands exactly where this study looks: corridor run time, and the queues the
+light rail sits in.
+
+The derivable thing was never the timings - it is the **algorithm** that
+produces them.
+
+### What SCATS does, and what is implemented
+
+`citysim.ScatsSignalController` (`src/java_signals/`) implements the published
+control logic on one measured primitive and two adaptations of it.
+
+**The primitive - degree of saturation.** Measured from the mobsim, not
+modelled: every vehicle crossing a signalised stop line emits a
+`LinkLeaveEvent`, and
+
+```
+DS = served / (saturation flow per lane x lanes x green / 3600)
+```
+
+is what was served against what that green could have discharged at
+saturation. No detector model, and nothing inferred from the plan being
+evaluated.
+
+**Adaptation 1 - cycle length.** Lengthen while the CRITICAL movement runs
+above the target DS, shorten while every movement runs below, in bounded
+increments rather than jumping to a computed optimum, so one noisy cycle
+cannot destroy coordination. Bounded by the declared min/max **and** by the
+intersection geometry: every clearance plus a minimum green per stage, a floor
+that outranks the declared minimum wherever it is higher.
+
+**Adaptation 2 - splits.** Green distributed to EQUALISE DS across stages.
+Clearances are preserved exactly - they are safety geometry derived from the
+intersection, not capacity to reallocate.
+
+**Adaptation 3 - offsets: NOT implemented, deliberately.** SCATS selects
+offsets from an operator-tuned per-subsystem library. That library IS the
+unreleased artefact, and unlike cycle and splits there is no algorithm to fall
+back on. An offset invented here would be this repository asserting a
+coordination pattern nobody measured - the precise failure the exercise exists
+to avoid. Each system keeps its generated offset, and corridor coordination
+stays a **stated limitation** rather than a fabricated input.
+
+### Two defects the build surfaced, both worth the record
+
+**1. The degree of saturation was measured against full-scale capacity.** The
+declared 1900 veh/h/lane is real-world, but MATSim scales every link discharge
+by `qsim.flowCapacityFactor`, so a 25% run's links pass a quarter of the
+vehicles per hour of green. Dividing a sampled count by a full-scale capacity
+read DS **0.000 at a 1% sample**, and the first probe drove every cycle from
+110 s to the floor with traffic present. The denominator now carries the factor
+that is already in the physics. **A sampled mobsim is not a small city; it is a
+city whose capacities were scaled, and any measurement against a real-world
+rate has to scale with them.**
+
+**2. Modular arithmetic cannot survive a variable cycle.** A fixed-time
+controller finds its place with `(t - offset) mod cycle`. The moment cycle
+length changes that expression silently reinterprets every past boundary and
+the plan jumps. The controller keeps an EXPLICIT cycle start and length, and
+re-times only at a boundary - a cycle in progress is never re-timed underneath
+itself.
+
+### Transit priority composes, and compensation becomes intrinsic
+
+A signal system names exactly ONE controller, so an adaptive corridor that
+could not grant tram priority would silently drop it. The priority layer
+therefore lives inside this controller too, on the same declared
+`tramPriority` parameters and the same detection service, in the same order:
+SCATS decides the plan for cycle N, and a detected tram may deform THAT cycle.
+
+One mechanism becomes unnecessary. The fixed-time controller keeps a
+compensation LEDGER, repaying in cycle N+1 what a competing stage lost in cycle
+N, because a fixed plan has no other route back to its declared splits. **Under
+SCATS the repayment is intrinsic**: a stage that gave up green discharges the
+same traffic through a shorter green, its measured DS rises, and the next
+split hands the time back for that reason. No ledger is kept that could
+disagree with the feedback.
+
+### Measured
+
+Probe `20260828T230050_2it_1pct` (1%, 2 iterations, rc=0, accounting closes):
+all **14 systems re-time**; NLR_SIG_01 runs 110 -> 104 -> 98 -> 92 s against
+criticalDS 0.564 -> 0.282 -> 0.141. Probe `20260828T230739_2it_1pct` on **S2b**
+(rc=0) carries SCATS and `green_extension` priority together, 168 logged
+re-timings across the 14 systems.
+
+### Declared, and the guard that keeps it honest
+
+`A.signals.control_regime` (**`scats_adaptive`**, categorical sweep against
+`fixed_time`) plus six algorithm parameters, all bound into the emitted `scats`
+module so the reach probe can move them:
+`target_degree_saturation` 0.90 [0.80-0.98] · `cycle_step_s` 6 [3-12] ·
+`min_cycle_s` 30 [20-60] · `max_cycle_s` 150 [110-180] · `ds_deadband` 0.05
+[0.02-0.10] · `ds_smoothing` 0.5 [0.1-0.9]. The min/max bracket the documented
+SCATS user limits (dossier 03/09); the operated corridor evidence of 9.75 (TIA
+PPSHCC-137: TCS 1138 at 72-81 s, TCS 923 at 104-113 s) sits well inside them.
+
+**`fixed_time` is kept, and reproduces every earlier arm exactly.** That is the
+comparison that says what the control logic is worth.
+
+The controller identifier is baked into the generated control file, so a
+declared regime disagreeing with the committed artefact would reach NOTHING -
+the run would execute the other controller and complete happily. `run_matsim.py`
+now refuses that mismatch in 0.1 s and names the command that fixes it.
+
+### Comparability
+
+Signal control decides corridor travel time, so nothing run before this
+compares to anything run after it. Declared as family **F12**.
+
+---
+
+## 9.89 The ferry gets a derived target instead of no target at all (28 August 2026, thirteenth session; issues #49, #84)
+
+Under the same amended directive, ferry stops being `unobtained`.
+
+**What does not exist:** any published Newcastle ferry patronage. The Opal
+all-modes series carries a Ferry row, but it is NSW-wide and Sydney-dominated,
+so it identifies nothing here; the station entries/exits publication carries
+Train and Light rail only. That was the basis for 9.87 leaving the mode with
+**no target at all**, which meant mode 10 of 12 could not be gated.
+
+**What does exist:** the census G62 one-method count - **40 of 1,501** core-SA1
+public-transport journeys to work, 2.665%. It sets the ferry share WITHIN
+public transport, which the HTS PT level of 3.8% then scales:
+**0.1013% of resident person trips.**
+
+**Why the transfer is more defensible for this mode than for the others.** Two
+reasons, both specific to this service. The Stockton crossing is **captive** -
+the road alternative is a ~20 km detour via Hexham - so its riders are not
+choosing it on the margin a bus rider is, and the commute-to-all-purpose
+transfer distorts less. And a share WITHIN public transport is far less
+sensitive to the August 2021 lockdown than an absolute level would be, because
+the lockdown suppressed numerator and denominator together.
+
+**The sweep stays wide - 0 to twice the point value.** The lockdown vintage is
+real and unquantified, and a derived value is not a measured one. What changes
+is that the mode now HAS a target and can be gated; what does not change is
+that the number is labelled `derived`, never `observed`.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -9043,6 +9202,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-28 | **SCATS becomes an implemented algorithm and the ferry gets a derived target; family F12 opens (§9.88, §9.89; issue #73; thirteenth session, amended `/goal` directive).** The directive was amended mid-session to forbid leaving an unavailable input SWEPT where it can be DERIVED, naming SCATS as the worked example. Every arm to date ran 14 corridor intersections on a fixed 110 s plan; `ScatsSignalController` now implements the published control logic — degree of saturation measured at every signalised stop line, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, the intersection’s own clearances preserved. **Offsets are deliberately not adapted**: that library is exactly the unreleased artefact and no algorithm replaces it, so corridor coordination stays a stated limitation rather than a fabricated input. Two defects recorded: DS measured against FULL-SCALE saturation read 0.000 at a 1% sample and drove every cycle to the floor (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic silently reinterprets past boundaries once the cycle length varies. Transit priority composes inside the same controller, and its compensation ledger becomes unnecessary — a stage that gave up green shows higher DS and the next split repays it. Probes `20260828T230050_2it_1pct` (14 systems re-timing, 110→104→98 s against criticalDS 0.564→0.282→0.141) and `20260828T230739_2it_1pct` on S2b (SCATS + green_extension together), both rc=0, accounting closes. Seven fields declared and bound; `fixed_time` kept and reproduces every earlier arm exactly; `run_matsim.py` refuses a regime that disagrees with the committed control file. **§9.89**: ferry stops being unobtained — the census G62 one-method count (40 of 1,501 PT journeys) sets its share within PT, scaled by the HTS level to **0.1013%**, `derived` with a wide 0–2x sweep, so mode 10 of 12 can finally be gated. **New comparability family F12: signal control decides corridor travel time, so nothing before compares to anything after. Nothing here is a result.** |
 | 2026-08-28 | **Twelve modes get twelve individual targets, and the acceptance bar stops being typed into a script (§9.87; issues #49/#84; thirteenth session, `/goal` monitoring directive).** The NSW HTS publishes SIX categories against TWELVE simulated modes: bus, light rail, heavy rail and ferry shared ONE 3.8% Public Transport row, and a fold lets an excess in one member hide behind a deficit in the other. The acquired data document’s own category lists **evidence** `fit.py`’s existing folds rather than leaving them assumed. New city builder `build_mode_targets.py` writes `mode_targets_by_mode.csv` — car 58.1631, ride 20.6000, walk 13.4000, bike 3.0131, motorbike 0.2406, taxi 0.1869, bus 1.3039, heavy_rail 2.0922, light_rail 0.4039, ferry **unobtained**, truck 15.4698 on the classified-count denominator, freight_train **not simulated** — each row carrying the derivation it came from. **The PT split is taken on CURRENT Opal/station boardings (2025-07..2026-06), not on the 2021 census enumerated inside the Delta lockdown; the census composition sets each sweep’s far end, because the disagreement between them is real uncertainty rather than a source to choose between.** Ferry is declared `unobtained` and swept — no Newcastle ferry patronage exists in any acquired artefact, and the NSW-wide Opal ferry series identifies nothing here. Person-trip targets sum to 99.4037%; the missing 0.596 pp is resident truck-driving, named rather than folded into car. Five fields declared: three derivation choices with sweeps, plus `CAL.gate.stop_deviation_pct` 20 and `CAL.gate.pass_deviation_pct` 10 as `definition`. New framework reader `src/analyse/report_mode_ridership.py` prints all twelve modes individually with a timestamp, never an umbrella row. **Deliberately NOT added to `validation_targets.csv`** — a disaggregation scored beside its own parents would double-count and disturb the 67/143 split; `fit.py` is untouched. Ledger 0, currency 0, manifest 494, registry 377. Nothing here is a result. |
 | 2026-08-28 | **A hired car is a car on the road: taxi becomes a physically simulated mode, and family F11 opens (§9.86; issue #88; thirteenth session, `/goal` precondition).** `taxi` was network-routed, link-permitted, congestion-bound and car-bodied but absent from `RUN.qsim.main_mode`, so the mobsim teleported it — **39,892 of 39,923 legs per iteration**, ~40,000 vehicle-trips of road space missing from every link and count station while `car` read −19.4% and the `bike+taxi` fold read +471.2%. The fix is one registry enum; nothing else needed building. The taxi body restates `RUN.qsim.car_vehicle` exactly rather than declaring a second one, and **empty running (deadheading) stays unobserved rather than becoming an assumed multiplier**. Probe `20260828T220751_2it_1pct` rc=0, accounting closes: **197 of 197 taxi departures enter traffic, 29,994 link traversals**, all 2,300,485 link-entry events attributed to a vehicle class. Also measured there: `ride` is 1,166 of 2,101 legs physically boarded (44.5% teleported) — a DEMAND failure §9.85 addresses, never to be closed with a phantom vehicle per passenger; §9.85’s `boundDriver` is live (`paired_by_identity` 98 at iteration 2, `pair_rate` 0.5410 → 0.5030 → 0.5224, not decaying). **New comparability family F11: network loading changed, so nothing before it compares to anything after. Nothing here is a result.** |
 | 2026-08-28 | **The joint binding does not survive translation, and the pair is re-found with the clock the model itself moves (§9.85; issues #48, #86, #49, #50; twelfth session).** The F9 gate-2 arm was stopped on the iteration-100 gate with all five scored categories past 20% — Other +471.2%, pt +123.4%, driver −19.4%, ride −76.3%, walk +55.2%, mean abs error 10.864 pp — and §9.84's driver-side pass measured INERT against the previous arm at equal depth (10.920 → 10.864, ride 4.91 → 4.87). The located cause: all three B2 binding tables NAME the driver, `build_matsim_plans.py` read that identity for seeding and DISCARDED it, so `RidePairingEngine` re-discovered every declared pair from geometry plus a 15-minute window — while MATSim's `TimeAllocationMutator`, at an UNDECLARED ±1800 s default, moved the two members apart independently. Measured: 73.8% (joint) / 67.4% (escort) / 80.5% (lift) of bound ride legs still had their declared driver on the same OD BY CAR, but only 60.6% / 42.6% / 64.5% fell inside the window. The driver is present, driving the same trip, and refused on the clock — which is why §9.82's and §9.84's repairs were both inert, each re-identifying through the window the drift had already exceeded. Built as family **F10**: `boundDriver` carries the identity for all three tables (158,898 persons); `RUN.replanning.time_mutation_range_s` is declared and swept; `B.ride.bound_pairing_window_min` is DERIVED from it, relaxing IDENTIFICATION only, with the inferred window unchanged at 15 min and a bound window narrower than it REFUSED. Caught before it could report a false success: `JointRideEngine` still bounded the physical wait by the narrow window, so the pair rate would have risen while nobody boarded (trap 6/7) — `Booking` now carries its own tolerance. At iteration 0, before any drift, `paired_by_identity` is 7 of 62,359. Registry 370 → **372**, ledger 0, doc-currency 0. **Nothing here is a result**: no arm has reached a gate on this boundary and the repair's effect is not yet measured. |

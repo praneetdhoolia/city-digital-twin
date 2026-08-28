@@ -249,15 +249,23 @@ def main():
     # and swept, per the standing rule for an input this project cannot
     # observe: it is not pinned to a point value.
     ferry_cen = pt_level * g['ferry'] / g_pt
-    add('ferry', None, 'resident person trips', 'unobtained',
-        'NO Newcastle ferry patronage is published in any acquired artefact: '
-        'the Opal all-modes Ferry series is NSW-wide and Sydney-dominated, and '
-        'the station entries/exits publication carries Train and Light rail '
-        'only. The census G62 one-method count (%d of %d PT journeys) would '
-        'give %.4f%%, but it was enumerated in the August 2021 lockdown that '
-        'suppressed PT commuting specifically, so it sets the sweep rather '
-        'than a value. Swept 0 to twice that figure'
-        % (g['ferry'], g_pt, ferry_cen),
+    add('ferry', ferry_cen, 'resident person trips', 'derived',
+        'DERIVED, not observed: no Newcastle ferry patronage is published in '
+        'any acquired artefact - the Opal all-modes Ferry series is NSW-wide '
+        'and Sydney-dominated, and the station entries/exits publication '
+        'carries Train and Light rail only. The one city-specific ferry '
+        'observation that exists is the census G62 one-method count, %d of %d '
+        'PT journeys (%.3f%%), and it sets the ferry share WITHIN public '
+        'transport, which the HTS PT level then scales. Two things make that '
+        'transfer more defensible for this mode than for the others: the '
+        'Stockton service is a CAPTIVE crossing (the road alternative is a '
+        '~20 km detour via Hexham), so its riders are not choosing it on the '
+        'margin the way a bus rider might; and a share WITHIN PT is far less '
+        'sensitive to the August 2021 lockdown than an absolute level, because '
+        'the lockdown suppressed the numerator and denominator together. The '
+        'sweep is nonetheless wide - 0 to twice the point value - because the '
+        'lockdown vintage is real and unquantified'
+        % (g['ferry'], g_pt, 100.0 * g['ferry'] / g_pt),
         (0.0, 2.0 * ferry_cen))
 
     # ---- the modes on their own denominators -----------------------

@@ -28,6 +28,8 @@ import org.matsim.contrib.signals.model.SignalSystem;
 import org.matsim.core.api.experimental.events.EventsManager;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * SCATS-style adaptive signal control (DECISIONS.md 9.88, issue #73).
@@ -80,6 +82,27 @@ import org.matsim.core.config.ConfigUtils;
  * the failure mode the whole exercise exists to avoid. Each system therefore
  * keeps the offset its generated plan declares, and the corridor's coordination
  * remains a stated limitation rather than a fabricated input.
+ *
+ * <h2>Transit priority, and why compensation is not a ledger here</h2>
+ *
+ * <p>A signal system names exactly ONE controller, so an adaptive corridor
+ * that could not grant tram priority would silently drop it — the corridor
+ * this study exists to measure. The priority layer of
+ * {@link TramPriorityController} therefore lives here too, reading the same
+ * declared {@code tramPriority} parameters and the same
+ * {@link TramPriorityController.TramDetection} service, and acting in the same
+ * order: SCATS decides the plan for cycle N from measured saturation, and a
+ * detected tram may then deform THAT cycle locally, never the plan.
+ *
+ * <p>One thing the fixed-time controller must do explicitly is unnecessary
+ * here. It keeps a compensation LEDGER, repaying in cycle N+1 whatever a
+ * competing stage lost in cycle N, because a fixed plan has no other way back
+ * to its declared splits. Under SCATS the repayment is intrinsic: a stage that
+ * gave up green discharges the same traffic through a shorter green, so its
+ * measured degree of saturation RISES, and the next cycle's split hands the
+ * time back for that reason. {@code tramPriority.compensationEnabled} is
+ * therefore honoured by the feedback rather than by a second mechanism, and
+ * this class keeps no ledger to disagree with it.
  *
  * <h2>The variable-cycle clock</h2>
  *
@@ -188,6 +211,8 @@ public final class ScatsSignalController extends AbstractSignalController {
     // ------------------------------------------------------------------
 
     private final ScatsConfigGroup params;
+    private final TramPriorityConfigGroup priority;
+    private final TramPriorityController.TramDetection detection;
     private final Discharge discharge;
     private final Network network;
     /**
@@ -225,14 +250,30 @@ public final class ScatsSignalController extends AbstractSignalController {
     private int retimingsLogged;
     private static final int RETIMINGS_LOGGED_MAX = 12;
 
+    /** Index of the stage carrying the priority group, or -1 if none. */
+    private int priorityStage = -1;
+    /** Seconds of priority deformation already spent this cycle. */
+    private int budgetUsedS;
+
     ScatsSignalController(final ScatsConfigGroup params,
+                          final TramPriorityConfigGroup priority,
+                          final TramPriorityController.TramDetection detection,
                           final Discharge discharge,
                           final Network network,
                           final double effectiveSaturationFlow) {
         this.params = params;
+        this.priority = priority;
+        this.detection = detection;
         this.discharge = discharge;
         this.network = network;
         this.effectiveSaturationFlow = effectiveSaturationFlow;
+    }
+
+    private boolean priorityOff() {
+        return this.priorityStage < 0
+                || this.priority.getMode().isEmpty()
+                || TramPriorityConfigGroup.MODE_OFF.equals(
+                        this.priority.getMode());
     }
 
     // ------------------------------------------------------------------
@@ -293,6 +334,9 @@ public final class ScatsSignalController extends AbstractSignalController {
             beginCycle();
         }
         final int pos = (int) Math.floor(timeSeconds - this.cycleStart);
+        if (!priorityOff()) {
+            applyPriority(pos);
+        }
         for (final Stage st : this.stages) {
             for (final Id<SignalGroup> gid : st.groups) {
                 if (!this.onsetFired.contains(gid) && pos >= st.onset) {
@@ -311,6 +355,13 @@ public final class ScatsSignalController extends AbstractSignalController {
     private void beginCycle() {
         this.onsetFired.clear();
         this.dropFired.clear();
+        this.budgetUsedS = 0;
+        // A detection left from the previous cycle is stale: that tram either
+        // passed, or is first in queue for the onset this new cycle grants
+        // anyway, and carrying it over would serve one tram twice.
+        if (!priorityOff()) {
+            this.detection.clear(this.system.getId());
+        }
         for (final Stage st : this.stages) {
             st.servedAtCycleStart = servedNow(st);
         }
@@ -481,6 +532,123 @@ public final class ScatsSignalController extends AbstractSignalController {
     }
 
     // ------------------------------------------------------------------
+    // transit priority, inside the cycle SCATS just decided
+    // ------------------------------------------------------------------
+
+    /**
+     * Deform THIS cycle for a detected tram, within the declared budget.
+     *
+     * <p>Two actions, exactly the ones {@link TramPriorityController} defines:
+     * a tram arriving while its stage is green and about to drop DELAYS that
+     * dropping ({@code green_extension}); a tram arriving while its stage is
+     * red may TRUNCATE the running stage and recall its own early
+     * ({@code extension_recall}), but never before every green stage has had
+     * the declared minimum green. {@code conditional} grants either action only
+     * to a tram already late by more than the declared threshold.
+     *
+     * <p>Whatever the priority stage gains, the stage with the most green to
+     * spare loses, so the cycle length SCATS chose is conserved and the two
+     * mechanisms cannot fight over it.
+     */
+    private void applyPriority(final int pos) {
+        final TramPriorityController.TramDetection.Pending pending =
+                this.detection.peek(this.system.getId());
+        if (pending == null) {
+            return;
+        }
+        if (TramPriorityConfigGroup.MODE_CONDITIONAL.equals(
+                this.priority.getMode())
+                && pending.delayS < this.priority.getLatenessThresholdS()) {
+            return;                       // on time: no claim on the budget
+        }
+        final int budget = (int) Math.floor(
+                this.priority.getPriorityBudgetShare() * this.cycleLen);
+        final int remaining = budget - this.budgetUsedS;
+        if (remaining <= 0) {
+            return;
+        }
+        final Stage tram = this.stages.get(this.priorityStage);
+        final int window = (int) Math.round(
+                this.priority.getExtensionWindowS());
+        final int minGreen = (int) Math.round(this.params.getMinGreenS());
+
+        int granted = 0;
+        if (pos >= tram.onset && pos < tram.drop) {
+            // green now: extend the dropping if it is close enough to matter
+            if (tram.drop - pos > window) {
+                return;                   // plenty of green left; nothing owed
+            }
+            granted = Math.min(window, remaining);
+        } else if (TramPriorityConfigGroup.MODE_EXTENSION_RECALL.equals(
+                           this.priority.getMode())
+                   || TramPriorityConfigGroup.MODE_CONDITIONAL.equals(
+                           this.priority.getMode())) {
+            // red now: recall early by truncating the running stage, but only
+            // once it has served the minimum green
+            final Stage running = runningStage(pos);
+            if (running == null || running == tram) {
+                return;
+            }
+            final int served = pos - running.onset;
+            if (served < minGreen) {
+                return;
+            }
+            granted = Math.min(Math.min(window, remaining),
+                               running.drop - pos);
+        }
+        if (granted <= 0) {
+            return;
+        }
+        final int donor = donorStage(minGreen, granted);
+        if (donor < 0) {
+            return;                       // nothing to borrow without starving
+        }
+        this.stages.get(this.priorityStage).green += granted;
+        this.stages.get(donor).green -= granted;
+        this.budgetUsedS += granted;
+        rebuildFromGreens();
+        this.detection.clear(this.system.getId());
+    }
+
+    /** The stage whose green contains this cycle position, or null. */
+    private Stage runningStage(final int pos) {
+        for (final Stage st : this.stages) {
+            if (pos >= st.onset && pos < st.drop) {
+                return st;
+            }
+        }
+        return null;
+    }
+
+    /** The non-priority stage with the most green above the floor. */
+    private int donorStage(final int minGreen, final int needed) {
+        int best = -1;
+        for (int i = 0; i < this.stages.size(); i++) {
+            if (i == this.priorityStage) {
+                continue;
+            }
+            if (this.stages.get(i).green - needed < minGreen) {
+                continue;
+            }
+            if (best < 0 || this.stages.get(i).green
+                    > this.stages.get(best).green) {
+                best = i;
+            }
+        }
+        return best;
+    }
+
+    /** Lay the stages back out from their greens, clearances preserved. */
+    private void rebuildFromGreens() {
+        int cursor = 0;
+        for (final Stage st : this.stages) {
+            st.onset = cursor;
+            st.drop = cursor + st.green;
+            cursor = st.drop + st.clearanceAfter;
+        }
+    }
+
+    // ------------------------------------------------------------------
     // plan resolution
     // ------------------------------------------------------------------
 
@@ -552,6 +720,27 @@ public final class ScatsSignalController extends AbstractSignalController {
             st.green = Math.max(0, st.drop - st.onset);
             st.ds = 0.0;
         }
+        // Which stage carries the priority group ("tram" for the light-rail
+        // variants, "corridor" for the BRT variant whose buses run in the
+        // corridor lanes). A system without one runs pure SCATS and never
+        // registers for detection.
+        this.priorityStage = -1;
+        final String priorityGid = this.priority.getPriorityGroupId();
+        if (priorityGid != null && !priorityGid.isEmpty()) {
+            for (int i = 0; i < this.stages.size(); i++) {
+                for (final Id<SignalGroup> gid : this.stages.get(i).groups) {
+                    if (priorityGid.equals(gid.toString())) {
+                        this.priorityStage = i;
+                    }
+                }
+            }
+        }
+        if (!priorityOff()) {
+            final Set<Id<Link>> approaches =
+                    new HashSet<>(this.stages.get(this.priorityStage).links);
+            this.detection.register(this.system.getId(), approaches);
+        }
+
         // clearance to the NEXT stage, wrapping the last back to the first;
         // taken from the plan so the intersection's own intergreens survive
         for (int i = 0; i < this.stages.size(); i++) {
@@ -580,6 +769,8 @@ public final class ScatsSignalController extends AbstractSignalController {
     public static final class Factory implements SignalControllerFactory {
 
         private final ScatsConfigGroup params;
+        private final TramPriorityConfigGroup priority;
+        private final TramPriorityController.TramDetection detection;
         private final Discharge discharge;
         private final Network network;
         private final double effectiveSaturationFlow;
@@ -596,9 +787,14 @@ public final class ScatsSignalController extends AbstractSignalController {
                         + "point registers it and the run-input builder writes "
                         + "it; refusing to run on a regime nobody chose");
             }
+            this.priority = ConfigUtils.addOrGetModule(config,
+                    TramPriorityConfigGroup.NAME,
+                    TramPriorityConfigGroup.class);
             this.network = scenario.getNetwork();
             this.discharge = new Discharge();
             events.addHandler(this.discharge);
+            this.detection = new TramPriorityController.TramDetection();
+            events.addHandler(this.detection);
             final double flowCapFactor = config.qsim().getFlowCapFactor();
             if (flowCapFactor <= 0) {
                 throw new IllegalStateException(
@@ -619,13 +815,20 @@ public final class ScatsSignalController extends AbstractSignalController {
                      this.params.getSaturationFlowVehHLane(), flowCapFactor,
                      this.effectiveSaturationFlow,
                      this.params.getMinGreenS());
+            LOG.info("scats: transit priority mode={} group={} window={}s "
+                     + "budgetShare={}",
+                     this.priority.getMode(),
+                     this.priority.getPriorityGroupId(),
+                     this.priority.getExtensionWindowS(),
+                     this.priority.getPriorityBudgetShare());
         }
 
         @Override
         public SignalController createSignalSystemController(
                 final SignalSystem signalSystem) {
             final ScatsSignalController controller =
-                    new ScatsSignalController(this.params, this.discharge,
+                    new ScatsSignalController(this.params, this.priority,
+                                              this.detection, this.discharge,
                                               this.network,
                                               this.effectiveSaturationFlow);
             controller.setSignalSystem(signalSystem);

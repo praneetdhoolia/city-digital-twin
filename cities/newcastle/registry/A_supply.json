@@ -1888,7 +1888,7 @@
       "description": "Symmetric clamp, in percent, on the signed grade_pct attribute stamped onto run-network links from the A1/A6 node elevations."
     },
     "A.signals.control_regime": {
-      "value": "fixed_time",
+      "value": "scats_adaptive",
       "units": "enum",
       "source": "assumed",
       "sweep": {
@@ -1900,7 +1900,7 @@
       },
       "status": "active",
       "decisions_ref": "9.88",
-      "description": "Signal control logic: fixed_time executes the generated plan verbatim (the pre-9.88 behaviour, byte-identical), scats_adaptive runs the SCATS algorithm - degree of saturation measured at every signalised stop line, incremental cycle-length adaptation toward a target DS, and splits allocated to equalise DS across stages. Offsets are NOT adapted: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured.",
+      "description": "Signal control logic. scats_adaptive (the value since 9.88) runs the SCATS algorithm in citysim.ScatsSignalController: degree of saturation measured at every signalised stop line against the saturation flow the mobsim actually enforces, incremental cycle-length adaptation toward a target DS on the critical movement, and splits allocated to equalise DS across stages, with the generated plan as the STARTING point and the intersection’s own clearances preserved. fixed_time executes that generated plan verbatim and reproduces every arm before 9.88 exactly, which is why it is kept. Offsets are NOT adapted under either member: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured. Transit priority composes with either member - the priority layer lives inside the adaptive controller too, so the corridor never silently loses it.",
       "matsim_param": "scats.regime"
     },
     "A.signals.scats.target_degree_saturation": {
