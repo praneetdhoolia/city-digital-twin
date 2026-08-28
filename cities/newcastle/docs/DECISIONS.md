@@ -7630,6 +7630,27 @@ refused. At **iteration 0, before any drift has occurred, `paired_by_identity`
 is 7** of 62,359 pairings — the mechanism does nothing until the mutator has
 moved somebody.
 
+### Found and NOT fixed: taxi is routed physically and simulated as a ghost (#88)
+
+`taxi` is in `RUN.routing.network_modes` but **not** in `RUN.qsim.main_mode`,
+so it is routed on the network and then handed to the teleportation engine:
+at iteration 100, **39,892 of 39,923 taxi legs (99.9%) produced a teleport
+arrival and none entered a link**, against car / bike / truck / motorbike
+which entered on every departure. The declared taxi `vehicleType` — length
+7.5 m, PCE 1.0 — is never instantiated, and every road link already permits
+`taxi`. `RUN.qsim.main_mode`'s description justifies each inclusion and
+explains `ride`'s exclusion but does not mention taxi; §9.77 added taxi to
+the two RUN vocabularies and `city.json` and appears to have missed this one.
+
+**What is NOT claimed.** The teleport is not a scoring hole: the leg carries
+the router's congested time and its route distance (median 13,343 m), so the
+IPART per-km rate and the `FareChargeHandler` flagfall are both scored. This
+is a physical-fidelity and road-capacity defect — ~40,000 vehicle-trips per
+iteration at PCE 1.0 missing from the network — not the cause of the `Other`
+excess, and it must not be offered as one. Filed as **#88** and deliberately
+left out of F10: it is a network-loading boundary, and folding it in would
+have made the pairing repair's effect unattributable.
+
 ### Family F10
 
 The population gains an attribute and the pairing gains an identity; the

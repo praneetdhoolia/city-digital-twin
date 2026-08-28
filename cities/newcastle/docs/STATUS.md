@@ -658,8 +658,23 @@ the 4.6.9 arm is an open decision (board header).
 | 4.13.4 | Gradient into bike/walk link travel time, both router and mobsim | #21 | **BUILT (§9.84)** — `grade_pct` stamped from A1/A6 node elevations (81.9% of walk/bike links); Tobler walk, Parkin & Rotheram bike, all constants declared and swept; `GradientSignalsNetworkFactory` keeps signals and gradient alive together |
 | 4.13.5 | Taxi and bike age gates | #49 #50 | **BUILT (§9.84)** — `B.taxi.min_unaccompanied_age` 18 [0,18], `B.population.bike_min_age` 12 [0,16], zero disables, via the new `modeAvailability` module |
 | 4.13.6 | Regenerate demand, plans and the 30 run-input sets as family F9 | — | **B2 DONE** (three day types; legs per day identical to the pre-joint build — the binder adds no trip); plans and run inputs regenerating |
-| 4.13.7 | Validate on `probe_replanning_25pct`, measuring signals alive + gradient live + joint riding + gates biting | — | open |
-| 4.13.8 | Run the F9 arm, gate every 100 iterations on the fit basis, per-mode | #48 #49 #50 #30 #82 | open — the goal directive authorises the loop |
+| 4.13.7 | Validate on `probe_replanning_25pct`, measuring signals alive + gradient live + joint riding + gates biting | — | **SUPERSEDED** — the two F9 arms ran to depth instead, which is stronger evidence than an 8-iteration probe |
+| 4.13.8 | Run the F9 arm, gate every 100 iterations on the fit basis, per-mode | #48 #49 #50 #30 #82 | **DONE — the gate FIRED twice.** Gate-1 `20260827T181709` stopped at iteration 100 (ride decaying); gate-2 `20260828T111708` stopped at iteration 100 with all five scored categories past 20% and §9.84's driver-side pass measured INERT (§9.85) |
+
+### Batch 4.14 — the 28 Aug twelfth-session translation-loss repair (§9.85) — family F10
+
+| # | Task | Issues | State |
+|---|---|---|---|
+| 4.14.1 | Read the F9 gate-2 arm at iteration 100 on the scoring basis | #48 | **DONE (§9.85)** — all five scored categories past the 20% bar: Other +471.2%, pt +123.4%, driver −19.4%, ride −76.3%, walk +55.2%; mean abs error 10.864 pp. Arm stopped |
+| 4.14.2 | Attribute §9.84's driver-side pass | #48 | **DONE — INERT.** 10.920 → 10.864 mean abs error and ride 4.91 → 4.87 against the previous arm at equal depth. That inertness located the cause |
+| 4.14.3 | Locate why every pairing repair has been inert | #48 #86 | **DONE (§9.85)** — a TRANSLATION LOSS. All three B2 binding tables name the driver; `build_matsim_plans.py` read the identity for seeding and discarded it, so the pair is re-found by a clock `TimeAllocationMutator` moves at an **undeclared** ±1800 s. Measured: 73.8% / 67.4% / 80.5% of joint / escort / lift bound ride legs have their declared driver on the same OD **by car**, but only 60.6% / 42.6% / 64.5% fall inside the 15-min window |
+| 4.14.4 | Confirm the demand is not the constraint | #86 | **DONE** — `modestats` ride is **0.1903 at iteration 0** against an observed 0.206. §9.84's binder closed the ceiling; the realisation is what fails |
+| 4.14.5 | Carry the binding identity into the population | #48 | **BUILT (§9.85)** — `boundDriver` from all three tables, 158,898 persons. Joint alone would have covered 46% of affected legs and left escort, the worst-hit, on the clock |
+| 4.14.6 | Declare the mutation range; derive the bound-pair tolerance from it | #48 | **BUILT** — `RUN.replanning.time_mutation_range_s` declared and swept (group name verified against the pinned jar); `B.ride.bound_pairing_window_min` DERIVED by identity, relaxing IDENTIFICATION only. Registry 370 → **372** |
+| 4.14.7 | Keep the physical wait consistent with the booked tolerance | #48 | **BUILT** — `JointRideEngine` bounded the wait by the narrow window, so the pair rate would have risen while nobody boarded (trap 6/7). `Booking` now carries its own tolerance |
+| 4.14.8 | Validate F10 on `probe_replanning_25pct` | — | **PARTIAL — stopped on instruction at iteration 2 of 8.** What it established: config parses, run reaches iterations, `paired_by_identity` 7 (it.0, no drift) → 1,745 (it.1); vs F9 at equal depth pair_rate 0.4936 → **0.5095**, occupancy 0.2770 → **0.2860**, physical wait-boardings 453 → **637**, timeouts 3,964 → **3,784**. **The 8-iteration validation did not complete** |
+| 4.14.9 | Run the F10 arm and gate every 100 iterations, per mode | #48 #49 #50 #30 #82 | **OPEN — the active lane.** Needs a fresh stated-cost approval (~7.6 h to iteration 100 at the measured 273.82 s/it) |
+| 4.14.10 | Make taxi physical in the mobsim | **#88** (new) | **OPEN** — `taxi` is in `RUN.routing.network_modes` but not `RUN.qsim.main_mode`, so 39,892 of 39,923 taxi legs per iteration are teleported and consume no road capacity. Not a scoring hole — the fare IS charged — but it contradicts the §9.51 all-physical directive |
 
 ### P5 — scenario runs (blocked on 4.2)
 
