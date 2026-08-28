@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 388 fields are made of
+## What the 389 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 32 | follows from another registry field by identity |
 | `literature` | 64 | a published value, not specific to this city |
-| `assumed` | 143 | chosen without direct empirical support |
+| `assumed` | 144 | chosen without direct empirical support |
 | `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 369 | usable point value |
+| `active` | 370 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1854,7 +1854,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 11 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 12 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -1870,6 +1870,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.search.convergence_delta` | `0.25` | percentage_points | `assumed` | 0.1 - 1 |
 | `CAL.search.max_rounds` | `3` | count | `assumed` | 1 - 6 |
 | `CAL.search.points_per_parameter` | `3` | count | `assumed` | 3 - 7 |
+| `CAL.taxi.lga_concentration` | `1.0` | ratio | `assumed` | 1 - 2 |
 | `CAL.truck.count_year_from` | `2023` | year | `assumed` | 2019 - 2025 |
 
 #### `CAL.gate.pass_deviation_pct`
@@ -1935,6 +1936,12 @@ Maximum coordinate-descent passes over the free parameters. The loop stops earli
 Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Three is the smallest number that can show curvature. Each point is a full run, so this multiplies wall clock directly.
 
 ***assumed** · status **active** · DECISIONS.md §9.16*
+
+#### `CAL.taxi.lga_concentration`
+
+How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned.
+
+***assumed** · status **active** · DECISIONS.md §9.91*
 
 #### `CAL.truck.count_year_from`
 

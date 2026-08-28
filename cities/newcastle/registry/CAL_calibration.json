@@ -152,6 +152,18 @@
       "status": "active",
       "decisions_ref": "9.87",
       "description": "The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything."
+    },
+    "CAL.taxi.lga_concentration": {
+      "value": 1.0,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        1.0,
+        2.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.91",
+      "description": "How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned."
     }
   }
 }

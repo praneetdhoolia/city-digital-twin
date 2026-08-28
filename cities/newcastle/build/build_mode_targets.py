@@ -104,6 +104,24 @@ def hts_levels(cfg):
     return year, lga, out
 
 
+def region_trip_totals(year):
+    """Weekday trips by LGA on the survey's own mode-share base.
+
+    The point-to-point trips band counts the whole study area, so turning it
+    into a share needs the study area's trip total - not the target LGA's.
+    Walk-linked rows are excluded because the survey excludes them from
+    MODE_SHARE, and mixing the two bases would inflate the denominator.
+    """
+    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
+    hm['TRIPS_BY_MODE'] = pd.to_numeric(hm['TRIPS_BY_MODE'], errors='coerce')
+    sel = hm[(hm.geography == 'lga')
+             & (hm.FINANCIAL_YEAR.astype(str) == year)
+             & hm.MODE_SHARE.notna() & (hm.MODE_SHARE > 0)]
+    return {str(k).strip(): float(v) for k, v
+            in sel.groupby('area_name')['TRIPS_BY_MODE'].sum().items()}
+
+
 def g62_composition():
     """One-method JTW journeys by mode, this city's core SA1s only."""
     d = pd.read_csv(os.path.join(CEN, 'census2021_G62_SA1.csv'))
@@ -191,32 +209,62 @@ def main():
         'construction and is not a target' % year)
 
     # "Other" holds taxi/rideshare/carshare, wheelchair, bicycle and aircraft
-    # by the data document's own list. Two of those five are modelled, so the
-    # split is taken across the two the census also counts, and the residual
-    # (wheelchair, aircraft, carshare) is reported rather than absorbed.
+    # by the data document's own list. Splitting it by the CENSUS was wrong and
+    # is corrected here (9.91): the census counts JOURNEYS TO WORK, and taxi is
+    # overwhelmingly NOT a commute mode - it carries nights out, airport runs,
+    # medical trips and the carless - so a commute share understates it by
+    # roughly five times. The city has a better source, already declared:
+    # B.taxi.daily_trips_band, the IPART 2025 point-to-point incidence band for
+    # the study area. Taxi therefore takes its level from that band, and BIKE
+    # takes the residual - the two share one survey category, so one cannot
+    # move without the other.
     oth = lv['other']
-    o_den = g['bike'] + g['taxi']
-    bike = oth * g['bike'] / o_den
-    taxi = oth * g['taxi'] / o_den
+    band = cfg.get('B.taxi.daily_trips_band')
+    conc = float(cfg.get('CAL.taxi.lga_concentration'))
+    totals = region_trip_totals(year)
+    region = sum(totals.values())
+    lga_trips = totals[lga]
+    lo_share = 100.0 * (band[0] / region) * conc
+    hi_share = 100.0 * (band[1] / region) * conc
+    taxi = 0.5 * (lo_share + hi_share)
+
+    if taxi >= oth:
+        raise SystemExit(
+            'the point-to-point band implies a taxi share of %.4f%%, which '
+            'is not smaller than the whole HTS "Other" category (%.4f%%). '
+            'Bike would be negative. Either the band, the concentration or '
+            'the survey category has changed meaning - resolve it rather '
+            'than clamping.' % (taxi, oth))
+    bike = oth - taxi
+
+    add('taxi', taxi, 'resident person trips', 'derived',
+        'B.taxi.daily_trips_band %d-%d point-to-point trips/day across the '
+        'study area (IPART 2025 incidence x usage rate), against %d study-area '
+        'weekday trips = %.4f%%-%.4f%% of trips, x CAL.taxi.lga_concentration '
+        '%.2f. NOT the census share: the census counts journeys to WORK and '
+        'taxi is overwhelmingly a non-commute mode, which understated it about '
+        'fivefold (9.91). The target LGA carries %d of those weekday trips'
+        % (band[0], band[1], region, lo_share, hi_share, conc, lga_trips),
+        (lo_share, hi_share))
 
     add('bike', bike, 'resident person trips', 'derived',
-        'HTS "%s" Other %.1f%% x census G62 bicycle %d of %d '
-        '(bicycle+taxi) journeys (%.2f%%). HTS Other also holds wheelchair, '
-        'carshare and aircraft, which this city does not model'
-        % (year, oth, g['bike'], o_den, 100.0 * g['bike'] / o_den),
-        (bike * (1 - tol), bike * (1 + tol)))
+        'HTS "%s" Other %.1f%% MINUS the point-to-point share above, because '
+        'bicycle and taxi/rideshare sit in ONE survey category and cannot be '
+        'set independently. The residual also carries wheelchair, carshare and '
+        'aircraft, which this city does not model, so it is a slight OVER-'
+        'statement of cycling rather than an under-statement. The census G62 '
+        'bicycle count (%d of %d bicycle+taxi journeys) is not used for the '
+        'level for the same reason it is not used for taxi - commuting is not '
+        'a random sample of travel - but it agrees on the ordering: cycling is '
+        'the larger of the two'
+        % (year, oth, g['bike'], g['bike'] + g['taxi']),
+        (oth - hi_share, oth - lo_share))
 
     add('motorbike', mbk, 'resident person trips', 'derived',
         'HTS "%s" Vehicle driver %.1f%% x census G62 motorbike/scooter %d of '
         '%d driver journeys (%.3f%%)'
         % (year, vd, g['motorbike'], drv, 100.0 * g['motorbike'] / drv),
         (mbk * (1 - tol), mbk * (1 + tol)))
-
-    add('taxi', taxi, 'resident person trips', 'derived',
-        'HTS "%s" Other %.1f%% x census G62 taxi/rideshare %d of %d '
-        '(bicycle+taxi) journeys (%.2f%%)'
-        % (year, oth, g['taxi'], o_den, 100.0 * g['taxi'] / o_den),
-        (taxi * (1 - tol), taxi * (1 + tol)))
 
     # Public transport splits on CURRENT boardings, not on the 2021 census:
     # the census was enumerated during a lockdown that suppressed PT commuting
