@@ -90,6 +90,7 @@ its layout will otherwise cost you an hour:
 | **The ferry gets a derived target instead of no target at all** | **§9.89** — no Newcastle ferry patronage is published anywhere (the Opal all-modes Ferry row is NSW-wide and Sydney-dominated), so §9.87 left mode 10 of 12 ungateable. The census G62 one-method count (40 of 1,501 PT journeys, 2.665%) sets the share WITHIN PT, which the HTS 3.8% scales to **0.1013%**. Defensible for THIS mode because the Stockton crossing is captive (a ~20 km road detour) and a within-PT share is far less lockdown-sensitive than a level. Sweep stays wide, 0 to 2x; the value is labelled `derived`, never `observed` |
 | **A crossing closes for every train that crosses it, and the timetable says which** | **§9.90** — `A.crossings.closures_per_day` was 30, assumed, uniform across 24 h and identical at both sites. The city’s OWN mapped rail timetable was already in the package: `build_level_crossings.py` now counts every scheduled service whose mapped route traverses the rail links at each crossing and times each closure from that service’s stop time. **Adamstown 110/weekday, Islington 204** (541 → 3,014 change events), peaked at 17h rather than flat — and the shape matters more than the count, because uniform closures land where there is no traffic to delay. Freight stays declared and swept at ZERO on §9.70’s grade separation. Mode 12 gets a target: **314 closures/weekday**, so with §9.89 all twelve modes are gateable |
 | **The gate fires at iteration 50, and the first defect is in the yardstick** | **§9.91** — ten of twelve modes past 20%, taxi DIVERGING (1.20% → 7.75% against a 0.19% target). The target was the defect: §9.87 sized taxi from the census JOURNEY-TO-WORK share, and taxi is overwhelmingly not a commute mode. `B.taxi.daily_trips_band` (IPART 2025, 15,000–25,000 point-to-point trips/day) gives **0.9916%**, ~5× higher, and **bike takes the residual 2.2084%** because the two share one survey category. Measured on the arm rather than reasoned: taxi costs 27.13 AUD per median 13.1 km trip, taxi plans score −128 vs −44, the flagfall fires, and taxi is 7.52% even among agents holding a car AND a licence — so scoring is not the culprit and it is not captive demand. Taxi is **seeded at exactly 0.0** and arrives entirely through innovation. Also recorded: the held-fixed fare rule’s own departure condition is now MET (median taxi trip 13.1 km against its “far under 12 km” premise), and `ride` legs are **23.33% zero-distance** against car’s 1.09% |
+| **The seed is a bad guess ON PURPOSE, and the gate was read before the model had answered** | **§9.92** — three paired 1% diagnostics. The chain-breaking single-trip innovation is REAL but small (car 36.26% → 40.34% at p=0.0, about a sixth of a 22 pp deficit) and is not the lever. The deficit is inherited from the SEED, which is uniform **by recorded design** — "deliberately a bad guess… so that arriving there is evidence about the model rather than about the seed", with an `informed` table kept precisely because "seeding at the answer makes reaching the answer uninformative". **So the seed must NOT be changed to close the gap.** Both arms show car JUMPING at the innovation cutoff (31.96% → 35.90%), so a reading at iteration 50 of a 1000-iteration arm measures an innovation-dominated transient, not the model. And **ride −65% / walk +94% are ONE mechanism**: 44,044 of 84,609 ride legs (52.1%) fail to pair and, with `remodeUnpaired`, none departs as ride — they are realised as walk |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -8793,6 +8794,127 @@ exactly why it is recorded here before anyone reaches for it as a lever.
 
 ---
 
+## 9.92 The seed is a bad guess on purpose, and the gate was read before the model had answered (29 August 2026, thirteenth session; issues #48, #49, #50)
+
+§9.91 left three candidate causes for the iteration-50 gate. Three paired 1%
+diagnostics at 40 iterations settle which of them matter, and the answer
+reframes what the gate reading was measuring at all.
+
+### The chain hypothesis: real, and small
+
+`car` and `bike` are MATSim chain-based modes, so a subtour uses them end to
+end. `RUN.mode_choice.proba_random_single_trip_mode` assigns a mode to ONE
+trip, which breaks that chain, and a broken chain cannot be repaired by another
+single-trip change because returning to car needs the whole subtour at once.
+The control ran it at 0.5 (the top of its declared sweep) and
+`subtour_chain_1pct` at 0.0, everything else identical:
+
+| mode | p = 0.5 | p = 0.0 | target |
+|---|---:|---:|---:|
+| car | 36.2649% | **40.3358%** | 58.1631 |
+| walk | 23.4251% | **20.8958%** | 13.4000 |
+| ride | 16.7991% | 15.0857% | 20.6000 |
+| bike | 7.6523% | 8.3695% | 2.2084 |
+| taxi | 5.9647% | 5.7758% | 0.9916 |
+
+The mechanism is real - car gains 4.07 pp and walk loses 2.53 pp - but it is
+**worth about a sixth of car's 22 pp deficit**, and it does nothing for taxi
+while making ride and bike slightly worse. **It is not the lever, and this
+entry exists partly so nobody reaches for it as one.**
+
+### What the deficit actually is: the seed, and it is deliberate
+
+The seeded split at iteration 0, before any mode choice has run:
+
+| mode | seeded | target | error |
+|---|---:|---:|---:|
+| car | 32.71% | 58.16% | **−25.45 pp** |
+| walk | 29.75% | 13.40% | **+16.35 pp** |
+| bike | 7.41% | 2.21% | +5.20 pp |
+| pt | 6.82% | 3.80% | +3.02 pp |
+| ride | 19.23% | 20.60% | −1.37 pp |
+| taxi | 0.00% | 0.99% | −0.99 pp |
+
+Almost every large deviation at the gate is inherited from that. And the seed
+is uniform **by recorded design**: `B.mode.seed_split` is "UNIFORM OVER THE
+USABLE MODES AND DELIBERATELY A BAD GUESS: it starts the search far from the
+observed point so that arriving there is evidence about the model rather than
+about the seed."
+
+A declared `informed` alternative exists, approximately the observed split, and
+its own description says why it is not the default: **"seeding at the answer
+makes reaching the answer uninformative."**
+
+**So the seed is NOT to be changed to close the gap.** Doing so would make
+every subsequent fit a restatement of the seed, which is the precise shape of
+the biasing this project refuses. Recorded here because the temptation is
+obvious and the numbers make it look like a fix.
+
+Note what the seed gets RIGHT: **ride, at 19.23% against a 20.60% target.**
+§9.84's binder work is sound, and ride's gate deviation is therefore not a
+demand defect at all - see below.
+
+### The gate was read while innovation was still running
+
+Both arms show car flat-to-drifting while innovation is on and then **jumping
+at the cutoff**: 31.96% at iteration 30, **35.90% at iteration 35**, with
+innovation disabled after 32. The same shape appears in taxi (§9.91).
+
+The model **prefers car**; innovation noise was suppressing it. A reading taken
+at iteration 50 of a 1000-iteration arm - where innovation runs until 800 - is
+therefore not a statement about the model's answer. **Every "mode past 20%"
+verdict this session has produced was taken in that regime**, and the only
+honest verdict comes from an arm read after its own innovation cutoff.
+
+### Ride's deficit and walk's excess are ONE mechanism, measured
+
+At iteration 50 of the F12 arm, across all agents:
+
+| | legs |
+|---|---:|
+| planned `ride` legs | 84,609 |
+| paired with a driver | 40,565 (47.9%) |
+| **unpaired** | **44,044 (52.1%)** |
+| `ride` departures in the events | 40,965 |
+
+Ride departures match the PAIRED count, not the planned one. With
+`ridePairing.remodeUnpaired = true`, an unpaired ride leg never departs as
+ride: it is remoded before the mobsim and the events-derived trips table
+records it as **walk**. The planned-versus-realised split says the same thing -
+`modestats` carries ride 14.76% and walk 20.94%, the realised trips carry ride
+7.21% and walk 26.05%.
+
+**So ride −65% and walk +94% are not two defects. They are the same 44,044
+legs**, and the cause is the 52% pairing failure, dominated by `miss_endpoints`
+at 27,807 against `miss_window` 4,981 and `miss_capacity` 1,432.
+
+`miss_endpoints` is not a rule that is too strict. The engine's own recorded
+measurement is that such legs mostly have **no endpoint-matching driver at any
+hour** - the household genuinely drove elsewhere, because per-agent replanning
+moved the driver. That is the §9.82 defect class: B2 generates the pair, and
+`SubtourModeChoice` moves one agent at a time, so the two-sided state is
+unreachable by any per-agent strategy once lost.
+
+The declared instrument for it is already built and is deliberately a SEARCH
+parameter rather than a preference: `B.ride.escort_coherence_rate` and
+`B.ride.joint_coherence_rate` set how often a decohered pair is **offered** the
+coherent plan back, with `ChangeExpBeta` still deciding on score - "propose,
+never impose". Both sit at **0.1 in a declared [0.0, 0.5]**, and
+`ride_coherence_1pct` measures 0.4 against the control.
+
+### What is NOT being done, and why
+
+- **The seed stays uniform.** Seeding at the answer makes the answer
+  uninformative.
+- **`B.ride.pairing_rule` stays `both_links`.** §9.91 floated relaxing it;
+  the engine's own measurement says the missing pairs have no matching trip at
+  any hour, so relaxing would pair passengers with drivers going elsewhere.
+- **`proba_random_single_trip_mode` stays at its declared value.** Measured
+  worth ~4 pp of a 22 pp deficit; moving it would be buying a small fit
+  improvement with an exploration parameter.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -9465,6 +9587,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-29 | **Three paired diagnostics: the chain effect is small, the deficit is an intentional seed, and ride/walk are one mechanism (§9.92; issues #48/#49/#50; thirteenth session).** `subtour_chain_1pct` against `taxi_fare_control_1pct` shows the random single-trip innovation is a REAL but modest effect — car 36.26% → 40.34% and walk 23.43% → 20.90% at p=0.0, about a sixth of car’s 22 pp deficit, with taxi unmoved — so it is **not** the lever and this entry records that so nobody reaches for it as one. The deficit is inherited from the SEEDED split (car 32.71% against a 58.16% target, walk 29.75% against 13.40%), and that seed is uniform **by recorded design**: `B.mode.seed_split` is "deliberately a bad guess" so that reaching the observed point is evidence about the model, and the `informed` table is kept out of the default because "seeding at the answer makes reaching the answer uninformative". **The seed is therefore NOT changed** — doing so would make every later fit a restatement of the seed. What the seed gets RIGHT is ride, 19.23% against 20.60%, which vindicates §9.84’s binder. Both arms show car jumping at the innovation cutoff (31.96% → 35.90% across iteration 32), so **every "past 20%" verdict this session produced was read in an innovation-dominated regime** and only a post-cutoff arm can judge the model. Measured and filed: ride −65% and walk +94% are the SAME 44,044 legs — 52.1% of planned ride fails to pair, and with `remodeUnpaired` none of them departs as ride, so the events record them as walk. `miss_endpoints` is not an over-strict rule (the engine’s own measurement finds no endpoint-matching driver at any hour); it is the §9.82 decoherence class, whose declared SEARCH instrument sits at 0.1 in a [0.0, 0.5] sweep. Nothing here is a result. |
 | 2026-08-29 | **The iteration-50 gate fires on ten of twelve modes, and the taxi target is corrected from a commute source to a point-to-point one (§9.91; issues #49/#84/#48; thirteenth session).** The F12 arm was stopped at iteration 50 with taxi DIVERGING — 1.20% → 7.75% against a 0.19% target — and ten modes past the 20% bar; only heavy rail was inside it at −0.7%. **The first defect found was in the yardstick, not the model**: §9.87 sized taxi by splitting HTS "Other" with the census JOURNEY-TO-WORK share, and taxi/rideshare is overwhelmingly a non-commute mode, so the target was about fivefold low. `B.taxi.daily_trips_band` — the IPART 2025 point-to-point band of 15,000–25,000 trips/day across the study area, already declared and overlooked — gives **0.9916%** of resident trips, and **bike takes the residual 2.2084%** because bicycle and taxi sit in ONE survey category and cannot be set independently. One declared assumption joins the study-area count to the LGA share (`CAL.taxi.lga_concentration` 1.0, swept upward only). Measured on the arm rather than reasoned, because arithmetic and outcome disagreed: a median taxi trip is 13,072 m costing 27.13 AUD against car’s 2.35; plans with a taxi leg score mean −128.2 against −44.0; the flagfall fires (42,835 events); taxi is **7.52% even among agents holding both a car and a licence**, so it is not captive demand; and taxi is **seeded at exactly 0.0**, arriving entirely through innovation. The one unproven term is `monetaryDistanceRate` (24.14 of the 27.13 AUD), which emits no event — separated by the committed diagnostic overlay `taxi_fare_stress_1pct`. Two findings filed not fixed: the held-fixed fare rule’s OWN departure condition is now met (its "far under 12 km" premise against a 13.1 km median), and `ride` legs are 23.33% zero-distance against car’s 1.09%. `B.ride.pairing_rule` deliberately NOT relaxed — loosening an endpoint rule until more pairs match would invent shared travel the demand never declared. **§9.85’s repair is confirmed working in its first arm**: `paired_by_identity` 29 → 8,883 and `pair_rate` stopped decaying (0.4585 → 0.4794). Nothing here is a result. |
 | 2026-08-28 | **Level-crossing closures stop being assumed and are derived from the mapped rail timetable (§9.90; issue #68; thirteenth session, amended `/goal` directive).** `A.crossings.closures_per_day` was 30 per site, assumed, swept 10–60, spread uniformly across 24 hours and identical at both crossings — and every arm since §9.77 ran it. The data to derive it was already in the package: a crossing closes for every train that crosses, and the city’s own mapped timetable says which. `build_level_crossings.py` now finds the mapped RAIL links at each site (held-fixed 40 m join; measured 29.6 m and 8.0 m), counts every scheduled service traversing them and times each closure from that service’s stop time at its nearest rail stop: **Saint James Road (Adamstown) 110/weekday and Clyde Street (Islington) 204**, against 30 each — 541 → 3,014 network change events. The SHAPE is the bigger correction: uniform closures put most of their closures where there is no traffic to delay, while the derived pattern peaks at 17h (9 and 14) where the road is busiest. Freight is separated out as `A.crossings.freight_closures_per_day`, point value **zero on recorded evidence** (§9.70: the coal chain is grade-separated since 2006 and does not cross these roads at grade), swept 0–30 because ARTC publishes no log for non-coal movements. `A.crossings.closure_source` keeps `assumed_uniform` as a member that reproduces every earlier arm exactly. The builder REFUSES a site with no rail link or no scheduled movement rather than emitting a silent zero that would delete the crossing while reporting success. Mode 12 gains a target — **314 closures/weekday, derived** — so with §9.89 all twelve modes now carry one and none is ungateable. Part of family F12. Nothing here is a result. |
 | 2026-08-28 | **SCATS becomes an implemented algorithm and the ferry gets a derived target; family F12 opens (§9.88, §9.89; issue #73; thirteenth session, amended `/goal` directive).** The directive was amended mid-session to forbid leaving an unavailable input SWEPT where it can be DERIVED, naming SCATS as the worked example. Every arm to date ran 14 corridor intersections on a fixed 110 s plan; `ScatsSignalController` now implements the published control logic — degree of saturation measured at every signalised stop line, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, the intersection’s own clearances preserved. **Offsets are deliberately not adapted**: that library is exactly the unreleased artefact and no algorithm replaces it, so corridor coordination stays a stated limitation rather than a fabricated input. Two defects recorded: DS measured against FULL-SCALE saturation read 0.000 at a 1% sample and drove every cycle to the floor (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic silently reinterprets past boundaries once the cycle length varies. Transit priority composes inside the same controller, and its compensation ledger becomes unnecessary — a stage that gave up green shows higher DS and the next split repays it. Probes `20260828T230050_2it_1pct` (14 systems re-timing, 110→104→98 s against criticalDS 0.564→0.282→0.141) and `20260828T230739_2it_1pct` on S2b (SCATS + green_extension together), both rc=0, accounting closes. Seven fields declared and bound; `fixed_time` kept and reproduces every earlier arm exactly; `run_matsim.py` refuses a regime that disagrees with the committed control file. **§9.89**: ferry stops being unobtained — the census G62 one-method count (40 of 1,501 PT journeys) sets its share within PT, scaled by the HTS level to **0.1013%**, `derived` with a wide 0–2x sweep, so mode 10 of 12 can finally be gated. **New comparability family F12: signal control decides corridor travel time, so nothing before compares to anything after. Nothing here is a result.** |
