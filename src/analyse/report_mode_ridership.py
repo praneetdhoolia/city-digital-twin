@@ -137,6 +137,27 @@ def pt_submode_trips(run_dir, iteration, person_lga):
     return per_submode, multi, unknown
 
 
+def crossing_closures(run_dir):
+    """Closure EPISODES this run applied, from its own change-events file.
+
+    Freight rail reaches the road as timed capacity-zero events on the matched
+    level-crossing links, so the modelled quantity for that mode is the number
+    of closures the run actually loaded - not a trip count, and not zero. An
+    episode is one event that takes flow capacity to zero; the paired reopening
+    is not a second closure.
+    """
+    import re
+    cfg = _os.path.join(run_dir, 'config.xml')
+    if not _os.path.exists(cfg):
+        return None
+    text = open(cfg, encoding='utf-8').read()
+    m = re.search(r'name="inputChangeEventsFile"\s+value="([^"]*)"', text)
+    if not m or not m.group(1) or not _os.path.exists(m.group(1)):
+        return None
+    body = open(m.group(1), encoding='utf-8').read()
+    return len(re.findall(r'<flowCapacity[^>]*value="0(?:\.0*)?"', body))
+
+
 def road_vehicle_share(counts_all):
     """Heavy vehicles as a share of modelled road vehicle trips.
 
@@ -168,6 +189,7 @@ def report(run_dir, iteration):
         for t in csv.DictReader(fh, delimiter=';'):
             all_counts[t['main_mode']] += 1
     truck_pct, road_tot = road_vehicle_share(all_counts)
+    closures = crossing_closures(run_dir)
 
     modelled = {}
     trips = {}
@@ -181,7 +203,7 @@ def report(run_dir, iteration):
             trips[mode] = all_counts.get('truck', 0)
         elif mode == 'freight_train':
             modelled[mode] = None
-            trips[mode] = 0
+            trips[mode] = closures if closures is not None else 0
         else:
             modelled[mode] = lga_pct.get(mode, 0.0)
             trips[mode] = lga_cnt.get(mode, 0)
@@ -196,7 +218,7 @@ def report(run_dir, iteration):
           'route\'s transportMode')
     print('=' * 100)
     print('%-15s %10s %10s %11s %12s  %s'
-          % ('mode', 'modelled%', 'target%', 'deviation', 'trips', 'gate'))
+          % ('mode', 'modelled%', 'target%', 'deviation', 'count', 'gate'))
     print('-' * 100)
 
     breaches = []
@@ -208,9 +230,14 @@ def report(run_dir, iteration):
                      'NOT SIMULATED (decision)'))
             continue
         if t['target'] is None:
-            print('%-15s %10.4f %10s %11s %12d  %s'
-                  % ('%d %s' % (i, mode), m or 0.0, 'unobtained', 'n/a',
-                     trips[mode], 'NO TARGET - swept, never pinned'))
+            # a mode with no percentage denominator prints no percentage:
+            # a 0.0000 in that column reads as "measured zero", which is the
+            # opposite of "this quantity is not a share of anything"
+            print('%-15s %10s %10s %11s %12d  %s'
+                  % ('%d %s' % (i, mode),
+                     '-' if m is None else '%.4f' % m,
+                     'unobtained', 'n/a', trips[mode],
+                     'NO TARGET - swept, never pinned'))
             continue
         dev = 100.0 * (m - t['target']) / t['target']
         if abs(dev) >= GATE_STOP_PCT:

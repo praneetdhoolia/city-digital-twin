@@ -35,8 +35,7 @@
   "by_status": {
     "derived": 8,
     "observed": 2,
-    "unobtained": 1,
-    "not_simulated": 1
+    "unobtained": 2
   },
   "person_trip_target_sum": 99.4037
 }

@@ -289,18 +289,34 @@ def main():
                     if y >= int(cfg.get('CAL.truck.count_year_from'))),
         (min(recent), max(recent)) if recent else None)
 
-    # Freight rail is deliberately not simulated: the coal chain runs on
-    # dedicated grade-separated track, so putting trains in the mobsim would
-    # fabricate an interaction that does not exist. Its real road interaction
-    # is the two level crossings. Written as a row so the mode cannot be
-    # silently absent from a twelve-mode report.
-    add('freight_train', None, 'train movements per day', 'not_simulated',
-        'Deliberately not simulated: ~110 coal movements/day on dedicated '
-        'track grade-separated since 2006 (ARTC/PWCS/NCIG), so no road '
-        'interaction exists to simulate except the Adamstown and Islington '
-        'level crossings, which are represented as road closure events. A '
-        'modelled value of zero train movements is the DECISION, not a defect',
-        None)
+    # Freight rail's ROAD EFFECT is simulated; the train itself is not a
+    # vehicle in the mobsim, and that is the decision rather than a gap. The
+    # coal chain has run on dedicated grade-separated track since 2006, so a
+    # train in the mobsim would interact with nothing - except at the two
+    # level crossings, which ARE simulated, as timed capacity closures on the
+    # matched car links. The comparable quantity is therefore closures per
+    # day, not train movements, and its observation does not exist: TfNSW and
+    # ARTC do not publish crossing closure logs. So it is swept, exactly like
+    # the other three inputs this project cannot observe.
+    per_site = float(cfg.get('A.crossings.closures_per_day'))
+    sites = len(cfg.get('A.crossings.freight_road_names'))
+    sweep = cfg.sweep('A.crossings.closures_per_day')
+    lo, hi = (sweep['interval'] if isinstance(sweep, dict) else sweep)
+    add('freight_train', None, 'level-crossing closures per day',
+        'unobtained',
+        'ROAD EFFECT SIMULATED, train not a mobsim vehicle - the coal chain '
+        'has run on dedicated grade-separated track since 2006 (ARTC/PWCS/'
+        'NCIG, ~110 movements/day), so the only real road interaction is the '
+        'Adamstown and Islington level crossings and those ARE simulated: '
+        '%d closure episodes/day across %d sites, %.0f s each, as timed '
+        'capacity-zero network change events on the matched car links. The '
+        'closure FREQUENCY is unobserved - TfNSW and ARTC publish no closure '
+        'logs - so it is declared A.crossings.closures_per_day and swept '
+        '%g-%g per site, never pinned. A modelled count of train VEHICLES of '
+        'zero is the decision, not a defect'
+        % (per_site * sites, sites,
+           float(cfg.get('A.crossings.closure_duration_s')), lo, hi),
+        (lo * sites, hi * sites))
 
     os.makedirs(OUT, exist_ok=True)
     d = pd.DataFrame(rows)
