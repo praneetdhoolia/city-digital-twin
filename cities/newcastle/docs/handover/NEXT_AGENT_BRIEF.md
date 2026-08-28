@@ -1,6 +1,6 @@
 # Brief for the next agent — THE SEED IS RECOVERABLE FOR THREE MODES, AND TAXI IS BLOCKED ON A DEPENDENCY
 
-*Updated 29 August 2026, THIRTEENTH session (§9.86–§9.94) — a groundwork-and-diagnosis
+*Updated 29 August 2026, THIRTEENTH session (§9.86–§9.96) — a groundwork-and-diagnosis
 session. The `/goal` directive was amended mid-session to forbid leaving an unavailable
 input SWEPT where it can be DERIVED. Four inputs were derived or made physical, two arms
 were run and stopped at their gates, and five paired 1% diagnostics separated the causes.
@@ -24,8 +24,8 @@ trust order, the six questions, the environment gate — live in
 | Fact as of this handoff | Re-derive with |
 |---|---|
 | **NO PR IS OPEN, and 16 commits sit unmerged on `praneetdhoolia/f11-taxi-physical`.** Opening that PR is the first item of unfinished business | `gh pr list --state open` · `git log main..HEAD --oneline` |
-| 14 open issues: #90 #86 #84 #82 #73 #68 #66 #63 #62 #50 #49 #48 #30 #21 | `gh issue list --state open` |
-| 56 filed · 42 closed · 14 open; 32 PRs merged, 2 closed unmerged, 0 open | `gh issue list --state all` · `gh pr list --state all` |
+| 15 open issues: #91 #90 #86 #84 #82 #73 #68 #66 #63 #62 #50 #49 #48 #30 #21 | `gh issue list --state open` |
+| 57 filed · 42 closed · 15 open; 32 PRs merged, 2 closed unmerged, 0 open | `gh issue list --state all` · `gh pr list --state all` |
 | **#88 was CLOSED this session** on measured evidence (taxi physical); **#90 is NEW** and carries taxi's blocker | `gh issue view 88` · `gh issue view 90` |
 | **Machine FREE — no run in progress.** Both arms stopped on the gate directive | look for a MATSim `java` process (VS Code's `redhat.java` is NOT one); `results/` mtimes |
 | 82 run directories, 32 of them `aborted_*`, every one stating its cause | `ls -1d results/*/` · `results/INDEX.md` · `python src/run/run_failure.py --check` |
@@ -139,8 +139,10 @@ important result.
 **Open the PR. 16 commits are unmerged and no PR exists.** Nothing else should start first.
 
 **Then: ride.** It is the largest fixable deviation (13.4 pp) with no external blocker,
-and it is the one that indicts the model rather than the data — **ride seeds at 19.03%
-against a 20.60% target, so the demand is right and the model destroys it.**
+and it is the one that indicts the model rather than the data. **Do NOT repeat the
+claim that ride seeding at 19.03% vindicates the binder — §9.96 withdraws it.** That
+number is the deliberately uniform seed showing through (p=0.20/0.25 predicts 21.2% on
+its own); whether the binder is correctly sized is OPEN.
 
 The mechanism, measured (§9.92, §9.94):
 
@@ -279,22 +281,27 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **A CURVE THAT IS STILL MOVING IS NOT A LEVEL.** This session made that error TWICE
+1. **A NUMBER THAT AGREES WITH YOUR EXPECTATION STILL HAS TO BE EXPLAINED.** Ride
+   seeds at 19.03% against a 20.60% target, and §9.94 and §9.95 both read that as
+   evidence the demand was right. It is the uniform seed's own p=0.20 showing through
+   (§9.96), and the claim was repeated in two committed entries before anyone checked
+   the arithmetic. **Ask what would produce the number if the model were WRONG.**
+2. **A CURVE THAT IS STILL MOVING IS NOT A LEVEL.** This session made that error TWICE
    inside one investigation (§9.91): a stress arm read at iteration 20 said "price cannot
    discipline taxi" and by iteration 40 said the opposite; then a collapse was attributed
    to the innovation cutoff when the control showed the cutoff worth ~11% against the
    fare's elevenfold. **Wait for the arm to finish before concluding.**
-2. **A LEVEL READ WHILE INNOVATION RUNS IS NOT THE MODEL'S ANSWER.** Car jumps
+3. **A LEVEL READ WHILE INNOVATION RUNS IS NOT THE MODEL'S ANSWER.** Car jumps
    31.96% → 35.90% across the cutoff. Read the trend, or read post-cutoff.
-3. **The TARGET can be the defect.** §9.87's taxi target was fivefold low because it used a
+4. **The TARGET can be the defect.** §9.87's taxi target was fivefold low because it used a
    commute source for a non-commute mode. **Check the yardstick before blaming the model.**
-4. **A sampled mobsim is not a small city.** It is a city whose capacities were scaled, so
+5. **A sampled mobsim is not a small city.** It is a city whose capacities were scaled, so
    any measurement against a real-world rate must scale with `flowCapacityFactor` (§9.88).
-5. **Submodes are not additive.** A linked PT trip boards several; counting it once per
+6. **Submodes are not additive.** A linked PT trip boards several; counting it once per
    submode nearly doubled the PT total and hid two deficits.
-6. **The registry refuses out-of-sweep values typed at a shell** — and it is right to.
+7. **The registry refuses out-of-sweep values typed at a shell** — and it is right to.
    Deliberate stress tests need a COMMITTED overlay with a written justification.
-7. Carried: `modestats.csv` is PLANNED modes and the trips table is REALISED — the two
+8. Carried: `modestats.csv` is PLANNED modes and the trips table is REALISED — the two
    differ by exactly the remoded unpaired rides; git-bash heredocs eat backslashes (write
    patches via a Python file); compiling is not installing (`bootstrap_toolchain.py
    --verify`); stopping a run needs BOTH `Stop-ScheduledTask` and `taskkill /PID <pid> /T
@@ -322,7 +329,7 @@ and a converged arm.
 `_run.json` in F10, F11 or F12. The standing calibrated base is still the pre-repair **F4**
 arm `20260821T175907_1000it_25pct` (MAE 10.65 pp, 35 of 67 scored), a **different family**.
 
-**5 · Issue ledger.** Totals in §0. **#90** (NEW) taxi supply, blocked on a dependency;
+**5 · Issue ledger.** Totals in §0. **#91** (NEW) three in ten ride legs carry no declared driver — reframed by §9.96; **#90** (NEW) taxi supply, blocked on a dependency;
 **#86** demand ceiling — the seed is now measured RIGHT for ride (19.03 vs 20.60), so this
 is a realisation question; **#48** ride as physical passenger — the loop is measured;
 **#84** patronage has no legitimate target; **#82** counts; **#73** signals — SCATS landed;

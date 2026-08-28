@@ -93,6 +93,7 @@ its layout will otherwise cost you an hour:
 | **The seed is a bad guess ON PURPOSE, and the gate was read before the model had answered** | **§9.92** — three paired 1% diagnostics. The chain-breaking single-trip innovation is REAL but small (car 36.26% → 40.34% at p=0.0, about a sixth of a 22 pp deficit) and is not the lever. The deficit is inherited from the SEED, which is uniform **by recorded design** — "deliberately a bad guess… so that arriving there is evidence about the model rather than about the seed", with an `informed` table kept precisely because "seeding at the answer makes reaching the answer uninformative". **So the seed must NOT be changed to close the gap.** Both arms show car JUMPING at the innovation cutoff (31.96% → 35.90%), so a reading at iteration 50 of a 1000-iteration arm measures an innovation-dominated transient, not the model. And **ride −65% / walk +94% are ONE mechanism**: 44,044 of 84,609 ride legs (52.1%) fail to pair and, with `remodeUnpaired`, none departs as ride — they are realised as walk |
 | **The uniform seed IS recoverable for three modes, and diverges for three others** | **§9.94** — the first F12 arm to reach a gate (`20260829T054941`, 10%, 108 s/it), stopped at iteration 102. Read on TREND rather than level, because §9.92 established the seed is deliberately bad. **CONVERGING**: car 34.09 → 44.22 (58.16), walk 28.88 → 15.22 (13.40), pt 6.88 → 5.30 (3.80) — walk has gone from +115% to +14% of target, and this is the FIRST evidence the co-evolution recovers from the seed at all. **DIVERGING**: taxi 0.00 → 8.81 (0.99), bike 7.08 → 8.24 (2.21), ride 19.03 → 14.19 (20.60). Ride is worst because it SEEDS almost exactly right and the model destroys it — a feedback loop where pairing failure walks the leg, the plan scores badly, the agent drops ride and thins the candidate pool. Taxi’s repair is a finite FLEET, recorded as NOT DONE with the reason: the pinned stack carries no DVRP/DRT and adding it is a toolchain change against a Maven host the sandbox does not list; the demand-side alternative needs a point-to-point user incidence the package does not hold |
 | **The bound pairing window was HALF the drift it covers, and a third of ride demand names nobody** | **§9.95** — new `src/analyse/diagnose_ride_pairing.py` classifies every declared ride leg by what its named driver was doing. **The suspected cause was wrong**: `neither_endpoint` (the household drove elsewhere) is only **1.49%**. Two real defects instead. (1) `bound_pairing_window_min` was `time_mutation_range_s / 60` = 30 min, but the mutator moves each member INDEPENDENTLY, so two draws on ±1800 s land up to 3600 s apart — the window was half the drift, and 3,987 legs (13.13%) with BOTH endpoints matching were refused on the clock alone, median gap 53.6 min, **minimum exactly 30.0**. Identity corrected to `2 * range / 60` = 60 min. (2) **9,036 legs (29.76%) carry no `boundDriver` at all** — filed as #91 |
+| **CORRECTION: ride’s seeded share is the uniform draw, not evidence about the binder** | **§9.96** — §9.94 and §9.95 both read ride seeding at 19.03% against a 20.60% target as "the demand is right". It is not. Ride’s initial mode comes from the DELIBERATELY UNIFORM `B.mode.seed_split` at p=0.20/0.25, and with 76.3% of trips car-available the uniform draw alone predicts **21.2%**. The near-match is a coincidence of 0.2 sitting close to 0.206. **Withdrawn**: that the seed vindicates §9.84’s binder. **Corrected**: #91’s 29.76% unbound is the expected consequence of a uniform seed, not a binder that forgot to bind. §9.95’s two measured defects stand unchanged |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -9109,6 +9110,71 @@ which is #91.
 
 ---
 
+## 9.96 CORRECTION: ride's seeded share is the uniform draw, not evidence the binder is sound (29 August 2026, thirteenth session; issues #48, #91)
+
+**§9.94 and §9.95 both state that ride seeding at 19.03% against a 20.60% target
+shows "the demand is right" and vindicates §9.84's binder. That inference is
+wrong, and it was repeated twice before it was checked.**
+
+### The arithmetic
+
+A tour's initial mode is `tour_mode[tour_id]`, drawn from `B.mode.seed_split` -
+the DELIBERATELY UNIFORM table (§9.92): ride at p=0.20 for a car-available
+person and p=0.25 for the rest. Measured on the F12 arm, 76.3% of trips are made
+by car-available persons, so the uniform draw ALONE predicts
+
+```
+0.763 x 0.20  +  0.237 x 0.25  =  21.2%
+```
+
+against an observed seeded ride share of **19.03%** - the shortfall explained by
+bound serve-tours being seeded to car instead (§9.68).
+
+**So ride's seeded share is the uniform table showing through.** It sits close
+to the observed 20.60% by coincidence, because 0.2 happens to be near 0.206. It
+is not a measurement of the binder, and it cannot vindicate anything.
+
+### What that changes
+
+- **§9.94's "what the seed gets RIGHT is ride" is withdrawn.** The seed gets
+  ride *numerically close* for a reason unrelated to whether ride demand is
+  correctly generated.
+- **§9.95's reading of #91 is corrected.** The 29.76% of ride legs with no
+  `boundDriver` is the expected consequence of a uniform seed assigning ride at
+  random, NOT a demand build that forgot to bind them. #91's framing has been
+  corrected on the issue itself.
+- **Whether the binder is correctly sized remains OPEN.** No measurement in this
+  session bears on it, and the seed cannot supply one while it is uniform.
+
+### What survives unchanged
+
+The two defects §9.95 found stand on their own measurements and are unaffected:
+the bound window was half the drift it covers (median gap 53.6 min, minimum
+exactly 30.0 against a 30-min window), and `neither_endpoint` is 1.49%, so
+relaxing the pairing rule would recover nothing.
+
+And the structural point sharpens rather than weakens: **most seeded ride legs
+are random and unpairable by identity**, so mode choice has to discover that
+ride realises only for bound pairs - migrating toward them and away from random
+ride. That is a slow search, and it is consistent with realised ride (−65.3%)
+being far worse than planned ride (−31%).
+
+**The open question is now better posed:** can the model discover that within a
+converged arm, or should ride demand be generated FROM the bindings rather than
+from a mode seed at all? The second would be a demand-build change, and it is
+not made here.
+
+### Why this is recorded rather than quietly fixed
+
+The claim was stated twice, in two committed entries, and used to argue that the
+ride problem was purely one of realisation. A reader who took that at face value
+would stop looking at demand generation entirely. The trap it belongs to is
+already at the top of §8 in the brief - **a number that agrees with your
+expectation still has to be explained** - and this is the same error as reading
+a moving curve as a level, in a different costume.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -9781,6 +9847,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-29 | **CORRECTION: ride’s seeded share is the uniform draw showing through, not evidence about the binder (§9.96; issues #48/#91; thirteenth session).** §9.94 and §9.95 both stated that ride seeding at 19.03% against a 20.60% target showed the demand was right and vindicated §9.84’s binder. The claim was repeated twice before it was checked, and it is wrong. A tour’s initial mode is drawn from the deliberately uniform `B.mode.seed_split` — ride at p=0.20 for car-available persons and p=0.25 otherwise — and with 76.3% of trips car-available the uniform draw alone predicts 21.2%, against the observed 19.03% with bound serve-tours seeded to car explaining the shortfall. The near-match to the target is a coincidence of 0.2 sitting close to 0.206. **Withdrawn**: that the seed vindicates the binder — whether the binder is correctly sized remains OPEN, and no measurement this session bears on it. **Corrected**: #91’s 29.76% of ride legs with no `boundDriver` is the expected consequence of a uniform seed assigning ride at random, not a demand build that forgot to bind them; the issue has been corrected on itself. **Unchanged**: §9.95’s two defects stand on their own measurements. The structural point sharpens — most seeded ride legs are random and unpairable by identity, so mode choice must discover that ride realises only for bound pairs, which is consistent with realised ride (−65.3%) trailing planned ride (−31%). |
 | 2026-08-29 | **The bound pairing window was half the drift it exists to cover, and a third of ride demand names no driver (§9.95; issues #48/#91; thirteenth session).** New `src/analyse/diagnose_ride_pairing.py` reads the selected plans the engine reads at BeforeMobsim — the realised legs table cannot answer this, because `remodeUnpaired` converts unpaired ride legs before the mobsim — and classifies every declared ride leg by what its named driver was doing. **The suspected cause was wrong**: `neither_endpoint`, the household genuinely driving elsewhere, is only 1.49% of 30,363 legs, so §9.92 was right to refuse relaxing the pairing rule and is now right for a measured reason. Two real defects instead. **(1)** `B.ride.bound_pairing_window_min` was derived as `time_mutation_range_s / 60` = 30 min, but that half-width is applied to EACH agent independently, so a pair drifts up to twice it — the window was half the size of the drift it covers. 3,987 legs (13.13%) with BOTH endpoints matching exactly were refused on the clock alone, median gap 53.6 min and **minimum exactly 30.0**, the discarded boundary printing itself in the data. Identity corrected to `2 * time_mutation_range_s / 60` = 60 min; a derivation correction, not a tuning, since the value still moves only with the mutation range. **(2)** 9,036 legs (29.76%) carry no `boundDriver` at all, so the engine can only reach them by geometric discovery — filed as **#91**, a demand-build question rather than an engine one. Predicted effect of the window fix: paired share 37.96% toward ~45%. **A prediction, not a result — the arm testing it has not been run.** |
 | 2026-08-29 | **The first F12 gate: the uniform seed is recoverable for car, walk and pt, and three modes diverge (§9.94; issues #48/#49/#50/#88; thirteenth session).** Arm `20260829T054941_1000it_10pct` at 108 s/it reached the iteration-100 gate and was stopped at 102 on the standing directive, with ten of twelve modes past the 20% bar. **The level is not the finding — the direction is**, because §9.92 established the seed is deliberately uniform. Converging: car 34.09 → 44.22 (target 58.16), walk 28.88 → 15.22 (13.40), pt 6.88 → 5.30 (3.80); walk travelled from +115% to +14% of target, and this is the FIRST evidence that the co-evolution recovers from the seed at all. Diverging: taxi 0.00 → 8.81 (0.99), bike 7.08 → 8.24 (2.21), ride 19.03 → 14.19 (20.60); motorbike flat at 0.18 (0.24). **Ride is the serious one** — it seeds at 19.03 against 20.60, so the demand is right and the model destroys it: planned ride falls to 14.19% and only half of that realises, a feedback loop in which pairing failure walks the leg, the ride plan scores badly, the agent abandons ride and the thinner demand leaves fewer pairing candidates. Stopped rather than spend ~21 h more reaching the innovation cutoff to confirm three divergences whose causes are already identified. **Taxi’s correct repair is a finite fleet and it is recorded as NOT DONE with its reason**: the pinned run stack resolves matsim + signals only, with no DVRP or DRT, and adding them is a toolchain change against a Maven host the network sandbox does not list. The buildable demand-side alternative — a `taxiAvail` attribute mirroring `rideAvail` — needs a point-to-point USER INCIDENCE that the package does not hold (`data/raw/p2p/` carries the Fares Order alone), and choosing that share so taxi lands on target would be fitting availability to the answer. **The honest next step is to acquire the incidence, not to assume it.** Nothing here is a result. |
 | 2026-08-29 | **Three paired diagnostics: the chain effect is small, the deficit is an intentional seed, and ride/walk are one mechanism (§9.92; issues #48/#49/#50; thirteenth session).** `subtour_chain_1pct` against `taxi_fare_control_1pct` shows the random single-trip innovation is a REAL but modest effect — car 36.26% → 40.34% and walk 23.43% → 20.90% at p=0.0, about a sixth of car’s 22 pp deficit, with taxi unmoved — so it is **not** the lever and this entry records that so nobody reaches for it as one. The deficit is inherited from the SEEDED split (car 32.71% against a 58.16% target, walk 29.75% against 13.40%), and that seed is uniform **by recorded design**: `B.mode.seed_split` is "deliberately a bad guess" so that reaching the observed point is evidence about the model, and the `informed` table is kept out of the default because "seeding at the answer makes reaching the answer uninformative". **The seed is therefore NOT changed** — doing so would make every later fit a restatement of the seed. What the seed gets RIGHT is ride, 19.23% against 20.60%, which vindicates §9.84’s binder. Both arms show car jumping at the innovation cutoff (31.96% → 35.90% across iteration 32), so **every "past 20%" verdict this session produced was read in an innovation-dominated regime** and only a post-cutoff arm can judge the model. Measured and filed: ride −65% and walk +94% are the SAME 44,044 legs — 52.1% of planned ride fails to pair, and with `remodeUnpaired` none of them departs as ride, so the events record them as walk. `miss_endpoints` is not an over-strict rule (the engine’s own measurement finds no endpoint-matching driver at any hour); it is the §9.82 decoherence class, whose declared SEARCH instrument sits at 0.1 in a [0.0, 0.5] sweep. Nothing here is a result. |
