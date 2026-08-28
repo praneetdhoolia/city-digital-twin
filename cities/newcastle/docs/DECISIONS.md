@@ -8722,6 +8722,75 @@ never declared, which is the "no biasing" line rather than a repair.
 decaying** - 0.5563 → 0.4585 at iteration 20, then back up to 0.4794 by
 iteration 50. That was the stated success criterion, and it is met.
 
+### The paired diagnostic, and two readings it corrected on the way
+
+The stress overlay and its matched control ran at 1% for 40 iterations, with
+innovation disabled after iteration 32 in both.
+
+| iteration | taxi, control | taxi, 20x fare |
+|---:|---:|---:|
+| 10 | 0.0428 | 0.0308 |
+| 20 | 0.0587 | 0.0256 |
+| 30 | 0.0669 | 0.0192 |
+| **40** (innovation off) | **0.0596** | **0.0054** |
+
+Every other mode agrees between the two arms within about 13%, so the fare is
+the only thing that moved.
+
+**The per-kilometre rate binds, and hard: an elevenfold difference.** The one
+term in the taxi price that emits no event, and had therefore never been
+proven, does reach the score. That closes the question §9.91 opened.
+
+**Two intermediate readings were wrong, and both were wrong the same way -
+read off a transient.** First, the stress arm at iteration 20 showed taxi at
+2.56% and was read as "price cannot discipline taxi"; by iteration 40 it was
+0.54%, and the arm had simply not finished falling. Second, the collapse
+appeared to begin at the innovation cutoff, and was read as innovation
+sustaining the mode; the control shows the cutoff moving taxi only 0.0669 to
+0.0596, about 11%, while the fare moved it elevenfold. **A curve that is still
+moving is not a level, and this file now carries two instances of that same
+error inside one investigation.**
+
+### What that leaves as the cause
+
+Taxi's equilibrium at the DECLARED fare is about 6% at 1% sample, against a
+0.9916% target. It is a genuine model outcome rather than an artefact, and the
+arithmetic that said it should be rare is missing something structural.
+
+The structural asymmetry is availability. Every other mode in this model is
+constrained by something physical or personal: car by ownership and licence and
+by subtour chain consistency, `ride` by a declared driver existing and by
+`rideAvail`, bike by `bikeAvail` and an age gate, pt by a timetable and a stop,
+truck by being a separate subpopulation, motorbike by a person-level locked
+carve. **Taxi is constrained by an age gate and nothing else** - every adult may
+take a taxi on every trip, with no fleet, no booking friction and no supply
+limit, at a flat declared 5-minute wait.
+
+That also explains the puzzle in §9.91's measurement that taxi is 7.52% even
+among agents holding a car AND a licence. `car` is a CHAIN-BASED mode: a
+single-trip mode change cannot assign it without breaking the subtour, so an
+agent whose chain has been perturbed onto another mode genuinely cannot drive
+that leg. Their remaining options are walk, pt, bike, ride and taxi - and for a
+13 km leg, taxi beats walking on score. Taxi is not winning against car; it is
+winning the trips where car is structurally unavailable, and it wins them
+because nothing limits it.
+
+**Not fixed in this entry, and deliberately.** The candidate repairs are a
+person-level taxi availability basis anchored on the IPART incidence behind
+`B.taxi.daily_trips_band` (mirroring `rideAvail` and `bikeAvail`), or a genuine
+fleet with finite vehicles. Both are model changes that open a family, and the
+second is the one that makes taxi physically constrained the way the standing
+directive asks. Neither is chosen on a 1% forty-iteration diagnostic.
+
+### A held-fixed rule re-read, and the correction points the other way
+
+§9.91 recorded that `B.taxi.fare_per_km_taxi_aud`'s premise - trips "far under
+12 km" - is contradicted by a measured 13,072 m median. That still stands. But
+the tail it excludes is **$2.29/km beyond 12 km against $2.52/km within**, so
+modelling it makes a long taxi trip slightly CHEAPER, not dearer. Correcting it
+is a fidelity improvement that moves taxi the wrong way for the fit, which is
+exactly why it is recorded here before anyone reaches for it as a lever.
+
 ---
 
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
