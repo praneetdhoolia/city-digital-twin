@@ -21,6 +21,7 @@
         "qsim",
         "scoring",
         "replanning",
+        "timeAllocationMutator",
         "subtourModeChoice",
         "travelTimeCalculator",
         "transitRouter",

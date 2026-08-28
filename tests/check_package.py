@@ -574,10 +574,15 @@ else:
         # (DECISIONS.md 9.49) - no observed layer locates a freight
         # destination - so they are outside this assertion the same way
         # escorted copies are.
+        # A 'joint' destination (DECISIONS.md 9.84) is a copy of the joint
+        # driver's own drawn destination in exactly the same sense as
+        # 'escorted' - the companion attends the driver's activity - so it
+        # sits outside the drawn-share assertion too.
         drawn = (sum(placement.values()) - placement.get('home', 0)
                  - placement.get('escorted', 0) - placement.get('freight', 0)
                  - placement.get('lift_pickup', 0)
-                 - placement.get('lift_serve', 0))
+                 - placement.get('lift_serve', 0)
+                 - placement.get('joint', 0))
         share_poi = placement.get('poi', 0) / max(drawn, 1)
         check(share_poi > 0.85,
               '%s: %.1f%% of drawn activity ends sit on an observed attractor'
@@ -652,12 +657,26 @@ else:
         check(bool(free) and (max(free) - min(free)) < 0.02,
               '%s: the seed is uninformed - uniform over the modes available to '
               'everyone (spread %.4f)' % (day, (max(free) - min(free)) if free else -1))
+        # Since 9.84 the ride seed has TWO components: the uniform draw,
+        # which must still sit below the universal modes because part of the
+        # population has nobody to drive them (9.11), and the coverage-seeded
+        # component - escort, lift and joint bindings starting at the
+        # coherent two-sided state (9.68/9.84) - which legitimately raises
+        # the total above them. The report splits them so each is held to its
+        # own invariant.
         ride = seed.get('ride', 0)
-        check(0 < ride < min(free) if free else False,
-              '%s: seed ride share %.3f sits below the universal modes '
-              '(%.3f) because part of the population has nobody to drive them, '
-              'and is not zero (DECISIONS.md 9.11)'
-              % (day, ride, min(free) if free else -1))
+        covered = v.get('seed_ride_covered_share')
+        check(covered is not None,
+              '%s: the plans report records the coverage-seeded ride '
+              'component (DECISIONS.md 9.84)' % day)
+        ride_drawn = ride - (covered or 0)
+        check(0 < ride_drawn < min(free) if free else False,
+              '%s: the DRAWN ride seed %.3f (total %.3f minus covered %.3f) '
+              'sits below the universal modes (%.3f) because part of the '
+              'population has nobody to drive them, and is not zero '
+              '(DECISIONS.md 9.11, 9.84)'
+              % (day, ride_drawn, ride, covered or 0,
+                 min(free) if free else -1))
         bike = seed.get('bike', 0)
         _bar = prep.get('bike_available_rate')
         check(_bar is not None,

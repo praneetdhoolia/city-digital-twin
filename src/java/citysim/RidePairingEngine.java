@@ -9,8 +9,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
@@ -133,6 +135,20 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      *  person's own. The binding is an eligibility, not a guarantee - the
      *  driver's leg must still match under the declared rule and window. */
     public static final String LIFT_HOUSEHOLD_ATTRIBUTE = "liftHousehold";
+    /** Person attribute written by build_matsim_plans.py from the B2 JOINT
+     *  bindings (DECISIONS.md 9.85): the person id(s) of the driver(s) this
+     *  companion was generated to travel WITH. The binder has always
+     *  written the identity and the population has always dropped it, so
+     *  this engine had to RE-DISCOVER a declared pair from geometry and
+     *  the clock - and MATSim's own TimeAllocationMutator moves the two
+     *  members independently, at a range the registry did not declare
+     *  until 9.85. Measured on arm 20260828T111708 at iteration 100:
+     *  73.8% of companion ride legs still had their declared driver making
+     *  the same-endpoint trip BY CAR, but the median gap between them had
+     *  drifted to 10.3 min with p90 at 45.1, so only 60.6% were inside the
+     *  15-minute inference window. The driver was there; the clock hid
+     *  them. The binding is still an ELIGIBILITY, not a guarantee. */
+    public static final String BOUND_DRIVER_ATTRIBUTE = "boundDriver";
     /** Written by build_matsim_plans.py, and already consumed by
      *  {@link AvailabilityModesCalculator}'s sibling attributes. */
     public static final String LICENCE_ATTRIBUTE = "hasLicense";
@@ -154,6 +170,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             // answers: the first should abandon ride on its score, the second
             // is a departure-time coordination MATSim does not model.
             + "miss_no_candidate,miss_window,miss_endpoints,miss_capacity,"
+            // 9.85: how many pairings were made with the driver the demand
+            // NAMED, and how many of those the inference window alone would
+            // have thrown away. The second column is the mechanism's
+            // effect; a zero in it means the binding changed nothing.
+            + "paired_declared,paired_by_identity,"
             // For a leg that missed ONLY on timing, how far off was the nearest
             // driver making a geometrically matching trip? A window miss can be
             // a near miss the declared tolerance just failed to reach, or a
@@ -170,6 +191,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private final Map<Id<Person>, String> household = new HashMap<>();
     /** Lift-driver household per bound passenger (9.60), resolved once. */
     private final Map<Id<Person>, String> liftHousehold = new HashMap<>();
+    /** Declared joint-tour driver ids per companion (9.85), resolved once. */
+    private final Map<Id<Person>, Set<String>> boundDriver = new HashMap<>();
     /** Licence holding per person, resolved once, for the same reason. */
     private final Map<Id<Person>, Boolean> licensed = new HashMap<>();
     private boolean indexed = false;
@@ -192,13 +215,26 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         final Id<Link> to;
         final double plannedDeparture;
         final Id<Person> driver;
+        /** 9.85: the tolerance THIS booking was made under, in seconds.
+         *  A declared pair is booked on the wider bound window, so the
+         *  passenger must be allowed to wait that long for the car -
+         *  otherwise the booking is made and then timed out, and the
+         *  pair rate rises while no additional passenger ever boards. */
+        final double waitSeconds;
 
         Booking(final Id<Link> from, final Id<Link> to,
-                final double plannedDeparture, final Id<Person> driver) {
+                final double plannedDeparture, final Id<Person> driver,
+                final double waitSeconds) {
             this.from = from;
             this.to = to;
             this.plannedDeparture = plannedDeparture;
             this.driver = driver;
+            this.waitSeconds = waitSeconds;
+        }
+
+        /** How long this passenger may wait, in seconds. */
+        public double waitSeconds() {
+            return this.waitSeconds;
         }
 
         public Id<Link> destination() {
@@ -258,6 +294,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private int missNoCandidate = 0;
     private int missWindow = 0;
     private int missEndpoints = 0;
+    /** Pairings whose driver was the DECLARED partner (9.85), and the
+     *  subset of those the inference window alone would have refused -
+     *  which is this mechanism's effect, measured rather than argued. */
+    private int pairedDeclared = 0;
+    private int pairedByIdentity = 0;
     private int missCapacity = 0;
 
     /** Minutes off the nearest ENDPOINT-MATCHING driver, for legs that missed
@@ -383,10 +424,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         missEndpoints = 0;
         missCapacity = 0;
         missGapMinutes.clear();
+        pairedDeclared = 0;
+        pairedByIdentity = 0;
 
         index();
 
         final double window = cfg.getWindowMinutes() * 60.0;
+        // 9.85: the tolerance for a pair the DEMAND DECLARES. It relaxes
+        // IDENTIFICATION only - endpoints, capacity and physical boarding
+        // still decide, and the realised gap is waiting time the passenger
+        // pays for in score. Equal to `window` recovers the old behaviour.
+        final double boundWindow = cfg.getBoundWindowMinutes() * 60.0;
         final String rule = cfg.getRule();
         final int capacity = cfg.getMaxPassengersPerVehicle();
         final double dwell = cfg.getPickupDwellSeconds();
@@ -512,6 +560,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             }
             DriverLeg best = null;
             double bestGap = Double.MAX_VALUE;
+            boolean bestDeclared = false;
             boolean refusedForCapacity = false;
             // The funnel, so a miss can say WHICH gate closed on it.
             int sawCandidate = 0;
@@ -521,13 +570,19 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             // the clock said. This is what decides whether a window miss was a
             // near miss or a driver who was never going to serve it.
             double nearestMatchingGap = Double.MAX_VALUE;
+            final Set<String> declared = boundDriver.getOrDefault(
+                    ride.person, Collections.emptySet());
             for (final DriverLeg driver : candidates) {
                 if (driver.person.equals(ride.person)) {
                     continue;                       // you cannot drive yourself
                 }
                 sawCandidate++;
                 final double gap = Math.abs(driver.departure - ride.departure);
-                if (gap > window) {
+                // 9.85: for the driver the demand NAMED, identity has
+                // already settled whether this is the same trip, so the
+                // clock only has to cover the drift replanning introduced.
+                final boolean isDeclared = declared.contains(driver.person.toString());
+                if (gap > (isDeclared ? boundWindow : window)) {
                     if (endpointsMatch(rule, driver, ride) && gap < nearestMatchingGap) {
                         nearestMatchingGap = gap;
                     }
@@ -542,9 +597,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     refusedForCapacity = true;
                     continue;
                 }
-                if (gap < bestGap) {
+                // A declared partner outranks a coincidence at equal gap:
+                // preferring the nearer stranger would let the inference
+                // overwrite the binding it exists to approximate.
+                if (best == null
+                        || (isDeclared && !bestDeclared)
+                        || (isDeclared == bestDeclared && gap < bestGap)) {
                     bestGap = gap;
                     best = driver;
+                    bestDeclared = isDeclared;
                 }
             }
             if (best == null) {
@@ -614,6 +675,14 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             }
             best.carrying++;
             nPaired++;
+            if (bestDeclared) {
+                pairedDeclared++;
+                if (bestGap > window) {
+                    // the inference window alone would have refused this
+                    // pair; the demand's own binding is what kept it
+                    pairedByIdentity++;
+                }
+            }
             paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
 
             final double realised = realisedDuration(best);
@@ -640,7 +709,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // behaviour.
                 bookings.computeIfAbsent(ride.person, k -> new ArrayList<>(2))
                         .add(new Booking(ride.from, ride.to, ride.departure,
-                                         best.person));
+                                         best.person,
+                                         bestDeclared ? boundWindow : window));
             }
         }
 
@@ -896,6 +966,20 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             if (lift != null) {
                 liftHousehold.put(person.getId(), lift.toString());
             }
+            final Object bound = person.getAttributes()
+                    .getAttribute(BOUND_DRIVER_ATTRIBUTE);
+            if (bound != null) {
+                final Set<String> ids = new HashSet<>();
+                for (final String id : bound.toString().split(",")) {
+                    final String trimmed = id.trim();
+                    if (!trimmed.isEmpty()) {
+                        ids.add(trimmed);
+                    }
+                }
+                if (!ids.isEmpty()) {
+                    boundDriver.put(person.getId(), ids);
+                }
+            }
             final Object lic = person.getAttributes().getAttribute(LICENCE_ATTRIBUTE);
             licensed.put(person.getId(), lic != null && LICENCE_YES.equals(lic.toString()));
         }
@@ -939,6 +1023,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 .append(',').append(missWindow)
                 .append(',').append(missEndpoints)
                 .append(',').append(missCapacity)
+                .append(',').append(pairedDeclared)
+                .append(',').append(pairedByIdentity)
                 .append(',').append(gapAtMost(30.0))
                 .append(',').append(gapAtMost(45.0))
                 .append(',').append(gapAtMost(60.0))

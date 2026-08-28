@@ -98,6 +98,13 @@ def motorbike_user(pid):
 # collateral - the escorting driver cannot be driven on their OTHER tours the
 # same day - is stated, small, and plausibly the truth.
 ESCORT_EXCLUDES_RIDE = CFG.get('B.activity.escort_excludes_ride')
+# The bike age gate (DECISIONS.md 9.84, #50), applied to the SEED as well as
+# to replanning: AvailabilityModesCalculator governs only NEW mode choices
+# and never strips a mode from a held plan, so an under-age person seeded
+# bike would hold an illegal plan ChangeExpBeta can re-select forever (the
+# 9.15 class, measured for ride at 4,723 surviving legs). Taxi needs no seed
+# gate - it is not in either declared seed split. Zero disables.
+BIKE_MIN_AGE = CFG.get('B.population.bike_min_age')
 
 PLANS = _city.path('demand/plans')
 POP = _city.path('demand/population')
@@ -335,6 +342,19 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # construction) and carries the driver's household id as `liftHousehold`,
     # which widens citysim.RidePairingEngine's candidate search to that
     # household. The binding is an eligibility, not a guarantee.
+    # 9.85: the DECLARED driver identity, from every binding table that
+    # names one. All three have always carried it and this builder has
+    # always discarded it, so citysim.RidePairingEngine had to RE-DISCOVER
+    # a declared pair from geometry and the clock - which MATSim's own
+    # TimeAllocationMutator then breaks, moving the two members
+    # independently at a range the registry did not declare until 9.85.
+    bound_driver = {}     # passenger pid -> [driver pids, ordered]
+
+    def bind(passenger, driver):
+        bound_driver.setdefault(passenger, [])
+        if driver not in bound_driver[passenger]:
+            bound_driver[passenger].append(driver)
+
     lift_hh = {}          # passenger pid -> [driver household ids, ordered]
     lift_cover = {}       # (passenger pid, tour_id) -> set of directions
     lifts = os.path.join(PLANS, 'B2_lift_bindings_%s.csv' % day)
@@ -343,6 +363,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
             for r in csv.DictReader(fh):
                 p = int(r['passenger_person_id'])
                 hh = int(r['driver_household_id'])
+                bind(p, int(r['driver_person_id']))
                 lift_hh.setdefault(p, [])
                 if hh not in lift_hh[p]:
                     lift_hh[p].append(hh)
@@ -358,6 +379,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
     if os.path.exists(escorts):
         with open(escorts, encoding='utf-8') as fh:
             for r in csv.DictReader(fh):
+                bind(int(r['member_person_id']),
+                     int(r['driver_person_id']))
                 escort_cover.setdefault(
                     (int(r['member_person_id']), int(r['member_tour_id'])),
                     set()).add(r['direction'])
@@ -365,6 +388,25 @@ def write_day(day, attrs, rng, report, seed_table=None):
     for (p, tid), dirs in list(escort_cover.items()) + list(lift_cover.items()):
         if {'drop', 'pickup'} <= dirs:
             covered_by_pid.setdefault(p, set()).add(tid)
+    # 9.84: joint household tours. The companion travels WITH the driver on
+    # both legs by construction, so a joint companion tour is covered in both
+    # directions and seeds as B.mode.bound_passenger_seed; the driver's tour
+    # seeds car like a bound serve tour - the pairing engine pairs ride legs
+    # with CAR legs only, and a joint driver on any other mode cannot carry
+    # the companion bound onto their car.
+    joint_driver = {}   # pid -> set of tour ids
+    joints = os.path.join(PLANS, 'B2_joint_bindings_%s.csv' % day)
+    if os.path.exists(joints):
+        with open(joints, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                covered_by_pid.setdefault(
+                    int(r['companion_person_id']), set()).add(
+                        int(r['companion_tour_id']))
+                joint_driver.setdefault(
+                    int(r['driver_person_id']), set()).add(
+                        int(r['driver_tour_id']))
+                bind(int(r['companion_person_id']),
+                     int(r['driver_person_id']))
     u_buf = {'buf': rng.random(1 << 20), 'i': 0}
 
     def u():
@@ -380,6 +422,10 @@ def write_day(day, attrs, rng, report, seed_table=None):
     act_counts = collections.Counter()
     tours = 0
     escort_ride_denied = [0]
+    # 9.84: ride legs seeded through escort/lift/joint COVERAGE, split out so
+    # the package check can hold the uniform draw to its 9.11 invariant while
+    # the coverage-seeded component legitimately raises ride above it.
+    covered_ride_legs = [0]
 
     with gzip_writer(dst) as w:
         w.write('<?xml version="1.0" encoding="utf-8"?>\n')
@@ -457,6 +503,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
             # one mode per tour keeps chain-based modes conserved from the start
             serve_tours = set()
             covered_tours = set()
+            covered_seed_tids = set()
             if not external:
                 for r in rows:
                     # a BOUND serve tour carries a serving placement on one of
@@ -465,6 +512,9 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     if r['dest_placement'] in ('escorted', 'lift_pickup',
                                                'lift_serve'):
                         serve_tours.add(int(r['tour_id']))
+                # 9.84: a joint driver's tour is a serving tour in the same
+                # sense - a companion is booked into that car
+                serve_tours |= joint_driver.get(pid, EMPTY_SET)
                 covered_tours = covered_by_pid.get(pid, EMPTY_SET)
             tour_mode = {}
             for r in rows:
@@ -492,10 +542,13 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         # serve tours in BOTH directions starts at the coherent
                         # two-sided state; selection keeps or abandons it.
                         m = BOUND_PASSENGER_SEED
+                        covered_seed_tids.add(tid)
                     else:
                         m = pick_mode(car_av, u, seed_table,
                                       ride_available=bool(ride_av),
-                                      bike_available=bool(bike_av))
+                                      bike_available=bool(bike_av) and (
+                                          BIKE_MIN_AGE <= 0
+                                          or age >= BIKE_MIN_AGE))
                     tour_mode[tid] = m
             tours += len(tour_mode)
 
@@ -536,6 +589,21 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 w.write('\t\t\t<attribute name="liftHousehold" '
                         'class="java.lang.String">%s</attribute>\n'
                         % ','.join('%d' % h for h in lift_hh[pid]))
+            if not external and pid in bound_driver:
+                # 9.85: the DECLARED driver(s) this passenger was generated
+                # to travel with - joint companion, escorted member or
+                # bound lift passenger alike, since the defect and its
+                # repair are identical in all three. Consumed by
+                # citysim.RidePairingEngine. The binding is an IDENTITY,
+                # not a proximity: the engine may recognise this pair after
+                # replanning has moved either member's clock, which the
+                # geometric+window search cannot do. It remains an
+                # ELIGIBILITY - endpoints, vehicle capacity and physical
+                # boarding still decide whether the pairing is made, and
+                # the gap is waiting time the passenger pays for in score.
+                w.write('\t\t\t<attribute name="boundDriver" '
+                        'class="java.lang.String">%s</attribute>\n'
+                        % ','.join('%d' % d for d in bound_driver[pid]))
             if tier in ('through', 'freight') or moto:
                 # locks SubtourModeChoice to {car} / {truck} / {motorbike} for
                 # this agent - a volume anchored on an observation must stay
@@ -560,6 +628,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 mode = tour_mode[int(r['tour_id'])]
                 w.write('\t\t\t<leg mode="%s" />\n' % mode)
                 modes[mode] += 1
+                if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
+                    covered_ride_legs[0] += 1
                 n_legs += 1
                 act = r['dest_activity_type']
                 act_counts[act] += 1
@@ -582,6 +652,11 @@ def write_day(day, attrs, rng, report, seed_table=None):
                        escort_ride_denied=escort_ride_denied[0],
                        seed_mode_share={k: round(v / max(n_legs, 1), 4)
                                         for k, v in sorted(modes.items())},
+                       # 9.84: the coverage-seeded ride component (escort,
+                       # lift and joint bindings), as a share of legs - the
+                       # remainder of the ride seed is the uniform draw
+                       seed_ride_covered_share=round(
+                           covered_ride_legs[0] / max(n_legs, 1), 4),
                        activity_types=dict(sorted(act_counts.items())))
     print('%-8s %7d persons %9d legs %9d activities  %s'
           % (day, n_persons, n_legs, n_acts,
@@ -621,17 +696,26 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
                 bike_available_rate=BIKE_AVAILABLE_RATE,
                 bike_available_sweep=list(
                     CFG.sweep('B.population.bike_available_rate')),
+                # The #62 A5 refactor moved the survey file and vintage behind
+                # the city's reader adapter, and these two provenance strings
+                # kept naming the removed HTS_FILE/HTS_YEAR globals - a
+                # NameError that only fired on the first plans build after the
+                # refactor. The framework no longer knows the file: the
+                # adapter is the source it can honestly name.
                 hts_mode_share_pct=hts_unlinked,
                 hts_mode_share_pct_source=(
-                    'derived from %s, %s, LGA rows: trips-weighted over the five '
-                    'study-area LGAs, unlinked, walk includes the walk stage of a '
-                    'PT trip' % (_city.rel(HTS_FILE), HTS_YEAR)),
+                    'derived through the city reader mode_share_table '
+                    '(cities/<city>/extract/reader_shapes.py, #62 A5): '
+                    'trips-weighted over the study-area LGAs, unlinked, walk '
+                    'includes the walk stage of a PT trip'),
                 hts_calibration_target_pct=hts_linked,
                 hts_calibration_target_source=(
-                    'derived from %s, %s, %s LGA, published MODE_SHARE column '
-                    '(linked trips). This is the basis of validation targets '
-                    'V202-V207 and the one a MATSim mode share is comparable to '
-                    '(DECISIONS.md 12.1)' % (_city.rel(HTS_FILE), HTS_YEAR, HTS_TARGET_LGA)),
+                    'derived through the city reader mode_share_table '
+                    '(cities/<city>/extract/reader_shapes.py, #62 A5): the '
+                    'published linked MODE_SHARE column for the %s LGA. This '
+                    'is the basis of validation targets V202-V207 and the one '
+                    'a MATSim mode share is comparable to (DECISIONS.md 12.1)'
+                    % HTS_TARGET_LGA),
                 typical_duration_s=TYPICAL_DURATION_S,
                 typical_duration_sweep=TYPICAL_DURATION_SWEEP,
                 note='Seed modes are initial conditions for MATSim co-evolution, '

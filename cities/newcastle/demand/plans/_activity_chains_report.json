@@ -531,6 +531,26 @@
           "passenger_tours_not_direct": 31456,
           "passenger_tours_round_trip": 24515
         }
+      },
+      "joint_binding": {
+        "enabled": true,
+        "ratio": 0.3503,
+        "purposes": [
+          "HS",
+          "HO"
+        ],
+        "target_trips": 448229,
+        "existing_covered_trips": 102306,
+        "candidates": 201931,
+        "bound": 74663,
+        "skipped_infeasible": 73258,
+        "thin_p": 0.8565,
+        "households_multi": 151107,
+        "driver_tours": 231687,
+        "companion_tours": 234924,
+        "skipped_conflict": 24996,
+        "bound_driver_shifted": 16473,
+        "driver_tours_used": 66630
       }
     },
     "SAT": {
@@ -589,6 +609,26 @@
           "passenger_tours_not_direct": 28390,
           "passenger_tours_round_trip": 13904
         }
+      },
+      "joint_binding": {
+        "enabled": true,
+        "ratio": 0.3503,
+        "purposes": [
+          "HS",
+          "HO"
+        ],
+        "target_trips": 369985,
+        "existing_covered_trips": 47048,
+        "candidates": 315965,
+        "bound": 95858,
+        "skipped_infeasible": 44738,
+        "thin_p": 0.511,
+        "households_multi": 131399,
+        "driver_tours": 304273,
+        "companion_tours": 349852,
+        "skipped_conflict": 21399,
+        "bound_driver_shifted": 13365,
+        "driver_tours_used": 86257
       }
     },
     "SUN": {
@@ -647,6 +687,26 @@
           "passenger_tours_not_direct": 25487,
           "passenger_tours_round_trip": 9904
         }
+      },
+      "joint_binding": {
+        "enabled": true,
+        "ratio": 0.3503,
+        "purposes": [
+          "HS",
+          "HO"
+        ],
+        "target_trips": 323437,
+        "existing_covered_trips": 30614,
+        "candidates": 299312,
+        "bound": 87727,
+        "skipped_infeasible": 38762,
+        "thin_p": 0.4892,
+        "households_multi": 121639,
+        "driver_tours": 274198,
+        "companion_tours": 331681,
+        "skipped_conflict": 19757,
+        "bound_driver_shifted": 11401,
+        "driver_tours_used": 79144
       }
     }
   },

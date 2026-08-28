@@ -61,7 +61,7 @@
     "pt": 3.39,
     "bike_other": 1.55
   },
-  "hts_mode_share_pct_source": "derived from data/processed/hts/hts_mode.csv, 2024/25, LGA rows: trips-weighted over the five study-area LGAs, unlinked, walk includes the walk stage of a PT trip",
+  "hts_mode_share_pct_source": "derived through the city reader mode_share_table (cities/<city>/extract/reader_shapes.py, #62 A5): trips-weighted over the study-area LGAs, unlinked, walk includes the walk stage of a PT trip",
   "hts_calibration_target_pct": {
     "car": 59.0,
     "ride": 20.6,
@@ -69,7 +69,7 @@
     "pt": 3.8,
     "bike_other": 3.2
   },
-  "hts_calibration_target_source": "derived from data/processed/hts/hts_mode.csv, 2024/25, Newcastle LGA, published MODE_SHARE column (linked trips). This is the basis of validation targets V202-V207 and the one a MATSim mode share is comparable to (DECISIONS.md 12.1)",
+  "hts_calibration_target_source": "derived through the city reader mode_share_table (cities/<city>/extract/reader_shapes.py, #62 A5): the published linked MODE_SHARE column for the Newcastle LGA. This is the basis of validation targets V202-V207 and the one a MATSim mode share is comparable to (DECISIONS.md 12.1)",
   "typical_duration_s": {
     "home": 43200,
     "work": 28800,
@@ -82,55 +82,30 @@
   "typical_duration_sweep": 0.25,
   "note": "Seed modes are initial conditions for MATSim co-evolution, drawn per tour so chain-based modes stay conserved. The default seed is UNINFORMED - uniform over the modes each person can use, conditioned only on B1 car availability - so that the HTS mode share is a target the model has to reach rather than one it is handed (DECISIONS.md 9.6). Run with --seed-mode informed to reproduce the P3 seed.",
   "by_day": {
-    "WEEKDAY": {
-      "persons": 620553,
-      "legs": 2343321,
-      "activities": 2963874,
-      "tours": 1100353,
-      "bytes": 41600670,
-      "escort_ride_denied": 111018,
-      "seed_mode_share": {
-        "bike": 0.0884,
-        "car": 0.3079,
-        "motorbike": 0.0021,
-        "pt": 0.2076,
-        "ride": 0.1485,
-        "truck": 0.0381,
-        "walk": 0.2075
-      },
-      "activity_types": {
-        "business": 24001,
-        "education": 67471,
-        "escort": 224453,
-        "home": 1720906,
-        "other": 458987,
-        "shopping": 233673,
-        "work": 234383
-      }
-    },
     "SAT": {
       "persons": 506013,
       "legs": 1903521,
       "activities": 2409534,
       "tours": 878330,
-      "bytes": 33818784,
+      "bytes": 33464703,
       "escort_ride_denied": 66187,
       "seed_mode_share": {
-        "bike": 0.0964,
-        "car": 0.2724,
+        "bike": 0.0732,
+        "car": 0.3254,
         "motorbike": 0.0028,
-        "pt": 0.2253,
-        "ride": 0.155,
+        "pt": 0.1795,
+        "ride": 0.2171,
         "truck": 0.0224,
-        "walk": 0.2257
+        "walk": 0.1795
       },
+      "seed_ride_covered_share": 0.1236,
       "activity_types": {
         "business": 2765,
         "education": 2428,
         "escort": 125173,
         "home": 1384343,
-        "other": 558281,
-        "shopping": 286855,
+        "other": 556004,
+        "shopping": 289132,
         "work": 49689
       }
     },
@@ -139,24 +114,25 @@
       "legs": 1664677,
       "activities": 2134288,
       "tours": 768752,
-      "bytes": 30400573,
+      "bytes": 29999419,
       "escort_ride_denied": 48404,
       "seed_mode_share": {
-        "bike": 0.0988,
-        "car": 0.2542,
+        "bike": 0.0752,
+        "car": 0.3099,
         "motorbike": 0.003,
-        "pt": 0.2303,
-        "ride": 0.1595,
+        "pt": 0.1827,
+        "ride": 0.223,
         "truck": 0.0228,
-        "walk": 0.2313
+        "walk": 0.1833
       },
+      "seed_ride_covered_share": 0.1227,
       "activity_types": {
         "business": 1849,
         "education": 761,
         "escort": 89190,
         "home": 1238363,
-        "other": 576311,
-        "shopping": 198946,
+        "other": 574631,
+        "shopping": 200626,
         "work": 28868
       }
     }

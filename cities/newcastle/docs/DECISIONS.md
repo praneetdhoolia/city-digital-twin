@@ -82,6 +82,8 @@ its layout will otherwise cost you an hour:
 | **The iteration-200 gate loop: two causes found and repaired, neither by moving a parameter** | **§9.81** the ride ratchet — a missed pairing was MUTATING THE PLAN, deleting the alternative (95.7% of iteration-0 misses gone by iteration 1); the forced walk becomes an EXECUTION restored at `AfterMobsim`. **§9.82** the empty escort tours — 84.53% of escort trips car against 11.45% of escort-bound members riding; `EscortCoherenceListener` PROPOSES the coherent plan back, `ChangeExpBeta` decides. Families **F7**, **F8** |
 | **Which quantity a gate reading is taken on, and why the record's "car bias" was not one** | **§9.83** — `modestats` counts PLANNED modes; events give LEGS across five LGAs; `fit.py` scores linked main-mode TRIPS for target-LGA residents, and `<n>.trips.csv.gz` carries exactly that per iteration. Reading it inverts the car verdict (11.7% UNDER, not over) and shows bike+taxi fold into ONE target. `src/analyse/measure_iteration_modes.py`. **Corrects §9.82's probe reversal — it is the innovation cutoff at 0.8 × 8, not convergence** |
 | **The ride gap is a DEMAND CEILING, not a mode-choice defect** | **§9.83** — every B2 trip has `party_size = 1`; escort-bound travel is 5.4% of trips against an observed 20.6%; occupancy 1.0013 modelled vs the **measured** 1.3503. This is the measurement **§9.55** named as decisive, and the displaced mass lands in bike, taxi, walk and pt. The declared, swept lever is `B.activity.escort_binding_nonhh_scope` (§9.60) |
+| **The joint-tour binder, the gradient channel and the age gates (family F9)** | **§9.84** — the demand ceiling's mechanism: adult joint household travel generated as pairs, anchored on the measured occupancy ratio and the observed driver share, eligibility only; gradient into walk/bike link travel time on both router and mobsim sides; taxi/bike age gates, zero disables; the §9.60 scope lever measured as spent (98% consumed at `same_zone`); `--max-persons` probes are blind to household mechanisms |
+| **A declared pair is re-found by a clock the model itself moves (family F10)** | **§9.85** — the B2 binding tables name the driver and `build_matsim_plans.py` read that identity for SEEDING and then threw it away, so `RidePairingEngine` re-discovered declared pairs from geometry and a 15-minute window while MATSim's `TimeAllocationMutator` — at an UNDECLARED ±1800 s default — moved the two members apart independently. The driver is present, on car, on the same trip, and refused on the clock. `boundDriver` carries the identity; the tolerance for a declared pair is DERIVED from the mutation range |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -7520,6 +7522,150 @@ family's arm and nothing here is a result.
 
 ---
 
+## 9.85 The joint binding does not survive translation, and the pair is re-found with the clock the model itself moves (28 August 2026, twelfth session; issues #48, #86, #49, #50)
+
+The session's `/goal` restated the gate loop — read every 100 iterations, stop
+any mode heading past 20% deviation, fix the cause from the root, no
+workarounds and no biasing — and the F9 gate-2 arm
+(`20260828T111708_1000it_25pct`) reached iteration 100 while this session was
+opening. **The gate fired on all five scored categories** and the arm was
+stopped.
+
+### The gate reading
+
+Linked main-mode trips, Newcastle LGA residents, from `100.trips.csv.gz`
+through `fit.py`'s own `score_mode_share` (§9.83's basis, not `modestats`):
+
+| survey category | modelled | observed | deviation |
+|---|---:|---:|---:|
+| Other (`bike+taxi`) | 18.28 | 3.20 | **+471.2%** |
+| Public transport (`pt`) | 8.49 | 3.80 | **+123.4%** |
+| Vehicle driver (`car+motorbike`) | 47.57 | 59.00 | **−19.4%** |
+| Vehicle passenger (`ride`) | 4.87 | 20.60 | **−76.3%** |
+| Walk only (`walk`) | 20.79 | 13.40 | **+55.2%** |
+| **mean abs error, pp** | | | **10.864** |
+
+Per mode individually: car 47.41, walk 20.79, bike 9.79, taxi 8.49, pt 8.49,
+ride 4.87, motorbike 0.16, truck 0.00 (freight is not an LGA resident).
+
+**The gate-1 repair was inert.** Against `aborted_20260827T181709` at the same
+depth the driver-side pass of §9.84 moved the mean absolute error 10.920 →
+10.864 and ride 4.91 → 4.87 — 0.056 pp, and ride marginally *worse*. That
+inertness is the evidence that located the cause.
+
+### The cause: the binding is generated, then discarded at translation
+
+`ride` is not decaying because agents dislike it. **The seeded demand is
+right**: `modestats` at iteration 0 carries ride 0.1903 against an observed
+0.206. It decays to 0.1250 by iteration 100 because the pairing that has to
+realise it keeps failing — `pair_rate` 0.556 → 0.362,
+`occupancy_from_pairings` 0.3097 → 0.0956 against a **measured** 0.3503.
+
+All three B2 binding tables name the driver — `B2_joint_bindings` 70,964 rows,
+`B2_escort_bindings` 109,971, `B2_lift_bindings` 45,602. **`build_matsim_plans.py`
+read that identity to decide SEEDING and then dropped it**, so nothing in the
+MATSim population recorded that two people were ever a pair.
+`RidePairingEngine` therefore had to re-discover each pair from geometry plus
+`B.ride.pairing_window_min` (15 min) — and MATSim's own `TimeAllocationMutator`
+moves the two members independently, at a **±1800 s default that no registry
+field declared and no sweep covered**.
+
+Measured on the stopped arm at iteration 100, per binding table:
+
+| binding | ride legs | declared driver on the SAME OD by car | gap median | gap p90 | inside the 15-min window |
+|---|---:|---:|---:|---:|---:|
+| joint | 28,709 | 73.8% | 10.3 min | 45.1 min | **60.6%** |
+| escort | 26,410 | 67.4% | 23.1 min | 429.4 min | **42.6%** |
+| lift | 7,746 | 80.5% | 7.1 min | 76.3 min | **64.5%** |
+
+Across the joint table, 94.3% of companions still holding a `ride` leg had
+their declared driver on `car` *somewhere*, and 90.6% of same-OD declared
+drivers were on `car` for that very trip. **The driver is present, driving,
+making the same trip — and refused because the clock moved further than the
+tolerance.** This is also why both earlier repairs were inert: §9.82's
+passenger side and §9.84's driver side both re-identify through the same
+15-minute window the drift has already exceeded.
+
+### What was built (family F10)
+
+1. **The identity survives translation.** `build_matsim_plans.py` writes
+   `boundDriver` on every passenger any binding table names a driver for —
+   158,898 persons. Carrying only the joint table would have covered 46% of
+   the affected legs and left escort, the worst-hit, still on the clock.
+   No value is invented: this is information B2 already holds.
+2. **`RUN.replanning.time_mutation_range_s` is DECLARED** (1800 s, swept
+   [600, 1800], `timeAllocationMutator.mutationRange`, the group name verified
+   against `pt2matsim-26.6-shaded.jar`). It was reaching the mobsim as a
+   framework default — the undeclared modelling choice this registry exists to
+   prevent — and it is measured to be load-bearing on a quantity that is not
+   its own.
+3. **`B.ride.bound_pairing_window_min` is DERIVED from it**, by the identity
+   `bound_pairing_window_min = time_mutation_range_s / 60`. It relaxes
+   IDENTIFICATION only, for a pair the demand declares; `B.ride.pairing_window_min`
+   stays 15 min and still governs every pairing the engine must INFER.
+   Endpoints, vehicle capacity and physical boarding decide as before, and the
+   gap becomes waiting time the passenger pays for in score — so an
+   implausible pairing is refused by the scoring, not by a threshold. Setting
+   it equal to `pairing_window_min` recovers the pre-9.85 behaviour exactly,
+   and the config group REFUSES a bound window narrower than the inferred one:
+   a binding may not be a way to buy pairings.
+
+**A defect caught before it could report a false success.** The first build
+booked a declared pair on the wider window while `JointRideEngine` still
+bounded the passenger's *physical* wait by `windowMinutes`, so every pairing
+the binding recovered would have timed out at the meeting point — the pair
+rate would have risen while no additional passenger boarded, the trap-6/7
+class this repository has already been caught by twice. `Booking` now carries
+the tolerance it was made under. The probe that was running on the incomplete
+build was stopped and closed out with that as its cause;
+`aborted_20260828T203411` is the same session's earlier failure, a run that
+loaded the previously installed classes because the build had been compiled to
+a scratch directory (trap 9) and never installed.
+
+**The mechanism is inert where there is nothing to rescue**, which is what
+makes its effect measurable rather than assumed: two new telemetry columns,
+`paired_declared` and `paired_by_identity`, report how many pairings used a
+declared driver and how many of those the inference window alone would have
+refused. At **iteration 0, before any drift has occurred, `paired_by_identity`
+is 7** of 62,359 pairings — the mechanism does nothing until the mutator has
+moved somebody.
+
+### Found and NOT fixed: taxi is routed physically and simulated as a ghost (#88)
+
+`taxi` is in `RUN.routing.network_modes` but **not** in `RUN.qsim.main_mode`,
+so it is routed on the network and then handed to the teleportation engine:
+at iteration 100, **39,892 of 39,923 taxi legs (99.9%) produced a teleport
+arrival and none entered a link**, against car / bike / truck / motorbike
+which entered on every departure. The declared taxi `vehicleType` — length
+7.5 m, PCE 1.0 — is never instantiated, and every road link already permits
+`taxi`. `RUN.qsim.main_mode`'s description justifies each inclusion and
+explains `ride`'s exclusion but does not mention taxi; §9.77 added taxi to
+the two RUN vocabularies and `city.json` and appears to have missed this one.
+
+**What is NOT claimed.** The teleport is not a scoring hole: the leg carries
+the router's congested time and its route distance (median 13,343 m), so the
+IPART per-km rate and the `FareChargeHandler` flagfall are both scored. This
+is a physical-fidelity and road-capacity defect — ~40,000 vehicle-trips per
+iteration at PCE 1.0 missing from the network — not the cause of the `Other`
+excess, and it must not be offered as one. Filed as **#88** and deliberately
+left out of F10: it is a network-loading boundary, and folding it in would
+have made the pairing repair's effect unattributable.
+
+### Family F10
+
+The population gains an attribute and the pairing gains an identity; the
+mutation range becomes declared. All activate as ONE boundary — family
+**F10** — and nothing run on the regenerated population compares to F9.
+Registry 370 → **372**, ledger 0, doc-currency 0.
+
+**Nothing here is a result.** No arm has run to a gate on this boundary, no
+`_run.json` exists in F10, no target moved, no threshold was invented, the
+67/143 holdout split is untouched, and the effect of the repair is **not yet
+measured** — the numbers above are the DIAGNOSIS, taken from the stopped F9
+arm.
+
+---
+
 ## 10. Scenario construction (E1)
 
 All ten scenarios derive from `schedules/base2026.zip` by explicit transformation,
@@ -8441,10 +8587,253 @@ is a result**: no converged arm exists in F7 or F8, and no `_run.json` was writt
 
 ---
 
+## 9.84 The demand ceiling gets its mechanism, gradient gets its channel, and the age gates close (27 August 2026, eleventh session; issues #86, #48, #49, #50, #21)
+
+The session's `/goal` renewed the gate-loop directive — every 100 iterations,
+stop on any mode heading past 20% deviation, fix the cause from the root, no
+workarounds, no biasing, data and parameter tuning only — and authorised the
+decisions §9.83 left open. This section records the three root-cause builds
+made under it, one measurement that settled a §0 decision without a run, and
+the family boundary they form. **Nothing here is a result**: every number is
+an input, a build report figure, or a measurement of an earlier arm.
+
+### The scope decision is settled by measurement: the lever was already spent
+
+The tenth session's active lane was "widen `B.activity.escort_binding_nonhh_scope`
+(§9.60) from `same_zone`". Read from `_activity_chains_report.json` before
+anything was built: the §9.60 lift pass binds **49,030 of 50,014 unbound HX
+tours (98.0%) at `same_zone`** on WEEKDAY (SAT 27,808/28,566; SUN 19,808/20,566),
+against 126,321 passenger candidates. **The binding constraint is DRIVER SUPPLY
+— the observed serve-passenger rate — not matching scope.** Widening the scope
+enum could add at most ~2% more bindings (~0.08% of trips) against a ~15 pp
+shortfall. The scope stays `same_zone`; the field and its sweep are unchanged;
+the decision consumed no run.
+
+### M4, the joint-tour binder: the party the generator never created (#86, #48)
+
+§9.83 located the residual ride gap as a DEMAND CEILING — all 2,343,321 B2
+trips carried `party_size = 1`, so the model structurally could not supply the
+observed 20.6% vehicle-passenger share however well the escort machinery
+worked. The missing travel is not chauffeuring (HX carries that at its
+observed rate): it is ADULTS TRAVELLING TOGETHER — the shopping trip made in
+one car, the social visit as a couple. `bind_joint_tours`
+(`build_activity_chains.py`), the third binder pass on the closed day file:
+
+- **Candidates**: a household companion's own drawn direct tour of a shareable
+  purpose (`B.activity.joint_tour_purposes`, assumed, swept — HS/HO; HW and
+  HE excluded in every sweep option because the one observed commute cell,
+  G62 car-as-passenger 3.35% of JTW, says commute joint travel is rare) and a
+  licensed co-member's direct tour of a shareable purpose.
+- **Binding**: the companion's tour becomes a MIRROR of the driver's — same
+  endpoints, same times, `party_size = 2` on both sides, `dest_placement =
+  joint` on the outbound leg (a copy of the driver's own drawn destination,
+  exactly the `escorted` sense; excluded from the drawn-share assertion in
+  `check_package.py` on the same ground). ADDS NO TRIP: one activity is
+  relocated to be done jointly. The #65 contiguity invariant is asserted
+  before the file is written.
+- **Volume**: anchored on two observed quantities and one identity.
+  `B.activity.joint_tour_passenger_ratio` = 0.3503 is **derived** from the
+  measured occupancy constraint (`C.constraint.vehicle_occupancy` 1.3503,
+  HTS 2024/25 driver+passenger trip counts) as occupancy − 1; it multiplies
+  the observed HTS Vehicle-driver share (`hts_car_driver_share()`, already a
+  generator input); and the escort- and lift-covered trips already generated
+  count toward the target FIRST. Deterministic seeded thinning to the target.
+  **No new number enters the model.**
+- **Eligibility, not outcome**: `build_matsim_plans` seeds the companion tour
+  as `B.mode.bound_passenger_seed` (ride) and the driver tour as car (the
+  serve-tour rule — the pairing engine pairs ride legs with CAR legs only);
+  the physical pairing, boarding and ChangeExpBeta still decide what
+  realises. The scored share stays emergent, so the fit remains a real test —
+  the model can still fail it by under- or over-realising the eligibility.
+- **Runtime coherence**: per-agent replanning splits a generated pair exactly
+  as it split the escort pairs (§9.82), so `EscortCoherenceListener` gains a
+  JOINT path — any household car leg whose endpoints a co-member's trip
+  shares within the declared window, whatever activity it arrives at, at
+  `B.ride.joint_coherence_rate` (assumed, swept [0, 0.5], **zero recovers the
+  escort-only behaviour exactly**). On the joint path the offer extends to
+  car-available adults — they ARE the generated population — where the escort
+  path keeps its unlicensed-only guard.
+- **Parties and negotiated timing, each forced by a measurement.** The first
+  build bound one companion to one driver tour, once per person, nearest
+  departure first: 52,713 of 114,820 WEEKDAY candidates. Allowing the party
+  (several companions in one car, capped by the declared
+  `B.ride.max_passengers_per_vehicle`) and repeat bindings against properly
+  tracked re-timed intervals: 59,752 of 146,001. Trying EVERY household
+  driver tour instead of only the nearest: 63,360 of 201,931 — which located
+  the true constraint as TEMPORAL: for two-thirds of companion tours no
+  household driver tour fits the companion's day as independently drawn.
+  Joint travel is a negotiated departure, and the §9.60 M1 binder already
+  re-times a serve tour to its passenger's departure exactly — so the same
+  move lands here: an unloaded driver tour may be rigidly SHIFTED into the
+  slot the companion's replaced tour vacates (durations preserved, no
+  constant restated, the driver's own day and the horizon both checked, the
+  #65 contiguity assertion over every re-sorted day). Final WEEKDAY
+  attainment: **74,663 bindings (16,473 by shift), coordinated supply
+  251,632 trips = 56% of the 448,229-trip occupancy target — ~11.5% of core
+  trips ride-eligible against the 4.7% the escort path alone supplied.**
+  **The household-only mechanism saturates here**: two members of one
+  household must share a free window, and with independently drawn days
+  they often do not. The remaining ~9 pp of the observed vehicle-passenger
+  share is non-household joint travel — the #86 decision the queue already
+  names — or unreachable, and the F9 arm measures which.
+
+### Gradient reaches link travel time, as physics (#21)
+
+§9.83 measured the cost of `not_representable`'s honest register line: 30.5%
+of 50,182 road edges exceed 4% grade while modelled bike trips ran 9.21 km /
+41.7 min against a measured 5.2 / 19.2. Built, behind the one-gate discipline
+(`A.gradient.representation`, `absent` recovering the flat network exactly):
+
+- `build_matsim_run_inputs.py` stamps a signed `grade_pct` attribute on every
+  run-network link from the **node elevations** the A1/A6 layers already
+  carry — matching by node identity survives pt2matsim's re-segmentation
+  (measured on the S0 network: whole-edge matching reached 34.9% of links;
+  node matching 78.6%, and 81.9% of walk/bike-capable links). Clamped by
+  `A.gradient.grade_clamp_pct` (node differencing over very short links
+  produces outliers no street sustains — p99 32.5%, max 283% unclamped).
+  A link without both endpoint elevations stays flat and is counted.
+- `citysim.GradientLinkSpeed` converts grade to a speed factor with ONE
+  formula and two consumers — the router (`Router`, the
+  `CappedSpeedTravelTime` discipline times the factor) and the mobsim
+  (`Mobsim`, a `LinkSpeedCalculator`) — so estimate and physics cannot
+  drift. Walk takes the Tobler hiking function (Tobler 1993, the same
+  published source that produced A6's own `walk_speed_factor` columns;
+  coefficient and offset declared, literature, swept). Bike takes a linear
+  slowdown per grade percent (Parkin & Rotheram 2010; slowdown, speedup,
+  floor and ceiling all declared and swept). Nothing is a behavioural
+  weight: a cyclist genuinely climbs slower, and the extra seconds are
+  priced by the mode's own scoring parameters.
+- **The signals stack needed its own seam.** The core injects
+  `Multibinder<LinkSpeedCalculator>` into `DefaultQNetworkFactory`, which the
+  non-signal stack uses — but the contrib's `QSignalsNetworkFactory` news its
+  link delegate PAST Guice, so a calculator added there is silently dropped
+  on a signals run, and replacing the factory wholesale would silently drop
+  every signal instead. `GradientSignalsNetworkFactory`
+  (`src/java_signals/qnetsimengine/`, in the package because the node-side
+  classes are package-private) ports the signals factory's node logic
+  verbatim from the pinned jar — signals turn acceptance per the declared
+  intersection logic — and swaps only the link delegate for the public
+  `ConfigurableQNetworkFactory` carrying the gradient calculator. Lanes are
+  refused loudly rather than half-ported. A toolchain change invalidates the
+  port by construction, and a toolchain change is already a recorded model
+  change (§14).
+
+### The age gates (#49, #50)
+
+Taxi was gated by NOTHING and `age` was consulted by nothing — 0–4 year olds
+hailed 19.5% and cycled 31.1% of their trips on the F7 arm, bounding the two
+gates together at 19% of the `Other` excess. No mode × age cell exists in the
+held data, so both thresholds are ASSUMED, declared, labelled and swept with
+**zero disabling the gate**: `B.taxi.min_unaccompanied_age` (18, swept
+[0, 18]) and `B.population.bike_min_age` (12, swept [0, 16], composing with
+the CWANZ ownership draw). Consumed by `AvailabilityModesCalculator` against
+the person's own `age` attribute through the new `modeAvailability` config
+module. No threshold is fitted to any target.
+
+### The availability contract was porous on half the innovations: MATSim's single-trip path never consults the calculator
+
+The first F9 probe (`20260827T152032_8it_25pct`, 8 × 25%, rc 0) measured the
+age gates and found bike under-12 at exactly **zero** but taxi under-18 at
+**747 trips — 5.5% of all taxi, spread uniformly over ages 0–17**. The
+cause is a STOCK seam, read from the pinned jar's bytecode: with
+`subtourModeChoice.probaForRandomSingleTripMode` at the declared 0.5, half
+of all mode innovations run through `ChooseRandomSingleLegMode`, which is
+constructed from the raw non-chain mode array and **never consults
+`PermissibleModesCalculator`** — the calculator gates only the subtour
+choice-set path. Every per-person availability rule this project has built
+on that calculator was porous there: the same seam has leaked `ride` to
+persons with nobody to drive them since §9.11, invisibly, because an
+unpaired ride re-modes to physical walk and prices itself out; bike never
+leaked because bike is chain-based and the single-trip path deals only in
+non-chain modes.
+
+**`GatedSubtourModeChoice`** closes it at the citysim seam: the stock
+strategy chain, with one addition — after the stock algorithm runs, a trip
+now carrying a mode the calculator does not permit is REVERTED to its
+pre-innovation main mode. The single-trip path changes exactly one trip, so
+the revert restores the valid pre-innovation plan and the refused draw is a
+no-op; the subtour path draws from the filtered choice set and can never
+trigger it. **When nothing is impermissible the wrapper changes nothing** —
+stock behaviour recovered exactly. No draw is re-rolled and no distribution
+reweighted: an illegal proposal is refused, never replaced. Verified on a
+second probe before any arm.
+
+### Gate 1 on the F9 arm: the driver's half of the pair was unreachable
+
+The second F9 arm (`20260827T181709`, launched after the coordDistance fix)
+passed the previous crash depth and ran to the iteration-100 gate. Scored on
+the fit basis, F9 beat F8 on EVERY mode at equal depth — ride 4.91 vs 2.05,
+Other 18.26 vs 21.96-class, MAE 10.920 at it.100 against F8's 10.348 at
+it.150 — and the gate still fired: **ride was >20% off and heading away**
+(9.09 → 5.92 → 4.91 across iterations 1/50/100, a ~36-iteration half-life)
+while taxi rose. The arm was stopped at the gate
+(`aborted_20260827T181709_1000it_25pct`).
+
+`ride_pairing.csv` locates the decay. The pair rate among persistent ride
+plans is STABLE (~0.36 from iteration 10) — plans are being ABANDONED, and
+the misses say why: at iteration 100, **52% are `miss_endpoints`** — the
+household no longer holds ANY car leg matching the trip, because
+SubtourModeChoice moved the DRIVER's tour off car and the driver's own score
+never sees the passenger's loss — with 26% `miss_window` (TimeAllocationMutator
+walking the two departures apart) behind it. This is §9.82's empty-escort
+wound generalised: a pair is ONE choice made by two agents, and while only
+the passenger half could be re-proposed, the coherent state was structurally
+unreachable whenever the driver left.
+
+**The driver side becomes proposable** (superseding §9.82's driver-is-never-
+touched clause on this measurement): for a planned ride no household car leg
+serves, the listener finds the member whose own non-car trip matches it and
+proposes THAT member's home-anchored subtour back to car — under the enforced
+subtour structure, at the same declared rates, scored by ChangeExpBeta on the
+driver's own plan, zero still recovering the one-sided behaviour exactly.
+`miss_window` is deliberately not addressed in the same change: one
+mechanism per arm, and the endpoint channel is twice its size.
+
+Also measured on this arm: the §9.36/#66 stall class recurred at scale —
+iteration 71 took **23,916 s (6.6 h)** and iteration 72 another 1.8 h against
+a 282 s median, self-recovering, still unattributed.
+
+### A probe blindness found on the way: `--max-persons` cannot see households
+
+`build_activity_chains.py --max-persons N` samples `persons.iloc[::step]` — a
+stride across the whole population that keeps AT MOST ONE MEMBER PER
+HOUSEHOLD. Measured at 20,000 persons: 5,833 multi-member households exist in
+a contiguous 20,000-person prefix, yet the strided sample held **zero**, so
+`HX bound = 0` (against 72% at full scale) and every intra-household
+mechanism — escort binding, joint binding — is structurally invisible to such
+a probe **while the run completes happily**. The pre-change baseline shows
+the identical zero, so nothing regressed; but a max-persons probe is BLIND to
+household mechanisms and must never be read as evidence about them (the trap-4
+class: a probe too small to see a defect will pass).
+
+### Family F9
+
+The joint tours change the demand and the plans; the gradient changes the
+network attributes and the physics; the gates change the choice sets. All
+activate as ONE boundary — family **F9**, declared in
+[`run_families.json`](../audit/run_families.json) — and nothing run on the
+regenerated inputs compares to F6/F7/F8. Registry 357 → **370** (+13: the
+ratio, purposes, joint rate, two age gates, the gradient gate, four bike
+factors, two Tobler constants, the clamp), ledger 0, reach 102/102.
+
+### What this deliberately does not do
+
+No mode constant moved. No behavioural weight was added. The scored
+vehicle-passenger share was not written into the generator — the anchor is
+the occupancy constraint's ratio and the observed driver share, the binder
+supplies eligibility, and realisation stays emergent. The 67/143 split is
+untouched. The measured occupancy constraint keeps its constraint role: the
+arm's realised occupancy is REPORTED against [1.2493, 1.394], and an arm that
+overshoots it is a failed arm, not a success.
+
+---
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-28 | **The joint binding does not survive translation, and the pair is re-found with the clock the model itself moves (§9.85; issues #48, #86, #49, #50; twelfth session).** The F9 gate-2 arm was stopped on the iteration-100 gate with all five scored categories past 20% — Other +471.2%, pt +123.4%, driver −19.4%, ride −76.3%, walk +55.2%, mean abs error 10.864 pp — and §9.84's driver-side pass measured INERT against the previous arm at equal depth (10.920 → 10.864, ride 4.91 → 4.87). The located cause: all three B2 binding tables NAME the driver, `build_matsim_plans.py` read that identity for seeding and DISCARDED it, so `RidePairingEngine` re-discovered every declared pair from geometry plus a 15-minute window — while MATSim's `TimeAllocationMutator`, at an UNDECLARED ±1800 s default, moved the two members apart independently. Measured: 73.8% (joint) / 67.4% (escort) / 80.5% (lift) of bound ride legs still had their declared driver on the same OD BY CAR, but only 60.6% / 42.6% / 64.5% fell inside the window. The driver is present, driving the same trip, and refused on the clock — which is why §9.82's and §9.84's repairs were both inert, each re-identifying through the window the drift had already exceeded. Built as family **F10**: `boundDriver` carries the identity for all three tables (158,898 persons); `RUN.replanning.time_mutation_range_s` is declared and swept; `B.ride.bound_pairing_window_min` is DERIVED from it, relaxing IDENTIFICATION only, with the inferred window unchanged at 15 min and a bound window narrower than it REFUSED. Caught before it could report a false success: `JointRideEngine` still bounded the physical wait by the narrow window, so the pair rate would have risen while nobody boarded (trap 6/7) — `Booking` now carries its own tolerance. At iteration 0, before any drift, `paired_by_identity` is 7 of 62,359. Registry 370 → **372**, ledger 0, doc-currency 0. **Nothing here is a result**: no arm has reached a gate on this boundary and the repair's effect is not yet measured. |
+| 2026-08-27 | **The demand ceiling gets its mechanism, gradient gets its channel, and the age gates close (§9.84; issues #86, #48, #49, #50, #21; eleventh session).** Three root-cause builds under the renewed gate-loop `/goal`, forming family **F9**: `bind_joint_tours` generates adult joint household travel as pairs — companion tours mirroring a co-member driver's tour, `party_size` 2, volume anchored on the measured occupancy ratio (0.3503 passengers per driver trip, derived) times the observed driver share with escort/lift coverage counted first, eligibility only, realisation emergent; gradient reaches walk/bike link travel time on BOTH router and mobsim sides (`grade_pct` stamped from A1/A6 node elevations, 81.9% of walk/bike links matched; Tobler for walk, Parkin & Rotheram for bike, all constants declared and swept; `GradientSignalsNetworkFactory` ports the signals node logic so signals and gradient survive together); and the taxi/bike age gates land as declared, swept, zero-disables fields. One §0 decision settled by measurement WITHOUT a run: the §9.60 non-household scope lever was already 98% consumed at `same_zone` — the binding constraint is driver supply, so the scope stays. Found: `--max-persons` probes stride-sample one member per household and are structurally BLIND to every intra-household mechanism. Registry 357 → **370**, ledger 0, reach 102/102. The scored share was not written into the generator; occupancy keeps its constraint role. Nothing here is a result. |
 | 2026-08-27 | **The gate was being read on the wrong quantity, and the ride gap is a demand ceiling (§9.83; issues #48, #49, #50, #30; tenth session).** No run was launched and no model or data value changed. The §9.81/§9.82 gate loop had been reading whole-scenario LEG counts (`modestats` planned, or events realised) while `fit.py` scores linked main-mode TRIPS for target-LGA residents; MATSim's per-iteration `<n>.trips.csv.gz` carries that quantity and was present in every arm at iterations 0, 1, 50, 100, 150. New `src/analyse/measure_iteration_modes.py` reads it through `fit.py`'s OWN `score_mode_share`. **This inverts one verdict — car is not over-chosen but 11.7% UNDER (52.12 vs 59.00)** — and shows `fit.py` folds bike and taxi into ONE target, so the two over-chosen modes compound into a +18.11 pp miss. Scored at iteration 150, mean abs error **10.991 (F6 unfixed) → 10.460 (§9.81) → 10.348 (§9.82)**: both repairs work, every category improved, none regressed, ride 0.61 → 1.39 → 1.61, and together they close 7.8% of the ride gap. **CORRECTION to §9.82, which stays as written**: its 8-iteration probe's pair-rate "reversal" is the innovation cutoff at 0.8 × 8 = 6.4, not convergence — the 1000-iteration arm kept falling through the same iterations. The residual is a DEMAND CEILING, not a choice defect: **every B2 trip has `party_size = 1`**, escort-bound travel is 5.4% of trips against an observed 20.6% vehicle-passenger share, and two measured observations agree (occupancy 1.0013 vs the measured 1.3503; ride 1.61% vs 20.60%). This is the measurement §9.55 named as decisive, and the displaced mass lands in bike +8.82, taxi +9.29, walk +4.12 and pt +3.64 pp. Two further causes measured and NOT acted on: **taxi is gated by nothing** and `age` reaches nothing (0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess); **gradient reaches mode choice through nothing** on a network where 30.5% of 50,182 edges exceed 4% grade, with modelled bike trips at 9.21 km / 41.7 min against a measured 5.2 km / 19.2 min. The F8 arm was stopped on instruction at iteration 163 of 1000, before its gate, and closed out as `aborted_20260826T233658_1000it_25pct` with a measured cause. No target moved, no threshold invented, the 67/143 split is untouched, nothing here is a result. |
 | 2026-08-26 | **The escort drives and the escorted cycles (§9.82; issues #48, #50, #30; ninth session).** The §9.81 arm was stopped at its iteration-200 gate: the ride-alternative restore WORKED (ride legs 87,019 / 85,873 / 86,118 against the unfixed 28,228 / 25,889) and was NOT SUFFICIENT - realised car 47.90, bike 9.97, taxi 8.36, ride 0.95. F7 and the unfixed arm agreed within 0.15 pp on car, bike, taxi and pt while ride and walk traded ~10 pp, which is how the second cause became visible. Measured at iteration 150: **84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride** - the escort tours run empty, suppressing ride and inflating car and bike together. B2 generates escort travel as a pair and SubtourModeChoice moves one agent at a time, so no per-agent strategy can propose the two-sided state. `EscortCoherenceListener` PROPOSES the coherent plan back and ChangeExpBeta decides; the driver is never touched. The only assertion is that two people travelling together travel by the same means. `B.ride.escort_coherence_rate` is a SEARCH rate whose zero recovers the previous behaviour exactly. Registry 356 -> 357, reach 92/92. Family **F8** declared. Nothing here is a result. |
 | 2026-08-26 | **A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (§9.81; issues #48, #49, #30; ninth session).** The first F6 arm was stopped by instruction at iteration 200 with car 54.33%, ride 0.41% and taxi 9.47% (whole-scenario legs). `RidePairingEngine` was MUTATING THE PLAN when a ride leg failed to pair - 95.7% of the 61,409 iteration-0 misses were gone by iteration 1 and never returned, an exponential decay with a 36-iteration half-life toward the pre-repair 0.0013 occupancy. Those destroyed legs were 23.5% of all walk legs as ~9.7 km forced walks, the pool replanning turned into taxi. The forced walk is now an EXECUTION, restored at AfterMobsim so the walk is still scored and the alternative is still there; §9.55 is kept, no parameter moved. A window hypothesis was REFUSED BY MEASUREMENT (median gap 253.7 min; widening 15->60 would recover 13 legs of 1,529), and the funnel reordered geometry-first. Family **F7** declared. Nothing here is a result. |

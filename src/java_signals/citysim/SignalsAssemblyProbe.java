@@ -127,6 +127,13 @@ public final class SignalsAssemblyProbe {
                 buildSignalsData(signalsConfig,
                         DefaultPlanbasedSignalSystemController.IDENTIFIER));
         new Signals.Configurator(controler);
+        // The gradient factory (DECISIONS.md 9.84): this probe's config
+        // declares gradient.representation = link_speed and stamps a +10%
+        // grade on link2, so the run below proves the ported
+        // GradientSignalsNetworkFactory keeps the signal gating THE
+        // ASSERTIONS BELOW MEASURE while the walker slows by exactly the
+        // declared Tobler factor - both halves alive in one mobsim.
+        CitysimSignalsControler.installGradientIfDeclared(controler);
 
         final ProbeHandler handler = new ProbeHandler();
         controler.addOverridingModule(new AbstractModule() {
@@ -190,8 +197,29 @@ public final class SignalsAssemblyProbe {
         // (d) the walk agent finished its walk leg on the toy's network
         final boolean walkCompleted = handler.walkerArrived;
 
-        final boolean ok =
-                redGates && greenReleases && dischargeOk && walkCompleted;
+        // (e) gradient composes with signals (DECISIONS.md 9.84): the walker
+        // crossed the +10% link2 at the declared cap times the Tobler
+        // factor - computed by the SAME GradientLinkSpeed.factor the mobsim
+        // ran, so the assertion is that execution matches the one formula.
+        // Departure 5.0; the home link is not traversed, so the walk
+        // duration is link2's 100 m at the graded speed plus insertion
+        // granularity.
+        final GradientConfigGroup gradientCfg = (GradientConfigGroup)
+                controler.getConfig().getModules()
+                        .get(GradientConfigGroup.NAME);
+        final Link gradedLink = scenario.getNetwork().getLinks()
+                .get(Id.createLinkId(LINK_OUT));
+        final double gradeFactor =
+                GradientLinkSpeed.factor("walk", gradedLink, gradientCfg);
+        final double expectedWalkS = 100.0 / (1.34 * gradeFactor);
+        final Double walkDur = handler.walkerArrivalTime == null ? null
+                : handler.walkerArrivalTime - 5.0;
+        final boolean gradeRead = gradeFactor < 0.8;
+        final boolean walkSlowed = walkDur != null
+                && Math.abs(walkDur - expectedWalkS) <= 3.0;
+
+        final boolean ok = redGates && greenReleases && dischargeOk
+                && walkCompleted && gradeRead && walkSlowed;
         final StringBuilder json = new StringBuilder();
         json.append("{\"probe\": \"SignalsAssemblyProbe\"");
         json.append(", \"red_gates_buffer\": ").append(redGates);
@@ -208,6 +236,11 @@ public final class SignalsAssemblyProbe {
         }
         json.append("}");
         json.append(", \"walk_agent_completed\": ").append(walkCompleted);
+        json.append(", \"walk_grade_factor\": ").append(gradeFactor);
+        json.append(", \"walk_duration_s\": ").append(walkDur);
+        json.append(", \"walk_expected_graded_s\": ").append(expectedWalkS);
+        json.append(", \"grade_read\": ").append(gradeRead);
+        json.append(", \"walk_slowed_to_formula\": ").append(walkSlowed);
         json.append(", \"car_on_green_left_at_s\": ").append(carALeave);
         json.append(", \"car_on_red_left_at_s\": ").append(carBLeave);
         json.append(", \"next_green_onset_after_red_arrival_s\": ")
@@ -258,6 +291,12 @@ public final class SignalsAssemblyProbe {
                 withWalk ? Set.of("car", "walk") : Set.of("car");
         addLink(net, LINK_SIGNAL, n1, n2, modes);
         addLink(net, LINK_OUT, n2, n3, modes);
+        // DECISIONS.md 9.84: a +10% grade on the walker's link, read only
+        // when the config declares gradient.representation = link_speed -
+        // the TramPriorityProbe shares this toy with the module absent and
+        // the attribute is then inert data
+        net.getLinks().get(Id.createLinkId(LINK_OUT)).getAttributes()
+                .putAttribute(GradientConfigGroup.GRADE_ATTRIBUTE, "10.0");
         // return links: the router refuses a mode network that is not
         // strongly connected; nothing drives back in this probe
         addLink(net, LINK_SIGNAL + "r", n2, n1, modes);
@@ -296,13 +335,20 @@ public final class SignalsAssemblyProbe {
         // a FRESH config for the file: the one the scenario container was
         // created from is locked against input-file changes by then
         final Config runConfig = ConfigUtils.createConfig();
-        configureToy(runConfig, dir, withWalk);
+        configureToy(runConfig, dir, withWalk, true);
         new ConfigWriter(runConfig).write(dir.resolve("config.xml").toString());
+    }
+
+    /** The tram probe's form: no walk agent, no gradient module. */
+    static void configureToy(final Config config, final Path dir,
+                             final boolean withWalk) {
+        configureToy(config, dir, withWalk, false);
     }
 
     /** The run config for the toy; file names are config-dir relative. */
     static void configureToy(final Config config, final Path dir,
-                             final boolean withWalk) {
+                             final boolean withWalk,
+                             final boolean withGradient) {
         config.network().setInputFile("network.xml");
         config.plans().setInputFile("plans.xml");
         config.vehicles().setVehiclesFile("vehicles.xml");
@@ -357,6 +403,23 @@ public final class SignalsAssemblyProbe {
                 new org.matsim.core.config.ConfigGroup("telemetry");
         telemetry.addParam("liveIntervalS", "3600");
         config.addModule(telemetry);
+        if (withGradient) {
+            // The declared 9.84 gradient regime, as the run-input builder
+            // emits it. Toy literals like every other number in this probe:
+            // the assertion compares execution against the ONE shared
+            // formula, not against a registry value.
+            final org.matsim.core.config.ConfigGroup gradient =
+                    new org.matsim.core.config.ConfigGroup(
+                            GradientConfigGroup.NAME);
+            gradient.addParam("representation", "link_speed");
+            gradient.addParam("bikeUphillSlowdownPerPct", "0.065");
+            gradient.addParam("bikeDownhillSpeedupPerPct", "0.015");
+            gradient.addParam("bikeFloorFactor", "0.2");
+            gradient.addParam("bikeCeilingFactor", "1.3");
+            gradient.addParam("walkToblerSlopeCoeff", "3.5");
+            gradient.addParam("walkToblerOffset", "0.05");
+            config.addModule(gradient);
+        }
     }
 
     private static void addLink(final Network net, final String id,
@@ -452,6 +515,7 @@ public final class SignalsAssemblyProbe {
         private final Set<Id<Vehicle>> carVehicles = new java.util.TreeSet<>();
         private final List<double[]> stateChanges = new ArrayList<>();
         boolean walkerArrived;
+        Double walkerArrivalTime;
 
         Id<Vehicle> vehicleOf(final String person) {
             return this.vehicleOfPerson.get(person);
@@ -502,6 +566,7 @@ public final class SignalsAssemblyProbe {
             if ("walker".equals(event.getPersonId().toString())
                     && "walk".equals(event.getLegMode())) {
                 this.walkerArrived = true;
+                this.walkerArrivalTime = event.getTime();
             }
         }
 
@@ -518,6 +583,7 @@ public final class SignalsAssemblyProbe {
             this.carVehicles.clear();
             this.stateChanges.clear();
             this.walkerArrived = false;
+            this.walkerArrivalTime = null;
         }
     }
 }

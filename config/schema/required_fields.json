@@ -4,15 +4,15 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 357,
+  "n_fields": 372,
   "n_by_layer": {
-    "A": 113,
-    "B": 83,
+    "A": 121,
+    "B": 89,
     "C": 57,
     "CAL": 6,
     "D": 5,
     "E": 26,
-    "RUN": 67
+    "RUN": 68
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -218,6 +218,78 @@
       "units": "enum",
       "type": "string",
       "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.bike_downhill_speedup_per_pct": {
+      "layer": "A",
+      "units": "share_of_flat_speed_per_pct",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.bike_speed_ceiling_factor": {
+      "layer": "A",
+      "units": "share",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.bike_speed_floor_factor": {
+      "layer": "A",
+      "units": "share",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.bike_uphill_slowdown_per_pct": {
+      "layer": "A",
+      "units": "share_of_flat_speed_per_pct",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.grade_clamp_pct": {
+      "layer": "A",
+      "units": "percent",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.representation": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.walk_tobler_offset": {
+      "layer": "A",
+      "units": "gradient_fraction",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.gradient.walk_tobler_slope_coeff": {
+      "layer": "A",
+      "units": "dimensionless",
+      "type": "number",
+      "source_in_reference_city": "literature",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
@@ -1185,6 +1257,24 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.activity.joint_tour_passenger_ratio": {
+      "layer": "B",
+      "units": "passenger_trips_per_driver_trip",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.activity.joint_tour_purposes": {
+      "layer": "B",
+      "units": "enum_list",
+      "type": "array",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.activity.p_intermediate_stop": {
       "layer": "B",
       "units": "probability",
@@ -1599,6 +1689,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.population.bike_min_age": {
+      "layer": "B",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.population.build_sample_share": {
       "layer": "B",
       "units": "share_of_population",
@@ -1626,7 +1725,25 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.ride.bound_pairing_window_min": {
+      "layer": "B",
+      "units": "minutes",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.ride.escort_coherence_rate": {
+      "layer": "B",
+      "units": "share_per_iteration",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.ride.joint_coherence_rate": {
       "layer": "B",
       "units": "share_per_iteration",
       "type": "number",
@@ -1757,6 +1874,15 @@
       "units": "{currency}",
       "type": "number",
       "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.min_unaccompanied_age": {
+      "layer": "B",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -2991,6 +3117,15 @@
       "type": "array",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.replanning.time_mutation_range_s": {
+      "layer": "RUN",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },

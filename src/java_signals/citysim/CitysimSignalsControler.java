@@ -92,6 +92,43 @@ public final class CitysimSignalsControler {
                 TramPriorityController.IDENTIFIER,
                 TramPriorityController.Factory.class);
 
+        // Gradient in walk/bike link speed under signals (DECISIONS.md 9.84,
+        // #21). The contrib's QSignalsNetworkFactory news its link delegate
+        // past Guice, so the core Multibinder seam the base stack uses never
+        // reaches a signals run. This overriding QSim module - installed
+        // AFTER the configurator so it wins the QNetworkFactory binding -
+        // swaps in GradientSignalsNetworkFactory: the signals node logic
+        // ported verbatim, the link delegate carrying the gradient
+        // calculator. The SignalsAssemblyProbe discipline applies: no
+        // scenario touches this before a probe has measured signals alive
+        // AND bike slowed on grade.
+        installGradientIfDeclared(controler);
+
         controler.run();
+    }
+
+    /**
+     * Bind the gradient-aware signals network factory when the config
+     * declares {@code gradient.representation = link_speed}; a no-op
+     * otherwise. Shared with {@link SignalsAssemblyProbe}, which proves the
+     * composition — signals still gating, walk slowed on grade — before any
+     * scenario runs it.
+     */
+    public static void installGradientIfDeclared(final Controler controler) {
+        final GradientConfigGroup gradient = (GradientConfigGroup)
+                controler.getConfig().getModules().get(GradientConfigGroup.NAME);
+        if (gradient == null || !gradient.isLinkSpeed()) {
+            return;
+        }
+        controler.addOverridingQSimModule(
+                new org.matsim.core.mobsim.qsim.AbstractQSimModule() {
+            @Override
+            protected void configureQSim() {
+                bind(org.matsim.core.mobsim.qsim.qnetsimengine
+                        .QNetworkFactory.class)
+                        .toProvider(GradientSignalsNetworkFactoryProvider
+                                .class);
+            }
+        });
     }
 }

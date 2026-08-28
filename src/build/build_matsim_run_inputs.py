@@ -60,6 +60,12 @@ from registry import param_config as _param_config  # noqa: E402
 
 MATSIM = _city.path('networks/matsim')
 PATCHES = _city.path('data/processed/network/A1_road_variant_patches.csv')
+# DECISIONS.md 9.84 (issue #21): the P2 elevation layers, read for their node
+# elevations so every run-network link can carry a signed grade - matching by
+# node identity survives pt2matsim's re-segmentation, where matching whole
+# edges (measured) reached only 34.9% of links against 78.6% by node.
+ROAD_EDGES = _city.path('data/processed/network/A1_road_edges.csv')
+FOOTWAY_EDGES = _city.path('data/processed/network/A6_footway_edges.csv')
 E1 = _city.path('scenarios/E1_scenarios.csv')
 PARAMS = _city.path('params/C1_parameters.json')
 PLANS = _city.path('demand/plans/matsim')
@@ -701,6 +707,72 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
     return dict(applied)
 
 
+def stamp_gradients(net_path, clamp_pct):
+    """Stamp a signed `grade_pct` attribute on every run-network link whose
+    endpoint elevations the P2 layers hold (DECISIONS.md 9.84, issue #21).
+
+    The grade is DERIVED per link from the node elevations the A1/A6 edge
+    tables already carry (copernicus_glo30): (elev[to] - elev[from]) /
+    length, positive climbing in the link's direction of travel, clamped by
+    the declared `A.gradient.grade_clamp_pct` (node differencing over very
+    short links produces outliers no street sustains). A link without both
+    endpoint elevations gets NO attribute and is flat to the consumer -
+    counted, never hidden. Near-flat links (|grade| < 0.05%) are left
+    unstamped: the factor is 1 to four decimal places and the attribute
+    would only grow the file.
+
+    Consumed by citysim.GradientLinkSpeed on both the router and the mobsim
+    side when `gradient.representation = link_speed`.
+    """
+    elev = {}
+    for path in (ROAD_EDGES, FOOTWAY_EDGES):
+        with open(path, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                for node, key in ((r['from_node'], 'elev_start_m'),
+                                  (r['to_node'], 'elev_end_m')):
+                    v = r.get(key)
+                    if v:
+                        try:
+                            elev.setdefault(node, float(v))
+                        except ValueError:
+                            pass
+    with gzip.open(net_path, 'rt', encoding='utf-8') as f:
+        xml = f.read()
+    counts = collections.Counter()
+
+    def stamp(m):
+        s = m.group(0)
+        head_end = s.index('>')
+        head = s[:head_end]
+        a = dict(ATTR_RE.findall(head))
+        counts['links'] += 1
+        f_e = elev.get(a.get('from'))
+        t_e = elev.get(a.get('to'))
+        if f_e is None or t_e is None:
+            counts['no_elevation'] += 1
+            return s
+        try:
+            length = float(a.get('length') or 0)
+        except ValueError:
+            length = 0.0
+        if length <= 0:
+            counts['no_elevation'] += 1
+            return s
+        grade = (t_e - f_e) / length * 100.0
+        grade = max(-clamp_pct, min(clamp_pct, grade))
+        if abs(grade) < 0.05:
+            counts['flat'] += 1
+            return s
+        counts['stamped'] += 1
+        tail = s[head_end:]
+        return head + set_link_attribute(tail, 'grade_pct', '%.2f' % grade)
+
+    body = LINK_BLOCK_RE.sub(stamp, xml)
+    with gzip_writer(net_path) as f:
+        f.write(body)
+    return dict(counts)
+
+
 def patch_signal_capacities(net_path, patch_csv):
     """The re-capacitation half of the double-count rule (#73), applied to the
     emitted run network.
@@ -1059,13 +1131,20 @@ def scoring_from_c1(cfg, c1, purpose_share):
             'purpose-specific values' % vot_avg,
             'crowding multipliers (beta_crowding_*): require an explicit '
             'capacity-dependent scoring extension, not enabled here',
-            'gradient penalties (beta_gradient_uphill=%s, beta_gradient_'
-            'downhill=%s): MATSim scores a leg from time and distance and has '
-            'no gradient term, so the gradient attached to 43,112 road and '
-            '35,653 footway edges reaches mode choice through nothing. It '
-            'remains used for corridor grades (issue 21)'
+            'gradient UTILITY penalties (beta_gradient_uphill=%s, '
+            'beta_gradient_downhill=%s): MATSim scores a leg from time and '
+            'distance and has no gradient utility term, so these two '
+            'behavioural weights reach nothing. %s (9.84, issue 21)'
             % (w['beta_gradient_uphill']['base'],
-               w['beta_gradient_downhill']['base']),
+               w['beta_gradient_downhill']['base'],
+               'The gradient DATA now reaches mode choice through link '
+               'travel time instead - grade_pct on the run network, walk '
+               'and bike slowed by the declared published relations on '
+               'both the router and the mobsim side'
+               if cfg.get('A.gradient.representation') == 'link_speed' else
+               'With A.gradient.representation=absent the attached '
+               'gradient reaches mode choice through nothing; it remains '
+               'used for corridor grades'),
             'PT walk-access decay (walk_decay, beta_per_m=%s): the access and '
             'egress walk that actually happens is routing.accessEgressType '
             'plus SwissRailRaptor own radius handling, neither of which reads '
@@ -1399,11 +1478,18 @@ def main(day_types=None, scenarios=None, set_overrides=None):
             sig_sched = os.path.join(sig_dir, 'transitSchedule_signals.xml.gz')
         if crossings_on:
             check_change_event_links(net_dst, change_events_xml)
+        # Gradient into link travel time (DECISIONS.md 9.84, #21): stamped
+        # after every other network patch so nothing overwrites it.
+        gradient_stamp = {}
+        if base_cfg.get('A.gradient.representation') == 'link_speed':
+            gradient_stamp = stamp_gradients(
+                net_dst, base_cfg.get('A.gradient.grade_clamp_pct'))
         price_dst = os.path.join(OUT, sid, PARK_PRICE_FILE)
         parking = write_parking_prices(net_dst, price_dst)
         entry = dict(road_variant=ref, patch_rows=len(pat),
                      links_touched=touched, parking=parking,
-                     signal_capacity_links=recap_links, days={})
+                     signal_capacity_links=recap_links,
+                     gradient=gradient_stamp, days={})
         for d in day_types:
             # RESOLVED PER SCENARIO AND DAY TYPE. The scenario and day overlays
             # are layers of the registry, so S2b's signal priority and Sunday's

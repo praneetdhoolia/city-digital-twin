@@ -135,16 +135,26 @@ public final class CitysimControler {
         // an emitted module then fails the run instead of being ignored.
         final ch.sbb.matsim.config.SwissRailRaptorConfigGroup swissRailRaptor =
                 new ch.sbb.matsim.config.SwissRailRaptorConfigGroup();
+        // Gradient in walk/bike link travel time (DECISIONS.md 9.84, #21) and
+        // the age availability gates (9.84, #49/#50). Registered on every
+        // stack like tramPriority: the modules are emitted into every config
+        // once their registry fields exist, and an unmaterialised module
+        // fails MATSim's consistency check.
+        final GradientConfigGroup gradient = new GradientConfigGroup();
+        final ModeAvailabilityConfigGroup modeAvailability =
+                new ModeAvailabilityConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[6 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[8 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
         groups[3] = fare;
         groups[4] = tramPriority;
         groups[5] = swissRailRaptor;
+        groups[6] = gradient;
+        groups[7] = modeAvailability;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[6 + i] = extraGroups.get(i);
+            groups[8 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -174,6 +184,16 @@ public final class CitysimControler {
             public void install() {
                 bind(PermissibleModesCalculator.class)
                         .to(AvailabilityModesCalculator.class);
+                // The stock SubtourModeChoice's single-trip path
+                // (probaForRandomSingleTripMode) never consults the
+                // calculator bound above, so every per-person availability
+                // rule was porous on half the mode innovations - measured as
+                // 747 under-18 taxi trips at probe iteration 8 (DECISIONS.md
+                // 9.84, #49/#50; the 9.15 class). The gated strategy refuses
+                // an impermissible draw by reverting the one trip it changed;
+                // when nothing is impermissible it changes nothing.
+                addPlanStrategyBinding("SubtourModeChoice")
+                        .toProvider(GatedSubtourModeChoice.class);
                 // #49 Tier C (DECISIONS.md 9.78): with pt-submode mapping a
                 // passenger leg's mode is the scheduled bus/tram/rail/ferry,
                 // and the stock DefaultAnalysisMainModeIdentifier either
@@ -228,8 +248,20 @@ public final class CitysimControler {
                                 + "speed cap is declared in the registry and "
                                 + "emitted by build_matsim_run_inputs.py");
                     }
-                    addTravelTimeBinding(mode).toInstance(
-                            new CappedSpeedTravelTime(type.getMaximumVelocity()));
+                    if (gradient.isLinkSpeed()) {
+                        // Gradient in the ROUTER's estimate (DECISIONS.md
+                        // 9.84): the same declared cap, times the same grade
+                        // factor the qsim applies, from one shared formula -
+                        // estimate and physics cannot drift.
+                        addTravelTimeBinding(mode).toInstance(
+                                new GradientLinkSpeed.Router(
+                                        mode, type.getMaximumVelocity(),
+                                        gradient));
+                    } else {
+                        addTravelTimeBinding(mode).toInstance(
+                                new CappedSpeedTravelTime(
+                                        type.getMaximumVelocity()));
+                    }
                     addTravelDisutilityFactoryBinding(mode).toInstance(
                             new org.matsim.core.router.costcalculators
                                     .OnlyTimeDependentTravelDisutilityFactory());
@@ -346,6 +378,28 @@ public final class CitysimControler {
                 if (networkWalk) {
                     components.removeNamedComponent(PopulationModule.COMPONENT_NAME);
                     components.addNamedComponent("citysimTolerantAgentSource");
+                }
+            });
+        }
+        if (gradient.isLinkSpeed()) {
+            // Gradient in the MOBSIM's physics (DECISIONS.md 9.84). On the
+            // non-signal stack the core's DefaultQNetworkFactory injects a
+            // Multibinder<LinkSpeedCalculator> set, so the calculator is
+            // ADDED to the default rather than replacing the factory. The
+            // signals stack cannot be reached this way - its factory news
+            // the delegate past Guice - and is wired in
+            // CitysimSignalsControler with GradientSignalsNetworkFactory.
+            controler.addOverridingQSimModule(new AbstractQSimModule() {
+                @Override
+                protected void configureQSim() {
+                    com.google.inject.multibindings.Multibinder
+                            .newSetBinder(binder(),
+                                          org.matsim.core.mobsim.qsim
+                                                  .qnetsimengine
+                                                  .linkspeedcalculator
+                                                  .LinkSpeedCalculator.class)
+                            .addBinding()
+                            .toInstance(new GradientLinkSpeed.Mobsim(gradient));
                 }
             });
         }
