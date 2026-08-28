@@ -8613,6 +8613,41 @@ stock behaviour recovered exactly. No draw is re-rolled and no distribution
 reweighted: an illegal proposal is refused, never replaced. Verified on a
 second probe before any arm.
 
+### Gate 1 on the F9 arm: the driver's half of the pair was unreachable
+
+The second F9 arm (`20260827T181709`, launched after the coordDistance fix)
+passed the previous crash depth and ran to the iteration-100 gate. Scored on
+the fit basis, F9 beat F8 on EVERY mode at equal depth — ride 4.91 vs 2.05,
+Other 18.26 vs 21.96-class, MAE 10.920 at it.100 against F8's 10.348 at
+it.150 — and the gate still fired: **ride was >20% off and heading away**
+(9.09 → 5.92 → 4.91 across iterations 1/50/100, a ~36-iteration half-life)
+while taxi rose. The arm was stopped at the gate
+(`aborted_20260827T181709_1000it_25pct`).
+
+`ride_pairing.csv` locates the decay. The pair rate among persistent ride
+plans is STABLE (~0.36 from iteration 10) — plans are being ABANDONED, and
+the misses say why: at iteration 100, **52% are `miss_endpoints`** — the
+household no longer holds ANY car leg matching the trip, because
+SubtourModeChoice moved the DRIVER's tour off car and the driver's own score
+never sees the passenger's loss — with 26% `miss_window` (TimeAllocationMutator
+walking the two departures apart) behind it. This is §9.82's empty-escort
+wound generalised: a pair is ONE choice made by two agents, and while only
+the passenger half could be re-proposed, the coherent state was structurally
+unreachable whenever the driver left.
+
+**The driver side becomes proposable** (superseding §9.82's driver-is-never-
+touched clause on this measurement): for a planned ride no household car leg
+serves, the listener finds the member whose own non-car trip matches it and
+proposes THAT member's home-anchored subtour back to car — under the enforced
+subtour structure, at the same declared rates, scored by ChangeExpBeta on the
+driver's own plan, zero still recovering the one-sided behaviour exactly.
+`miss_window` is deliberately not addressed in the same change: one
+mechanism per arm, and the endpoint channel is twice its size.
+
+Also measured on this arm: the §9.36/#66 stall class recurred at scale —
+iteration 71 took **23,916 s (6.6 h)** and iteration 72 another 1.8 h against
+a 282 s median, self-recovering, still unattributed.
+
 ### A probe blindness found on the way: `--max-persons` cannot see households
 
 `build_activity_chains.py --max-persons N` samples `persons.iloc[::step]` — a

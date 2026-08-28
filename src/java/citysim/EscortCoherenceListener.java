@@ -59,11 +59,18 @@ import org.matsim.core.router.TripStructureUtils.Trip;
  * REACHABLE, which is what MATSim's innovation strategies exist to ensure and
  * what no per-agent strategy can do here.
  *
- * <p>It does not touch the driver: the escorting person's mode is their own
- * choice, and if they cycle, no ride is proposed to anyone. It invents no
- * value; the one declared parameter is how often a decohered pair is
- * re-proposed ({@code B.ride.escort_coherence_rate}), whose zero recovers
- * today's behaviour exactly so its effect is measurable rather than assumed.
+ * <p><b>Both sides of the pair are proposable since 9.84</b> — the original
+ * driver-is-never-touched stance is SUPERSEDED ON MEASUREMENT: the F9 gate at
+ * iteration 100 found 52% of pairing misses were the household holding no
+ * matching car leg at all, the driver having drifted off car with the
+ * passenger's loss invisible to their own score, and a pair whose driver half
+ * cannot be re-proposed decays however often the passenger half is offered.
+ * The driver-side pass proposes the drifted member's home-anchored subtour
+ * back to car; ChangeExpBeta decides on the driver's own plan, exactly as on
+ * the passenger side. It invents no value; the declared rates
+ * ({@code B.ride.escort_coherence_rate}, {@code B.ride.joint_coherence_rate})
+ * govern both sides, and zero recovers the unassisted behaviour exactly so
+ * the effect stays measurable rather than assumed.
  */
 public final class EscortCoherenceListener implements ReplanningListener {
 
@@ -256,10 +263,159 @@ public final class EscortCoherenceListener implements ReplanningListener {
                 proposed++;
             }
         }
-        if (decohered > 0) {
-            LOG.info("escortCoherence: {} decohered escort/joint pair(s) seen, "
-                     + "{} re-proposed as ride at rates {}/{} - proposed, "
-                     + "never imposed", decohered, proposed, rate, jointRate);
+
+        // ------------------------------------------------------------------
+        // THE DRIVER SIDE (DECISIONS.md 9.84, superseding 9.82's driver-is-
+        // never-touched clause ON MEASUREMENT). The F9 gate at iteration 100
+        // located the ride decay: 52% of pairing misses were miss_endpoints -
+        // the household holds NO car leg matching the planned ride any more,
+        // because SubtourModeChoice moved the DRIVER's tour off car and the
+        // driver's own score never sees the passenger's loss. A pair is ONE
+        // choice made by two agents; while only the passenger side could be
+        // re-proposed, the coherent state was unreachable whenever the driver
+        // left. This pass proposes the DRIVER's half back - the subtour
+        // holding their matching trip, converted to car - at the same
+        // declared rates, still scored by ChangeExpBeta on the driver's own
+        // plan. Zero still recovers the one-sided behaviour exactly.
+        int driverDecohered = 0;
+        int driverProposed = 0;
+        for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
+            final List<Person> members = e.getValue();
+            if (members.size() < 2) {
+                continue;
+            }
+            for (final Person passenger : members) {
+                final Plan pplan = passenger.getSelectedPlan();
+                if (pplan == null) {
+                    continue;
+                }
+                for (final Trip ptrip : TripStructureUtils.getTrips(pplan)) {
+                    if (!isAllMode(ptrip, TransportMode.ride)) {
+                        continue;
+                    }
+                    final Id<Link> from = ptrip.getOriginActivity().getLinkId();
+                    final Id<Link> to =
+                            ptrip.getDestinationActivity().getLinkId();
+                    final double dep = departure(ptrip, pplan);
+                    // served already? then the pairing engine will carry it
+                    boolean served = false;
+                    for (final Person driver : members) {
+                        if (driver == passenger || served) {
+                            continue;
+                        }
+                        final Plan dplan = driver.getSelectedPlan();
+                        if (dplan == null) {
+                            continue;
+                        }
+                        for (final Trip dt : TripStructureUtils.getTrips(dplan)) {
+                            if (isAllMode(dt, TransportMode.car)
+                                    && from.equals(dt.getOriginActivity().getLinkId())
+                                    && to.equals(dt.getDestinationActivity().getLinkId())
+                                    && Math.abs(departure(dt, dplan) - dep) <= window) {
+                                served = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (served) {
+                        continue;
+                    }
+                    // a member whose own NON-car trip matches: the driver who
+                    // drifted. Only someone the car identity permits, and only
+                    // a home-anchored subtour, so the vehicle chain stays whole.
+                    for (final Person driver : members) {
+                        if (driver == passenger) {
+                            continue;
+                        }
+                        final Object avail =
+                                driver.getAttributes().getAttribute(CAR_AVAIL);
+                        if (avail == null || !CAR_ALWAYS.equals(avail.toString())) {
+                            continue;
+                        }
+                        if (driver.getAttributes().getAttribute(
+                                AvailabilityModesCalculator.LOCKED_ATTRIBUTE) != null) {
+                            continue;
+                        }
+                        final Plan dplan = driver.getSelectedPlan();
+                        if (dplan == null) {
+                            continue;
+                        }
+                        Trip match = null;
+                        for (final Trip dt : TripStructureUtils.getTrips(dplan)) {
+                            if (!isAllMode(dt, TransportMode.car)
+                                    && from.equals(dt.getOriginActivity().getLinkId())
+                                    && to.equals(dt.getDestinationActivity().getLinkId())
+                                    && Math.abs(departure(dt, dplan) - dep) <= window) {
+                                match = dt;
+                                break;
+                            }
+                        }
+                        if (match == null) {
+                            continue;
+                        }
+                        driverDecohered++;
+                        final boolean escortPair = ESCORT_ACTIVITY.equals(
+                                match.getDestinationActivity().getType());
+                        if (rng.nextDouble() >= (escortPair ? rate : jointRate)) {
+                            break;
+                        }
+                        final Plan copy = PopulationUtils.createPlan(driver);
+                        PopulationUtils.copyFromTo(dplan, copy);
+                        Trip inCopy = null;
+                        for (final Trip t : TripStructureUtils.getTrips(copy)) {
+                            if (t.getOriginActivity().getLinkId()
+                                    .equals(match.getOriginActivity().getLinkId())
+                                    && t.getDestinationActivity().getLinkId()
+                                    .equals(match.getDestinationActivity()
+                                            .getLinkId())) {
+                                inCopy = t;
+                                break;
+                            }
+                        }
+                        if (inCopy == null) {
+                            break;
+                        }
+                        final List<Trip> subtourTrips =
+                                subtourContaining(copy, inCopy);
+                        // car is chain-based: convert only a subtour anchored
+                        // at home, where the household's vehicle stands
+                        if (subtourTrips.isEmpty()
+                                || !"home".equals(subtourTrips.get(0)
+                                        .getOriginActivity().getType())) {
+                            break;
+                        }
+                        boolean built = true;
+                        for (final Trip t : subtourTrips) {
+                            final Leg leg =
+                                    PopulationUtils.createLeg(TransportMode.car);
+                            TripStructureUtils.setRoutingMode(
+                                    leg, TransportMode.car);
+                            try {
+                                TripRouter.insertTrip(copy, t.getOriginActivity(),
+                                        Collections.singletonList(leg),
+                                        t.getDestinationActivity());
+                            } catch (final RuntimeException ex) {
+                                built = false;
+                                break;
+                            }
+                        }
+                        if (built) {
+                            driver.addPlan(copy);
+                            driver.setSelectedPlan(copy);
+                            trim(driver);
+                            driverProposed++;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+        if (decohered > 0 || driverDecohered > 0) {
+            LOG.info("escortCoherence: passenger side {} decohered / {} "
+                     + "re-proposed as ride; driver side {} decohered / {} "
+                     + "re-proposed as car; rates {}/{} - proposed, never "
+                     + "imposed", decohered, proposed, driverDecohered,
+                     driverProposed, rate, jointRate);
         }
     }
 
