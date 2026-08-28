@@ -2596,7 +2596,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.qsim.car_vehicle` | `{"length_m": 7.5, "width_m": 1.0, "pce": 1.0}` | metres/metres/passenger_car_equivalents | `definition` | - |
 | `RUN.qsim.end_time_h` | `30` | hours | `definition` | - |
 | `RUN.qsim.link_dynamics` | `PassingQ` | enum | `definition` | - |
-| `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike"]` | enum | `definition` | - |
+| `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
 | `RUN.qsim.vehicles_source` | `modeVehicleTypesFromVehiclesData` | policy | `definition` | - |
@@ -2830,9 +2830,9 @@ The queue discipline vehicles obey within a link: FIFO (MATSim's default - vehic
 
 #### `RUN.qsim.main_mode`
 
-The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; and walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53).
+The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53).
 
-***definition** · status **active** · DECISIONS.md §9.54 · MATSim `qsim.mainMode`*
+***definition** · status **active** · DECISIONS.md §9.54, 9.86 · MATSim `qsim.mainMode`*
 
 #### `RUN.qsim.snapshot_period`
 
@@ -3064,7 +3064,7 @@ Maximum stop-to-stop distance at which the PT router will create a transfer. THI
 
 #### `RUN.travel_time.analysed_modes`
 
-Which modes contribute observed link travel times. Only car is physically simulated (RUN.qsim.main_mode), so only car can contribute one. See RUN.travel_time.separate_modes: the two are one decision in two parameters.
+Which modes contribute observed link travel times. Of the physically simulated modes (RUN.qsim.main_mode) only car is analysed here: the observed link travel time this feeds back to routing is the car stream's, and truck, motorbike, bike, walk and taxi (9.86) each ride that stream at their own declared PCE rather than defining a separate one. See RUN.travel_time.separate_modes: the two are one decision in two parameters.
 
 ***definition** · status **active** · DECISIONS.md §9.29, 15 · MATSim `travelTimeCalculator.analyzedModes`*
 

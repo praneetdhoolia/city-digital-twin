@@ -84,6 +84,7 @@ its layout will otherwise cost you an hour:
 | **The ride gap is a DEMAND CEILING, not a mode-choice defect** | **§9.83** — every B2 trip has `party_size = 1`; escort-bound travel is 5.4% of trips against an observed 20.6%; occupancy 1.0013 modelled vs the **measured** 1.3503. This is the measurement **§9.55** named as decisive, and the displaced mass lands in bike, taxi, walk and pt. The declared, swept lever is `B.activity.escort_binding_nonhh_scope` (§9.60) |
 | **The joint-tour binder, the gradient channel and the age gates (family F9)** | **§9.84** — the demand ceiling's mechanism: adult joint household travel generated as pairs, anchored on the measured occupancy ratio and the observed driver share, eligibility only; gradient into walk/bike link travel time on both router and mobsim sides; taxi/bike age gates, zero disables; the §9.60 scope lever measured as spent (98% consumed at `same_zone`); `--max-persons` probes are blind to household mechanisms |
 | **A declared pair is re-found by a clock the model itself moves (family F10)** | **§9.85** — the B2 binding tables name the driver and `build_matsim_plans.py` read that identity for SEEDING and then threw it away, so `RidePairingEngine` re-discovered declared pairs from geometry and a 15-minute window while MATSim's `TimeAllocationMutator` — at an UNDECLARED ±1800 s default — moved the two members apart independently. The driver is present, on car, on the same trip, and refused on the clock. `boundDriver` carries the identity; the tolerance for a declared pair is DERIVED from the mutation range |
+| **A hired car is a car on the road: taxi stops being a ghost in the mobsim (family F11)** | **§9.86** — `taxi` was routed on the network, permitted on 143,891 links, bound to the congested car travel time and given a car-bodied vehicle type, but was NOT in `RUN.qsim.main_mode`, so MATSim teleported it: **39,892 of 39,923 legs per iteration** never touched the carriageway (#88). One enum value fixes it; the body restates `RUN.qsim.car_vehicle` rather than inventing a second one. Probe-measured: 197 of 197 taxi departures now enter traffic, 29,994 link traversals. **Deadheading stays unmodelled and unassumed.** `ride`’s remaining 44.5% teleport is a DEMAND failure, not a mobsim one — never close it with a phantom vehicle per passenger |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -8160,6 +8161,100 @@ argument parser into the registry where it binds everything.
 
 ---
 
+## 9.86 A hired car is a car on the road: taxi stops being a ghost in the mobsim (28 August 2026, thirteenth session; issues #88, #49, #48)
+
+The session's `/goal` puts a precondition ahead of the gate loop: *the groundwork
+must be as-is compared to real life; every mode physically simulated, monitored
+and scored - no teleportation.* Issue **#88** is the one measured breach of it.
+
+### What was wrong
+
+`taxi` was carried correctly everywhere except the one place that decides road
+space. It is in `RUN.routing.network_modes`, it is permitted on 143,891 links,
+`CitysimControler` binds it to the congested car travel time and the car
+disutility (so a taxi cannot out-run the traffic it rides in), its fare is
+scored in two parts, and `build_matsim_run_inputs.write_mode_vehicles` already
+emits a car-bodied `taxi` vehicle type. But it was **not in
+`RUN.qsim.main_mode`**, and MATSim's contract is that a mode outside the main
+modes is teleported no matter how carefully it was routed. Measured on the F9
+gate-2 arm: **39,892 of 39,923 taxi legs per iteration** arrived by clock rather
+than by carriageway.
+
+Two consequences, and only the second is obvious:
+
+1. **The road was under-loaded.** ~40,000 vehicle-trips an iteration - at a
+   declared PCE of 1.0, the same road space as the same number of cars - were
+   absent from every link, every queue and every count station. `car` measuring
+   **-19.4%** against its target while `Other` (the `bike+taxi` fold) measured
+   **+471.2%** was being read on a network that never carried the taxis.
+2. **The taxi's own time was free of the congestion it causes.** The travel-time
+   binding gives a taxi the *car's observed* link times, which is right; but a
+   teleported taxi contributes nothing back to those times, so the mode was
+   priced against a road it did not load.
+
+### The change
+
+`RUN.qsim.main_mode` gains `taxi` - one value, in the registry, where every
+other physical-simulation decision is declared. Nothing else needed building:
+the vehicle type, the link permissions, the travel-time binding and the fare
+were all already in place and had been waiting on this one enum.
+
+The vehicle body is **not a new declaration**. A taxi restates
+`RUN.qsim.car_vehicle` exactly - 7.5 m, PCE 1.0, the declared ride seat cap -
+because a hired car *is* a car, and inventing a separate taxi body would be a
+modelling choice with no observation behind it.
+
+### What is deliberately NOT claimed
+
+**Deadheading is not modelled.** A real taxi fleet also drives empty between
+fares, and that load is real. Nothing here fabricates it: what is now on the
+road is the *occupied* leg, which is the leg the demand model actually produces.
+The empty-running share is unobserved for Newcastle, so it stays unobserved
+rather than becoming an assumed multiplier. Recorded here so the next reader
+knows the boundary is deliberate.
+
+### Measured, on the 1% two-iteration plumbing probe `20260828T220751_2it_1pct`
+
+rc=0, accounting closes. Every link-entry event in `2.events.xml.gz` attributed
+to the vehicle class that produced it:
+
+| vehicle class | link enters | departures | vehicles entering traffic |
+|---|---:|---:|---:|
+| walk | 825,231 | 10,223 | 7,856 |
+| car | 794,330 | 9,052 | 8,899 |
+| bus (transit) | 237,057 | 1,309 | driven by transit driver |
+| bike | 181,964 | 1,547 | 1,547 |
+| truck | 136,897 | 907 | 907 |
+| rail (transit) | 87,001 | 382 | driven by transit driver |
+| **taxi** | **29,994** | **197** | **197** |
+| tram (transit) | 4,145 | 15 | driven by transit driver |
+| motorbike | 3,652 | 45 | 45 |
+| ferry (transit) | 214 | 14 | driven by transit driver |
+| **total** | **2,300,485** | | |
+
+**Every taxi departure now enters traffic: 197 of 197.** Before this change the
+same column read 0.
+
+The same probe measures what remains teleported and why: **`ride` - 1,166 of
+2,101 legs physically boarded, 935 (44.5%) teleported.** That is *not* a mobsim
+defect and must not be closed by giving a passenger their own vehicle: a car
+passenger is not a second car, and a phantom vehicle per unpaired passenger
+would double-count road load to make a physicality statistic look better. An
+unpaired `ride` leg is a **demand-side** failure - the passenger chose a mode
+no driver realised - which is exactly what 9.85's `boundDriver` repair
+addresses. The probe confirms that repair is live: `paired_by_identity` is 98 at
+iteration 2, and `pair_rate` holds 0.5410 -> 0.5030 -> 0.5224 rather than decaying.
+
+### The comparability boundary
+
+This changes network loading, so nothing run before it compares to anything run
+after it. Declared as family **F11** in
+[`audit/run_families.json`](audit/run_families.json). F10 has no completed arm to
+lose: its only launches were a 1-iteration abort and a 5-iteration plumbing
+probe, both stopped on instruction.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -8832,6 +8927,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-28 | **A hired car is a car on the road: taxi becomes a physically simulated mode, and family F11 opens (§9.86; issue #88; thirteenth session, `/goal` precondition).** `taxi` was network-routed, link-permitted, congestion-bound and car-bodied but absent from `RUN.qsim.main_mode`, so the mobsim teleported it — **39,892 of 39,923 legs per iteration**, ~40,000 vehicle-trips of road space missing from every link and count station while `car` read −19.4% and the `bike+taxi` fold read +471.2%. The fix is one registry enum; nothing else needed building. The taxi body restates `RUN.qsim.car_vehicle` exactly rather than declaring a second one, and **empty running (deadheading) stays unobserved rather than becoming an assumed multiplier**. Probe `20260828T220751_2it_1pct` rc=0, accounting closes: **197 of 197 taxi departures enter traffic, 29,994 link traversals**, all 2,300,485 link-entry events attributed to a vehicle class. Also measured there: `ride` is 1,166 of 2,101 legs physically boarded (44.5% teleported) — a DEMAND failure §9.85 addresses, never to be closed with a phantom vehicle per passenger; §9.85’s `boundDriver` is live (`paired_by_identity` 98 at iteration 2, `pair_rate` 0.5410 → 0.5030 → 0.5224, not decaying). **New comparability family F11: network loading changed, so nothing before it compares to anything after. Nothing here is a result.** |
 | 2026-08-28 | **The joint binding does not survive translation, and the pair is re-found with the clock the model itself moves (§9.85; issues #48, #86, #49, #50; twelfth session).** The F9 gate-2 arm was stopped on the iteration-100 gate with all five scored categories past 20% — Other +471.2%, pt +123.4%, driver −19.4%, ride −76.3%, walk +55.2%, mean abs error 10.864 pp — and §9.84's driver-side pass measured INERT against the previous arm at equal depth (10.920 → 10.864, ride 4.91 → 4.87). The located cause: all three B2 binding tables NAME the driver, `build_matsim_plans.py` read that identity for seeding and DISCARDED it, so `RidePairingEngine` re-discovered every declared pair from geometry plus a 15-minute window — while MATSim's `TimeAllocationMutator`, at an UNDECLARED ±1800 s default, moved the two members apart independently. Measured: 73.8% (joint) / 67.4% (escort) / 80.5% (lift) of bound ride legs still had their declared driver on the same OD BY CAR, but only 60.6% / 42.6% / 64.5% fell inside the window. The driver is present, driving the same trip, and refused on the clock — which is why §9.82's and §9.84's repairs were both inert, each re-identifying through the window the drift had already exceeded. Built as family **F10**: `boundDriver` carries the identity for all three tables (158,898 persons); `RUN.replanning.time_mutation_range_s` is declared and swept; `B.ride.bound_pairing_window_min` is DERIVED from it, relaxing IDENTIFICATION only, with the inferred window unchanged at 15 min and a bound window narrower than it REFUSED. Caught before it could report a false success: `JointRideEngine` still bounded the physical wait by the narrow window, so the pair rate would have risen while nobody boarded (trap 6/7) — `Booking` now carries its own tolerance. At iteration 0, before any drift, `paired_by_identity` is 7 of 62,359. Registry 370 → **372**, ledger 0, doc-currency 0. **Nothing here is a result**: no arm has reached a gate on this boundary and the repair's effect is not yet measured. |
 | 2026-08-27 | **The demand ceiling gets its mechanism, gradient gets its channel, and the age gates close (§9.84; issues #86, #48, #49, #50, #21; eleventh session).** Three root-cause builds under the renewed gate-loop `/goal`, forming family **F9**: `bind_joint_tours` generates adult joint household travel as pairs — companion tours mirroring a co-member driver's tour, `party_size` 2, volume anchored on the measured occupancy ratio (0.3503 passengers per driver trip, derived) times the observed driver share with escort/lift coverage counted first, eligibility only, realisation emergent; gradient reaches walk/bike link travel time on BOTH router and mobsim sides (`grade_pct` stamped from A1/A6 node elevations, 81.9% of walk/bike links matched; Tobler for walk, Parkin & Rotheram for bike, all constants declared and swept; `GradientSignalsNetworkFactory` ports the signals node logic so signals and gradient survive together); and the taxi/bike age gates land as declared, swept, zero-disables fields. One §0 decision settled by measurement WITHOUT a run: the §9.60 non-household scope lever was already 98% consumed at `same_zone` — the binding constraint is driver supply, so the scope stays. Found: `--max-persons` probes stride-sample one member per household and are structurally BLIND to every intra-household mechanism. Registry 357 → **370**, ledger 0, reach 102/102. The scored share was not written into the generator; occupancy keeps its constraint role. Nothing here is a result. |
 | 2026-08-27 | **The gate was being read on the wrong quantity, and the ride gap is a demand ceiling (§9.83; issues #48, #49, #50, #30; tenth session).** No run was launched and no model or data value changed. The §9.81/§9.82 gate loop had been reading whole-scenario LEG counts (`modestats` planned, or events realised) while `fit.py` scores linked main-mode TRIPS for target-LGA residents; MATSim's per-iteration `<n>.trips.csv.gz` carries that quantity and was present in every arm at iterations 0, 1, 50, 100, 150. New `src/analyse/measure_iteration_modes.py` reads it through `fit.py`'s OWN `score_mode_share`. **This inverts one verdict — car is not over-chosen but 11.7% UNDER (52.12 vs 59.00)** — and shows `fit.py` folds bike and taxi into ONE target, so the two over-chosen modes compound into a +18.11 pp miss. Scored at iteration 150, mean abs error **10.991 (F6 unfixed) → 10.460 (§9.81) → 10.348 (§9.82)**: both repairs work, every category improved, none regressed, ride 0.61 → 1.39 → 1.61, and together they close 7.8% of the ride gap. **CORRECTION to §9.82, which stays as written**: its 8-iteration probe's pair-rate "reversal" is the innovation cutoff at 0.8 × 8 = 6.4, not convergence — the 1000-iteration arm kept falling through the same iterations. The residual is a DEMAND CEILING, not a choice defect: **every B2 trip has `party_size = 1`**, escort-bound travel is 5.4% of trips against an observed 20.6% vehicle-passenger share, and two measured observations agree (occupancy 1.0013 vs the measured 1.3503; ride 1.61% vs 20.60%). This is the measurement §9.55 named as decisive, and the displaced mass lands in bike +8.82, taxi +9.29, walk +4.12 and pt +3.64 pp. Two further causes measured and NOT acted on: **taxi is gated by nothing** and `age` reaches nothing (0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess); **gradient reaches mode choice through nothing** on a network where 30.5% of 50,182 edges exceed 4% grade, with modelled bike trips at 9.21 km / 41.7 min against a measured 5.2 km / 19.2 min. The F8 arm was stopped on instruction at iteration 163 of 1000, before its gate, and closed out as `aborted_20260826T233658_1000it_25pct` with a measured cause. No target moved, no threshold invented, the 67/143 split is untouched, nothing here is a result. |
