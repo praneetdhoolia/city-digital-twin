@@ -306,25 +306,40 @@ def main():
     # day, not train movements, and its observation does not exist: TfNSW and
     # ARTC do not publish crossing closure logs. So it is swept, exactly like
     # the other three inputs this project cannot observe.
-    per_site = float(cfg.get('A.crossings.closures_per_day'))
-    sites = len(cfg.get('A.crossings.freight_road_names'))
-    sweep = cfg.sweep('A.crossings.closures_per_day')
-    lo, hi = (sweep['interval'] if isinstance(sweep, dict) else sweep)
-    add('freight_train', None, 'level-crossing closures per day',
-        'unobtained',
-        'ROAD EFFECT SIMULATED, train not a mobsim vehicle - the coal chain '
-        'has run on dedicated grade-separated track since 2006 (ARTC/PWCS/'
-        'NCIG, ~110 movements/day), so the only real road interaction is the '
-        'Adamstown and Islington level crossings and those ARE simulated: '
-        '%d closure episodes/day across %d sites, %.0f s each, as timed '
-        'capacity-zero network change events on the matched car links. The '
-        'closure FREQUENCY is unobserved - TfNSW and ARTC publish no closure '
-        'logs - so it is declared A.crossings.closures_per_day and swept '
-        '%g-%g per site, never pinned. A modelled count of train VEHICLES of '
-        'zero is the decision, not a defect'
-        % (per_site * sites, sites,
-           float(cfg.get('A.crossings.closure_duration_s')), lo, hi),
-        (lo * sites, hi * sites))
+    crep_path = _city.path('networks/matsim/crossings/_crossings_report.json')
+    crep = json.load(open(crep_path, encoding='utf-8')) if os.path.exists(crep_path) else None
+    if crep and crep.get('closure_source') == 'schedule_derived':
+        per_site = crep['closures_per_site']
+        total = sum(per_site.values())
+        add('freight_train', float(total),
+            'level-crossing closures per weekday', 'derived',
+            'ROAD EFFECT SIMULATED, train not a mobsim vehicle. The coal chain '
+            'has run on dedicated grade-separated track since 2006 (ARTC/PWCS/'
+            'NCIG, ~110 movements/day), so the only real road interaction is '
+            'the level crossings - and those are now DERIVED from the mapped '
+            'rail timetable rather than assumed (9.90): one closure per '
+            'scheduled train that crosses, at the time it crosses. %s, '
+            '%d/weekday in total, each %.0f s. Non-timetabled freight is added '
+            'on top at A.crossings.freight_closures_per_day, zero by default '
+            'because the coal chain does not cross these roads at grade and '
+            'ARTC publishes no movement log for what else might. A modelled '
+            'count of train VEHICLES of zero is the decision, not a defect'
+            % (', '.join('%s %d' % (k, v) for k, v in sorted(per_site.items())),
+               total, float(cfg.get('A.crossings.closure_duration_s'))),
+            None)
+    else:
+        per = float(cfg.get('A.crossings.closures_per_day'))
+        sites_n = len(cfg.get('A.crossings.freight_road_names'))
+        sweep = cfg.sweep('A.crossings.closures_per_day')
+        lo, hi = (sweep['interval'] if isinstance(sweep, dict) else sweep)
+        add('freight_train', None, 'level-crossing closures per weekday',
+            'unobtained',
+            'ROAD EFFECT SIMULATED under the assumed_uniform closure source: '
+            '%d closures/day across %d sites, %.0f s each, spread evenly '
+            'because no closure log is published. Swept %g-%g per site'
+            % (per * sites_n, sites_n,
+               float(cfg.get('A.crossings.closure_duration_s')), lo, hi),
+            (lo * sites_n, hi * sites_n))
 
     os.makedirs(OUT, exist_ok=True)
     d = pd.DataFrame(rows)

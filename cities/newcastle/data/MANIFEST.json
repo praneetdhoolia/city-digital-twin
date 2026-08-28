@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-28T23:13:16",
+  "generated": "2026-08-28T23:19:10",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 494,
-  "total_bytes": 4265764463,
+  "total_bytes": 4266324370,
   "total_gib": 3.97,
   "by_stage": {
     "raw": 81,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1542419335
+    "processed": 1542979242
   },
   "files": [
     {
@@ -1601,9 +1601,9 @@
     },
     {
       "path": "data/processed/validation/_mode_targets_report.json",
-      "bytes": 791,
+      "bytes": 770,
       "rows": null,
-      "sha256": "058f6dc745af368b9fe65fe413c7a59f52d4f9c0b2ee6a5f86b93de30a823b66",
+      "sha256": "9c0cb0f71a28c35aa5dc21a3094e403a7b171e9cb4ddcf4875c54f0e4858c5a7",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",
@@ -1673,9 +1673,9 @@
     },
     {
       "path": "data/processed/validation/mode_targets_by_mode.csv",
-      "bytes": 4045,
+      "bytes": 4145,
       "rows": 12,
-      "sha256": "597e5435120d9cd73cbde6502778684ff192e9972e740599235616ecfddf1e12",
+      "sha256": "17f363c805c115284110e905f7164411f8cfa7c1c85138115054a0c87b1fd70f",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",
@@ -4637,9 +4637,9 @@
     },
     {
       "path": "networks/matsim/crossings/_crossings_report.json",
-      "bytes": 4874,
+      "bytes": 10272,
       "rows": null,
-      "sha256": "3390c62afdeecfab61552ca0d050a0baedc39babb5537281f95f005fff45444c",
+      "sha256": "49a9a63dd09fb50b76937f7144ea22d200ca6a5ad33c78989f88f2203b43e6fe",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",
@@ -4649,9 +4649,9 @@
     },
     {
       "path": "networks/matsim/crossings/crossing_change_events.xml",
-      "bytes": 121308,
+      "bytes": 675738,
       "rows": null,
-      "sha256": "fefa8bfa589880c192615dd21dd1d48a0b6b90480623d9766736d03bdb3afc68",
+      "sha256": "8ae0b37a1a435270133c437546ca9180c66510efb5da1d352aec19a65dc9cb45",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
       "source": "",

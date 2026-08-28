@@ -131,13 +131,13 @@ data/processed/schedule_extras/A3_route_extras.csv,processed,41415,290,src/build
 data/processed/schedule_extras/A3_stop_extras.csv,processed,401658,3873,src/build/build_gtfs_extras.py,,,,,1d22c1b2632863915c218c8d172c172d8d251ca145dbbf37ac3ef57af1eca3a6
 data/processed/schedule_extras/A3_transfer_extras.csv,processed,513828,3584,src/build/build_gtfs_extras.py,,,,,b9ac0bc65b8e022e85615584966bad9b75446838cc1aee2131951ced7cbfa94f
 data/processed/schedule_extras/_extras_report.json,processed,691,,src/build/build_gtfs_extras.py,,,,,3982a2ea663cffabee831c6e0b6dc196c9c0ffe85f3c0a497279d38de5f4c801
-data/processed/validation/_mode_targets_report.json,processed,791,,cities/newcastle/build/build_validation_targets.py,,,,,058f6dc745af368b9fe65fe413c7a59f52d4f9c0b2ee6a5f86b93de30a823b66
+data/processed/validation/_mode_targets_report.json,processed,770,,cities/newcastle/build/build_validation_targets.py,,,,,9c0cb0f71a28c35aa5dc21a3094e403a7b171e9cb4ddcf4875c54f0e4858c5a7
 data/processed/validation/_validation_report.json,processed,500,,cities/newcastle/build/build_validation_targets.py,,,,,9d9c374554a1ad719ca82c59c11a649ad9dee3a084058c084f017ba16261cc27
 data/processed/validation/bus_monthly_series.csv,processed,2925,108,cities/newcastle/build/build_validation_targets.py,,,,,12349cf379347f26ada4b1b67e5b6c92bd495d2c9938c2e729f056f3c34127a5
 data/processed/validation/count_station_links.csv,processed,17665,195,cities/newcastle/build/build_validation_targets.py,,,,,cbcc69ee328bd377c969fbe0af183e6fb0ecb2ee287759f5f7153eb6a94fb2ee
 data/processed/validation/lr_monthly_series.csv,processed,2224,89,cities/newcastle/build/build_validation_targets.py,,,,,7111e637d43fc5cd236f50a0d8789a273016879d7cfb583ec119ad8a3069474d
 data/processed/validation/lr_taps_by_stop.csv,processed,205,6,cities/newcastle/build/build_validation_targets.py,,,,,0c62da63ae0a88963060add74a6f0a165f8d3ace10da354068ededeb12ae8024
-data/processed/validation/mode_targets_by_mode.csv,processed,4045,12,cities/newcastle/build/build_validation_targets.py,,,,,597e5435120d9cd73cbde6502778684ff192e9972e740599235616ecfddf1e12
+data/processed/validation/mode_targets_by_mode.csv,processed,4145,12,cities/newcastle/build/build_validation_targets.py,,,,,17f363c805c115284110e905f7164411f8cfa7c1c85138115054a0c87b1fd70f
 data/processed/validation/road_aadt_targets.csv,processed,18485,119,cities/newcastle/build/build_validation_targets.py,,,,,6e01c96dffd984de97923902046cd19e3c7fe111754bffb71322ce76d7ae5495
 data/processed/validation/station_entries_exits_mean.csv,processed,2236,52,cities/newcastle/build/build_validation_targets.py,,,,,bfe827118ee8988d39b9efb296d2bcc099927dab94704b5eb21b8de73281d25b
 data/processed/validation/validation_targets.csv,processed,40585,210,cities/newcastle/build/build_validation_targets.py,,,,,a2bde12b77a1aa7e7f82d8fd878cd18c9382cce9895ecc603d9cc712b72f2b1d
@@ -384,8 +384,8 @@ networks/osm/signals.osm,raw,3250042,,cities/newcastle/extract/overpass.py,,,,,4
 networks/osm/water.osm,raw,12324895,,cities/newcastle/extract/overpass.py,,,,,c7dbfeb3f92749ca4eeaabd940419f7ec72d8badd2232d8499fa3620ae09ed92
 networks/matsim/_matsim_build_report.json,processed,13343,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,7db82857c88146410caf6b1d242119a44f8069fb0974bbcba8538711be923652
 networks/matsim/base/network.xml.gz,processed,6694664,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,a1f0f8ad964fa280b01d33f9e287514a8eb0e20d62eb45b6d2d76be970f02360
-networks/matsim/crossings/_crossings_report.json,processed,4874,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,3390c62afdeecfab61552ca0d050a0baedc39babb5537281f95f005fff45444c
-networks/matsim/crossings/crossing_change_events.xml,processed,121308,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,fefa8bfa589880c192615dd21dd1d48a0b6b90480623d9766736d03bdb3afc68
+networks/matsim/crossings/_crossings_report.json,processed,10272,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,49a9a63dd09fb50b76937f7144ea22d200ca6a5ad33c78989f88f2203b43e6fe
+networks/matsim/crossings/crossing_change_events.xml,processed,675738,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,8ae0b37a1a435270133c437546ca9180c66510efb5da1d352aec19a65dc9cb45
 networks/matsim/schedules/_dwell_report.json,processed,2217,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,5c46572a13121eafd55db82723ccc5a1e936e3c3454f2c49289cbe257a96c40d
 networks/matsim/schedules/base2026/network.xml.gz,processed,6464071,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,0cc3e56fbe80c637980b2b402f0761fdddc2687123f214357a7d9610848321eb
 networks/matsim/schedules/base2026/transitSchedule.xml.gz,processed,1971464,,src/build/build_matsim_network.py (pt2matsim 26.6),,,,,ac0ba3b2ac28a75ea944617ea12b7c87181995c59074ad2e2ee6771774ca0beb

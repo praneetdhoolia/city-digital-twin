@@ -559,7 +559,7 @@
       "consumers": [
         "cities/newcastle/build/build_level_crossings.py"
       ],
-      "description": "How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented."
+      "description": "Closures per day per site under the assumed_uniform member of A.crossings.closure_source ONLY. Superseded as the default by 9.90, which derives both the count and the time from the city’s own mapped rail timetable; kept because the two members are a measurable comparison and because every arm before 9.90 ran on this value. How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented."
     },
     "A.crossings.closure_duration_s": {
       "value": 240,
@@ -1980,6 +1980,42 @@
       "decisions_ref": "9.88",
       "description": "Exponential smoothing weight on the newest cycle's measured degree of saturation. SCATS filters its counts rather than re-timing from a single cycle; 1.0 would react to the last cycle alone (noisy at the low flows that occupy most of the day) and 0.0 would never react at all. The filter exists in the real system; its constant is unpublished, so this is assumed and swept.",
       "matsim_param": "scats.dsSmoothing"
+    },
+    "A.crossings.closure_source": {
+      "value": "schedule_derived",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "assumed_uniform",
+          "schedule_derived"
+        ],
+        "basis": "Where a level crossing closure gets its COUNT and its TIME. assumed_uniform is the pre-9.90 behaviour - A.crossings.closures_per_day closures spread evenly across the declared window, the same number at both sites, because no closure log is published. schedule_derived reads the city’s OWN mapped rail timetable: a crossing closes for every train that crosses it, and the timetable says which trains those are and when. Both members are kept because the difference between them is a measurable claim about what the crossings do to the road."
+      },
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "Under schedule_derived, build_level_crossings.py counts the scheduled rail movements whose mapped route traverses the rail links at each crossing, and times each closure from that service’s own stop time at the nearest rail stop. Measured on the WEEKDAY schedule: 110 movements at Saint James Road (Adamstown) and 204 at Clyde Street (Islington), against the 30-per-site the assumed member emits - and peaked (17h carries 9 and 14) rather than flat, which is what decides whether a closure lands in the traffic it delays."
+    },
+    "A.crossings.freight_closures_per_day": {
+      "value": 0,
+      "units": "closures_per_day_per_site",
+      "source": "assumed",
+      "sweep": [
+        0,
+        30
+      ],
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "NON-TIMETABLED freight movements added on top of the schedule-derived passenger closures at each crossing. The point value is ZERO on the recorded evidence of 9.70: the coal chain - the overwhelming majority of freight on this network at ~110 movements/day - has run on dedicated track grade-separated since 2006, so it does not cross these roads at grade at all. What the zero does NOT assert is that no non-coal freight ever uses these lines; that is unquantified because ARTC publishes no movement log, which is why the field exists and is swept to 30 rather than being left out. Read only under A.crossings.closure_source = schedule_derived."
+    },
+    "A.crossings.rail_match_radius_m": {
+      "value": 40.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "Radius within which a mapped RAIL link counts as the railway at a level crossing, for the schedule-derived closure count. A data-join tolerance, not a model parameter, and held fixed for the same reason as A.signals.scats_match_radius_m: no output varies across it. Measured midpoint distances at the two sites are 29.6 m (Saint James Road) and 8.0 m (Clyde Street), and the next-nearest rail link at either site sits far enough away that every radius from about 35 m to 55 m selects the identical set. Declaring a sweep over which the output is constant is the defect this project has already hit three times."
     }
   }
 }

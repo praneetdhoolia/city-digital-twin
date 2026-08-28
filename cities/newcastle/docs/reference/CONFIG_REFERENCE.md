@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 384 fields are made of
+## What the 387 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 32 | follows from another registry field by identity |
 | `literature` | 63 | a published value, not specific to this city |
-| `assumed` | 141 | chosen without direct empirical support |
-| `definition` | 113 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 143 | chosen without direct empirical support |
+| `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 365 | usable point value |
+| `active` | 368 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -85,7 +85,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 128 fields*
+*`cities/newcastle/registry/A_supply.json` - 131 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -107,12 +107,15 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.crossings.closed_flow_capacity_veh_h` | `0.0` | vehicles_per_hour | `definition` | - |
 | `A.crossings.closed_freespeed_ms` | `0.1` | metres_per_second | `definition` | - |
 | `A.crossings.closure_duration_s` | `240` | seconds | `assumed` | 60 - 600 |
+| `A.crossings.closure_source` | `schedule_derived` | enum | `assumed` | `assumed_uniform`, `schedule_derived` |
 | `A.crossings.closure_window_h` | `[0.0, 24.0]` | hours | `definition` | - |
 | `A.crossings.closures_per_day` | `30` | closures_per_day | `assumed` | 10 - 60 |
 | `A.crossings.corridor_exclusion_m` | `500.0` | metres | `definition` | - |
+| `A.crossings.freight_closures_per_day` | `0` | closures_per_day_per_site | `assumed` | 0 - 30 |
 | `A.crossings.freight_road_names` | `["Saint James Road", "Clyde Street"]` | road_names | `literature` | **held fixed** |
 | `A.crossings.link_match_radius_m` | `30.0` | metres | `definition` | **held fixed** |
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
+| `A.crossings.rail_match_radius_m` | `40.0` | m | `definition` | - |
 | `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
 | `A.gradient.bike_downhill_speedup_per_pct` | `0.015` | share_of_flat_speed_per_pct | `literature` | 0 - 0.03 |
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
@@ -182,7 +185,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.schedule_mapping.thread_chunk_size` | `100` | routes | `definition` | - |
 | `A.schedule_mapping.transport_mode_assignment` | `{"bus": ["car", "bus"], "rail": ["rail"], "light_rail": ["light_rail", "tram", "car"], "tram": ["light_rail...` | network_modes_by_schedule_mode | `definition` | - |
 | `A.schedule_mapping.travel_cost_type` | `linkLength` | cost_basis | `definition` | - |
-| `A.signals.control_regime` | `fixed_time` | enum | `assumed` | `fixed_time`, `scats_adaptive` |
+| `A.signals.control_regime` | `scats_adaptive` | enum | `assumed` | `fixed_time`, `scats_adaptive` |
 | `A.signals.delay_per_intersection_s` | `26.0` | seconds | `assumed` | 15 - 40 |
 | `A.signals.junction_match_m` | `60.0` | metres | `assumed` | 30 - 100 |
 | `A.signals.min_green_s` | `6.0` | seconds | `literature` | 4 - 10 |
@@ -332,6 +335,12 @@ How long one closure holds the crossing shut. ASSUMED and swept against the offi
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
 
+#### `A.crossings.closure_source`
+
+Under schedule_derived, build_level_crossings.py counts the scheduled rail movements whose mapped route traverses the rail links at each crossing, and times each closure from that service’s own stop time at the nearest rail stop. Measured on the WEEKDAY schedule: 110 movements at Saint James Road (Adamstown) and 204 at Clyde Street (Islington), against the 30-per-site the assumed member emits - and peaked (17h carries 9 and 14) rather than flat, which is what decides whether a closure lands in the traffic it delays.
+
+***assumed** · status **active** · DECISIONS.md §9.90*
+
 #### `A.crossings.closure_window_h`
 
 The day window closures are spread across. The freight network operates around the clock (ARTC 24/7 operations, 9.70), so the window is the whole day; narrowing it would assert a pattern no published log supports.
@@ -340,7 +349,7 @@ The day window closures are spread across. The freight network operates around t
 
 #### `A.crossings.closures_per_day`
 
-How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented.
+Closures per day per site under the assumed_uniform member of A.crossings.closure_source ONLY. Superseded as the default by 9.90, which derives both the count and the time from the city’s own mapped rail timetable; kept because the two members are a measurable comparison and because every arm before 9.90 ran on this value. How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented.
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
 
@@ -349,6 +358,12 @@ How many boom closures each crossing sees per day. ASSUMED - no closure log is p
 The Stewart Avenue guard (9.75): the builder REFUSES to emit a closure within this distance of the tram alignment, because the corridor light-rail crossing is a T-aspect signal site owned by the signal build (#73) and must never be double-treated as a boom-gate closure. The nearest legitimate crossing sits kilometres away, so the value only needs to separate the corridor from the suburbs.
 
 ***definition** · status **active** · DECISIONS.md §9.75, 9.76*
+
+#### `A.crossings.freight_closures_per_day`
+
+NON-TIMETABLED freight movements added on top of the schedule-derived passenger closures at each crossing. The point value is ZERO on the recorded evidence of 9.70: the coal chain - the overwhelming majority of freight on this network at ~110 movements/day - has run on dedicated track grade-separated since 2006, so it does not cross these roads at grade at all. What the zero does NOT assert is that no non-coal freight ever uses these lines; that is unquantified because ARTC publishes no movement log, which is why the field exists and is swept to 30 rather than being left out. Read only under A.crossings.closure_source = schedule_derived.
+
+***assumed** · status **active** · DECISIONS.md §9.90*
 
 #### `A.crossings.freight_road_names`
 
@@ -375,6 +390,12 @@ How close a car link named by A.crossings.freight_road_names must pass to the cr
 OSM maps a double-track crossing as one node per track a few metres apart; nodes closer than this are one physical crossing.
 
 ***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `A.crossings.rail_match_radius_m`
+
+Radius within which a mapped RAIL link counts as the railway at a level crossing, for the schedule-derived closure count. A data-join tolerance, not a model parameter, and held fixed for the same reason as A.signals.scats_match_radius_m: no output varies across it. Measured midpoint distances at the two sites are 29.6 m (Saint James Road) and 8.0 m (Clyde Street), and the next-nearest rail link at either site sits far enough away that every radius from about 35 m to 55 m selects the identical set. Declaring a sweep over which the output is constant is the defect this project has already hit three times.
+
+***definition** · status **active** · DECISIONS.md §9.90*
 
 #### `A.crossings.representation`
 
@@ -852,7 +873,7 @@ Whether the mapper minimises link LENGTH or link TRAVEL TIME. Length, so a mappe
 
 #### `A.signals.control_regime`
 
-Signal control logic: fixed_time executes the generated plan verbatim (the pre-9.88 behaviour, byte-identical), scats_adaptive runs the SCATS algorithm - degree of saturation measured at every signalised stop line, incremental cycle-length adaptation toward a target DS, and splits allocated to equalise DS across stages. Offsets are NOT adapted: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured.
+Signal control logic. scats_adaptive (the value since 9.88) runs the SCATS algorithm in citysim.ScatsSignalController: degree of saturation measured at every signalised stop line against the saturation flow the mobsim actually enforces, incremental cycle-length adaptation toward a target DS on the critical movement, and splits allocated to equalise DS across stages, with the generated plan as the STARTING point and the intersection’s own clearances preserved. fixed_time executes that generated plan verbatim and reproduces every arm before 9.88 exactly, which is why it is kept. Offsets are NOT adapted under either member: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured. Transit priority composes with either member - the priority layer lives inside the adaptive controller too, so the corridor never silently loses it.
 
 ***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.regime`*
 

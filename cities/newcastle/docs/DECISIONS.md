@@ -88,6 +88,7 @@ its layout will otherwise cost you an hour:
 | **Twelve modes get twelve targets: a folded survey category cannot answer a per-mode question** | **§9.87** — the HTS publishes SIX categories and this city simulates TWELVE modes, so four modes shared one 3.8% Public Transport row and a fold could hide an excess behind a deficit. The data document’s own lists EVIDENCE `fit.py`’s folds (bike+taxi → Other; motorbike appears in no other category, so it can only be a Vehicle driver). `build_mode_targets.py` disaggregates every level with census G62 composition and current Opal/station boardings, writes `mode_targets_by_mode.csv`, and is read by `report_mode_ridership.py`. **PT splits on CURRENT boardings, not the lockdown-vintage 2021 census — the census sets the sweep’s far end instead.** Ferry stays **unobtained and swept**: nothing is published for this city. The person-trip targets sum to 99.4037%, and the missing 0.596 pp is resident truck-driving, written out as a named deduction rather than folded into car. **NOT added to `validation_targets.csv`** — it would double-count and disturb the 67/143 split |
 | **SCATS stops being an assumed constant and becomes an algorithm (family F12)** | **§9.88** — every arm to date ran 14 corridor intersections on a FIXED 110 s plan, because the unreleased phase data was handled by sweeping a cycle time. `citysim.ScatsSignalController` implements the published logic instead: degree of saturation measured at every stop line from `LinkLeaveEvent`, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, clearances preserved. **Offsets deliberately NOT adapted** — that library is the unreleased artefact and no algorithm replaces it. Two defects recorded: DS measured against FULL-SCALE capacity read 0.000 at a 1% sample (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic cannot survive a variable cycle. Transit priority lives inside the controller, and **compensation becomes intrinsic** — a starved stage’s DS rises and the next split repays it |
 | **The ferry gets a derived target instead of no target at all** | **§9.89** — no Newcastle ferry patronage is published anywhere (the Opal all-modes Ferry row is NSW-wide and Sydney-dominated), so §9.87 left mode 10 of 12 ungateable. The census G62 one-method count (40 of 1,501 PT journeys, 2.665%) sets the share WITHIN PT, which the HTS 3.8% scales to **0.1013%**. Defensible for THIS mode because the Stockton crossing is captive (a ~20 km road detour) and a within-PT share is far less lockdown-sensitive than a level. Sweep stays wide, 0 to 2x; the value is labelled `derived`, never `observed` |
+| **A crossing closes for every train that crosses it, and the timetable says which** | **§9.90** — `A.crossings.closures_per_day` was 30, assumed, uniform across 24 h and identical at both sites. The city’s OWN mapped rail timetable was already in the package: `build_level_crossings.py` now counts every scheduled service whose mapped route traverses the rail links at each crossing and times each closure from that service’s stop time. **Adamstown 110/weekday, Islington 204** (541 → 3,014 change events), peaked at 17h rather than flat — and the shape matters more than the count, because uniform closures land where there is no traffic to delay. Freight stays declared and swept at ZERO on §9.70’s grade separation. Mode 12 gets a target: **314 closures/weekday**, so with §9.89 all twelve modes are gateable |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -8530,6 +8531,79 @@ that the number is labelled `derived`, never `observed`.
 
 ---
 
+## 9.90 A crossing closes for every train that crosses it, and the timetable says which (28 August 2026, thirteenth session; issue #68)
+
+The third input the amended directive reaches. `A.crossings.closures_per_day`
+was **30, assumed, swept 10-60, and the same number at both sites**, spread
+uniformly across 24 hours because no closure log is published. Every arm since
+§9.77 has run that.
+
+### It was derivable from data already in the package
+
+A level crossing closes for **every train that crosses it**, and this city's
+own mapped rail timetable says exactly which trains those are and when. Nothing
+new had to be acquired.
+
+`build_level_crossings.py` now finds the mapped RAIL links at each crossing
+(within a held-fixed 40 m join tolerance; measured midpoint distances are
+29.6 m at Saint James Road and 8.0 m at Clyde Street), counts every scheduled
+service whose mapped route traverses them, and times each closure from that
+service's own stop time at its nearest rail stop.
+
+| site | assumed before | **derived** | shape |
+|---|---:|---:|---|
+| Saint James Road (Adamstown) | 30 | **110** | peaked: 17h carries 9, 13h and 14h carry 8 |
+| Clyde Street (Islington) | 30 | **204** | peaked: 17h carries 14, 08h and 14h carry 12 |
+| total change events | 541 | **3,014** | |
+
+Two things the assumed value got wrong, and neither is a small correction:
+
+1. **The count, by 3.7x at one site and 6.8x at the other.** The uniform member
+   gave both crossings the same 30, and the two are not alike - Islington sits
+   on a busier line than Adamstown.
+2. **The shape, which is what actually matters.** A closure spread uniformly
+   across 24 hours puts most of its closures where there is no traffic to
+   delay. The derived pattern is peaked where the service is peaked, which is
+   also where the road is busiest - the interaction the crossing exists to
+   represent.
+
+### What is still not derived, and is declared rather than hidden
+
+Freight movements are **not** in a passenger timetable.
+`A.crossings.freight_closures_per_day` is declared for them, and its point
+value is **zero on recorded evidence**, not for want of a number: §9.70
+established that the coal chain - the overwhelming majority of freight on this
+network, ~110 movements/day - has run on dedicated track **grade-separated
+since 2006**, so it does not cross these roads at grade at all. What the zero
+does not assert is that no non-coal freight ever uses these lines; ARTC
+publishes no movement log, so that remainder is unquantified and the field is
+swept 0-30 rather than left out.
+
+The residual in the timing is stated too: the offset between a train's nearest
+stop and the crossing itself is not modelled. At both sites the nearest rail
+stop is the adjacent station, so it is well under a minute.
+
+### The guard, and the member that is kept
+
+`A.crossings.closure_source` is categorical - `assumed_uniform` reproduces
+every arm before this exactly, `schedule_derived` is the value. The builder
+**refuses** rather than degrades: a crossing with no mapped rail link within
+the tolerance, or mapped links carrying no scheduled movement, stops the build,
+because a silent zero there would delete the crossing from the model while the
+build reported success.
+
+The schedule read is the scenario's **already-mapped** feed, never a re-run of
+the mapper (§3.5): mapping is not reproducible run to run, and a second mapping
+would put the trains on different links from the ones the scenario simulates.
+
+### Mode 12 finally has a target
+
+`mode_targets_by_mode.csv` carries `freight_train` = **314 closures/weekday**,
+`derived`, on its own denominator. With §9.89's ferry, **all twelve modes now
+carry a target and none is ungateable** - which was the point.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -9202,6 +9276,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-28 | **Level-crossing closures stop being assumed and are derived from the mapped rail timetable (§9.90; issue #68; thirteenth session, amended `/goal` directive).** `A.crossings.closures_per_day` was 30 per site, assumed, swept 10–60, spread uniformly across 24 hours and identical at both crossings — and every arm since §9.77 ran it. The data to derive it was already in the package: a crossing closes for every train that crosses, and the city’s own mapped timetable says which. `build_level_crossings.py` now finds the mapped RAIL links at each site (held-fixed 40 m join; measured 29.6 m and 8.0 m), counts every scheduled service traversing them and times each closure from that service’s stop time at its nearest rail stop: **Saint James Road (Adamstown) 110/weekday and Clyde Street (Islington) 204**, against 30 each — 541 → 3,014 network change events. The SHAPE is the bigger correction: uniform closures put most of their closures where there is no traffic to delay, while the derived pattern peaks at 17h (9 and 14) where the road is busiest. Freight is separated out as `A.crossings.freight_closures_per_day`, point value **zero on recorded evidence** (§9.70: the coal chain is grade-separated since 2006 and does not cross these roads at grade), swept 0–30 because ARTC publishes no log for non-coal movements. `A.crossings.closure_source` keeps `assumed_uniform` as a member that reproduces every earlier arm exactly. The builder REFUSES a site with no rail link or no scheduled movement rather than emitting a silent zero that would delete the crossing while reporting success. Mode 12 gains a target — **314 closures/weekday, derived** — so with §9.89 all twelve modes now carry one and none is ungateable. Part of family F12. Nothing here is a result. |
 | 2026-08-28 | **SCATS becomes an implemented algorithm and the ferry gets a derived target; family F12 opens (§9.88, §9.89; issue #73; thirteenth session, amended `/goal` directive).** The directive was amended mid-session to forbid leaving an unavailable input SWEPT where it can be DERIVED, naming SCATS as the worked example. Every arm to date ran 14 corridor intersections on a fixed 110 s plan; `ScatsSignalController` now implements the published control logic — degree of saturation measured at every signalised stop line, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, the intersection’s own clearances preserved. **Offsets are deliberately not adapted**: that library is exactly the unreleased artefact and no algorithm replaces it, so corridor coordination stays a stated limitation rather than a fabricated input. Two defects recorded: DS measured against FULL-SCALE saturation read 0.000 at a 1% sample and drove every cycle to the floor (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic silently reinterprets past boundaries once the cycle length varies. Transit priority composes inside the same controller, and its compensation ledger becomes unnecessary — a stage that gave up green shows higher DS and the next split repays it. Probes `20260828T230050_2it_1pct` (14 systems re-timing, 110→104→98 s against criticalDS 0.564→0.282→0.141) and `20260828T230739_2it_1pct` on S2b (SCATS + green_extension together), both rc=0, accounting closes. Seven fields declared and bound; `fixed_time` kept and reproduces every earlier arm exactly; `run_matsim.py` refuses a regime that disagrees with the committed control file. **§9.89**: ferry stops being unobtained — the census G62 one-method count (40 of 1,501 PT journeys) sets its share within PT, scaled by the HTS level to **0.1013%**, `derived` with a wide 0–2x sweep, so mode 10 of 12 can finally be gated. **New comparability family F12: signal control decides corridor travel time, so nothing before compares to anything after. Nothing here is a result.** |
 | 2026-08-28 | **Twelve modes get twelve individual targets, and the acceptance bar stops being typed into a script (§9.87; issues #49/#84; thirteenth session, `/goal` monitoring directive).** The NSW HTS publishes SIX categories against TWELVE simulated modes: bus, light rail, heavy rail and ferry shared ONE 3.8% Public Transport row, and a fold lets an excess in one member hide behind a deficit in the other. The acquired data document’s own category lists **evidence** `fit.py`’s existing folds rather than leaving them assumed. New city builder `build_mode_targets.py` writes `mode_targets_by_mode.csv` — car 58.1631, ride 20.6000, walk 13.4000, bike 3.0131, motorbike 0.2406, taxi 0.1869, bus 1.3039, heavy_rail 2.0922, light_rail 0.4039, ferry **unobtained**, truck 15.4698 on the classified-count denominator, freight_train **not simulated** — each row carrying the derivation it came from. **The PT split is taken on CURRENT Opal/station boardings (2025-07..2026-06), not on the 2021 census enumerated inside the Delta lockdown; the census composition sets each sweep’s far end, because the disagreement between them is real uncertainty rather than a source to choose between.** Ferry is declared `unobtained` and swept — no Newcastle ferry patronage exists in any acquired artefact, and the NSW-wide Opal ferry series identifies nothing here. Person-trip targets sum to 99.4037%; the missing 0.596 pp is resident truck-driving, named rather than folded into car. Five fields declared: three derivation choices with sweeps, plus `CAL.gate.stop_deviation_pct` 20 and `CAL.gate.pass_deviation_pct` 10 as `definition`. New framework reader `src/analyse/report_mode_ridership.py` prints all twelve modes individually with a timestamp, never an umbrella row. **Deliberately NOT added to `validation_targets.csv`** — a disaggregation scored beside its own parents would double-count and disturb the 67/143 split; `fit.py` is untouched. Ledger 0, currency 0, manifest 494, registry 377. Nothing here is a result. |
 | 2026-08-28 | **A hired car is a car on the road: taxi becomes a physically simulated mode, and family F11 opens (§9.86; issue #88; thirteenth session, `/goal` precondition).** `taxi` was network-routed, link-permitted, congestion-bound and car-bodied but absent from `RUN.qsim.main_mode`, so the mobsim teleported it — **39,892 of 39,923 legs per iteration**, ~40,000 vehicle-trips of road space missing from every link and count station while `car` read −19.4% and the `bike+taxi` fold read +471.2%. The fix is one registry enum; nothing else needed building. The taxi body restates `RUN.qsim.car_vehicle` exactly rather than declaring a second one, and **empty running (deadheading) stays unobserved rather than becoming an assumed multiplier**. Probe `20260828T220751_2it_1pct` rc=0, accounting closes: **197 of 197 taxi departures enter traffic, 29,994 link traversals**, all 2,300,485 link-entry events attributed to a vehicle class. Also measured there: `ride` is 1,166 of 2,101 legs physically boarded (44.5% teleported) — a DEMAND failure §9.85 addresses, never to be closed with a phantom vehicle per passenger; §9.85’s `boundDriver` is live (`paired_by_identity` 98 at iteration 2, `pair_rate` 0.5410 → 0.5030 → 0.5224, not decaying). **New comparability family F11: network loading changed, so nothing before it compares to anything after. Nothing here is a result.** |
