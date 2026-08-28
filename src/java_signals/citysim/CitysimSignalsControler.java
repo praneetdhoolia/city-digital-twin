@@ -91,6 +91,14 @@ public final class CitysimSignalsControler {
         configurator.addSignalControllerFactory(
                 TramPriorityController.IDENTIFIER,
                 TramPriorityController.Factory.class);
+        // SCATS adaptive control (DECISIONS.md 9.88, #73). Registered
+        // unconditionally: which identifier a system actually runs is decided
+        // per signal system in the generated control file, so a fixed-time
+        // scenario never constructs one of these and behaves exactly as
+        // before.
+        configurator.addSignalControllerFactory(
+                ScatsSignalController.IDENTIFIER,
+                ScatsSignalController.Factory.class);
 
         // Gradient in walk/bike link speed under signals (DECISIONS.md 9.84,
         // #21). The contrib's QSignalsNetworkFactory news its link delegate

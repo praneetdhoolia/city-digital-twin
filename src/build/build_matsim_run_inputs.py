@@ -1315,6 +1315,22 @@ def config_runtime(cfg, scoring, day, paths):
             False, 'derived',
             'the signals contrib refuses fast capacity update; forced false '
             'while A.signals.representation == explicit_signals')
+        # Tram priority and SCATS are two controllers, and a signal system
+        # names exactly one. Until the priority layer is implemented INSIDE
+        # the adaptive controller, selecting both would silently drop transit
+        # priority from every corridor intersection while the run completed
+        # happily - the class of defect the assembly probe exists to catch.
+        # Refuse the combination rather than regress it.
+        if (cfg.get('A.signals.control_regime') == 'scats_adaptive'
+                and cfg.get('A.signals.tsp.mode') != 'off'):
+            raise SystemExit(
+                'A.signals.control_regime is scats_adaptive and '
+                'A.signals.tsp.mode is %r. A signal system names ONE '
+                'controller, and citysim.ScatsSignalController does not yet '
+                'carry the tram-priority layer, so running both would '
+                'silently drop transit priority. Set A.signals.tsp.mode=off '
+                'to measure SCATS alone, or keep control_regime=fixed_time '
+                '(DECISIONS.md 9.88).' % cfg.get('A.signals.tsp.mode'))
 
     # Level crossings (#68): the closures reach the router only as a
     # time-variant network, and only when the declared representation gate

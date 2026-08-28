@@ -281,6 +281,29 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
                     'missing. Run cities/<city>/build/build_matsim_signals.py '
                     'first.' % p)
             signal_paths[key] = fwd(p)
+        # The controller identifier is baked into the generated control file,
+        # so a declared regime that disagrees with the committed artefact
+        # would reach NOTHING - the run would execute the other controller and
+        # complete happily. Checked here in 0.1 s (DECISIONS.md 9.88).
+        want = ('CitysimScats'
+                if cfg.get('A.signals.control_regime') == 'scats_adaptive'
+                else None)
+        ctl = os.path.join(sig_dir, 'signal_control.xml')
+        with open(ctl, encoding='utf-8') as fh:
+            control_text = fh.read()
+        has_scats = 'CitysimScats' in control_text
+        if want and not has_scats:
+            raise SystemExit(
+                'A.signals.control_regime is scats_adaptive but %s names no '
+                'CitysimScats controller. The identifier is generated into '
+                'the control file, so the regime must be regenerated with it: '
+                'python cities/<city>/build/build_matsim_signals.py' % ctl)
+        if not want and has_scats:
+            raise SystemExit(
+                'A.signals.control_regime is %r but %s names the CitysimScats '
+                'controller. Regenerate the signal data for the declared '
+                'regime: python cities/<city>/build/build_matsim_signals.py'
+                % (cfg.get('A.signals.control_regime'), ctl))
     # Level crossings (#68): the closures enter this run's re-emitted config
     # only under the declared representation gate - same rule as the shipped
     # assembly, checked here in 0.1 s rather than in the JVM.

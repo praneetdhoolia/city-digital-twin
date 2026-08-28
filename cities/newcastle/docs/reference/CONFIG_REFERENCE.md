@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 377 fields are made of
+## What the 384 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 31 | computed from observed data in this package |
 | `derived` | 32 | follows from another registry field by identity |
-| `literature` | 59 | a published value, not specific to this city |
-| `assumed` | 138 | chosen without direct empirical support |
+| `literature` | 63 | a published value, not specific to this city |
+| `assumed` | 141 | chosen without direct empirical support |
 | `definition` | 113 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 358 | usable point value |
+| `active` | 365 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -85,7 +85,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 121 fields*
+*`cities/newcastle/registry/A_supply.json` - 128 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -182,12 +182,19 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.schedule_mapping.thread_chunk_size` | `100` | routes | `definition` | - |
 | `A.schedule_mapping.transport_mode_assignment` | `{"bus": ["car", "bus"], "rail": ["rail"], "light_rail": ["light_rail", "tram", "car"], "tram": ["light_rail...` | network_modes_by_schedule_mode | `definition` | - |
 | `A.schedule_mapping.travel_cost_type` | `linkLength` | cost_basis | `definition` | - |
+| `A.signals.control_regime` | `fixed_time` | enum | `assumed` | `fixed_time`, `scats_adaptive` |
 | `A.signals.delay_per_intersection_s` | `26.0` | seconds | `assumed` | 15 - 40 |
 | `A.signals.junction_match_m` | `60.0` | metres | `assumed` | 30 - 100 |
 | `A.signals.min_green_s` | `6.0` | seconds | `literature` | 4 - 10 |
 | `A.signals.n_corridor_intersections` | `14` | count | `observed` | - |
 | `A.signals.representation` | `explicit_signals` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
 | `A.signals.saturation_flow_veh_h_lane` | `1900.0` | vehicles_per_hour_per_lane | `literature` | 1800 - 2050 |
+| `A.signals.scats.cycle_step_s` | `6.0` | s | `literature` | 3 - 12 |
+| `A.signals.scats.ds_deadband` | `0.05` | ratio | `assumed` | 0.02 - 0.1 |
+| `A.signals.scats.ds_smoothing` | `0.5` | weight | `assumed` | 0.1 - 0.9 |
+| `A.signals.scats.max_cycle_s` | `150.0` | s | `literature` | 110 - 180 |
+| `A.signals.scats.min_cycle_s` | `30.0` | s | `literature` | 20 - 60 |
+| `A.signals.scats.target_degree_saturation` | `0.9` | ratio | `literature` | 0.8 - 0.98 |
 | `A.signals.scats_match_radius_m` | `60` | metres | `definition` | **held fixed** |
 | `A.signals.scats_phasing` | *(null - unobtained)* | phase_plan | `assumed` | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
 | `A.signals.tsp.compensation_enabled` | `true` | boolean | `literature` | `True`, `False` |
@@ -843,6 +850,12 @@ Whether the mapper minimises link LENGTH or link TRAVEL TIME. Length, so a mappe
 
 ***definition** · status **active** · DECISIONS.md §9.34, 15*
 
+#### `A.signals.control_regime`
+
+Signal control logic: fixed_time executes the generated plan verbatim (the pre-9.88 behaviour, byte-identical), scats_adaptive runs the SCATS algorithm - degree of saturation measured at every signalised stop line, incremental cycle-length adaptation toward a target DS, and splits allocated to equalise DS across stages. Offsets are NOT adapted: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured.
+
+***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.regime`*
+
 #### `A.signals.delay_per_intersection_s`
 
 Proxy signal delay per corridor intersection, used to decompose scheduled run time in the absence of SCATS phasing. Downstream of A.signals.scats_phasing.
@@ -859,7 +872,7 @@ How close an A2 intersection's clustered OSM signal nodes must sit to a network 
 
 Minimum green time in a generated SUMO signal program.
 
-***literature** · status **active** · DECISIONS.md §5, 9.78*
+***literature** · status **active** · DECISIONS.md §5, 9.78 · MATSim `scats.minGreenS`*
 
 #### `A.signals.n_corridor_intersections`
 
@@ -877,7 +890,43 @@ Which representation carries the corridor signal effect. implicit_delay: A.signa
 
 Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1).
 
-***literature** · status **active** · DECISIONS.md §9.76*
+***literature** · status **active** · DECISIONS.md §9.76 · MATSim `scats.saturationFlowVehHLane`*
+
+#### `A.signals.scats.cycle_step_s`
+
+The most the cycle length may move in ONE cycle. SCATS adapts incrementally rather than jumping to a computed optimum, so that one noisy cycle cannot destroy coordination with neighbouring intersections; increments of a few seconds are what the published descriptions of the system describe.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.cycleStepS`*
+
+#### `A.signals.scats.ds_deadband`
+
+The band around the target degree of saturation inside which the cycle is left alone. Without it the cycle hunts - a measured DS never lands exactly on the target, so every cycle would step one way or the other. The published descriptions establish that SCATS is deliberately sluggish but not the width, so this is assumed and swept.
+
+***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.dsDeadband`*
+
+#### `A.signals.scats.ds_smoothing`
+
+Exponential smoothing weight on the newest cycle's measured degree of saturation. SCATS filters its counts rather than re-timing from a single cycle; 1.0 would react to the last cycle alone (noisy at the low flows that occupy most of the day) and 0.0 would never react at all. The filter exists in the real system; its constant is unpublished, so this is assumed and swept.
+
+***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.dsSmoothing`*
+
+#### `A.signals.scats.max_cycle_s`
+
+Longest cycle the controller may choose - the upper end of the documented SCATS user limits (dossier 03/09). Sweep-basis evidence (9.75, operated SCATS interpreted history republished in planning-portal TIA PPSHCC-137): corridor-adjacent TCS 1138 runs 72-81 s and parallel-arterial TCS 923 runs 104-113 s, so the operated corridor sits well inside this ceiling and the ceiling binds only under saturation.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.maxCycleS`*
+
+#### `A.signals.scats.min_cycle_s`
+
+Shortest cycle the controller may choose. The documented SCATS user limits run roughly 30-150 s (signalling dossier 03/09), and this is the lower end. It is a bound on the ALGORITHM, not a modelling assumption about this corridor: the controller is additionally floored by the intersection's own geometry - every clearance plus a minimum green per stage - and that floor outranks this value wherever it is higher.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.minCycleS`*
+
+#### `A.signals.scats.target_degree_saturation`
+
+The degree of saturation SCATS holds the CRITICAL (busiest) movement near by lengthening or shortening the cycle. Published descriptions of SCATS operation put the working target near 0.9 - high enough to use the intersection, low enough to leave recovery room after a surge. Swept because the operated Newcastle target is unpublished, and the corridor run time this study measures is sensitive to it.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.targetDegreeSaturation`*
 
 #### `A.signals.scats_match_radius_m`
 

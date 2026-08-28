@@ -336,7 +336,8 @@
       "description": "Minimum green time in a generated SUMO signal program.",
       "consumers": [
         "cities/newcastle/build/build_matsim_signals.py"
-      ]
+      ],
+      "matsim_param": "scats.minGreenS"
     },
     "A.signals.junction_match_m": {
       "value": 60.0,
@@ -390,7 +391,8 @@
       "consumers": [
         "cities/newcastle/build/build_matsim_signals.py"
       ],
-      "description": "Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1)."
+      "description": "Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1).",
+      "matsim_param": "scats.saturationFlowVehHLane"
     },
     "A.signals.tsp.mode": {
       "value": "green_extension",
@@ -1884,6 +1886,100 @@
         "src/build/build_matsim_run_inputs.py"
       ],
       "description": "Symmetric clamp, in percent, on the signed grade_pct attribute stamped onto run-network links from the A1/A6 node elevations."
+    },
+    "A.signals.control_regime": {
+      "value": "fixed_time",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "fixed_time",
+          "scats_adaptive"
+        ],
+        "basis": "Which control LOGIC the 14 corridor intersections run. The operated SCATS phase data was never released, and the project previously handled that by leaving A.signals.scats_phasing unobtained and sweeping a FIXED cycle time - so every arm to date ran a fixed 110 s plan, which is not what a SCATS intersection does. Under scats_adaptive the generated plan becomes the STARTING point and citysim.ScatsSignalController re-times cycle and splits every cycle from the saturation the mobsim actually presents. Both members are kept because they are the comparison that shows what the control logic is worth: fixed_time reproduces every earlier arm exactly."
+      },
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Signal control logic: fixed_time executes the generated plan verbatim (the pre-9.88 behaviour, byte-identical), scats_adaptive runs the SCATS algorithm - degree of saturation measured at every signalised stop line, incremental cycle-length adaptation toward a target DS, and splits allocated to equalise DS across stages. Offsets are NOT adapted: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured.",
+      "matsim_param": "scats.regime"
+    },
+    "A.signals.scats.target_degree_saturation": {
+      "value": 0.9,
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        0.8,
+        0.98
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "The degree of saturation SCATS holds the CRITICAL (busiest) movement near by lengthening or shortening the cycle. Published descriptions of SCATS operation put the working target near 0.9 - high enough to use the intersection, low enough to leave recovery room after a surge. Swept because the operated Newcastle target is unpublished, and the corridor run time this study measures is sensitive to it.",
+      "matsim_param": "scats.targetDegreeSaturation"
+    },
+    "A.signals.scats.cycle_step_s": {
+      "value": 6.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        3.0,
+        12.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "The most the cycle length may move in ONE cycle. SCATS adapts incrementally rather than jumping to a computed optimum, so that one noisy cycle cannot destroy coordination with neighbouring intersections; increments of a few seconds are what the published descriptions of the system describe.",
+      "matsim_param": "scats.cycleStepS"
+    },
+    "A.signals.scats.min_cycle_s": {
+      "value": 30.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        20.0,
+        60.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Shortest cycle the controller may choose. The documented SCATS user limits run roughly 30-150 s (signalling dossier 03/09), and this is the lower end. It is a bound on the ALGORITHM, not a modelling assumption about this corridor: the controller is additionally floored by the intersection's own geometry - every clearance plus a minimum green per stage - and that floor outranks this value wherever it is higher.",
+      "matsim_param": "scats.minCycleS"
+    },
+    "A.signals.scats.max_cycle_s": {
+      "value": 150.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        110.0,
+        180.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Longest cycle the controller may choose - the upper end of the documented SCATS user limits (dossier 03/09). Sweep-basis evidence (9.75, operated SCATS interpreted history republished in planning-portal TIA PPSHCC-137): corridor-adjacent TCS 1138 runs 72-81 s and parallel-arterial TCS 923 runs 104-113 s, so the operated corridor sits well inside this ceiling and the ceiling binds only under saturation.",
+      "matsim_param": "scats.maxCycleS"
+    },
+    "A.signals.scats.ds_deadband": {
+      "value": 0.05,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.02,
+        0.1
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "The band around the target degree of saturation inside which the cycle is left alone. Without it the cycle hunts - a measured DS never lands exactly on the target, so every cycle would step one way or the other. The published descriptions establish that SCATS is deliberately sluggish but not the width, so this is assumed and swept.",
+      "matsim_param": "scats.dsDeadband"
+    },
+    "A.signals.scats.ds_smoothing": {
+      "value": 0.5,
+      "units": "weight",
+      "source": "assumed",
+      "sweep": [
+        0.1,
+        0.9
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Exponential smoothing weight on the newest cycle's measured degree of saturation. SCATS filters its counts rather than re-timing from a single cycle; 1.0 would react to the last cycle alone (noisy at the low flows that occupy most of the day) and 0.0 would never react at all. The filter exists in the real system; its constant is unpublished, so this is assumed and swept.",
+      "matsim_param": "scats.dsSmoothing"
     }
   }
 }

@@ -123,6 +123,13 @@ public final class CitysimControler {
         // imports, so the base compile stays clean; the CONTROLLER that acts
         // on it exists only in src/java_signals/.
         final TramPriorityConfigGroup tramPriority = new TramPriorityConfigGroup();
+        // SCATS adaptive control (DECISIONS.md 9.88, #73), registered on
+        // every stack for exactly the reason above: its fields are
+        // registry-bound, so the `scats` module is emitted into every
+        // config and an unmaterialised group would fail the consistency
+        // check. Only citysim.ScatsSignalController - which lives in
+        // src/java_signals/ - ever acts on it.
+        final ScatsConfigGroup scats = new ScatsConfigGroup();
         // The swissRailRaptor module (#49 Tier C, DECISIONS.md 9.78) needs its
         // typed group registered BEFORE the config is parsed, exactly like
         // tramPriority above: MATSim's UnmaterializedConfigGroupChecker throws
@@ -144,7 +151,7 @@ public final class CitysimControler {
         final ModeAvailabilityConfigGroup modeAvailability =
                 new ModeAvailabilityConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[8 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[9 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -153,8 +160,9 @@ public final class CitysimControler {
         groups[5] = swissRailRaptor;
         groups[6] = gradient;
         groups[7] = modeAvailability;
+        groups[8] = scats;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[8 + i] = extraGroups.get(i);
+            groups[9 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
