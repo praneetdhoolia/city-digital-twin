@@ -108,6 +108,7 @@ its layout will otherwise cost you an hour:
 | **Three of the modes I spent the session repairing were converging on their own** | **§9.108** — every gate this session was read at iteration 100 of a 1000-iteration arm with innovation to 800. On the TREND: **car 0.3409 → 0.4429 (~136 more iterations to target), walk 0.2888 → 0.2116 (~100 more), pt 0.0688 → 0.0603 (~248 more)** — all converging, and walk's GEOMETRY with them (mean 8.12 → 6.66 km, trips 21,475 → 15,955). **Genuinely diverging: ride, bike (flat at ~10.0 km against an observed 5.2 on BOTH axes), motorbike.** The yardstick repairs (§9.100, §9.101) are untouched — those are wrong at every iteration. **A gate that stops a run before the model can answer turns every transient into a defect**; this session chased four. No arm has ever reached its cutoff |
 | **The demand generates 42% more ride legs than drivers, and half its joint bindings are refused** | **§9.109** — at **iteration 0**, before any replanning: 44,750 ride legs generated, **24,833 pairable (55.5%)**, 13,176 whose household drove elsewhere at ANY hour, 5,787 with no household car leg at all — **42.4% unservable by the demand itself**, and the proportion is flat across the arm, which is what STRUCTURAL looks like. The binder's own report agrees from the other end: escort binding **71.7%**, joint binding reaching **39.5%** of its own 448,229-trip target with **73,258 skipped as infeasible against 74,663 bound**. **Ride's deficit and bike's excess are ONE defect** — a carless agent cycles because they cannot be a passenger. The pairing rule, window and coherence rate had nothing to find |
 | **CORRECTION to §9.109: the companions' days are NOT full** | **§9.110** — §9.109 said the joint bindings are refused because the companion's day is already full. That was read off a source comment, not measured. Measured: the median person commits **6.25 h of a 30 h horizon (20.8%)** and only **4.6%** commit more than half. Driver tours are not scarce in aggregate either (~200,000 commitments against 1,100,353 tours), so any shortage is HOUSEHOLD-LOCAL. **Why each of the 73,258 candidates was refused is recorded nowhere** — one counter serves a five-clause test — which is why the comment got reached for. §9.109's engine-side numbers stand. **Third time this session a cause was asserted from a plausible mechanism rather than measured** |
+| **Seven in ten refused joint bindings name the companion as their own driver** | **§9.111** — the binder now classifies its refusals (run with approval, **verified byte-identical** first, so no family boundary). Of 73,258: **driver_is_the_companion 51,215 (69.9%)**, shift-pass driver committed 12,530, as-timed collision 9,511, and **driver_party_full just 2** — the cap's own "not binding" claim is VINDICATED. Driver and companion pools are built from the SAME tours, so a licensed car-owner is in both; **41.7% of multi-person households have at most one licensed travelling member**, and that person can drive relatives but can never be served. `p_thin` thins a pool a third of which is unbindable by construction. **Fix: exclude companions whose household holds no OTHER eligible driver tour** — no parameter, observation or target changes, but it is a FAMILY BOUNDARY and is left to the operator |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10436,6 +10437,102 @@ with your expectation still has to be explained*. The generalisation worth
 keeping is stronger than either: **an explanation is not evidence, however well
 it fits, and the cost of checking is nearly always smaller than the cost of
 being wrong about it downstream.**
+
+---
+
+## 9.111 Seven in ten refused joint bindings name the companion as their own driver (30 August 2026, fourteenth session; issues #86, #91, #48)
+
+§9.110 left the 73,258 refused joint bindings unclassified and withdrew the
+guess that they were full days. The binder now records which clause refused
+each one. Run for WEEKDAY with operator approval, and **verified byte-identical
+against the committed demand before a single number was read** - all four
+WEEKDAY artefacts match their prior sha256, so this opens no family boundary and
+nothing below is a property of a changed demand.
+
+### Which clause actually fires
+
+| clause | refusals | share |
+|---|---:|---:|
+| **driver_is_the_companion** | **51,215** | **69.9%** |
+| shift_driver_already_committed | 12,530 | 17.1% |
+| as_timed_collides_with_companion | 9,511 | 13.0% |
+| **driver_party_full** | **2** | **0.0%** |
+| driver_tour_already_a_companion_tour | 0 | - |
+| shift_leaves_day_horizon | 0 | - |
+| shift_collides_with_companion | 0 | - |
+| shift_collides_with_driver | 0 | - |
+| no_driver_tour_in_household | 0 | - |
+
+**The party-size cap refuses two bindings out of 73,258.** The claim written on
+`B.ride.max_passengers_per_vehicle` - *"it is not binding at the measured
+pairing rates"* - is **vindicated**, and the suspicion recorded against it while
+the clause was still lumped is withdrawn. It was worth splitting rather than
+asserting; the lumped counter would have blamed the cap for something it does
+not do.
+
+### What `driver_is_the_companion` means
+
+The household's driver pool and its companion pool are built from the same
+tours. A tour joins the driver pool if its person is licensed with a car
+available; it joins the companion pool if that person is not escorting. **A
+licensed car-owner's tour is therefore in both.** When such a person is drawn as
+the companion, the first-pass loop skips every driver for which
+`d_pid == c_pid`, and if they are the household's ONLY licensed travelling
+member there is nothing else in the list.
+
+Measured against the population:
+
+| licensed, car-available members who TRAVEL, per multi-person household | households | share |
+|---|---:|---:|
+| 0 | 21,802 | 12.0% |
+| **1** | **53,928** | **29.7%** |
+| 2 | 65,798 | 36.3% |
+| 3+ | 39,869 | 22.0% |
+
+**41.7% of multi-person households have no more than one licensed travelling
+member.** In the 29.7% that have exactly one, that person can be a driver for
+their non-licensed relatives - and is - but can never themselves be served, and
+every candidacy drawn for them is spent for nothing.
+
+This is not a shortage of co-travellers: 83% of multi-person households have two
+or more members travelling (§9.110's follow-up). It is a shortage of a SECOND
+licensed driver, and the candidate pool does not know the difference.
+
+### The defect, stated as a defect
+
+`p_thin` = 0.8565 thins 201,931 candidates toward the target. **It thins a pool
+in which roughly a third of the members cannot be bound by construction**, so
+the achieved count falls short by about that third: 74,663 bound against a
+448,229-trip target, 39.5% (§9.109). The thinning is doing exactly what it was
+told; it was told to draw from a pool nobody had filtered for servability.
+
+**The fix is to exclude from the candidate pool any companion tour whose
+household holds no OTHER eligible driver tour.** That changes no parameter, no
+observation and no target. It removes candidacies that are refused with
+certainty, so the same thinning rate draws from a servable pool.
+
+Order of magnitude, and it is only that: ~128,673 of the 201,931 candidates are
+not refused on this ground, so thinning that pool at the same rate would bind
+roughly 110,000 instead of 74,663. **That is not a prediction of ride's share** -
+what the engine can physically pair afterwards is a separate question that
+§9.109 measures at 55.5% - but it is the first change identified this session
+that acts on the 42.4% of ride demand which is unservable at iteration 0.
+
+### What it costs, and why it is not done here
+
+**It changes the demand, which is a FAMILY BOUNDARY.** Every run on disk becomes
+incomparable with every run after it, including the two calibrated F4 arms the
+front door still draws its figures from. That is a decision with a cost beyond
+this session's remit, and it is recorded here for the operator rather than
+taken.
+
+### The lesson worth carrying
+
+**Split a compound condition before you attribute anything to it.** One counter
+served a five-clause test, and the two clauses a reader would most naturally
+blame - a full party and a full day - are responsible for two refusals and zero
+respectively. Every guess made about this quantity while it was lumped was
+wrong, including mine an hour earlier.
 
 ---
 

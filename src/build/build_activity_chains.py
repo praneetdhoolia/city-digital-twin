@@ -1591,7 +1591,14 @@ def bind_joint_tours(path, day, pctx, seed):
             if (d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid)
                     or (d_pid, d_tid) in replaced
                     or driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS):
-                why['driver_already_committed'] += 1
+                # split, because "already committed" is four different facts
+                # and lumping them is how a cap gets blamed for a collision
+                if d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid):
+                    why['driver_is_the_companion'] += 1
+                elif (d_pid, d_tid) in replaced:
+                    why['driver_tour_already_a_companion_tour'] += 1
+                elif driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS:
+                    why['driver_party_full'] += 1
                 continue
             d_rows = effective_rows(d_pid, d_tid)
             t_start = min(int(r['dep_time_s']) for r in d_rows)
