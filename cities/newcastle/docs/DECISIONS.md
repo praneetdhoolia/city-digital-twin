@@ -110,6 +110,7 @@ its layout will otherwise cost you an hour:
 | **CORRECTION to §9.109: the companions' days are NOT full** | **§9.110** — §9.109 said the joint bindings are refused because the companion's day is already full. That was read off a source comment, not measured. Measured: the median person commits **6.25 h of a 30 h horizon (20.8%)** and only **4.6%** commit more than half. Driver tours are not scarce in aggregate either (~200,000 commitments against 1,100,353 tours), so any shortage is HOUSEHOLD-LOCAL. **Why each of the 73,258 candidates was refused is recorded nowhere** — one counter serves a five-clause test — which is why the comment got reached for. §9.109's engine-side numbers stand. **Third time this session a cause was asserted from a plausible mechanism rather than measured** |
 | **Seven in ten refused joint bindings name the companion as their own driver** | **§9.111** — the binder now classifies its refusals (run with approval, **verified byte-identical** first, so no family boundary). Of 73,258: **driver_is_the_companion 51,215 (69.9%)**, shift-pass driver committed 12,530, as-timed collision 9,511, and **driver_party_full just 2** — the cap's own "not binding" claim is VINDICATED. Driver and companion pools are built from the SAME tours, so a licensed car-owner is in both; **41.7% of multi-person households have at most one licensed travelling member**, and that person can drive relatives but can never be served. `p_thin` thins a pool a third of which is unbindable by construction. **Fix: exclude companions whose household holds no OTHER eligible driver tour** — no parameter, observation or target changes, but it is a FAMILY BOUNDARY and is left to the operator |
 | **Motorbike is told one share and scored against another; the ferry's market walks 12 km around the water** | **§9.112** — the two modes nobody had investigated. **Motorbike**: the carve is declared **0.3630%** (census 653 of 179,761 ALL journeys) while the fit target is **0.2406%** (the same 653 of 160,103 DRIVER journeys x the HTS 59.0% driver level) — same numerator, 51% apart, generated against one and scored against the other. The carve also under-delivers its own number (realised **0.2013%**) because its stated assumption is false: carved persons trip **3.48/day against a 4.11 average**. **Ferry**: the wharves are **640 m** apart against a ~20 km road detour, and **450 trips take the detour — 233 by car and 118 ON FOOT** (a 2.5 h walk) — while the ferry runs 276 trips a day and captures 6 of a 64-trip target. Trap recorded: `main_mode` is `pt`, never a submode |
+| **A transitRoute's day tag is not its service day** | **§9.113** — the mapped weekday schedule shows **0 WEEKDAY routes for ferry and tram** against 965 for bus and 266 for rail, which looks like the whole explanation for both deficits and is FALSE. Departures: **ferry 107, tram 252** — exactly their GTFS weekday trip counts. pt2matsim names a grouped route after a representative trip's service id, so a small line can be labelled SAT while running a full weekday timetable. **Never read service from a route id; count departures.** Corrects §9.103's "550 light rail trips a day" (unfiltered GTFS) to **252 weekday departures** — its conclusion is unchanged and better supported. **Supply is now ruled out for both modes on measurement** |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10633,6 +10634,71 @@ now would be the fourth time this session an explanation was mistaken for
 evidence (§9.107, §9.110, and the party-cap suspicion §9.111 withdrew). The
 measurement above says the market exists and is being lost; it does not say
 where.
+
+---
+
+## 9.113 A transitRoute's day tag is not its service day, and supply is ruled out for the light rail and the ferry (30 August 2026, fourteenth session; issues #49, #84, #30)
+
+Chasing §9.112's open question - why the raptor never returns the ferry - the
+mapped weekday schedule appeared to say the answer outright. Counting
+`transitRoute` ids by the day their name carries:
+
+| mode | WEEKDAY routes | SAT | SUN |
+|---|---:|---:|---:|
+| bus | 965 | 18 | 13 |
+| rail | 266 | 2 | 2 |
+| **ferry** | **0** | 1 | 1 |
+| **tram** | **0** | 1 | 1 |
+
+Zero weekday routes for the two worst-deviating modes, in the file the weekday
+run reads. It looked decisive, it explained both deficits at once, and **it is
+wrong.**
+
+### What the departures say
+
+| mode | routes | **departures** | GTFS weekday trips |
+|---|---:|---:|---:|
+| bus | 996 | 1,448 | - |
+| rail | 270 | 332 | 283 |
+| **ferry** | **2** | **107** | **107** |
+| **tram** | **2** | **252** | **252** |
+
+**The ferry's 107 weekday departures and the tram's 252 are present and exact.**
+pt2matsim groups a line's trips into one route per direction and names that
+route after a representative trip's service id; for a mode with few routes the
+representative can be a Saturday one. The id is a label, not a calendar. The
+service is there.
+
+### Recorded as a trap, because it is a good one
+
+**Never read service from a `transitRoute` id.** The tag is stable enough to
+look authoritative and it survives into every derived schedule, so a filter or a
+diagnostic built on it will silently mis-handle exactly the small lines - the
+tram and the ferry here, which is to say the intervention this study exists to
+test and the one captive crossing in the city. Count departures.
+
+This also corrects a figure of my own: §9.103 said the light rail runs "550
+trips a day", taken from the GTFS `trips.txt` without filtering the calendar.
+**The weekday figure is 252 departures.** The conclusion §9.103 drew from it -
+that supply does not explain the light rail's deficit - is unchanged and is now
+better supported, because 252 is measured on the file the run actually reads.
+
+### What this settles
+
+**Supply is ruled out for both modes, on departures rather than inference.** The
+light rail runs 252 times and carries 28 trips; the ferry runs 107 times and
+carries 6 against a 64-trip target while 450 trips take a road detour around the
+water it crosses (§9.112). Whatever is wrong is on the demand or routing side of
+both, and the schedule is no longer a candidate.
+
+### The near-miss worth admitting
+
+This entry was three minutes from being recorded as *"the weekday tram and ferry
+services are missing from the mapped schedule"* - a clean, satisfying,
+completely false finding that would have sent the next session to rebuild a
+schedule that is correct. What stopped it was counting the thing that matters
+(departures) rather than the thing that was easy to count (route ids). That is
+the fourth time in this session the easy count and the right count disagreed.
 
 ---
 
