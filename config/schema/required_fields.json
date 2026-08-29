@@ -4,12 +4,12 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 372,
+  "n_fields": 400,
   "n_by_layer": {
-    "A": 121,
-    "B": 89,
+    "A": 133,
+    "B": 96,
     "C": 57,
-    "CAL": 6,
+    "CAL": 15,
     "D": 5,
     "E": 26,
     "RUN": 68
@@ -150,10 +150,28 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.crossings.closure_duration_passenger_s": {
+      "layer": "A",
+      "units": "s",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.crossings.closure_duration_s": {
       "layer": "A",
       "units": "seconds",
       "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.closure_source": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
@@ -186,6 +204,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.crossings.freight_closures_per_day": {
+      "layer": "A",
+      "units": "closures_per_day_per_site",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.crossings.freight_road_names": {
       "layer": "A",
       "units": "road_names",
@@ -207,6 +234,15 @@
     "A.crossings.node_cluster_m": {
       "layer": "A",
       "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.crossings.rail_match_radius_m": {
+      "layer": "A",
+      "units": "m",
       "type": "number",
       "source_in_reference_city": "definition",
       "sweep_required": false,
@@ -834,6 +870,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.signals.control_regime": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.signals.delay_per_intersection_s": {
       "layer": "A",
       "units": "seconds",
@@ -882,6 +927,60 @@
     "A.signals.saturation_flow_veh_h_lane": {
       "layer": "A",
       "units": "vehicles_per_hour_per_lane",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.scats.cycle_step_s": {
+      "layer": "A",
+      "units": "s",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.scats.ds_deadband": {
+      "layer": "A",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.scats.ds_smoothing": {
+      "layer": "A",
+      "units": "weight",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.scats.max_cycle_s": {
+      "layer": "A",
+      "units": "s",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.scats.min_cycle_s": {
+      "layer": "A",
+      "units": "s",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.signals.scats.target_degree_saturation": {
+      "layer": "A",
+      "units": "ratio",
       "type": "number",
       "source_in_reference_city": "literature",
       "sweep_required": true,
@@ -968,6 +1067,15 @@
       "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
+    },
+    "A.taxi.fleet_representation": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
     },
     "A.transit.bus_capacity_seated": {
       "layer": "A",
@@ -1572,6 +1680,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.mode.bike_feasible_km": {
+      "layer": "B",
+      "units": "km_straight_line",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.mode.bound_passenger_seed": {
       "layer": "B",
       "units": "enum",
@@ -1603,6 +1720,15 @@
       "layer": "B",
       "units": "enum",
       "type": "string",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.mode.walk_feasible_km": {
+      "layer": "B",
+      "units": "km_straight_line",
+      "type": "number",
       "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
@@ -1815,6 +1941,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.ride.unpaired_fallback": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.ride.wait_for_driver": {
       "layer": "B",
       "units": "boolean",
@@ -1838,6 +1973,15 @@
       "units": "trips_per_day",
       "type": "array",
       "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.deadhead_min": {
+      "layer": "B",
+      "units": "minutes",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -1878,6 +2022,24 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.taxi.fleet_size": {
+      "layer": "B",
+      "units": "vehicles",
+      "type": "number",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.max_wait_min": {
+      "layer": "B",
+      "units": "minutes",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.taxi.min_unaccompanied_age": {
       "layer": "B",
       "units": "years",
@@ -1890,6 +2052,15 @@
     "B.taxi.rideshare_trip_share": {
       "layer": "B",
       "units": "share_of_p2p_trips",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.taxi.vehicle_trips_per_day": {
+      "layer": "B",
+      "units": "trips_per_vehicle_per_day",
       "type": "number",
       "source_in_reference_city": "literature",
       "sweep_required": true,
@@ -2418,6 +2589,33 @@
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json"
     },
+    "CAL.gate.pass_deviation_pct": {
+      "layer": "CAL",
+      "units": "per cent",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.gate.stop_deviation_pct": {
+      "layer": "CAL",
+      "units": "per cent",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.mode_split.commute_transfer_tolerance": {
+      "layer": "CAL",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
     "CAL.objective.components": {
       "layer": "CAL",
       "units": "weight_per_fit_component",
@@ -2445,6 +2643,42 @@
       "unobtained_in_reference_city": false,
       "declared_in": "CAL_calibration.json"
     },
+    "CAL.pt_split.break_ratio": {
+      "layer": "CAL",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.pt_split.lr_observed_stop_share": {
+      "layer": "CAL",
+      "units": "share_of_line_boardings",
+      "type": "number",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.pt_split.station_scope": {
+      "layer": "CAL",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.pt_split.window_months": {
+      "layer": "CAL",
+      "units": "months",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
     "CAL.search.convergence_delta": {
       "layer": "CAL",
       "units": "percentage_points",
@@ -2466,6 +2700,24 @@
     "CAL.search.points_per_parameter": {
       "layer": "CAL",
       "units": "count",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.taxi.lga_concentration": {
+      "layer": "CAL",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.truck.count_year_from": {
+      "layer": "CAL",
+      "units": "year",
       "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
