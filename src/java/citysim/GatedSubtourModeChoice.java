@@ -106,6 +106,13 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
         private final double walkFeasibleM;
         private final double bikeFeasibleM;
         private final double coordDistance;
+        private final String[] chainBased;
+        /** Caps the diagnostic to the first few offenders, across all threads. */
+        private static final java.util.concurrent.atomic.AtomicInteger
+                PREMIX_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
+        /** Same cap, for mixes this strategy is caught creating. */
+        private static final java.util.concurrent.atomic.AtomicInteger
+                CREATED_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
 
         GatedModule(final GlobalConfigGroup global,
                     final SubtourModeChoiceConfigGroup config,
@@ -115,6 +122,7 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             super(global, config, calc);
             this.calc = calc;
             this.coordDistance = config.getCoordDistance();
+            this.chainBased = config.getChainBasedModes();
             this.walkFeasibleM = walkFeasibleKm * 1000.0;
             this.bikeFeasibleM = bikeFeasibleKm * 1000.0;
         }
@@ -139,6 +147,81 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                 return false;
             }
             return CoordUtils.calcEuclideanDistance(a, b) > limit;
+        }
+
+        /** Chain-based modes, as the run's own config declares them. */
+        private java.util.Set<String> chainBasedModes() {
+            return new java.util.HashSet<>(
+                    java.util.Arrays.asList(chainBased));
+        }
+
+        /** Does any subtour of this plan mix chain- with non-chain-based modes? */
+        private boolean isAnySubtourMixed(final Plan plan) {
+            try {
+                final java.util.Set<String> chain = chainBasedModes();
+                for (final TripStructureUtils.Subtour st
+                        : TripStructureUtils.getSubtours(plan, coordDistance)) {
+                    boolean sawChain = false;
+                    boolean sawNon = false;
+                    for (final Trip t : st.getTrips()) {
+                        final List<Leg> legs = t.getLegsOnly();
+                        if (legs.isEmpty()) {
+                            continue;
+                        }
+                        String m = TripStructureUtils.getRoutingMode(legs.get(0));
+                        if (m == null) {
+                            m = legs.get(0).getMode();
+                        }
+                        if (chain.contains(m)) {
+                            sawChain = true;
+                        } else {
+                            sawNon = true;
+                        }
+                    }
+                    if (sawChain && sawNon) {
+                        return true;
+                    }
+                }
+            } catch (final RuntimeException ignored) {
+                return false;
+            }
+            return false;
+        }
+
+        /** The person and every subtour's modes, on one line. */
+        private String describe(final Plan plan) {
+            final StringBuilder sb = new StringBuilder();
+            sb.append("person ").append(plan.getPerson() == null ? "?"
+                    : plan.getPerson().getId().toString());
+            try {
+                int i = 0;
+                for (final TripStructureUtils.Subtour st
+                        : TripStructureUtils.getSubtours(plan, coordDistance)) {
+                    sb.append("\n   subtour ").append(i++)
+                      .append(" trips=").append(st.getTrips().size())
+                      .append(" hasParent=").append(st.getParent() != null)
+                      .append("  modes=[");
+                    for (final Trip t : st.getTrips()) {
+                        final List<Leg> legs = t.getLegsOnly();
+                        String m = legs.isEmpty() ? "(none)"
+                                : TripStructureUtils.getRoutingMode(legs.get(0));
+                        if (m == null && !legs.isEmpty()) {
+                            m = legs.get(0).getMode();
+                        }
+                        sb.append(m).append(' ');
+                    }
+                    sb.append("] acts=[");
+                    for (final Trip t : st.getTrips()) {
+                        sb.append(t.getOriginActivity().getType()).append("->")
+                          .append(t.getDestinationActivity().getType())
+                          .append(' ');
+                    }
+                    sb.append(']');
+                }
+            } catch (final RuntimeException ex) {
+                sb.append("  (describe failed: ").append(ex).append(')');
+            }
+            return sb.toString();
         }
 
         /**
@@ -213,8 +296,35 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                         }
                         oldModes.add(m);
                     }
+                    // Does the mix ALREADY exist before MATSim's strategy
+                    // touches the plan? That is the whole question: if it does,
+                    // something upstream wrote it; if it does not, the strategy
+                    // itself creates it - and probaForRandomSingleTripMode
+                    // changes ONE trip's mode irrespective of its subtour.
+                    // Diagnostic only; nothing is altered either way.
+                    final boolean mixedBefore = isAnySubtourMixed(plan);
+                    if (mixedBefore && PREMIX_DUMPS.get() < 20) {
+                        PREMIX_DUMPS.incrementAndGet();
+                        org.apache.logging.log4j.LogManager
+                                .getLogger(GatedSubtourModeChoice.class)
+                                .error("PRE-EXISTING MIX (before inner.run) - "
+                                        + describe(plan));
+                    }
                     try {
                         inner.run(plan);
+                        // Was it CLEAN before and MIXED after? Then this
+                        // strategy created the state that will kill a later
+                        // iteration, and the creator is named rather than
+                        // inferred. Diagnostic only.
+                        if (!mixedBefore && CREATED_DUMPS.get() < 20
+                                && isAnySubtourMixed(plan)) {
+                            CREATED_DUMPS.incrementAndGet();
+                            org.apache.logging.log4j.LogManager
+                                    .getLogger(GatedSubtourModeChoice.class)
+                                    .error("STRATEGY CREATED MIX (clean before "
+                                            + "inner.run, mixed after) - "
+                                            + describe(plan));
+                        }
                     } catch (final IllegalStateException ex) {
                         // DIAGNOSTIC, not a workaround: the exception is
                         // re-thrown unchanged. "Subtour contains a mix of

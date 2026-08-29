@@ -59,6 +59,10 @@ public final class SubtourChainScan {
         }
         final int maxExamples = args.length > 2
                 ? Integer.parseInt(args[2]) : 10;
+        // The run's own subtourModeChoice.coordDistance. Passed in rather than
+        // assumed, so this scanner decomposes exactly as the run does.
+        final double coordDistance = args.length > 3
+                ? Double.parseDouble(args[3]) : 100.0;
 
         final Scenario scenario = ScenarioUtils.createScenario(
                 ConfigUtils.createConfig());
@@ -69,6 +73,8 @@ public final class SubtourChainScan {
         long plans = 0;
         long subtours = 0;
         long mixedSubtours = 0;
+        long mixedLeafSubtours = 0;
+        long mixedSpanningSubtours = 0;
         long mixedPlans = 0;
         final Set<String> mixedPersons = new HashSet<>();
         final Map<String, Long> comboCounts = new LinkedHashMap<>();
@@ -81,7 +87,14 @@ public final class SubtourChainScan {
                 boolean planMixed = false;
                 final Collection<Subtour> subs;
                 try {
-                    subs = TripStructureUtils.getSubtours(plan);
+                    // The COORD-DISTANCE overload, which is what the run itself
+                    // uses (subtourModeChoice.coordDistance) and what
+                    // EscortCoherenceListener uses. The no-argument overload
+                    // demands facility or link ids, which an INPUT plans file
+                    // does not carry until PersonPrepareForSim assigns them -
+                    // that is why this scanner decomposed 0 subtours on its
+                    // first run and reported a clean it had never tested.
+                    subs = TripStructureUtils.getSubtours(plan, coordDistance);
                 } catch (final RuntimeException e) {
                     // A plan whose structure MATSim cannot decompose is itself
                     // a finding, and is reported rather than skipped silently.
@@ -115,6 +128,17 @@ public final class SubtourChainScan {
                         mixedSubtours++;
                         planMixed = true;
                         mixedPersons.add(person.getId().toString());
+                        // A LEAF subtour is one home-anchored excursion, and a
+                        // mix inside it is physically impossible - the car is
+                        // not where the agent left it. A subtour WITH children
+                        // spans several excursions, and mixing across them
+                        // (drive in the morning, PT in the evening) is an
+                        // ordinary day. Only the first is a demand defect.
+                        if (sub.getChildren().isEmpty()) {
+                            mixedLeafSubtours++;
+                        } else {
+                            mixedSpanningSubtours++;
+                        }
                         final List<String> sorted = new ArrayList<>(modes);
                         java.util.Collections.sort(sorted);
                         final String key = String.join("+", sorted);
@@ -139,6 +163,10 @@ public final class SubtourChainScan {
         System.out.println("plans           " + plans);
         System.out.println("subtours        " + subtours);
         System.out.println("MIXED subtours  " + mixedSubtours);
+        System.out.println("   of which LEAF (one excursion - a DEFECT)      "
+                + mixedLeafSubtours);
+        System.out.println("   of which SPANNING (several excursions - normal) "
+                + mixedSpanningSubtours);
         System.out.println("MIXED plans     " + mixedPlans);
         System.out.println("MIXED persons   " + mixedPersons.size());
         if (!comboCounts.isEmpty()) {
