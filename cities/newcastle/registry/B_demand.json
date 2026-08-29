@@ -1701,6 +1701,76 @@
       ],
       "matsim_param": "modeAvailability.bikeMinAge",
       "description": "Minimum age at which bike is in an agent's choice set, composing with the CWANZ ownership draw (B.population.bike_available_rate): a drawn bike still needs a rider old enough to ride it unaccompanied."
+    },
+    "A.taxi.fleet_representation": {
+      "value": "finite_fleet",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "finite_fleet"
+        ],
+        "basis": "Whether taxi supply exists at all. `absent` serves every request and reproduces every arm before 9.99 exactly, which is what makes the fleet’s effect measurable rather than asserted; `finite_fleet` refuses a request no vehicle can serve. Both members are kept for the same reason A.signals.control_regime keeps fixed_time: the difference between them is a measurable claim about what supply is worth."
+      },
+      "status": "active",
+      "decisions_ref": "9.99",
+      "description": "Taxi was the ONLY mode this model constrained by nothing - car by ownership, licence and chain consistency; ride by a declared driver; bike by an availability attribute and an age gate; pt by a timetable; truck by its own subpopulation; motorbike by a locked carve; taxi by an age gate and nothing else. Under finite_fleet, citysim.TaxiFleetEngine allocates every taxi leg to a vehicle at BeforeMobsim and REFUSES the ones no vehicle can reach, so waiting emerges from supply instead of being the declared constant C.taxi.wait_min.",
+      "matsim_param": "taxiFleet.representation"
+    },
+    "B.taxi.vehicle_trips_per_day": {
+      "value": 25.0,
+      "units": "trips_per_vehicle_per_day",
+      "source": "literature",
+      "sweep": [
+        15.0,
+        35.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.99",
+      "description": "Fares one taxi carries in a day, which is what turns an observed TRIP volume into a vehicle count. Point-to-point operators report full-time vehicles working in the low tens of fares per day, and the band here is deliberately wide because utilisation varies with shift patterns, rank-versus-booking mix and how much of the day a vehicle is actually crewed. It is the ONE free quantity in the fleet size: everything else in the identity is the observed B.taxi.daily_trips_band. Swept 15-35, which moves the fleet by a factor of 2.3 and is the honest width given that no Newcastle utilisation figure is published."
+    },
+    "B.taxi.fleet_size": {
+      "value": 800,
+      "units": "vehicles",
+      "source": "derived",
+      "status": "active",
+      "decisions_ref": "9.99",
+      "description": "Taxi and rideshare vehicles serving the study area, AT FULL SCALE - the engine scales it by qsim.flowCapacityFactor for the same reason the SCATS saturation flow is scaled (9.88): a sampled run is a city whose capacities were scaled, and a full-scale fleet serving a tenth of the demand would constrain nothing. Derived rather than declared, because the observed quantity is a TRIP volume (B.taxi.daily_trips_band, IPART 2025) and the only thing needed to turn it into vehicles is how many fares one vehicle carries in a day.",
+      "derived_from": {
+        "fields": [
+          "B.taxi.daily_trips_band",
+          "B.taxi.vehicle_trips_per_day"
+        ],
+        "identity": "fleet_size = mean(daily_trips_band) / vehicle_trips_per_day"
+      },
+      "matsim_param": "taxiFleet.fleetSize"
+    },
+    "B.taxi.max_wait_min": {
+      "value": 20.0,
+      "units": "minutes",
+      "source": "assumed",
+      "sweep": [
+        10.0,
+        45.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.99",
+      "description": "How long a passenger waits for a vehicle before abandoning the taxi trip. It is what makes a finite fleet BIND: without a refusal threshold a shortage would only delay every request rather than turning any away, and the mode share would not move. It is NOT C.taxi.wait_min, which is the typical wait priced into the taxi mode constant; this is the tail of that distribution, the point at which the traveller gives up. Assumed and swept broadly because no Newcastle abandonment figure is published, and because a regional city outside its CBD is where this value does its work.",
+      "matsim_param": "taxiFleet.maxWaitMinutes"
+    },
+    "B.taxi.deadhead_min": {
+      "value": 12.0,
+      "units": "minutes",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        30.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.99",
+      "description": "Empty running between setting one passenger down and reaching the next - the part of a vehicle’s day that carries nobody, and the reason a fleet of N serves fewer trips than the arithmetic of fare durations alone suggests. Declared as unavailable TIME rather than modelled as routed empty legs, so it does NOT load the road network; that simplification is stated here rather than hidden, and it is the one thing a full demand-responsive implementation would add. Zero recovers a fleet that teleports between fares, which is the behaviour to compare against.",
+      "matsim_param": "taxiFleet.deadheadMinutes"
     }
   }
 }

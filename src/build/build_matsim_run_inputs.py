@@ -1315,6 +1315,16 @@ def config_runtime(cfg, scoring, day, paths):
             False, 'derived',
             'the signals contrib refuses fast capacity update; forced false '
             'while A.signals.representation == explicit_signals')
+    # Taxi as a finite fleet (DECISIONS.md 9.99, #90). remodeRefused is a
+    # DEFINITION rather than a registry value, exactly like the ride engine's
+    # own remode switch: a refused request that did not walk would be a
+    # constraint with no price, and the whole point of the fleet is that the
+    # constraint IS the price.
+    runtime['taxiFleet.remodeRefused'] = (
+        True, 'derived',
+        'a refused taxi request walks this iteration and has the mode restored '
+        'at AfterMobsim (9.55, 9.81, 9.99)')
+
     # Level crossings (#68): the closures reach the router only as a
     # time-variant network, and only when the declared representation gate
     # says so - under `absent` the emission is byte-identical to pre-#68.

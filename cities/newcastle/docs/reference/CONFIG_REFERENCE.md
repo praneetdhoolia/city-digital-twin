@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 389 fields are made of
+## What the 394 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 31 | computed from observed data in this package |
-| `derived` | 32 | follows from another registry field by identity |
-| `literature` | 64 | a published value, not specific to this city |
-| `assumed` | 144 | chosen without direct empirical support |
+| `derived` | 33 | follows from another registry field by identity |
+| `literature` | 65 | a published value, not specific to this city |
+| `assumed` | 147 | chosen without direct empirical support |
 | `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 370 | usable point value |
+| `active` | 375 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1118,12 +1118,13 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 89 fields*
+*`cities/newcastle/registry/B_demand.json` - 94 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `A.taxi.fleet_representation` | `finite_fleet` | enum | `assumed` | `absent`, `finite_fleet` |
 | `B.activity.act_duration_min` | `{"HW": 465, "HE": 360, "HS": 45, "HO": 90, "WB": 60, "NHB": 20, "HX": 5}` | minutes | `assumed` | plus/minus 25% |
 | `B.activity.child_tour_retention` | `0.4` | probability | `assumed` | 0.25 - 0.6 |
 | `B.activity.day_horizon_s` | `108000` | seconds | `definition` | - |
@@ -1206,13 +1207,23 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.wait_for_driver` | `true` | boolean | `definition` | - |
 | `B.seed.master` | `20260810` | integer_seed | `definition` | - |
 | `B.taxi.daily_trips_band` | `[15000, 25000]` | trips_per_day | `literature` | **held fixed** |
+| `B.taxi.deadhead_min` | `12.0` | minutes | `assumed` | 0 - 30 |
 | `B.taxi.fare_per_km_rideshare_aud` | `1.5` | AUD_per_km | `literature` | 1.2 - 1.8 |
 | `B.taxi.fare_per_km_taxi_aud` | `2.52` | AUD_per_km | `measured` | **held fixed** |
 | `B.taxi.flagfall_rideshare_aud` | `1.95` | AUD | `literature` | 1.5 - 2.5 |
 | `B.taxi.flagfall_taxi_aud` | `5.0` | AUD | `measured` | **held fixed** |
+| `B.taxi.fleet_size` | `800` | vehicles | `derived` | derived: fleet_size = mean(daily_trips_band) / vehicle_trips_per_day |
+| `B.taxi.max_wait_min` | `20.0` | minutes | `assumed` | 10 - 45 |
 | `B.taxi.min_unaccompanied_age` | `18` | years | `assumed` | 0 - 18 |
 | `B.taxi.rideshare_trip_share` | `0.66` | share_of_p2p_trips | `literature` | 0.4 - 0.8 |
+| `B.taxi.vehicle_trips_per_day` | `25.0` | trips_per_vehicle_per_day | `literature` | 15 - 35 |
 | `B.walk.pce` | `0.0` | passenger_car_equivalents | `definition` | - |
+
+#### `A.taxi.fleet_representation`
+
+Taxi was the ONLY mode this model constrained by nothing - car by ownership, licence and chain consistency; ride by a declared driver; bike by an availability attribute and an age gate; pt by a timetable; truck by its own subpopulation; motorbike by a locked carve; taxi by an age gate and nothing else. Under finite_fleet, citysim.TaxiFleetEngine allocates every taxi leg to a vehicle at BeforeMobsim and REFUSES the ones no vehicle can reach, so waiting emerges from supply instead of being the declared constant C.taxi.wait_min.
+
+***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.representation`*
 
 #### `B.activity.act_duration_min`
 
@@ -1802,6 +1813,12 @@ The inferred central band of daily point-to-point trips in the study area (IPART
 >
 > *Departure requires: the levy trip counts, if ever requested*
 
+#### `B.taxi.deadhead_min`
+
+Empty running between setting one passenger down and reaching the next - the part of a vehicle’s day that carries nobody, and the reason a fleet of N serves fewer trips than the arithmetic of fare durations alone suggests. Declared as unavailable TIME rather than modelled as routed empty legs, so it does NOT load the road network; that simplification is stated here rather than hidden, and it is the one thing a full demand-responsive implementation would add. Zero recovers a fleet that teleports between fares, which is the behaviour to compare against.
+
+***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.deadheadMinutes`*
+
 #### `B.taxi.fare_per_km_rideshare_aud`
 
 Rideshare distance rate, literature band, swept.
@@ -1834,6 +1851,20 @@ Taxi flag fall, urban maximum, from 1 July 2025 (archived: data/raw/p2p/tfnsw_p2
 >
 > *Departure requires: a new Fares Order*
 
+#### `B.taxi.fleet_size`
+
+Taxi and rideshare vehicles serving the study area, AT FULL SCALE - the engine scales it by qsim.flowCapacityFactor for the same reason the SCATS saturation flow is scaled (9.88): a sampled run is a city whose capacities were scaled, and a full-scale fleet serving a tenth of the demand would constrain nothing. Derived rather than declared, because the observed quantity is a TRIP volume (B.taxi.daily_trips_band, IPART 2025) and the only thing needed to turn it into vehicles is how many fares one vehicle carries in a day.
+
+***derived** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.fleetSize`*
+
+> **Derived from** `B.taxi.daily_trips_band`, `B.taxi.vehicle_trips_per_day`: fleet_size = mean(daily_trips_band) / vehicle_trips_per_day
+
+#### `B.taxi.max_wait_min`
+
+How long a passenger waits for a vehicle before abandoning the taxi trip. It is what makes a finite fleet BIND: without a refusal threshold a shortage would only delay every request rather than turning any away, and the mode share would not move. It is NOT C.taxi.wait_min, which is the typical wait priced into the taxi mode constant; this is the tail of that distribution, the point at which the traveller gives up. Assumed and swept broadly because no Newcastle abandonment figure is published, and because a regional city outside its CBD is where this value does its work.
+
+***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.maxWaitMinutes`*
+
 #### `B.taxi.min_unaccompanied_age`
 
 Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49).
@@ -1845,6 +1876,12 @@ Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING
 The rideshare share of point-to-point trips, used to BLEND the measured taxi schedule with the literature rideshare rates into the one priced mode: fare = (1-s) x taxi + s x rideshare. The blend is what makes one taxi mode honest about being two services.
 
 ***literature** · status **active** · DECISIONS.md §9.76*
+
+#### `B.taxi.vehicle_trips_per_day`
+
+Fares one taxi carries in a day, which is what turns an observed TRIP volume into a vehicle count. Point-to-point operators report full-time vehicles working in the low tens of fares per day, and the band here is deliberately wide because utilisation varies with shift patterns, rank-versus-booking mix and how much of the day a vehicle is actually crewed. It is the ONE free quantity in the fleet size: everything else in the identity is the observed B.taxi.daily_trips_band. Swept 15-35, which moves the fleet by a factor of 2.3 and is the honest width given that no Newcastle utilisation figure is published.
+
+***literature** · status **active** · DECISIONS.md §9.99*
 
 #### `B.walk.pce`
 
