@@ -32,6 +32,7 @@ import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
 import org.matsim.core.controler.listener.AfterMobsimListener;
 import org.matsim.core.controler.listener.BeforeMobsimListener;
+import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.StageActivityTypeIdentifier;
 import org.matsim.core.utils.misc.OptionalTime;
 
@@ -325,15 +326,23 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         private final Id<Link> to;
         private final double departure;
         private final double routedTravelTime;
+        /**
+         * Every link the driver actually drives, start to end. A passenger can
+         * only be carried on a segment of it, so the path - not the pair of
+         * endpoints - is what a containment test and a time apportionment need.
+         */
+        private final List<Id<Link>> path;
         private int carrying = 0;
 
         DriverLeg(final Id<Person> person, final Id<Link> from, final Id<Link> to,
-                  final double departure, final double routedTravelTime) {
+                  final double departure, final double routedTravelTime,
+                  final List<Id<Link>> path) {
             this.person = person;
             this.from = from;
             this.to = to;
             this.departure = departure;
             this.routedTravelTime = routedTravelTime;
+            this.path = path;
         }
     }
 
@@ -494,7 +503,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                                 .add(new DriverLeg(person.getId(),
                                                    route.getStartLinkId(),
                                                    route.getEndLinkId(),
-                                                   departure, travel));
+                                                   departure, travel,
+                                                   drivenPath(route)));
                     }
                 } else if (TransportMode.ride.equals(leg.getMode())) {
                     if (hh == null) {
@@ -686,14 +696,18 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
 
             final double realised = realisedDuration(best);
-            final double driverTime;
+            final double wholeLeg;
             if (Double.isNaN(realised)) {
-                driverTime = best.routedTravelTime;
+                wholeLeg = best.routedTravelTime;
                 fromRouted++;
             } else {
-                driverTime = realised;
+                wholeLeg = realised;
                 fromRealised++;
             }
+            // The passenger rides the SEGMENT, not the leg. Unity when the
+            // segment is the whole route, so `both_links` is bit-for-bit what
+            // it was and this change is measurable rather than asserted.
+            final double driverTime = wholeLeg * carriedShare(best, ride);
             final double baseline = definedOr(ride.leg.getTravelTime(),
                                               definedOr(ride.route.getTravelTime(), 0.0));
             deltaSum += driverTime - baseline;
@@ -855,6 +869,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 return equalId(driver.from, ride.from);
             case RidePairingConfigGroup.RULE_DEST_LINK:
                 return equalId(driver.to, ride.to);
+            case RidePairingConfigGroup.RULE_ROUTE_CONTAINS:
+                // BOTH of the passenger's links on the driver's path, in the
+                // order the driver drives them. Order matters: a driver who
+                // passes the passenger's destination before their origin is
+                // going the other way, and pairing those two would carry
+                // somebody backwards.
+                final int i = driver.path.indexOf(ride.from);
+                final int j = driver.path.lastIndexOf(ride.to);
+                return i >= 0 && j >= 0 && i <= j;
             case RidePairingConfigGroup.RULE_WINDOW_ONLY:
                 return true;
             default:
@@ -862,6 +885,47 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // here would mean the config group was bypassed.
                 throw new IllegalStateException("unknown ridePairing.rule " + rule);
         }
+    }
+
+    /** Every link of a routed car leg, start and end included. */
+    private static List<Id<Link>> drivenPath(final Route route) {
+        final List<Id<Link>> path = new ArrayList<>();
+        path.add(route.getStartLinkId());
+        if (route instanceof NetworkRoute) {
+            path.addAll(((NetworkRoute) route).getLinkIds());
+        }
+        final Id<Link> end = route.getEndLinkId();
+        if (path.isEmpty() || !path.get(path.size() - 1).equals(end)) {
+            path.add(end);
+        }
+        return path;
+    }
+
+    /**
+     * The share of the driver's routed LENGTH that the passenger is aboard for.
+     *
+     * <p>A passenger dropped off en route rides part of the driver's leg, so
+     * charging them the whole leg's time would make every such pairing score
+     * as though they had gone all the way. Returns 1.0 when the segment is the
+     * whole route, so `both_links` reproduces the previous behaviour exactly.
+     */
+    private double carriedShare(final DriverLeg driver, final RideLeg ride) {
+        final int i = driver.path.indexOf(ride.from);
+        final int j = driver.path.lastIndexOf(ride.to);
+        if (i < 0 || j < 0 || j < i) {
+            return 1.0;
+        }
+        double total = 0.0;
+        double segment = 0.0;
+        for (int k = 0; k < driver.path.size(); k++) {
+            final Link link = scenario.getNetwork().getLinks().get(driver.path.get(k));
+            final double length = link == null ? 0.0 : link.getLength();
+            total += length;
+            if (k >= i && k <= j) {
+                segment += length;
+            }
+        }
+        return total <= 0.0 ? 1.0 : segment / total;
     }
 
     private static boolean equalId(final Id<Link> a, final Id<Link> b) {

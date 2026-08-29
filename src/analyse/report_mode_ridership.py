@@ -206,7 +206,75 @@ def road_vehicle_share(counts_all):
     return 100.0 * counts_all.get('truck', 0) / tot, tot
 
 
-def report(run_dir, iteration):
+
+def truck_at_count_stations(run_dir, iteration):
+    """Modelled and observed heavy-vehicle share at the classifying stations.
+
+    The truck target in `mode_targets_by_mode.csv` is heavy vehicles as a
+    share of all vehicles AT THE STATIONS THAT CLASSIFY THEM, and those sit on
+    freight routes. The modelled counterpart used to be a NETWORK-WIDE share,
+    so the two were different populations and the gap between them was never
+    an error statistic (9.101). This measures both sides on the same ground:
+    link entries at those stations' own links, against those stations' own
+    observed counts.
+
+    CALIBRATION SPLIT ONLY. The holdout is never opened, and the number of
+    classifying stations it holds is returned so a reader can see how much of
+    the observation this comparison is forbidden to use - here most of it.
+
+    Returns (modelled_pct, observed_pct, heavy, road, n_calibration, n_holdout)
+    with the first two None when nothing can be measured.
+    """
+    import gzip
+    import re as _re
+    want, cal_keys, held_keys = set(), set(), set()
+    heavy_obs = light_obs = 0.0
+    with open(_city.path('data/processed/validation/road_aadt_targets.csv'),
+              encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            if not (r.get('heavy_vehicles') or '').strip():
+                continue
+            if r['split'] == 'holdout':
+                held_keys.add(r['station_key'])
+            elif r['split'] == 'calibration':
+                cal_keys.add(r['station_key'])
+                heavy_obs += float(r['heavy_vehicles'])
+                light_obs += float(r['light_vehicles'] or 0)
+    with open(_city.path('data/processed/validation/count_station_links.csv'),
+              encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            if r['station_key'] in cal_keys:
+                want.add(r['link'])
+
+    observed = (100.0 * heavy_obs / (heavy_obs + light_obs)
+                if heavy_obs + light_obs > 0 else None)
+    if not want:
+        return None, observed, 0, 0, len(cal_keys), len(held_keys)
+
+    path = _os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % iteration,
+                         '%d.events.xml.gz' % iteration)
+    if not _os.path.exists(path):
+        return None, observed, 0, 0, len(cal_keys), len(held_keys)
+    pat = _re.compile(r'type="entered link" link="([^"]+)" vehicle="([^"]+)"')
+    tally = collections.Counter()
+    with gzip.open(path, 'rt') as fh:
+        for line in fh:
+            if 'entered link' not in line:
+                continue
+            m = pat.search(line)
+            if m is None or m.group(1) not in want:
+                continue
+            veh = m.group(2)
+            tally[veh.rsplit('_', 1)[-1] if '_' in veh else 'car'] += 1
+    road = sum(v for k, v in tally.items() if k in ROAD_VEHICLE_MODES)
+    if not road:
+        return None, observed, 0, 0, len(cal_keys), len(held_keys)
+    heavy = tally.get('truck', 0)
+    return (100.0 * heavy / road, observed, heavy, road,
+            len(cal_keys), len(held_keys))
+
+
+def report(run_dir, iteration, truck_stations=False):
     person_lga = em.home_lga()
     share = mim.mode_share_at(run_dir, iteration, person_lga)
     tgt = load_targets()
@@ -224,6 +292,16 @@ def report(run_dir, iteration):
         for t in csv.DictReader(fh, delimiter=';'):
             all_counts[t['main_mode']] += 1
     truck_pct, road_tot = road_vehicle_share(all_counts)
+    truck_note = ('NOT the target\'s basis - network-wide share vs a '
+                  'freight-route observation (9.101); --truck-stations scores it')
+    truck_stn = None
+    truck_target_stn = None
+    if truck_stations:
+        truck_stn = truck_at_count_stations(run_dir, iteration)
+        if truck_stn[0] is not None and truck_stn[1] is not None:
+            truck_pct = truck_stn[0]
+            truck_target_stn = truck_stn[1]
+            truck_note = None
     closures = crossing_closures(run_dir)
     movements = crossing_movements()
 
@@ -265,6 +343,10 @@ def report(run_dir, iteration):
     breaches = []
     for i, (mode, t) in enumerate(tgt.items(), 1):
         m = modelled[mode]
+        if mode == 'truck' and truck_target_stn is not None:
+            # scored on the target's own ground, so the comparator is those
+            # stations' own observed share rather than the pooled one
+            t = dict(t, target=truck_target_stn)
         if t['status'] == 'not_simulated':
             print('%-15s %10s %10s %11s %12d  %s'
                   % ('%d %s' % (i, mode), '-', '-', '-', trips[mode],
@@ -292,6 +374,14 @@ def report(run_dir, iteration):
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      flag))
             continue
+        if mode == 'truck' and truck_note:
+            # A share of the WHOLE network set beside a share measured on
+            # freight routes is a level, not an error. Printing a deviation
+            # here is the mistake 9.80/#84 records for the light rail.
+            print('%-15s %10.4f %10.4f %11s %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], 'n/a', trips[mode],
+                     truck_note))
+            continue
         if abs(dev) >= GATE_STOP_PCT:
             flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
             breaches.append((mode, m, t['target'], dev))
@@ -305,6 +395,13 @@ def report(run_dir, iteration):
     print('-' * 100)
     print('target-LGA linked trips %d   modelled road vehicle trips %d '
           '(all subpopulations)' % (lga_tot, road_tot))
+    if truck_stn is not None and truck_stn[0] is not None:
+        print('truck scored AT THE CLASSIFYING COUNT STATIONS: %d heavy of %d '
+              'road vehicles over %d calibration station(s), against their own '
+              'observed %.4f%%; %d classifying station(s) are HOLDOUT and were '
+              'NOT opened'
+              % (truck_stn[2], truck_stn[3], truck_stn[4], truck_stn[1],
+                 truck_stn[5]))
     if sub.get('pt:no_boarding'):
         print('pt trips that boarded nothing (raptor direct-walk fallback): %d'
               % sub['pt:no_boarding'])
@@ -334,6 +431,10 @@ def main():
                     help='iteration; default the newest one with a trips table')
     ap.add_argument('--all', action='store_true',
                     help='list the iterations this run holds and exit')
+    ap.add_argument('--truck-stations', action='store_true',
+                    help='score truck at the classifying count stations, the '
+                         'ground its target was measured on (reads the '
+                         'iteration events; calibration split only)')
     a = ap.parse_args()
 
     have = mim.iterations_with_trips(a.run)
@@ -346,7 +447,7 @@ def main():
     if it not in have:
         raise SystemExit('iteration %d has no trips table; this run holds %s'
                          % (it, ' '.join(str(i) for i in have)))
-    report(a.run, it)
+    report(a.run, it, a.truck_stations)
 
 
 if __name__ == '__main__':

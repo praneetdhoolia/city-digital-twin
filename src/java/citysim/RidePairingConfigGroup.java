@@ -35,11 +35,20 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      */
     private static final double UNSET = -1.0;
 
-    /** The four rules {@code B.ride.pairing_rule} may take. */
+    /** The five rules {@code B.ride.pairing_rule} may take. */
     public static final String RULE_BOTH_LINKS = "both_links";
     public static final String RULE_ORIGIN_LINK = "origin_link";
     public static final String RULE_DEST_LINK = "dest_link";
     public static final String RULE_WINDOW_ONLY = "window_only";
+    /**
+     * The passenger's two links both lie ON the driver's routed path, in
+     * order. This is the only rule that can represent a DROP-OFF EN ROUTE,
+     * and that is the commonest car-passenger trip there is: a parent who
+     * drives a child to school and carries on to work has a car leg from
+     * home to work, so {@link #RULE_BOTH_LINKS} refuses it by construction
+     * however wide the window is opened.
+     */
+    public static final String RULE_ROUTE_CONTAINS = "route_contains";
 
     private boolean enabled = false;
     private boolean physicalBoarding = false;
@@ -250,11 +259,16 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     /**
      * Which endpoints of the driver's leg must coincide with the passenger's.
      *
-     * <p>{@link #RULE_BOTH_LINKS} is the only rule under which handing the
-     * driver's realised travel time to the passenger is CORRECT rather than
-     * merely closer: the two are then the same trip. The looser rules exist so
-     * the sweep can measure what a laxer assumption would buy, and a run made
-     * under one of them is a sensitivity, not a result.
+     * <p>{@link #RULE_BOTH_LINKS} and {@link #RULE_ROUTE_CONTAINS} are the
+     * two rules under which handing the driver's time to the passenger is
+     * CORRECT rather than merely closer. Under the first the two are the same
+     * trip. Under the second the passenger occupies a SUB-SEGMENT of the
+     * driver's path, so the engine apportions the driver's time by that
+     * segment's share of the route's length - which reduces to the whole leg
+     * when the segment is the whole route, so `both_links` reproduces exactly.
+     * {@link #RULE_ORIGIN_LINK}, {@link #RULE_DEST_LINK} and
+     * {@link #RULE_WINDOW_ONLY} match trips that need not overlap at all, so a
+     * run made under one of them is a sensitivity, not a result.
      */
     @StringGetter("rule")
     public String getRule() {
@@ -338,11 +352,13 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         require(!this.rule.isEmpty(), "rule", "B.ride.pairing_rule");
         if (!RULE_BOTH_LINKS.equals(this.rule) && !RULE_ORIGIN_LINK.equals(this.rule)
                 && !RULE_DEST_LINK.equals(this.rule)
+                && !RULE_ROUTE_CONTAINS.equals(this.rule)
                 && !RULE_WINDOW_ONLY.equals(this.rule)) {
             throw new IllegalStateException(
                     "ridePairing.rule is '" + this.rule + "', which is not one of "
                     + RULE_BOTH_LINKS + ", " + RULE_ORIGIN_LINK + ", "
-                    + RULE_DEST_LINK + ", " + RULE_WINDOW_ONLY
+                    + RULE_DEST_LINK + ", " + RULE_ROUTE_CONTAINS + ", "
+                    + RULE_WINDOW_ONLY
                     + ". The rule is declared as B.ride.pairing_rule.");
         }
     }

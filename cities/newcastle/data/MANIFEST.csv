@@ -131,13 +131,13 @@ data/processed/schedule_extras/A3_route_extras.csv,processed,41415,290,src/build
 data/processed/schedule_extras/A3_stop_extras.csv,processed,401658,3873,src/build/build_gtfs_extras.py,,,,,1d22c1b2632863915c218c8d172c172d8d251ca145dbbf37ac3ef57af1eca3a6
 data/processed/schedule_extras/A3_transfer_extras.csv,processed,513828,3584,src/build/build_gtfs_extras.py,,,,,b9ac0bc65b8e022e85615584966bad9b75446838cc1aee2131951ced7cbfa94f
 data/processed/schedule_extras/_extras_report.json,processed,691,,src/build/build_gtfs_extras.py,,,,,3982a2ea663cffabee831c6e0b6dc196c9c0ffe85f3c0a497279d38de5f4c801
-data/processed/validation/_mode_targets_report.json,processed,770,,cities/newcastle/build/build_validation_targets.py,,,,,9c0cb0f71a28c35aa5dc21a3094e403a7b171e9cb4ddcf4875c54f0e4858c5a7
+data/processed/validation/_mode_targets_report.json,processed,779,,cities/newcastle/build/build_validation_targets.py,,,,,4de4b825055a03230ef9cdb400cd77bc4218a3cd7185536a496a5d93f0107262
 data/processed/validation/_validation_report.json,processed,500,,cities/newcastle/build/build_validation_targets.py,,,,,9d9c374554a1ad719ca82c59c11a649ad9dee3a084058c084f017ba16261cc27
 data/processed/validation/bus_monthly_series.csv,processed,2925,108,cities/newcastle/build/build_validation_targets.py,,,,,12349cf379347f26ada4b1b67e5b6c92bd495d2c9938c2e729f056f3c34127a5
 data/processed/validation/count_station_links.csv,processed,17665,195,cities/newcastle/build/build_validation_targets.py,,,,,cbcc69ee328bd377c969fbe0af183e6fb0ecb2ee287759f5f7153eb6a94fb2ee
 data/processed/validation/lr_monthly_series.csv,processed,2224,89,cities/newcastle/build/build_validation_targets.py,,,,,7111e637d43fc5cd236f50a0d8789a273016879d7cfb583ec119ad8a3069474d
 data/processed/validation/lr_taps_by_stop.csv,processed,205,6,cities/newcastle/build/build_validation_targets.py,,,,,0c62da63ae0a88963060add74a6f0a165f8d3ace10da354068ededeb12ae8024
-data/processed/validation/mode_targets_by_mode.csv,processed,4867,12,cities/newcastle/build/build_validation_targets.py,,,,,7598879708cb7b18b995df0d3d357cb26f19fd6eb22c0adb0f81311d2fd0eb95
+data/processed/validation/mode_targets_by_mode.csv,processed,8772,12,cities/newcastle/build/build_validation_targets.py,,,,,a87b1fa8cb67d3415afbda04a90aa7c97384a41d358bab2d7ab1ddd12382b72d
 data/processed/validation/road_aadt_targets.csv,processed,18485,119,cities/newcastle/build/build_validation_targets.py,,,,,6e01c96dffd984de97923902046cd19e3c7fe111754bffb71322ce76d7ae5495
 data/processed/validation/station_entries_exits_mean.csv,processed,2236,52,cities/newcastle/build/build_validation_targets.py,,,,,bfe827118ee8988d39b9efb296d2bcc099927dab94704b5eb21b8de73281d25b
 data/processed/validation/validation_targets.csv,processed,40585,210,cities/newcastle/build/build_validation_targets.py,,,,,a2bde12b77a1aa7e7f82d8fd878cd18c9382cce9895ecc603d9cc712b72f2b1d

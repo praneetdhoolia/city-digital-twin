@@ -1,0 +1,17 @@
+{
+  "overlay": "ride_rule_contains_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN - nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. It is the TEST half of the pair that measures what the route-containment pairing rule is worth (DECISIONS.md 9.102), and it pins B.ride.pairing_rule to route_contains, the value declared from 9.102. It shares sample, depth, threads, heap and every other value with ride_rule_control_1pct, so the two differ in the pairing rule and in nothing else. Under route_contains the passenger's two links must lie ON the driver's routed path, in the order the driver drives them, and the engine apportions the driver's time by the carried segment's share of the route length - unity when the segment is the whole route, so both_links reproduces exactly and the difference between these two runs is attributable to the rule alone. What the pair is expected to separate: whether the endpoint test was the binding constraint on pairing, or whether the constraint is upstream in the DRIVER'S PLAN, which contains no escort stop for the router to pass through. A driver routed home-to-work does not detour to a school, so containment can only recover the pairs whose destination already happens to lie on the path.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "B.ride.pairing_rule": "route_contains"
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations matches the existing 1% diagnostics exactly, because a test read at a different depth compares two points on a transient rather than isolating the one variable under test. The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

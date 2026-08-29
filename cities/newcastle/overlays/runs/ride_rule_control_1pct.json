@@ -1,0 +1,17 @@
+{
+  "overlay": "ride_rule_control_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN - nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. It is the CONTROL half of the pair that measures what the route-containment pairing rule is worth (DECISIONS.md 9.102), and it pins B.ride.pairing_rule to both_links, the value declared before 9.102. It shares sample, depth, threads, heap and every other value with ride_rule_contains_1pct, so the two differ in the pairing rule and in nothing else. The measurement that motivates the pair: at iteration 50 of arm 20260829T172145_1000it_10pct, 18,823 of 36,147 planned ride legs (52.1%) failed to pair, and 12,124 of those failures (64.4%) were miss_endpoints - the class whose name is 'the household drove elsewhere'. Under both_links the driver's car leg must START and END on the passenger's own two links, which cannot represent a drop-off en route however wide the window is opened. Because ridePairing.remodeUnpaired is true, every unpaired leg is realised as WALK, so one mechanism shows up twice: ride reads -64.6% against target and walk +89.5%. both_links is a declared member of this field's categorical sweep, so this overlay selects a declared member and measures it rather than proposing a value.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "B.ride.pairing_rule": "both_links"
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations matches the existing 1% diagnostics exactly, because a control read at a different depth compares two points on a transient rather than isolating the one variable under test. The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

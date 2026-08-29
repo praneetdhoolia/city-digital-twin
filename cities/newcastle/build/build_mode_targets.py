@@ -49,7 +49,11 @@ _sys.path.insert(0, _os.path.join(_REPO, 'src'))
 _sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
 import city as _city  # noqa: E402
 import os
+import re
+import csv
+import io as _io
 import json
+import zipfile
 import collections
 import pandas as pd
 
@@ -59,6 +63,7 @@ OBS = _city.path('data/processed/observed')
 HTS = _city.path('data/processed/hts')
 CEN = _city.path('data/processed/census')
 OUT = _city.path('data/processed/validation')
+ZON = _city.path('data/processed/zones')
 
 MON = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05',
        'Jun': '06', 'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10',
@@ -129,14 +134,90 @@ def g62_composition():
     return {k: int(d[col].fillna(0).sum()) for k, col in G62.items()}
 
 
+def _norm_stop(name):
+    """A publication's station label reduced to what a schedule stop calls it."""
+    t = re.sub(r'\s+', ' ', str(name)).strip().lower()
+    for suffix in (r'\s+platform\s+\d+$', r'\s+station$', r'\s+light rail$'):
+        t = re.sub(suffix, '', t)
+    return t
+
+
+def model_pt_stations():
+    """Every rail/light-rail stop THIS CITY's own mapped schedule contains,
+    with the LGA the boundary layer puts it in.
+
+    The composition that splits the survey's PT level must be measured over the
+    ground the survey measured, and neither half of that may be asserted: which
+    stops exist is the city's schedule, and which LGA one sits in is the city's
+    boundary. Nothing here names a place. A station the publication carries but
+    the schedule does not is not this city's - the published Newcastle series
+    carries a light rail stop belonging to another city entirely (9.100).
+    """
+    import geopandas as gpd
+    from shapely.geometry import Point
+
+    z = zipfile.ZipFile(_city.path('schedules/base2026.zip'))
+    rd = lambda n: list(csv.DictReader(_io.TextIOWrapper(z.open(n), 'utf-8-sig')))
+    routes = {r['route_id']: r for r in rd('routes.txt')}
+    trip_route = {t['trip_id']: t['route_id'] for t in rd('trips.txt')}
+    kind_of = {}
+    for r in rd('stop_times.txt'):
+        rt = trip_route.get(r['trip_id'])
+        if rt is not None:
+            kind_of[r['stop_id']] = routes[rt]['route_type']
+
+    lga = gpd.read_file(os.path.join(ZON, 'zones_LGA.gpkg')).to_crs('EPSG:4326')
+    out = {}
+    for st in rd('stops.txt'):
+        kind = kind_of.get(st['stop_id'])
+        if kind not in ('0', '2'):
+            continue
+        key = (_norm_stop(st['stop_name']), kind)
+        if key in out:
+            continue
+        hit = lga[lga.geometry.contains(
+            Point(float(st['stop_lon']), float(st['stop_lat'])))]
+        out[key] = None if hit.empty else str(hit.iloc[0]['LGA_NAME21'])
+    return out
+
+
+def _unbroken_months(series_by_month, ratio):
+    """The months of one series that are NOT a structural break.
+
+    A patronage series can stop meaning what it meant - an operator or contract
+    change empties one region's rows while every other region in the same
+    publication continues normally. Such a month is not a season and must not
+    enter a composition. It is separated from a season by size: the seasonal
+    trough in these series is ~20% below the median and the break is ~88%
+    below, so any threshold in between finds the same answer.
+    """
+    if not series_by_month:
+        return set()
+    med = sorted(series_by_month.values())[len(series_by_month) // 2]
+    return {m for m, v in series_by_month.items() if med <= 0 or v >= ratio * med}
+
+
 def opal_pt_boardings(cfg):
     """Bus / heavy rail / light rail boardings over the common recent window.
 
-    Three separate TfNSW publications, so the window is the intersection of
-    what all three cover rather than each source's own newest data - a split
-    taken over mismatched periods would be an artefact of the calendar.
+    Three separate publications, so the window is the intersection of what all
+    three cover rather than each source's own newest data - a split taken over
+    mismatched periods would be an artefact of the calendar. Three further
+    things the window and the totals must survive (9.100):
+
+    * a station the publication carries that this city does not contain, or
+      that sits outside the LGA the survey level describes, is EXCLUDED;
+    * a month in which a series structurally breaks may not enter the window;
+    * a line the current publication reports at ONE stop is scaled to the whole
+      line by the measured share that stop takes, rather than being read as if
+      the stop were the line.
     """
     months = int(cfg.get('CAL.pt_split.window_months'))
+    scope = str(cfg.get('CAL.pt_split.station_scope'))
+    ratio = float(cfg.get('CAL.pt_split.break_ratio'))
+    lr_share = float(cfg.get('CAL.pt_split.lr_observed_stop_share'))
+    target = _city.target_lga()
+    known = model_pt_stations()
 
     bus = collections.Counter()
     for _, r in pd.read_csv(
@@ -145,25 +226,63 @@ def opal_pt_boardings(cfg):
         bus['%s-%s' % (yr, MON[mon])] += float(r['Trip'] or 0)
 
     sta = collections.defaultdict(collections.Counter)
+    excluded = collections.Counter()
     for _, r in pd.read_csv(
             os.path.join(OBS, 'station_entries_exits_newcastle.csv')).iterrows():
         if r['Entry_Exit'] != 'Entry':
             continue
+        kind = '2' if r['Station_Type'] == 'Train' else '0'
+        key = (_norm_stop(r['Station']), kind)
+        if scope == 'target_lga':
+            where = known.get(key, False)
+            if where is False:
+                excluded['%s (not in this city)' % str(r['Station']).strip()] += 1
+                continue
+            if where != target:
+                excluded['%s (%s)' % (str(r['Station']).strip(),
+                                      where or 'outside every LGA')] += 1
+                continue
         sta[r['Station_Type']][str(r['MonthYear'])[:7]] += float(r['Trip'] or 0)
 
-    common = sorted(set(bus) & set(sta['Train']) & set(sta['Light rail']))
-    window = common[-months:]
+    clean_bus = _unbroken_months(dict(bus), ratio)
+    common = sorted((set(bus) & set(sta['Train']) & set(sta['Light rail']))
+                    & clean_bus)
+    # The window must be CONTIGUOUS and must not span a break. Pooling months
+    # from either side of one measures the break: after a contract change the
+    # series is a different series, and whether it has recovered its old
+    # meaning is exactly what cannot be known from it. A run must also be long
+    # enough to say something - half the declared window, so no new free value
+    # is introduced - which disqualifies the two-month tail that follows this
+    # city's bus break and selects the intact period before it (9.100).
+    runs, run = [], []
+    for m in common:
+        ordinal = int(m[:4]) * 12 + int(m[5:7])
+        if run and ordinal != run[-1][0] + 1:
+            runs.append([x[1] for x in run])
+            run = []
+        run.append((ordinal, m))
+    if run:
+        runs.append([x[1] for x in run])
+    usable = [r for r in runs if len(r) >= max(1, months // 2)]
+    if not usable:
+        raise SystemExit(
+            'no contiguous stretch of at least %d month(s) is covered by all '
+            'three PT publications and free of a structural break, so no '
+            'composition can be measured. Resolve the sources rather than '
+            'relaxing CAL.pt_split.break_ratio.' % max(1, months // 2))
+    window = usable[-1][-months:]
+
     got = dict(bus=sum(bus[m] for m in window),
                rail=sum(sta['Train'][m] for m in window),
-               light_rail=sum(sta['Light rail'][m] for m in window))
-    return window, got
+               light_rail=sum(sta['Light rail'][m] for m in window) / lr_share)
+    return window, got, excluded, lr_share
 
 
 def main():
     cfg = _registry.load(strict=True)
     year, lga, lv = hts_levels(cfg)
     g = g62_composition()
-    window, pt = opal_pt_boardings(cfg)
+    window, pt, pt_excluded, lr_share = opal_pt_boardings(cfg)
 
     rows = []
 
@@ -282,11 +401,26 @@ def main():
         v = pt_level * obs_share
         alt = pt_level * cen_share
         add(mode, v, 'resident person trips', 'derived',
-            'HTS "%s" Public transport %.1f%% x Opal/station boardings share '
-            '%.3f%% over %s..%s (%d of %d boardings). Census G62 commute '
-            'composition gives %.3f%% instead and sets the sweep\'s far end'
+            'HTS "%s" Public transport %.1f%% x Opal/station boardings '
+            'share %.3f%% over %s..%s (%d of %d boardings). The window is '
+            'the CONTIGUOUS run of months all three publications cover in '
+            "which no series structurally breaks (9.100): this city's bus "
+            'contract region falls 88%% in one month while every other '
+            'region in the same publication continues normally, and the '
+            'window used before 9.100 lay entirely inside that broken '
+            "stretch. Stations are restricted to those this city's own "
+            'mapped schedule contains inside the target LGA '
+            '(CAL.pt_split.station_scope), which excluded %d of them - %s '
+            '- because the HTS level being split is a share of TARGET-LGA '
+            "residents' trips and the composition must be measured over "
+            'the same ground. Light rail is reported by the current '
+            "publication at ONE of the line's stops, so it is scaled to "
+            'the line by the measured CAL.pt_split.lr_observed_stop_share '
+            '%.4f. Census G62 commute composition gives %.3f%% instead '
+            "and sets the sweep's far end"
             % (year, pt_level, 100.0 * obs_share, window[0], window[-1],
-               pt[key], pt_tot, 100.0 * cen_share),
+               pt[key], pt_tot, len(pt_excluded),
+               '; '.join(sorted(pt_excluded)), lr_share, 100.0 * cen_share),
             (min(v, alt), max(v, alt)))
 
     # Ferry: no Newcastle ferry patronage is published in any acquired

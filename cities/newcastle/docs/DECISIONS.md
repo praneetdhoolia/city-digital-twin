@@ -97,6 +97,10 @@ its layout will otherwise cost you an hour:
 | **A diagnostic that read today’s window into yesterday’s arm — and the THIRD instance of one error** | **§9.97** — `diagnose_ride_pairing.py` took the bound window from the LIVE REGISTRY rather than the run that executed it, so a historical arm was re-classified under today’s rule and the reclassification looked like a model improvement. It announced itself: a 30-minute arm reported a **minimum gap of 60.1 min**, which is impossible. Fixed to read the run’s own `config.xml`. Done properly, depth-matched at iteration 50 with each arm under its own window: paired_ok 40.07% → **42.02%**, window_only 10.68% → **8.37%**, everything else within 0.25 pp. **Real, but +1.95 pp against the ~7 pp §9.95 predicted.** Residual `window_only` legs now have a median gap of 344 min — different trips, not drift. **Three instances this session of one error: a comparison whose two sides were not the same kind of thing** |
 | **The window correction at depth: real, and NOT the bottleneck** | **§9.98** — depth-matched at iteration 100, each arm under its own window: paired_ok 37.96% → **41.53%** (+3.57 pp), window_only 13.13% → **8.82%**, everything else within 0.4 pp. Larger at depth than at iteration 50 (+1.95 pp), as accumulating drift predicts — but still about HALF the ~7 pp §9.95 predicted. **It bought +0.19 pp of ride mode share.** The bottleneck is upstream: 30.16% of ride legs carry no declared driver, and the plan-level abandonment happens before pairing is attempted. Widening further is measurably pointless — residual `window_only` median gap is **344 minutes** |
 | **Taxi gets a finite fleet, and a refused request walks** | **§9.99** — §9.94 recorded taxi as BLOCKED on the DRT contrib. The blocker was real; the inference was not. A fleet needs the `BeforeMobsim` boundary, not a dispatcher — **exactly where `RidePairingEngine` has paired ride legs since §9.44**. `TaxiFleetEngine` serves taxi legs greedily from the earliest-free vehicle and REFUSES any request beyond `max_wait_min`; a refusal WALKS and has taxi restored at `AfterMobsim` (§9.81’s correction). **Nothing caps the share — the constraint is the price.** Fleet DERIVED: `mean(daily_trips_band) / vehicle_trips_per_day` = 800, scaled by the sample factor. Probe: iteration 1 serves 250 of 274 and refuses 24 at 340 s mean wait, then requests fall to 177. Empty running is unavailable TIME, not routed legs — stated, not hidden |
+| **The PT yardstick counted another city's stop, three LGAs and a broken series** | **§9.100** — the composition splitting the HTS 3.8% PT level held three measured defects: a light rail stop belonging to ANOTHER CITY (30,241 boardings, 15.6% of the light rail leg, while five of this line's six real stops contributed nothing); a train leg pooling THREE LGAs, only 53.7% of it in the target LGA the HTS level describes; and a bus series that falls **319,770 → 37,414 in one month** while every other contract region continues normally — with the committed window lying ENTIRELY inside the break. Station membership is now DERIVED from the city's own schedule and boundary (15 excluded, each named), the window must be contiguous and break-free (2024-10..2025-03), and a line reported at one stop is scaled by the measured `CAL.pt_split.lr_observed_stop_share` 0.3696. **bus +452.7% → +202.6%, heavy_rail −1.5% → +166.2%, light_rail −89.0% → −93.1%: the mode that FITTED was fitting a contaminated yardstick.** Underneath it all, PT is **+145%** overall and the light rail carries 28 trips of 62,818 |
+| **Truck was scored against a target its own basis says is not comparable** | **§9.101** — the target is heavy vehicles at the stations that CLASSIFY them, which sit on freight routes; the modelled side was a NETWORK-WIDE share, so the −49.6% was two populations, not an error. Scored where the target was measured: **11.9171% modelled vs 11.3092% observed = +5.4%**, the only mode inside the bar. **But 20 of the 24 classifying stations are HOLDOUT and were not opened**, so the comparison rests on 3 stations and 23 traversals — honest but thin. Lesson: a basis field saying *not comparable* is an instruction, not a caveat |
+| **The light rail is not out-competed, it is out of REACH** | **§9.103** — the whole within-PT error is the intervention: 148 boardings of 21,429, −95.9%. Not supply (S2 runs **550 light rail trips a day**) and not mainly mode choice: **only 2,350 of 221,144 trips (1.063%) have BOTH ends within 800 m of a stop**, and of those 83 choose PT at all and 28 the light rail, against car 1,010 and walk 928. A tram corridor through the CBD holding 1.06% of trips is a statement about DESTINATION PLACEMENT, not mode choice — and it lands on **#30**. The corridor market is a MODELLED quantity, so it may never be used to argue the observation down |
+| **Resume matched two runs differing in a declared value** | **§9.104** — the §9.102 pair was launched as two committed overlays differing in ONE field, and the test was handed **the control's completed run**: `find_completed` compared parameters, `--set` overrides and the controler hash but **not the resolved registry values**, which is exactly where an overlay sets things. A paired diagnostic would have reported a difference of zero. `_run.json` now carries **`values_sha256`** and resume requires it; a record without one does not match, by design. **The fourth appearance of one error in two sessions** — a comparison whose two sides are not the same kind of thing (§9.91, §9.97, §9.100) — and this time the harness produced it silently |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -9414,6 +9418,368 @@ withdrawn; the sandbox measurement it rests on stands.
 
 ---
 
+## 9.100 The PT yardstick counted another city's stop, three LGAs and a broken series (29 August 2026, fourteenth session; issues #49, #84, #82)
+
+The iteration-100 gate on arm `20260829T172145_1000it_10pct` read bus at
+**+452.7%** and heavy rail at **-1.5%**, the one mode apparently inside the
+bar. Checking the yardstick before the model - §9.91's lesson - found three
+defects in the boardings composition that splits the HTS's single 3.8% public
+transport level into bus, heavy rail, light rail and ferry. All three were
+measured, none inferred.
+
+### The Sydney stop
+
+`station_entries_exits_newcastle.csv` carries two light rail stations. One is
+**Waratah Mills Light Rail**, a stop on another city's network entirely. The
+model's own mapped schedule contains six light rail stops - Newcastle
+Interchange, Honeysuckle, Civic, Crown Street, Queens Wharf, Newcastle Beach -
+and Waratah Mills is not among them. It contributed **30,241 boardings** to the
+window the composition used, 15.6% of the light rail leg, while **five of the
+six real stops contributed nothing** because the publication does not carry
+them.
+
+The name is the likely mechanism: this city has a suburb, a railway station and
+a light rail line whose names share a word with that stop. A filter on names
+admitted it. Nothing in the pipeline asked whether the city contained it.
+
+### The three-LGA train leg
+
+The train leg pooled **24 stations across three LGAs** - 1,191,526 boardings in
+the target LGA, 737,747 in one neighbour, 292,152 in another. Only **53.7%** of
+it was measured on the ground the HTS level describes, which is trips made by
+residents of the TARGET LGA. The bus leg, meanwhile, is a single contract
+region. The composition compared a one-region bus count against a three-LGA
+train count and called the ratio a mode split.
+
+### The broken bus series
+
+The window in use was 2025-07..2026-06. Inside it the bus contract region falls
+from **319,770 boardings in 2025-03 to 37,414 in 2025-04**, a drop of 88% in
+one month, and does not recover. Every other contract region in the same
+publication continues normally across that boundary - the largest goes
+4,964,864 to 4,395,045, an ordinary seasonal dip - so this is not an outage in
+the publication. It is one series ceasing to mean what it meant. **The window
+the target was built from lay entirely inside the broken stretch.**
+
+### What was done
+
+`build_mode_targets.py` now derives station membership rather than accepting
+it: a station enters the composition only if this city's OWN mapped schedule
+contains it and the boundary layer puts it inside the target LGA. Neither half
+is asserted and no place is named in a script - the same refusal that
+`check_hardcoding.py` enforces for values. Fifteen stations are excluded and
+every one is named in the committed basis text.
+
+The window must now be **CONTIGUOUS and free of a structural break**, where a
+break is a month below `CAL.pt_split.break_ratio` of the series' own trailing
+median. Pooling months from either side of a break measures the break. The
+seasonal trough in these series is ~20% below median and the break is ~88%
+below, so the threshold is not near anything. That selects **2024-10..2025-03**,
+six months, the intact overlap of all three publications.
+
+Light rail is reported by the current publication at one of the line's six
+stops, so it is scaled to the line by `CAL.pt_split.lr_observed_stop_share`
+0.3696 - **measured**, from the per-stop series that covers all six, and stable
+across 2019-2024 at 0.3372-0.3755, which is why the transfer is defensible and
+why the sweep is that measured spread.
+
+### What it moved
+
+| mode | model | old target | new target | old dev | new dev |
+|---|---:|---:|---:|---:|---:|
+| bus | 7.2065 | 1.3039 | **2.3819** | +452.7% | **+202.6%** |
+| heavy_rail | 2.0599 | 2.0922 | **0.7737** | -1.5% | **+166.2%** |
+| light_rail | 0.0446 | 0.4039 | **0.6444** | -89.0% | **-93.1%** |
+
+**The mode that fitted was fitting a contaminated yardstick.** Heavy rail's
+-1.5% came from a train leg counting three LGAs; corrected, no mode is inside
+the bar. That is the second time in two sessions that the first defect a gate
+found was in the target (§9.91), and the first time correcting one has taken a
+mode OUT of the bar rather than putting one in.
+
+### The finding underneath all three, and the decomposition that reads it
+
+Modelled public transport is **9.32% of trips against an HTS 3.80%: +145%**, and
+no split of that level changes it.
+
+The corrected per-mode deviations above are therefore compounds, and separating
+them changes what they say. Measured on the SAME basis both sides - boardings,
+at iteration 100 of the same arm:
+
+| submode | modelled boardings | observed composition | deviation | mean leg |
+|---|---:|---:|---:|---:|
+| bus | 74.287% | 62.681% | **+18.5%** | 7.96 km |
+| rail | 24.495% | 20.361% | **+20.3%** | 18.73 km |
+| light rail | **0.691%** | **16.958%** | **-95.9%** | 1.60 km |
+| ferry | 0.527% | - | - | 0.64 km |
+
+**The composition is very nearly right for bus and heavy rail.** Their +202.6%
+and +166.2% at the gate are a **PT LEVEL 2.45x too high** compounded with a
+composition error of under a quarter. Reporting them as if the split were the
+defect would send the next session to fix the wrong thing - and the split is
+where this entry spent its evidence.
+
+**The whole of the within-PT error is the light rail: 148 boardings of 21,429.**
+That matters more than any other number here, because the light rail is this
+study's subject, and the supply is not the explanation - S2 runs **550 light
+rail trips a day** over the line's six stops.
+
+### A measurement asymmetry that has to be stated with it
+
+The per-mode PT targets are a boardings composition scaling a TRIP-share level,
+while the model is measured in LINKED TRIPS allocated to the submode with the
+greatest in-vehicle distance (the §9.87 reader fix). Those two bases are not the
+same, and the difference is not neutral between modes: the mean modelled light
+rail leg is **1.60 km** against 7.96 km for bus and 18.73 km for rail, so a light
+rail leg inside a multi-submode journey almost never wins the allocation. The
+linked-trip basis is systematically hostile to the shortest mode, which here is
+the intervention.
+
+That does NOT explain the deficit - light rail is -95.9% on boardings too, where
+no allocation is involved - but it does mean the two bases must not be quoted
+interchangeably, and a target built from boardings should be scored against
+boardings until the transfer is measured.
+
+### What this does NOT settle: the composition's own coverage
+
+The corrections above remove three things that were unambiguously wrong. They do
+NOT make the resulting composition certain, and the reason has to be on the
+record rather than discovered again.
+
+Over the corrected window the three series total **14,858 boardings a day** -
+bus 9,313, rail 3,025, light rail 2,520. The HTS level they are used to split
+implies **76,646 PT trips a day** across the study area. Boardings should EXCEED
+trips, because a journey with a transfer boards twice; instead the observation
+is **5.2x smaller** than the level it is splitting. The series therefore cover
+roughly a fifth of the region's public transport, and there is no reason to
+assume they cover each mode's fifth equally: the bus leg is ONE contract region
+of several in the study area, while the rail and light rail legs are now
+restricted to the target LGA by this very change. **Restricting the station legs
+improved the geography and worsened the coverage symmetry at the same time.**
+
+Two independent indications say the bus leg is the one most undercounted, and
+both should be weighed before the corrected split is trusted as a point value:
+
+* the **census commute composition** puts bus at **78.481%** of PT, against the
+  Opal-derived 62.681% - and it is already this field's declared sweep end;
+* the **model's own** boardings put bus at **74.287%**, arrived at without
+  reference to either source.
+
+Two estimates near 75-78% against one at 62.7% is not proof, and the model is
+not an observation. It is enough that the sweep must be read as live rather than
+decorative, and that **no bus or heavy rail deviation quoted against the point
+value should be treated as settled** while the coverage gap stands. What would
+settle it is a bus series covering the study area's other contract regions,
+which the package does not hold.
+
+### The lesson worth carrying
+
+**A published extract named after your city is not thereby about your city.**
+Membership is a question with an answer in the package - the schedule says what
+exists and the boundary says where it is - and asking it cost nothing. Not
+asking it put another city's patronage into this one's target for three
+sessions.
+
+---
+
+## 9.101 Truck was scored against a target its own basis says is not comparable (29 August 2026, fourteenth session; issues #82, #84)
+
+The gate read truck at **-49.6%** and flagged it to STOP. The target's own
+committed basis says, verbatim: *"NOT a person-trip share and NOT comparable
+with one - only a handful of stations classify, and they sit on freight routes,
+so this is the share where heavy vehicles are measured, not across the
+network."*
+
+The modelled counterpart was a **network-wide** heavy-vehicle share. A share of
+the whole network set beside a share measured on freight routes is not an error
+statistic, it is two different populations - and lower is what the model should
+read, by construction. This is the same class of defect as §9.80/#84, where the
+light rail's boardings were quoted as an error against a target `fit.py` marks
+unscorable, and it survived because the modelled side was *sensibly* computed:
+`road_vehicle_share()` correctly uses road vehicles rather than person trips,
+which made the number look like it belonged.
+
+### What was done
+
+`report_mode_ridership.py` no longer prints a deviation for truck on the
+network-wide basis - it prints the level and says why it is not the target's
+basis. `--truck-stations` scores truck where its target was measured: link
+entries at the classifying stations' own links, against **those same stations'
+own observed heavy share**, both read from `road_aadt_targets.csv`, the generic
+city-owned artefact the framework already reads for counts.
+
+### Measured, at iteration 100 of `20260829T172145_1000it_10pct`
+
+| basis | modelled | observed | deviation |
+|---|---:|---:|---:|
+| network-wide (was quoted) | 7.7951% | 15.4698% | -49.6% |
+| **at the classifying stations** | **11.9171%** | **11.3092%** | **+5.4%** |
+
+**Truck was never -49.6%.** On the ground its target was measured on it is
+inside the 10% bar, and it is the only mode that is.
+
+### What this does NOT settle, and must be said
+
+The comparison uses **3 calibration stations and 23 modelled heavy traversals**.
+Of the 24 classifying stations that map to a link, **20 are in the holdout and
+were not opened**. So the like-for-like truck measurement is holdout-bound: the
+number above is honest but thin, and its precision is not what a +5.4% normally
+implies. Whether to spend holdout on freight is a decision for the operator, not
+something to resolve by quietly widening the comparison.
+
+### The lesson worth carrying
+
+**A basis field that says "not comparable" is an instruction, not a caveat.**
+It was written correctly, committed, regenerated into the reference docs, and
+read past for two sessions while the number it disclaims was quoted at every
+gate. A refusal recorded in prose does not enforce itself - the reader had to
+be taught to honour it.
+
+---
+
+## 9.103 The light rail is not out-competed, it is out of reach: the corridor holds 1.06% of trips (29 August 2026, fourteenth session; issues #30, #49, #84)
+
+§9.100 separated the public transport error into a LEVEL that is +145% and a
+composition that is right for bus and heavy rail to within a quarter, leaving
+**the whole within-PT error on the light rail: 148 boardings of 21,429, -95.9%
+of its observed share.** This entry asks where that comes from, because the
+light rail is the intervention this study exists to test and a deficit in it is
+not a detail.
+
+### It is not supply
+
+S2 runs **550 light rail trips a day** over the line's six stops. The mapped
+schedule carries them, the vehicles exist, and pt2matsim reports no unmapped
+stop. Nothing about the service explains 148 boardings.
+
+### It is not primarily mode choice either
+
+Measured at iteration 100 of `20260829T172145_1000it_10pct`, over all 221,144
+trips of every subpopulation, against the line's ten stop points:
+
+| trips with... | count | share |
+|---|---:|---:|
+| **BOTH ends within 800 m of a light rail stop** | **2,350** | **1.063%** |
+| exactly one end within 800 m | 15,614 | 7.061% |
+
+**The entire addressable market for a direct light rail trip is 1.06% of all
+trips.** The target the mode is scored against is 0.6444% of target-LGA trips,
+about 405 of them. So the target is not unreachable in principle - but it
+requires capturing a large fraction of a corridor market that is itself tiny,
+and the model is capturing almost none of it: of the 2,350 corridor trips, **83
+choose public transport of any kind and 28 are light rail.** The rest go
+
+| mode | corridor trips |
+|---|---:|
+| car | 1,010 |
+| walk | 928 |
+| bike | 158 |
+| ride | 98 |
+| pt (all submodes) | 83 |
+| truck | 45 |
+| taxi | 25 |
+| motorbike | 3 |
+
+### Why that points upstream of mode choice
+
+928 walk trips inside a corridor served 550 times a day is not obviously wrong -
+the mean modelled light rail leg is **1.60 km**, and a 1.6 km walk is genuinely
+competitive against a wait plus a transfer penalty. What is harder to accept is
+the SIZE of the market: a city's tram corridor through its own CBD holding 1.06%
+of all trips, when the line was built precisely because that corridor is where
+the trips are.
+
+That is a statement about **where the demand model puts destinations**, not
+about how agents choose between modes, and it lands on an issue already open:
+**#30, destination placement yields a third of the observed sub-1 km walk
+trips.** A CBD with too few modelled activities produces too few short CBD
+trips, and the light rail is the mode that lives on exactly those.
+
+### What must NOT be concluded from this
+
+**Nothing here says the light rail target is too high**, and nothing here
+licenses lowering it. The corridor market is a MODELLED quantity - it is the
+model's own destination placement measured against the model's own stops - so
+using it to argue the observation down would be fitting the yardstick to the
+answer, which is the §9.92 error in a new costume. The observation stands; what
+this measurement identifies is where to look.
+
+### The next lane it defines
+
+Establish whether the corridor's 1.06% is a defect or a fact, by comparing the
+modelled activity density near the line against an observed one the package
+already holds, before touching any behavioural parameter. If destination
+placement is the cause, the light rail deficit, the sub-1 km walk deficit (#30)
+and part of the walk excess are **one defect with three symptoms**, and fixing
+mode choice would paper over all three.
+
+---
+
+## 9.104 Resume matched two runs that differ in a declared value, and handed back the wrong one (29 August 2026, fourteenth session; issue #66)
+
+The §9.102 pair was launched the way this repository requires: two committed
+overlays, `ride_rule_control_1pct` and `ride_rule_contains_1pct`, identical in
+sample, depth, threads, heap and every other value, differing in exactly one
+declared field - `B.ride.pairing_rule`. The control ran for 40 iterations. The
+test then printed:
+
+```
+resume: 20260829T205738_40it_1pct already complete
+```
+
+**It was handed the control's completed run**, its metrics, its mode shares and
+its run directory. Had that gone unnoticed, the paired diagnostic would have
+reported the two arms as identical - a difference of exactly zero - and the
+conclusion would have been that route containment changes nothing.
+
+### Why it matched
+
+`find_completed` compares scenario, day, fraction, iterations, seed, the
+`--set` overrides, the warm-start key, `rc == 0`, and prefers a matching
+`controler_sha256`. **It does not compare the resolved registry values.** A
+run-config overlay sets registry fields rather than `--set` overrides, so the
+one thing the two overlays existed to differ in was invisible to the identity
+check. The Java is identical between them, so the controler hash matched too.
+
+The defect is old and was harmless until now only because no prior pair
+differed *solely* by an overlay-set registry value: the taxi and coherence
+diagnostics differ in iteration counts or were run before their controls.
+
+### The fix
+
+`_run.json` now carries **`values_sha256`**, a hash over every resolved
+registry value in the run's own `_config.json` snapshot, and `find_completed`
+requires it to match. A record written before this was tracked carries no hash
+and therefore cannot prove it used the same values, so **it does not match** -
+deliberately. That is the same conservatism the controler hash already states
+in its own comment: *a resume refused on a change that could not have mattered
+costs a re-run; a resume granted on one that did produces an untraceable
+result.* The cost is that every completed run predating this change must be
+re-run rather than resumed, which is the right way round.
+
+### The lesson worth carrying
+
+**This is the fourth appearance of one error in two sessions.** §9.97 recorded
+a diagnostic that read today's window into yesterday's arm; §9.91 recorded a
+level read off a moving curve, twice; and §9.100 recorded a composition pooling
+three LGAs against one contract region. Every one is the same shape: **a
+comparison whose two sides are not the same kind of thing.** Here the harness
+itself produced the mismatch, silently, while doing what it was told.
+
+The general form is worth stating plainly, because it keeps recurring in new
+costumes: **anything that decides two things are "the same" must be checked
+against everything that could make them different.** A resume is an equality
+test on runs. It was missing a term.
+
+### What it does NOT excuse
+
+The pair had to be re-run with `--force`, and the control's own record predates
+the fix, so **neither arm may be compared against any earlier run** - only
+against each other, both having been produced under the same code. Nothing in
+this entry is a result.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -10086,6 +10452,8 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-29 | **The PT yardstick counted another city's stop, three LGAs and a broken series (§9.100; issues #49/#84/#82; fourteenth session).** The iteration-100 gate read bus +452.7% and heavy rail −1.5%, the one mode apparently inside the bar. Checking the yardstick first (§9.91's lesson) found three measured defects in the boardings composition. **A light rail stop belonging to another city entirely** sat in a file named for this one, contributing 30,241 boardings — 15.6% of the light rail leg — while five of the six stops this city's own schedule contains contributed nothing; a name filter admitted it and nothing asked whether the city contained it. **The train leg pooled 24 stations across three LGAs**, only 53.7% of its boardings on the ground the HTS level describes, against a bus leg that is one contract region. **The bus series falls 319,770 → 37,414 boardings in one month (−88%) and does not recover**, while every other contract region in the same publication continues normally — and the committed window lay ENTIRELY inside that break. `build_mode_targets.py` now DERIVES station membership from the city's own mapped schedule and boundary layer (no place named in a script; 15 stations excluded, every one written into the basis), requires a CONTIGUOUS break-free window (`CAL.pt_split.break_ratio`, selecting 2024-10..2025-03), and scales a line reported at one stop to the whole line by the MEASURED `CAL.pt_split.lr_observed_stop_share` 0.3696 (stable 0.3372–0.3755 across 2019–2024). Targets move: **bus 1.3039 → 2.3819, heavy_rail 2.0922 → 0.7737, light_rail 0.4039 → 0.6444**, so **heavy rail's −1.5% fit was an artefact and no mode is now inside the bar.** The finding underneath: modelled PT is **9.32% against an HTS 3.80%, +145%**, which no split changes, and the light rail carries **28 trips of 62,818**. +3 registry fields. Lesson: a published extract named after your city is not thereby about your city. Nothing here is a result. |
+| 2026-08-29 | **Truck was scored against a target its own basis says is not comparable (§9.101; issues #82/#84; fourteenth session).** The gate read truck −49.6% and flagged STOP. The target's committed basis says verbatim that it is *"NOT a person-trip share and NOT comparable with one"* — it is heavy vehicles at the handful of stations that CLASSIFY them, which sit on freight routes — while the modelled side was a NETWORK-WIDE share. Two populations, not an error, and lower is what the model should read by construction; it survived because the modelled side was sensibly computed on road vehicles, which made it look like it belonged. Same class as §9.80/#84. `report_mode_ridership.py` no longer prints a deviation on that basis, and `--truck-stations` scores truck where its target was measured — link entries at the classifying stations' own links against those stations' own observed share, both from the generic `road_aadt_targets.csv`. **Measured at iteration 100: 11.9171% modelled against 11.3092% observed, +5.4%** — inside the bar, and the only mode that is. **Stated rather than hidden: 20 of the 24 classifying stations are HOLDOUT and were not opened**, so this rests on 3 stations and 23 modelled heavy traversals; whether to spend holdout on freight is the operator's decision. Lesson: a basis field that says *not comparable* is an instruction, not a caveat — it was committed, regenerated into the reference docs, and read past for two sessions. Nothing here is a result. |
 | 2026-08-29 | **Taxi gets a finite fleet, and a refused request walks (§9.99; issue #90; thirteenth session).** §9.94 recorded taxi’s repair as blocked on the MATSim DRT contrib, absent from the pinned stack and unreachable from the sandbox. **The blocker was real and the conclusion was wrong**: a fleet needs no mobsim dispatcher, only the `BeforeMobsim` boundary where selected plans are stable — exactly where `RidePairingEngine` has paired ride legs since §9.44, a pattern already in the repository. `citysim.TaxiFleetEngine` collects every taxi leg, sorts by departure, serves greedily from the earliest-free vehicle, and REFUSES any request whose earliest vehicle is beyond `B.taxi.max_wait_min`; a refused request walks that iteration with the mode restored at `AfterMobsim`, carrying §9.81’s correction that a refusal must not delete the alternative. **Nothing caps the mode share — the supply constraint is the price, so taxi becomes emergent**, the same reasoning §9.55 applies to ride. The fleet is DERIVED, not declared: `mean(daily_trips_band) / vehicle_trips_per_day` = 20,000/25 = **800 vehicles** at full scale, scaled by `flowCapacityFactor` for the §9.88 reason, with `vehicle_trips_per_day` the one free quantity (literature, swept 15–35). Two simplifications stated not hidden: empty running is unavailable TIME rather than routed legs so dead legs load no link, and there is no spatial dispatch. Probe `20260829T171626_2it_1pct` rc=0, accounting closes: iteration 0 has no taxi legs at all, iteration 1 serves 250 of 274 and refuses 24 at 340 s mean wait, and requests then fall to 177 as refusals price taxi down — **the fleet binds under load and relaxes when it does not**, which a cap would not do. `absent` is kept and reproduces every earlier arm. **Lesson: "blocked on a dependency" deserves the same scepticism as any other claim.** Nothing here is a result. |
 | 2026-08-29 | **The pairing-window correction measured at depth: real, and not the bottleneck (§9.98; issues #48/#91; thirteenth session).** The arm carrying §9.95’s corrected identity reached iteration 100. Depth-matched against the previous arm, each classified under the window it itself ran and differing in only that window: **paired_ok 37.96% → 41.53% (+3.57 pp)** and window_only 13.13% → 8.82%, with every other verdict inside 0.4 pp. The effect is larger at depth than the +1.95 pp measured at iteration 50, which is what accumulating drift predicts — but it is still about half the ~7 pp §9.95 forecast, and that forecast is not retrospectively rescued. **What it bought in ridership was +0.19 pp of ride** (7.1512 → 7.3417), with car +0.51, walk −0.52 and bike −0.19: every mode moving toward its target, all of it marginal. **The window was a real defect and never the bottleneck** — that sits upstream, in the 30.16% of ride legs carrying no declared driver (#91) and in the plan-level abandonment that turns a 19.03% seed into a 14.19% planned share before pairing is ever attempted. Recorded so it is not re-bought: widening the window further is measurably pointless, the residual window_only legs having a median gap of 344 minutes — different trips, not drift. Nothing here is a result. |
 | 2026-08-29 | **A diagnostic that read today’s window into yesterday’s arm, and the third instance of one error (§9.97; issue #48; thirteenth session).** `diagnose_ride_pairing.py` took the bound pairing window from the live registry instead of from the run that executed it, so classifying a historical arm applied today’s rule to plans that never ran under it — and the reclassification is indistinguishable from a model improvement. The defect announced itself in the data: an arm that RAN a 30-minute window reported a minimum observed gap of 60.1 minutes, which cannot happen. The tool now reads tolerances from the run’s own config.xml and refuses a run that declares none. Done properly — depth-matched at iteration 50, each arm classified under the window it actually ran, differing in only that window — **paired_ok 40.07% → 42.02% and window_only 10.68% → 8.37%**, with every other verdict moving less than a quarter point. So §9.95’s derivation correction is real and touches only what it should, but it is worth **+1.95 pp, about a quarter of the ~7 pp predicted**; that prediction extrapolated from iteration 100, where drift has had twice as long to accumulate. The residual `window_only` legs have a median gap of 344 minutes — different trips at different times of day, not drift, and widening further would pair people who are not travelling together. **Recorded as a pattern: three instances this session (§9.91 a moving curve read as a level, §9.96 a number that agreed with expectation and went unexplained, §9.97 a yardstick that moved with the thing it measured) of ONE error — a comparison whose two sides were not the same kind of thing.** The §9.95 derivation itself is not withdrawn: the mutation range applies per agent, so a pair drifts up to twice it, whatever the effect size. |

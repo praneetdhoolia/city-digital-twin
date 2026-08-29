@@ -111,6 +111,45 @@
       "decisions_ref": "9.87",
       "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
     },
+    "CAL.pt_split.station_scope": {
+      "value": "target_lga",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "target_lga",
+          "all_observed"
+        ],
+        "basis": "The HTS level the PT split scales is a share of trips made by residents of the TARGET LGA, so the boardings composition that splits it must be measured over the same ground. `target_lga` counts only stations the city's own mapped schedule contains AND that fall inside the target LGA boundary - both tested, never named in a script. `all_observed` reproduces the pre-9.100 behaviour, which pooled every station the publication happened to carry: three LGAs of train boardings and a light rail stop belonging to another city entirely. It is kept as the sweep's other arm because the bus series has no station-level breakdown and so cannot be restricted the same way, which leaves a real asymmetry between the legs rather than a settled one."
+      },
+      "status": "active",
+      "decisions_ref": "9.100",
+      "description": "Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all."
+    },
+    "CAL.pt_split.break_ratio": {
+      "value": 0.5,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.35,
+        0.7
+      ],
+      "status": "active",
+      "decisions_ref": "9.100",
+      "description": "A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near."
+    },
+    "CAL.pt_split.lr_observed_stop_share": {
+      "value": 0.3696,
+      "units": "share_of_line_boardings",
+      "source": "measured",
+      "sweep": [
+        0.3372,
+        0.3755
+      ],
+      "status": "active",
+      "decisions_ref": "9.100",
+      "description": "The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged."
+    },
     "CAL.mode_split.commute_transfer_tolerance": {
       "value": 0.25,
       "units": "ratio",

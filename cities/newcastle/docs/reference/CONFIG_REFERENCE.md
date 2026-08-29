@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 394 fields are made of
+## What the 397 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 31 | computed from observed data in this package |
+| `measured` | 32 | computed from observed data in this package |
 | `derived` | 33 | follows from another registry field by identity |
 | `literature` | 65 | a published value, not specific to this city |
-| `assumed` | 147 | chosen without direct empirical support |
+| `assumed` | 149 | chosen without direct empirical support |
 | `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 375 | usable point value |
+| `active` | 378 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1199,7 +1199,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.joint_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.max_passengers_per_vehicle` | `4` | persons | `assumed` | 1 - 4 |
 | `B.ride.pairing_enabled` | `true` | boolean | `definition` | - |
-| `B.ride.pairing_rule` | `both_links` | enum | `assumed` | `both_links`, `origin_link`, `dest_link`, `window_only` |
+| `B.ride.pairing_rule` | `route_contains` | enum | `assumed` | `route_contains`, `both_links`, `origin_link`, `dest_link`, `window_only` |
 | `B.ride.pairing_window_min` | `15.0` | minutes | `assumed` | 5 - 60 |
 | `B.ride.physical_boarding` | `true` | boolean | `definition` | - |
 | `B.ride.pickup_dwell_s` | `0.0` | seconds | `assumed` | 0 - 120 |
@@ -1759,9 +1759,9 @@ Whether a `ride` leg may NAME the household member who drives it, and take that 
 
 #### `B.ride.pairing_rule`
 
-The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. Consumed by src/java/citysim/RidePairingEngine.
+The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `route_contains` means the passenger boards and alights at two links the driver drives, in that order, so the passenger is in the car for a SEGMENT of the driver's trip. `both_links` is the special case where that segment is the whole trip. Consumed by src/java/citysim/RidePairingEngine.
 
-***assumed** · status **active** · DECISIONS.md §9.44 · MATSim `ridePairing.rule`*
+***assumed** · status **active** · DECISIONS.md §9.44, 9.102 · MATSim `ridePairing.rule`*
 
 #### `B.ride.pairing_window_min`
 
@@ -1891,7 +1891,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 12 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 15 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -1903,6 +1903,9 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
+| `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
+| `CAL.pt_split.station_scope` | `target_lga` | enum | `assumed` | `target_lga`, `all_observed` |
 | `CAL.pt_split.window_months` | `12` | months | `assumed` | 6 - 24 |
 | `CAL.search.convergence_delta` | `0.25` | percentage_points | `assumed` | 0.1 - 1 |
 | `CAL.search.max_rounds` | `3` | count | `assumed` | 1 - 6 |
@@ -1949,6 +1952,24 @@ How many independent numbers the objective actually contains. The loop refuses t
 ***derived** · status **active** · DECISIONS.md §12.1*
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
+
+#### `CAL.pt_split.break_ratio`
+
+A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near.
+
+***assumed** · status **active** · DECISIONS.md §9.100*
+
+#### `CAL.pt_split.lr_observed_stop_share`
+
+The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged.
+
+***measured** · status **active** · DECISIONS.md §9.100*
+
+#### `CAL.pt_split.station_scope`
+
+Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all.
+
+***assumed** · status **active** · DECISIONS.md §9.100*
 
 #### `CAL.pt_split.window_months`
 
