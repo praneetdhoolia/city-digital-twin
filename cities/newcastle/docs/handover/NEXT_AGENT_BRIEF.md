@@ -1,6 +1,6 @@
 # Brief for the next agent — THE SEED IS RECOVERABLE FOR THREE MODES, AND TAXI IS BLOCKED ON A DEPENDENCY
 
-*Updated 29 August 2026, THIRTEENTH session (§9.86–§9.96) — a groundwork-and-diagnosis
+*Updated 29 August 2026, THIRTEENTH session (§9.86–§9.97) — a groundwork-and-diagnosis
 session. The `/goal` directive was amended mid-session to forbid leaving an unavailable
 input SWEPT where it can be DERIVED. Four inputs were derived or made physical, two arms
 were run and stopped at their gates, and five paired 1% diagnostics separated the causes.
@@ -281,27 +281,35 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **A NUMBER THAT AGREES WITH YOUR EXPECTATION STILL HAS TO BE EXPLAINED.** Ride
+1. **BEFORE QUOTING ANY DIFFERENCE, ASK WHAT ELSE DIFFERS BESIDES THE THING UNDER
+   TEST.** This session made ONE error in three costumes (§9.91, §9.96, §9.97): a
+   moving curve read as a level; a number that agreed with expectation and went
+   unexplained; and a tool that took its yardstick from the live registry, so it
+   re-classified a historical arm under today's rule and produced a confirmation.
+   That last one announced itself only because a 30-minute arm reported a minimum
+   gap of 60.1 minutes, which is impossible. **A comparison whose two sides are not
+   the same kind of thing is not a measurement.**
+2. **A NUMBER THAT AGREES WITH YOUR EXPECTATION STILL HAS TO BE EXPLAINED.** Ride
    seeds at 19.03% against a 20.60% target, and §9.94 and §9.95 both read that as
    evidence the demand was right. It is the uniform seed's own p=0.20 showing through
    (§9.96), and the claim was repeated in two committed entries before anyone checked
    the arithmetic. **Ask what would produce the number if the model were WRONG.**
-2. **A CURVE THAT IS STILL MOVING IS NOT A LEVEL.** This session made that error TWICE
+3. **A CURVE THAT IS STILL MOVING IS NOT A LEVEL.** This session made that error TWICE
    inside one investigation (§9.91): a stress arm read at iteration 20 said "price cannot
    discipline taxi" and by iteration 40 said the opposite; then a collapse was attributed
    to the innovation cutoff when the control showed the cutoff worth ~11% against the
    fare's elevenfold. **Wait for the arm to finish before concluding.**
-3. **A LEVEL READ WHILE INNOVATION RUNS IS NOT THE MODEL'S ANSWER.** Car jumps
+4. **A LEVEL READ WHILE INNOVATION RUNS IS NOT THE MODEL'S ANSWER.** Car jumps
    31.96% → 35.90% across the cutoff. Read the trend, or read post-cutoff.
-4. **The TARGET can be the defect.** §9.87's taxi target was fivefold low because it used a
+5. **The TARGET can be the defect.** §9.87's taxi target was fivefold low because it used a
    commute source for a non-commute mode. **Check the yardstick before blaming the model.**
-5. **A sampled mobsim is not a small city.** It is a city whose capacities were scaled, so
+6. **A sampled mobsim is not a small city.** It is a city whose capacities were scaled, so
    any measurement against a real-world rate must scale with `flowCapacityFactor` (§9.88).
-6. **Submodes are not additive.** A linked PT trip boards several; counting it once per
+7. **Submodes are not additive.** A linked PT trip boards several; counting it once per
    submode nearly doubled the PT total and hid two deficits.
-7. **The registry refuses out-of-sweep values typed at a shell** — and it is right to.
+8. **The registry refuses out-of-sweep values typed at a shell** — and it is right to.
    Deliberate stress tests need a COMMITTED overlay with a written justification.
-8. Carried: `modestats.csv` is PLANNED modes and the trips table is REALISED — the two
+9. Carried: `modestats.csv` is PLANNED modes and the trips table is REALISED — the two
    differ by exactly the remoded unpaired rides; git-bash heredocs eat backslashes (write
    patches via a Python file); compiling is not installing (`bootstrap_toolchain.py
    --verify`); stopping a run needs BOTH `Stop-ScheduledTask` and `taskkill /PID <pid> /T

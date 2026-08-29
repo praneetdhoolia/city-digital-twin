@@ -94,6 +94,7 @@ its layout will otherwise cost you an hour:
 | **The uniform seed IS recoverable for three modes, and diverges for three others** | **§9.94** — the first F12 arm to reach a gate (`20260829T054941`, 10%, 108 s/it), stopped at iteration 102. Read on TREND rather than level, because §9.92 established the seed is deliberately bad. **CONVERGING**: car 34.09 → 44.22 (58.16), walk 28.88 → 15.22 (13.40), pt 6.88 → 5.30 (3.80) — walk has gone from +115% to +14% of target, and this is the FIRST evidence the co-evolution recovers from the seed at all. **DIVERGING**: taxi 0.00 → 8.81 (0.99), bike 7.08 → 8.24 (2.21), ride 19.03 → 14.19 (20.60). Ride is worst because it SEEDS almost exactly right and the model destroys it — a feedback loop where pairing failure walks the leg, the plan scores badly, the agent drops ride and thins the candidate pool. Taxi’s repair is a finite FLEET, recorded as NOT DONE with the reason: the pinned stack carries no DVRP/DRT and adding it is a toolchain change against a Maven host the sandbox does not list; the demand-side alternative needs a point-to-point user incidence the package does not hold |
 | **The bound pairing window was HALF the drift it covers, and a third of ride demand names nobody** | **§9.95** — new `src/analyse/diagnose_ride_pairing.py` classifies every declared ride leg by what its named driver was doing. **The suspected cause was wrong**: `neither_endpoint` (the household drove elsewhere) is only **1.49%**. Two real defects instead. (1) `bound_pairing_window_min` was `time_mutation_range_s / 60` = 30 min, but the mutator moves each member INDEPENDENTLY, so two draws on ±1800 s land up to 3600 s apart — the window was half the drift, and 3,987 legs (13.13%) with BOTH endpoints matching were refused on the clock alone, median gap 53.6 min, **minimum exactly 30.0**. Identity corrected to `2 * range / 60` = 60 min. (2) **9,036 legs (29.76%) carry no `boundDriver` at all** — filed as #91 |
 | **CORRECTION: ride’s seeded share is the uniform draw, not evidence about the binder** | **§9.96** — §9.94 and §9.95 both read ride seeding at 19.03% against a 20.60% target as "the demand is right". It is not. Ride’s initial mode comes from the DELIBERATELY UNIFORM `B.mode.seed_split` at p=0.20/0.25, and with 76.3% of trips car-available the uniform draw alone predicts **21.2%**. The near-match is a coincidence of 0.2 sitting close to 0.206. **Withdrawn**: that the seed vindicates §9.84’s binder. **Corrected**: #91’s 29.76% unbound is the expected consequence of a uniform seed, not a binder that forgot to bind. §9.95’s two measured defects stand unchanged |
+| **A diagnostic that read today’s window into yesterday’s arm — and the THIRD instance of one error** | **§9.97** — `diagnose_ride_pairing.py` took the bound window from the LIVE REGISTRY rather than the run that executed it, so a historical arm was re-classified under today’s rule and the reclassification looked like a model improvement. It announced itself: a 30-minute arm reported a **minimum gap of 60.1 min**, which is impossible. Fixed to read the run’s own `config.xml`. Done properly, depth-matched at iteration 50 with each arm under its own window: paired_ok 40.07% → **42.02%**, window_only 10.68% → **8.37%**, everything else within 0.25 pp. **Real, but +1.95 pp against the ~7 pp §9.95 predicted.** Residual `window_only` legs now have a median gap of 344 min — different trips, not drift. **Three instances this session of one error: a comparison whose two sides were not the same kind of thing** |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -9175,6 +9176,84 @@ a moving curve as a level, in a different costume.
 
 ---
 
+## 9.97 A diagnostic that read today's window into yesterday's arm, and the third instance of one error (29 August 2026, thirteenth session; issue #48)
+
+§9.95 corrected the bound pairing window from 30 to 60 minutes and predicted the
+paired share would move from 37.96% toward ~45%. The arm testing it reached
+iteration 50, and the first reading appeared to confirm it: paired_ok **42.02%**
+against the previous arm's **37.96%**.
+
+**That comparison was invalid three times over, and the tool itself had a
+defect that would have flattered every future one.**
+
+### The tool defect
+
+`diagnose_ride_pairing.py` took the bound window from the LIVE REGISTRY rather
+than from the run that executed it. Classifying a historical arm therefore
+applies today's rule to plans that never ran under it — and the reclassification
+is indistinguishable from a model improvement.
+
+It announced itself in the data: the previous arm, which **ran a 30-minute
+window**, reported a minimum observed gap of **60.1 minutes**. A minimum gap
+cannot sit above the window that produced it; the current window was printing
+itself into an arm that never saw it. The tool now reads the tolerances from the
+run's own `config.xml` and refuses a run whose config declares none, rather than
+falling back to the registry.
+
+### The comparison, done properly
+
+Depth-matched at iteration 50, each arm classified under the window it actually
+ran, and differing in **only** that window (the coherence rate was already 0.4
+in both):
+
+| verdict | old arm, 30 min | new arm, 60 min | change |
+|---|---:|---:|---:|
+| paired_ok | 40.07% | **42.02%** | **+1.95 pp** |
+| window_only | 10.68% | **8.37%** | **−2.31 pp** |
+| dest_only | 7.15% | 7.30% | +0.15 |
+| origin_only | 6.28% | 6.34% | +0.06 |
+| neither_endpoint | 1.73% | 1.81% | +0.08 |
+| driver_no_car_leg | 4.55% | 4.38% | −0.17 |
+| no_declared_driver | 29.55% | 29.78% | +0.23 |
+
+**The correction is real, it moves only what it should, and it is worth about
++1.95 pp — roughly a quarter of the ~7 pp §9.95 predicted.** The prediction was
+extrapolated from the previous arm at iteration 100, where drift has had twice
+as long to accumulate and the `window_only` pool is correspondingly larger;
+reading it against iteration 50 compared two different points on a transient.
+
+The residual `window_only` legs are not a case for widening further: their
+median gap is now **344 minutes**, nearly six hours. Those are genuinely
+different trips at different times of day, not replanning drift, and a window
+that admitted them would be pairing people who are not travelling together.
+
+### The pattern — three instances, one error
+
+This session has now made the same mistake three times, in three costumes:
+
+1. **§9.91** — a stress arm read at iteration 20 said "price cannot discipline
+   taxi"; by iteration 40 it said the opposite. *A moving curve read as a level.*
+2. **§9.96** — ride seeding at 19.03% against a 20.60% target was read as
+   evidence the binder was sound; it is the uniform seed's own p=0.20 showing
+   through. *A number that agreed with the expectation, not explained.*
+3. **§9.97, here** — a tool compared an arm against itself under a changed rule
+   and produced a confirmation. *A yardstick that moved with the thing it
+   measured.*
+
+All three share one shape: **a comparison whose two sides were not the same
+kind of thing**, presented as a measurement. The discipline that catches it is
+not more care in the moment; it is asking, before quoting any difference, what
+ELSE differs between the two numbers besides the thing under test. The first was
+caught by waiting, the second by arithmetic, the third by an impossible value in
+the output — and only the third would have been caught by a check.
+
+**What is NOT withdrawn:** the derivation correction in §9.95 stands on its own
+argument. `time_mutation_range_s` is applied to each agent independently, so a
+pair drifts up to twice it; the identity was wrong before and is right now,
+whatever the size of the effect turns out to be.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -9847,6 +9926,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-29 | **A diagnostic that read today’s window into yesterday’s arm, and the third instance of one error (§9.97; issue #48; thirteenth session).** `diagnose_ride_pairing.py` took the bound pairing window from the live registry instead of from the run that executed it, so classifying a historical arm applied today’s rule to plans that never ran under it — and the reclassification is indistinguishable from a model improvement. The defect announced itself in the data: an arm that RAN a 30-minute window reported a minimum observed gap of 60.1 minutes, which cannot happen. The tool now reads tolerances from the run’s own config.xml and refuses a run that declares none. Done properly — depth-matched at iteration 50, each arm classified under the window it actually ran, differing in only that window — **paired_ok 40.07% → 42.02% and window_only 10.68% → 8.37%**, with every other verdict moving less than a quarter point. So §9.95’s derivation correction is real and touches only what it should, but it is worth **+1.95 pp, about a quarter of the ~7 pp predicted**; that prediction extrapolated from iteration 100, where drift has had twice as long to accumulate. The residual `window_only` legs have a median gap of 344 minutes — different trips at different times of day, not drift, and widening further would pair people who are not travelling together. **Recorded as a pattern: three instances this session (§9.91 a moving curve read as a level, §9.96 a number that agreed with expectation and went unexplained, §9.97 a yardstick that moved with the thing it measured) of ONE error — a comparison whose two sides were not the same kind of thing.** The §9.95 derivation itself is not withdrawn: the mutation range applies per agent, so a pair drifts up to twice it, whatever the effect size. |
 | 2026-08-29 | **CORRECTION: ride’s seeded share is the uniform draw showing through, not evidence about the binder (§9.96; issues #48/#91; thirteenth session).** §9.94 and §9.95 both stated that ride seeding at 19.03% against a 20.60% target showed the demand was right and vindicated §9.84’s binder. The claim was repeated twice before it was checked, and it is wrong. A tour’s initial mode is drawn from the deliberately uniform `B.mode.seed_split` — ride at p=0.20 for car-available persons and p=0.25 otherwise — and with 76.3% of trips car-available the uniform draw alone predicts 21.2%, against the observed 19.03% with bound serve-tours seeded to car explaining the shortfall. The near-match to the target is a coincidence of 0.2 sitting close to 0.206. **Withdrawn**: that the seed vindicates the binder — whether the binder is correctly sized remains OPEN, and no measurement this session bears on it. **Corrected**: #91’s 29.76% of ride legs with no `boundDriver` is the expected consequence of a uniform seed assigning ride at random, not a demand build that forgot to bind them; the issue has been corrected on itself. **Unchanged**: §9.95’s two defects stand on their own measurements. The structural point sharpens — most seeded ride legs are random and unpairable by identity, so mode choice must discover that ride realises only for bound pairs, which is consistent with realised ride (−65.3%) trailing planned ride (−31%). |
 | 2026-08-29 | **The bound pairing window was half the drift it exists to cover, and a third of ride demand names no driver (§9.95; issues #48/#91; thirteenth session).** New `src/analyse/diagnose_ride_pairing.py` reads the selected plans the engine reads at BeforeMobsim — the realised legs table cannot answer this, because `remodeUnpaired` converts unpaired ride legs before the mobsim — and classifies every declared ride leg by what its named driver was doing. **The suspected cause was wrong**: `neither_endpoint`, the household genuinely driving elsewhere, is only 1.49% of 30,363 legs, so §9.92 was right to refuse relaxing the pairing rule and is now right for a measured reason. Two real defects instead. **(1)** `B.ride.bound_pairing_window_min` was derived as `time_mutation_range_s / 60` = 30 min, but that half-width is applied to EACH agent independently, so a pair drifts up to twice it — the window was half the size of the drift it covers. 3,987 legs (13.13%) with BOTH endpoints matching exactly were refused on the clock alone, median gap 53.6 min and **minimum exactly 30.0**, the discarded boundary printing itself in the data. Identity corrected to `2 * time_mutation_range_s / 60` = 60 min; a derivation correction, not a tuning, since the value still moves only with the mutation range. **(2)** 9,036 legs (29.76%) carry no `boundDriver` at all, so the engine can only reach them by geometric discovery — filed as **#91**, a demand-build question rather than an engine one. Predicted effect of the window fix: paired share 37.96% toward ~45%. **A prediction, not a result — the arm testing it has not been run.** |
 | 2026-08-29 | **The first F12 gate: the uniform seed is recoverable for car, walk and pt, and three modes diverge (§9.94; issues #48/#49/#50/#88; thirteenth session).** Arm `20260829T054941_1000it_10pct` at 108 s/it reached the iteration-100 gate and was stopped at 102 on the standing directive, with ten of twelve modes past the 20% bar. **The level is not the finding — the direction is**, because §9.92 established the seed is deliberately uniform. Converging: car 34.09 → 44.22 (target 58.16), walk 28.88 → 15.22 (13.40), pt 6.88 → 5.30 (3.80); walk travelled from +115% to +14% of target, and this is the FIRST evidence that the co-evolution recovers from the seed at all. Diverging: taxi 0.00 → 8.81 (0.99), bike 7.08 → 8.24 (2.21), ride 19.03 → 14.19 (20.60); motorbike flat at 0.18 (0.24). **Ride is the serious one** — it seeds at 19.03 against 20.60, so the demand is right and the model destroys it: planned ride falls to 14.19% and only half of that realises, a feedback loop in which pairing failure walks the leg, the ride plan scores badly, the agent abandons ride and the thinner demand leaves fewer pairing candidates. Stopped rather than spend ~21 h more reaching the innovation cutoff to confirm three divergences whose causes are already identified. **Taxi’s correct repair is a finite fleet and it is recorded as NOT DONE with its reason**: the pinned run stack resolves matsim + signals only, with no DVRP or DRT, and adding them is a toolchain change against a Maven host the network sandbox does not list. The buildable demand-side alternative — a `taxiAvail` attribute mirroring `rideAvail` — needs a point-to-point USER INCIDENCE that the package does not hold (`data/raw/p2p/` carries the Fares Order alone), and choosing that share so taxi lands on target would be fitting availability to the answer. **The honest next step is to acquire the incidence, not to assume it.** Nothing here is a result. |
