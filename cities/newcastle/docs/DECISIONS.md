@@ -106,6 +106,7 @@ its layout will otherwise cost you an hour:
 | **A feasibility bound on walk does not work, and the reason matters** | **§9.106** — walk is the ONLY mode nothing constrains, so a derived bound was built (p99 of an exponential with the observed 0.70 km mean = **3.22 km**, corroborated to within a kilometre by the observed mean walk TIME). It failed twice: first `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` (a refusal must reject the WHOLE proposal), then on measurement — **sum of |deviation| 509.9% → 577.1%, WORSE**, taxi +15.2% → +135.1%, and walk's mean moved only 8.84 → 8.72 km. **A choice-set gate can only refuse NEW proposals; it cannot remove behaviour already in the plan**, and the forced whole-proposal rejection can TRAP an agent. Set to 0.0, disabled and reproducing. **Four downstream repairs have now failed to move the geometry — it is not determined downstream** |
 | **CORRECTION: the demand is not the defect — walk and car are SWAPPED at both ends** | **§9.107** — §9.103 and §9.106 both concluded the cause was destination placement. The HTS publishes **DISTANCE_BY_MODE**, an observed anchor never used: resident trips **1.11x**, total km **1.20x**, mean trip length **1.08x**, and **16.31% of modelled trips are under 1 km** against an observed walk-only 13.4%. The demand has the short trips. But **only 39.5% of sub-1 km trips are walked while car takes 39.2%**, and walk's resident mean is **6.66 km against an observed 0.70**. Modes are assigned per SUBTOUR, so a car chain drives its 800 m leg and a walk chain walks its 20 km leg — which is why four downstream repairs could not move it and why a per-trip bound broke the chain invariant. **A calibration question on the walk/car distance margin, and a per-mode mean trip length is an observation this package holds and has never scored against** |
 | **Three of the modes I spent the session repairing were converging on their own** | **§9.108** — every gate this session was read at iteration 100 of a 1000-iteration arm with innovation to 800. On the TREND: **car 0.3409 → 0.4429 (~136 more iterations to target), walk 0.2888 → 0.2116 (~100 more), pt 0.0688 → 0.0603 (~248 more)** — all converging, and walk's GEOMETRY with them (mean 8.12 → 6.66 km, trips 21,475 → 15,955). **Genuinely diverging: ride, bike (flat at ~10.0 km against an observed 5.2 on BOTH axes), motorbike.** The yardstick repairs (§9.100, §9.101) are untouched — those are wrong at every iteration. **A gate that stops a run before the model can answer turns every transient into a defect**; this session chased four. No arm has ever reached its cutoff |
+| **The demand generates 42% more ride legs than drivers, and half its joint bindings are refused** | **§9.109** — at **iteration 0**, before any replanning: 44,750 ride legs generated, **24,833 pairable (55.5%)**, 13,176 whose household drove elsewhere at ANY hour, 5,787 with no household car leg at all — **42.4% unservable by the demand itself**, and the proportion is flat across the arm, which is what STRUCTURAL looks like. The binder's own report agrees from the other end: escort binding **71.7%**, joint binding reaching **39.5%** of its own 448,229-trip target with **73,258 skipped as infeasible against 74,663 bound**. **Ride's deficit and bike's excess are ONE defect** — a carless agent cycles because they cannot be a passenger. The pairing rule, window and coherence rate had nothing to find |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10268,6 +10269,98 @@ and walk at +89.5% at iteration 100 are exactly what a correct model looks like
 one tenth of the way through its search from a deliberately uniform seed
 (§9.92). The seed was chosen so that arriving at the observed point would be
 evidence; reading the journey as the destination throws that evidence away.
+
+---
+
+## 9.109 The demand generates 42% more ride legs than it generates drivers for, and half its joint bindings are refused as infeasible (29 August 2026, fourteenth session; issues #86, #91, #48)
+
+§9.108 left three modes genuinely diverging: ride, bike and motorbike. This
+entry finds ride's cause, and with it bike's, at the one place in the pipeline
+where no replanning has happened yet.
+
+### The engine's report card on the demand, at iteration 0
+
+`ride_pairing.csv` at **iteration 0** describes the demand exactly as built -
+before a single replanning pass:
+
+| | legs | share |
+|---|---:|---:|
+| ride legs generated | **44,750** | |
+| paired with a household car leg | 24,833 | 55.5% |
+| household drove ELSEWHERE at any hour | **13,176** | 29.4% |
+| no household car leg AT ALL | **5,787** | 12.9% |
+| missed only on timing | 801 | 1.8% |
+| refused for capacity | 153 | 0.3% |
+
+**42.4% of generated ride demand is unservable by the demand itself.** Not
+unserved by a rule, a window or a scoring parameter - unservable, because the
+household it names never drives where the passenger is going, at any hour of the
+day. The proportion is stable across the arm (66.2% of failures are the
+endpoint class at iteration 0 and 66.0% at iteration 100), which is what a
+STRUCTURAL property looks like as opposed to an emergent one.
+
+This closes the question §9.102 opened. The pairing rule was not the constraint,
+the bound window was not the constraint (§9.98), and the coherence rate was not
+the constraint (§9.93). **There was nothing for them to find.**
+
+### The binder's own report card, which agrees
+
+`_activity_chains_report.json`, WEEKDAY, written at build time and never read
+against the engine:
+
+* **escort binding**: 177,318 tours requested, **127,203 bound (71.7%)**,
+  **50,115 unbound for want of a candidate**.
+* **joint binding**: target **448,229** trips, of which 102,306 already covered
+  by escorts and lifts, 201,931 candidates found, **74,663 bound** - and
+  **73,258 skipped as infeasible**.
+
+So the demand reaches **176,969 of its own 448,229-trip joint-travel target -
+39.5%** - and **nearly half of every joint binding it attempts is refused
+because the companion's day is already full.** The #65 invariant is doing that
+deliberately and correctly: a binding must never break a day that already works.
+But the cost of the invariant has never been measured against the target it
+prevents reaching, and it is the larger half of the gap.
+
+Two measurements from opposite ends of the pipeline - the generator's own log
+and the mobsim engine's pairing funnel - independently put the shortfall at
+roughly the same size. That is the strongest evidence this session has produced
+about anything.
+
+### Why this is also bike's defect
+
+Bike is the only mode self-correcting on neither share nor geometry (§9.108):
+0.0708 to 0.0847 against a 0.0221 target, mean trip flat at ~10.0 km against an
+observed 5.2. The scoring explains it once ride is understood. For an agent with
+no car, the choice is walk or bike, and on the declared parameters bike beats
+walk beyond about 660 m - so a carless agent with a bike cycles nearly
+everything, at any distance. **In the observed world those people are largely
+passengers**: the HTS puts vehicle-passenger at 20.6% of trips, the largest
+non-driver category there is. In the model they cannot be, because 42% of the
+ride demand has no driver, so they cycle instead.
+
+**Ride's deficit and bike's excess are one defect.** That is exactly the
+coupling the standing directive warns about - a deviation in one mode caused by
+the absence of another - and it is measured here rather than argued.
+
+### What must NOT be done about it
+
+Not `origin_link` or `window_only` (§9.44, §9.102): they pair passengers with
+drivers going somewhere else, which buys the share by breaking the meaning.
+Not relaxing the #65 invariant blindly: a binding that breaks a working day
+trades one defect for another that is harder to see. Not raising
+`B.activity.joint_tour_passenger_ratio`, which is DERIVED from the measured
+occupancy and is not a free parameter.
+
+### The lane it defines
+
+The 73,258 infeasible joint bindings are the largest single, measured,
+untouched quantity in the demand. **Why a companion's day is already full when
+the binder arrives is not recorded** - the report counts the refusals without
+classifying them. Classifying them is cheap, needs no run, and would say whether
+the ceiling is a timing collision the generator could avoid by ordering its
+passes differently, or a genuine structural limit of one-day activity chains.
+That is where the next session should start, and it is upstream of everything
+this session touched.
 
 ---
 
