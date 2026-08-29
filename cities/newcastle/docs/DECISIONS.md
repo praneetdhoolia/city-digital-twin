@@ -105,6 +105,7 @@ its layout will otherwise cost you an hour:
 | **A denied lift is not a fifteen-hour walk** | **§9.105** — reading walk's GEOMETRY rather than its share: mean trip **8.75 km against a declared observed 0.70 km (12.5x)**, 46% over 5 km, longest **91.4 km**. Ride over the same trips is **0.97x** its observed mean, so the demand is sound. **16,153 unpaired ride legs + 1,602 refused taxi requests are forced into walk in ONE iteration — 31% of all walk trips.** `B.ride.unpaired_fallback` now lets a licensed car-owner DRIVE instead. Measured on a committed pair: six of seven modes toward target, **taxi +64.2% → +7.5%, inside the bar**, walk +183% → +141%, car −30.2% → −18.9% — but **pt moved AWAY, −19.6% → −30.2%**, and **walk's geometry barely moved (9.30 → 8.80 km)**, so most implausible walks are CHOSEN, not forced |
 | **A feasibility bound on walk does not work, and the reason matters** | **§9.106** — walk is the ONLY mode nothing constrains, so a derived bound was built (p99 of an exponential with the observed 0.70 km mean = **3.22 km**, corroborated to within a kilometre by the observed mean walk TIME). It failed twice: first `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` (a refusal must reject the WHOLE proposal), then on measurement — **sum of |deviation| 509.9% → 577.1%, WORSE**, taxi +15.2% → +135.1%, and walk's mean moved only 8.84 → 8.72 km. **A choice-set gate can only refuse NEW proposals; it cannot remove behaviour already in the plan**, and the forced whole-proposal rejection can TRAP an agent. Set to 0.0, disabled and reproducing. **Four downstream repairs have now failed to move the geometry — it is not determined downstream** |
 | **CORRECTION: the demand is not the defect — walk and car are SWAPPED at both ends** | **§9.107** — §9.103 and §9.106 both concluded the cause was destination placement. The HTS publishes **DISTANCE_BY_MODE**, an observed anchor never used: resident trips **1.11x**, total km **1.20x**, mean trip length **1.08x**, and **16.31% of modelled trips are under 1 km** against an observed walk-only 13.4%. The demand has the short trips. But **only 39.5% of sub-1 km trips are walked while car takes 39.2%**, and walk's resident mean is **6.66 km against an observed 0.70**. Modes are assigned per SUBTOUR, so a car chain drives its 800 m leg and a walk chain walks its 20 km leg — which is why four downstream repairs could not move it and why a per-trip bound broke the chain invariant. **A calibration question on the walk/car distance margin, and a per-mode mean trip length is an observation this package holds and has never scored against** |
+| **Three of the modes I spent the session repairing were converging on their own** | **§9.108** — every gate this session was read at iteration 100 of a 1000-iteration arm with innovation to 800. On the TREND: **car 0.3409 → 0.4429 (~136 more iterations to target), walk 0.2888 → 0.2116 (~100 more), pt 0.0688 → 0.0603 (~248 more)** — all converging, and walk's GEOMETRY with them (mean 8.12 → 6.66 km, trips 21,475 → 15,955). **Genuinely diverging: ride, bike (flat at ~10.0 km against an observed 5.2 on BOTH axes), motorbike.** The yardstick repairs (§9.100, §9.101) are untouched — those are wrong at every iteration. **A gate that stops a run before the model can answer turns every transient into a defect**; this session chased four. No arm has ever reached its cutoff |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10177,6 +10178,96 @@ reasoning rather than measuring.** §9.103 and §9.106 reached the same wrong
 conclusion from different directions, and the agreement made it feel settled.
 The observed anchor that refuted it was in an acquired artefact the whole time,
 one column away from a number this project already reads every build.
+
+---
+
+## 9.108 Three of the modes I spent the session repairing were converging on their own (29 August 2026, fourteenth session; issues #48, #49, #50, #30)
+
+Every gate reading in this session was taken at **iteration 100 of a
+1000-iteration arm whose innovation runs to 800**. The standing directive has
+said since §9.92 that a level read while innovation is running is not a
+statement about the model, and this entry is what happens when that is finally
+applied to the whole mode table rather than to one mode at a time.
+
+### The planned-share trend over the arm's first 100 iterations
+
+| mode | iteration 0 | iteration 100 | target | rate / iteration | verdict |
+|---|---:|---:|---:|---:|---|
+| car | 0.3409 | 0.4429 | 0.5816 | **+0.001019** | converging, ~136 more |
+| walk | 0.2888 | 0.2116 | 0.1340 | **-0.000772** | converging, ~100 more |
+| pt | 0.0688 | 0.0603 | 0.0390 | **-0.000086** | converging, ~248 more |
+| **ride** | 0.1903 | 0.1457 | 0.2060 | -0.000446 | **DIVERGING** |
+| **bike** | 0.0708 | 0.0847 | 0.0221 | +0.000139 | **DIVERGING** |
+| taxi | 0.0000 | 0.0147 | 0.0099 | +0.000147 | overshot its target |
+| motorbike | 0.0020 | 0.0018 | 0.0024 | -0.000002 | flat, wrong side |
+
+**Car, walk and public transport are all moving toward their targets, and at
+their measured rates would arrive between iterations 200 and 350** - inside or
+near the 250 the directive asks for. They were never broken in the way a level
+read at iteration 100 makes them look.
+
+### Walk's GEOMETRY is converging too, which §9.107 could not see from one gate
+
+| iteration | walk trips | walk mean km | car mean km | bike mean km | ride mean km |
+|---:|---:|---:|---:|---:|---:|
+| 0 | 21,475 | 8.12 | 9.38 | 10.06 | 8.63 |
+| 50 | 19,395 | 7.32 | 11.02 | 9.99 | 8.61 |
+| 100 | 15,955 | **6.66** | 11.09 | 10.04 | 8.34 |
+| observed | - | **0.70** | 10.20 | 5.20 | 9.80 |
+
+The model IS shedding its long walks - 21,475 walk trips to 15,955, mean 8.12 km
+to 6.66 - just slowly, and it has ~400 iterations of that trend to run. §9.107's
+diagnosis of WHAT is wrong stands exactly (walk and car are swapped at both ends
+of the distribution); what it could not know from a single gate is that the
+swap is being undone.
+
+### What this costs the session's own conclusions
+
+**§9.105 and §9.106 repaired, or tried to repair, a transient.** The fallback
+change is still defensible on its own terms - a denied lift is not a
+fifteen-hour walk whatever the iteration - and the reach bound was correctly
+rejected on measurement. But the URGENCY both were argued from was an artefact
+of reading iteration 100 as an answer, and neither was necessary to make car and
+walk converge.
+
+**The yardstick repairs are untouched by this.** A light rail stop belonging to
+another city (§9.100), a bus series broken inside its own window (§9.100) and a
+truck target compared against the wrong population (§9.101) are wrong at every
+iteration, and no amount of running fixes them.
+
+### What is genuinely defective, on the trend rather than the level
+
+* **ride** - diverging, and §9.102 established the pairing engine is not the
+  lever. The plan-level abandonment upstream of pairing is.
+* **bike** - diverging on share AND flat on geometry: its mean trip has not
+  moved from ~10.0 km in 100 iterations against an observed 5.2. It is the one
+  mode showing no sign of self-correction on either axis.
+* **motorbike** - flat at 0.0018 against 0.0024, on the wrong side.
+* **light rail** - §9.103, a corridor market of 1.06% of trips.
+* **ferry** - -90.6%, never investigated this session.
+
+### The decision this forces
+
+**No arm in F11, F12 or F13 has ever reached its innovation cutoff**, so this
+project has never once read a post-cutoff level for twelve modes. Every gate,
+including all of this session's, has been a reading off a moving curve. The
+directive's instruction to gate at 100 iterations and stop is being applied to
+arms that need ~800 to answer, and the two are in tension: **a gate that stops
+the run before the model can answer converts every transient into a defect and
+sends the session chasing it.** This session chased four.
+
+The resolution is not to abandon the gate but to read the TREND at it, which
+this entry does for the first time across all modes at once, and to run ONE arm
+to its cutoff so that a level finally means something. That needs an explicit
+stated-cost approval and none stands.
+
+### The lesson worth carrying
+
+**Ask what the number would look like if nothing were wrong.** Car at -18.6%
+and walk at +89.5% at iteration 100 are exactly what a correct model looks like
+one tenth of the way through its search from a deliberately uniform seed
+(§9.92). The seed was chosen so that arriving at the observed point would be
+evidence; reading the journey as the destination throws that evidence away.
 
 ---
 
