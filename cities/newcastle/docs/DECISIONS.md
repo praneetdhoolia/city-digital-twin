@@ -112,6 +112,7 @@ its layout will otherwise cost you an hour:
 | **Motorbike is told one share and scored against another; the ferry's market walks 12 km around the water** | **§9.112** — the two modes nobody had investigated. **Motorbike**: the carve is declared **0.3630%** (census 653 of 179,761 ALL journeys) while the fit target is **0.2406%** (the same 653 of 160,103 DRIVER journeys x the HTS 59.0% driver level) — same numerator, 51% apart, generated against one and scored against the other. The carve also under-delivers its own number (realised **0.2013%**) because its stated assumption is false: carved persons trip **3.48/day against a 4.11 average**. **Ferry**: the wharves are **640 m** apart against a ~20 km road detour, and **450 trips take the detour — 233 by car and 118 ON FOOT** (a 2.5 h walk) — while the ferry runs 276 trips a day and captures 6 of a 64-trip target. Trap recorded: `main_mode` is `pt`, never a submode |
 | **A transitRoute's day tag is not its service day** | **§9.113** — the mapped weekday schedule shows **0 WEEKDAY routes for ferry and tram** against 965 for bus and 266 for rail, which looks like the whole explanation for both deficits and is FALSE. Departures: **ferry 107, tram 252** — exactly their GTFS weekday trip counts. pt2matsim names a grouped route after a representative trip's service id, so a small line can be labelled SAT while running a full weekday timetable. **Never read service from a route id; count departures.** Corrects §9.103's "550 light rail trips a day" (unfiltered GTFS) to **252 weekday departures** — its conclusion is unchanged and better supported. **Supply is now ruled out for both modes on measurement** |
 | **CORRECTION: most cyclists own cars, so bike is NOT displaced ride** | **§9.114** — §9.109 and §9.112 both said bike's excess is carless agents who cannot be passengers. Measured: of 5,649 resident bike trips, **51.6% are made by agents with a licence AND a car**, 30.3% fully carless, 18.1% licensed without one. The displaced-passenger mechanism covers at most a third. Car dominates bike at every distance on the declared scoring, so this is **the same shape as walk (§9.107)** — a mode winning trips the scoring says it should lose, for agents holding the alternative — i.e. **bike is walk's problem in a second mode, not ride's shadow**. Fifth unmeasured mechanism this session; the rule proposed: a cause in an entry must carry the measurement distinguishing it from the obvious alternative, or be marked unmeasured |
+| **The motorbike carve and its target are the same observation, minus a conversion** | **§9.115** — §9.112 left which of 0.3630% and 0.2406% is right as a decision. It is arithmetic. The carve applies the census commute share to all trips, assuming the driver share of all TRIPS equals the **89.1%** driver share of commute JOURNEYS where the HTS observes **59.0%**. `0.3630 / (89.1/59.0) = 0.2405` — the target, to the fourth decimal. **The carve is the target times a ratio that should have cancelled**; no judgement, no sweep. `B.motorbike.trip_share` becomes **0.2406%, derived not assumed** — pending the same rebuild as §9.111. It LOWERS generation, so it is a consistency repair, not a fit repair |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10773,6 +10774,77 @@ entry must carry the measurement that distinguishes it from the obvious
 alternative, or be marked explicitly as unmeasured.** §9.112 did that correctly
 for the ferry ("why the raptor does not return the ferry is NOT established") and
 incorrectly for bike in the same entry.
+
+---
+
+## 9.115 The motorbike carve and its target are the same observation, and the carve forgot a conversion (30 August 2026, fourteenth session; issues #49, #84)
+
+§9.112 recorded that `B.motorbike.trip_share` (0.3630%) and §9.87's fit target
+(0.2406%) transfer the same 653 census riders through different denominators,
+and left which one is right as a decision to take. **It is not a decision. It is
+arithmetic, and it resolves exactly.**
+
+### The two transfers
+
+| | |
+|---|---:|
+| census G62 journey-to-work, all journeys | 179,761 |
+| census G62 journey-to-work, DRIVER journeys | 160,103 |
+| driver share of commute JOURNEYS | **89.1%** |
+| HTS all-purpose Vehicle driver level | **59.0%** |
+
+The **carve** takes 653 / 179,761 = 0.3633% of all commute journeys and applies
+it directly to all trips. Doing that assumes the driver share of all TRIPS
+equals the driver share of commute JOURNEYS - 89.1% where the survey observes
+59.0%.
+
+The **target** takes 653 / 160,103 = 0.408% of DRIVER commute journeys and
+scales it by the observed 59.0% driver level, which is the conversion the carve
+omits.
+
+### It closes to the fourth decimal
+
+```
+overstatement = 89.1% / 59.0%     = 1.510
+0.3630% / 1.510                   = 0.2405%
+§9.87 target                      = 0.2406%
+```
+
+The residual is rounding. **The carve is the target multiplied by a ratio of two
+driver shares that should have cancelled.** There is no modelling judgement
+between them and no sweep to run: one number is the other with a step missing.
+
+### What follows
+
+`B.motorbike.trip_share` should be **0.2406%**, and its `source` should change
+from **assumed** to **derived**, with the identity written out - the same census
+cell, conditioned on driver journeys, scaled by the HTS driver level. That
+removes an assumed value the package can derive, which the standing directive
+requires wherever it is possible.
+
+**Not applied here.** Changing it regenerates the MATSim plans, so it belongs
+with the §9.111 candidate-pool filter in one deliberate rebuild rather than
+leaving the declared value inconsistent with the demand on disk. Two pending
+changes now wait on that rebuild.
+
+### What it does NOT fix
+
+Motorbike reads **-49.7%** at the gate on 0.1210% for target-LGA residents.
+Correcting the carve LOWERS generation from 0.3630% to 0.2406%, so on its own
+this makes the modelled share smaller, not larger. It is a consistency repair,
+not a fit repair, and it must not be sold as one: what it buys is that
+generation and scoring finally describe the same quantity, so any later
+measurement of motorbike means something.
+
+Two further motorbike facts stay open and are recorded as open:
+
+* the carve under-delivers its own declared share (0.2013% realised against
+  0.3630%) because carved persons trip **3.48/day against a 4.11 average** while
+  its probability assumes they trip at the average (§9.112);
+* motorbike is **under-represented among target-LGA residents** relative to the
+  wider study area - LGA residents make 30% of person trips but only 18% of
+  motorbike trips. Whether that is a real spatial pattern or an artefact of the
+  carve's eligibility filter is **not established**, and is not asserted.
 
 ---
 
