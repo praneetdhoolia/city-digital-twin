@@ -201,7 +201,7 @@ demand/plans/B2_joint_bindings_WEEKDAY.csv,processed,2250818,74663,src/build/bui
 demand/plans/B2_lift_bindings_SAT.csv,processed,2119980,27808,src/build/build_activity_chains.py,,,,,d49358c29d645873bc901721249a975f9da3e3c5a76d426cd4976090c3404bac
 demand/plans/B2_lift_bindings_SUN.csv,processed,1509605,19808,src/build/build_activity_chains.py,,,,,713b1eb7e839c23ca8f050b45c30eef9f3770ea556a866611511f80f3a78e95b
 demand/plans/B2_lift_bindings_WEEKDAY.csv,processed,3737461,49030,src/build/build_activity_chains.py,,,,,4eb6cd49cfbca880540ec1dfda8d3aa61bfc76048d98f45fc0a4ebeb9cbcde2c
-demand/plans/_activity_chains_report.json,processed,20765,,src/build/build_activity_chains.py,,,,,605c9c6ff7eb61f1b9ab1f550b6c5ae2253d2634bcacb1f8a3a56a00acdd1a5b
+demand/plans/_activity_chains_report.json,processed,16053,,src/build/build_activity_chains.py,,,,,a19e53231a03d482e77b42072c8b3f0e7ce5f6769fd3a21cadef4d5ca0f3cc93
 demand/plans/matsim/_plans_report.json,processed,3406,,src/build/build_matsim_plans.py,,,,,9222398d128ac9218f4d49be8e1886a16317eb22b04885b1c8028daa49babe54
 demand/plans/matsim/population_SAT.xml.gz,processed,33464703,,src/build/build_matsim_plans.py,,,,,93fba3aec0b156c3067c8c5ec7304b804e75995498d2349edfc832715bf32a0a
 demand/plans/matsim/population_SUN.xml.gz,processed,29999419,,src/build/build_matsim_plans.py,,,,,63471017fad2e0b0b5906a3fdd23a65cb6df5a9c64b584df2198982167ce27ba
