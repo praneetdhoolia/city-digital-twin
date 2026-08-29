@@ -11105,6 +11105,125 @@ the one most likely to be stale.
 
 ---
 
+## 9.118 The escort listener converted the INNER subtour of a nested plan, and the enclosing one was left mixed (30 August 2026, fifteenth session; issues #48, #49, #86)
+
+The first F14 arm died at iteration 3, rc=1, after 928 s:
+
+```
+IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes.
+  at ChooseRandomLegModeForSubtour.applyChange(...:472)
+  at citysim.GatedSubtourModeChoice$GatedModule$1.run(...:162)
+```
+
+**The same exception has now killed four arms** — `aborted_20260826T222352_1000it_25pct`,
+`aborted_20260827T165131_1000it_25pct`, `aborted_20260829T230306_40it_1pct` and
+`aborted_20260830T022430_1000it_25pct`. It was recorded as a trap and treated as
+settled. It was not settled.
+
+### Where it is NOT
+
+`GatedSubtourModeChoice.java:162` is `inner.run(plan)` — the exception comes out
+of **MATSim's own strategy**, not out of the gate's refusal path. The reach
+bounds are 0.0 (§9.106), so `beyondReach` returns false for every trip and the
+refusal branch is unreachable. **The §9.106 repair is not implicated**, and the
+plan handed to the strategy was already mixed before it ran.
+
+### A mechanism asserted, then REFUTED by its own log
+
+§9.105 made a denied lift able to fall back to **`car`** rather than `walk`.
+`car` is chain-based; `walk` is not. A ride leg re-moded to `car` and then not
+restored would leave exactly the fatal mix, and `RidePairingEngine`'s restore
+skips silently when it cannot re-find the trip (`if (target == null) continue;`).
+That is a complete and plausible explanation.
+
+**The arm's own log refutes it.** Every restore succeeded:
+
+```
+48101 of 48101 forced-walk leg(s) restored
+50705 of 50705
+53890 of 53890
+```
+
+Nothing was left re-moded. Recorded because the explanation fitted perfectly and
+was still wrong — the fifth such refutation in two sessions, and the reason
+trap 5 exists.
+
+### Where it IS, measured rather than argued
+
+`EscortCoherenceListener.subtourContaining` returned the **first** subtour
+containing the bound trip:
+
+```java
+for (Subtour st : TripStructureUtils.getSubtours(plan, coordDist))
+    for (Trip t : st.getTrips())
+        if (matches) return new ArrayList<>(st.getTrips());
+```
+
+`citysim.NestedSubtourProbe` settles what that returns, on a plan it builds
+itself so the answer depends on no run. For `home → work → lunch → work → home`,
+all by car:
+
+| index | subtour | `getTrips()` | `hasParent` |
+|---:|---|---:|---|
+| 0 | work → lunch → work | **2** | **true** |
+| 1 | home … home | 4 | false |
+
+**`getSubtours` returns nested subtours INNER-FIRST**, so `subtourContaining`
+returned the inner one. Converting "the whole subtour" to `ride` therefore
+converted two trips of four and left the enclosing subtour holding `car` **and**
+`ride` — the precise state `applyChange` refuses.
+
+### Why the earlier repair did not cover it
+
+The 26 August repair, recorded in this listener's own comment, stopped it
+converting **one trip of a subtour** after that killed
+`aborted_20260826T222352_1000it_25pct`. The defect that remained is one level
+up: converting **one subtour of a nested plan.** Both produce the identical
+exception, which is why the second looked like a recurrence of the first.
+
+### The fix
+
+`subtourContaining` walks to the ROOT before returning:
+
+```java
+Subtour root = st;
+while (root.getParent() != null) { root = root.getParent(); }
+return new ArrayList<>(root.getTrips());
+```
+
+`Subtour.getTrips()` includes every nested trip, so the root's list covers the
+inner subtour too and **no enclosing subtour can be left mixed.** Sibling
+top-level subtours are untouched and each stays internally consistent. The probe
+confirms the root covers all four trips. Both call sites — the passenger's
+`ride` conversion and the driver's `car` conversion — go through this one
+function, and it is the only `getSubtours` call in the codebase.
+
+**This changes behaviour, and the change is stated rather than hidden:** an
+escorted member's coherent proposal is now their whole home-anchored day rather
+than the inner errand. That is what MATSim's chain-based constraint requires —
+a subtour cannot mix, so the alternative to converting the whole thing is not
+converting a part of it, it is not proposing at all. The listener still only
+**proposes**; `ChangeExpBeta` decides on score, so a worse plan cannot win.
+
+### Two tools, and one of them told a lie first
+
+`citysim.SubtourChainScan` scans a plans file for mixed subtours. Its first run
+reported **CLEAN** — off **0 subtours decomposed**, because an input plans file
+carries coordinates but no link ids until `PersonPrepareForSim` assigns them,
+and MATSim's decomposition refuses such activities. It now exits 3 with
+**INCONCLUSIVE** when it decomposes nothing. A tool that reports clean without
+testing anything is the §9.117 failure in a new costume, and it was caught only
+because the summary counts were read rather than the verdict line.
+
+### The lesson worth carrying
+
+**A recurring exception is not a recurring bug.** The same message had one cause
+in August 26's repair and a different cause underneath it, and the trap entry
+made the second look like a regression of the first. When a fixed defect
+reappears, re-derive the mechanism instead of re-applying the fix.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -11777,6 +11896,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **The escort listener converted the INNER subtour of a nested plan (§9.118; issues #48/#49/#86).** The first F14 arm died at iteration 3 on `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` - **the same exception that killed three earlier arms** and was recorded as a settled trap. It comes out of MATSim's OWN strategy at `inner.run(plan)`, not the §9.106 refusal path, whose reach bounds are 0.0 and unreachable. **A mechanism was asserted and refuted by the arm's own log**: §9.105's `car` fallback could leave a chain-based leg in a non-chain subtour if the restore silently skipped, but every restore succeeded (48101/48101, 50705/50705, 53890/53890). **The real cause, measured with a purpose-built probe rather than argued**: `EscortCoherenceListener.subtourContaining` returned the FIRST subtour containing the bound trip, and `getSubtours` returns nested subtours **INNER-FIRST** - for `home→work→lunch→work→home` it returns the 2-trip inner subtour at index 0 (`hasParent=true`) ahead of the 4-trip outer one. Converting "the whole subtour" therefore converted two trips of four and left the ENCLOSING subtour holding `car` and `ride`. The 26 August repair stopped this listener converting ONE TRIP of a subtour; it did not stop it converting ONE SUBTOUR of a nested plan. **Fix:** walk to the root before converting - `getTrips()` includes nested trips, so no enclosing subtour can be left mixed; sibling top-level subtours are untouched. Behaviour change stated: a coherent proposal is now the whole home-anchored day, which is what the chain-based constraint requires; the listener still only PROPOSES and `ChangeExpBeta` still decides. New tools `citysim.NestedSubtourProbe` and `citysim.SubtourChainScan`; the latter **reported CLEAN off 0 subtours decomposed** on its first run and now exits INCONCLUSIVE instead. Nothing here is a finding. |
 | 2026-08-30 | **The local suite was failing on `main` while three documents said it passed (§9.117; §9.93 reconstructed).** `check_package.py` is local-only and is the gate the conventions name for declaring a data phase complete; it reported **FAILURES PRESENT** on arrival, against a board, a brief and a dated row all calling it green. Two pre-existing failures. **(1)** `B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite **§9.93 and no such section existed** - the decision (both rates 0.1 → 0.4, on search completeness rather than fit) was real, applied and measured, and the measurement survived only inside the two field descriptions. §9.93 is **reconstructed from that already-committed evidence**, labelled as a reconstruction, introducing no new number. **(2)** Three `consumers` claims were **semantically true and textually false** - `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km` and `B.ride.unpaired_fallback` each named the class that APPLIES the value through a config-group accessor rather than the group that names the key. Repaired on both sides: the config group joins `consumers`, and the applying class now names the field at the point of use. **0 false claims remain across 193 claims over 179 fields.** The check reports only its FIRST failure, so fixing two revealed a third; enumerating the whole set found it in one pass. Suite now **ALL CHECKS PASSED** (2 standing warnings). Same shape as §9.116 the same morning: not a missing check, but a **claim about a check**. Nothing here is a finding. |
 | 2026-08-30 | **The committed builder had stopped reproducing the committed demand; both queued fixes applied and family F14 opens (§9.116; issues #92/#93/#86/#49).** §9.111 and §9.115 each recorded their fix as written and deliberately NOT committed. **The §9.111 candidate-pool filter was committed anyway**, in `b65d280` via PR #95, without its rebuild - so the repository could not regenerate its own demand from its own code, and **all eight arrival gates passed over it**, because none compares a builder with the artefact it produced. Caught from the committed build report: `candidates` 201,931 with `candidates_unservable` absent is a report the committed builder cannot write. Both fixes are now applied together and all three day types rebuilt. Measured, WEEKDAY: candidates 201,931 → **146,260** (55,671 unservable), **bound 74,663 → 82,384**, infeasible 73,258 → 35,937, `driver_is_the_companion` 51,215 → 8,150, and **`p_thin` 0.8565 → 1.0000** - thinning stops applying, so joint binding is now **supply-limited by servable candidates**, a different regime from every prior entry, and a WEEKDAY property only (SAT 0.6216, SUN 0.5955). **§9.111's "roughly 110,000" estimate is wrong: the measured answer is 82,384**, because the estimate assumed a thinning rate that no longer applies and did not anticipate the two timing clauses growing (+3,759, +1,985). `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived`; the two observations behind the identity are now declared (`CAL.mode_split.vehicle_driver_level`, `.motorbike_driver_journey_share`) and `build_mode_targets.py` **asserts them against the acquired sources on every build**. `mode_targets_by_mode.csv` is unchanged but for line endings, confirming the carve moves generation, not the yardstick - motorbike's share will go DOWN. **FAMILY BOUNDARY F14: nothing run before compares with anything run after**, including the two F4 arms `README.md` draws its figures from. Registry 400 → 402. Nothing here is a finding. |
 | 2026-08-30 | **The motorbike carve and its target are the same observation, minus a conversion (§9.115; issues #49/#84).** §9.112 left which of `B.motorbike.trip_share` 0.3630% and the §9.87 target 0.2406% is right as a decision to take; it is arithmetic. The carve applies the census commute share straight to all trips, assuming the driver share of all TRIPS equals the **89.1%** driver share of commute JOURNEYS where the HTS observes **59.0%**: `0.3630 / (89.1/59.0) = 0.2405` against a target of 0.2406, the residual being rounding. The carve is the target times a ratio that should have cancelled. `B.motorbike.trip_share` should become **0.2406%, source `derived`**, removing an assumed value the package can derive. NOT APPLIED - it regenerates the plans and queues with §9.111 for one deliberate rebuild. Stated so it is not mis-sold: it LOWERS generation, so it is a consistency repair, not a fit repair. No target value changed; the 67/143 split is untouched; nothing here is a finding. |

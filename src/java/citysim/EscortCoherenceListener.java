@@ -442,7 +442,30 @@ public final class EscortCoherenceListener implements ReplanningListener {
             for (final Trip t : st.getTrips()) {
                 if (t.getOriginActivity() == trip.getOriginActivity()
                         && t.getDestinationActivity() == trip.getDestinationActivity()) {
-                    return new ArrayList<>(st.getTrips());
+                    // THE OUTERMOST subtour, never the innermost. getSubtours
+                    // returns NESTED subtours inner-FIRST (measured with
+                    // citysim.NestedSubtourProbe: for home-work-lunch-work-home
+                    // it returns the 2-trip work-lunch-work subtour at index 0
+                    // with hasParent=true, and the 4-trip home..home subtour at
+                    // index 1), so returning the first match returned the INNER
+                    // one. Converting only an inner subtour to ride leaves the
+                    // ENCLOSING subtour holding car and ride together, which is
+                    // precisely what ChooseRandomLegModeForSubtour refuses with
+                    // "Subtour contains a mix of chain- and non-chainbased
+                    // modes" - the exception that killed arms on 26, 27, 29 and
+                    // 30 August. The 26 August repair stopped this listener
+                    // converting ONE TRIP of a subtour; it did not stop it
+                    // converting ONE SUBTOUR of a nested plan.
+                    //
+                    // Subtour.getTrips() includes every nested trip, so the
+                    // root's trip list covers the inner subtour too and no
+                    // enclosing subtour can be left mixed. Sibling top-level
+                    // subtours are untouched and stay internally consistent.
+                    TripStructureUtils.Subtour root = st;
+                    while (root.getParent() != null) {
+                        root = root.getParent();
+                    }
+                    return new ArrayList<>(root.getTrips());
                 }
             }
         }
