@@ -105,6 +105,7 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
         private final PermissibleModesCalculator calc;
         private final double walkFeasibleM;
         private final double bikeFeasibleM;
+        private final double coordDistance;
 
         GatedModule(final GlobalConfigGroup global,
                     final SubtourModeChoiceConfigGroup config,
@@ -113,6 +114,7 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                     final double bikeFeasibleKm) {
             super(global, config, calc);
             this.calc = calc;
+            this.coordDistance = config.getCoordDistance();
             this.walkFeasibleM = walkFeasibleKm * 1000.0;
             this.bikeFeasibleM = bikeFeasibleKm * 1000.0;
         }
@@ -139,6 +141,58 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             return CoordUtils.calcEuclideanDistance(a, b) > limit;
         }
 
+        /**
+         * Print the plan MATSim just refused: the person, each subtour, and the
+         * routing mode of every trip in it. Read-only, and the caller rethrows.
+         */
+        private void dumpRefusedPlan(final Plan plan,
+                                     final IllegalStateException ex) {
+            final org.apache.logging.log4j.Logger log =
+                    org.apache.logging.log4j.LogManager
+                            .getLogger(GatedSubtourModeChoice.class);
+            try {
+                final String who = plan.getPerson() == null ? "?"
+                        : plan.getPerson().getId().toString();
+                final StringBuilder sb = new StringBuilder();
+                sb.append("SUBTOUR MIX REFUSED - person ").append(who)
+                  .append(" : ").append(ex.getMessage());
+                final double cd = subtourModeChoiceCoordDistance();
+                int i = 0;
+                for (final TripStructureUtils.Subtour st
+                        : TripStructureUtils.getSubtours(plan, cd)) {
+                    sb.append("\n   subtour ").append(i++)
+                      .append(" trips=").append(st.getTrips().size())
+                      .append(" hasParent=").append(st.getParent() != null)
+                      .append(" closed=").append(st.isClosed())
+                      .append("  modes=[");
+                    for (final Trip t : st.getTrips()) {
+                        final List<Leg> legs = t.getLegsOnly();
+                        String m = legs.isEmpty() ? "(none)"
+                                : TripStructureUtils.getRoutingMode(legs.get(0));
+                        if (m == null && !legs.isEmpty()) {
+                            m = legs.get(0).getMode();
+                        }
+                        sb.append(m).append(' ');
+                    }
+                    sb.append("] acts=[");
+                    for (final Trip t : st.getTrips()) {
+                        sb.append(t.getOriginActivity().getType()).append("->")
+                          .append(t.getDestinationActivity().getType())
+                          .append(' ');
+                    }
+                    sb.append(']');
+                }
+                log.error(sb.toString());
+            } catch (final RuntimeException inner2) {
+                log.error("SUBTOUR MIX REFUSED - and the dump itself failed: "
+                        + inner2);
+            }
+        }
+
+        private double subtourModeChoiceCoordDistance() {
+            return coordDistance;
+        }
+
         @Override
         public PlanAlgorithm getPlanAlgoInstance() {
             final PlanAlgorithm inner = super.getPlanAlgoInstance();
@@ -159,7 +213,20 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                         }
                         oldModes.add(m);
                     }
-                    inner.run(plan);
+                    try {
+                        inner.run(plan);
+                    } catch (final IllegalStateException ex) {
+                        // DIAGNOSTIC, not a workaround: the exception is
+                        // re-thrown unchanged. "Subtour contains a mix of
+                        // chain- and non-chainbased modes" has killed five arms
+                        // and every attempt to attribute it from the code alone
+                        // has been refuted (9.118). It names no person, so this
+                        // prints the plan MATSim actually refused - the agent,
+                        // every subtour, and the modes in it - and lets the run
+                        // die exactly as it would have.
+                        dumpRefusedPlan(plan, ex);
+                        throw ex;
+                    }
                     final List<Trip> after = TripStructureUtils.getTrips(plan);
                     if (after.size() != before.size()) {
                         return;   // structure changed: not the single-trip path

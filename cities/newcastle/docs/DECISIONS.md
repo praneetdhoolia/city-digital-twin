@@ -11107,6 +11107,16 @@ the one most likely to be stale.
 
 ## 9.118 The escort listener converted the INNER subtour of a nested plan, and the enclosing one was left mixed (30 August 2026, fifteenth session; issues #48, #49, #86)
 
+> **AMENDED THE SAME DAY, BEFORE THIS ENTRY WAS EVER RELIED ON: the fix below is
+> REAL BUT IT IS NOT THE CAUSE OF THE CRASH.** The arm was relaunched with it and
+> died again at the same iteration on the same exception, after 918 s against 928 s
+> (`aborted_20260830T024952_1000it_25pct`). The inner-subtour conversion IS a defect
+> and the repair stands on its own merits, but something else is also producing a
+> mixed subtour, and this entry must not be read as having closed the matter. A
+> diagnostic that prints the refused plan itself was installed instead of a third
+> guess; §9.119 carries what it found. **This is the sixth mechanism in two sessions
+> to be argued from code and then refuted by a run.**
+
 The first F14 arm died at iteration 3, rc=1, after 928 s:
 
 ```
