@@ -51,6 +51,34 @@ import collections
 
 import registry as _registry                                      # noqa: E402
 
+CONFIG_RE = re.compile(
+    r'name="(boundWindowMinutes|pairingWindowMinutes|maxPassengersPerVehicle)"'
+    r'\s+value="([^"]*)"')
+
+
+def windows_from_run(run_dir):
+    """The tolerances THIS RUN executed, from its own emitted config.
+
+    Reading them from the live registry instead is a real defect and it was
+    committed once: a historical arm then gets re-classified under today's
+    rule, and the reclassification looks exactly like a model improvement. The
+    first comparison built on this tool showed a 30-minute arm reporting a
+    minimum gap of 60.1 - the current window printing itself into an arm that
+    never ran it (DECISIONS.md 9.97).
+    """
+    cfg = _os.path.join(run_dir, 'config.xml')
+    if not _os.path.exists(cfg):
+        raise SystemExit(
+            'no config.xml in %s. The pairing tolerances must come from the '
+            'run that executed them, not from the registry as it stands now.'
+            % run_dir)
+    found = dict(CONFIG_RE.findall(open(cfg, encoding='utf-8').read()))
+    if 'boundWindowMinutes' not in found:
+        raise SystemExit(
+            '%s declares no ridePairing.boundWindowMinutes; this run predates '
+            'the declared bound window and cannot be classified by it.' % cfg)
+    return found
+
 PERSON_RE = re.compile(r'<person id="([^"]+)"')
 ATTR_RE = re.compile(r'<attribute name="([^"]+)"[^>]*>([^<]*)</attribute>')
 SELECTED_RE = re.compile(r'<plan[^>]*selected="yes"')
@@ -186,10 +214,13 @@ def main():
             'controler.writePlansInterval, so not every iteration has one.'
             % path)
 
+    found = windows_from_run(a.run)
+    bound_s = float(found['boundWindowMinutes']) * 60.0
+    capacity = int(float(found.get('maxPassengersPerVehicle', 4)))
     cfg = _registry.load(strict=True)
+    # the inferred window is not emitted per run; it is the registry's, and it
+    # has not moved since 9.81
     window_s = float(cfg.get('B.ride.pairing_window_min')) * 60.0
-    bound_s = float(cfg.get('B.ride.bound_pairing_window_min')) * 60.0
-    capacity = int(cfg.get('B.ride.max_passengers_per_vehicle'))
 
     print('reading %s ...' % path)
     people = read_selected_plans(path)
@@ -201,7 +232,8 @@ def main():
     print('DECLARED RIDE PAIRING   %s   run %s   iteration %d'
           % (stamp, _os.path.basename(_os.path.normpath(a.run)), a.it))
     print('basis  the SELECTED plans the pairing engine reads at BeforeMobsim')
-    print('window %.0f min inferred / %.0f min for a declared pair'
+    print('window %.0f min inferred / %.0f min for a declared pair '
+          "(READ FROM THIS RUN'S OWN config.xml)"
           % (window_s / 60.0, bound_s / 60.0))
     print('=' * 78)
     print('%-22s %10s %8s' % ('verdict', 'ride legs', 'share'))
