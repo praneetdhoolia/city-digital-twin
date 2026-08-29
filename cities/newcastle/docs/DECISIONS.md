@@ -11234,6 +11234,125 @@ reappears, re-derive the mechanism instead of re-applying the fix.
 
 ---
 
+## 9.119 MATSim's own mode choice created the state MATSim's own mode choice refuses (30 August 2026, fifteenth session; issues #48, #49, #96)
+
+`IllegalStateException: Subtour contains a mix of chain- and non-chainbased
+modes` has killed **five arms** — 26, 27, 29 August and twice on 30 August. It
+was carried as a settled trap through two sessions. It was never settled,
+because nobody had asked the exception which agent it was talking about: **it
+names no person.**
+
+Three mechanisms were argued from the code and refuted. This entry records what
+a diagnostic measured instead.
+
+### What was refuted, and by what
+
+| asserted | refuted by |
+|---|---|
+| the §9.106 reach-refusal path put one trip back | the stack: the throw is at `inner.run(plan)`, inside MATSim's strategy. The bounds are 0.0, so `beyondReach` never fires |
+| §9.105's `car` fallback was left unrestored | the arm's own log: **48101/48101, 50705/50705, 53890/53890** restored |
+| `EscortCoherenceListener` converted an INNER subtour of a nested plan | a rebuilt arm died identically, 918 s against 928 s (§9.118, amended) |
+
+The third was a **genuine defect** — `getSubtours` does return nested subtours
+inner-first, measured — and its repair stands. It simply was not this.
+
+### What the diagnostic measured
+
+`GatedSubtourModeChoice` was given a check on both sides of MATSim's strategy:
+is the plan mixed BEFORE, and is it mixed AFTER? Both log and neither swallows.
+
+| in one replanning round | count |
+|---|---:|
+| plans arriving already mixed | **8** |
+| **plans CLEAN before and MIXED after** | **20** |
+| refusals raised at the same moment | 0 |
+
+**The strategy creates the state, and creates it faster than it inherits it.**
+Every created case has the identical shape:
+
+```
+person 90295   subtour 0 trips=1 hasParent=true   modes=[pt ]           acts=[work->other ]
+               subtour 1 trips=3 hasParent=false  modes=[car pt car ]   acts=[home->work work->other other->home ]
+person 150946  subtour 0 trips=1 hasParent=true   modes=[ride ]
+               subtour 1 trips=3 hasParent=false  modes=[car ride car ]
+person 36221   subtour 0 trips=1 hasParent=true   modes=[taxi ]
+               subtour 1 trips=4 hasParent=false  modes=[bike taxi bike bike ]
+```
+
+A **degenerate ONE-TRIP child subtour** — two consecutive activities within
+`subtourModeChoice.coordDistance` (100 m) of each other, `shopping->shopping`,
+`escort->escort` — is given a non-chain mode by
+`probaForRandomSingleTripMode` (0.5). That is entirely valid *for the child*.
+It leaves the **parent** holding `car` and `pt` together.
+
+The plan then enters the agent's memory and does nothing for several
+iterations. It kills the run only when mode choice later happens to **select
+the parent** — which is why five arms died at five different iterations, and
+why some arms ran past 100 without dying at all. **The intermittency was the
+signature, and it was read as flakiness.**
+
+### The demand, measured offline, holds none of the fatal shape
+
+`citysim.SubtourChainScan` over the committed WEEKDAY population, decomposing
+with the run's own coordDistance:
+
+| | |
+|---|---:|
+| persons | 620,553 |
+| subtours | 1,138,887 |
+| mixed subtours | **99** |
+| of which LEAF — ONE excursion | **0** |
+| of which SPANNING several excursions | 99 |
+
+A mix **across** excursions is an ordinary day: drive in the morning, take the
+train in the evening. A mix **inside** one excursion is physically impossible,
+because the car is not where the agent left it. **The demand generates none of
+the second kind.** Every one of the 99 is `closed=false` — a day that never
+returns home, so a chain-based mode in it abandons the vehicle. That is a real
+but separate defect, filed as **#96**.
+
+### The repair
+
+Two refusals, neither of which invents a mode or moves a parameter.
+
+1. **A proposal that would leave a subtour mixed is REFUSED**, and the
+   pre-innovation plan restored whole. This is the principle the reach refusal
+   already stated in this same method — *"the pre-innovation plan is consistent
+   by construction, so restoring all of it is the only safe refusal"* — applied
+   to an invariant MATSim itself states. The agent keeps a valid plan and every
+   mode remains available on the next draw.
+2. **A plan that ARRIVES mixed is stood aside from mode choice**, because no
+   draw can make it valid and running the strategy on it is a guaranteed throw.
+   `ReRoute`, the strategy's other module, still runs. **This is a refusal to
+   crash on #96, not a repair of it**, and those agents get no mode innovation
+   while it stands.
+
+### Measured on the arm that followed
+
+`20260830T083019_1000it_25pct` **cleared iteration 6** — five arms had died at
+iteration 3 — with 5 proposals refused and 5 plans stood aside, at a median
+**288 s/iteration**.
+
+### What this costs, stated
+
+Refusing a proposal removes it from the search. The proposals removed are
+states MATSim cannot hold, so nothing representable is lost — but the
+single-trip mode change is now a weaker operator on agents whose day contains a
+degenerate one-trip subtour, and those subtours exist because destination
+placement puts consecutive activities within 100 m of each other. **That is
+#30's territory**, and it is named here rather than absorbed.
+
+### The lesson worth carrying
+
+**An intermittent crash is a stochastic SELECTION over a deterministic defect.**
+The state was being manufactured every replanning round and lay dormant until
+the strategy drew the subtour holding it. Five arms, two sessions and three
+refuted mechanisms went past because the failure looked random and the
+exception named no agent. **When a crash names no subject, the first move is to
+make it name one.**
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -11906,6 +12025,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **MATSim's own mode choice created the state MATSim's own mode choice refuses (§9.119; issues #48/#49/#96).** `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` had killed **five arms** across two sessions and was carried as a settled trap. **Three mechanisms were argued from the code and all three refuted** - the §9.106 refusal path (the throw is inside MATSim's own strategy and the bounds are 0.0), §9.105's `car` fallback (every restore succeeded: 48101/48101, 50705/50705, 53890/53890) and §9.118's nested-subtour conversion (a rebuilt arm died identically, 918 s against 928 s). A two-sided diagnostic measured it instead: in one replanning round, **8 plans arrived mixed and 20 went from CLEAN to MIXED** under MATSim's own strategy. The shape is always the same - a degenerate ONE-TRIP child subtour, two activities within `coordDistance` 100 m, is given a non-chain mode by `probaForRandomSingleTripMode` 0.5, which is valid for the child and leaves the PARENT holding `car` and `pt`. The plan sleeps in the agent's memory and kills the run only when mode choice later SELECTS the parent - **the intermittency was the signature, and it was read as flakiness.** Offline, the committed WEEKDAY demand holds **99 mixed subtours of 1,138,887 and 0 of them LEAF** - all span several excursions and all are `closed=false` (#96). Repaired by two refusals that invent nothing: a proposal leaving a subtour mixed is REFUSED and the pre-innovation plan restored whole, and a plan that ARRIVES mixed is stood aside from mode choice while ReRoute still runs. Arm `20260830T083019_1000it_25pct` then **cleared iteration 6**, where five arms had died at 3, at a median 288 s/it. Nothing here is a finding. |
 | 2026-08-30 | **The escort listener converted the INNER subtour of a nested plan (§9.118; issues #48/#49/#86).** The first F14 arm died at iteration 3 on `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` - **the same exception that killed three earlier arms** and was recorded as a settled trap. It comes out of MATSim's OWN strategy at `inner.run(plan)`, not the §9.106 refusal path, whose reach bounds are 0.0 and unreachable. **A mechanism was asserted and refuted by the arm's own log**: §9.105's `car` fallback could leave a chain-based leg in a non-chain subtour if the restore silently skipped, but every restore succeeded (48101/48101, 50705/50705, 53890/53890). **The real cause, measured with a purpose-built probe rather than argued**: `EscortCoherenceListener.subtourContaining` returned the FIRST subtour containing the bound trip, and `getSubtours` returns nested subtours **INNER-FIRST** - for `home→work→lunch→work→home` it returns the 2-trip inner subtour at index 0 (`hasParent=true`) ahead of the 4-trip outer one. Converting "the whole subtour" therefore converted two trips of four and left the ENCLOSING subtour holding `car` and `ride`. The 26 August repair stopped this listener converting ONE TRIP of a subtour; it did not stop it converting ONE SUBTOUR of a nested plan. **Fix:** walk to the root before converting - `getTrips()` includes nested trips, so no enclosing subtour can be left mixed; sibling top-level subtours are untouched. Behaviour change stated: a coherent proposal is now the whole home-anchored day, which is what the chain-based constraint requires; the listener still only PROPOSES and `ChangeExpBeta` still decides. New tools `citysim.NestedSubtourProbe` and `citysim.SubtourChainScan`; the latter **reported CLEAN off 0 subtours decomposed** on its first run and now exits INCONCLUSIVE instead. Nothing here is a finding. |
 | 2026-08-30 | **The local suite was failing on `main` while three documents said it passed (§9.117; §9.93 reconstructed).** `check_package.py` is local-only and is the gate the conventions name for declaring a data phase complete; it reported **FAILURES PRESENT** on arrival, against a board, a brief and a dated row all calling it green. Two pre-existing failures. **(1)** `B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite **§9.93 and no such section existed** - the decision (both rates 0.1 → 0.4, on search completeness rather than fit) was real, applied and measured, and the measurement survived only inside the two field descriptions. §9.93 is **reconstructed from that already-committed evidence**, labelled as a reconstruction, introducing no new number. **(2)** Three `consumers` claims were **semantically true and textually false** - `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km` and `B.ride.unpaired_fallback` each named the class that APPLIES the value through a config-group accessor rather than the group that names the key. Repaired on both sides: the config group joins `consumers`, and the applying class now names the field at the point of use. **0 false claims remain across 193 claims over 179 fields.** The check reports only its FIRST failure, so fixing two revealed a third; enumerating the whole set found it in one pass. Suite now **ALL CHECKS PASSED** (2 standing warnings). Same shape as §9.116 the same morning: not a missing check, but a **claim about a check**. Nothing here is a finding. |
 | 2026-08-30 | **The committed builder had stopped reproducing the committed demand; both queued fixes applied and family F14 opens (§9.116; issues #92/#93/#86/#49).** §9.111 and §9.115 each recorded their fix as written and deliberately NOT committed. **The §9.111 candidate-pool filter was committed anyway**, in `b65d280` via PR #95, without its rebuild - so the repository could not regenerate its own demand from its own code, and **all eight arrival gates passed over it**, because none compares a builder with the artefact it produced. Caught from the committed build report: `candidates` 201,931 with `candidates_unservable` absent is a report the committed builder cannot write. Both fixes are now applied together and all three day types rebuilt. Measured, WEEKDAY: candidates 201,931 → **146,260** (55,671 unservable), **bound 74,663 → 82,384**, infeasible 73,258 → 35,937, `driver_is_the_companion` 51,215 → 8,150, and **`p_thin` 0.8565 → 1.0000** - thinning stops applying, so joint binding is now **supply-limited by servable candidates**, a different regime from every prior entry, and a WEEKDAY property only (SAT 0.6216, SUN 0.5955). **§9.111's "roughly 110,000" estimate is wrong: the measured answer is 82,384**, because the estimate assumed a thinning rate that no longer applies and did not anticipate the two timing clauses growing (+3,759, +1,985). `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived`; the two observations behind the identity are now declared (`CAL.mode_split.vehicle_driver_level`, `.motorbike_driver_journey_share`) and `build_mode_targets.py` **asserts them against the acquired sources on every build**. `mode_targets_by_mode.csv` is unchanged but for line endings, confirming the carve moves generation, not the yardstick - motorbike's share will go DOWN. **FAMILY BOUNDARY F14: nothing run before compares with anything run after**, including the two F4 arms `README.md` draws its figures from. Registry 400 → 402. Nothing here is a finding. |

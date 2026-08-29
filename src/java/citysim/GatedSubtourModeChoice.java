@@ -302,29 +302,36 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                     // itself creates it - and probaForRandomSingleTripMode
                     // changes ONE trip's mode irrespective of its subtour.
                     // Diagnostic only; nothing is altered either way.
+                    // A plan that ARRIVES mixed cannot be mode-changed at all:
+                    // ChooseRandomLegModeForSubtour throws the moment it
+                    // selects the offending subtour, and no draw makes that
+                    // plan valid. Running the strategy on it is a guaranteed
+                    // crash, so mode choice stands aside and ReRoute - the
+                    // other module of this strategy - still runs.
+                    //
+                    // Measured (9.119): the committed WEEKDAY demand holds 99
+                    // such subtours in 1,138,887, every one SPANNING several
+                    // excursions and every one closed=false - a day that never
+                    // comes home, so the car it started in is abandoned. NONE
+                    // is a single-excursion mix. That is a DEMAND defect and
+                    // this is not its repair; it is the refusal to crash on it
+                    // while it stands. The count is logged so it cannot be
+                    // forgotten, and the repair is tracked on its own issue.
                     final boolean mixedBefore = isAnySubtourMixed(plan);
-                    if (mixedBefore && PREMIX_DUMPS.get() < 20) {
-                        PREMIX_DUMPS.incrementAndGet();
-                        org.apache.logging.log4j.LogManager
-                                .getLogger(GatedSubtourModeChoice.class)
-                                .error("PRE-EXISTING MIX (before inner.run) - "
-                                        + describe(plan));
+                    if (mixedBefore) {
+                        if (PREMIX_DUMPS.getAndIncrement() < 5) {
+                            org.apache.logging.log4j.LogManager
+                                    .getLogger(GatedSubtourModeChoice.class)
+                                    .warn("mode choice STOOD ASIDE for a plan "
+                                            + "that arrived with a mixed "
+                                            + "subtour (a demand defect, not "
+                                            + "one this strategy made) - "
+                                            + describe(plan));
+                        }
+                        return;
                     }
                     try {
                         inner.run(plan);
-                        // Was it CLEAN before and MIXED after? Then this
-                        // strategy created the state that will kill a later
-                        // iteration, and the creator is named rather than
-                        // inferred. Diagnostic only.
-                        if (!mixedBefore && CREATED_DUMPS.get() < 20
-                                && isAnySubtourMixed(plan)) {
-                            CREATED_DUMPS.incrementAndGet();
-                            org.apache.logging.log4j.LogManager
-                                    .getLogger(GatedSubtourModeChoice.class)
-                                    .error("STRATEGY CREATED MIX (clean before "
-                                            + "inner.run, mixed after) - "
-                                            + describe(plan));
-                        }
                     } catch (final IllegalStateException ex) {
                         // DIAGNOSTIC, not a workaround: the exception is
                         // re-thrown unchanged. "Subtour contains a mix of
@@ -355,6 +362,38 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                                 && beyondReach(legs.get(0).getMode(), t)) {
                             infeasible = true;
                             break;
+                        }
+                    }
+                    // AND the proposal must not leave a subtour mixing chain-
+                    // with non-chain-based modes. MATSim cannot represent that
+                    // state - `ChooseRandomLegModeForSubtour.applyChange`
+                    // refuses it - yet MATSim's own single-trip mode change
+                    // CREATES it, measured here: 20 plans went from clean to
+                    // mixed in one replanning round against 8 that arrived
+                    // mixed (9.119). The shape is always the same: a degenerate
+                    // ONE-TRIP child subtour, two consecutive activities inside
+                    // subtourModeChoice.coordDistance of each other, is given a
+                    // non-chain mode by probaForRandomSingleTripMode; that is
+                    // valid for the child and leaves the PARENT holding car and
+                    // pt together. The plan survives into the agent's memory
+                    // and kills the run several iterations later, when the
+                    // strategy happens to select the parent - which is why five
+                    // arms died at five different points.
+                    //
+                    // This refuses the PROPOSAL, not the mode: the agent keeps
+                    // its pre-innovation plan, which is consistent by
+                    // construction, and every mode remains available on the
+                    // next draw. It is the same principle as the reach refusal
+                    // above and it enforces an invariant MATSim itself states.
+                    if (!infeasible && !mixedBefore && isAnySubtourMixed(plan)) {
+                        infeasible = true;
+                        if (CREATED_DUMPS.getAndIncrement() < 5) {
+                            org.apache.logging.log4j.LogManager
+                                    .getLogger(GatedSubtourModeChoice.class)
+                                    .warn("refused a proposal that would leave "
+                                            + "a subtour mixing chain- and "
+                                            + "non-chain-based modes - "
+                                            + describe(plan));
                         }
                     }
                     if (infeasible) {
