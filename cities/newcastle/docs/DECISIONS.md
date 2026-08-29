@@ -109,6 +109,7 @@ its layout will otherwise cost you an hour:
 | **The demand generates 42% more ride legs than drivers, and half its joint bindings are refused** | **§9.109** — at **iteration 0**, before any replanning: 44,750 ride legs generated, **24,833 pairable (55.5%)**, 13,176 whose household drove elsewhere at ANY hour, 5,787 with no household car leg at all — **42.4% unservable by the demand itself**, and the proportion is flat across the arm, which is what STRUCTURAL looks like. The binder's own report agrees from the other end: escort binding **71.7%**, joint binding reaching **39.5%** of its own 448,229-trip target with **73,258 skipped as infeasible against 74,663 bound**. **Ride's deficit and bike's excess are ONE defect** — a carless agent cycles because they cannot be a passenger. The pairing rule, window and coherence rate had nothing to find |
 | **CORRECTION to §9.109: the companions' days are NOT full** | **§9.110** — §9.109 said the joint bindings are refused because the companion's day is already full. That was read off a source comment, not measured. Measured: the median person commits **6.25 h of a 30 h horizon (20.8%)** and only **4.6%** commit more than half. Driver tours are not scarce in aggregate either (~200,000 commitments against 1,100,353 tours), so any shortage is HOUSEHOLD-LOCAL. **Why each of the 73,258 candidates was refused is recorded nowhere** — one counter serves a five-clause test — which is why the comment got reached for. §9.109's engine-side numbers stand. **Third time this session a cause was asserted from a plausible mechanism rather than measured** |
 | **Seven in ten refused joint bindings name the companion as their own driver** | **§9.111** — the binder now classifies its refusals (run with approval, **verified byte-identical** first, so no family boundary). Of 73,258: **driver_is_the_companion 51,215 (69.9%)**, shift-pass driver committed 12,530, as-timed collision 9,511, and **driver_party_full just 2** — the cap's own "not binding" claim is VINDICATED. Driver and companion pools are built from the SAME tours, so a licensed car-owner is in both; **41.7% of multi-person households have at most one licensed travelling member**, and that person can drive relatives but can never be served. `p_thin` thins a pool a third of which is unbindable by construction. **Fix: exclude companions whose household holds no OTHER eligible driver tour** — no parameter, observation or target changes, but it is a FAMILY BOUNDARY and is left to the operator |
+| **Motorbike is told one share and scored against another; the ferry's market walks 12 km around the water** | **§9.112** — the two modes nobody had investigated. **Motorbike**: the carve is declared **0.3630%** (census 653 of 179,761 ALL journeys) while the fit target is **0.2406%** (the same 653 of 160,103 DRIVER journeys x the HTS 59.0% driver level) — same numerator, 51% apart, generated against one and scored against the other. The carve also under-delivers its own number (realised **0.2013%**) because its stated assumption is false: carved persons trip **3.48/day against a 4.11 average**. **Ferry**: the wharves are **640 m** apart against a ~20 km road detour, and **450 trips take the detour — 233 by car and 118 ON FOOT** (a 2.5 h walk) — while the ferry runs 276 trips a day and captures 6 of a 64-trip target. Trap recorded: `main_mode` is `pt`, never a submode |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10533,6 +10534,105 @@ served a five-clause test, and the two clauses a reader would most naturally
 blame - a full party and a full day - are responsible for two refusals and zero
 respectively. Every guess made about this quantity while it was lumped was
 wrong, including mine an hour earlier.
+
+---
+
+## 9.112 Motorbike is told one share and scored against another; the ferry's market walks 12 km around the water (30 August 2026, fourteenth session; issues #49, #84, #30)
+
+§9.108 left ride, bike and motorbike diverging, and ferry uninvestigated
+entirely. These are the two nobody had looked at. Both are read-only findings
+from the committed arm and the committed demand - no run, no rebuild.
+
+### Motorbike: generation and scoring disagree by half, from the same census cell
+
+`B.motorbike.trip_share` = **0.3630%**, and its own basis says so plainly: the
+census G62 one-method motorbike/scooter count, **653 of 179,761 ALL journeys**.
+
+§9.87's fit target = **0.2406%**, derived from the same 653 riders: **653 of
+160,103 DRIVER journeys** (0.408%) scaled by the HTS Vehicle-driver level
+(59.0%).
+
+**Same numerator, different denominators, and a 51% disagreement.** The model is
+instructed to generate one share and scored against the other. Neither is wrong
+in itself - conditioning on being a driver before applying the HTS driver level
+is the more careful transfer - but they cannot both stand, and until they agree
+no movement in motorbike's fit means anything.
+
+### And the carve does not deliver even its own number
+
+Measured at iteration 100, on the carve's own basis:
+
+| | |
+|---|---:|
+| person-subpopulation agents | 50,969 |
+| carved to motorbike | **132** (0.2590% of persons) |
+| their trips | 459 (0.2190% of person trips) |
+| realised `motorbike` trips | 422 (**0.2013%**) |
+| **declared share** | **0.3630%** |
+
+The carve computes its probability as
+`q = share x len(attrs) / eligible`, and states the assumption it rests on:
+*"Eligible persons (licensed AND car-available) are assumed to trip at the
+population's average rate."*
+
+**Measured, they do not: carved persons make 3.48 trips a day against a
+population average of 4.11 - 15% below.** The assumption is written down, which
+is to its credit, and it is false, which the field's sweep was said to absorb.
+It does not absorb it: the realised 0.2013% is 55% of the declared 0.3630% and
+below the 0.2406% target as well, so motorbike reads -49.7% at the gate while
+its generator believes it is over-supplying.
+
+### Ferry: the market exists, and it walks
+
+The ferry runs **276 trips a day** in the base schedule, and the Stockton and
+Queens wharves are **640 m apart in a straight line** while the road between
+them is a ~20 km detour via Hexham. That makes the crossing identifiable
+without knowing which bank a point is on: a trip whose two ends are close as the
+crow flies but whose ROAD distance is long is a trip going the long way round
+water.
+
+Trips with crow-fly under 3 km and road distance over 12 km, iteration 100:
+
+| mode | trips | share |
+|---|---:|---:|
+| **car** | **233** | 51.8% |
+| **walk** | **118** | 26.2% |
+| ride | 50 | 11.1% |
+| bike | 34 | 7.6% |
+| taxi | 8 | 1.8% |
+| truck | 4 | 0.9% |
+| pt (any submode) | 3 | 0.7% |
+| **total** | **450** | 0.2035% of all trips |
+
+**450 trips take the detour; three take public transport.** The ferry's target
+for target-LGA residents is 0.1013% of 62,818 = **64 trips**, and the model
+realises **6**. The market is not missing - it is 450 trips wide and the ferry
+captures a hundredth of it.
+
+**118 of those agents WALK the detour.** A 12 km walk at this model's capped
+1.25 m/s is over two and a half hours, taken to get somewhere 3 km away across
+water that a 640 m ferry crosses 276 times a day. That is not a preference the
+scoring discovered; it is a choice set that never offered the alternative. It is
+also the same wound as §9.107's walk geometry, seen in the one corridor where
+the correct answer is unambiguous.
+
+### A counting trap recorded so nobody repeats it
+
+`main_mode == 'ferry'` is **zero** in the trips table, and that is not a finding.
+A public-transport trip carries `main_mode == 'pt'`; the submode is recovered
+from the LEGS table by the route each leg boarded, which is what
+`report_mode_ridership.py` does and why it reads 6 rather than 0. Counting
+submodes off `main_mode` will report every one of the four PT modes as absent.
+
+### What is NOT concluded here
+
+Why the raptor does not return the ferry for those crossings is **not
+established** - access and egress walk, headway, transfer penalty and the
+submode's own scoring are all candidates and none has been measured. Naming one
+now would be the fourth time this session an explanation was mistaken for
+evidence (§9.107, §9.110, and the party-cap suspicion §9.111 withdrew). The
+measurement above says the market exists and is being lost; it does not say
+where.
 
 ---
 

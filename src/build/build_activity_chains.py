@@ -1403,7 +1403,8 @@ def bind_joint_tours(path, day, pctx, seed):
     out = dict(enabled=JOINT_RATIO > 0, ratio=JOINT_RATIO,
                purposes=list(JOINT_PURPOSES), target_trips=0,
                existing_covered_trips=0, candidates=0, bound=0,
-               skipped_infeasible=0, thin_p=None, refusal_reasons={})
+               skipped_infeasible=0, thin_p=None, refusal_reasons={},
+               candidates_unservable=0)
     bpath = os.path.join(OUT, 'B2_joint_bindings_%s.csv' % day)
     bind_cols = ['companion_person_id', 'companion_tour_id',
                  'driver_person_id', 'driver_tour_id',
@@ -1515,7 +1516,21 @@ def bind_joint_tours(path, day, pctx, seed):
         # (B.ride.max_passengers_per_vehicle).
         hh_drivers[hid] = [(p, tid, int(rows[ix]['dep_time_s']))
                            for p, tid, ix in driver_tours]
+        # A companion whose household holds no driver tour belonging to
+        # SOMEBODY ELSE cannot be bound, ever: the first pass skips every
+        # driver where d_pid == c_pid, so the list it walks holds nothing
+        # usable. Measured before this filter existed (9.111): 51,215 of
+        # 73,258 refusals - 69.9% - were exactly that, because a licensed
+        # car-owner's tour sits in BOTH pools and 41.7% of multi-person
+        # households have at most one licensed travelling member. Leaving
+        # those candidacies in the pool does not merely waste them:
+        # `p_thin` divides the target across the pool it is given, so every
+        # certain refusal thins a SERVABLE candidate away with it.
+        driver_persons = {d_pid for d_pid, _tid, _ix in driver_tours}
         for c_pid, c_tid, c_ix in comp_tours:
+            if not (driver_persons - {c_pid}):
+                out['candidates_unservable'] += 1
+                continue
             candidates.append((c_pid, c_tid, hid,
                                int(rows[c_ix]['dep_time_s'])))
     out['candidates'] = len(candidates)
