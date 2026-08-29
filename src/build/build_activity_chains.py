@@ -1403,7 +1403,7 @@ def bind_joint_tours(path, day, pctx, seed):
     out = dict(enabled=JOINT_RATIO > 0, ratio=JOINT_RATIO,
                purposes=list(JOINT_PURPOSES), target_trips=0,
                existing_covered_trips=0, candidates=0, bound=0,
-               skipped_infeasible=0, thin_p=None)
+               skipped_infeasible=0, thin_p=None, refusal_reasons={})
     bpath = os.path.join(OUT, 'B2_joint_bindings_%s.csv' % day)
     bind_cols = ['companion_person_id', 'companion_tour_id',
                  'driver_person_id', 'driver_tour_id',
@@ -1541,6 +1541,11 @@ def bind_joint_tours(path, day, pctx, seed):
     shifted = {}                          # (d_pid, d_tid) -> rigid shift, s
     out['skipped_conflict'] = 0
     out['bound_driver_shifted'] = 0
+    # WHY a candidate found no driver (9.110). One counter cannot answer a
+    # five-clause test, and 73,258 refusals went unexplained because of it.
+    # Counted per CANDIDATE on the clause that blocked every driver it saw,
+    # so the classes partition the refusals rather than double-counting them.
+    refusal = collections.Counter()
 
     def intervals_of(pid, skip_tid):
         """A person's other-tour intervals, reading every re-timing this
@@ -1578,16 +1583,21 @@ def bind_joint_tours(path, day, pctx, seed):
             hh_drivers[hid],
             key=lambda t: (abs(t[2] - c_dep), int(t[0]), int(t[1])))
         chosen = None
+        why = collections.Counter()
+        if not drivers:
+            why['no_driver_tour_in_household'] += 1
         # First pass: a driver tour that fits the companion's day AS TIMED.
         for d_pid, d_tid, _d_dep in drivers:
             if (d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid)
                     or (d_pid, d_tid) in replaced
                     or driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS):
+                why['driver_already_committed'] += 1
                 continue
             d_rows = effective_rows(d_pid, d_tid)
             t_start = min(int(r['dep_time_s']) for r in d_rows)
             t_end = max(int(r['arr_time_s']) for r in d_rows)
             if any(t_start < e + 600 and t_end > s - 600 for s, e in busy):
+                why['as_timed_collides_with_companion'] += 1
                 continue
             chosen = (d_pid, d_tid, d_rows, t_start, t_end, 0)
             break
@@ -1605,6 +1615,7 @@ def bind_joint_tours(path, day, pctx, seed):
                         or (d_pid, d_tid) in replaced
                         or driver_load[(d_pid, d_tid)] > 0
                         or (d_pid, d_tid) in shifted):
+                    why['shift_driver_already_committed'] += 1
                     continue
                 d_rows = [dict(rows[ix]) for ix in tours_of(d_pid)[d_tid]]
                 t0 = min(int(r['dep_time_s']) for r in d_rows)
@@ -1612,12 +1623,15 @@ def bind_joint_tours(path, day, pctx, seed):
                 delta = c_dep - t0
                 s_start, s_end = t0 + delta, t1 + delta
                 if s_start < 0 or s_end > DAY_HORIZON_S:
+                    why['shift_leaves_day_horizon'] += 1
                     continue
                 if any(s_start < e + 600 and s_end > s - 600
                        for s, e in busy):
+                    why['shift_collides_with_companion'] += 1
                     continue
                 if any(s_start < e + 600 and s_end > s - 600
                        for s, e in intervals_of(d_pid, d_tid)):
+                    why['shift_collides_with_driver'] += 1
                     continue
                 for r in d_rows:
                     r['dep_time_s'] = int(r['dep_time_s']) + delta
@@ -1629,6 +1643,9 @@ def bind_joint_tours(path, day, pctx, seed):
                 break
         if chosen is None:
             out['skipped_infeasible'] += 1
+            # the clause that blocked the most drivers for THIS candidate; one
+            # vote per refused candidate, so the classes partition the total
+            refusal[why.most_common(1)[0][0] if why else 'no_driver_examined'] += 1
             continue
         d_pid, d_tid, d_rows, t_start, t_end, _delta = chosen
         mirror = []
@@ -1715,6 +1732,7 @@ def bind_joint_tours(path, day, pctx, seed):
                         key=lambda b: (int(b['companion_person_id']),
                                        int(b['companion_tour_id']))):
             w.writerow(b)
+    out['refusal_reasons'] = dict(refusal.most_common())
     return out
 
 

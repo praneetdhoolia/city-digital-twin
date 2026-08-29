@@ -107,6 +107,7 @@ its layout will otherwise cost you an hour:
 | **CORRECTION: the demand is not the defect — walk and car are SWAPPED at both ends** | **§9.107** — §9.103 and §9.106 both concluded the cause was destination placement. The HTS publishes **DISTANCE_BY_MODE**, an observed anchor never used: resident trips **1.11x**, total km **1.20x**, mean trip length **1.08x**, and **16.31% of modelled trips are under 1 km** against an observed walk-only 13.4%. The demand has the short trips. But **only 39.5% of sub-1 km trips are walked while car takes 39.2%**, and walk's resident mean is **6.66 km against an observed 0.70**. Modes are assigned per SUBTOUR, so a car chain drives its 800 m leg and a walk chain walks its 20 km leg — which is why four downstream repairs could not move it and why a per-trip bound broke the chain invariant. **A calibration question on the walk/car distance margin, and a per-mode mean trip length is an observation this package holds and has never scored against** |
 | **Three of the modes I spent the session repairing were converging on their own** | **§9.108** — every gate this session was read at iteration 100 of a 1000-iteration arm with innovation to 800. On the TREND: **car 0.3409 → 0.4429 (~136 more iterations to target), walk 0.2888 → 0.2116 (~100 more), pt 0.0688 → 0.0603 (~248 more)** — all converging, and walk's GEOMETRY with them (mean 8.12 → 6.66 km, trips 21,475 → 15,955). **Genuinely diverging: ride, bike (flat at ~10.0 km against an observed 5.2 on BOTH axes), motorbike.** The yardstick repairs (§9.100, §9.101) are untouched — those are wrong at every iteration. **A gate that stops a run before the model can answer turns every transient into a defect**; this session chased four. No arm has ever reached its cutoff |
 | **The demand generates 42% more ride legs than drivers, and half its joint bindings are refused** | **§9.109** — at **iteration 0**, before any replanning: 44,750 ride legs generated, **24,833 pairable (55.5%)**, 13,176 whose household drove elsewhere at ANY hour, 5,787 with no household car leg at all — **42.4% unservable by the demand itself**, and the proportion is flat across the arm, which is what STRUCTURAL looks like. The binder's own report agrees from the other end: escort binding **71.7%**, joint binding reaching **39.5%** of its own 448,229-trip target with **73,258 skipped as infeasible against 74,663 bound**. **Ride's deficit and bike's excess are ONE defect** — a carless agent cycles because they cannot be a passenger. The pairing rule, window and coherence rate had nothing to find |
+| **CORRECTION to §9.109: the companions' days are NOT full** | **§9.110** — §9.109 said the joint bindings are refused because the companion's day is already full. That was read off a source comment, not measured. Measured: the median person commits **6.25 h of a 30 h horizon (20.8%)** and only **4.6%** commit more than half. Driver tours are not scarce in aggregate either (~200,000 commitments against 1,100,353 tours), so any shortage is HOUSEHOLD-LOCAL. **Why each of the 73,258 candidates was refused is recorded nowhere** — one counter serves a five-clause test — which is why the comment got reached for. §9.109's engine-side numbers stand. **Third time this session a cause was asserted from a plausible mechanism rather than measured** |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10361,6 +10362,80 @@ the ceiling is a timing collision the generator could avoid by ordering its
 passes differently, or a genuine structural limit of one-day activity chains.
 That is where the next session should start, and it is upstream of everything
 this session touched.
+
+---
+
+## 9.110 CORRECTION to §9.109: the companions' days are not full, and I asserted that from a code comment (29 August 2026, fourteenth session; issues #86, #91)
+
+§9.109 said, of the 73,258 joint bindings the demand refuses as infeasible, that
+*"nearly half of every joint binding it attempts is refused because the
+companion's day is already full"*. **That was read off the binder's own source
+comment and the #65 invariant it cites. It was not measured, and the
+measurement contradicts it.**
+
+### What the demand's own file says
+
+Committed time per person across the weekday demand, against the 108,000 s
+(30 h) horizon the binder shifts within:
+
+| | seconds | hours | share of horizon |
+|---|---:|---:|---:|
+| p10 | 2,001 | 0.56 | 1.9% |
+| p25 | 6,933 | 1.93 | 6.4% |
+| **median** | **22,484** | **6.25** | **20.8%** |
+| p75 | 37,592 | 10.44 | 34.8% |
+| p90 | 47,529 | 13.20 | 44.0% |
+| p99 | 64,254 | 17.85 | 59.5% |
+
+**Only 4.6% of persons have more than half the horizon committed.** The median
+person's day is four fifths empty. Whatever refuses 73,258 bindings, it is not a
+shortage of hours in the companion's day.
+
+### What IS measured, and what is not
+
+Measured, from the committed artefacts:
+
+* 74,663 joint bindings sit on **66,630 distinct driver tours** - mostly one
+  companion each, up to four.
+* **125,475 escort bindings** consume driver-side capacity before the joint pass
+  runs at all.
+* Together those are ~200,000 commitments against **1,100,353 tours**, so driver
+  tours are not scarce in aggregate. Any shortage is HOUSEHOLD-LOCAL.
+* §9.109's engine-side numbers stand unchanged: 44,750 ride legs generated,
+  24,833 pairable at iteration 0, **42.4% unservable by the demand itself**.
+
+**Not measured, and now explicitly open**: why any individual candidate was
+refused. The binder increments one counter for every failure of a five-clause
+test - no driver in the household, every driver already taken, the shifted tour
+falling outside the horizon, a collision with the companion's other tours, a
+collision with the driver's other tours - and records which clause fired for
+none of them. The classification does not exist, which is exactly why §9.109
+reached for the code comment instead.
+
+### The correction to the lane
+
+The lane §9.109 named is unchanged and is if anything better justified: **the
+73,258 refusals are the largest measured untouched quantity in the demand and
+they need classifying.** What changes is that the answer is NOT already known.
+Instrumenting the five clauses is a counters-only change to
+`build_activity_chains.py`, deterministic and output-identical, so it can be
+measured without regenerating the demand or opening a family boundary.
+
+### The lesson, which is now this session's third instance
+
+§9.103 and §9.106 concluded the walk defect was destination placement; §9.107
+measured it and they were wrong. §9.109 concluded the ride ceiling was full
+days; this entry measures it and that is wrong too. **Three times in one session
+a cause has been asserted from a plausible mechanism rather than from a
+measurement, and each time the measurement was cheap and available.**
+
+The tell is identical in all three: a mechanism that WOULD explain the number,
+adopted because it would, without asking what else would. §9.94 recorded the
+same failure a session earlier under a different name - *a number that agrees
+with your expectation still has to be explained*. The generalisation worth
+keeping is stronger than either: **an explanation is not evidence, however well
+it fits, and the cost of checking is nearly always smaller than the cost of
+being wrong about it downstream.**
 
 ---
 
