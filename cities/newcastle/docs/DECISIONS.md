@@ -111,6 +111,7 @@ its layout will otherwise cost you an hour:
 | **Seven in ten refused joint bindings name the companion as their own driver** | **§9.111** — the binder now classifies its refusals (run with approval, **verified byte-identical** first, so no family boundary). Of 73,258: **driver_is_the_companion 51,215 (69.9%)**, shift-pass driver committed 12,530, as-timed collision 9,511, and **driver_party_full just 2** — the cap's own "not binding" claim is VINDICATED. Driver and companion pools are built from the SAME tours, so a licensed car-owner is in both; **41.7% of multi-person households have at most one licensed travelling member**, and that person can drive relatives but can never be served. `p_thin` thins a pool a third of which is unbindable by construction. **Fix: exclude companions whose household holds no OTHER eligible driver tour** — no parameter, observation or target changes, but it is a FAMILY BOUNDARY and is left to the operator |
 | **Motorbike is told one share and scored against another; the ferry's market walks 12 km around the water** | **§9.112** — the two modes nobody had investigated. **Motorbike**: the carve is declared **0.3630%** (census 653 of 179,761 ALL journeys) while the fit target is **0.2406%** (the same 653 of 160,103 DRIVER journeys x the HTS 59.0% driver level) — same numerator, 51% apart, generated against one and scored against the other. The carve also under-delivers its own number (realised **0.2013%**) because its stated assumption is false: carved persons trip **3.48/day against a 4.11 average**. **Ferry**: the wharves are **640 m** apart against a ~20 km road detour, and **450 trips take the detour — 233 by car and 118 ON FOOT** (a 2.5 h walk) — while the ferry runs 276 trips a day and captures 6 of a 64-trip target. Trap recorded: `main_mode` is `pt`, never a submode |
 | **A transitRoute's day tag is not its service day** | **§9.113** — the mapped weekday schedule shows **0 WEEKDAY routes for ferry and tram** against 965 for bus and 266 for rail, which looks like the whole explanation for both deficits and is FALSE. Departures: **ferry 107, tram 252** — exactly their GTFS weekday trip counts. pt2matsim names a grouped route after a representative trip's service id, so a small line can be labelled SAT while running a full weekday timetable. **Never read service from a route id; count departures.** Corrects §9.103's "550 light rail trips a day" (unfiltered GTFS) to **252 weekday departures** — its conclusion is unchanged and better supported. **Supply is now ruled out for both modes on measurement** |
+| **CORRECTION: most cyclists own cars, so bike is NOT displaced ride** | **§9.114** — §9.109 and §9.112 both said bike's excess is carless agents who cannot be passengers. Measured: of 5,649 resident bike trips, **51.6% are made by agents with a licence AND a car**, 30.3% fully carless, 18.1% licensed without one. The displaced-passenger mechanism covers at most a third. Car dominates bike at every distance on the declared scoring, so this is **the same shape as walk (§9.107)** — a mode winning trips the scoring says it should lose, for agents holding the alternative — i.e. **bike is walk's problem in a second mode, not ride's shadow**. Fifth unmeasured mechanism this session; the rule proposed: a cause in an entry must carry the measurement distinguishing it from the obvious alternative, or be marked unmeasured |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10699,6 +10700,79 @@ completely false finding that would have sent the next session to rebuild a
 schedule that is correct. What stopped it was counting the thing that matters
 (departures) rather than the thing that was easy to count (route ids). That is
 the fourth time in this session the easy count and the right count disagreed.
+
+---
+
+## 9.114 CORRECTION to §9.109 and §9.112: most cyclists own cars, so bike is not displaced ride (30 August 2026, fourteenth session; issues #49, #48, #30)
+
+§9.109 closed with *"Ride's deficit and bike's excess are one defect"*, and
+§9.112 repeated it: a carless agent cycles because the demand cannot make them a
+passenger. It is a tidy story, it connects two diverging modes, and it matches
+the standing directive's warning that one mode's deviation can be another's
+absence. **It was never measured. It is wrong.**
+
+### Who actually cycles
+
+Bike trips by target-LGA residents at iteration 100:
+
+| agent | trips | share |
+|---|---:|---:|
+| **licensed AND car available** | **2,914** | **51.6%** |
+| no licence, no car | 1,713 | 30.3% |
+| licensed, no car | 1,022 | 18.1% |
+
+**A majority of bike trips are made by people who have a car.** The
+displaced-passenger mechanism can account for at most the carless 30.3%, and
+even that is generous - being carless does not by itself mean a ride was wanted
+and refused.
+
+### What it means instead
+
+The declared scoring says a car-owner should never cycle at any distance. Per
+kilometre, car costs about 0.604 utils (10.9608/hr at road speed plus the
+monetary distance rate) against bike's ~1.36 (14.5226/hr at 4.2 m/s), and bike
+carries a -1.35 constant against car's 0.0. Car dominates bike everywhere, and
+2,914 trips by car-owners say otherwise.
+
+That is the **same shape as walk** (§9.107): a mode winning trips the scoring
+says it should lose, for agents who hold the alternative. And the same mechanism
+is available - modes are assigned per SUBTOUR, so an agent handed a bike subtour
+cycles every leg of it whatever their garage holds. Bike is not ride's shadow;
+**bike is walk's problem in a second mode.**
+
+Consistent with that, and offered as an observation rather than a mechanism: over
+the arm's first 100 iterations walk falls 0.2888 to 0.2116 and ride falls 0.1903
+to 0.1457, while car rises 0.3409 to 0.4429 and **bike rises 0.0708 to 0.0847**.
+Bike gains far less than car does, so it may be absorbing part of what walk
+sheds on its way elsewhere. **Whether it is a way-station or a destination is not
+established here and should not be asserted.**
+
+### The count that matters for the record
+
+This is the **fifth** time in this session a plausible mechanism was written down
+as a finding without being measured, and the third that reached a committed
+entry:
+
+* §9.103 / §9.106 - the walk defect is destination placement. Refuted by §9.107.
+* §9.109 - the joint bindings fail because companions' days are full. Refuted by
+  §9.110.
+* §9.111's working suspicion - the party-size cap is binding. Refuted by the
+  split counters in §9.111 itself, which vindicated the field's own claim.
+* §9.113's near-miss - the ferry and tram have no weekday service. Refuted before
+  recording, by counting departures instead of route ids.
+* **§9.109 / §9.112 - bike's excess is displaced ride. Refuted here.**
+
+Every one of the five was cheap to check. Four of the five were checked only
+because something else forced the check. **The pattern is not carelessness about
+evidence in general - the numbers in these entries are measured - it is that a
+CAUSE gets adopted on fit with the numbers already in hand, and then travels as
+though it had been tested.**
+
+The rule this session should leave behind: **a mechanism named in a DECISIONS
+entry must carry the measurement that distinguishes it from the obvious
+alternative, or be marked explicitly as unmeasured.** §9.112 did that correctly
+for the ferry ("why the raptor does not return the ferry is NOT established") and
+incorrectly for bike in the same entry.
 
 ---
 
