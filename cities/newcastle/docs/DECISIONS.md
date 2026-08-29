@@ -8937,6 +8937,79 @@ never impose". Both sit at **0.1 in a declared [0.0, 0.5]**, and
 
 ---
 
+## 9.93 The coherence rates are raised from 0.1 to 0.4 on search completeness, not on fit (29 August 2026, thirteenth session; issues #48, #49; RECONSTRUCTED 30 August 2026, fifteenth session)
+
+**This entry was missing.** Two registry fields —
+`B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` — carry
+`decisions_ref` values naming §9.93, and no `## 9.93` section existed. The gap
+was found by `check_package.py`, whose reference check fails when a field cites
+a record that is not there; it had been failing on `main` and the board
+described the suite as passing.
+
+**Nothing here is new.** Every number below is quoted from evidence already
+committed — the two field descriptions, which carry the measurement in full,
+and §9.92, which set the measurement up and recorded both rates at 0.1. No
+value was re-derived and no run was re-read to write this. What was missing was
+the record, and the rule the project runs on is that a decision without its
+record is not a decision anyone can audit.
+
+### The decision
+
+Both rates move **0.1 → 0.4**, inside their declared `[0.0, 0.5]` interval.
+
+### Why, and why this is not tuning
+
+The listener **proposes** the coherent plan back to a decohered pair;
+`ChangeExpBeta` still decides on score. So the rate cannot make a bad plan win —
+**it can only reduce the chance that a good two-sided plan is never offered at
+all.** The state it restores is unreachable by ANY per-agent strategy, because
+B2 generates escort and joint travel as a PAIR while `SubtourModeChoice` moves
+one agent at a time. The only thing a low rate buys is a smaller chance of
+finding a state the search cannot otherwise reach.
+
+That is the whole argument, and it is a **search-completeness** argument rather
+than a fit argument. `0.0` still recovers the pre-§9.82 behaviour exactly, which
+is what makes the mechanism's effect measurable rather than assumed.
+
+### What it measured, on the paired 1% diagnostics at iteration 40
+
+| quantity | 0.1 | 0.4 |
+|---|---:|---:|
+| ride share | 16.7991% | **18.1689%** |
+| bike share | 7.6523% | 6.9696% |
+| `occupancy_from_pairings` | 0.2282 | 0.2505 |
+| ride legs retained | 3,833 | 4,099 |
+| `pair_rate` | 0.5025 | 0.5067 |
+
+**`pair_rate` barely moves while retained legs and occupancy both rise.** That
+is the signature the mechanism predicts: the listener is keeping more coherent
+pairs in PLANS, which is its design, rather than pairing more of them in the
+mobsim.
+
+### The honesty note the fields already carry, restated here
+
+**The move improves a fit and could be mistaken for tuning.** Both field
+descriptions say so explicitly, and the reason it is not tuning is the
+mechanism, not the direction of the numbers: a proposal that scores badly is
+discarded by `ChangeExpBeta` regardless of how often it is made. The rate is
+**not fitted to any target and cannot be.**
+
+### What this reconstruction does NOT establish
+
+The 1% diagnostics behind the table are a **sample fraction that must never be
+compared with an arm** (§9.10, §9.12), and iteration 40 is far short of any
+cutoff. The measurement supports the *ordering* the mechanism predicts; it is
+not a statement about the model's answer, and no mode share above is a result.
+
+### The lesson worth carrying
+
+**A `decisions_ref` is a promise, and `check_package.py` is the only thing that
+checks it.** Two fields pointed at a record that was never written, through a
+handover that called the suite green. Run the local suite before believing the
+board about it.
+
+---
+
 ## 9.94 The uniform seed is recoverable for three modes and diverges for three others (29 August 2026, thirteenth session; issues #48, #49, #50, #88)
 
 The first F12 arm to reach a gate: `20260829T054941_1000it_10pct`, 10% sample,
@@ -10961,6 +11034,77 @@ recorded as wanted rather than claimed as done.
 
 ---
 
+## 9.117 The local suite was failing on `main` while three documents said it passed (30 August 2026, fifteenth session; issues #92, #93)
+
+`tests/check_package.py` is the gate the conventions name for declaring a data
+phase complete, and it is **local only** — CI deliberately does not run it. On
+arrival this session it reported **FAILURES PRESENT**. The board, the handover
+brief and a dated deliverable row all described it as passing.
+
+Two failures, both pre-existing on `main`, neither caused by any change made
+this session:
+
+### 1. A `decisions_ref` pointing at a record that was never written
+
+`B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite
+**§9.93**, and no `## 9.93` section existed — §9.92 was followed directly by
+§9.94. The decision itself was real, applied and measured: both rates were
+raised 0.1 → 0.4, and the measurement survives in full inside the two field
+descriptions. **Only the record was missing.**
+
+It is reconstructed at §9.93 from that already-committed evidence, labelled as
+a reconstruction, introducing no number that was not already in the repository.
+
+This is the failure mode proposal §8.1 exists to prevent, arriving from an
+unexpected direction: not an undeclared value, but a **declared value whose
+justification could not be found by anyone following its own pointer.**
+
+### 2. Three `consumers` claims that were false
+
+A `consumers` entry is a machine-readable claim that the named file reads the
+field, and the check tests it by text. Three claims failed it:
+
+| field | claimed | actually names the key |
+|---|---|---|
+| `B.mode.walk_feasible_km` | `GatedSubtourModeChoice.java` | `ModeAvailabilityConfigGroup.java` |
+| `B.mode.bike_feasible_km` | `GatedSubtourModeChoice.java` | `ModeAvailabilityConfigGroup.java` |
+| `B.ride.unpaired_fallback` | `RidePairingEngine.java` | `RidePairingConfigGroup.java` |
+
+Each claim was **semantically true and textually false**: the named class does
+apply the value, but reaches it through a config-group accessor
+(`getBikeFeasibleKm()`, `getUnpairedFallback()`) and never spells the key.
+
+Repaired on both sides rather than by deleting the claim: the config group that
+carries each value is added to `consumers`, and the class that applies it now
+**names the field in a comment at the point of use**, so the claim is
+verifiable by text as well as by intent. Enumerating every claim afterwards
+gives **0 remaining false ones** across 193 claims over 179 fields.
+
+**The check reports only its FIRST failure.** Fixing two revealed a third, and
+only enumerating the whole set found it in one pass rather than three.
+
+### Why no gate caught either, and why that matters here
+
+Both defects are invisible to everything CI runs. The one gate that sees them
+is the one that needs the full ~2.3 GiB package on a workstation, so it is the
+easiest to assert and the hardest to check — and it was asserted, in three
+places, for at least a session.
+
+**This is the same shape as §9.116, found the same morning.** There, a builder
+had stopped reproducing its artefact and eight gates passed over it. Here, the
+suite that would have said so was itself reported green without being run. The
+common failure is not a missing check but a **claim about a check**, and the
+conventions already name the cure for the prose form of it: a number in a
+living document is part of the change that moved it.
+
+### The lesson worth carrying
+
+**Run the local suite before believing the board about the local suite.** It is
+the one gate a session can skip silently, which is exactly why its status is
+the one most likely to be stale.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -11633,6 +11777,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **The local suite was failing on `main` while three documents said it passed (§9.117; §9.93 reconstructed).** `check_package.py` is local-only and is the gate the conventions name for declaring a data phase complete; it reported **FAILURES PRESENT** on arrival, against a board, a brief and a dated row all calling it green. Two pre-existing failures. **(1)** `B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite **§9.93 and no such section existed** - the decision (both rates 0.1 → 0.4, on search completeness rather than fit) was real, applied and measured, and the measurement survived only inside the two field descriptions. §9.93 is **reconstructed from that already-committed evidence**, labelled as a reconstruction, introducing no new number. **(2)** Three `consumers` claims were **semantically true and textually false** - `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km` and `B.ride.unpaired_fallback` each named the class that APPLIES the value through a config-group accessor rather than the group that names the key. Repaired on both sides: the config group joins `consumers`, and the applying class now names the field at the point of use. **0 false claims remain across 193 claims over 179 fields.** The check reports only its FIRST failure, so fixing two revealed a third; enumerating the whole set found it in one pass. Suite now **ALL CHECKS PASSED** (2 standing warnings). Same shape as §9.116 the same morning: not a missing check, but a **claim about a check**. Nothing here is a finding. |
 | 2026-08-30 | **The committed builder had stopped reproducing the committed demand; both queued fixes applied and family F14 opens (§9.116; issues #92/#93/#86/#49).** §9.111 and §9.115 each recorded their fix as written and deliberately NOT committed. **The §9.111 candidate-pool filter was committed anyway**, in `b65d280` via PR #95, without its rebuild - so the repository could not regenerate its own demand from its own code, and **all eight arrival gates passed over it**, because none compares a builder with the artefact it produced. Caught from the committed build report: `candidates` 201,931 with `candidates_unservable` absent is a report the committed builder cannot write. Both fixes are now applied together and all three day types rebuilt. Measured, WEEKDAY: candidates 201,931 → **146,260** (55,671 unservable), **bound 74,663 → 82,384**, infeasible 73,258 → 35,937, `driver_is_the_companion` 51,215 → 8,150, and **`p_thin` 0.8565 → 1.0000** - thinning stops applying, so joint binding is now **supply-limited by servable candidates**, a different regime from every prior entry, and a WEEKDAY property only (SAT 0.6216, SUN 0.5955). **§9.111's "roughly 110,000" estimate is wrong: the measured answer is 82,384**, because the estimate assumed a thinning rate that no longer applies and did not anticipate the two timing clauses growing (+3,759, +1,985). `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived`; the two observations behind the identity are now declared (`CAL.mode_split.vehicle_driver_level`, `.motorbike_driver_journey_share`) and `build_mode_targets.py` **asserts them against the acquired sources on every build**. `mode_targets_by_mode.csv` is unchanged but for line endings, confirming the carve moves generation, not the yardstick - motorbike's share will go DOWN. **FAMILY BOUNDARY F14: nothing run before compares with anything run after**, including the two F4 arms `README.md` draws its figures from. Registry 400 → 402. Nothing here is a finding. |
 | 2026-08-30 | **The motorbike carve and its target are the same observation, minus a conversion (§9.115; issues #49/#84).** §9.112 left which of `B.motorbike.trip_share` 0.3630% and the §9.87 target 0.2406% is right as a decision to take; it is arithmetic. The carve applies the census commute share straight to all trips, assuming the driver share of all TRIPS equals the **89.1%** driver share of commute JOURNEYS where the HTS observes **59.0%**: `0.3630 / (89.1/59.0) = 0.2405` against a target of 0.2406, the residual being rounding. The carve is the target times a ratio that should have cancelled. `B.motorbike.trip_share` should become **0.2406%, source `derived`**, removing an assumed value the package can derive. NOT APPLIED - it regenerates the plans and queues with §9.111 for one deliberate rebuild. Stated so it is not mis-sold: it LOWERS generation, so it is a consistency repair, not a fit repair. No target value changed; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-08-30 | **CORRECTION: most cyclists own cars, so bike is not displaced ride (§9.114; issues #49/#48/#30).** §9.109 and §9.112 both concluded bike's excess and ride's deficit are one defect - a carless agent cycles because the demand cannot make them a passenger. Measured: of 5,649 resident bike trips, **51.6% are made by agents holding BOTH a licence and a car**, 30.3% fully carless, 18.1% licensed without one. The displaced-passenger mechanism covers at most a third. Car dominates bike at every distance on the declared scoring (~0.604 utils/km against 1.36, and a -1.35 constant against 0.0), so this is the same shape as walk in §9.107 - a mode winning trips the scoring says it should lose, for agents who hold the alternative - and bike is **walk's problem in a second mode, not ride's shadow**. Fifth unmeasured mechanism this session, third to reach a committed entry. Nothing here is a finding. |

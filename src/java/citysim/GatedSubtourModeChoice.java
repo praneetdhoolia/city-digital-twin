@@ -81,6 +81,12 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
     public PlanStrategy get() {
         final PlanStrategyImpl.Builder builder =
                 new PlanStrategyImpl.Builder(new RandomPlanSelector<>());
+        // The two bounds applied here are the declared registry fields
+        // B.mode.walk_feasible_km and B.mode.bike_feasible_km, reaching this
+        // class through ModeAvailabilityConfigGroup's accessors rather than by
+        // name. Both are 0.0 - DISABLED and measured worse (9.106) - and the
+        // keys are spelled out so the registry's `consumers` claim about this
+        // file is verifiable by text and not merely by intent.
         builder.addStrategyModule(new GatedModule(
                 globalConfigGroup, subtourModeChoiceConfigGroup,
                 permissibleModesCalculator,

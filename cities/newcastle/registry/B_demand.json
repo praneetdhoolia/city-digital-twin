@@ -1240,6 +1240,7 @@
       "matsim_param": "ridePairing.unpairedFallback",
       "description": "How a ride leg that no household driver can serve is physically executed for the iteration in which it failed. It is an EXECUTION, never an amputation: the leg keeps `ride` as an alternative, restored at AfterMobsim, so a pairing failure stays reversible (9.81). This field decides only what the agent actually does that day. Consumed by src/java/citysim/RidePairingEngine.",
       "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
         "src/java/citysim/RidePairingEngine.java"
       ]
     },
@@ -1262,6 +1263,7 @@
       "matsim_param": "modeAvailability.walkFeasibleKm",
       "description": "DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `walk` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long walk is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.",
       "consumers": [
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
         "src/java/citysim/GatedSubtourModeChoice.java"
       ]
     },
@@ -1284,6 +1286,7 @@
       "matsim_param": "modeAvailability.bikeFeasibleKm",
       "description": "DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `bike` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long bike is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.",
       "consumers": [
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
         "src/java/citysim/GatedSubtourModeChoice.java"
       ]
     },
