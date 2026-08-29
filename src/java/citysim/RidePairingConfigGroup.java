@@ -50,6 +50,11 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      */
     public static final String RULE_ROUTE_CONTAINS = "route_contains";
 
+    /** What an unpairable ride leg is EXECUTED as, this iteration. */
+    public static final String FALLBACK_WALK = "walk";
+    public static final String FALLBACK_DRIVE_ELSE_WALK =
+            "licensed_drive_else_walk";
+
     private boolean enabled = false;
     private boolean physicalBoarding = false;
     private boolean remodeUnpaired = false;
@@ -59,6 +64,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private double escortCoherenceRate = UNSET;
     private double jointCoherenceRate = UNSET;
     private String rule = "";
+    private String unpairedFallback = "";
     private double pickupDwellSeconds = UNSET;
     private int maxPassengersPerVehicle = -1;
 
@@ -270,6 +276,29 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * {@link #RULE_WINDOW_ONLY} match trips that need not overlap at all, so a
      * run made under one of them is a sensitivity, not a result.
      */
+    /**
+     * What an unpairable ride leg is executed as for this mobsim.
+     *
+     * <p>{@link #FALLBACK_WALK} was the only behaviour before 9.105 and
+     * reproduces it exactly. It is not a behaviour so much as a placeholder:
+     * a person denied a lift for a 10 km trip does not walk it, and forcing
+     * them to made walk 12.5x its observed mean trip length.
+     * {@link #FALLBACK_DRIVE_ELSE_WALK} lets a passenger who holds a licence
+     * and has a car available DRIVE instead, which is what the household
+     * actually does, and leaves everyone else walking as before. Either way
+     * the ride alternative is restored at AfterMobsim - 9.81's ratchet must
+     * not come back.
+     */
+    @StringGetter("unpairedFallback")
+    public String getUnpairedFallback() {
+        return this.unpairedFallback;
+    }
+
+    @StringSetter("unpairedFallback")
+    public void setUnpairedFallback(final String value) {
+        this.unpairedFallback = value == null ? "" : value.trim();
+    }
+
     @StringGetter("rule")
     public String getRule() {
         return this.rule;
@@ -350,6 +379,16 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         require(this.maxPassengersPerVehicle >= 1, "maxPassengersPerVehicle",
                 "B.ride.max_passengers_per_vehicle");
         require(!this.rule.isEmpty(), "rule", "B.ride.pairing_rule");
+        require(!this.unpairedFallback.isEmpty(), "unpairedFallback",
+                "B.ride.unpaired_fallback");
+        if (!FALLBACK_WALK.equals(this.unpairedFallback)
+                && !FALLBACK_DRIVE_ELSE_WALK.equals(this.unpairedFallback)) {
+            throw new RuntimeException(
+                    "ridePairing.unpairedFallback is '" + this.unpairedFallback
+                    + "', which is not one of " + FALLBACK_WALK + ", "
+                    + FALLBACK_DRIVE_ELSE_WALK
+                    + ". It is declared as B.ride.unpaired_fallback.");
+        }
         if (!RULE_BOTH_LINKS.equals(this.rule) && !RULE_ORIGIN_LINK.equals(this.rule)
                 && !RULE_DEST_LINK.equals(this.rule)
                 && !RULE_ROUTE_CONTAINS.equals(this.rule)

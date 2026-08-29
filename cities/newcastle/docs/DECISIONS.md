@@ -102,6 +102,8 @@ its layout will otherwise cost you an hour:
 | **The light rail is not out-competed, it is out of REACH** | **§9.103** — the whole within-PT error is the intervention: 148 boardings of 21,429, −95.9%. Not supply (S2 runs **550 light rail trips a day**) and not mainly mode choice: **only 2,350 of 221,144 trips (1.063%) have BOTH ends within 800 m of a stop**, and of those 83 choose PT at all and 28 the light rail, against car 1,010 and walk 928. A tram corridor through the CBD holding 1.06% of trips is a statement about DESTINATION PLACEMENT, not mode choice — and it lands on **#30**. The corridor market is a MODELLED quantity, so it may never be used to argue the observation down |
 | **Resume matched two runs differing in a declared value** | **§9.104** — the §9.102 pair was launched as two committed overlays differing in ONE field, and the test was handed **the control's completed run**: `find_completed` compared parameters, `--set` overrides and the controler hash but **not the resolved registry values**, which is exactly where an overlay sets things. A paired diagnostic would have reported a difference of zero. `_run.json` now carries **`values_sha256`** and resume requires it; a record without one does not match, by design. **The fourth appearance of one error in two sessions** — a comparison whose two sides are not the same kind of thing (§9.91, §9.97, §9.100) — and this time the harness produced it silently |
 | **The endpoint test can't represent a drop-off en route — and fixing that changes nothing** | **§9.102** — `both_links` requires the driver's leg to START and END on the passenger's links, so a parent driving a child to school on the way to work is refused by construction, and **64.4% of pairing failures are that class**. `route_contains` was built (passenger on a SEGMENT of the driver's path, driver's time apportioned by length share, unity for `both_links` so the two are comparable). **Measured on a committed pair differing in this field alone: pair rate 0.5069 → 0.5113, `miss_endpoints` −24, and ride mode share went the WRONG way, 9.6748 → 9.4513.** The driver's PLAN has no escort stop, so the driver's PATH does not pass the passenger either. **§9.92's conclusion stands**, now on a measurement rather than a circular argument; `both_links` remains the value and `route_contains` a sweep member. **Third pairing-side lever found real-but-marginal — stop looking at the pairing engine** |
+| **A denied lift is not a fifteen-hour walk** | **§9.105** — reading walk's GEOMETRY rather than its share: mean trip **8.75 km against a declared observed 0.70 km (12.5x)**, 46% over 5 km, longest **91.4 km**. Ride over the same trips is **0.97x** its observed mean, so the demand is sound. **16,153 unpaired ride legs + 1,602 refused taxi requests are forced into walk in ONE iteration — 31% of all walk trips.** `B.ride.unpaired_fallback` now lets a licensed car-owner DRIVE instead. Measured on a committed pair: six of seven modes toward target, **taxi +64.2% → +7.5%, inside the bar**, walk +183% → +141%, car −30.2% → −18.9% — but **pt moved AWAY, −19.6% → −30.2%**, and **walk's geometry barely moved (9.30 → 8.80 km)**, so most implausible walks are CHOSEN, not forced |
+| **A feasibility bound on walk does not work, and the reason matters** | **§9.106** — walk is the ONLY mode nothing constrains, so a derived bound was built (p99 of an exponential with the observed 0.70 km mean = **3.22 km**, corroborated to within a kilometre by the observed mean walk TIME). It failed twice: first `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` (a refusal must reject the WHOLE proposal), then on measurement — **sum of |deviation| 509.9% → 577.1%, WORSE**, taxi +15.2% → +135.1%, and walk's mean moved only 8.84 → 8.72 km. **A choice-set gate can only refuse NEW proposals; it cannot remove behaviour already in the plan**, and the forced whole-proposal rejection can TRAP an agent. Set to 0.0, disabled and reproducing. **Four downstream repairs have now failed to move the geometry — it is not determined downstream** |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -9882,6 +9884,191 @@ Nothing here says ride's target is wrong, and nothing licenses relaxing to
 `origin_link` or `window_only` to close the gap. Those pair passengers with
 drivers going somewhere else; a higher pair rate bought that way is a worse
 model that fits better, which is the failure this project cannot absorb.
+
+---
+
+## 9.105 A denied lift is not a fifteen-hour walk (29 August 2026, fourteenth session; issues #48, #30)
+
+Walk ran **+89.5%** at the iteration-100 gate. Reading its GEOMETRY rather than
+its share found something worse than a bad number:
+
+| | modelled | declared observed | ratio |
+|---|---:|---:|---:|
+| walk mean trip | **8.75 km** | **0.70 km** | **12.5x** |
+| bike mean trip | 12.80 km | 5.20 km | 2.5x |
+| car mean trip | 15.18 km | 10.20 km | 1.5x |
+| **ride** mean trip | **9.55 km** | **9.80 km** | **0.97x** |
+| pt mean trip | 17.72 km | 23.40 km | 0.76x |
+
+**21% of walk trips are under 1 km, 46% are over 5 km, 14% are over 20 km, and
+the longest is 91.4 km** - a twenty-hour walk. The observed means were already
+in the registry as `C.constraint.trip_length_km.*`, and nothing had ever
+compared the model against them.
+
+### The first cause: two fallbacks that both end in walking
+
+At iteration 100, **16,153 unpaired ride legs and 1,602 refused taxi requests
+were forced into walk in a single iteration** - **31% of all walk trips** -
+carrying ride and taxi geometry with them.
+
+Neither fallback was ever argued for as a behaviour. §9.55 chose walk so that a
+failed lift would SCORE badly and co-evolution would reassign the tour; §9.99
+inherited it for a refused taxi. The means has overwhelmed the end: a person
+denied a lift for a 10 km trip does not walk it, and the household's actual
+answer is that they drive themselves.
+
+`B.ride.unpaired_fallback` now executes the leg as **car** when the passenger
+holds a licence and has a car available, and leaves everyone who cannot drive
+walking exactly as before. `walk` is kept as a declared member and reproduces
+every earlier arm. **The ride alternative is still restored at AfterMobsim under
+both members** - §9.81's one-way ratchet must not return - which required
+generalising the restore matcher from `isAllWalk` to `isAllMode`, because the
+restore has to look for the trip it actually created.
+
+### Measured, on a committed pair differing in that field alone
+
+| mode | `walk` | `licensed_drive_else_walk` | target | dev before | dev after |
+|---|---:|---:|---:|---:|---:|
+| walk | 37.9220 | **32.3007** | 13.4000 | +183.0% | **+141.1%** |
+| car | 40.6150 | **47.1784** | 58.1631 | -30.2% | **-18.9%** |
+| taxi | 1.6278 | **1.0655** | 0.9916 | +64.2% | **+7.5%** |
+| ride | 9.4252 | **10.0434** | 20.6000 | -54.2% | **-51.2%** |
+| bike | 7.1744 | 6.5509 | 2.2084 | +224.9% | **+196.6%** |
+| motorbike | 0.1005 | 0.1381 | 0.2406 | -58.2% | **-42.6%** |
+| pt | 3.1350 | 2.7230 | 3.9013 | -19.6% | **-30.2%** |
+
+Six of seven modes moved toward target and **taxi came inside the 10% bar**. PT
+moved AWAY, by 10.6 points of error, and that is a real cost of this change
+rather than a rounding artefact.
+
+### What it did NOT do, which matters more than what it did
+
+**Walk's geometry barely moved: mean 9.30 -> 8.80 km, still 12.6x observed,
+still 13.7% of walk trips over 20 km, longest still 67 km.** The fallback
+removed 16% of walk trips and did not make walk plausible. Whatever is putting
+agents on 20 km walks, it is mostly not this.
+
+### The declared risk, stated because it is the condition for self-deception
+
+Walk was too high and car too low, so moving trips from one to the other
+flatters both. That is not why the change was made - a 10 km forced walk is not
+a behaviour any person exhibits - but it is exactly the shape a fit-driven
+change takes when it is disguising itself. It therefore ships as a declared
+value measured against a committed control, like every other, and the control
+member reproduces the old behaviour exactly so the effect stays attributable.
+
+### One simplification, stated not hidden
+
+`carAvail` is a person-level attribute, so a one-car household can in principle
+have two members driving it in the same hour. The finer check needs a vehicle
+roster the demand does not carry.
+
+---
+
+## 9.106 A feasibility bound on walk does not work, and the reason says where the defect really is (29 August 2026, fourteenth session; issues #30, #49)
+
+§9.105 removed the forced walks and found the geometry almost unchanged: walk's
+mean trip stayed at 8.80 km against a declared observed 0.70 km, with 13.7% of
+walk trips over 20 km. Most implausible walks are CHOSEN, not forced. Three
+hypotheses for why were tested and all three failed:
+
+* **"they have no car"** - false. Of agents making a 20 km walk, **60.8% hold
+  BOTH a licence and a car**, and 145 of them drive on another trip the same day.
+* **"it is only innovation"** - false. `SubtourModeChoice` carries weight 0.1 of
+  1.0, so at most a tenth of executed plans are fresh mutations; 46% of walk
+  trips exceed 5 km.
+* **"they never finish, so are never charged"** - false. Zero stuck events; the
+  walks complete and are scored.
+
+Meanwhile **ride's mean trip is 0.97x its observed mean and pt's is 0.76x**, so
+the demand's trip lengths are sound. The defect is that walk absorbs trips it
+should never be offered.
+
+### The asymmetry, which is real
+
+| mode | constraint |
+|---|---|
+| car | licence, ownership, subtour chain consistency |
+| ride | a declared driver must exist |
+| bike | ownership and an age gate |
+| pt | a timetable and a stop |
+| taxi | a finite fleet since §9.99 |
+| truck | its own subpopulation |
+| motorbike | a person-level locked carve |
+| **walk** | **nothing at all** |
+
+That is exactly the asymmetry §9.99 found for taxi, one mode over. So a
+FEASIBILITY bound was built - not a preference and not a penalty. Scoring can
+express that a long walk is bad; it cannot express that it is not a thing people
+do, and the model was handing agents 60-90 km on foot and charging them fifteen
+hours for it.
+
+**The bound is derived, not assumed**: the p99 of an exponential trip-length
+distribution with the observed mean the registry already declares - -ln(0.01) x
+0.7 km = **3.22 km** for walk, 23.95 km for bike. For walk it is corroborated by
+a second declared observation not used to derive it: the observed mean walk trip
+TIME is 12.3 min, whose exponential p99 at this model's own capped 1.25 m/s is
+**4.25 km**, agreeing to within a kilometre.
+
+### It failed twice, and the second failure is the informative one
+
+**First it killed the run.** Refusing one trip inside a subtour leaves that
+subtour holding a chain-based mode on one trip and a non-chain-based mode on the
+others, which MATSim rejects outright: `IllegalStateException: Subtour contains
+a mix of chain- and non-chainbased modes`, rc=1 at the first iteration
+(`aborted_20260829T230306_40it_1pct`). The existing permissibility revert is
+safe only because it targets the single-TRIP mutation seam. A reach refusal has
+to reject the WHOLE proposal, restoring the pre-innovation plan, which is
+consistent by construction.
+
+**Then it made the fit worse.** On a committed pair differing in the two bounds
+alone:
+
+| mode | bound off | bound on | target | dev off | dev on |
+|---|---:|---:|---:|---:|---:|
+| walk | 32.1710 | 30.3308 | 13.4000 | +140.1% | **+126.3%** |
+| car | 46.9464 | 47.3894 | 58.1631 | -19.3% | -18.5% |
+| pt | 3.0536 | 3.4874 | 3.9013 | -21.7% | **-10.6%** |
+| motorbike | 0.0788 | 0.1395 | 0.2406 | -67.2% | **-42.0%** |
+| bike | 6.5209 | 6.4568 | 2.2084 | +195.3% | +192.4% |
+| ride | 10.0867 | 9.8645 | 20.6000 | -51.0% | -52.1% |
+| **taxi** | 1.1426 | **2.3316** | 0.9916 | +15.2% | **+135.1%** |
+| **sum of \|deviation\|** | | | | **509.9%** | **577.1%** |
+
+And it did not do the thing it was built to do: **walk's mean fell 8.84 -> 8.72
+km and its share over 20 km fell 14.0% -> 13.2%.** The longest walk is still
+67 km.
+
+### Why it cannot work where it was put, which is the finding
+
+**A choice-set gate in the replanner can only refuse NEW proposals; it cannot
+remove behaviour already in the plan.** The long walks are largely seeded at
+iteration 0 and retained, and the gate never sees them. Worse, the whole-proposal
+rejection that chain consistency FORCES can trap an agent: a mutation that would
+have moved them to car is thrown away entire because some other trip in the same
+proposal was a long walk. The bound is not merely weak in this position, it works
+against itself.
+
+`B.mode.walk_feasible_km` and `B.mode.bike_feasible_km` are therefore **0.0 -
+disabled and reproducing**. The mechanism stays, declared and swept, because it
+is sound in itself and the next attempt will want it.
+
+### Where the defect actually is
+
+Not the pairing engine (§9.102), not the fallback (§9.105, which helped six
+modes but not the geometry), and not the replanner's choice set (here). What is
+left is **where the plans are BUILT** - the seed and the initial mode assignment
+- and **destination placement**, which §9.103 already implicated for the light
+rail from a completely different direction. Two independent lines now point at
+the same place, and #30 has been open on it since 24 August.
+
+### The pattern this session has now shown four times
+
+§9.98 (window), §9.102 (pairing rule), §9.105 (fallback, partially) and §9.106
+(reach bound) are four interventions downstream of the demand, each defensible on
+its own mechanism, and none of them moves the geometry. **When four independent
+downstream repairs all fail to move a quantity, the quantity is not determined
+downstream.**
 
 ---
 

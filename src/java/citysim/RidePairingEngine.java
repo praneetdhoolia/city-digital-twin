@@ -154,6 +154,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      *  {@link AvailabilityModesCalculator}'s sibling attributes. */
     public static final String LICENCE_ATTRIBUTE = "hasLicense";
     public static final String LICENCE_YES = "yes";
+    /** Person attribute naming whether a car is available to them. */
+    public static final String CAR_AVAIL_ATTRIBUTE = "carAvail";
+    public static final String CAR_AVAIL_NEVER = "never";
 
     private static final String OUT_FILE = "ride_pairing.csv";
     private static final String HEADER =
@@ -196,6 +199,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private final Map<Id<Person>, Set<String>> boundDriver = new HashMap<>();
     /** Licence holding per person, resolved once, for the same reason. */
     private final Map<Id<Person>, Boolean> licensed = new HashMap<>();
+    /** Whether a car is available to this person at all. */
+    private final Map<Id<Person>, Boolean> carAvailable = new HashMap<>();
+    /** The mode each remoded leg was actually executed as, so the
+     *  AfterMobsim restore looks for the trip it really created. */
+    private final Map<RideLeg, String> remodedAs = new HashMap<>();
     private boolean indexed = false;
     /** Population membership does not change during a run, so the id-ordered
      *  traversal that makes the pairing deterministic is built once. */
@@ -428,6 +436,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         inFlight.clear();
         bookings.clear();
         remodedThisMobsim.clear();
+        remodedAs.clear();
         missNoCandidate = 0;
         missWindow = 0;
         missEndpoints = 0;
@@ -668,9 +677,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     // worth choosing is for the score to decide over many
                     // iterations, not for one missed pairing to settle.
                     remodedThisMobsim.add(ride);
-                    ride.leg.setMode(TransportMode.walk);
+                    final String fallback = fallbackMode(ride.person);
+                    remodedAs.put(ride, fallback);
+                    ride.leg.setMode(fallback);
                     org.matsim.core.router.TripStructureUtils.setRoutingMode(
-                            ride.leg, TransportMode.walk);
+                            ride.leg, fallback);
                     // the car route may traverse walk-excluded links, and
                     // PersonPrepareForSim refuses a route inconsistent with
                     // link modes (measured). A null route makes it re-route
@@ -796,7 +807,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 final Id<Link> from = trip.getOriginActivity().getLinkId();
                 final Id<Link> to = trip.getDestinationActivity().getLinkId();
                 if (ride.from.equals(from) && ride.to.equals(to)
-                        && isAllWalk(trip)) {
+                        && isAllMode(trip, remodedAs.getOrDefault(
+                                ride, TransportMode.walk))) {
                     target = trip;
                     break;
                 }
@@ -826,13 +838,39 @@ public final class RidePairingEngine implements BeforeMobsimListener,
 
     /** Every leg of the trip is a walk leg - i.e. this is a trip the pairing
      *  forced, not some other walk the agent was always going to make. */
-    private static boolean isAllWalk(
-            final org.matsim.core.router.TripStructureUtils.Trip trip) {
+    /**
+     * The mode an unpairable ride leg is executed as this iteration.
+     *
+     * <p>A passenger whose lift falls through is not thereby a pedestrian. If
+     * they hold a licence and a car is available to them, the household's
+     * actual answer is that they drive themselves; only someone who cannot
+     * drive is left walking. Under the declared `walk` member this returns
+     * walk for everyone and reproduces the pre-9.105 behaviour exactly.
+     *
+     * <p>Stated rather than hidden: this does NOT check that the household's
+     * vehicle is free at that hour, so a household with one car can in
+     * principle have two members driving it. `carAvail` is a person-level
+     * attribute and the finer check would need a vehicle roster the demand
+     * does not carry.
+     */
+    private String fallbackMode(final Id<Person> person) {
+        if (!RidePairingConfigGroup.FALLBACK_DRIVE_ELSE_WALK
+                .equals(cfg.getUnpairedFallback())) {
+            return TransportMode.walk;
+        }
+        return Boolean.TRUE.equals(licensed.get(person))
+                && Boolean.TRUE.equals(carAvailable.get(person))
+                ? TransportMode.car : TransportMode.walk;
+    }
+
+    private static boolean isAllMode(
+            final org.matsim.core.router.TripStructureUtils.Trip trip,
+            final String mode) {
         if (trip.getLegsOnly().isEmpty()) {
             return false;
         }
         for (final Leg leg : trip.getLegsOnly()) {
-            if (!TransportMode.walk.equals(leg.getMode())) {
+            if (!mode.equals(leg.getMode())) {
                 return false;
             }
         }
@@ -1046,6 +1084,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             }
             final Object lic = person.getAttributes().getAttribute(LICENCE_ATTRIBUTE);
             licensed.put(person.getId(), lic != null && LICENCE_YES.equals(lic.toString()));
+            final Object avail =
+                    person.getAttributes().getAttribute(CAR_AVAIL_ATTRIBUTE);
+            carAvailable.put(person.getId(),
+                             avail != null
+                             && !CAR_AVAIL_NEVER.equals(avail.toString()));
         }
         ordered = new ArrayList<>(scenario.getPopulation().getPersons().values());
         ordered.sort(Comparator.comparing(Person::getId));

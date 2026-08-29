@@ -1,0 +1,17 @@
+{
+  "overlay": "fallback_walk_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN - nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. It is the CONTROL half of the pair that measures what an unpairable ride leg should be EXECUTED as (DECISIONS.md 9.105), and it pins B.ride.unpaired_fallback to `walk`. It shares sample, depth, threads, heap and every other value with its partner, so the two differ in that field and nothing else. The measurement that motivates the pair: at iteration 100 of 20260829T172145_1000it_10pct, 16,153 unpaired ride legs and 1,602 refused taxi legs are forced to walk in ONE iteration - 31% of all walk trips - and walk's mean trip length is 8.75 km against the 0.7 km this package declares as observed, with 46% of walk trips over 5 km and the longest 91.4 km. Of walk trips over 5 km, 14,910 belong to agents holding BOTH a licence and a car, so the forced walk is not a story about people without options. `walk` reproduces every arm before 9.105 exactly.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "B.ride.unpaired_fallback": "walk"
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations matches the existing 1% diagnostics exactly, because a control read at a different depth compares two points on a transient rather than isolating the one variable under test. The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

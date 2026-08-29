@@ -1224,6 +1224,69 @@
       "description": "The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. `route_contains` generalises that to a SEGMENT of the driver's trip and is implemented and measured (9.102), but is a sweep member rather than the value. Consumed by src/java/citysim/RidePairingEngine.",
       "matsim_param": "ridePairing.rule"
     },
+    "B.ride.unpaired_fallback": {
+      "value": "licensed_drive_else_walk",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "licensed_drive_else_walk",
+          "walk"
+        ],
+        "basis": "What an unpairable ride leg is EXECUTED as for that mobsim. `walk` was the only behaviour before 9.105 and reproduces every earlier arm exactly, which is why it is kept. It was never argued for as a behaviour - 9.55 chose it so that a failed lift would SCORE badly and co-evolution would reassign the tour, and the walk was a means to that end. Measured, the means dominates: at iteration 100 of 20260829T172145_1000it_10pct, 16,153 unpaired ride legs and 1,602 refused taxi legs are forced to walk in a single iteration - 31% of all walk trips - and walk's mean trip length is 8.75 km against the 0.7 km this package already declares as observed (C.constraint.trip_length_km.walk), with 46% of walk trips over 5 km and the longest 91.4 km, a twenty-hour walk. Of walk trips over 5 km, 14,910 belong to agents holding BOTH a licence and a car, so this is not people without options. `licensed_drive_else_walk` executes the leg as CAR when the passenger holds a licence and has a car available, and leaves everyone else walking: a household whose lift falls through drives, and only someone who cannot drive is left on foot. It is a behavioural claim, not a fit device - it is chosen because a 10 km forced walk is not a behaviour any person exhibits, and it must be measured against the `walk` arm like any other declared value. The ride alternative is restored at AfterMobsim under BOTH members; 9.81's one-way ratchet must not return."
+      },
+      "status": "active",
+      "decisions_ref": "9.55, 9.81, 9.105",
+      "matsim_param": "ridePairing.unpairedFallback",
+      "description": "How a ride leg that no household driver can serve is physically executed for the iteration in which it failed. It is an EXECUTION, never an amputation: the leg keeps `ride` as an alternative, restored at AfterMobsim, so a pairing failure stays reversible (9.81). This field decides only what the agent actually does that day. Consumed by src/java/citysim/RidePairingEngine.",
+      "consumers": [
+        "src/java/citysim/RidePairingEngine.java"
+      ]
+    },
+    "B.mode.walk_feasible_km": {
+      "value": 0.0,
+      "units": "km_straight_line",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.walk"
+        ],
+        "identity": "the 99th percentile of an exponential trip-length distribution with the OBSERVED mean this package already declares: -ln(0.01) x 0.7 km = 3.22 km. The exponential is the standard form for trip lengths and is stated rather than assumed silently; what it supplies is a TAIL, and only the tail is used - the bound refuses the far end of the distribution, not its body. For walk the derivation is corroborated by a second declared observation that was not used to make it: the observed mean walk trip TIME is 12.3 min, whose exponential p99 is 57 min, which at this model's own capped walk speed of 1.25 m/s is 4.2 km - agreeing with the distance derivation to within a kilometre."
+      },
+      "sweep": [
+        0.0,
+        6.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.106",
+      "matsim_param": "modeAvailability.walkFeasibleKm",
+      "description": "DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `walk` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long walk is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.",
+      "consumers": [
+        "src/java/citysim/GatedSubtourModeChoice.java"
+      ]
+    },
+    "B.mode.bike_feasible_km": {
+      "value": 0.0,
+      "units": "km_straight_line",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "C.constraint.trip_length_km.bike"
+        ],
+        "identity": "the 99th percentile of an exponential trip-length distribution with the OBSERVED mean this package already declares: -ln(0.01) x 5.2 km = 23.95 km. The exponential is the standard form for trip lengths and is stated rather than assumed silently; what it supplies is a TAIL, and only the tail is used."
+      },
+      "sweep": [
+        0.0,
+        35.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.106",
+      "matsim_param": "modeAvailability.bikeFeasibleKm",
+      "description": "DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `bike` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long bike is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.",
+      "consumers": [
+        "src/java/citysim/GatedSubtourModeChoice.java"
+      ]
+    },
     "B.ride.pickup_dwell_s": {
       "value": 0.0,
       "units": "seconds",
