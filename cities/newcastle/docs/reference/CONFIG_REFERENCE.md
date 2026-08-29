@@ -1199,7 +1199,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.joint_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.max_passengers_per_vehicle` | `4` | persons | `assumed` | 1 - 4 |
 | `B.ride.pairing_enabled` | `true` | boolean | `definition` | - |
-| `B.ride.pairing_rule` | `route_contains` | enum | `assumed` | `route_contains`, `both_links`, `origin_link`, `dest_link`, `window_only` |
+| `B.ride.pairing_rule` | `both_links` | enum | `assumed` | `both_links`, `route_contains`, `origin_link`, `dest_link`, `window_only` |
 | `B.ride.pairing_window_min` | `15.0` | minutes | `assumed` | 5 - 60 |
 | `B.ride.physical_boarding` | `true` | boolean | `definition` | - |
 | `B.ride.pickup_dwell_s` | `0.0` | seconds | `assumed` | 0 - 120 |
@@ -1759,7 +1759,7 @@ Whether a `ride` leg may NAME the household member who drives it, and take that 
 
 #### `B.ride.pairing_rule`
 
-The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `route_contains` means the passenger boards and alights at two links the driver drives, in that order, so the passenger is in the car for a SEGMENT of the driver's trip. `both_links` is the special case where that segment is the whole trip. Consumed by src/java/citysim/RidePairingEngine.
+The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. `route_contains` generalises that to a SEGMENT of the driver's trip and is implemented and measured (9.102), but is a sweep member rather than the value. Consumed by src/java/citysim/RidePairingEngine.
 
 ***assumed** · status **active** · DECISIONS.md §9.44, 9.102 · MATSim `ridePairing.rule`*
 

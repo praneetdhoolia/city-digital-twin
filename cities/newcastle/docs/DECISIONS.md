@@ -101,6 +101,7 @@ its layout will otherwise cost you an hour:
 | **Truck was scored against a target its own basis says is not comparable** | **§9.101** — the target is heavy vehicles at the stations that CLASSIFY them, which sit on freight routes; the modelled side was a NETWORK-WIDE share, so the −49.6% was two populations, not an error. Scored where the target was measured: **11.9171% modelled vs 11.3092% observed = +5.4%**, the only mode inside the bar. **But 20 of the 24 classifying stations are HOLDOUT and were not opened**, so the comparison rests on 3 stations and 23 traversals — honest but thin. Lesson: a basis field saying *not comparable* is an instruction, not a caveat |
 | **The light rail is not out-competed, it is out of REACH** | **§9.103** — the whole within-PT error is the intervention: 148 boardings of 21,429, −95.9%. Not supply (S2 runs **550 light rail trips a day**) and not mainly mode choice: **only 2,350 of 221,144 trips (1.063%) have BOTH ends within 800 m of a stop**, and of those 83 choose PT at all and 28 the light rail, against car 1,010 and walk 928. A tram corridor through the CBD holding 1.06% of trips is a statement about DESTINATION PLACEMENT, not mode choice — and it lands on **#30**. The corridor market is a MODELLED quantity, so it may never be used to argue the observation down |
 | **Resume matched two runs differing in a declared value** | **§9.104** — the §9.102 pair was launched as two committed overlays differing in ONE field, and the test was handed **the control's completed run**: `find_completed` compared parameters, `--set` overrides and the controler hash but **not the resolved registry values**, which is exactly where an overlay sets things. A paired diagnostic would have reported a difference of zero. `_run.json` now carries **`values_sha256`** and resume requires it; a record without one does not match, by design. **The fourth appearance of one error in two sessions** — a comparison whose two sides are not the same kind of thing (§9.91, §9.97, §9.100) — and this time the harness produced it silently |
+| **The endpoint test can't represent a drop-off en route — and fixing that changes nothing** | **§9.102** — `both_links` requires the driver's leg to START and END on the passenger's links, so a parent driving a child to school on the way to work is refused by construction, and **64.4% of pairing failures are that class**. `route_contains` was built (passenger on a SEGMENT of the driver's path, driver's time apportioned by length share, unity for `both_links` so the two are comparable). **Measured on a committed pair differing in this field alone: pair rate 0.5069 → 0.5113, `miss_endpoints` −24, and ride mode share went the WRONG way, 9.6748 → 9.4513.** The driver's PLAN has no escort stop, so the driver's PATH does not pass the passenger either. **§9.92's conclusion stands**, now on a measurement rather than a circular argument; `both_links` remains the value and `route_contains` a sweep member. **Third pairing-side lever found real-but-marginal — stop looking at the pairing engine** |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -9777,6 +9778,110 @@ The pair had to be re-run with `--force`, and the control's own record predates
 the fix, so **neither arm may be compared against any earlier run** - only
 against each other, both having been produced under the same code. Nothing in
 this entry is a result.
+
+---
+
+## 9.102 The endpoint test CAN'T represent a drop-off en route, and fixing that changes nothing (29 August 2026, fourteenth session; issues #48, #91)
+
+Ride is the largest deviation with no external blocker: **-64.6% at the
+iteration-100 gate**, and because `remodeUnpaired` is true every unpaired leg is
+realised as WALK, so the same mechanism reads out twice - walk **+89.5%**. At
+iteration 50 of `20260829T172145_1000it_10pct`, **18,823 of 36,147 planned ride
+legs (52.1%) failed to pair**, and **12,124 of those failures (64.4%) were
+`miss_endpoints`** - the class whose name is *the household drove elsewhere*.
+
+### The structural objection to `both_links`
+
+`B.ride.pairing_rule` was `both_links`: the driver's car leg must START and END
+on the passenger's own two links. That is a very strong test, and it **cannot
+represent a drop-off en route** - a parent who drives a child to school and
+carries on to work has a car leg from home to WORK, so no window, however wide,
+can ever admit it. This is the commonest car-passenger trip there is, and none
+of the four available rules described it: `origin_link`, `dest_link` and
+`window_only` all match trips that need not overlap at all.
+
+§9.92 had settled that `both_links` stays, on the ground that the missing pairs
+have no endpoint-matching driver at any hour. **That reasoning is circular** -
+"endpoint-matching" is measured under `both_links`, so it cannot see a driver
+whose route merely PASSES THROUGH the passenger's endpoints. The objection was
+worth testing, and testing it required building the missing rule.
+
+### What was built
+
+`RULE_ROUTE_CONTAINS`: both of the passenger's links lie on the driver's routed
+path, in the order the driver drives them. `DriverLeg` now carries the driven
+path rather than only its two endpoints. The passenger occupies a SEGMENT of the
+driver's leg, so handing them the whole leg's travel time would charge them for
+a journey they did not make; the engine apportions the driver's time by that
+segment's share of the route's length. **That share is unity when the segment is
+the whole route, so `both_links` reproduces its previous behaviour exactly** and
+the two rules are directly comparable rather than merely similar.
+
+### Measured, and the answer is no
+
+A paired diagnostic, both halves committed overlays identical in sample, depth,
+threads, heap and every other declared value, differing in this field alone.
+Both re-run under the same code after §9.104.
+
+| iteration 40, 1% | `both_links` | `route_contains` | change |
+|---|---:|---:|---:|
+| ride legs planned | 4,078 | 4,097 | +19 |
+| paired | 2,067 | 2,095 | +28 |
+| **pair rate** | **0.5069** | **0.5113** | **+0.0044** |
+| unpaired → walk | 2,011 | 2,002 | -9 |
+| `miss_endpoints` | 1,257 | 1,233 | **-24** |
+| `miss_no_candidate` | 508 | 506 | -2 |
+| `miss_window` | 195 | 213 | +18 |
+
+And what it bought in ridership:
+
+| mode | `both_links` | `route_contains` | change |
+|---|---:|---:|---:|
+| ride | 9.6748 | **9.4513** | **-0.2235** |
+| walk | 37.6154 | **39.2871** | **+1.6717** |
+| car | 40.3854 | 39.8478 | -0.5376 |
+| pt | 3.1313 | 2.7032 | -0.4281 |
+| taxi | 1.7061 | 1.3616 | -0.3445 |
+| bike | 7.3665 | 7.2287 | -0.1378 |
+| motorbike | 0.1204 | 0.1201 | -0.0003 |
+
+**Relaxing the endpoint test from identity to containment recovers 1.9% of the
+`miss_endpoints` class and moves ride the WRONG way.** On ~4,990 trips at one
+seed these differences are of the order of ten trips and are not distinguishable
+from noise; what is clear is that there is no improvement to find here.
+
+### Why - and this is the finding
+
+**A driver routed home-to-work has no escort stop, so the router has no reason
+to pass the passenger's destination either.** Containment relaxes the test, but
+the driver's PATH still does not go where the passenger is going, because the
+driver's PLAN does not contain the passenger's trip. The constraint was never
+the endpoint test; it is that the demand hands the engine a driver whose day
+does not include the detour, and no pairing rule can add one.
+
+**§9.92's conclusion therefore stands, and is now supported by a measurement
+rather than by a circular argument.** `both_links` remains the declared value.
+`route_contains` remains IMPLEMENTED and a declared sweep member, because the
+mechanism is real and the rule is the correct one to reach for if the demand
+ever generates the detour.
+
+### The pattern this completes
+
+This is the **third** pairing-side lever measured and found real-but-marginal:
+§9.85/§9.98 widened the bound window (+3.57 pp of pairing, +0.19 pp of ride),
+§9.93 raised the coherence rate, and now containment (+0.44 pp of pairing, -0.22
+pp of ride). Three independent improvements to how pairs are FOUND have between
+them moved ride by a fraction of a point against a 13 pp gap. **Stop looking at
+the pairing engine.** The gap is upstream, where the driver's plan is built -
+which is where the joint-tour binder (§9.84 M4) and #91's 30% of ride legs with
+no declared driver already point.
+
+### What must not be concluded
+
+Nothing here says ride's target is wrong, and nothing licenses relaxing to
+`origin_link` or `window_only` to close the gap. Those pair passengers with
+drivers going somewhere else; a higher pair rate bought that way is a worse
+model that fits better, which is the failure this project cannot absorb.
 
 ---
 
