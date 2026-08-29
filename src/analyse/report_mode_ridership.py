@@ -87,6 +87,8 @@ def load_targets():
             out[r['mode']] = dict(target=num('target_pct'),
                                   low=num('sweep_low'),
                                   high=num('sweep_high'),
+                                  mean_km=num('target_mean_km'),
+                                  mean_km_basis=r.get('mean_km_basis') or '',
                                   denominator=r['denominator'],
                                   status=r['status'],
                                   basis=r['basis'])
@@ -285,12 +287,27 @@ def report(run_dir, iteration, truck_stations=False):
 
     sub, multi, unknown = pt_submode_trips(run_dir, iteration, person_lga)
 
-    # every subpopulation, for the freight denominator
+    # every subpopulation, for the freight denominator; and the target-LGA
+    # residents' distance by mode, for the geometry column
     all_counts = collections.Counter()
+    km_sum = collections.Counter()
+    km_n = collections.Counter()
     with em.open_output(run_dir, 'ITERS/it.%d/%d.trips'
                         % (iteration, iteration)) as fh:
         for t in csv.DictReader(fh, delimiter=';'):
             all_counts[t['main_mode']] += 1
+            if person_lga.get(t['person']) != em.TARGET_LGA:
+                continue
+            try:
+                d = float(t['traveled_distance']) / 1000.0
+            except (KeyError, TypeError, ValueError):
+                continue
+            km_sum[t['main_mode']] += d
+            km_n[t['main_mode']] += 1
+    # a linked pt trip is one trip; its distance belongs to the submode the
+    # reader allocated it to, which is what `sub` already decided
+    pt_km = sum(km_sum[m] for m in ('pt', 'bus', 'rail', 'tram', 'ferry'))
+    pt_n = sum(km_n[m] for m in ('pt', 'bus', 'rail', 'tram', 'ferry'))
     truck_pct, road_tot = road_vehicle_share(all_counts)
     truck_note = ('NOT the target\'s basis - network-wide share vs a '
                   'freight-route observation (9.101); --truck-stations scores it')
@@ -336,9 +353,28 @@ def report(run_dir, iteration, truck_stations=False):
     print('       pt split from that iteration\'s legs table by each boarded '
           'route\'s transportMode')
     print('=' * 100)
-    print('%-15s %10s %10s %11s %12s  %s'
-          % ('mode', 'modelled%', 'target%', 'deviation', 'count', 'gate'))
+    print('%-15s %10s %10s %11s %12s %9s %8s  %s'
+          % ('mode', 'modelled%', 'target%', 'deviation', 'count',
+             'mean km', 'vs obs', 'gate'))
     print('-' * 100)
+
+    def geometry(mode, t):
+        """Modelled mean trip km, and how it compares with the observed one.
+
+        A mode can sit on its share and still be carrying trips of entirely the
+        wrong length, which no share can show (9.107).
+        """
+        if mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+            n, s_ = pt_n, pt_km          # the survey folds all four into one
+        else:
+            n, s_ = km_n.get(mode, 0), km_sum.get(mode, 0.0)
+        if not n:
+            return '        -', '       -'
+        mean = s_ / n
+        obs = t.get('mean_km')
+        if not obs:
+            return '%9.2f' % mean, '       -'
+        return '%9.2f' % mean, '%+7.0f%%' % (100.0 * (mean - obs) / obs)
 
     breaches = []
     for i, (mode, t) in enumerate(tgt.items(), 1):
@@ -389,8 +425,10 @@ def report(run_dir, iteration, truck_stations=False):
             flag = 'over %.0f%%' % GATE_PASS_PCT
         else:
             flag = 'ok'
-        print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
-              % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode], flag))
+        gk, gd = geometry(mode, t)
+        print('%-15s %10.4f %10.4f %+10.1f%% %12d %s %s  %s'
+              % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
+                 gk, gd, flag))
 
     print('-' * 100)
     print('target-LGA linked trips %d   modelled road vehicle trips %d '
@@ -402,6 +440,12 @@ def report(run_dir, iteration, truck_stations=False):
               'NOT opened'
               % (truck_stn[2], truck_stn[3], truck_stn[4], truck_stn[1],
                  truck_stn[5]))
+    print('mean km is the modelled mean TRIP LENGTH for %s residents against '
+          'the HTS\'s own' % em.TARGET_LGA)
+    print('   TRIP_AVG_DISTANCE for that mode\'s survey category; the four pt '
+          'submodes share one folded')
+    print('   observation, so their geometry deviations are not independent of '
+          'each other')
     if sub.get('pt:no_boarding'):
         print('pt trips that boarded nothing (raptor direct-walk fallback): %d'
               % sub['pt:no_boarding'])

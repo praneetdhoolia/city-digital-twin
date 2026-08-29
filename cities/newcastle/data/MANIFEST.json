@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-29T21:08:02",
+  "generated": "2026-08-29T23:40:11",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 494,
-  "total_bytes": 4266214963,
+  "total_bytes": 4266217172,
   "total_gib": 3.97,
   "by_stage": {
     "raw": 81,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1542869835
+    "processed": 1542872044
   },
   "files": [
     {
@@ -1673,9 +1673,9 @@
     },
     {
       "path": "data/processed/validation/mode_targets_by_mode.csv",
-      "bytes": 8772,
+      "bytes": 10981,
       "rows": 12,
-      "sha256": "a87b1fa8cb67d3415afbda04a90aa7c97384a41d358bab2d7ab1ddd12382b72d",
+      "sha256": "ba80329e83a66b74f0449cbca1cceb15976a7db0b8e21ab6247849d394155ca0",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",

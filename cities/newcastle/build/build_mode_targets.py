@@ -85,6 +85,44 @@ G62 = {
 }
 
 
+def hts_trip_means():
+    """Observed mean trip length by the survey's OWN mode category.
+
+    Published beside the mode shares as TRIP_AVG_DISTANCE and carried into
+    `hts_mode.csv` at acquisition. A folded category's mean applies to every
+    mode inside it - four public transport modes share one - so the row says
+    which category it came from and a reader can see when a mean is shared.
+    """
+    year = _city.readers().survey_vintage()
+    lga = _city.target_lga()
+    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    sel = hm[(hm.geography == 'lga')
+             & (hm.area_name.str.strip() == lga)
+             & (hm.FINANCIAL_YEAR.astype(str) == year)]
+    out = {}
+    for _, r in sel.iterrows():
+        key = str(r['TRAVEL_MODE']).strip().rstrip('*').strip().lower()
+        v = pd.to_numeric(r.get('TRIP_AVG_DISTANCE'), errors='coerce')
+        if pd.notna(v):
+            out[key] = float(v)
+    return out
+
+
+# Which survey category each simulated mode takes its observed mean from.
+MEAN_CATEGORY = {
+    'car': 'vehicle driver',
+    'motorbike': 'vehicle driver',
+    'ride': 'vehicle passenger',
+    'walk': 'walk only',
+    'bike': 'other',
+    'taxi': 'other',
+    'bus': 'public transport',
+    'heavy_rail': 'public transport',
+    'light_rail': 'public transport',
+    'ferry': 'public transport',
+}
+
+
 def hts_levels(cfg):
     """The current-vintage HTS category levels for this city's target LGA.
 
@@ -524,6 +562,22 @@ def main():
             (lo * sites_n, hi * sites_n))
 
     os.makedirs(OUT, exist_ok=True)
+    means = hts_trip_means()
+    shared = collections.Counter(MEAN_CATEGORY.values())
+    for row in rows:
+        cat = MEAN_CATEGORY.get(row['mode'])
+        row['target_mean_km'] = (None if cat is None
+                                 else round(means.get(cat), 4)
+                                 if means.get(cat) is not None else None)
+        row['mean_km_basis'] = (
+            '' if cat is None else
+            'HTS "%s" %s TRIP_AVG_DISTANCE%s' % (
+                year, cat,
+                '' if shared[cat] == 1 else
+                ', a FOLDED category shared by %d simulated modes - the survey '
+                'publishes no finer mean, so this is the same observation for '
+                'each of them and a deviation against it is not independent '
+                'evidence about one mode' % shared[cat]))
     d = pd.DataFrame(rows)
     dst = os.path.join(OUT, 'mode_targets_by_mode.csv')
     d.to_csv(dst, index=False)

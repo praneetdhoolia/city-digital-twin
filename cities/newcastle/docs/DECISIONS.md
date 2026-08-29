@@ -104,6 +104,7 @@ its layout will otherwise cost you an hour:
 | **The endpoint test can't represent a drop-off en route — and fixing that changes nothing** | **§9.102** — `both_links` requires the driver's leg to START and END on the passenger's links, so a parent driving a child to school on the way to work is refused by construction, and **64.4% of pairing failures are that class**. `route_contains` was built (passenger on a SEGMENT of the driver's path, driver's time apportioned by length share, unity for `both_links` so the two are comparable). **Measured on a committed pair differing in this field alone: pair rate 0.5069 → 0.5113, `miss_endpoints` −24, and ride mode share went the WRONG way, 9.6748 → 9.4513.** The driver's PLAN has no escort stop, so the driver's PATH does not pass the passenger either. **§9.92's conclusion stands**, now on a measurement rather than a circular argument; `both_links` remains the value and `route_contains` a sweep member. **Third pairing-side lever found real-but-marginal — stop looking at the pairing engine** |
 | **A denied lift is not a fifteen-hour walk** | **§9.105** — reading walk's GEOMETRY rather than its share: mean trip **8.75 km against a declared observed 0.70 km (12.5x)**, 46% over 5 km, longest **91.4 km**. Ride over the same trips is **0.97x** its observed mean, so the demand is sound. **16,153 unpaired ride legs + 1,602 refused taxi requests are forced into walk in ONE iteration — 31% of all walk trips.** `B.ride.unpaired_fallback` now lets a licensed car-owner DRIVE instead. Measured on a committed pair: six of seven modes toward target, **taxi +64.2% → +7.5%, inside the bar**, walk +183% → +141%, car −30.2% → −18.9% — but **pt moved AWAY, −19.6% → −30.2%**, and **walk's geometry barely moved (9.30 → 8.80 km)**, so most implausible walks are CHOSEN, not forced |
 | **A feasibility bound on walk does not work, and the reason matters** | **§9.106** — walk is the ONLY mode nothing constrains, so a derived bound was built (p99 of an exponential with the observed 0.70 km mean = **3.22 km**, corroborated to within a kilometre by the observed mean walk TIME). It failed twice: first `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` (a refusal must reject the WHOLE proposal), then on measurement — **sum of |deviation| 509.9% → 577.1%, WORSE**, taxi +15.2% → +135.1%, and walk's mean moved only 8.84 → 8.72 km. **A choice-set gate can only refuse NEW proposals; it cannot remove behaviour already in the plan**, and the forced whole-proposal rejection can TRAP an agent. Set to 0.0, disabled and reproducing. **Four downstream repairs have now failed to move the geometry — it is not determined downstream** |
+| **CORRECTION: the demand is not the defect — walk and car are SWAPPED at both ends** | **§9.107** — §9.103 and §9.106 both concluded the cause was destination placement. The HTS publishes **DISTANCE_BY_MODE**, an observed anchor never used: resident trips **1.11x**, total km **1.20x**, mean trip length **1.08x**, and **16.31% of modelled trips are under 1 km** against an observed walk-only 13.4%. The demand has the short trips. But **only 39.5% of sub-1 km trips are walked while car takes 39.2%**, and walk's resident mean is **6.66 km against an observed 0.70**. Modes are assigned per SUBTOUR, so a car chain drives its 800 m leg and a walk chain walks its 20 km leg — which is why four downstream repairs could not move it and why a per-trip bound broke the chain invariant. **A calibration question on the walk/car distance margin, and a per-mode mean trip length is an observation this package holds and has never scored against** |
 | **`age` and `taxi` reach no availability gate; gradient reaches mode choice through nothing** | **§9.83** — `AvailabilityModesCalculator` gates `rideAvail`/`bikeAvail`/`lockedMode`, **taxi nothing**; 0–4 year olds take 31.1% of trips by bike and 19.5% by taxi, but this bounds at 19% of the excess. Gradient: 30.5% of 50,182 edges steeper than 4%, modelled bike 9.21 km/41.7 min against a measured 5.2/19.2. Both measured, NEITHER built (#21 was closed on the honest `not_representable` record) |
 | **Trip length by mode** | §9.13; destination placement per home LGA **§9.40** |
 | **External / boundary demand** | §9.14, §9.15, §9.20; through traffic **§9.41** |
@@ -10069,6 +10070,113 @@ the same place, and #30 has been open on it since 24 August.
 its own mechanism, and none of them moves the geometry. **When four independent
 downstream repairs all fail to move a quantity, the quantity is not determined
 downstream.**
+
+---
+
+## 9.107 CORRECTION: the demand is not the defect. Walk and car are swapped at both ends of the distribution (29 August 2026, fourteenth session; issues #30, #49, #50)
+
+§9.103 concluded from the light rail's tiny corridor market that the defect lay
+in DESTINATION PLACEMENT, and §9.106 agreed from a different direction - four
+downstream repairs had failed to move walk's geometry, so the cause "is not
+determined downstream". **Both conclusions were reached without an observed
+anchor for the demand, and the anchor exists.** It says they are wrong.
+
+### The anchor that was never used
+
+The HTS workbook this package already holds publishes, per LGA per mode, not
+only trips but **DISTANCE_BY_MODE**. For the target LGA, 2024/25:
+
+| | trips | km | mean |
+|---|---:|---:|---:|
+| observed (MODE_SHARE base) | 567,000 | 5,185,000 | **9.14 km** |
+| modelled, iteration 100, scaled from 10% | 628,180 | 6,200,434 | **9.87 km** |
+| ratio | **1.11x** | **1.20x** | **1.08x** |
+
+**The demand generates 8% too much distance per trip and 20% too much travel in
+total.** That is not nothing, but it is not a defect that could produce a walk
+mean 12.5x its observed value. My earlier "1.40x" was computed over ALL
+subpopulations - freight and external agents included - which is the wrong basis
+for a resident travel survey, and it overstated the problem by a third.
+
+### The distribution is right too, which kills the remaining version of the claim
+
+| band | modelled share of resident trips |
+|---|---:|
+| under 1 km | **16.31%** |
+| 1-2 km | 11.88% |
+| 2-5 km | 18.33% |
+| 5-10 km | 21.02% |
+| 10-20 km | 17.20% |
+| over 20 km | 15.26% |
+
+Observed walk-only is **13.4%** of the mode-share base at a 0.7 km mean, and
+walk-linked adds 32,000 more short trips outside that base. **The model has the
+short trips.** #30's charge - that destination placement yields a third of the
+observed sub-1 km walk trips - is not what this measures: the sub-1 km TRIPS are
+there, in about the right number.
+
+### What is actually wrong: the trips are there, on the wrong modes
+
+**Of the 10,247 modelled trips under 1 km, only 39.5% are walked. Car takes
+39.2% of them** - 4,012 sub-kilometre car trips. And at the other end, walk's
+mean trip is **6.66 km** for residents against an observed **0.70 km**.
+
+| mode | modelled mean | observed mean | ratio |
+|---|---:|---:|---:|
+| car | 11.09 km | 10.20 km | 1.09x |
+| ride | 8.34 km | 9.80 km | 0.85x |
+| **walk** | **6.66 km** | **0.70 km** | **9.5x** |
+| bike | 10.04 km | 5.20 km | 1.93x |
+| pt | 13.18 km | 23.40 km | 0.56x |
+
+**Walk and car are swapped at both ends of the distribution.** Walk carries long
+trips it should never see; car carries short ones it should not. The total is
+right, the distribution is right, and the ALLOCATION is wrong.
+
+### The mechanism, and why it is not obviously a defect
+
+MATSim assigns a mode per SUBTOUR, not per trip. A subtour is a closed chain,
+and a chain-based mode has to be returned to where it was taken from, so **every
+trip in a car subtour is driven, including its 800 m leg, and every trip in a
+walk subtour is walked, including its 20 km leg.** Some of that is correct
+behaviour - a person who drove to work genuinely cannot walk one leg of that
+chain, because the car would be left behind. Some of it is not.
+
+That is why the four downstream repairs could not move the geometry: none of
+them touches the subtour-level assignment, and neither the pairing engine nor a
+fallback nor a choice-set gate can. It is also why a per-trip reach bound broke
+the chain invariant outright (§9.106) - the invariant is the mechanism.
+
+### What this means for the plan
+
+The walk/car margin is **a calibration question about the relative cost of
+distance between two modes**, which is what P4 exists to settle and what
+`C5_calibration.json` is for. It is not a structural defect, not a missing
+constraint, and not the demand. The declared behavioural parameters that govern
+it - the per-mode constants, the marginal utilities of travel time, and the
+monetary distance rates - are all in the registry with sweeps and have never
+been calibrated against a per-mode DISTANCE target, only against mode shares.
+
+**A per-mode mean trip length is an observation this package holds and has never
+scored against.** Adding it to the fit is the obvious next step, and it is a
+measurement change rather than a model change.
+
+### What must not be concluded
+
+Nothing here says destination placement is perfect - 1.20x on total travel is a
+real 20% and #30 remains open on its own evidence. What it says is that
+destination placement **cannot account for the walk geometry**, and that
+§9.103's and §9.106's closing paragraphs pointed the next session at the wrong
+place. They are corrected here rather than edited, because a dated record is
+frozen.
+
+### The lesson worth carrying
+
+**Two independent lines of reasoning agreeing is not evidence when both are
+reasoning rather than measuring.** §9.103 and §9.106 reached the same wrong
+conclusion from different directions, and the agreement made it feel settled.
+The observed anchor that refuted it was in an acquired artefact the whole time,
+one column away from a number this project already reads every build.
 
 ---
 
