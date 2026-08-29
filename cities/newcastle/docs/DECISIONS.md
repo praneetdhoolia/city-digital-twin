@@ -10848,6 +10848,119 @@ Two further motorbike facts stay open and are recorded as open:
 
 ---
 
+## 9.116 The committed builder had stopped reproducing the committed demand, and the rebuild that repairs it opens family F14 (30 August 2026, fifteenth session; issues #92, #93, #86, #49)
+
+§9.111 and §9.115 each ended with the same sentence: the fix is **not applied
+here**, because a builder change without its rebuild breaks reproducibility.
+The brief, the board and both entries then recorded the two fixes as *written
+and deliberately uncommitted*.
+
+**One of them was committed anyway.** The §9.111 candidate-pool filter landed
+in `main` in commit `b65d280`, carried by PR #95, without its rebuild.
+
+### How it was caught, and why it was not caught by a gate
+
+Every gate passed on arrival this session - `check_manifest`,
+`check_hardcoding --strict`, `check_doc_currency --strict`, `run_failure
+--check`, `build_fit_figures --check`, `check_city_agnostic` 13/13. None of
+them compares a **builder** against the **artefact it produced**, so a builder
+that had stopped reproducing its own output was invisible to all of them.
+
+The evidence was in the demand's own build report, which is committed:
+
+| `_activity_chains_report.json`, WEEKDAY | on disk before this session |
+|---|---:|
+| `candidates` | 201,931 |
+| `driver_is_the_companion` | 51,215 |
+| `candidates_unservable` | **key absent** |
+
+The committed builder cannot produce that report. It filters the pool and
+counts what it removed; the counter is not optional. So the demand on disk was
+the PRE-filter demand, and the two had been inconsistent since PR #95 merged.
+
+**This is worth stating plainly: the repository spent that window unable to
+regenerate its own demand from its own committed code.** The reproducibility
+rule calls that a gate, not an aspiration, and it had failed silently.
+
+### What the rebuild measured - the filter works, and by less than was predicted
+
+Both fixes were applied together, as both entries directed, and all three day
+types were rebuilt from the committed builders.
+
+| WEEKDAY joint binding | before | after |
+|---|---:|---:|
+| candidates | 201,931 | 146,260 |
+| `candidates_unservable` | - | 55,671 |
+| **bound** | **74,663** | **82,384** |
+| `skipped_infeasible` | 73,258 | 35,937 |
+| `thin_p` | 0.8565 | **1.0000** |
+| `driver_is_the_companion` | 51,215 | 8,150 |
+| `shift_driver_already_committed` | 12,530 | 16,289 |
+| `as_timed_collides_with_companion` | 9,511 | 11,496 |
+| `driver_party_full` | 2 | 2 |
+
+**§9.111 estimated "roughly 110,000 instead of 74,663". The measured answer is
+82,384** - the fix delivers about a fifth of the additional bindings it was
+projected to. The estimate is wrong for a reason worth recording: it assumed
+the same thinning rate would apply to a smaller pool, and **thinning stopped
+applying at all**. `p_thin` reaches 1.0000, so the binder now takes every
+servable candidate it is offered and still falls short of its target. The two
+timing clauses grew as more candidates competed for the same drivers
+(+3,759 and +1,985), which the estimate did not anticipate either.
+
+**Joint binding is now supply-limited by servable candidates, not by
+thinning.** That is a different regime from the one every prior entry
+described, and it changes what the next lever has to be: adding candidates, not
+thinning fewer of them. On the weekend day types thinning still binds
+(`thin_p` 0.6216 SAT, 0.5955 SUN), so the saturation is a WEEKDAY property and
+must not be generalised.
+
+`driver_is_the_companion` does not fall to zero, and should not: the filter
+removes the candidacies refused with CERTAINTY - households holding no other
+eligible driver tour at all - while a driver who becomes committed during the
+pass can still leave a companion with only themselves. 8,150 of those remain,
+and they are emergent rather than structural.
+
+### The motorbike carve, applied (§9.115, #93)
+
+`B.motorbike.trip_share` 0.0036 -> **0.0024064**, `source` `assumed` ->
+`derived`, the identity written out. The carve now realises
+`q=0.00346 over 426,129 eligible persons`, seeding motorbike at 0.001 WEEKDAY
+against 0.002 on both weekend types.
+
+Two observations behind the identity are now DECLARED rather than reachable
+only inside a build script - `CAL.mode_split.vehicle_driver_level` (0.59) and
+`CAL.mode_split.motorbike_driver_journey_share` (0.0040786) - and
+`build_mode_targets.py` now **asserts the declared pair against the acquired
+sources on every build**, refusing to run if they diverge. That guard is the
+answer to the failure this entry opens with, applied to the one place it can
+be applied cheaply: a declared value and its artefact can no longer drift apart
+in silence.
+
+`mode_targets_by_mode.csv` is byte-identical across the change apart from line
+endings, which is the confirmation §9.115 predicted: **the carve moves
+generation, not the yardstick.** Motorbike's modelled share will go DOWN. It is
+a consistency repair and must not be reported as a fit repair.
+
+### FAMILY BOUNDARY - F14
+
+The demand, the plans and the 30 run-input sets are all regenerated. **Nothing
+run before this entry compares with anything run after it**, including the two
+calibrated F4 arms `20260821T175907_1000it_25pct` and
+`20260821T180310_1000it_25pct` that `README.md` still draws its fit figures
+from. Those arms remain valid as their own family's record.
+
+### The lesson worth carrying
+
+**A gate that never compares a producer with its product cannot see a producer
+that has stopped producing it.** Eight checks passed over a repository that
+could not rebuild its own demand. The cheap general form of the missing check
+is the one installed here - make the build assert its declared inputs against
+its sources - and the expensive general form, a rebuild-and-compare, is
+recorded as wanted rather than claimed as done.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -11520,6 +11633,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **The committed builder had stopped reproducing the committed demand; both queued fixes applied and family F14 opens (§9.116; issues #92/#93/#86/#49).** §9.111 and §9.115 each recorded their fix as written and deliberately NOT committed. **The §9.111 candidate-pool filter was committed anyway**, in `b65d280` via PR #95, without its rebuild - so the repository could not regenerate its own demand from its own code, and **all eight arrival gates passed over it**, because none compares a builder with the artefact it produced. Caught from the committed build report: `candidates` 201,931 with `candidates_unservable` absent is a report the committed builder cannot write. Both fixes are now applied together and all three day types rebuilt. Measured, WEEKDAY: candidates 201,931 → **146,260** (55,671 unservable), **bound 74,663 → 82,384**, infeasible 73,258 → 35,937, `driver_is_the_companion` 51,215 → 8,150, and **`p_thin` 0.8565 → 1.0000** - thinning stops applying, so joint binding is now **supply-limited by servable candidates**, a different regime from every prior entry, and a WEEKDAY property only (SAT 0.6216, SUN 0.5955). **§9.111's "roughly 110,000" estimate is wrong: the measured answer is 82,384**, because the estimate assumed a thinning rate that no longer applies and did not anticipate the two timing clauses growing (+3,759, +1,985). `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived`; the two observations behind the identity are now declared (`CAL.mode_split.vehicle_driver_level`, `.motorbike_driver_journey_share`) and `build_mode_targets.py` **asserts them against the acquired sources on every build**. `mode_targets_by_mode.csv` is unchanged but for line endings, confirming the carve moves generation, not the yardstick - motorbike's share will go DOWN. **FAMILY BOUNDARY F14: nothing run before compares with anything run after**, including the two F4 arms `README.md` draws its figures from. Registry 400 → 402. Nothing here is a finding. |
 | 2026-08-30 | **The motorbike carve and its target are the same observation, minus a conversion (§9.115; issues #49/#84).** §9.112 left which of `B.motorbike.trip_share` 0.3630% and the §9.87 target 0.2406% is right as a decision to take; it is arithmetic. The carve applies the census commute share straight to all trips, assuming the driver share of all TRIPS equals the **89.1%** driver share of commute JOURNEYS where the HTS observes **59.0%**: `0.3630 / (89.1/59.0) = 0.2405` against a target of 0.2406, the residual being rounding. The carve is the target times a ratio that should have cancelled. `B.motorbike.trip_share` should become **0.2406%, source `derived`**, removing an assumed value the package can derive. NOT APPLIED - it regenerates the plans and queues with §9.111 for one deliberate rebuild. Stated so it is not mis-sold: it LOWERS generation, so it is a consistency repair, not a fit repair. No target value changed; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-08-30 | **CORRECTION: most cyclists own cars, so bike is not displaced ride (§9.114; issues #49/#48/#30).** §9.109 and §9.112 both concluded bike's excess and ride's deficit are one defect - a carless agent cycles because the demand cannot make them a passenger. Measured: of 5,649 resident bike trips, **51.6% are made by agents holding BOTH a licence and a car**, 30.3% fully carless, 18.1% licensed without one. The displaced-passenger mechanism covers at most a third. Car dominates bike at every distance on the declared scoring (~0.604 utils/km against 1.36, and a -1.35 constant against 0.0), so this is the same shape as walk in §9.107 - a mode winning trips the scoring says it should lose, for agents who hold the alternative - and bike is **walk's problem in a second mode, not ride's shadow**. Fifth unmeasured mechanism this session, third to reach a committed entry. Nothing here is a finding. |
 | 2026-08-30 | **A transitRoute's day tag is not its service day (§9.113; issues #49/#84/#30).** The mapped weekday schedule shows **zero WEEKDAY-tagged routes for ferry and tram** against 965 for bus and 266 for rail, which looks like a complete explanation for both deficits and is false. Departures: **ferry 107, tram 252** - exactly their GTFS weekday trip counts. pt2matsim names a grouped route after a representative trip's service id, so a line with few routes can be labelled SAT while running a full weekday timetable. Recorded as a trap: never read service from a route id, count departures. Corrects §9.103's "550 light rail trips a day" (unfiltered GTFS) to **252 weekday departures**; that entry's conclusion is unchanged and better supported. **Supply is now ruled out for both modes on measurement.** Nothing here is a finding. |
