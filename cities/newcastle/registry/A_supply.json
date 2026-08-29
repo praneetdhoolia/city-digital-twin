@@ -336,7 +336,8 @@
       "description": "Minimum green time in a generated SUMO signal program.",
       "consumers": [
         "cities/newcastle/build/build_matsim_signals.py"
-      ]
+      ],
+      "matsim_param": "scats.minGreenS"
     },
     "A.signals.junction_match_m": {
       "value": 60.0,
@@ -390,7 +391,8 @@
       "consumers": [
         "cities/newcastle/build/build_matsim_signals.py"
       ],
-      "description": "Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1)."
+      "description": "Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1).",
+      "matsim_param": "scats.saturationFlowVehHLane"
     },
     "A.signals.tsp.mode": {
       "value": "green_extension",
@@ -557,7 +559,7 @@
       "consumers": [
         "cities/newcastle/build/build_level_crossings.py"
       ],
-      "description": "How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented."
+      "description": "Closures per day per site under the assumed_uniform member of A.crossings.closure_source ONLY. Superseded as the default by 9.90, which derives both the count and the time from the city’s own mapped rail timetable; kept because the two members are a measurable comparison and because every arm before 9.90 ran on this value. How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented."
     },
     "A.crossings.closure_duration_s": {
       "value": 240,
@@ -575,7 +577,7 @@
       "consumers": [
         "cities/newcastle/build/build_level_crossings.py"
       ],
-      "description": "How long one closure holds the crossing shut. ASSUMED and swept against the official \"up to ten minutes\" bound; the point value is a mid-band working value, never a claim."
+      "description": "Closure duration for a FREIGHT movement, and for every closure under the assumed_uniform member of A.crossings.closure_source. Retained at its recorded basis - the TfNSW \"up to ten minutes\" statement describes a long coal train, not a passenger set - while passenger closures take A.crossings.closure_duration_passenger_s (9.90). How long one closure holds the crossing shut. ASSUMED and swept against the official \"up to ten minutes\" bound; the point value is a mid-band working value, never a claim."
     },
     "A.crossings.closure_window_h": {
       "value": [
@@ -1884,6 +1886,148 @@
         "src/build/build_matsim_run_inputs.py"
       ],
       "description": "Symmetric clamp, in percent, on the signed grade_pct attribute stamped onto run-network links from the A1/A6 node elevations."
+    },
+    "A.signals.control_regime": {
+      "value": "scats_adaptive",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "fixed_time",
+          "scats_adaptive"
+        ],
+        "basis": "Which control LOGIC the 14 corridor intersections run. The operated SCATS phase data was never released, and the project previously handled that by leaving A.signals.scats_phasing unobtained and sweeping a FIXED cycle time - so every arm to date ran a fixed 110 s plan, which is not what a SCATS intersection does. Under scats_adaptive the generated plan becomes the STARTING point and citysim.ScatsSignalController re-times cycle and splits every cycle from the saturation the mobsim actually presents. Both members are kept because they are the comparison that shows what the control logic is worth: fixed_time reproduces every earlier arm exactly."
+      },
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Signal control logic. scats_adaptive (the value since 9.88) runs the SCATS algorithm in citysim.ScatsSignalController: degree of saturation measured at every signalised stop line against the saturation flow the mobsim actually enforces, incremental cycle-length adaptation toward a target DS on the critical movement, and splits allocated to equalise DS across stages, with the generated plan as the STARTING point and the intersection’s own clearances preserved. fixed_time executes that generated plan verbatim and reproduces every arm before 9.88 exactly, which is why it is kept. Offsets are NOT adapted under either member: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured. Transit priority composes with either member - the priority layer lives inside the adaptive controller too, so the corridor never silently loses it.",
+      "matsim_param": "scats.regime"
+    },
+    "A.signals.scats.target_degree_saturation": {
+      "value": 0.9,
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        0.8,
+        0.98
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "The degree of saturation SCATS holds the CRITICAL (busiest) movement near by lengthening or shortening the cycle. Published descriptions of SCATS operation put the working target near 0.9 - high enough to use the intersection, low enough to leave recovery room after a surge. Swept because the operated Newcastle target is unpublished, and the corridor run time this study measures is sensitive to it.",
+      "matsim_param": "scats.targetDegreeSaturation"
+    },
+    "A.signals.scats.cycle_step_s": {
+      "value": 6.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        3.0,
+        12.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "The most the cycle length may move in ONE cycle. SCATS adapts incrementally rather than jumping to a computed optimum, so that one noisy cycle cannot destroy coordination with neighbouring intersections; increments of a few seconds are what the published descriptions of the system describe.",
+      "matsim_param": "scats.cycleStepS"
+    },
+    "A.signals.scats.min_cycle_s": {
+      "value": 30.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        20.0,
+        60.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Shortest cycle the controller may choose. The documented SCATS user limits run roughly 30-150 s (signalling dossier 03/09), and this is the lower end. It is a bound on the ALGORITHM, not a modelling assumption about this corridor: the controller is additionally floored by the intersection's own geometry - every clearance plus a minimum green per stage - and that floor outranks this value wherever it is higher.",
+      "matsim_param": "scats.minCycleS"
+    },
+    "A.signals.scats.max_cycle_s": {
+      "value": 150.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        110.0,
+        180.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Longest cycle the controller may choose - the upper end of the documented SCATS user limits (dossier 03/09). Sweep-basis evidence (9.75, operated SCATS interpreted history republished in planning-portal TIA PPSHCC-137): corridor-adjacent TCS 1138 runs 72-81 s and parallel-arterial TCS 923 runs 104-113 s, so the operated corridor sits well inside this ceiling and the ceiling binds only under saturation.",
+      "matsim_param": "scats.maxCycleS"
+    },
+    "A.signals.scats.ds_deadband": {
+      "value": 0.05,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.02,
+        0.1
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "The band around the target degree of saturation inside which the cycle is left alone. Without it the cycle hunts - a measured DS never lands exactly on the target, so every cycle would step one way or the other. The published descriptions establish that SCATS is deliberately sluggish but not the width, so this is assumed and swept.",
+      "matsim_param": "scats.dsDeadband"
+    },
+    "A.signals.scats.ds_smoothing": {
+      "value": 0.5,
+      "units": "weight",
+      "source": "assumed",
+      "sweep": [
+        0.1,
+        0.9
+      ],
+      "status": "active",
+      "decisions_ref": "9.88",
+      "description": "Exponential smoothing weight on the newest cycle's measured degree of saturation. SCATS filters its counts rather than re-timing from a single cycle; 1.0 would react to the last cycle alone (noisy at the low flows that occupy most of the day) and 0.0 would never react at all. The filter exists in the real system; its constant is unpublished, so this is assumed and swept.",
+      "matsim_param": "scats.dsSmoothing"
+    },
+    "A.crossings.closure_source": {
+      "value": "schedule_derived",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "assumed_uniform",
+          "schedule_derived"
+        ],
+        "basis": "Where a level crossing closure gets its COUNT and its TIME. assumed_uniform is the pre-9.90 behaviour - A.crossings.closures_per_day closures spread evenly across the declared window, the same number at both sites, because no closure log is published. schedule_derived reads the city’s OWN mapped rail timetable: a crossing closes for every train that crosses it, and the timetable says which trains those are and when. Both members are kept because the difference between them is a measurable claim about what the crossings do to the road."
+      },
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "Under schedule_derived, build_level_crossings.py counts the scheduled rail movements whose mapped route traverses the rail links at each crossing, and times each closure from that service’s own stop time at the nearest rail stop. Measured on the WEEKDAY schedule: 110 movements at Saint James Road (Adamstown) and 204 at Clyde Street (Islington), against the 30-per-site the assumed member emits - and peaked (17h carries 9 and 14) rather than flat, which is what decides whether a closure lands in the traffic it delays."
+    },
+    "A.crossings.freight_closures_per_day": {
+      "value": 0,
+      "units": "closures_per_day_per_site",
+      "source": "assumed",
+      "sweep": [
+        0,
+        30
+      ],
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "NON-TIMETABLED freight movements added on top of the schedule-derived passenger closures at each crossing. The point value is ZERO on the recorded evidence of 9.70: the coal chain - the overwhelming majority of freight on this network at ~110 movements/day - has run on dedicated track grade-separated since 2006, so it does not cross these roads at grade at all. What the zero does NOT assert is that no non-coal freight ever uses these lines; that is unquantified because ARTC publishes no movement log, which is why the field exists and is swept to 30 rather than being left out. Read only under A.crossings.closure_source = schedule_derived."
+    },
+    "A.crossings.rail_match_radius_m": {
+      "value": 40.0,
+      "units": "m",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "Radius within which a mapped RAIL link counts as the railway at a level crossing, for the schedule-derived closure count. A data-join tolerance, not a model parameter, and held fixed for the same reason as A.signals.scats_match_radius_m: no output varies across it. Measured midpoint distances at the two sites are 29.6 m (Saint James Road) and 8.0 m (Clyde Street), and the next-nearest rail link at either site sits far enough away that every radius from about 35 m to 55 m selects the identical set. Declaring a sweep over which the output is constant is the defect this project has already hit three times."
+    },
+    "A.crossings.closure_duration_passenger_s": {
+      "value": 60.0,
+      "units": "s",
+      "source": "literature",
+      "sweep": [
+        30.0,
+        120.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.90",
+      "description": "How long the boom stays down for ONE scheduled PASSENGER train. Under the schedule-derived closure source a closure is emitted per train, so the duration has to be a per-train figure - and the 240 s of A.crossings.closure_duration_s is not one. That value is anchored on the TfNSW statement that closures run \"up to ten minutes\", which describes a long coal train, and applying it per passenger train would hold the Islington boom down 204 x 240 s = 13.6 hours a weekday, which is not what that crossing does. A boom-gate closure decomposes into a warning/lead time before arrival, the train transit itself, and a short lag before the booms lift; a two-to-four-car Hunter Line set clears the crossing in seconds, so the lead and lag dominate. 60 s is that sum at standard operation and is swept 30-120 s because neither the operated lead time nor the boom lag is published for these two sites."
     }
   }
 }

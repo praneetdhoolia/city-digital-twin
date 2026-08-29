@@ -1,0 +1,18 @@
+{
+  "overlay": "ride_coherence_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN - nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. It shares sample, depth, threads and heap with taxi_fare_control_1pct so the two differ only in the two coherence rates, 0.1 in the control and 0.4 here. The measurement that motivates it: at iteration 50 of the F12 arm, 44,044 of 84,609 planned ride legs (52.1%) failed to pair, and because ridePairing.remodeUnpaired is true NONE of them departs as ride - the events carry 40,965 ride departures against 40,565 paired legs. Those legs are realised as walk, so ride reads -65% and walk +94% off ONE mechanism. B2 generates escort and joint travel as a PAIR, while SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy once lost. Both rates are declared SEARCH parameters, not preferences - they change how often a decohered pair is OFFERED the coherent plan, never how attractive riding is, and ChangeExpBeta still decides on score. 0.4 is inside the declared [0.0, 0.5], so this overlay selects a declared member and measures it rather than proposing a value.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "B.ride.escort_coherence_rate": 0.4,
+    "B.ride.joint_coherence_rate": 0.4
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations is chosen to match taxi_fare_stress_1pct exactly, because a control at a different depth would compare two different points on a transient rather than isolating the one variable under test. The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 372 fields are made of
+## What the 400 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 31 | computed from observed data in this package |
-| `derived` | 32 | follows from another registry field by identity |
-| `literature` | 59 | a published value, not specific to this city |
-| `assumed` | 135 | chosen without direct empirical support |
-| `definition` | 111 | fixed by the formulation, not an empirical quantity |
+| `measured` | 32 | computed from observed data in this package |
+| `derived` | 35 | follows from another registry field by identity |
+| `literature` | 65 | a published value, not specific to this city |
+| `assumed` | 150 | chosen without direct empirical support |
+| `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 353 | usable point value |
+| `active` | 381 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -85,7 +85,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 121 fields*
+*`cities/newcastle/registry/A_supply.json` - 132 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -106,13 +106,17 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.corridor.trunk_buffer_m` | `60.0` | metres | `assumed` | 40 - 100 |
 | `A.crossings.closed_flow_capacity_veh_h` | `0.0` | vehicles_per_hour | `definition` | - |
 | `A.crossings.closed_freespeed_ms` | `0.1` | metres_per_second | `definition` | - |
+| `A.crossings.closure_duration_passenger_s` | `60.0` | s | `literature` | 30 - 120 |
 | `A.crossings.closure_duration_s` | `240` | seconds | `assumed` | 60 - 600 |
+| `A.crossings.closure_source` | `schedule_derived` | enum | `assumed` | `assumed_uniform`, `schedule_derived` |
 | `A.crossings.closure_window_h` | `[0.0, 24.0]` | hours | `definition` | - |
 | `A.crossings.closures_per_day` | `30` | closures_per_day | `assumed` | 10 - 60 |
 | `A.crossings.corridor_exclusion_m` | `500.0` | metres | `definition` | - |
+| `A.crossings.freight_closures_per_day` | `0` | closures_per_day_per_site | `assumed` | 0 - 30 |
 | `A.crossings.freight_road_names` | `["Saint James Road", "Clyde Street"]` | road_names | `literature` | **held fixed** |
 | `A.crossings.link_match_radius_m` | `30.0` | metres | `definition` | **held fixed** |
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
+| `A.crossings.rail_match_radius_m` | `40.0` | m | `definition` | - |
 | `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
 | `A.gradient.bike_downhill_speedup_per_pct` | `0.015` | share_of_flat_speed_per_pct | `literature` | 0 - 0.03 |
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
@@ -182,12 +186,19 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.schedule_mapping.thread_chunk_size` | `100` | routes | `definition` | - |
 | `A.schedule_mapping.transport_mode_assignment` | `{"bus": ["car", "bus"], "rail": ["rail"], "light_rail": ["light_rail", "tram", "car"], "tram": ["light_rail...` | network_modes_by_schedule_mode | `definition` | - |
 | `A.schedule_mapping.travel_cost_type` | `linkLength` | cost_basis | `definition` | - |
+| `A.signals.control_regime` | `scats_adaptive` | enum | `assumed` | `fixed_time`, `scats_adaptive` |
 | `A.signals.delay_per_intersection_s` | `26.0` | seconds | `assumed` | 15 - 40 |
 | `A.signals.junction_match_m` | `60.0` | metres | `assumed` | 30 - 100 |
 | `A.signals.min_green_s` | `6.0` | seconds | `literature` | 4 - 10 |
 | `A.signals.n_corridor_intersections` | `14` | count | `observed` | - |
 | `A.signals.representation` | `explicit_signals` | enum | `assumed` | `implicit_delay`, `explicit_signals` |
 | `A.signals.saturation_flow_veh_h_lane` | `1900.0` | vehicles_per_hour_per_lane | `literature` | 1800 - 2050 |
+| `A.signals.scats.cycle_step_s` | `6.0` | s | `literature` | 3 - 12 |
+| `A.signals.scats.ds_deadband` | `0.05` | ratio | `assumed` | 0.02 - 0.1 |
+| `A.signals.scats.ds_smoothing` | `0.5` | weight | `assumed` | 0.1 - 0.9 |
+| `A.signals.scats.max_cycle_s` | `150.0` | s | `literature` | 110 - 180 |
+| `A.signals.scats.min_cycle_s` | `30.0` | s | `literature` | 20 - 60 |
+| `A.signals.scats.target_degree_saturation` | `0.9` | ratio | `literature` | 0.8 - 0.98 |
 | `A.signals.scats_match_radius_m` | `60` | metres | `definition` | **held fixed** |
 | `A.signals.scats_phasing` | *(null - unobtained)* | phase_plan | `assumed` | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
 | `A.signals.tsp.compensation_enabled` | `true` | boolean | `literature` | `True`, `False` |
@@ -319,11 +330,23 @@ The freespeed FLOOR written during a closure. A numerical guard, not a model val
 
 ***definition** · status **active** · DECISIONS.md §9.76*
 
+#### `A.crossings.closure_duration_passenger_s`
+
+How long the boom stays down for ONE scheduled PASSENGER train. Under the schedule-derived closure source a closure is emitted per train, so the duration has to be a per-train figure - and the 240 s of A.crossings.closure_duration_s is not one. That value is anchored on the TfNSW statement that closures run "up to ten minutes", which describes a long coal train, and applying it per passenger train would hold the Islington boom down 204 x 240 s = 13.6 hours a weekday, which is not what that crossing does. A boom-gate closure decomposes into a warning/lead time before arrival, the train transit itself, and a short lag before the booms lift; a two-to-four-car Hunter Line set clears the crossing in seconds, so the lead and lag dominate. 60 s is that sum at standard operation and is swept 30-120 s because neither the operated lead time nor the boom lag is published for these two sites.
+
+***literature** · status **active** · DECISIONS.md §9.90*
+
 #### `A.crossings.closure_duration_s`
 
-How long one closure holds the crossing shut. ASSUMED and swept against the official "up to ten minutes" bound; the point value is a mid-band working value, never a claim.
+Closure duration for a FREIGHT movement, and for every closure under the assumed_uniform member of A.crossings.closure_source. Retained at its recorded basis - the TfNSW "up to ten minutes" statement describes a long coal train, not a passenger set - while passenger closures take A.crossings.closure_duration_passenger_s (9.90). How long one closure holds the crossing shut. ASSUMED and swept against the official "up to ten minutes" bound; the point value is a mid-band working value, never a claim.
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
+
+#### `A.crossings.closure_source`
+
+Under schedule_derived, build_level_crossings.py counts the scheduled rail movements whose mapped route traverses the rail links at each crossing, and times each closure from that service’s own stop time at the nearest rail stop. Measured on the WEEKDAY schedule: 110 movements at Saint James Road (Adamstown) and 204 at Clyde Street (Islington), against the 30-per-site the assumed member emits - and peaked (17h carries 9 and 14) rather than flat, which is what decides whether a closure lands in the traffic it delays.
+
+***assumed** · status **active** · DECISIONS.md §9.90*
 
 #### `A.crossings.closure_window_h`
 
@@ -333,7 +356,7 @@ The day window closures are spread across. The freight network operates around t
 
 #### `A.crossings.closures_per_day`
 
-How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented.
+Closures per day per site under the assumed_uniform member of A.crossings.closure_source ONLY. Superseded as the default by 9.90, which derives both the count and the time from the city’s own mapped rail timetable; kept because the two members are a measurable comparison and because every arm before 9.90 ran on this value. How many boom closures each crossing sees per day. ASSUMED - no closure log is published - and swept; spread uniformly across A.crossings.closure_window_h because any temporal pattern would be invented.
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76*
 
@@ -342,6 +365,12 @@ How many boom closures each crossing sees per day. ASSUMED - no closure log is p
 The Stewart Avenue guard (9.75): the builder REFUSES to emit a closure within this distance of the tram alignment, because the corridor light-rail crossing is a T-aspect signal site owned by the signal build (#73) and must never be double-treated as a boom-gate closure. The nearest legitimate crossing sits kilometres away, so the value only needs to separate the corridor from the suburbs.
 
 ***definition** · status **active** · DECISIONS.md §9.75, 9.76*
+
+#### `A.crossings.freight_closures_per_day`
+
+NON-TIMETABLED freight movements added on top of the schedule-derived passenger closures at each crossing. The point value is ZERO on the recorded evidence of 9.70: the coal chain - the overwhelming majority of freight on this network at ~110 movements/day - has run on dedicated track grade-separated since 2006, so it does not cross these roads at grade at all. What the zero does NOT assert is that no non-coal freight ever uses these lines; that is unquantified because ARTC publishes no movement log, which is why the field exists and is swept to 30 rather than being left out. Read only under A.crossings.closure_source = schedule_derived.
+
+***assumed** · status **active** · DECISIONS.md §9.90*
 
 #### `A.crossings.freight_road_names`
 
@@ -368,6 +397,12 @@ How close a car link named by A.crossings.freight_road_names must pass to the cr
 OSM maps a double-track crossing as one node per track a few metres apart; nodes closer than this are one physical crossing.
 
 ***definition** · status **active** · DECISIONS.md §9.76*
+
+#### `A.crossings.rail_match_radius_m`
+
+Radius within which a mapped RAIL link counts as the railway at a level crossing, for the schedule-derived closure count. A data-join tolerance, not a model parameter, and held fixed for the same reason as A.signals.scats_match_radius_m: no output varies across it. Measured midpoint distances at the two sites are 29.6 m (Saint James Road) and 8.0 m (Clyde Street), and the next-nearest rail link at either site sits far enough away that every radius from about 35 m to 55 m selects the identical set. Declaring a sweep over which the output is constant is the defect this project has already hit three times.
+
+***definition** · status **active** · DECISIONS.md §9.90*
 
 #### `A.crossings.representation`
 
@@ -843,6 +878,12 @@ Whether the mapper minimises link LENGTH or link TRAVEL TIME. Length, so a mappe
 
 ***definition** · status **active** · DECISIONS.md §9.34, 15*
 
+#### `A.signals.control_regime`
+
+Signal control logic. scats_adaptive (the value since 9.88) runs the SCATS algorithm in citysim.ScatsSignalController: degree of saturation measured at every signalised stop line against the saturation flow the mobsim actually enforces, incremental cycle-length adaptation toward a target DS on the critical movement, and splits allocated to equalise DS across stages, with the generated plan as the STARTING point and the intersection’s own clearances preserved. fixed_time executes that generated plan verbatim and reproduces every arm before 9.88 exactly, which is why it is kept. Offsets are NOT adapted under either member: SCATS selects those from an operator-tuned per-subsystem library, which is exactly the unreleased artefact, and inventing one would assert a coordination pattern nobody measured. Transit priority composes with either member - the priority layer lives inside the adaptive controller too, so the corridor never silently loses it.
+
+***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.regime`*
+
 #### `A.signals.delay_per_intersection_s`
 
 Proxy signal delay per corridor intersection, used to decompose scheduled run time in the absence of SCATS phasing. Downstream of A.signals.scats_phasing.
@@ -859,7 +900,7 @@ How close an A2 intersection's clustered OSM signal nodes must sit to a network 
 
 Minimum green time in a generated SUMO signal program.
 
-***literature** · status **active** · DECISIONS.md §5, 9.78*
+***literature** · status **active** · DECISIONS.md §5, 9.78 · MATSim `scats.minGreenS`*
 
 #### `A.signals.n_corridor_intersections`
 
@@ -877,7 +918,43 @@ Which representation carries the corridor signal effect. implicit_delay: A.signa
 
 Stop-line saturation flow used to RE-CAPACITATE signalised approaches when signals are explicit. A conventional MATSim link capacity already encodes average throughput INCLUDING red time (capacity = s x g/C); an explicit signal must meter an s-capacity link, never an s x g/C one - metering the metered value counts the signal twice (dossier 04 6.1).
 
-***literature** · status **active** · DECISIONS.md §9.76*
+***literature** · status **active** · DECISIONS.md §9.76 · MATSim `scats.saturationFlowVehHLane`*
+
+#### `A.signals.scats.cycle_step_s`
+
+The most the cycle length may move in ONE cycle. SCATS adapts incrementally rather than jumping to a computed optimum, so that one noisy cycle cannot destroy coordination with neighbouring intersections; increments of a few seconds are what the published descriptions of the system describe.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.cycleStepS`*
+
+#### `A.signals.scats.ds_deadband`
+
+The band around the target degree of saturation inside which the cycle is left alone. Without it the cycle hunts - a measured DS never lands exactly on the target, so every cycle would step one way or the other. The published descriptions establish that SCATS is deliberately sluggish but not the width, so this is assumed and swept.
+
+***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.dsDeadband`*
+
+#### `A.signals.scats.ds_smoothing`
+
+Exponential smoothing weight on the newest cycle's measured degree of saturation. SCATS filters its counts rather than re-timing from a single cycle; 1.0 would react to the last cycle alone (noisy at the low flows that occupy most of the day) and 0.0 would never react at all. The filter exists in the real system; its constant is unpublished, so this is assumed and swept.
+
+***assumed** · status **active** · DECISIONS.md §9.88 · MATSim `scats.dsSmoothing`*
+
+#### `A.signals.scats.max_cycle_s`
+
+Longest cycle the controller may choose - the upper end of the documented SCATS user limits (dossier 03/09). Sweep-basis evidence (9.75, operated SCATS interpreted history republished in planning-portal TIA PPSHCC-137): corridor-adjacent TCS 1138 runs 72-81 s and parallel-arterial TCS 923 runs 104-113 s, so the operated corridor sits well inside this ceiling and the ceiling binds only under saturation.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.maxCycleS`*
+
+#### `A.signals.scats.min_cycle_s`
+
+Shortest cycle the controller may choose. The documented SCATS user limits run roughly 30-150 s (signalling dossier 03/09), and this is the lower end. It is a bound on the ALGORITHM, not a modelling assumption about this corridor: the controller is additionally floored by the intersection's own geometry - every clearance plus a minimum green per stage - and that floor outranks this value wherever it is higher.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.minCycleS`*
+
+#### `A.signals.scats.target_degree_saturation`
+
+The degree of saturation SCATS holds the CRITICAL (busiest) movement near by lengthening or shortening the cycle. Published descriptions of SCATS operation put the working target near 0.9 - high enough to use the intersection, low enough to leave recovery room after a surge. Swept because the operated Newcastle target is unpublished, and the corridor run time this study measures is sensitive to it.
+
+***literature** · status **active** · DECISIONS.md §9.88 · MATSim `scats.targetDegreeSaturation`*
 
 #### `A.signals.scats_match_radius_m`
 
@@ -1041,12 +1118,13 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 89 fields*
+*`cities/newcastle/registry/B_demand.json` - 97 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `A.taxi.fleet_representation` | `finite_fleet` | enum | `assumed` | `absent`, `finite_fleet` |
 | `B.activity.act_duration_min` | `{"HW": 465, "HE": 360, "HS": 45, "HO": 90, "WB": 60, "NHB": 20, "HX": 5}` | minutes | `assumed` | plus/minus 25% |
 | `B.activity.child_tour_retention` | `0.4` | probability | `assumed` | 0.25 - 0.6 |
 | `B.activity.day_horizon_s` | `108000` | seconds | `definition` | - |
@@ -1099,10 +1177,12 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.max_speed_kmh` | `100.0` | km/h | `definition` | - |
 | `B.freight.pce` | `2.0` | passenger_car_equivalents | `literature` | 1.5 - 3.5 |
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
+| `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
 | `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
+| `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
 | `B.motorbike.trip_share` | `0.0036` | share_of_trips | `assumed` | 0 - 0.01 |
@@ -1116,26 +1196,37 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.licence_rate_by_age_band` | `[0, 0, 0, 0.62, 0.88, 0.93, 0.94, 0.93, 0.88, 0.72, 0.45]` | probability | `literature` | plus/minus 10% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
-| `B.ride.bound_pairing_window_min` | `30.0` | minutes | `derived` | derived: bound_pairing_window_min = time_mutation_range_s / 60 |
-| `B.ride.escort_coherence_rate` | `0.1` | share_per_iteration | `assumed` | 0 - 0.5 |
-| `B.ride.joint_coherence_rate` | `0.1` | share_per_iteration | `assumed` | 0 - 0.5 |
+| `B.ride.bound_pairing_window_min` | `60.0` | minutes | `derived` | derived: bound_pairing_window_min = 2 * time_mutation_range_s / 60 |
+| `B.ride.escort_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
+| `B.ride.joint_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.max_passengers_per_vehicle` | `4` | persons | `assumed` | 1 - 4 |
 | `B.ride.pairing_enabled` | `true` | boolean | `definition` | - |
-| `B.ride.pairing_rule` | `both_links` | enum | `assumed` | `both_links`, `origin_link`, `dest_link`, `window_only` |
+| `B.ride.pairing_rule` | `both_links` | enum | `assumed` | `both_links`, `route_contains`, `origin_link`, `dest_link`, `window_only` |
 | `B.ride.pairing_window_min` | `15.0` | minutes | `assumed` | 5 - 60 |
 | `B.ride.physical_boarding` | `true` | boolean | `definition` | - |
 | `B.ride.pickup_dwell_s` | `0.0` | seconds | `assumed` | 0 - 120 |
 | `B.ride.remode_unpaired` | `true` | boolean | `definition` | - |
+| `B.ride.unpaired_fallback` | `licensed_drive_else_walk` | enum | `assumed` | `licensed_drive_else_walk`, `walk` |
 | `B.ride.wait_for_driver` | `true` | boolean | `definition` | - |
 | `B.seed.master` | `20260810` | integer_seed | `definition` | - |
 | `B.taxi.daily_trips_band` | `[15000, 25000]` | trips_per_day | `literature` | **held fixed** |
+| `B.taxi.deadhead_min` | `12.0` | minutes | `assumed` | 0 - 30 |
 | `B.taxi.fare_per_km_rideshare_aud` | `1.5` | AUD_per_km | `literature` | 1.2 - 1.8 |
 | `B.taxi.fare_per_km_taxi_aud` | `2.52` | AUD_per_km | `measured` | **held fixed** |
 | `B.taxi.flagfall_rideshare_aud` | `1.95` | AUD | `literature` | 1.5 - 2.5 |
 | `B.taxi.flagfall_taxi_aud` | `5.0` | AUD | `measured` | **held fixed** |
+| `B.taxi.fleet_size` | `800` | vehicles | `derived` | derived: fleet_size = mean(daily_trips_band) / vehicle_trips_per_day |
+| `B.taxi.max_wait_min` | `20.0` | minutes | `assumed` | 10 - 45 |
 | `B.taxi.min_unaccompanied_age` | `18` | years | `assumed` | 0 - 18 |
 | `B.taxi.rideshare_trip_share` | `0.66` | share_of_p2p_trips | `literature` | 0.4 - 0.8 |
+| `B.taxi.vehicle_trips_per_day` | `25.0` | trips_per_vehicle_per_day | `literature` | 15 - 35 |
 | `B.walk.pce` | `0.0` | passenger_car_equivalents | `definition` | - |
+
+#### `A.taxi.fleet_representation`
+
+Taxi was the ONLY mode this model constrained by nothing - car by ownership, licence and chain consistency; ride by a declared driver; bike by an availability attribute and an age gate; pt by a timetable; truck by its own subpopulation; motorbike by a locked carve; taxi by an age gate and nothing else. Under finite_fleet, citysim.TaxiFleetEngine allocates every taxi leg to a vehicle at BeforeMobsim and REFUSES the ones no vehicle can reach, so waiting emerges from supply instead of being the declared constant C.taxi.wait_min.
+
+***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.representation`*
 
 #### `B.activity.act_duration_min`
 
@@ -1511,6 +1602,14 @@ Internal heavy-vehicle trips generated per resident light-vehicle trip, applied 
 
 > **Sweep basis.** The default restates the MEASURED median heavy share of classified station flow (B.counts.heavy_vehicle_share, 0.0652) as a ratio to light vehicles: 0.0652 / (1 - 0.0652). What is ASSUMED is the transfer from a flow share at count stations to a trip share of the resident vehicle-trip base - trucks travel further per trip than cars, so a flow share overstates a trip share by an unobserved factor, and no freight OD survey exists for this or any comparable city in the package. The lower bound is zero, which turns the internal freight layer off entirely so its whole effect is measurable as a sweep member; the upper bound is roughly the classified stations' upper-quartile share expressed the same way.
 
+#### `B.mode.bike_feasible_km`
+
+DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `bike` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long bike is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.
+
+***derived** · status **active** · DECISIONS.md §9.106 · MATSim `modeAvailability.bikeFeasibleKm`*
+
+> **Derived from** `C.constraint.trip_length_km.bike`: the 99th percentile of an exponential trip-length distribution with the OBSERVED mean this package already declares: -ln(0.01) x 5.2 km = 23.95 km. The exponential is the standard form for trip lengths and is stated rather than assumed silently; what it supplies is a TAIL, and only the tail is used.
+
 #### `B.mode.bound_passenger_seed`
 
 Seed mode for a passenger tour whose BOTH directions are covered by serve-tour bindings (round-trip coverage). Tours with partial or no coverage keep the uninformed draw. Consumed by build_matsim_plans.py.
@@ -1538,6 +1637,14 @@ Seed mode for a serve (HX) tour that is BOUND to a passenger trip (household 9.4
 ***derived** · status **active** · DECISIONS.md §9.68*
 
 > **Derived from** `B.ride.pairing_enabled`, `B.mode.seed_split`: the pairing engine pairs ride legs with CAR legs only, so a bound serve tour seeded with any other mode cannot serve the passenger booked onto it - the tour's reason to exist. MEASURED (9.68): under the uniform seed a bound driver's serve tour started as car with probability 0.2, and 0.196 was the outbound pairing ceiling the first converged arm actually realised - the seed probability WAS the ceiling. This forces only the SEED of bound serve tours; SubtourModeChoice remains free to move them, and unbound serve tours keep the uniform draw.
+
+#### `B.mode.walk_feasible_km`
+
+DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `walk` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long walk is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.
+
+***derived** · status **active** · DECISIONS.md §9.106 · MATSim `modeAvailability.walkFeasibleKm`*
+
+> **Derived from** `C.constraint.trip_length_km.walk`: the 99th percentile of an exponential trip-length distribution with the OBSERVED mean this package already declares: -ln(0.01) x 0.7 km = 3.22 km. The exponential is the standard form for trip lengths and is stated rather than assumed silently; what it supplies is a TAIL, and only the tail is used - the bound refuses the far end of the distribution, not its body. For walk the derivation is corroborated by a second declared observation that was not used to make it: the observed mean walk trip TIME is 12.3 min, whose exponential p99 is 57 min, which at this model's own capped walk speed of 1.25 m/s is 4.2 km - agreeing with the distance derivation to within a kilometre.
 
 #### `B.motorbike.length_m`
 
@@ -1637,23 +1744,23 @@ Whether `ride` is withheld from a person with nobody to drive them. MATSim's sta
 
 #### `B.ride.bound_pairing_window_min`
 
-The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly.
+The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly. CORRECTED IN 9.95, and the error was in the identity rather than the value. It read time_mutation_range_s / 60, which is ONE agent half-width - but the mutator moves each member of a pair INDEPENDENTLY, as this field description already said. Two independent draws on +-1800 s can land 3600 s apart, so the relative drift a declared pair can accumulate is TWICE the half-width, not equal to it. The window was therefore half the size of the drift it exists to cover, and it was refusing pairs the model itself had separated. Measured on arm 20260829T054941 at iteration 100 with src/analyse/diagnose_ride_pairing.py: 3,987 declared ride legs (13.13% of all of them) had the driver making the SAME trip, both endpoints matching exactly, and were refused on the clock alone - median gap 53.6 minutes, minimum exactly 30.0, which is the old window showing its own edge in the data. This is a correction to a derivation, not a tuning: the value still cannot move without moving the mutation range that produces the drift, and the realised gap is still paid for as waiting time in score.
 
-***derived** · status **active** · DECISIONS.md §9.85 · MATSim `ridePairing.boundWindowMinutes`*
+***derived** · status **active** · DECISIONS.md §9.85, 9.95 · MATSim `ridePairing.boundWindowMinutes`*
 
-> **Derived from** `RUN.replanning.time_mutation_range_s`: bound_pairing_window_min = time_mutation_range_s / 60
+> **Derived from** `RUN.replanning.time_mutation_range_s`: bound_pairing_window_min = 2 * time_mutation_range_s / 60
 
 #### `B.ride.escort_coherence_rate`
 
-Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together.
+Rate at which an escort driver and the household member they were generated to carry are re-offered the coherent state after MATSim's per-agent replanning has split them. B2 generates escort travel as a PAIR (B2_escort_bindings_<DAY>.csv, from census household structure and the HTS escort rates) and SubtourModeChoice moves one agent at a time, so the two-sided state is unreachable by any per-agent strategy and cannot recohere once lost. Measured on arm 20260826T060938 at iteration 150: 84.53% of trips arriving at an escort activity are car while only 11.45% of escort-bound members ride - the escort tours run largely empty, suppressing ride and inflating car together. RAISED 0.1 -> 0.4 in 9.93, and the reason is SEARCH COMPLETENESS rather than fit: the listener PROPOSES the coherent plan and ChangeExpBeta still decides on score, so a higher rate cannot make a bad plan win - it can only reduce the chance that a good two-sided plan is never offered at all. The state it restores is unreachable by ANY per-agent strategy, so the only thing a low rate buys is a smaller chance of finding it. Measured on the paired 1% diagnostics at iteration 40: ride 16.7991% -> 18.1689%, bike 7.6523% -> 6.9696%, occupancy_from_pairings 0.2282 -> 0.2505 and ride legs retained 3,833 -> 4,099, while pair_rate barely moved (0.5025 -> 0.5067) - the listener is keeping more coherent pairs in PLANS, which is its design. Recorded this explicitly because the move improves a fit and could be mistaken for tuning: the argument stands on the mechanism, and 0.0 still recovers the pre-9.82 behaviour exactly.
 
-***assumed** · status **active** · DECISIONS.md §9.82 · MATSim `ridePairing.escortCoherenceRate`*
+***assumed** · status **active** · DECISIONS.md §9.82, 9.93 · MATSim `ridePairing.escortCoherenceRate`*
 
 #### `B.ride.joint_coherence_rate`
 
-Rate at which a joint-tour driver and their bound household companion are re-offered the coherent car+ride state after per-agent replanning has split them. The joint binder (9.84) generates two-person travel as a PAIR, and SubtourModeChoice moves one agent at a time - the 9.82 defect class, which is why the same propose-never-impose listener carries it.
+Rate at which a joint-tour driver and their bound household companion are re-offered the coherent car+ride state after per-agent replanning has split them. The joint binder (9.84) generates two-person travel as a PAIR, and SubtourModeChoice moves one agent at a time - the 9.82 defect class, which is why the same propose-never-impose listener carries it. RAISED 0.1 -> 0.4 in 9.93, and the reason is SEARCH COMPLETENESS rather than fit: the listener PROPOSES the coherent plan and ChangeExpBeta still decides on score, so a higher rate cannot make a bad plan win - it can only reduce the chance that a good two-sided plan is never offered at all. The state it restores is unreachable by ANY per-agent strategy, so the only thing a low rate buys is a smaller chance of finding it. Measured on the paired 1% diagnostics at iteration 40: ride 16.7991% -> 18.1689%, bike 7.6523% -> 6.9696%, occupancy_from_pairings 0.2282 -> 0.2505 and ride legs retained 3,833 -> 4,099, while pair_rate barely moved (0.5025 -> 0.5067) - the listener is keeping more coherent pairs in PLANS, which is its design. Recorded this explicitly because the move improves a fit and could be mistaken for tuning: the argument stands on the mechanism, and 0.0 still recovers the pre-9.82 behaviour exactly.
 
-***assumed** · status **active** · DECISIONS.md §9.84 · MATSim `ridePairing.jointCoherenceRate`*
+***assumed** · status **active** · DECISIONS.md §9.84, 9.93 · MATSim `ridePairing.jointCoherenceRate`*
 
 #### `B.ride.max_passengers_per_vehicle`
 
@@ -1671,9 +1778,9 @@ Whether a `ride` leg may NAME the household member who drives it, and take that 
 
 #### `B.ride.pairing_rule`
 
-The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. Consumed by src/java/citysim/RidePairingEngine.
+The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. `route_contains` generalises that to a SEGMENT of the driver's trip and is implemented and measured (9.102), but is a sweep member rather than the value. Consumed by src/java/citysim/RidePairingEngine.
 
-***assumed** · status **active** · DECISIONS.md §9.44 · MATSim `ridePairing.rule`*
+***assumed** · status **active** · DECISIONS.md §9.44, 9.102 · MATSim `ridePairing.rule`*
 
 #### `B.ride.pairing_window_min`
 
@@ -1703,6 +1810,12 @@ Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the Before
 
 ***definition** · status **active** · DECISIONS.md §9.55 · MATSim `ridePairing.remodeUnpaired`*
 
+#### `B.ride.unpaired_fallback`
+
+How a ride leg that no household driver can serve is physically executed for the iteration in which it failed. It is an EXECUTION, never an amputation: the leg keeps `ride` as an alternative, restored at AfterMobsim, so a pairing failure stays reversible (9.81). This field decides only what the agent actually does that day. Consumed by src/java/citysim/RidePairingEngine.
+
+***assumed** · status **active** · DECISIONS.md §9.55, 9.81, 9.105 · MATSim `ridePairing.unpairedFallback`*
+
 #### `B.ride.wait_for_driver`
 
 Whether a booked passenger whose car is not at the meeting point yet physically WAITS for it, bounded by the declared pairing window (B.ride.pairing_window_min - the same tolerance the booking was made under, so no second number is invented). The 9.53 boarding engine could board only a car ALREADY parked at the link; a passenger departing first was a counted miss falling back to teleport - the measured x6.91 window layer of the realisation gap wearing its physical face. Waiting is real elapsed time: a timed-out passenger completes on the Tier-1 clock FROM THE TIMEOUT, so waiting costs what waiting costs and scores accordingly. False restores the 9.53 behaviour. Consumed by citysim.JointRideEngine.
@@ -1724,6 +1837,12 @@ The inferred central band of daily point-to-point trips in the study area (IPART
 > **Held fixed.** A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 >
 > *Departure requires: the levy trip counts, if ever requested*
+
+#### `B.taxi.deadhead_min`
+
+Empty running between setting one passenger down and reaching the next - the part of a vehicle’s day that carries nobody, and the reason a fleet of N serves fewer trips than the arithmetic of fare durations alone suggests. Declared as unavailable TIME rather than modelled as routed empty legs, so it does NOT load the road network; that simplification is stated here rather than hidden, and it is the one thing a full demand-responsive implementation would add. Zero recovers a fleet that teleports between fares, which is the behaviour to compare against.
+
+***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.deadheadMinutes`*
 
 #### `B.taxi.fare_per_km_rideshare_aud`
 
@@ -1757,6 +1876,20 @@ Taxi flag fall, urban maximum, from 1 July 2025 (archived: data/raw/p2p/tfnsw_p2
 >
 > *Departure requires: a new Fares Order*
 
+#### `B.taxi.fleet_size`
+
+Taxi and rideshare vehicles serving the study area, AT FULL SCALE - the engine scales it by qsim.flowCapacityFactor for the same reason the SCATS saturation flow is scaled (9.88): a sampled run is a city whose capacities were scaled, and a full-scale fleet serving a tenth of the demand would constrain nothing. Derived rather than declared, because the observed quantity is a TRIP volume (B.taxi.daily_trips_band, IPART 2025) and the only thing needed to turn it into vehicles is how many fares one vehicle carries in a day.
+
+***derived** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.fleetSize`*
+
+> **Derived from** `B.taxi.daily_trips_band`, `B.taxi.vehicle_trips_per_day`: fleet_size = mean(daily_trips_band) / vehicle_trips_per_day
+
+#### `B.taxi.max_wait_min`
+
+How long a passenger waits for a vehicle before abandoning the taxi trip. It is what makes a finite fleet BIND: without a refusal threshold a shortage would only delay every request rather than turning any away, and the mode share would not move. It is NOT C.taxi.wait_min, which is the typical wait priced into the taxi mode constant; this is the tail of that distribution, the point at which the traveller gives up. Assumed and swept broadly because no Newcastle abandonment figure is published, and because a regional city outside its CBD is where this value does its work.
+
+***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.maxWaitMinutes`*
+
 #### `B.taxi.min_unaccompanied_age`
 
 Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49).
@@ -1769,6 +1902,12 @@ The rideshare share of point-to-point trips, used to BLEND the measured taxi sch
 
 ***literature** · status **active** · DECISIONS.md §9.76*
 
+#### `B.taxi.vehicle_trips_per_day`
+
+Fares one taxi carries in a day, which is what turns an observed TRIP volume into a vehicle count. Point-to-point operators report full-time vehicles working in the low tens of fares per day, and the band here is deliberately wide because utilisation varies with shift patterns, rank-versus-booking mix and how much of the day a vehicle is actually crewed. It is the ONE free quantity in the fleet size: everything else in the identity is the observed B.taxi.daily_trips_band. Swept 15-35, which moves the fleet by a factor of 2.3 and is the honest width given that no Newcastle utilisation figure is published.
+
+***literature** · status **active** · DECISIONS.md §9.99*
+
 #### `B.walk.pce`
 
 Road capacity a network-simulated pedestrian consumes: zero, by definition - a walker moves along the network beside the carriageway (the sidewalk, expressed in queue arithmetic), physically present on every link (real LinkEnter/LinkLeave events, speed-capped at the declared walking speed) while neither impeding nor being impeded by motor traffic. Not a tunable: a pedestrian who consumed road capacity would be walking in the traffic lane.
@@ -1777,18 +1916,45 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 6 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 15 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
+| `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
+| `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
+| `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
+| `CAL.pt_split.station_scope` | `target_lga` | enum | `assumed` | `target_lga`, `all_observed` |
+| `CAL.pt_split.window_months` | `12` | months | `assumed` | 6 - 24 |
 | `CAL.search.convergence_delta` | `0.25` | percentage_points | `assumed` | 0.1 - 1 |
 | `CAL.search.max_rounds` | `3` | count | `assumed` | 1 - 6 |
 | `CAL.search.points_per_parameter` | `3` | count | `assumed` | 3 - 7 |
+| `CAL.taxi.lga_concentration` | `1.0` | ratio | `assumed` | 1 - 2 |
+| `CAL.truck.count_year_from` | `2023` | year | `assumed` | 2019 - 2025 |
+
+#### `CAL.gate.pass_deviation_pct`
+
+The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything.
+
+***definition** · status **active** · DECISIONS.md §9.87*
+
+#### `CAL.gate.stop_deviation_pct`
+
+The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading.
+
+***definition** · status **active** · DECISIONS.md §9.87*
+
+#### `CAL.mode_split.commute_transfer_tolerance`
+
+The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%.
+
+***assumed** · status **active** · DECISIONS.md §9.87*
 
 #### `CAL.objective.components`
 
@@ -1812,6 +1978,30 @@ How many independent numbers the objective actually contains. The loop refuses t
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
 
+#### `CAL.pt_split.break_ratio`
+
+A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near.
+
+***assumed** · status **active** · DECISIONS.md §9.100*
+
+#### `CAL.pt_split.lr_observed_stop_share`
+
+The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged.
+
+***measured** · status **active** · DECISIONS.md §9.100*
+
+#### `CAL.pt_split.station_scope`
+
+Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all.
+
+***assumed** · status **active** · DECISIONS.md §9.100*
+
+#### `CAL.pt_split.window_months`
+
+How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode.
+
+***assumed** · status **active** · DECISIONS.md §9.87*
+
 #### `CAL.search.convergence_delta`
 
 A coordinate pass that improves the objective by less than this ends the search. In the units of the objective, which is mean absolute mode-share error in percentage points. Below roughly 0.1 pp the search would be chasing seed noise rather than parameter effects, which DECISIONS.md 9.7 measured at the same order.
@@ -1829,6 +2019,18 @@ Maximum coordinate-descent passes over the free parameters. The loop stops earli
 Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Three is the smallest number that can show curvature. Each point is a full run, so this multiplies wall clock directly.
 
 ***assumed** · status **active** · DECISIONS.md §9.16*
+
+#### `CAL.taxi.lga_concentration`
+
+How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned.
+
+***assumed** · status **active** · DECISIONS.md §9.91*
+
+#### `CAL.truck.count_year_from`
+
+The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year).
+
+***assumed** · status **active** · DECISIONS.md §9.87*
 
 ## Behavioural parameters (C1)
 
@@ -2596,7 +2798,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.qsim.car_vehicle` | `{"length_m": 7.5, "width_m": 1.0, "pce": 1.0}` | metres/metres/passenger_car_equivalents | `definition` | - |
 | `RUN.qsim.end_time_h` | `30` | hours | `definition` | - |
 | `RUN.qsim.link_dynamics` | `PassingQ` | enum | `definition` | - |
-| `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike"]` | enum | `definition` | - |
+| `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
 | `RUN.qsim.vehicles_source` | `modeVehicleTypesFromVehiclesData` | policy | `definition` | - |
@@ -2830,9 +3032,9 @@ The queue discipline vehicles obey within a link: FIFO (MATSim's default - vehic
 
 #### `RUN.qsim.main_mode`
 
-The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; and walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53).
+The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53).
 
-***definition** · status **active** · DECISIONS.md §9.54 · MATSim `qsim.mainMode`*
+***definition** · status **active** · DECISIONS.md §9.54, 9.86 · MATSim `qsim.mainMode`*
 
 #### `RUN.qsim.snapshot_period`
 
@@ -3064,7 +3266,7 @@ Maximum stop-to-stop distance at which the PT router will create a transfer. THI
 
 #### `RUN.travel_time.analysed_modes`
 
-Which modes contribute observed link travel times. Only car is physically simulated (RUN.qsim.main_mode), so only car can contribute one. See RUN.travel_time.separate_modes: the two are one decision in two parameters.
+Which modes contribute observed link travel times. Of the physically simulated modes (RUN.qsim.main_mode) only car is analysed here: the observed link travel time this feeds back to routing is the car stream's, and truck, motorbike, bike, walk and taxi (9.86) each ride that stream at their own declared PCE rather than defining a separate one. See RUN.travel_time.separate_modes: the two are one decision in two parameters.
 
 ***definition** · status **active** · DECISIONS.md §9.29, 15 · MATSim `travelTimeCalculator.analyzedModes`*
 

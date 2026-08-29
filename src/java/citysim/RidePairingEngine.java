@@ -32,6 +32,7 @@ import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
 import org.matsim.core.controler.listener.AfterMobsimListener;
 import org.matsim.core.controler.listener.BeforeMobsimListener;
+import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.StageActivityTypeIdentifier;
 import org.matsim.core.utils.misc.OptionalTime;
 
@@ -153,6 +154,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      *  {@link AvailabilityModesCalculator}'s sibling attributes. */
     public static final String LICENCE_ATTRIBUTE = "hasLicense";
     public static final String LICENCE_YES = "yes";
+    /** Person attribute naming whether a car is available to them. */
+    public static final String CAR_AVAIL_ATTRIBUTE = "carAvail";
+    public static final String CAR_AVAIL_NEVER = "never";
 
     private static final String OUT_FILE = "ride_pairing.csv";
     private static final String HEADER =
@@ -195,6 +199,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private final Map<Id<Person>, Set<String>> boundDriver = new HashMap<>();
     /** Licence holding per person, resolved once, for the same reason. */
     private final Map<Id<Person>, Boolean> licensed = new HashMap<>();
+    /** Whether a car is available to this person at all. */
+    private final Map<Id<Person>, Boolean> carAvailable = new HashMap<>();
+    /** The mode each remoded leg was actually executed as, so the
+     *  AfterMobsim restore looks for the trip it really created. */
+    private final Map<RideLeg, String> remodedAs = new HashMap<>();
     private boolean indexed = false;
     /** Population membership does not change during a run, so the id-ordered
      *  traversal that makes the pairing deterministic is built once. */
@@ -325,15 +334,23 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         private final Id<Link> to;
         private final double departure;
         private final double routedTravelTime;
+        /**
+         * Every link the driver actually drives, start to end. A passenger can
+         * only be carried on a segment of it, so the path - not the pair of
+         * endpoints - is what a containment test and a time apportionment need.
+         */
+        private final List<Id<Link>> path;
         private int carrying = 0;
 
         DriverLeg(final Id<Person> person, final Id<Link> from, final Id<Link> to,
-                  final double departure, final double routedTravelTime) {
+                  final double departure, final double routedTravelTime,
+                  final List<Id<Link>> path) {
             this.person = person;
             this.from = from;
             this.to = to;
             this.departure = departure;
             this.routedTravelTime = routedTravelTime;
+            this.path = path;
         }
     }
 
@@ -419,6 +436,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         inFlight.clear();
         bookings.clear();
         remodedThisMobsim.clear();
+        remodedAs.clear();
         missNoCandidate = 0;
         missWindow = 0;
         missEndpoints = 0;
@@ -494,7 +512,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                                 .add(new DriverLeg(person.getId(),
                                                    route.getStartLinkId(),
                                                    route.getEndLinkId(),
-                                                   departure, travel));
+                                                   departure, travel,
+                                                   drivenPath(route)));
                     }
                 } else if (TransportMode.ride.equals(leg.getMode())) {
                     if (hh == null) {
@@ -658,9 +677,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     // worth choosing is for the score to decide over many
                     // iterations, not for one missed pairing to settle.
                     remodedThisMobsim.add(ride);
-                    ride.leg.setMode(TransportMode.walk);
+                    final String fallback = fallbackMode(ride.person);
+                    remodedAs.put(ride, fallback);
+                    ride.leg.setMode(fallback);
                     org.matsim.core.router.TripStructureUtils.setRoutingMode(
-                            ride.leg, TransportMode.walk);
+                            ride.leg, fallback);
                     // the car route may traverse walk-excluded links, and
                     // PersonPrepareForSim refuses a route inconsistent with
                     // link modes (measured). A null route makes it re-route
@@ -686,14 +707,18 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
 
             final double realised = realisedDuration(best);
-            final double driverTime;
+            final double wholeLeg;
             if (Double.isNaN(realised)) {
-                driverTime = best.routedTravelTime;
+                wholeLeg = best.routedTravelTime;
                 fromRouted++;
             } else {
-                driverTime = realised;
+                wholeLeg = realised;
                 fromRealised++;
             }
+            // The passenger rides the SEGMENT, not the leg. Unity when the
+            // segment is the whole route, so `both_links` is bit-for-bit what
+            // it was and this change is measurable rather than asserted.
+            final double driverTime = wholeLeg * carriedShare(best, ride);
             final double baseline = definedOr(ride.leg.getTravelTime(),
                                               definedOr(ride.route.getTravelTime(), 0.0));
             deltaSum += driverTime - baseline;
@@ -782,7 +807,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 final Id<Link> from = trip.getOriginActivity().getLinkId();
                 final Id<Link> to = trip.getDestinationActivity().getLinkId();
                 if (ride.from.equals(from) && ride.to.equals(to)
-                        && isAllWalk(trip)) {
+                        && isAllMode(trip, remodedAs.getOrDefault(
+                                ride, TransportMode.walk))) {
                     target = trip;
                     break;
                 }
@@ -812,13 +838,39 @@ public final class RidePairingEngine implements BeforeMobsimListener,
 
     /** Every leg of the trip is a walk leg - i.e. this is a trip the pairing
      *  forced, not some other walk the agent was always going to make. */
-    private static boolean isAllWalk(
-            final org.matsim.core.router.TripStructureUtils.Trip trip) {
+    /**
+     * The mode an unpairable ride leg is executed as this iteration.
+     *
+     * <p>A passenger whose lift falls through is not thereby a pedestrian. If
+     * they hold a licence and a car is available to them, the household's
+     * actual answer is that they drive themselves; only someone who cannot
+     * drive is left walking. Under the declared `walk` member this returns
+     * walk for everyone and reproduces the pre-9.105 behaviour exactly.
+     *
+     * <p>Stated rather than hidden: this does NOT check that the household's
+     * vehicle is free at that hour, so a household with one car can in
+     * principle have two members driving it. `carAvail` is a person-level
+     * attribute and the finer check would need a vehicle roster the demand
+     * does not carry.
+     */
+    private String fallbackMode(final Id<Person> person) {
+        if (!RidePairingConfigGroup.FALLBACK_DRIVE_ELSE_WALK
+                .equals(cfg.getUnpairedFallback())) {
+            return TransportMode.walk;
+        }
+        return Boolean.TRUE.equals(licensed.get(person))
+                && Boolean.TRUE.equals(carAvailable.get(person))
+                ? TransportMode.car : TransportMode.walk;
+    }
+
+    private static boolean isAllMode(
+            final org.matsim.core.router.TripStructureUtils.Trip trip,
+            final String mode) {
         if (trip.getLegsOnly().isEmpty()) {
             return false;
         }
         for (final Leg leg : trip.getLegsOnly()) {
-            if (!TransportMode.walk.equals(leg.getMode())) {
+            if (!mode.equals(leg.getMode())) {
                 return false;
             }
         }
@@ -855,6 +907,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 return equalId(driver.from, ride.from);
             case RidePairingConfigGroup.RULE_DEST_LINK:
                 return equalId(driver.to, ride.to);
+            case RidePairingConfigGroup.RULE_ROUTE_CONTAINS:
+                // BOTH of the passenger's links on the driver's path, in the
+                // order the driver drives them. Order matters: a driver who
+                // passes the passenger's destination before their origin is
+                // going the other way, and pairing those two would carry
+                // somebody backwards.
+                final int i = driver.path.indexOf(ride.from);
+                final int j = driver.path.lastIndexOf(ride.to);
+                return i >= 0 && j >= 0 && i <= j;
             case RidePairingConfigGroup.RULE_WINDOW_ONLY:
                 return true;
             default:
@@ -862,6 +923,47 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // here would mean the config group was bypassed.
                 throw new IllegalStateException("unknown ridePairing.rule " + rule);
         }
+    }
+
+    /** Every link of a routed car leg, start and end included. */
+    private static List<Id<Link>> drivenPath(final Route route) {
+        final List<Id<Link>> path = new ArrayList<>();
+        path.add(route.getStartLinkId());
+        if (route instanceof NetworkRoute) {
+            path.addAll(((NetworkRoute) route).getLinkIds());
+        }
+        final Id<Link> end = route.getEndLinkId();
+        if (path.isEmpty() || !path.get(path.size() - 1).equals(end)) {
+            path.add(end);
+        }
+        return path;
+    }
+
+    /**
+     * The share of the driver's routed LENGTH that the passenger is aboard for.
+     *
+     * <p>A passenger dropped off en route rides part of the driver's leg, so
+     * charging them the whole leg's time would make every such pairing score
+     * as though they had gone all the way. Returns 1.0 when the segment is the
+     * whole route, so `both_links` reproduces the previous behaviour exactly.
+     */
+    private double carriedShare(final DriverLeg driver, final RideLeg ride) {
+        final int i = driver.path.indexOf(ride.from);
+        final int j = driver.path.lastIndexOf(ride.to);
+        if (i < 0 || j < 0 || j < i) {
+            return 1.0;
+        }
+        double total = 0.0;
+        double segment = 0.0;
+        for (int k = 0; k < driver.path.size(); k++) {
+            final Link link = scenario.getNetwork().getLinks().get(driver.path.get(k));
+            final double length = link == null ? 0.0 : link.getLength();
+            total += length;
+            if (k >= i && k <= j) {
+                segment += length;
+            }
+        }
+        return total <= 0.0 ? 1.0 : segment / total;
     }
 
     private static boolean equalId(final Id<Link> a, final Id<Link> b) {
@@ -982,6 +1084,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             }
             final Object lic = person.getAttributes().getAttribute(LICENCE_ATTRIBUTE);
             licensed.put(person.getId(), lic != null && LICENCE_YES.equals(lic.toString()));
+            final Object avail =
+                    person.getAttributes().getAttribute(CAR_AVAIL_ATTRIBUTE);
+            carAvailable.put(person.getId(),
+                             avail != null
+                             && !CAR_AVAIL_NEVER.equals(avail.toString()));
         }
         ordered = new ArrayList<>(scenario.getPopulation().getPersons().values());
         ordered.sort(Comparator.comparing(Person::getId));

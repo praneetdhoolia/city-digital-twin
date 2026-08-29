@@ -123,6 +123,18 @@ public final class CitysimControler {
         // imports, so the base compile stays clean; the CONTROLLER that acts
         // on it exists only in src/java_signals/.
         final TramPriorityConfigGroup tramPriority = new TramPriorityConfigGroup();
+        // SCATS adaptive control (DECISIONS.md 9.88, #73), registered on
+        // every stack for exactly the reason above: its fields are
+        // registry-bound, so the `scats` module is emitted into every
+        // config and an unmaterialised group would fail the consistency
+        // check. Only citysim.ScatsSignalController - which lives in
+        // src/java_signals/ - ever acts on it.
+        final ScatsConfigGroup scats = new ScatsConfigGroup();
+        // Taxi as a finite fleet (9.99, #90), registered on every stack
+        // for the same reason as the two above: its fields are
+        // registry-bound, so the `taxiFleet` module is emitted into every
+        // config and an unmaterialised group fails the consistency check.
+        final TaxiFleetConfigGroup taxiFleet = new TaxiFleetConfigGroup();
         // The swissRailRaptor module (#49 Tier C, DECISIONS.md 9.78) needs its
         // typed group registered BEFORE the config is parsed, exactly like
         // tramPriority above: MATSim's UnmaterializedConfigGroupChecker throws
@@ -144,7 +156,7 @@ public final class CitysimControler {
         final ModeAvailabilityConfigGroup modeAvailability =
                 new ModeAvailabilityConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[8 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[10 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -153,8 +165,10 @@ public final class CitysimControler {
         groups[5] = swissRailRaptor;
         groups[6] = gradient;
         groups[7] = modeAvailability;
+        groups[8] = scats;
+        groups[9] = taxiFleet;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[8 + i] = extraGroups.get(i);
+            groups[10 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -294,6 +308,23 @@ public final class CitysimControler {
                     bind(FareChargeHandler.class).in(Singleton.class);
                     addEventHandlerBinding().to(FareChargeHandler.class);
                     addControllerListenerBinding().to(FareChargeHandler.class);
+                }
+            });
+        }
+        // Taxi as a finite fleet (DECISIONS.md 9.99, issue #90). Installed
+        // whenever the declared representation asks for it, independently of
+        // the ride engine: the two constrain different modes and neither
+        // implies the other. Like RidePairingEngine it acts at the
+        // BeforeMobsim boundary, where every selected plan is stable - which
+        // is why the fleet needs no mobsim engine, no dispatcher and no new
+        // dependency, the MATSim DRT contrib being absent from this project's
+        // pinned run stack and unreachable from its network sandbox.
+        if (taxiFleet.isFleet()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    bind(TaxiFleetEngine.class).in(Singleton.class);
+                    addControllerListenerBinding().to(TaxiFleetEngine.class);
                 }
             });
         }

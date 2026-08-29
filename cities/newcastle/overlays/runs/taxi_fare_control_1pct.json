@@ -1,0 +1,16 @@
+{
+  "overlay": "taxi_fare_control_1pct",
+  "description": "The CONTROL for taxi_fare_stress_1pct, identical in every respect except that the fare rates keep their declared values. A DIAGNOSTIC, NOT A MODELLING RUN: nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. The stress arm showed taxi peaking at 3.08% by iteration 10 and then collapsing to 0.54% by iteration 40, with the collapse beginning at iteration 32 - which is exactly where innovation is disabled (fractionOfIterationsToDisableInnovation 0.8 x 40). That timing says the elevated share was sustained by ongoing mode-choice innovation rather than by preference, and it means the twentyfold fare and the innovation cutoff are confounded in a single arm: both could produce the same collapse. This control removes the fare change and keeps the cutoff, so the two are separated. If taxi also collapses here, the fare is not what disciplines it and the innovation floor is the whole story; if taxi stays high here and only the stress arm collapsed, price binds and the fare is doing the work. Same 1% sample and same 40 iterations so the two are compared at equal depth on equal demand.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g"
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations is chosen to match taxi_fare_stress_1pct exactly, because a control at a different depth would compare two different points on a transient rather than isolating the one variable under test. The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

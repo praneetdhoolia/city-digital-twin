@@ -1,0 +1,40 @@
+{
+  "hts_vintage": "2024/25",
+  "target_lga": "Newcastle",
+  "hts_levels": {
+    "other": 3.2,
+    "public transport": 3.8,
+    "vehicle driver": 59.0,
+    "vehicle passenger": 20.6,
+    "walk linked": 0.0,
+    "walk only": 13.4
+  },
+  "g62_core_one_method": {
+    "train": 231,
+    "bus": 1178,
+    "ferry": 40,
+    "tram": 52,
+    "taxi": 56,
+    "car": 157832,
+    "car_passenger": 9430,
+    "truck": 1618,
+    "motorbike": 653,
+    "bike": 903,
+    "walk": 4383
+  },
+  "pt_window": [
+    "2024-10",
+    "2025-03"
+  ],
+  "pt_boardings": {
+    "bus": 1698703.0,
+    "rail": 551807.0,
+    "light_rail": 459572.51082251087
+  },
+  "n_modes": 12,
+  "by_status": {
+    "derived": 10,
+    "observed": 2
+  },
+  "person_trip_target_sum": 99.505
+}

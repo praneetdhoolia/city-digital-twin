@@ -281,6 +281,29 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
                     'missing. Run cities/<city>/build/build_matsim_signals.py '
                     'first.' % p)
             signal_paths[key] = fwd(p)
+        # The controller identifier is baked into the generated control file,
+        # so a declared regime that disagrees with the committed artefact
+        # would reach NOTHING - the run would execute the other controller and
+        # complete happily. Checked here in 0.1 s (DECISIONS.md 9.88).
+        want = ('CitysimScats'
+                if cfg.get('A.signals.control_regime') == 'scats_adaptive'
+                else None)
+        ctl = os.path.join(sig_dir, 'signal_control.xml')
+        with open(ctl, encoding='utf-8') as fh:
+            control_text = fh.read()
+        has_scats = 'CitysimScats' in control_text
+        if want and not has_scats:
+            raise SystemExit(
+                'A.signals.control_regime is scats_adaptive but %s names no '
+                'CitysimScats controller. The identifier is generated into '
+                'the control file, so the regime must be regenerated with it: '
+                'python cities/<city>/build/build_matsim_signals.py' % ctl)
+        if not want and has_scats:
+            raise SystemExit(
+                'A.signals.control_regime is %r but %s names the CitysimScats '
+                'controller. Regenerate the signal data for the declared '
+                'regime: python cities/<city>/build/build_matsim_signals.py'
+                % (cfg.get('A.signals.control_regime'), ctl))
     # Level crossings (#68): the closures enter this run's re-emitted config
     # only under the declared representation gate - same rule as the shipped
     # assembly, checked here in 0.1 s rather than in the JVM.
@@ -461,8 +484,27 @@ def start_progress_digest(run_dir, cfg):
         return None
 
 
+
+def values_sha256(cfg):
+    """A fingerprint of every resolved registry value this run will use.
+
+    Run identity has to include what the model was CONFIGURED with, not only
+    its parameters and its source. A run-config overlay sets registry fields,
+    so without this two overlays that differ in exactly one declared value -
+    which is what a paired diagnostic IS - are indistinguishable to resume, and
+    the second silently inherits the first's results (9.104). The same
+    conservatism applies as to the controler hash: a resume refused on a value
+    change that could not have mattered costs a re-run, a resume granted on one
+    that did produces a comparison whose two sides are not the same thing.
+    """
+    values = cfg.snapshot()['values']
+    blob = json.dumps(values, sort_keys=True, ensure_ascii=False,
+                      default=str).encode('utf-8')
+    return hashlib.sha256(blob).hexdigest()
+
+
 def find_completed(scenario, day, fraction, iterations, seed, overrides,
-                   controler=None, warm_key=None):
+                   controler=None, warm_key=None, values=None):
     """The completed run with these parameters, if one exists.
 
     Identity lives in the run record, not in the directory name: the name is a
@@ -495,6 +537,15 @@ def find_completed(scenario, day, fraction, iterations, seed, overrides,
                 # are DIFFERENT results (the RNG stream and travel-time memory
                 # reset at the checkpoint), so neither may resume the other.
                 and (doc.get('warm_started_from') or None) == (warm_key or None)
+                # The resolved registry values are part of run identity: a
+                # run-config overlay sets declared fields, so two overlays
+                # differing in ONE value are the same parameter set here and
+                # the second would inherit the first's result (9.104). A
+                # record written before this was tracked carries no hash and
+                # cannot prove it used the same values, so it does not match -
+                # a re-run costs time, a false resume costs a finding.
+                and (values is None
+                     or doc.get('values_sha256') == values)
                 and doc.get('rc') == 0):
             doc['name'] = os.path.basename(os.path.dirname(record))
             if controler is None or doc.get('controler_sha256') == controler:
@@ -647,8 +698,9 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
               % (warm['run'], warm['iteration'], warm['iteration']), flush=True)
 
     controler = controler_sha256()
+    values = values_sha256(cfg)
     prior = find_completed(scenario, day, fraction, iterations, seed, overrides,
-                           controler, warm_key)
+                           controler, warm_key, values)
     if prior is not None and not force:
         if prior.get('controler_sha256') == controler:
             print('resume: %s already complete' % prior['name'], flush=True)
@@ -762,6 +814,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
                median_iteration_s=steady[len(steady) // 2] if steady else None,
                config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
                controler_sha256=controler,
+               values_sha256=values,
                **sample)
     if warm_key:
         doc['warm_started_from'] = warm_key

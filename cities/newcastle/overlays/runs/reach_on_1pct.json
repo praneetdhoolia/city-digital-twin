@@ -1,0 +1,18 @@
+{
+  "overlay": "reach_on_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN - nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. It is the TEST half of the pair that measures the walk/bike FEASIBILITY bound (DECISIONS.md 9.106). It shares sample, depth, threads, heap, the 9.105 fallback and every other value with its partner, so the two differ in the two reach bounds and nothing else. The measurement that motivates the pair: at iteration 100 of 20260829T172145_1000it_10pct, walk's mean trip length is 8.75 km against the 0.7 km this package declares as observed - 12.5x - with 46% of walk trips over 5 km and the longest 91.4 km, a twenty-hour walk; ride over the same trips is 0.97x its observed mean, so the demand's trip lengths are sound and it is the choice set that is wrong. 60.8% of the agents making a 20 km walk hold BOTH a licence and a car. Zero disables both bounds and reproduces every arm before 9.106.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "B.mode.walk_feasible_km": 3.22,
+    "B.mode.bike_feasible_km": 23.95
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations matches the existing 1% diagnostics exactly, because a control read at a different depth compares two points on a transient rather than isolating the one variable under test. The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

@@ -1,15 +1,20 @@
-# Brief for the next agent — THE PAIR WAS DECLARED, THEN RE-FOUND BY A CLOCK THE MODEL ITSELF MOVES
+# Brief for the next agent — THE YARDSTICK WAS THE DEFECT, THE GATE WAS READING A TRANSIENT, AND FIVE MECHANISMS WERE ASSERTED WITHOUT MEASUREMENT
 
-*Updated 28 August 2026, TWELFTH session (§9.85) — a diagnosis-and-build session.
-The F9 gate-2 arm was found RUNNING at session start, reached the iteration-100
-gate, failed all five scored categories and was stopped. The cause is located and
-repaired as family **F10**; the repair's effect on mode share is **NOT YET
-MEASURED** — its validation probe was stopped on instruction at iteration 2 of 8.*
+*Updated 30 August 2026, FOURTEENTH session (§9.100–§9.115) — a diagnosis session. The
+iteration-100 gate fired with 9 of 11 fittable modes past 20%. **Three yardstick defects
+were found and fixed** (another city's light rail stop, a broken bus series, a truck
+target compared against the wrong population). **Then the gate itself was found to be
+reading a transient**: car, walk and pt are all converging and arrive between iterations
+200 and 350. **The real defect is upstream in the demand** — 42.4% of ride legs are
+unservable at iteration 0. Two fixes are identified, measured and deliberately NOT
+applied, because both cross a family boundary. **Five causes were asserted from
+plausible mechanisms and later refuted; three reached committed entries before that
+happened.***
 
 *This is a **HANDOVER, not a source of truth.** Where it disagrees with
 [`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md) or
-[`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win. The shared
-definitions — trust order, the six questions, the environment gate — live in
+[`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md), those win. The shared definitions —
+trust order, the six questions, the environment gate — live in
 [`docs/HANDOVER_CONTRACT.md`](../../../../docs/HANDOVER_CONTRACT.md).*
 
 ---
@@ -18,65 +23,55 @@ definitions — trust order, the six questions, the environment gate — live in
 §0  VERIFY FIRST — these facts expire; re-derive them before trusting a word below
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Every line in this block was true when written and may be false now.** Run the
-command; believe the output. **Every count derived from GitHub or from `results/`
-lives HERE and nowhere else** — later sections point at this table.
+**Every count derived from GitHub or from `results/` lives HERE and nowhere else.**
 
 | Fact as of this handoff | Re-derive with |
 |---|---|
-| **This session's PR was OPEN at handoff.** If still open, merging it and deleting the branch both sides is the first item of unfinished business | `gh pr list --state open` |
-| It carries **five** commits — the ELEVENTH session's four (F9) and this session's one (F10). The eleventh session never opened a PR | `git log main..HEAD --oneline` |
-| 14 open issues: #88 #86 #84 #82 #73 #68 #66 #63 #62 #50 #49 #48 #30 #21 | `gh issue list --state open` |
-| 55 filed · 41 closed · 14 open; 31 PRs merged, 2 closed unmerged, 0 open | `gh issue list --state all` · `gh pr list --state all` |
-| **Machine FREE — no run in progress.** Everything was stopped on instruction 28 Aug ~21:0x | look for a MATSim `java` process (VS Code's `redhat.java` language server is NOT one); check `results/` mtimes |
-| 66 run directories, 26 of them `aborted_*`, every one stating its cause | `ls -1d results/*/` · `results/INDEX.md` · `python src/run/run_failure.py --check` |
-| Registry **372** fields | `python src/registry/check_hardcoding.py --strict` |
+| **This session's PR is OPEN and is the first item of unfinished business** | `gh pr list --state open` · `gh pr checks <n>` |
+| Open issues, including **#92 #93 #94 filed this session** | `gh issue list --state open` |
+| Issue / PR totals | `gh issue list --state all` · `gh pr list --state all` |
+| **Machine FREE — no run in progress** | look for a MATSim `java` process (VS Code's `redhat.java` is NOT one); `results/` mtimes |
+| Run directories, and every dead one stating its cause | `ls -1d results/*/` · `results/INDEX.md` · `python src/run/run_failure.py --check` |
+| Registry field count | `python src/registry/check_hardcoding.py --strict` |
 | **NO run approval stands. None.** Approvals are spent on use | assume none; ask |
 
-Then the environment gate — **all of it must pass, and a failure is your first work
-item, not a footnote**:
+Then the environment gate — **all of it must pass, and a failure is your first work item**:
 
 ```bash
-python src/setup/bootstrap_toolchain.py --verify   # ~3 s, compiles BOTH class trees
-python tests/check_manifest.py                     # committed subset intact
+python src/setup/bootstrap_toolchain.py --verify   # compiles BOTH class trees
+python tests/check_manifest.py
 python src/registry/check_hardcoding.py --strict   # must exit 0
 python tests/check_doc_currency.py --strict        # must exit 0
-python src/run/run_failure.py --check              # every dead run says WHY
-python src/analyse/build_fit_figures.py --check    # the front door draws the current base
+python src/run/run_failure.py --check
+python src/analyse/build_fit_figures.py --check
 python tests/check_city_agnostic.py                # 13/13
 ```
 
-**⚠ STANDING DIRECTIVES:**
+**⚠ STANDING DIRECTIVES**
 
-1. **NO MULTI-HOUR RUN WITHOUT EXPLICIT APPROVAL — none is standing.** The F9 arm
-   paced **273.82 s/it** median at 25%, so iteration 100 is ~7.6 h and iteration 200
-   ~15.2 h. State the cost, get a yes.
-1a. **LAUNCH with `python run.py --detach ...`**; a launch counts only once
-   `matsim.log` is past `PersonPrepareForSim` (#70).
-1b. **NEVER run two arms concurrently** (#66). No probe while an arm is up.
-2. **The prime goal: every mode's ridership as close to real life as possible ON ITS
-   OWN; no hardcoding, no biasing, no workarounds; every issue logged.**
-3. **Every mode individually in every numbers table** — never an umbrella row.
-4. **Never commit directly to `main`; the session's ONE PR opens at `/handoff`.**
-5. **Never hand-name a run**; `_run.json` stays the only result gate.
-6. **A number in `README.md` or `STATUS.md` is a claim about an artefact** — fix it in
-   the same commit and prove it with `check_doc_currency.py --strict`.
-7. **NEVER STATE AN ERROR AGAINST AN UNSCORABLE TARGET** (#84). Read `_fit.json`'s
-   `unscorable` list first. The light rail's boardings are a **level**, not an error.
-8. **READ THE GATE ON `<n>.trips.csv.gz`, NEVER ON `modestats.csv`** (§9.83).
-   `python src/analyse/measure_iteration_modes.py --run <dir> --it <n>`.
+1. **NO MULTI-HOUR RUN WITHOUT EXPLICIT APPROVAL.** Measured: **~100 s/it at 10%**,
+   ~30 s/it at 1%. A 1000-iteration arm is ~28 h at 10%.
+2. **READ THE TREND, NOT THE LEVEL.** §9.108 is the most important thing in this brief:
+   every gate reading this session was at iteration 100 of an arm whose innovation runs
+   to 800, and **car, walk and pt were converging the whole time.** Four repairs chased
+   a transient.
+3. **A CAUSE MUST CARRY ITS MEASUREMENT.** Five mechanisms were asserted this session on
+   fit with numbers already in hand; three reached committed entries and were refuted
+   (§9.107, §9.110, §9.114). If you name a cause in a DECISIONS entry, either measure
+   what distinguishes it from the obvious alternative, or mark it unmeasured.
+4. **Every mode individually in every numbers table** — never an umbrella row.
+5. **Never commit directly to `main`; the session's ONE PR opens at `/handoff`.**
+6. `python src/analyse/report_mode_ridership.py --run <dir> --it <n>` is the twelve-mode
+   reader; it now prints **mean trip length beside every share** (§9.107). Add
+   `--truck-stations` to score truck on its own ground (§9.101).
 
-**⚠ DECISIONS REQUIRED:**
-- **Approve the F10 arm**, and at what iteration count. ~7.6 h buys iteration 100.
-  **Nothing is standing.**
-- **Whether to complete the F10 validation probe first** (~35 min, 8 iterations). It
-  was stopped at iteration 2; what it showed is in §4, and it is NOT a completed
-  validation.
-- **#88: make taxi physical?** It is a network-loading boundary and would make the
-  F10 arm's effect unattributable if folded in. Sequence it, do not merge it.
-- `E.replication.n_replications` — seed floor ≤0.11 pp/mode at n=2 (§9.64); open.
-- **Warm-restart validity** — a warm-completed arm: valid arm, or diagnostic? (§9.76)
-- **#84: what is the intervention's patronage legitimately checked against?**
+**⚠ DECISIONS REQUIRED**
+- **Whether to cross the family boundary** and apply #92 + #93 together in one rebuild.
+  Every run on disk becomes incomparable, including the F4 arms the front door draws
+  from. Both fixes are written up and neither is committed.
+- **Approve a converged arm** — ~28 h at 10%, innovation off at 800. **No arm in F11,
+  F12 or F13 has ever reached its cutoff**, so no post-cutoff twelve-mode level has ever
+  been read.
 
 ---
 
@@ -84,103 +79,80 @@ python tests/check_city_agnostic.py                # 13/13
 §1  THE GOAL — and where it now stands
 ═══════════════════════════════════════════════════════════════════════════════
 
-> **A digital twin of any city, traffic-wise ... whether that scaling actually
-> predicts the correct ridership per mode must be CHECKED, not assumed. Every
-> form of transport should be IN ACTION physically.**
+> Twelve modes present, **physically simulated**, monitored and scored — no teleportation.
+> **<10% deviation from real life for every mode.** Unavailable data must be DERIVED.
+> Gate every 100 iterations; stop on any mode past 20%; fix the cause from the root.
 
-Plus the standing gate-loop directive: *run → gate every 100 iterations → stop on
-any mode past 20% deviation → fix the cause from the root → relaunch*, with **<10%
-deviation per mode** as the bar and no workarounds, hardcoding or biasing.
+**Physical simulation: 12 of 12.** Taxi gained a finite fleet at §9.99 and it binds.
 
-"In action" is **nearly complete** — with one measured exception now filed as
-**#88**: `taxi` is routed on the network but teleported in the mobsim, 39,892 of
-39,923 legs per iteration. "Checked" has a measured answer and it is **5 of 5
-scored categories failing the 10% bar**. The loop has now fired five times; each
-firing has found a real cause and repaired it, and **none of the repairs has yet
-been measured to move the fit** — F10's included.
+**<10% per mode: not met.** On a share basis no mode is inside; **truck is inside on its
+own correct basis (+5.4%)**. But see §2 — the level is not the model's answer.
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§2  THE MODES — every mode individually, on the basis that scores
+§2  THE MODES — every mode individually, and the TREND that matters more
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Basis:** linked main-mode TRIPS, Newcastle LGA residents, from the arm's own
-`<n>.trips.csv.gz` — events-derived, so realised. **Family F9, arm
-`aborted_20260828T111708_1000it_25pct`, iteration 100.** Reproduce with
-`python src/analyse/measure_iteration_modes.py --run results/aborted_20260828T111708_1000it_25pct --it 100`.
+**Basis:** linked main-mode trips, target-LGA residents, from the arm's own
+`100.trips.csv.gz`. Arm `aborted_20260829T172145_1000it_10pct`, **iteration 100 of 1000,
+innovation still running.** Reproduce with
+`python src/analyse/report_mode_ridership.py --run results/aborted_20260829T172145_1000it_10pct --it 100`.
 
-### Scored against observation (`fit.py`'s own folds applied)
+| # | mode | modelled % | target % | deviation | mean km | vs obs |
+|---|---|---:|---:|---:|---:|---:|
+| 1 | car | 47.3368 | 58.1631 | −18.6% | 11.09 | +9% |
+| 2 | ride | 7.2909 | 20.6000 | −64.6% | 8.34 | −15% |
+| 3 | walk | 25.3988 | 13.4000 | +89.5% | 6.66 | **+852%** |
+| 4 | bike | 8.9926 | 2.2084 | +307.2% | 10.04 | +93% |
+| 5 | motorbike | 0.1210 | 0.2406 | −49.7% | 11.94 | +17% |
+| 6 | taxi | 1.5394 | 0.9916 | +55.2% | 11.43 | +120% |
+| 7 | bus | 7.2065 | 2.3819 | +202.6% | 13.18 | −44%* |
+| 8 | light_rail | 0.0446 | 0.6444 | −93.1% | 13.18 | −44%* |
+| 9 | heavy_rail | 2.0599 | 0.7737 | +166.2% | 13.18 | −44%* |
+| 10 | ferry | 0.0096 | 0.1013 | −90.6% | 13.18 | −44%* |
+| 11 | truck | 7.7951 | — | **+5.4% on its own ground** | — | — |
+| 12 | freight_train | 314 | 314 | representation, not a fit | — | — |
 
-| survey category | modelled | observed | deviation | trend across it. 1 → 50 → 100 |
+\* one folded HTS observation shared by four PT submodes; not independent.
+
+**THE TREND IS THE FINDING (§9.108), from planned shares over the first 100 iterations:**
+
+| mode | it 0 | it 100 | target | verdict |
 |---|---:|---:|---:|---|
-| Other (`bike+taxi`) | 18.28 | 3.20 | **+471.2%** | 9.23 → 16.76 → 18.28 — **diverging** |
-| Public transport (`pt`) | 8.49 | 3.80 | **+123.4%** | 9.85 → 9.14 → 8.49 — converging slowly |
-| Vehicle driver (`car+motorbike`) | 47.57 | 59.00 | **−19.4%** | 35.25 → 40.65 → 47.57 — converging |
-| Vehicle passenger (`ride`) | 4.87 | 20.60 | **−76.3%** | 9.10 → 6.03 → 4.87 — **decaying** |
-| Walk only (`walk`) | 20.79 | 13.40 | **+55.2%** | 36.57 → 27.43 → 20.79 — converging |
-| **mean abs error, pp** | | | **10.864** | 14.100 → 13.170 → 10.864 |
+| car | 0.3409 | 0.4429 | 0.5816 | **converging, ~136 more** |
+| walk | 0.2888 | 0.2116 | 0.1340 | **converging, ~100 more** |
+| pt | 0.0688 | 0.0603 | 0.0390 | **converging, ~248 more** |
+| **ride** | 0.1903 | 0.1457 | 0.2060 | **DIVERGING** |
+| **bike** | 0.0708 | 0.0847 | 0.0221 | **DIVERGING** |
+| taxi | 0.0000 | 0.0147 | 0.0099 | overshot |
+| motorbike | 0.0020 | 0.0018 | 0.0024 | flat, wrong side |
 
-### Per mode individually (F9, iteration 100, target LGA)
-
-| mode | share % | LGA trips |
-|---|---:|---:|
-| car | 47.41 | 75,414 |
-| walk | 20.79 | 33,079 |
-| bike | 9.79 | 15,575 |
-| taxi | 8.49 | 13,500 |
-| pt | 8.49 | 13,503 |
-| ride | 4.87 | 7,750 |
-| motorbike | 0.16 | 259 |
-| truck | 0.00 | 0 (freight is not an LGA resident) |
-
-**Three things to carry forward:**
-
-1. **The excesses and the deficits balance exactly.** Over-chosen +27.16 pp (Other
-   +15.08, walk +7.39, pt +4.69); under-chosen −27.16 pp (ride −15.73, driver
-   −11.43). Bike, taxi and walk are absorbing the passenger demand `ride` is not
-   realising — which is why the ride repair is the lever on all five categories and
-   not just one.
-2. **`fit.py` folds bike and taxi into ONE target** and car with motorbike into
-   another. Quoting a folded mode alone halves the apparent defect.
-3. **Car is UNDER, not over** (§9.83's inversion still holds).
-
-**Unscorable — never quote an error against these:** V206 (Walk linked, 0.0 by
-construction), V196–V201 (2018/19 vintage), V001/V002 (pre-pandemic patronage),
-V003 (monthly total needing WEEKDAY+SAT+SUN composed).
+Walk's **geometry** converges with its share too: 21,475 trips → 15,955, mean 8.12 →
+6.66 km.
 
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
-§3  THE ACTIVE LANE — the single next task
+§3  THE ACTIVE LANE
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Run the F10 arm and gate it at iteration 100 on the per-mode basis.**
+**Merge this session's PR first** (§0 has the command).
 
-- **Why this and nothing else first:** F10 is built, gated and committed, and its
-  effect is **unmeasured**. Every lever below it is a guess until the arm says what
-  the identity repair actually realised.
-- **Cost:** ~7.6 h to iteration 100 at the measured 273.82 s/it, 25% sample, ~40 GiB
-  heap. **Needs a fresh stated-cost approval.**
-- **Optionally first:** finish the 8-iteration `probe_replanning_25pct` validation
-  (~35 min) that was stopped at iteration 2.
-- **What decides success:** `paired_by_identity` grows with depth (it is 7 at
-  iteration 0 and 1,745 at iteration 1 — it should keep climbing as drift
-  accumulates); `pair_rate` and `occupancy_from_pairings` **stop decaying**; and
-  `ride` rises while `Other` and `walk` fall.
-- **What would falsify it:** `paired_by_identity` flat or `pair_rate` still decaying
-  on the F9 curve. That would mean the identity is being found and the pairing still
-  refused for a reason this session has not measured — go to `miss_endpoints` and
-  `miss_capacity` in `ride_pairing.csv`, not to a parameter.
+**Then, one of two, and both need a decision you must obtain:**
 
-**If F10 proves insufficient**, the queue in measured order of size:
+**(a) Cross the family boundary and apply #92 + #93 in one rebuild.** #92 is the largest
+measured, untouched quantity in the model: 69.9% of 73,258 refused joint bindings name
+the companion as their own driver, and `p_thin` thins a pool a third of which is
+unbindable. #93 is exact arithmetic — the motorbike carve is its own target times a
+ratio that should have cancelled. Neither is committed, deliberately: a builder change
+without its rebuild breaks the reproducibility gate.
 
-| # | lever | size | state |
-|---|---|---|---|
-| 2 | Bike's own excess | bike alone is 9.79% against a bike+taxi target of 3.20% | measure AFTER the F10 arm — bike may fall as ride is realised |
-| 3 | Taxi physical in the mobsim (#88) | ~40,000 vehicle-trips/iteration missing from the network | **built nowhere**; a network-loading boundary, sequence it separately |
-| 4 | Walk trip geometry (#30) | 24.3% of walk trips over 5 km | open |
-| 5 | Counts −91.8% (#82) | 30 stations, 6 modelled-zero | awaiting a run |
+**(b) Run one arm to its innovation cutoff** (~28 h at 10%) so that, for the first time,
+a level means something. Car, walk and pt are on track to arrive; ride and bike are not.
+
+**Do NOT** start by repairing car, walk or pt. §9.108 measured them converging, and four
+repairs this session went into a transient.
 
 ---
 
@@ -188,64 +160,46 @@ V003 (monthly total needing WEEKDAY+SAT+SUN composed).
 §4  WHAT IS DONE — record, not instruction. DO NOT REDO ANY OF IT
 ═══════════════════════════════════════════════════════════════════════════════
 
-**§9.85 — the translation loss. DIAGNOSED and REPAIRED; effect NOT YET MEASURED.**
+**§9.100 — the PT yardstick had three defects.** A light rail stop belonging to another
+city (30,241 boardings, 15.6% of the leg, while five of six real stops contributed
+nothing); a train leg pooling THREE LGAs (53.7% in the target LGA); a window lying
+entirely inside a bus series that falls 319,770 → 37,414 in one month. Station
+membership is now derived from the city's own schedule and boundary, the window must be
+contiguous and break-free, and a line reported at one stop is scaled by a measured
+share. Targets moved: bus 1.3039 → 2.3819, heavy rail 2.0922 → 0.7737, light rail 0.4039
+→ 0.6444. **Heavy rail's −1.5% "fit" was an artefact.** +3 registry fields.
 
-The diagnosis, all measured on `aborted_20260828T111708` at iteration 100:
+**§9.101 — truck was scored against the wrong population.** Its own basis says the target
+is *not comparable* with a person-trip share. Scored where the target was measured:
+**+5.4%**, not −49.6%. The reader no longer prints a deviation on the wrong basis;
+`--truck-stations` scores it properly. **20 of 24 classifying stations are holdout and
+were not opened.**
 
-- **The seeded demand is right.** `modestats` ride is **0.1903 at iteration 0**
-  against an observed 0.206. §9.84's binder closed the ceiling #86 was filed for.
-- **The realisation fails.** `pair_rate` 0.556 → 0.362; `occupancy_from_pairings`
-  0.3097 → **0.0956** against a measured 0.3503.
-- **Why:** all three B2 binding tables NAME the driver (joint 70,964 rows, escort
-  109,971, lift 45,602), and `build_matsim_plans.py` read that identity to decide
-  **seeding** and then **discarded** it. Nothing in the population recorded that two
-  people were a pair, so `RidePairingEngine` re-discovered each from geometry plus a
-  15-minute window — while MATSim's own `TimeAllocationMutator` moved the two
-  members apart independently at a **±1800 s default no registry field declared**.
+**§9.102 — the pairing rule is not the lever.** `route_contains` was built and measured
+against a committed control: pair rate 0.5069 → 0.5113, ride share went the **wrong**
+way. §9.92's ruling that `both_links` stays is **confirmed by measurement**.
 
-| binding | ride legs | declared driver same OD **by car** | gap median | inside the 15-min window |
-|---|---:|---:|---:|---:|
-| joint | 28,709 | 73.8% | 10.3 min | **60.6%** |
-| escort | 26,410 | 67.4% | 23.1 min | **42.6%** |
-| lift | 7,746 | 80.5% | 7.1 min | **64.5%** |
+**§9.104 — resume matched two runs differing in a declared value** and handed back the
+wrong one. `_run.json` now carries `values_sha256`; records predating it do not match, by
+design.
 
-**This is why §9.82's and §9.84's repairs were both inert** — each re-identifies
-through the same window the drift has already exceeded. §9.84's driver-side pass
-measured **10.920 → 10.864** mean abs error and ride **4.91 → 4.87** against the
-previous arm at equal depth.
+**§9.105 — a denied lift becomes a drive.** `B.ride.unpaired_fallback` (+1 field). Six of
+seven modes moved toward target and **taxi came inside the bar at +7.5%** — but pt moved
+away and walk's geometry barely moved.
 
-**Built as family F10** (committed, gates green):
-1. `boundDriver` carries the identity from **all three tables** — 158,898 persons.
-   Joint alone would have covered 46% of affected legs.
-2. `RUN.replanning.time_mutation_range_s` **declared and swept** (group name
-   `timeAllocationMutator` verified against `pt2matsim-26.6-shaded.jar` — it is NOT
-   the capitalised form).
-3. `B.ride.bound_pairing_window_min` **DERIVED** from it by identity; relaxes
-   IDENTIFICATION only. The inferred window stays 15 min; endpoints, capacity and
-   physical boarding still decide; the gap is waiting time paid for in score; a
-   bound window narrower than the inferred one is **refused**.
-4. `Booking` carries the tolerance it was made under — without this the pair rate
-   rises while nobody boards.
+**§9.106 — a walk feasibility bound does NOT work.** Derived at 3.22 km, it first killed
+the run on the chain invariant, then made the fit worse (509.9% → 577.1%). Set to **0.0,
+disabled and reproducing**. +2 registry fields.
 
-**Partial validation only** (probe stopped at iteration 2 of 8, on instruction):
+**§9.107 — the gate now prints geometry.** `mode_targets_by_mode.csv` gained
+`target_mean_km` from the survey's own TRIP_AVG_DISTANCE.
 
-| | it. 0 (no drift) | it. 1 |
-|---|---:|---:|
-| `paired_by_identity` | 7 | 1,745 |
-| pair_rate vs F9 at equal depth | 0.5560 = 0.5560 | 0.4936 → **0.5095** |
-| occupancy vs F9 | 0.3097 = 0.3097 | 0.2770 → **0.2860** |
-| physical wait-boardings / timeouts vs F9 | 453 → **637** / 3,964 → **3,784** | |
+**§9.109/§9.111 — the demand cannot serve the ride legs it generates.** 42.4% unservable
+at iteration 0; 69.9% of refusals are `driver_is_the_companion`; **`driver_party_full`
+is 2 of 73,258**, vindicating that field's own claim.
 
-**Already ruled out by measurement — do not re-propose:**
-- **Widening `B.ride.pairing_window_min`.** It is the INFERENCE window and stays 15
-  min; widening it would loosen identification for strangers, which is the opposite
-  of what the measurement supports.
-- **Moving a mode constant to close `Other`.** The measured occupancy constraint
-  would catch it, and it is a workaround.
-- **Blaming the taxi teleport for the `Other` excess.** The fare IS scored — the
-  teleported leg carries its route distance (median 13,343 m) and the flagfall fires
-  on departure (46,914 × −$2.99 measured in the events). #88 is a physical-fidelity
-  defect, not a scoring hole.
+**§9.113 — supply is ruled out for light rail and ferry** on departures (252 and 107),
+not on route-id day tags, which lie.
 
 ---
 
@@ -253,18 +207,14 @@ previous arm at equal depth.
 §5  WHAT INVALIDATES THE WORK
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **F10 regenerates the population, so nothing run on it compares to F9** — and F9
-  already broke comparability with F6/F7/F8. Never compare across families, sample
-  fractions or network builds.
+- **Applying #92 or #93 opens a FAMILY BOUNDARY.** Nothing before compares to anything
+  after, including the F4 arms `README.md` draws its fit figures from.
+- **Never compare across sample fractions.** This session's diagnostics are 1%; the arm
+  is 10%.
 - **One arm at a time** (#66). No probe while an arm is up.
 - **The 67/143 holdout split is never opened or peeked.**
-- **A run without `_run.json` is not a result.** No arm exists in F10 at all.
-- **The calibrated base is still the pre-repair F4 arm** `20260821T175907_1000it_25pct`
-  (MAE 10.65 pp, 35 of 67 targets scored) — a **different family**. Do not compare it
-  with any F9 or F10 number.
-- Raw data immutable; every assumed value declared in the registry with a sweep.
-- Branch `<git-handle>/<kebab>`, never `claude/*`; no attribution trailers; no session
-  links; never commit directly to `main`.
+- **A run without `_run.json` is not a result.** No arm in F10–F13 has one.
+- Branch `<git-handle>/<kebab>`, never `claude/*`; no attribution trailers; no session links.
 
 ---
 
@@ -272,21 +222,16 @@ previous arm at equal depth.
 §6  EXACT STATE
 ═══════════════════════════════════════════════════════════════════════════════
 
-Counts that expire live in **§0**, with their commands. This section describes shape.
+Counts that expire live in **§0**.
 
-- **Phase:** P4 calibration, 8 of 9 deliverables; deliverable 0 (0b backlog, #63) open.
-- **Machine:** free. Everything stopped on instruction 28 Aug.
-- **Toolchain:** JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25),
-  Maven 3.9.9, run-stack 201 jars — sha256-pinned in `.tools/toolchain.json`.
-  **Recompile with `bootstrap_toolchain.py --verify` after ANY Java change** — it
-  installs into `.tools/classes`, which is what the JVM loads. Compiling to a scratch
-  directory (trap 9) does NOT install, and a run will load the stale classes.
-- **Package:** `check_manifest.py` passes; `check_package.py` needs the full local
-  package and runs on a workstation only. **It was NOT run this session.**
-- **Results:** the calibrated base did not move, so the front door's figures are
-  current.
-- **Families:** F6, F7, F8, F9, **F10 (current)** — declared in
-  [`audit/run_families.json`](../audit/run_families.json). No arm in F7–F10 is a result.
+- **Phase:** P4 calibration. The yardstick is now sound; the demand is not.
+- **Machine:** free.
+- **Toolchain:** JDK 25.0.4+7, pt2matsim 26.6, Maven 3.9.9, run-stack 201 jars. Recompile
+  with `bootstrap_toolchain.py --verify` after ANY Java change.
+- **Two fixes written and NOT committed**, by design: #92 (candidate-pool filter) and
+  #93 (motorbike carve). Each is fully specified in its issue and its DECISIONS entry.
+- **A pre-fix WEEKDAY demand backup** with a verified `baseline.sha256` was taken this
+  session; the instrumented rebuild round-tripped byte-identical twice.
 
 ---
 
@@ -294,17 +239,12 @@ Counts that expire live in **§0**, with their commands. This section describes 
 §7  DECISIONS TAKEN — do not re-litigate
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **SUMO descoped** (§9.74) — MATSim is the single simulator.
-- **Constrain-and-report calibration** (§9.50, §9.64).
-- **The pre-LR corridor keeps all 14 signalised intersections** (§9.24).
-- **The coal chain is deliberately not simulated** (§9.70).
-- **SCATS phasing stays `unobtained` and swept** (§9.21).
-- **`B.ride.pairing_window_min` NOT moved** (§9.81, and re-affirmed §9.85 — it is the
-  inference window and stays 15 min).
-- **The §9.60 non-household scope stays `same_zone`** (§9.84) — measured 98% consumed.
-- **§9.81, §9.82 and §9.84's repairs all KEPT** — none regressed anything, and §9.85
-  explains why the last two could not have worked on their own.
-- **#88 deliberately excluded from F10** (§9.85) — a separate boundary.
+- **`B.ride.pairing_rule` stays `both_links`** (§9.92, confirmed by §9.102's measurement).
+- **The walk/bike feasibility bounds stay 0.0** (§9.106) — measured, worse.
+- **`B.ride.max_passengers_per_vehicle` does not bind** (§9.111) — 2 refusals of 73,258.
+- **The seed stays uniform** (§9.92).
+- **SCATS offsets are not adapted** (§9.88); **freight trains are not mobsim vehicles**
+  (§9.70, §9.90); **the taxi fare is not a lever** (§9.91).
 
 ---
 
@@ -312,47 +252,34 @@ Counts that expire live in **§0**, with their commands. This section describes 
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **A repair can be found INERT and still be right about its cause.** §9.84's
-   driver-side pass correctly identified that drivers drift off car, and moved the
-   fit 0.056 pp — because it re-identified the drifted driver through the same
-   15-minute window the drift had already exceeded. **When a well-evidenced repair
-   does nothing, suspect the thing it depends on, not the diagnosis.**
-2. **A MATSim config-group name is not what you would guess.** It is
-   `timeAllocationMutator`, lowercase. Verify against the pinned jar with
-   `javap -cp .tools/jars/pt2matsim-26.6-shaded.jar -constants <class>` before
-   declaring a `matsim_param`.
-3. **A framework DEFAULT is an undeclared modelling choice, and the ledger cannot
-   see it.** `check_hardcoding.py` reads literals in scripts; `mutationRange` reached
-   the mobsim through no declaration at all and was the single mechanism decohering
-   every declared pair. **When a mechanism misbehaves, ask what MATSim is supplying
-   that nobody declared.**
-4. **Two engines can disagree about the same tolerance.** `RidePairingEngine` booked
-   on the wide window while `JointRideEngine` timed the physical wait out on the
-   narrow one — the pair rate would have risen while nobody boarded. Caught before it
-   ran. **When you widen a tolerance, grep every consumer of it.**
-5. **Compiling is not installing.** `javac -d <scratch>` (trap 9's advice, correct
-   mid-run) leaves `.tools/classes` stale, and the next run dies on the config it
-   cannot parse. Cost: one dead run. Run `bootstrap_toolchain.py --verify` once the
-   machine is free.
-6. **A parse bug in an analysis script will hand you a confident wrong number.** A
-   flush-on-wrong-boundary bug reported taxi plans as scoring −137 utils worse than
-   their alternatives; corrected, it is −4.43 median. **Re-derive a surprising number
-   a second way before building on it.**
-7. Carried: `modestats.csv` is PLANNED modes and the events stream is legs across
-   five LGAs — **`fit.py` scores linked main-mode TRIPS for target-LGA residents**
-   (§9.83); `fit.py` folds bike+taxi and car+motorbike; a short probe cannot see
-   convergence; a probe too small or too short will pass blind; a subtour has ONE
-   mode class; a `Leg` reference does not survive the mobsim; **log lines measure
-   intent, not effect**; measure before moving a parameter.
-8. **Stopping a run needs BOTH steps** — `Stop-ScheduledTask` leaves the JVM
-   orphaned. Task names carry the launch stamp **minus one second**. Then
-   `taskkill /PID <java pid> /T /F`. The harness renames the directory itself. **A
-   `java.exe` at ~0.5 GB is VS Code's `redhat.java` language server, not an arm** —
-   check the command line before killing it.
-9. Carried and still live: `os.kill(pid,0)` on Windows TERMINATES; git-bash heredocs
-   eat backslashes (write JSON and patches via Python); PowerShell 5.1 `-Encoding
-   utf8` writes a BOM; `run.py --run-config smoke` resume-matches an earlier identical
-   probe unless `--force`; a slow mobsim is not a dead run.
+1. **AN EXPLANATION IS NOT EVIDENCE, HOWEVER WELL IT FITS.** Five times this session a
+   cause was adopted because it would explain the numbers already in hand, and three
+   reached committed entries before being refuted: destination placement for walk
+   (§9.103/§9.106 → refuted §9.107), full days for the joint bindings (§9.109 → refuted
+   §9.110), displaced ride for bike (§9.109/§9.112 → refuted §9.114). Every check was
+   cheap. **Ask what else would produce the same number.**
+2. **A LEVEL READ WHILE INNOVATION RUNS IS NOT THE MODEL'S ANSWER** (§9.108). Car at
+   −18.6% and walk at +89.5% at iteration 100 are what a *correct* model looks like a
+   tenth of the way through its search from a deliberately uniform seed.
+3. **SPLIT A COMPOUND CONDITION BEFORE ATTRIBUTING ANYTHING TO IT** (§9.111). One
+   counter served a five-clause test; the two clauses anyone would suspect account for
+   **2 refusals and 0**.
+4. **NEVER READ SERVICE FROM A `transitRoute` ID** (§9.113). Ferry and tram show ZERO
+   weekday routes and run 107 and 252 weekday departures. **Count departures.** This was
+   three minutes from being recorded as a finding.
+5. **A `main_mode` IS NEVER A PT SUBMODE** (§9.112). It is `pt`; the submode comes from
+   the legs table. Counting off `main_mode` reports all four PT modes as absent.
+6. **CHECK THE YARDSTICK BEFORE THE MODEL** (§9.91, §9.100, §9.101). Two of this
+   session's three "worst" modes were measurement defects.
+7. **A REFUSAL INSIDE A SUBTOUR MUST REJECT THE WHOLE PROPOSAL** (§9.106) — otherwise
+   `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes`,
+   rc=1 at the first iteration.
+8. **A BUILDER CHANGE WITHOUT ITS REBUILD BREAKS REPRODUCIBILITY.** That is why #92 and
+   #93 are uncommitted rather than "ready".
+9. Carried: `modestats.csv` is PLANNED and the trips table is REALISED; git-bash
+   heredocs eat backslashes (write patches via a file); compiling is not installing;
+   stopping a run needs BOTH `Stop-ScheduledTask` and `taskkill /PID <pid> /T /F`; a
+   `java.exe` at ~0.5 GB is VS Code's language server.
 
 ---
 
@@ -360,54 +287,30 @@ Counts that expire live in **§0**, with their commands. This section describes 
 §9  THE SIX STATE-OF-THE-PROJECT QUESTIONS
 ═══════════════════════════════════════════════════════════════════════════════
 
-**1 · Goals and achievement.** Research goal: test the Auditor-General's untested
-claims by counterfactual microsimulation — hypotheses A1–A6 and B1–B4 (B3, net
-arrivals across all modes, is the decisive test). Operational goal: a twin whose
-per-mode ridership is *checked*. **Build nearly complete — one measured exception,
-#88, where taxi is routed physically and simulated as a ghost. Checked half failing
-5 of 5 scored categories** (§2). **No hypothesis has been tested; no scenario
-comparison exists.** Deliverables (proposal §8): 1 reproducible model 🟡 (not
-containerised) · 2 open data package 🟡 (492 files, unpublished) · 3 calibration
-report 🟡 (C5, `feasible=False`, five stated violations) · 4 findings paper ⬜ ·
-5 explorer 🟡 · 6 method note 🟡.
+**1 · Goals and achievement.** Research goal: test the Auditor-General's claims by
+counterfactual microsimulation. Operational goal: a twin whose per-mode ridership is
+*checked*. **Physical simulation 12 of 12.** **<10% per mode not met** — no mode inside
+on a share basis, truck inside on its own. **No hypothesis tested; no scenario
+comparison exists.** Deliverables: 1 🟡 · 2 🟡 · 3 🟡 · 4 ⬜ · 5 🟡 · 6 🟡.
 
-**2 · Phases.** P0 ✅ · P1 ✅ for P4's needs (SCATS refused, journey-linked Opal
-unpublished, dwell unmeasured — all swept) · P2 ✅ (181,892-link MATSim base + 4
-variants, 15 mapped feeds, 0 unmapped stops) · P3 ✅ (612,687 agents; 620,553
-WEEKDAY plan persons on the F9/F10 demand) · **P4 🟡 8 of 9** · P5 ⬜ (mechanisms
-built inert) · P6 ⬜ · P7 ⬜.
+**2 · Phases.** P0 ✅ · P1 ✅ for P4's needs · P2 ✅ · P3 ✅ · **P4 🟡** · P5–P7 ⬜.
 
-**3 · Tasks per phase.** Batch 4.12 closed except 4.12.6–4.12.8, which §9.84
-superseded or built. Batch 4.13 (eleventh session) is closed: 4.13.7 superseded by
-the two arms, 4.13.8 **done — the gate fired twice**. Batch 4.14 (this session):
-4.14.1–4.14.7 **done and evaluated**, 4.14.8 **partial** (probe stopped at iteration
-2 of 8), 4.14.9 **open and the active lane**, 4.14.10 open (#88).
-Done-but-not-evaluated: **4.14.5–4.14.7 — the F10 build itself.** Its effect on mode
-share is unmeasured and that is exactly what 4.14.9 exists to settle.
+**3 · Tasks.** This session: three yardstick defects fixed, two model changes measured
+and rejected on evidence, one harness correctness defect fixed, the demand's ceiling
+located and classified, three issues filed, three of the session's own conclusions
+corrected. Open: #92, #93, #94, and a converged arm.
 
-**4 · Simulator versus real life.** See **§2** for the full per-mode table. **No
-valid post-repair run exists** — no `_run.json` in F7, F8, F9 or F10; every arm was
-stopped or died. The standing calibrated base is the pre-repair **F4** arm
-`20260821T175907_1000it_25pct` (MAE 10.65 pp, 35 of 67 scored), a **different
-family** — do not compare it with F9's 10.864. **Light rail patronage carries NO
-error figure**: V001/V002 are pre-pandemic and V003 is a monthly total no
-single-day-type arm produces. Boardings are a level (#84).
+**4 · Simulator versus real life.** See **§2**. **No valid post-cutoff arm exists** — no
+`_run.json` in F10–F13, and no arm has ever reached its innovation cutoff. The standing
+calibrated base is still the pre-repair **F4** arm `20260821T175907_1000it_25pct` (MAE
+10.65 pp), a **different family**.
 
-**5 · Issue ledger.** Totals and the open set are in **§0**. Per open issue: **#88**
-(NEW) taxi routed but teleported, 39,892 of 39,923 legs, ~40k vehicle-trips/iteration
-missing from the network; **#86** the demand ceiling — **answered in the demand** by
-§9.84 (ride 0.1903 seeded against an observed 0.206) and re-scoped by §9.85 to the
-realisation question; **#48** ride as physical passenger — cause found and repaired,
-effect unmeasured; **#21** gradient — built in §9.84, bike 12.02 → 9.79 across
-families (not a like-for-like comparison); **#49** taxi modes; **#50** demographics;
-**#30** walk geometry — 24.3% of walk trips over 5 km; **#84** patronage has no
-legitimate target; **#82** counts −91.8%; **#73 #68 #66** awaiting a run; **#63** 0b
-backlog; **#62** city-free input contract.
+**5 · Issue ledger.** Totals in §0. **#92** (NEW) the joint-binding candidate pool;
+**#93** (NEW) motorbike generated against one share and scored against another; **#94**
+(NEW) the ferry's 450-trip detour market. Commented with measured evidence: **#86**,
+**#91**, **#48**, **#30** — the last partly refuted, since the demand *has* the sub-1 km
+trips (16.31% under 1 km). Untouched: #84, #82, #73, #68, #66, #63, #62, #50, #49, #21.
 
-**6 · PR history and the next PR.** Totals in **§0**. The merged sequence runs from
-the P1 data package (#1) through network (#2), demand (#3), the ride/mode work (#52,
-#53, #69), the rename and two-arm campaign (#67), the all-modes batch (#80, #81), the
-doc-currency gate (#83), the front-door figures (#85) and F6's first arm (#87).
-**This session's PR** carries the eleventh session's four F9 commits plus this
-session's F10 commit — the eleventh session closed without opening one. **The next
-PR** should carry the F10 arm's gate reading and whatever cause it locates.
+**6 · PR history and the next PR.** Totals in §0. This session's PR carries §9.100–§9.115.
+The next PR should carry **either** the #92 + #93 rebuild **or** a converged arm — both
+need a decision recorded in §0 first.

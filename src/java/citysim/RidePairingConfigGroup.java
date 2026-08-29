@@ -35,11 +35,25 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      */
     private static final double UNSET = -1.0;
 
-    /** The four rules {@code B.ride.pairing_rule} may take. */
+    /** The five rules {@code B.ride.pairing_rule} may take. */
     public static final String RULE_BOTH_LINKS = "both_links";
     public static final String RULE_ORIGIN_LINK = "origin_link";
     public static final String RULE_DEST_LINK = "dest_link";
     public static final String RULE_WINDOW_ONLY = "window_only";
+    /**
+     * The passenger's two links both lie ON the driver's routed path, in
+     * order. This is the only rule that can represent a DROP-OFF EN ROUTE,
+     * and that is the commonest car-passenger trip there is: a parent who
+     * drives a child to school and carries on to work has a car leg from
+     * home to work, so {@link #RULE_BOTH_LINKS} refuses it by construction
+     * however wide the window is opened.
+     */
+    public static final String RULE_ROUTE_CONTAINS = "route_contains";
+
+    /** What an unpairable ride leg is EXECUTED as, this iteration. */
+    public static final String FALLBACK_WALK = "walk";
+    public static final String FALLBACK_DRIVE_ELSE_WALK =
+            "licensed_drive_else_walk";
 
     private boolean enabled = false;
     private boolean physicalBoarding = false;
@@ -50,6 +64,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private double escortCoherenceRate = UNSET;
     private double jointCoherenceRate = UNSET;
     private String rule = "";
+    private String unpairedFallback = "";
     private double pickupDwellSeconds = UNSET;
     private int maxPassengersPerVehicle = -1;
 
@@ -250,12 +265,40 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     /**
      * Which endpoints of the driver's leg must coincide with the passenger's.
      *
-     * <p>{@link #RULE_BOTH_LINKS} is the only rule under which handing the
-     * driver's realised travel time to the passenger is CORRECT rather than
-     * merely closer: the two are then the same trip. The looser rules exist so
-     * the sweep can measure what a laxer assumption would buy, and a run made
-     * under one of them is a sensitivity, not a result.
+     * <p>{@link #RULE_BOTH_LINKS} and {@link #RULE_ROUTE_CONTAINS} are the
+     * two rules under which handing the driver's time to the passenger is
+     * CORRECT rather than merely closer. Under the first the two are the same
+     * trip. Under the second the passenger occupies a SUB-SEGMENT of the
+     * driver's path, so the engine apportions the driver's time by that
+     * segment's share of the route's length - which reduces to the whole leg
+     * when the segment is the whole route, so `both_links` reproduces exactly.
+     * {@link #RULE_ORIGIN_LINK}, {@link #RULE_DEST_LINK} and
+     * {@link #RULE_WINDOW_ONLY} match trips that need not overlap at all, so a
+     * run made under one of them is a sensitivity, not a result.
      */
+    /**
+     * What an unpairable ride leg is executed as for this mobsim.
+     *
+     * <p>{@link #FALLBACK_WALK} was the only behaviour before 9.105 and
+     * reproduces it exactly. It is not a behaviour so much as a placeholder:
+     * a person denied a lift for a 10 km trip does not walk it, and forcing
+     * them to made walk 12.5x its observed mean trip length.
+     * {@link #FALLBACK_DRIVE_ELSE_WALK} lets a passenger who holds a licence
+     * and has a car available DRIVE instead, which is what the household
+     * actually does, and leaves everyone else walking as before. Either way
+     * the ride alternative is restored at AfterMobsim - 9.81's ratchet must
+     * not come back.
+     */
+    @StringGetter("unpairedFallback")
+    public String getUnpairedFallback() {
+        return this.unpairedFallback;
+    }
+
+    @StringSetter("unpairedFallback")
+    public void setUnpairedFallback(final String value) {
+        this.unpairedFallback = value == null ? "" : value.trim();
+    }
+
     @StringGetter("rule")
     public String getRule() {
         return this.rule;
@@ -336,13 +379,25 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         require(this.maxPassengersPerVehicle >= 1, "maxPassengersPerVehicle",
                 "B.ride.max_passengers_per_vehicle");
         require(!this.rule.isEmpty(), "rule", "B.ride.pairing_rule");
+        require(!this.unpairedFallback.isEmpty(), "unpairedFallback",
+                "B.ride.unpaired_fallback");
+        if (!FALLBACK_WALK.equals(this.unpairedFallback)
+                && !FALLBACK_DRIVE_ELSE_WALK.equals(this.unpairedFallback)) {
+            throw new RuntimeException(
+                    "ridePairing.unpairedFallback is '" + this.unpairedFallback
+                    + "', which is not one of " + FALLBACK_WALK + ", "
+                    + FALLBACK_DRIVE_ELSE_WALK
+                    + ". It is declared as B.ride.unpaired_fallback.");
+        }
         if (!RULE_BOTH_LINKS.equals(this.rule) && !RULE_ORIGIN_LINK.equals(this.rule)
                 && !RULE_DEST_LINK.equals(this.rule)
+                && !RULE_ROUTE_CONTAINS.equals(this.rule)
                 && !RULE_WINDOW_ONLY.equals(this.rule)) {
             throw new IllegalStateException(
                     "ridePairing.rule is '" + this.rule + "', which is not one of "
                     + RULE_BOTH_LINKS + ", " + RULE_ORIGIN_LINK + ", "
-                    + RULE_DEST_LINK + ", " + RULE_WINDOW_ONLY
+                    + RULE_DEST_LINK + ", " + RULE_ROUTE_CONTAINS + ", "
+                    + RULE_WINDOW_ONLY
                     + ". The rule is declared as B.ride.pairing_rule.");
         }
     }

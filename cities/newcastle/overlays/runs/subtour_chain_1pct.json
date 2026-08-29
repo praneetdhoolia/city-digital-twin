@@ -1,0 +1,17 @@
+{
+  "overlay": "subtour_chain_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN - nothing produced under it is a result and no mode share from it may be quoted, compared or fitted. It shares its sample, depth, threads and heap with taxi_fare_control_1pct so the two differ in exactly one declared value: RUN.mode_choice.proba_random_single_trip_mode, 0.5 in the control and 0.0 here. The hypothesis under test is structural rather than about any one mode. `car` and `bike` are MATSim chain-based modes, so a subtour must use them end to end; the random single-trip innovation assigns a mode to ONE trip, which breaks that chain, and a broken chain cannot be repaired by another single-trip change because returning to car requires the whole subtour at once. If that is what is happening, the model should bleed steadily out of chain-based modes into the modes with no chain constraint - and the control's iteration-40 reading is exactly that shape: car 0.3626 against a 0.5816 target while walk 0.2343 (target 0.1340), bike 0.0765 (0.0221), taxi 0.0596 (0.0099) and pt 0.0581 (0.0380) all sit above theirs. One mechanism would explain five deviations at once. This arm reads the same iteration with the single-trip draw switched off. 0.0 is INSIDE the declared sweep [0.0, 0.5] - the control's 0.5 sits at the top of it - so no allow_outside_sweep is needed for it, and this overlay proposes no new value: it selects a declared member and measures what it does.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "RUN.mode_choice.proba_random_single_trip_mode": 0.0
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations is chosen to match taxi_fare_control_1pct exactly, because a diagnostic compared at a different depth would read two different points on a transient rather than isolating the one variable under test - an error this investigation has already made twice (9.91). The value sits far below the range so any output carrying it is obviously not a result."
+  }
+}

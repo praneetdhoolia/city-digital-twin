@@ -1,0 +1,22 @@
+{
+  "overlay": "taxi_fare_stress_1pct",
+  "description": "A DIAGNOSTIC, NOT A MODELLING RUN. Nothing produced under this overlay is a result and no mode share from it may be quoted, compared or fitted. It exists to answer one question that reading the code could not settle: does the per-kilometre taxi fare actually reach the score? The flagfall is observable - it fires as a personMoney event, 42,835 of them measured at iteration 50 of the F12 arm - but monetaryDistanceRate is applied directly inside scoring and emits no event, so it is the one term in the taxi price that has never been proven to bind. It is also the large one: on the measured 13.1 km median taxi trip the flagfall is 2.99 AUD against 24.14 AUD of distance charge. The F12 arm read taxi at 7.75% of trips against a 0.99% target, and 7.52% even among agents holding BOTH a car and a licence, which the scoring arithmetic says should be impossible. Multiplying both fare rates by twenty makes the term unmissable: if taxi collapses, the rate binds and the over-choice has some other cause; if taxi still climbs, the rate is inert and that is the defect. Run at 1% for 40 iterations - long enough for mode choice to act, far too short to be a result.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 40,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "B.taxi.fare_per_km_taxi_aud": 50.4,
+    "B.taxi.fare_per_km_rideshare_aud": 30.0
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration",
+    "B.taxi.fare_per_km_taxi_aud",
+    "B.taxi.fare_per_km_rideshare_aud"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations is a diagnostic depth, chosen because the F12 arm showed taxi reaching 4.2% by iteration 10 and 5.3% by iteration 20, so the mechanism under test is plainly visible well before 40. The value sits far below the range so any output carrying it is obviously not a result.",
+    "B.taxi.fare_per_km_taxi_aud": "HELD FIXED at the Fares Order urban Distance Rate, and deliberately broken here rather than quietly re-declared. The field's own departure condition is a stress test or new evidence; this is the former. Twenty times the regulated rate is not a claim about any fare - it is chosen precisely because no defensible fare is anywhere near it, so a taxi share that survives it cannot be explained by price. The regulated value is untouched in the registry and every modelling run keeps it.",
+    "B.taxi.fare_per_km_rideshare_aud": "Same test, same reason: the emitted monetaryDistanceRate is a BLEND of the taxi and rideshare rates weighted by B.taxi.rideshare_trip_share, so moving only one of the two would leave two thirds of the blend at its declared value and blunt the very term being tested. Both are moved together so the blend moves by the full factor."
+  }
+}

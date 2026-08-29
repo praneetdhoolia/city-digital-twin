@@ -545,6 +545,12 @@
         "bound": 74663,
         "skipped_infeasible": 73258,
         "thin_p": 0.8565,
+        "refusal_reasons": {
+          "driver_is_the_companion": 51215,
+          "shift_driver_already_committed": 12530,
+          "as_timed_collides_with_companion": 9511,
+          "driver_party_full": 2
+        },
         "households_multi": 151107,
         "driver_tours": 231687,
         "companion_tours": 234924,
@@ -552,169 +558,13 @@
         "bound_driver_shifted": 16473,
         "driver_tours_used": 66630
       }
-    },
-    "SAT": {
-      "external_agents": 4759,
-      "external_legs": 8994,
-      "through_agents": 13709,
-      "through_legs": 14490,
-      "through_freight_agents": 781,
-      "freight_internal_agents": 41862,
-      "freight_agents_total": 42643,
-      "legs": 1815578,
-      "tours": 817481,
-      "travelling_persons": 445164,
-      "legs_per_person": 2.963,
-      "tours_per_traveller": 1.836,
-      "tours_dropped_over_horizon": 6408,
-      "tours_dropped_midnight_collision": 542,
-      "by_purpose": {
-        "HO": 902843,
-        "NHB": 179816,
-        "HS": 448934,
-        "HX": 190505,
-        "HW": 83372,
-        "HE": 4578,
-        "WB": 5530
-      },
-      "escort_binding": {
-        "enabled": true,
-        "scope": "any_member_trip",
-        "hx_tours_requested": 98340,
-        "hx_tours_bound": 69757,
-        "hx_tours_unbound_no_candidate": 28583,
-        "bound_by_priority": {
-          "0": 698,
-          "1": 24715,
-          "2": 78,
-          "3": 44266
-        },
-        "anchors_placed_bound": 68799,
-        "anchors_placed_unbound": 28566,
-        "mean_network_km_bound": 9.9,
-        "mean_network_km_unbound": 7.74,
-        "hts_network_km": 7.84,
-        "directions": "round_trip",
-        "pickups_unserved": 37110,
-        "member_tours_covered_round_trip": 9620,
-        "member_tours_covered_one_way": 49561,
-        "nonhousehold": {
-          "enabled": true,
-          "scope": "same_zone",
-          "drivers_unbound": 28566,
-          "passenger_candidates": 117447,
-          "bound": 27808,
-          "skipped_infeasible": 73581,
-          "directions": "round_trip",
-          "passenger_tours_not_direct": 28390,
-          "passenger_tours_round_trip": 13904
-        }
-      },
-      "joint_binding": {
-        "enabled": true,
-        "ratio": 0.3503,
-        "purposes": [
-          "HS",
-          "HO"
-        ],
-        "target_trips": 369985,
-        "existing_covered_trips": 47048,
-        "candidates": 315965,
-        "bound": 95858,
-        "skipped_infeasible": 44738,
-        "thin_p": 0.511,
-        "households_multi": 131399,
-        "driver_tours": 304273,
-        "companion_tours": 349852,
-        "skipped_conflict": 21399,
-        "bound_driver_shifted": 13365,
-        "driver_tours_used": 86257
-      }
-    },
-    "SUN": {
-      "external_agents": 4141,
-      "external_legs": 7796,
-      "through_agents": 11949,
-      "through_legs": 12643,
-      "through_freight_agents": 694,
-      "freight_internal_agents": 37325,
-      "freight_agents_total": 38019,
-      "legs": 1590832,
-      "tours": 714886,
-      "travelling_persons": 415745,
-      "legs_per_person": 2.596,
-      "tours_per_traveller": 1.72,
-      "tours_dropped_over_horizon": 3465,
-      "tours_dropped_midnight_collision": 345,
-      "by_purpose": {
-        "HO": 946249,
-        "NHB": 160528,
-        "HW": 46883,
-        "HS": 296366,
-        "HX": 135673,
-        "HE": 1435,
-        "WB": 3698
-      },
-      "escort_binding": {
-        "enabled": true,
-        "scope": "any_member_trip",
-        "hx_tours_requested": 69913,
-        "hx_tours_bound": 49337,
-        "hx_tours_unbound_no_candidate": 20576,
-        "bound_by_priority": {
-          "0": 178,
-          "1": 17738,
-          "2": 20,
-          "3": 31401
-        },
-        "anchors_placed_bound": 48816,
-        "anchors_placed_unbound": 20566,
-        "mean_network_km_bound": 9.94,
-        "mean_network_km_unbound": 7.84,
-        "hts_network_km": 7.84,
-        "directions": "round_trip",
-        "pickups_unserved": 29016,
-        "member_tours_covered_round_trip": 5403,
-        "member_tours_covered_one_way": 38011,
-        "nonhousehold": {
-          "enabled": true,
-          "scope": "same_zone",
-          "drivers_unbound": 20566,
-          "passenger_candidates": 105096,
-          "bound": 19808,
-          "skipped_infeasible": 44784,
-          "directions": "round_trip",
-          "passenger_tours_not_direct": 25487,
-          "passenger_tours_round_trip": 9904
-        }
-      },
-      "joint_binding": {
-        "enabled": true,
-        "ratio": 0.3503,
-        "purposes": [
-          "HS",
-          "HO"
-        ],
-        "target_trips": 323437,
-        "existing_covered_trips": 30614,
-        "candidates": 299312,
-        "bound": 87727,
-        "skipped_infeasible": 38762,
-        "thin_p": 0.4892,
-        "households_multi": 121639,
-        "driver_tours": 274198,
-        "companion_tours": 331681,
-        "skipped_conflict": 19757,
-        "bound_driver_shifted": 11401,
-        "driver_tours_used": 79144
-      }
     }
   },
   "placement": {
-    "poi": 2671691,
-    "home": 2521742,
-    "jitter": 157136,
-    "escorted": 243024
+    "poi": 985887,
+    "home": 989375,
+    "jitter": 86512,
+    "escorted": 125409
   },
   "tours_dropped_over_horizon": 0,
   "rate_solution": {
@@ -738,49 +588,7 @@
         "WB": 0.0779,
         "HX": 0.3928
       }
-    },
-    "SAT": {
-      "day_rate_target": 3.004,
-      "licence_frac": 0.7357,
-      "mandatory_legs": 0.1936,
-      "secondary_target_legs": 2.8104,
-      "child_thinning_factor": 0.9469,
-      "purpose_weights": {
-        "HW": 0.0346,
-        "HE": 0.0045,
-        "HS": 0.2724,
-        "HO": 0.5658,
-        "WB": 0.0067,
-        "HX": 0.116
-      },
-      "tour_lambda": {
-        "HS": 0.3762,
-        "HO": 0.7815,
-        "WB": 0.0093,
-        "HX": 0.2178
-      }
-    },
-    "SUN": {
-      "day_rate_target": 2.6183,
-      "licence_frac": 0.7357,
-      "mandatory_legs": 0.107,
-      "secondary_target_legs": 2.5114,
-      "child_thinning_factor": 0.9469,
-      "purpose_weights": {
-        "HW": 0.0281,
-        "HE": 0.002,
-        "HS": 0.1917,
-        "HO": 0.6798,
-        "WB": 0.005,
-        "HX": 0.0934
-      },
-      "tour_lambda": {
-        "HS": 0.2341,
-        "HO": 0.83,
-        "WB": 0.0061,
-        "HX": 0.1549
-      }
     }
   },
-  "realised_week_trip_rate": 3.344
+  "realised_week_trip_rate": 3.57
 }

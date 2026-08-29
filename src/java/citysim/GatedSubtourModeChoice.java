@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.matsim.api.core.v01.Coord;
+import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.core.config.groups.GlobalConfigGroup;
@@ -20,6 +22,7 @@ import org.matsim.core.replanning.selectors.RandomPlanSelector;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.router.TripStructureUtils.Trip;
+import org.matsim.core.utils.geometry.CoordUtils;
 import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.ActivityFacilities;
 
@@ -71,13 +74,18 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
     @Inject
     private TimeInterpretation timeInterpretation;
 
+    @Inject
+    private ModeAvailabilityConfigGroup availability;
+
     @Override
     public PlanStrategy get() {
         final PlanStrategyImpl.Builder builder =
                 new PlanStrategyImpl.Builder(new RandomPlanSelector<>());
         builder.addStrategyModule(new GatedModule(
                 globalConfigGroup, subtourModeChoiceConfigGroup,
-                permissibleModesCalculator));
+                permissibleModesCalculator,
+                availability.getWalkFeasibleKm(),
+                availability.getBikeFeasibleKm()));
         builder.addStrategyModule(new ReRoute(
                 facilities, tripRouterProvider, globalConfigGroup,
                 timeInterpretation));
@@ -89,12 +97,40 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             extends org.matsim.core.replanning.modules.SubtourModeChoice {
 
         private final PermissibleModesCalculator calc;
+        private final double walkFeasibleM;
+        private final double bikeFeasibleM;
 
         GatedModule(final GlobalConfigGroup global,
                     final SubtourModeChoiceConfigGroup config,
-                    final PermissibleModesCalculator calc) {
+                    final PermissibleModesCalculator calc,
+                    final double walkFeasibleKm,
+                    final double bikeFeasibleKm) {
             super(global, config, calc);
             this.calc = calc;
+            this.walkFeasibleM = walkFeasibleKm * 1000.0;
+            this.bikeFeasibleM = bikeFeasibleKm * 1000.0;
+        }
+
+        /**
+         * Whether this trip is beyond the declared reach of the mode proposed.
+         *
+         * <p>Measured on the straight line between the two activities, which is
+         * a LOWER bound on what the agent would actually cover, so a trip
+         * refused here is refused on a distance it certainly exceeds. A bound of
+         * zero is off.
+         */
+        private boolean beyondReach(final String mode, final Trip trip) {
+            final double limit = TransportMode.walk.equals(mode) ? walkFeasibleM
+                    : TransportMode.bike.equals(mode) ? bikeFeasibleM : 0.0;
+            if (Double.isNaN(limit) || limit <= 0.0) {
+                return false;
+            }
+            final Coord a = trip.getOriginActivity().getCoord();
+            final Coord b = trip.getDestinationActivity().getCoord();
+            if (a == null || b == null) {
+                return false;
+            }
+            return CoordUtils.calcEuclideanDistance(a, b) > limit;
         }
 
         @Override
@@ -122,6 +158,41 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                     if (after.size() != before.size()) {
                         return;   // structure changed: not the single-trip path
                     }
+                    // A reach refusal rejects the ENTIRE proposal. Putting
+                    // one trip of a subtour back would leave that subtour
+                    // mixing chain- and non-chain-based modes, which MATSim
+                    // refuses with an IllegalStateException - measured, and it
+                    // kills the run at the first iteration. The pre-innovation
+                    // plan is consistent by construction, so restoring all of
+                    // it is the only safe refusal.
+                    boolean infeasible = false;
+                    for (final Trip t : after) {
+                        final List<Leg> legs = t.getLegsOnly();
+                        if (!legs.isEmpty()
+                                && beyondReach(legs.get(0).getMode(), t)) {
+                            infeasible = true;
+                            break;
+                        }
+                    }
+                    if (infeasible) {
+                        for (int i = 0; i < after.size(); i++) {
+                            final String old = oldModes.get(i);
+                            final Trip t = after.get(i);
+                            final List<Leg> legs = t.getLegsOnly();
+                            if (old == null || legs.isEmpty()
+                                    || old.equals(legs.get(0).getMode())) {
+                                continue;
+                            }
+                            final Leg leg = PopulationUtils.createLeg(old);
+                            TripStructureUtils.setRoutingMode(leg, old);
+                            TripRouter.insertTrip(
+                                    plan, t.getOriginActivity(),
+                                    Collections.singletonList(leg),
+                                    t.getDestinationActivity());
+                        }
+                        return;
+                    }
+
                     final Collection<String> allowed =
                             calc.getPermissibleModes(plan);
                     for (int i = 0; i < after.size(); i++) {

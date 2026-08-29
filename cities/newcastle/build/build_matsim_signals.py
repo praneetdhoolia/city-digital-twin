@@ -264,8 +264,19 @@ def emit_xml(scenario, variant, systems, out_dir):
     os.makedirs(out_dir, exist_ok=True)
     row0 = systems[0]['inter']['row']
     tsp = row0['tsp_enabled'] == '1'
-    controller = ('CitysimTramPriority' if tsp
-                  else 'DefaultPlanbasedSignalSystemController')
+    # Which control LOGIC each system runs (DECISIONS.md 9.88, #73). Under
+    # scats_adaptive the timings generated below stay exactly as they are and
+    # become the STARTING point: citysim.ScatsSignalController re-times cycle
+    # and splits every cycle from measured saturation, so the plan written
+    # here is still the thing a fixed-time run would execute verbatim and the
+    # two regimes are comparable within one build.
+    scats = CFG.get('A.signals.control_regime') == 'scats_adaptive'
+    if scats:
+        controller = 'CitysimScats'
+    elif tsp:
+        controller = 'CitysimTramPriority'
+    else:
+        controller = 'DefaultPlanbasedSignalSystemController'
 
     sys_root = ET.Element('signalSystems', {'xmlns': XMLNS})
     grp_root = ET.Element('signalGroups', {'xmlns': XMLNS})

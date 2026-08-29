@@ -98,6 +98,111 @@
       "consumers": [
         "src/calibrate/calibrate.py"
       ]
+    },
+    "CAL.pt_split.window_months": {
+      "value": 12,
+      "units": "months",
+      "source": "assumed",
+      "sweep": [
+        6,
+        24
+      ],
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
+    },
+    "CAL.pt_split.station_scope": {
+      "value": "target_lga",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "target_lga",
+          "all_observed"
+        ],
+        "basis": "The HTS level the PT split scales is a share of trips made by residents of the TARGET LGA, so the boardings composition that splits it must be measured over the same ground. `target_lga` counts only stations the city's own mapped schedule contains AND that fall inside the target LGA boundary - both tested, never named in a script. `all_observed` reproduces the pre-9.100 behaviour, which pooled every station the publication happened to carry: three LGAs of train boardings and a light rail stop belonging to another city entirely. It is kept as the sweep's other arm because the bus series has no station-level breakdown and so cannot be restricted the same way, which leaves a real asymmetry between the legs rather than a settled one."
+      },
+      "status": "active",
+      "decisions_ref": "9.100",
+      "description": "Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all."
+    },
+    "CAL.pt_split.break_ratio": {
+      "value": 0.5,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.35,
+        0.7
+      ],
+      "status": "active",
+      "decisions_ref": "9.100",
+      "description": "A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near."
+    },
+    "CAL.pt_split.lr_observed_stop_share": {
+      "value": 0.3696,
+      "units": "share_of_line_boardings",
+      "source": "measured",
+      "sweep": [
+        0.3372,
+        0.3755
+      ],
+      "status": "active",
+      "decisions_ref": "9.100",
+      "description": "The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged."
+    },
+    "CAL.mode_split.commute_transfer_tolerance": {
+      "value": 0.25,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.1,
+        0.5
+      ],
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%."
+    },
+    "CAL.truck.count_year_from": {
+      "value": 2023,
+      "units": "year",
+      "source": "assumed",
+      "sweep": [
+        2019,
+        2025
+      ],
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year)."
+    },
+    "CAL.gate.stop_deviation_pct": {
+      "value": 20.0,
+      "units": "per cent",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading."
+    },
+    "CAL.gate.pass_deviation_pct": {
+      "value": 10.0,
+      "units": "per cent",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.87",
+      "description": "The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything."
+    },
+    "CAL.taxi.lga_concentration": {
+      "value": 1.0,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        1.0,
+        2.0
+      ],
+      "status": "active",
+      "decisions_ref": "9.91",
+      "description": "How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned."
     }
   }
 }

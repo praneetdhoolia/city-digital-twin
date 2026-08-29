@@ -430,11 +430,13 @@ def write_mode_vehicles(dst_path, cfg):
         'xsi:schemaLocation="http://www.matsim.org/files/dtd '
         'http://www.matsim.org/files/dtd/vehicleDefinitions_v2.0.xsd">',
     ] + car_bodied('car') + car_bodied('ride') + (
-        # taxi (issue #49): a taxi IS a car by identity - the passenger rides
-        # in one - and like `ride` it is network-routed but never a qsim main
-        # mode, so the type exists for PrepareForSim and is inert beyond
-        # loading. Emitted only when the declared routing vocabulary carries
-        # the mode (INERT until the batch boundary adds it).
+        # taxi (issue #49, #88; DECISIONS.md 9.86): a taxi IS a car by
+        # identity - the passenger rides in one - so it restates the car type
+        # rather than declaring a second body. Since 9.86 taxi is also a qsim
+        # MAIN mode, so this type is what the mobsim loads and queues: the
+        # length, width and PCE here are the road space a hired car actually
+        # takes. Emitted only when the declared routing vocabulary carries
+        # the mode.
         car_bodied('taxi') if 'taxi' in cfg.get('RUN.routing.network_modes')
         else []
     ) + [
@@ -1313,6 +1315,15 @@ def config_runtime(cfg, scoring, day, paths):
             False, 'derived',
             'the signals contrib refuses fast capacity update; forced false '
             'while A.signals.representation == explicit_signals')
+    # Taxi as a finite fleet (DECISIONS.md 9.99, #90). remodeRefused is a
+    # DEFINITION rather than a registry value, exactly like the ride engine's
+    # own remode switch: a refused request that did not walk would be a
+    # constraint with no price, and the whole point of the fleet is that the
+    # constraint IS the price.
+    runtime['taxiFleet.remodeRefused'] = (
+        True, 'derived',
+        'a refused taxi request walks this iteration and has the mode restored '
+        'at AfterMobsim (9.55, 9.81, 9.99)')
 
     # Level crossings (#68): the closures reach the router only as a
     # time-variant network, and only when the declared representation gate
