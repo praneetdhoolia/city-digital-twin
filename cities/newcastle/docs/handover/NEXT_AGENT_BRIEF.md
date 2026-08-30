@@ -92,8 +92,10 @@ python tests/check_package.py                      # LOCAL ONLY - RUN IT (ALL PA
 > timestamp.
 
 **Physical simulation: 12 of 12.** **Monitoring: met** — every 10th iteration yields the
-twelve-mode table (§9.120). **<10% per mode: not met, and no F15 level has been read
-yet.** The last levels read (F14, iteration 30, 25%) are in §2.
+twelve-mode table (§9.120). **<10% per mode: not met, and no honest level has been
+read since F4** — F15's only gate (§2) was the seed-order artefact §9.121 names, and
+the F16 arm is its correction. **Ride's mechanism is fixed** (88.8% of ride legs pair on
+identity); its remaining gap is the demand's supply of drivers (#86).
 
 ---
 
@@ -353,8 +355,9 @@ read.** No hypothesis tested; no scenario comparison exists. Deliverables: 1 �
 **2 · Phases.** P0 ✅ · P1 ✅ for P4's needs · P2 ✅ · P3 ✅ (plans regenerated 30 Aug
 12:40 as the full choice set) · **P4 🟡** · P5–P7 ⬜.
 
-**3 · Tasks.** Batch 4.15 (§9.120): 4.15.1–4.15.10 and 4.15.13 done; **4.15.11 (run and
-gate the F15 arm) running**; 4.15.12 (the ride ceiling) open as the next root cause.
+**3 · Tasks.** Batch 4.15 (§9.120/§9.121): 4.15.1–4.15.10, 4.15.13 and 4.15.14 done;
+4.15.11 (the F15 arm) stopped on the gate with its cause measured; **4.15.15 (run and
+gate the F16 arm) running**; 4.15.12 (the ride ceiling) open as the next root cause.
 
 **4 · Simulator versus real life.** See **§2** — F14 iteration 30, superseded. **No valid
 post-cutoff arm exists in any family since F4.** The standing calibrated base is still
@@ -371,4 +374,4 @@ pending). Untouched: #94, #84, #82, #73, #68, #66, #63, #62, #50, #49, #21.
 **6 · PR history and the next PR.** Totals in §0. This session's PR carries §9.120 —
 the reader, the F14 close-out, the measurements, the three repairs, the rebuild, the
 F13/F14/F15 family declarations and the check widening. The next PR should carry the
-F15 arm's gate readings and whichever root cause they name.
+F16 arm's gate readings and whichever root cause they name.
