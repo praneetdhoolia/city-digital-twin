@@ -67,7 +67,7 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus,
 | Open comparability family | `F20-bucket-rule-carve-pool` (opened `20260830T184954`, §9.129) - nothing run before it compares with anything after it |
 | Input registry | **414 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **501 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
-| Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` |
+| Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (30 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (30 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (30 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (30 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (30 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (30 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (30 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (30 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (30 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (30 August 2026) |
 <!-- generated:state end -->
 

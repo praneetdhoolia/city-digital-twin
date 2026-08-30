@@ -229,15 +229,18 @@ def block_state():
         with open(man, newline='', encoding='utf-8') as fh:
             n_files = sum(1 for _ in csv.DictReader(fh))
     lines.append('| Data package | **%d files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |' % n_files)
-    # run-input sets
+    # run-input sets - counted from the COMMITTED manifest (one config.xml per
+    # scenario x day-type set), never from the gitignored directories, so the
+    # block reads the same in CI as on the workstation
     sets = 0
-    base = _city.path('scenarios', 'matsim')
-    if os.path.isdir(base):
-        for s in os.listdir(base):
-            p = os.path.join(base, s)
-            if os.path.isdir(p):
-                sets += sum(1 for d in os.listdir(p) if os.path.isdir(os.path.join(p, d)))
-    lines.append('| Run inputs assembled | **%d** scenario x day-type sets under `scenarios/matsim/` |' % sets)
+    if os.path.exists(man):
+        with open(man, newline='', encoding='utf-8') as fh:
+            for row in csv.DictReader(fh):
+                parts = row['path'].split('/')
+                if (len(parts) == 5 and parts[0] == 'scenarios' and parts[1] == 'matsim'
+                        and parts[4] == 'config.xml'):
+                    sets += 1
+    lines.append('| Run inputs assembled | **%d** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |' % sets)
     # positions
     pos_dir = _city.path('docs', 'positions')
     if os.path.isdir(pos_dir):
