@@ -193,10 +193,10 @@ eligible persons being escorters), and the carve at the resolution the census ob
 it, `B.motorbike.carve_resolution` = `sa1_thinned`; **the yardstick half is done now**
 — the driver split reads the target LGA's own G62 cell, moving motorbike's target
 0.2406 → 0.3785, car 58.16 → 58.32, ferry 0.1013 → 0.1429, and at 10% motorbike is a
-17-person statistic; (b) measured, not built (§9.120) — residents
-who drive trucks, census G62 one-method `Truck` 1,880 journeys to work, 1.058% of
-car-as-driver journeys, transferring exactly as the motorbike carve does (≈0.62% of
-resident trips, locked to `truck`), the directive's item 8; (c) #30's destination
+17-person statistic; (b) **built, not yet rebuilt (§9.125)** — residents who drive a
+truck for a living, `B.truck.resident_trip_share` 0.002993 from the target LGA's G62
+Truck cell (223 of 43,959 driver journeys) by the motorbike carve's identity, carved and
+locked to `truck` on the same non-escorting pool, the directive's item 8; (c) #30's destination
 solver, now quantified against the D1 layers (shopping/other ends in the tram corridor
 at two-thirds of the observed attraction rate). Rebuilding plans for (a)–(c) opens a
 family; do it once, after the F17 gate names its own root causes.
