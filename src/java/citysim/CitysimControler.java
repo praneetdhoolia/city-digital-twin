@@ -216,8 +216,9 @@ public final class CitysimControler {
                 // DECISIONS.md 9.121, #94: the PT router's direct walk is
                 // evaluated on the walk network rather than the beeline the
                 // raptor draws across the harbour. Both bindings only when
-                // the declared basis asks for it; `beeline` is the stock
-                // raptor untouched.
+                // the declared basis (RUN.transit_router.direct_walk_basis,
+                // emitted as ptDirectWalk.basis) asks for it; `beeline` is
+                // the stock raptor untouched.
                 if (ptDirectWalk.isNetwork()) {
                     // MATSim's injector requires explicit bindings: the stock
                     // raptor module's provider is injected by the wrapper and

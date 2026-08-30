@@ -20,6 +20,11 @@ import org.matsim.core.config.ReflectiveConfigGroup;
  * {@code walk} routing module, and the raptor's comparison is applied to
  * THAT walk's time with the same declared {@code directWalkFactor}. Nothing
  * else moves. {@code basis = beeline}: the stock behaviour.
+ *
+ * <p>Registry: {@code RUN.transit_router.direct_walk_basis} binds to
+ * {@code ptDirectWalk.basis}; the factor is
+ * {@code RUN.transit_router.direct_walk_factor} on
+ * {@code transitRouter.directWalkFactor}.
  */
 public final class PtDirectWalkConfigGroup extends ReflectiveConfigGroup {
 

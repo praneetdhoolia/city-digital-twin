@@ -47,7 +47,10 @@ import org.matsim.core.router.RoutingRequest;
  *
  * <p>No value is invented and no declared value moves: the factor, the
  * marginal utilities and the walk speed are the run's own; the ferry, the
- * bus and the walk compete on the ground they exist on.
+ * bus and the walk compete on the ground they exist on. Bound by
+ * {@link CitysimControler} when the registry field
+ * {@code RUN.transit_router.direct_walk_basis} is {@code network}; the factor
+ * is {@code RUN.transit_router.direct_walk_factor}.
  */
 public final class NetworkDirectWalkPtRouter implements RoutingModule {
     private static final Logger LOG = LogManager.getLogger(NetworkDirectWalkPtRouter.class);
