@@ -667,6 +667,23 @@ def write_day(day, attrs, rng, report, seed_table=None):
                             p[tid] = base
                     plan_set.append(p)
                 seed_plans_hist[len(plan_set)] += 1
+                # 9.121: WHICH seeded plan is executed first is drawn
+                # uniformly over the person's plans, by a hash of the person
+                # id and the master seed (no rng stream consumed). With the
+                # car plan first for everyone, iteration 0 put 74.7% of
+                # residents in a car on a 10% network - 162,812 departures,
+                # 6,820 cars stuck at 30:00 - and every car plan in memory
+                # kept that gridlock score while the other modes were scored
+                # on near-empty roads in iterations 1-6: a 60-100 util
+                # handicap ChangeExpBeta never re-tests. Drawn uniformly,
+                # iteration 0 is a mixed traffic state like every later one
+                # and no mode's plans are scored under a state the others
+                # were not.
+                h = _hashlib.sha256(('seedorder|%s|%d' % (pid, SEED))
+                                    .encode()).hexdigest()
+                first = int(h[:12], 16) % len(plan_set)
+                if first:
+                    plan_set = [plan_set[first]] + plan_set[:first] + plan_set[first + 1:]
 
             w.write('\t<person id="%d">\n' % pid)
             w.write('\t\t<attributes>\n')

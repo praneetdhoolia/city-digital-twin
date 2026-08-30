@@ -1,0 +1,10 @@
+{
+  "overlay": "f16_gate_10pct",
+  "description": "The first family-F16 arm (DECISIONS.md 9.121): the F15 stack with the seed's FIRST-EXECUTED plan drawn uniformly over each person's seeded plans instead of car-first. Identical run parameters to f15_gate_10pct - S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the standing /goal directive - so the only difference between the two arms is the seed order, and 9.121's finding (every car plan in memory scored under the iteration-0 gridlock the car-first seed created) is what this arm tests. Measured pace on the F15 arm: 120-150 s/it in the first ten iterations at 10%, so a gate costs ~3.5 h. NEVER compare with a 25% arm (9.10, 9.12) or with any run before 30 August 13:35 (family F16 opens at 9.121). NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.10,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}

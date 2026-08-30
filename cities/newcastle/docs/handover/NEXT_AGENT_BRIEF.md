@@ -28,7 +28,7 @@ trust order, the six questions, the environment gate — live in
 
 | Fact as of this handoff | Re-derive with |
 |---|---|
-| **AN ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T124711_300it_10pct` (S2, WEEKDAY, 10%, 300 it, cutoff 240, overlay `f15_gate_10pct`), launched 30 Aug 12:47 as Task Scheduler task `citysim_run_20260830T124710`; **measured 151.7 s/it median at iteration 2** (not the ~100 s/it of the F13 10% arm — the choice-set seed loads pt, taxi and walk early), so the iteration-100 gate lands ~17:15 and the run ~13 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
+| **AN F16 ARM IS RUNNING — THE MACHINE IS NOT FREE** (overlay `f16_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240; the run directory is named by the runner — find it with `ls -td results/2026*_300it_10pct \| head -1`, its task is `citysim_run_<stamp minus 1 s>`). The F15 arm `aborted_20260830T124711_300it_10pct` was **stopped on the gate at iteration 13** (§9.121). Measured pace at 10%: 120–150 s/it, so a gate every ~3.5 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
 | Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --trend` (every readable iteration, every mode, direction) · `--it <n>` for one table · `--watch 300` to keep printing — every 10th iteration is readable now, not only the trips-table ones |
 | **This session's PR is OPEN at handoff** (or merged overnight — check) | `gh pr list --state open` · `gh pr checks <n>` |
 | Open issues — **none closed this session; #48, #86, #91, #30, #93, #96 carry new measured comments** | `gh issue list --state open` |
@@ -101,29 +101,30 @@ yet.** The last levels read (F14, iteration 30, 25%) are in §2.
 §2  THE MODES — every mode individually
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Basis:** linked main-mode trips, target-LGA residents. **THIS IS THE DEAD F14 ARM
-AT ITERATION 30 (25%) — a point on a moving curve in a superseded family, NOT the
-model's answer, and NOT comparable with the running 10% F15 arm** (§9.10, §9.12).
-Reproduce with `python src/analyse/report_mode_ridership.py --run
-results/aborted_20260830T083019_1000it_25pct --it 30`. Trend is 1 → 10 → 20 → 30.
+**Basis:** linked main-mode trips, target-LGA residents, 10%. **THIS IS THE STOPPED
+F15 ARM AT ITERATION 10 — every car plan in it was scored under the iteration-0
+gridlock the car-first seed created (§9.121), so the levels are that artefact, NOT
+the model's answer.** Reproduce with `python src/analyse/report_mode_ridership.py
+--run results/aborted_20260830T124711_300it_10pct --it 10`.
 
-| # | mode | modelled % it.30 | target % | deviation | trend 1→30 | mean km vs obs |
-|---|---|---:|---:|---:|---|---:|
-| 1 | car | 44.2018 | 58.1631 | −24.0% | toward, +0.19 pp/it | +4% |
-| 2 | ride | 9.1404 | 20.6000 | −55.6% | **away then flat** (planned 22.46%!) | −13% |
-| 3 | walk | 28.3978 | 13.4000 | +111.9% | toward, −0.16 pp/it | +951% |
-| 4 | bike | 7.9987 | 2.2084 | +262.2% | **away** | +88% |
-| 5 | motorbike | 0.0986 | 0.2406 | −59.0% | flat | +5% |
-| 6 | taxi | 1.3442 | 0.9916 | +35.6% | flat overshoot | +134% |
-| 7 | bus | 7.0170 | 2.3819 | +194.6% | toward, slowly | −48% |
-| 8 | heavy_rail | 1.7283 | 0.7737 | +123.4% | flat | −48% |
-| 9 | light_rail | 0.0653 | 0.6444 | −89.9% | **away** | −48% |
-| 10 | ferry | 0.0078 | 0.1013 | −92.3% | toward, from 0.003 | −48% |
-| 11 | truck | 8.2417 | — | n/a network-wide; **16.4456 vs 11.3092 at the 3 classifying stations (+45%, 377 vehicles)** | — | — |
-| 12 | freight_train | 314 closures | 314 | representation, not a fit | — | — |
+| # | mode | modelled % it.10 | target % | deviation | what it is |
+|---|---|---:|---:|---:|---|
+| 1 | car | 36.9159 | 58.1631 | −36.5% | car plans carry the it.0 gridlock score |
+| 2 | ride | 7.3597 | 20.6000 | −64.3% | **realises what is bound** — 88.8% of ride legs paired; rising |
+| 3 | walk | 33.0019 | 13.4000 | +146.3% | scored on quarter-traffic roads |
+| 4 | bike | 11.2446 | 2.2084 | +409.2% | bike plan +68 utils over car (48.7% prefer it) — the artefact |
+| 5 | motorbike | 0.0627 | 0.2406 | −73.9% | locked carve; 39 trips at 10% |
+| 6 | taxi | 1.6167 | 0.9916 | +63.0% | fleet still refusing 41% of the seed flood |
+| 7 | bus | 7.7055 | 2.3819 | +223.5% | pt plans scored on quarter-traffic roads |
+| 8 | heavy_rail | 2.0318 | 0.7737 | +162.6% | as bus |
+| 9 | light_rail | 0.0579 | 0.6444 | −91.0% | corridor market (#30) |
+| 10 | ferry | 0.0032 | 0.1013 | −96.8% | 2 trips; the catchment exists (§9.120) — the router question stays open |
+| 11 | truck | 9.3341 | — | n/a network-wide | `--truck-stations` scores it |
+| 12 | freight_train | 314 closures | 314 | representation | — |
 
 The four PT submodes share one folded HTS observation; their geometry deviations are
-not independent.
+not independent. **The last valid trend reading remains the dead F14 arm's (25%,
+iterations 1→30), recorded in §9.120.**
 
 ---
 
@@ -131,18 +132,19 @@ not independent.
 §3  THE ACTIVE LANE
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Gate the running F15 arm at iterations 100, 200 and 300 — all twelve modes, trend
-and level — with `report_mode_ridership.py`.** What it must answer, in this order:
+**Gate the running F16 arm at iterations 100, 200 and 300 — all twelve modes, trend
+and level — with `report_mode_ridership.py --trend`.** Read the trend from iteration
+10 on (iterations 0–6 execute the unscored seeds). What it must answer, in this order:
 
-1. **Does ride realise what the demand binds?** Planned ride can now only sit on
-   trips with a declared driver; the realised share should approach the ~11% ceiling
-   rather than half of a fictitious 22%. Read `ride_pairing.csv` (`paired_by_identity`,
-   `miss_endpoints`) and the log's `re-timed` line per iteration.
-2. **Is car's planned share honest now** (no fallback drives masking it)?
-3. **Do walk and bike fall once every mode is scored** (the seed is no longer the
-   search)? If bike stays near 8% with car/walk plans scored in memory, it is a
-   scoring question for the first time.
-4. **Does the model settle inside 250 iterations?** `_progress.json`'s relaxation block
+1. **Ride — answered on F15 (§9.121): it realises what the demand binds** (88.8% of
+   ride legs paired on identity). Confirm on F16, then the ride gap is the demand
+   ceiling (#86) and nothing in the run.
+2. **With every mode scored under ONE traffic state, where do car, walk, bike and pt
+   settle?** The F15 levels were the seed-order artefact; F16 is the first honest
+   read. If bike still beats car in a resident's own memory, run
+   `plan_scores`-style per-mode score comparison on the plans file before touching a
+   constant — the scores, not the shares, say why.
+3. **Does the model settle inside 250 iterations?** `_progress.json`'s relaxation block
    after the cutoff at 240.
 
 If a mode is past 20% AND not moving toward its target across 100/200, stop the arm
@@ -221,14 +223,31 @@ Plans (3 day types), 30 run-input sets and the manifest (494 rows) rebuilt; F13,
 F15 declared in `run_families.json`; `check_package.py` adapted to the multi-plan seed
 and ALL PASSED.
 
+**§9.121 — the F15 arm's gate at iteration 10, and why it stopped at 13.** Ride pairs
+at **88.8% on identity** (13,580 of 15,295; 0.41 on F14) — the ride repairs work. But
+the per-mode plan scores of 14,753 car-available residents showed the **bike plan
++67.95 utils over the car plan on average (48.7% prefer it)**, pt +34.7 at p75, gaps of
+±100 utils: activity utility lost, not travel time (parking −1.87 AUD/person-day).
+Cause: the seed wrote car first and selected, so **iteration 0 ran car for 74.7% of
+residents — 162,812 departures at 10%, 6,820 stuck, average score −77.8 — while every
+other mode was scored on quarter-traffic roads in iterations 1–6**. Repair: the
+first-executed seed plan is drawn uniformly per person by a hash. Plans, run inputs,
+manifest rebuilt as **family F16**; the F15 arm is closed out with the reading in its
+cause. Also measured and recorded in §9.120: the corridor holds shopping/other ends at
+two-thirds of the observed attraction rate (`src/analyse/corridor_market.py`); the
+ferry's catchment holds 59,458 trip ends within 1 km; the router's search/extension
+radii were undeclared jar defaults and are now `RUN.transit_router.*`; 1,880 resident
+truck commuters are observed in G62 and queued.
+
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
 §5  WHAT INVALIDATES THE WORK
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **FAMILY F15 IS OPEN (30 Aug 12:40).** Nothing run before compares with anything
-  after, including the dead F14 arm and the two F4 arms `README.md` draws from.
+- **FAMILY F16 IS OPEN (30 Aug 13:30, §9.121).** Nothing run before compares with
+  anything after — not the 13-iteration F15 arm, not the dead F14 arm, not the two F4
+  arms `README.md` draws from.
 - **Never compare across sample fractions.** The running arm is 10%; F14 was 25%.
 - **One arm at a time** (#66). **No recompile into `.tools/classes` while it runs.**
 - **The 67/143 holdout split is never opened or peeked.**
@@ -267,6 +286,8 @@ Counts that expire live in **§0**.
 
 - **The seed is the full choice set** (§9.120) — supersedes §9.92's "the seed stays
   uniform"; `uniform_draw` is retained and swept against.
+- **The first-executed seed plan is drawn uniformly per person** (§9.121) — never
+  one mode for everyone: iteration 0 must be a mixed traffic state.
 - **`ride` is a trip somebody drives**; a declared driver keeps `car` on the trips
   they serve (§9.120).
 - **A declared pair is paired on identity and timed by the driver** (§9.120);
@@ -284,7 +305,11 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **THE ENVIRONMENT GATE RECOMPILES `.tools/classes`, AND AN ARM LOADS FROM IT.**
+1. **A CHOICE SET IS SCORED UNDER WHATEVER TRAFFIC ITS ITERATION CARRIED** (§9.121).
+   Car-first seeding gridlocked iteration 0 and handed every car plan a 60–100 util
+   handicap ChangeExpBeta never re-tests. Read the per-mode plan SCORES in a resident's
+   memory before believing a share; a share can be an ordering.
+2. **THE ENVIRONMENT GATE RECOMPILES `.tools/classes`, AND AN ARM LOADS FROM IT.**
    `bootstrap_toolchain.py --verify` is in the gate; run it before an arm is up, never
    during. The F14 arm died within a minute of this session's start; the correlation
    is recorded, the cause is not established, and the scheduler log that would settle
