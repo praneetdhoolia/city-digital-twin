@@ -399,6 +399,34 @@
       "matsim_param": "transitRouter.maxBeelineWalkConnectionDistance",
       "description": "Maximum stop-to-stop distance at which the PT router will create a transfer. THIS PARAMETER ALONE CREATES EVERY INTERCHANGE IN THE MODEL: none of the five raw TfNSW feeds carries a transfers.txt, so the schedule holds zero minimalTransferTimes and nothing backstops it. At the unset default of 100 m the light rail at Newcastle Interchange reached Stand A (49.0 m), Stand B (95.1 m) and the heavy rail platforms (53.9-57.8 m) but NOT Stand C at 119.2-139.0 m, which carries the regional buses and NSW TrainLink - the external-origin connection hypothesis A3 falsifies on (9.28)."
     },
+    "RUN.transit_router.search_radius_m": {
+      "value": 1000.0,
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        500.0,
+        2000.0
+      ],
+      "sweep_basis": "MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.",
+      "status": "active",
+      "decisions_ref": "9.120",
+      "matsim_param": "transitRouter.searchRadius",
+      "description": "Radius around a trip end within which the PT router considers stop facilities as access or egress points. If no stop lies within it, the router extends to the nearest stop plus RUN.transit_router.extension_radius_m. It governs the reach of every submode and is the one value that decides whether a resident 1.5 km from Stockton wharf can be routed onto the ferry (#94); it had been governing silently as the jar default."
+    },
+    "RUN.transit_router.extension_radius_m": {
+      "value": 200.0,
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        100.0,
+        500.0
+      ],
+      "sweep_basis": "MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.",
+      "status": "active",
+      "decisions_ref": "9.120",
+      "matsim_param": "transitRouter.extensionRadius",
+      "description": "When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default."
+    },
     "RUN.routing.network_modes": {
       "value": [
         "car",

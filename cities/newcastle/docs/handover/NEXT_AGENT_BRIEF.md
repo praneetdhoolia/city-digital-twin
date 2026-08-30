@@ -240,7 +240,8 @@ Counts that expire live in **§0**.
 - **Machine:** BUSY (the 10% arm, ~30 GB heap).
 - **Toolchain:** JDK 25.0.4+7, pt2matsim 26.6, Maven 3.9.9, run-stack 201 jars
   (MATSim 2027.0-2026w25); `.tools/classes` carries the §9.120 classes.
-- **Registry:** 403 fields, ledger 0.
+- **Registry:** 405 fields, ledger 0 (§9.120 added `B.mode.seed_method`,
+  `RUN.transit_router.search_radius_m`, `RUN.transit_router.extension_radius_m`).
 - **`check_package.py`: ALL CHECKS PASSED** with its 2 standing warnings — run this
   session on the F15 package, not asserted.
 - **Session branch:** `praneetdhoolia/f15-choice-set-seed-bound-ride`, three commits

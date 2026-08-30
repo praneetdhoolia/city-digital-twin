@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 403 fields are made of
+## What the 405 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 34 | computed from observed data in this package |
 | `derived` | 36 | follows from another registry field by identity |
-| `literature` | 65 | a published value, not specific to this city |
+| `literature` | 67 | a published value, not specific to this city |
 | `assumed` | 149 | chosen without direct empirical support |
 | `definition` | 115 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 384 | usable point value |
+| `active` | 386 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -2782,7 +2782,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 68 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 70 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration carries a null value because no justified value has been measured; the resolver will not invent one.
 
@@ -2852,7 +2852,9 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
+| `RUN.transit_router.extension_radius_m` | `200.0` | metres | `literature` | 100 - 500 |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
+| `RUN.transit_router.search_radius_m` | `1000.0` | metres | `literature` | 500 - 2000 |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
 | `RUN.travel_time.bin_size_s` | `300` | seconds | `literature` | 60 - 900 |
 | `RUN.travel_time.separate_modes` | `false` | boolean | `definition` | - |
@@ -3277,6 +3279,14 @@ Whether the mobsim simulates the transit schedule at all. False would make every
 
 ***definition** · status **active** · DECISIONS.md §15 · MATSim `transit.useTransit`*
 
+#### `RUN.transit_router.extension_radius_m`
+
+When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default.
+
+***literature** · status **active** · DECISIONS.md §9.120 · MATSim `transitRouter.extensionRadius`*
+
+> **Sweep basis.** MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.
+
 #### `RUN.transit_router.max_beeline_walk_connection_m`
 
 Maximum stop-to-stop distance at which the PT router will create a transfer. THIS PARAMETER ALONE CREATES EVERY INTERCHANGE IN THE MODEL: none of the five raw TfNSW feeds carries a transfers.txt, so the schedule holds zero minimalTransferTimes and nothing backstops it. At the unset default of 100 m the light rail at Newcastle Interchange reached Stand A (49.0 m), Stand B (95.1 m) and the heavy rail platforms (53.9-57.8 m) but NOT Stand C at 119.2-139.0 m, which carries the regional buses and NSW TrainLink - the external-origin connection hypothesis A3 falsifies on (9.28).
@@ -3284,6 +3294,14 @@ Maximum stop-to-stop distance at which the PT router will create a transfer. THI
 ***literature** · status **active** · DECISIONS.md §9.28 · MATSim `transitRouter.maxBeelineWalkConnectionDistance`*
 
 > **Sweep basis.** 100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.
+
+#### `RUN.transit_router.search_radius_m`
+
+Radius around a trip end within which the PT router considers stop facilities as access or egress points. If no stop lies within it, the router extends to the nearest stop plus RUN.transit_router.extension_radius_m. It governs the reach of every submode and is the one value that decides whether a resident 1.5 km from Stockton wharf can be routed onto the ferry (#94); it had been governing silently as the jar default.
+
+***literature** · status **active** · DECISIONS.md §9.120 · MATSim `transitRouter.searchRadius`*
+
+> **Sweep basis.** MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.
 
 #### `RUN.travel_time.analysed_modes`
 
