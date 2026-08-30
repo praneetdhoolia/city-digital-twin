@@ -246,7 +246,10 @@ Counts that expire live in **§0**.
 - **Phase:** P4 calibration. First F15 arm running; no F15 level read yet.
 - **Machine:** BUSY (the 10% arm, ~30 GB heap).
 - **Toolchain:** JDK 25.0.4+7, pt2matsim 26.6, Maven 3.9.9, run-stack 201 jars
-  (MATSim 2027.0-2026w25); `.tools/classes` carries the §9.120 classes.
+  (MATSim 2027.0-2026w25); `.tools/classes` carries the §9.120 classes as compiled
+  at 12:40 — **the source is one commit ahead of it** (`aba700f`, the bound-trip
+  refusal counters logged), verified to compile in scratch; `bootstrap_toolchain.py
+  --verify` installs it once no arm is running.
 - **Registry:** 405 fields, ledger 0 (§9.120 added `B.mode.seed_method`,
   `RUN.transit_router.search_radius_m`, `RUN.transit_router.extension_radius_m`).
 - **`check_package.py`: ALL CHECKS PASSED** with its 2 standing warnings — run this
