@@ -1,14 +1,16 @@
-# Brief for the next agent — TWO REPRODUCIBILITY FAILURES NO GATE COULD SEE, AND A FIVE-ARM CRASH THAT WAS MATSIM REFUSING ITS OWN CREATION
+# Brief for the next agent — RIDE WAS OFFERED TO PEOPLE NOBODY DRIVES, THE SEED WAS DOING THE SEARCHING, AND THE F14 ARM DIED OF A CONSOLE STOP NOBODY CAN NAME
 
-*Updated 30 August 2026, FIFTEENTH session (§9.93 reconstructed, §9.116–§9.119).
-**The committed builder had stopped reproducing the committed demand** — a filter was
-committed without its rebuild and all eight arrival gates passed over it. **The
-local-only suite was FAILING while three documents said it passed.** And the
-`IllegalStateException` that had killed five arms across two sessions turned out to be
-**MATSim's own mode choice manufacturing a state MATSim's own mode choice refuses** —
-found only after three mechanisms were argued from the code and all three refuted.
-Both queued fixes (#92, #93) are applied, the demand is rebuilt (**family F14**), and
-**an arm is running that has passed the point where five arms died.***
+*Updated 30 August 2026, SIXTEENTH session (§9.120). **A twelve-mode reading now
+exists at every iteration the run writes** (the reader derives the linked-trip table
+from experienced plans, validated exactly against the trips table). **The F14 arm
+died mid-iteration 38** — `0xC000013A STATUS_CONTROL_C_EXIT` recorded by Task
+Scheduler, no exception, trigger not established. Its own iterations measured the
+defect the gate would have found: **residents PLAN ride on 22.5% of trips and realise
+9.1%**, a third of planned ride legs had no declared driver, the declared pairs
+decayed under independent time mutation, **65% of cyclists held no bike-free plan in
+memory**, and 6.7% of planned trips were never experienced. Three repairs that invent
+nothing open **family F15**, and **the first F15 arm is running at 10% × 300
+iterations.***
 
 *This is a **HANDOVER, not a source of truth.** Where it disagrees with
 [`STATUS.md`](../STATUS.md), [`DECISIONS.md`](../DECISIONS.md) or
@@ -26,55 +28,56 @@ trust order, the six questions, the environment gate — live in
 
 | Fact as of this handoff | Re-derive with |
 |---|---|
-| **AN ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T083019_1000it_25pct`, pid 27864, was at iteration 32 of 1000 | `tail results/20260830T083019_1000it_25pct/matsim.log`; its `_meta.json`; look for a MATSim `java` process |
-| Whether that arm is alive, dead, or past its iteration-100 gate | `ls results/20260830T083019_1000it_25pct/output/ITERS/` |
-| **This session's PR is OPEN at handoff** and is the first item of unfinished business | `gh pr list --state open` · `gh pr checks <n>` |
-| Open issues — **#92 CLOSED, #96 OPENED this session** | `gh issue list --state open` |
+| **AN ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T124711_300it_10pct` (S2, WEEKDAY, 10%, 300 it, cutoff 240, overlay `f15_gate_10pct`), launched 30 Aug 12:47 as Task Scheduler task `citysim_run_20260830T124710` | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
+| Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --all` then `--it <n>` — every 10th iteration is readable now, not only the trips-table ones |
+| **This session's PR is OPEN at handoff** (or merged overnight — check) | `gh pr list --state open` · `gh pr checks <n>` |
+| Open issues — **none closed this session; #48, #86, #91, #30, #93, #96 carry new measured comments** | `gh issue list --state open` |
 | Issue / PR totals | `gh issue list --state all` · `gh pr list --state all` |
 | Run directories, and every dead one stating its cause | `ls -1d results/*/` · `results/INDEX.md` · `python src/run/run_failure.py --check` |
 | Registry field count | `python src/registry/check_hardcoding.py --strict` |
-| **NO run approval stands. None.** Approvals are spent on use | assume none; ask |
+| **NO run approval stands beyond the running arm.** Approvals are spent on use | assume none; ask |
 
 Then the environment gate — **all of it must pass, and a failure is your first work item**:
 
 ```bash
-python src/setup/bootstrap_toolchain.py --verify   # compiles BOTH class trees
+python src/setup/bootstrap_toolchain.py --verify   # compiles BOTH class trees - NOT while an arm runs off .tools/classes (see trap 1)
 python tests/check_manifest.py
 python src/registry/check_hardcoding.py --strict   # must exit 0
 python tests/check_doc_currency.py --strict        # must exit 0
-python src/run/run_failure.py --check
+python src/run/run_failure.py --check              # every dead run says WHY; a dead pid under `running` now fails it
 python src/analyse/build_fit_figures.py --check
 python tests/check_city_agnostic.py                # 13/13
-python tests/check_package.py                      # LOCAL ONLY - RUN IT
+python tests/check_package.py                      # LOCAL ONLY - RUN IT (ALL PASSED at handoff, verified)
 ```
-
-**⚠ RUN `check_package.py` YOURSELF.** It is the one gate CI never runs, which makes
-its status the likeliest to be stale — and it *was* stale, red for at least a session
-while three documents called it green (§9.117).
 
 **⚠ STANDING DIRECTIVES**
 
-1. **NO MULTI-HOUR RUN WITHOUT EXPLICIT APPROVAL.** Measured on the current arm:
-   **~290–305 s/it at 25%**, so 1000 iterations is **~84 h**. ~100 s/it at 10%,
-   ~30 s/it at 1%.
-2. **READ THE TREND, NOT THE LEVEL** (§9.108). A level read while innovation runs is
-   not the model's answer.
-3. **A CAUSE MUST CARRY ITS MEASUREMENT.** Six mechanisms across two sessions have now
-   been argued from plausibility and refuted — three of them this session (§9.119).
-   **If a crash names no agent, make it name one before theorising.**
-4. **Every mode individually in every numbers table** — never an umbrella row.
-5. **ONE ARM AT A TIME** (#66). Breached briefly this session — two arms overlapped for
-   ~1 min during startup; caught, stopped, and recorded.
-6. **Never commit directly to `main`; the session's ONE PR opens at `/handoff`.**
+1. **NO MULTI-HOUR RUN WITHOUT EXPLICIT APPROVAL.** Measured: ~290–305 s/it at 25%,
+   ~100 s/it at 10%, ~30 s/it at 1%. The running arm is ~8–9 h.
+2. **THE `/goal` DIRECTIVE** (the user's, in force since 24 Aug and re-issued this
+   session): twelve modes present, physically simulated, monitored and scored; <10%
+   deviation per mode; gate every 100 iterations, stop on >20% **or heading there**,
+   fix from the root; print all twelve individually with a timestamp; converge in
+   ≤250 iterations; unobtained data DERIVED, never assumed.
+3. **READ THE TREND, NOT THE LEVEL** (§9.108) — and now read it against a scored
+   choice set (§9.120): under `full_choice_set` every mode is scored within the first
+   iterations, so a level at 100 means more than it ever did.
+4. **A CAUSE MUST CARRY ITS MEASUREMENT.** Seven mechanisms have been argued from
+   plausibility and refuted across three sessions.
+5. **Every mode individually in every numbers table** — never an umbrella row.
+6. **ONE ARM AT A TIME** (#66). **Never recompile into `.tools/classes` while an arm
+   runs** — the gate's `bootstrap_toolchain.py --verify` does exactly that.
+7. **Never commit directly to `main`; the session's ONE PR opens at `/handoff`.**
 
 **⚠ DECISIONS REQUIRED**
-- **Whether to let the arm run to its innovation cutoff (~84 h total).** No arm in
-  F10–F14 has ever reached one, so **no post-cutoff twelve-mode level has ever been
-  read by this project.**
-- **Whether the next family boundary is #30 / #96 (destination placement).** §9.119
-  shows destination placement manufacturing degenerate one-trip subtours; §9.103 puts
-  the light rail's whole market at 1.06% of trips; §9.107 names it for walk. It cannot
-  be done while an arm is up.
+- **Enable the Task Scheduler operational log** (`wevtutil sl
+  Microsoft-Windows-TaskScheduler/Operational /e:true`, needs elevation) so the next
+  console-stop death of an arm names its trigger. The F14 arm's cannot be named.
+- **Whether the demand's ride ceiling (#86) is the next family boundary** once the
+  running arm shows bound ride realising — the binder supplies ~11% of trips against
+  20.6% observed, and nothing in F15 changes that.
+- **25% confirmation arm** after the 10% gate loop — stated cost ~25 h for 300
+  iterations.
 
 ---
 
@@ -84,13 +87,13 @@ while three documents called it green (§9.117).
 
 > Twelve modes present, **physically simulated**, monitored and scored — no teleportation.
 > **<10% deviation from real life for every mode.** Unavailable data must be DERIVED.
-> Gate every 100 iterations; stop on any mode past 20%; fix the cause from the root.
+> Gate every 100 iterations; stop on any mode past 20% or heading there; fix the cause
+> from the root. Converge in ≤250 iterations. Print all twelve, individually, with a
+> timestamp.
 
-**Physical simulation: 12 of 12.**
-
-**<10% per mode: not met, and still not legitimately measurable** — no arm has ever run
-past its innovation cutoff, so every level ever read has been a point on a moving curve.
-**Taxi reads +0.9% and truck +5.4% on its own basis**, both at shallow depth.
+**Physical simulation: 12 of 12.** **Monitoring: met** — every 10th iteration yields the
+twelve-mode table (§9.120). **<10% per mode: not met, and no F15 level has been read
+yet.** The last levels read (F14, iteration 30, 25%) are in §2.
 
 ---
 
@@ -98,32 +101,29 @@ past its innovation cutoff, so every level ever read has been a point on a movin
 §2  THE MODES — every mode individually
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Basis:** linked main-mode trips, target-LGA residents, from the iteration's own trips
-table. **THIS IS ITERATION 1 — effectively the uniform seed (§9.92), NOT the model's
-answer.** It is **25%**, so it is NOT comparable with any 10% arm (§9.10, §9.12).
+**Basis:** linked main-mode trips, target-LGA residents. **THIS IS THE DEAD F14 ARM
+AT ITERATION 30 (25%) — a point on a moving curve in a superseded family, NOT the
+model's answer, and NOT comparable with the running 10% F15 arm** (§9.10, §9.12).
+Reproduce with `python src/analyse/report_mode_ridership.py --run
+results/aborted_20260830T083019_1000it_25pct --it 30`. Trend is 1 → 10 → 20 → 30.
 
-Arm `20260830T083019_1000it_25pct`, iteration 1 of 1000, innovation cutoff 800.
-Reproduce with
-`python src/analyse/report_mode_ridership.py --run results/20260830T083019_1000it_25pct --it 1`.
+| # | mode | modelled % it.30 | target % | deviation | trend 1→30 | mean km vs obs |
+|---|---|---:|---:|---:|---|---:|
+| 1 | car | 44.2018 | 58.1631 | −24.0% | toward, +0.19 pp/it | +4% |
+| 2 | ride | 9.1404 | 20.6000 | −55.6% | **away then flat** (planned 22.46%!) | −13% |
+| 3 | walk | 28.3978 | 13.4000 | +111.9% | toward, −0.16 pp/it | +951% |
+| 4 | bike | 7.9987 | 2.2084 | +262.2% | **away** | +88% |
+| 5 | motorbike | 0.0986 | 0.2406 | −59.0% | flat | +5% |
+| 6 | taxi | 1.3442 | 0.9916 | +35.6% | flat overshoot | +134% |
+| 7 | bus | 7.0170 | 2.3819 | +194.6% | toward, slowly | −48% |
+| 8 | heavy_rail | 1.7283 | 0.7737 | +123.4% | flat | −48% |
+| 9 | light_rail | 0.0653 | 0.6444 | −89.9% | **away** | −48% |
+| 10 | ferry | 0.0078 | 0.1013 | −92.3% | toward, from 0.003 | −48% |
+| 11 | truck | 8.2417 | — | n/a network-wide; **16.4456 vs 11.3092 at the 3 classifying stations (+45%, 377 vehicles)** | — | — |
+| 12 | freight_train | 314 closures | 314 | representation, not a fit | — | — |
 
-| # | mode | modelled % | target % | deviation | count | mean km |
-|---|---|---:|---:|---:|---:|---:|
-| 1 | car | 40.6211 | 58.1631 | −30.2% | 60,917 | 9.79 |
-| 2 | ride | 10.6932 | 20.6000 | −48.1% | 16,036 | 8.92 |
-| 3 | walk | 30.2093 | 13.4000 | +125.4% | 45,303 | 7.92 |
-| 4 | bike | 7.7659 | 2.2084 | +251.7% | 11,646 | 9.81 |
-| 5 | motorbike | 0.1054 | 0.2406 | −56.2% | 158 | 9.63 |
-| 6 | **taxi** | **1.0009** | **0.9916** | **+0.9%** | 1,501 | 11.39 |
-| 7 | bus | 7.7239 | 2.3819 | +224.3% | 11,583 | 12.02 |
-| 8 | light_rail | 0.0834 | 0.6444 | −87.1% | 125 | 12.02 |
-| 9 | heavy_rail | 1.7938 | 0.7737 | +131.8% | 2,690 | 12.02 |
-| 10 | ferry | 0.0033 | 0.1013 | −96.7% | 5 | 12.02 |
-| 11 | truck | 9.1524 | — | **+5.4% on its own ground** (§9.101) | 22,370 | — |
-| 12 | freight_train | 314 | 314 | representation, not a fit | 256 | — |
-
-The four PT submodes share one folded HTS observation, so their geometry deviations are
-**not independent**. Motorbike's share will fall further: §9.115's carve correction
-lowers generation by design, and that is a consistency repair, never a fit repair.
+The four PT submodes share one folded HTS observation; their geometry deviations are
+not independent.
 
 ---
 
@@ -131,15 +131,25 @@ lowers generation by design, and that is a consistency repair, never a fit repai
 §3  THE ACTIVE LANE
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Read the arm's iteration-100 gate, then 200 and 300.** §9.108 measured car, walk and
-pt arriving between iterations 200 and 350 on the previous family; this is the first
-chance to see whether that holds on the repaired demand, and whether **ride still
-diverges now that joint binding is supply-limited rather than thinned** (§9.116).
+**Gate the running F15 arm at iterations 100, 200 and 300 — all twelve modes, trend
+and level — with `report_mode_ridership.py`.** What it must answer, in this order:
 
-**Do NOT repair car, walk or pt off a gate reading before the trend says they are not
-converging.** Four repairs in the fourteenth session went into a transient.
+1. **Does ride realise what the demand binds?** Planned ride can now only sit on
+   trips with a declared driver; the realised share should approach the ~11% ceiling
+   rather than half of a fictitious 22%. Read `ride_pairing.csv` (`paired_by_identity`,
+   `miss_endpoints`) and the log's `re-timed` line per iteration.
+2. **Is car's planned share honest now** (no fallback drives masking it)?
+3. **Do walk and bike fall once every mode is scored** (the seed is no longer the
+   search)? If bike stays near 8% with car/walk plans scored in memory, it is a
+   scoring question for the first time.
+4. **Does the model settle inside 250 iterations?** `_progress.json`'s relaxation block
+   after the cutoff at 240.
 
-After the arm, the candidate next boundary is **#30 / #96, destination placement**.
+If a mode is past 20% AND not moving toward its target across 100/200, stop the arm
+per the directive and fix the cause it names. **Do not repair a mode off one gate.**
+
+After the arm: the ride ceiling (#86/#91) is the likeliest next root cause; light rail
+(#30, §9.103) and the ferry (#94) are untouched by F15.
 
 ---
 
@@ -147,50 +157,46 @@ After the arm, the candidate next boundary is **#30 / #96, destination placement
 §4  WHAT IS DONE — record, not instruction. DO NOT REDO ANY OF IT
 ═══════════════════════════════════════════════════════════════════════════════
 
-**§9.116 — the committed builder had stopped reproducing the committed demand.** The
-§9.111 filter landed in `b65d280` via PR #95 without its rebuild. Caught from the
-committed build report: `candidates` 201,931 with `candidates_unservable` absent is a
-report the committed builder cannot write. **All eight arrival gates passed over it** —
-none compares a builder with the artefact it produced. Both fixes applied together,
-all three day types rebuilt. WEEKDAY:
+**§9.120 — the reader.** `src/analyse/iteration_trips.py` rebuilds the linked-trip
+table from `<n>.experienced_plans.xml.gz` (stage activities by MATSim's rule, main mode
+by `PtSubmodeMainModeIdentifier` over `DefaultAnalysisMainModeIdentifier`, distance as
+the sum of route distances, pt submodes from boarded routes through the run's own
+schedule). **Validated exactly** against the trips table at F14 it.0 (532,161 trips) and
+F13 it.100 (221,144 trips, taxi included). `--validate <it>` re-checks any run holding
+both. Both readers fall back to it and the basis line names the source.
 
-| | before | after |
+**§9.120 — the F14 arm's death.** Closed out through `mark_dead` with the Task
+Scheduler exit status; `run_failure.py --check` now also fails on a `running` record
+whose pid is dead (trap 8 of the previous brief, fixed in the harness).
+
+**§9.120 — the measurements** (all on `aborted_20260830T083019` iteration 30, residents):
+
+| planned → experienced | trips | share |
 |---|---:|---:|
-| candidates | 201,931 | 146,260 |
-| `candidates_unservable` | — | 55,671 |
-| **bound** | **74,663** | **82,384** |
-| `skipped_infeasible` | 73,258 | 35,937 |
-| `thin_p` | 0.8565 | **1.0000** |
-| `driver_is_the_companion` | 51,215 | 8,150 |
+| ride → ride | 13,994 | 9.14% |
+| **ride → car (fallback drive)** | **12,098** | **7.90%** |
+| **ride → walk (fallback walk)** | **5,833** | **3.81%** |
+| ride → never experienced | 2,462 | 1.61% |
+| walk → never experienced | 4,479 | 2.93% |
+| taxi → walk (refused) | 1,194 | 0.78% |
 
-**§9.111's "roughly 110,000" is superseded: the measurement is 82,384.** Thinning
-stopped applying, so binding is **supply-limited by servable candidates** — WEEKDAY only
-(SAT 0.6216, SUN 0.5955). **#93 applied:** `B.motorbike.trip_share` 0.0036 →
-**0.0024064**, `assumed` → `derived`; two observations declared and
-`build_mode_targets.py` **asserts them against the acquired sources every build**.
-`mode_targets_by_mode.csv` unchanged but for line endings — the carve moves generation,
-not the yardstick.
+Planned ride legs by declared-driver class, it.0 → it.30: no declared driver **26.6% →
+36.0%**; same OD within 15 min **57.1% → 27.5%**; gap >45 min 1.8% → 7.5%; driver on
+another mode 0.6% → 3.4%. Bike: **65.1% of 4,459 cycling agents hold no bike-free
+plan** in memory. Stuck at 30:00: 18,412 agents (walk 9,327, ride 5,070, bus 3,202).
 
-**§9.117 — the local suite was red while three documents said green.** A `decisions_ref`
-named **§9.93**, which had never been written, and three `consumers` claims were
-semantically true but textually false. **§9.93 is reconstructed** from evidence already
-committed inside the field descriptions, labelled as a reconstruction, introducing no
-new number. **0 false claims remain across 193 claims over 179 fields.** The check
-reports only its FIRST failure — enumerate the whole set.
+**§9.120 — the repairs, all built, probed (`20260830T124345_2it_1pct` rc 0) and running:**
 
-**§9.119 — the five-arm crash.** Three mechanisms argued from code, all refuted: the
-§9.106 refusal path (the throw is inside MATSim's strategy, the bounds are 0.0);
-§9.105's `car` fallback (every restore succeeded — 48101/48101, 50705/50705,
-53890/53890); §9.118's nested-subtour conversion (a rebuilt arm died identically, 918 s
-against 928 s). **Measured instead: 8 plans arrived mixed, 20 went clean→mixed in one
-round.** A degenerate one-trip child subtour gets a non-chain mode from
-`probaForRandomSingleTripMode`; the PARENT then holds `car`+`pt`, sleeps in memory, and
-kills the run when mode choice later SELECTS it. Repaired by two refusals that invent
-nothing. **§9.118's nested-subtour repair is real and kept, and is AMENDED in place to
-say it is not this crash's cause.**
+| what | where | invents |
+|---|---|---|
+| `boundRideTrips` / `boundDriveTrips` per trip, from the three binding tables; ride refused off the first, non-car refused on the second | `build_matsim_plans.py`, `GatedSubtourModeChoice` | nothing |
+| declared pair: no clock test; passenger's departing activity re-timed to the driver's departure minus the planned access walk | `RidePairingEngine` | nothing |
+| `B.mode.seed_method` = `full_choice_set` — one plan per usable mode (2–6 per person); `RUN.replanning.max_agent_plan_memory` 5 → 8 | registry, `build_matsim_plans.py` | a method, swept against `uniform_draw` |
+| motorbike carve q solved on eligible persons' own trip counts | `build_matsim_plans.py` | nothing |
 
-**Offline, the committed WEEKDAY demand holds 99 mixed subtours of 1,138,887 and 0 of
-the fatal single-excursion shape** — all span excursions, all `closed=false` (**#96**).
+Plans (3 day types), 30 run-input sets and the manifest (494 rows) rebuilt; F13, F14,
+F15 declared in `run_families.json`; `check_package.py` adapted to the multi-plan seed
+and ALL PASSED.
 
 ---
 
@@ -198,12 +204,12 @@ the fatal single-excursion shape** — all span excursions, all `closed=false` (
 §5  WHAT INVALIDATES THE WORK
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **FAMILY F14 IS OPEN.** Nothing run before 30 Aug compares with anything after,
-  including the two F4 arms `README.md` draws its fit figures from.
-- **Never compare across sample fractions.** This arm is 25%; the previous family was 10%.
-- **One arm at a time** (#66).
+- **FAMILY F15 IS OPEN (30 Aug 12:40).** Nothing run before compares with anything
+  after, including the dead F14 arm and the two F4 arms `README.md` draws from.
+- **Never compare across sample fractions.** The running arm is 10%; F14 was 25%.
+- **One arm at a time** (#66). **No recompile into `.tools/classes` while it runs.**
 - **The 67/143 holdout split is never opened or peeked.**
-- **A run without `_run.json` is not a result.** No arm in F10–F14 has one.
+- **A run without `_run.json` is not a result.** No arm in F10–F15 has one.
 - Branch `<git-handle>/<kebab>`, never `claude/*`; no attribution trailers; no session links.
 
 ---
@@ -214,19 +220,17 @@ the fatal single-excursion shape** — all span excursions, all `closed=false` (
 
 Counts that expire live in **§0**.
 
-- **Phase:** P4 calibration. Yardstick sound; demand repaired; the replanner no longer
-  manufactures states it refuses; first surviving F14 arm running.
-- **Machine:** BUSY.
-- **Toolchain:** JDK 25.0.4+7, pt2matsim 26.6, Maven 3.9.9, run-stack 201 jars.
-- **Registry:** 402 fields, ledger 0.
-- **`check_package.py`: ALL CHECKS PASSED** with its 2 standing warnings — verified this
-  session, not asserted.
-- **Two new diagnostic tools**, both under `src/java/citysim/`:
-  `SubtourChainScan` (scan a plans file for mixed subtours; **takes coordDistance**, and
-  exits INCONCLUSIVE rather than reporting a clean it never tested) and
-  `NestedSubtourProbe` (settles `getSubtours` ordering without a run).
-- A Guice `LineNumbers` warning at startup (`Unsupported class file major version 69`)
-  is **cosmetic** — its bundled ASM predates the pinned JDK 25.
+- **Phase:** P4 calibration. First F15 arm running; no F15 level read yet.
+- **Machine:** BUSY (the 10% arm, ~30 GB heap).
+- **Toolchain:** JDK 25.0.4+7, pt2matsim 26.6, Maven 3.9.9, run-stack 201 jars
+  (MATSim 2027.0-2026w25); `.tools/classes` carries the §9.120 classes.
+- **Registry:** 403 fields, ledger 0.
+- **`check_package.py`: ALL CHECKS PASSED** with its 2 standing warnings — run this
+  session on the F15 package, not asserted.
+- **Session branch:** `praneetdhoolia/f15-choice-set-seed-bound-ride`, three commits
+  at the time of writing; the PR opens at `/handoff`.
+- `GOAL.md` at the repo root is the user's `/goal` text (untracked, not committed —
+  the root holds one document by convention).
 
 ---
 
@@ -234,15 +238,18 @@ Counts that expire live in **§0**.
 §7  DECISIONS TAKEN — do not re-litigate
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **`B.ride.pairing_rule` stays `both_links`** (§9.92, confirmed §9.102).
-- **The walk/bike feasibility bounds stay 0.0** (§9.106) — measured, worse.
-- **`B.ride.max_passengers_per_vehicle` does not bind** — 2 refusals of 73,258, and
-  still 2 after the rebuild (§9.111, §9.116).
-- **The seed stays uniform** (§9.92).
-- **The coherence rates stay 0.4** (§9.93) — search completeness, not fit.
-- **A proposal that would leave a subtour mixed is refused, not repaired** (§9.119).
-- **SCATS offsets are not adapted** (§9.88); **freight trains are not mobsim vehicles**
-  (§9.70, §9.90); **the taxi fare is not a lever** (§9.91).
+- **The seed is the full choice set** (§9.120) — supersedes §9.92's "the seed stays
+  uniform"; `uniform_draw` is retained and swept against.
+- **`ride` is a trip somebody drives**; a declared driver keeps `car` on the trips
+  they serve (§9.120).
+- **A declared pair is paired on identity and timed by the driver** (§9.120);
+  `B.ride.bound_pairing_window_min` is a physical-wait tolerance only.
+- **Plan memory 8** (§9.120), inside its 3–10 sweep, because MATSim removes an
+  unscored plan first.
+- Carried: `B.ride.pairing_rule` `both_links` (§9.92, §9.102); walk/bike feasibility
+  bounds 0.0 (§9.106); coherence rates 0.4 (§9.93); a mixed-subtour proposal is
+  refused (§9.119); SCATS offsets not adapted (§9.88); freight trains not mobsim
+  vehicles (§9.70, §9.90); the taxi fare is not a lever (§9.91).
 
 ---
 
@@ -250,36 +257,33 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **AN INTERMITTENT CRASH IS A STOCHASTIC SELECTION OVER A DETERMINISTIC DEFECT**
-   (§9.119). The bad state was manufactured every round and lay dormant until the
-   strategy drew the subtour holding it. Five arms, two sessions, three refuted
-   mechanisms. **When a crash names no subject, make it name one first.**
-2. **A GATE THAT NEVER COMPARES A PRODUCER WITH ITS PRODUCT CANNOT SEE A PRODUCER THAT
-   HAS STOPPED PRODUCING IT** (§9.116). Eight checks passed over a repository that could
-   not rebuild its own demand.
-3. **RUN THE LOCAL SUITE BEFORE BELIEVING THE BOARD ABOUT THE LOCAL SUITE** (§9.117).
-4. **A CHECK THAT REPORTS ONLY ITS FIRST FAILURE HIDES THE REST** (§9.117).
-5. **A TOOL CAN REPORT A GREEN IT NEVER TESTED** (§9.119). `SubtourChainScan` printed
-   CLEAN off **0 subtours decomposed** — it had the wrong `getSubtours` overload for
-   unrouted plans. Caught only because the summary counts were read, not the verdict.
-6. **AN ESTIMATE IS NOT A MEASUREMENT** (§9.116). "Roughly 110,000" became 82,384.
-7. **A RECURRING EXCEPTION IS NOT A RECURRING BUG** (§9.118). The same message had one
-   cause in August 26's repair and a different one underneath it.
-8. **`run_failure.py --check` DOES NOT SEE A RUN STUCK IN `running`.** It inspects
-   terminal records only, and `reconcile_stale()` fires only when another run launches —
-   so a killed run can sit with a dead pid, no cause, and a green check. Found this
-   session and closed out by hand; **not yet fixed in the harness.**
-9. **A LEVEL READ WHILE INNOVATION RUNS IS NOT THE MODEL'S ANSWER** (§9.108).
-10. **SPLIT A COMPOUND CONDITION BEFORE ATTRIBUTING ANYTHING TO IT** (§9.111).
-11. **NEVER READ SERVICE FROM A `transitRoute` ID** (§9.113) — count departures.
-12. **A `main_mode` IS NEVER A PT SUBMODE** (§9.112).
-13. **CHECK THE YARDSTICK BEFORE THE MODEL** (§9.91, §9.100, §9.101).
-14. Carried: `modestats.csv` is PLANNED and the trips table is REALISED; **git-bash
-    heredocs eat backslashes and break on long documents** — write Java/Markdown with a
-    file tool, not a heredoc; compiling is not installing; stopping a run needs BOTH
-    `Stop-ScheduledTask` and `taskkill /PID <pid> /T /F`; a `java.exe` at ~1 GB is VS
-    Code's language server; **a run directory's timestamp can differ from its scheduled
-    task name by a second** — glob on the run directory, not the task.
+1. **THE ENVIRONMENT GATE RECOMPILES `.tools/classes`, AND AN ARM LOADS FROM IT.**
+   `bootstrap_toolchain.py --verify` is in the gate; run it before an arm is up, never
+   during. The F14 arm died within a minute of this session's start; the correlation
+   is recorded, the cause is not established, and the scheduler log that would settle
+   it is disabled.
+2. **A `running` RECORD WITH A DEAD PID WAS INVISIBLE TO `--check`** (trap 8 of the
+   last brief) — half an hour of a dead arm behind a green check. Fixed: the check
+   fails on it now.
+3. **THE TRIPS TABLE IS NOT THE ONLY SOURCE OF A TRIP** — the readers refused
+   iterations the run had fully written. Derive from the experienced plans and
+   VALIDATE against the table.
+4. **A PLANNED SHARE CAN BE ABOVE TARGET WHILE THE REALISED ONE IS HALF OF IT** — a
+   ride plan executed as a drive scores like a car plan. Read planned against
+   experienced, trip by trip, before believing either.
+5. **A LEVEL AT ITERATION 100 UNDER A UNIFORM SEED IS A STATEMENT ABOUT THE SEARCH.**
+   65% of cycling agents had never been offered a bike-free plan.
+6. **THE TASK NAME IS ONE SECOND BEFORE THE RUN DIRECTORY** — `Get-ScheduledTaskInfo`
+   on the directory's stamp finds nothing.
+7. **THE ~0.5–1 GB `java.exe` IS VS CODE**, not the arm; the arm is tens of GB.
+8. Carried from earlier briefs: an intermittent crash is a deterministic defect under
+   stochastic selection (§9.119); a gate that never compares a producer with its
+   product cannot see a stopped producer (§9.116); run the local suite before
+   believing the board about it (§9.117); an estimate is not a measurement; never read
+   service from a `transitRoute` id (§9.113); a `main_mode` is never a pt submode
+   (§9.112); check the yardstick before the model (§9.91, §9.100, §9.101);
+   `modestats.csv` is PLANNED and the trips table is REALISED; git-bash heredocs eat
+   backslashes — write Java/Markdown with a file tool.
 
 ---
 
@@ -288,33 +292,31 @@ Counts that expire live in **§0**.
 ═══════════════════════════════════════════════════════════════════════════════
 
 **1 · Goals and achievement.** Research goal: test the Auditor-General's claims by
-counterfactual microsimulation. Operational goal: a twin whose per-mode ridership is
-*checked*. **Physical simulation 12 of 12.** **<10% per mode not met** and not yet
-legitimately measurable — no arm has passed its innovation cutoff. **No hypothesis
-tested; no scenario comparison exists.** Deliverables: 1 🟡 · 2 🟡 · 3 🟡 · 4 ⬜ · 5 🟡 · 6 🟡.
+counterfactual microsimulation (proposal §3, A1–A6, B1–B4). Operational goal: the
+`/goal` twin whose per-mode ridership is *checked*. **Physical simulation 12 of 12;
+per-iteration twelve-mode monitoring met; <10% per mode not met and no F15 level yet
+read.** No hypothesis tested; no scenario comparison exists. Deliverables: 1 🟡 · 2 🟡
+· 3 🟡 · 4 ⬜ · 5 🟡 · 6 🟡.
 
-**2 · Phases.** P0 ✅ · P1 ✅ for P4's needs · P2 ✅ · P3 ✅ · **P4 🟡** · P5–P7 ⬜.
+**2 · Phases.** P0 ✅ · P1 ✅ for P4's needs · P2 ✅ · P3 ✅ (plans regenerated 30 Aug
+12:40 as the full choice set) · **P4 🟡** · P5–P7 ⬜.
 
-**3 · Tasks.** This session: two reproducibility failures found and repaired, both
-queued fixes applied and measured, a missing record reconstructed, three false registry
-claims corrected, the five-arm crash diagnosed and fixed, the local suite returned to
-green, one issue closed on evidence, one opened with measurements, and the first
-surviving F14 arm launched. Open: #93 (needs an arm's realised share), #96, #86, #30.
+**3 · Tasks.** Batch 4.15 (§9.120): 4.15.1–4.15.10 and 4.15.13 done; **4.15.11 (run and
+gate the F15 arm) running**; 4.15.12 (the ride ceiling) open as the next root cause.
 
-**4 · Simulator versus real life.** See **§2** — that is iteration 1, the seed. **No
-valid post-cutoff arm exists.** The standing calibrated base is still the pre-repair
-**F4** arm `20260821T175907_1000it_25pct` (MAE 10.65 pp), now **two families back**.
-Never quote an error against a target `_fit.json` marks unscorable — the light rail's
-3,417 and all six HTS mode-share rows are on that list.
+**4 · Simulator versus real life.** See **§2** — F14 iteration 30, superseded. **No valid
+post-cutoff arm exists in any family since F4.** The standing calibrated base is still
+the F4 arm `20260821T175907_1000it_25pct` (MAE 10.65 pp), now three families back. Never
+quote an error against a target `_fit.json` marks unscorable — the light rail's 3,417
+and all six HTS mode-share rows are on that list.
 
-**5 · Issue ledger.** Totals in §0. **#92 closed** on its measurement. **#96 opened**:
-the demand's 99 mixed subtours. Commented with measured evidence: **#30** (destination
-placement manufactures degenerate one-trip subtours), **#86** (binding is now
-supply-limited, not thinned). #93 deliberately left open — its close condition needs an
-arm's realised share. Untouched: #94, #91, #84, #82, #73, #68, #66, #63, #62, #50, #49,
-#48, #21.
+**5 · Issue ledger.** Totals in §0. No issue closed this session. Measured comments
+added: #48 (planned vs experienced; driver classes), #86 (the ~11% ceiling), #91 (26.6
+→ 36.0% un-driven ride), #30 (walk's composition; 6.7% never experienced), #93 (carve
+arithmetic repaired), #96 (F15 seeds no mixed subtour by construction; the scan is
+pending). Untouched: #94, #84, #82, #73, #68, #66, #63, #62, #50, #49, #21.
 
-**6 · PR history and the next PR.** Totals in §0. This session's PR carries §9.93,
-§9.116, §9.117, §9.118 (with its amendment) and §9.119 — the rebuild, the gate repairs,
-the crash fix and the arm. The next PR should carry the arm's gate readings, and then
-whichever root cause those readings actually name.
+**6 · PR history and the next PR.** Totals in §0. This session's PR carries §9.120 —
+the reader, the F14 close-out, the measurements, the three repairs, the rebuild, the
+F13/F14/F15 family declarations and the check widening. The next PR should carry the
+F15 arm's gate readings and whichever root cause they name.
