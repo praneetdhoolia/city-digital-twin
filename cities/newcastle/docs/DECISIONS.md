@@ -87,6 +87,10 @@ its layout will otherwise cost you an hour:
 | **A hired car is a car on the road: taxi stops being a ghost in the mobsim (family F11)** | **§9.86** — `taxi` was routed on the network, permitted on 143,891 links, bound to the congested car travel time and given a car-bodied vehicle type, but was NOT in `RUN.qsim.main_mode`, so MATSim teleported it: **39,892 of 39,923 legs per iteration** never touched the carriageway (#88). One enum value fixes it; the body restates `RUN.qsim.car_vehicle` rather than inventing a second one. Probe-measured: 197 of 197 taxi departures now enter traffic, 29,994 link traversals. **Deadheading stays unmodelled and unassumed.** `ride`’s remaining 44.5% teleport is a DEMAND failure, not a mobsim one — never close it with a phantom vehicle per passenger |
 | **Twelve modes get twelve targets: a folded survey category cannot answer a per-mode question** | **§9.87** — the HTS publishes SIX categories and this city simulates TWELVE modes, so four modes shared one 3.8% Public Transport row and a fold could hide an excess behind a deficit. The data document’s own lists EVIDENCE `fit.py`’s folds (bike+taxi → Other; motorbike appears in no other category, so it can only be a Vehicle driver). `build_mode_targets.py` disaggregates every level with census G62 composition and current Opal/station boardings, writes `mode_targets_by_mode.csv`, and is read by `report_mode_ridership.py`. **PT splits on CURRENT boardings, not the lockdown-vintage 2021 census — the census sets the sweep’s far end instead.** Ferry stays **unobtained and swept**: nothing is published for this city. The person-trip targets sum to 99.4037%, and the missing 0.596 pp is resident truck-driving, written out as a named deduction rather than folded into car. **NOT added to `validation_targets.csv`** — it would double-count and disturb the 67/143 split |
 | **SCATS stops being an assumed constant and becomes an algorithm (family F12)** | **§9.88** — every arm to date ran 14 corridor intersections on a FIXED 110 s plan, because the unreleased phase data was handled by sweeping a cycle time. `citysim.ScatsSignalController` implements the published logic instead: degree of saturation measured at every stop line from `LinkLeaveEvent`, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, clearances preserved. **Offsets deliberately NOT adapted** — that library is the unreleased artefact and no algorithm replaces it. Two defects recorded: DS measured against FULL-SCALE capacity read 0.000 at a 1% sample (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic cannot survive a variable cycle. Transit priority lives inside the controller, and **compensation becomes intrinsic** — a starved stage’s DS rises and the next split repays it |
+| **A recurring crash: MATSim's mode choice creates the state it refuses** | **§9.119** — `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` killed FIVE arms across two sessions. Three mechanisms were argued from code and all three refuted. Measured instead: in one replanning round **8 plans arrived mixed and 20 went clean→mixed** under MATSim's own strategy. A degenerate ONE-TRIP child subtour (two activities within `coordDistance`) gets a non-chain mode from `probaForRandomSingleTripMode`, leaving the PARENT holding car+pt; the plan sleeps until mode choice later SELECTS the parent. Repaired by two refusals that invent nothing. **§9.118** is the nested-subtour defect found on the way — real, repaired, and AMENDED because it is not this crash's cause |
+| **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
+| **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
+| **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
 | **The ferry gets a derived target instead of no target at all** | **§9.89** — no Newcastle ferry patronage is published anywhere (the Opal all-modes Ferry row is NSW-wide and Sydney-dominated), so §9.87 left mode 10 of 12 ungateable. The census G62 one-method count (40 of 1,501 PT journeys, 2.665%) sets the share WITHIN PT, which the HTS 3.8% scales to **0.1013%**. Defensible for THIS mode because the Stockton crossing is captive (a ~20 km road detour) and a within-PT share is far less lockdown-sensitive than a level. Sweep stays wide, 0 to 2x; the value is labelled `derived`, never `observed` |
 | **A crossing closes for every train that crosses it, and the timetable says which** | **§9.90** — `A.crossings.closures_per_day` was 30, assumed, uniform across 24 h and identical at both sites. The city’s OWN mapped rail timetable was already in the package: `build_level_crossings.py` now counts every scheduled service whose mapped route traverses the rail links at each crossing and times each closure from that service’s stop time. **Adamstown 110/weekday, Islington 204** (541 → 3,014 change events), peaked at 17h rather than flat — and the shape matters more than the count, because uniform closures land where there is no traffic to delay. Freight stays declared and swept at ZERO on §9.70’s grade separation. Mode 12 gets a target: **314 closures/weekday**, so with §9.89 all twelve modes are gateable |
 | **The gate fires at iteration 50, and the first defect is in the yardstick** | **§9.91** — ten of twelve modes past 20%, taxi DIVERGING (1.20% → 7.75% against a 0.19% target). The target was the defect: §9.87 sized taxi from the census JOURNEY-TO-WORK share, and taxi is overwhelmingly not a commute mode. `B.taxi.daily_trips_band` (IPART 2025, 15,000–25,000 point-to-point trips/day) gives **0.9916%**, ~5× higher, and **bike takes the residual 2.2084%** because the two share one survey category. Measured on the arm rather than reasoned: taxi costs 27.13 AUD per median 13.1 km trip, taxi plans score −128 vs −44, the flagfall fires, and taxi is 7.52% even among agents holding a car AND a licence — so scoring is not the culprit and it is not captive demand. Taxi is **seeded at exactly 0.0** and arrives entirely through innovation. Also recorded: the held-fixed fare rule’s own departure condition is now MET (median taxi trip 13.1 km against its “far under 12 km” premise), and `ride` legs are **23.33% zero-distance** against car’s 1.09% |
@@ -8937,6 +8941,79 @@ never impose". Both sit at **0.1 in a declared [0.0, 0.5]**, and
 
 ---
 
+## 9.93 The coherence rates are raised from 0.1 to 0.4 on search completeness, not on fit (29 August 2026, thirteenth session; issues #48, #49; RECONSTRUCTED 30 August 2026, fifteenth session)
+
+**This entry was missing.** Two registry fields —
+`B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` — carry
+`decisions_ref` values naming §9.93, and no `## 9.93` section existed. The gap
+was found by `check_package.py`, whose reference check fails when a field cites
+a record that is not there; it had been failing on `main` and the board
+described the suite as passing.
+
+**Nothing here is new.** Every number below is quoted from evidence already
+committed — the two field descriptions, which carry the measurement in full,
+and §9.92, which set the measurement up and recorded both rates at 0.1. No
+value was re-derived and no run was re-read to write this. What was missing was
+the record, and the rule the project runs on is that a decision without its
+record is not a decision anyone can audit.
+
+### The decision
+
+Both rates move **0.1 → 0.4**, inside their declared `[0.0, 0.5]` interval.
+
+### Why, and why this is not tuning
+
+The listener **proposes** the coherent plan back to a decohered pair;
+`ChangeExpBeta` still decides on score. So the rate cannot make a bad plan win —
+**it can only reduce the chance that a good two-sided plan is never offered at
+all.** The state it restores is unreachable by ANY per-agent strategy, because
+B2 generates escort and joint travel as a PAIR while `SubtourModeChoice` moves
+one agent at a time. The only thing a low rate buys is a smaller chance of
+finding a state the search cannot otherwise reach.
+
+That is the whole argument, and it is a **search-completeness** argument rather
+than a fit argument. `0.0` still recovers the pre-§9.82 behaviour exactly, which
+is what makes the mechanism's effect measurable rather than assumed.
+
+### What it measured, on the paired 1% diagnostics at iteration 40
+
+| quantity | 0.1 | 0.4 |
+|---|---:|---:|
+| ride share | 16.7991% | **18.1689%** |
+| bike share | 7.6523% | 6.9696% |
+| `occupancy_from_pairings` | 0.2282 | 0.2505 |
+| ride legs retained | 3,833 | 4,099 |
+| `pair_rate` | 0.5025 | 0.5067 |
+
+**`pair_rate` barely moves while retained legs and occupancy both rise.** That
+is the signature the mechanism predicts: the listener is keeping more coherent
+pairs in PLANS, which is its design, rather than pairing more of them in the
+mobsim.
+
+### The honesty note the fields already carry, restated here
+
+**The move improves a fit and could be mistaken for tuning.** Both field
+descriptions say so explicitly, and the reason it is not tuning is the
+mechanism, not the direction of the numbers: a proposal that scores badly is
+discarded by `ChangeExpBeta` regardless of how often it is made. The rate is
+**not fitted to any target and cannot be.**
+
+### What this reconstruction does NOT establish
+
+The 1% diagnostics behind the table are a **sample fraction that must never be
+compared with an arm** (§9.10, §9.12), and iteration 40 is far short of any
+cutoff. The measurement supports the *ordering* the mechanism predicts; it is
+not a statement about the model's answer, and no mode share above is a result.
+
+### The lesson worth carrying
+
+**A `decisions_ref` is a promise, and `check_package.py` is the only thing that
+checks it.** Two fields pointed at a record that was never written, through a
+handover that called the suite green. Run the local suite before believing the
+board about it.
+
+---
+
 ## 9.94 The uniform seed is recoverable for three modes and diverges for three others (29 August 2026, thirteenth session; issues #48, #49, #50, #88)
 
 The first F12 arm to reach a gate: `20260829T054941_1000it_10pct`, 10% sample,
@@ -10848,6 +10925,438 @@ Two further motorbike facts stay open and are recorded as open:
 
 ---
 
+## 9.116 The committed builder had stopped reproducing the committed demand, and the rebuild that repairs it opens family F14 (30 August 2026, fifteenth session; issues #92, #93, #86, #49)
+
+§9.111 and §9.115 each ended with the same sentence: the fix is **not applied
+here**, because a builder change without its rebuild breaks reproducibility.
+The brief, the board and both entries then recorded the two fixes as *written
+and deliberately uncommitted*.
+
+**One of them was committed anyway.** The §9.111 candidate-pool filter landed
+in `main` in commit `b65d280`, carried by PR #95, without its rebuild.
+
+### How it was caught, and why it was not caught by a gate
+
+Every gate passed on arrival this session - `check_manifest`,
+`check_hardcoding --strict`, `check_doc_currency --strict`, `run_failure
+--check`, `build_fit_figures --check`, `check_city_agnostic` 13/13. None of
+them compares a **builder** against the **artefact it produced**, so a builder
+that had stopped reproducing its own output was invisible to all of them.
+
+The evidence was in the demand's own build report, which is committed:
+
+| `_activity_chains_report.json`, WEEKDAY | on disk before this session |
+|---|---:|
+| `candidates` | 201,931 |
+| `driver_is_the_companion` | 51,215 |
+| `candidates_unservable` | **key absent** |
+
+The committed builder cannot produce that report. It filters the pool and
+counts what it removed; the counter is not optional. So the demand on disk was
+the PRE-filter demand, and the two had been inconsistent since PR #95 merged.
+
+**This is worth stating plainly: the repository spent that window unable to
+regenerate its own demand from its own committed code.** The reproducibility
+rule calls that a gate, not an aspiration, and it had failed silently.
+
+### What the rebuild measured - the filter works, and by less than was predicted
+
+Both fixes were applied together, as both entries directed, and all three day
+types were rebuilt from the committed builders.
+
+| WEEKDAY joint binding | before | after |
+|---|---:|---:|
+| candidates | 201,931 | 146,260 |
+| `candidates_unservable` | - | 55,671 |
+| **bound** | **74,663** | **82,384** |
+| `skipped_infeasible` | 73,258 | 35,937 |
+| `thin_p` | 0.8565 | **1.0000** |
+| `driver_is_the_companion` | 51,215 | 8,150 |
+| `shift_driver_already_committed` | 12,530 | 16,289 |
+| `as_timed_collides_with_companion` | 9,511 | 11,496 |
+| `driver_party_full` | 2 | 2 |
+
+**§9.111 estimated "roughly 110,000 instead of 74,663". The measured answer is
+82,384** - the fix delivers about a fifth of the additional bindings it was
+projected to. The estimate is wrong for a reason worth recording: it assumed
+the same thinning rate would apply to a smaller pool, and **thinning stopped
+applying at all**. `p_thin` reaches 1.0000, so the binder now takes every
+servable candidate it is offered and still falls short of its target. The two
+timing clauses grew as more candidates competed for the same drivers
+(+3,759 and +1,985), which the estimate did not anticipate either.
+
+**Joint binding is now supply-limited by servable candidates, not by
+thinning.** That is a different regime from the one every prior entry
+described, and it changes what the next lever has to be: adding candidates, not
+thinning fewer of them. On the weekend day types thinning still binds
+(`thin_p` 0.6216 SAT, 0.5955 SUN), so the saturation is a WEEKDAY property and
+must not be generalised.
+
+`driver_is_the_companion` does not fall to zero, and should not: the filter
+removes the candidacies refused with CERTAINTY - households holding no other
+eligible driver tour at all - while a driver who becomes committed during the
+pass can still leave a companion with only themselves. 8,150 of those remain,
+and they are emergent rather than structural.
+
+### The motorbike carve, applied (§9.115, #93)
+
+`B.motorbike.trip_share` 0.0036 -> **0.0024064**, `source` `assumed` ->
+`derived`, the identity written out. The carve now realises
+`q=0.00346 over 426,129 eligible persons`, seeding motorbike at 0.001 WEEKDAY
+against 0.002 on both weekend types.
+
+Two observations behind the identity are now DECLARED rather than reachable
+only inside a build script - `CAL.mode_split.vehicle_driver_level` (0.59) and
+`CAL.mode_split.motorbike_driver_journey_share` (0.0040786) - and
+`build_mode_targets.py` now **asserts the declared pair against the acquired
+sources on every build**, refusing to run if they diverge. That guard is the
+answer to the failure this entry opens with, applied to the one place it can
+be applied cheaply: a declared value and its artefact can no longer drift apart
+in silence.
+
+`mode_targets_by_mode.csv` is byte-identical across the change apart from line
+endings, which is the confirmation §9.115 predicted: **the carve moves
+generation, not the yardstick.** Motorbike's modelled share will go DOWN. It is
+a consistency repair and must not be reported as a fit repair.
+
+### FAMILY BOUNDARY - F14
+
+The demand, the plans and the 30 run-input sets are all regenerated. **Nothing
+run before this entry compares with anything run after it**, including the two
+calibrated F4 arms `20260821T175907_1000it_25pct` and
+`20260821T180310_1000it_25pct` that `README.md` still draws its fit figures
+from. Those arms remain valid as their own family's record.
+
+### The lesson worth carrying
+
+**A gate that never compares a producer with its product cannot see a producer
+that has stopped producing it.** Eight checks passed over a repository that
+could not rebuild its own demand. The cheap general form of the missing check
+is the one installed here - make the build assert its declared inputs against
+its sources - and the expensive general form, a rebuild-and-compare, is
+recorded as wanted rather than claimed as done.
+
+---
+
+## 9.117 The local suite was failing on `main` while three documents said it passed (30 August 2026, fifteenth session; issues #92, #93)
+
+`tests/check_package.py` is the gate the conventions name for declaring a data
+phase complete, and it is **local only** — CI deliberately does not run it. On
+arrival this session it reported **FAILURES PRESENT**. The board, the handover
+brief and a dated deliverable row all described it as passing.
+
+Two failures, both pre-existing on `main`, neither caused by any change made
+this session:
+
+### 1. A `decisions_ref` pointing at a record that was never written
+
+`B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite
+**§9.93**, and no `## 9.93` section existed — §9.92 was followed directly by
+§9.94. The decision itself was real, applied and measured: both rates were
+raised 0.1 → 0.4, and the measurement survives in full inside the two field
+descriptions. **Only the record was missing.**
+
+It is reconstructed at §9.93 from that already-committed evidence, labelled as
+a reconstruction, introducing no number that was not already in the repository.
+
+This is the failure mode proposal §8.1 exists to prevent, arriving from an
+unexpected direction: not an undeclared value, but a **declared value whose
+justification could not be found by anyone following its own pointer.**
+
+### 2. Three `consumers` claims that were false
+
+A `consumers` entry is a machine-readable claim that the named file reads the
+field, and the check tests it by text. Three claims failed it:
+
+| field | claimed | actually names the key |
+|---|---|---|
+| `B.mode.walk_feasible_km` | `GatedSubtourModeChoice.java` | `ModeAvailabilityConfigGroup.java` |
+| `B.mode.bike_feasible_km` | `GatedSubtourModeChoice.java` | `ModeAvailabilityConfigGroup.java` |
+| `B.ride.unpaired_fallback` | `RidePairingEngine.java` | `RidePairingConfigGroup.java` |
+
+Each claim was **semantically true and textually false**: the named class does
+apply the value, but reaches it through a config-group accessor
+(`getBikeFeasibleKm()`, `getUnpairedFallback()`) and never spells the key.
+
+Repaired on both sides rather than by deleting the claim: the config group that
+carries each value is added to `consumers`, and the class that applies it now
+**names the field in a comment at the point of use**, so the claim is
+verifiable by text as well as by intent. Enumerating every claim afterwards
+gives **0 remaining false ones** across 193 claims over 179 fields.
+
+**The check reports only its FIRST failure.** Fixing two revealed a third, and
+only enumerating the whole set found it in one pass rather than three.
+
+### Why no gate caught either, and why that matters here
+
+Both defects are invisible to everything CI runs. The one gate that sees them
+is the one that needs the full ~2.3 GiB package on a workstation, so it is the
+easiest to assert and the hardest to check — and it was asserted, in three
+places, for at least a session.
+
+**This is the same shape as §9.116, found the same morning.** There, a builder
+had stopped reproducing its artefact and eight gates passed over it. Here, the
+suite that would have said so was itself reported green without being run. The
+common failure is not a missing check but a **claim about a check**, and the
+conventions already name the cure for the prose form of it: a number in a
+living document is part of the change that moved it.
+
+### The lesson worth carrying
+
+**Run the local suite before believing the board about the local suite.** It is
+the one gate a session can skip silently, which is exactly why its status is
+the one most likely to be stale.
+
+---
+
+## 9.118 The escort listener converted the INNER subtour of a nested plan, and the enclosing one was left mixed (30 August 2026, fifteenth session; issues #48, #49, #86)
+
+> **AMENDED THE SAME DAY, BEFORE THIS ENTRY WAS EVER RELIED ON: the fix below is
+> REAL BUT IT IS NOT THE CAUSE OF THE CRASH.** The arm was relaunched with it and
+> died again at the same iteration on the same exception, after 918 s against 928 s
+> (`aborted_20260830T024952_1000it_25pct`). The inner-subtour conversion IS a defect
+> and the repair stands on its own merits, but something else is also producing a
+> mixed subtour, and this entry must not be read as having closed the matter. A
+> diagnostic that prints the refused plan itself was installed instead of a third
+> guess; §9.119 carries what it found. **This is the sixth mechanism in two sessions
+> to be argued from code and then refuted by a run.**
+
+The first F14 arm died at iteration 3, rc=1, after 928 s:
+
+```
+IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes.
+  at ChooseRandomLegModeForSubtour.applyChange(...:472)
+  at citysim.GatedSubtourModeChoice$GatedModule$1.run(...:162)
+```
+
+**The same exception has now killed four arms** — `aborted_20260826T222352_1000it_25pct`,
+`aborted_20260827T165131_1000it_25pct`, `aborted_20260829T230306_40it_1pct` and
+`aborted_20260830T022430_1000it_25pct`. It was recorded as a trap and treated as
+settled. It was not settled.
+
+### Where it is NOT
+
+`GatedSubtourModeChoice.java:162` is `inner.run(plan)` — the exception comes out
+of **MATSim's own strategy**, not out of the gate's refusal path. The reach
+bounds are 0.0 (§9.106), so `beyondReach` returns false for every trip and the
+refusal branch is unreachable. **The §9.106 repair is not implicated**, and the
+plan handed to the strategy was already mixed before it ran.
+
+### A mechanism asserted, then REFUTED by its own log
+
+§9.105 made a denied lift able to fall back to **`car`** rather than `walk`.
+`car` is chain-based; `walk` is not. A ride leg re-moded to `car` and then not
+restored would leave exactly the fatal mix, and `RidePairingEngine`'s restore
+skips silently when it cannot re-find the trip (`if (target == null) continue;`).
+That is a complete and plausible explanation.
+
+**The arm's own log refutes it.** Every restore succeeded:
+
+```
+48101 of 48101 forced-walk leg(s) restored
+50705 of 50705
+53890 of 53890
+```
+
+Nothing was left re-moded. Recorded because the explanation fitted perfectly and
+was still wrong — the fifth such refutation in two sessions, and the reason
+trap 5 exists.
+
+### Where it IS, measured rather than argued
+
+`EscortCoherenceListener.subtourContaining` returned the **first** subtour
+containing the bound trip:
+
+```java
+for (Subtour st : TripStructureUtils.getSubtours(plan, coordDist))
+    for (Trip t : st.getTrips())
+        if (matches) return new ArrayList<>(st.getTrips());
+```
+
+`citysim.NestedSubtourProbe` settles what that returns, on a plan it builds
+itself so the answer depends on no run. For `home → work → lunch → work → home`,
+all by car:
+
+| index | subtour | `getTrips()` | `hasParent` |
+|---:|---|---:|---|
+| 0 | work → lunch → work | **2** | **true** |
+| 1 | home … home | 4 | false |
+
+**`getSubtours` returns nested subtours INNER-FIRST**, so `subtourContaining`
+returned the inner one. Converting "the whole subtour" to `ride` therefore
+converted two trips of four and left the enclosing subtour holding `car` **and**
+`ride` — the precise state `applyChange` refuses.
+
+### Why the earlier repair did not cover it
+
+The 26 August repair, recorded in this listener's own comment, stopped it
+converting **one trip of a subtour** after that killed
+`aborted_20260826T222352_1000it_25pct`. The defect that remained is one level
+up: converting **one subtour of a nested plan.** Both produce the identical
+exception, which is why the second looked like a recurrence of the first.
+
+### The fix
+
+`subtourContaining` walks to the ROOT before returning:
+
+```java
+Subtour root = st;
+while (root.getParent() != null) { root = root.getParent(); }
+return new ArrayList<>(root.getTrips());
+```
+
+`Subtour.getTrips()` includes every nested trip, so the root's list covers the
+inner subtour too and **no enclosing subtour can be left mixed.** Sibling
+top-level subtours are untouched and each stays internally consistent. The probe
+confirms the root covers all four trips. Both call sites — the passenger's
+`ride` conversion and the driver's `car` conversion — go through this one
+function, and it is the only `getSubtours` call in the codebase.
+
+**This changes behaviour, and the change is stated rather than hidden:** an
+escorted member's coherent proposal is now their whole home-anchored day rather
+than the inner errand. That is what MATSim's chain-based constraint requires —
+a subtour cannot mix, so the alternative to converting the whole thing is not
+converting a part of it, it is not proposing at all. The listener still only
+**proposes**; `ChangeExpBeta` decides on score, so a worse plan cannot win.
+
+### Two tools, and one of them told a lie first
+
+`citysim.SubtourChainScan` scans a plans file for mixed subtours. Its first run
+reported **CLEAN** — off **0 subtours decomposed**, because an input plans file
+carries coordinates but no link ids until `PersonPrepareForSim` assigns them,
+and MATSim's decomposition refuses such activities. It now exits 3 with
+**INCONCLUSIVE** when it decomposes nothing. A tool that reports clean without
+testing anything is the §9.117 failure in a new costume, and it was caught only
+because the summary counts were read rather than the verdict line.
+
+### The lesson worth carrying
+
+**A recurring exception is not a recurring bug.** The same message had one cause
+in August 26's repair and a different cause underneath it, and the trap entry
+made the second look like a regression of the first. When a fixed defect
+reappears, re-derive the mechanism instead of re-applying the fix.
+
+---
+
+## 9.119 MATSim's own mode choice created the state MATSim's own mode choice refuses (30 August 2026, fifteenth session; issues #48, #49, #96)
+
+`IllegalStateException: Subtour contains a mix of chain- and non-chainbased
+modes` has killed **five arms** — 26, 27, 29 August and twice on 30 August. It
+was carried as a settled trap through two sessions. It was never settled,
+because nobody had asked the exception which agent it was talking about: **it
+names no person.**
+
+Three mechanisms were argued from the code and refuted. This entry records what
+a diagnostic measured instead.
+
+### What was refuted, and by what
+
+| asserted | refuted by |
+|---|---|
+| the §9.106 reach-refusal path put one trip back | the stack: the throw is at `inner.run(plan)`, inside MATSim's strategy. The bounds are 0.0, so `beyondReach` never fires |
+| §9.105's `car` fallback was left unrestored | the arm's own log: **48101/48101, 50705/50705, 53890/53890** restored |
+| `EscortCoherenceListener` converted an INNER subtour of a nested plan | a rebuilt arm died identically, 918 s against 928 s (§9.118, amended) |
+
+The third was a **genuine defect** — `getSubtours` does return nested subtours
+inner-first, measured — and its repair stands. It simply was not this.
+
+### What the diagnostic measured
+
+`GatedSubtourModeChoice` was given a check on both sides of MATSim's strategy:
+is the plan mixed BEFORE, and is it mixed AFTER? Both log and neither swallows.
+
+| in one replanning round | count |
+|---|---:|
+| plans arriving already mixed | **8** |
+| **plans CLEAN before and MIXED after** | **20** |
+| refusals raised at the same moment | 0 |
+
+**The strategy creates the state, and creates it faster than it inherits it.**
+Every created case has the identical shape:
+
+```
+person 90295   subtour 0 trips=1 hasParent=true   modes=[pt ]           acts=[work->other ]
+               subtour 1 trips=3 hasParent=false  modes=[car pt car ]   acts=[home->work work->other other->home ]
+person 150946  subtour 0 trips=1 hasParent=true   modes=[ride ]
+               subtour 1 trips=3 hasParent=false  modes=[car ride car ]
+person 36221   subtour 0 trips=1 hasParent=true   modes=[taxi ]
+               subtour 1 trips=4 hasParent=false  modes=[bike taxi bike bike ]
+```
+
+A **degenerate ONE-TRIP child subtour** — two consecutive activities within
+`subtourModeChoice.coordDistance` (100 m) of each other, `shopping->shopping`,
+`escort->escort` — is given a non-chain mode by
+`probaForRandomSingleTripMode` (0.5). That is entirely valid *for the child*.
+It leaves the **parent** holding `car` and `pt` together.
+
+The plan then enters the agent's memory and does nothing for several
+iterations. It kills the run only when mode choice later happens to **select
+the parent** — which is why five arms died at five different iterations, and
+why some arms ran past 100 without dying at all. **The intermittency was the
+signature, and it was read as flakiness.**
+
+### The demand, measured offline, holds none of the fatal shape
+
+`citysim.SubtourChainScan` over the committed WEEKDAY population, decomposing
+with the run's own coordDistance:
+
+| | |
+|---|---:|
+| persons | 620,553 |
+| subtours | 1,138,887 |
+| mixed subtours | **99** |
+| of which LEAF — ONE excursion | **0** |
+| of which SPANNING several excursions | 99 |
+
+A mix **across** excursions is an ordinary day: drive in the morning, take the
+train in the evening. A mix **inside** one excursion is physically impossible,
+because the car is not where the agent left it. **The demand generates none of
+the second kind.** Every one of the 99 is `closed=false` — a day that never
+returns home, so a chain-based mode in it abandons the vehicle. That is a real
+but separate defect, filed as **#96**.
+
+### The repair
+
+Two refusals, neither of which invents a mode or moves a parameter.
+
+1. **A proposal that would leave a subtour mixed is REFUSED**, and the
+   pre-innovation plan restored whole. This is the principle the reach refusal
+   already stated in this same method — *"the pre-innovation plan is consistent
+   by construction, so restoring all of it is the only safe refusal"* — applied
+   to an invariant MATSim itself states. The agent keeps a valid plan and every
+   mode remains available on the next draw.
+2. **A plan that ARRIVES mixed is stood aside from mode choice**, because no
+   draw can make it valid and running the strategy on it is a guaranteed throw.
+   `ReRoute`, the strategy's other module, still runs. **This is a refusal to
+   crash on #96, not a repair of it**, and those agents get no mode innovation
+   while it stands.
+
+### Measured on the arm that followed
+
+`20260830T083019_1000it_25pct` **cleared iteration 6** — five arms had died at
+iteration 3 — with 5 proposals refused and 5 plans stood aside, at a median
+**288 s/iteration**.
+
+### What this costs, stated
+
+Refusing a proposal removes it from the search. The proposals removed are
+states MATSim cannot hold, so nothing representable is lost — but the
+single-trip mode change is now a weaker operator on agents whose day contains a
+degenerate one-trip subtour, and those subtours exist because destination
+placement puts consecutive activities within 100 m of each other. **That is
+#30's territory**, and it is named here rather than absorbed.
+
+### The lesson worth carrying
+
+**An intermittent crash is a stochastic SELECTION over a deterministic defect.**
+The state was being manufactured every replanning round and lay dormant until
+the strategy drew the subtour holding it. Five arms, two sessions and three
+refuted mechanisms went past because the failure looked random and the
+exception named no agent. **When a crash names no subject, the first move is to
+make it name one.**
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -11520,6 +12029,10 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **MATSim's own mode choice created the state MATSim's own mode choice refuses (§9.119; issues #48/#49/#96).** `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` had killed **five arms** across two sessions and was carried as a settled trap. **Three mechanisms were argued from the code and all three refuted** - the §9.106 refusal path (the throw is inside MATSim's own strategy and the bounds are 0.0), §9.105's `car` fallback (every restore succeeded: 48101/48101, 50705/50705, 53890/53890) and §9.118's nested-subtour conversion (a rebuilt arm died identically, 918 s against 928 s). A two-sided diagnostic measured it instead: in one replanning round, **8 plans arrived mixed and 20 went from CLEAN to MIXED** under MATSim's own strategy. The shape is always the same - a degenerate ONE-TRIP child subtour, two activities within `coordDistance` 100 m, is given a non-chain mode by `probaForRandomSingleTripMode` 0.5, which is valid for the child and leaves the PARENT holding `car` and `pt`. The plan sleeps in the agent's memory and kills the run only when mode choice later SELECTS the parent - **the intermittency was the signature, and it was read as flakiness.** Offline, the committed WEEKDAY demand holds **99 mixed subtours of 1,138,887 and 0 of them LEAF** - all span several excursions and all are `closed=false` (#96). Repaired by two refusals that invent nothing: a proposal leaving a subtour mixed is REFUSED and the pre-innovation plan restored whole, and a plan that ARRIVES mixed is stood aside from mode choice while ReRoute still runs. Arm `20260830T083019_1000it_25pct` then **cleared iteration 6**, where five arms had died at 3, at a median 288 s/it. Nothing here is a finding. |
+| 2026-08-30 | **The escort listener converted the INNER subtour of a nested plan (§9.118; issues #48/#49/#86).** The first F14 arm died at iteration 3 on `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` - **the same exception that killed three earlier arms** and was recorded as a settled trap. It comes out of MATSim's OWN strategy at `inner.run(plan)`, not the §9.106 refusal path, whose reach bounds are 0.0 and unreachable. **A mechanism was asserted and refuted by the arm's own log**: §9.105's `car` fallback could leave a chain-based leg in a non-chain subtour if the restore silently skipped, but every restore succeeded (48101/48101, 50705/50705, 53890/53890). **The real cause, measured with a purpose-built probe rather than argued**: `EscortCoherenceListener.subtourContaining` returned the FIRST subtour containing the bound trip, and `getSubtours` returns nested subtours **INNER-FIRST** - for `home→work→lunch→work→home` it returns the 2-trip inner subtour at index 0 (`hasParent=true`) ahead of the 4-trip outer one. Converting "the whole subtour" therefore converted two trips of four and left the ENCLOSING subtour holding `car` and `ride`. The 26 August repair stopped this listener converting ONE TRIP of a subtour; it did not stop it converting ONE SUBTOUR of a nested plan. **Fix:** walk to the root before converting - `getTrips()` includes nested trips, so no enclosing subtour can be left mixed; sibling top-level subtours are untouched. Behaviour change stated: a coherent proposal is now the whole home-anchored day, which is what the chain-based constraint requires; the listener still only PROPOSES and `ChangeExpBeta` still decides. New tools `citysim.NestedSubtourProbe` and `citysim.SubtourChainScan`; the latter **reported CLEAN off 0 subtours decomposed** on its first run and now exits INCONCLUSIVE instead. Nothing here is a finding. |
+| 2026-08-30 | **The local suite was failing on `main` while three documents said it passed (§9.117; §9.93 reconstructed).** `check_package.py` is local-only and is the gate the conventions name for declaring a data phase complete; it reported **FAILURES PRESENT** on arrival, against a board, a brief and a dated row all calling it green. Two pre-existing failures. **(1)** `B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite **§9.93 and no such section existed** - the decision (both rates 0.1 → 0.4, on search completeness rather than fit) was real, applied and measured, and the measurement survived only inside the two field descriptions. §9.93 is **reconstructed from that already-committed evidence**, labelled as a reconstruction, introducing no new number. **(2)** Three `consumers` claims were **semantically true and textually false** - `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km` and `B.ride.unpaired_fallback` each named the class that APPLIES the value through a config-group accessor rather than the group that names the key. Repaired on both sides: the config group joins `consumers`, and the applying class now names the field at the point of use. **0 false claims remain across 193 claims over 179 fields.** The check reports only its FIRST failure, so fixing two revealed a third; enumerating the whole set found it in one pass. Suite now **ALL CHECKS PASSED** (2 standing warnings). Same shape as §9.116 the same morning: not a missing check, but a **claim about a check**. Nothing here is a finding. |
+| 2026-08-30 | **The committed builder had stopped reproducing the committed demand; both queued fixes applied and family F14 opens (§9.116; issues #92/#93/#86/#49).** §9.111 and §9.115 each recorded their fix as written and deliberately NOT committed. **The §9.111 candidate-pool filter was committed anyway**, in `b65d280` via PR #95, without its rebuild - so the repository could not regenerate its own demand from its own code, and **all eight arrival gates passed over it**, because none compares a builder with the artefact it produced. Caught from the committed build report: `candidates` 201,931 with `candidates_unservable` absent is a report the committed builder cannot write. Both fixes are now applied together and all three day types rebuilt. Measured, WEEKDAY: candidates 201,931 → **146,260** (55,671 unservable), **bound 74,663 → 82,384**, infeasible 73,258 → 35,937, `driver_is_the_companion` 51,215 → 8,150, and **`p_thin` 0.8565 → 1.0000** - thinning stops applying, so joint binding is now **supply-limited by servable candidates**, a different regime from every prior entry, and a WEEKDAY property only (SAT 0.6216, SUN 0.5955). **§9.111's "roughly 110,000" estimate is wrong: the measured answer is 82,384**, because the estimate assumed a thinning rate that no longer applies and did not anticipate the two timing clauses growing (+3,759, +1,985). `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived`; the two observations behind the identity are now declared (`CAL.mode_split.vehicle_driver_level`, `.motorbike_driver_journey_share`) and `build_mode_targets.py` **asserts them against the acquired sources on every build**. `mode_targets_by_mode.csv` is unchanged but for line endings, confirming the carve moves generation, not the yardstick - motorbike's share will go DOWN. **FAMILY BOUNDARY F14: nothing run before compares with anything run after**, including the two F4 arms `README.md` draws its figures from. Registry 400 → 402. Nothing here is a finding. |
 | 2026-08-30 | **The motorbike carve and its target are the same observation, minus a conversion (§9.115; issues #49/#84).** §9.112 left which of `B.motorbike.trip_share` 0.3630% and the §9.87 target 0.2406% is right as a decision to take; it is arithmetic. The carve applies the census commute share straight to all trips, assuming the driver share of all TRIPS equals the **89.1%** driver share of commute JOURNEYS where the HTS observes **59.0%**: `0.3630 / (89.1/59.0) = 0.2405` against a target of 0.2406, the residual being rounding. The carve is the target times a ratio that should have cancelled. `B.motorbike.trip_share` should become **0.2406%, source `derived`**, removing an assumed value the package can derive. NOT APPLIED - it regenerates the plans and queues with §9.111 for one deliberate rebuild. Stated so it is not mis-sold: it LOWERS generation, so it is a consistency repair, not a fit repair. No target value changed; the 67/143 split is untouched; nothing here is a finding. |
 | 2026-08-30 | **CORRECTION: most cyclists own cars, so bike is not displaced ride (§9.114; issues #49/#48/#30).** §9.109 and §9.112 both concluded bike's excess and ride's deficit are one defect - a carless agent cycles because the demand cannot make them a passenger. Measured: of 5,649 resident bike trips, **51.6% are made by agents holding BOTH a licence and a car**, 30.3% fully carless, 18.1% licensed without one. The displaced-passenger mechanism covers at most a third. Car dominates bike at every distance on the declared scoring (~0.604 utils/km against 1.36, and a -1.35 constant against 0.0), so this is the same shape as walk in §9.107 - a mode winning trips the scoring says it should lose, for agents who hold the alternative - and bike is **walk's problem in a second mode, not ride's shadow**. Fifth unmeasured mechanism this session, third to reach a committed entry. Nothing here is a finding. |
 | 2026-08-30 | **A transitRoute's day tag is not its service day (§9.113; issues #49/#84/#30).** The mapped weekday schedule shows **zero WEEKDAY-tagged routes for ferry and tram** against 965 for bus and 266 for rail, which looks like a complete explanation for both deficits and is false. Departures: **ferry 107, tram 252** - exactly their GTFS weekday trip counts. pt2matsim names a grouped route after a representative trip's service id, so a line with few routes can be labelled SAT while running a full weekday timetable. Recorded as a trap: never read service from a route id, count departures. Corrects §9.103's "550 light rail trips a day" (unfiltered GTFS) to **252 weekday departures**; that entry's conclusion is unchanged and better supported. **Supply is now ruled out for both modes on measurement.** Nothing here is a finding. |

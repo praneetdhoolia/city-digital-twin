@@ -162,6 +162,36 @@
       "decisions_ref": "9.87",
       "description": "The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%."
     },
+    "CAL.mode_split.vehicle_driver_level": {
+      "value": 0.59,
+      "units": "share_of_trips",
+      "source": "measured",
+      "sweep": [
+        0.5605,
+        0.6195
+      ],
+      "status": "active",
+      "decisions_ref": "9.115",
+      "description": "The survey's all-purpose Vehicle driver level - the share of resident person trips made as the driver of a private vehicle - READ from the household travel survey level table that build_mode_targets.py already splits into car, motorbike and resident truck driving, and asserted against that source on every build. It is declared here because it is the CONVERSION that carries a census commute-JOURNEY share to an all-purpose TRIP share, and a carve that omits it overstates its mode by the ratio of the two driver shares (9.115). The sweep is a DECLARED +/-5% band on the transfer, not a measured spread: the survey publishes this level as a single figure and no repeated measurement of it exists in the package, so the band expresses how far the conversion may be wrong rather than an observed variation. It is not a free parameter.",
+      "consumers": [
+        "cities/newcastle/build/build_mode_targets.py"
+      ]
+    },
+    "CAL.mode_split.motorbike_driver_journey_share": {
+      "value": 0.0040786,
+      "units": "share_of_driver_journeys",
+      "source": "measured",
+      "sweep": [
+        0.0038747,
+        0.0042825
+      ],
+      "status": "active",
+      "decisions_ref": "9.115",
+      "description": "Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the core SA1s - 653 of 160,103 - READ from the census extract and asserted against it on every build. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes. Taking 653 of all 179,761 journeys (0.363%) and applying it straight to all trips is the defect 9.115 records - it assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS, where the survey observes 59.0%. The sweep is a DECLARED +/-5% band on that transfer, not a measured spread: this is one census cell with no repeated measurement in the package.",
+      "consumers": [
+        "cities/newcastle/build/build_mode_targets.py"
+      ]
+    },
     "CAL.truck.count_year_from": {
       "value": 2023,
       "units": "year",

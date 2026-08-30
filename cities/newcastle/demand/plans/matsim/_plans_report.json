@@ -82,30 +82,57 @@
   "typical_duration_sweep": 0.25,
   "note": "Seed modes are initial conditions for MATSim co-evolution, drawn per tour so chain-based modes stay conserved. The default seed is UNINFORMED - uniform over the modes each person can use, conditioned only on B1 car availability - so that the HTS mode share is a target the model has to reach rather than one it is handed (DECISIONS.md 9.6). Run with --seed-mode informed to reproduce the P3 seed.",
   "by_day": {
+    "WEEKDAY": {
+      "persons": 620553,
+      "legs": 2343321,
+      "activities": 2963874,
+      "tours": 1100353,
+      "bytes": 41580496,
+      "escort_ride_denied": 111018,
+      "seed_mode_share": {
+        "bike": 0.0695,
+        "car": 0.3445,
+        "motorbike": 0.0014,
+        "pt": 0.1755,
+        "ride": 0.1952,
+        "truck": 0.0381,
+        "walk": 0.1757
+      },
+      "seed_ride_covered_share": 0.1087,
+      "activity_types": {
+        "business": 24001,
+        "education": 67471,
+        "escort": 224453,
+        "home": 1720906,
+        "other": 456907,
+        "shopping": 235753,
+        "work": 234383
+      }
+    },
     "SAT": {
       "persons": 506013,
       "legs": 1903521,
       "activities": 2409534,
       "tours": 878330,
-      "bytes": 33464703,
+      "bytes": 33292342,
       "escort_ride_denied": 66187,
       "seed_mode_share": {
-        "bike": 0.0732,
-        "car": 0.3254,
-        "motorbike": 0.0028,
-        "pt": 0.1795,
-        "ride": 0.2171,
+        "bike": 0.0709,
+        "car": 0.3325,
+        "motorbike": 0.0019,
+        "pt": 0.1729,
+        "ride": 0.2263,
         "truck": 0.0224,
-        "walk": 0.1795
+        "walk": 0.1732
       },
-      "seed_ride_covered_share": 0.1236,
+      "seed_ride_covered_share": 0.1387,
       "activity_types": {
         "business": 2765,
         "education": 2428,
         "escort": 125173,
         "home": 1384343,
-        "other": 556004,
-        "shopping": 289132,
+        "other": 555520,
+        "shopping": 289616,
         "work": 49689
       }
     },
@@ -114,25 +141,25 @@
       "legs": 1664677,
       "activities": 2134288,
       "tours": 768752,
-      "bytes": 29999419,
+      "bytes": 29835854,
       "escort_ride_denied": 48404,
       "seed_mode_share": {
-        "bike": 0.0752,
-        "car": 0.3099,
-        "motorbike": 0.003,
-        "pt": 0.1827,
-        "ride": 0.223,
+        "bike": 0.0722,
+        "car": 0.3169,
+        "motorbike": 0.0021,
+        "pt": 0.1758,
+        "ride": 0.2335,
         "truck": 0.0228,
-        "walk": 0.1833
+        "walk": 0.1766
       },
-      "seed_ride_covered_share": 0.1227,
+      "seed_ride_covered_share": 0.1385,
       "activity_types": {
         "business": 1849,
         "education": 761,
         "escort": 89190,
         "home": 1238363,
-        "other": 574631,
-        "shopping": 200626,
+        "other": 574489,
+        "shopping": 200768,
         "work": 28868
       }
     }

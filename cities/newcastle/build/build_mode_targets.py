@@ -344,6 +344,28 @@ def main():
     vd = lv['vehicle driver']
     tol = float(cfg.get('CAL.mode_split.commute_transfer_tolerance'))
 
+    # The two observations this split rests on are DECLARED, because the
+    # motorbike carve in build_matsim_plans.py is derived from them and a
+    # registry value that silently disagrees with the artefact is the
+    # duplication failure 9.79 was written about. They are read from the
+    # acquired sources here, as they always were - this only refuses to let
+    # the two copies drift apart. 9.115.
+    _decl_vd = float(cfg.get('CAL.mode_split.vehicle_driver_level'))
+    _decl_mb = float(cfg.get('CAL.mode_split.motorbike_driver_journey_share'))
+    _obs_vd = vd / 100.0
+    _obs_mb = g['motorbike'] / drv
+    for name, declared, observed in (
+            ('CAL.mode_split.vehicle_driver_level', _decl_vd, _obs_vd),
+            ('CAL.mode_split.motorbike_driver_journey_share',
+             _decl_mb, _obs_mb)):
+        if abs(declared - observed) > 5e-5:
+            raise SystemExit(
+                'registry drift: %s declares %.7f but the acquired source '
+                'measures %.7f. The declared value is what the motorbike '
+                'carve derives from (9.115); update the field in the same '
+                'change as the data, or the carve and its target stop '
+                'describing one quantity.' % (name, declared, observed))
+
     car = vd * g['car'] / drv
     mbk = vd * g['motorbike'] / drv
     trk_resident = vd * g['truck'] / drv

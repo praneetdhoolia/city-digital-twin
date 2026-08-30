@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 400 fields are made of
+## What the 402 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 32 | computed from observed data in this package |
-| `derived` | 35 | follows from another registry field by identity |
+| `measured` | 34 | computed from observed data in this package |
+| `derived` | 36 | follows from another registry field by identity |
 | `literature` | 65 | a published value, not specific to this city |
-| `assumed` | 150 | chosen without direct empirical support |
+| `assumed` | 149 | chosen without direct empirical support |
 | `definition` | 114 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 381 | usable point value |
+| `active` | 383 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1185,7 +1185,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
-| `B.motorbike.trip_share` | `0.0036` | share_of_trips | `assumed` | 0 - 0.01 |
+| `B.motorbike.trip_share` | `0.0024064` | share_of_trips | `derived` | derived: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.moto |
 | `B.network_factors.distance_band` | `0.25` | share | `assumed` | 0.1 - 0.5 |
 | `B.network_factors.min_pair_m` | `500.0` | metres | `assumed` | 100 - 2000 |
 | `B.network_factors.n_pairs` | `600` | zone_pairs | `assumed` | 200 - 5000 |
@@ -1668,9 +1668,9 @@ Passenger-car equivalents of one modelled motorbike - it consumes LESS road capa
 
 Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.
 
-***assumed** · status **active** · DECISIONS.md §9.52*
+***derived** · status **active** · DECISIONS.md §9.115*
 
-> **Sweep basis.** The default restates the MEASURED census G62 one-method journey-to-work share for the 1,500 core SA1s: 653 of 179,761 journeys = 0.363% by motorbike/scooter (docs/design/mode-individualisation.md). What is ASSUMED is the transfer from a commute share to an all-purpose trip share - the HTS cannot separate motorcycle trips (its data document places them inside Vehicle driver/passenger), so no all-purpose observation exists. The lower bound is zero, which turns the mode off so its whole effect is a sweep member; the upper bound is roughly 3x the commute anchor, spanning the plausible all-purpose range for a mode whose registration share exceeds its trip share.
+> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.motorbike_driver_journey_share`: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0040786 = 0.0024064. The carve share and the fit target are the SAME 653 census riders transferred to all-purpose trips, and there is no modelling judgement between them: the carve previously took 653 of ALL 179,761 commute journeys (0.363%) and applied it straight to all trips, which assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS where the survey observes 59.0%. Dividing out that ratio - 89.1/59.0 = 1.510 - returns 0.363%/1.510 = 0.2405%, the target to its last decimal. Conditioning the census cell on driver journeys and scaling by the observed driver level performs the same conversion in one step, so generation and scoring finally describe one quantity (9.115). This LOWERS generation and is a consistency repair, not a fit repair; it must not be sold as one.
 
 #### `B.network_factors.distance_band`
 
@@ -1916,7 +1916,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 15 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 17 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -1925,6 +1925,8 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
 | `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
 | `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
+| `CAL.mode_split.motorbike_driver_journey_share` | `0.0040786` | share_of_driver_journeys | `measured` | 0.0038747 - 0.0042825 |
+| `CAL.mode_split.vehicle_driver_level` | `0.59` | share_of_trips | `measured` | 0.5605 - 0.6195 |
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
@@ -1955,6 +1957,18 @@ The per-mode deviation from its real-life target at which the standing gate-loop
 The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%.
 
 ***assumed** · status **active** · DECISIONS.md §9.87*
+
+#### `CAL.mode_split.motorbike_driver_journey_share`
+
+Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the core SA1s - 653 of 160,103 - READ from the census extract and asserted against it on every build. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes. Taking 653 of all 179,761 journeys (0.363%) and applying it straight to all trips is the defect 9.115 records - it assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS, where the survey observes 59.0%. The sweep is a DECLARED +/-5% band on that transfer, not a measured spread: this is one census cell with no repeated measurement in the package.
+
+***measured** · status **active** · DECISIONS.md §9.115*
+
+#### `CAL.mode_split.vehicle_driver_level`
+
+The survey's all-purpose Vehicle driver level - the share of resident person trips made as the driver of a private vehicle - READ from the household travel survey level table that build_mode_targets.py already splits into car, motorbike and resident truck driving, and asserted against that source on every build. It is declared here because it is the CONVERSION that carries a census commute-JOURNEY share to an all-purpose TRIP share, and a carve that omits it overstates its mode by the ratio of the two driver shares (9.115). The sweep is a DECLARED +/-5% band on the transfer, not a measured spread: the survey publishes this level as a single figure and no repeated measurement of it exists in the package, so the band expresses how far the conversion may be wrong rather than an observed variation. It is not a free parameter.
+
+***measured** · status **active** · DECISIONS.md §9.115*
 
 #### `CAL.objective.components`
 

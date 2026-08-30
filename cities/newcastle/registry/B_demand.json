@@ -1240,6 +1240,7 @@
       "matsim_param": "ridePairing.unpairedFallback",
       "description": "How a ride leg that no household driver can serve is physically executed for the iteration in which it failed. It is an EXECUTION, never an amputation: the leg keeps `ride` as an alternative, restored at AfterMobsim, so a pairing failure stays reversible (9.81). This field decides only what the agent actually does that day. Consumed by src/java/citysim/RidePairingEngine.",
       "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
         "src/java/citysim/RidePairingEngine.java"
       ]
     },
@@ -1262,6 +1263,7 @@
       "matsim_param": "modeAvailability.walkFeasibleKm",
       "description": "DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `walk` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long walk is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.",
       "consumers": [
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
         "src/java/citysim/GatedSubtourModeChoice.java"
       ]
     },
@@ -1284,6 +1286,7 @@
       "matsim_param": "modeAvailability.bikeFeasibleKm",
       "description": "DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip distance beyond which `bike` is not OFFERED to the replanner. A FEASIBILITY bound, not a preference: scoring can express that a long bike is bad, but it cannot express that it is not a thing people do, and without this the model hands agents trips of 60-90 km on foot and charges them fifteen hours for it. Measured before it existed: walk's mean trip was 8.75 km against an observed 0.7 km, 46% of walk trips exceeded 5 km, and 60.8% of the agents making a 20 km walk held BOTH a licence and a car - so this is not a story about people with no alternative. Zero disables the bound and reproduces every arm before 9.106, which is the sweep's low end. The straight line is a LOWER bound on the distance actually travelled, so a trip refused here is refused on a distance it certainly exceeds. Consumed by src/java/citysim/GatedSubtourModeChoice.java. MEASURED AND NOT ADOPTED: on a committed pair differing only in the two bounds, the sum of absolute deviation over the seven scored modes went 509.9% -> 577.1% - WORSE - and walk's geometry barely moved (mean 8.84 -> 8.72 km, trips over 20 km 14.0% -> 13.2%). The mechanism is kept because it is sound in itself and is a declared sweep member; the point value is zero because the evidence says the gate does not do what it was built to do.",
       "consumers": [
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
         "src/java/citysim/GatedSubtourModeChoice.java"
       ]
     },
@@ -1393,16 +1396,18 @@
       "matsim_param": "ridePairing.physicalBoarding"
     },
     "B.motorbike.trip_share": {
-      "value": 0.0036,
+      "value": 0.0024064,
       "units": "share_of_trips",
-      "source": "assumed",
-      "sweep": [
-        0.0,
-        0.01
-      ],
-      "sweep_basis": "The default restates the MEASURED census G62 one-method journey-to-work share for the 1,500 core SA1s: 653 of 179,761 journeys = 0.363% by motorbike/scooter (docs/design/mode-individualisation.md). What is ASSUMED is the transfer from a commute share to an all-purpose trip share - the HTS cannot separate motorcycle trips (its data document places them inside Vehicle driver/passenger), so no all-purpose observation exists. The lower bound is zero, which turns the mode off so its whole effect is a sweep member; the upper bound is roughly 3x the commute anchor, spanning the plausible all-purpose range for a mode whose registration share exceeds its trip share.",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "CAL.mode_split.vehicle_driver_level",
+          "CAL.mode_split.motorbike_driver_journey_share"
+        ],
+        "identity": "trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0040786 = 0.0024064. The carve share and the fit target are the SAME 653 census riders transferred to all-purpose trips, and there is no modelling judgement between them: the carve previously took 653 of ALL 179,761 commute journeys (0.363%) and applied it straight to all trips, which assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS where the survey observes 59.0%. Dividing out that ratio - 89.1/59.0 = 1.510 - returns 0.363%/1.510 = 0.2405%, the target to its last decimal. Conditioning the census cell on driver journeys and scaling by the observed driver level performs the same conversion in one step, so generation and scoring finally describe one quantity (9.115). This LOWERS generation and is a consistency repair, not a fit repair; it must not be sold as one."
+      },
       "status": "active",
-      "decisions_ref": "9.52",
+      "decisions_ref": "9.115",
       "description": "Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.",
       "consumers": [
         "src/build/build_matsim_plans.py"

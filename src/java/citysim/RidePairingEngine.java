@@ -854,6 +854,12 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      * does not carry.
      */
     private String fallbackMode(final Id<Person> person) {
+        // The choice applied here is the declared registry field
+        // B.ride.unpaired_fallback (9.105 - a denied lift is not a
+        // fifteen-hour walk), reaching this class through
+        // RidePairingConfigGroup's accessor rather than by name. The key is
+        // spelled out so the registry's `consumers` claim about this file is
+        // verifiable by text and not merely by intent.
         if (!RidePairingConfigGroup.FALLBACK_DRIVE_ELSE_WALK
                 .equals(cfg.getUnpairedFallback())) {
             return TransportMode.walk;
