@@ -106,8 +106,8 @@
     "F18-shared-rides-carves": {
       "label": "F17 stack on a demand with shared rides, the repaired motorbike carve at census resolution and the resident truck carve (9.122, 9.124, 9.125)",
       "decisions_ref": "9.122, 9.124, 9.125",
-      "from_launch": "20260830T170000",
-      "note": "Opens at the first F18 launch (stamp provisional until then): B2 rebuilt with the fourth binder pass (B.ride.shared_lift_scope = same_sa2_od), plans rebuilt with the motorbike carve solved on non-escorters at sa1_thinned resolution and the resident truck carve. The run side is F17 unchanged. The F17 arm 20260830T141222 is F17 to whatever iteration it reaches."
+      "from_launch": "20260830T161200",
+      "note": "Opened 30 Aug 16:12 with arm 20260830T161243_300it_10pct after smoke probe 20260830T161030: B2 rebuilt with the fourth binder pass (B.ride.shared_lift_scope = same_sa2_od), plans rebuilt with the motorbike carve solved on non-escorters at sa1_thinned resolution and the resident truck carve. The run side is F17 unchanged. The F17 arm 20260830T141222 is F17 to whatever iteration it reaches."
     }
   },
   "overrides": {

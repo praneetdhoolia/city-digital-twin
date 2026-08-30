@@ -28,7 +28,7 @@ trust order, the six questions, the environment gate — live in
 
 | Fact as of this handoff | Re-derive with |
 |---|---|
-| **AN F17 ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T141222_300it_10pct` (overlay `f17_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240), launched 30 Aug 14:12 as Task Scheduler task `citysim_run_20260830T141221`; first gate ~17:45. The F16 arm `aborted_20260830T132843_300it_10pct` was **stopped on the gate at iteration 17** and the F15 arm `aborted_20260830T124711_300it_10pct` at iteration 13, each with its cause measured (§9.121). Measured pace at 10%: 120–150 s/it, so a gate every ~3.5 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
+| **AN F18 ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T161243_300it_10pct` (overlay `f18_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240), launched 30 Aug 16:12 as Task Scheduler task `citysim_run_20260830T161242`; first gate ~19:15. The F17 arm `aborted_20260830T141222_300it_10pct` was **stopped at iteration 60 for F18** having converged car (+1.7%) and walk (+11%) by iteration 50 (§9.126); F16 stopped at 17 and F15 at 13, each with its cause measured (§9.121). Measured pace at 10%: ~106 s/it, so a gate every ~3 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
 | Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --trend` (every readable iteration, every mode, direction) · `--it <n>` for one table · `--watch 300` to keep printing — every 10th iteration is readable now, not only the trips-table ones |
 | **This session's PR is OPEN at handoff** (or merged overnight — check) | `gh pr list --state open` · `gh pr checks <n>` |
 | Open issues — **none closed this session; #48, #86, #91, #30, #93, #96 carry new measured comments** | `gh issue list --state open` |
@@ -103,26 +103,26 @@ identity); its remaining gap is the demand's supply of drivers (#86).
 §2  THE MODES — every mode individually
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Basis:** linked main-mode trips, target-LGA residents, 10%. **THIS IS THE RUNNING
-F17 ARM AT ITERATION 10 — every seed scored, selection still lagging scoring (car is
-the best-scored plan for 61.2% of car-available residents and selected by 38.7%), NOT
-the model's answer.** Reproduce with `python src/analyse/report_mode_ridership.py
---run results/20260830T141222_300it_10pct --it 10`; the F16 column is the same depth
-with the beeline direct walk (§9.121).
+**Basis:** linked main-mode trips, target-LGA residents, 10%, **against the corrected
+yardstick (§9.122: the driver split on the target LGA's own census cell)**. **THIS IS THE
+F17 ARM AT ITERATION 50 — its last full reading before it was stopped for F18; NOT a
+result (no `_run.json`, innovation still on), but the first honest levels since F4.**
+Reproduce with `python src/analyse/report_mode_ridership.py --run
+results/aborted_20260830T141222_300it_10pct --it 50`; `--trend` prints 0→50.
 
-| # | mode | F17 it.10 % | F16 it.10 % | target % | deviation (F17) | what it is |
+| # | mode | F17 it.50 % | F17 it.10 % | target % | deviation (it.50) | what it is |
 |---|---|---:|---:|---:|---:|---|
-| 1 | car | 44.3700 | 44.0758 | 58.1631 | −23.7% | selection lag; best plan for 61% |
-| 2 | ride | 7.4391 | 7.4288 | 20.6000 | −63.9% | **realises what is bound** (81% paired); ceiling is #86 |
-| 3 | walk | 30.1490 | 29.3956 | 13.4000 | +125.0% | best plan for 6.1%; selected 17.3% |
-| 4 | bike | 8.2496 | 9.1107 | 2.2084 | +273.6% | beats car for ~14% |
-| 5 | motorbike | 0.0606 | 0.0591 | 0.2406 | −74.8% | locked carve; 38 trips at 10% |
-| 6 | taxi | 1.5124 | 1.6100 | 0.9916 | +52.5% | fleet refusing ~37% of requests |
-| 7 | bus | 6.2426 | 6.5231 | 2.3819 | +162.1% | pt best plan for 7.7% |
-| 8 | heavy_rail | 1.8506 | 1.7426 | 0.7737 | +139.2% | as bus |
-| 9 | light_rail | 0.0782 | 0.0495 | 0.6444 | −87.9% | corridor market (#30) |
-| 10 | ferry | **0.0479** | 0.0048 | 0.1013 | **−52.8%** | 30 trips against 3: the network direct walk (#94) |
-| 11 | truck | 8.1603 | 8.1391 | — | n/a network-wide | `--truck-stations` scores it |
+| 1 | car | **59.3240** | 44.3700 | 58.3222 | **+1.7%** | converged in 50 iterations |
+| 2 | ride | 10.0881 | 7.4391 | 20.6000 | −51.0% | the demand's ceiling; F18 adds shared rides |
+| 3 | walk | **14.8765** | 30.1490 | 13.4000 | **+11.0%** | still falling ~2 pp per 10 it |
+| 4 | bike | 8.2863 | 8.2496 | 2.2084 | +275.2% | the car-less quarter (§9.123); F18 |
+| 5 | motorbike | 0.0606 | 0.0606 | 0.3785 | −84.0% | carve halved after the draw (§9.122); F18; 17-person statistic at 10% |
+| 6 | taxi | 1.5096 | 1.5124 | 0.9916 | +52.2% | fleet (§9.99), untouched |
+| 7 | bus | 4.4525 | 6.2426 | 2.3819 | +86.9% | car-less quarter; F18 |
+| 8 | heavy_rail | 1.3137 | 1.8506 | 0.7737 | +69.8% | car-less quarter; F18 |
+| 9 | light_rail | 0.0326 | 0.0782 | 0.6444 | −94.9% | corridor placement (#30, §9.120) |
+| 10 | ferry | 0.0560 | 0.0479 | 0.1429 | −60.8% | 36 trips against 3 on F16 (#94) |
+| 11 | truck | 6.1043 | 8.1603 | — | n/a network-wide | `--truck-stations` scores it |
 | 12 | freight_train | 314 closures | 314 | 314 | representation | — |
 
 The four PT submodes share one folded HTS observation; their geometry deviations are
