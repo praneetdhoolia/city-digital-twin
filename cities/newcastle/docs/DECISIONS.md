@@ -11624,9 +11624,11 @@ would hold on the order of 7% of trip ends, not the 1.06% two-ended market
 §9.103 measured, because a corridor trip needs BOTH ends near the line and
 the home end is only 1.7–2.3% corridor. This is the measurement; the repair
 is B2's destination solver and belongs to #30's family boundary, not to
-F15. Reproduce with the scratch script recorded in the session; the inputs
-are the S2 WEEKDAY schedule, `B2_activity_trips_WEEKDAY.csv`,
-`D1_zone_attractions_SA1.csv` and `D1_poi.csv`.
+F15. Reproduce with `python src/analyse/corridor_market.py --run <any S2
+WEEKDAY run> --mode tram --radius-m 800` — the stops come from the run's own
+schedule, the ends from `B2_activity_trips_WEEKDAY.csv`, the observed side
+from `D1_zone_attractions_SA1.csv` and `D1_poi.csv`; the radius is the
+caller's, never a constant in the tool.
 
 ### Family F15 opens
 
