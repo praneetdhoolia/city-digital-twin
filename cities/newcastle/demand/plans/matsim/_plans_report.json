@@ -97,113 +97,113 @@
   "by_day": {
     "WEEKDAY": {
       "persons": 620553,
-      "legs": 9880427,
-      "activities": 12191654,
+      "legs": 9878423,
+      "activities": 12189342,
       "tours": 1100353,
-      "bytes": 74283077,
-      "escort_ride_denied": 114264,
+      "bytes": 74919625,
+      "escort_ride_denied": 114294,
       "legs_selected_plan": 2343321,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 20133,
-        "3": 51406,
-        "4": 204336,
-        "5": 204124,
-        "6": 27645
+        "2": 19976,
+        "3": 51640,
+        "4": 204393,
+        "5": 203924,
+        "6": 27647
       },
       "seed_mode_share": {
-        "bike": 0.0693,
-        "car": 0.4425,
+        "bike": 0.0702,
+        "car": 0.4363,
         "motorbike": 0.0003,
-        "pt": 0.1513,
-        "ride": 0.0354,
-        "taxi": 0.1296,
+        "pt": 0.153,
+        "ride": 0.0355,
+        "taxi": 0.1313,
         "truck": 0.0094,
-        "walk": 0.1622
+        "walk": 0.1638
       },
-      "seed_ride_covered_share": 0.0354,
+      "seed_ride_covered_share": 0.0355,
       "activity_types": {
-        "business": 108321,
-        "education": 215100,
+        "business": 108280,
+        "education": 215388,
         "escort": 995313,
-        "home": 6767705,
-        "other": 2018059,
-        "shopping": 1042116,
-        "work": 1045040
+        "home": 6766483,
+        "other": 2017445,
+        "shopping": 1041969,
+        "work": 1044464
       }
     },
     "SAT": {
       "persons": 506013,
-      "legs": 8256783,
-      "activities": 10279866,
+      "legs": 8254405,
+      "activities": 10277045,
       "tours": 878330,
-      "bytes": 61226652,
-      "escort_ride_denied": 67633,
+      "bytes": 61580543,
+      "escort_ride_denied": 67625,
       "legs_selected_plan": 1903521,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 12327,
-        "3": 38485,
-        "4": 175228,
-        "5": 183636,
-        "6": 33509
+        "2": 12363,
+        "3": 38559,
+        "4": 175163,
+        "5": 183548,
+        "6": 33493
       },
       "seed_mode_share": {
-        "bike": 0.0748,
-        "car": 0.412,
+        "bike": 0.0751,
+        "car": 0.4092,
         "motorbike": 0.0004,
-        "pt": 0.1582,
-        "ride": 0.0381,
-        "taxi": 0.1417,
+        "pt": 0.159,
+        "ride": 0.0382,
+        "taxi": 0.1426,
         "truck": 0.0056,
-        "walk": 0.1692
+        "walk": 0.1699
       },
-      "seed_ride_covered_share": 0.0381,
+      "seed_ride_covered_share": 0.0382,
       "activity_types": {
-        "business": 12522,
-        "education": 7647,
+        "business": 12509,
+        "education": 7665,
         "escort": 555739,
-        "home": 5738470,
-        "other": 2463678,
-        "shopping": 1288380,
-        "work": 213430
+        "home": 5736986,
+        "other": 2462790,
+        "shopping": 1288152,
+        "work": 213204
       }
     },
     "SUN": {
       "persons": 469611,
-      "legs": 7202978,
-      "activities": 9086482,
+      "legs": 7202355,
+      "activities": 9085676,
       "tours": 768752,
-      "bytes": 54529207,
-      "escort_ride_denied": 49380,
+      "bytes": 54888088,
+      "escort_ride_denied": 49348,
       "legs_selected_plan": 1664677,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 12084,
-        "3": 36133,
-        "4": 163908,
-        "5": 170551,
-        "6": 31123
+        "2": 12126,
+        "3": 36183,
+        "4": 163657,
+        "5": 170673,
+        "6": 31111
       },
       "seed_mode_share": {
-        "bike": 0.0759,
-        "car": 0.404,
-        "motorbike": 0.0004,
-        "pt": 0.1605,
-        "ride": 0.0389,
-        "taxi": 0.1435,
+        "bike": 0.0764,
+        "car": 0.4002,
+        "motorbike": 0.0005,
+        "pt": 0.1615,
+        "ride": 0.039,
+        "taxi": 0.1445,
         "truck": 0.0058,
-        "walk": 0.171
+        "walk": 0.1721
       },
-      "seed_ride_covered_share": 0.0389,
+      "seed_ride_covered_share": 0.039,
       "activity_types": {
-        "business": 8341,
-        "education": 2343,
+        "business": 8345,
+        "education": 2362,
         "escort": 395787,
-        "home": 5127027,
-        "other": 2544238,
-        "shopping": 888102,
-        "work": 120644
+        "home": 5126536,
+        "other": 2544106,
+        "shopping": 888014,
+        "work": 120526
       }
     }
   }

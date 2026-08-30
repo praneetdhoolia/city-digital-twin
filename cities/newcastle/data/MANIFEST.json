@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-30T16:09:14",
+  "generated": "2026-08-30T16:29:49",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 497,
-  "total_bytes": 4362798391,
+  "total_bytes": 4364158562,
   "total_gib": 4.06,
   "by_stage": {
     "raw": 81,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1639453263
+    "processed": 1640813434
   },
   "files": [
     {
@@ -2441,9 +2441,9 @@
     },
     {
       "path": "demand/plans/B2_shared_bindings_SAT.csv",
-      "bytes": 2809292,
-      "rows": 66540,
-      "sha256": "2252a19b39565ff73e7baa81bf36e5b7cf6b9cc6537d0ea5e1f37a7bbd6fb36b",
+      "bytes": 2810003,
+      "rows": 66566,
+      "sha256": "1186c55bd423fdcadfcc9a9e1dbbab54a7c8334b8e0b376d83d666a09b459f30",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",
@@ -2453,9 +2453,9 @@
     },
     {
       "path": "demand/plans/B2_shared_bindings_SUN.csv",
-      "bytes": 2689579,
-      "rows": 63738,
-      "sha256": "f4f3c4a749f6c46df5d8042ab505beea59dce6f8726362aa3fb2ca7c448a283e",
+      "bytes": 2694999,
+      "rows": 63872,
+      "sha256": "ce22211e7cfda3c9b3ca50b238a07cfbb20804d66ce2c5c76a8d0a5e3b640a9d",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",
@@ -2465,9 +2465,9 @@
     },
     {
       "path": "demand/plans/B2_shared_bindings_WEEKDAY.csv",
-      "bytes": 5033978,
-      "rows": 119296,
-      "sha256": "0d716182abcae2eec8e822589c6dbfc37a4ec4ae5830d06023cc30190879e9b2",
+      "bytes": 5039419,
+      "rows": 119436,
+      "sha256": "39c07ee2f190d509880d79c146a42029bbef1c30e01cfe0f926428392b10dcac",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",
@@ -2477,9 +2477,9 @@
     },
     {
       "path": "demand/plans/_activity_chains_report.json",
-      "bytes": 23665,
+      "bytes": 22945,
       "rows": null,
-      "sha256": "28db649f80111d7e4456be9c53ddcd7a77fbd50f0cdf357e51e1f8b144c9c969",
+      "sha256": "419fdc3229c3c10489001c2dd710863f246dcb6f7107e4b8d4ef5c17259b3b2f",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",
@@ -2489,9 +2489,9 @@
     },
     {
       "path": "demand/plans/matsim/_plans_report.json",
-      "bytes": 5331,
+      "bytes": 5330,
       "rows": null,
-      "sha256": "79004240d61a8d3572daa3d594b8f59a750ef0d93e3f324a77584587b6316f9d",
+      "sha256": "ad200231993653e5faf5f8a526983bcbe1d70f657a9a6642919ad9e50339c886",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2501,9 +2501,9 @@
     },
     {
       "path": "demand/plans/matsim/population_SAT.xml.gz",
-      "bytes": 61226652,
+      "bytes": 61580543,
       "rows": null,
-      "sha256": "5f23bc584e2fa54dbae4376e325ee506f940259261a399774aed89a5f7d203d9",
+      "sha256": "cdb16855918d3081f6abe72b730b22ecd6144678ec98adfa73d05942870fb563",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2513,9 +2513,9 @@
     },
     {
       "path": "demand/plans/matsim/population_SUN.xml.gz",
-      "bytes": 54529207,
+      "bytes": 54888088,
       "rows": null,
-      "sha256": "63cae57ba6844295b88a63c9b1bf7c49a1b53554f242308040652d3792327d7c",
+      "sha256": "45303d1fb56fae7501aa66abbe0aa6399074ac3cdd9e39204cc04638fc76b0bf",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2525,9 +2525,9 @@
     },
     {
       "path": "demand/plans/matsim/population_WEEKDAY.xml.gz",
-      "bytes": 74283077,
+      "bytes": 74919625,
       "rows": null,
-      "sha256": "503ca6c716887ed307e0ed9f675df940b123078146d753832e9d483a15641cf8",
+      "sha256": "0ebe08d480f6c78236b8687880c10b05835fcb0144a4d7bcbf8c50dfb2c2d4e7",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",

@@ -485,10 +485,12 @@
         "passenger_tours": 141670,
         "passenger_tours_not_direct": 34581,
         "driver_trips_indexed": 1479058,
-        "servable_tours": 105515,
-        "bound": 59648,
-        "thin_p": 0.5654,
-        "shortfall_trips": 17
+        "servable_tours": 98549,
+        "bound": 59718,
+        "thin_p": 0.6054,
+        "shortfall_trips": 0,
+        "sample_seed": 20260810,
+        "seats_exhausted": 2
       },
       "external_agents": 5632,
       "external_legs": 10858,
@@ -584,10 +586,11 @@
         "passenger_tours": 119604,
         "passenger_tours_not_direct": 31886,
         "driver_trips_indexed": 1287362,
-        "servable_tours": 85787,
-        "bound": 33270,
-        "thin_p": 0.3874,
-        "shortfall_trips": 0
+        "servable_tours": 79885,
+        "bound": 33283,
+        "thin_p": 0.4161,
+        "shortfall_trips": 0,
+        "sample_seed": 20260810
       },
       "external_agents": 4759,
       "external_legs": 8994,
@@ -683,10 +686,11 @@
         "passenger_tours": 113522,
         "passenger_tours_not_direct": 29294,
         "driver_trips_indexed": 1135976,
-        "servable_tours": 81937,
-        "bound": 31869,
-        "thin_p": 0.3878,
-        "shortfall_trips": 0
+        "servable_tours": 75716,
+        "bound": 31936,
+        "thin_p": 0.4197,
+        "shortfall_trips": 0,
+        "sample_seed": 20260810
       },
       "external_agents": 4141,
       "external_legs": 7796,
