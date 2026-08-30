@@ -11579,6 +11579,22 @@ trips/day) was the arithmetic, not the share. q 0.00317 over 426,129 eligible.
 * Walk's planned excess is now something the scored choice set can remove;
   whether it does is what the arm measures.
 
+### Measured on the rebuilt population before the arm
+
+`SubtourChainScan` over the F15 WEEKDAY population (chain-based `car,bike`,
+`coordDistance` 100): **2,277,769 plans, 4,562,668 subtours, 334 mixed — 3
+LEAF (the single-excursion shape §9.119 calls a defect) and 331 SPANNING —
+in 328 plans of 114 persons**, 0.015% of plans. They arise where a serving
+tour held at `car` sits inside a walk/pt/taxi base plan and an escort
+activity lies within `coordDistance` of home, so MATSim's decomposition
+folds the two tours into one subtour (person 786: escort stops 95 m and 30 m
+from home). The F14 population held 99 mixed, all spanning, none leaf.
+`GatedSubtourModeChoice` stands aside for a plan that arrives mixed
+(§9.119), so none of these can kill the arm; what they cost is mode
+innovation on those 328 plans while selected, which the full choice set
+makes moot for their owners. The 3 leaf cases and the `coordDistance` fold
+are #96's, not this entry's.
+
 ### Family F15 opens
 
 The population, its attributes, the seed and two controler classes change
