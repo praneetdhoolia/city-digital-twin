@@ -7,9 +7,9 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 30 August 2026 — the F21 arm `20260830T222642_300it_10pct`
-is running on the licence-rate demand (§9.131, §9.133); family F21 is open
-from `20260830T222641`; its first gate reading is iteration 100.
+**Last updated:** 31 August 2026 — the F21 arm ran to its iteration-100 gate
+and was stopped under the GOAL.md loop: 8 modes at or past 20 %. Car crossed
+its target for the first time (+16.0 % at 100); family F21 stays open.
 
 ## The goal
 
@@ -28,25 +28,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260830T222642_300it_10pct` at **iteration 40** (family `F21-licence-rate-demand`, status `running`, 10% sample, launched 2026-08-30T22:26:42, experienced plans (derived; validated against the trips table)). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run results/20260830T222642_300it_10pct --it 40` (`--trend` for the direction).
+Read from `aborted_20260830T222642_300it_10pct` at **iteration 100** (family `F21-licence-rate-demand`, status `aborted`, 10% sample, launched 2026-08-30T22:26:42, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run results/aborted_20260830T222642_300it_10pct --it 100` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 60.2085 | 58.3222 | +3.2% | ok | share of resident linked trips |
-| 2 | ride | 12.1437 | 20.6000 | -41.1% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 13.1232 | 13.4000 | -2.1% | ok | share of resident linked trips |
-| 4 | taxi | 1.6691 | 0.9916 | +68.3% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 7.4150 | 2.2084 | +235.8% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4677 | 0.3785 | +23.6% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 3.5571 | 2.3819 | +49.3% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 25,500 | 6,529 | +290.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,110 | 2,954 | -62.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0331 | 0.1429 | -76.9% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 6.3376 | 15.4698 | -59.0% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 67.6729 | 58.3222 | +16.0% | over 10% | share of resident linked trips |
+| 2 | ride | 12.0828 | 20.6000 | -41.3% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 8.4961 | 13.4000 | -36.6% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.6603 | 0.9916 | +67.4% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.6827 | 2.2084 | +157.3% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4715 | 0.3785 | +24.6% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 2.7527 | 2.3819 | +15.6% | over 10% | share of resident linked trips |
+| 8 | heavy_rail | 17,090 | 6,529 | +161.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 780 | 2,954 | -73.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0265 | 0.1429 | -81.5% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6483 | 15.4698 | -63.5% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, walk**. Past the 20% stop bar: **ride, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -82,7 +82,7 @@ F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260830T222642_300it_10pct` | running | F21-licence-rate-demand | 51 | - |
+| `aborted_20260830T222642_300it_10pct` | aborted | F21-licence-rate-demand | 102 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 8 modes at or past 20% deviation (heavy_rail +161.8%, bike +157.... |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
@@ -94,14 +94,15 @@ F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
 
 ## Next
 
-1. **The F21 arm is running** — `20260830T222642_300it_10pct` (S2, WEEKDAY,
-   10 %, 300 iterations, innovation off at 240; launched detached 30 Aug
-   22:26 under a stated-cost approval of ~9–15 h, spent at launch). Watch it
-   by stamp glob; stopping it needs `Stop-ScheduledTask` AND the `java.exe`
-   ([positions/runs-and-economics](positions/runs-and-economics.md)).
-2. **Gate it at 100, 200 and 300** with `report_mode_ridership.py --trend`,
-   every mode; stop on any mode past 20 % or heading there; fix from the root
-   (the loop in GOAL.md). Regenerate this board after every reading.
+1. **Fix from the root what the gate stop names** (the loop in GOAL.md):
+   ride plateaued at its ~12 % demand ceiling from iteration 30 (#86); light
+   rail AWAY at −73.6 % (#30, #84); heavy rail +161.8 % still falling (#98);
+   walk overshot to −36.6 % while car overshot to +16.0 % — one movement;
+   bike +157.3 % falling slowly (#30); ferry −81.5 % (#94). Needs the user's
+   pick of lane; no run approval stands.
+2. **Read the stopped arm before changing anything**: per-mode plan scores,
+   shares by car availability, boardings by station — the diagnostics the
+   position pages name, none needing a run.
 3. **The #96 scan is rerun on the rebuilt plans**: 341 mixed subtours, 3 leaf,
    in 110 of 621,364 persons — unchanged in rate by the rebuild (on #96).
 
