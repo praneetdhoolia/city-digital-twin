@@ -179,7 +179,14 @@ the population — feasibility, not a rate, decides how much realises. That is a
 change and a family boundary; it needs the user's decision and the F15 arm's ride
 reading first.
 
-**Queued for the same next family:** (a) **built, not yet rebuilt (§9.122)** — the
+**Queued for the same next family:** (0) **built and measured, not yet rebuilt
+(§9.124)** — the shared-ride pass: car-less residents' direct tours bound both ways to
+non-household drivers making the same SA2-to-SA2 trip within the pairing window,
+thinned to the passenger-share identity — 59,648 tours on the committed WEEKDAY demand,
+17 trips short of the identity (`B.ride.shared_lift_scope` = `same_sa2_od`; SA1 scope
+reaches a fifth); the runtime `both_links` rule may refuse a suburb-wide match, and
+`route_contains` (§9.102) is the declared alternative to read on the F18 arm;
+(a) **built, not yet rebuilt (§9.122)** — the
 motorbike carve solved on the persons who will NOT be denied on an escort day (the
 denial after the draw halved it: 0.128% of legs against 0.241% solved for, 38% of
 eligible persons being escorters), and the carve at the resolution the census observes
