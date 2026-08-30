@@ -98,6 +98,7 @@ its layout will otherwise cost you an hour:
 | **A coupling between households is a sampling unit** | **§9.127** — the first F18 arm ran on 31,262 persons at 10% against 62,134: shared rides made the sampler's lift clusters giant components; a shared ride now binds only to drivers whose household unit hash is at or below the passenger's, so any nested sample keeps the pair |
 | **A declared pair whose links differ is served by the driver's detour** | **§9.128** — the valid F18 arm refused 2,053 of 6,966 ride legs on endpoints at iteration 0 (the shared rides among them); a walking meeting point measured 8-11 km per passenger and was replaced by the driver's car leg routed through the passenger's links, boarded at the passenger's own; `B.ride.declared_pair_meeting`; family F19 |
 | **The 9.127 rule biased every sub-sample; the carves were solved on a pool that is not drawn** | **§9.129** — at-or-below named low-hash households as drivers, so a 10% sample kept named drivers at 12.4% and everyone else at 7.95% (motorbike carve 5.5%); a shared pair must now share a hash bucket (`B.ride.shared_lift_hash_bucket` 0.05); the carve pool excludes named drivers before the solve and delivers 0.2666% against 0.2654% solved; family F20 |
+| **Heavy rail and light rail are held to their disclosed boardings** | **§9.130** — the line's Opal series (2,754 a day) and 24 stations' entries (6,086 a day) replace an HTS share split by a boardings composition; per weekday via `CAL.pt.weekday_factor`; F19 it.20 reads light rail -51% and heavy rail +372%, the suburban stations 3-13x over while the Interchange is right |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -12137,6 +12138,70 @@ quarter's modes settle once a fifth of their tours ride.
 
 ---
 
+## 9.130 Heavy rail and light rail are held to their DISCLOSED boardings, and the disclosed count shows heavy rail five times over at the suburban stations (30 August 2026, sixteenth session; issues #84, #49, #30)
+
+Read from the F19 arm's iteration 20 while the F20 arm ran, because the
+light rail's -96% could not wait for a gate to name it.
+
+**What the -96% was.** The pt submode targets were the HTS's single
+public-transport level (3.8% of resident trips) split by an Opal boardings
+composition (9.100): light rail 16.96% of boardings -> 0.644% of resident
+trips, some 14,500 trips a day. But the light rail's patronage is
+DISCLOSED - the line's own Opal series by month and card type runs to
+2026-06 and reads **1,005,033 boardings over 2025-07..2026-06 = 2,754 a
+day** (all card types; school students 0.6%, contactless 44.8%); the
+station-entries publication's Interchange stop agrees (36,805 in 2026-04
+against the measured 0.3696 stop share = 99.6k vs the line's 100,426). The
+composition had lifted every submode to the survey's scale, and for a line
+whose count is published that is a derivation standing where an
+observation exists. The same holds for heavy rail: the 24 stations this
+city's schedule contains report **6,086 entries a day** over the same
+window, against a composition-derived 0.774% of resident trips (17,500).
+
+**The decision.** Both modes are now held to the disclosed count, per
+WEEKDAY, counting every traveller who boards - as the publications count
+them - scaled by `CAL.pt.weekday_factor` 1.0727 (new, 414 fields; the
+demand's own weekday-to-mean-day trip ratio, swept 1.0-1.3): **light rail
+2,954 boardings per weekday on the line; heavy rail 6,529 per weekday at
+the 24 disclosed stations.** `build_mode_targets.py` writes them
+(`pt_boardings_targets.json` carries the per-station counts, 498 manifest
+rows), and `report_mode_ridership.py` scores them on modelled boardings of
+every subpopulation, x 1/fraction, heavy rail at the disclosed stations
+only. Bus keeps the composition-derived trip share, because its published
+series is a contract-region subset with a structural break (9.100); ferry
+stays unobtained; the pt total stays against the HTS level.
+
+**What the disclosed basis says, F19 iteration 20.** Light rail **1,440 a
+weekday, -51%** (was -96% on the derived basis). Heavy rail **30,800 a
+weekday, +372%** (was +65%). Station by station: Newcastle Interchange
+1,430 modelled against 1,569 disclosed - right; the suburban stations 3 to
+13 times over - Hamilton 7,050 vs 534, Cardiff 2,340 vs 739, Waratah 1,930
+vs 132, Adamstown 1,670 vs 83, Metford 1,750 vs 53, Thornton 1,840 vs 192.
+The pt total is right (3.55% of resident trips, HTS 3.8%) and its
+composition is wrong: bus 67.7 / rail 30.1 / tram 1.3 / ferry 1.0 of
+boardings against the Opal 62.7 / 20.4 / 17.0 split. The rail over-use is
+the next cause to find; it is a scoring or destination question, not a
+network one (the Interchange is right).
+
+**What the tram's shortfall is NOT.** The corridor's destination market is
+present (work ends within 400 m of a tram stop 5.8% of all work ends
+against 4.4% of jobs; shopping 4.9% against 6.5% of retail). The
+Interchange transfer works: of 296 rail alighters there, 205 continued by
+bus to suburban destinations (median 9.4 km from any tram stop), 44 took
+the tram (30 to destinations within 400 m of a tram stop) and 46 walked.
+The rail-to-tram walk is 54-58 m, inside the 300 m connection radius; the
+tram has 16 departures towards the CBD in 07-09 against 8 by bus, 7.8 min
+scheduled to the last CBD stop. The corridor-internal market (both trip
+ends within 400 m of a tram stop) is 1,127 trips at 10%, mean beeline
+500 m, car 59% and walk 27%: the tram cannot beat a 500 m walk, and a
+mode constant is invisible to the router (SwissRailRaptor chooses on time,
+line-switch cost and the per-mode travel-time utilities the mode mapping
+supplies). Where the tram's missing riders are - longer corridor trips,
+rail transferees, visitors - is the light rail's open question at the
+F20 gate.
+
+---
+
 ## 9.129 The 9.127 rule biased every sub-sample, and the carves were solved on a pool that is not drawn (30 August 2026, sixteenth session; issues #93, #86, #66)
 
 Two build-side defects, both found by reading the F19 arm's motorbike share
@@ -12980,6 +13045,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **Heavy rail and light rail are held to their DISCLOSED boardings (§9.130; issues #84/#49/#30).** The composition-derived targets (HTS 3.8% x Opal split) put light rail at 14,500 trips a day where the line's own published series reads 2,754 boardings a day, and heavy rail at 17,500 where 24 stations' entries read 6,086. Both are now boardings per weekday, all travellers, via `CAL.pt.weekday_factor` 1.0727 (414 fields): light rail 2,954, heavy rail 6,529. `pt_boardings_targets.json` (498 manifest rows); the report counts every subpopulation's boardings x 1/fraction. F19 it.20 on this basis: light rail 1,440 (-51%), heavy rail 30,800 (+372%) - Interchange 1,430 vs 1,569, Hamilton 7,050 vs 534, Adamstown 1,670 vs 83. The tram's Interchange transfer and corridor market were measured and are not the cause. |
 | 2026-08-30 | **The 9.127 rule biased every sub-sample, and the carves were solved on a pool that is not drawn (§9.129; issues #93/#86/#66).** F19's motorbike share (0.115% at it.20) read back to two build defects: the at-or-below coupling rule names low-hash households as drivers, so a 10% sample kept named drivers at 12.4% and everyone else at 7.95% (carves at 5.5% / 5.1%); replaced by a same-bucket rule, `B.ride.shared_lift_hash_bucket` = 0.05 (413 fields), measured on the binder at 73,509 servable / 59,701 bound / 0 short on WEEKDAY. And the carve's probability was solved before the 9.125 named-driver refusal (42.1% of the pool's trips), delivering 58% of its share; the pool now excludes named drivers and the rebuilt carve delivers 0.2666% against 0.2654% solved (5,937 trips on 1,687 persons). Plans, run inputs and manifest rebuilt; family F20 opens at its launch. |
 | 2026-08-30 | **A declared pair whose links differ is served by the driver's detour (§9.128; issues #86/#66).** The valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints - the same-SA2 shared rides of §9.124 cannot share a link with their driver - so it was stopped at iteration 1 (`aborted_20260830T163010_300it_10pct`). A walking meeting point was built and measured on a 1% smoke at 8-11 km walked per passenger; replaced by the driver detour: the engine routes the driver's car leg through each carried passenger's origin and destination links, the passenger boards and alights at their own link as the car passes, the booking is at the routed pass time. New `B.ride.declared_pair_meeting` = `driver_detour` | `passenger_links` (412 fields). Smoke: 0 unroutable detours, mean 471-751 s per driver; its timeouts traced to the 1% flow-capacity artefact. Also: the harness resume key now includes the population's sha256 (`inputs_sha256`). Family F19 opens at `20260830T170742`; arm `20260830T170743_300it_10pct`. |
 | 2026-08-30 | **A coupling between households is a sampling unit: the first F18 arm ran on half a sample (§9.127; issues #86/#66).** `20260830T161243` kept 31,262 persons at 10% against F17's 62,134 - the household sampler's union-find over `liftHousehold` made the sampling unit the connected component, and the shared-ride bindings turn those into giant lumps; stopped at iteration 2. A directed closure was measured to pull the sample to 17.65% and rejected. Repair: the binder pairs a passenger only with drivers whose household unit hash (the sampler's own, under `RUN.machine.seed`) is at or below the passenger's, so any nested sample that keeps the passenger keeps the driver; the plans name the shared drivers' households in `sharedDriverHousehold` and the sampler excludes them from its clusters; the rebuild asserts the 10% sample within 8.5-11.5% of persons (62,134, F17's count exactly). Re-bound WEEKDAY under the rule: 98,549 servable, 59,718 bound, 0 trips short. `check_package.py` reads the choice-set seed as a choice set. The valid F18 arm is `20260830T163010_300it_10pct`. |

@@ -202,6 +202,44 @@ def derive(run_dir, iteration, route_mode=None):
     return trips, unknown_routes
 
 
+def boardings(run_dir, iteration, route_mode=None):
+    """Every pt boarding of one iteration: (submode, boarding stop name) -> n.
+
+    9.130: a boardings-basis target counts every traveller who boards, resident
+    or not, exactly as the publication counts them - so this reads every
+    subpopulation's selected plan, one boarding per pt leg, resolved to the
+    boarded route's transportMode through the run's own schedule and to the
+    access stop's name through the same schedule.
+    """
+    path = plans_path(run_dir, iteration)
+    if path is None:
+        raise SystemExit('iteration %d wrote no experienced plans under %s'
+                         % (iteration, run_dir))
+    if route_mode is None:
+        route_mode = em.transit_route_modes(run_dir)
+    stop_name = em.transit_stop_names(run_dir)
+    out = collections.Counter()
+    with gzip.open(path, 'rb') as fh:
+        in_selected = False
+        for ev, el in ET.iterparse(fh, events=('start', 'end')):
+            if ev == 'start':
+                if el.tag == 'plan':
+                    in_selected = (el.get('selected') == 'yes')
+                continue
+            if el.tag == 'route' and in_selected and el.get('type') == 'default_pt' and el.text:
+                try:
+                    j = json.loads(el.text)
+                except ValueError:
+                    continue
+                sm = route_mode.get((j.get('transitLineId'), j.get('transitRouteId')))
+                if sm is None:
+                    continue
+                out[(sm, stop_name.get(j.get('accessFacilityId'), ''))] += 1
+            if el.tag in ('leg', 'activity', 'person'):
+                el.clear()
+    return out
+
+
 def as_trip_rows(trips):
     """The trips-table columns the readers consume, one dict per trip."""
     for t in trips:

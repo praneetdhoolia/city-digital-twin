@@ -215,6 +215,27 @@ def pt_boardings(run_dir, fraction):
                 by_line={k: round(v * scale) for k, v in by_line.most_common(40)})
 
 
+def transit_stop_names(run_dir):
+    """stopFacility id -> name, from the run's OWN schedule (9.130)."""
+    import re
+    import xml.etree.ElementTree as ET
+    cfg_text = open(os.path.join(run_dir, 'config.xml'), encoding='utf-8').read()
+    m = re.search(r'name="transitScheduleFile" value="([^"]+)"', cfg_text)
+    if not m:
+        return {}
+    path = m.group(1)
+    if not os.path.isabs(path):
+        path = os.path.normpath(os.path.join(run_dir, path))
+    opener = gzip.open if path.endswith('.gz') else open
+    out = {}
+    with opener(path, 'rt', encoding='utf-8') as f:
+        for ev, el in ET.iterparse(f, events=('end',)):
+            if el.tag == 'stopFacility':
+                out[el.get('id')] = (el.get('name') or '').strip()
+            el.clear()
+    return out
+
+
 def transit_route_modes(run_dir):
     """(transit_line, transit_route) -> the schedule's transportMode.
 

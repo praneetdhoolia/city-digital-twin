@@ -34,8 +34,9 @@
   },
   "n_modes": 12,
   "by_status": {
-    "derived": 10,
-    "observed": 2
+    "derived": 8,
+    "observed": 2,
+    "measured": 2
   },
-  "person_trip_target_sum": 99.8436
+  "person_trip_target_sum": 98.4255
 }

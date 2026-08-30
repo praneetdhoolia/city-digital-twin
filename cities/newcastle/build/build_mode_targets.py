@@ -332,6 +332,49 @@ def opal_pt_boardings(cfg):
     return window, got, excluded, lr_share
 
 
+def disclosed_pt_boardings(cfg):
+    """Light rail line boardings and heavy rail station entries, per day.
+
+    9.130: both are DISCLOSED counts - the line's own Opal series by month
+    and card type, and the station entries publication - so the model is held
+    to them directly, per weekday, counting every traveller who boards (the
+    publications count everyone, resident or not). The window is the latest
+    CAL.pt_split.window_months months each series carries; stations are those
+    this city's own mapped schedule contains (model_pt_stations), so a station
+    the publication carries and the model cannot board is excluded and named.
+    Returns (light_rail_per_day, rail_per_day, rail_stations, windows, excluded).
+    """
+    months = int(cfg.get('CAL.pt_split.window_months'))
+    lr = pd.read_csv(os.path.join(OBS, 'opal_lr_newcastle_by_month_cardtype.csv'))
+    lr['m'] = pd.to_datetime(lr['Year_Month'], format='mixed').dt.to_period('M')
+    by_m = lr.groupby('m')['Trip'].sum().sort_index()
+    lr_months = list(by_m.index[-months:])
+    lr_days = sum(m.days_in_month for m in lr_months)
+    lr_per_day = float(by_m.loc[lr_months].sum()) / lr_days
+
+    known = model_pt_stations()
+    st = pd.read_csv(os.path.join(OBS, 'station_entries_exits_newcastle.csv'))
+    st = st[(st['Station_Type'] == 'Train') & (st['Entry_Exit'] == 'Entry')].copy()
+    st['Trip'] = pd.to_numeric(st['Trip'].astype(str).str.replace(',', ''),
+                               errors='coerce').fillna(0.0)
+    st['m'] = st['MonthYear'].astype(str).str[:7]
+    st_months = sorted(st['m'].unique())[-months:]
+    st = st[st['m'].isin(st_months)]
+    st_days = sum(pd.Period(m).days_in_month for m in st_months)
+    per_station = {}
+    excluded = []
+    for name, v in st.groupby(st['Station'].str.strip())['Trip'].sum().items():
+        if known.get((_norm_stop(name), '2'), False) is False:
+            excluded.append(name)
+            continue
+        per_station[name] = float(v) / st_days
+    rail_per_day = sum(per_station.values())
+    return (lr_per_day, rail_per_day, per_station,
+            dict(light_rail=[str(lr_months[0]), str(lr_months[-1])],
+                 heavy_rail=[st_months[0], st_months[-1]]),
+            excluded)
+
+
 def main():
     cfg = _registry.load(strict=True)
     year, lga, lv = hts_levels(cfg)
@@ -475,9 +518,10 @@ def main():
     pt_tot = pt['bus'] + pt['rail'] + pt['light_rail']
     g_pt = g['bus'] + g['train'] + g['tram'] + g['ferry']
 
-    for mode, key, gkey in (('bus', 'bus', 'bus'),
-                            ('heavy_rail', 'rail', 'train'),
-                            ('light_rail', 'light_rail', 'tram')):
+    # 9.130: heavy rail and light rail are held to their DISCLOSED boardings
+    # below; only bus keeps the composition-derived trip share, because its
+    # published series is a contract-region subset with a structural break.
+    for mode, key, gkey in (('bus', 'bus', 'bus'),):
         obs_share = pt[key] / pt_tot
         cen_share = g[gkey] / g_pt
         v = pt_level * obs_share
@@ -504,6 +548,59 @@ def main():
                pt[key], pt_tot, len(pt_excluded),
                '; '.join(sorted(pt_excluded)), lr_share, 100.0 * cen_share),
             (min(v, alt), max(v, alt)))
+
+    # 9.130: the two public-transport modes whose patronage IS disclosed are
+    # held to the disclosed count - every boarding, every traveller, per
+    # weekday - rather than to an HTS trip share split by a boardings
+    # composition. Measured before this change: the composition put light
+    # rail at 0.644% of resident trips (some 14,500 trips a day) against a
+    # published line total of 2,754 boardings a day, and heavy rail at 0.774%
+    # (17,500) against 6,086 station entries a day - the survey level and
+    # the operator counts differ by a factor the composition cannot see, and
+    # a model reading -96% on the derived basis read -48% on the disclosed
+    # one while heavy rail read +65% derived and roughly +400% disclosed.
+    lr_day, rail_day, rail_stations, pt_windows, rail_excluded = \
+        disclosed_pt_boardings(cfg)
+    wf = float(cfg.get('CAL.pt.weekday_factor'))
+    wf_lo, wf_hi = 1.0, 1.3
+    add('heavy_rail', rail_day * wf,
+        'boardings per weekday at the disclosed stations (all travellers)',
+        'measured',
+        'DISCLOSED: station entries (Train, Entry) summed over the %d '
+        'stations this city\'s mapped schedule contains, %s..%s, %.0f a day '
+        'over all days, x CAL.pt.weekday_factor %.4f. Every traveller who '
+        'boards is counted, as the publication counts them; %d published '
+        'station(s) the model cannot board are excluded%s. The '
+        'composition-derived trip share this replaces (HTS "%s" PT %.1f%% x '
+        'the boardings split) was %.4f%% of resident trips'
+        % (len(rail_stations), pt_windows['heavy_rail'][0],
+           pt_windows['heavy_rail'][1], rail_day, wf, len(rail_excluded),
+           (': ' + ', '.join(sorted(rail_excluded))) if rail_excluded else '',
+           year, pt_level, pt_level * pt['rail'] / pt_tot),
+        (rail_day * wf_lo, rail_day * wf_hi))
+    add('light_rail', lr_day * wf,
+        'boardings per weekday on the line (all travellers)',
+        'measured',
+        'DISCLOSED: the line\'s own Opal series by month and card type, all '
+        'card types, %s..%s, %.0f a day over all days, x '
+        'CAL.pt.weekday_factor %.4f. The composition-derived trip share this '
+        'replaces (HTS "%s" PT %.1f%% x the boardings split) was %.4f%% of '
+        'resident trips'
+        % (pt_windows['light_rail'][0], pt_windows['light_rail'][1], lr_day,
+           wf, year, pt_level, pt_level * pt['light_rail'] / pt_tot),
+        (lr_day * wf_lo, lr_day * wf_hi))
+    json.dump(dict(decisions_ref='9.130', weekday_factor=wf,
+                   light_rail=dict(per_day=round(lr_day, 2),
+                                   per_weekday=round(lr_day * wf, 2),
+                                   window=pt_windows['light_rail']),
+                   heavy_rail=dict(per_day=round(rail_day, 2),
+                                   per_weekday=round(rail_day * wf, 2),
+                                   window=pt_windows['heavy_rail'],
+                                   stations={k: round(v, 2) for k, v in
+                                             sorted(rail_stations.items())},
+                                   excluded=sorted(rail_excluded))),
+              open(os.path.join(OUT, 'pt_boardings_targets.json'), 'w'),
+              indent=2)
 
     # Ferry: no Newcastle ferry patronage is published in any acquired
     # artefact. The all-modes Opal series carries a Ferry row but it is

@@ -1,18 +1,18 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-30T18:41:54",
+  "generated": "2026-08-30T19:16:20",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
-  "n_files": 497,
-  "total_bytes": 4363759904,
+  "n_files": 498,
+  "total_bytes": 4363758962,
   "total_gib": 4.06,
   "by_stage": {
     "raw": 81,
-    "processed": 416
+    "processed": 417
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1640414776
+    "processed": 1640413834
   },
   "files": [
     {
@@ -1601,9 +1601,9 @@
     },
     {
       "path": "data/processed/validation/_mode_targets_report.json",
-      "bytes": 817,
+      "bytes": 836,
       "rows": null,
-      "sha256": "0e6286d3ad221fc8ed1dec7e50fd426e8151d3267cc7e61899f8e22cc2a4e84f",
+      "sha256": "777005d85b73a9b49c00880f6b6be6c27e40f23d703865b624ce6190c79b4894",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",
@@ -1673,9 +1673,21 @@
     },
     {
       "path": "data/processed/validation/mode_targets_by_mode.csv",
-      "bytes": 10976,
+      "bytes": 8765,
       "rows": 12,
-      "sha256": "7751ab58c79d9cefe25e49274e78356ca55db69af0ec21ee552390aa457c9a34",
+      "sha256": "d62aa4a09c827c8d1de6e10abd7f5d9357090d89a13a477acc924c3f7974ae8f",
+      "stage": "processed",
+      "produced_by": "cities/newcastle/build/build_validation_targets.py",
+      "source": "",
+      "source_url": "",
+      "licence": "",
+      "retrieved": ""
+    },
+    {
+      "path": "data/processed/validation/pt_boardings_targets.json",
+      "bytes": 1250,
+      "rows": null,
+      "sha256": "5f27f122cac426354d62d0bd26b4f27700c2675a63268d71f57c10769a283148",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",

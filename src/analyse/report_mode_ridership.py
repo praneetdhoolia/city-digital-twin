@@ -36,6 +36,7 @@ matter how it scores.
 """
 
 import os as _os
+import re
 import sys as _sys
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
 for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
@@ -103,6 +104,34 @@ def load_targets():
                                   status=r['status'],
                                   basis=r['basis'])
     return out
+
+
+def sample_fraction(run_dir):
+    """The run's sample fraction, from its own record - never assumed."""
+    import json as _json
+    for name in ('_meta.json', '_run.json'):
+        path = _os.path.join(run_dir, name)
+        if _os.path.exists(path):
+            with open(path, encoding='utf-8') as fh:
+                doc = _json.load(fh)
+            v = doc.get('fraction')
+            if v:
+                return float(v)
+    return None
+
+
+def disclosed_stations():
+    """Lower-cased names of the stations the heavy-rail target counts (9.130)."""
+    import json as _json
+    path = _city.path('data/processed/validation/pt_boardings_targets.json')
+    if not _os.path.exists(path):
+        return []
+    with open(path, encoding='utf-8') as fh:
+        doc = _json.load(fh)
+    names = []
+    for s in (doc.get('heavy_rail') or {}).get('stations', {}):
+        names.append(re.sub(r'\s+station$', '', s.strip().lower()).strip())
+    return names
 
 
 def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
@@ -352,10 +381,36 @@ def report(run_dir, iteration, truck_stations=False):
     closures = crossing_closures(run_dir)
     movements = crossing_movements()
 
+    # 9.130: a target on a boardings denominator is scored on modelled
+    # boardings - every traveller, every boarding, scaled to a full day by
+    # the run's sample fraction; heavy rail only at the disclosed stations.
+    boarding_modes = {m for m, t_ in tgt.items()
+                      if (t_['denominator'] or '').startswith('boardings per weekday')}
+    boarded = {}
+    if boarding_modes:
+        import iteration_trips as itr
+        counts = itr.boardings(run_dir, iteration)
+        frac = sample_fraction(run_dir)
+        disclosed = disclosed_stations()
+        for m in boarding_modes:
+            sm = {'heavy_rail': 'rail', 'light_rail': 'tram', 'bus': 'bus',
+                  'ferry': 'ferry'}.get(m, m)
+            n = 0
+            for (s, stop), c in counts.items():
+                if s != sm:
+                    continue
+                if m == 'heavy_rail' and disclosed and not any(
+                        d in stop.lower() for d in disclosed):
+                    continue
+                n += c
+            boarded[m] = (n, n / frac if frac else float(n))
     modelled = {}
     trips = {}
     for mode in tgt:
-        if mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+        if mode in boarding_modes:
+            trips[mode] = boarded[mode][0]
+            modelled[mode] = boarded[mode][1]
+        elif mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
             n = sub.get(mode, 0)
             modelled[mode] = 100.0 * n / lga_tot if lga_tot else 0.0
             trips[mode] = n
@@ -448,6 +503,18 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      flag))
+            continue
+        if mode in boarding_modes:
+            if abs(dev) >= GATE_STOP_PCT:
+                flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
+                breaches.append((mode, m, t['target'], dev))
+            elif abs(dev) >= GATE_PASS_PCT:
+                flag = 'over %.0f%%' % GATE_PASS_PCT
+            else:
+                flag = 'ok'
+            print('%-15s %10.0f %10.0f %+10.1f%% %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
+                     'BOARDINGS/weekday, all travellers, x1/fraction; ' + flag))
             continue
         if mode == 'truck' and truck_note:
             # A share of the WHOLE network set beside a share measured on

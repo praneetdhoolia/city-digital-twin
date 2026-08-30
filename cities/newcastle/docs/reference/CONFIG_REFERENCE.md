@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 413 fields are made of
+## What the 414 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 35 | computed from observed data in this package |
 | `derived` | 38 | follows from another registry field by identity |
 | `literature` | 68 | a published value, not specific to this city |
-| `assumed` | 151 | chosen without direct empirical support |
+| `assumed` | 152 | chosen without direct empirical support |
 | `definition` | 117 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 394 | usable point value |
+| `active` | 395 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1962,7 +1962,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 18 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 19 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -1977,6 +1977,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
 | `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
 | `CAL.pt_split.station_scope` | `target_lga` | enum | `assumed` | `target_lga`, `all_observed` |
@@ -2044,6 +2045,14 @@ How many independent numbers the objective actually contains. The loop refuses t
 ***derived** · status **active** · DECISIONS.md §12.1*
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
+
+#### `CAL.pt.weekday_factor`
+
+Weekday uplift applied to an all-days daily boardings count (light rail line boardings, heavy rail station entries) so the target is stated per WEEKDAY, the day type the gated arms run. Derived from the demand's own day-type trip ratio.
+
+***assumed** · status **active** · DECISIONS.md §9.130*
+
+> **Sweep basis.** Set from the demand's own day-type trip ratio - demand/plans/matsim/_plans_report.json: by_day.WEEKDAY.legs_selected_plan / ((5 x WEEKDAY + SAT + SUN) / 7) = 2,343,321 / 2,184,254 - the demand's own weekday-to-mean-day trip ratio, applied to an all-days daily boardings count to state it per WEEKDAY - and declared assumed because the schema's `derived` means implied by other registry fields, which this is not: it is read from the demand build. The published patronage series are monthly totals with no day-type split, and the run is a WEEKDAY. The ratio of a weekday's trips to the mean day's is taken from the demand's own three day types (1.0727 for all trips); public transport is more weekday-peaked than travel as a whole, so the sweep runs from no uplift to 1.3. Never fitted.
 
 #### `CAL.pt_split.break_ratio`
 
