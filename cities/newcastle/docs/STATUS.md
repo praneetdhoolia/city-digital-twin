@@ -7,9 +7,9 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 30 August 2026 — the demand chain is rebuilt on the
-licence-rate population and the package is consistent (§9.133); family F20 is
-open; the F21 arm waits on a stated-cost approval.
+**Last updated:** 30 August 2026 — the F21 arm `20260830T222642_300it_10pct`
+is running on the licence-rate demand (§9.131, §9.133); family F21 is open
+from `20260830T222641`; its first gate reading is iteration 100.
 
 ## The goal
 
@@ -65,7 +65,7 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus,
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F20-bucket-rule-carve-pool` (opened `20260830T184954`, §9.129) - nothing run before it compares with anything after it |
+| Open comparability family | `F21-licence-rate-demand` (opened `20260830T222641`, §9.131) - nothing run before it compares with anything after it |
 | Input registry | **414 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **503 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
@@ -74,32 +74,31 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus,
 
 **The package on disk is consistent** (§9.133): chains, plans and run inputs
 were rebuilt on the licence-rate population on 30 Aug and
-`tests/check_package.py` reports ALL CHECKS PASSED. No arm has read the rebuilt
-demand beyond the plumbing smoke; F21 opens at the first arm's launch.
+`tests/check_package.py` reports ALL CHECKS PASSED (re-run 30 Aug 22:20). The
+F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260830T222642_300it_10pct` | running | F21-licence-rate-demand | - | - |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
 | `aborted_20260830T170743_300it_10pct` | aborted | F19-driver-detour | 28 | Stopped by the session at iteration 27 for the F20 arm (DECISIONS.md 9.129): its 10% sample, drawn under the 9.127 at-or-below coupling r... |
 | `aborted_20260830T170153_300it_10pct` | aborted | F19-driver-detour | 0 | Stopped by the session at iteration 0, six minutes after launch: launched inline (a child of the session) by mistake where every arm is l... |
-| `20260830T165440_2it_1pct` | completed | F18-shared-rides-carves | 2 | has `_run.json` |
 
-119 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+120 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **Launch the F21 arm** — `python run.py --run-config f21_gate_10pct
-   --detach` (S2, WEEKDAY, 10 %, 300 iterations, innovation off at 240; the
-   overlay is written) — **needs a stated-cost approval** (~9–15 h at the
-   measured 100–200 s/it,
-   [positions/runs-and-economics](positions/runs-and-economics.md)). Declare
-   F21 in `docs/run_families.json` at that launch stamp, `decisions_ref` 9.131.
+1. **The F21 arm is running** — `20260830T222642_300it_10pct` (S2, WEEKDAY,
+   10 %, 300 iterations, innovation off at 240; launched detached 30 Aug
+   22:26 under a stated-cost approval of ~9–15 h, spent at launch). Watch it
+   by stamp glob; stopping it needs `Stop-ScheduledTask` AND the `java.exe`
+   ([positions/runs-and-economics](positions/runs-and-economics.md)).
 2. **Gate it at 100, 200 and 300** with `report_mode_ridership.py --trend`,
    every mode; stop on any mode past 20 % or heading there; fix from the root
    (the loop in GOAL.md). Regenerate this board after every reading.

@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 30 August 2026, eighteenth session · **Open family:** `F20-bucket-rule-carve-pool` · **Commit:** the PR that carries §9.133
+**Written:** 30 August 2026, eighteenth session; §0 and §1 brought current by the nineteenth at the F21 launch · **Open family:** `F21-licence-rate-demand` · **Commit:** the PR that carries §9.133
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
@@ -9,14 +9,14 @@ the sixteenth session interrupted: the demand chain — chains, plans, the 30
 run-input sets, the manifest — is rebuilt on the licence-rate population of
 §9.131, `tests/check_package.py` passes, a registry `consumers` claim that the
 package check had exposed is made true, the F21 overlay is written and a smoke
-has run on the rebuilt inputs (§9.133). **The model lane is one approval away
-from the F21 arm.**
+has run on the rebuilt inputs (§9.133). **The F21 arm was approved (~9–15 h,
+spent) and launched 30 Aug 22:26 as `20260830T222642_300it_10pct`.**
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **No arm is running; the machine is idle.** The last run is the smoke `20260830T213149_2it_1pct` (2 iterations, 1 %, rc 0 — a plumbing test, not a result). The F20 arm `aborted_20260830T184955_300it_10pct` stays the scoreboard's reading at iteration 10. | `python src/run/session_gate.py --digest` (the MACHINE line) · `ls -t results/ \| head` |
+| **The F21 arm `20260830T222642_300it_10pct` is running** (family `F21-licence-rate-demand` from `20260830T222641`; 61,953 persons sampled against the F20 arm's 62,134). Until it reads at iteration 100, the F20 arm `aborted_20260830T184955_300it_10pct` stays the scoreboard's reading at iteration 10. | `python src/run/session_gate.py --digest` (the MACHINE line) · `ls -t results/ \| head` · `results/20260830T222642_300it_10pct/_progress.json` |
 | **The package on disk is consistent.** Population 612,634 persons (`_population_report.json`); chains, plans and the 30 run-input sets rebuilt on it 30 Aug 21:05–21:27; manifest 503 files; `check_package.py` ALL CHECKS PASSED (§9.133). | `python tests/check_package.py` (about ten minutes) · `ls -la cities/newcastle/demand/plans/B2_activity_trips_WEEKDAY.csv` |
 | **This session's PR** is open at handoff, or merged — check. | `gh pr list --state open` · `gh pr checks <n>` |
 | Open issues: #86, #93 and #96 carry this session's measured comment (§9.133); no issue was closed or opened. | `gh issue list --state open` |
@@ -28,24 +28,20 @@ skips the toolchain compile only while an arm runs.
 
 ## §1 The lane
 
-**The F21 arm** — S2, WEEKDAY, 10 %, 300 iterations, innovation off at 240,
-launched detached:
-
-```bash
-python run.py --run-config f21_gate_10pct --detach
-```
-
-**Needs a stated-cost approval: ~9–15 h** at the measured 100–200 s/it
-([positions/runs-and-economics](positions/runs-and-economics.md)); none
-stands. The overlay exists (`cities/newcastle/overlays/runs/f21_gate_10pct.json`)
-and the smoke has already run, so the launch is one command. At the launch,
-declare **F21** in `docs/run_families.json` with `from_launch` = that stamp
-and `decisions_ref` 9.131, and add its row to
+**The F21 arm is running** — `20260830T222642_300it_10pct`: S2, WEEKDAY,
+10 %, 300 iterations, innovation off at 240, launched detached 30 Aug 22:26
+from `python run.py --run-config f21_gate_10pct --detach` under a stated-cost
+approval (~9–15 h at the measured 100–200 s/it,
+[positions/runs-and-economics](positions/runs-and-economics.md)) that is
+**spent**. F21 is declared in `docs/run_families.json` (`from_launch`
+`20260830T222641`, `decisions_ref` 9.131) with its row on
 [positions/sampling-and-families](positions/sampling-and-families.md).
+Watch it by stamp glob; stopping it needs `Stop-ScheduledTask` AND the
+`java.exe`.
 
-**Before believing iteration 0**, read the sample's composition: person count
-in the arm's `plans.xml.gz` against the F20 arm's (the 1 % smoke drew 6,428
-against 6,263 — a different seeded draw once the couplings changed, §9.127).
+**The sample's composition is read**: 61,953 persons in the arm's
+`plans.xml.gz` against the F20 arm's 62,134 — a different seeded draw on the
+rebuilt population, as §9.127 predicts (the 1 % smoke drew 6,428 against 6,263).
 
 **Gate it at 100, 200 and 300** with `python src/analyse/report_mode_ridership.py
 --run results/<arm> --trend` — every mode, trend before level, iterations 0–6
@@ -114,8 +110,8 @@ rebuilt plans (§9.119).
 ## §3 Standing directives and approvals
 
 - **No multi-hour run without a stated-cost approval.** The F21 arm's approval
-  has **not** been given. Every earlier approval is **SPENT**. The smoke this
-  session ran was a two-iteration plumbing test, not a run needing one.
+  (~9–15 h) was given 30 Aug and is **SPENT** on `20260830T222642_300it_10pct`;
+  every earlier approval is spent too. No approval stands for any further arm.
 - **The goal directive lives in [`GOAL.md`](GOAL.md)** and is not re-issued
   per session: twelve modes physical, monitored and scored; <10 % each; gate
   every 100 iterations; stop on >20 % or heading there; fix from the root;
