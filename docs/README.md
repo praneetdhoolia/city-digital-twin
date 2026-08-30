@@ -11,7 +11,7 @@ describes one city's study rather than the framework.
 | [`../README.md`](../README.md) | **The only document at the repo root.** Install, run a scenario, reproduce a city's package |
 | [`../.claude/CLAUDE.md`](../.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repository |
 | **this file** | What the framework is, and where the portable input contract lives |
-| [`HANDOVER_CONTRACT.md`](HANDOVER_CONTRACT.md) | **How a session opens and closes**: the trust order, the six state-of-the-project questions, the facts that expire between writing a handover and reading one, and the environment gate. One definition, read by both the `/onboard` and `/handoff` skills |
+| [`HANDOVER_CONTRACT.md`](HANDOVER_CONTRACT.md) | **How a session opens and closes**: the reading budget, the trust order by question, the four state-of-the-project questions, the facts that expire between writing a handover and reading one, and the gate. One definition, read by both the `/onboard` and `/handoff` skills |
 | [`../cities/newcastle/docs/`](../cities/newcastle/docs/) | The Newcastle twin: `GOAL.md` (what it is for), `STATUS.md` (the one-page board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), the generated `reference/`, and `archived/` (everything frozen) |
 
 ## What the framework is
@@ -89,6 +89,17 @@ twin stands against its goal is on that city's one-page board — for the
 reference city, [`cities/newcastle/docs/STATUS.md`](../cities/newcastle/docs/STATUS.md),
 with the goal in [`GOAL.md`](../cities/newcastle/docs/GOAL.md) and the current
 truth per topic under [`positions/`](../cities/newcastle/docs/positions).
+
+**Editing the Java in VS Code.** The two source trees have no Maven or Gradle
+project of their own — `src/setup/bootstrap_toolchain.py` compiles them against
+the pinned jars in `.tools/`. The committed [`.vscode/settings.json`](../.vscode/settings.json)
+gives the Java extension the same classpath (`.tools/run-stack/lib`), so run
+`python src/setup/bootstrap_toolchain.py --run-stack` once and the imports
+resolve; without the run stack the folders show unresolved imports. The sources
+are compiled at Java 25 (the pinned JDK under `.tools/jdk`); if the extension
+reports a compliance or runtime problem, point `java.configuration.runtimes` in
+your *user* settings at that JDK's absolute path — a machine path is not
+committed.
 
 ## How a session opens and closes
 

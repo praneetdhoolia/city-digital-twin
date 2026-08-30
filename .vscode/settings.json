@@ -1,0 +1,20 @@
+{
+  // The Java sources are compiled by src/setup/bootstrap_toolchain.py against the
+  // pinned jars in .tools/ (gitignored), not by an IDE build. Without a project
+  // definition the VS Code Java extension sees src/java and src/java_signals as a
+  // project with an empty classpath, marks every org.matsim import unresolved and
+  // paints both folders red. This tells it what the toolchain script knows: both
+  // source trees resolve against the run stack (MATSim + the signals contrib at
+  // the pinned version), exactly as bootstrap_toolchain.py compiles the signals
+  // tree. Run `python src/setup/bootstrap_toolchain.py --run-stack` once so the
+  // jars exist; the IDE's own output goes under .tools/ and is never committed.
+  "java.project.sourcePaths": ["src/java", "src/java_signals"],
+  "java.project.referencedLibraries": [".tools/run-stack/lib/**/*.jar"],
+  "java.project.outputPath": ".tools/classes-ide",
+  "java.import.exclusions": ["**/.tools/**", "**/results/**", "**/cities/**"],
+  "java.import.maven.enabled": false,
+  "java.import.gradle.enabled": false,
+  "files.exclude": {
+    "**/__pycache__": true
+  }
+}
