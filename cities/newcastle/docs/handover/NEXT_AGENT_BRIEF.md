@@ -167,6 +167,13 @@ the population — feasibility, not a rate, decides how much realises. That is a
 change and a family boundary; it needs the user's decision and the F15 arm's ride
 reading first.
 
+**Queued for the same next family, measured and not built (§9.120):** residents who
+drive trucks — census G62 one-method `Truck` 1,880 journeys to work, 1.058% of
+car-as-driver journeys — transfer exactly as the motorbike carve does (≈0.62% of
+resident trips, locked to `truck`); the directive's item 8. And #30's destination
+solver, now quantified against the D1 layers (shopping/other ends in the tram
+corridor at two-thirds of the observed attraction rate).
+
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════

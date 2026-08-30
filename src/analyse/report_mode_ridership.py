@@ -22,6 +22,13 @@ denominator they do have, never silently mixed in:
 
     python src/analyse/report_mode_ridership.py --run <run dir>
     python src/analyse/report_mode_ridership.py --run <run dir> --it 100
+    python src/analyse/report_mode_ridership.py --run <run dir> --watch 300
+
+Any iteration the run has written can be read (DECISIONS.md 9.120): the
+trips table where one exists, else the same linked trips derived from that
+iteration's experienced plans by `iteration_trips.py`, validated exactly
+against the table wherever both exist. `--watch` keeps printing each newly
+readable iteration, with a timestamp on every table, until the run ends.
 
 Reads the run directory and the city's target artefact. Writes nothing.
 **Nothing here is a result**: a run without `_run.json` is not a result no
@@ -500,9 +507,44 @@ def main():
                     help='score truck at the classifying count stations, the '
                          'ground its target was measured on (reads the '
                          'iteration events; calibration split only)')
+    ap.add_argument('--watch', type=float, metavar='SECONDS',
+                    help='keep printing: every SECONDS, report each iteration '
+                         'that has become readable since the last report, '
+                         'until the run\'s _meta.json leaves `running` (the '
+                         'goal directive\'s continuous per-mode print, with '
+                         'a timestamp on every table)')
     a = ap.parse_args()
 
     import iteration_trips as itr
+    if a.watch:
+        import json
+        import time as _time
+        done = set()
+        while True:
+            have = sorted(set(mim.iterations_with_trips(a.run))
+                          | set(itr.iterations_with_plans(a.run)))
+            # the newest iteration may still be being written; report it
+            # only once a later one exists or the run has ended
+            try:
+                status = json.load(open(_os.path.join(a.run, '_meta.json'),
+                                        encoding='utf-8')).get('status')
+            except (OSError, ValueError):
+                status = None
+            ready = have if status != 'running' else have[:-1]
+            for it in ready:
+                if it in done:
+                    continue
+                try:
+                    report(a.run, it, a.truck_stations)
+                except SystemExit as ex:
+                    print('iteration %d not readable yet: %s' % (it, ex))
+                    continue
+                print(flush=True)
+                done.add(it)
+            if status != 'running':
+                print('run %s is %s; watch ends' % (a.run, status), flush=True)
+                return
+            _time.sleep(a.watch)
     # every iteration that can be read: trips table OR experienced plans
     have = sorted(set(mim.iterations_with_trips(a.run))
                   | set(itr.iterations_with_plans(a.run)))

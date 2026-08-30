@@ -11648,6 +11648,19 @@ every resident holds a scored pt plan, so the F15 arm's iteration-10
 reading is the first direct test of whether the router returns the ferry
 for those 8,243 residents; #94's question is answered there, not here.
 
+### Residents who drive trucks are observed, and not yet modelled
+
+The directive's item 8 asks for a small resident share with trucker jobs
+beside the anonymous freight tier. The package holds the observation:
+census G62 one-method **`Truck` 1,880 journeys to work against 177,701
+car-as-driver — 1.058% of driver journeys**, at SA1. It transfers exactly as
+the motorbike carve does (`vehicle_driver_level` × the driver-journey share
+≈ 0.62% of resident trips, a person-level carve locked to `truck`), and
+like that carve it is a plans-builder change and a family boundary. Measured
+here, **not built** — it queues for the next family with the ride ceiling,
+so the F15 arm is not confounded. Truck's realised count would then hold a
+resident component scored on the same count-station ground (§9.101).
+
 ### Family F15 opens
 
 The population, its attributes, the seed and two controler classes change
