@@ -28,25 +28,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260830T222642_300it_10pct` at **iteration 0** (family `F21-licence-rate-demand`, status `running`, 10% sample, launched 2026-08-30T22:26:42, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run results/20260830T222642_300it_10pct --it 0` (`--trend` for the direction).
+Read from `20260830T222642_300it_10pct` at **iteration 10** (family `F21-licence-rate-demand`, status `running`, 10% sample, launched 2026-08-30T22:26:42, experienced plans (derived; validated against the trips table)). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run results/20260830T222642_300it_10pct --it 10` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 44.3218 | 58.3222 | -24.0% | **STOP** >=20% | share of resident linked trips |
-| 2 | ride | 3.7695 | 20.6000 | -81.7% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 34.1883 | 13.4000 | +155.1% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 2.1230 | 0.9916 | +114.1% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.5676 | 2.2084 | +197.4% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.5411 | 0.3785 | +43.0% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 6.5709 | 2.3819 | +175.9% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 39,080 | 6,529 | +498.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,680 | 2,954 | -43.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0248 | 0.1429 | -82.6% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 8.7570 | 15.4698 | -43.4% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 49.7450 | 58.3222 | -14.7% | over 10% | share of resident linked trips |
+| 2 | ride | 9.6385 | 20.6000 | -53.2% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 23.7627 | 13.4000 | +77.3% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.6503 | 0.9916 | +66.4% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 7.7397 | 2.2084 | +250.5% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4795 | 0.3785 | +26.7% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 5.1304 | 2.3819 | +115.4% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 36,340 | 6,529 | +456.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,590 | 2,954 | -46.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0353 | 0.1429 | -75.3% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 7.6891 | 15.4698 | -50.3% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -82,7 +82,7 @@ F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260830T222642_300it_10pct` | running | F21-licence-rate-demand | 11 | - |
+| `20260830T222642_300it_10pct` | running | F21-licence-rate-demand | 21 | - |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
