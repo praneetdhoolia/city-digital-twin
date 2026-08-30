@@ -37,6 +37,13 @@ TERMINAL = re.compile(r'^Exception in thread "([^"]+)" '
                       r'([\w.$]+(?:Exception|Error|Throwable))(?:[:;]\s*(.*))?$')
 CAUSED_BY = re.compile(r'^Caused by:\s+([\w.$]+(?:Exception|Error|Throwable))'
                        r'(?:[:;]\s*(.*))?$')
+# A throwable printed BARE at column 0 - `pkg.Cls: message` with no thread
+# prefix - which is how a Guice CreationException reaches the log when the
+# thread group's uncaught handler prints it (DECISIONS.md 9.121: two runs died
+# at injector creation and this reader called both "no exception in
+# matsim.log"). Only lines that look like a class name, never a log line.
+BARE = re.compile(r'^([A-Za-z_$][\w$]*(?:\.[\w$]+)+(?:Exception|Error|Throwable))'
+                  r'(?:[:;]\s*(.*))?$')
 LOG_ERROR = re.compile(r'\b(?:ERROR|SEVERE|FATAL)\b\s+(.*)$')
 MESSAGE_CHARS = 400
 META = '_meta.json'
@@ -70,10 +77,27 @@ def from_log(log_path):
     for i, line in enumerate(lines):
         if TERMINAL.match(line.strip()):
             start = i
+    bare = False
+    if start is None:
+        # no thread-prefixed terminal line: the last bare throwable, if any
+        for i, line in enumerate(lines):
+            if not line.startswith((' ', '\t')) and BARE.match(line.rstrip()):
+                start = i
+                bare = True
     if start is None:
         return None
 
-    m = TERMINAL.match(lines[start].strip())
+    m = (BARE if bare else TERMINAL).match(lines[start].strip())
+    if bare:
+        # align the groups with TERMINAL's (thread, exception, message)
+        class _M(object):
+            def __init__(self, mm):
+                # group(1) thread, group(2) exception, group(3) message
+                self._g = (None, None, mm.group(1), mm.group(2))
+
+            def group(self, i):
+                return self._g[i]
+        m = _M(m)
     chain = []
     for line in lines[start + 1:]:
         c = CAUSED_BY.match(line.strip())

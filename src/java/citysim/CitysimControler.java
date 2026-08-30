@@ -219,6 +219,12 @@ public final class CitysimControler {
                 // the declared basis asks for it; `beeline` is the stock
                 // raptor untouched.
                 if (ptDirectWalk.isNetwork()) {
+                    // MATSim's injector requires explicit bindings: the stock
+                    // raptor module's provider is injected by the wrapper and
+                    // is bound nowhere else (measured: the first smoke died
+                    // at injector creation on exactly this)
+                    bind(ch.sbb.matsim.routing.pt.raptor
+                            .SwissRailRaptorRoutingModuleProvider.class);
                     bind(ch.sbb.matsim.routing.pt.raptor.RaptorParametersForPerson.class)
                             .to(NetworkDirectWalkPtRouter.NoDirectWalkParameters.class)
                             .in(Singleton.class);
