@@ -113,6 +113,7 @@ about its layout will otherwise cost you an hour:
 | **The 9.127 rule biased every sub-sample; the carves were solved on a pool that is not drawn** | **§9.129** — at-or-below named low-hash households as drivers, so a 10% sample kept named drivers at 12.4% and everyone else at 7.95% (motorbike carve 5.5%); a shared pair must now share a hash bucket (`B.ride.shared_lift_hash_bucket` 0.05); the carve pool excludes named drivers before the solve and delivers 0.2666% against 0.2654% solved; family F20 |
 | **Heavy rail and light rail are held to their disclosed boardings** | **§9.130** — the line's Opal series (2,754 a day) and 24 stations' entries (6,086 a day) replace an HTS share split by a boardings composition; per weekday via `CAL.pt.weekday_factor`; F19 it.20 reads light rail -51% and heavy rail +372%, the suburban stations 3-13x over while the Interchange is right |
 | **A seventh of the workforce had no licence** | **§9.131** — the literature licence vector left 14.2-14.8% of employed persons unlicensed and 17.5-21% without a car, which is where the outer-LGA rail, walk and bike commutes came from (census JTW by home LGA: car 86-91%, train 0.1-0.3%); replaced by the TfNSW licence snapshot over the ABS population by age and LGA, per LGA; family F21 |
+| **The demand chain rebuilt on the licence-rate population** | **§9.133** — the package was inconsistent from 30 August 19:31 (new population, old chains, plans and run inputs; `check_package.py` failing) and a registry `consumers` claim on `B.population.licence_rate_by_age_band` was untrue; chains, plans and the 30 run-input sets rebuilt, 503 manifest files, ALL CHECKS PASSED; the licence-rate builder asserts its vector against the declared field; F21 overlay written, arm not launched, F21 not declared |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13218,10 +13219,98 @@ only by the template. The four false statements cannot return without failing
 CI. The next session opens on the digest and resumes the model lane exactly
 where §9.131 left it.
 
+## 9.133 The demand chain rebuilt on the licence-rate population, and the package consistent again (30 August 2026, eighteenth session; issues #86, #93, #96)
+
+**What was wrong.** The sixteenth session rebuilt the population on the
+measured licence rates (§9.131) and stopped mid-way through the WEEKDAY
+chains, so from 30 August 19:31 the package on disk mixed a new population
+with chains, plans and run inputs built on the old one:
+`B2_activity_trips_WEEKDAY.csv` was absent, the F20 arm had been stopped at
+iteration 11 for exactly this rebuild, and `tests/check_package.py` failed
+three checks — the WEEKDAY trips file, the WEEKDAY chains, and a registry
+`consumers` claim. The third was a lie the two earlier failures had hidden:
+`B.population.licence_rate_by_age_band` named
+`cities/newcastle/build/build_licence_rates.py` as a consumer, and that script
+never spelled the key. It writes the observation the field's value was copied
+from, so nothing pinned the declared vector to its source, and a re-derivation
+that moved the vector would have left the population builder drawing licences
+from a number the snapshot no longer supported.
+
+**What changed.** No model value changed and no target moved.
+`build_activity_chains.py`, `build_matsim_plans.py` and
+`build_matsim_run_inputs.py` were rerun on the 612,634-person population; the
+manifest was regenerated inside the `normalise_eol` sandwich (503 files, from
+501 — the WEEKDAY trips and escort-binding files are back); `check_package.py`
+reports ALL CHECKS PASSED. `build_licence_rates.py` now reads
+`B.population.licence_rate_by_age_band` after writing its outputs and exits 1 if
+the vector it derives differs from the declared one by more than 5e-5, the way
+`build_mode_targets.py` asserts its declared inputs against their sources
+(§9.116); on the 202607 snapshot it matches, and its outputs are byte-identical
+to the committed ones. The run overlay `f21_gate_10pct.json` is written — S2 ×
+WEEKDAY, 10 %, 300 iterations, innovation off at 240, the F15–F20 parameters —
+so the next session launches with one command. The board generator
+(`src/analyse/build_status_board.py`) now skips a plumbing test when it picks
+the scoreboard's run: regenerating the board after the smoke had put a
+two-iteration reading on the board in place of the F20 arm's iteration 10,
+which the `smoke` overlay's own justification forbids. The rule is the
+registry's, not a name pattern — a run whose `_meta.json` declares fewer
+iterations than the lower bound of the sweep on `RUN.controler.last_iteration`
+(250) is a test, not a reading. **Family F21 is not declared**:
+it opens at the first arm's launch stamp with `decisions_ref` 9.131 (§9.131),
+and that arm needs a stated-cost approval that was not given this session.
+
+**Measured.** WEEKDAY, the rebuilt demand against the old one in parentheses,
+from `_activity_chains_report.json` and `_plans_report.json` (the old values are
+the committed reports at `5a62bd7`).
+
+- Chains: 2,188,001 legs (2,187,183), 990,511 tours (989,375), 510,383
+  travelling persons (509,575); realised week trip rate 3.346 (3.344); 5,632
+  external and 16,264 through agents, unchanged; placement `poi` 2,673,003,
+  `home` 2,523,040, `jitter` 155,442, `escorted` 245,319.
+- Binders: escort 128,881 of 177,667 HX tours bound (127,203 of 177,318); lift
+  47,578 of 48,680 unbound HX tours re-targeted (49,030 of 50,014); joint 84,436
+  bound from 155,162 candidates at `thin_p` 1.0 with 55,783 unservable (82,384
+  from 146,260, 55,671 unservable); shared 61,682 servable / 57,758 bound /
+  shortfall 0 at `thin_p` 0.9354 (73,509 / 59,701 / 0 at 0.8116), with 332,807
+  of the 448,203 identity trips covered before the pass (328,916 of 448,229).
+  Car-less passenger tours offered to the shared pass fell from 141,670 to
+  111,145: the licences moved a fifth of that pool to the driver side, which is
+  what §9.131 predicted and the binders now show. Weekend joint `thin_p` SAT
+  0.5901 (0.6216), SUN 0.5669 (0.5955).
+- Plans: 621,364 WEEKDAY persons (620,553); 9,966,248 legs over the full choice
+  set (9,856,549); escort-day ride denials 123,081 (114,096); the uninformed
+  seed's car share 0.4516 (0.4390), ride 0.0339 (0.0354), walk 0.1574 (0.1629)
+  — initial conditions for co-evolution, not shares (§9.6). Motorbike carve
+  trip-weighted 0.2652 % (0.2654 %) against the 0.3785 % region share it thins
+  from; truck carve `q` 0.01123 (0.01336) on 237,652 eligible persons — the
+  pool grew, so each eligible person is drawn less often for the same share.
+- Smoke `20260830T213149_2it_1pct` (S2, WEEKDAY, 1 %, 2 iterations) on the
+  rebuilt inputs: rc 0, completed with `_run.json` and a 58-station count reading, in the six minutes the F20 smoke took. Its 1 % sample holds 6,428 persons against 6,263 in
+  the F20 smoke `20260830T184637_2it_1pct`: the seeded household sampler draws
+  a different 1 % once the couplings between households change (§9.127).
+  `inputs_sha256` `38d539d8…` against `7bcb2a5d…`. A plumbing test, not a
+  result; the ledger files it under F20 by the `from_launch` rule, as it filed
+  the F20 smoke under F19 (§9.129).
+
+**Deliberately not done.** The F21 arm was not launched and F21 was not
+declared — both wait on the approval. The #96 subtour scan was not rerun on
+the rebuilt plans. No registry value moved; the 67/143 split is untouched.
+The motorbike carve's 0.265 % against 0.378 % is the per-cell thinning of
+§9.129 on both populations and is left for #93 to carry, not re-argued here.
+
+**Consequences.** Nothing run on the old demand compares with anything run on
+this one (§9.127: the population a run samples from is part of its identity).
+The board's scoreboard still reads the F20 arm at iteration 10 until an F21
+arm reaches 100. The next session's first item is the approval, then
+`python run.py --run-config f21_gate_10pct --detach`, the F21 row in
+`docs/run_families.json` at that launch stamp, and the gate at 100, 200 and
+300 with every mode read on its own basis (`GOAL.md`, the loop).
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **The demand chain rebuilt on the licence-rate population; the package consistent again (§9.133; issues #86/#93/#96; eighteenth session).** Chains, plans and the 30 run-input sets rerun on the 612,634-person population of §9.131; manifest 503 files (from 501); `tests/check_package.py` ALL CHECKS PASSED. `build_licence_rates.py` asserts the vector it derives against `B.population.licence_rate_by_age_band` and exits 1 on drift, making the registry's consumer claim true. WEEKDAY shared pass 61,682 servable / 57,758 bound / shortfall 0 (was 73,509 / 59,701 / 0). Overlay `f21_gate_10pct.json` written; smoke `20260830T213149_2it_1pct` run. **No model value changed, no target moved, no family opened (F21 opens at the arm's launch); the 67/143 split is untouched; nothing here is a finding.** |
 | 2026-08-30 | **The project on one page: the goal stated, the board generated, the record frozen behind position pages (§9.132; seventeenth session).** `GOAL.md` tracked; `STATUS.md` one page with three generated blocks; thirteen position pages; `check_doc_shape.py` in CI with the brief's family stamp, the record's order and cap, and a source on every figure; `session_gate.py` as the one gate; a PR hook on red documents; every frozen document bannered and moved under `docs/archived/`; issues #73 and #68 closed on evidence, #21 commented. **No model value changed, no data artefact changed, no family opened; the 67/143 split is untouched; nothing here is a finding.** |
 | 2026-08-30 | **A seventh of the workforce had no licence (§9.131; issues #49/#93/#30).** Heavy rail's five-fold over-boarding traced to outer-LGA residents' work trips: census journeys to work by home LGA are 86-91% car and 0.1-0.3% train, the model's were 55-59% car and 2.4-5.4% rail, because `B.population.licence_rate_by_age_band` was a literature vector that left 14.2-14.8% of employed persons unlicensed. Acquired the TfNSW Driver Licence Statistics snapshot and the ABS population by age and LGA (2024) with provenance; `build_licence_rates.py` measures 18-24 0.78, 25-34 0.94, 35-74 0.97-1.00, 75-84 0.92, 85+ 0.51, 12-17 0.08, per LGA; the population builder draws at the LGA's rate. Population, chains, plans and run inputs rebuilt; family F21 opens at its launch. The population was rebuilt at 19:31 (612,634 persons): employed persons with a car available rose from 78.9-83.0% to 90.8-91.7% in Cessnock, Lake Macquarie, Maitland and Port Stephens and to 80.8% in Newcastle (its 18-24 rate is 0.68 and 8.2% of its dwellings hold no vehicle); the unlicensed share of the employed fell from 14.2-14.8% to 4.8-5.9% (Newcastle 12.7%). The activity chains, plans and run inputs were NOT rebuilt: the chain was stopped at the user's direction at handoff, mid-way through the WEEKDAY chains, and its partial WEEKDAY trips and escort-binding files were deleted, so the package on disk holds a population newer than its chains until build_activity_chains.py, build_matsim_plans.py and build_matsim_run_inputs.py are rerun - the next session's first build. Family F21 opens at that arm's launch. |
 | 2026-08-30 | **Heavy rail and light rail are held to their DISCLOSED boardings (§9.130; issues #84/#49/#30).** The composition-derived targets (HTS 3.8% x Opal split) put light rail at 14,500 trips a day where the line's own published series reads 2,754 boardings a day, and heavy rail at 17,500 where 24 stations' entries read 6,086. Both are now boardings per weekday, all travellers, via `CAL.pt.weekday_factor` 1.0727 (414 fields): light rail 2,954, heavy rail 6,529. `pt_boardings_targets.json` (498 manifest rows); the report counts every subpopulation's boardings x 1/fraction. F19 it.20 on this basis: light rail 1,440 (-51%), heavy rail 30,800 (+372%) - Interchange 1,430 vs 1,569, Hamilton 7,050 vs 534, Adamstown 1,670 vs 83. The tram's Interchange transfer and corridor market were measured and are not the cause. |

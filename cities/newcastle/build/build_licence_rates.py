@@ -222,6 +222,20 @@ def main():
     print('pooled rate by band:', ', '.join('%d-%d %.3f' % (b[0], b[1], v) for b, v in zip(bands, vector)))
     for lga in lgas:
         print('  %-15s %s' % (lga, ' '.join('%.2f' % r['rate'] for r in out_rows if r['lga'] == lga)))
+    # The registry carries this pooled vector as B.population.licence_rate_by_age_band
+    # (source `measured`), so the declared value and the observation it is
+    # written from are two copies of one number. Asserted here, the way
+    # build_mode_targets.py asserts its declared inputs against their sources
+    # (DECISIONS.md 9.116): a re-derivation that moves the vector must move the
+    # registry field in the same change, or the population builder draws
+    # licences from a value the observation no longer supports.
+    declared = [float(v) for v in cfg.get('B.population.licence_rate_by_age_band')]
+    if len(declared) != len(vector) or any(abs(a - b) > 5e-5 for a, b in zip(declared, vector)):
+        print('DRIFT: B.population.licence_rate_by_age_band declares %s but the '
+              'snapshot derives %s - update the registry field in the same change'
+              % (declared, vector))
+        _sys.exit(1)
+    print('B.population.licence_rate_by_age_band matches the derived vector')
 
 
 if __name__ == '__main__':

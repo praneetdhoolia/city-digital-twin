@@ -7,8 +7,9 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 30 August 2026 — the board became one page (§9.132); family
-F20 is open; the F21 population is rebuilt and its demand chain is not.
+**Last updated:** 30 August 2026 — the demand chain is rebuilt on the
+licence-rate population and the package is consistent (§9.133); family F20 is
+open; the F21 arm waits on a stated-cost approval.
 
 ## The goal
 
@@ -55,7 +56,7 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus,
 | P0 scoping | ✅ | base year 2026, five LGAs, 1,500 core SA1s (§1) |
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
-| P3 demand | 🟡 | the population is rebuilt on measured licence rates (§9.131); **the WEEKDAY chains, the plans and the 30 run-input sets are not** — see *Next* |
+| P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
 | P4 calibration | 🟡 | the gate loop of GOAL.md; harness, fit and reader built; no arm has reached its gate since F4 (21 Aug) |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
@@ -66,44 +67,44 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus,
 |---|---|
 | Open comparability family | `F20-bucket-rule-carve-pool` (opened `20260830T184954`, §9.129) - nothing run before it compares with anything after it |
 | Input registry | **414 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
-| Data package | **501 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
+| Data package | **503 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (30 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (30 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (30 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (30 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (30 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (30 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (30 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (30 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (30 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (30 August 2026) |
 <!-- generated:state end -->
 
-**The package on disk is inconsistent** (handoff of 30 Aug, §9.131):
-`demand/population/` was rebuilt at 19:31 with the measured licence rates; the
-WEEKDAY activity chains are absent and the plans and run inputs are the F20
-ones. `tests/check_package.py` fails until the chain below is rerun.
+**The package on disk is consistent** (§9.133): chains, plans and run inputs
+were rebuilt on the licence-rate population on 30 Aug and
+`tests/check_package.py` reports ALL CHECKS PASSED. No arm has read the rebuilt
+demand beyond the plumbing smoke; F21 opens at the first arm's launch.
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
 | `aborted_20260830T170743_300it_10pct` | aborted | F19-driver-detour | 28 | Stopped by the session at iteration 27 for the F20 arm (DECISIONS.md 9.129): its 10% sample, drawn under the 9.127 at-or-below coupling r... |
 | `aborted_20260830T170153_300it_10pct` | aborted | F19-driver-detour | 0 | Stopped by the session at iteration 0, six minutes after launch: launched inline (a child of the session) by mistake where every arm is l... |
 | `20260830T165440_2it_1pct` | completed | F18-shared-rides-carves | 2 | has `_run.json` |
-| `20260830T164757_2it_1pct` | completed | F18-shared-rides-carves | 2 | has `_run.json` |
 
-118 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+119 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **Rebuild the demand chain on the F21 population** (~1 h CPU, not a run):
-   `build_activity_chains.py` → `build_matsim_plans.py` →
-   `build_matsim_run_inputs.py` → the manifest inside the `normalise_eol`
-   sandwich → `tests/check_package.py` ALL PASSED. Declare F21 in
-   `docs/run_families.json` at the arm's launch.
-2. **Launch the F21 arm** (S2, WEEKDAY, 10 %, 300 iterations, innovation off at
-   240, detached) — **needs a stated-cost approval** (~9–15 h at the measured
-   100–200 s/it, [positions/runs-and-economics](positions/runs-and-economics.md)).
-3. **Gate it at 100, 200 and 300** with `report_mode_ridership.py --trend`,
+1. **Launch the F21 arm** — `python run.py --run-config f21_gate_10pct
+   --detach` (S2, WEEKDAY, 10 %, 300 iterations, innovation off at 240; the
+   overlay is written) — **needs a stated-cost approval** (~9–15 h at the
+   measured 100–200 s/it,
+   [positions/runs-and-economics](positions/runs-and-economics.md)). Declare
+   F21 in `docs/run_families.json` at that launch stamp, `decisions_ref` 9.131.
+2. **Gate it at 100, 200 and 300** with `report_mode_ridership.py --trend`,
    every mode; stop on any mode past 20 % or heading there; fix from the root
    (the loop in GOAL.md). Regenerate this board after every reading.
+3. **Rerun the #96 subtour scan on the rebuilt plans** while the arm runs (not
+   a run; no approval).
 
 **Decisions required:** enable the Task Scheduler operational log so a
 console-stop death can name its trigger (#66); the fraction and cost of a
@@ -117,7 +118,7 @@ while the record's S2 probe ran with it off ([positions/signals-and-crossings](p
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
 | The F21 arm's gate readings | #48 #86 #91 #49 #30 #93 #94 #82 | all | iteration 100 |
-| Ride: the demand binds ~11 % of trips against 20.6 % observed | #86 #91 | [ride-and-pairing](positions/ride-and-pairing.md) | the shared-ride pass counts on the F21 chains |
+| Ride: the demand binds ~11 % of trips against 20.6 % observed | #86 #91 | [ride-and-pairing](positions/ride-and-pairing.md) | what the F21 arm realises of the 57,758 shared bindings (§9.133) |
 | Heavy rail boards five times the disclosed entries at suburban stations | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | F21 boardings at the disclosed stations after the licence fix |
 | The HTS PT level and the operator counts differ by a factor the targets cannot see | #99 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | a regional bus count |
 | Light rail out of reach: the corridor holds two-thirds of the observed attraction | #30 #84 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the destination solver against the D1 layers |

@@ -101,6 +101,31 @@ def _iterations_reached(run_dir):
     return max(nums) if nums else None
 
 
+def _horizon_floor():
+    """The lower bound of the declared sweep on the iteration horizon.
+
+    A run that DECLARES fewer iterations than the smallest value the registry
+    admits as a modelling run is a plumbing test (the `smoke` overlay says so
+    in its own justification): its shares are two iterations of seed plans and
+    may not be quoted, compared or fitted. The board must never carry one as
+    its reading - a smoke launched after an arm would otherwise displace that
+    arm's last gate reading. None when the registry cannot say."""
+    try:
+        import registry as _registry
+        sweep = _registry.load(strict=True).sweep('RUN.controler.last_iteration')
+        return float(sweep['interval'][0])
+    except Exception:
+        return None
+
+
+def _is_plumbing_test(run_dir, floor):
+    if floor is None:
+        return False
+    meta = _json(os.path.join(run_dir, '_meta.json')) or {}
+    declared = meta.get('iterations')
+    return isinstance(declared, (int, float)) and declared < floor
+
+
 def _fmt(v, target):
     if v is None:
         return '-'
@@ -111,11 +136,17 @@ def _fmt(v, target):
 # ------------------------------------------------------------------- blocks
 
 def block_scoreboard():
-    """The twelve-mode table from the newest readable run, or None."""
+    """The twelve-mode table from the newest readable run, or None.
+
+    A plumbing test (a run declaring fewer iterations than the registry's
+    horizon floor) is skipped, so the reading is the newest ARM's."""
     import measure_iteration_modes as mim
     import iteration_trips as itr
+    floor = _horizon_floor()
     for name in _run_dirs():
         run_dir = os.path.join(RESULTS, name)
+        if _is_plumbing_test(run_dir, floor):
+            continue
         try:
             have = sorted(set(mim.iterations_with_trips(run_dir))
                           | set(itr.iterations_with_plans(run_dir)))

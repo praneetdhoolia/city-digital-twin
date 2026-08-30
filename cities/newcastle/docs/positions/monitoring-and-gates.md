@@ -2,13 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 30 August 2026 · **Record read through:** §9.133 · **Open family:** F20
 
 ## What is built
 
 - **The gate reader** is `src/analyse/report_mode_ridership.py`. It prints every one of the twelve simulated modes on its own row against its own target, never an umbrella `pt` row: the pt submodes are resolved from each boarded route's `transportMode` through the run's own schedule (§9.87). It reads the run directory and the city's target artefact and writes nothing.
 - **Any iteration the run has written is readable** (§9.120). Where MATSim wrote `<n>.trips.csv.gz` the reader uses it; between those, `src/analyse/iteration_trips.py` derives the same linked main-mode trips from `<n>.experienced_plans.xml.gz`, which is written every `RUN.controler.write_plans_interval` = 10 iterations. The derivation is validated exactly against the trips table wherever both exist (`--validate`), and the trips table wins any disagreement (§9.120).
 - **Three views**: `--it N` for one iteration, `--trend` for one row per mode across every readable iteration with a direction verdict (`toward`, `AWAY`, `flat`), and `--watch SECONDS` to keep printing each newly readable iteration until the run ends. `--truck-stations` scores truck on its target's basis (below).
+- **The board's scoreboard is the newest ARM's reading** (`src/analyse/build_status_board.py`): a run whose `_meta.json` declares fewer iterations than the lower bound of the sweep on `RUN.controler.last_iteration` (250) is a plumbing test and is skipped, so a smoke launched after an arm cannot displace that arm's last gate reading (§9.133).
 - **Targets** come from `data/processed/validation/mode_targets_by_mode.csv`, written by `cities/newcastle/build/build_mode_targets.py` (§9.87), and `pt_boardings_targets.json` for the two disclosed rail modes (§9.130). They are deliberately NOT rows of `validation_targets.csv`, so the pre-registered 67/143 split is untouched (§9.87, §12).
 - **The thresholds are registry fields**, source `definition`, not swept: `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 (§9.87). A mode at or beyond the stop bar is flagged `STOP`; between the two it is flagged `over 10%` and rounded to neither; inside the pass bar it is `ok`.
 - **The calibration fit** is `src/calibrate/fit.py`: it scores the survey's six categories from `_metrics.json` through `score_mode_share`, with `bike+taxi` folded to Other and `car+motorbike` to Vehicle driver — folds the HTS data document's own lists evidence (§9.87). It lists every target it cannot score as `unscorable` with the reason (§9.80). The per-iteration survey-basis reader `src/analyse/measure_iteration_modes.py` hands the trips table to that same function (§9.83).
@@ -54,6 +55,7 @@
 
 ## History
 
+- §9.133 — board skips plumbing tests
 - §9.131 — licence rate rebuilt; F21 opens
 - §9.130 — rail modes on disclosed boardings
 - §9.126 — F17 car and walk converged
