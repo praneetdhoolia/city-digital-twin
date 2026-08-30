@@ -28,7 +28,7 @@ trust order, the six questions, the environment gate — live in
 
 | Fact as of this handoff | Re-derive with |
 |---|---|
-| **AN F18 ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T161243_300it_10pct` (overlay `f18_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240), launched 30 Aug 16:12 as Task Scheduler task `citysim_run_20260830T161242`; first gate ~19:15. The F17 arm `aborted_20260830T141222_300it_10pct` was **stopped at iteration 60 for F18** having converged car (+1.7%) and walk (+11%) by iteration 50 (§9.126); F16 stopped at 17 and F15 at 13, each with its cause measured (§9.121). Measured pace at 10%: ~106 s/it, so a gate every ~3 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
+| **AN F18 ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T163010_300it_10pct` (overlay `f18_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240), launched 30 Aug 16:30 as Task Scheduler task `citysim_run_20260830T163010` on 62,134 sampled persons; first gate ~19:30. Its predecessor `aborted_20260830T161243_300it_10pct` ran on a half-sample (§9.127) and was stopped at iteration 2. The F17 arm `aborted_20260830T141222_300it_10pct` was **stopped at iteration 60 for F18** having converged car (+1.7%) and walk (+11%) by iteration 50 (§9.126); F16 stopped at 17 and F15 at 13, each with its cause measured (§9.121). Measured pace at 10%: ~106 s/it, so a gate every ~3 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
 | Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --trend` (every readable iteration, every mode, direction) · `--it <n>` for one table · `--watch 300` to keep printing — every 10th iteration is readable now, not only the trips-table ones |
 | **This session's PR is OPEN at handoff** (or merged overnight — check) | `gh pr list --state open` · `gh pr checks <n>` |
 | Open issues — **none closed this session; #48, #86, #91, #30, #93, #96 carry new measured comments** | `gh issue list --state open` |
@@ -352,6 +352,12 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
+0. **THE HARNESS RESUMES A COMPLETED RUN WHEN ONLY THE POPULATION CHANGED.**
+   `find_completed` keys on scenario, day, fraction, iterations, seed, overrides, the
+   controler hash and the resolved registry values — not on the plans file — so the
+   second F18 chain's smoke "passed" by resuming the 16:10 probe on the old plans. Pass
+   `--force` to a probe after a rebuild, or read the probe's `_meta.json` `started`
+   against the plans' mtime. Not yet fixed in the harness.
 1. **A COUPLING BETWEEN HOUSEHOLDS IS A SAMPLING UNIT — CHECK THE SAMPLE SIZE AFTER
    ANY NEW BINDING** (§9.127). The first F18 arm ran on 31,262 persons at 10% against
    62,134 because the sampler's union-find over lift couplings turned shared rides
