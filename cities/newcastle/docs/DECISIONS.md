@@ -99,6 +99,7 @@ its layout will otherwise cost you an hour:
 | **A declared pair whose links differ is served by the driver's detour** | **§9.128** — the valid F18 arm refused 2,053 of 6,966 ride legs on endpoints at iteration 0 (the shared rides among them); a walking meeting point measured 8-11 km per passenger and was replaced by the driver's car leg routed through the passenger's links, boarded at the passenger's own; `B.ride.declared_pair_meeting`; family F19 |
 | **The 9.127 rule biased every sub-sample; the carves were solved on a pool that is not drawn** | **§9.129** — at-or-below named low-hash households as drivers, so a 10% sample kept named drivers at 12.4% and everyone else at 7.95% (motorbike carve 5.5%); a shared pair must now share a hash bucket (`B.ride.shared_lift_hash_bucket` 0.05); the carve pool excludes named drivers before the solve and delivers 0.2666% against 0.2654% solved; family F20 |
 | **Heavy rail and light rail are held to their disclosed boardings** | **§9.130** — the line's Opal series (2,754 a day) and 24 stations' entries (6,086 a day) replace an HTS share split by a boardings composition; per weekday via `CAL.pt.weekday_factor`; F19 it.20 reads light rail -51% and heavy rail +372%, the suburban stations 3-13x over while the Interchange is right |
+| **A seventh of the workforce had no licence** | **§9.131** — the literature licence vector left 14.2-14.8% of employed persons unlicensed and 17.5-21% without a car, which is where the outer-LGA rail, walk and bike commutes came from (census JTW by home LGA: car 86-91%, train 0.1-0.3%); replaced by the TfNSW licence snapshot over the ABS population by age and LGA, per LGA; family F21 |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -12138,6 +12139,57 @@ quarter's modes settle once a fifth of their tours ride.
 
 ---
 
+## 9.131 A seventh of the workforce had no licence: the licence rate is now the published count over the published population (30 August 2026, sixteenth session; issues #49, #93, #30)
+
+Read back from heavy rail's five-fold over-boarding at the suburban
+stations (9.130). The over-modelled boardings are long, multi-leg pt trips
+on the Maitland line - Hamilton's 4,030 a day are two- and three-leg trips
+of median 18 km to Beresfield, Thornton, Metford and Maitland; the Maitland
+LGA stations sum to some 7,200 modelled entries a day against 850
+disclosed. So the model's OUTER-LGA residents ride rail far more than real
+ones, which the target-LGA scope of the share table never sees.
+
+**The observed yardstick.** Census G62, one-method journeys to work by
+HOME LGA: car as driver 86.3% (Newcastle), 90.8% (Lake Macquarie), 91.2%
+(Maitland); train 0.16% / 0.09% / 0.32%; walked 4.4% / 1.6% / 1.4%;
+bicycle 1.4% / 0.16% / 0.18%. The F19 arm's iteration-20 WORK trips: car
+54.5% / 57.7% / 58.6%; rail 2.4% / 3.4% / 5.4% (15-36x); walk 18.7% /
+16.1% / 19.2%; bike 8.9% / 9.0% / 8.9%. Iteration 20 still carries the
+choice-set exploration for walk and bike, but rail's over-use held to
+F17's iteration 50 and is structural.
+
+**The structure: 17.5-21% of employed persons had no car available**,
+14.2-14.8% of them because they held NO LICENCE - `B.population.
+licence_rate_by_age_band` was a LITERATURE vector (18-24 0.62, 25-34 0.88,
+35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88) drawn independently of
+employment, and a worker without a licence commutes by rail, walk or bike
+whatever the scoring says. The remaining 3-6% are licence holders in
+households with no vehicle, which the census (G34: 4.4-8.2% of dwellings
+with no vehicle) supports.
+
+**The published count.** TfNSW Driver Licence Statistics publishes a
+monthly snapshot of licence holders by licence type, class, gender, age
+group and customer-address LGA (CC-BY; `cities/newcastle/extract/
+fetch_licences.py`, `data/raw/tfnsw/driver_licences_snapshot_2026.zip`,
+`provenance_licences.json`). Over the ABS estimated resident population by
+age and LGA at 30 June 2024 (`data/raw/abs/32350DS0003_2024.xlsx`, the
+same acquisition), split to single years by the census G04 profile where
+the age groups do not nest, `build_licence_rates.py` measures, for the July
+2026 snapshot, primary non-learner licences of any class: **18-24 0.78,
+25-34 0.94, 35-44 1.00, 45-54 0.98, 55-64 0.97, 65-74 0.98, 75-84 0.92,
+85+ 0.51, and 12-17 0.08** (16-17-year-old provisional drivers) - pooled;
+per LGA, Newcastle's 18-24 hold at 0.68 and Port Stephens' at 0.84, and
+the population builder draws each person at their own LGA's rate
+(`data/processed/observed/licence_rates_by_age_lga.csv`). Holders exceed
+the 2024 population in the 35-44 band (address staleness and two years of
+growth) and the rate is capped at 1; 395 suppressed cells (<=5) are taken
+at 3; the sweep is the suppression and the denominator vintage. The
+registry field is `measured` now, not `literature`.
+
+**What it moves.** The population was rebuilt at 19:31 (612,634 persons): employed persons with a car available rose from 78.9-83.0% to 90.8-91.7% in Cessnock, Lake Macquarie, Maitland and Port Stephens and to 80.8% in Newcastle (its 18-24 rate is 0.68 and 8.2% of its dwellings hold no vehicle); the unlicensed share of the employed fell from 14.2-14.8% to 4.8-5.9% (Newcastle 12.7%). The activity chains, plans and run inputs were NOT rebuilt: the chain was stopped at the user's direction at handoff, mid-way through the WEEKDAY chains, and its partial WEEKDAY trips and escort-binding files were deleted, so the package on disk holds a population newer than its chains until build_activity_chains.py, build_matsim_plans.py and build_matsim_run_inputs.py are rerun - the next session's first build. Family F21 opens at that arm's launch.
+
+---
+
 ## 9.130 Heavy rail and light rail are held to their DISCLOSED boardings, and the disclosed count shows heavy rail five times over at the suburban stations (30 August 2026, sixteenth session; issues #84, #49, #30)
 
 Read from the F19 arm's iteration 20 while the F20 arm ran, because the
@@ -13045,6 +13097,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **A seventh of the workforce had no licence (§9.131; issues #49/#93/#30).** Heavy rail's five-fold over-boarding traced to outer-LGA residents' work trips: census journeys to work by home LGA are 86-91% car and 0.1-0.3% train, the model's were 55-59% car and 2.4-5.4% rail, because `B.population.licence_rate_by_age_band` was a literature vector that left 14.2-14.8% of employed persons unlicensed. Acquired the TfNSW Driver Licence Statistics snapshot and the ABS population by age and LGA (2024) with provenance; `build_licence_rates.py` measures 18-24 0.78, 25-34 0.94, 35-74 0.97-1.00, 75-84 0.92, 85+ 0.51, 12-17 0.08, per LGA; the population builder draws at the LGA's rate. Population, chains, plans and run inputs rebuilt; family F21 opens at its launch. The population was rebuilt at 19:31 (612,634 persons): employed persons with a car available rose from 78.9-83.0% to 90.8-91.7% in Cessnock, Lake Macquarie, Maitland and Port Stephens and to 80.8% in Newcastle (its 18-24 rate is 0.68 and 8.2% of its dwellings hold no vehicle); the unlicensed share of the employed fell from 14.2-14.8% to 4.8-5.9% (Newcastle 12.7%). The activity chains, plans and run inputs were NOT rebuilt: the chain was stopped at the user's direction at handoff, mid-way through the WEEKDAY chains, and its partial WEEKDAY trips and escort-binding files were deleted, so the package on disk holds a population newer than its chains until build_activity_chains.py, build_matsim_plans.py and build_matsim_run_inputs.py are rerun - the next session's first build. Family F21 opens at that arm's launch. |
 | 2026-08-30 | **Heavy rail and light rail are held to their DISCLOSED boardings (§9.130; issues #84/#49/#30).** The composition-derived targets (HTS 3.8% x Opal split) put light rail at 14,500 trips a day where the line's own published series reads 2,754 boardings a day, and heavy rail at 17,500 where 24 stations' entries read 6,086. Both are now boardings per weekday, all travellers, via `CAL.pt.weekday_factor` 1.0727 (414 fields): light rail 2,954, heavy rail 6,529. `pt_boardings_targets.json` (498 manifest rows); the report counts every subpopulation's boardings x 1/fraction. F19 it.20 on this basis: light rail 1,440 (-51%), heavy rail 30,800 (+372%) - Interchange 1,430 vs 1,569, Hamilton 7,050 vs 534, Adamstown 1,670 vs 83. The tram's Interchange transfer and corridor market were measured and are not the cause. |
 | 2026-08-30 | **The 9.127 rule biased every sub-sample, and the carves were solved on a pool that is not drawn (§9.129; issues #93/#86/#66).** F19's motorbike share (0.115% at it.20) read back to two build defects: the at-or-below coupling rule names low-hash households as drivers, so a 10% sample kept named drivers at 12.4% and everyone else at 7.95% (carves at 5.5% / 5.1%); replaced by a same-bucket rule, `B.ride.shared_lift_hash_bucket` = 0.05 (413 fields), measured on the binder at 73,509 servable / 59,701 bound / 0 short on WEEKDAY. And the carve's probability was solved before the 9.125 named-driver refusal (42.1% of the pool's trips), delivering 58% of its share; the pool now excludes named drivers and the rebuilt carve delivers 0.2666% against 0.2654% solved (5,937 trips on 1,687 persons). Plans, run inputs and manifest rebuilt; family F20 opens at its launch. |
 | 2026-08-30 | **A declared pair whose links differ is served by the driver's detour (§9.128; issues #86/#66).** The valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints - the same-SA2 shared rides of §9.124 cannot share a link with their driver - so it was stopped at iteration 1 (`aborted_20260830T163010_300it_10pct`). A walking meeting point was built and measured on a 1% smoke at 8-11 km walked per passenger; replaced by the driver detour: the engine routes the driver's car leg through each carried passenger's origin and destination links, the passenger boards and alights at their own link as the car passes, the booking is at the routed pass time. New `B.ride.declared_pair_meeting` = `driver_detour` | `passenger_links` (412 fields). Smoke: 0 unroutable detours, mean 471-751 s per driver; its timeouts traced to the 1% flow-capacity artefact. Also: the harness resume key now includes the population's sha256 (`inputs_sha256`). Family F19 opens at `20260830T170742`; arm `20260830T170743_300it_10pct`. |

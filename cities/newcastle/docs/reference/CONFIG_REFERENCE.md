@@ -32,9 +32,9 @@ Three things are refused at every layer:
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 35 | computed from observed data in this package |
+| `measured` | 36 | computed from observed data in this package |
 | `derived` | 38 | follows from another registry field by identity |
-| `literature` | 68 | a published value, not specific to this city |
+| `literature` | 67 | a published value, not specific to this city |
 | `assumed` | 152 | chosen without direct empirical support |
 | `definition` | 117 | fixed by the formulation, not an empirical quantity |
 
@@ -1196,7 +1196,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.bike_available_rate` | `0.493` | share | `literature` | 0.3 - 1 |
 | `B.population.bike_min_age` | `12` | years | `assumed` | 0 - 16 |
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
-| `B.population.licence_rate_by_age_band` | `[0, 0, 0, 0.62, 0.88, 0.93, 0.94, 0.93, 0.88, 0.72, 0.45]` | probability | `literature` | plus/minus 10% |
+| `B.population.licence_rate_by_age_band` | `[0.0, 0.0, 0.0823, 0.7828, 0.9402, 1.0, 0.9786, 0.972, 0.9838, 0.9172, 0.5118]` | probability | `measured` | plus/minus 5% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
 | `B.ride.bound_pairing_window_min` | `60.0` | minutes | `derived` | derived: bound_pairing_window_min = 2 * time_mutation_range_s / 60 |
 | `B.ride.declared_pair_meeting` | `driver_detour` | enum | `assumed` | `driver_detour`, `passenger_links` |
@@ -1748,9 +1748,9 @@ Share of the synthetic population BUILT. One, always: this is the build, not the
 
 #### `B.population.licence_rate_by_age_band`
 
-Driver licence holding by age band, aligned to B.population.age_bands.
+Driver-licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written by cities/newcastle/build/build_licence_rates.py from the TfNSW Driver Licence Statistics snapshot (202607: primary licence of any class, non-learner, by age group and customer-address LGA) over the ABS estimated resident population by age and LGA at 30 June 2024, split to single years by the census G04 profile. The population builder draws each person's licence from the PER-LGA rate in data/processed/observed/licence_rates_by_age_lga.csv and falls back to this vector only where an LGA has no row. Before 9.131 this was a literature vector (18-24 0.62, 25-34 0.88, 35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88, 75-84 0.72, 85+ 0.45) that left 14.2-14.8% of employed persons without a licence; the measured rates are 18-24 0.78, 25-34 0.94, 35-44 1.00 (holders exceed the 2024 ERP - address staleness and two years of growth - and the rate is capped at 1), 45-74 0.97-0.98, 75-84 0.92, 85+ 0.51, and 12-17 0.08 (provisional drivers aged 16-17). Suppressed cells (<=5) are taken at 3. The sweep is the suppression and the denominator vintage.
 
-***literature** · status **active** · DECISIONS.md §9.1*
+***measured** · status **active** · DECISIONS.md §9.1, 9.131*
 
 #### `B.population.ride_requires_household_driver`
 

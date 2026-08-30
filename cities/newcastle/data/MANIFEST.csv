@@ -2,7 +2,9 @@ path,stage,bytes,rows,produced_by,source,source_url,licence,retrieved,sha256
 data/raw/_osm_fetch.log,raw,539,,,,,,,34650b9503db5b75d0b1f3a446d283319b05a483a0155c16aed9fccb4dcc5d3e
 data/raw/_s3_historical_gtfs_listing.txt,raw,6209826,,,,,,,b00abef076427693c54faf49963a622157c93606b932c787f4d3c32ab4c6393a
 data/raw/provenance_abs_dem.json,raw,6258,,,,,,,995509b1f3f97ea7c42c13c31ee1f57ea015aa206ff124ee87109d983871f94e
+data/raw/provenance_licences.json,raw,1134,,,,,,,e79e457a99456fc43fe1dbeb49bd2a3d8acccf74a080481e5fca3a2bdd40d9c4
 data/raw/provenance_open_data.json,raw,11257,,,,,,,37e280a7808f53003a37c4789c52682ca95d3aa90d44cccc6ef9e3a99dcec2f6
+data/raw/abs/32350DS0003_2024.xlsx,raw,274335,,,"ABS Regional population by age and sex, 2024 - estimated resident population by age and sex, Local Government Areas, 30 June 2024 (released 28 Aug 2025)",https://www.abs.gov.au/statistics/people/population/regional-population-age-and-sex/2024/32350DS0003_2024.xlsx,CC-BY 4.0,2026-08-30,4e25a917b8556d1d22f628d749f7c348ef72048e6fdd9d241ffa68949b55e184
 data/raw/boundaries/DZN_2021_AUST_GDA2020_SHP.zip,raw,62160137,9,cities/newcastle/extract/fetch_abs_dem.py,ABS Destination Zones 2021 (workplace geography),https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/DZN_2021_AUST_GDA2020_SHP.zip,CC-BY 4.0,2026-08-16,40c867bb50c9816d7fae54f75c2641b32db78a4c910ddd4a43a7727fc0ddb417
 data/raw/boundaries/LGA_2021_AUST_GDA2020_SHP.zip,raw,39858973,9,cities/newcastle/extract/fetch_abs_dem.py,ABS LGA 2021 boundaries,https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/LGA_2021_AUST_GDA2020_SHP.zip,CC-BY 4.0,2026-08-16,3b42e527d3fb946fec937ed6f76b8cad9882047b46188295988c3bcaab90b99a
 data/raw/boundaries/SA1_2021_AUST_SHP_GDA2020.zip,raw,100630598,5,cities/newcastle/extract/fetch_abs_dem.py,ABS ASGS Ed3 SA1 2021 digital boundaries,https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/SA1_2021_AUST_SHP_GDA2020.zip,CC-BY 4.0,2026-08-16,177adac8fcc931355318984471e0e6ac76b42d1119acf3c4e3842a7c6f25ed18
@@ -54,6 +56,7 @@ data/raw/speedzones/Speed_Zones.shp,raw,97790172,,,,,,,2b0e7cb628b8f28a43ef95b86
 data/raw/speedzones/Speed_Zones.shx,raw,3579508,,,,,,,028fd0255666eeb8643f305e4e3f8b523f3b44086ae5222e02a161e3dc6dd377
 data/raw/speedzones/provenance_speed_zones.json,raw,805,,,,,,,e0b39fd288507766a7c42a092f8b27749e331756f9973179f402ab69edef1e28
 data/raw/speedzones/speedzones.zip,raw,62453324,4,,,,,,7b86d6ddb3523a3c1bbd4bdacbefd86feba971f177a2a6884cde4312ed91f950
+data/raw/tfnsw/driver_licences_snapshot_2026.zip,raw,1535688,7,,"TfNSW Driver Licence Statistics - Driver Licences Snapshot 2026 (monthly; licence type, class, primary flag, gender, age group, customer address LGA, count)",https://opendata.transport.nsw.gov.au/data/dataset/63c6e401-4cca-4a2c-adcc-365d205d0a3e/resource/10987cf1-79a4-4ee9-b17e-10fe1b24819f/download/tfnsw_driver_licences_snapshot_2026.zip,CC-BY 4.0,2026-08-30,a17be1c12e7832a30406ea18569f5a490a052d80650a0886c4b6905891129030
 data/processed/basemap.json,processed,2226971,,,,,,,c12dbb941a5f36df235898027825e2666ee4e29c98f1ee6ac65e80b468cf6483
 data/processed/census/_census_report.json,processed,4458,,cities/newcastle/extract/extract_census.py,,,,,4948168ecd062b22a634a9bbca25ec1c960cda3eff6fa0c586c87c4651682783
 data/processed/census/census2021_G01_SA1.csv,processed,549841,1701,cities/newcastle/extract/extract_census.py,,,,,36c8fb6e9a70043bf928997de949ec8fd9167372fe7ae8da98fdffbe8b9e6106
@@ -119,6 +122,8 @@ data/processed/network/_speed_zone_report.json,processed,1476,,src/build/build_n
 data/processed/observed/_slice_report.json,processed,3736,,cities/newcastle/extract/slice_newcastle.py,,,,,21b6f091b57bf9142b72f5eb08d070ae28c61ea2df8a7f8708be09046c184867
 data/processed/observed/freight_day_factors.csv,processed,97,3,cities/newcastle/extract/extract_freight_profile.py,,,,,a05be3ec649713a4a6155dee5e7ed9f2d4f682a303f336831841006572bc46ab
 data/processed/observed/freight_hourly_profile.csv,processed,1230,72,cities/newcastle/extract/extract_freight_profile.py,,,,,4079c0bc993315451dcd15c4fe29dd677dcee906658a8e36bdcdcc8b44b7f9b8
+data/processed/observed/licence_rate_by_age_band.json,processed,712,,cities/newcastle/extract/slice_newcastle.py,,,,,b00727a7ba84d301fd3cc52614e328b299c9c9f13a8965ce8dcccf7829a07a13
+data/processed/observed/licence_rates_by_age_lga.csv,processed,2422,66,cities/newcastle/extract/slice_newcastle.py,,,,,b3b444196b6b15d991dad209cb1dcad959bd068bcf658788cd7ea3c9fd2a8fc6
 data/processed/observed/light_day_factors.csv,processed,118,3,cities/newcastle/extract/slice_newcastle.py,,,,,95646a6f93869b9fc9a9f235be94a7dafae9b83eeeaf1c3a83c3761598a3e420
 data/processed/observed/light_hourly_profile.csv,processed,1232,72,cities/newcastle/extract/slice_newcastle.py,,,,,7b8dd9425c6e0bc5d86da6a6633f1f3752f387435731db1997187b92ce2270f1
 data/processed/observed/opal_bus_newcastle_hunter.csv,processed,49156,1363,cities/newcastle/extract/slice_newcastle.py,,,,,59cccc3a1c98ddf8b0643d1ae445d6ae37f7a810a145f5de4eac1260c341ecb2
@@ -131,14 +136,14 @@ data/processed/schedule_extras/A3_route_extras.csv,processed,41415,290,src/build
 data/processed/schedule_extras/A3_stop_extras.csv,processed,401658,3873,src/build/build_gtfs_extras.py,,,,,1d22c1b2632863915c218c8d172c172d8d251ca145dbbf37ac3ef57af1eca3a6
 data/processed/schedule_extras/A3_transfer_extras.csv,processed,513828,3584,src/build/build_gtfs_extras.py,,,,,b9ac0bc65b8e022e85615584966bad9b75446838cc1aee2131951ced7cbfa94f
 data/processed/schedule_extras/_extras_report.json,processed,691,,src/build/build_gtfs_extras.py,,,,,3982a2ea663cffabee831c6e0b6dc196c9c0ffe85f3c0a497279d38de5f4c801
-data/processed/validation/_mode_targets_report.json,processed,836,,cities/newcastle/build/build_validation_targets.py,,,,,777005d85b73a9b49c00880f6b6be6c27e40f23d703865b624ce6190c79b4894
+data/processed/validation/_mode_targets_report.json,processed,795,,cities/newcastle/build/build_validation_targets.py,,,,,051b165795617b7d7f88f20e1bd9b4b2be574acfbe3db514b182db65e1526b0a
 data/processed/validation/_validation_report.json,processed,500,,cities/newcastle/build/build_validation_targets.py,,,,,9d9c374554a1ad719ca82c59c11a649ad9dee3a084058c084f017ba16261cc27
 data/processed/validation/bus_monthly_series.csv,processed,2925,108,cities/newcastle/build/build_validation_targets.py,,,,,12349cf379347f26ada4b1b67e5b6c92bd495d2c9938c2e729f056f3c34127a5
 data/processed/validation/count_station_links.csv,processed,17665,195,cities/newcastle/build/build_validation_targets.py,,,,,cbcc69ee328bd377c969fbe0af183e6fb0ecb2ee287759f5f7153eb6a94fb2ee
 data/processed/validation/lr_monthly_series.csv,processed,2224,89,cities/newcastle/build/build_validation_targets.py,,,,,7111e637d43fc5cd236f50a0d8789a273016879d7cfb583ec119ad8a3069474d
 data/processed/validation/lr_taps_by_stop.csv,processed,205,6,cities/newcastle/build/build_validation_targets.py,,,,,0c62da63ae0a88963060add74a6f0a165f8d3ace10da354068ededeb12ae8024
-data/processed/validation/mode_targets_by_mode.csv,processed,8765,12,cities/newcastle/build/build_validation_targets.py,,,,,d62aa4a09c827c8d1de6e10abd7f5d9357090d89a13a477acc924c3f7974ae8f
-data/processed/validation/pt_boardings_targets.json,processed,1250,,cities/newcastle/build/build_validation_targets.py,,,,,5f27f122cac426354d62d0bd26b4f27700c2675a63268d71f57c10769a283148
+data/processed/validation/mode_targets_by_mode.csv,processed,8752,12,cities/newcastle/build/build_validation_targets.py,,,,,2d4b803627ad25c8f5a1ef3acb9a8efe5fc49f202ceb88be25cb00a3e7734336
+data/processed/validation/pt_boardings_targets.json,processed,1204,,cities/newcastle/build/build_validation_targets.py,,,,,627eb1ccc08597eb3709e2e153efd5f62a71ae26d7e7e1b73fdc2828bc52bc73
 data/processed/validation/road_aadt_targets.csv,processed,18485,119,cities/newcastle/build/build_validation_targets.py,,,,,6e01c96dffd984de97923902046cd19e3c7fe111754bffb71322ce76d7ae5495
 data/processed/validation/station_entries_exits_mean.csv,processed,2236,52,cities/newcastle/build/build_validation_targets.py,,,,,bfe827118ee8988d39b9efb296d2bcc099927dab94704b5eb21b8de73281d25b
 data/processed/validation/validation_targets.csv,processed,40585,210,cities/newcastle/build/build_validation_targets.py,,,,,a2bde12b77a1aa7e7f82d8fd878cd18c9382cce9895ecc603d9cc712b72f2b1d
@@ -192,10 +197,8 @@ schedules/scenarios/S6.zip,processed,9411374,8,cities/newcastle/build/build_scen
 schedules/scenarios/_scenario_schedule_report.json,processed,3399,,cities/newcastle/build/build_scenario_schedules.py,,,,,eebfe1b532aa6a5b4d272abab1d5091611116362a96d9c0e67c3c69cfcd8b81d
 demand/plans/B2_activity_trips_SAT.csv,processed,255112121,1903521,src/build/build_activity_chains.py,,,,,3edaf234c39e8f87515e181fa2c9379beb13de35a8d77674e6dd077db9385484
 demand/plans/B2_activity_trips_SUN.csv,processed,222966839,1664677,src/build/build_activity_chains.py,,,,,8002174962a99180b67b3807a3c7428131302d4fc477f1aa7dd86347bdb5929f
-demand/plans/B2_activity_trips_WEEKDAY.csv,processed,322902268,2343321,src/build/build_activity_chains.py,,,,,skipped_large
 demand/plans/B2_escort_bindings_SAT.csv,processed,1439230,68801,src/build/build_activity_chains.py,,,,,3fe6937c544cde38e9f50210aff63f14e0f25a7e1adff4f985ede75c230535b9
 demand/plans/B2_escort_bindings_SUN.csv,processed,1017867,48817,src/build/build_activity_chains.py,,,,,2865fc40b51543e0c1ddbbcf9354981d8a54a85d6ab3ff63fe9c4b712312015e
-demand/plans/B2_escort_bindings_WEEKDAY.csv,processed,2642323,125475,src/build/build_activity_chains.py,,,,,de23f825fcdacb14edc206bdea69da083f798ccb4be18b06dc9f70fa589a12a0
 demand/plans/B2_joint_bindings_SAT.csv,processed,3318214,110079,src/build/build_activity_chains.py,,,,,0556c4c1ac1a154f24b8522d6b413eae1583785bc9a15f897ce065b7ef651bbd
 demand/plans/B2_joint_bindings_SUN.csv,processed,3039694,100821,src/build/build_activity_chains.py,,,,,cb26da868a5bb6cd4642cf357952c9b3fdbc0e026e2991a3f4880700510e1d57
 demand/plans/B2_joint_bindings_WEEKDAY.csv,processed,2483492,82384,src/build/build_activity_chains.py,,,,,2f2b9d869f95a58e1a6c285ca9919d834210a0bc6368093a7fef11dd51243bbd
@@ -206,13 +209,13 @@ demand/plans/B2_shared_bindings_SAT.csv,processed,2805656,66558,src/build/build_
 demand/plans/B2_shared_bindings_SUN.csv,processed,2678181,63578,src/build/build_activity_chains.py,,,,,422ffa4506155e3f3231d5d35da813f7333a663805182504ad5d640992b95a95
 demand/plans/B2_shared_bindings_WEEKDAY.csv,processed,5032595,119402,src/build/build_activity_chains.py,,,,,5b89c74c5e92c191de83b2a620265f535b012427c4c77041462a5a3b1d66a8f0
 demand/plans/_activity_chains_report.json,processed,23002,,src/build/build_activity_chains.py,,,,,63e298aabc91e5243d4b105c43ef814541f6389eecf5be7307cb1e37848e99e7
-demand/plans/matsim/_plans_report.json,processed,5330,,src/build/build_matsim_plans.py,,,,,3e83c8ba25e671b888bde7ee5885b26ef24fd904be68bba070a49f06ea149971
+demand/plans/matsim/_plans_report.json,processed,5121,,src/build/build_matsim_plans.py,,,,,d67ea071747576862218511824ea88c8b054162467e1c846d3ad273957182ce7
 demand/plans/matsim/population_SAT.xml.gz,processed,61483679,,src/build/build_matsim_plans.py,,,,,ba1cd24eccc8f911ec3339b223b5efcc2a12e13ff826a116d74f4146b0e4aa6c
 demand/plans/matsim/population_SUN.xml.gz,processed,54775757,,src/build/build_matsim_plans.py,,,,,4a796312ad159a2f5fb17434571f2c2393194543da7805f97e8e9405ca9e6a84
 demand/plans/matsim/population_WEEKDAY.xml.gz,processed,74756384,,src/build/build_matsim_plans.py,,,,,7bcb2a5dd4449480cf128be85e9899eee2b7f688f129ba9864f8a3181eb0181a
-demand/population/B1_households.csv,processed,20719465,246845,src/build/build_population.py,,,,,d3bb588f1094a9d0a8b61b957f14493664aae7b67d996a66f20ee613d0938d50
-demand/population/B1_synthetic_population.csv,processed,65341162,612687,src/build/build_population.py,,,,,549b938c9739d6b2a50c06c477d273245a8fc692d715f44988618aba9b84a39c
-demand/population/_population_report.json,processed,1483,,src/build/build_population.py,,,,,9be0511e3704575e4f928b0a69a0cc0b9a5ef9e2eb28f1642d1277b97c2cd142
+demand/population/B1_households.csv,processed,20721831,246865,src/build/build_population.py,,,,,e0fcb4aa94e241437d64bd04ad23c54e15a903795c690e2e96b38eb26442b763
+demand/population/B1_synthetic_population.csv,processed,65331497,612634,src/build/build_population.py,,,,,e70cea575a42520bb59d04d30659ad396ce33d6d5d13daa463f4edcd7f226247
+demand/population/_population_report.json,processed,1483,,src/build/build_population.py,,,,,ac361c1dba8df99e754f7967191c2dd25c7f5641db0cb7cb330ef2f487ba52d1
 params/C1_behavioural_parameters.csv,processed,16536,30,src/build/build_params.py,,,,,480edf46705b7380d63053bca39bc22558e730eba023cc83f71941a30b3d0d2a
 params/C1_parameters.json,processed,3905,,src/build/build_params.py,,,,,32d3219a2978b4ac0b273f388ec9aa81621fac42b5fa36e5e0267552832726da
 params/C1_sensitivity_sweep_grid.csv,processed,573,28,src/build/build_params.py,,,,,61075e0ad62ad5a7e2202dfee962a581aff226758e1bc1f7d38263242fc05212
@@ -235,7 +238,7 @@ scenarios/S3.json,processed,1340,,cities/newcastle/build/build_scenario_configs.
 scenarios/S4.json,processed,1351,,cities/newcastle/build/build_scenario_configs.py,,,,,1743c796dbcb51cab005910b11c58543fa6f360a9bf2f8426cbfb47bf4aea4fe
 scenarios/S5.json,processed,1343,,cities/newcastle/build/build_scenario_configs.py,,,,,a9ace48e84b7da4dba47d7139208335b10c330f22c5fa97007ca670228cff012
 scenarios/S6.json,processed,1293,,cities/newcastle/build/build_scenario_configs.py,,,,,757ec3bb7a9e434d791b3ea3dcbbb7b8cdbd3a5483f182916b0c0324e714b4a4
-scenarios/matsim/_run_inputs_report.json,processed,46178,,src/build/build_matsim_run_inputs.py,,,,,ab4b6ffb56e77eabf97ab48f79d65afedc2121bd7c046bdf8f2d53a30dcbda35
+scenarios/matsim/_run_inputs_report.json,processed,44382,,src/build/build_matsim_run_inputs.py,,,,,db9762a12d67ddca6d93edfe02aee843a1d5726802b54934341221410974eedf
 scenarios/matsim/S0/network.xml.gz,processed,7509854,,src/build/build_matsim_run_inputs.py,,,,,ef0872c6dd484a7db45eb84c33f9bce886d08d72a94e46419b017021dea4a41a
 scenarios/matsim/S0/parking_prices.tsv,processed,301766,,src/build/build_matsim_run_inputs.py,,,,,f270dd3e5f985e389c27a353f4736794acbeca92a0182582082e91cf597f732b
 scenarios/matsim/S0/SAT/config.xml,processed,15089,,src/build/build_matsim_run_inputs.py,,,,,42ceec50042f348e08bf7a1a800311dbcccec7d2794685176646916781cf4ac7

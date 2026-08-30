@@ -1,18 +1,18 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-30T19:16:20",
+  "generated": "2026-08-30T19:39:53",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
-  "n_files": 498,
-  "total_bytes": 4363758962,
-  "total_gib": 4.06,
+  "n_files": 501,
+  "total_bytes": 4040019258,
+  "total_gib": 3.76,
   "by_stage": {
-    "raw": 81,
+    "raw": 84,
     "processed": 417
   },
   "bytes_by_stage": {
-    "raw": 2723345128,
-    "processed": 1640413834
+    "raw": 2725156285,
+    "processed": 1314862973
   },
   "files": [
     {
@@ -52,6 +52,18 @@
       "retrieved": ""
     },
     {
+      "path": "data/raw/provenance_licences.json",
+      "bytes": 1134,
+      "rows": null,
+      "sha256": "e79e457a99456fc43fe1dbeb49bd2a3d8acccf74a080481e5fca3a2bdd40d9c4",
+      "stage": "raw",
+      "produced_by": "",
+      "source": "",
+      "source_url": "",
+      "licence": "",
+      "retrieved": ""
+    },
+    {
       "path": "data/raw/provenance_open_data.json",
       "bytes": 11257,
       "rows": null,
@@ -62,6 +74,18 @@
       "source_url": "",
       "licence": "",
       "retrieved": ""
+    },
+    {
+      "path": "data/raw/abs/32350DS0003_2024.xlsx",
+      "bytes": 274335,
+      "rows": null,
+      "sha256": "4e25a917b8556d1d22f628d749f7c348ef72048e6fdd9d241ffa68949b55e184",
+      "stage": "raw",
+      "produced_by": "",
+      "source": "ABS Regional population by age and sex, 2024 - estimated resident population by age and sex, Local Government Areas, 30 June 2024 (released 28 Aug 2025)",
+      "source_url": "https://www.abs.gov.au/statistics/people/population/regional-population-age-and-sex/2024/32350DS0003_2024.xlsx",
+      "licence": "CC-BY 4.0",
+      "retrieved": "2026-08-30"
     },
     {
       "path": "data/raw/boundaries/DZN_2021_AUST_GDA2020_SHP.zip",
@@ -674,6 +698,18 @@
       "source_url": "",
       "licence": "",
       "retrieved": ""
+    },
+    {
+      "path": "data/raw/tfnsw/driver_licences_snapshot_2026.zip",
+      "bytes": 1535688,
+      "rows": 7,
+      "sha256": "a17be1c12e7832a30406ea18569f5a490a052d80650a0886c4b6905891129030",
+      "stage": "raw",
+      "produced_by": "",
+      "source": "TfNSW Driver Licence Statistics - Driver Licences Snapshot 2026 (monthly; licence type, class, primary flag, gender, age group, customer address LGA, count)",
+      "source_url": "https://opendata.transport.nsw.gov.au/data/dataset/63c6e401-4cca-4a2c-adcc-365d205d0a3e/resource/10987cf1-79a4-4ee9-b17e-10fe1b24819f/download/tfnsw_driver_licences_snapshot_2026.zip",
+      "licence": "CC-BY 4.0",
+      "retrieved": "2026-08-30"
     },
     {
       "path": "data/processed/basemap.json",
@@ -1456,6 +1492,30 @@
       "retrieved": ""
     },
     {
+      "path": "data/processed/observed/licence_rate_by_age_band.json",
+      "bytes": 712,
+      "rows": null,
+      "sha256": "b00727a7ba84d301fd3cc52614e328b299c9c9f13a8965ce8dcccf7829a07a13",
+      "stage": "processed",
+      "produced_by": "cities/newcastle/extract/slice_newcastle.py",
+      "source": "",
+      "source_url": "",
+      "licence": "",
+      "retrieved": ""
+    },
+    {
+      "path": "data/processed/observed/licence_rates_by_age_lga.csv",
+      "bytes": 2422,
+      "rows": 66,
+      "sha256": "b3b444196b6b15d991dad209cb1dcad959bd068bcf658788cd7ea3c9fd2a8fc6",
+      "stage": "processed",
+      "produced_by": "cities/newcastle/extract/slice_newcastle.py",
+      "source": "",
+      "source_url": "",
+      "licence": "",
+      "retrieved": ""
+    },
+    {
       "path": "data/processed/observed/light_day_factors.csv",
       "bytes": 118,
       "rows": 3,
@@ -1601,9 +1661,9 @@
     },
     {
       "path": "data/processed/validation/_mode_targets_report.json",
-      "bytes": 836,
+      "bytes": 795,
       "rows": null,
-      "sha256": "777005d85b73a9b49c00880f6b6be6c27e40f23d703865b624ce6190c79b4894",
+      "sha256": "051b165795617b7d7f88f20e1bd9b4b2be574acfbe3db514b182db65e1526b0a",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",
@@ -1673,9 +1733,9 @@
     },
     {
       "path": "data/processed/validation/mode_targets_by_mode.csv",
-      "bytes": 8765,
+      "bytes": 8752,
       "rows": 12,
-      "sha256": "d62aa4a09c827c8d1de6e10abd7f5d9357090d89a13a477acc924c3f7974ae8f",
+      "sha256": "2d4b803627ad25c8f5a1ef3acb9a8efe5fc49f202ceb88be25cb00a3e7734336",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",
@@ -1685,9 +1745,9 @@
     },
     {
       "path": "data/processed/validation/pt_boardings_targets.json",
-      "bytes": 1250,
+      "bytes": 1204,
       "rows": null,
-      "sha256": "5f27f122cac426354d62d0bd26b4f27700c2675a63268d71f57c10769a283148",
+      "sha256": "627eb1ccc08597eb3709e2e153efd5f62a71ae26d7e7e1b73fdc2828bc52bc73",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_validation_targets.py",
       "source": "",
@@ -2332,18 +2392,6 @@
       "retrieved": ""
     },
     {
-      "path": "demand/plans/B2_activity_trips_WEEKDAY.csv",
-      "bytes": 322902268,
-      "rows": 2343321,
-      "sha256": "skipped_large",
-      "stage": "processed",
-      "produced_by": "src/build/build_activity_chains.py",
-      "source": "",
-      "source_url": "",
-      "licence": "",
-      "retrieved": ""
-    },
-    {
       "path": "demand/plans/B2_escort_bindings_SAT.csv",
       "bytes": 1439230,
       "rows": 68801,
@@ -2360,18 +2408,6 @@
       "bytes": 1017867,
       "rows": 48817,
       "sha256": "2865fc40b51543e0c1ddbbcf9354981d8a54a85d6ab3ff63fe9c4b712312015e",
-      "stage": "processed",
-      "produced_by": "src/build/build_activity_chains.py",
-      "source": "",
-      "source_url": "",
-      "licence": "",
-      "retrieved": ""
-    },
-    {
-      "path": "demand/plans/B2_escort_bindings_WEEKDAY.csv",
-      "bytes": 2642323,
-      "rows": 125475,
-      "sha256": "de23f825fcdacb14edc206bdea69da083f798ccb4be18b06dc9f70fa589a12a0",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",
@@ -2501,9 +2537,9 @@
     },
     {
       "path": "demand/plans/matsim/_plans_report.json",
-      "bytes": 5330,
+      "bytes": 5121,
       "rows": null,
-      "sha256": "3e83c8ba25e671b888bde7ee5885b26ef24fd904be68bba070a49f06ea149971",
+      "sha256": "d67ea071747576862218511824ea88c8b054162467e1c846d3ad273957182ce7",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2549,9 +2585,9 @@
     },
     {
       "path": "demand/population/B1_households.csv",
-      "bytes": 20719465,
-      "rows": 246845,
-      "sha256": "d3bb588f1094a9d0a8b61b957f14493664aae7b67d996a66f20ee613d0938d50",
+      "bytes": 20721831,
+      "rows": 246865,
+      "sha256": "e0fcb4aa94e241437d64bd04ad23c54e15a903795c690e2e96b38eb26442b763",
       "stage": "processed",
       "produced_by": "src/build/build_population.py",
       "source": "",
@@ -2561,9 +2597,9 @@
     },
     {
       "path": "demand/population/B1_synthetic_population.csv",
-      "bytes": 65341162,
-      "rows": 612687,
-      "sha256": "549b938c9739d6b2a50c06c477d273245a8fc692d715f44988618aba9b84a39c",
+      "bytes": 65331497,
+      "rows": 612634,
+      "sha256": "e70cea575a42520bb59d04d30659ad396ce33d6d5d13daa463f4edcd7f226247",
       "stage": "processed",
       "produced_by": "src/build/build_population.py",
       "source": "",
@@ -2575,7 +2611,7 @@
       "path": "demand/population/_population_report.json",
       "bytes": 1483,
       "rows": null,
-      "sha256": "9be0511e3704575e4f928b0a69a0cc0b9a5ef9e2eb28f1642d1277b97c2cd142",
+      "sha256": "ac361c1dba8df99e754f7967191c2dd25c7f5641db0cb7cb330ef2f487ba52d1",
       "stage": "processed",
       "produced_by": "src/build/build_population.py",
       "source": "",
@@ -2849,9 +2885,9 @@
     },
     {
       "path": "scenarios/matsim/_run_inputs_report.json",
-      "bytes": 46178,
+      "bytes": 44382,
       "rows": null,
-      "sha256": "ab4b6ffb56e77eabf97ab48f79d65afedc2121bd7c046bdf8f2d53a30dcbda35",
+      "sha256": "db9762a12d67ddca6d93edfe02aee843a1d5726802b54934341221410974eedf",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "",

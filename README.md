@@ -186,11 +186,11 @@ python src/calibrate/report.py --run <run dir>
 
 | | |
 |---|---|
-| Files in the manifest | **498** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
+| Files in the manifest | **501** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
 | Package on disk | ~4.7 GB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
-| Population | 611,915 (2021 Census) → 612,687 synthetic agents |
+| Population | 611,915 (2021 Census) → 612,634 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
