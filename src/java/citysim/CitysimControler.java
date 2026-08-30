@@ -155,8 +155,12 @@ public final class CitysimControler {
         final GradientConfigGroup gradient = new GradientConfigGroup();
         final ModeAvailabilityConfigGroup modeAvailability =
                 new ModeAvailabilityConfigGroup();
+        // The PT router's direct-walk basis (DECISIONS.md 9.121, #94):
+        // registered on every stack like the others; absent from the
+        // emitted config it defaults to the stock beeline behaviour.
+        final PtDirectWalkConfigGroup ptDirectWalk = new PtDirectWalkConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[10 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[11 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -167,8 +171,9 @@ public final class CitysimControler {
         groups[7] = modeAvailability;
         groups[8] = scats;
         groups[9] = taxiFleet;
+        groups[10] = ptDirectWalk;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[10 + i] = extraGroups.get(i);
+            groups[11 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -208,6 +213,25 @@ public final class CitysimControler {
                 // when nothing is impermissible it changes nothing.
                 addPlanStrategyBinding("SubtourModeChoice")
                         .toProvider(GatedSubtourModeChoice.class);
+                // DECISIONS.md 9.121, #94: the PT router's direct walk is
+                // evaluated on the walk network rather than the beeline the
+                // raptor draws across the harbour. Both bindings only when
+                // the declared basis (RUN.transit_router.direct_walk_basis,
+                // emitted as ptDirectWalk.basis) asks for it; `beeline` is
+                // the stock raptor untouched.
+                if (ptDirectWalk.isNetwork()) {
+                    // MATSim's injector requires explicit bindings: the stock
+                    // raptor module's provider is injected by the wrapper and
+                    // is bound nowhere else (measured: the first smoke died
+                    // at injector creation on exactly this)
+                    bind(ch.sbb.matsim.routing.pt.raptor
+                            .SwissRailRaptorRoutingModuleProvider.class);
+                    bind(ch.sbb.matsim.routing.pt.raptor.RaptorParametersForPerson.class)
+                            .to(NetworkDirectWalkPtRouter.NoDirectWalkParameters.class)
+                            .in(Singleton.class);
+                    addRoutingModuleBinding(TransportMode.pt)
+                            .toProvider(NetworkDirectWalkPtRouter.RouterProvider.class);
+                }
                 // #49 Tier C (DECISIONS.md 9.78): with pt-submode mapping a
                 // passenger leg's mode is the scheduled bus/tram/rail/ferry,
                 // and the stock DefaultAnalysisMainModeIdentifier either

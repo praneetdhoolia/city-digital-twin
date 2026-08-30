@@ -75,28 +75,29 @@
     },
     "B.population.licence_rate_by_age_band": {
       "value": [
-        0,
-        0,
-        0,
-        0.62,
-        0.88,
-        0.93,
-        0.94,
-        0.93,
-        0.88,
-        0.72,
-        0.45
+        0.0,
+        0.0,
+        0.0823,
+        0.7828,
+        0.9402,
+        1.0,
+        0.9786,
+        0.972,
+        0.9838,
+        0.9172,
+        0.5118
       ],
       "units": "probability",
-      "source": "literature",
+      "source": "measured",
       "sweep": {
-        "proportional": 0.1
+        "proportional": 0.05
       },
       "status": "active",
-      "decisions_ref": "9.1",
-      "description": "Driver licence holding by age band, aligned to B.population.age_bands.",
+      "decisions_ref": "9.1, 9.131",
+      "description": "Driver-licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written by cities/newcastle/build/build_licence_rates.py from the TfNSW Driver Licence Statistics snapshot (202607: primary licence of any class, non-learner, by age group and customer-address LGA) over the ABS estimated resident population by age and LGA at 30 June 2024, split to single years by the census G04 profile. The population builder draws each person's licence from the PER-LGA rate in data/processed/observed/licence_rates_by_age_lga.csv and falls back to this vector only where an LGA has no row. Before 9.131 this was a literature vector (18-24 0.62, 25-34 0.88, 35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88, 75-84 0.72, 85+ 0.45) that left 14.2-14.8% of employed persons without a licence; the measured rates are 18-24 0.78, 25-34 0.94, 35-44 1.00 (holders exceed the 2024 ERP - address staleness and two years of growth - and the rate is capped at 1), 45-74 0.97-0.98, 75-84 0.92, 85+ 0.51, and 12-17 0.08 (provisional drivers aged 16-17). Suppressed cells (<=5) are taken at 3. The sweep is the suppression and the denominator vintage.",
       "consumers": [
-        "src/build/build_population.py"
+        "src/build/build_population.py",
+        "cities/newcastle/build/build_licence_rates.py"
       ]
     },
     "B.activity.plan_speed_car_kmh": {
@@ -713,7 +714,8 @@
       "decisions_ref": "9.77",
       "description": "Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. A flag on how a comparison is LABELLED, never a value that reaches the model; declared so the threshold is visible and changeable in one place.",
       "consumers": [
-        "src/analyse/measure_demographic_modes.py"
+        "src/analyse/measure_demographic_modes.py",
+        "src/build/build_matsim_plans.py"
       ]
     },
     "B.counts.station_match_radius_m": {
@@ -1114,6 +1116,24 @@
       "decisions_ref": "9.6, 9.7",
       "description": "The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative."
     },
+    "B.mode.seed_method": {
+      "value": "full_choice_set",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "full_choice_set",
+          "uniform_draw"
+        ],
+        "basis": "The two seed methods the plan builder can produce. `uniform_draw` is the pre-9.120 seed - ONE plan per person, its tour modes drawn uniformly over the usable modes (B.mode.seed_split) - and `full_choice_set` writes one plan per usable mode instead, so the sweep is over the METHOD, not over any share; running both measures how much the search, rather than the scoring, decided the converged shares."
+      },
+      "status": "active",
+      "decisions_ref": "9.120",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "How each person's initial plan memory is populated. `full_choice_set`: one plan per mode the person may use - car (if a car is available), walk, bike (if one is available and the person is old enough), pt, taxi (if old enough) - each mode on every tour it may take, with serving tours held at car and, where the demand declared a driver, one further plan riding on the covered tours. MATSim executes every UNSCORED plan before it consults the selector (GenericPlanStrategyImpl.run in the pinned jar), so the entire choice set is scored within the first few iterations and selection - not random innovation - decides the mode from then on. It favours no mode: each is one plan, once. Measured motivation (9.120): on the F14 arm at iteration 30, 65% of the residents still cycling held no bike-free plan in memory, and a level read at iteration 100 was a statement about the search, not the model. Needs RUN.replanning.max_agent_plan_memory above the seeded plan count, because MATSim removes an UNSCORED plan first when memory overflows (WorstPlanForRemovalSelector). `uniform_draw`: the single uniformly drawn plan, as before."
+    },
     "B.network_factors.n_pairs": {
       "value": 600,
       "units": "zone_pairs",
@@ -1185,19 +1205,22 @@
       "status": "active",
       "decisions_ref": "9.44",
       "description": "How far apart a passenger's and a driver's PLANNED departures may be and still be treated as one trip. This is the tolerance the pairing is allowed, NOT a modelled waiting time: Tier 1 does not move the passenger's departure, because shifting it would cascade through the rest of that person's day and the blast radius of the change is deliberately bounded. Who adapts is nonetheless DECLARED rather than left open - the passenger does, since the driver's plan cascades further - and the unmodelled sub-window adjustment is a stated limitation, not a silent one. Consumed by src/java/citysim/RidePairingEngine.",
-      "matsim_param": "ridePairing.windowMinutes"
+      "matsim_param": "ridePairing.windowMinutes",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
     },
     "B.ride.bound_pairing_window_min": {
       "value": 60.0,
       "units": "minutes",
       "source": "derived",
       "status": "active",
-      "decisions_ref": "9.85, 9.95",
+      "decisions_ref": "9.85, 9.95, 9.120",
       "consumers": [
         "src/java/citysim/RidePairingConfigGroup.java"
       ],
       "matsim_param": "ridePairing.boundWindowMinutes",
-      "description": "The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly. CORRECTED IN 9.95, and the error was in the identity rather than the value. It read time_mutation_range_s / 60, which is ONE agent half-width - but the mutator moves each member of a pair INDEPENDENTLY, as this field description already said. Two independent draws on +-1800 s can land 3600 s apart, so the relative drift a declared pair can accumulate is TWICE the half-width, not equal to it. The window was therefore half the size of the drift it exists to cover, and it was refusing pairs the model itself had separated. Measured on arm 20260829T054941 at iteration 100 with src/analyse/diagnose_ride_pairing.py: 3,987 declared ride legs (13.13% of all of them) had the driver making the SAME trip, both endpoints matching exactly, and were refused on the clock alone - median gap 53.6 minutes, minimum exactly 30.0, which is the old window showing its own edge in the data. This is a correction to a derivation, not a tuning: the value still cannot move without moving the mutation range that produces the drift, and the realised gap is still paid for as waiting time in score.",
+      "description": "SINCE 9.120 THIS IS NOT A PAIRING TOLERANCE. RidePairingEngine applies no clock test to the driver the demand named: a declared pair is paired on identity alone and the passenger's departing activity is re-timed to the driver's departure, so the planning drift this window was derived to cover (2 x the mutation range) is removed at its source rather than tolerated. The field survives with ONE consumer: the physical wait JointRideEngine allows a DECLARED booking at the meeting link before the miss falls through to the routed time - the driver's own realised drift from earlier legs, which the identity still describes. It is unchanged in value and derivation. Everything below is the pre-9.120 record. The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly. CORRECTED IN 9.95, and the error was in the identity rather than the value. It read time_mutation_range_s / 60, which is ONE agent half-width - but the mutator moves each member of a pair INDEPENDENTLY, as this field description already said. Two independent draws on +-1800 s can land 3600 s apart, so the relative drift a declared pair can accumulate is TWICE the half-width, not equal to it. The window was therefore half the size of the drift it exists to cover, and it was refusing pairs the model itself had separated. Measured on arm 20260829T054941 at iteration 100 with src/analyse/diagnose_ride_pairing.py: 3,987 declared ride legs (13.13% of all of them) had the driver making the SAME trip, both endpoints matching exactly, and were refused on the clock alone - median gap 53.6 minutes, minimum exactly 30.0, which is the old window showing its own edge in the data. This is a correction to a derivation, not a tuning: the value still cannot move without moving the mutation range that produces the drift, and the realised gap is still paid for as waiting time in score.",
       "derived_from": {
         "fields": [
           "RUN.replanning.time_mutation_range_s"
@@ -1223,6 +1246,26 @@
       "decisions_ref": "9.44, 9.102",
       "description": "The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. `route_contains` generalises that to a SEGMENT of the driver's trip and is implemented and measured (9.102), but is a sweep member rather than the value. Consumed by src/java/citysim/RidePairingEngine.",
       "matsim_param": "ridePairing.rule"
+    },
+    "B.ride.declared_pair_meeting": {
+      "value": "driver_detour",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "driver_detour",
+          "passenger_links"
+        ],
+        "basis": "Where a DECLARED ride pair meets when the passenger's and the driver's links differ. `passenger_links` is the behaviour before 9.128: the named driver must still satisfy B.ride.pairing_rule on the passenger's own two links, so a shared ride bound on a suburb-to-suburb trip (9.124) is never realised - two households in one SA2 do not share a link, and the valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints for exactly that reason. `driver_detour` routes the driver's car leg, at BeforeMobsim and with the run's own car router, through each carried passenger's origin link (in departure order) and then each destination link, and on to the driver's own destination; the passenger boards at their own link as the car passes it and alights at their own, and the pairing books the pass time. The detour is driven on the network and the driver's score pays for it, so a passenger too far out of the driver's way costs the driver what it costs and no threshold decides who is served. A walking meeting point was built first and measured on a 1% smoke at a mean 8-11 km walked to and from the driver's links - nobody walks that to a lift - and was replaced by this. The sweep is over the MECHANISM: running both measures how much of the realised ride share the detour itself supplies."
+      },
+      "status": "active",
+      "decisions_ref": "9.128",
+      "matsim_param": "ridePairing.declaredMeeting",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/RidePairingEngine.java"
+      ],
+      "description": "Where a declared ride pair meets when the two members' links differ: `driver_detour` routes the driver's car leg through the passenger's origin and destination links and the passenger boards and alights at their own; `passenger_links` requires the driver to satisfy the pairing rule on the passenger's links (pre-9.128). Consumed by RidePairingEngine through ridePairing.declaredMeeting."
     },
     "B.ride.unpaired_fallback": {
       "value": "licensed_drive_else_walk",
@@ -1331,6 +1374,41 @@
       "description": "Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 standing directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. False keeps Tier 1's teleport for the unpaired, for comparability within one build. Consumed by citysim.RidePairingEngine.",
       "matsim_param": "ridePairing.remodeUnpaired"
     },
+    "B.ride.shared_lift_scope": {
+      "value": "same_sa2_od",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "same_sa2_od",
+          "same_sa1_od",
+          "none"
+        ],
+        "basis": "The three states the fourth binder pass can take. `none` is the pre-9.124 demand, in which a resident without a car rides only with a household driver, an escort or a re-targeted lift; `same_sa1_od` and `same_sa2_od` bind their direct tours to non-household drivers making the same zone-to-zone trip within B.ride.pairing_window_min, at SA1 or SA2 co-location - both the statistical geography, neither a radius. Measured on the committed WEEKDAY demand (9.124): the identity's remainder after the three earlier passes is 119,313 trips (59,656 direct tours); same-SA1 finds a driver both ways for 19,034 of the 107,089 car-less direct tours and binds them all, a fifth of the remainder; same-SA2 finds one for 105,515 and is THINNED to 59,648 - the observation caps it, with 17 trips of shortfall. The sweep is over the co-location rule; the volume is never free."
+      },
+      "status": "active",
+      "decisions_ref": "9.124, 9.127",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "Where a resident without a car may be given a lift by someone outside their household. Measured motivation (9.123): on the F17 arm residents without a car made 24.7% of trips and, with only the bound rides available, walked 48%, cycled 17% and took pt 15% of them - bike's, bus's and walk's excess were ride's deficit. `same_sa2_od`: the passenger's direct tour is bound, both directions, to non-household drivers making a trip between the same origin SA2 and destination SA2 within B.ride.pairing_window_min (a colleague from the same suburb driving to the same suburb at the same hour), each driver trip carrying at most B.ride.max_passengers_per_vehicle, the nearest departure first, sorted traversal; the volume is the joint binder's identity - (occupancy - 1) x the driver share x core trips - less every trip the earlier passes cover, thinned deterministically to it. Consumed by build_activity_chains.py; the bindings reach the run as boundDriver / boundRideTrips / boundDriveTrips like the lift table's, and the runtime pairing re-times the passenger to the driver (9.120). SAMPLING (9.127): a passenger is bound only to drivers whose household unit hash (blake2b over 'household|<id>|RUN.machine.seed', the sampler's own) is at or below the passenger's, so every nested household sample that keeps the passenger keeps the driver by construction; the sampler excludes these households from its lift clusters (`sharedDriverHousehold`). Measured: unioning them made the 10% sample 31,262 persons where 62,134 were due; a directed closure made it 17.65% of persons."
+    },
+    "B.ride.shared_lift_hash_bucket": {
+      "value": 0.05,
+      "units": "fraction of the sampling-hash range",
+      "source": "assumed",
+      "sweep": [
+        0.05,
+        0.1
+      ],
+      "sweep_basis": "The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. The 9.127 rule (driver hash AT OR BELOW the passenger's) also guaranteed that, but it named LOW-hash households as drivers, and a 10% sample - which is exactly the low-hash households - then kept named drivers at 12.4% and everyone else at 7.95% (the eligible non-named pool at 6.1%, the motorbike carve at 5.5%, the truck carve at 5.1%): the count was 10%, the composition was not. A bucket prefers no hash. Measured on the WEEKDAY binder, package-identical inputs: at-or-below 98,549 servable / 59,718 bound / 0 short; bucket 0.10 86,848 / 59,806 / 0; bucket 0.05 73,509 / 59,701 / 0; unconstrained 105,515 / 59,648 / 17. 0.05 is declared because 0.10, 0.25 and 0.50 are all multiples of it, so a 25% confirmation arm keeps its pairs too; the cost is candidate supply, and the identity is still met in full. A 1% smoke is not a multiple and breaks pairs - it is a plumbing test and its pairing is never read.",
+      "status": "active",
+      "decisions_ref": "9.129",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both, without preferring low-hash households as drivers. Consumed by the fourth binder pass (bind_shared_rides)."
+    },
     "B.ride.wait_for_driver": {
       "value": true,
       "units": "boolean",
@@ -1396,7 +1474,7 @@
       "matsim_param": "ridePairing.physicalBoarding"
     },
     "B.motorbike.trip_share": {
-      "value": 0.0024064,
+      "value": 0.0037849,
       "units": "share_of_trips",
       "source": "derived",
       "derived_from": {
@@ -1404,14 +1482,50 @@
           "CAL.mode_split.vehicle_driver_level",
           "CAL.mode_split.motorbike_driver_journey_share"
         ],
-        "identity": "trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0040786 = 0.0024064. The carve share and the fit target are the SAME 653 census riders transferred to all-purpose trips, and there is no modelling judgement between them: the carve previously took 653 of ALL 179,761 commute journeys (0.363%) and applied it straight to all trips, which assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS where the survey observes 59.0%. Dividing out that ratio - 89.1/59.0 = 1.510 - returns 0.363%/1.510 = 0.2405%, the target to its last decimal. Conditioning the census cell on driver journeys and scaling by the observed driver level performs the same conversion in one step, so generation and scoring finally describe one quantity (9.115). This LOWERS generation and is a consistency repair, not a fit repair; it must not be sold as one."
+        "identity": "trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0064151 = 0.0037849, both on the TARGET LGA since 9.122 (the core cell gave 0.59 x 0.0040786 = 0.0024064, generated for five LGAs and scored against one). The carve share and the fit target are the SAME census riders transferred to all-purpose trips by the survey's driver level, so generation and scoring describe one quantity (9.115); under B.motorbike.carve_resolution = sa1_thinned the same identity is applied per home SA1 and this field is the LGA-level check the trip-weighted cell mean is reported against."
       },
       "status": "active",
-      "decisions_ref": "9.115",
+      "decisions_ref": "9.115, 9.122",
       "description": "Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.",
       "consumers": [
         "src/build/build_matsim_plans.py"
       ]
+    },
+    "B.motorbike.carve_resolution": {
+      "value": "sa1_thinned",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "sa1_thinned",
+          "region"
+        ],
+        "basis": "The two resolutions the plans builder can carve at. `region` applies B.motorbike.trip_share to every home SA1 alike (the pre-9.122 carve); `sa1_thinned` derives the SAME identity per home SA1 from the census cell that gives the region share - one-method motorbike journeys over one-method car-as-driver journeys, scaled by CAL.mode_split.vehicle_driver_level - falling back to the SA1's SA2 where the driver cell is under B.census.thin_cell_min_journeys. The sweep is over the resolution, not over any share."
+      },
+      "status": "active",
+      "decisions_ref": "9.122",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "The spatial resolution of the motorbike carve. Measured motivation (9.122, #93 fact 2): census G62 puts the motorbike share of driver journeys between 0 and 1.13% across SA2s against a flat 0.41% region value, and the flat carve delivered 0.06% of target-LGA resident trips against the 0.24% target on the F16 and F17 arms - the carve put motorcyclists where car ownership is, not where the census sees them. Per cell the probability is solved on that cell's eligible persons' own trips; the trip-weighted mean of the cell shares is reported beside the declared region share in _plans_report.json so the identity can be checked, never asserted."
+    },
+    "B.truck.resident_trip_share": {
+      "value": 0.002993,
+      "units": "share_of_trips",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "CAL.mode_split.vehicle_driver_level",
+          "CAL.mode_split.truck_driver_journey_share"
+        ],
+        "identity": "resident_trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.truck_driver_journey_share = 0.59 x 0.0050729 = 0.0029930 - the motorbike carve's identity (9.115) applied to the census Truck cell of the target LGA. It is the same slice build_mode_targets.py deducts from the driver level, so the carve and the yardstick describe one quantity."
+      },
+      "status": "active",
+      "decisions_ref": "9.125",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "Share of resident person trips made driving a truck, realised as a PERSON-LEVEL carve exactly like the motorbike carve: a licensed, car-available resident who is not escorting that day becomes a truck driver (their whole day locks to `truck` - vehicle continuity is chain-based, the person's own truck vehicle exists, and no preference observation exists to let it compete in mode choice) with the probability that makes carved persons' trips this share of all trips, solved on the persons who will not be denied. The directive's item 8 - residents with actual trucker jobs beside the anonymous freight tier. Scored with the freight tier's trucks at the classifying count stations (9.101)."
     },
     "B.motorbike.pce": {
       "value": 0.4,
@@ -1746,10 +1860,11 @@
       "status": "active",
       "decisions_ref": "9.84",
       "consumers": [
-        "src/java/citysim/ModeAvailabilityConfigGroup.java"
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
+        "src/build/build_matsim_plans.py"
       ],
       "matsim_param": "modeAvailability.taxiMinAge",
-      "description": "Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49)."
+      "description": "Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49). Since 9.120 the plan builder reads the same value so the full-choice-set seed never writes a taxi plan for a person the run would refuse."
     },
     "B.population.bike_min_age": {
       "value": 12,

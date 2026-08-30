@@ -69,25 +69,47 @@ def iterations_with_trips(run_dir):
     return sorted(found)
 
 
-def mode_share_at(run_dir, iteration, person_lga):
+def trip_rows(run_dir, iteration):
+    """The iteration's linked trips, as trips-table rows.
+
+    From `<n>.trips.csv.gz` when the run wrote one; otherwise derived from the
+    same iteration's experienced plans by `iteration_trips.py`, which is
+    validated to reproduce the table exactly wherever both exist. Returns
+    (rows, source) so a reader can say which it read.
+    """
+    stem = TRIPS_STEM % (iteration, iteration)
+    base = _os.path.join(run_dir, 'output', stem)
+    if any(_os.path.exists(base + ext) for ext in ('.csv.gz', '.csv', '.csv.zst')):
+        with em.open_output(run_dir, stem) as fh:
+            return list(csv.DictReader(fh, delimiter=';')), 'trips table'
+    import iteration_trips as itr
+    if itr.plans_path(run_dir, iteration) is None:
+        raise SystemExit('iteration %d wrote neither a trips table nor '
+                         'experienced plans under %s' % (iteration, run_dir))
+    trips, _ = itr.derive(run_dir, iteration)
+    return list(itr.as_trip_rows(trips)), 'experienced plans (derived)'
+
+
+def mode_share_at(run_dir, iteration, person_lga, rows=None):
     """`extract_metrics.mode_share`'s quantity, for ONE iteration's trips.
 
     Same shape the finished-run path produces, so `fit.score_mode_share` reads
-    it without knowing which of the two produced it.
+    it without knowing which of the two produced it. `rows` lets a caller that
+    already holds the iteration's trips pass them in.
     """
     everyone = collections.Counter()
     target = collections.Counter()
     unknown = 0
-    stem = TRIPS_STEM % (iteration, iteration)
-    with em.open_output(run_dir, stem) as fh:
-        for trip in csv.DictReader(fh, delimiter=';'):
-            mode = trip['main_mode']
-            everyone[mode] += 1
-            who = person_lga.get(trip['person'])
-            if who == em.TARGET_LGA:
-                target[mode] += 1
-            elif who is None:
-                unknown += 1
+    if rows is None:
+        rows, _ = trip_rows(run_dir, iteration)
+    for trip in rows:
+        mode = trip['main_mode']
+        everyone[mode] += 1
+        who = person_lga.get(trip['person'])
+        if who == em.TARGET_LGA:
+            target[mode] += 1
+        elif who is None:
+            unknown += 1
 
     def pct(counter):
         total = sum(counter.values())

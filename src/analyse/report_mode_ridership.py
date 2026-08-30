@@ -22,6 +22,13 @@ denominator they do have, never silently mixed in:
 
     python src/analyse/report_mode_ridership.py --run <run dir>
     python src/analyse/report_mode_ridership.py --run <run dir> --it 100
+    python src/analyse/report_mode_ridership.py --run <run dir> --watch 300
+
+Any iteration the run has written can be read (DECISIONS.md 9.120): the
+trips table where one exists, else the same linked trips derived from that
+iteration's experienced plans by `iteration_trips.py`, validated exactly
+against the table wherever both exist. `--watch` keeps printing each newly
+readable iteration, with a timestamp on every table, until the run ends.
 
 Reads the run directory and the city's target artefact. Writes nothing.
 **Nothing here is a result**: a run without `_run.json` is not a result no
@@ -29,6 +36,7 @@ matter how it scores.
 """
 
 import os as _os
+import re
 import sys as _sys
 _HERE = _os.path.dirname(_os.path.abspath(__file__))
 for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
@@ -63,6 +71,9 @@ SUBMODE_TO_TARGET = {
 # vehicle - they travel in a car that is already counted - so ride is absent
 # here by construction, not by oversight.
 ROAD_VEHICLE_MODES = ('car', 'truck', 'motorbike', 'taxi')
+# What the last report() computed - modelled level, count and target per mode -
+# so `--trend` can line iterations up without re-implementing the table
+LAST = {}
 
 # The gate's two thresholds are the DIRECTIVE's, not this script's, so they
 # are declared like every other controllable value rather than typed here.
@@ -95,7 +106,35 @@ def load_targets():
     return out
 
 
-def pt_submode_trips(run_dir, iteration, person_lga):
+def sample_fraction(run_dir):
+    """The run's sample fraction, from its own record - never assumed."""
+    import json as _json
+    for name in ('_meta.json', '_run.json'):
+        path = _os.path.join(run_dir, name)
+        if _os.path.exists(path):
+            with open(path, encoding='utf-8') as fh:
+                doc = _json.load(fh)
+            v = doc.get('fraction')
+            if v:
+                return float(v)
+    return None
+
+
+def disclosed_stations():
+    """Lower-cased names of the stations the heavy-rail target counts (9.130)."""
+    import json as _json
+    path = _city.path('data/processed/validation/pt_boardings_targets.json')
+    if not _os.path.exists(path):
+        return []
+    with open(path, encoding='utf-8') as fh:
+        doc = _json.load(fh)
+    names = []
+    for s in (doc.get('heavy_rail') or {}).get('stations', {}):
+        names.append(re.sub(r'\s+station$', '', s.strip().lower()).strip())
+    return names
+
+
+def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
     """Target-LGA linked pt trips, allocated to ONE primary submode each.
 
     A linked public-transport trip may board several submodes - a bus to the
@@ -112,26 +151,38 @@ def pt_submode_trips(run_dir, iteration, person_lga):
     stops being counted as a bus trip. The shares then sum to pt, which is what
     makes them comparable with targets that sum to the pt level.
     """
-    route_mode = em.transit_route_modes(run_dir)
-    stem = 'ITERS/it.%d/%d.legs' % (iteration, iteration)
     # (person, trip) -> submode -> in-vehicle metres on that submode
     ridden = collections.defaultdict(collections.Counter)
     unknown = 0
-    with em.open_output(run_dir, stem) as fh:
-        for l in csv.DictReader(fh, delimiter=';'):
-            line = (l.get('transit_line') or '').strip()
-            if not line:
-                continue
-            route = (l.get('transit_route') or '').strip()
-            sm = route_mode.get((line, route))
-            if sm is None:
-                unknown += 1
-                continue
-            try:
-                metres = float(l.get('distance') or 0.0)
-            except ValueError:
-                metres = 0.0
-            ridden[(l['person'], l['trip_id'])][sm] += metres
+    if derived is not None:
+        # the same quantity, carried on each derived trip from its boarded
+        # routes' transportMode (iteration_trips.py resolves them through the
+        # run's own schedule, exactly as the legs-table path below does)
+        import iteration_trips as itr
+        for key, per_mode in itr.submodes_by_trip(derived).items():
+            ridden[key].update(per_mode)
+        rows = list(itr.as_trip_rows(derived))
+    else:
+        route_mode = em.transit_route_modes(run_dir)
+        stem = 'ITERS/it.%d/%d.legs' % (iteration, iteration)
+        with em.open_output(run_dir, stem) as fh:
+            for l in csv.DictReader(fh, delimiter=';'):
+                line = (l.get('transit_line') or '').strip()
+                if not line:
+                    continue
+                route = (l.get('transit_route') or '').strip()
+                sm = route_mode.get((line, route))
+                if sm is None:
+                    unknown += 1
+                    continue
+                try:
+                    metres = float(l.get('distance') or 0.0)
+                except ValueError:
+                    metres = 0.0
+                ridden[(l['person'], l['trip_id'])][sm] += metres
+        stem = 'ITERS/it.%d/%d.trips' % (iteration, iteration)
+        with em.open_output(run_dir, stem) as fh:
+            rows = list(csv.DictReader(fh, delimiter=';'))
     submodes = {}
     for key, per_mode in ridden.items():
         # greatest in-vehicle distance wins; ties break on the submode name so
@@ -140,21 +191,19 @@ def pt_submode_trips(run_dir, iteration, person_lga):
 
     per_submode = collections.Counter()
     multi = 0
-    stem = 'ITERS/it.%d/%d.trips' % (iteration, iteration)
-    with em.open_output(run_dir, stem) as fh:
-        for t in csv.DictReader(fh, delimiter=';'):
-            if t['main_mode'] != 'pt':
-                continue
-            if person_lga.get(t['person']) != em.TARGET_LGA:
-                continue
-            key = (t['person'], t['trip_id'])
-            primary = submodes.get(key)
-            if primary is None:
-                per_submode['pt:no_boarding'] += 1
-                continue
-            if len(ridden[key]) > 1:
-                multi += 1
-            per_submode[SUBMODE_TO_TARGET.get(primary, primary)] += 1
+    for t in rows:
+        if t['main_mode'] != 'pt':
+            continue
+        if person_lga.get(t['person']) != em.TARGET_LGA:
+            continue
+        key = (t['person'], t['trip_id'])
+        primary = submodes.get(key)
+        if primary is None:
+            per_submode['pt:no_boarding'] += 1
+            continue
+        if len(ridden[key]) > 1:
+            multi += 1
+        per_submode[SUBMODE_TO_TARGET.get(primary, primary)] += 1
     return per_submode, multi, unknown
 
 
@@ -277,33 +326,43 @@ def truck_at_count_stations(run_dir, iteration):
 
 
 def report(run_dir, iteration, truck_stations=False):
+    import iteration_trips as itr
     person_lga = em.home_lga()
-    share = mim.mode_share_at(run_dir, iteration, person_lga)
+    # The trips table when the run wrote one; otherwise the same linked trips
+    # derived from the iteration's experienced plans - the writer's own source,
+    # validated to reproduce the table exactly wherever both exist.
+    derived = None
+    if itr.trips_table_exists(run_dir, iteration):
+        rows, source = mim.trip_rows(run_dir, iteration)
+    else:
+        derived, _ = itr.derive(run_dir, iteration)
+        rows = list(itr.as_trip_rows(derived))
+        source = 'experienced plans (derived; validated against the trips table)'
+    share = mim.mode_share_at(run_dir, iteration, person_lga, rows=rows)
     tgt = load_targets()
 
     lga_pct = share['target_lga_pct']
     lga_cnt = share['target_lga_counts']
     lga_tot = share['target_lga_trips']
 
-    sub, multi, unknown = pt_submode_trips(run_dir, iteration, person_lga)
+    sub, multi, unknown = pt_submode_trips(run_dir, iteration, person_lga,
+                                           derived=derived)
 
     # every subpopulation, for the freight denominator; and the target-LGA
     # residents' distance by mode, for the geometry column
     all_counts = collections.Counter()
     km_sum = collections.Counter()
     km_n = collections.Counter()
-    with em.open_output(run_dir, 'ITERS/it.%d/%d.trips'
-                        % (iteration, iteration)) as fh:
-        for t in csv.DictReader(fh, delimiter=';'):
-            all_counts[t['main_mode']] += 1
-            if person_lga.get(t['person']) != em.TARGET_LGA:
-                continue
-            try:
-                d = float(t['traveled_distance']) / 1000.0
-            except (KeyError, TypeError, ValueError):
-                continue
-            km_sum[t['main_mode']] += d
-            km_n[t['main_mode']] += 1
+    for t in rows:
+        all_counts[t['main_mode']] += 1
+        if person_lga.get(t['person']) != em.TARGET_LGA:
+            continue
+        try:
+            d = float(t['traveled_distance']) / 1000.0
+        except (KeyError, TypeError, ValueError):
+            continue
+        km_sum[t['main_mode']] += d
+        km_n[t['main_mode']] += 1
     # a linked pt trip is one trip; its distance belongs to the submode the
     # reader allocated it to, which is what `sub` already decided
     pt_km = sum(km_sum[m] for m in ('pt', 'bus', 'rail', 'tram', 'ferry'))
@@ -322,10 +381,36 @@ def report(run_dir, iteration, truck_stations=False):
     closures = crossing_closures(run_dir)
     movements = crossing_movements()
 
+    # 9.130: a target on a boardings denominator is scored on modelled
+    # boardings - every traveller, every boarding, scaled to a full day by
+    # the run's sample fraction; heavy rail only at the disclosed stations.
+    boarding_modes = {m for m, t_ in tgt.items()
+                      if (t_['denominator'] or '').startswith('boardings per weekday')}
+    boarded = {}
+    if boarding_modes:
+        import iteration_trips as itr
+        counts = itr.boardings(run_dir, iteration)
+        frac = sample_fraction(run_dir)
+        disclosed = disclosed_stations()
+        for m in boarding_modes:
+            sm = {'heavy_rail': 'rail', 'light_rail': 'tram', 'bus': 'bus',
+                  'ferry': 'ferry'}.get(m, m)
+            n = 0
+            for (s, stop), c in counts.items():
+                if s != sm:
+                    continue
+                if m == 'heavy_rail' and disclosed and not any(
+                        d in stop.lower() for d in disclosed):
+                    continue
+                n += c
+            boarded[m] = (n, n / frac if frac else float(n))
     modelled = {}
     trips = {}
     for mode in tgt:
-        if mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+        if mode in boarding_modes:
+            trips[mode] = boarded[mode][0]
+            modelled[mode] = boarded[mode][1]
+        elif mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
             n = sub.get(mode, 0)
             modelled[mode] = 100.0 * n / lga_tot if lga_tot else 0.0
             trips[mode] = n
@@ -344,14 +429,23 @@ def report(run_dir, iteration, truck_stations=False):
             modelled[mode] = lga_pct.get(mode, 0.0)
             trips[mode] = lga_cnt.get(mode, 0)
 
+    # the numbers behind the table, for `--trend` (which prints nothing of
+    # the table itself and reads these after a silenced report())
+    LAST['iteration'] = iteration
+    LAST['modelled'] = dict(modelled)
+    LAST['trips'] = dict(trips)
+    LAST['targets'] = {m: t['target'] for m, t in tgt.items()}
+    LAST['truck_target'] = truck_target_stn
+
     stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
     name = _os.path.basename(_os.path.normpath(run_dir))
     print('=' * 100)
     print('PER-MODE RIDERSHIP   %s   run %s   iteration %d' % (stamp, name, iteration))
     print('basis  linked main-mode trips, %s residents, from the iteration\'s '
-          'own trips table (events-derived)' % em.TARGET_LGA)
-    print('       pt split from that iteration\'s legs table by each boarded '
-          'route\'s transportMode')
+          'own %s' % (em.TARGET_LGA, source))
+    print('       pt split from that iteration\'s %s by each boarded '
+          'route\'s transportMode'
+          % ('legs table' if derived is None else 'boarded routes'))
     print('=' * 100)
     print('%-15s %10s %10s %11s %12s %9s %8s  %s'
           % ('mode', 'modelled%', 'target%', 'deviation', 'count',
@@ -409,6 +503,18 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      flag))
+            continue
+        if mode in boarding_modes:
+            if abs(dev) >= GATE_STOP_PCT:
+                flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
+                breaches.append((mode, m, t['target'], dev))
+            elif abs(dev) >= GATE_PASS_PCT:
+                flag = 'over %.0f%%' % GATE_PASS_PCT
+            else:
+                flag = 'ok'
+            print('%-15s %10.0f %10.0f %+10.1f%% %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
+                     'BOARDINGS/weekday, all travellers, x1/fraction; ' + flag))
             continue
         if mode == 'truck' and truck_note:
             # A share of the WHOLE network set beside a share measured on
@@ -479,17 +585,111 @@ def main():
                     help='score truck at the classifying count stations, the '
                          'ground its target was measured on (reads the '
                          'iteration events; calibration split only)')
+    ap.add_argument('--watch', type=float, metavar='SECONDS',
+                    help='keep printing: every SECONDS, report each iteration '
+                         'that has become readable since the last report, '
+                         'until the run\'s _meta.json leaves `running` (the '
+                         'goal directive\'s continuous per-mode print, with '
+                         'a timestamp on every table)')
+    ap.add_argument('--trend', action='store_true',
+                    help='one row per readable iteration, every mode '
+                         'individually: modelled %% against target, then the '
+                         'direction over the readings - the gate reads the '
+                         'TREND, not the level (DECISIONS.md 9.108, 9.120)')
     a = ap.parse_args()
 
-    have = mim.iterations_with_trips(a.run)
+    import iteration_trips as itr
+    if a.trend:
+        import contextlib
+        import io as _io
+        have = sorted(set(mim.iterations_with_trips(a.run))
+                      | set(itr.iterations_with_plans(a.run)))
+        if not have:
+            raise SystemExit('%s holds no readable iteration yet' % a.run)
+        rows = []
+        for it in have:
+            try:
+                with contextlib.redirect_stdout(_io.StringIO()):
+                    report(a.run, it, a.truck_stations)
+            except SystemExit:
+                continue        # the newest iteration may still be writing
+            rows.append((it, dict(LAST['modelled'])))
+        if not rows:
+            raise SystemExit('no iteration of %s could be read' % a.run)
+        targets = LAST['targets']
+        modes = [m for m in targets if m != 'freight_train']
+        stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
+        print('PER-MODE TREND   %s   run %s   %d readable iteration(s)'
+              % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows)))
+        print('modelled %% of resident linked trips (truck: %s)'
+              % ('heavy share at the classifying stations'
+                 if a.truck_stations else 'network-wide road-vehicle share, NOT its target basis'))
+        print('%-12s %9s' % ('mode', 'target') + ''.join('%9s' % ('it.%d' % it) for it, _ in rows) + '   direction')
+        for m in modes:
+            t = targets.get(m)
+            if m == 'truck' and a.truck_stations and LAST.get('truck_target') is not None:
+                t = LAST['truck_target']
+            vals = [r.get(m) for _, r in rows]
+            line = '%-12s %9s' % (m, '-' if t is None else '%.4f' % t)
+            line += ''.join('%9s' % ('-' if v is None else '%.4f' % v) for v in vals)
+            if t is not None and len(vals) >= 2 and vals[0] is not None and vals[-1] is not None:
+                d0, d1 = abs(vals[0] - t), abs(vals[-1] - t)
+                span = rows[-1][0] - rows[0][0]
+                rate = (vals[-1] - vals[0]) / span if span else 0.0
+                if d1 < d0:
+                    verdict = 'toward'
+                    if rate and (t - vals[-1]) * rate > 0:
+                        verdict += ' (~%d more it)' % round((t - vals[-1]) / rate)
+                elif d1 > d0:
+                    verdict = 'AWAY'
+                else:
+                    verdict = 'flat'
+                dev = 100.0 * (vals[-1] - t) / t if t else float('nan')
+                line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
+            print(line)
+        return
+    if a.watch:
+        import json
+        import time as _time
+        done = set()
+        while True:
+            have = sorted(set(mim.iterations_with_trips(a.run))
+                          | set(itr.iterations_with_plans(a.run)))
+            # the newest iteration may still be being written; report it
+            # only once a later one exists or the run has ended
+            try:
+                status = json.load(open(_os.path.join(a.run, '_meta.json'),
+                                        encoding='utf-8')).get('status')
+            except (OSError, ValueError):
+                status = None
+            ready = have if status != 'running' else have[:-1]
+            for it in ready:
+                if it in done:
+                    continue
+                try:
+                    report(a.run, it, a.truck_stations)
+                except SystemExit as ex:
+                    print('iteration %d not readable yet: %s' % (it, ex))
+                    continue
+                print(flush=True)
+                done.add(it)
+            if status != 'running':
+                print('run %s is %s; watch ends' % (a.run, status), flush=True)
+                return
+            _time.sleep(a.watch)
+    # every iteration that can be read: trips table OR experienced plans
+    have = sorted(set(mim.iterations_with_trips(a.run))
+                  | set(itr.iterations_with_plans(a.run)))
     if a.all:
         print(' '.join(str(i) for i in have))
         return
     if not have:
-        raise SystemExit('%s holds no per-iteration trips table yet' % a.run)
+        raise SystemExit('%s holds neither a per-iteration trips table nor '
+                         'experienced plans yet' % a.run)
     it = a.it if a.it is not None else have[-1]
     if it not in have:
-        raise SystemExit('iteration %d has no trips table; this run holds %s'
+        raise SystemExit('iteration %d wrote neither a trips table nor '
+                         'experienced plans; this run holds %s'
                          % (it, ' '.join(str(i) for i in have)))
     report(a.run, it, a.truck_stations)
 

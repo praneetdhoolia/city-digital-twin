@@ -214,6 +214,29 @@ JOINT_PURPOSES = tuple(CFG.get('B.activity.joint_tour_purposes'))
 # One driver tour carries up to this many household companions - the same
 # declared physical capacity the runtime pairing enforces per vehicle.
 MAX_PARTY_PASSENGERS = CFG.get('B.ride.max_passengers_per_vehicle')
+# DECISIONS.md 9.124: the fourth binder pass - car-less residents' direct
+# tours bound to non-household drivers making the same SA1-to-SA1 trip
+# within the declared pairing window. `none` switches the pass off.
+SHARED_LIFT_SCOPE = CFG.get('B.ride.shared_lift_scope')
+# 9.129: a shared-ride pair must share a sampling-hash bucket of this width
+SHARED_LIFT_HASH_BUCKET = float(CFG.get('B.ride.shared_lift_hash_bucket'))
+PAIRING_WINDOW_MIN = float(CFG.get('B.ride.pairing_window_min'))
+# DECISIONS.md 9.127: the run's household sampler keeps a household when
+# blake2b('household|<id>|<RUN.machine.seed>') / 2^64 < fraction. A shared
+# ride binds a passenger only to drivers whose household hash is AT OR BELOW
+# the passenger's, so every nested sample that keeps the passenger keeps the
+# driver by construction - no cluster, no closure, no lump. The seed is read
+# here because the identity is the sampler's, and it is recorded in the
+# binder report so a run under another seed can be refused.
+SAMPLE_SEED = int(CFG.get('RUN.machine.seed'))
+import hashlib as _hashlib  # noqa: E402
+
+
+def sample_unit_hash(household_id):
+    """The sampler's uniform in [0, 1) for a household - the same bytes."""
+    key = 'household|%s|%d' % (household_id, SAMPLE_SEED)
+    h = _hashlib.blake2b(key.encode(), digest_size=8)
+    return int.from_bytes(h.digest(), 'big') / 2 ** 64
 
 # DECISIONS.md 9.69 (issue #30): the observed short-trip mass. The gravity
 # draw becomes a two-component mixture per purpose - a short kernel whose
@@ -1821,6 +1844,215 @@ EMPLOYMENT_ANZSIC = _city.path(
     'data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv')
 
 
+def bind_shared_rides(path, day, pctx, seed):
+    """Bind car-less residents' direct tours to non-household drivers making
+    the same SA1-to-SA1 trip at the same time (DECISIONS.md 9.124, #86, #91).
+
+    The FOURTH binder pass, after escorts (9.46), lifts (9.60) and joint
+    tours (9.84). Measured on the F17 arm (9.123): residents without a car
+    make 24.7% of trips and, holding only the bound rides, walk 48%, cycle
+    17% and take pt 15% of them - bike's, bus's and walk's excess are ride's
+    deficit wearing other modes. The HTS passenger share is a share of ALL
+    trips and the household passes reach ~11%; what they cannot reach is the
+    lift a colleague, neighbour or friend gives - the carpool - which needs
+    no observation of who drives whom to exist: a driver already making the
+    passenger's trip at the passenger's hour.
+
+    Passengers: core persons with no car available, on DIRECT (two-row)
+    non-escort tours not already bound by an earlier pass. Drivers: licensed,
+    car-available core persons' non-escort trips, in another household, with
+    the same origin and destination SA1 - zone-level co-location, the
+    `same_zone` precedent of 9.60, so no radius is invented - departing
+    within B.ride.pairing_window_min of the passenger. Both directions must
+    be found (a lift home is a different driver as often as the same one);
+    each driver trip carries at most B.ride.max_passengers_per_vehicle. The
+    nearest departure wins; sorted traversal, no draw except the thinning.
+
+    Volume is the joint binder's identity - (occupancy - 1) x the driver
+    share x core trips - LESS every trip the three earlier passes already
+    cover; if supply exceeds that remainder the pass thins to it with a rng
+    seeded on (seed, day), and if it does not, everything servable is bound
+    and the shortfall is reported. ADDS NO TRIP and re-times nothing: the
+    runtime pairing re-times a declared passenger to the driver (9.120).
+
+    Writes `B2_shared_bindings_<day>.csv` beside the trips file, consumed by
+    build_matsim_plans.py exactly as the lift table is (boundDriver,
+    liftHousehold, boundRideTrips on the passenger; boundDriveTrips on the
+    driver's tour).
+    """
+    out = dict(enabled=SHARED_LIFT_SCOPE != 'none', scope=SHARED_LIFT_SCOPE,
+               window_s=int(PAIRING_WINDOW_MIN * 60), target_trips=0,
+               existing_covered_trips=0, passenger_tours=0,
+               passenger_tours_not_direct=0, driver_trips_indexed=0,
+               servable_tours=0, bound=0, thin_p=None, shortfall_trips=0)
+    bpath = os.path.join(OUT, 'B2_shared_bindings_%s.csv' % day)
+    cols = ['passenger_person_id', 'passenger_tour_id', 'direction',
+            'passenger_dep_s', 'driver_person_id', 'driver_tour_id',
+            'driver_household_id', 'driver_dep_s']
+    if not out['enabled']:
+        with open(bpath, 'w', newline='', encoding='utf-8') as fh:
+            csv.DictWriter(fh, fieldnames=cols, lineterminator='\n').writeheader()
+        return out
+    with open(path, encoding='utf-8') as fh:
+        rows = list(csv.DictReader(fh))
+    core = [r for r in rows if r['agent_tier'] == 'core']
+    n_core = len(core)
+
+    # what the earlier passes cover, per (person, tour, direction)
+    covered = set()
+    for fname, pkey, tkey, both in (
+            ('B2_escort_bindings_%s.csv' % day, 'member_person_id',
+             'member_tour_id', False),
+            ('B2_lift_bindings_%s.csv' % day, 'passenger_person_id',
+             'passenger_tour_id', False),
+            ('B2_joint_bindings_%s.csv' % day, 'companion_person_id',
+             'companion_tour_id', True)):
+        fpath = os.path.join(OUT, fname)
+        if not os.path.exists(fpath):
+            continue
+        with open(fpath, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                if both:
+                    covered.add((r[pkey], r[tkey], 'drop'))
+                    covered.add((r[pkey], r[tkey], 'pickup'))
+                else:
+                    covered.add((r[pkey], r[tkey], r.get('direction') or 'drop'))
+    out['existing_covered_trips'] = len(covered)
+    driver_share, _yr = hts_car_driver_share()
+    target = JOINT_RATIO * driver_share * n_core
+    out['target_trips'] = int(round(target))
+    need_trips = max(0.0, target - len(covered))
+
+    window = PAIRING_WINDOW_MIN * 60.0
+    bins = int(max(window, 1.0))
+    # the zone a trip end is matched on: its SA1, or its SA1's SA2 under the
+    # wider scope - both are the statistical geography, neither a radius
+    zone_of = {}
+    if SHARED_LIFT_SCOPE == 'same_sa2_od':
+        with open(os.path.join(ZON, 'zones_SA1.csv'), encoding='utf-8') as fh:
+            for z in csv.DictReader(fh):
+                zone_of[z['SA1_CODE21']] = z['SA2_CODE21']
+
+    def zone(sa1):
+        return zone_of.get(sa1, sa1)
+
+    drivers = collections.defaultdict(list)   # (o_zone, d_zone, bin) -> [driver]
+    tours = collections.defaultdict(list)     # person -> [row]
+    for r in core:
+        tours[r['person_id']].append(r)
+    for person_id, prs in tours.items():
+        ctx = pctx.get(person_id)
+        if ctx is None or not (ctx['licence'] and ctx['cav']):
+            continue
+        for r in prs:
+            if r['dest_activity_type'] == 'escort':
+                continue
+            dep = int(r['dep_time_s'])
+            drivers[(zone(r['origin_sa1']), zone(r['dest_sa1']), dep // bins)].append(
+                dict(pid=person_id, tid=r['tour_id'], hid=ctx['hid'], dep=dep,
+                     seats=MAX_PARTY_PASSENGERS))
+            out['driver_trips_indexed'] += 1
+
+    out['sample_seed'] = SAMPLE_SEED
+    out['hash_bucket'] = SHARED_LIFT_HASH_BUCKET
+    unit_hash = {}
+
+    def uh(h):
+        v = unit_hash.get(h)
+        if v is None:
+            v = unit_hash[h] = sample_unit_hash(h)
+        return v
+
+    def find(o_sa1, d_sa1, dep, hid, need_seat):
+        b = dep // bins
+        best = None
+        bucket_p = int(uh(hid) / SHARED_LIFT_HASH_BUCKET)
+        for bb in (b - 1, b, b + 1):
+            for drv in drivers.get((zone(o_sa1), zone(d_sa1), bb), ()):
+                if drv['hid'] == hid or (need_seat and drv['seats'] <= 0):
+                    continue
+                # 9.127 / 9.129: a driver the sampler would drop while
+                # keeping this passenger is not a driver this passenger may
+                # be bound to. The pair must share a hash BUCKET: at-or-below
+                # also kept pairs together, but it named low-hash households
+                # as drivers and a 10% sample is the low-hash households, so
+                # the sample's composition was biased (named drivers kept at
+                # 12.4%, everyone else at 7.95%). A bucket prefers no hash.
+                if int(uh(drv['hid']) / SHARED_LIFT_HASH_BUCKET) != bucket_p:
+                    continue
+                gap = abs(drv['dep'] - dep)
+                if gap <= window and (best is None or gap < best[0]
+                                      or (gap == best[0]
+                                          and (int(drv['pid']), int(drv['tid']))
+                                          < (int(best[1]['pid']), int(best[1]['tid'])))):
+                    best = (gap, drv)
+        return best[1] if best else None
+
+    candidates = []   # (sa1, pid, tid, out_row, ret_row)
+    for person_id in sorted(tours, key=int):
+        ctx = pctx.get(person_id)
+        if ctx is None or ctx['cav']:
+            continue
+        by_tid = collections.OrderedDict()
+        for r in tours[person_id]:
+            by_tid.setdefault(r['tour_id'], []).append(r)
+        for tid, trs in by_tid.items():
+            if any(r['dest_activity_type'] == 'escort' for r in trs):
+                continue
+            if (person_id, tid, 'drop') in covered or (person_id, tid, 'pickup') in covered:
+                continue
+            out['passenger_tours'] += 1
+            if len(trs) != 2:
+                out['passenger_tours_not_direct'] += 1
+                continue
+            trs = sorted(trs, key=lambda r: int(r['trip_seq']))
+            candidates.append((ctx['sa1'], person_id, tid, trs[0], trs[1]))
+    candidates.sort(key=lambda c: (c[0], int(c[1]), int(c[2])))
+
+    # servability FIRST (seats ignored), so the thinning is a share of what
+    # can be bound and not of what was asked; then the draw; then seats
+    servable = []
+    for cand in candidates:
+        sa1, pid, tid, o_row, r_row = cand
+        hid = pctx[pid]['hid']
+        if (find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, False)
+                and find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, False)):
+            servable.append(cand)
+    out['servable_tours'] = len(servable)
+    rng = np.random.default_rng([seed, sum(ord(ch) for ch in day), 4])
+    p = min(1.0, (need_trips / 2.0) / len(servable)) if servable else 1.0
+    out['thin_p'] = round(p, 4)
+    draws = rng.random(len(servable))
+
+    bindings = []
+    for k, (sa1, pid, tid, o_row, r_row) in enumerate(servable):
+        if draws[k] >= p:
+            continue
+        hid = pctx[pid]['hid']
+        d_out = find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, True)
+        d_ret = find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, True) \
+            if d_out is not None else None
+        if d_out is None or d_ret is None:
+            out['seats_exhausted'] = out.get('seats_exhausted', 0) + 1
+            continue
+        d_out['seats'] -= 1
+        d_ret['seats'] -= 1
+        for direction, prow, drv in (('drop', o_row, d_out), ('pickup', r_row, d_ret)):
+            bindings.append(dict(
+                passenger_person_id=pid, passenger_tour_id=tid,
+                direction=direction, passenger_dep_s=int(prow['dep_time_s']),
+                driver_person_id=drv['pid'], driver_tour_id=drv['tid'],
+                driver_household_id=drv['hid'], driver_dep_s=drv['dep']))
+        out['bound'] += 1
+    out['shortfall_trips'] = int(round(max(0.0, need_trips - 2 * out['bound'])))
+    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, lineterminator='\n')
+        w.writeheader()
+        for b in bindings:
+            w.writerow(b)
+    return out
+
+
 def cordon_nodes(ext):
     """External stations: where boundary demand enters the modelled network.
 
@@ -2703,7 +2935,12 @@ def main(seed=SEED, max_persons=None, day_types=None):
         # DECISIONS.md 9.84: the joint-tour pass runs THIRD, on the file the
         # lift pass closed, so its accounting sees every earlier binding.
         joint = bind_joint_tours(path, d, pctx, seed)
+        # DECISIONS.md 9.124: the shared-ride pass runs FOURTH, on the file
+        # the joint pass left, so its remainder accounts for every earlier
+        # binding. It re-times nothing and adds no trip.
+        shared = bind_shared_rides(path, d, pctx, seed)
         stats['by_day'][d] = dict(
+            shared_binding=shared,
             external_agents=n_ext, external_legs=len(ext_legs),
             through_agents=n_thr, through_legs=len(thr_legs),
             through_freight_agents=n_thr_truck,

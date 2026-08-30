@@ -4,15 +4,15 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 402,
+  "n_fields": 414,
   "n_by_layer": {
     "A": 133,
-    "B": 96,
+    "B": 102,
     "C": 57,
-    "CAL": 17,
+    "CAL": 19,
     "D": 5,
     "E": 26,
-    "RUN": 68
+    "RUN": 72
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -1698,6 +1698,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.mode.seed_method": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.mode.seed_split": {
       "layer": "B",
       "units": "share_by_mode",
@@ -1731,6 +1740,15 @@
       "type": "number",
       "source_in_reference_city": "derived",
       "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.motorbike.carve_resolution": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
@@ -1837,7 +1855,7 @@
       "layer": "B",
       "units": "probability",
       "type": "array",
-      "source_in_reference_city": "literature",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -1856,6 +1874,15 @@
       "units": "minutes",
       "type": "number",
       "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.ride.declared_pair_meeting": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -1936,6 +1963,24 @@
       "layer": "B",
       "units": "boolean",
       "type": "boolean",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.ride.shared_lift_hash_bucket": {
+      "layer": "B",
+      "units": "fraction of the sampling-hash range",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.ride.shared_lift_scope": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
       "source_in_reference_city": "definition",
       "sweep_required": false,
       "unobtained_in_reference_city": false,
@@ -2063,6 +2108,15 @@
       "units": "trips_per_vehicle_per_day",
       "type": "number",
       "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.truck.resident_trip_share": {
+      "layer": "B",
+      "units": "share_of_trips",
+      "type": "number",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -2625,6 +2679,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "CAL_calibration.json"
     },
+    "CAL.mode_split.truck_driver_journey_share": {
+      "layer": "CAL",
+      "units": "share_of_driver_journeys",
+      "type": "number",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
     "CAL.mode_split.vehicle_driver_level": {
       "layer": "CAL",
       "units": "share_of_trips",
@@ -2657,6 +2720,15 @@
       "units": "count",
       "type": "number",
       "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.pt.weekday_factor": {
+      "layer": "CAL",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "CAL_calibration.json"
@@ -3597,7 +3669,43 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.transit_router.direct_walk_basis": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.transit_router.direct_walk_factor": {
+      "layer": "RUN",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.transit_router.extension_radius_m": {
+      "layer": "RUN",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.transit_router.max_beeline_walk_connection_m": {
+      "layer": "RUN",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.transit_router.search_radius_m": {
       "layer": "RUN",
       "units": "metres",
       "type": "number",

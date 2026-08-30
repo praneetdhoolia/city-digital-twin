@@ -1,0 +1,10 @@
+{
+  "overlay": "f15_gate_10pct",
+  "description": "The first family-F15 arm (DECISIONS.md 9.120): S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240 (RUN.replanning.fraction_to_disable_innovation 0.8), gated per mode at iterations 100 / 200 / 300 under the standing /goal directive. WHY 300: the directive aims at convergence inside 250 iterations, and this family seeds the whole choice set (B.mode.seed_method = full_choice_set) so that selection rather than random innovation decides the modes from the first iterations - 300 tests that horizon with 60 post-innovation iterations to read relaxation on. WHY 10%: a gate every 100 iterations costs ~3 h at the measured ~100 s/iteration rather than ~8 h at 25% (~290-305 s/iteration), and the family's first question - does the repaired ride/seed/gate stack behave as designed - is answered at 10% (DECISIONS.md 9.10, 9.12: 10% readings were confirmed at 25%; 1% is unusable). A 25% confirmation arm follows whatever this one names; NEVER compare this arm with a 25% one (9.10, 9.12) or with any run before 30 August 12:40 (family F15 opens at 9.120). Memory: 8 plans per agent (RUN.replanning.max_agent_plan_memory) at 10% fits well inside 30g. NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.10,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}

@@ -37,6 +37,13 @@ TERMINAL = re.compile(r'^Exception in thread "([^"]+)" '
                       r'([\w.$]+(?:Exception|Error|Throwable))(?:[:;]\s*(.*))?$')
 CAUSED_BY = re.compile(r'^Caused by:\s+([\w.$]+(?:Exception|Error|Throwable))'
                        r'(?:[:;]\s*(.*))?$')
+# A throwable printed BARE at column 0 - `pkg.Cls: message` with no thread
+# prefix - which is how a Guice CreationException reaches the log when the
+# thread group's uncaught handler prints it (DECISIONS.md 9.121: two runs died
+# at injector creation and this reader called both "no exception in
+# matsim.log"). Only lines that look like a class name, never a log line.
+BARE = re.compile(r'^([A-Za-z_$][\w$]*(?:\.[\w$]+)+(?:Exception|Error|Throwable))'
+                  r'(?:[:;]\s*(.*))?$')
 LOG_ERROR = re.compile(r'\b(?:ERROR|SEVERE|FATAL)\b\s+(.*)$')
 MESSAGE_CHARS = 400
 META = '_meta.json'
@@ -70,10 +77,27 @@ def from_log(log_path):
     for i, line in enumerate(lines):
         if TERMINAL.match(line.strip()):
             start = i
+    bare = False
+    if start is None:
+        # no thread-prefixed terminal line: the last bare throwable, if any
+        for i, line in enumerate(lines):
+            if not line.startswith((' ', '\t')) and BARE.match(line.rstrip()):
+                start = i
+                bare = True
     if start is None:
         return None
 
-    m = TERMINAL.match(lines[start].strip())
+    m = (BARE if bare else TERMINAL).match(lines[start].strip())
+    if bare:
+        # align the groups with TERMINAL's (thread, exception, message)
+        class _M(object):
+            def __init__(self, mm):
+                # group(1) thread, group(2) exception, group(3) message
+                self._g = (None, None, mm.group(1), mm.group(2))
+
+            def group(self, i):
+                return self._g[i]
+        m = _M(m)
     chain = []
     for line in lines[start + 1:]:
         c = CAUSED_BY.match(line.strip())
@@ -166,6 +190,55 @@ def backfill(results_dir, dry_run=False):
     return changed
 
 
+def _pid_alive(pid):
+    """Is this pid a live process? Never signals it.
+
+    The same test `run_matsim._pid_alive` makes (not imported: run_matsim
+    imports this module). On Windows `os.kill(pid, 0)` would TERMINATE the
+    process, so liveness is asked of the kernel handle.
+    """
+    try:
+        pid = int(pid)
+    except (TypeError, ValueError):
+        return False
+    if pid <= 0:
+        return False
+    if os.name == 'nt':
+        import ctypes
+        k32 = ctypes.windll.kernel32
+        handle = k32.OpenProcess(0x00100000, 0, pid)          # SYNCHRONIZE
+        if not handle:
+            return False
+        try:
+            # WAIT_TIMEOUT (258) means still running; 0 means signalled/exited
+            return k32.WaitForSingleObject(handle, 0) == 258
+        finally:
+            k32.CloseHandle(handle)
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    return True
+
+
+def stale_running(results_dir):
+    """(name, pid) of every record claiming `running` whose pid is dead."""
+    out = []
+    for meta_path in sorted(glob.glob(os.path.join(results_dir, '*', META))):
+        try:
+            with io.open(meta_path, encoding='utf-8') as fh:
+                meta = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        if meta.get('status') != 'running':
+            continue
+        if _pid_alive(meta.get('pid')):
+            continue
+        out.append((os.path.basename(os.path.dirname(meta_path)),
+                    meta.get('pid')))
+    return out
+
+
 def missing(results_dir):
     """Terminal run records that still cannot say why they died."""
     out = []
@@ -202,7 +275,18 @@ def main():
         for name in gaps:
             print('NO CAUSE %s' % name)
         print('%d terminal run record(s) cannot say why they died' % len(gaps))
-        return 1 if gaps else 0
+        # DECISIONS.md 9.120: a run that claims to be RUNNING under a dead
+        # pid is a dead run with no record at all, and this check used to
+        # look only at terminal records - so the F14 arm sat dead for half
+        # an hour behind a green check (brief trap 8, found twice). It is
+        # reported here, never settled: the settlement needs a cause, and
+        # that is `run_matsim.reconcile_stale` or an operator's close-out.
+        stale = stale_running(args.results)
+        for name, pid in stale:
+            print('STALE RUNNING %s: claims to be running, pid %s is dead - '
+                  'close it out with a cause' % (name, pid))
+        print('%d running record(s) whose process is gone' % len(stale))
+        return 1 if (gaps or stale) else 0
 
     changed = backfill(args.results, dry_run=args.dry_run)
     for name, cause in changed:

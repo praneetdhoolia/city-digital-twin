@@ -1,0 +1,10 @@
+{
+  "overlay": "f19_gate_10pct",
+  "description": "The first family-F19 arm (DECISIONS.md 9.128): the F18 demand (shared-ride pass, motorbike and truck carves, 9.122-9.127) with declared ride pairs served by a driver detour - the driver's car leg is routed through each carried passenger's origin and destination links, the passenger boards and alights at their own link as the car passes, and the driver's score pays for the detour (B.ride.declared_pair_meeting = driver_detour). Motivation measured on the valid F18 arm's iteration 0: 2,053 of 6,966 ride legs refused on endpoints under both_links, the shared rides bound suburb-to-suburb (9.124) among them, so that arm could measure nothing about the demand it was launched to test and was stopped at iteration 1. Identical run parameters to f15/f16/f17/f18_gate_10pct - S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the standing /goal directive - so the F18 arm's iteration 0 is the like-for-like predecessor and the meeting is what changed. NEVER compare with a 25% arm (9.10, 9.12) or with any run before the F19 boundary. NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.1,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}

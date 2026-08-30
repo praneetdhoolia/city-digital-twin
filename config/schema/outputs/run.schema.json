@@ -96,6 +96,13 @@
       "pattern": "^[0-9a-f]{64}$",
       "description": "sha256 over the committed source of src/java/citysim, the MATSim entry point this run executed. The run name is built from the scenario and the registry values and cannot see the controler, so without this a result produced before a controler change and one produced after would share a name and be indistinguishable. run_matsim.py refuses to resume a completed run whose recorded hash differs from the current source. Absent from records written before DECISIONS.md 9.26."
     },
+    "inputs_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "sha256 of the day's population file the run sampled from (DECISIONS.md 9.127): part of the run's identity, so a rebuilt demand under the same parameters is a different run and cannot resume an earlier one; null when the file was absent."
+    },
     "warm_started_from": {
       "type": "object",
       "description": "Present only on a warm-started run (issue #75): the dead parent run and the plans checkpoint iteration this run continued from. A warm-started run is NOT bit-identical to an uninterrupted one (DECISIONS.md 9.76), so this key is part of run identity and resume matching.",

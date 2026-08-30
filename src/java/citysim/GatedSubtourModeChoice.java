@@ -113,6 +113,58 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
         /** Same cap, for mixes this strategy is caught creating. */
         private static final java.util.concurrent.atomic.AtomicInteger
                 CREATED_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
+        /** 9.120: person attributes written by build_matsim_plans.py - the
+         *  1-based trip indices a declared driver serves, and those on which
+         *  this person is that driver. Absent means none. */
+        static final String BOUND_RIDE_ATTRIBUTE = "boundRideTrips";
+        static final String BOUND_DRIVE_ATTRIBUTE = "boundDriveTrips";
+        /** Proposals refused for putting ride on an unserved trip, and for
+         *  taking a declared driver off car - counted so the effect is a
+         *  number in the log rather than an assertion. */
+        static final java.util.concurrent.atomic.AtomicInteger
+                BOUND_RIDE_REFUSALS = new java.util.concurrent.atomic.AtomicInteger();
+        static final java.util.concurrent.atomic.AtomicInteger
+                BOUND_DRIVE_REFUSALS = new java.util.concurrent.atomic.AtomicInteger();
+
+        /** The first few refusals of each kind in full, then every
+         *  thousandth as a running count - a number in the log rather than
+         *  an assertion, at a cost the log can bear. */
+        static void logRefusal(final String what, final int n, final Plan plan) {
+            if (n <= 5 || n % 1000 == 0) {
+                org.apache.logging.log4j.LogManager
+                        .getLogger(GatedSubtourModeChoice.class)
+                        .info("refused proposal #{} putting {} - person {}",
+                              n, what, plan.getPerson() == null ? "?"
+                                      : plan.getPerson().getId().toString());
+            }
+        }
+
+        /** The trip indices a person attribute lists, or an empty set. */
+        static java.util.Set<Integer> boundTrips(final Plan plan,
+                                                 final String attribute) {
+            if (plan.getPerson() == null) {
+                return java.util.Collections.emptySet();
+            }
+            final Object raw = plan.getPerson().getAttributes()
+                    .getAttribute(attribute);
+            if (raw == null) {
+                return java.util.Collections.emptySet();
+            }
+            final java.util.Set<Integer> out = new java.util.HashSet<>();
+            for (final String token : raw.toString().split(",")) {
+                final String s = token.trim();
+                if (s.isEmpty()) {
+                    continue;
+                }
+                try {
+                    out.add(Integer.valueOf(s));
+                } catch (final NumberFormatException ignored) {
+                    // a malformed token names nothing; the gate is then
+                    // conservative in the refusing direction for ride
+                }
+            }
+            return out;
+        }
 
         GatedModule(final GlobalConfigGroup global,
                     final SubtourModeChoiceConfigGroup config,
@@ -394,6 +446,58 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                                             + "a subtour mixing chain- and "
                                             + "non-chain-based modes - "
                                             + describe(plan));
+                        }
+                    }
+                    // 9.120: `ride` is a trip somebody drives, and `car` on
+                    // a serving trip is the driver's commitment. The demand
+                    // declares BOTH per trip (`boundRideTrips`,
+                    // `boundDriveTrips`, written by build_matsim_plans.py
+                    // from the escort, lift and joint binding tables), so a
+                    // proposal putting ride on a trip nobody serves, or
+                    // taking a declared driver off car on a trip they serve,
+                    // is refused whole - the same refusal as above. Measured
+                    // on the F14 arm at iteration 30: 36% of residents'
+                    // planned ride legs belonged to persons with no declared
+                    // driver at all, every one executed as a drive or a walk
+                    // while the plan kept `ride`; and 3.4% of declared pairs
+                    // had lost their driver to another mode. A trip whose
+                    // mode the proposal did not change is never judged here:
+                    // this gates proposals, not memories.
+                    if (!infeasible) {
+                        final java.util.Set<Integer> rideTrips =
+                                boundTrips(plan, BOUND_RIDE_ATTRIBUTE);
+                        final java.util.Set<Integer> driveTrips =
+                                boundTrips(plan, BOUND_DRIVE_ATTRIBUTE);
+                        for (int i = 0; i < after.size(); i++) {
+                            final List<Leg> legs = after.get(i).getLegsOnly();
+                            if (legs.isEmpty()) {
+                                continue;
+                            }
+                            String mode = TripStructureUtils.getRoutingMode(
+                                    legs.get(0));
+                            if (mode == null) {
+                                mode = legs.get(0).getMode();
+                            }
+                            final String old = oldModes.get(i);
+                            if (old != null && old.equals(mode)) {
+                                continue;          // untouched by the proposal
+                            }
+                            if (TransportMode.ride.equals(mode)
+                                    && !rideTrips.contains(i + 1)) {
+                                infeasible = true;
+                                logRefusal("ride on a trip no declared driver "
+                                        + "serves", BOUND_RIDE_REFUSALS
+                                        .incrementAndGet(), plan);
+                                break;
+                            }
+                            if (driveTrips.contains(i + 1)
+                                    && !TransportMode.car.equals(mode)) {
+                                infeasible = true;
+                                logRefusal("a declared driver off car on a "
+                                        + "trip they serve", BOUND_DRIVE_REFUSALS
+                                        .incrementAndGet(), plan);
+                                break;
+                            }
                         }
                     }
                     if (infeasible) {

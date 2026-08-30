@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 402 fields are made of
+## What the 414 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 34 | computed from observed data in this package |
-| `derived` | 36 | follows from another registry field by identity |
-| `literature` | 65 | a published value, not specific to this city |
-| `assumed` | 149 | chosen without direct empirical support |
-| `definition` | 114 | fixed by the formulation, not an empirical quantity |
+| `measured` | 36 | computed from observed data in this package |
+| `derived` | 38 | follows from another registry field by identity |
+| `literature` | 67 | a published value, not specific to this city |
+| `assumed` | 152 | chosen without direct empirical support |
+| `definition` | 117 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 383 | usable point value |
+| `active` | 395 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1118,7 +1118,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 97 fields*
+*`cities/newcastle/registry/B_demand.json` - 103 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1179,13 +1179,15 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
 | `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
+| `B.mode.seed_method` | `full_choice_set` | enum | `definition` | `full_choice_set`, `uniform_draw` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
 | `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
+| `B.motorbike.carve_resolution` | `sa1_thinned` | enum | `definition` | `sa1_thinned`, `region` |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
-| `B.motorbike.trip_share` | `0.0024064` | share_of_trips | `derived` | derived: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.moto |
+| `B.motorbike.trip_share` | `0.0037849` | share_of_trips | `derived` | derived: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.moto |
 | `B.network_factors.distance_band` | `0.25` | share | `assumed` | 0.1 - 0.5 |
 | `B.network_factors.min_pair_m` | `500.0` | metres | `assumed` | 100 - 2000 |
 | `B.network_factors.n_pairs` | `600` | zone_pairs | `assumed` | 200 - 5000 |
@@ -1194,9 +1196,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.bike_available_rate` | `0.493` | share | `literature` | 0.3 - 1 |
 | `B.population.bike_min_age` | `12` | years | `assumed` | 0 - 16 |
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
-| `B.population.licence_rate_by_age_band` | `[0, 0, 0, 0.62, 0.88, 0.93, 0.94, 0.93, 0.88, 0.72, 0.45]` | probability | `literature` | plus/minus 10% |
+| `B.population.licence_rate_by_age_band` | `[0.0, 0.0, 0.0823, 0.7828, 0.9402, 1.0, 0.9786, 0.972, 0.9838, 0.9172, 0.5118]` | probability | `measured` | plus/minus 5% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
 | `B.ride.bound_pairing_window_min` | `60.0` | minutes | `derived` | derived: bound_pairing_window_min = 2 * time_mutation_range_s / 60 |
+| `B.ride.declared_pair_meeting` | `driver_detour` | enum | `assumed` | `driver_detour`, `passenger_links` |
 | `B.ride.escort_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.joint_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.max_passengers_per_vehicle` | `4` | persons | `assumed` | 1 - 4 |
@@ -1206,6 +1209,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.physical_boarding` | `true` | boolean | `definition` | - |
 | `B.ride.pickup_dwell_s` | `0.0` | seconds | `assumed` | 0 - 120 |
 | `B.ride.remode_unpaired` | `true` | boolean | `definition` | - |
+| `B.ride.shared_lift_hash_bucket` | `0.05` | fraction of the sampling-hash range | `assumed` | 0.05 - 0.1 |
+| `B.ride.shared_lift_scope` | `same_sa2_od` | enum | `definition` | `same_sa2_od`, `same_sa1_od`, `none` |
 | `B.ride.unpaired_fallback` | `licensed_drive_else_walk` | enum | `assumed` | `licensed_drive_else_walk`, `walk` |
 | `B.ride.wait_for_driver` | `true` | boolean | `definition` | - |
 | `B.seed.master` | `20260810` | integer_seed | `definition` | - |
@@ -1220,6 +1225,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.taxi.min_unaccompanied_age` | `18` | years | `assumed` | 0 - 18 |
 | `B.taxi.rideshare_trip_share` | `0.66` | share_of_p2p_trips | `literature` | 0.4 - 0.8 |
 | `B.taxi.vehicle_trips_per_day` | `25.0` | trips_per_vehicle_per_day | `literature` | 15 - 35 |
+| `B.truck.resident_trip_share` | `0.002993` | share_of_trips | `derived` | derived: resident_trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_s |
 | `B.walk.pce` | `0.0` | passenger_car_equivalents | `definition` | - |
 
 #### `A.taxi.fleet_representation`
@@ -1616,6 +1622,12 @@ Seed mode for a passenger tour whose BOTH directions are covered by serve-tour b
 
 ***assumed** · status **active** · DECISIONS.md §9.68*
 
+#### `B.mode.seed_method`
+
+How each person's initial plan memory is populated. `full_choice_set`: one plan per mode the person may use - car (if a car is available), walk, bike (if one is available and the person is old enough), pt, taxi (if old enough) - each mode on every tour it may take, with serving tours held at car and, where the demand declared a driver, one further plan riding on the covered tours. MATSim executes every UNSCORED plan before it consults the selector (GenericPlanStrategyImpl.run in the pinned jar), so the entire choice set is scored within the first few iterations and selection - not random innovation - decides the mode from then on. It favours no mode: each is one plan, once. Measured motivation (9.120): on the F14 arm at iteration 30, 65% of the residents still cycling held no bike-free plan in memory, and a level read at iteration 100 was a statement about the search, not the model. Needs RUN.replanning.max_agent_plan_memory above the seeded plan count, because MATSim removes an UNSCORED plan first when memory overflows (WorstPlanForRemovalSelector). `uniform_draw`: the single uniformly drawn plan, as before.
+
+***definition** · status **active** · DECISIONS.md §9.120*
+
 #### `B.mode.seed_split`
 
 The mode split the co-evolution STARTS from, conditioned only on car availability from B1. UNIFORM OVER THE USABLE MODES AND DELIBERATELY A BAD GUESS: it starts the search far from the observed point so that arriving there is evidence about the model rather than about the seed. It is a definition, not an assumption, because "uniform over what a person can use" is fully determined by B1 car availability and has no free share to sweep. What is swept is the CHOICE of seed - see B.mode.seed_split_informed.
@@ -1646,6 +1658,12 @@ DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip d
 
 > **Derived from** `C.constraint.trip_length_km.walk`: the 99th percentile of an exponential trip-length distribution with the OBSERVED mean this package already declares: -ln(0.01) x 0.7 km = 3.22 km. The exponential is the standard form for trip lengths and is stated rather than assumed silently; what it supplies is a TAIL, and only the tail is used - the bound refuses the far end of the distribution, not its body. For walk the derivation is corroborated by a second declared observation that was not used to make it: the observed mean walk trip TIME is 12.3 min, whose exponential p99 is 57 min, which at this model's own capped walk speed of 1.25 m/s is 4.2 km - agreeing with the distance derivation to within a kilometre.
 
+#### `B.motorbike.carve_resolution`
+
+The spatial resolution of the motorbike carve. Measured motivation (9.122, #93 fact 2): census G62 puts the motorbike share of driver journeys between 0 and 1.13% across SA2s against a flat 0.41% region value, and the flat carve delivered 0.06% of target-LGA resident trips against the 0.24% target on the F16 and F17 arms - the carve put motorcyclists where car ownership is, not where the census sees them. Per cell the probability is solved on that cell's eligible persons' own trips; the trip-weighted mean of the cell shares is reported beside the declared region share in _plans_report.json so the identity can be checked, never asserted.
+
+***definition** · status **active** · DECISIONS.md §9.122*
+
 #### `B.motorbike.length_m`
 
 Stated length of the motorbike vehicle type in the vehicles file. Does not reach the traffic model - space and flow run on PCE - and is held fixed for exactly that reason.
@@ -1668,9 +1686,9 @@ Passenger-car equivalents of one modelled motorbike - it consumes LESS road capa
 
 Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.
 
-***derived** · status **active** · DECISIONS.md §9.115*
+***derived** · status **active** · DECISIONS.md §9.115, 9.122*
 
-> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.motorbike_driver_journey_share`: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0040786 = 0.0024064. The carve share and the fit target are the SAME 653 census riders transferred to all-purpose trips, and there is no modelling judgement between them: the carve previously took 653 of ALL 179,761 commute journeys (0.363%) and applied it straight to all trips, which assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS where the survey observes 59.0%. Dividing out that ratio - 89.1/59.0 = 1.510 - returns 0.363%/1.510 = 0.2405%, the target to its last decimal. Conditioning the census cell on driver journeys and scaling by the observed driver level performs the same conversion in one step, so generation and scoring finally describe one quantity (9.115). This LOWERS generation and is a consistency repair, not a fit repair; it must not be sold as one.
+> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.motorbike_driver_journey_share`: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0064151 = 0.0037849, both on the TARGET LGA since 9.122 (the core cell gave 0.59 x 0.0040786 = 0.0024064, generated for five LGAs and scored against one). The carve share and the fit target are the SAME census riders transferred to all-purpose trips by the survey's driver level, so generation and scoring describe one quantity (9.115); under B.motorbike.carve_resolution = sa1_thinned the same identity is applied per home SA1 and this field is the LGA-level check the trip-weighted cell mean is reported against.
 
 #### `B.network_factors.distance_band`
 
@@ -1730,9 +1748,9 @@ Share of the synthetic population BUILT. One, always: this is the build, not the
 
 #### `B.population.licence_rate_by_age_band`
 
-Driver licence holding by age band, aligned to B.population.age_bands.
+Driver-licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written by cities/newcastle/build/build_licence_rates.py from the TfNSW Driver Licence Statistics snapshot (202607: primary licence of any class, non-learner, by age group and customer-address LGA) over the ABS estimated resident population by age and LGA at 30 June 2024, split to single years by the census G04 profile. The population builder draws each person's licence from the PER-LGA rate in data/processed/observed/licence_rates_by_age_lga.csv and falls back to this vector only where an LGA has no row. Before 9.131 this was a literature vector (18-24 0.62, 25-34 0.88, 35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88, 75-84 0.72, 85+ 0.45) that left 14.2-14.8% of employed persons without a licence; the measured rates are 18-24 0.78, 25-34 0.94, 35-44 1.00 (holders exceed the 2024 ERP - address staleness and two years of growth - and the rate is capped at 1), 45-74 0.97-0.98, 75-84 0.92, 85+ 0.51, and 12-17 0.08 (provisional drivers aged 16-17). Suppressed cells (<=5) are taken at 3. The sweep is the suppression and the denominator vintage.
 
-***literature** · status **active** · DECISIONS.md §9.1*
+***measured** · status **active** · DECISIONS.md §9.1, 9.131*
 
 #### `B.population.ride_requires_household_driver`
 
@@ -1744,11 +1762,17 @@ Whether `ride` is withheld from a person with nobody to drive them. MATSim's sta
 
 #### `B.ride.bound_pairing_window_min`
 
-The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly. CORRECTED IN 9.95, and the error was in the identity rather than the value. It read time_mutation_range_s / 60, which is ONE agent half-width - but the mutator moves each member of a pair INDEPENDENTLY, as this field description already said. Two independent draws on +-1800 s can land 3600 s apart, so the relative drift a declared pair can accumulate is TWICE the half-width, not equal to it. The window was therefore half the size of the drift it exists to cover, and it was refusing pairs the model itself had separated. Measured on arm 20260829T054941 at iteration 100 with src/analyse/diagnose_ride_pairing.py: 3,987 declared ride legs (13.13% of all of them) had the driver making the SAME trip, both endpoints matching exactly, and were refused on the clock alone - median gap 53.6 minutes, minimum exactly 30.0, which is the old window showing its own edge in the data. This is a correction to a derivation, not a tuning: the value still cannot move without moving the mutation range that produces the drift, and the realised gap is still paid for as waiting time in score.
+SINCE 9.120 THIS IS NOT A PAIRING TOLERANCE. RidePairingEngine applies no clock test to the driver the demand named: a declared pair is paired on identity alone and the passenger's departing activity is re-timed to the driver's departure, so the planning drift this window was derived to cover (2 x the mutation range) is removed at its source rather than tolerated. The field survives with ONE consumer: the physical wait JointRideEngine allows a DECLARED booking at the meeting link before the miss falls through to the routed time - the driver's own realised drift from earlier legs, which the identity still describes. It is unchanged in value and derivation. Everything below is the pre-9.120 record. The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly. CORRECTED IN 9.95, and the error was in the identity rather than the value. It read time_mutation_range_s / 60, which is ONE agent half-width - but the mutator moves each member of a pair INDEPENDENTLY, as this field description already said. Two independent draws on +-1800 s can land 3600 s apart, so the relative drift a declared pair can accumulate is TWICE the half-width, not equal to it. The window was therefore half the size of the drift it exists to cover, and it was refusing pairs the model itself had separated. Measured on arm 20260829T054941 at iteration 100 with src/analyse/diagnose_ride_pairing.py: 3,987 declared ride legs (13.13% of all of them) had the driver making the SAME trip, both endpoints matching exactly, and were refused on the clock alone - median gap 53.6 minutes, minimum exactly 30.0, which is the old window showing its own edge in the data. This is a correction to a derivation, not a tuning: the value still cannot move without moving the mutation range that produces the drift, and the realised gap is still paid for as waiting time in score.
 
-***derived** · status **active** · DECISIONS.md §9.85, 9.95 · MATSim `ridePairing.boundWindowMinutes`*
+***derived** · status **active** · DECISIONS.md §9.85, 9.95, 9.120 · MATSim `ridePairing.boundWindowMinutes`*
 
 > **Derived from** `RUN.replanning.time_mutation_range_s`: bound_pairing_window_min = 2 * time_mutation_range_s / 60
+
+#### `B.ride.declared_pair_meeting`
+
+Where a declared ride pair meets when the two members' links differ: `driver_detour` routes the driver's car leg through the passenger's origin and destination links and the passenger boards and alights at their own; `passenger_links` requires the driver to satisfy the pairing rule on the passenger's links (pre-9.128). Consumed by RidePairingEngine through ridePairing.declaredMeeting.
+
+***assumed** · status **active** · DECISIONS.md §9.128 · MATSim `ridePairing.declaredMeeting`*
 
 #### `B.ride.escort_coherence_rate`
 
@@ -1809,6 +1833,20 @@ Seconds added to a PAIRED passenger's travel time for the act of being picked up
 Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 standing directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. False keeps Tier 1's teleport for the unpaired, for comparability within one build. Consumed by citysim.RidePairingEngine.
 
 ***definition** · status **active** · DECISIONS.md §9.55 · MATSim `ridePairing.remodeUnpaired`*
+
+#### `B.ride.shared_lift_hash_bucket`
+
+Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both, without preferring low-hash households as drivers. Consumed by the fourth binder pass (bind_shared_rides).
+
+***assumed** · status **active** · DECISIONS.md §9.129*
+
+> **Sweep basis.** The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. The 9.127 rule (driver hash AT OR BELOW the passenger's) also guaranteed that, but it named LOW-hash households as drivers, and a 10% sample - which is exactly the low-hash households - then kept named drivers at 12.4% and everyone else at 7.95% (the eligible non-named pool at 6.1%, the motorbike carve at 5.5%, the truck carve at 5.1%): the count was 10%, the composition was not. A bucket prefers no hash. Measured on the WEEKDAY binder, package-identical inputs: at-or-below 98,549 servable / 59,718 bound / 0 short; bucket 0.10 86,848 / 59,806 / 0; bucket 0.05 73,509 / 59,701 / 0; unconstrained 105,515 / 59,648 / 17. 0.05 is declared because 0.10, 0.25 and 0.50 are all multiples of it, so a 25% confirmation arm keeps its pairs too; the cost is candidate supply, and the identity is still met in full. A 1% smoke is not a multiple and breaks pairs - it is a plumbing test and its pairing is never read.
+
+#### `B.ride.shared_lift_scope`
+
+Where a resident without a car may be given a lift by someone outside their household. Measured motivation (9.123): on the F17 arm residents without a car made 24.7% of trips and, with only the bound rides available, walked 48%, cycled 17% and took pt 15% of them - bike's, bus's and walk's excess were ride's deficit. `same_sa2_od`: the passenger's direct tour is bound, both directions, to non-household drivers making a trip between the same origin SA2 and destination SA2 within B.ride.pairing_window_min (a colleague from the same suburb driving to the same suburb at the same hour), each driver trip carrying at most B.ride.max_passengers_per_vehicle, the nearest departure first, sorted traversal; the volume is the joint binder's identity - (occupancy - 1) x the driver share x core trips - less every trip the earlier passes cover, thinned deterministically to it. Consumed by build_activity_chains.py; the bindings reach the run as boundDriver / boundRideTrips / boundDriveTrips like the lift table's, and the runtime pairing re-times the passenger to the driver (9.120). SAMPLING (9.127): a passenger is bound only to drivers whose household unit hash (blake2b over 'household|<id>|RUN.machine.seed', the sampler's own) is at or below the passenger's, so every nested household sample that keeps the passenger keeps the driver by construction; the sampler excludes these households from its lift clusters (`sharedDriverHousehold`). Measured: unioning them made the 10% sample 31,262 persons where 62,134 were due; a directed closure made it 17.65% of persons.
+
+***definition** · status **active** · DECISIONS.md §9.124, 9.127*
 
 #### `B.ride.unpaired_fallback`
 
@@ -1892,7 +1930,7 @@ How long a passenger waits for a vehicle before abandoning the taxi trip. It is 
 
 #### `B.taxi.min_unaccompanied_age`
 
-Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49).
+Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49). Since 9.120 the plan builder reads the same value so the full-choice-set seed never writes a taxi plan for a person the run would refuse.
 
 ***assumed** · status **active** · DECISIONS.md §9.84 · MATSim `modeAvailability.taxiMinAge`*
 
@@ -1908,6 +1946,14 @@ Fares one taxi carries in a day, which is what turns an observed TRIP volume int
 
 ***literature** · status **active** · DECISIONS.md §9.99*
 
+#### `B.truck.resident_trip_share`
+
+Share of resident person trips made driving a truck, realised as a PERSON-LEVEL carve exactly like the motorbike carve: a licensed, car-available resident who is not escorting that day becomes a truck driver (their whole day locks to `truck` - vehicle continuity is chain-based, the person's own truck vehicle exists, and no preference observation exists to let it compete in mode choice) with the probability that makes carved persons' trips this share of all trips, solved on the persons who will not be denied. The directive's item 8 - residents with actual trucker jobs beside the anonymous freight tier. Scored with the freight tier's trucks at the classifying count stations (9.101).
+
+***derived** · status **active** · DECISIONS.md §9.125*
+
+> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.truck_driver_journey_share`: resident_trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.truck_driver_journey_share = 0.59 x 0.0050729 = 0.0029930 - the motorbike carve's identity (9.115) applied to the census Truck cell of the target LGA. It is the same slice build_mode_targets.py deducts from the driver level, so the carve and the yardstick describe one quantity.
+
 #### `B.walk.pce`
 
 Road capacity a network-simulated pedestrian consumes: zero, by definition - a walker moves along the network beside the carriageway (the sidewalk, expressed in queue arithmetic), physically present on every link (real LinkEnter/LinkLeave events, speed-capped at the declared walking speed) while neither impeding nor being impeded by motor traffic. Not a tunable: a pedestrian who consumed road capacity would be walking in the traffic lane.
@@ -1916,7 +1962,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 17 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 19 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -1925,11 +1971,13 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
 | `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
 | `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
-| `CAL.mode_split.motorbike_driver_journey_share` | `0.0040786` | share_of_driver_journeys | `measured` | 0.0038747 - 0.0042825 |
+| `CAL.mode_split.motorbike_driver_journey_share` | `0.0064151` | share_of_driver_journeys | `measured` | 0.0060943 - 0.0067359 |
+| `CAL.mode_split.truck_driver_journey_share` | `0.0050729` | share_of_driver_journeys | `measured` | 0.0048193 - 0.0053265 |
 | `CAL.mode_split.vehicle_driver_level` | `0.59` | share_of_trips | `measured` | 0.5605 - 0.6195 |
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
 | `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
 | `CAL.pt_split.station_scope` | `target_lga` | enum | `assumed` | `target_lga`, `all_observed` |
@@ -1960,9 +2008,15 @@ The fractional half-width of the sweep placed on every per-mode target derived b
 
 #### `CAL.mode_split.motorbike_driver_journey_share`
 
-Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the core SA1s - 653 of 160,103 - READ from the census extract and asserted against it on every build. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes. Taking 653 of all 179,761 journeys (0.363%) and applying it straight to all trips is the defect 9.115 records - it assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS, where the survey observes 59.0%. The sweep is a DECLARED +/-5% band on that transfer, not a measured spread: this is one census cell with no repeated measurement in the package.
+Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.
 
-***measured** · status **active** · DECISIONS.md §9.115*
+***measured** · status **active** · DECISIONS.md §9.115, 9.122*
+
+#### `CAL.mode_split.truck_driver_journey_share`
+
+Census G62 one-method Truck journeys to work as a share of one-method DRIVER journeys to work for the target LGA's SA1s - 223 of 43959 - READ from the census extract and asserted against it on every build. The cell build_mode_targets.py has always deducted from the driver level as the resident-truck slice (0.2993% of resident trips); since 9.125 the plans builder also carves residents locked to `truck` from it, so the directive's resident truck drivers exist in the population and the yardstick's deduction describes them.
+
+***measured** · status **active** · DECISIONS.md §9.125*
 
 #### `CAL.mode_split.vehicle_driver_level`
 
@@ -1991,6 +2045,14 @@ How many independent numbers the objective actually contains. The loop refuses t
 ***derived** · status **active** · DECISIONS.md §12.1*
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
+
+#### `CAL.pt.weekday_factor`
+
+Weekday uplift applied to an all-days daily boardings count (light rail line boardings, heavy rail station entries) so the target is stated per WEEKDAY, the day type the gated arms run. Derived from the demand's own day-type trip ratio.
+
+***assumed** · status **active** · DECISIONS.md §9.130*
+
+> **Sweep basis.** Set from the demand's own day-type trip ratio - demand/plans/matsim/_plans_report.json: by_day.WEEKDAY.legs_selected_plan / ((5 x WEEKDAY + SAT + SUN) / 7) = 2,343,321 / 2,184,254 - the demand's own weekday-to-mean-day trip ratio, applied to an all-days daily boardings count to state it per WEEKDAY - and declared assumed because the schema's `derived` means implied by other registry fields, which this is not: it is read from the demand build. The published patronage series are monthly totals with no day-type split, and the run is a WEEKDAY. The ratio of a weekday's trips to the mean day's is taken from the demand's own three day types (1.0727 for all trips); public transport is more weekday-peaked than travel as a whole, so the sweep runs from no uplift to 1.3. Never fitted.
 
 #### `CAL.pt_split.break_ratio`
 
@@ -2775,7 +2837,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 68 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 72 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration carries a null value because no justified value has been measured; the resolver will not invent one.
 
@@ -2819,7 +2881,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.relaxation.drift_tolerance_pp` | `0.5` | percentage_points | `assumed` | 0.1 - 1 |
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `measured` | 1 - 100 |
 | `RUN.replanning.fraction_to_disable_innovation` | `0.8` | share_of_iterations | `literature` | 0.7 - 0.9 |
-| `RUN.replanning.max_agent_plan_memory` | `5` | plans | `literature` | 3 - 10 |
+| `RUN.replanning.max_agent_plan_memory` | `8` | plans | `literature` | 3 - 10 |
 | `RUN.replanning.strategy_subpopulations` | `{"SubtourModeChoice": ["person"]}` | subpopulation_names_per_strategy | `definition` | - |
 | `RUN.replanning.subpopulations` | `["person", "external", "freight"]` | subpopulation_names | `definition` | - |
 | `RUN.replanning.time_mutation_range_s` | `1800.0` | seconds | `literature` | 600 - 1800 |
@@ -2845,7 +2907,11 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
+| `RUN.transit_router.direct_walk_basis` | `network` | enum | `derived` | derived: direct_walk_basis = network whenever walk is routed and simulated on t |
+| `RUN.transit_router.direct_walk_factor` | `1.0` | ratio | `literature` | 1 - 2 |
+| `RUN.transit_router.extension_radius_m` | `200.0` | metres | `literature` | 100 - 500 |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
+| `RUN.transit_router.search_radius_m` | `1000.0` | metres | `literature` | 500 - 2000 |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
 | `RUN.travel_time.bin_size_s` | `300` | seconds | `literature` | 60 - 900 |
 | `RUN.travel_time.separate_modes` | `false` | boolean | `definition` | - |
@@ -3088,7 +3154,7 @@ Share of iterations after which no new plans are created. At 250 iterations inno
 
 #### `RUN.replanning.max_agent_plan_memory`
 
-Plans retained per agent. A property of the MATSim formulation, not of Newcastle.
+Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep.
 
 ***literature** · status **active** · DECISIONS.md §9.3 · MATSim `replanning.maxAgentPlanMemorySize`*
 
@@ -3270,6 +3336,30 @@ Whether the mobsim simulates the transit schedule at all. False would make every
 
 ***definition** · status **active** · DECISIONS.md §15 · MATSim `transit.useTransit`*
 
+#### `RUN.transit_router.direct_walk_basis`
+
+What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it.
+
+***derived** · status **active** · DECISIONS.md §9.121 · MATSim `ptDirectWalk.basis`*
+
+> **Derived from** `RUN.routing.network_modes`: direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121), by bank: of 256 harbour-crossing trips in residents' PT plans the raptor returned a beeline walk across the harbour for 174 and a ferry leg for 23; those walks executed as the ~19 km road detour, and over all residents 38.3% of PT-plan trips were walk-only. On the F17 arm at the same depth 209 of 359 crossings route with a ferry leg. `beeline` recovers the stock raptor exactly.
+
+#### `RUN.transit_router.direct_walk_factor`
+
+Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default.
+
+***literature** · status **active** · DECISIONS.md §9.121 · MATSim `transitRouter.directWalkFactor`*
+
+> **Sweep basis.** MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.
+
+#### `RUN.transit_router.extension_radius_m`
+
+When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default.
+
+***literature** · status **active** · DECISIONS.md §9.120 · MATSim `transitRouter.extensionRadius`*
+
+> **Sweep basis.** MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.
+
 #### `RUN.transit_router.max_beeline_walk_connection_m`
 
 Maximum stop-to-stop distance at which the PT router will create a transfer. THIS PARAMETER ALONE CREATES EVERY INTERCHANGE IN THE MODEL: none of the five raw TfNSW feeds carries a transfers.txt, so the schedule holds zero minimalTransferTimes and nothing backstops it. At the unset default of 100 m the light rail at Newcastle Interchange reached Stand A (49.0 m), Stand B (95.1 m) and the heavy rail platforms (53.9-57.8 m) but NOT Stand C at 119.2-139.0 m, which carries the regional buses and NSW TrainLink - the external-origin connection hypothesis A3 falsifies on (9.28).
@@ -3277,6 +3367,14 @@ Maximum stop-to-stop distance at which the PT router will create a transfer. THI
 ***literature** · status **active** · DECISIONS.md §9.28 · MATSim `transitRouter.maxBeelineWalkConnectionDistance`*
 
 > **Sweep basis.** 100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.
+
+#### `RUN.transit_router.search_radius_m`
+
+Radius around a trip end within which the PT router considers stop facilities as access or egress points. If no stop lies within it, the router extends to the nearest stop plus RUN.transit_router.extension_radius_m. It governs the reach of every submode and is the one value that decides whether a resident 1.5 km from Stockton wharf can be routed onto the ferry (#94); it had been governing silently as the jar default.
+
+***literature** · status **active** · DECISIONS.md §9.120 · MATSim `transitRouter.searchRadius`*
+
+> **Sweep basis.** MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.
 
 #### `RUN.travel_time.analysed_modes`
 

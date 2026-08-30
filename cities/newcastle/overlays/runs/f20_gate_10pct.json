@@ -1,0 +1,10 @@
+{
+  "overlay": "f20_gate_10pct",
+  "description": "The first family-F20 arm (DECISIONS.md 9.129): the F19 run stack (driver detour, 9.128) on a demand re-bound under the same-bucket coupling rule (B.ride.shared_lift_hash_bucket = 0.05 - a 10% sample no longer keeps named drivers at 12.4% and everyone else at 7.95%) with the motorbike and truck carves solved on the pool that is actually drawn (named drivers excluded; the motorbike carve now delivers 0.2666% of resident trips against 0.2654% solved, was 0.153%). Identical run parameters to f15..f19_gate_10pct - S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the standing /goal directive. NEVER compare with a 25% arm (9.10, 9.12) or with any run before the F20 boundary. NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.1,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}

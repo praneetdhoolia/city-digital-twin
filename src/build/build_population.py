@@ -51,8 +51,40 @@ os.makedirs(os.path.join(OUT, 'plans'), exist_ok=True)
 AGE_BANDS = CFG.get('B.population.age_bands')
 BAND_LABEL = ['0-4', '5-11', '12-17', '18-24', '25-34', '35-44',
               '45-54', '55-64', '65-74', '75-84', '85+']
-# NSW driver-licence holding rate by age band (assumed; ABS/TfNSW-typical)
+# Driver-licence holding rate by age band: the pooled measured vector
+# (B.population.licence_rate_by_age_band, DECISIONS.md 9.131), and the
+# per-LGA table it was pooled from, which the draw prefers - the rate is
+# observed per LGA (Newcastle's 18-24 hold at 0.68, Port Stephens' at 0.84)
+# and a pooled number would put the same licence in every suburb.
 LICENCE_RATE = CFG.get('B.population.licence_rate_by_age_band')
+LICENCE_RATE_BY_LGA = {}   # (lga, band index) -> rate
+_LICENCE_TABLE = _city.path('data/processed/observed/licence_rates_by_age_lga.csv')
+_SA1_LGA_TABLE = _city.path('data/processed/zones/sa1_to_lga.csv')
+SA1_LGA = {}
+if os.path.exists(_LICENCE_TABLE) and os.path.exists(_SA1_LGA_TABLE):
+    import csv as _csv
+    with open(_SA1_LGA_TABLE, encoding='utf-8') as _fh:
+        for _z in _csv.DictReader(_fh):
+            SA1_LGA[_z['SA1_CODE21']] = _z['lga_name']
+    with open(_LICENCE_TABLE, encoding='utf-8') as _fh:
+        for _r in _csv.DictReader(_fh):
+            if _r['lga'] == 'ALL':
+                continue
+            _lo, _hi = (int(x) for x in _r['band'].split('-'))
+            for _bi, _b in enumerate(CFG.get('B.population.age_bands')):
+                if int(_b[0]) == _lo and int(_b[1]) == _hi:
+                    LICENCE_RATE_BY_LGA[(_r['lga'], _bi)] = float(_r['rate'])
+
+
+def licence_rate(sa1, b):
+    """The licence holding rate for a person of age band b living in sa1:
+    the LGA's measured rate, else the pooled vector (9.131)."""
+    lga = SA1_LGA.get(str(sa1))
+    if lga is not None:
+        v = LICENCE_RATE_BY_LGA.get((lga, b))
+        if v is not None:
+            return v
+    return LICENCE_RATE[b]
 # Of 18+ education attendees (G01, observed), the share studying full time -
 # the ones who draw a mandatory HE tour. MEASURED per SA1 from G15 (the claim
 # that G15 "is not in the package" was FALSE - it always was, inside the GCP
@@ -445,7 +477,10 @@ def main(seed=None, sample=None, max_sa1=None):
                 employed = est.startswith('employed')
                 occ = OCCUPATIONS[int(rng.choice(len(OCCUPATIONS), p=p_occ))] if employed else ''
                 ib = INCOME_BANDS[int(rng.choice(len(INCOME_BANDS), p=p_inc))] if age >= 15 else 'Neg_Nil'
-                lic = int(age >= 17 and rng.random() < LICENCE_RATE[b])
+                # 9.131: drawn at the LGA's measured rate; 16 is the
+                # provisional minimum and the 12-17 band's rate is the
+                # 16-17-year-olds' holding spread over the band
+                lic = int(age >= 16 and rng.random() < licence_rate(sa1, b))
                 # attendance is observed (G01); how an 18+ attendee splits
                 # full/part-time is not held and is declared and swept
                 if rng.random() < edu[edu_group_of(age)]:

@@ -111,6 +111,22 @@
       "decisions_ref": "9.87",
       "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
     },
+    "CAL.pt.weekday_factor": {
+      "value": 1.0727,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        1.0,
+        1.3
+      ],
+      "sweep_basis": "Set from the demand's own day-type trip ratio - demand/plans/matsim/_plans_report.json: by_day.WEEKDAY.legs_selected_plan / ((5 x WEEKDAY + SAT + SUN) / 7) = 2,343,321 / 2,184,254 - the demand's own weekday-to-mean-day trip ratio, applied to an all-days daily boardings count to state it per WEEKDAY - and declared assumed because the schema's `derived` means implied by other registry fields, which this is not: it is read from the demand build. The published patronage series are monthly totals with no day-type split, and the run is a WEEKDAY. The ratio of a weekday's trips to the mean day's is taken from the demand's own three day types (1.0727 for all trips); public transport is more weekday-peaked than travel as a whole, so the sweep runs from no uplift to 1.3. Never fitted.",
+      "status": "active",
+      "decisions_ref": "9.130",
+      "consumers": [
+        "cities/newcastle/build/build_mode_targets.py"
+      ],
+      "description": "Weekday uplift applied to an all-days daily boardings count (light rail line boardings, heavy rail station entries) so the target is stated per WEEKDAY, the day type the gated arms run. Derived from the demand's own day-type trip ratio."
+    },
     "CAL.pt_split.station_scope": {
       "value": "target_lga",
       "units": "enum",
@@ -174,23 +190,39 @@
       "decisions_ref": "9.115",
       "description": "The survey's all-purpose Vehicle driver level - the share of resident person trips made as the driver of a private vehicle - READ from the household travel survey level table that build_mode_targets.py already splits into car, motorbike and resident truck driving, and asserted against that source on every build. It is declared here because it is the CONVERSION that carries a census commute-JOURNEY share to an all-purpose TRIP share, and a carve that omits it overstates its mode by the ratio of the two driver shares (9.115). The sweep is a DECLARED +/-5% band on the transfer, not a measured spread: the survey publishes this level as a single figure and no repeated measurement of it exists in the package, so the band expresses how far the conversion may be wrong rather than an observed variation. It is not a free parameter.",
       "consumers": [
-        "cities/newcastle/build/build_mode_targets.py"
+        "cities/newcastle/build/build_mode_targets.py",
+        "src/build/build_matsim_plans.py"
       ]
     },
     "CAL.mode_split.motorbike_driver_journey_share": {
-      "value": 0.0040786,
+      "value": 0.0064151,
       "units": "share_of_driver_journeys",
       "source": "measured",
       "sweep": [
-        0.0038747,
-        0.0042825
+        0.0060943,
+        0.0067359
       ],
       "status": "active",
-      "decisions_ref": "9.115",
-      "description": "Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the core SA1s - 653 of 160,103 - READ from the census extract and asserted against it on every build. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes. Taking 653 of all 179,761 journeys (0.363%) and applying it straight to all trips is the defect 9.115 records - it assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS, where the survey observes 59.0%. The sweep is a DECLARED +/-5% band on that transfer, not a measured spread: this is one census cell with no repeated measurement in the package.",
+      "decisions_ref": "9.115, 9.122",
+      "description": "Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.",
       "consumers": [
         "cities/newcastle/build/build_mode_targets.py"
       ]
+    },
+    "CAL.mode_split.truck_driver_journey_share": {
+      "value": 0.0050729,
+      "units": "share_of_driver_journeys",
+      "source": "measured",
+      "sweep": [
+        0.0048193,
+        0.0053265
+      ],
+      "status": "active",
+      "decisions_ref": "9.125",
+      "consumers": [
+        "cities/newcastle/build/build_mode_targets.py"
+      ],
+      "description": "Census G62 one-method Truck journeys to work as a share of one-method DRIVER journeys to work for the target LGA's SA1s - 223 of 43959 - READ from the census extract and asserted against it on every build. The cell build_mode_targets.py has always deducted from the driver level as the resident-truck slice (0.2993% of resident trips); since 9.125 the plans builder also carves residents locked to `truck` from it, so the directive's resident truck drivers exist in the population and the yardstick's deduction describes them."
     },
     "CAL.truck.count_year_from": {
       "value": 2023,

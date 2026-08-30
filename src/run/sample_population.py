@@ -75,6 +75,11 @@ HOUSEHOLD_RE = re.compile(
 # variance at fixed size).
 LIFT_RE = re.compile(
     r'<attribute name="liftHousehold"[^>]*>([^<]+)</attribute>')
+# DECISIONS.md 9.127: the shared-ride drivers' households, a subset of
+# liftHousehold that the binder bound under the sampler's own unit-hash rule
+# and that must therefore NOT be unioned into clusters.
+SHARED_RE = re.compile(
+    r'<attribute name="sharedDriverHousehold"[^>]*>([^<]+)</attribute>')
 # <ns0:capacity seats="70" standingRoomInPersons="0"> - both numbers are scaled,
 # so a fleet that had standing room would scale too, though this one has none.
 CAPACITY_RE = re.compile(r'(<[\w:]*capacity\b[^>]*?)'
@@ -106,7 +111,10 @@ def lift_cluster_map(src):
     Union-find over (householdId, liftHousehold) pairs read from the plans
     themselves, so the sampler can never disagree with what the population
     actually carries. Empty when no binding exists, which restores the 9.45
-    behaviour byte for byte.
+    behaviour byte for byte. Since 9.127 the shared-ride drivers' households
+    are excluded from the unions: a directed closure over them was measured
+    to pull the 10% sample to 17.65% of persons, and a union to make it half
+    of what it should be; the binder's unit-hash rule needs neither.
     """
     parent = {}
 
@@ -116,8 +124,17 @@ def lift_cluster_map(src):
             x = parent[x]
         return x
 
+    # 9.127: a person's liftHousehold now also carries the households of the
+    # SHARED-RIDE drivers (9.124). Those are NOT unioned: the binder bound
+    # them under the unit-hash rule, so a shared driver is kept whenever its
+    # passenger is, and unioning them makes the sampling unit a giant
+    # component (the first F18 arm kept 31,262 persons at 10% against
+    # 62,134). The plans name them in `sharedDriverHousehold`; the person's
+    # block is read whole so the exclusion is known before the unions.
     with gzip.open(src, 'rt', encoding='utf-8') as f:
         hid = None
+        lifts = []
+        shared = set()
         for line in f:
             h = HOUSEHOLD_RE.search(line)
             if h:
@@ -125,21 +142,36 @@ def lift_cluster_map(src):
                 continue
             l = LIFT_RE.search(line)
             if l and hid is not None:
-                # comma-separated since 9.68: a round-trip pair may be served
-                # by drivers from two households - union them all
-                for lift_hh in l.group(1).split(','):
-                    a, b = find(hid), find(lift_hh.strip())
-                    if a != b:
-                        # canonical: the numerically smaller root wins
-                        lo, hi = sorted((a, b), key=lambda v: (len(v), v))
-                        parent[hi] = lo
+                lifts = [x.strip() for x in l.group(1).split(',') if x.strip()]
+                continue
+            s = SHARED_RE.search(line)
+            if s and hid is not None:
+                shared = {x.strip() for x in s.group(1).split(',') if x.strip()}
+                continue
             if line.startswith('\t</person>'):
+                if hid is not None:
+                    # comma-separated since 9.68: a round-trip pair may be
+                    # served by drivers from two households - union them all,
+                    # less the shared-ride drivers the hash rule already keeps
+                    for lift_hh in lifts:
+                        if lift_hh in shared:
+                            continue
+                        a, b = find(hid), find(lift_hh)
+                        if a != b:
+                            # canonical: the numerically smaller root wins
+                            lo, hi = sorted((a, b), key=lambda v: (len(v), v))
+                            parent[hi] = lo
                 hid = None
+                lifts = []
+                shared = set()
     return {h: find(h) for h in list(parent)}
 
 
 def subsample_plans(src, dst, fraction, seed=SEED, unit=None):
     n_in = n_out = n_no_household = 0
+    # 9.60 clusters over the lift couplings; 9.127: the shared-ride drivers
+    # are excluded from them (see lift_cluster_map) because the binder keeps
+    # them by the unit-hash rule, so the clusters stay small
     cluster = lift_cluster_map(src) \
         if (unit or SAMPLE_UNIT) == 'household' else {}
     with gzip.open(src, 'rt', encoding='utf-8') as f, gzip_writer(dst) as w:

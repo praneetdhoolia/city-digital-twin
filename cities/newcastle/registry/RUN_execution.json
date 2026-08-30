@@ -194,7 +194,7 @@
       "description": "The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53)."
     },
     "RUN.replanning.max_agent_plan_memory": {
-      "value": 5,
+      "value": 8,
       "units": "plans",
       "source": "literature",
       "sweep": [
@@ -204,7 +204,7 @@
       "status": "active",
       "decisions_ref": "9.3",
       "matsim_param": "replanning.maxAgentPlanMemorySize",
-      "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle."
+      "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep."
     },
     "RUN.replanning.time_mutation_range_s": {
       "value": 1800.0,
@@ -398,6 +398,68 @@
       "decisions_ref": "9.28",
       "matsim_param": "transitRouter.maxBeelineWalkConnectionDistance",
       "description": "Maximum stop-to-stop distance at which the PT router will create a transfer. THIS PARAMETER ALONE CREATES EVERY INTERCHANGE IN THE MODEL: none of the five raw TfNSW feeds carries a transfers.txt, so the schedule holds zero minimalTransferTimes and nothing backstops it. At the unset default of 100 m the light rail at Newcastle Interchange reached Stand A (49.0 m), Stand B (95.1 m) and the heavy rail platforms (53.9-57.8 m) but NOT Stand C at 119.2-139.0 m, which carries the regional buses and NSW TrainLink - the external-origin connection hypothesis A3 falsifies on (9.28)."
+    },
+    "RUN.transit_router.search_radius_m": {
+      "value": 1000.0,
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        500.0,
+        2000.0
+      ],
+      "sweep_basis": "MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.",
+      "status": "active",
+      "decisions_ref": "9.120",
+      "matsim_param": "transitRouter.searchRadius",
+      "description": "Radius around a trip end within which the PT router considers stop facilities as access or egress points. If no stop lies within it, the router extends to the nearest stop plus RUN.transit_router.extension_radius_m. It governs the reach of every submode and is the one value that decides whether a resident 1.5 km from Stockton wharf can be routed onto the ferry (#94); it had been governing silently as the jar default."
+    },
+    "RUN.transit_router.extension_radius_m": {
+      "value": 200.0,
+      "units": "metres",
+      "source": "literature",
+      "sweep": [
+        100.0,
+        500.0
+      ],
+      "sweep_basis": "MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.",
+      "status": "active",
+      "decisions_ref": "9.120",
+      "matsim_param": "transitRouter.extensionRadius",
+      "description": "When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default."
+    },
+    "RUN.transit_router.direct_walk_factor": {
+      "value": 1.0,
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        1.0,
+        2.0
+      ],
+      "sweep_basis": "MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.",
+      "status": "active",
+      "decisions_ref": "9.121",
+      "matsim_param": "transitRouter.directWalkFactor",
+      "description": "Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default."
+    },
+    "RUN.transit_router.direct_walk_basis": {
+      "value": "network",
+      "units": "enum",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "RUN.routing.network_modes"
+        ],
+        "identity": "direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121), by bank: of 256 harbour-crossing trips in residents' PT plans the raptor returned a beeline walk across the harbour for 174 and a ferry leg for 23; those walks executed as the ~19 km road detour, and over all residents 38.3% of PT-plan trips were walk-only. On the F17 arm at the same depth 209 of 359 crossings route with a ferry leg. `beeline` recovers the stock raptor exactly."
+      },
+      "status": "active",
+      "decisions_ref": "9.121",
+      "matsim_param": "ptDirectWalk.basis",
+      "consumers": [
+        "src/java/citysim/PtDirectWalkConfigGroup.java",
+        "src/java/citysim/CitysimControler.java",
+        "src/java/citysim/NetworkDirectWalkPtRouter.java"
+      ],
+      "description": "What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it."
     },
     "RUN.routing.network_modes": {
       "value": [

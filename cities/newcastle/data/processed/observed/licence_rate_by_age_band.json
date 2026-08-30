@@ -1,0 +1,40 @@
+{
+  "decisions_ref": "9.131",
+  "snapshot_month": "202607",
+  "numerator": "TfNSW Driver Licence Statistics snapshot: primary licence, any class, non-learner",
+  "denominator": "ABS ERP by age and LGA, 30 June 2024, split to single years by census G04",
+  "suppressed_cells_taken_at_3": 395,
+  "lgas": [
+    "Cessnock",
+    "Lake Macquarie",
+    "Maitland",
+    "Newcastle",
+    "Port Stephens"
+  ],
+  "age_bands": [
+    "0-4",
+    "5-11",
+    "12-17",
+    "18-24",
+    "25-34",
+    "35-44",
+    "45-54",
+    "55-64",
+    "65-74",
+    "75-84",
+    "85-120"
+  ],
+  "rate_by_age_band": [
+    0.0,
+    0.0,
+    0.0823,
+    0.7828,
+    0.9402,
+    1.0,
+    0.9786,
+    0.972,
+    0.9838,
+    0.9172,
+    0.5118
+  ]
+}

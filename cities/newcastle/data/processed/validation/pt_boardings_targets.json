@@ -1,0 +1,47 @@
+{
+  "decisions_ref": "9.130",
+  "weekday_factor": 1.0727,
+  "light_rail": {
+    "per_day": 2753.52,
+    "per_weekday": 2953.7,
+    "window": [
+      "2025-07",
+      "2026-06"
+    ]
+  },
+  "heavy_rail": {
+    "per_day": 6086.1,
+    "per_weekday": 6528.56,
+    "window": [
+      "2025-07",
+      "2026-06"
+    ],
+    "stations": {
+      "Adamstown  Station": 82.9,
+      "Awaba  Station": 19.47,
+      "Booragul  Station": 29.67,
+      "Broadmeadow  Station": 730.58,
+      "Cardiff  Station": 738.64,
+      "Cockle Creek  Station": 43.94,
+      "Dora Creek  Station": 34.92,
+      "East Maitland  Station": 26.55,
+      "Fassifern  Station": 336.65,
+      "Hamilton  Station": 534.23,
+      "Hexham  Station": 7.35,
+      "Kotara  Station": 46.57,
+      "Maitland  Station": 312.93,
+      "Metford  Station": 52.63,
+      "Morisset  Station": 574.19,
+      "Newcastle Interchange Station": 1568.52,
+      "Sandgate  Station": 12.37,
+      "Tarro  Station": 4.62,
+      "Teralba  Station": 37.91,
+      "Thornton  Station": 191.64,
+      "Victoria Street  Station": 216.67,
+      "Warabrook  Station": 145.55,
+      "Waratah  Station": 131.76,
+      "Wyee  Station": 205.84
+    },
+    "excluded": []
+  }
+}

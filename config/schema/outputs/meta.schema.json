@@ -67,6 +67,13 @@
         "null"
       ]
     },
+    "inputs_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "sha256 of the day's population file the run sampled from (DECISIONS.md 9.127): part of the run's identity, so a rebuilt demand under the same parameters is a different run and cannot resume an earlier one; null when the file was absent."
+    },
     "started": {
       "type": "string",
       "description": "Launch wall-clock time, ISO local (yyyy-mm-ddThh:mm:ss)."

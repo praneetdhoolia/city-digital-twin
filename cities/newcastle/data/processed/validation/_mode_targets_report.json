@@ -10,18 +10,19 @@
     "walk only": 13.4
   },
   "g62_core_one_method": {
-    "train": 231,
-    "bus": 1178,
-    "ferry": 40,
+    "train": 83,
+    "bus": 735,
+    "ferry": 34,
     "tram": 52,
-    "taxi": 56,
-    "car": 157832,
-    "car_passenger": 9430,
-    "truck": 1618,
-    "motorbike": 653,
-    "bike": 903,
-    "walk": 4383
+    "taxi": 39,
+    "car": 43454,
+    "car_passenger": 2562,
+    "truck": 223,
+    "motorbike": 282,
+    "bike": 718,
+    "walk": 2212
   },
+  "g62_one_method_scope": "target_lga",
   "pt_window": [
     "2024-10",
     "2025-03"
@@ -33,8 +34,9 @@
   },
   "n_modes": 12,
   "by_status": {
-    "derived": 10,
-    "observed": 2
+    "derived": 8,
+    "observed": 2,
+    "measured": 2
   },
-  "person_trip_target_sum": 99.505
+  "person_trip_target_sum": 98.4255
 }

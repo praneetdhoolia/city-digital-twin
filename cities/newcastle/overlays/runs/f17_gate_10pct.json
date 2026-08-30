@@ -1,0 +1,10 @@
+{
+  "overlay": "f17_gate_10pct",
+  "description": "The first family-F17 arm (DECISIONS.md 9.121, #94): the F16 stack with the PT router's direct walk evaluated on the walk network (RUN.transit_router.direct_walk_basis = network) instead of SwissRailRaptor's beeline. Identical run parameters to f15_gate_10pct and f16_gate_10pct - S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the standing /goal directive - so this arm differs from the F16 arm in the router's direct-walk basis alone. Measured motivation: 38.3% of the trips in residents' PT plans were walk-only at F16 iteration 10, 45.5% of them over 3 km on the network, because a beeline crosses the harbour and the road does not; Stockton-side residents' CBD trips were routed as a walk 88 times in 110 and on the ferry once. Measured pace at 10%: 120-150 s/it, so a gate costs ~3.5 h. NEVER compare with a 25% arm (9.10, 9.12) or with any run before 30 August 14:05 (family F17 opens at 9.121). NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.10,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}
