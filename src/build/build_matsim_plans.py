@@ -79,16 +79,76 @@ EXTERNAL_RIDE_AVAILABLE = CFG.get('B.external.agent_ride_available')
 # identical across day types, and consuming no rng stream, so every existing
 # draw sequence is byte-identical to the pre-motorbike build.
 MOTORBIKE_SHARE = CFG.get('B.motorbike.trip_share')
+# DECISIONS.md 9.122: the carve at the resolution the census observes it.
+# `region` applies B.motorbike.trip_share everywhere; `sa1_thinned` derives
+# a share per home SA1 from the same G62 cell (motorbike / car-as-driver
+# journeys x CAL.mode_split.vehicle_driver_level), falling back to the SA1's
+# SA2 where the driver cell is under B.census.thin_cell_min_journeys - ABS
+# perturbs small cells. Measured: SA2 shares run 0 to 1.13% of drivers
+# against a flat 0.41%, and the flat carve delivered 0.06% of target-LGA
+# trips against 0.24% on the F16/F17 arms (#93 fact 2).
+MOTORBIKE_CARVE_RESOLUTION = CFG.get('B.motorbike.carve_resolution')
+VEHICLE_DRIVER_LEVEL = CFG.get('CAL.mode_split.vehicle_driver_level')
+THIN_CELL_MIN = CFG.get('B.census.thin_cell_min_journeys')
 _MOTORBIKE_Q = {'q': 0.0}   # solved in main() from the eligible share
+_MOTORBIKE_Q_BY_PID = {}    # 9.122: per-person q under `sa1_thinned`
 
 import hashlib as _hashlib  # noqa: E402
 
 
 def motorbike_user(pid):
-    if _MOTORBIKE_Q['q'] <= 0.0:
+    q = _MOTORBIKE_Q_BY_PID.get(pid, _MOTORBIKE_Q['q']) \
+        if _MOTORBIKE_Q_BY_PID else _MOTORBIKE_Q['q']
+    if q <= 0.0:
         return False
     h = _hashlib.sha256(('motorbike|%s|%d' % (pid, SEED)).encode()).hexdigest()
-    return int(h[:12], 16) / float(1 << 48) < _MOTORBIKE_Q['q']
+    return int(h[:12], 16) / float(1 << 48) < q
+
+
+def motorbike_share_by_cell():
+    """(home SA1 -> motorbike share of trips) from the census cell, thinned.
+
+    The identity is B.motorbike.trip_share's, applied per cell: share =
+    CAL.mode_split.vehicle_driver_level x (one-method motorbike journeys /
+    one-method car-as-driver journeys). A cell with fewer driver journeys than
+    B.census.thin_cell_min_journeys takes its SA2's ratio. Returns the map and
+    the cells used, for the report.
+    """
+    import csv as _csv
+    g62 = _city.path('data/processed/census/census2021_G62_SA1.csv')
+    zones = _city.path('data/processed/zones/zones_SA1.csv')
+    sa2_of = {}
+    with open(zones, newline='', encoding='utf-8') as fh:
+        for r in _csv.DictReader(fh):
+            sa2_of[r['SA1_CODE21']] = r['SA2_CODE21']
+    drv, moto = {}, {}
+    with open(g62, newline='', encoding='utf-8') as fh:
+        for r in _csv.DictReader(fh):
+            sa1 = r['SA1_CODE_2021']
+            try:
+                drv[sa1] = float(r.get('One_method_Car_as_driver_P') or 0)
+                moto[sa1] = float(r.get('One_method_Motorbike_scootr_P') or 0)
+            except ValueError:
+                continue
+    sa2_drv, sa2_moto = {}, {}
+    for sa1, d in drv.items():
+        s2 = sa2_of.get(sa1)
+        sa2_drv[s2] = sa2_drv.get(s2, 0.0) + d
+        sa2_moto[s2] = sa2_moto.get(s2, 0.0) + moto[sa1]
+    share, used = {}, {'sa1': 0, 'sa2': 0, 'none': 0}
+    for sa1, d in drv.items():
+        if d >= THIN_CELL_MIN and d > 0:
+            share[sa1] = VEHICLE_DRIVER_LEVEL * moto[sa1] / d
+            used['sa1'] += 1
+        else:
+            s2 = sa2_of.get(sa1)
+            if sa2_drv.get(s2, 0.0) > 0:
+                share[sa1] = VEHICLE_DRIVER_LEVEL * sa2_moto[s2] / sa2_drv[s2]
+                used['sa2'] += 1
+            else:
+                share[sa1] = 0.0
+                used['none'] += 1
+    return share, used
 # An escort trip's traveller is the driver - the identity that already limits
 # HX generation to licence holders, carried through to mode choice: a person
 # whose day includes an escort activity is denied `ride` FOR THAT DAY TYPE.
@@ -853,15 +913,60 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
             os.path.join(PLANS, 'B2_activity_trips_%s.csv' % first_day)):
         trips_by_pid[pid] = len(rows)
     total_trips = sum(trips_by_pid[p] for p in attrs)
-    eligible = sum(1 for a in attrs.values() if a[0] and a[2])
+    # 9.122: a carved person is DENIED the mode on an escort day (write_day:
+    # a pillion is not how the escorted child travels), and that denial
+    # happens after the draw. Solving q on all eligible persons therefore
+    # delivered share x (1 - the escorters' trip share): measured 0.128% of
+    # legs against 0.241% solved for, with 38.0% of eligible persons holding
+    # 47% of eligible trips being escorters on WEEKDAY. The denial is known
+    # before the draw, so the pool is the eligible persons who will not be
+    # denied - the carve then delivers what it solves for.
+    escorters = set()
+    for pid, rows in stream_persons(
+            os.path.join(PLANS, 'B2_activity_trips_%s.csv' % first_day)):
+        if any(r['dest_activity_type'] == 'escort' for r in rows):
+            escorters.add(pid)
+    eligible = sum(1 for p, a in attrs.items()
+                   if a[0] and a[2] and p not in escorters)
     eligible_trips = sum(trips_by_pid[p] for p, a in attrs.items()
-                         if a[0] and a[2])
+                         if a[0] and a[2] and p not in escorters)
     q = (MOTORBIKE_SHARE * total_trips / eligible_trips) if eligible_trips else 0.0
     _MOTORBIKE_Q['q'] = min(1.0, q)
     print('motorbike carve: trip share %.5f -> q=%.5f over %d eligible '
           'persons (of %d) making %d of %d %s trips'
           % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'], eligible, len(attrs),
              eligible_trips, total_trips, first_day), flush=True)
+    carve_cells = None
+    if MOTORBIKE_CARVE_RESOLUTION == 'sa1_thinned':
+        # 9.122: the same identity per home SA1 (its SA2 where thin), each
+        # cell's probability solved on ITS eligible persons' own trips
+        share_by_sa1, used = motorbike_share_by_cell()
+        home = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
+                           usecols=['person_id', 'home_sa1'], dtype=str)
+        sa1_of = dict(zip(home['person_id'].astype(int), home['home_sa1']))
+        cell_trips, cell_elig = collections.Counter(), collections.Counter()
+        for p, a in attrs.items():
+            c = sa1_of.get(p)
+            cell_trips[c] += trips_by_pid[p]
+            if a[0] and a[2] and p not in escorters:
+                cell_elig[c] += trips_by_pid[p]
+        weighted = 0.0
+        for p, a in attrs.items():
+            c = sa1_of.get(p)
+            s = share_by_sa1.get(c, 0.0)
+            qc = (s * cell_trips[c] / cell_elig[c]) if cell_elig[c] else 0.0
+            _MOTORBIKE_Q_BY_PID[p] = min(1.0, qc)
+        for c, t in cell_trips.items():
+            weighted += share_by_sa1.get(c, 0.0) * t
+        weighted = weighted / total_trips if total_trips else 0.0
+        carve_cells = dict(resolution='sa1_thinned', cells_at_sa1=used['sa1'],
+                           cells_at_sa2=used['sa2'], cells_without=used['none'],
+                           trip_weighted_share=round(weighted, 6),
+                           declared_region_share=MOTORBIKE_SHARE)
+        print('motorbike carve per cell: %d SA1 cells, %d thinned to SA2, %d '
+              'without a cell; trip-weighted share %.5f against the declared '
+              'region share %.5f' % (used['sa1'], used['sa2'], used['none'],
+                                     weighted, MOTORBIKE_SHARE), flush=True)
     report = {}
     for d in day_types:
         write_day(d, attrs, rng, report, seed_table)
@@ -870,6 +975,9 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
                 # per usable mode and the split below is then only the
                 # selected plan's draw
                 seed_method=SEED_METHOD,
+                # 9.122: the carve's resolution and, per cell, what it solved
+                motorbike_carve=carve_cells or dict(resolution='region',
+                                                    declared_region_share=MOTORBIKE_SHARE),
                 seed_mode_split={str(k): v for k, v in seed_table.items()},
                 seed_mode_sweep=SEED_MODE_SWEEP,
                 bike_available_rate=BIKE_AVAILABLE_RATE,

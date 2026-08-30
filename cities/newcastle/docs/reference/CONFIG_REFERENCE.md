@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 407 fields are made of
+## What the 408 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 37 | follows from another registry field by identity |
 | `literature` | 68 | a published value, not specific to this city |
 | `assumed` | 149 | chosen without direct empirical support |
-| `definition` | 115 | fixed by the formulation, not an empirical quantity |
+| `definition` | 116 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 388 | usable point value |
+| `active` | 389 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1118,7 +1118,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 98 fields*
+*`cities/newcastle/registry/B_demand.json` - 99 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1184,9 +1184,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
 | `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
+| `B.motorbike.carve_resolution` | `sa1_thinned` | enum | `definition` | `sa1_thinned`, `region` |
 | `B.motorbike.length_m` | `2.2` | metres | `literature` | **held fixed** |
 | `B.motorbike.pce` | `0.4` | passenger_car_equivalents | `literature` | 0.3 - 0.75 |
-| `B.motorbike.trip_share` | `0.0024064` | share_of_trips | `derived` | derived: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.moto |
+| `B.motorbike.trip_share` | `0.0037849` | share_of_trips | `derived` | derived: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.moto |
 | `B.network_factors.distance_band` | `0.25` | share | `assumed` | 0.1 - 0.5 |
 | `B.network_factors.min_pair_m` | `500.0` | metres | `assumed` | 100 - 2000 |
 | `B.network_factors.n_pairs` | `600` | zone_pairs | `assumed` | 200 - 5000 |
@@ -1653,6 +1654,12 @@ DISABLED (0.0) and reproducing, on measurement (9.106). The straight-line trip d
 
 > **Derived from** `C.constraint.trip_length_km.walk`: the 99th percentile of an exponential trip-length distribution with the OBSERVED mean this package already declares: -ln(0.01) x 0.7 km = 3.22 km. The exponential is the standard form for trip lengths and is stated rather than assumed silently; what it supplies is a TAIL, and only the tail is used - the bound refuses the far end of the distribution, not its body. For walk the derivation is corroborated by a second declared observation that was not used to make it: the observed mean walk trip TIME is 12.3 min, whose exponential p99 is 57 min, which at this model's own capped walk speed of 1.25 m/s is 4.2 km - agreeing with the distance derivation to within a kilometre.
 
+#### `B.motorbike.carve_resolution`
+
+The spatial resolution of the motorbike carve. Measured motivation (9.122, #93 fact 2): census G62 puts the motorbike share of driver journeys between 0 and 1.13% across SA2s against a flat 0.41% region value, and the flat carve delivered 0.06% of target-LGA resident trips against the 0.24% target on the F16 and F17 arms - the carve put motorcyclists where car ownership is, not where the census sees them. Per cell the probability is solved on that cell's eligible persons' own trips; the trip-weighted mean of the cell shares is reported beside the declared region share in _plans_report.json so the identity can be checked, never asserted.
+
+***definition** · status **active** · DECISIONS.md §9.122*
+
 #### `B.motorbike.length_m`
 
 Stated length of the motorbike vehicle type in the vehicles file. Does not reach the traffic model - space and flow run on PCE - and is held fixed for exactly that reason.
@@ -1675,9 +1682,9 @@ Passenger-car equivalents of one modelled motorbike - it consumes LESS road capa
 
 Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.
 
-***derived** · status **active** · DECISIONS.md §9.115*
+***derived** · status **active** · DECISIONS.md §9.115, 9.122*
 
-> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.motorbike_driver_journey_share`: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0040786 = 0.0024064. The carve share and the fit target are the SAME 653 census riders transferred to all-purpose trips, and there is no modelling judgement between them: the carve previously took 653 of ALL 179,761 commute journeys (0.363%) and applied it straight to all trips, which assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS where the survey observes 59.0%. Dividing out that ratio - 89.1/59.0 = 1.510 - returns 0.363%/1.510 = 0.2405%, the target to its last decimal. Conditioning the census cell on driver journeys and scaling by the observed driver level performs the same conversion in one step, so generation and scoring finally describe one quantity (9.115). This LOWERS generation and is a consistency repair, not a fit repair; it must not be sold as one.
+> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.motorbike_driver_journey_share`: trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0064151 = 0.0037849, both on the TARGET LGA since 9.122 (the core cell gave 0.59 x 0.0040786 = 0.0024064, generated for five LGAs and scored against one). The carve share and the fit target are the SAME census riders transferred to all-purpose trips by the survey's driver level, so generation and scoring describe one quantity (9.115); under B.motorbike.carve_resolution = sa1_thinned the same identity is applied per home SA1 and this field is the LGA-level check the trip-weighted cell mean is reported against.
 
 #### `B.network_factors.distance_band`
 
@@ -1932,7 +1939,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
 | `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
 | `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
-| `CAL.mode_split.motorbike_driver_journey_share` | `0.0040786` | share_of_driver_journeys | `measured` | 0.0038747 - 0.0042825 |
+| `CAL.mode_split.motorbike_driver_journey_share` | `0.0064151` | share_of_driver_journeys | `measured` | 0.0038747 - 0.0042825 |
 | `CAL.mode_split.vehicle_driver_level` | `0.59` | share_of_trips | `measured` | 0.5605 - 0.6195 |
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
@@ -1967,9 +1974,9 @@ The fractional half-width of the sweep placed on every per-mode target derived b
 
 #### `CAL.mode_split.motorbike_driver_journey_share`
 
-Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the core SA1s - 653 of 160,103 - READ from the census extract and asserted against it on every build. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes. Taking 653 of all 179,761 journeys (0.363%) and applying it straight to all trips is the defect 9.115 records - it assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS, where the survey observes 59.0%. The sweep is a DECLARED +/-5% band on that transfer, not a measured spread: this is one census cell with no repeated measurement in the package.
+Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.
 
-***measured** · status **active** · DECISIONS.md §9.115*
+***measured** · status **active** · DECISIONS.md §9.115, 9.122*
 
 #### `CAL.mode_split.vehicle_driver_level`
 

@@ -174,12 +174,20 @@ the population — feasibility, not a rate, decides how much realises. That is a
 change and a family boundary; it needs the user's decision and the F15 arm's ride
 reading first.
 
-**Queued for the same next family, measured and not built (§9.120):** residents who
-drive trucks — census G62 one-method `Truck` 1,880 journeys to work, 1.058% of
-car-as-driver journeys — transfer exactly as the motorbike carve does (≈0.62% of
-resident trips, locked to `truck`); the directive's item 8. And #30's destination
-solver, now quantified against the D1 layers (shopping/other ends in the tram
-corridor at two-thirds of the observed attraction rate).
+**Queued for the same next family:** (a) **built, not yet rebuilt (§9.122)** — the
+motorbike carve solved on the persons who will NOT be denied on an escort day (the
+denial after the draw halved it: 0.128% of legs against 0.241% solved for, 38% of
+eligible persons being escorters), and the carve at the resolution the census observes
+it, `B.motorbike.carve_resolution` = `sa1_thinned`; **the yardstick half is done now**
+— the driver split reads the target LGA's own G62 cell, moving motorbike's target
+0.2406 → 0.3785, car 58.16 → 58.32, ferry 0.1013 → 0.1429, and at 10% motorbike is a
+17-person statistic; (b) measured, not built (§9.120) — residents
+who drive trucks, census G62 one-method `Truck` 1,880 journeys to work, 1.058% of
+car-as-driver journeys, transferring exactly as the motorbike carve does (≈0.62% of
+resident trips, locked to `truck`), the directive's item 8; (c) #30's destination
+solver, now quantified against the D1 layers (shopping/other ends in the tram corridor
+at two-thirds of the observed attraction rate). Rebuilding plans for (a)–(c) opens a
+family; do it once, after the F17 gate names its own root causes.
 
 ---
 

@@ -165,10 +165,26 @@ def region_trip_totals(year):
             in sel.groupby('area_name')['TRIPS_BY_MODE'].sum().items()}
 
 
-def g62_composition():
-    """One-method JTW journeys by mode, this city's core SA1s only."""
+def g62_composition(scope='target_lga'):
+    """One-method JTW journeys by mode.
+
+    `target_lga` (DECISIONS.md 9.122): the SA1s the boundary layer puts in
+    the target LGA - the population whose HTS levels every other target rests
+    on and whose modelled share the fit measures. `core` is the five-LGA core,
+    which this split used until 9.122: motorbike was then generated for one
+    geography and scored against another (0.408% of driver journeys on the
+    core cell against 0.642% on the LGA's own), the 9.91/9.100 class.
+    """
     d = pd.read_csv(os.path.join(CEN, 'census2021_G62_SA1.csv'))
-    d = d[d.zone_tier == 'core']
+    if scope == 'core':
+        d = d[d.zone_tier == 'core']
+    elif scope == 'target_lga':
+        lga = pd.read_csv(os.path.join(ZON, 'sa1_to_lga.csv'), dtype=str)
+        inside = set(lga.loc[lga.lga_name.str.strip() == _city.target_lga(),
+                             'SA1_CODE21'])
+        d = d[d.SA1_CODE_2021.astype(str).isin(inside)]
+    else:
+        raise SystemExit('unknown G62 scope %r' % scope)
     return {k: int(d[col].fillna(0).sum()) for k, col in G62.items()}
 
 
@@ -608,6 +624,9 @@ def main():
         hts_vintage=year, target_lga=lga,
         hts_levels=lv,
         g62_core_one_method=g,
+        # 9.122: the key name predates the scope change; the cell is the
+        # target LGA's since then, and this says so where the key cannot
+        g62_one_method_scope='target_lga',
         pt_window=[window[0], window[-1]], pt_boardings=pt,
         n_modes=len(d),
         by_status=d['status'].value_counts().to_dict(),

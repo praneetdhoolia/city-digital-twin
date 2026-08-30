@@ -713,7 +713,8 @@
       "decisions_ref": "9.77",
       "description": "Reporting flag for the demographic mode-share measurement (issue #50): an observed census cell under this many journeys is marked too thin to constrain anything - ABS randomly perturbs small cells, so tiny aggregates carry perturbation noise on top of sampling noise. A flag on how a comparison is LABELLED, never a value that reaches the model; declared so the threshold is visible and changeable in one place.",
       "consumers": [
-        "src/analyse/measure_demographic_modes.py"
+        "src/analyse/measure_demographic_modes.py",
+        "src/build/build_matsim_plans.py"
       ]
     },
     "B.counts.station_match_radius_m": {
@@ -1414,7 +1415,7 @@
       "matsim_param": "ridePairing.physicalBoarding"
     },
     "B.motorbike.trip_share": {
-      "value": 0.0024064,
+      "value": 0.0037849,
       "units": "share_of_trips",
       "source": "derived",
       "derived_from": {
@@ -1422,14 +1423,32 @@
           "CAL.mode_split.vehicle_driver_level",
           "CAL.mode_split.motorbike_driver_journey_share"
         ],
-        "identity": "trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0040786 = 0.0024064. The carve share and the fit target are the SAME 653 census riders transferred to all-purpose trips, and there is no modelling judgement between them: the carve previously took 653 of ALL 179,761 commute journeys (0.363%) and applied it straight to all trips, which assumes the driver share of all TRIPS equals the 89.1% driver share of commute JOURNEYS where the survey observes 59.0%. Dividing out that ratio - 89.1/59.0 = 1.510 - returns 0.363%/1.510 = 0.2405%, the target to its last decimal. Conditioning the census cell on driver journeys and scaling by the observed driver level performs the same conversion in one step, so generation and scoring finally describe one quantity (9.115). This LOWERS generation and is a consistency repair, not a fit repair; it must not be sold as one."
+        "identity": "trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.motorbike_driver_journey_share = 0.59 x 0.0064151 = 0.0037849, both on the TARGET LGA since 9.122 (the core cell gave 0.59 x 0.0040786 = 0.0024064, generated for five LGAs and scored against one). The carve share and the fit target are the SAME census riders transferred to all-purpose trips by the survey's driver level, so generation and scoring describe one quantity (9.115); under B.motorbike.carve_resolution = sa1_thinned the same identity is applied per home SA1 and this field is the LGA-level check the trip-weighted cell mean is reported against."
       },
       "status": "active",
-      "decisions_ref": "9.115",
+      "decisions_ref": "9.115, 9.122",
       "description": "Share of resident person trips made by motorbike, realised as a PERSON-LEVEL carve: a licensed, car-available adult becomes a motorbike user (their whole day locks to the mode - vehicle continuity is chain-based by nature) with the probability that makes carved persons' trips this share of all trips. Carved FROM car-driver demand, which is where the HTS and census place motorcyclists - so the car comparison folds motorbike back in at fit time (fit.py) and the carve never invents a trip.",
       "consumers": [
         "src/build/build_matsim_plans.py"
       ]
+    },
+    "B.motorbike.carve_resolution": {
+      "value": "sa1_thinned",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "sa1_thinned",
+          "region"
+        ],
+        "basis": "The two resolutions the plans builder can carve at. `region` applies B.motorbike.trip_share to every home SA1 alike (the pre-9.122 carve); `sa1_thinned` derives the SAME identity per home SA1 from the census cell that gives the region share - one-method motorbike journeys over one-method car-as-driver journeys, scaled by CAL.mode_split.vehicle_driver_level - falling back to the SA1's SA2 where the driver cell is under B.census.thin_cell_min_journeys. The sweep is over the resolution, not over any share."
+      },
+      "status": "active",
+      "decisions_ref": "9.122",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "The spatial resolution of the motorbike carve. Measured motivation (9.122, #93 fact 2): census G62 puts the motorbike share of driver journeys between 0 and 1.13% across SA2s against a flat 0.41% region value, and the flat carve delivered 0.06% of target-LGA resident trips against the 0.24% target on the F16 and F17 arms - the carve put motorcyclists where car ownership is, not where the census sees them. Per cell the probability is solved on that cell's eligible persons' own trips; the trip-weighted mean of the cell shares is reported beside the declared region share in _plans_report.json so the identity can be checked, never asserted."
     },
     "B.motorbike.pce": {
       "value": 0.4,
