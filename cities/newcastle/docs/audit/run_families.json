@@ -114,6 +114,12 @@
       "decisions_ref": "9.128",
       "from_launch": "20260830T170742",
       "note": "Opened 30 Aug 17:07 with arm 20260830T170743_300it_10pct after smoke probe 20260830T165440: B.ride.declared_pair_meeting = driver_detour (new). The demand is F18's unchanged; the run side changed (RidePairingEngine routes the driver's car leg through each carried declared passenger's links and books at the pass time). The valid F18 arm 20260830T163010 was stopped at iteration 1 and is F18 to that iteration."
+    },
+    "F20-bucket-rule-carve-pool": {
+      "label": "F19 run stack on a demand re-bound under the same-bucket coupling rule with the carves solved on the pool that is drawn (9.129)",
+      "decisions_ref": "9.129",
+      "from_launch": "20260830T184954",
+      "note": "Opened 30 Aug 18:49 with arm 20260830T184955_300it_10pct after smoke probe 20260830T184637: B.ride.shared_lift_hash_bucket = 0.05 (new) replaces the 9.127 at-or-below rule in the fourth binder pass, and the motorbike / truck carve probability excludes named drivers before the solve. Run side is F19 unchanged. The F19 arm 20260830T170743 was stopped at iteration 27 and is F19 to that iteration."
     }
   },
   "overrides": {
@@ -128,6 +134,10 @@
     "aborted_20260830T170153_300it_10pct": {
       "family": "F19-driver-detour",
       "note": "The F19 launch made inline by mistake; stopped at iteration 0 six minutes later and relaunched detached as 20260830T170743_300it_10pct."
+    },
+    "aborted_20260830T170743_300it_10pct": {
+      "family": "F19-driver-detour",
+      "note": "The first F19 arm, stopped at iteration 27 by the session for the F20 arm: its sample composition was biased by the 9.127 rule (9.129)."
     }
   }
 }
