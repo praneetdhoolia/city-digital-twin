@@ -1,7 +1,7 @@
 {
   "description": "Newcastle's LIVE-STATE documentation claims - the CITY-OWNED half of tests/check_doc_currency.py. Each entry pins one number written into a document to the artefact that decides it, so a figure cannot silently outlive the thing it describes. A second city supplies its own copy at cities/<city>/tests/doc_currency.json; the harness in tests/ names no city, no document and no number.",
   "what_belongs_here": "ONLY live-state cells - a table row or sentence that must equal the artefact TODAY. A dated record is frozen and must never be claimed: DECISIONS.md 14 saying 'manifest 436' on 24 August is history, and STATUS.md's dated task rows are the same. Claiming a record would force the project to rewrite its own past to keep a check green, which is the exact opposite of the reproducibility rule.",
-  "why_these_two_documents": "README.md is the front door and STATUS.md is the board - both are long-lived, both are read for current state, and both drifted. NEXT_AGENT_BRIEF.md is deliberately absent: /handoff rewrites it wholesale every session, so pinned patterns there would break by design and train readers to ignore the check. The brief's numbers are covered because /handoff sources them from STATUS.md, which is checked.",
+  "why_these_two_documents": "README.md is the front door, STATUS.md is the board, .claude/CLAUDE.md and docs/README.md frame the project for every session, and GOAL.md states what it is for - all are read for current state. NEXT_AGENT_BRIEF.md carries no pinned NUMBER (it is rewritten every session and its family stamp is checked by tests/check_doc_shape.py), but it does carry the banned-statement claims: a stale sentence is exactly as wrong in a brief as anywhere else.",
   "claims": [
     {
       "id": "readme.manifest-files",
@@ -124,90 +124,11 @@
       "id": "status.data-package-files",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\| Open data package \\|[^|]*?\\*\\*([\\d,]+)\\*\\* files",
+      "pattern": "\\| Data package \\| \\*\\*([\\d,]+) files\\*\\*",
       "truth": {
         "kind": "manifest_files"
       },
-      "note": "proposal 8 deliverable 2; drifted to 376 while the manifest held 489"
-    },
-    {
-      "id": "status.synthetic-agents",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\u2192 ([\\d,]+) synthetic agents",
-      "truth": {
-        "kind": "json_number",
-        "file": "demand/population/_population_report.json",
-        "key": "persons"
-      },
-      "note": "STATUS carried 612,680 here and 612,687 in its own P3 phase row - the board disagreed with itself"
-    },
-    {
-      "id": "status.road-edges",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\| Road network \\| ([\\d,]+) edges",
-      "truth": {
-        "kind": "manifest_artefact_rows",
-        "path": "data/processed/network/A1_road_edges.csv"
-      }
-    },
-    {
-      "id": "status.active-edges",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\| Active network \\| ([\\d,]+) edges",
-      "truth": {
-        "kind": "manifest_artefact_rows",
-        "path": "data/processed/network/A6_footway_edges.csv"
-      }
-    },
-    {
-      "id": "status.core-sa1",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\| Zones \\| ([\\d,]+) core SA1",
-      "truth": {
-        "kind": "csv_value_count",
-        "file": "data/processed/zones/zones_SA1.csv",
-        "column": "zone_tier",
-        "value": "core"
-      }
-    },
-    {
-      "id": "status.external-sa1",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\| Zones \\| [\\d,]+ core SA1 \\+ ([\\d,]+) external SA1",
-      "truth": {
-        "kind": "csv_value_count",
-        "file": "data/processed/zones/zones_SA1.csv",
-        "column": "zone_tier",
-        "value": "external"
-      }
-    },
-    {
-      "id": "status.core-dzn",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "external SA1, ([\\d,]+) core DZN",
-      "truth": {
-        "kind": "csv_value_count",
-        "file": "data/processed/zones/zones_DZN.csv",
-        "column": "zone_tier",
-        "value": "core"
-      }
-    },
-    {
-      "id": "status.p1-raw-downloads",
-      "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "\\*\\*([\\d,]+) immutable raw downloads\\*\\*",
-      "truth": {
-        "kind": "manifest_files",
-        "path_prefix": "data/raw/"
-      },
-      "note": "P1's OWN delivery. The row used to claim the whole-package total (391), which later phases grew past."
+      "note": "written by build_status_board.py into the generated state block; pinned here so a hand edit cannot outlive the manifest"
     },
     {
       "id": "status.run-input-sets",
@@ -356,6 +277,146 @@
         "key": "not_scored.intervention_boardings.modelled_per_weekday"
       },
       "note": "MODELLED only. The nearest observation is a pre-pandemic vintage fit.py refuses to score, so this must never be written as an error"
+    },
+    {
+      "id": "readme.scats-handled-by-sweep",
+      "kind": "absent",
+      "doc": "README.md",
+      "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
+      "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
+    },
+    {
+      "id": "readme.no-run-stage-sentence",
+      "kind": "absent",
+      "doc": "README.md",
+      "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
+      "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
+    },
+    {
+      "id": "readme.counterfactual-framing",
+      "kind": "absent",
+      "doc": "README.md",
+      "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
+      "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
+    },
+    {
+      "id": "claude.scats-handled-by-sweep",
+      "kind": "absent",
+      "doc": ".claude/CLAUDE.md",
+      "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
+      "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
+    },
+    {
+      "id": "claude.no-run-stage-sentence",
+      "kind": "absent",
+      "doc": ".claude/CLAUDE.md",
+      "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
+      "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
+    },
+    {
+      "id": "claude.counterfactual-framing",
+      "kind": "absent",
+      "doc": ".claude/CLAUDE.md",
+      "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
+      "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
+    },
+    {
+      "id": "status.scats-handled-by-sweep",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
+      "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
+    },
+    {
+      "id": "status.no-run-stage-sentence",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
+      "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
+    },
+    {
+      "id": "status.counterfactual-framing",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
+      "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
+    },
+    {
+      "id": "readme.scats-handled-by-sweep",
+      "kind": "absent",
+      "doc": "docs/README.md",
+      "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
+      "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
+    },
+    {
+      "id": "readme.no-run-stage-sentence",
+      "kind": "absent",
+      "doc": "docs/README.md",
+      "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
+      "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
+    },
+    {
+      "id": "readme.counterfactual-framing",
+      "kind": "absent",
+      "doc": "docs/README.md",
+      "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
+      "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
+    },
+    {
+      "id": "next_agent_brief.scats-handled-by-sweep",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
+      "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
+    },
+    {
+      "id": "next_agent_brief.no-run-stage-sentence",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
+      "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
+    },
+    {
+      "id": "next_agent_brief.counterfactual-framing",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
+      "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
+    },
+    {
+      "id": "goal.scats-handled-by-sweep",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/GOAL.md",
+      "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
+      "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
+    },
+    {
+      "id": "goal.no-run-stage-sentence",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/GOAL.md",
+      "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
+      "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
+    },
+    {
+      "id": "goal.counterfactual-framing",
+      "kind": "absent",
+      "doc": "cities/newcastle/docs/GOAL.md",
+      "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
+      "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
+    },
+    {
+      "id": "readme.taxi-blended-mode",
+      "kind": "absent",
+      "doc": "README.md",
+      "pattern": "One blended priced mode on the published 2025 fares|checked against an inferred trips-per-day band as a \\*\\*constraint, never a target\\*\\*",
+      "reason": "Taxi is a physical mode on the road with a finite fleet (9.86, 9.99) and its own target (9.87); the blended priced mode is history."
+    },
+    {
+      "id": "readme.signals-fixed-plans",
+      "kind": "absent",
+      "doc": "README.md",
+      "pattern": "generated phase plans, declared minimum greens and saturation flows, run on MATSim's signals contrib\\. The real SCATS phasing was refused",
+      "reason": "The corridor signals run the SCATS algorithm (9.88), not fixed generated plans; see positions/signals-and-crossings.md."
     }
   ]
 }

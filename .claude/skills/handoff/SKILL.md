@@ -1,290 +1,180 @@
 ---
 name: handoff
-description: Closes out a work session in the city-digital-twin repository - tidies code and documents, grooms GitHub issues on evidence, records decisions in DECISIONS.md, brings STATUS.md current, rewrites the next-agent brief, gates on the checks, and lands everything as ONE reviewable pull request that is watched to merge. Use at the END of any session that changed the model, the data, the documents or the plan, and whenever the user runs /handoff, says "close this out", "wrap up", "write the handover", or "open the PR for this session". The counterpart of /onboard.
+description: Closes out a work session in the city-digital-twin repository - consolidates every topic the session touched into its position page, appends one record section, regenerates the board, rewrites the brief from its template, grooms GitHub issues on evidence, runs the gate, and lands everything as ONE pull request watched to merge. Use at the END of any session that changed the model, the data, the documents or the plan, and whenever the user runs /handoff, says "close this out", "wrap up", "write the handover", or "open the PR for this session". The counterpart of /onboard.
 ---
 
-# /handoff — session close-out and handover
+# /handoff — session close-out
 
-Produce a handover in which **every claim is evidenced, every document lives in its
-one home, and the next agent can resume from `main` alone**. This skill edits
-documents and issues; it never runs scenarios, never touches holdouts, and never
-re-litigates a settled decision without new evidence.
+Produce a handover in which **every claim is evidenced, every fact lives in its
+one home, and the next agent can resume from `main` alone in 600 lines of
+reading**. The definitions — the document layers, the trust order, the four
+questions, the brief's and the record's required shape, the gate — are in
+**[`docs/HANDOVER_CONTRACT.md`](../../../docs/HANDOVER_CONTRACT.md)**; this file
+is the procedure. `<city>` is the active city (`CITYSIM_CITY`, default `newcastle`).
 
-The rules this shares with `/onboard` — the trust order, the six questions, the facts
-that expire, the environment gate — live in one place:
-**[`docs/HANDOVER_CONTRACT.md`](../../../docs/HANDOVER_CONTRACT.md). Read it before
-Phase 3.** It is the definition; this file is the procedure.
-
-Run the phases **in order** — later phases summarise what earlier ones settle. If a
-phase finds nothing to do, say so and move on; **do not manufacture work.**
-
-Throughout, `<city>` is the active city — `CITYSIM_CITY`, default `newcastle`.
-
-Copy this checklist and tick it off as you go:
+Run the phases **in order**. If a phase finds nothing to do, say so and move on;
+**do not manufacture work.** Never run scenarios, never touch holdouts, never
+re-litigate a settled decision without new evidence.
 
 ```
 Handoff:
-- [ ] Phase 0  Ground truth + session inventory
-- [ ] Phase 1  Code and document hygiene
-- [ ] Phase 2  Issue grooming (evidence only)
-- [ ] Phase 3  DECISIONS.md
-- [ ] Phase 4  STATUS.md
-- [ ] Phase 5  NEXT_AGENT_BRIEF.md
-- [ ] Phase 6  Gates, then land it
+- [ ] Phase 0  Inventory the session, verified against artefacts
+- [ ] Phase 1  Consolidate: the position pages
+- [ ] Phase 2  Record: one DECISIONS section, one index row, one §14 row
+- [ ] Phase 3  Board: hand lines, then regenerate
+- [ ] Phase 4  Brief: rewritten from the template
+- [ ] Phase 5  Issues, on evidence
+- [ ] Phase 6  Gate, then land ONE pull request
 - [ ] Phase 7  Green, merged, branch deleted
 ```
 
-## Phase 0 — Ground truth before touching anything
+## Phase 0 — Inventory the session
 
-1. Read `cities/<city>/docs/STATUS.md`, the topical index at the top of
-   `cities/<city>/docs/DECISIONS.md`, and
-   `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md`.
-2. `gh issue list --state open`, noting each issue's last-updated date.
-3. `git status`, and `git log main..HEAD --oneline` if on a branch.
-4. **Confirm no run is in progress** (no MATSim `java` process). If one is, stop: a
-   handover written mid-run is stale on arrival.
-5. **Inventory this session**: decisions taken, measurements produced, defects found,
-   directives given. This list drives every later phase. Write it down first, then
-   **verify each item against an artefact** — a file, a diff, a run record — before
-   recording it anywhere. **Reproduce before attributing; never record a number you
-   cannot point at.**
+1. `git status`, `git log origin/main..HEAD --oneline`, and **confirm no arm is
+   running** (`python src/run/session_gate.py --digest`). A handover written
+   mid-run is stale on arrival; if an arm must keep running, say so in §0.
+2. Write down what the session did: decisions taken, measurements produced,
+   defects found, families opened, directives given, approvals spent.
+3. **Verify each item against an artefact** — a file, a diff, a run record —
+   before recording it anywhere. Never record a number you cannot point at.
 
-## Phase 1 — Code and document hygiene
+## Phase 1 — Consolidate: the position pages
 
-**Deletion discipline (hard rules):**
+For **every topic the session touched**, rewrite its page in
+`cities/<city>/docs/positions/` so it states the current truth:
 
-- `data/raw/` is immutable — never delete or edit.
-- **Run outputs are never deleted.** A dead run is renamed
-  `results/aborted_<launch>_<iterations>it_<pct>pct` with its `_meta.json` stating the
-  cause — the harness does this itself (`DECISIONS.md` §9.66). Do not recreate the old
-  `results/_aborted_<date>/` parents. A run without `_run.json` is still not a result.
-- **Generated documents are regenerated by their generator**, never hand-edited and
-  never deleted.
-- Anything else may be deleted only if it is (a) superseded by a named successor and
-  (b) unreferenced — `grep -r` its path and name across docs, code and issues first.
-  **Deletions are proposed in the PR body, never buried.**
+- Keep the template's headings (*What is built · What is measured · What is
+  open · Refused — do not re-raise · History*), at most 130 lines.
+- **Every line that carries a figure carries its source on the same line** —
+  a `§9.x`, an issue `#NN`, or a backticked path or run name. The shape check
+  enforces this.
+- **Retire superseded sentences**; do not append "update:" paragraphs. The page
+  is the current position, not a log. The history list at the bottom gains one
+  entry (`§9.x — five-word summary`, newest first, at most fifteen).
+- Update the `**Updated:**` line and, if a family opened, the families table on
+  `sampling-and-families.md`.
+- A new topic gets a new page only when no existing page owns it; propose it in
+  the PR body.
 
-**What to look for:** scratch scripts that graduated into `src/` without a consumer;
-documents superseded by a DECISIONS entry; **stale statements in living documents — a
-figure this session's work made wrong**; dead branches (`git branch --merged main`).
+**This phase is where a correction lands.** A figure or conclusion an earlier
+record section got wrong is fixed here, with a §14 row in Phase 2 — never by a
+new "CORRECTION" section and never by editing the dated text.
 
-**A document that duplicates the board or the record is the defect, not the
-drift.** `README.md` drifted three phases because one figures table lived in two
-files; `P4_CHECKPOINT.md` drifted thirteen days because it restated a phase board
-that was already `STATUS.md`'s job (§9.79, §9.80). When you find a living document
-whose content belongs to another, do not refresh it — **check whether anything in
-it is unique, migrate what is, and freeze the rest as the dated record it is**,
-with a header that says so and points at the live source.
+## Phase 2 — Record: one section, one index row, one §14 row
 
-**Where a document class lives — never invent a new home:**
+Append **one** `## 9.x` section for the session — numbered next, **after the
+last `## 9.x` section** (before `## 14.`), at most 140 lines — on this template:
 
-| Class | The one home |
-|---|---|
-| Board (state, plan, checklists) | `cities/<city>/docs/STATUS.md` |
-| Decisions, measurements, rationale | `cities/<city>/docs/DECISIONS.md` (+ §14 change log and topical index) |
-| Handover | `cities/<city>/docs/handover/NEXT_AGENT_BRIEF.md` — **rewritten in place**, never a second brief |
-| Session narrative | `cities/<city>/docs/handover/SESSION_LOG.md` (archive; append-only) |
-| Audit / evaluation reports | `cities/<city>/docs/audit/<YYYY-MM-DD>/<topic>.md`. Existing flat files stay where links point; generator-owned files (e.g. `CALIBRATION_REPORT.md`) stay at their generator's path |
-| Design dossiers | `cities/<city>/docs/design/` |
-| Framework process (applies to any city) | `docs/`, indexed by `docs/README.md` |
-| Anything generated | regenerate via `src/registry/render_docs.py`, `render_schema.py`, `src/calibrate/report.py`, `src/build/build_manifest.py` |
+```
+## 9.NNN <plain title> (<date>, <session>; issues #..)
 
-A genuinely new *class* of document requires an explicit decision — propose it in the
-PR body; do not create one unilaterally.
-
-**Duplication is drift waiting to happen.** If a fact now appears in two documents,
-that is the defect: `README.md` and `STATUS.md` held the same figures table and
-drifted apart on four numbers at once. Give the fact one home and have the other
-point at it.
-
-## Phase 2 — GitHub issue grooming (evidence only)
-
-For every **open** issue:
-
-- **Close** only when the repository contains the evidence. The closing comment
-  states that evidence and a **REOPEN IF** condition.
-- **Update** a stale body: strike false halves (strikethrough plus a dated note —
-  keep the history legible), refresh numbers the session measured, drop labels that
-  no longer hold.
-- **Comment** the session's measured numbers on any issue they bear on, with the
-  `DECISIONS.md` § reference.
-
-For every **defect or gap found this session and not fixed**: file one issue per
-defect carrying the measured numbers, where it lives in the code or data, and what
-would close it. **No invented data** — an unmeasured suspicion is worded as a
-suspicion. No umbrella issues, and no more issues than the session actually
-evidenced.
-
-## Phase 3 — DECISIONS.md
-
-For each decision or measurement from Phase 0's inventory:
-
-1. Add a numbered section in the style of its neighbours — dated title with issue
-   refs; what was wrong, what changed, the measured numbers, what this deliberately
-   does **not** do, and the consequences. Follow-on measurements **extend** the family
-   (§9.46 → §9.48); they never rewrite history.
-2. Add a **§14 change-log row** (newest first) stating what changed in the model or
-   the data, with the standing caveats where true: *no target value changed, the
-   67/143 split is untouched, nothing here is a finding*.
-3. Update the **topical index** rows the new section belongs to.
-4. Every assumed value introduced this session must **already** be in the registry
-   with a sweep. If it is not, that is unfinished work, not a handover footnote.
-
-**§14 rows and dated sections are FROZEN records.** A figure in them was true on its
-date and stays as written — never "corrected" to match today's artefacts. That
-distinction is what `tests/check_doc_currency.py` is built on, and it is why the
-record is deliberately exempt from it.
-
-## Phase 4 — STATUS.md
-
-Fix **every board line this session's work made wrong**: the Last-updated header,
-Blocking state / active lane, affected table rows, runs-on-disk, the Results row, and
-task checklists (mark ✅ with the one-line measured outcome and the `DECISIONS.md` §
-ref).
-
-**Board, not diary** — no narrative paragraphs; the story lives in `DECISIONS.md`.
-
-**If your change moved a count this board states — manifest rows, registry fields,
-network edges, agents, assembled sets — fix it here in this same commit** and prove
-it with `python tests/check_doc_currency.py --strict`. A live-state cell must equal
-its artefact today.
-
-## Phase 5 — NEXT_AGENT_BRIEF.md
-
-Rewrite **in place**, to the shape and the six questions defined in
-[`docs/HANDOVER_CONTRACT.md`](../../../docs/HANDOVER_CONTRACT.md). Research each
-answer against the repository and GitHub — **never from memory of the session
-alone** — and make every number traceable to a document, an artefact or a run record.
-
-Three properties the contract requires, restated because they are the ones most often
-dropped:
-
-- **§0 is a VERIFY FIRST block.** Every fact that can expire between writing and
-  reading — the session PR's state, the open-issue set, whether a run is going,
-  whether the machine is free — is written **with the command that re-derives it**,
-  never as a settled statement. The sixth-session brief opened by telling its reader
-  to merge a PR that had already merged; the reader's first moves went on disproving
-  its briefing.
-- **Completed sections flip from instruction to record** — what ran, what it
-  measured, where it is recorded — so the next agent cannot redo finished work.
-- **Consumed approvals are marked SPENT**, standing directives are restated, and new
-  traps join §8 with what they cost.
-- **A COUNT DERIVED FROM GITHUB LIVES IN §0 AND NOWHERE ELSE.** "28 merged PRs",
-  "10 open issues", "45 run directories" are true at the moment of writing and
-  are read after the next merge. Put each one in the §0 table beside the command
-  that re-derives it, and let §6 and §9 refer to §0 rather than restating the
-  number. The seventh-session brief stated "28 merged PRs" in §6; it was 29
-  before the next agent finished its environment gate.
-
-The brief stays a **pointer**, not a copy: where it disagrees with STATUS, DECISIONS
-or CLAUDE.md, those win — and its header says so.
-
-## Phase 6 — Gates, then land it
-
-In order, all must pass:
-
-```bash
-python src/registry/check_hardcoding.py --strict   # must exit 0
-python tests/check_doc_currency.py --strict        # must exit 0
-python tests/check_manifest.py
-python -m compileall -q src tests
-python src/run/run_failure.py --check              # every dead run says why
-# if a run finished, died, or the calibrated base moved:
-python src/analyse/build_run_index.py
-python src/analyse/build_fit_figures.py            # the front door's figures
-python src/calibrate/report.py --run <run dir>     # and its calibration report
-# if the registry changed:
-python src/registry/render_docs.py && python src/registry/render_schema.py
-# if a data artefact changed:
-#   normalise_eol -> python src/build/build_manifest.py -> normalise_eol
+**What was wrong.** One paragraph, measured.
+**What changed.** The mechanism, the fields (`KEY` value, sweep), the family boundary if one opened.
+**Measured.** The numbers, each with the run or artefact it came from.
+**Deliberately not done.** What this leaves alone, and why.
+**Consequences.** What no longer compares; what the next session must do.
 ```
 
-**The `normalise_eol` sandwich is NOT optional when a committed data artefact
-changed.** Running `build_manifest.py` bare hashes CRLF bytes on disk while git stores
-LF, so the local full-package check passes and **CI's committed-files check fails on
-the PR** (breached 21 August and again 25 August 2026: two regenerated build reports
-failed PR #81's manifest check on exactly this). If `git add` prints a *"CRLF will be
-replaced by LF"* warning for a manifest-listed file, the sandwich was skipped — stop
-and run it.
+Then a row in the **topical index** (top of the file) and a row in **§14**
+(newest first) stating what changed in the model or the data, with the standing
+caveats where true: *no target value changed, the 67/143 split is untouched,
+nothing here is a finding*. Dated sections and §14 rows are **frozen**: never
+"corrected" to match today. Every assumed value introduced this session must
+already be in the registry with a sweep — if not, that is unfinished work.
 
-Then verify that any documentation link you added or moved actually resolves. **Never
-abbreviate a path with `…`** — renderers turn it into a dead URL.
+## Phase 3 — Board
 
-**Landing:**
+Edit only the hand-written lines of `cities/<city>/docs/STATUS.md` that the
+session made wrong: *Last updated*, the goal table's *where it stands* cells,
+the phase table, the package-consistency paragraph, *Next*, *Open work*.
+Then regenerate the blocks:
 
-- Branch `<git-handle>/<short-kebab>` — **never `claude/*`**.
-- `STATUS.md` lands in the **same commit** as the work it describes.
-- Commit messages state what changed **in the model or the data**, not which script
-  ran.
-- **No attribution trailers and no session links**, in commits or the PR body.
-- **One title scheme for every GitHub artefact, issues and PRs alike:**
-  `P<phase>: <concise plain-English summary>` (≤ ~72 chars), with task numbers or
-  issue cross-refs in parens at the **end** — e.g. `P4: Add freight as a physical
-  truck mode (#24)`. Banned from titles: `Directive:`, `Audit …:`, `handover:`,
-  `board:`, `Tooling:`, and `DECISIONS.md` §-refs.
-- **Every handoff lands via a PR — never a direct commit to `main`.**
-- **The PR is opened HERE, at `/handoff`** — not earlier when a piece of work
-  finished. Session work accumulates as commits on the session branch, and this phase
-  opens the ONE pull request carrying it.
-- **One PR, based on `main` — never stacked on an unmerged work branch.** A stacked
-  PR merges into its base, not `main`; that stranded five PRs on 20 August 2026 until
-  a landing PR carried the union. If session work is still unmerged, fold the
-  handover into that same branch and PR rather than stacking a second.
-- The PR body lists, in conventional GitHub style and without the house idiom: what
-  was recorded, what was deleted (with supersession evidence), which issues were
-  closed / updated / opened, and what the next agent should do first.
+```bash
+python src/analyse/build_status_board.py
+```
+
+**The board is one page.** `tests/check_doc_shape.py` caps its hand-written
+lines and allows only its own headings; narrative goes to the record or to
+`archived/SESSION_LOG.md`. If a count the board states moved, the generated
+block already carries it; a hand-written count is a defect.
+
+## Phase 4 — Brief, from the template
+
+Rewrite `cities/<city>/docs/NEXT_AGENT_BRIEF.md` **in place from this
+template** — never patch the old one — at most 180 lines:
+
+```
+# Brief for the next agent
+
+**Written:** <date> · **Open family:** `<ledger's newest key>` · **Commit:** `<sha>`
+*A pointer, not a source: GOAL.md, the board and the position pages win.*
+
+## §0 Verify first — facts that expire, each with its command
+| Fact at handoff | Re-derive with |
+|---|---|
+| <arm running / machine idle> | ... |
+| <package consistent / inconsistent, and the first build if not> | ... |
+| <this session's PR open / merged> | `gh pr list --state open` |
+| <open issues touched> | `gh issue list --state open` |
+Then: `python src/run/session_gate.py`
+
+## §1 The lane
+The single next task, its cost, what blocks it; the decisions the user must take.
+
+## §2 Traps — newest first, at most ten, each with what it cost
+
+## §3 Standing directives and approvals
+Each approval marked SPENT or absent. No approval is ever standing.
+```
+
+Everything else is a link. A count derived from GitHub or `results/` lives in
+§0 beside its command and nowhere else.
+
+## Phase 5 — Issues, on evidence
+
+For every open issue the session bears on: **close** only when the repository
+holds the evidence (the closing comment names it and a REOPEN IF condition);
+**update** a body whose halves are now false; **comment** the session's measured
+numbers with their `§` reference. File one issue per defect found and not fixed,
+with the measured numbers. No umbrella issues; no invented data.
+
+## Phase 6 — Gate, then land ONE pull request
+
+```bash
+python src/run/session_gate.py            # every gate; must PASS
+python tests/check_package.py             # LOCAL, if a data artefact changed
+```
+
+If a data artefact changed: `normalise_eol` → `build_manifest.py` →
+`normalise_eol` (git stores LF; hashing CRLF on disk fails CI's manifest check).
+If the registry changed: `render_docs.py` and `render_schema.py`. If a run
+finished or died: `build_run_index.py`; if the calibrated base moved:
+`build_fit_figures.py` and `report.py`.
+
+**Landing:** branch `<git-handle>/<kebab>` (never `claude/*`); commits state
+what changed in the model or the data; **no attribution trailers, no session
+links**; title `P<phase>: <plain summary>` (≤ ~72 chars, issue refs in parens at
+the end, no house idiom); body in Summary / Changes / Testing / Breaking
+changes form. **One PR, based on `main`, never stacked.** The hook
+`gate-pr-on-docs.sh` refuses `gh pr create` while the document gates are red —
+fix the documents, do not bypass it.
 
 ## Phase 7 — Green, merged, branch deleted
 
-**Verify the PR is green BEFORE anything else. This is a gate, not a courtesy.**
+`gh pr checks <n> --watch` and `gh pr view <n> --json mergeable,mergeStateStatus`
+must both be clean **before** anything else; a failing check is this session's
+defect to fix now. Then arm a watch for the merge; when it merges and the remote
+branch is gone, delete the local branch. **Only then is the handoff complete.**
+If the session ends first, the open PR is the next session's first item of
+unfinished business — and the brief's §0 says so with the command to check it.
 
-```bash
-gh pr checks <n> --watch
-gh pr view <n> --json mergeable,mergeStateStatus
-```
+## Final self-check
 
-Every check must PASS and the PR must be MERGEABLE (`mergeStateStatus` not
-`BEHIND`/`DIRTY`/`UNSTABLE`).
-
-**A failing check is this session's defect to fix now** — diagnose from the failed
-job's log (`gh run view <id> --log-failed`), fix on the session branch, push, and
-re-watch until green. **Never hand over, arm the merge watch, or report the session
-closed on a red or conflicted PR**: a PR that cannot merge is not a handover, it is
-unfinished work wearing one's clothes. (Breached 25 August 2026: PR #81 was opened,
-the watch armed and the session reported closed while CI's manifest check was
-failing.)
-
-Only once green: **arm a watch for the merge.** When it merges and the remote branch
-is gone, delete the local branch. **The handoff is complete only then.** If the
-session ends before the merge, the open PR is the next session's first item of
-unfinished business — and the brief's §0 says so **with the command to check it**,
-not as a settled fact.
-
-Finish with branch cleanup: delete merged work branches local and remote, after
-verifying their tips carry nothing absent from `main`.
-
-## Final self-check before opening the PR
-
-- [ ] Could the next agent resume from `main` + the brief alone, with this session's
-      context gone?
-- [ ] Is every number in the brief and STATUS traceable to a `DECISIONS.md` § or a run
-      artefact?
-- [ ] Does `python tests/check_doc_currency.py --strict` exit 0 — no living document
-      states a figure its artefact no longer supports?
-- [ ] Did any fact acquire a **second** home this session?
-- [ ] Is every GitHub-derived count (PRs merged, issues open, run directories) in
-      **§0 with its command**, and stated nowhere else as settled prose?
-- [ ] If a run finished or died: does `python src/run/run_failure.py --check` exit 0,
-      and does `results/INDEX.md` name it?
-- [ ] If the calibrated base moved: were the front door's figures and the calibration
-      report **regenerated in this same change**
-      (`build_fit_figures.py --check` exits 0)?
-- [ ] Did anything get a new documentation *class* it shouldn't have?
-- [ ] Is every issue action (close / update / open) backed by evidence in the repo?
-- [ ] Do STATUS, DECISIONS and the brief agree with each other?
-- [ ] Does the brief answer all six questions, and is every expiring fact in §0
-      written **with its re-derive command** rather than as a settled statement?
-- [ ] Is the PR **green and mergeable**, with any failure fixed and pushed before the
-      session reports itself closed?
-- [ ] Is the PR opened, the merge watch armed, and branch deletion queued for after
-      the merge?
+- [ ] Could the next agent resume from `main` in 600 lines — digest, GOAL, board, brief, one position page?
+- [ ] Does every figure in the brief, the board and the touched position pages carry its source?
+- [ ] Did any fact acquire a second home this session?
+- [ ] Is every expiring fact in §0 with its command, and nowhere else as settled prose?
+- [ ] Is the brief stamped with the ledger's newest family, and under 180 lines?
+- [ ] Does `python src/run/session_gate.py` pass?
+- [ ] Is every issue action backed by evidence in the repository?
+- [ ] Is the PR green, mergeable, watched, and the branch deletion queued?

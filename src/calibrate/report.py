@@ -23,7 +23,7 @@ reader count them as evidence of fit; they are evidence of plausibility.
 whose provenance is not stated is not reportable.
 
     python src/calibrate/report.py --run <tag> [--run <tag> ...] \
-        --out cities/<city>/docs/audit/CALIBRATION_REPORT.md
+        --out cities/<city>/docs/reference/CALIBRATION_REPORT.md
 """
 
 # City-relative paths resolve through src/city.py: `data/...` names a
@@ -38,7 +38,7 @@ import json
 import argparse
 import datetime
 
-DEFAULT_OUT = _city.path('docs', 'audit', 'CALIBRATION_REPORT.md')
+DEFAULT_OUT = _city.path('docs', 'reference', 'CALIBRATION_REPORT.md')
 CAL = _city.path('params/C5_calibration.json')
 
 

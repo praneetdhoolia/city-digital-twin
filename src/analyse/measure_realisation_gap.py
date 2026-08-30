@@ -14,7 +14,7 @@ layers, named in 9.48 and unmeasured until this script:
      coordinates to identical links.
 
 It also measures the PAIRING CEILING the physical-ride directive needs
-(docs/design/physical-ride.md section 4): the share of ride demand a
+(docs/archived/design/physical-ride.md section 4): the share of ride demand a
 household-only physical service could ever carry, from the demand itself.
 
 Bound pairs are reconstructed from B2, not guessed: an escorted HX anchor
@@ -192,7 +192,7 @@ def main():
                  'ceiling on PAIRABLE ride demand; observed ride share is '
                  '20.60%, so the difference is the unobserved '
                  'non-household-lift share the owner must rule on '
-                 '(docs/design/physical-ride.md section 4)'))
+                 '(docs/archived/design/physical-ride.md section 4)'))
     dst = os.path.join(run_dir, 'realisation_gap_%s.json' % out['run'])
     json.dump(out, open(dst, 'w'), indent=2)
     print(json.dumps(out['stages'], indent=1))

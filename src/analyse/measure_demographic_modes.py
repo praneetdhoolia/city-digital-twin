@@ -15,7 +15,7 @@ Two halves, in one report:
    (`hts_mode.csv`, `hts_purpose.csv`) carry NO demographic column, so
    mode x age / mode x employment are not observable from held data - an
    acquisition item, not a modelling gap (issue #50, issue #63,
-   `docs/design/mode-individualisation.md` section 3). The holdout split
+   `docs/archived/design/mode-individualisation.md` section 3). The holdout split
    under `data/processed/validation/` is never opened here.
 
 2. MEASUREMENT - the run's realised trips (`output_trips.csv.gz`, the same
@@ -37,7 +37,7 @@ Usage:
 Writes `_demographic_modes.json` into the run directory (read-only over
 everything else) and prints the tables. City inputs are resolved through
 src/city.py; the run's comparability family is read from the declared
-`docs/audit/run_families.json` via build_run_index, never re-derived.
+`docs/run_families.json` via build_run_index, never re-derived.
 """
 
 from __future__ import annotations
@@ -315,7 +315,7 @@ def main() -> int:
             'caveats': [
                 '2021 was a COVID census: car share is WFH-inflated and PT '
                 'collapsed; treat these shares as structure, not level '
-                'targets (docs/design/mode-individualisation.md section 1)',
+                'targets (docs/archived/design/mode-individualisation.md section 1)',
                 'commute-only: journeys to work, one method; multi-method '
                 'and worked-at-home journeys excluded (counts in '
                 'context_journeys)',
