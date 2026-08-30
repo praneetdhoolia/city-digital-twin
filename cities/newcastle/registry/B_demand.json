@@ -1246,6 +1246,26 @@
       "description": "The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. `route_contains` generalises that to a SEGMENT of the driver's trip and is implemented and measured (9.102), but is a sweep member rather than the value. Consumed by src/java/citysim/RidePairingEngine.",
       "matsim_param": "ridePairing.rule"
     },
+    "B.ride.declared_pair_meeting": {
+      "value": "driver_detour",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "driver_detour",
+          "passenger_links"
+        ],
+        "basis": "Where a DECLARED ride pair meets when the passenger's and the driver's links differ. `passenger_links` is the behaviour before 9.128: the named driver must still satisfy B.ride.pairing_rule on the passenger's own two links, so a shared ride bound on a suburb-to-suburb trip (9.124) is never realised - two households in one SA2 do not share a link, and the valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints for exactly that reason. `driver_detour` routes the driver's car leg, at BeforeMobsim and with the run's own car router, through each carried passenger's origin link (in departure order) and then each destination link, and on to the driver's own destination; the passenger boards at their own link as the car passes it and alights at their own, and the pairing books the pass time. The detour is driven on the network and the driver's score pays for it, so a passenger too far out of the driver's way costs the driver what it costs and no threshold decides who is served. A walking meeting point was built first and measured on a 1% smoke at a mean 8-11 km walked to and from the driver's links - nobody walks that to a lift - and was replaced by this. The sweep is over the MECHANISM: running both measures how much of the realised ride share the detour itself supplies."
+      },
+      "status": "active",
+      "decisions_ref": "9.128",
+      "matsim_param": "ridePairing.declaredMeeting",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/RidePairingEngine.java"
+      ],
+      "description": "Where a declared ride pair meets when the two members' links differ: `driver_detour` routes the driver's car leg through the passenger's origin and destination links and the passenger boards and alights at their own; `passenger_links` requires the driver to satisfy the pairing rule on the passenger's links (pre-9.128). Consumed by RidePairingEngine through ridePairing.declaredMeeting."
+    },
     "B.ride.unpaired_fallback": {
       "value": "licensed_drive_else_walk",
       "units": "enum",

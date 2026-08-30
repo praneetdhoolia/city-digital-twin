@@ -1,6 +1,7 @@
 package citysim;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -32,7 +33,11 @@ import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
 import org.matsim.core.controler.listener.AfterMobsimListener;
 import org.matsim.core.controler.listener.BeforeMobsimListener;
+import java.util.LinkedHashMap;
 import org.matsim.core.population.routes.NetworkRoute;
+import org.matsim.core.router.TripRouter;
+import org.matsim.facilities.FacilitiesUtils;
+import org.matsim.utils.objectattributes.attributable.AttributesImpl;
 import org.matsim.core.router.StageActivityTypeIdentifier;
 import org.matsim.core.utils.misc.OptionalTime;
 
@@ -333,18 +338,26 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         private final Id<Link> from;
         private final Id<Link> to;
         private final double departure;
-        private final double routedTravelTime;
+        private double routedTravelTime;
         /**
          * Every link the driver actually drives, start to end. A passenger can
          * only be carried on a segment of it, so the path - not the pair of
          * endpoints - is what a containment test and a time apportionment need.
+         * Rewritten by a 9.128 detour, which is why it is not final.
          */
-        private final List<Id<Link>> path;
+        private List<Id<Link>> path;
         private int carrying = 0;
+        /** 9.128: the routed time before a detour was written over it. */
+        private double routedBefore = Double.NaN;
+        /** 9.128: the plan leg and its route, so a detour can be written. */
+        private final Leg leg;
+        private final Route route;
 
         DriverLeg(final Id<Person> person, final Id<Link> from, final Id<Link> to,
                   final double departure, final double routedTravelTime,
-                  final List<Id<Link>> path) {
+                  final List<Id<Link>> path, final Leg leg, final Route route) {
+            this.leg = leg;
+            this.route = route;
             this.person = person;
             this.from = from;
             this.to = to;
@@ -368,11 +381,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
          *  departure - what a declared pair's re-timing has to move. */
         private final Activity origin;
         private final double accessTravel;
+        /** 9.128: the plan this leg sits in and its index there - the
+         *  handles the meeting-point reshaping needs. */
+        private final Plan plan;
+        private final int index;
 
         RideLeg(final Id<Person> person, final Leg leg, final Route route,
                 final Id<Link> from, final Id<Link> to, final double departure,
                 final String direction, final Activity origin,
-                final double accessTravel) {
+                final double accessTravel, final Plan plan, final int index) {
+            this.plan = plan;
+            this.index = index;
             this.person = person;
             this.leg = leg;
             this.route = route;
@@ -385,10 +404,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         }
     }
 
+    /** 9.128: routes a driver's detour through a declared passenger's links
+     *  with the run's own car router, so the detour is driven like every
+     *  other car leg and the driver's score pays for it. */
+    private final Provider<TripRouter> tripRouter;
+
     @Inject
-    RidePairingEngine(final Scenario scenario, final OutputDirectoryHierarchy io) {
+    RidePairingEngine(final Scenario scenario, final OutputDirectoryHierarchy io,
+                      final Provider<TripRouter> tripRouter) {
         this.scenario = scenario;
         this.io = io;
+        this.tripRouter = tripRouter;
         this.cfg = (RidePairingConfigGroup) scenario.getConfig().getModules()
                 .get(RidePairingConfigGroup.NAME);
     }
@@ -462,6 +488,12 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         // pays for in score. Equal to `window` recovers the old behaviour.
         final double boundWindow = cfg.getBoundWindowMinutes() * 60.0;
         final String rule = cfg.getRule();
+        // 9.128: where a declared pair's links differ, the DRIVER detours
+        // through the passenger's. Deferred to after the loop, because a
+        // driver's detour is routed once through every passenger it carries.
+        final boolean detour = RidePairingConfigGroup.MEETING_DRIVER_DETOUR
+                .equals(cfg.getDeclaredMeeting());
+        final Map<DriverLeg, List<RideLeg>> detours = new LinkedHashMap<>();
         final int capacity = cfg.getMaxPassengersPerVehicle();
         final double dwell = cfg.getPickupDwellSeconds();
 
@@ -530,7 +562,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                                                    route.getStartLinkId(),
                                                    route.getEndLinkId(),
                                                    departure, travel,
-                                                   drivenPath(route)));
+                                                   drivenPath(route), leg, route));
                     }
                 } else if (TransportMode.ride.equals(leg.getMode())) {
                     if (hh == null) {
@@ -546,7 +578,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                                           route.getEndLinkId(), departure,
                                           direction(previousActivity,
                                                     nextActivity(elements, i)),
-                                          lastReal, accessBefore));
+                                          lastReal, accessBefore, plan, i));
                 }
             }
         }
@@ -638,7 +670,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     continue;
                 }
                 sawInWindow = true;
-                if (!endpointsMatch(rule, driver, ride)) {
+                // 9.128: the driver the demand NAMED is the same trip by
+                // identity; where the links differ the driver will detour
+                // through the passenger's, so geometry is not a gate here.
+                final boolean meets = isDeclared && detour;
+                if (!meets && !endpointsMatch(rule, driver, ride)) {
                     continue;
                 }
                 sawEndpoints = true;
@@ -724,6 +760,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 restore(ride.leg, ride.route);
                 continue;
             }
+            // 9.128: where a declared pair's links differ, the driver
+            // detours through them. The pair is accepted here and its
+            // timing, booking and re-timing are written once the driver's
+            // detour is routed through every passenger it carries.
+            if (bestDeclared && detour && !endpointsMatch(rule, best, ride)) {
+                best.carrying++;
+                detours.computeIfAbsent(best, k -> new ArrayList<>(2)).add(ride);
+                continue;
+            }
             best.carrying++;
             nPaired++;
             if (bestDeclared) {
@@ -796,6 +841,84 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             }
         }
 
+        // 9.128: the deferred detours. Drivers in the order their first
+        // passenger was met (rides are in person-id order, so this is
+        // deterministic); each driver's car leg is routed through its
+        // passengers' origin links in departure order, then their
+        // destination links in the same order, then home to its own
+        // destination.
+        int detoured = 0;
+        int detourDrivers = 0;
+        double detourExtraS = 0.0;
+        int detourRefused = 0;
+        for (final Map.Entry<DriverLeg, List<RideLeg>> e : detours.entrySet()) {
+            final DriverLeg driver = e.getKey();
+            final List<RideLeg> carried = e.getValue();
+            carried.sort(Comparator.<RideLeg>comparingDouble(r -> r.departure)
+                                 .thenComparing(r -> r.person));
+            final Map<RideLeg, Double> passAt = routeDetour(driver, carried);
+            if (passAt == null) {
+                detourRefused += carried.size();
+                missEndpoints += carried.size();
+                driver.carrying -= carried.size();
+                for (final RideLeg ride : carried) {
+                    restore(ride.leg, ride.route);
+                }
+                continue;
+            }
+            detourDrivers++;
+            for (final RideLeg ride : carried) {
+                detoured++;
+                nPaired++;
+                pairedDeclared++;
+                paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
+                final double pass = passAt.get(ride);
+                // the passenger is at their own link when the car passes it
+                if (ride.origin != null) {
+                    final double target = pass - ride.accessTravel;
+                    final OptionalTime start = ride.origin.getStartTime();
+                    if (!start.isDefined() || target > start.seconds()) {
+                        final OptionalTime was = ride.origin.getEndTime();
+                        if (!was.isDefined()
+                                || Math.abs(was.seconds() - target) > 0.5) {
+                            ride.origin.setEndTime(target);
+                            retimed++;
+                            retimeShiftSum += Math.abs(
+                                    (was.isDefined() ? was.seconds() : target)
+                                    - target);
+                        }
+                    }
+                }
+                final double realised = realisedDuration(driver);
+                final double wholeLeg;
+                if (Double.isNaN(realised)) {
+                    wholeLeg = driver.routedTravelTime;
+                    fromRouted++;
+                } else {
+                    wholeLeg = realised;
+                    fromRealised++;
+                }
+                final double driverTime = wholeLeg * carriedShare(driver, ride);
+                final double baseline = definedOr(ride.leg.getTravelTime(),
+                                                  definedOr(ride.route.getTravelTime(), 0.0));
+                deltaSum += driverTime - baseline;
+                ride.route.setTravelTime(driverTime + dwell);
+                if (cfg.isPhysicalBoarding()) {
+                    bookings.computeIfAbsent(ride.person, k -> new ArrayList<>(2))
+                            .add(new Booking(ride.from, ride.to, pass,
+                                             driver.person, boundWindow));
+                }
+            }
+            detourExtraS += driver.routedTravelTime - driver.routedBefore;
+        }
+        org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                .info("ridePairing: {} declared passengers picked up on {} drivers' "
+                      + "detours, mean detour {} s per driver; {} refused for an "
+                      + "unroutable detour (DECISIONS.md 9.128)",
+                      detoured, detourDrivers,
+                      detourDrivers == 0 ? 0 : Math.round(detourExtraS / detourDrivers),
+                      detourRefused);
+
         write(event.getIteration(), rides.size(), nPaired, paired, unpaired,
               carLegs, fromRealised, fromRouted,
               nPaired == 0 ? 0.0 : deltaSum / nPaired, capacityRefusals,
@@ -811,6 +934,93 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                       + "driver's departure, mean shift {} s (DECISIONS.md 9.120)",
                       retimed, retimed == 0 ? 0.0
                               : Math.round(retimeShiftSum / retimed));
+    }
+
+    // ---- 9.128: the driver's detour through a declared passenger's links ---
+
+    /**
+     * Route the driver's car leg through the carried passengers' links and
+     * write it to the driver's plan. Returns, per passenger, the clock at
+     * which the car reaches their origin link; null - with the plan
+     * untouched - when any segment cannot be routed.
+     */
+    private Map<RideLeg, Double> routeDetour(final DriverLeg driver,
+                                             final List<RideLeg> carried) {
+        if (!(driver.route instanceof NetworkRoute)) {
+            return null;
+        }
+        final Person person = scenario.getPopulation().getPersons().get(driver.person);
+        if (person == null) {
+            return null;
+        }
+        final List<Id<Link>> via = new ArrayList<>(2 + 2 * carried.size());
+        via.add(driver.from);
+        for (final RideLeg r : carried) {
+            via.add(r.from);
+        }
+        for (final RideLeg r : carried) {
+            via.add(r.to);
+        }
+        via.add(driver.to);
+        final List<Id<Link>> path = new ArrayList<>();
+        final Map<Id<Link>, Double> reached = new HashMap<>();
+        path.add(driver.from);
+        reached.put(driver.from, driver.departure);
+        double clock = driver.departure;
+        double metres = 0.0;
+        for (int k = 1; k < via.size(); k++) {
+            final Id<Link> a = via.get(k - 1);
+            final Id<Link> b = via.get(k);
+            if (a.equals(b)) {
+                reached.putIfAbsent(b, clock);
+                continue;
+            }
+            final Link la = scenario.getNetwork().getLinks().get(a);
+            final Link lb = scenario.getNetwork().getLinks().get(b);
+            if (la == null || lb == null) {
+                return null;
+            }
+            final List<? extends PlanElement> routed = tripRouter.get().calcRoute(
+                    TransportMode.car, FacilitiesUtils.wrapLink(la),
+                    FacilitiesUtils.wrapLink(lb), clock, person, new AttributesImpl());
+            if (routed == null || routed.size() != 1 || !(routed.get(0) instanceof Leg)) {
+                return null;
+            }
+            final Leg seg = (Leg) routed.get(0);
+            if (!(seg.getRoute() instanceof NetworkRoute) || !seg.getTravelTime().isDefined()) {
+                return null;
+            }
+            final NetworkRoute nr = (NetworkRoute) seg.getRoute();
+            path.addAll(nr.getLinkIds());
+            path.add(b);
+            for (final Id<Link> id : nr.getLinkIds()) {
+                final Link l = scenario.getNetwork().getLinks().get(id);
+                metres += l == null ? 0.0 : l.getLength();
+            }
+            metres += lb.getLength();
+            clock += seg.getTravelTime().seconds();
+            reached.putIfAbsent(b, clock);
+        }
+        final Map<RideLeg, Double> passAt = new HashMap<>();
+        for (final RideLeg r : carried) {
+            final Double at = reached.get(r.from);
+            if (at == null) {
+                return null;
+            }
+            passAt.put(r, at);
+        }
+        // write the detour to the driver's plan
+        final NetworkRoute route = (NetworkRoute) driver.route;
+        final List<Id<Link>> inner = path.size() > 2
+                ? new ArrayList<>(path.subList(1, path.size() - 1)) : new ArrayList<>();
+        route.setLinkIds(driver.from, inner, driver.to);
+        route.setDistance(metres);
+        route.setTravelTime(clock - driver.departure);
+        driver.leg.setTravelTime(clock - driver.departure);
+        driver.routedBefore = driver.routedTravelTime;
+        driver.routedTravelTime = clock - driver.departure;
+        driver.path = path;
+        return passAt;
     }
 
     // ---- the rules --------------------------------------------------------

@@ -55,6 +55,24 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     public static final String FALLBACK_DRIVE_ELSE_WALK =
             "licensed_drive_else_walk";
 
+    /**
+     * Where a DECLARED pair meets when the two members' links differ
+     * ({@code B.ride.declared_pair_meeting}, DECISIONS.md 9.128).
+     *
+     * <p>{@code passenger_links}: the declared driver must still satisfy
+     * {@code rule} on the passenger's own links - the behaviour before 9.128,
+     * under which a shared ride bound on a suburb-to-suburb trip (9.124)
+     * could not be realised at all, because two households in one SA2 do
+     * not share a link. {@code driver_detour}: the driver's car leg is
+     * routed through the passenger's origin link and destination link, the
+     * passenger boards at their own link as the car passes and alights at
+     * their own - the car-pool as it is actually made. The detour is driven
+     * on the network and the driver's score pays for it; nothing is
+     * teleported and no threshold decides who is served.
+     */
+    public static final String MEETING_PASSENGER_LINKS = "passenger_links";
+    public static final String MEETING_DRIVER_DETOUR = "driver_detour";
+
     private boolean enabled = false;
     private boolean physicalBoarding = false;
     private boolean remodeUnpaired = false;
@@ -64,6 +82,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private double escortCoherenceRate = UNSET;
     private double jointCoherenceRate = UNSET;
     private String rule = "";
+    private String declaredMeeting = "";
     private String unpairedFallback = "";
     private double pickupDwellSeconds = UNSET;
     private int maxPassengersPerVehicle = -1;
@@ -309,6 +328,16 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         this.rule = value == null ? "" : value.trim();
     }
 
+    @StringGetter("declaredMeeting")
+    public String getDeclaredMeeting() {
+        return this.declaredMeeting;
+    }
+
+    @StringSetter("declaredMeeting")
+    public void setDeclaredMeeting(final String value) {
+        this.declaredMeeting = value == null ? "" : value.trim();
+    }
+
     /**
      * Seconds added to a paired passenger's travel time for being picked up.
      *
@@ -381,6 +410,14 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         require(!this.rule.isEmpty(), "rule", "B.ride.pairing_rule");
         require(!this.unpairedFallback.isEmpty(), "unpairedFallback",
                 "B.ride.unpaired_fallback");
+        if (!MEETING_PASSENGER_LINKS.equals(this.declaredMeeting)
+                && !MEETING_DRIVER_DETOUR.equals(this.declaredMeeting)) {
+            throw new IllegalArgumentException(
+                    "ridePairing.declaredMeeting must be one of "
+                    + MEETING_PASSENGER_LINKS + " | " + MEETING_DRIVER_DETOUR
+                    + " (B.ride.declared_pair_meeting); got '"
+                    + this.declaredMeeting + "'");
+        }
         if (!FALLBACK_WALK.equals(this.unpairedFallback)
                 && !FALLBACK_DRIVE_ELSE_WALK.equals(this.unpairedFallback)) {
             throw new RuntimeException(
