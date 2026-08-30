@@ -94,6 +94,7 @@ its layout will otherwise cost you an hour:
 | **The car-less quarter: bike, bus and walk's residue are ride's deficit** | **§9.123** — 95.4% of residents preferring bike on score have no car; car-less residents (24.7% of trips) walk 48%, cycle 17%, take pt 15% for want of a lift; the next family boundary is lift supply (#86/#91) |
 | **Shared rides: the lift from someone already making the trip** | **§9.124** — a fourth binder pass binds car-less residents' direct tours to non-household drivers on the same zone-to-zone trip within the pairing window, thinned to the passenger-share identity; `B.ride.shared_lift_scope` = `same_sa2_od` (59,648 tours, shortfall 17 trips; SA1 reaches a fifth). Built, queued |
 | **Residents who drive a truck for a living** | **§9.125** — G62 Truck 223 of 43,959 LGA driver journeys, carried to 0.2993% of resident trips by the motorbike carve's identity and carved locked to `truck`; the yardstick's resident-truck deduction now describes real agents. Built, queued |
+| **F17 converged car and walk in fifty iterations; F18 opens on the demand it named** | **§9.126** — car 59.32 (+1.7%) and walk 14.88 (+11%) at iteration 50 of the first honest arm since F4; the residues are the car-less quarter, the carves, the corridor and the fleet; F18 = F17's run side on the §9.122–§9.125 demand |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -12076,6 +12077,63 @@ sees. Built; rebuilt with family F18.
 
 ---
 
+## 9.126 The first honest arm since F4 converged car and walk inside fifty iterations, and family F18 opens on the demand it named (30 August 2026, sixteenth session; issues #48, #86, #49, #30, #93, #94)
+
+The F17 arm `20260830T141222_300it_10pct` - every seed scored, one traffic
+state, the network direct walk - was gated every ten iterations on the
+reader §9.120 built. Residents, linked main-mode trips, 10%:
+
+| iteration | car | ride | walk | taxi | bike | m'bike | bus | h.rail | l.rail | ferry |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| target | 58.32 | 20.60 | 13.40 | 0.99 | 2.21 | 0.379 | 2.38 | 0.774 | 0.644 | 0.143 |
+| 0 | 36.26 | 2.23 | 42.27 | 2.05 | 7.66 | 0.071 | 7.68 | 1.67 | 0.074 | 0.036 |
+| 10 | 44.37 | 7.44 | 30.15 | 1.51 | 8.25 | 0.061 | 6.24 | 1.85 | 0.078 | 0.048 |
+| 20 | 48.46 | 9.17 | 24.13 | 1.61 | 9.00 | 0.059 | 5.75 | 1.70 | 0.067 | 0.055 |
+| 30 | 53.39 | 9.77 | 19.79 | 1.53 | 8.89 | 0.067 | 5.09 | 1.40 | 0.033 | 0.034 |
+| 40 | 56.88 | 9.91 | 16.70 | 1.58 | 8.43 | 0.058 | 4.93 | 1.44 | 0.041 | 0.042 |
+| **50** | **59.32** | 10.09 | **14.88** | 1.51 | 8.29 | 0.061 | 4.45 | 1.31 | 0.033 | 0.056 |
+
+**Car reached +1.7% and walk +11.0% of their targets at iteration 50** -
+the directive's 250-iteration horizon is not the constraint it looked like
+under the uniform seed, where §9.108 measured car needing ~136 iterations
+more at iteration 100. Ride realised what the demand bound (pair rate
+0.80-0.81 on identity), the ferry held ~30-36 trips where F16 had 3, and
+the truck share at the network basis fell from 9.7 to 6.1% as car rose.
+What stayed away from target is exactly what §9.122-§9.125 measured and
+built for: the car-less quarter (ride -51%, bike +275%, bus +87%, heavy
+rail +70%), the motorbike carve and its yardstick (-84% against the corrected
+0.3785), the corridor's destination placement (light rail -95%, #30) and the
+taxi fleet (+52%). The arm was stopped at iteration 60 when the F18 build
+completed, its iteration-50 reading in its cause.
+
+### Family F18
+
+Built while F17 ran, launched after a smoke probe on the same classes:
+
+* **Shared rides (§9.124)**: 59,648 car-less direct tours bound to
+  non-household drivers on the same SA2-to-SA2 trip within the pairing
+  window, 17 trips short of the passenger-share identity; escort (127,203)
+  and joint (82,384) bindings unchanged.
+* **The motorbike carve (§9.122)** solved on the non-escorting eligible pool
+  (q 0.00941 over 287,645 persons, 895,717 of 2,226,914 WEEKDAY trips) at
+  census resolution (902 SA1 cells, 799 thinned to SA2; trip-weighted cell
+  share 0.00265 beside the declared LGA share 0.00378 - the cells outside
+  the LGA are lower, as the census says).
+* **The resident truck carve (§9.125)**: q 0.00744 on the same pool.
+* **A person the binders named as a driver is never carved** (the pairing
+  engine pairs ride legs with car legs only).
+* Plans: 620,553 WEEKDAY persons, 9,880,427 seeded legs (ride on 3.54%,
+  F17 2.61%), 2,343,321 in the selected plans; run inputs, manifest (497
+  rows: the three shared-binding tables joined it).
+
+The run side is F17's unchanged, so F18 against F17 at equal depth reads
+the demand change alone. What the F18 gates must answer: does the runtime
+pairing realise a suburb-wide match under `both_links` (§9.124 names
+`route_contains` as the declared alternative), and where do the car-less
+quarter's modes settle once a fifth of their tours ride.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -12748,6 +12806,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **The first honest arm since F4 converged car and walk inside fifty iterations, and family F18 opens on the demand it named (§9.126; issues #48/#86/#49/#30/#93/#94).** F17 (`20260830T141222`, 10%): car 36.26 → 59.32 (+1.7%) and walk 42.27 → 14.88 (+11%) by iteration 50, ride at the demand's ceiling (pair rate 0.80 on identity), the ferry at 30–36 trips against 3; bike +275%, bus +87%, heavy rail +70%, ride −51% are the car-less quarter's, motorbike −84% the carve's, light rail −95% the corridor's, taxi +52% the fleet's. Stopped at iteration 60 for F18: shared rides (59,648 tours), the repaired motorbike carve at census resolution, the resident truck carve, drivers never carved; plans 9,880,427 seeded legs, manifest 497. Run side unchanged from F17. |
 | 2026-08-30 | **Residents who drive a truck for a living, carved from the census like the motorcyclists (§9.125; directive item 8).** G62 one-method Truck journeys - 223 of the target LGA's 43,959 driver journeys - declared as `CAL.mode_split.truck_driver_journey_share` (measured, asserted on every build) and carried to `B.truck.resident_trip_share` 0.002993 by the motorbike carve's identity; the plans builder carves licensed, car-available, non-escorting residents locked to `truck` on their own hash namespace, one lock per person. The yardstick's resident-truck deduction, always computed, now describes agents that exist. Built; rebuilt with F18. |
 | 2026-08-30 | **Shared rides: the lift a car-less resident gets from someone already making their trip (§9.124; issues #86/#91/#48).** A fourth binder pass, `bind_shared_rides`: car-less residents' direct tours bound both ways to non-household drivers making the same zone-to-zone trip within `B.ride.pairing_window_min`, seats capped, nearest first; volume = the joint binder's identity (448,229 passenger trips) less the 328,916 the earlier passes cover, thinned to it. Measured on the committed WEEKDAY demand: same-SA1 co-location serves 19,034 tours (a fifth of the remainder), same-SA2 105,515, thinned to 59,648 with 17 trips of shortfall. `B.ride.shared_lift_scope` = `same_sa2_od`, swept against `same_sa1_od` and `none`. Built, not rebuilt; next family. |
 | 2026-08-30 | **The car-less quarter: bike, bus and much of walk are ride's deficit wearing other modes (§9.123; issues #86/#48/#49/#30).** F17 at iteration 20: car 48.46 (-16.9%, inside the bar), walk 24.13 falling, ride 9.17 rising, bike 9.00 and moving away. Of 913 residents whose best-scored plan is bike, 95.4% have no car; car-less residents (24.7% of trips) walk 48.1%, ride 18.5%, cycle 16.7%, take pt 14.6%, while car-available residents sit at car 64.4% and bike 6.5% falling. Bike's, bus's and heavy rail's excess and walk's residue are the lift supply the demand does not bind; the next family boundary is #86/#91, not a bike parameter. |
