@@ -28,7 +28,7 @@ trust order, the six questions, the environment gate — live in
 
 | Fact as of this handoff | Re-derive with |
 |---|---|
-| **AN F16 ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T132843_300it_10pct` (overlay `f16_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240), launched 30 Aug 13:28 as Task Scheduler task `citysim_run_20260830T132842`. The F15 arm `aborted_20260830T124711_300it_10pct` was **stopped on the gate at iteration 13** (§9.121). Measured pace at 10%: 120–150 s/it, so a gate every ~3.5 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
+| **AN F17 ARM IS RUNNING — THE MACHINE IS NOT FREE** (overlay `f17_gate_10pct`: S2, WEEKDAY, 10%, 300 it, cutoff 240; the run directory is the newest `results/2026*_300it_10pct` and its task is `citysim_run_<stamp minus 1 s>`). The F16 arm `aborted_20260830T132843_300it_10pct` was **stopped on the gate at iteration 17** and the F15 arm `aborted_20260830T124711_300it_10pct` at iteration 13, each with its cause measured (§9.121). Measured pace at 10%: 120–150 s/it, so a gate every ~3.5 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
 | Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --trend` (every readable iteration, every mode, direction) · `--it <n>` for one table · `--watch 300` to keep printing — every 10th iteration is readable now, not only the trips-table ones |
 | **This session's PR is OPEN at handoff** (or merged overnight — check) | `gh pr list --state open` · `gh pr checks <n>` |
 | Open issues — **none closed this session; #48, #86, #91, #30, #93, #96 carry new measured comments** | `gh issue list --state open` |
@@ -135,9 +135,11 @@ iterations 1→30), recorded in §9.120.**
 §3  THE ACTIVE LANE
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Gate the running F16 arm at iterations 100, 200 and 300 — all twelve modes, trend
+**Gate the running F17 arm at iterations 100, 200 and 300 — all twelve modes, trend
 and level — with `report_mode_ridership.py --trend`.** Read the trend from iteration
-10 on (iterations 0–6 execute the unscored seeds). What it must answer, in this order:
+10 on (iterations 0–6 execute the unscored seeds). F17 = F16 + the router's direct
+walk on the network (§9.121, #94), so ferry, pt and walk are all read fresh. What it
+must answer, in this order:
 
 1. **Ride — answered on F15 (§9.121): it realises what the demand binds** (88.8% of
    ride legs paired on identity). Confirm on F16, then the ride gap is the demand
@@ -242,15 +244,30 @@ ferry's catchment holds 59,458 trip ends within 1 km; the router's search/extens
 radii were undeclared jar defaults and are now `RUN.transit_router.*`; 1,880 resident
 truck commuters are observed in G62 and queued.
 
+**§9.121 — the F16 arm, and the ferry's cause.** F16 at iteration 10 (same depth as
+F15, seed order the only difference): car 44.08 (36.92), bike 9.11 (11.24); the car
+plan best-scored for 61.1% of car-available residents (47.8%), bike beating car for
+14.1% (48.7%) — the two-state scoring is gone. Then #94, measurable at last: **of
+Stockton-side residents' 110 CBD-bound pt-plan trips the router returned a walk for
+88, a bus for 20, the ferry for 1** — SwissRailRaptor's direct walk is a BEELINE and
+the beeline crosses the harbour; over all residents **38.3% of pt-plan trips are
+walk-only, 45.5% of them over 3 km on the network (p90 29 km)**. F16 stopped at
+iteration 17. Repair (**family F17**): `citysim.NetworkDirectWalkPtRouter` routes the
+direct walk on the walk network, prices it as the raptor would with the declared
+`directWalkFactor`, and compares it with the transit route's own cost;
+`RUN.transit_router.direct_walk_basis` = `network` (derived), `direct_walk_factor` 1.0
+declared; `ptDirectWalk` config group registered. Classes installed, run inputs
+re-emitted, manifest rebuilt, smoke-probed.
+
 ---
 
 ═══════════════════════════════════════════════════════════════════════════════
 §5  WHAT INVALIDATES THE WORK
 ═══════════════════════════════════════════════════════════════════════════════
 
-- **FAMILY F16 IS OPEN (30 Aug 13:30, §9.121).** Nothing run before compares with
-  anything after — not the 13-iteration F15 arm, not the dead F14 arm, not the two F4
-  arms `README.md` draws from.
+- **FAMILY F17 IS OPEN (30 Aug 14:05, §9.121).** Nothing run before compares with
+  anything after — not the 17-iteration F16 arm, not the 13-iteration F15 arm, not the
+  dead F14 arm, not the two F4 arms `README.md` draws from.
 - **Never compare across sample fractions.** The running arm is 10%; F14 was 25%.
 - **One arm at a time** (#66). **No recompile into `.tools/classes` while it runs.**
 - **The 67/143 holdout split is never opened or peeked.**
@@ -291,6 +308,9 @@ Counts that expire live in **§0**.
   uniform"; `uniform_draw` is retained and swept against.
 - **The first-executed seed plan is drawn uniformly per person** (§9.121) — never
   one mode for everyone: iteration 0 must be a mixed traffic state.
+- **The PT router's direct walk is the network walk** (§9.121, #94) — `beeline` is
+  the stock raptor and is kept only as the sensitivity; the ferry's market is a
+  water crossing and a beeline erases it.
 - **`ride` is a trip somebody drives**; a declared driver keeps `car` on the trips
   they serve (§9.120).
 - **A declared pair is paired on identity and timed by the driver** (§9.120);
@@ -308,7 +328,11 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **A CHOICE SET IS SCORED UNDER WHATEVER TRAFFIC ITS ITERATION CARRIED** (§9.121).
+1. **A BEELINE CROSSES WATER; A NETWORK WALK DOES NOT** (§9.121, #94). The PT
+   router's direct-walk shortcut turned 38% of pt-plan trips into walks, some of 30
+   km, and the ferry into a mode nobody could reach. Any router shortcut that reasons
+   on straight lines must be checked against the network it will be executed on.
+2. **A CHOICE SET IS SCORED UNDER WHATEVER TRAFFIC ITS ITERATION CARRIED** (§9.121).
    Car-first seeding gridlocked iteration 0 and handed every car plan a 60–100 util
    handicap ChangeExpBeta never re-tests. Read the per-mode plan SCORES in a resident's
    memory before believing a share; a share can be an ordering.
