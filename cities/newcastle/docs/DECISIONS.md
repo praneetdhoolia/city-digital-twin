@@ -11744,6 +11744,15 @@ re-execution updates it. Under a mixed iteration 0 that state is the same for
 every mode; how quickly selection then refines it is what the F16 arm
 measures.
 
+### Measured on the F16 arm's iteration 0
+
+`20260830T132843_300it_10pct`, iteration 0: **car departures 81,332 against
+162,812 on F15; cars stuck at 30:00 246 against 6,820**; walk 133,818
+departures with 6,408 stuck (the walk-seed plans on long trips, which
+scoring removes), bus 1,188 stuck. The gridlock is gone at its source. The
+taxi seed flood is unchanged by design (34,870 requests, 85.7% refused at
+iteration 0, decaying as the plans are scored).
+
 ### Family F16 opens
 
 The population file changes (the `selected` flag moves), so the F15 arm and
