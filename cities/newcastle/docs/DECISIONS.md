@@ -11595,6 +11595,39 @@ innovation on those 328 plans while selected, which the full choice set
 makes moot for their owners. The 3 leaf cases and the `coordDistance` fold
 are #96's, not this entry's.
 
+### The corridor's activity density, measured against the observed layers (§9.103's next lane)
+
+§9.103 asked whether the light rail's 1.06% corridor market is a defect of
+destination placement or a fact, and named the comparison: modelled activity
+density near the line against an observed one the package already holds.
+Measured within 800 m of the ten mapped tram stop points, B2 WEEKDAY trip
+ends against `D1_zone_attractions_SA1` (SA1 centroids) and `D1_poi`:
+
+| purpose (modelled ends) | modelled share in corridor | observed counterpart | observed share in corridor |
+|---|---:|---|---:|
+| work | **8.80%** | jobs (`attr_HW`) | **8.04%** |
+| shopping | **6.84%** | retail POI 9.82% · `attr_HS` | **11.38%** |
+| other | **5.69%** | `attr_HO` | **8.07%** |
+| education | 3.38% | `attr_HE` | 4.24% |
+| business | 9.35% | `attr_NHB` | 11.33% |
+| escort | 5.43% | — | — |
+| home | 2.28% | population | 1.72% |
+| **all trip ends** | **4.46%** | POI attraction weight, all groups | **8.05%** |
+
+Work is placed where the jobs are. **Shopping and other — the purposes a
+CBD tram carries — are placed in the corridor at roughly two-thirds of the
+rate the observed attractions put them there**, and food and office
+attractions are 16–19% corridor-concentrated against a modelled shopping
+share of 6.8%. So part of the light rail's missing market is destination
+placement (#30) and part is not: even at the observed rates the corridor
+would hold on the order of 7% of trip ends, not the 1.06% two-ended market
+§9.103 measured, because a corridor trip needs BOTH ends near the line and
+the home end is only 1.7–2.3% corridor. This is the measurement; the repair
+is B2's destination solver and belongs to #30's family boundary, not to
+F15. Reproduce with the scratch script recorded in the session; the inputs
+are the S2 WEEKDAY schedule, `B2_activity_trips_WEEKDAY.csv`,
+`D1_zone_attractions_SA1.csv` and `D1_poi.csv`.
+
 ### Family F15 opens
 
 The population, its attributes, the seed and two controler classes change
