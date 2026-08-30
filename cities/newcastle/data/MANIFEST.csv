@@ -2,7 +2,7 @@ path,stage,bytes,rows,produced_by,source,source_url,licence,retrieved,sha256
 data/raw/_osm_fetch.log,raw,539,,,,,,,34650b9503db5b75d0b1f3a446d283319b05a483a0155c16aed9fccb4dcc5d3e
 data/raw/_s3_historical_gtfs_listing.txt,raw,6209826,,,,,,,b00abef076427693c54faf49963a622157c93606b932c787f4d3c32ab4c6393a
 data/raw/provenance_abs_dem.json,raw,6258,,,,,,,995509b1f3f97ea7c42c13c31ee1f57ea015aa206ff124ee87109d983871f94e
-data/raw/provenance_licences.json,raw,1134,,,,,,,e79e457a99456fc43fe1dbeb49bd2a3d8acccf74a080481e5fca3a2bdd40d9c4
+data/raw/provenance_licences.json,raw,1115,,,,,,,3884276eaefeba5423fb5014fe30db7bec6f6075c9fca4f6bc1a43e6bacaf81b
 data/raw/provenance_open_data.json,raw,11257,,,,,,,37e280a7808f53003a37c4789c52682ca95d3aa90d44cccc6ef9e3a99dcec2f6
 data/raw/abs/32350DS0003_2024.xlsx,raw,274335,,,"ABS Regional population by age and sex, 2024 - estimated resident population by age and sex, Local Government Areas, 30 June 2024 (released 28 Aug 2025)",https://www.abs.gov.au/statistics/people/population/regional-population-age-and-sex/2024/32350DS0003_2024.xlsx,CC-BY 4.0,2026-08-30,4e25a917b8556d1d22f628d749f7c348ef72048e6fdd9d241ffa68949b55e184
 data/raw/boundaries/DZN_2021_AUST_GDA2020_SHP.zip,raw,62160137,9,cities/newcastle/extract/fetch_abs_dem.py,ABS Destination Zones 2021 (workplace geography),https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/DZN_2021_AUST_GDA2020_SHP.zip,CC-BY 4.0,2026-08-16,40c867bb50c9816d7fae54f75c2641b32db78a4c910ddd4a43a7727fc0ddb417
