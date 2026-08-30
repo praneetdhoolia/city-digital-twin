@@ -995,11 +995,28 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
     # 47% of eligible trips being escorters on WEEKDAY. The denial is known
     # before the draw, so the pool is the eligible persons who will not be
     # denied - the carve then delivers what it solves for.
+    # 9.129: the draw (write_day) also refuses every person the binders
+    # NAMED as a driver - joint, shared, escorted / lift placements (9.125)
+    # - and those held 42.1% of the non-escorting eligible pool's trips on
+    # WEEKDAY, so a probability solved without them delivered 58% of its
+    # share (measured 0.153% of resident trips against 0.2654% solved).
+    # The denial is known before the draw, exactly as the escort denial is,
+    # so the pool is the persons who will actually be offered the draw.
     escorters = set()
     for pid, rows in stream_persons(
             os.path.join(PLANS, 'B2_activity_trips_%s.csv' % first_day)):
         if any(r['dest_activity_type'] == 'escort' for r in rows):
             escorters.add(pid)
+        elif any(r['dest_placement'] in ('escorted', 'lift_pickup', 'lift_serve')
+                 for r in rows):
+            escorters.add(pid)
+    for fname, col in (('B2_joint_bindings_%s.csv' % first_day, 'driver_person_id'),
+                       ('B2_shared_bindings_%s.csv' % first_day, 'driver_person_id')):
+        fpath = os.path.join(PLANS, fname)
+        if os.path.exists(fpath):
+            with open(fpath, encoding='utf-8') as fh:
+                for r in csv.DictReader(fh):
+                    escorters.add(int(r[col]))
     eligible = sum(1 for p, a in attrs.items()
                    if a[0] and a[2] and p not in escorters)
     eligible_trips = sum(trips_by_pid[p] for p, a in attrs.items()
@@ -1007,7 +1024,8 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
     q = (MOTORBIKE_SHARE * total_trips / eligible_trips) if eligible_trips else 0.0
     _MOTORBIKE_Q['q'] = min(1.0, q)
     print('motorbike carve: trip share %.5f -> q=%.5f over %d eligible '
-          'persons (of %d) making %d of %d %s trips'
+          'persons (of %d; escorters and named drivers excluded, 9.129) '
+          'making %d of %d %s trips'
           % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'], eligible, len(attrs),
              eligible_trips, total_trips, first_day), flush=True)
     # 9.125: the resident truck carve on the same pool, the same arithmetic

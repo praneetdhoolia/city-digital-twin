@@ -489,7 +489,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         final double boundWindow = cfg.getBoundWindowMinutes() * 60.0;
         final String rule = cfg.getRule();
         // 9.128: where a declared pair's links differ, the DRIVER detours
-        // through the passenger's. Deferred to after the loop, because a
+        // through the passenger's (B.ride.declared_pair_meeting, read as
+        // ridePairing.declaredMeeting). Deferred to after the loop, because a
         // driver's detour is routed once through every passenger it carries.
         final boolean detour = RidePairingConfigGroup.MEETING_DRIVER_DETOUR
                 .equals(cfg.getDeclaredMeeting());

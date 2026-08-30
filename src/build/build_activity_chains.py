@@ -218,6 +218,8 @@ MAX_PARTY_PASSENGERS = CFG.get('B.ride.max_passengers_per_vehicle')
 # tours bound to non-household drivers making the same SA1-to-SA1 trip
 # within the declared pairing window. `none` switches the pass off.
 SHARED_LIFT_SCOPE = CFG.get('B.ride.shared_lift_scope')
+# 9.129: a shared-ride pair must share a sampling-hash bucket of this width
+SHARED_LIFT_HASH_BUCKET = float(CFG.get('B.ride.shared_lift_hash_bucket'))
 PAIRING_WINDOW_MIN = float(CFG.get('B.ride.pairing_window_min'))
 # DECISIONS.md 9.127: the run's household sampler keeps a household when
 # blake2b('household|<id>|<RUN.machine.seed>') / 2^64 < fraction. A shared
@@ -1952,6 +1954,7 @@ def bind_shared_rides(path, day, pctx, seed):
             out['driver_trips_indexed'] += 1
 
     out['sample_seed'] = SAMPLE_SEED
+    out['hash_bucket'] = SHARED_LIFT_HASH_BUCKET
     unit_hash = {}
 
     def uh(h):
@@ -1963,14 +1966,19 @@ def bind_shared_rides(path, day, pctx, seed):
     def find(o_sa1, d_sa1, dep, hid, need_seat):
         b = dep // bins
         best = None
-        u_p = uh(hid)
+        bucket_p = int(uh(hid) / SHARED_LIFT_HASH_BUCKET)
         for bb in (b - 1, b, b + 1):
             for drv in drivers.get((zone(o_sa1), zone(d_sa1), bb), ()):
                 if drv['hid'] == hid or (need_seat and drv['seats'] <= 0):
                     continue
-                # 9.127: a driver the sampler would drop while keeping this
-                # passenger is not a driver this passenger may be bound to
-                if uh(drv['hid']) > u_p:
+                # 9.127 / 9.129: a driver the sampler would drop while
+                # keeping this passenger is not a driver this passenger may
+                # be bound to. The pair must share a hash BUCKET: at-or-below
+                # also kept pairs together, but it named low-hash households
+                # as drivers and a 10% sample is the low-hash households, so
+                # the sample's composition was biased (named drivers kept at
+                # 12.4%, everyone else at 7.95%). A bucket prefers no hash.
+                if int(uh(drv['hid']) / SHARED_LIFT_HASH_BUCKET) != bucket_p:
                     continue
                 gap = abs(drv['dep'] - dep)
                 if gap <= window and (best is None or gap < best[0]

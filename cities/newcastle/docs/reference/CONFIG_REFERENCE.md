@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 412 fields are made of
+## What the 413 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 35 | computed from observed data in this package |
 | `derived` | 38 | follows from another registry field by identity |
 | `literature` | 68 | a published value, not specific to this city |
-| `assumed` | 150 | chosen without direct empirical support |
+| `assumed` | 151 | chosen without direct empirical support |
 | `definition` | 117 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 393 | usable point value |
+| `active` | 394 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1118,7 +1118,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 102 fields*
+*`cities/newcastle/registry/B_demand.json` - 103 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1209,6 +1209,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.physical_boarding` | `true` | boolean | `definition` | - |
 | `B.ride.pickup_dwell_s` | `0.0` | seconds | `assumed` | 0 - 120 |
 | `B.ride.remode_unpaired` | `true` | boolean | `definition` | - |
+| `B.ride.shared_lift_hash_bucket` | `0.05` | fraction of the sampling-hash range | `assumed` | 0.05 - 0.1 |
 | `B.ride.shared_lift_scope` | `same_sa2_od` | enum | `definition` | `same_sa2_od`, `same_sa1_od`, `none` |
 | `B.ride.unpaired_fallback` | `licensed_drive_else_walk` | enum | `assumed` | `licensed_drive_else_walk`, `walk` |
 | `B.ride.wait_for_driver` | `true` | boolean | `definition` | - |
@@ -1832,6 +1833,14 @@ Seconds added to a PAIRED passenger's travel time for the act of being picked up
 Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 standing directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. False keeps Tier 1's teleport for the unpaired, for comparability within one build. Consumed by citysim.RidePairingEngine.
 
 ***definition** · status **active** · DECISIONS.md §9.55 · MATSim `ridePairing.remodeUnpaired`*
+
+#### `B.ride.shared_lift_hash_bucket`
+
+Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both, without preferring low-hash households as drivers. Consumed by the fourth binder pass (bind_shared_rides).
+
+***assumed** · status **active** · DECISIONS.md §9.129*
+
+> **Sweep basis.** The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. The 9.127 rule (driver hash AT OR BELOW the passenger's) also guaranteed that, but it named LOW-hash households as drivers, and a 10% sample - which is exactly the low-hash households - then kept named drivers at 12.4% and everyone else at 7.95% (the eligible non-named pool at 6.1%, the motorbike carve at 5.5%, the truck carve at 5.1%): the count was 10%, the composition was not. A bucket prefers no hash. Measured on the WEEKDAY binder, package-identical inputs: at-or-below 98,549 servable / 59,718 bound / 0 short; bucket 0.10 86,848 / 59,806 / 0; bucket 0.05 73,509 / 59,701 / 0; unconstrained 105,515 / 59,648 / 17. 0.05 is declared because 0.10, 0.25 and 0.50 are all multiples of it, so a 25% confirmation arm keeps its pairs too; the cost is candidate supply, and the identity is still met in full. A 1% smoke is not a multiple and breaks pairs - it is a plumbing test and its pairing is never read.
 
 #### `B.ride.shared_lift_scope`
 
