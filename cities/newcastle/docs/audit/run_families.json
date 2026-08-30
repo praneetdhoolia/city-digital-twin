@@ -108,12 +108,26 @@
       "decisions_ref": "9.122, 9.124, 9.125",
       "from_launch": "20260830T161200",
       "note": "Opened 30 Aug 16:12 with arm 20260830T161243_300it_10pct after smoke probe 20260830T161030: B2 rebuilt with the fourth binder pass (B.ride.shared_lift_scope = same_sa2_od), plans rebuilt with the motorbike carve solved on non-escorters at sa1_thinned resolution and the resident truck carve. The run side is F17 unchanged. The F17 arm 20260830T141222 is F17 to whatever iteration it reaches."
+    },
+    "F19-driver-detour": {
+      "label": "F18 demand with declared ride pairs served by the driver's detour through the passenger's links (9.128)",
+      "decisions_ref": "9.128",
+      "from_launch": "20260830T170742",
+      "note": "Opened 30 Aug 17:07 with arm 20260830T170743_300it_10pct after smoke probe 20260830T165440: B.ride.declared_pair_meeting = driver_detour (new). The demand is F18's unchanged; the run side changed (RidePairingEngine routes the driver's car leg through each carried declared passenger's links and books at the pass time). The valid F18 arm 20260830T163010 was stopped at iteration 1 and is F18 to that iteration."
     }
   },
   "overrides": {
     "aborted_20260818T162538_1000it_25pct": {
       "family": null,
       "note": "Dead launch, no artefacts, launched 18 Aug 16:25 - the record does not state whether the 9.44/9.45 landings preceded it that day, so its family is left unattributed rather than guessed."
+    },
+    "aborted_20260830T163010_300it_10pct": {
+      "family": "F18-shared-rides-carves",
+      "note": "The valid F18 arm, stopped at iteration 1 by the session: its iteration-0 pairing showed the shared rides refused on endpoints (9.128)."
+    },
+    "aborted_20260830T170153_300it_10pct": {
+      "family": "F19-driver-detour",
+      "note": "The F19 launch made inline by mistake; stopped at iteration 0 six minutes later and relaunched detached as 20260830T170743_300it_10pct."
     }
   }
 }

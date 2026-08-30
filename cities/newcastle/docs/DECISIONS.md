@@ -96,6 +96,7 @@ its layout will otherwise cost you an hour:
 | **Residents who drive a truck for a living** | **§9.125** — G62 Truck 223 of 43,959 LGA driver journeys, carried to 0.2993% of resident trips by the motorbike carve's identity and carved locked to `truck`; the yardstick's resident-truck deduction now describes real agents. Built, queued |
 | **F17 converged car and walk in fifty iterations; F18 opens on the demand it named** | **§9.126** — car 59.32 (+1.7%) and walk 14.88 (+11%) at iteration 50 of the first honest arm since F4; the residues are the car-less quarter, the carves, the corridor and the fleet; F18 = F17's run side on the §9.122–§9.125 demand |
 | **A coupling between households is a sampling unit** | **§9.127** — the first F18 arm ran on 31,262 persons at 10% against 62,134: shared rides made the sampler's lift clusters giant components; a shared ride now binds only to drivers whose household unit hash is at or below the passenger's, so any nested sample keeps the pair |
+| **A declared pair whose links differ is served by the driver's detour** | **§9.128** — the valid F18 arm refused 2,053 of 6,966 ride legs on endpoints at iteration 0 (the shared rides among them); a walking meeting point measured 8-11 km per passenger and was replaced by the driver's car leg routed through the passenger's links, boarded at the passenger's own; `B.ride.declared_pair_meeting`; family F19 |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -12135,6 +12136,61 @@ quarter's modes settle once a fifth of their tours ride.
 
 ---
 
+## 9.128 A declared pair whose links differ is served by the driver's detour, not refused on geometry (30 August 2026, sixteenth session; issues #86, #66)
+
+The valid F18 arm, `20260830T163010_300it_10pct`, wrote its iteration-0
+pairing record: **6,966 ride legs, 4,858 paired, 2,053 refused on
+endpoints** (`miss_endpoints`). The household pairs match `both_links` by
+construction - the escort activity sits on the passenger's link - and the
+shared rides the fourth binder pass bound on same-SA2 trips (§9.124) do
+not: two households in one SA2 do not share a link. So the pass that arm
+was launched to test could not be realised on it at all, and it was stopped
+at iteration 1 rather than run nine hours to measure nothing.
+
+**Two mechanisms were built and the first was measured out.** A walking
+meeting point - the passenger walks to the driver's origin link and from
+the driver's destination link, in MATSim's own access/egress trip shape -
+ran on a 1% smoke at a **mean 8-11 km walked to and from the driver's
+links** and a mean re-timing of 30-86 min. Nobody walks that to a lift; the
+mechanism was replaced before it reached an arm.
+
+**The car-pool as it is made: the driver detours.** With
+`B.ride.declared_pair_meeting = driver_detour` (`ridePairing.declaredMeeting`,
+new, 412 fields) the pairing engine accepts a DECLARED pair on identity
+whatever the links, defers it, and once every passenger a driver carries is
+known routes the driver's car leg - with the run's own car router, at
+BeforeMobsim - through each carried passenger's origin link in departure
+order, then each destination link in the same order, then on to the
+driver's own destination. The passenger's plan is untouched: they board at
+their own link as the car passes it (the joint-ride engine boards a waiting
+passenger when the vehicle's current link is theirs, and alights them
+mid-route at their destination link - §9.102's machinery), the booking is
+made at the car's routed pass time and the passenger is re-timed to it
+(§9.120). The detour is driven on the network, its links and time are
+written to the driver's plan, and the driver's score pays for it; no
+threshold decides who is served. `passenger_links` keeps the pre-9.128
+behaviour and is the other member of the sweep.
+
+**Smoke (1%, 2 iterations, `20260830T165440_2it_1pct`).** 68 / 104 / 76
+declared passengers picked up on 64 / 92 / 67 drivers' detours across the
+three mobsims, mean detour 471-751 s per driver, **0 unroutable**; pair
+rate 0.971 / 0.976; joint-ride boardings 295-317. The smoke also showed
+133 passengers timing out at their link against 13 on the previous smoke,
+and that was measured before it was believed: of 77 timed-out ride legs in
+the final events, 62 had their driver's car pass the link HOURS before
+they departed, and the driver's written routes were unchanged (41 km,
+40 min planned, identical across all four plans) while the realised legs
+took 2-10 h - the 1% flow-capacity artefact a smoke has always carried,
+not the mechanism. The 10% arm decides.
+
+**Family F19 opens at launch `20260830T170742`**; the arm is `20260830T170743_300it_10pct`
+(`f19_gate_10pct`: S2 x WEEKDAY, 10%, 300 iterations, innovation off at
+240, gated per mode at 100 / 200 / 300). `aborted_20260830T170153_300it_10pct`
+is the same launch made inline by mistake and replaced six minutes later by
+the detached one; it ran no iteration.
+
+---
+
 ## 9.127 A coupling between households is a sampling unit: the first F18 arm ran on half a sample (30 August 2026, sixteenth session; issues #86, #66)
 
 The first F18 arm, `20260830T161243_300it_10pct`, ran iteration 0 in 66 s
@@ -12869,6 +12925,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **A declared pair whose links differ is served by the driver's detour (§9.128; issues #86/#66).** The valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints - the same-SA2 shared rides of §9.124 cannot share a link with their driver - so it was stopped at iteration 1 (`aborted_20260830T163010_300it_10pct`). A walking meeting point was built and measured on a 1% smoke at 8-11 km walked per passenger; replaced by the driver detour: the engine routes the driver's car leg through each carried passenger's origin and destination links, the passenger boards and alights at their own link as the car passes, the booking is at the routed pass time. New `B.ride.declared_pair_meeting` = `driver_detour` | `passenger_links` (412 fields). Smoke: 0 unroutable detours, mean 471-751 s per driver; its timeouts traced to the 1% flow-capacity artefact. Also: the harness resume key now includes the population's sha256 (`inputs_sha256`). Family F19 opens at `20260830T170742`; arm `20260830T170743_300it_10pct`. |
 | 2026-08-30 | **A coupling between households is a sampling unit: the first F18 arm ran on half a sample (§9.127; issues #86/#66).** `20260830T161243` kept 31,262 persons at 10% against F17's 62,134 - the household sampler's union-find over `liftHousehold` made the sampling unit the connected component, and the shared-ride bindings turn those into giant lumps; stopped at iteration 2. A directed closure was measured to pull the sample to 17.65% and rejected. Repair: the binder pairs a passenger only with drivers whose household unit hash (the sampler's own, under `RUN.machine.seed`) is at or below the passenger's, so any nested sample that keeps the passenger keeps the driver; the plans name the shared drivers' households in `sharedDriverHousehold` and the sampler excludes them from its clusters; the rebuild asserts the 10% sample within 8.5-11.5% of persons (62,134, F17's count exactly). Re-bound WEEKDAY under the rule: 98,549 servable, 59,718 bound, 0 trips short. `check_package.py` reads the choice-set seed as a choice set. The valid F18 arm is `20260830T163010_300it_10pct`. |
 | 2026-08-30 | **The first honest arm since F4 converged car and walk inside fifty iterations, and family F18 opens on the demand it named (§9.126; issues #48/#86/#49/#30/#93/#94).** F17 (`20260830T141222`, 10%): car 36.26 → 59.32 (+1.7%) and walk 42.27 → 14.88 (+11%) by iteration 50, ride at the demand's ceiling (pair rate 0.80 on identity), the ferry at 30–36 trips against 3; bike +275%, bus +87%, heavy rail +70%, ride −51% are the car-less quarter's, motorbike −84% the carve's, light rail −95% the corridor's, taxi +52% the fleet's. Stopped at iteration 60 for F18: shared rides (59,648 tours), the repaired motorbike carve at census resolution, the resident truck carve, drivers never carved; plans 9,880,427 seeded legs, manifest 497. Run side unchanged from F17. |
 | 2026-08-30 | **Residents who drive a truck for a living, carved from the census like the motorcyclists (§9.125; directive item 8).** G62 one-method Truck journeys - 223 of the target LGA's 43,959 driver journeys - declared as `CAL.mode_split.truck_driver_journey_share` (measured, asserted on every build) and carried to `B.truck.resident_trip_share` 0.002993 by the motorbike carve's identity; the plans builder carves licensed, car-available, non-escorting residents locked to `truck` on their own hash namespace, one lock per person. The yardstick's resident-truck deduction, always computed, now describes agents that exist. Built; rebuilt with F18. |
