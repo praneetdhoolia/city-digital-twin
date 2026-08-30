@@ -96,6 +96,12 @@
       "decisions_ref": "9.121",
       "from_launch": "20260830T133000",
       "note": "Opened 30 Aug 13:30: only the population file changes - which seeded plan carries selected=\"yes\" - drawn uniformly by a hash of person id and master seed instead of car-first. The F15 arm 20260830T124711 was stopped at iteration 13 with its cause measured (car plans scored under the iteration-0 gridlock the car-first order created) and is F15. First F16 arm under overlay f16_gate_10pct."
+    },
+    "F17-network-direct-walk": {
+      "label": "F16 stack with the PT router direct walk evaluated on the network (9.121, #94)",
+      "decisions_ref": "9.121",
+      "from_launch": "20260830T140500",
+      "note": "Opened 30 Aug 14:05: the pt routing module is wrapped (citysim.NetworkDirectWalkPtRouter) so the direct walk the raptor compares every transit route against is the walk network route, not a beeline across the harbour; RUN.transit_router.direct_walk_basis = network, direct_walk_factor declared at its default 1.0. The F16 arm 20260830T132843 was stopped at iteration 17 with the cause measured (38.3% of pt-plan trips walk-only, 45.5% of them over 3 km on the network) and is F16. First F17 arm under overlay f17_gate_10pct."
     }
   },
   "overrides": {

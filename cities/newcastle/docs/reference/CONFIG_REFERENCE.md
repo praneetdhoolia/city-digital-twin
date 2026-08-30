@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 405 fields are made of
+## What the 407 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
 | `measured` | 34 | computed from observed data in this package |
-| `derived` | 36 | follows from another registry field by identity |
-| `literature` | 67 | a published value, not specific to this city |
+| `derived` | 37 | follows from another registry field by identity |
+| `literature` | 68 | a published value, not specific to this city |
 | `assumed` | 149 | chosen without direct empirical support |
 | `definition` | 115 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 386 | usable point value |
+| `active` | 388 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -2782,7 +2782,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 70 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 72 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration carries a null value because no justified value has been measured; the resolver will not invent one.
 
@@ -2852,6 +2852,8 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
+| `RUN.transit_router.direct_walk_basis` | `network` | enum | `derived` | derived: direct_walk_basis = network whenever walk is routed and simulated on t |
+| `RUN.transit_router.direct_walk_factor` | `1.0` | ratio | `literature` | 1 - 2 |
 | `RUN.transit_router.extension_radius_m` | `200.0` | metres | `literature` | 100 - 500 |
 | `RUN.transit_router.max_beeline_walk_connection_m` | `300.0` | metres | `literature` | 100 - 500 |
 | `RUN.transit_router.search_radius_m` | `1000.0` | metres | `literature` | 500 - 2000 |
@@ -3278,6 +3280,22 @@ The mode strings the mobsim serves transit passengers under, and - minus the `pt
 Whether the mobsim simulates the transit schedule at all. False would make every scenario in this study meaningless, which is exactly why it is declared rather than left as a literal nobody can see.
 
 ***definition** · status **active** · DECISIONS.md §15 · MATSim `transit.useTransit`*
+
+#### `RUN.transit_router.direct_walk_basis`
+
+What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it.
+
+***derived** · status **active** · DECISIONS.md §9.121 · MATSim `ptDirectWalk.basis`*
+
+> **Derived from** `RUN.routing.network_modes`: direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121): of 110 CBD-bound trips in Stockton-side residents' PT plans the raptor returned a beeline walk across the harbour for 88, a bus for 20 and the ferry for 1; those walks executed as the ~20 km road detour. `beeline` recovers the stock raptor exactly.
+
+#### `RUN.transit_router.direct_walk_factor`
+
+Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default.
+
+***literature** · status **active** · DECISIONS.md §9.121 · MATSim `transitRouter.directWalkFactor`*
+
+> **Sweep basis.** MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.
 
 #### `RUN.transit_router.extension_radius_m`
 

@@ -427,6 +427,40 @@
       "matsim_param": "transitRouter.extensionRadius",
       "description": "When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default."
     },
+    "RUN.transit_router.direct_walk_factor": {
+      "value": 1.0,
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        1.0,
+        2.0
+      ],
+      "sweep_basis": "MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.",
+      "status": "active",
+      "decisions_ref": "9.121",
+      "matsim_param": "transitRouter.directWalkFactor",
+      "description": "Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default."
+    },
+    "RUN.transit_router.direct_walk_basis": {
+      "value": "network",
+      "units": "enum",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "RUN.routing.network_modes"
+        ],
+        "identity": "direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121): of 110 CBD-bound trips in Stockton-side residents' PT plans the raptor returned a beeline walk across the harbour for 88, a bus for 20 and the ferry for 1; those walks executed as the ~20 km road detour. `beeline` recovers the stock raptor exactly."
+      },
+      "status": "active",
+      "decisions_ref": "9.121",
+      "matsim_param": "ptDirectWalk.basis",
+      "consumers": [
+        "src/java/citysim/PtDirectWalkConfigGroup.java",
+        "src/java/citysim/CitysimControler.java",
+        "src/java/citysim/NetworkDirectWalkPtRouter.java"
+      ],
+      "description": "What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it."
+    },
     "RUN.routing.network_modes": {
       "value": [
         "car",
