@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-30T13:04:05",
+  "generated": "2026-08-30T13:24:42",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 494,
-  "total_bytes": 4353513132,
+  "total_bytes": 4353543537,
   "total_gib": 4.05,
   "by_stage": {
     "raw": 81,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1630168004
+    "processed": 1630198409
   },
   "files": [
     {
@@ -2455,7 +2455,7 @@
       "path": "demand/plans/matsim/_plans_report.json",
       "bytes": 5035,
       "rows": null,
-      "sha256": "88b65cadfd44c301698b28809bcecdcaa67e941f3e5054dff673e111faa3096b",
+      "sha256": "a4026f0cf831ad7dd2680d2eb2b36311a3ecddfb6c5ddc9dc4c4134a516097cd",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2465,9 +2465,9 @@
     },
     {
       "path": "demand/plans/matsim/population_SAT.xml.gz",
-      "bytes": 61570754,
+      "bytes": 61578089,
       "rows": null,
-      "sha256": "8eef0a66fd86974e8ab369c9c58834b3b5e2b28d668103560a35ae647382b9e4",
+      "sha256": "a5036d24ead3b7651a5e5217ea126698230280de072caf875703bba5e19cd619",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2477,9 +2477,9 @@
     },
     {
       "path": "demand/plans/matsim/population_SUN.xml.gz",
-      "bytes": 54872213,
+      "bytes": 54870841,
       "rows": null,
-      "sha256": "6d01c217da940ad0e0bae6aea35f8a2c708211eb1dfed8368cf1aa4fb875a5fa",
+      "sha256": "0827d851a7fb5f2953e08cbd58fe74ff170dd6ca3946322456d8c3d85ada6bc6",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",
@@ -2489,9 +2489,9 @@
     },
     {
       "path": "demand/plans/matsim/population_WEEKDAY.xml.gz",
-      "bytes": 74849962,
+      "bytes": 74874404,
       "rows": null,
-      "sha256": "c78dc35cee4523872703f809fba7508d6fabd68b9945203d8774e8144ad5ef61",
+      "sha256": "cde3f149c1fed92c9c0e57d85ffa76ed74f1f6e0f8d1d1196475bfeb797e0b10",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_plans.py",
       "source": "",

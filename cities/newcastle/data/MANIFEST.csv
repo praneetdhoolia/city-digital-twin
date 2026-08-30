@@ -202,10 +202,10 @@ demand/plans/B2_lift_bindings_SAT.csv,processed,2119980,27808,src/build/build_ac
 demand/plans/B2_lift_bindings_SUN.csv,processed,1509605,19808,src/build/build_activity_chains.py,,,,,713b1eb7e839c23ca8f050b45c30eef9f3770ea556a866611511f80f3a78e95b
 demand/plans/B2_lift_bindings_WEEKDAY.csv,processed,3737461,49030,src/build/build_activity_chains.py,,,,,4eb6cd49cfbca880540ec1dfda8d3aa61bfc76048d98f45fc0a4ebeb9cbcde2c
 demand/plans/_activity_chains_report.json,processed,21543,,src/build/build_activity_chains.py,,,,,750f17ca21fe996d35638bd2fbe8ae0b80ea9b4c892bd738a5c95ea2c6f84fe9
-demand/plans/matsim/_plans_report.json,processed,5035,,src/build/build_matsim_plans.py,,,,,88b65cadfd44c301698b28809bcecdcaa67e941f3e5054dff673e111faa3096b
-demand/plans/matsim/population_SAT.xml.gz,processed,61570754,,src/build/build_matsim_plans.py,,,,,8eef0a66fd86974e8ab369c9c58834b3b5e2b28d668103560a35ae647382b9e4
-demand/plans/matsim/population_SUN.xml.gz,processed,54872213,,src/build/build_matsim_plans.py,,,,,6d01c217da940ad0e0bae6aea35f8a2c708211eb1dfed8368cf1aa4fb875a5fa
-demand/plans/matsim/population_WEEKDAY.xml.gz,processed,74849962,,src/build/build_matsim_plans.py,,,,,c78dc35cee4523872703f809fba7508d6fabd68b9945203d8774e8144ad5ef61
+demand/plans/matsim/_plans_report.json,processed,5035,,src/build/build_matsim_plans.py,,,,,a4026f0cf831ad7dd2680d2eb2b36311a3ecddfb6c5ddc9dc4c4134a516097cd
+demand/plans/matsim/population_SAT.xml.gz,processed,61578089,,src/build/build_matsim_plans.py,,,,,a5036d24ead3b7651a5e5217ea126698230280de072caf875703bba5e19cd619
+demand/plans/matsim/population_SUN.xml.gz,processed,54870841,,src/build/build_matsim_plans.py,,,,,0827d851a7fb5f2953e08cbd58fe74ff170dd6ca3946322456d8c3d85ada6bc6
+demand/plans/matsim/population_WEEKDAY.xml.gz,processed,74874404,,src/build/build_matsim_plans.py,,,,,cde3f149c1fed92c9c0e57d85ffa76ed74f1f6e0f8d1d1196475bfeb797e0b10
 demand/population/B1_households.csv,processed,20719465,246845,src/build/build_population.py,,,,,d3bb588f1094a9d0a8b61b957f14493664aae7b67d996a66f20ee613d0938d50
 demand/population/B1_synthetic_population.csv,processed,65341162,612687,src/build/build_population.py,,,,,549b938c9739d6b2a50c06c477d273245a8fc692d715f44988618aba9b84a39c
 demand/population/_population_report.json,processed,1483,,src/build/build_population.py,,,,,9be0511e3704575e4f928b0a69a0cc0b9a5ef9e2eb28f1642d1277b97c2cd142
