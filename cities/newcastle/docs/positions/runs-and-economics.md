@@ -1,0 +1,74 @@
+# Runs, harness and economics — current position
+
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+
+**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+
+## What is built
+
+- **One front door.** `run.py` resolves a scenario × day-type input set through `src/city.py`, applies a `--run-config` overlay from `cities/newcastle/overlays/runs/` and any `--set` overrides, and hands off to `src/run/run_matsim.py`, which emits the MATSim config, launches the pinned JVM and writes the run's records. `--iterations` has no default: a run states the horizon it used (§9.43).
+- **Runs are named by the runner**, never by hand: `<launch yyyymmddThhmmss>_<iterations>it_<pct>pct`; the `--tag` flag is gone (§9.65). The stamp is a label, not identity.
+- **Resume identity.** `find_completed` in `src/run/run_matsim.py` matches scenario, day, fraction, iterations, seed, `--set` overrides, the warm-start key, `rc == 0`, `controler_sha256` (the compiled Java), `values_sha256` (every resolved registry value in the run's `_config.json`, §9.104) and `inputs_sha256` (the day's population file, §9.127). A record lacking either hash never matches; `--force` re-runs. A run's identity is its inputs, not its parameters.
+- **Three records per run.** `_meta.json` is the status card written at launch and at every transition — `running` / `completed` / `failed` / `aborted`, the identifying parameters, `pid`, `wall_s`, `rc`, `cause` — schema-checked against `config/schema/outputs/meta.schema.json` (§9.66). `_progress.json` is the machine-readable digest refreshed every `RUN.monitor.progress_interval_s` = 30 s: iteration, ETA, last mode shares, pace against `RUN.monitor.pace_band_s` = [217, 253] and the solo iterations `RUN.monitor.solo_check_iterations` = [2, 5] (§9.72, §9.76, #76). `_run.json` is written on success only and **remains the result gate**: a run without it is not a result (§9.66).
+- **Detached launch.** `run.py ... --detach` registers and starts a Windows Task Scheduler task `citysim_run_<stamp>` so the JVM outlives the launching context (#70, closed). The task is stamped ONE SECOND before the run directory; stopping an arm needs `Stop-ScheduledTask` AND killing the `java.exe` / `python.exe`. A launch is verified only when `matsim.log` progresses past `PersonPrepareForSim` with the launcher gone (§9.72).
+- **A dead run says why.** `mark_dead` renames a failed or aborted run to `aborted_<name>` in place at the top of `results/` and writes a `cause`; at every harness start a `running` record whose pid no longer exists is reconciled to `aborted` (§9.66). `src/run/run_failure.py --check` gates that every terminal record carries a cause quoted from its own `matsim.log`, and fails on a `running` record with a dead pid (§9.120). `results/INDEX.md` prints every cause (`src/analyse/build_run_index.py`).
+- **Warm restart.** `--warm-start <dead run dir>` resumes from a dead run's newest plans checkpoint and records `warm_started_from` in `_run.json`; it is crash recovery, not a bit-identical continuation, and whether a warm-completed arm counts as an arm is a project ruling, not the harness's (#75, §9.76).
+- **Live view.** `RUN.monitor.enabled` = true serves an observer-only page on `RUN.monitor.port` = 8731, re-reading every `RUN.monitor.poll_s` = 3 s and calling a run stalled after `RUN.monitor.stall_s` = 300 s of log silence (§9.36).
+- **The toolchain** is fetched by `src/setup/bootstrap_toolchain.py` and pinned by sha256 in `.tools/toolchain.json`: JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25, §9.73), Maven 3.9.9 and the 201-jar signals run stack at that same MATSim version (§9.76). Signal runs execute `citysim.CitysimSignalsControler` on the run stack; every other run uses the shaded jar; the two never share a classpath. `--verify` re-hashes both and recompiles both class trees.
+
+## What is measured — what a run costs
+
+- **Newest measurement wins.** The F20 arm `aborted_20260830T184955_300it_10pct` (10% × 300, 10 qsim threads, 30g heap) paced solo iterations 2–5 at 177–185 s and a median 201.3 s/it through iteration 11 (its `_progress.json`). The brief's standing figure is ~100–200 s/it at 10% (3–4 min/it with the driver detour and the shared-ride legs) and ~30 s/it at 1% (`NEXT_AGENT_BRIEF.md` §0); a 300-iteration 10% arm is 9–15 h, and a 25% × 300 confirmation arm is stated at ~25 h.
+- The last 25% arm, the F14 `20260830T083019_1000it_25pct`, cleared iteration 6 at a median 288 s/it before its console stop (§9.119, §9.120). The F12 10% arm `20260829T054941_1000it_10pct` ran at 108 s/it (§9.94); the brief attributes the rise since to the driver detour and the shared-ride pass.
+- **Memory.** The 10% arms run at `--xmx 30g` (the F20 arm's `_meta.json`); 25% arms peaked ~27 GiB each under the two-arm pattern (§9.62) and 33–38 GiB working set on 40g alone (§9.43). Memory model ≈ 24 GiB fixed + 0.09–0.3 MB/agent, so 100% needs ~80–160 GiB of heap and does not fit the 63.5 GiB machine (§9.43, §9.5). The driver pins `-Xms` to `-Xmx` (§9.59), so declared heap is committed heap.
+- **Threads.** `RUN.machine.threads` = 10 (qsim; run identity — MATSim partitions the network by it) and `RUN.machine.replanning_threads` = 20 (run identity; the one clean win, replanning 76 → 33 s, §9.59). `RUN.machine.event_handler_threads` = 4 is a wall-time knob, not identity: event multisets verified bit-identical, ~21% off the wall at 25%, at the price that within-timestep event order is no longer byte-reproducible (§9.56). `RUN.machine.events_synchronize_on_simsteps` stays true (false is a 65 s/it regression) and `RUN.machine.events_one_thread_per_handler` stays false (measured fatal) (§9.59).
+- **Wall-time-only controler fields.** `RUN.controler.write_events_interval` / `write_plans_interval` = 10 in the registry, 100 in long-arm overlays; `RUN.controler.create_graphs` is switched off for long arms (§9.56, §9.59). `RUN.controler.last_iteration` = 1000 is measured to leave the model relaxed, not measured to be enough search (§9.43).
+- The registry default `RUN.machine.xmx` = 14g and its stated sizing rule are the §9.5 model; every arm overrides it, and the §9.43 model above is the one to cost against.
+
+## Rules that stand
+
+- **No multi-hour run without explicit approval, and approvals are spent on use** (§9.57, §9.62, §9.72). None stands at this handoff; the next arm needs a fresh stated-cost yes.
+- **One arm at a time** (#66) — it supersedes the two-arm family-throughput pattern (§9.59, §9.62). Measured: three arms declared 78 GiB on 63.5 GiB and the pagefile grew 8.1 → 19.1 GiB (§9.5); the machine-level stall hit both concurrent arms at the same wall-clock time (#66). Iteration count survives contention; iteration duration does not.
+- **Never recompile into `.tools/classes` while an arm runs.** The environment gate (`bootstrap_toolchain.py --verify`) recompiles both class trees, and a running arm loads from them.
+- **Launch detached** (`run.py ... --detach`); never from an agent tool call by any other route (§9.72, #70).
+- **Never compare across sample fractions or across families** (§9.12, `cities/newcastle/docs/run_families.json`); a probe under 250 iterations is plumbing and timing evidence, never a result (§9.7, §9.43).
+- **A toolchain change is a model change**: re-fetch, re-hash, log it in §14 (§9.76).
+- **Read the trend, not the level** (§9.108), against a scored choice set (§9.120); a cause carries its measurement before it is fixed.
+- Watch a run by stamp glob, not by path: `mark_dead` renames the directory and a path-bound watcher goes blind (`NEXT_AGENT_BRIEF.md` trap 4).
+
+## What is open
+
+- **#66 — the machine-level stall.** A 10% iteration once took 2,415 s against a ~20 s median, and on 22 August it hit both concurrent arms at the same wall-clock time in different iterations (#66). Unattributed — OS maintenance, antivirus or standby trimming are the candidates; the watch's tripwire timestamps each occurrence.
+- **The F14 console stop.** Task Scheduler recorded `0xC000013A STATUS_CONTROL_C_EXIT` with no exception and no power event; the trigger is not established because the scheduler's operational log is disabled (§9.120). **Decision pending:** enable it — `wevtutil sl Microsoft-Windows-TaskScheduler/Operational /e:true`, needs elevation — so the next such death can name its trigger.
+- **A confirmation arm's fraction** — 10% or 25% × 300 (~25 h stated) — once the F21 package is rebuilt and `tests/check_package.py` passes (§9.129, §9.131).
+- `src/run/run_failure.py` quotes the first exception it finds: the F20 arm's `cause_detail` names a benign Guice/ASM warning (`Unsupported class file major version 69`) while its `cause` is the stop by direction — the reader does not distinguish a logged warning from a terminating exception.
+- `RUN.monitor.pace_band_s` = [217, 253] is the 25% × 1000 band; the `_progress.json` digest applies it to 10% arms and reports them out of band (§9.72).
+
+## Refused — do not re-raise
+
+- **Migration off MATSim** (BEAM, POLARIS, Hermes, DSim): every faster stack drops something the study cannot lose (§9.73).
+- **~10× per-iteration speed-up** without shrinking the physical work — the measured CPU floor over 24 cores; teleportation stays banned (§9.59).
+- **`oneThreadPerHandler`** (measured fatal) and **`synchronizeOnSimSteps=false`** (measured regression) (§9.59).
+- **FIFO link dynamics** for speed — `PassingQ` stands on correctness at ~42 s/it over FIFO (§9.59).
+- **A larger settle margin** to pass the whole drift-tolerance sweep — passing by measuring less is not passing (§9.43).
+- **Hand-named runs** and **`_aborted_<date>` quarantine parents** (§9.65, §9.66).
+- **Resuming a record without `values_sha256` or `inputs_sha256`** — a refused resume costs a re-run; a granted one produces an untraceable result (§9.104, §9.127).
+- **Deleting a stale run directory** from the harness — never the harness's call (§9.65).
+
+## History
+
+- §9.127 — population hash joins run key
+- §9.120 — console stop; dead-pid check
+- §9.119 — F14 arm cleared iteration 6
+- §9.104 — resume gained resolved-values hash
+- §9.94 — F12 gate at 108 s/it
+- §9.76 — detached launch, digest, run stack
+- §9.73 — MATSim re-affirmed, version recorded
+- §9.72 — silent launch deaths; approval spent
+- §9.66 — status card, aborted_ naming
+- §9.65 — runner names every directory
+- §9.62 — two-arm relaunch at 30g
+- §9.59 — every wall-time knob probed
+- §9.56 — events pipeline threads measured
+- §9.43 — 1000 iterations declared measured
+- §9.5 — first run cost measured

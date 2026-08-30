@@ -6,31 +6,35 @@ root holds exactly one document: [`README.md`](../README.md), the usage guide.
 
 ## What this is
 
-A counterfactual microsimulation of the **Newcastle Light Rail** as a transport
-intervention — MATSim end to end (SUMO descoped 25 Aug 2026, DECISIONS.md §9.74) — built to be
-more transparent about its assumptions than the business case it examines.
+A **city digital twin**: an agent-based microsimulation (MATSim end to end) that
+reproduces how a real city moves — twelve modes, each physically simulated on the
+real roads and timetables and scored against its real-life ridership — so that
+questions nobody can answer by observation alone can be put to it. Newcastle (NSW)
+is the first city. The goal, its hard requirements and the loop that drives every
+session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it first.
 
-- [`docs/design/newcastle-lr-proposal.md`](../cities/newcastle/docs/design/newcastle-lr-proposal.md) is the **research design**: what
-  is being built, which scenarios, which tests. Read it for intent, scope and vocabulary.
-- **[`DECISIONS.md`](../cities/newcastle/docs/DECISIONS.md) is the single source of truth for every value that is
-  not observed.** Every parameter chosen without direct empirical support is recorded
-  there with its rationale and its sweep range (proposal §8.1 — *"not optional"*). It also
-  records five corrections to premises stated in the proposal (the fifth is the
-  SUMO descope, §9.74). **Consult it before
-  changing any assumed value, and don't re-litigate a settled decision without new
-  evidence.**
-- **[`STATUS.md`](../cities/newcastle/docs/STATUS.md) is the single source of truth for where the build is, what's
-  next, and how to resume.** Read it at session start; **keep it current in the same
-  commit/PR as the work it describes.** It is a **board, not a diary** — 944 lines of
-  dated narrative were moved out of it to
-  [`docs/handover/SESSION_LOG.md`](../cities/newcastle/docs/handover/SESSION_LOG.md); do not append more.
+- **[`STATUS.md`](../cities/newcastle/docs/STATUS.md) is the board — ONE page**: the
+  twelve-mode scoreboard, where the build is, what runs, what is next. Its state
+  blocks are generated (`python src/analyse/build_status_board.py`); the
+  hand-written rest is capped by `tests/check_doc_shape.py`. **Keep it current in
+  the same commit/PR as the work it describes**, and never append narrative to it.
+- **[`positions/`](../cities/newcastle/docs/positions) hold the current truth per
+  topic** (ride, signals, sampling, seed, taxi, walk/bike, PT yardsticks, …), one
+  page each, every figure with its source. Read the position page for your lane
+  instead of the record. `/handoff` rewrites the pages a session touched.
+- **[`DECISIONS.md`](../cities/newcastle/docs/DECISIONS.md) is the dated record** of
+  every value that is not observed and every decision, with its rationale and
+  sweep. It is append-only and frozen: never rewritten, only pointed past. **Consult
+  it through its topical index or a position page, never by reading it whole** — it
+  is over 13,000 lines. Do not re-litigate a settled decision without new evidence.
 - [`README.md`](../README.md) is the **usage guide**: install, run a scenario with
   `run.py`, reproduce the data package. It is the only document at the repo root;
   every other one is under [`docs/`](../docs/README.md).
-- Current stage: **P3 demand synthesis complete. No scenario has been run. Nothing in
-  the repo is a result.** The MATSim network, the 15 mapped schedules,
-  the synthetic population, the activity chains and the 30 assembled scenario x day-type
-  run input sets are all *inputs*, not outputs.
+- [`docs/archived/design/newcastle-lr-proposal.md`](../cities/newcastle/docs/archived/design/newcastle-lr-proposal.md)
+  is the **frozen origin design** — the light-rail counterfactual that started the
+  study and is now its first application; read it for scenario vocabulary only.
+- Stage: the board's phase table says where the build is. Nothing is a result until
+  a run completes with `_run.json`, and no run since family F4 has reached its gate.
 
 ## Working style (apply to every change)
 
@@ -99,9 +103,14 @@ more transparent about its assumptions than the business case it examines.
 - **Licence boundary.** OSM-derived layers are **ODbL 1.0 (share-alike)**; the rest of
   the package is CC-BY 4.0. Keep the distinction visible in the manifest and in anything
   published; do not merge an OSM-derived column into a CC-BY artefact without noting it.
-- **The three unobtained inputs stay unobtained.** SCATS signal phasing, journey-linked
-  Opal, and measured charging dwell are handled **by sweep, not by
-  assumption-as-fact** (`DECISIONS.md` §0, §13). Do not quietly pin one to a point value.
+- **Unobtained data is derived, never assumed and never marked impossible**
+  (`GOAL.md` requirement 6). Where a value is disclosed, the exact official value is
+  used; where it is not, it is researched and derived — SCATS as its published
+  algorithm (§9.88), rail and tram on disclosed boardings (§9.130), licence rates
+  from the published count (§9.131). A sweep is the fallback only where derivation
+  is genuinely impossible (today: the transfer penalty, the charging dwell, the
+  SCATS offset library), and then the reason is stated and the value is never
+  quietly pinned. Do not describe a derivable input as "handled by sweep".
 - **The toolchain is pinned, and a toolchain change is a model change.** The JDK,
   pt2matsim, Maven and the MATSim signals run stack are fetched by [`src/setup/bootstrap_toolchain.py`](../src/setup/bootstrap_toolchain.py)
   into `.tools/` (gitignored) and pinned by sha256 in `.tools/toolchain.json`. Changing a
@@ -218,6 +227,8 @@ more transparent about its assumptions than the business case it examines.
 | JSON validity of provenance / scenario / params files | CI | nothing |
 | `python src/registry/check_hardcoding.py --strict` | **CI** + local, before every commit | committed files only |
 | `python tests/check_doc_currency.py --strict` | **CI** + local, before every commit | committed files only |
+| `python tests/check_doc_shape.py --strict` · `python src/analyse/build_status_board.py --check` | **CI** + local, before every commit | committed files only (the results-derived board blocks are skipped without `results/`) |
+| `python src/run/session_gate.py` (every gate above, one line each; `--digest` for the session opener) | local, at `/onboard` and `/handoff` | skips the toolchain compile while an arm runs |
 | `python src/registry/check_city.py --all` · `render_schema.py --check` | CI | nothing |
 | `python tests/check_city_agnostic.py` | CI | nothing |
 | `python tests/check_package.py` | **local only** | the full ~2.3 GiB package |
@@ -230,6 +241,16 @@ template literals, numeric constants in the build layer, and coordinates typed
 into code. **It is at 0, `--strict` gates CI, and it stays at 0** — an item is
 worked down, never silenced. **If your change adds an item, the change is not
 finished.**
+
+**`check_doc_shape.py` keeps the living documents the shape they were designed
+to be**: the board's hand-written lines are capped and its generated blocks
+required, the brief is capped and stamped with the family it was written for,
+new `DECISIONS.md` sections arrive in order and under a cap with an index row,
+every figure on a position page carries its source, and a frozen document says
+so in its first lines. The rules are city-owned
+([`cities/<city>/tests/doc_shape.json`](../cities/newcastle/tests/doc_shape.json)).
+A pull request cannot open while either document gate is red
+([`.claude/hooks/gate-pr-on-docs.sh`](hooks/gate-pr-on-docs.sh)).
 
 **`check_doc_currency.py` is the same refusal pointed at prose: a number written
 into a living document is a claim about an artefact, and it must still be true.**
@@ -272,14 +293,16 @@ those depend on ABS/TfNSW/Overpass availability and on compute, not on the diff.
 |------|---------------|
 | `README.md` | **The only document at the repo root.** Usage guide: install, run a scenario, reproduce the package. |
 | `.claude/CLAUDE.md` | This file — conventions and hard constraints. Loaded automatically each session. |
-| `cities/<city>/docs/STATUS.md` | **That city's board** — phase state, deliverable checklist, next action. Read at session start; keep current. **Not a diary**: narrative goes in `DECISIONS.md`. |
-| `cities/<city>/docs/DECISIONS.md` | Every assumed/modelled value + rationale + sweep range (don't re-litigate). **Start at its "How to find something in this file" index** — the section numbers are not in file order and §9 holds unrelated topics. |
+| `cities/<city>/docs/GOAL.md` | **What the city's twin is for** — the hard requirements, the gate loop, the monitoring rule. Read first. |
+| `cities/<city>/docs/STATUS.md` | **That city's board, one page** — scoreboard, phase state, runs, next action; generated blocks + a capped hand-written rest. Read at session start; keep current. |
+| `cities/<city>/docs/positions/` | **The current truth per topic**, one page each, every figure sourced. Read the page for your lane; `/handoff` rewrites the pages a session touched. |
+| `cities/<city>/docs/DECISIONS.md` | The frozen, append-only record: every assumed/modelled value + rationale + sweep, every decision (don't re-litigate). **Enter through its topical index or a position page** — never read it whole. |
 | `docs/` | **The FRAMEWORK's documentation only**, indexed by [`docs/README.md`](../docs/README.md). A city's own study documents live under `cities/<city>/docs/`. |
 | `config/schema/` | **The portable half.** What any city must supply and in what shape: the field and registry schemas, the overlay schema and the output schemas. **No city's values live here.** |
 | `run.py` | The front door: run a scenario with defaults or custom arguments. |
 | `src/city.py` | Resolves which city's inputs a run reads. The only module that knows. |
 | `cities/<city>/` | **ONE CITY - everything specific to it.** Selected by `CITYSIM_CITY` (default `newcastle`). |
-| `cities/<city>/docs/` | That city's study: `STATUS.md` (board), `DECISIONS.md` (every unobserved value), `design/`, `audit/`, `handover/`, and the GENERATED `reference/`. |
+| `cities/<city>/docs/` | That city's study: `GOAL.md`, `STATUS.md` (board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), the GENERATED `reference/`, and `archived/` — everything frozen, bannered as such. |
 | `cities/<city>/build/` | Builders that encode that city's intervention, corridor, history and statistical geography. |
 | `cities/<city>/geometry/` | Declared extents that were once typed into scripts. |
 | `cities/<city>/registry/` | That city's declared values, with units, provenance and a sweep or held-fixed rule. |
