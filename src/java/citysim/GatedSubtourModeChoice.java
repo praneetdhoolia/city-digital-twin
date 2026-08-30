@@ -126,6 +126,19 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
         static final java.util.concurrent.atomic.AtomicInteger
                 BOUND_DRIVE_REFUSALS = new java.util.concurrent.atomic.AtomicInteger();
 
+        /** The first few refusals of each kind in full, then every
+         *  thousandth as a running count - a number in the log rather than
+         *  an assertion, at a cost the log can bear. */
+        static void logRefusal(final String what, final int n, final Plan plan) {
+            if (n <= 5 || n % 1000 == 0) {
+                org.apache.logging.log4j.LogManager
+                        .getLogger(GatedSubtourModeChoice.class)
+                        .info("refused proposal #{} putting {} - person {}",
+                              n, what, plan.getPerson() == null ? "?"
+                                      : plan.getPerson().getId().toString());
+            }
+        }
+
         /** The trip indices a person attribute lists, or an empty set. */
         static java.util.Set<Integer> boundTrips(final Plan plan,
                                                  final String attribute) {
@@ -472,13 +485,17 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                             if (TransportMode.ride.equals(mode)
                                     && !rideTrips.contains(i + 1)) {
                                 infeasible = true;
-                                BOUND_RIDE_REFUSALS.incrementAndGet();
+                                logRefusal("ride on a trip no declared driver "
+                                        + "serves", BOUND_RIDE_REFUSALS
+                                        .incrementAndGet(), plan);
                                 break;
                             }
                             if (driveTrips.contains(i + 1)
                                     && !TransportMode.car.equals(mode)) {
                                 infeasible = true;
-                                BOUND_DRIVE_REFUSALS.incrementAndGet();
+                                logRefusal("a declared driver off car on a "
+                                        + "trip they serve", BOUND_DRIVE_REFUSALS
+                                        .incrementAndGet(), plan);
                                 break;
                             }
                         }
