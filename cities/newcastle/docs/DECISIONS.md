@@ -11829,6 +11829,16 @@ exactly) and `RUN.transit_router.direct_walk_factor` 1.0 (`literature`,
 MATSim's default, unchanged). Registered as the `ptDirectWalk` config
 module. Nothing about the ferry, the bus or the walk moves.
 
+### Measured on the F17 arm's iteration 0
+
+`20260830T141222_300it_10pct`, iteration 0 (the seeded plans as the new
+router routed them): **ferry departures 147** at 10% — the mode the seeded
+pt plans could not reach — with car 81,349 departures and 241 cars stuck,
+the same mixed road state as F16's iteration 0; bus 19,097 (F16 20,135),
+walk 132,841 (133,818). The smoke probe before it logged 254 direct-walk
+decisions of the form "network walk 340 s (cost 2) beats transit (cost
+191)": the raptor's rule, on the network's walk.
+
 ### Family F16 opens
 
 The population file changes (the `selected` flag moves), so the F15 arm and
