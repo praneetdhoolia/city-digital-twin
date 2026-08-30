@@ -1435,7 +1435,6 @@
     "scenarios/matsim": {
       "kind": "directory",
       "read_by": [
-        "src/analyse/build_status_board.py",
         "src/build/build_matsim_run_inputs.py",
         "src/run/run_matsim.py",
         "tests/check_package.py"
