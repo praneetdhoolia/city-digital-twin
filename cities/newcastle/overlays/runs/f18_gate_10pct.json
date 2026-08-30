@@ -1,0 +1,10 @@
+{
+  "overlay": "f18_gate_10pct",
+  "description": "The first family-F18 arm (DECISIONS.md 9.122, 9.124, 9.125): the F17 stack on a demand rebuilt with the shared-ride pass (car-less residents' direct tours bound to non-household drivers on the same SA2-to-SA2 trip, thinned to the passenger-share identity), the motorbike carve solved on the persons who will not be denied and applied at census resolution, and the resident truck carve. Identical run parameters to f15/f16/f17_gate_10pct - S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the standing /goal directive - so the F17 arm is the like-for-like predecessor on the run side and the demand is what changed. Measured motivation (9.123): residents without a car made 24.7% of trips on F17 and, holding only the bound rides, walked 48%, cycled 17% and took pt 15% of them. Measured pace at 10%: ~106 s/it. NEVER compare with a 25% arm (9.10, 9.12) or with any run before the F18 boundary. NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.10,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}

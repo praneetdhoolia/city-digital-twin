@@ -1472,6 +1472,24 @@
       ],
       "description": "The spatial resolution of the motorbike carve. Measured motivation (9.122, #93 fact 2): census G62 puts the motorbike share of driver journeys between 0 and 1.13% across SA2s against a flat 0.41% region value, and the flat carve delivered 0.06% of target-LGA resident trips against the 0.24% target on the F16 and F17 arms - the carve put motorcyclists where car ownership is, not where the census sees them. Per cell the probability is solved on that cell's eligible persons' own trips; the trip-weighted mean of the cell shares is reported beside the declared region share in _plans_report.json so the identity can be checked, never asserted."
     },
+    "B.truck.resident_trip_share": {
+      "value": 0.002993,
+      "units": "share_of_trips",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "CAL.mode_split.vehicle_driver_level",
+          "CAL.mode_split.truck_driver_journey_share"
+        ],
+        "identity": "resident_trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.truck_driver_journey_share = 0.59 x 0.0050729 = 0.0029930 - the motorbike carve's identity (9.115) applied to the census Truck cell of the target LGA. It is the same slice build_mode_targets.py deducts from the driver level, so the carve and the yardstick describe one quantity."
+      },
+      "status": "active",
+      "decisions_ref": "9.125",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "Share of resident person trips made driving a truck, realised as a PERSON-LEVEL carve exactly like the motorbike carve: a licensed, car-available resident who is not escorting that day becomes a truck driver (their whole day locks to `truck` - vehicle continuity is chain-based, the person's own truck vehicle exists, and no preference observation exists to let it compete in mode choice) with the probability that makes carved persons' trips this share of all trips, solved on the persons who will not be denied. The directive's item 8 - residents with actual trucker jobs beside the anonymous freight tier. Scored with the freight tier's trucks at the classifying count stations (9.101)."
+    },
     "B.motorbike.pce": {
       "value": 0.4,
       "units": "passenger_car_equivalents",

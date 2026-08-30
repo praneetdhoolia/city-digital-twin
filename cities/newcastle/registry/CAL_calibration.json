@@ -183,8 +183,8 @@
       "units": "share_of_driver_journeys",
       "source": "measured",
       "sweep": [
-        0.0038747,
-        0.0042825
+        0.0060943,
+        0.0067359
       ],
       "status": "active",
       "decisions_ref": "9.115, 9.122",
@@ -192,6 +192,21 @@
       "consumers": [
         "cities/newcastle/build/build_mode_targets.py"
       ]
+    },
+    "CAL.mode_split.truck_driver_journey_share": {
+      "value": 0.0050729,
+      "units": "share_of_driver_journeys",
+      "source": "measured",
+      "sweep": [
+        0.0048193,
+        0.0053265
+      ],
+      "status": "active",
+      "decisions_ref": "9.125",
+      "consumers": [
+        "cities/newcastle/build/build_mode_targets.py"
+      ],
+      "description": "Census G62 one-method Truck journeys to work as a share of one-method DRIVER journeys to work for the target LGA's SA1s - 223 of 43959 - READ from the census extract and asserted against it on every build. The cell build_mode_targets.py has always deducted from the driver level as the resident-truck slice (0.2993% of resident trips); since 9.125 the plans builder also carves residents locked to `truck` from it, so the directive's resident truck drivers exist in the population and the yardstick's deduction describes them."
     },
     "CAL.truck.count_year_from": {
       "value": 2023,

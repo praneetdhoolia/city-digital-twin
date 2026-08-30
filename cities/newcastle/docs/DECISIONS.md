@@ -93,6 +93,7 @@ its layout will otherwise cost you an hour:
 | **Motorbike: halved by an escort-day denial after the draw, scored against the core's cell** | **§9.122** — the carve delivered 0.128% against 0.241% because 38% of eligible persons (47% of eligible trips) are denied after the draw; repaired in the builder. The driver split moves to the target LGA's G62 cell: car 58.32, motorbike 0.3785, ferry 0.1429. `B.motorbike.carve_resolution` = `sa1_thinned` kept as the observed spatial form |
 | **The car-less quarter: bike, bus and walk's residue are ride's deficit** | **§9.123** — 95.4% of residents preferring bike on score have no car; car-less residents (24.7% of trips) walk 48%, cycle 17%, take pt 15% for want of a lift; the next family boundary is lift supply (#86/#91) |
 | **Shared rides: the lift from someone already making the trip** | **§9.124** — a fourth binder pass binds car-less residents' direct tours to non-household drivers on the same zone-to-zone trip within the pairing window, thinned to the passenger-share identity; `B.ride.shared_lift_scope` = `same_sa2_od` (59,648 tours, shortfall 17 trips; SA1 reaches a fifth). Built, queued |
+| **Residents who drive a truck for a living** | **§9.125** — G62 Truck 223 of 43,959 LGA driver journeys, carried to 0.2993% of resident trips by the motorbike carve's identity and carved locked to `truck`; the yardstick's resident-truck deduction now describes real agents. Built, queued |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -12045,6 +12046,36 @@ measured; rebuilt with the next family together with the motorbike carve
 
 ---
 
+## 9.125 Residents who drive a truck for a living, carved from the census like the motorcyclists (30 August 2026, sixteenth session; directive item 8)
+
+The directive asks that the freight tier's anonymous trucks be joined by a
+small resident share with actual trucking jobs. The observation has been in
+the package since the census extract: G62 one-method **Truck journeys to
+work, 223 of the target LGA's 43,959 driver journeys (0.507%)**, and
+`build_mode_targets.py` has always deducted that slice from the HTS driver
+level as `trk_resident` - a yardstick term describing agents that did not
+exist. `CAL.mode_split.truck_driver_journey_share` declares the cell
+(measured, asserted against the source on every build) and
+`B.truck.resident_trip_share` = 0.59 x 0.0050729 = **0.2993% of resident
+trips** carries it to all purposes by the motorbike carve's identity
+(§9.115).
+
+The carve is the motorbike carve's: a licensed, car-available resident who
+is not escorting that day is drawn, on its own hash namespace so the
+motorbike draws are byte-identical, with the probability that makes carved
+persons' trips the declared share of all trips, solved on the persons who
+will not be denied (§9.122); one lock per person, a motorcyclist never also
+a truck driver. Their whole day locks to `truck` - the person's own truck
+vehicle already exists in the `vehicles` attribute, the mode is chain-based,
+and no preference observation exists to let it compete in mode choice - and
+`AvailabilityModesCalculator` keeps replanning off it. The trips are person
+trips of residents: they count in the twelve-mode table as `truck` and, on
+the road, at the classifying count stations with the freight tier's
+vehicles (§9.101), where the heavy-vehicle share is what the observation
+sees. Built; rebuilt with family F18.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -12717,6 +12748,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **Residents who drive a truck for a living, carved from the census like the motorcyclists (§9.125; directive item 8).** G62 one-method Truck journeys - 223 of the target LGA's 43,959 driver journeys - declared as `CAL.mode_split.truck_driver_journey_share` (measured, asserted on every build) and carried to `B.truck.resident_trip_share` 0.002993 by the motorbike carve's identity; the plans builder carves licensed, car-available, non-escorting residents locked to `truck` on their own hash namespace, one lock per person. The yardstick's resident-truck deduction, always computed, now describes agents that exist. Built; rebuilt with F18. |
 | 2026-08-30 | **Shared rides: the lift a car-less resident gets from someone already making their trip (§9.124; issues #86/#91/#48).** A fourth binder pass, `bind_shared_rides`: car-less residents' direct tours bound both ways to non-household drivers making the same zone-to-zone trip within `B.ride.pairing_window_min`, seats capped, nearest first; volume = the joint binder's identity (448,229 passenger trips) less the 328,916 the earlier passes cover, thinned to it. Measured on the committed WEEKDAY demand: same-SA1 co-location serves 19,034 tours (a fifth of the remainder), same-SA2 105,515, thinned to 59,648 with 17 trips of shortfall. `B.ride.shared_lift_scope` = `same_sa2_od`, swept against `same_sa1_od` and `none`. Built, not rebuilt; next family. |
 | 2026-08-30 | **The car-less quarter: bike, bus and much of walk are ride's deficit wearing other modes (§9.123; issues #86/#48/#49/#30).** F17 at iteration 20: car 48.46 (-16.9%, inside the bar), walk 24.13 falling, ride 9.17 rising, bike 9.00 and moving away. Of 913 residents whose best-scored plan is bike, 95.4% have no car; car-less residents (24.7% of trips) walk 48.1%, ride 18.5%, cycle 16.7%, take pt 14.6%, while car-available residents sit at car 64.4% and bike 6.5% falling. Bike's, bus's and heavy rail's excess and walk's residue are the lift supply the demand does not bind; the next family boundary is #86/#91, not a bike parameter. |
 | 2026-08-30 | **Motorbike: halved by an escort-day denial made after the draw, and scored against another geography's cell (§9.122; issues #93/#49).** The carve delivered 0.128% of legs against the 0.241% it solved for because 38.0% of eligible persons - holding 47% of eligible trips - are escorters denied the mode after the draw; the pool is now the persons who will not be denied (no value moves; rebuild queued). The 10% arm reads motorbike off 17 sampled persons (43 legs), a precision note. The driver split in `build_mode_targets.py` read the five-LGA core's G62 cell while every other target is the LGA's: now `g62_composition('target_lga')` - car 58.1631 → 58.3222, motorbike 0.2406 → 0.3785, resident-truck deduction 0.5963 → 0.2993, ferry 0.1013 → 0.1429; `CAL.mode_split.motorbike_driver_journey_share` 0.0064151 and `B.motorbike.trip_share` 0.0037849 by the unchanged identity. `B.motorbike.carve_resolution` = `sa1_thinned` kept as the spatially observed derivation. |

@@ -102,6 +102,12 @@
       "decisions_ref": "9.121",
       "from_launch": "20260830T140500",
       "note": "Opened 30 Aug 14:05: the pt routing module is wrapped (citysim.NetworkDirectWalkPtRouter) so the direct walk the raptor compares every transit route against is the walk network route, not a beeline across the harbour; RUN.transit_router.direct_walk_basis = network, direct_walk_factor declared at its default 1.0. The F16 arm 20260830T132843 was stopped at iteration 17 with the cause measured (38.3% of pt-plan trips walk-only, 45.5% of them over 3 km on the network) and is F16. First F17 arm under overlay f17_gate_10pct."
+    },
+    "F18-shared-rides-carves": {
+      "label": "F17 stack on a demand with shared rides, the repaired motorbike carve at census resolution and the resident truck carve (9.122, 9.124, 9.125)",
+      "decisions_ref": "9.122, 9.124, 9.125",
+      "from_launch": "20260830T170000",
+      "note": "Opens at the first F18 launch (stamp provisional until then): B2 rebuilt with the fourth binder pass (B.ride.shared_lift_scope = same_sa2_od), plans rebuilt with the motorbike carve solved on non-escorters at sa1_thinned resolution and the resident truck carve. The run side is F17 unchanged. The F17 arm 20260830T141222 is F17 to whatever iteration it reaches."
     }
   },
   "overrides": {

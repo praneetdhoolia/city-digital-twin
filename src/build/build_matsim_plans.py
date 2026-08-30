@@ -92,8 +92,25 @@ VEHICLE_DRIVER_LEVEL = CFG.get('CAL.mode_split.vehicle_driver_level')
 THIN_CELL_MIN = CFG.get('B.census.thin_cell_min_journeys')
 _MOTORBIKE_Q = {'q': 0.0}   # solved in main() from the eligible share
 _MOTORBIKE_Q_BY_PID = {}    # 9.122: per-person q under `sa1_thinned`
+# DECISIONS.md 9.125: residents who drive a truck for a living - census G62
+# one-method Truck journeys to work, 223 of 43,959 driver journeys in the
+# target LGA, carried to all-purpose trips by the survey's driver level
+# exactly as the motorbike carve is. A person-level carve locked to `truck`:
+# the vehicle is the person's own (`vehicles` carries a truck per person),
+# the mode is chain-based by nature, and no preference observation exists to
+# let it compete in mode choice. Drawn on its own hash namespace so the
+# motorbike draws are byte-identical to before; a person can hold one lock.
+TRUCK_RESIDENT_SHARE = CFG.get('B.truck.resident_trip_share')
+_TRUCK_Q = {'q': 0.0}
 
 import hashlib as _hashlib  # noqa: E402
+
+
+def truck_user(pid):
+    if _TRUCK_Q['q'] <= 0.0:
+        return False
+    h = _hashlib.sha256(('truck|%s|%d' % (pid, SEED)).encode()).hexdigest()
+    return int(h[:12], 16) / float(1 << 48) < _TRUCK_Q['q']
 
 
 def motorbike_user(pid):
@@ -554,6 +571,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     EXTERNAL_PROFILE['mobility_impairment_flag'])
                 ride_av, bike_av, hh_id = 0, 0, None
                 moto = False
+                trk = False
             elif external:
                 # An external boundary agent has no B1 household, so its
                 # attributes are definitional placeholders (B.external
@@ -580,6 +598,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # is the same identity that already denies it `ride`.
                 hh_id = None
                 moto = False
+                trk = False
             else:
                 a = attrs.get(pid)
                 if a is None:
@@ -602,6 +621,12 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 moto = (bool(car_av) and bool(lic) and motorbike_user(pid)
                         and not any(r['dest_activity_type'] == 'escort'
                                     for r in rows))
+                # 9.125: the resident truck carve, same pool, one lock per
+                # person (a motorcyclist is not also a truck driver)
+                trk = (not moto and bool(car_av) and bool(lic)
+                       and truck_user(pid)
+                       and not any(r['dest_activity_type'] == 'escort'
+                                   for r in rows))
 
             # one mode per tour keeps chain-based modes conserved from the start
             serve_tours = set()
@@ -631,6 +656,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         m = 'car'
                     elif moto:
                         m = 'motorbike'
+                    elif trk:
+                        m = 'truck'
                     elif tid in serve_tours and car_av:
                         # 9.68 B.mode.serve_tour_seed: the pairing engine
                         # pairs ride legs with CAR legs only - a bound serve
@@ -706,7 +733,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
             # the carve keep their single plan: a lock is a definition.
             plan_set = [dict(tour_mode)]
             if (SEED_METHOD == 'full_choice_set' and not external
-                    and not moto):
+                    and not moto and not trk):
                 base_modes = []
                 if car_av:
                     base_modes.append('car')
@@ -834,14 +861,15 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 w.write('\t\t\t<attribute name="boundDriver" '
                         'class="java.lang.String">%s</attribute>\n'
                         % ','.join('%d' % d for d in bound_driver[pid]))
-            if tier in ('through', 'freight') or moto:
+            if tier in ('through', 'freight') or moto or trk:
                 # locks SubtourModeChoice to {car} / {truck} / {motorbike} for
                 # this agent - a volume anchored on an observation must stay
                 # on it, and a mode with no preference data cannot compete in
-                # choice without inventing a constant (DECISIONS.md 9.52)
+                # choice without inventing a constant (DECISIONS.md 9.52;
+                # 9.125 for the resident truck driver)
                 w.write('\t\t\t<attribute name="lockedMode" '
                         'class="java.lang.String">%s</attribute>\n'
-                        % ('truck' if tier == 'freight' else
+                        % ('truck' if (tier == 'freight' or trk) else
                            'motorbike' if moto else 'car'))
             w.write('\t\t</attributes>\n')
             for k, plan_modes in enumerate(plan_set):
@@ -959,6 +987,12 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
           'persons (of %d) making %d of %d %s trips'
           % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'], eligible, len(attrs),
              eligible_trips, total_trips, first_day), flush=True)
+    # 9.125: the resident truck carve on the same pool, the same arithmetic
+    qt = (TRUCK_RESIDENT_SHARE * total_trips / eligible_trips) if eligible_trips else 0.0
+    _TRUCK_Q['q'] = min(1.0, qt)
+    print('resident truck carve: trip share %.5f -> q=%.5f on the same '
+          'non-escorting eligible pool' % (TRUCK_RESIDENT_SHARE, _TRUCK_Q['q']),
+          flush=True)
     carve_cells = None
     if MOTORBIKE_CARVE_RESOLUTION == 'sa1_thinned':
         # 9.122: the same identity per home SA1 (its SA2 where thin), each
@@ -1001,6 +1035,9 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
                 # 9.122: the carve's resolution and, per cell, what it solved
                 motorbike_carve=carve_cells or dict(resolution='region',
                                                     declared_region_share=MOTORBIKE_SHARE),
+                # 9.125: the resident truck carve's declared share and solved q
+                truck_carve=dict(declared_share=TRUCK_RESIDENT_SHARE,
+                                 q=round(_TRUCK_Q['q'], 6)),
                 seed_mode_split={str(k): v for k, v in seed_table.items()},
                 seed_mode_sweep=SEED_MODE_SWEEP,
                 bike_available_rate=BIKE_AVAILABLE_RATE,

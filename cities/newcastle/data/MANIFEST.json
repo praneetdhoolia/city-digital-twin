@@ -1,18 +1,18 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-08-30T14:58:59",
+  "generated": "2026-08-30T15:22:23",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
-  "n_files": 494,
-  "total_bytes": 4353547522,
+  "n_files": 495,
+  "total_bytes": 4352692791,
   "total_gib": 4.05,
   "by_stage": {
     "raw": 81,
-    "processed": 413
+    "processed": 414
   },
   "bytes_by_stage": {
     "raw": 2723345128,
-    "processed": 1630202394
+    "processed": 1629347663
   },
   "files": [
     {
@@ -2321,8 +2321,8 @@
     },
     {
       "path": "demand/plans/B2_activity_trips_WEEKDAY.csv",
-      "bytes": 322902268,
-      "rows": 2343321,
+      "bytes": 317013559,
+      "rows": 2303590,
       "sha256": "skipped_large",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
@@ -2432,6 +2432,18 @@
       "bytes": 3737461,
       "rows": 49030,
       "sha256": "4eb6cd49cfbca880540ec1dfda8d3aa61bfc76048d98f45fc0a4ebeb9cbcde2c",
+      "stage": "processed",
+      "produced_by": "src/build/build_activity_chains.py",
+      "source": "",
+      "source_url": "",
+      "licence": "",
+      "retrieved": ""
+    },
+    {
+      "path": "demand/plans/B2_shared_bindings_WEEKDAY.csv",
+      "bytes": 5033978,
+      "rows": 119296,
+      "sha256": "0d716182abcae2eec8e822589c6dbfc37a4ec4ae5830d06023cc30190879e9b2",
       "stage": "processed",
       "produced_by": "src/build/build_activity_chains.py",
       "source": "",

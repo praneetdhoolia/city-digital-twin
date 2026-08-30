@@ -368,12 +368,18 @@ def main():
     # the two copies drift apart. 9.115.
     _decl_vd = float(cfg.get('CAL.mode_split.vehicle_driver_level'))
     _decl_mb = float(cfg.get('CAL.mode_split.motorbike_driver_journey_share'))
+    # 9.125: the resident truck driver's cell, asserted like the motorbike's
+    # - the plans builder carves residents locked to `truck` from it
+    _decl_tk = float(cfg.get('CAL.mode_split.truck_driver_journey_share'))
     _obs_vd = vd / 100.0
     _obs_mb = g['motorbike'] / drv
+    _obs_tk = g['truck'] / drv
     for name, declared, observed in (
             ('CAL.mode_split.vehicle_driver_level', _decl_vd, _obs_vd),
             ('CAL.mode_split.motorbike_driver_journey_share',
-             _decl_mb, _obs_mb)):
+             _decl_mb, _obs_mb),
+            ('CAL.mode_split.truck_driver_journey_share',
+             _decl_tk, _obs_tk)):
         if abs(declared - observed) > 5e-5:
             raise SystemExit(
                 'registry drift: %s declares %.7f but the acquired source '

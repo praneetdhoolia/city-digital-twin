@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 409 fields are made of
+## What the 411 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 4 | read directly from a raw download |
-| `measured` | 34 | computed from observed data in this package |
-| `derived` | 37 | follows from another registry field by identity |
+| `measured` | 35 | computed from observed data in this package |
+| `derived` | 38 | follows from another registry field by identity |
 | `literature` | 68 | a published value, not specific to this city |
 | `assumed` | 149 | chosen without direct empirical support |
 | `definition` | 117 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 390 | usable point value |
+| `active` | 392 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1118,7 +1118,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 100 fields*
+*`cities/newcastle/registry/B_demand.json` - 101 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1223,6 +1223,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.taxi.min_unaccompanied_age` | `18` | years | `assumed` | 0 - 18 |
 | `B.taxi.rideshare_trip_share` | `0.66` | share_of_p2p_trips | `literature` | 0.4 - 0.8 |
 | `B.taxi.vehicle_trips_per_day` | `25.0` | trips_per_vehicle_per_day | `literature` | 15 - 35 |
+| `B.truck.resident_trip_share` | `0.002993` | share_of_trips | `derived` | derived: resident_trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_s |
 | `B.walk.pce` | `0.0` | passenger_car_equivalents | `definition` | - |
 
 #### `A.taxi.fleet_representation`
@@ -1929,6 +1930,14 @@ Fares one taxi carries in a day, which is what turns an observed TRIP volume int
 
 ***literature** · status **active** · DECISIONS.md §9.99*
 
+#### `B.truck.resident_trip_share`
+
+Share of resident person trips made driving a truck, realised as a PERSON-LEVEL carve exactly like the motorbike carve: a licensed, car-available resident who is not escorting that day becomes a truck driver (their whole day locks to `truck` - vehicle continuity is chain-based, the person's own truck vehicle exists, and no preference observation exists to let it compete in mode choice) with the probability that makes carved persons' trips this share of all trips, solved on the persons who will not be denied. The directive's item 8 - residents with actual trucker jobs beside the anonymous freight tier. Scored with the freight tier's trucks at the classifying count stations (9.101).
+
+***derived** · status **active** · DECISIONS.md §9.125*
+
+> **Derived from** `CAL.mode_split.vehicle_driver_level`, `CAL.mode_split.truck_driver_journey_share`: resident_trip_share = CAL.mode_split.vehicle_driver_level x CAL.mode_split.truck_driver_journey_share = 0.59 x 0.0050729 = 0.0029930 - the motorbike carve's identity (9.115) applied to the census Truck cell of the target LGA. It is the same slice build_mode_targets.py deducts from the driver level, so the carve and the yardstick describe one quantity.
+
 #### `B.walk.pce`
 
 Road capacity a network-simulated pedestrian consumes: zero, by definition - a walker moves along the network beside the carriageway (the sidewalk, expressed in queue arithmetic), physically present on every link (real LinkEnter/LinkLeave events, speed-capped at the declared walking speed) while neither impeding nor being impeded by motor traffic. Not a tunable: a pedestrian who consumed road capacity would be walking in the traffic lane.
@@ -1937,7 +1946,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 17 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 18 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -1946,7 +1955,8 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
 | `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
 | `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
-| `CAL.mode_split.motorbike_driver_journey_share` | `0.0064151` | share_of_driver_journeys | `measured` | 0.0038747 - 0.0042825 |
+| `CAL.mode_split.motorbike_driver_journey_share` | `0.0064151` | share_of_driver_journeys | `measured` | 0.0060943 - 0.0067359 |
+| `CAL.mode_split.truck_driver_journey_share` | `0.0050729` | share_of_driver_journeys | `measured` | 0.0048193 - 0.0053265 |
 | `CAL.mode_split.vehicle_driver_level` | `0.59` | share_of_trips | `measured` | 0.5605 - 0.6195 |
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
@@ -1984,6 +1994,12 @@ The fractional half-width of the sweep placed on every per-mode target derived b
 Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.
 
 ***measured** · status **active** · DECISIONS.md §9.115, 9.122*
+
+#### `CAL.mode_split.truck_driver_journey_share`
+
+Census G62 one-method Truck journeys to work as a share of one-method DRIVER journeys to work for the target LGA's SA1s - 223 of 43959 - READ from the census extract and asserted against it on every build. The cell build_mode_targets.py has always deducted from the driver level as the resident-truck slice (0.2993% of resident trips); since 9.125 the plans builder also carves residents locked to `truck` from it, so the directive's resident truck drivers exist in the population and the yardstick's deduction describes them.
+
+***measured** · status **active** · DECISIONS.md §9.125*
 
 #### `CAL.mode_split.vehicle_driver_level`
 
