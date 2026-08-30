@@ -651,7 +651,19 @@ else:
         # validation targets V202-V207 are and what a MATSim main-mode share is
         # comparable to - not to the unlinked five-LGA figure the P3 seed was
         # positioned against (DECISIONS.md 12.1)
-        if tgt_share:
+        if tgt_share and seed_method == 'full_choice_set':
+            # DECISIONS.md 9.120: the seed is not a draw but the whole choice
+            # set - one plan per usable mode - so a share over all seeded
+            # legs is a statement about availability, not a starting point
+            # near or far from the target. What must hold is that no mode
+            # was favoured: every person holds 2-6 plans and the first one
+            # executed is drawn uniformly (9.121).
+            check(bool(hist) and all(2 <= int(k) <= 6 for k in hist),
+                  '%s: the full-choice-set seed holds one plan per usable '
+                  'mode (%s plans per person), so the calibration is not '
+                  'handed its answer by a starting share'
+                  % (day, '/'.join(sorted(hist))))
+        elif tgt_share:
             car = 100 * seed.get('car', 0)
             check(abs(car - tgt_share['car']) > 20.0,
                   '%s: seed car share %.1f%% is far from the HTS calibration '

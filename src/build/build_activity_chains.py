@@ -219,6 +219,22 @@ MAX_PARTY_PASSENGERS = CFG.get('B.ride.max_passengers_per_vehicle')
 # within the declared pairing window. `none` switches the pass off.
 SHARED_LIFT_SCOPE = CFG.get('B.ride.shared_lift_scope')
 PAIRING_WINDOW_MIN = float(CFG.get('B.ride.pairing_window_min'))
+# DECISIONS.md 9.127: the run's household sampler keeps a household when
+# blake2b('household|<id>|<RUN.machine.seed>') / 2^64 < fraction. A shared
+# ride binds a passenger only to drivers whose household hash is AT OR BELOW
+# the passenger's, so every nested sample that keeps the passenger keeps the
+# driver by construction - no cluster, no closure, no lump. The seed is read
+# here because the identity is the sampler's, and it is recorded in the
+# binder report so a run under another seed can be refused.
+SAMPLE_SEED = int(CFG.get('RUN.machine.seed'))
+import hashlib as _hashlib  # noqa: E402
+
+
+def sample_unit_hash(household_id):
+    """The sampler's uniform in [0, 1) for a household - the same bytes."""
+    key = 'household|%s|%d' % (household_id, SAMPLE_SEED)
+    h = _hashlib.blake2b(key.encode(), digest_size=8)
+    return int.from_bytes(h.digest(), 'big') / 2 ** 64
 
 # DECISIONS.md 9.69 (issue #30): the observed short-trip mass. The gravity
 # draw becomes a two-component mixture per purpose - a short kernel whose
@@ -1935,12 +1951,26 @@ def bind_shared_rides(path, day, pctx, seed):
                      seats=MAX_PARTY_PASSENGERS))
             out['driver_trips_indexed'] += 1
 
+    out['sample_seed'] = SAMPLE_SEED
+    unit_hash = {}
+
+    def uh(h):
+        v = unit_hash.get(h)
+        if v is None:
+            v = unit_hash[h] = sample_unit_hash(h)
+        return v
+
     def find(o_sa1, d_sa1, dep, hid, need_seat):
         b = dep // bins
         best = None
+        u_p = uh(hid)
         for bb in (b - 1, b, b + 1):
             for drv in drivers.get((zone(o_sa1), zone(d_sa1), bb), ()):
                 if drv['hid'] == hid or (need_seat and drv['seats'] <= 0):
+                    continue
+                # 9.127: a driver the sampler would drop while keeping this
+                # passenger is not a driver this passenger may be bound to
+                if uh(drv['hid']) > u_p:
                     continue
                 gap = abs(drv['dep'] - dep)
                 if gap <= window and (best is None or gap < best[0]

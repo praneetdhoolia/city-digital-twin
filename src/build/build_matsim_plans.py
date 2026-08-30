@@ -470,6 +470,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # coverage; and the DRIVER's tour becomes a serving tour (held at car,
     # boundDriveTrips) like a joint driver's.
     shared_driver = {}   # driver pid -> set of tour ids that carry a passenger
+    shared_hh = {}       # passenger pid -> [driver household ids] (9.127)
     shared = os.path.join(PLANS, 'B2_shared_bindings_%s.csv' % day)
     if os.path.exists(shared):
         with open(shared, encoding='utf-8') as fh:
@@ -480,6 +481,9 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 lift_hh.setdefault(p, [])
                 if hh not in lift_hh[p]:
                     lift_hh[p].append(hh)
+                shared_hh.setdefault(p, [])
+                if hh not in shared_hh[p]:
+                    shared_hh[p].append(hh)
                 lift_cover.setdefault(
                     (p, int(r['passenger_tour_id'])), set()).add(r['direction'])
                 shared_driver.setdefault(
@@ -841,6 +845,16 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 w.write('\t\t\t<attribute name="liftHousehold" '
                         'class="java.lang.String">%s</attribute>\n'
                         % ','.join('%d' % h for h in lift_hh[pid]))
+            if not external and pid in shared_hh:
+                # 9.127: the subset of liftHousehold that came from the
+                # shared-ride pass. The sampler EXCLUDES these from its
+                # household clusters - the binder already guarantees a shared
+                # driver is kept whenever its passenger is (the unit-hash
+                # rule) - so the clusters stay the small lift couplings of
+                # 9.60 instead of the giant components shared rides make.
+                w.write('\t\t\t<attribute name="sharedDriverHousehold" '
+                        'class="java.lang.String">%s</attribute>\n'
+                        % ','.join('%d' % h for h in shared_hh[pid]))
             if bound_ride_trips:
                 # 9.120: consumed by citysim.GatedSubtourModeChoice and
                 # citysim.RidePairingEngine - the trips (1-based, plan order)
