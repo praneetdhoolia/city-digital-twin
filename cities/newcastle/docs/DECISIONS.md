@@ -11786,14 +11786,22 @@ iteration-100 gate reads whether that lag closes; nothing here is a result.
 ### The ferry loses to a walk across the river that does not exist (#94), and so does much of pt
 
 With every resident holding a scored pt plan, #94's question — why the router
-does not return the ferry — was measurable for the first time. Stockton-side
-residents (home within 1 km of the wharf, 604 in the 10% sample) hold **110
-CBD-bound trips in their pt plans, and the router answered 88 of them with a
-walk-only route, 20 with a bus, 1 with a tram and 1 with the ferry.** The
-demand is there — B2 places 13.2% of their non-home ends within 1 km of
-Queens Wharf against 1.5% for all residents — the service is there (107
-departures) and the router reaches the wharf; the trip is lost at the
-raptor's last step. `SwissRailRaptor.createDirectWalk` builds a direct walk
+does not return the ferry — was measurable for the first time. **CORRECTION,
+made the same afternoon:** the first measurement labelled the wharves the
+wrong way round (the schedule's `nisc001:229557` at (386157, 6356940) is
+Stockton Wharf on the north bank; `nisc001:2300102` at (385958, 6356332) is
+Queens Wharf) and used a 1 km radius, which overlaps the other bank because
+the wharves are 640 m apart — so its "604 Stockton-side residents / 88 of 110
+crossings walked" described CBD-side residents and a circle straddling the
+water. Re-measured by BANK (Stockton side: the peninsula, x 385,400–388,200
+and y > 6,356,640; CBD side: y < 6,356,640 within 2.5 km of Queens Wharf; a
+crossing has one end on each): **B2 generates 4,956 harbour-crossing trips a
+weekday (0.211% of all trips) by 2,593 persons, and 7,490 residents live on
+the Stockton side.** In residents' pt plans on the F16 arm at iteration 10,
+**256 crossing trips were routed: 174 as a walk-only route (68%), 48 by bus,
+23 with a ferry leg** — and the walk-only ones walk a median 19.4 km on the
+network. The demand is there, the service is there (107 departures) and the
+router reaches the wharf; the trip is lost at the raptor's last step. `SwissRailRaptor.createDirectWalk` builds a direct walk
 from the **beeline** distance at `transitRouter.beelineWalkSpeed`, scales it
 by `transitRouter.directWalkFactor` (1.0, a jar default declared nowhere
 until now) and returns that walk whenever it undercuts the best transit
@@ -11838,6 +11846,23 @@ the same mixed road state as F16's iteration 0; bus 19,097 (F16 20,135),
 walk 132,841 (133,818). The smoke probe before it logged 254 direct-walk
 decisions of the form "network walk 340 s (cost 2) beats transit (cost
 191)": the raptor's rule, on the network's walk.
+
+### Measured on the F17 arm's iteration 10 — the crossing, by bank
+
+Same measurement as the F16 one above, same depth: **359 harbour-crossing
+trips in residents' pt plans, 209 of them routed WITH a ferry leg (58% —
+ferry 124, ferry+tram 26, ferry+bus 20, bus+ferry 20, tram+ferry 18, one
+longer), 61 walk-only (17%, F16: 68%), 81 by bus or tram alone.** In the
+selected plans the crossing is made by ferry 36 times against 6 on F16 (car
+156, walk 86 against 135, ride 39, bike 20, bus 17). Realised ferry over all
+residents: **30 trips, 0.048%, −52.8% against 0.1013% — from 3 trips and
+−95% on F16**, at the same depth. The 61 walk-only crossings still walk a
+median 18.9 km; those are trips the router found no transit for at their
+hour (the ferry does not run all night), and selection will not keep them.
+Over all residents' pt plans the walk-only share is 39.7% (F16 39.3%) — most
+of it 2–3 km walks that are honestly cheaper than the bus, the rest trips
+without a service at their hour; the water crossings were the wrong part of
+it, and they are repaired.
 
 ### Family F16 opens
 

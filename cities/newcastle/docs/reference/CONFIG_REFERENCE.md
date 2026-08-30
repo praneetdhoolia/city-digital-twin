@@ -3287,7 +3287,7 @@ What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's ow
 
 ***derived** · status **active** · DECISIONS.md §9.121 · MATSim `ptDirectWalk.basis`*
 
-> **Derived from** `RUN.routing.network_modes`: direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121): of 110 CBD-bound trips in Stockton-side residents' PT plans the raptor returned a beeline walk across the harbour for 88, a bus for 20 and the ferry for 1; those walks executed as the ~20 km road detour. `beeline` recovers the stock raptor exactly.
+> **Derived from** `RUN.routing.network_modes`: direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121), by bank: of 256 harbour-crossing trips in residents' PT plans the raptor returned a beeline walk across the harbour for 174 and a ferry leg for 23; those walks executed as the ~19 km road detour, and over all residents 38.3% of PT-plan trips were walk-only. On the F17 arm at the same depth 209 of 359 crossings route with a ferry leg. `beeline` recovers the stock raptor exactly.
 
 #### `RUN.transit_router.direct_walk_factor`
 

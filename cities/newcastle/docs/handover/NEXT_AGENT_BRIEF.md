@@ -104,25 +104,25 @@ identity); its remaining gap is the demand's supply of drivers (#86).
 ═══════════════════════════════════════════════════════════════════════════════
 
 **Basis:** linked main-mode trips, target-LGA residents, 10%. **THIS IS THE RUNNING
-F16 ARM AT ITERATION 10 — every seed scored, selection still lagging scoring (car is
-the best-scored plan for 61.1% of car-available residents and selected by 38.0%), NOT
+F17 ARM AT ITERATION 10 — every seed scored, selection still lagging scoring (car is
+the best-scored plan for 61.2% of car-available residents and selected by 38.7%), NOT
 the model's answer.** Reproduce with `python src/analyse/report_mode_ridership.py
---run results/20260830T132843_300it_10pct --it 10`; the F15 column is the same depth
-with the car-first seed order (§9.121).
+--run results/20260830T141222_300it_10pct --it 10`; the F16 column is the same depth
+with the beeline direct walk (§9.121).
 
-| # | mode | F16 it.10 % | F15 it.10 % | target % | deviation (F16) | what it is |
+| # | mode | F17 it.10 % | F16 it.10 % | target % | deviation (F17) | what it is |
 |---|---|---:|---:|---:|---:|---|
-| 1 | car | 44.0758 | 36.9159 | 58.1631 | −24.2% | selection lag; best plan for 61% |
-| 2 | ride | 7.4288 | 7.3597 | 20.6000 | −63.9% | **realises what is bound** (81–89% paired); ceiling is #86 |
-| 3 | walk | 29.3956 | 33.0019 | 13.4000 | +119.4% | best plan for 6.4%; selected 16.9% |
-| 4 | bike | 9.1107 | 11.2446 | 2.2084 | +312.5% | beats car for 14.1% (F15: 48.7%) |
-| 5 | motorbike | 0.0591 | 0.0627 | 0.2406 | −75.4% | locked carve; 37 trips at 10% |
-| 6 | taxi | 1.6100 | 1.6167 | 0.9916 | +62.4% | fleet refusing 37% of requests |
-| 7 | bus | 6.5231 | 7.7055 | 2.3819 | +173.9% | pt best plan for 7.1% |
-| 8 | heavy_rail | 1.7426 | 2.0318 | 0.7737 | +125.2% | as bus |
-| 9 | light_rail | 0.0495 | 0.0579 | 0.6444 | −92.3% | corridor market (#30) |
-| 10 | ferry | 0.0048 | 0.0032 | 0.1013 | −95.3% | 3 trips; the catchment exists (§9.120) |
-| 11 | truck | 8.1391 | 9.3341 | — | n/a network-wide | `--truck-stations` scores it |
+| 1 | car | 44.3700 | 44.0758 | 58.1631 | −23.7% | selection lag; best plan for 61% |
+| 2 | ride | 7.4391 | 7.4288 | 20.6000 | −63.9% | **realises what is bound** (81% paired); ceiling is #86 |
+| 3 | walk | 30.1490 | 29.3956 | 13.4000 | +125.0% | best plan for 6.1%; selected 17.3% |
+| 4 | bike | 8.2496 | 9.1107 | 2.2084 | +273.6% | beats car for ~14% |
+| 5 | motorbike | 0.0606 | 0.0591 | 0.2406 | −74.8% | locked carve; 38 trips at 10% |
+| 6 | taxi | 1.5124 | 1.6100 | 0.9916 | +52.5% | fleet refusing ~37% of requests |
+| 7 | bus | 6.2426 | 6.5231 | 2.3819 | +162.1% | pt best plan for 7.7% |
+| 8 | heavy_rail | 1.8506 | 1.7426 | 0.7737 | +139.2% | as bus |
+| 9 | light_rail | 0.0782 | 0.0495 | 0.6444 | −87.9% | corridor market (#30) |
+| 10 | ferry | **0.0479** | 0.0048 | 0.1013 | **−52.8%** | 30 trips against 3: the network direct walk (#94) |
+| 11 | truck | 8.1603 | 8.1391 | — | n/a network-wide | `--truck-stations` scores it |
 | 12 | freight_train | 314 closures | 314 | 314 | representation | — |
 
 The four PT submodes share one folded HTS observation; their geometry deviations are
@@ -247,12 +247,16 @@ truck commuters are observed in G62 and queued.
 **§9.121 — the F16 arm, and the ferry's cause.** F16 at iteration 10 (same depth as
 F15, seed order the only difference): car 44.08 (36.92), bike 9.11 (11.24); the car
 plan best-scored for 61.1% of car-available residents (47.8%), bike beating car for
-14.1% (48.7%) — the two-state scoring is gone. Then #94, measurable at last: **of
-Stockton-side residents' 110 CBD-bound pt-plan trips the router returned a walk for
-88, a bus for 20, the ferry for 1** — SwissRailRaptor's direct walk is a BEELINE and
-the beeline crosses the harbour; over all residents **38.3% of pt-plan trips are
+14.1% (48.7%) — the two-state scoring is gone. Then #94, measurable at last, by BANK
+(a first radius-based reading had the wharves swapped and is corrected in §9.121): B2
+generates **4,956 harbour-crossing trips a weekday by 2,593 persons**; in residents'
+pt plans at F16 iteration 10 **174 of 256 crossings were routed as a walk-only route
+(68%), 23 with a ferry leg** — SwissRailRaptor's direct walk is a BEELINE and the
+beeline crosses the harbour; over all residents **38.3% of pt-plan trips are
 walk-only, 45.5% of them over 3 km on the network (p90 29 km)**. F16 stopped at
-iteration 17. Repair (**family F17**): `citysim.NetworkDirectWalkPtRouter` routes the
+iteration 17. **F17 at iteration 10: 209 of 359 crossings routed with a ferry leg
+(58%), 61 walk-only; ferry selected for 36 crossings against 6; realised ferry 30
+trips (−52.8%) against 3 (−95%).** Repair (**family F17**): `citysim.NetworkDirectWalkPtRouter` routes the
 direct walk on the walk network, prices it as the raptor would with the declared
 `directWalkFactor`, and compares it with the transit route's own cost;
 `RUN.transit_router.direct_walk_basis` = `network` (derived), `direct_walk_factor` 1.0
