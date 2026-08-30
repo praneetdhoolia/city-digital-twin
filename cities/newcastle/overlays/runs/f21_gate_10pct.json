@@ -1,0 +1,10 @@
+{
+  "overlay": "f21_gate_10pct",
+  "description": "The first family-F21 arm (DECISIONS.md 9.131): the F20 run stack and binder rules (9.129) on a demand rebuilt from the population that draws each person's driver licence from the measured TfNSW rate for their own LGA (B.population.licence_rate_by_age_band, the published licence count over the published resident population) instead of the literature vector that left a seventh of the workforce without a licence. What it must answer, in order: does car reach its share once workers hold licences (F20 read -17.7% at iteration 10); does heavy rail fall from five times its disclosed boardings (#98); does ride realise what the demand binds (#86); where do walk, bike and bus settle with the car-less quarter served. Identical run parameters to f15..f20_gate_10pct - S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the loop in GOAL.md. NEVER compare with a 25% arm (9.10, 9.12) or with any run before the F21 boundary: the population it samples from is part of the run's identity (9.127). NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.1,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}
