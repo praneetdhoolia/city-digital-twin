@@ -352,12 +352,13 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-0. **THE HARNESS RESUMES A COMPLETED RUN WHEN ONLY THE POPULATION CHANGED.**
-   `find_completed` keys on scenario, day, fraction, iterations, seed, overrides, the
-   controler hash and the resolved registry values — not on the plans file — so the
-   second F18 chain's smoke "passed" by resuming the 16:10 probe on the old plans. Pass
-   `--force` to a probe after a rebuild, or read the probe's `_meta.json` `started`
-   against the plans' mtime. Not yet fixed in the harness.
+0. **THE HARNESS RESUMED A COMPLETED PROBE WHEN ONLY THE POPULATION HAD CHANGED**
+   (§9.127). `find_completed` keyed on scenario, day, fraction, iterations, seed,
+   overrides, the controler hash and the resolved values — not on the plans file — so
+   the second F18 chain's smoke "passed" by resuming the 16:10 probe on the old plans.
+   **Fixed:** `inputs_sha256` (the day's population file) is part of the run key and
+   the run/meta records; a record without it never matches. The valid F18 arm itself
+   ran on the rebuilt plans (62,134 persons verified).
 1. **A COUPLING BETWEEN HOUSEHOLDS IS A SAMPLING UNIT — CHECK THE SAMPLE SIZE AFTER
    ANY NEW BINDING** (§9.127). The first F18 arm ran on 31,262 persons at 10% against
    62,134 because the sampler's union-find over lift couplings turned shared rides

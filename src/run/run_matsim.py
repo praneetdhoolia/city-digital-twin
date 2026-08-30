@@ -485,6 +485,26 @@ def start_progress_digest(run_dir, cfg):
 
 
 
+def inputs_sha256(day):
+    """A fingerprint of the population this run samples from (9.127).
+
+    The run's identity has to include WHAT it ran on. Scenario, day, fraction,
+    seed, overrides, the controler hash and the resolved values did not see a
+    rebuilt population: the second F18 chain's smoke probe resumed the 16:10
+    probe on the old plans and reported "passed". The sha256 of the day's
+    population file joins the key; a record written before this was tracked
+    carries none and does not match, as with the values hash.
+    """
+    path = os.path.join(PLANS, 'population_%s.xml.gz' % day)
+    if not os.path.exists(path):
+        return None
+    h = hashlib.sha256()
+    with open(path, 'rb') as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def values_sha256(cfg):
     """A fingerprint of every resolved registry value this run will use.
 
@@ -504,7 +524,7 @@ def values_sha256(cfg):
 
 
 def find_completed(scenario, day, fraction, iterations, seed, overrides,
-                   controler=None, warm_key=None, values=None):
+                   controler=None, warm_key=None, values=None, inputs=None):
     """The completed run with these parameters, if one exists.
 
     Identity lives in the run record, not in the directory name: the name is a
@@ -546,6 +566,10 @@ def find_completed(scenario, day, fraction, iterations, seed, overrides,
                 # a re-run costs time, a false resume costs a finding.
                 and (values is None
                      or doc.get('values_sha256') == values)
+                # 9.127: and the population it sampled from - a rebuilt
+                # demand under the same parameters is a different run
+                and (inputs is None
+                     or doc.get('inputs_sha256') == inputs)
                 and doc.get('rc') == 0):
             doc['name'] = os.path.basename(os.path.dirname(record))
             if controler is None or doc.get('controler_sha256') == controler:
@@ -699,8 +723,9 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
 
     controler = controler_sha256()
     values = values_sha256(cfg)
+    inputs = inputs_sha256(day)
     prior = find_completed(scenario, day, fraction, iterations, seed, overrides,
-                           controler, warm_key, values)
+                           controler, warm_key, values, inputs)
     if prior is not None and not force:
         if prior.get('controler_sha256') == controler:
             print('resume: %s already complete' % prior['name'], flush=True)
@@ -737,7 +762,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         status='running', scenario=scenario, day=day, fraction=fraction,
         sample_pct=float('%g' % (fraction * 100)), iterations=iterations,
         seed=seed, threads=threads, xmx=xmx, overrides=overrides or {},
-        controler_sha256=controler, started=_now(), ended=None, wall_s=None,
+        controler_sha256=controler, inputs_sha256=inputs,
+        started=_now(), ended=None, wall_s=None,
         rc=None, pid=os.getpid())
     if warm_key:
         meta['warm_started_from'] = warm_key
@@ -815,6 +841,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
                config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
                controler_sha256=controler,
                values_sha256=values,
+               inputs_sha256=inputs,
                **sample)
     if warm_key:
         doc['warm_started_from'] = warm_key

@@ -12185,6 +12185,16 @@ draw and failed its "seed car share far from target" check on a share that
 is availability, not a starting point; the check now reads the seed method
 and holds the choice set to one plan per usable mode instead.
 
+And the harness's resume matched a run on scenario, day, fraction,
+iterations, seed, overrides, the controler hash and the resolved values -
+not on the population it sampled from - so the rebuild chain's smoke step
+"passed" by RESUMING the 16:10 probe on the old plans (`find_completed`
+returned it as complete). The day's population file's sha256 now joins the
+run key as `inputs_sha256`, written to `_meta.json` and `_run.json` and
+declared in their schemas; a record without it never matches, as the
+values hash already refuses. The valid F18 arm ran on the rebuilt plans -
+its sampled population was counted, not assumed.
+
 ---
 
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
