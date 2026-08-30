@@ -149,7 +149,23 @@ If a mode is past 20% AND not moving toward its target across 100/200, stop the 
 per the directive and fix the cause it names. **Do not repair a mode off one gate.**
 
 After the arm: the ride ceiling (#86/#91) is the likeliest next root cause; light rail
-(#30, §9.103) and the ferry (#94) are untouched by F15.
+(#30, §9.103 — the corridor holds shopping/other ends at two-thirds of the observed
+attraction rate, measured §9.120) and the ferry (#94) are untouched by F15.
+
+**The ride ceiling, stated for the decision it needs.** The demand binds a driver to
+~11% of resident trips against 20.6% observed. The joint binder re-aims a companion's
+OWN drawn tour onto a household co-member's tour and adds no trip (§9.84), so its
+supply is a SECOND licensed, car-available, travelling household member — and §9.111
+measured that 41.7% of multi-person households have at most one, while 26.2% of
+households are lone persons (#48). The passenger travel the HTS observes beyond what
+households can serve is therefore travel with NON-household drivers, for which the
+model holds a mechanism (the §9.60 lift binder, scoped `same_zone` to escort
+re-targeting) and no observation of who drives whom. The derivable lane: anchor the
+non-household volume on the identity (observed passenger share minus what household
+binding serves), and match passengers to non-household drivers on OD and time within
+the population — feasibility, not a rate, decides how much realises. That is a B2
+change and a family boundary; it needs the user's decision and the F15 arm's ride
+reading first.
 
 ---
 
