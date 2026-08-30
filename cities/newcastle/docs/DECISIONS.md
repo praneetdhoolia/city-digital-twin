@@ -95,6 +95,7 @@ its layout will otherwise cost you an hour:
 | **Shared rides: the lift from someone already making the trip** | **§9.124** — a fourth binder pass binds car-less residents' direct tours to non-household drivers on the same zone-to-zone trip within the pairing window, thinned to the passenger-share identity; `B.ride.shared_lift_scope` = `same_sa2_od` (59,648 tours, shortfall 17 trips; SA1 reaches a fifth). Built, queued |
 | **Residents who drive a truck for a living** | **§9.125** — G62 Truck 223 of 43,959 LGA driver journeys, carried to 0.2993% of resident trips by the motorbike carve's identity and carved locked to `truck`; the yardstick's resident-truck deduction now describes real agents. Built, queued |
 | **F17 converged car and walk in fifty iterations; F18 opens on the demand it named** | **§9.126** — car 59.32 (+1.7%) and walk 14.88 (+11%) at iteration 50 of the first honest arm since F4; the residues are the car-less quarter, the carves, the corridor and the fleet; F18 = F17's run side on the §9.122–§9.125 demand |
+| **A coupling between households is a sampling unit** | **§9.127** — the first F18 arm ran on 31,262 persons at 10% against 62,134: shared rides made the sampler's lift clusters giant components; a shared ride now binds only to drivers whose household unit hash is at or below the passenger's, so any nested sample keeps the pair |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -12134,6 +12135,58 @@ quarter's modes settle once a fifth of their tours ride.
 
 ---
 
+## 9.127 A coupling between households is a sampling unit: the first F18 arm ran on half a sample (30 August 2026, sixteenth session; issues #86, #66)
+
+The first F18 arm, `20260830T161243_300it_10pct`, ran iteration 0 in 66 s
+with 32,482 car and 44,654 walk departures where the F17 arm at the same
+fraction and seed had 81,349 and 132,841. Its `plans.xml.gz` held **31,262
+persons against F17's 62,134**. The sample was not a sample.
+
+**Cause.** §9.45 samples by household so that in-household couplings
+survive; §9.60 extended that to the lift couplings by union-find over
+(`householdId`, `liftHousehold`) pairs, so a passenger and the household
+that drives them are kept or dropped together - fine while the clusters
+were the small lift pairs. The shared-ride pass (§9.124) writes its drivers'
+households into `liftHousehold` too (the runtime pairing searches them
+there), and 59,648 bindings between arbitrary households turn the clusters
+into giant components: the sampling unit became the component, and a 10%
+draw over a few lumps kept half the persons it should. Every earlier gate
+would have passed over it; the person count did not.
+
+**A directed closure is not the repair.** Keeping a household by its own
+hash and then pulling in every driver household its members depend on,
+transitively, is nested and keeps every binding - and was measured to pull
+19,566 driver households in and land the "10%" sample at 17.65% of persons,
+weighted toward car-owning households. Rejected.
+
+**The repair is a rule the binder can obey.** The sampler keeps a household
+when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction. A shared
+ride now binds a passenger only to drivers whose household hash is AT OR
+BELOW the passenger's: every nested sample that keeps the passenger keeps
+the driver by construction, with no cluster and no closure, and each
+household's inclusion probability stays exactly the fraction. The cost is
+candidate supply - a passenger with a low hash sees fewer drivers - and the
+identity still caps the volume. The plans name the shared drivers'
+households in `sharedDriverHousehold` (a subset of `liftHousehold`), and the
+sampler excludes them from its unions, so the clusters return to the small
+lift couplings of §9.60. The binder records the seed it hashed under; a run
+under another `RUN.machine.seed` would break the guarantee and the report
+says which seed holds it. The 10% sample is asserted within 8.5-11.5% of
+persons in the rebuild before any smoke or launch: **62,134 of 620,553
+persons, 10.01% - F17's count exactly.**
+
+Re-bound under the rule (servable / bound / shortfall trips): WEEKDAY
+98,549 / 59,718 / 0 (thin p 0.605); SAT 79,885 / 33,283 / 0; SUN 75,716 / 31,936 /
+0 - against 105,515 / 59,648 / 17 on WEEKDAY without it. The rule cost
+seven thousand servable tours and no bound one.
+
+Also this session: `check_package.py` read the full-choice-set seed as a
+draw and failed its "seed car share far from target" check on a share that
+is availability, not a starting point; the check now reads the seed method
+and holds the choice set to one plan per usable mode instead.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -12806,6 +12859,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **A coupling between households is a sampling unit: the first F18 arm ran on half a sample (§9.127; issues #86/#66).** `20260830T161243` kept 31,262 persons at 10% against F17's 62,134 - the household sampler's union-find over `liftHousehold` made the sampling unit the connected component, and the shared-ride bindings turn those into giant lumps; stopped at iteration 2. A directed closure was measured to pull the sample to 17.65% and rejected. Repair: the binder pairs a passenger only with drivers whose household unit hash (the sampler's own, under `RUN.machine.seed`) is at or below the passenger's, so any nested sample that keeps the passenger keeps the driver; the plans name the shared drivers' households in `sharedDriverHousehold` and the sampler excludes them from its clusters; the rebuild asserts the 10% sample within 8.5-11.5% of persons (62,134, F17's count exactly). Re-bound WEEKDAY under the rule: 98,549 servable, 59,718 bound, 0 trips short. `check_package.py` reads the choice-set seed as a choice set. The valid F18 arm is `20260830T163010_300it_10pct`. |
 | 2026-08-30 | **The first honest arm since F4 converged car and walk inside fifty iterations, and family F18 opens on the demand it named (§9.126; issues #48/#86/#49/#30/#93/#94).** F17 (`20260830T141222`, 10%): car 36.26 → 59.32 (+1.7%) and walk 42.27 → 14.88 (+11%) by iteration 50, ride at the demand's ceiling (pair rate 0.80 on identity), the ferry at 30–36 trips against 3; bike +275%, bus +87%, heavy rail +70%, ride −51% are the car-less quarter's, motorbike −84% the carve's, light rail −95% the corridor's, taxi +52% the fleet's. Stopped at iteration 60 for F18: shared rides (59,648 tours), the repaired motorbike carve at census resolution, the resident truck carve, drivers never carved; plans 9,880,427 seeded legs, manifest 497. Run side unchanged from F17. |
 | 2026-08-30 | **Residents who drive a truck for a living, carved from the census like the motorcyclists (§9.125; directive item 8).** G62 one-method Truck journeys - 223 of the target LGA's 43,959 driver journeys - declared as `CAL.mode_split.truck_driver_journey_share` (measured, asserted on every build) and carried to `B.truck.resident_trip_share` 0.002993 by the motorbike carve's identity; the plans builder carves licensed, car-available, non-escorting residents locked to `truck` on their own hash namespace, one lock per person. The yardstick's resident-truck deduction, always computed, now describes agents that exist. Built; rebuilt with F18. |
 | 2026-08-30 | **Shared rides: the lift a car-less resident gets from someone already making their trip (§9.124; issues #86/#91/#48).** A fourth binder pass, `bind_shared_rides`: car-less residents' direct tours bound both ways to non-household drivers making the same zone-to-zone trip within `B.ride.pairing_window_min`, seats capped, nearest first; volume = the joint binder's identity (448,229 passenger trips) less the 328,916 the earlier passes cover, thinned to it. Measured on the committed WEEKDAY demand: same-SA1 co-location serves 19,034 tours (a fifth of the remainder), same-SA2 105,515, thinned to 59,648 with 17 trips of shortfall. `B.ride.shared_lift_scope` = `same_sa2_od`, swept against `same_sa1_od` and `none`. Built, not rebuilt; next family. |
