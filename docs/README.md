@@ -95,11 +95,19 @@ project of their own — `src/setup/bootstrap_toolchain.py` compiles them agains
 the pinned jars in `.tools/`. The committed [`.vscode/settings.json`](../.vscode/settings.json)
 gives the Java extension the same classpath (`.tools/run-stack/lib`), so run
 `python src/setup/bootstrap_toolchain.py --run-stack` once and the imports
-resolve; without the run stack the folders show unresolved imports. The sources
-are compiled at Java 25 (the pinned JDK under `.tools/jdk`); if the extension
-reports a compliance or runtime problem, point `java.configuration.runtimes` in
-your *user* settings at that JDK's absolute path — a machine path is not
-committed.
+resolve. **The extension must itself run on a JDK 25 or later**: every pinned jar
+and our own classes are class-file version 69 (Java 25), and the extension's
+bundled runtime is JRE 21, which cannot read them — the symptom is hundreds of
+"The import org.matsim cannot be resolved" markers with every jar on the
+classpath. Set, in your *user* settings (a machine path is never committed):
+
+```jsonc
+"java.jdt.ls.java.home": "<absolute path to>/.tools/jdk",
+"java.configuration.runtimes": [{ "name": "JavaSE-25", "path": "<the same path>", "default": true }]
+```
+
+then run *Java: Clean Java Language Server Workspace* (or *Developer: Reload
+Window*). Without the run stack the folders show unresolved imports.
 
 ## How a session opens and closes
 
