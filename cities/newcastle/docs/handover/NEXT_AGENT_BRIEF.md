@@ -352,7 +352,13 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **A MODE'S EXCESS IS OFTEN ANOTHER MODE'S DEFICIT — SPLIT THE POPULATION BEFORE
+1. **A COUPLING BETWEEN HOUSEHOLDS IS A SAMPLING UNIT — CHECK THE SAMPLE SIZE AFTER
+   ANY NEW BINDING** (§9.127). The first F18 arm ran on 31,262 persons at 10% against
+   62,134 because the sampler's union-find over lift couplings turned shared rides
+   into giant components; read `plans.xml.gz`'s person count against the previous arm's
+   before believing an iteration. A directed closure pulled the sample to 17.65%; the
+   binder now pairs only with drivers the sampler keeps whenever it keeps the passenger.
+2. **A MODE'S EXCESS IS OFTEN ANOTHER MODE'S DEFICIT — SPLIT THE POPULATION BEFORE
    TOUCHING A CONSTANT** (§9.123). Bike +308% was the car-less quarter with no lift;
    every bike parameter was innocent. Read the mode split by car availability, and
    the per-mode plan scores in memory, before believing a share names its own cause.
