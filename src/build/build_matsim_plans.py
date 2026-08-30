@@ -446,6 +446,27 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 lift_cover.setdefault(
                     (p, int(r['passenger_tour_id'])), set()).add(
                         r.get('direction') or 'drop')
+    # 9.124: the shared-ride pass - a car-less resident's direct tour bound
+    # to non-household drivers making the same SA1-to-SA1 trip. Read
+    # exactly as the lift table: the driver's identity, the driver's
+    # household for the runtime candidate search, the direction for
+    # coverage; and the DRIVER's tour becomes a serving tour (held at car,
+    # boundDriveTrips) like a joint driver's.
+    shared_driver = {}   # driver pid -> set of tour ids that carry a passenger
+    shared = os.path.join(PLANS, 'B2_shared_bindings_%s.csv' % day)
+    if os.path.exists(shared):
+        with open(shared, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                p = int(r['passenger_person_id'])
+                hh = int(r['driver_household_id'])
+                bind(p, int(r['driver_person_id']))
+                lift_hh.setdefault(p, [])
+                if hh not in lift_hh[p]:
+                    lift_hh[p].append(hh)
+                lift_cover.setdefault(
+                    (p, int(r['passenger_tour_id'])), set()).add(r['direction'])
+                shared_driver.setdefault(
+                    int(r['driver_person_id']), set()).add(int(r['driver_tour_id']))
     # 9.68: household escort coverage - which member tours the placed
     # household serve tours cover, by direction. A tour covered in BOTH
     # directions seeds as B.mode.bound_passenger_seed.
@@ -597,6 +618,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # 9.84: a joint driver's tour is a serving tour in the same
                 # sense - a companion is booked into that car
                 serve_tours |= joint_driver.get(pid, EMPTY_SET)
+                # 9.124: a driver carrying a shared-ride passenger serves too
+                serve_tours |= shared_driver.get(pid, EMPTY_SET)
                 covered_tours = covered_by_pid.get(pid, EMPTY_SET)
             tour_mode = {}
             for r in rows:

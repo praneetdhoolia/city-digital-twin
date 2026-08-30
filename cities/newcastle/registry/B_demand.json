@@ -1204,7 +1204,10 @@
       "status": "active",
       "decisions_ref": "9.44",
       "description": "How far apart a passenger's and a driver's PLANNED departures may be and still be treated as one trip. This is the tolerance the pairing is allowed, NOT a modelled waiting time: Tier 1 does not move the passenger's departure, because shifting it would cascade through the rest of that person's day and the blast radius of the change is deliberately bounded. Who adapts is nonetheless DECLARED rather than left open - the passenger does, since the driver's plan cascades further - and the unmodelled sub-window adjustment is a stated limitation, not a silent one. Consumed by src/java/citysim/RidePairingEngine.",
-      "matsim_param": "ridePairing.windowMinutes"
+      "matsim_param": "ridePairing.windowMinutes",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
     },
     "B.ride.bound_pairing_window_min": {
       "value": 60.0,
@@ -1349,6 +1352,25 @@
       "decisions_ref": "9.55",
       "description": "Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the BeforeMobsim boundary - the 9.51 standing directive's own ruling (every ride physically in a car, no exceptions, no teleportation) enacted without inventing a parameter: a ride trip no household driver can physically serve is not a ride trip, it walks, scores accordingly, and co-evolution reassigns the tour - so the surviving ride share is EMERGENT from the physical driver supply rather than declared. False keeps Tier 1's teleport for the unpaired, for comparability within one build. Consumed by citysim.RidePairingEngine.",
       "matsim_param": "ridePairing.remodeUnpaired"
+    },
+    "B.ride.shared_lift_scope": {
+      "value": "same_sa2_od",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "same_sa2_od",
+          "same_sa1_od",
+          "none"
+        ],
+        "basis": "The three states the fourth binder pass can take. `none` is the pre-9.124 demand, in which a resident without a car rides only with a household driver, an escort or a re-targeted lift; `same_sa1_od` and `same_sa2_od` bind their direct tours to non-household drivers making the same zone-to-zone trip within B.ride.pairing_window_min, at SA1 or SA2 co-location - both the statistical geography, neither a radius. Measured on the committed WEEKDAY demand (9.124): the identity's remainder after the three earlier passes is 119,313 trips (59,656 direct tours); same-SA1 finds a driver both ways for 19,034 of the 107,089 car-less direct tours and binds them all, a fifth of the remainder; same-SA2 finds one for 105,515 and is THINNED to 59,648 - the observation caps it, with 17 trips of shortfall. The sweep is over the co-location rule; the volume is never free."
+      },
+      "status": "active",
+      "decisions_ref": "9.124",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "Where a resident without a car may be given a lift by someone outside their household. Measured motivation (9.123): on the F17 arm residents without a car made 24.7% of trips and, with only the bound rides available, walked 48%, cycled 17% and took pt 15% of them - bike's, bus's and walk's excess were ride's deficit. `same_sa2_od`: the passenger's direct tour is bound, both directions, to non-household drivers making a trip between the same origin SA2 and destination SA2 within B.ride.pairing_window_min (a colleague from the same suburb driving to the same suburb at the same hour), each driver trip carrying at most B.ride.max_passengers_per_vehicle, the nearest departure first, sorted traversal; the volume is the joint binder's identity - (occupancy - 1) x the driver share x core trips - less every trip the earlier passes cover, thinned deterministically to it. Consumed by build_activity_chains.py; the bindings reach the run as boundDriver / boundRideTrips / boundDriveTrips like the lift table's, and the runtime pairing re-times the passenger to the driver (9.120)."
     },
     "B.ride.wait_for_driver": {
       "value": true,

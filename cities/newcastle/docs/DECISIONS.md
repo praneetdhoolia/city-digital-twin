@@ -92,6 +92,7 @@ its layout will otherwise cost you an hour:
 | **The choice set was scored under two traffic states - the car plans got the gridlock** | **§9.121** — the car-first seed order put 74.7% of residents in a car at iteration 0 (6,820 stuck), so every car plan in memory scored 60-100 utils behind plans scored on empty roads; the first-executed seed plan is now drawn uniformly; ride pairs at 88.8% on identity; family F16 |
 | **Motorbike: halved by an escort-day denial after the draw, scored against the core's cell** | **§9.122** — the carve delivered 0.128% against 0.241% because 38% of eligible persons (47% of eligible trips) are denied after the draw; repaired in the builder. The driver split moves to the target LGA's G62 cell: car 58.32, motorbike 0.3785, ferry 0.1429. `B.motorbike.carve_resolution` = `sa1_thinned` kept as the observed spatial form |
 | **The car-less quarter: bike, bus and walk's residue are ride's deficit** | **§9.123** — 95.4% of residents preferring bike on score have no car; car-less residents (24.7% of trips) walk 48%, cycle 17%, take pt 15% for want of a lift; the next family boundary is lift supply (#86/#91) |
+| **Shared rides: the lift from someone already making the trip** | **§9.124** — a fourth binder pass binds car-less residents' direct tours to non-household drivers on the same zone-to-zone trip within the pairing window, thinned to the passenger-share identity; `B.ride.shared_lift_scope` = `same_sa2_od` (59,648 tours, shortfall 17 trips; SA1 reaches a fifth). Built, queued |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -11988,6 +11989,62 @@ its gates as the measurement of everything else.
 
 ---
 
+## 9.124 Shared rides: the lift a car-less resident gets from someone already making their trip (30 August 2026, sixteenth session; issues #86, #91, #48)
+
+§9.123 measured the next boundary: residents without a car make 24.7% of
+trips, hold only the rides the demand binds, and put the rest on walk, bike
+and pt. The three binder passes reach a passenger through a household
+driver (§9.46, §9.84) or a re-targeted escort tour (§9.60). What none of them
+can generate is the lift the HTS passenger share also contains and no held
+observation attributes - a colleague, neighbour or friend already driving
+the passenger's trip at the passenger's hour. That lift needs no
+observation of who drives whom to exist in a synthetic population: the
+driver is already there, in the same file.
+
+**The fourth binder pass, `bind_shared_rides`.** Passengers: core persons
+with no car available, on direct (two-row) non-escort tours no earlier pass
+bound. Drivers: licensed, car-available core persons' non-escort trips in
+another household with the same origin zone and destination zone,
+departing within `B.ride.pairing_window_min` (15 min); both directions of
+the tour must find one; a driver trip carries at most
+`B.ride.max_passengers_per_vehicle`; the nearest departure wins, in sorted
+traversal. The zone is the statistical geography (`B.ride.shared_lift_scope`:
+`same_sa2_od`, `same_sa1_od`, `none`), never a radius - the `same_zone`
+precedent of §9.60. **The volume is the joint binder's identity, (occupancy
+- 1) x the driver share x core trips = 448,229 passenger trips on WEEKDAY,
+less the 328,916 the three earlier passes cover: 119,313 trips, 59,656 direct
+tours.** If the servable supply exceeds it the pass thins to it with a rng
+seeded on (seed, day); if it does not, everything servable is bound and the
+shortfall is reported. Adds no trip, re-times nothing - the runtime pairing
+re-times a declared passenger to the driver (§9.120).
+
+Measured on the committed WEEKDAY demand, 107,089 car-less direct tours
+unbound (34,581 more are not direct and stay walk/pt/bike):
+
+| scope | servable tours | thin p | bound tours | shortfall (trips) |
+|---|---:|---:|---:|---:|
+| `same_sa1_od` | 19,034 | 1.00 | 19,032 | 81,249 |
+| **`same_sa2_od`** | **105,515** | **0.565** | **59,648** | **17** |
+
+Same-SA1 co-location supplies a fifth of the remainder; same-SA2 supplies
+almost twice it and is thinned to the observation. `same_sa2_od` is the
+declared value: it is the scope at which the identity is reached, and the
+identity - not the scope - is what bounds the ride share. Whether a suburb
+is the right precision for a carpool is the sweep's question, and
+`same_sa1_od` is its lower bound. Under the wider scope the passenger's own
+activity is up to a suburb away from the driver's origin link, which the
+runtime pairing rule `both_links` refuses; the F18 arm measures how much of
+the binding the run realises, and the `route_contains` rule built in §9.102
+is the declared alternative if it refuses too much.
+
+The bindings reach the plans builder as the lift table does: `boundDriver`
+and `liftHousehold` on the passenger, `boundRideTrips` per direction, the
+driver's tour held at car and listed in `boundDriveTrips`. Built and
+measured; rebuilt with the next family together with the motorbike carve
+(§9.122).
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -12660,6 +12717,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **Shared rides: the lift a car-less resident gets from someone already making their trip (§9.124; issues #86/#91/#48).** A fourth binder pass, `bind_shared_rides`: car-less residents' direct tours bound both ways to non-household drivers making the same zone-to-zone trip within `B.ride.pairing_window_min`, seats capped, nearest first; volume = the joint binder's identity (448,229 passenger trips) less the 328,916 the earlier passes cover, thinned to it. Measured on the committed WEEKDAY demand: same-SA1 co-location serves 19,034 tours (a fifth of the remainder), same-SA2 105,515, thinned to 59,648 with 17 trips of shortfall. `B.ride.shared_lift_scope` = `same_sa2_od`, swept against `same_sa1_od` and `none`. Built, not rebuilt; next family. |
 | 2026-08-30 | **The car-less quarter: bike, bus and much of walk are ride's deficit wearing other modes (§9.123; issues #86/#48/#49/#30).** F17 at iteration 20: car 48.46 (-16.9%, inside the bar), walk 24.13 falling, ride 9.17 rising, bike 9.00 and moving away. Of 913 residents whose best-scored plan is bike, 95.4% have no car; car-less residents (24.7% of trips) walk 48.1%, ride 18.5%, cycle 16.7%, take pt 14.6%, while car-available residents sit at car 64.4% and bike 6.5% falling. Bike's, bus's and heavy rail's excess and walk's residue are the lift supply the demand does not bind; the next family boundary is #86/#91, not a bike parameter. |
 | 2026-08-30 | **Motorbike: halved by an escort-day denial made after the draw, and scored against another geography's cell (§9.122; issues #93/#49).** The carve delivered 0.128% of legs against the 0.241% it solved for because 38.0% of eligible persons - holding 47% of eligible trips - are escorters denied the mode after the draw; the pool is now the persons who will not be denied (no value moves; rebuild queued). The 10% arm reads motorbike off 17 sampled persons (43 legs), a precision note. The driver split in `build_mode_targets.py` read the five-LGA core's G62 cell while every other target is the LGA's: now `g62_composition('target_lga')` - car 58.1631 → 58.3222, motorbike 0.2406 → 0.3785, resident-truck deduction 0.5963 → 0.2993, ferry 0.1013 → 0.1429; `CAL.mode_split.motorbike_driver_journey_share` 0.0064151 and `B.motorbike.trip_share` 0.0037849 by the unchanged identity. `B.motorbike.carve_resolution` = `sa1_thinned` kept as the spatially observed derivation. |
 | 2026-08-30 | **The choice set was scored under two traffic states, and the car plans got the gridlock (§9.121; issues #48/#49/#30/#50).** The first F15 arm at iteration 10: ride pairs at 88.8% on identity (13,580 of 15,295; 0.41 on F14) — the §9.120 ride repairs work — but the bike plan scores +67.95 utils better than the car plan for the average car-available resident and 48.7% prefer it, gaps of ±100 utils that are activity utility lost, not travel time and not parking (−1.87 AUD per person-day). Cause: the seed wrote the car plan first and selected, so iteration 0 ran car for every car-available resident (74.7%, 162,812 departures at 10%, 6,820 stuck, average score −77.8) while every other mode was scored on quarter-traffic roads in iterations 1–6, and ChangeExpBeta never re-tests a plan 60 utils behind. Arm stopped at iteration 13 on the directive. Repair: the first-executed seed plan is drawn uniformly over each person's plans by a hash — no value, no re-scoring. Family F16 opens; overlay `f16_gate_10pct` identical to F15's in every run parameter. **F16 at iteration 10 against F15**: car 44.08 (36.92), bike 9.11 (11.24), the car plan best-scored for 61.1% (47.8%), bike beats car for 14.1% (48.7%) — the artefact is gone. **Then the ferry (#94)**: Stockton-side residents' 110 CBD-bound pt-plan trips were routed as a walk 88 times, a bus 20, the ferry once — SwissRailRaptor's direct walk is a BEELINE across the harbour that the network executes as the 20 km detour — and over all residents 38.3% of pt-plan trips are walk-only, 45.5% of them over 3 km on the network (p90 29 km). F16 stopped at iteration 17. Repair (family F17): `citysim.NetworkDirectWalkPtRouter` evaluates the direct walk on the walk network with the raptor's own rule and the declared `directWalkFactor`; `RUN.transit_router.direct_walk_basis` = `network`, `direct_walk_factor` 1.0 declared. |
