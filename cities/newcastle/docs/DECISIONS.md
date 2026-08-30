@@ -11753,6 +11753,36 @@ scoring removes), bus 1,188 stuck. The gridlock is gone at its source. The
 taxi seed flood is unchanged by design (34,870 requests, 85.7% refused at
 iteration 0, decaying as the plans are scored).
 
+### Measured at iteration 10, F16 against F15 — same depth, same everything but the seed order
+
+| | F15 it.10 | **F16 it.10** | target |
+|---|---:|---:|---:|
+| car % | 36.92 | **44.08** | 58.16 |
+| ride % | 7.36 | 7.43 | 20.60 |
+| walk % | 33.00 | **29.40** | 13.40 |
+| taxi % | 1.62 | 1.61 | 0.99 |
+| bike % | 11.24 | **9.11** | 2.21 |
+| motorbike % | 0.063 | 0.059 | 0.241 |
+| bus % | 7.71 | 6.52 | 2.38 |
+| heavy rail % | 2.03 | 1.74 | 0.77 |
+| light rail % | 0.058 | 0.050 | 0.644 |
+| ferry % | 0.003 | 0.005 | 0.101 |
+| car plan is the resident's BEST-scored plan | 47.8% | **61.1%** | — |
+| bike plan beats the car plan | 48.7% | **14.1%** | — |
+| walk plan beats the car plan | 23.6% | **4.0%** | — |
+| pt plan beats the car plan | 33.4% | 11.7% | — |
+| ride pair rate (`ride_pairing.csv`) | 0.888 | 0.814 | — |
+
+The two-state scoring is gone: with every mode scored under one traffic
+state the car plan is the best in 61% of car-available residents' memories,
+and the walk/bike/pt advantages of F15 shrink to the tail. What remains at
+iteration 10 is SELECTION lagging SCORING — car selected by 38.0% of those
+residents against 61.1% for whom it scores best — which is ChangeExpBeta's
+own pace (it compares the selected plan with one random other each
+round) plus the innovation floor (30% of agents execute a fresh plan each
+iteration, a fifth of the mode innovations landing on any given mode). The
+iteration-100 gate reads whether that lag closes; nothing here is a result.
+
 ### Family F16 opens
 
 The population file changes (the `selected` flag moves), so the F15 arm and

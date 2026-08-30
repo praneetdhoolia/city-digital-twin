@@ -103,26 +103,27 @@ identity); its remaining gap is the demand's supply of drivers (#86).
 §2  THE MODES — every mode individually
 ═══════════════════════════════════════════════════════════════════════════════
 
-**Basis:** linked main-mode trips, target-LGA residents, 10%. **THIS IS THE STOPPED
-F15 ARM AT ITERATION 10 — every car plan in it was scored under the iteration-0
-gridlock the car-first seed created (§9.121), so the levels are that artefact, NOT
+**Basis:** linked main-mode trips, target-LGA residents, 10%. **THIS IS THE RUNNING
+F16 ARM AT ITERATION 10 — every seed scored, selection still lagging scoring (car is
+the best-scored plan for 61.1% of car-available residents and selected by 38.0%), NOT
 the model's answer.** Reproduce with `python src/analyse/report_mode_ridership.py
---run results/aborted_20260830T124711_300it_10pct --it 10`.
+--run results/20260830T132843_300it_10pct --it 10`; the F15 column is the same depth
+with the car-first seed order (§9.121).
 
-| # | mode | modelled % it.10 | target % | deviation | what it is |
-|---|---|---:|---:|---:|---|
-| 1 | car | 36.9159 | 58.1631 | −36.5% | car plans carry the it.0 gridlock score |
-| 2 | ride | 7.3597 | 20.6000 | −64.3% | **realises what is bound** — 88.8% of ride legs paired; rising |
-| 3 | walk | 33.0019 | 13.4000 | +146.3% | scored on quarter-traffic roads |
-| 4 | bike | 11.2446 | 2.2084 | +409.2% | bike plan +68 utils over car (48.7% prefer it) — the artefact |
-| 5 | motorbike | 0.0627 | 0.2406 | −73.9% | locked carve; 39 trips at 10% |
-| 6 | taxi | 1.6167 | 0.9916 | +63.0% | fleet still refusing 41% of the seed flood |
-| 7 | bus | 7.7055 | 2.3819 | +223.5% | pt plans scored on quarter-traffic roads |
-| 8 | heavy_rail | 2.0318 | 0.7737 | +162.6% | as bus |
-| 9 | light_rail | 0.0579 | 0.6444 | −91.0% | corridor market (#30) |
-| 10 | ferry | 0.0032 | 0.1013 | −96.8% | 2 trips; the catchment exists (§9.120) — the router question stays open |
-| 11 | truck | 9.3341 | — | n/a network-wide | `--truck-stations` scores it |
-| 12 | freight_train | 314 closures | 314 | representation | — |
+| # | mode | F16 it.10 % | F15 it.10 % | target % | deviation (F16) | what it is |
+|---|---|---:|---:|---:|---:|---|
+| 1 | car | 44.0758 | 36.9159 | 58.1631 | −24.2% | selection lag; best plan for 61% |
+| 2 | ride | 7.4288 | 7.3597 | 20.6000 | −63.9% | **realises what is bound** (81–89% paired); ceiling is #86 |
+| 3 | walk | 29.3956 | 33.0019 | 13.4000 | +119.4% | best plan for 6.4%; selected 16.9% |
+| 4 | bike | 9.1107 | 11.2446 | 2.2084 | +312.5% | beats car for 14.1% (F15: 48.7%) |
+| 5 | motorbike | 0.0591 | 0.0627 | 0.2406 | −75.4% | locked carve; 37 trips at 10% |
+| 6 | taxi | 1.6100 | 1.6167 | 0.9916 | +62.4% | fleet refusing 37% of requests |
+| 7 | bus | 6.5231 | 7.7055 | 2.3819 | +173.9% | pt best plan for 7.1% |
+| 8 | heavy_rail | 1.7426 | 2.0318 | 0.7737 | +125.2% | as bus |
+| 9 | light_rail | 0.0495 | 0.0579 | 0.6444 | −92.3% | corridor market (#30) |
+| 10 | ferry | 0.0048 | 0.0032 | 0.1013 | −95.3% | 3 trips; the catchment exists (§9.120) |
+| 11 | truck | 8.1391 | 9.3341 | — | n/a network-wide | `--truck-stations` scores it |
+| 12 | freight_train | 314 closures | 314 | 314 | representation | — |
 
 The four PT submodes share one folded HTS observation; their geometry deviations are
 not independent. **The last valid trend reading remains the dead F14 arm's (25%,
