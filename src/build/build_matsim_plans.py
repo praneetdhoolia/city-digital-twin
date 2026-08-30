@@ -618,13 +618,22 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # child travels in any data this project holds, and the ride
                 # pairing pairs passengers with CAR legs. Same day-plan-level
                 # denial pattern as ESCORT_EXCLUDES_RIDE above.
-                moto = (bool(car_av) and bool(lic) and motorbike_user(pid)
+                # 9.125: a person the binders named as someone's DRIVER is
+                # never carved - the pairing engine pairs ride legs with CAR
+                # legs only, so a carved driver would strand the passenger
+                # the demand bound to them. Escort days were already excluded.
+                names_driver = (pid in joint_driver or pid in shared_driver
+                                or any(r['dest_placement'] in
+                                       ('escorted', 'lift_pickup', 'lift_serve')
+                                       for r in rows))
+                moto = (bool(car_av) and bool(lic) and not names_driver
+                        and motorbike_user(pid)
                         and not any(r['dest_activity_type'] == 'escort'
                                     for r in rows))
                 # 9.125: the resident truck carve, same pool, one lock per
                 # person (a motorcyclist is not also a truck driver)
                 trk = (not moto and bool(car_av) and bool(lic)
-                       and truck_user(pid)
+                       and not names_driver and truck_user(pid)
                        and not any(r['dest_activity_type'] == 'escort'
                                    for r in rows))
 
