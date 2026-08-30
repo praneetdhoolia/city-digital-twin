@@ -29,7 +29,7 @@ trust order, the six questions, the environment gate — live in
 | Fact as of this handoff | Re-derive with |
 |---|---|
 | **AN ARM IS RUNNING — THE MACHINE IS NOT FREE.** `results/20260830T124711_300it_10pct` (S2, WEEKDAY, 10%, 300 it, cutoff 240, overlay `f15_gate_10pct`), launched 30 Aug 12:47 as Task Scheduler task `citysim_run_20260830T124710`; **measured 151.7 s/it median at iteration 2** (not the ~100 s/it of the F13 10% arm — the choice-set seed loads pt, taxi and walk early), so the iteration-100 gate lands ~17:15 and the run ~13 h | `python src/run/run_failure.py --check` (now reports a `running` record whose pid is dead); `_meta.json`; a MATSim `java.exe` at tens of GB — **the ~0.5–1 GB one is VS Code's language server** |
-| Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --all` then `--it <n>` — every 10th iteration is readable now, not only the trips-table ones |
+| Which iterations it has written, and its per-mode reading at each | `python src/analyse/report_mode_ridership.py --run results/20260830T124711_300it_10pct --trend` (every readable iteration, every mode, direction) · `--it <n>` for one table · `--watch 300` to keep printing — every 10th iteration is readable now, not only the trips-table ones |
 | **This session's PR is OPEN at handoff** (or merged overnight — check) | `gh pr list --state open` · `gh pr checks <n>` |
 | Open issues — **none closed this session; #48, #86, #91, #30, #93, #96 carry new measured comments** | `gh issue list --state open` |
 | Issue / PR totals | `gh issue list --state all` · `gh pr list --state all` |

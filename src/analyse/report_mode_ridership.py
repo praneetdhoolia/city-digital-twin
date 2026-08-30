@@ -70,6 +70,9 @@ SUBMODE_TO_TARGET = {
 # vehicle - they travel in a car that is already counted - so ride is absent
 # here by construction, not by oversight.
 ROAD_VEHICLE_MODES = ('car', 'truck', 'motorbike', 'taxi')
+# What the last report() computed - modelled level, count and target per mode -
+# so `--trend` can line iterations up without re-implementing the table
+LAST = {}
 
 # The gate's two thresholds are the DIRECTIVE's, not this script's, so they
 # are declared like every other controllable value rather than typed here.
@@ -371,6 +374,14 @@ def report(run_dir, iteration, truck_stations=False):
             modelled[mode] = lga_pct.get(mode, 0.0)
             trips[mode] = lga_cnt.get(mode, 0)
 
+    # the numbers behind the table, for `--trend` (which prints nothing of
+    # the table itself and reads these after a silenced report())
+    LAST['iteration'] = iteration
+    LAST['modelled'] = dict(modelled)
+    LAST['trips'] = dict(trips)
+    LAST['targets'] = {m: t['target'] for m, t in tgt.items()}
+    LAST['truck_target'] = truck_target_stn
+
     stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
     name = _os.path.basename(_os.path.normpath(run_dir))
     print('=' * 100)
@@ -513,9 +524,63 @@ def main():
                          'until the run\'s _meta.json leaves `running` (the '
                          'goal directive\'s continuous per-mode print, with '
                          'a timestamp on every table)')
+    ap.add_argument('--trend', action='store_true',
+                    help='one row per readable iteration, every mode '
+                         'individually: modelled %% against target, then the '
+                         'direction over the readings - the gate reads the '
+                         'TREND, not the level (DECISIONS.md 9.108, 9.120)')
     a = ap.parse_args()
 
     import iteration_trips as itr
+    if a.trend:
+        import contextlib
+        import io as _io
+        have = sorted(set(mim.iterations_with_trips(a.run))
+                      | set(itr.iterations_with_plans(a.run)))
+        if not have:
+            raise SystemExit('%s holds no readable iteration yet' % a.run)
+        rows = []
+        for it in have:
+            try:
+                with contextlib.redirect_stdout(_io.StringIO()):
+                    report(a.run, it, a.truck_stations)
+            except SystemExit:
+                continue        # the newest iteration may still be writing
+            rows.append((it, dict(LAST['modelled'])))
+        if not rows:
+            raise SystemExit('no iteration of %s could be read' % a.run)
+        targets = LAST['targets']
+        modes = [m for m in targets if m != 'freight_train']
+        stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
+        print('PER-MODE TREND   %s   run %s   %d readable iteration(s)'
+              % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows)))
+        print('modelled %% of resident linked trips (truck: %s)'
+              % ('heavy share at the classifying stations'
+                 if a.truck_stations else 'network-wide road-vehicle share, NOT its target basis'))
+        print('%-12s %9s' % ('mode', 'target') + ''.join('%9s' % ('it.%d' % it) for it, _ in rows) + '   direction')
+        for m in modes:
+            t = targets.get(m)
+            if m == 'truck' and a.truck_stations and LAST.get('truck_target') is not None:
+                t = LAST['truck_target']
+            vals = [r.get(m) for _, r in rows]
+            line = '%-12s %9s' % (m, '-' if t is None else '%.4f' % t)
+            line += ''.join('%9s' % ('-' if v is None else '%.4f' % v) for v in vals)
+            if t is not None and len(vals) >= 2 and vals[0] is not None and vals[-1] is not None:
+                d0, d1 = abs(vals[0] - t), abs(vals[-1] - t)
+                span = rows[-1][0] - rows[0][0]
+                rate = (vals[-1] - vals[0]) / span if span else 0.0
+                if d1 < d0:
+                    verdict = 'toward'
+                    if rate and (t - vals[-1]) * rate > 0:
+                        verdict += ' (~%d more it)' % round((t - vals[-1]) / rate)
+                elif d1 > d0:
+                    verdict = 'AWAY'
+                else:
+                    verdict = 'flat'
+                dev = 100.0 * (vals[-1] - t) / t if t else float('nan')
+                line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
+            print(line)
+        return
     if a.watch:
         import json
         import time as _time
