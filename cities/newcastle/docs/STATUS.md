@@ -82,7 +82,7 @@ F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260830T222642_300it_10pct` | running | F21-licence-rate-demand | - | - |
+| `20260830T222642_300it_10pct` | running | F21-licence-rate-demand | 0 | - |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
@@ -102,8 +102,8 @@ F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
 2. **Gate it at 100, 200 and 300** with `report_mode_ridership.py --trend`,
    every mode; stop on any mode past 20 % or heading there; fix from the root
    (the loop in GOAL.md). Regenerate this board after every reading.
-3. **Rerun the #96 subtour scan on the rebuilt plans** while the arm runs (not
-   a run; no approval).
+3. **The #96 scan is rerun on the rebuilt plans**: 341 mixed subtours, 3 leaf,
+   in 110 of 621,364 persons — unchanged in rate by the rebuild (on #96).
 
 **Decisions required:** enable the Task Scheduler operational log so a
 console-stop death can name its trigger (#66); the fraction and cost of a
@@ -125,7 +125,7 @@ while the record's S2 probe ran with it off ([positions/signals-and-crossings](p
 | Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals on F21 |
 | Bike, bus and walk residues — the car-less quarter and the licence fix | #49 #50 #30 | [walk-and-bike](positions/walk-and-bike.md) | F21 shares by car availability |
 | Traffic counts far below observation at 30 stations | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) | F21 counts |
-| Mixed chain/non-chain subtours in the demand | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the scan on the F21 plans |
+| Mixed chain/non-chain subtours in the demand (341 on the F21 plans, 3 leaf) | #96 #30 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the three leaf subtours traced to their placement |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
 | Assumed values still replaceable by held data | #63 #62 | [network-and-inputs](positions/network-and-inputs.md) | the TableBuilder extract |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |

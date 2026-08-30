@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 30 August 2026 · **Record read through:** §9.133 · **Open family:** F21
 
 ## What is built
 
@@ -26,7 +26,7 @@
 - **Two-state scoring**: with the car plan written first, F15 iteration 0 executed car for 74.74% of residents (162,812 departures, 6,820 cars still on the road at 30:00) and every other mode's plan was scored under a quarter of that traffic; bike beat car for 48.7% of car-available residents (§9.121). After the uniform draw, F16 iteration 0 had 81,332 car departures and 246 stuck, and car is the best-scored plan for 61.1% against 47.8% (§9.121).
 - **Selection lags scoring**: F16 iteration 10 had car selected by 38.0% of car-available residents against 61.1% for whom it scored best — ChangeExpBeta compares the selected plan with one random other each round, and 30% of agents execute a fresh plan each iteration (§9.121).
 - **The mixed-subtour crash** killed five arms at five different iterations. Measured in one replanning round: 20 plans clean before and mixed after MATSim's own strategy, against 8 arriving mixed (§9.119). The shape is a one-trip child subtour — consecutive activities within `RUN.mode_choice.coord_distance_m` — handed a non-chain mode by the single-trip draw, dormant until the parent is selected. `20260830T083019_1000it_25pct` cleared iteration 6 with 5 refusals and 5 stand-asides, where five arms had died at 3 (§9.119).
-- **The demand's own mixed subtours**: 99 in the F14 WEEKDAY population, all spanning several excursions, none leaf (#96); 334 in the F15 population — 3 leaf, 331 spanning, in 328 plans of 114 persons, 0.015% of plans (§9.120).
+- **The demand's own mixed subtours**: 99 in the F14 WEEKDAY population, all spanning several excursions, none leaf (#96); 334 in the F15 population — 3 leaf, 331 spanning, in 328 plans of 114 persons, 0.015% of plans (§9.120); **341 in the F21 population** (rebuilt on the licence-rate population, §9.133) — 3 leaf, 338 spanning, in 329 plans of 110 persons out of 621,364 persons, 2,337,850 plans and 4,667,170 subtours; `car+walk` 112, `car+pt` 112, `car+taxi` 111, `car+ride` 6, every example `closed=false` (`citysim.SubtourChainScan`, 30 Aug, recorded on #96). The rebuild moved the count by 7 and the rate not at all; the three leaf subtours persist.
 - **Relaxation at 1000** (`20260816T022250_1000it_10pct`, `20260817T011703_1000it_25pct`): post-snap drift +0.22 / +0.17 pp, fraction-independent, passes at 0.25, 0.5 and 1.0 pp and fails the 0.1 pp floor; pre-cutoff search creep decaying ×0.73 per 100 iterations with roughly 2 pp unfinished (§9.43).
 - **The latest twelve-mode reading**, F20 `aborted_20260830T184955_300it_10pct` iteration 10: car 48.01, ride 9.22, walk 25.60, bike 7.77 — exploration, not a gate (brief §2). F19 `aborted_20260830T170743_300it_10pct` iteration 20 read car 56.76, walk 18.05, ahead of F17 at equal depth on every mode.
 
