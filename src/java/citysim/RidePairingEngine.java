@@ -363,10 +363,16 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         private final Id<Link> to;
         private final double departure;
         private final String direction;
+        /** 9.120: the real (non-stage) activity this trip leaves from, and
+         *  the planned access time between its end and the ride leg's own
+         *  departure - what a declared pair's re-timing has to move. */
+        private final Activity origin;
+        private final double accessTravel;
 
         RideLeg(final Id<Person> person, final Leg leg, final Route route,
                 final Id<Link> from, final Id<Link> to, final double departure,
-                final String direction) {
+                final String direction, final Activity origin,
+                final double accessTravel) {
             this.person = person;
             this.leg = leg;
             this.route = route;
@@ -374,6 +380,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             this.to = to;
             this.departure = departure;
             this.direction = direction;
+            this.origin = origin;
+            this.accessTravel = accessTravel;
         }
     }
 
@@ -474,6 +482,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             final List<PlanElement> elements = plan.getPlanElements();
             double clock = Double.NaN;
             String previousActivity = null;
+            // 9.120: the real activity the current trip leaves from, and the
+            // planned access time accumulated since its end - the handles a
+            // declared pair's re-timing needs (see below)
+            Activity lastReal = null;
+            double accessSinceReal = 0.0;
             for (int i = 0; i < elements.size(); i++) {
                 final PlanElement pe = elements.get(i);
                 if (pe instanceof Activity) {
@@ -491,6 +504,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     // carries - silently all-zero.
                     if (!StageActivityTypeIdentifier.isStageActivity(act.getType())) {
                         previousActivity = act.getType();
+                        lastReal = act;
+                        accessSinceReal = 0.0;
                     }
                     continue;
                 }
@@ -500,6 +515,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 if (!Double.isNaN(clock)) {
                     clock = departure + travel;
                 }
+                final double accessBefore = accessSinceReal;
+                accessSinceReal += travel;
                 final Route route = leg.getRoute();
                 if (route == null) {
                     continue;
@@ -528,7 +545,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                                           route.getStartLinkId(),
                                           route.getEndLinkId(), departure,
                                           direction(previousActivity,
-                                                    nextActivity(elements, i))));
+                                                    nextActivity(elements, i)),
+                                          lastReal, accessBefore));
                 }
             }
         }
@@ -545,6 +563,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         final Map<String, int[]> unpaired = new HashMap<>();
         int nPaired = 0;
         int remoded = 0;
+        // 9.120: declared passengers whose departure was moved to the
+        // driver's, and by how much in total - the drift the re-timing removed
+        int retimed = 0;
+        double retimeShiftSum = 0.0;
         int fromRealised = 0;
         int fromRouted = 0;
         int capacityRefusals = 0;
@@ -601,7 +623,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // already settled whether this is the same trip, so the
                 // clock only has to cover the drift replanning introduced.
                 final boolean isDeclared = declared.contains(driver.person.toString());
-                if (gap > (isDeclared ? boundWindow : window)) {
+                // 9.120: for the driver the demand NAMED there is no clock
+                // test at all. The two members were generated as ONE trip
+                // and only MATSim's independent time mutation ever moved
+                // them apart - measured on the F14 arm, the declared pair
+                // on the same OD within 15 min fell 57.1% -> 27.5% in 30
+                // iterations while gaps over 45 min rose 1.8% -> 7.5%. The
+                // passenger is RE-TIMED to the driver below, so the gap is
+                // not paid for as waiting: it is removed at its source.
+                if (!isDeclared && gap > window) {
                     if (endpointsMatch(rule, driver, ride) && gap < nearestMatchingGap) {
                         nearestMatchingGap = gap;
                     }
@@ -703,6 +733,33 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     // pair; the demand's own binding is what kept it
                     pairedByIdentity++;
                 }
+                // 9.120: a declared passenger leaves when the car leaves.
+                // The activity this trip departs from is ended so that the
+                // planned access walk delivers the passenger to the meeting
+                // link exactly at the driver's planned departure - the walk
+                // is PCE 0 at a capped constant speed, so its planned time
+                // is its realised time. Nothing is invented: the two
+                // members' clocks were one clock when the demand generated
+                // the trip. Refused only when the driver leaves before this
+                // activity could start, which is a genuine miss and stays
+                // one. The plan keeps the new end time, so the passenger's
+                // memory converges on the driver's clock rather than being
+                // re-drawn from it every round.
+                if (ride.origin != null) {
+                    final double target = best.departure - ride.accessTravel;
+                    final OptionalTime start = ride.origin.getStartTime();
+                    if (!start.isDefined() || target > start.seconds()) {
+                        final OptionalTime was = ride.origin.getEndTime();
+                        if (!was.isDefined()
+                                || Math.abs(was.seconds() - target) > 0.5) {
+                            ride.origin.setEndTime(target);
+                            retimed++;
+                            retimeShiftSum += Math.abs(
+                                    (was.isDefined() ? was.seconds() : target)
+                                    - target);
+                        }
+                    }
+                }
             }
             paired.computeIfAbsent(ride.direction, k -> new int[1])[0]++;
 
@@ -749,6 +806,11 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     .info("ridePairing: {} unpaired ride legs re-moded to "
                           + "network walk (DECISIONS.md 9.55)", remoded);
         }
+        org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                .info("ridePairing: {} declared passengers re-timed to their "
+                      + "driver's departure, mean shift {} s (DECISIONS.md 9.120)",
+                      retimed, retimed == 0 ? 0.0
+                              : Math.round(retimeShiftSum / retimed));
     }
 
     // ---- the rules --------------------------------------------------------

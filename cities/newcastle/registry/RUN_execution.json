@@ -194,7 +194,7 @@
       "description": "The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53)."
     },
     "RUN.replanning.max_agent_plan_memory": {
-      "value": 5,
+      "value": 8,
       "units": "plans",
       "source": "literature",
       "sweep": [
@@ -204,7 +204,7 @@
       "status": "active",
       "decisions_ref": "9.3",
       "matsim_param": "replanning.maxAgentPlanMemorySize",
-      "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle."
+      "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep."
     },
     "RUN.replanning.time_mutation_range_s": {
       "value": 1800.0,

@@ -623,10 +623,21 @@ else:
         pth = _city.path('demand/plans/matsim/population_%s.xml.gz') % day
         if not check(os.path.exists(pth), 'MATSim population present for %s' % day):
             continue
-        check(v['activities'] == v['legs'] + v['persons'],
-              '%s: activities = legs + persons, so every plan alternates '
-              'activity/leg and closes (%d = %d + %d)'
-              % (day, v['activities'], v['legs'], v['persons']))
+        # DECISIONS.md 9.120: under the full-choice-set seed a person holds
+        # one plan per usable mode, so the identity is activities = legs +
+        # PLANS; the plan count is the histogram the report carries plus one
+        # for every person written with a single plan (locked tiers, carve)
+        seed_method = v.get('seed_method', 'uniform_draw')
+        hist = v.get('seed_plans_per_person', {}) or {}
+        multi_persons = sum(int(n) for n in hist.values())
+        plans_total = (sum(int(k) * int(n) for k, n in hist.items())
+                       + (v['persons'] - multi_persons))
+        check(v['activities'] == v['legs'] + plans_total,
+              '%s: activities = legs + plans, so every plan alternates '
+              'activity/leg and closes (%d = %d + %d; seed method %s, %d '
+              'persons with %s plans)'
+              % (day, v['activities'], v['legs'], plans_total, seed_method,
+                 multi_persons, '/'.join(sorted(hist)) or '1'))
         seed = v.get('seed_mode_share', {})
         check(abs(sum(seed.values()) - 1.0) < 1e-3,
               '%s: seed mode shares sum to 1' % day)
@@ -670,13 +681,22 @@ else:
               '%s: the plans report records the coverage-seeded ride '
               'component (DECISIONS.md 9.84)' % day)
         ride_drawn = ride - (covered or 0)
-        check(0 < ride_drawn < min(free) if free else False,
-              '%s: the DRAWN ride seed %.3f (total %.3f minus covered %.3f) '
-              'sits below the universal modes (%.3f) because part of the '
-              'population has nobody to drive them, and is not zero '
-              '(DECISIONS.md 9.11, 9.84)'
-              % (day, ride_drawn, ride, covered or 0,
-                 min(free) if free else -1))
+        if seed_method == 'full_choice_set':
+            # 9.120: no ride leg is seeded that the demand did not bind to
+            # a driver - the drawn component is exactly zero, and the
+            # covered component is the whole ride seed
+            check(abs(ride_drawn) < 1e-6 and ride > 0,
+                  '%s: under the full-choice-set seed every seeded ride leg '
+                  'is a bound one (drawn %.4f, covered %.4f, total %.4f; '
+                  'DECISIONS.md 9.120)' % (day, ride_drawn, covered or 0, ride))
+        else:
+            check(0 < ride_drawn < min(free) if free else False,
+                  '%s: the DRAWN ride seed %.3f (total %.3f minus covered %.3f) '
+                  'sits below the universal modes (%.3f) because part of the '
+                  'population has nobody to drive them, and is not zero '
+                  '(DECISIONS.md 9.11, 9.84)'
+                  % (day, ride_drawn, ride, covered or 0,
+                     min(free) if free else -1))
         bike = seed.get('bike', 0)
         _bar = prep.get('bike_available_rate')
         check(_bar is not None,

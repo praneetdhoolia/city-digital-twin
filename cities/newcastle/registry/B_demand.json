@@ -1114,6 +1114,24 @@
       "decisions_ref": "9.6, 9.7",
       "description": "The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative."
     },
+    "B.mode.seed_method": {
+      "value": "full_choice_set",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "full_choice_set",
+          "uniform_draw"
+        ],
+        "basis": "The two seed methods the plan builder can produce. `uniform_draw` is the pre-9.120 seed - ONE plan per person, its tour modes drawn uniformly over the usable modes (B.mode.seed_split) - and `full_choice_set` writes one plan per usable mode instead, so the sweep is over the METHOD, not over any share; running both measures how much the search, rather than the scoring, decided the converged shares."
+      },
+      "status": "active",
+      "decisions_ref": "9.120",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "How each person's initial plan memory is populated. `full_choice_set`: one plan per mode the person may use - car (if a car is available), walk, bike (if one is available and the person is old enough), pt, taxi (if old enough) - each mode on every tour it may take, with serving tours held at car and, where the demand declared a driver, one further plan riding on the covered tours. MATSim executes every UNSCORED plan before it consults the selector (GenericPlanStrategyImpl.run in the pinned jar), so the entire choice set is scored within the first few iterations and selection - not random innovation - decides the mode from then on. It favours no mode: each is one plan, once. Measured motivation (9.120): on the F14 arm at iteration 30, 65% of the residents still cycling held no bike-free plan in memory, and a level read at iteration 100 was a statement about the search, not the model. Needs RUN.replanning.max_agent_plan_memory above the seeded plan count, because MATSim removes an UNSCORED plan first when memory overflows (WorstPlanForRemovalSelector). `uniform_draw`: the single uniformly drawn plan, as before."
+    },
     "B.network_factors.n_pairs": {
       "value": 600,
       "units": "zone_pairs",
@@ -1746,10 +1764,11 @@
       "status": "active",
       "decisions_ref": "9.84",
       "consumers": [
-        "src/java/citysim/ModeAvailabilityConfigGroup.java"
+        "src/java/citysim/ModeAvailabilityConfigGroup.java",
+        "src/build/build_matsim_plans.py"
       ],
       "matsim_param": "modeAvailability.taxiMinAge",
-      "description": "Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49)."
+      "description": "Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49). Since 9.120 the plan builder reads the same value so the full-choice-set seed never writes a taxi plan for a person the run would refuse."
     },
     "B.population.bike_min_age": {
       "value": 12,

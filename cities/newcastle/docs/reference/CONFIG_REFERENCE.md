@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 402 fields are made of
+## What the 403 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 36 | follows from another registry field by identity |
 | `literature` | 65 | a published value, not specific to this city |
 | `assumed` | 149 | chosen without direct empirical support |
-| `definition` | 114 | fixed by the formulation, not an empirical quantity |
+| `definition` | 115 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 383 | usable point value |
+| `active` | 384 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -1118,7 +1118,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 97 fields*
+*`cities/newcastle/registry/B_demand.json` - 98 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1179,6 +1179,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
 | `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
+| `B.mode.seed_method` | `full_choice_set` | enum | `definition` | `full_choice_set`, `uniform_draw` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
 | `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
@@ -1616,6 +1617,12 @@ Seed mode for a passenger tour whose BOTH directions are covered by serve-tour b
 
 ***assumed** · status **active** · DECISIONS.md §9.68*
 
+#### `B.mode.seed_method`
+
+How each person's initial plan memory is populated. `full_choice_set`: one plan per mode the person may use - car (if a car is available), walk, bike (if one is available and the person is old enough), pt, taxi (if old enough) - each mode on every tour it may take, with serving tours held at car and, where the demand declared a driver, one further plan riding on the covered tours. MATSim executes every UNSCORED plan before it consults the selector (GenericPlanStrategyImpl.run in the pinned jar), so the entire choice set is scored within the first few iterations and selection - not random innovation - decides the mode from then on. It favours no mode: each is one plan, once. Measured motivation (9.120): on the F14 arm at iteration 30, 65% of the residents still cycling held no bike-free plan in memory, and a level read at iteration 100 was a statement about the search, not the model. Needs RUN.replanning.max_agent_plan_memory above the seeded plan count, because MATSim removes an UNSCORED plan first when memory overflows (WorstPlanForRemovalSelector). `uniform_draw`: the single uniformly drawn plan, as before.
+
+***definition** · status **active** · DECISIONS.md §9.120*
+
 #### `B.mode.seed_split`
 
 The mode split the co-evolution STARTS from, conditioned only on car availability from B1. UNIFORM OVER THE USABLE MODES AND DELIBERATELY A BAD GUESS: it starts the search far from the observed point so that arriving there is evidence about the model rather than about the seed. It is a definition, not an assumption, because "uniform over what a person can use" is fully determined by B1 car availability and has no free share to sweep. What is swept is the CHOICE of seed - see B.mode.seed_split_informed.
@@ -1892,7 +1899,7 @@ How long a passenger waits for a vehicle before abandoning the taxi trip. It is 
 
 #### `B.taxi.min_unaccompanied_age`
 
-Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49).
+Minimum age at which taxi is in an agent's choice set. Taxi was gated by NOTHING - AvailabilityModesCalculator gated ride, bike and lockedMode while any agent of any age could hail (issue #49). Since 9.120 the plan builder reads the same value so the full-choice-set seed never writes a taxi plan for a person the run would refuse.
 
 ***assumed** · status **active** · DECISIONS.md §9.84 · MATSim `modeAvailability.taxiMinAge`*
 
@@ -2819,7 +2826,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.relaxation.drift_tolerance_pp` | `0.5` | percentage_points | `assumed` | 0.1 - 1 |
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `measured` | 1 - 100 |
 | `RUN.replanning.fraction_to_disable_innovation` | `0.8` | share_of_iterations | `literature` | 0.7 - 0.9 |
-| `RUN.replanning.max_agent_plan_memory` | `5` | plans | `literature` | 3 - 10 |
+| `RUN.replanning.max_agent_plan_memory` | `8` | plans | `literature` | 3 - 10 |
 | `RUN.replanning.strategy_subpopulations` | `{"SubtourModeChoice": ["person"]}` | subpopulation_names_per_strategy | `definition` | - |
 | `RUN.replanning.subpopulations` | `["person", "external", "freight"]` | subpopulation_names | `definition` | - |
 | `RUN.replanning.time_mutation_range_s` | `1800.0` | seconds | `literature` | 600 - 1800 |
@@ -3088,7 +3095,7 @@ Share of iterations after which no new plans are created. At 250 iterations inno
 
 #### `RUN.replanning.max_agent_plan_memory`
 
-Plans retained per agent. A property of the MATSim formulation, not of Newcastle.
+Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep.
 
 ***literature** · status **active** · DECISIONS.md §9.3 · MATSim `replanning.maxAgentPlanMemorySize`*
 

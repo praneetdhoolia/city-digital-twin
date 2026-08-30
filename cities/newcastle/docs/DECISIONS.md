@@ -88,6 +88,7 @@ its layout will otherwise cost you an hour:
 | **Twelve modes get twelve targets: a folded survey category cannot answer a per-mode question** | **§9.87** — the HTS publishes SIX categories and this city simulates TWELVE modes, so four modes shared one 3.8% Public Transport row and a fold could hide an excess behind a deficit. The data document’s own lists EVIDENCE `fit.py`’s folds (bike+taxi → Other; motorbike appears in no other category, so it can only be a Vehicle driver). `build_mode_targets.py` disaggregates every level with census G62 composition and current Opal/station boardings, writes `mode_targets_by_mode.csv`, and is read by `report_mode_ridership.py`. **PT splits on CURRENT boardings, not the lockdown-vintage 2021 census — the census sets the sweep’s far end instead.** Ferry stays **unobtained and swept**: nothing is published for this city. The person-trip targets sum to 99.4037%, and the missing 0.596 pp is resident truck-driving, written out as a named deduction rather than folded into car. **NOT added to `validation_targets.csv`** — it would double-count and disturb the 67/143 split |
 | **SCATS stops being an assumed constant and becomes an algorithm (family F12)** | **§9.88** — every arm to date ran 14 corridor intersections on a FIXED 110 s plan, because the unreleased phase data was handled by sweeping a cycle time. `citysim.ScatsSignalController` implements the published logic instead: degree of saturation measured at every stop line from `LinkLeaveEvent`, incremental cycle adaptation toward a target DS on the critical movement, splits equalising DS across stages, clearances preserved. **Offsets deliberately NOT adapted** — that library is the unreleased artefact and no algorithm replaces it. Two defects recorded: DS measured against FULL-SCALE capacity read 0.000 at a 1% sample (`qsim.flowCapacityFactor` belongs in the denominator), and modular cycle arithmetic cannot survive a variable cycle. Transit priority lives inside the controller, and **compensation becomes intrinsic** — a starved stage’s DS rises and the next split repays it |
 | **A recurring crash: MATSim's mode choice creates the state it refuses** | **§9.119** — `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` killed FIVE arms across two sessions. Three mechanisms were argued from code and all three refuted. Measured instead: in one replanning round **8 plans arrived mixed and 20 went clean→mixed** under MATSim's own strategy. A degenerate ONE-TRIP child subtour (two activities within `coordDistance`) gets a non-chain mode from `probaForRandomSingleTripMode`, leaving the PARENT holding car+pt; the plan sleeps until mode choice later SELECTS the parent. Repaired by two refusals that invent nothing. **§9.118** is the nested-subtour defect found on the way — real, repaired, and AMENDED because it is not this crash's cause |
+| **Ride offered to people nobody drives, the seed doing the searching, a per-iteration twelve-mode reader, and the F14 arm's console-stop death** | **§9.120** — per-trip `boundRideTrips`/`boundDriveTrips` gate ride and hold declared drivers on car; a declared passenger is re-timed to the driver; `B.mode.seed_method` = `full_choice_set` (supersedes §9.92's uniform seed); plan memory 5 → 8; the carve solved on eligible trip counts; family F15 |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -11357,6 +11358,239 @@ make it name one.**
 
 ---
 
+## 9.120 Ride was offered to people nobody drives, the seed was doing the searching, and the arm died of a console stop nobody can name (30 August 2026, sixteenth session; issues #48, #86, #91, #30, #49, #93, #96)
+
+The sixteenth session opened on the F14 arm `20260830T083019_1000it_25pct` at
+iteration 38 and on the `/goal` directive that asks for every one of twelve
+modes to be printed against its target continuously and gated every 100
+iterations. Three things followed, in this order: the reader that could not
+print, the arm that could not be gated, and the measurements that named what
+the gate would have found.
+
+### The reader refused iterations the run had fully written
+
+`report_mode_ridership.py` read `<n>.trips.csv.gz` and nothing else. MATSim
+writes that table on `writeTripsInterval` — this run held it at iterations 0
+and 1 — while `<n>.experienced_plans.xml.gz` is written every 10 iterations
+and is the SOURCE the trips table is derived from (`TripsAndLegsCSVWriter`
+walks the experienced plans, splits them at every non-stage activity, asks the
+bound `AnalysisMainModeIdentifier`). New `src/analyse/iteration_trips.py`
+rebuilds the same linked trips from the experienced plans — stage activities
+by MATSim's own rule (a type ending in `interaction`), main mode by
+`PtSubmodeMainModeIdentifier` over `DefaultAnalysisMainModeIdentifier`
+(transit legs fold to `pt`, walk legs drop out, the one mode left decides),
+distance as the sum of route distances, pt submodes from each boarded route's
+`transportMode` through the run's own schedule — and **is validated against
+the table wherever both exist, not assumed**: iteration 0 of the F14 arm
+(532,161 trips) and iteration 100 of `aborted_20260829T172145_1000it_10pct`
+(221,144 trips, taxi included) reproduce every mode count exactly and every
+distance to rounding. `--validate` refuses to report a difference as
+agreement. `measure_iteration_modes.py` and `report_mode_ridership.py` now
+read either source and say which; the basis line names it.
+
+### The arm died, and the record can say how but not why
+
+Between 12:03:18 and 12:03:31 — mid-iteration 38, QSim at 19:00 — the JVM
+vanished. No exception, no `OutOfMemoryError`, no `hs_err` file. Task
+Scheduler recorded `citysim_run_20260830T083018` (the one-second name offset
+of trap 14) as ended with **`LastTaskResult 3221225786 = 0xC000013A,
+STATUS_CONTROL_C_EXIT`** — a console-control stop, not a Java failure. What
+sent it is **not established**: the scheduler's operational log is disabled
+on this machine and enabling it needs elevation (refused from the session);
+the System log holds no power-source event although the task carries
+`StopIfGoingOnBatteries`; and the stop coincides with this session starting
+(12:02–12:03), which is a correlation and is recorded as one. Closed out
+through `mark_dead` with those facts; `run_failure.py --check` is green because
+the record carries a cause, and the cause says what it does not know.
+
+**Trap 8 of the brief stood exactly as written**: `run_failure.py --check`
+inspects terminal records only, so the dead arm sat at `running` with a dead
+pid and a green check until a watcher on the log's mtime noticed 30 minutes of
+silence. The watcher was armed for a new iteration, an exception, a stall and
+a status change; only the stall fired.
+
+### What the arm established before it died — the twelve modes at 1 / 10 / 20 / 30
+
+Residents' linked main-mode trips, 25%, from the reader above. Trend across
+the four readings, not the level:
+
+| mode | it.1 | it.10 | it.20 | it.30 | target | trend |
+|---|---:|---:|---:|---:|---:|---|
+| car | 40.62 | 40.39 | 42.12 | 44.20 | 58.16 | toward, +0.19 pp/it over 10→30 |
+| ride | 10.69 | 9.46 | 9.04 | 9.14 | 20.60 | **away, then flat** |
+| walk | 30.21 | 31.68 | 30.40 | 28.40 | 13.40 | toward, −0.16 pp/it |
+| taxi | 1.00 | 1.36 | 1.39 | 1.34 | 0.99 | overshot, flat at +36% |
+| bike | 7.77 | 7.59 | 7.74 | 8.00 | 2.21 | **away** |
+| motorbike | 0.105 | 0.091 | 0.099 | 0.099 | 0.241 | flat at −59% |
+| bus | 7.72 | 7.52 | 7.30 | 7.02 | 2.38 | toward, slowly |
+| heavy rail | 1.79 | 1.82 | 1.83 | 1.73 | 0.77 | flat |
+| light rail | 0.083 | 0.080 | 0.070 | 0.065 | 0.644 | **away** |
+| ferry | 0.003 | 0.003 | 0.005 | 0.008 | 0.101 | toward, from nothing |
+| truck | 9.15 | 9.08 | 8.66 | 8.24 | n/a (§9.101) | 16.45% at the 3 classifying stations vs 11.31% |
+| freight train | 314 | 314 | 314 | 314 | 314 closures | representation |
+
+### The measurement: planned against experienced, trip by trip
+
+Pairing each resident trip's mode in the iteration-30 SELECTED plan with its
+mode in the same iteration's EXPERIENCED plan (153,100 trips):
+
+| planned | experienced | trips | share |
+|---|---|---:|---:|
+| car | car | 55,575 | 36.30% |
+| walk | walk | 36,441 | 23.80% |
+| ride | ride | 13,994 | 9.14% |
+| pt | pt | 13,498 | 8.82% |
+| bike | bike | 12,246 | 8.00% |
+| **ride** | **car** | **12,098** | **7.90%** |
+| **ride** | **walk** | **5,833** | **3.81%** |
+| walk | *never experienced* | 4,479 | 2.93% |
+| ride | *never experienced* | 2,462 | 1.61% |
+| taxi | taxi | 2,058 | 1.34% |
+| pt | *never experienced* | 1,899 | 1.24% |
+| taxi | walk | 1,194 | 0.78% |
+
+Three facts, none of which a share can show:
+
+1. **Residents PLAN ride on 22.46% of trips — above the 20.60% target — and
+   realise 9.14%.** The rest is the `licensed_drive_else_walk` fallback
+   (§9.105): 7.90 points executed as a drive, 3.81 as a walk. Because the
+   forced execution is what scoring sees while the plan keeps `ride`
+   (§9.81), a ride plan that gets driven scores like a car plan and is never
+   selected away. Car's own planned share is **36.93% against 58.16%**, masked
+   by the fallback drives.
+2. **6.74% of planned resident trips were never experienced at all.** At
+   30:00 the qsim held **18,412 agents** still en route — walk 9,327, **ride
+   5,070 passengers waiting for a driver who did not come**, bus 3,202, rail
+   451 — and every later trip of theirs is missing from the realised table.
+   Nothing had measured this class before.
+3. Walk's planned share is 26.73% before any fallback — itself double the
+   target — and converging at only −0.086 pp per iteration in `modestats`.
+
+### Why ride does not realise: the pair decays, and a third of it never had a driver
+
+Every resident ride leg in the selected plans, classified against the
+`boundDriver` the demand named for that person (a per-PERSON attribute until
+today):
+
+| class | iteration 0 | iteration 30 |
+|---|---:|---:|
+| planned ride legs | 31,500 | 34,387 |
+| **no declared driver at all** | **26.6%** | **36.0%** |
+| declared driver drives the same OD within 15 min | **57.1%** | **27.5%** |
+| same OD, gap 15–45 min | 0.1% | 6.3% |
+| same OD, gap over 45 min | 1.8% | 7.5% |
+| driver's leg shares one end only (the drop-off class, §9.102) | 11.6% | 13.6% |
+| driver has no leg on this OD | 2.1% | 5.8% |
+| driver on the same OD by another mode | 0.6% | 3.4% |
+
+At iteration 0 — before a single replanning round — a quarter of the ride
+legs belonged to people with nobody to drive them: the uniform seed drew
+`ride` at 0.2 for any car-available tour, bound or not (§9.96 had already
+named the seed as what showed through). By iteration 30 mode choice had
+raised that to 36%, because `rideAvail` is a household property and
+`SubtourModeChoice` hands `ride` to any trip of any person the household
+qualifies. Of the pairs that WERE declared, the same-OD-within-15-min class
+halved in 30 iterations while the over-45-minute class quadrupled:
+`TimeAllocationMutator` moves the passenger and the driver independently and
+the drift compounds. The pairing engine's own funnel says the same thing from
+the other side — `paired_by_identity` 66,528 → 45,861, `miss_endpoints`
+13,545 → 43,754.
+
+### Why bike does not fall: the search, not the score
+
+Of 4,459 resident agents executing a bike plan at iteration 30, the plan was
+the best-scored in memory for 28.4%, within 2 utils of the best for 34.7%,
+and worse by more than 2 utils for 36.8% — and **65.1% held no bike-free plan
+anywhere in their 5–6-plan memory**. `ChangeExpBeta` selects among the plans
+an agent has; a bike leg the uniform seed placed survives until random
+innovation happens to offer that subtour another mode, at 0.1 per iteration
+over five modes and several subtours. Bike's emitted scoring is −14.5 utils/h
+at 15 km/h against car's −11.0 at road speed; on a 9.8 km mean trip (observed
+5.2) bike cannot win on score, and it was not winning on score.
+
+This is the same finding as §9.108's "car, walk and pt were converging all
+along", read one level down: **a level at iteration 100 was a statement about
+how far random innovation had got through the seed, not about the model**,
+and a gate that stops on that level stops on the seed.
+
+### The repairs — three, and none invents a value
+
+**1. Ride is a trip somebody drives.** `build_matsim_plans.py` now writes,
+from the three binding tables that have always carried the tour and the
+direction, two per-trip attributes: `boundRideTrips` (1-based trip indices in
+plan order — a drop-off is its tour's first trip, a pick-up its last, a joint
+companion tour every trip) and `boundDriveTrips` (every trip on a tour that
+serves a booked passenger). WEEKDAY carries 347,692 of them.
+`GatedSubtourModeChoice` refuses whole any proposal that puts `ride` on a trip
+off the first list, or takes a declared driver off `car` on a trip in the
+second — the same refusal it already makes for reach and for a mixed subtour,
+gating proposals and never memories. `rideAvail` stays as the household-level
+necessary condition.
+
+**2. A declared passenger leaves when the car leaves.** `RidePairingEngine`
+no longer applies a clock test to the driver the demand named; on pairing it
+sets the end time of the real activity the ride trip departs from to the
+driver's departure minus the planned access walk — walk is PCE 0 at a capped
+constant speed, so its planned time is its realised time — and refuses only
+when the driver leaves before that activity could start. The plan keeps the
+new end time, so the passenger's memory converges on the driver's clock
+instead of being re-drawn from it. `B.ride.bound_pairing_window_min` is no
+longer a pairing tolerance; it survives only as the physical-wait bound
+`JointRideEngine` gives a declared booking, and its identity (twice the
+mutation range) still describes what it bounds — the driver's own realised
+drift.
+
+**3. The seed is the choice set.** `B.mode.seed_method` = `full_choice_set`:
+one plan per usable mode — car where a car is available, walk, bike where
+one is available and the person is old enough, pt, taxi where old enough —
+each mode on every tour it may take, serving tours held at car, and where the
+demand declared a driver one further plan riding the covered tours on the car
+(else walk) base. MATSim runs a random UNSCORED plan before it consults the
+selector (`GenericPlanStrategyImpl.run` in the pinned jar, read from the
+bytecode), so every mode is executed and scored within the first iterations
+and selection decides from then on; and `WorstPlanForRemovalSelector` drops an
+unscored plan FIRST on overflow, so `RUN.replanning.max_agent_plan_memory`
+goes 5 → 8, inside its 3–10 sweep. WEEKDAY: 620,553 persons, 2–6 plans each
+(2: 34,383 · 3: 50,847 · 4: 201,022 · 5: 194,732 · 6: 27,829), 9,750,599 legs
+over all plans against 2,343,321 in the selected ones. No mode is favoured:
+each is one plan, once. **This supersedes §9.92's "the seed stays uniform"**,
+for the reason the goal states — convergence inside 250 iterations — and for
+the reason measured above: a uniform draw makes random innovation do the
+enumerating the seed can do exactly. `uniform_draw` is retained and swept
+against, so how much the search decided is a measurement, not a claim.
+`seed_ride_covered_share` equals the whole ride seed now, and
+`check_package.py` holds it to that.
+
+**Also:** the motorbike carve probability is solved on the eligible persons'
+OWN WEEKDAY trip counts (1,690,586 of 2,226,914) rather than the population's
+average rate — issue #93's measured under-delivery (3.48 against 4.11
+trips/day) was the arithmetic, not the share. q 0.00317 over 426,129 eligible.
+
+### What this does not repair, stated before the arm
+
+* **The demand binds a driver to ~11% of resident trips** (the ride variant's
+  legs are 2.61% of all seeded legs, 10.9% of the selected plan's), against a
+  20.6% target. With ride offered only where a driver exists, the realised
+  ride share can now be read as the demand's ceiling — and that ceiling is the
+  next root cause, on #86/#91 (55,671 unservable candidates; 8,150
+  `driver_is_the_companion`).
+* Light rail (§9.103, #30) and the ferry (#94) are untouched.
+* Taxi at +36% is a fleet-size question (§9.99), untouched.
+* Walk's planned excess is now something the scored choice set can remove;
+  whether it does is what the arm measures.
+
+### Family F15 opens
+
+The population, its attributes, the seed and two controler classes change
+together, so **nothing run before this compares with anything run after it**,
+including the dead F14 arm and the two F4 arms `README.md` draws from. First
+arm: S2 × WEEKDAY at **10%, 300 iterations, innovation off at 240**, gated per
+mode at 100 / 200 / 300 — sized so a gate costs ~3 h rather than ~8, and so
+the goal's 250-iteration horizon is what the run tests. A 25% confirmation
+follows whatever the 10% arm names.
+
+---
+
 ## 9.81 A missed pairing was deleting the ride alternative, and the model was walking back to its pre-repair answer (26 August 2026, ninth session; issues #48, #49, #30)
 
 The first F6 arm was launched 25 August at 13:57 and **stopped by instruction at
@@ -12029,6 +12263,7 @@ overshoots it is a failed arm, not a success.
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **Ride was offered to people nobody drives, the seed was doing the searching, and the F14 arm died of a console stop nobody can name (§9.120; issues #48/#86/#91/#30/#49/#93/#96).** A per-iteration twelve-mode reader now derives the linked-trip table from the experienced plans and is validated exactly against the trips table at two iterations. The F14 arm `20260830T083019` died mid-iteration 38 with `0xC000013A STATUS_CONTROL_C_EXIT` recorded by Task Scheduler and no exception; trigger not established (scheduler log disabled, no power event, coincident with the session start). Measured on its iteration 30: residents plan ride on 22.46% of trips and realise 9.14% (7.90 executed as a drive, 3.81 as a walk under the fallback); 36.0% of planned ride legs had no declared driver (26.6% at iteration 0); the declared pair on the same OD within 15 min fell 57.1% → 27.5%; 65% of agents executing a bike plan held no bike-free plan in memory; 6.74% of planned trips were never experienced (18,412 agents stuck at 30:00). Three repairs, none inventing a value: per-trip `boundRideTrips`/`boundDriveTrips` from the binding tables, gated in `GatedSubtourModeChoice`; a declared passenger re-timed to the driver's departure in `RidePairingEngine`; and `B.mode.seed_method` = `full_choice_set` — one plan per usable mode, scored within the first iterations because MATSim runs unscored plans first — superseding §9.92's uniform seed, with `RUN.replanning.max_agent_plan_memory` 5 → 8. The motorbike carve is solved on eligible persons' own trip counts. Family F15 opens; first arm 10% × 300 iterations, gated per mode at 100/200/300. |
 | 2026-08-30 | **MATSim's own mode choice created the state MATSim's own mode choice refuses (§9.119; issues #48/#49/#96).** `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` had killed **five arms** across two sessions and was carried as a settled trap. **Three mechanisms were argued from the code and all three refuted** - the §9.106 refusal path (the throw is inside MATSim's own strategy and the bounds are 0.0), §9.105's `car` fallback (every restore succeeded: 48101/48101, 50705/50705, 53890/53890) and §9.118's nested-subtour conversion (a rebuilt arm died identically, 918 s against 928 s). A two-sided diagnostic measured it instead: in one replanning round, **8 plans arrived mixed and 20 went from CLEAN to MIXED** under MATSim's own strategy. The shape is always the same - a degenerate ONE-TRIP child subtour, two activities within `coordDistance` 100 m, is given a non-chain mode by `probaForRandomSingleTripMode` 0.5, which is valid for the child and leaves the PARENT holding `car` and `pt`. The plan sleeps in the agent's memory and kills the run only when mode choice later SELECTS the parent - **the intermittency was the signature, and it was read as flakiness.** Offline, the committed WEEKDAY demand holds **99 mixed subtours of 1,138,887 and 0 of them LEAF** - all span several excursions and all are `closed=false` (#96). Repaired by two refusals that invent nothing: a proposal leaving a subtour mixed is REFUSED and the pre-innovation plan restored whole, and a plan that ARRIVES mixed is stood aside from mode choice while ReRoute still runs. Arm `20260830T083019_1000it_25pct` then **cleared iteration 6**, where five arms had died at 3, at a median 288 s/it. Nothing here is a finding. |
 | 2026-08-30 | **The escort listener converted the INNER subtour of a nested plan (§9.118; issues #48/#49/#86).** The first F14 arm died at iteration 3 on `IllegalStateException: Subtour contains a mix of chain- and non-chainbased modes` - **the same exception that killed three earlier arms** and was recorded as a settled trap. It comes out of MATSim's OWN strategy at `inner.run(plan)`, not the §9.106 refusal path, whose reach bounds are 0.0 and unreachable. **A mechanism was asserted and refuted by the arm's own log**: §9.105's `car` fallback could leave a chain-based leg in a non-chain subtour if the restore silently skipped, but every restore succeeded (48101/48101, 50705/50705, 53890/53890). **The real cause, measured with a purpose-built probe rather than argued**: `EscortCoherenceListener.subtourContaining` returned the FIRST subtour containing the bound trip, and `getSubtours` returns nested subtours **INNER-FIRST** - for `home→work→lunch→work→home` it returns the 2-trip inner subtour at index 0 (`hasParent=true`) ahead of the 4-trip outer one. Converting "the whole subtour" therefore converted two trips of four and left the ENCLOSING subtour holding `car` and `ride`. The 26 August repair stopped this listener converting ONE TRIP of a subtour; it did not stop it converting ONE SUBTOUR of a nested plan. **Fix:** walk to the root before converting - `getTrips()` includes nested trips, so no enclosing subtour can be left mixed; sibling top-level subtours are untouched. Behaviour change stated: a coherent proposal is now the whole home-anchored day, which is what the chain-based constraint requires; the listener still only PROPOSES and `ChangeExpBeta` still decides. New tools `citysim.NestedSubtourProbe` and `citysim.SubtourChainScan`; the latter **reported CLEAN off 0 subtours decomposed** on its first run and now exits INCONCLUSIVE instead. Nothing here is a finding. |
 | 2026-08-30 | **The local suite was failing on `main` while three documents said it passed (§9.117; §9.93 reconstructed).** `check_package.py` is local-only and is the gate the conventions name for declaring a data phase complete; it reported **FAILURES PRESENT** on arrival, against a board, a brief and a dated row all calling it green. Two pre-existing failures. **(1)** `B.ride.escort_coherence_rate` and `B.ride.joint_coherence_rate` both cite **§9.93 and no such section existed** - the decision (both rates 0.1 → 0.4, on search completeness rather than fit) was real, applied and measured, and the measurement survived only inside the two field descriptions. §9.93 is **reconstructed from that already-committed evidence**, labelled as a reconstruction, introducing no new number. **(2)** Three `consumers` claims were **semantically true and textually false** - `B.mode.walk_feasible_km`, `B.mode.bike_feasible_km` and `B.ride.unpaired_fallback` each named the class that APPLIES the value through a config-group accessor rather than the group that names the key. Repaired on both sides: the config group joins `consumers`, and the applying class now names the field at the point of use. **0 false claims remain across 193 claims over 179 fields.** The check reports only its FIRST failure, so fixing two revealed a third; enumerating the whole set found it in one pass. Suite now **ALL CHECKS PASSED** (2 standing warnings). Same shape as §9.116 the same morning: not a missing check, but a **claim about a check**. Nothing here is a finding. |

@@ -160,6 +160,21 @@ SEED_MODE_SPLIT_INFORMED = _seed_table('B.mode.seed_split_informed')
 # state. Seeds only: SubtourModeChoice remains free to move both.
 SERVE_TOUR_SEED = CFG.get('B.mode.serve_tour_seed')
 BOUND_PASSENGER_SEED = CFG.get('B.mode.bound_passenger_seed')
+# DECISIONS.md 9.120. `full_choice_set` seeds every person with ONE PLAN PER
+# MODE they may use - car, walk, bike, pt, taxi as availability allows, and
+# the bound-ride variant where the demand declared a driver - so that the
+# whole choice set is executed and SCORED inside the first few iterations
+# (MATSim runs a random UNSCORED plan before it consults the selector, read
+# from the pinned jar's GenericPlanStrategyImpl.run). Measured on the F14 arm
+# at iteration 30: 65% of the agents still cycling held NO bike-free plan
+# in memory - the uniform draw had put bike on a fifth of tours and random
+# innovation had not yet offered the alternative. No mode is favoured: each
+# plan is one mode, once. `uniform_draw` is the pre-9.120 seed.
+SEED_METHOD = CFG.get('B.mode.seed_method')
+# The taxi age gate the run enforces (citysim.AvailabilityModesCalculator):
+# a seeded taxi plan for a person under it would be an illegal plan in
+# memory (the 9.15 class), so the seed reads the same declared value.
+TAXI_MIN_AGE = CFG.get('B.taxi.min_unaccompanied_age')
 EMPTY_SET = frozenset()
 HTS_TARGET_LGA = _city.target_lga()
 
@@ -395,11 +410,15 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # with CAR legs only, and a joint driver on any other mode cannot carry
     # the companion bound onto their car.
     joint_driver = {}   # pid -> set of tour ids
+    joint_companion = {}   # pid -> set of tour ids ridden WITH the driver
     joints = os.path.join(PLANS, 'B2_joint_bindings_%s.csv' % day)
     if os.path.exists(joints):
         with open(joints, encoding='utf-8') as fh:
             for r in csv.DictReader(fh):
                 covered_by_pid.setdefault(
+                    int(r['companion_person_id']), set()).add(
+                        int(r['companion_tour_id']))
+                joint_companion.setdefault(
                     int(r['companion_person_id']), set()).add(
                         int(r['companion_tour_id']))
                 joint_driver.setdefault(
@@ -426,6 +445,9 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # the package check can hold the uniform draw to its 9.11 invariant while
     # the coverage-seeded component legitimately raises ride above it.
     covered_ride_legs = [0]
+    # 9.120: how many plans each person starts with under the seed method
+    seed_plans_hist = collections.Counter()
+    n_legs_selected = 0
 
     with gzip_writer(dst) as w:
         w.write('<?xml version="1.0" encoding="utf-8"?>\n')
@@ -552,6 +574,100 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     tour_mode[tid] = m
             tours += len(tour_mode)
 
+            # 9.120: WHICH TRIPS the bindings actually cover, as 1-based trip
+            # indices in plan order - the same numbering MATSim's own
+            # TripStructureUtils.getTrips and the trips table use. The binding
+            # tables have always carried the tour AND the direction; the
+            # population carried only `boundDriver`, a person-level identity,
+            # so the run could offer `ride` on any trip of a bound person and
+            # on every trip of an unbound one. Measured on the F14 arm at
+            # iteration 30: 36% of residents' planned ride legs belonged to
+            # persons with no declared driver at all, and every one of them
+            # was executed as a drive or a walk while the plan kept `ride`.
+            #   boundRideTrips  - trips a declared driver serves (a drop-off
+            #                     is the tour's first trip, a pick-up its
+            #                     last, a joint companion tour every trip)
+            #   boundDriveTrips - trips on a tour that SERVES a booked
+            #                     passenger (the driver's commitment)
+            # Consumed by citysim.GatedSubtourModeChoice, which refuses a
+            # `ride` proposal off the first list and a non-car proposal on
+            # the second, and by the full-choice-set seed below.
+            bound_ride_trips = []
+            bound_drive_trips = []
+            if not external:
+                by_tour = {}
+                for i, r in enumerate(rows):
+                    by_tour.setdefault(int(r['tour_id']), []).append(i + 1)
+                for tid, idx in by_tour.items():
+                    dirs = set()
+                    dirs |= escort_cover.get((pid, tid), EMPTY_SET)
+                    dirs |= lift_cover.get((pid, tid), EMPTY_SET)
+                    if tid in joint_companion.get(pid, EMPTY_SET):
+                        dirs |= {'drop', 'pickup'}
+                        bound_ride_trips.extend(idx)
+                    else:
+                        if 'drop' in dirs:
+                            bound_ride_trips.append(idx[0])
+                        if 'pickup' in dirs and len(idx) > 1:
+                            bound_ride_trips.append(idx[-1])
+                    if tid in serve_tours:
+                        bound_drive_trips.extend(idx)
+                bound_ride_trips = sorted(set(bound_ride_trips))
+                bound_drive_trips = sorted(set(bound_drive_trips))
+
+            # The plans this person starts with. `uniform_draw`: the one
+            # plan the loop above drew. `full_choice_set` (9.120): one plan
+            # per usable mode, each mode on every tour it may take -
+            # serving tours stay car (the commitment) and the bound-ride
+            # variant puts ride on the covered tours only. Locked tiers and
+            # the carve keep their single plan: a lock is a definition.
+            plan_set = [dict(tour_mode)]
+            if (SEED_METHOD == 'full_choice_set' and not external
+                    and not moto):
+                base_modes = []
+                if car_av:
+                    base_modes.append('car')
+                base_modes.append('walk')
+                if bike_av and (BIKE_MIN_AGE <= 0 or age >= BIKE_MIN_AGE):
+                    base_modes.append('bike')
+                base_modes.append('pt')
+                if TAXI_MIN_AGE <= 0 or age >= TAXI_MIN_AGE:
+                    base_modes.append('taxi')
+                ride_tours = set()
+                if ride_av and bound_ride_trips:
+                    for tid, idx in by_tour.items():
+                        # a tour is a ride tour only when EVERY trip of it is
+                        # served: a one-way binding leaves the other leg to
+                        # the base mode, which mixes only within non-chain
+                        # modes when the base is walk/pt/taxi - so a
+                        # partially bound tour rides only on a non-chain base
+                        if all(i in bound_ride_trips for i in idx):
+                            ride_tours.add(tid)
+                plan_set = []
+                for base in base_modes:
+                    p = {}
+                    for tid in by_tour:
+                        if tid in serve_tours and car_av:
+                            p[tid] = 'car'
+                        else:
+                            p[tid] = base
+                    plan_set.append(p)
+                if ride_tours:
+                    # the bound-ride variant on the car base when a car is
+                    # available (the uncovered tours are driven), else on walk
+                    base = 'car' if car_av else 'walk'
+                    p = {}
+                    for tid in by_tour:
+                        if tid in serve_tours and car_av:
+                            p[tid] = 'car'
+                        elif tid in ride_tours:
+                            p[tid] = 'ride'
+                            covered_seed_tids.add(tid)
+                        else:
+                            p[tid] = base
+                    plan_set.append(p)
+                seed_plans_hist[len(plan_set)] += 1
+
             w.write('\t<person id="%d">\n' % pid)
             w.write('\t\t<attributes>\n')
             w.write('\t\t\t<attribute name="subpopulation" class="java.lang.String">'
@@ -589,6 +705,20 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 w.write('\t\t\t<attribute name="liftHousehold" '
                         'class="java.lang.String">%s</attribute>\n'
                         % ','.join('%d' % h for h in lift_hh[pid]))
+            if bound_ride_trips:
+                # 9.120: consumed by citysim.GatedSubtourModeChoice and
+                # citysim.RidePairingEngine - the trips (1-based, plan order)
+                # a declared driver serves. `ride` is refused on any other.
+                w.write('\t\t\t<attribute name="boundRideTrips" '
+                        'class="java.lang.String">%s</attribute>\n'
+                        % ','.join('%d' % i for i in bound_ride_trips))
+            if bound_drive_trips:
+                # 9.120: consumed by citysim.GatedSubtourModeChoice - the
+                # trips on which this person is the declared driver of a
+                # booked passenger; a proposal moving them off car is refused.
+                w.write('\t\t\t<attribute name="boundDriveTrips" '
+                        'class="java.lang.String">%s</attribute>\n'
+                        % ','.join('%d' % i for i in bound_drive_trips))
             if not external and pid in bound_driver:
                 # 9.85: the DECLARED driver(s) this passenger was generated
                 # to travel with - joint companion, escorted member or
@@ -614,35 +744,40 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         % ('truck' if tier == 'freight' else
                            'motorbike' if moto else 'car'))
             w.write('\t\t</attributes>\n')
-            w.write('\t\t<plan selected="yes">\n')
+            for k, plan_modes in enumerate(plan_set):
+                # the first plan is the selected one; under the full choice
+                # set MATSim executes every unscored plan once regardless
+                w.write('\t\t<plan selected="%s">\n' % ('yes' if k == 0 else 'no'))
 
-            # opening activity: home, at the first leg's origin
-            first = rows[0]
-            w.write('\t\t\t<activity type="home" x="%s" y="%s" end_time="%s" />\n'
-                    % (first['origin_x'], first['origin_y'],
-                       hhmmss(int(first['dep_time_s']))))
-            n_acts += 1
-            act_counts['home'] += 1
-
-            for i, r in enumerate(rows):
-                mode = tour_mode[int(r['tour_id'])]
-                w.write('\t\t\t<leg mode="%s" />\n' % mode)
-                modes[mode] += 1
-                if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
-                    covered_ride_legs[0] += 1
-                n_legs += 1
-                act = r['dest_activity_type']
-                act_counts[act] += 1
+                # opening activity: home, at the first leg's origin
+                first = rows[0]
+                w.write('\t\t\t<activity type="home" x="%s" y="%s" end_time="%s" />\n'
+                        % (first['origin_x'], first['origin_y'],
+                           hhmmss(int(first['dep_time_s']))))
                 n_acts += 1
-                if i == len(rows) - 1:
-                    w.write('\t\t\t<activity type="%s" x="%s" y="%s" />\n'
-                            % (act, r['dest_x'], r['dest_y']))
-                else:
-                    end = int(rows[i + 1]['dep_time_s'])
-                    w.write('\t\t\t<activity type="%s" x="%s" y="%s" '
-                            'end_time="%s" />\n'
-                            % (act, r['dest_x'], r['dest_y'], hhmmss(end)))
-            w.write('\t\t</plan>\n')
+                act_counts['home'] += 1
+
+                for i, r in enumerate(rows):
+                    mode = plan_modes[int(r['tour_id'])]
+                    w.write('\t\t\t<leg mode="%s" />\n' % mode)
+                    modes[mode] += 1
+                    if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
+                        covered_ride_legs[0] += 1
+                    n_legs += 1
+                    act = r['dest_activity_type']
+                    act_counts[act] += 1
+                    n_acts += 1
+                    if i == len(rows) - 1:
+                        w.write('\t\t\t<activity type="%s" x="%s" y="%s" />\n'
+                                % (act, r['dest_x'], r['dest_y']))
+                    else:
+                        end = int(rows[i + 1]['dep_time_s'])
+                        w.write('\t\t\t<activity type="%s" x="%s" y="%s" '
+                                'end_time="%s" />\n'
+                                % (act, r['dest_x'], r['dest_y'], hhmmss(end)))
+                w.write('\t\t</plan>\n')
+                if k == 0:
+                    n_legs_selected += len(rows)
             w.write('\t</person>\n')
             n_persons += 1
         w.write('</population>\n')
@@ -650,6 +785,13 @@ def write_day(day, attrs, rng, report, seed_table=None):
     report[day] = dict(persons=n_persons, legs=n_legs, activities=n_acts,
                        tours=tours, bytes=os.path.getsize(dst),
                        escort_ride_denied=escort_ride_denied[0],
+                       # 9.120: legs counted over EVERY seeded plan; the
+                       # selected plan's own count is what a 1-plan build
+                       # used to report as `legs`
+                       legs_selected_plan=n_legs_selected,
+                       seed_method=SEED_METHOD,
+                       seed_plans_per_person={
+                           str(k): v for k, v in sorted(seed_plans_hist.items())},
                        seed_mode_share={k: round(v / max(n_legs, 1), 4)
                                         for k, v in sorted(modes.items())},
                        # 9.84: the coverage-seeded ride component (escort,
@@ -681,16 +823,36 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
     # owner in every data source this project holds) are assumed to trip at
     # the population's average rate; the approximation is absorbed by the
     # field's own sweep and stated in its basis.
+    # 9.120: the probability is solved on the eligible persons' OWN trip
+    # counts, not on the population's average rate. The earlier form assumed
+    # eligible persons trip at the average and the assumption was measured
+    # false (issue #93: carved persons made 3.48 trips/day against 4.11, so
+    # the carve delivered 55% of its declared share). Trips are counted on
+    # the first day type built - the share is a share of all trips and the
+    # carve is one draw per person across day types.
+    trips_by_pid = collections.Counter()
+    first_day = day_types[0]
+    for pid, rows in stream_persons(
+            os.path.join(PLANS, 'B2_activity_trips_%s.csv' % first_day)):
+        trips_by_pid[pid] = len(rows)
+    total_trips = sum(trips_by_pid[p] for p in attrs)
     eligible = sum(1 for a in attrs.values() if a[0] and a[2])
-    q = (MOTORBIKE_SHARE * len(attrs) / eligible) if eligible else 0.0
+    eligible_trips = sum(trips_by_pid[p] for p, a in attrs.items()
+                         if a[0] and a[2])
+    q = (MOTORBIKE_SHARE * total_trips / eligible_trips) if eligible_trips else 0.0
     _MOTORBIKE_Q['q'] = min(1.0, q)
-    print('motorbike carve: trip share %.4f -> q=%.5f over %d eligible '
-          'persons (of %d)' % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'],
-                               eligible, len(attrs)), flush=True)
+    print('motorbike carve: trip share %.5f -> q=%.5f over %d eligible '
+          'persons (of %d) making %d of %d %s trips'
+          % (MOTORBIKE_SHARE, _MOTORBIKE_Q['q'], eligible, len(attrs),
+             eligible_trips, total_trips, first_day), flush=True)
     report = {}
     for d in day_types:
         write_day(d, attrs, rng, report, seed_table)
     meta = dict(seed=seed, seed_mode=seed_mode,
+                # 9.120: the seed METHOD - `full_choice_set` writes one plan
+                # per usable mode and the split below is then only the
+                # selected plan's draw
+                seed_method=SEED_METHOD,
                 seed_mode_split={str(k): v for k, v in seed_table.items()},
                 seed_mode_sweep=SEED_MODE_SWEEP,
                 bike_available_rate=BIKE_AVAILABLE_RATE,
