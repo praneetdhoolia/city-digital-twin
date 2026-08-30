@@ -49,7 +49,7 @@ Usage:
 
 Writes `_corridor_pt_composition.json` into the run directory (read-only
 over everything else) and prints the tables. The run's comparability
-family is read from the declared `docs/audit/run_families.json` via
+family is read from the declared `docs/run_families.json` via
 build_run_index, never re-derived. The holdout split under
 `data/processed/validation/` is not read.
 """

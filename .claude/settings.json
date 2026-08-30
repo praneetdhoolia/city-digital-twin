@@ -24,6 +24,11 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/branch-naming-reminder.sh\"",
             "statusMessage": "Checking branch-naming convention"
+          },
+          {
+            "type": "command",
+            "command": "python \"${CLAUDE_PROJECT_DIR}/src/run/session_gate.py\" --digest",
+            "statusMessage": "Printing the goal, the scoreboard and the state"
           }
         ]
       }
@@ -46,6 +51,11 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-session-ref-in-gh-pr.sh\"",
             "statusMessage": "Checking gh pr command for forbidden session reference"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gate-pr-on-docs.sh\"",
+            "statusMessage": "A PR cannot open on stale documents"
           }
         ]
       }

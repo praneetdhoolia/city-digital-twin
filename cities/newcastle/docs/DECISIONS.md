@@ -6,7 +6,7 @@ counterfactual microsimulation of the Newcastle Light Rail
 nothing in this repository is a finding about the light rail.** The base model
 has run and been measured; that measurement is a calibration diagnostic (the
 figures in [`README.md`](../../../README.md), the full rows in
-[`audit/CALIBRATION_REPORT.md`](audit/CALIBRATION_REPORT.md)), not a result.
+[`audit/CALIBRATION_REPORT.md`](reference/CALIBRATION_REPORT.md)), not a result.
 **Started:** 10 August 2026 · **the newest entry is the last `## 9.x` section
 before `## 10.`, and the last row of §14** — stated as a place rather than a
 number, because a number here has to be rewritten to stay true and twice was
@@ -24,8 +24,20 @@ This file records every value in the data package whose `source` field reads
 
 ## How to find something in this file
 
-This file is **long and append-only** — several thousand lines. Two things about
-its layout will otherwise cost you an hour:
+**Since 30 August 2026 (§9.132) this file is the frozen record, entered through
+the position pages.** The current truth for a topic is in
+[`positions/`](positions) (one page each, every figure sourced); the board is
+[`STATUS.md`](STATUS.md); the goal is [`GOAL.md`](GOAL.md). Read a section here
+for *why*, never the file for *what is true now*, and never the file whole:
+`grep -n "^## 9\.NNN"` then `sed -n`. Sections through §9.131 are frozen. A new
+section is appended after the last `## 9.x` (before `## 14.`), numbered next,
+at most 140 lines, on the template in the `/handoff` skill, with a row in the
+index below and a row in §14; a correction to an earlier section is an edit to
+the position page plus a §14 row, never a new section (`tests/check_doc_shape.py`
+enforces the order, the cap and the index row).
+
+This file is **long and append-only** — over thirteen thousand lines. Two things
+about its layout will otherwise cost you an hour:
 
 1. **The section numbers are not in file order.** `§15` (the input registry) sits
    **before** `§14` (the change log), which is last. There is no `§16`.
@@ -38,12 +50,13 @@ its layout will otherwise cost you an hour:
 
 | Looking for | Read |
 |---|---|
+| **START HERE — the goal, the board, the current truth per topic** | [`GOAL.md`](GOAL.md) · [`STATUS.md`](STATUS.md) · [`positions/`](positions); how this record is now kept: **§9.132** |
 | **Scope, base year, zone system, S0–S6** | §1 |
 | **Corrections to the proposal's own stated premises** | §2 (incl. **§2.6 — EPSG:28356 is GDA94, not GDA2020**) |
 | **Road / active network, lanes, speeds, gradient** | §3, §9.28, §9.33, §9.34 |
 | **pt2matsim is not reproducible run to run** | **§3.5** — one build of the network per comparison |
 | **Light rail vehicle, dwell, charging** | §4, §9.18, §9.30; **§9.76 the dwell is native** — concurrent-with-boarding decided, derived offsets, anchors preserved (#74) |
-| **Signals, SCATS** | §5, §9.24; refusal documented in §9.21; **§9.75 the signalling dossier ([`design/signalling/`](design/signalling/README.md)), the public operated-data discovery (TIA route, #78) and the directed by recorded decision native build (#73)**; **§9.76 the build itself** — explicit plans + tram-priority controller, probes passing, PPSHCC-137 archived — `scats_phasing` stays `unobtained` |
+| **Signals, SCATS** | §5, §9.24; refusal documented in §9.21; **§9.75 the signalling dossier ([`design/signalling/`](archived/design/signalling/README.md)), the public operated-data discovery (TIA route, #78) and the directed by recorded decision native build (#73)**; **§9.76 the build itself** — explicit plans + tram-priority controller, probes passing, PPSHCC-137 archived — `scats_phasing` stays `unobtained` |
 | **SUMO descoped; MATSim the single simulator** | **§9.74** — decision required 25 Aug; S-b native via #73 (a band regardless), reliability variance a stated limitation, deliverable 7/§9.16 retired, P5 5.1/5.2 deleted; **execution DONE §9.76 (#72)** |
 | **Framework choice re-examined (MATSim vs the 2026 field)** | **§9.73** — migration rejected on a documented survey; the pinned jar embeds MATSim 2027.0-2026w25 (verified); DSim watch-only |
 | **Parking supply, price, max stay** | §6, **§9.31** |
@@ -58,7 +71,7 @@ its layout will otherwise cost you an hour:
 | **The first all-physical arm (attempted, stopped) and its measurements** | **§9.57** — the 1000-vs-500 decision, the ~234 s pace, the walk-leg decomposition, the it-110 knot, the #60 turn-refusal defect |
 | **The walk wedge (#60 verified and repaired)** | **§9.58** — the qsim never enforces turn restrictions (routers do, per mode); the refusals were first-hop breaks from activities on walk-less links; four repairs: the pedestrian exclusion corrected to the actual road rules, reverse walk/bike complements on one-ways, `ActivityLinkAssigner`, SubtourModeChoice person-only. NEW FAMILY BOUNDARY |
 | **Iteration wall time: the declared knobs and their measurements** | **§9.59** — PassingQ link dynamics (a correctness repair of 9.54's declared PCE-0 semantics that FIFO violated), the events-pipeline and replanning-pool knobs, the probe measurements, and the honest statement against the 10x ask |
-| **Non-household lifts (the reported gap, now mechanised)** | **§9.60** — M0 physical waiting at the meeting point; M1 re-targets unbound observed-rate escort tours to driverless-household passengers; pairing/boarding/sampling integrity; dossier [`design/non-household-lifts.md`](design/non-household-lifts.md) |
+| **Non-household lifts (the reported gap, now mechanised)** | **§9.60** — M0 physical waiting at the meeting point; M1 re-targets unbound observed-rate escort tours to driverless-household passengers; pairing/boarding/sampling integrity; dossier [`design/non-household-lifts.md`](archived/design/non-household-lifts.md) |
 | **Deliverable 0b: assumptions replaced by held data** | **§9.61** — G15 tertiary full-time split (per SA1, observed), the light-vehicle day-type factors (SAT:SUN split, external weekend scaling, departure shift - all measured from the classified hourly counts), the chain-timing scaffold speeds declared, and the ranked remainder |
 | **The two-arm relaunch (arm A base, arm B the seed replication)** | **§9.62** — the §9.59 concurrency pattern enacted (approved 21 Aug): qsim 8 + events 4 + xmx 30g per arm; arm B varies only `RUN.machine.seed` and is the seed-variance measurement `E.replication.n_replications` has waited on; the 50-iteration watch and its tripwires |
 | **The relaunch crash: interleaved lift tours (#65)** | **§9.63** — both arms died at replanning 1 (mixed chain/non-chain subtours); the M1 busy check read stale sibling times, two lifts per driver overlapped, the splice interleaved them; repaired + contiguity assertion; B2/plans regenerated, 0 interleaved, weekday bindings 55,249 |
@@ -141,7 +154,7 @@ its layout will otherwise cost you an hour:
 | **The 30-hour-day cap (issue #37)** | **§9.38** |
 | **Bike availability (issue #29)** | **§9.39** |
 | **Calibration loop, fit statistic, outer-loop tolerance** | §9.16, §12 |
-| **The specification audit** | §9.25 and [`docs/audit/SPEC_AUDIT.md`](audit/SPEC_AUDIT.md) |
+| **The specification audit** | §9.25 and [`docs/archived/audit/SPEC_AUDIT.md`](archived/audit/SPEC_AUDIT.md) |
 | **The input registry — every controllable value** | **§15**, and [`docs/reference/CONFIG_REFERENCE.md`](reference/CONFIG_REFERENCE.md) (generated) |
 | **City portability, `cities/<city>/registry/`** | §9.29, §15 |
 | **The OSM harvest extent, and the corrupt merge** | **§9.35** |
@@ -150,12 +163,19 @@ its layout will otherwise cost you an hour:
 | **Outstanding data tasks** | §13 |
 | **Toolchain pins — a toolchain change is a model change** | §14 (change log) and `.tools/toolchain.json` |
 | **Live view, telemetry, the congestion map** | **§9.36** |
-| **Dated build narrative** | [`docs/handover/SESSION_LOG.md`](handover/SESSION_LOG.md) — archive; this file is authoritative |
+| **Dated build narrative** | [`docs/archived/SESSION_LOG.md`](archived/SESSION_LOG.md) — archive; this file is authoritative |
 
 
 ---
 
 ## 0. Status summary
+
+> **Frozen snapshot of 10 August 2026.** The table below was true at P1 and is
+> kept as written. The current position on every input is
+> [`positions/network-and-inputs.md`](positions/network-and-inputs.md); the
+> paragraph beneath the table — three inputs "handled by sweep" — is superseded
+> by `GOAL.md` requirement 6 and by §9.88 (SCATS implemented), §9.130 (rail and
+> tram on disclosed boardings) and §9.131 (licence rates measured).
 
 | Layer | Observed | Modelled / assumed | Not obtained |
 |---|---|---|---|
@@ -2794,7 +2814,7 @@ operation is known.
 
 Deliverable 0a ran first because mode share was wrong in a way nobody had
 explained, and calibrating on top of an unexplained error fits it into a
-constant. The full ranked register is [`docs/audit/SPEC_AUDIT.md`](audit/SPEC_AUDIT.md);
+constant. The full ranked register is [`docs/archived/audit/SPEC_AUDIT.md`](archived/audit/SPEC_AUDIT.md);
 this records what it changes.
 
 **The symptom is two near-exact inversions, not five independent errors.** Car
@@ -4422,7 +4442,7 @@ morning. That is coherent only for an agent who is not also travelling in those
 same early-morning hours of the modelled day. Measured on the seed plans before
 this change: **2,066 WEEKDAY / 358 SAT / 240 SUN persons** (0.394% / 0.080% /
 0.058%) had a departure both before 06:00 and at or after 24:00 — one person
-with two 2 a.m.s ([`docs/audit/ISSUE_VERDICTS.md`](audit/ISSUE_VERDICTS.md)).
+with two 2 a.m.s ([`docs/archived/audit/ISSUE_VERDICTS.md`](archived/audit/ISSUE_VERDICTS.md)).
 
 `build_activity_chains.py` now drops, whole, any tour containing a departure at
 or after 24:00 when the person also departs before the tail hour
@@ -4658,7 +4678,7 @@ Two full arms on the 16 August rebuild, one at a time, same network build
 
 Full evaluation, including the structural findings that are not about
 convergence, in
-[`docs/audit/CONVERGENCE_PILOT_EVALUATION.md`](audit/CONVERGENCE_PILOT_EVALUATION.md).
+[`docs/archived/audit/CONVERGENCE_PILOT_EVALUATION.md`](archived/audit/CONVERGENCE_PILOT_EVALUATION.md).
 
 ### The instrument was broken, and it was broken in a way that always failed
 
@@ -5204,7 +5224,7 @@ and plausibly the truth.
 Task 4.2.6, sequenced after §9.46 because the escorted population — children
 attending education, elderly non-drivers — is exactly the population this
 entry repairs. Full evidence:
-[`docs/design/age-structure.md`](design/age-structure.md). Three defects, all
+[`docs/archived/design/age-structure.md`](archived/design/age-structure.md). Three defects, all
 in `build_population.py`, all measured on the built package before fixing
 (the brief's numbers were reproduced, not trusted):
 
@@ -5627,14 +5647,14 @@ No motorbike CHOICE model (no constant, no competition — the share is
 declared and swept); no non-commute observation is claimed; no separate
 motorbike network layer (filtering/lane-splitting is inside the PCE sweep);
 taxi/rideshare stays with task 4.4 and the tier plan in
-[`docs/design/mode-individualisation.md`](design/mode-individualisation.md).
+[`docs/archived/design/mode-individualisation.md`](archived/design/mode-individualisation.md).
 
 ---
 
 ## 9.53 A paired passenger physically boards the driver's car (20 August 2026, issues #48, #28, #31)
 
 **Decision:** the mechanism the #48 directive requires is **option C of the
-dossier** ([`design/physical-ride.md`](design/physical-ride.md)) — chosen by
+dossier** ([`design/physical-ride.md`](archived/design/physical-ride.md)) — chosen by
 the measurement, not by taste: the §9.48 gap decomposition showed the three
 realisation layers lose ×2.24 (mode co-assignment), ×6.91 (the realised
 window) and ×2.73 (link resolution), and a passenger who is IN the vehicle
@@ -6062,7 +6082,7 @@ claim.
 
 **The project's new instruction supersedes §9.55's report-only stance**: fix
 the non-household-lift gap. The option analysis is the dossier
-[`design/non-household-lifts.md`](design/non-household-lifts.md); the
+[`design/non-household-lifts.md`](archived/design/non-household-lifts.md); the
 decisive fact is that the two halves of the gap are the same phenomenon
 seen from two sides — B2 generates serve-passenger (HX) driver tours at the
 OBSERVED 10–19.5% rate, §9.46 binds 68.6% of them to household member
@@ -6330,7 +6350,7 @@ unpairable-re-moded.
 under the §9.50 branch: every parameter at its declared value, objective
 10.65, **feasible=False with five stated violations** (occupancy + four
 trip-length ranges) — reported, never absorbed. #9 closes as decided by
-§9.50: ASCs stay priors. `docs/audit/CALIBRATION_REPORT.md` regenerated.
+§9.50: ASCs stay priors. `docs/reference/CALIBRATION_REPORT.md` regenerated.
 
 **The seed noise floor is measured (arm B's product, n=2):** per-mode
 |A−B| at fit level 0.00–0.11 pp (MAE 10.65 vs 10.66), LR boardings
@@ -6838,7 +6858,7 @@ and remains the operative representation until #73 lands.
 
 **The dossier.** A ten-file research dossier on SCATS and Newcastle
 signalling landed at
-[`design/signalling/`](design/signalling/README.md) (moved from a temporary
+[`design/signalling/`](archived/design/signalling/README.md) (moved from a temporary
 holding area; design-dossier class, the point-to-point-mode precedent). Its
 epistemic discipline matches the project's: every claim tagged
 `[documented]` / `[commonly claimed]` / `[gap]`. Substance: SCATS mechanics
@@ -6936,7 +6956,7 @@ fold-in) remains open and is untouched by any of it.
 - **Cross-run index (4.7.3, #77).** `build_run_index.py` → `results/INDEX.md`
   + `.csv`: one row per directory with status, record, relaxed, comparability
   FAMILY and per-mode fit. Families are DECLARED once in
-  `docs/audit/run_families.json` (F1 pilot → F5 ride/walk repairs, each with
+  `docs/run_families.json` (F1 pilot → F5 ride/walk repairs, each with
   its decisions refs), never re-derived; one 18 Aug dead launch is left
   explicitly unattributed rather than guessed. The probe/arm boundary is the
   declared sweep floor of `RUN.controler.last_iteration`, not a constant.
@@ -7202,7 +7222,7 @@ measurement is revivable if it is ever worth an arm.
   inert §9.76 plumbing (blended fares, `fare` module, car-bodied vehicle,
   congested network travel time, ASC) engaged without further change.
 - The 30 run-input sets regenerated; the boundary is ONE boundary, and
-  **family F6 is declared in `docs/audit/run_families.json` in this change.**
+  **family F6 is declared in `docs/run_families.json` in this change.**
 
 **Two defects found by the activation probe, not by reading (both fixed):**
 
@@ -7326,9 +7346,9 @@ at EQUAL in-vehicle time — the gap is wait plus the extra boarding, priced at
 `utilityOfLineSwitch` −2.2614 (≈12 min in-vehicle). Tram headway (11.4
 min/direction) is denser than almost any single bus route — the bus
 advantage is aggregate coverage, not line frequency. Full tables:
-`docs/audit/CORRIDOR_PT_COMPOSITION.md`; re-measures on the first F6 arm.
+`docs/archived/audit/CORRIDOR_PT_COMPOSITION.md`; re-measures on the first F6 arm.
 
-**The demographic measurement (#50) is on the record** (`docs/audit/
+**The demographic measurement (#50) is on the record** (`docs/archived/audit/
 DEMOGRAPHIC_MODES.md`): the held data carries exactly ONE demographic mode
 observation (G62 JTW mode × sex; NO mode × age cell exists anywhere in the
 package), and against it the modelled split is nearly SEX-INVARIANT (M/F
@@ -7466,7 +7486,7 @@ were chosen deliberately:
 - **It draws the calibrated base's own run.** Not the newest directory (usually a
   two-iteration probe, never a result), and not a hand-named tag:
   `params/C5_calibration.json`'s `best_tag` selects it, so the figures and
-  `docs/audit/CALIBRATION_REPORT.md` always describe the same arm and both follow
+  `docs/reference/CALIBRATION_REPORT.md` always describe the same arm and both follow
   the base forward when a new one is calibrated.
 - **No wall-clock, anywhere.** A figure that restamps itself on every
   regeneration churns the diff and cannot be checked; the provenance is the run,
@@ -7485,7 +7505,7 @@ February 2020 is a pre-pandemic PT market, PT mode share roughly halved before
 the 2026 base year (§12.1), and V002 is V001 ÷ 30.4 rather than an independent
 datum. The modelled 1,260 is a **level**; the gap between it and that observation
 is not a fit statistic. The framing had propagated into
-`docs/audit/CORRIDOR_PT_COMPOSITION.md` and through three consecutive handover
+`docs/archived/audit/CORRIDOR_PT_COMPOSITION.md` and through three consecutive handover
 briefs, and it is the same class of error §9.79 corrected in
 `src/calibrate/report.py`: a comparison whose stated justification the record had
 already withdrawn. Corrected in the audit document, banned in the generator
@@ -8293,7 +8313,7 @@ iteration 2, and `pair_rate` holds 0.5410 -> 0.5030 -> 0.5224 rather than decayi
 
 This changes network loading, so nothing run before it compares to anything run
 after it. Declared as family **F11** in
-[`audit/run_families.json`](audit/run_families.json). F10 has no completed arm to
+[`run_families.json`](run_families.json). F10 has no completed arm to
 lose: its only launches were a 1-iteration abort and a 5-iteration plumbing
 probe, both stopped on instruction.
 
@@ -13076,7 +13096,7 @@ class: a probe too small to see a defect will pass).
 The joint tours change the demand and the plans; the gradient changes the
 network attributes and the physics; the gates change the choice sets. All
 activate as ONE boundary — family **F9**, declared in
-[`run_families.json`](../audit/run_families.json) — and nothing run on the
+[`run_families.json`](../run_families.json) — and nothing run on the
 regenerated inputs compares to F6/F7/F8. Registry 357 → **370** (+13: the
 ratio, purposes, joint rate, two age gates, the gradient gate, four bike
 factors, two Tobler constants, the clamp), ledger 0, reach 102/102.
@@ -13093,10 +13113,116 @@ overshoots it is a failed arm, not a success.
 
 ---
 
+## 9.132 The project on one page: the goal stated, the board generated, the record frozen behind position pages (30 August 2026, seventeenth session)
+
+**What was wrong.** Measured on `main` at `3e5b036`: this record was 911 KB and
+13,194 lines with 122 `## 9.x` sections, 1,845 and 1,909 lines added on 29 and
+30 August alone, seventeen `CORRECTION` markers and §9.127–§9.129 in reverse
+order in the file. The board was 116 KB and 805 lines with a 2,923-character
+*Last updated* cell and eleven narrative sections under a line-9 rule that said
+*not a diary*. The brief was 406 lines and named F15, F16, F17, F18 and F20 as
+the running family in different sections, because it had been patched across
+five family boundaries in one day instead of rewritten. The operating goal — the
+user's `/goal` directive of 24 August — existed only as an untracked `GOAL.md`
+and as "the session's `/goal`" quoted eleven times here, while
+`.claude/CLAUDE.md:8`, `README.md:3` and the proposal defined the project as the
+light-rail counterfactual; in the record from §9.80 on, the proposal's hypotheses
+are mentioned three times and ridership twenty. Four living documents still said
+"SCATS phasing is unobtained, handled by sweep" two days after §9.88 implemented
+the algorithm, and `CLAUDE.md:30` said "No scenario has been run" after ~118 run
+directories existed — neither sentence was in the scope of the currency check,
+which pinned 32 numbers in two documents. `/onboard` pointed a fresh session at
+the record, the board and the brief whole: about forty minutes of reading before
+a briefing.
+
+**What changed.** No model value, no data artefact, no family boundary.
+
+- `cities/newcastle/docs/GOAL.md` is tracked: the eleven hard requirements, the
+  gate loop and the monitoring rule as the user stated them on 24 and 30 August,
+  with what they supersede (the proposal's framing and its §7.2 "no SCATS →
+  sweep" fallback). `CLAUDE.md` and `README.md` define the project by it.
+- `STATUS.md` is one page: a goal table, three **generated** blocks
+  (`src/analyse/build_status_board.py` — the twelve-mode scoreboard from the
+  newest readable run, the state from the ledger, registry, manifest and
+  run-input sets, the runs on disk with their causes), a phase table, *Next*,
+  *Open work* and *Do not re-raise*. Its hand-written lines are capped at 170.
+  The retired body — batches 4.1–4.15, the delivery tables, the run-cost
+  history, the narrative sections — is archived verbatim in
+  `archived/SESSION_LOG.md`.
+- Thirteen **position pages** under `docs/positions/` state the current truth
+  per topic (ride and pairing; sampling and families; seed and choice set;
+  signals and crossings; taxi; walk and bike; public transport and yardsticks;
+  motorbike, truck and freight; population and demand; runs and economics;
+  monitoring and gates; light rail and ferry; network and inputs), each under
+  130 lines, every figure with its source on its line. They were distilled from
+  this record in parallel and reviewed; the contradictions they surfaced are
+  recorded on the pages as open items, not resolved here.
+- `report_mode_ridership.py --trend` prints all twelve modes (freight rail was
+  absent) with a basis column, formats boardings as integers, and writes `--json`
+  for the board.
+- `tests/check_doc_shape.py` (CI, rules in `cities/newcastle/tests/doc_shape.json`)
+  caps the board and the brief, requires the brief's family stamp to equal the
+  ledger's newest key, requires new sections here to be appended in ascending
+  order under 140 lines with an index row, requires a source on every figure of
+  a position page, and requires a banner on every frozen document. Thirteen
+  documents under `audit/`, `design/` and `handover/` are bannered as frozen,
+  the proposal among them. `check_doc_currency.py` now covers `CLAUDE.md`,
+  `docs/README.md`, the brief and `GOAL.md` (45 claims), banning every phrasing
+  of the four false statements above.
+- `src/run/session_gate.py` is the one gate both skills run (it skips the
+  toolchain compile while an arm runs — this session ran the old gate under the
+  F20 arm, which the brief's first trap forbade); `--digest` prints the goal,
+  the board's blocks and the machine state at SessionStart. A `PreToolUse` hook
+  refuses `gh pr create` while either document gate is red. CI gains the shape
+  job and the board-block check.
+- `docs/HANDOVER_CONTRACT.md`, `/onboard` and `/handoff` are rewritten: a
+  600-line reading budget, the trust order by question, four questions instead
+  of six, a *Consolidate* phase that rewrites the touched position pages, the
+  section template above, the brief template (four sections, 180 lines).
+- Issues #73 and #68 closed on the evidence the position pages cite (§9.88,
+  §9.90); #21 commented, not closed — the gradient physics channel is built
+  (§9.84) but the `C.gradient.*` scoring weights and the PT walk-access decay
+  still reach nothing.
+- At the user's direction the frozen documents moved under `docs/archived/`
+  (`audit/`, `design/` with the signalling dossier, the two old briefs and the
+  session log), the ledger `run_families.json` and the brief moved to the docs
+  root, and the generated `CALIBRATION_REPORT.md` to `reference/`, so `docs/`
+  holds only what is live. 71 markdown links were re-resolved from each file's
+  new location, this record's among them — link maintenance, not a rewrite;
+  `layers.json` was regenerated for the two moved code-read paths.
+
+**Measured.** Board: 805 → under 170 hand-written lines plus generated blocks.
+Brief: 406 → under 180 lines. Reading to a briefing: the record, the board and
+the brief whole → about 600 lines (digest, `GOAL.md`, board, brief, one
+position page). Currency claims 32 → 45; shape rules 5 classes; frozen documents
+bannered 13. The scoreboard reads the F20 arm at iteration 10: one mode inside
+10 % (motorbike), eight past the 20 % bar, truck on a level only, freight rail a
+representation — the same numbers the sixteenth session's brief carried, now
+generated rather than typed.
+
+**Deliberately not done.** The demand chain on the F21 population was not
+rebuilt and the F21 arm was not launched: that is the model lane, it changes
+bulk data and the manifest, and it needs a stated-cost approval. This record's
+existing sections were not reordered, renumbered or edited — §9.127–§9.131 stay
+where they are, out of order, and the shape rule applies only above §9.131. The
+S2 tram-priority ambiguity the signals page found (the emitted config says
+`green_extension`; the record's S2 probe ran with it off) is recorded as a
+decision required, not decided. Position pages were not written for the
+scenarios S0–S6 or the calibration loop, which have had no session since the
+goal changed; the record's §10–§12 stand.
+
+**Consequences.** A family now costs one ledger row, one section here and one
+position edit; the board and the brief are regenerated or rewritten, so cadence
+no longer makes documents wrong. This file is frozen through §9.131 and grows
+only by the template. The four false statements cannot return without failing
+CI. The next session opens on the digest and resumes the model lane exactly
+where §9.131 left it.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-30 | **The project on one page: the goal stated, the board generated, the record frozen behind position pages (§9.132; seventeenth session).** `GOAL.md` tracked; `STATUS.md` one page with three generated blocks; thirteen position pages; `check_doc_shape.py` in CI with the brief's family stamp, the record's order and cap, and a source on every figure; `session_gate.py` as the one gate; a PR hook on red documents; every frozen document bannered and moved under `docs/archived/`; issues #73 and #68 closed on evidence, #21 commented. **No model value changed, no data artefact changed, no family opened; the 67/143 split is untouched; nothing here is a finding.** |
 | 2026-08-30 | **A seventh of the workforce had no licence (§9.131; issues #49/#93/#30).** Heavy rail's five-fold over-boarding traced to outer-LGA residents' work trips: census journeys to work by home LGA are 86-91% car and 0.1-0.3% train, the model's were 55-59% car and 2.4-5.4% rail, because `B.population.licence_rate_by_age_band` was a literature vector that left 14.2-14.8% of employed persons unlicensed. Acquired the TfNSW Driver Licence Statistics snapshot and the ABS population by age and LGA (2024) with provenance; `build_licence_rates.py` measures 18-24 0.78, 25-34 0.94, 35-74 0.97-1.00, 75-84 0.92, 85+ 0.51, 12-17 0.08, per LGA; the population builder draws at the LGA's rate. Population, chains, plans and run inputs rebuilt; family F21 opens at its launch. The population was rebuilt at 19:31 (612,634 persons): employed persons with a car available rose from 78.9-83.0% to 90.8-91.7% in Cessnock, Lake Macquarie, Maitland and Port Stephens and to 80.8% in Newcastle (its 18-24 rate is 0.68 and 8.2% of its dwellings hold no vehicle); the unlicensed share of the employed fell from 14.2-14.8% to 4.8-5.9% (Newcastle 12.7%). The activity chains, plans and run inputs were NOT rebuilt: the chain was stopped at the user's direction at handoff, mid-way through the WEEKDAY chains, and its partial WEEKDAY trips and escort-binding files were deleted, so the package on disk holds a population newer than its chains until build_activity_chains.py, build_matsim_plans.py and build_matsim_run_inputs.py are rerun - the next session's first build. Family F21 opens at that arm's launch. |
 | 2026-08-30 | **Heavy rail and light rail are held to their DISCLOSED boardings (§9.130; issues #84/#49/#30).** The composition-derived targets (HTS 3.8% x Opal split) put light rail at 14,500 trips a day where the line's own published series reads 2,754 boardings a day, and heavy rail at 17,500 where 24 stations' entries read 6,086. Both are now boardings per weekday, all travellers, via `CAL.pt.weekday_factor` 1.0727 (414 fields): light rail 2,954, heavy rail 6,529. `pt_boardings_targets.json` (498 manifest rows); the report counts every subpopulation's boardings x 1/fraction. F19 it.20 on this basis: light rail 1,440 (-51%), heavy rail 30,800 (+372%) - Interchange 1,430 vs 1,569, Hamilton 7,050 vs 534, Adamstown 1,670 vs 83. The tram's Interchange transfer and corridor market were measured and are not the cause. |
 | 2026-08-30 | **The 9.127 rule biased every sub-sample, and the carves were solved on a pool that is not drawn (§9.129; issues #93/#86/#66).** F19's motorbike share (0.115% at it.20) read back to two build defects: the at-or-below coupling rule names low-hash households as drivers, so a 10% sample kept named drivers at 12.4% and everyone else at 7.95% (carves at 5.5% / 5.1%); replaced by a same-bucket rule, `B.ride.shared_lift_hash_bucket` = 0.05 (413 fields), measured on the binder at 73,509 servable / 59,701 bound / 0 short on WEEKDAY. And the carve's probability was solved before the 9.125 named-driver refusal (42.1% of the pool's trips), delivering 58% of its share; the pool now excludes named drivers and the rebuilt carve delivers 0.2666% against 0.2654% solved (5,937 trips on 1,687 persons). Plans, run inputs and manifest rebuilt; family F20 opens at its launch. |
@@ -13172,12 +13298,12 @@ overshoots it is a failed arm, not a success.
 | 2026-08-20 | **Four standing directives reset the value order, and the base arm is stopped (§9.51).** (1) Every ride trip physically in a car — no teleportation — and the share tuned to the observed 20.60%; re-opens the joint-plans question (socnetsim ~10× is the recorded cost to beat). (2) All 9+ modes distinguished — pt never an umbrella; motorbike and taxi/rideshare individualised, anchored on the VERIFIED per-mode G62 journey-to-work columns (Motorbike/scooter, Taxi/Rideshare, Tram/LR, Train, Bus, Ferry, Truck). (3) The sub-1 km walk deficit is the priority structural defect — #30 re-opens under its own REOPEN IF. (4) Mode × demographic distributions must match real life — new observables enter as constraints, never targets. `base1000_25pct` stopped at ~iteration 20 by instruction and quarantined; #14/#9 stay open until it relaunches. No target moved, the 67/143 split untouched, nothing is a finding. |
 | 2026-08-20 | **The calibrated base takes §8.5's second branch — constrain and report — and the decision is logged before its run exists (§9.50, issues #14, #9).** The first branch (ASCs on era 3) is recorded infeasible as stated: no 2018 demand exists and the historical reconstruction is dropped, so estimating 2018 constants under a 2026 population would manufacture the confound §8.5 prevents. ASCs stay at the §8.5 priors, held fixed; `asc_car_passenger` is NOT re-solved against the §9.48 occupancy excess (that would be ASC absorption — #9 resolved by decision, the excess reported). No parameter search: the corrected loop identifies exactly two searchable parameters at ~21 × 35 h runs, neither able to reach the structural misfits — declined with the cost stated. Also fixed: the loop's rebuild-stage table defaulted unclassified consumers to "movable at run time", putting the OSM harvest margins in the movable set — unclassified consumers are now excluded with the reason stated. The base is one reference run of the §9.49 family whose fit is reported as it comes out. |
 | 2026-08-20 | **Freight becomes physical (§9.49, issue #24): a `truck` mode in the mobsim at declared PCE, seeded from the counts the model already holds.** `qsim.mainMode` = `car,truck`; `vehiclesSource` → `modeVehicleTypesFromVehiclesData` with the car type restating MATSim's default exactly (`RUN.qsim.car_vehicle`) and the truck type at `B.freight.pce` (literature 2.0, swept 1.5–3.5) under the regulated 100 km/h cap. Through-gate volumes split into car and truck by each gate station's own observed heavy share (Hunter Expressway 0.1529 observed; median 0.0652 fallback) — through trucks had been riding as PCE-1 cars. An internal freight tier draws over the observed freight-industry attractor at the assumed, swept `B.freight.trip_ratio` (0.0697, sweep 0.0–0.14). NEW MEASUREMENTS from the classified RMS hourly counts (`extract_freight_profile.py`, 33,816 station-days): the heavy hourly profile per day type and the weekend factors (SAT 0.4627, SUN 0.4104). Six new registry fields + `RUN.qsim.car_vehicle`; subpopulation `freight` with `lockedMode=truck` (no Java change). **A planned comparability break: the demand family changes again — `bind1000_25pct` is the last run of the §9.46/§9.47 family.** No toolchain change; no target touched; nothing here is a result. |
-| 2026-08-20 | **Session close-out and onboarding become procedure, not recollection — no model or data value changed.** Two project skills land in `.claude/skills/`: **`/handoff`** (evidence-gated close-out: deletion-disciplined hygiene, issue grooming that closes only with evidence and a REOPEN IF condition, the DECISIONS entry + §14 row + index, the board repaired in the same commit, and the brief rewritten in place with completed sections flipped from instructions to record) and **`/onboard`** (session start: read in precedence order — constraints → record → board → brief, artefact over document — run the §0 checks, cross-check the documents against live GitHub state, answer the six state-of-the-project questions with sourced numbers, recite the invalidating constraints, then brief and stop). The handover is now REQUIRED to answer six questions exhaustively — goals vs achievement, phase states, tasks done-and-evaluated, simulator vs observation, the issue ledger, PR history + next PR — so a next agent reconstructs the whole picture from `main` alone. One home per document class is stated as a rule (new audit reports under `docs/audit/<YYYY-MM-DD>/`; a new document class is an decision required). **PR titles now carry the phase and task number** (`P<phase> (<task>): …`; `P<n> board:` / `P<n> handover:` / `Tooling:`), and all twelve existing PRs were retitled to the scheme. No target value changed, the 67/143 split is untouched, nothing here is a result. |
+| 2026-08-20 | **Session close-out and onboarding become procedure, not recollection — no model or data value changed.** Two project skills land in `.claude/skills/`: **`/handoff`** (evidence-gated close-out: deletion-disciplined hygiene, issue grooming that closes only with evidence and a REOPEN IF condition, the DECISIONS entry + §14 row + index, the board repaired in the same commit, and the brief rewritten in place with completed sections flipped from instructions to record) and **`/onboard`** (session start: read in precedence order — constraints → record → board → brief, artefact over document — run the §0 checks, cross-check the documents against live GitHub state, answer the six state-of-the-project questions with sourced numbers, recite the invalidating constraints, then brief and stop). The handover is now REQUIRED to answer six questions exhaustively — goals vs achievement, phase states, tasks done-and-evaluated, simulator vs observation, the issue ledger, PR history + next PR — so a next agent reconstructs the whole picture from `main` alone. One home per document class is stated as a rule (new audit reports under `docs/archived/audit/<YYYY-MM-DD>/`; a new document class is an decision required). **PR titles now carry the phase and task number** (`P<phase> (<task>): …`; `P<n> board:` / `P<n> handover:` / `Tooling:`), and all twelve existing PRs were retitled to the scheme. No target value changed, the 67/143 split is untouched, nothing here is a result. |
 | 2026-08-20 | **The re-measure arm ran, and the escort binding is measured to move realised pairability by two orders of magnitude (§9.48, issues #31, #28, #9).** `bind1000_25pct` — 25% × 1000 WEEKDAY on the §9.46/§9.47 demand, the first run of the post-repair family — completed rc=0 in 34 h 44 m, median iteration 105.9 s, **`relaxed: true`** (max post-margin drift +0.09 pp), accounting closed, stuck 0.028%. **OD-coincidence 0.104% → 15.31%; declared-regime (`both_links` ±15 min) pairing 0.00004 → 0.0130**; the #28 residual is ~11.6 s at 25% (was ~5 s); the direction split stays non-zero (239 return pairings at iteration 1000). The defect **changed sign**: occupancy is now 0.4855 passengers per driver against the observed 0.3503, outside the declared range in the **flattering** direction — recorded, not tuned, and handed to the 4.2.4 calibration decision. Ride's LGA linked share moved 37.17 → 31.05 against observed 20.60; the restored 75+ cohort makes 0.7% of its trips to work. The realisation gap (15.31% coincident vs 1.30% paired) is named and deliberately not chased. Per the brief's §4D branch the ride lane rests; next in value order, pending confirmation: #24 freight, then 4.2.4/#14. **Pre-calibration, one scenario, one seed, no counterfactual: nothing here is a finding about the light rail, and no holdout row was opened.** |
 | 2026-08-15 | **The city selector never worked, Java was never audited, and G2 is now exercised rather than asserted (§9.38 cont.).** Reporting zero hardcoding against an audit that did not look at Java, for a framework whose second-city claim had never been run, was a verdict on a scoreboard rather than on the repository. Both gaps contained a live defect. **THE CITY SELECTOR WAS BROKEN AND ALWAYS HAD BEEN.** `README.md`, `docs/README.md` and `.claude/CLAUDE.md` all state that the city is selected by `CITYSIM_CITY`. Setting it to ANY value - *including its own default* - made every `registry.load()` raise *"env CITYSIM_CITY matches no registry field"*, because the resolver reads `CITYSIM_*` from the environment as field overrides and skipped only `CITYSIM_REPO`. Nobody had ever set it: there is one city and the default applies when the variable is absent. The documented mechanism for goal G2 could not be used, and it took actually building a second city to find out. `city.py` now owns the reserved names and the resolver skips them, so the two copies cannot disagree; an EMPTY value also resolved to `cities/` itself and now falls back. **JAVA WAS NEVER SCANNED.** `check_hardcoding` read `src/java/` only for key mentions, never for values, and two MATSim `ConfigGroup` defaults EQUALLED the registry values they shadow - `TelemetryConfigGroup.liveIntervalS = 3600.0` against `RUN.telemetry.live_interval_s = 3600`, and `ParkingConfigGroup.chargedModes = "car"` against `A.parking.charged_modes`. That is the signature defect in its worst form: right by accident, every test passing, and silently wrong the moment anyone sweeps the field, because a config that lost the binding would run on the Java number and report success. Both are now a sentinel or a neutral value with `checkConsistency` refusing the run, and the audit gained a detector for the class - **verified by reintroducing the defect and watching the gate go red**. **G2 IS EXERCISED.** `tests/check_city_agnostic.py` builds a second city from the reference city's own declarations under a different identity - different projection, base year, seed, day types, **three modes not five**, different scenarios - emits its MATSim config through the same emitter and asserts DIFFERENCES, because a test that only checked the config parsed would pass even if every value in it were Newcastle's. It **invents no observation**: fabricating a city's census or counts would breach the rule that no unsupported number may be presented as observed, so the fixture is explicitly not a study, is built at test time and is deleted after. It also hashes `src/`, `config/schema/` and `run.py` either side to prove **no framework file changed while it ran**. 13 assertions, all passing, and a CI job runs it on every push. **THE CONTRACT WAS OVER-STRICT AND SAID SO ABOUT ITSELF.** `required_fields.json` demanded all 292 fields of every city while its own caveat admitted *"a city with no light rail has no use for A.lightrail.dwell_fixed_s - narrowing this set per model layer is not done"*; a three-mode city was refused for not declaring bike parameters it has no bike to apply to. The mode case is the one narrowing that can be DERIVED rather than judged, because the mode name is in the tool binding: fields carry `required_if_mode`, and `check_city` both excuses a missing one and now FAILS a city that declares a mode it does not run. **THE THIRTY RUN-INPUT SETS WERE REGENERATED** and now carry the emitter's output rather than the deleted template's - `lastIteration` 100 → 250 (the declared sweep floor, set through the resolver), threads 8 → 10 (`RUN.machine.threads`), and both capacity factors 1.0 → the resolved sample fraction. Manifest **376 → 378** files. Rebuilding the scenario GTFS feeds is **blocked by the empty OSM harvest (#32)** and was not attempted; the scenario rewiring was instead proved **value-neutral against git** - 23 declared values and every relocated coordinate identical to the literals they replaced. One more defect found by running the builder: `split_schedule` still referenced the deleted module-level `CFG`, which compiles and dies on use, exactly trap #11 - and a repo-wide AST sweep for the class now returns zero. **No scenario was run, no target value changed, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-08-15 | **Zero hardcoding: the config is BUILT from the registry, and 69 bound fields are PROVEN to reach the model by moving them (§9.38).** The MATSim config was a hand-written template with substitution holes, so every parameter nobody had cut a hole for stayed a literal - **47 of them**, including `fractionOfIterationsToDisableInnovation`, which the entire relaxation measurement hinges on, the four strategy weights that bound how far co-evolution can move mode share, and `BrainExpBeta`, the logit scale, which **had no registry field at all**. Six more had fields carrying a `matsim_param` binding the template ignored: right by accident, and wrong the moment anyone swept them. Patching them one at a time leaves the template, and **the template is the defect** - a place where typing a number is possible. `src/registry/param_config.py` now builds the MATSim config and pt2matsim's two from the fields that declare a binding; a parameter exists only if a field claims it or the caller supplies it under one of three declared runtime roles (a path, the city's own identity, a value derived from declared fields), and `closure()` returns anything else. **Emitting rather than patching also fixed what an overlay could reach**: `run_matsim.py` read the shipped config and rewrote SIX parameters, so a run overlay setting any other field was validated against its sweep, written into `_config.json` as the run's provenance, and changed nothing - the snapshot said one thing and the run did another. **Four quantities were bound to a parameter of a different kind, and the emitter found each by refusing to write it**: an exponent to a factor (`storage_capacity_exponent` 1.0 into a 0.01 factor - MATSim rejects that in one second), a time RATIO to a util/hour rate (`beta_walk_mode`, `beta_bike_mode`), a per-day-type window dict to two scalar hours (parking), and an activity duration table with no clock format. Each is now the input to a `computed` field carrying its identity. **The network builder held a second copy of the road class defaults** and the comment above it said it was kept there so the MATSim network, the SUMO corridor and `A1_road_edges.csv` could not drift apart; **they had** - six classes carried a different free speed from `A.road.speed_default`, in both directions (motorway 100 v 110, trunk 80 v 60, plus motorway_link, primary_link, secondary_link, service). Nothing compared them, because a second copy with no `legacy_symbol` is invisible to `check_legacy_drift.py`. One copy now, and **the network takes the declared speed** - a real change to six classes' free speed, taken because the registry is the declared source of truth and the network is rebuilt by #32 anyway. **The shipped configs stopped carrying a value supplied past the resolver**: `RUN.controler.last_iteration` is `unobtained` because 100 is MEASURED to be too low, and an argparse default shipped exactly 100 into all thirty sets; a shipped config now carries the sweep's lower bound, set THROUGH the resolver so it is recorded and range-checked. **22 coordinates left the scripts** into `cities/<city>/geometry/scenario_alignments.json` - among them the eight stops of the S1 shuttle and the six of the S3 BRT, the whole alignment of both counterfactuals the light rail is reported against, with the S3 list a copy of the S1 list that could drift; S3 is now expressed as which S1 stops it omits. Their service specifications went too, and were worse than unswept: `make_bus_shuttle(speed_kmh=28.0, dwell_s=15.0)` were **dead defaults** - the S1 call site passed 26.0 and 18.0, so the signature advertised a specification the model never used. **`0.75` was the S2b intervention**: "full transit signal priority" removes 75% of corridor signal delay, and that share - the thing S2b exists to measure - was a bare literal inside an arithmetic expression. `A.lightrail.tsp_enabled`, which all ten scenario overlays set, **reached nothing**; it now decides whether the S2b saving applies at all. **`DWELL_CHARGING = 20.0` pinned an UNOBTAINED input in a script**, walking past the one refusal the registry exists to make; the handover brief said it was pinned by `legacy_symbol` and should be left alone, and it carried none - its `EXPECTED_DIVERGENCE` entry compared nothing and the constant was unguarded. The seed existed in **nine copies** against a declared `B.seed.master`. `DEPART` was **144 assumed numbers** deciding when every tour starts. `build_matsim_plans.py` held a second activity-duration table, six keys against the field's seven - it had no `escort`. **The audit itself was counting the wrong things**: it asked whether a key was a SUBSTRING of any file, so a key named only in a comment or a test passed as wired, and **the count FELL when someone added a comment**. It now counts a key only where it appears as a complete string literal, understands a key built by format at the call site, and asks a sixth question no text search can - change each bound value and watch the emitted config change. **69 of 69 pass, 0 inert.** Honest baseline **185 items, not the 95 the previous audit could see; now 0**, with 18 structural exceptions and 7 declared-ahead-of-consumer fields each carrying a written reason and the issue that will wire it. `--strict` is a CI gate. **The CI provenance job had been failing since the city restructure** - it tested `docs/DECISIONS.md`, which moved. **No scenario was run, no target value changed, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-08-14 | **One city moves into `cities/<city>/`, and the framework stops knowing which city it models (§9.37).** No model or data value changed: the manifest was regenerated and diffed - **376 rows before and after, no path added or removed, not one sha256 changed**, only `produced_by`. `cities/newcastle/` now holds the registry, the overlays, the acquisition adapters, the seven builders that encode this city's intervention, and every data, network, schedule, demand and scenario artefact; `config/` is `config/schema/` alone. `src/city.py` is the only module that knows where a city lives and 338 path literals across 46 scripts resolve through it. **The input contract now exists**: `city.schema.json` (identity, and a boundary that must be DERIVED - `bbox` is deliberately not a property), plus the generated `required_fields.json` (210 keys) and `layers.json` (119 artefacts, read from the framework's own `city.path(...)` calls), gated by `check_city.py` in CI. The CRS left seven modules and the mode-share filter value left three, into `city.json`; the #34 CBD box and the harbourside window are declared in `geometry/` at **byte-identical values** - relocated, NOT fixed, #34 still open. **#36 closed**: `CITYSIM_*`, `src/java/citysim/`, `CitysimControler`, generic OSM layer names. **One breaking output change taken deliberately**: `newcastle_lga_pct` -> `target_lga_pct`, so run records written earlier cannot be read by `fit.py`. **Two defects found by measurement**: four scripts named a city directory relative to the working directory and one wrote 32 MB of GTFS into the repo root (`check_city.py` now fails on the class, verified by reintroducing it), and `build_manifest.py` still stamped **GDA2020** where §2.6 established GDA94. Still no scenario run; no falsification condition altered. |
-| 2026-08-13 | **Repository context cleanup — no model or data value changed (issue #36 filed).** The documents had drifted from the model. `STATUS.md`, whose whole purpose is to be readable at session start, had become **1,191 lines of which 944 were dated session narrative** duplicating §9.1–§9.35; that narrative moved to `docs/handover/SESSION_LOG.md` as an archive and `STATUS.md` is a board again at 317 lines. **Four figures in it were stale and one was self-contradictory**: it claimed 364 manifest files against a real 386, "four runs exist" against seven directories, "~960 checks", and a header reading *"Stage: P4 stages 0–3"* under a *"last updated: P4 stage 17"* line. **A correction recorded in §2.6 had never propagated**: `CLAUDE.md` and `README.md` still labelled EPSG:28356 as GDA2020 when §2.6 establishes it is GDA94 — the one file that overrides all others was stating the wrong datum. `DECISIONS.md` gained a **topical index**, because its section numbers are not in file order (§15 precedes §14) and §9 had accumulated 35 subsections spanning parking, network, toolchain and registry decisions under a heading that says *Synthetic population and demand*; nothing was renumbered, since §9.x ids are referenced from code comments, issues and both other documents. Documents were filed under `docs/{design,reference,audit,handover}/` with `docs/README.md` marking **which four are generated and must never be hand-edited**; the three generators and `check_package.py` were repointed and `render_docs.py --check` re-verified. **The project codename was a suburb**: "Project Wickham" named the whole five-LGA Newcastle model after one suburb of it, contradicting this repo's own rule that no place name belongs in the framework — and the city-selection mechanism reads `CITYSIM_CITY=newcastle`. Prose, the three schema titles and the manifest `project` string are renamed to the then repository name (itself superseded by `city-digital-twin`, §9.67); the `CITYSIM_*` prefix and the `src/java/citysim/` package are **deliberately left** and tracked in #36, to be renamed inside the #32 re-harvest batch, which already invalidates every run record and recompiles the Java — a rename of a compiled entry point cannot be gated now, because `networks/osm/` is empty and `check_package.py` cannot pass. Every Wickham-the-suburb reference is untouched: the zone, stop and POI data, the Newcastle Interchange transfer, scenario S1 and the era-1 reconstruction. **#16 closed** — §9.12 ran the measurement it specified and §9.17 took the decision it gated; the other eleven open issues were each checked against the package and **none of the rest is resolved**. Four fully-merged local branches deleted (zero unique commits each). One broken relative link in §9.13 fixed; all 40 links in the extracted narrative repointed; **0 broken links** across every document. `check_manifest.py` passes and `compileall` is clean. **Nothing in this repository is a result**, and the OSM harvest is still empty. |
+| 2026-08-13 | **Repository context cleanup — no model or data value changed (issue #36 filed).** The documents had drifted from the model. `STATUS.md`, whose whole purpose is to be readable at session start, had become **1,191 lines of which 944 were dated session narrative** duplicating §9.1–§9.35; that narrative moved to `docs/archived/SESSION_LOG.md` as an archive and `STATUS.md` is a board again at 317 lines. **Four figures in it were stale and one was self-contradictory**: it claimed 364 manifest files against a real 386, "four runs exist" against seven directories, "~960 checks", and a header reading *"Stage: P4 stages 0–3"* under a *"last updated: P4 stage 17"* line. **A correction recorded in §2.6 had never propagated**: `CLAUDE.md` and `README.md` still labelled EPSG:28356 as GDA2020 when §2.6 establishes it is GDA94 — the one file that overrides all others was stating the wrong datum. `DECISIONS.md` gained a **topical index**, because its section numbers are not in file order (§15 precedes §14) and §9 had accumulated 35 subsections spanning parking, network, toolchain and registry decisions under a heading that says *Synthetic population and demand*; nothing was renumbered, since §9.x ids are referenced from code comments, issues and both other documents. Documents were filed under `docs/{design,reference,audit,handover}/` with `docs/README.md` marking **which four are generated and must never be hand-edited**; the three generators and `check_package.py` were repointed and `render_docs.py --check` re-verified. **The project codename was a suburb**: "Project Wickham" named the whole five-LGA Newcastle model after one suburb of it, contradicting this repo's own rule that no place name belongs in the framework — and the city-selection mechanism reads `CITYSIM_CITY=newcastle`. Prose, the three schema titles and the manifest `project` string are renamed to the then repository name (itself superseded by `city-digital-twin`, §9.67); the `CITYSIM_*` prefix and the `src/java/citysim/` package are **deliberately left** and tracked in #36, to be renamed inside the #32 re-harvest batch, which already invalidates every run record and recompiles the Java — a rename of a compiled entry point cannot be gated now, because `networks/osm/` is empty and `check_package.py` cannot pass. Every Wickham-the-suburb reference is untouched: the zone, stop and POI data, the Newcastle Interchange transfer, scenario S1 and the era-1 reconstruction. **#16 closed** — §9.12 ran the measurement it specified and §9.17 took the decision it gated; the other eleven open issues were each checked against the package and **none of the rest is resolved**. Four fully-merged local branches deleted (zero unique commits each). One broken relative link in §9.13 fixed; all 40 links in the extracted narrative repointed; **0 broken links** across every document. `check_manifest.py` passes and `compileall` is clean. **Nothing in this repository is a result**, and the OSM harvest is still empty. |
 | 2026-08-13 | **The corridor speed limit becomes the REGULATED one, and the rest stays imputed and says so (§9.34, issue #27).** TfNSW's statewide **Speed Zones** layer - the legal instrument, not a mapper's transcription of a sign - clipped to the dissolved LGA boundary plus a declared margin, never a typed extent. Corridor edges on a regulated speed **0 → 669 of 714**; imputed **75 → 41**. Network-wide, imputation falls **53.7% → 38.3%**, and 15,804 of the 16,515 still imputed are `service` roads, so on the roads anyone drives it is **2.6%**. **The join was validated and the validation changed it**: at 20 m it agreed with OSM only 73.5%, and looking showed agreement collapsing from 72% at 10 m to **30% at 10-20 m and 15% at 20-40 m**, plus service roads matching the arterial beside them at 37% against residential's 83%. Radius tightened to 10 m on that measurement and `service` excluded by class - excluding by measured agreement would be fitting the join to its own validation. **What did not close is asserted as still open**: kerbside 678 of 714 imputed, lane width 704, capacity 714, turn lanes 644 absent. TfNSW publishes kerbside for the **Sydney CBD only** and no statewide lane or capacity inventory exists, so B3 - proposal §3.3's *decisive test of Claim B* - must report them as uncertainty, and check_package now fails if the gap is quietly relabelled. Two more copies of a number found on the way: the corridor builder kept its OWN speed, lanes and capacity defaults, which had **diverged** from the measured ones (trunk 80 vs 60), and a second bare 3.2 lane width with the same carriageway-versus-lane error. **No scenario was run, no target value changed and nothing here is a result.** |
 | 2026-08-13 | **P4 deliverable 0b - six defaults stop being guesses, and a suspected duplicate turns out to be two different numbers (§9.33, issue #23).** **88 → 84 assumed, 15 → 21 measured**, plus one field that existed nowhere. `RUN.routing.beeline_distance_factor` and `B.activity.detour_factor` were flagged as probably the same quantity declared twice; they are not - one is the road graph at zone spacing, the other the ACTIVE network at walk and bike trip lengths, and circuity falls with distance. Measured: **walk 1.6902, bike 1.5231** against a shared assumed 1.30, so the field is **split in two**. A first sampling by random bearing gave 1.96 and was **rejected on its own evidence** - it sent walk trips across the harbour; sampling observed POI destinations, which is where B2 puts activities, gives 1.69. The walk SPEED, though, WAS a genuine duplicate: `A.transit.walk_speed_ms` 1.25 and `RUN.routing.teleported_walk_speed_ms` 1.05, both `literature`, each describing the other as a different quantity - and the pinned jar's bytecode shows `travelTime = (beeline x factor) / teleportedModeSpeed`, so the speed is ALONG the path and they are one number. Now `derived` by identity at 1.25. Per-class defaults measured from the city's own OSM tags where at least 30 edges are tagged: **trunk speed 80 → 60** over 1,702 tagged edges, **motorway 100 → 110**, and a **lane width that was a bare 3.2 in no registry at all**, now measured at **3.5 m** - and NOT from the `width` tag, which on a road is the whole carriageway at 6.5 m and would have doubled every carriageway in the model. Three things the data looked able to settle and could not, all the same trap: parking capacity has 4,861 observed values of which **4,623 are 1** because they are individual bays, not car parks. The reclassification #23 proposed was reviewed and **mostly declined** - the SUMO booleans and corridor buffers each change a result, and relabelling a real assumption to make a percentage look better is the opposite of what 0b is for. **No scenario was run, no target value changed, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-08-13 | **P4 deliverable 8 - the transfer penalty cannot be estimated from this package, and the parameter was reaching nothing anyway (§9.32, issues #25, #35).** Proposal §7.2's fallback asks for tap-on/tap-off **timing** at the Interchange plus a matching model. **Every Opal source held is a monthly aggregate** - no timestamp, no tap-off paired to a tap-on, nothing for a matching model to match. The stop-level tap data that would substitute is **holdout**, and the 67 calibration rows contain nothing bearing on interchange, so the constrain-to-an-observable route (§9.8) has no observable either. No published interchange percentage for Newcastle could be located; and published interchange **times** are the wrong quantity - MATSim already simulates the walk and scores the wait at 2.0x in-vehicle time, and this parameter is the premium **on top of** the measured 112 s Interchange walk, so substituting one would double-count. Per the deliverable's own bar the reason is recorded and **the sweep stands** at 3-15 minutes across seven points. Tracing where the parameter goes found that it went nowhere: `build_params.py` read **one** registry field and typed the other **26** in as literals, so setting the value through the resolver's own override path left `C1_parameters.json` **byte-identical**. Seventh instance of the class. Two consequences sharper than usual - the **mode constants are `held_fixed` under §8.5** and the model was not reading the value being protected, so deliverable 5 (#14) would have estimated seven ASCs, written them to the registry, changed nothing and reported success; and the **sweep grid was a literal too**, making #25's own bar unmeetable by construction. The prior check compared **bases only** and its comment conceded *"the registry copy is a mirror"* - three RANGES had already drifted apart unnoticed. C1 is now **generated from** the registry rather than checked against it, with five missing declarations added; declaring a sampling grid for the charging dwell did **not** pin it, which stays unobtained and null. **Value-neutral and proved so** - no base moved and all 30 run-input sets regenerated unchanged - and **reach proved by changing a value**: the override now moves `utilityOfLineSwitch` -2.2613 to -3.3922, exactly the VOT conversion. `check_package.py` 1,435 -> **1,440**. **No scenario was run, no target value changed, no holdout row was opened and nothing here is a result.** |

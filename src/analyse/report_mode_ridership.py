@@ -436,6 +436,10 @@ def report(run_dir, iteration, truck_stations=False):
     LAST['trips'] = dict(trips)
     LAST['targets'] = {m: t['target'] for m, t in tgt.items()}
     LAST['truck_target'] = truck_target_stn
+    LAST['run'] = _os.path.basename(_os.path.normpath(run_dir))
+    LAST['fraction'] = sample_fraction(run_dir)
+    LAST['source'] = source
+    LAST['rows'] = []          # one dict per mode, filled as the table prints
 
     stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
     name = _os.path.basename(_os.path.normpath(run_dir))
@@ -471,6 +475,13 @@ def report(run_dir, iteration, truck_stations=False):
         return '%9.2f' % mean, '%+7.0f%%' % (100.0 * (mean - obs) / obs)
 
     breaches = []
+
+    def _row(i, mode, t, m, dev, basis, flag):
+        LAST['rows'].append(dict(
+            n=i, mode=mode, modelled=m, target=t.get('target'),
+            deviation_pct=dev, count=trips.get(mode, 0), basis=basis,
+            flag=flag, denominator=t.get('denominator') or ''))
+
     for i, (mode, t) in enumerate(tgt.items(), 1):
         m = modelled[mode]
         if mode == 'truck' and truck_target_stn is not None:
@@ -481,6 +492,7 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10s %10s %11s %12d  %s'
                   % ('%d %s' % (i, mode), '-', '-', '-', trips[mode],
                      'NOT SIMULATED (decision)'))
+            _row(i, mode, t, None, None, 'not simulated', 'decision')
             continue
         if t['target'] is None:
             # a mode with no percentage denominator prints no percentage:
@@ -491,11 +503,14 @@ def report(run_dir, iteration, truck_stations=False):
                      '-' if m is None else '%.4f' % m,
                      'unobtained', 'n/a', trips[mode],
                      'NO TARGET - swept, never pinned'))
+            _row(i, mode, t, m, None, 'share of resident trips', 'no target')
             continue
         if m is None:
             print('%-15s %10s %10.4f %11s %12d  %s'
                   % ('%d %s' % (i, mode), '-', t['target'], 'n/a',
                      trips[mode], 'NO MODELLED COUNTERPART'))
+            _row(i, mode, t, None, None, t.get('denominator') or '',
+                 'no modelled counterpart')
             continue
         dev = 100.0 * (m - t['target']) / t['target']
         if mode == 'freight_train':
@@ -503,6 +518,9 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      flag))
+            _row(i, mode, t, m, dev,
+                 'train movements represented by crossing closures',
+                 'representation')
             continue
         if mode in boarding_modes:
             if abs(dev) >= GATE_STOP_PCT:
@@ -515,6 +533,8 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.0f %10.0f %+10.1f%% %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      'BOARDINGS/weekday, all travellers, x1/fraction; ' + flag))
+            _row(i, mode, t, m, dev,
+                 'boardings per weekday, all travellers, x1/fraction', flag)
             continue
         if mode == 'truck' and truck_note:
             # A share of the WHOLE network set beside a share measured on
@@ -523,6 +543,9 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %11s %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], 'n/a', trips[mode],
                      truck_note))
+            _row(i, mode, t, m, dev,
+                 'network-wide road-vehicle share (not the target basis; '
+                 '--truck-stations scores it)', 'level only')
             continue
         if abs(dev) >= GATE_STOP_PCT:
             flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
@@ -535,6 +558,9 @@ def report(run_dir, iteration, truck_stations=False):
         print('%-15s %10.4f %10.4f %+10.1f%% %12d %s %s  %s'
               % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                  gk, gd, flag))
+        _row(i, mode, t, m, dev,
+             'heavy share at the classifying stations' if mode == 'truck'
+             else 'share of resident linked trips', flag)
 
     print('-' * 100)
     print('target-LGA linked trips %d   modelled road vehicle trips %d '
@@ -596,6 +622,10 @@ def main():
                          'individually: modelled %% against target, then the '
                          'direction over the readings - the gate reads the '
                          'TREND, not the level (DECISIONS.md 9.108, 9.120)')
+    ap.add_argument('--json', metavar='OUT',
+                    help='also write the last table as JSON - one row per mode '
+                         'with its basis and gate flag - for the generated '
+                         'board (src/analyse/build_status_board.py)')
     a = ap.parse_args()
 
     import iteration_trips as itr
@@ -617,21 +647,32 @@ def main():
         if not rows:
             raise SystemExit('no iteration of %s could be read' % a.run)
         targets = LAST['targets']
-        modes = [m for m in targets if m != 'freight_train']
+        modes = list(targets)            # all twelve, freight rail included
+        basis = {r['mode']: r['basis'] for r in LAST['rows']}
         stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
         print('PER-MODE TREND   %s   run %s   %d readable iteration(s)'
               % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows)))
-        print('modelled %% of resident linked trips (truck: %s)'
+        print('modelled %% of resident linked trips unless the basis column '
+              'says otherwise (truck: %s)'
               % ('heavy share at the classifying stations'
                  if a.truck_stations else 'network-wide road-vehicle share, NOT its target basis'))
-        print('%-12s %9s' % ('mode', 'target') + ''.join('%9s' % ('it.%d' % it) for it, _ in rows) + '   direction')
+        print('%-14s %10s' % ('mode', 'target')
+              + ''.join('%10s' % ('it.%d' % it) for it, _ in rows)
+              + '   direction   basis')
+
+        def fmt(v, t):
+            if v is None:
+                return '-'
+            big = (t is not None and abs(t) >= 1000) or abs(v) >= 1000
+            return '%.0f' % v if big else '%.4f' % v
+
         for m in modes:
             t = targets.get(m)
             if m == 'truck' and a.truck_stations and LAST.get('truck_target') is not None:
                 t = LAST['truck_target']
             vals = [r.get(m) for _, r in rows]
-            line = '%-12s %9s' % (m, '-' if t is None else '%.4f' % t)
-            line += ''.join('%9s' % ('-' if v is None else '%.4f' % v) for v in vals)
+            line = '%-14s %10s' % (m, fmt(t, t))
+            line += ''.join('%10s' % fmt(v, t) for v in vals)
             if t is not None and len(vals) >= 2 and vals[0] is not None and vals[-1] is not None:
                 d0, d1 = abs(vals[0] - t), abs(vals[-1] - t)
                 span = rows[-1][0] - rows[0][0]
@@ -645,11 +686,24 @@ def main():
                 else:
                     verdict = 'flat'
                 dev = 100.0 * (vals[-1] - t) / t if t else float('nan')
-                line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
+                if m == 'freight_train':
+                    line += '   representation'
+                elif m == 'truck' and not a.truck_stations:
+                    line += '   level only, %+.1f%% (not its target basis)' % dev
+                else:
+                    line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
+            line += '   ' + basis.get(m, '')
             print(line)
+        if a.json:
+            with open(a.json, 'w', encoding='utf-8') as fh:
+                json.dump(dict(run=LAST['run'], iteration=LAST['iteration'],
+                               fraction=LAST['fraction'], source=LAST['source'],
+                               rows=LAST['rows'],
+                               trend={m: [r.get(m) for _, r in rows] for m in modes},
+                               iterations=[it for it, _ in rows]),
+                          fh, indent=1)
         return
     if a.watch:
-        import json
         import time as _time
         done = set()
         while True:
@@ -692,6 +746,11 @@ def main():
                          'experienced plans; this run holds %s'
                          % (it, ' '.join(str(i) for i in have)))
     report(a.run, it, a.truck_stations)
+    if a.json:
+        with open(a.json, 'w', encoding='utf-8') as fh:
+            json.dump(dict(run=LAST['run'], iteration=LAST['iteration'],
+                           fraction=LAST['fraction'], source=LAST['source'],
+                           rows=LAST['rows']), fh, indent=1)
 
 
 if __name__ == '__main__':

@@ -1,20 +1,25 @@
 # city-digital-twin
 
-A city-agnostic transport digital-twin framework, applied first as a counterfactual
-microsimulation of the **Newcastle (NSW) light rail** — MATSim end to end, for the
-five-LGA regional demand model and the corridor alike.
+A city-agnostic **digital twin of how a real city moves** — MATSim end to end.
+Twelve modes, each physically simulated on the real roads and timetables and
+scored against its real-life ridership, driven by a synthetic population drawn
+from the published census, survey and licence data. The first city is
+**Newcastle (NSW)**; the goal, its hard requirements and the loop every session
+runs are in [`GOAL.md`](cities/newcastle/docs/GOAL.md).
 
-The NSW Auditor-General found that the light rail's benefits were never estimated
-against the alternatives that were available in 2013. This repository builds the
-model that would answer that question, and holds itself to a stricter standard of
-disclosure than the business case it examines: **every value that was not observed
-is declared, given a sweep range, and recorded with the reason it was chosen.**
+Why: once the twin reproduces every mode at its real share, it can be pointed at
+questions observation cannot settle — Australia's low light rail usage (Newcastle's
+2019 line is the first application, the frozen origin design at
+[`design/newcastle-lr-proposal.md`](cities/newcastle/docs/archived/design/newcastle-lr-proposal.md)),
+the modes that could relieve a corridor's congestion, the demands of an event the
+size of Brisbane 2032. It holds itself to one standard throughout: **every value
+that was not observed is derived where it can be, and otherwise declared, given a
+sweep range and recorded with the reason it was chosen.**
 
-> **No counterfactual has been run, and nothing here is a finding about the light
-> rail.** The base model *has* run and been measured — that measurement is
-> [below](#does-it-reproduce-the-city-not-yet), and it is a calibration diagnostic,
-> not a result. See [`STATUS.md`](cities/newcastle/docs/STATUS.md) for the board and
-> the next action.
+> **Where it stands:** the [board](cities/newcastle/docs/STATUS.md) carries the
+> twelve-mode scoreboard from the latest reading and what is next. Nothing is a
+> result until a run completes with `_run.json`; the fit figures
+> [below](#does-it-reproduce-the-city-not-yet) are the last completed base arm.
 
 ---
 
@@ -31,11 +36,11 @@ imposes on the street is represented rather than netted out.
 | Freight (`truck`) | Physical, at declared PCE, seeded from each cordon station's own observed heavy-vehicle share |
 | Bus, heavy rail, light rail, ferry | Scheduled transit on the mapped GTFS, **scored as distinct submodes** so a bus and a tram are not interchangeable in route choice |
 | Bike, walk | Physical on the active network, with gradient and directional walk-speed factors |
-| Taxi / rideshare | One blended priced mode on the published 2025 fares, checked against an inferred trips-per-day band as a **constraint, never a target** |
+| Taxi / rideshare | **Physical on the road with a finite fleet** — a request the fleet cannot serve is refused; priced on the published 2025 fares; scored against a target derived from the IPART trips-per-day band |
 
 | Corridor mechanisms | How |
 |---|---|
-| Traffic signals | **Explicit signal control at the 14 corridor intersections** — generated phase plans, declared minimum greens and saturation flows, run on MATSim's signals contrib. The real SCATS phasing was refused (see [below](#what-could-not-be-obtained)), so the plans are declared and swept, never presented as observed |
+| Traffic signals | **SCATS, implemented as its published algorithm** at the 14 corridor intersections on MATSim's signals contrib: degree of saturation measured at every stop line, cycle and splits adapted toward a target DS, clearances preserved. The operated phase plans and the offset library are the parts TfNSW does not release, so offsets are not adapted (see [below](#what-is-derived-rather-than-observed)) |
 | Transit priority | Green extension with a declared priority budget and repayment, keyed to the **tram** in the light-rail scenarios and to the **bus** in the bus-priority counterfactual |
 | Level crossings | Freight-train closures at two named crossings, as time-varying link capacity |
 | Light rail charging dwell | Native, concurrent with boarding — the wire-free design's cost in run time |
@@ -72,8 +77,8 @@ python run.py --detach      # the DEFAULT arm: S2, weekday, 25% sample, 1000 ite
 ```
 
 **The default arm is a multi-hour run** — tens of hours, and how many depends on the
-model it runs. [`STATUS.md`](cities/newcastle/docs/STATUS.md) carries the measured
-seconds-per-iteration for each stack under *Measured run costs*; read it before
+model it runs. [`positions/runs-and-economics.md`](cities/newcastle/docs/positions/runs-and-economics.md)
+carries the measured seconds-per-iteration for each stack; read it before
 launching, and launch with `--detach`.
 
 ```bash
@@ -172,7 +177,7 @@ recorded as unscored, with the reason, in
 [`FIGURES.json`](cities/newcastle/docs/reference/figures/FIGURES.json).
 
 Full rows, every unscorable target and the parameter provenance:
-[`CALIBRATION_REPORT.md`](cities/newcastle/docs/audit/CALIBRATION_REPORT.md).
+[`CALIBRATION_REPORT.md`](cities/newcastle/docs/reference/CALIBRATION_REPORT.md).
 Regenerate the figures and the report together after a new arm:
 
 ```bash
@@ -212,15 +217,17 @@ this page still equal the artefacts they describe.
 
 | | |
 |---|---|
-| [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) | **The board** — phase state, deliverables, next action. Read first |
-| [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) | **Every value that is not observed**, with its rationale and sweep range. Start at its own index |
-| [`cities/newcastle/docs/design/newcastle-lr-proposal.md`](cities/newcastle/docs/design/newcastle-lr-proposal.md) | The research design: hypotheses, identification strategy, deliverables |
+| [`cities/newcastle/docs/GOAL.md`](cities/newcastle/docs/GOAL.md) | **What the twin is for** — the hard requirements, the gate loop, the monitoring rule. Read first |
+| [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) | **The board, one page** — the twelve-mode scoreboard, phase state, runs, next action |
+| [`cities/newcastle/docs/positions/`](cities/newcastle/docs/positions) | **The current truth per topic** — ride, signals, sampling, seed, taxi, walk and bike, PT yardsticks, and more; one page each, every figure sourced |
+| [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) | **The record**: every value that is not observed and every decision, with rationale and sweep. Enter through its index or a position page |
+| [`cities/newcastle/docs/archived/design/newcastle-lr-proposal.md`](cities/newcastle/docs/archived/design/newcastle-lr-proposal.md) | The frozen origin design: the light-rail counterfactual, now the twin's first application |
 | [`docs/README.md`](docs/README.md) | The **framework's** documentation and the portable input contract |
 | [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repo |
 
-**Read [`DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) before using any of
-this.** It records every assumed value, its sweep range, and five corrections to
-premises stated in the research proposal.
+**A value in this model is observed, derived or declared-with-a-sweep, and the
+record says which.** Read the position page for a topic before changing anything
+in it.
 
 ---
 
@@ -343,25 +350,27 @@ in anything published. Per-file provenance is in
 
 ---
 
-## What could not be obtained
+## What is derived rather than observed
 
-Three inputs the research design named as critical are not available from open
-sources. **Each is handled by parameter sweep and never pinned to a point value** —
-the model runs the mechanism, and the headline is reported as a band across the
-range rather than as a single number:
+The rule ([`GOAL.md`](cities/newcastle/docs/GOAL.md) requirement 6): a disclosed
+value is used exactly; an undisclosed one is researched and derived; a sweep is the
+fallback only where derivation is genuinely impossible, and then the reason is
+stated and the value is never pinned.
 
-- **SCATS signal phasing** — **refused by TfNSW policy**, documented and citable.
-  The published inventory gives each signal's identity, location and install date;
-  no phase plan, cycle time or split. The corridor's signals are therefore modelled
-  explicitly from *declared* plans, and corridor run time swings 38% between no
-  priority and full priority — the largest single uncertainty in the model.
-- **Journey-linked Opal** — not published. Estimating the transfer penalty needs
-  tap-on/tap-off *timing*; every Opal source held is a monthly aggregate and the
-  stop-level tap data is holdout. Swept across 3–15 minutes.
-- **Measured charging dwell** — no published figure. Swept, never pinned.
+- **SCATS signal operation** — TfNSW does not release the operated phase plans or
+  the offset library. The published SCATS algorithm is **implemented** instead
+  (degree of saturation, cycle and split adaptation, priority); offsets are not
+  adapted because no algorithm replaces the unreleased library. See
+  [`positions/signals-and-crossings.md`](cities/newcastle/docs/positions/signals-and-crossings.md).
+- **Rail and tram patronage** — held to the **disclosed** weekday boardings
+  (station entries; the line's own Opal series). **Ferry** patronage is not
+  published anywhere, so its target is derived from the harbour's market.
+- **Licence holding** — the published TfNSW licence count over the ABS population,
+  per age band and LGA.
+- **Journey-linked Opal** — not published; the transfer penalty it would estimate
+  is swept 3–15 minutes. **Measured charging dwell** — no published figure; swept.
 
-Also absent: pedestrian counts (none published for Newcastle — hypothesis B1 has no
-observable without them), frontage-level retail floorspace and vacancy, parking meter
-transactions, and a 2014 timetable to validate the era-1 reconstruction. The full list
-and priority order is in
-[`DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) §13.
+Also absent: pedestrian counts, frontage-level retail floorspace and vacancy,
+parking meter transactions, and a 2014 timetable to validate the era-1
+reconstruction. The current position on every input is
+[`positions/network-and-inputs.md`](cities/newcastle/docs/positions/network-and-inputs.md).

@@ -56,6 +56,29 @@ jobs:
       - name: No live figure has outlived its artefact
         run: python tests/check_doc_currency.py --strict
 
+  doc_shape:
+    name: living documents keep their shape
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      # The companion of doc_currency: a number can be right while the document
+      # around it has become a diary. The board's hand-written lines are capped
+      # and its generated blocks required, the brief is capped and stamped with
+      # the family it was written for, new DECISIONS sections arrive in order and
+      # under a cap, every figure on a position page carries its source, and a
+      # frozen document says so at the top. Standard library only; committed
+      # files only; rules are city-owned (cities/<city>/tests/doc_shape.json).
+      - name: The board is a board, the brief is stamped, the record is in order
+        run: python tests/check_doc_shape.py --strict
+      # The board's state block is generated from committed artefacts (the family
+      # ledger, the registry, the manifest, the run-input sets); the two
+      # results-derived blocks are skipped here because CI holds no run outputs.
+      - name: The board's generated blocks are current
+        run: python src/analyse/build_status_board.py --check
+
   city:
     name: city contract (schema, required fields, artefacts)
     runs-on: ubuntu-latest

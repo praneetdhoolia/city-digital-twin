@@ -5,7 +5,7 @@ Valid runs, probes and aborted launches used to be distinguishable only by
 reading each directory's records. This writes `results/INDEX.md` and
 `results/INDEX.csv` - one row per run directory - so comparability is
 mechanical: every row carries its comparability FAMILY (from the city's
-declared `docs/audit/run_families.json`, never re-derived here) and its
+declared `docs/run_families.json`, never re-derived here) and its
 VALIDITY (status from `_meta.json`, whether `_run.json` exists, whether the
 run relaxed), which is exactly the information whose absence lets someone
 compare across families or fractions without noticing.
@@ -50,7 +50,7 @@ PROBE_ITERATIONS_CEILING = _registry.load().sweep(
 
 
 def load_families():
-    path = city.path('docs', 'audit', 'run_families.json')
+    path = city.path('docs', 'run_families.json')
     with open(path, encoding='utf-8') as f:
         doc = json.load(f)
     fams = sorted(doc['families'].items(), key=lambda kv: kv[1]['from_launch'])
@@ -175,7 +175,7 @@ def build():
                 'NEVER hand-edit\n\n')
         f.write('One row per run directory. **Comparisons are legitimate only '
                 'inside one family at one fraction** (DECISIONS.md 3.5 and the '
-                'family boundaries in docs/audit/run_families.json). A run '
+                'family boundaries in docs/run_families.json). A run '
                 'without `_run.json` is not a result; a `probe` (under %d '
                 'iterations, DECISIONS.md 9.7/9.43) is plumbing/timing '
                 'evidence, never a result.\n\n' % PROBE_ITERATIONS_CEILING)

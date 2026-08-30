@@ -14,7 +14,7 @@ document, that the base arm puts vehicle passengers at 0.09% against an observed
 plumbing probe, and a probe is not a result (DECISIONS.md 9.7/9.43). The default
 is the run the CALIBRATED BASE was written from: `params/C5_calibration.json`
 names its `best_tag`, and this finds the run whose `_fit.json` carries that tag.
-So these figures and `docs/audit/CALIBRATION_REPORT.md` always describe the same
+So these figures and `docs/reference/CALIBRATION_REPORT.md` always describe the same
 arm, and both follow the base forward when a new one is calibrated.
 
 **WHAT IT REFUSES TO DRAW.** Only what the fit statistic actually scored. A
@@ -48,7 +48,7 @@ import argparse  # noqa: E402
 
 OUT_DIR = _city.path('docs', 'reference', 'figures')
 CALIBRATION_FILE = _city.path('params/C5_calibration.json')
-FAMILIES_FILE = _city.path('docs', 'audit', 'run_families.json')
+FAMILIES_FILE = _city.path('docs', 'run_families.json')
 RESULTS_DIR = _os.path.join(_city.REPO, 'results')
 LEDGER = 'FIGURES.json'
 
