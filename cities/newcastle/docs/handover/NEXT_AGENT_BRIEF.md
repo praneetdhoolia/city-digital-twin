@@ -159,8 +159,13 @@ After the arm: the ride ceiling (#86/#91) is the likeliest next root cause; ligh
 (#30, §9.103 — the corridor holds shopping/other ends at two-thirds of the observed
 attraction rate, measured §9.120) and the ferry (#94) are untouched by F15.
 
-**The ride ceiling, stated for the decision it needs.** The demand binds a driver to
-~11% of resident trips against 20.6% observed. The joint binder re-aims a companion's
+**The ride ceiling is now MEASURED to be the next boundary (§9.123).** At F17
+iteration 20, 95.4% of the residents whose best-scored plan is bike have no car;
+car-less residents (24.7% of trips) walk 48%, ride 18.5% (the bound trips), cycle 17%
+and take pt 15%, while car-available residents converge on car (48.5% overall, inside
+the bar) and shed bike. Bike +308%, bus +141%, heavy rail +120% and walk's residue are
+ride's deficit wearing other modes. **Do not touch a bike, pt or walk parameter for
+them.** The demand binds a driver to ~11% of resident trips against 20.6% observed. The joint binder re-aims a companion's
 OWN drawn tour onto a household co-member's tour and adds no trip (§9.84), so its
 supply is a SECOND licensed, car-available, travelling household member — and §9.111
 measured that 41.7% of multi-person households have at most one, while 26.2% of
@@ -340,7 +345,11 @@ Counts that expire live in **§0**.
 §8  TRAPS — newest first, each with what it cost
 ═══════════════════════════════════════════════════════════════════════════════
 
-1. **A BEELINE CROSSES WATER; A NETWORK WALK DOES NOT** (§9.121, #94). The PT
+1. **A MODE'S EXCESS IS OFTEN ANOTHER MODE'S DEFICIT — SPLIT THE POPULATION BEFORE
+   TOUCHING A CONSTANT** (§9.123). Bike +308% was the car-less quarter with no lift;
+   every bike parameter was innocent. Read the mode split by car availability, and
+   the per-mode plan scores in memory, before believing a share names its own cause.
+2. **A BEELINE CROSSES WATER; A NETWORK WALK DOES NOT** (§9.121, #94). The PT
    router's direct-walk shortcut turned 38% of pt-plan trips into walks, some of 30
    km, and the ferry into a mode nobody could reach. Any router shortcut that reasons
    on straight lines must be checked against the network it will be executed on.
