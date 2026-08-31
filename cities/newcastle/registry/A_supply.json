@@ -2028,6 +2028,375 @@
       "status": "active",
       "decisions_ref": "9.90",
       "description": "How long the boom stays down for ONE scheduled PASSENGER train. Under the schedule-derived closure source a closure is emitted per train, so the duration has to be a per-train figure - and the 240 s of A.crossings.closure_duration_s is not one. That value is anchored on the TfNSW statement that closures run \"up to ten minutes\", which describes a long coal train, and applying it per passenger train would hold the Islington boom down 204 x 240 s = 13.6 hours a weekday, which is not what that crossing does. A boom-gate closure decomposes into a warning/lead time before arrival, the train transit itself, and a short lag before the booms lift; a two-to-four-car Hunter Line set clears the crossing in seconds, so the lead and lag dominate. 60 s is that sum at standard operation and is swept 30-120 s because neither the operated lead time nor the boom lag is published for these two sites."
+    },
+    "A.fare.train_band_upper_km": {
+      "value": [
+        10,
+        20,
+        35,
+        65
+      ],
+      "units": "km",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal metro/train fare distance-band upper bounds; the last band is open (65+ km). Fare distance, not network distance. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.train_adult_peak_aud": {
+      "value": [
+        4.33,
+        5.38,
+        6.2,
+        8.28,
+        10.66
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult metro/train peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.train_adult_offpeak_aud": {
+      "value": [
+        3.03,
+        3.76,
+        4.34,
+        5.79,
+        7.46
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult metro/train off-peak fare per band (the published 30% discount, as published - not recomputed). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.train_child_peak_aud": {
+      "value": [
+        2.16,
+        2.69,
+        3.1,
+        4.14,
+        5.33
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth metro/train peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.train_child_offpeak_aud": {
+      "value": [
+        1.51,
+        1.88,
+        2.17,
+        2.89,
+        3.73
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth metro/train off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.bus_band_upper_km": {
+      "value": [
+        3,
+        8
+      ],
+      "units": "km",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal bus fare distance-band upper bounds; the last band is open (8+ km). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.bus_adult_peak_aud": {
+      "value": [
+        3.3,
+        4.49,
+        5.77
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult bus peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.bus_adult_offpeak_aud": {
+      "value": [
+        2.31,
+        3.14,
+        4.03
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult bus off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.bus_child_peak_aud": {
+      "value": [
+        1.65,
+        2.24,
+        2.88
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth bus peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.bus_child_offpeak_aud": {
+      "value": [
+        1.15,
+        1.56,
+        2.01
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth bus off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.lightrail_band_upper_km": {
+      "value": [
+        3,
+        8
+      ],
+      "units": "km",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal light rail fare distance-band upper bounds; published as its own table (its values equal the bus table, but each is declared from its own publication so neither can drift by proxy). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.lightrail_adult_peak_aud": {
+      "value": [
+        3.3,
+        4.49,
+        5.77
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.lightrail_adult_offpeak_aud": {
+      "value": [
+        2.31,
+        3.14,
+        4.03
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult light rail off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.lightrail_child_peak_aud": {
+      "value": [
+        1.65,
+        2.24,
+        2.88
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.lightrail_child_offpeak_aud": {
+      "value": [
+        1.15,
+        1.56,
+        2.01
+      ],
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth light rail off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.ferry_adult_peak_aud": {
+      "value": 3.3,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Newcastle Stockton ferry adult peak fare - the ferry fare table carries a named row for this crossing (0-3 km), separate from the Sydney bands. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.ferry_adult_offpeak_aud": {
+      "value": 2.31,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Newcastle Stockton ferry adult off-peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.ferry_child_peak_aud": {
+      "value": 1.65,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Newcastle Stockton ferry Child/Youth peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.ferry_child_offpeak_aud": {
+      "value": 1.15,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Newcastle Stockton ferry Child/Youth off-peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.senior_per_fare_cap_aud": {
+      "value": 2.5,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Gold Senior/Pensioner Opal: each fare is the Child/Youth fare capped at this value, and the daily cap equals it. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.daily_cap_adult_aud": {
+      "value": 19.3,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult daily cap, Mondays to Thursdays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.daily_cap_adult_weekend_aud": {
+      "value": 9.65,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Adult daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.daily_cap_child_aud": {
+      "value": 9.65,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth daily cap, Mondays to Thursdays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.daily_cap_child_weekend_aud": {
+      "value": 4.8,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.daily_cap_senior_aud": {
+      "value": 2.5,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Gold Senior/Pensioner daily cap, every day of the week. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.transfer_discount_adult_aud": {
+      "value": 2.0,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal transfer discount off an adult fare, for every transfer between modes within one journey. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.transfer_discount_child_aud": {
+      "value": 1.0,
+      "units": "AUD",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal transfer discount off a Child/Youth or Concession fare, for every transfer between modes within one journey. Also applied to Senior/Pensioner fares, which the publication folds into concession. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.transfer_window_min": {
+      "value": 60,
+      "units": "minutes",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          30,
+          90
+        ],
+        "basis": "The 60-minute tap-off-to-tap-on rule is the Opal journey definition in general use; the archived pages state the discount but not the window, so it is literature, swept around the published rule."
+      },
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Maximum gap between alighting one service and boarding the next for the two boardings to count as one journey (and earn the transfer discount)."
+    },
+    "A.fare.peak_morning_start_h": {
+      "value": 6.5,
+      "units": "hours",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal morning peak start, metro/train, bus and light rail: 6:30am. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.peak_morning_end_h": {
+      "value": 10.0,
+      "units": "hours",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal morning peak end: 10am. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.peak_evening_start_h": {
+      "value": 15.0,
+      "units": "hours",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal evening peak start: 3pm. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.peak_evening_end_h": {
+      "value": 19.0,
+      "units": "hours",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Opal evening peak end: 7pm. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.rail_peak_morning_start_h": {
+      "value": 6.0,
+      "units": "hours",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Intercity trains begin their morning peak at 6am (the Hunter line is an NSW TrainLink intercity service); the published note that it varies by tap-on station for some stations is recorded and not modelled. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.child_min_age": {
+      "value": 4,
+      "units": "years",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Children under 4 travel free; Child/Youth fares start at 4. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.child_max_age": {
+      "value": 15,
+      "units": "years",
+      "source": "observed",
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Child/Youth Opal fares apply to ages 4-15 (eligible school students 16+ also qualify; that concession class is recorded, not modelled). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
+    },
+    "A.fare.senior_min_age": {
+      "value": 60,
+      "units": "years",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          60,
+          67
+        ],
+        "basis": "NSW Seniors Card eligibility age; pensioner eligibility below 60 exists and is not modelled. Swept up to pension age."
+      },
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "Age from which a resident not employed full-time is priced on Gold Senior/Pensioner Opal fares. Eligibility also requires not working full-time, read from the held employment attribute."
     }
   }
 }
