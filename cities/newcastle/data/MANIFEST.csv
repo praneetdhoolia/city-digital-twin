@@ -246,7 +246,7 @@ scenarios/S3.json,processed,1340,,cities/newcastle/build/build_scenario_configs.
 scenarios/S4.json,processed,1351,,cities/newcastle/build/build_scenario_configs.py,,,,,1743c796dbcb51cab005910b11c58543fa6f360a9bf2f8426cbfb47bf4aea4fe
 scenarios/S5.json,processed,1343,,cities/newcastle/build/build_scenario_configs.py,,,,,a9ace48e84b7da4dba47d7139208335b10c330f22c5fa97007ca670228cff012
 scenarios/S6.json,processed,1293,,cities/newcastle/build/build_scenario_configs.py,,,,,757ec3bb7a9e434d791b3ea3dcbbb7b8cdbd3a5483f182916b0c0324e714b4a4
-scenarios/matsim/_run_inputs_report.json,processed,46178,,src/build/build_matsim_run_inputs.py,,,,,ab4b6ffb56e77eabf97ab48f79d65afedc2121bd7c046bdf8f2d53a30dcbda35
+scenarios/matsim/_run_inputs_report.json,processed,44382,,src/build/build_matsim_run_inputs.py,,,,,db9762a12d67ddca6d93edfe02aee843a1d5726802b54934341221410974eedf
 scenarios/matsim/S0/network.xml.gz,processed,7509854,,src/build/build_matsim_run_inputs.py,,,,,ef0872c6dd484a7db45eb84c33f9bce886d08d72a94e46419b017021dea4a41a
 scenarios/matsim/S0/parking_prices.tsv,processed,301766,,src/build/build_matsim_run_inputs.py,,,,,f270dd3e5f985e389c27a353f4736794acbeca92a0182582082e91cf597f732b
 scenarios/matsim/S0/SAT/config.xml,processed,17006,,src/build/build_matsim_run_inputs.py,,,,,cbca4879c26d441613e56aaedf0010dd1baf82d7bd3bd071064530c127d828b1
