@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 31 August 2026, twentieth session · **Open family:** `F21-licence-rate-demand` · **Commit:** the PR that carries §9.135
+**Written:** 31 August 2026, twentieth session · **Open family:** `F22-pt-fares-priced` · **Commit:** the PR that carries §9.135
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
@@ -11,33 +11,34 @@ car paid fuel and parking and taxi the meter. The cause was picked by
 measurement on the stopped F21 arm's own outputs: heavy rail is **+131% even
 on the entries basis**, over at every suburban station, with the Interchange
 UNDER. The gate-stop diagnostics the last brief queued are all read. **The
-next lane is the first F22 arm on the fare-priced model — it needs the
-user's stated-cost approval (~18–21 h at 10% × 300).**
+first F22 arm is LAUNCHED (31 Aug 16:51, task `citysim_run_20260831T165126`),
+25% × 300 by the user's decision at approval, ~25 h stated cost, SPENT at
+launch. The next lane is its iteration-100 gate under the GOAL.md loop.**
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **No arm is running; the machine is idle.** The last runs are the completed smoke `20260831T145828_2it_1pct` (fares live, caps verified) and the F21 gate-stop arm `aborted_20260830T222642_300it_10pct` — still the scoreboard's reading. | `python src/run/session_gate.py --digest` (the MACHINE line) · `ls -t results/ \| head` |
+| **The first F22 arm is RUNNING** (launched 31 Aug 16:51, 25% × 300, ~25 h): do not recompile `.tools/classes`, launch nothing beside it, gate it at every 100th iteration. | `python src/run/session_gate.py --digest` (the MACHINE line) · `ls -t results/ \| head` |
 | **The package on disk is consistent under the fare change.** The 30 run-input sets carry the `ptFare` module; `check_package.py` ALL CHECKS PASSED, re-run 31 Aug after the regeneration. | `python tests/check_package.py` (about ten minutes) |
 | **This session's PR** is open at handoff, or merged — check; the branch is `praneetdhoolia/pt-fares`. | `gh pr list --state open` · `gh pr checks <n>` |
 | Issues #98, #93, #86, #48, #82, #99 and #30 carry this session's measured comments (§9.135); no issue was closed or opened. | `gh issue list --state open` |
 | Registry 450 fields, manifest 509 files, 30 run-input sets, family `F21-licence-rate-demand` open from `20260830T222641` — all generated into the board's *State* block. F22 is DECLARED ONLY AT the next arm's launch. | `python src/analyse/build_status_board.py --check` |
-| **No run approval stands.** The F21 approval was spent on the gate-stop arm; nothing was approved since. | assume none; ask |
+| **No further run approval stands.** The F22 approval (25% × 300, ~25 h) was SPENT on the launch of 31 Aug 16:51; nothing else is approved. | assume none; ask |
 
 Then the gate: `python src/run/session_gate.py` — every check on one line; it
 skips the toolchain compile only while an arm runs.
 
 ## §1 The lane
 
-**Launch the first F22 arm on the fare-priced model** once the user grants a
-stated-cost approval: S2 × WEEKDAY, 10%, 300 iterations is **~18–21 h at the
-measured late pace** (§9.134, median ~250 s/it by iteration 100). Launch
-detached, family `F22` declared at launch (`decisions_ref` 9.135), gate at
-every 100th iteration under the GOAL.md loop. What its gate measures: the
-fare's effect on heavy rail (+161.8% at the F21 gate, #98), bus (+15.6%,
-#99), taxi's relative price position (#49), and where the displaced pt trips
-land (car/ride/walk).
+**Gate the running F22 arm at every 100th iteration** under the GOAL.md
+loop: launched detached 31 Aug 16:51 (S2 × WEEKDAY, 25% × 300, overlay
+`f22_gate_25pct`, family `F22-pt-fares-priced` declared at launch,
+`decisions_ref` 9.135; the user chose 25% at approval, ~25 h stated, spent).
+What its gate measures: the fare's effect on heavy rail (+161.8% at the F21
+gate, #98), bus (+15.6%, #99), taxi's relative price position (#49), and
+where the displaced pt trips land (car/ride/walk). Never read it against the
+10% F21 arm (§9.10, §9.12) — its targets are the yardstick.
 
 **Lanes measured and waiting, none needing a run** (§9.135, the position
 pages):
@@ -61,14 +62,13 @@ pages):
    licence-rate demand.
 
 **Decisions required from the user** (also on the board):
-1. **The stated-cost approval for the first F22 arm** (~18–21 h at 10% × 300).
-2. Enable the Task Scheduler operational log (`wevtutil sl
+1. Enable the Task Scheduler operational log (`wevtutil sl
    Microsoft-Windows-TaskScheduler/Operational /e:true`, elevated) (#66).
-3. The fraction and cost of a confirmation arm after the 10% loop — 25% × 300
-   ≈ 25 h stated (§9.129).
-4. Whether bus moves to a boardings basis once a regional count is acquired
+2. Whether a separate confirmation arm is still needed now the loop itself
+   runs at 25% (§9.129).
+3. Whether bus moves to a boardings basis once a regional count is acquired
    (#99).
-5. Whether the S2 base grants the tram signal priority — the emitted config
+4. Whether the S2 base grants the tram signal priority — the emitted config
    says `green_extension` while the record's S2 probe ran with it off
    ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
 
@@ -108,9 +108,9 @@ pages):
 
 ## §3 Standing directives and approvals
 
-- **No multi-hour run without a stated-cost approval.** The F21 approval is
-  **SPENT** on `aborted_20260830T222642_300it_10pct`; every earlier approval
-  is **SPENT**. The F22 arm is NOT approved. No approval stands.
+- **No multi-hour run without a stated-cost approval.** The F22 approval
+  (25% × 300, ~25 h, granted 31 Aug) is **SPENT** on the arm launched at
+  16:51; every earlier approval is **SPENT**. No approval stands.
 - **The goal directive lives in [`GOAL.md`](GOAL.md)** and is not re-issued
   per session: twelve modes physical, monitored and scored; <10% each; gate
   every 100 iterations; stop on >20% or heading there; fix from the root;

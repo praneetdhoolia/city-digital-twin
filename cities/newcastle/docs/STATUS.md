@@ -7,10 +7,11 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 31 August 2026 — public transport is priced: the published
-Opal fare schedule is charged on every pt journey (§9.135), diagnosed from the
-F21 gate stop's own outputs (rail +131 % even on the entries basis, every ride
-free while car paid fuel and parking). The next arm opens family F22.
+**Last updated:** 31 August 2026 — the first F22 arm is launched on the
+fare-priced model (§9.135): 25 % × 300 iterations by the user's decision at
+approval (~25 h stated cost, spent at launch; task `citysim_run_20260831T165126`).
+Family `F22-pt-fares-priced` opened at launch; its iteration-100 gate is the
+next reading.
 
 ## The goal
 
@@ -66,7 +67,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F21-licence-rate-demand` (opened `20260830T222641`, §9.131) - nothing run before it compares with anything after it |
+| Open comparability family | `F22-pt-fares-priced` (opened `20260831T164923`, §9.135) - nothing run before it compares with anything after it |
 | Input registry | **450 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **509 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
@@ -83,22 +84,22 @@ PASSED (re-run 31 Aug, after the fare change). The F21 arm's sample holds
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260831T165127_300it_25pct` | running | F22-pt-fares-priced | - | - |
 | `20260831T145828_2it_1pct` | completed | F21-licence-rate-demand | 2 | has `_run.json` |
 | `aborted_20260830T222642_300it_10pct` | aborted | F21-licence-rate-demand | 102 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 8 modes at or past 20% deviation (heavy_rail +161.8%, bike +157.... |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
-| `aborted_20260830T170743_300it_10pct` | aborted | F19-driver-detour | 28 | Stopped by the session at iteration 27 for the F20 arm (DECISIONS.md 9.129): its 10% sample, drawn under the 9.127 at-or-below coupling r... |
 
-121 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+122 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **Run the first F22 arm on the fare-priced model** (§9.135): 300 × 10 %
-   costs ~18–21 h at the measured late pace (§9.134) and **needs a fresh
-   stated-cost approval**; its iteration-100 gate measures the fare's effect
-   on heavy rail (#98), bus (#99) and the displaced trips.
+1. **Read the first F22 arm's iteration-100 gate** (§9.135): the arm is
+   launched 31 Aug at 25 % × 300 under a spent ~25 h approval; the gate
+   measures the fare's effect on heavy rail (#98), bus (#99) and the
+   displaced trips. Never read it against the 10 % F21 arm (§9.10, §9.12).
 2. **The gate-stop diagnostics are read** (§9.135): rail is +131 % on the
    entries basis with the Interchange UNDER (#30's corridor end); the
    walk/car imbalance sits in the car-available group (86.4 % car, 2.9 %
@@ -108,13 +109,12 @@ PASSED (re-run 31 Aug, after the fare change). The F21 arm's sample holds
 3. **The #96 scan is rerun on the rebuilt plans**: 341 mixed subtours, 3 leaf,
    in 110 of 621,364 persons — unchanged in rate by the rebuild (on #96).
 
-**Decisions required:** the stated-cost approval for the first F22 arm
-(~18–21 h at 10 % × 300, §9.134); enable the Task Scheduler operational log so
-a console-stop death can name its trigger (#66); the fraction and cost of a
-confirmation arm after the 10 % loop (25 % × 300 ≈ 25 h); whether bus moves to
-a boardings basis once a regional count is acquired (#99); whether the S2 base
-grants the tram signal priority — the emitted config says `green_extension`
-while the record's S2 probe ran with it off ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+**Decisions required:** enable the Task Scheduler operational log so
+a console-stop death can name its trigger (#66); whether a separate
+confirmation arm is still needed now the loop runs at 25 % (§9.129); whether
+bus moves to a boardings basis once a regional count is acquired (#99);
+whether the S2 base grants the tram signal priority — the emitted config says
+`green_extension` while the record's S2 probe ran with it off ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
 
 ## Open work
 

@@ -126,6 +126,12 @@
       "decisions_ref": "9.131",
       "from_launch": "20260830T222641",
       "note": "Opened 30 Aug 22:26 with arm 20260830T222642_300it_10pct after smoke probe 20260830T213149 on the rebuilt inputs: chains, plans and the 30 run-input sets rebuilt on the population that draws each person's driver licence from the measured TfNSW rate for their own LGA (B.population.licence_rate_by_age_band, 9.131) in place of the literature vector that left a seventh of the workforce unlicensed (9.133). Run side and binder rules are F20 unchanged (9.129). The population file is part of the run key (9.127): the arm sampled 61,953 persons against the F20 arm's 62,134. Launched detached under a stated-cost approval of ~9-15 h, spent at launch."
+    },
+    "F22-pt-fares-priced": {
+      "label": "F21 run stack and demand with every pt journey charged its published Opal fare (9.135)",
+      "decisions_ref": "9.135",
+      "from_launch": "20260831T164923",
+      "note": "Opened 31 Aug with arm 20260831T165127_300it_25pct, after smoke probe 20260831T145828 verified fares live and caps binding: citysim.PtFareChargeHandler charges the archived Opal schedule (36 A.fare.* fields, data/raw/fares/) on every pt journey as PersonMoneyEvents - until 9.135 every pt ride was free while car paid fuel and parking. Demand, binder rules and network are F21 unchanged; the price system is part of the run's identity (9.127, 9.135), so nothing before this boundary compares with anything after. The arm runs at 25% x 300 iterations by the user's decision at approval (31 Aug, ~25 h stated cost, spent at launch); NEVER read it against the 10% F21 arm (9.10, 9.12)."
     }
   },
   "overrides": {
