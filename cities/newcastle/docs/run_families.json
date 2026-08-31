@@ -120,6 +120,12 @@
       "decisions_ref": "9.129",
       "from_launch": "20260830T184954",
       "note": "Opened 30 Aug 18:49 with arm 20260830T184955_300it_10pct after smoke probe 20260830T184637: B.ride.shared_lift_hash_bucket = 0.05 (new) replaces the 9.127 at-or-below rule in the fourth binder pass, and the motorbike / truck carve probability excludes named drivers before the solve. Run side is F19 unchanged. The F19 arm 20260830T170743 was stopped at iteration 27 and is F19 to that iteration."
+    },
+    "F21-licence-rate-demand": {
+      "label": "F20 run stack and binder rules on the demand rebuilt from the measured licence-rate population (9.131, 9.133)",
+      "decisions_ref": "9.131",
+      "from_launch": "20260830T222641",
+      "note": "Opened 30 Aug 22:26 with arm 20260830T222642_300it_10pct after smoke probe 20260830T213149 on the rebuilt inputs: chains, plans and the 30 run-input sets rebuilt on the population that draws each person's driver licence from the measured TfNSW rate for their own LGA (B.population.licence_rate_by_age_band, 9.131) in place of the literature vector that left a seventh of the workforce unlicensed (9.133). Run side and binder rules are F20 unchanged (9.129). The population file is part of the run key (9.127): the arm sampled 61,953 persons against the F20 arm's 62,134. Launched detached under a stated-cost approval of ~9-15 h, spent at launch."
     }
   },
   "overrides": {

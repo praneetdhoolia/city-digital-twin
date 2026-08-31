@@ -1,8 +1,8 @@
 # Monitoring, scoring and the gate — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.133 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -28,13 +28,13 @@
 
 - **The calibrated base is F4, arm `20260821T175907_1000it_25pct`**: 35 of 67 calibration targets scorable, MAE 10.65 pp, `feasible=False` with five stated violations, ASCs held at their priors (§9.64, §9.50). `params/C5_calibration.json` names it as `best_tag`, and `README.md`'s fit figures still draw it via `src/analyse/build_fit_figures.py` (§9.80). Its light rail 1,260 boardings is a LEVEL, not an error (§9.80, #84).
 - **The seed noise floor** from the F4 pair: at most 0.11 pp per mode at fit level, light rail boardings within 3.9% (§9.64).
-- **The latest gate readings are not results.** The F20 arm `aborted_20260830T184955_300it_10pct` reached iteration 10: motorbike 0.378% against 0.3785, heavy rail 37,520 boardings a weekday against 6,529, light rail 1,650 against 2,954 (`STATUS.md`, §9.130). On the F19 arm at iteration 20 the disclosed basis read light rail -51% and heavy rail +372%, with the Interchange right and the suburban stations three to thirteen times over (§9.130).
+- **The first gate since F4 was reached, and it fired (§9.134).** The F21 arm `aborted_20260830T222642_300it_10pct` read all twelve modes at iteration 100: 8 at or past 20% (heavy rail +161.8%, bike +157.3%, ferry −81.5%, light rail −73.6% and AWAY, taxi +67.4%, ride −41.3%, walk −36.6%, motorbike +24.6%) and the run was stopped under the GOAL.md loop; car +16.0% and bus +15.6% had crossed their targets and sat inside the stop bar. On the F19 arm at iteration 20 the disclosed basis read light rail -51% and heavy rail +372%, with the Interchange right and the suburban stations three to thirteen times over (§9.130).
 - **Truck at its own basis**: +5.4% on 3 calibration stations and 23 modelled heavy traversals at iteration 100 of `aborted_20260829T172145_1000it_10pct`; 20 of the 24 classifying stations are holdout and were not opened (§9.101).
 
 ## What is open
 
-- **The machine is idle and the package on disk is inconsistent** — the population was rebuilt with measured licence rates and the chains were not (§9.131). Family F21 opens at the next launch; no arm has been read on it.
-- **Heavy rail's five-fold suburban over-boarding** is outer-LGA residents' long rail work trips, which the target-LGA trip table never sees (§9.131). The licence-rate rebuild is the first repair; the reading is pending.
+- **The machine is idle and the package on disk is consistent** (§9.133). Family F21 is open; its first arm is read and stopped at the iteration-100 gate (§9.134). The next family follows the user's pick of root cause, under a fresh run approval.
+- **Heavy rail's over-boarding halved inside the F21 arm and still stands**: 36,340 → 17,090 boardings over iterations 10 → 100, +161.8% against 6,529 at the gate (§9.134, #98). The licence fix was the first repair, not the last.
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
 - **No arm has reached its innovation cutoff since F4**, so no post-cutoff twelve-mode level exists (§9.108).
 - **`--trend` omits `freight_train`** and its header still says resident linked trips for every row, while heavy rail and light rail rows now carry boardings (§9.130) — the header is behind the basis.
@@ -55,6 +55,7 @@
 
 ## History
 
+- §9.134 — first gate since F4; stop fired
 - §9.133 — board skips plumbing tests
 - §9.131 — licence rate rebuilt; F21 opens
 - §9.130 — rail modes on disclosed boardings
