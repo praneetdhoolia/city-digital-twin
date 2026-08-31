@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
+**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
 
 ## What is built
 
@@ -41,7 +41,7 @@
 - **Precision:** a 10% arm reads motorbike off a few tens of persons; a −50% at that depth was a sampling statement, not a defect (§9.122).
 - **Truck, network-wide:** 5.65% of modelled road vehicles at the F21 gate (iteration 100, §9.134), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101).
 - **Truck at the classifying stations, first F21 reading** (§9.135): 5.54% modelled against the 3 calibration stations' own observed 11.31% (−51.0%), on 24 heavy of 433 vehicles — thin, and far below the F13 like-for-like +5.4% (§9.101); the freight tier under the licence-rate demand is #82's next question.
-- **Truck at the classifying stations** (`--truck-stations`, link entries against `road_aadt_targets.csv`'s own heavy shares): last like-for-like reading 11.9171% modelled against 11.3092% observed, +5.4%, at iteration 100 of `20260829T172145_1000it_10pct`, family F13 — on 3 calibration stations and 23 heavy traversals; 20 of 24 classifying stations are holdout (§9.101). The station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). No F20 reading on this basis has been taken.
+- The basis (`--truck-stations`): link entries against `road_aadt_targets.csv`'s own heavy shares, 3 calibration stations, 20 of 24 classifying stations holdout and never opened (§9.101); the station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). The F13 like-for-like read +5.4% at iteration 100 of `20260829T172145_1000it_10pct` (§9.101).
 - **Freight rail:** 314 closures per weekday — Clyde Street 204, Saint James Road 110 — 3,014 change events, peaked with the service (§9.90). The `freight_train` target row is 314 on that same denominator; it is a representation check, not a fit (§9.90).
 
 ## What is open
