@@ -14,6 +14,8 @@ cities/*/data/raw/**
 !cities/*/data/raw/planning_tia/provenance_*.json
 !cities/*/data/raw/p2p/
 !cities/*/data/raw/p2p/provenance_*.json
+!cities/*/data/raw/fares/
+!cities/*/data/raw/fares/provenance_*.json
 !cities/*/data/raw/_s3_historical_gtfs_listing.txt
 
 # --- raw Overpass extracts (~156 MB) ---

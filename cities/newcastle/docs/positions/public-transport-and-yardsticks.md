@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
+**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
 
 ## What is built
 
@@ -13,6 +13,7 @@
 - **Twelve-mode target table** at `data/processed/validation/mode_targets_by_mode.csv` (13 rows, one per mode plus header), written by `cities/newcastle/build/build_mode_targets.py`; the two rail modes' per-station disclosed counts are in `data/processed/validation/pt_boardings_targets.json` (`decisions_ref` 9.130). Scored by `src/analyse/report_mode_ridership.py` — submodes are read from the LEGS table by the route each leg boarded, never from `main_mode`, which is `pt` for every PT trip (§9.112).
 - The table is a **disaggregation** of targets already in `validation_targets.csv`; it is not added to the pre-registered 210 and the 67/143 calibration/holdout split is untouched (§9.87, §12).
 - PT access: `RUN.transit_router.search_radius_m` 1000 and `RUN.transit_router.extension_radius_m` 200 govern every submode's reach, including whether a Stockton resident can be routed onto the ferry (#94).
+- **Every pt journey is charged its published Opal fare (§9.135).** `citysim.PtFareChargeHandler` prices each fare leg from the archived schedule (`data/raw/fares/`, 36 `A.fare.*` fields, all observed but two literature): distance-banded peak/off-peak tables per submode, the Stockton ferry's own row, the $2/$1 transfer discount, child (4–15) and Gold Senior/Pensioner (60+, not full-time employed; capped $2.50/fare and $2.50/day) classes, and the published daily caps — as `PersonMoneyEvent`s at journey close. Until §9.135 every pt trip was free while car paid fuel and parking and taxi the meter. The raptor still routes without seeing the fare; plan choice pays it.
 
 ## The twelve targets and their bases
 
@@ -49,7 +50,7 @@ Latest twelve-mode reading: the F21 gate at iteration 100 (`results/aborted_2026
 | ferry | 0.027% | 0.143% | −81.5% | 0.035% | §9.134, #94 |
 
 - **The PT total is right and its composition is wrong.** At F19 it.20 PT was 3.55% of resident trips against HTS 3.8%; boardings split bus 67.7 / rail 30.1 / tram 1.3 / ferry 1.0 against the Opal 62.7 / 20.4 / 17.0 (§9.130).
-- **Heavy rail's excess is at the suburban stations, not the Interchange (§9.130, #98).** Newcastle Interchange 1,430 modelled vs 1,569 disclosed; Hamilton 7,050 vs 534, Waratah 1,930 vs 132, Metford 1,750 vs 53 — 3 to 13 times over (#98). The over-boardings are long multi-leg trips of outer-LGA residents on the Maitland line (§9.131).
+- **Heavy rail's excess is at the suburban stations, not the Interchange (§9.130, #98), and it is genuine demand, not the yardstick (§9.135).** The F21 per-station split at iteration 100: boardings 16,790 vs entries 15,080 (9.8% of rail journeys re-board, mostly at Hamilton, 3,900 → 2,410 on the entries basis vs 573) — even scored as entries the mode reads +131%. Adamstown 980 vs 89, Metford 1,120 vs 56, Tarro 190 vs 5; **Newcastle Interchange is UNDER at 610 vs 1,683** — the missing CBD end is #30's corridor attraction (§9.135).
 - **The cause found for it is the licence rate (§9.131), and the F21 arm carries the fix.** `B.population.licence_rate_by_age_band` is `measured` from the TfNSW licence snapshot over the ABS population by age and LGA (`data/processed/observed/licence_rates_by_age_lga.csv`, §9.131). At the F21 gate heavy rail fell 36,340 → 17,090 boardings inside the arm (iterations 10 → 100) and bus fell to +15.6%, while light rail and ferry moved no closer (§9.134).
 - **The light rail's shortfall is not supply, not the destination market and not the Interchange transfer (§9.130).** The tram runs 252 weekday departures (§9.113); work ends within 400 m of a tram stop are 5.8% of all work ends (§9.130); the rail-to-tram walk is 54–58 m (§9.130). Where the missing riders are — longer corridor trips, rail transferees, visitors — is the open question.
 - **The ferry's market exists and walks around it.** 450 trips a day take the road detour around the water the ferry crosses, and 3 of them take public transport (§9.112, #94).
@@ -57,7 +58,7 @@ Latest twelve-mode reading: the F21 gate at iteration 100 (`results/aborted_2026
 
 ## What is open
 
-- **#98** — heavy rail read +161.8% at the F21 gate, halved inside the arm and still far past the bar (§9.134); the per-station split of the F21 outputs is unread — the next diagnostic.
+- **#98** — the per-station split is read (§9.135): the excess is genuine long suburban trips riding free while car paid fuel and parking; the fare (§9.135) is the root-cause fix carried by the next arm, and its first gate is the measurement.
 - **#99** — whether bus moves to a boardings basis; needs an official regional bus count acquired with provenance, and a statement of whether the HTS PT level counts school-bus travel (§9.130).
 - **#94** — the ferry captures a hundredth of its captive market; the raptor's reason is not established and no candidate has been measured (§9.112).
 - **#49** — the standing directive: every mode individually. Reporting and scoring are individual; the <10% bar is not met for any PT mode.
@@ -79,6 +80,7 @@ Latest twelve-mode reading: the F21 gate at iteration 100 (`results/aborted_2026
 
 ## History
 
+- §9.135 — the published Opal fare priced in
 - §9.134 — F21 gate: rail halved, tram away
 - §9.131 — licence rate now measured, rail cause
 - §9.130 — rail modes held to disclosed boardings

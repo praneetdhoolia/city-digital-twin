@@ -4,9 +4,9 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 414,
+  "n_fields": 450,
   "n_by_layer": {
-    "A": 133,
+    "A": 169,
     "B": 102,
     "C": 57,
     "CAL": 19,
@@ -254,6 +254,330 @@
       "units": "enum",
       "type": "string",
       "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.bus_adult_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.bus_adult_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.bus_band_upper_km": {
+      "layer": "A",
+      "units": "km",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.bus_child_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.bus_child_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.child_max_age": {
+      "layer": "A",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.child_min_age": {
+      "layer": "A",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.daily_cap_adult_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.daily_cap_adult_weekend_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.daily_cap_child_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.daily_cap_child_weekend_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.daily_cap_senior_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.ferry_adult_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.ferry_adult_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.ferry_child_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.ferry_child_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.lightrail_adult_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.lightrail_adult_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.lightrail_band_upper_km": {
+      "layer": "A",
+      "units": "km",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.lightrail_child_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.lightrail_child_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.peak_evening_end_h": {
+      "layer": "A",
+      "units": "hours",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.peak_evening_start_h": {
+      "layer": "A",
+      "units": "hours",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.peak_morning_end_h": {
+      "layer": "A",
+      "units": "hours",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.peak_morning_start_h": {
+      "layer": "A",
+      "units": "hours",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.rail_peak_morning_start_h": {
+      "layer": "A",
+      "units": "hours",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.senior_min_age": {
+      "layer": "A",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.senior_per_fare_cap_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.train_adult_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.train_adult_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.train_band_upper_km": {
+      "layer": "A",
+      "units": "km",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.train_child_offpeak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.train_child_peak_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.transfer_discount_adult_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.transfer_discount_child_aud": {
+      "layer": "A",
+      "units": "{currency}",
+      "type": "number",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.fare.transfer_window_min": {
+      "layer": "A",
+      "units": "minutes",
+      "type": "number",
+      "source_in_reference_city": "literature",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"

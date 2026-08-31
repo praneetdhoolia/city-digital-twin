@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
+**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
 
 ## What is built
 
@@ -36,10 +36,12 @@
 ## What is measured
 
 - **Motorbike, the F21 gate** (`aborted_20260830T222642_300it_10pct`, iteration 100): 0.4715% against 0.3785% (+24.6%), flat at 0.47–0.49% from iteration 30 (§9.134, #93). The F20 arm's −0.1% at iteration 10 was the old population's carve; the rebuilt demand re-solved both carves (§9.133) and the first gate-depth reading sits outside the bar.
+- **The carve identity comparison #93 asked for is taken** (§9.135): the plans report solves 0.2652% trip-weighted core-wide (`_plans_report.json`), but target-LGA delivery reads 0.5411% at iteration 0 and 0.4715% at the gate against the 0.3785% LGA identity — the SA1-resolution solve over-delivers inside the target LGA. Measured, not yet explained; the next step is the per-LGA split of the carve's draws, no run needed.
 - **The carve now delivers what it solves for:** 5,937 trips on 1,687 persons = 0.2666% of WEEKDAY resident trips against 0.2654% solved, the per-cell identity's core-wide trip-weighted value (§9.129). Before the pool repair it delivered 0.153%, 58% of the solve, because named drivers held 42.1% of the pool's trips (§9.129).
 - **Precision:** a 10% arm reads motorbike off a few tens of persons; a −50% at that depth was a sampling statement, not a defect (§9.122).
-- **Truck, network-wide:** 5.65% of modelled road vehicles at the F21 gate (iteration 100, §9.134), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101); no `--truck-stations` reading has been taken on F21.
-- **Truck at the classifying stations** (`--truck-stations`, link entries against `road_aadt_targets.csv`'s own heavy shares): last like-for-like reading 11.9171% modelled against 11.3092% observed, +5.4%, at iteration 100 of `20260829T172145_1000it_10pct`, family F13 — on 3 calibration stations and 23 heavy traversals; 20 of 24 classifying stations are holdout (§9.101). The station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). No F20 reading on this basis has been taken.
+- **Truck, network-wide:** 5.65% of modelled road vehicles at the F21 gate (iteration 100, §9.134), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101).
+- **Truck at the classifying stations, first F21 reading** (§9.135): 5.54% modelled against the 3 calibration stations' own observed 11.31% (−51.0%), on 24 heavy of 433 vehicles — thin, and far below the F13 like-for-like +5.4% (§9.101); the freight tier under the licence-rate demand is #82's next question.
+- The basis (`--truck-stations`): link entries against `road_aadt_targets.csv`'s own heavy shares, 3 calibration stations, 20 of 24 classifying stations holdout and never opened (§9.101); the station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). The F13 like-for-like read +5.4% at iteration 100 of `20260829T172145_1000it_10pct` (§9.101).
 - **Freight rail:** 314 closures per weekday — Clyde Street 204, Saint James Road 110 — 3,014 change events, peaked with the service (§9.90). The `freight_train` target row is 314 on that same denominator; it is a representation check, not a fit (§9.90).
 
 ## What is open

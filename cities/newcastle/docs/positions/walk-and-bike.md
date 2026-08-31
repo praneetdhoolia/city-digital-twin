@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
+**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
 
 ## What is built
 
@@ -21,6 +21,7 @@
 ## What is measured
 
 - **Gate reading, F21 iteration 100** (`results/aborted_20260830T222642_300it_10pct`, §9.134): walk 8.50% against 13.40% (−36.6%) — it crossed its target near iteration 38 and kept falling as car rose to 67.7% (+16.0%); bike 5.68% against 2.21% (+157.3%), drifting down from 7.81% at iteration 20. The stop fired with both outside the bar.
+- **The imbalance lives inside the car-available group** (§9.135, same arm at iteration 100): car-available residents make 78.3% of target-LGA trips and put 86.4% on car, 2.9% on walk; licensed-no-car residents (5.8% of trips) bike 36.0% and walk 34.7%; no-licence residents (15.9%) ride 41.3%, walk 26.6%, bike 16.5%. A short car trip costs almost nothing (`accessEgressType` `none`, §9.54; car constant 0; parking free outside the 150 priced zones) — the walk/car lane's standing measurement.
 - **Deepest reading of any family**: F17 iteration 50 — walk 14.88% (+11.0%) with car at +1.7%; bike 8.29% and moving away (§9.126).
 - **Walk geometry**: mean walk trip 6.66 km at iteration 100 against observed 0.70 km, falling from 8.12 at iteration 0 (§9.108). Walk and car are swapped at both ends: of resident trips under 1 km only 39.5% are walked and car takes 39.2% (§9.107). The sub-1 km trips exist in about the right number — 16.31% of resident trips against the 18.8% observed band share (§9.107, §9.69). Bike mean 10.04 km against observed 5.20 (§9.107).
 - **Who cycles**: of 913 residents whose best-scored plan is bike, 95.4% have no car available; car-less residents (24.7% of trips) walk 48.1%, cycle 16.7% and ride 18.5% (§9.123). Under the F12 seed 51.6% of bike trips were by licensed, car-available residents (§9.114); §9.123 measures the scored choice set and is the newer finding.

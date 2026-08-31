@@ -115,6 +115,7 @@ about its layout will otherwise cost you an hour:
 | **A seventh of the workforce had no licence** | **§9.131** — the literature licence vector left 14.2-14.8% of employed persons unlicensed and 17.5-21% without a car, which is where the outer-LGA rail, walk and bike commutes came from (census JTW by home LGA: car 86-91%, train 0.1-0.3%); replaced by the TfNSW licence snapshot over the ABS population by age and LGA, per LGA; family F21 |
 | **The demand chain rebuilt on the licence-rate population** | **§9.133** — the package was inconsistent from 30 August 19:31 (new population, old chains, plans and run inputs; `check_package.py` failing) and a registry `consumers` claim on `B.population.licence_rate_by_age_band` was untrue; chains, plans and the 30 run-input sets rebuilt, 503 manifest files, ALL CHECKS PASSED; the licence-rate builder asserts its vector against the declared field; F21 overlay written, arm not launched, F21 not declared |
 | **The first gate since F4: the F21 arm read at 100 and stopped** | **§9.134** — family F21 declared at launch `20260830T222641`; the arm reached the iteration-100 gate in ~7.1 h and 8 modes stood at or past 20% (heavy rail +161.8%, light rail −73.6% AWAY, ride capped at ~12%, walk −36.6% under a car +16.0% overshoot); stopped under the loop; the #96 scan on the rebuilt plans reads 341 mixed subtours, rate unchanged |
+| **Public transport is priced: the published Opal schedule enters the model** | **§9.135** — the model charged car fuel, parking and the taxi meter while every pt ride was free; five transportnsw.info pages archived, 36 `A.fare.*` fields (34 observed), `citysim.PtFareChargeHandler` charges each journey per fare leg with peak/off-peak bands, transfer discounts, child/senior classes and daily caps; per-station diagnosis: rail +131% even on the entries basis, the Interchange UNDER (610 vs 1,683); smoke charged 629 journeys −2,490 AUD at it.0; the next arm opens F22 |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13375,10 +13376,105 @@ overshoot is walk's and ride's deficit worn by car, not a car defect to tune
 in isolation (§9.123's rule).
 
 
+## 9.135 Public transport is priced: the published Opal schedule enters the model (31 August 2026, twentieth session; issues #98, #99, #30, #94)
+
+**What was wrong.** The model charged a car its fuel (`monetaryDistanceRate`),
+its parking (§9.31) and a taxi its metered fare (§9.76, §9.91) — and charged a
+train, bus, tram or ferry rider **nothing**. No decision ever said pt rides
+free; the fare simply was never built, while GOAL.md requirement 6 says a
+disclosed value is used exactly. The published Opal schedule prices exactly
+the trips the F21 gate flagged: a free 30 km Maitland-line ride against a car
+paying fuel and parking is asymmetric physics, not a preference.
+
+**Diagnosed on the stopped F21 arm before anything changed** (the §9.128 rule:
+a cause carries its measurement; all from
+`aborted_20260830T222642_300it_10pct` iteration 100 unless stated):
+
+- **The heavy-rail yardstick is sound; the demand is not.** The disclosed
+  counts are station ENTRIES; the scorer counts one boarding per leg. Measured
+  gap: 16,790 boardings vs 15,080 entries ×10 — 9.8% of rail journeys
+  re-board (93 rail>rail, mostly Hamilton: 3,900 → 2,410 entries vs 573
+  disclosed). Even on the entries basis the mode reads **+131%**, over at
+  every suburban station (Adamstown 980 vs 89, Metford 1,120 vs 56, Dora
+  Creek 640 vs 37, Tarro 190 vs 5) while **Newcastle Interchange is UNDER,
+  610 vs 1,683** — the missing CBD end is #30's corridor attraction, not a
+  fare question.
+- **The walk/car imbalance lives inside the car-available group.** Target-LGA
+  trips by availability: car-available residents make 78.3% of trips and put
+  86.4% on car, 2.9% on walk; licensed-no-car (5.8%) bike 36.0%, walk 34.7%;
+  no-licence (15.9%) ride 41.3%, walk 26.6%, bike 16.5%. A short car trip
+  costs almost nothing (`accessEgressType` `none`, §9.54; constant 0; most
+  parking free outside 150 priced zones) — recorded as the walk/car lane's
+  measurement, not attacked here.
+- **Truck at its own stations** (`--truck-stations`, first F21 reading):
+  5.54% modelled vs 11.31% observed, −51.0%, on 3 calibration stations and
+  24 heavy vehicles of 433 (#82; thin n, stated).
+- **Ride pairing on the rebuilt demand is healthy; the ceiling is demand.**
+  Iteration 0: 2,814 declared passengers on 2,657 detours, 0 unroutable, 178
+  unpaired re-moded; saturating at ~8,700 picked up from iteration ~90 (#86).
+- **The motorbike carve identity is sharpened** (#93): the per-cell solve is
+  0.2652% trip-weighted core-wide (`_plans_report.json`), but target-LGA
+  delivery reads 0.5411% at iteration 0 and 0.4715% at the gate against the
+  0.3785% LGA identity — the SA1-resolution solve over-delivers inside the
+  target LGA. Measured, not yet explained.
+
+**What changed.**
+
+1. **Acquisition.** Five transportnsw.info pages archived under
+   `data/raw/fares/` with `provenance_fares.json` (sha256, retrieval
+   2026-08-31, values quoted verbatim): adult, child and Gold
+   Senior/Pensioner tables, peak windows, caps, the $2/$1 transfer discount.
+   The fare tables sit in the pages' server-rendered payload; the Newcastle
+   Stockton ferry has its own named row in all three tables.
+2. **Registry.** 36 `A.fare.*` fields — 34 `observed` from the archive, 2
+   `literature` with sweeps (`A.fare.transfer_window_min` 60 min [30, 90];
+   `A.fare.senior_min_age` 60 [60, 67]). Registry 414 → 450 fields.
+3. **Runtime.** `citysim.PtFareConfigGroup` (sentinel defaults,
+   `checkConsistency` refuses a config that lost a binding) and
+   `citysim.PtFareChargeHandler`: per linked journey, consecutive same-submode
+   boardings within the transfer window continue one fare leg; a submode
+   change starts a new leg minus the transfer discount; fare distance is the
+   crow-fly tap-on to tap-off; peak by tap-on time (rail 6–10 h intercity,
+   others 6:30–10, both 15–19); rider class from held attributes (under 4
+   free; 4–15 child; 60+ not employed full-time the Gold rule, child fare
+   capped $2.50/fare and $2.50/day; else adult, external agents included);
+   per-class published daily caps; deferred `PersonMoneyEvent`s (the
+   ParkingChargeHandler discipline). Emitted from the fields by
+   `build_matsim_run_inputs.py` into a `ptFare` module; SAT/SUN configs are
+   off-peak all day with the published weekend caps.
+4. **Probe.** Smoke `20260831T145828_2it_1pct` (S2 WEEKDAY, 1%, 2 it,
+   completed with `_run.json`): iteration 0 charged 629 pt journeys
+   −2,490.21 AUD (median −3.30, the short bus/tram fare; max −15.91, inside
+   the $19.30 cap; min −0.06, a transfer-discounted residual), iteration 2
+   600 journeys −2,350.85 AUD, beside 892 parking and 413 taxi charges —
+   the third price channel alive next to the two that already were. Caps
+   verified per person against the run's own attributes: 427 charged persons,
+   66 seniors none above $2.50, 72 children none above $9.65, and the adult
+   maximum exactly $19.30 — the cap binding, not a coincidence.
+
+**Deliberately not modelled, each recorded:** the weekly cap and the Opal
+week (a one-day simulation); the single-trip-ticket premium (everyone pays
+Opal rates); the school-student 16+ concession; Friday's all-day off-peak
+inside the WEEKDAY day type (WEEKDAY prices as Monday–Thursday); the
+intercity stations whose morning peak varies by tap-on; a fare term in the
+raptor's route choice (the router still chooses on time and transfers; the
+plan pays the fare — same boundary as §9.130's "a mode constant is invisible
+to the raptor").
+
+**Consequences.** A fare is a scoring change: nothing before it compares with
+anything after (§9.127) — the next arm opens family **F22** at launch and
+needs a fresh stated-cost approval (~18–21 h at 10% × 300 per §9.134).
+Expected movements are expectations, not results: heavy rail and bus down,
+some displaced pt trips landing on car/ride/walk; light rail and ferry also
+pay (small flat fares) — their deficits stay #30's and #94's lanes. The 30
+run-input sets are regenerated with the module; manifest 503 → 509. The
+67/143 split is untouched; no target moved; nothing here is a result.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-31 | **Public transport is priced: the published Opal fare schedule enters the model (§9.135; issues #98/#99/#30/#94; twentieth session).** Acquisition `data/raw/fares/` (five archived pages + provenance); registry 414 → 450 fields (36 `A.fare.*`, 34 observed, 2 literature+sweep); `citysim.PtFareConfigGroup`/`PtFareChargeHandler` charge every pt journey its published fare (fare legs by submode, peak by tap-on, $2/$1 transfer discount, child 4–15 and Gold Senior/Pensioner 60+ classes, published daily caps) as deferred PersonMoneyEvents; emitted as the `ptFare` module; 30 run-input sets regenerated. Diagnosed first on the stopped F21 arm: rail boardings 16,790 vs entries 15,080 (yardstick sound), +131% on entries, Interchange UNDER; car-available residents put 86.4% on car and 2.9% on walk; truck at stations −51.0%; motorbike carve delivers 0.4715% in the target LGA against a 0.2652% core solve (#93). Smoke `20260831T145828_2it_1pct` completed: 629 journeys −2,490.21 AUD at it.0 beside parking and taxi charges. **No target moved; the 67/143 split is untouched; the next arm opens family F22 at launch and needs a fresh stated-cost approval; nothing here is a result.** |
 | 2026-08-31 | **The first gate since F4: the F21 arm reached iteration 100 and the stop fired (§9.134; issues #86/#93/#96/#98/#30/#66; nineteenth session).** Family `F21-licence-rate-demand` declared (`from_launch` 20260830T222641, `decisions_ref` 9.131); arm `20260830T222642_300it_10pct` launched detached under a ~9–15 h stated-cost approval, spent; stopped at the iteration-100 gate with 8 modes at or past 20%. Car crossed its target for the first time (+16.0%), bus +15.6%; ride plateaued at ~12% from iteration 30; heavy rail fell 36,340 → 17,090 boardings inside the arm; light rail AWAY. Pace: solo 170.9–182.1 s, median 249.4 s/it at 100; one isolated 355 s iteration timestamped for #66. `SubtourChainScan` on the rebuilt WEEKDAY plans: 341 mixed, 3 leaf, 110 of 621,364 persons — rate unchanged (#96). **No model value changed, no target moved; the 67/143 split is untouched; nothing here is a finding (no `_run.json`).** |
 | 2026-08-30 | **The demand chain rebuilt on the licence-rate population; the package consistent again (§9.133; issues #86/#93/#96; eighteenth session).** Chains, plans and the 30 run-input sets rerun on the 612,634-person population of §9.131; manifest 503 files (from 501); `tests/check_package.py` ALL CHECKS PASSED. `build_licence_rates.py` asserts the vector it derives against `B.population.licence_rate_by_age_band` and exits 1 on drift, making the registry's consumer claim true. WEEKDAY shared pass 61,682 servable / 57,758 bound / shortfall 0 (was 73,509 / 59,701 / 0). Overlay `f21_gate_10pct.json` written; smoke `20260830T213149_2it_1pct` run. **No model value changed, no target moved, no family opened (F21 opens at the arm's launch); the 67/143 split is untouched; nothing here is a finding.** |
 | 2026-08-30 | **The project on one page: the goal stated, the board generated, the record frozen behind position pages (§9.132; seventeenth session).** `GOAL.md` tracked; `STATUS.md` one page with three generated blocks; thirteen position pages; `check_doc_shape.py` in CI with the brief's family stamp, the record's order and cap, and a source on every figure; `session_gate.py` as the one gate; a PR hook on red documents; every frozen document bannered and moved under `docs/archived/`; issues #73 and #68 closed on evidence, #21 commented. **No model value changed, no data artefact changed, no family opened; the 67/143 split is untouched; nothing here is a finding.** |

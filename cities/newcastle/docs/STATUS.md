@@ -7,9 +7,10 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 31 August 2026 — the F21 arm ran to its iteration-100 gate
-and was stopped under the GOAL.md loop: 8 modes at or past 20 %. Car crossed
-its target for the first time (+16.0 % at 100); family F21 stays open.
+**Last updated:** 31 August 2026 — public transport is priced: the published
+Opal fare schedule is charged on every pt journey (§9.135), diagnosed from the
+F21 gate stop's own outputs (rail +131 % even on the entries basis, every ride
+free while car paid fuel and parking). The next arm opens family F22.
 
 ## The goal
 
@@ -23,7 +24,7 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
 | Every mode inside 10 % | **0 of 12** at the F21 iteration-100 gate — car (+16.0 %) and bus (+15.6 %) closest, both having crossed their targets; see the scoreboard | below, §9.134 |
 | Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arm (F21) stopped at its iteration-100 gate, before the 240 cutoff; `RUN.controler.last_iteration` still declares 1000 | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.134 |
-| Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
+| Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); pt fares from the published Opal schedule (§9.135); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
@@ -66,48 +67,50 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 | | |
 |---|---|
 | Open comparability family | `F21-licence-rate-demand` (opened `20260830T222641`, §9.131) - nothing run before it compares with anything after it |
-| Input registry | **414 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
-| Data package | **503 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
+| Input registry | **450 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Data package | **509 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (31 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (31 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (31 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (31 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (31 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (31 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (31 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (31 August 2026) |
 <!-- generated:state end -->
 
-**The package on disk is consistent** (§9.133): chains, plans and run inputs
-were rebuilt on the licence-rate population on 30 Aug and
-`tests/check_package.py` reports ALL CHECKS PASSED (re-run 30 Aug 22:20). The
-F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
+**The package on disk is consistent** (§9.133, §9.135): the 30 run-input sets
+carry the `ptFare` module and `tests/check_package.py` reports ALL CHECKS
+PASSED (re-run 31 Aug, after the fare change). The F21 arm's sample holds
+61,953 persons against the F20 arm's 62,134 (§9.127).
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260831T145828_2it_1pct` | completed | F21-licence-rate-demand | 2 | has `_run.json` |
 | `aborted_20260830T222642_300it_10pct` | aborted | F21-licence-rate-demand | 102 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 8 modes at or past 20% deviation (heavy_rail +161.8%, bike +157.... |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
 | `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
 | `aborted_20260830T170743_300it_10pct` | aborted | F19-driver-detour | 28 | Stopped by the session at iteration 27 for the F20 arm (DECISIONS.md 9.129): its 10% sample, drawn under the 9.127 at-or-below coupling r... |
-| `aborted_20260830T170153_300it_10pct` | aborted | F19-driver-detour | 0 | Stopped by the session at iteration 0, six minutes after launch: launched inline (a child of the session) by mistake where every arm is l... |
 
-120 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+121 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **Fix from the root what the gate stop names** (the loop in GOAL.md):
-   ride plateaued at its ~12 % demand ceiling from iteration 30 (#86); light
-   rail AWAY at −73.6 % (#30, #84); heavy rail +161.8 % still falling (#98);
-   walk overshot to −36.6 % while car overshot to +16.0 % — one movement;
-   bike +157.3 % falling slowly (#30); ferry −81.5 % (#94). Needs the user's
-   pick of lane; no run approval stands.
-2. **Read the stopped arm before changing anything**: per-mode plan scores,
-   shares by car availability, boardings by station — the diagnostics the
-   position pages name, none needing a run.
+1. **Run the first F22 arm on the fare-priced model** (§9.135): 300 × 10 %
+   costs ~18–21 h at the measured late pace (§9.134) and **needs a fresh
+   stated-cost approval**; its iteration-100 gate measures the fare's effect
+   on heavy rail (#98), bus (#99) and the displaced trips.
+2. **The gate-stop diagnostics are read** (§9.135): rail is +131 % on the
+   entries basis with the Interchange UNDER (#30's corridor end); the
+   walk/car imbalance sits in the car-available group (86.4 % car, 2.9 %
+   walk); truck at stations −51.0 % (#82); motorbike delivers 0.4715 %
+   against a 0.2652 % core solve (#93). Each stands as the next lane's
+   measurement.
 3. **The #96 scan is rerun on the rebuilt plans**: 341 mixed subtours, 3 leaf,
    in 110 of 621,364 persons — unchanged in rate by the rebuild (on #96).
 
-**Decisions required:** enable the Task Scheduler operational log so a
-console-stop death can name its trigger (#66); the fraction and cost of a
+**Decisions required:** the stated-cost approval for the first F22 arm
+(~18–21 h at 10 % × 300, §9.134); enable the Task Scheduler operational log so
+a console-stop death can name its trigger (#66); the fraction and cost of a
 confirmation arm after the 10 % loop (25 % × 300 ≈ 25 h); whether bus moves to
 a boardings basis once a regional count is acquired (#99); whether the S2 base
 grants the tram signal priority — the emitted config says `green_extension`
@@ -119,7 +122,7 @@ while the record's S2 probe ran with it off ([positions/signals-and-crossings](p
 |---|---|---|---|
 | The next family's root cause, after the F21 gate stop | #48 #86 #91 #49 #30 #93 #94 #82 | all | the next arm's iteration-100 gate |
 | Ride: the demand binds ~11 % of trips against 20.6 % observed | #86 #91 | [ride-and-pairing](positions/ride-and-pairing.md) | what the F21 arm realises of the 57,758 shared bindings (§9.133) |
-| Heavy rail boards five times the disclosed entries at suburban stations | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | F21 boardings at the disclosed stations after the licence fix |
+| Heavy rail +131 % on the entries basis; every ride was free until §9.135 | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | the F22 arm's iteration-100 gate under fares |
 | The HTS PT level and the operator counts differ by a factor the targets cannot see | #99 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | a regional bus count |
 | Light rail out of reach: the corridor holds two-thirds of the observed attraction | #30 #84 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the destination solver against the D1 layers |
 | Ferry at a quarter of its derived target after the beeline repair | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | crossings routed with a ferry leg on F21 |

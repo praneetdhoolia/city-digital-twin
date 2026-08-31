@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 414 fields are made of
+## What the 450 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
-| `observed` | 4 | read directly from a raw download |
+| `observed` | 38 | read directly from a raw download |
 | `measured` | 36 | computed from observed data in this package |
 | `derived` | 38 | follows from another registry field by identity |
-| `literature` | 67 | a published value, not specific to this city |
+| `literature` | 69 | a published value, not specific to this city |
 | `assumed` | 152 | chosen without direct empirical support |
 | `definition` | 117 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 395 | usable point value |
+| `active` | 431 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -85,7 +85,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 132 fields*
+*`cities/newcastle/registry/A_supply.json` - 168 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -118,6 +118,42 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
 | `A.crossings.rail_match_radius_m` | `40.0` | m | `definition` | - |
 | `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
+| `A.fare.bus_adult_offpeak_aud` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
+| `A.fare.bus_adult_peak_aud` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
+| `A.fare.bus_band_upper_km` | `[3, 8]` | km | `observed` | - |
+| `A.fare.bus_child_offpeak_aud` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
+| `A.fare.bus_child_peak_aud` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
+| `A.fare.child_max_age` | `15` | years | `observed` | - |
+| `A.fare.child_min_age` | `4` | years | `observed` | - |
+| `A.fare.daily_cap_adult_aud` | `19.3` | AUD | `observed` | - |
+| `A.fare.daily_cap_adult_weekend_aud` | `9.65` | AUD | `observed` | - |
+| `A.fare.daily_cap_child_aud` | `9.65` | AUD | `observed` | - |
+| `A.fare.daily_cap_child_weekend_aud` | `4.8` | AUD | `observed` | - |
+| `A.fare.daily_cap_senior_aud` | `2.5` | AUD | `observed` | - |
+| `A.fare.ferry_adult_offpeak_aud` | `2.31` | AUD | `observed` | - |
+| `A.fare.ferry_adult_peak_aud` | `3.3` | AUD | `observed` | - |
+| `A.fare.ferry_child_offpeak_aud` | `1.15` | AUD | `observed` | - |
+| `A.fare.ferry_child_peak_aud` | `1.65` | AUD | `observed` | - |
+| `A.fare.lightrail_adult_offpeak_aud` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
+| `A.fare.lightrail_adult_peak_aud` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
+| `A.fare.lightrail_band_upper_km` | `[3, 8]` | km | `observed` | - |
+| `A.fare.lightrail_child_offpeak_aud` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
+| `A.fare.lightrail_child_peak_aud` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
+| `A.fare.peak_evening_end_h` | `19.0` | hours | `observed` | - |
+| `A.fare.peak_evening_start_h` | `15.0` | hours | `observed` | - |
+| `A.fare.peak_morning_end_h` | `10.0` | hours | `observed` | - |
+| `A.fare.peak_morning_start_h` | `6.5` | hours | `observed` | - |
+| `A.fare.rail_peak_morning_start_h` | `6.0` | hours | `observed` | - |
+| `A.fare.senior_min_age` | `60` | years | `literature` | 60 - 67 |
+| `A.fare.senior_per_fare_cap_aud` | `2.5` | AUD | `observed` | - |
+| `A.fare.train_adult_offpeak_aud` | `[3.03, 3.76, 4.34, 5.79, 7.46]` | AUD | `observed` | - |
+| `A.fare.train_adult_peak_aud` | `[4.33, 5.38, 6.2, 8.28, 10.66]` | AUD | `observed` | - |
+| `A.fare.train_band_upper_km` | `[10, 20, 35, 65]` | km | `observed` | - |
+| `A.fare.train_child_offpeak_aud` | `[1.51, 1.88, 2.17, 2.89, 3.73]` | AUD | `observed` | - |
+| `A.fare.train_child_peak_aud` | `[2.16, 2.69, 3.1, 4.14, 5.33]` | AUD | `observed` | - |
+| `A.fare.transfer_discount_adult_aud` | `2.0` | AUD | `observed` | - |
+| `A.fare.transfer_discount_child_aud` | `1.0` | AUD | `observed` | - |
+| `A.fare.transfer_window_min` | `60` | minutes | `literature` | 30 - 90 |
 | `A.gradient.bike_downhill_speedup_per_pct` | `0.015` | share_of_flat_speed_per_pct | `literature` | 0 - 0.03 |
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
 | `A.gradient.bike_speed_floor_factor` | `0.2` | share | `assumed` | 0.1 - 0.3 |
@@ -409,6 +445,222 @@ Radius within which a mapped RAIL link counts as the railway at a level crossing
 The representation gate for the two boom-gated freight level crossings. Flipped to change_events at the 9.77 activation boundary: run inputs then carry network.timeVariantNetwork=true and the change-events file, and RUN.travel_time.bin_size_s must be <= the shortest closure the router should see (declared 300 at the same boundary). Under absent the emission is byte-identical to the pre-#68 state.
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76, 9.77*
+
+#### `A.fare.bus_adult_offpeak_aud`
+
+Adult bus off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.bus_adult_peak_aud`
+
+Adult bus peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.bus_band_upper_km`
+
+Opal bus fare distance-band upper bounds; the last band is open (8+ km). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.bus_child_offpeak_aud`
+
+Child/Youth bus off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.bus_child_peak_aud`
+
+Child/Youth bus peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.child_max_age`
+
+Child/Youth Opal fares apply to ages 4-15 (eligible school students 16+ also qualify; that concession class is recorded, not modelled). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.child_min_age`
+
+Children under 4 travel free; Child/Youth fares start at 4. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.daily_cap_adult_aud`
+
+Adult daily cap, Mondays to Thursdays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.daily_cap_adult_weekend_aud`
+
+Adult daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.daily_cap_child_aud`
+
+Child/Youth daily cap, Mondays to Thursdays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.daily_cap_child_weekend_aud`
+
+Child/Youth daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.daily_cap_senior_aud`
+
+Gold Senior/Pensioner daily cap, every day of the week. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.ferry_adult_offpeak_aud`
+
+Newcastle Stockton ferry adult off-peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.ferry_adult_peak_aud`
+
+Newcastle Stockton ferry adult peak fare - the ferry fare table carries a named row for this crossing (0-3 km), separate from the Sydney bands. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.ferry_child_offpeak_aud`
+
+Newcastle Stockton ferry Child/Youth off-peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.ferry_child_peak_aud`
+
+Newcastle Stockton ferry Child/Youth peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.lightrail_adult_offpeak_aud`
+
+Adult light rail off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.lightrail_adult_peak_aud`
+
+Adult light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.lightrail_band_upper_km`
+
+Opal light rail fare distance-band upper bounds; published as its own table (its values equal the bus table, but each is declared from its own publication so neither can drift by proxy). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.lightrail_child_offpeak_aud`
+
+Child/Youth light rail off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.lightrail_child_peak_aud`
+
+Child/Youth light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.peak_evening_end_h`
+
+Opal evening peak end: 7pm. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.peak_evening_start_h`
+
+Opal evening peak start: 3pm. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.peak_morning_end_h`
+
+Opal morning peak end: 10am. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.peak_morning_start_h`
+
+Opal morning peak start, metro/train, bus and light rail: 6:30am. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.rail_peak_morning_start_h`
+
+Intercity trains begin their morning peak at 6am (the Hunter line is an NSW TrainLink intercity service); the published note that it varies by tap-on station for some stations is recorded and not modelled. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.senior_min_age`
+
+Age from which a resident not employed full-time is priced on Gold Senior/Pensioner Opal fares. Eligibility also requires not working full-time, read from the held employment attribute.
+
+***literature** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.senior_per_fare_cap_aud`
+
+Gold Senior/Pensioner Opal: each fare is the Child/Youth fare capped at this value, and the daily cap equals it. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.train_adult_offpeak_aud`
+
+Adult metro/train off-peak fare per band (the published 30% discount, as published - not recomputed). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.train_adult_peak_aud`
+
+Adult metro/train peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.train_band_upper_km`
+
+Opal metro/train fare distance-band upper bounds; the last band is open (65+ km). Fare distance, not network distance. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.train_child_offpeak_aud`
+
+Child/Youth metro/train off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.train_child_peak_aud`
+
+Child/Youth metro/train peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.transfer_discount_adult_aud`
+
+Opal transfer discount off an adult fare, for every transfer between modes within one journey. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.transfer_discount_child_aud`
+
+Opal transfer discount off a Child/Youth or Concession fare, for every transfer between modes within one journey. Also applied to Senior/Pensioner fares, which the publication folds into concession. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
+
+***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.transfer_window_min`
+
+Maximum gap between alighting one service and boarding the next for the two boardings to count as one journey (and earn the transfer discount).
+
+***literature** · status **active** · DECISIONS.md §9.135*
 
 #### `A.gradient.bike_downhill_speedup_per_pct`
 
