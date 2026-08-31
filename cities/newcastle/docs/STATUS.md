@@ -21,8 +21,8 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **12 of 12** — freight rail as timetable-derived crossing closures, not a mobsim vehicle | [positions/motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md), §9.70 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
-| Every mode inside 10 % | **1 of 12** at the last reading (motorbike); see the scoreboard | below |
-| Convergence in ≤ 250 iterations | **Unmeasured** — no arm on the choice-set seed has run past iteration 60; `RUN.controler.last_iteration` still declares 1000 | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.126 |
+| Every mode inside 10 % | **0 of 12** at the F21 iteration-100 gate — car (+16.0 %) and bus (+15.6 %) closest, both having crossed their targets; see the scoreboard | below, §9.134 |
+| Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arm (F21) stopped at its iteration-100 gate, before the 240 cutoff; `RUN.controler.last_iteration` still declares 1000 | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.134 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
@@ -57,7 +57,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the gate loop of GOAL.md; harness, fit and reader built; no arm has reached its gate since F4 (21 Aug) |
+| P4 calibration | 🟡 | the gate loop of GOAL.md fired for the first time since F4: the F21 arm stopped at its iteration-100 gate, 8 modes out (§9.134) |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -69,7 +69,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 | Input registry | **414 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **503 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (30 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (30 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (30 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (30 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (30 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (30 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (30 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (30 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (30 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (30 August 2026) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (31 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (31 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (31 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (31 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (31 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (31 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (31 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (31 August 2026) |
 <!-- generated:state end -->
 
 **The package on disk is consistent** (§9.133): chains, plans and run inputs
@@ -117,7 +117,7 @@ while the record's S2 probe ran with it off ([positions/signals-and-crossings](p
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
-| The F21 arm's gate readings | #48 #86 #91 #49 #30 #93 #94 #82 | all | iteration 100 |
+| The next family's root cause, after the F21 gate stop | #48 #86 #91 #49 #30 #93 #94 #82 | all | the next arm's iteration-100 gate |
 | Ride: the demand binds ~11 % of trips against 20.6 % observed | #86 #91 | [ride-and-pairing](positions/ride-and-pairing.md) | what the F21 arm realises of the 57,758 shared bindings (§9.133) |
 | Heavy rail boards five times the disclosed entries at suburban stations | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | F21 boardings at the disclosed stations after the licence fix |
 | The HTS PT level and the operator counts differ by a factor the targets cannot see | #99 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | a regional bus count |

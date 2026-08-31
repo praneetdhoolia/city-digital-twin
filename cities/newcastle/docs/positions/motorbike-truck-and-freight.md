@@ -1,8 +1,8 @@
 # Motorbike, truck and freight rail — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -35,17 +35,17 @@
 
 ## What is measured
 
-- **Motorbike, F20 arm `aborted_20260830T184955_300it_10pct`, iteration 10:** 0.378% of target-LGA resident linked trips against 0.3785%, −0.1% (§9.129; `NEXT_AGENT_BRIEF.md`). Iteration 0 held 175 motorbike-locked persons at 10% against F19's 52 (§9.129). This is the exploration phase, not a gate.
+- **Motorbike, the F21 gate** (`aborted_20260830T222642_300it_10pct`, iteration 100): 0.4715% against 0.3785% (+24.6%), flat at 0.47–0.49% from iteration 30 (§9.134, #93). The F20 arm's −0.1% at iteration 10 was the old population's carve; the rebuilt demand re-solved both carves (§9.133) and the first gate-depth reading sits outside the bar.
 - **The carve now delivers what it solves for:** 5,937 trips on 1,687 persons = 0.2666% of WEEKDAY resident trips against 0.2654% solved, the per-cell identity's core-wide trip-weighted value (§9.129). Before the pool repair it delivered 0.153%, 58% of the solve, because named drivers held 42.1% of the pool's trips (§9.129).
 - **Precision:** a 10% arm reads motorbike off a few tens of persons; a −50% at that depth was a sampling statement, not a defect (§9.122).
-- **Truck, network-wide:** 7.98% of modelled road vehicles at F20 iteration 10, 6.53% at F19 iteration 20 (`NEXT_AGENT_BRIEF.md`). That basis is NOT the target's and no deviation is printed for it (§9.101).
+- **Truck, network-wide:** 5.65% of modelled road vehicles at the F21 gate (iteration 100, §9.134), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101); no `--truck-stations` reading has been taken on F21.
 - **Truck at the classifying stations** (`--truck-stations`, link entries against `road_aadt_targets.csv`'s own heavy shares): last like-for-like reading 11.9171% modelled against 11.3092% observed, +5.4%, at iteration 100 of `20260829T172145_1000it_10pct`, family F13 — on 3 calibration stations and 23 heavy traversals; 20 of 24 classifying stations are holdout (§9.101). The station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). No F20 reading on this basis has been taken.
 - **Freight rail:** 314 closures per weekday — Clyde Street 204, Saint James Road 110 — 3,014 change events, peaked with the service (§9.90). The `freight_train` target row is 314 on that same denominator; it is a representation check, not a fit (§9.90).
 
 ## What is open
 
-- **The population under the carves is stale.** §9.131 rebuilt the population with measured licence rates (612,634 persons) but the chains, plans and run inputs were not rerun; both carves re-solve on a larger licensed pool at the F21 rebuild, and their `q` values above will move (§9.131).
-- **Motorbike has no gate reading.** Every arm since F15 was stopped before iteration 100; the −0.1% is iteration 10 of F20 (§9.129). #93 stays open until a gate reads it on the rebuilt demand.
+- **The carves are re-solved on the rebuilt demand** (§9.133) and motorbike's first gate-depth reading is +24.6% (§9.134, #93). Whether the carve's delivered share or the target identity moved is unread — compare `_plans_report.json`'s solve against the gate's 0.4715% before touching any value.
+- **Motorbike's first gate reading is taken**: +24.6% at F21 iteration 100 (§9.134). #93 stays open — its generated-share-vs-scored-share question now has a gate-depth number on the rebuilt demand.
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
 - **#68 is still open on GitHub** though the crossings are built and activated (§9.77, §9.90); it should close on the record or state what remains.
 - The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 60 s — the registry is the newer statement and wins; the CSV text should be regenerated.
@@ -63,6 +63,7 @@
 
 ## History
 
+- §9.134 — F21 gate: motorbike +24.6%
 - §9.131 — licence rate rebuilt, carves await rebuild
 - §9.129 — carves solved on drawn pool
 - §9.126 — F18 built both carves

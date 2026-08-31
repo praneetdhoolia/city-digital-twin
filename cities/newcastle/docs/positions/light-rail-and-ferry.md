@@ -1,8 +1,8 @@
 # Light rail and ferry — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -26,11 +26,11 @@
 
 ## What is measured
 
-Every arm below was stopped before its gate; these are exploration-phase readings, not results.
+Every arm below was stopped at or before its gate; these are readings, not results.
 
 **Light rail.**
 
-- F20 arm `aborted_20260830T184955_300it_10pct`, iteration 10: 1,650 boardings a weekday against 2,954, −44.1%; F19 arm `aborted_20260830T170743_300it_10pct`, iteration 20: 1,440, −51% (`NEXT_AGENT_BRIEF.md`, §9.130).
+- F21 arm `aborted_20260830T222642_300it_10pct`, the iteration-100 gate: 1,680 → 780 boardings a weekday over iterations 0–100 against 2,954 — −73.6% and AWAY on its own trend (§9.134). The F20 arm read 1,650 at iteration 10; the F19 arm 1,440 at iteration 20 (`NEXT_AGENT_BRIEF.md`, §9.130).
 - Supply is ruled out on departures: 252 a weekday carry 28 corridor trips; §9.103's "550 trips a day" was an unfiltered GTFS count and §9.113 supersedes it, with the conclusion unchanged (§9.113).
 - Out of reach, not out-competed: at iteration 100 of `20260829T172145_1000it_10pct`, 1.063% of all trips (2,350) had both ends within 800 m of a stop; of those, 28 chose light rail, 1,010 car and 928 walk; the mean modelled tram leg is 1.60 km (§9.103).
 - Corridor market against observation (`src/analyse/corridor_market.py`): work ends are placed where the jobs are (8.80% of work ends vs 8.04% of jobs within 800 m); shopping and other ends at roughly two-thirds of the observed attraction rate (6.84% vs 11.38%; 5.69% vs 8.07%); the home end is only 1.7–2.3% corridor, so a two-ended corridor market is small even at observed rates (§9.120, #30).
@@ -39,7 +39,7 @@ Every arm below was stopped before its gate; these are exploration-phase reading
 
 **Ferry.**
 
-- F20 iteration 10: 0.035% of resident trips against 0.143%, −75.3%; F19 iteration 20: 0.039% (`NEXT_AGENT_BRIEF.md`, #94).
+- F21 iteration 100 (the gate): 0.027% of resident trips against 0.143% (−81.5%), flat at 0.02–0.04% across the arm (§9.134, #94). F20 iteration 10 read 0.035%; F19 iteration 20, 0.039% (`NEXT_AGENT_BRIEF.md`).
 - The market, by bank: B2 generates 4,956 harbour-crossing trips a weekday (0.211% of all trips) by 2,593 persons; 7,490 residents live on the Stockton side; 59,458 WEEKDAY trip ends lie within 1,000 m of the two wharves (§9.121, §9.120).
 - The defect: the raptor's direct walk was a beeline across the harbour that the network executed as the ~20 km road detour; on F16 iteration 10, 174 of 256 crossing trips in residents' pt plans were walk-only (median 19.4 km) and 38.3% of all residents' pt-plan trips were walk-only (§9.121).
 - After the repair, F17 arm `20260830T141222_300it_10pct`, iteration 10: 209 of 359 crossing trips routed with a ferry leg (58%), walk-only down to 17%; realised ferry 30 trips, 0.048% against the then-target 0.1013%, from 3 trips on F16; the remaining walk-only crossings are trips at hours the ferry does not run (§9.121).
@@ -52,7 +52,7 @@ Every arm below was stopped before its gate; these are exploration-phase reading
 - #84 — the disclosed boardings basis of §9.130 answers the issue's substance; it stays open until closed on evidence.
 - #94 — the beeline defect is repaired, but the ferry reads −75.3% at F20 iteration 10 and has not been re-measured by bank since F17 (§9.121); whether the residual is hour of service, headway or scoring is not established (§9.112).
 - The ferry target's vintage: the census cell is a lockdown month, which is why the sweep runs from 0 to twice the point value (§9.89).
-- F21: the population is rebuilt with measured licence rates; chains, plans and run inputs are pending, and both modes are re-read there (§9.131).
+- Both modes were re-read at the F21 gate and moved no closer on the licence-rate demand's own trend (§9.134); the corridor attraction (#30) and the ferry's residual (#94) stand as the causes to attack.
 - The seated/standing split of the Urbos stays assumed; the acquisition route is field observation at Civic or Crown Street, or GTFS-Realtime dwell distributions (§4.3, §9.18).
 
 ## Refused — do not re-raise
@@ -69,6 +69,7 @@ Every arm below was stopped before its gate; these are exploration-phase reading
 
 ## History
 
+- §9.134 — F21 gate: tram away, ferry flat
 - §9.131 — licence rebuild pending; F21 next
 - §9.130 — disclosed boardings target 2,954
 - §9.122 — ferry target moves to LGA cell

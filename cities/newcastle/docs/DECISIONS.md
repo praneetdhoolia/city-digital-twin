@@ -114,6 +114,7 @@ about its layout will otherwise cost you an hour:
 | **Heavy rail and light rail are held to their disclosed boardings** | **§9.130** — the line's Opal series (2,754 a day) and 24 stations' entries (6,086 a day) replace an HTS share split by a boardings composition; per weekday via `CAL.pt.weekday_factor`; F19 it.20 reads light rail -51% and heavy rail +372%, the suburban stations 3-13x over while the Interchange is right |
 | **A seventh of the workforce had no licence** | **§9.131** — the literature licence vector left 14.2-14.8% of employed persons unlicensed and 17.5-21% without a car, which is where the outer-LGA rail, walk and bike commutes came from (census JTW by home LGA: car 86-91%, train 0.1-0.3%); replaced by the TfNSW licence snapshot over the ABS population by age and LGA, per LGA; family F21 |
 | **The demand chain rebuilt on the licence-rate population** | **§9.133** — the package was inconsistent from 30 August 19:31 (new population, old chains, plans and run inputs; `check_package.py` failing) and a registry `consumers` claim on `B.population.licence_rate_by_age_band` was untrue; chains, plans and the 30 run-input sets rebuilt, 503 manifest files, ALL CHECKS PASSED; the licence-rate builder asserts its vector against the declared field; F21 overlay written, arm not launched, F21 not declared |
+| **The first gate since F4: the F21 arm read at 100 and stopped** | **§9.134** — family F21 declared at launch `20260830T222641`; the arm reached the iteration-100 gate in ~7.1 h and 8 modes stood at or past 20% (heavy rail +161.8%, light rail −73.6% AWAY, ride capped at ~12%, walk −36.6% under a car +16.0% overshoot); stopped under the loop; the #96 scan on the rebuilt plans reads 341 mixed subtours, rate unchanged |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13306,10 +13307,79 @@ arm reaches 100. The next session's first item is the approval, then
 `docs/run_families.json` at that launch stamp, and the gate at 100, 200 and
 300 with every mode read on its own basis (`GOAL.md`, the loop).
 
+## 9.134 The first gate since F4: the F21 arm reached iteration 100 and the stop fired (31 August 2026, nineteenth session; issues #86, #93, #96, #98, #30, #66)
+
+**What was wrong.** The loop in GOAL.md had never actually fired: every arm
+since F4 stopped before iteration 100, so no gate had ever been read on any
+demand, and nothing had been read at all on the licence-rate demand of §9.131
+beyond a two-iteration smoke (§9.133).
+
+**What changed.** No model value, no target, no data artefact. Family
+`F21-licence-rate-demand` was declared in `docs/run_families.json` at launch
+stamp `20260830T222641` (`decisions_ref` 9.131) — the F20 run stack and binder
+rules on the §9.133 demand — and its first arm
+`20260830T222642_300it_10pct` ran S2 × WEEKDAY at 10%, 300 declared
+iterations, innovation off at 240, launched detached under a stated-cost
+approval (~9–15 h) spent at launch. At the iteration-100 gate, 8 modes stood
+at or past 20% and the run was stopped under the loop; the directory is
+`aborted_20260830T222642_300it_10pct` with the gate-stop cause in its
+`_meta.json`.
+
+**Measured.** All from that arm's own outputs
+(`report_mode_ridership.py --it 100` and `--trend`) unless stated:
+
+- The sample: 61,953 persons against the F20 arm's 62,134 (`plans.xml.gz` of
+  each arm) — the different seeded draw §9.127 predicts; 9.97% of the
+  621,364-person WEEKDAY plans population, inside the 8.5–11.5% assertion.
+- The gate at iteration 100: car 67.67% against 58.32% (+16.0%); ride 12.08%
+  against 20.60% (−41.3%); walk 8.50% against 13.40% (−36.6%); taxi 1.66%
+  (+67.4%); bike 5.68% (+157.3%); motorbike 0.47% (+24.6%); bus 2.75%
+  (+15.6%); heavy rail 17,090 boardings against 6,529 (+161.8%); light rail
+  780 against 2,954 (−73.6%); ferry 0.027% (−81.5%); truck 5.65%
+  network-wide (level only); freight rail 314 of 314 closures.
+- The trend inside the arm: car crossed its target near iteration 35 and
+  decelerated (+4.2, +2.8, +2.0 pp per ten iterations); walk crossed near 38
+  and kept falling — the two are one movement; ride rose to 12.26% by
+  iteration 30 and stayed within 0.2 pp of it to 100 — the bound demand's
+  ceiling realised (#86); heavy rail fell 36,340 → 17,090 (#98); light rail
+  fell 1,680 → 780, the only mode moving AWAY; bike drifted 7.81 → 5.68;
+  taxi and motorbike flat; ferry flat at 0.02–0.04%.
+- The cost: solo iterations 2–5 at 170.9–182.1 s (the F20 arm's band),
+  median 249.4 s/it at iteration 100, 25,560 s wall to the gate — a full
+  300-iteration 10% arm at the late pace is ~18–21 h, superseding the 9–15 h
+  costing (`_progress.json`). Iteration 30 took 355 s against a 219–228 s
+  neighbourhood (00:19–00:25), isolated, write load ruled out by iterations
+  10 and 20 — timestamped for #66.
+- `citysim.SubtourChainScan` on the rebuilt WEEKDAY plans (no run): 341 mixed
+  subtours — 3 leaf, 338 spanning — in 329 plans of 110 persons, out of
+  621,364 persons, 2,337,850 plans, 4,667,170 subtours; combinations
+  car+walk 112, car+pt 112, car+taxi 111, car+ride 6, every example
+  closed=false. Against the F15 population's 334 the rebuild moved the count
+  by 7 and the rate not at all; the three leaf defects persist (#96).
+
+**Deliberately not done.** No value was touched mid-arm and no root cause is
+asserted without its measurement (§9.128's rule). The 200- and 300-iteration
+readings were not taken: the loop says stop first. The heavy-rail per-station
+split, the `--truck-stations` reading and the iteration-0 `ridePairing`
+counts on the rebuilt demand were not read before the stop — each is named on
+its position page as the next diagnostic.
+
+**Consequences.** F21 readings compare only within F21 (§9.127). The run
+approval is spent; the next arm needs a fresh stated-cost yes at the measured
+~250 s/it. The next session starts at the user's pick of root cause: the ride
+demand ceiling (#86), the corridor attraction (#30), heavy rail's residual
+excess (#98), the walk/car balance (one movement, this section), or the
+motorbike carve identity (#93). Car crossing its target for the first time is
+the licence fix (§9.131) doing what it was measured to do; its +16.0%
+overshoot is walk's and ride's deficit worn by car, not a car defect to tune
+in isolation (§9.123's rule).
+
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-08-31 | **The first gate since F4: the F21 arm reached iteration 100 and the stop fired (§9.134; issues #86/#93/#96/#98/#30/#66; nineteenth session).** Family `F21-licence-rate-demand` declared (`from_launch` 20260830T222641, `decisions_ref` 9.131); arm `20260830T222642_300it_10pct` launched detached under a ~9–15 h stated-cost approval, spent; stopped at the iteration-100 gate with 8 modes at or past 20%. Car crossed its target for the first time (+16.0%), bus +15.6%; ride plateaued at ~12% from iteration 30; heavy rail fell 36,340 → 17,090 boardings inside the arm; light rail AWAY. Pace: solo 170.9–182.1 s, median 249.4 s/it at 100; one isolated 355 s iteration timestamped for #66. `SubtourChainScan` on the rebuilt WEEKDAY plans: 341 mixed, 3 leaf, 110 of 621,364 persons — rate unchanged (#96). **No model value changed, no target moved; the 67/143 split is untouched; nothing here is a finding (no `_run.json`).** |
 | 2026-08-30 | **The demand chain rebuilt on the licence-rate population; the package consistent again (§9.133; issues #86/#93/#96; eighteenth session).** Chains, plans and the 30 run-input sets rerun on the 612,634-person population of §9.131; manifest 503 files (from 501); `tests/check_package.py` ALL CHECKS PASSED. `build_licence_rates.py` asserts the vector it derives against `B.population.licence_rate_by_age_band` and exits 1 on drift, making the registry's consumer claim true. WEEKDAY shared pass 61,682 servable / 57,758 bound / shortfall 0 (was 73,509 / 59,701 / 0). Overlay `f21_gate_10pct.json` written; smoke `20260830T213149_2it_1pct` run. **No model value changed, no target moved, no family opened (F21 opens at the arm's launch); the 67/143 split is untouched; nothing here is a finding.** |
 | 2026-08-30 | **The project on one page: the goal stated, the board generated, the record frozen behind position pages (§9.132; seventeenth session).** `GOAL.md` tracked; `STATUS.md` one page with three generated blocks; thirteen position pages; `check_doc_shape.py` in CI with the brief's family stamp, the record's order and cap, and a source on every figure; `session_gate.py` as the one gate; a PR hook on red documents; every frozen document bannered and moved under `docs/archived/`; issues #73 and #68 closed on evidence, #21 commented. **No model value changed, no data artefact changed, no family opened; the 67/143 split is untouched; nothing here is a finding.** |
 | 2026-08-30 | **A seventh of the workforce had no licence (§9.131; issues #49/#93/#30).** Heavy rail's five-fold over-boarding traced to outer-LGA residents' work trips: census journeys to work by home LGA are 86-91% car and 0.1-0.3% train, the model's were 55-59% car and 2.4-5.4% rail, because `B.population.licence_rate_by_age_band` was a literature vector that left 14.2-14.8% of employed persons unlicensed. Acquired the TfNSW Driver Licence Statistics snapshot and the ABS population by age and LGA (2024) with provenance; `build_licence_rates.py` measures 18-24 0.78, 25-34 0.94, 35-74 0.97-1.00, 75-84 0.92, 85+ 0.51, 12-17 0.08, per LGA; the population builder draws at the LGA's rate. Population, chains, plans and run inputs rebuilt; family F21 opens at its launch. The population was rebuilt at 19:31 (612,634 persons): employed persons with a car available rose from 78.9-83.0% to 90.8-91.7% in Cessnock, Lake Macquarie, Maitland and Port Stephens and to 80.8% in Newcastle (its 18-24 rate is 0.68 and 8.2% of its dwellings hold no vehicle); the unlicensed share of the employed fell from 14.2-14.8% to 4.8-5.9% (Newcastle 12.7%). The activity chains, plans and run inputs were NOT rebuilt: the chain was stopped at the user's direction at handoff, mid-way through the WEEKDAY chains, and its partial WEEKDAY trips and escort-binding files were deleted, so the package on disk holds a population newer than its chains until build_activity_chains.py, build_matsim_plans.py and build_matsim_run_inputs.py are rerun - the next session's first build. Family F21 opens at that arm's launch. |

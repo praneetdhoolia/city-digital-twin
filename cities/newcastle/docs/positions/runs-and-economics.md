@@ -1,8 +1,8 @@
 # Runs, harness and economics — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -18,7 +18,7 @@
 
 ## What is measured — what a run costs
 
-- **Newest measurement wins.** The F20 arm `aborted_20260830T184955_300it_10pct` (10% × 300, 10 qsim threads, 30g heap) paced solo iterations 2–5 at 177–185 s and a median 201.3 s/it through iteration 11 (its `_progress.json`). The brief's standing figure is ~100–200 s/it at 10% (3–4 min/it with the driver detour and the shared-ride legs) and ~30 s/it at 1% (`NEXT_AGENT_BRIEF.md` §0); a 300-iteration 10% arm is 9–15 h, and a 25% × 300 confirmation arm is stated at ~25 h.
+- **Newest measurement wins.** The F21 arm `aborted_20260830T222642_300it_10pct` (10% × 300, 10 qsim threads, 30g heap) paced solo iterations 2–5 at 170.9–182.1 s, rose steadily to a median 249.4 s/it by iteration 100, and reached its gate in 25,560 s wall (~7.1 h) (§9.134, its `_progress.json`). A full 300-iteration 10% arm at the late pace is ~18–21 h — the 9–15 h the launch was costed at is superseded. A 25% × 300 confirmation arm is stated at ~25 h.
 - The last 25% arm, the F14 `20260830T083019_1000it_25pct`, cleared iteration 6 at a median 288 s/it before its console stop (§9.119, §9.120). The F12 10% arm `20260829T054941_1000it_10pct` ran at 108 s/it (§9.94); the brief attributes the rise since to the driver detour and the shared-ride pass.
 - **Memory.** The 10% arms run at `--xmx 30g` (the F20 arm's `_meta.json`); 25% arms peaked ~27 GiB each under the two-arm pattern (§9.62) and 33–38 GiB working set on 40g alone (§9.43). Memory model ≈ 24 GiB fixed + 0.09–0.3 MB/agent, so 100% needs ~80–160 GiB of heap and does not fit the 63.5 GiB machine (§9.43, §9.5). The driver pins `-Xms` to `-Xmx` (§9.59), so declared heap is committed heap.
 - **Threads.** `RUN.machine.threads` = 10 (qsim; run identity — MATSim partitions the network by it) and `RUN.machine.replanning_threads` = 20 (run identity; the one clean win, replanning 76 → 33 s, §9.59). `RUN.machine.event_handler_threads` = 4 is a wall-time knob, not identity: event multisets verified bit-identical, ~21% off the wall at 25%, at the price that within-timestep event order is no longer byte-reproducible (§9.56). `RUN.machine.events_synchronize_on_simsteps` stays true (false is a 65 s/it regression) and `RUN.machine.events_one_thread_per_handler` stays false (measured fatal) (§9.59).
@@ -38,9 +38,9 @@
 
 ## What is open
 
-- **#66 — the machine-level stall.** A 10% iteration once took 2,415 s against a ~20 s median, and on 22 August it hit both concurrent arms at the same wall-clock time in different iterations (#66). Unattributed — OS maintenance, antivirus or standby trimming are the candidates; the watch's tripwire timestamps each occurrence.
+- **#66 — the machine-level stall.** A 10% iteration once took 2,415 s against a ~20 s median, and on 22 August it hit both concurrent arms at the same wall-clock time in different iterations (#66). Unattributed — OS maintenance, antivirus or standby trimming are the candidates. The F21 arm added one candidate event: iteration 30 took 355 s against a 219–228 s neighbourhood (00:19–00:25, 31 Aug), isolated, with the ten-iteration write load ruled out by iterations 10 and 20 (§9.134).
 - **The F14 console stop.** Task Scheduler recorded `0xC000013A STATUS_CONTROL_C_EXIT` with no exception and no power event; the trigger is not established because the scheduler's operational log is disabled (§9.120). **Decision pending:** enable it — `wevtutil sl Microsoft-Windows-TaskScheduler/Operational /e:true`, needs elevation — so the next such death can name its trigger.
-- **A confirmation arm's fraction** — 10% or 25% × 300 (~25 h stated) — once the F21 package is rebuilt and `tests/check_package.py` passes (§9.129, §9.131).
+- **A confirmation arm's fraction** — 10% or 25% × 300 (~25 h stated) — deferred: the F21 gate stopped its arm at iteration 100 with 8 modes out (§9.134); the next arm follows the user's root-cause pick, costed at the measured ~250 s/it.
 - `src/run/run_failure.py` quotes the first exception it finds: the F20 arm's `cause_detail` names a benign Guice/ASM warning (`Unsupported class file major version 69`) while its `cause` is the stop by direction — the reader does not distinguish a logged warning from a terminating exception.
 - `RUN.monitor.pace_band_s` = [217, 253] is the 25% × 1000 band; the `_progress.json` digest applies it to 10% arms and reports them out of band (§9.72).
 
@@ -57,6 +57,7 @@
 
 ## History
 
+- §9.134 — F21 arm to its gate; pace measured
 - §9.127 — population hash joins run key
 - §9.120 — console stop; dead-pid check
 - §9.119 — F14 arm cleared iteration 6

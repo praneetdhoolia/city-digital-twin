@@ -1,8 +1,8 @@
 # Ride and pairing — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -28,13 +28,14 @@
 
 ## What is measured
 
-Every arm below was stopped before its gate; levels are exploration-phase readings, not results.
+Every arm below was stopped at or before its gate; levels are readings, not results.
 
+- F21 arm `aborted_20260830T222642_300it_10pct`, the iteration-100 gate: ride 12.08% against 20.60% (−41.3%), plateaued at 12.0–12.3% from iteration 30 — the bound demand realised its ~12% ceiling and no more (§9.134, #86).
 - F20 arm `aborted_20260830T184955_300it_10pct`, iteration 10: ride 9.22% against the 20.60% target (−55.2%); 41,194 bound ride trips in the 10% plans (`NEXT_AGENT_BRIEF.md`).
 - F20 iteration 0: 8,068 of 8,256 ride legs paired (0.977), 2,864 passengers on 2,683 detours, none unroutable, 23,040 named drivers (`NEXT_AGENT_BRIEF.md`).
 - F19 arm `aborted_20260830T170743_300it_10pct`: iteration 0 paired 6,850 of 6,966 ride legs, endpoint refusals 2,053 → 67, 2,005 passengers on 1,888 detours; iteration 20 ride 10.86% (§9.129).
 - The valid F18 arm `20260830T163010_300it_10pct` under `passenger_links`: 4,858 of 6,966 paired, 2,053 refused on endpoints because two households in one SA2 do not share a link (§9.128). A walking meeting point walked 8–11 km per passenger on a 1% smoke and was dropped before any arm (§9.128).
-- Shared-ride binder under the bucket rule, servable / bound / shortfall: WEEKDAY 73,509 / 59,701 / 0; SAT 60,842 / 33,279 / 0; SUN 56,208 / 31,789 / 0 (§9.129). These are on the OLD population: the population was rebuilt with measured licence rates (612,634 persons) but the chains, plans and run inputs were not (§9.131).
+- Shared-ride binder on the rebuilt licence-rate demand, servable / bound / shortfall: WEEKDAY 61,682 / 57,758 / 0 (§9.133; the old population read 73,509 / 59,701 / 0, §9.129). The F21 arm sampled 61,953 persons against the F20 arm's 62,134 — a different seeded draw, as §9.127 predicts (§9.134).
 - F17 arm `20260830T141222_300it_10pct` iteration 50: ride 10.09%, pair rate 0.80–0.81 on identity (§9.126); car-less residents make 24.7% of trips and put 48.1% on walk, 16.7% on bike and 18.5% on ride (§9.123).
 - Planned against experienced, F14 iteration 30: residents plan ride on 22.46% of trips and realise 9.14%; 36.0% of planned ride legs then named no driver, and 5,070 passengers were still waiting at 30:00 (§9.120).
 - Pairing-side levers, each real and marginal: window 30 → 60 min gave +3.57 pp pairing and +0.19 pp ride (§9.98); `route_contains` gave +0.44 pp pairing and −0.22 pp ride (§9.102); residual `window_only` legs have a median gap of 344 min (§9.98).
@@ -43,8 +44,8 @@ Every arm below was stopped before its gate; levels are exploration-phase readin
 
 ## What is open
 
-- #48 — every ride physically in a car. Next: the F21 arm's iteration-100 gate reading of ride against 20.60% on the rebuilt demand, with `ridePairing` and `jointRide` log lines at iteration 0 (`NEXT_AGENT_BRIEF.md`, §9.131).
-- #86 — the demand ceiling. Next: `_activity_chains_report.json` `by_day.WEEKDAY.shared_binding` servable / bound / shortfall on the rebuilt population, and whether the bound trips still exceed the target's share (§9.129, §9.131).
+- #48 — every ride physically in a car. The F21 gate read ride 12.08% (−41.3%, §9.134); the iteration-0 `ridePairing` counts on the rebuilt demand were not read before the stop — the next arm's first check.
+- #86 — the demand ceiling is now measured as the cap: the F21 arm plateaued at ~12% from iteration 30 against 20.6% observed (§9.134). The binder binds 57,758 shared WEEKDAY trips with shortfall 0 (§9.133); more ride needs more bound demand, not better pairing.
 - #91 — ride legs with no declared driver. The class is closed at the seed by `boundRideTrips` gating (§9.120); next: its count in `ride_pairing.csv` at F21 iteration 0.
 - Confirmation-arm fraction: the bucket rule holds at 10%, 25% and 50%; a 25% × 300 arm is ~25 h and needs approval (§9.129, `NEXT_AGENT_BRIEF.md`).
 - Whether a suburb is the right carpool precision is the sweep's question, with `same_sa1_od` its lower bound (§9.124).
@@ -65,6 +66,7 @@ Every arm below was stopped before its gate; levels are exploration-phase readin
 
 ## History
 
+- §9.134 — F21 gate: ride capped at 12%
 - §9.131 — licence rate measured; F21 pending
 - §9.129 — bucket rule replaces at-or-below
 - §9.128 — driver detour serves declared pair

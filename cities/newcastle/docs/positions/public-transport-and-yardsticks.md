@@ -1,8 +1,8 @@
 # Public transport and its yardsticks — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -39,25 +39,25 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 
 ## What is measured
 
-Latest twelve-mode reading: F20 arm at iteration 10 (`results/aborted_20260830T184955_300it_10pct`), the exploration phase — not a gate, not a result. Reproduce with `python src/analyse/report_mode_ridership.py --run results/aborted_20260830T184955_300it_10pct --it 10`.
+Latest twelve-mode reading: the F21 gate at iteration 100 (`results/aborted_20260830T222642_300it_10pct`, §9.134) — the first gate since F4; the run was stopped on it; not a result. Reproduce with `python src/analyse/report_mode_ridership.py --run results/aborted_20260830T222642_300it_10pct --it 100`.
 
-| mode | F20 it.10 | target | deviation | F19 it.20 | source |
+| mode | F21 it.100 | target | deviation | F21 it.10 | source |
 |---|---:|---:|---:|---:|---|
-| bus | 5.49% | 2.38% | +130.5% | 4.30% | `NEXT_AGENT_BRIEF.md` §2, #99 |
-| heavy_rail | 37,520 bdg | 6,529 bdg | +474.7% | 30,800 bdg | `NEXT_AGENT_BRIEF.md` §2, #98 |
-| light_rail | 1,650 bdg | 2,954 bdg | −44.1% | 1,440 bdg | `NEXT_AGENT_BRIEF.md` §2, §9.130 |
-| ferry | 0.035% | 0.143% | −75.3% | 0.039% | `NEXT_AGENT_BRIEF.md` §2, #94 |
+| bus | 2.75% | 2.38% | +15.6% | 5.13% | §9.134, #99 |
+| heavy_rail | 17,090 bdg | 6,529 bdg | +161.8% | 36,340 bdg | §9.134, #98 |
+| light_rail | 780 bdg | 2,954 bdg | −73.6% | 1,590 bdg | §9.134, §9.130 |
+| ferry | 0.027% | 0.143% | −81.5% | 0.035% | §9.134, #94 |
 
 - **The PT total is right and its composition is wrong.** At F19 it.20 PT was 3.55% of resident trips against HTS 3.8%; boardings split bus 67.7 / rail 30.1 / tram 1.3 / ferry 1.0 against the Opal 62.7 / 20.4 / 17.0 (§9.130).
 - **Heavy rail's excess is at the suburban stations, not the Interchange (§9.130, #98).** Newcastle Interchange 1,430 modelled vs 1,569 disclosed; Hamilton 7,050 vs 534, Waratah 1,930 vs 132, Metford 1,750 vs 53 — 3 to 13 times over (#98). The over-boardings are long multi-leg trips of outer-LGA residents on the Maitland line (§9.131).
-- **The cause found for it is the licence rate (§9.131).** The literature vector left 14.2–14.8% of employed persons unlicensed, and an unlicensed worker rides rail whatever the scoring says; `B.population.licence_rate_by_age_band` is now `measured` from the TfNSW licence snapshot over the ABS population by age and LGA (`data/processed/observed/licence_rates_by_age_lga.csv`, §9.131). The population is rebuilt; the chains, plans and run inputs are not, so no reading yet carries it (§9.131).
+- **The cause found for it is the licence rate (§9.131), and the F21 arm carries the fix.** `B.population.licence_rate_by_age_band` is `measured` from the TfNSW licence snapshot over the ABS population by age and LGA (`data/processed/observed/licence_rates_by_age_lga.csv`, §9.131). At the F21 gate heavy rail fell 36,340 → 17,090 boardings inside the arm (iterations 10 → 100) and bus fell to +15.6%, while light rail and ferry moved no closer (§9.134).
 - **The light rail's shortfall is not supply, not the destination market and not the Interchange transfer (§9.130).** The tram runs 252 weekday departures (§9.113); work ends within 400 m of a tram stop are 5.8% of all work ends (§9.130); the rail-to-tram walk is 54–58 m (§9.130). Where the missing riders are — longer corridor trips, rail transferees, visitors — is the open question.
 - **The ferry's market exists and walks around it.** 450 trips a day take the road detour around the water the ferry crosses, and 3 of them take public transport (§9.112, #94).
 - **Bus is read against a target its own basis doubts.** The HTS level and the operator series differ by roughly 3–10× by mode (#99); two independent indications put bus nearer 75–78% of PT boardings than the 62.7% point value (§9.100).
 
 ## What is open
 
-- **#98** — heavy rail five-fold over at the suburban stations; the licence fix awaits the F21 arm (§9.131).
+- **#98** — heavy rail read +161.8% at the F21 gate, halved inside the arm and still far past the bar (§9.134); the per-station split of the F21 outputs is unread — the next diagnostic.
 - **#99** — whether bus moves to a boardings basis; needs an official regional bus count acquired with provenance, and a statement of whether the HTS PT level counts school-bus travel (§9.130).
 - **#94** — the ferry captures a hundredth of its captive market; the raptor's reason is not established and no candidate has been measured (§9.112).
 - **#49** — the standing directive: every mode individually. Reporting and scoring are individual; the <10% bar is not met for any PT mode.
@@ -79,6 +79,7 @@ Latest twelve-mode reading: F20 arm at iteration 10 (`results/aborted_20260830T1
 
 ## History
 
+- §9.134 — F21 gate: rail halved, tram away
 - §9.131 — licence rate now measured, rail cause
 - §9.130 — rail modes held to disclosed boardings
 - §9.113 — day tag is not service; supply exonerated

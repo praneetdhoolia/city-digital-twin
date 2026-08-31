@@ -1,8 +1,8 @@
 # Taxi and rideshare — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -19,8 +19,8 @@
 
 ## What is measured
 
-- **Latest level, F20 iteration 10: taxi 1.64% against 0.99%, +64.9%; F19 iteration 20 read 1.63%** (`results/aborted_20260830T184955_300it_10pct`, `docs/NEXT_AGENT_BRIEF.md`). Exploration phase, not a gate.
-- **Deepest reading of any family, F17 iteration 50: 1.51% (+52%)**, flat from iteration 10 while car and walk converged (§9.126). Every arm since F15 reads taxi flat between +36% and +65% (§9.120, §9.121, §9.126).
+- **Gate reading, F21 iteration 100: taxi 1.66% against 0.99%, +67.4%, flat at 1.57–1.67% across the arm** (`results/aborted_20260830T222642_300it_10pct`, §9.134) — the deepest reading of any family, and the flat band every arm since F15 has read.
+- **F17 iteration 50 read 1.51% (+52%)**, flat while car and walk converged (§9.126); every arm since F15 reads taxi flat between +36% and +67% (§9.120, §9.126, §9.134).
 - **The fleet binds under load and relaxes when it does not:** probe `20260829T171626_2it_1pct` refused 24 of 274 requests (8.8%) at iteration 1 and none of 177 at iteration 2 (§9.99). Under the full-choice-set seed the iteration-0 flood is 34,870 requests with 85.7% refused, decaying as plans are scored (§9.121).
 - **The fare binds, hard.** The per-kilometre rate moved taxi elevenfold on the `taxi_fare_stress_1pct` / `taxi_fare_control_1pct` pair (`cities/newcastle/overlays/runs/`), while the innovation cutoff moved it about 11% (§9.91).
 - **Before the fleet, price alone left taxi at about 6% at 1% sample, 7.52% even among agents holding a car and a licence**: car is chain-based, so a perturbed subtour cannot use it, and taxi won the trips where nothing else said no (§9.91, §9.94).
@@ -49,6 +49,7 @@
 
 ## History
 
+- §9.134 — F21 gate: taxi flat at +67%
 - §9.126 — F17 held taxi at +52%
 - §9.121 — seed flood refused, then decays
 - §9.120 — taxi is a fleet-size question

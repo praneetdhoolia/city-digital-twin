@@ -1,8 +1,8 @@
 # Walk and bike — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
 
 ## What is built
 
@@ -20,7 +20,7 @@
 
 ## What is measured
 
-- **Latest reading**, F20 iteration 10, residents' linked main-mode trips at 10% (`results/aborted_20260830T184955_300it_10pct`): walk 25.60% against 13.40% (+91.0%); bike 7.77% against 2.21% (+251.7%). F19 iteration 20 read walk 18.05% and bike 6.90% (`results/aborted_20260830T170743_300it_10pct`). Iteration 10 is the exploration phase, not a gate.
+- **Gate reading, F21 iteration 100** (`results/aborted_20260830T222642_300it_10pct`, §9.134): walk 8.50% against 13.40% (−36.6%) — it crossed its target near iteration 38 and kept falling as car rose to 67.7% (+16.0%); bike 5.68% against 2.21% (+157.3%), drifting down from 7.81% at iteration 20. The stop fired with both outside the bar.
 - **Deepest reading of any family**: F17 iteration 50 — walk 14.88% (+11.0%) with car at +1.7%; bike 8.29% and moving away (§9.126).
 - **Walk geometry**: mean walk trip 6.66 km at iteration 100 against observed 0.70 km, falling from 8.12 at iteration 0 (§9.108). Walk and car are swapped at both ends: of resident trips under 1 km only 39.5% are walked and car takes 39.2% (§9.107). The sub-1 km trips exist in about the right number — 16.31% of resident trips against the 18.8% observed band share (§9.107, §9.69). Bike mean 10.04 km against observed 5.20 (§9.107).
 - **Who cycles**: of 913 residents whose best-scored plan is bike, 95.4% have no car available; car-less residents (24.7% of trips) walk 48.1%, cycle 16.7% and ride 18.5% (§9.123). Under the F12 seed 51.6% of bike trips were by licensed, car-available residents (§9.114); §9.123 measures the scored choice set and is the newer finding.
@@ -34,7 +34,7 @@
 - **#30** — the sub-1 km trips are generated (§9.107); the walk/car allocation of short trips is the open question, a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107). Destination placement is measured present for the corridor (§9.130).
 - **#21** — the physics channel is built (§9.84); `C.gradient.uphill_penalty_per_pct` 0.09 and `C.gradient.downhill_penalty_per_pct` 0.02 remain scoring weights that reach nothing, named in `not_representable` by `src/build/build_matsim_run_inputs.py`. What closes it: a paired arm differing only in `A.gradient.representation` showing bike's mean trip and time moving toward the observed 5.2 km / 19.2 min, plus a decision to retire or keep the two scoring weights.
 - **#50** — the bike age gate is assumed; no mode by age cell is held (§9.84).
-- **The F21 arm**: whether the licence fix brings walk and bike down on work trips, where a seventh of the workforce was unlicensed (§9.131).
+- **Answered at the F21 gate**: the licence fix moved walk through its target and beyond — the open question is now the walk/car balance (walk −36.6% under a car +16.0% overshoot, one movement, §9.134), not walk's level alone.
 - **Walk detour**: main walk at the road graph's ~1.34 rather than the measured 1.6902 flatters walk slightly less than truth; stated, not corrected (§9.54).
 
 ## Refused — do not re-raise
@@ -49,6 +49,7 @@
 
 ## History
 
+- §9.134 — F21 gate: walk overshot downward
 - §9.131 — licence rate measured from counts
 - §9.126 — F17 converged car and walk
 - §9.123 — car-less quarter explains bike
