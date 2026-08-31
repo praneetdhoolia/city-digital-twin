@@ -73,10 +73,10 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (31 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (31 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (31 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (31 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (31 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (31 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (31 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (31 August 2026) |
 <!-- generated:state end -->
 
-**The package on disk is consistent** (§9.133): chains, plans and run inputs
-were rebuilt on the licence-rate population on 30 Aug and
-`tests/check_package.py` reports ALL CHECKS PASSED (re-run 30 Aug 22:20). The
-F21 arm's sample holds 61,953 persons against the F20 arm's 62,134 (§9.127).
+**The package on disk is consistent** (§9.133, §9.135): the 30 run-input sets
+carry the `ptFare` module and `tests/check_package.py` reports ALL CHECKS
+PASSED (re-run 31 Aug, after the fare change). The F21 arm's sample holds
+61,953 persons against the F20 arm's 62,134 (§9.127).
 
 ## Runs on disk
 
