@@ -31,6 +31,7 @@
 Every arm below was stopped at or before its gate; levels are readings, not results.
 
 - F21 arm `aborted_20260830T222642_300it_10pct`, the iteration-100 gate: ride 12.08% against 20.60% (−41.3%), plateaued at 12.0–12.3% from iteration 30 — the bound demand realised its ~12% ceiling and no more (§9.134, #86).
+- F21 iteration 0, read from the arm's own log (§9.135, the check #48 queued): 2,814 declared passengers picked up on 2,657 drivers' detours, 0 unroutable, 178 unpaired legs re-moded; pickups grow to ~8,700 by iteration 100 and saturate — pairing is healthy on the rebuilt demand, the constraint is bound volume (#86).
 - F20 arm `aborted_20260830T184955_300it_10pct`, iteration 10: ride 9.22% against the 20.60% target (−55.2%); 41,194 bound ride trips in the 10% plans (`NEXT_AGENT_BRIEF.md`).
 - F20 iteration 0: 8,068 of 8,256 ride legs paired (0.977), 2,864 passengers on 2,683 detours, none unroutable, 23,040 named drivers (`NEXT_AGENT_BRIEF.md`).
 - F19 arm `aborted_20260830T170743_300it_10pct`: iteration 0 paired 6,850 of 6,966 ride legs, endpoint refusals 2,053 → 67, 2,005 passengers on 1,888 detours; iteration 20 ride 10.86% (§9.129).
@@ -44,7 +45,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## What is open
 
-- #48 — every ride physically in a car. The F21 gate read ride 12.08% (−41.3%, §9.134); the iteration-0 `ridePairing` counts on the rebuilt demand were not read before the stop — the next arm's first check.
+- #48 — every ride physically in a car. The F21 gate read ride 12.08% (−41.3%, §9.134); the iteration-0 counts are now read from the arm's log (§9.135): 2,814 picked up, 0 unroutable — the physical channel works at the rebuilt demand's volume.
 - #86 — the demand ceiling is now measured as the cap: the F21 arm plateaued at ~12% from iteration 30 against 20.6% observed (§9.134). The binder binds 57,758 shared WEEKDAY trips with shortfall 0 (§9.133); more ride needs more bound demand, not better pairing.
 - #91 — ride legs with no declared driver. The class is closed at the seed by `boundRideTrips` gating (§9.120); next: its count in `ride_pairing.csv` at F21 iteration 0.
 - Confirmation-arm fraction: the bucket rule holds at 10%, 25% and 50%; a 25% × 300 arm is ~25 h and needs approval (§9.129, `NEXT_AGENT_BRIEF.md`).

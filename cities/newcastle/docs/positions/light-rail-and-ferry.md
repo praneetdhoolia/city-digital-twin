@@ -15,6 +15,7 @@
 - Supply: the mapped WEEKDAY schedule carries 252 tram departures on two routes, equal to the GTFS weekday count; the route ids are tagged SAT/SUN because pt2matsim names a grouped route after one representative trip — count departures, never route ids (§9.113).
 - Target: the line's own disclosed Opal series, 1,005,033 boardings over 2025-07 to 2026-06 = 2,754 a day, × `CAL.pt.weekday_factor` = 1.0727 (assumed, sweep 1.0–1.3) = 2,954 boardings per weekday, all travellers; row `light_rail` of `cities/newcastle/data/processed/validation/mode_targets_by_mode.csv`, status measured, sweep 2,754–3,580 (§9.130).
 - Scoring: `src/analyse/report_mode_ridership.py` counts modelled boardings of every subpopulation × 1/fraction against that count; the composition-derived 0.6444% trip share it replaces is retired (§9.130).
+- Fares: both modes are priced from §9.135 — the tram on the published light rail table (0–3 km $3.30/$2.31), the ferry on the Stockton crossing's own published row ($3.30/$2.31 adult) — charged by `citysim.PtFareChargeHandler` with every other pt journey (§9.135).
 
 **Ferry — the Stockton crossing.**
 
