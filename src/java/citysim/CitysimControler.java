@@ -159,8 +159,14 @@ public final class CitysimControler {
         // registered on every stack like the others; absent from the
         // emitted config it defaults to the stock beeline behaviour.
         final PtDirectWalkConfigGroup ptDirectWalk = new PtDirectWalkConfigGroup();
+        // The published Opal fare schedule (DECISIONS.md 9.135, #98):
+        // registered on every stack like the others; absent from the emitted
+        // config the group holds only sentinels, isEnabled() is false and
+        // no handler is installed - every ride is then free, which is
+        // exactly the pre-9.135 model.
+        final PtFareConfigGroup ptFare = new PtFareConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[11 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[12 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -172,8 +178,9 @@ public final class CitysimControler {
         groups[8] = scats;
         groups[9] = taxiFleet;
         groups[10] = ptDirectWalk;
+        groups[11] = ptFare;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[11 + i] = extraGroups.get(i);
+            groups[12 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -315,6 +322,23 @@ public final class CitysimControler {
                     bind(ParkingChargeHandler.class).in(Singleton.class);
                     addEventHandlerBinding().to(ParkingChargeHandler.class);
                     addControllerListenerBinding().to(ParkingChargeHandler.class);
+                }
+            });
+        }
+        if (ptFare.isEnabled()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    // The published Opal fare on every pt journey
+                    // (DECISIONS.md 9.135, #98): one instance in both roles,
+                    // accumulating per-journey charges as an event handler
+                    // and emitting the deferred PersonMoneyEvents as a
+                    // controler listener - the ParkingChargeHandler
+                    // discipline. Installed only when the emitted config
+                    // carries the fare tables.
+                    bind(PtFareChargeHandler.class).in(Singleton.class);
+                    addEventHandlerBinding().to(PtFareChargeHandler.class);
+                    addControllerListenerBinding().to(PtFareChargeHandler.class);
                 }
             });
         }

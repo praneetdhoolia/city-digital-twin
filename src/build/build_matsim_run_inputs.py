@@ -1286,6 +1286,81 @@ def config_runtime(cfg, scoring, day, paths):
             'same name; vocabulary = RUN.transit.transit_modes minus the pt '
             'umbrella')
 
+    # The published Opal fare schedule (DECISIONS.md 9.135, #98): every pt
+    # journey is charged its published fare by citysim.PtFareChargeHandler.
+    # Each parameter below is a declared A.fare.* field - quoted from the
+    # archived pages at data/raw/fares/ - copied verbatim (arrays comma-
+    # joined, the module's list encoding). Emitted only when the fleet
+    # serves submodes, because the handler prices by boarded submode.
+    if submodes:
+        def fare_list(key):
+            return (','.join('%g' % v for v in cfg.get(key)), 'derived',
+                    key + ', comma-joined')
+        for param, key in (
+                ('ptFare.trainBandsKm', 'A.fare.train_band_upper_km'),
+                ('ptFare.trainAdultPeakAud', 'A.fare.train_adult_peak_aud'),
+                ('ptFare.trainAdultOffpeakAud',
+                 'A.fare.train_adult_offpeak_aud'),
+                ('ptFare.trainChildPeakAud', 'A.fare.train_child_peak_aud'),
+                ('ptFare.trainChildOffpeakAud',
+                 'A.fare.train_child_offpeak_aud'),
+                ('ptFare.busBandsKm', 'A.fare.bus_band_upper_km'),
+                ('ptFare.busAdultPeakAud', 'A.fare.bus_adult_peak_aud'),
+                ('ptFare.busAdultOffpeakAud', 'A.fare.bus_adult_offpeak_aud'),
+                ('ptFare.busChildPeakAud', 'A.fare.bus_child_peak_aud'),
+                ('ptFare.busChildOffpeakAud', 'A.fare.bus_child_offpeak_aud'),
+                ('ptFare.tramBandsKm', 'A.fare.lightrail_band_upper_km'),
+                ('ptFare.tramAdultPeakAud', 'A.fare.lightrail_adult_peak_aud'),
+                ('ptFare.tramAdultOffpeakAud',
+                 'A.fare.lightrail_adult_offpeak_aud'),
+                ('ptFare.tramChildPeakAud', 'A.fare.lightrail_child_peak_aud'),
+                ('ptFare.tramChildOffpeakAud',
+                 'A.fare.lightrail_child_offpeak_aud')):
+            runtime[param] = fare_list(key)
+        for param, key in (
+                ('ptFare.ferryAdultPeakAud', 'A.fare.ferry_adult_peak_aud'),
+                ('ptFare.ferryAdultOffpeakAud',
+                 'A.fare.ferry_adult_offpeak_aud'),
+                ('ptFare.ferryChildPeakAud', 'A.fare.ferry_child_peak_aud'),
+                ('ptFare.ferryChildOffpeakAud',
+                 'A.fare.ferry_child_offpeak_aud'),
+                ('ptFare.seniorPerFareCapAud', 'A.fare.senior_per_fare_cap_aud'),
+                ('ptFare.dailyCapSeniorAud', 'A.fare.daily_cap_senior_aud'),
+                ('ptFare.transferDiscountAdultAud',
+                 'A.fare.transfer_discount_adult_aud'),
+                ('ptFare.transferDiscountChildAud',
+                 'A.fare.transfer_discount_child_aud'),
+                ('ptFare.transferWindowMin', 'A.fare.transfer_window_min'),
+                ('ptFare.peakMorningStartH', 'A.fare.peak_morning_start_h'),
+                ('ptFare.peakMorningEndH', 'A.fare.peak_morning_end_h'),
+                ('ptFare.peakEveningStartH', 'A.fare.peak_evening_start_h'),
+                ('ptFare.peakEveningEndH', 'A.fare.peak_evening_end_h'),
+                ('ptFare.railPeakMorningStartH',
+                 'A.fare.rail_peak_morning_start_h'),
+                ('ptFare.childMinAge', 'A.fare.child_min_age'),
+                ('ptFare.childMaxAge', 'A.fare.child_max_age'),
+                ('ptFare.seniorMinAge', 'A.fare.senior_min_age')):
+            runtime[param] = (cfg.get(key), 'derived', key + ', verbatim')
+        # The publication: Fridays, weekends and public holidays are off-peak
+        # all day, with their own caps. WEEKDAY is priced as Monday-Thursday
+        # (Friday's off-peak pricing inside the WEEKDAY day type is a stated
+        # simplification, DECISIONS.md 9.135).
+        weekend = day != 'WEEKDAY'
+        runtime['ptFare.offPeakAllDay'] = (
+            weekend, 'derived',
+            'the published rule: weekends are off-peak all day; WEEKDAY '
+            'prices as Monday-Thursday')
+        runtime['ptFare.dailyCapAdultAud'] = (
+            cfg.get('A.fare.daily_cap_adult_weekend_aud') if weekend
+            else cfg.get('A.fare.daily_cap_adult_aud'), 'derived',
+            'A.fare.daily_cap_adult%s_aud by day type'
+            % ('_weekend' if weekend else ''))
+        runtime['ptFare.dailyCapChildAud'] = (
+            cfg.get('A.fare.daily_cap_child_weekend_aud') if weekend
+            else cfg.get('A.fare.daily_cap_child_aud'), 'derived',
+            'A.fare.daily_cap_child%s_aud by day type'
+            % ('_weekend' if weekend else ''))
+
     # Explicit corridor signals (#73): the signals contrib's module and its
     # three data files enter ONLY when the declared representation says so -
     # A.signals.representation is the one-representation-per-effect switch
