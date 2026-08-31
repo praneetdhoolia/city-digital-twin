@@ -28,7 +28,7 @@ data/raw/fares/adult_opal_fares_20260831.html,raw,192208,,,,,,,742efefae9fa9e43f
 data/raw/fares/child_opal_fares_20260831.html,raw,187490,,,,,,,ce09acdbc6340ac90581a120224740d1c85210be1fb9b9275f140d816a513240
 data/raw/fares/fares_overview_20260831.html,raw,200965,,,,,,,05eaf6d303a96e468da9b58830a880b1f4c5100e02c35bad473c16d98d8f5b80
 data/raw/fares/opal_peak_off_peak_fares_20260831.html,raw,155956,,,,,,,f55ba0ddd879b81b5aeff0f60bf9058e2cf67a522ca93487e263d37396a8ce12
-data/raw/fares/provenance_fares.json,raw,6039,,,,,,,a9564eece131a1ca32f8afdcde6c7ef923802ec33945efbc2204b5b3993c60b5
+data/raw/fares/provenance_fares.json,raw,5877,,,,,,,4577e10cd8c11eb0a75f24ad84211cb83420e532b5e50f401243fc30d77c7452
 data/raw/fares/senior_pensioner_opal_fares_20260831.html,raw,193849,,,,,,,4a977b9975371ad9f0e5c5d1681bd8175918d1d90fae2aa56229c176bcb38bff
 data/raw/hts/hts_by_lga_2009-10_to_2019-20.xlsx,raw,171511,,cities/newcastle/extract/fetch_open_data.py,NSW Household Travel Survey by LGA 2009/10-2019/20,https://opendata.transport.nsw.gov.au/data/dataset/c0f9a300-38e5-4086-90fb-c7a1f0b0fe31/resource/2bc7603b-6bba-456d-9a81-e560d8a0f5ce/download/data-by-lga-2009-to-2019_revised-release-feb-2026.xlsx,CC-BY 4.0,2026-08-12,4e280c6b3ae486ea64d7d7a786fff39a9d80c0e134b9a9328f8352149d223a34
 data/raw/hts/hts_by_lga_2020-21_to_2024-25.xlsx,raw,140991,,cities/newcastle/extract/fetch_open_data.py,NSW Household Travel Survey by LGA 2020/21-2024/25,https://opendata.transport.nsw.gov.au/data/dataset/c0f9a300-38e5-4086-90fb-c7a1f0b0fe31/resource/8b0a7e54-9dea-43c3-9804-5e2917bf4f1f/download/data-by-lga-2020_21-to-2024_25.xlsx,CC-BY 4.0,2026-08-12,21b8cb5ca2fc689dfee6a7a5a71198e047e9fe6e2ef3203a1bcf6d35484177a7
