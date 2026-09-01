@@ -1833,16 +1833,25 @@ if _registry is not None and os.path.exists(PRICE_ZONES):
                      'run network' % _sid):
             continue
         _lines = open(_tsv, encoding='utf-8').read().splitlines()
-        _ids, _neg = set(), 0
+        # Two columns before 9.138; a third, `search_min`, when
+        # A.parking.search_time_representation is `scoring` - the derived
+        # search minutes, 0 <= min <= A.parking.search_min_max.
+        _ids, _neg, _bad_search = set(), 0, 0
+        _smax = _cfgp.get('A.parking.search_min_max')
         for _line in _lines[1:]:
-            _lid, _, _p = _line.partition('\t')
-            _ids.add(_lid)
-            if float(_p) <= 0:
+            _cols = _line.split('\t')
+            _ids.add(_cols[0])
+            if float(_cols[1]) <= 0:
                 _neg += 1
+            if len(_cols) > 2 and not 0.0 <= float(_cols[2]) <= _smax:
+                _bad_search += 1
         check(_ids and not _neg,
               '%s: every row of the parking table is a PRICED link (%d rows, %d '
               'priced at zero) - a zero row means the same as no row and would '
               'be 144k rows of nothing' % (_sid, len(_ids), _neg))
+        check(not _bad_search,
+              '%s: every search_min column value sits inside [0, '
+              'A.parking.search_min_max] (%d outside)' % (_sid, _bad_search))
         for _d in DAY_TYPES:
             _cfgx = os.path.join(_sdir, _d, 'config.xml')
             if not os.path.exists(_cfgx):

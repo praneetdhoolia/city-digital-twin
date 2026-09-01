@@ -312,7 +312,7 @@ Felt-distance multiplier for the 20-30k AADT proxy band (secondary).
 
 #### `A.bike_stress.representation`
 
-The representation gate for motor-traffic cycling stress (the Mode-Choice Ledger's rank-2 gap; issue #100).
+The representation gate for motor-traffic cycling stress (the Mode-Choice Ledger's rank-2 gap; issue #107).
 
 ***assumed** · status **active** · DECISIONS.md §9.138 · MATSim `bikeStress.representation`*
 
@@ -2665,7 +2665,7 @@ Exponent on (average/personal) income in the per-person marginal utility of mone
 
 #### `C.income.representation`
 
-The representation gate for income-dependent money sensitivity (issue #101).
+The representation gate for income-dependent money sensitivity (issue #108).
 
 ***assumed** · status **active** · DECISIONS.md §9.138 · MATSim `incomeScoring.representation`*
 

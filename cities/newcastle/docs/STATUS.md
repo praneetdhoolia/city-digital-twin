@@ -7,12 +7,12 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 1 September 2026 — the first F22 arm ran to its
-iteration-100 gate and was stopped under the loop (§9.136): **bus is the
-first mode ever inside its band (+8.0 %)**, heavy rail fell 37,540 → 16,512
-boardings and was still falling, and the walk/car seesaw survived the fare.
-Seven modes stand past 20 %; the next family follows the user's pick among
-the measured causes.
+**Last updated:** 1 September 2026 — on the user's directive, the two
+research artifacts' top findings entered the model (§9.138): bike traffic
+stress (Broach et al. 2012 felt-distance factors per link, #107), the
+derived parking search time (§9.136's measured walk/car candidate), and
+income-scaled money sensitivity (#108). Plans and the 30 sets rebuilt; the
+first F23 arm carries the reading. F22's gate stands as written (§9.136).
 
 ## The goal
 
@@ -97,27 +97,24 @@ since). The F22 arm sampled at 25 % under the §9.129 bucket rule (§9.136).
 
 ## Next
 
-1. **The user picks the next family's cause from the measured set** (§9.136):
-   the walk/car cost channel (car access/egress or derived parking time,
-   [positions/walk-and-bike](positions/walk-and-bike.md)); the carve's per-LGA
-   conservation fix (#93); the corridor attraction repair — floorspace-weighted
-   attraction or an agglomeration term (#30); the ride binder's reach (#86).
-   The chosen fix opens its family at the next arm's launch, under a fresh
-   stated-cost approval at the measured pace (§9.136).
-2. **Rail's residual under fares is the F22 gate's open reading** (#98): rail
-   was still falling when stopped; where it settles, and the per-station split
-   under fares, are the next arm's measurements.
+1. **Read the first F23 arm at its gates** (§9.138): bike from +185.5% once
+   arterials cost what the literature says they feel like, and where its
+   trips land; the walk/car seesaw under the derived parking search time;
+   taxi (+70.9%) and the fare's rail effect under income-scaled money
+   sensitivity. The runner's own watcher stops the hard bar (§9.137); the
+   trend half stays a session judgement.
+2. **Rail's residual under fares is still the open reading** (#98): rail was
+   falling when F22 stopped; crowding stays deferred until the F23 gate says
+   where fares alone settle it (§9.138).
 3. **The #96 leaf trace needs a `SubtourChainScan` extension** (mark leaf vs
-   spanning in examples) and a `.tools/classes` recompile — the machine is
-   idle now; small, no run needed.
+   spanning in examples) and a `.tools/classes` recompile — small, no run
+   needed, **never while the arm runs** (#66).
 
-**Decisions required:** the next family's cause, from §9.136's measured set
-(above); the next arm's stated-cost approval at the measured 25 % pace
-(~45–50 h per 300, §9.136) or the 10 % pace (~18–21 h, §9.134); enable the
-Task Scheduler operational log so a machine-level death can name its trigger
-(#66, again unattributed after the 1 Sep crash); whether bus moves to a
-boardings basis once a regional count is acquired (#99); whether the S2 base
-grants the tram signal priority ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+**Decisions required:** enable the Task Scheduler operational log so a
+machine-level death can name its trigger (#66, again unattributed after the
+1 Sep crash); whether bus moves to a boardings basis once a regional count
+is acquired (#99); whether the S2 base grants the tram signal priority
+([positions/signals-and-crossings](positions/signals-and-crossings.md)).
 
 ## Open work
 
