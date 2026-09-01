@@ -4,11 +4,11 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 452,
+  "n_fields": 462,
   "n_by_layer": {
-    "A": 169,
+    "A": 176,
     "B": 102,
-    "C": 57,
+    "C": 60,
     "CAL": 19,
     "D": 5,
     "E": 26,
@@ -20,6 +20,51 @@
       "units": "metres",
       "type": "object",
       "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.bike_stress.aadt_class_by_highway": {
+      "layer": "A",
+      "units": "aadt_proxy_class_by_osm_highway",
+      "type": "object",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.bike_stress.felt_factor_high": {
+      "layer": "A",
+      "units": "felt_distance_ratio",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.bike_stress.felt_factor_moderate": {
+      "layer": "A",
+      "units": "felt_distance_ratio",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.bike_stress.felt_factor_moderate_high": {
+      "layer": "A",
+      "units": "felt_distance_ratio",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.bike_stress.representation": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
@@ -991,6 +1036,24 @@
       "layer": "A",
       "units": "percentile",
       "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.parking.search_min_max": {
+      "layer": "A",
+      "units": "minutes",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.parking.search_time_representation": {
+      "layer": "A",
+      "units": "enum",
+      "type": "string",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
@@ -2655,6 +2718,33 @@
     "C.gradient.uphill_penalty_per_pct": {
       "layer": "C",
       "units": "utils_per_percent_grade",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json"
+    },
+    "C.income.exponent": {
+      "layer": "C",
+      "units": "exponent",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json"
+    },
+    "C.income.representation": {
+      "layer": "C",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json"
+    },
+    "C.income.top_band_factor": {
+      "layer": "C",
+      "units": "ratio",
       "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,

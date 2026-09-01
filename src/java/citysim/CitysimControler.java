@@ -165,8 +165,15 @@ public final class CitysimControler {
         // no handler is installed - every ride is then free, which is
         // exactly the pre-9.135 model.
         final PtFareConfigGroup ptFare = new PtFareConfigGroup();
+        // Motor-traffic cycling stress (DECISIONS.md 9.138, #107) and
+        // income-dependent money sensitivity (9.138, #108): registered on
+        // every stack like the others; absent from the emitted config each
+        // group holds representation=absent and nothing below installs.
+        final BikeStressConfigGroup bikeStress = new BikeStressConfigGroup();
+        final IncomeScoringConfigGroup incomeScoring =
+                new IncomeScoringConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[12 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[14 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -179,8 +186,10 @@ public final class CitysimControler {
         groups[9] = taxiFleet;
         groups[10] = ptDirectWalk;
         groups[11] = ptFare;
+        groups[12] = bikeStress;
+        groups[13] = incomeScoring;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[12 + i] = extraGroups.get(i);
+            groups[14 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -307,9 +316,22 @@ public final class CitysimControler {
                                 new CappedSpeedTravelTime(
                                         type.getMaximumVelocity()));
                     }
-                    addTravelDisutilityFactoryBinding(mode).toInstance(
-                            new org.matsim.core.router.costcalculators
-                                    .OnlyTimeDependentTravelDisutilityFactory());
+                    if (TransportMode.bike.equals(mode)
+                            && bikeStress.isFeltTime()) {
+                        // Motor-traffic stress in the ROUTER's link cost
+                        // (DECISIONS.md 9.138, #107): time x the stamped
+                        // bike_stress_factor, so the route search prefers
+                        // the quiet street. The SCORE half is installed
+                        // below; under representation=absent this branch is
+                        // never taken and the stock time-only factory stays.
+                        addTravelDisutilityFactoryBinding(mode).toInstance(
+                                new BikeStressDisutility.Factory(
+                                        scenario.getNetwork()));
+                    } else {
+                        addTravelDisutilityFactoryBinding(mode).toInstance(
+                                new org.matsim.core.router.costcalculators
+                                        .OnlyTimeDependentTravelDisutilityFactory());
+                    }
                 }
             }
         });
@@ -479,6 +501,62 @@ public final class CitysimControler {
                                                   .LinkSpeedCalculator.class)
                             .addBinding()
                             .toInstance(new GradientLinkSpeed.Mobsim(gradient));
+                }
+            });
+        }
+        if (bikeStress.isFeltTime()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    // The SCORE half of the bike stress channel (DECISIONS.md
+                    // 9.138, #107): one instance in both roles, accumulating
+                    // felt surplus seconds as an event handler and emitting
+                    // the deferred PersonScoreEvents as a controler listener
+                    // - the ParkingChargeHandler discipline.
+                    bind(BikeStressScoring.class).in(Singleton.class);
+                    addEventHandlerBinding().to(BikeStressScoring.class);
+                    addControllerListenerBinding().to(BikeStressScoring.class);
+                }
+            });
+        }
+        if (incomeScoring.isEnabled()) {
+            // Income-dependent money sensitivity (DECISIONS.md 9.138, #108):
+            // MATSim core's own IndividualPersonScoringParameters, which
+            // scales each person's marginalUtilityOfMoney by
+            // (average income / personal income)^incomeExponent from the
+            // `income` person attribute build_matsim_plans.py stamps. The
+            // taste-variations parameter set that carries the exponent is
+            // attached to every subpopulation's scoring parameters HERE,
+            // from the declared registry values, rather than hand-written
+            // into the emitted XML - one source, no drift. Subpopulations
+            // that are volumes rather than budgets (external, freight) are
+            // excluded by name; their agents carry no income attribute
+            // either, so the exclusion is belt and braces.
+            final java.util.Set<String> excluded = new java.util.HashSet<>();
+            for (final String part
+                    : incomeScoring.getExcludeSubpopulations().split(",")) {
+                if (!part.trim().isEmpty()) {
+                    excluded.add(part.trim());
+                }
+            }
+            for (final org.matsim.core.config.groups.ScoringConfigGroup
+                    .ScoringParameterSet sps
+                    : config.scoring()
+                            .getScoringParametersPerSubpopulation().values()) {
+                final org.matsim.core.config.groups
+                        .TasteVariationsConfigParameterSet tv =
+                        sps.getOCreateTasteVariationsParams();
+                tv.setIncomeExponent(incomeScoring.getIncomeExponent());
+                tv.setExcludeSubpopulations(excluded);
+            }
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    bind(org.matsim.core.scoring.functions
+                            .ScoringParametersForPerson.class)
+                            .to(org.matsim.core.scoring.functions
+                                    .IndividualPersonScoringParameters.class)
+                            .in(Singleton.class);
                 }
             });
         }

@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 452 fields are made of
+## What the 462 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
 | `measured` | 36 | computed from observed data in this package |
 | `derived` | 38 | follows from another registry field by identity |
-| `literature` | 69 | a published value, not specific to this city |
-| `assumed` | 152 | chosen without direct empirical support |
+| `literature` | 74 | a published value, not specific to this city |
+| `assumed` | 157 | chosen without direct empirical support |
 | `definition` | 119 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 433 | usable point value |
+| `active` | 443 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,10 +56,11 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### The 22 fields held fixed
+### The 23 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
+- `A.bike_stress.aadt_class_by_highway` - A CLASSIFICATION, not a tunable: no per-link AADT observation is held for this city, so each OSM highway class a cyclist may legally ride is mapped to the Broach et al. 2012 traffi
 - `A.corridor.dedupe_tolerance_m` - A NUMERICAL HYGIENE TOLERANCE, not a model parameter: it exists because GTFS consumers dislike consecutive near-duplicate shape points, and at 1 m - on shapes densified at A.corrid
 - `A.corridor.nearest_node_max_rings` - A SEARCH BOUND, not a model parameter: the grid search returns the same nearest node for every max_rings large enough to reach it, and fails to find one (returns nothing) rather th
 - `A.crossings.freight_road_names` - The IDENTITY of the freight-rail/road interaction set, not a tunable: DECISIONS.md 9.70 established from ARTC/TfNSW/PWCS/NCIG documents that the coal chain is grade-separated every
@@ -85,13 +86,18 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 168 fields*
+*`cities/newcastle/registry/A_supply.json` - 175 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
 | `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 3 |
+| `A.bike_stress.aadt_class_by_highway` | `{"trunk": "high", "trunk_link": "high", "primary": "high", "primary_link": "high", "secondary": "moderate_h...` | aadt_proxy_class_by_osm_highway | `assumed` | **held fixed** |
+| `A.bike_stress.felt_factor_high` | `7.68` | felt_distance_ratio | `literature` | 7.19 - 8.16 |
+| `A.bike_stress.felt_factor_moderate` | `1.3` | felt_distance_ratio | `literature` | 1.22 - 1.37 |
+| `A.bike_stress.felt_factor_moderate_high` | `2.39` | felt_distance_ratio | `literature` | 2.37 - 2.4 |
+| `A.bike_stress.representation` | `felt_time` | enum | `assumed` | `absent`, `felt_time` |
 | `A.corridor.attribute_search_cutoff_m` | `2000.0` | metres | `assumed` | 500 - 5000 |
 | `A.corridor.cross_buffer_m` | `40.0` | metres | `assumed` | 25 - 60 |
 | `A.corridor.dedupe_tolerance_m` | `1.0` | metres | `definition` | **held fixed** |
@@ -200,6 +206,8 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.parking.price_aud_hr_max` | `3.2` | AUD_per_hour | `assumed` | 1.6 - 4.8 |
 | `A.parking.price_saturation_pctile` | `99.0` | percentile | `assumed` | 95 - 99.5 |
 | `A.parking.price_threshold_pctile` | `90.0` | percentile | `assumed` | 80 - 95 |
+| `A.parking.search_min_max` | `8.1` | minutes | `literature` | 3.5 - 14 |
+| `A.parking.search_time_representation` | `scoring` | enum | `assumed` | `absent`, `scoring` |
 | `A.road.capacity_default` | `{"motorway": 2000, "trunk": 1800, "primary": 1600, "secondary": 1400, "tertiary": 1200, "unclassified": 100...` | vehicles_per_hour_per_lane | `assumed` | 300 - 2200 |
 | `A.road.lane_width_default_m` | `3.5` | metres | `measured` | 2.5 - 4.5 |
 | `A.road.lanes_default` | `{"busway": 1, "living_street": 1.0, "motorway": 2.0, "motorway_link": 1.0, "primary": 2.0, "primary_link": ...` | lanes_per_direction | `measured` | 1 - 3 |
@@ -267,6 +275,46 @@ Fallback footway width. Footway widths were not obtained for Newcastle. MEASURED
 ***measured** · status **active** · DECISIONS.md §9.33*
 
 > **Sweep basis.** the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges - an observed spread, not a chosen interval
+
+#### `A.bike_stress.aadt_class_by_highway`
+
+AADT-band proxy per OSM highway class, keyed on the classes present on the run network's bike-capable links (100% coverage measured on the S2 build). base carries factor 1.0 by identity; the other bands take their declared felt_factor fields.
+
+***assumed** · status **active** · DECISIONS.md §9.138*
+
+> **Held fixed.** A CLASSIFICATION, not a tunable: no per-link AADT observation is held for this city, so each OSM highway class a cyclist may legally ride is mapped to the Broach et al. 2012 traffic-volume band its class typically carries (trunk/primary arterials to 30k+, secondary to 20-30k, tertiary/unclassified collectors to 10-20k, residential/living_street/service to the low-traffic baseline). The MAGNITUDE per band is what is swept, on the three felt_factor fields.
+>
+> *Departure requires: a per-link traffic-volume layer for this city (e.g. classified counts joined to OSM ways), which would replace the class proxy with the observed band*
+
+#### `A.bike_stress.felt_factor_high`
+
+Felt-distance multiplier for the 30k+ AADT proxy band (trunk/primary arterials).
+
+***literature** · status **active** · DECISIONS.md §9.138*
+
+> **Sweep basis.** Broach, Dill & Gliebe 2012 Table 3: AADT 30k+ without a bike lane +619.4% (non-commute) to +715.7% (commute) distance-equivalent; midpoint value, purpose-bound sweep. The paper's own reading of this magnitude - a cyclist facing such a road detours enormously 'or would not travel by bicycle at all' - is exactly the mode-choice channel this factor opens.
+
+#### `A.bike_stress.felt_factor_moderate`
+
+Felt-distance multiplier for the 10-20k AADT proxy band (tertiary/unclassified/busway).
+
+***literature** · status **active** · DECISIONS.md §9.138*
+
+> **Sweep basis.** Broach, Dill & Gliebe 2012 (TR-A 46(10), GPS revealed-preference route choice, Portland), Table 3 distance-value equivalents: riding on AADT 10-20k without a bike lane is worth +22.3% distance (non-commute) to +36.8% (commute); the value is the midpoint, the sweep the two trip-purpose bounds.
+
+#### `A.bike_stress.felt_factor_moderate_high`
+
+Felt-distance multiplier for the 20-30k AADT proxy band (secondary).
+
+***literature** · status **active** · DECISIONS.md §9.138*
+
+> **Sweep basis.** Broach, Dill & Gliebe 2012 Table 3: AADT 20-30k without a bike lane +137.3% (non-commute) to +140.0% (commute) distance-equivalent; midpoint value, purpose-bound sweep.
+
+#### `A.bike_stress.representation`
+
+The representation gate for motor-traffic cycling stress (the Mode-Choice Ledger's rank-2 gap; issue #100).
+
+***assumed** · status **active** · DECISIONS.md §9.138 · MATSim `bikeStress.representation`*
 
 #### `A.corridor.attribute_search_cutoff_m`
 
@@ -979,6 +1027,20 @@ Job-density percentile at which paid parking begins. Read against the CITY'S OWN
 ***assumed** · status **active** · DECISIONS.md §9.31*
 
 > **Sweep basis.** chosen, not observed: no Newcastle meter-transaction or paid-zone boundary dataset exists to fit the threshold against. The range spans the top quintile to the top twentieth of zones.
+
+#### `A.parking.search_min_max`
+
+Search+access minutes at the 9.31 saturation density; a zone's search time is search_min_max x its density_weight.
+
+***literature** · status **active** · DECISIONS.md §9.138*
+
+> **Sweep basis.** Shoup 2006 (Cruising for parking, Transport Policy 13(6)) reviews sixteen studies of parking search in congested centres, 1927-2001: mean cruise time 8.1 minutes, study range 3.5-14. Scaled per zone by the 9.31 density_weight ramp, so only the densest priced zones approach the maximum and the 1,350 unpriced zones stay at zero.
+
+#### `A.parking.search_time_representation`
+
+The representation gate for parking search/access time (the 9.136 measured walk/car candidate, chosen over physical access/egress stubs which 9.58 refused).
+
+***assumed** · status **active** · DECISIONS.md §9.138*
 
 #### `A.road.capacity_default`
 
@@ -2362,7 +2424,7 @@ The earliest classified-count year pooled into the heavy-vehicle share that road
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 57 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 60 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
@@ -2391,6 +2453,9 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.crowding.standing_multiplier` | `1.45` | ratio | `literature` | 1.2 - 1.8 |
 | `C.gradient.downhill_penalty_per_pct` | `0.02` | utils_per_percent_grade | `assumed` | 0 - 0.05 |
 | `C.gradient.uphill_penalty_per_pct` | `0.09` | utils_per_percent_grade | `assumed` | 0.05 - 0.14 |
+| `C.income.exponent` | `1.0` | exponent | `literature` | 0.5 - 1.5 |
+| `C.income.representation` | `person_marginal_utility_of_money` | enum | `assumed` | `absent`, `person_marginal_utility_of_money` |
+| `C.income.top_band_factor` | `1.25` | ratio | `assumed` | 1.1 - 1.5 |
 | `C.nesting.active_coefficient` | `0.7` | dimensionless | `assumed` | 0.5 - 0.95 |
 | `C.nesting.private_coefficient` | `0.8` | dimensionless | `assumed` | 0.5 - 0.95 |
 | `C.nesting.pt_coefficient` | `0.65` | dimensionless | `assumed` | 0.5 - 0.95 |
@@ -2589,6 +2654,28 @@ Asymmetric gradient cost, downhill.
 Asymmetric gradient cost on active-mode edges. Proposal 6.3 requires uphill and downhill to be different costs; material in Newcastle East and The Hill.
 
 ***assumed** · status **active** · DECISIONS.md §8.4 · proposal §6.3*
+
+#### `C.income.exponent`
+
+Exponent on (average/personal) income in the per-person marginal utility of money.
+
+***literature** · status **active** · DECISIONS.md §9.138 · MATSim `incomeScoring.incomeExponent`*
+
+> **Sweep basis.** MATSim's income-dependent scoring scales marginalUtilityOfMoney by (average income / personal income)^exponent; 1.0 is inverse proportionality, the reference behaviour of the core class and the Berlin scenario family's practice. The sweep spans the sub-proportional cost-sensitivity-vs-income elasticities (~0.5) found in stated-preference VOT syntheses up to a super-proportional 1.5.
+
+#### `C.income.representation`
+
+The representation gate for income-dependent money sensitivity (issue #101).
+
+***assumed** · status **active** · DECISIONS.md §9.138 · MATSim `incomeScoring.representation`*
+
+#### `C.income.top_band_factor`
+
+Multiplier on the open top income band's lower bound to form its representative weekly income; every closed band takes its interval midpoint by identity.
+
+***assumed** · status **active** · DECISIONS.md §9.138*
+
+> **Sweep basis.** G17's open-ended top band (3000_more AUD/week) has no upper bound; the conventional open-interval treatment takes the lower bound times a Pareto-tail factor. 120 of 612,634 persons carry the band, so any swept value is immaterial to the average.
 
 #### `C.nesting.active_coefficient`
 

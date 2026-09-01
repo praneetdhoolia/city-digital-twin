@@ -1,0 +1,10 @@
+{
+  "overlay": "f23_gate_10pct",
+  "description": "The first family-F23 arm (DECISIONS.md 9.138): the F22 run stack, fares included, with the three behaviour channels the research artifacts ranked above everything remaining - bike traffic stress (bike_stress_factor per link, Broach/Dill/Gliebe 2012 felt-distance factors, charged in score by citysim.BikeStressScoring and in the router by citysim.BikeStressDisutility, #107), the derived parking search time (Shoup 2006's 8.1 min scaled by the 9.31 density ramp, charged once per charged spell at the transfer-penalty identity - the 9.136 measured walk/car candidate), and income-scaled money sensitivity (each resident's G17 band midpoint through MATSim core's IndividualPersonScoringParameters, #108). What the arm must answer, in order: does bike fall from +185.5% toward its 2.21% target once arterials cost what the literature says they feel like, and where do its trips land (walk -36.6% and ride -41.3% are the candidates, 9.123); does the walk/car seesaw narrow once a dense-zone car trip pays its search minutes; does income scaling move taxi (+70.9%) and redistribute the fare's rail effect (#98); does rail keep falling under fares alone (crowding stays deferred until that is read). S2 x WEEKDAY at 10%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the loop in GOAL.md - the runner's own gate watcher stops the hard bar itself (9.137). 10% is the measured ~18-21 h pace (9.134); the 9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05, so 10% keeps them. NEVER compare with a 25% arm (9.10, 9.12) and never with any run before the F23 boundary: the plans (income attribute) and the network (stress stamp) are part of the run's identity (9.127, 9.138). NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.1,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "30g"
+  }
+}

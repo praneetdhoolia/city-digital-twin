@@ -1214,6 +1214,41 @@
         "src/registry/param_config.py"
       ]
     },
+    "A.parking.search_time_representation": {
+      "value": "scoring",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "scoring"
+        ],
+        "basis": "Whether the derived parking search time reaches the car's score at all. absent: the pre-9.138 state - a car parks the instant it arrives, everywhere; with accessEgressType=none load-bearing (9.54, 9.58) and stub re-adding refused, scoring is the derivable channel 9.136 names for the walk/car cost imbalance. scoring: every charged parking spell in a 9.31 priced zone costs its derived search minutes once at arrival, at the identity the transfer penalty already prices minutes with: utils = -(min/60) x trip-weighted VOT x marginalUtilityOfMoney. The same home exemption as the price (9.31) applies, for the same reason."
+      },
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/java/citysim/ParkingConfigGroup.java"
+      ],
+      "description": "The representation gate for parking search/access time (the 9.136 measured walk/car candidate, chosen over physical access/egress stubs which 9.58 refused)."
+    },
+    "A.parking.search_min_max": {
+      "value": 8.1,
+      "units": "minutes",
+      "source": "literature",
+      "sweep": [
+        3.5,
+        14.0
+      ],
+      "sweep_basis": "Shoup 2006 (Cruising for parking, Transport Policy 13(6)) reviews sixteen studies of parking search in congested centres, 1927-2001: mean cruise time 8.1 minutes, study range 3.5-14. Scaled per zone by the 9.31 density_weight ramp, so only the densest priced zones approach the maximum and the 1,350 unpriced zones stay at zero.",
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Search+access minutes at the 9.31 saturation density; a zone's search time is search_min_max x its density_weight."
+    },
     "A.active.footway_width_default": {
       "value": {
         "bridleway": 2.0,
@@ -1886,6 +1921,104 @@
         "src/build/build_matsim_run_inputs.py"
       ],
       "description": "Symmetric clamp, in percent, on the signed grade_pct attribute stamped onto run-network links from the A1/A6 node elevations."
+    },
+    "A.bike_stress.representation": {
+      "value": "felt_time",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "felt_time"
+        ],
+        "basis": "Whether motor-traffic stress reaches cycling at all. absent: the pre-9.138 state - a six-lane arterial cycles exactly like a cul-de-sac, while the route-choice literature's dominant cycling deterrent is adjacent traffic (Broach, Dill & Gliebe 2012) and modelled bike stood at +185.5% at the F22 iteration-100 gate. felt_time: every bike-capable run-network link carries a felt-distance multiplier for its road class (bike_stress_factor), a cyclist pays the extra felt time in score (citysim.BikeStressScoring, PersonScoreEvent) and sees the same multiplier in router link cost, so stressed streets are both avoided en route and felt in mode choice. One-gate discipline mirroring A.gradient.representation."
+      },
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/java/citysim/BikeStressConfigGroup.java"
+      ],
+      "matsim_param": "bikeStress.representation",
+      "description": "The representation gate for motor-traffic cycling stress (the Mode-Choice Ledger's rank-2 gap; issue #107)."
+    },
+    "A.bike_stress.aadt_class_by_highway": {
+      "value": {
+        "trunk": "high",
+        "trunk_link": "high",
+        "primary": "high",
+        "primary_link": "high",
+        "secondary": "moderate_high",
+        "secondary_link": "moderate_high",
+        "tertiary": "moderate",
+        "tertiary_link": "moderate",
+        "unclassified": "moderate",
+        "busway": "moderate",
+        "residential": "base",
+        "living_street": "base",
+        "service": "base"
+      },
+      "units": "aadt_proxy_class_by_osm_highway",
+      "source": "assumed",
+      "held_fixed": {
+        "rule": "A CLASSIFICATION, not a tunable: no per-link AADT observation is held for this city, so each OSM highway class a cyclist may legally ride is mapped to the Broach et al. 2012 traffic-volume band its class typically carries (trunk/primary arterials to 30k+, secondary to 20-30k, tertiary/unclassified collectors to 10-20k, residential/living_street/service to the low-traffic baseline). The MAGNITUDE per band is what is swept, on the three felt_factor fields.",
+        "decisions_ref": "9.138",
+        "departure_requires": "a per-link traffic-volume layer for this city (e.g. classified counts joined to OSM ways), which would replace the class proxy with the observed band"
+      },
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "AADT-band proxy per OSM highway class, keyed on the classes present on the run network's bike-capable links (100% coverage measured on the S2 build). base carries factor 1.0 by identity; the other bands take their declared felt_factor fields."
+    },
+    "A.bike_stress.felt_factor_moderate": {
+      "value": 1.3,
+      "units": "felt_distance_ratio",
+      "source": "literature",
+      "sweep": [
+        1.22,
+        1.37
+      ],
+      "sweep_basis": "Broach, Dill & Gliebe 2012 (TR-A 46(10), GPS revealed-preference route choice, Portland), Table 3 distance-value equivalents: riding on AADT 10-20k without a bike lane is worth +22.3% distance (non-commute) to +36.8% (commute); the value is the midpoint, the sweep the two trip-purpose bounds.",
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Felt-distance multiplier for the 10-20k AADT proxy band (tertiary/unclassified/busway)."
+    },
+    "A.bike_stress.felt_factor_moderate_high": {
+      "value": 2.39,
+      "units": "felt_distance_ratio",
+      "source": "literature",
+      "sweep": [
+        2.37,
+        2.4
+      ],
+      "sweep_basis": "Broach, Dill & Gliebe 2012 Table 3: AADT 20-30k without a bike lane +137.3% (non-commute) to +140.0% (commute) distance-equivalent; midpoint value, purpose-bound sweep.",
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Felt-distance multiplier for the 20-30k AADT proxy band (secondary)."
+    },
+    "A.bike_stress.felt_factor_high": {
+      "value": 7.68,
+      "units": "felt_distance_ratio",
+      "source": "literature",
+      "sweep": [
+        7.19,
+        8.16
+      ],
+      "sweep_basis": "Broach, Dill & Gliebe 2012 Table 3: AADT 30k+ without a bike lane +619.4% (non-commute) to +715.7% (commute) distance-equivalent; midpoint value, purpose-bound sweep. The paper's own reading of this magnitude - a cyclist facing such a road detours enormously 'or would not travel by bicycle at all' - is exactly the mode-choice channel this factor opens.",
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "Felt-distance multiplier for the 30k+ AADT proxy band (trunk/primary arterials)."
     },
     "A.signals.control_regime": {
       "value": "scats_adaptive",

@@ -309,6 +309,10 @@ TYPICAL_DURATION_S = CFG.get('C.scoring.activity_typical_duration_s')
 # MATSim's scoring shape parameter, not an observable local quantity.
 TYPICAL_DURATION_SWEEP = CFG.sweep(
     'C.scoring.activity_typical_duration_s')['proportional']
+# The open top income band's representative value is its lower bound times
+# this declared factor (DECISIONS.md 9.138); every closed band takes its
+# interval midpoint by identity.
+TOP_BAND_FACTOR = CFG.get('C.income.top_band_factor')
 
 
 def hhmmss(s):
@@ -352,7 +356,7 @@ def load_person_attributes(rng_bike):
     p = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
                     usecols=['person_id', 'household_id', 'age', 'car_available',
                              'licence_holder', 'employment_status', 'student_status',
-                             'mobility_impairment_flag'])
+                             'mobility_impairment_flag', 'income_band'])
 
     if RIDE_REQUIRES_DRIVER:
         # licence holders per household, and whether the household has a vehicle
@@ -378,9 +382,33 @@ def load_person_attributes(rng_bike):
         int(r.person_id): (int(r.car_available), int(r.age), int(r.licence_holder),
                            str(r.employment_status), str(r.student_status),
                            int(r.mobility_impairment_flag), int(r.ride_avail),
-                           int(r.bike_avail), int(r.household_id))
+                           int(r.bike_avail), int(r.household_id),
+                           income_band_midpoint(r.income_band))
         for r in p.itertuples()
     }
+
+
+def income_band_midpoint(band):
+    """Weekly income (AUD) represented by a census income band, or None.
+
+    The identity is the band label's own bounds: a closed band `lo_hi` takes
+    its interval midpoint; the open top band `lo_more` takes lo x the declared
+    C.income.top_band_factor (the conventional open-interval treatment); the
+    no-income band and anything unparseable take None, so the person carries
+    NO income attribute and keeps the subpopulation marginalUtilityOfMoney by
+    MATSim's documented fallback (DECISIONS.md 9.138, issue #108). Only the
+    RATIO of a person's income to the population average ever reaches
+    scoring, so the weekly basis needs no unit conversion.
+    """
+    parts = str(band).split('_')
+    if len(parts) != 2 or not parts[0].isdigit():
+        return None                      # Neg_Nil, blanks, unknown labels
+    lo = float(parts[0])
+    if parts[1] == 'more':
+        return round(lo * TOP_BAND_FACTOR, 1)
+    if not parts[1].isdigit():
+        return None
+    return round((lo + float(parts[1])) / 2.0, 1)
 
 
 def pick_mode(car_available, u, table_by_avail=None, ride_available=True,
@@ -574,6 +602,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     EXTERNAL_PROFILE['student_status'],
                     EXTERNAL_PROFILE['mobility_impairment_flag'])
                 ride_av, bike_av, hh_id = 0, 0, None
+                inc = None               # a volume, not a budget (9.138)
                 moto = False
                 trk = False
             elif external:
@@ -601,13 +630,14 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # carries no householdId and can never pair with a driver. That
                 # is the same identity that already denies it `ride`.
                 hh_id = None
+                inc = None               # household-less, no G17 band (9.138)
                 moto = False
                 trk = False
             else:
                 a = attrs.get(pid)
                 if a is None:
                     continue
-                car_av, age, lic, emp, stu, mob, ride_av, bike_av, hh_id = a
+                car_av, age, lic, emp, stu, mob, ride_av, bike_av, hh_id, inc = a
                 if pid in lift_hh:
                     # 9.60: a bound lift passenger has, by construction, a
                     # driver who can carry them - the identity ride_avail
@@ -823,6 +853,18 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     '%s</attribute>\n' % esc(emp))
             w.write('\t\t\t<attribute name="mobilityImpaired" class="java.lang.String">'
                     '%s</attribute>\n' % ('yes' if mob else 'no'))
+            if inc is not None:
+                # The person's weekly income, the G17 band's midpoint (9.138,
+                # #108): DATA like householdId, stamped whenever the band is
+                # held; whether anything READS it is gated by
+                # C.income.representation, which binds MATSim core's
+                # IndividualPersonScoringParameters to scale this person's
+                # marginalUtilityOfMoney by (average/personal)^exponent.
+                # Absent (the Neg_Nil band, boundary tiers, freight) means the
+                # subpopulation value applies - the class's documented
+                # fallback, not a zero.
+                w.write('\t\t\t<attribute name="income" '
+                        'class="java.lang.Double">%s</attribute>\n' % inc)
             # consumed by citysim.AvailabilityModesCalculator; absent means
             # available, so a population without them behaves as before
             w.write('\t\t\t<attribute name="rideAvail" class="java.lang.String">'

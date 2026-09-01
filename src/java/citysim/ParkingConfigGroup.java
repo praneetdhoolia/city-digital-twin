@@ -36,6 +36,7 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
     private double chargedEndHour = 0.0;
     private String chargedModes = "";
     private String exemptActivityTypes = "";
+    private double searchPenaltyUtilsPerMin = 0.0;
 
     public ParkingConfigGroup() {
         super(GROUP_NAME);
@@ -127,6 +128,26 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
     @StringSetter("exemptActivityTypes")
     public void setExemptActivityTypes(final String value) {
         this.exemptActivityTypes = value == null ? "" : value.trim();
+    }
+
+    /**
+     * Utils per minute of parking search/access time (DECISIONS.md 9.138):
+     * the trip-weighted VOT x marginalUtilityOfMoney identity the transfer
+     * penalty already prices minutes with, derived by the emitter. The
+     * MINUTES are data — the third column of {@link #getPriceFile()}, the
+     * declared A.parking.search_min_max scaled by each zone's 9.31
+     * density_weight. The neutral default 0.0 charges nothing, which is the
+     * pre-9.138 model and the A.parking.search_time_representation=absent
+     * state.
+     */
+    @StringGetter("searchPenaltyUtilsPerMin")
+    public double getSearchPenaltyUtilsPerMin() {
+        return this.searchPenaltyUtilsPerMin;
+    }
+
+    @StringSetter("searchPenaltyUtilsPerMin")
+    public void setSearchPenaltyUtilsPerMin(final double value) {
+        this.searchPenaltyUtilsPerMin = value;
     }
 
     /**

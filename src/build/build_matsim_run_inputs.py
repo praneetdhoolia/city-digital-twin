@@ -775,6 +775,64 @@ def stamp_gradients(net_path, clamp_pct):
     return dict(counts)
 
 
+def stamp_bike_stress(net_path, cfg):
+    """Stamp a `bike_stress_factor` attribute on every bike-capable run-network
+    link whose road class the declared mapping puts above the low-traffic
+    baseline (DECISIONS.md 9.138, issue #107).
+
+    The factor is the Broach, Dill & Gliebe 2012 felt-distance equivalent for
+    the link's AADT proxy band: `A.bike_stress.aadt_class_by_highway` maps the
+    link's `osm:way:highway` class to a band, and the three declared
+    `A.bike_stress.felt_factor_*` fields price the bands. A link whose class is
+    `base`, whose class the mapping does not name, or that carries no highway
+    attribute gets NO attribute and cycles stress-free - counted, never
+    hidden. Consumed by citysim.BikeStressScoring (score) and
+    citysim.BikeStressDisutility (router link cost) when
+    `bikeStress.representation = felt_time`.
+    """
+    class_of = cfg.get('A.bike_stress.aadt_class_by_highway')
+    factor_of = {
+        'base': 1.0,
+        'moderate': cfg.get('A.bike_stress.felt_factor_moderate'),
+        'moderate_high': cfg.get('A.bike_stress.felt_factor_moderate_high'),
+        'high': cfg.get('A.bike_stress.felt_factor_high'),
+    }
+    with gzip.open(net_path, 'rt', encoding='utf-8') as f:
+        xml = f.read()
+    counts = collections.Counter()
+
+    def stamp(m):
+        s = m.group(0)
+        head_end = s.index('>')
+        head = s[:head_end]
+        a = dict(ATTR_RE.findall(head))
+        if 'bike' not in (a.get('modes') or '').split(','):
+            return s
+        counts['bike_links'] += 1
+        hw = HIGHWAY_ATTR_RE.search(s)
+        if hw is None:
+            counts['no_highway'] += 1
+            return s
+        band = class_of.get(hw.group(1))
+        if band is None:
+            counts['unmapped_class'] += 1
+            return s
+        factor = factor_of[band]
+        if factor <= 1.0:
+            counts['baseline'] += 1
+            return s
+        counts['stamped'] += 1
+        counts['stamped_%s' % band] += 1
+        tail = s[head_end:]
+        return head + set_link_attribute(tail, 'bike_stress_factor',
+                                         '%.2f' % factor)
+
+    body = LINK_BLOCK_RE.sub(stamp, xml)
+    with gzip_writer(net_path) as f:
+        f.write(body)
+    return dict(counts)
+
+
 def patch_signal_capacities(net_path, patch_csv):
     """The re-capacitation half of the double-count rule (#73), applied to the
     emitted run network.
@@ -870,11 +928,24 @@ def write_parking_prices(net_path, dst_path):
     """
     import geopandas as gpd
 
-    prices = {}
+    # Parking search/access time rides the same join (DECISIONS.md 9.138):
+    # a priced zone's derived search minutes are the declared
+    # A.parking.search_min_max scaled by the zone's own 9.31 density_weight
+    # ramp, so the densest zones approach the literature maximum and the
+    # 1,350 unpriced zones stay at zero. Written as a third column whenever
+    # the representation asks for it; a two-column file is the pre-9.138
+    # shape and the handler reads it exactly as before.
+    cfg = _registry.load(strict=True)
+    search_on = cfg.get('A.parking.search_time_representation') == 'scoring'
+    search_min_max = cfg.get('A.parking.search_min_max')
+    prices, search_min = {}, {}
     for r in csv.DictReader(open(PARK_PRICE_ZONES, encoding='utf-8')):
         p = float(r['price_aud_hr'])
         if p > 0:
             prices[r['SA1_CODE21']] = p
+            if search_on:
+                search_min[r['SA1_CODE21']] = round(
+                    float(r['density_weight']) * search_min_max, 2)
     nodes, links = {}, []
     with gzip.open(net_path, 'rb') as fh:
         for _, el in ET.iterparse(fh, events=('end',)):
@@ -899,14 +970,20 @@ def write_parking_prices(net_path, dst_path):
     for (link_id, _, _), code in zip(links, codes):
         # NaN for a link outside the zone system - beyond the study area, and
         # free, which is what an absent row already means.
-        price = prices.get('' if code != code or code is None else str(code))
+        key = '' if code != code or code is None else str(code)
+        price = prices.get(key)
         if price:
-            rows.append((link_id, price))
+            rows.append((link_id, price, search_min.get(key, 0.0)))
     rows.sort(key=lambda r: r[0])
     with open(dst_path, 'w', encoding='utf-8', newline='\n') as fh:
-        fh.write('link_id\tprice_aud_hr\n')
-        for link_id, price in rows:
-            fh.write('%s\t%.4f\n' % (link_id, price))
+        if search_on:
+            fh.write('link_id\tprice_aud_hr\tsearch_min\n')
+            for link_id, price, s_min in rows:
+                fh.write('%s\t%.4f\t%.2f\n' % (link_id, price, s_min))
+        else:
+            fh.write('link_id\tprice_aud_hr\n')
+            for link_id, price, _ in rows:
+                fh.write('%s\t%.4f\n' % (link_id, price))
     return dict(car_links=len(links), priced_links=len(rows),
                 priced_zones=len(prices))
 
@@ -1400,6 +1477,42 @@ def config_runtime(cfg, scoring, day, paths):
         'a refused taxi request walks this iteration and has the mode restored '
         'at AfterMobsim (9.55, 9.81, 9.99)')
 
+    # Motor-traffic cycling stress (DECISIONS.md 9.138, #107): the stress
+    # DATA is the bike_stress_factor stamped on the run network; this one
+    # derived parameter prices a felt surplus hour exactly as if it were
+    # ridden - the same identity chain every other derived scoring value
+    # uses. Emitted only under the declared representation, so `absent`
+    # leaves the module holding representation=absent and nothing installs.
+    if cfg.get('A.bike_stress.representation') == 'felt_time':
+        runtime['bikeStress.penaltyUtilsPerHour'] = (
+            round(scoring['vot_aud_hr_used']
+                  * cfg.get('C.time_weights.beta_bike_mode')
+                  * cfg.get('C.scoring.marginal_utility_of_money'), 4),
+            'derived',
+            'trip-weighted VOT x C.time_weights.beta_bike_mode x '
+            'C.scoring.marginal_utility_of_money: a felt extra hour on a '
+            'stressed link costs what an hour of cycling costs')
+    # Parking search/access time (9.138): the MINUTES are the price file's
+    # derived third column; this prices one minute at the utilityOfLineSwitch
+    # identity, per minute instead of per transfer.
+    if cfg.get('A.parking.search_time_representation') == 'scoring':
+        runtime['parking.searchPenaltyUtilsPerMin'] = (
+            round(scoring['vot_aud_hr_used']
+                  * cfg.get('C.scoring.marginal_utility_of_money') / 60.0, 6),
+            'derived',
+            '(trip-weighted VOT x marginalUtilityOfMoney) / 60 - the '
+            'transfer-penalty identity applied per search minute')
+    # Income-dependent money sensitivity (9.138, #108): the exponent and the
+    # representation gate arrive by their declared matsim_param bindings; the
+    # exclusion list is the demand builder's own non-resident subpopulation
+    # vocabulary, which is a property of the plans, not a registry value.
+    if cfg.get('C.income.representation') == 'person_marginal_utility_of_money':
+        runtime['incomeScoring.excludeSubpopulations'] = (
+            'external,freight', 'derived',
+            "the demand builder's non-resident subpopulation names "
+            '(build_matsim_plans.py): volumes, not budgets - they carry no '
+            'income attribute either, so the exclusion is belt and braces')
+
     # Level crossings (#68): the closures reach the router only as a
     # time-variant network, and only when the declared representation gate
     # says so - under `absent` the emission is byte-identical to pre-#68.
@@ -1570,12 +1683,18 @@ def main(day_types=None, scenarios=None, set_overrides=None):
         if base_cfg.get('A.gradient.representation') == 'link_speed':
             gradient_stamp = stamp_gradients(
                 net_dst, base_cfg.get('A.gradient.grade_clamp_pct'))
+        # Motor-traffic cycling stress (9.138, #107): stamped after every
+        # other network patch, like the gradient, so nothing overwrites it.
+        bike_stress_stamp = {}
+        if base_cfg.get('A.bike_stress.representation') == 'felt_time':
+            bike_stress_stamp = stamp_bike_stress(net_dst, base_cfg)
         price_dst = os.path.join(OUT, sid, PARK_PRICE_FILE)
         parking = write_parking_prices(net_dst, price_dst)
         entry = dict(road_variant=ref, patch_rows=len(pat),
                      links_touched=touched, parking=parking,
                      signal_capacity_links=recap_links,
-                     gradient=gradient_stamp, days={})
+                     gradient=gradient_stamp, bike_stress=bike_stress_stamp,
+                     days={})
         for d in day_types:
             # RESOLVED PER SCENARIO AND DAY TYPE. The scenario and day overlays
             # are layers of the registry, so S2b's signal priority and Sunday's
