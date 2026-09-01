@@ -24,6 +24,15 @@
         "no_elevation": 41069,
         "flat": 22332
       },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
+      },
       "days": {
         "WEEKDAY": {
           "routes_kept": 1275,
@@ -177,6 +186,15 @@
         "no_elevation": 41063,
         "flat": 22332
       },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
+      },
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -326,6 +344,15 @@
         "stamped": 128729,
         "no_elevation": 41101,
         "flat": 22332
+      },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
       },
       "days": {
         "WEEKDAY": {
@@ -501,6 +528,15 @@
         "no_elevation": 41101,
         "flat": 22332
       },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
+      },
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -674,6 +710,15 @@
         "stamped": 128729,
         "no_elevation": 41100,
         "flat": 22332
+      },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
       },
       "days": {
         "WEEKDAY": {
@@ -852,6 +897,15 @@
         "no_elevation": 41101,
         "flat": 22332
       },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
+      },
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -1026,6 +1080,15 @@
         "no_elevation": 41063,
         "flat": 22332
       },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
+      },
       "days": {
         "WEEKDAY": {
           "routes_kept": 1270,
@@ -1177,6 +1240,15 @@
         "stamped": 128728,
         "no_elevation": 41105,
         "flat": 22332
+      },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
       },
       "days": {
         "WEEKDAY": {
@@ -1354,6 +1426,15 @@
         "no_elevation": 41105,
         "flat": 22332
       },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
+      },
       "days": {
         "WEEKDAY": {
           "routes_kept": 1271,
@@ -1530,6 +1611,15 @@
         "stamped": 128729,
         "no_elevation": 41064,
         "flat": 22332
+      },
+      "bike_stress": {
+        "bike_links": 177761,
+        "stamped": 47652,
+        "stamped_moderate_high": 11859,
+        "stamped_moderate": 27468,
+        "baseline": 114084,
+        "stamped_high": 8325,
+        "no_highway": 16025
       },
       "days": {
         "WEEKDAY": {
