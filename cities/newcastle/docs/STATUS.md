@@ -31,25 +31,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260901T133404_300it_10pct` at **iteration 30** (family `F23-behaviour-channels`, status `aborted`, 10% sample, launched 2026-09-01T13:34:04, experienced plans (derived; validated against the trips table)). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260901T133404_300it_10pct --it 30` (`--trend` for the direction).
+Read from `20260901T165115_300it_25pct` at **iteration 30** (family `F23-behaviour-channels`, status `running`, 25% sample, launched 2026-09-01T16:51:15, experienced plans (derived; validated against the trips table)). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260901T165115_300it_25pct --it 30` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 57.0020 | 58.3222 | -2.3% | ok | share of resident linked trips |
-| 2 | ride | 12.0967 | 20.6000 | -41.3% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 17.4633 | 13.4000 | +30.3% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.6901 | 0.9916 | +70.4% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.9675 | 2.2084 | +170.2% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4836 | 0.3785 | +27.8% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 3.6227 | 2.3819 | +52.1% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 30,170 | 6,529 | +362.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,140 | 2,954 | -61.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0270 | 0.1429 | -81.1% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 6.6834 | 15.4698 | -56.8% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 56.8368 | 58.3222 | -2.5% | ok | share of resident linked trips |
+| 2 | ride | 12.0520 | 20.6000 | -41.5% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 16.7772 | 13.4000 | +25.2% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.5431 | 0.9916 | +55.6% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.5930 | 2.2084 | +198.5% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4239 | 0.3785 | +12.0% | over 10% | share of resident linked trips |
+| 7 | bus | 4.0223 | 2.3819 | +68.9% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 30,916 | 6,529 | +373.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,512 | 2,954 | -48.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0335 | 0.1429 | -76.6% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 6.6288 | 15.4698 | -57.1% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
 
-Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -87,7 +87,7 @@ bucket rule (§9.138) and the 1 Sep 25%-runs-only directive.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260901T165115_300it_25pct` | running | F23-behaviour-channels | - | - |
+| `20260901T165115_300it_25pct` | running | F23-behaviour-channels | 47 | - |
 | `aborted_20260901T152548_300it_25pct` | aborted | F23-behaviour-channels | - | Stopped at the user's direction (1 Sep): stop the run - no reading taken, stopped before any gate |
 | `aborted_20260901T133404_300it_10pct` | aborted | F23-behaviour-channels | 34 | User directive (1 Sep): 25% runs only - the F23 read moves to a 25% x 300 arm; this 10% arm stopped before its first gate |
 | `20260901T132710_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
