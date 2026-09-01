@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
+**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
 
 ## What is built
 
@@ -42,6 +42,7 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F20-bucket-rule-carve-pool` | 20260830T184954 | the same-bucket coupling rule; carves solved on the pool that is drawn | §9.129 |
 | `F21-licence-rate-demand` | 20260830T222641 | the demand rebuilt on the measured licence-rate population; arm `20260830T222642_300it_10pct` sampled 61,953 persons against the F20 arm's 62,134 (`plans.xml.gz`) | §9.131, §9.133 |
 | `F22-pt-fares-priced` | 20260831T164923 | every pt journey charged its published Opal fare (`citysim.PtFareChargeHandler`); demand and network F21 unchanged — the price system joins the run's identity. First arm at 25% × 300 by the user's decision at approval (31 Aug, ~25 h stated); never read against the 10% F21 arm | §9.135 |
+| `F23-behaviour-channels` | 20260901T133356 | bike traffic stress (`bike_stress_factor` per link, score + router), derived parking search time (the §9.31 ramp's minutes at the transfer-penalty identity) and income-scaled money sensitivity (the G17 `income` attribute through MATSim core) — plans and network both change, so both join the run's identity. First arm at 10% × 300 (the measured ~18–21 h pace); never read against a 25% arm | §9.138 |
 
 Overrides in the file: three dead 30 Aug launches are attributed by name (the valid F18 arm `aborted_20260830T163010_300it_10pct`; the two F19 arms `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct`), and `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
@@ -58,7 +59,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## What is open
 
-- The first F22 arm runs at 25% × 300 (user decision at approval, 31 Aug): the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05, so 25% keeps them; the cost of the choice is that its readings never compare with the 10% F21 gate (§9.10, §9.12), only with its own targets.
+- The first F23 arm runs at 10% × 300 (`20260901T133404_300it_10pct`, §9.138): the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05, so 10% keeps them; its readings never compare with the 25% F22 gate (§9.10, §9.12), only with its own targets.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -77,6 +78,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.138 — F23 opens on the behaviour channels
 - §9.131 — F21 opens on licence rebuild
 - §9.129 — bucket rule replaces at-or-below
 - §9.128 — driver detour opens F19

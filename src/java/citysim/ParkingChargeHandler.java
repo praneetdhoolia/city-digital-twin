@@ -19,6 +19,7 @@ import org.matsim.api.core.v01.events.ActivityStartEvent;
 import org.matsim.api.core.v01.events.PersonArrivalEvent;
 import org.matsim.api.core.v01.events.PersonDepartureEvent;
 import org.matsim.api.core.v01.events.PersonMoneyEvent;
+import org.matsim.api.core.v01.events.PersonScoreEvent;
 import org.matsim.api.core.v01.events.handler.ActivityStartEventHandler;
 import org.matsim.api.core.v01.events.handler.PersonArrivalEventHandler;
 import org.matsim.api.core.v01.events.handler.PersonDepartureEventHandler;
@@ -79,19 +80,24 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
 
     /** Purpose string carried on every emitted PersonMoneyEvent. */
     public static final String PURPOSE = "parking";
+    /** Kind string on every emitted search-time PersonScoreEvent (9.138). */
+    public static final String SEARCH_KIND = "parkingSearch";
     /** Deliberately generic: naming an operator here would name a place. */
     public static final String PARTNER = "parkingOperator";
 
     private final EventsManager events;
     private final Map<Id<Link>, Double> priceByLink;
+    private final Map<Id<Link>, Double> searchMinByLink = new HashMap<>();
     private final Set<String> chargedModes;
     private final Set<String> exemptActivities;
     private final double windowStart;
     private final double windowEnd;
     private final double maxStaySeconds;
+    private final double searchPenaltyUtilsPerMin;
 
     private final Map<Id<Person>, Spell> open = new HashMap<>();
     private final List<Charge> pending = new ArrayList<>();
+    private final List<Charge> pendingSearch = new ArrayList<>();
     private double lastEventTime = 0.0;
 
     /** One car parked at one link, from arrival until the next car departure. */
@@ -133,6 +139,7 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
         this.windowStart = cfg.getChargedStartHour() * 3600.0;
         this.windowEnd = cfg.getChargedEndHour() * 3600.0;
         this.maxStaySeconds = cfg.getMaxStayMinutes() * 60.0;
+        this.searchPenaltyUtilsPerMin = cfg.getSearchPenaltyUtilsPerMin();
     }
 
     private static Set<String> split(final String csv) {
@@ -149,7 +156,13 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
         return out;
     }
 
-    private static Map<Id<Link>, Double> readPrices(final String path) {
+    /**
+     * `link_id\tprice_aud_hr` per priced link, with an OPTIONAL third
+     * `search_min` column (9.138) - the derived parking search/access
+     * minutes for the link's zone. A two-column file (the pre-9.138 shape)
+     * reads exactly as before, with no search time anywhere.
+     */
+    private Map<Id<Link>, Double> readPrices(final String path) {
         final Map<Id<Link>, Double> out = new HashMap<>();
         if (path == null || path.isEmpty()) {
             return out;
@@ -163,12 +176,18 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
                 if (line.isEmpty()) {
                     continue;
                 }
-                final int tab = line.indexOf('\t');
-                if (tab < 0) {
+                final String[] cols = line.split("\t");
+                if (cols.length < 2) {
                     throw new IOException("parking price file row is not tab separated: " + line);
                 }
-                out.put(Id.createLinkId(line.substring(0, tab)),
-                        Double.valueOf(line.substring(tab + 1)));
+                final Id<Link> link = Id.createLinkId(cols[0]);
+                out.put(link, Double.valueOf(cols[1]));
+                if (cols.length > 2) {
+                    final double searchMin = Double.parseDouble(cols[2]);
+                    if (searchMin > 0.0) {
+                        this.searchMinByLink.put(link, searchMin);
+                    }
+                }
             }
         } catch (final IOException e) {
             throw new UncheckedIOException("cannot read parking price file " + path, e);
@@ -210,6 +229,24 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
         spell.charged = !this.exemptActivities.contains(baseType(event.getActType()));
         if (!spell.charged) {
             this.open.remove(event.getPersonId());
+            return;
+        }
+        // Search/access time (9.138): paid ONCE, at arrival, when the spell
+        // is charged at all and the arrival falls inside the charged window -
+        // the search is driven by the same business-hours demand the price
+        // is. The minutes are the file's derived third column; the per-minute
+        // price is the transfer-penalty identity. Queued here rather than
+        // emitted: the ParkingChargeHandler deferral discipline.
+        if (this.searchPenaltyUtilsPerMin > 0.0
+                && spell.start >= this.windowStart
+                && spell.start < this.windowEnd) {
+            final Double searchMin = this.searchMinByLink.get(spell.link);
+            if (searchMin != null) {
+                this.pendingSearch.add(new Charge(
+                        event.getPersonId(), spell.start,
+                        -searchMin * this.searchPenaltyUtilsPerMin,
+                        spell.link));
+            }
         }
     }
 
@@ -274,12 +311,18 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
                     charge.link.toString()));
         }
         this.pending.clear();
+        for (final Charge charge : this.pendingSearch) {
+            this.events.processEvent(new PersonScoreEvent(
+                    charge.time, charge.person, charge.amount, SEARCH_KIND));
+        }
+        this.pendingSearch.clear();
     }
 
     @Override
     public void reset(final int iteration) {
         this.open.clear();
         this.pending.clear();
+        this.pendingSearch.clear();
         this.lastEventTime = 0.0;
     }
 
@@ -290,6 +333,8 @@ public final class ParkingChargeHandler implements PersonArrivalEventHandler,
                 + new TreeSet<>(this.chargedModes) + ", window "
                 + this.windowStart / 3600.0 + "-" + this.windowEnd / 3600.0
                 + " h, max stay " + this.maxStaySeconds / 60.0 + " min, exempt "
-                + new TreeSet<>(this.exemptActivities);
+                + new TreeSet<>(this.exemptActivities) + ", search time on "
+                + this.searchMinByLink.size() + " links at "
+                + this.searchPenaltyUtilsPerMin + " utils/min";
     }
 }

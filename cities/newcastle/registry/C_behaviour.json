@@ -105,6 +105,59 @@
       "decisions_ref": "9.3",
       "description": "The single VOT MATSim actually scores with, trip-weighted across purposes. This is what C1 per-purpose structure degrades to in translation, and is one of the three things DECISIONS.md 9.3 records as lost."
     },
+    "C.income.representation": {
+      "value": "person_marginal_utility_of_money",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "person_marginal_utility_of_money"
+        ],
+        "basis": "Whether the synthesised census income reaches money scoring at all. absent: the pre-9.138 state - every resident feels a dollar identically through C.scoring.marginal_utility_of_money while four money channels charge (pt fares 9.135, parking 9.31, fuel, taxi meters), and the G17 income_band dealt to every person at B1 is consumed by nothing (the Mode-Choice Ledger's rank-1 gap). person_marginal_utility_of_money: each resident's marginalUtilityOfMoney becomes the subpopulation value x (average income / personal income)^C.income.exponent - MATSim core's IndividualPersonScoringParameters, formula read from the pinned 2027.0 source, not from memory. A person without a positive income (the Neg_Nil band, 109,267 of 612,634) carries no income attribute and keeps the subpopulation value by that class's documented fallback; external and freight subpopulations are excluded by name."
+      },
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py",
+        "src/java/citysim/IncomeScoringConfigGroup.java"
+      ],
+      "description": "The representation gate for income-dependent money sensitivity (issue #108).",
+      "matsim_param": "incomeScoring.representation"
+    },
+    "C.income.exponent": {
+      "value": 1.0,
+      "units": "exponent",
+      "source": "literature",
+      "sweep": [
+        0.5,
+        1.5
+      ],
+      "sweep_basis": "MATSim's income-dependent scoring scales marginalUtilityOfMoney by (average income / personal income)^exponent; 1.0 is inverse proportionality, the reference behaviour of the core class and the Berlin scenario family's practice. The sweep spans the sub-proportional cost-sensitivity-vs-income elasticities (~0.5) found in stated-preference VOT syntheses up to a super-proportional 1.5.",
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/java/citysim/IncomeScoringConfigGroup.java"
+      ],
+      "matsim_param": "incomeScoring.incomeExponent",
+      "description": "Exponent on (average/personal) income in the per-person marginal utility of money."
+    },
+    "C.income.top_band_factor": {
+      "value": 1.25,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        1.1,
+        1.5
+      ],
+      "sweep_basis": "G17's open-ended top band (3000_more AUD/week) has no upper bound; the conventional open-interval treatment takes the lower bound times a Pareto-tail factor. 120 of 612,634 persons carry the band, so any swept value is immaterial to the average.",
+      "status": "active",
+      "decisions_ref": "9.138",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "Multiplier on the open top income band's lower bound to form its representative weekly income; every closed band takes its interval midpoint by identity."
+    },
     "C.transfer.beta_transfer_penalty_min": {
       "value": 8.0,
       "units": "minutes_equivalent",

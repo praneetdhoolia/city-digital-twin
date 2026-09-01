@@ -118,6 +118,7 @@ about its layout will otherwise cost you an hour:
 | **Public transport is priced: the published Opal schedule enters the model** | **§9.135** — the model charged car fuel, parking and the taxi meter while every pt ride was free; five transportnsw.info pages archived, 36 `A.fare.*` fields (34 observed), `citysim.PtFareChargeHandler` charges each journey per fare leg with peak/off-peak bands, transfer discounts, child/senior classes and daily caps; per-station diagnosis: rail +131% even on the entries basis, the Interchange UNDER (610 vs 1,683); smoke charged 629 journeys −2,490 AUD at it.0; the next arm opens F22 |
 | **The first F22 arm: the fare moves rail and bus, the gate stops seven modes** | **§9.136** — 25% × 300 by user decision at approval; bus +8.0% is the first mode inside at any gate; rail fell 37,540 → 16,512 still falling; the walk/car seesaw survives fares; 25% pace 630–670 s/it (~45–50 h per 300, not ~25); the carve's over-delivery is the cell aggregation (+12% over the LGA identity), the corridor deficit is structural by distance band, ride decomposes 19.13/16.0/12.1; `run_failure.py` reads a bounded tail |
 | **The results store: bulk a budgeted cache, findings permanent, hands off** | **§9.137** — user directive: `results/raw` (500 GB cap, `RUN.storage.raw_cap_gb`, oldest deleted after findings extraction) and `results/processed` (records + mode snapshots, never trimmed); the runner gates its own run every `RUN.gate.interval_iterations` and stops itself on the hard bar; `run.py --stop` is the one manual path; 122 legacy dirs migrated; supersedes §9.65's never-delete and the by-hand gate stop |
+| **Bike stress, parking search time, income: three literature channels enter** | **§9.138** — from the two research artifacts, on user directive: `bike_stress_factor` per link (Broach et al. 2012 felt-distance factors, swept) charged in score and router; a priced zone's derived search minutes (Shoup 2006, scaled by the §9.31 density ramp) charged once per parking spell; each resident's G17 band midpoint scales marginalUtilityOfMoney (MATSim core, exponent swept). Crowding deferred until fares settle rail (#98). Family F23 declared at launch `20260901T133356`; first arm at 10% × 300 |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13594,10 +13595,91 @@ stop runs only through `run.py --stop`; a gate stop needs no session at all.
 The 67/143 split is untouched; no target moved; no model value changed —
 the store cannot alter a result, only how much bulk survives.
 
+## 9.138 Three behaviour channels the literature ranks above what remained: bike stress, parking search time, income (1 September 2026, twenty-second session; user directive; issues #107, #108, #30)
+
+**Where they came from.** Two research artifacts compiled 31 Aug–1 Sep (the
+Mode-Choice Ledger, crossing ~49 literature factors against the model's
+coverage; Twenty City Twins, a field survey of nineteen validated city
+replicas) ranked the model's remaining gaps. The user directed (1 Sep):
+research the findings, incorporate the high-confidence ones, and test. Three
+channels qualified; each is derivable or literature-priced with a sweep,
+none is a compensating constant, and each sits behind a representation gate
+whose `absent` recovers the F22 model.
+
+**Bike stress (#107).** The route-choice literature's dominant cycling
+factor — adjacent motor traffic — was absent while bike stood at +185.5% at
+the F22 gate and had WORSENED under pt fares (F21 +157.5%): pricing pt fed
+the free, fearless bike. Broach, Dill & Gliebe 2012 (GPS revealed
+preference) price riding without a bike lane at +22.3/+36.8% distance
+(AADT 10–20k, non-commute/commute), +137.3/+140.0% (20–30k), +619.4/+715.7%
+(30k+). Built: `A.bike_stress.aadt_class_by_highway` maps the run network's
+`osm:way:highway` classes (100% coverage of bike links measured on S2) to
+three bands held fixed as a classification; the three `felt_factor_*` fields
+carry the Table 3 midpoints with purpose-bound sweeps; the assembly stamps
+`bike_stress_factor` per link; `citysim.BikeStressScoring` charges the felt
+surplus (factor−1)×measured traversal seconds at trip-weighted VOT ×
+`beta_bike_mode` × marginalUtilityOfMoney, and `citysim.BikeStressDisutility`
+puts the same factor in the router's bike link cost. §9.123's refusal stands:
+no bike constant moved — this is the literature's own mechanism, not a fit
+to the excess.
+
+**Parking search time (§9.136's measured walk/car candidate).** The seesaw
+(walk −36.6% under car +15.2%) survived fares at two gates; §9.54's
+`accessEgressType = none` is load-bearing and §9.58 refused stubs, so the
+derivable channel is the §9.31 extension the position page names: a charged
+parking spell in a priced zone now costs its derived search minutes ONCE at
+arrival — `A.parking.search_min_max` 8.1 min (Shoup 2006's sixteen-study
+mean; sweep 3.5–14, the study range) scaled by the zone's own §9.31
+`density_weight` ramp — priced per minute at the utilityOfLineSwitch
+identity. Same home exemption as the price, same reason. The third column of
+`parking_prices.tsv`; a two-column file reads as before.
+
+**Income (#108).** Every resident has carried a G17 income band since B1 and
+nothing read it, while §9.135 made money four channels wide. Built as the
+Ledger's top recommendation: `build_matsim_plans.py` stamps each resident's
+weekly band midpoint as the `income` attribute (closed bands by interval
+identity; the open top band at `C.income.top_band_factor` 1.25, swept,
+immaterial at 120 persons; Neg_Nil carries none and keeps the subpopulation
+value by the documented fallback); MATSim core's
+`IndividualPersonScoringParameters` — formula verified against the pinned
+2027.0 source: marginalUtilityOfMoney × (average/personal)^`C.income.exponent`
+(1.0, swept 0.5–1.5) — is bound when `C.income.representation` asks;
+`external` and `freight` are excluded by name (volumes, not budgets; they
+carry no attribute either).
+
+**Deliberately not done.** Crowding disutility (the Ledger's rank 4): rail
+was STILL FALLING when the F22 gate stopped, so where fares alone settle
+rail (#98) is measured first — wiring crowding now would conflate the two.
+Weather, tolls, on-board time use: stated omissions, reasons in the Ledger.
+
+**Consequences.** The plans rebuild (income attribute) and the network
+stamps change `inputs_sha256` and the model: family **F23** opens at the
+next arm's launch; nothing before it compares with anything after. The
+demand itself (chains, tours, bindings) is byte-unchanged from F21.
+Registry 452 → 462.
+
+**Verified live and launched.** Smoke `20260901T132710_2it_1pct` (completed,
+`_run.json`) carries all three channels: `IndividualPersonScoringParameters`
+logged average income 1012.13 for subpopulation `person`; iteration 0's
+events hold 1,139 `parkingSearch` (−1,171.8 utils) and 406 `bikeStress`
+(−24,500 utils) personScore charges — the seeded arterial-riding bike trips
+feel the full ×7.68, which is the literature's claim entering mode choice.
+`check_package.py` ALL CHECKS PASSED on the reassembled package (its parking
+parser extended for the third column and bounding `search_min`). Family
+`F23-behaviour-channels` declared from `20260901T133356`; the first arm
+`20260901T133404_300it_10pct` launched detached at 13:34 under the user's
+1 Sep goal directive (incorporate the artifact findings and test), 10% × 300
+at the measured ~18–21 h pace (§9.134), verified past `PersonPrepareForSim`
+into iterations (#70) with income live (average 1018.57 on the 10% draw);
+the §9.137 watcher gates it at 100/200/300. **Nothing here is a result**:
+the arm's gate has not read, and the channels' effect is a prediction until
+it does.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-01 | **Bike stress, parking search time and income enter the model; family F23 opens at its arm's launch (§9.138; issues #107/#108; twenty-second session; user directive).** From the two research artifacts' ranked findings: every bike-capable link carries a `bike_stress_factor` (Broach, Dill & Gliebe 2012 felt-distance equivalents — 1.30/2.39/7.68 by AADT proxy band, purpose-bound sweeps) charged in score by `citysim.BikeStressScoring` and in the router by `citysim.BikeStressDisutility`; a charged parking spell in a §9.31 priced zone pays its derived search minutes once (Shoup 2006's 8.1 min × the zone's `density_weight`, swept 3.5–14) at the transfer-penalty identity; each resident's G17 weekly band midpoint scales marginalUtilityOfMoney through MATSim core's `IndividualPersonScoringParameters` (exponent 1.0 swept 0.5–1.5; Neg_Nil falls back; external/freight excluded). Plans rebuilt (424,190 of 621,364 WEEKDAY persons carry income), 30 sets reassembled (47,652 stressed links on S2), manifest 509. Registry 452 → **462**, ledger 0, `CONFIG_REFERENCE.md` regenerated, `check_package.py` ALL CHECKS PASSED. Smoke verified all three channels live; family `F23-behaviour-channels` declared from `20260901T133356` and arm `20260901T133404_300it_10pct` launched at the measured ~18–21 h pace, verified iterating. Crowding deferred until fares settle rail (#98). **No target value changed, the 67/143 split is untouched, nothing here is a result (no gate has read on this boundary).** |
 | 2026-09-01 | **The results store lands: run bulk becomes a 500 GB budgeted cache, findings become permanent, and the run lifecycle is automated end to end (§9.137; user directive; twenty-first session).** `src/run/results_store.py` owns `results/raw` (bulk) and `results/processed` (records mirrored at every transition + `modes_trend.txt`/`modes_final.json` snapshots); fields `RUN.storage.raw_cap_gb` 500 and `RUN.gate.interval_iterations` 100 declared (definition); the runner gate-watches its own run and stops itself on the hard bar with the verdict as cause; `run.py --stop <name> --cause` replaces every by-hand kill/rename; raw is trimmed oldest-first at harness start and run end with deletions logged to `processed/_trim_log.json`; 122 legacy run dirs migrated; eleven consumers resolve through the store. Supersedes §9.65's "the harness never deletes a run directory" for raw bulk only. Registry 450 → 452; `CONFIG_REFERENCE.md` regenerated. **No model value changed, no target moved; the 67/143 split is untouched; the store cannot alter a result.** |
 | 2026-09-01 | **The first F22 arm ran to its iteration-100 gate and was stopped: the fare moves rail and bus, seven modes stand out (§9.136; issues #98/#99/#93/#30/#86/#82/#96/#66; twenty-first session).** Family `F22-pt-fares-priced` declared at launch (`from_launch` 20260831T164923); arm `20260831T165127_300it_25pct` — 25% × 300 by the user's decision at approval, ~25 h stated, spent — stopped at the gate with 7 modes at or past 20% and **bus inside its band (+8.0%), the first of the twelve at any gate**; heavy rail fell 37,540 → 16,512 boardings inside the arm, still falling; the walk/car seesaw reproduced F21's gate under fares; truck at stations −45.7%. Measured 25% pace 630–670 s/it (~45–50 h per 300). The PC crashed after the gate kill; records written on resume. No-run measurements: the motorbike carve's bias is the `sa1_thinned` cell aggregation (+12% over the target LGA identity; draw and pool exact); the corridor deficit is structural by distance band; ride decomposes generated 19.13% / bound 16.0% / realised 12.1%. `src/run/run_failure.py` reads a bounded 64 MiB tail (its whole-log read exhausted memory on the 6.9 GB log). **No model value changed, no target moved; the 67/143 split is untouched; nothing here is a result (no `_run.json`).** |
 | 2026-08-31 | **Public transport is priced: the published Opal fare schedule enters the model (§9.135; issues #98/#99/#30/#94; twentieth session).** Acquisition `data/raw/fares/` (five archived pages + provenance); registry 414 → 450 fields (36 `A.fare.*`, 34 observed, 2 literature+sweep); `citysim.PtFareConfigGroup`/`PtFareChargeHandler` charge every pt journey its published fare (fare legs by submode, peak by tap-on, $2/$1 transfer discount, child 4–15 and Gold Senior/Pensioner 60+ classes, published daily caps) as deferred PersonMoneyEvents; emitted as the `ptFare` module; 30 run-input sets regenerated. Diagnosed first on the stopped F21 arm: rail boardings 16,790 vs entries 15,080 (yardstick sound), +131% on entries, Interchange UNDER; car-available residents put 86.4% on car and 2.9% on walk; truck at stations −51.0%; motorbike carve delivers 0.4715% in the target LGA against a 0.2652% core solve (#93). Smoke `20260831T145828_2it_1pct` completed: 629 journeys −2,490.21 AUD at it.0 beside parking and taxi charges. **No target moved; the 67/143 split is untouched; the next arm opens family F22 at launch and needs a fresh stated-cost approval; nothing here is a result.** |

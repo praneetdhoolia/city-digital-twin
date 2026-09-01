@@ -132,6 +132,12 @@
       "decisions_ref": "9.135",
       "from_launch": "20260831T164923",
       "note": "Opened 31 Aug with arm 20260831T165127_300it_25pct, after smoke probe 20260831T145828 verified fares live and caps binding: citysim.PtFareChargeHandler charges the archived Opal schedule (36 A.fare.* fields, data/raw/fares/) on every pt journey as PersonMoneyEvents - until 9.135 every pt ride was free while car paid fuel and parking. Demand, binder rules and network are F21 unchanged; the price system is part of the run's identity (9.127, 9.135), so nothing before this boundary compares with anything after. The arm runs at 25% x 300 iterations by the user's decision at approval (31 Aug, ~25 h stated cost, spent at launch); NEVER read it against the 10% F21 arm (9.10, 9.12)."
+    },
+    "F23-behaviour-channels": {
+      "label": "F22 run stack, fares included, with bike traffic stress, derived parking search time and income-scaled money sensitivity (9.138)",
+      "decisions_ref": "9.138",
+      "from_launch": "20260901T133356",
+      "note": "Opened 1 Sep from the two research artifacts' findings on the user's directive, after smoke probe 20260901T132710 verified all three channels live (average income 1012.13 logged by IndividualPersonScoringParameters; 1,139 parkingSearch and 406 bikeStress personScore charges in iteration 0's events): bike_stress_factor on 47,652 S2 links (Broach/Dill/Gliebe 2012 felt-distance factors, charged in score by citysim.BikeStressScoring and in the router by citysim.BikeStressDisutility, #107); a charged parking spell in a 9.31 priced zone pays its derived search minutes once at the transfer-penalty identity (Shoup 2006 x density_weight); each resident's G17 weekly band midpoint scales marginalUtilityOfMoney through MATSim core (exponent 1.0 swept, external/freight excluded, #108). Plans rebuilt (income attribute) and the 30 sets reassembled, so the plans and the network are part of the run's identity (9.127, 9.138): nothing before this boundary compares with anything after. The arm runs at 10% x 300 iterations (the measured ~18-21 h pace, 9.134) under the user's 1 Sep goal directive to incorporate and test; NEVER read it against a 25% arm (9.10, 9.12). Crowding deferred until fares settle rail (#98)."
     }
   },
   "overrides": {
