@@ -68,7 +68,7 @@ Inside 10%: **bus**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F22-pt-fares-priced` (opened `20260831T164923`, §9.135) - nothing run before it compares with anything after it |
+| Open comparability family | `F23-behaviour-channels` (opened `20260901T133356`, §9.138) - nothing run before it compares with anything after it |
 | Input registry | **462 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **509 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
@@ -85,14 +85,14 @@ since). The F22 arm sampled at 25 % under the §9.129 bucket rule (§9.136).
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260901T132710_2it_1pct` | running | F22-pt-fares-priced | - | - |
+| `20260901T133404_300it_10pct` | running | F23-behaviour-channels | - | - |
+| `20260901T132710_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `20260901T113040_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `aborted_20260831T165127_300it_25pct` | aborted | F22-pt-fares-priced | 101 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (bike +185.5%, heavy_rail +152.... |
 | `20260831T145828_2it_1pct` | completed | F21-licence-rate-demand | 2 | has `_run.json` |
 | `aborted_20260830T222642_300it_10pct` | aborted | F21-licence-rate-demand | 102 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 8 modes at or past 20% deviation (heavy_rail +161.8%, bike +157.... |
-| `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 
-124 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+125 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

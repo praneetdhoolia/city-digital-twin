@@ -42,6 +42,7 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F20-bucket-rule-carve-pool` | 20260830T184954 | the same-bucket coupling rule; carves solved on the pool that is drawn | §9.129 |
 | `F21-licence-rate-demand` | 20260830T222641 | the demand rebuilt on the measured licence-rate population; arm `20260830T222642_300it_10pct` sampled 61,953 persons against the F20 arm's 62,134 (`plans.xml.gz`) | §9.131, §9.133 |
 | `F22-pt-fares-priced` | 20260831T164923 | every pt journey charged its published Opal fare (`citysim.PtFareChargeHandler`); demand and network F21 unchanged — the price system joins the run's identity. First arm at 25% × 300 by the user's decision at approval (31 Aug, ~25 h stated); never read against the 10% F21 arm | §9.135 |
+| `F23-behaviour-channels` | 20260901T133356 | bike traffic stress (`bike_stress_factor` per link, score + router), derived parking search time (the §9.31 ramp's minutes at the transfer-penalty identity) and income-scaled money sensitivity (the G17 `income` attribute through MATSim core) — plans and network both change, so both join the run's identity. First arm at 10% × 300 (the measured ~18–21 h pace); never read against a 25% arm | §9.138 |
 
 Overrides in the file: three dead 30 Aug launches are attributed by name (the valid F18 arm `aborted_20260830T163010_300it_10pct`; the two F19 arms `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct`), and `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
