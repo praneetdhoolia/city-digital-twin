@@ -7,12 +7,12 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 1 September 2026 — on the user's directive, the two
-research artifacts' top findings entered the model (§9.138): bike traffic
-stress (Broach et al. 2012 felt-distance factors per link, #107), the
-derived parking search time (§9.136's measured walk/car candidate), and
-income-scaled money sensitivity (#108). Plans and the 30 sets rebuilt; the
-first F23 arm carries the reading. F22's gate stands as written (§9.136).
+**Last updated:** 1 September 2026 — the two research artifacts' top findings
+entered the model (§9.138): bike traffic stress (#107), the derived parking
+search time, and income-scaled money sensitivity (#108). The first F23 arm
+(10%) read to iteration 30 and was stopped under the user's 25%-runs-only
+directive; a fresh 25% × 300 arm launched 16:51 now carries the F23 read to
+its gates. F22's gate stands as written (§9.136).
 
 ## The goal
 
@@ -31,25 +31,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260901T133404_300it_10pct` at **iteration 0** (family `F23-behaviour-channels`, status `running`, 10% sample, launched 2026-09-01T13:34:04, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260901T133404_300it_10pct --it 0` (`--trend` for the direction).
+Read from `aborted_20260901T133404_300it_10pct` at **iteration 30** (family `F23-behaviour-channels`, status `aborted`, 10% sample, launched 2026-09-01T13:34:04, experienced plans (derived; validated against the trips table)). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260901T133404_300it_10pct --it 30` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 44.3243 | 58.3222 | -24.0% | **STOP** >=20% | share of resident linked trips |
-| 2 | ride | 3.7677 | 20.6000 | -81.7% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 34.2549 | 13.4000 | +155.6% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 2.1055 | 0.9916 | +112.3% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.4893 | 2.2084 | +193.8% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.5430 | 0.3785 | +43.5% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 6.5906 | 2.3819 | +176.7% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 39,190 | 6,529 | +500.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,700 | 2,954 | -42.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0249 | 0.1429 | -82.6% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 8.7797 | 15.4698 | -43.2% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 57.0020 | 58.3222 | -2.3% | ok | share of resident linked trips |
+| 2 | ride | 12.0967 | 20.6000 | -41.3% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 17.4633 | 13.4000 | +30.3% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.6901 | 0.9916 | +70.4% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.9675 | 2.2084 | +170.2% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4836 | 0.3785 | +27.8% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 3.6227 | 2.3819 | +52.1% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 30,170 | 6,529 | +362.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,140 | 2,954 | -61.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0270 | 0.1429 | -81.1% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 6.6834 | 15.4698 | -56.8% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -79,22 +79,22 @@ Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, moto
 sets rebuilt 1 Sep with the three behaviour channels — the `income`
 attribute, the `bike_stress_factor` stamps and the parking table's
 `search_min` column — and `tests/check_package.py` reports ALL CHECKS
-PASSED (re-run 1 Sep). The F23 arm samples at 10 % under the §9.129 bucket
-rule (§9.138).
+PASSED (re-run 1 Sep). The running F23 arm samples at 25 % under the §9.129
+bucket rule (§9.138) and the 1 Sep 25%-runs-only directive.
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260901T133404_300it_10pct` | running | F23-behaviour-channels | 3 | - |
+| `20260901T165115_300it_25pct` | running | F23-behaviour-channels | - | - |
+| `aborted_20260901T152548_300it_25pct` | aborted | F23-behaviour-channels | - | Stopped at the user's direction (1 Sep): stop the run - no reading taken, stopped before any gate |
+| `aborted_20260901T133404_300it_10pct` | aborted | F23-behaviour-channels | 34 | User directive (1 Sep): 25% runs only - the F23 read moves to a 25% x 300 arm; this 10% arm stopped before its first gate |
 | `20260901T132710_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `20260901T113040_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `aborted_20260831T165127_300it_25pct` | aborted | F22-pt-fares-priced | 101 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (bike +185.5%, heavy_rail +152.... |
-| `20260831T145828_2it_1pct` | completed | F21-licence-rate-demand | 2 | has `_run.json` |
-| `aborted_20260830T222642_300it_10pct` | aborted | F21-licence-rate-demand | 102 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 8 modes at or past 20% deviation (heavy_rail +161.8%, bike +157.... |
 
-125 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+127 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
