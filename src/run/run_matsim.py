@@ -48,6 +48,7 @@ import registry  # noqa: E402
 sys.path.insert(0, os.path.join(HERE, '..', 'build'))
 import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
+import results_store  # noqa: E402
 import run_failure  # noqa: E402
 import summarise_run  # noqa: E402
 from registry import outputs  # noqa: E402
@@ -94,7 +95,12 @@ def controler_sha256():
 
 SETS = city.path('scenarios', 'matsim')
 PLANS = city.path('demand', 'plans', 'matsim')
-RESULTS = os.path.join(REPO, 'results')
+# The store owns the layout (DECISIONS.md 9.137): runs are CREATED under
+# results/raw, records mirror into results/processed at every transition, and
+# raw is a budgeted cache trimmed oldest-first. RESULTS stays pointed at the
+# root only so legacy pre-migration paths keep resolving.
+RESULTS = results_store.RESULTS
+RAW = results_store.RAW
 
 
 def fwd(p):
@@ -542,7 +548,10 @@ def find_completed(scenario, day, fraction, iterations, seed, overrides,
     carries.
     """
     fallback = None
-    for record in sorted(glob.glob(os.path.join(RESULTS, '*', '_run.json')),
+    for record in sorted(glob.glob(os.path.join(RAW, '*', '_run.json'))
+                         + glob.glob(os.path.join(results_store.PROCESSED,
+                                                  '*', '_run.json'))
+                         + glob.glob(os.path.join(RESULTS, '*', '_run.json')),
                          reverse=True):
         try:
             doc = json.load(open(record, encoding='utf-8'))
@@ -588,6 +597,13 @@ def _now():
 
 def write_meta(run_dir, doc):
     outputs.write_checked(os.path.join(run_dir, META), doc, 'meta')
+    # Every record transition lands in processed the moment it happens, so a
+    # run's findings exist even if its bulk never survives to be processed
+    # (a crash mid-run, a trim later). Mirroring must never kill a run.
+    try:
+        results_store.mirror(run_dir)
+    except Exception as e:                                   # noqa: BLE001
+        print('record mirror failed (%s): %s' % (run_dir, e), flush=True)
 
 
 def update_meta(run_dir, **changes):
@@ -661,12 +677,18 @@ def mark_dead(run_dir, status, rc=None, wall_s=None, cause=None):
         n += 1
     try:
         os.rename(run_dir, target)
-        return target
     except OSError as e:
         print('could not rename %s -> %s (%s); its status is recorded in %s'
               % (run_dir, os.path.basename(target),
                  e, os.path.join(name, META)), flush=True)
         return run_dir
+    # the processed twin follows the rename, so a run keeps ONE name
+    results_store.rename(name, os.path.basename(target))
+    try:
+        results_store.mirror(target)
+    except Exception as e:                                   # noqa: BLE001
+        print('record mirror failed (%s): %s' % (target, e), flush=True)
+    return target
 
 
 def reconcile_stale():
@@ -676,7 +698,8 @@ def reconcile_stale():
     invocation settles it: status `running` with the recorded pid gone means
     the run is dead. A live concurrent arm has a live pid and is left alone.
     """
-    for path in glob.glob(os.path.join(RESULTS, '*', META)):
+    for path in (glob.glob(os.path.join(RAW, '*', META))
+                 + glob.glob(os.path.join(RESULTS, '*', META))):
         run_dir = os.path.dirname(path)
         try:
             doc = json.load(open(path, encoding='utf-8'))
@@ -695,11 +718,145 @@ def reconcile_stale():
                                         os.path.basename(dead)), flush=True)
 
 
+GATE_STOP = '_gate_stop.json'
+
+
+def _last_ended_iteration(run_dir):
+    """The newest '### ITERATION n ENDS' in the log's tail, or -1."""
+    log = os.path.join(run_dir, 'matsim.log')
+    try:
+        size = os.path.getsize(log)
+        with open(log, 'rb') as fh:
+            if size > (1 << 16):
+                fh.seek(size - (1 << 16))
+            tail = fh.read().decode('utf-8', errors='replace')
+    except OSError:
+        return -1
+    ends = re.findall(r'### ITERATION (\d+) ENDS', tail)
+    return int(ends[-1]) if ends else -1
+
+
+def start_gate_watch(run_dir, cfg, proc):
+    """The GOAL.md loop's hard bar, executed by the runner itself (9.137).
+
+    Every `RUN.gate.interval_iterations` iterations the watcher reads all
+    twelve modes with the same reporter a person would use; if any mode is at
+    or past the stop bar the run is stopped HERE - the verdict written to
+    `_gate_stop.json`, the JVM killed, and run() records the abort with the
+    gate table as its cause. A person never kills a run at a gate again; the
+    trend half of the loop ('or heading there') stays a session judgement.
+    The watcher is a daemon and every failure is swallowed after a retry:
+    an unreadable milestone must never kill a healthy run.
+    """
+    try:
+        interval = int(cfg.get('RUN.gate.interval_iterations'))
+    except Exception:                                        # noqa: BLE001
+        return None
+    if interval <= 0:
+        return None
+    import threading
+    reporter = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
+
+    def loop():
+        claimed = 0
+        while proc.poll() is None:
+            time.sleep(30)
+            it = _last_ended_iteration(run_dir)
+            milestone = (it // interval) * interval if it >= 0 else 0
+            if milestone <= claimed:
+                continue
+            try:
+                out = subprocess.run(
+                    [sys.executable, reporter, '--run', run_dir,
+                     '--it', str(milestone)],
+                    capture_output=True, text=True, timeout=1800, cwd=REPO)
+            except (OSError, subprocess.SubprocessError):
+                continue
+            if out.returncode != 0:
+                # table not written yet - retry until the run moves a whole
+                # interval past the milestone, then let it go
+                if it >= milestone + interval:
+                    claimed = milestone
+                continue
+            claimed = milestone
+            text = out.stdout
+            if 'GATE:' not in text:
+                continue
+            gate_lines = text[text.index('GATE:'):].strip().splitlines()
+            verdict = dict(iteration=milestone,
+                           stopped=_now(),
+                           interval=interval,
+                           gate=[ln.strip() for ln in gate_lines])
+            try:
+                with open(os.path.join(run_dir, GATE_STOP), 'w',
+                          encoding='utf-8', newline='\n') as fh:
+                    json.dump(verdict, fh, indent=1)
+            except OSError:
+                pass
+            print('gate watcher: stopping the run at iteration %d - %s'
+                  % (milestone, gate_lines[0]), flush=True)
+            proc.kill()
+            return
+
+    t = threading.Thread(target=loop, daemon=True, name='gate-watch')
+    t.start()
+    return t
+
+
+def _gate_stop_cause(run_dir):
+    """The cause composed from the watcher's verdict file, or None."""
+    path = os.path.join(run_dir, GATE_STOP)
+    if not os.path.exists(path):
+        return None
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+    lines = doc.get('gate') or []
+    return ('Stopped automatically by the gate watcher at iteration %s under '
+            'the GOAL.md loop (RUN.gate.interval_iterations=%s): %s'
+            % (doc.get('iteration'), doc.get('interval'),
+               ' | '.join(lines[:10])))
+
+
+def stop_run(name, cause):
+    """Stop a running arm through the harness - never by hand (9.137).
+
+    Ends the run's scheduled task if one exists, kills the recorded process
+    tree, and records the abort with the caller's cause. The one sanctioned
+    way a person (or a session) stops a run.
+    """
+    run_dir = results_store.resolve(name)
+    if run_dir is None:
+        raise SystemExit('no run named %s' % name)
+    meta = json.load(open(os.path.join(run_dir, META), encoding='utf-8'))
+    if meta.get('status') != 'running':
+        raise SystemExit('%s is not running (status %s)'
+                         % (name, meta.get('status')))
+    pid = meta.get('pid')
+    if os.name == 'nt' and pid:
+        subprocess.run(['taskkill', '/F', '/PID', str(pid), '/T'],
+                       capture_output=True)
+    elif pid:
+        subprocess.run(['kill', '-9', str(pid)], capture_output=True)
+    time.sleep(3)
+    dead = mark_dead(run_dir, 'aborted', cause=cause)
+    print('stopped and recorded: %s' % os.path.basename(dead), flush=True)
+    return dead
+
+
 def run(scenario, day, cfg, overrides, force=False, warm=None):
     src_dir = os.path.join(SETS, scenario, day)
     if not os.path.isdir(src_dir):
         raise SystemExit('no run inputs at %s' % src_dir)
     reconcile_stale()
+    # the store maintains itself at every harness start: migrate anything
+    # legacy, trim raw back under its declared budget (9.137)
+    try:
+        results_store.maintain(cfg.get('RUN.storage.raw_cap_gb'))
+    except Exception as e:                                   # noqa: BLE001
+        print('results store maintenance failed (continuing): %s' % e,
+              flush=True)
 
     fraction = cfg.get('RUN.sample.fraction')
     try:
@@ -748,10 +905,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     stamp = time.strftime('%Y%m%dT%H%M%S')
     name = '%s_%dit_%spct' % (stamp, iterations, '%g' % (fraction * 100))
     n = 2
-    while os.path.exists(os.path.join(RESULTS, name)):
+    while os.path.exists(results_store.raw_dir(name)) \
+            or os.path.exists(os.path.join(RESULTS, name)):
         name = '%s_%dit_%spct-%d' % (stamp, iterations, '%g' % (fraction * 100), n)
         n += 1
-    run_dir = os.path.join(RESULTS, name)
+    run_dir = results_store.raw_dir(name)
     record = os.path.join(run_dir, '_run.json')
     os.makedirs(run_dir, exist_ok=True)
     # The status card, written at LAUNCH and updated at every transition, so a
@@ -813,8 +971,12 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     t0 = time.time()
     try:
         with open(log, 'w', encoding='utf-8', errors='replace') as lf:
-            rc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
-                                  cwd=run_dir).wait()
+            proc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
+                                    cwd=run_dir)
+            # the runner gates its own run every RUN.gate.interval_iterations
+            # (9.137): a failing hard bar stops the JVM from inside
+            start_gate_watch(run_dir, cfg, proc)
+            rc = proc.wait()
     except BaseException:
         # Ctrl+C or a harness kill that still unwinds: record the abort and
         # rename before propagating. A kill this except cannot see is settled
@@ -825,9 +987,20 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         raise
     wall = time.time() - t0
     if rc != 0:
-        dead = mark_dead(run_dir, 'failed', rc=rc, wall_s=round(wall, 1))
-        print('FAILED rc=%d after %.0fs - see %s'
-              % (rc, wall, os.path.join(dead, 'matsim.log')), flush=True)
+        gate_cause = _gate_stop_cause(run_dir)
+        dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
+                         rc=rc, wall_s=round(wall, 1), cause=gate_cause)
+        print(('GATE-STOPPED after %.0fs - %s' % (wall, gate_cause))
+              if gate_cause else
+              ('FAILED rc=%d after %.0fs - see %s'
+               % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
+        # a dead run's findings are extracted while its bulk is fresh, and
+        # the cache re-trimmed - both unattended (9.137)
+        try:
+            results_store.process(os.path.basename(dead), extract=True)
+            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+        except Exception as e:                               # noqa: BLE001
+            print('post-run processing failed: %s' % e, flush=True)
         return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
     update_meta(run_dir, status='completed', ended=_now(), rc=0,
                 wall_s=round(wall, 1))
@@ -863,6 +1036,13 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         summarise_run.summarise(run_dir)
     except Exception as e:                                   # noqa: BLE001
         print('summary could not be written: %s' % e, flush=True)
+    # findings into processed and the cache back under budget, unattended
+    # (9.137) - a completed run's readings survive any later trim
+    try:
+        results_store.process(name, extract=True)
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+    except Exception as e:                                   # noqa: BLE001
+        print('post-run processing failed: %s' % e, flush=True)
     return doc
 
 

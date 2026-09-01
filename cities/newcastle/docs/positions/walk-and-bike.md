@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
+**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
 
 ## What is built
 
@@ -20,8 +20,9 @@
 
 ## What is measured
 
-- **Gate reading, F21 iteration 100** (`results/aborted_20260830T222642_300it_10pct`, §9.134): walk 8.50% against 13.40% (−36.6%) — it crossed its target near iteration 38 and kept falling as car rose to 67.7% (+16.0%); bike 5.68% against 2.21% (+157.3%), drifting down from 7.81% at iteration 20. The stop fired with both outside the bar.
-- **The imbalance lives inside the car-available group** (§9.135, same arm at iteration 100): car-available residents make 78.3% of target-LGA trips and put 86.4% on car, 2.9% on walk; licensed-no-car residents (5.8% of trips) bike 36.0% and walk 34.7%; no-licence residents (15.9%) ride 41.3%, walk 26.6%, bike 16.5%. A short car trip costs almost nothing (`accessEgressType` `none`, §9.54; car constant 0; parking free outside the 150 priced zones) — the walk/car lane's standing measurement.
+- **Gate reading, F22 iteration 100** (`results/aborted_20260831T165127_300it_25pct`, §9.136): walk 8.50% against 13.40% (−36.6%) — it crossed its target near iteration 38 and kept falling as car rose to 67.2% (+15.2%); bike 6.30% against 2.21% (+185.5%), drifting down from 8.12% at iteration 20. **The seesaw reproduced F21's gate almost exactly under pt fares** (F21: walk −36.6%, car +16.0%, §9.134) — pricing pt does not price the short car trip.
+- **The imbalance lives inside the car-available group** (§9.135, F21 arm at iteration 100): car-available residents make 78.3% of target-LGA trips and put 86.4% on car, 2.9% on walk; licensed-no-car residents (5.8% of trips) bike 36.0% and walk 34.7%; no-licence residents (15.9%) ride 41.3%, walk 26.6%, bike 16.5%. A short car trip costs almost nothing (`accessEgressType` `none`, §9.54; car constant 0; parking free outside the 150 priced zones).
+- **`accessEgressType = none` is load-bearing, so the short-car-trip cost is a design decision, not a revert** (§9.136): §9.54's `TolerantAgentSource`/`GenericRouteTeleporter` and §9.58's activity-link repair are built on it, and §9.58 explicitly refused re-adding stubs. The derivable candidates: physical car access/egress walk, or a parking search/access time for dense zones extending §9.31's job-density derivation.
 - **Deepest reading of any family**: F17 iteration 50 — walk 14.88% (+11.0%) with car at +1.7%; bike 8.29% and moving away (§9.126).
 - **Walk geometry**: mean walk trip 6.66 km at iteration 100 against observed 0.70 km, falling from 8.12 at iteration 0 (§9.108). Walk and car are swapped at both ends: of resident trips under 1 km only 39.5% are walked and car takes 39.2% (§9.107). The sub-1 km trips exist in about the right number — 16.31% of resident trips against the 18.8% observed band share (§9.107, §9.69). Bike mean 10.04 km against observed 5.20 (§9.107).
 - **Who cycles**: of 913 residents whose best-scored plan is bike, 95.4% have no car available; car-less residents (24.7% of trips) walk 48.1%, cycle 16.7% and ride 18.5% (§9.123). Under the F12 seed 51.6% of bike trips were by licensed, car-available residents (§9.114); §9.123 measures the scored choice set and is the newer finding.
@@ -35,7 +36,7 @@
 - **#30** — the sub-1 km trips are generated (§9.107); the walk/car allocation of short trips is the open question, a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107). Destination placement is measured present for the corridor (§9.130).
 - **#21** — the physics channel is built (§9.84); `C.gradient.uphill_penalty_per_pct` 0.09 and `C.gradient.downhill_penalty_per_pct` 0.02 remain scoring weights that reach nothing, named in `not_representable` by `src/build/build_matsim_run_inputs.py`. What closes it: a paired arm differing only in `A.gradient.representation` showing bike's mean trip and time moving toward the observed 5.2 km / 19.2 min, plus a decision to retire or keep the two scoring weights.
 - **#50** — the bike age gate is assumed; no mode by age cell is held (§9.84).
-- **Answered at the F21 gate**: the licence fix moved walk through its target and beyond — the open question is now the walk/car balance (walk −36.6% under a car +16.0% overshoot, one movement, §9.134), not walk's level alone.
+- **Answered at two gates**: the walk/car balance is one movement (walk −36.6% under car +15–16% at both the F21 and F22 gates, §9.134, §9.136) and survives pt pricing; the decision between the two derivable car-access-cost channels (§9.136) is the user's, queued on the board.
 - **Walk detour**: main walk at the road graph's ~1.34 rather than the measured 1.6902 flatters walk slightly less than truth; stated, not corrected (§9.54).
 
 ## Refused — do not re-raise
@@ -50,6 +51,7 @@
 
 ## History
 
+- §9.136 — seesaw survives fares; cost decision
 - §9.134 — F21 gate: walk overshot downward
 - §9.131 — licence rate measured from counts
 - §9.126 — F17 converged car and walk

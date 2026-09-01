@@ -179,6 +179,15 @@ def main():
                     help='registry override, checked against the declared sweep')
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
                     help='MATSim config override, e.g. ride.constant=-3.4')
+    ap.add_argument('--stop', metavar='RUN_NAME',
+                    help='stop a running arm through the harness: ends its '
+                         'scheduled task, kills its process tree and records '
+                         'the abort with --cause. The ONE sanctioned way to '
+                         'stop a run - nobody renames or edits results/ by '
+                         'hand (DECISIONS.md 9.137)')
+    ap.add_argument('--cause', metavar='TEXT',
+                    help='why --stop is stopping the run; recorded verbatim '
+                         'as the abort cause')
     ap.add_argument('--dry-run', action='store_true',
                     help='resolve the registry, print the snapshot, execute nothing')
     ap.add_argument('--list', action='store_true',
@@ -189,6 +198,23 @@ def main():
 
     if a.list:
         return listing()
+
+    if a.stop:
+        if not a.cause:
+            raise SystemExit('--stop needs --cause: a dead run must say why '
+                             'it died, in the words of whoever stopped it')
+        # the scheduled task self-deletes when its command tree ends; ending
+        # any citysim_run_* task first is belt and braces
+        if os.name == 'nt':
+            import subprocess
+            for line in subprocess.run(
+                    ['schtasks', '/query', '/fo', 'csv'],
+                    capture_output=True, text=True).stdout.splitlines():
+                if 'citysim_run_' in line:
+                    tn = line.split(',')[0].strip('"').lstrip('\\')
+                    subprocess.run(['schtasks', '/end', '/tn', tn],
+                                   capture_output=True)
+        return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
 
     # The one defaulting decision this script makes, and it is made loudly.
     run_config = a.run_config
@@ -239,10 +265,14 @@ def main():
     if doc.get('rc') != 0:
         return 1
 
-    run_dir = os.path.join(run_matsim.RESULTS, doc['name'])
+    run_dir = run_matsim.results_store.resolve(doc['name']) \
+        or run_matsim.results_store.raw_dir(doc['name'])
     if not a.no_metrics:
         try:
             _extract(run_dir)
+            # _metrics.json lands after the runner's own processing pass, so
+            # it is mirrored into results/processed here (9.137)
+            run_matsim.results_store.mirror(run_dir)
         except Exception as e:                               # noqa: BLE001
             # A failed extraction does not invalidate the run: the run record and
             # the summary are already written, and metrics can be re-extracted.

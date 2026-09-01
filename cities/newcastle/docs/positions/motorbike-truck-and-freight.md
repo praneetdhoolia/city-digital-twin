@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
+**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
 
 ## What is built
 
@@ -35,19 +35,18 @@
 
 ## What is measured
 
-- **Motorbike, the F21 gate** (`aborted_20260830T222642_300it_10pct`, iteration 100): 0.4715% against 0.3785% (+24.6%), flat at 0.47–0.49% from iteration 30 (§9.134, #93). The F20 arm's −0.1% at iteration 10 was the old population's carve; the rebuilt demand re-solved both carves (§9.133) and the first gate-depth reading sits outside the bar.
-- **The carve identity comparison #93 asked for is taken** (§9.135): the plans report solves 0.2652% trip-weighted core-wide (`_plans_report.json`), but target-LGA delivery reads 0.5411% at iteration 0 and 0.4715% at the gate against the 0.3785% LGA identity — the SA1-resolution solve over-delivers inside the target LGA. Measured, not yet explained; the next step is the per-LGA split of the carve's draws, no run needed.
+- **Motorbike, the F22 gate** (`aborted_20260831T165127_300it_25pct`, iteration 100, 25% sample): 0.4287% against 0.3785% (+13.3%), flat across the arm (§9.136, #93). The F21 gate's +24.6% at 10% (§9.134) carried more sampling noise; the 25% reading sits near the plans' own 0.4459% delivery.
+- **The per-LGA split #93 asked for is taken, and it explains the over-delivery** (§9.136): the draw and the §9.129 pool solve are exact per LGA (delivered/intended 0.94–1.13, ~1.00 everywhere), but the `sa1_thinned` cell shares themselves aggregate **above** the LGA identity when weighted by synthetic trips — intended 0.4271% against Newcastle's 0.3829% identity (+12%), +10% Maitland, +38% Cessnock, +9% core-wide. The bias is the cell aggregation, not the draw; the fix is per-LGA conservation of the cell shares, covering the truck carve identically (§9.125) — a demand rebuild, queued behind the F22 gate's own cause.
 - **The carve now delivers what it solves for:** 5,937 trips on 1,687 persons = 0.2666% of WEEKDAY resident trips against 0.2654% solved, the per-cell identity's core-wide trip-weighted value (§9.129). Before the pool repair it delivered 0.153%, 58% of the solve, because named drivers held 42.1% of the pool's trips (§9.129).
 - **Precision:** a 10% arm reads motorbike off a few tens of persons; a −50% at that depth was a sampling statement, not a defect (§9.122).
-- **Truck, network-wide:** 5.65% of modelled road vehicles at the F21 gate (iteration 100, §9.134), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101).
-- **Truck at the classifying stations, first F21 reading** (§9.135): 5.54% modelled against the 3 calibration stations' own observed 11.31% (−51.0%), on 24 heavy of 433 vehicles — thin, and far below the F13 like-for-like +5.4% (§9.101); the freight tier under the licence-rate demand is #82's next question.
+- **Truck, network-wide:** 5.61% of modelled road vehicles at the F22 gate (iteration 100, §9.136), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101).
+- **Truck at the classifying stations, F22 gate** (§9.136): 6.14% modelled against the 3 calibration stations' own observed 11.31% (−45.7%) on the 25% sample — thicker n than F21's −51.0% at 10% (§9.135) and still far below the F13 like-for-like +5.4% (§9.101); the freight tier under the fare-priced demand is #82's open question.
 - The basis (`--truck-stations`): link entries against `road_aadt_targets.csv`'s own heavy shares, 3 calibration stations, 20 of 24 classifying stations holdout and never opened (§9.101); the station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). The F13 like-for-like read +5.4% at iteration 100 of `20260829T172145_1000it_10pct` (§9.101).
 - **Freight rail:** 314 closures per weekday — Clyde Street 204, Saint James Road 110 — 3,014 change events, peaked with the service (§9.90). The `freight_train` target row is 314 on that same denominator; it is a representation check, not a fit (§9.90).
 
 ## What is open
 
-- **The carves are re-solved on the rebuilt demand** (§9.133) and motorbike's first gate-depth reading is +24.6% (§9.134, #93). Whether the carve's delivered share or the target identity moved is unread — compare `_plans_report.json`'s solve against the gate's 0.4715% before touching any value.
-- **Motorbike's first gate reading is taken**: +24.6% at F21 iteration 100 (§9.134). #93 stays open — its generated-share-vs-scored-share question now has a gate-depth number on the rebuilt demand.
+- **#93 is measured to its cause** (§9.136): the aggregation bias above. What closes it: the per-LGA conservation fix in `src/build/build_matsim_plans.py` (both carves), a demand rebuild, and a gate reading at or under the identity. Not while an arm runs (§9.116's trap: a carve fix committed without its rebuild).
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
 - **#68 is still open on GitHub** though the crossings are built and activated (§9.77, §9.90); it should close on the record or state what remains.
 - The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 60 s — the registry is the newer statement and wins; the CSV text should be regenerated.
@@ -65,6 +64,7 @@
 
 ## History
 
+- §9.136 — carve bias is the cell aggregation
 - §9.134 — F21 gate: motorbike +24.6%
 - §9.131 — licence rate rebuilt, carves await rebuild
 - §9.129 — carves solved on drawn pool

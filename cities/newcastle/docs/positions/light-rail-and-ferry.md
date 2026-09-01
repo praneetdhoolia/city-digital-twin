@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
+**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
 
 ## What is built
 
@@ -31,7 +31,8 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 **Light rail.**
 
-- F21 arm `aborted_20260830T222642_300it_10pct`, the iteration-100 gate: 1,680 → 780 boardings a weekday over iterations 0–100 against 2,954 — −73.6% and AWAY on its own trend (§9.134). The F20 arm read 1,650 at iteration 10; the F19 arm 1,440 at iteration 20 (`NEXT_AGENT_BRIEF.md`, §9.130).
+- F22 arm `aborted_20260831T165127_300it_25pct`, the iteration-100 gate: 2,048 → 860 boardings a weekday over iterations 0–100 against 2,954 — −70.9% and AWAY on its own trend, under fares as it was free (§9.136). The F21 gate read 780 at its own iteration 100 on the 10% sample (§9.134).
+- **The corridor deficit is structural in the home-anchored distance bands** (§9.136, #30): on the rebuilt demand the corridor share of shopping ends RISES with trip distance — 5.01% under 1 km, 6.04% at 1–3, 6.78% at 3–8, 9.77% beyond 8 km against the 11.38% attraction share (other: 4.31 → 7.11% against 8.07%); only 1.72% of population lives within 800 m of a tram stop. With decay calibrated to the observed HTS means (realised = target per purpose, `_activity_chains_report.json`), a size × distance gravity cannot reach the corridor's attraction share; the two derivable repairs are floorspace-weighted attraction from the harvested OSM building footprints, or a declared agglomeration term (§9.136).
 - Supply is ruled out on departures: 252 a weekday carry 28 corridor trips; §9.103's "550 trips a day" was an unfiltered GTFS count and §9.113 supersedes it, with the conclusion unchanged (§9.113).
 - Out of reach, not out-competed: at iteration 100 of `20260829T172145_1000it_10pct`, 1.063% of all trips (2,350) had both ends within 800 m of a stop; of those, 28 chose light rail, 1,010 car and 928 walk; the mean modelled tram leg is 1.60 km (§9.103).
 - Corridor market against observation (`src/analyse/corridor_market.py`): work ends are placed where the jobs are (8.80% of work ends vs 8.04% of jobs within 800 m); shopping and other ends at roughly two-thirds of the observed attraction rate (6.84% vs 11.38%; 5.69% vs 8.07%); the home end is only 1.7–2.3% corridor, so a two-ended corridor market is small even at observed rates (§9.120, #30).
@@ -40,7 +41,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 **Ferry.**
 
-- F21 iteration 100 (the gate): 0.027% of resident trips against 0.143% (−81.5%), flat at 0.02–0.04% across the arm (§9.134, #94). F20 iteration 10 read 0.035%; F19 iteration 20, 0.039% (`NEXT_AGENT_BRIEF.md`).
+- F22 iteration 100 (the gate): 0.0285% of resident trips against 0.143% (−80.0%), flat at 0.02–0.03% across the arm — the fare moved it nowhere (§9.136, #94). F21's gate read 0.027% (§9.134).
 - The market, by bank: B2 generates 4,956 harbour-crossing trips a weekday (0.211% of all trips) by 2,593 persons; 7,490 residents live on the Stockton side; 59,458 WEEKDAY trip ends lie within 1,000 m of the two wharves (§9.121, §9.120).
 - The defect: the raptor's direct walk was a beeline across the harbour that the network executed as the ~20 km road detour; on F16 iteration 10, 174 of 256 crossing trips in residents' pt plans were walk-only (median 19.4 km) and 38.3% of all residents' pt-plan trips were walk-only (§9.121).
 - After the repair, F17 arm `20260830T141222_300it_10pct`, iteration 10: 209 of 359 crossing trips routed with a ferry leg (58%), walk-only down to 17%; realised ferry 30 trips, 0.048% against the then-target 0.1013%, from 3 trips on F16; the remaining walk-only crossings are trips at hours the ferry does not run (§9.121).
@@ -49,7 +50,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 ## What is open
 
 - Light rail: where the missing ~1,300 boardings a weekday are — longer corridor trips, rail transferees, visitors — is the mode's question at the next gate (§9.130, `NEXT_AGENT_BRIEF.md`).
-- #30 — destination placement puts shopping and other ends in the corridor at two-thirds of the observed rate; the repair is B2's destination solver at its own family boundary (§9.120).
+- #30 — the deficit survives the licence-rate rebuild unchanged (shopping 0.59×, other 0.69×, work 1.09× of the attraction share, §9.136) and is measured structural (the band gradient above); the repair choice — floorspace-weighted attraction vs an agglomeration term — is a decision at B2's own family boundary (§9.120, §9.136).
 - #84 — the disclosed boardings basis of §9.130 answers the issue's substance; it stays open until closed on evidence.
 - #94 — the beeline defect is repaired, but the ferry reads −75.3% at F20 iteration 10 and has not been re-measured by bank since F17 (§9.121); whether the residual is hour of service, headway or scoring is not established (§9.112).
 - The ferry target's vintage: the census cell is a lockdown month, which is why the sweep runs from 0 to twice the point value (§9.89).
@@ -70,6 +71,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.136 — corridor deficit structural by band
 - §9.134 — F21 gate: tram away, ferry flat
 - §9.131 — licence rebuild pending; F21 next
 - §9.130 — disclosed boardings target 2,954

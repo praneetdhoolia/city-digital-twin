@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 450 fields are made of
+## What the 452 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 38 | follows from another registry field by identity |
 | `literature` | 69 | a published value, not specific to this city |
 | `assumed` | 152 | chosen without direct empirical support |
-| `definition` | 117 | fixed by the formulation, not an empirical quantity |
+| `definition` | 119 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 431 | usable point value |
+| `active` | 433 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -3089,7 +3089,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 72 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 74 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration carries a null value because no justified value has been measured; the resolver will not invent one.
 
@@ -3102,6 +3102,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.controler.overwrite_files` | `failIfDirectoryExists` | policy | `definition` | - |
 | `RUN.controler.write_events_interval` | `10` | iterations | `definition` | - |
 | `RUN.controler.write_plans_interval` | `10` | iterations | `definition` | - |
+| `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
@@ -3156,6 +3157,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.scoring.late_arrival_utils_per_h` | `-18.0` | utils_per_hour | `literature` | -36 - -6 |
 | `RUN.scoring.learning_rate` | `1.0` | share | `literature` | 0.5 - 1 |
 | `RUN.scoring.waiting_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -6 - 0 |
+| `RUN.storage.raw_cap_gb` | `500` | gigabytes | `definition` | - |
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
@@ -3209,6 +3211,12 @@ How often events are written. Affects disk and wall time, not the model.
 How often plans are written. Affects disk and wall time, not the model.
 
 ***definition** · status **active** · DECISIONS.md §15 · MATSim `controler.writePlansInterval`*
+
+#### `RUN.gate.interval_iterations`
+
+How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.
+
+***definition** · status **active** · DECISIONS.md §9.137*
 
 #### `RUN.machine.event_handler_threads`
 
@@ -3569,6 +3577,12 @@ Disutility of general waiting, over and above the opportunity cost of the time. 
 ***assumed** · status **active** · DECISIONS.md §9.3, 9.28, 15 · MATSim `scoring.waiting`*
 
 > **Sweep basis.** Zero avoids double-counting: general waiting is already priced through the forgone performing utility of the time. The interval allows an additional explicit disutility for a sensitivity arm. Distinct from scoring.waitingPt, which is DERIVED from the C1 beta_wait and is not this field.
+
+#### `RUN.storage.raw_cap_gb`
+
+The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.
+
+***definition** · status **active** · DECISIONS.md §9.137*
 
 #### `RUN.telemetry.live_interval_s`
 

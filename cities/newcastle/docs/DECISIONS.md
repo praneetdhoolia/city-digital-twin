@@ -116,6 +116,8 @@ about its layout will otherwise cost you an hour:
 | **The demand chain rebuilt on the licence-rate population** | **§9.133** — the package was inconsistent from 30 August 19:31 (new population, old chains, plans and run inputs; `check_package.py` failing) and a registry `consumers` claim on `B.population.licence_rate_by_age_band` was untrue; chains, plans and the 30 run-input sets rebuilt, 503 manifest files, ALL CHECKS PASSED; the licence-rate builder asserts its vector against the declared field; F21 overlay written, arm not launched, F21 not declared |
 | **The first gate since F4: the F21 arm read at 100 and stopped** | **§9.134** — family F21 declared at launch `20260830T222641`; the arm reached the iteration-100 gate in ~7.1 h and 8 modes stood at or past 20% (heavy rail +161.8%, light rail −73.6% AWAY, ride capped at ~12%, walk −36.6% under a car +16.0% overshoot); stopped under the loop; the #96 scan on the rebuilt plans reads 341 mixed subtours, rate unchanged |
 | **Public transport is priced: the published Opal schedule enters the model** | **§9.135** — the model charged car fuel, parking and the taxi meter while every pt ride was free; five transportnsw.info pages archived, 36 `A.fare.*` fields (34 observed), `citysim.PtFareChargeHandler` charges each journey per fare leg with peak/off-peak bands, transfer discounts, child/senior classes and daily caps; per-station diagnosis: rail +131% even on the entries basis, the Interchange UNDER (610 vs 1,683); smoke charged 629 journeys −2,490 AUD at it.0; the next arm opens F22 |
+| **The first F22 arm: the fare moves rail and bus, the gate stops seven modes** | **§9.136** — 25% × 300 by user decision at approval; bus +8.0% is the first mode inside at any gate; rail fell 37,540 → 16,512 still falling; the walk/car seesaw survives fares; 25% pace 630–670 s/it (~45–50 h per 300, not ~25); the carve's over-delivery is the cell aggregation (+12% over the LGA identity), the corridor deficit is structural by distance band, ride decomposes 19.13/16.0/12.1; `run_failure.py` reads a bounded tail |
+| **The results store: bulk a budgeted cache, findings permanent, hands off** | **§9.137** — user directive: `results/raw` (500 GB cap, `RUN.storage.raw_cap_gb`, oldest deleted after findings extraction) and `results/processed` (records + mode snapshots, never trimmed); the runner gates its own run every `RUN.gate.interval_iterations` and stops itself on the hard bar; `run.py --stop` is the one manual path; 122 legacy dirs migrated; supersedes §9.65's never-delete and the by-hand gate stop |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13470,10 +13472,134 @@ pay (small flat fares) — their deficits stay #30's and #94's lanes. The 30
 run-input sets are regenerated with the module; manifest 503 → 509. The
 67/143 split is untouched; no target moved; nothing here is a result.
 
+## 9.136 The first F22 arm: the fare moves rail and bus, the gate stops seven modes (31 August – 1 September 2026, twenty-first session; issues #98, #99, #93, #30, #86, #82, #96, #66)
+
+**What was wrong.** The fare-priced model (§9.135) had never run: its expected
+movements were expectations. Three no-run questions also stood measured-but-
+unexplained: the motorbike carve's target-LGA over-delivery (#93), the corridor
+attraction deficit's mechanism (#30), and ride's ~12% ceiling decomposition
+(#86).
+
+**What changed.** The first F22 arm launched detached 31 Aug 16:51 — S2 ×
+WEEKDAY, **25% × 300 by the user's decision at approval** (~25 h stated,
+SPENT at launch), overlay `f22_gate_25pct` (new), family `F22-pt-fares-priced`
+declared at launch (`from_launch` 20260831T164923, `decisions_ref` 9.135).
+`src/run/run_failure.py` now reads only the log's last 64 MiB (`TAIL_BYTES`):
+its whole-file `read().splitlines()` held every decoded byte in memory, and
+this arm's 6.9 GB `matsim.log` pushed the 63.5 GiB machine to exhaustion while
+the death was being recorded; `read_from` names the window when truncated.
+No registry field, no target, no data artefact changed.
+
+**Measured.** Arm `aborted_20260831T165127_300it_25pct`, stopped by the
+session at the iteration-100 gate under the GOAL.md loop, 7 modes at or past
+20%: bike +185.5%, heavy rail +152.9%, ferry −80.0%, light rail −70.9% AWAY,
+taxi +70.9%, ride −41.3%, walk −36.6%; car +15.2% and motorbike +13.3% over
+10%; **bus INSIDE its band at +8.0% — the first of the twelve inside at any
+gate**. The fare's effect: heavy rail fell 37,540 → 16,512 boardings inside
+the arm and was still falling at the stop ("~47 more iterations" on the trend
+fit); bus 6.27% → 2.57%; the walk/car seesaw reproduced F21's gate (walk
+crossed its target near iteration 38 and fell to −36.6% as car rose) — pt
+pricing does not price the short car trip; taxi worsened relative. Truck at
+its stations −45.7% (6.14% vs 11.31%, 3 calibration stations) against F21's
+−51.0%. Pairing at 25%, iteration 0: 7,092 declared passengers picked up on
+6,697 detours, 0 unroutable, 364 re-moded — the 10% counts × the fraction.
+Pace: ~504 s/it over iterations 0–10 rising to 630–670 by 70–100, gate in
+~17.6 h of iterations — **a full 25% × 300 on this stack is ~45–50 h, not the
+~25 h stated**; the session ran to the gate and no further on that ground.
+The PC crashed minutes after the arm was killed at the gate; every artefact
+survived and the death record was written on resume. The no-run lanes: (#93)
+the carve's draw and §9.129 pool are exact per LGA (delivered/intended
+0.94–1.13) — the over-delivery is the `sa1_thinned` cell aggregation, whose
+trip-weighted intended share sits +12% above Newcastle's LGA identity (0.4271%
+vs 0.3829%), +9% core-wide, before any draw; (#30) the corridor deficit
+survives the rebuild unchanged (shopping 0.59×, other 0.69×, work 1.09× of
+attraction) and corridor share RISES with distance (shopping 5.01% under 1 km
+→ 9.77% beyond 8 km vs the 11.38% attraction share) — a size × distance
+gravity calibrated to the HTS means cannot reach the corridor's attraction
+share from home-anchored bands; (#86) generated 19.13% (448,229 trips, the
+occupancy identity) / bound 16.0% (374,823: escort 127,293 + shared 115,516 +
+joint 84,436 + lift 47,578) / realised 12.10%.
+
+**Deliberately not done.** No fix was implemented for any measured cause: the
+carve conservation fix, the corridor attraction repair (floorspace-weighted
+attraction from the harvested OSM footprints, or an agglomeration term) and
+the car access-cost channel (`accessEgressType = none` is load-bearing,
+§9.54/§9.58) are each a declared decision at the next demand or scoring
+boundary, the user's pick. The #96 leaf-subtour trace is blocked on a
+`SubtourChainScan` extension needing a `.tools/classes` recompile — refused
+while the arm ran. The deep run was not continued past its gate: the loop
+stopped it and the measured pace had outgrown the approval.
+
+**Consequences.** F22 holds the deepest 25% reading; nothing before §9.135
+compares with it, and its 10%-arm neighbours never do (§9.10, §9.12). Cost
+the next 25% arm at the measured 630–670 s/it, never the stated ~25 h. The
+next family follows the user's pick among the measured causes (walk/car cost
+channel, carve conservation, corridor attraction, ride binding reach). The
+67/143 split is untouched; no target moved; nothing here is a result (no
+`_run.json`).
+
+## 9.137 The results store: run bulk becomes a budgeted cache, findings become permanent, and nobody touches results/ by hand (1 September 2026, twenty-first session; user directive)
+
+**What was wrong.** `results/` held 748 GiB of run bulk with no budget, no
+processing pipeline and no separation between a run's bulk (events, plans,
+ITERS, logs — regenerable in principle, expensive in practice) and its
+findings (the records and readings sessions actually quote). Every reading
+was extracted by hand when needed; a gate stop was executed by hand (kill,
+rename, `mark_dead`), and the §9.135/§9.136 close-outs each spent session
+time manually tending run directories. The user directed (1 Sep 2026): split
+`results/` into `raw` and `processed`, automate the whole run lifecycle, cap
+raw at 500 GB with automatic oldest-first deletion, and end manual
+intervention in `results/` entirely.
+
+**What changed.** `src/run/results_store.py` now OWNS the layout the way
+`src/city.py` owns a city's: `results/raw/<run>` is the bulk cache,
+`results/processed/<run>` the permanent findings (record files mirrored at
+every status transition, plus `modes_trend.txt` and `modes_final.json`
+extracted by the twelve-mode reporter). Two declared fields:
+`RUN.storage.raw_cap_gb` = 500 (definition; user directive) and
+`RUN.gate.interval_iterations` = 100 (definition; the GOAL.md loop's own
+interval). The runner (`run_matsim.py`) creates runs under raw, mirrors
+records to processed on every transition, runs a **gate watcher** that reads
+all twelve modes every 100 iterations and kills the JVM itself when any mode
+is at or past `CAL.gate.stop_deviation_pct` (verdict in `_gate_stop.json`,
+recorded as the abort cause), extracts findings at every run end, and trims
+raw back under budget at every harness start and run end (live runs and
+`_launch` never deleted; every deletion appended to
+`processed/_trim_log.json`). `python run.py --stop <name> --cause "..."` is
+the one sanctioned manual stop — it ends the scheduled task, kills the tree
+and records the cause; nobody renames or edits `results/` by hand. Eleven
+consumer modules resolve runs through the store; `run_failure`,
+`check_package` and the board read records from processed when the bulk is
+gone. The 122 legacy directories were migrated and raw trimmed to the cap.
+
+**Measured.** Before: 748.2 GiB in 122 run directories. The migration moved
+all 122 under raw and seeded processed with every record file; the reporter,
+the index, the board and the gate all read identically through the store
+(the board regenerated byte-stable except the intended `--run` spelling).
+The trim's deletions and end size are in `results/processed/_trim_log.json`
+— the cache's history is itself a record.
+
+**Deliberately not done.** The trend half of the gate loop ("or heading
+there") stays a session judgement — the watcher automates only the hard bar.
+Processed findings are never trimmed, by design. The two §9.65 rules this
+supersedes are narrow: the harness now DOES delete raw bulk (budgeted,
+oldest-first, findings extracted first) and DOES stop a run (at the declared
+gate); everything else of §9.65/§9.66 — runner-named directories, causes on
+every death, `_run.json` as the result gate — stands unchanged.
+
+**Consequences.** A trimmed run's bulk cannot be re-read for NEW diagnostics
+— what survives is what processing extracted, so anything worth keeping from
+a run must be written by the processor, not fetched by hand later. Sessions
+stop runs only through `run.py --stop`; a gate stop needs no session at all.
+The 67/143 split is untouched; no target moved; no model value changed —
+the store cannot alter a result, only how much bulk survives.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-01 | **The results store lands: run bulk becomes a 500 GB budgeted cache, findings become permanent, and the run lifecycle is automated end to end (§9.137; user directive; twenty-first session).** `src/run/results_store.py` owns `results/raw` (bulk) and `results/processed` (records mirrored at every transition + `modes_trend.txt`/`modes_final.json` snapshots); fields `RUN.storage.raw_cap_gb` 500 and `RUN.gate.interval_iterations` 100 declared (definition); the runner gate-watches its own run and stops itself on the hard bar with the verdict as cause; `run.py --stop <name> --cause` replaces every by-hand kill/rename; raw is trimmed oldest-first at harness start and run end with deletions logged to `processed/_trim_log.json`; 122 legacy run dirs migrated; eleven consumers resolve through the store. Supersedes §9.65's "the harness never deletes a run directory" for raw bulk only. Registry 450 → 452; `CONFIG_REFERENCE.md` regenerated. **No model value changed, no target moved; the 67/143 split is untouched; the store cannot alter a result.** |
+| 2026-09-01 | **The first F22 arm ran to its iteration-100 gate and was stopped: the fare moves rail and bus, seven modes stand out (§9.136; issues #98/#99/#93/#30/#86/#82/#96/#66; twenty-first session).** Family `F22-pt-fares-priced` declared at launch (`from_launch` 20260831T164923); arm `20260831T165127_300it_25pct` — 25% × 300 by the user's decision at approval, ~25 h stated, spent — stopped at the gate with 7 modes at or past 20% and **bus inside its band (+8.0%), the first of the twelve at any gate**; heavy rail fell 37,540 → 16,512 boardings inside the arm, still falling; the walk/car seesaw reproduced F21's gate under fares; truck at stations −45.7%. Measured 25% pace 630–670 s/it (~45–50 h per 300). The PC crashed after the gate kill; records written on resume. No-run measurements: the motorbike carve's bias is the `sa1_thinned` cell aggregation (+12% over the target LGA identity; draw and pool exact); the corridor deficit is structural by distance band; ride decomposes generated 19.13% / bound 16.0% / realised 12.1%. `src/run/run_failure.py` reads a bounded 64 MiB tail (its whole-log read exhausted memory on the 6.9 GB log). **No model value changed, no target moved; the 67/143 split is untouched; nothing here is a result (no `_run.json`).** |
 | 2026-08-31 | **Public transport is priced: the published Opal fare schedule enters the model (§9.135; issues #98/#99/#30/#94; twentieth session).** Acquisition `data/raw/fares/` (five archived pages + provenance); registry 414 → 450 fields (36 `A.fare.*`, 34 observed, 2 literature+sweep); `citysim.PtFareConfigGroup`/`PtFareChargeHandler` charge every pt journey its published fare (fare legs by submode, peak by tap-on, $2/$1 transfer discount, child 4–15 and Gold Senior/Pensioner 60+ classes, published daily caps) as deferred PersonMoneyEvents; emitted as the `ptFare` module; 30 run-input sets regenerated. Diagnosed first on the stopped F21 arm: rail boardings 16,790 vs entries 15,080 (yardstick sound), +131% on entries, Interchange UNDER; car-available residents put 86.4% on car and 2.9% on walk; truck at stations −51.0%; motorbike carve delivers 0.4715% in the target LGA against a 0.2652% core solve (#93). Smoke `20260831T145828_2it_1pct` completed: 629 journeys −2,490.21 AUD at it.0 beside parking and taxi charges. **No target moved; the 67/143 split is untouched; the next arm opens family F22 at launch and needs a fresh stated-cost approval; nothing here is a result.** |
 | 2026-08-31 | **The first gate since F4: the F21 arm reached iteration 100 and the stop fired (§9.134; issues #86/#93/#96/#98/#30/#66; nineteenth session).** Family `F21-licence-rate-demand` declared (`from_launch` 20260830T222641, `decisions_ref` 9.131); arm `20260830T222642_300it_10pct` launched detached under a ~9–15 h stated-cost approval, spent; stopped at the iteration-100 gate with 8 modes at or past 20%. Car crossed its target for the first time (+16.0%), bus +15.6%; ride plateaued at ~12% from iteration 30; heavy rail fell 36,340 → 17,090 boardings inside the arm; light rail AWAY. Pace: solo 170.9–182.1 s, median 249.4 s/it at 100; one isolated 355 s iteration timestamped for #66. `SubtourChainScan` on the rebuilt WEEKDAY plans: 341 mixed, 3 leaf, 110 of 621,364 persons — rate unchanged (#96). **No model value changed, no target moved; the 67/143 split is untouched; nothing here is a finding (no `_run.json`).** |
 | 2026-08-30 | **The demand chain rebuilt on the licence-rate population; the package consistent again (§9.133; issues #86/#93/#96; eighteenth session).** Chains, plans and the 30 run-input sets rerun on the 612,634-person population of §9.131; manifest 503 files (from 501); `tests/check_package.py` ALL CHECKS PASSED. `build_licence_rates.py` asserts the vector it derives against `B.population.licence_rate_by_age_band` and exits 1 on drift, making the registry's consumer claim true. WEEKDAY shared pass 61,682 servable / 57,758 bound / shortfall 0 (was 73,509 / 59,701 / 0). Overlay `f21_gate_10pct.json` written; smoke `20260830T213149_2it_1pct` run. **No model value changed, no target moved, no family opened (F21 opens at the arm's launch); the 67/143 split is untouched; nothing here is a finding.** |

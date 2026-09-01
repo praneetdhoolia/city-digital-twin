@@ -122,12 +122,18 @@ def find_run(tag=None):
             'no --run given and %s names no best_tag: there is no calibrated '
             'base to draw.' % _os.path.relpath(CALIBRATION_FILE, _city.REPO))
     direct = wanted if _os.path.isdir(wanted) \
-        else _os.path.join(RESULTS_DIR, wanted)
+        else next((d for d in (_os.path.join(RESULTS_DIR, 'raw', wanted),
+                               _os.path.join(RESULTS_DIR, wanted),
+                               _os.path.join(RESULTS_DIR, 'processed', wanted))
+                   if _os.path.isdir(d)),
+                  _os.path.join(RESULTS_DIR, 'raw', wanted))
     if _os.path.isdir(direct) and _os.path.exists(_os.path.join(direct,
                                                                 '_fit.json')):
         return direct
     hits = []
-    for fit_path in sorted(glob.glob(_os.path.join(RESULTS_DIR, '*',
+    for fit_path in sorted(glob.glob(_os.path.join(RESULTS_DIR, 'raw', '*',
+                                     '_fit.json'))
+                           + glob.glob(_os.path.join(RESULTS_DIR, 'processed', '*',
                                                    '_fit.json'))):
         if _load(fit_path).get('run') == wanted:
             hits.append(_os.path.dirname(fit_path))

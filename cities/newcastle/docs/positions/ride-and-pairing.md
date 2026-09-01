@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.135 · **Open family:** F21
+**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
 
 ## What is built
 
@@ -30,8 +30,9 @@
 
 Every arm below was stopped at or before its gate; levels are readings, not results.
 
-- F21 arm `aborted_20260830T222642_300it_10pct`, the iteration-100 gate: ride 12.08% against 20.60% (−41.3%), plateaued at 12.0–12.3% from iteration 30 — the bound demand realised its ~12% ceiling and no more (§9.134, #86).
-- F21 iteration 0, read from the arm's own log (§9.135, the check #48 queued): 2,814 declared passengers picked up on 2,657 drivers' detours, 0 unroutable, 178 unpaired legs re-moded; pickups grow to ~8,700 by iteration 100 and saturate — pairing is healthy on the rebuilt demand, the constraint is bound volume (#86).
+- F22 arm `aborted_20260831T165127_300it_25pct`, the iteration-100 gate: ride 12.10% against 20.60% (−41.3%), plateaued at 12.0–12.5% from iteration 30 — the same ~12% ceiling as F21's 12.08%, unmoved by the fare (§9.136, #86).
+- F22 iteration 0, from the arm's own log (§9.136): 7,092 declared passengers picked up on 6,697 drivers' detours (mean detour 538 s), 0 unroutable, 364 unpaired legs re-moded and restored — 2.5× the F21 10% counts, exactly the fraction's scaling; pairing is healthy at 25%.
+- **The generation ledger, measured on the rebuilt WEEKDAY demand** (§9.136, #86): the occupancy identity generates 448,229 passenger trips = 19.13% of 2,343,161 (`B2_activity_trips_WEEKDAY.csv`) — near the 20.6% target; the four passes bind 374,823 rows = 16.0% (escort 127,293 + shared 115,516 + joint 84,436 + lift 47,578, `B2_*_bindings_WEEKDAY.csv`); the gate realises 12.10%. ~3.1 pp is generated-but-unbindable (no driver exists, §9.109's class); ~3.9 pp is bound-but-not-realised — the choice-side gap a deeper arm must decompose.
 - F20 arm `aborted_20260830T184955_300it_10pct`, iteration 10: ride 9.22% against the 20.60% target (−55.2%); 41,194 bound ride trips in the 10% plans (`NEXT_AGENT_BRIEF.md`).
 - F20 iteration 0: 8,068 of 8,256 ride legs paired (0.977), 2,864 passengers on 2,683 detours, none unroutable, 23,040 named drivers (`NEXT_AGENT_BRIEF.md`).
 - F19 arm `aborted_20260830T170743_300it_10pct`: iteration 0 paired 6,850 of 6,966 ride legs, endpoint refusals 2,053 → 67, 2,005 passengers on 1,888 detours; iteration 20 ride 10.86% (§9.129).
@@ -45,10 +46,10 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## What is open
 
-- #48 — every ride physically in a car. The F21 gate read ride 12.08% (−41.3%, §9.134); the iteration-0 counts are now read from the arm's log (§9.135): 2,814 picked up, 0 unroutable — the physical channel works at the rebuilt demand's volume.
-- #86 — the demand ceiling is now measured as the cap: the F21 arm plateaued at ~12% from iteration 30 against 20.6% observed (§9.134). The binder binds 57,758 shared WEEKDAY trips with shortfall 0 (§9.133); more ride needs more bound demand, not better pairing.
+- #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
+- #86 — the ceiling is decomposed (§9.136): generated 19.13% / bound 16.0% / realised 12.1%. More ride needs (a) binding passes that reach the unbindable 3.1 pp — passenger classes the four passes structurally miss (licensed car-available riders between households, non-direct tours) — and (b) the bound→realised 3.9 pp read from a deeper arm's choice records.
 - #91 — ride legs with no declared driver. The class is closed at the seed by `boundRideTrips` gating (§9.120); next: its count in `ride_pairing.csv` at F21 iteration 0.
-- Confirmation-arm fraction: the bucket rule holds at 10%, 25% and 50%; a 25% × 300 arm is ~25 h and needs approval (§9.129, `NEXT_AGENT_BRIEF.md`).
+- The 25% × 300 costing: ~25 h stated at the F22 approval; the arm measured 630–670 s/it late pace, ~45–50 h for a full 300 (§9.136) — cost the next 25% arm on the measured pace.
 - Whether a suburb is the right carpool precision is the sweep's question, with `same_sa1_od` its lower bound (§9.124).
 - Where the car-less quarter's excess on walk, bike and pt settles once a fifth of their tours ride (§9.123, §9.126).
 
@@ -67,6 +68,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.136 — ceiling decomposed: 19/16/12
 - §9.134 — F21 gate: ride capped at 12%
 - §9.131 — licence rate measured; F21 pending
 - §9.129 — bucket rule replaces at-or-below

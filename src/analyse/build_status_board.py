@@ -51,6 +51,11 @@ for _p in (os.path.join(ROOT, 'src'), _HERE):
 
 import city as _city                                              # noqa: E402
 
+for _p in (os.path.join(ROOT, 'src', 'run'),):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+import results_store as _store                                    # noqa: E402
+
 RESULTS = os.path.join(ROOT, 'results')
 MARK = re.compile(r'<!-- generated:(\w+) start -->\n(.*?)<!-- generated:\1 end -->',
                   re.S)
@@ -84,12 +89,14 @@ def _family_of(name):
 
 
 def _run_dirs():
-    if not os.path.isdir(RESULTS):
-        return []
     import build_run_index as bri
-    names = [n for n in os.listdir(RESULTS)
-             if RUN_DIR.match(n) and os.path.isdir(os.path.join(RESULTS, n))]
+    names = [n for n in _store.run_names() if RUN_DIR.match(n)]
     return sorted(names, key=lambda n: bri.launch_stamp(n) or '', reverse=True)
+
+
+def _dir_of(name):
+    """A run's directory: raw while the bulk lives, processed after a trim."""
+    return _store.resolve_records(name) or os.path.join(RESULTS, name)
 
 
 def _iterations_reached(run_dir):
@@ -144,7 +151,7 @@ def block_scoreboard():
     import iteration_trips as itr
     floor = _horizon_floor()
     for name in _run_dirs():
-        run_dir = os.path.join(RESULTS, name)
+        run_dir = _dir_of(name)
         if _is_plumbing_test(run_dir, floor):
             continue
         try:
@@ -179,7 +186,7 @@ def block_scoreboard():
                         ('%g' % (100 * frac)) if frac else '?',
                         meta.get('started', '?'), rmr.LAST.get('source', '')))
         lines.append('Reproduce: `python src/analyse/report_mode_ridership.py '
-                     '--run results/%s --it %d` (`--trend` for the direction).' % (name, it))
+                     '--run %s --it %d` (`--trend` for the direction).' % (name, it))
         lines.append('')
         lines.append('| # | mode | modelled | target | deviation | gate | basis |')
         lines.append('|---|---|---:|---:|---:|---|---|')
@@ -219,7 +226,7 @@ def block_runs():
     lines = ['| run | status | family | reached | cause / note |',
              '|---|---|---|---:|---|']
     for name in names[:6]:
-        run_dir = os.path.join(RESULTS, name)
+        run_dir = _dir_of(name)
         meta = _json(os.path.join(run_dir, '_meta.json')) or {}
         reached = _iterations_reached(run_dir)
         cause = (meta.get('cause') or '').replace('|', '/').replace('\n', ' ')

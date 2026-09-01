@@ -622,6 +622,31 @@
         "src/analyse/run_view.py"
       ]
     },
+    "RUN.storage.raw_cap_gb": {
+      "value": 500,
+      "units": "gigabytes",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.137",
+      "description": "The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.",
+      "consumers": [
+        "src/run/results_store.py",
+        "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.gate.interval_iterations": {
+      "value": 100,
+      "units": "iterations",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.137",
+      "description": "How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ]
+    },
     "RUN.monitor.live_poll_s": {
       "value": 0.5,
       "units": "seconds",

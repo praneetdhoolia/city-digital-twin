@@ -7,11 +7,12 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 31 August 2026 — the first F22 arm is launched on the
-fare-priced model (§9.135): 25 % × 300 iterations by the user's decision at
-approval (~25 h stated cost, spent at launch; task `citysim_run_20260831T165126`).
-Family `F22-pt-fares-priced` opened at launch; its iteration-100 gate is the
-next reading.
+**Last updated:** 1 September 2026 — the first F22 arm ran to its
+iteration-100 gate and was stopped under the loop (§9.136): **bus is the
+first mode ever inside its band (+8.0 %)**, heavy rail fell 37,540 → 16,512
+boardings and was still falling, and the walk/car seesaw survived the fare.
+Seven modes stand past 20 %; the next family follows the user's pick among
+the measured causes.
 
 ## The goal
 
@@ -23,32 +24,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **12 of 12** — freight rail as timetable-derived crossing closures, not a mobsim vehicle | [positions/motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md), §9.70 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
-| Every mode inside 10 % | **0 of 12** at the F21 iteration-100 gate — car (+16.0 %) and bus (+15.6 %) closest, both having crossed their targets; see the scoreboard | below, §9.134 |
-| Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arm (F21) stopped at its iteration-100 gate, before the 240 cutoff; `RUN.controler.last_iteration` still declares 1000 | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.134 |
+| Every mode inside 10 % | **1 of 12** at the F22 iteration-100 gate — bus (+8.0 %), the first ever inside; car (+15.2 %) and motorbike (+13.3 %) next closest; see the scoreboard | below, §9.136 |
+| Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arms (F21, F22) each stopped at their iteration-100 gate, before the 240 cutoff; `RUN.controler.last_iteration` still declares 1000 | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.136 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); pt fares from the published Opal schedule (§9.135); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260830T222642_300it_10pct` at **iteration 100** (family `F21-licence-rate-demand`, status `aborted`, 10% sample, launched 2026-08-30T22:26:42, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run results/aborted_20260830T222642_300it_10pct --it 100` (`--trend` for the direction).
+Read from `aborted_20260831T165127_300it_25pct` at **iteration 100** (family `F22-pt-fares-priced`, status `aborted`, 25% sample, launched 2026-08-31T16:51:27, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260831T165127_300it_25pct --it 100` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 67.6729 | 58.3222 | +16.0% | over 10% | share of resident linked trips |
-| 2 | ride | 12.0828 | 20.6000 | -41.3% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 8.4961 | 13.4000 | -36.6% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.6603 | 0.9916 | +67.4% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.6827 | 2.2084 | +157.3% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4715 | 0.3785 | +24.6% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 2.7527 | 2.3819 | +15.6% | over 10% | share of resident linked trips |
-| 8 | heavy_rail | 17,090 | 6,529 | +161.8% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 780 | 2,954 | -73.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0265 | 0.1429 | -81.5% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6483 | 15.4698 | -63.5% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 67.1877 | 58.3222 | +15.2% | over 10% | share of resident linked trips |
+| 2 | ride | 12.0993 | 20.6000 | -41.3% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 8.4995 | 13.4000 | -36.6% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.6943 | 0.9916 | +70.9% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.3049 | 2.2084 | +185.5% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4287 | 0.3785 | +13.3% | over 10% | share of resident linked trips |
+| 7 | bus | 2.5726 | 2.3819 | +8.0% | ok | share of resident linked trips |
+| 8 | heavy_rail | 16,512 | 6,529 | +152.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 860 | 2,954 | -70.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0285 | 0.1429 | -80.0% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6074 | 15.4698 | -63.8% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike, heavy_rail, light_rail, ferry**.
+Inside 10%: **bus**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -59,7 +60,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the gate loop of GOAL.md fired for the first time since F4: the F21 arm stopped at its iteration-100 gate, 8 modes out (§9.134) |
+| P4 calibration | 🟡 | the gate loop has fired twice: F21 stopped with 8 modes out and none inside (§9.134); F22, on the fare-priced model, with 7 out and bus inside (§9.136) |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -68,53 +69,55 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, motorbike
 | | |
 |---|---|
 | Open comparability family | `F22-pt-fares-priced` (opened `20260831T164923`, §9.135) - nothing run before it compares with anything after it |
-| Input registry | **450 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **452 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **509 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (31 August 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (31 August 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (31 August 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (31 August 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (31 August 2026) · [runs-and-economics](positions/runs-and-economics.md) (31 August 2026) · [sampling-and-families](positions/sampling-and-families.md) (31 August 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (31 August 2026) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (1 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (1 September 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (1 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (1 September 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (1 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (1 September 2026) · [sampling-and-families](positions/sampling-and-families.md) (1 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (1 September 2026) |
 <!-- generated:state end -->
 
 **The package on disk is consistent** (§9.133, §9.135): the 30 run-input sets
 carry the `ptFare` module and `tests/check_package.py` reports ALL CHECKS
-PASSED (re-run 31 Aug, after the fare change). The F21 arm's sample holds
-61,953 persons against the F20 arm's 62,134 (§9.127).
+PASSED (re-run 31 Aug, after the fare change; nothing in the package changed
+since). The F22 arm sampled at 25 % under the §9.129 bucket rule (§9.136).
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260831T165127_300it_25pct` | running | F22-pt-fares-priced | - | - |
+| `20260901T113040_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
+| `aborted_20260831T165127_300it_25pct` | aborted | F22-pt-fares-priced | 101 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (bike +185.5%, heavy_rail +152.... |
 | `20260831T145828_2it_1pct` | completed | F21-licence-rate-demand | 2 | has `_run.json` |
 | `aborted_20260830T222642_300it_10pct` | aborted | F21-licence-rate-demand | 102 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 8 modes at or past 20% deviation (heavy_rail +161.8%, bike +157.... |
 | `20260830T213149_2it_1pct` | completed | F20-bucket-rule-carve-pool | 2 | has `_run.json` |
 | `aborted_20260830T184955_300it_10pct` | aborted | F20-bucket-rule-carve-pool | 12 | Stopped by the session at iteration 11 at the users direction at handoff (a clean, idle machine): the F21 demand - licence rates measured... |
-| `20260830T184637_2it_1pct` | completed | F19-driver-detour | 2 | has `_run.json` |
 
-122 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+123 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **Read the first F22 arm's iteration-100 gate** (§9.135): the arm is
-   launched 31 Aug at 25 % × 300 under a spent ~25 h approval; the gate
-   measures the fare's effect on heavy rail (#98), bus (#99) and the
-   displaced trips. Never read it against the 10 % F21 arm (§9.10, §9.12).
-2. **The gate-stop diagnostics are read** (§9.135): rail is +131 % on the
-   entries basis with the Interchange UNDER (#30's corridor end); the
-   walk/car imbalance sits in the car-available group (86.4 % car, 2.9 %
-   walk); truck at stations −51.0 % (#82); motorbike delivers 0.4715 %
-   against a 0.2652 % core solve (#93). Each stands as the next lane's
-   measurement.
-3. **The #96 scan is rerun on the rebuilt plans**: 341 mixed subtours, 3 leaf,
-   in 110 of 621,364 persons — unchanged in rate by the rebuild (on #96).
+1. **The user picks the next family's cause from the measured set** (§9.136):
+   the walk/car cost channel (car access/egress or derived parking time,
+   [positions/walk-and-bike](positions/walk-and-bike.md)); the carve's per-LGA
+   conservation fix (#93); the corridor attraction repair — floorspace-weighted
+   attraction or an agglomeration term (#30); the ride binder's reach (#86).
+   The chosen fix opens its family at the next arm's launch, under a fresh
+   stated-cost approval at the measured pace (§9.136).
+2. **Rail's residual under fares is the F22 gate's open reading** (#98): rail
+   was still falling when stopped; where it settles, and the per-station split
+   under fares, are the next arm's measurements.
+3. **The #96 leaf trace needs a `SubtourChainScan` extension** (mark leaf vs
+   spanning in examples) and a `.tools/classes` recompile — the machine is
+   idle now; small, no run needed.
 
-**Decisions required:** enable the Task Scheduler operational log so
-a console-stop death can name its trigger (#66); whether a separate
-confirmation arm is still needed now the loop runs at 25 % (§9.129); whether
-bus moves to a boardings basis once a regional count is acquired (#99);
-whether the S2 base grants the tram signal priority — the emitted config says
-`green_extension` while the record's S2 probe ran with it off ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+**Decisions required:** the next family's cause, from §9.136's measured set
+(above); the next arm's stated-cost approval at the measured 25 % pace
+(~45–50 h per 300, §9.136) or the 10 % pace (~18–21 h, §9.134); enable the
+Task Scheduler operational log so a machine-level death can name its trigger
+(#66, again unattributed after the 1 Sep crash); whether bus moves to a
+boardings basis once a regional count is acquired (#99); whether the S2 base
+grants the tram signal priority ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
 
 ## Open work
 

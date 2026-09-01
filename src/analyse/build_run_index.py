@@ -40,6 +40,9 @@ sys.path.insert(0, os.path.join(ROOT, 'src'))
 import city  # noqa: E402
 import registry as _registry  # noqa: E402
 
+sys.path.insert(0, os.path.join(ROOT, 'src', 'run'))
+import results_store  # noqa: E402
+
 RESULTS = os.path.join(ROOT, 'results')
 # Below this iteration count a completed run is a probe. Not a constant of this
 # script's own: it is the declared sweep FLOOR of RUN.controler.last_iteration,
@@ -86,7 +89,8 @@ def _load(run_dir, filename):
 
 
 def scan_run(name, fams, overrides):
-    run_dir = os.path.join(RESULTS, name)
+    # records survive a raw trim in results/processed; the store resolves
+    run_dir = results_store.resolve_records(name) or os.path.join(RESULTS, name)
     meta = _load(run_dir, '_meta.json') or {}
     record = _load(run_dir, '_run.json')
     summary = _load(run_dir, '_summary.json') or {}
@@ -151,9 +155,8 @@ CSV_COLUMNS = ['name', 'class', 'status', 'run_record', 'relaxed', 'family',
 
 def build():
     fams, overrides = load_families()
-    names = sorted(d for d in os.listdir(RESULTS)
-                   if os.path.isdir(os.path.join(RESULTS, d))
-                   and not d.startswith('_'))
+    names = sorted(d for d in results_store.run_names()
+                   if not d.startswith('_'))
     rows, per_mode = [], {}
     for name in names:
         row, modes = scan_run(name, fams, overrides)

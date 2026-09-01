@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
+**Updated:** 1 September 2026 · **Record read through:** §9.137 · **Open family:** F22
 
 ## What is built
 
+- **The hard bar of the gate is the runner's own** (§9.137): a watcher inside `run_matsim.py` reads all twelve modes every `RUN.gate.interval_iterations` = 100 iterations with the same reporter below and stops the JVM itself when any mode is at or past `CAL.gate.stop_deviation_pct`, recording the gate table as the abort cause. The trend judgement ("or heading there") stays with the session.
 - **The gate reader** is `src/analyse/report_mode_ridership.py`. It prints every one of the twelve simulated modes on its own row against its own target, never an umbrella `pt` row: the pt submodes are resolved from each boarded route's `transportMode` through the run's own schedule (§9.87). It reads the run directory and the city's target artefact and writes nothing.
 - **Any iteration the run has written is readable** (§9.120). Where MATSim wrote `<n>.trips.csv.gz` the reader uses it; between those, `src/analyse/iteration_trips.py` derives the same linked main-mode trips from `<n>.experienced_plans.xml.gz`, which is written every `RUN.controler.write_plans_interval` = 10 iterations. The derivation is validated exactly against the trips table wherever both exist (`--validate`), and the trips table wins any disagreement (§9.120).
 - **Three views**: `--it N` for one iteration, `--trend` for one row per mode across every readable iteration with a direction verdict (`toward`, `AWAY`, `flat`), and `--watch SECONDS` to keep printing each newly readable iteration until the run ends. `--truck-stations` scores truck on its target's basis (below).
@@ -28,13 +29,13 @@
 
 - **The calibrated base is F4, arm `20260821T175907_1000it_25pct`**: 35 of 67 calibration targets scorable, MAE 10.65 pp, `feasible=False` with five stated violations, ASCs held at their priors (§9.64, §9.50). `params/C5_calibration.json` names it as `best_tag`, and `README.md`'s fit figures still draw it via `src/analyse/build_fit_figures.py` (§9.80). Its light rail 1,260 boardings is a LEVEL, not an error (§9.80, #84).
 - **The seed noise floor** from the F4 pair: at most 0.11 pp per mode at fit level, light rail boardings within 3.9% (§9.64).
-- **The first gate since F4 was reached, and it fired (§9.134).** The F21 arm `aborted_20260830T222642_300it_10pct` read all twelve modes at iteration 100: 8 at or past 20% (heavy rail +161.8%, bike +157.3%, ferry −81.5%, light rail −73.6% and AWAY, taxi +67.4%, ride −41.3%, walk −36.6%, motorbike +24.6%) and the run was stopped under the GOAL.md loop; car +16.0% and bus +15.6% had crossed their targets and sat inside the stop bar. On the F19 arm at iteration 20 the disclosed basis read light rail -51% and heavy rail +372%, with the Interchange right and the suburban stations three to thirteen times over (§9.130).
+- **The gate has now fired twice, and the second reading holds the first mode inside its band (§9.136).** The F22 arm `aborted_20260831T165127_300it_25pct` read all twelve at iteration 100: 7 at or past 20% (bike +185.5%, heavy rail +152.9%, ferry −80.0%, light rail −70.9% AWAY, taxi +70.9%, ride −41.3%, walk −36.6%), car +15.2% and motorbike +13.3% over 10%, and **bus INSIDE at +8.0%** — the run was stopped under the GOAL.md loop. The F21 gate (§9.134) had read 8 out with none inside; truck at its stations read −45.7% on F22 against F21's −51.0% (§9.136, #82).
 - **Truck at its own basis**: +5.4% on 3 calibration stations and 23 modelled heavy traversals at iteration 100 of `aborted_20260829T172145_1000it_10pct`; 20 of the 24 classifying stations are holdout and were not opened (§9.101).
 
 ## What is open
 
-- **The machine is idle and the package on disk is consistent** (§9.133). Family F21 is open; its first arm is read and stopped at the iteration-100 gate (§9.134). The next family follows the user's pick of root cause, under a fresh run approval.
-- **Heavy rail's over-boarding halved inside the F21 arm and still stands**: 36,340 → 17,090 boardings over iterations 10 → 100, +161.8% against 6,529 at the gate (§9.134, #98). The licence fix was the first repair, not the last.
+- **The machine is idle and the package on disk is consistent** (§9.133, §9.135). Family F22 is open; its first arm is read and stopped at the iteration-100 gate (§9.136). The next family follows the user's pick of root cause, under a fresh run approval.
+- **Heavy rail's over-boarding has halved at two successive gates and still stands**: 36,340 → 17,090 inside F21 (§9.134), 37,540 → 16,512 inside F22 under fares, still falling at the stop (§9.136, #98). The licence fix and the fare were the first two repairs, not the last.
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
 - **No arm has reached its innovation cutoff since F4**, so no post-cutoff twelve-mode level exists (§9.108).
 - **`--trend` omits `freight_train`** and its header still says resident linked trips for every row, while heavy rail and light rail rows now carry boardings (§9.130) — the header is behind the basis.
@@ -57,6 +58,8 @@
 
 - §9.134 — first gate since F4; stop fired
 - §9.133 — board skips plumbing tests
+- §9.137 — the hard bar becomes the runner's
+- §9.136 — second gate fires; bus first inside
 - §9.131 — licence rate rebuilt; F21 opens
 - §9.130 — rail modes on disclosed boardings
 - §9.126 — F17 car and walk converged

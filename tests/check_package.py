@@ -1253,7 +1253,9 @@ if _registry is not None:
               'the %s output carries a declared schema' % _kind)
 
     # any run already on disk must meet its contract
-    for _rec in sorted(glob.glob(os.path.join('results', '*', '_run.json'))):
+    for _rec in sorted(glob.glob(os.path.join('results', 'raw', '*', '_run.json'))
+                   + glob.glob(os.path.join('results', 'processed', '*', '_run.json'))
+                   + glob.glob(os.path.join('results', '*', '_run.json'))):
         _problems = _outputs.validate_file(_rec)
         check(not _problems, 'run record %s meets the run contract%s'
               % (os.path.basename(os.path.dirname(_rec)),
@@ -1261,7 +1263,9 @@ if _registry is not None:
 
     # a dead run must be able to say why it died: a status card reading
     # `failed, rc=1` and nothing else is a directory nobody can rule out.
-    for _card in sorted(glob.glob(os.path.join('results', '*', '_meta.json'))):
+    for _card in sorted(glob.glob(os.path.join('results', 'raw', '*', '_meta.json'))
+                    + glob.glob(os.path.join('results', 'processed', '*', '_meta.json'))
+                    + glob.glob(os.path.join('results', '*', '_meta.json'))):
         _problems = _outputs.validate_file(_card)
         check(not _problems, 'status card %s meets the meta contract%s'
               % (os.path.basename(os.path.dirname(_card)),

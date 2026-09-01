@@ -35,6 +35,20 @@ import sys as _sys
 _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                                   '..', '..', 'src'))
 import city as _city  # noqa: E402
+
+# a run name resolves through the results store - results/raw first, then a
+# legacy top-level dir - so consumers survived the 9.137 layout change once,
+# here, instead of each composing its own results/ path
+import sys as _sys_rs, os as _os_rs
+_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
+    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
+import results_store as _results_store  # noqa: E402
+
+
+def _resolve_run(name_or_path):
+    return _results_store.resolve(name_or_path) or name_or_path
+
+
 import argparse
 import csv
 import json
@@ -346,7 +360,7 @@ def main():
     ap.add_argument('--run', required=True)
     ap.add_argument('--out')
     a = ap.parse_args()
-    run_dir = a.run if os.path.isdir(a.run) else os.path.join(_city.REPO, 'results', a.run)
+    run_dir = _resolve_run(a.run) if not os.path.isdir(a.run) else a.run
     metrics = json.load(open(os.path.join(run_dir, '_metrics.json'),
                              encoding='utf-8'))
     corrections = json.load(open(C3, encoding='utf-8'))
