@@ -47,6 +47,20 @@ import sys as _sys
 _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                                   '..', '..', 'src'))
 import city as _city  # noqa: E402
+
+# a run name resolves through the results store - results/raw first, then a
+# legacy top-level dir - so consumers survived the 9.137 layout change once,
+# here, instead of each composing its own results/ path
+import sys as _sys_rs, os as _os_rs
+_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
+    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
+import results_store as _results_store  # noqa: E402
+
+
+def _resolve_run(name_or_path):
+    return _results_store.resolve(name_or_path) or name_or_path
+
+
 import os
 import sys
 import json
@@ -271,7 +285,7 @@ def write_constrained_base(scenario, day, run_config, tag):
     excess is carried here as a stated constraint violation instead.
     """
     cfg = _registry.load(scenario=scenario, day=day, run=run_config)
-    run_dir = os.path.join(_city.REPO, 'results', tag)
+    run_dir = _resolve_run(tag)
     fit_path = os.path.join(run_dir, '_fit.json')
     if not os.path.exists(fit_path):
         raise SystemExit('no _fit.json in %s - the base run must exist and be '
@@ -425,6 +439,8 @@ def main():
         want = {k: '%s' % v for k, v in overrides.items()}
         # newest first: a forced re-run supersedes what it re-ran
         for record in sorted(glob.glob(
+                os.path.join(_city.REPO, 'results', 'raw', '*', '_run.json'))
+            + glob.glob(
                 os.path.join(_city.REPO, 'results', '*', '_run.json')),
                 reverse=True):
             try:

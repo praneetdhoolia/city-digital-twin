@@ -319,5 +319,5 @@ those depend on ABS/TfNSW/Overpass availability and on compute, not on the diff.
 | `src/build/` | Layer construction (the reproduction pipeline, in README order). |
 | `src/registry/` | The registry resolver, its validators, the legacy-drift check and the docs generator. |
 | `src/run/`, `src/calibrate/`, `src/analyse/` | P3+ execution, calibration and analysis. |
-| `results/` | Run outputs. Gitignored — nothing here is committed. |
+| `results/` | Run outputs, gitignored, self-managing (§9.137): `raw/` is a budgeted bulk cache, `processed/` the permanent findings. Never touched by hand — stop a run with `run.py --stop`. |
 | `tests/` | `check_manifest.py` (CI, committed subset) and `check_package.py` (local, full package). |

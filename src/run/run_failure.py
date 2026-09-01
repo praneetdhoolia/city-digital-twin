@@ -48,6 +48,50 @@ LOG_ERROR = re.compile(r'\b(?:ERROR|SEVERE|FATAL)\b\s+(.*)$')
 MESSAGE_CHARS = 400
 META = '_meta.json'
 LOG = 'matsim.log'
+# A terminating exception is at the END of the log - the process dies shortly
+# after writing it - so the reader needs the tail, never the whole file.
+# Reading the whole file (`read().splitlines()`) held every byte decoded in
+# memory at once, and a 25% arm's 6.9 GB log pushed the machine to memory
+# exhaustion while its death was being recorded (1 Sep 2026). Not a model
+# parameter: a read-window bound, like MESSAGE_CHARS above.
+TAIL_BYTES = 64 * 1024 * 1024
+
+
+def _tail_lines(log_path):
+    """The log's last TAIL_BYTES as lines, and whether the head was skipped.
+
+    A file within the bound is read whole (identical behaviour to before);
+    a larger one is read from `size - TAIL_BYTES`, discarding the first,
+    almost surely partial, line.
+    """
+    size = os.path.getsize(log_path)
+    with io.open(log_path, 'rb') as fh:
+        truncated = size > TAIL_BYTES
+        if truncated:
+            fh.seek(size - TAIL_BYTES)
+        data = fh.read()
+    lines = data.decode('utf-8', errors='replace').splitlines()
+    if truncated and lines:
+        lines = lines[1:]
+    return lines, truncated
+
+
+def _meta_paths(results_dir):
+    """Every run's status card: raw and legacy first, processed only where
+    the raw bulk has been trimmed away (9.137) - one card per run."""
+    seen, paths = set(), []
+    for base in (os.path.join(results_dir, 'raw'), results_dir):
+        for p in sorted(glob.glob(os.path.join(base, '*', META))):
+            name = os.path.basename(os.path.dirname(p))
+            if name not in seen:
+                seen.add(name)
+                paths.append(p)
+    for p in sorted(glob.glob(os.path.join(results_dir, 'processed', '*', META))):
+        name = os.path.basename(os.path.dirname(p))
+        if name not in seen:
+            seen.add(name)
+            paths.append(p)
+    return paths
 
 
 def _short(fqcn):
@@ -70,8 +114,9 @@ def from_log(log_path):
     """
     if not os.path.exists(log_path):
         return None
-    with io.open(log_path, encoding='utf-8', errors='replace') as fh:
-        lines = fh.read().splitlines()
+    lines, truncated = _tail_lines(log_path)
+    read_from = LOG + (' (last %d MiB)' % (TAIL_BYTES >> 20) if truncated
+                       else '')
 
     start = None
     for i, line in enumerate(lines):
@@ -113,7 +158,7 @@ def from_log(log_path):
         'message': _clip(m.group(3)),
         'caused_by': chain,
         'log_line': start + 1,
-        'read_from': LOG,
+        'read_from': read_from,
     }
 
 
@@ -121,13 +166,14 @@ def _last_error(log_path):
     """The last logged ERROR line, for a JVM that died without unwinding."""
     if not os.path.exists(log_path):
         return None
-    with io.open(log_path, encoding='utf-8', errors='replace') as fh:
-        lines = fh.read().splitlines()
+    lines, truncated = _tail_lines(log_path)
+    read_from = LOG + (' (last %d MiB)' % (TAIL_BYTES >> 20) if truncated
+                       else '')
     for i in range(len(lines) - 1, -1, -1):
         m = LOG_ERROR.search(lines[i])
         if m:
             return {'cause': _clip(m.group(1)), 'log_line': i + 1,
-                    'read_from': LOG}
+                    'read_from': read_from}
     return None
 
 
@@ -172,7 +218,7 @@ def apply_to_meta(meta, run_dir, status=None, rc=None):
 def backfill(results_dir, dry_run=False):
     """Every terminal run record missing a cause, filled from its own log."""
     changed = []
-    for meta_path in sorted(glob.glob(os.path.join(results_dir, '*', META))):
+    for meta_path in _meta_paths(results_dir):
         run_dir = os.path.dirname(meta_path)
         try:
             with io.open(meta_path, encoding='utf-8') as fh:
@@ -224,7 +270,7 @@ def _pid_alive(pid):
 def stale_running(results_dir):
     """(name, pid) of every record claiming `running` whose pid is dead."""
     out = []
-    for meta_path in sorted(glob.glob(os.path.join(results_dir, '*', META))):
+    for meta_path in _meta_paths(results_dir):
         try:
             with io.open(meta_path, encoding='utf-8') as fh:
                 meta = json.load(fh)
@@ -242,7 +288,7 @@ def stale_running(results_dir):
 def missing(results_dir):
     """Terminal run records that still cannot say why they died."""
     out = []
-    for meta_path in sorted(glob.glob(os.path.join(results_dir, '*', META))):
+    for meta_path in _meta_paths(results_dir):
         try:
             with io.open(meta_path, encoding='utf-8') as fh:
                 meta = json.load(fh)

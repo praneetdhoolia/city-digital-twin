@@ -110,8 +110,12 @@ def main():
         ap.error('give a run directory or --all')
 
     if a.all:
-        runs = [os.path.join(RESULTS, d) for d in sorted(os.listdir(RESULTS))
-                if os.path.isdir(os.path.join(RESULTS, d))]
+        roots = [r for r in (os.path.join(RESULTS, 'raw'), RESULTS)
+                 if os.path.isdir(r)]
+        runs = [os.path.join(root, d) for root in roots
+                for d in sorted(os.listdir(root))
+                if os.path.isdir(os.path.join(root, d))
+                and d not in ('raw', 'processed', '_launch')]
     else:
         runs = [a.run_dir]
 

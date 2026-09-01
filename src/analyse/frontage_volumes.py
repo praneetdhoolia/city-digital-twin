@@ -35,6 +35,20 @@ ROOT = os.path.dirname(os.path.dirname(_HERE))
 sys.path.insert(0, os.path.join(ROOT, 'src'))
 import city as _city  # noqa: E402
 
+# a run name resolves through the results store - results/raw first, then a
+# legacy top-level dir - so consumers survived the 9.137 layout change once,
+# here, instead of each composing its own results/ path
+import sys as _sys_rs, os as _os_rs
+_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
+    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
+import results_store as _results_store  # noqa: E402
+
+
+def _resolve_run(name_or_path):
+    return _results_store.resolve(name_or_path) or name_or_path
+
+
+
 CORRIDOR = _city.path('data/processed/network/A1_corridor_road_edges.csv')
 
 
@@ -102,7 +116,7 @@ def main():
     ap.add_argument('--out', default=None)
     a = ap.parse_args()
     run_dir = (a.run if os.path.isdir(a.run)
-               else os.path.join(ROOT, 'results', a.run))
+               else _resolve_run(a.run))
     rec = json.load(open(os.path.join(run_dir, '_run.json'), encoding='utf-8'))
     events = os.path.join(run_dir, 'output', 'output_events.xml.gz')
     if not os.path.exists(events):

@@ -1,0 +1,10 @@
+{
+  "overlay": "f22_gate_25pct",
+  "description": "The first family-F22 arm (DECISIONS.md 9.135): the F21 run stack and demand with every pt journey charged its published Opal fare by citysim.PtFareChargeHandler - distance-banded peak/off-peak tables per submode, the transfer discount, child and Gold Senior/Pensioner classes and the published daily caps, as PersonMoneyEvents at journey close. Until 9.135 every pt ride was free while car paid fuel and parking and taxi the meter; the F21 gate read heavy rail at +161.8% of its disclosed boardings (+131% even on the entries basis, over at every suburban station). What the arm must answer, in order: does heavy rail fall toward its disclosed boardings once riding costs money (#98); where do the displaced pt trips land (car/ride/walk); does bus hold near its band under the same fare (#99); does taxi's relative price position move it toward target (#49). S2 x WEEKDAY at 25%, 300 iterations, innovation off at 240, gated per mode at 100 / 200 / 300 under the loop in GOAL.md. 25% is a user decision at approval (31 Aug): the stated cost of ~25 h was approved and spent at launch; the 9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05, so 25% keeps them. NEVER compare with a 10% arm (9.10, 9.12) and never with any run before the F22 boundary: the price system is part of the run's identity (9.127, 9.135). NOTHING THIS PRODUCES IS A RESULT until it carries _run.json and a relaxed reading.",
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 300,
+    "RUN.machine.threads": 10,
+    "RUN.machine.xmx": "40g"
+  }
+}

@@ -87,10 +87,18 @@ python run.py --scenario S3 --day SAT --fraction 0.10 --iterations 1000
 ```
 
 **The runner names the run directory** —
-`results/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct` — so every run is
-dated, sortable and self-describing. Re-invoking with the same parameters resumes
+`results/raw/<launch yyyymmddThhmmss>_<iterations>it_<sample pct>pct` — so every run
+is dated, sortable and self-describing. Re-invoking with the same parameters resumes
 the completed run (identity is the parameter set in `_run.json`, not the name);
 `--force` starts a fresh directory and overwrites nothing.
+
+**`results/` manages itself** (DECISIONS.md §9.137): `results/raw/` holds run bulk
+as a budgeted cache (`RUN.storage.raw_cap_gb`, oldest runs deleted automatically
+once their findings are extracted); `results/processed/` keeps every run's records
+and mode-reading snapshots permanently. The runner gates its own run every
+`RUN.gate.interval_iterations` iterations and stops it when a mode breaches the
+stop bar. Do not rename, delete or edit anything under `results/` by hand — stop a
+run with `python run.py --stop <name> --cause "..."`.
 
 | Flag | What it does |
 |---|---|
@@ -100,6 +108,7 @@ the completed run (identity is the parameter set in `_run.json`, not the name);
 | `--fraction` `--iterations` `--threads` `--xmx` `--seed` | registry overrides, checked against each field's declared sweep |
 | `--set KEY=VALUE` | a raw MATSim config override, e.g. `ride.constant=-3.4` |
 | `--detach` | launch past `PersonPrepareForSim` and return; the run outlives the shell |
+| `--stop NAME --cause TEXT` | stop a running arm through the harness and record why — the one sanctioned way |
 | `--dry-run` `--list` `--no-metrics` `--force` | resolve-only, list, skip metric extraction, ignore an existing run record |
 
 **`run.py` does not invent an iteration count in code.**
@@ -110,11 +119,11 @@ provenance in the overlay file, not a number in a script.
 After a run:
 
 ```bash
-python src/analyse/extract_metrics.py --run results/<name>
-python src/calibrate/fit.py           --run results/<name>   # calibration half only
-python src/analyse/run_view.py        --run results/<name>   # live + replay, congestion map
+python src/analyse/extract_metrics.py --run <name>           # a bare name resolves via results/raw
+python src/calibrate/fit.py           --run <name>           # calibration half only
+python src/analyse/run_view.py        --run <name>           # live + replay, congestion map
 python src/analyse/build_run_index.py                        # results/INDEX.md
-python src/run/prune_run.py           --run results/<name>   # reclaim per-iteration output
+python src/run/prune_run.py           <name>                 # reclaim per-iteration output
 ```
 
 A run without `_run.json` is not a result, and a run under 250 iterations is a
@@ -199,7 +208,7 @@ python src/calibrate/report.py --run <run dir>
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 450 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
+| Input registry | 452 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -250,10 +259,10 @@ src/java/citysim/            MATSim entry point: parking, fares, ride pairing, t
 src/java_signals/citysim/    the signals entry point and its tram/bus priority controller
 tests/                       check_manifest.py, check_doc_currency.py,
                              check_city_agnostic.py (CI); check_package.py (local)
-results/                     run outputs (gitignored)
+results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 450 declared values, with units, provenance, sweeps
+  registry/                  the 452 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

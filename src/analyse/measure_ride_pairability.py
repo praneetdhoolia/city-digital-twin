@@ -43,6 +43,20 @@ RESULTS = os.path.join(ROOT, 'results')
 sys.path.insert(0, os.path.join(ROOT, 'src'))
 
 import city as _city          # noqa: E402
+
+# a run name resolves through the results store - results/raw first, then a
+# legacy top-level dir - so consumers survived the 9.137 layout change once,
+# here, instead of each composing its own results/ path
+import sys as _sys_rs, os as _os_rs
+_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
+    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
+import results_store as _results_store  # noqa: E402
+
+
+def _resolve_run(name_or_path):
+    return _results_store.resolve(name_or_path) or name_or_path
+
+
 import registry               # noqa: E402
 
 # The rules are the declared ones, read from the field rather than listed here:
@@ -217,7 +231,7 @@ def main():
     ap.add_argument('--json', help='write the full surface here')
     a = ap.parse_args()
 
-    run_dir = a.run if os.path.isdir(a.run) else os.path.join(RESULTS, a.run)
+    run_dir = _resolve_run(a.run) if not os.path.isdir(a.run) else a.run
     if not os.path.isdir(run_dir):
         raise SystemExit('no such run: %s' % a.run)
 

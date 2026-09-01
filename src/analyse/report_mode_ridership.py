@@ -628,6 +628,20 @@ def main():
                          'board (src/analyse/build_status_board.py)')
     a = ap.parse_args()
 
+    # a bare run name resolves through the results store (results/raw first,
+    # then legacy results/<name>); a path that exists is used as given
+    import sys as _sys
+    _sys.path.insert(0, _os.path.join(_os.path.dirname(
+        _os.path.dirname(_os.path.abspath(__file__))), 'run'))
+    import results_store as _store
+    resolved = _store.resolve(a.run)
+    if resolved is None:
+        rec = _store.resolve_records(a.run)
+        hint = (' (its bulk was trimmed; the findings are in %s)' % rec
+                if rec else '')
+        raise SystemExit('no readable run at %s%s' % (a.run, hint))
+    a.run = resolved
+
     import iteration_trips as itr
     if a.trend:
         import contextlib
