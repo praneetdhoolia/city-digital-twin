@@ -87,7 +87,7 @@ rule (§9.138).
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260901T133404_300it_10pct` | running | F23-behaviour-channels | 2 | - |
+| `20260901T133404_300it_10pct` | running | F23-behaviour-channels | 3 | - |
 | `20260901T132710_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `20260901T113040_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `aborted_20260831T165127_300it_25pct` | aborted | F22-pt-fares-priced | 101 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (bike +185.5%, heavy_rail +152.... |
