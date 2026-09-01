@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.137 · **Open family:** F22
+**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
 
 ## What is built
 
@@ -29,7 +29,7 @@
 
 ## Rules that stand
 
-- **No multi-hour run without explicit approval, and approvals are spent on use** (§9.57, §9.62, §9.72). None stands at this handoff; the next arm needs a fresh stated-cost yes. **A gate is also a cost boundary**: the F22 arm's measured pace implied ~45–50 h against a ~25 h approval, so the session ran it to its iteration-100 gate and no further (§9.136).
+- **No multi-hour run without explicit approval, and approvals are spent on use** (§9.57, §9.62, §9.72). The F23 arm `20260901T133404_300it_10pct` runs under the user's 1 Sep goal directive to incorporate the artifact findings and go through the testing phase, costed at the measured 10% pace ~18–21 h (§9.134, §9.138) — that authorisation is SPENT on this launch; the next arm needs a fresh stated-cost yes. **A gate is also a cost boundary**: the F22 arm's measured pace implied ~45–50 h against a ~25 h approval, so the session ran it to its iteration-100 gate and no further (§9.136).
 - **One arm at a time** (#66) — it supersedes the two-arm family-throughput pattern (§9.59, §9.62). Measured: three arms declared 78 GiB on 63.5 GiB and the pagefile grew 8.1 → 19.1 GiB (§9.5); the machine-level stall hit both concurrent arms at the same wall-clock time (#66). Iteration count survives contention; iteration duration does not.
 - **Never recompile into `.tools/classes` while an arm runs.** The environment gate (`bootstrap_toolchain.py --verify`) recompiles both class trees, and a running arm loads from them.
 - **Launch detached** (`run.py ... --detach`); never from an agent tool call by any other route (§9.72, #70).
@@ -60,6 +60,7 @@
 
 ## History
 
+- §9.138 — F23 arm launched under goal directive
 - §9.137 — results store; runs gate themselves
 - §9.136 — 25% pace measured; log read bounded
 - §9.134 — F21 arm to its gate; pace measured

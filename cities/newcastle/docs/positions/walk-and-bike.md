@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
+**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
 
 ## What is built
 
@@ -13,6 +13,8 @@
 - **Access/egress stubs** stay teleported at `RUN.routing.access_walk_beeline_factor` 1.6902 (measured); main walk detours at the road graph's own geometry (§9.54).
 - **Gradient reaches link travel time as physics, not as a scoring weight** (§9.84, #21). `A.gradient.representation` = `link_speed` (`absent` recovers the flat network exactly). A signed `grade_pct` is stamped on run-network links from A1/A6 node elevations (81.9% of walk/bike-capable links) and clamped at `A.gradient.grade_clamp_pct` 20.0 (§9.84). Walk takes Tobler's hiking function — `A.gradient.walk_tobler_slope_coeff` 3.5, `A.gradient.walk_tobler_offset` 0.05 (literature, swept); bike takes a linear Parkin & Rotheram slowdown — `A.gradient.bike_uphill_slowdown_per_pct` 0.065, `A.gradient.bike_downhill_speedup_per_pct` 0.015, `A.gradient.bike_speed_floor_factor` 0.2, `A.gradient.bike_speed_ceiling_factor` 1.3 (§9.84). `citysim.GradientLinkSpeed` serves router and mobsim from one formula; `GradientSignalsNetworkFactory` keeps gradient and signals alive together.
 - **The PT router's direct walk is the network walk**: `RUN.transit_router.direct_walk_basis` = `network`, `RUN.transit_router.direct_walk_factor` 1.0 (§9.121). The stock raptor compared a beeline walk, sent harbour crossings on a ~19 km road detour and counted them as realised walk; 38.3% of residents' PT-plan trips were walk-only on F16 (§9.121).
+- **Motor-traffic stress is priced for bike** (§9.138, #107): every bike-capable run-network link carries a `bike_stress_factor` from `A.bike_stress.aadt_class_by_highway` and the three declared Broach, Dill & Gliebe 2012 felt-distance factors (1.30 / 2.39 / 7.68 by AADT proxy band, purpose-bound sweeps; 47,652 stamped links on S2). `citysim.BikeStressScoring` charges the felt surplus — (factor−1) × the mobsim's own traversal seconds — at trip-weighted VOT × `beta_bike_mode` × marginalUtilityOfMoney, and `citysim.BikeStressDisutility` applies the same factor in the router's bike link cost, so hostile roads are both fled en route and felt in mode choice. `A.bike_stress.representation = absent` recovers the fearless bike (§9.138).
+- **A dense-zone car trip pays a derived parking search time** (§9.138): a charged parking spell in a §9.31 priced zone costs `A.parking.search_min_max` (8.1 min, Shoup 2006; swept 3.5–14) × the zone's own `density_weight` ramp, once at arrival, at the transfer-penalty identity — the §9.136 measured walk/car candidate chosen over physical access/egress stubs, which §9.58 refused. Same home exemption as the price (§9.31).
 - **Bike availability is drawn** per person at `B.population.bike_available_rate` 0.493 (literature, CWANZ; swept 0.30–1.00 — §9.39 declared it at 0.50 assumed, and the registry's later source upgrade wins) and gated at `B.population.bike_min_age` 12 (assumed, swept 0–16, zero disables; §9.84). `AvailabilityModesCalculator` strips bike from the choice set of a person without one; external boundary agents keep it (§9.39).
 - **Short trips get their observed distribution** (§9.69, #30): the gravity draw is a two-component mixture per purpose; the short kernel's mean `B.activity.short_trip_mean_km` 0.7 is derived from `C.constraint.trip_length_km.walk`, and its weight is solved to `B.activity.short_trip_band_share` (HTS Sydney 2012/13 Table 4.4.7, all purposes 18.8% up to 1 km; literature, swept ±25%).
 - **A denied lift drives**: `B.ride.unpaired_fallback` = `licensed_drive_else_walk` (§9.105). Only a passenger who cannot drive is left on foot; `walk` is the control member.
@@ -20,6 +22,7 @@
 
 ## What is measured
 
+- **The stress channel is live, not just declared**: smoke `20260901T132710_2it_1pct` iteration 0 holds 406 `bikeStress` personScore charges totalling −24,500 utils — the seeded arterial-riding bike trips feel the full ×7.68 — and 1,139 `parkingSearch` charges totalling −1,171.8 utils (§9.138). A smoke is plumbing evidence, never a result.
 - **Gate reading, F22 iteration 100** (`results/aborted_20260831T165127_300it_25pct`, §9.136): walk 8.50% against 13.40% (−36.6%) — it crossed its target near iteration 38 and kept falling as car rose to 67.2% (+15.2%); bike 6.30% against 2.21% (+185.5%), drifting down from 8.12% at iteration 20. **The seesaw reproduced F21's gate almost exactly under pt fares** (F21: walk −36.6%, car +16.0%, §9.134) — pricing pt does not price the short car trip.
 - **The imbalance lives inside the car-available group** (§9.135, F21 arm at iteration 100): car-available residents make 78.3% of target-LGA trips and put 86.4% on car, 2.9% on walk; licensed-no-car residents (5.8% of trips) bike 36.0% and walk 34.7%; no-licence residents (15.9%) ride 41.3%, walk 26.6%, bike 16.5%. A short car trip costs almost nothing (`accessEgressType` `none`, §9.54; car constant 0; parking free outside the 150 priced zones).
 - **`accessEgressType = none` is load-bearing, so the short-car-trip cost is a design decision, not a revert** (§9.136): §9.54's `TolerantAgentSource`/`GenericRouteTeleporter` and §9.58's activity-link repair are built on it, and §9.58 explicitly refused re-adding stubs. The derivable candidates: physical car access/egress walk, or a parking search/access time for dense zones extending §9.31's job-density derivation.
@@ -36,7 +39,7 @@
 - **#30** — the sub-1 km trips are generated (§9.107); the walk/car allocation of short trips is the open question, a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107). Destination placement is measured present for the corridor (§9.130).
 - **#21** — the physics channel is built (§9.84); `C.gradient.uphill_penalty_per_pct` 0.09 and `C.gradient.downhill_penalty_per_pct` 0.02 remain scoring weights that reach nothing, named in `not_representable` by `src/build/build_matsim_run_inputs.py`. What closes it: a paired arm differing only in `A.gradient.representation` showing bike's mean trip and time moving toward the observed 5.2 km / 19.2 min, plus a decision to retire or keep the two scoring weights.
 - **#50** — the bike age gate is assumed; no mode by age cell is held (§9.84).
-- **Answered at two gates**: the walk/car balance is one movement (walk −36.6% under car +15–16% at both the F21 and F22 gates, §9.134, §9.136) and survives pt pricing; the decision between the two derivable car-access-cost channels (§9.136) is the user's, queued on the board.
+- **Answered at two gates, now acted on**: the walk/car balance is one movement (walk −36.6% under car +15–16% at both the F21 and F22 gates, §9.134, §9.136) and survives pt pricing; §9.138 chose the derived parking-search channel and the first F23 arm (`20260901T133404_300it_10pct`) carries the reading. Neither channel's effect is measured until its gate.
 - **Walk detour**: main walk at the road graph's ~1.34 rather than the measured 1.6902 flatters walk slightly less than truth; stated, not corrected (§9.54).
 
 ## Refused — do not re-raise
@@ -51,6 +54,7 @@
 
 ## History
 
+- §9.138 — bike stress and parking search built
 - §9.136 — seesaw survives fares; cost decision
 - §9.134 — F21 gate: walk overshot downward
 - §9.131 — licence rate measured from counts

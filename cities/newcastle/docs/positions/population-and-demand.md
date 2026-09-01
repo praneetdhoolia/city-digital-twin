@@ -2,13 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.133 · **Open family:** F20 (F21 opens at the first arm on the rebuilt demand, §9.131)
+**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
 
 ## What is built
 
 **B1 — persons and households (`src/build/build_population.py`, seed 20260810, the 1,500 core SA1s only).**
 
 - Fitted per SA1 to the census marginals: household size (G35), vehicles (G34), dwelling structure (G36), age–sex (G04), labour force (G43/G46), income (G17), occupation (G60); home coordinates jittered within the SA1 at 0.6 of the equivalent-circle radius (§9.1).
+- **The G17 income band now reaches scoring** (§9.138, #108): each resident's weekly band midpoint is stamped as the `income` plan attribute (closed bands by interval identity, the open top band at `C.income.top_band_factor` 1.25 swept; 424,190 of 621,364 WEEKDAY persons carry one) and MATSim core's `IndividualPersonScoringParameters` scales that person's marginalUtilityOfMoney by (average/personal)^`C.income.exponent` (1.0, swept 0.5–1.5). Neg_Nil (109,267 residents) carries no attribute and keeps the subpopulation value by the class's documented fallback; `external`/`freight` are excluded by name. `C.income.representation = absent` recovers the flat-money model (§9.138).
 - Age structure reads G04's grouped 80+ columns, so the 75+ population exists; employment, the full-time/part-time split and unemployment are drawn per (SA1, sex, ABS band) from G46A/B; school attendance per SA1 from G01; the 18+ full-time/part-time education split is observed per SA1 from G15, and `B.population.tertiary_ft_share` is retired (§9.47, §9.61).
 - Licence holding is **measured**: `B.population.licence_rate_by_age_band` (`measured`, sweep proportional 0.05) is the TfNSW Driver Licence Statistics July 2026 snapshot over the ABS estimated resident population at 30 June 2024, pooled 18–24 0.78, 25–34 0.94, 35–44 1.00 (capped), 45–74 0.97–0.98, 75–84 0.92, 85+ 0.51, 12–17 0.08; each person is drawn at their own LGA's rate from `data/processed/observed/licence_rates_by_age_lga.csv` (§9.131). The producing script `cities/newcastle/build/build_licence_rates.py` asserts the vector it derives against the declared field and exits non-zero on drift, so the registry cannot lag its observation (§9.133).
 - Car availability is a licence plus a household vehicle; bike availability is a per-person draw at `B.population.bike_available_rate` 0.493 (`literature`, CWANZ NSW 2025, sweep 0.30–1.00), gated below `B.population.bike_min_age` 12; taxi is gated below `B.taxi.min_unaccompanied_age` 18, both thresholds assumed and swept with zero disabling the gate (§9.39, §9.78, §9.84).
@@ -77,6 +78,7 @@
 
 ## History
 
+- §9.138 — census income reaches money scoring
 - §9.133 — demand chain rebuilt on licence-rate population
 - §9.131 — licence rate measured per LGA
 - §9.129 — bucket rule; carves on drawn pool

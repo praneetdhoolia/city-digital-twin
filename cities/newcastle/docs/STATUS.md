@@ -31,25 +31,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260831T165127_300it_25pct` at **iteration 100** (family `F22-pt-fares-priced`, status `aborted`, 25% sample, launched 2026-08-31T16:51:27, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260831T165127_300it_25pct --it 100` (`--trend` for the direction).
+Read from `20260901T133404_300it_10pct` at **iteration 0** (family `F23-behaviour-channels`, status `running`, 10% sample, launched 2026-09-01T13:34:04, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260901T133404_300it_10pct --it 0` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 67.1877 | 58.3222 | +15.2% | over 10% | share of resident linked trips |
-| 2 | ride | 12.0993 | 20.6000 | -41.3% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 8.4995 | 13.4000 | -36.6% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.6943 | 0.9916 | +70.9% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.3049 | 2.2084 | +185.5% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4287 | 0.3785 | +13.3% | over 10% | share of resident linked trips |
-| 7 | bus | 2.5726 | 2.3819 | +8.0% | ok | share of resident linked trips |
-| 8 | heavy_rail | 16,512 | 6,529 | +152.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 860 | 2,954 | -70.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0285 | 0.1429 | -80.0% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6074 | 15.4698 | -63.8% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 44.3243 | 58.3222 | -24.0% | **STOP** >=20% | share of resident linked trips |
+| 2 | ride | 3.7677 | 20.6000 | -81.7% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 34.2549 | 13.4000 | +155.6% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 2.1055 | 0.9916 | +112.3% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.4893 | 2.2084 | +193.8% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.5430 | 0.3785 | +43.5% | **STOP** >=20% | share of resident linked trips |
+| 7 | bus | 6.5906 | 2.3819 | +176.7% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 39,190 | 6,529 | +500.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,700 | 2,954 | -42.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0249 | 0.1429 | -82.6% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 8.7797 | 15.4698 | -43.2% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
 
-Inside 10%: **bus**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -72,20 +72,22 @@ Inside 10%: **bus**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail
 | Input registry | **462 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **509 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (1 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (1 September 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (1 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (30 August 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (1 September 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (1 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (1 September 2026) · [sampling-and-families](positions/sampling-and-families.md) (1 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (1 September 2026) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (1 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (1 September 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (1 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (30 August 2026) · [population-and-demand](positions/population-and-demand.md) (1 September 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (1 September 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (1 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (1 September 2026) · [sampling-and-families](positions/sampling-and-families.md) (1 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (31 August 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (31 August 2026) · [walk-and-bike](positions/walk-and-bike.md) (1 September 2026) |
 <!-- generated:state end -->
 
-**The package on disk is consistent** (§9.133, §9.135): the 30 run-input sets
-carry the `ptFare` module and `tests/check_package.py` reports ALL CHECKS
-PASSED (re-run 31 Aug, after the fare change; nothing in the package changed
-since). The F22 arm sampled at 25 % under the §9.129 bucket rule (§9.136).
+**The package on disk is consistent** (§9.138): plans and the 30 run-input
+sets rebuilt 1 Sep with the three behaviour channels — the `income`
+attribute, the `bike_stress_factor` stamps and the parking table's
+`search_min` column — and `tests/check_package.py` reports ALL CHECKS
+PASSED (re-run 1 Sep). The F23 arm samples at 10 % under the §9.129 bucket
+rule (§9.138).
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260901T133404_300it_10pct` | running | F23-behaviour-channels | - | - |
+| `20260901T133404_300it_10pct` | running | F23-behaviour-channels | 2 | - |
 | `20260901T132710_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `20260901T113040_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `aborted_20260831T165127_300it_25pct` | aborted | F22-pt-fares-priced | 101 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (bike +185.5%, heavy_rail +152.... |

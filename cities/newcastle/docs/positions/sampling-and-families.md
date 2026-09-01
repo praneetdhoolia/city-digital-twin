@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
+**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
 
 ## What is built
 
@@ -59,7 +59,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## What is open
 
-- The first F22 arm runs at 25% × 300 (user decision at approval, 31 Aug): the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05, so 25% keeps them; the cost of the choice is that its readings never compare with the 10% F21 gate (§9.10, §9.12), only with its own targets.
+- The first F23 arm runs at 10% × 300 (`20260901T133404_300it_10pct`, §9.138): the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05, so 10% keeps them; its readings never compare with the 25% F22 gate (§9.10, §9.12), only with its own targets.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -78,6 +78,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.138 — F23 opens on the behaviour channels
 - §9.131 — F21 opens on licence rebuild
 - §9.129 — bucket rule replaces at-or-below
 - §9.128 — driver detour opens F19
