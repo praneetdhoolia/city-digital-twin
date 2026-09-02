@@ -119,6 +119,7 @@ about its layout will otherwise cost you an hour:
 | **The first F22 arm: the fare moves rail and bus, the gate stops seven modes** | **§9.136** — 25% × 300 by user decision at approval; bus +8.0% is the first mode inside at any gate; rail fell 37,540 → 16,512 still falling; the walk/car seesaw survives fares; 25% pace 630–670 s/it (~45–50 h per 300, not ~25); the carve's over-delivery is the cell aggregation (+12% over the LGA identity), the corridor deficit is structural by distance band, ride decomposes 19.13/16.0/12.1; `run_failure.py` reads a bounded tail |
 | **The results store: bulk a budgeted cache, findings permanent, hands off** | **§9.137** — user directive: `results/raw` (500 GB cap, `RUN.storage.raw_cap_gb`, oldest deleted after findings extraction) and `results/processed` (records + mode snapshots, never trimmed); the runner gates its own run every `RUN.gate.interval_iterations` and stops itself on the hard bar; `run.py --stop` is the one manual path; 122 legacy dirs migrated; supersedes §9.65's never-delete and the by-hand gate stop |
 | **Bike stress, parking search time, income: three literature channels enter** | **§9.138** — from the two research artifacts, on user directive: `bike_stress_factor` per link (Broach et al. 2012 felt-distance factors, swept) charged in score and router; a priced zone's derived search minutes (Shoup 2006, scaled by the §9.31 density ramp) charged once per parking spell; each resident's G17 band midpoint scales marginalUtilityOfMoney (MATSim core, exponent swept). Crowding deferred until fares settle rail (#98). Family F23 declared at launch `20260901T133356`; first arm at 10% × 300 |
+| **The F23 gate: channels move bike and walk, income blunts the fare, the watcher was blind** | **§9.139** — the 25% arm stopped by the session at iteration 100 with 7 modes out: bike +185.5% → +111.2% (the stress channel works), the walk/car seesaw over-swings through its targets, heavy rail +193.2% against F22's +152.9% at the same milestone (income scaling weakens the fare's bite, #108), ferry and light rail untouched; the §9.137 watcher's 64 KiB log-tail read measured blind (ENDS marker 611 MiB behind EOF) and replaced by the `_progress.json` digest |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13675,10 +13676,88 @@ the §9.137 watcher gates it at 100/200/300. **Nothing here is a result**:
 the arm's gate has not read, and the channels' effect is a prediction until
 it does.
 
+## 9.139 The F23 gate at 25%: the channels move bike and walk, income scaling blunts the fare, and the runner's own gate never fired (2 September 2026, twenty-third session; issues #107, #108, #98, #94, #30, #66)
+
+**What was wrong.** Three things, found in sequence. The board still showed the
+10% F23 arm running after both 1 Sep arms had been stopped at the user's
+direction (`aborted_20260901T133404_300it_10pct` under the 25%-runs-only
+directive at iteration ~34; `aborted_20260901T152548_300it_25pct` four minutes
+in, before any reading) — the board-blocks gate was red on arrival. Family F23
+had no gate reading at any fraction. And when the fresh arm reached iteration
+100, the §9.137 gate watcher — built precisely so a person never kills a run at
+a gate again — did not fire: the run sailed into iteration 101 with seven modes
+at or past the stop bar.
+
+**What changed.** A 25% × 300 arm (`20260901T165115_300it_25pct`, S2 WEEKDAY,
+seed 20260810, 40g/10 threads) was launched detached under the user's 2 Sep
+"continue running and tuning" goal directive against the §9.136 ~45–50 h
+costing — that approval is SPENT. The session read the gate at iteration 100
+and stopped the run itself (`run.py --stop`, the gate table as cause). The
+watcher's blindness was then measured, not guessed: `_last_ended_iteration`
+read a 64 KiB `matsim.log` tail for `### ITERATION n ENDS`, and on this arm the
+last ENDS marker sat **611 MiB before EOF** — `NetworkRoutingProvider:138` WARN
+spam (every sampled line in a 2 MiB probe at 300 MiB before EOF) puts the log
+at 51.1 GiB by iteration ~104, so the marker leaves the window within a second
+and the poll returned −1 forever, silently by the watcher's own
+swallow-failures design. The reporter itself is innocent (rc 0 with a GATE
+block from an absolute run path, re-verified). Fixed in `run_matsim.py`:
+`_last_ended_iteration` now reads `iteration` from `_progress.json` — the
+digest's incremental scan, which cannot miss a marker — with the tail read as
+fallback; verified returning 103 against the dead arm. Harness-side only: like
+§9.137 itself, the watcher decides when a run stops, never what a run computes
+— no family boundary, no registry field, no model value.
+
+**Measured.** The iteration-100 gate, all twelve modes
+(`aborted_20260901T165115_300it_25pct`, trips table; reproduce with
+`python src/analyse/report_mode_ridership.py --run aborted_20260901T165115_300it_25pct --it 100`):
+car +14.8% (66.94 vs 58.32, over 10%), ride −40.1% (12.34), walk −27.2%
+(9.76), taxi +76.6% (1.75), bike +111.2% (4.66), motorbike +13.9% (0.43), bus
++16.2% (2.77), heavy rail +193.2% (19,140 vs 6,529 boardings), light rail
+−66.1% (1,000 vs 2,954, AWAY), ferry −80.0% (0.0286), truck level −57.1% (not
+its basis), freight rail 314 = the timetable. Against the four questions
+§9.138 posed: **bike** fell from F22's +185.5% to +111.2% and was still
+falling at the stop (6.55% at it.0 → 4.66) — the stress channel's first
+measured effect, its outflow landing on walk and car, not ride; **the walk/car
+seesaw now over-swings instead of sitting low** — walk passed +8.6% at it.40
+on its way DOWN through its target (car crossing upward ~it.45), so the
+parking-search channel moves the pair but the equilibrium settles past the
+targets, not on them; **income scaling blunted the fare where the fare was
+working** — at the same milestone the flat-fare F22 gate read bus +8.0% INSIDE
+and heavy rail +152.9%, the income-scaled F23 gate reads bus +16.2% and heavy
+rail +193.2% (in-run fall 37,568 → 19,140), and taxi widened +70.9% → +76.6%
+— rail's over-boarders are disproportionately higher-income, so their fare
+deterrent shrank (#108, #98); **ferry and light rail are untouched by all
+three channels** (−80.0% flat; −66.1% AWAY), as by the fare before them (#94,
+#30). Cost: gate reached in ~18.1 h at median 664.9 s/it (`_progress.json`),
+confirming §9.136's 45–50 h per 300; log 51.1 GiB against F22's 47.7.
+
+**Deliberately not done.** No constant was touched and no channel re-tuned on
+this reading — the gate is one reading on a moving curve, and the repair
+choice is the user's root-cause pick. Crowding stays deferred behind rail's
+price-independent residual (§9.138, #98). The arm was not resumed past its
+gate: a gate is also a cost boundary (§9.136). The misleading `cause_detail`
+on `aborted_20260901T152548_300it_25pct` (the benign ASM warning quoted as the
+exception while the `cause` is the user's stop) is left as recorded — the
+record is frozen; the `run_failure.py` warning-vs-exception defect stays open
+on the runs position page. The `NetworkRoutingProvider` log flood is measured
+and named, not yet silenced.
+
+**Consequences.** F23 now has its baseline gate; nothing before its boundary
+compares after (§9.138). The candidate causes, in the order the reading ranks
+them: rail's residual excess is not a price question — the corridor's missing
+CBD end (#30) outranks further fare work; whether income scaling stays as
+built, is swept on its declared members, or is gated `absent` for the next
+family is the user's decision (#108); bike's remaining +111.2% is the car-less
+quarter (§9.123), still falling. The fixed watcher has never fired live — the
+next arm's milestone is its first test. The 25%-runs-only directive stands; no
+run approval stands. **No target value changed, the 67/143 split is untouched,
+nothing here is a result (no `_run.json`).**
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-02 | **The F23 gate read at 25% and the arm stopped; the runner's own gate watcher found blind and fixed (§9.139; issues #107/#108/#98/#94/#30/#66; twenty-third session).** Arm `20260901T165115_300it_25pct` launched under the user's 2 Sep continue directive (SPENT, ~45–50 h stated) and stopped by the session at the iteration-100 gate: 7 modes at or past 20% — heavy rail +193.2%, bike +111.2% (from F22's +185.5%, the stress channel's first measured effect), ferry −80.0%, taxi +76.6%, light rail −66.1% AWAY, ride −40.1%, walk −27.2% — car +14.8%, motorbike +13.9%, bus +16.2% over 10%, none inside; income scaling blunted the fare (F22 same milestone: bus +8.0% inside, rail +152.9%). The §9.137 watcher did not fire: its 64 KiB log-tail iteration read was measured blind (last ENDS marker 611 MiB before EOF; 51.1 GiB log of `NetworkRoutingProvider` WARN spam); `_last_ended_iteration` now reads the `_progress.json` digest, verified on the dead arm — harness-side, no model value, no family boundary. Both 1 Sep user-directed stops recorded; the board's stale blocks regenerated same-day. **No target value changed, the 67/143 split is untouched, nothing here is a result (no `_run.json`).** |
 | 2026-09-01 | **Bike stress, parking search time and income enter the model; family F23 opens at its arm's launch (§9.138; issues #107/#108; twenty-second session; user directive).** From the two research artifacts' ranked findings: every bike-capable link carries a `bike_stress_factor` (Broach, Dill & Gliebe 2012 felt-distance equivalents — 1.30/2.39/7.68 by AADT proxy band, purpose-bound sweeps) charged in score by `citysim.BikeStressScoring` and in the router by `citysim.BikeStressDisutility`; a charged parking spell in a §9.31 priced zone pays its derived search minutes once (Shoup 2006's 8.1 min × the zone's `density_weight`, swept 3.5–14) at the transfer-penalty identity; each resident's G17 weekly band midpoint scales marginalUtilityOfMoney through MATSim core's `IndividualPersonScoringParameters` (exponent 1.0 swept 0.5–1.5; Neg_Nil falls back; external/freight excluded). Plans rebuilt (424,190 of 621,364 WEEKDAY persons carry income), 30 sets reassembled (47,652 stressed links on S2), manifest 509. Registry 452 → **462**, ledger 0, `CONFIG_REFERENCE.md` regenerated, `check_package.py` ALL CHECKS PASSED. Smoke verified all three channels live; family `F23-behaviour-channels` declared from `20260901T133356` and arm `20260901T133404_300it_10pct` launched at the measured ~18–21 h pace, verified iterating. Crowding deferred until fares settle rail (#98). **No target value changed, the 67/143 split is untouched, nothing here is a result (no gate has read on this boundary).** |
 | 2026-09-01 | **The results store lands: run bulk becomes a 500 GB budgeted cache, findings become permanent, and the run lifecycle is automated end to end (§9.137; user directive; twenty-first session).** `src/run/results_store.py` owns `results/raw` (bulk) and `results/processed` (records mirrored at every transition + `modes_trend.txt`/`modes_final.json` snapshots); fields `RUN.storage.raw_cap_gb` 500 and `RUN.gate.interval_iterations` 100 declared (definition); the runner gate-watches its own run and stops itself on the hard bar with the verdict as cause; `run.py --stop <name> --cause` replaces every by-hand kill/rename; raw is trimmed oldest-first at harness start and run end with deletions logged to `processed/_trim_log.json`; 122 legacy run dirs migrated; eleven consumers resolve through the store. Supersedes §9.65's "the harness never deletes a run directory" for raw bulk only. Registry 450 → 452; `CONFIG_REFERENCE.md` regenerated. **No model value changed, no target moved; the 67/143 split is untouched; the store cannot alter a result.** |
 | 2026-09-01 | **The first F22 arm ran to its iteration-100 gate and was stopped: the fare moves rail and bus, seven modes stand out (§9.136; issues #98/#99/#93/#30/#86/#82/#96/#66; twenty-first session).** Family `F22-pt-fares-priced` declared at launch (`from_launch` 20260831T164923); arm `20260831T165127_300it_25pct` — 25% × 300 by the user's decision at approval, ~25 h stated, spent — stopped at the gate with 7 modes at or past 20% and **bus inside its band (+8.0%), the first of the twelve at any gate**; heavy rail fell 37,540 → 16,512 boardings inside the arm, still falling; the walk/car seesaw reproduced F21's gate under fares; truck at stations −45.7%. Measured 25% pace 630–670 s/it (~45–50 h per 300). The PC crashed after the gate kill; records written on resume. No-run measurements: the motorbike carve's bias is the `sa1_thinned` cell aggregation (+12% over the target LGA identity; draw and pool exact); the corridor deficit is structural by distance band; ride decomposes generated 19.13% / bound 16.0% / realised 12.1%. `src/run/run_failure.py` reads a bounded 64 MiB tail (its whole-log read exhausted memory on the 6.9 GB log). **No model value changed, no target moved; the 67/143 split is untouched; nothing here is a result (no `_run.json`).** |
