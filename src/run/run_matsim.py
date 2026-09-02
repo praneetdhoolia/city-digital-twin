@@ -722,7 +722,24 @@ GATE_STOP = '_gate_stop.json'
 
 
 def _last_ended_iteration(run_dir):
-    """The newest '### ITERATION n ENDS' in the log's tail, or -1."""
+    """The run's newest iteration: the progress digest first, the log tail second.
+
+    The digest (`_progress.json`) scans the log incrementally and cannot miss a
+    marker. A fixed 64 KiB tail can: at the 25% arm's log rate the ENDS marker
+    is flushed out of the tail within a second of being written (measured 611
+    MiB behind EOF on `aborted_20260901T165115_300it_25pct`), which left the
+    9.137 gate watcher blind for a whole run. The digest's figure may be an
+    iteration that has BEGUN but not ended; the caller already retries a
+    milestone whose tables are not written yet, so that is safe.
+    """
+    try:
+        with open(os.path.join(run_dir, '_progress.json'),
+                  encoding='utf-8') as fh:
+            it = json.load(fh).get('iteration')
+        if isinstance(it, int):
+            return it
+    except (OSError, ValueError):
+        pass
     log = os.path.join(run_dir, 'matsim.log')
     try:
         size = os.path.getsize(log)

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 31 August 2026 · **Record read through:** §9.134 · **Open family:** F21
+**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
 
 ## What is built
 
@@ -19,7 +19,7 @@
 
 ## What is measured
 
-- **Gate reading, F21 iteration 100: taxi 1.66% against 0.99%, +67.4%, flat at 1.57–1.67% across the arm** (`results/aborted_20260830T222642_300it_10pct`, §9.134) — the deepest reading of any family, and the flat band every arm since F15 has read.
+- **Gate reading, F23 iteration 100: taxi 1.75% against 0.99%, +76.6%, flat at 1.52–1.75% across the arm, mean trip 12.82 km** (`results/raw/aborted_20260901T165115_300it_25pct`, §9.139). The flat band has now widened slightly at each pricing change it did not share in: F21 +67.4% (§9.134), F22 +70.9% under pt fares (§9.136), F23 +76.6% under income-scaled money sensitivity (§9.139, #108) — everything else got costlier or its cost got lighter for the rich; taxi's meter did not move.
 - **F17 iteration 50 read 1.51% (+52%)**, flat while car and walk converged (§9.126); every arm since F15 reads taxi flat between +36% and +67% (§9.120, §9.126, §9.134).
 - **The fleet binds under load and relaxes when it does not:** probe `20260829T171626_2it_1pct` refused 24 of 274 requests (8.8%) at iteration 1 and none of 177 at iteration 2 (§9.99). Under the full-choice-set seed the iteration-0 flood is 34,870 requests with 85.7% refused, decaying as plans are scored (§9.121).
 - **The fare binds, hard.** The per-kilometre rate moved taxi elevenfold on the `taxi_fare_stress_1pct` / `taxi_fare_control_1pct` pair (`cities/newcastle/overlays/runs/`), while the innovation cutoff moved it about 11% (§9.91).
@@ -49,6 +49,7 @@
 
 ## History
 
+- §9.139 — F23 gate: band widens to +77%
 - §9.134 — F21 gate: taxi flat at +67%
 - §9.126 — F17 held taxi at +52%
 - §9.121 — seed flood refused, then decays

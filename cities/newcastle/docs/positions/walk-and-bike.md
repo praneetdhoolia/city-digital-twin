@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
+**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
 
 ## What is built
 
@@ -22,6 +22,7 @@
 
 ## What is measured
 
+- **Gate reading, F23 iteration 100** (`results/raw/aborted_20260901T165115_300it_25pct`, §9.139): **bike 4.66% against 2.21% (+111.2%), from +185.5% at F22's gate — the stress channel's first measured effect** — still falling (6.55% at it.0) at the stop. Walk 9.76% against 13.40% (−27.2%, from F22's −36.6%): the pair crossed their targets near iteration 45–50 under the parking search time and kept going — car reached 66.94% (+14.8%), walk kept falling. Bike's outflow landed on walk and car, not on ride (−40.1%, F22 −41.3%).
 - **The stress channel is live, not just declared**: smoke `20260901T132710_2it_1pct` iteration 0 holds 406 `bikeStress` personScore charges totalling −24,500 utils — the seeded arterial-riding bike trips feel the full ×7.68 — and 1,139 `parkingSearch` charges totalling −1,171.8 utils (§9.138). A smoke is plumbing evidence, never a result.
 - **Gate reading, F22 iteration 100** (`results/aborted_20260831T165127_300it_25pct`, §9.136): walk 8.50% against 13.40% (−36.6%) — it crossed its target near iteration 38 and kept falling as car rose to 67.2% (+15.2%); bike 6.30% against 2.21% (+185.5%), drifting down from 8.12% at iteration 20. **The seesaw reproduced F21's gate almost exactly under pt fares** (F21: walk −36.6%, car +16.0%, §9.134) — pricing pt does not price the short car trip.
 - **The imbalance lives inside the car-available group** (§9.135, F21 arm at iteration 100): car-available residents make 78.3% of target-LGA trips and put 86.4% on car, 2.9% on walk; licensed-no-car residents (5.8% of trips) bike 36.0% and walk 34.7%; no-licence residents (15.9%) ride 41.3%, walk 26.6%, bike 16.5%. A short car trip costs almost nothing (`accessEgressType` `none`, §9.54; car constant 0; parking free outside the 150 priced zones).
@@ -39,7 +40,8 @@
 - **#30** — the sub-1 km trips are generated (§9.107); the walk/car allocation of short trips is the open question, a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107). Destination placement is measured present for the corridor (§9.130).
 - **#21** — the physics channel is built (§9.84); `C.gradient.uphill_penalty_per_pct` 0.09 and `C.gradient.downhill_penalty_per_pct` 0.02 remain scoring weights that reach nothing, named in `not_representable` by `src/build/build_matsim_run_inputs.py`. What closes it: a paired arm differing only in `A.gradient.representation` showing bike's mean trip and time moving toward the observed 5.2 km / 19.2 min, plus a decision to retire or keep the two scoring weights.
 - **#50** — the bike age gate is assumed; no mode by age cell is held (§9.84).
-- **Answered at two gates, now acted on**: the walk/car balance is one movement (walk −36.6% under car +15–16% at both the F21 and F22 gates, §9.134, §9.136) and survives pt pricing; §9.138 chose the derived parking-search channel and the first F23 arm (`20260901T133404_300it_10pct`) carries the reading. Neither channel's effect is measured until its gate.
+- **The seesaw now over-swings instead of sitting low** (§9.139): under the parking search time walk and car pass THROUGH their targets in-run and keep going (walk −27.2% low, car +14.8% high at the F23 gate; walk was momentarily +8.6% at it.40). Whether the equilibrium overshoots because the search minutes are one-shot at arrival (no within-day feedback) or because walk's own cost dominates past the crossing is the next family's question — not a constant to tune (§9.123 split first).
+- **Bike's residual after the stress channel** (§9.139): +111.2% and falling at the stop; the remaining excess is the car-less quarter's missing alternatives (§9.123: 95.4% of bike-choosers have no car) — the stress factors' sweep members are the declared axis if the fall stalls, never an ASC.
 - **Walk detour**: main walk at the road graph's ~1.34 rather than the measured 1.6902 flatters walk slightly less than truth; stated, not corrected (§9.54).
 
 ## Refused — do not re-raise
@@ -54,6 +56,7 @@
 
 ## History
 
+- §9.139 — both channels' first gate reading
 - §9.138 — bike stress and parking search built
 - §9.136 — seesaw survives fares; cost decision
 - §9.134 — F21 gate: walk overshot downward
