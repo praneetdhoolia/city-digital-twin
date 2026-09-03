@@ -100,15 +100,6 @@
             "type": "number",
             "minimum": 0
           }
-        },
-        "lr_share_of_pt_legs": {
-          "type": [
-            "number",
-            "null"
-          ],
-          "minimum": 0,
-          "maximum": 1,
-          "description": "Hypothesis A1's metric: light rail person-legs over TOTAL PT person-legs across the whole study area. This is NOT the observed 20.8% figure, which is light rail over (light rail + NISC 1 bus) TAPS and is an UPPER BOUND on A1. Never calibrate A1 against 20.8%."
         }
       }
     },

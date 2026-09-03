@@ -35,7 +35,8 @@ warnings.filterwarnings('ignore')
 
 ZON = _city.path('data/processed/zones')
 LU = _city.path('data/processed/landuse')
-CEN = _city.path('data/processed/census')
+# The census is read through the city's reader adapter (issue #62 A5).
+READERS = _city.readers()
 OUT = _city.path('data/processed/landuse')
 
 # relative workplace intensity per POI group (jobs per establishment, indicative)
@@ -44,7 +45,9 @@ JOB_WEIGHT = CFG.get('D.attraction.job_weight_by_category')
 PURPOSE_WEIGHT = CFG.get('D.attraction.purpose_weight')
 
 
-def main():
+def main(out_dir=None):
+    global OUT
+    OUT = out_dir or OUT
     sa1 = gpd.read_file(os.path.join(ZON, 'zones_SA1.gpkg'))
     sa1['SA1_CODE21'] = sa1['SA1_CODE21'].astype(str)
     poi = pd.read_csv(os.path.join(LU, 'D1_poi.csv'))
@@ -64,52 +67,26 @@ def main():
     d = base.merge(grp, on='SA1_CODE21', how='left').fillna(
         {c: 0 for c in JOB_WEIGHT})
 
-    # ---- residential side: population and dwellings per SA1 ----
-    g01 = pd.read_csv(os.path.join(CEN, 'census2021_G01_SA1.csv'), low_memory=False)
-    kc = [c for c in g01.columns if c.upper().startswith('SA1_CODE')][0]
-    g01[kc] = g01[kc].astype(str)
-    pcol = 'Tot_P_P' if 'Tot_P_P' in g01.columns else [c for c in g01.columns if c.endswith('_P')][0]
-    d = d.merge(g01[[kc, pcol]].rename(columns={kc: 'SA1_CODE21', pcol: 'population'}),
-                on='SA1_CODE21', how='left')
-    g36 = pd.read_csv(os.path.join(CEN, 'census2021_G36_SA1.csv'), low_memory=False)
-    k36 = [c for c in g36.columns if c.upper().startswith('SA1_CODE')][0]
-    g36[k36] = g36[k36].astype(str)
-    dw = 'Total_PDs_Dwellings' if 'Total_PDs_Dwellings' in g36.columns else None
-    occ = [c for c in g36.columns if 'Occup_priv_dwgs' in c and c.endswith('Total')]
-    d = d.merge(g36[[k36] + ([dw] if dw else []) + occ[:1]].rename(
-        columns={k36: 'SA1_CODE21', dw: 'dwellings_total'}), on='SA1_CODE21', how='left')
-    if occ:
-        d = d.rename(columns={occ[0]: 'dwellings_occupied'})
+    # ---- residential side: population and dwellings per zone, through the
+    # city's reader adapter (issue #62 A5, DECISIONS.md 9.140) ----
+    res = READERS.residence_counts().rename(columns={'zone_id': 'SA1_CODE21'})
+    d = d.merge(res, on='SA1_CODE21', how='left')
     d['population'] = pd.to_numeric(d['population'], errors='coerce').fillna(0).astype(int)
     for c in ['dwellings_total', 'dwellings_occupied']:
         if c in d.columns:
             d[c] = pd.to_numeric(d[c], errors='coerce').fillna(0).astype(int)
 
-    # ---- jobs: WPP SA2 totals disaggregated to SA1 by workplace POI index ----
-    w09b = pd.read_csv(os.path.join(CEN, 'census2021_W09B_POW_SA2.csv'), low_memory=False)
-    kw = [c for c in w09b.columns if 'SA2_CODE' in c.upper() or c.upper().startswith('POW')][0]
-    w09b[kw] = w09b[kw].astype(str).str.replace('POW', '', regex=False)
-    jobs_sa2 = w09b[[kw, 'Tot_P']].rename(columns={kw: 'SA2_CODE21', 'Tot_P': 'jobs_sa2'})
-    jobs_sa2['SA2_CODE21'] = jobs_sa2['SA2_CODE21'].astype(str)
-    jobs_sa2['jobs_sa2'] = pd.to_numeric(jobs_sa2['jobs_sa2'], errors='coerce').fillna(0)
-
-    # jobs by ANZSIC division at POW SA2 -> the D1 `employment` schema
-    ind = []
-    for part in ['W09A', 'W09B']:
-        w = pd.read_csv(os.path.join(CEN, 'census2021_%s_POW_SA2.csv' % part), low_memory=False)
-        k = [c for c in w.columns if 'SA2_CODE' in c.upper() or c.upper().startswith('POW')][0]
-        w[k] = w[k].astype(str).str.replace('POW', '', regex=False)
-        tot_p = [c for c in w.columns if c.endswith('_Tot_P')]
-        if tot_p:
-            m = w[[k] + tot_p].rename(columns={k: 'SA2_CODE21'})
-            ind.append(m.set_index('SA2_CODE21'))
-    if ind:
-        emp = pd.concat(ind, axis=1).reset_index()
+    # ---- jobs: place-of-work totals disaggregated to SA1 by workplace POI
+    # index; the industry division table is the census's own vocabulary ----
+    jobs_sa2, industry, n_ind = READERS.workplace_jobs()
+    jobs_sa2 = jobs_sa2.rename(columns={'workplace_zone': 'SA2_CODE21', 'jobs': 'jobs_sa2'})
+    if industry is not None:
+        emp = industry.reset_index().rename(columns={'workplace_zone': 'SA2_CODE21'})
         emp = emp.merge(jobs_sa2, on='SA2_CODE21', how='left')
         emp['year'] = 2021
         emp.to_csv(os.path.join(OUT, 'D1_employment_by_anzsic_POW_SA2.csv'), index=False)
         print('wrote D1_employment_by_anzsic_POW_SA2.csv: %d SA2 x %d industry columns'
-              % (len(emp), len(tot_p)))
+              % (len(emp), n_ind))
 
     d['job_index'] = sum(d[c] * w for c, w in JOB_WEIGHT.items())
     d['SA2_CODE21'] = d['SA2_CODE21'].astype(str)
@@ -153,4 +130,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument('--out', default=None,
+                    help='override the landuse output directory (a verification '
+                         'build writes beside the canonical one, never over it)')
+    main(ap.parse_args().out)

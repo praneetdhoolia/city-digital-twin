@@ -6,17 +6,17 @@
     "RUN.controler.last_iteration": 40,
     "RUN.machine.threads": 8,
     "RUN.machine.xmx": "12g",
-    "B.taxi.fare_per_km_taxi_aud": 50.4,
-    "B.taxi.fare_per_km_rideshare_aud": 30.0
+    "B.taxi.fare_per_km_taxi": 50.4,
+    "B.taxi.fare_per_km_rideshare": 30.0
   },
   "allow_outside_sweep": [
     "RUN.controler.last_iteration",
-    "B.taxi.fare_per_km_taxi_aud",
-    "B.taxi.fare_per_km_rideshare_aud"
+    "B.taxi.fare_per_km_taxi",
+    "B.taxi.fare_per_km_rideshare"
   ],
   "justification": {
     "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: 40 iterations is a diagnostic depth, chosen because the F12 arm showed taxi reaching 4.2% by iteration 10 and 5.3% by iteration 20, so the mechanism under test is plainly visible well before 40. The value sits far below the range so any output carrying it is obviously not a result.",
-    "B.taxi.fare_per_km_taxi_aud": "HELD FIXED at the Fares Order urban Distance Rate, and deliberately broken here rather than quietly re-declared. The field's own departure condition is a stress test or new evidence; this is the former. Twenty times the regulated rate is not a claim about any fare - it is chosen precisely because no defensible fare is anywhere near it, so a taxi share that survives it cannot be explained by price. The regulated value is untouched in the registry and every modelling run keeps it.",
-    "B.taxi.fare_per_km_rideshare_aud": "Same test, same reason: the emitted monetaryDistanceRate is a BLEND of the taxi and rideshare rates weighted by B.taxi.rideshare_trip_share, so moving only one of the two would leave two thirds of the blend at its declared value and blunt the very term being tested. Both are moved together so the blend moves by the full factor."
+    "B.taxi.fare_per_km_taxi": "HELD FIXED at the Fares Order urban Distance Rate, and deliberately broken here rather than quietly re-declared. The field's own departure condition is a stress test or new evidence; this is the former. Twenty times the regulated rate is not a claim about any fare - it is chosen precisely because no defensible fare is anywhere near it, so a taxi share that survives it cannot be explained by price. The regulated value is untouched in the registry and every modelling run keeps it.",
+    "B.taxi.fare_per_km_rideshare": "Same test, same reason: the emitted monetaryDistanceRate is a BLEND of the taxi and rideshare rates weighted by B.taxi.rideshare_trip_share, so moving only one of the two would leave two thirds of the blend at its declared value and blunt the very term being tested. Both are moved together so the blend moves by the full factor."
   }
 }
