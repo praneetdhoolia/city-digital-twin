@@ -8,12 +8,11 @@ per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
 **Last updated:** 3 September 2026 — every open issue worked to closed or
-`awaiting-run` on the user's directive, now GOAL.md requirement 10 with a gate
-the launcher enforces (§9.140). Six issues closed on evidence; seven dead
-registry fields retired; the S0 detour measured and the external interaction
-rate derived from the 2011 journey-to-work flow; the input contract made
-city-free; the motorbike carve conserved per LGA and the leaf subtour mix
-repaired at the seed; the package rebuilt, opening F24 at its first launch.
+`awaiting-run` (GOAL.md requirement 10, §9.140) and the package rebuilt,
+opening F24 at its first launch; the first whole-repository assessment
+lodged (`docs/reports/20260903T134517_project_report.html`): 14 defects confirmed
+at HEAD and filed as #112–#137, none needing a run — the gate watcher
+(#112) would record a passing arm as aborted, so it is fixed first.
 
 ## The goal
 
@@ -73,7 +72,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 | Input registry | **457 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **511 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (3 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (3 September 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (3 September 2026) · [population-and-demand](positions/population-and-demand.md) (3 September 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (3 September 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (3 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (3 September 2026) · [sampling-and-families](positions/sampling-and-families.md) (3 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (3 September 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (30 August 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (2 September 2026) · [walk-and-bike](positions/walk-and-bike.md) (3 September 2026) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (3 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (3 September 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (3 September 2026) · [population-and-demand](positions/population-and-demand.md) (3 September 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (3 September 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (3 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (3 September 2026) · [sampling-and-families](positions/sampling-and-families.md) (3 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (3 September 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026) · [walk-and-bike](positions/walk-and-bike.md) (3 September 2026) |
 <!-- generated:state end -->
 
 **The package on disk is consistent and is the F24 build** (§9.140): chains,
@@ -100,16 +99,18 @@ src/run/issue_gate.py`), and the launcher refuses otherwise.
 
 ## Next
 
-1. **The first F24 arm** under a fresh stated-cost approval (~45–50 h at
+1. **Fix the assessment's defects before any arm** (#112–#127; none needs
+   a run): #112 first, then the taxi restore (#113), the board's truck
+   deviation (#114) and the two data producers that cannot rebuild their
+   layer (#115, #116). The launcher refuses while they are open (requirement 10).
+2. **The first F24 arm** under a fresh stated-cost approval (~45–50 h at
    25% × 300, §9.136): it reads all twelve modes at its gate and, on top,
    the carve at its identity (#93), the leaf stand-aside log (#96), the
    ferry's near-wharf split and the choice-set survival (#94, §9.140).
-2. **The user picks the next root cause** (§9.139, §9.140): the corridor's
+3. **The user picks the next root cause** (§9.139, §9.140): the corridor's
    missing CBD end (#30, floorspace-weighted attraction vs an agglomeration
    term); the income channel's disposition (#108); the fifth binder pass
    for the unbindable ride classes or a stated limitation (#86).
-3. **Nothing else is open without a run**: the gate refuses a launch while
-   an unlabelled issue exists (GOAL.md requirement 10, §9.140).
 
 **Decisions required:** the root-cause pick, the income-channel
 disposition and the #86 binder decision above; enable the Task Scheduler
@@ -130,6 +131,7 @@ operational log (#66); whether the S2 base grants the tram signal priority
 | Traffic counts far below observation at 30 stations | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) | F21 counts |
 | Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F24 arm (§9.140) |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
+| The 3 Sep assessment's 26 findings: 14 defects, 9 risks and gaps, 3 document drifts | #112 #113 #114 #115 #116 #117 #118 #119 #120 #121 #122 #123 #124 #125 #126 #127 #128 #129 #130 #131 #132 #133 #134 #135 #136 #137 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | none — every one is fixable without a run (`docs/reports/20260903T134517_project_report.html`) |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |
 | Convergence horizon: 250 asked, 1000 declared | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
 

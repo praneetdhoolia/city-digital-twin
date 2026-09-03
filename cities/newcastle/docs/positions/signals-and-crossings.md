@@ -1,8 +1,9 @@
 # Signals, SCATS and level crossings — current position
 
+Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description; `.claude/CLAUDE.md` and `STATUS.md` no longer do) describe the pre-§9.88 state; §9.88 is newer and wins. The precise statement is: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 30 August 2026 · **Record read through:** §9.131 · **Open family:** F20
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -33,7 +34,6 @@
 | Offset between a train's nearest stop and the crossing | Not modelled; under a minute at both sites, stated (§9.90) |
 | Charging dwell | **Unobtained**, swept, selected per scenario (§9.76) |
 
-Living documents that still say "SCATS phasing is unobtained and handled by sweep" (`.claude/CLAUDE.md`, `STATUS.md`, the S2b overlay description, the `A.signals.tsp.mode` description) describe the pre-§9.88 state; §9.88 is newer and wins. The precise statement is: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 
 ## What is measured
 
@@ -51,6 +51,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 - Offsets remain a stated limitation with no derivation path short of the library itself (§9.88).
 - Charging dwell field measurement stays the second data priority of §13; `A.signals.delay_per_intersection_s` 26 [15–40] now serves only the `implicit_delay` arm (§9.76).
 - Comparability: every signal or crossing change is a family boundary; F12 opened at §9.88 and nothing before it compares to anything after (`cities/newcastle/docs/run_families.json`).
+- **The SCATS priority extension is a no-op when the donor stage precedes the tram stage** (#125), and the two controllers disagree on the lateness boundary; the corridor pedestrian-phase flag is 1 in both branches of `build_corridor_layers.py` (#120).
 
 ## Refused — do not re-raise
 

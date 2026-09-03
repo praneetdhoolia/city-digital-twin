@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -35,6 +35,7 @@
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order and nothing else (§9.94). Acquiring the incidence is the honest route to any person-level availability.
 - **The target is derived and weak** — a band, not a count — and the mean-distance yardstick (5.2 km) is the folded HTS "Other" figure shared with bike, so a deviation against it is not independent evidence about taxi (`data/processed/validation/mode_targets_by_mode.csv`, §9.42).
 - Umbrella issue #49 stays open for the converged measurements; #88 (physicality) and #90 (supply) are closed.
+- **Refused taxi legs are restored through an orphaned `Leg` reference** (#113): under the finite fleet a refused leg stays walk in plan memory permanently, the §9.81 ratchet inside the taxi engine; the F23 reading of +76.6 % (§9.139) was taken under it.
 
 ## Refused — do not re-raise
 
