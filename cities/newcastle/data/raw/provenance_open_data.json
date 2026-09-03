@@ -205,5 +205,14 @@
     "bytes": 306302,
     "sha256": "18531d1e3c41b26ed91fd6ccd83db01c6453b288fe43452d06f6f311f8944821",
     "retrieved": "2026-08-12"
+  },
+  {
+    "path": "jtw/bts_jtw_table01_2011_v1_0.zip",
+    "url": "https://opendata.transport.nsw.gov.au/data/dataset/66ee70ff-eb4f-45e5-b45b-90ce484ec178/resource/2dd13d56-2894-4153-bbab-972550629bfe/download/bts_jtw_table01_2011_v1_0.zip",
+    "description": "TfNSW Journey to Work 2011, Table 01: origin SA2 x destination SA2, employed persons (2011 Census)",
+    "licence": "CC-BY 4.0",
+    "bytes": 2169455,
+    "sha256": "c680d73c9b4a47458010dd567ae64a18858686b1341f804aa8f009fadcfef014",
+    "retrieved": "2026-09-03"
   }
 ]

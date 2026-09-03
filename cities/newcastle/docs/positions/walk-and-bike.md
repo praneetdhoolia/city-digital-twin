@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -11,7 +11,7 @@
 - **Road rules**: `A.network.pedestrian_excluded_classes` and `A.network.bicycle_excluded_classes` are both `[motorway, motorway_link]` — §9.58 corrected the walk list from §9.54's trunk exclusion, which mis-stated the law and severed the walkable city. Each mode is stripped from links outside its largest strongly connected component, and a one-way carriageway carries a walk/bike reverse complement (16,603 on S2, §9.58).
 - **The walk wedge is repaired** (§9.58): `ActivityLinkAssigner` pins each activity to a link carrying every mode its person can use, so the qsim's first hop connects; `RUN.replanning.strategy_subpopulations` withholds `SubtourModeChoice` from boundary agents. #60's filed suspicion (the walk router ignores `disallowedNextLinks`) was refuted in the pinned engine's bytecode (§9.58).
 - **Access/egress stubs** stay teleported at `RUN.routing.access_walk_beeline_factor` 1.6902 (measured); main walk detours at the road graph's own geometry (§9.54).
-- **Gradient reaches link travel time as physics, not as a scoring weight** (§9.84, #21). `A.gradient.representation` = `link_speed` (`absent` recovers the flat network exactly). A signed `grade_pct` is stamped on run-network links from A1/A6 node elevations (81.9% of walk/bike-capable links) and clamped at `A.gradient.grade_clamp_pct` 20.0 (§9.84). Walk takes Tobler's hiking function — `A.gradient.walk_tobler_slope_coeff` 3.5, `A.gradient.walk_tobler_offset` 0.05 (literature, swept); bike takes a linear Parkin & Rotheram slowdown — `A.gradient.bike_uphill_slowdown_per_pct` 0.065, `A.gradient.bike_downhill_speedup_per_pct` 0.015, `A.gradient.bike_speed_floor_factor` 0.2, `A.gradient.bike_speed_ceiling_factor` 1.3 (§9.84). `citysim.GradientLinkSpeed` serves router and mobsim from one formula; `GradientSignalsNetworkFactory` keeps gradient and signals alive together.
+- **Gradient reaches link travel time as physics, and only as physics** (§9.84, §9.140, #21 closed): the two `C.gradient.*` utility weights that reached nothing were retired on 3 Sep 2026, with the PT walk-access decay group (`C.walk.decay_*`, `gaussian_*`, `max_considered_m`) — the scored access walk is the continuous penalty proposal 6.3 asked for, and a swept field read by nothing was a sensitivity band of zero by construction (§9.140). `A.gradient.representation` = `link_speed` (`absent` recovers the flat network exactly). A signed `grade_pct` is stamped on run-network links from A1/A6 node elevations (81.9% of walk/bike-capable links) and clamped at `A.gradient.grade_clamp_pct` 20.0 (§9.84). Walk takes Tobler's hiking function — `A.gradient.walk_tobler_slope_coeff` 3.5, `A.gradient.walk_tobler_offset` 0.05 (literature, swept); bike takes a linear Parkin & Rotheram slowdown — `A.gradient.bike_uphill_slowdown_per_pct` 0.065, `A.gradient.bike_downhill_speedup_per_pct` 0.015, `A.gradient.bike_speed_floor_factor` 0.2, `A.gradient.bike_speed_ceiling_factor` 1.3 (§9.84). `citysim.GradientLinkSpeed` serves router and mobsim from one formula; `GradientSignalsNetworkFactory` keeps gradient and signals alive together.
 - **The PT router's direct walk is the network walk**: `RUN.transit_router.direct_walk_basis` = `network`, `RUN.transit_router.direct_walk_factor` 1.0 (§9.121). The stock raptor compared a beeline walk, sent harbour crossings on a ~19 km road detour and counted them as realised walk; 38.3% of residents' PT-plan trips were walk-only on F16 (§9.121).
 - **Motor-traffic stress is priced for bike** (§9.138, #107): every bike-capable run-network link carries a `bike_stress_factor` from `A.bike_stress.aadt_class_by_highway` and the three declared Broach, Dill & Gliebe 2012 felt-distance factors (1.30 / 2.39 / 7.68 by AADT proxy band, purpose-bound sweeps; 47,652 stamped links on S2). `citysim.BikeStressScoring` charges the felt surplus — (factor−1) × the mobsim's own traversal seconds — at trip-weighted VOT × `beta_bike_mode` × marginalUtilityOfMoney, and `citysim.BikeStressDisutility` applies the same factor in the router's bike link cost, so hostile roads are both fled en route and felt in mode choice. `A.bike_stress.representation = absent` recovers the fearless bike (§9.138).
 - **A dense-zone car trip pays a derived parking search time** (§9.138): a charged parking spell in a §9.31 priced zone costs `A.parking.search_min_max` (8.1 min, Shoup 2006; swept 3.5–14) × the zone's own `density_weight` ramp, once at arrival, at the transfer-penalty identity — the §9.136 measured walk/car candidate chosen over physical access/egress stubs, which §9.58 refused. Same home exemption as the price (§9.31).
@@ -38,7 +38,7 @@
 ## What is open
 
 - **#30** — the sub-1 km trips are generated (§9.107); the walk/car allocation of short trips is the open question, a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107). Destination placement is measured present for the corridor (§9.130).
-- **#21** — the physics channel is built (§9.84); `C.gradient.uphill_penalty_per_pct` 0.09 and `C.gradient.downhill_penalty_per_pct` 0.02 remain scoring weights that reach nothing, named in `not_representable` by `src/build/build_matsim_run_inputs.py`. What closes it: a paired arm differing only in `A.gradient.representation` showing bike's mean trip and time moving toward the observed 5.2 km / 19.2 min, plus a decision to retire or keep the two scoring weights.
+- **The gradient channel's effect is unmeasured**: no paired arm differing only in `A.gradient.representation` has read bike's mean trip and time against the observed 5.2 km / 19.2 min (§9.84); #21 is closed on the retirement, not on that measurement (§9.140).
 - **#50** — the bike age gate is assumed; no mode by age cell is held (§9.84).
 - **The seesaw now over-swings instead of sitting low** (§9.139): under the parking search time walk and car pass THROUGH their targets in-run and keep going (walk −27.2% low, car +14.8% high at the F23 gate; walk was momentarily +8.6% at it.40). Whether the equilibrium overshoots because the search minutes are one-shot at arrival (no within-day feedback) or because walk's own cost dominates past the crossing is the next family's question — not a constant to tune (§9.123 split first).
 - **Bike's residual after the stress channel** (§9.139): +111.2% and falling at the stop; the remaining excess is the car-less quarter's missing alternatives (§9.123: 95.4% of bike-choosers have no car) — the stress factors' sweep members are the declared axis if the fall stalls, never an ASC.
@@ -50,12 +50,13 @@
 - Tuning bike's own constants or time rates against its excess (§9.123): the excess is the car-less quarter's missing lifts, and moving them would fit the symptom.
 - Destination placement as the cause of walk's geometry (§9.107 corrected §9.103 and §9.106).
 - Bike as displaced ride, asserted without measurement (§9.114 corrected §9.109 and §9.112); §9.123 carries the measurement.
-- A gradient utility term in scoring: MATSim has none, and link speed is the chosen representation (§9.84, #21).
+- A gradient utility term in scoring, or an access-decay curve: MATSim has neither, link speed is the chosen representation, and the fields are retired (§9.84, §9.140, #21).
 - Teleported walk or bike, re-added access/egress stubs, and the trunk-road pedestrian exclusion (§9.54, §9.58).
 - Walk as the fallback for a licensed, car-available passenger whose lift fails (§9.105).
 
 ## History
 
+- §9.140 — gradient weights and decay retired
 - §9.139 — both channels' first gate reading
 - §9.138 — bike stress and parking search built
 - §9.136 — seesaw survives fares; cost decision

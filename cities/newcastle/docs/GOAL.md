@@ -53,6 +53,12 @@ comes first; the questions are applications of it.
 9. **City-agnostic.** The framework (`src/`, `config/schema/`, `tests/`,
    `run.py`) may not be tuned to Newcastle; everything specific to a city —
    data, parameters, adapters, documents — lives under `cities/<city>/`.
+10. **No open issue behind a run.** Before the simulator is tuned or tested —
+    before any arm is launched — every GitHub issue is either closed or
+    labelled `awaiting-run`, meaning the only thing left to do on it is a
+    measurement that needs the run. An issue that can be fixed without a run
+    is fixed first. The launcher and the session gate refuse while an open
+    issue carries no `awaiting-run` label (set by the user, 3 September 2026).
 
 ## The loop
 
@@ -66,7 +72,9 @@ comes first; the questions are applications of it.
    fix it from the root. No workarounds, no compensating constants. A
    deviation in one mode is often another mode's deficit: consider them
    together.
-4. Repeat until every mode is inside 10 %.
+4. Work every open issue to closed or `awaiting-run` before the next arm
+   (requirement 10); the arm then measures what the issues left to it.
+5. Repeat until every mode is inside 10 %.
 
 ## Monitoring
 

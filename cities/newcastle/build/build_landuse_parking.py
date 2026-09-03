@@ -300,8 +300,8 @@ def build_frontages(poi_rows, bld_rows):
 #
 PRICE_THRESHOLD_PCTILE = CFG.get('A.parking.price_threshold_pctile')
 PRICE_SATURATION_PCTILE = CFG.get('A.parking.price_saturation_pctile')
-PRICE_AUD_HR_MAX = CFG.get('A.parking.price_aud_hr_max')
-PRICE_SWEEP = CFG.sweep('A.parking.price_aud_hr_max')
+PRICE_AUD_HR_MAX = CFG.get('A.parking.price_hr_max')
+PRICE_SWEEP = CFG.sweep('A.parking.price_hr_max')
 MAX_STAY_MIN = CFG.get('A.parking.max_stay_min')
 CHARGED_HOURS = CFG.get('A.parking.charged_hours_by_day_type')
 # One assumed profile for every facility. The four priced-zone profiles this

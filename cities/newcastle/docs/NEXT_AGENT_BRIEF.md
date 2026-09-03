@@ -1,116 +1,100 @@
 # Brief for the next agent
 
-**Written:** 2 September 2026, twenty-third session · **Open family:** `F23-behaviour-channels` · **Commit:** the PR that carries §9.139
+**Written:** 3 September 2026, twenty-fourth session · **Open family:** `F23-behaviour-channels` (the package on disk opens `F24` at its first launch) · **Commit:** the PR that carries §9.140
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-This session took family F23 to its first gate. The 25% × 300 arm
-(`20260901T165115_300it_25pct`, launched under the user's 2 Sep continue
-directive) was read at iteration 100 and stopped by the session: 7 modes at
-or past 20% (§9.139). The channels answered the §9.138 questions — bike
-+185.5% → +111.2% and still falling (the stress channel works, #107); the
-walk/car seesaw now over-swings THROUGH its targets; income scaling BLUNTS
-the fare (heavy rail +193.2% vs F22's +152.9% at the same milestone, bus
-loses its inside place, #108, #98); ferry and light rail untouched (#94,
-#30). The §9.137 gate watcher did not fire — measured blind (its 64 KiB
-log-tail read vs a 51 GiB log) and fixed to read `_progress.json` — the fix
-has never fired live. **The next lane is the user's root-cause pick.**
+This session took the user's directive — every GitHub issue fixed to closed
+or `awaiting-run` before the simulator is touched again — and made it
+`GOAL.md` requirement 10 with a gate the launcher enforces (§9.140). Six
+issues closed on evidence (#21, #62, #63, #84, #91, #99), seven are labelled
+`awaiting-run` with the measurement each needs, and none is open without the
+label. Along the way: seven dead registry fields retired, the S0 detour
+measured, the external interaction rate derived from the 2011 journey-to-work
+flow, the input contract made city-free (census readers behind the city
+adapter, byte-identical), the motorbike carve conserved per LGA, the leaf
+subtour mix repaired at the seed, and the ferry's market and the choice-set
+decay measured on the F23 gate outputs. Chains, plans and run inputs are
+rebuilt: **the next arm opens family F24.**
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **Machine idle; no arm runs.** The F23 gate arm is `aborted_20260901T165115_300it_25pct`, stopped at iteration 100 by the session with the gate table as cause (§9.139). | `python src/run/session_gate.py --digest` (MACHINE line); the run's `_meta.json` |
-| **The package on disk is consistent**: ALL CHECKS PASSED re-run 2 Sep; nothing in the package changed at the gate. | `python tests/check_package.py` (~10 min) |
-| **This session's PR** is open at handoff, or merged — check; the branch is `praneetdhoolia/f23-25pct-gate-read`. | `gh pr list --state open` · `gh pr checks <n>` |
-| Issues #107/#108/#98/#94 carry the gate's measured numbers as comments; #96 open, no run needed; no issue closed this session. | `gh issue list --state open` |
-| Registry 462 fields, manifest 509 files, 30 run-input sets, family `F23-behaviour-channels` — the board's *State* block. | `python src/analyse/build_status_board.py --check` |
-| **No run approval stands.** The 2 Sep continue directive was SPENT on the stopped gate arm; **25% runs only** (1 Sep directive) governs any future launch. | assume none; ask |
-| **Untracked `cities/nagpur/` sits in the tree** — the Nagpur SECR program's work, deliberately NOT in this session's PR. Do not commit it into a Newcastle change. | `git status` |
+| **Machine idle; no arm runs.** The last arm is `aborted_20260901T165115_300it_25pct`, F23's gate arm (§9.139). | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **The package on disk is the F24 build**: chains, plans and the 30 run-input sets rebuilt 3 Sep; manifest 511 files; `check_package.py` passes with §9.140 in the record. | `python tests/check_package.py` (~10 min) |
+| **Every open issue is labelled `awaiting-run`** (13 on 3 Sep) and the launcher refuses otherwise. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| **This session's PR** is open at handoff, or merged — check; the branch is `praneetdhoolia/close-open-issues`. | `gh pr list --state open` · `gh pr checks <n>` |
+| Registry 457 fields, manifest 511 files, 30 run-input sets, family `F23-behaviour-channels` in the ledger (F24 is declared at launch) — the board's *State* block. | `python src/analyse/build_status_board.py --check` |
+| **No run approval stands.** Every approval to date is SPENT; **25% runs only** (1 Sep directive) governs any launch. | assume none; ask |
 
 Then the gate: `python src/run/session_gate.py` — the machine is idle, so it
 runs the toolchain compile too.
 
 ## §1 The lane
 
-**The user picks the next family's root cause from the F23 gate reading
-(§9.139), then a fresh stated-cost approval launches its arm** (~45–50 h at
-25% × 300, §9.136; 25%-only stands). The candidates, in the order the
-reading ranks them:
+**The first F24 arm, under a fresh stated-cost approval** (~45–50 h at 25% ×
+300, §9.136; 25%-only stands). Launch `python run.py --detach` with the
+standing gate overlay; the runner's own watcher stops it at a gate
+(§9.137/§9.139, first live firing still unobserved). Read at iteration 100:
+all twelve modes (`report_mode_ridership.py --trend`), and the readings the
+awaiting-run issues name — motorbike at its identity (#93), the §9.119
+stand-aside log empty (#96), the ferry's near-wharf split and whether its
+plan survives in memory (#94, §9.140), rail under the income channel (#98,
+#108), bike's fall (#107), ride's plateau (#86).
 
-1. **Rail's residual is not a price question** (#98, §9.139): two price
-   repairs each moved it and neither closed it, and income scaling moves it
-   the wrong way. The corridor's missing CBD end (#30) is the standing
-   structural candidate — floorspace-weighted attraction vs a declared
-   agglomeration term is the recorded repair choice (§9.136).
-2. **The income channel's disposition** (#108): kept as built, swept on its
-   declared members, or gated `absent` next family. It measurably blunts
-   the fare on rail (+152.9% → +193.2% at the same milestone), bus
-   (+8.0% → +16.2%) and taxi (+70.9% → +76.6%) (§9.139).
-3. **The walk/car overshoot** (§9.139): under the parking-search channel
-   the pair passes THROUGH its targets ~iteration 45–50 and keeps going
-   (walk −27.2% low, car +14.8% high at the stop). Diagnose before
-   touching `A.parking.search_min_max` — split by car availability first
-   (§9.123).
+**Decisions the user must take** (the board's *Next*): the root-cause pick
+for the family after F24 — the corridor's missing CBD end (#30: floorspace-
+weighted attraction vs a declared agglomeration term), the income channel's
+disposition (#108), a fifth binder pass for the unbindable ride classes or a
+stated limitation (#86); the Task Scheduler operational log (#66); the S2
+tram signal priority ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
 
-Open with no run needed: the #96 leaf trace (a `SubtourChainScan` example
-tag + `.tools/classes` recompile — machine idle, allowed now; **never while
-an arm runs**, #66). Decisions also pending (board): Task Scheduler
-operational log (#66); bus boardings basis (#99); S2 tram signal priority
-([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+Nothing is open without a run. A new issue opened without `awaiting-run`
+blocks the launcher until it is fixed or labelled — that is the requirement,
+not a nuisance.
 
 ## §2 Traps — newest first, at most ten
 
-1. **The fixed gate watcher has never fired live** (§9.139): the F23 gate
-   ran 3+ iterations past 100 unnoticed before the session stopped it. At
-   the next arm's iteration-100 milestone, verify `_gate_stop.json` appears
-   — if it does not, the watcher is still broken and the session owns the
-   stop.
-2. **A 25% arm's log is ~51 GiB by its gate** (§9.139): never grep or
-   `Select-String` the whole `matsim.log` — a foreground scan timed out and
-   its open handle blocked the runner's own `aborted_` rename. Scan bounded
-   byte windows from EOF, or read `_progress.json`.
-3. **Read `cause`, never `cause_detail`, for why a run died**:
-   `aborted_20260901T152548_300it_25pct`'s `cause_detail` quotes the benign
-   ASM warning (`Unsupported class file major version 69`) as if it were
-   the terminating exception; the `cause` (user-directed stop) is correct.
-   The reader defect is recorded on
-   [positions/runs-and-economics](positions/runs-and-economics.md).
-4. **The board's scoreboard reads the newest ARM's newest reading** — now
-   iteration 100 of the aborted F23 arm, labelled not-a-result. Do not
-   quote it as a result; no run since F4 has `_run.json`.
-5. **The three channels are gated, not global** (§9.138):
+1. **The launcher refuses behind an unlabelled open issue** (GOAL.md
+   requirement 10, §9.140): `run.py` exits before `--detach`; fix or label,
+   and never pass `--allow-open-issues` without writing why in the run record.
+   Where `gh` is not authenticated the gate cannot see the tracker and says so.
+2. **The target LGA's carve conserves to the DECLARED identity, not to its
+   summed SA1 cells** (§9.140): the cells read +1.2% (ABS perturbation); the
+   builder refuses only beyond 5%. Do not "fix" the declared value to the sum.
+3. **`F24` is not in `run_families.json` yet** — it is declared at the first
+   launch with `decisions_ref` 9.140, in the same change as the launch. A run
+   launched before that entry inherits F23 in the index and is mis-attributed.
+4. **The seeded choice set is a seed** (§9.140): at iteration 100 only 22.7%
+   of residents still hold a pt plan and 8.7% a bike plan. A mode absent from
+   memory is not a mode the person refused — read a gate with that in mind.
+5. **The fixed gate watcher has never fired live** (§9.139): at the next
+   arm's iteration-100 milestone verify `_gate_stop.json` appears; if not, the
+   session owns the stop (`python run.py --stop NAME --cause "..."`).
+6. **A 25% arm's log is ~51 GiB by its gate** (§9.139): never grep the whole
+   `matsim.log`; read `_progress.json` or a bounded byte window from EOF.
+7. **Read `cause`, never `cause_detail`, for why a run died** — the reader
+   quotes the first exception-looking line, benign warnings included
+   ([positions/runs-and-economics](positions/runs-and-economics.md)).
+8. **The board's scoreboard reads the newest ARM's newest reading** — still
+   the aborted F23 arm at iteration 100 until F24 writes one; not a result.
+9. **The three behaviour channels are gated, not global** (§9.138):
    `A.bike_stress.representation`, `A.parking.search_time_representation`,
-   `C.income.representation` — each `absent` recovers the F22 model; a
-   sweep arm toggles the field, never edits code.
-6. **Never touch `results/` by hand** (§9.137): stop a run only with
-   `python run.py --stop <name> --cause "..."`. If its rename fails on a
-   held file handle, close the handle and re-check before doing anything —
-   this session completed the runner's own printed rename intent once,
-   after `--stop` had recorded the abort.
-7. **Cost at the measured pace and treat a gate as a cost boundary**
-   (§9.136, §9.139): the F23 arm confirmed ~18.1 h to iteration 100 at 25%
-   (median 664.9 s/it), ~45–50 h per 300.
-8. **`run_failure` reads only the log's last 64 MiB** (§9.136); the
-   terminating exception is at the end.
-9. **A run's identity includes its plans, network, price system AND
-   fraction** (§9.127, §9.135, §9.138): the two F23 arms (10% and 25%)
-   never compare with each other (§9.10, §9.12), and nothing before the
-   F23 boundary compares with anything after.
-10. **A mode's excess is often another mode's deficit** (§9.123, §9.134):
-    split by car availability before touching any constant.
+   `C.income.representation` — a sweep arm toggles the field, never code.
+10. **Heredocs with mixed quotes break the shell** — write a script to the
+    scratchpad and run the file; two long edits were silently lost that way.
 
 ## §3 Standing directives and approvals
 
-- **No multi-hour run without a stated-cost approval.** The 2 Sep
-  "continue running and tuning" directive is **SPENT** on the stopped F23
-  gate arm; every earlier approval is **SPENT**. No approval stands.
-- **25% runs only** (user directive, 1 Sep) — the 10% pace tables are
-  history, not options.
-- **The goal directive lives in [`GOAL.md`](GOAL.md)**: twelve modes
-  physical, monitored, scored; <10% each; gate every 100 iterations (the
-  hard bar the runner's own, §9.137, §9.139); stop on >20% or heading
-  there; fix from the root; converge in ≤250; derive, never assume.
+- **No multi-hour run without a stated-cost approval.** Every approval to
+  date is **SPENT**; none stands. **A gate is a cost boundary** (§9.136).
+- **25% runs only** (user directive, 1 Sep) — the 10% pace tables are history.
+- **No open issue behind a run** (user directive, 3 Sep; GOAL.md requirement
+  10) — enforced by `src/run/issue_gate.py` in the session gate and `run.py`.
+- **The goal directive lives in [`GOAL.md`](GOAL.md)**: twelve modes physical,
+  monitored, scored; <10% each; gate every 100 iterations; stop on >20% or
+  heading there; fix from the root; converge in ≤250; derive, never assume.
 - **Read the trend, not the level** (§9.108); every mode individually in
   every table; **one arm at a time** (#66); launch detached; never commit
   to `main`; the session's one PR opens at `/handoff`.

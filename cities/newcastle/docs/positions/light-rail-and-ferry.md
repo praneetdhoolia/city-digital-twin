@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -43,6 +43,8 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 - F23 iteration 100 (the gate): 0.0286% of resident trips against 0.143% (−80.0%), flat at 0.02–0.03% across the arm — untouched by all three behaviour channels, as by the fare before them (§9.139, #94). F22's gate read 0.0285% (§9.136); F21's 0.027% (§9.134).
 - The market, by bank: B2 generates 4,956 harbour-crossing trips a weekday (0.211% of all trips) by 2,593 persons; 7,490 residents live on the Stockton side; 59,458 WEEKDAY trip ends lie within 1,000 m of the two wharves (§9.121, §9.120).
+- **The F23 gate's crossings, re-measured by bank** (§9.140, #94): 790 peninsula-to-south-side trips by 413 persons at iteration 100 — car 495, pt 129 (84 with a ferry leg), ride 95, walk 31, bike 15, truck 12, taxi 11; the derived target needs ~28% of that market and the ferry carries ~11%. Hour of service is not it (04:55–23:05, ~9% of crossings outside it). Only 205 of 790 crossings have both ends within the raptor's 1 km search radius, and the peninsula has no bus stop or line in the mapped schedule; in that near-wharf market the split is car 124 / pt 41 / ride 27 / walk 9 (§9.140).
+- **The ferry plan is competitive and then forgotten** (§9.140): 270 of the 413 crossing persons hold no pt plan at all at iteration 100; 100 hold a ferry plan and 62 select it; where a ferry plan exists and loses it trails by a median 2.8 utils (p25 −68.7, p75 +0.2). The seeded choice set decays under innovation for every mode — see [seed-and-choice-set](seed-and-choice-set.md).
 - The defect: the raptor's direct walk was a beeline across the harbour that the network executed as the ~20 km road detour; on F16 iteration 10, 174 of 256 crossing trips in residents' pt plans were walk-only (median 19.4 km) and 38.3% of all residents' pt-plan trips were walk-only (§9.121).
 - After the repair, F17 arm `20260830T141222_300it_10pct`, iteration 10: 209 of 359 crossing trips routed with a ferry leg (58%), walk-only down to 17%; realised ferry 30 trips, 0.048% against the then-target 0.1013%, from 3 trips on F16; the remaining walk-only crossings are trips at hours the ferry does not run (§9.121).
 - Before the repair, at iteration 100 of the committed arm: 450 trips with crow-fly under 3 km and road distance over 12 km took the detour, 118 of them on foot and 3 by public transport (§9.112).
@@ -51,8 +53,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 - Light rail: where the missing ~1,300 boardings a weekday are — longer corridor trips, rail transferees, visitors — is the mode's question at the next gate (§9.130, `NEXT_AGENT_BRIEF.md`).
 - #30 — the deficit survives the licence-rate rebuild unchanged (shopping 0.59×, other 0.69×, work 1.09× of the attraction share, §9.136) and is measured structural (the band gradient above); the repair choice — floorspace-weighted attraction vs an agglomeration term — is a decision at B2's own family boundary (§9.120, §9.136).
-- #84 — the disclosed boardings basis of §9.130 answers the issue's substance; it stays open until closed on evidence.
-- #94 — the beeline defect is repaired, but the ferry reads −75.3% at F20 iteration 10 and has not been re-measured by bank since F17 (§9.121); whether the residual is hour of service, headway or scoring is not established (§9.112).
+- #94 (awaiting-run) — supply, hour of service and routing are exonerated (§9.140); the residual is the reach bound (three quarters of the market beyond the 1 km walk radius with no feeder — a declared, swept field, not a constant to guess) and a competitive-but-losing plan the memory drops; the next gate reads the near-wharf split on the F24 package (§9.140).
 - The ferry target's vintage: the census cell is a lockdown month, which is why the sweep runs from 0 to twice the point value (§9.89).
 - Both modes have now been re-read at three successive gates (F21 §9.134, F22 §9.136, F23 §9.139) and moved no closer under any repair; the corridor attraction (#30) and the ferry's residual (#94) stand as the causes to attack, and neither is a pricing or behaviour-channel question.
 - The seated/standing split of the Urbos stays assumed; the acquisition route is field observation at Civic or Crown Street, or GTFS-Realtime dwell distributions (§4.3, §9.18).
@@ -71,6 +72,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.140 — ferry market and memory measured
 - §9.139 — F23 gate: both unmoved again
 - §9.136 — corridor deficit structural by band
 - §9.134 — F21 gate: tram away, ferry flat

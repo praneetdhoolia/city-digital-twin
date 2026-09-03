@@ -54,30 +54,39 @@
       "note": "Only the fields the framework reads are declared. Heavy-vehicle classes are consumed by city-owned measurement (the freight profile adapter), not by the framework."
     },
     "census_attributes": {
-      "status": "DECLARED, ADAPTER PENDING - these readers remain source-shaped",
-      "consumed_by_still_source_shaped": [
-        "src/build/build_population.py (ABS G01/G04A+B/G15/G17A+B/G34/G35/G36/G43/G46A+B/G60A+B column names, age-band spellings and sex-split table pairs)",
-        "src/build/build_zone_attractions.py (ABS G01/G36 and W09A+B place-of-work tables)",
-        "src/build/measure_network_factors.py (measure_work_attendance: ABS G62)"
+      "status": "adapted",
+      "consumed_by": [
+        "src/build/build_population.py (residence marginals, region fallbacks, tertiary shares, published bandings and vocabularies)",
+        "src/build/build_zone_attractions.py (residence counts, workplace jobs by industry)",
+        "src/build/measure_network_factors.py (work attendance on census day)"
       ],
-      "fields_the_framework_reads": {
-        "per_residence_zone": [
-          "population by single-year age and sex (grouped bands accepted at the distribution tail)",
-          "household count by family composition",
-          "motor vehicles per dwelling distribution",
-          "dwelling structure distribution",
-          "labour force status conditional on age band and sex (employed FT/PT, unemployed, not in labour force)",
-          "education attendance by age group",
-          "full-time share of adult education attendees",
-          "personal income band by sex",
-          "occupation by sex",
-          "share of employed persons who travelled to work on census day (sweep lower bound only)"
-        ],
-        "per_workplace_zone": [
-          "jobs by industry division at place of work"
-        ]
+      "adapter_functions": {
+        "labour_force_bands()": "[(band, lo, hi)] - the age bands labour-force status is published in; the band names key labour_force cells and the population report.",
+        "education_groups()": "[(group, lo, hi)] - the age groups education attendance is published in, the last one open-ended.",
+        "occupation_labels()": "the occupation vocabulary (1-digit classification) as the city publishes it; carried into B1 as labels.",
+        "income_band_labels()": "the personal weekly income band labels as the city publishes them; carried into B1 as labels, whose interval the plans builder reads off the label.",
+        "dwelling_types()": "the framework's dwelling-structure vocabulary in the order the dwellings counts are returned.",
+        "residence_marginals(zone)": "the per-zone counts below, or None where the zone is absent from any residence table.",
+        "region_labour_force_totals()": "{(sex, band): (employed, in_labour_force, not_in_labour_force, full_time, part_time, unemployed)} summed over the core zones - the fallback for empty cells.",
+        "region_education_totals()": "{group: (attendees, persons)} summed over the core zones.",
+        "tertiary_full_time_shares()": "(zone -> {band: full-time share of tertiary attendees}, {band: share over every zone}), bands 18_24 and 25_ov.",
+        "residence_counts()": "DataFrame [zone_id, population, dwellings_total, dwellings_occupied] per residence zone.",
+        "workplace_jobs()": "(jobs DataFrame [workplace_zone, jobs], industry DataFrame indexed by workplace_zone with one column per published industry division, column count).",
+        "work_attendance_counts()": "{total, worked_home, did_not_go}: employed persons on census day."
       },
-      "reason_left": "The population synthesiser consumes the ABS tables' own banding, dual column spellings and sex-split table pairs at ~40 read sites; normalising them is a data-pipeline rebuild, not a read-time mapping, and is deliberately NOT done in the same change that adapts the two thin families (issue #62 A5). The declared field list above is the target shape for that rebuild."
+      "residence_marginals_shape": {
+        "age_single_year": "[(age, males, females)] for every single year the table publishes (None where unpublished)",
+        "age_grouped": "[(lo, hi, males, females)] for the grouped ages above the single years",
+        "age_over": "(lo, males, females) for the open top group",
+        "household_size": "[persons per household 1, 2, 3, 4, 5, 6+] dwelling counts",
+        "vehicles": "[motor vehicles per dwelling 0, 1, 2, 3, 4+] dwelling counts",
+        "dwellings": "dwelling counts in dwelling_types() order",
+        "labour_force": "{(sex 'M'|'F', band): (employed, in_labour_force, not_in_labour_force, full_time, part_time, unemployed)}",
+        "education": "{group: (attendees, persons)}",
+        "occupation": "counts in occupation_labels() order, all ages 15+ and both sexes summed",
+        "income": "counts in income_band_labels() order, all ages 15+ and both sexes summed"
+      },
+      "note": "Adapted 3 Sep 2026 (DECISIONS.md 9.140). The framework forms every rate itself from these counts, so the synthetic population is byte-identical to the one built when the synthesiser read the ABS columns directly (verified on the 9.131 population). A second city's adapter returns the same shapes from its own census; the occupation and income labels it returns become that city's B1 vocabulary."
     }
   }
 }

@@ -24,30 +24,30 @@ public final class PtFareConfigGroup extends ReflectiveConfigGroup {
     public static final String GROUP_NAME = "ptFare";
 
     private String trainBandsKm = "";
-    private String trainAdultPeakAud = "";
-    private String trainAdultOffpeakAud = "";
-    private String trainChildPeakAud = "";
-    private String trainChildOffpeakAud = "";
+    private String trainAdultPeak = "";
+    private String trainAdultOffpeak = "";
+    private String trainChildPeak = "";
+    private String trainChildOffpeak = "";
     private String busBandsKm = "";
-    private String busAdultPeakAud = "";
-    private String busAdultOffpeakAud = "";
-    private String busChildPeakAud = "";
-    private String busChildOffpeakAud = "";
+    private String busAdultPeak = "";
+    private String busAdultOffpeak = "";
+    private String busChildPeak = "";
+    private String busChildOffpeak = "";
     private String tramBandsKm = "";
-    private String tramAdultPeakAud = "";
-    private String tramAdultOffpeakAud = "";
-    private String tramChildPeakAud = "";
-    private String tramChildOffpeakAud = "";
-    private double ferryAdultPeakAud = -1.0;
-    private double ferryAdultOffpeakAud = -1.0;
-    private double ferryChildPeakAud = -1.0;
-    private double ferryChildOffpeakAud = -1.0;
-    private double seniorPerFareCapAud = -1.0;
-    private double dailyCapAdultAud = -1.0;
-    private double dailyCapChildAud = -1.0;
-    private double dailyCapSeniorAud = -1.0;
-    private double transferDiscountAdultAud = -1.0;
-    private double transferDiscountChildAud = -1.0;
+    private String tramAdultPeak = "";
+    private String tramAdultOffpeak = "";
+    private String tramChildPeak = "";
+    private String tramChildOffpeak = "";
+    private double ferryAdultPeak = -1.0;
+    private double ferryAdultOffpeak = -1.0;
+    private double ferryChildPeak = -1.0;
+    private double ferryChildOffpeak = -1.0;
+    private double seniorPerFareCap = -1.0;
+    private double dailyCapAdult = -1.0;
+    private double dailyCapChild = -1.0;
+    private double dailyCapSenior = -1.0;
+    private double transferDiscountAdult = -1.0;
+    private double transferDiscountChild = -1.0;
     private double transferWindowMin = -1.0;
     private double peakMorningStartH = -1.0;
     private double peakMorningEndH = -1.0;
@@ -73,44 +73,44 @@ public final class PtFareConfigGroup extends ReflectiveConfigGroup {
         this.trainBandsKm = v;
     }
 
-    @StringGetter("trainAdultPeakAud")
-    public String getTrainAdultPeakAud() {
-        return this.trainAdultPeakAud;
+    @StringGetter("trainAdultPeak")
+    public String getTrainAdultPeak() {
+        return this.trainAdultPeak;
     }
 
-    @StringSetter("trainAdultPeakAud")
-    public void setTrainAdultPeakAud(final String v) {
-        this.trainAdultPeakAud = v;
+    @StringSetter("trainAdultPeak")
+    public void setTrainAdultPeak(final String v) {
+        this.trainAdultPeak = v;
     }
 
-    @StringGetter("trainAdultOffpeakAud")
-    public String getTrainAdultOffpeakAud() {
-        return this.trainAdultOffpeakAud;
+    @StringGetter("trainAdultOffpeak")
+    public String getTrainAdultOffpeak() {
+        return this.trainAdultOffpeak;
     }
 
-    @StringSetter("trainAdultOffpeakAud")
-    public void setTrainAdultOffpeakAud(final String v) {
-        this.trainAdultOffpeakAud = v;
+    @StringSetter("trainAdultOffpeak")
+    public void setTrainAdultOffpeak(final String v) {
+        this.trainAdultOffpeak = v;
     }
 
-    @StringGetter("trainChildPeakAud")
-    public String getTrainChildPeakAud() {
-        return this.trainChildPeakAud;
+    @StringGetter("trainChildPeak")
+    public String getTrainChildPeak() {
+        return this.trainChildPeak;
     }
 
-    @StringSetter("trainChildPeakAud")
-    public void setTrainChildPeakAud(final String v) {
-        this.trainChildPeakAud = v;
+    @StringSetter("trainChildPeak")
+    public void setTrainChildPeak(final String v) {
+        this.trainChildPeak = v;
     }
 
-    @StringGetter("trainChildOffpeakAud")
-    public String getTrainChildOffpeakAud() {
-        return this.trainChildOffpeakAud;
+    @StringGetter("trainChildOffpeak")
+    public String getTrainChildOffpeak() {
+        return this.trainChildOffpeak;
     }
 
-    @StringSetter("trainChildOffpeakAud")
-    public void setTrainChildOffpeakAud(final String v) {
-        this.trainChildOffpeakAud = v;
+    @StringSetter("trainChildOffpeak")
+    public void setTrainChildOffpeak(final String v) {
+        this.trainChildOffpeak = v;
     }
 
     @StringGetter("busBandsKm")
@@ -123,44 +123,44 @@ public final class PtFareConfigGroup extends ReflectiveConfigGroup {
         this.busBandsKm = v;
     }
 
-    @StringGetter("busAdultPeakAud")
-    public String getBusAdultPeakAud() {
-        return this.busAdultPeakAud;
+    @StringGetter("busAdultPeak")
+    public String getBusAdultPeak() {
+        return this.busAdultPeak;
     }
 
-    @StringSetter("busAdultPeakAud")
-    public void setBusAdultPeakAud(final String v) {
-        this.busAdultPeakAud = v;
+    @StringSetter("busAdultPeak")
+    public void setBusAdultPeak(final String v) {
+        this.busAdultPeak = v;
     }
 
-    @StringGetter("busAdultOffpeakAud")
-    public String getBusAdultOffpeakAud() {
-        return this.busAdultOffpeakAud;
+    @StringGetter("busAdultOffpeak")
+    public String getBusAdultOffpeak() {
+        return this.busAdultOffpeak;
     }
 
-    @StringSetter("busAdultOffpeakAud")
-    public void setBusAdultOffpeakAud(final String v) {
-        this.busAdultOffpeakAud = v;
+    @StringSetter("busAdultOffpeak")
+    public void setBusAdultOffpeak(final String v) {
+        this.busAdultOffpeak = v;
     }
 
-    @StringGetter("busChildPeakAud")
-    public String getBusChildPeakAud() {
-        return this.busChildPeakAud;
+    @StringGetter("busChildPeak")
+    public String getBusChildPeak() {
+        return this.busChildPeak;
     }
 
-    @StringSetter("busChildPeakAud")
-    public void setBusChildPeakAud(final String v) {
-        this.busChildPeakAud = v;
+    @StringSetter("busChildPeak")
+    public void setBusChildPeak(final String v) {
+        this.busChildPeak = v;
     }
 
-    @StringGetter("busChildOffpeakAud")
-    public String getBusChildOffpeakAud() {
-        return this.busChildOffpeakAud;
+    @StringGetter("busChildOffpeak")
+    public String getBusChildOffpeak() {
+        return this.busChildOffpeak;
     }
 
-    @StringSetter("busChildOffpeakAud")
-    public void setBusChildOffpeakAud(final String v) {
-        this.busChildOffpeakAud = v;
+    @StringSetter("busChildOffpeak")
+    public void setBusChildOffpeak(final String v) {
+        this.busChildOffpeak = v;
     }
 
     @StringGetter("tramBandsKm")
@@ -173,144 +173,144 @@ public final class PtFareConfigGroup extends ReflectiveConfigGroup {
         this.tramBandsKm = v;
     }
 
-    @StringGetter("tramAdultPeakAud")
-    public String getTramAdultPeakAud() {
-        return this.tramAdultPeakAud;
+    @StringGetter("tramAdultPeak")
+    public String getTramAdultPeak() {
+        return this.tramAdultPeak;
     }
 
-    @StringSetter("tramAdultPeakAud")
-    public void setTramAdultPeakAud(final String v) {
-        this.tramAdultPeakAud = v;
+    @StringSetter("tramAdultPeak")
+    public void setTramAdultPeak(final String v) {
+        this.tramAdultPeak = v;
     }
 
-    @StringGetter("tramAdultOffpeakAud")
-    public String getTramAdultOffpeakAud() {
-        return this.tramAdultOffpeakAud;
+    @StringGetter("tramAdultOffpeak")
+    public String getTramAdultOffpeak() {
+        return this.tramAdultOffpeak;
     }
 
-    @StringSetter("tramAdultOffpeakAud")
-    public void setTramAdultOffpeakAud(final String v) {
-        this.tramAdultOffpeakAud = v;
+    @StringSetter("tramAdultOffpeak")
+    public void setTramAdultOffpeak(final String v) {
+        this.tramAdultOffpeak = v;
     }
 
-    @StringGetter("tramChildPeakAud")
-    public String getTramChildPeakAud() {
-        return this.tramChildPeakAud;
+    @StringGetter("tramChildPeak")
+    public String getTramChildPeak() {
+        return this.tramChildPeak;
     }
 
-    @StringSetter("tramChildPeakAud")
-    public void setTramChildPeakAud(final String v) {
-        this.tramChildPeakAud = v;
+    @StringSetter("tramChildPeak")
+    public void setTramChildPeak(final String v) {
+        this.tramChildPeak = v;
     }
 
-    @StringGetter("tramChildOffpeakAud")
-    public String getTramChildOffpeakAud() {
-        return this.tramChildOffpeakAud;
+    @StringGetter("tramChildOffpeak")
+    public String getTramChildOffpeak() {
+        return this.tramChildOffpeak;
     }
 
-    @StringSetter("tramChildOffpeakAud")
-    public void setTramChildOffpeakAud(final String v) {
-        this.tramChildOffpeakAud = v;
+    @StringSetter("tramChildOffpeak")
+    public void setTramChildOffpeak(final String v) {
+        this.tramChildOffpeak = v;
     }
 
-    @StringGetter("ferryAdultPeakAud")
-    public double getFerryAdultPeakAud() {
-        return this.ferryAdultPeakAud;
+    @StringGetter("ferryAdultPeak")
+    public double getFerryAdultPeak() {
+        return this.ferryAdultPeak;
     }
 
-    @StringSetter("ferryAdultPeakAud")
-    public void setFerryAdultPeakAud(final double v) {
-        this.ferryAdultPeakAud = v;
+    @StringSetter("ferryAdultPeak")
+    public void setFerryAdultPeak(final double v) {
+        this.ferryAdultPeak = v;
     }
 
-    @StringGetter("ferryAdultOffpeakAud")
-    public double getFerryAdultOffpeakAud() {
-        return this.ferryAdultOffpeakAud;
+    @StringGetter("ferryAdultOffpeak")
+    public double getFerryAdultOffpeak() {
+        return this.ferryAdultOffpeak;
     }
 
-    @StringSetter("ferryAdultOffpeakAud")
-    public void setFerryAdultOffpeakAud(final double v) {
-        this.ferryAdultOffpeakAud = v;
+    @StringSetter("ferryAdultOffpeak")
+    public void setFerryAdultOffpeak(final double v) {
+        this.ferryAdultOffpeak = v;
     }
 
-    @StringGetter("ferryChildPeakAud")
-    public double getFerryChildPeakAud() {
-        return this.ferryChildPeakAud;
+    @StringGetter("ferryChildPeak")
+    public double getFerryChildPeak() {
+        return this.ferryChildPeak;
     }
 
-    @StringSetter("ferryChildPeakAud")
-    public void setFerryChildPeakAud(final double v) {
-        this.ferryChildPeakAud = v;
+    @StringSetter("ferryChildPeak")
+    public void setFerryChildPeak(final double v) {
+        this.ferryChildPeak = v;
     }
 
-    @StringGetter("ferryChildOffpeakAud")
-    public double getFerryChildOffpeakAud() {
-        return this.ferryChildOffpeakAud;
+    @StringGetter("ferryChildOffpeak")
+    public double getFerryChildOffpeak() {
+        return this.ferryChildOffpeak;
     }
 
-    @StringSetter("ferryChildOffpeakAud")
-    public void setFerryChildOffpeakAud(final double v) {
-        this.ferryChildOffpeakAud = v;
+    @StringSetter("ferryChildOffpeak")
+    public void setFerryChildOffpeak(final double v) {
+        this.ferryChildOffpeak = v;
     }
 
-    @StringGetter("seniorPerFareCapAud")
-    public double getSeniorPerFareCapAud() {
-        return this.seniorPerFareCapAud;
+    @StringGetter("seniorPerFareCap")
+    public double getSeniorPerFareCap() {
+        return this.seniorPerFareCap;
     }
 
-    @StringSetter("seniorPerFareCapAud")
-    public void setSeniorPerFareCapAud(final double v) {
-        this.seniorPerFareCapAud = v;
+    @StringSetter("seniorPerFareCap")
+    public void setSeniorPerFareCap(final double v) {
+        this.seniorPerFareCap = v;
     }
 
-    @StringGetter("dailyCapAdultAud")
-    public double getDailyCapAdultAud() {
-        return this.dailyCapAdultAud;
+    @StringGetter("dailyCapAdult")
+    public double getDailyCapAdult() {
+        return this.dailyCapAdult;
     }
 
-    @StringSetter("dailyCapAdultAud")
-    public void setDailyCapAdultAud(final double v) {
-        this.dailyCapAdultAud = v;
+    @StringSetter("dailyCapAdult")
+    public void setDailyCapAdult(final double v) {
+        this.dailyCapAdult = v;
     }
 
-    @StringGetter("dailyCapChildAud")
-    public double getDailyCapChildAud() {
-        return this.dailyCapChildAud;
+    @StringGetter("dailyCapChild")
+    public double getDailyCapChild() {
+        return this.dailyCapChild;
     }
 
-    @StringSetter("dailyCapChildAud")
-    public void setDailyCapChildAud(final double v) {
-        this.dailyCapChildAud = v;
+    @StringSetter("dailyCapChild")
+    public void setDailyCapChild(final double v) {
+        this.dailyCapChild = v;
     }
 
-    @StringGetter("dailyCapSeniorAud")
-    public double getDailyCapSeniorAud() {
-        return this.dailyCapSeniorAud;
+    @StringGetter("dailyCapSenior")
+    public double getDailyCapSenior() {
+        return this.dailyCapSenior;
     }
 
-    @StringSetter("dailyCapSeniorAud")
-    public void setDailyCapSeniorAud(final double v) {
-        this.dailyCapSeniorAud = v;
+    @StringSetter("dailyCapSenior")
+    public void setDailyCapSenior(final double v) {
+        this.dailyCapSenior = v;
     }
 
-    @StringGetter("transferDiscountAdultAud")
-    public double getTransferDiscountAdultAud() {
-        return this.transferDiscountAdultAud;
+    @StringGetter("transferDiscountAdult")
+    public double getTransferDiscountAdult() {
+        return this.transferDiscountAdult;
     }
 
-    @StringSetter("transferDiscountAdultAud")
-    public void setTransferDiscountAdultAud(final double v) {
-        this.transferDiscountAdultAud = v;
+    @StringSetter("transferDiscountAdult")
+    public void setTransferDiscountAdult(final double v) {
+        this.transferDiscountAdult = v;
     }
 
-    @StringGetter("transferDiscountChildAud")
-    public double getTransferDiscountChildAud() {
-        return this.transferDiscountChildAud;
+    @StringGetter("transferDiscountChild")
+    public double getTransferDiscountChild() {
+        return this.transferDiscountChild;
     }
 
-    @StringSetter("transferDiscountChildAud")
-    public void setTransferDiscountChildAud(final double v) {
-        this.transferDiscountChildAud = v;
+    @StringSetter("transferDiscountChild")
+    public void setTransferDiscountChild(final double v) {
+        this.transferDiscountChild = v;
     }
 
     @StringGetter("transferWindowMin")
@@ -415,7 +415,7 @@ public final class PtFareConfigGroup extends ReflectiveConfigGroup {
 
     /** The module is live only when the emitter wrote a train fare table. */
     public boolean isEnabled() {
-        return !this.trainAdultPeakAud.isEmpty();
+        return !this.trainAdultPeak.isEmpty();
     }
 
     /** Comma-separated doubles, the band/fare list encoding. */
@@ -433,21 +433,21 @@ public final class PtFareConfigGroup extends ReflectiveConfigGroup {
         if (!isEnabled()) {
             return;
         }
-        checkTable("train", this.trainBandsKm, this.trainAdultPeakAud,
-                this.trainAdultOffpeakAud, this.trainChildPeakAud,
-                this.trainChildOffpeakAud);
-        checkTable("bus", this.busBandsKm, this.busAdultPeakAud,
-                this.busAdultOffpeakAud, this.busChildPeakAud,
-                this.busChildOffpeakAud);
-        checkTable("tram", this.tramBandsKm, this.tramAdultPeakAud,
-                this.tramAdultOffpeakAud, this.tramChildPeakAud,
-                this.tramChildOffpeakAud);
-        final double[] scalars = {this.ferryAdultPeakAud,
-                this.ferryAdultOffpeakAud, this.ferryChildPeakAud,
-                this.ferryChildOffpeakAud, this.seniorPerFareCapAud,
-                this.dailyCapAdultAud, this.dailyCapChildAud,
-                this.dailyCapSeniorAud, this.transferDiscountAdultAud,
-                this.transferDiscountChildAud, this.transferWindowMin,
+        checkTable("train", this.trainBandsKm, this.trainAdultPeak,
+                this.trainAdultOffpeak, this.trainChildPeak,
+                this.trainChildOffpeak);
+        checkTable("bus", this.busBandsKm, this.busAdultPeak,
+                this.busAdultOffpeak, this.busChildPeak,
+                this.busChildOffpeak);
+        checkTable("tram", this.tramBandsKm, this.tramAdultPeak,
+                this.tramAdultOffpeak, this.tramChildPeak,
+                this.tramChildOffpeak);
+        final double[] scalars = {this.ferryAdultPeak,
+                this.ferryAdultOffpeak, this.ferryChildPeak,
+                this.ferryChildOffpeak, this.seniorPerFareCap,
+                this.dailyCapAdult, this.dailyCapChild,
+                this.dailyCapSenior, this.transferDiscountAdult,
+                this.transferDiscountChild, this.transferWindowMin,
                 this.peakMorningStartH, this.peakMorningEndH,
                 this.peakEveningStartH, this.peakEveningEndH,
                 this.railPeakMorningStartH};

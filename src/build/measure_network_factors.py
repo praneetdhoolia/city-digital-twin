@@ -297,10 +297,9 @@ def measure_day_type():
 
 def measure_work_attendance():
     """Share of employed persons who travelled to work, census G62."""
-    g = pd.read_csv(os.path.join(CEN, 'census2021_G62_SA1.csv'))
-    tot = float(g['Tot_P'].sum())
-    home = float(g['Worked_home_P'].sum())
-    away = float(g['Did_not_go_to_work_P'].sum())
+    # through the city's reader adapter (issue #62 A5, DECISIONS.md 9.140)
+    c = _city.readers().work_attendance_counts()
+    tot, home, away = c['total'], c['worked_home'], c['did_not_go']
     travelled = (tot - home - away) / tot if tot > 0 else float('nan')
     return dict(
         census_day_attendance=round(travelled, 4),

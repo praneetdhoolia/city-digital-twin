@@ -1210,25 +1210,24 @@ def scoring_from_c1(cfg, c1, purpose_share):
             'purpose-specific values' % vot_avg,
             'crowding multipliers (beta_crowding_*): require an explicit '
             'capacity-dependent scoring extension, not enabled here',
-            'gradient UTILITY penalties (beta_gradient_uphill=%s, '
-            'beta_gradient_downhill=%s): MATSim scores a leg from time and '
-            'distance and has no gradient utility term, so these two '
-            'behavioural weights reach nothing. %s (9.84, issue 21)'
-            % (w['beta_gradient_uphill']['base'],
-               w['beta_gradient_downhill']['base'],
-               'The gradient DATA now reaches mode choice through link '
-               'travel time instead - grade_pct on the run network, walk '
-               'and bike slowed by the declared published relations on '
-               'both the router and the mobsim side'
+            'gradient UTILITY penalties: RETIRED 3 Sep 2026 (9.140, issue '
+            '21). MATSim scores a leg from time and distance and has no '
+            'gradient utility term; %s'
+            % ('the gradient DATA reaches mode choice through link travel '
+               'time instead - grade_pct on the run network, walk and bike '
+               'slowed by the declared published relations on both the '
+               'router and the mobsim side (A.gradient.representation='
+               'link_speed, 9.84)'
                if cfg.get('A.gradient.representation') == 'link_speed' else
-               'With A.gradient.representation=absent the attached '
-               'gradient reaches mode choice through nothing; it remains '
-               'used for corridor grades'),
-            'PT walk-access decay (walk_decay, beta_per_m=%s): the access and '
-            'egress walk that actually happens is routing.accessEgressType '
-            'plus SwissRailRaptor own radius handling, neither of which reads '
-            'a decay curve, so the declared curve reaches nothing (issue 21)'
-            % c1['walk_decay']['params']['beta_per_m'],
+               'with A.gradient.representation=absent the attached gradient '
+               'reaches mode choice through nothing; it remains used for '
+               'corridor grades'),
+            'PT walk-access decay curve: RETIRED 3 Sep 2026 (9.140, issue '
+            '21). The access and egress walk is routed on the walk network '
+            'and scored at its full walking time - the continuous penalty '
+            'proposal 6.3 asked for, with no catchment cut-off - and the '
+            'declared RUN.transit_router.search_radius_m / '
+            'extension_radius_m bound the raptor search, never the utility',
         ])
 
 
@@ -1323,19 +1322,19 @@ def config_runtime(cfg, scoring, day, paths):
     # declared rideshare share - one mode honestly carrying two services.
     if 'taxi' in cfg.get('RUN.mode_choice.modes'):
         s_ride = cfg.get('B.taxi.rideshare_trip_share')
-        blend_km = ((1 - s_ride) * cfg.get('B.taxi.fare_per_km_taxi_aud')
-                    + s_ride * cfg.get('B.taxi.fare_per_km_rideshare_aud'))
-        blend_flag = ((1 - s_ride) * cfg.get('B.taxi.flagfall_taxi_aud')
-                      + s_ride * cfg.get('B.taxi.flagfall_rideshare_aud'))
+        blend_km = ((1 - s_ride) * cfg.get('B.taxi.fare_per_km_taxi')
+                    + s_ride * cfg.get('B.taxi.fare_per_km_rideshare'))
+        blend_flag = ((1 - s_ride) * cfg.get('B.taxi.flagfall_taxi')
+                      + s_ride * cfg.get('B.taxi.flagfall_rideshare'))
         runtime['scoring.modeParams[taxi].monetaryDistanceRate'] = (
             round(-blend_km / 1000.0, 8), 'derived',
-            '-((1-B.taxi.rideshare_trip_share) x B.taxi.fare_per_km_taxi_aud '
-            '+ share x B.taxi.fare_per_km_rideshare_aud) / 1000, AUD per '
+            '-((1-B.taxi.rideshare_trip_share) x B.taxi.fare_per_km_taxi '
+            '+ share x B.taxi.fare_per_km_rideshare) / 1000, AUD per '
             'metre')
-        runtime['fare.flagfallAud'] = (
+        runtime['fare.flagfall'] = (
             round(blend_flag, 4), 'derived',
-            '(1-B.taxi.rideshare_trip_share) x B.taxi.flagfall_taxi_aud + '
-            'share x B.taxi.flagfall_rideshare_aud')
+            '(1-B.taxi.rideshare_trip_share) x B.taxi.flagfall_taxi + '
+            'share x B.taxi.flagfall_rideshare')
         runtime['fare.mode'] = (
             'taxi', 'derived', 'the mode FareChargeHandler charges')
 
@@ -1375,38 +1374,38 @@ def config_runtime(cfg, scoring, day, paths):
                     key + ', comma-joined')
         for param, key in (
                 ('ptFare.trainBandsKm', 'A.fare.train_band_upper_km'),
-                ('ptFare.trainAdultPeakAud', 'A.fare.train_adult_peak_aud'),
-                ('ptFare.trainAdultOffpeakAud',
-                 'A.fare.train_adult_offpeak_aud'),
-                ('ptFare.trainChildPeakAud', 'A.fare.train_child_peak_aud'),
-                ('ptFare.trainChildOffpeakAud',
-                 'A.fare.train_child_offpeak_aud'),
+                ('ptFare.trainAdultPeak', 'A.fare.train_adult_peak'),
+                ('ptFare.trainAdultOffpeak',
+                 'A.fare.train_adult_offpeak'),
+                ('ptFare.trainChildPeak', 'A.fare.train_child_peak'),
+                ('ptFare.trainChildOffpeak',
+                 'A.fare.train_child_offpeak'),
                 ('ptFare.busBandsKm', 'A.fare.bus_band_upper_km'),
-                ('ptFare.busAdultPeakAud', 'A.fare.bus_adult_peak_aud'),
-                ('ptFare.busAdultOffpeakAud', 'A.fare.bus_adult_offpeak_aud'),
-                ('ptFare.busChildPeakAud', 'A.fare.bus_child_peak_aud'),
-                ('ptFare.busChildOffpeakAud', 'A.fare.bus_child_offpeak_aud'),
+                ('ptFare.busAdultPeak', 'A.fare.bus_adult_peak'),
+                ('ptFare.busAdultOffpeak', 'A.fare.bus_adult_offpeak'),
+                ('ptFare.busChildPeak', 'A.fare.bus_child_peak'),
+                ('ptFare.busChildOffpeak', 'A.fare.bus_child_offpeak'),
                 ('ptFare.tramBandsKm', 'A.fare.lightrail_band_upper_km'),
-                ('ptFare.tramAdultPeakAud', 'A.fare.lightrail_adult_peak_aud'),
-                ('ptFare.tramAdultOffpeakAud',
-                 'A.fare.lightrail_adult_offpeak_aud'),
-                ('ptFare.tramChildPeakAud', 'A.fare.lightrail_child_peak_aud'),
-                ('ptFare.tramChildOffpeakAud',
-                 'A.fare.lightrail_child_offpeak_aud')):
+                ('ptFare.tramAdultPeak', 'A.fare.lightrail_adult_peak'),
+                ('ptFare.tramAdultOffpeak',
+                 'A.fare.lightrail_adult_offpeak'),
+                ('ptFare.tramChildPeak', 'A.fare.lightrail_child_peak'),
+                ('ptFare.tramChildOffpeak',
+                 'A.fare.lightrail_child_offpeak')):
             runtime[param] = fare_list(key)
         for param, key in (
-                ('ptFare.ferryAdultPeakAud', 'A.fare.ferry_adult_peak_aud'),
-                ('ptFare.ferryAdultOffpeakAud',
-                 'A.fare.ferry_adult_offpeak_aud'),
-                ('ptFare.ferryChildPeakAud', 'A.fare.ferry_child_peak_aud'),
-                ('ptFare.ferryChildOffpeakAud',
-                 'A.fare.ferry_child_offpeak_aud'),
-                ('ptFare.seniorPerFareCapAud', 'A.fare.senior_per_fare_cap_aud'),
-                ('ptFare.dailyCapSeniorAud', 'A.fare.daily_cap_senior_aud'),
-                ('ptFare.transferDiscountAdultAud',
-                 'A.fare.transfer_discount_adult_aud'),
-                ('ptFare.transferDiscountChildAud',
-                 'A.fare.transfer_discount_child_aud'),
+                ('ptFare.ferryAdultPeak', 'A.fare.ferry_adult_peak'),
+                ('ptFare.ferryAdultOffpeak',
+                 'A.fare.ferry_adult_offpeak'),
+                ('ptFare.ferryChildPeak', 'A.fare.ferry_child_peak'),
+                ('ptFare.ferryChildOffpeak',
+                 'A.fare.ferry_child_offpeak'),
+                ('ptFare.seniorPerFareCap', 'A.fare.senior_per_fare_cap'),
+                ('ptFare.dailyCapSenior', 'A.fare.daily_cap_senior'),
+                ('ptFare.transferDiscountAdult',
+                 'A.fare.transfer_discount_adult'),
+                ('ptFare.transferDiscountChild',
+                 'A.fare.transfer_discount_child'),
                 ('ptFare.transferWindowMin', 'A.fare.transfer_window_min'),
                 ('ptFare.peakMorningStartH', 'A.fare.peak_morning_start_h'),
                 ('ptFare.peakMorningEndH', 'A.fare.peak_morning_end_h'),
@@ -1427,15 +1426,15 @@ def config_runtime(cfg, scoring, day, paths):
             weekend, 'derived',
             'the published rule: weekends are off-peak all day; WEEKDAY '
             'prices as Monday-Thursday')
-        runtime['ptFare.dailyCapAdultAud'] = (
-            cfg.get('A.fare.daily_cap_adult_weekend_aud') if weekend
-            else cfg.get('A.fare.daily_cap_adult_aud'), 'derived',
-            'A.fare.daily_cap_adult%s_aud by day type'
+        runtime['ptFare.dailyCapAdult'] = (
+            cfg.get('A.fare.daily_cap_adult_weekend') if weekend
+            else cfg.get('A.fare.daily_cap_adult'), 'derived',
+            'A.fare.daily_cap_adult%s by day type'
             % ('_weekend' if weekend else ''))
-        runtime['ptFare.dailyCapChildAud'] = (
-            cfg.get('A.fare.daily_cap_child_weekend_aud') if weekend
-            else cfg.get('A.fare.daily_cap_child_aud'), 'derived',
-            'A.fare.daily_cap_child%s_aud by day type'
+        runtime['ptFare.dailyCapChild'] = (
+            cfg.get('A.fare.daily_cap_child_weekend') if weekend
+            else cfg.get('A.fare.daily_cap_child'), 'derived',
+            'A.fare.daily_cap_child%s by day type'
             % ('_weekend' if weekend else ''))
 
     # Explicit corridor signals (#73): the signals contrib's module and its

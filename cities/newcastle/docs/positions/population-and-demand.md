@@ -2,13 +2,13 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.138 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
 **B1 — persons and households (`src/build/build_population.py`, seed 20260810, the 1,500 core SA1s only).**
 
-- Fitted per SA1 to the census marginals: household size (G35), vehicles (G34), dwelling structure (G36), age–sex (G04), labour force (G43/G46), income (G17), occupation (G60); home coordinates jittered within the SA1 at 0.6 of the equivalent-circle radius (§9.1).
+- Fitted per SA1 to the census marginals: household size (G35), vehicles (G34), dwelling structure (G36), age–sex (G04), labour force (G43/G46), income (G17), occupation (G60); home coordinates jittered within the SA1 at 0.6 of the equivalent-circle radius (§9.1). Since 3 Sep 2026 the synthesiser reads those tables through the city's reader adapter (`cities/newcastle/extract/reader_shapes.py`, shapes in `config/schema/reader_shapes.json`) and names no ABS column; the population rebuilds byte-identically across the change (§9.140, #62).
 - **The G17 income band now reaches scoring** (§9.138, #108): each resident's weekly band midpoint is stamped as the `income` plan attribute (closed bands by interval identity, the open top band at `C.income.top_band_factor` 1.25 swept; 424,190 of 621,364 WEEKDAY persons carry one) and MATSim core's `IndividualPersonScoringParameters` scales that person's marginalUtilityOfMoney by (average/personal)^`C.income.exponent` (1.0, swept 0.5–1.5). Neg_Nil (109,267 residents) carries no attribute and keeps the subpopulation value by the class's documented fallback; `external`/`freight` are excluded by name. `C.income.representation = absent` recovers the flat-money model (§9.138).
 - Age structure reads G04's grouped 80+ columns, so the 75+ population exists; employment, the full-time/part-time split and unemployment are drawn per (SA1, sex, ABS band) from G46A/B; school attendance per SA1 from G01; the 18+ full-time/part-time education split is observed per SA1 from G15, and `B.population.tertiary_ft_share` is retired (§9.47, §9.61).
 - Licence holding is **measured**: `B.population.licence_rate_by_age_band` (`measured`, sweep proportional 0.05) is the TfNSW Driver Licence Statistics July 2026 snapshot over the ABS estimated resident population at 30 June 2024, pooled 18–24 0.78, 25–34 0.94, 35–44 1.00 (capped), 45–74 0.97–0.98, 75–84 0.92, 85+ 0.51, 12–17 0.08; each person is drawn at their own LGA's rate from `data/processed/observed/licence_rates_by_age_lga.csv` (§9.131). The producing script `cities/newcastle/build/build_licence_rates.py` asserts the vector it derives against the declared field and exits non-zero on drift, so the registry cannot lag its observation (§9.133).
@@ -31,15 +31,14 @@
 
 **Other tiers, all in the same builder.**
 
-- External: the 201 boundary SA1s' residents enter the core at `B.external.interaction_rate` 0.08 (`assumed`, sweep 0.04–0.15) through derived cordon crossings, placed on the same attractors, ride withheld (`B.external.agent_ride_available`), scaled on the weekend by the measured light day factors SAT 0.8429 / SUN 0.7347 (§9.2, §9.15, §9.61).
+- External: the 201 boundary SA1s' residents enter the core at `B.external.interaction_rate` 0.0900 (`derived`, sweep 0.06–0.12) = `B.external.commute_share_to_core` 0.1377 (TfNSW Journey to Work 2011, 4,636 of 33,666 employed residents working in the five core LGAs; measured, ±30% vintage sweep) × `B.external.employed_share` 0.4575 (32,230 of 70,448, 2021 G46 over G01; held fixed) / the HW purpose split 0.7, so the HW agents equal the observed commuters (§9.140, #63) — through derived cordon crossings, placed on the same attractors, ride withheld (`B.external.agent_ride_available`), scaled on the weekend by the measured light day factors SAT 0.8429 / SUN 0.7347 (§9.2, §9.15, §9.61).
 - Through: trips enter at one derived cordon gate and exit at another at the gate's own observed AADT times `B.external.through_share` 0.35 (`assumed`), with the gate's observed heavy share carried as trucks (§9.41, §9.49).
 - Freight: `truck` is a declared, swept physical background load (`freight_trip_ratio` 0.0697 in `_activity_chains_report.json`), not a freight demand model (§9.49); the coal chain is not simulated (§9.70). Two resident carves are drawn in `src/build/build_matsim_plans.py` on the pool that excludes escorters and named drivers: motorbike `B.motorbike.trip_share` 0.0037849 (`derived`, the target LGA's G62 cell — it supersedes §9.116's 0.0024064) and truck `B.truck.resident_trip_share` 0.002993 (`derived`) (§9.125, §9.129).
 
 ## The state on disk
 
-- **The package is consistent on the licence-rate population** (§9.133): `cities/newcastle/demand/population/B1_synthetic_population.csv` holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`_population_report.json`, §9.131); the three day-type chains, the plans and the 30 run-input sets were rebuilt on it on 30 August 2026, and `tests/check_package.py` reports ALL CHECKS PASSED on 503 manifest files (`data/MANIFEST.csv`, §9.133).
-- Every figure below is the rebuilt demand's (`_activity_chains_report.json`, `_plans_report.json`); the figures the old population gave stand in §9.129 and §9.131 for comparison, and no run has read the rebuilt demand beyond the plumbing smoke (§9.133).
-- Family F21 opens at the first arm's launch stamp, with `decisions_ref` 9.131; its overlay is `cities/newcastle/overlays/runs/f21_gate_10pct.json` (S2 × WEEKDAY, 10%, 300 iterations), identical in run parameters to F15–F20 (§9.133). The arm needs a stated-cost approval and none stands (`NEXT_AGENT_BRIEF.md` §3).
+- **The package is consistent on the licence-rate population and is the F24 build** (§9.140): `cities/newcastle/demand/population/B1_synthetic_population.csv` holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`_population_report.json`, §9.131); the three day-type chains, the plans and the 30 run-input sets were rebuilt on it on 3 Sep 2026 — the derived interaction rate, the LGA-conserved motorbike carve and the leaf-subtour repair — and the manifest holds 511 files (`data/MANIFEST.csv`, §9.140).
+- The figures below are the 30 Aug rebuild's where §9.133 is cited and the 3 Sep rebuild's where §9.140 is; WEEKDAY plans 622,051 persons and 9,969,564 legs on the F24 build (`_plans_report.json`, §9.140). Family F24 is declared at the first arm's launch stamp; the arm needs a stated-cost approval and none stands (`NEXT_AGENT_BRIEF.md` §3).
 
 ## What is measured
 
@@ -57,11 +56,9 @@
 ## What is open
 
 - #86 — passenger demand against the observed 20.6%: the four passes reach the identity on paper; realisation at F21 is the test (#86, §9.124).
-- #91 — ride legs generated with no declared driver: the choice-set seed's question, on the ride page (#91, §9.120).
 - #50 — no mode × age cell exists in the held data; the age gates are assumed and swept, and the modelled split is sex-invariant against G62 (§9.78, §9.84).
-- #63 — the 0b backlog: `B.external.interaction_rate`, `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION` and the activity durations stay assumed; a journey-to-work origin–destination table would settle the first and is not held (§9.2, §9.61).
-- #96 — 99 unclosed subtours mix chain- and non-chain-based modes, all in days that never return home; the scan has not been rerun on the rebuilt plans (§9.119).
-- #93 — the motorbike carve delivers 0.265% of resident trips against a 0.378% region share on both populations; the per-cell thinning, not the pool, now sets the gap (`_plans_report.json`, §9.129, §9.133).
+- Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION` and the activity durations (§9.2, §9.61); the 2021 journey-to-work table would sharpen the interaction rate's 2011 vintage and is an attended extract (§9.140).
+- #96 and #93 are awaiting a run on the F24 build: the leaf mixes are repaired at the seed (0 leaf on every day type) and the carve is conserved per LGA (§9.140) — the seed page and the motorbike page carry the numbers.
 - The 9,376 `driver_is_the_companion` refusals that survive the filter are emergent, not structural, and stay reported (`_activity_chains_report.json`, §9.116).
 
 ## Refused — do not re-raise
@@ -78,6 +75,7 @@
 
 ## History
 
+- §9.140 — interaction rate derived; F24 build
 - §9.138 — census income reaches money scoring
 - §9.133 — demand chain rebuilt on licence-rate population
 - §9.131 — licence rate measured per LGA

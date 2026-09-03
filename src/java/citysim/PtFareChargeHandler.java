@@ -288,8 +288,8 @@ public final class PtFareChargeHandler implements
                     && leg.boardTime - lastAlight
                             <= this.cfg.getTransferWindowMin() * 60.0) {
                 final double discount = rc == RiderClass.ADULT
-                        ? this.cfg.getTransferDiscountAdultAud()
-                        : this.cfg.getTransferDiscountChildAud();
+                        ? this.cfg.getTransferDiscountAdult()
+                        : this.cfg.getTransferDiscountChild();
                 fare = Math.max(0.0, fare - discount);
             }
             journeyFare += fare;
@@ -301,9 +301,9 @@ public final class PtFareChargeHandler implements
             return;
         }
         final double cap = rc == RiderClass.ADULT
-                ? this.cfg.getDailyCapAdultAud()
-                : rc == RiderClass.CHILD ? this.cfg.getDailyCapChildAud()
-                : this.cfg.getDailyCapSeniorAud();
+                ? this.cfg.getDailyCapAdult()
+                : rc == RiderClass.CHILD ? this.cfg.getDailyCapChild()
+                : this.cfg.getDailyCapSenior();
         final double already = this.chargedToday.getOrDefault(personId, 0.0);
         final double amount = Math.min(journeyFare, Math.max(0.0, cap - already));
         if (amount <= 0.0) {
@@ -335,10 +335,10 @@ public final class PtFareChargeHandler implements
     private double lookup(final String mode, final double km,
             final RiderClass rc, final boolean peak) {
         if ("ferry".equals(mode)) {
-            final double adult = peak ? this.cfg.getFerryAdultPeakAud()
-                    : this.cfg.getFerryAdultOffpeakAud();
-            final double child = peak ? this.cfg.getFerryChildPeakAud()
-                    : this.cfg.getFerryChildOffpeakAud();
+            final double adult = peak ? this.cfg.getFerryAdultPeak()
+                    : this.cfg.getFerryAdultOffpeak();
+            final double child = peak ? this.cfg.getFerryChildPeak()
+                    : this.cfg.getFerryChildOffpeak();
             return classFare(rc, adult, child);
         }
         final String bands;
@@ -346,24 +346,24 @@ public final class PtFareChargeHandler implements
         final String childCsv;
         if ("rail".equals(mode)) {
             bands = this.cfg.getTrainBandsKm();
-            adultCsv = peak ? this.cfg.getTrainAdultPeakAud()
-                    : this.cfg.getTrainAdultOffpeakAud();
-            childCsv = peak ? this.cfg.getTrainChildPeakAud()
-                    : this.cfg.getTrainChildOffpeakAud();
+            adultCsv = peak ? this.cfg.getTrainAdultPeak()
+                    : this.cfg.getTrainAdultOffpeak();
+            childCsv = peak ? this.cfg.getTrainChildPeak()
+                    : this.cfg.getTrainChildOffpeak();
         } else if ("tram".equals(mode)) {
             bands = this.cfg.getTramBandsKm();
-            adultCsv = peak ? this.cfg.getTramAdultPeakAud()
-                    : this.cfg.getTramAdultOffpeakAud();
-            childCsv = peak ? this.cfg.getTramChildPeakAud()
-                    : this.cfg.getTramChildOffpeakAud();
+            adultCsv = peak ? this.cfg.getTramAdultPeak()
+                    : this.cfg.getTramAdultOffpeak();
+            childCsv = peak ? this.cfg.getTramChildPeak()
+                    : this.cfg.getTramChildOffpeak();
         } else {
             // bus, and any scheduled submode without a table of its own,
             // takes the bus table - the aggregate pt fallback of 9.78
             bands = this.cfg.getBusBandsKm();
-            adultCsv = peak ? this.cfg.getBusAdultPeakAud()
-                    : this.cfg.getBusAdultOffpeakAud();
-            childCsv = peak ? this.cfg.getBusChildPeakAud()
-                    : this.cfg.getBusChildOffpeakAud();
+            adultCsv = peak ? this.cfg.getBusAdultPeak()
+                    : this.cfg.getBusAdultOffpeak();
+            childCsv = peak ? this.cfg.getBusChildPeak()
+                    : this.cfg.getBusChildOffpeak();
         }
         final double[] upper = PtFareConfigGroup.parse(bands);
         int band = upper.length;  // the open last band
@@ -386,7 +386,7 @@ public final class PtFareChargeHandler implements
         if (rc == RiderClass.CHILD) {
             return child;
         }
-        return Math.min(child, this.cfg.getSeniorPerFareCapAud());
+        return Math.min(child, this.cfg.getSeniorPerFareCap());
     }
 
     /** Logged once at startup, so a run's console says what it charged. */

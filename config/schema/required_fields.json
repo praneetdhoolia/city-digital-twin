@@ -4,11 +4,11 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 462,
+  "n_fields": 457,
   "n_by_layer": {
     "A": 176,
-    "B": 102,
-    "C": 60,
+    "B": 104,
+    "C": 53,
     "CAL": 19,
     "D": 5,
     "E": 26,
@@ -303,7 +303,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.bus_adult_offpeak_aud": {
+    "A.fare.bus_adult_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -312,7 +312,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.bus_adult_peak_aud": {
+    "A.fare.bus_adult_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -330,7 +330,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.bus_child_offpeak_aud": {
+    "A.fare.bus_child_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -339,7 +339,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.bus_child_peak_aud": {
+    "A.fare.bus_child_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -366,7 +366,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.daily_cap_adult_aud": {
+    "A.fare.daily_cap_adult": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -375,7 +375,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.daily_cap_adult_weekend_aud": {
+    "A.fare.daily_cap_adult_weekend": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -384,7 +384,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.daily_cap_child_aud": {
+    "A.fare.daily_cap_child": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -393,7 +393,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.daily_cap_child_weekend_aud": {
+    "A.fare.daily_cap_child_weekend": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -402,7 +402,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.daily_cap_senior_aud": {
+    "A.fare.daily_cap_senior": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -411,7 +411,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.ferry_adult_offpeak_aud": {
+    "A.fare.ferry_adult_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -420,7 +420,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.ferry_adult_peak_aud": {
+    "A.fare.ferry_adult_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -429,7 +429,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.ferry_child_offpeak_aud": {
+    "A.fare.ferry_child_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -438,7 +438,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.ferry_child_peak_aud": {
+    "A.fare.ferry_child_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -447,7 +447,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.lightrail_adult_offpeak_aud": {
+    "A.fare.lightrail_adult_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -456,7 +456,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.lightrail_adult_peak_aud": {
+    "A.fare.lightrail_adult_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -474,7 +474,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.lightrail_child_offpeak_aud": {
+    "A.fare.lightrail_child_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -483,7 +483,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.lightrail_child_peak_aud": {
+    "A.fare.lightrail_child_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -546,7 +546,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.senior_per_fare_cap_aud": {
+    "A.fare.senior_per_fare_cap": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -555,7 +555,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.train_adult_offpeak_aud": {
+    "A.fare.train_adult_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -564,7 +564,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.train_adult_peak_aud": {
+    "A.fare.train_adult_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -582,7 +582,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.train_child_offpeak_aud": {
+    "A.fare.train_child_offpeak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -591,7 +591,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.train_child_peak_aud": {
+    "A.fare.train_child_peak": {
       "layer": "A",
       "units": "{currency}",
       "type": "array",
@@ -600,7 +600,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.transfer_discount_adult_aud": {
+    "A.fare.transfer_discount_adult": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -609,7 +609,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.fare.transfer_discount_child_aud": {
+    "A.fare.transfer_discount_child": {
       "layer": "A",
       "units": "{currency}",
       "type": "number",
@@ -1014,7 +1014,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
-    "A.parking.price_aud_hr_max": {
+    "A.parking.price_hr_max": {
       "layer": "A",
       "units": "{currency}_per_hour",
       "type": "number",
@@ -1941,6 +1941,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.external.commute_share_to_core": {
+      "layer": "B",
+      "units": "share_of_employed_residents",
+      "type": "number",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.external.cordon_road_classes": {
       "layer": "B",
       "units": "osm_highway_class",
@@ -1950,11 +1959,20 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.external.employed_share": {
+      "layer": "B",
+      "units": "share_of_persons",
+      "type": "number",
+      "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.external.interaction_rate": {
       "layer": "B",
       "units": "probability",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -2418,7 +2436,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
-    "B.taxi.fare_per_km_rideshare_aud": {
+    "B.taxi.fare_per_km_rideshare": {
       "layer": "B",
       "units": "{currency}_per_km",
       "type": "number",
@@ -2427,7 +2445,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
-    "B.taxi.fare_per_km_taxi_aud": {
+    "B.taxi.fare_per_km_taxi": {
       "layer": "B",
       "units": "{currency}_per_km",
       "type": "number",
@@ -2436,7 +2454,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
-    "B.taxi.flagfall_rideshare_aud": {
+    "B.taxi.flagfall_rideshare": {
       "layer": "B",
       "units": "{currency}",
       "type": "number",
@@ -2445,7 +2463,7 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
-    "B.taxi.flagfall_taxi_aud": {
+    "B.taxi.flagfall_taxi": {
       "layer": "B",
       "units": "{currency}",
       "type": "number",
@@ -2702,24 +2720,6 @@
       "units": "ratio",
       "type": "number",
       "source_in_reference_city": "literature",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
-    "C.gradient.downhill_penalty_per_pct": {
-      "layer": "C",
-      "units": "utils_per_percent_grade",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
-    "C.gradient.uphill_penalty_per_pct": {
-      "layer": "C",
-      "units": "utils_per_percent_grade",
-      "type": "number",
-      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json"
@@ -3012,51 +3012,6 @@
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json"
     },
-    "C.walk.decay_beta_per_m": {
-      "layer": "C",
-      "units": "per_metre",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
-    "C.walk.decay_form": {
-      "layer": "C",
-      "units": "enum",
-      "type": "string",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
-    "C.walk.gaussian_mu_m": {
-      "layer": "C",
-      "units": "metres",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
-    "C.walk.gaussian_sigma_m": {
-      "layer": "C",
-      "units": "metres",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
-    "C.walk.max_considered_m": {
-      "layer": "C",
-      "units": "metres",
-      "type": "number",
-      "source_in_reference_city": "assumed",
-      "sweep_required": true,
-      "unobtained_in_reference_city": false,
-      "declared_in": "C_behaviour.json"
-    },
     "CAL.gate.pass_deviation_pct": {
       "layer": "CAL",
       "units": "per cent",
@@ -3331,7 +3286,7 @@
       "layer": "E",
       "units": "factor",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "measured",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "E_scenario.json"

@@ -76,23 +76,6 @@
         "src/build/build_params.py"
       ]
     },
-    "C.walk.max_considered_m": {
-      "value": 2500.0,
-      "units": "metres",
-      "source": "assumed",
-      "sweep": [
-        1500.0,
-        4000.0
-      ],
-      "sweep_basis": "chosen. Proposal 6.3 forbids a THRESHOLD on the decay curve; this is the outer distance at which the curve is still evaluated, not a cut-off applied to behaviour.",
-      "status": "active",
-      "decisions_ref": "8.4, 9.32",
-      "proposal_ref": "6.3",
-      "description": "Outer distance over which the walk-access decay curve is evaluated. NOT a catchment threshold: proposal 6.3 forbids one, because a 400 m cut-off treats a person at 401 m as identical to one at 2 km and flatters fixed-route modes.",
-      "consumers": [
-        "src/build/build_params.py"
-      ]
-    },
     "C.vot.trip_weighted": {
       "value": 16.96,
       "units": "AUD_2026_per_hour",
@@ -208,58 +191,6 @@
         "src/build/build_matsim_run_inputs.py"
       ],
       "description": "The taxi mode constant net of the derived wait cost. Zero says: beyond fare and wait, no extra penalty is asserted."
-    },
-    "C.walk.decay_beta_per_m": {
-      "value": 0.0018,
-      "units": "per_metre",
-      "source": "assumed",
-      "sweep": [
-        0.001,
-        0.003
-      ],
-      "status": "active",
-      "decisions_ref": "8.2",
-      "proposal_ref": "6.3",
-      "description": "Negative-exponential distance decay on walk access. Weight 0.49 at 400 m, 0.24 at 800 m, 0.12 at 1200 m, considered to 2500 m. NO 400 m THRESHOLD IS USED ANYWHERE: proposal 6.3 is explicit that a cut-off treats a person at 401 m as identical to one at 2 km and systematically flatters fixed-route modes."
-    },
-    "C.walk.decay_form": {
-      "value": "negative_exponential",
-      "units": "enum",
-      "source": "assumed",
-      "sweep": {
-        "categorical": [
-          "negative_exponential",
-          "cumulative_gaussian"
-        ],
-        "basis": "DECISIONS.md 8.2 provides a cumulative-Gaussian alternative, mu 700 m, sigma 420 m"
-      },
-      "status": "active",
-      "decisions_ref": "8.2",
-      "description": "Functional form of the walk access decay."
-    },
-    "C.walk.gaussian_mu_m": {
-      "value": 700.0,
-      "units": "metres",
-      "source": "assumed",
-      "sweep": [
-        500.0,
-        900.0
-      ],
-      "status": "active",
-      "decisions_ref": "8.2",
-      "description": "Alternative-form parameter, used only when decay_form is cumulative_gaussian."
-    },
-    "C.walk.gaussian_sigma_m": {
-      "value": 420.0,
-      "units": "metres",
-      "source": "assumed",
-      "sweep": [
-        300.0,
-        550.0
-      ],
-      "status": "active",
-      "decisions_ref": "8.2",
-      "description": "Alternative-form parameter, used only when decay_form is cumulative_gaussian."
     },
     "C.time_weights.beta_walk_access": {
       "value": 2.0,
@@ -379,31 +310,6 @@
       "status": "active",
       "decisions_ref": "8.4, 9.3",
       "description": "Crowding multiplier, standing. NOT carried into MATSim scoring (DECISIONS.md 9.3), and the transit fleet carries standingRoomInPersons=0, so standing does not occur in the current fleet at all."
-    },
-    "C.gradient.uphill_penalty_per_pct": {
-      "value": 0.09,
-      "units": "utils_per_percent_grade",
-      "source": "assumed",
-      "sweep": [
-        0.05,
-        0.14
-      ],
-      "status": "active",
-      "decisions_ref": "8.4",
-      "proposal_ref": "6.3",
-      "description": "Asymmetric gradient cost on active-mode edges. Proposal 6.3 requires uphill and downhill to be different costs; material in Newcastle East and The Hill."
-    },
-    "C.gradient.downhill_penalty_per_pct": {
-      "value": 0.02,
-      "units": "utils_per_percent_grade",
-      "source": "assumed",
-      "sweep": [
-        0.0,
-        0.05
-      ],
-      "status": "active",
-      "decisions_ref": "8.4",
-      "description": "Asymmetric gradient cost, downhill."
     },
     "C.asc.car_driver": {
       "value": 0.0,

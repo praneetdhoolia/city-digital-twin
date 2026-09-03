@@ -2,11 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
 - **The hard bar of the gate is the runner's own** (§9.137): a watcher inside `run_matsim.py` reads all twelve modes every `RUN.gate.interval_iterations` = 100 iterations with the same reporter below and stops the JVM itself when any mode is at or past `CAL.gate.stop_deviation_pct`, recording the gate table as the abort cause. The trend judgement ("or heading there") stays with the session. **Its iteration source is the progress digest, not a log tail** (§9.139): the original 64 KiB tail read was measured blind at the 25% arm's log rate — the ENDS marker sat 611 MiB behind EOF — and the watcher idled through the F23 gate; fixed 2 Sep, first live firing still unobserved.
+- **No open issue behind a run** (GOAL.md requirement 10, §9.140): `src/run/issue_gate.py` reads the tracker through `gh` and refuses while any open issue lacks the `awaiting-run` label; `session_gate.py` carries it as the `issues gated` line and `run.py` refuses to launch (`--allow-open-issues` overrides, to be justified in the run record). Where `gh` cannot read the tracker the gate says so rather than pretending it is empty.
 - **The gate reader** is `src/analyse/report_mode_ridership.py`. It prints every one of the twelve simulated modes on its own row against its own target, never an umbrella `pt` row: the pt submodes are resolved from each boarded route's `transportMode` through the run's own schedule (§9.87). It reads the run directory and the city's target artefact and writes nothing.
 - **Any iteration the run has written is readable** (§9.120). Where MATSim wrote `<n>.trips.csv.gz` the reader uses it; between those, `src/analyse/iteration_trips.py` derives the same linked main-mode trips from `<n>.experienced_plans.xml.gz`, which is written every `RUN.controler.write_plans_interval` = 10 iterations. The derivation is validated exactly against the trips table wherever both exist (`--validate`), and the trips table wins any disagreement (§9.120).
 - **Three views**: `--it N` for one iteration, `--trend` for one row per mode across every readable iteration with a direction verdict (`toward`, `AWAY`, `flat`), and `--watch SECONDS` to keep printing each newly readable iteration until the run ends. `--truck-stations` scores truck on its target's basis (below).
@@ -34,14 +35,13 @@
 
 ## What is open
 
-- **The machine is idle and the package on disk is consistent** (§9.138, `check_package.py` ALL CHECKS PASSED re-run 2 Sep). Family F23 is open; its 25% arm is read and stopped at the iteration-100 gate (§9.139). The next family follows the user's pick of root cause, under a fresh run approval.
+- **The machine is idle; the package on disk is the F24 build** (§9.140): chains, plans and run inputs rebuilt 3 Sep; F23's gate arm is read and stopped (§9.139). Every open issue is labelled `awaiting-run` (13 on 3 Sep, `python src/run/issue_gate.py`); the next arm follows the user's root-cause pick under a fresh run approval.
 - **The fixed watcher has never fired in anger** (§9.139): the fix reads `_progress.json`; the next arm to cross a gate milestone is its first live test.
 - **Heavy rail's over-boarding has halved inside every arm and still stands**: 36,340 → 17,090 inside F21 (§9.134), 37,540 → 16,512 inside F22 under fares (§9.136), 37,568 → 19,140 inside F23 under income-scaled fares (§9.139, #98) — the F23 level at the same gate is HIGHER because income scaling weakens the fare deterrent for high-income boarders (#108).
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
 - **No arm has reached its innovation cutoff since F4**, so no post-cutoff twelve-mode level exists (§9.108).
 - **`--trend` omits `freight_train`** and its header still says resident linked trips for every row, while heavy rail and light rail rows now carry boardings (§9.130) — the header is behind the basis.
 - **`--truck-stations` is holdout-bound**: whether to spend holdout on freight is the operator's decision, not the reader's (§9.101, #82).
-- **#84 stays open** until every surviving quotation of a light rail per-cent error against the unscorable 2019–20 target is found.
 - **`fit.py` still folds** (§9.87): the calibration fit scores the survey's categories, the gate scores twelve modes, and the two are distinct instruments by design.
 
 ## Refused — do not re-raise
@@ -57,6 +57,7 @@
 
 ## History
 
+- §9.140 — issue gate; requirement 10
 - §9.139 — third gate; watcher blind, fixed
 - §9.134 — first gate since F4; stop fired
 - §9.133 — board skips plumbing tests

@@ -34,8 +34,6 @@
     "data/processed/census": {
       "kind": "directory",
       "read_by": [
-        "src/build/build_population.py",
-        "src/build/build_zone_attractions.py",
         "src/build/measure_network_factors.py"
       ]
     },
@@ -834,6 +832,7 @@
       "kind": "file",
       "read_by": [
         "src/analyse/extract_metrics.py",
+        "src/build/build_matsim_plans.py",
         "src/build/build_population.py"
       ],
       "columns_in_reference_city": [
@@ -1232,9 +1231,6 @@
         "beta_transfer_penalty_low",
         "beta_transfer_penalty_high",
         "beta_transfer_penalty_source",
-        "walk_decay_function",
-        "walk_decay_beta_per_m",
-        "walk_decay_source",
         "nesting_structure",
         "beta_ivt",
         "beta_ivt_low",
@@ -1268,14 +1264,6 @@
         "beta_crowding_standing_low",
         "beta_crowding_standing_high",
         "beta_crowding_standing_source",
-        "beta_gradient_uphill",
-        "beta_gradient_uphill_low",
-        "beta_gradient_uphill_high",
-        "beta_gradient_uphill_source",
-        "beta_gradient_downhill",
-        "beta_gradient_downhill_low",
-        "beta_gradient_downhill_high",
-        "beta_gradient_downhill_source",
         "asc_car_driver",
         "asc_car_driver_source",
         "asc_car_passenger",

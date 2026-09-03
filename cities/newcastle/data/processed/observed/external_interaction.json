@@ -1,0 +1,92 @@
+{
+  "source": {
+    "commute": "TfNSW Journey to Work 2011 Table 01 (origin SA2 x destination SA2, employed persons), data/raw/jtw/",
+    "employed": "2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P, external-tier SA1s"
+  },
+  "core_lgas": [
+    "Cessnock",
+    "Lake Macquarie",
+    "Maitland",
+    "Newcastle",
+    "Port Stephens"
+  ],
+  "external_sa2_2021": [
+    "Branxton - Greta - Pokolbin",
+    "Dungog",
+    "Muswellbrook",
+    "Muswellbrook Surrounds",
+    "Scone",
+    "Scone Surrounds",
+    "Singleton",
+    "Singleton Surrounds",
+    "Tea Gardens - Hawks Nest"
+  ],
+  "commute_share_to_core": 0.1377,
+  "employed_residents_2011": 33666.0,
+  "working_in_core_2011": 4636.15,
+  "employed_share": 0.4575,
+  "persons_2021": 70448,
+  "employed_2021": 32230,
+  "interaction_rate_identity": {
+    "expression": "commute_share_to_core x employed_share / purpose_split.HW",
+    "value": 0.09,
+    "declared": 0.09
+  },
+  "by_sa2": {
+    "Branxton - Greta - Pokolbin": {
+      "sa2_2011": "Branxton - Greta - Pokolbin",
+      "employed_2011": 4433.0,
+      "to_core": 2150.73,
+      "share": 0.4852
+    },
+    "Dungog": {
+      "sa2_2011": "Dungog",
+      "employed_2011": 3703.9999999999995,
+      "to_core": 1412.07,
+      "share": 0.3812
+    },
+    "Muswellbrook": {
+      "sa2_2011": "Muswellbrook",
+      "employed_2011": 5356.999999999999,
+      "to_core": 90.77000000000001,
+      "share": 0.0169
+    },
+    "Muswellbrook Surrounds": {
+      "sa2_2011": "Muswellbrook Region",
+      "employed_2011": 1996.0,
+      "to_core": 23.2,
+      "share": 0.0116
+    },
+    "Scone": {
+      "sa2_2011": "Scone",
+      "employed_2011": 2740.0,
+      "to_core": 32.769999999999996,
+      "share": 0.012
+    },
+    "Scone Surrounds": {
+      "sa2_2011": "Scone Region",
+      "employed_2011": 3757.0,
+      "to_core": 20.999999999999996,
+      "share": 0.0056
+    },
+    "Singleton": {
+      "sa2_2011": "Singleton",
+      "employed_2011": 7994.999999999999,
+      "to_core": 402.16999999999996,
+      "share": 0.0503
+    },
+    "Singleton Surrounds": {
+      "sa2_2011": "Singleton Region",
+      "employed_2011": 2387.0,
+      "to_core": 209.14,
+      "share": 0.0876
+    },
+    "Tea Gardens - Hawks Nest": {
+      "sa2_2011": "Tea Gardens - Hawks Nest",
+      "employed_2011": 1297.0,
+      "to_core": 294.29999999999995,
+      "share": 0.2269
+    }
+  },
+  "decisions_ref": "9.140"
+}

@@ -16,21 +16,21 @@ public final class FareConfigGroup extends ReflectiveConfigGroup {
 
     public static final String GROUP_NAME = "fare";
 
-    private double flagfallAud = 0.0;
+    private double flagfall = 0.0;
     private String mode = "";
 
     public FareConfigGroup() {
         super(GROUP_NAME);
     }
 
-    @StringGetter("flagfallAud")
-    public double getFlagfallAud() {
-        return this.flagfallAud;
+    @StringGetter("flagfall")
+    public double getFlagfall() {
+        return this.flagfall;
     }
 
-    @StringSetter("flagfallAud")
-    public void setFlagfallAud(final double value) {
-        this.flagfallAud = value;
+    @StringSetter("flagfall")
+    public void setFlagfall(final double value) {
+        this.flagfall = value;
     }
 
     @StringGetter("mode")
@@ -45,6 +45,6 @@ public final class FareConfigGroup extends ReflectiveConfigGroup {
 
     /** The module is live only when a mode is named and the flagfall is set. */
     public boolean isEnabled() {
-        return !this.mode.isEmpty() && this.flagfallAud > 0.0;
+        return !this.mode.isEmpty() && this.flagfall > 0.0;
     }
 }

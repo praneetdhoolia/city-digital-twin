@@ -149,6 +149,8 @@ GATES = [
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
     ('dead runs say why', [PY, 'src/run/run_failure.py', '--check'], False),
     ('fit figures', [PY, 'src/analyse/build_fit_figures.py', '--check'], False),
+    # GOAL.md requirement 10: every open issue closed or awaiting a run
+    ('issues gated', [PY, 'src/run/issue_gate.py'], False),
     ('toolchain', [PY, 'src/setup/bootstrap_toolchain.py', '--verify'], True),
 ]
 

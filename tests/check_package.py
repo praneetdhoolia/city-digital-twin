@@ -1740,7 +1740,7 @@ PRICE_ZONES = _city.path('data/processed/landuse/A5_parking_price_zones.csv')
 if _registry is not None and os.path.exists(PRICE_ZONES):
     _cfgp = _registry.load()
     for _k in ('A.parking.price_threshold_pctile', 'A.parking.price_saturation_pctile',
-               'A.parking.price_aud_hr_max', 'A.parking.max_stay_min',
+               'A.parking.price_hr_max', 'A.parking.max_stay_min',
                'A.parking.charged_hours_by_day_type', 'A.parking.exempt_activity_types'):
         _f = _fields.get(_k)
         check(_f is not None and _f.get('sweep') is not None,
@@ -1749,7 +1749,7 @@ if _registry is not None and os.path.exists(PRICE_ZONES):
               'a point value typed into a script' % _k)
     _thr_q = _cfgp.get('A.parking.price_threshold_pctile')
     _sat_q = _cfgp.get('A.parking.price_saturation_pctile')
-    _pmax = _cfgp.get('A.parking.price_aud_hr_max')
+    _pmax = _cfgp.get('A.parking.price_hr_max')
     check(_sat_q > _thr_q,
           'the parking saturation percentile (%g) exceeds the threshold percentile '
           '(%g), so the price ramp has a positive span' % (_sat_q, _thr_q))

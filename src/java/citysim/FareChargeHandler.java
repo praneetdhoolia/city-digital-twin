@@ -59,7 +59,7 @@ public final class FareChargeHandler
                 ConfigUtils.addOrGetModule(config, FareConfigGroup.class);
         this.events = events;
         this.mode = cfg.getMode();
-        this.flagfall = cfg.getFlagfallAud();
+        this.flagfall = cfg.getFlagfall();
     }
 
     @Override
