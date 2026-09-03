@@ -103,3 +103,7 @@ __pycache__/
 basemap.json
 replay.json
 replay.html
+
+# --- the GitHub Pages site assembled by .github/scripts/build_pages.py: CI
+#     builds it in the runner; a local build should go to a scratch directory
+_site/

@@ -1,0 +1,59 @@
+name: pages
+
+# Deploys the GitHub Pages site from README.md: the repository's front door is
+# the site's front page, rendered by GitHub's own Markdown renderer so the two
+# read identically. The fit figures README references and the dated reports
+# under docs/reports/ are carried along. Nothing is typed into the site that is
+# not in the repository; see .github/scripts/build_pages.py.
+#
+# The repository's Pages source must be "GitHub Actions" (build_type: workflow)
+# for this deployment to be the live one.
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "README.md"
+      - "docs/reports/**"
+      - "cities/*/docs/reference/figures/**"
+      - ".github/scripts/build_pages.py"
+      - ".github/workflows/pages.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Render README.md and assemble the site
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PAGES_SOURCE_BRANCH: ${{ github.ref_name }}
+        run: python .github/scripts/build_pages.py _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
