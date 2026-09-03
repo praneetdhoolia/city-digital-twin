@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Run the two signal gate probes on the signals run stack (issue #73).
+"""Run the Java gate probes on the signals run stack (issue #73, #125, #113).
 
 The probes are the ONLY gate between the citysim QSim assembly and the
 signals contrib physics (DECISIONS.md 9.74): `SignalsAssemblyProbe` proves a
@@ -12,8 +12,12 @@ Stdlib only, no arguments. It assembles the classpath from
 `.tools/run-stack/lib` (every jar, resolved and sha256-pinned by
 `src/setup/bootstrap_toolchain.py --run-stack`) plus `.tools/classes-signals`
 (compiled by the same bootstrap, or by this script if the sources are newer),
-runs both probes with the pinned JDK, and echoes each probe's one-line JSON
-verdict. Exit code 0 only if both probes exit 0.
+runs every probe with the pinned JDK, and echoes each probe's one-line JSON
+verdict. Exit code 0 only if every probe exits 0. `ScatsPriorityProbe` (#125)
+proves the SCATS priority extension moves the tram's drop on a three-stage
+plan and refuses honestly when the tram stage is last; `RemodeRestoreProbe`
+(#113) proves a trip forced to walk gets its mode back through the re-find
+both engines now share.
 """
 import glob
 import os
@@ -24,7 +28,11 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 TOOLS = os.path.join(ROOT, '.tools')
 LIB = os.path.join(TOOLS, 'run-stack', 'lib')
 CLASSES_SIGNALS = os.path.join(TOOLS, 'classes-signals')
-PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe')
+PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
+          # #125: SCATS priority on a three-stage plan, donor direction
+          'citysim.ScatsPriorityProbe',
+          # #113: the re-moded trip restore, shared by ride and taxi
+          'citysim.RemodeRestoreProbe')
 
 
 def java_exe():

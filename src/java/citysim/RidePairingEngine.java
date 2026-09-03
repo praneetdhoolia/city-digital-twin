@@ -1066,39 +1066,26 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         // iteration 1 with "Found a trip whose legs have different
         // routingModes" (agents 223559, 539119, 522667). The 1% probe had not
         // caught it because no matching agent there held a multi-leg walk trip.
+        //
+        // The re-find is RemodeRestore, shared with TaxiFleetEngine (#113),
+        // and consumes each trip once: a person with two trips between the
+        // same links has each restored, not the first twice.
         int restored = 0;
+        final Map<Id<Person>, Set<Activity>> consumed = new HashMap<>();
         for (final RideLeg ride : remodedThisMobsim) {
             final Person person =
                     scenario.getPopulation().getPersons().get(ride.person);
             if (person == null || person.getSelectedPlan() == null) {
                 continue;
             }
-            final Plan plan = person.getSelectedPlan();
-            org.matsim.core.router.TripStructureUtils.Trip target = null;
-            for (final org.matsim.core.router.TripStructureUtils.Trip trip
-                    : org.matsim.core.router.TripStructureUtils.getTrips(plan)) {
-                final Id<Link> from = trip.getOriginActivity().getLinkId();
-                final Id<Link> to = trip.getDestinationActivity().getLinkId();
-                if (ride.from.equals(from) && ride.to.equals(to)
-                        && isAllMode(trip, remodedAs.getOrDefault(
-                                ride, TransportMode.walk))) {
-                    target = trip;
-                    break;
-                }
+            if (RemodeRestore.restore(
+                    person.getSelectedPlan(), ride.from, ride.to,
+                    remodedAs.getOrDefault(ride, TransportMode.walk),
+                    TransportMode.ride, ride.route,
+                    consumed.computeIfAbsent(ride.person,
+                            k -> RemodeRestore.ledger()))) {
+                restored++;
             }
-            if (target == null) {
-                continue;
-            }
-            final Leg leg = org.matsim.core.population.PopulationUtils
-                    .createLeg(TransportMode.ride);
-            leg.setRoute(ride.route);
-            org.matsim.core.router.TripStructureUtils.setRoutingMode(
-                    leg, TransportMode.ride);
-            org.matsim.core.router.TripRouter.insertTrip(
-                    plan, target.getOriginActivity(),
-                    Collections.singletonList(leg),
-                    target.getDestinationActivity());
-            restored++;
         }
         if (!remodedThisMobsim.isEmpty()) {
             org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
@@ -1109,8 +1096,6 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         remodedThisMobsim.clear();
     }
 
-    /** Every leg of the trip is a walk leg - i.e. this is a trip the pairing
-     *  forced, not some other walk the agent was always going to make. */
     /**
      * The mode an unpairable ride leg is executed as this iteration.
      *
@@ -1140,20 +1125,6 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         return Boolean.TRUE.equals(licensed.get(person))
                 && Boolean.TRUE.equals(carAvailable.get(person))
                 ? TransportMode.car : TransportMode.walk;
-    }
-
-    private static boolean isAllMode(
-            final org.matsim.core.router.TripStructureUtils.Trip trip,
-            final String mode) {
-        if (trip.getLegsOnly().isEmpty()) {
-            return false;
-        }
-        for (final Leg leg : trip.getLegsOnly()) {
-            if (!mode.equals(leg.getMode())) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /** How many timing misses were within `minutes` of a matching driver. */
