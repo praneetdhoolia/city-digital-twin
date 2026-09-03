@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -47,8 +47,8 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 ## What is open
 
 - #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
-- #86 — the ceiling is decomposed (§9.136): generated 19.13% / bound 16.0% / realised 12.1%. More ride needs (a) binding passes that reach the unbindable 3.1 pp — passenger classes the four passes structurally miss (licensed car-available riders between households, non-direct tours) — and (b) the bound→realised 3.9 pp read from a deeper arm's choice records.
-- #91 — ride legs with no declared driver. The class is closed at the seed by `boundRideTrips` gating (§9.120); next: its count in `ride_pairing.csv` at F21 iteration 0.
+- #86 (awaiting-run) — the ceiling is decomposed (§9.136): generated 19.13% / bound 16.0% / realised 12.1%. (a) The unbindable 3.1 pp — licensed car-available riders between households, non-direct tours — needs a fifth binder pass that declares who drives whom for classes no observation covers: a declared, swept, labelled-assumed structure or a stated limitation, the user's pick (§9.140); (b) the bound→realised 3.9 pp is a deeper arm's choice records. At the F23 gate 44.7% of residents still held a plan with `ride` (car-less 64.8%), the best-surviving mode after car in the plan memories (§9.140).
+- #91 is closed (§9.140): the no-declared-driver class is zero at the seed since §9.120; F20's iteration-0 pair rate 0.977 and F22's 7,092 pickups with 0 unroutable are its evidence.
 - The 25% × 300 costing: ~25 h stated at the F22 approval; the arm measured 630–670 s/it late pace, ~45–50 h for a full 300 (§9.136) — cost the next 25% arm on the measured pace.
 - Whether a suburb is the right carpool precision is the sweep's question, with `same_sa1_od` its lower bound (§9.124).
 - Where the car-less quarter's excess on walk, bike and pt settles once a fifth of their tours ride (§9.123, §9.126).
@@ -68,6 +68,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.140 — #91 closed; ride survives memory
 - §9.136 — ceiling decomposed: 19/16/12
 - §9.134 — F21 gate: ride capped at 12%
 - §9.131 — licence rate measured; F21 pending

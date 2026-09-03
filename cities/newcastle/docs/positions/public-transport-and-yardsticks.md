@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -61,10 +61,10 @@ Latest twelve-mode reading: the F23 gate at iteration 100 (`results/raw/aborted_
 ## What is open
 
 - **#98** — the fare is measured (+152.9% at F22's gate, §9.136) and income scaling measurably worsens it (+193.2% at F23's, §9.139): the residual excess's cause once price is paid — the corridor's missing CBD end (#30) is the standing candidate — now outranks any further price work; crowding stays deferred behind it (§9.138).
-- **#99** — whether bus moves to a boardings basis; needs an official regional bus count acquired with provenance, and a statement of whether the HTS PT level counts school-bus travel (§9.130). Bus read INSIDE its band (+8.0%) at the F22 gate on the composition basis (§9.136).
+- **Bus stays on the composition basis as a recorded limitation** (§9.140, #99 closed): the Opal `NISC 1` series falls 88% in April 2025 (319,770 → 37,414 trips a month), uniformly across card types, absorbed by no other region, recovering only to 226,956 by May 2026 (`data/raw/opal/bus_trips_by_contract_region.csv`); no allowlisted source publishes Newcastle's bus boardings. The HTS data document defines Public Transport as train, metro, bus, light rail and ferry with no exclusion of school services, so a school-bus trip is a PT trip in the survey while Opal counts taps (`data/raw/hts/hts_data_document_2020_2024.pdf`, §9.140). REOPEN #99 if a regional count becomes obtainable.
 - **#94** — the ferry captures a hundredth of its captive market; the raptor's reason is not established and no candidate has been measured (§9.112).
 - **#49** — the standing directive: every mode individually. Reporting and scoring are individual; the <10% bar is not met for any PT mode.
-- **#84** — no light rail error is quoted against the unscorable 3,417/day pre-pandemic target; the current basis is §9.130's disclosed count.
+- #84 is closed (§9.140): the disclosed basis of §9.130 is the scoreable target, and no living document quotes an error against the pre-pandemic count.
 - The composition's own coverage: the three operator series total 14,858 boardings a day against an HTS-implied 76,646 PT trips, so the sweep on bus is live, not decorative (§9.100).
 - The light rail's missing riders (§9.130) — the light rail's open question at the F20 gate.
 - Time is priced at the one declared `beta_ivt` for every submode; C1 declares no per-submode time weight (§9.78).
@@ -82,6 +82,7 @@ Latest twelve-mode reading: the F23 gate at iteration 100 (`results/raw/aborted_
 
 ## History
 
+- §9.140 — bus count unobtainable; #84, #99 closed
 - §9.139 — F23 gate: income scaling blunts fare
 - §9.136 — F22 gate: fare lands, bus inside
 - §9.135 — the published Opal fare priced in

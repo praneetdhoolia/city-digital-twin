@@ -120,6 +120,7 @@ about its layout will otherwise cost you an hour:
 | **The results store: bulk a budgeted cache, findings permanent, hands off** | **§9.137** — user directive: `results/raw` (500 GB cap, `RUN.storage.raw_cap_gb`, oldest deleted after findings extraction) and `results/processed` (records + mode snapshots, never trimmed); the runner gates its own run every `RUN.gate.interval_iterations` and stops itself on the hard bar; `run.py --stop` is the one manual path; 122 legacy dirs migrated; supersedes §9.65's never-delete and the by-hand gate stop |
 | **Bike stress, parking search time, income: three literature channels enter** | **§9.138** — from the two research artifacts, on user directive: `bike_stress_factor` per link (Broach et al. 2012 felt-distance factors, swept) charged in score and router; a priced zone's derived search minutes (Shoup 2006, scaled by the §9.31 density ramp) charged once per parking spell; each resident's G17 band midpoint scales marginalUtilityOfMoney (MATSim core, exponent swept). Crowding deferred until fares settle rail (#98). Family F23 declared at launch `20260901T133356`; first arm at 10% × 300 |
 | **The F23 gate: channels move bike and walk, income blunts the fare, the watcher was blind** | **§9.139** — the 25% arm stopped by the session at iteration 100 with 7 modes out: bike +185.5% → +111.2% (the stress channel works), the walk/car seesaw over-swings through its targets, heavy rail +193.2% against F22's +152.9% at the same milestone (income scaling weakens the fare's bite, #108), ferry and light rail untouched; the §9.137 watcher's 64 KiB log-tail read measured blind (ENDS marker 611 MiB behind EOF) and replaced by the `_progress.json` digest |
+| **Every open issue closed or awaiting a run; dead fields retired; the interaction rate derived; the contract city-free** | **§9.140** — GOAL.md requirement 10 and the issue gate (`run.py` refuses behind an unlabelled open issue); seven fields retired (462 → 457); `E.s0.heavy_rail_detour_factor` measured 1.037 and `B.external.interaction_rate` derived 0.0900 from the 2011 journey-to-work flow; 29 keys lose their currency suffix and the census readers move behind the city adapter, byte-identical; the motorbike carve conserved per LGA and the leaf subtour mix repaired at the seed, package rebuilt (F24 at launch); the ferry's market and the choice-set decay measured on the F23 gate; #21 #62 #63 #84 #91 #99 closed, 13 issues awaiting-run |
 | **The builder stopped reproducing its own demand; family F14** | **§9.116** — the §9.111 candidate-pool filter was committed without its rebuild, so the committed builder could not regenerate the committed demand and **all eight gates passed over it**. Both queued fixes (#92, #93) applied together and all three day types rebuilt: joint bindings **74,663 → 82,384**, `p_thin` 0.8565 → **1.0000** — binding is now **supply-limited by servable candidates**, not thinned. `B.motorbike.trip_share` 0.0036 → **0.0024064**, `assumed` → `derived` |
 | **The local suite was red while three documents said green** | **§9.117** — `check_package.py` is local-only and was FAILING on `main`: a `decisions_ref` naming §9.93, which had never been written, and three `consumers` claims semantically true but textually false. **§9.93 is RECONSTRUCTED** from evidence already committed in the field descriptions, labelled as such, introducing no new number. Run the suite before believing the board about it |
 | **The coherence rates, and why they are not tuning** | **§9.93** — both rates 0.1 → 0.4 on SEARCH COMPLETENESS: the listener PROPOSES and `ChangeExpBeta` still decides, so a higher rate cannot make a bad plan win. Reconstructed 30 Aug 2026 (§9.117) |
@@ -13753,10 +13754,147 @@ next arm's milestone is its first test. The 25%-runs-only directive stands; no
 run approval stands. **No target value changed, the 67/143 split is untouched,
 nothing here is a result (no `_run.json`).**
 
+## 9.140 Every open issue to closed or awaiting a run; the gradient weights and the walk decay retired; the interaction rate derived; the input contract city-free (3 September 2026, twenty-fourth session; user directive; issues #21, #62, #63, #84, #91, #93, #94, #96, #99, #86, #98, #107, #108)
+
+**What was wrong.** The board asked the user for a root-cause pick while nineteen
+issues stood open, thirteen of them unlabelled: some overtaken by the record
+(#84's substance answered by §9.130, #91's class closed at the seed by §9.120),
+some holding no-run work nobody had done (#21's dead fields, #62's census
+readers and currency-bearing key names, #63's last two items, #93's carve
+conservation, #96's leaf trace), and some never re-measured on the arm that
+was there to be read (#94). The user's directive of 3 Sep: fix every issue
+that needs no run until it is closed or awaiting one, and make that a hard
+requirement of `GOAL.md`. Onboarding also found the last handoff unfinished
+(PR #110 merged but its branch never deleted, the brief's §0 stale on the PR
+and on a Nagpur tree that no longer existed) and `RUN_execution.json`
+describing `last_iteration` as null while it held 1000.
+
+**What changed.**
+- **GOAL.md requirement 10 and loop step 4**: before any arm, every issue is
+  closed or labelled `awaiting-run`. `src/run/issue_gate.py` reads the tracker
+  through `gh`; `session_gate.py` carries it as `issues gated`; `run.py`
+  refuses to launch while an open issue is unlabelled (`--allow-open-issues`
+  overrides and must be justified in the run record). Where `gh` cannot read
+  the tracker the gate says so rather than pretending it is empty.
+- **#21 closed — seven fields retired (462 → 457)**: `C.gradient.uphill_penalty_per_pct`,
+  `C.gradient.downhill_penalty_per_pct`, `C.walk.decay_beta_per_m`,
+  `C.walk.decay_form`, `C.walk.gaussian_mu_m`, `C.walk.gaussian_sigma_m`,
+  `C.walk.max_considered_m`. Gradient reaches walk and bike as link travel time
+  on router and mobsim alike (§9.84), so a scored weight would double-count
+  the climb; the access walk is routed on the walk network and scored at its
+  full walking time — the continuous penalty proposal 6.3 asked for, with no
+  catchment cut-off — and the raptor's declared radii bound the search, never
+  the utility. A field read by nothing carried a sweep whose band was zero by
+  construction (the false negative #21 named). `build_params.py` no longer
+  mirrors them into C1; the run-inputs `not_representable` register states the
+  retirement.
+- **#63 closed — two assumptions measured.** `E.s0.heavy_rail_detour_factor`
+  1.1 assumed → 1.037 measured, sweep [1.0, 1.1]: the light-rail alignment in
+  `networks/osm/railways.osm` reuses the heavy-rail formation west of Civic
+  (1,601 m of path against a 1,604 m beeline, 0.999) and runs the street east
+  of it (915 / 840 m, 1.089); chain-weighted 2,517 / 2,426. The heavy rail's
+  foreshore alignment survives in OSM as two abandoned bridge stubs, so the
+  successor bounds that leg from above. `B.external.interaction_rate` 0.08
+  assumed → 0.0900 derived = `B.external.commute_share_to_core` 0.1377
+  (measured; TfNSW Journey to Work 2011 Table 01, origin SA2 × destination
+  SA2, acquired with provenance to `data/raw/jtw/`, CC-BY — 2016 withdrawn by
+  its publisher, 2021 attended-only) × `B.external.employed_share` 0.4575
+  (32,230 employed of 70,448 persons in the 201 external SA1s, 2021 G46 over
+  G01; held fixed) / the HW purpose split 0.7, so the HW agents equal the
+  observed commuters per resident. Over the nine external SA2s under their
+  2011 names ("X Region" = 2021 "X Surrounds"): 4,636 of 33,666 employed
+  residents work in the five core LGAs — Branxton–Greta–Pokolbin 48.5%,
+  Dungog 38.1%, Tea Gardens–Hawks Nest 22.7%, Singleton 5.0%, Muswellbrook
+  1.7%, Scone 1.2%. `cities/newcastle/build/build_external_interaction.py`
+  recomputes both members and refuses on drift (the §9.116 guard);
+  `build_activity_chains.py` asserts the identity and reads the sweep from the
+  registry instead of a literal.
+- **#62 closed — the contract is city-free.** 29 `A.fare`, `A.parking` and
+  `B.taxi` keys drop their `_aud` suffix and the fare config parameters their
+  `Aud` suffix (Java and run inputs; the currency lives in `units` and
+  `city.json`); the dormant `lr_share_of_pt_legs` metrics property is removed;
+  the census family is adapted — `cities/newcastle/extract/reader_shapes.py`
+  carries every ABS table, column spelling, sex-split pair and banding, and
+  `build_population.py`, `build_zone_attractions.py` and
+  `measure_network_factors.py` read the shapes declared in
+  `config/schema/reader_shapes.json`. Verified byte-identical: the population
+  and the zone attractions were built before and after the change into scratch
+  directories (`--out`, new on both builders) and hash equal; the attendance
+  counts agree to the unit.
+- **#93 built — per-LGA conservation of the `sa1_thinned` carve.** One factor
+  per LGA makes its cells' trip-weighted mean equal the LGA's own G62 identity;
+  the target LGA conserves to the declared `B.motorbike.trip_share` (its SA1
+  cells summed read 0.0038289, +1.2% by ABS perturbation, stated and refused
+  only beyond 5%). Factors on the rebuilt WEEKDAY plans: Newcastle 0.8862
+  (intended 0.004271 → 0.003785), Maitland 0.9071, Lake Macquarie 0.9740,
+  Cessnock 0.7244, Port Stephens 1.0649 (`_plans_report.json`). The truck
+  carve is a flat region probability that delivers its solve exactly.
+- **#96 built — a leaf subtour mix is repaired at the seed.** `SubtourChainScan`
+  now traces every leaf mix; all three on the 9.133 plans were person 112686's
+  three base-mode variants: a serve stop 98 m from home, inside
+  `RUN.mode_choice.coord_distance_m` 100, collapses `home → escort` into a
+  one-trip loop, and the next serve stop (103 m) is the POI the person later
+  reaches by the base mode, so MATSim closes `escort −car→ home −walk→ other`
+  as a leaf. `leaf_mixed_tours()` in `build_matsim_plans.py` reproduces
+  `TripStructureUtils.getSubtours(plan, coordDistance)` and drives the
+  offending free tour in that variant. Rebuilt plans: WEEKDAY 3 tours on 1
+  person, SAT 9 on 2, SUN 0; the scan reads 0 leaf on every day type (WEEKDAY
+  338 mixed, SAT 222, SUN 181, all spanning).
+- **The package rebuilt** — chains (interaction rate), plans (#93, #96), the
+  30 run-input sets (C1 without the retired fields, the renamed keys), the
+  manifest at 511 files. Plans and network both change, so the build opens
+  **family F24 at its first launch** (§9.127); nothing before that boundary
+  compares with anything after.
+- The stale branch and its remote were deleted and work started from `main`;
+  `RUN_execution.json` now states the horizon it holds.
+
+**Measured.**
+- **#94, the ferry, on the F23 gate outputs** (`aborted_20260901T165115_300it_25pct`,
+  iteration 100, 25%): 790 peninsula-to-south-side crossings by 413 persons —
+  car 495, pt 129 (84 with a ferry leg), ride 95, walk 31, bike 15, truck 12,
+  taxi 11. The ferry runs 04:55–23:05, 107 departures; ~9% of crossings fall
+  outside. Only 205 of 790 have both ends within the raptor's 1 km search
+  radius, and no bus stop or line serves the peninsula in the mapped schedule;
+  the near-wharf split is car 124 / pt 41 / ride 27 / walk 9. In the plan
+  memories 270 of the 413 crossing persons hold no pt plan; 100 hold a ferry
+  plan, 62 select it; where held and not selected the ferry plan trails by a
+  median 2.8 utils (p25 −68.7, p75 +0.2).
+- **The seeded choice set decays**: at the same iteration the 127,200 sampled
+  residents hold 8–9 plans each, and the share still holding a plan with the
+  mode is car 76.0%, ride 44.7%, walk 23.3%, pt 22.7%, taxi 10.8%, bike 8.7%
+  (car-available: pt 12.4%, walk 13.4%; car-less: pt 59.3%, walk 58.4%).
+- **#99, the bus count, is unobtainable**: Opal `NISC 1` falls 88% in April
+  2025 (319,770 → 37,414 a month) uniformly across card types, absorbed by no
+  region, recovering to 226,956 by May 2026; no allowlisted source publishes
+  Newcastle's bus boardings. The HTS document defines Public Transport as
+  train, metro, bus, light rail and ferry with no school-service exclusion.
+  Closed as a recorded limitation; bus stays on the composition basis.
+- **#84 closed** on §9.130's disclosed basis (sweep clean); **#91 closed** on
+  §9.120's seed gate (F20 pair rate 0.977, F22 7,092 pickups / 0 unroutable).
+- The canonical B1 and D1 files differ from a fresh rebuild only in line
+  endings (normalised digests equal): reproducible in content.
+
+**Deliberately not done.** No arm was launched and no approval stands. #30's
+corridor repair (floorspace-weighted attraction or an agglomeration term) and
+#86's fifth binder pass are modelling choices the user makes, not fixes to make
+quietly; #98, #107, #108, #86, #94, #93 and #96 are labelled `awaiting-run`
+with the measurement each needs. The 2021 journey-to-work table stays an
+attended extract. Bus's yardstick was not moved to boardings on an absent count.
+The spanning mixed subtours stay as they are.
+
+**Consequences.** Every open issue (13) is `awaiting-run`; the gate passes and
+the launcher will refuse the day one is opened without the label. The next arm
+runs the F24 package under a fresh stated-cost approval at 25% (~45–50 h per
+300, §9.136) and reads all twelve modes at its gate, plus the ferry's near-wharf
+split and the choice-set survival. `check_package.py` passes only once this
+section exists (its `decisions_ref` check). **No target value changed, the
+67/143 split is untouched, nothing here is a result (no `_run.json`).**
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-03 | **Every open issue worked to closed or awaiting a run; requirement 10 and the issue gate; seven dead fields retired; the S0 detour measured and the external interaction rate derived; the input contract made city-free; carve conservation and the leaf-subtour repair built and the package rebuilt (§9.140; issues #21/#62/#63/#84/#91/#99 closed, #93/#96/#94/#86/#98/#107/#108 awaiting-run; twenty-fourth session; user directive).** Registry 462 → 457 (`C.gradient.*`, `C.walk.decay_*`, `gaussian_*`, `max_considered_m` retired); `E.s0.heavy_rail_detour_factor` 1.1 → 1.037 measured; `B.external.interaction_rate` 0.08 → 0.0900 derived with two new measured members and `data/raw/jtw/` acquired; 29 currency-named keys renamed; census readers adapted with byte-identical B1 and D1; chains, plans and the 30 run-input sets rebuilt (manifest 511 files), opening F24 at its first launch. Toolchain unchanged; no target value changed, the 67/143 split is untouched, nothing here is a result. |
 | 2026-09-02 | **The F23 gate read at 25% and the arm stopped; the runner's own gate watcher found blind and fixed (§9.139; issues #107/#108/#98/#94/#30/#66; twenty-third session).** Arm `20260901T165115_300it_25pct` launched under the user's 2 Sep continue directive (SPENT, ~45–50 h stated) and stopped by the session at the iteration-100 gate: 7 modes at or past 20% — heavy rail +193.2%, bike +111.2% (from F22's +185.5%, the stress channel's first measured effect), ferry −80.0%, taxi +76.6%, light rail −66.1% AWAY, ride −40.1%, walk −27.2% — car +14.8%, motorbike +13.9%, bus +16.2% over 10%, none inside; income scaling blunted the fare (F22 same milestone: bus +8.0% inside, rail +152.9%). The §9.137 watcher did not fire: its 64 KiB log-tail iteration read was measured blind (last ENDS marker 611 MiB before EOF; 51.1 GiB log of `NetworkRoutingProvider` WARN spam); `_last_ended_iteration` now reads the `_progress.json` digest, verified on the dead arm — harness-side, no model value, no family boundary. Both 1 Sep user-directed stops recorded; the board's stale blocks regenerated same-day. **No target value changed, the 67/143 split is untouched, nothing here is a result (no `_run.json`).** |
 | 2026-09-01 | **Bike stress, parking search time and income enter the model; family F23 opens at its arm's launch (§9.138; issues #107/#108; twenty-second session; user directive).** From the two research artifacts' ranked findings: every bike-capable link carries a `bike_stress_factor` (Broach, Dill & Gliebe 2012 felt-distance equivalents — 1.30/2.39/7.68 by AADT proxy band, purpose-bound sweeps) charged in score by `citysim.BikeStressScoring` and in the router by `citysim.BikeStressDisutility`; a charged parking spell in a §9.31 priced zone pays its derived search minutes once (Shoup 2006's 8.1 min × the zone's `density_weight`, swept 3.5–14) at the transfer-penalty identity; each resident's G17 weekly band midpoint scales marginalUtilityOfMoney through MATSim core's `IndividualPersonScoringParameters` (exponent 1.0 swept 0.5–1.5; Neg_Nil falls back; external/freight excluded). Plans rebuilt (424,190 of 621,364 WEEKDAY persons carry income), 30 sets reassembled (47,652 stressed links on S2), manifest 509. Registry 452 → **462**, ledger 0, `CONFIG_REFERENCE.md` regenerated, `check_package.py` ALL CHECKS PASSED. Smoke verified all three channels live; family `F23-behaviour-channels` declared from `20260901T133356` and arm `20260901T133404_300it_10pct` launched at the measured ~18–21 h pace, verified iterating. Crowding deferred until fares settle rail (#98). **No target value changed, the 67/143 split is untouched, nothing here is a result (no gate has read on this boundary).** |
 | 2026-09-01 | **The results store lands: run bulk becomes a 500 GB budgeted cache, findings become permanent, and the run lifecycle is automated end to end (§9.137; user directive; twenty-first session).** `src/run/results_store.py` owns `results/raw` (bulk) and `results/processed` (records mirrored at every transition + `modes_trend.txt`/`modes_final.json` snapshots); fields `RUN.storage.raw_cap_gb` 500 and `RUN.gate.interval_iterations` 100 declared (definition); the runner gate-watches its own run and stops itself on the hard bar with the verdict as cause; `run.py --stop <name> --cause` replaces every by-hand kill/rename; raw is trimmed oldest-first at harness start and run end with deletions logged to `processed/_trim_log.json`; 122 legacy run dirs migrated; eleven consumers resolve through the store. Supersedes §9.65's "the harness never deletes a run directory" for raw bulk only. Registry 450 → 452; `CONFIG_REFERENCE.md` regenerated. **No model value changed, no target moved; the 67/143 split is untouched; the store cannot alter a result.** |

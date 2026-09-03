@@ -34,8 +34,6 @@
     "data/processed/census": {
       "kind": "directory",
       "read_by": [
-        "src/build/build_population.py",
-        "src/build/build_zone_attractions.py",
         "src/build/measure_network_factors.py"
       ]
     },

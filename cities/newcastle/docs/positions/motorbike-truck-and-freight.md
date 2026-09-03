@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 1 September 2026 · **Record read through:** §9.136 · **Open family:** F22
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -11,7 +11,8 @@
 - Anchor: census G62 one-method motorbike/scooter journeys over one-method driver journeys, on the target LGA's own SA1s — `CAL.mode_split.motorbike_driver_journey_share` = 0.0064151 (282 of 43,959), measured and asserted against the extract on every build (§9.122).
 - Share: `B.motorbike.trip_share` = 0.0037849, `derived` = `CAL.mode_split.vehicle_driver_level` 0.59 x the cell above; the carve share and the fit target are the same observation transferred by the same identity (§9.115, §9.122).
 - Resolution: `B.motorbike.carve_resolution` = `sa1_thinned` — the identity applied per home SA1, falling back to the SA2 where the driver cell is under `B.census.thin_cell_min_journeys`; `region` is the sweep member (§9.122).
-- Pool: the probability is solved on the persons who will actually be carved — eligible persons who are not escorters that day AND were not named as a driver by any binder pass (§9.122, §9.129). The current plans report `cells_at_sa1` 902, `cells_at_sa2` 799, trip-weighted cell share 0.002654 beside the declared LGA share 0.0037849 (`cities/newcastle/demand/plans/matsim/_plans_report.json`).
+- Pool: the probability is solved on the persons who will actually be carved — eligible persons who are not escorters that day AND were not named as a driver by any binder pass (§9.122, §9.129). The current plans report `cells_at_sa1` 902, `cells_at_sa2` 799, core-wide trip-weighted cell share 0.002439 beside the declared target-LGA share 0.0037849 (`cities/newcastle/demand/plans/matsim/_plans_report.json`, §9.140).
+- **Each LGA's cell shares are conserved to the LGA's own identity** (§9.140, #93): one factor per LGA makes the trip-weighted mean of its cells equal `CAL.mode_split.vehicle_driver_level` × the LGA's G62 ratio — Newcastle 0.8862 (intended 0.004271 → identity 0.003785), Maitland 0.9071, Lake Macquarie 0.9740, Cessnock 0.7244, Port Stephens 1.0649 (`_plans_report.json`, `lga_conservation`). The target LGA conserves to the DECLARED `B.motorbike.trip_share`; its SA1 cells summed read 0.0038289 (+1.2%, ABS small-cell perturbation), stated and refused only beyond 5%. The truck carve is a flat region probability that delivers its solve exactly and needs none (§9.140).
 - Physics: `B.motorbike.pce` = 0.4 (literature, sweep 0.3–0.75); `B.motorbike.length_m` = 2.2 held fixed as cosmetic in the queue model (§9.52).
 
 **Resident truck drivers** are carved by the same mechanism on the same pool, on their own hash namespace so the motorbike draws stay byte-identical; one lock per person, never both (§9.125).
@@ -46,7 +47,7 @@
 
 ## What is open
 
-- **#93 is measured to its cause** (§9.136): the aggregation bias above. What closes it: the per-LGA conservation fix in `src/build/build_matsim_plans.py` (both carves), a demand rebuild, and a gate reading at or under the identity. Not while an arm runs (§9.116's trap: a carve fix committed without its rebuild).
+- **#93 (awaiting-run)** — the conservation fix is built and the plans rebuilt on it (§9.140); what closes it is a gate reading at or under the identity on the F24 package.
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
 - **#68 is still open on GitHub** though the crossings are built and activated (§9.77, §9.90); it should close on the record or state what remains.
 - The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 60 s — the registry is the newer statement and wins; the CSV text should be regenerated.
@@ -64,6 +65,7 @@
 
 ## History
 
+- §9.140 — carve conserved per LGA, rebuilt
 - §9.136 — carve bias is the cell aggregation
 - §9.134 — F21 gate: motorbike +24.6%
 - §9.131 — licence rate rebuilt, carves await rebuild

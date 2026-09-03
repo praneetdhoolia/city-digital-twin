@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 2 September 2026 · **Record read through:** §9.139 · **Open family:** F23
+**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -33,6 +33,7 @@
 - **No multi-hour run without explicit approval, and approvals are spent on use** (§9.57, §9.62, §9.72). The 2 Sep "continue running and tuning" goal directive was SPENT on the F23 25% arm `20260901T165115_300it_25pct`, launched against the stated ~45–50 h cost and stopped by the session at its iteration-100 gate (§9.139); every earlier approval is SPENT. The next arm needs a fresh stated-cost yes. **A gate is also a cost boundary** (§9.136). **25% runs only** — the user's 1 Sep directive; the 10% F23 arm was stopped under it (`aborted_20260901T133404_300it_10pct`, its `_meta.json`).
 - **One arm at a time** (#66) — it supersedes the two-arm family-throughput pattern (§9.59, §9.62). Measured: three arms declared 78 GiB on 63.5 GiB and the pagefile grew 8.1 → 19.1 GiB (§9.5); the machine-level stall hit both concurrent arms at the same wall-clock time (#66). Iteration count survives contention; iteration duration does not.
 - **Never recompile into `.tools/classes` while an arm runs.** The environment gate (`bootstrap_toolchain.py --verify`) recompiles both class trees, and a running arm loads from them.
+- **No open issue behind a run** (GOAL.md requirement 10, §9.140): `run.py` refuses to launch while any open GitHub issue lacks the `awaiting-run` label (`src/run/issue_gate.py`; `--allow-open-issues` overrides and must be justified in the run record), and `session_gate.py` carries the same check as `issues gated`. Fix what needs no run first; label what only a run can move.
 - **Launch detached** (`run.py ... --detach`); never from an agent tool call by any other route (§9.72, #70).
 - **Never compare across sample fractions or across families** (§9.12, `cities/newcastle/docs/run_families.json`); a probe under 250 iterations is plumbing and timing evidence, never a result (§9.7, §9.43).
 - **A toolchain change is a model change**: re-fetch, re-hash, log it in §14 (§9.76).
@@ -61,6 +62,7 @@
 
 ## History
 
+- §9.140 — launcher refuses behind open issues
 - §9.139 — gate watcher blind at 25%, fixed
 - §9.138 — F23 arm launched under goal directive
 - §9.137 — results store; runs gate themselves
