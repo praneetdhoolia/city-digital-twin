@@ -106,7 +106,7 @@
     },
     "seed": {
       "type": "integer",
-      "description": "The one seed everything synthetic derives from. Must equal B.population.seed in the registry."
+      "description": "The one seed everything synthetic derives from. Must equal B.seed.master in the registry (check_city.py cross-checks the two)."
     },
     "boundary": {
       "type": "object",

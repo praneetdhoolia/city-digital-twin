@@ -65,6 +65,23 @@ MIN_PAIR_M = CFG.get('B.network_factors.min_pair_m')
 BAND = CFG.get('B.network_factors.distance_band')
 
 
+def spread(ratios, value):
+    """The sweep of a measured aggregate: the per-pair interquartile range,
+    extended to include the aggregate itself (#124).
+
+    The aggregate is a ratio of SUMS - length-weighted - and can sit outside
+    the unweighted per-pair spread: the bike beeline factor measured 1.5231
+    against a per-pair IQR of [1.207, 1.456], and a value outside its own
+    sweep failed no check. The IQR stays reported as `iqr`; the sweep is the
+    smallest interval that holds both, so a declared value is inside its
+    declared range by construction and the package check can assert it.
+    """
+    lo = round(float(np.percentile(ratios, 25)), 3)
+    hi = round(float(np.percentile(ratios, 75)), 3)
+    v = round(float(value), 4)
+    return [min(lo, v), max(hi, v)], [lo, hi]
+
+
 def measure_detour(n_pairs, seed):
     """Ratio of total network distance to total straight-line distance.
 
@@ -108,10 +125,11 @@ def measure_detour(n_pairs, seed):
         ratios.append(nd / sd)
     r = np.array(ratios)
     aggregate = sum_net / sum_straight
+    sweep, iqr = spread(r, aggregate)
     return dict(
         value=round(float(aggregate), 4),
-        sweep=[round(float(np.percentile(r, 25)), 3),
-               round(float(np.percentile(r, 75)), 3)],
+        sweep=sweep,
+        iqr=iqr,
         source='measured - shortest path over the observed A1 road graph',
         pairs_routed=routed, pairs_unroutable=unroutable,
         sample_seed=seed,
@@ -119,7 +137,8 @@ def measure_detour(n_pairs, seed):
         median_of_ratios=round(float(np.median(r)), 4),
         note='aggregate ratio of summed network to summed straight-line '
              'distance over population-weighted zone pairs; the sweep is the '
-             'interquartile range of the per-pair ratios')
+             'interquartile range of the per-pair ratios extended to hold '
+             'the aggregate (iqr carries the range alone)')
 
 
 class ActiveGraph(RoadGraph):
@@ -249,10 +268,11 @@ def measure_active_detour(n_pairs, seed, target_m, label):
     if not ratios:
         raise SystemExit('no %s pair could be routed on the active network' % label)
     r = np.array(ratios)
+    sweep, iqr = spread(r, sum_net / sum_straight)
     return dict(
         value=round(float(sum_net / sum_straight), 4),
-        sweep=[round(float(np.percentile(r, 25)), 3),
-               round(float(np.percentile(r, 75)), 3)],
+        sweep=sweep,
+        iqr=iqr,
         source='measured - shortest path over the observed A6 active network '
                'unioned with every road class a pedestrian may use, between '
                'population-weighted origins and observed POI destinations',
@@ -264,7 +284,8 @@ def measure_active_detour(n_pairs, seed, target_m, label):
         note='sampled at the observed %s trip length between population-weighted '
              'origins and observed POI destinations; the aggregate ratio of '
              'summed path to summed straight-line distance, with the sweep the '
-             'interquartile range of the per-pair ratios' % label)
+             'interquartile range of the per-pair ratios extended to hold the '
+             'aggregate (iqr carries the range alone)' % label)
 
 
 def measure_day_type():

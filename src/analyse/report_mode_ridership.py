@@ -518,7 +518,10 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      flag))
-            _row(i, mode, t, m, dev,
+            # no deviation is STORED for a representation (#114): the closures
+            # ARE the timetable, so 0.0% is a tautology, not a fit, and the
+            # board must not print one
+            _row(i, mode, t, m, None,
                  'train movements represented by crossing closures',
                  'representation')
             continue
@@ -543,7 +546,10 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %11s %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], 'n/a', trips[mode],
                      truck_note))
-            _row(i, mode, t, m, dev,
+            # ... and none is STORED either (#114): the board rendered the
+            # stored value, so the committed scoreboard carried the very
+            # percentage this branch refuses to print
+            _row(i, mode, t, m, None,
                  'network-wide road-vehicle share (not the target basis; '
                  '--truck-stations scores it)', 'level only')
             continue
@@ -708,7 +714,7 @@ def main():
                 if m == 'freight_train':
                     line += '   representation'
                 elif m == 'truck' and not a.truck_stations:
-                    line += '   level only, %+.1f%% (not its target basis)' % dev
+                    line += '   level only (not its target basis)'
                 else:
                     line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
             line += '   ' + basis.get(m, '')

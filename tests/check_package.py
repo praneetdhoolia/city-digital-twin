@@ -1118,6 +1118,18 @@ else:
           'measured detour factor is physically plausible (%.4f)' % d.get('value', 0))
     check(d['sweep'][0] < d['value'] < d['sweep'][1],
           'measured detour factor sits inside its own sweep range')
+    # the same assertion for every measured active beeline factor (#124):
+    # the bike factor sat outside its own sweep and nothing said so. A WARN
+    # until C2 is re-measured: the producer now defines the sweep to hold
+    # the aggregate, but re-measuring on 3 Sep 2026 moved the VALUES too
+    # (detour 1.3376 -> 1.3276, bike beeline 1.5231 -> 1.5570; the network
+    # was rebuilt on 16 Aug after C2 was measured), which is a model change
+    # and a package rebuild the user decides on, not a check to pass quietly.
+    for _mode, _bf in sorted((c2.get('active_beeline_factor') or {}).items()):
+        check(_bf['sweep'][0] <= _bf['value'] <= _bf['sweep'][1],
+              'measured %s beeline factor %.4f sits inside its own sweep %s '
+              '(re-measure C2 on the current network to clear this)'
+              % (_mode, _bf['value'], _bf['sweep']), warn=True)
     dt = c2.get('day_type', {})
     check(dt.get('station_years', 0) > 100,
           'weekend/weekday ratio measured over a usable sample (%d station-years)'

@@ -1264,7 +1264,7 @@
       "source": "measured",
       "sweep": [
         0.5,
-        3.0
+        6.0
       ],
       "status": "active",
       "decisions_ref": "9.33",
@@ -1272,7 +1272,7 @@
       "consumers": [
         "src/build/build_network_layers.py"
       ],
-      "sweep_basis": "the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges - an observed spread, not a chosen interval"
+      "sweep_basis": "the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges is [0.5, 3.0] - an observed spread, not a chosen interval - extended to 6.0 so that the interval also bounds the five classes that keep an ASSUMED width for want of coverage (pedestrian 6.0, a pedestrian mall, is the largest). The interval brackets every class value; it is not a measured spread over the assumed classes, and the pedestrian width is an assumption, not a value tuned to anything (#124)"
     },
     "A.signals.scats_match_radius_m": {
       "value": 60,

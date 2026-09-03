@@ -46,8 +46,8 @@ Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260901T1
 | 8 | heavy_rail | 19,140 | 6,529 | +193.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
 | 9 | light_rail | 1,000 | 2,954 | -66.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
 | 10 | ferry | 0.0286 | 0.1429 | -80.0% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6357 | 15.4698 | -63.6% | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
-| 12 | freight_train | 314.0000 | 314.0000 | +0.0% | representation | train movements represented by crossing closures |
+| 11 | truck | 5.6357 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
 Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->

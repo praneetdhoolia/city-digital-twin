@@ -93,7 +93,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
-| `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 3 |
+| `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 6 |
 | `A.bike_stress.aadt_class_by_highway` | `{"trunk": "high", "trunk_link": "high", "primary": "high", "primary_link": "high", "secondary": "moderate_h...` | aadt_proxy_class_by_osm_highway | `assumed` | **held fixed** |
 | `A.bike_stress.felt_factor_high` | `7.68` | felt_distance_ratio | `literature` | 7.19 - 8.16 |
 | `A.bike_stress.felt_factor_moderate` | `1.3` | felt_distance_ratio | `literature` | 1.22 - 1.37 |
@@ -275,7 +275,7 @@ Fallback footway width. Footway widths were not obtained for Newcastle. MEASURED
 
 ***measured** · status **active** · DECISIONS.md §9.33*
 
-> **Sweep basis.** the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges - an observed spread, not a chosen interval
+> **Sweep basis.** the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges is [0.5, 3.0] - an observed spread, not a chosen interval - extended to 6.0 so that the interval also bounds the five classes that keep an ASSUMED width for want of coverage (pedestrian 6.0, a pedestrian mall, is the largest). The interval brackets every class value; it is not a measured spread over the assumed classes, and the pedestrian width is an assumption, not a value tuned to anything (#124)
 
 #### `A.bike_stress.aadt_class_by_highway`
 
@@ -2488,9 +2488,9 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.scoring.marginal_utility_of_money` | `1.0` | utils_per_AUD | `definition` | - |
 | `C.scoring.marginal_utility_of_traveling` | *(null - unobtained)* | utils_per_hour | `derived` | derived: marginalUtilityOfTraveling[m] = performing - trip_weighted_VOT * beta[ |
 | `C.scoring.mode_constant` | *(null - unobtained)* | utils | `derived` | derived: constant[m] = the C1 alternative-specific constant for the mode m maps |
-| `C.scoring.monetary_distance_rate` | `{"car": -0.00018, "ride": -0.00018, "pt": 0.0, "walk": 0.0, "bike": 0.0, "truck": 0.0, "motorbike": 0.0, "n...` | AUD_per_metre | `derived` | derived: a kilometre in a car costs the same kilometre whether you are in the d |
+| `C.scoring.monetary_distance_rate` | `{"car": -0.00018, "ride": -0.00018, "pt": 0.0, "walk": 0.0, "bike": 0.0, "truck": 0.0, "motorbike": 0.0, "n...` | AUD_per_metre | `derived` | -0.00025 - -0.00012 |
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `literature` | 4 - 8 |
-| `C.scoring.utility_of_line_switch` | *(null - unobtained)* | utils | `derived` | derived: utilityOfLineSwitch = -(C.transfer.penalty_min / 60) * trip_weighted_V |
+| `C.scoring.utility_of_line_switch` | *(null - unobtained)* | utils | `derived` | derived: utilityOfLineSwitch = -(C.transfer.beta_transfer_penalty_min / 60) * t |
 | `C.scoring.waiting_pt` | *(null - unobtained)* | utils_per_hour | `derived` | derived: waitingPt = performing - trip_weighted_VOT * beta_wait * marginalUtili |
 | `C.taxi.asc` | `0.0` | utility | `assumed` | -2 - 0 |
 | `C.taxi.wait_min` | `5.0` | minutes | `assumed` | 2 - 12 |
@@ -2749,9 +2749,7 @@ Vehicle operating cost per metre AS PERCEIVED BY THE TRAVELLER MAKING THE CHOICE
 
 ***derived** · status **active** · DECISIONS.md §9.8, 9.13, 9.17 · MATSim `scoring.modeParams[*].monetaryDistanceRate`*
 
-> **Sweep basis.** applies to the car entry only; ride follows it by the identity above, and pt, walk and bike remain zero because no vehicle operating cost is borne by their traveller. Truck is zero because a freight agent's mode is LOCKED (9.49): scoring never compares a truck alternative against anything, so a cost model here would be decoration pretending to be behaviour
-
-> **Derived from** `C.scoring.monetary_distance_rate`: a kilometre in a car costs the same kilometre whether you are in the driver seat or beside it, so ride carries the car rate. This SUPERSEDES the 9.8 identity that set ride to zero: that identity - a vehicle operating cost is paid once, so charging both occupants makes AGGREGATE cost 1.35x the real one - is a statement about system cost accounting, and monetaryDistanceRate is the cost PERCEIVED BY ONE PERSON weighing one alternative. The 9.13 trip length constraint falsified the old treatment: modelled ride to car trip length was 1.372 against an observed 0.961, widening with sample fraction - the signature a zero marginal distance cost produces. See DECISIONS.md 9.17
+> **Sweep basis.** applies to the car entry only; ride follows it by the identity that a kilometre in a car costs the same kilometre whether you are in the driver seat or beside it (DECISIONS.md 9.17, superseding the 9.8 identity that set ride to zero - a statement about aggregate cost accounting, where monetaryDistanceRate is the cost perceived by one person weighing one alternative; the 9.13 trip-length constraint falsified the old treatment at a modelled ride:car trip length of 1.372 against an observed 0.961). pt, walk and bike remain zero because no vehicle operating cost is borne by their traveller. Truck is zero because a freight agent's mode is LOCKED (9.49): scoring never compares a truck alternative against anything, so a cost model here would be decoration pretending to be behaviour
 
 #### `C.scoring.performing_utils_per_h`
 
@@ -2765,7 +2763,7 @@ The scoring penalty for changing transit line, ON TOP of the walk and wait MATSi
 
 ***derived** · status **computed** · DECISIONS.md §9.32 · MATSim `scoring.utilityOfLineSwitch`*
 
-> **Derived from** `C.transfer.penalty_min`, `C.vot.trip_weighted`, `C.scoring.marginal_utility_of_money`: utilityOfLineSwitch = -(C.transfer.penalty_min / 60) * trip_weighted_VOT * marginalUtilityOfMoney
+> **Derived from** `C.transfer.beta_transfer_penalty_min`, `C.vot.trip_weighted`, `C.scoring.marginal_utility_of_money`: utilityOfLineSwitch = -(C.transfer.beta_transfer_penalty_min / 60) * trip_weighted_VOT * marginalUtilityOfMoney
 
 #### `C.scoring.waiting_pt`
 
