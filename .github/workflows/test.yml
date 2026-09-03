@@ -26,6 +26,10 @@ jobs:
       # installing the heavy geo stack (geopandas, rasterio, …) those modules import.
       - name: Byte-compile every source and test module
         run: python -m compileall -q src tests
+      - name: The gate watcher stops on a breach and only on a breach (#112)
+        run: python tests/check_gate_watcher.py
+      - name: A refused launch leaves a card that says why (#127)
+        run: python tests/check_launch_refusal.py
 
   manifest:
     name: manifest integrity (committed files)

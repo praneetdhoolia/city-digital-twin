@@ -719,6 +719,10 @@ def reconcile_stale():
 
 
 GATE_STOP = '_gate_stop.json'
+# the reporter's verdict file, written per milestone and read by the watcher;
+# module-level so a test can point the watcher at a canned reporter
+GATE_VERDICT = '_gate_verdict.json'
+REPORTER = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
 
 
 def _last_ended_iteration(run_dir):
@@ -772,7 +776,8 @@ def start_gate_watch(run_dir, cfg, proc):
     if interval <= 0:
         return None
     import threading
-    reporter = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
+    reporter = REPORTER
+    verdict_path = os.path.join(run_dir, GATE_VERDICT)
 
     def loop():
         claimed = 0
@@ -785,7 +790,7 @@ def start_gate_watch(run_dir, cfg, proc):
             try:
                 out = subprocess.run(
                     [sys.executable, reporter, '--run', run_dir,
-                     '--it', str(milestone)],
+                     '--it', str(milestone), '--gate-json', verdict_path],
                     capture_output=True, text=True, timeout=1800, cwd=REPO)
             except (OSError, subprocess.SubprocessError):
                 continue
@@ -795,14 +800,38 @@ def start_gate_watch(run_dir, cfg, proc):
                 if it >= milestone + interval:
                     claimed = milestone
                 continue
-            claimed = milestone
-            text = out.stdout
-            if 'GATE:' not in text:
+            # THE STOP IS KEYED ON THE VERDICT FILE, NEVER ON THE PRINTED
+            # TEXT (#112): the reporter prints a `GATE:` line on a pass as
+            # well as on a breach, and a substring test would have killed the
+            # first arm to clear its bar. A verdict that is missing or from
+            # another milestone means the reporter did not speak for this
+            # one - retry, never guess.
+            try:
+                with open(verdict_path, encoding='utf-8') as fh:
+                    read = json.load(fh)
+            except (OSError, ValueError):
+                read = None
+            if not isinstance(read, dict) \
+                    or read.get('iteration') != milestone:
+                if it >= milestone + interval:
+                    claimed = milestone
                 continue
-            gate_lines = text[text.index('GATE:'):].strip().splitlines()
+            claimed = milestone
+            breaches = read.get('breaches') or []
+            if read.get('passed') or not breaches:
+                print('gate watcher: iteration %d PASSED - no mode at or '
+                      'past the stop bar; the run continues'
+                      % milestone, flush=True)
+                continue
+            text = out.stdout
+            gate_lines = (text[text.index('GATE:'):].strip().splitlines()
+                          if 'GATE:' in text else
+                          ['GATE: %d mode(s) at or past the stop bar'
+                           % len(breaches)])
             verdict = dict(iteration=milestone,
                            stopped=_now(),
                            interval=interval,
+                           breaches=breaches,
                            gate=[ln.strip() for ln in gate_lines])
             try:
                 with open(os.path.join(run_dir, GATE_STOP), 'w',
@@ -818,6 +847,30 @@ def start_gate_watch(run_dir, cfg, proc):
     t = threading.Thread(target=loop, daemon=True, name='gate-watch')
     t.start()
     return t
+
+
+def refuse_launch(run_dir, meta, exc):
+    """A launch refused before MATSim started still says why (#127).
+
+    The card is written once, already `failed`, with the refusal quoted as
+    its cause - the meta contract requires a cause on every dead run - and
+    the directory is then retired through `mark_dead`, so it carries the
+    `aborted_` label like every other run that did not complete and its
+    processed twin follows. The JVM never ran, so there is no log to read;
+    the message the launch died with is the only evidence, and it is kept.
+    """
+    msg = str(exc).strip() or exc.__class__.__name__
+    cause = 'launch refused before MATSim started: %s' % msg
+    card = dict(meta, status='failed', ended=_now(), wall_s=0.0, rc=None,
+                cause=cause)
+    try:
+        write_meta(run_dir, card)
+    except Exception as e:                                   # noqa: BLE001
+        print('could not write the refusal card for %s: %s' % (run_dir, e),
+              flush=True)
+        return run_dir
+    print('LAUNCH REFUSED - %s' % cause, flush=True)
+    return mark_dead(run_dir, 'failed', wall_s=0.0, cause=cause)
 
 
 def _gate_stop_cause(run_dir):
@@ -942,34 +995,46 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         rc=None, pid=os.getpid())
     if warm_key:
         meta['warm_started_from'] = warm_key
-    write_meta(run_dir, meta)
 
-    # `iterations`, `threads` and every other declared value reach the config
-    # through `cfg`, not through this call: they are registry fields, and the
-    # emitter reads them from the same resolution the snapshot records.
-    config_path, sample = build_config(src_dir, run_dir, scenario, day, fraction,
-                                       seed, overrides, cfg, warm=warm)
-    snapshot = cfg.write_snapshot(os.path.join(run_dir, '_config.json'))
+    # THE INPUTS ARE VALIDATED BEFORE THE CARD SAYS `running` (#127): a
+    # missing input file, a regime mismatch or an unbuilt run stack refuses
+    # the launch here, and the refusal is written to the card as the cause -
+    # `failed`, with the message quoted. The card used to be written first,
+    # so a refused launch left a `running` record that the next harness
+    # reconciled as "no longer running" and the real message was lost.
+    try:
+        # `iterations`, `threads` and every other declared value reach the
+        # config through `cfg`, not through this call: they are registry
+        # fields, and the emitter reads them from the same resolution the
+        # snapshot records.
+        config_path, sample = build_config(src_dir, run_dir, scenario, day,
+                                           fraction, seed, overrides, cfg,
+                                           warm=warm)
+        snapshot = cfg.write_snapshot(os.path.join(run_dir, '_config.json'))
+        # THE STACK FOLLOWS THE REPRESENTATION (#73, DECISIONS 9.73/9.76):
+        # the signals contrib is not in the shaded jar and must never share
+        # a classpath with it, so an explicit-signals run executes the
+        # Maven-built run stack and the signals entry point; everything else
+        # runs exactly the stack it always ran.
+        main_class = MAIN
+        if cfg.get('A.signals.representation') == 'explicit_signals':
+            stack_jars = sorted(glob.glob(os.path.join(
+                REPO, '.tools', 'run-stack', 'lib', '*.jar')))
+            classes_signals = os.path.join(REPO, '.tools', 'classes-signals')
+            if not stack_jars or not os.path.isdir(classes_signals):
+                raise SystemExit(
+                    'A.signals.representation is explicit_signals but the '
+                    'signals run stack is not built. Run: python '
+                    'src/setup/bootstrap_toolchain.py --run-stack')
+            classpath = os.pathsep.join([classes_signals] + stack_jars)
+            main_class = 'citysim.CitysimSignalsControler'
+        else:
+            classpath = os.pathsep.join([JAR, CLASSES])
+    except (SystemExit, Exception) as e:                     # noqa: BLE001
+        refuse_launch(run_dir, meta, e)
+        raise
+    write_meta(run_dir, meta)
     log = os.path.join(run_dir, 'matsim.log')
-    # THE STACK FOLLOWS THE REPRESENTATION (#73, DECISIONS 9.73/9.76): the
-    # signals contrib is not in the shaded jar and must never share a
-    # classpath with it, so an explicit-signals run executes the Maven-built
-    # run stack and the signals entry point; everything else runs exactly the
-    # stack it always ran.
-    main_class = MAIN
-    if cfg.get('A.signals.representation') == 'explicit_signals':
-        stack_jars = sorted(glob.glob(os.path.join(
-            REPO, '.tools', 'run-stack', 'lib', '*.jar')))
-        classes_signals = os.path.join(REPO, '.tools', 'classes-signals')
-        if not stack_jars or not os.path.isdir(classes_signals):
-            raise SystemExit(
-                'A.signals.representation is explicit_signals but the '
-                'signals run stack is not built. Run: python '
-                'src/setup/bootstrap_toolchain.py --run-stack')
-        classpath = os.pathsep.join([classes_signals] + stack_jars)
-        main_class = 'citysim.CitysimSignalsControler'
-    else:
-        classpath = os.pathsep.join([JAR, CLASSES])
     # -Xms equal to -Xmx: the 9.57 arm grew the heap 7 -> 27 GB across the run
     # with full-GC stalls visible during the it-110 routing pathology; a
     # pre-sized heap removes the growth path. Wall-time only - the JVM heap

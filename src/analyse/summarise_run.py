@@ -70,14 +70,18 @@ _CITY_NAME = _city.descriptor()['name']
 # typed here: it decides the verdict issue #5 turns on, so it is swept like any
 # other unobserved value instead of sitting in a constant nobody can see or vary.
 # It was `DRIFT_THRESHOLD_PP = 0.5` in this file; the value moved unchanged.
-DRIFT_TOLERANCE_PP = registry.load().get('RUN.relaxation.drift_tolerance_pp')
+# Read on first use, not at import (#126): run_matsim.py imports this module,
+# and a module-level load made `run.py --stop` need a valid registry.
+def drift_tolerance_pp():
+    return registry.load().get('RUN.relaxation.drift_tolerance_pp')
 
 # How many iterations after the innovation cutoff the drift window starts.
 # DECLARED for the same reason as the tolerance: it decides the verdict. The
 # window used to start AT the cutoff, which swept in a ONE-ITERATION selection
 # snap (+3.4 pp car at both fractions) and made the gate unpassable at any
 # horizon - a defect in the instrument, not in the runs (DECISIONS.md 9.43).
-SETTLE_MARGIN_ITERS = registry.load().get('RUN.relaxation.settle_margin_iterations')
+def settle_margin_iterations():
+    return registry.load().get('RUN.relaxation.settle_margin_iterations')
 
 
 def _load(path, default=None):
@@ -159,9 +163,9 @@ def relaxation(modes, innovation_off_at, tolerance_pp=None, settle_margin=None):
     nothing that was previously visible has been hidden by the fix.
     """
     if tolerance_pp is None:
-        tolerance_pp = DRIFT_TOLERANCE_PP
+        tolerance_pp = drift_tolerance_pp()
     if settle_margin is None:
-        settle_margin = SETTLE_MARGIN_ITERS
+        settle_margin = settle_margin_iterations()
     block = {'innovation_off_at': innovation_off_at, 'drift_pp': {},
              'max_abs_drift_pp': None, 'tolerance_pp': tolerance_pp,
              'settle_margin_iterations': settle_margin,
