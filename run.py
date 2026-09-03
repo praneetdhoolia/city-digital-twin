@@ -188,6 +188,10 @@ def main():
     ap.add_argument('--cause', metavar='TEXT',
                     help='why --stop is stopping the run; recorded verbatim '
                          'as the abort cause')
+    ap.add_argument('--allow-open-issues', action='store_true',
+                    help='launch although an open GitHub issue is not labelled '
+                         'awaiting-run (GOAL.md requirement 10); say why in '
+                         'the run record')
     ap.add_argument('--dry-run', action='store_true',
                     help='resolve the registry, print the snapshot, execute nothing')
     ap.add_argument('--list', action='store_true',
@@ -223,6 +227,15 @@ def main():
         run_config = DEFAULT_OVERLAY
         defaulted = True
         print(_default_banner(run_config, a.scenario, a.day))
+
+    # GOAL.md requirement 10: no open issue behind a run. Checked before
+    # --detach re-invokes this command under the scheduler, so the refusal
+    # is printed to the person launching, not to a log nobody reads.
+    if not a.dry_run:
+        import issue_gate
+        why = issue_gate.refuse_launch(a.allow_open_issues)
+        if why:
+            raise SystemExit('refusing to launch: ' + why)
 
     if a.detach:
         return _detach()

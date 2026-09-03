@@ -55,18 +55,6 @@
       "low": 1.2,
       "high": 1.8,
       "source": "literature"
-    },
-    "beta_gradient_uphill": {
-      "base": 0.09,
-      "low": 0.05,
-      "high": 0.14,
-      "source": "assumed"
-    },
-    "beta_gradient_downhill": {
-      "base": 0.02,
-      "low": 0.0,
-      "high": 0.05,
-      "source": "assumed"
     }
   },
   "transfer_penalty": {
@@ -114,26 +102,6 @@
       -1.35,
       "assumed"
     ]
-  },
-  "walk_decay": {
-    "function": "negative_exponential",
-    "params": {
-      "beta_per_m": 0.0018
-    },
-    "sweep": {
-      "beta_per_m": [
-        0.001,
-        0.003
-      ]
-    },
-    "alternative": "cumulative_gaussian",
-    "alternative_params": {
-      "mu_m": 700.0,
-      "sigma_m": 420.0
-    },
-    "max_considered_m": 2500.0,
-    "source": "assumed",
-    "note": "At beta=0.0018 the weight is 0.49 at 400 m, 0.24 at 800 m and 0.12 at 1200 m. Never truncate at 400 m."
   },
   "nesting": {
     "structure": "nested_logit",

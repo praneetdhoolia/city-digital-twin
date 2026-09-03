@@ -96,8 +96,11 @@ WEIGHT_FIELDS = [
     ('beta_reliability', 'C.time_weights.beta_reliability'),
     ('beta_crowding_seated', 'C.crowding.seated_multiplier'),
     ('beta_crowding_standing', 'C.crowding.standing_multiplier'),
-    ('beta_gradient_uphill', 'C.gradient.uphill_penalty_per_pct'),
-    ('beta_gradient_downhill', 'C.gradient.downhill_penalty_per_pct'),
+    # The two gradient UTILITY weights (C.gradient.*_penalty_per_pct) were
+    # retired on 3 Sep 2026 (DECISIONS.md 9.140, issue #21): gradient reaches
+    # walk and bike through link travel time on the router and the mobsim
+    # alike (A.gradient.representation, 9.84), and a scored weight that
+    # reached nothing carried a sweep whose band was zero by construction.
 ]
 WEIGHTS = {name: _triple(key) for name, key in WEIGHT_FIELDS}
 
@@ -139,19 +142,15 @@ ASC_FIELDS = [('asc_car_driver', 'C.asc.car_driver'),
               ('asc_cycle', 'C.asc.cycle')]
 ASC = {name: (float(CFG.get(key)), CFG.source(key)) for name, key in ASC_FIELDS}
 
-# walk access decay. Proposal 6.3 forbids a threshold: a 400 m cut-off treats a
-# person at 401 m as identical to one at 2 km and flatters fixed-route modes.
-_WD_LO, _WD_HI = _lo_hi('C.walk.decay_beta_per_m')
-WALK_DECAY = dict(function=CFG.get('C.walk.decay_form'),
-                  params={'beta_per_m': CFG.get('C.walk.decay_beta_per_m')},
-                  sweep={'beta_per_m': [_WD_LO, _WD_HI]},
-                  alternative='cumulative_gaussian',
-                  alternative_params={'mu_m': CFG.get('C.walk.gaussian_mu_m'),
-                                      'sigma_m': CFG.get('C.walk.gaussian_sigma_m')},
-                  max_considered_m=CFG.get('C.walk.max_considered_m'),
-                  source=CFG.source('C.walk.decay_beta_per_m'),
-                  note='At beta=0.0018 the weight is 0.49 at 400 m, 0.24 at 800 m '
-                       'and 0.12 at 1200 m. Never truncate at 400 m.')
+# The PT walk-access decay curve (C.walk.decay_*, C.walk.gaussian_*,
+# C.walk.max_considered_m) was retired on 3 Sep 2026 (DECISIONS.md 9.140,
+# issue #21). Its purpose - proposal 6.3's refusal of a 400 m catchment
+# cut-off - is met by construction in MATSim: the access and egress walk is
+# routed on the walk network and SCORED at its full walking time (a
+# continuous penalty, no threshold), and the raptor's declared
+# RUN.transit_router.search_radius_m / extension_radius_m bound the search,
+# never the utility. A curve read by nothing had a sweep whose band was
+# zero by construction.
 
 NEST = dict(structure='nested_logit',
             nests={'motorised_pt': ['bus', 'lr', 'rail'],
@@ -203,9 +202,6 @@ def rows_c1():
                      beta_transfer_penalty_low=TRANSFER_PENALTY['low'],
                      beta_transfer_penalty_high=TRANSFER_PENALTY['high'],
                      beta_transfer_penalty_source=TRANSFER_PENALTY['source'],
-                     walk_decay_function=WALK_DECAY['function'],
-                     walk_decay_beta_per_m=WALK_DECAY['params']['beta_per_m'],
-                     walk_decay_source=WALK_DECAY['source'],
                      nesting_structure=NEST['structure'])
             for k, (base, lo, hi, src) in WEIGHTS.items():
                 v = base * (adj_walk if 'walk' in k else 1.0)
@@ -226,17 +222,17 @@ def rows_sweep():
     curve across this grid, never as a point estimate (proposal 3.4 S-d).
 
     `walk_decay_beta_per_m` was a third axis of five levels and is NOT one any
-    more. It reaches the model through nothing - zero occurrences of the decay
-    curve in the generated MATSim config, and it is named in `not_representable`
-    for that reason (issue 21, DECISIONS.md 9.3). Sweeping it five ways produced
-    a sensitivity band of exactly zero by construction, which would have been
-    reported as "insensitive to walk access" when the truth is "walk decay is
-    not in the model" - a false negative, and worse than an absent one. It also
-    consumed four fifths of the grid: 140 points, of which 112 could not differ
-    from another point for any reason a reader would care about.
+    more. It reached the model through nothing - zero occurrences of the decay
+    curve in the generated MATSim config (issue 21, DECISIONS.md 9.3). Sweeping
+    it five ways produced a sensitivity band of exactly zero by construction,
+    which would have been reported as "insensitive to walk access" when the
+    truth was "walk decay is not in the model" - a false negative, and worse
+    than an absent one. It also consumed four fifths of the grid: 140 points,
+    of which 112 could not differ from another point for any reason a reader
+    would care about.
 
-    140 -> 28 (DECISIONS.md 9.22). The axis returns the day the curve reaches
-    the model, and not before.
+    140 -> 28 (DECISIONS.md 9.22). The curve itself was retired on 3 Sep 2026
+    (9.140): the scored access walk is the continuous penalty it stood for.
     """
     out = []
     i = 0
@@ -268,15 +264,14 @@ if __name__ == '__main__':
     json.dump(dict(vot_aud_hr=VOT, weights={k: dict(base=v[0], low=v[1], high=v[2], source=v[3])
                                             for k, v in WEIGHTS.items()},
                    transfer_penalty=TRANSFER_PENALTY, asc=ASC,
-                   walk_decay=WALK_DECAY, nesting=NEST,
+                   nesting=NEST,
                    n_param_sets=len(c1), n_sweep_points=len(sw),
                    assumed_rows=[r['param_set_id'] for r in c1]),
               open(os.path.join(OUT, 'C1_parameters.json'), 'w'), indent=2)
     # the list DECISIONS.md must carry
     assumed = sorted({k for k, v in WEIGHTS.items() if v[3] == 'assumed'} |
                      {k for k, v in ASC.items() if v[1] == 'assumed'} |
-                     {'beta_transfer_penalty_min', 'walk_decay_beta_per_m',
-                      'nesting_coefficients'})
+                     {'beta_transfer_penalty_min', 'nesting_coefficients'})
     print('\nparameters with source=assumed (must appear in DECISIONS.md):')
     for a in assumed:
         print('   -', a)

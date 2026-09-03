@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 462 fields are made of
+## What the 457 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
-| `measured` | 36 | computed from observed data in this package |
-| `derived` | 38 | follows from another registry field by identity |
+| `measured` | 39 | computed from observed data in this package |
+| `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 157 | chosen without direct empirical support |
+| `assumed` | 148 | chosen without direct empirical support |
 | `definition` | 119 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 443 | usable point value |
+| `active` | 438 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,7 +56,7 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### The 23 fields held fixed
+### The 24 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -70,11 +70,12 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
+- `B.external.employed_share` - a census count: 32,230 employed persons of 70,448 residents over the 201 external-tier SA1s (2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P); a count has no plausible range to swee
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
 - `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
-- `B.taxi.fare_per_km_taxi_aud` - The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not mode
-- `B.taxi.flagfall_taxi_aud` - The legal instrument itself: the Point to Point Transport (Fares) Order 2025 urban Hiring Charge, and clause 2(g)(ii) names the Newcastle Transport District an Urban Area. A regula
+- `B.taxi.fare_per_km_taxi` - The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not mode
+- `B.taxi.flagfall_taxi` - The legal instrument itself: the Point to Point Transport (Fares) Order 2025 urban Hiring Charge, and clause 2(g)(ii) names the Newcastle Transport District an Urban Area. A regula
 - `C.asc.bus` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.car_passenger` - Constrained, not calibrated. DECISIONS.md 9.8 solves this constant so the modelled ride:car leg ratio reproduces the OBSERVED passenger:driver ratio (0.3503, HTS). That is the seco
 - `C.asc.cycle` - Constrained, not calibrated - the second branch DECISIONS.md 8.5 permits. THE DEPARTURE IS LOGGED AT 9.28, before any run on the changed specification. The shipped -1.35 stays as t
@@ -124,41 +125,41 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
 | `A.crossings.rail_match_radius_m` | `40.0` | m | `definition` | - |
 | `A.crossings.representation` | `change_events` | enum | `assumed` | `absent`, `change_events` |
-| `A.fare.bus_adult_offpeak_aud` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
-| `A.fare.bus_adult_peak_aud` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
+| `A.fare.bus_adult_offpeak` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
+| `A.fare.bus_adult_peak` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
 | `A.fare.bus_band_upper_km` | `[3, 8]` | km | `observed` | - |
-| `A.fare.bus_child_offpeak_aud` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
-| `A.fare.bus_child_peak_aud` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
+| `A.fare.bus_child_offpeak` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
+| `A.fare.bus_child_peak` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
 | `A.fare.child_max_age` | `15` | years | `observed` | - |
 | `A.fare.child_min_age` | `4` | years | `observed` | - |
-| `A.fare.daily_cap_adult_aud` | `19.3` | AUD | `observed` | - |
-| `A.fare.daily_cap_adult_weekend_aud` | `9.65` | AUD | `observed` | - |
-| `A.fare.daily_cap_child_aud` | `9.65` | AUD | `observed` | - |
-| `A.fare.daily_cap_child_weekend_aud` | `4.8` | AUD | `observed` | - |
-| `A.fare.daily_cap_senior_aud` | `2.5` | AUD | `observed` | - |
-| `A.fare.ferry_adult_offpeak_aud` | `2.31` | AUD | `observed` | - |
-| `A.fare.ferry_adult_peak_aud` | `3.3` | AUD | `observed` | - |
-| `A.fare.ferry_child_offpeak_aud` | `1.15` | AUD | `observed` | - |
-| `A.fare.ferry_child_peak_aud` | `1.65` | AUD | `observed` | - |
-| `A.fare.lightrail_adult_offpeak_aud` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
-| `A.fare.lightrail_adult_peak_aud` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
+| `A.fare.daily_cap_adult` | `19.3` | AUD | `observed` | - |
+| `A.fare.daily_cap_adult_weekend` | `9.65` | AUD | `observed` | - |
+| `A.fare.daily_cap_child` | `9.65` | AUD | `observed` | - |
+| `A.fare.daily_cap_child_weekend` | `4.8` | AUD | `observed` | - |
+| `A.fare.daily_cap_senior` | `2.5` | AUD | `observed` | - |
+| `A.fare.ferry_adult_offpeak` | `2.31` | AUD | `observed` | - |
+| `A.fare.ferry_adult_peak` | `3.3` | AUD | `observed` | - |
+| `A.fare.ferry_child_offpeak` | `1.15` | AUD | `observed` | - |
+| `A.fare.ferry_child_peak` | `1.65` | AUD | `observed` | - |
+| `A.fare.lightrail_adult_offpeak` | `[2.31, 3.14, 4.03]` | AUD | `observed` | - |
+| `A.fare.lightrail_adult_peak` | `[3.3, 4.49, 5.77]` | AUD | `observed` | - |
 | `A.fare.lightrail_band_upper_km` | `[3, 8]` | km | `observed` | - |
-| `A.fare.lightrail_child_offpeak_aud` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
-| `A.fare.lightrail_child_peak_aud` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
+| `A.fare.lightrail_child_offpeak` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
+| `A.fare.lightrail_child_peak` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
 | `A.fare.peak_evening_end_h` | `19.0` | hours | `observed` | - |
 | `A.fare.peak_evening_start_h` | `15.0` | hours | `observed` | - |
 | `A.fare.peak_morning_end_h` | `10.0` | hours | `observed` | - |
 | `A.fare.peak_morning_start_h` | `6.5` | hours | `observed` | - |
 | `A.fare.rail_peak_morning_start_h` | `6.0` | hours | `observed` | - |
 | `A.fare.senior_min_age` | `60` | years | `literature` | 60 - 67 |
-| `A.fare.senior_per_fare_cap_aud` | `2.5` | AUD | `observed` | - |
-| `A.fare.train_adult_offpeak_aud` | `[3.03, 3.76, 4.34, 5.79, 7.46]` | AUD | `observed` | - |
-| `A.fare.train_adult_peak_aud` | `[4.33, 5.38, 6.2, 8.28, 10.66]` | AUD | `observed` | - |
+| `A.fare.senior_per_fare_cap` | `2.5` | AUD | `observed` | - |
+| `A.fare.train_adult_offpeak` | `[3.03, 3.76, 4.34, 5.79, 7.46]` | AUD | `observed` | - |
+| `A.fare.train_adult_peak` | `[4.33, 5.38, 6.2, 8.28, 10.66]` | AUD | `observed` | - |
 | `A.fare.train_band_upper_km` | `[10, 20, 35, 65]` | km | `observed` | - |
-| `A.fare.train_child_offpeak_aud` | `[1.51, 1.88, 2.17, 2.89, 3.73]` | AUD | `observed` | - |
-| `A.fare.train_child_peak_aud` | `[2.16, 2.69, 3.1, 4.14, 5.33]` | AUD | `observed` | - |
-| `A.fare.transfer_discount_adult_aud` | `2.0` | AUD | `observed` | - |
-| `A.fare.transfer_discount_child_aud` | `1.0` | AUD | `observed` | - |
+| `A.fare.train_child_offpeak` | `[1.51, 1.88, 2.17, 2.89, 3.73]` | AUD | `observed` | - |
+| `A.fare.train_child_peak` | `[2.16, 2.69, 3.1, 4.14, 5.33]` | AUD | `observed` | - |
+| `A.fare.transfer_discount_adult` | `2.0` | AUD | `observed` | - |
+| `A.fare.transfer_discount_child` | `1.0` | AUD | `observed` | - |
 | `A.fare.transfer_window_min` | `60` | minutes | `literature` | 30 - 90 |
 | `A.gradient.bike_downhill_speedup_per_pct` | `0.015` | share_of_flat_speed_per_pct | `literature` | 0 - 0.03 |
 | `A.gradient.bike_speed_ceiling_factor` | `1.3` | share | `assumed` | 1 - 1.5 |
@@ -203,7 +204,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.parking.exempt_activity_types` | `["home"]` | enum | `assumed` | `['home']`, `[]` |
 | `A.parking.max_stay_min` | `120.0` | minutes | `assumed` | 60 - 180 |
 | `A.parking.occupancy_profile` | `[0.1, 0.08, 0.07, 0.06, 0.08, 0.14, 0.28, 0.46, 0.6, 0.66, 0.7, 0.72, 0.73, 0.72, 0.7, 0.66, 0.58, 0.46, 0....` | occupancy_ratio_by_hour | `assumed` | plus/minus 25% |
-| `A.parking.price_aud_hr_max` | `3.2` | AUD_per_hour | `assumed` | 1.6 - 4.8 |
+| `A.parking.price_hr_max` | `3.2` | AUD_per_hour | `assumed` | 1.6 - 4.8 |
 | `A.parking.price_saturation_pctile` | `99.0` | percentile | `assumed` | 95 - 99.5 |
 | `A.parking.price_threshold_pctile` | `90.0` | percentile | `assumed` | 80 - 95 |
 | `A.parking.search_min_max` | `8.1` | minutes | `literature` | 3.5 - 14 |
@@ -494,13 +495,13 @@ The representation gate for the two boom-gated freight level crossings. Flipped 
 
 ***assumed** · status **active** · DECISIONS.md §9.70, 9.76, 9.77*
 
-#### `A.fare.bus_adult_offpeak_aud`
+#### `A.fare.bus_adult_offpeak`
 
 Adult bus off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.bus_adult_peak_aud`
+#### `A.fare.bus_adult_peak`
 
 Adult bus peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
@@ -512,13 +513,13 @@ Opal bus fare distance-band upper bounds; the last band is open (8+ km). Observe
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.bus_child_offpeak_aud`
+#### `A.fare.bus_child_offpeak`
 
 Child/Youth bus off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.bus_child_peak_aud`
+#### `A.fare.bus_child_peak`
 
 Child/Youth bus peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
@@ -536,67 +537,67 @@ Children under 4 travel free; Child/Youth fares start at 4. Observed: archived a
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.daily_cap_adult_aud`
+#### `A.fare.daily_cap_adult`
 
 Adult daily cap, Mondays to Thursdays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.daily_cap_adult_weekend_aud`
+#### `A.fare.daily_cap_adult_weekend`
 
 Adult daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.daily_cap_child_aud`
+#### `A.fare.daily_cap_child`
 
 Child/Youth daily cap, Mondays to Thursdays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.daily_cap_child_weekend_aud`
+#### `A.fare.daily_cap_child_weekend`
 
 Child/Youth daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.daily_cap_senior_aud`
+#### `A.fare.daily_cap_senior`
 
 Gold Senior/Pensioner daily cap, every day of the week. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.ferry_adult_offpeak_aud`
+#### `A.fare.ferry_adult_offpeak`
 
 Newcastle Stockton ferry adult off-peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.ferry_adult_peak_aud`
+#### `A.fare.ferry_adult_peak`
 
 Newcastle Stockton ferry adult peak fare - the ferry fare table carries a named row for this crossing (0-3 km), separate from the Sydney bands. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.ferry_child_offpeak_aud`
+#### `A.fare.ferry_child_offpeak`
 
 Newcastle Stockton ferry Child/Youth off-peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.ferry_child_peak_aud`
+#### `A.fare.ferry_child_peak`
 
 Newcastle Stockton ferry Child/Youth peak fare. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.lightrail_adult_offpeak_aud`
+#### `A.fare.lightrail_adult_offpeak`
 
 Adult light rail off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.lightrail_adult_peak_aud`
+#### `A.fare.lightrail_adult_peak`
 
 Adult light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
@@ -608,13 +609,13 @@ Opal light rail fare distance-band upper bounds; published as its own table (its
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.lightrail_child_offpeak_aud`
+#### `A.fare.lightrail_child_offpeak`
 
 Child/Youth light rail off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.lightrail_child_peak_aud`
+#### `A.fare.lightrail_child_peak`
 
 Child/Youth light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
@@ -656,19 +657,19 @@ Age from which a resident not employed full-time is priced on Gold Senior/Pensio
 
 ***literature** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.senior_per_fare_cap_aud`
+#### `A.fare.senior_per_fare_cap`
 
 Gold Senior/Pensioner Opal: each fare is the Child/Youth fare capped at this value, and the daily cap equals it. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.train_adult_offpeak_aud`
+#### `A.fare.train_adult_offpeak`
 
 Adult metro/train off-peak fare per band (the published 30% discount, as published - not recomputed). Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.train_adult_peak_aud`
+#### `A.fare.train_adult_peak`
 
 Adult metro/train peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
@@ -680,25 +681,25 @@ Opal metro/train fare distance-band upper bounds; the last band is open (65+ km)
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.train_child_offpeak_aud`
+#### `A.fare.train_child_offpeak`
 
 Child/Youth metro/train off-peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.train_child_peak_aud`
+#### `A.fare.train_child_peak`
 
 Child/Youth metro/train peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.transfer_discount_adult_aud`
+#### `A.fare.transfer_discount_adult`
 
 Opal transfer discount off an adult fare, for every transfer between modes within one journey. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
 
-#### `A.fare.transfer_discount_child_aud`
+#### `A.fare.transfer_discount_child`
 
 Opal transfer discount off a Child/Youth or Concession fare, for every transfer between modes within one journey. Also applied to Senior/Pensioner fares, which the publication folds into concession. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
@@ -1004,7 +1005,7 @@ Hourly occupancy profile, applied to EVERY parking facility. Assumed: parking me
 
 ***assumed** · status **active** · DECISIONS.md §6*
 
-#### `A.parking.price_aud_hr_max`
+#### `A.parking.price_hr_max`
 
 Parking price in the densest employment zone, in 2026 AUD per hour. The ceiling of the density ramp, not a citywide rate.
 
@@ -1432,7 +1433,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 103 fields*
+*`cities/newcastle/registry/B_demand.json` - 105 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1477,8 +1478,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.counts.vehicles_per_ride_leg` | `0.0` | vehicles_per_leg | `derived` | derived: a passenger rides in a vehicle already counted, so a ride leg contribu |
 | `B.external.agent_profile` | `{"car_available": 1, "age": 40, "licence_holder": 1, "employment_status": "employed_full_time", "student_st...` | person_attributes | `definition` | - |
 | `B.external.agent_ride_available` | `false` | boolean | `derived` | derived: a person may be a car passenger only if their household holds a vehicl |
+| `B.external.commute_share_to_core` | `0.1377` | share_of_employed_residents | `measured` | 0.1 - 0.18 |
 | `B.external.cordon_road_classes` | `["motorway", "trunk", "primary", "secondary", "motorway_link", "trunk_link", "primary_link"]` | osm_highway_class | `definition` | - |
-| `B.external.interaction_rate` | `0.08` | probability | `assumed` | 0.04 - 0.15 |
+| `B.external.employed_share` | `0.4575` | share_of_persons | `measured` | **held fixed** |
+| `B.external.interaction_rate` | `0.09` | probability | `derived` | derived: interaction_rate = commute_share_to_core x employed_share / purpose_sp |
 | `B.external.person_id_base` | `900000000` | integer_offset | `definition` | - |
 | `B.external.purpose_split` | `{"HW": 0.7, "HO": 0.3}` | probability | `assumed` | plus/minus 20% |
 | `B.external.through_corridor_match_km` | `30.0` | km | `assumed` | 10 - 50 |
@@ -1530,10 +1533,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.seed.master` | `20260810` | integer_seed | `definition` | - |
 | `B.taxi.daily_trips_band` | `[15000, 25000]` | trips_per_day | `literature` | **held fixed** |
 | `B.taxi.deadhead_min` | `12.0` | minutes | `assumed` | 0 - 30 |
-| `B.taxi.fare_per_km_rideshare_aud` | `1.5` | AUD_per_km | `literature` | 1.2 - 1.8 |
-| `B.taxi.fare_per_km_taxi_aud` | `2.52` | AUD_per_km | `measured` | **held fixed** |
-| `B.taxi.flagfall_rideshare_aud` | `1.95` | AUD | `literature` | 1.5 - 2.5 |
-| `B.taxi.flagfall_taxi_aud` | `5.0` | AUD | `measured` | **held fixed** |
+| `B.taxi.fare_per_km_rideshare` | `1.5` | AUD_per_km | `literature` | 1.2 - 1.8 |
+| `B.taxi.fare_per_km_taxi` | `2.52` | AUD_per_km | `measured` | **held fixed** |
+| `B.taxi.flagfall_rideshare` | `1.95` | AUD | `literature` | 1.5 - 2.5 |
+| `B.taxi.flagfall_taxi` | `5.0` | AUD | `measured` | **held fixed** |
 | `B.taxi.fleet_size` | `800` | vehicles | `derived` | derived: fleet_size = mean(daily_trips_band) / vehicle_trips_per_day |
 | `B.taxi.max_wait_min` | `20.0` | minutes | `assumed` | 10 - 45 |
 | `B.taxi.min_unaccompanied_age` | `18` | years | `assumed` | 0 - 18 |
@@ -1820,17 +1823,39 @@ Whether an external boundary agent may travel as a car passenger.
 
 > **Derived from** `B.population.ride_requires_household_driver`: a person may be a car passenger only if their household holds a vehicle AND contains another licence holder; an external boundary agent is household-less by construction, so that condition cannot be satisfied and ride is unavailable. Resolving the same unknown the other way made 432 of 962 external trips car-passenger trips with no possible driver
 
+#### `B.external.commute_share_to_core`
+
+Share of the external tier's EMPLOYED residents whose place of work lies in the five core LGAs: 4,636 of 33,666 in TfNSW Journey to Work 2011 Table 01 (origin SA2 x destination SA2, data/raw/jtw/bts_jtw_table01_2011_v1_0.zip), the 2021 external-tier SA2s read under their 2011 names (X Surrounds = X Region). Per SA2 it runs 0.5% (Scone Region) to 48.5% (Branxton - Greta - Pokolbin). Recomputed from the raw table by cities/newcastle/build/build_external_interaction.py, which refuses to run if this declared value drifts from it (the 9.116 guard).
+
+***measured** · status **active** · DECISIONS.md §9.140*
+
+> **Sweep basis.** the observation is the 2011 Census journey-to-work flow (the newest origin-destination release TfNSW publishes; the 2016 release was withdrawn by the publisher and 2021 exists only as an attended TableBuilder extract), so the band is +-30% for fifteen years of drift in where the external tier's residents work; it is not a sampling interval
+
 #### `B.external.cordon_road_classes`
 
 Road classes whose network nodes may serve as an external station, that is a cordon entry point. Defines what counts as a road capable of carrying boundary demand into the study area; a residential cul-de-sac is not one.
 
 ***definition** · status **active** · DECISIONS.md §9.15*
 
+#### `B.external.employed_share`
+
+Employed persons as a share of ALL persons in the external tier, from the held census tables, so that a commute share stated per employed resident can be applied to the tier's population. Recomputed by cities/newcastle/build/build_external_interaction.py.
+
+***measured** · status **active** · DECISIONS.md §9.140*
+
+> **Held fixed.** a census count: 32,230 employed persons of 70,448 residents over the 201 external-tier SA1s (2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P); a count has no plausible range to sweep
+>
+> *Departure requires: a logged decision*
+
 #### `B.external.interaction_rate`
 
-Rate at which external-tier residents interact with the core. LOCALISABLE BUT NOT YET AVAILABLE: the ABS journey-to-work origin-destination table (SA2 usual residence x SA2 place of work) would settle it. The package holds the place-of-work side but not the pairing. A standard TableBuilder extract, not a formal request (DECISIONS.md 13 priority 11).
+Rate at which external-tier residents interact with the core - the share of the tier's residents who make a trip into the core on a weekday. Derived from the 2011 journey-to-work origin-destination flow since 9.140; the 2021 table remains an attended TableBuilder extract (DECISIONS.md 13 priority 11) and would replace the 2011 vintage when obtained.
 
-***assumed** · status **active** · DECISIONS.md §9.2, 13*
+***derived** · status **active** · DECISIONS.md §9.2, 13, 9.140*
+
+> **Sweep basis.** the commute share's own +-30% vintage band carried through the identity; the purpose split's sweep moves the HO component independently
+
+> **Derived from** `B.external.commute_share_to_core`, `B.external.employed_share`, `B.external.purpose_split`: interaction_rate = commute_share_to_core x employed_share / purpose_split.HW = 0.1377 x 0.4575 / 0.7 = 0.0900: the tier's boundary agents are generated at this rate per resident and split HW/HO by B.external.purpose_split, so the HW component equals the observed commuters per resident exactly and the HO component inherits the declared purpose split (9.140). Assumed 0.08 until 9.140 (DECISIONS.md 13 priority 11 called for the origin-destination table; the 2011 release is the one obtainable without an attended extract).
 
 #### `B.external.person_id_base`
 
@@ -2196,13 +2221,13 @@ Empty running between setting one passenger down and reaching the next - the par
 
 ***assumed** · status **active** · DECISIONS.md §9.99 · MATSim `taxiFleet.deadheadMinutes`*
 
-#### `B.taxi.fare_per_km_rideshare_aud`
+#### `B.taxi.fare_per_km_rideshare`
 
 Rideshare distance rate, literature band, swept.
 
 ***literature** · status **active** · DECISIONS.md §9.76*
 
-#### `B.taxi.fare_per_km_taxi_aud`
+#### `B.taxi.fare_per_km_taxi`
 
 Taxi distance rate, urban maximum, first 12 km, from 1 July 2025 (archived with provenance).
 
@@ -2212,13 +2237,13 @@ Taxi distance rate, urban maximum, first 12 km, from 1 July 2025 (archived with 
 >
 > *Departure requires: a new Fares Order, or trip-length evidence that the 12 km tail binds*
 
-#### `B.taxi.flagfall_rideshare_aud`
+#### `B.taxi.flagfall_rideshare`
 
 Rideshare base fare, literature band, swept.
 
 ***literature** · status **active** · DECISIONS.md §9.76*
 
-#### `B.taxi.flagfall_taxi_aud`
+#### `B.taxi.flagfall_taxi`
 
 Taxi flag fall, urban maximum, from 1 July 2025 (archived: data/raw/p2p/tfnsw_p2p_fares_order_june_2025.pdf). Rank-and-hail maxima; the peak-time surcharge, night rates and the $1.32 levy are recorded in the provenance and deliberately NOT added - the mode charges the base schedule and the simplification is stated.
 
@@ -2424,7 +2449,7 @@ The earliest classified-count year pooled into the heavy-vehicle share that road
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 60 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 53 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
@@ -2451,8 +2476,6 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.constraint.vehicle_occupancy` | `1.3503` | persons_per_vehicle | `measured` | 1.2493 - 1.394 |
 | `C.crowding.seated_multiplier` | `1.0` | ratio | `literature` | 1 - 1.15 |
 | `C.crowding.standing_multiplier` | `1.45` | ratio | `literature` | 1.2 - 1.8 |
-| `C.gradient.downhill_penalty_per_pct` | `0.02` | utils_per_percent_grade | `assumed` | 0 - 0.05 |
-| `C.gradient.uphill_penalty_per_pct` | `0.09` | utils_per_percent_grade | `assumed` | 0.05 - 0.14 |
 | `C.income.exponent` | `1.0` | exponent | `literature` | 0.5 - 1.5 |
 | `C.income.representation` | `person_marginal_utility_of_money` | enum | `assumed` | `absent`, `person_marginal_utility_of_money` |
 | `C.income.top_band_factor` | `1.25` | ratio | `assumed` | 1.1 - 1.5 |
@@ -2485,11 +2508,6 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.vot.car_unavailable_walk_factor` | `1.15` | ratio | `assumed` | 1 - 1.3 |
 | `C.vot.concession_factor` | `0.75` | ratio | `literature` | 0.6 - 0.9 |
 | `C.vot.trip_weighted` | `16.96` | AUD_2026_per_hour | `derived` | plus/minus 30% |
-| `C.walk.decay_beta_per_m` | `0.0018` | per_metre | `assumed` | 0.001 - 0.003 |
-| `C.walk.decay_form` | `negative_exponential` | enum | `assumed` | `negative_exponential`, `cumulative_gaussian` |
-| `C.walk.gaussian_mu_m` | `700.0` | metres | `assumed` | 500 - 900 |
-| `C.walk.gaussian_sigma_m` | `420.0` | metres | `assumed` | 300 - 550 |
-| `C.walk.max_considered_m` | `2500.0` | metres | `assumed` | 1500 - 4000 |
 
 #### `C.asc.bus`
 
@@ -2642,18 +2660,6 @@ Crowding multiplier, seated. NOT carried into MATSim scoring (DECISIONS.md 9.3).
 Crowding multiplier, standing. NOT carried into MATSim scoring (DECISIONS.md 9.3), and the transit fleet carries standingRoomInPersons=0, so standing does not occur in the current fleet at all.
 
 ***literature** · status **active** · DECISIONS.md §8.4, 9.3*
-
-#### `C.gradient.downhill_penalty_per_pct`
-
-Asymmetric gradient cost, downhill.
-
-***assumed** · status **active** · DECISIONS.md §8.4*
-
-#### `C.gradient.uphill_penalty_per_pct`
-
-Asymmetric gradient cost on active-mode edges. Proposal 6.3 requires uphill and downhill to be different costs; material in Newcastle East and The Hill.
-
-***assumed** · status **active** · DECISIONS.md §8.4 · proposal §6.3*
 
 #### `C.income.exponent`
 
@@ -2873,38 +2879,6 @@ The single VOT MATSim actually scores with, trip-weighted across purposes. This 
 
 ***derived** · status **computed** · DECISIONS.md §9.3*
 
-#### `C.walk.decay_beta_per_m`
-
-Negative-exponential distance decay on walk access. Weight 0.49 at 400 m, 0.24 at 800 m, 0.12 at 1200 m, considered to 2500 m. NO 400 m THRESHOLD IS USED ANYWHERE: proposal 6.3 is explicit that a cut-off treats a person at 401 m as identical to one at 2 km and systematically flatters fixed-route modes.
-
-***assumed** · status **active** · DECISIONS.md §8.2 · proposal §6.3*
-
-#### `C.walk.decay_form`
-
-Functional form of the walk access decay.
-
-***assumed** · status **active** · DECISIONS.md §8.2*
-
-#### `C.walk.gaussian_mu_m`
-
-Alternative-form parameter, used only when decay_form is cumulative_gaussian.
-
-***assumed** · status **active** · DECISIONS.md §8.2*
-
-#### `C.walk.gaussian_sigma_m`
-
-Alternative-form parameter, used only when decay_form is cumulative_gaussian.
-
-***assumed** · status **active** · DECISIONS.md §8.2*
-
-#### `C.walk.max_considered_m`
-
-Outer distance over which the walk-access decay curve is evaluated. NOT a catchment threshold: proposal 6.3 forbids one, because a 400 m cut-off treats a person at 401 m as identical to one at 2 km and flatters fixed-route modes.
-
-***assumed** · status **active** · DECISIONS.md §8.4, 9.32 · proposal §6.3*
-
-> **Sweep basis.** chosen. Proposal 6.3 forbids a THRESHOLD on the decay curve; this is the outer distance at which the curve is still evaluated, not a cut-off applied to behaviour.
-
 ## Land use (D1)
 
 *`cities/newcastle/registry/D_landuse.json` - 5 fields*
@@ -2963,7 +2937,7 @@ The scenario matrix and the coupling controls. Per-scenario variant references s
 | `E.matrix.reference_scenario` | `S2` | enum | `definition` | - |
 | `E.matrix.scenario_ids` | `["S0", "S1", "S2", "S2a", "S2b", "S2c", "S3", "S4", "S5", "S6"]` | enum | `definition` | - |
 | `E.replication.n_replications` | `30` | count | `definition` | 5 - 30 |
-| `E.s0.heavy_rail_detour_factor` | `1.1` | factor | `assumed` | 1 - 1.3 |
+| `E.s0.heavy_rail_detour_factor` | `1.037` | factor | `measured` | 1 - 1.1 |
 | `E.s0.station_dwell_s` | `30.0` | seconds | `assumed` | 20 - 60 |
 | `E.s1.first_hour` | `4` | hour_of_day | `measured` | 4 - 7 |
 | `E.s1.headway_s` | `600` | seconds | `definition` | - |
@@ -3028,11 +3002,11 @@ Seeded replications per scenario. One of the three things that can be cut to clo
 
 #### `E.s0.heavy_rail_detour_factor`
 
-Path-length multiplier applied to the beeline between S0 station sites when computing run time. A bare 1.10 in an expression until this change, which is the form of literal no module-level constant scan can reach.
+Path-length multiplier applied to the beeline between S0 station sites when computing run time. MEASURED (3 Sep 2026, 9.140, issue #63 item 5) as path length over beeline of the held light-rail alignment (networks/osm/railways.osm, railway=tram ways named Newcastle Light Railway) between the declared S0 chain anchors: corridor_west -> Civic 1,601 m on the shared former heavy-rail formation against a 1,604 m beeline (0.999); Civic -> Newcastle Station 915 m on the street-running successor against 840 m (1.089); chain-length weighted 2,517 / 2,426 = 1.037. The heavy rail's own foreshore alignment east of Civic survives in OSM only as two abandoned bridge stubs, so the successor's street run bounds that leg from above. A bare 1.10 in an expression until 9.34; assumed 1.1 until 9.140.
 
-***assumed** · status **active** · DECISIONS.md §4.3, 9.34, 15*
+***measured** · status **active** · DECISIONS.md §4.3, 9.34, 9.140, 15*
 
-> **Sweep basis.** how much longer the running alignment is than the straight line between two station sites. Rail on reserved alignment is close to straight, so the range is tight; the road detour factor B.activity.detour_factor is 1.3376 and does NOT apply here.
+> **Sweep basis.** the western two thirds of the chain is measured at 0.999 on the very formation the heavy rail ran on; the eastern third is bounded by the street-running light rail at 1.089 and by a straight foreshore alignment at 1.0, so the whole chain sits in [1.0, 1.1]. The road detour factor B.activity.detour_factor (1.3376) does NOT apply here.
 
 #### `E.s0.station_dwell_s`
 

@@ -66,8 +66,6 @@
 
   "c1_value_pairs": {
     "C.transfer.beta_transfer_penalty_min": ["transfer_penalty", "base"],
-    "C.gradient.uphill_penalty_per_pct": ["weights", "beta_gradient_uphill", "base"],
-    "C.gradient.downhill_penalty_per_pct": ["weights", "beta_gradient_downhill", "base"],
     "C.crowding.seated_multiplier": ["weights", "beta_crowding_seated", "base"],
     "C.crowding.standing_multiplier": ["weights", "beta_crowding_standing", "base"],
     "C.time_weights.beta_ivt": ["weights", "beta_ivt", "base"],
@@ -92,8 +90,6 @@
     "C.transfer.beta_transfer_penalty_min": ["transfer_penalty", "low", "high"],
     "C.crowding.seated_multiplier": ["weights", "beta_crowding_seated"],
     "C.crowding.standing_multiplier": ["weights", "beta_crowding_standing"],
-    "C.gradient.uphill_penalty_per_pct": ["weights", "beta_gradient_uphill"],
-    "C.gradient.downhill_penalty_per_pct": ["weights", "beta_gradient_downhill"],
     "C.time_weights.beta_wait": ["weights", "beta_wait"],
     "C.time_weights.beta_walk_access": ["weights", "beta_walk_access"],
     "C.time_weights.beta_walk_egress": ["weights", "beta_walk_egress"],
