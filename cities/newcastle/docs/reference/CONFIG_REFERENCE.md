@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 457 fields are made of
+## What the 459 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 148 | chosen without direct empirical support |
-| `definition` | 119 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 149 | chosen without direct empirical support |
+| `definition` | 120 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 438 | usable point value |
+| `active` | 440 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -2301,7 +2301,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 19 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 20 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -2316,6 +2316,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt.censored_cell_value` | `0.0` | trips per month | `assumed` | 0 - 25 |
 | `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
 | `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
@@ -2384,6 +2385,14 @@ How many independent numbers the objective actually contains. The loop refuses t
 ***derived** · status **active** · DECISIONS.md §12.1*
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
+
+#### `CAL.pt.censored_cell_value`
+
+The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series; the validation-target builder still EXCLUDES censored cells from its station means, a pre-registered treatment of the 143 holdout rows that is not changed here - whether it should read this field too is a decision the user takes (#129).
+
+***assumed** · status **active** · DECISIONS.md §9.130*
+
+> **Sweep basis.** the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed
 
 #### `CAL.pt.weekday_factor`
 
@@ -3148,7 +3157,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 74 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 75 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3162,6 +3171,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.controler.write_events_interval` | `10` | iterations | `definition` | - |
 | `RUN.controler.write_plans_interval` | `10` | iterations | `definition` | - |
 | `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
+| `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
@@ -3274,6 +3284,12 @@ How often plans are written. Affects disk and wall time, not the model.
 #### `RUN.gate.interval_iterations`
 
 How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.
+
+***definition** · status **active** · DECISIONS.md §9.137*
+
+#### `RUN.gate.retry_interval_s`
+
+How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else.
 
 ***definition** · status **active** · DECISIONS.md §9.137*
 

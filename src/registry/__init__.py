@@ -160,12 +160,9 @@ def _intrinsic_errors(fields):
         interval = _sweep_interval(f.get('sweep'))
         if interval and f.get('value') is not None:
             lo, hi = interval
+            # sweep_keys names the entries the interval applies to; an entry a
+            # city does not carry (a mode it lacks) is simply not checked
             keys = f.get('sweep_keys')
-            if keys and isinstance(f['value'], dict):
-                for k in keys:
-                    if k not in f['value']:
-                        errors.append('%s: sweep_keys names %r, which is not an entry of '
-                                      'the value (#124)' % (key, k))
             for suffix, leaf in _numeric_leaves(f['value']):
                 if keys and suffix[1:-1] not in keys:
                     continue                  # the sweep is declared not to apply

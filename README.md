@@ -73,13 +73,23 @@ must never share a classpath with it. **A toolchain change is a model change.**
 python run.py --list        # what is runnable: scenarios, day types, run overlays
 python run.py --dry-run     # resolve every input, print it, execute nothing
 python run.py --run-config smoke   # a plumbing test: 1% sample, 2 iterations
-python run.py --detach      # the DEFAULT arm: S2, weekday, 25% sample, 1000 iterations
+python run.py --detach --run-config <overlay>   # an arm: S2, weekday, the overlay's sample and horizon
 ```
 
-**The default arm is a multi-hour run** — tens of hours, and how many depends on the
-model it runs. [`positions/runs-and-economics.md`](cities/newcastle/docs/positions/runs-and-economics.md)
-carries the measured seconds-per-iteration for each stack; read it before
-launching, and launch with `--detach`.
+**An arm is a multi-hour run** — about 45–50 hours at 25 % × 300 iterations
+([`positions/runs-and-economics.md`](cities/newcastle/docs/positions/runs-and-economics.md)
+carries the measured seconds-per-iteration for each stack). Four rules stand
+before any launch, and the launcher enforces the third:
+
+1. **A stated-cost approval from the user**, spent on use — no arm without one.
+2. **25 % sample only** (user directive, 1 September 2026); the run overlay
+   declares the horizon, and GOAL.md asks for convergence within 250 iterations.
+3. **No open GitHub issue without the `awaiting-run` label**
+   (`python src/run/issue_gate.py`; GOAL.md requirement 10).
+4. **One arm at a time**, launched with `--detach`, stopped with `--stop`,
+   never by hand. `--detach` and `--stop` use the Windows Task Scheduler and
+   `taskkill`; on Linux the JVM launches in the foreground and `--stop` kills
+   the JVM pid the status card records (#128).
 
 ```bash
 python run.py --run-config ride_fix_10pct
@@ -196,19 +206,27 @@ python src/calibrate/report.py --run <run dir>
 
 ---
 
+## Five words
+
+- **Arm** — one scenario run, launched detached, gated every 100 iterations; not a result until it completes with `_run.json`.
+- **Family** — a comparability class: every run since a change to the plans or the network; nothing compares across families (`cities/newcastle/docs/run_families.json`).
+- **Gate** — the reading of all twelve modes against their targets every 100 iterations; a mode at or past 20 % stops the run.
+- **Holdout** — the 143 of 210 validation targets that stay unread until the end; the 67 others are the calibration half.
+- **`awaiting-run`** — the label an open issue must carry before any launch: the only thing left to do on it is a measurement that needs the run.
+
 ## What is here
 
 | | |
 |---|---|
-| Files in the manifest | **511** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
-| Package on disk | ~4.7 GB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` — mostly gitignored and regenerable |
+| Files in the manifest | **512** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
+| Package on disk | 4.07 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
 | Population | 611,915 (2021 Census) → 612,634 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 457 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
+| Input registry | 459 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -231,7 +249,7 @@ this page still equal the artefacts they describe.
 | [`cities/newcastle/docs/positions/`](cities/newcastle/docs/positions) | **The current truth per topic** — ride, signals, sampling, seed, taxi, walk and bike, PT yardsticks, and more; one page each, every figure sourced |
 | [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) | **The record**: every value that is not observed and every decision, with rationale and sweep. Enter through its index or a position page |
 | [`cities/newcastle/docs/archived/design/newcastle-lr-proposal.md`](cities/newcastle/docs/archived/design/newcastle-lr-proposal.md) | The frozen origin design: the light-rail counterfactual, now the twin's first application |
-| [`docs/README.md`](docs/README.md) | The **framework's** documentation and the portable input contract |
+| [`docs/README.md`](docs/README.md) | The **framework's** documentation index; the portable input contract itself is [`config/schema/`](config/schema) |
 | [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repo |
 
 **A value in this model is observed, derived or declared-with-a-sweep, and the
@@ -262,7 +280,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 457 declared values, with units, provenance, sweeps
+  registry/                  the 459 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

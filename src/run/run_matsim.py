@@ -54,7 +54,21 @@ import summarise_run  # noqa: E402
 from registry import outputs  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-JAVA = os.path.join(REPO, '.tools', 'jdk', 'bin', 'java.exe')
+
+
+def _java_exe():
+    """The pinned JDK's launcher, by platform (#128): `java.exe` on Windows,
+    `java` elsewhere; the Windows name was typed in and no other platform
+    could launch."""
+    for cand in ('java.exe', 'java'):
+        p = os.path.join(REPO, '.tools', 'jdk', 'bin', cand)
+        if os.path.exists(p):
+            return p
+    return os.path.join(REPO, '.tools', 'jdk', 'bin',
+                        'java.exe' if os.name == 'nt' else 'java')
+
+
+JAVA = _java_exe()
 JAR = os.path.join(REPO, '.tools', 'jars', 'pt2matsim-26.6-shaded.jar')
 CLASSES = os.path.join(REPO, '.tools', 'classes')
 # Our entry point, not MATSim's: it rebinds PermissibleModesCalculator so `ride`
@@ -744,17 +758,17 @@ def _last_ended_iteration(run_dir):
             return it
     except (OSError, ValueError):
         pass
+    # No digest (the monitor is off, or it has not written yet): read the
+    # log INCREMENTALLY through run_view's cached reader (#131) - the first
+    # call walks the log once, every later call reads only its growth. The
+    # 64 KiB tail this replaced was blind at the 25% log rate.
     log = os.path.join(run_dir, 'matsim.log')
     try:
-        size = os.path.getsize(log)
-        with open(log, 'rb') as fh:
-            if size > (1 << 16):
-                fh.seek(size - (1 << 16))
-            tail = fh.read().decode('utf-8', errors='replace')
-    except OSError:
+        import run_view                                   # noqa: PLC0415
+        iters = run_view.read_iterations(log)
+    except Exception:                                     # noqa: BLE001
         return -1
-    ends = re.findall(r'### ITERATION (\d+) ENDS', tail)
-    return int(ends[-1]) if ends else -1
+    return iters[-1][0] if iters else -1
 
 
 def start_gate_watch(run_dir, cfg, proc):
@@ -771,6 +785,9 @@ def start_gate_watch(run_dir, cfg, proc):
     """
     try:
         interval = int(cfg.get('RUN.gate.interval_iterations'))
+        # seconds between reporter attempts on a milestone whose tables are
+        # not written yet (#131); the milestone itself is never skipped
+        retry_s = float(cfg.get('RUN.gate.retry_interval_s'))
     except Exception:                                        # noqa: BLE001
         return None
     if interval <= 0:
@@ -781,11 +798,18 @@ def start_gate_watch(run_dir, cfg, proc):
 
     def loop():
         claimed = 0
+        retry_at = 0.0
         while proc.poll() is None:
             time.sleep(30)
             it = _last_ended_iteration(run_dir)
             milestone = (it // interval) * interval if it >= 0 else 0
             if milestone <= claimed:
+                continue
+            # a milestone whose tables are not written yet is retried at a
+            # bounded cadence (#131): the reporter reads the whole trips
+            # table, and running it every 30 s against a 25% arm competed
+            # with the JVM for the disk
+            if time.time() < retry_at:
                 continue
             try:
                 out = subprocess.run(
@@ -793,12 +817,14 @@ def start_gate_watch(run_dir, cfg, proc):
                      '--it', str(milestone), '--gate-json', verdict_path],
                     capture_output=True, text=True, timeout=1800, cwd=REPO)
             except (OSError, subprocess.SubprocessError):
+                retry_at = time.time() + retry_s
                 continue
             if out.returncode != 0:
                 # table not written yet - retry until the run moves a whole
                 # interval past the milestone, then let it go
                 if it >= milestone + interval:
                     claimed = milestone
+                retry_at = time.time() + retry_s
                 continue
             # THE STOP IS KEYED ON THE VERDICT FILE, NEVER ON THE PRINTED
             # TEXT (#112): the reporter prints a `GATE:` line on a pass as
@@ -815,6 +841,7 @@ def start_gate_watch(run_dir, cfg, proc):
                     or read.get('iteration') != milestone:
                 if it >= milestone + interval:
                     claimed = milestone
+                retry_at = time.time() + retry_s
                 continue
             claimed = milestone
             breaches = read.get('breaches') or []
@@ -847,6 +874,19 @@ def start_gate_watch(run_dir, cfg, proc):
     t = threading.Thread(target=loop, daemon=True, name='gate-watch')
     t.start()
     return t
+
+
+def _trim_async(cfg):
+    """Trim the raw cache on a daemon thread, after the launch (#132)."""
+    import threading
+
+    def go():
+        try:
+            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+        except Exception as e:                               # noqa: BLE001
+            print('raw cache trim failed (the run is unaffected): %s' % e,
+                  flush=True)
+    threading.Thread(target=go, daemon=True, name='raw-trim').start()
 
 
 def refuse_launch(run_dir, meta, exc):
@@ -903,12 +943,17 @@ def stop_run(name, cause):
     if meta.get('status') != 'running':
         raise SystemExit('%s is not running (status %s)'
                          % (name, meta.get('status')))
-    pid = meta.get('pid')
-    if os.name == 'nt' and pid:
-        subprocess.run(['taskkill', '/F', '/PID', str(pid), '/T'],
-                       capture_output=True)
-    elif pid:
-        subprocess.run(['kill', '-9', str(pid)], capture_output=True)
+    # the JVM's own pid is recorded on the card (#128): on Windows the
+    # harness's process tree carries it, on POSIX killing the harness alone
+    # left the JVM running
+    for victim in (meta.get('jvm_pid'), meta.get('pid')):
+        if not victim:
+            continue
+        if os.name == 'nt':
+            subprocess.run(['taskkill', '/F', '/PID', str(victim), '/T'],
+                           capture_output=True)
+        else:
+            subprocess.run(['kill', '-9', str(victim)], capture_output=True)
     time.sleep(3)
     dead = mark_dead(run_dir, 'aborted', cause=cause)
     print('stopped and recorded: %s' % os.path.basename(dead), flush=True)
@@ -921,11 +966,16 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         raise SystemExit('no run inputs at %s' % src_dir)
     reconcile_stale()
     # the store maintains itself at every harness start: migrate anything
-    # legacy, trim raw back under its declared budget (9.137)
+    # legacy now; the raw cache is trimmed back under its declared budget on
+    # a daemon thread once the run is launched (#132 - at 671 GiB against a
+    # 500 GB cap the synchronous trim held the launch for the deletion)
     try:
-        results_store.maintain(cfg.get('RUN.storage.raw_cap_gb'))
+        moved = results_store.migrate()
+        if moved:
+            print('results store: migrated %d run(s) under results/raw'
+                  % len(moved), flush=True)
     except Exception as e:                                   # noqa: BLE001
-        print('results store maintenance failed (continuing): %s' % e,
+        print('results store migration failed (continuing): %s' % e,
               flush=True)
 
     fraction = cfg.get('RUN.sample.fraction')
@@ -1055,6 +1105,9 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         with open(log, 'w', encoding='utf-8', errors='replace') as lf:
             proc = subprocess.Popen(cmd, stdout=lf, stderr=subprocess.STDOUT,
                                     cwd=run_dir)
+            # the JVM's pid on the card, so --stop can reach it (#128)
+            update_meta(run_dir, jvm_pid=proc.pid)
+            _trim_async(cfg)
             # the runner gates its own run every RUN.gate.interval_iterations
             # (9.137): a failing hard bar stops the JVM from inside
             start_gate_watch(run_dir, cfg, proc)

@@ -245,6 +245,22 @@
       "decisions_ref": "9.87",
       "description": "The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading."
     },
+    "CAL.pt.censored_cell_value": {
+      "value": 0.0,
+      "units": "trips per month",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        25.0
+      ],
+      "sweep_basis": "the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed",
+      "status": "active",
+      "decisions_ref": "9.130",
+      "description": "The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series; the validation-target builder still EXCLUDES censored cells from its station means, a pre-registered treatment of the 143 holdout rows that is not changed here - whether it should read this field too is a decision the user takes (#129).",
+      "consumers": [
+        "cities/newcastle/build/build_mode_targets.py"
+      ]
+    },
     "CAL.gate.pass_deviation_pct": {
       "value": 10.0,
       "units": "per cent",

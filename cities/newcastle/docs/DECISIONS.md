@@ -172,6 +172,13 @@ about its layout will otherwise cost you an hour:
 | **Toolchain pins — a toolchain change is a model change** | §14 (change log) and `.tools/toolchain.json` |
 | **Live view, telemetry, the congestion map** | **§9.36** |
 | **Dated build narrative** | [`docs/archived/SESSION_LOG.md`](archived/SESSION_LOG.md) — archive; this file is authoritative |
+| **The assembled run inputs did not load** | **§9.4** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **Mode choice was not choosing, and the seed is now uninformed** | **§9.6** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **The with-tram scenario had no tram on a weekday** | **§9.9** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **A live view of a run, and why it is not a live map** | **§9.19** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **Three decisions taken, and the carried-over work re-prioritised** | **§9.22** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **Own collection dropped, and what the published catalogue actually holds** | **§9.23** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **One city moves into `cities/<city>/`, and the framework stops knowing which city it models** | **§9.37** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
 
 
 ---
@@ -6762,7 +6769,7 @@ results (`_run.json` absent by definition); the 67/143 split is untouched.
 
 ---
 
-## §9.73 — The simulator stack re-examined: MATSim re-affirmed, and the embedded MATSim version recorded (25 Aug 2026, fourth session)
+## 9.73 The simulator stack re-examined: MATSim re-affirmed, and the embedded MATSim version recorded (25 Aug 2026, fourth session)
 
 The session's `/goal` asked whether MATSim is still the best tool or whether a
 materially better or faster framework exists. Answered by a documented survey
@@ -6811,7 +6818,7 @@ model or data value changed; nothing here is a result.
 
 ---
 
-## §9.74 — SUMO descoped by recorded decision: MATSim is the single simulator (25 Aug 2026; the fifth premise correction — supersedes proposal §5's twin-simulator architecture)
+## 9.74 SUMO descoped by recorded decision: MATSim is the single simulator (25 Aug 2026; the fifth premise correction — supersedes proposal §5's twin-simulator architecture)
 
 **Decision required (25 Aug 2026): the study is "officially free of SUMO".**
 Recorded here as a decision with its consequences; executed mechanically as
@@ -6862,7 +6869,7 @@ and remains the operative representation until #73 lands.
 
 ---
 
-## §9.75 — The signalling dossier, the operated-SCATS-data discovery, and the project's all-modes-first batch (25 Aug 2026; issues #49, #68, #72–#78)
+## 9.75 The signalling dossier, the operated-SCATS-data discovery, and the project's all-modes-first batch (25 Aug 2026; issues #49, #68, #72–#78)
 
 **The dossier.** A ten-file research dossier on SCATS and Newcastle
 signalling landed at
@@ -6929,7 +6936,7 @@ untouched; the TIA numbers are cited evidence, not acquired inputs (that is
 
 ---
 
-## §9.76 — Batch 4.7 BUILT, inert: the all-modes batch lands as code, data and probes; the descope executed; the harness safety set live (25 Aug 2026, overnight session; issues #49, #62, #63, #68, #70, #72–#78)
+## 9.76 Batch 4.7 BUILT, inert: the all-modes batch lands as code, data and probes; the descope executed; the harness safety set live (25 Aug 2026, overnight session; issues #49, #62, #63, #68, #70, #72–#78)
 
 **Directive.** The session's `/goal` ordered the 25 Aug batch (§9.75)
 implemented overnight — signals, taxi and the full simulation factors first,
@@ -7194,7 +7201,7 @@ stayed held.
 
 ---
 
-## §9.77 — The activation boundary is CROSSED: explicit signals, crossings, native dwell and taxi are LIVE in the assembled inputs; S3 gets bus-keyed priority; family F6 declared (25 Aug 2026, sixth session; issues #49, #68, #73)
+## 9.77 The activation boundary is CROSSED: explicit signals, crossings, native dwell and taxi are LIVE in the assembled inputs; S3 gets bus-keyed priority; family F6 declared (25 Aug 2026, sixth session; issues #49, #68, #73)
 
 **Directive.** The session's `/goal` ordered every runless GitHub issue
 implemented — signals, taxi and the full simulation factors first, the free
@@ -7282,7 +7289,7 @@ open.
 
 ---
 
-## §9.78 — The runless lanes closed out: score-distinct PT submodes (Tier C), seven 0b source upgrades incl. the CWANZ-cited bike availability, the corridor-composition answer, the demographic sex-structure finding, the empty TIA sweep, the stall capture armed (25 Aug 2026, sixth session; issues #49, #50, #63, #66, #78-record)
+## 9.78 The runless lanes closed out: score-distinct PT submodes (Tier C), seven 0b source upgrades incl. the CWANZ-cited bike availability, the corridor-composition answer, the demographic sex-structure finding, the empty TIA sweep, the stall capture armed (25 Aug 2026, sixth session; issues #49, #50, #63, #66, #78-record)
 
 **Tier C — the PT submodes are SCORE-DISTINCT (#49), verified against the
 pinned jar's own bytecode.** SwissRailRaptor (confirmed the default and only
@@ -13894,6 +13901,7 @@ section exists (its `decisions_ref` check). **No target value changed, the
 
 | Date | Change |
 |---|---|
+| 2026-09-03 | **Six record headings normalised and seven index rows added (#135; twenty-sixth session; the dated text unchanged).** Sections 9.73 to 9.78 were headed `## §9.73 —`, a form the shape check's section pattern and the `grep -n "^## 9\.NNN"` recipe both miss; each is renamed to `## 9.73 ...` in place and nothing below the heading moves. Index rows are added for §9.4, §9.6, §9.9, §9.19, §9.22, §9.23 and §9.37, title only. The frozen sections' order (9.81–9.84 after 9.127, 9.131–9.127 descending) is left as written - the record is not reordered - and the shape check asserts ascending order for every section after the freeze. |
 | 2026-09-03 | **The first whole-repository assessment lodged and the `/project-report` skill added (twenty-fifth session; no model, data or target value changed; the 67/143 split untouched; nothing here is a finding of the model).** `docs/reports/20260903T134517_project_report.html` reads commit `9c99e54` (the PR #110 merge): every tracked file by area, 45 pull requests, 376 commits, 65 issues, 126 run records; 14 defects confirmed at HEAD and filed as #112–#127, with #128–#137 for the risks, gaps and document drift; five ratings per area, each with its evidence. `.claude/skills/project-report/` (the procedure and `scripts/collect_metrics.py`) reproduces it; `docs/reports/README.md` indexes the dated series. The report's in-flight section describes the twenty-fourth session's tree, since merged as PR #111 (§9.140). The GitHub Pages site now deploys from `README.md` by workflow (`.github/workflows/pages.yml`, `.github/scripts/build_pages.py`: GitHub's own renderer, the fit figures and `docs/reports/` carried along) in place of the legacy build from `docs/`. |
 | 2026-09-03 | **Every open issue worked to closed or awaiting a run; requirement 10 and the issue gate; seven dead fields retired; the S0 detour measured and the external interaction rate derived; the input contract made city-free; carve conservation and the leaf-subtour repair built and the package rebuilt (§9.140; issues #21/#62/#63/#84/#91/#99 closed, #93/#96/#94/#86/#98/#107/#108 awaiting-run; twenty-fourth session; user directive).** Registry 462 → 457 (`C.gradient.*`, `C.walk.decay_*`, `gaussian_*`, `max_considered_m` retired); `E.s0.heavy_rail_detour_factor` 1.1 → 1.037 measured; `B.external.interaction_rate` 0.08 → 0.0900 derived with two new measured members and `data/raw/jtw/` acquired; 29 currency-named keys renamed; census readers adapted with byte-identical B1 and D1; chains, plans and the 30 run-input sets rebuilt (manifest 511 files), opening F24 at its first launch. Toolchain unchanged; no target value changed, the 67/143 split is untouched, nothing here is a result. |
 | 2026-09-02 | **The F23 gate read at 25% and the arm stopped; the runner's own gate watcher found blind and fixed (§9.139; issues #107/#108/#98/#94/#30/#66; twenty-third session).** Arm `20260901T165115_300it_25pct` launched under the user's 2 Sep continue directive (SPENT, ~45–50 h stated) and stopped by the session at the iteration-100 gate: 7 modes at or past 20% — heavy rail +193.2%, bike +111.2% (from F22's +185.5%, the stress channel's first measured effect), ferry −80.0%, taxi +76.6%, light rail −66.1% AWAY, ride −40.1%, walk −27.2% — car +14.8%, motorbike +13.9%, bus +16.2% over 10%, none inside; income scaling blunted the fare (F22 same milestone: bus +8.0% inside, rail +152.9%). The §9.137 watcher did not fire: its 64 KiB log-tail iteration read was measured blind (last ENDS marker 611 MiB before EOF; 51.1 GiB log of `NetworkRoutingProvider` WARN spam); `_last_ended_iteration` now reads the `_progress.json` digest, verified on the dead arm — harness-side, no model value, no family boundary. Both 1 Sep user-directed stops recorded; the board's stale blocks regenerated same-day. **No target value changed, the 67/143 split is untouched, nothing here is a result (no `_run.json`).** |

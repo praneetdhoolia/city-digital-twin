@@ -44,7 +44,7 @@ import results_store as _results_store  # noqa: E402
 
 
 def _resolve_run(name_or_path):
-    return _results_store.resolve(name_or_path) or name_or_path
+    return _results_store.resolve_records(name_or_path) or name_or_path
 
 
 import os
@@ -61,7 +61,19 @@ def load(tag):
     path = os.path.join(run_dir, '_fit.json')
     if not os.path.exists(path):
         raise SystemExit('no _fit.json in %s - run fit.py first' % run_dir)
-    return json.load(open(path, encoding='utf-8'))
+    fit = json.load(open(path, encoding='utf-8'))
+    # the run is NAMED BY ITS DIRECTORY (9.65, #137): a hand name the fit
+    # remembers is kept beside it as history, never as the run's name
+    fit['_run_dir'] = os.path.basename(os.path.normpath(run_dir))
+    return fit
+
+
+def run_name(fit, tag):
+    """The runner's name for a run, with its hand name in brackets if the
+    record carries one that differs."""
+    name = fit.get('_run_dir') or tag
+    legacy = fit.get('run') or tag
+    return '`%s`' % name if legacy == name else '`%s` (recorded as `%s`)' % (name, legacy)
 
 
 def pct(x, nd=2):
@@ -110,8 +122,9 @@ def section_runs(w, fits, tags):
     w('\n## The runs this report covers\n\n')
     w('| run | scenario | day | sample | iterations |\n|---|---|---|---:|---:|\n')
     for t, f in zip(tags, fits):
-        w('| `%s` | %s | %s | %g%% | %d |\n'
-          % (t, f['scenario'], f['day'], f['fraction'] * 100, f['iterations']))
+        w('| %s | %s | %s | %g%% | %d |\n'
+          % (run_name(f, t), f['scenario'], f['day'], f['fraction'] * 100,
+             f['iterations']))
     w('\n')
     if any(f['iterations'] < 500 for f in fits):
         w('> **Not a result.** DECISIONS.md §9.7 measured mode share still '

@@ -9,8 +9,10 @@ name: test
 # written for exactly that; tests/check_package.py needs the full local package and is a
 # workstation gate, not a CI one.
 on:
+  # push runs on main only; every other branch is exercised by its pull
+  # request, so a change is not tested twice (#130)
   push:
-    branches: ["**"]
+    branches: ["main"]
   pull_request:
 
 jobs:
@@ -21,7 +23,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       # Compile-only: catches syntax errors across the acquisition/build code without
       # installing the heavy geo stack (geopandas, rasterio, …) those modules import.
       - name: Byte-compile every source and test module
@@ -40,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       - name: Every committed data file matches its MANIFEST.csv hash and size
         run: python tests/check_manifest.py
 
@@ -51,7 +53,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       # The counterpart of the hardcoding gate, pointed at prose. A number written
       # into README.md or STATUS.md is a claim about an artefact, and until 25 Aug
       # 2026 nothing checked that the claim still held: the front door advertised a
@@ -69,7 +71,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       # The companion of doc_currency: a number can be right while the document
       # around it has become a diary. The board's hand-written lines are capped
       # and its generated blocks required, the brief is capped and stamped with
@@ -92,7 +94,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       - name: Install the JSON Schema validator
         run: pip install jsonschema
       # The portable contract is GENERATED from the reference city, so it cannot be
@@ -103,6 +105,10 @@ jobs:
       # part-way through its build is a normal state.
       - name: Every city satisfies the contract
         run: python src/registry/check_city.py --all
+      - name: The generated configuration reference is current
+        run: python src/registry/render_docs.py --check
+      - name: The build layer has not drifted from the registry
+        run: python src/registry/check_legacy_drift.py
 
   hardcoding:
     name: zero hardcoding (declared, wired, and proven to reach)
@@ -111,7 +117,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       # THE GATE. Every controllable value is declared, every declared field
       # either reaches the model or carries a written reason, and every field
       # bound to a tool parameter is proven to reach it by changing the value
@@ -134,7 +140,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       - name: Install the JSON Schema validator
         run: pip install jsonschema
       # G2 said "structurally in place, never exercised" for the whole life of
@@ -152,7 +158,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.14"
       # The credibility claim in DECISIONS.md rests on these files existing and parsing;
       # a rename or a truncated write should fail loudly rather than at read time.
       - name: Committed provenance records are valid JSON
@@ -178,6 +184,12 @@ jobs:
           found=0
           for f in cities/*/docs/DECISIONS.md; do
             found=1
-            test -s "$f" && test "$(wc -l < "$f")" -gt 50 && echo "PASS  $f"
+            # an explicit failure branch: a command inside an && list is exempt
+            # from set -e, so the size assertion was decorative (#130)
+            if test -s "$f" && test "$(wc -l < "$f")" -gt 50; then
+              echo "PASS  $f"
+            else
+              echo "FAIL  $f is missing or trivial"; exit 1
+            fi
           done
           test "$found" = 1

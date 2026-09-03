@@ -69,8 +69,8 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 | | |
 |---|---|
 | Open comparability family | `F23-behaviour-channels` (opened `20260901T133356`, §9.138) - nothing run before it compares with anything after it |
-| Input registry | **457 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
-| Data package | **511 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
+| Input registry | **459 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (3 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (3 September 2026) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (3 September 2026) · [population-and-demand](positions/population-and-demand.md) (3 September 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (3 September 2026) · [ride-and-pairing](positions/ride-and-pairing.md) (3 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (3 September 2026) · [sampling-and-families](positions/sampling-and-families.md) (3 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (3 September 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026) · [walk-and-bike](positions/walk-and-bike.md) (3 September 2026) |
 <!-- generated:state end -->
@@ -78,7 +78,8 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 **The package on disk is consistent and is the F24 build** (§9.140): chains,
 plans and the 30 run-input sets rebuilt 3 Sep on the derived external
 interaction rate, the LGA-conserved motorbike carve and the leaf-subtour
-repair, manifest 511 files; family F24 is declared at its first launch. No arm
+repair; manifest 512 files since the OSM harvest's provenance record was
+written (#118); family F24 is declared at its first launch. No arm
 runs; every open issue is labelled `awaiting-run` (`python
 src/run/issue_gate.py`), and the launcher refuses otherwise.
 
@@ -87,14 +88,14 @@ src/run/issue_gate.py`), and the launcher refuses otherwise.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260901T165115_300it_25pct` | aborted | F23-behaviour-channels | - | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (heavy_rail +193.2%, bike +111.... |
 | `aborted_20260901T165115_300it_25pct` | aborted | F23-behaviour-channels | 104 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (heavy_rail +193.2%, bike +111.... |
 | `aborted_20260901T152548_300it_25pct` | aborted | F23-behaviour-channels | - | Stopped at the user's direction (1 Sep): stop the run - no reading taken, stopped before any gate |
 | `aborted_20260901T133404_300it_10pct` | aborted | F23-behaviour-channels | 34 | User directive (1 Sep): 25% runs only - the F23 read moves to a 25% x 300 arm; this 10% arm stopped before its first gate |
 | `20260901T132710_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
 | `20260901T113040_2it_1pct` | completed | F22-pt-fares-priced | 2 | has `_run.json` |
+| `aborted_20260831T165127_300it_25pct` | aborted | F22-pt-fares-priced | 101 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (bike +185.5%, heavy_rail +152.... |
 
-128 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+127 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

@@ -59,6 +59,30 @@ import pandas as pd
 
 import registry as _registry  # noqa: E402
 
+_CENSORED = None
+
+
+def _censored():
+    """What a censored Opal cell ('Less than 50') counts as: the declared
+    CAL.pt.censored_cell_value (#129), never a literal. Three builders once
+    treated the same cell three ways - excluded, zero, and a crash."""
+    global _CENSORED
+    if _CENSORED is None:
+        _CENSORED = float(_registry.load().get('CAL.pt.censored_cell_value'))
+    return _CENSORED
+
+
+def _trip_cell(raw):
+    """A Trip cell to a number: numeric text as it is, an empty cell as 0,
+    a censored cell as the declared value."""
+    s = str(raw if raw is not None else '').replace(',', '').strip()
+    if not s or s.lower() == 'nan':
+        return 0.0
+    try:
+        return float(s)
+    except ValueError:
+        return _censored()
+
 OBS = _city.path('data/processed/observed')
 HTS = _city.path('data/processed/hts')
 CEN = _city.path('data/processed/census')
@@ -296,7 +320,7 @@ def opal_pt_boardings(cfg):
                 excluded['%s (%s)' % (str(r['Station']).strip(),
                                       where or 'outside every LGA')] += 1
                 continue
-        sta[r['Station_Type']][str(r['MonthYear'])[:7]] += float(r['Trip'] or 0)
+        sta[r['Station_Type']][str(r['MonthYear'])[:7]] += _trip_cell(r['Trip'])
 
     clean_bus = _unbroken_months(dict(bus), ratio)
     common = sorted((set(bus) & set(sta['Train']) & set(sta['Light rail']))
@@ -355,8 +379,7 @@ def disclosed_pt_boardings(cfg):
     known = model_pt_stations()
     st = pd.read_csv(os.path.join(OBS, 'station_entries_exits_newcastle.csv'))
     st = st[(st['Station_Type'] == 'Train') & (st['Entry_Exit'] == 'Entry')].copy()
-    st['Trip'] = pd.to_numeric(st['Trip'].astype(str).str.replace(',', ''),
-                               errors='coerce').fillna(0.0)
+    st['Trip'] = st['Trip'].map(_trip_cell)
     st['m'] = st['MonthYear'].astype(str).str[:7]
     st_months = sorted(st['m'].unique())[-months:]
     st = st[st['m'].isin(st_months)]

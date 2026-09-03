@@ -84,7 +84,8 @@ print('\nGATE: no mode at or past 20% deviation.')
 
 class FakeCfg(object):
     def get(self, key):
-        return {'RUN.gate.interval_iterations': 100}[key]
+        return {'RUN.gate.interval_iterations': 100,
+                'RUN.gate.retry_interval_s': 0}[key]
 
 
 class FakeProc(object):
