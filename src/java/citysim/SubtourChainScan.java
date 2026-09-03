@@ -44,6 +44,26 @@ public final class SubtourChainScan {
     private SubtourChainScan() {
     }
 
+    private static org.matsim.api.core.v01.Coord firstActivityCoord(final Plan plan) {
+        for (final org.matsim.api.core.v01.population.PlanElement pe
+                : plan.getPlanElements()) {
+            if (pe instanceof org.matsim.api.core.v01.population.Activity) {
+                return ((org.matsim.api.core.v01.population.Activity) pe).getCoord();
+            }
+        }
+        return null;
+    }
+
+    private static String metresFrom(final org.matsim.api.core.v01.Coord home,
+                                     final org.matsim.api.core.v01.population.Activity act) {
+        if (home == null || act.getCoord() == null) {
+            return "?";
+        }
+        return String.valueOf(Math.round(
+                org.matsim.core.utils.geometry.CoordUtils.calcEuclideanDistance(
+                        home, act.getCoord())));
+    }
+
     public static void main(final String[] args) {
         if (args.length < 2) {
             System.err.println("usage: SubtourChainScan <plans.xml.gz> "
@@ -143,11 +163,41 @@ public final class SubtourChainScan {
                         java.util.Collections.sort(sorted);
                         final String key = String.join("+", sorted);
                         comboCounts.merge(key, 1L, Long::sum);
-                        if (examples.size() < maxExamples) {
-                            examples.add(person.getId() + " : " + key
-                                    + "  (" + sub.getTrips().size()
-                                    + " trips, closed="
-                                    + sub.isClosed() + ")");
+                        final boolean leaf = sub.getChildren().isEmpty();
+                        // A LEAF mix is the defect shape (#96), so every one
+                        // is traced in full - the trips with their activity
+                        // types, modes and each activity's distance from the
+                        // plan's first activity (home) - whatever the example
+                        // budget; the budget bounds the SPANNING examples,
+                        // which are ordinary days.
+                        if (leaf || examples.size() < maxExamples) {
+                            final StringBuilder sb = new StringBuilder();
+                            sb.append(person.getId()).append(" : ").append(key)
+                                    .append("  (").append(sub.getTrips().size())
+                                    .append(" trips, closed=").append(sub.isClosed())
+                                    .append(leaf ? ", LEAF)" : ", SPANNING)");
+                            if (leaf) {
+                                final org.matsim.api.core.v01.Coord home =
+                                        firstActivityCoord(plan);
+                                for (final Trip trip : sub.getTrips()) {
+                                    final List<Leg> legs = trip.getLegsOnly();
+                                    String mode = legs.isEmpty() ? "?"
+                                            : TripStructureUtils.getRoutingMode(legs.get(0));
+                                    if (mode == null && !legs.isEmpty()) {
+                                        mode = legs.get(0).getMode();
+                                    }
+                                    sb.append("\n        ")
+                                            .append(trip.getOriginActivity().getType())
+                                            .append(" @")
+                                            .append(metresFrom(home, trip.getOriginActivity()))
+                                            .append("m -[").append(mode).append("]-> ")
+                                            .append(trip.getDestinationActivity().getType())
+                                            .append(" @")
+                                            .append(metresFrom(home, trip.getDestinationActivity()))
+                                            .append("m");
+                                }
+                            }
+                            examples.add(sb.toString());
                         }
                     }
                 }

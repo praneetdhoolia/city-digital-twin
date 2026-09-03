@@ -165,7 +165,30 @@ def motorbike_share_by_cell():
             else:
                 share[sa1] = 0.0
                 used['none'] += 1
-    return share, used
+    return share, used, drv, moto
+
+
+def motorbike_identity_by_lga(drv, moto):
+    """(LGA name -> the LGA's own identity share, SA1 -> LGA) from the same
+    G62 cells summed over each LGA: CAL.mode_split.vehicle_driver_level x
+    (motorbike journeys / car-as-driver journeys). The target LGA's value is
+    B.motorbike.trip_share by construction (9.115, 9.122)."""
+    import csv as _csv
+    lga_of = {}
+    with open(_city.path('data/processed/zones/sa1_to_lga.csv'), newline='',
+              encoding='utf-8') as fh:
+        for r in _csv.DictReader(fh):
+            lga_of[r['SA1_CODE21']] = r['lga_name']
+    d_l, m_l = collections.Counter(), collections.Counter()
+    for sa1, d in drv.items():
+        lga = lga_of.get(sa1)
+        if lga is None:
+            continue
+        d_l[lga] += d
+        m_l[lga] += moto.get(sa1, 0.0)
+    identity = {lga: (VEHICLE_DRIVER_LEVEL * m_l[lga] / d_l[lga]) if d_l[lga] else 0.0
+                for lga in d_l}
+    return identity, lga_of
 # An escort trip's traveller is the driver - the identity that already limits
 # HX generation to licence holders, carried through to mode choice: a person
 # whose day includes an escort activity is denied `ride` FOR THAT DAY TYPE.
@@ -453,6 +476,52 @@ def stream_persons(path):
             yield cur, rows
 
 
+# 9.140 (#96): the run's own subtour decomposition parameters, so the seed
+# is tested exactly as MATSim will decompose it.
+COORD_DISTANCE_M = float(CFG.get('RUN.mode_choice.coord_distance_m'))
+CHAIN_BASED_MODES = frozenset(CFG.get('RUN.mode_choice.chain_based_modes'))
+
+
+def leaf_mixed_tours(rows, plan_modes):
+    """Tour ids whose trips fall in a LEAF subtour mixing chain- and
+    non-chain-based modes, by MATSim's own rule.
+
+    TripStructureUtils.getSubtours(plan, coordDistance): trips are taken in
+    order; each trip joins the unallocated list, and if the LATEST
+    unallocated trip whose origin lies within coordDistance of this trip's
+    destination exists, the trips from it onward close one subtour and
+    leave the list. A subtour whose trips are contiguous in plan order has
+    no children - a leaf, one excursion - and a leaf holding both a
+    chain-based and a non-chain-based leg is the state
+    ChooseRandomLegModeForSubtour refuses (9.119): the vehicle is not where
+    the agent left it. Measured on the 9.133 plans: 3 leaf mixes in
+    4,667,170 subtours, every one a serve stop within coordDistance of home
+    and a later base-mode activity at the served location (9.140).
+    """
+    acts = [(float(rows[0]['origin_x']), float(rows[0]['origin_y']))]
+    acts += [(float(r['dest_x']), float(r['dest_y'])) for r in rows]
+    tids = [int(r['tour_id']) for r in rows]
+    unalloc = []
+    bad = set()
+    cd2 = COORD_DISTANCE_M * COORD_DISTANCE_M
+    for t in range(len(rows)):
+        unalloc.append(t)
+        dx, dy = acts[t + 1]
+        for k in range(len(unalloc) - 1, -1, -1):
+            ox, oy = acts[unalloc[k]]
+            if (ox - dx) ** 2 + (oy - dy) ** 2 <= cd2:
+                sub = unalloc[k:]
+                del unalloc[k:]
+                if sub[-1] - sub[0] + 1 == len(sub):     # contiguous: a leaf
+                    modes = {plan_modes[tids[i]] for i in sub}
+                    if any(m in CHAIN_BASED_MODES for m in modes) and \
+                            any(m not in CHAIN_BASED_MODES for m in modes):
+                        bad.update(tids[i] for i in sub
+                                   if plan_modes[tids[i]] not in CHAIN_BASED_MODES)
+                break
+    return bad
+
+
 def write_day(day, attrs, rng, report, seed_table=None):
     src = os.path.join(PLANS, 'B2_activity_trips_%s.csv' % day)
     dst = os.path.join(OUT, 'population_%s.xml.gz' % day)
@@ -578,6 +647,9 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # 9.120: how many plans each person starts with under the seed method
     seed_plans_hist = collections.Counter()
     n_legs_selected = 0
+    # 9.140 (#96): variants whose leaf subtour mixed a held car leg with the
+    # base mode, repaired by driving the offending tour
+    leaf_mix_repairs = {'tours': 0, 'ride_tours_driven': 0, 'persons': set()}
 
     with gzip_writer(dst) as w:
         w.write('<?xml version="1.0" encoding="utf-8"?>\n')
@@ -819,6 +891,28 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         else:
                             p[tid] = base
                     plan_set.append(p)
+                # 9.140 (#96): a plan MATSim's own subtour decomposition
+                # cannot hold is not offered. A serving tour is held at car
+                # while the variant's other tours take the base mode, and
+                # where a serve stop sits within subtourModeChoice's
+                # coordDistance of an activity the person later reaches by
+                # the base mode, the decomposition closes a LEAF loop
+                # holding one car leg and one non-chain leg - the exact
+                # state ChooseRandomLegModeForSubtour refuses (9.119). The
+                # offending free tour is driven in that variant instead: the
+                # person keeps every other tour on the variant's mode.
+                if car_av:
+                    for p in plan_set:
+                        for _ in range(4):
+                            bad = leaf_mixed_tours(rows, p)
+                            if not bad:
+                                break
+                            for tid in bad:
+                                if p[tid] == 'ride':
+                                    leaf_mix_repairs['ride_tours_driven'] += 1
+                                p[tid] = 'car'
+                            leaf_mix_repairs['tours'] += len(bad)
+                            leaf_mix_repairs['persons'].add(pid)
                 seed_plans_hist[len(plan_set)] += 1
                 # 9.121: WHICH seeded plan is executed first is drawn
                 # uniformly over the person's plans, by a hash of the person
@@ -992,6 +1086,15 @@ def write_day(day, attrs, rng, report, seed_table=None):
                        # remainder of the ride seed is the uniform draw
                        seed_ride_covered_share=round(
                            covered_ride_legs[0] / max(n_legs, 1), 4),
+                       # 9.140 (#96): leaf subtours that would have mixed a
+                       # held car leg with the variant's mode, repaired at
+                       # the seed by driving the offending tour
+                       leaf_mix_repairs=dict(
+                           tours=leaf_mix_repairs['tours'],
+                           ride_tours_driven=leaf_mix_repairs['ride_tours_driven'],
+                           persons=len(leaf_mix_repairs['persons']),
+                           coord_distance_m=COORD_DISTANCE_M,
+                           chain_based_modes=sorted(CHAIN_BASED_MODES)),
                        activity_types=dict(sorted(act_counts.items())))
     print('%-8s %7d persons %9d legs %9d activities  %s'
           % (day, n_persons, n_legs, n_acts,
@@ -1080,7 +1183,7 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
     if MOTORBIKE_CARVE_RESOLUTION == 'sa1_thinned':
         # 9.122: the same identity per home SA1 (its SA2 where thin), each
         # cell's probability solved on ITS eligible persons' own trips
-        share_by_sa1, used = motorbike_share_by_cell()
+        share_by_sa1, used, g62_drv, g62_moto = motorbike_share_by_cell()
         home = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
                            usecols=['person_id', 'home_sa1'], dtype=str)
         sa1_of = dict(zip(home['person_id'].astype(int), home['home_sa1']))
@@ -1090,6 +1193,33 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
             cell_trips[c] += trips_by_pid[p]
             if a[0] and a[2] and p not in escorters:
                 cell_elig[c] += trips_by_pid[p]
+        # 9.140 (#93): per-LGA conservation of the cell shares. The census
+        # ratio is taken per SA1 (its SA2 where thin) and then weighted by
+        # each cell's TRIPS, and cells with a high motorbike ratio make more
+        # trips per driver journey than the LGA average - so the
+        # trip-weighted intended share sat 9-38% above each LGA's own
+        # identity before any draw (+12% Newcastle, +10% Maitland, +38%
+        # Cessnock, measured 1 Sep, 9.136), and the F22 gate read motorbike
+        # +13.3% at the plans' own over-delivery. The identity that the
+        # target is built on is the LGA's (9.122), so each LGA's cell shares
+        # are scaled by one factor that makes their trip-weighted mean equal
+        # the LGA's identity: the spatial pattern within the LGA is the
+        # census's, the level is the LGA's, and generation and scoring
+        # describe one quantity again. The resident truck carve (9.125) is a
+        # flat region probability on the same pool and delivers its solve
+        # exactly, so it needs no conservation.
+        identity_by_lga, lga_of = motorbike_identity_by_lga(g62_drv, g62_moto)
+        intended_l, trips_l = collections.Counter(), collections.Counter()
+        for c, t in cell_trips.items():
+            lga = lga_of.get(c)
+            intended_l[lga] += share_by_sa1.get(c, 0.0) * t
+            trips_l[lga] += t
+        conserve = {}
+        for lga, t in trips_l.items():
+            mean = intended_l[lga] / t if t else 0.0
+            conserve[lga] = (identity_by_lga.get(lga, 0.0) / mean) if mean > 0 else 1.0
+        for c in list(share_by_sa1):
+            share_by_sa1[c] = share_by_sa1[c] * conserve.get(lga_of.get(c), 1.0)
         weighted = 0.0
         for p, a in attrs.items():
             c = sa1_of.get(p)
@@ -1099,14 +1229,33 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
         for c, t in cell_trips.items():
             weighted += share_by_sa1.get(c, 0.0) * t
         weighted = weighted / total_trips if total_trips else 0.0
+        by_lga = {}
+        for lga in sorted(trips_l, key=str):
+            t = trips_l[lga]
+            by_lga[str(lga)] = dict(
+                identity=round(identity_by_lga.get(lga, 0.0), 6),
+                intended_before=round(intended_l[lga] / t if t else 0.0, 6),
+                conservation_factor=round(conserve[lga], 4),
+                trips=int(t))
         carve_cells = dict(resolution='sa1_thinned', cells_at_sa1=used['sa1'],
                            cells_at_sa2=used['sa2'], cells_without=used['none'],
                            trip_weighted_share=round(weighted, 6),
-                           declared_region_share=MOTORBIKE_SHARE)
+                           declared_region_share=MOTORBIKE_SHARE,
+                           lga_conservation=by_lga)
         print('motorbike carve per cell: %d SA1 cells, %d thinned to SA2, %d '
               'without a cell; trip-weighted share %.5f against the declared '
               'region share %.5f' % (used['sa1'], used['sa2'], used['none'],
                                      weighted, MOTORBIKE_SHARE), flush=True)
+        for lga, row in by_lga.items():
+            print('   %-16s identity %.5f  intended before %.5f  factor %.4f'
+                  % (lga, row['identity'], row['intended_before'],
+                     row['conservation_factor']), flush=True)
+        tgt = HTS_TARGET_LGA
+        if tgt in identity_by_lga and abs(identity_by_lga[tgt] - MOTORBIKE_SHARE) > 1e-6:
+            raise SystemExit(
+                'the %s G62 identity (%.7f) is not B.motorbike.trip_share '
+                '(%.7f): the declared pair and the census cell have drifted '
+                'apart (9.116)' % (tgt, identity_by_lga[tgt], MOTORBIKE_SHARE))
     report = {}
     for d in day_types:
         write_day(d, attrs, rng, report, seed_table)
