@@ -62,11 +62,17 @@ def main():
     checked = absent = unhashed = 0
     failures = []
     manifested = set()
+    unlicensed = []
 
     with open(MANIFEST, encoding='utf-8') as f:
         for row in csv.DictReader(f):
             path = norm(row['path'])
             manifested.add(path)
+            # every row carries a licence (#117): a blank is a file nobody
+            # declared a source for, and the OSM share-alike boundary is
+            # invisible when 472 rows say nothing
+            if not (row.get('licence') or '').strip():
+                unlicensed.append(path)
             full = city.path(path)
             if not os.path.exists(full):
                 absent += 1
@@ -97,6 +103,10 @@ def main():
           % (checked, unhashed, absent))
     for line in failures:
         print('FAIL  ' + line)
+    if unlicensed:
+        failures.append('%d manifest row(s) carry no licence: %s%s'
+                        % (len(unlicensed), ', '.join(unlicensed[:6]),
+                           ' ...' if len(unlicensed) > 6 else ''))
     if failures:
         print('\n%d failure(s)' % len(failures))
         return 1

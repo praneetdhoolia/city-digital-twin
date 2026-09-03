@@ -26,6 +26,7 @@
     }
   },
   "n_corridor_signals": 14,
+  "corridor_intersections_with_pedestrian_phase": 1,
   "signal_variants": [
     "S2_base",
     "S2b_full_tsp",

@@ -78,7 +78,9 @@ for kind, fl in frames.items():
     if not fl:
         continue
     d = pd.concat(fl, ignore_index=True)
-    d.to_csv(os.path.join(OUT, 'hts_%s_newcastle.csv' % kind), index=False)
+    # the names the reads below and every consumer use (#115): the reads were
+    # renamed in 047b7a0 and this write was not, so a clean rebuild died
+    d.to_csv(os.path.join(OUT, 'hts_%s.csv' % kind), index=False)
     report['%s_rows' % kind] = len(d)
     report['%s_years' % kind] = sorted(d['FINANCIAL_YEAR'].astype(str).unique().tolist())
 

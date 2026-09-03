@@ -49,10 +49,17 @@ CFG = _registry.load()
 #: another serves in seconds is normal load-shedding, not a fault in the query -
 #: measured here on the roads layer, where the same tile failed four times on
 #: the first mirror. Having a second is the difference between a harvest that
-#: completes and one that needs babysitting.
+#: completes and one that needs babysitting. Every mirror named here is also
+#: in .claude/settings.json sandbox.network (#118): a mirror the sandbox
+#: blocks is an attempt spent on a refusal.
 ENDPOINTS = ("https://overpass.kumi.systems/api/interpreter",
              "https://overpass-api.de/api/interpreter",
              "https://overpass.private.coffee/api/interpreter")
+
+#: The harvest's provenance record (#118): endpoint list, per-layer query and
+#: extent, bytes, sha256, harvest time and the ODbL licence - written beside
+#: the other raw records so the manifest joins it to every networks/osm row.
+PROVENANCE = _city.path('data', 'raw', 'provenance_osm.json')
 
 LGA = _city.path('data/processed/zones/zones_LGA.gpkg')
 STOPS = _city.path('data/processed/schedule_extras/A3_stop_extras.csv')
@@ -277,13 +284,83 @@ def fetch(name, outdir=_city.path("networks/osm")):
     return path
 
 
+def write_provenance(names, reconstructed=False, outdir=_city.path("networks/osm")):
+    """Record what was harvested: the query, the extent, the bytes, the hash.
+
+    A live Overpass query carries no `[date:]` attic pin: the layers are OSM
+    as of the harvest time, and the record says `date_pin: null` rather than
+    invent one. The mirror that served each tile is not recorded (tiles rotate
+    mirrors on retry). `reconstructed` marks a record written AFTER the fact
+    for a harvest that had none (`--provenance-only`): the harvest time is
+    then each file's modification time and the query is the template in the
+    script at that time, both stated as such.
+    """
+    import json as _json
+    import hashlib as _hashlib
+    import datetime as _dt
+    files = {}
+    for n in names:
+        p = os.path.join(outdir, "%s.osm" % n)
+        if not os.path.exists(p):
+            continue
+        h = _hashlib.sha256()
+        with open(p, "rb") as f:
+            for chunk in iter(lambda: f.read(1 << 20), b""):
+                h.update(chunk)
+        stamp = _dt.datetime.fromtimestamp(os.path.getmtime(p)).isoformat(
+            timespec="seconds")
+        files["%s.osm" % n] = dict(
+            query_template=QUERY_TEMPLATES[n].strip(),
+            extent_swne=[float(x) for x in QUERY_EXTENT[n]],
+            tile_deg=TILE_DEG, bytes=os.path.getsize(p), sha256=h.hexdigest(),
+            harvested=stamp)
+    if not files:
+        print("no layer on disk to record", flush=True)
+        return None
+    doc = dict(
+        source="OpenStreetMap, via the Overpass API - a tiled harvest over the "
+               "extent derived from the dissolved LGA boundary (issue #32)",
+        base="networks/osm",
+        endpoints=list(ENDPOINTS),
+        retrieved=max(f["harvested"] for f in files.values()),
+        licence="ODbL 1.0 (OpenStreetMap contributors) - share-alike; every "
+                "layer derived from these files keeps the ODbL label",
+        date_pin=None,
+        note="a live Overpass query has no [date:] attic pin: each layer is OSM "
+             "as of its harvest time; the mirror that served each tile is not "
+             "recorded",
+        reconstructed=bool(reconstructed),
+        files=files)
+    if reconstructed:
+        doc["reconstruction"] = (
+            "written after the fact (3 September 2026, #118) for the 15-16 "
+            "August 2026 harvest, which wrote no record: `harvested` is each "
+            "file's modification time; the query templates and extents are "
+            "the script's at commit 047b7a0 (14 August 2026), which predate "
+            "every file and are therefore the ones that ran; bytes and sha256 "
+            "are read from the files. Nothing else is inferred. The older "
+            "data/raw/_osm_fetch.log describes the SUPERSEDED pre-#32 harvest.")
+    with open(PROVENANCE, "w", encoding="utf-8") as fh:
+        _json.dump(doc, fh, indent=2)
+    print("wrote %s (%d layer(s)%s)" % (PROVENANCE, len(files),
+                                        ", reconstructed" if reconstructed else ""),
+          flush=True)
+    return PROVENANCE
+
+
 if __name__ == "__main__":
     print("STUDY     S,W,N,E = %s" % (STUDY,), flush=True)
     print("BUILDINGS S,W,N,E = %s" % (CORRIDOR,), flush=True)
-    names = sys.argv[1:] or list(QUERY_TEMPLATES)
+    args = [a for a in sys.argv[1:] if not a.startswith("--")]
+    if "--provenance-only" in sys.argv:
+        # record the layers already on disk, marked reconstructed
+        write_provenance(args or list(QUERY_TEMPLATES), reconstructed=True)
+        sys.exit(0)
+    names = args or list(QUERY_TEMPLATES)
     unknown = [n for n in names if n not in QUERY_TEMPLATES]
     if unknown:
         raise SystemExit("no such layer %s. Available: %s"
                          % (unknown, ", ".join(sorted(QUERY_TEMPLATES))))
-    for n in names:
-        fetch(n)
+    fetched = [n for n in names if fetch(n)]
+    if fetched:
+        write_provenance(fetched)

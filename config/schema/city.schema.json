@@ -356,6 +356,21 @@
           }
         }
       }
+    },
+    "package_licence": {
+      "type": "string",
+      "description": "The licence of everything this city builds that no derived_licences glob covers (the manifest's default for processed rows, #117)."
+    },
+    "derived_licences": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "City-relative glob -> licence for DERIVED layers whose licence is not the package licence, typically the share-alike label a source such as OpenStreetMap passes into every layer built from it. Longest matching glob wins (src/build/build_manifest.py)."
+    },
+    "derived_licences_basis": {
+      "type": "string",
+      "description": "Why each derived_licences glob carries the licence it does."
     }
   }
 }

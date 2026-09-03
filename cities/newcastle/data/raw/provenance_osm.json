@@ -1,0 +1,147 @@
+{
+  "source": "OpenStreetMap, via the Overpass API - a tiled harvest over the extent derived from the dissolved LGA boundary (issue #32)",
+  "base": "networks/osm",
+  "endpoints": [
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass-api.de/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter"
+  ],
+  "retrieved": "2026-08-16T01:19:45",
+  "licence": "ODbL 1.0 (OpenStreetMap contributors) - share-alike; every layer derived from these files keeps the ODbL label",
+  "date_pin": null,
+  "note": "a live Overpass query has no [date:] attic pin: each layer is OSM as of its harvest time; the mirror that served each tile is not recorded",
+  "reconstructed": true,
+  "files": {
+    "roads.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (way[\"highway\"~\"^(motorway|trunk|primary|secondary|tertiary|unclassified|residential|living_street|service|motorway_link|trunk_link|primary_link|secondary_link|tertiary_link|road|busway)$\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 42011840,
+      "sha256": "2a5f4309472e3198065bd4f012e5354c5fe0cfc94aac10dac5a73ae55c095362",
+      "harvested": "2026-08-15T23:42:15"
+    },
+    "footways.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (way[\"highway\"~\"^(footway|path|pedestrian|steps|cycleway|track|bridleway|corridor)$\"]({bb});\n  way[\"footway\"]({bb});\n  way[\"sidewalk\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 36098295,
+      "sha256": "96b2f1f13864baf863c62b629cf015852f42c31e28e8afe0c2e2045820bbd71c",
+      "harvested": "2026-08-15T23:53:16"
+    },
+    "railways.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (way[\"railway\"]({bb}); node[\"railway\"]({bb});\n  relation[\"route\"~\"^(train|tram|light_rail|subway|bus|ferry)$\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 20653113,
+      "sha256": "04c0fbfd2629b40960a768fa661fdc1bfee4ee03a15dcd561b6ddaab3e9c9fbb",
+      "harvested": "2026-08-15T23:56:47"
+    },
+    "signals.osm": {
+      "query_template": "[out:xml][timeout:900];\n (node[\"highway\"=\"traffic_signals\"]({bb});\n  node[\"highway\"=\"crossing\"]({bb});\n  node[\"crossing\"]({bb});\n  node[\"highway\"=\"stop\"]({bb});\n  node[\"highway\"=\"give_way\"]({bb});\n  node[\"traffic_calming\"]({bb});\n  relation[\"type\"=\"restriction\"]({bb}););\n out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 3250042,
+      "sha256": "499ace3fe648b553527d3a2db1586936c625d6cce4b97c479248d3b42a7def0b",
+      "harvested": "2026-08-16T00:28:22"
+    },
+    "parking.osm": {
+      "query_template": "[out:xml][timeout:900];\n (nwr[\"amenity\"=\"parking\"]({bb});\n  nwr[\"amenity\"=\"parking_space\"]({bb});\n  nwr[\"amenity\"=\"motorcycle_parking\"]({bb});\n  way[\"parking:lane:both\"]({bb});\n  way[\"parking:lane:left\"]({bb});\n  way[\"parking:lane:right\"]({bb});\n  way[\"parking:both\"]({bb});\n  way[\"parking:left\"]({bb});\n  way[\"parking:right\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 5592281,
+      "sha256": "8e1cc72557d139e5efc5ca0583d197b61299b51ada481f2fc8257fb55ebe4f82",
+      "harvested": "2026-08-16T00:37:54"
+    },
+    "poi.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (nwr[\"shop\"]({bb}); nwr[\"amenity\"]({bb}); nwr[\"office\"]({bb});\n  nwr[\"tourism\"]({bb}); nwr[\"leisure\"]({bb}); nwr[\"healthcare\"]({bb});\n  nwr[\"landuse\"~\"^(retail|commercial|industrial|residential|education)$\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 54268545,
+      "sha256": "14be96dd2fe55fe2fc5ed070feda6b8367026be5004e04bc665d7bc88220569a",
+      "harvested": "2026-08-16T00:44:39"
+    },
+    "buildings_cbd.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (way[\"building\"]({bb}); relation[\"building\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -32.9594,
+        151.7215,
+        -32.8924,
+        151.8241
+      ],
+      "tile_deg": 0.4,
+      "bytes": 9009917,
+      "sha256": "ca2a79c0c10ba04c29a108faa02be68b14a292a9b8296e3ba8859135ca35487d",
+      "harvested": "2026-08-16T00:45:45"
+    },
+    "boundaries.osm": {
+      "query_template": "[out:xml][timeout:900];\n (relation[\"boundary\"=\"administrative\"][\"admin_level\"~\"^(4|6|7)$\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 9944320,
+      "sha256": "4fc8d940416c5c684c369ac9affbc35da48f3e44b3c75fa23136cc4bf6a6f7f5",
+      "harvested": "2026-08-16T01:05:19"
+    },
+    "water.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (way[\"natural\"=\"water\"]({bb}); relation[\"natural\"=\"water\"]({bb});\n  way[\"waterway\"=\"riverbank\"]({bb}); relation[\"waterway\"=\"riverbank\"]({bb});\n  way[\"landuse\"~\"^(reservoir|basin)$\"]({bb});\n  way[\"natural\"=\"coastline\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 12324895,
+      "sha256": "c7dbfeb3f92749ca4eeaabd940419f7ec72d8badd2232d8499fa3620ae09ed92",
+      "harvested": "2026-08-16T01:08:53"
+    },
+    "green.osm": {
+      "query_template": "[out:xml][timeout:1800];\n (way[\"leisure\"~\"^(park|golf_course|nature_reserve|garden)$\"]({bb});\n  way[\"natural\"~\"^(wood|scrub|heath|beach|sand|wetland)$\"]({bb});\n  way[\"landuse\"~\"^(forest|grass|meadow|recreation_ground|cemetery|village_green)$\"]({bb}););\n (._;>;); out body qt;",
+      "extent_swne": [
+        -33.2553,
+        150.7418,
+        -32.5209,
+        152.2606
+      ],
+      "tile_deg": 0.4,
+      "bytes": 16396551,
+      "sha256": "ce6fb5c4436af3a520c39f35c18fc9c7371d395b3dd0d9c1c0e2b723b9a15f4a",
+      "harvested": "2026-08-16T01:19:45"
+    }
+  },
+  "reconstruction": "written after the fact (3 September 2026, #118) for the 15-16 August 2026 harvest, which wrote no record: `harvested` is each file's modification time; the query templates and extents are the script's at commit 047b7a0 (14 August 2026), which predate every file and are therefore the ones that ran; bytes and sha256 are read from the files. Nothing else is inferred. The older data/raw/_osm_fetch.log describes the SUPERSEDED pre-#32 harvest."
+}

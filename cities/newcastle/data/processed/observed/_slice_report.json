@@ -22,7 +22,16 @@
     "Newcastle Interchange Light Rail",
     "Queens Wharf Light Rail"
   ],
-  "bus_regions_newcastle": [],
+  "bus_contracts_declared": [
+    "Intercity",
+    "NISC 1",
+    "NISC 1 (light rail)",
+    "Newcastle Hunter region",
+    "Regional"
+  ],
+  "bus_regions_newcastle": [
+    "NISC 1"
+  ],
   "bus_all_regions": [
     "Greater Sydney Contract 1",
     "Greater Sydney Contract 10",
