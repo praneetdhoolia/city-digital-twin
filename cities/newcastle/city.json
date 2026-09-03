@@ -114,6 +114,7 @@
     "data/processed/corridor": "build/build_corridor_layers.py",
     "data/processed/landuse": "build/build_landuse_parking.py + src/build/build_zone_attractions.py",
     "data/processed/validation": "build/build_validation_targets.py",
+    "data/processed/observed/external_interaction.json": "build/build_external_interaction.py",
     "schedules": "build/build_era_feeds.py",
     "schedules/scenarios": "build/build_scenario_schedules.py",
     "scenarios": "build/build_scenario_configs.py"
@@ -125,7 +126,7 @@
       "url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
       "share_alike": false,
-      "provides": ["schedules", "data/raw/opal", "data/raw/counts", "data/raw/hts"]
+      "provides": ["schedules", "data/raw/opal", "data/raw/counts", "data/raw/hts", "data/raw/jtw"]
     },
     {
       "name": "Australian Bureau of Statistics - Census DataPacks, ASGS boundaries",

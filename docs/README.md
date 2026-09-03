@@ -12,6 +12,7 @@ describes one city's study rather than the framework.
 | [`../.claude/CLAUDE.md`](../.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repository |
 | **this file** | What the framework is, and where the portable input contract lives |
 | [`HANDOVER_CONTRACT.md`](HANDOVER_CONTRACT.md) | **How a session opens and closes**: the reading budget, the trust order by question, the four state-of-the-project questions, the facts that expire between writing a handover and reading one, and the gate. One definition, read by both the `/onboard` and `/handoff` skills |
+| [`reports/`](reports/README.md) | **Dated whole-repository assessments** written by the `/project-report` skill: every file by area, code quality with file-and-line evidence, the milestones of every pull request, the issue ledger, CI, runs, data and documents. Newest first; never overwritten |
 | [`../cities/newcastle/docs/`](../cities/newcastle/docs/) | The Newcastle twin: `GOAL.md` (what it is for), `STATUS.md` (the one-page board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), the generated `reference/`, and `archived/` (everything frozen) |
 
 ## What the framework is

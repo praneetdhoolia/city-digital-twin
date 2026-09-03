@@ -1209,6 +1209,21 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
         # flat region probability on the same pool and delivers its solve
         # exactly, so it needs no conservation.
         identity_by_lga, lga_of = motorbike_identity_by_lga(g62_drv, g62_moto)
+        # The target LGA conserves to the DECLARED identity - the same census
+        # riders the fit target is built from (CAL.mode_split.*, 9.122) -
+        # so generation and scoring describe one quantity. Its SA1 cells
+        # summed differ from that LGA cell by ABS's small-cell perturbation
+        # (measured 0.0038289 against 0.0037849, +1.2%, 3 Sep 2026): stated,
+        # and not the basis. The other LGAs have no declared identity and
+        # conserve to their own summed cells.
+        tgt = HTS_TARGET_LGA
+        cells_tgt = identity_by_lga.get(tgt)
+        if cells_tgt is not None and abs(cells_tgt - MOTORBIKE_SHARE) > 0.05 * MOTORBIKE_SHARE:
+            raise SystemExit(
+                'the %s G62 cells summed (%.7f) sit more than 5%% from '
+                'B.motorbike.trip_share (%.7f): the declared pair and the '
+                'census have drifted apart (9.116)' % (tgt, cells_tgt, MOTORBIKE_SHARE))
+        identity_by_lga[tgt] = MOTORBIKE_SHARE
         intended_l, trips_l = collections.Counter(), collections.Counter()
         for c, t in cell_trips.items():
             lga = lga_of.get(c)
@@ -1250,12 +1265,11 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
             print('   %-16s identity %.5f  intended before %.5f  factor %.4f'
                   % (lga, row['identity'], row['intended_before'],
                      row['conservation_factor']), flush=True)
-        tgt = HTS_TARGET_LGA
-        if tgt in identity_by_lga and abs(identity_by_lga[tgt] - MOTORBIKE_SHARE) > 1e-6:
-            raise SystemExit(
-                'the %s G62 identity (%.7f) is not B.motorbike.trip_share '
-                '(%.7f): the declared pair and the census cell have drifted '
-                'apart (9.116)' % (tgt, identity_by_lga[tgt], MOTORBIKE_SHARE))
+        if cells_tgt is not None:
+            carve_cells['target_lga_cells_summed'] = round(cells_tgt, 7)
+            print('   %s SA1 cells summed %.7f against the declared identity '
+                  '%.7f (ABS small-cell perturbation; the declared value is '
+                  'the basis)' % (tgt, cells_tgt, MOTORBIKE_SHARE), flush=True)
     report = {}
     for d in day_types:
         write_day(d, attrs, rng, report, seed_table)
