@@ -306,7 +306,7 @@ def build():
             cycle_time_s=110, cycle_time_sweep_low=80, cycle_time_sweep_high=140,
             n_phases=4, phase_split_pct='45|15|30|10', offset_s=0,
             coordination_group='HUNTER_SCOTT',
-            pedestrian_phase_flag=1 if r.get('ped_phase_flag') == '1' else 1,
+            pedestrian_phase_flag=1 if r.get('ped_phase_flag') == '1' else 0,
             ped_clearance_s=8,
             tsp_enabled=0, tsp_type='', tsp_detection_distance_m=0,
             tsp_max_extension_s=0,
@@ -381,6 +381,11 @@ def build():
                                                     if r['direction_id'] == d), 1) for d in per_dir},
                residual_allocation=alloc,
                n_corridor_signals=len(sig_rows),
+               # the observed flag reaches the layer (#120): both branches of
+               # the ternary above were 1 until 3 Sep 2026
+               corridor_intersections_with_pedestrian_phase=sum(
+                   1 for r in sig_rows if r.get('scenario_variant_ref') == 'S2_base'
+                   and r.get('pedestrian_phase_flag') == 1),
                signal_variants=['S2_base', 'S2b_full_tsp', 'S0_no_tram',
                                 'S2c_reserved_alignment', 'S3_brt_priority'],
                charging_dwell_share_of_runtime={

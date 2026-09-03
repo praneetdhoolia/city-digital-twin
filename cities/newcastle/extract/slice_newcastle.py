@@ -31,10 +31,17 @@ m.to_csv(_city.path('data/processed/observed/opal_lr_newcastle_by_stop.csv'),ind
 rep['lr_stop_rows']=len(m); rep['lr_stops_found']=sorted(m['Location'].unique().tolist())
 
 # --- Opal bus by contract region ---
+# The contract region is DECLARED in schedules/operators.json, the feed
+# metadata, and matched exactly - never typed here (#116): the filter once
+# looked for 'Newcastle|Hunter', which no Opal region contains, matched
+# nothing, and the committed slice (1,363 NISC 1 rows) had no producer.
+ops=json.load(open(_city.path('schedules/operators.json'),encoding='utf-8'))
+contracts=sorted({f.get('contract','') for f in ops.get('feeds',{}).values() if f.get('contract')})
 d=pd.read_csv(_city.path('data/raw/opal/bus_trips_by_contract_region.csv'))
 regs=sorted(d['Contract_region'].dropna().unique().tolist())
-nb=d[d['Contract_region'].str.contains('Newcastle|Hunter',case=False,na=False)]
+nb=d[d['Contract_region'].isin(contracts)]
 nb.to_csv(_city.path('data/processed/observed/opal_bus_newcastle_hunter.csv'),index=False)
+rep['bus_contracts_declared']=contracts
 rep['bus_regions_newcastle']=sorted(nb['Contract_region'].unique().tolist())
 rep['bus_all_regions']=regs
 

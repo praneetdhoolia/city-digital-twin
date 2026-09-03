@@ -26,6 +26,16 @@ M=[
 ]
 
 
+def _dem_licence():
+    """The DEM licence as the city DECLARES it (city.json sources), not a
+    literal typed here: the record once said 'ESA / open' while the
+    descriptor said 'ESA, free and open' (#117)."""
+    for s in _city.descriptor().get('sources') or []:
+        if 'data/raw/dem' in (s.get('provides') or []):
+            return s.get('licence', '')
+    return ''
+
+
 def dem_tiles():
     """Copernicus GLO-30 1-degree cells covering the DERIVED study extent.
 
@@ -35,9 +45,10 @@ def dem_tiles():
     LGA boundary plus A.osm.harvest_margin_m, the road network grew past
     151..152 and 6.5% of edges silently lost their gradient source. The cells
     are now derived from the same boundary + margin the harvest itself uses.
-    Falls back to the two original cells, loudly, if the processed boundary
-    does not exist yet (first-fetch bootstrap: boundaries download before
-    zones are built).
+    If the processed boundary does not exist yet the fetch REFUSES and says
+    which build comes first (the zones, from the boundary download); a typed
+    fallback rectangle stood here until 3 September 2026 and is gone (#118).
+    Cold start: run the boundary download, build the zones, then this.
     """
     import math
     try:
@@ -53,9 +64,12 @@ def dem_tiles():
         deg = margin / 111000.0
         s, w, n, e = s - deg, w - deg, n + deg, e + deg
     except Exception as exc:                                   # noqa: BLE001
-        print('DEM extent falls back to the two original cells - the derived '
-              'boundary is not available yet (%s)' % exc, flush=True)
-        s, w, n, e = -33.20, 151.0, -32.55, 152.0
+        raise SystemExit(
+            'DEM extent cannot be derived (%s). The cells come from the '
+            'dissolved LGA boundary in data/processed/zones/zones_LGA.gpkg '
+            'plus A.osm.harvest_margin_m: build the zones first, then re-run. '
+            'No typed rectangle stands in for a boundary that is not there '
+            '(#118).' % exc)
     cells = []
     for lat0 in range(int(math.floor(s)), int(math.ceil(n))):
         for lon0 in range(int(math.floor(w)), int(math.ceil(e))):
@@ -63,7 +77,7 @@ def dem_tiles():
             cells.append(('dem/%s.tif' % name, COP + '%s/%s.tif' % (name, name),
                           'Copernicus GLO-30 DEM tile S%02dE%03d (cell derived '
                           'from the dissolved LGA boundary + harvest margin)'
-                          % (-lat0, lon0), 'ESA / open'))
+                          % (-lat0, lon0), _dem_licence()))
     return cells
 
 

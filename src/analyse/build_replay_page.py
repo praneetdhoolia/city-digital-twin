@@ -23,8 +23,15 @@ scripts are the committed artefacts.
         --out replay.html
 """
 import os
+import sys
 import json
 import argparse
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(os.path.dirname(_HERE))
+if os.path.join(ROOT, 'src') not in sys.path:
+    sys.path.insert(0, os.path.join(ROOT, 'src'))
+import city as _city                                              # noqa: E402
 
 PAGE = r"""<title>{title}</title>
 <style>

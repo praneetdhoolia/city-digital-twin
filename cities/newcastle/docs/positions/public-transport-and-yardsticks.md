@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -12,6 +12,7 @@
 - **Weekday supply, counted on departures (§9.113):** bus 1,448, rail 332, tram 252, ferry 107 in the mapped weekday schedule (§9.113). Supply is ruled out as the cause of the light rail and ferry deficits.
 - **Twelve-mode target table** at `data/processed/validation/mode_targets_by_mode.csv` (13 rows, one per mode plus header), written by `cities/newcastle/build/build_mode_targets.py`; the two rail modes' per-station disclosed counts are in `data/processed/validation/pt_boardings_targets.json` (`decisions_ref` 9.130). Scored by `src/analyse/report_mode_ridership.py` — submodes are read from the LEGS table by the route each leg boarded, never from `main_mode`, which is `pt` for every PT trip (§9.112).
 - The table is a **disaggregation** of targets already in `validation_targets.csv`; it is not added to the pre-registered 210 and the 67/143 calibration/holdout split is untouched (§9.87, §12).
+- **A censored Opal cell counts as `CAL.pt.censored_cell_value`** = 0 trips per month, assumed, swept 0–25 (the floor and the midpoint of the 'Less than 50' range), read by `build_mode_targets.py` for the heavy-rail boardings target and the station series; 0 reproduces the targets byte for byte (§9.141, #129). The validation-target builder still excludes censored cells from its station means — pre-registered holdout rows — pending the user's decision (#129).
 - PT access: `RUN.transit_router.search_radius_m` 1000 and `RUN.transit_router.extension_radius_m` 200 govern every submode's reach, including whether a Stockton resident can be routed onto the ferry (#94).
 - **Every pt journey is charged its published Opal fare (§9.135).** `citysim.PtFareChargeHandler` prices each fare leg from the archived schedule (`data/raw/fares/`, 36 `A.fare.*` fields, all observed but two literature): distance-banded peak/off-peak tables per submode, the Stockton ferry's own row, the $2/$1 transfer discount, child (4–15) and Gold Senior/Pensioner (60+, not full-time employed; capped $2.50/fare and $2.50/day) classes, and the published daily caps — as `PersonMoneyEvent`s at journey close. Until §9.135 every pt trip was free while car paid fuel and parking and taxi the meter. The raptor still routes without seeing the fare; plan choice pays it.
 
@@ -82,6 +83,7 @@ Latest twelve-mode reading: the F23 gate at iteration 100 (`results/raw/aborted_
 
 ## History
 
+- §9.141 — censored cells declared once
 - §9.140 — bus count unobtainable; #84, #99 closed
 - §9.139 — F23 gate: income scaling blunts fare
 - §9.136 — F22 gate: fare lands, bus inside

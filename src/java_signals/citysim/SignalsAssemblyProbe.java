@@ -374,6 +374,30 @@ public final class SignalsAssemblyProbe {
         config.qsim().setSimStarttimeInterpretation(
                 QSimConfigGroup.StarttimeInterpretation.onlyUseStarttime);
         config.qsim().setEndTime(3600.0);
+        // The reach bound (B.mode.walk_feasible_km / bike_feasible_km), the
+        // signal regime (A.signals.control_regime) and the taxi fleet
+        // (A.taxi.fleet_representation) are declared, never defaulted: each
+        // module refuses a run that never chose. Zero disables the bound,
+        // fixed_time is the plan verbatim, absent is no fleet - stated
+        // here the way every real config states them, via the config file.
+        // Until these lines both probes died in checkConsistency before the
+        // mobsim started: a gate that could not run (found under #125).
+        final org.matsim.core.config.ConfigGroup avail =
+                new org.matsim.core.config.ConfigGroup(
+                        ModeAvailabilityConfigGroup.NAME);
+        avail.addParam("walkFeasibleKm", "0");
+        avail.addParam("bikeFeasibleKm", "0");
+        config.addModule(avail);
+        final org.matsim.core.config.ConfigGroup scats =
+                new org.matsim.core.config.ConfigGroup(ScatsConfigGroup.NAME);
+        scats.addParam("regime", ScatsConfigGroup.REGIME_FIXED_TIME);
+        config.addModule(scats);
+        final org.matsim.core.config.ConfigGroup taxi =
+                new org.matsim.core.config.ConfigGroup(
+                        TaxiFleetConfigGroup.NAME);
+        taxi.addParam("representation",
+                      TaxiFleetConfigGroup.REPRESENTATION_ABSENT);
+        config.addModule(taxi);
         config.routing().setNetworkModes(mainModes);
         config.routing().setAccessEgressType(
                 RoutingConfigGroup.AccessEgressType.none);

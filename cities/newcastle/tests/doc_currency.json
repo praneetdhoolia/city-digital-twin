@@ -4,6 +4,19 @@
   "why_these_two_documents": "README.md is the front door, STATUS.md is the board, .claude/CLAUDE.md and docs/README.md frame the project for every session, and GOAL.md states what it is for - all are read for current state. NEXT_AGENT_BRIEF.md carries no pinned NUMBER (it is rewritten every session and its family stamp is checked by tests/check_doc_shape.py), but it does carry the banned-statement claims: a stale sentence is exactly as wrong in a brief as anywhere else.",
   "claims": [
     {
+      "id": "readme.package-gib",
+      "kind": "number",
+      "doc": "README.md",
+      "pattern": "\\| Package on disk \\| ([\\d.]+) GiB",
+      "truth": {
+        "kind": "json_number",
+        "file": "data/MANIFEST.json",
+        "key": "total_gib"
+      },
+      "decimals": 2,
+      "note": "the manifest's own total (#136): the README said ~4.7 GB while the conventions and CI said ~2.3 GiB, two different quantities nobody pinned"
+    },
+    {
       "id": "readme.manifest-files",
       "kind": "number",
       "doc": "README.md",

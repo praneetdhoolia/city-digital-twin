@@ -73,13 +73,25 @@ def check_board(city: Path, spec: dict) -> list[str]:
                         f"{cap} - the board is becoming a diary; move narrative to "
                         f"DECISIONS.md or SESSION_LOG.md")
     allowed = set(spec.get("allowed_h2", []))
+    # a scoreboard row whose gate says the number is not a fit must not
+    # carry one (#114): `level only` and `representation` rows show `-`
+    no_dev = tuple(spec.get("no_deviation_flags", []))
     in_block = False
+    block = None
     for i, l in enumerate(text.splitlines(), 1):
         if l.startswith("<!-- generated:") and l.endswith("start -->"):
             in_block = True
+            block = l[len("<!-- generated:"):-len(" start -->")].strip()
         elif l.startswith("<!-- generated:") and l.endswith("end -->"):
             in_block = False
+            block = None
             continue
+        if in_block and block == "scoreboard" and no_dev and l.startswith("| "):
+            cells = [c.strip() for c in l.strip().strip("|").split("|")]
+            if len(cells) >= 6 and cells[5].startswith(no_dev) and cells[4] != "-":
+                problems.append(f"{spec['path']}:{i}: scoreboard row '{cells[1]}' is "
+                                f"'{cells[5]}' yet carries a deviation '{cells[4]}' - "
+                                f"a percentage against a non-target basis (#114)")
         if l.startswith("## "):
             title = l[3:].strip()
             if allowed and title not in allowed:

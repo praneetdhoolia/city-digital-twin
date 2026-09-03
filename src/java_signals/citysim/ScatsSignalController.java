@@ -254,6 +254,8 @@ public final class ScatsSignalController extends AbstractSignalController {
     private int priorityStage = -1;
     /** Seconds of priority deformation already spent this cycle. */
     private int budgetUsedS;
+    /** Grants refused because no stage could donate in the needed direction. */
+    private int priorityRefusedNoDonor;
 
     ScatsSignalController(final ScatsConfigGroup params,
                           final TramPriorityConfigGroup priority,
@@ -546,9 +548,20 @@ public final class ScatsSignalController extends AbstractSignalController {
      * the declared minimum green. {@code conditional} grants either action only
      * to a tram already late by more than the declared threshold.
      *
-     * <p>Whatever the priority stage gains, the stage with the most green to
-     * spare loses, so the cycle length SCATS chose is conserved and the two
-     * mechanisms cannot fight over it.
+     * <p>Whatever the priority stage gains, another stage loses, so the cycle
+     * length SCATS chose is conserved and the two mechanisms cannot fight
+     * over it. WHICH stage loses is decided by the layout, not by spare
+     * green (#125): {@link #rebuildFromGreens} lays the stages out from
+     * cursor 0, so a donation from a stage BEFORE the tram's shifts the
+     * tram's onset and drop together and extends nothing - the budget was
+     * spent and the detection cleared for a deformation that never reached
+     * the stop line. An extension therefore takes its seconds from the
+     * stage with the most spare green AFTER the tram stage, which moves the
+     * drop later and returns the cursor to its cycle end at the donor; a
+     * recall truncates the RUNNING stage, which precedes the tram's, and so
+     * pulls the onset earlier. A tram stage that is last in its cycle
+     * cannot be extended under a conserved cycle and the grant is refused,
+     * counted and logged - never charged to the budget.
      */
     private void applyPriority(final int pos) {
         final TramPriorityController.TramDetection.Pending pending =
@@ -558,8 +571,12 @@ public final class ScatsSignalController extends AbstractSignalController {
         }
         if (TramPriorityConfigGroup.MODE_CONDITIONAL.equals(
                 this.priority.getMode())
-                && pending.delayS < this.priority.getLatenessThresholdS()) {
-            return;                       // on time: no claim on the budget
+                && pending.delayS <= this.priority.getLatenessThresholdS()) {
+            // on time: no claim on the budget. The boundary is the fixed-time
+            // controller's (`<=`, TramPriorityController.applyPriority) and
+            // the detection is ruled out, not left latched (#125).
+            this.detection.clear(this.system.getId());
+            return;
         }
         final int budget = (int) Math.floor(
                 this.priority.getPriorityBudgetShare() * this.cycleLen);
@@ -573,21 +590,31 @@ public final class ScatsSignalController extends AbstractSignalController {
         final int minGreen = (int) Math.round(this.params.getMinGreenS());
 
         int granted = 0;
+        int donor = -1;
         if (pos >= tram.onset && pos < tram.drop) {
             // green now: extend the dropping if it is close enough to matter
             if (tram.drop - pos > window) {
                 return;                   // plenty of green left; nothing owed
             }
             granted = Math.min(window, remaining);
+            // the seconds must come from a stage that FOLLOWS the tram's,
+            // or the re-laid drop does not move (#125)
+            donor = donorStage(minGreen, granted, this.priorityStage + 1,
+                               this.stages.size() - 1);
         } else if (TramPriorityConfigGroup.MODE_EXTENSION_RECALL.equals(
                            this.priority.getMode())
                    || TramPriorityConfigGroup.MODE_CONDITIONAL.equals(
                            this.priority.getMode())) {
-            // red now: recall early by truncating the running stage, but only
-            // once it has served the minimum green
+            // red now: recall early by truncating the RUNNING stage, but only
+            // once it has served the minimum green, and only while the tram's
+            // onset is still ahead in this cycle
             final Stage running = runningStage(pos);
             if (running == null || running == tram) {
                 return;
+            }
+            final int runningIndex = this.stages.indexOf(running);
+            if (runningIndex > this.priorityStage) {
+                return;                   // the tram's onset has passed
             }
             final int served = pos - running.onset;
             if (served < minGreen) {
@@ -595,19 +622,35 @@ public final class ScatsSignalController extends AbstractSignalController {
             }
             granted = Math.min(Math.min(window, remaining),
                                running.drop - pos);
+            if (granted > 0 && running.green - granted >= minGreen) {
+                donor = runningIndex;
+            }
         }
         if (granted <= 0) {
             return;
         }
-        final int donor = donorStage(minGreen, granted);
         if (donor < 0) {
-            return;                       // nothing to borrow without starving
+            // nothing to borrow without starving, or no stage after the
+            // tram's to borrow from: refused, and the budget untouched
+            if (this.priorityRefusedNoDonor++ == 0) {
+                LOG.info("scats {}: transit priority refused - no stage that "
+                         + "can donate {} s in the direction the layout needs "
+                         + "(priority stage {} of {}); counted, not charged",
+                         this.system.getId(), granted, this.priorityStage,
+                         this.stages.size());
+            }
+            return;
         }
         this.stages.get(this.priorityStage).green += granted;
         this.stages.get(donor).green -= granted;
         this.budgetUsedS += granted;
         rebuildFromGreens();
         this.detection.clear(this.system.getId());
+    }
+
+    /** Grants refused for want of a donor in the right direction (#125). */
+    public int priorityRefusedNoDonor() {
+        return this.priorityRefusedNoDonor;
     }
 
     /** The stage whose green contains this cycle position, or null. */
@@ -620,10 +663,14 @@ public final class ScatsSignalController extends AbstractSignalController {
         return null;
     }
 
-    /** The non-priority stage with the most green above the floor. */
-    private int donorStage(final int minGreen, final int needed) {
+    /**
+     * The non-priority stage in {@code [lo, hi]} with the most green above
+     * the floor, or -1: the range is the layout's direction (#125).
+     */
+    private int donorStage(final int minGreen, final int needed,
+                           final int lo, final int hi) {
         int best = -1;
-        for (int i = 0; i < this.stages.size(); i++) {
+        for (int i = Math.max(0, lo); i <= hi && i < this.stages.size(); i++) {
             if (i == this.priorityStage) {
                 continue;
             }

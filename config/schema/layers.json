@@ -10,7 +10,8 @@
       "kind": "file",
       "read_by": [
         "src/analyse/build_status_board.py",
-        "tests/check_manifest.py"
+        "tests/check_manifest.py",
+        "tests/check_package.py"
       ],
       "columns_in_reference_city": [
         "path",

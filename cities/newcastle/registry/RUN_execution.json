@@ -635,6 +635,18 @@
         "src/run/run_matsim.py"
       ]
     },
+    "RUN.gate.retry_interval_s": {
+      "value": 300,
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.137",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else."
+    },
     "RUN.gate.interval_iterations": {
       "value": 100,
       "units": "iterations",

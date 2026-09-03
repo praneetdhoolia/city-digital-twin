@@ -27,6 +27,7 @@ import city as _city  # noqa: E402
 import os
 import sys
 import csv
+import fnmatch
 import json
 import glob
 import gzip
@@ -1118,6 +1119,18 @@ else:
           'measured detour factor is physically plausible (%.4f)' % d.get('value', 0))
     check(d['sweep'][0] < d['value'] < d['sweep'][1],
           'measured detour factor sits inside its own sweep range')
+    # the same assertion for every measured active beeline factor (#124):
+    # the bike factor sat outside its own sweep and nothing said so. A WARN
+    # until C2 is re-measured: the producer now defines the sweep to hold
+    # the aggregate, but re-measuring on 3 Sep 2026 moved the VALUES too
+    # (detour 1.3376 -> 1.3276, bike beeline 1.5231 -> 1.5570; the network
+    # was rebuilt on 16 Aug after C2 was measured), which is a model change
+    # and a package rebuild the user decides on, not a check to pass quietly.
+    for _mode, _bf in sorted((c2.get('active_beeline_factor') or {}).items()):
+        check(_bf['sweep'][0] <= _bf['value'] <= _bf['sweep'][1],
+              'measured %s beeline factor %.4f sits inside its own sweep %s '
+              '(re-measure C2 on the current network to clear this)'
+              % (_mode, _bf['value'], _bf['sweep']), warn=True)
     dt = c2.get('day_type', {})
     check(dt.get('station_years', 0) > 100,
           'weekend/weekday ratio measured over a usable sample (%d station-years)'
@@ -1129,6 +1142,61 @@ else:
     check('LOWER BOUND' in wa.get('source', ''),
           'census G62 attendance is used only as a sweep lower bound, never as '
           'a value (DECISIONS.md 2.4 rules G62 out as a behavioural rate)')
+
+
+# ---- 18. every processed artefact has a producer that names it ----
+# Four committed artefacts had no producer that could write them (#115 the
+# HTS tables, #116 the Opal bus slice, #119 the scenario tables' path form,
+# #120 a flag both branches set): a builder and its artefact drifted apart
+# and no check stood between them. This one does: every processed manifest
+# row names a producing script that exists, and that script's text names the
+# artefact - its basename, or a format/glob literal that matches it.
+_lit = re.compile(r"""['"]([^'"\n]{3,})['"]""")
+
+
+def _script_names(text, basename):
+    if basename in text:
+        return True
+    for lit in _lit.findall(text):
+        if '%' in lit or '{' in lit or '*' in lit:
+            pat = re.sub(r'%\(?\w*\)?[sd]|\{[^}]*\}', '*', lit)
+            if fnmatch.fnmatch(basename, pat.split('/')[-1]):
+                return True
+    return False
+
+
+_orphans, _no_script, _checked_rows = [], [], 0
+_script_cache = {}
+_repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+for _row in csv.DictReader(open(_city.path('data/MANIFEST.csv'), encoding='utf-8')):
+    if _row.get('stage') != 'processed':
+        continue
+    _checked_rows += 1
+    _producers = [t.split(' (')[0].strip()
+                  for t in (_row.get('produced_by') or '').split(' + ') if t.strip()]
+    if not _producers:
+        _no_script.append(_row['path'])
+        continue
+    _named = False
+    for _s in _producers:
+        _p = os.path.join(_repo_root, _s)
+        if _s not in _script_cache:
+            _script_cache[_s] = (open(_p, encoding='utf-8', errors='replace').read()
+                                 if os.path.exists(_p) else None)
+        if _script_cache[_s] is None:
+            _no_script.append('%s -> %s (missing)' % (_row['path'], _s))
+            continue
+        if _script_names(_script_cache[_s], os.path.basename(_row['path'])):
+            _named = True
+    if not _named and not any(_script_cache.get(s) is None for s in _producers):
+        _orphans.append('%s (%s)' % (_row['path'], ', '.join(_producers)))
+check(not _no_script,
+      'every processed manifest row names a producing script that exists '
+      '(%d rows; %s)' % (_checked_rows, '; '.join(_no_script[:4]) or 'all present'))
+check(not _orphans,
+      'every producing script names the artefact it produces (%d rows; %s%s)'
+      % (_checked_rows, '; '.join(_orphans[:6]),
+         ' ...' if len(_orphans) > 6 else '' if _orphans else 'all named'))
 
 
 # ---- N. the input registry: every controllable value, declared ----

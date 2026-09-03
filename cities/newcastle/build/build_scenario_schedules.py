@@ -725,13 +725,25 @@ def main():
     out['S1'] = summarise(s1, 'S1')
     out['S1']['shuttle_trips'] = n1
 
-    # S2a - charging dwell removed
-    s2a = scale_lr_runtime(base, delta_per_intermediate_s=DWELL_FIXED,
-                           delta_per_segment_s=-0.0)
+    # S2a - charging dwell removed: the charging dwell comes OFF every
+    # segment, the boarding dwell is untouched (a dead first call once ADDED
+    # the fixed dwell instead and was overwritten, #121)
     s2a = scale_lr_runtime(base, delta_per_intermediate_s=0.0,
                            delta_per_segment_s=-DWELL_CHARGING)
     write_feed(renumber_sequences(s2a), os.path.join(OUT, 'S2a.zip'))
     out['S2a'] = summarise(s2a, 'S2a')
+    # the report states the delta and refuses a wire-free feed that is not
+    # faster than S2 on every trunk route
+    delta = {}
+    for k, v in out['S2a']['trunk_runtime_min'].items():
+        s2 = out['S2']['trunk_runtime_min'].get(k)
+        if s2 is None:
+            continue
+        if not v < s2:
+            raise SystemExit('S2a trunk runtime for %s is %.2f min against S2 %.2f: '
+                             'removing the charging dwell must shorten it' % (k, v, s2))
+        delta[k] = round(v - s2, 2)
+    out['S2a']['runtime_delta_vs_S2_min'] = delta
 
     # S2b - full transit signal priority (75% of signal delay removed)
     # A.lightrail.tsp_enabled says WHETHER priority applies and

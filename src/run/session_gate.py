@@ -148,6 +148,9 @@ GATES = [
     ('schema current', [PY, 'src/registry/render_schema.py', '--check'], False),
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
     ('dead runs say why', [PY, 'src/run/run_failure.py', '--check'], False),
+    ('gate watcher', [PY, 'tests/check_gate_watcher.py'], False),
+    ('launch refusal', [PY, 'tests/check_launch_refusal.py'], False),
+    ('registry rules', [PY, 'tests/check_registry_rules.py'], False),
     ('fit figures', [PY, 'src/analyse/build_fit_figures.py', '--check'], False),
     # GOAL.md requirement 10: every open issue closed or awaiting a run
     ('issues gated', [PY, 'src/run/issue_gate.py'], False),

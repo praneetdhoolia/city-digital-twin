@@ -518,7 +518,10 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
                      flag))
-            _row(i, mode, t, m, dev,
+            # no deviation is STORED for a representation (#114): the closures
+            # ARE the timetable, so 0.0% is a tautology, not a fit, and the
+            # board must not print one
+            _row(i, mode, t, m, None,
                  'train movements represented by crossing closures',
                  'representation')
             continue
@@ -543,7 +546,10 @@ def report(run_dir, iteration, truck_stations=False):
             print('%-15s %10.4f %10.4f %11s %12d  %s'
                   % ('%d %s' % (i, mode), m, t['target'], 'n/a', trips[mode],
                      truck_note))
-            _row(i, mode, t, m, dev,
+            # ... and none is STORED either (#114): the board rendered the
+            # stored value, so the committed scoreboard carried the very
+            # percentage this branch refuses to print
+            _row(i, mode, t, m, None,
                  'network-wide road-vehicle share (not the target basis; '
                  '--truck-stations scores it)', 'level only')
             continue
@@ -626,6 +632,11 @@ def main():
                     help='also write the last table as JSON - one row per mode '
                          'with its basis and gate flag - for the generated '
                          'board (src/analyse/build_status_board.py)')
+    ap.add_argument('--gate-json', metavar='OUT',
+                    help='write the gate VERDICT as JSON - passed, or the '
+                         'breaching modes - for the runner\'s gate watcher '
+                         '(src/run/run_matsim.py), which keys its stop on '
+                         'this file and never on the printed text (#112)')
     a = ap.parse_args()
 
     # a bare run name resolves through the results store (results/raw first,
@@ -703,7 +714,7 @@ def main():
                 if m == 'freight_train':
                     line += '   representation'
                 elif m == 'truck' and not a.truck_stations:
-                    line += '   level only, %+.1f%% (not its target basis)' % dev
+                    line += '   level only (not its target basis)'
                 else:
                     line += '   %s, %+.1f%% at it.%d' % (verdict, dev, rows[-1][0])
             line += '   ' + basis.get(m, '')
@@ -759,12 +770,33 @@ def main():
         raise SystemExit('iteration %d wrote neither a trips table nor '
                          'experienced plans; this run holds %s'
                          % (it, ' '.join(str(i) for i in have)))
-    report(a.run, it, a.truck_stations)
+    breaches = report(a.run, it, a.truck_stations)
     if a.json:
         with open(a.json, 'w', encoding='utf-8') as fh:
             json.dump(dict(run=LAST['run'], iteration=LAST['iteration'],
                            fraction=LAST['fraction'], source=LAST['source'],
                            rows=LAST['rows']), fh, indent=1)
+    if a.gate_json:
+        write_gate_verdict(a.gate_json, it, breaches)
+
+
+def write_gate_verdict(path, iteration, breaches):
+    """The gate verdict as data (#112).
+
+    The printed table ends in a `GATE:` line on a PASS as well as on a breach,
+    and the runner's watcher once stopped on that substring: the first arm to
+    clear its bar would have been killed at the milestone and recorded as
+    aborted. The watcher now reads this file - `passed` and the breaching
+    modes - and the printed text stays what it is, a table for a person.
+    """
+    doc = dict(run=LAST['run'], iteration=iteration,
+               stop_deviation_pct=GATE_STOP_PCT,
+               passed=not breaches,
+               breaches=[dict(mode=m, modelled=mv, target=t, deviation_pct=dev)
+                         for m, mv, t, dev in
+                         sorted(breaches, key=lambda x: -abs(x[3]))])
+    with open(path, 'w', encoding='utf-8') as fh:
+        json.dump(doc, fh, indent=1)
 
 
 if __name__ == '__main__':

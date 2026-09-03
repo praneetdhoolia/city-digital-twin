@@ -2,14 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
 - **One mode, `taxi`, standing for taxi and rideshare together.** It blends the two services at `B.taxi.rideshare_trip_share` 0.66 (IPART 2025 last-trip split, swept 0.4–0.8, §9.76). The two are never separate modes: no observation splits them (§9.21, §9.42).
 - **It is a physical vehicle on the road.** `taxi` is in `RUN.qsim.main_mode`, `RUN.mode_choice.modes` and `RUN.routing.network_modes`; its body restates `RUN.qsim.car_vehicle` exactly, PCE 1.0, because a hired car is a car (§9.86, family F11). Travel time is bound to the congested car network so a taxi cannot out-run the traffic it rides in (§9.77).
 - **It is served by a finite fleet.** `A.taxi.fleet_representation` = `finite_fleet` (members `absent`, `finite_fleet`; `absent` reproduces every arm before §9.99). `citysim.TaxiFleetEngine` (`src/java/citysim/TaxiFleetEngine.java`) collects every taxi leg at `BeforeMobsim`, sorts by departure, and serves greedily from the earliest-free vehicle, which is the fleet's best case (§9.99, family F13).
-- **A refused request walks this iteration, and the mode is restored at `AfterMobsim`** — a refusal never deletes the alternative (§9.99, carrying §9.81's rule). Nothing caps the share; the constraint is supply and the price (§9.99).
+- **A refused request walks this iteration, and the mode is restored at `AfterMobsim`** — a refusal never deletes the alternative (§9.99, carrying §9.81's rule). The restore RE-FINDS the trip in the selected plan by its endpoints through `citysim.RemodeRestore`, shared with the ride engine, and logs what it found (§9.141, #113 closed): the engine once restored through the leg object it had stored, which the router had replaced, so every refused trip stayed walk in plan memory. Nothing caps the share; the constraint is supply and the price (§9.99).
 - **The fleet is derived, not declared.** `B.taxi.fleet_size` 800 at full scale = mean of `B.taxi.daily_trips_band` [15000, 25000] trips/day divided by `B.taxi.vehicle_trips_per_day` 25 (literature, swept 15–35, the one free quantity) (§9.99). The engine scales the fleet by `qsim.flowCapacityFactor`, for the reason the SCATS saturation flow is scaled (§9.99, §9.88).
 - **Fleet timing:** `B.taxi.max_wait_min` 20 (assumed, swept 10–45) is the abandonment tail that makes the fleet bind; `B.taxi.deadhead_min` 12 (assumed, swept 0–30) is empty running as unavailable time, not a routed leg (§9.99).
 - **Fares** (`cities/newcastle/registry/B_demand.json`): taxi `B.taxi.flagfall_taxi` 5.00 and `B.taxi.fare_per_km_taxi` 2.52, both `measured` from the Point to Point Transport (Fares) Order 2025 urban schedule archived at `data/raw/p2p/` (§9.76); rideshare `B.taxi.flagfall_rideshare` 1.95 and `B.taxi.fare_per_km_rideshare` 1.50, `literature`, swept (§9.76). Surge, night rates, the peak surcharge and the passenger service levy are recorded and deliberately not charged (§9.76).
@@ -35,7 +35,7 @@
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order and nothing else (§9.94). Acquiring the incidence is the honest route to any person-level availability.
 - **The target is derived and weak** — a band, not a count — and the mean-distance yardstick (5.2 km) is the folded HTS "Other" figure shared with bike, so a deviation against it is not independent evidence about taxi (`data/processed/validation/mode_targets_by_mode.csv`, §9.42).
 - Umbrella issue #49 stays open for the converged measurements; #88 (physicality) and #90 (supply) are closed.
-- **Refused taxi legs are restored through an orphaned `Leg` reference** (#113): under the finite fleet a refused leg stays walk in plan memory permanently, the §9.81 ratchet inside the taxi engine; the F23 reading of +76.6 % (§9.139) was taken under it.
+- **Every taxi reading to date was taken under the orphaned-restore defect** (#113 closed, §9.141): a refused trip stayed walk permanently, so the F21–F23 taxi levels (+67 % to +77 %, §9.134–§9.139) were read with the alternative amputated; the F24 arm is the first reading with the restore working, and `citysim.RemodeRestoreProbe` (`python src/run/run_signal_probes.py`) proves the re-find without a run.
 
 ## Refused — do not re-raise
 
@@ -50,6 +50,7 @@
 
 ## History
 
+- §9.141 — refused trip restored by endpoints
 - §9.139 — F23 gate: band widens to +77%
 - §9.134 — F21 gate: taxi flat at +67%
 - §9.126 — F17 held taxi at +52%

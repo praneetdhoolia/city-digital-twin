@@ -339,6 +339,16 @@ def write_constrained_base(scenario, day, run_config, tag):
         print('   stated violation: %s' % v)
 
 
+def _best_run_dir(tag):
+    """The results-store directory a run tag resolves to, or None."""
+    try:
+        import results_store                                  # noqa: PLC0415
+        d = results_store.resolve_records(tag)
+        return os.path.basename(os.path.normpath(d)) if d else None
+    except Exception:                                         # noqa: BLE001
+        return None
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -515,6 +525,10 @@ def main():
         independent_targets=n_free_allowed,
         free_parameters=[p['key'] for p in free],
         best_tag=best_tag, best_objective=best_obj,
+        # the runner's directory name for the best run, beside the tag the
+        # record carries (#137): the tag is what the run called itself, the
+        # directory is what the store calls it
+        best_run=_best_run_dir(best_tag),
         calibrated=current, history=history,
         note='Calibrated against the CALIBRATION half only. Counts were scored '
              'and reported but not optimised against (DECISIONS.md 9.14). The '

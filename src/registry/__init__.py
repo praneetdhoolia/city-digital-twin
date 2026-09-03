@@ -114,11 +114,29 @@ def _sweep_interval(sweep):
     return None
 
 
+def _numeric_leaves(value):
+    """(suffix, number) for a numeric value or the numeric entries of a dict."""
+    if isinstance(value, bool):
+        return []
+    if isinstance(value, (int, float)):
+        return [('', value)]
+    if isinstance(value, dict):
+        return [('[%s]' % k, v) for k, v in sorted(value.items())
+                if isinstance(v, (int, float)) and not isinstance(v, bool)]
+    return []
+
+
 def _intrinsic_errors(fields):
     """The rules that matter, checked without a jsonschema dependency.
 
     CI installs nothing, so these run everywhere. `validate()` additionally
     runs the full JSON Schema when jsonschema happens to be importable.
+
+    The integrity rules (#124) - every `derived_from` field exists, none
+    derives from itself, every numeric value sits inside its own interval
+    sweep - live here rather than in a separate script because this is the
+    one gate every strict `load()` runs: a broken registry fails at its
+    first read, not only in CI.
     """
     errors = []
     for key, f in sorted(fields.items()):
@@ -130,6 +148,28 @@ def _intrinsic_errors(fields):
         swept = f.get('sweep') is not None
         held = 'held_fixed' in f
         implied = 'derived_from' in f
+        if implied:
+            for dep in (f['derived_from'] or {}).get('fields') or []:
+                if dep == key:
+                    errors.append('%s: derived_from names the field itself - an '
+                                  'identity between entries of one field belongs in '
+                                  'its sweep_basis, not in derived_from (#124)' % key)
+                elif dep not in fields:
+                    errors.append('%s: derived_from names %r, which is not a registry '
+                                  'field (#124)' % (key, dep))
+        interval = _sweep_interval(f.get('sweep'))
+        if interval and f.get('value') is not None:
+            lo, hi = interval
+            # sweep_keys names the entries the interval applies to; an entry a
+            # city does not carry (a mode it lacks) is simply not checked
+            keys = f.get('sweep_keys')
+            for suffix, leaf in _numeric_leaves(f['value']):
+                if keys and suffix[1:-1] not in keys:
+                    continue                  # the sweep is declared not to apply
+                if not (lo <= float(leaf) <= hi):
+                    errors.append('%s%s: value %r lies outside its own sweep [%g, %g] - '
+                                  'either the value or the sweep basis is wrong (#124)'
+                                  % (key, suffix, leaf, lo, hi))
         if f['source'] in SWEPT_SOURCES:
             if not swept and not held and not implied:
                 errors.append('%s: source %r requires a sweep, a held_fixed rule or a '
@@ -334,7 +374,16 @@ def _check_values(items, fields, layer_name, allow=(), justification=None):
                           'introduce an input.' % (layer_name, key))
             continue
         field = fields[key]
-        interval = _sweep_interval(field.get('sweep'))
+        sweep = field.get('sweep')
+        # a categorical sweep is a membership test (#124): a typo such as
+        # `explicit_signal` for `explicit_signals` was accepted and emitted
+        if isinstance(sweep, dict) and isinstance(sweep.get('categorical'), list) \
+                and isinstance(value, str) and value not in sweep['categorical']:
+            if key not in allow:
+                errors.append('%s: sets %s to %r, which is not one of its declared '
+                              'categorical sweep %s.'
+                              % (layer_name, key, value, sweep['categorical']))
+        interval = _sweep_interval(sweep)
         if interval and isinstance(value, (int, float)) and not isinstance(value, bool):
             lo, hi = interval
             if not (lo <= float(value) <= hi):
@@ -376,8 +425,8 @@ def load(scenario=None, day=None, run=None, set=None, use_env=True,
             continue
         path = os.path.join(OVERLAY_DIRS[kind], '%s.json' % name)
         if not os.path.exists(path):
-            if kind == 'run':
-                continue                      # a run overlay is optional
+            # a NAMED overlay that is absent is an error for every kind (#124):
+            # a mistyped --run-config once ran the base under the tag's name
             raise RegistryError('no %s overlay at %s' % (kind, path))
         doc = _read_json(path)
         values, errs = _check_overlay(doc, fields, '%s overlay %s' % (kind, name))

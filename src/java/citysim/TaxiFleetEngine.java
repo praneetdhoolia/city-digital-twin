@@ -4,16 +4,21 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
 import org.matsim.api.core.v01.TransportMode;
+import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.population.Activity;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
-import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
@@ -105,8 +110,18 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
     private final Scenario scenario;
     private final double sampleFraction;
 
-    /** Legs walked this mobsim, to be given taxi back afterwards. */
-    private final List<Leg> refusedThisMobsim = new ArrayList<>();
+    /**
+     * Trips walked this mobsim, to be given taxi back afterwards - recorded
+     * by person and endpoints, NEVER as leg objects (#113): the re-mode nulls
+     * the route, PersonPrepareForSim then re-routes the trip and replaces its
+     * leg objects, and a restore through the old reference wrote to an orphan.
+     * Every refused taxi trip stayed walk in plan memory for good - the 9.81
+     * ratchet this class says it avoids - while the log reported the list
+     * size as "restored". The ride engine had measured and fixed the same
+     * defect (RidePairingEngine.notifyAfterMobsim); both now restore through
+     * {@link RemodeRestore}.
+     */
+    private final List<Refused> refusedThisMobsim = new ArrayList<>();
 
     @Inject
     TaxiFleetEngine(final Scenario scenario) {
@@ -122,21 +137,43 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         }
     }
 
-    /** One taxi request: a leg, when it wants to leave, how long it takes. */
+    /** One taxi request: a trip, when it wants to leave, how long it takes. */
     private static final class Request {
-        final Leg leg;
+        final Id<Person> personId;
+        final List<Leg> legs;
+        final Id<Link> from;
+        final Id<Link> to;
         final double departure;
         final double duration;
         final String person;
         final int index;
 
-        Request(final Leg leg, final double departure, final double duration,
-                final String person, final int index) {
-            this.leg = leg;
+        Request(final Id<Person> personId, final List<Leg> legs,
+                final Id<Link> from, final Id<Link> to,
+                final double departure, final double duration,
+                final int index) {
+            this.personId = personId;
+            this.legs = legs;
+            this.from = from;
+            this.to = to;
             this.departure = departure;
             this.duration = duration;
-            this.person = person;
+            this.person = personId.toString();
             this.index = index;
+        }
+    }
+
+    /** A refused trip, by the handles that survive the router. */
+    private static final class Refused {
+        final Id<Person> person;
+        final Id<Link> from;
+        final Id<Link> to;
+
+        Refused(final Id<Person> person, final Id<Link> from,
+                final Id<Link> to) {
+            this.person = person;
+            this.from = from;
+            this.to = to;
         }
     }
 
@@ -198,7 +235,10 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
                  String.format("%.0f", served == 0 ? 0.0 : waitSum / served));
     }
 
-    /** Every taxi leg in a selected plan, with its own departure and duration. */
+    /**
+     * Every taxi trip in a selected plan - every leg of it taxi - with its
+     * endpoints, its own departure and its duration.
+     */
     private List<Request> collect() {
         final List<Request> out = new ArrayList<>();
         for (final Person person : this.scenario.getPopulation()
@@ -209,37 +249,34 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
             }
             int index = 0;
             double clock = Double.NaN;
-            for (final PlanElement pe : plan.getPlanElements()) {
-                if (pe instanceof org.matsim.api.core.v01.population.Activity) {
-                    final OptionalTime end = ((org.matsim.api.core.v01.population
-                            .Activity) pe).getEndTime();
-                    if (end.isDefined()) {
-                        clock = end.seconds();
-                    }
-                    continue;
-                }
-                if (!(pe instanceof Leg)) {
-                    continue;
-                }
-                final Leg leg = (Leg) pe;
+            for (final TripStructureUtils.Trip trip
+                    : TripStructureUtils.getTrips(plan)) {
                 index++;
-                if (!TAXI.equals(leg.getMode())) {
+                final Activity origin = trip.getOriginActivity();
+                if (origin.getEndTime().isDefined()) {
+                    clock = origin.getEndTime().seconds();
+                }
+                if (!RemodeRestore.isAllMode(trip, TAXI)) {
                     continue;
                 }
-                final OptionalTime dep = leg.getDepartureTime();
+                final List<Leg> legs = trip.getLegsOnly();
+                final OptionalTime dep = legs.get(0).getDepartureTime();
                 final double departure = dep.isDefined() ? dep.seconds() : clock;
                 if (Double.isNaN(departure)) {
                     continue;            // no clock to allocate against
                 }
                 double duration = 0.0;
-                if (leg.getRoute() != null
-                        && leg.getRoute().getTravelTime().isDefined()) {
-                    duration = leg.getRoute().getTravelTime().seconds();
-                } else if (leg.getTravelTime().isDefined()) {
-                    duration = leg.getTravelTime().seconds();
+                for (final Leg leg : legs) {
+                    if (leg.getRoute() != null
+                            && leg.getRoute().getTravelTime().isDefined()) {
+                        duration += leg.getRoute().getTravelTime().seconds();
+                    } else if (leg.getTravelTime().isDefined()) {
+                        duration += leg.getTravelTime().seconds();
+                    }
                 }
-                out.add(new Request(leg, departure, Math.max(0.0, duration),
-                                    person.getId().toString(), index));
+                out.add(new Request(person.getId(), legs, origin.getLinkId(),
+                                    trip.getDestinationActivity().getLinkId(),
+                                    departure, Math.max(0.0, duration), index));
             }
         }
         return out;
@@ -250,27 +287,45 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         if (!this.cfg.isRemodeRefused()) {
             return;
         }
-        this.refusedThisMobsim.add(r.leg);
-        r.leg.setMode(TransportMode.walk);
-        TripStructureUtils.setRoutingMode(r.leg, TransportMode.walk);
-        // the taxi route may traverse links walk is not permitted on, and the
-        // router will rebuild it - the same handling RidePairingEngine gives a
-        // remoded ride leg
-        r.leg.setRoute(null);
+        this.refusedThisMobsim.add(new Refused(r.personId, r.from, r.to));
+        for (final Leg leg : r.legs) {
+            leg.setMode(TransportMode.walk);
+            TripStructureUtils.setRoutingMode(leg, TransportMode.walk);
+            // the taxi route may traverse links walk is not permitted on, and
+            // the router will rebuild it - the same handling RidePairingEngine
+            // gives a remoded ride leg
+            leg.setRoute(null);
+        }
     }
 
+    /**
+     * Give every refused trip taxi back, RE-FOUND in the selected plan by its
+     * endpoints (#113): the walk was scored, the alternative is kept. The
+     * count logged is what was actually found and replaced.
+     */
     @Override
     public void notifyAfterMobsim(final AfterMobsimEvent event) {
         if (this.refusedThisMobsim.isEmpty()) {
             return;
         }
-        for (final Leg leg : this.refusedThisMobsim) {
-            leg.setMode(TAXI);
-            TripStructureUtils.setRoutingMode(leg, TAXI);
-            leg.setRoute(null);
+        int restored = 0;
+        final Map<Id<Person>, Set<Activity>> consumed = new HashMap<>();
+        for (final Refused r : this.refusedThisMobsim) {
+            final Person person =
+                    this.scenario.getPopulation().getPersons().get(r.person);
+            if (person == null || person.getSelectedPlan() == null) {
+                continue;
+            }
+            if (RemodeRestore.restore(person.getSelectedPlan(), r.from, r.to,
+                                      TransportMode.walk, TAXI, null,
+                                      consumed.computeIfAbsent(r.person,
+                                              k -> RemodeRestore.ledger()))) {
+                restored++;
+            }
         }
-        LOG.info("taxiFleet: {} refused leg(s) walked this iteration and had "
-                 + "taxi restored as an alternative", this.refusedThisMobsim.size());
+        LOG.info("taxiFleet: {} of {} refused trip(s) walked this iteration "
+                 + "and had taxi restored as an alternative",
+                 restored, this.refusedThisMobsim.size());
         this.refusedThisMobsim.clear();
     }
 }

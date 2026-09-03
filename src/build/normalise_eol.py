@@ -33,6 +33,7 @@ CITY_ROOTS += ['networks/matsim']
 # the only files left at the repo root, so they are the only ones named here.
 REPO_SINGLE = ['README.md', 'run.py', '.gitignore', '.gitattributes']
 CITY_SINGLE = ['data/raw/provenance_open_data.json', 'data/raw/provenance_abs_dem.json',
+               'data/raw/provenance_osm.json',
                'data/raw/_s3_historical_gtfs_listing.txt', 'data/raw/_osm_fetch.log',
                'schedules/provenance.json', 'schedules/raw/provenance.json',
                'schedules/era_build_summary.json',

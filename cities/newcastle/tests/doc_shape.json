@@ -19,6 +19,10 @@
       "scoreboard",
       "runs",
       "state"
+    ],
+    "no_deviation_flags": [
+      "level only",
+      "representation"
     ]
   },
   "brief": {

@@ -172,6 +172,14 @@ about its layout will otherwise cost you an hour:
 | **Toolchain pins — a toolchain change is a model change** | §14 (change log) and `.tools/toolchain.json` |
 | **Live view, telemetry, the congestion map** | **§9.36** |
 | **Dated build narrative** | [`docs/archived/SESSION_LOG.md`](archived/SESSION_LOG.md) — archive; this file is authoritative |
+| **The assembled run inputs did not load** | **§9.4** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **Mode choice was not choosing, and the seed is now uninformed** | **§9.6** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **The with-tram scenario had no tram on a weekday** | **§9.9** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **A live view of a run, and why it is not a live map** | **§9.19** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **Three decisions taken, and the carried-over work re-prioritised** | **§9.22** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **Own collection dropped, and what the published catalogue actually holds** | **§9.23** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **One city moves into `cities/<city>/`, and the framework stops knowing which city it models** | **§9.37** — index row added 3 Sep 2026 (#135), title only: the section says the rest |
+| **The assessment's fourteen defects closed without a run; the resolver refuses its own breaks; every artefact has a producer that names it** | **§9.141** — #112–#127 fixed and verified by probes and stdlib checks (the watcher on a verdict, the taxi restore by endpoints, the SCATS donor by layout, the card after validation, the manifest licensed on every row); `sweep_keys`, `CAL.pt.censored_cell_value`, `RUN.gate.retry_interval_s` declared; C2 found measured on the superseded network and NOT re-measured (decision); #129, #133, #134 stay open as decisions and block the launcher |
 
 
 ---
@@ -6762,7 +6770,7 @@ results (`_run.json` absent by definition); the 67/143 split is untouched.
 
 ---
 
-## §9.73 — The simulator stack re-examined: MATSim re-affirmed, and the embedded MATSim version recorded (25 Aug 2026, fourth session)
+## 9.73 The simulator stack re-examined: MATSim re-affirmed, and the embedded MATSim version recorded (25 Aug 2026, fourth session)
 
 The session's `/goal` asked whether MATSim is still the best tool or whether a
 materially better or faster framework exists. Answered by a documented survey
@@ -6811,7 +6819,7 @@ model or data value changed; nothing here is a result.
 
 ---
 
-## §9.74 — SUMO descoped by recorded decision: MATSim is the single simulator (25 Aug 2026; the fifth premise correction — supersedes proposal §5's twin-simulator architecture)
+## 9.74 SUMO descoped by recorded decision: MATSim is the single simulator (25 Aug 2026; the fifth premise correction — supersedes proposal §5's twin-simulator architecture)
 
 **Decision required (25 Aug 2026): the study is "officially free of SUMO".**
 Recorded here as a decision with its consequences; executed mechanically as
@@ -6862,7 +6870,7 @@ and remains the operative representation until #73 lands.
 
 ---
 
-## §9.75 — The signalling dossier, the operated-SCATS-data discovery, and the project's all-modes-first batch (25 Aug 2026; issues #49, #68, #72–#78)
+## 9.75 The signalling dossier, the operated-SCATS-data discovery, and the project's all-modes-first batch (25 Aug 2026; issues #49, #68, #72–#78)
 
 **The dossier.** A ten-file research dossier on SCATS and Newcastle
 signalling landed at
@@ -6929,7 +6937,7 @@ untouched; the TIA numbers are cited evidence, not acquired inputs (that is
 
 ---
 
-## §9.76 — Batch 4.7 BUILT, inert: the all-modes batch lands as code, data and probes; the descope executed; the harness safety set live (25 Aug 2026, overnight session; issues #49, #62, #63, #68, #70, #72–#78)
+## 9.76 Batch 4.7 BUILT, inert: the all-modes batch lands as code, data and probes; the descope executed; the harness safety set live (25 Aug 2026, overnight session; issues #49, #62, #63, #68, #70, #72–#78)
 
 **Directive.** The session's `/goal` ordered the 25 Aug batch (§9.75)
 implemented overnight — signals, taxi and the full simulation factors first,
@@ -7194,7 +7202,7 @@ stayed held.
 
 ---
 
-## §9.77 — The activation boundary is CROSSED: explicit signals, crossings, native dwell and taxi are LIVE in the assembled inputs; S3 gets bus-keyed priority; family F6 declared (25 Aug 2026, sixth session; issues #49, #68, #73)
+## 9.77 The activation boundary is CROSSED: explicit signals, crossings, native dwell and taxi are LIVE in the assembled inputs; S3 gets bus-keyed priority; family F6 declared (25 Aug 2026, sixth session; issues #49, #68, #73)
 
 **Directive.** The session's `/goal` ordered every runless GitHub issue
 implemented — signals, taxi and the full simulation factors first, the free
@@ -7282,7 +7290,7 @@ open.
 
 ---
 
-## §9.78 — The runless lanes closed out: score-distinct PT submodes (Tier C), seven 0b source upgrades incl. the CWANZ-cited bike availability, the corridor-composition answer, the demographic sex-structure finding, the empty TIA sweep, the stall capture armed (25 Aug 2026, sixth session; issues #49, #50, #63, #66, #78-record)
+## 9.78 The runless lanes closed out: score-distinct PT submodes (Tier C), seven 0b source upgrades incl. the CWANZ-cited bike availability, the corridor-composition answer, the demographic sex-structure finding, the empty TIA sweep, the stall capture armed (25 Aug 2026, sixth session; issues #49, #50, #63, #66, #78-record)
 
 **Tier C — the PT submodes are SCORE-DISTINCT (#49), verified against the
 pinned jar's own bytecode.** SwissRailRaptor (confirmed the default and only
@@ -13890,10 +13898,40 @@ split and the choice-set survival. `check_package.py` passes only once this
 section exists (its `decisions_ref` check). **No target value changed, the
 67/143 split is untouched, nothing here is a result (no `_run.json`).**
 
+## 9.141 The assessment's fourteen defects closed without a run; the registry refuses its own integrity breaks; every artefact has a producer that names it (3 September 2026, twenty-sixth session; user directive "proceed"; issues #112–#137)
+
+**What was wrong.** The 3 Sep assessment (`docs/reports/20260903T134517_project_report.html`, §14) filed fourteen defects and twelve risks, and requirement 10 refused any arm while they stood open. Verified at HEAD `a8aea73` before anything was changed: all sixteen defect issues were real, and seven of the proposed fixes needed a correction before they were sound — an exit code the results store would have read as a failed extract (#112), a lineage rule that would have named Newcastle's artefacts inside the framework (#117), a `[date:]` pin no live Overpass query carries (#118), a pedestrian-mall width that would have become a compensating constant (#124), a controller merge the two deformation models do not admit (#125), a fix that left the run summariser loading the registry at import (#126), and a reorder that would have written no card at all (#127). Two defects were live for the next arm: every refused taxi trip stayed walk in plan memory under the finite fleet (#113), and the watcher would have recorded the first passing gate as an abort (#112). Two more were found on the way: the two signal probes had been unable to run since the config modules gained consistency checks, and C2's circuity factors were measured on the pre-16-August network.
+
+**What changed.**
+- **The gate watcher stops on a verdict** (#112): `report_mode_ridership.py --gate-json` writes `passed` and the breaching modes; `run_matsim.start_gate_watch` stops only on a verdict for its milestone with breaches, logs a pass, retries an unready milestone every `RUN.gate.retry_interval_s` 300 s (definition, #131), and reads the log incrementally through `run_view.read_iterations` — one shared cache, growth only — when the digest is absent. `tests/check_gate_watcher.py` (breach / pass / no verdict) and `tests/check_launch_refusal.py` run in CI and the session gate.
+- **The status card follows validation** (#127): `build_config`, the snapshot and the run-stack check run first; a refusal writes a `failed` card quoting the message and retires the directory. `run.py --stop`/`--list` need no valid registry (#126): the sampler and the summariser load it on first use. `java` resolves by platform, `jvm_pid` is on the card and `--stop` kills it (#128); the README states that `--detach` is the Task Scheduler.
+- **Refused taxi trips get taxi back by endpoints** (#113): `citysim.RemodeRestore` — re-find by origin and destination link and executed mode, replace the whole trip, consume each once — is shared by `TaxiFleetEngine` and `RidePairingEngine`; the count logged is what was found. `citysim.RemodeRestoreProbe` reproduces the orphaned reference and proves the re-find.
+- **SCATS priority extends in the layout's direction** (#125): an extension borrows from a stage after the tram's, a recall truncates the running stage before it, a last-in-cycle tram stage is refused, counted and logged; the conditional boundary is `<=` and clears the detection. `citysim.ScatsPriorityProbe` (three stages: extension 58 → 68 s, cycle conserved; last refused; recall 30 → 20 s). The corridor's two-stage, tram-first plans never exercised the defect. `SignalsAssemblyProbe` and `TramPriorityProbe` declare the reach bound, the regime and the taxi representation in their toy config and run again.
+- **The board carries no deviation on a non-target basis** (#114): the reporter stores `None` for `level only` and `representation`; `doc_shape.json` `no_deviation_flags` refuses a percentage beside either. `build_replay_page.py` imports the city module (#122). `check_city` cross-checks `B.seed.master`, fails on a mismatch, and asserts every `consumers` path exists (#123, #124).
+- **The resolver refuses its own integrity breaks** (#124): `_intrinsic_errors` rejects a `derived_from` naming a missing field, a self-reference and a numeric value outside its interval sweep (dict values leaf by leaf, or the entries `sweep_keys` names — new schema key); `_check_values` rejects an overlay value outside a categorical sweep; a named run overlay that is absent raises. Repaired: `C.scoring.utility_of_line_switch` derives from `C.transfer.beta_transfer_penalty_min`; `C.scoring.monetary_distance_rate` keeps its ride identity in `sweep_basis` with `sweep_keys` car and ride; `A.active.footway_width_default` sweep [0.5, 6.0], basis stated, value unchanged. `tests/check_registry_rules.py` feeds each rule its break.
+- **Every producer names its artefact** (#115, #116, #119, #120, #121): `extract_hts.py` writes `hts_mode.csv`/`hts_purpose.csv`; `slice_newcastle.py` matches the contract declared in `schedules/operators.json` (`NISC 1`, 1,363 rows as committed); `build_scenario_configs.py` writes city-relative references; `build_corridor_layers.py` `else 0` — 1 of 14 intersections carries a pedestrian phase, 65 of 70 rows moved; the dead S2a call is gone and the schedule report states the runtime delta. `tests/check_package.py` asserts every processed manifest row's producer exists and names its artefact; `build_manifest.py` LINEAGE and `city.json` `lineage` declare 24 file-level producers the prefix rule had wrong.
+- **Every manifest row carries a licence** (#117, #118): provenance records are read recursively in both forms, keyed by a declared `base`, the record's own directory or the layer root; a raw row's licence is its declared source's, a derived row's is the city's `derived_licences` glob (network, corridor, landuse, MATSim networks, run networks → ODbL 1.0) else `package_licence` CC-BY 4.0 — 512 rows, 161 ODbL, 337 CC-BY, 0 blank; `check_manifest.py` refuses a blank. `overpass.py` writes `data/raw/provenance_osm.json`; the 15–16 August harvest's record is marked `reconstructed` with what is read and what is inferred; `overpass.private.coffee` is allowlisted; `fetch_abs_dem.py` refuses instead of a typed box and takes its licence from the descriptor.
+- **Declared:** `CAL.pt.censored_cell_value` 0 trips/month, assumed, sweep [0, 25], read by `build_mode_targets.py` (0 reproduces the targets byte for byte; the ValueError on 'Less than 50' is gone) (#129). `RUN.gate.retry_interval_s` 300 s, definition (#131). Registry 457 → 459.
+- **Documents and CI** (#130, #135, #136, #137): CI runs on `main` pushes and PRs, pins Python 3.14, fails on a trivial record, runs `render_docs.py --check` and `check_legacy_drift.py`; sections 9.73–9.78 renamed to the checkable heading form, seven index rows added; README states the four launch rules, the package size pinned to the manifest (4.07 GiB), five words, the Linux limitation; `report.py` names the base run `20260821T175907_1000it_25pct` with its hand name recorded, resolved through the store's legacy-name scan; trim keeps an unextracted completed run and runs after the launch (#132); a processed twin under a pre-abort name is reconciled (the F23 arm was listed twice).
+
+**Measured.**
+- Probes on the pinned run stack (`python src/run/run_signal_probes.py`): `ScatsPriorityProbe` extension-middle tram drop 68 s (plan 58), next onset 70, cycle-2 onset 90; extension-last drop 88, 8 refusals counted; recall-middle onset 20 (plan 30), running drop 18, drop 58. `RemodeRestoreProbe`: stale reference leaves walk true; re-find restores taxi true; two same-endpoint trips restored 2. `SignalsAssemblyProbe` and `TramPriorityProbe` pass as before (tram red 40 s under extension, 30 s off).
+- `tests/check_package.py` ALL CHECKS PASSED at 512 manifest files, 420 processed rows with a producer that names them; 1 warn — bike beeline 1.5231 outside [1.207, 1.456] (below). `check_city --all` PASS 40; `check_hardcoding --strict` 0; `check_doc_currency --strict` 0; session gate green on every line but `issues gated`.
+- Producers regenerate their committed artefacts byte-identically modulo line endings: `extract_hts.py`, `slice_newcastle.py` (report gains `bus_contracts_declared`), `build_scenario_configs.py`, `build_mode_targets.py`; `build_corridor_layers.py` moves 65 of 70 rows (the fix).
+- C2 re-measured on the current network: detour 1.3376 → 1.3276 (595 routed pairs, was 551), walk 1.6902 → 1.6938 (560, was 531), bike 1.5231 → 1.5570 (562, was 549). NOT kept.
+- The F23 arm's processed twin `20260901T165115_300it_25pct` renamed `aborted_…` by the store; the board lists it once.
+
+**Deliberately not done.** No arm, no approval spent, no target value changed, the 67/143 split untouched. C2 was not re-measured into the package: the values feed the activity chains and the beeline factors, so it is a model change and a package rebuild for the user to decide; the package check warns on the bike factor until then. `C5_calibration.json` keeps `best_tag` as its own dated record (a future calibration writes `best_run` beside it). The validation-target builder keeps excluding censored cells (pre-registered holdout rows) until the user decides on #129. The frozen sections' order is not changed (#135). No pytest layer (#133) and no sweep disposition (#134): decisions. The trim's 671 GiB backlog is not run by hand.
+
+**Consequences.** `controler_sha256` changes with the Java (TaxiFleetEngine, RidePairingEngine, RemodeRestore, ScatsSignalController), so no post-fix arm compares with a pre-fix one — fine, since F24 is declared at its first launch and none has run. `values_sha256` is unchanged: no resolved value moved (`sweep_keys`, sweep bounds and descriptions are metadata; the two new fields are read by the harness and the target builder, not the config). The first F24 arm is the first live test of the verdict-keyed watcher, the endpoint restore (taxi will read HIGHER than F23's +76.6 % for the alternative surviving), the incremental log read and the post-launch trim. Three issues stay open and block the launcher until the user decides them: #129 (validation-target censoring), #133 (a unit-test layer — four stdlib checks exist now), #134 (238 sweeps never set). #131 is `awaiting-run` for its disk measurement.
+
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-03 | **The 3 Sep assessment's fourteen defects closed without a run; the registry refuses its own integrity breaks; every artefact has a producer that names it (§9.141; issues #112–#137; twenty-sixth session; user directive).** Harness: verdict-keyed gate watcher, card after validation, `--stop` without a registry, incremental log read, bounded retry, trim after launch, `jvm_pid`. Java: `RemodeRestore` shared by taxi and ride, SCATS donor by layout, four probes running (two had been unable to). Data: HTS, Opal-bus, scenario-table and corridor producers reproduce their artefacts; manifest 511 → 512 with a licence on every row (161 ODbL); `provenance_osm.json`. Registry 457 → 459 (`CAL.pt.censored_cell_value`, `RUN.gate.retry_interval_s`), three integrity breaks repaired, `sweep_keys` in the field schema. Documents: README launch rules and pinned package size, six record headings normalised, calibration report on the runner name. **No target value changed, the 67/143 split is untouched, no arm ran, no approval spent, nothing here is a finding.** C2 re-measured on the current network moves its values and was not kept — a decision. |
+| 2026-09-03 | **Six record headings normalised and seven index rows added (#135; twenty-sixth session; the dated text unchanged).** Sections 9.73 to 9.78 were headed `## §9.73 —`, a form the shape check's section pattern and the `grep -n "^## 9\.NNN"` recipe both miss; each is renamed to `## 9.73 ...` in place and nothing below the heading moves. Index rows are added for §9.4, §9.6, §9.9, §9.19, §9.22, §9.23 and §9.37, title only. The frozen sections' order (9.81–9.84 after 9.127, 9.131–9.127 descending) is left as written - the record is not reordered - and the shape check asserts ascending order for every section after the freeze. |
 | 2026-09-03 | **The first whole-repository assessment lodged and the `/project-report` skill added (twenty-fifth session; no model, data or target value changed; the 67/143 split untouched; nothing here is a finding of the model).** `docs/reports/20260903T134517_project_report.html` reads commit `9c99e54` (the PR #110 merge): every tracked file by area, 45 pull requests, 376 commits, 65 issues, 126 run records; 14 defects confirmed at HEAD and filed as #112–#127, with #128–#137 for the risks, gaps and document drift; five ratings per area, each with its evidence. `.claude/skills/project-report/` (the procedure and `scripts/collect_metrics.py`) reproduces it; `docs/reports/README.md` indexes the dated series. The report's in-flight section describes the twenty-fourth session's tree, since merged as PR #111 (§9.140). The GitHub Pages site now deploys from `README.md` by workflow (`.github/workflows/pages.yml`, `.github/scripts/build_pages.py`: GitHub's own renderer, the fit figures and `docs/reports/` carried along) in place of the legacy build from `docs/`. |
 | 2026-09-03 | **Every open issue worked to closed or awaiting a run; requirement 10 and the issue gate; seven dead fields retired; the S0 detour measured and the external interaction rate derived; the input contract made city-free; carve conservation and the leaf-subtour repair built and the package rebuilt (§9.140; issues #21/#62/#63/#84/#91/#99 closed, #93/#96/#94/#86/#98/#107/#108 awaiting-run; twenty-fourth session; user directive).** Registry 462 → 457 (`C.gradient.*`, `C.walk.decay_*`, `gaussian_*`, `max_considered_m` retired); `E.s0.heavy_rail_detour_factor` 1.1 → 1.037 measured; `B.external.interaction_rate` 0.08 → 0.0900 derived with two new measured members and `data/raw/jtw/` acquired; 29 currency-named keys renamed; census readers adapted with byte-identical B1 and D1; chains, plans and the 30 run-input sets rebuilt (manifest 511 files), opening F24 at its first launch. Toolchain unchanged; no target value changed, the 67/143 split is untouched, nothing here is a result. |
 | 2026-09-02 | **The F23 gate read at 25% and the arm stopped; the runner's own gate watcher found blind and fixed (§9.139; issues #107/#108/#98/#94/#30/#66; twenty-third session).** Arm `20260901T165115_300it_25pct` launched under the user's 2 Sep continue directive (SPENT, ~45–50 h stated) and stopped by the session at the iteration-100 gate: 7 modes at or past 20% — heavy rail +193.2%, bike +111.2% (from F22's +185.5%, the stress channel's first measured effect), ferry −80.0%, taxi +76.6%, light rail −66.1% AWAY, ride −40.1%, walk −27.2% — car +14.8%, motorbike +13.9%, bus +16.2% over 10%, none inside; income scaling blunted the fare (F22 same milestone: bus +8.0% inside, rail +152.9%). The §9.137 watcher did not fire: its 64 KiB log-tail iteration read was measured blind (last ENDS marker 611 MiB before EOF; 51.1 GiB log of `NetworkRoutingProvider` WARN spam); `_last_ended_iteration` now reads the `_progress.json` digest, verified on the dead arm — harness-side, no model value, no family boundary. Both 1 Sep user-directed stops recorded; the board's stale blocks regenerated same-day. **No target value changed, the 67/143 split is untouched, nothing here is a result (no `_run.json`).** |

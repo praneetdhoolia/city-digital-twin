@@ -68,7 +68,47 @@ def resolve(name_or_path):
     for candidate in (raw_dir(name), os.path.join(RESULTS, name)):
         if os.path.isdir(candidate):
             return candidate
+    legacy = resolve_legacy_name(name)
+    if legacy is not None and os.path.isdir(raw_dir(legacy)):
+        return raw_dir(legacy)
     return None
+
+
+_LEGACY = {}
+
+
+def resolve_legacy_name(name):
+    """The runner-named directory a HAND-NAMED run lives in, or None (#137).
+
+    Runs before 9.65 were named by hand (`phys1000a_25pct`); the runner then
+    renamed every directory to its launch stamp and the hand name survived
+    only as `name` inside the run's own `_run.json`. Records that cite the
+    hand name - C5_calibration.json's best_tag, the calibration report -
+    resolve through it here, scanning processed (findings are permanent) and
+    raw once and remembering the answer.
+    """
+    if name in _LEGACY:
+        return _LEGACY[name]
+    found = None
+    for root in (PROCESSED, RAW):
+        if not os.path.isdir(root):
+            continue
+        for entry in sorted(os.listdir(root)):
+            rec = os.path.join(root, entry, '_run.json')
+            if not os.path.exists(rec):
+                continue
+            try:
+                with io.open(rec, encoding='utf-8') as fh:
+                    doc = json.load(fh)
+            except (OSError, ValueError):
+                continue
+            if doc.get('name') == name or doc.get('tag') == name:
+                found = entry
+                break
+        if found:
+            break
+    _LEGACY[name] = found
+    return found
 
 
 def resolve_records(name_or_path):
@@ -79,7 +119,12 @@ def resolve_records(name_or_path):
         return bulk
     name = os.path.basename(os.path.normpath(name_or_path))
     p = processed_dir(name)
-    return p if os.path.isdir(p) else None
+    if os.path.isdir(p):
+        return p
+    legacy = resolve_legacy_name(name)
+    if legacy is not None and os.path.isdir(processed_dir(legacy)):
+        return processed_dir(legacy)
+    return None
 
 
 def run_names():
@@ -189,15 +234,50 @@ def process(name, extract=False):
             extract_snapshots(name)
 
 
+def reconcile_names():
+    """A raw `aborted_<name>` whose processed twin still carries `<name>`
+    is renamed in processed too, so a run keeps ONE name.
+
+    `rename()` follows a raw rename at the moment it happens; when that
+    rename loses to a directory lock - or happened before the store existed -
+    the processed twin keeps the old name and the run index lists the arm
+    twice (the F23 gate arm, 3 Sep 2026). Idempotent; a twin that exists
+    under both names is left for a person to compare, and said so.
+    """
+    fixed = []
+    if not os.path.isdir(RAW) or not os.path.isdir(PROCESSED):
+        return fixed
+    for entry in sorted(os.listdir(RAW)):
+        if not entry.startswith('aborted_') or not os.path.isdir(raw_dir(entry)):
+            continue
+        base = entry[len('aborted_'):]
+        old_p, new_p = processed_dir(base), processed_dir(entry)
+        if not os.path.isdir(old_p):
+            continue
+        if os.path.isdir(new_p):
+            _log(entry, 'processed twin exists under both %s and %s; not merged'
+                 % (base, entry))
+            continue
+        try:
+            os.rename(old_p, new_p)
+            fixed.append((base, entry))
+            _log(entry, 'processed rename %s -> %s (reconciled)' % (base, entry))
+        except OSError as e:
+            _log(entry, 'processed rename %s -> %s failed: %s' % (base, entry, e))
+    return fixed
+
+
 def migrate():
     """Move legacy `results/<run>` dirs under raw/ and seed processed.
 
     Idempotent; skips `_launch`, the store roots and loose files. A move that
-    loses to a directory lock is reported and retried at the next call.
+    loses to a directory lock is reported and retried at the next call. Also
+    reconciles a processed twin left under a run's pre-abort name.
     """
     os.makedirs(RAW, exist_ok=True)
     os.makedirs(PROCESSED, exist_ok=True)
     moved = []
+    reconcile_names()
     if not os.path.isdir(RESULTS):
         return moved
     for entry in sorted(os.listdir(RESULTS)):
@@ -289,6 +369,15 @@ def trim(cap_gb, log=print):
             break
         d = raw_dir(name)
         if _is_running(d):
+            continue
+        # a completed run whose metrics are not yet extracted is never
+        # deleted (#132): run.py extracts _metrics.json after run() returns,
+        # and a concurrent harness's trim could reach the directory first.
+        # prune_run.py refuses exactly this case; so does trim now.
+        if os.path.exists(os.path.join(d, '_run.json')) \
+                and not os.path.exists(os.path.join(d, '_metrics.json')):
+            log('trim: keeping raw/%s - completed, metrics not yet extracted'
+                % name)
             continue
         process(name, extract=True)
         freed = _dir_bytes(d)

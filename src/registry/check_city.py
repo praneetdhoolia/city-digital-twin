@@ -179,15 +179,34 @@ def check_fields(city_dir, name, doc):
         check(False, '%s: %s' % (name, e))
     check(not errors, '%s: every field satisfies field.schema.json' % name)
 
+    # every `consumers` path names a file that exists (#124): the key is a
+    # claim about who reads the field, and a claim about a file that is gone
+    # is the drift check_hardcoding cannot see
+    missing = sorted(set(
+        '%s -> %s' % (key, p)
+        for key, f in fields.items()
+        for p in (f.get('consumers') or [])
+        if not os.path.exists(os.path.join(REPO, p))))
+    check(not missing,
+          '%s: every consumers path exists (%s)'
+          % (name, '; '.join(missing[:5]) if missing else '%d fields checked'
+             % len(fields)))
+
     # the descriptor and the registry must agree where they overlap
     if doc:
         modes = fields.get('RUN.mode_choice.modes', {}).get('value')
         check(modes is None or sorted(doc.get('modes', [])) == sorted(modes),
               '%s: city.json modes match RUN.mode_choice.modes (%s vs %s)'
               % (name, doc.get('modes'), modes))
-        seed = fields.get('B.population.seed', {}).get('value')
+        # the field that exists is B.seed.master (#123): the check once read
+        # B.population.seed, which no registry declares, and passed vacuously
+        seed = fields.get('B.seed.master', {}).get('value')
+        if doc.get('seed') is not None:
+            check(seed is not None,
+                  '%s: city.json declares a seed, so the registry declares '
+                  'B.seed.master' % name)
         check(seed is None or doc.get('seed') == seed,
-              '%s: city.json seed matches B.population.seed (%s vs %s)'
+              '%s: city.json seed matches B.seed.master (%s vs %s)'
               % (name, doc.get('seed'), seed))
         for f in doc.get('unobtained', []):
             key = f.get('field')

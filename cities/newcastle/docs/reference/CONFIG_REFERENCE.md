@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 457 fields are made of
+## What the 459 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 148 | chosen without direct empirical support |
-| `definition` | 119 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 149 | chosen without direct empirical support |
+| `definition` | 120 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 438 | usable point value |
+| `active` | 440 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -93,7 +93,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
-| `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 3 |
+| `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 6 |
 | `A.bike_stress.aadt_class_by_highway` | `{"trunk": "high", "trunk_link": "high", "primary": "high", "primary_link": "high", "secondary": "moderate_h...` | aadt_proxy_class_by_osm_highway | `assumed` | **held fixed** |
 | `A.bike_stress.felt_factor_high` | `7.68` | felt_distance_ratio | `literature` | 7.19 - 8.16 |
 | `A.bike_stress.felt_factor_moderate` | `1.3` | felt_distance_ratio | `literature` | 1.22 - 1.37 |
@@ -275,7 +275,7 @@ Fallback footway width. Footway widths were not obtained for Newcastle. MEASURED
 
 ***measured** · status **active** · DECISIONS.md §9.33*
 
-> **Sweep basis.** the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges - an observed spread, not a chosen interval
+> **Sweep basis.** the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges is [0.5, 3.0] - an observed spread, not a chosen interval - extended to 6.0 so that the interval also bounds the five classes that keep an ASSUMED width for want of coverage (pedestrian 6.0, a pedestrian mall, is the largest). The interval brackets every class value; it is not a measured spread over the assumed classes, and the pedestrian width is an assumption, not a value tuned to anything (#124)
 
 #### `A.bike_stress.aadt_class_by_highway`
 
@@ -2301,7 +2301,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 19 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 20 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -2316,6 +2316,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.pt.censored_cell_value` | `0.0` | trips per month | `assumed` | 0 - 25 |
 | `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
 | `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
@@ -2384,6 +2385,14 @@ How many independent numbers the objective actually contains. The loop refuses t
 ***derived** · status **active** · DECISIONS.md §12.1*
 
 > **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
+
+#### `CAL.pt.censored_cell_value`
+
+The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series; the validation-target builder still EXCLUDES censored cells from its station means, a pre-registered treatment of the 143 holdout rows that is not changed here - whether it should read this field too is a decision the user takes (#129).
+
+***assumed** · status **active** · DECISIONS.md §9.130*
+
+> **Sweep basis.** the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed
 
 #### `CAL.pt.weekday_factor`
 
@@ -2488,9 +2497,9 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.scoring.marginal_utility_of_money` | `1.0` | utils_per_AUD | `definition` | - |
 | `C.scoring.marginal_utility_of_traveling` | *(null - unobtained)* | utils_per_hour | `derived` | derived: marginalUtilityOfTraveling[m] = performing - trip_weighted_VOT * beta[ |
 | `C.scoring.mode_constant` | *(null - unobtained)* | utils | `derived` | derived: constant[m] = the C1 alternative-specific constant for the mode m maps |
-| `C.scoring.monetary_distance_rate` | `{"car": -0.00018, "ride": -0.00018, "pt": 0.0, "walk": 0.0, "bike": 0.0, "truck": 0.0, "motorbike": 0.0, "n...` | AUD_per_metre | `derived` | derived: a kilometre in a car costs the same kilometre whether you are in the d |
+| `C.scoring.monetary_distance_rate` | `{"car": -0.00018, "ride": -0.00018, "pt": 0.0, "walk": 0.0, "bike": 0.0, "truck": 0.0, "motorbike": 0.0, "n...` | AUD_per_metre | `derived` | -0.00025 - -0.00012 |
 | `C.scoring.performing_utils_per_h` | `6.0` | utils_per_hour | `literature` | 4 - 8 |
-| `C.scoring.utility_of_line_switch` | *(null - unobtained)* | utils | `derived` | derived: utilityOfLineSwitch = -(C.transfer.penalty_min / 60) * trip_weighted_V |
+| `C.scoring.utility_of_line_switch` | *(null - unobtained)* | utils | `derived` | derived: utilityOfLineSwitch = -(C.transfer.beta_transfer_penalty_min / 60) * t |
 | `C.scoring.waiting_pt` | *(null - unobtained)* | utils_per_hour | `derived` | derived: waitingPt = performing - trip_weighted_VOT * beta_wait * marginalUtili |
 | `C.taxi.asc` | `0.0` | utility | `assumed` | -2 - 0 |
 | `C.taxi.wait_min` | `5.0` | minutes | `assumed` | 2 - 12 |
@@ -2749,9 +2758,7 @@ Vehicle operating cost per metre AS PERCEIVED BY THE TRAVELLER MAKING THE CHOICE
 
 ***derived** · status **active** · DECISIONS.md §9.8, 9.13, 9.17 · MATSim `scoring.modeParams[*].monetaryDistanceRate`*
 
-> **Sweep basis.** applies to the car entry only; ride follows it by the identity above, and pt, walk and bike remain zero because no vehicle operating cost is borne by their traveller. Truck is zero because a freight agent's mode is LOCKED (9.49): scoring never compares a truck alternative against anything, so a cost model here would be decoration pretending to be behaviour
-
-> **Derived from** `C.scoring.monetary_distance_rate`: a kilometre in a car costs the same kilometre whether you are in the driver seat or beside it, so ride carries the car rate. This SUPERSEDES the 9.8 identity that set ride to zero: that identity - a vehicle operating cost is paid once, so charging both occupants makes AGGREGATE cost 1.35x the real one - is a statement about system cost accounting, and monetaryDistanceRate is the cost PERCEIVED BY ONE PERSON weighing one alternative. The 9.13 trip length constraint falsified the old treatment: modelled ride to car trip length was 1.372 against an observed 0.961, widening with sample fraction - the signature a zero marginal distance cost produces. See DECISIONS.md 9.17
+> **Sweep basis.** applies to the car entry only; ride follows it by the identity that a kilometre in a car costs the same kilometre whether you are in the driver seat or beside it (DECISIONS.md 9.17, superseding the 9.8 identity that set ride to zero - a statement about aggregate cost accounting, where monetaryDistanceRate is the cost perceived by one person weighing one alternative; the 9.13 trip-length constraint falsified the old treatment at a modelled ride:car trip length of 1.372 against an observed 0.961). pt, walk and bike remain zero because no vehicle operating cost is borne by their traveller. Truck is zero because a freight agent's mode is LOCKED (9.49): scoring never compares a truck alternative against anything, so a cost model here would be decoration pretending to be behaviour
 
 #### `C.scoring.performing_utils_per_h`
 
@@ -2765,7 +2772,7 @@ The scoring penalty for changing transit line, ON TOP of the walk and wait MATSi
 
 ***derived** · status **computed** · DECISIONS.md §9.32 · MATSim `scoring.utilityOfLineSwitch`*
 
-> **Derived from** `C.transfer.penalty_min`, `C.vot.trip_weighted`, `C.scoring.marginal_utility_of_money`: utilityOfLineSwitch = -(C.transfer.penalty_min / 60) * trip_weighted_VOT * marginalUtilityOfMoney
+> **Derived from** `C.transfer.beta_transfer_penalty_min`, `C.vot.trip_weighted`, `C.scoring.marginal_utility_of_money`: utilityOfLineSwitch = -(C.transfer.beta_transfer_penalty_min / 60) * trip_weighted_VOT * marginalUtilityOfMoney
 
 #### `C.scoring.waiting_pt`
 
@@ -3150,7 +3157,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 74 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 75 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3164,6 +3171,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.controler.write_events_interval` | `10` | iterations | `definition` | - |
 | `RUN.controler.write_plans_interval` | `10` | iterations | `definition` | - |
 | `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
+| `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
@@ -3276,6 +3284,12 @@ How often plans are written. Affects disk and wall time, not the model.
 #### `RUN.gate.interval_iterations`
 
 How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.
+
+***definition** · status **active** · DECISIONS.md §9.137*
+
+#### `RUN.gate.retry_interval_s`
+
+How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else.
 
 ***definition** · status **active** · DECISIONS.md §9.137*
 

@@ -100,20 +100,57 @@ def _ts(s):
         return None
 
 
+_ITER_CACHE = {}
+_ITER_LOCK = threading.Lock()
+
+
 def read_iterations(log_path):
-    """(iteration, wall clock) for every iteration the log has begun."""
-    out = []
-    try:
-        with open(log_path, 'r', encoding='utf-8', errors='replace') as f:
-            for line in f:
-                m = ITER_RE.match(line)
-                if m:
-                    t = _ts(m.group(1))
-                    if t is not None:
-                        out.append((int(m.group(2)), t))
-    except OSError:
-        return []
-    return out
+    """(iteration, wall clock) for every iteration the log has begun.
+
+    INCREMENTAL (#131): the first call walks the log once and every later
+    call reads only the bytes appended since, from a saved offset. The
+    digest called the whole-file reader twice every 30 s, which at a 25%
+    arm's 51 GiB log was about 100 GiB of decoded reads a cycle competing
+    with the JVM for the disk. A log that shrinks (a new run in the same
+    directory) resets the offset. Thread-safe: the digest and the gate
+    watcher share one cache.
+    """
+    with _ITER_LOCK:
+        offset, out = _ITER_CACHE.get(log_path, (0, []))
+        try:
+            size = os.path.getsize(log_path)
+        except OSError:
+            return []
+        if size < offset:
+            offset, out = 0, []
+        if size == offset:
+            return list(out)
+        out = list(out)
+        try:
+            with open(log_path, 'rb') as f:
+                f.seek(offset)
+                carry = b''
+                pos = offset
+                while True:
+                    chunk = f.read(1 << 24)
+                    if not chunk:
+                        break
+                    buf = carry + chunk
+                    lines = buf.split(b'\n')
+                    carry = lines.pop()
+                    for raw in lines:
+                        if b'ITERATION' not in raw or b'BEGINS' not in raw:
+                            continue
+                        m = ITER_RE.match(raw.decode('utf-8', errors='replace'))
+                        if m:
+                            t = _ts(m.group(1))
+                            if t is not None:
+                                out.append((int(m.group(2)), t))
+                    pos = f.tell() - len(carry)
+        except OSError:
+            return list(out)
+        _ITER_CACHE[log_path] = (pos, out)
+        return list(out)
 
 
 def read_series(path, keep=None):

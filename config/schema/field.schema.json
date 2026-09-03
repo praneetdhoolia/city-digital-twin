@@ -115,6 +115,14 @@
       "type": "string",
       "description": "How the range was arrived at. An observed spread is worth more than a chosen interval and must say so."
     },
+    "sweep_keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "description": "For a dict-valued field whose interval sweep applies to SOME of its entries only: the entries it applies to. The resolver's integrity rule (every numeric value inside its own sweep, #124) checks these entries and no other; the sweep_basis must say what the remaining entries are and why they stand outside the interval."
+    },
     "status": {
       "enum": [
         "active",

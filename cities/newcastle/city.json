@@ -117,7 +117,29 @@
     "data/processed/observed/external_interaction.json": "build/build_external_interaction.py",
     "schedules": "build/build_era_feeds.py",
     "schedules/scenarios": "build/build_scenario_schedules.py",
-    "scenarios": "build/build_scenario_configs.py"
+    "scenarios": "build/build_scenario_configs.py",
+    "params/C3_count_comparison.json": "build/build_validation_targets.py",
+    "data/processed/network/A1_corridor_road_edges.csv": "build/build_corridor_road_attributes.py",
+    "data/processed/network/A1_road_variant_patches.csv": "build/build_corridor_road_attributes.py",
+    "data/processed/network/A2_turn_restrictions_resolved.csv": "build/build_corridor_road_attributes.py",
+    "data/processed/network/_corridor_attributes_report.json": "build/build_corridor_road_attributes.py",
+    "data/processed/observed/licence_rate_by_age_band.json": "build/build_licence_rates.py",
+    "data/processed/observed/licence_rates_by_age_lga.csv": "build/build_licence_rates.py",
+    "data/processed/observed/light_day_factors.csv": "extract/extract_daytype_factors.py",
+    "data/processed/observed/light_hourly_profile.csv": "extract/extract_daytype_factors.py",
+    "data/processed/validation/_mode_targets_report.json": "build/build_mode_targets.py",
+    "data/processed/validation/mode_targets_by_mode.csv": "build/build_mode_targets.py",
+    "data/processed/validation/pt_boardings_targets.json": "build/build_mode_targets.py",
+    "data/processed/zones/sa1_to_lga.csv": "build/map_sa1_to_lga.py",
+    "networks/matsim/crossings": "build/build_level_crossings.py",
+    "networks/matsim/signals": "build/build_matsim_signals.py",
+    "networks/matsim/schedules/_dwell_report.json": "build/build_charging_dwell_offsets.py",
+    "networks/matsim/schedules/S2/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py",
+    "networks/matsim/schedules/S2a/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py",
+    "networks/matsim/schedules/S2b/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py",
+    "networks/matsim/schedules/S2c/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py",
+    "networks/matsim/schedules/S4/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py",
+    "networks/matsim/schedules/S5/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py"
   },
 
   "sources": [
@@ -126,7 +148,7 @@
       "url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
       "share_alike": false,
-      "provides": ["schedules", "data/raw/opal", "data/raw/counts", "data/raw/hts", "data/raw/jtw"]
+      "provides": ["schedules", "data/raw/opal", "data/raw/counts", "data/raw/hts", "data/raw/jtw", "data/raw/speedzones"]
     },
     {
       "name": "Australian Bureau of Statistics - Census DataPacks, ASGS boundaries",
@@ -150,6 +172,16 @@
       "provides": ["data/raw/dem"]
     }
   ],
+
+  "package_licence": "CC-BY 4.0",
+  "derived_licences": {
+    "data/processed/network/*": "ODbL 1.0",
+    "data/processed/corridor/*": "ODbL 1.0",
+    "data/processed/landuse/*": "ODbL 1.0",
+    "networks/matsim/*": "ODbL 1.0",
+    "scenarios/matsim/*network*.xml.gz": "ODbL 1.0"
+  },
+  "derived_licences_basis": "The layers built from OpenStreetMap geometry carry its share-alike ODbL label (#117): the road, active, signal, parking and gradient network layers; the corridor layers (OSM signals and alignment); the land-use and parking layers (OSM parking, POI and buildings); the MATSim networks and the run networks patched from them. Population, plans, schedules, targets, observations and census-derived layers are CC-BY 4.0: the plans reference OSM way ids as link ids but carry no OSM geometry or tags. Declared here by glob because which of a city's layers embed OSM is a fact about that city's build; the framework names no artefact.",
 
   "unobtained": [
     {

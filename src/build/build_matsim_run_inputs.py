@@ -1295,7 +1295,7 @@ def config_runtime(cfg, scoring, day, paths):
             'performing - trip-weighted VOT * beta_wait * marginalUtilityOfMoney'),
         'scoring.utilityOfLineSwitch': (
             scoring['utility_of_line_switch'], 'derived',
-            '-(C.transfer.penalty_min / 60) * trip-weighted VOT * '
+            '-(C.transfer.beta_transfer_penalty_min / 60) * trip-weighted VOT * '
             'marginalUtilityOfMoney'),
         'scoring.modeParams[*].constant': (
             {m: v['constant'] for m, v in scoring['modes'].items()},

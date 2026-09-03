@@ -44,21 +44,46 @@ sys.path.insert(0, os.path.join(_HERE, '..'))
 from det_io import gzip_writer  # noqa: E402
 import registry                 # noqa: E402
 
-# The seed is NOT a literal here. It resolved from the registry, so there is one
-# copy of it and changing it is a declared change - two copies of a number is the
-# drift this package cannot absorb (DECISIONS.md 15). run_matsim.py passes
-# RUN.machine.seed explicitly; this default only serves a standalone invocation.
-SEED = registry.load().get('RUN.machine.seed')
-# Nor is the capacity floor. It was a literal `1` here while the registry
-# declared RUN.sample.transit_capacity_floor and swept it 1-4, so the sweep
-# moved a number the code never read - a declared parameter reaching nothing,
-# the issue 21 defect class (issue 12).
-CAPACITY_FLOOR = registry.load().get('RUN.sample.transit_capacity_floor')
+# The registry is read ON FIRST USE, not at import (#126). This module is
+# imported by run_matsim.py, which run.py imports unconditionally, so a
+# module-level `registry.load()` here made `run.py --stop` and `--list` need
+# a fully valid registry: while anyone was mid-edit of a layer file the one
+# sanctioned way to stop a running arm was unavailable. run_matsim.py passes
+# every value explicitly; these defaults serve a standalone invocation only.
+_CFG = None
+
+
+def _cfg():
+    global _CFG
+    if _CFG is None:
+        _CFG = registry.load()
+    return _CFG
+
+
+def default_seed():
+    """RUN.machine.seed - NOT a literal here. It resolves from the registry,
+    so there is one copy of it and changing it is a declared change - two
+    copies of a number is the drift this package cannot absorb
+    (DECISIONS.md 15)."""
+    return _cfg().get('RUN.machine.seed')
+
+
+def capacity_floor():
+    """RUN.sample.transit_capacity_floor. It was a literal `1` here while the
+    registry declared the field and swept it 1-4, so the sweep moved a number
+    the code never read - a declared parameter reaching nothing, the issue 21
+    defect class (issue 12)."""
+    return _cfg().get('RUN.sample.transit_capacity_floor')
+
+
+def sample_unit():
+    """RUN.sample.unit - declared, not typed in. `person` reproduces every
+    run made before DECISIONS.md 9.45 byte for byte, which is what makes the
+    two comparable within one build."""
+    return _cfg().get('RUN.sample.unit')
+
+
 CAPACITY_FLOOR_DOC = None
-# The sampling unit is declared, not typed in. `person` reproduces every run
-# made before DECISIONS.md 9.45 byte for byte, which is what makes the two
-# comparable within one build.
-SAMPLE_UNIT = registry.load().get('RUN.sample.unit')
 PERSON_RE = re.compile(r'<person id="([^"]+)"')
 # The boundary tiers carry no householdId at all - they have no B1 household -
 # so the absence of this attribute is meaningful and those agents keep hashing
@@ -86,7 +111,7 @@ CAPACITY_RE = re.compile(r'(<[\w:]*capacity\b[^>]*?)'
                          r'(seats|standingRoomInPersons)(=")(\d+)(")')
 
 
-def keep(person_id, fraction, seed=SEED, household_id=None, unit=None):
+def keep(person_id, fraction, seed=None, household_id=None, unit=None):
     """Uniform in [0,1) from the sampling unit's id, so the sample nests.
 
     The unit is the household where the agent has one and `RUN.sample.unit`
@@ -96,7 +121,9 @@ def keep(person_id, fraction, seed=SEED, household_id=None, unit=None):
     exactly; the household key is namespaced so a household id and a person id
     that happen to be the same integer are still two independent draws.
     """
-    unit = SAMPLE_UNIT if unit is None else unit
+    unit = sample_unit() if unit is None else unit
+    if seed is None:
+        seed = default_seed()
     if unit == 'household' and household_id is not None:
         key = 'household|%s|%d' % (household_id, seed)
     else:
@@ -167,13 +194,16 @@ def lift_cluster_map(src):
     return {h: find(h) for h in list(parent)}
 
 
-def subsample_plans(src, dst, fraction, seed=SEED, unit=None):
+def subsample_plans(src, dst, fraction, seed=None, unit=None):
     n_in = n_out = n_no_household = 0
+    if seed is None:
+        seed = default_seed()
+    if unit is None:
+        unit = sample_unit()
     # 9.60 clusters over the lift couplings; 9.127: the shared-ride drivers
     # are excluded from them (see lift_cluster_map) because the binder keeps
     # them by the unit-hash rule, so the clusters stay small
-    cluster = lift_cluster_map(src) \
-        if (unit or SAMPLE_UNIT) == 'household' else {}
+    cluster = lift_cluster_map(src) if unit == 'household' else {}
     with gzip.open(src, 'rt', encoding='utf-8') as f, gzip_writer(dst) as w:
         buf, pid, hid = None, None, None
         for line in f:
@@ -202,7 +232,7 @@ def subsample_plans(src, dst, fraction, seed=SEED, unit=None):
 def scale_transit_capacity(src, dst, fraction, floor=None):
     """Scale every vehicle type's seat count by the sample fraction."""
     if floor is None:
-        floor = CAPACITY_FLOOR
+        floor = capacity_floor()
     with gzip.open(src, 'rt', encoding='utf-8') as f:
         xml = f.read()
     scaled = []
@@ -229,12 +259,13 @@ def main():
     ap.add_argument('--out-plans', required=True)
     ap.add_argument('--out-vehicles')
     ap.add_argument('--fraction', type=float, required=True)
-    ap.add_argument('--seed', type=int, default=SEED)
+    ap.add_argument('--seed', type=int, default=None,
+                    help='default RUN.machine.seed from the registry')
     a = ap.parse_args()
     n_in, n_out, n_hhless = subsample_plans(a.plans, a.out_plans, a.fraction,
                                             a.seed)
     print('plans: %d of %d persons kept (%.4f), unit %s, %d household-less'
-          % (n_out, n_in, n_out / max(n_in, 1), SAMPLE_UNIT, n_hhless))
+          % (n_out, n_in, n_out / max(n_in, 1), sample_unit(), n_hhless))
     if a.vehicles and a.out_vehicles:
         sc = scale_transit_capacity(a.vehicles, a.out_vehicles, a.fraction)
         print('transit capacity scaled on %d vehicle types: %s'
