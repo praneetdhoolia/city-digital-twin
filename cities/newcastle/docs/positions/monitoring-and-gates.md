@@ -43,6 +43,7 @@
 - **`--trend` omits `freight_train`** and its header still says resident linked trips for every row, while heavy rail and light rail rows now carry boardings (§9.130) — the header is behind the basis.
 - **`--truck-stations` is holdout-bound**: whether to spend holdout on freight is the operator's decision, not the reader's (§9.101, #82).
 - **`fit.py` still folds** (§9.87): the calibration fit scores the survey's categories, the gate scores twelve modes, and the two are distinct instruments by design.
+- **The runner's gate watcher stops on the reporter's pass line as well as its breach line** (#112): `run_matsim.py` keys on the text `GATE:`, which `report_mode_ridership.py` prints on a pass too, so a passing arm at iteration 100 would be recorded aborted; fixed before the first F24 arm. The board renders a deviation for truck and freight rail against a non-target basis (#114).
 
 ## Refused — do not re-raise
 

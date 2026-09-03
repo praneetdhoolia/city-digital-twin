@@ -51,6 +51,7 @@
 - The 2021 journey-to-work origin–destination table stays an attended ABS TableBuilder extract; it replaces the 2011 vintage the day it lands (`B.external.commute_share_to_core` sweep basis, §9.140).
 - **#82**: counts run −91.8% across 30 stations with 6 carrying no modelled traffic; whether the through tier's gates route over the count-station links is untested and run-gated.
 - Not built: the event-demand overlay (§1); era-1 validation against a 2014 timetable (§11); LiDAR for the CBD, pedestrian counts, the floorspace audit (§13). Two ABS DataPack URLs 404 upstream and were never held (`STATUS.md`).
+- **Reproducibility breaks in the data layer** (`docs/reports/20260903T134517_project_report.html`): `extract_hts.py` cannot rebuild the HTS layer (#115); the Opal bus slice has no working producer (#116); the manifest joins four of nine provenance records and 471 of 509 rows carry no licence (#117); the OSM harvest has no provenance record (#118); scenario configs written with absolute paths (#119); censored patronage cells treated three ways (#129).
 
 ## Refused — do not re-raise
 

@@ -48,6 +48,7 @@
 - `run_failure.py` now reads only the log's last 64 MiB (`TAIL_BYTES`, §9.136): the whole-file read held every decoded byte in memory and a 25% arm's 6.9 GB log pushed the machine to exhaustion while its death was being recorded. `read_from` names the window when truncated.
 - `src/run/run_failure.py` quotes the first exception it finds: the F20 arm's `cause_detail` names a benign Guice/ASM warning (`Unsupported class file major version 69`) while its `cause` is the stop by direction — the reader does not distinguish a logged warning from a terminating exception.
 - `RUN.monitor.pace_band_s` = [217, 253] is the 25% × 1000 band; the `_progress.json` digest applies it to 10% arms and reports them out of band (§9.72).
+- **Harness defects from the 3 Sep assessment** (`docs/reports/20260903T134517_project_report.html`): `--stop` and `--list` need a valid registry (#126); the status card is written before input validation (#127); the digest re-reads the whole log every 30 s and the gate depends on the monitor (#131); `results/raw` at 671 GiB against the 500 GB cap, and trim can delete an unextracted run (#132); no Linux launch (#128).
 
 ## Refused — do not re-raise
 
