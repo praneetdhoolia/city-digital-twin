@@ -234,17 +234,17 @@
       "description": "Heavy rail EMU service deceleration."
     },
     "E.s0.heavy_rail_detour_factor": {
-      "value": 1.1,
+      "value": 1.037,
       "units": "factor",
-      "source": "assumed",
+      "source": "measured",
       "sweep": [
         1.0,
-        1.3
+        1.1
       ],
-      "sweep_basis": "how much longer the running alignment is than the straight line between two station sites. Rail on reserved alignment is close to straight, so the range is tight; the road detour factor B.activity.detour_factor is 1.3376 and does NOT apply here.",
+      "sweep_basis": "the western two thirds of the chain is measured at 0.999 on the very formation the heavy rail ran on; the eastern third is bounded by the street-running light rail at 1.089 and by a straight foreshore alignment at 1.0, so the whole chain sits in [1.0, 1.1]. The road detour factor B.activity.detour_factor (1.3376) does NOT apply here.",
       "status": "active",
-      "decisions_ref": "4.3, 9.34, 15",
-      "description": "Path-length multiplier applied to the beeline between S0 station sites when computing run time. A bare 1.10 in an expression until this change, which is the form of literal no module-level constant scan can reach."
+      "decisions_ref": "4.3, 9.34, 9.140, 15",
+      "description": "Path-length multiplier applied to the beeline between S0 station sites when computing run time. MEASURED (3 Sep 2026, 9.140, issue #63 item 5) as path length over beeline of the held light-rail alignment (networks/osm/railways.osm, railway=tram ways named Newcastle Light Railway) between the declared S0 chain anchors: corridor_west -> Civic 1,601 m on the shared former heavy-rail formation against a 1,604 m beeline (0.999); Civic -> Newcastle Station 915 m on the street-running successor against 840 m (1.089); chain-length weighted 2,517 / 2,426 = 1.037. The heavy rail's own foreshore alignment east of Civic survives in OSM only as two abandoned bridge stubs, so the successor's street run bounds that leg from above. A bare 1.10 in an expression until 9.34; assumed 1.1 until 9.140."
     },
     "E.s2b.signal_delay_removed_share": {
       "value": 0.75,

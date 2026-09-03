@@ -72,8 +72,8 @@
     },
     "open_data": {
       "script": "extract/fetch_open_data.py",
-      "produces": ["data/raw/opal", "data/raw/counts", "data/raw/hts"],
-      "description": "Opal patronage, road traffic counts and Household Travel Survey from the TfNSW Open Data Hub."
+      "produces": ["data/raw/opal", "data/raw/counts", "data/raw/hts", "data/raw/jtw"],
+      "description": "Opal patronage, road traffic counts, the Household Travel Survey and the 2011 journey-to-work origin-destination flow from the TfNSW Open Data Hub."
     },
     "statistical": {
       "script": "extract/fetch_abs_dem.py",

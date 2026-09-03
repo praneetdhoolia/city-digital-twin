@@ -537,17 +537,57 @@
         "src/build/build_activity_chains.py"
       ]
     },
-    "B.external.interaction_rate": {
-      "value": 0.08,
-      "units": "probability",
-      "source": "assumed",
+    "B.external.commute_share_to_core": {
+      "value": 0.1377,
+      "units": "share_of_employed_residents",
+      "source": "measured",
       "sweep": [
-        0.04,
-        0.15
+        0.10,
+        0.18
       ],
+      "sweep_basis": "the observation is the 2011 Census journey-to-work flow (the newest origin-destination release TfNSW publishes; the 2016 release was withdrawn by the publisher and 2021 exists only as an attended TableBuilder extract), so the band is +-30% for fifteen years of drift in where the external tier's residents work; it is not a sampling interval",
       "status": "active",
-      "decisions_ref": "9.2, 13",
-      "description": "Rate at which external-tier residents interact with the core. LOCALISABLE BUT NOT YET AVAILABLE: the ABS journey-to-work origin-destination table (SA2 usual residence x SA2 place of work) would settle it. The package holds the place-of-work side but not the pairing. A standard TableBuilder extract, not a formal request (DECISIONS.md 13 priority 11).",
+      "decisions_ref": "9.140",
+      "description": "Share of the external tier's EMPLOYED residents whose place of work lies in the five core LGAs: 4,636 of 33,666 in TfNSW Journey to Work 2011 Table 01 (origin SA2 x destination SA2, data/raw/jtw/bts_jtw_table01_2011_v1_0.zip), the 2021 external-tier SA2s read under their 2011 names (X Surrounds = X Region). Per SA2 it runs 0.5% (Scone Region) to 48.5% (Branxton - Greta - Pokolbin). Recomputed from the raw table by cities/newcastle/build/build_external_interaction.py, which refuses to run if this declared value drifts from it (the 9.116 guard).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.external.employed_share": {
+      "value": 0.4575,
+      "units": "share_of_persons",
+      "source": "measured",
+      "held_fixed": {
+        "rule": "a census count: 32,230 employed persons of 70,448 residents over the 201 external-tier SA1s (2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P); a count has no plausible range to sweep",
+        "decisions_ref": "9.140"
+      },
+      "status": "active",
+      "decisions_ref": "9.140",
+      "description": "Employed persons as a share of ALL persons in the external tier, from the held census tables, so that a commute share stated per employed resident can be applied to the tier's population. Recomputed by cities/newcastle/build/build_external_interaction.py.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.external.interaction_rate": {
+      "value": 0.09,
+      "units": "probability",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "B.external.commute_share_to_core",
+          "B.external.employed_share",
+          "B.external.purpose_split"
+        ],
+        "identity": "interaction_rate = commute_share_to_core x employed_share / purpose_split.HW = 0.1377 x 0.4575 / 0.7 = 0.0900: the tier's boundary agents are generated at this rate per resident and split HW/HO by B.external.purpose_split, so the HW component equals the observed commuters per resident exactly and the HO component inherits the declared purpose split (9.140). Assumed 0.08 until 9.140 (DECISIONS.md 13 priority 11 called for the origin-destination table; the 2011 release is the one obtainable without an attended extract)."
+      },
+      "sweep": [
+        0.06,
+        0.12
+      ],
+      "sweep_basis": "the commute share's own +-30% vintage band carried through the identity; the purpose split's sweep moves the HO component independently",
+      "status": "active",
+      "decisions_ref": "9.2, 13, 9.140",
+      "description": "Rate at which external-tier residents interact with the core - the share of the tier's residents who make a trip into the core on a weekday. Derived from the 2011 journey-to-work origin-destination flow since 9.140; the 2021 table remains an attended TableBuilder extract (DECISIONS.md 13 priority 11) and would replace the 2011 vintage when obtained.",
       "consumers": [
         "src/build/build_activity_chains.py"
       ]
@@ -1558,7 +1598,7 @@
         "src/build/build_matsim_run_inputs.py"
       ]
     },
-    "B.taxi.flagfall_taxi_aud": {
+    "B.taxi.flagfall_taxi": {
       "value": 5.0,
       "units": "AUD",
       "source": "measured",
@@ -1574,7 +1614,7 @@
       ],
       "description": "Taxi flag fall, urban maximum, from 1 July 2025 (archived: data/raw/p2p/tfnsw_p2p_fares_order_june_2025.pdf). Rank-and-hail maxima; the peak-time surcharge, night rates and the $1.32 levy are recorded in the provenance and deliberately NOT added - the mode charges the base schedule and the simplification is stated."
     },
-    "B.taxi.fare_per_km_taxi_aud": {
+    "B.taxi.fare_per_km_taxi": {
       "value": 2.52,
       "units": "AUD_per_km",
       "source": "measured",
@@ -1590,7 +1630,7 @@
       ],
       "description": "Taxi distance rate, urban maximum, first 12 km, from 1 July 2025 (archived with provenance)."
     },
-    "B.taxi.flagfall_rideshare_aud": {
+    "B.taxi.flagfall_rideshare": {
       "value": 1.95,
       "units": "AUD",
       "source": "literature",
@@ -1608,7 +1648,7 @@
       ],
       "description": "Rideshare base fare, literature band, swept."
     },
-    "B.taxi.fare_per_km_rideshare_aud": {
+    "B.taxi.fare_per_km_rideshare": {
       "value": 1.5,
       "units": "AUD_per_km",
       "source": "literature",

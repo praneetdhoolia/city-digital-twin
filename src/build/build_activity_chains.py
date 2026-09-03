@@ -1797,10 +1797,22 @@ def bind_joint_tours(path, day, pctx, seed):
 # ---------------------------------------------------------------------------
 
 # Share of external-tier residents making a trip into the core on a weekday.
-# Assumed - no journey-linked Opal and no external-tier HTS cell exists to
-# estimate it from.
+# Derived since 9.140: the journey-to-work origin-destination flow's commute
+# share of the tier's employed residents, carried to all residents by the
+# census employed share and to all purposes by the declared purpose split
+# (the identity is on the field). The two measured members are recomputed
+# from the raw table by the city's build_external_interaction.py, which
+# refuses if the declared values drift from it.
 EXTERNAL_INTERACTION_RATE = CFG.get('B.external.interaction_rate')
-EXTERNAL_INTERACTION_SWEEP = (0.04, 0.15)
+EXTERNAL_INTERACTION_SWEEP = tuple(CFG.sweep('B.external.interaction_rate'))
+_EXT_IDENTITY = (CFG.get('B.external.commute_share_to_core')
+                 * CFG.get('B.external.employed_share')
+                 / CFG.get('B.external.purpose_split')['HW'])
+if abs(_EXT_IDENTITY - EXTERNAL_INTERACTION_RATE) > 5e-4:
+    raise SystemExit(
+        'B.external.interaction_rate %.4f is not its declared identity '
+        'commute_share_to_core x employed_share / purpose_split.HW = %.4f '
+        '(9.140)' % (EXTERNAL_INTERACTION_RATE, _EXT_IDENTITY))
 # MEASURED (9.61): the external tier scales with the observed light-vehicle
 # day factor - the same quantity, from the same counts, that the freight
 # tier's own day factor comes from (9.49). Replaced the assumed

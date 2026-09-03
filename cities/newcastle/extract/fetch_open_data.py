@@ -44,6 +44,11 @@ M=[
  ("hts/hts_by_sa3_2009-10_to_2019-20.xlsx",B+"c0f9a300-38e5-4086-90fb-c7a1f0b0fe31/resource/75b3e41c-18e6-499d-948d-de735fd8e308/download/data-by-sa3-2009-to-2019_revised-release-feb-2026.xlsx","NSW Household Travel Survey by SA3 2009/10-2019/20","CC-BY 4.0"),
  ("hts/hts_data_document_2020_2024.pdf",B+"c0f9a300-38e5-4086-90fb-c7a1f0b0fe31/resource/5a0ac96e-4562-4ffe-bb96-beb0cb0dca89/download/hts-data-document-2020_2024.pdf","HTS data documentation 2020-2024","CC-BY 4.0"),
  ("hts/hts_data_document_2009_2019.pdf",B+"c0f9a300-38e5-4086-90fb-c7a1f0b0fe31/resource/8c440e30-09b2-4c70-99ed-74a250fb55f9/download/hts-data-document-2009_2019.pdf","HTS data documentation 2009-2019","CC-BY 4.0"),
+ # ---- B.external: the journey-to-work origin-destination flow (9.140, #63
+ #      item 7). 2011 is the newest release TfNSW publishes at SA2 x SA2: the
+ #      2016 release was withdrawn by the publisher (ABS confidentialisation)
+ #      and 2021 exists only as an attended ABS TableBuilder extract.
+ ("jtw/bts_jtw_table01_2011_v1_0.zip",B+"66ee70ff-eb4f-45e5-b45b-90ce484ec178/resource/2dd13d56-2894-4153-bbab-972550629bfe/download/bts_jtw_table01_2011_v1_0.zip","TfNSW Journey to Work 2011, Table 01: origin SA2 x destination SA2, employed persons (2011 Census)","CC-BY 4.0"),
 ]
 root=_city.path('data/raw'); prov=[]
 for rel,url,desc,lic in M:
