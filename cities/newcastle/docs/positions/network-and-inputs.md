@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -38,7 +38,7 @@
 - Corridor trunk: 87.5% of lanes and 97.5% of speeds observed in OSM (§2.5); with speed zones, 669 of 714 corridor edges and 25,109 of 43,112 network edges carry a regulated speed, and imputation on driven roads is 2.6% (§9.34). Still imputed on the corridor: kerbside 678, lane width 704, capacity 714 of 714 (§9.34).
 - Speed-zone join: agreement 74.9% over 18,473 validated edges at 10 m; it collapses to 30% beyond 10 m, which set the radius (§9.34).
 - Pre-LR corridor: 9 of 21 named segments carried a lanes tag in 2016–17 and every one read one lane per direction; the assumed 2 had doubled the counterfactual's capacity (§9.71).
-- Circuity: walk 1.6902, bike 1.5231, road 1.3376 — two active factors, not one (§9.33). Walk speed 1.25 m/s is one number, not two (§9.33). **These were measured on the pre-16-August network**: re-measured on the current network on 3 Sep 2026 they read detour 1.3276, walk 1.6938, bike 1.5570 over 595 / 560 / 562 routed pairs, and the regenerated file was NOT kept, because the values feed the chains and the beeline factors and a change to them is the user's (§9.141).
+- Circuity: walk 1.6938, bike 1.5570, road 1.3276 over 560 / 562 / 595 routed pairs, re-measured on the CURRENT network 4 Sep 2026 and kept, with the chains, plans and run inputs rebuilt on them (§9.142) - two active factors, not one (§9.33). Walk speed 1.25 m/s is one number, not two (§9.33). The superseded set (walk 1.6902, bike 1.5231, road 1.3376 over 531 / 549 / 551 pairs) was measured before the 16 August rebuild, so a committed producer no longer reproduced its committed artefact; the extra pairs are zone pairs the old network could not route between.
 - Harvest defect closed: 87 core SA1s and 31,940 agents (5.2%) had been outside the network (§9.35).
 - 0b: 136 assumed fields enumerated; SAT:SUN 1.1473 and a 1 h weekend shift measured (§9.61); seven source upgrades including `B.population.bike_available_rate` 0.493 (§9.78); the VoT set sits inside ±30% of EPV 2025 except education and the concession factor, recorded not moved (§9.71).
 - Level crossings: 110 and 204 closures a day against an assumed 30 at both (§9.90). A transitRoute's day tag is not its service day: ferry 107 and tram 252 weekday departures (§9.113).
@@ -48,11 +48,11 @@
 
 - **The package on disk is consistent and opens family F24 at its first launch** (§9.140): chains, plans and the 30 run-input sets were rebuilt on 3 Sep 2026 on the derived interaction rate, the LGA-conserved motorbike carve and the leaf-subtour repair; `tests/check_package.py` passes once §9.140 exists in the record (its `decisions_ref` check reads the file).
 - The canonical B1 and D1 files on disk differ from a fresh rebuild only in line endings (normalised digests equal, §9.140); the manifest hashes the bytes on disk, so a rebuild moves those rows without moving a value.
-- **The builder-versus-artefact gate now exists** (§9.141, above); a committed builder had stopped reproducing the committed demand (§9.116) and four artefacts had no producer that could write them (#115, #116, #119, #120). C2 is measured on the superseded network (above): the bike beeline factor 1.5231 sits outside its own per-pair IQR sweep [1.207, 1.456], the producer now defines a sweep that holds the aggregate, and the package check WARNS until C2 is re-measured — a decision, since re-measuring moves the values. Run the suite before believing the board.
+- **The builder-versus-artefact gate now exists** (§9.141); a committed builder had stopped reproducing the committed demand (§9.116) and four artefacts had no producer that could write them (#115, #116, #119, #120). C2 is now measured on the network that runs (§9.142, above), so the bike beeline factor sits inside its own sweep and the package check asserts that as a hard check rather than warning. One more instance was found and closed by the same rule: `build_validation_targets.py` asserted that B2 generates no escort trip, which the §9.15 repair had made false - the committed artefact had been corrected by hand and its producer had not, so every run of the builder silently reverted the correction. The producer now COUNTS the legs (351,645 weekday HX legs) instead of asserting them (§9.142).
 - The 2021 journey-to-work origin–destination table stays an attended ABS TableBuilder extract; it replaces the 2011 vintage the day it lands (`B.external.commute_share_to_core` sweep basis, §9.140).
 - **#82**: counts run −91.8% across 30 stations with 6 carrying no modelled traffic; whether the through tier's gates route over the count-station links is untested and run-gated.
 - Not built: the event-demand overlay (§1); era-1 validation against a 2014 timetable (§11); LiDAR for the CBD, pedestrian counts, the floorspace audit (§13). Two ABS DataPack URLs 404 upstream and were never held (`STATUS.md`).
-- **The 3 Sep assessment's data defects are closed** (#115–#121, §9.141) except the censored-cell rule: `CAL.pt.censored_cell_value` 0 [0, 25] is declared and read by the mode-target builder, and whether the validation-target builder's exclusion of censored cells — a treatment of pre-registered holdout rows — should read it too is the user's decision (#129).
+- **The 3 Sep assessment's data defects are closed** (#115-#121, §9.141) and the censored-cell rule is decided (#129, §9.142): the mode-target builder counts a censored Opal cell as `CAL.pt.censored_cell_value` because its heavy-rail target is a SUM over stations, the validation-target builder EXCLUDES it from its station means because those are MEANS over station-months, and that exclusion is recorded as the pre-registered treatment of those holdout rows. Measured: the package holds ONE censored cell (Tarro, Exit, 1 month of 21), outside the (Train, Entry) series the target sums, so the two rules agree on every scored target and the sweep moves no target at either end. Three guards now refuse a build if that stops being true.
 
 ## Refused — do not re-raise
 
@@ -65,6 +65,7 @@
 
 ## History
 
+- §9.142 — C2 measured on the network that runs; the censoring rule decided
 - §9.141 — producers name artefacts; licences resolved
 - §9.140 — contract city-free; two assumptions measured
 - §9.131 — licence rate measured, package inconsistent
