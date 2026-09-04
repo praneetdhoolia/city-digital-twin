@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -21,6 +21,10 @@
 
 ## What is measured — what a run costs
 
+- **Where an iteration's time actually goes, measured for the first time** (§9.142). The F23 arm's own `output/stopwatch.csv` at iterations 101-103 (673-684 s each): `beforeMobsimListeners` **402-404 s (60%)**, mobsim 193-198 s (29%), replanning 42-46 s, `prepareForMobsim` 25-27 s, `iterationEndsListeners` 3-7 s. `output/ride_pairing.csv`'s `elapsed_ms` for the same iterations is 401,955 / 404,337 / 403,718, so that 60% **is** `RidePairingEngine.notifyBeforeMobsim` to within a second. §9.59 probed every configuration knob and concluded the mobsim was the floor; it never profiled this project's own Java, and the mobsim is now the minority cost.
+- **The cause is one line.** `tripRouter.get()` sits inside `routeDetour`'s per-segment loop, so a whole `TripRouter` - 13 routing-module providers, each `NetworkRoutingProvider.get()` building a fresh least-cost-path calculator over 81,060 nodes - is constructed **~51,600 times an iteration** on one thread (20,437 detour drivers x 2.5-3.3 segments, from the arm's own `RidePairingEngine:916` log line). Hoisting it is a family boundary, because the randomising travel disutility draws a new local RNG per construction at MATSim's default `routingRandomness` 3.0 (§9.142).
+- **164 GiB per run is one warning.** `matsim.log`, `output/logfile.log` and `output/logfileWarningsErrors.log` each reached **54.9 GB** on that arm, ~1.6 GiB an iteration; a 3 MiB sample 25 GiB in held 27,918 lines of which all but two partial lines were `NetworkRoutingProvider:138` warning that `accessEgressType=none` (which is load-bearing and must not change). The only log4j configuration is inside the pinned jar, so the fix is one `Configurator.setLevel` call in the controler mains - logging only, results untouched (§9.142).
+- **Graph rendering costs 3-7 s an iteration** for eight PNGs (`iterationEndsListeners`); §9.59 declared `RUN.controler.create_graphs` for exactly this and the F23 arm still paid it. The committed `f24_gate_25pct` overlay turns it off (§9.142).
 - **Newest measurement wins.** The F23 arm `aborted_20260901T165115_300it_25pct` (25% × 300, 10 qsim threads, 40g heap, the behaviour-channels stack) reached its iteration-100 gate in ~18.1 h at a median 664.9 s/it (§9.139, its `_progress.json`), confirming §9.136's 45–50 h costing for a full 300. The F22 arm ran the same shape at ~504 s/it early to 630–670 by 100, gate in ~17.6 h (§9.136). The 10% economics stand at §9.134: solo 170.9–182.1 s/it, median 249.4 by iteration 100, ~18–21 h per 300 — historical only, the 1 Sep directive says 25% runs only (§9.139).
 - **A 25% arm's log is ~51 GiB by its gate** (measured on both `aborted_20260831T165127_300it_25pct` 47.7 GiB and `aborted_20260901T165115_300it_25pct` 51.1 GiB, §9.139): `NetworkRoutingProvider:138` WARN spam is the bulk — every sampled tail line at 300 MiB before EOF was that one warning. It is why the log-tail iteration read failed, and a disk-budget item for the `RUN.storage.raw_cap_gb` = 500 cache.
 - The last 25% arm, the F14 `20260830T083019_1000it_25pct`, cleared iteration 6 at a median 288 s/it before its console stop (§9.119, §9.120). The F12 10% arm `20260829T054941_1000it_10pct` ran at 108 s/it (§9.94); the brief attributes the rise since to the driver detour and the shared-ride pass.
@@ -64,6 +68,7 @@
 
 ## History
 
+- §9.142 — the iteration profiled; 60% is one hoistable call
 - §9.141 — card after validation; stop needs no registry
 - §9.140 — launcher refuses behind open issues
 - §9.139 — gate watcher blind at 25%, fixed
