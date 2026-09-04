@@ -46,11 +46,11 @@ What the arm answers, in order:
    bound trips never reach plan memory), not for the pairing rule.
 5. The `awaiting-run` measurements: #93, #96, #94, #98, #108, #107, #82, #131.
 
-**Then the iteration's cost.** §9.142 profiled it: 60 % of a 673–684 s
-iteration is `RidePairingEngine.notifyBeforeMobsim`, which constructs ~51,600
-`TripRouter`s an iteration; the same call writes 164 GiB of one warning per
-run. Hoisting the router is a family boundary, so it belongs BEFORE a launch,
-not after one.
+**The iteration is already repaired** (§9.142), so the arm costs ~24 h rather
+than 45–50: the detour pass's router is hoisted (`elapsed_ms` 2,868 → 300 ms an
+iteration at 1 %) and the routing log storm is silenced (17,375 → 0 warnings,
+~164 GiB → ~3 GiB a run). Both are in this session's PR. The pace figure is
+PROJECTED from a 1 % probe; this arm measures the real one.
 
 **Decisions the user must take** (the board's *Next*): the stated-cost
 approval; the root-cause pick after the gate; the Task Scheduler operational

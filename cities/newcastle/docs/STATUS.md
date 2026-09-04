@@ -89,36 +89,38 @@ requirement-10 refusal clears when they close.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260904T161721_2it_1pct` | ? | F23-behaviour-channels | - | - |
+| `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
+| `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
+| `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
+| `20260904T162301_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
+| `20260904T161721_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
 | `20260904T161108_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T160128_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T154640_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T153456_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `aborted_20260901T165115_300it_25pct` | aborted | F23-behaviour-channels | 104 | Stopped by the session at the iteration-100 gate under the GOAL.md loop: 7 modes at or past 20% deviation (heavy_rail +193.2%, bike +111.... |
 
-132 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+136 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **The first F24 arm, under a fresh stated-cost approval** (~45–50 h at
-   25% × 300 on the F23 pace, §9.136 — less if the profiled iteration cost comes
-   down, §9.142). It is the first arm to read a balanced corridor, and it reads
+1. **The first F24 arm, under a fresh stated-cost approval** (~24 h at
+   25% × 300 on the repaired iteration, projected from a 9.6x fall in the detour
+   pass; the F23 arm measured 45–50 h, §9.136, §9.142). It is the first arm to read a balanced corridor, and it reads
    all twelve modes at its gate plus what the `awaiting-run` issues name (#93,
    #96, #94, #98, #108, #107, #82, #131). Two readings are repairs working, not
    regressions: taxi should read HIGHER than F23's +76.6 % because a refused trip
    now keeps taxi (#113), and light rail and heavy rail move on the corridor
    (#30, #98).
-2. **The iteration's cost, measured rather than modelled** (§9.142): 60 % of a
-   673–684 s iteration is `RidePairingEngine.notifyBeforeMobsim`, which builds
-   ~51,600 `TripRouter`s an iteration and writes 164 GiB of one warning per run.
-   Hoisting it is a family boundary, which costs nothing before F24 launches.
+2. **A run of this model is not reproducible bit for bit** (§9.142): three runs
+   of one unmodified build, same package and seed, gave 5,620,710 / 5,620,410 /
+   5,620,710 iteration-0 events. MATSim's own RNG counter is unsynchronised under
+   20 threads. Mode shares were identical, so a gate reading is safe, but the
+   determinism constraint as written does not hold. **A decision, not run-gated.**
 3. **The user picks the next root cause** after the F24 gate: the ride plan
    variant #86 now names (46,345 bound trips that never reach plan memory), the
    income channel's disposition (#108), or the ferry's reach bound (#94).
 
-**Decisions required:** a stated-cost approval for the first F24 arm; the
-root-cause pick after its gate; enable the Task Scheduler operational log
+**Decisions required:** a stated-cost approval for the first F24 arm (~24 h
+projected); whether to make a run reproducible, given that three runs of one
+build disagree (§9.142); the root-cause pick after its gate; enable the Task Scheduler operational log
 (#66); whether the S2 base grants the tram signal priority
 ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
 The three that held the launcher are taken (§9.142).
