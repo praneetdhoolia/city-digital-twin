@@ -35,6 +35,31 @@ jobs:
       - name: The registry resolver's integrity rules fire on the breaks they guard (#124)
         run: python tests/check_registry_rules.py
 
+  unit:
+    name: unit tests (the functions that decide correctness)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      # Until 4 Sep 2026 every verification in this repository was a WHOLE-PACKAGE
+      # check script: the functions that decide correctness were exercised only
+      # when a real 2.3 GiB package or a real run happened to pass through them,
+      # which is how the gate watcher, the taxi restore, the seed check and the
+      # registry integrity breaks all survived every gate (#133). tests/unit/
+      # drives them on synthetic inputs instead - a rendered value, an output
+      # document, a fake run directory, a scored metric - so a break shows up in
+      # the diff that caused it. No package, no network, no run: the whole
+      # directory is sub-second.
+      #
+      # pandas is not the tests' own dependency: importing src/run/run_matsim.py
+      # pulls in the run-input builder, which reads a committed csv with it.
+      - name: Install pytest and the run module's one dependency
+        run: pip install pytest pandas
+      - name: Every unit test passes
+        run: python -m pytest -q tests/unit
+
   manifest:
     name: manifest integrity (committed files)
     runs-on: ubuntu-latest

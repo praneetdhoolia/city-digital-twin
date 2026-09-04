@@ -18,6 +18,14 @@ proves the SCATS priority extension moves the tram's drop on a three-stage
 plan and refuses honestly when the tram stage is last; `RemodeRestoreProbe`
 (#113) proves a trip forced to walk gets its mode back through the re-find
 both engines now share.
+
+The list has grown past the signals stack (#133): a probe here is how a Java
+class that decides correctness is exercised without a scenario, and the pinned
+toolchain carries no test framework - adding one would be a toolchain change
+(DECISIONS.md 14). `GatedSubtourProbe` proves the mode-choice wrapper reverts
+an impermissible proposal in full; `PtFareProbe` proves the Opal fare lookup
+reads the band, the rider class and the daily cap the schedule declares. Both
+run in seconds on a plan and a schedule built in memory.
 """
 import glob
 import os
@@ -32,7 +40,11 @@ PROBES = ('citysim.SignalsAssemblyProbe', 'citysim.TramPriorityProbe',
           # #125: SCATS priority on a three-stage plan, donor direction
           'citysim.ScatsPriorityProbe',
           # #113: the re-moded trip restore, shared by ride and taxi
-          'citysim.RemodeRestoreProbe')
+          'citysim.RemodeRestoreProbe',
+          # #133: the mode-choice wrapper's full revert of a refused proposal
+          'citysim.GatedSubtourProbe',
+          # #133: the PT fare band, the rider class and the daily cap
+          'citysim.PtFareProbe')
 
 
 def java_exe():
