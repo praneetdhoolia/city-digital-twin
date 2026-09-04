@@ -130,7 +130,7 @@ The three that held the launcher are taken (§9.142).
 | The F24 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
 | Ride: the binders reach 20.13% of core trips but 46,345 bound trips never become a ride alternative in plan memory (§9.142) | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F24 gate, then the per-trip plan variant behind `GatedSubtourProbe` |
 | Heavy rail +193 % at the F23 gate; income scaling blunts the fare (§9.139) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | where rail settles once the corridor's CBD end (#30) is repaired |
-| Light rail and heavy rail: the corridor's CBD end received 5.38% of work trip ends against 8.27% of the attraction (§9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F24 gate, on a draw balanced at the destination end |
+| Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F24 gate: the stops are a subset of the CBD and the mode is still chosen |
 | Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F24 gate (§9.140) |
 | Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals on F21 |
 | Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | F24 shares by car availability |

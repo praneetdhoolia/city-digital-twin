@@ -477,9 +477,11 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     origin sends the right number of trips the right average distance, and
     nothing requires a destination to RECEIVE the share of arrivals its own
     attraction states. Measured on the committed demand it does not - the
-    corridor's CBD end holds 8.27% of core work attraction and received 5.38%
-    of work trip ends, and the shortfall widened with distance, so no
-    calibration of one decay per purpose could close it: a size x distance
+    corridor's CBD end holds 8.27% of core work attraction while the worst zone's
+    share of arrivals sat 12.9x its own attraction share away from it, shopping
+    received 0.59x and other 0.69x of theirs (9.136), and the shortfall widened
+    with distance, so no calibration of one decay per purpose could close it: a
+    size x distance
     kernel cannot concentrate arrivals the way an agglomeration does.
 
     The standard repair constrains the destination end too (Wilson 1967; the
