@@ -156,13 +156,46 @@ public final class ScatsSignalController extends AbstractSignalController {
 
         private final Map<Id<Link>, int[]> counts = new ConcurrentHashMap<>();
 
+        /**
+         * The same cells reached by {@code Id.index()} instead of by hashing.
+         *
+         * <p>{@link #handleEvent} is on the mobsim's hottest path - every
+         * link-leave in the network, ~65 M an iteration on a 25% arm - and all
+         * it needs to know is whether this link is one of the few hundred
+         * signalised approaches. An array index answers that; a map lookup
+         * hashed an {@code Id} 65 M times to say "no" almost every time.
+         *
+         * <p>The array is written only by {@link #watch}, called from each
+         * controller's {@code simulationInitialized} before the mobsim's first
+         * step, so the REFERENCE is volatile (it may be reallocated there) and
+         * the cells are not - the counter increment is exactly as unsynchronised
+         * as it was, and deliberately so: MATSim hands one handler's events to
+         * one thread.
+         */
+        private volatile int[][] cellsByLink = new int[0][];
+
         void watch(final Id<Link> linkId) {
-            this.counts.computeIfAbsent(linkId, k -> new int[1]);
+            final int[] cell = this.counts.computeIfAbsent(linkId,
+                                                           k -> new int[1]);
+            final int i = linkId.index();
+            if (i < 0) {
+                return;
+            }
+            if (i >= this.cellsByLink.length) {
+                this.cellsByLink =
+                        java.util.Arrays.copyOf(this.cellsByLink, i + 256);
+            }
+            this.cellsByLink[i] = cell;
         }
 
         @Override
         public void handleEvent(final LinkLeaveEvent event) {
-            final int[] cell = this.counts.get(event.getLinkId());
+            final int[][] cells = this.cellsByLink;
+            final int i = event.getLinkId().index();
+            if (i < 0 || i >= cells.length) {
+                return;
+            }
+            final int[] cell = cells[i];
             if (cell != null) {
                 cell[0]++;
             }

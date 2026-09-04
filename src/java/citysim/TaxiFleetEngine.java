@@ -256,10 +256,13 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
                 if (origin.getEndTime().isDefined()) {
                     clock = origin.getEndTime().seconds();
                 }
-                if (!RemodeRestore.isAllMode(trip, TAXI)) {
+                // ONE getLegsOnly() for the whole trip: it allocates a filtered
+                // list per call and this loop used to make three of them for
+                // every trip of every person, every iteration.
+                final List<Leg> legs = trip.getLegsOnly();
+                if (!RemodeRestore.isAllMode(legs, TAXI)) {
                     continue;
                 }
-                final List<Leg> legs = trip.getLegsOnly();
                 final OptionalTime dep = legs.get(0).getDepartureTime();
                 final double departure = dep.isDefined() ? dep.seconds() : clock;
                 if (Double.isNaN(departure)) {

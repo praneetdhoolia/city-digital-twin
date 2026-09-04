@@ -344,6 +344,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
          * only be carried on a segment of it, so the path - not the pair of
          * endpoints - is what a containment test and a time apportionment need.
          * Rewritten by a 9.128 detour, which is why it is not final.
+         *
+         * <p>Built LAZILY by {@link #path()}. It copies every link of the
+         * driver's route, and under `rule=both_links` - the committed rule -
+         * it is read only for the handful of legs that actually carry someone
+         * or detour: 372,945 car legs an iteration were being copied to serve
+         * ~61,000 pairings. Null means "not built yet"; the route is immutable
+         * until {@code routeDetour} rewrites it, and that writes the new path
+         * over this field in the same breath, so the lazy value can never be
+         * stale.
          */
         private List<Id<Link>> path;
         private int carrying = 0;
@@ -355,7 +364,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
 
         DriverLeg(final Id<Person> person, final Id<Link> from, final Id<Link> to,
                   final double departure, final double routedTravelTime,
-                  final List<Id<Link>> path, final Leg leg, final Route route) {
+                  final Leg leg, final Route route) {
             this.leg = leg;
             this.route = route;
             this.person = person;
@@ -363,7 +372,14 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             this.to = to;
             this.departure = departure;
             this.routedTravelTime = routedTravelTime;
-            this.path = path;
+        }
+
+        /** The driven path, built on first use. See {@link #path}. */
+        private List<Id<Link>> path() {
+            if (this.path == null) {
+                this.path = drivenPath(this.route);
+            }
+            return this.path;
         }
     }
 
@@ -563,7 +579,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                                                    route.getStartLinkId(),
                                                    route.getEndLinkId(),
                                                    departure, travel,
-                                                   drivenPath(route), leg, route));
+                                                   leg, route));
                     }
                 } else if (TransportMode.ride.equals(leg.getMode())) {
                     if (hh == null) {
@@ -852,12 +868,29 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         int detourDrivers = 0;
         double detourExtraS = 0.0;
         int detourRefused = 0;
+        // ONE router for every detour of this iteration. `Provider<TripRouter>`
+        // is UNSCOPED: each get() runs all thirteen routing-module providers
+        // and NetworkRoutingProvider builds a fresh SpeedyALT
+        // LeastCostPathCalculator over the whole 81,060-node network. Asking
+        // per detour SEGMENT - what this loop used to do, through
+        // routeDetour's own tripRouter.get() - built ~51,600 routers per
+        // iteration on the F23 arm and cost 402 s of the 673 s iteration
+        // (measured: beforeMobsimListeners 402 s against this class's own
+        // elapsed_ms of 401,955). A TripRouter is reusable and this loop is
+        // single-threaded, so one is all it needs.
+        //
+        // Obtained here rather than at the top of the method so that a run
+        // with nothing to detour still constructs NO router, exactly as
+        // before: RandomizingTimeDistanceTravelDisutility draws from
+        // MatsimRandom.getLocalInstance() on construction, so the NUMBER of
+        // routers built is part of the random sequence.
+        final TripRouter router = detours.isEmpty() ? null : tripRouter.get();
         for (final Map.Entry<DriverLeg, List<RideLeg>> e : detours.entrySet()) {
             final DriverLeg driver = e.getKey();
             final List<RideLeg> carried = e.getValue();
             carried.sort(Comparator.<RideLeg>comparingDouble(r -> r.departure)
                                  .thenComparing(r -> r.person));
-            final Map<RideLeg, Double> passAt = routeDetour(driver, carried);
+            final Map<RideLeg, Double> passAt = routeDetour(router, driver, carried);
             if (passAt == null) {
                 detourRefused += carried.size();
                 missEndpoints += carried.size();
@@ -944,8 +977,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      * write it to the driver's plan. Returns, per passenger, the clock at
      * which the car reaches their origin link; null - with the plan
      * untouched - when any segment cannot be routed.
+     *
+     * @param router the iteration's ONE TripRouter, supplied by the caller. It
+     *               used to be pulled from the unscoped provider inside the
+     *               per-segment loop below, which built a whole router - and a
+     *               whole least-cost-path calculator over the network - for
+     *               every one of ~51,600 segments an iteration.
      */
-    private Map<RideLeg, Double> routeDetour(final DriverLeg driver,
+    private Map<RideLeg, Double> routeDetour(final TripRouter router,
+                                             final DriverLeg driver,
                                              final List<RideLeg> carried) {
         if (!(driver.route instanceof NetworkRoute)) {
             return null;
@@ -981,7 +1021,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             if (la == null || lb == null) {
                 return null;
             }
-            final List<? extends PlanElement> routed = tripRouter.get().calcRoute(
+            final List<? extends PlanElement> routed = router.calcRoute(
                     TransportMode.car, FacilitiesUtils.wrapLink(la),
                     FacilitiesUtils.wrapLink(lb), clock, person, new AttributesImpl());
             if (routed == null || routed.size() != 1 || !(routed.get(0) instanceof Leg)) {
@@ -1163,8 +1203,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // passes the passenger's destination before their origin is
                 // going the other way, and pairing those two would carry
                 // somebody backwards.
-                final int i = driver.path.indexOf(ride.from);
-                final int j = driver.path.lastIndexOf(ride.to);
+                final List<Id<Link>> driven = driver.path();
+                final int i = driven.indexOf(ride.from);
+                final int j = driven.lastIndexOf(ride.to);
                 return i >= 0 && j >= 0 && i <= j;
             case RidePairingConfigGroup.RULE_WINDOW_ONLY:
                 return true;
@@ -1198,15 +1239,29 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      * whole route, so `both_links` reproduces the previous behaviour exactly.
      */
     private double carriedShare(final DriverLeg driver, final RideLeg ride) {
-        final int i = driver.path.indexOf(ride.from);
-        final int j = driver.path.lastIndexOf(ride.to);
+        final List<Id<Link>> driven = driver.path();
+        final int i = driven.indexOf(ride.from);
+        final int j = driven.lastIndexOf(ride.to);
         if (i < 0 || j < 0 || j < i) {
+            return 1.0;
+        }
+        // The segment IS the whole route, so it needs no measuring. Under
+        // `rule=both_links` - the committed rule - endpointsMatch has already
+        // forced driver.from == ride.from and driver.to == ride.to, and
+        // drivenPath puts those at the two ends of the list, so this is the
+        // case EVERY pairing takes: it used to walk the whole path and look up
+        // every link in the network map to divide a number by itself. The two
+        // sums below would be built from identical additions in identical
+        // order, so their quotient is exactly 1.0 and this return is
+        // bit-for-bit what the loop produced (the total <= 0 branch returns
+        // 1.0 as well).
+        if (i == 0 && j == driven.size() - 1) {
             return 1.0;
         }
         double total = 0.0;
         double segment = 0.0;
-        for (int k = 0; k < driver.path.size(); k++) {
-            final Link link = scenario.getNetwork().getLinks().get(driver.path.get(k));
+        for (int k = 0; k < driven.size(); k++) {
+            final Link link = scenario.getNetwork().getLinks().get(driven.get(k));
             final double length = link == null ? 0.0 : link.getLength();
             total += length;
             if (k >= i && k <= j) {

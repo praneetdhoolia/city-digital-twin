@@ -102,10 +102,23 @@ final class RemodeRestore {
     /** Every leg of the trip is of the mode - the trip the engine forced,
      *  not some other trip the agent was always going to make that way. */
     static boolean isAllMode(final Trip trip, final String mode) {
-        if (trip.getLegsOnly().isEmpty()) {
+        return isAllMode(trip.getLegsOnly(), mode);
+    }
+
+    /**
+     * The same test on legs the caller already holds.
+     *
+     * <p>{@code Trip.getLegsOnly()} builds a fresh filtered list on every call,
+     * and this test used to call it twice by itself. {@code TaxiFleetEngine}
+     * then asked for the legs a third time for the trip it accepted, so every
+     * taxi-eligible trip of every person, every iteration, allocated three
+     * throwaway lists - on the order of 2 M an iteration at 25%.
+     */
+    static boolean isAllMode(final java.util.List<Leg> legs, final String mode) {
+        if (legs.isEmpty()) {
             return false;
         }
-        for (final Leg leg : trip.getLegsOnly()) {
+        for (final Leg leg : legs) {
             if (!mode.equals(leg.getMode())) {
                 return false;
             }

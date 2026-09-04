@@ -635,6 +635,21 @@ public final class TramPriorityController extends AbstractSignalController
 
         private final Set<Id<Vehicle>> transitVehicles =
                 ConcurrentHashMap.newKeySet();
+        /**
+         * The same membership by {@code Id.index()}.
+         *
+         * <p>{@link #handleEvent(LinkEnterEvent)} runs on every link-enter in
+         * the network - ~65 M an iteration on a 25% arm - and its first act is
+         * to ask "is this a transit vehicle?", which for all but a few thousand
+         * of them is "no". That question was answered by hashing an {@code Id}
+         * into a concurrent key set; an array index answers it without hashing.
+         *
+         * <p>The array is sized in {@link #reset} off the vehicle id space, so
+         * it is never reallocated while events flow; a vehicle whose index
+         * somehow falls outside it is answered from the set, which is still
+         * maintained and is still the authority.
+         */
+        private volatile boolean[] transitByVehicle = new boolean[0];
         private final Map<Id<Vehicle>, Double> lastKnownDelayS =
                 new ConcurrentHashMap<>();
         /** approach link -> systems watching it (rebuilt each mobsim). */
@@ -677,6 +692,21 @@ public final class TramPriorityController extends AbstractSignalController
         @Override
         public void handleEvent(final TransitDriverStartsEvent event) {
             this.transitVehicles.add(event.getVehicleId());
+            final boolean[] flags = this.transitByVehicle;
+            final int i = event.getVehicleId().index();
+            if (i >= 0 && i < flags.length) {
+                flags[i] = true;
+            }
+        }
+
+        /** Is this vehicle a transit vehicle? See {@link #transitByVehicle}. */
+        private boolean isTransit(final Id<Vehicle> vehicle) {
+            final boolean[] flags = this.transitByVehicle;
+            final int i = vehicle.index();
+            if (i >= 0 && i < flags.length) {
+                return flags[i];
+            }
+            return this.transitVehicles.contains(vehicle);
         }
 
         @Override
@@ -691,7 +721,7 @@ public final class TramPriorityController extends AbstractSignalController
 
         @Override
         public void handleEvent(final LinkEnterEvent event) {
-            if (!this.transitVehicles.contains(event.getVehicleId())) {
+            if (!isTransit(event.getVehicleId())) {
                 return; // not a transit vehicle: never a tram
             }
             final Set<Id<SignalSystem>> systems =
@@ -710,6 +740,10 @@ public final class TramPriorityController extends AbstractSignalController
         @Override
         public void reset(final int iteration) {
             this.transitVehicles.clear();
+            // Sized off the vehicle id space here, immediately before the
+            // mobsim, so the fast path is never reallocated while events flow.
+            this.transitByVehicle =
+                    new boolean[Id.getNumberOfIds(Vehicle.class) + 1024];
             this.lastKnownDelayS.clear();
             this.pending.clear();
             // registrations are rebuilt by each controller's

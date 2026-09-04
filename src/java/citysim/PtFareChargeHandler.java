@@ -248,10 +248,16 @@ public final class PtFareChargeHandler implements
             return RiderClass.ADULT;
         }
         final Object ageAttr = person.getAttributes().getAttribute("age");
-        if (!(ageAttr instanceof Integer)) {
+        // `instanceof Number`, not `instanceof Integer`: the SAME attribute is
+        // read as a Number by AvailabilityModesCalculator, so an age written as
+        // a Long was charged the ADULT fare here while being gated as a child
+        // there. The committed plan builder writes java.lang.Integer, so the
+        // divergence was latent rather than live; PtFareProbe now ASSERTS that
+        // a Long age of 10 pays the child fare (issue #133).
+        if (!(ageAttr instanceof Number)) {
             return RiderClass.ADULT;
         }
-        final int age = (Integer) ageAttr;
+        final int age = ((Number) ageAttr).intValue();
         if (age < this.cfg.getChildMinAge()) {
             return RiderClass.FREE;
         }

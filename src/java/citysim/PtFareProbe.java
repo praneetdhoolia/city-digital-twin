@@ -61,14 +61,16 @@ import org.matsim.vehicles.Vehicle;
  *     further money event is emitted at all.</li>
  * </ul>
  *
- * <p><b>Reported, not asserted:</b> the handler reads the age attribute as
- * {@code instanceof Integer}, while {@link AvailabilityModesCalculator} reads
- * the same attribute as {@code instanceof Number}. A {@code Long} age
- * therefore falls through to the Adult table instead of the Child one, and
- * the probe prints what it measured rather than claiming a verdict: the
- * committed population writes {@code class="java.lang.Integer"}, so this is a
- * latent divergence between two readers of one attribute, not a live defect,
- * and the probe records it where the next session will see it.
+ * <p><b>The boxed-type check, and why it is asserted.</b> This probe found the
+ * handler reading the age attribute as {@code instanceof Integer} while
+ * {@link AvailabilityModesCalculator} read the same attribute as
+ * {@code instanceof Number}: a {@code Long} age of 10 was charged the ADULT
+ * fare by one reader and gated as a child by the other. The committed
+ * population writes {@code class="java.lang.Integer"}, so it was latent rather
+ * than live - and a latent divergence between two readers of one attribute is
+ * exactly what a demand change makes live without anybody noticing. The
+ * handler now reads a {@code Number}, and the probe ASSERTS that an age of 10
+ * pays the child fare whichever boxed integral type carries it.
  *
  * <p>One JSON line on stdout; exit 0 only if every asserted check holds.
  */
@@ -147,23 +149,16 @@ public final class PtFareProbe {
             .append(",\"below_child_min_age_is_free\":").append(infantFree)
             .append(",\"no_age_attribute_is_adult\":").append(noAgeIsAdult);
 
-        // reported, not asserted - see the class comment
+        // ASSERTED since the handler was fixed to read the attribute as a
+        // Number: an age of 10 pays the child fare whichever boxed integral
+        // type the population wrote it as, so the fare reader and
+        // AvailabilityModesCalculator can no longer disagree about one agent.
         final double longAge = rider.charged("p_long_child");
-        final boolean longAgeReadsAdult = eq(longAge, 4.00);
+        final boolean longAgeIsChild = eq(longAge, rider.charged("p_child"));
+        ok &= longAgeIsChild;
         json.append(",\"long_age_fare\":").append(longAge)
-            .append(",\"long_age_reads_adult\":").append(longAgeReadsAdult);
-        if (longAgeReadsAdult) {
-            System.err.println("REPORTED, not a probe failure: a Long `age` "
-                    + "attribute is charged the ADULT fare (" + longAge
-                    + ") where an Integer age of the same value is charged the "
-                    + "child fare (" + rider.charged("p_child") + "). "
-                    + "PtFareChargeHandler reads the attribute as `instanceof "
-                    + "Integer`; AvailabilityModesCalculator reads the same "
-                    + "attribute as `instanceof Number`. The committed "
-                    + "population writes class=\"java.lang.Integer\", so this "
-                    + "is a latent divergence between two readers of one "
-                    + "attribute.");
-        }
+            .append(",\"long_age_pays_the_child_column\":")
+            .append(longAgeIsChild);
 
         // --- 4. the daily cap ---------------------------------------------
         // Four 7 km off-peak adult journeys at 4.00 each against a cap of
