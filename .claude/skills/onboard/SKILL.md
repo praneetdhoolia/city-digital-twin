@@ -79,7 +79,10 @@ Then the classes no checker covers, each a one-line question:
 - An open issue the record has overtaken (a position page says *built* or
   *measured* under an issue number that is still open).
 - Uncommitted work in the tree, or commits ahead of `main` with no PR.
-- A run directory with no `_run.json` and no cause.
+- A run directory with no `_run.json` and no cause. (A run that was STOPPED
+  deliberately should carry both - a record saying `stopped_at_gate` or
+  `stopped_by_operator`, and the cause on its `_meta.json`; one that carries
+  neither is a run nobody closed out.)
 - A document that states the project's goal differently from `GOAL.md`.
 
 Each gap goes in the briefing. **Fixing them is scoped work the user decides
@@ -111,7 +114,9 @@ traps — each has already cost a day:
 - **No invented data**; an unobserved value is derived, or declared with a sweep.
 - **The 67/143 holdout is never opened.** **Never compare across families,
   fractions or network builds.** **One arm at a time**; never recompile
-  `.tools/classes` while one runs. **A run without `_run.json` is not a result.**
+  `.tools/classes` while one runs. **A run is a result only if its `_run.json`
+  says `ran_to_last_iteration`**; a stopped arm's record is a citable reading at
+  its `reached_iteration`, not a result.
 - Branch `<git-handle>/<kebab>`, never `claude/*`; no attribution trailers, no
   session links; **never commit to `main`**; the session's ONE PR opens at
   `/handoff`.

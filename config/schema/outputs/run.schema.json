@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/praneetdhoolia/city-digital-twin/config/schema/outputs/run.schema.json",
   "title": "_run.json - the run record",
-  "description": "Written by src/run/run_matsim.py on a successful run, and ONLY on a successful run: its presence is what makes a run resumable, and a run that died leaves none. Everything needed to identify and repeat the run.",
+  "description": "Written by src/run/run_matsim.py when a run ends at a DEFINED BOUNDARY: it ran every declared iteration, or it was deliberately stopped - by the gate watcher under the GOAL.md loop, or by the operator through run.py --stop. A run that CRASHED leaves none, and that is still what separates a run whose reading can be cited from a directory that cannot explain itself. The record no longer means 'this run converged': `completion` says which boundary ended it, and only `ran_to_last_iteration` means the run executed the horizon it declared. Readers that mean 'a complete arm' MUST ask `completion`, not mere presence - resume matching and the calibrated base both do. Records written before that field existed were only ever written on rc=0, so a MISSING `completion` reads as `ran_to_last_iteration`.",
   "type": "object",
   "required": [
     "name",
@@ -13,7 +13,8 @@
     "threads",
     "seed",
     "rc",
-    "wall_s"
+    "wall_s",
+    "completion"
   ],
   "properties": {
     "name": {
@@ -59,8 +60,11 @@
       "description": "Relative path to the resolved registry snapshot for this run. A result without one cannot state what inputs produced it."
     },
     "rc": {
-      "type": "integer",
-      "description": "Process return code. 0 on success."
+      "type": [
+        "integer",
+        "null"
+      ],
+      "description": "Process return code. 0 on a run that reached its horizon; the JVM's non-zero code on a gate stop. NULL on `stopped_by_operator`: --stop kills the harness as well as the JVM, so no process survived to observe a code, and recording a made-up one would state something the run did not."
     },
     "wall_s": {
       "type": "number",
@@ -120,6 +124,30 @@
         }
       },
       "additionalProperties": false
+    },
+    "completion": {
+      "type": "string",
+      "enum": [
+        "ran_to_last_iteration",
+        "stopped_at_gate",
+        "stopped_by_operator"
+      ],
+      "description": "Which boundary ended the run. `ran_to_last_iteration` - the run executed every iteration it declared (this is NOT a claim of convergence; DECISIONS.md 9.7 holds that separately). `stopped_at_gate` - the runner's own watcher stopped it at a GOAL.md gate because a mode was at or past the stop bar. `stopped_by_operator` - a person or session stopped it through run.py --stop with a stated cause. A stopped run's reading up to `reached_iteration` is real and citable; the run is NOT a complete arm and must never anchor a calibrated base or satisfy resume."
+    },
+    "reached_iteration": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "The last iteration the run actually ended, read from its own progress digest or log. Equals `iterations` on `ran_to_last_iteration`. On a stopped run this is the iteration the reading belongs to, and citing any figure from the run without it states more than the run did."
+    },
+    "stop_cause": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Why a stopped run stopped, quoted from the gate watcher's verdict or the operator's stated cause - never composed. Null on `ran_to_last_iteration`."
     }
   },
   "additionalProperties": true

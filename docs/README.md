@@ -85,7 +85,9 @@ python src/registry/render_schema.py --check  # the generated halves are not sta
    its boundary selector, and reports each hit. That count is meant to go down, and
    it is reported rather than suppressed because the repository still has instances.
 
-**Nothing is a result until a run completes with `_run.json`.** Where a city's
+**Nothing is a result until a run's `_run.json` says `ran_to_last_iteration`.**
+A run stopped at a gate carries a record too, and its reading is citable at that
+record's `reached_iteration` and nowhere past it. Where a city's
 twin stands against its goal is on that city's one-page board — for the
 reference city, [`cities/newcastle/docs/STATUS.md`](../cities/newcastle/docs/STATUS.md),
 with the goal in [`GOAL.md`](../cities/newcastle/docs/GOAL.md) and the current

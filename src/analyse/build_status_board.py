@@ -179,9 +179,9 @@ def block_scoreboard():
         frac = rmr.LAST.get('fraction')
         lines = []
         lines.append('Read from `%s` at **iteration %d** (family `%s`, status `%s`, '
-                     '%s%% sample, launched %s, %s). **Not a result** - a run '
-                     'without `_run.json` is a reading, and every arm since F4 '
-                     'stopped before its gate.'
+                     '%s%% sample, launched %s, %s). **Not a result** - only a run '
+                     'whose `_run.json` says `ran_to_last_iteration` is one, and '
+                     'every arm since F4 stopped before its gate.'
                      % (name, it, fam, meta.get('status', 'unknown'),
                         ('%g' % (100 * frac)) if frac else '?',
                         meta.get('started', '?'), rmr.LAST.get('source', '')))
@@ -232,7 +232,11 @@ def block_runs():
         cause = (meta.get('cause') or '').replace('|', '/').replace('\n', ' ')
         if len(cause) > 140:
             cause = cause[:137] + '...'
-        record = 'has `_run.json`' if os.path.exists(os.path.join(run_dir, '_run.json')) else ''
+        # A record no longer means the run reached its horizon - one stopped at
+        # a gate carries one too - so the cell says WHICH boundary ended it.
+        rec = _json(os.path.join(run_dir, '_run.json'))
+        record = ('%s `_run.json`'
+                  % rec.get('completion', 'ran_to_last_iteration')) if rec else ''
         lines.append('| `%s` | %s | %s | %s | %s |'
                      % (name, meta.get('status', '?'), _family_of(name) or '-',
                         '-' if reached is None else reached,

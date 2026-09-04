@@ -32,7 +32,7 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260901T165115_300it_25pct` at **iteration 100** (family `F23-behaviour-channels`, status `aborted`, 25% sample, launched 2026-09-01T16:51:15, trips table). **Not a result** - a run without `_run.json` is a reading, and every arm since F4 stopped before its gate.
+Read from `aborted_20260901T165115_300it_25pct` at **iteration 100** (family `F23-behaviour-channels`, status `aborted`, 25% sample, launched 2026-09-01T16:51:15, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
 Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260901T165115_300it_25pct --it 100` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
@@ -89,12 +89,12 @@ requirement-10 refusal clears when they close.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T162301_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T161721_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
-| `20260904T161108_2it_1pct` | completed | F23-behaviour-channels | 2 | has `_run.json` |
+| `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
+| `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
+| `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
+| `20260904T162301_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
+| `20260904T161721_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
+| `20260904T161108_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 
 136 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->

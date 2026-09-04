@@ -18,7 +18,7 @@ sweep range and recorded with the reason it was chosen.**
 
 > **Where it stands:** the [board](cities/newcastle/docs/STATUS.md) carries the
 > twelve-mode scoreboard from the latest reading and what is next. Nothing is a
-> result until a run completes with `_run.json`; the fit figures
+> result until a run's `_run.json` says `ran_to_last_iteration`; the fit figures
 > [below](#does-it-reproduce-the-city-not-yet) are the last completed base arm.
 
 ---
@@ -136,8 +136,13 @@ python src/analyse/build_run_index.py                        # results/INDEX.md
 python src/run/prune_run.py           <name>                 # reclaim per-iteration output
 ```
 
-A run without `_run.json` is not a result, and a run under 250 iterations is a
-plumbing probe, never evidence.
+A run is a result only if its `_run.json` says `ran_to_last_iteration`, and a
+run under 250 iterations is a plumbing probe, never evidence. A run that was
+stopped — by the gate watcher under the goal's loop, or by `--stop` — is closed
+out with a record of its own saying `stopped_at_gate` or `stopped_by_operator`:
+its reading is real at that record's `reached_iteration` and says nothing about
+any iteration after it. A run that CRASHED gets no record at all; its
+`_meta.json` states the cause.
 
 ---
 
@@ -208,7 +213,7 @@ python src/calibrate/report.py --run <run dir>
 
 ## Five words
 
-- **Arm** — one scenario run, launched detached, gated every 100 iterations; not a result until it completes with `_run.json`.
+- **Arm** — one scenario run, launched detached, gated every 100 iterations; not a result until its `_run.json` says `ran_to_last_iteration`.
 - **Family** — a comparability class: every run since a change to the plans or the network; nothing compares across families (`cities/newcastle/docs/run_families.json`).
 - **Gate** — the reading of all twelve modes against their targets every 100 iterations; a mode at or past 20 % stops the run.
 - **Holdout** — the 143 of 210 validation targets that stay unread until the end; the 67 others are the calibration half.

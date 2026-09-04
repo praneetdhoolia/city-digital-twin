@@ -1,0 +1,173 @@
+"""A run that ends at a DEFINED BOUNDARY closes itself out; a crash does not.
+
+`src/run/run_matsim.py:close_out` writes the record and the summary for a run
+that ended rather than died - one that reached its declared last iteration, one
+the gate watcher stopped under the GOAL.md loop, and one the operator stopped
+through `run.py --stop`. Before it existed the record was written on rc=0 alone,
+so every arm since family F4 - each of which stopped at its gate, which is what
+the gate is FOR - left a directory holding a real reading and nothing that could
+cite it, and the next session re-derived its figures from a 51 GiB log.
+
+What the record's presence means is therefore narrower than it was, and these
+tests pin the narrowing: presence means THIS RUN CAN BE CITED, `completion`
+says which boundary ended it, and only `ran_to_last_iteration` means the run
+executed the horizon it declared. The record is written through the declared
+output schema, so a close-out that cannot state its identity fails here rather
+than producing a record nothing downstream can trust.
+
+The tests build a run directory under `tmp_path` from the launch card the
+runner actually writes. Nothing under `results/` is read or written: the two
+post-run side effects (`summarise_run`, `results_store`) are stubbed, because
+what is under test is the RECORD, not the summary it triggers.
+"""
+import json
+import os
+import time
+
+import pytest
+
+import run_matsim
+
+
+LOG = """
+2026-09-04T10:00:00 ### ITERATION 0 BEGINS
+2026-09-04T10:05:00 ### ITERATION 0 ENDS
+2026-09-04T10:05:00 ### ITERATION 1 BEGINS
+2026-09-04T10:10:00 ### ITERATION 1 ENDS
+"""
+
+
+@pytest.fixture
+def run_dir(tmp_path, monkeypatch):
+    """A launched run's directory: the card the runner writes, and a log.
+
+    The card carries everything the record needs (`config_snapshot`,
+    `values_sha256`, `sample`) because the process that closes a stopped run out
+    cannot reach the locals `build_config` produced - for an operator stop it is
+    a different process entirely.
+    """
+    d = tmp_path / '20260904T100000_300it_25pct'
+    d.mkdir()
+    card = dict(
+        status='running', scenario='S2', day='WEEKDAY', fraction=0.25,
+        sample_pct=25.0, iterations=300, seed=20260810, threads=10, xmx='40g',
+        overrides={}, controler_sha256='c' * 64, inputs_sha256='i' * 64,
+        values_sha256='v' * 64, config_snapshot='_config.json',
+        sample=dict(persons_in=1000, persons_kept=250,
+                    transit_capacity_scaled=[]),
+        started=time.strftime('%Y-%m-%dT%H:%M:%S'), ended=None, wall_s=None,
+        rc=None, pid=os.getpid())
+    (d / '_meta.json').write_text(json.dumps(card), encoding='utf-8')
+    (d / 'matsim.log').write_text(LOG, encoding='utf-8')
+    (d / '_progress.json').write_text(json.dumps({'iteration': 100}),
+                                      encoding='utf-8')
+    # the record is what is under test; the summary and the store are not
+    monkeypatch.setattr(run_matsim.summarise_run, 'summarise',
+                        lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.results_store, 'process',
+                        lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.results_store, 'trim', lambda *a, **k: None)
+    return d
+
+
+def written(d):
+    return json.loads((d / '_run.json').read_text(encoding='utf-8'))
+
+
+# --------------------------------------------------------------------------
+# the boundary is recorded, and it is recorded as what it was
+# --------------------------------------------------------------------------
+def test_a_gate_stop_is_closed_out_with_a_record(run_dir):
+    doc = run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE,
+                               rc=1, wall_s=3600.0,
+                               stop_cause='ride -40.1% at iteration 100')
+    assert doc is not None
+    assert (run_dir / '_run.json').exists(), (
+        'the gate stop left no record: the reading the gate was taken for '
+        'cannot be cited')
+    assert written(run_dir)['completion'] == 'stopped_at_gate'
+
+
+def test_the_record_states_the_iteration_the_reading_belongs_to(run_dir):
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE, rc=1,
+                         wall_s=3600.0, stop_cause='past the bar')
+    # read from the run's own progress digest, not composed
+    assert written(run_dir)['reached_iteration'] == 100
+
+
+def test_the_stop_cause_is_carried_verbatim(run_dir):
+    cause = 'Stopped automatically by the gate watcher at iteration 100'
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE, rc=1,
+                         wall_s=1.0, stop_cause=cause)
+    assert written(run_dir)['stop_cause'] == cause
+
+
+def test_an_operator_stop_is_recorded_as_one(run_dir):
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_BY_OPERATOR,
+                         rc=None, wall_s=None, stop_cause='stopped by hand')
+    doc = written(run_dir)
+    assert doc['completion'] == 'stopped_by_operator'
+    # --stop kills the harness holding the clock, so no process observed a
+    # return code; recording a made-up one would state what the run did not
+    assert doc['rc'] is None
+
+
+def test_an_operator_stop_takes_its_wall_clock_from_the_launch_stamp(run_dir):
+    # the elapsed time is the cost the arm actually spent, not zero
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_BY_OPERATOR,
+                         rc=None, wall_s=None, stop_cause='stopped by hand')
+    assert written(run_dir)['wall_s'] >= 0.0
+
+
+# --------------------------------------------------------------------------
+# the record still states the run's full identity
+# --------------------------------------------------------------------------
+def test_a_stopped_run_states_the_same_identity_a_complete_one_does(run_dir):
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE, rc=1,
+                         wall_s=1.0, stop_cause='past the bar')
+    doc = written(run_dir)
+    # a reading that cannot say what produced it is not citable either
+    for key in ('scenario', 'day', 'fraction', 'iterations', 'threads', 'seed',
+                'controler_sha256', 'values_sha256', 'inputs_sha256',
+                'config_snapshot'):
+        assert doc.get(key) is not None, '%s missing from a stopped record' % key
+    assert doc['controler_sha256'] == 'c' * 64
+    assert doc['persons_kept'] == 250
+
+
+def test_the_record_is_named_for_the_directory_that_holds_it(run_dir):
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE, rc=1,
+                         wall_s=1.0, stop_cause='past the bar')
+    assert written(run_dir)['name'] == run_dir.name
+
+
+def test_the_declared_horizon_is_kept_beside_what_was_reached(run_dir):
+    # `iterations` stays what the run DECLARED; `reached_iteration` is what it
+    # got to. Collapsing the two would hide that the arm was cut short.
+    run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE, rc=1,
+                         wall_s=1.0, stop_cause='past the bar')
+    doc = written(run_dir)
+    assert doc['iterations'] == 300
+    assert doc['reached_iteration'] == 100
+
+
+# --------------------------------------------------------------------------
+# a run that cannot state what it was gets no record
+# --------------------------------------------------------------------------
+def test_a_directory_without_a_card_is_not_closed_out(tmp_path, monkeypatch):
+    d = tmp_path / 'no-card'
+    d.mkdir()
+    monkeypatch.setattr(run_matsim.summarise_run, 'summarise',
+                        lambda *a, **k: None)
+    assert run_matsim.close_out(str(d), run_matsim.STOPPED_AT_GATE, rc=1,
+                                wall_s=1.0) is None
+    assert not (d / '_run.json').exists(), (
+        'a record was manufactured for a directory that cannot say what it ran')
+
+
+def test_the_record_must_meet_its_declared_schema(run_dir):
+    # `completion` is REQUIRED, so a close-out that does not state its boundary
+    # writes nothing rather than a record readers cannot classify
+    assert run_matsim.close_out(str(run_dir), 'not-a-boundary', rc=1,
+                                wall_s=1.0) is None
+    assert not (run_dir / '_run.json').exists()

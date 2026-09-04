@@ -221,3 +221,51 @@ def test_a_caller_that_asks_about_no_controler_takes_the_newest(store):
     store(store.raw, '20260901T000000_300it_25pct',
           record(controler_sha256='0' * 64))
     assert find(controler=None) is not None
+
+
+# --------------------------------------------------------------------------
+# only a run that REACHED ITS HORIZON can be resumed
+#
+# A run stopped at a GOAL.md gate is now closed out with a `_run.json` of its
+# own, so presence alone stopped being the test. Without the `completion`
+# filter, relaunching the very overlay whose arm the gate stopped would print
+# `resume: already complete` and run nothing - the session would read a stopped
+# arm as a finished one, which is the failure the whole record exists to
+# prevent.
+# --------------------------------------------------------------------------
+@pytest.mark.parametrize('completion', ['stopped_at_gate',
+                                        'stopped_by_operator'])
+def test_a_stopped_run_never_satisfies_resume(store, completion):
+    store(store.raw, '20260901T000000_300it_25pct',
+          record(completion=completion, reached_iteration=100,
+                 stop_cause='ride -40.1% at the iteration-100 gate'))
+    assert find() is None, (
+        'a %s arm answered a launch of the same parameters: the relaunch '
+        'would have run nothing' % completion)
+
+
+def test_a_run_that_reached_its_horizon_still_resumes(store):
+    store(store.raw, '20260901T000000_300it_25pct',
+          record(completion='ran_to_last_iteration', reached_iteration=300))
+    assert find() is not None
+
+
+def test_a_record_written_before_the_field_existed_still_resumes(store):
+    # every record without `completion` was written on rc=0 and only on rc=0,
+    # so a missing value reads as ran_to_last_iteration - the historical
+    # records on disk must not stop matching because the field was added
+    doc = record()
+    assert 'completion' not in doc
+    store(store.raw, '20260901T000000_300it_25pct', doc)
+    assert find() is not None
+
+
+def test_a_stopped_run_does_not_shadow_a_complete_one(store):
+    # newest first: the stopped arm is the newer directory, and skipping it
+    # must not also skip the completed run behind it
+    store(store.raw, '20260901T000000_300it_25pct', record())
+    store(store.raw, '20260902T000000_300it_25pct',
+          record(completion='stopped_at_gate', reached_iteration=100))
+    prior = find()
+    assert prior is not None
+    assert prior['name'] == '20260901T000000_300it_25pct'

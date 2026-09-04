@@ -86,10 +86,12 @@ carries the latest reading as a generated block.
 ## Non-negotiables inherited from the method
 
 These stay whatever the model becomes: no invented data (a value is observed,
-derived or assumed-with-a-sweep, and labelled); no result before a run
-completes with `_run.json`; the 67/143 validation holdout is never opened
-before the end; one network build per comparison; one arm at a time; every
-controllable value declared in the registry.
+derived or assumed-with-a-sweep, and labelled); no result before a run's
+`_run.json` says `ran_to_last_iteration` — a run stopped at a gate is closed
+out with a record too, and its reading is citable at its `reached_iteration`
+and nowhere past it, but it is not a result; the 67/143 validation holdout is
+never opened before the end; one network build per comparison; one arm at a
+time; every controllable value declared in the registry.
 
 ## What this supersedes
 
