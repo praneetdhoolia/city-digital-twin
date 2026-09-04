@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
+
+- **The heavy-rail target's basis names its censoring rule** (§9.142, #129): a censored Opal cell ('Less than 50') counts as `CAL.pt.censored_cell_value` in this SUM over stations, while the holdout station MEANS exclude it as their pre-registered treatment. Measured: the package holds ONE censored cell, outside the (Train, Entry) series this target sums, so the field's sweep moves the target at neither end and the two rules agree on every scored target. Three build guards refuse a build if that stops being true.
 
 - **Four scheduled submodes, score-distinct (Tier C, §9.78).** Bus, heavy rail, light rail and ferry are routed by SwissRailRaptor with `useModeMappingForPassengers`, one `scoring.modeParams` block per submode, behind `RUN.routing.pt_submode_scoring` = `per_submode`. The constants are C1's: `C.asc.bus` −1.05, `C.asc.light_rail` −0.75, `C.asc.rail` −0.65, all held fixed (§8.5, §9.78). Ferry has no C1 constant and keeps the pt aggregate's `asc_bus`, stated in the run-inputs report rather than invented (§9.78).
 - Plan-level choice stays `pt`; only the router assigns submode legs, and `citysim.PtSubmodeMainModeIdentifier` folds them back to `pt` for every main-mode analysis (§9.78). `RUN.transit.transit_modes` carries the submode vocabulary so the QSim serves a `tram` or `ferry` departure instead of teleporting it; `split_schedule` refuses a route whose `transportMode` is outside it.
@@ -61,7 +63,7 @@ Latest twelve-mode reading: the F23 gate at iteration 100 (`results/raw/aborted_
 
 ## What is open
 
-- **#98** — the fare is measured (+152.9% at F22's gate, §9.136) and income scaling measurably worsens it (+193.2% at F23's, §9.139): the residual excess's cause once price is paid — the corridor's missing CBD end (#30) is the standing candidate — now outranks any further price work; crowding stays deferred behind it (§9.138).
+- **#98** - the fare is measured (+152.9% at F22's gate, §9.136) and income scaling measurably worsens it (+193.2% at F23's, §9.139), and the residual excess's standing candidate - the corridor's missing CBD end (#30) - **is now repaired at the demand** (§9.142): the CBD SA2 receives 1.02x its work attraction share of non-home trip ends against a draw that previously gave the corridor 0.59x on shopping and 0.69x on other. Whether rail's excess falls with it is the F24 gate's reading and nothing here claims it; crowding stays deferred behind that (§9.138).
 - **Bus stays on the composition basis as a recorded limitation** (§9.140, #99 closed): the Opal `NISC 1` series falls 88% in April 2025 (319,770 → 37,414 trips a month), uniformly across card types, absorbed by no other region, recovering only to 226,956 by May 2026 (`data/raw/opal/bus_trips_by_contract_region.csv`); no allowlisted source publishes Newcastle's bus boardings. The HTS data document defines Public Transport as train, metro, bus, light rail and ferry with no exclusion of school services, so a school-bus trip is a PT trip in the survey while Opal counts taps (`data/raw/hts/hts_data_document_2020_2024.pdf`, §9.140). REOPEN #99 if a regional count becomes obtainable.
 - **#94** — the ferry captures a hundredth of its captive market; the raptor's reason is not established and no candidate has been measured (§9.112).
 - **#49** — the standing directive: every mode individually. Reporting and scoring are individual; the <10% bar is not met for any PT mode.
@@ -83,6 +85,7 @@ Latest twelve-mode reading: the F23 gate at iteration 100 (`results/raw/aborted_
 
 ## History
 
+- §9.142 — the corridor repaired; the censoring rule named in the basis
 - §9.141 — censored cells declared once
 - §9.140 — bus count unobtainable; #84, #99 closed
 - §9.139 — F23 gate: income scaling blunts fare

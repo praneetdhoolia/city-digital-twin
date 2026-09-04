@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -59,7 +59,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## What is open
 
-- No arm runs; the F23 gate arm is read and stopped (§9.139). **The package on disk is F24's** — chains, plans and run inputs rebuilt 3 Sep on the derived external interaction rate, the LGA-conserved motorbike carve and the leaf-subtour repair (§9.140); the family key is declared in `run_families.json` at its first launch, with `decisions_ref` 9.140, and nothing before that boundary compares with anything after. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05. The next family follows the user's pick of root cause under a fresh stated-cost approval.
+- No arm runs; the F23 gate arm is read and stopped (§9.139). **The package on disk is F24's** - chains, plans and the 30 run-input sets rebuilt 4 Sep on destination choice constrained at both ends and on circuity re-measured on the current network (§9.142), over the 3 Sep rebuild's derived interaction rate, LGA-conserved motorbike carve and leaf-subtour repair (§9.140). **F24 is a boundary on THREE counts at once** - the demand, the plans built from it, and `controler_sha256` (the router hoist, the silenced routing logger, the per-event repairs and the two new probes, §9.142) - so nothing before it compares with anything after it, and nothing is lost because no F24 arm has run. The key is declared in `run_families.json` at the first launch with `decisions_ref` 9.142. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -78,6 +78,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.142 — F24 is a boundary on the demand, the plans and the controler
 - §9.140 — F24 package built, unlaunched
 - §9.139 — F23 gate arm read at 25%
 - §9.138 — F23 opens on the behaviour channels

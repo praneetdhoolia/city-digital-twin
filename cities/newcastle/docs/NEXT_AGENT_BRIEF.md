@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 4 September 2026, twenty-seventh session · **Open family:** `F23-behaviour-channels` (the package on disk opens `F24` at its first launch) · **Commit:** the PR that carries the three decisions and the destination-balancing repair (§9.142)
+**Written:** 4 September 2026, twenty-seventh session · **Open family:** `F23-behaviour-channels` (the package on disk opens `F24` at its first launch) · **Commit:** `e6bfe45` on `praneetdhoolia/decisions-taken-f24`, carried by PR #140 (§9.142)
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
@@ -17,7 +17,7 @@ approval was spent, no target value changed, the 67/143 split is untouched.
 | **Machine idle; no arm runs.** The last arm is still `aborted_20260901T165115_300it_25pct`, F23's gate arm (§9.139). | `python src/run/session_gate.py --digest` (MACHINE line) |
 | **The package on disk is the F24 build** (§9.142): destination choice constrained at both ends, C2 re-measured, chains + plans + the 30 run-input sets rebuilt 4 Sep. | `python tests/check_package.py` (~10 min) |
 | **Every open issue is closed or `awaiting-run`**, so the launcher's requirement-10 refusal is clear. If `issues gated` is red, an issue was opened or a label lost. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| **This session's PR** is open at handoff, or merged — check; the branch is `praneetdhoolia/decisions-taken-f24`. | `gh pr list --state open` · `gh pr checks <n>` |
+| **PR #140 is MERGED** (4 Sep, all nine CI checks green) and carries the whole session; a second docs-only PR closes the handoff out. Check whether that one merged too. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
 | Registry 464 fields, 30 run-input sets, family `F23-behaviour-channels` in the ledger (F24 is declared at launch). | `python src/analyse/build_status_board.py --check` |
 | **No run approval stands.** Every approval to date is SPENT; **25% runs only** (1 Sep directive) governs any launch. | assume none; ask |
 

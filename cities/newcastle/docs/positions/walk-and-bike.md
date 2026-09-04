@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -37,7 +37,7 @@
 
 ## What is open
 
-- **#30** — the sub-1 km trips are generated (§9.107); the walk/car allocation of short trips is the open question, a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107). Destination placement is measured present for the corridor (§9.130).
+- **#30** - the sub-1 km trips are generated (§9.107) and the short-trip band shares still match their observed values to three decimals after the 4 Sep rebuild (`decay` in `_activity_chains_report.json`, §9.142). Destination choice is now constrained at the destination end too, so the short trips are drawn against arrivals that match each zone's attraction share; the walk/car allocation of those trips is unchanged as the open question - a calibration of the relative cost of distance that has never been scored against a per-mode distance target (§9.107).
 - **The gradient channel's effect is unmeasured**: no paired arm differing only in `A.gradient.representation` has read bike's mean trip and time against the observed 5.2 km / 19.2 min (§9.84); #21 is closed on the retirement, not on that measurement (§9.140).
 - **#50** — the bike age gate is assumed; no mode by age cell is held (§9.84).
 - **The seesaw now over-swings instead of sitting low** (§9.139): under the parking search time walk and car pass THROUGH their targets in-run and keep going (walk −27.2% low, car +14.8% high at the F23 gate; walk was momentarily +8.6% at it.40). Whether the equilibrium overshoots because the search minutes are one-shot at arrival (no within-day feedback) or because walk's own cost dominates past the crossing is the next family's question — not a constant to tune (§9.123 split first).
@@ -56,6 +56,7 @@
 
 ## History
 
+- §9.142 — short trips drawn against balanced arrivals; bands unmoved
 - §9.140 — gradient weights and decay retired
 - §9.139 — both channels' first gate reading
 - §9.138 — bike stress and parking search built
