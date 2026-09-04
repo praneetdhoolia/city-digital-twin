@@ -2,12 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
+- **The functions that decide correctness have their own tests** (§9.142, #133): `tests/unit/` runs 89 pytest cases on synthetic inputs in 0.13 s - `param_config`'s rendering and target parsing, `outputs._semantic_errors`, `run_matsim.find_completed`'s identity matching, and `fit.py`'s scoring including the issue-19 modelled-zero regression. It is a CI job and a `unit tests` line in `session_gate.py`, which now runs 17 checks. Six Java probes run on the signals stack, `GatedSubtourProbe` and `PtFareProbe` added; the latter measured a latent `Long`-age adult-fare defect on its first day, now fixed and asserted.
+
 - **The hard bar of the gate is the runner's own** (§9.137): a watcher inside `run_matsim.py` reads all twelve modes every `RUN.gate.interval_iterations` = 100 iterations with the same reporter below and stops the JVM itself when any mode is at or past `CAL.gate.stop_deviation_pct`, recording the gate table as the abort cause. The trend judgement ("or heading there") stays with the session. **Its iteration source is the progress digest, not a log tail** (§9.139): the original 64 KiB tail read was measured blind at the 25% arm's log rate — the ENDS marker sat 611 MiB behind EOF — and the watcher idled through the F23 gate; fixed 2 Sep. **Its stop is keyed on the reporter's verdict file** (`--gate-json`), never on the printed `GATE:` line, which the reporter prints on a pass too (§9.141, #112 closed): a passing milestone is logged and the run continues; a milestone whose tables are not written yet is retried every `RUN.gate.retry_interval_s` = 300 s (§9.141, #131); without the digest it reads the log incrementally through `run_view.read_iterations`, never a tail (§9.141). `tests/check_gate_watcher.py` drives it against canned breach, pass and no-verdict reporters in CI. First live firing still unobserved.
-- **No open issue behind a run** (GOAL.md requirement 10, §9.140): `src/run/issue_gate.py` reads the tracker through `gh` and refuses while any open issue lacks the `awaiting-run` label; `session_gate.py` carries it as the `issues gated` line and `run.py` refuses to launch (`--allow-open-issues` overrides, to be justified in the run record). Where `gh` cannot read the tracker the gate says so rather than pretending it is empty.
+- **No open issue behind a run** (GOAL.md requirement 10, §9.140): `src/run/issue_gate.py` reads the tracker through `gh` and refuses while any open issue lacks the `awaiting-run` label; `session_gate.py` carries it as the `issues gated` line and `run.py` refuses to launch (`--allow-open-issues` overrides, to be justified in the run record). Where `gh` cannot read the tracker the gate says so rather than pretending it is empty. As of 4 Sep the tracker is clear of blockers: the three issues that were decisions (#129, #133, #134) are closed and all 14 open issues carry `awaiting-run` (§9.142).
 - **The gate reader** is `src/analyse/report_mode_ridership.py`. It prints every one of the twelve simulated modes on its own row against its own target, never an umbrella `pt` row: the pt submodes are resolved from each boarded route's `transportMode` through the run's own schedule (§9.87). It reads the run directory and the city's target artefact and writes nothing.
 - **Any iteration the run has written is readable** (§9.120). Where MATSim wrote `<n>.trips.csv.gz` the reader uses it; between those, `src/analyse/iteration_trips.py` derives the same linked main-mode trips from `<n>.experienced_plans.xml.gz`, which is written every `RUN.controler.write_plans_interval` = 10 iterations. The derivation is validated exactly against the trips table wherever both exist (`--validate`), and the trips table wins any disagreement (§9.120).
 - **Three views**: `--it N` for one iteration, `--trend` for one row per mode across every readable iteration with a direction verdict (`toward`, `AWAY`, `flat`), and `--watch SECONDS` to keep printing each newly readable iteration until the run ends. `--truck-stations` scores truck on its target's basis (below).
@@ -58,6 +60,7 @@
 
 ## History
 
+- §9.142 — 89 unit tests, two probes, the tracker clear of blockers
 - §9.141 — watcher keyed on a verdict; retry bounded
 - §9.140 — issue gate; requirement 10
 - §9.139 — third gate; watcher blind, fixed

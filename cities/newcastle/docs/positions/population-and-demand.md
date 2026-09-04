@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -42,6 +42,8 @@
 
 ## What is measured
 
+- **The demand was rebuilt on 4 Sep** (§9.142) on destination choice constrained at both ends and on circuity re-measured on the current network: 612,634 persons across three day types, WEEKDAY 2,185,896 legs / 989,347 tours / 3.568 legs per person, and a week average of 3.343 trips per person per day against the HTS 3.473 (`demand/plans/_activity_chains_report.json`). Every purpose x home LGA still realises its own observed mean journey distance exactly, on all 30 cells but the two already at the bisection edge. `tests/check_package.py` passes on the rebuilt package.
+
 - The literature licence vector left 14.2–14.8% of employed persons without a licence; on the measured rates the unlicensed share of the employed is 4.8–5.9% (Newcastle 12.7%, its 18–24 rate 0.68) and employed persons with a car available rose from 78.9–83.0% to 90.8–91.7% in four LGAs and 80.8% in Newcastle (§9.131).
 - WEEKDAY on the rebuilt demand: 2,188,001 legs, 990,511 tours, 510,383 travelling persons, 5,632 external and 16,264 through agents; realised week trip rate 3.346 against the HTS 3.473; placement `poi` 2,673,003, `home` 2,523,040, `jitter` 155,442, `escorted` 245,319 (`_activity_chains_report.json`). Against the old population the day moved by 0.04% in legs and 0.11% in tours (§9.133).
 - The binders on the rebuilt WEEKDAY: escort 128,881 of 177,667 HX tours bound (was 127,203 of 177,318); lift 47,578 of 48,680 unbound HX tours re-targeted (was 49,030 of 50,014); joint 84,436 bound from 155,162 candidates at `thin_p` 1.0 with 55,783 unservable (was 82,384 from 146,260, 55,671 unservable); shared 61,682 servable / 57,758 bound / shortfall 0 at `thin_p` 0.9354 with 332,807 trips already covered of the 448,203 identity (was 73,509 / 59,701 / 0 at 0.8116) (`_activity_chains_report.json`, §9.133). Licences moved passengers into the driver and companion pools: 111,145 car-less passenger tours against 141,670 before (§9.133).
@@ -75,6 +77,7 @@
 
 ## History
 
+- §9.142 — the demand rebuilt on balanced destinations
 - §9.140 — interaction rate derived; F24 build
 - §9.138 — census income reaches money scoring
 - §9.133 — demand chain rebuilt on licence-rate population
