@@ -7,12 +7,13 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 3 September 2026 — the assessment's fourteen defects
-(#112–#127) and nine of its twelve risks are closed without a run (§9.141):
-the gate watcher stops on a verdict, refused taxi trips get taxi back, SCATS
-priority extends in the layout's direction, every manifest row carries a
-licence and every artefact has a producer that names it. Three decisions
-(#129, #133, #134) stay open and hold the launcher; #131 awaits the arm.
+**Last updated:** 4 September 2026 — the three decisions that held the
+launcher are taken (#129, #133, #134) and the corridor's missing CBD end is
+repaired at its cause (§9.142): destination choice is now constrained at the
+destination end as well as the origin, so a zone receives the arrivals its own
+attraction states. C2 is re-measured on the network that runs and the demand
+rebuilt on it. The iteration's own cost is profiled for the first time: 60 % of
+it is one hoistable line. No arm has run and no approval stands.
 
 ## The goal
 
@@ -25,7 +26,7 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 | Twelve modes physically simulated | **12 of 12** — freight rail as timetable-derived crossing closures, not a mobsim vehicle | [positions/motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md), §9.70 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
 | Every mode inside 10 % | **0 of 12** at the F23 iteration-100 gate (car +14.8 %, motorbike +13.9 %, bus +16.2 % closest); bus's F22 +8.0 % stays the only mode ever inside | below, §9.139, §9.136 |
-| Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arms (F21, F22) each stopped at their iteration-100 gate, before the 240 cutoff; `RUN.controler.last_iteration` still declares 1000 | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.136 |
+| Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arms (F21, F22, F23) each stopped at their iteration-100 gate. `RUN.controler.last_iteration` stays 1000 and was deliberately NOT re-declared to 250: §9.7 measured 250 insufficient. The instrument exists — a 300-iteration arm switches innovation off at 240, so its post-cutoff window straddles 250 — and the first arm to pass its gate measures it | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.142, §9.7 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); pt fares from the published Opal schedule (§9.135); the external interaction rate from the 2011 journey-to-work flow and the S0 detour from the alignment (§9.140); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
@@ -60,7 +61,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the gate loop has fired three times: F21 with 8 out (§9.134); F22 with 7 out and bus inside (§9.136); F23, on the behaviour channels, with 7 out and none inside (§9.139); the F24 package waits for its arm behind three user decisions (§9.140, §9.141) |
+| P4 calibration | 🟡 | the gate loop has fired three times: F21 with 8 out (§9.134); F22 with 7 out and bus inside (§9.136); F23 with 7 out and none inside (§9.139). The F24 package is built and its three blocking decisions are taken (§9.142); the arm waits only on a stated-cost approval |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -75,13 +76,13 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (3 September 2026) · [monitoring-and-gates](positions/monitoring-and-gates.md) (3 September 2026 (twenty-sixth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (3 September 2026 (twenty-sixth session)) · [population-and-demand](positions/population-and-demand.md) (3 September 2026) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (3 September 2026 (twenty-sixth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (3 September 2026) · [runs-and-economics](positions/runs-and-economics.md) (3 September 2026 (twenty-sixth session)) · [sampling-and-families](positions/sampling-and-families.md) (3 September 2026) · [seed-and-choice-set](positions/seed-and-choice-set.md) (3 September 2026) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (3 September 2026) |
 <!-- generated:state end -->
 
-**The package on disk is consistent and is the F24 build** (§9.140): chains,
-plans and the 30 run-input sets rebuilt 3 Sep on the derived external
-interaction rate, the LGA-conserved motorbike carve and the leaf-subtour
-repair; manifest 512 files since the OSM harvest's provenance record was
-written (§9.141); family F24 is declared at its first launch. No arm runs.
-Three open issues are decisions, not run measurements (#129, #133, #134),
-so `python src/run/issue_gate.py` refuses a launch until the user takes them.
+**The package on disk is consistent and is the F24 build** (§9.142): chains,
+plans and the 30 run-input sets rebuilt 4 Sep on destination choice constrained
+at both ends and on circuity re-measured on the current network (detour 1.3276
+over 595 routed pairs, walk 1.6938, bike 1.5570). Family F24 is declared at its
+first launch. No arm runs. The three decisions that held
+`python src/run/issue_gate.py` are taken (#129, #133, #134), so the launcher's
+requirement-10 refusal clears when they close.
 
 ## Runs on disk
 
@@ -100,46 +101,46 @@ so `python src/run/issue_gate.py` refuses a launch until the user takes them.
 
 ## Next
 
-1. **Three decisions unblock the launcher** (requirement 10, §9.141):
-   whether the validation-target builder reads `CAL.pt.censored_cell_value`
-   for its pre-registered station means (#129); a unit-test layer beyond the
-   four stdlib checks now in CI (#133); the 238 sweeps never set — run them
-   after the gate, or reclassify as held fixed (#134). Also whether C2 is
-   re-measured on the current network, which moves the chains (§9.141).
-2. **The first F24 arm** under a fresh stated-cost approval (~45–50 h at
-   25% × 300, §9.136): the first live test of the verdict-keyed watcher and
-   the taxi restore; it reads all twelve modes at its gate and, on top, the
-   carve at its identity (#93), the leaf stand-aside log (#96), the ferry's
-   near-wharf split and the choice-set survival (#94, §9.140), the digest's
-   disk read (#131).
-3. **The user picks the next root cause** (§9.139, §9.140): the corridor's
-   missing CBD end (#30); the income channel's disposition (#108); the fifth
-   binder pass or a stated limitation (#86).
+1. **The first F24 arm, under a fresh stated-cost approval** (~45–50 h at
+   25% × 300 on the F23 pace, §9.136 — less if the profiled iteration cost comes
+   down, §9.142). It is the first arm to read a balanced corridor, and it reads
+   all twelve modes at its gate plus what the `awaiting-run` issues name (#93,
+   #96, #94, #98, #108, #107, #82, #131). Two readings are repairs working, not
+   regressions: taxi should read HIGHER than F23's +76.6 % because a refused trip
+   now keeps taxi (#113), and light rail and heavy rail move on the corridor
+   (#30, #98).
+2. **The iteration's cost, measured rather than modelled** (§9.142): 60 % of a
+   673–684 s iteration is `RidePairingEngine.notifyBeforeMobsim`, which builds
+   ~51,600 `TripRouter`s an iteration and writes 164 GiB of one warning per run.
+   Hoisting it is a family boundary, which costs nothing before F24 launches.
+3. **The user picks the next root cause** after the F24 gate: the ride plan
+   variant #86 now names (46,345 bound trips that never reach plan memory), the
+   income channel's disposition (#108), or the ferry's reach bound (#94).
 
-**Decisions required:** the three above and the C2 re-measure; the
-root-cause pick, the income-channel disposition and the #86 binder
-decision; enable the Task Scheduler operational log (#66); whether the S2
-base grants the tram signal priority
+**Decisions required:** a stated-cost approval for the first F24 arm; the
+root-cause pick after its gate; enable the Task Scheduler operational log
+(#66); whether the S2 base grants the tram signal priority
 ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+The three that held the launcher are taken (§9.142).
 
 ## Open work
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
 | The F24 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
-| Ride: generated 19.1 / bound 16.0 / realised 12.1 % against 20.6 % observed | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the fifth binder pass decision, then the F24 gate (§9.136, §9.140) |
+| Ride: the binders reach 20.13% of core trips but 46,345 bound trips never become a ride alternative in plan memory (§9.142) | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F24 gate, then the per-trip plan variant behind `GatedSubtourProbe` |
 | Heavy rail +193 % at the F23 gate; income scaling blunts the fare (§9.139) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | where rail settles once the corridor's CBD end (#30) is repaired |
-| Light rail out of reach: the corridor holds two-thirds of the observed attraction | #30 #84 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the destination solver against the D1 layers |
+| Light rail and heavy rail: the corridor's CBD end received 5.38% of work trip ends against 8.27% of the attraction (§9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F24 gate, on a draw balanced at the destination end |
 | Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F24 gate (§9.140) |
 | Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals on F21 |
 | Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | F24 shares by car availability |
 | Traffic counts far below observation at 30 stations | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) | F21 counts |
 | Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F24 arm (§9.140) |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
-| The 3 Sep assessment: 14 defects and 9 risks closed (§9.141); three decisions open | #129 #133 #134 #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F24 arm (#131); the rest need the user, not a run |
-| C2 circuity measured on the pre-16-August network; re-measuring moves the values | — | [network-and-inputs](positions/network-and-inputs.md) | the user's call: re-measure and rebuild the chains, or keep (§9.141) |
+| The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F24 arm (#131) |
+| Iteration wall time: 60% of it is one hoistable `tripRouter.get()`, and 164 GiB per run is one warning (§9.142) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the phase table on the first F24 arm |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |
-| Convergence horizon: 250 asked, 1000 declared | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
+| Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
 
 ## Do not re-raise
 
