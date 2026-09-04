@@ -22,9 +22,15 @@ _REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
 _sys.path.insert(0, _os.path.join(_REPO, 'src'))
 _sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
 import city as _city  # noqa: E402
+import registry as _registry  # noqa: E402
 import os
 import json
 import pandas as pd
+
+CFG = _registry.load()
+# How dense censoring may get before the exclusion of censored cells from the
+# holdout station means stops being a marginal treatment (#129, 9.142).
+CENSORED_SHARE_MAX = CFG.get('CAL.pt.censored_share_max')
 
 OBS = _city.path('data/processed/observed')
 HTS = _city.path('data/processed/hts')
@@ -40,6 +46,25 @@ def add(metric, geography, period, value, unit, source, split, note=''):
     rows.append(dict(target_id='V%03d' % (len(rows) + 1), metric=metric,
                      geography=geography, period=period, value=value, unit=unit,
                      source=source, split=split, note=note))
+
+
+def escort_legs():
+    """Escort legs in the committed weekday demand, counted rather than stated.
+
+    The note this feeds asserted a fact about the demand for three phases after
+    the 9.15 repair made it false (DECISIONS.md 9.142). A count measured at
+    build time cannot go stale; where the demand is not built yet it says so
+    rather than guessing a number.
+    """
+    path = _city.path('demand/plans/B2_activity_trips_WEEKDAY.csv')
+    if not os.path.exists(path):
+        return 'count unavailable - the weekday trip table is not built'
+    n = 0
+    with open(path, encoding='utf-8') as fh:
+        for r in __import__('csv').DictReader(fh):
+            if r.get('purpose') == 'HX':
+                n += 1
+    return '%s weekday legs' % format(n, ',d')
 
 
 def main():
@@ -121,17 +146,67 @@ def main():
             'person-legs; the model must reproduce the person-leg version.')
 
     # ---------------- station entries/exits (HOLDOUT) ----------------
+    # Censoring: a station-month the Opal series reports as the text
+    # "Less than 50" is EXCLUDED from these means, and that exclusion is the
+    # PRE-REGISTERED treatment of these 143 holdout rows, not an oversight
+    # (#129, DECISIONS.md 9.142). The mode-target builder counts a censored
+    # cell as the declared CAL.pt.censored_cell_value instead, because its
+    # heavy-rail boardings target is a SUM over stations where dropping a cell
+    # would drop a station's whole contribution; here the quantity is a MEAN
+    # per station-and-direction, where one censored month among many is
+    # missing data rather than a zero. The two rules differ because the two
+    # statistics differ, and the difference is recorded rather than unified.
+    #
+    # It is safe only while censoring stays marginal, so the builder MEASURES
+    # that rather than assuming it: the guard below refuses to write a target
+    # whose mean rests on nothing, or a series where censoring has spread far
+    # enough to bias a mean it silently drops cells from.
     se = pd.read_csv(os.path.join(OBS, 'station_entries_exits_newcastle.csv'))
     se['Trip_num'] = pd.to_numeric(se['Trip'], errors='coerce')
-    g = se.groupby(['Station', 'Entry_Exit'])['Trip_num'].mean().reset_index()
+    se['censored'] = se['Trip_num'].isna() & se['Trip'].notna()
+    n_cens = int(se['censored'].sum())
+    grp = se.groupby(['Station', 'Entry_Exit'])
+    cens_by_group = grp['censored'].sum()
+    size_by_group = grp['censored'].size()
+    empty = sorted('%s/%s' % k for k in
+                   size_by_group.index[(cens_by_group == size_by_group).to_numpy()])
+    if empty:
+        raise SystemExit(
+            'every cell is censored for %d station-direction group(s): %s. '
+            'Excluding censored cells would delete a PRE-REGISTERED holdout '
+            'row, which the 9.13 rule forbids after the fact - decide the '
+            'treatment (#129) before rebuilding.' % (len(empty), empty))
+    heavy_entry = se[se['Station_Type'].astype(str).str.strip().str.lower().eq('train')
+                     & se['Entry_Exit'].astype(str).str.strip().str.lower().eq('entry')]
+    n_heavy_cens = int(heavy_entry['censored'].sum())
+    if n_heavy_cens:
+        raise SystemExit(
+            '%d censored cell(s) now fall in the (Train, Entry) series the '
+            'heavy-rail boardings target sums (DECISIONS.md 9.130). That '
+            'target counts a censored cell as CAL.pt.censored_cell_value '
+            'while these holdout means exclude it; the two rules only agree '
+            'while this series carries none (#129).' % n_heavy_cens)
+    cens_share = n_cens / float(len(se)) if len(se) else 0.0
+    if cens_share > CENSORED_SHARE_MAX:
+        raise SystemExit(
+            'censored cells are %.2f%% of the station series against a %.2f%% '
+            'ceiling: exclusion is no longer a marginal treatment and the '
+            'means it produces are biased upward (#129).'
+            % (100 * cens_share, 100 * CENSORED_SHARE_MAX))
+    g = grp['Trip_num'].mean().reset_index()
+    note = ('Values reported as "Less than 50" are censored and EXCLUDED - the '
+            'pre-registered treatment of these holdout rows (#129, '
+            'DECISIONS.md 9.142). %d of %d cells in the series are censored, '
+            'none of them in the (Train, Entry) series the heavy-rail target '
+            'sums, and no station-direction group is wholly censored.'
+            % (n_cens, len(se)))
     for _, r in g.iterrows():
         if pd.isna(r['Trip_num']):
             continue
         add('station_%s_monthly_mean' % str(r['Entry_Exit']).lower(),
             str(r['Station']).strip(), 'from 2024-11',
             round(float(r['Trip_num']), 0), 'trips/month',
-            'TfNSW station entries and exits (Opal batch)', 'holdout',
-            'Values reported as "Less than 50" are censored and excluded')
+            'TfNSW station entries and exits (Opal batch)', 'holdout', note)
     g.to_csv(os.path.join(OUT, 'station_entries_exits_mean.csv'), index=False)
 
     # ---------------- road traffic ----------------
@@ -257,16 +332,21 @@ def main():
             'source': 'derived - HTS vehicle occupancy 1.3503 persons per '
                       'vehicle (params/C4_mode_constraints.json) means observed '
                       'vehicle trips ARE driver trips',
+            # 9.142: this note is MEASURED from the demand each build rather
+            # than asserted. It used to say "B2 generates none" of the escort
+            # trip, which the 9.15 repair had made false; the committed
+            # artefact was corrected by hand and this producer was not, so
+            # every run of this builder silently reverted the correction.
             'note': 'A passenger rides in a vehicle that is already counted, so '
                     'the modelled vehicle count is the car legs alone and a ride '
                     'leg correctly contributes none. This holds only while the '
                     'modelled ride:car ratio matches the observed '
                     'passenger:driver ratio, which is what DECISIONS.md 9.8 '
-                    'constrains asc_car_passenger to reproduce. What stays '
-                    'genuinely unmodelled is the escort trip: B2 generates none, '
-                    'so a driver travelling solely to carry someone else is '
-                    'absent. That is a stated limitation, not a fitted '
-                    'parameter.',
+                    'constrains asc_car_passenger to reproduce. Escort tours ARE '
+                    'generated since the 9.15 repair - B2 carries HX as its own '
+                    'tour purpose (%s), driven by the escorting licence holder. '
+                    'What stays genuinely unmodelled here is freight '
+                    '(issue 24).' % escort_legs(),
         },
     }
     json.dump(corr, open(_city.path('params', 'C3_count_comparison.json'), 'w'),

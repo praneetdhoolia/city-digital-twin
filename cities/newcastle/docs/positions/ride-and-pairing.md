@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -47,7 +47,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 ## What is open
 
 - #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
-- #86 (awaiting-run) — the ceiling is decomposed (§9.136): generated 19.13% / bound 16.0% / realised 12.1%. (a) The unbindable 3.1 pp — licensed car-available riders between households, non-direct tours — needs a fifth binder pass that declares who drives whom for classes no observation covers: a declared, swept, labelled-assumed structure or a stated limitation, the user's pick (§9.140); (b) the bound→realised 3.9 pp is a deeper arm's choice records. At the F23 gate 44.7% of residents still held a plan with `ride` (car-less 64.8%), the best-surviving mode after car in the plan memories (§9.140).
+- **#86 — the fifth binder pass is measured NOT to be the largest class** (§9.142). The four passes bind **447,797 trip-equivalents, 20.13 % of core trips**, against the identity's 447,711 and an observed 20.6 %: the BINDING volume is at target, so a fifth pass declaring who drives whom for classes no observation covers would add volume that is already there. What is lost is downstream of the binder: **46,499 bound trips (2.09 % of core trips) never become a `ride` alternative in plan memory** - 42,019 because a one-way binding on a car-available person would mix a chain-based mode with a non-chain one inside a subtour, which MATSim refuses (§9.119), and 4,480 because the escorted person's household holds no vehicle although a household member was bound as their driver. The repair is a per-trip plan variant (ride on the bound leg, a non-chain mode on the other), and it belongs behind the `GatedSubtourProbe` that landed on 4 Sep - the same construction whose chain invariant crashed two arms (§9.106, §9.119). Measured, named, deliberately not built.
 - #91 is closed (§9.140): the no-declared-driver class is zero at the seed since §9.120; F20's iteration-0 pair rate 0.977 and F22's 7,092 pickups with 0 unroutable are its evidence.
 - The 25% × 300 costing: ~25 h stated at the F22 approval; the arm measured 630–670 s/it late pace, ~45–50 h for a full 300 (§9.136) — cost the next 25% arm on the measured pace.
 - Whether a suburb is the right carpool precision is the sweep's question, with `same_sa1_od` its lower bound (§9.124).
@@ -68,6 +68,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.142 — the binders reach target; the loss is in plan memory
 - §9.140 — #91 closed; ride survives memory
 - §9.136 — ceiling decomposed: 19/16/12
 - §9.134 — F21 gate: ride capped at 12%

@@ -151,6 +151,8 @@ GATES = [
     ('gate watcher', [PY, 'tests/check_gate_watcher.py'], False),
     ('launch refusal', [PY, 'tests/check_launch_refusal.py'], False),
     ('registry rules', [PY, 'tests/check_registry_rules.py'], False),
+    # #133: the functions that decide correctness, on synthetic inputs
+    ('unit tests', [PY, '-m', 'pytest', '-q', 'tests/unit'], False),
     ('fit figures', [PY, 'src/analyse/build_fit_figures.py', '--check'], False),
     # GOAL.md requirement 10: every open issue closed or awaiting a run
     ('issues gated', [PY, 'src/run/issue_gate.py'], False),

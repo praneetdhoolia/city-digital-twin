@@ -113,7 +113,15 @@
     },
     "sweep_basis": {
       "type": "string",
-      "description": "How the range was arrived at. An observed spread is worth more than a chosen interval and must say so."
+      "description": "How the range was arrived at. An observed spread is worth more than a chosen interval and must say so. Required, and non-empty, on every field whose source is 'assumed' and which carries a sweep (#134): an assumed value's interval is the only evidence it has, so an interval with no stated basis is a range nobody chose. The basis may sit here or inside the sweep object's own 'basis' key; the rule accepts either, the resolver enforces it."
+    },
+    "sweep_role": {
+      "enum": [
+        "answer",
+        "uncertainty",
+        "measurement"
+      ],
+      "description": "What the sweep IS FOR. The registry used one word for two things (#134): a sweep in DECISIONS.md 8.1's sense is the sensitivity CURVE the study reports at phase P6 - no headline at a single value - while a sweep in 15's sense is the honesty BRACKET that lets an assumed value validate at all. 238 declared sweeps had never been set by any overlay, and the registry could not say which of them were owed a run. answer = the sweep is a P6 deliverable: the record says the curve across it decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate. uncertainty = a declared bracket the resolver enforces and no run is scheduled over; the sweep_basis says whether its leverage is measured or unknown. measurement = an observed spread on a measured or derived value (an interquartile range of routed pairs, a range of station-years, a census interval): it describes the data, not a run to make. Required on every field that carries a sweep; the resolver refuses a swept field without one, so a sweep that is a sweep in name only cannot hide among the ones that are owed."
     },
     "sweep_keys": {
       "type": "array",
@@ -298,6 +306,72 @@
             }
           }
         }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "sweep": {
+            "not": {
+              "type": "null"
+            }
+          }
+        },
+        "required": [
+          "sweep"
+        ]
+      },
+      "then": {
+        "required": [
+          "sweep_role"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "source": {
+            "const": "assumed"
+          },
+          "sweep": {
+            "not": {
+              "type": "null"
+            }
+          }
+        },
+        "required": [
+          "source",
+          "sweep"
+        ]
+      },
+      "then": {
+        "anyOf": [
+          {
+            "required": [
+              "sweep_basis"
+            ],
+            "properties": {
+              "sweep_basis": {
+                "minLength": 1
+              }
+            }
+          },
+          {
+            "properties": {
+              "sweep": {
+                "type": "object",
+                "required": [
+                  "basis"
+                ],
+                "properties": {
+                  "basis": {
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        ]
       }
     }
   ]

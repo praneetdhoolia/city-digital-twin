@@ -13,6 +13,7 @@
         0.4
       ],
       "sweep_basis": "measured: 9.8 s/iteration and 9.8 GiB at 1%, 29.9 s and 18.4 GiB at 10%, ~64 s and 31.5 GiB at 25%. time = 3.1 s + 268 s x fraction, memory = 9.6 + 87 GiB x fraction, so 100% needs ~97 GiB and DOES NOT FIT in 63.5 GiB. The upper bound is the machine ceiling, not a modelling judgement",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.5, 15",
       "description": "Share of the synthetic population simulated. The subsample is NESTED - a person is kept if a hash of their id falls below the fraction, so 1% is a strict subset of 10% and a difference between fractions is a sample-size effect rather than a sampling one. EVERY P4 BEHAVIOURAL RESULT SO FAR WAS MEASURED AT 1% (5,209 persons, 0.85% of the population)."
@@ -84,6 +85,8 @@
         1,
         4
       ],
+      "sweep_basis": "chosen interval: 1 seat is the smallest usable vehicle, and the floor binds below about a 1.5% sample, where it makes capacity systematically too generous; the top of 4 tests whether a larger floor changes anything while crowding scoring is off (issue 12). No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "15",
       "description": "Minimum seats after scaling, so a vehicle never becomes unusable. Capacity floors at 1 seat below about a 1.5% sample, which makes capacity systematically too generous at small fractions. Acceptable while crowding scoring is off; revisit if it is enabled (issue 12)."
@@ -99,6 +102,7 @@
         ],
         "basis": "the lower bound is the largest value MEASURED to be insufficient. The upper bound is NOT a budget limit any more: it is the open half of the question. 1000 is measured to leave the post-cutoff state settled, and is NOT measured to be enough SEARCH - the pre-cutoff creep was still decaying geometrically when innovation froze it (9.43), so the range above 1000 stays declared rather than closed"
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.7, 9.43, 15",
       "matsim_param": "controler.lastIteration",
@@ -201,6 +205,7 @@
         3,
         10
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3",
       "matsim_param": "replanning.maxAgentPlanMemorySize",
@@ -215,6 +220,7 @@
         1800.0
       ],
       "sweep_basis": "MATSim ships 1800 s and this model inherited it SILENTLY - the value reached the mobsim through no declaration at all until 9.85, which is exactly the undeclared modelling choice this registry exists to prevent. It is swept rather than pinned because it is MEASURED to be load-bearing on a quantity that is not its own: it sets how far the two members of a DECLARED joint pair drift apart, and at 1800 s the measured median gap between a companion and their declared driver is 10.3 min with p90 at 45.1 min, against a pairing tolerance of 15 min. The lower bound is the coarsest bin the travel-time calculator resolves (RUN.travel_time.bin_size_s = 300) doubled; the upper is MATSim's own default. Narrowing it is NOT a way to buy pairings - B.ride.bound_pairing_window_min is derived from it, so the tolerance follows the drift rather than chasing it.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.85",
       "matsim_param": "timeAllocationMutator.mutationRange",
@@ -228,6 +234,7 @@
         0.7,
         0.9
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.7",
       "matsim_param": "replanning.fractionOfIterationsToDisableInnovation",
@@ -244,6 +251,7 @@
         ],
         "basis": "There is no standard for how flat a MATSim mode-share trace must be before a run may be called settled, so the tolerance is swept rather than asserted. The lower bound is about the resolution a 10% sample can support; the upper bound is loose enough that a run failing it is unarguably still moving. The verdict is always reported WITH the tolerance beside it and with the two iteration numbers it was measured between, so a reader can apply their own."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.27",
       "consumers": [
@@ -263,6 +271,7 @@
         ],
         "basis": "the lower bound is the MEASURED duration of the snap itself - one iteration, at both fractions - so it is the smallest margin that can exclude it. The upper bound is where the excluded window starts to be a meaningful share of a 200-iteration post-cutoff tail: beyond it the metric passes by measuring less rather than by the run being flatter, which is the failure mode this field must not have"
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.43",
       "consumers": [
@@ -283,6 +292,7 @@
         "proportional": 0.5,
         "basis": "DECISIONS.md 9.3 sweeps the SubtourModeChoice weight over 0.05-0.20"
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3",
       "matsim_param": "replanning.strategysettings[*].weight",
@@ -352,6 +362,7 @@
         ],
         "basis": "the two values MATSim offers. Open Berlin, Leipzig and Kelheim all set the former; the latter is the MATSim default and was live here unset."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.28",
       "matsim_param": "subtourModeChoice.behavior",
@@ -366,6 +377,7 @@
         0.5
       ],
       "sweep_basis": "0.0 is the MATSim default, which its own source annotates as a backwards-compatibility setting that should be changed; 0.5 is the value Open Berlin, Leipzig and Kelheim all use.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.28",
       "matsim_param": "subtourModeChoice.probaForRandomSingleTripMode",
@@ -380,6 +392,7 @@
         100.0
       ],
       "sweep_basis": "0 is the MATSim default and was live here unset; 100 is Open Berlin's value.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.28",
       "matsim_param": "subtourModeChoice.coordDistance",
@@ -394,6 +407,7 @@
         500.0
       ],
       "sweep_basis": "100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.28",
       "matsim_param": "transitRouter.maxBeelineWalkConnectionDistance",
@@ -408,6 +422,7 @@
         2000.0
       ],
       "sweep_basis": "MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.120",
       "matsim_param": "transitRouter.searchRadius",
@@ -422,6 +437,7 @@
         500.0
       ],
       "sweep_basis": "MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.120",
       "matsim_param": "transitRouter.extensionRadius",
@@ -436,6 +452,7 @@
         2.0
       ],
       "sweep_basis": "MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.121",
       "matsim_param": "transitRouter.directWalkFactor",
@@ -490,6 +507,7 @@
         ],
         "basis": "the two representations the pinned MATSim (2027.0-2026w25) supports, verified against the jar's bytecode rather than memory: per_submode uses the `swissRailRaptor` config module's `useModeMappingForPassengers` with one `modeMapping` parameterset (routeMode -> passengerMode) per scheduled transportMode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup), so each submode's legs carry its own mode and score with C1's own per-submode constants; aggregate is the pre-9.78 state - one `pt` passenger mode carrying asc_bus for bus, tram, rail and ferry alike, the collapse DECISIONS.md 9.3 recorded as not representable."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.78",
       "consumers": [
@@ -505,6 +523,7 @@
         1,
         24
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.5, 9.59",
       "matsim_param": "qsim.numberOfThreads",
@@ -518,6 +537,7 @@
         1,
         24
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.59",
       "matsim_param": "global.numberOfThreads",
@@ -727,6 +747,7 @@
         2.0
       ],
       "sweep_basis": "MATSim's own default is 1.0 and the manual treats it as the conventional starting point rather than a measured quantity. The interval spans the range in common use: below 1 agents respond more softly to a utility difference and mode shares flatten, above 1 they respond more sharply and the model can lock in. Nothing about Newcastle bears on it.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3, 15",
       "matsim_param": "scoring.BrainExpBeta",
@@ -741,6 +762,7 @@
         1.0
       ],
       "sweep_basis": "MATSim's default is 1.0, meaning a plan's score is replaced outright by the latest execution rather than blended with its history. Values below 1 blend, which damps oscillation at the cost of slower relaxation - directly relevant to issue 5, and therefore swept rather than pinned.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3, 9.7, 15",
       "matsim_param": "scoring.learningRate",
@@ -755,6 +777,7 @@
         -6.0
       ],
       "sweep_basis": "MATSim's conventional value is -18 utils/h, three times a typical performing rate, and the manual presents it as a convention rather than an estimate. The interval spans one third to twice that. No Newcastle observation bears on it: the HTS held is aggregate and carries no schedule-adherence measure.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3, 15",
       "matsim_param": "scoring.lateArrival",
@@ -769,6 +792,7 @@
         0.0
       ],
       "sweep_basis": "Zero is an assumption that leaving an activity early costs nothing beyond the activity utility already forgone, which is the usual MATSim treatment and avoids charging the same shortfall twice. The interval allows an explicit penalty up to the late-arrival rate for a sensitivity arm.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3, 15",
       "matsim_param": "scoring.earlyDeparture",
@@ -783,6 +807,7 @@
         0.0
       ],
       "sweep_basis": "Zero avoids double-counting: general waiting is already priced through the forgone performing utility of the time. The interval allows an additional explicit disutility for a sensitivity arm. Distinct from scoring.waitingPt, which is DERIVED from the C1 beta_wait and is not this field.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.3, 9.28, 15",
       "matsim_param": "scoring.waiting",
@@ -916,6 +941,7 @@
         ],
         "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.76, 9.77",
       "matsim_param": "travelTimeCalculator.travelTimeBinSize",
@@ -977,14 +1003,15 @@
       "description": "Speed of the teleported access/egress stub walk (non_network_walk) that connects an activity to its network link. The MAIN walk mode is network-simulated (9.54); this helper covers only the stub, and it carries the same declared walking speed."
     },
     "RUN.routing.access_walk_beeline_factor": {
-      "value": 1.6902,
+      "value": 1.6938,
       "units": "ratio",
       "source": "measured",
       "sweep": [
-        1.294,
-        1.794
+        1.286,
+        1.741
       ],
-      "sweep_basis": "Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.",
+      "sweep_basis": "Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use, and re-measured on the current network 4 Sep 2026 (9.142) - 1.6902 over 531 routed pairs became 1.6938 over 560. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.",
+      "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "9.54",
       "matsim_param": "routing.teleportedModeParameters[non_network_walk].beelineDistanceFactor",

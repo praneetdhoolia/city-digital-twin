@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -35,7 +35,7 @@
 ## What is open
 
 - **No arm on the choice-set seed has passed iteration 60**, and no arm since F4 has reached an innovation cutoff or a 100-iteration gate; a post-cutoff level for twelve modes has never been read on this seed (§9.108, §9.126).
-- **The declared horizon and the arms' horizon differ**: `RUN.controler.last_iteration` declares 1000 (§9.43) while every gate arm runs 300 with the goal asking for at most 250 (§9.120). Re-declaring the field on a completed choice-set arm is a declaration not yet made.
+- **The declared horizon and the arms' horizon differ, and that was reviewed and left alone** (§9.142): `RUN.controler.last_iteration` declares 1000 (§9.43) while every gate arm runs 300 and GOAL.md requirement 8 asks for at most 250. Re-declaring the field to 250 was considered and REFUSED: §9.7 measured 250 insufficient on the pre-rebuild stack, so declaring it would assert a value against a measurement. Requirement 8's 250 is a property the twin must be SHOWN to have, not a number to type into the field, and the instrument for showing it already exists - a 300-iteration arm switches innovation off at 240, so its post-cutoff window straddles 250. The first arm to pass its gate measures it.
 - **Whether 1000 iterations are enough SEARCH** was never measured — the 1500-iteration arm was cancelled (§9.43, limit 1). It is moot if the choice-set seed converges inside 250, which is not yet shown.
 - **The `full_choice_set` against `uniform_draw` sweep** has not been run on one family; how much the search decided remains unmeasured (`B.mode.seed_method` sweep basis).
 - **Each seeded plan is scored once** under the traffic of the iteration it ran in; only re-execution updates it, and how fast selection refines that is what a gate reads (§9.121).
@@ -55,6 +55,7 @@
 
 ## History
 
+- §9.142 — the 250-iteration horizon reviewed and deliberately not declared
 - §9.140 — leaf mix repaired; memory census
 - §9.126 — choice-set seed converges car, walk
 - §9.121 — first-executed plan drawn uniformly

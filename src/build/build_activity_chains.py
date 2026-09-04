@@ -247,6 +247,17 @@ def sample_unit_hash(household_id):
 SHORT_BAND_SHARE = CFG.get('B.activity.short_trip_band_share')
 SHORT_BAND_KM = CFG.get('B.activity.short_trip_band_km')
 SHORT_MEAN_KM = CFG.get('B.activity.short_trip_mean_km')
+# DECISIONS.md 9.142 (issue #30): whether destination choice is constrained at
+# the DESTINATION end as well as the origin end. A gravity model constrained
+# only by production reproduces each purpose's observed mean trip distance and
+# still need not deliver each zone its observed share of arrivals; the measured
+# consequence was a corridor holding two thirds of the attraction it is
+# observed to hold. Under `doubly_constrained` the matrix is balanced
+# (Wilson 1967 / Furness) so both margins hold at once.
+DEST_BALANCING = CFG.get('B.activity.destination_balancing')
+BALANCE_ROUNDS = int(CFG.get('B.activity.balancing_rounds'))
+BALANCE_PASSES = int(CFG.get('B.activity.balancing_passes'))
+BALANCE_TOL = CFG.get('B.activity.balancing_tolerance')
 # Share of an under-12's drawn secondary tours that are actually made alone.
 # Applied as per-tour thinning, not as a scaling of the count.
 CHILD_TOUR_RETENTION = CFG.get('B.activity.child_tour_retention')
@@ -460,6 +471,32 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     aggregate solve kept as the fallback for suppressed cells and as the decay
     the external tier uses, since a boundary agent has no home LGA (issue #30,
     DECISIONS.md 9.40).
+
+    Both margins, not one (9.142, issue #30). Solving a decay against an
+    observed mean distance constrains the matrix at its ORIGIN end only: every
+    origin sends the right number of trips the right average distance, and
+    nothing requires a destination to RECEIVE the share of arrivals its own
+    attraction states. Measured on the committed demand it does not - the
+    corridor's CBD end holds 8.27% of core work attraction while the worst zone's
+    share of arrivals sat 12.9x its own attraction share away from it, shopping
+    received 0.59x and other 0.69x of theirs (9.136), and the shortfall widened
+    with distance, so no calibration of one decay per purpose could close it: a
+    size x distance
+    kernel cannot concentrate arrivals the way an agglomeration does.
+
+    The standard repair constrains the destination end too (Wilson 1967; the
+    Furness/IPF balancing of the classical four-step model). A destination
+    multiplier b_j is solved so the production-weighted column shares equal the
+    attraction vector; because b_j enters the kernel exactly where the
+    attraction vector does, the decay solve above runs unchanged against
+    ATTR * b. The two are solved TOGETHER - balance, re-solve the decays on the
+    balanced attraction, repeat - so that at the fixed point each purpose still
+    realises its own observed mean distance per home LGA AND each zone receives
+    its share of that purpose's arrivals. No new observation, parameter or
+    constant enters: b is the multiplier of a constraint the attraction vector
+    had already stated and the draw had been free to ignore.
+    `B.activity.destination_balancing` = `singly_constrained` restores the
+    previous behaviour exactly.
     """
     DX = X[None, :] - X[:, None]
     DY = Y[None, :] - Y[:, None]
@@ -467,13 +504,18 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     del DX, DY
     out, diag = {}, {}
     pw = norm(prod)
+    # The attraction the kernel actually draws on: the observed vector times
+    # the destination-end multiplier solved below. Under
+    # `singly_constrained` the multiplier stays at one and this is ATTR
+    # exactly, so that setting reproduces the previous build bit for bit.
+    AEFF = {p: np.asarray(ATTR[p], dtype=float).copy() for p in PURPOSES}
 
     def solve(p, target, rows=None):
         """Bisect beta so the realised mean over `rows` origins hits target."""
         w_origin = pw if rows is None else norm(np.where(rows, pw, 0.0))
 
         def realised(beta):
-            w = ATTR[p][None, :] * np.exp(-beta * DKM)
+            w = AEFF[p][None, :] * np.exp(-beta * DKM)
             s = w.sum(axis=1, keepdims=True)
             w = np.divide(w, np.where(s > 0, s, 1.0))
             return float((w_origin * (w * DKM).sum(axis=1)).sum())
@@ -513,13 +555,13 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
         return np.divide(mat, np.where(s > 0, s, 1.0))
 
     def kernel(p, beta_vec):
-        return norm_w(ATTR[p][None, :] * np.exp(-beta_vec[:, None] * DKM))
+        return norm_w(AEFF[p][None, :] * np.exp(-beta_vec[:, None] * DKM))
 
     def solve_short(p):
         lo, hi = 0.005, 12.0
 
         def realised(beta):
-            w = norm_w(ATTR[p][None, :] * np.exp(-beta * DKM))
+            w = norm_w(AEFF[p][None, :] * np.exp(-beta * DKM))
             return float((pw * (w * DKM).sum(axis=1)).sum())
 
         if realised(hi) > short_mean_target:
@@ -539,11 +581,18 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     def band_of(w):
         return float((pw * np.where(in_band, w, 0.0).sum(axis=1)).sum())
 
+    def arrivals(w):
+        """Production-weighted share of this purpose's trip ends per zone."""
+        return pw @ w
+
     lgas = sorted(set(zone_lga)) if zone_lga is not None else []
     beta_of_zone = {}
     mix_of = {}
     short_beta = {}
-    for p in PURPOSES:
+
+    def calibrate_one(p):
+        """One purpose's decays and mixture on the CURRENT effective
+        attraction, and the mixed draw matrix they imply."""
         target = max(meandist.get(p, 8.0), 0.8) / DETOUR_FACTOR
         b_short, short_mean_got = solve_short(p)
         short_beta[p] = b_short
@@ -611,14 +660,82 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
         if lgas:
             diag[p]['by_lga'] = by_lga
         beta_of_zone[p] = zone_beta
-    CUM = {}
-    for p in PURPOSES:
-        w = kernel(p, beta_of_zone[p])
-        mix = mix_of.get(p, 0.0)
+        w = kernel(p, zone_beta)
         if mix > 0.0:
             w = (1.0 - mix) * w + mix * kernel(
                 p, np.full(X.size, short_beta[p]))
-        CUM[p] = np.cumsum(w, axis=1).astype(np.float32)
+        return w
+
+    def mixed(p, zone_beta):
+        """The draw matrix for one purpose at fixed decays - two kernel builds,
+        against the several hundred a decay solve costs."""
+        w = kernel(p, zone_beta)
+        m = mix_of.get(p, 0.0)
+        if m > 0.0:
+            w = (1.0 - m) * w + m * kernel(p, np.full(X.size, short_beta[p]))
+        return w
+
+    def gap_of(p, w):
+        """Largest relative shortfall or excess of a zone's share of this
+        purpose's arrivals against its own attraction share."""
+        a = arrivals(w)
+        held = np.asarray(ATTR[p]) > 0
+        if not held.any():
+            return 0.0, a, held
+        rel = a[held] / np.asarray(ATTR[p])[held] - 1.0
+        return float(np.abs(rel).max()), a, held
+
+    # ---- 9.142 (issue #30): solve the decays and the destination-end
+    # multiplier together, cheaply. A decay solve costs several hundred kernel
+    # builds (a bisection per purpose and per home LGA); a balancing step costs
+    # two. So the balancing iterates at FIXED decays until the arrivals match,
+    # and only then are the decays re-solved on the balanced attraction - a
+    # pass repeated B.activity.balancing_passes times. Pass 1 before any
+    # balancing IS the origin-constrained solve exactly as it stood, which is
+    # what `singly_constrained` returns.
+    doubly = DEST_BALANCING == 'doubly_constrained'
+    passes = max(1, BALANCE_PASSES) if doubly else 1
+    W = {}
+    gap_first, gap_last, inner_used = {}, {}, {}
+    passes_run = 0
+    for pss in range(passes):
+        passes_run = pss + 1
+        for p in PURPOSES:
+            W[p] = calibrate_one(p)
+            g, _a, _h = gap_of(p, W[p])
+            if pss == 0:
+                gap_first[p] = g
+            gap_last[p] = g
+        if not doubly:
+            break
+        for p in PURPOSES:
+            used = 0
+            for _ in range(max(1, BALANCE_ROUNDS)):
+                g, a, held = gap_of(p, W[p])
+                gap_last[p] = g
+                if g <= BALANCE_TOL:
+                    break
+                used += 1
+                f = np.ones_like(a)
+                ok = held & (a > 0)
+                f[ok] = np.asarray(ATTR[p])[ok] / a[ok]
+                AEFF[p] = np.where(held, AEFF[p] * f, 0.0)
+                W[p] = mixed(p, beta_of_zone[p])
+                gap_last[p] = gap_of(p, W[p])[0]
+            inner_used[p] = inner_used.get(p, 0) + used
+    diag['_destination_balancing'] = dict(
+        rule=DEST_BALANCING, passes_run=passes_run, passes_max=passes,
+        inner_rounds_max=BALANCE_ROUNDS, inner_rounds_used=inner_used,
+        tolerance=BALANCE_TOL,
+        worst_arrival_gap_before={p: round(gap_first[p], 4) for p in PURPOSES},
+        worst_arrival_gap_after={p: round(gap_last[p], 4) for p in PURPOSES},
+        note=('the largest relative gap between a zone\'s share of a purpose\'s '
+              'arrivals and its own attraction share, over the zones that hold '
+              'attraction, before any balancing and after the last pass. Under '
+              'singly_constrained nothing is balanced and the two are equal.'))
+    CUM = {}
+    for p in PURPOSES:
+        CUM[p] = np.cumsum(W[p], axis=1).astype(np.float32)
     del DKM
     return CUM, diag
 

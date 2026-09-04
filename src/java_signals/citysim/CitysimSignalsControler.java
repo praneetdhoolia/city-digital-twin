@@ -61,6 +61,15 @@ public final class CitysimSignalsControler {
                     "usage: citysim.CitysimSignalsControler <config.xml>");
             System.exit(2);
         }
+        // The same one-logger silencing the base entry point does, and for the
+        // same reason: `routing.accessEgressType = none` makes
+        // NetworkRoutingProvider warn seven lines per routing-module provider
+        // call, and the F23 arm turned that into ~164 GiB of log across
+        // matsim.log, output/logfile.log and output/logfileWarningsErrors.log.
+        // See CitysimControler.quietenAccessEgressWarning for the whole story;
+        // it is called here rather than from assemble() so that a probe
+        // building a Controler in-process keeps MATSim's own logging verbatim.
+        CitysimControler.quietenAccessEgressWarning();
         final SignalSystemsConfigGroup signalsConfig =
                 new SignalSystemsConfigGroup();
         // TramPriorityConfigGroup is registered by assemble() itself on EVERY

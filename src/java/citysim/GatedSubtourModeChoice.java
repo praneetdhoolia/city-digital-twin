@@ -106,7 +106,11 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
         private final double walkFeasibleM;
         private final double bikeFeasibleM;
         private final double coordDistance;
-        private final String[] chainBased;
+        /** Chain-based modes, as the run's own config declares them. Built once:
+         *  {@code isAnySubtourMixed} used to build this set on every call, and
+         *  it is called twice per proposal. (Named ...Set because the stock
+         *  SubtourModeChoice has a private `chainBasedModes` of its own.) */
+        private final java.util.Set<String> chainBasedModeSet;
         /** Caps the diagnostic to the first few offenders, across all threads. */
         private static final java.util.concurrent.atomic.AtomicInteger
                 PREMIX_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
@@ -139,6 +143,24 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             }
         }
 
+        /**
+         * The parse of one attribute VALUE, cached by that value.
+         *
+         * <p>Keyed on the string rather than on the person because the parse is
+         * a pure function of the string, so this cache cannot go stale the way
+         * a per-person one would - and the value space is tiny: a few distinct
+         * comma-lists of trip indices across the whole population. Without it
+         * every plan of every replanning round split two strings and built two
+         * {@code HashSet}s, and this gate runs twice per proposal.
+         *
+         * <p>Concurrent because replanning runs on
+         * {@code global.numberOfThreads} threads; the cached sets are
+         * unmodifiable and shared.
+         */
+        private static final java.util.Map<String, java.util.Set<Integer>>
+                BOUND_TRIPS_BY_VALUE =
+                        new java.util.concurrent.ConcurrentHashMap<>();
+
         /** The trip indices a person attribute lists, or an empty set. */
         static java.util.Set<Integer> boundTrips(final Plan plan,
                                                  final String attribute) {
@@ -150,8 +172,15 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             if (raw == null) {
                 return java.util.Collections.emptySet();
             }
+            return BOUND_TRIPS_BY_VALUE.computeIfAbsent(
+                    raw.toString(), GatedModule::parseBoundTrips);
+        }
+
+        /** The trip indices one attribute value names. */
+        private static java.util.Set<Integer> parseBoundTrips(
+                final String value) {
             final java.util.Set<Integer> out = new java.util.HashSet<>();
-            for (final String token : raw.toString().split(",")) {
+            for (final String token : value.split(",")) {
                 final String s = token.trim();
                 if (s.isEmpty()) {
                     continue;
@@ -163,7 +192,7 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                     // conservative in the refusing direction for ride
                 }
             }
-            return out;
+            return java.util.Collections.unmodifiableSet(out);
         }
 
         GatedModule(final GlobalConfigGroup global,
@@ -174,7 +203,9 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             super(global, config, calc);
             this.calc = calc;
             this.coordDistance = config.getCoordDistance();
-            this.chainBased = config.getChainBasedModes();
+            this.chainBasedModeSet = java.util.Collections.unmodifiableSet(
+                    new java.util.HashSet<>(java.util.Arrays.asList(
+                            config.getChainBasedModes())));
             this.walkFeasibleM = walkFeasibleKm * 1000.0;
             this.bikeFeasibleM = bikeFeasibleKm * 1000.0;
         }
@@ -201,16 +232,10 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
             return CoordUtils.calcEuclideanDistance(a, b) > limit;
         }
 
-        /** Chain-based modes, as the run's own config declares them. */
-        private java.util.Set<String> chainBasedModes() {
-            return new java.util.HashSet<>(
-                    java.util.Arrays.asList(chainBased));
-        }
-
         /** Does any subtour of this plan mix chain- with non-chain-based modes? */
         private boolean isAnySubtourMixed(final Plan plan) {
             try {
-                final java.util.Set<String> chain = chainBasedModes();
+                final java.util.Set<String> chain = this.chainBasedModeSet;
                 for (final TripStructureUtils.Subtour st
                         : TripStructureUtils.getSubtours(plan, coordDistance)) {
                     boolean sawChain = false;

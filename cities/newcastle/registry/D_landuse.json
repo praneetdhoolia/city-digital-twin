@@ -25,6 +25,8 @@
         15.0,
         50.0
       ],
+      "sweep_basis": "chosen interval around the 30 m within which a building is attributed to one of the 50 m frontage segments (DECISIONS.md 7); half to five thirds of the value. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "7",
       "description": "Distance from a frontage segment within which a building is attributed to it.",
@@ -49,6 +51,8 @@
       "sweep": {
         "proportional": 0.4
       },
+      "sweep_basis": "DECISIONS.md 7: the workplace-weighted POI index (office 12, civic 15, health 8, food 6, retail 4) is assumed because retail floorspace and vacancy were not obtained (13 priority 7); +/-40% on every weight, the proportional form being the honest expression of weights whose relative order is a judgement and whose magnitude is unobserved.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "7",
       "description": "Relative employment weight by POI category, used to distribute SA2 job counts to zones. Retail floorspace and vacancy were not obtained, so this stands in for them (DECISIONS.md 13 priority 7).",
@@ -106,6 +110,8 @@
       "sweep": {
         "proportional": 0.4
       },
+      "sweep_basis": "DECISIONS.md 7: the POI attraction weights by purpose are assumed and feed destination choice and frontage throughput; +/-40% on every weight, as for the job weights they extend. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "7",
       "description": "Destination attraction weight by trip purpose and POI category.",
@@ -124,6 +130,7 @@
         ],
         "basis": "no Newcastle frontage vacancy audit exists"
       },
+      "sweep_role": "uncertainty",
       "status": "unobtained",
       "decisions_ref": "7, 13",
       "proposal_ref": "6.1",

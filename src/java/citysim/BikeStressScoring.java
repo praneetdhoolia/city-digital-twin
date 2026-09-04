@@ -69,8 +69,16 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
 
     private final EventsManager events;
     private final double penaltyUtilsPerHour;
-    /** factor - 1 per link that carries a factor above 1; absent = 0. */
-    private final Map<Id<Link>, Double> surplusByLink = new HashMap<>();
+    /**
+     * factor - 1 per link that carries a factor above 1, by {@code Id.index()};
+     * 0.0 where the link carries no factor, which is what absence meant.
+     *
+     * <p>A {@code Map<Id<Link>, Double>} until the profiling pass: it was read
+     * on every link event of every mode - ~65 M an iteration on a 25% arm - and
+     * each read hashed an {@code Id} and unboxed a {@code Double}. The array is
+     * built once from the network in the constructor and never written again.
+     */
+    private final double[] surplusByLink;
 
     /** One cycling vehicle currently in traffic. */
     private static final class Ride {
@@ -83,7 +91,10 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
         }
     }
 
-    private final Map<Id<Vehicle>, Ride> riding = new HashMap<>();
+    /** Cycling vehicles currently in traffic, by {@code Id.index()}. Null means
+     *  "not cycling", which is what absence from the old map meant. Read on
+     *  every link event, so an index rather than a hash. */
+    private Ride[] ridingByVehicle = new Ride[0];
     private final Map<Id<Person>, Double> surplusSeconds = new HashMap<>();
 
     @Inject
@@ -93,6 +104,7 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
                 ConfigUtils.addOrGetModule(config, BikeStressConfigGroup.class);
         this.events = events;
         this.penaltyUtilsPerHour = cfg.getPenaltyUtilsPerHour();
+        this.surplusByLink = new double[Id.getNumberOfIds(Link.class) + 1];
         for (final Link link : network.getLinks().values()) {
             final Object raw = link.getAttributes()
                     .getAttribute(BikeStressConfigGroup.STRESS_ATTRIBUTE);
@@ -100,8 +112,9 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
                 continue;
             }
             final double factor = Double.parseDouble(raw.toString());
-            if (factor > 1.0) {
-                this.surplusByLink.put(link.getId(), factor - 1.0);
+            final int i = link.getId().index();
+            if (factor > 1.0 && i >= 0 && i < this.surplusByLink.length) {
+                this.surplusByLink[i] = factor - 1.0;
             }
         }
     }
@@ -113,13 +126,28 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
                 .equals(event.getNetworkMode())) {
             return;
         }
-        this.riding.put(event.getVehicleId(),
-                        new Ride(event.getPersonId(), event.getTime()));
+        final int i = event.getVehicleId().index();
+        if (i < 0) {
+            return;
+        }
+        if (i >= this.ridingByVehicle.length) {
+            this.ridingByVehicle =
+                    java.util.Arrays.copyOf(this.ridingByVehicle, i + 1024);
+        }
+        this.ridingByVehicle[i] = new Ride(event.getPersonId(),
+                                           event.getTime());
+    }
+
+    /** The ride this vehicle is on, or null. See {@link #ridingByVehicle}. */
+    private Ride riding(final Id<Vehicle> vehicle) {
+        final int i = vehicle.index();
+        return i < 0 || i >= this.ridingByVehicle.length
+                ? null : this.ridingByVehicle[i];
     }
 
     @Override
     public void handleEvent(final LinkEnterEvent event) {
-        final Ride ride = this.riding.get(event.getVehicleId());
+        final Ride ride = riding(event.getVehicleId());
         if (ride != null) {
             ride.enteredAt = event.getTime();
         }
@@ -127,13 +155,17 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
 
     @Override
     public void handleEvent(final LinkLeaveEvent event) {
-        accrue(this.riding.get(event.getVehicleId()), event.getLinkId(),
+        accrue(riding(event.getVehicleId()), event.getLinkId(),
                event.getTime());
     }
 
     @Override
     public void handleEvent(final VehicleLeavesTrafficEvent event) {
-        final Ride ride = this.riding.remove(event.getVehicleId());
+        final Ride ride = riding(event.getVehicleId());
+        final int i = event.getVehicleId().index();
+        if (i >= 0 && i < this.ridingByVehicle.length) {
+            this.ridingByVehicle[i] = null;
+        }
         accrue(ride, event.getLinkId(), event.getTime());
     }
 
@@ -141,8 +173,10 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
         if (ride == null) {
             return;
         }
-        final Double surplus = this.surplusByLink.get(link);
-        if (surplus == null) {
+        final int li = link.index();
+        final double surplus = li >= 0 && li < this.surplusByLink.length
+                ? this.surplusByLink[li] : 0.0;
+        if (surplus == 0.0) {
             return;
         }
         final double dt = now - ride.enteredAt;
@@ -166,19 +200,38 @@ public final class BikeStressScoring implements VehicleEntersTrafficEventHandler
                     24.0 * 3600.0, entry.getKey(), utils, KIND));
         }
         this.surplusSeconds.clear();
-        this.riding.clear();
+        clearRiding();
     }
 
     @Override
     public void reset(final int iteration) {
-        this.riding.clear();
+        clearRiding();
         this.surplusSeconds.clear();
+    }
+
+    /** Forget every open ride. Sized off the vehicle id space rather than
+     *  wiped in place: reset(int) runs immediately before the mobsim, when
+     *  every vehicle the mobsim will use already has an id. */
+    private void clearRiding() {
+        this.ridingByVehicle =
+                new Ride[Id.getNumberOfIds(Vehicle.class) + 1024];
+    }
+
+    /** How many links carry a stress factor above 1. */
+    private int stressedLinks() {
+        int n = 0;
+        for (final double s : this.surplusByLink) {
+            if (s > 0.0) {
+                n++;
+            }
+        }
+        return n;
     }
 
     /** Logged once at startup, so a run's console says what it charges. */
     @Override
     public String toString() {
-        return "bikeStress: " + this.surplusByLink.size()
+        return "bikeStress: " + stressedLinks()
                 + " stressed links, penalty "
                 + this.penaltyUtilsPerHour + " utils per felt extra hour";
     }

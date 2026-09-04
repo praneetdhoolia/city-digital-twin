@@ -85,7 +85,40 @@ public final class CitysimControler {
             System.err.println("usage: citysim.CitysimControler <config.xml>");
             System.exit(2);
         }
+        quietenAccessEgressWarning();
         assemble(args[0], java.util.List.of()).run();
+    }
+
+    /**
+     * Silence ONE logger: {@code NetworkRoutingProvider}'s
+     * "Using deprecated routing module without access/egress" warning.
+     *
+     * <p>It fires seven lines every time a routing-module provider is asked
+     * for a module, because {@code routing.accessEgressType = none} is what
+     * this model runs on - deliberately, and it is load-bearing:
+     * {@link ActivityLinkAssigner} exists precisely because access and egress
+     * are not routed, so the setting is not the thing to change.
+     *
+     * <p>The F23 arm wrote 54.9 GB of {@code matsim.log} and the same again to
+     * {@code output/logfile.log} and {@code output/logfileWarningsErrors.log} -
+     * about 164 GiB, ~1.6 GiB an iteration, essentially all of it this one
+     * warning, emitted through a caller-location-aware synchronous appender.
+     * The CAUSE was the ride pairing building a whole TripRouter per detour
+     * segment ({@link RidePairingEngine}, now one per iteration), and that is
+     * fixed on its own terms; this line stops the remaining handful from being
+     * a disk-space question at all, and stops any future unscoped provider
+     * call from becoming one. Nothing else moves: the level is raised for this
+     * one logger, so the same run emits the same events and the same plans.
+     *
+     * <p>The only log4j configuration otherwise in play is the {@code
+     * log4j2.xml} inside the pinned MATSim jar; there is no project config and
+     * the launcher passes no {@code -Dlog4j2.configurationFile}, so this is
+     * where the decision has to be recorded.
+     */
+    static void quietenAccessEgressWarning() {
+        org.apache.logging.log4j.core.config.Configurator.setLevel(
+                "org.matsim.core.router.NetworkRoutingProvider",
+                org.apache.logging.log4j.Level.ERROR);
     }
 
     /**

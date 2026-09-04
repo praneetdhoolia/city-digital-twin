@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
 
 ## What is built
 
@@ -52,7 +52,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 ## What is open
 
 - Light rail: where the missing ~1,300 boardings a weekday are — longer corridor trips, rail transferees, visitors — is the mode's question at the next gate (§9.130, `NEXT_AGENT_BRIEF.md`).
-- #30 — the deficit survives the licence-rate rebuild unchanged (shopping 0.59×, other 0.69×, work 1.09× of the attraction share, §9.136) and is measured structural (the band gradient above); the repair choice — floorspace-weighted attraction vs an agglomeration term — is a decision at B2's own family boundary (§9.120, §9.136).
+- **#30 is repaired at the demand level** (§9.142). The deficit had survived two rebuilds unchanged (shopping 0.59x, other 0.69x, work 1.09x of the attraction share, §9.136) and was measured structural: a size x distance gravity constrained only at the ORIGIN end cannot concentrate arrivals the way an agglomeration does, at any decay. Destination choice is now constrained at the destination end too, and the CBD SA2 receives its own attraction share of non-home weekday core trip ends: **work 1.02x, shopping 0.99x, other 0.99x**, education 0.91x. Shopping is the one purpose whose WORST-ZONE gap does not reach the declared tolerance (0.37 against 0.01, the inner cap binding in all three passes): one destination multiplier cannot match the column shares of a two-component mixture, and a multiplier per component is the next demand lane (§9.142). Whether that reaches the tram is the F24 gate's reading, not a claim this page makes: the corridor's stops are a subset of the CBD and the mode still has to be chosen.
 - #94 (awaiting-run) — supply, hour of service and routing are exonerated (§9.140); the residual is the reach bound (three quarters of the market beyond the 1 km walk radius with no feeder — a declared, swept field, not a constant to guess) and a competitive-but-losing plan the memory drops; the next gate reads the near-wharf split on the F24 package (§9.140).
 - The ferry target's vintage: the census cell is a lockdown month, which is why the sweep runs from 0 to twice the point value (§9.89).
 - Both modes have now been re-read at three successive gates (F21 §9.134, F22 §9.136, F23 §9.139) and moved no closer under any repair; the corridor attraction (#30) and the ferry's residual (#94) stand as the causes to attack, and neither is a pricing or behaviour-channel question.
@@ -72,6 +72,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.142 — the corridor gets its arrivals: destination choice constrained at both ends
 - §9.140 — ferry market and memory measured
 - §9.139 — F23 gate: both unmoved again
 - §9.136 — corridor deficit structural by band

@@ -132,18 +132,37 @@ public final class RunTelemetry implements
     private final Map<Id<Vehicle>, String> transitType = new HashMap<>();
     private final Map<String, Integer> enRouteByVehicleType = new TreeMap<>();
 
-    /** Open link traversals, keyed by vehicle: entry time awaiting a leave. */
-    private final Map<Id<Vehicle>, LinkEntry> open = new HashMap<>();
+    /**
+     * Open link traversals by VEHICLE INDEX: the link a vehicle entered and
+     * when, awaiting its leave.
+     *
+     * <p>An array of reusable slots rather than a map of fresh objects. This
+     * pair of handlers sees ~65 M events an iteration, and it used to allocate
+     * a {@code LinkEntry} on every enter and remove it from a hash map on
+     * every leave. A slot is created once per vehicle per iteration and then
+     * overwritten; {@code LinkEntry.open} carries what the map's presence or
+     * absence used to.
+     */
+    private LinkEntry[] openByVehicle = new LinkEntry[0];
 
-    /** Cumulative over the whole iteration - the day's picture, written at the end. */
+    /** Cumulative over the whole iteration - the day's picture, written at the
+     *  end. The MAP fixes the publication order, exactly as it always has;
+     *  {@link #loadByLink} is the same objects reached by link index, which is
+     *  how the link events find their accumulator without hashing an Id. */
     private final Map<Id<Link>, LinkLoad> load = new HashMap<>();
 
-    /** The CURRENT window only, cleared at every live flush. A live map has to
-     *  answer "what is congested now", and a cumulative day mean cannot: it
-     *  converges as the day proceeds and stops moving, so the peak would build
-     *  and then never dissipate. This is what makes the map live rather than
-     *  merely frequent. */
-    private final Map<Id<Link>, LinkLoad> window = new HashMap<>();
+    /** {@link #load}'s values by {@code Id.index()}. Same objects. */
+    private LinkLoad[] loadByLink = new LinkLoad[0];
+
+    /** The links touched in the CURRENT window, in first-touch order, cleared
+     *  at every live flush. A live map has to answer "what is congested now",
+     *  and a cumulative day mean cannot: it converges as the day proceeds and
+     *  stops moving, so the peak would build and then never dissipate. This is
+     *  what makes the map live rather than merely frequent.
+     *
+     *  <p>The window's counters live on the same {@link LinkLoad} as the day's,
+     *  so a leave does ONE lookup instead of two. */
+    private final List<LinkLoad> windowTouched = new ArrayList<>();
     private double windowStart = 0.0;
 
     private final List<Bin> profile = new ArrayList<>();
@@ -162,20 +181,32 @@ public final class RunTelemetry implements
     private double lastTime = 0.0;
     private long iterationStartedMs = 0L;
 
+    /** One vehicle's open traversal. Mutable and reused - see
+     *  {@link #openByVehicle}. {@code open} false means "no traversal awaiting
+     *  a leave", which is what absence from the old map meant. */
     private static final class LinkEntry {
-        private final Id<Link> link;
-        private final double time;
-
-        private LinkEntry(final Id<Link> link, final double time) {
-            this.link = link;
-            this.time = time;
-        }
+        /** Link INDEX, so the leave path compares ints rather than Ids. */
+        private int link = -1;
+        private double time;
+        private boolean open;
     }
 
-    /** Volume and cumulative traversal time for one link over one iteration. */
+    /** Volume and cumulative traversal time for one link, for the whole
+     *  iteration and for the live window that is currently filling. */
     private static final class LinkLoad {
+        private final Id<Link> id;
+        /** Free-flow traversal seconds, cached off {@link #freeflow} at
+         *  creation: the payload writer looked it up per link per frame. */
+        private final double freeflowS;
         private int volume;
         private double travelTimeSum;
+        private int windowVolume;
+        private double windowTravelTimeSum;
+
+        private LinkLoad(final Id<Link> id, final double freeflowS) {
+            this.id = id;
+            this.freeflowS = freeflowS;
+        }
     }
 
     /** One simulated-time bin of the accumulating day profile. */
@@ -230,8 +261,13 @@ public final class RunTelemetry implements
         stuckByMode.clear();
         enRouteByVehicleType.clear();
         transitType.clear();
-        open.clear();
+        // Sized off the id space rather than grown from nothing: the network is
+        // built and the vehicles created before the mobsim, and reset(int) runs
+        // last, immediately before it.
+        openByVehicle = new LinkEntry[Id.getNumberOfIds(Vehicle.class) + 1024];
         load.clear();
+        loadByLink = new LinkLoad[Id.getNumberOfIds(Link.class) + 1024];
+        windowTouched.clear();
         profile.clear();
         nextFlush = Double.NEGATIVE_INFINITY;
         lastTime = 0.0;
@@ -293,25 +329,86 @@ public final class RunTelemetry implements
 
     @Override
     public void handleEvent(final LinkEnterEvent event) {
-        open.put(event.getVehicleId(),
-                 new LinkEntry(event.getLinkId(), event.getTime()));
+        final LinkEntry e = slotFor(event.getVehicleId());
+        if (e != null) {
+            e.link = event.getLinkId().index();
+            e.time = event.getTime();
+            e.open = true;
+        }
         lastTime = event.getTime();
     }
 
     @Override
     public void handleEvent(final LinkLeaveEvent event) {
-        final LinkEntry e = open.remove(event.getVehicleId());
         lastTime = event.getTime();
-        if (e == null || !e.link.equals(event.getLinkId())) {
+        final int vi = event.getVehicleId().index();
+        if (vi < 0 || vi >= openByVehicle.length) {
+            return;
+        }
+        final LinkEntry e = openByVehicle[vi];
+        if (e == null || !e.open) {
+            return;
+        }
+        // Closed whether or not the link matches: the map this replaced did its
+        // `remove` before the comparison, so a mismatched leave consumed the
+        // open traversal there too.
+        e.open = false;
+        final int li = event.getLinkId().index();
+        if (e.link != li) {
             return;
         }
         final double tt = event.getTime() - e.time;
-        final LinkLoad l = load.computeIfAbsent(e.link, k -> new LinkLoad());
+        final LinkLoad l = loadFor(event.getLinkId(), li);
         l.volume++;
         l.travelTimeSum += tt;
-        final LinkLoad w = window.computeIfAbsent(e.link, k -> new LinkLoad());
-        w.volume++;
-        w.travelTimeSum += tt;
+        if (l.windowVolume == 0) {
+            windowTouched.add(l);
+        }
+        l.windowVolume++;
+        l.windowTravelTimeSum += tt;
+    }
+
+    /** This vehicle's reusable open-traversal slot, created on first sight. */
+    private LinkEntry slotFor(final Id<Vehicle> vehicle) {
+        final int i = vehicle.index();
+        if (i < 0) {
+            return null;
+        }
+        if (i >= openByVehicle.length) {
+            openByVehicle = java.util.Arrays.copyOf(openByVehicle, i + 1024);
+        }
+        LinkEntry e = openByVehicle[i];
+        if (e == null) {
+            e = new LinkEntry();
+            openByVehicle[i] = e;
+        }
+        return e;
+    }
+
+    /** This link's accumulator, created on first traversal of the iteration.
+     *  The map insertion is what fixes the publication order, so it happens on
+     *  exactly the same first-touch sequence as the old computeIfAbsent. */
+    private LinkLoad loadFor(final Id<Link> link, final int index) {
+        if (index >= 0 && index < loadByLink.length) {
+            final LinkLoad hit = loadByLink[index];
+            if (hit != null) {
+                return hit;
+            }
+        }
+        final LinkLoad made = load.computeIfAbsent(
+                link, k -> new LinkLoad(k, freeflowOf(k)));
+        if (index >= 0) {
+            if (index >= loadByLink.length) {
+                loadByLink = java.util.Arrays.copyOf(loadByLink, index + 1024);
+            }
+            loadByLink[index] = made;
+        }
+        return made;
+    }
+
+    private double freeflowOf(final Id<Link> link) {
+        final Double v = freeflow.get(link);
+        return v == null ? 0.0 : v;
     }
 
     // ---- live flush, on a SIMULATED-time boundary ----
@@ -347,8 +444,8 @@ public final class RunTelemetry implements
         writeLive(now, false);
         // The map moves with the clock: the congestion of the window that just
         // closed, published before the next one starts filling.
-        writeLinks(window, wStart, now, false);
-        window.clear();
+        writeLinks(windowTouched, wStart, now, false);
+        clearWindow();
         windowStart = now;
     }
 
@@ -366,9 +463,18 @@ public final class RunTelemetry implements
         appendIterationLine();
         // The whole day, replacing the last live window: once the mobsim has
         // ended, the useful reading is the iteration's own picture.
-        writeLinks(load, 0.0, lastTime, true);
-        window.clear();
+        writeLinks(load.values(), 0.0, lastTime, true);
+        clearWindow();
         windowStart = 0.0;
+    }
+
+    /** End the current live window: zero its counters and forget its links. */
+    private void clearWindow() {
+        for (final LinkLoad l : windowTouched) {
+            l.windowVolume = 0;
+            l.windowTravelTimeSum = 0.0;
+        }
+        windowTouched.clear();
     }
 
     // ---- emit ----
@@ -469,12 +575,14 @@ public final class RunTelemetry implements
      * <p>Only links that carried something are written: a link with no volume
      * has no congestion to colour.
      *
-     * @param src   the accumulator to publish — the live window, or the day
+     * @param src   the accumulators to publish — the links touched in the live
+     *              window, or every link the day touched
      * @param from  window start, simulated seconds
      * @param to    window end, simulated seconds
      * @param whole true when this is the iteration's whole-day picture
      */
-    private void writeLinks(final Map<Id<Link>, LinkLoad> src, final double from,
+    private void writeLinks(final java.util.Collection<LinkLoad> src,
+                            final double from,
                             final double to, final boolean whole) {
         final StringBuilder b = new StringBuilder(1 << 22);
         b.append("{\"iteration\":").append(iteration);
@@ -490,23 +598,25 @@ public final class RunTelemetry implements
                  + " to the mobsim (issue #31)\"");
         b.append(",\"links\":[");
         boolean first = true;
-        for (final Map.Entry<Id<Link>, LinkLoad> e : src.entrySet()) {
-            final LinkLoad l = e.getValue();
-            if (l.volume <= 0) {
+        for (final LinkLoad l : src) {
+            // `whole` reads the iteration's counters, otherwise the live
+            // window's - both now live on the same accumulator.
+            final int volume = whole ? l.volume : l.windowVolume;
+            final double sum = whole ? l.travelTimeSum : l.windowTravelTimeSum;
+            if (volume <= 0) {
                 continue;
             }
-            final Double ff = freeflow.get(e.getKey());
-            final double mean = l.travelTimeSum / l.volume;
+            final double ff = l.freeflowS;
+            final double mean = sum / volume;
             // Below one free-flow traversal there is no delay to report; the
             // ratio is clamped at 1.0 so the ramp starts at "flowing".
-            final double ratio = ff == null || ff <= 0 ? 1.0
-                    : Math.max(1.0, mean / ff);
+            final double ratio = ff <= 0 ? 1.0 : Math.max(1.0, mean / ff);
             if (!first) {
                 b.append(',');
             }
             first = false;
-            b.append("[\"").append(e.getKey()).append("\",")
-             .append(l.volume).append(',').append(fmt(ratio)).append(']');
+            b.append("[\"").append(l.id).append("\",")
+             .append(volume).append(',').append(fmt(ratio)).append(']');
         }
         b.append("]}");
         atomicWrite("telemetry_links.json", b.toString());
