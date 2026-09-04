@@ -69,7 +69,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F23-behaviour-channels` (opened `20260901T133356`, §9.138) - nothing run before it compares with anything after it |
+| Open comparability family | `F24-balanced-destinations` (opened `20260904T181133`, §9.142) - nothing run before it compares with anything after it |
 | Input registry | **464 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
@@ -89,14 +89,14 @@ requirement-10 refusal clears when they close.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260904T181203_300it_25pct` | running | F24-balanced-destinations | 0 | - |
 | `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T162301_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T161721_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
-| `20260904T161108_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 
-136 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+137 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

@@ -22,7 +22,9 @@ what is under test is the RECORD, not the summary it triggers.
 """
 import json
 import os
+import pathlib
 import time
+from types import SimpleNamespace
 
 import pytest
 
@@ -56,7 +58,7 @@ def run_dir(tmp_path, monkeypatch):
         sample=dict(persons_in=1000, persons_kept=250,
                     transit_capacity_scaled=[]),
         started=time.strftime('%Y-%m-%dT%H:%M:%S'), ended=None, wall_s=None,
-        rc=None, pid=os.getpid())
+        rc=None, pid=os.getpid(), jvm_pid=os.getpid() + 1)
     (d / '_meta.json').write_text(json.dumps(card), encoding='utf-8')
     (d / 'matsim.log').write_text(LOG, encoding='utf-8')
     (d / '_progress.json').write_text(json.dumps({'iteration': 100}),
@@ -171,3 +173,66 @@ def test_the_record_must_meet_its_declared_schema(run_dir):
     assert run_matsim.close_out(str(run_dir), 'not-a-boundary', rc=1,
                                 wall_s=1.0) is None
     assert not (run_dir / '_run.json').exists()
+
+
+# --------------------------------------------------------------------------
+# the operator stop, end to end
+#
+# `--stop` is the one sanctioned way a person ends an arm (9.137), and it is the
+# path an arm approved only as far as its gate is ended on. It runs in its OWN
+# process - it kills the harness's pid as well as the JVM, so nothing survives
+# there to write a record - which is why the close-out has to happen inside
+# stop_run rather than in the harness's unwind.
+# --------------------------------------------------------------------------
+@pytest.fixture
+def stoppable(run_dir, monkeypatch):
+    """`run_dir` wired so stop_run can act on it without killing anything."""
+    killed = []
+    monkeypatch.setattr(run_matsim.results_store, 'resolve',
+                        lambda name: str(run_dir))
+    monkeypatch.setattr(run_matsim.results_store, 'rename',
+                        lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.results_store, 'mirror', lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.subprocess, 'run',
+                        lambda cmd, **k: killed.append(cmd))
+    monkeypatch.setattr(run_matsim.time, 'sleep', lambda s: None)
+    return SimpleNamespace(dir=run_dir, killed=killed,
+                           name='20260904T100000_300it_25pct')
+
+
+def read_json(run_dir, filename):
+    return json.loads(
+        (pathlib.Path(run_dir) / filename).read_text(encoding='utf-8'))
+
+
+def test_stop_run_closes_the_arm_out(stoppable):
+    cause = 'stopped at the approved iteration-100 gate'
+    dead = run_matsim.stop_run(stoppable.name, cause)
+    doc = read_json(dead, '_run.json')
+    assert doc['completion'] == 'stopped_by_operator'
+    assert doc['stop_cause'] == cause
+    assert doc['reached_iteration'] == 100, (
+        'the reading has to say which iteration it belongs to')
+
+
+def test_stop_run_kills_the_jvm_and_the_harness(stoppable):
+    run_matsim.stop_run(stoppable.name, 'stopped')
+    # both pids: killing the harness alone once left the JVM running (#128)
+    assert len(stoppable.killed) == 2
+
+
+def test_stop_run_records_the_cause_on_the_card_too(stoppable):
+    cause = 'stopped at the approved gate'
+    dead = run_matsim.stop_run(stoppable.name, cause)
+    meta = read_json(dead, '_meta.json')
+    assert meta['status'] == 'aborted'
+    assert cause in (meta.get('cause') or '')
+
+
+def test_stop_run_refuses_a_run_that_is_not_running(stoppable):
+    card = read_json(stoppable.dir, '_meta.json')
+    card['status'] = 'completed'
+    (stoppable.dir / '_meta.json').write_text(json.dumps(card),
+                                              encoding='utf-8')
+    with pytest.raises(SystemExit):
+        run_matsim.stop_run(stoppable.name, 'stopped')

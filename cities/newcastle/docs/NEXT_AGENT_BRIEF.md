@@ -1,20 +1,28 @@
 # Brief for the next agent
 
-**Written:** 4 September 2026, twenty-seventh session · **Open family:** `F23-behaviour-channels` (the package on disk opens `F24` at its first launch) · **Commit:** `e6bfe45` on `praneetdhoolia/decisions-taken-f24`, carried by PR #140 (§9.142)
+**Written:** 4 September 2026, twenty-eighth session · **Open family:** `F24-balanced-destinations` (declared at its first launch, §9.142) · **Commit:** on `praneetdhoolia/stopped-runs-carry-their-record`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-This session took the three decisions that held the launcher (#129, #133,
-#134), repaired the corridor's missing CBD end at its cause, re-measured C2
-on the network that actually runs and rebuilt the demand on both, and
-profiled an iteration's own wall clock for the first time. No arm ran, no
-approval was spent, no target value changed, the 67/143 split is untouched.
+The twenty-eighth session made a stopped run close itself out and launched
+the first F24 arm. **An arm is RUNNING** - `20260904T181203_300it_25pct`,
+under an approval stated and given TO THE ITERATION-100 GATE ONLY. No target
+value changed and the 67/143 split is untouched.
+
+**A run that ends at a defined boundary now carries its completion materials.**
+The record was written on rc=0 alone, so every arm since F4 - each stopped at
+its gate, which is what the gate is FOR - left an orphan directory. A gate stop
+and an operator stop are now closed out with a record, a summary and extracted
+findings; a CRASH still gets none. The record's required `completion` field is
+the result gate now, not the file's presence: only `ran_to_last_iteration` is a
+result, satisfies resume or anchors a calibrated base, and a stopped arm's
+reading is citable at its `reached_iteration` and nowhere past it.
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **Machine idle; no arm runs.** The last arm is still `aborted_20260901T165115_300it_25pct`, F23's gate arm (§9.139). | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **AN ARM IS RUNNING**: `20260904T181203_300it_25pct`, the first F24 arm, launched 4 Sep 18:12. Approved to its iteration-100 gate ONLY - if the gate watcher has not stopped it on a breach by then, it is stopped with `run.py --stop` and closes out as `stopped_by_operator`. | `python src/run/session_gate.py --digest` (MACHINE line) |
 | **The package on disk is the F24 build** (§9.142): destination choice constrained at both ends, C2 re-measured, chains + plans + the 30 run-input sets rebuilt 4 Sep. | `python tests/check_package.py` (~10 min) |
 | **Every open issue is closed or `awaiting-run`**, so the launcher's requirement-10 refusal is clear. If `issues gated` is red, an issue was opened or a label lost. | `python src/run/issue_gate.py` · `gh issue list --state open` |
 | **PR #140 is MERGED** (4 Sep, all nine CI checks green) and carries the whole session; a second docs-only PR closes the handoff out. Check whether that one merged too. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
@@ -26,11 +34,11 @@ runs the toolchain compile too. Every line should be green.
 
 ## §1 The lane
 
-**The first F24 arm, on a fresh stated-cost approval.** `--run-config
-f24_gate_25pct` (committed this session; 25% × 300, graph rendering off).
-Declare `F24` in `cities/newcastle/docs/run_families.json` with
-`decisions_ref` 9.142 **in the same change as the launch**, and read it at
-iteration 100 for all twelve modes.
+**Read the running F24 arm at its iteration-100 gate.** `F24` is declared
+(`F24-balanced-destinations`, `decisions_ref` 9.142). The arm is `--run-config
+f24_gate_25pct` (25% × 300 declared, graph rendering off) and is approved only
+as far as iteration 100; it will carry a `_run.json` when it stops, so its
+reading is citable without re-deriving anything from the log.
 
 What the arm answers, in order:
 
