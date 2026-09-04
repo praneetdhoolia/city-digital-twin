@@ -597,11 +597,43 @@ else:
                    EXP['hts_rate_fallback_per_person_day'])
     check(abs(wk - hts) / hts < 0.06,
           'realised week trip rate %.3f within 6%% of the HTS %.3f' % (wk, hts))
+    # An underscore-prefixed key in the decay block is METADATA about how the
+    # decays were solved, not a purpose (9.142 added `_destination_balancing`);
+    # a consumer that iterates purposes must say so rather than assume every
+    # key is one.
     for pnt, d in crep.get('decay', {}).items():
+        if pnt.startswith('_'):
+            continue
         got, want = d['realised_network_km'], d['hts_network_km']
         check(abs(got - want) / max(want, 1e-6) < 0.02,
               'gravity decay for %s reproduces the HTS journey distance '
               '(%.2f vs %.2f km)' % (pnt, got, want))
+    # 9.142: both margins, not one. The decays above hold the observed mean
+    # distance; this holds the arrival shares, and the report must say which
+    # rule produced the demand rather than leaving a reader to infer it.
+    bal = crep.get('decay', {}).get('_destination_balancing')
+    check(bool(bal), 'the demand records which destination-choice rule built it')
+    if bal:
+        check(bal.get('rule') in ('doubly_constrained', 'singly_constrained'),
+              'the destination-choice rule is one the registry declares (%s)'
+              % bal.get('rule'))
+        worst = max((bal.get('worst_arrival_gap_after') or {}).values(),
+                    default=0.0)
+        # NOT a pass/fail on the tolerance: shopping is measured not to reach it,
+        # because one multiplier cannot match a two-component mixture (9.142).
+        # What must hold is that balancing IMPROVED every purpose it ran on and
+        # left no purpose wilder than the worst it started from.
+        if bal.get('rule') == 'doubly_constrained':
+            before = bal.get('worst_arrival_gap_before') or {}
+            after = bal.get('worst_arrival_gap_after') or {}
+            worse = sorted(k for k in after if after[k] > before.get(k, 0) + 1e-9)
+            check(not worse,
+                  'destination balancing left no purpose further from its '
+                  'arrival shares than it started (%s)'
+                  % (', '.join(worse) if worse else 'none worse'))
+            check(worst < 1.0,
+                  'no purpose ends more than one whole attraction share out '
+                  '(worst %.4f)' % worst)
     ext = sum(v.get('external_agents', 0) for v in crep.get('by_day', {}).values())
     check(ext > 0,
           'the external boundary tier generates demand (%d agents across day types)'
@@ -1130,8 +1162,7 @@ else:
     # factors and the network have parted.
     for _mode, _bf in sorted((c2.get('active_beeline_factor') or {}).items()):
         check(_bf['sweep'][0] <= _bf['value'] <= _bf['sweep'][1],
-              'measured %s beeline factor %.4f sits inside its own sweep %s '
-              '(re-measure C2 on the current network to clear this)'
+              'measured %s beeline factor %.4f sits inside its own sweep %s'
               % (_mode, _bf['value'], _bf['sweep']))
     dt = c2.get('day_type', {})
     check(dt.get('station_years', 0) > 100,
