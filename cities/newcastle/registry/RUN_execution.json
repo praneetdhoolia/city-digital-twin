@@ -1003,14 +1003,14 @@
       "description": "Speed of the teleported access/egress stub walk (non_network_walk) that connects an activity to its network link. The MAIN walk mode is network-simulated (9.54); this helper covers only the stub, and it carries the same declared walking speed."
     },
     "RUN.routing.access_walk_beeline_factor": {
-      "value": 1.6902,
+      "value": 1.6938,
       "units": "ratio",
       "source": "measured",
       "sweep": [
-        1.294,
-        1.794
+        1.286,
+        1.741
       ],
-      "sweep_basis": "Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.",
+      "sweep_basis": "Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use, and re-measured on the current network 4 Sep 2026 (9.142) - 1.6902 over 531 routed pairs became 1.6938 over 560. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.",
       "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "9.54",

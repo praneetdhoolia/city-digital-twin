@@ -202,6 +202,73 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.destination_balancing": {
+      "value": "doubly_constrained",
+      "units": "enum",
+      "source": "definition",
+      "sweep": {
+        "categorical": [
+          "doubly_constrained",
+          "singly_constrained"
+        ],
+        "basis": "The two states destination choice can take, and the pair is comparable by construction: `singly_constrained` reproduces the pre-9.142 build exactly, so the difference between them is the balancing and nothing else. `singly_constrained` constrains production only - every origin sends the right number of trips at the right observed mean distance, and a destination receives whatever the kernel leaves it. `doubly_constrained` also requires each zone to receive its own attraction share of a purpose's arrivals (Wilson 1967; the Furness/IPF balancing of the classical four-step model). Measured on the committed demand under the singly-constrained rule: the corridor's CBD end held 8.27% of core work attraction and received 5.38% of work trip ends, with the shortfall WIDENING with distance (shopping 5.01% under 1 km to 9.77% beyond 8 km against an 11.38% attraction share, 9.136), which is why no calibration of the decay could close it."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.142",
+      "description": "Whether the destination draw is constrained at the destination end as well as the origin end (issue #30). The attraction vector states what share of a purpose's trip ends each zone should receive; under `singly_constrained` the draw was free to ignore it, and the measured consequence was a corridor receiving two thirds of the arrivals its own observed attraction states, which read as a light-rail and heavy-rail defect for three families. Under `doubly_constrained` a destination multiplier is solved so the production-weighted arrival shares equal the attraction shares while each purpose still realises its own observed mean distance per home LGA. This introduces NO new observation and no new tunable: the multiplier is the Lagrange multiplier of a constraint the attraction vector had already declared. Reported in the build report under `decay._destination_balancing`.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.balancing_passes": {
+      "value": 3,
+      "units": "passes",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): a pass re-solves every decay on the balanced attraction, and the sequence converges because balancing moves the realised mean distance by less each time. Any value large enough to converge yields the same matrix; the build report records the gap left after the last pass, so a bound that ever became binding would be visible rather than silent. It is separate from B.activity.balancing_rounds only because the two levels cost different amounts: a decay solve is several hundred kernel builds, a balancing step is two.",
+        "decisions_ref": "9.142"
+      },
+      "status": "active",
+      "decisions_ref": "9.142",
+      "description": "How many times the destination balancing and the decay solve alternate (issue #30). Balancing the arrivals moves the realised mean trip distance, so the decays are re-solved on the balanced attraction and the arrivals rebalanced, until both constraints hold together. `passes_run` in the build report says how many were used.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.balancing_rounds": {
+      "value": 60,
+      "units": "iterations",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): the balancing runs until the worst arrival gap is inside B.activity.balancing_tolerance and this is only the cap that stops a non-converging solve from running forever. Any value large enough to reach the tolerance produces the same matrix, so no output varies across it; the build report records how many steps were actually needed per purpose, so a cap that ever became binding would be visible rather than silent.",
+        "decisions_ref": "9.142"
+      },
+      "status": "active",
+      "decisions_ref": "9.142",
+      "description": "Maximum balancing steps at FIXED decays within one pass, before the build stops iterating (issue #30). Each step multiplies the destination end by the ratio of a zone's attraction share to its realised arrival share and rebuilds the draw matrix, which costs two kernel builds; the loop exits as soon as the worst gap is inside B.activity.balancing_tolerance. `inner_rounds_used` in the build report says how many were needed per purpose.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.balancing_tolerance": {
+      "value": 0.01,
+      "units": "share of a zone's attraction share",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A CONVERGENCE TOLERANCE, not a model parameter (the A.corridor.dedupe_tolerance_m precedent): it says when the two margins are close enough to call the matrix balanced, at a tightness far below the quantities the balancing exists to move (a corridor short by a third of its arrivals). Sweeping it would sweep how carefully an identity is solved rather than anything about how this city travels.",
+        "decisions_ref": "9.142"
+      },
+      "status": "active",
+      "decisions_ref": "9.142",
+      "description": "The largest relative gap between any zone's realised share of a purpose's arrivals and its own attraction share at which the destination balancing stops iterating (issue #30). One per cent of a zone's own share, against a defect measured at a third of it.",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.short_trip_band_share": {
       "value": {
         "HW": 0.059,
@@ -533,18 +600,18 @@
       "description": "Weekend vs weekday travel, measured from the RMS traffic counts own WEEKDAYS and WEEKENDS periods. Replaces an assumed value that implied 0.825. Vehicle volume, not person trips."
     },
     "B.activity.detour_factor": {
-      "value": 1.3376,
+      "value": 1.3276,
       "units": "ratio",
       "source": "measured",
       "sweep": [
-        1.25,
-        1.423
+        1.247,
+        1.419
       ],
-      "sweep_basis": "the interquartile range of the per-pair ratios over 551 population-weighted zone pairs",
+      "sweep_basis": "the interquartile range of the per-pair ratios over 595 population-weighted zone pairs, re-measured on the current network 4 Sep 2026 (9.142); the 551-pair figure it replaces was routed over the network as it stood before the 16 August rebuild",
       "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "9.2",
-      "description": "Straight-line to network distance, routed over the observed A1 road graph. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value."
+      "description": "Straight-line to network distance, routed over the observed A1 road graph, re-measured on the CURRENT network 4 Sep 2026 (9.142): 1.3376 over 551 routed pairs became 1.3276 over 595, the extra pairs being zone pairs the pre-16-August network could not route between. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value."
     },
     "B.activity.days_per_week": {
       "value": {

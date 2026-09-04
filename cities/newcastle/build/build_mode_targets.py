@@ -366,7 +366,17 @@ def disclosed_pt_boardings(cfg):
     CAL.pt_split.window_months months each series carries; stations are those
     this city's own mapped schedule contains (model_pt_stations), so a station
     the publication carries and the model cannot board is excluded and named.
-    Returns (light_rail_per_day, rail_per_day, rail_stations, windows, excluded).
+
+    Censoring (#129, 9.142): a station-month published as the text 'Less than
+    50' counts as CAL.pt.censored_cell_value here, because this statistic is a
+    SUM over stations and excluding the cell would drop that station's whole
+    contribution to a day's boardings. The holdout station MEANS take the other
+    rule and exclude it, which is recorded as their pre-registered treatment;
+    the two agree on every scored target while this series carries no censored
+    cell, so the count is returned and written into the target's basis rather
+    than left to be assumed.
+    Returns (light_rail_per_day, rail_per_day, rail_stations, windows,
+    excluded, censored_cells_in_window).
     """
     months = int(cfg.get('CAL.pt_split.window_months'))
     lr = pd.read_csv(os.path.join(OBS, 'opal_lr_newcastle_by_month_cardtype.csv'))
@@ -379,10 +389,13 @@ def disclosed_pt_boardings(cfg):
     known = model_pt_stations()
     st = pd.read_csv(os.path.join(OBS, 'station_entries_exits_newcastle.csv'))
     st = st[(st['Station_Type'] == 'Train') & (st['Entry_Exit'] == 'Entry')].copy()
+    st['censored'] = pd.to_numeric(st['Trip'], errors='coerce').isna() \
+        & st['Trip'].notna()
     st['Trip'] = st['Trip'].map(_trip_cell)
     st['m'] = st['MonthYear'].astype(str).str[:7]
     st_months = sorted(st['m'].unique())[-months:]
     st = st[st['m'].isin(st_months)]
+    n_censored = int(st['censored'].sum())
     st_days = sum(pd.Period(m).days_in_month for m in st_months)
     per_station = {}
     excluded = []
@@ -395,7 +408,7 @@ def disclosed_pt_boardings(cfg):
     return (lr_per_day, rail_per_day, per_station,
             dict(light_rail=[str(lr_months[0]), str(lr_months[-1])],
                  heavy_rail=[st_months[0], st_months[-1]]),
-            excluded)
+            excluded, n_censored)
 
 
 def main():
@@ -582,7 +595,7 @@ def main():
     # the operator counts differ by a factor the composition cannot see, and
     # a model reading -96% on the derived basis read -48% on the disclosed
     # one while heavy rail read +65% derived and roughly +400% disclosed.
-    lr_day, rail_day, rail_stations, pt_windows, rail_excluded = \
+    lr_day, rail_day, rail_stations, pt_windows, rail_excluded, rail_censored = \
         disclosed_pt_boardings(cfg)
     wf = float(cfg.get('CAL.pt.weekday_factor'))
     wf_lo, wf_hi = 1.0, 1.3
@@ -593,12 +606,20 @@ def main():
         'stations this city\'s mapped schedule contains, %s..%s, %.0f a day '
         'over all days, x CAL.pt.weekday_factor %.4f. Every traveller who '
         'boards is counted, as the publication counts them; %d published '
-        'station(s) the model cannot board are excluded%s. The '
+        'station(s) the model cannot board are excluded%s. %s. The '
         'composition-derived trip share this replaces (HTS "%s" PT %.1f%% x '
         'the boardings split) was %.4f%% of resident trips'
         % (len(rail_stations), pt_windows['heavy_rail'][0],
            pt_windows['heavy_rail'][1], rail_day, wf, len(rail_excluded),
            (': ' + ', '.join(sorted(rail_excluded))) if rail_excluded else '',
+           ('%d station-month(s) in this window are censored ("Less than 50") '
+            'and count as CAL.pt.censored_cell_value %.0f trips, the rule '
+            'declared for a SUM over stations (#129)'
+            % (rail_censored, _censored())) if rail_censored else
+           ('No station-month in this window is censored ("Less than 50"), so '
+            'CAL.pt.censored_cell_value moves this target at neither end of '
+            'its sweep; the holdout station means EXCLUDE a censored cell '
+            'instead, their recorded pre-registered treatment (#129)'),
            year, pt_level, pt_level * pt['rail'] / pt_tot),
         (rail_day * wf_lo, rail_day * wf_hi))
     add('light_rail', lr_day * wf,

@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 459 fields are made of
+## What the 464 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
 | `assumed` | 149 | chosen without direct empirical support |
-| `definition` | 120 | fixed by the formulation, not an empirical quantity |
+| `definition` | 125 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 440 | usable point value |
+| `active` | 445 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 255 sweeps are for
+### What the 256 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 11 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 222 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 223 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -82,7 +82,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `E.s3.brt_speed_kmh` | `40.0` | 25 - 55 |
 | `E.s3.headway_s` | `450` | 300 - 900 |
 
-### The 24 fields held fixed
+### The 28 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -95,6 +95,9 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `A.signals.scats_match_radius_m` - A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score r
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
+- `B.activity.balancing_passes` - A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): a pass re-solves every decay on the balanced attraction, and the sequence converges be
+- `B.activity.balancing_rounds` - A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): the balancing runs until the worst arrival gap is inside B.activity.balancing_toleranc
+- `B.activity.balancing_tolerance` - A CONVERGENCE TOLERANCE, not a model parameter (the A.corridor.dedupe_tolerance_m precedent): it says when the two margins are close enough to call the matrix balanced, at a tightn
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.external.employed_share` - a census count: 32,230 employed persons of 70,448 residents over the 201 external-tier SA1s (2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P); a count has no plausible range to swee
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
@@ -108,6 +111,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `C.asc.light_rail` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.rail` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.walk` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
+- `CAL.pt.censored_share_max` - A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must sto
 - `E.s2b.lr_segment_count` - MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this fie
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
 
@@ -1555,7 +1559,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 105 fields*
+*`cities/newcastle/registry/B_demand.json` - 109 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1563,12 +1567,16 @@ Synthetic population, activity and tour generation, external boundary demand, an
 |---|---|---|---|---|
 | `A.taxi.fleet_representation` | `finite_fleet` | enum | `assumed` | `absent`, `finite_fleet` |
 | `B.activity.act_duration_min` | `{"HW": 465, "HE": 360, "HS": 45, "HO": 90, "WB": 60, "NHB": 20, "HX": 5}` | minutes | `assumed` | plus/minus 25% |
+| `B.activity.balancing_passes` | `3` | passes | `definition` | **held fixed** |
+| `B.activity.balancing_rounds` | `60` | iterations | `definition` | **held fixed** |
+| `B.activity.balancing_tolerance` | `0.01` | share of a zone's attraction share | `definition` | **held fixed** |
 | `B.activity.child_tour_retention` | `0.4` | probability | `assumed` | 0.25 - 0.6 |
 | `B.activity.day_horizon_s` | `108000` | seconds | `definition` | - |
 | `B.activity.day_purpose_mix` | `{"WEEKDAY": {"HW": 1.0, "HE": 1.0, "HS": 0.9, "HO": 0.9, "WB": 1.0, "HX": 1.0}, "SAT": {"HW": 0.25, "HE": 0...` | multiplier_on_weekday | `assumed` | plus/minus 30% |
 | `B.activity.days_per_week` | `{"WEEKDAY": 5.0, "SAT": 1.0, "SUN": 1.0}` | days | `definition` | - |
 | `B.activity.departure_profile` | `{"HE": [0.0, 0.0, 0.0, 0.0, 0.002, 0.01, 0.06, 0.23, 0.27, 0.09, 0.035, 0.03, 0.035, 0.04, 0.075, 0.06, 0.0...` | probability_by_hour | `assumed` | plus/minus 25% |
-| `B.activity.detour_factor` | `1.3376` | ratio | `measured` | 1.25 - 1.423 |
+| `B.activity.destination_balancing` | `doubly_constrained` | enum | `definition` | `doubly_constrained`, `singly_constrained` |
+| `B.activity.detour_factor` | `1.3276` | ratio | `measured` | 1.247 - 1.419 |
 | `B.activity.duration_cv` | `0.3` | coefficient_of_variation | `assumed` | 0.2 - 0.45 |
 | `B.activity.escort_binding_direct_tour` | `true` | boolean | `derived` | derived: under the declared `both_links` pairing rule the serving leg must repr |
 | `B.activity.escort_binding_directions` | `round_trip` | enum | `assumed` | `outbound_only`, `round_trip` |
@@ -1683,6 +1691,36 @@ Mean activity duration by purpose. HX (serve passenger) is a drop-off: the drive
 
 > **Sweep basis.** DECISIONS.md 9.2: activity durations are carried from P1 with +/-25% on each mean and a +/-30% lognormal spread within, and are not Newcastle-specific in any observable sense. HX carries the same proportional sweep because no survey in the package measures a drop-off dwell.
 
+#### `B.activity.balancing_passes`
+
+How many times the destination balancing and the decay solve alternate (issue #30). Balancing the arrivals moves the realised mean trip distance, so the decays are re-solved on the balanced attraction and the arrivals rebalanced, until both constraints hold together. `passes_run` in the build report says how many were used.
+
+***definition** · status **active** · DECISIONS.md §9.142*
+
+> **Held fixed.** A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): a pass re-solves every decay on the balanced attraction, and the sequence converges because balancing moves the realised mean distance by less each time. Any value large enough to converge yields the same matrix; the build report records the gap left after the last pass, so a bound that ever became binding would be visible rather than silent. It is separate from B.activity.balancing_rounds only because the two levels cost different amounts: a decay solve is several hundred kernel builds, a balancing step is two.
+>
+> *Departure requires: a logged decision*
+
+#### `B.activity.balancing_rounds`
+
+Maximum balancing steps at FIXED decays within one pass, before the build stops iterating (issue #30). Each step multiplies the destination end by the ratio of a zone's attraction share to its realised arrival share and rebuilds the draw matrix, which costs two kernel builds; the loop exits as soon as the worst gap is inside B.activity.balancing_tolerance. `inner_rounds_used` in the build report says how many were needed per purpose.
+
+***definition** · status **active** · DECISIONS.md §9.142*
+
+> **Held fixed.** A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): the balancing runs until the worst arrival gap is inside B.activity.balancing_tolerance and this is only the cap that stops a non-converging solve from running forever. Any value large enough to reach the tolerance produces the same matrix, so no output varies across it; the build report records how many steps were actually needed per purpose, so a cap that ever became binding would be visible rather than silent.
+>
+> *Departure requires: a logged decision*
+
+#### `B.activity.balancing_tolerance`
+
+The largest relative gap between any zone's realised share of a purpose's arrivals and its own attraction share at which the destination balancing stops iterating (issue #30). One per cent of a zone's own share, against a defect measured at a third of it.
+
+***definition** · status **active** · DECISIONS.md §9.142*
+
+> **Held fixed.** A CONVERGENCE TOLERANCE, not a model parameter (the A.corridor.dedupe_tolerance_m precedent): it says when the two margins are close enough to call the matrix balanced, at a tightness far below the quantities the balancing exists to move (a corridor short by a third of its arrivals). Sweeping it would sweep how carefully an identity is solved rather than anything about how this city travels.
+>
+> *Departure requires: a logged decision*
+
 #### `B.activity.child_tour_retention`
 
 Share of child tours retained as independent tours.
@@ -1719,13 +1757,21 @@ Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED A
 
 > **Sweep basis.** the whole profile may be reweighted by a quarter either way per hour, then renormalised. There is no Newcastle observation to bracket it: the HTS held is aggregate and reports journeys by purpose, not departure hour. A proportional sweep is the honest expression of "NSW-typical shape, magnitude unknown".
 
+#### `B.activity.destination_balancing`
+
+Whether the destination draw is constrained at the destination end as well as the origin end (issue #30). The attraction vector states what share of a purpose's trip ends each zone should receive; under `singly_constrained` the draw was free to ignore it, and the measured consequence was a corridor receiving two thirds of the arrivals its own observed attraction states, which read as a light-rail and heavy-rail defect for three families. Under `doubly_constrained` a destination multiplier is solved so the production-weighted arrival shares equal the attraction shares while each purpose still realises its own observed mean distance per home LGA. This introduces NO new observation and no new tunable: the multiplier is the Lagrange multiplier of a constraint the attraction vector had already declared. Reported in the build report under `decay._destination_balancing`.
+
+***definition** · status **active** · DECISIONS.md §9.142 · sweep role **uncertainty***
+
+> **Sweep basis.** The two states destination choice can take, and the pair is comparable by construction: `singly_constrained` reproduces the pre-9.142 build exactly, so the difference between them is the balancing and nothing else. `singly_constrained` constrains production only - every origin sends the right number of trips at the right observed mean distance, and a destination receives whatever the kernel leaves it. `doubly_constrained` also requires each zone to receive its own attraction share of a purpose's arrivals (Wilson 1967; the Furness/IPF balancing of the classical four-step model). Measured on the committed demand under the singly-constrained rule: the corridor's CBD end held 8.27% of core work attraction and received 5.38% of work trip ends, with the shortfall WIDENING with distance (shopping 5.01% under 1 km to 9.77% beyond 8 km against an 11.38% attraction share, 9.136), which is why no calibration of the decay could close it.
+
 #### `B.activity.detour_factor`
 
-Straight-line to network distance, routed over the observed A1 road graph. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value.
+Straight-line to network distance, routed over the observed A1 road graph, re-measured on the CURRENT network 4 Sep 2026 (9.142): 1.3376 over 551 routed pairs became 1.3276 over 595, the extra pairs being zone pairs the pre-16-August network could not route between. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value.
 
 ***measured** · status **active** · DECISIONS.md §9.2 · sweep role **measurement***
 
-> **Sweep basis.** the interquartile range of the per-pair ratios over 551 population-weighted zone pairs
+> **Sweep basis.** the interquartile range of the per-pair ratios over 595 population-weighted zone pairs, re-measured on the current network 4 Sep 2026 (9.142); the 551-pair figure it replaces was routed over the network as it stood before the 16 August rebuild
 
 #### `B.activity.duration_cv`
 
@@ -2483,7 +2529,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 20 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 21 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -2499,6 +2545,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
 | `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
 | `CAL.pt.censored_cell_value` | `0.0` | trips per month | `assumed` | 0 - 25 |
+| `CAL.pt.censored_share_max` | `0.05` | share of cells | `definition` | **held fixed** |
 | `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
 | `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
@@ -2572,11 +2619,21 @@ How many independent numbers the objective actually contains. The loop refuses t
 
 #### `CAL.pt.censored_cell_value`
 
-The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series; the validation-target builder still EXCLUDES censored cells from its station means, a pre-registered treatment of the 143 holdout rows that is not changed here - whether it should read this field too is a decision the user takes (#129).
+The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series, where the statistic is a SUM over stations and dropping a cell would drop a station's whole contribution. The validation-target builder EXCLUDES censored cells from its station means instead, and that exclusion is now RECORDED as the pre-registered treatment of those 143 holdout rows rather than left open (#129 decided 4 Sep 2026, DECISIONS.md 9.142): a mean over station-months is missing data when a month is censored, not a zero month. Measured before deciding: the whole package holds ONE censored cell (Tarro Station, Exit, 1 month of 21; the other three Opal series carry none), it lies outside the (Train, Entry) series this field's heavy-rail target sums, so the two rules AGREE on every scored target and this field's sweep moves no target at either end - 0 and 25 both reproduce mode_targets_by_mode.csv byte for byte. The exclusion's only effect is Tarro's own holdout mean, 106.2 trips/month excluded against 101.1 at 0 and 102.3 at 25. build_validation_targets.py measures rather than assumes that this stays true: it refuses to build if a censored cell reaches the (Train, Entry) series, if any station-direction group becomes wholly censored, or if censoring exceeds CAL.pt.censored_share_max.
 
 ***assumed** · status **active** · DECISIONS.md §9.130 · sweep role **uncertainty***
 
 > **Sweep basis.** the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed
+
+#### `CAL.pt.censored_share_max`
+
+The share of cells in the station entries/exits series above which build_validation_targets.py REFUSES to build rather than quietly exclude censored cells from its holdout means (#129). Excluding a censored station-month is defensible while censoring is marginal - the mean simply rests on the months that were published - but every excluded cell is known to be BELOW 50, so exclusion biases the mean upward, and past some density that bias stops being negligible. Rather than assume the series stays sparse, the builder measures it against this ceiling each time it runs. The held series sits at 0.09% (1 of 1,092), so the guard is dormant by a wide margin and exists to catch a future republication, not today's data.
+
+***definition** · status **active** · DECISIONS.md §9.142*
+
+> **Held fixed.** A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must stop, and no model output varies with it - at any value in a wide neighbourhood the guard's verdict on the held series is the same, because that series is at 0.09% (1 censored cell in 1,092). Sweeping it would sweep the point at which the project refuses to keep building, which is a rule about honesty rather than a quantity about Newcastle.
+>
+> *Departure requires: a logged decision*
 
 #### `CAL.pt.weekday_factor`
 
@@ -3261,7 +3318,7 @@ Path-length multiplier applied to the beeline between S0 station sites when comp
 
 ***measured** · status **active** · DECISIONS.md §4.3, 9.34, 9.140, 15 · sweep role **measurement***
 
-> **Sweep basis.** the western two thirds of the chain is measured at 0.999 on the very formation the heavy rail ran on; the eastern third is bounded by the street-running light rail at 1.089 and by a straight foreshore alignment at 1.0, so the whole chain sits in [1.0, 1.1]. The road detour factor B.activity.detour_factor (1.3376) does NOT apply here.
+> **Sweep basis.** the western two thirds of the chain is measured at 0.999 on the very formation the heavy rail ran on; the eastern third is bounded by the street-running light rail at 1.089 and by a straight foreshore alignment at 1.0, so the whole chain sits in [1.0, 1.1]. The road detour factor B.activity.detour_factor (1.3276) does NOT apply here.
 
 #### `E.s0.station_dwell_s`
 
@@ -3465,7 +3522,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.replanning.time_mutation_range_s` | `1800.0` | seconds | `literature` | 600 - 1800 |
 | `RUN.replanning.weights` | `{"ChangeExpBeta": 0.7, "ReRoute": 0.15, "SubtourModeChoice": 0.1, "TimeAllocationMutator": 0.05}` | strategy_weight | `literature` | plus/minus 50% |
 | `RUN.routing.access_egress_type` | `none` | policy | `definition` | - |
-| `RUN.routing.access_walk_beeline_factor` | `1.6902` | ratio | `measured` | 1.294 - 1.794 |
+| `RUN.routing.access_walk_beeline_factor` | `1.6938` | ratio | `measured` | 1.286 - 1.741 |
 | `RUN.routing.access_walk_speed_ms` | `1.25` | m/s | `derived` | derived: the same physical walking speed - the access/egress stub walk to and f |
 | `RUN.routing.clear_default_teleported_params` | `true` | boolean | `definition` | - |
 | `RUN.routing.network_modes` | `["car", "ride", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
@@ -3797,7 +3854,7 @@ Straight-line to path-distance ratio for the teleported access/egress stub walk.
 
 ***measured** · status **active** · DECISIONS.md §9.54 · MATSim `routing.teleportedModeParameters[non_network_walk].beelineDistanceFactor` · sweep role **measurement***
 
-> **Sweep basis.** Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.
+> **Sweep basis.** Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use, and re-measured on the current network 4 Sep 2026 (9.142) - 1.6902 over 531 routed pairs became 1.6938 over 560. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.
 
 #### `RUN.routing.access_walk_speed_ms`
 

@@ -253,7 +253,7 @@
         1.0,
         1.1
       ],
-      "sweep_basis": "the western two thirds of the chain is measured at 0.999 on the very formation the heavy rail ran on; the eastern third is bounded by the street-running light rail at 1.089 and by a straight foreshore alignment at 1.0, so the whole chain sits in [1.0, 1.1]. The road detour factor B.activity.detour_factor (1.3376) does NOT apply here.",
+      "sweep_basis": "the western two thirds of the chain is measured at 0.999 on the very formation the heavy rail ran on; the eastern third is bounded by the street-running light rail at 1.089 and by a straight foreshore alignment at 1.0, so the whole chain sits in [1.0, 1.1]. The road detour factor B.activity.detour_factor (1.3276) does NOT apply here.",
       "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "4.3, 9.34, 9.140, 15",

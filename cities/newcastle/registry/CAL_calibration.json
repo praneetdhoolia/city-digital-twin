@@ -277,9 +277,25 @@
       "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.130",
-      "description": "The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series; the validation-target builder still EXCLUDES censored cells from its station means, a pre-registered treatment of the 143 holdout rows that is not changed here - whether it should read this field too is a decision the user takes (#129).",
+      "description": "The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series, where the statistic is a SUM over stations and dropping a cell would drop a station's whole contribution. The validation-target builder EXCLUDES censored cells from its station means instead, and that exclusion is now RECORDED as the pre-registered treatment of those 143 holdout rows rather than left open (#129 decided 4 Sep 2026, DECISIONS.md 9.142): a mean over station-months is missing data when a month is censored, not a zero month. Measured before deciding: the whole package holds ONE censored cell (Tarro Station, Exit, 1 month of 21; the other three Opal series carry none), it lies outside the (Train, Entry) series this field's heavy-rail target sums, so the two rules AGREE on every scored target and this field's sweep moves no target at either end - 0 and 25 both reproduce mode_targets_by_mode.csv byte for byte. The exclusion's only effect is Tarro's own holdout mean, 106.2 trips/month excluded against 101.1 at 0 and 102.3 at 25. build_validation_targets.py measures rather than assumes that this stays true: it refuses to build if a censored cell reaches the (Train, Entry) series, if any station-direction group becomes wholly censored, or if censoring exceeds CAL.pt.censored_share_max.",
       "consumers": [
         "cities/newcastle/build/build_mode_targets.py"
+      ]
+    },
+    "CAL.pt.censored_share_max": {
+      "value": 0.05,
+      "units": "share of cells",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must stop, and no model output varies with it - at any value in a wide neighbourhood the guard's verdict on the held series is the same, because that series is at 0.09% (1 censored cell in 1,092). Sweeping it would sweep the point at which the project refuses to keep building, which is a rule about honesty rather than a quantity about Newcastle.",
+        "decisions_ref": "9.142"
+      },
+      "status": "active",
+      "decisions_ref": "9.142",
+      "description": "The share of cells in the station entries/exits series above which build_validation_targets.py REFUSES to build rather than quietly exclude censored cells from its holdout means (#129). Excluding a censored station-month is defensible while censoring is marginal - the mean simply rests on the months that were published - but every excluded cell is known to be BELOW 50, so exclusion biases the mean upward, and past some density that bias stops being negligible. Rather than assume the series stays sparse, the builder measures it against this ceiling each time it runs. The held series sits at 0.09% (1 of 1,092), so the guard is dormant by a wide margin and exists to catch a future republication, not today's data.",
+      "consumers": [
+        "cities/newcastle/build/build_validation_targets.py"
       ]
     },
     "CAL.gate.pass_deviation_pct": {

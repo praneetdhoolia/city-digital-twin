@@ -1,18 +1,22 @@
 {
   "seed": 20260810,
   "detour_factor": {
-    "value": 1.3376,
+    "value": 1.3276,
     "sweep": [
-      1.25,
-      1.423
+      1.247,
+      1.419
+    ],
+    "iqr": [
+      1.247,
+      1.419
     ],
     "source": "measured - shortest path over the observed A1 road graph",
-    "pairs_routed": 551,
-    "pairs_unroutable": 48,
+    "pairs_routed": 595,
+    "pairs_unroutable": 4,
     "sample_seed": 20260810,
-    "mean_of_ratios": 1.402,
-    "median_of_ratios": 1.317,
-    "note": "aggregate ratio of summed network to summed straight-line distance over population-weighted zone pairs; the sweep is the interquartile range of the per-pair ratios"
+    "mean_of_ratios": 1.394,
+    "median_of_ratios": 1.3103,
+    "note": "aggregate ratio of summed network to summed straight-line distance over population-weighted zone pairs; the sweep is the interquartile range of the per-pair ratios extended to hold the aggregate (iqr carries the range alone)"
   },
   "day_type": {
     "weekend_to_weekday": 0.7521,
@@ -33,38 +37,46 @@
   },
   "active_beeline_factor": {
     "walk": {
-      "value": 1.6902,
+      "value": 1.6938,
       "sweep": [
-        1.294,
-        1.794
+        1.286,
+        1.741
+      ],
+      "iqr": [
+        1.286,
+        1.741
       ],
       "source": "measured - shortest path over the observed A6 active network unioned with every road class a pedestrian may use, between population-weighted origins and observed POI destinations",
       "target_distance_m": 700.0,
       "band": 0.25,
-      "pairs_routed": 531,
+      "pairs_routed": 560,
       "pairs_unroutable": 21,
-      "pairs_without_destination": 48,
+      "pairs_without_destination": 19,
       "sample_seed": 20260810,
-      "mean_of_ratios": 1.6877,
-      "median_of_ratios": 1.4562,
-      "note": "sampled at the observed walk trip length between population-weighted origins and observed POI destinations; the aggregate ratio of summed path to summed straight-line distance, with the sweep the interquartile range of the per-pair ratios"
+      "mean_of_ratios": 1.687,
+      "median_of_ratios": 1.4376,
+      "note": "sampled at the observed walk trip length between population-weighted origins and observed POI destinations; the aggregate ratio of summed path to summed straight-line distance, with the sweep the interquartile range of the per-pair ratios extended to hold the aggregate (iqr carries the range alone)"
     },
     "bike": {
-      "value": 1.5231,
+      "value": 1.557,
       "sweep": [
-        1.207,
-        1.456
+        1.203,
+        1.557
+      ],
+      "iqr": [
+        1.203,
+        1.466
       ],
       "source": "measured - shortest path over the observed A6 active network unioned with every road class a pedestrian may use, between population-weighted origins and observed POI destinations",
       "target_distance_m": 5200.0,
       "band": 0.25,
-      "pairs_routed": 549,
-      "pairs_unroutable": 32,
-      "pairs_without_destination": 19,
+      "pairs_routed": 562,
+      "pairs_unroutable": 38,
+      "pairs_without_destination": 0,
       "sample_seed": 20260810,
-      "mean_of_ratios": 1.5147,
-      "median_of_ratios": 1.2972,
-      "note": "sampled at the observed bike trip length between population-weighted origins and observed POI destinations; the aggregate ratio of summed path to summed straight-line distance, with the sweep the interquartile range of the per-pair ratios"
+      "mean_of_ratios": 1.5506,
+      "median_of_ratios": 1.2926,
+      "note": "sampled at the observed bike trip length between population-weighted origins and observed POI destinations; the aggregate ratio of summed path to summed straight-line distance, with the sweep the interquartile range of the per-pair ratios extended to hold the aggregate (iqr carries the range alone)"
     }
   }
 }

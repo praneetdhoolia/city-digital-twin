@@ -1120,17 +1120,19 @@ else:
     check(d['sweep'][0] < d['value'] < d['sweep'][1],
           'measured detour factor sits inside its own sweep range')
     # the same assertion for every measured active beeline factor (#124):
-    # the bike factor sat outside its own sweep and nothing said so. A WARN
-    # until C2 is re-measured: the producer now defines the sweep to hold
-    # the aggregate, but re-measuring on 3 Sep 2026 moved the VALUES too
-    # (detour 1.3376 -> 1.3276, bike beeline 1.5231 -> 1.5570; the network
-    # was rebuilt on 16 Aug after C2 was measured), which is a model change
-    # and a package rebuild the user decides on, not a check to pass quietly.
+    # the bike factor sat outside its own sweep and nothing said so. It was a
+    # WARN while C2 was still measured on the pre-16-August network, because
+    # re-measuring moves the VALUES and not merely the sweeps, which is a model
+    # change the user decides on rather than a check to pass quietly. C2 was
+    # re-measured on the current network on 4 Sep 2026 and the demand rebuilt
+    # on it (9.142), so the reason for the warn is gone and this is a hard
+    # check again: a measured factor outside its own measured spread means the
+    # factors and the network have parted.
     for _mode, _bf in sorted((c2.get('active_beeline_factor') or {}).items()):
         check(_bf['sweep'][0] <= _bf['value'] <= _bf['sweep'][1],
               'measured %s beeline factor %.4f sits inside its own sweep %s '
               '(re-measure C2 on the current network to clear this)'
-              % (_mode, _bf['value'], _bf['sweep']), warn=True)
+              % (_mode, _bf['value'], _bf['sweep']))
     dt = c2.get('day_type', {})
     check(dt.get('station_years', 0) > 100,
           'weekend/weekday ratio measured over a usable sample (%d station-years)'
