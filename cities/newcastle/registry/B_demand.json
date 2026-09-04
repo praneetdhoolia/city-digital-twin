@@ -92,6 +92,7 @@
       "sweep": {
         "proportional": 0.05
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.1, 9.131",
       "description": "Driver-licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written by cities/newcastle/build/build_licence_rates.py from the TfNSW Driver Licence Statistics snapshot (202607: primary licence of any class, non-learner, by age group and customer-address LGA) over the ABS estimated resident population by age and LGA at 30 June 2024, split to single years by the census G04 profile. The population builder draws each person's licence from the PER-LGA rate in data/processed/observed/licence_rates_by_age_lga.csv and falls back to this vector only where an LGA has no row. Before 9.131 this was a literature vector (18-24 0.62, 25-34 0.88, 35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88, 75-84 0.72, 85+ 0.45) that left 14.2-14.8% of employed persons without a licence; the measured rates are 18-24 0.78, 25-34 0.94, 35-44 1.00 (holders exceed the 2024 ERP - address staleness and two years of growth - and the rate is capped at 1), 45-74 0.97-0.98, 75-84 0.92, 85+ 0.51, and 12-17 0.08 (provisional drivers aged 16-17). Suppressed cells (<=5) are taken at 3. The sweep is the suppression and the denominator vintage.",
@@ -109,6 +110,7 @@
         32.0
       ],
       "sweep_basis": "urban door-to-door average including parking and access; brackets typical metropolitan network speeds. It decides only the B2 chain-timing scaffold (whether tours fit a day, and their planned departure spacing) - the mobsim re-times every leg physically - but a value that decides anything is declared (9.61: it sat as a bare 26.0 inside time_tour's expression, invisible to the ledger's scanner).",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.61",
       "description": "Door-to-door planning speed for a car-available person, used by the B2 chain builder to time tours (straight-line distance at this speed plus B.activity.plan_access_s). Not a routing or scoring quantity.",
@@ -125,6 +127,7 @@
         22.0
       ],
       "sweep_basis": "a blend of walk, cycle and bus door-to-door speeds for a person without a car. Same scaffold-only role, same 9.61 declaration rationale, as plan_speed_car_kmh.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.61",
       "description": "Door-to-door planning speed for a person without car availability, used by the B2 chain builder to time tours. Not a routing or scoring quantity.",
@@ -141,6 +144,7 @@
         480
       ],
       "sweep_basis": "fixed access-and-egress overhead per planned leg (getting to the vehicle, parking, walking in). Scaffold-only, declared per 9.61.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.61",
       "description": "Fixed per-leg overhead added to every B2 planned leg time on top of distance/speed. Not a routing or scoring quantity.",
@@ -171,6 +175,7 @@
         ],
         "basis": "No observation of who-drives-whom exists, so WHICH household trips an escort tour may bind to is an assumed choice, declared and swept rather than silently made. `any_member_trip` binds to any household member's trip in priority order (unlicensed member's education trip, unlicensed member's any trip, education trip, any trip) - the maximal coupling. `unlicensed_or_education` stops after the first three classes: the escorted-person interpretation is strongest for someone who cannot drive themselves, and the fourth class binds escorts to licensed adults' own (often long) trips. MEASURED consequence on the first full build (9.46): the fourth class carries most bindings and pulls the bound escort's trip length above the observed HTS serve-passenger distance, which is REPORTED in _activity_chains_report.json against the observed value, never tuned away."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.46",
       "description": "Which classes of already-drawn household trips an HX escort tour may take its destination and departure from.",
@@ -189,6 +194,7 @@
         ],
         "basis": "No observation of who-drives-whom exists anywhere in the held data (the STATUS data-grade row's 'NO TARGET AT ALL: non-household lifts'), so the matching scope of the 9.60 second-pass binder is declared and swept rather than implied. `household_only` switches the pass off and restores 9.46 exactly; `same_zone` lets an unbound escort tour serve a driverless-household passenger sharing the driver's home SA1 - the neighbourhood, expressed on zone identity so no coordinate or radius enters the framework."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.60",
       "description": "Which non-household passengers an HX escort tour that found no household trip may be re-targeted to serve (9.60). The driver supply is the observed Serve-passenger rate, already generated; this decides only how far an unbound tour may look for the passenger it exists to carry. Passengers are the driverless-household class - the people household pairing structurally cannot reach.",
@@ -211,6 +217,7 @@
         "proportional": 0.25,
         "basis": "the shares are Sydney GCCSA, not Hunter - the same HTS instrument as every observed mean this build already targets, and the only Australian government-published trips-by-distance-band-by-purpose table found (a Hunter-specific one does not exist; the modern HTS releases publish no distance bands at any geography, checked against the Feb-2026 data dictionary). A 25% proportional sweep covers the Sydney-to-regional transfer: denser Sydney plausibly makes MORE short trips, so the lower half of the sweep is the operative direction. All HTSs under-report short walk trips (Fairnie et al. 2016 via Eady and Burtt 2019), so the value is a lower bound on the true short-trip mass."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.69",
       "description": "Observed share of trips at or under short_trip_band_km network km, per purpose. Bureau of Transport Statistics, Household Travel Survey Report: Sydney 2012/13 (Nov 2014, ISBN 978-0-7313-2869-7), Table 4.4.7 'Trips by distance category and purpose (average weekday) - 2012/13', linked door-to-door trips: commute 148/2525, work business 117/1294, education 245/1554, shopping 739/2667, HO = personal business + social/recreation + other = (169+967+267)/(926+4028+557), serve passenger 480/3065. The destination-draw mixture weight is SOLVED against these so the generated distance distribution carries the observed short-trip mass while the per-(purpose x LGA) observed means stay met exactly (9.69); the model's own generated share was 4.45% of legs under 1 km against the table's 18.8% all-purpose (issue #30).",
@@ -263,6 +270,7 @@
         ],
         "basis": "The observed Serve-passenger rate counts serve journeys and says nothing about how they distribute over passengers, so the allocation is an assumed choice, declared and swept rather than silently made. `outbound_only` is the 9.46/9.60 state: every binding serves the passenger's outward anchor trip and nothing serves the trip home - MEASURED consequence on the first converged all-physical arm (9.68): outbound legs paired at 0.196, return legs at 0.008, intermediate at 0.0 across iterations 200-799, so a ride subtour always contained an unpairable leg that re-moded to a mean 5.56 km walk, and 76,986 of 77,626 ride-available persons held NO ride plan in final memory - the 9.64 'choice collapse' was this allocation, not a preference. `round_trip` allocates the same observed-rate serve tours in drop-off + pick-up pairs per passenger tour (half the passengers, both directions), the only allocation under which a bound passenger can hold a fully-pairable ride tour."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.68",
       "description": "How bound serve tours distribute over escorted passenger tours: one serving tour per passenger outward trip, or a drop-off and pick-up pair covering the passenger's whole 2-leg tour. Applies to both the 9.46 household binder and the 9.60 non-household re-targeting pass.",
@@ -298,6 +306,7 @@
         5400
       ],
       "sweep_basis": "no observation bears on how closely one driver can stack two escort runs; 45 minutes covers a school-run drop-off (dwell ~5 min) plus the return at the model's own seed speeds over the observed 6.4 km escort distance. The bounds are a 15-minute back-to-back stack and a 90-minute spacing. Finer overlap - a drawn intermediate stop stretching one bound tour into the next - resolves at placement, where the later binding drops rather than shifts.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.46",
       "description": "Minimum separation between the departures of two escort tours BOUND for the same escorter, so the driver can physically make both runs.",
@@ -331,6 +340,7 @@
         3.3,
         3.65
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Observed NSW HTS trip rate the synthesis is calibrated to reproduce. The realised rate is 3.397, 2.2% low.",
@@ -353,6 +363,8 @@
       "sweep": {
         "proportional": 0.25
       },
+      "sweep_basis": "DECISIONS.md 9.2: activity durations are carried from P1 with +/-25% on each mean and a +/-30% lognormal spread within, and are not Newcastle-specific in any observable sense. HX carries the same proportional sweep because no survey in the package measures a drop-off dwell.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Mean activity duration by purpose. HX (serve passenger) is a drop-off: the driver does not perform an activity at the destination, so its duration is the dwell, not a stay. No survey in the package measures a drop-off dwell, so it is assumed and carries the same proportional sweep as the rest.",
@@ -368,6 +380,8 @@
         0.2,
         0.45
       ],
+      "sweep_basis": "DECISIONS.md 9.2: the within-purpose spread of activity duration is the P1 +/-30% lognormal, carried rather than observed; chosen interval of two thirds to three halves around it. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Spread of activity duration around its mean.",
@@ -390,6 +404,8 @@
         0.1,
         0.35
       ],
+      "sweep_basis": "DECISIONS.md 9.2: trip-chaining rates are not in the published HTS tables, so the per-purpose values (0.12-0.30) are assumed and the record declares the 0.10-0.35 interval that brackets all of them. Its leverage is named, not measured: the record calls this the parameter that decides how many sub-tours exist and therefore how freely mode choice can vary within a day. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Probability a tour carries an intermediate stop, by purpose. WATCH THIS ONE: it decides how many sub-tours exist and therefore how freely MATSim mode choice can vary within a day. It is assumed, and it is the demand-side parameter with the most leverage over mode share. 56.7% of persons have more than one tour at the shipped values. HX (serve passenger) chains at the same rate as a discretionary tour: a driver who drops a passenger may link another stop before returning.",
@@ -405,6 +421,8 @@
         0.12,
         0.4
       ],
+      "sweep_basis": "DECISIONS.md 9.2 declares 0.25 swept 0.12-0.40 for the same reason as p_intermediate_stop: chaining rates are not published, so the interval is a chosen bracket of half to eight fifths of the value. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Probability of a second intermediate stop, given a first.",
@@ -420,6 +438,8 @@
         0.25,
         0.6
       ],
+      "sweep_basis": "DECISIONS.md 9.2 declares 0.4 swept 0.25-0.60: the share of an under-12's secondary tours made independently is in no held table, so the interval is a chosen bracket. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Share of child tours retained as independent tours.",
@@ -449,6 +469,7 @@
         0.95
       ],
       "sweep_basis": "the work entry is bounded BELOW by the census G62 observed attendance of 0.651, which bounds the sweep and is not allowed to set the value, because census night was August 2021 with 19.2% working from home",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "2.4, 9.2",
       "description": "Probability an employed person or student attends on a given day type.",
@@ -488,6 +509,8 @@
       "sweep": {
         "proportional": 0.3
       },
+      "sweep_basis": "DECISIONS.md 9.2: +/-30% on each multiplier, because the HTS held carries no day-of-week dimension (confirmed in the raw workbook, whose only dimensions are financial year, LGA, mode and purpose), so no weekend purpose mix can be estimated from it.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Weekend purpose mix relative to the weekday. HX (serve passenger) is derived demand - it exists because somebody else has to be somewhere - so it falls at the weekend with the school run without vanishing, because weekend escorting is sport and social rather than education. Like every other entry here it is assumed and swept; the HTS extract in the package carries no day-type dimension to estimate it from. NHB is absent: it is a leg label, not a tour purpose, so it has no day-type mix to carry.",
@@ -504,6 +527,7 @@
         0.816
       ],
       "sweep_basis": "observed across 551 RMS station-years",
+      "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Weekend vs weekday travel, measured from the RMS traffic counts own WEEKDAYS and WEEKENDS periods. Replaces an assumed value that implied 0.825. Vehicle volume, not person trips."
@@ -517,6 +541,7 @@
         1.423
       ],
       "sweep_basis": "the interquartile range of the per-pair ratios over 551 population-weighted zone pairs",
+      "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Straight-line to network distance, routed over the observed A1 road graph. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value."
@@ -546,6 +571,7 @@
         0.18
       ],
       "sweep_basis": "the observation is the 2011 Census journey-to-work flow (the newest origin-destination release TfNSW publishes; the 2016 release was withdrawn by the publisher and 2021 exists only as an attended TableBuilder extract), so the band is +-30% for fifteen years of drift in where the external tier's residents work; it is not a sampling interval",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.140",
       "description": "Share of the external tier's EMPLOYED residents whose place of work lies in the five core LGAs: 4,636 of 33,666 in TfNSW Journey to Work 2011 Table 01 (origin SA2 x destination SA2, data/raw/jtw/bts_jtw_table01_2011_v1_0.zip), the 2021 external-tier SA2s read under their 2011 names (X Surrounds = X Region). Per SA2 it runs 0.5% (Scone Region) to 48.5% (Branxton - Greta - Pokolbin). Recomputed from the raw table by cities/newcastle/build/build_external_interaction.py, which refuses to run if this declared value drifts from it (the 9.116 guard).",
@@ -585,6 +611,7 @@
         0.12
       ],
       "sweep_basis": "the commute share's own +-30% vintage band carried through the identity; the purpose split's sweep moves the HO component independently",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2, 13, 9.140",
       "description": "Rate at which external-tier residents interact with the core - the share of the tier's residents who make a trip into the core on a weekday. Derived from the 2011 journey-to-work origin-destination flow since 9.140; the 2021 table remains an attended TableBuilder extract (DECISIONS.md 13 priority 11) and would replace the 2011 vintage when obtained.",
@@ -601,6 +628,7 @@
         0.6
       ],
       "sweep_basis": "No through-share survey exists for the study boundary and no journey-linked data can separate through from local traffic at a count station, so the share is assumed and swept wide. The motivating observation is V113 (the M1 at Wyee, 48,016 AADT, a calibration row): the Sydney-Newcastle motorway at the boundary is the road most dominated by through traffic, and the model routed zero vehicles onto it because the demand contained no through movement at all (issue #20).",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.41",
       "description": "Share of the AADT measured at a cordon-gate calibration count station that is through traffic - vehicles whose journey neither starts nor ends inside the study area. Applied symmetrically: half of the through component enters at the gate and half exits, so the generated inbound volume at gate i is 0.5 x through_share x AADT_i. Seeded from CALIBRATION count rows only; the split filter is structural in the builder and no holdout row is ever read.",
@@ -617,6 +645,7 @@
         50.0
       ],
       "sweep_basis": "MEASURED MOTIVATION: only one calibration station sits within 2 km of the boundary crossing it measures (the M1 at Wyee, 273 m); the others that observe a boundary corridor sit 16-24 km inside it (Pacific Highway at Tomago, New England Highway at Tarro). Matching by same road NAME along the corridor is what the held data supports; the radius bounds how far along the corridor a station may sit and still anchor the gate. An inland station overstates the boundary volume by its local traffic - absorbed, stated, by the through_share sweep.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.41",
       "description": "A boundary-crossing road edge becomes a through-traffic gate only if a calibration count station ON THE SAME NAMED ROAD lies within this distance of the crossing; the nearest such station anchors the gate's volume. Beyond it the corridor is unobserved and generates nothing.",
@@ -633,6 +662,7 @@
         3000.0
       ],
       "sweep_basis": "The dissolved study boundary includes the coastline and the harbour, so a road bridging the Hunter River 'crosses the boundary' without leaving the study area - Hannell Street at Wickham is the measured example (nothing of it reaches more than 2 m beyond the polygon), and its station would otherwise seed through traffic entering in central Newcastle. Genuine exits measured on the rebuilt layer put same-named endpoints 1-8 km beyond the boundary while their crossing EDGES often end 31-203 m out, so the evidence is road-level. 1 km separates a departure from a river crossing; the sweep brackets that judgement.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.41",
       "description": "A boundary crossing counts as leaving the study area only if some endpoint of its ROAD (any same-named edge within the corridor-match distance of the crossing) lies at least this far beyond the dissolved boundary. Road-level, not edge-level: a motorway's crossing way often ends metres past the polygon while the road continues on further ways. Filters water crossings INSIDE the area (harbour bridges) out of the gate set.",
@@ -649,6 +679,7 @@
         50.0
       ],
       "sweep_basis": "The study area spans roughly 60-90 km. A through trip must actually cross it: two gates a few kilometres apart on the same corridor edge would otherwise exchange 'through' trips that never leave the boundary region. 30 km forces entry and exit to lie on opposite sides; the sweep brackets how strict that requirement is.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.41",
       "description": "Minimum straight-line separation between the entry gate and the exit gate for a generated trip to count as through traffic. Exit gates closer than this to the entry are excluded from its destination set.",
@@ -666,6 +697,8 @@
       "sweep": {
         "proportional": 0.2
       },
+      "sweep_basis": "chosen +/-20% on each share. The 2011 journey-to-work flow that now drives B.external.interaction_rate (9.140) observes commuting only, so the commute:other split of external demand remains assumed. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Purpose split for external boundary demand.",
@@ -695,6 +728,7 @@
         ],
         "basis": "proposal 7.2 fallback: estimate transfer rates from tap-on/tap-off timing at the Interchange using aggregate stop-level data plus a matching model, validated against the published interchange percentages"
       },
+      "sweep_role": "uncertainty",
       "status": "unobtained",
       "decisions_ref": "0, 13",
       "proposal_ref": "6.1, 7.2",
@@ -709,6 +743,7 @@
         0.1529
       ],
       "sweep_basis": "the observed range across the 23 stations that carry a classified count",
+      "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "12.2a",
       "description": "Heavy vehicle share, in two roles. (1) AT COMPARISON TIME: the count comparison uses the station's own observed share where classified and this median at the remaining 96 stations - only 3 of the 34 calibration stations are classified, so the assumed case is the usual one there. (2) AT GENERATION TIME (9.49): the through tier splits each cordon gate's volume into car and truck by the gate station's own observed heavy share, and a gate whose station is unclassified falls back to this median.",
@@ -767,6 +802,7 @@
         120.0
       ],
       "sweep_basis": "measured on data/processed/validation/count_station_links.csv: the largest ACCEPTED match is 119.7 m, so 120 m is exactly binding. Tightening costs targets at a measured rate - at 100 m six of the 116 matched stations lose their link and at 60 m twenty-three do - which is the lower bound. The upper bound is the current value because loosening cannot gain anything already in the file; whether a larger radius would resolve the three stations that match nothing (issue 10) has NOT been tested, and testing it means re-running the mapper and regenerating a committed artefact.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "12.1",
       "description": "Radius within which a permanent traffic count station may be attached to a network link it is taken to count. It decides which road_aadt targets are scorable at all, so it is a lever on the reported fit, not a plotting tolerance: 189 of 203 link matches are by name AND proximity, 14 by proximity alone. Was a CLI default typed into map_count_stations.py with no provenance and no range (issue 19).",
@@ -795,6 +831,7 @@
         1.0
       ],
       "sweep_basis": "The census carries no bicycle-ownership variable; the published NSW anchor is CWANZ, Walking & Cycling Participation Survey - New South Wales Report, 2025 (Painted Dog Research; fieldwork 11 Mar - 9 Apr 2025; NSW n=700; cwanz.com.au/wp-content/uploads/2025/10/251001-CWANZ-National-Walking-and-Cycling-Participation-Survey-Report-NSW.pdf), p.72 'Household Bicycle Ownership' (Q46, bicycles IN WORKING ORDER): total bicycle ownership 49.3% - the report's own headline, the proportion of NSW residents owning at least 1 traditional bicycle, e-bike or e-rideable. Same page: 46.6% of households hold at least one working traditional bicycle in 2025 (100 - 53.4 zero-bike), 53.1% in the reweighted 2023 wave - both inside the sweep. What stays ASSUMED is the transfer from statewide ownership to per-person availability in this study area (the 9.52/9.49 transfer pattern). The upper bound 1.0 is the previous silent behaviour (bike available to everyone), retained so the constraint's own effect is measurable; the lower bound allows for availability well below the ownership rate. Re-size against the observed 3.2% bike share only AFTER the post-rebuild run re-measures the modelled share - the old 5x was measured on a model that no longer exists (issue #29).",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.39, 9.78",
       "description": "Share of synthetic persons with a bicycle available to them. Until this field existed, car was the only mode whose ownership was modelled while bike was silently available to everyone - a structural bias against car in the choice set itself, undeclared anywhere (issue #29, SPEC_AUDIT A3). Drawn deterministically per person in build_matsim_plans.py and consumed by the same availability calculator that enforces rideAvail. External boundary agents keep bike available: they are household-less by construction, so no ownership identity exists to derive a denial from, and the choice is recorded in DECISIONS.md 9.39.",
@@ -1060,6 +1097,7 @@
         "proportional": 0.25
       },
       "sweep_basis": "the whole profile may be reweighted by a quarter either way per hour, then renormalised. There is no Newcastle observation to bracket it: the HTS held is aggregate and reports journeys by purpose, not departure hour. A proportional sweep is the honest expression of \"NSW-typical shape, magnitude unknown\".",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9, 15",
       "description": "Probability that a tour of each purpose departs in each hour 0-23. ONE HUNDRED AND FORTY-FOUR ASSUMED NUMBERS that decide when every trip in the model happens, and therefore what the peak looks like and where congestion forms. They were a dict literal in src/build/build_activity_chains.py labelled \"assumed, NSW-typical shapes\", which no audit could see because a container is not a scalar and no sweep could reach. HX is a copy of HE and is derived at load rather than declared twice. MEASURED CONSTRAINT since 25 Aug 2026 (9.76, #63 item 6): measure_departure_constraint.py compares the realised B2 departure-hour distribution these shapes generate against the observed RMS light-vehicle hourly profile (params/C6_departure_profile_check.json). First reading: WEEKDAY overlap 0.858 with peak hours MATCHING at 16:00; SAT/SUN overlap ~0.88 but the modelled weekend peaks sit 3-4 h LATER than the observed 11:00 - the weekend shapes skew late, a recorded finding, not a fit.",
@@ -1097,6 +1135,7 @@
         ],
         "basis": "MATSim's co-evolution has no joint replanning: a passenger's ride plan scores well only in iterations where the driver's SELECTED plan happens to hold the serving tour in car at the bound time, so the coherent two-sided state is sampled with vanishing probability from an uninformed seed (measured 9.68: 531 of 77,626 ride-available persons selected ride after 1000 iterations). Seeding the round-trip-covered passenger's tour as ride starts the search AT the coherent state and lets ChangeExpBeta abandon it if it scores badly - the seed biases where search starts, never what selection keeps. `uninformed` restores the uniform draw as the sensitivity."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.68",
       "description": "Seed mode for a passenger tour whose BOTH directions are covered by serve-tour bindings (round-trip coverage). Tours with partial or no coverage keep the uninformed draw. Consumed by build_matsim_plans.py.",
@@ -1152,6 +1191,7 @@
         ]
       },
       "sweep_basis": "the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes \"the result does not depend on the seed\" a claim that can be tested rather than asserted (DECISIONS.md 9.6).",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.6, 9.7",
       "description": "The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative."
@@ -1167,6 +1207,7 @@
         ],
         "basis": "The two seed methods the plan builder can produce. `uniform_draw` is the pre-9.120 seed - ONE plan per person, its tour modes drawn uniformly over the usable modes (B.mode.seed_split) - and `full_choice_set` writes one plan per usable mode instead, so the sweep is over the METHOD, not over any share; running both measures how much the search, rather than the scoring, decided the converged shares."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.120",
       "consumers": [
@@ -1183,6 +1224,7 @@
         5000
       ],
       "sweep_basis": "how many population-weighted zone pairs the detour factor is measured over. It is a MONTE CARLO SAMPLE SIZE, so the sweep is about the precision of the measurement rather than about the city: too few pairs and the ratio is noisy, more than a few thousand buys little and costs routing time.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2, 15",
       "description": "Zone pairs routed over the observed road graph to measure B.activity.detour_factor. A keyword default AND an argparse default carrying the same number, neither declared."
@@ -1196,6 +1238,7 @@
         2000.0
       ],
       "sweep_basis": "the shortest straight-line separation a measured pair may have. Below it the network detour ratio is dominated by which side of the block each centroid fell on rather than by the road graph, and above it short trips - the ones walk needs - stop being represented.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2, 15",
       "description": "Minimum straight-line distance between two zone centroids for the pair to enter the detour measurement."
@@ -1209,6 +1252,7 @@
         0.5
       ],
       "sweep_basis": "width of the distance band a destination is drawn from, as a share either side of the observed trip length. Wide enough that every origin has candidates, narrow enough that the measurement stays at the mode’s own length scale.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.2, 15",
       "description": "Half-width of the distance band used when drawing a destination for the network-factor measurement."
@@ -1242,6 +1286,7 @@
         60.0
       ],
       "sweep_basis": "No local observation of how far apart a household lift's two departures may be exists, and HTS carries no household-linked trip records at all, so the tolerance is assumed and swept rather than fitted. The lower bound is a tight coincidence; the upper is an hour, beyond which calling two departures one trip stops being credible. MEASURED SENSITIVITY on the relaxed 25% pilot arm (9.44): the share of ride legs with ANY household car leg in the window runs 1.1% at +-5 min, 3.1% at +-15, 5.6% at +-30 and 15.1% at +-120, so this field moves the pairing rate by an order of magnitude and may not be pinned.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.44",
       "description": "How far apart a passenger's and a driver's PLANNED departures may be and still be treated as one trip. This is the tolerance the pairing is allowed, NOT a modelled waiting time: Tier 1 does not move the passenger's departure, because shifting it would cascade through the rest of that person's day and the blast radius of the change is deliberately bounded. Who adapts is nonetheless DECLARED rather than left open - the passenger does, since the driver's plan cascades further - and the unmodelled sub-window adjustment is a stated limitation, not a silent one. Consumed by src/java/citysim/RidePairingEngine.",
@@ -1282,6 +1327,7 @@
         ],
         "basis": "Which of the driver's links the passenger's must coincide with. `both_links` is the declared value: the driver's leg starts and ends on the passenger's own two links, so the two are the same trip and handing the driver's realised travel time to the passenger is correct rather than merely closer. `route_contains` (added 9.102) requires the passenger's two links to lie ON the driver's routed path in the order the driver drives them, and the engine apportions the driver's time by the carried segment's share of route length - unity when the segment is the whole route, so both_links is the special case and the two are directly comparable. It is the only rule that CAN represent a drop-off en route, which is the commonest car-passenger trip there is, and it was built because 64.4% of pairing failures are the `miss_endpoints` class. **It is not the declared value, because it was measured and it does not help**: a paired 1%/40-iteration diagnostic differing in this field alone (ride_rule_control_1pct vs ride_rule_contains_1pct) moved the pair rate 0.5069 -> 0.5113 (+0.44 pp) and miss_endpoints 1,257 -> 1,233, while ride mode share went 9.6748 -> 9.4513 and walk 37.6154 -> 39.2871 - the wrong way, and at a size indistinguishable from one seed's noise. The reason is upstream: a driver routed home-to-work has no escort stop, so the router has no reason to pass the passenger's destination either, and relaxing the test from identity to containment finds almost nothing more. That CONFIRMS 9.92's conclusion that both_links stays. The three loosest rules match trips that need not overlap at all and remain sensitivities, never results. Their spread is large and measured (9.44): on the relaxed 25% arm at +-30 min the pairable share is 0.001% under both_links, 1.5% under origin_link, 1.4% under dest_link and 5.6% under window_only."
       },
+      "sweep_role": "answer",
       "status": "active",
       "decisions_ref": "9.44, 9.102",
       "description": "The spatial coincidence a pairing requires, expressed on LINK IDENTITY rather than on distance - no coordinate, no radius and no place enters the model, so the rule reads identically for a city the framework has never seen. `both_links` means the driver's leg starts and ends on the same links as the passenger's, i.e. the passenger is in the car for the whole of the driver's trip. `route_contains` generalises that to a SEGMENT of the driver's trip and is implemented and measured (9.102), but is a sweep member rather than the value. Consumed by src/java/citysim/RidePairingEngine.",
@@ -1298,6 +1344,7 @@
         ],
         "basis": "Where a DECLARED ride pair meets when the passenger's and the driver's links differ. `passenger_links` is the behaviour before 9.128: the named driver must still satisfy B.ride.pairing_rule on the passenger's own two links, so a shared ride bound on a suburb-to-suburb trip (9.124) is never realised - two households in one SA2 do not share a link, and the valid F18 arm's iteration 0 refused 2,053 of 6,966 ride legs on endpoints for exactly that reason. `driver_detour` routes the driver's car leg, at BeforeMobsim and with the run's own car router, through each carried passenger's origin link (in departure order) and then each destination link, and on to the driver's own destination; the passenger boards at their own link as the car passes it and alights at their own, and the pairing books the pass time. The detour is driven on the network and the driver's score pays for it, so a passenger too far out of the driver's way costs the driver what it costs and no threshold decides who is served. A walking meeting point was built first and measured on a 1% smoke at a mean 8-11 km walked to and from the driver's links - nobody walks that to a lift - and was replaced by this. The sweep is over the MECHANISM: running both measures how much of the realised ride share the detour itself supplies."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.128",
       "matsim_param": "ridePairing.declaredMeeting",
@@ -1318,6 +1365,7 @@
         ],
         "basis": "What an unpairable ride leg is EXECUTED as for that mobsim. `walk` was the only behaviour before 9.105 and reproduces every earlier arm exactly, which is why it is kept. It was never argued for as a behaviour - 9.55 chose it so that a failed lift would SCORE badly and co-evolution would reassign the tour, and the walk was a means to that end. Measured, the means dominates: at iteration 100 of 20260829T172145_1000it_10pct, 16,153 unpaired ride legs and 1,602 refused taxi legs are forced to walk in a single iteration - 31% of all walk trips - and walk's mean trip length is 8.75 km against the 0.7 km this package already declares as observed (C.constraint.trip_length_km.walk), with 46% of walk trips over 5 km and the longest 91.4 km, a twenty-hour walk. Of walk trips over 5 km, 14,910 belong to agents holding BOTH a licence and a car, so this is not people without options. `licensed_drive_else_walk` executes the leg as CAR when the passenger holds a licence and has a car available, and leaves everyone else walking: a household whose lift falls through drives, and only someone who cannot drive is left on foot. It is a behavioural claim, not a fit device - it is chosen because a 10 km forced walk is not a behaviour any person exhibits, and it must be measured against the `walk` arm like any other declared value. The ride alternative is restored at AfterMobsim under BOTH members; 9.81's one-way ratchet must not return."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.55, 9.81, 9.105",
       "matsim_param": "ridePairing.unpairedFallback",
@@ -1341,6 +1389,7 @@
         0.0,
         6.0
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.106",
       "matsim_param": "modeAvailability.walkFeasibleKm",
@@ -1364,6 +1413,7 @@
         0.0,
         35.0
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.106",
       "matsim_param": "modeAvailability.bikeFeasibleKm",
@@ -1382,6 +1432,7 @@
         120.0
       ],
       "sweep_basis": "No measurement of pickup dwell exists for this city, or for any comparable one in the package, so the value is swept and NEVER fitted. The default is deliberately NEUTRAL. The car-minus-ride residual this lane exists to remove was MEASURED from the pilot arms' own output_legs at about 5 s at 25% and 13 s at 10%, flat across every distance bin below 50 km; a one-minute friction would therefore be five to twelve times the entire quantity it was meant to explain. Sizing this to close that gap is calibration wearing a mechanism's clothes and was REFUSED. The upper bound is two minutes, which is already far beyond what the residual can bear, and exists so the sweep can show that.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.44",
       "description": "Seconds added to a PAIRED passenger's travel time for the act of being picked up. Zero by default: the mechanism Tier 1 asserts is that the passenger experiences the driver's realised trip, and nothing in the package observes a friction on top of that. This field exists so the question can be swept rather than assumed away. Consumed by src/java/citysim/RidePairingEngine.",
@@ -1396,6 +1447,7 @@
         4
       ],
       "sweep_basis": "The upper bound is the physical one: a five-seat car minus the driver, which is what the overwhelming majority of the registered light fleet is. The lower bound is one passenger per driver, the most conservative reading of a household lift. No observation splits household lifts by party size - HTS reports Vehicle passenger as a share of trips, not an occupancy distribution - so the cap is assumed within physical bounds and swept. It is not binding at the measured pairing rates and the diagnostic reports how often it refuses, so a run in which it starts to bind is visible rather than silent.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.44",
       "description": "How many passengers one driver's leg may carry. Without a cap a single driver would serve every passenger their household offered - the same unbounded-supply defect that rideAvail removed on the availability side, where an unconstrained model put 5.9 people in every car (9.10). Consumed by src/java/citysim/RidePairingEngine.",
@@ -1426,6 +1478,7 @@
         ],
         "basis": "The three states the fourth binder pass can take. `none` is the pre-9.124 demand, in which a resident without a car rides only with a household driver, an escort or a re-targeted lift; `same_sa1_od` and `same_sa2_od` bind their direct tours to non-household drivers making the same zone-to-zone trip within B.ride.pairing_window_min, at SA1 or SA2 co-location - both the statistical geography, neither a radius. Measured on the committed WEEKDAY demand (9.124): the identity's remainder after the three earlier passes is 119,313 trips (59,656 direct tours); same-SA1 finds a driver both ways for 19,034 of the 107,089 car-less direct tours and binds them all, a fifth of the remainder; same-SA2 finds one for 105,515 and is THINNED to 59,648 - the observation caps it, with 17 trips of shortfall. The sweep is over the co-location rule; the volume is never free."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.124, 9.127",
       "consumers": [
@@ -1442,6 +1495,7 @@
         0.1
       ],
       "sweep_basis": "The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. The 9.127 rule (driver hash AT OR BELOW the passenger's) also guaranteed that, but it named LOW-hash households as drivers, and a 10% sample - which is exactly the low-hash households - then kept named drivers at 12.4% and everyone else at 7.95% (the eligible non-named pool at 6.1%, the motorbike carve at 5.5%, the truck carve at 5.1%): the count was 10%, the composition was not. A bucket prefers no hash. Measured on the WEEKDAY binder, package-identical inputs: at-or-below 98,549 servable / 59,718 bound / 0 short; bucket 0.10 86,848 / 59,806 / 0; bucket 0.05 73,509 / 59,701 / 0; unconstrained 105,515 / 59,648 / 17. 0.05 is declared because 0.10, 0.25 and 0.50 are all multiples of it, so a 25% confirmation arm keeps its pairs too; the cost is candidate supply, and the identity is still met in full. A 1% smoke is not a multiple and breaks pairs - it is a plumbing test and its pairing is never read.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.129",
       "consumers": [
@@ -1480,6 +1534,7 @@
         0.4
       ],
       "sweep_basis": "Austroads and HCM passenger-car-equivalent ranges for on-road bicycles run from about 0.1 (wide kerbside lane, filtering) to about 0.4 (narrow lane, no filtering). No local lane-width-conditioned observation exists, so the class low-mid value is taken and the published range is swept.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.54",
       "description": "Road capacity a network-simulated cyclist consumes. Unlike a pedestrian, a cyclist genuinely takes carriageway space - this is the field that makes bike PHYSICAL rather than decorative.",
@@ -1496,6 +1551,7 @@
         5.5
       ],
       "sweep_basis": "Carried over verbatim from the retired RUN.routing.teleported_bike_speed_ms (9.54): the disagreement between published MATSim practice and ATAP cycling speeds is unresolved and stays swept, not repinned. The quantity is unchanged - the speed a cyclist rides at - only its consumer moved from the teleportation formula to the vehicle type's maximumVelocity.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.54",
       "description": "Cycling speed, carried by the bike vehicle type as its maximum velocity: a cyclist traverses each link at the lower of this and the link's free speed, in the router (CappedSpeedTravelTime) and the mobsim alike - one declared value, both consumers.",
@@ -1542,6 +1598,7 @@
         ],
         "basis": "The two resolutions the plans builder can carve at. `region` applies B.motorbike.trip_share to every home SA1 alike (the pre-9.122 carve); `sa1_thinned` derives the SAME identity per home SA1 from the census cell that gives the region share - one-method motorbike journeys over one-method car-as-driver journeys, scaled by CAL.mode_split.vehicle_driver_level - falling back to the SA1's SA2 where the driver cell is under B.census.thin_cell_min_journeys. The sweep is over the resolution, not over any share."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.122",
       "consumers": [
@@ -1576,6 +1633,7 @@
         0.75
       ],
       "sweep_basis": "Austroads and HCM passenger-car-equivalent ranges for motorcycles in urban traffic run from about 0.3 (filtering, uncongested) to 0.75 (no filtering, interrupted flow); no local fleet-mix or filtering observation exists, so the class low-mid value is taken and the published range is swept.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.52",
       "description": "Passenger-car equivalents of one modelled motorbike - it consumes LESS road capacity than a car. This is the field that makes the mode PHYSICAL in the mobsim.",
@@ -1641,6 +1699,7 @@
         ],
         "basis": "Booked services are unregulated; aggregator estimates for Newcastle put the rideshare base at ~$1.80-2.10 (point-to-point-mode.md). Surge is unknowable and unmodelled - stated."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.76",
       "consumers": [
@@ -1659,6 +1718,7 @@
         ],
         "basis": "Aggregator estimates ~$1.40-1.60/km for Newcastle rideshare (point-to-point-mode.md); per-minute components folded into the per-km band rather than modelled separately - stated."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.76",
       "consumers": [
@@ -1677,6 +1737,7 @@
         ],
         "basis": "IPART 2025 point-to-point survey, Lower Hunter & Greater Newcastle stratum: last-trip split 34% taxi / 66% rideshare. One survey wave, self-reported - swept broadly around it."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.76",
       "consumers": [
@@ -1712,6 +1773,7 @@
         0.14
       ],
       "sweep_basis": "The default restates the MEASURED median heavy share of classified station flow (B.counts.heavy_vehicle_share, 0.0652) as a ratio to light vehicles: 0.0652 / (1 - 0.0652). What is ASSUMED is the transfer from a flow share at count stations to a trip share of the resident vehicle-trip base - trucks travel further per trip than cars, so a flow share overstates a trip share by an unobserved factor, and no freight OD survey exists for this or any comparable city in the package. The lower bound is zero, which turns the internal freight layer off entirely so its whole effect is measurable as a sweep member; the upper bound is roughly the classified stations' upper-quartile share expressed the same way.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.49",
       "description": "Internal heavy-vehicle trips generated per resident light-vehicle trip, applied to the observed car-driver share of the day's generated person trips. This is the background freight VOLUME knob: it is a declared, sweepable background load, not an estimate of freight demand (issue #24). Through freight is seeded separately at the cordon gates from each gate station's own observed heavy share and is not scaled by this field.",
@@ -1728,6 +1790,7 @@
         0.2
       ],
       "sweep_basis": "No freight OD observation exists for the study area, so the destination-choice decay is assumed and swept wide. The bounds bracket the person-purpose decays this package SOLVES from observed trip lengths (roughly 0.05-0.25 per km across purposes and home LGAs, DECISIONS.md 9.40): the lower bound lets a truck trip run materially longer than a discretionary person trip, which is what line-haul freight does; the upper bound pins it to short urban delivery.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.49",
       "description": "Distance decay (negative-exponential, per km) for the internal freight destination draw over the freight-employment attractor. Controls the modelled truck trip length, which no local observation constrains.",
@@ -1765,6 +1828,7 @@
         3.5
       ],
       "sweep_basis": "Austroads and HCM passenger-car-equivalent ranges for heavy commercial vehicles on level urban roads run from about 1.5 (rigid truck, flat) to 3.5 (articulated, interrupted flow); no Newcastle-specific fleet mix is observed, so the class mid-value is taken and the published range is swept. For scale: the bus fleet in this package carries the pt2matsim literature figure 2.8.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.49",
       "description": "Passenger-car equivalents of one modelled heavy vehicle - how much road capacity and storage a truck consumes in the mobsim relative to a car. This is the field that makes freight PHYSICAL: at PCE > 1 a truck changes the travel time of every vehicle sharing its links.",
@@ -1810,6 +1874,7 @@
         ],
         "basis": "A SEARCH parameter, not a preference: how often a DECOHERED escort pair is offered the coherent plan back, never how attractive riding is. ZERO RECOVERS TODAY'S BEHAVIOUR EXACTLY, which is what makes the mechanism's effect measurable rather than assumed, and is the reason the interval starts there. The upper bound is where re-proposal would start to dominate the declared innovation weights (SubtourModeChoice 0.1, ReRoute 0.15) and the search would be re-proposing faster than it explores. The value is not fitted to any target and cannot be: the proposed plan is scored like any other and ChangeExpBeta keeps it only if it earns its place, so this field moves how QUICKLY a coherent pair can be rediscovered, not whether it survives."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.82, 9.93",
       "consumers": [
@@ -1860,6 +1925,7 @@
         ],
         "basis": "No held table records which activities household members attend together, so the shareable-purpose set is declared and swept rather than silently chosen. Joint discretionary travel concentrates in shopping and social/recreation; commute joint travel is rare in the one observed cell (G62 car-as-passenger is 3.35% of journeys to work), so HW and HE stay excluded in every option and the escort mechanism keeps carrying education."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.84",
       "consumers": [
@@ -1878,6 +1944,7 @@
         ],
         "basis": "The same SEARCH parameter as B.ride.escort_coherence_rate, pointed at joint (non-escort) household pairs: how often a decohered driver-companion pair is offered the coherent state back, never how attractive riding is. ZERO RECOVERS THE ESCORT-ONLY BEHAVIOUR EXACTLY, so the joint extension is measurable on its own. The upper bound mirrors the escort rate: above it, re-proposal would dominate the declared innovation weights and the search would re-propose faster than it explores. Not fitted to any target and cannot be - ChangeExpBeta keeps a proposed plan only if it earns its place."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.84, 9.93",
       "consumers": [
@@ -1897,6 +1964,7 @@
         ],
         "basis": "No mode-by-age observation exists in the held data (issue #50: hts_mode.csv carries no age cell), and NSW point-to-point law sets no statutory minimum, so the age below which an agent cannot hail a taxi alone is assumed and swept over its whole range. ZERO DISABLES THE GATE and recovers the ungated F8 behaviour exactly, which is what makes the gate effect measurable. Measured motivation (9.83/#49): 0-4 year olds took 19.5% of their trips by taxi on the F7 arm - children hailed at roughly 2.5x the adult rate - and moving every under-18 bike and taxi trip off those modes bounds the two gates together at 19% of the Other excess."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.84",
       "consumers": [
@@ -1917,6 +1985,7 @@
         ],
         "basis": "No mode-by-age observation is held (issue #50), so the age below which an agent cannot cycle INDEPENDENTLY is assumed and swept. ZERO DISABLES THE GATE and recovers the ungated behaviour exactly. The independent-mobility literature (school-travel licence studies) puts unaccompanied cycling onset around 10-12; the sweep runs the gate from off to 16 so its whole effect is measurable. Measured motivation (9.83/#50): 0-4 year olds took 31.1% of their trips by bike on the F7 arm."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.84",
       "consumers": [
@@ -1937,6 +2006,7 @@
         ],
         "basis": "Whether taxi supply exists at all. `absent` serves every request and reproduces every arm before 9.99 exactly, which is what makes the fleet’s effect measurable rather than asserted; `finite_fleet` refuses a request no vehicle can serve. Both members are kept for the same reason A.signals.control_regime keeps fixed_time: the difference between them is a measurable claim about what supply is worth."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.99",
       "description": "Taxi was the ONLY mode this model constrained by nothing - car by ownership, licence and chain consistency; ride by a declared driver; bike by an availability attribute and an age gate; pt by a timetable; truck by its own subpopulation; motorbike by a locked carve; taxi by an age gate and nothing else. Under finite_fleet, citysim.TaxiFleetEngine allocates every taxi leg to a vehicle at BeforeMobsim and REFUSES the ones no vehicle can reach, so waiting emerges from supply instead of being the declared constant C.taxi.wait_min.",
@@ -1950,6 +2020,7 @@
         15.0,
         35.0
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.99",
       "description": "Fares one taxi carries in a day, which is what turns an observed TRIP volume into a vehicle count. Point-to-point operators report full-time vehicles working in the low tens of fares per day, and the band here is deliberately wide because utilisation varies with shift patterns, rank-versus-booking mix and how much of the day a vehicle is actually crewed. It is the ONE free quantity in the fleet size: everything else in the identity is the observed B.taxi.daily_trips_band. Swept 15-35, which moves the fleet by a factor of 2.3 and is the honest width given that no Newcastle utilisation figure is published."
@@ -1978,6 +2049,8 @@
         10.0,
         45.0
       ],
+      "sweep_basis": "DECISIONS.md 9.99: no Newcastle abandonment figure is published, so the wait at which a passenger gives up is assumed and bracketed from a tolerant 10 minutes to a patient 45; half to a little over twice the value. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.99",
       "description": "How long a passenger waits for a vehicle before abandoning the taxi trip. It is what makes a finite fleet BIND: without a refusal threshold a shortage would only delay every request rather than turning any away, and the mode share would not move. It is NOT C.taxi.wait_min, which is the typical wait priced into the taxi mode constant; this is the tail of that distribution, the point at which the traveller gives up. Assumed and swept broadly because no Newcastle abandonment figure is published, and because a regional city outside its CBD is where this value does its work.",
@@ -1991,6 +2064,8 @@
         0.0,
         30.0
       ],
+      "sweep_basis": "DECISIONS.md 9.99: the deadhead stands in for the average cost of reaching the next fare and is declared as unavailable time rather than routed. Zero (a fleet that teleports between fares) is the lower bound so the effect of empty running is itself a sweep member; 30 minutes is a generous suburban repositioning. No Newcastle operator data; no observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.99",
       "description": "Empty running between setting one passenger down and reaching the next - the part of a vehicle’s day that carries nobody, and the reason a fleet of N serves fewer trips than the arithmetic of fare durations alone suggests. Declared as unavailable TIME rather than modelled as routed empty legs, so it does NOT load the road network; that simplification is stated here rather than hidden, and it is the one thing a full demand-responsive implementation would add. Zero recovers a fleet that teleports between fares, which is the behaviour to compare against.",

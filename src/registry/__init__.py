@@ -71,6 +71,18 @@ OVERLAY_DIRS = {'scenario': os.path.join(CITY_DIR, 'overlays', 'scenarios'),
 ENV_PREFIX = 'CITYSIM_'
 SWEPT_SOURCES = ('measured', 'derived', 'literature', 'assumed')
 
+# What a sweep is FOR (#134). The registry used one word for two things: a
+# sweep in DECISIONS.md 8.1's sense is the sensitivity CURVE reported at P6 (no
+# headline at a single value), a sweep in 15's sense is the honesty BRACKET that
+# lets an assumed value validate. 238 declared sweeps had never been set by any
+# overlay and nothing could say which of them were owed a run.
+#   answer       a P6 deliverable - an arm plan with a stated cost is owed once
+#                the twin passes its gate
+#   uncertainty  a declared bracket the resolver enforces; never scheduled
+#   measurement  an observed spread on a measured or derived value; describes
+#                the data, not a run to make
+SWEEP_ROLES = ('answer', 'uncertainty', 'measurement')
+
 
 class RegistryError(Exception):
     """A configuration fault. Always fatal - never fall back to a default."""
@@ -126,6 +138,55 @@ def _numeric_leaves(value):
     return []
 
 
+def sweep_basis_of(field):
+    """The stated basis of a field's sweep, wherever it was written, or ''.
+
+    The schema admits it in two places - `sweep_basis` beside the sweep, or
+    `basis` inside an object-form sweep - and both are in use. One reader, so
+    the rule below and the ledger (`sweep_ledger.py`) cannot disagree about
+    whether a basis exists.
+    """
+    text = field.get('sweep_basis')
+    if isinstance(text, str) and text.strip():
+        return text.strip()
+    sweep = field.get('sweep')
+    if isinstance(sweep, dict):
+        inner = sweep.get('basis')
+        if isinstance(inner, str) and inner.strip():
+            return inner.strip()
+    return ''
+
+
+def sweep_role_errors(fields):
+    """Every sweep says what it is for; every assumed sweep says where it came from (#134).
+
+    Two rules, one function, so `_intrinsic_errors` (the gate every strict
+    load runs) and `sweep_ledger.py --check` (the readable ledger) enforce the
+    same thing by calling the same code rather than by agreeing in prose.
+    """
+    errors = []
+    for key, f in sorted(fields.items()):
+        if f.get('sweep') is None:
+            if 'sweep_role' in f:
+                errors.append('%s: carries a sweep_role but no sweep - a role names what '
+                              'a sweep is for, and there is none (#134)' % key)
+            continue
+        role = f.get('sweep_role')
+        if role not in SWEEP_ROLES:
+            errors.append('%s: carries a sweep but no sweep_role - say whether it is an '
+                          'answer (a P6 curve owed a run), an uncertainty (a bracket, '
+                          'never scheduled) or a measurement (an observed spread); a '
+                          'sweep that does not say cannot be told from one that is a '
+                          'sweep in name only (#134)%s'
+                          % (key, '' if role is None else ' - got %r' % (role,)))
+        if f.get('source') == 'assumed' and not sweep_basis_of(f):
+            errors.append('%s: source "assumed" with a sweep but no sweep_basis - an '
+                          'assumed value\'s interval is the only evidence it has, so '
+                          'say how it was chosen, or that it was a chosen interval with '
+                          'no observed spread (#134)' % key)
+    return errors
+
+
 def _intrinsic_errors(fields):
     """The rules that matter, checked without a jsonschema dependency.
 
@@ -136,9 +197,10 @@ def _intrinsic_errors(fields):
     derives from itself, every numeric value sits inside its own interval
     sweep - live here rather than in a separate script because this is the
     one gate every strict `load()` runs: a broken registry fails at its
-    first read, not only in CI.
+    first read, not only in CI. The sweep-role rules (#134) join them for
+    the same reason.
     """
-    errors = []
+    errors = sweep_role_errors(fields)
     for key, f in sorted(fields.items()):
         for req in ('value', 'units', 'source', 'status', 'description'):
             if req not in f:

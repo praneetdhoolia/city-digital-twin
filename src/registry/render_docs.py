@@ -44,6 +44,15 @@ STATUS_GLOSS = {
     'placeholder': 'a structural stand-in; the model runs but the field is not defensible',
     'computed': 'written at run time from other fields; do not hand-edit',
 }
+ROLE_ORDER = list(registry.SWEEP_ROLES)
+ROLE_GLOSS = {
+    'answer': 'a P6 deliverable - the record says the curve across this sweep decides the '
+              'answer, and an arm plan with a stated cost is owed once the twin passes its gate',
+    'uncertainty': 'a declared bracket the resolver enforces; no run is scheduled over it, '
+                   'and the basis says whether its leverage is measured or unknown',
+    'measurement': 'an observed spread on a measured or derived value; it describes the '
+                   'data, not a run to make',
+}
 
 
 def fmt_value(v):
@@ -160,6 +169,31 @@ def render(fields, origin):
         why = (why[1] if len(why) > 1 else why[0])[:150]
         A('| `%s` | %s | %s |' % (k, fmt_sweep(f), why))
     A('')
+    swept = sorted(k for k, f in fields.items() if f.get('sweep') is not None)
+    role_counts = collections.Counter(fields[k].get('sweep_role') for k in swept)
+    A('### What the %d sweeps are for' % len(swept))
+    A('')
+    A('A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 '
+      'says must be reported rather than a headline at a single value, and the honesty '
+      'BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep '
+      'carries a `sweep_role` saying which, and the resolver refuses one that does not. '
+      '`python src/registry/sweep_ledger.py` prints the ledger with whether any overlay '
+      'has ever set each field.')
+    A('')
+    A('| Role | Sweeps | Meaning |')
+    A('|---|---:|---|')
+    for r in ROLE_ORDER:
+        if role_counts.get(r):
+            A('| `%s` | %d | %s |' % (r, role_counts[r], ROLE_GLOSS[r]))
+    A('')
+    A('The `answer` sweeps - the runs the study owes after the gate:')
+    A('')
+    A('| Field | Value | Sweep |')
+    A('|---|---|---|')
+    for k in swept:
+        if fields[k].get('sweep_role') == 'answer':
+            A('| `%s` | %s | %s |' % (k, fmt_value(fields[k].get('value')), fmt_sweep(fields[k])))
+    A('')
     A('### The %d fields held fixed' % len(held))
     A('')
     A('Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them '
@@ -201,10 +235,16 @@ def render(fields, origin):
                 bits.append('was `%s`' % f['legacy_symbol'])
             if f.get('matsim_param'):
                 bits.append('MATSim `%s`' % f['matsim_param'])
+            if f.get('sweep_role'):
+                bits.append('sweep role **%s**' % f['sweep_role'])
             A('*%s*' % ' · '.join(bits))
             A('')
-            if f.get('sweep_basis'):
-                A('> **Sweep basis.** %s' % f['sweep_basis'])
+            # the basis may sit beside the sweep or inside it; show it wherever
+            # it was written, or the reference hides the one thing an assumed
+            # interval has to say for itself
+            basis = registry.sweep_basis_of(f)
+            if basis:
+                A('> **Sweep basis.** %s' % basis)
                 A('')
             if 'held_fixed' in f:
                 hf = f['held_fixed']

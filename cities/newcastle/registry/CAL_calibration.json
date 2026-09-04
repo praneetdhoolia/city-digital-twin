@@ -62,6 +62,8 @@
         3,
         7
       ],
+      "sweep_basis": "DECISIONS.md 9.16: three is the smallest number of points that can show curvature along a sweep interval and each point is a full run, so the interval runs from that floor to seven. A control of the calibration search, never of the model. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.16",
       "description": "Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Three is the smallest number that can show curvature. Each point is a full run, so this multiplies wall clock directly.",
@@ -77,6 +79,8 @@
         1,
         6
       ],
+      "sweep_basis": "DECISIONS.md 9.16 names this a control of the search loop itself, and calibrating the search against itself is the failure it guards; the interval runs from a single pass to twice the declared three. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.16",
       "description": "Maximum coordinate-descent passes over the free parameters. The loop stops earlier if a pass improves the objective by less than CAL.search.convergence_delta.",
@@ -92,6 +96,8 @@
         0.1,
         1.0
       ],
+      "sweep_basis": "chosen interval around the 0.25 pp stopping delta: the floor of 0.1 pp is the order of the seed noise DECISIONS.md 9.7 measured, below which the search would chase noise, and 1.0 pp is a coarse stop. A control of the calibration loop (9.16), not a model input. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.16",
       "description": "A coordinate pass that improves the objective by less than this ends the search. In the units of the objective, which is mean absolute mode-share error in percentage points. Below roughly 0.1 pp the search would be chasing seed noise rather than parameter effects, which DECISIONS.md 9.7 measured at the same order.",
@@ -107,6 +113,8 @@
         6,
         24
       ],
+      "sweep_basis": "DECISIONS.md 9.87 declares 12 swept 6-24: twelve months removes the seasonal cycle exactly once, six is a half-cycle and seasonally biased, twenty-four reaches back into the patronage recovery. A window on the observed series, not a spread of it.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.87",
       "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
@@ -120,6 +128,7 @@
         1.3
       ],
       "sweep_basis": "Set from the demand's own day-type trip ratio - demand/plans/matsim/_plans_report.json: by_day.WEEKDAY.legs_selected_plan / ((5 x WEEKDAY + SAT + SUN) / 7) = 2,343,321 / 2,184,254 - the demand's own weekday-to-mean-day trip ratio, applied to an all-days daily boardings count to state it per WEEKDAY - and declared assumed because the schema's `derived` means implied by other registry fields, which this is not: it is read from the demand build. The published patronage series are monthly totals with no day-type split, and the run is a WEEKDAY. The ratio of a weekday's trips to the mean day's is taken from the demand's own three day types (1.0727 for all trips); public transport is more weekday-peaked than travel as a whole, so the sweep runs from no uplift to 1.3. Never fitted.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.130",
       "consumers": [
@@ -138,6 +147,7 @@
         ],
         "basis": "The HTS level the PT split scales is a share of trips made by residents of the TARGET LGA, so the boardings composition that splits it must be measured over the same ground. `target_lga` counts only stations the city's own mapped schedule contains AND that fall inside the target LGA boundary - both tested, never named in a script. `all_observed` reproduces the pre-9.100 behaviour, which pooled every station the publication happened to carry: three LGAs of train boardings and a light rail stop belonging to another city entirely. It is kept as the sweep's other arm because the bus series has no station-level breakdown and so cannot be restricted the same way, which leaves a real asymmetry between the legs rather than a settled one."
       },
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.100",
       "description": "Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all."
@@ -150,6 +160,8 @@
         0.35,
         0.7
       ],
+      "sweep_basis": "DECISIONS.md 9.100: a genuine seasonal trough in the held series is about 20% below the trailing median and the Newcastle bus contract break of 2025-04 is 88% below, so the half-way threshold is separated from both by a wide margin and the interval spans the width of that margin rather than probing a boundary anything sits near. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.100",
       "description": "A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near."
@@ -162,6 +174,7 @@
         0.3372,
         0.3755
       ],
+      "sweep_role": "measurement",
       "status": "active",
       "decisions_ref": "9.100",
       "description": "The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged."
@@ -174,6 +187,8 @@
         0.1,
         0.5
       ],
+      "sweep_basis": "DECISIONS.md 9.87 declares 0.25 swept 0.1-0.5: the half-width of the interval placed on any target derived by applying a census commute composition to an all-purpose HTS level, spanning a tight 10% to a loose 50%. It bounds a transfer whose error is unmeasured; no observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.87",
       "description": "The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%."
@@ -186,6 +201,7 @@
         0.5605,
         0.6195
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.115",
       "description": "The survey's all-purpose Vehicle driver level - the share of resident person trips made as the driver of a private vehicle - READ from the household travel survey level table that build_mode_targets.py already splits into car, motorbike and resident truck driving, and asserted against that source on every build. It is declared here because it is the CONVERSION that carries a census commute-JOURNEY share to an all-purpose TRIP share, and a carve that omits it overstates its mode by the ratio of the two driver shares (9.115). The sweep is a DECLARED +/-5% band on the transfer, not a measured spread: the survey publishes this level as a single figure and no repeated measurement of it exists in the package, so the band expresses how far the conversion may be wrong rather than an observed variation. It is not a free parameter.",
@@ -202,6 +218,7 @@
         0.0060943,
         0.0067359
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.115, 9.122",
       "description": "Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.",
@@ -217,6 +234,7 @@
         0.0048193,
         0.0053265
       ],
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.125",
       "consumers": [
@@ -232,6 +250,8 @@
         2019,
         2025
       ],
+      "sweep_basis": "DECISIONS.md 9.87 declares 2023 swept 2019-2025: 2023 is the first full year clear of the pandemic freight anomaly, 2019 the pre-pandemic year on a different network, 2025 the newest full year of classified counts. A choice of pooling window over the observed series, not a spread of it.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.87",
       "description": "The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year)."
@@ -254,6 +274,7 @@
         25.0
       ],
       "sweep_basis": "the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.130",
       "description": "The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series; the validation-target builder still EXCLUDES censored cells from its station means, a pre-registered treatment of the 143 holdout rows that is not changed here - whether it should read this field too is a decision the user takes (#129).",
@@ -278,6 +299,8 @@
         1.0,
         2.0
       ],
+      "sweep_basis": "DECISIONS.md 9.91: no published LGA split of point-to-point trips exists, so the join is declared at the neutral 1.0 and swept upward only to 2.0, because the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link and the true concentration is more likely above 1.0 than below. No observed spread.",
+      "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "9.91",
       "description": "How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned."

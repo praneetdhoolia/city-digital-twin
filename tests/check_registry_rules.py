@@ -29,8 +29,13 @@ def check(cond, msg):
 
 def field(**kw):
     base = dict(value=1.0, units='u', source='assumed', status='active',
-                description='fixture', sweep=[0.0, 2.0], decisions_ref='0')
+                description='fixture', sweep=[0.0, 2.0], decisions_ref='0',
+                sweep_role='uncertainty', sweep_basis='fixture: a chosen interval')
     base.update(kw)
+    if base.get('sweep') is None:
+        # a role names what a sweep is for; a field with no sweep carries none
+        base.pop('sweep_role', None)
+        base.pop('sweep_basis', None)
     return base
 
 
@@ -70,6 +75,51 @@ check(any('categorical' in e for e in errs),
       'a categorical overlay value outside the declared members is an error')
 _, errs = registry._check_values({'X.c': 'off'}, cat, 'fixture overlay')
 check(not errs, 'a categorical overlay value that is a member passes')
+
+# The sweep-role rules (#134): a sweep says what it is for, an assumed sweep
+# says where it came from. The fixture's own `field()` carries both, so the
+# clean case above already proves the rules stay quiet on a well-formed field.
+noroles = {'X.a': field(sweep_role=None)}
+noroles['X.a'].pop('sweep_role')
+errs = registry._intrinsic_errors(noroles)
+check(any('no sweep_role' in e for e in errs),
+      'a swept field without a sweep_role is an error')
+
+badrole = {'X.a': field(sweep_role='sensitivity')}
+errs = registry._intrinsic_errors(badrole)
+check(any('no sweep_role' in e and "'sensitivity'" in e for e in errs),
+      'a sweep_role outside answer/uncertainty/measurement is an error')
+
+stray = {'X.h': field(sweep=None, held_fixed=dict(rule='fixture', decisions_ref='0'))}
+stray['X.h']['sweep_role'] = 'uncertainty'
+errs = registry._intrinsic_errors(stray)
+check(any('sweep_role but no sweep' in e for e in errs),
+      'a sweep_role on a field with no sweep is an error')
+
+nobasis = {'X.a': field()}
+nobasis['X.a'].pop('sweep_basis')
+errs = registry._intrinsic_errors(nobasis)
+check(any('no sweep_basis' in e for e in errs),
+      'an assumed field with a sweep but no sweep_basis is an error')
+
+blank = {'X.a': field(sweep_basis='   ')}
+errs = registry._intrinsic_errors(blank)
+check(any('no sweep_basis' in e for e in errs),
+      '... and a blank sweep_basis does not count')
+
+inner = {'X.a': field(sweep={'interval': [0.0, 2.0], 'basis': 'fixture: inside the sweep'})}
+inner['X.a'].pop('sweep_basis')
+check(not registry._intrinsic_errors(inner),
+      'a basis written inside the sweep object satisfies the rule')
+
+lit = {'X.l': field(source='literature')}
+lit['X.l'].pop('sweep_basis')
+check(not registry._intrinsic_errors(lit),
+      'a literature field without a sweep_basis is not an error (the rule is for assumed)')
+
+for role in registry.SWEEP_ROLES:
+    ok = {'X.a': field(sweep_role=role)}
+    check(not registry._intrinsic_errors(ok), 'sweep_role %r is accepted' % role)
 
 try:
     registry.load(run='__no_such_overlay_fixture__')
