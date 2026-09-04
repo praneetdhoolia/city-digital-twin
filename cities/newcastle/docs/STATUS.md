@@ -7,13 +7,15 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 4 September 2026 — the three decisions that held the
-launcher are taken (#129, #133, #134) and the corridor's missing CBD end is
-repaired at its cause (§9.142): destination choice is now constrained at the
-destination end as well as the origin, so a zone receives the arrivals its own
-attraction states. C2 is re-measured on the network that runs and the demand
-rebuilt on it. The iteration's own cost is profiled for the first time: 60 % of
-it is one hoistable line. No arm has run and no approval stands.
+**Last updated:** 5 September 2026 — the first F24 arm ran to its approved
+gate and is the first arm ever CLOSED OUT: a run stopped at a defined boundary
+now carries its record, its summary and its findings, and the record's
+`completion` field — not the file's presence — is the result gate. **Motorbike
+is inside 10 %** (−5.7 %), the second mode ever to be, and car has come in to
++10.6 %. Walk left the stop band; heavy rail and bus went further out. The
+corridor repair moved light rail the right way and nowhere near far enough.
+The arm was stopped during iteration 100 and its last ENDED iteration is 99, so
+the reading is at milestone 90. No approval stands.
 
 ## The goal
 
@@ -25,32 +27,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **12 of 12** — freight rail as timetable-derived crossing closures, not a mobsim vehicle | [positions/motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md), §9.70 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
-| Every mode inside 10 % | **0 of 12** at the F23 iteration-100 gate (car +14.8 %, motorbike +13.9 %, bus +16.2 % closest); bus's F22 +8.0 % stays the only mode ever inside | below, §9.139, §9.136 |
+| Every mode inside 10 % | **1 of 12** at the F24 iteration-90 gate — motorbike −5.7 %, the first mode inside since bus's F22 +8.0 % and only the second ever; car +10.6 % is the closest outside, walk −18.5 % | below, §9.143, §9.136 |
 | Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arms (F21, F22, F23) each stopped at their iteration-100 gate. `RUN.controler.last_iteration` stays 1000 and was deliberately NOT re-declared to 250: §9.7 measured 250 insufficient. The instrument exists — a 300-iteration arm switches innovation off at 240, so its post-cutoff window straddles 250 — and the first arm to pass its gate measures it | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.142, §9.7 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); pt fares from the published Opal schedule (§9.135); the external interaction rate from the 2011 journey-to-work flow and the S0 detour from the alignment (§9.140); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260901T165115_300it_25pct` at **iteration 100** (family `F23-behaviour-channels`, status `aborted`, 25% sample, launched 2026-09-01T16:51:15, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260901T165115_300it_25pct --it 100` (`--trend` for the direction).
+Read from `aborted_20260904T181203_300it_25pct` at **iteration 90** (family `F24-balanced-destinations`, status `aborted`, 25% sample, launched 2026-09-04T18:12:03, experienced plans (derived; validated against the trips table)). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260904T181203_300it_25pct --it 90` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 66.9432 | 58.3222 | +14.8% | over 10% | share of resident linked trips |
-| 2 | ride | 12.3367 | 20.6000 | -40.1% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 9.7602 | 13.4000 | -27.2% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.7514 | 0.9916 | +76.6% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 4.6638 | 2.2084 | +111.2% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4313 | 0.3785 | +13.9% | over 10% | share of resident linked trips |
-| 7 | bus | 2.7686 | 2.3819 | +16.2% | over 10% | share of resident linked trips |
-| 8 | heavy_rail | 19,140 | 6,529 | +193.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,000 | 2,954 | -66.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0286 | 0.1429 | -80.0% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6357 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 64.4871 | 58.3222 | +10.6% | over 10% | share of resident linked trips |
+| 2 | ride | 11.8458 | 20.6000 | -42.5% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 10.9220 | 13.4000 | -18.5% | over 10% | share of resident linked trips |
+| 4 | taxi | 2.5447 | 0.9916 | +156.6% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.0758 | 2.2084 | +129.8% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3569 | 0.3785 | -5.7% | ok | share of resident linked trips |
+| 7 | bus | 3.2919 | 2.3819 | +38.2% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 23,160 | 6,529 | +254.7% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,300 | 2,954 | -56.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0385 | 0.1429 | -73.0% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6893 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail, light_rail, ferry**.
+Inside 10%: **motorbike**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -61,7 +63,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the gate loop has fired three times: F21 with 8 out (§9.134); F22 with 7 out and bus inside (§9.136); F23 with 7 out and none inside (§9.139). The F24 package is built and its three blocking decisions are taken (§9.142); the arm waits only on a stated-cost approval |
+| P4 calibration | 🟡 | the gate loop has fired four times: F21 with 8 out (§9.134); F22 with 7 out and bus inside (§9.136); F23 with 7 out and none inside (§9.139); F24 with 7 out and motorbike inside (§9.143). F24 is the first arm whose reading is citable from its own record rather than re-derived from a log |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -76,20 +78,21 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rai
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (4 September 2026 (twenty-seventh session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (4 September 2026 (twenty-seventh session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (4 September 2026 (twenty-seventh session)) · [runs-and-economics](positions/runs-and-economics.md) (4 September 2026 (twenty-seventh session)) · [sampling-and-families](positions/sampling-and-families.md) (4 September 2026 (twenty-seventh session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (4 September 2026 (twenty-seventh session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
-**The package on disk is consistent and is the F24 build** (§9.142): chains,
-plans and the 30 run-input sets rebuilt 4 Sep on destination choice constrained
-at both ends and on circuity re-measured on the current network (detour 1.3276
-over 595 routed pairs, walk 1.6938, bike 1.5570). Family F24 is declared at its
-first launch. No arm runs. The three decisions that held
-`python src/run/issue_gate.py` are taken (#129, #133, #134), so the launcher's
-requirement-10 refusal clears when they close.
+**Family F24 is open and its first arm is read** (§9.142, §9.143): chains,
+plans and the 30 run-input sets were rebuilt 4 Sep on destination choice
+constrained at both ends and on circuity re-measured on the current network
+(detour 1.3276 over 595 routed pairs, walk 1.6938, bike 1.5570). The arm
+`aborted_20260904T181203_300it_25pct` ran 99 iterations at a settled 325 s each
+— the F23 arm's 673–684 s halved, though §9.142's 280–320 s projection from a
+1 % probe was still 25 % optimistic — and its log reached 7.3 MB against F23's
+~51 GiB. No arm runs.
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260904T181203_300it_25pct` | running | F24-balanced-destinations | 0 | - |
+| `aborted_20260904T181203_300it_25pct` | aborted | F24-balanced-destinations | 100 | Stopped by the operator during iteration 100, at the approved boundary: the stated-cost approval for this arm was given TO THE ITERATION-... |
 | `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |

@@ -31,11 +31,16 @@ import pytest
 import run_matsim
 
 
+# Real controller lines: the timestamp carries milliseconds after a COMMA, which
+# is what `TS_RE` matches. A fixture without them parses to no iterations at all
+# and every pace and reached-iteration assertion below silently tests the
+# fallback instead of the thing it names.
 LOG = """
-2026-09-04T10:00:00 ### ITERATION 0 BEGINS
-2026-09-04T10:05:00 ### ITERATION 0 ENDS
-2026-09-04T10:05:00 ### ITERATION 1 BEGINS
-2026-09-04T10:10:00 ### ITERATION 1 ENDS
+2026-09-04T10:00:00,000  INFO AbstractController:137 ### ITERATION 0 BEGINS
+2026-09-04T10:05:00,000  INFO AbstractController:184 ### ITERATION 0 ENDS
+2026-09-04T10:05:00,000  INFO AbstractController:137 ### ITERATION 1 BEGINS
+2026-09-04T10:10:00,000  INFO AbstractController:184 ### ITERATION 1 ENDS
+2026-09-04T10:10:00,000  INFO AbstractController:137 ### ITERATION 2 BEGINS
 """
 
 
@@ -61,6 +66,9 @@ def run_dir(tmp_path, monkeypatch):
         rc=None, pid=os.getpid(), jvm_pid=os.getpid() + 1)
     (d / '_meta.json').write_text(json.dumps(card), encoding='utf-8')
     (d / 'matsim.log').write_text(LOG, encoding='utf-8')
+    # The digest reports an iteration that has BEGUN. Here it claims 100 while
+    # the log's ENDS markers stop at 1 - exactly the state the first arm closed
+    # out this way was stopped in, and the record must say 1, not 100.
     (d / '_progress.json').write_text(json.dumps({'iteration': 100}),
                                       encoding='utf-8')
     # the record is what is under test; the summary and the store are not
@@ -90,11 +98,15 @@ def test_a_gate_stop_is_closed_out_with_a_record(run_dir):
     assert written(run_dir)['completion'] == 'stopped_at_gate'
 
 
-def test_the_record_states_the_iteration_the_reading_belongs_to(run_dir):
+def test_the_record_states_the_LAST_ENDED_iteration_never_the_one_in_flight(run_dir):
+    # The progress digest says 100; the log's ENDS markers stop at 1. Recording
+    # the digest's figure would claim the run reached a milestone whose tables
+    # were never written and send a reader somewhere that holds nothing - which
+    # is exactly what happened to the first arm closed out this way, stopped
+    # while iteration 100 was in flight with 90 the newest readable milestone.
     run_matsim.close_out(str(run_dir), run_matsim.STOPPED_AT_GATE, rc=1,
                          wall_s=3600.0, stop_cause='past the bar')
-    # read from the run's own progress digest, not composed
-    assert written(run_dir)['reached_iteration'] == 100
+    assert written(run_dir)['reached_iteration'] == 1
 
 
 def test_the_stop_cause_is_carried_verbatim(run_dir):
@@ -150,7 +162,7 @@ def test_the_declared_horizon_is_kept_beside_what_was_reached(run_dir):
                          wall_s=1.0, stop_cause='past the bar')
     doc = written(run_dir)
     assert doc['iterations'] == 300
-    assert doc['reached_iteration'] == 100
+    assert doc['reached_iteration'] == 1
 
 
 # --------------------------------------------------------------------------
@@ -211,8 +223,9 @@ def test_stop_run_closes_the_arm_out(stoppable):
     doc = read_json(dead, '_run.json')
     assert doc['completion'] == 'stopped_by_operator'
     assert doc['stop_cause'] == cause
-    assert doc['reached_iteration'] == 100, (
-        'the reading has to say which iteration it belongs to')
+    assert doc['reached_iteration'] == 1, (
+        'the reading has to say which iteration it belongs to, and that is the '
+        'last one that ENDED - not the one the digest saw begin')
 
 
 def test_stop_run_kills_the_jvm_and_the_harness(stoppable):

@@ -998,8 +998,6 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
         print('cannot close out %s: no %s to build a record from'
               % (name, META), flush=True)
         return None
-    if reached_iteration is None:
-        reached_iteration = _last_ended_iteration(run_dir)
     if wall_s is None:
         # --stop kills the harness that was holding the clock, so the elapsed
         # time is taken from the card's own launch stamp rather than left at
@@ -1007,6 +1005,21 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
         wall_s = _elapsed_since(meta.get('started'))
     per = iteration_times(os.path.join(run_dir, 'matsim.log'))
     steady = sorted(v for k, v in per.items() if k > 0)
+    if reached_iteration is None:
+        # THE LAST ITERATION THAT ENDED - never the one in flight. `per` holds
+        # an iteration only once its ENDS marker is read, which is the property
+        # this needs; `_last_ended_iteration` does NOT have it. That reader
+        # takes the progress digest's figure, which is an iteration that has
+        # BEGUN - safe for the gate watcher, which simply retries until the
+        # milestone's tables appear, but WRONG in a record, where it would
+        # claim the run reached an iteration whose tables were never written
+        # and send a reader to a milestone that holds nothing.
+        #
+        # Measured on the first arm ever closed out this way
+        # (20260904T181203_300it_25pct): stopped while iteration 100 was in
+        # flight, the digest said 100, and the newest readable milestone was
+        # 90. The record said 100 until this used the ENDS markers instead.
+        reached_iteration = max(per) if per else _last_ended_iteration(run_dir)
     doc = dict(name=name,
                scenario=meta.get('scenario'), day=meta.get('day'),
                fraction=meta.get('fraction'), iterations=meta.get('iterations'),
