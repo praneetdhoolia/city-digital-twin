@@ -220,10 +220,10 @@ demand/plans/B2_shared_bindings_SAT.csv,processed,2797187,66224,src/build/build_
 demand/plans/B2_shared_bindings_SUN.csv,processed,2689091,63700,src/build/build_activity_chains.py,,,CC-BY 4.0,,c289cb880926f36ab118b1232c563832494ea5243b3ae362988d2efb0bed3353
 demand/plans/B2_shared_bindings_WEEKDAY.csv,processed,4886239,115790,src/build/build_activity_chains.py,,,CC-BY 4.0,,8a64f3846c04d820c4ab6ba3db5827acac7e071017a5d802a15dc44710890f7a
 demand/plans/_activity_chains_report.json,processed,23880,,src/build/build_activity_chains.py,,,CC-BY 4.0,,f49c7e01069f6d358670a289b451c5632b93b8bf83e7b07acb36f75622d6bd7a
-demand/plans/matsim/_plans_report.json,processed,6665,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,4088f317b86f3e9a77c2f537b7f61702d401e1239499e7117205a953776fc46d
-demand/plans/matsim/population_SAT.xml.gz,processed,62853929,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,e6baf8f18e88c93826c161d59cd9bc60269379eb0571ccf7121b40443a613564
-demand/plans/matsim/population_SUN.xml.gz,processed,56087862,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,c51ae9d34bc2d1fb7ce54f18f0617b53794700d9948ce4125eabeef731b3d096
-demand/plans/matsim/population_WEEKDAY.xml.gz,processed,76183051,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,2f915f3019f973ce9efbaec006851571a44451aa1e61fffe900b43c96e87b68c
+demand/plans/matsim/_plans_report.json,processed,7745,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,ecb17f96a73fa72f004e8a5a6cb639aa393d36725e9e78f9b4c56e3372a78415
+demand/plans/matsim/population_SAT.xml.gz,processed,63140558,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,60992b93df4c8ac724b3dfb10337ee38511bd02f2c18fedfb59678dae6f07e4e
+demand/plans/matsim/population_SUN.xml.gz,processed,56301254,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,c74b5cabdb20aa7f708b9d889f861b0a55852c3b6c0128f5789b5bd3957e5cb5
+demand/plans/matsim/population_WEEKDAY.xml.gz,processed,76631914,,src/build/build_matsim_plans.py,,,CC-BY 4.0,,6c1c65c5fbc3be6f66ab6f54710b26d597096004074fa6ac637d8e652e391a9f
 demand/population/B1_households.csv,processed,20721831,246865,src/build/build_population.py,,,CC-BY 4.0,,e0fcb4aa94e241437d64bd04ad23c54e15a903795c690e2e96b38eb26442b763
 demand/population/B1_synthetic_population.csv,processed,65331497,612634,src/build/build_population.py,,,CC-BY 4.0,,e70cea575a42520bb59d04d30659ad396ce33d6d5d13daa463f4edcd7f226247
 demand/population/_population_report.json,processed,1483,,src/build/build_population.py,,,CC-BY 4.0,,ac361c1dba8df99e754f7967191c2dd25c7f5641db0cb7cb330ef2f487ba52d1
@@ -249,7 +249,7 @@ scenarios/S3.json,processed,1340,,cities/newcastle/build/build_scenario_configs.
 scenarios/S4.json,processed,1351,,cities/newcastle/build/build_scenario_configs.py,,,CC-BY 4.0,,1743c796dbcb51cab005910b11c58543fa6f360a9bf2f8426cbfb47bf4aea4fe
 scenarios/S5.json,processed,1343,,cities/newcastle/build/build_scenario_configs.py,,,CC-BY 4.0,,a9ace48e84b7da4dba47d7139208335b10c330f22c5fa97007ca670228cff012
 scenarios/S6.json,processed,1293,,cities/newcastle/build/build_scenario_configs.py,,,CC-BY 4.0,,757ec3bb7a9e434d791b3ea3dcbbb7b8cdbd3a5483f182916b0c0324e714b4a4
-scenarios/matsim/_run_inputs_report.json,processed,46921,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,d8e2d5710427c36226d794e9316a7fea1552507c2b3f23c7bcfbd8e7091fcd47
+scenarios/matsim/_run_inputs_report.json,processed,48807,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,7afa297ca33fd276c84d8026e1f2b90e9920469c7ac1f9dbb8185d6ca1513931
 scenarios/matsim/S0/network.xml.gz,processed,7584393,,src/build/build_matsim_run_inputs.py,,,ODbL 1.0,,da8a52025f1d5af7d5b44e0a7eb81392f9420d62449214e2dd222d058115d02f
 scenarios/matsim/S0/parking_prices.tsv,processed,414662,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,13121a7f2aa188b3c2a0fffe778aceed5a57a07090874aa9dc8d62a376d99d99
 scenarios/matsim/S0/SAT/config.xml,processed,17373,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,c0974e57647b24760844763fa7011d0d07a8fc8416d9df381f80bc34fab36d41

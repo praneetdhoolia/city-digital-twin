@@ -271,6 +271,10 @@ BOUND_PASSENGER_SEED = CFG.get('B.mode.bound_passenger_seed')
 # innovation had not yet offered the alternative. No mode is favoured: each
 # plan is one mode, once. `uniform_draw` is the pre-9.120 seed.
 SEED_METHOD = CFG.get('B.mode.seed_method')
+# 9.143 (#86): the non-chain mode a seeded plan puts on the UNCOVERED leg of
+# a partially bound tour, so its covered leg can be seeded as `ride` without
+# the chain/non-chain subtour mix MATSim refuses (9.119).
+PARTIAL_BIND_BASE = CFG.get('B.mode.partial_bind_base')
 # The taxi age gate the run enforces (citysim.AvailabilityModesCalculator):
 # a seeded taxi plan for a person under it would be an illegal plan in
 # memory (the 9.15 class), so the seed reads the same declared value.
@@ -650,6 +654,13 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # 9.140 (#96): variants whose leaf subtour mixed a held car leg with the
     # base mode, repaired by driving the offending tour
     leaf_mix_repairs = {'tours': 0, 'ride_tours_driven': 0, 'persons': set()}
+    # 9.143 (#86): what the per-trip variant reached, and what is STILL
+    # unreachable because the person holds no ride availability at all - split
+    # by the two identities that deny it, because they are different defects
+    # and only one of them is this change's.
+    partial_bind = {'tours': 0, 'trips': 0, 'plans_added': 0, 'persons': set()}
+    unreachable = {'escort_day_trips': 0, 'escort_day_persons': set(),
+                   'no_vehicle_trips': 0, 'no_vehicle_persons': set()}
 
     with gzip_writer(dst) as w:
         w.write('<?xml version="1.0" encoding="utf-8"?>\n')
@@ -715,9 +726,11 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     # driver who can carry them - the identity ride_avail
                     # derives from is satisfied across the household boundary.
                     ride_av = 1
+                escort_denied = False
                 if ESCORT_EXCLUDES_RIDE and ride_av and any(
                         r['dest_activity_type'] == 'escort' for r in rows):
                     ride_av = 0
+                    escort_denied = True
                     escort_ride_denied[0] += 1
                 # The motorbike carve (DECISIONS.md 9.52) - but never on an
                 # escort day: a pillion passenger is not how the escorted
@@ -839,6 +852,20 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         bound_drive_trips.extend(idx)
                 bound_ride_trips = sorted(set(bound_ride_trips))
                 bound_drive_trips = sorted(set(bound_drive_trips))
+                # 9.143 (#86): a bound trip on a person the availability
+                # identity denies `ride` to is unreachable no matter what the
+                # seed offers - no variant may carry a mode the person cannot
+                # use. MEASURED, NOT CHANGED: the escort-day denial is
+                # B.activity.escort_excludes_ride, whose own derivation calls
+                # this collateral "small" and has never counted it in trips;
+                # the vehicle-less denial is the ride_avail identity itself.
+                if bound_ride_trips and not ride_av:
+                    if escort_denied:
+                        unreachable['escort_day_trips'] += len(bound_ride_trips)
+                        unreachable['escort_day_persons'].add(pid)
+                    else:
+                        unreachable['no_vehicle_trips'] += len(bound_ride_trips)
+                        unreachable['no_vehicle_persons'].add(pid)
 
             # The plans this person starts with. `uniform_draw`: the one
             # plan the loop above drew. `full_choice_set` (9.120): one plan
@@ -846,7 +873,11 @@ def write_day(day, attrs, rng, report, seed_table=None):
             # serving tours stay car (the commitment) and the bound-ride
             # variant puts ride on the covered tours only. Locked tiers and
             # the carve keep their single plan: a lock is a definition.
-            plan_set = [dict(tour_mode)]
+            # 9.143: a plan is (tour modes, per-trip overrides). The
+            # override is empty for every plan but the partial-bind variant,
+            # so `uniform_draw` and every base-mode plan behave exactly as
+            # before.
+            plan_set = [(dict(tour_mode), {})]
             if (SEED_METHOD == 'full_choice_set' and not external
                     and not moto and not trk):
                 base_modes = []
@@ -858,16 +889,20 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 base_modes.append('pt')
                 if TAXI_MIN_AGE <= 0 or age >= TAXI_MIN_AGE:
                     base_modes.append('taxi')
-                ride_tours = set()
+                # 9.143 (#86): a tour is FULLY bound when every trip of it is
+                # served, and PARTLY bound when only some are - a drop-off
+                # binds the tour's first trip and a pick-up its last (9.120),
+                # so a one-directional escort or lift always lands here.
+                ride_tours, partial_tours = set(), {}
                 if ride_av and bound_ride_trips:
                     for tid, idx in by_tour.items():
-                        # a tour is a ride tour only when EVERY trip of it is
-                        # served: a one-way binding leaves the other leg to
-                        # the base mode, which mixes only within non-chain
-                        # modes when the base is walk/pt/taxi - so a
-                        # partially bound tour rides only on a non-chain base
-                        if all(i in bound_ride_trips for i in idx):
+                        covered = [i for i in idx if i in bound_ride_trips]
+                        if not covered:
+                            continue
+                        if len(covered) == len(idx):
                             ride_tours.add(tid)
+                        else:
+                            partial_tours[tid] = covered
                 plan_set = []
                 for base in base_modes:
                     p = {}
@@ -876,7 +911,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                             p[tid] = 'car'
                         else:
                             p[tid] = base
-                    plan_set.append(p)
+                    plan_set.append((p, {}))
                 if ride_tours:
                     # the bound-ride variant on the car base when a car is
                     # available (the uncovered tours are driven), else on walk
@@ -890,7 +925,62 @@ def write_day(day, attrs, rng, report, seed_table=None):
                             covered_seed_tids.add(tid)
                         else:
                             p[tid] = base
-                    plan_set.append(p)
+                    plan_set.append((p, {}))
+                # 9.143 (#86): THE PARTIALLY BOUND TOUR GETS A PLAN AT ALL.
+                # Until now such a tour was excluded from the ride variant
+                # outright, so its bound trips never became a `ride`
+                # alternative ANYWHERE in plan memory and co-evolution was
+                # never offered them - 2.09% of core trips (9.142), which no
+                # scoring or pairing repair downstream could reach.
+                #
+                # It could not be offered because a seeded plan carried ONE
+                # MODE PER TOUR: `ride` on the covered leg with the car base
+                # on the other is a subtour mixing a chain-based mode with a
+                # non-chain one, the exact state ChooseRandomLegModeForSubtour
+                # refuses and that crashed two arms (9.119). The plan now
+                # carries a PER-TRIP override, and the uncovered leg takes
+                # B.mode.partial_bind_base - a non-chain mode - so the whole
+                # subtour is non-chain and the refused state is structurally
+                # unreachable rather than repaired after the fact.
+                #
+                # A car-LESS person needs no new plan: their bound-ride
+                # variant above is already walk-based, so the override rides
+                # on it. Only a car-available person gets this extra plan,
+                # which is why the seed's plan count rises by at most one.
+                if partial_tours:
+                    base = PARTIAL_BIND_BASE if car_av else 'walk'
+                    p, over = {}, {}
+                    for tid in by_tour:
+                        if tid in serve_tours and car_av:
+                            p[tid] = 'car'
+                        elif tid in ride_tours:
+                            p[tid] = 'ride'
+                            covered_seed_tids.add(tid)
+                        elif tid in partial_tours:
+                            # the tour's nominal mode is the non-chain base;
+                            # the covered trips override to ride
+                            p[tid] = base
+                            covered_seed_tids.add(tid)
+                            for i in partial_tours[tid]:
+                                over[i] = 'ride'
+                        else:
+                            p[tid] = base
+                    if not car_av and ride_tours:
+                        # the walk-based bound-ride variant was appended just
+                        # above and this plan is that plan plus the overrides,
+                        # so it REPLACES it rather than spending a second slot
+                        plan_set[-1] = (p, over)
+                    else:
+                        # a car-available person needs the non-chain base this
+                        # plan alone carries; a car-less person with no fully
+                        # bound tour has no bound-ride variant to fold onto
+                        plan_set.append((p, over))
+                    partial_bind['tours'] += len(partial_tours)
+                    partial_bind['trips'] += sum(len(v) for v
+                                                 in partial_tours.values())
+                    partial_bind['persons'].add(pid)
+                    if car_av or not ride_tours:
+                        partial_bind['plans_added'] += 1
                 # 9.140 (#96): a plan MATSim's own subtour decomposition
                 # cannot hold is not offered. A serving tour is held at car
                 # while the variant's other tours take the base mode, and
@@ -902,7 +992,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # offending free tour is driven in that variant instead: the
                 # person keeps every other tour on the variant's mode.
                 if car_av:
-                    for p in plan_set:
+                    for p, over in plan_set:
                         for _ in range(4):
                             bad = leaf_mixed_tours(rows, p)
                             if not bad:
@@ -911,6 +1001,14 @@ def write_day(day, attrs, rng, report, seed_table=None):
                                 if p[tid] == 'ride':
                                     leaf_mix_repairs['ride_tours_driven'] += 1
                                 p[tid] = 'car'
+                                # 9.143: a tour driven to repair a mix must
+                                # lose its per-trip ride with it - leaving the
+                                # override would put ride on one leg of a car
+                                # tour, which is the very state being repaired
+                                for i in [i for i in over
+                                          if int(rows[i - 1]['tour_id']) == tid]:
+                                    del over[i]
+                                    leaf_mix_repairs['ride_tours_driven'] += 1
                             leaf_mix_repairs['tours'] += len(bad)
                             leaf_mix_repairs['persons'].add(pid)
                 seed_plans_hist[len(plan_set)] += 1
@@ -1031,7 +1129,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                         % ('truck' if (tier == 'freight' or trk) else
                            'motorbike' if moto else 'car'))
             w.write('\t\t</attributes>\n')
-            for k, plan_modes in enumerate(plan_set):
+            for k, (plan_modes, trip_modes) in enumerate(plan_set):
                 # the first plan is the selected one; under the full choice
                 # set MATSim executes every unscored plan once regardless
                 w.write('\t\t<plan selected="%s">\n' % ('yes' if k == 0 else 'no'))
@@ -1045,7 +1143,10 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 act_counts['home'] += 1
 
                 for i, r in enumerate(rows):
-                    mode = plan_modes[int(r['tour_id'])]
+                    # 9.143 (#86): a per-TRIP mode wins over the tour's,
+                    # which is what lets one leg of a partially bound tour ride
+                    # while the other takes a non-chain base
+                    mode = trip_modes.get(i + 1) or plan_modes[int(r['tour_id'])]
                     w.write('\t\t\t<leg mode="%s" />\n' % mode)
                     modes[mode] += 1
                     if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
@@ -1095,6 +1196,25 @@ def write_day(day, attrs, rng, report, seed_table=None):
                            persons=len(leaf_mix_repairs['persons']),
                            coord_distance_m=COORD_DISTANCE_M,
                            chain_based_modes=sorted(CHAIN_BASED_MODES)),
+                       # 9.143 (#86): what the per-trip variant reached - the
+                       # partially bound tours whose covered leg can now be
+                       # seeded as `ride` at all
+                       partial_bind=dict(
+                           tours=partial_bind['tours'],
+                           trips=partial_bind['trips'],
+                           plans_added=partial_bind['plans_added'],
+                           persons=len(partial_bind['persons']),
+                           base=PARTIAL_BIND_BASE),
+                       # 9.143 (#86): bound trips STILL unreachable, because
+                       # the person holds no ride availability at all. MEASURED,
+                       # NOT CHANGED - a different defect from the one repaired
+                       # here, and the escort split is the first count of the
+                       # collateral B.activity.escort_excludes_ride declares.
+                       bound_trips_unreachable=dict(
+                           escort_day_trips=unreachable['escort_day_trips'],
+                           escort_day_persons=len(unreachable['escort_day_persons']),
+                           no_vehicle_trips=unreachable['no_vehicle_trips'],
+                           no_vehicle_persons=len(unreachable['no_vehicle_persons'])),
                        activity_types=dict(sorted(act_counts.items())))
     print('%-8s %7d persons %9d legs %9d activities  %s'
           % (day, n_persons, n_legs, n_acts,

@@ -130,31 +130,32 @@
   "by_day": {
     "WEEKDAY": {
       "persons": 621871,
-      "legs": 9957819,
-      "activities": 12296253,
+      "legs": 10123299,
+      "activities": 12504653,
       "tours": 1100917,
-      "bytes": 76183051,
+      "bytes": 76631914,
       "escort_ride_denied": 123046,
       "legs_selected_plan": 2341980,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 17203,
-        "3": 48358,
-        "4": 197188,
-        "5": 209750,
-        "6": 34416
+        "2": 9292,
+        "3": 53520,
+        "4": 186412,
+        "5": 207760,
+        "6": 46711,
+        "7": 3220
       },
       "seed_mode_share": {
-        "bike": 0.0686,
-        "car": 0.4517,
+        "bike": 0.0675,
+        "car": 0.4466,
         "motorbike": 0.0005,
-        "pt": 0.1499,
-        "ride": 0.0338,
-        "taxi": 0.1285,
-        "truck": 0.0096,
-        "walk": 0.1573
+        "pt": 0.1543,
+        "ride": 0.039,
+        "taxi": 0.1264,
+        "truck": 0.0095,
+        "walk": 0.1562
       },
-      "seed_ride_covered_share": 0.0338,
+      "seed_ride_covered_share": 0.039,
       "leaf_mix_repairs": {
         "tours": 0,
         "ride_tours_driven": 0,
@@ -165,45 +166,59 @@
           "car"
         ]
       },
+      "partial_bind": {
+        "tours": 50665,
+        "trips": 50665,
+        "plans_added": 42920,
+        "persons": 49514,
+        "base": "pt"
+      },
+      "bound_trips_unreachable": {
+        "escort_day_trips": 33832,
+        "escort_day_persons": 18403,
+        "no_vehicle_trips": 4480,
+        "no_vehicle_persons": 3419
+      },
       "activity_types": {
-        "business": 109126,
-        "education": 217527,
+        "business": 111668,
+        "education": 227816,
         "escort": 990199,
-        "home": 6834202,
-        "other": 2036801,
-        "shopping": 1053656,
-        "work": 1054742
+        "home": 6947553,
+        "other": 2076165,
+        "shopping": 1074805,
+        "work": 1076447
       }
     },
     "SAT": {
       "persons": 506352,
-      "legs": 8341869,
-      "activities": 10387255,
+      "legs": 8454337,
+      "activities": 10528050,
       "tours": 878802,
-      "bytes": 62853929,
+      "bytes": 63140558,
       "escort_ride_denied": 71979,
       "legs_selected_plan": 1903250,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 11284,
-        "3": 32360,
-        "4": 168204,
-        "5": 189287,
-        "6": 40254
+        "2": 8075,
+        "3": 33876,
+        "4": 159758,
+        "5": 188260,
+        "6": 49300,
+        "7": 2120
       },
       "seed_mode_share": {
-        "bike": 0.0736,
-        "car": 0.4245,
+        "bike": 0.0726,
+        "car": 0.4206,
         "motorbike": 0.0007,
-        "pt": 0.1556,
-        "ride": 0.0369,
-        "taxi": 0.1395,
-        "truck": 0.006,
-        "walk": 0.1631
+        "pt": 0.1598,
+        "ride": 0.0408,
+        "taxi": 0.1377,
+        "truck": 0.0059,
+        "walk": 0.162
       },
-      "seed_ride_covered_share": 0.0369,
+      "seed_ride_covered_share": 0.0408,
       "leaf_mix_repairs": {
-        "tours": 6,
+        "tours": 7,
         "ride_tours_driven": 0,
         "persons": 2,
         "coord_distance_m": 100.0,
@@ -212,43 +227,57 @@
           "car"
         ]
       },
+      "partial_bind": {
+        "tours": 31793,
+        "trips": 31793,
+        "plans_added": 28327,
+        "persons": 31208,
+        "base": "pt"
+      },
+      "bound_trips_unreachable": {
+        "escort_day_trips": 11388,
+        "escort_day_persons": 6392,
+        "no_vehicle_trips": 2632,
+        "no_vehicle_persons": 2224
+      },
       "activity_types": {
-        "business": 13082,
-        "education": 7406,
+        "business": 13329,
+        "education": 7746,
         "escort": 550357,
-        "home": 5800780,
-        "other": 2491939,
-        "shopping": 1306247,
-        "work": 217444
+        "home": 5877013,
+        "other": 2531242,
+        "shopping": 1327062,
+        "work": 221301
       }
     },
     "SUN": {
       "persons": 470486,
-      "legs": 7283260,
-      "activities": 9190713,
+      "legs": 7367037,
+      "activities": 9296888,
       "tours": 768884,
-      "bytes": 56087862,
+      "bytes": 56301254,
       "escort_ride_denied": 52068,
       "legs_selected_plan": 1665435,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 10639,
-        "3": 30082,
-        "4": 158066,
-        "5": 177044,
-        "6": 36758
+        "2": 8076,
+        "3": 31184,
+        "4": 151372,
+        "5": 176377,
+        "6": 44183,
+        "7": 1397
       },
       "seed_mode_share": {
-        "bike": 0.0746,
-        "car": 0.4166,
+        "bike": 0.0738,
+        "car": 0.4134,
         "motorbike": 0.0007,
-        "pt": 0.1578,
-        "ride": 0.0379,
-        "taxi": 0.1411,
-        "truck": 0.0062,
-        "walk": 0.165
+        "pt": 0.1611,
+        "ride": 0.0411,
+        "taxi": 0.1395,
+        "truck": 0.0061,
+        "walk": 0.1642
       },
-      "seed_ride_covered_share": 0.0379,
+      "seed_ride_covered_share": 0.0411,
       "leaf_mix_repairs": {
         "tours": 3,
         "ride_tours_driven": 0,
@@ -259,14 +288,27 @@
           "car"
         ]
       },
+      "partial_bind": {
+        "tours": 24626,
+        "trips": 24626,
+        "plans_added": 22398,
+        "persons": 24324,
+        "base": "pt"
+      },
+      "bound_trips_unreachable": {
+        "escort_day_trips": 6366,
+        "escort_day_persons": 3527,
+        "no_vehicle_trips": 1863,
+        "no_vehicle_persons": 1655
+      },
       "activity_types": {
-        "business": 8615,
-        "education": 2604,
+        "business": 8749,
+        "education": 2715,
         "escort": 393921,
-        "home": 5185973,
-        "other": 2574543,
-        "shopping": 903430,
-        "work": 121627
+        "home": 5244102,
+        "other": 2608110,
+        "shopping": 915831,
+        "work": 123460
       }
     }
   }

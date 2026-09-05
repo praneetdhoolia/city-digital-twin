@@ -72,7 +72,7 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy
 | | |
 |---|---|
 | Open comparability family | `F24-balanced-destinations` (opened `20260904T181133`, §9.142) - nothing run before it compares with anything after it |
-| Input registry | **464 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **465 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (4 September 2026 (twenty-seventh session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (4 September 2026 (twenty-seventh session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (4 September 2026 (twenty-seventh session)) · [runs-and-economics](positions/runs-and-economics.md) (4 September 2026 (twenty-seventh session)) · [sampling-and-families](positions/sampling-and-families.md) (4 September 2026 (twenty-seventh session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (4 September 2026 (twenty-seventh session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
@@ -92,14 +92,14 @@ constrained at both ends and on circuity re-measured on the current network
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260905T115355_2it_1pct` | completed | F24-balanced-destinations | 2 | ran_to_last_iteration `_run.json` |
 | `aborted_20260904T181203_300it_25pct` | aborted | F24-balanced-destinations | 100 | Stopped by the operator during iteration 100, at the approved boundary: the stated-cost approval for this arm was given TO THE ITERATION-... |
 | `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T162301_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
-| `20260904T161721_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 
-137 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+138 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

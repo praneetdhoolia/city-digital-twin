@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F24 (read at its gate; the package on disk opens F25 at its first launch)
 
 ## What is built
 
@@ -15,6 +15,7 @@
 - Volume: (occupancy − 1) × driver share × core trips = 448,229 passenger trips on WEEKDAY; escort and lift bindings count first, joint next, shared rides fill the remainder and are thinned to it (§9.84, §9.124). `B.activity.joint_tour_passenger_ratio` = 0.3503 is derived from `C.constraint.vehicle_occupancy` = 1.3503 (HTS 2024/25; sweep 1.2493–1.3940) (§9.8, §9.84).
 - Translation (`src/build/build_matsim_plans.py`): the passenger carries `boundDriver`, `liftHousehold`, `sharedDriverHousehold` and per-trip `boundRideTrips`; the driver carries `boundDriveTrips` (§9.85, §9.120, §9.127). `GatedSubtourModeChoice` refuses `ride` on a trip nobody drives and refuses taking a declared driver off `car` on a serving trip (§9.120).
 - Seed: `B.mode.seed_method` = `full_choice_set` gives every person one plan per usable mode and a declared passenger one further plan riding the bound trips; `RUN.replanning.max_agent_plan_memory` = 8 (§9.120).
+- A seeded plan carries PER-TRIP modes, not one mode per tour (§9.143). A tour bound in ONE direction only — a drop-off binds its first trip, a pick-up its last (§9.120) — now rides on the covered leg and takes `B.mode.partial_bind_base` = `pt` (sweep `pt`/`walk`/`taxi`) on the other, so the whole subtour is non-chain and the chain/non-chain mix `ChooseRandomLegModeForSubtour` refuses (§9.119) is unreachable rather than repaired afterwards. A car-less person folds the override onto their existing walk-based variant and spends no plan slot; plan memory peaks at 7 of 8 (§9.143).
 
 **Runtime — pairing at BeforeMobsim, boarding in the qsim.**
 
@@ -47,7 +48,9 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 ## What is open
 
 - #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
-- **#86 — the fifth binder pass is measured NOT to be the largest class** (§9.142). The four passes bind **447,797 trip-equivalents, 20.13 % of core trips**, against the identity's 447,711 and an observed 20.6 %: the BINDING volume is at target, so a fifth pass declaring who drives whom for classes no observation covers would add volume that is already there. What is lost is downstream of the binder: **46,499 bound trips (2.09 % of core trips) never become a `ride` alternative in plan memory** - 42,019 because a one-way binding on a car-available person would mix a chain-based mode with a non-chain one inside a subtour, which MATSim refuses (§9.119), and 4,480 because the escorted person's household holds no vehicle although a household member was bound as their driver. The repair is a per-trip plan variant (ride on the bound leg, a non-chain mode on the other), and it belongs behind the `GatedSubtourProbe` that landed on 4 Sep - the same construction whose chain invariant crashed two arms (§9.106, §9.119). Measured, named, deliberately not built.
+- **#86 — the binder volume is at target and the loss is downstream of it** (§9.142). The four passes bind **447,797 trip-equivalents, 20.13 % of core trips**, against the identity's 447,711 and an observed 20.6 %, so a fifth pass would add volume that is already there.
+- **The partially bound tour is REPAIRED** (§9.143, #86): **50,665 WEEKDAY bound trips (2.16 % of core trips) across 49,514 persons** now become a `ride` alternative that plan memory can hold at all, where before co-evolution was never offered them. Seed ride share 0.0338 → 0.0390; 42,920 new plans, all car-available (SAT 31,793 trips, SUN 24,626). **§9.142 under-counted this class**: it attributed all of it to the chain-mix cause at 42,019 — which matches the car-available count of 42,920 — and missed **7,745 car-LESS partial tours** excluded by the same `all(...)` test for no chain reason at all, whose walk-based variant could always have carried the ride. Verified on the built population: 0 ride legs off a declared bound trip, 0 chain/non-chain tour mixes, 0 persons over the plan cap.
+- **A bound trip on a person denied `ride` outright is still unreachable, and the escort class is not small** (§9.143, #86). Measured for the first time on WEEKDAY: **33,832 bound trips across 18,403 persons** are lost to `B.activity.escort_excludes_ride`, and 4,480 across 3,419 to the vehicle-less `ride_avail` identity. The escort figure is 1.44 % of core trips — two thirds the size of the class just repaired and 7.5× the vehicle-less one §9.142 named — against a derivation that calls the collateral "stated, small and plausibly the truth". The identity is sound (an escorter is driving); the SCOPE is per-DAY, so a parent who drives a child to school cannot be a passenger afterwards. The derivation chose per-day because `PermissibleModesCalculator` is per-plan — a constraint `GatedSubtourModeChoice` no longer imposes, since it gates `ride` per trip. **Measured, not changed: a decision, not a defect.**
 - #91 is closed (§9.140): the no-declared-driver class is zero at the seed since §9.120; F20's iteration-0 pair rate 0.977 and F22's 7,092 pickups with 0 unroutable are its evidence.
 - The 25% × 300 costing: ~25 h stated at the F22 approval; the arm measured 630–670 s/it late pace, ~45–50 h for a full 300 (§9.136) — cost the next 25% arm on the measured pace.
 - Whether a suburb is the right carpool precision is the sweep's question, with `same_sa1_od` its lower bound (§9.124).
@@ -68,6 +71,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.143 — the partially bound tour gets a plan; the escort class measured
 - §9.142 — the binders reach target; the loss is in plan memory
 - §9.140 — #91 closed; ride survives memory
 - §9.136 — ceiling decomposed: 19/16/12
