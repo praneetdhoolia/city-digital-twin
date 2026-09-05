@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 6 September 2026 (twenty-ninth session) · **Record read through:** §9.144 · **Open family:** F26 (opened at its rebuild; no arm has run in it)
 
 ## What is built
 
@@ -24,8 +24,8 @@
 
 **The binder passes, in order, each on the closed day file.** Pairing mechanics, seeding and runtime realisation belong to [`ride-and-pairing.md`](ride-and-pairing.md).
 
-1. **Escort** (§9.46): households generate whole, and an HX tour takes an already-drawn member trip's destination and departure exactly; the bound tour is immovable in the escorter's day.
-2. **Lift** (§9.60): an unbound HX tour is re-targeted to a driverless-household passenger within `B.activity.escort_binding_nonhh_scope` = `same_zone`, the serving leg timed to the passenger's own departure; adds no tour and no trip.
+1. **Escort** (§9.46, §9.144): households generate whole, and an HX tour takes an already-drawn member trip's destination and departure exactly; the bound tour is immovable in the escorter's day. **A binding requires the escorter to hold a licence AND the household to own a vehicle** — the identity all four passes share (§9.144, #142); the HX TOUR is not gated by it, so a car-less escorter still escorts on foot or by pt and declares no car passenger.
+2. **Lift** (§9.60, §9.144): an unbound HX tour is re-targeted to a driverless-household passenger within `B.activity.escort_binding_nonhh_scope` = `same_zone`, the serving leg timed to the passenger's own departure; adds no tour and no trip. The re-targeted driver must own a car too (§9.144).
 3. **Joint** (§9.84, §9.111, §9.116): a household companion's HS/HO tour (`B.activity.joint_tour_purposes`) becomes a mirror of a licensed co-member's drive, `party_size` 2, the driver tour shifted into the vacated slot where needed; the volume is `B.activity.joint_tour_passenger_ratio` 0.3503 (`derived`, occupancy − 1) times the HTS driver share, counting escort- and lift-covered trips first; candidates whose household holds no other eligible driver are removed before thinning (§9.116).
 4. **Shared** (§9.124, §9.129): a car-less person's direct tour binds to another household's trip with the same origin and destination zone at `B.ride.shared_lift_scope` = `same_sa2_od`, departing within `B.ride.pairing_window_min` 15 min, the two households sharing a `B.ride.shared_lift_hash_bucket` of 0.05; thinned to the same occupancy identity, with the shortfall reported when supply is short.
 
@@ -37,7 +37,7 @@
 
 ## The state on disk
 
-- **The package is consistent on the licence-rate population and is the F24 build** (§9.140): `cities/newcastle/demand/population/B1_synthetic_population.csv` holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`_population_report.json`, §9.131); the three day-type chains, the plans and the 30 run-input sets were rebuilt on it on 3 Sep 2026 — the derived interaction rate, the LGA-conserved motorbike carve and the leaf-subtour repair — and the manifest holds 511 files (`data/MANIFEST.csv`, §9.140).
+- **The package is consistent and is the F26 build** (§9.144): `cities/newcastle/demand/population/B1_synthetic_population.csv` holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`_population_report.json`, §9.131); the three day-type chains, the plans and the 30 run-input sets were rebuilt on it on 6 Sep 2026 for the driver-owns-a-car identity, and the manifest holds 512 files (`data/MANIFEST.csv`, §9.144). `check_package.py` ALL CHECKS PASSED.
 - The figures below are the 30 Aug rebuild's where §9.133 is cited and the 3 Sep rebuild's where §9.140 is; WEEKDAY plans 622,051 persons and 9,969,564 legs on the F24 build (`_plans_report.json`, §9.140). Family F24 is declared at the first arm's launch stamp; the arm needs a stated-cost approval and none stands (`NEXT_AGENT_BRIEF.md` §3).
 
 ## What is measured
@@ -45,9 +45,9 @@
 - **The demand was rebuilt on 4 Sep** (§9.142) on destination choice constrained at both ends and on circuity re-measured on the current network: 612,634 persons across three day types, WEEKDAY 2,185,896 legs / 989,347 tours / 3.568 legs per person, and a week average of 3.343 trips per person per day against the HTS 3.473 (`demand/plans/_activity_chains_report.json`). Every purpose x home LGA still realises its own observed mean journey distance exactly, on all 30 cells but the two already at the bisection edge. `tests/check_package.py` passes on the rebuilt package.
 
 - The literature licence vector left 14.2–14.8% of employed persons without a licence; on the measured rates the unlicensed share of the employed is 4.8–5.9% (Newcastle 12.7%, its 18–24 rate 0.68) and employed persons with a car available rose from 78.9–83.0% to 90.8–91.7% in four LGAs and 80.8% in Newcastle (§9.131).
-- WEEKDAY on the rebuilt demand: 2,188,001 legs, 990,511 tours, 510,383 travelling persons, 5,632 external and 16,264 through agents; realised week trip rate 3.346 against the HTS 3.473; placement `poi` 2,673,003, `home` 2,523,040, `jitter` 155,442, `escorted` 245,319 (`_activity_chains_report.json`). Against the old population the day moved by 0.04% in legs and 0.11% in tours (§9.133).
-- The binders on the rebuilt WEEKDAY: escort 128,881 of 177,667 HX tours bound (was 127,203 of 177,318); lift 47,578 of 48,680 unbound HX tours re-targeted (was 49,030 of 50,014); joint 84,436 bound from 155,162 candidates at `thin_p` 1.0 with 55,783 unservable (was 82,384 from 146,260, 55,671 unservable); shared 61,682 servable / 57,758 bound / shortfall 0 at `thin_p` 0.9354 with 332,807 trips already covered of the 448,203 identity (was 73,509 / 59,701 / 0 at 0.8116) (`_activity_chains_report.json`, §9.133). Licences moved passengers into the driver and companion pools: 111,145 car-less passenger tours against 141,670 before (§9.133).
-- The plans on the rebuilt WEEKDAY: 621,364 persons, 9,966,248 legs over the full choice set, 123,081 escort-day ride denials (was 114,096); the uninformed seed's car share 45.2% (was 43.9%), ride 3.4% (was 3.5%) — initial conditions, not a share (`_plans_report.json`, §9.6). Motorbike carve: trip-weighted 0.2652% against the 0.3785% region share it thins from, unchanged from §9.129's 0.2654%; truck carve `q` 0.01123 (was 0.01336) on the enlarged eligible pool (`_plans_report.json`, §9.133).
+- WEEKDAY on the F26 demand: 2,189,888 legs, 990,729 tours, 510,308 travelling persons, 3.575 legs per person, realised week trip rate 3.348 against the HTS 3.473 (`_activity_chains_report.json`, §9.144).
+- The binders on the F26 WEEKDAY (`_activity_chains_report.json`, §9.144): escort 122,689 of 168,112 HX tours bound, with 9,555 more drawn UNBOUND because the escorter's household owns no vehicle; lift 44,180 of 45,337 unbound HX tours re-targeted, 9,523 drivers refused for the same reason; joint 83,754 bound from 153,236 candidates at `thin_p` 1.0 with 53,307 unservable; shared 63,657 servable / 63,201 bound / shortfall 0 at `thin_p` 0.9926, 321,635 of the 448,013-trip identity already covered. Binding ROWS: escort 120,971, lift 44,180, joint 83,754, shared 126,402 — 375,307 against F25's 375,007, the freed volume re-let to drivers who can drive (§9.144).
+- The plans on the F26 WEEKDAY (`_plans_report.json`, §9.144): 622,036 persons, 10,263,958 legs over the full choice set, **0 escort-day ride denials** (§9.143 scoped the denial to the subtour) and **0 serve tours on a car-less person**; the uninformed seed's car share 43.88%, ride 4.48% — initial conditions, not a share (§9.6).
 - The ride gap was a demand ceiling, not a choice defect: every B2 trip carried `party_size` 1 and escort-bound travel was 5.4% of trips against an observed vehicle-passenger share of 20.6% (§9.83). The joint binder lifted ride-eligible travel to about 11.5% of core trips and saturated on household supply (§9.84); the shared pass reaches the occupancy identity with a shortfall of 0 on both populations (§9.124, §9.129, §9.133). The ceiling is closed at the binding level; what the run realises is F21's measurement.
 - Residents without a car make 24.7% of trips and hold only the rides the demand binds; their surplus lands on walk, bike and pt, so bike's and bus's excess is ride's deficit wearing other modes (§9.123). That share is the old population's; the licence fix shrinks it and F21 measures by how much (§9.131).
 - Joint binding on WEEKDAY is supply-limited (`thin_p` 1.0000); on the weekend thinning still binds (SAT 0.5901, SUN 0.5669 on the rebuilt demand; 0.6216 and 0.5955 before) (`_activity_chains_report.json`, §9.116). 41.7% of multi-person households had at most one licensed travelling member on the old licence vector (§9.111).
@@ -77,6 +77,8 @@
 
 ## History
 
+- §9.144 — a binder driver must own a car; F26 rebuild
+- §9.143 — per-trip seeded modes; escort denial scoped to the subtour
 - §9.142 — the demand rebuilt on balanced destinations
 - §9.140 — interaction rate derived; F24 build
 - §9.138 — census income reaches money scoring

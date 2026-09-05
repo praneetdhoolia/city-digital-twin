@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 6 September 2026 (twenty-ninth session) · **Record read through:** §9.144 · **Open family:** F26 (opened at its rebuild; no arm has run in it)
 
 ## What is built
 
@@ -46,6 +46,8 @@ A family boundary is a recorded model, data or network change after which nothin
 | `F24-balanced-destinations` | 20260904T181133 | destination choice constrained at BOTH ends, so a zone receives the arrivals its own attraction states instead of whatever the draw sent it — the corridor's CBD end had been holding about two thirds of its observed attraction, the deficit §9.136 and §9.139 traced light rail and heavy rail to. C2 circuity re-measured on the network that actually runs (detour 1.3276 over 595 routed pairs, walk 1.6938, bike 1.5570). Chains, plans and the 30 run-input sets rebuilt on both, so the demand joins the run's identity. Run side F23 unchanged, except that a refused taxi trip now keeps taxi in plan memory (#113) — so the family's taxi level is not comparable with any earlier reading. First arm `20260904T181203_300it_25pct`, launched under an approval stated to the iteration-100 gate only | §9.142 |
 | `F25-ride-reaches-plan-memory` | 20260905T125346 | every bound ride trip can now become a `ride` alternative in plan memory. Three losses between binding and the choice set repaired together: a seeded plan carries PER-TRIP modes so a partially bound tour rides its covered leg on a non-chain base (`B.mode.partial_bind_base`, 60,273 WEEKDAY trips); `B.activity.escort_exclusion_scope` = `subtour` enforces the escort identity on the escorting tour instead of the whole day (33,832 trips, 18,403 persons); and the binder passes no longer offer a booked passenger as a driver (17,740 person-tours booked as both, 6.94% of passenger bookings, 15,002 of them driving and being driven on the same trip). Chains, plans and the 30 sets rebuilt, so the demand joins the run's identity; the run side is F24 unchanged. First arm runs the FULL 300 iterations — the first since F4 with a horizon rather than a gate, so the first that can measure requirement 8 | §9.143 |
 
+| `F26-a-driver-owns-a-car` | 20260906T013531 | every declared ride driver owns a car. The escort binder and the §9.60 lift pass bound a driver on a LICENCE alone, where the joint and shared passes also require a household vehicle, so 6,165 WEEKDAY escort bindings (5,426 drivers) and 3,154 lift bindings (2,697 drivers) named a driver with no car, and the seed then walked, bussed or taxied 85,993 legs the same person was declared to drive. All four passes now test the same identity; the HX tour itself is untouched. Chains, plans and the 30 sets rebuilt, so the demand joins the run's identity; the run side is F25 unchanged. **Opened at the REBUILD, not at a launch** — the boundary is declared with the demand that creates it, so a later arm cannot be labelled F25 and read against F25 numbers | §9.144 |
+
 Overrides in the file: three dead 30 Aug launches are attributed by name (the valid F18 arm `aborted_20260830T163010_300it_10pct`; the two F19 arms `aborted_20260830T170153_300it_10pct` and `aborted_20260830T170743_300it_10pct`), and `aborted_20260818T162538_1000it_25pct` is left unattributed because the record cannot settle it.
 
 ## What is measured
@@ -61,7 +63,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## What is open
 
-- No arm runs; the F23 gate arm is read and stopped (§9.139). **The package on disk is F24's** - chains, plans and the 30 run-input sets rebuilt 4 Sep on destination choice constrained at both ends and on circuity re-measured on the current network (§9.142), over the 3 Sep rebuild's derived interaction rate, LGA-conserved motorbike carve and leaf-subtour repair (§9.140). **F24 is a boundary on THREE counts at once** - the demand, the plans built from it, and `controler_sha256` (the router hoist, the silenced routing logger, the per-event repairs and the two new probes, §9.142) - so nothing before it compares with anything after it, and nothing is lost because no F24 arm has run. The key is declared in `run_families.json` at the first launch with `decisions_ref` 9.142. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
+- No arm runs; the newest reading is F25's, taken at its watcher's iteration-100 gate (§9.143). **The package on disk is F26's** - chains, plans and the 30 run-input sets rebuilt 6 Sep on the driver-owns-a-car identity (§9.144), over F25's per-trip seeded modes, subtour-scoped escort denial and both-roles repair (§9.143). **F26 is a boundary on the DEMAND ONLY**: the run side, the network and `controler_sha256` are F25 unchanged, and nothing is lost because no F26 arm has run. **Every F25 level is now a reading against a superseded package** - it stays citable as what F25 measured, and no F26 reading may be differenced against it. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -80,6 +82,8 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.144 — F26 opens at a rebuild, on the demand only
+- §9.143 — F25 opens on plan memory reaching the bound trips
 - §9.142 — F24 is a boundary on the demand, the plans and the controler
 - §9.140 — F24 package built, unlaunched
 - §9.139 — F23 gate arm read at 25%
