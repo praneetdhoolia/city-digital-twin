@@ -180,8 +180,15 @@ def test_a_directory_without_a_card_is_not_closed_out(tmp_path, monkeypatch):
 
 
 def test_the_record_must_meet_its_declared_schema(run_dir):
-    # `completion` is REQUIRED, so a close-out that does not state its boundary
-    # writes nothing rather than a record readers cannot classify
+    # `completion` is an ENUM, so a close-out that cannot name its boundary
+    # writes nothing rather than a record readers cannot classify.
+    #
+    # The enum lives in the JSON schema, and `src/registry/outputs.py` treats
+    # jsonschema as OPTIONAL - the unit job installs only pytest and pandas, so
+    # there the structural rules run and the schema does not. Skipping keeps
+    # this test about close_out's behaviour rather than about which optional
+    # dependency the runner happens to have.
+    pytest.importorskip('jsonschema')
     assert run_matsim.close_out(str(run_dir), 'not-a-boundary', rc=1,
                                 wall_s=1.0) is None
     assert not (run_dir / '_run.json').exists()
