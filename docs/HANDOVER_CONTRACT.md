@@ -66,7 +66,9 @@ settle it.
    what it is blocked on.
 3. **The fit, honestly.** What the last *completed* arm measured, pre- or
    post-calibration, what `_fit.json` refused to score and why. Never an error
-   against an unscorable target; never a result from a run without `_run.json`.
+   against an unscorable target; never a result from a run whose `_run.json`
+   does not say `ran_to_last_iteration` - a stopped arm's reading is quoted at
+   its `reached_iteration`, and never past it.
 4. **Unfinished business.** Open PRs, commits ahead of `main`, a running or
    dead-but-unclosed arm, a red gate, issues the record has overtaken, decisions
    awaiting the user, approvals (all spent unless stated).

@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 464 fields are made of
+## What the 466 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 149 | chosen without direct empirical support |
+| `assumed` | 151 | chosen without direct empirical support |
 | `definition` | 125 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 445 | usable point value |
+| `active` | 447 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 256 sweeps are for
+### What the 258 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 11 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 223 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 225 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -1559,7 +1559,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 109 fields*
+*`cities/newcastle/registry/B_demand.json` - 111 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1585,6 +1585,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.escort_binding_nonhh_scope` | `same_zone` | enum | `assumed` | `household_only`, `same_zone` |
 | `B.activity.escort_binding_scope` | `any_member_trip` | enum | `assumed` | `any_member_trip`, `unlicensed_or_education` |
 | `B.activity.escort_excludes_ride` | `true` | boolean | `derived` | derived: an escort trip is a trip made in order to convey another person, so th |
+| `B.activity.escort_exclusion_scope` | `subtour` | enum | `assumed` | `subtour`, `day` |
 | `B.activity.escort_requires_licence` | `true` | boolean | `derived` | derived: an escort trip is a trip made in order to convey another person, so th |
 | `B.activity.hts_rate_per_person_day` | `3.473` | trips_per_person_per_day | `measured` | 3.3 - 3.65 |
 | `B.activity.joint_tour_passenger_ratio` | `0.3503` | passenger_trips_per_driver_trip | `derived` | derived: the measured persons-per-vehicle minus one: HTS 2024/25 driver and pas |
@@ -1626,6 +1627,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.freight.trip_ratio` | `0.0697` | heavy_vehicle_trips_per_light_vehicle_trip | `assumed` | 0 - 0.14 |
 | `B.mode.bike_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.mode.bound_passenger_seed` | `ride` | enum | `assumed` | `ride`, `uninformed` |
+| `B.mode.partial_bind_base` | `pt` | enum | `assumed` | `pt`, `walk`, `taxi` |
 | `B.mode.seed_method` | `full_choice_set` | enum | `definition` | `full_choice_set`, `uniform_draw` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
 | `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
@@ -1831,9 +1833,17 @@ Which classes of already-drawn household trips an HX escort tour may take its de
 
 Whether a person whose day includes an escort (HX) tour is denied `ride` for that day type. Measured motivation: 4,791 escort trips on the relaxed 25% arm were made BY ride - a passenger being driven in order to convey somebody, with no driver bound to either of them. Consumed by build_matsim_plans.py, which forces rideAvail=never for that person-day; the existing AvailabilityModesCalculator then withholds ride with no Java change.
 
-***derived** · status **active** · DECISIONS.md §9.46*
+***derived** · status **active** · DECISIONS.md §9.46, 9.143*
 
-> **Derived from** `B.activity.escort_requires_licence`: an escort trip is a trip made in order to convey another person, so the traveller is the driver - the same identity that already restricts HX generation to licence holders, taken through to mode choice: a person whose plan carries an escort activity cannot make that day's trips as a car passenger. Applied at the day-plan level (rideAvail=never on the escort day's population file) because MATSim's PermissibleModesCalculator is per-plan, not per-subtour; the collateral - the escorting driver cannot be driven on OTHER tours the same day - is stated, small and plausibly the truth
+> **Derived from** `B.activity.escort_requires_licence`: an escort trip is a trip made in order to convey another person, so the traveller is the driver - the same identity that already restricts HX generation to licence holders, taken through to mode choice: a person cannot make an escort trip as a car passenger. WHERE that denial applies is a separate question, and it is B.activity.escort_exclusion_scope. Until 9.143 it was applied at the DAY-PLAN level (rideAvail=never for the whole day) because MATSim's PermissibleModesCalculator is per-plan, not per-subtour, and the collateral - the escorting driver cannot be driven on OTHER tours the same day - was recorded as small and plausibly the truth. It was never counted. Measured in 9.143 it is 33,832 WEEKDAY bound trips across 18,403 persons, 1.44 pct of core trips, two thirds the size of the partially-bound-tour class repaired in the same section. The per-plan constraint that forced the broad scope no longer binds: citysim.GatedSubtourModeChoice gates ride per TRIP against boundRideTrips and refuses a non-car proposal on boundDriveTrips, so an escorting tour is held at car by the runtime whatever the day plan says
+
+#### `B.activity.escort_exclusion_scope`
+
+The scope over which B.activity.escort_excludes_ride applies. subtour denies ride only on the escorting tours themselves and leaves the person's other tours free; day denies it across the whole day plan, which is what the field did before 9.143 and what that sweep member reproduces exactly. Consumed by build_matsim_plans.py.
+
+***assumed** · status **active** · DECISIONS.md §9.143 · sweep role **uncertainty***
+
+> **Sweep basis.** WHERE the escort identity denies ride. subtour: only on the tours that actually serve an escort - which citysim.GatedSubtourModeChoice already enforces at runtime by refusing a non-car proposal on boundDriveTrips, and which the seed already enforces by holding a serve tour at car, so the denial is carried by two mechanisms without this field's help. day: the whole day plan, by writing rideAvail=never on the person - the pre-9.143 behaviour, kept as a sweep member so that it RECOVERS THAT BUILD EXACTLY and the difference between the two scopes is measurable rather than asserted. The choice is not about whether an escorter drives their own escort trip: both members agree they do. It is about whether the same person may be carried on an unrelated tour later that day. subtour is the value because nothing in the data says they may not, and the day-wide denial costs 33,832 WEEKDAY bound trips (9.143) that the demand had already bound to a named driver.
 
 #### `B.activity.escort_requires_licence`
 
@@ -2156,6 +2166,14 @@ Seed mode for a passenger tour whose BOTH directions are covered by serve-tour b
 ***assumed** · status **active** · DECISIONS.md §9.68 · sweep role **uncertainty***
 
 > **Sweep basis.** MATSim's co-evolution has no joint replanning: a passenger's ride plan scores well only in iterations where the driver's SELECTED plan happens to hold the serving tour in car at the bound time, so the coherent two-sided state is sampled with vanishing probability from an uninformed seed (measured 9.68: 531 of 77,626 ride-available persons selected ride after 1000 iterations). Seeding the round-trip-covered passenger's tour as ride starts the search AT the coherent state and lets ChangeExpBeta abandon it if it scores badly - the seed biases where search starts, never what selection keeps. `uninformed` restores the uniform draw as the sensitivity.
+
+#### `B.mode.partial_bind_base`
+
+The non-chain mode a full_choice_set seed puts on the UNCOVERED leg of a PARTIALLY BOUND tour, so that the covered leg can be seeded as `ride`. A drop-off binds a tour's first trip and a pick-up its last (9.120), so a one-directional escort or lift leaves the tour partly bound; before 9.143 such a tour was excluded from the ride variant altogether and its bound trips never became a `ride` alternative anywhere in plan memory - 2.09% of core trips measured in 9.142, which no scoring or pairing repair downstream could reach because co-evolution was never offered them. A car-available person needs this base because their bound-ride variant is otherwise car-based, and ride on one leg with car on the other is the mix MATSim refuses; a car-LESS person's variant is already walk-based and needs no new plan. Consumed by build_matsim_plans.py.
+
+***assumed** · status **active** · DECISIONS.md §9.143 · sweep role **uncertainty***
+
+> **Sweep basis.** The three NON-CHAIN modes a seeded plan may put on the uncovered leg. The set is not a preference and is not free: RUN.mode_choice.chain_based_modes is ['car','bike'], and a subtour mixing a chain-based mode with a non-chain one is the exact state ChooseRandomLegModeForSubtour refuses and that crashed two arms (9.119) - so the uncovered leg of a partially bound tour can only be walk, pt or taxi, whatever the person owns. `pt` is the value because the uncovered leg is a real trip a car-available adult must make without their car, and pt is the mode available to every such person regardless of age, ownership or licence. `walk` is the sweep's lower bound - it assumes no service and costs nothing, so it is the most conservative alternative and the one a short uncovered leg would take anyway - and `taxi` its upper, priced and age-gated. The base is a STARTING POINT, not a commitment: the whole subtour is non-chain, so SubtourModeChoice can move the uncovered leg freely from iteration 1 and ChangeExpBeta keeps the result only if it scores. What the field decides is where the search starts, never what selection keeps.
 
 #### `B.mode.seed_method`
 

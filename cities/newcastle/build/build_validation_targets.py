@@ -349,7 +349,7 @@ def main():
                     '(issue 24).' % escort_legs(),
         },
     }
-    json.dump(corr, open(_city.path('params', 'C3_count_comparison.json'), 'w'),
+    json.dump(corr, open(_city.path('params', 'C3_count_comparison.json'), 'w', newline='\n'),
               indent=2)
 
     # ---------------- mode share ----------------
@@ -381,7 +381,7 @@ def main():
     rep = dict(n_targets=len(d),
                by_split=d['split'].value_counts().to_dict(),
                by_metric=d['metric'].value_counts().to_dict())
-    json.dump(rep, open(os.path.join(OUT, '_validation_report.json'), 'w'), indent=2)
+    json.dump(rep, open(os.path.join(OUT, '_validation_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2))
     print('\nheadline targets:')
     for m in ['lr_boardings_daily_mean', 'lr_share_of_local_pt_boardings',

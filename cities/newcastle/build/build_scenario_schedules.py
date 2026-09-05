@@ -813,7 +813,7 @@ def main():
     # of onto every extended trip.
     geom['source_shape_coverage'] = shape_coverage(base)
     out['_geometry'] = geom
-    json.dump(out, open(os.path.join(OUT, '_scenario_schedule_report.json'), 'w'), indent=2)
+    json.dump(out, open(os.path.join(OUT, '_scenario_schedule_report.json'), 'w', newline='\n'), indent=2)
     for k in ['S0', 'S1', 'S2', 'S2a', 'S2b', 'S2c', 'S3', 'S4', 'S5', 'S6']:
         v = out[k]
         print('%-5s routes=%-4d trips=%-6d stops=%-5d trunk_runtime=%s'

@@ -405,7 +405,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
         k: dict(persons=n, employed_pct=round(100.0 * e / max(n, 1), 1),
                 student_full_time_pct=round(100.0 * s / max(n, 1), 1))
         for k, (n, e, s) in sorted(bands.items())}
-    json.dump(stats, open(os.path.join(out_dir, 'population', '_population_report.json'), 'w'), indent=2)
+    json.dump(stats, open(os.path.join(out_dir, 'population', '_population_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(stats, indent=2))
 
 

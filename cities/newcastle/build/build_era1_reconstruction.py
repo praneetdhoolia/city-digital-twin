@@ -171,7 +171,7 @@ def main():
                       'not 2014. Validate against a 2014 public timetable before use '
                       'in any published figure.',
                source='assumed')
-    json.dump(rep, open(REPORT, 'w'), indent=2)
+    json.dump(rep, open(REPORT, 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2))
 
 

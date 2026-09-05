@@ -271,4 +271,4 @@ if __name__ == '__main__':
                'footway_edges': f[0], 'footway_km': round(f[2] / 1000, 1), 'footway_imputed': f[1],
                'signals': s[0], 'crossings': s[1], 'turn_restrictions': s[2],
                'parking_facilities': p[0], 'parking_with_osm_capacity': p[1]},
-              open(os.path.join(OUT, '_build_report.json'), 'w'), indent=2)
+              open(os.path.join(OUT, '_build_report.json'), 'w', newline='\n'), indent=2)

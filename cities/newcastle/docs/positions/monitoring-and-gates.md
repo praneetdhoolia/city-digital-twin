@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F25 (read at its iteration-100 gate)
 
 ## What is built
 
@@ -30,6 +30,8 @@
 
 ## What is measured
 
+- **The gate watcher stopped an arm by itself, for the first time** (§9.143, #112). On `aborted_20260905T125612_300it_25pct` it read all twelve modes at iteration 100, found seven at or past `CAL.gate.stop_deviation_pct`, killed the JVM and wrote the gate table as the run's cause - and the arm then closed itself out with `completion` = `stopped_at_gate` and `reached_iteration` = 100, so the reading is citable without re-deriving it from a log. Every arm before it had to be stopped by a person.
+- **A milestone is readable only when its experienced plans decompress to the end** (§9.143). Three weaker signals were tried this session and all three mean STARTED, not finished: the progress digest's iteration counter, the `it.N` directory, and the file's mere existence. The runner's own watcher already had this right - it retries the reporter until it succeeds.
 - **The calibrated base is F4, arm `20260821T175907_1000it_25pct`**: 35 of 67 calibration targets scorable, MAE 10.65 pp, `feasible=False` with five stated violations, ASCs held at their priors (§9.64, §9.50). `params/C5_calibration.json` names it as `best_tag`, and `README.md`'s fit figures still draw it via `src/analyse/build_fit_figures.py` (§9.80). Its light rail 1,260 boardings is a LEVEL, not an error (§9.80, #84).
 - **The seed noise floor** from the F4 pair: at most 0.11 pp per mode at fit level, light rail boardings within 3.9% (§9.64).
 - **The gate has fired three times; the third is the F23 channels' first reading (§9.139).** The F23 arm `aborted_20260901T165115_300it_25pct` read all twelve at iteration 100: 7 at or past 20% (heavy rail +193.2%, bike +111.2%, ferry −80.0%, taxi +76.6%, light rail −66.1%, ride −40.1%, walk −27.2%), with car +14.8%, motorbike +13.9% and bus +16.2% over 10% and none inside — stopped by the session under the GOAL.md loop because the watcher stayed silent (§9.139). Against the questions §9.138 posed at F22's gate: bike +185.5% → +111.2% (the stress channel works, still falling 6.55 → 4.66 in-run), walk −36.6% → −27.2% but the walk/car pair overshot their targets ~it.50 and kept going, bus +8.0% → +16.2% (lost its inside place), heavy rail +152.9% → +193.2% (income scaling weakened the fare's bite), taxi +70.9% → +76.6%, ferry unmoved at −80.0%.
@@ -60,6 +62,7 @@
 
 ## History
 
+- §9.143 — the watcher stopped an arm itself, and it closed itself out
 - §9.142 — 89 unit tests, two probes, the tracker clear of blockers
 - §9.141 — watcher keyed on a verdict; retry bounded
 - §9.140 — issue gate; requirement 10

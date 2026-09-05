@@ -45,7 +45,7 @@
   },
   "truck_carve": {
     "declared_share": 0.002993,
-    "q": 0.01127
+    "q": 0.010581
   },
   "seed_mode_split": {
     "True": [
@@ -130,31 +130,32 @@
   "by_day": {
     "WEEKDAY": {
       "persons": 621871,
-      "legs": 9957819,
-      "activities": 12296253,
+      "legs": 10253549,
+      "activities": 12653380,
       "tours": 1100917,
-      "bytes": 76183051,
-      "escort_ride_denied": 123046,
+      "bytes": 77218095,
+      "escort_ride_denied": 0,
       "legs_selected_plan": 2341980,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 17203,
-        "3": 48358,
-        "4": 197188,
-        "5": 209750,
-        "6": 34416
+        "2": 9146,
+        "3": 51780,
+        "4": 179098,
+        "5": 209847,
+        "6": 53728,
+        "7": 3322
       },
       "seed_mode_share": {
-        "bike": 0.0686,
-        "car": 0.4517,
+        "bike": 0.0678,
+        "car": 0.4352,
         "motorbike": 0.0005,
-        "pt": 0.1499,
-        "ride": 0.0338,
-        "taxi": 0.1285,
-        "truck": 0.0096,
-        "walk": 0.1573
+        "pt": 0.1578,
+        "ride": 0.0444,
+        "taxi": 0.1271,
+        "truck": 0.0094,
+        "walk": 0.1579
       },
-      "seed_ride_covered_share": 0.0338,
+      "seed_ride_covered_share": 0.0444,
       "leaf_mix_repairs": {
         "tours": 0,
         "ride_tours_driven": 0,
@@ -165,90 +166,57 @@
           "car"
         ]
       },
+      "partial_bind": {
+        "tours": 60273,
+        "trips": 60273,
+        "plans_added": 52001,
+        "persons": 58768,
+        "base": "pt"
+      },
+      "bound_trips_unreachable": {
+        "escort_day_trips": 0,
+        "escort_day_persons": 0,
+        "no_vehicle_trips": 4460,
+        "no_vehicle_persons": 3406
+      },
       "activity_types": {
-        "business": 109126,
-        "education": 217527,
-        "escort": 990199,
-        "home": 6834202,
-        "other": 2036801,
-        "shopping": 1053656,
-        "work": 1054742
+        "business": 112746,
+        "education": 228977,
+        "escort": 1024987,
+        "home": 7021625,
+        "other": 2094808,
+        "shopping": 1084186,
+        "work": 1086051
       }
     },
     "SAT": {
       "persons": 506352,
-      "legs": 8341869,
-      "activities": 10387255,
+      "legs": 8498455,
+      "activities": 10578663,
       "tours": 878802,
-      "bytes": 62853929,
-      "escort_ride_denied": 71979,
+      "bytes": 63396957,
+      "escort_ride_denied": 0,
       "legs_selected_plan": 1903250,
       "seed_method": "full_choice_set",
       "seed_plans_per_person": {
-        "2": 11284,
-        "3": 32360,
-        "4": 168204,
-        "5": 189287,
-        "6": 40254
+        "2": 7966,
+        "3": 32994,
+        "4": 158054,
+        "5": 188793,
+        "6": 51554,
+        "7": 2133
       },
       "seed_mode_share": {
-        "bike": 0.0736,
-        "car": 0.4245,
+        "bike": 0.073,
+        "car": 0.4118,
         "motorbike": 0.0007,
-        "pt": 0.1556,
-        "ride": 0.0369,
-        "taxi": 0.1395,
-        "truck": 0.006,
-        "walk": 0.1631
+        "pt": 0.1622,
+        "ride": 0.044,
+        "taxi": 0.1387,
+        "truck": 0.0058,
+        "walk": 0.1637
       },
-      "seed_ride_covered_share": 0.0369,
-      "leaf_mix_repairs": {
-        "tours": 6,
-        "ride_tours_driven": 0,
-        "persons": 2,
-        "coord_distance_m": 100.0,
-        "chain_based_modes": [
-          "bike",
-          "car"
-        ]
-      },
-      "activity_types": {
-        "business": 13082,
-        "education": 7406,
-        "escort": 550357,
-        "home": 5800780,
-        "other": 2491939,
-        "shopping": 1306247,
-        "work": 217444
-      }
-    },
-    "SUN": {
-      "persons": 470486,
-      "legs": 7283260,
-      "activities": 9190713,
-      "tours": 768884,
-      "bytes": 56087862,
-      "escort_ride_denied": 52068,
-      "legs_selected_plan": 1665435,
-      "seed_method": "full_choice_set",
-      "seed_plans_per_person": {
-        "2": 10639,
-        "3": 30082,
-        "4": 158066,
-        "5": 177044,
-        "6": 36758
-      },
-      "seed_mode_share": {
-        "bike": 0.0746,
-        "car": 0.4166,
-        "motorbike": 0.0007,
-        "pt": 0.1578,
-        "ride": 0.0379,
-        "taxi": 0.1411,
-        "truck": 0.0062,
-        "walk": 0.165
-      },
-      "seed_ride_covered_share": 0.0379,
+      "seed_ride_covered_share": 0.044,
       "leaf_mix_repairs": {
         "tours": 3,
         "ride_tours_driven": 0,
@@ -259,14 +227,88 @@
           "car"
         ]
       },
+      "partial_bind": {
+        "tours": 35080,
+        "trips": 35080,
+        "plans_added": 31573,
+        "persons": 34437,
+        "base": "pt"
+      },
+      "bound_trips_unreachable": {
+        "escort_day_trips": 0,
+        "escort_day_persons": 0,
+        "no_vehicle_trips": 2624,
+        "no_vehicle_persons": 2222
+      },
       "activity_types": {
-        "business": 8615,
-        "education": 2604,
-        "escort": 393921,
-        "home": 5185973,
-        "other": 2574543,
-        "shopping": 903430,
-        "work": 121627
+        "business": 13394,
+        "education": 7749,
+        "escort": 561473,
+        "home": 5902425,
+        "other": 2539728,
+        "shopping": 1331731,
+        "work": 222163
+      }
+    },
+    "SUN": {
+      "persons": 470486,
+      "legs": 7390058,
+      "activities": 9323283,
+      "tours": 768884,
+      "bytes": 56509459,
+      "escort_ride_denied": 0,
+      "legs_selected_plan": 1665435,
+      "seed_method": "full_choice_set",
+      "seed_plans_per_person": {
+        "2": 8074,
+        "3": 30508,
+        "4": 150497,
+        "5": 176976,
+        "6": 45196,
+        "7": 1379
+      },
+      "seed_mode_share": {
+        "bike": 0.0746,
+        "car": 0.4038,
+        "motorbike": 0.0007,
+        "pt": 0.1637,
+        "ride": 0.044,
+        "taxi": 0.141,
+        "truck": 0.0061,
+        "walk": 0.1662
+      },
+      "seed_ride_covered_share": 0.044,
+      "leaf_mix_repairs": {
+        "tours": 0,
+        "ride_tours_driven": 0,
+        "persons": 0,
+        "coord_distance_m": 100.0,
+        "chain_based_modes": [
+          "bike",
+          "car"
+        ]
+      },
+      "partial_bind": {
+        "tours": 26191,
+        "trips": 26191,
+        "plans_added": 23943,
+        "persons": 25868,
+        "base": "pt"
+      },
+      "bound_trips_unreachable": {
+        "escort_day_trips": 0,
+        "escort_day_persons": 0,
+        "no_vehicle_trips": 1860,
+        "no_vehicle_persons": 1648
+      },
+      "activity_types": {
+        "business": 8755,
+        "education": 2709,
+        "escort": 399723,
+        "home": 5257231,
+        "other": 2613418,
+        "shopping": 917746,
+        "work": 123701
       }
     }
   }

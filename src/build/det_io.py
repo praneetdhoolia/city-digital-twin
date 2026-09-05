@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Deterministic gzip and zip output.
 
-`gzip.open(path, 'w')` stamps the current wall-clock time into the gzip header,
+`gzip.open(path, 'w', newline='\n')` stamps the current wall-clock time into the gzip header,
 so two builds of identical content produce different bytes and therefore
 different sha256 digests in `data/MANIFEST.csv`. That breaks the project's
 determinism rule and makes every rebuild look like a data change.

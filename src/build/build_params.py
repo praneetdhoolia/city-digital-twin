@@ -267,7 +267,7 @@ if __name__ == '__main__':
                    nesting=NEST,
                    n_param_sets=len(c1), n_sweep_points=len(sw),
                    assumed_rows=[r['param_set_id'] for r in c1]),
-              open(os.path.join(OUT, 'C1_parameters.json'), 'w'), indent=2)
+              open(os.path.join(OUT, 'C1_parameters.json'), 'w', newline='\n'), indent=2)
     # the list DECISIONS.md must carry
     assumed = sorted({k for k, v in WEIGHTS.items() if v[3] == 'assumed'} |
                      {k for k, v in ASC.items() if v[1] == 'assumed'} |

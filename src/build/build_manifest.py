@@ -306,12 +306,18 @@ def main():
         bytes_by_stage={s: sum(f['bytes'] for f in files if f['stage'] == s)
                         for s in ('raw', 'processed')},
         files=files)
-    json.dump(man, open(os.path.join(ROOT, 'data', 'MANIFEST.json'), 'w'), indent=2)
+    json.dump(man, open(os.path.join(ROOT, 'data', 'MANIFEST.json'), 'w', newline='\n'), indent=2)
     cols = ['path', 'stage', 'bytes', 'rows', 'produced_by', 'source', 'source_url',
             'licence', 'retrieved', 'sha256']
     with open(os.path.join(ROOT, 'data', 'MANIFEST.csv'), 'w', newline='',
           encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore')
+        # `newline=''` hands the line ending to the csv module, whose default
+        # is CRLF on every platform - so the manifest was written with CRLF,
+        # git committed it as LF, and the file's own recorded hash stopped
+        # matching the bytes in the repository. LF explicitly: a committed
+        # artefact must be regenerable byte for byte wherever it is built.
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore',
+                           lineterminator='\n')
         w.writeheader()
         w.writerows(files)
     print('files=%d  total=%.2f GiB' % (len(files), man['total_gib']))

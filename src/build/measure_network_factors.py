@@ -360,7 +360,7 @@ def main(n_pairs=None, seed=SEED):
     out = dict(seed=seed, detour_factor=detour, day_type=day,
                work_attendance=att, active_beeline_factor=active)
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    json.dump(out, open(OUT, 'w'), indent=2)
+    json.dump(out, open(OUT, 'w', newline='\n'), indent=2)
     print('wrote %s' % OUT, flush=True)
 
 

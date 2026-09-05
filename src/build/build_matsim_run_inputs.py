@@ -1746,7 +1746,7 @@ def main(day_types=None, scenarios=None, set_overrides=None):
         for line in report['scoring']['not_representable']:
             print('   does not survive translation: %s' % line, flush=True)
 
-    json.dump(report, open(os.path.join(OUT, '_run_inputs_report.json'), 'w'),
+    json.dump(report, open(os.path.join(OUT, '_run_inputs_report.json'), 'w', newline='\n'),
               indent=2)
 
 

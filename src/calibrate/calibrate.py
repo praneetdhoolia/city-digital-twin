@@ -290,9 +290,23 @@ def write_constrained_base(scenario, day, run_config, tag):
     if not os.path.exists(fit_path):
         raise SystemExit('no _fit.json in %s - the base run must exist and be '
                          'fitted before C5 can report it' % run_dir)
-    if not os.path.exists(os.path.join(run_dir, '_run.json')):
+    record_path = os.path.join(run_dir, '_run.json')
+    if not os.path.exists(record_path):
         raise SystemExit('%s has no _run.json: a run without one is not a '
                          'result and cannot anchor the calibrated base' % run_dir)
+    # PRESENCE IS NO LONGER THE TEST. A run stopped at a GOAL.md gate is closed
+    # out with a record too, and its reading is real - but it is a reading at
+    # the iteration the gate fired on, not a run that reached the horizon it
+    # declared, and a base calibrated on one would state a converged model the
+    # run never produced. Records written before the field existed were only
+    # ever written on rc=0, so a missing value reads as ran_to_last_iteration.
+    done = json.load(open(record_path, encoding='utf-8')).get(
+        'completion', 'ran_to_last_iteration')
+    if done != 'ran_to_last_iteration':
+        raise SystemExit(
+            '%s was %s and did not reach its last iteration: its reading is '
+            'citable but it is not a complete arm, and it cannot anchor the '
+            'calibrated base' % (run_dir, done))
     f = json.load(open(fit_path, encoding='utf-8'))
     audit_no_holdout(f)
     ok, why = feasible(f)

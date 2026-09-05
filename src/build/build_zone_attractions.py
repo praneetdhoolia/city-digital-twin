@@ -125,7 +125,7 @@ def main(out_dir=None):
                poi_joined=len(j),
                top10_job_sa1=d.nlargest(10, 'jobs')[
                    ['SA1_CODE21', 'SA2_NAME21', 'jobs']].to_dict('records'))
-    json.dump(rep, open(os.path.join(OUT, '_attractions_report.json'), 'w'), indent=2)
+    json.dump(rep, open(os.path.join(OUT, '_attractions_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2)[:2500])
 
 

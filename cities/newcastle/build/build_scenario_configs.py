@@ -189,7 +189,7 @@ def main():
     for r in rows:
         d = dict(r)
         d['seed_list'] = [int(x) for x in d['seed_list'].split(';')]
-        json.dump(d, open(os.path.join(OUT, '%s.json' % r['scenario_id']), 'w'), indent=2)
+        json.dump(d, open(os.path.join(OUT, '%s.json' % r['scenario_id']), 'w', newline='\n'), indent=2)
     print('wrote %d scenario configs to %s' % (len(rows), OUT))
     for r in rows:
         print('  %-4s %-52s trunk=%-11s gtfs=%s'

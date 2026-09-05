@@ -12,13 +12,23 @@ compare across families or fractions without noticing.
 
 Classification is stated, not judged:
 
-  * `aborted` / `failed` - the `_meta.json` status; no `_run.json`, never a
-    result (`aborted_*` prefix is a label, the metadata is the truth);
-  * `probe`  - completed but under 250 iterations, which DECISIONS.md 9.7/9.43
-    MEASURED to be below any relaxation horizon - plumbing and timing evidence,
-    never a result;
-  * `arm`    - a completed run at or above that horizon; whether it RELAXED is
-    its own column, read from `_summary.json`.
+  * `aborted` / `failed` - the `_meta.json` status of a run that CRASHED; no
+    `_run.json`, never a result (`aborted_*` prefix is a label, the metadata is
+    the truth);
+  * `probe`  - a run under 250 iterations, which DECISIONS.md 9.7/9.43 MEASURED
+    to be below any relaxation horizon - plumbing and timing evidence, never a
+    result;
+  * `stopped-arm` - a run stopped DELIBERATELY at a GOAL.md gate or by the
+    operator. It is closed out with a record like any other boundary, so its
+    reading is citable AT `reached_iteration` and nowhere past it; it is not a
+    complete arm, and it can neither anchor a calibrated base nor satisfy
+    resume;
+  * `arm`    - a run that reached its declared last iteration at or above that
+    horizon; whether it RELAXED is its own column, read from `_summary.json`.
+
+The `completion` column carries which of those boundaries ended a run, and
+records written before that field existed were only ever written on rc=0, so a
+missing value reads as `ran_to_last_iteration`.
 
 Per-mode fit is copied from `_fit.json` where one exists - every mode
 individually, never an aggregate row (standing directive). The index is
@@ -101,10 +111,20 @@ def scan_run(name, fams, overrides):
     has_record = record is not None
     relaxed = (summary.get('relaxation') or {}).get('relaxed')
 
+    # A record no longer means the run reached its horizon: one stopped at a
+    # GOAL.md gate, or by the operator, is closed out with a record too. Its
+    # reading is citable at `reached_iteration` and nowhere past it, so it gets
+    # its own class rather than being counted among the complete arms - the
+    # whole point of the index is that a reader never has to open a run to know
+    # what it is. A record written before the field existed was only ever
+    # written on rc=0, so a missing value reads as ran_to_last_iteration.
+    completion = (record or {}).get('completion', 'ran_to_last_iteration')
     if not has_record:
         run_class = status if status in ('failed', 'aborted') else 'no-record'
     elif (record.get('iterations') or 0) < PROBE_ITERATIONS_CEILING:
         run_class = 'probe'
+    elif completion != 'ran_to_last_iteration':
+        run_class = 'stopped-arm'
     else:
         run_class = 'arm'
 
@@ -115,6 +135,13 @@ def scan_run(name, fams, overrides):
         'class': run_class,
         'status': status,
         'run_record': 'yes' if has_record else 'no',
+        # WHICH BOUNDARY ENDED IT, and the iteration its reading belongs to.
+        # Citing any figure from a stopped run without the second states more
+        # than the run did.
+        'completion': completion if has_record else '',
+        'reached_iteration': (record or {}).get('reached_iteration',
+                                                src.get('iterations')
+                                                if has_record else None),
         'relaxed': {True: 'yes', False: 'no'}.get(relaxed, ''),
         'family': family or 'unattributed',
         'family_note': fam_note,
@@ -147,7 +174,8 @@ def scan_run(name, fams, overrides):
     return row, modes
 
 
-CSV_COLUMNS = ['name', 'class', 'status', 'run_record', 'relaxed', 'family',
+CSV_COLUMNS = ['name', 'class', 'status', 'run_record', 'completion',
+               'reached_iteration', 'relaxed', 'family',
                'scenario', 'day', 'fraction', 'iterations', 'seed', 'threads',
                'median_iteration_s', 'fit_mae_pp', 'warm_started_from',
                'controler_sha256', 'cause', 'family_note']

@@ -132,4 +132,4 @@ if __name__ == '__main__':
                               os.path.join(NET, 'A6_footway_geometry.jsonl'),
                               'footway_edge_id', os.path.join(NET, 'A6_footway_edges.csv'))
     print('footways:', rep['footways'], flush=True)
-    json.dump(rep, open(os.path.join(NET, '_gradient_report.json'), 'w'), indent=2)
+    json.dump(rep, open(os.path.join(NET, '_gradient_report.json'), 'w', newline='\n'), indent=2)

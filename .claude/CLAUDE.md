@@ -34,7 +34,11 @@ session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it fir
   is the **frozen origin design** — the light-rail counterfactual that started the
   study and is now its first application; read it for scenario vocabulary only.
 - Stage: the board's phase table says where the build is. Nothing is a result until
-  a run completes with `_run.json`, and no run since family F4 has reached its gate.
+  a run's `_run.json` says `ran_to_last_iteration`, and no run since family F4 has
+  reached its gate. A run stopped at a gate or by the operator is closed out with a
+  record too — its reading is citable at that record's `reached_iteration` and
+  nowhere past it — but only that one value means the run executed the horizon it
+  declared, and only it satisfies resume or anchors a calibrated base.
 
 ## Working style (apply to every change)
 

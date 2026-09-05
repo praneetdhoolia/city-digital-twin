@@ -162,10 +162,31 @@ def resolve_warm_start(source):
     if not os.path.exists(meta_path):
         raise SystemExit('%s carries no %s - not a run directory' % (source, META))
     meta = json.load(open(meta_path, encoding='utf-8'))
-    if os.path.exists(os.path.join(source, '_run.json')):
+    # A record no longer means the run reached its horizon - a run stopped at a
+    # gate carries one too - so the refusal has to read the field and say which
+    # of the two it is refusing. Both are refusals: warm restart is CRASH
+    # RECOVERY. Resuming an arm past a gate the loop stopped it at would carry
+    # the very deviation the gate fired on into the iterations after it, which
+    # is the opposite of GOAL.md step 3 - the cause is fixed and the arm
+    # relaunched, never continued.
+    rec_path = os.path.join(source, '_run.json')
+    if os.path.exists(rec_path):
+        try:
+            done = json.load(open(rec_path, encoding='utf-8')).get(
+                'completion', RAN_TO_LAST)
+        except (OSError, ValueError):
+            done = RAN_TO_LAST
+        if done == RAN_TO_LAST:
+            raise SystemExit(
+                '%s ran to its last iteration (its _run.json says %s). Warm '
+                'restart is crash recovery; re-running it is --force.'
+                % (source, RAN_TO_LAST))
         raise SystemExit(
-            '%s completed (its _run.json exists). Warm restart is crash '
-            'recovery; re-running a completed run is --force.' % source)
+            '%s was stopped deliberately, not crashed (its _run.json says %s) '
+            'and is already closed out. Warm restart is crash recovery: fix '
+            'what the stop found and launch a fresh arm - resuming past a gate '
+            'carries the deviation it fired on into every iteration after it.'
+            % (source, done))
     candidates = []
     for d in glob.glob(os.path.join(source, 'output', 'ITERS', 'it.*')):
         try:
@@ -543,14 +564,30 @@ def values_sha256(cfg):
     return hashlib.sha256(blob).hexdigest()
 
 
+# The three boundaries at which a run can END rather than die. `completion` in
+# the record names one of them, and only the first says the run executed the
+# horizon it declared - which is NOT a claim of convergence, held separately by
+# DECISIONS.md 9.7. A run that CRASHED reaches none of them and gets no record.
+RAN_TO_LAST = 'ran_to_last_iteration'
+STOPPED_AT_GATE = 'stopped_at_gate'
+STOPPED_BY_OPERATOR = 'stopped_by_operator'
+
+
 def find_completed(scenario, day, fraction, iterations, seed, overrides,
                    controler=None, warm_key=None, values=None, inputs=None):
     """The completed run with these parameters, if one exists.
 
     Identity lives in the run record, not in the directory name: the name is a
-    launch-time label, so resume has to compare what was actually run. Only a
-    run that finished (rc=0, record written) can be resumed; a dead run leaves
-    no `_run.json` and is invisible here, exactly as before.
+    launch-time label, so resume has to compare what was actually run. A run
+    that crashed leaves no `_run.json` and is invisible here, exactly as before.
+
+    ONLY A RUN THAT REACHED ITS HORIZON CAN BE RESUMED. Since a run stopped at a
+    gate also carries a record, presence alone is no longer the test: without
+    the `completion` check below, relaunching the very overlay whose arm the
+    gate stopped would print `resume: already complete` and run nothing - the
+    session would read a stopped arm as a finished one. Records written before
+    the field existed were only ever written on rc=0, so a missing value reads
+    as `ran_to_last_iteration`.
 
     A record whose controler hash matches `controler` is preferred over one
     whose does not: the same parameter set legitimately exists across model
@@ -571,7 +608,8 @@ def find_completed(scenario, day, fraction, iterations, seed, overrides,
             doc = json.load(open(record, encoding='utf-8'))
         except (OSError, ValueError):
             continue
-        if (doc.get('scenario') == scenario and doc.get('day') == day
+        if (doc.get('completion', RAN_TO_LAST) == RAN_TO_LAST
+                and doc.get('scenario') == scenario and doc.get('day') == day
                 and doc.get('fraction') == fraction
                 and doc.get('iterations') == iterations
                 and doc.get('seed') == seed
@@ -929,6 +967,121 @@ def _gate_stop_cause(run_dir):
                ' | '.join(lines[:10])))
 
 
+def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
+              stop_cause=None, extra=None, cfg=None):
+    """Write a run's record and summary at whichever boundary ended it.
+
+    THE RECORD USED TO BE WRITTEN ON rc=0 ALONE, so a run stopped at a GOAL.md
+    gate left a directory holding a real reading and nothing that could cite it.
+    Every arm since family F4 stopped before its horizon, and each one reached
+    the next session as an orphan whose figures had to be re-derived from a 51
+    GiB log. A run that ends at a DEFINED boundary now closes itself out.
+
+    What the record's presence means is therefore narrower than it was, and the
+    field carries the difference: presence means THIS RUN CAN BE CITED, and only
+    `completion == RAN_TO_LAST` means it ran the horizon it declared. Resume
+    matching (`find_completed`) and the calibrated base both ask the field, so a
+    stopped arm can never be handed back as a finished one.
+
+    A CRASH STILL WRITES NOTHING. A run that died of an exception has no
+    boundary and no defensible reading, and manufacturing a record for it would
+    turn this from a close-out into a green light - the one failure the run
+    index exists to prevent.
+
+    Every step is best-effort and reported, never raised: the run has already
+    ended, and a summary that cannot be written must not also destroy the record
+    that can.
+    """
+    name = os.path.basename(run_dir)
+    meta = _load_meta(run_dir)
+    if not meta:
+        print('cannot close out %s: no %s to build a record from'
+              % (name, META), flush=True)
+        return None
+    if wall_s is None:
+        # --stop kills the harness that was holding the clock, so the elapsed
+        # time is taken from the card's own launch stamp rather than left at
+        # zero: a stopped arm's wall clock is the cost it actually spent.
+        wall_s = _elapsed_since(meta.get('started'))
+    per = iteration_times(os.path.join(run_dir, 'matsim.log'))
+    steady = sorted(v for k, v in per.items() if k > 0)
+    if reached_iteration is None:
+        # THE LAST ITERATION THAT ENDED - never the one in flight. `per` holds
+        # an iteration only once its ENDS marker is read, which is the property
+        # this needs; `_last_ended_iteration` does NOT have it. That reader
+        # takes the progress digest's figure, which is an iteration that has
+        # BEGUN - safe for the gate watcher, which simply retries until the
+        # milestone's tables appear, but WRONG in a record, where it would
+        # claim the run reached an iteration whose tables were never written
+        # and send a reader to a milestone that holds nothing.
+        #
+        # Measured on the first arm ever closed out this way
+        # (20260904T181203_300it_25pct): stopped while iteration 100 was in
+        # flight, the digest said 100, and the newest readable milestone was
+        # 90. The record said 100 until this used the ENDS markers instead.
+        reached_iteration = max(per) if per else _last_ended_iteration(run_dir)
+    doc = dict(name=name,
+               scenario=meta.get('scenario'), day=meta.get('day'),
+               fraction=meta.get('fraction'), iterations=meta.get('iterations'),
+               threads=meta.get('threads'), xmx=meta.get('xmx'),
+               seed=meta.get('seed'), overrides=meta.get('overrides') or {},
+               rc=rc, wall_s=round(wall_s, 1) if wall_s is not None else 0.0,
+               median_iteration_s=steady[len(steady) // 2] if steady else None,
+               completion=completion,
+               reached_iteration=reached_iteration,
+               stop_cause=stop_cause,
+               controler_sha256=meta.get('controler_sha256'),
+               values_sha256=meta.get('values_sha256'),
+               inputs_sha256=meta.get('inputs_sha256'),
+               **(meta.get('sample') or {}))
+    if meta.get('config_snapshot'):
+        doc['config_snapshot'] = meta['config_snapshot']
+    if meta.get('warm_started_from'):
+        doc['warm_started_from'] = meta['warm_started_from']
+    doc.update(extra or {})
+    try:
+        outputs.write_checked(os.path.join(run_dir, '_run.json'), doc, 'run')
+    except outputs.OutputError as e:
+        # On the success path the caller turns this into a refusal; on a stop
+        # path the reading still exists and the meta card still states the
+        # cause, so a rejected record is reported and the close-out continues.
+        print('run record could not be written for %s: %s' % (name, e),
+              flush=True)
+        return None
+    # `_summary.json` against its declared schema and `SUMMARY.md` for a person.
+    # It reports the state of the RUN and refuses to report a finding: no mode
+    # share, no fit statistic, no validation target.
+    try:
+        summarise_run.summarise(run_dir)
+    except Exception as e:                                   # noqa: BLE001
+        print('summary could not be written: %s' % e, flush=True)
+    # findings into processed and the cache back under budget, unattended
+    # (9.137) - a closed-out run's readings survive any later trim
+    try:
+        results_store.process(name, extract=True)
+        if cfg is not None:
+            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+    except Exception as e:                                   # noqa: BLE001
+        print('post-run processing failed: %s' % e, flush=True)
+    return doc
+
+
+def _load_meta(run_dir):
+    try:
+        return json.load(open(os.path.join(run_dir, META), encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+
+
+def _elapsed_since(started):
+    """Seconds from a card's `started` stamp to now; 0.0 if it cannot be read."""
+    try:
+        t0 = time.mktime(time.strptime(started, '%Y-%m-%dT%H:%M:%S'))
+    except (TypeError, ValueError):
+        return 0.0
+    return max(0.0, time.time() - t0)
+
+
 def stop_run(name, cause):
     """Stop a running arm through the harness - never by hand (9.137).
 
@@ -956,7 +1109,17 @@ def stop_run(name, cause):
             subprocess.run(['kill', '-9', str(victim)], capture_output=True)
     time.sleep(3)
     dead = mark_dead(run_dir, 'aborted', cause=cause)
-    print('stopped and recorded: %s' % os.path.basename(dead), flush=True)
+    # THE STOP IS A BOUNDARY, NOT A DEATH, so the run is closed out here rather
+    # than left as a directory. It has to happen in THIS process: --stop kills
+    # the harness's own pid as well as the JVM, so the harness never unwinds to
+    # write anything. The reading up to `reached_iteration` is real; the record
+    # says `stopped_by_operator`, so nothing can mistake it for a finished arm.
+    doc = close_out(dead, STOPPED_BY_OPERATOR, rc=None,
+                    wall_s=meta.get('wall_s'), stop_cause=cause)
+    print('stopped and recorded: %s%s'
+          % (os.path.basename(dead),
+             (' (closed out at iteration %s)' % doc.get('reached_iteration'))
+             if doc else ''), flush=True)
     return dead
 
 
@@ -1083,6 +1246,16 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     except (SystemExit, Exception) as e:                     # noqa: BLE001
         refuse_launch(run_dir, meta, e)
         raise
+    # THE CARD CARRIES EVERYTHING THE RECORD WILL NEED. A run stopped at a gate
+    # is closed out by whichever process survives the stop - this harness for a
+    # gate stop, `--stop`'s own process for an operator stop - and neither can
+    # reach the locals build_config() just produced. Stashing them on the card
+    # at launch is what lets a stopped run state its identity as completely as a
+    # run that reached its horizon, instead of leaving a directory that can only
+    # be re-derived from a log.
+    meta.update(
+        config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
+        values_sha256=values, sample=sample)
     write_meta(run_dir, meta)
     log = os.path.join(run_dir, 'matsim.log')
     # -Xms equal to -Xmx: the 9.57 arm grew the heap 7 -> 27 GB across the run
@@ -1129,8 +1302,23 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
               if gate_cause else
               ('FAILED rc=%d after %.0fs - see %s'
                % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
-        # a dead run's findings are extracted while its bulk is fresh, and
-        # the cache re-trimmed - both unattended (9.137)
+        if gate_cause:
+            # A GATE STOP IS A BOUNDARY THE LOOP ASKED FOR, so the arm is closed
+            # out with the same materials a run that reached its horizon gets:
+            # its reading at `reached_iteration` is exactly what the gate was
+            # for, and it stops being an orphan the next session must re-derive.
+            # The record says `stopped_at_gate`, so it can never be handed back
+            # as a finished arm.
+            doc = close_out(dead, STOPPED_AT_GATE, rc=rc, wall_s=wall,
+                            stop_cause=gate_cause, cfg=cfg)
+            if doc is not None:
+                print('closed out at iteration %s: %s'
+                      % (doc.get('reached_iteration'),
+                         os.path.join(dead, '_run.json')), flush=True)
+                return doc
+        # A CRASH GETS NO RECORD - it has no boundary and no defensible reading.
+        # Its findings are still extracted while its bulk is fresh, and the
+        # cache re-trimmed, both unattended (9.137).
         try:
             results_store.process(os.path.basename(dead), extract=True)
             results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
@@ -1146,6 +1334,12 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
                iterations=iterations, threads=threads, xmx=xmx, seed=seed,
                overrides=overrides, rc=rc, wall_s=round(wall, 1),
                median_iteration_s=steady[len(steady) // 2] if steady else None,
+               # The run executed every iteration it declared. That is NOT a
+               # claim of convergence - 9.7 holds that separately - and it is
+               # the only completion resume matching and the calibrated base
+               # accept.
+               completion=RAN_TO_LAST, reached_iteration=iterations,
+               stop_cause=None,
                config_snapshot=os.path.relpath(snapshot, run_dir).replace(os.sep, '/'),
                controler_sha256=controler,
                values_sha256=values,

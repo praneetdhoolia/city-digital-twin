@@ -18,7 +18,7 @@ sweep range and recorded with the reason it was chosen.**
 
 > **Where it stands:** the [board](cities/newcastle/docs/STATUS.md) carries the
 > twelve-mode scoreboard from the latest reading and what is next. Nothing is a
-> result until a run completes with `_run.json`; the fit figures
+> result until a run's `_run.json` says `ran_to_last_iteration`; the fit figures
 > [below](#does-it-reproduce-the-city-not-yet) are the last completed base arm.
 
 ---
@@ -136,8 +136,13 @@ python src/analyse/build_run_index.py                        # results/INDEX.md
 python src/run/prune_run.py           <name>                 # reclaim per-iteration output
 ```
 
-A run without `_run.json` is not a result, and a run under 250 iterations is a
-plumbing probe, never evidence.
+A run is a result only if its `_run.json` says `ran_to_last_iteration`, and a
+run under 250 iterations is a plumbing probe, never evidence. A run that was
+stopped — by the gate watcher under the goal's loop, or by `--stop` — is closed
+out with a record of its own saying `stopped_at_gate` or `stopped_by_operator`:
+its reading is real at that record's `reached_iteration` and says nothing about
+any iteration after it. A run that CRASHED gets no record at all; its
+`_meta.json` states the cause.
 
 ---
 
@@ -208,7 +213,7 @@ python src/calibrate/report.py --run <run dir>
 
 ## Five words
 
-- **Arm** — one scenario run, launched detached, gated every 100 iterations; not a result until it completes with `_run.json`.
+- **Arm** — one scenario run, launched detached, gated every 100 iterations; not a result until its `_run.json` says `ran_to_last_iteration`.
 - **Family** — a comparability class: every run since a change to the plans or the network; nothing compares across families (`cities/newcastle/docs/run_families.json`).
 - **Gate** — the reading of all twelve modes against their targets every 100 iterations; a mode at or past 20 % stops the run.
 - **Holdout** — the 143 of 210 validation targets that stay unread until the end; the 67 others are the calibration half.
@@ -219,14 +224,14 @@ python src/calibrate/report.py --run <run dir>
 | | |
 |---|---|
 | Files in the manifest | **512** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
-| Package on disk | 4.07 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
+| Package on disk | 4.08 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
 | Population | 611,915 (2021 Census) → 612,634 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 464 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
+| Input registry | 466 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -280,7 +285,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 464 declared values, with units, provenance, sweeps
+  registry/                  the 466 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

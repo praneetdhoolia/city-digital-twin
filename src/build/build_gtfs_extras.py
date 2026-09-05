@@ -189,7 +189,7 @@ def main():
                if inter_rows else None,
                interchange_max_walk_time_s=round(
                    max((r['total_transfer_time_s'] for r in inter_rows), default=0), 1))
-    json.dump(rep, open(os.path.join(OUT, '_extras_report.json'), 'w'), indent=2)
+    json.dump(rep, open(os.path.join(OUT, '_extras_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2))
 
 

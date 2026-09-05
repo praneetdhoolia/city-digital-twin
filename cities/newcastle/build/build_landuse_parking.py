@@ -490,5 +490,5 @@ if __name__ == '__main__':
         'parking_facilities': pk[0], 'parking_capacity_imputed': pk[1],
         'parking_by_price_band': pk[2], 'parking_spaces_by_price_band': pk[3],
         'parking_price': pk[4]}
-    json.dump(rep, open(os.path.join(OUT, '_landuse_report.json'), 'w'), indent=2)
+    json.dump(rep, open(os.path.join(OUT, '_landuse_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2))
