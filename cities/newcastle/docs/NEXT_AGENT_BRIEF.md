@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 4 September 2026, twenty-eighth session · **Open family:** `F24-balanced-destinations` (declared at its first launch, §9.142) · **Commit:** on `praneetdhoolia/stopped-runs-carry-their-record`
+**Written:** 4 September 2026, twenty-eighth session · **Open family:** `F25-ride-reaches-plan-memory` (declared at its first launch, §9.143) · **Commit:** on `praneetdhoolia/stopped-runs-carry-their-record`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 

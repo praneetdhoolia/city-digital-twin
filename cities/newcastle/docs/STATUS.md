@@ -71,7 +71,7 @@ Inside 10%: **motorbike**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F24-balanced-destinations` (opened `20260904T181133`, §9.142) - nothing run before it compares with anything after it |
+| Open comparability family | `F25-ride-reaches-plan-memory` (opened `20260905T125346`, §9.143) - nothing run before it compares with anything after it |
 | Input registry | **466 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |

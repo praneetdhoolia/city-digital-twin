@@ -65,5 +65,5 @@ for title,pat in GROUPS:
             out.append('| `%s` | %s | %s | %d/%d |'%(c,kind(vals),ex.replace(chr(124),'/'),nz,len(vals)))
         out.append('')
 os.makedirs('docs',exist_ok=True)
-open(_city.path('docs','reference','DATA_DICTIONARY.md'),'w',encoding='utf-8').write('\n'.join(out))
+open(_city.path('docs','reference','DATA_DICTIONARY.md'),'w',encoding='utf-8',newline='\n').write('\n'.join(out))
 print('wrote DATA_DICTIONARY.md (%d lines)'%len(out))
