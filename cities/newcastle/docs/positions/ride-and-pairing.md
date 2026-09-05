@@ -2,13 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F25 (read at its iteration-100 gate)
+**Updated:** 6 September 2026 (twenty-ninth session) · **Record read through:** §9.144 · **Open family:** F26 (opened at the rebuild; no arm has run in it)
 
 ## What is built
 
 **Demand — four binder passes in `src/build/build_activity_chains.py`, each naming the driver.**
 
 - Escort: an HX tour binds to the household member it escorts, at that person's own school and own hour (§9.46); an unbound HX tour is re-targeted to a passenger in a driverless household within `B.activity.escort_binding_nonhh_scope` = `same_zone`, with the serving leg re-timed to the passenger's departure (§9.60).
+- **All four passes test the same driver identity: a licence AND a household vehicle** (§9.144, #142). The escort and lift passes tested the licence alone until 6 Sep, so 6,165 WEEKDAY escort bindings (5,426 drivers) and 3,154 lift bindings (2,697 drivers) declared a driver with no car. The HX TOUR is not gated by it: a car-less escorter still escorts at the observed rate, on foot or by pt, and declares no car passenger — 9,555 WEEKDAY HX tours are now drawn unbound for that reason (`_activity_chains_report.json`).
 - Joint tour: a household companion's HS/HO tour becomes a mirror of a licensed co-member's drive, `party_size` 2, the driver tour shifted into the vacated slot where needed (§9.84); companions whose household holds no other eligible driver are excluded before thinning, so binding is supply-limited (`p_thin` 1.0000 on WEEKDAY) rather than thinned (§9.116).
 - Shared ride (`bind_shared_rides`): a car-less core person's direct non-escort tour binds, both directions, to a licensed car-available driver in another household making the same SA2-to-SA2 trip within `B.ride.pairing_window_min`; nearest departure wins (§9.124). `B.ride.shared_lift_scope` = `same_sa2_od` (swept `same_sa1_od`, `none`) (§9.124).
 - A shared pair must share a sampling-hash bucket of `B.ride.shared_lift_hash_bucket` = 0.05, so any nested sample at a multiple of that width keeps both members (§9.129); this supersedes the at-or-below rule of §9.127, which kept pairs together but biased the sample's composition.
@@ -30,6 +31,8 @@
 ## What is measured
 
 Every arm below was stopped at or before its gate; levels are readings, not results.
+
+- **A declared driver now owns a car, and the ride volume did not fall** (§9.144, #142). On the F26 rebuild the freed volume is re-let by the occupancy identity to drivers who can actually drive: escort bindings 127,073 → **120,971**, lift 47,496 → **44,180**, joint 83,678 → **83,754**, shared 116,760 → **126,402**, so WEEKDAY bindings total 375,007 → **375,307** and the seeded ride share 0.0444 → **0.0448** (`_activity_chains_report.json`, `_plans_report.json`). **Non-car legs on a trip the same person is declared to drive: 85,993 → 0**, counted over all 710,813 `boundDriveTrips` entries in `population_WEEKDAY.xml.gz`; `serve_tours_carless` is 0 on all three day types and is reported every build so the class cannot return unseen.
 
 - **THE DEMAND WAS NOT THE CAUSE — F25 falsifies it** (§9.143, #86). The F25 arm `aborted_20260905T125612_300it_25pct`, stopped by its own watcher at the iteration-100 gate: **ride −43.1 %**, against F24's −42.5 % at milestone 90. Three repairs made 60,273 partially bound trips seedable, freed 33,832 escort-day trips and removed 17,740 impossible bookings, raising the SEEDED ride share 0.0338 → 0.0444, and the REALISED share did not move. Being in plan memory is necessary and **not sufficient**: the ceiling is downstream of the choice set, and the whole demand-side class of explanation is closed. This was named in the run overlay before the arm as the outcome to look for, so it is a pre-registered answer.
 - **Where it is lost instead: pairing at execution, and selection.** From the arm's own `ride_pairing.csv`: selected ride legs rose 25,362 (it 0) → 74,115 (it 50) → **77,214 (it 100)**, so the repairs did put the alternative in front of co-evolution; but the pair rate FELL 0.9817 → 0.8256 → **0.7827**, so **21.7 % of selected ride legs never pair** and execute as a drive or walk, which the trips table then counts as car or walk. The dominant miss is the TIME window and it grows monotonically — `miss_window` 1 → 5,339 → **7,921** — while `miss_endpoints` (5,237) and `miss_capacity` (2,012) stay smaller; the median gap closes 301.8 → 73.4 → **50.0 min**. `occupancy_from_pairings` reads **0.1642** against the measured 0.3503. Indicatively, and crossing two bases so it is an indication only: if every selected leg paired, ride would sit near 15 % rather than 11.7 %, so execution accounts for roughly 3 pp of the 8.9 pp gap and the remaining ~6 pp is ride not being SELECTED — a scoring question, and the next lane.
@@ -74,6 +77,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.144 — a declared driver owns a car, in all four passes
 - §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
 - §9.142 — the binders reach target; the loss is in plan memory
 - §9.140 — #91 closed; ride survives memory

@@ -1,25 +1,26 @@
 # Brief for the next agent
 
-**Written:** 5 September 2026, twenty-eighth session · **Open family:** `F25-ride-reaches-plan-memory` · **Commit:** `23f195d` on `praneetdhoolia/stopped-runs-carry-their-record`
+**Written:** 6 September 2026, twenty-ninth session · **Open family:** `F26-a-driver-owns-a-car` · **Commit:** `4a84f40` on `praneetdhoolia/escort-driver-needs-a-car`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-Two arms ran and both were read. **F25 falsified the demand cause for ride**:
-three repairs put 60,273 + 33,832 more bound trips into plan memory and removed
-17,740 impossible bookings, the seeded ride share rose 31 %, and the realised
-share did not move. The ride ceiling is downstream of the choice set. Also
-built: a run that ends at a defined boundary now closes itself out, so a gate
-stop is citable instead of an orphan.
+No arm ran. **#142 is fixed and closed, so nothing blocks a launch**: the escort
+binder and the §9.60 lift pass chose a ride driver on a LICENCE alone, where the
+joint and shared passes also require a household vehicle. 9,319 WEEKDAY bindings
+named a driver with no car, and the seed then walked, bussed or taxied **85,993
+legs the same person was declared to drive — now 0** (§9.144). The demand was
+rebuilt on it, so **family F26 is open and no arm has run in it**. The ride lane
+§9.143 opened is untouched and still owes the user a decision.
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **Machine idle; no arm runs.** The last is `aborted_20260905T125612_300it_25pct`, F25's gate arm, stopped by the watcher at iteration 100. | `python src/run/session_gate.py --digest` (MACHINE line) |
-| **The package on disk is the F25 build** (§9.143): chains, plans and the 30 run-input sets rebuilt 5 Sep. `check_package.py` ALL CHECKS PASSED at handoff. | `python tests/check_package.py` (~10 min) |
+| **Machine idle; no arm runs.** The newest reading is still F25's, at the watcher's iteration-100 gate. | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **The package on disk is the F26 build** (§9.144): chains, plans and the 30 run-input sets rebuilt 6 Sep. `check_package.py` ALL CHECKS PASSED at handoff; manifest 512 files. | `python tests/check_package.py` (~10 min) |
 | **This session's PR** — check whether it merged and whether the branch is gone. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
-| **#142 BLOCKS THE NEXT LAUNCH** and is meant to: it is fixable without a run, so requirement 10 refuses an arm until it is done. Every other open issue is `awaiting-run`. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| Registry 466 fields, 30 run-input sets, `F25-ride-reaches-plan-memory` newest in the ledger. | `python src/analyse/build_status_board.py --check` |
+| **Nothing blocks a launch.** #142 is closed; all 14 remaining open issues carry `awaiting-run`. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| Registry 466 fields, 30 run-input sets, `F26-a-driver-owns-a-car` newest in the ledger. | `python src/analyse/build_status_board.py --check` |
 | **No run approval stands.** Every approval to date is SPENT. **25 % runs only.** | assume none; ask |
 
 Then the gate: `python src/run/session_gate.py` — the machine is idle, so it
@@ -27,78 +28,78 @@ runs the toolchain compile too. Every line should be green.
 
 ## §1 The lane
 
-**First, #142 — it blocks every launch and needs no run.** An escort binding is
-created for **5,426 licence holders whose household owns no vehicle** (4.9 % of
-escort drivers); the joint and shared passes bind none, because they test
-`cav` and the escort pass tests only a licence. Those escorts are real travel
-but not car-passenger travel, so they should not generate a `ride` binding at
-all — which also explains the 85,993 non-car legs seeded onto serving trips and
-part of the mirror class of 4,460. The repair is in the escort pass in
-`src/build/build_activity_chains.py`; it changes the demand, so it opens a
-family boundary and needs a rebuild. Settle the `car_available` vs
-`household_vehicles > 0` question for all four passes while there.
-
-**Then: ride is lost downstream of the choice set. Find out which half.** F25 settles
-that it is not the demand and not plan memory. The arm's own
-`output/ride_pairing.csv` splits what remains:
+**Ride is lost downstream of the choice set, and the decision between its two
+halves is still owed to the user.** F25 falsified the demand cause (§9.143): the
+seeded ride share rose 31 % and the realised share did not move. F26 changed who
+may be a driver but not that finding — it removed 9,319 bindings that could
+never have become a ride and re-let the volume to drivers who can drive, so the
+binder volume is essentially unchanged (375,007 → 375,307 WEEKDAY rows, seeded
+ride share 0.0444 → 0.0448). What splits the remaining gap is unchanged from
+last session, measured on `aborted_20260905T125612_300it_25pct`:
 
 1. **Execution.** The pair rate fell **0.9817 → 0.8256 → 0.7827** across
-   iterations 0 / 50 / 100, so at the gate **21.7 % of selected ride legs never
-   pair** and execute as a drive or a walk, which the trips table counts as car
-   or walk. The dominant miss is the TIME window and it grows monotonically —
+   iterations 0 / 50 / 100, so **21.7 % of selected ride legs never pair** and
+   execute as a drive or a walk, which the trips table counts as car or walk.
+   The dominant miss is the TIME window and it grows monotonically —
    `miss_window` **1 → 5,339 → 7,921** — while `miss_endpoints` (5,237) and
    `miss_capacity` (2,012) stay smaller. `occupancy_from_pairings` reads
    **0.1642** against a measured 0.3503.
 2. **Selection.** Selected ride legs rose 25,362 → 77,214, so the alternative IS
-   being offered and mostly not chosen. Indicatively — crossing two bases, so an
+   offered and mostly not chosen. Indicatively — crossing two bases, so an
    indication only — ~3 pp of the 8.9 pp gap is execution and ~6 pp is
    selection, which is a scoring question.
 
 **The root cause under both is that MATSim has no joint replanning**:
-`TimeAllocationMutator` moves the two members of a declared pair independently
-at `RUN.replanning.time_mutation_range_s` = 1800 s, which is why the gap opens
-and why `B.ride.bound_pairing_window_min` was derived as 2× it. Widening a
-window treats the symptom; `EscortCoherenceListener` already re-proposes the
-coherent state at 0.4. **This is the decision the next session owes the user.**
+`TimeAllocationMutator` moves the two members of a declared pair independently at
+`RUN.replanning.time_mutation_range_s` = 1800 s, which is why the gap opens and
+why `B.ride.bound_pairing_window_min` was derived as 2× it. Widening a window
+treats the symptom; `EscortCoherenceListener` already re-proposes the coherent
+state at 0.4. **This is the decision the next session owes the user.**
 
-**Decisions the user must take** (the board's *Next*): the pick between
-execution and selection; whether §9.98's window refusal is superseded by the new
-gap median; whether a car-less server may serve; whether a fifth binder pass is
+One measurement is now available that was not before: **F26's own
+`ride_pairing.csv` at its first gate** tells you whether removing car-less
+drivers moved `miss_no_candidate` (1,608 at the F25 gate) — the only part of the
+pairing loss #142 could have touched. It costs nothing extra; it is a column of
+the arm you were going to run anyway.
+
+**Decisions the user must take** (the board's *Next*): the pick between execution
+and selection; whether §9.98's window refusal is superseded by the new gap
+median (344 min when refused, 50.0 min now); whether a fifth binder pass is
 needed now the reachable volume is ~18.7 % rather than 20.13 %; a stated-cost
 approval for any arm (~26–27 h at 25 % × 300, MEASURED); the Task Scheduler log
 (#66); the S2 tram signal priority.
 
 ## §2 Traps — newest first, at most ten
 
-1. **A milestone is readable only when its experienced plans decompress to the
-   END** (§9.143). Three weaker signals were tried this session and every one
-   means STARTED: the progress digest's iteration counter, the `it.N`
-   directory, and the file's existence. Cost: the F24 gate reading, taken at
-   milestone 90 because the arm was stopped mid-iteration-100. The runner's own
-   watcher already had this right — it retries the reporter until it succeeds.
-2. **`reached_iteration` is the last ENDED iteration**, from the log's markers,
-   never the digest's in-flight figure — a record that says otherwise sends a
-   reader to a milestone holding nothing.
-3. **`completion`, not the record's presence, is the result gate** (§9.143).
+1. **Count only what would otherwise have happened** (§9.144). A refusal counter
+   added this session first read 51,436 where the honest figure was 9,555: it
+   counted the Poisson HX draw of unlicensed persons, whose tours the builder
+   discards anyway. It was caught only because `hx_tours_requested` fell by
+   9,555 and the two figures would not reconcile. Reconcile every new counter
+   against a total that already exists.
+2. **`boundDriveTrips` and `boundRideTrips` are 1-BASED** (§9.144). A 0-based
+   reading of them reports 386,217 violations where there are none, and the
+   modes it invents look plausible.
+3. **A milestone is readable only when its experienced plans decompress to the
+   END** (§9.143). Three weaker signals all mean STARTED: the progress digest's
+   iteration counter, the `it.N` directory, and the file's existence.
+4. **`reached_iteration` is the last ENDED iteration**, from the log's markers,
+   never the digest's in-flight figure.
+5. **`completion`, not the record's presence, is the result gate** (§9.143).
    Only `ran_to_last_iteration` is a result, satisfies resume or anchors a
-   calibrated base. A record written before the field reads as that value.
-4. **Never write a registry field or a document through an unquoted shell
-   heredoc.** Backticked mode names are executed and silently deleted; it
-   happened this session and was caught only by reading the field back. Write
-   the script to the scratchpad and run the file.
-5. **Do not regex-edit the build layer in bulk.** A `, 'w')` substitution broke
-   21 scripts this session. Compile each file before writing it.
-6. **A build writer must pin `newline='\\n'`** (§9.143). Windows text mode makes
-   the same script emit different bytes, and the manifest then disagrees with
-   the blob git commits — invisible locally, fatal in CI. Verify against
+   calibrated base.
+6. **Never write a registry field or a document through an unquoted shell
+   heredoc**; and the Bash tool will break on a long quoted one. Write the
+   script to the scratchpad with the file tool and run the file.
+7. **Do not regex-edit the build layer in bulk.** A `, 'w')` substitution broke
+   21 scripts. Compile each file before writing it.
+8. **A build writer must pin `newline='\n'`** (§9.143). Verify against
    `git show HEAD:<path>`, not the working tree.
-7. **The chains build takes about an hour** and never pipe its output through a
-   buffering filter.
-8. **Reading pairing or ride share off a 1 % smoke is refused** (§9.128,
-   §9.129): the flow-capacity artefact and broken pairs.
-9. **The taxi level is not comparable across #113** (§9.141), and no level is
-   comparable across a family boundary.
-10. **Read `cause`, never `cause_detail`,** for why a run died.
+9. **The chains build takes about an hour** (three day types), the plans build
+   about twenty minutes, and neither should be piped through a buffering filter.
+10. **No level is comparable across a family boundary** — and F26 is one, on the
+    demand. The board's scoreboard is F25's reading; do not difference an F26
+    number against it.
 
 ## §3 Standing directives and approvals
 
@@ -106,7 +107,7 @@ approval for any arm (~26–27 h at 25 % × 300, MEASURED); the Task Scheduler l
   is **SPENT**; none stands. **A gate is a cost boundary** (§9.136).
 - **25 % runs only** (user directive, 1 Sep).
 - **No open issue behind a run** (user directive, 3 Sep; GOAL.md requirement
-  10) — enforced by `src/run/issue_gate.py`.
+  10) — enforced by `src/run/issue_gate.py`, and currently GREEN.
 - **"Proceed" on a verified plan authorises the lane and its PR, never an arm**
   (user directive, 3 Sep).
 - **The goal directive lives in [`GOAL.md`](GOAL.md)**: twelve modes physical,

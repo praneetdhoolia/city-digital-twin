@@ -1249,7 +1249,8 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
     """
     out = dict(enabled=ESCORT_NONHH_SCOPE != 'household_only',
                scope=ESCORT_NONHH_SCOPE, drivers_unbound=0,
-               passenger_candidates=0, bound=0, skipped_infeasible=0)
+               passenger_candidates=0, bound=0, skipped_infeasible=0,
+               drivers_refused_no_vehicle=0)
     if not out['enabled'] or not ESCORT_BINDING:
         return out
     with open(path, encoding='utf-8') as fh:
@@ -1276,8 +1277,19 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
                 continue
             if (r['tour_purpose'] == 'HX'
                     and r['dest_placement'] in ('poi', 'jitter')
-                    and ctx['licence']):
+                    and ctx['licence'] and ctx['cav']):
+                # A lift is a car trip, so the driver's household must own a
+                # vehicle - the same identity the joint and shared passes
+                # test. Testing the licence alone bound 3,154 WEEKDAY lifts
+                # (2,697 drivers) whose household holds no car, and the
+                # passenger was in ANOTHER household 100% of the time, so
+                # nothing downstream could catch it (DECISIONS.md 9.144,
+                # issue #142).
                 drivers.append((ctx['sa1'], person_id, r['tour_id']))
+            elif (r['tour_purpose'] == 'HX'
+                    and r['dest_placement'] in ('poi', 'jitter')
+                    and ctx['licence']):
+                out['drivers_refused_no_vehicle'] += 1
             elif (r['tour_purpose'] != 'HX' and not ctx['has_other_driver']):
                 pri = (0 if not ctx['licence'] and r['tour_purpose'] == 'HE'
                        else 1 if not ctx['licence']
@@ -2952,7 +2964,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
         dropped = [0, 0]   # [over-horizon, midnight-collision (issue #37)]
         by_purpose = collections.Counter()
         tours_hist = collections.Counter()
-        esc = dict(requested=0, bound=0, unbound=0,
+        esc = dict(requested=0, bound=0, unbound=0, refused_no_vehicle=0,
                    by_priority=collections.Counter(),
                    bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0,
                    pickups_unserved=0)
@@ -2985,7 +2997,29 @@ def main(seed=SEED, max_persons=None, day_types=None):
                               licence=bool(lic[i]))
                 pre = {p: int(counts[p][i]) for p in ('HS', 'HO', 'WB', 'HX')}
                 fixed = ()
-                may_escort = person['licence'] or not ESCORT_REQUIRES_LICENCE
+                # An escort BINDING declares a car trip - the escorter drives
+                # the member, and the member is seeded as that car's
+                # passenger. A licence is not enough: the household must own a
+                # vehicle, the identity the joint, lift and shared passes
+                # already test. Measured on the F25 build (DECISIONS.md 9.144,
+                # issue #142): all 6,165 WEEKDAY bindings this refuses had the
+                # passenger in the SAME vehicle-less household, where the
+                # `ride_avail` identity denies `ride` anyway - so the binding
+                # could never be realised as a ride and served only to put a
+                # walker on a trip the seed declares them to drive.
+                # The HX TOUR is untouched (see build_day, where
+                # ESCORT_REQUIRES_LICENCE governs): a car-less escorter still
+                # escorts, on foot or by pt, at the observed rate, and
+                # generates no ride demand.
+                may_draw_hx = person['licence'] or not ESCORT_REQUIRES_LICENCE
+                may_escort = may_draw_hx and person['cav']
+                if pre['HX'] > 0 and ESCORT_BINDING and may_draw_hx \
+                        and not may_escort:
+                    # count only tours that would OTHERWISE HAVE BEEN MADE: an
+                    # unlicensed person's Poisson HX draw is discarded in
+                    # build_day, so counting it here would overstate the class
+                    # 5x (51,436 against the true 9,555)
+                    esc['refused_no_vehicle'] += pre['HX']
                 if pre['HX'] > 0 and ESCORT_BINDING and may_escort:
                     esc['requested'] += pre['HX']
                     fixed = bind_escort_tours(pre['HX'], candidates, claimed,
@@ -3116,6 +3150,10 @@ def main(seed=SEED, max_persons=None, day_types=None):
                 hx_tours_requested=esc['requested'],
                 hx_tours_bound=esc['bound'],
                 hx_tours_unbound_no_candidate=esc['unbound'],
+                # 9.144: HX tours whose escorter's household owns no vehicle.
+                # They stay UNBOUND and are drawn from the distribution - real
+                # escort travel that declares no car passenger.
+                hx_tours_refused_no_vehicle=esc['refused_no_vehicle'],
                 bound_by_priority={str(k): v for k, v
                                    in sorted(esc['by_priority'].items())},
                 anchors_placed_bound=esc['bound_n'],
