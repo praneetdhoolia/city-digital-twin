@@ -650,6 +650,12 @@ def write_day(day, attrs, rng, report, seed_table=None):
     act_counts = collections.Counter()
     tours = 0
     escort_ride_denied = [0]
+    # 9.144 (#142): serve tours landing on a person whose household owns no
+    # vehicle. The four binder passes all test car availability on the driver
+    # side now, so this class is EMPTY by construction; it is counted, not
+    # tolerated - a non-zero figure here means a binding escaped that identity
+    # again and the seed is about to put a walker on a declared drive trip.
+    serve_tours_carless = [0]
     # 9.84: ride legs seeded through escort/lift/joint COVERAGE, split out so
     # the package check can hold the uniform draw to its 9.11 invariant while
     # the coverage-seeded component legitimately raises ride above it.
@@ -791,6 +797,8 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # 9.124: a driver carrying a shared-ride passenger serves too
                 serve_tours |= shared_driver.get(pid, EMPTY_SET)
                 covered_tours = covered_by_pid.get(pid, EMPTY_SET)
+                if serve_tours and not car_av:
+                    serve_tours_carless[0] += len(serve_tours)
             tour_mode = {}
             for r in rows:
                 tid = int(r['tour_id'])
@@ -1190,6 +1198,10 @@ def write_day(day, attrs, rng, report, seed_table=None):
     report[day] = dict(persons=n_persons, legs=n_legs, activities=n_acts,
                        tours=tours, bytes=os.path.getsize(dst),
                        escort_ride_denied=escort_ride_denied[0],
+                       # 9.144 (#142): must be 0 - a serve tour on a person
+                       # with no household vehicle is a binding that escaped
+                       # the driver-side car-availability identity
+                       serve_tours_carless=serve_tours_carless[0],
                        # 9.120: legs counted over EVERY seeded plan; the
                        # selected plan's own count is what a 1-plan build
                        # used to report as `legs`
