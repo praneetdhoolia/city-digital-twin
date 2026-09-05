@@ -392,7 +392,7 @@ def build():
                    d: round(DWELL_DEFAULTS['dwell_charging_s'] * n_int /
                             sum(r['scheduled_runtime_s'] for r in seg_rows
                                 if r['direction_id'] == d) * 100, 1) for d in per_dir})
-    json.dump(rep, open(os.path.join(OUT, '_corridor_report.json'), 'w'), indent=2)
+    json.dump(rep, open(os.path.join(OUT, '_corridor_report.json'), 'w', newline='\n'), indent=2)
     print(json.dumps(rep, indent=2))
 
 

@@ -249,7 +249,7 @@ scenarios/S3.json,processed,1340,,cities/newcastle/build/build_scenario_configs.
 scenarios/S4.json,processed,1351,,cities/newcastle/build/build_scenario_configs.py,,,CC-BY 4.0,,1743c796dbcb51cab005910b11c58543fa6f360a9bf2f8426cbfb47bf4aea4fe
 scenarios/S5.json,processed,1343,,cities/newcastle/build/build_scenario_configs.py,,,CC-BY 4.0,,a9ace48e84b7da4dba47d7139208335b10c330f22c5fa97007ca670228cff012
 scenarios/S6.json,processed,1293,,cities/newcastle/build/build_scenario_configs.py,,,CC-BY 4.0,,757ec3bb7a9e434d791b3ea3dcbbb7b8cdbd3a5483f182916b0c0324e714b4a4
-scenarios/matsim/_run_inputs_report.json,processed,48807,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,7afa297ca33fd276c84d8026e1f2b90e9920469c7ac1f9dbb8185d6ca1513931
+scenarios/matsim/_run_inputs_report.json,processed,46921,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,d8e2d5710427c36226d794e9316a7fea1552507c2b3f23c7bcfbd8e7091fcd47
 scenarios/matsim/S0/network.xml.gz,processed,7584393,,src/build/build_matsim_run_inputs.py,,,ODbL 1.0,,da8a52025f1d5af7d5b44e0a7eb81392f9420d62449214e2dd222d058115d02f
 scenarios/matsim/S0/parking_prices.tsv,processed,414662,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,13121a7f2aa188b3c2a0fffe778aceed5a57a07090874aa9dc8d62a376d99d99
 scenarios/matsim/S0/SAT/config.xml,processed,17373,,src/build/build_matsim_run_inputs.py,,,CC-BY 4.0,,c0974e57647b24760844763fa7011d0d07a8fc8416d9df381f80bc34fab36d41

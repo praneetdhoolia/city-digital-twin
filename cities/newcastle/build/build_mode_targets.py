@@ -643,7 +643,7 @@ def main():
                                    stations={k: round(v, 2) for k, v in
                                              sorted(rail_stations.items())},
                                    excluded=sorted(rail_excluded))),
-              open(os.path.join(OUT, 'pt_boardings_targets.json'), 'w'),
+              open(os.path.join(OUT, 'pt_boardings_targets.json'), 'w', newline='\n'),
               indent=2)
 
     # Ferry: no Newcastle ferry patronage is published in any acquired
@@ -780,7 +780,7 @@ def main():
         person_trip_target_sum=round(float(
             d[d.denominator == 'resident person trips']['target_pct']
             .fillna(0).sum()), 4))
-    json.dump(rep, open(os.path.join(OUT, '_mode_targets_report.json'), 'w'),
+    json.dump(rep, open(os.path.join(OUT, '_mode_targets_report.json'), 'w', newline='\n'),
               indent=2)
 
     print('wrote %s' % dst)

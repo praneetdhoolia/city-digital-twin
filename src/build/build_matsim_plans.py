@@ -1439,7 +1439,7 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
                      'reach rather than one it is handed (DECISIONS.md 9.6). '
                      'Run with --seed-mode informed to reproduce the P3 seed.',
                 by_day=report)
-    json.dump(meta, open(os.path.join(OUT, '_plans_report.json'), 'w'), indent=2)
+    json.dump(meta, open(os.path.join(OUT, '_plans_report.json'), 'w', newline='\n'), indent=2)
 
 
 if __name__ == '__main__':

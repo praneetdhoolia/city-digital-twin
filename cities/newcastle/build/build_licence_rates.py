@@ -217,7 +217,7 @@ def main():
                    denominator='ABS ERP by age and LGA, 30 June 2024, split to single years by census G04',
                    suppressed_cells_taken_at_3=suppressed, lgas=lgas,
                    age_bands=['%d-%d' % b for b in bands], rate_by_age_band=vector),
-              open(os.path.join(OBS, 'licence_rate_by_age_band.json'), 'w'), indent=2)
+              open(os.path.join(OBS, 'licence_rate_by_age_band.json'), 'w', newline='\n'), indent=2)
     print('snapshot %s; %d LGA(s); %d suppressed cell(s) at 3' % (month, len(lgas), suppressed))
     print('pooled rate by band:', ', '.join('%d-%d %.3f' % (b[0], b[1], v) for b, v in zip(bands, vector)))
     for lga in lgas:

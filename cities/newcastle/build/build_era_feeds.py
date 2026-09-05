@@ -127,5 +127,5 @@ for era,cfg in ERAS.items():
     meta['output']=outp; meta['totals']={'routes':len(M['routes']),'stops':len(M['stops']),'trips':len(M['trips']),'stop_times':len(M['stop_times'])}
     summary[era]=meta
     print(f'==> {outp}: {meta["totals"]}\n',flush=True)
-json.dump(summary,open(os.path.join(OUT,'era_build_summary.json'),'w'),indent=2)
+json.dump(summary,open(os.path.join(OUT,'era_build_summary.json'),'w',newline='\n'),indent=2)
 print('wrote',os.path.join(OUT,'era_build_summary.json'))

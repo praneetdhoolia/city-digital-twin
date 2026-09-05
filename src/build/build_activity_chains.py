@@ -3137,7 +3137,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
     week_rate = sum(DAYS_PER_WEEK[d] * stats['by_day'][d]['legs_per_person']
                     for d in day_types) / wk
     stats['realised_week_trip_rate'] = round(week_rate, 3)
-    json.dump(stats, open(os.path.join(OUT, '_activity_chains_report.json'), 'w'),
+    json.dump(stats, open(os.path.join(OUT, '_activity_chains_report.json'), 'w', newline='\n'),
               indent=2)
     print('week average %.3f trips/person/day against the HTS %.3f'
           % (week_rate, HTS_RATE_PER_PERSON_DAY), flush=True)
