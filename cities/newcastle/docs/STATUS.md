@@ -105,7 +105,12 @@ projection from a 1 % probe was 25 % optimistic. No arm runs.
 
 ## Next
 
-1. **Ride is lost downstream of the choice set — the next lane is pairing and
+1. **#142 blocks every launch, and needs no run** (§9.143): the escort pass binds
+   **5,426 licence holders whose household owns no vehicle** (4.9 % of escort
+   drivers) as ride drivers, where the joint and shared passes bind none because
+   they test car availability. Real travel, but not car-passenger travel. It
+   changes the demand, so it opens a family boundary.
+2. **Ride is lost downstream of the choice set — the next lane is pairing and
    selection** (§9.143, #86). F25 settles that the demand is not the cause: the
    seeded ride share rose 31 % and the realised share did not move. The arm's
    own `ride_pairing.csv` puts **21.7 %** of selected ride legs on a pairing
@@ -113,13 +118,13 @@ projection from a 1 % probe was 25 % optimistic. No arm runs.
    (`miss_window` 1 → 5,339 → 7,921 across iterations 0/50/100) while the median
    gap closes 301.8 → 50.0 min. Indicatively ~3 pp of the 8.9 pp gap is
    execution and ~6 pp is ride never being selected, which is scoring.
-2. **§9.98's refusal to widen the pairing window has new evidence against it**
+3. **§9.98's refusal to widen the pairing window has new evidence against it**
    (§9.143). It was refused because residual gaps had a median of 344 min and
    were "different trips"; the median gap is now 50 min. Requirement 2 allows a
    recorded decision to be superseded on evidence — but the cause is MATSim
    having no joint replanning, so widening a window may treat the symptom. A
    decision, and it needs an arm to test.
-3. **Convergence is still unmeasured** (requirement 8). F25 was approved for its
+4. **Convergence is still unmeasured** (requirement 8). F25 was approved for its
    full horizon to measure it, and the gate and the horizon collided at
    iteration 100; the loop won, by the user's decision. It waits for an arm with
    a chance of being inside the bars.

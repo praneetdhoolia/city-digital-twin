@@ -1,118 +1,118 @@
 # Brief for the next agent
 
-**Written:** 4 September 2026, twenty-eighth session · **Open family:** `F25-ride-reaches-plan-memory` (declared at its first launch, §9.143) · **Commit:** on `praneetdhoolia/stopped-runs-carry-their-record`
+**Written:** 5 September 2026, twenty-eighth session · **Open family:** `F25-ride-reaches-plan-memory` · **Commit:** `23f195d` on `praneetdhoolia/stopped-runs-carry-their-record`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-The twenty-eighth session made a stopped run close itself out and launched
-the first F24 arm. **An arm is RUNNING** - `20260904T181203_300it_25pct`,
-under an approval stated and given TO THE ITERATION-100 GATE ONLY. No target
-value changed and the 67/143 split is untouched.
-
-**A run that ends at a defined boundary now carries its completion materials.**
-The record was written on rc=0 alone, so every arm since F4 - each stopped at
-its gate, which is what the gate is FOR - left an orphan directory. A gate stop
-and an operator stop are now closed out with a record, a summary and extracted
-findings; a CRASH still gets none. The record's required `completion` field is
-the result gate now, not the file's presence: only `ran_to_last_iteration` is a
-result, satisfies resume or anchors a calibrated base, and a stopped arm's
-reading is citable at its `reached_iteration` and nowhere past it.
+Two arms ran and both were read. **F25 falsified the demand cause for ride**:
+three repairs put 60,273 + 33,832 more bound trips into plan memory and removed
+17,740 impossible bookings, the seeded ride share rose 31 %, and the realised
+share did not move. The ride ceiling is downstream of the choice set. Also
+built: a run that ends at a defined boundary now closes itself out, so a gate
+stop is citable instead of an orphan.
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **AN ARM IS RUNNING**: `20260904T181203_300it_25pct`, the first F24 arm, launched 4 Sep 18:12. Approved to its iteration-100 gate ONLY - if the gate watcher has not stopped it on a breach by then, it is stopped with `run.py --stop` and closes out as `stopped_by_operator`. | `python src/run/session_gate.py --digest` (MACHINE line) |
-| **The package on disk is the F24 build** (§9.142): destination choice constrained at both ends, C2 re-measured, chains + plans + the 30 run-input sets rebuilt 4 Sep. | `python tests/check_package.py` (~10 min) |
-| **Every open issue is closed or `awaiting-run`**, so the launcher's requirement-10 refusal is clear. If `issues gated` is red, an issue was opened or a label lost. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| **PR #140 is MERGED** (4 Sep, all nine CI checks green) and carries the whole session; a second docs-only PR closes the handoff out. Check whether that one merged too. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
-| Registry 464 fields, 30 run-input sets, family `F23-behaviour-channels` in the ledger (F24 is declared at launch). | `python src/analyse/build_status_board.py --check` |
-| **No run approval stands.** Every approval to date is SPENT; **25% runs only** (1 Sep directive) governs any launch. | assume none; ask |
+| **Machine idle; no arm runs.** The last is `aborted_20260905T125612_300it_25pct`, F25's gate arm, stopped by the watcher at iteration 100. | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **The package on disk is the F25 build** (§9.143): chains, plans and the 30 run-input sets rebuilt 5 Sep. `check_package.py` ALL CHECKS PASSED at handoff. | `python tests/check_package.py` (~10 min) |
+| **This session's PR** — check whether it merged and whether the branch is gone. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
+| **#142 BLOCKS THE NEXT LAUNCH** and is meant to: it is fixable without a run, so requirement 10 refuses an arm until it is done. Every other open issue is `awaiting-run`. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| Registry 466 fields, 30 run-input sets, `F25-ride-reaches-plan-memory` newest in the ledger. | `python src/analyse/build_status_board.py --check` |
+| **No run approval stands.** Every approval to date is SPENT. **25 % runs only.** | assume none; ask |
 
 Then the gate: `python src/run/session_gate.py` — the machine is idle, so it
 runs the toolchain compile too. Every line should be green.
 
 ## §1 The lane
 
-**Read the running F24 arm at its iteration-100 gate.** `F24` is declared
-(`F24-balanced-destinations`, `decisions_ref` 9.142). The arm is `--run-config
-f24_gate_25pct` (25% × 300 declared, graph rendering off) and is approved only
-as far as iteration 100; it will carry a `_run.json` when it stops, so its
-reading is citable without re-deriving anything from the log.
+**First, #142 — it blocks every launch and needs no run.** An escort binding is
+created for **5,426 licence holders whose household owns no vehicle** (4.9 % of
+escort drivers); the joint and shared passes bind none, because they test
+`cav` and the escort pass tests only a licence. Those escorts are real travel
+but not car-passenger travel, so they should not generate a `ride` binding at
+all — which also explains the 85,993 non-car legs seeded onto serving trips and
+part of the mirror class of 4,460. The repair is in the escort pass in
+`src/build/build_activity_chains.py`; it changes the demand, so it opens a
+family boundary and needs a rebuild. Settle the `car_available` vs
+`household_vehicles > 0` question for all four passes while there.
 
-What the arm answers, in order:
+**Then: ride is lost downstream of the choice set. Find out which half.** F25 settles
+that it is not the demand and not plan memory. The arm's own
+`output/ride_pairing.csv` splits what remains:
 
-1. **The corridor.** Light rail (−66.1 %) and heavy rail (+193.2 %) on a draw
-   that now delivers each zone its own attraction share of arrivals (#30, #98,
-   #84). This is the first test of the §9.142 repair.
-2. **Taxi should read HIGHER** than F23's +76.6 % (#113): a refused taxi trip
-   now keeps taxi in plan memory instead of becoming a walk. A rise is the
-   repair working.
-3. **Walk (−27.2 %) and car (+14.8 %)** once the short-trip mass is drawn
-   against balanced arrivals — does §9.139's seesaw stop overshooting?
-4. **Ride (−40.1 %)**: a flat reading is evidence for the §9.142 class (46,345
-   bound trips never reach plan memory), not for the pairing rule.
-5. The `awaiting-run` measurements: #93, #96, #94, #98, #108, #107, #82, #131.
+1. **Execution.** The pair rate fell **0.9817 → 0.8256 → 0.7827** across
+   iterations 0 / 50 / 100, so at the gate **21.7 % of selected ride legs never
+   pair** and execute as a drive or a walk, which the trips table counts as car
+   or walk. The dominant miss is the TIME window and it grows monotonically —
+   `miss_window` **1 → 5,339 → 7,921** — while `miss_endpoints` (5,237) and
+   `miss_capacity` (2,012) stay smaller. `occupancy_from_pairings` reads
+   **0.1642** against a measured 0.3503.
+2. **Selection.** Selected ride legs rose 25,362 → 77,214, so the alternative IS
+   being offered and mostly not chosen. Indicatively — crossing two bases, so an
+   indication only — ~3 pp of the 8.9 pp gap is execution and ~6 pp is
+   selection, which is a scoring question.
 
-**The iteration is already repaired** (§9.142), so the arm costs ~24 h rather
-than 45–50: the detour pass's router is hoisted (`elapsed_ms` 2,868 → 300 ms an
-iteration at 1 %) and the routing log storm is silenced (17,375 → 0 warnings,
-~164 GiB → ~3 GiB a run). Both are in this session's PR. The pace figure is
-PROJECTED from a 1 % probe; this arm measures the real one.
+**The root cause under both is that MATSim has no joint replanning**:
+`TimeAllocationMutator` moves the two members of a declared pair independently
+at `RUN.replanning.time_mutation_range_s` = 1800 s, which is why the gap opens
+and why `B.ride.bound_pairing_window_min` was derived as 2× it. Widening a
+window treats the symptom; `EscortCoherenceListener` already re-proposes the
+coherent state at 0.4. **This is the decision the next session owes the user.**
 
-**Decisions the user must take** (the board's *Next*): the stated-cost
-approval; the root-cause pick after the gate; the Task Scheduler operational
-log (#66); whether the S2 base grants the tram signal priority
-([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+**Decisions the user must take** (the board's *Next*): the pick between
+execution and selection; whether §9.98's window refusal is superseded by the new
+gap median; whether a car-less server may serve; whether a fifth binder pass is
+needed now the reachable volume is ~18.7 % rather than 20.13 %; a stated-cost
+approval for any arm (~26–27 h at 25 % × 300, MEASURED); the Task Scheduler log
+(#66); the S2 tram signal priority.
 
 ## §2 Traps — newest first, at most ten
 
-1. **`singly_constrained` is the comparison, not the fallback** (§9.142):
-   `B.activity.destination_balancing` reproduces the previous build exactly at
-   that member, which is what makes the balancing measurable. Switching it
-   there and rebuilding is a family boundary like any other.
-2. **The chains build is much slower now** (§9.142): the decay solve runs
-   three passes over the balancing. Budget tens of minutes, and never pipe its
-   output through `tail` — the pipe buffers until exit and you see nothing.
-3. **Do not re-declare `RUN.controler.last_iteration` to 250.** §9.7 measured
-   250 insufficient; requirement 8's 250 is a property to be shown, and a
-   300-iteration arm's post-cutoff window already straddles it (§9.142).
-4. **The taxi level is not comparable to F23's** (#113, §9.141): every earlier
-   reading was taken with refused trips amputated from plan memory.
-5. **`F24` is not in `run_families.json` yet** — declared at the first launch
-   with `decisions_ref` 9.142, in the same change as the launch.
-6. **The next launch trims ~170 GiB on a daemon thread** beside the arm
-   (#132): `results/raw` is over the 500 GB cap, so the disk is busy for the
-   first hours.
-7. **A 25% arm's log is ~51 GiB by its gate** (§9.139) and essentially all of
-   it is one `NetworkRoutingProvider` warning (§9.142): never grep
-   `matsim.log`; the digest and the watcher read it incrementally.
-8. **Read `cause`, never `cause_detail`, for why a run died**
-   ([positions/runs-and-economics](positions/runs-and-economics.md)).
-9. **A named run overlay that is absent now raises** (#124) — a mistyped
-   `--run-config` no longer runs the base under the tag's name.
-10. **Heredocs with mixed quotes and backslashes break the shell**: write the
-    script to the scratchpad and run the file. One explicit `gh` write per
-    issue.
+1. **A milestone is readable only when its experienced plans decompress to the
+   END** (§9.143). Three weaker signals were tried this session and every one
+   means STARTED: the progress digest's iteration counter, the `it.N`
+   directory, and the file's existence. Cost: the F24 gate reading, taken at
+   milestone 90 because the arm was stopped mid-iteration-100. The runner's own
+   watcher already had this right — it retries the reporter until it succeeds.
+2. **`reached_iteration` is the last ENDED iteration**, from the log's markers,
+   never the digest's in-flight figure — a record that says otherwise sends a
+   reader to a milestone holding nothing.
+3. **`completion`, not the record's presence, is the result gate** (§9.143).
+   Only `ran_to_last_iteration` is a result, satisfies resume or anchors a
+   calibrated base. A record written before the field reads as that value.
+4. **Never write a registry field or a document through an unquoted shell
+   heredoc.** Backticked mode names are executed and silently deleted; it
+   happened this session and was caught only by reading the field back. Write
+   the script to the scratchpad and run the file.
+5. **Do not regex-edit the build layer in bulk.** A `, 'w')` substitution broke
+   21 scripts this session. Compile each file before writing it.
+6. **A build writer must pin `newline='\\n'`** (§9.143). Windows text mode makes
+   the same script emit different bytes, and the manifest then disagrees with
+   the blob git commits — invisible locally, fatal in CI. Verify against
+   `git show HEAD:<path>`, not the working tree.
+7. **The chains build takes about an hour** and never pipe its output through a
+   buffering filter.
+8. **Reading pairing or ride share off a 1 % smoke is refused** (§9.128,
+   §9.129): the flow-capacity artefact and broken pairs.
+9. **The taxi level is not comparable across #113** (§9.141), and no level is
+   comparable across a family boundary.
+10. **Read `cause`, never `cause_detail`,** for why a run died.
 
 ## §3 Standing directives and approvals
 
 - **No multi-hour run without a stated-cost approval.** Every approval to date
   is **SPENT**; none stands. **A gate is a cost boundary** (§9.136).
-- **25% runs only** (user directive, 1 Sep) — the 10% pace tables are history.
+- **25 % runs only** (user directive, 1 Sep).
 - **No open issue behind a run** (user directive, 3 Sep; GOAL.md requirement
-  10) — enforced by `src/run/issue_gate.py` in the session gate and `run.py`.
-- **"Proceed" on a verified plan authorises the lane and its PR, never an
-  arm** (user directive, 3 Sep).
-- **Optimise the iteration to the fullest extent** (user directive, 4 Sep):
-  the profile is in §9.142 and the ranked items are named there. A change that
-  moves a result is a family boundary and is recorded as one, never slipped in.
+  10) — enforced by `src/run/issue_gate.py`.
+- **"Proceed" on a verified plan authorises the lane and its PR, never an arm**
+  (user directive, 3 Sep).
 - **The goal directive lives in [`GOAL.md`](GOAL.md)**: twelve modes physical,
-  monitored, scored; <10% each; gate every 100 iterations; stop on >20% or
-  heading there; fix from the root; converge in ≤250; derive, never assume.
-- **A whole-repository assessment is `/project-report`** (user directive,
-  3 Sep): it reads, it changes nothing, it lodges a dated file and files a
-  finding as an issue, never as a fix.
+  monitored, scored; <10 % each; gate every 100 iterations; stop on ≥20 %; fix
+  from the root; converge in ≤250; derive, never assume.
+- **A whole-repository assessment is `/project-report`** (user directive, 3 Sep).
 - **Read the trend, not the level** (§9.108); every mode individually in every
   table; **one arm at a time** (#66); launch detached; never commit to `main`;
   the session's one PR opens at `/handoff`.
