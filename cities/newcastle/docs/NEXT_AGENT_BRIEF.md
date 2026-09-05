@@ -49,12 +49,18 @@ last session, measured on `aborted_20260905T125612_300it_25pct`:
    indication only — ~3 pp of the 8.9 pp gap is execution and ~6 pp is
    selection, which is a scoring question.
 
-**The root cause under both is that MATSim has no joint replanning**:
-`TimeAllocationMutator` moves the two members of a declared pair independently at
-`RUN.replanning.time_mutation_range_s` = 1800 s, which is why the gap opens and
-why `B.ride.bound_pairing_window_min` was derived as 2× it. Widening a window
-treats the symptom; `EscortCoherenceListener` already re-proposes the coherent
-state at 0.4. **This is the decision the next session owes the user.**
+**The window reading above is WRONG, and §9.145 settles it on the code.** A
+declared pair faces no clock test at all (`if (!isDeclared && gap > window)`,
+since §9.120), so it can never be recorded as a window miss: `miss_window` means
+the declared driver was ABSENT and a substitute was found at the wrong hour. The
+four buckets sum exactly to the 16,778 unpaired legs and **14,766 of them (88 %)
+are that one class**. A declared driver leaves `car` only by SELECTING a seeded
+plan that never held it — `GatedSubtourModeChoice` gates proposals, not memories
+— and §9.144 took those from 85,993 to 0. **§9.98's window refusal stands; do not
+widen either window.** `EscortCoherenceListener` is intra-household on both
+passes, leaving 170,582 of 375,307 bindings (45.4 %) uncovered — measured, not
+repaired, because the F26 gate's new `miss_declared_absent` decides whether it
+still matters.
 
 One measurement is now available that was not before: **F26's own
 `ride_pairing.csv` at its first gate** tells you whether removing car-less

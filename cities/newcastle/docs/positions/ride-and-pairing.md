@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 6 September 2026 (twenty-ninth session) · **Record read through:** §9.144 · **Open family:** F26 (opened at the rebuild; no arm has run in it)
+**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.145 · **Open family:** F26 (opened at the rebuild; no arm has run in it)
 
 ## What is built
 
@@ -26,7 +26,8 @@
 - `B.ride.declared_pair_meeting` = `driver_detour`: once a driver's passengers are known, the driver's car leg is re-routed through each passenger's origin link and then each destination link, in departure order, with the run's own router; the detour is written to the driver's plan and paid in the driver's score; `passenger_links` is the swept alternative (§9.128).
 - `JointRideEngine` boards the passenger into the driver's real vehicle (`B.ride.physical_boarding` true), alights them mid-route at their destination link, and holds a booked passenger at their link up to the booking's tolerance (`B.ride.wait_for_driver` true) (§9.53, §9.60, §9.102). `B.ride.max_passengers_per_vehicle` = 4 refused 2 of 73,258 joint bindings (§9.111).
 - An unpaired ride leg executes this iteration as `B.ride.unpaired_fallback` = `licensed_drive_else_walk` (`B.ride.remode_unpaired` true) and the plan keeps `ride` at AfterMobsim — an execution, not a deletion (§9.55, §9.81, §9.105).
-- `EscortCoherenceListener` re-offers a split pair at `B.ride.escort_coherence_rate` = 0.4 and `B.ride.joint_coherence_rate` = 0.4 (sweep 0–0.5; zero recovers escort-only) (§9.84).
+- `EscortCoherenceListener` re-offers a split pair at `B.ride.escort_coherence_rate` = 0.4 and `B.ride.joint_coherence_rate` = 0.4 (sweep 0–0.5; zero recovers escort-only) (§9.84). Both its passes iterate `byHousehold`, so its scope is intra-household (§9.145).
+- `ride_pairing.csv` carries `miss_declared_absent` since §9.145 — unpaired legs naming a declared driver who brought no car leg — counted independently of the four-way funnel and appended last, so no earlier arm's columns shift meaning.
 
 ## What is measured
 
@@ -35,7 +36,11 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - **A declared driver now owns a car, and the ride volume did not fall** (§9.144, #142). On the F26 rebuild the freed volume is re-let by the occupancy identity to drivers who can actually drive: escort bindings 127,073 → **120,971**, lift 47,496 → **44,180**, joint 83,678 → **83,754**, shared 116,760 → **126,402**, so WEEKDAY bindings total 375,007 → **375,307** and the seeded ride share 0.0444 → **0.0448** (`_activity_chains_report.json`, `_plans_report.json`). **Non-car legs on a trip the same person is declared to drive: 85,993 → 0**, counted over all 710,813 `boundDriveTrips` entries in `population_WEEKDAY.xml.gz`; `serve_tours_carless` is 0 on all three day types and is reported every build so the class cannot return unseen.
 
 - **THE DEMAND WAS NOT THE CAUSE — F25 falsifies it** (§9.143, #86). The F25 arm `aborted_20260905T125612_300it_25pct`, stopped by its own watcher at the iteration-100 gate: **ride −43.1 %**, against F24's −42.5 % at milestone 90. Three repairs made 60,273 partially bound trips seedable, freed 33,832 escort-day trips and removed 17,740 impossible bookings, raising the SEEDED ride share 0.0338 → 0.0444, and the REALISED share did not move. Being in plan memory is necessary and **not sufficient**: the ceiling is downstream of the choice set, and the whole demand-side class of explanation is closed. This was named in the run overlay before the arm as the outcome to look for, so it is a pre-registered answer.
-- **Where it is lost instead: pairing at execution, and selection.** From the arm's own `ride_pairing.csv`: selected ride legs rose 25,362 (it 0) → 74,115 (it 50) → **77,214 (it 100)**, so the repairs did put the alternative in front of co-evolution; but the pair rate FELL 0.9817 → 0.8256 → **0.7827**, so **21.7 % of selected ride legs never pair** and execute as a drive or walk, which the trips table then counts as car or walk. The dominant miss is the TIME window and it grows monotonically — `miss_window` 1 → 5,339 → **7,921** — while `miss_endpoints` (5,237) and `miss_capacity` (2,012) stay smaller; the median gap closes 301.8 → 73.4 → **50.0 min**. `occupancy_from_pairings` reads **0.1642** against the measured 0.3503. Indicatively, and crossing two bases so it is an indication only: if every selected leg paired, ride would sit near 15 % rather than 11.7 %, so execution accounts for roughly 3 pp of the 8.9 pp gap and the remaining ~6 pp is ride not being SELECTED — a scoring question, and the next lane.
+- **Where it is lost instead: pairing at execution, and selection.** From the arm's own `ride_pairing.csv`: selected ride legs rose 25,362 (it 0) → 74,115 (it 50) → **77,214 (it 100)**, so the repairs did put the alternative in front of co-evolution; but the pair rate FELL 0.9817 → 0.8256 → **0.7827**, so **21.7 % of selected ride legs never pair** and execute as a drive or walk, which the trips table then counts as car or walk. `occupancy_from_pairings` reads **0.1642** against the measured 0.3503. Indicatively, and crossing two bases so it is an indication only: if every selected leg paired, ride would sit near 15 % rather than 11.7 %, so execution accounts for roughly 3 pp of the 8.9 pp gap and the remaining ~6 pp is ride not being SELECTED — a scoring question.
+
+- **THE MISS IS NOT A WINDOW, AND THE FUNNEL SAYS SO ONLY WHEN READ WITH THE CODE** (§9.145, #86). A declared pair faces NO clock test — `RidePairingEngine`'s candidate loop tests `if (!isDeclared && gap > window)` since §9.120 — so `sawInWindow` is true for any declared candidate and a declared pair **can never be recorded as a window miss**. `miss_window` therefore means the declared driver was ABSENT and a SUBSTITUTE was found at the wrong hour. At the F25 gate the four buckets sum exactly to the unpaired legs (7,921 + 5,237 + 2,012 + 1,608 = 16,778 = 77,214 − 60,436), `ride` is gated to declared trips, and only `miss_capacity` is consistent with the named driver being present: **14,766 of 16,778 misses, 88 %, are the one class — the declared driver had no car leg in their selected plan.** The closing median gap (301.8 → **50.0 min**) describes that substitute driver, never the declared pair.
+- **Why the driver leaves `car`, and why F26 may already have closed it** (§9.145). `GatedSubtourModeChoice` refuses a proposal taking a declared driver off `car`, but *"gates proposals, not memories"*: `ChangeExpBeta` selects among plans already held, ungated. A declared driver can leave `car` only via a seeded plan that never held it — and F25 seeded **85,993 non-car legs on declared drive trips**, which §9.144 took to **0** (`serve_tours_carless` 0 on all three day types, `_plans_report.json`). The dominant loss and the repair already built are the same defect, so the F26 gate measures it rather than a further mechanism being added.
+- **Not covered by any coherence mechanism: 45.4 % of bindings** (§9.145). `EscortCoherenceListener` iterates `byHousehold` on both its passenger-side and its driver-side pass, so lift (§9.60) and shared (§9.124) pairs — **170,582 of 375,307 WEEKDAY bindings** (44,180 + 126,402) — have nothing that re-proposes either half when it drifts. Measured, deliberately not repaired: the F26 gate's `miss_declared_absent` decides whether it matters.
 
 - F22 arm `aborted_20260831T165127_300it_25pct`, the iteration-100 gate: ride 12.10% against 20.60% (−41.3%), plateaued at 12.0–12.5% from iteration 30 — the same ~12% ceiling as F21's 12.08%, unmoved by the fare (§9.136, #86).
 - F22 iteration 0, from the arm's own log (§9.136): 7,092 declared passengers picked up on 6,697 drivers' detours (mean detour 538 s), 0 unroutable, 364 unpaired legs re-moded and restored — 2.5× the F21 10% counts, exactly the fraction's scaling; pairing is healthy at 25%.
@@ -65,7 +70,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 ## Refused — do not re-raise
 
 - Relaxing `B.ride.pairing_rule` to `origin_link`, `dest_link` or `window_only`: pairs passengers with drivers going elsewhere (§9.81, §9.102, §9.109).
-- Widening either pairing window beyond its identity: residual gaps of median 344 min are different trips (§9.98).
+- Widening either pairing window beyond its identity: residual gaps of median 344 min are different trips (§9.98). **REAFFIRMED on the code, not just the gaps** (§9.145): a declared pair faces no clock at all, so no window governs it and `miss_window`'s growth is not evidence about the tolerance. The closing median describes the substitute driver the search fell back on.
 - Solving `asc_car_passenger` to close the ride gap: ASC absorption (§9.8, §9.11).
 - Raising `B.activity.joint_tour_passenger_ratio`: it is derived from measured occupancy (§9.109).
 - Widening `B.activity.escort_binding_nonhh_scope`: at most ~2% more bindings (§9.84).
@@ -77,6 +82,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.145 — the dominant miss is not a window; measure F26 rather than patch
 - §9.144 — a declared driver owns a car, in all four passes
 - §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
 - §9.142 — the binders reach target; the loss is in plan memory

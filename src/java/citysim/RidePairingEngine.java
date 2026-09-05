@@ -190,7 +190,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             // driver hours away who was never going to serve it, and widening
             // the tolerance is only defensible against the first. The buckets
             // are minutes of |driver departure - passenger departure|.
-            + "gap_le30,gap_le45,gap_le60,gap_le120,gap_gt120,gap_median_min\n";
+            + "gap_le30,gap_le45,gap_le60,gap_le120,gap_gt120,gap_median_min,"
+            // 9.145: of the unpaired legs that NAMED a declared driver, how
+            // many brought no car leg to the pairing pass at all. A declared
+            // pair faces no clock test (9.120), so it can never be recorded
+            // as a window miss: whenever the declared driver is present the
+            // leg pairs unless the car is full. `miss_window` therefore does
+            // NOT mean the tolerance was too tight - it means a SUBSTITUTE
+            // driver was found at the wrong hour because the declared one was
+            // absent. This column names that class directly, so the funnel
+            // cannot be read as an argument for widening a window.
+            + "miss_declared_absent\n";
 
     private final Scenario scenario;
     private final OutputDirectoryHierarchy io;
@@ -308,6 +318,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private int missNoCandidate = 0;
     private int missWindow = 0;
     private int missEndpoints = 0;
+    /** 9.145: unpaired legs that named a declared driver who brought no car
+     *  leg to this pass. Orthogonal to the four-way funnel above, which is
+     *  left exactly as it was so no earlier arm's columns shift meaning. */
+    private int missDeclaredAbsent = 0;
     /** Pairings whose driver was the DECLARED partner (9.85), and the
      *  subset of those the inference window alone would have refused -
      *  which is this mechanism's effect, measured rather than argued. */
@@ -491,6 +505,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         missWindow = 0;
         missEndpoints = 0;
         missCapacity = 0;
+        missDeclaredAbsent = 0;
         missGapMinutes.clear();
         pairedDeclared = 0;
         pairedByIdentity = 0;
@@ -656,6 +671,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             int sawCandidate = 0;
             boolean sawInWindow = false;
             boolean sawEndpoints = false;
+            // 9.145: was the driver the demand NAMED among the candidates at
+            // all? Every other gate below is downstream of this one.
+            boolean sawDeclared = false;
             // The nearest driver making a geometrically matching trip, whatever
             // the clock said. This is what decides whether a window miss was a
             // near miss or a driver who was never going to serve it.
@@ -672,6 +690,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // already settled whether this is the same trip, so the
                 // clock only has to cover the drift replanning introduced.
                 final boolean isDeclared = declared.contains(driver.person.toString());
+                if (isDeclared) {
+                    sawDeclared = true;            // 9.145
+                }
                 // 9.120: for the driver the demand NAMED there is no clock
                 // test at all. The two members were generated as ONE trip
                 // and only MATSim's independent time mutation ever moved
@@ -723,6 +744,14 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // from a hopeless one is whether a matching TRIP exists at all.
                 final boolean matchedEver =
                         sawEndpoints || nearestMatchingGap < Double.MAX_VALUE;
+                // 9.145: counted BEFORE the four-way funnel and independently
+                // of it. A leg the demand bound to a named driver, unpaired
+                // because that driver brought no car leg, is one defect
+                // whichever of the four buckets the substitute search lands
+                // it in.
+                if (!declared.isEmpty() && !sawDeclared) {
+                    missDeclaredAbsent++;
+                }
                 if (sawCandidate == 0) {
                     missNoCandidate++;              // no household car leg at all
                 } else if (!matchedEver) {
@@ -1444,6 +1473,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 .append(',').append(missGapMinutes.size() - gapAtMost(120.0))
                 .append(',').append(String.format(java.util.Locale.ROOT, "%.1f",
                                                   gapMedian()))
+                .append(',').append(missDeclaredAbsent)      // 9.145
                 .append('\n');
         try {
             Files.write(Paths.get(io.getOutputFilename(OUT_FILE)),

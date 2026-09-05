@@ -7,16 +7,19 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 6 September 2026 — no arm ran. **#142 is fixed and closed, so
-nothing blocks a launch** (GOAL.md requirement 10): the escort binder and the
-lift pass chose a ride driver on a licence alone, where the joint and shared
-passes also require a household vehicle, so 9,319 WEEKDAY bindings named a
-driver with no car and the seed then walked, bussed or taxied **85,993 legs the
-same person was declared to drive — now 0** (§9.144). The demand was rebuilt on
-it and **family F26 is open**. The freed volume is re-let by the occupancy
-identity to drivers who can drive, so no ride demand is lost. The scoreboard
-below is still F25's iteration-100 reading and may not be differenced against
-anything F26 produces. No mode is inside 10 %. No approval stands.
+**Last updated:** 6 September 2026 — a full history check before the next arm,
+then the arm. **The dominant pairing miss is not a window** (§9.145): a declared
+pair faces no clock test at all since §9.120, so `miss_window` cannot describe
+one — it means the declared driver was ABSENT and a substitute was found at the
+wrong hour. On F25's own table the four buckets sum exactly to the 16,778
+unpaired legs and **14,766 of them (88 %) are that single class**. A declared
+driver can leave `car` only through a seeded plan that never held it, and
+§9.144 took those from **85,993 to 0** the day before. **The dominant loss and
+the repair already built are the same defect, so this session measured rather
+than adding a second mechanism**; §9.98's window refusal STANDS. Instrumentation
+only: `ride_pairing.csv` gains `miss_declared_absent`. Family **F26 is open**;
+the scoreboard below is still F25's iteration-100 reading and may not be
+differenced against anything F26 produces. No mode is inside 10 %.
 
 ## The goal
 
@@ -76,7 +79,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail
 | Input registry | **466 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (5 September 2026 (twenty-eighth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (6 September 2026 (twenty-ninth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (6 September 2026 (twenty-ninth session)) · [runs-and-economics](positions/runs-and-economics.md) (5 September 2026 (twenty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (6 September 2026 (twenty-ninth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (5 September 2026 (twenty-eighth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (6 September 2026 (twenty-ninth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (6 September 2026 (thirtieth session)) · [runs-and-economics](positions/runs-and-economics.md) (5 September 2026 (twenty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (6 September 2026 (twenty-ninth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
 **Family F26 is open and NO arm has run in it** (§9.144): chains, plans and the
@@ -112,34 +115,35 @@ iteration on the F25 arm, so 300 iterations is ~26–27 h. No arm runs.
    selection** (§9.143, #86). F25 settles that the demand is not the cause: the
    seeded ride share rose 31 % and the realised share did not move. The arm's
    own `ride_pairing.csv` puts **21.7 %** of selected ride legs on a pairing
-   that never happens, the dominant miss being the TIME window and growing
-   (`miss_window` 1 → 5,339 → 7,921 across iterations 0/50/100) while the median
-   gap closes 301.8 → 50.0 min. Indicatively ~3 pp of the 8.9 pp gap is
-   execution and ~6 pp is ride never being selected, which is scoring.
-3. **§9.98's refusal to widen the pairing window has new evidence against it**
-   (§9.143). It was refused because residual gaps had a median of 344 min and
-   were "different trips"; the median gap is now 50 min. Requirement 2 allows a
-   recorded decision to be superseded on evidence — but the cause is MATSim
-   having no joint replanning, so widening a window may treat the symptom. A
-   decision, and it needs an arm to test.
+   that never happens. Indicatively ~3 pp of the 8.9 pp gap is execution and
+   ~6 pp is ride never being selected, which is scoring.
+3. **§9.98's window refusal STANDS — the question is closed on the code**
+   (§9.145). `miss_window` grows because the declared driver is absent, not
+   because 60 minutes is too tight: a declared pair is exempt from the clock,
+   so no window governs it and the closing median gap describes the substitute
+   driver the search fell back on. The route by which a declared driver leaves
+   `car` is plan SELECTION from a seeded non-car plan, and §9.144 removed those
+   (85,993 → 0). The F26 gate's new `miss_declared_absent` column measures
+   whether that closed it.
 4. **Convergence is still unmeasured** (requirement 8). F25 was approved for its
    full horizon to measure it, and the gate and the horizon collided at
    iteration 100; the loop won, by the user's decision. It waits for an arm with
    a chance of being inside the bars.
 
-**Decisions required:** the root-cause pick between pairing execution and
-selection; whether §9.98's window refusal is superseded; whether a
-fifth binder pass is needed now the reachable binding volume is ~18.7 % rather
-than 20.13 %; a stated-cost approval for any next arm (~26–27 h at 25 % × 300,
-measured); enable the Task Scheduler operational log (#66); whether the S2 base
-grants the tram signal priority
-([positions/signals-and-crossings](positions/signals-and-crossings.md)).
+**Decisions required:** whether a fifth binder pass is needed now the reachable
+binding volume is ~18.7 % rather than 20.13 %; whether `EscortCoherenceListener`
+extends to the cross-household passes, which the F26 gate's
+`miss_declared_absent` decides (§9.145); enable the Task Scheduler operational
+log (#66); whether the S2 base grants the tram signal priority
+([positions/signals-and-crossings](positions/signals-and-crossings.md)). Taken
+this session: §9.98's window refusal stands (§9.145); the root-cause pick is
+measurement before mechanism.
 ## Open work
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
 | The first F26 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
-| Ride: the demand cause is falsified (§9.143) and every declared driver now owns a car (§9.144); the loss is pairing execution and selection | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F26 gate's `ride_pairing.csv`: pair rate and `miss_window` against F25's 0.7827 and 7,921 |
+| Ride: the demand cause is falsified (§9.143), every declared driver owns a car (§9.144), and 88 % of the pairing loss is the declared driver absent rather than a tight window (§9.145) | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F26 gate's `ride_pairing.csv`: the new `miss_declared_absent`, and pair rate against F25's 0.7827 |
 | Heavy rail +193 % at the F23 gate; income scaling blunts the fare (§9.139) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | where rail settles once the corridor's CBD end (#30) is repaired |
 | Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F26 gate: the stops are a subset of the CBD and the mode is still chosen |
 | Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F26 gate (§9.140) |
