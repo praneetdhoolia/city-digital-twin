@@ -34,25 +34,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260904T181203_300it_25pct` at **iteration 90** (family `F24-balanced-destinations`, status `aborted`, 25% sample, launched 2026-09-04T18:12:03, experienced plans (derived; validated against the trips table)). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260904T181203_300it_25pct --it 90` (`--trend` for the direction).
+Read from `aborted_20260905T125612_300it_25pct` at **iteration 100** (family `F25-ride-reaches-plan-memory`, status `aborted`, 25% sample, launched 2026-09-05T12:56:12, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260905T125612_300it_25pct --it 100` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 64.4871 | 58.3222 | +10.6% | over 10% | share of resident linked trips |
-| 2 | ride | 11.8458 | 20.6000 | -42.5% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 10.9220 | 13.4000 | -18.5% | over 10% | share of resident linked trips |
-| 4 | taxi | 2.5447 | 0.9916 | +156.6% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.0758 | 2.2084 | +129.8% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3569 | 0.3785 | -5.7% | ok | share of resident linked trips |
-| 7 | bus | 3.2919 | 2.3819 | +38.2% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 23,160 | 6,529 | +254.7% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,300 | 2,954 | -56.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0385 | 0.1429 | -73.0% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6893 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 64.9927 | 58.3222 | +11.4% | over 10% | share of resident linked trips |
+| 2 | ride | 11.7249 | 20.6000 | -43.1% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 10.8527 | 13.4000 | -19.0% | over 10% | share of resident linked trips |
+| 4 | taxi | 2.4306 | 0.9916 | +145.1% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 4.9169 | 2.2084 | +122.6% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3319 | 0.3785 | -12.3% | over 10% | share of resident linked trips |
+| 7 | bus | 3.2777 | 2.3819 | +37.6% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 22,368 | 6,529 | +242.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,288 | 2,954 | -56.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0391 | 0.1429 | -72.6% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6565 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **motorbike**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -92,14 +92,14 @@ constrained at both ends and on circuity re-measured on the current network
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `aborted_20260905T125612_300it_25pct` | aborted | F25-ride-reaches-plan-memory | 101 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260905T115355_2it_1pct` | completed | F24-balanced-destinations | 2 | ran_to_last_iteration `_run.json` |
 | `aborted_20260904T181203_300it_25pct` | aborted | F24-balanced-destinations | 100 | Stopped by the operator during iteration 100, at the approved boundary: the stated-cost approval for this arm was given TO THE ITERATION-... |
 | `20260904T164057_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T164039_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 | `20260904T162807_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
-| `20260904T162301_2it_1pct` | completed | F23-behaviour-channels | 2 | ran_to_last_iteration `_run.json` |
 
-138 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+139 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F24 (read at its gate; the package on disk opens F25 at its first launch)
+**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F25 (read at its iteration-100 gate)
 
 ## What is built
 
@@ -30,6 +30,9 @@
 ## What is measured
 
 Every arm below was stopped at or before its gate; levels are readings, not results.
+
+- **THE DEMAND WAS NOT THE CAUSE — F25 falsifies it** (§9.143, #86). The F25 arm `aborted_20260905T125612_300it_25pct`, stopped by its own watcher at the iteration-100 gate: **ride −43.1 %**, against F24's −42.5 % at milestone 90. Three repairs made 60,273 partially bound trips seedable, freed 33,832 escort-day trips and removed 17,740 impossible bookings, raising the SEEDED ride share 0.0338 → 0.0444, and the REALISED share did not move. Being in plan memory is necessary and **not sufficient**: the ceiling is downstream of the choice set, and the whole demand-side class of explanation is closed. This was named in the run overlay before the arm as the outcome to look for, so it is a pre-registered answer.
+- **Where it is lost instead: pairing at execution, and selection.** From the arm's own `ride_pairing.csv`: selected ride legs rose 25,362 (it 0) → 74,115 (it 50) → **77,214 (it 100)**, so the repairs did put the alternative in front of co-evolution; but the pair rate FELL 0.9817 → 0.8256 → **0.7827**, so **21.7 % of selected ride legs never pair** and execute as a drive or walk, which the trips table then counts as car or walk. The dominant miss is the TIME window and it grows monotonically — `miss_window` 1 → 5,339 → **7,921** — while `miss_endpoints` (5,237) and `miss_capacity` (2,012) stay smaller; the median gap closes 301.8 → 73.4 → **50.0 min**. `occupancy_from_pairings` reads **0.1642** against the measured 0.3503. Indicatively, and crossing two bases so it is an indication only: if every selected leg paired, ride would sit near 15 % rather than 11.7 %, so execution accounts for roughly 3 pp of the 8.9 pp gap and the remaining ~6 pp is ride not being SELECTED — a scoring question, and the next lane.
 
 - F22 arm `aborted_20260831T165127_300it_25pct`, the iteration-100 gate: ride 12.10% against 20.60% (−41.3%), plateaued at 12.0–12.5% from iteration 30 — the same ~12% ceiling as F21's 12.08%, unmoved by the fare (§9.136, #86).
 - F22 iteration 0, from the arm's own log (§9.136): 7,092 declared passengers picked up on 6,697 drivers' detours (mean detour 538 s), 0 unroutable, 364 unpaired legs re-moded and restored — 2.5× the F21 10% counts, exactly the fraction's scaling; pairing is healthy at 25%.
@@ -71,7 +74,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
-- §9.143 — the partially bound tour gets a plan; the escort class measured
+- §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
 - §9.142 — the binders reach target; the loss is in plan memory
 - §9.140 — #91 closed; ride survives memory
 - §9.136 — ceiling decomposed: 19/16/12
