@@ -389,11 +389,11 @@
         "fields": [
           "B.activity.escort_requires_licence"
         ],
-        "identity": "an escort trip is a trip made in order to convey another person, so the traveller is the driver - the same identity that already restricts HX generation to licence holders, taken through to mode choice: a person whose plan carries an escort activity cannot make that day's trips as a car passenger. Applied at the day-plan level (rideAvail=never on the escort day's population file) because MATSim's PermissibleModesCalculator is per-plan, not per-subtour; the collateral - the escorting driver cannot be driven on OTHER tours the same day - is stated, small and plausibly the truth"
+        "identity": "an escort trip is a trip made in order to convey another person, so the traveller is the driver - the same identity that already restricts HX generation to licence holders, taken through to mode choice: a person cannot make an escort trip as a car passenger. WHERE that denial applies is a separate question, and it is B.activity.escort_exclusion_scope. Until 9.143 it was applied at the DAY-PLAN level (rideAvail=never for the whole day) because MATSim's PermissibleModesCalculator is per-plan, not per-subtour, and the collateral - the escorting driver cannot be driven on OTHER tours the same day - was recorded as small and plausibly the truth. It was never counted. Measured in 9.143 it is 33,832 WEEKDAY bound trips across 18,403 persons, 1.44 pct of core trips, two thirds the size of the partially-bound-tour class repaired in the same section. The per-plan constraint that forced the broad scope no longer binds: citysim.GatedSubtourModeChoice gates ride per TRIP against boundRideTrips and refuses a non-car proposal on boundDriveTrips, so an escorting tour is held at car by the runtime whatever the day plan says"
       },
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.46",
+      "decisions_ref": "9.46, 9.143",
       "description": "Whether a person whose day includes an escort (HX) tour is denied `ride` for that day type. Measured motivation: 4,791 escort trips on the relaxed 25% arm were made BY ride - a passenger being driven in order to convey somebody, with no driver bound to either of them. Consumed by build_matsim_plans.py, which forces rideAvail=never for that person-day; the existing AvailabilityModesCalculator then withholds ride with no Java change.",
       "consumers": [
         "src/build/build_matsim_plans.py"
@@ -2157,6 +2157,25 @@
         "src/build/build_matsim_plans.py"
       ],
       "description": "The non-chain mode a full_choice_set seed puts on the UNCOVERED leg of a PARTIALLY BOUND tour, so that the covered leg can be seeded as `ride`. A drop-off binds a tour's first trip and a pick-up its last (9.120), so a one-directional escort or lift leaves the tour partly bound; before 9.143 such a tour was excluded from the ride variant altogether and its bound trips never became a `ride` alternative anywhere in plan memory - 2.09% of core trips measured in 9.142, which no scoring or pairing repair downstream could reach because co-evolution was never offered them. A car-available person needs this base because their bound-ride variant is otherwise car-based, and ride on one leg with car on the other is the mix MATSim refuses; a car-LESS person's variant is already walk-based and needs no new plan. Consumed by build_matsim_plans.py."
+    },
+    "B.activity.escort_exclusion_scope": {
+      "value": "subtour",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "subtour",
+          "day"
+        ],
+        "basis": "WHERE the escort identity denies ride. subtour: only on the tours that actually serve an escort - which citysim.GatedSubtourModeChoice already enforces at runtime by refusing a non-car proposal on boundDriveTrips, and which the seed already enforces by holding a serve tour at car, so the denial is carried by two mechanisms without this field's help. day: the whole day plan, by writing rideAvail=never on the person - the pre-9.143 behaviour, kept as a sweep member so that it RECOVERS THAT BUILD EXACTLY and the difference between the two scopes is measurable rather than asserted. The choice is not about whether an escorter drives their own escort trip: both members agree they do. It is about whether the same person may be carried on an unrelated tour later that day. subtour is the value because nothing in the data says they may not, and the day-wide denial costs 33,832 WEEKDAY bound trips (9.143) that the demand had already bound to a named driver."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.143",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "The scope over which B.activity.escort_excludes_ride applies. subtour denies ride only on the escorting tours themselves and leaves the person's other tours free; day denies it across the whole day plan, which is what the field did before 9.143 and what that sweep member reproduces exactly. Consumed by build_matsim_plans.py."
     }
   }
 }

@@ -224,14 +224,14 @@ python src/calibrate/report.py --run <run dir>
 | | |
 |---|---|
 | Files in the manifest | **512** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
-| Package on disk | 4.07 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
+| Package on disk | 4.08 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
 | Population | 611,915 (2021 Census) → 612,634 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 465 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
+| Input registry | 466 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -285,7 +285,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 465 declared values, with units, provenance, sweeps
+  registry/                  the 466 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

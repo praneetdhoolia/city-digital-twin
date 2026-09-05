@@ -689,13 +689,30 @@ else:
             # set - one plan per usable mode - so a share over all seeded
             # legs is a statement about availability, not a starting point
             # near or far from the target. What must hold is that no mode
-            # was favoured: every person holds 2-6 plans and the first one
-            # executed is drawn uniformly (9.121).
-            check(bool(hist) and all(2 <= int(k) <= 6 for k in hist),
+            # was favoured: every person holds one plan per usable mode plus
+            # the bound-ride variants, and the first one executed is drawn
+            # uniformly (9.121).
+            #
+            # The UPPER bound is not a count of variants - that grows whenever
+            # a new one is justified, as the 9.143 partial-bind plan did - but
+            # the DECLARED plan memory. MATSim removes an UNSCORED plan first
+            # when memory overflows (WorstPlanForRemovalSelector), so a seed
+            # wider than the memory silently drops part of the choice set and
+            # the calibration is again reading the search rather than the
+            # model. Read from the registry so the two cannot drift apart.
+            try:
+                import registry as _reg                       # noqa: PLC0415
+                _cap = int(_reg.load().get('RUN.replanning.max_agent_plan_memory'))
+            except Exception:                                 # noqa: BLE001
+                _cap = None
+            check(bool(hist) and _cap is not None
+                  and all(2 <= int(k) <= _cap for k in hist),
                   '%s: the full-choice-set seed holds one plan per usable '
-                  'mode (%s plans per person), so the calibration is not '
-                  'handed its answer by a starting share'
-                  % (day, '/'.join(sorted(hist))))
+                  'mode plus its bound-ride variants (%s plans per person), '
+                  'every person inside the declared plan memory of %s, so the '
+                  'calibration is not handed its answer by a starting share '
+                  'nor quietly deprived of part of its choice set'
+                  % (day, '/'.join(sorted(hist, key=int)), _cap))
         elif tgt_share:
             car = 100 * seed.get('car', 0)
             check(abs(car - tgt_share['car']) > 20.0,

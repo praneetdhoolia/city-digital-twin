@@ -1640,7 +1640,13 @@ def bind_joint_tours(path, day, pctx, seed):
                 if not eligible_tour(p, tid, ixs):
                     continue
                 anchor = ixs[0]
-                if ctx['licence'] and ctx['cav']:
+                # 9.143: a person already being CARRIED on this tour by an
+                # earlier pass cannot also drive it. `cov_dirs` above records
+                # what the escort and lift passes booked; this pass excluded
+                # those tours from its companion pool but not from its driver
+                # pool, which produced 726 of the 17,740 person-tours booked
+                # both ways.
+                if ctx['licence'] and ctx['cav'] and (p, tid) not in cov_dirs:
                     driver_tours.append((p, tid, anchor))
                 if p not in escorting:
                     comp_tours.append((p, tid, anchor))
@@ -2069,12 +2075,33 @@ def bind_shared_rides(path, day, pctx, seed):
     tours = collections.defaultdict(list)     # person -> [row]
     for r in core:
         tours[r['person_id']].append(r)
+    # 9.143: A PERSON CANNOT DRIVE A TOUR THEY ARE ALREADY BEING CARRIED ON.
+    # The earlier passes' passenger bookings were excluded from this pass's
+    # PASSENGER pool (`covered`, above) but never from its DRIVER pool, so the
+    # same person-tour could be booked both ways. Measured before the fix:
+    # 17,740 person-tours were booked as both, 6.94% of all passenger
+    # bookings - 15,002 of them driving and being driven on the SAME trip, and
+    # the remaining 2,738 driven one way and driving back a car that was left
+    # at home. This pass is the driver in 96% of them, being the last to run
+    # and the only one whose driver index filtered nothing.
+    #
+    # It is not a scoring question: build_matsim_plans tests `serve_tours`
+    # BEFORE `ride_tours`, so every one of those bookings was counted toward
+    # the binder volume and none could ever become a ride leg, and the two
+    # runtime gates contradicted on the trip - GatedSubtourModeChoice allowing
+    # `ride` because it is in boundRideTrips while refusing non-car because it
+    # is also in boundDriveTrips.
+    carried_tours = {(p, t) for p, t, _d in covered}
+    out['driver_trips_refused_already_carried'] = 0
     for person_id, prs in tours.items():
         ctx = pctx.get(person_id)
         if ctx is None or not (ctx['licence'] and ctx['cav']):
             continue
         for r in prs:
             if r['dest_activity_type'] == 'escort':
+                continue
+            if (person_id, r['tour_id']) in carried_tours:
+                out['driver_trips_refused_already_carried'] += 1
                 continue
             dep = int(r['dep_time_s'])
             drivers[(zone(r['origin_sa1']), zone(r['dest_sa1']), dep // bins)].append(

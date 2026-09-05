@@ -1374,7 +1374,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_SAT.csv`
 
-110098 rows, 6 columns
+109882 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1387,7 +1387,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_SUN.csv`
 
-100678 rows, 6 columns
+100629 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1400,7 +1400,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_WEEKDAY.csv`
 
-84161 rows, 6 columns
+83678 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1470,7 +1470,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_SAT.csv`
 
-66224 rows, 8 columns
+66706 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1478,14 +1478,14 @@ Appendix A of the proposal.
 | `passenger_tour_id` | int | 1 | 401/401 |
 | `direction` | str | drop | 401/401 |
 | `passenger_dep_s` | int | 54817 | 401/401 |
-| `driver_person_id` | int | 6489 | 401/401 |
+| `driver_person_id` | int | 2684 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 2420 | 401/401 |
-| `driver_dep_s` | int | 54744 | 401/401 |
+| `driver_household_id` | int | 1011 | 401/401 |
+| `driver_dep_s` | int | 54736 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_SUN.csv`
 
-63700 rows, 8 columns
+63922 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1500,18 +1500,18 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_WEEKDAY.csv`
 
-115790 rows, 8 columns
+116760 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 79 | 401/401 |
+| `passenger_person_id` | int | 17 | 401/401 |
 | `passenger_tour_id` | int | 1 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 43878 | 401/401 |
-| `driver_person_id` | int | 2090 | 401/401 |
+| `passenger_dep_s` | int | 28166 | 401/401 |
+| `driver_person_id` | int | 6832 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 766 | 401/401 |
-| `driver_dep_s` | int | 43865 | 401/401 |
+| `driver_household_id` | int | 2534 | 401/401 |
+| `driver_dep_s` | int | 27737 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/population/B1_households.csv`
 

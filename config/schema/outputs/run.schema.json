@@ -13,8 +13,7 @@
     "threads",
     "seed",
     "rc",
-    "wall_s",
-    "completion"
+    "wall_s"
   ],
   "properties": {
     "name": {
@@ -132,7 +131,7 @@
         "stopped_at_gate",
         "stopped_by_operator"
       ],
-      "description": "Which boundary ended the run. `ran_to_last_iteration` - the run executed every iteration it declared (this is NOT a claim of convergence; DECISIONS.md 9.7 holds that separately). `stopped_at_gate` - the runner's own watcher stopped it at a GOAL.md gate because a mode was at or past the stop bar. `stopped_by_operator` - a person or session stopped it through run.py --stop with a stated cause. A stopped run's reading up to `reached_iteration` is real and citable; the run is NOT a complete arm and must never anchor a calibrated base or satisfy resume."
+      "description": "Which boundary ended the run. `ran_to_last_iteration` - the run executed every iteration it declared (this is NOT a claim of convergence; DECISIONS.md 9.7 holds that separately). `stopped_at_gate` - the runner's own watcher stopped it at a GOAL.md gate because a mode was at or past the stop bar. `stopped_by_operator` - a person or session stopped it through run.py --stop with a stated cause. A stopped run's reading up to `reached_iteration` is real and citable; the run is NOT a complete arm and must never anchor a calibrated base or satisfy resume. ALWAYS written by the runner; ABSENT from records written before this field existed (a frozen record is never rewritten to satisfy a newer schema), and absence reads as `ran_to_last_iteration` because those records were only ever written on rc=0. It is therefore not a required property, and a reader must default it rather than demand it."
     },
     "reached_iteration": {
       "type": [

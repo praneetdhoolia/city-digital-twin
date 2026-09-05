@@ -198,6 +198,12 @@ def motorbike_identity_by_lga(drv, moto):
 # collateral - the escorting driver cannot be driven on their OTHER tours the
 # same day - is stated, small, and plausibly the truth.
 ESCORT_EXCLUDES_RIDE = CFG.get('B.activity.escort_excludes_ride')
+# 9.143 (#86): WHERE that denial applies. `subtour` leaves the person's other
+# tours free - the escorting tour is held at car by the seed and by
+# GatedSubtourModeChoice's refusal of a non-car proposal on boundDriveTrips,
+# so two mechanisms already carry it. `day` is the pre-9.143 behaviour and
+# recovers that build exactly.
+ESCORT_EXCLUSION_SCOPE = CFG.get('B.activity.escort_exclusion_scope')
 # The bike age gate (DECISIONS.md 9.84, #50), applied to the SEED as well as
 # to replanning: AvailabilityModesCalculator governs only NEW mode choices
 # and never strips a mode from a held plan, so an under-age person seeded
@@ -727,8 +733,19 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     # derives from is satisfied across the household boundary.
                     ride_av = 1
                 escort_denied = False
-                if ESCORT_EXCLUDES_RIDE and ride_av and any(
-                        r['dest_activity_type'] == 'escort' for r in rows):
+                if (ESCORT_EXCLUDES_RIDE and ESCORT_EXCLUSION_SCOPE == 'day'
+                        and ride_av
+                        and any(r['dest_activity_type'] == 'escort'
+                                for r in rows)):
+                    # 9.143: the DAY-wide denial, kept only as the sweep's
+                    # `day` member. Under `subtour` the person keeps ride
+                    # availability and the escorting tour is still held at car
+                    # - by the seed, which keeps a serve tour on car, and by
+                    # GatedSubtourModeChoice, which refuses a non-car proposal
+                    # on boundDriveTrips. The identity is enforced where it
+                    # applies instead of across the whole day, which cost
+                    # 33,832 WEEKDAY bound trips the demand had already bound
+                    # to a named driver.
                     ride_av = 0
                     escort_denied = True
                     escort_ride_denied[0] += 1
