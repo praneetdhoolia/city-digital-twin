@@ -182,6 +182,7 @@ about its layout will otherwise cost you an hour:
 | **The assessment's fourteen defects closed without a run; the resolver refuses its own breaks; every artefact has a producer that names it** | **§9.141** — #112–#127 fixed and verified by probes and stdlib checks (the watcher on a verdict, the taxi restore by endpoints, the SCATS donor by layout, the card after validation, the manifest licensed on every row); `sweep_keys`, `CAL.pt.censored_cell_value`, `RUN.gate.retry_interval_s` declared; C2 found measured on the superseded network and NOT re-measured (decision); #129, #133, #134 stay open as decisions and block the launcher |
 | **Destination choice was constrained at one end; the three open decisions taken; the iteration profiled** | **§9.142** — the corridor read 0.59x of its shopping attraction and 0.69x of its other (9.136) while its worst zones sat 12.9x and 34.7x from their own attraction shares, so three families of pricing and behaviour repairs could not move light or heavy rail: the draw is now balanced at the destination end too (Wilson 1967 / Furness), no new observation or tunable, `singly_constrained` reproducing the old build. #129 decided by measuring it (ONE censored cell in the package, outside the summed series, three guards proving it stays so); #134 gives every sweep a `sweep_role` the resolver enforces; #133 lands 89 unit tests and two probes, one of which measured a latent `Long`-age fare defect. C2 re-measured on the network that runs and KEPT. The iteration's own cost profiled: 60% of it is one hoistable `tripRouter.get()`. #86's fifth binder pass measured NOT to be the largest class |
 | **A stopped run can be cited; the partially bound tour gets a plan; the escort denial scoped to the subtour; nobody drives and is driven at once** | **§9.143** — the F24 gate read at milestone 90 with motorbike the second mode ever inside 10 %; a run that ends at a defined boundary now closes itself out and `completion` becomes the result gate, not the record's presence; #86's three losses between binding and plan memory measured and repaired — 60,273 partially bound trips seeded, 33,832 escort-day trips freed, and 17,740 person-tours that were booked to drive and be driven at once, which reopens §9.142's finding that the binder volume was at target; the F25 arm then FALSIFIED the demand cause - the seeded ride share rose 31 % and the realised share did not move, so the loss is in pairing (21.7 % of selected ride legs never pair) and in selection, not in the choice set |
+| **A declared ride driver must own a car** | **§9.144** — the escort binder and the §9.60 lift pass chose a driver on a LICENCE alone where the joint and shared passes also require a household vehicle, so 6,165 WEEKDAY escort bindings (5,426 drivers) and 3,154 lift bindings (2,697 drivers) named a driver with no car and the seed then walked, bussed or taxied 85,993 legs the same person was declared to drive; the measurement #142 asked for settles it - 100 % of the refused escort passengers are in the driver's OWN vehicle-less household, where `ride_avail` denies `ride` anyway, so the BINDING was wrong and not the seed, and the HX tour is left alone as real escort travel; `car_available` proves to be exactly `licence_holder AND household_vehicles > 0`; the freed volume is re-let by the occupancy identity to drivers who can drive (bindings 375,007 → 375,307, seeded ride share 0.0444 → 0.0448, non-car legs on a declared drive trip 85,993 → 0) and family F26 opens at the rebuild |
 
 
 ---
@@ -13981,10 +13982,100 @@ section exists (its `decisions_ref` check). **No target value changed, the
 
 **What did not change.** No target value moved, the 67/143 split is untouched, no mode's utility or ASC was altered, and nothing here is a finding of the model. Neither family's reading is a result: F24's is at milestone 90 and F25's at iteration 100, and no run since F4 has carried `ran_to_last_iteration` at a gate horizon. Registry 464 to 466 fields.
 
+## 9.144 A declared ride driver must own a car, in every binder pass (6 September 2026, twenty-ninth session; user directive "Fix and go ahead"; issue #142)
+
+**What was wrong.** Two of the four binder passes chose a ride driver on a
+LICENCE alone. The escort binder (§9.46) gated a binding on
+`B.activity.escort_requires_licence`, and the §9.60 lift pass tested
+`ctx['licence']`, while the joint (§9.84) and shared (§9.124) passes both
+required `ctx['licence'] and ctx['cav']`. A licence is not a car: measured on
+the F25 package before the change, **6,165 WEEKDAY escort bindings across
+5,426 drivers** and **3,154 lift bindings across 2,697 drivers** named a driver
+whose household owns no vehicle. `build_matsim_plans.py` holds a serving tour
+at `car` only when a car is available, so those drivers took the variant's base
+mode and "served" on foot, by bus or by taxi: **85,993 non-car legs sat on a
+trip the same person's own `boundDriveTrips` declared them to drive**, 76,139 of
+them already present before §9.143. `GatedSubtourModeChoice` refuses such a
+proposal at runtime, but a SEEDED plan is not a proposal - it enters memory
+directly - so MATSim could execute a plan in which the declared driver walked
+and the passenger bound to them had no driver to pair with (`miss_no_candidate`
+1,608 at the F25 iteration-100 gate, `output/ride_pairing.csv`).
+
+**What changed.** Both passes now test the identity the other two already did:
+a licence AND a household vehicle. The measurement #142 asked for decides which
+of its two readings is right. **Every one of the refused escort passengers -
+6,165 of 6,165 - is in the SAME vehicle-less household as the driver**, where
+the `ride_avail` identity denies them `ride` anyway, so the binding could never
+have become a ride and served only to declare a driver the seed then walked.
+The lift class is worse and had never been counted: its passengers are in
+ANOTHER household 100% of the time, so nothing downstream contradicted it.
+**Decision: the BINDING is wrong, not the seed.** The HX TOUR is deliberately
+untouched - a car-less licence holder still escorts at the observed rate, on
+foot or by pt, which is real travel that declares no car passenger; 9,555
+WEEKDAY HX tours (5,273 SAT, 3,788 SUN) are now drawn unbound for want of a
+vehicle. The brief's open question, `car_available` versus
+`household_vehicles > 0`, is not a choice: **`car_available` is exactly
+`licence_holder AND household_vehicles > 0`** across all 612,634 persons
+(cross-tab cells 468,681 / 26,885 / 111,052 / 6,016 and no other), so for a
+driver-side test the two predicates are one. **Family `F26-a-driver-owns-a-car`
+opens at the REBUILD** (`from_launch` 20260906T013531), not at a launch, so a
+later arm cannot be labelled F25 and read against F25 numbers.
+
+**Measured.** On the rebuild (`_activity_chains_report.json`,
+`_plans_report.json`, `population_WEEKDAY.xml.gz`):
+
+| WEEKDAY | F25 | F26 |
+|---|---:|---:|
+| escort binding rows | 127,073 | 120,971 |
+| lift binding rows | 47,496 | 44,180 |
+| joint binding rows | 83,678 | 83,754 |
+| shared binding rows | 116,760 | 126,402 |
+| all four | 375,007 | 375,307 |
+| seeded ride share | 0.0444 | 0.0448 |
+| non-car legs on a declared drive trip | 85,993 | **0** |
+
+The occupancy identity re-lets the freed volume to drivers who can actually
+drive - the shared pass, which fills the remainder to the identity, gains 9,642
+rows - so **no ride demand is lost by the repair**; the total rises by 300 rows
+and the seeded ride share by 0.0004. The `boundDriveTrips` count is over all
+710,813 entries across 622,036 persons in every seeded plan, not a sample.
+`serve_tours_carless` is 0 on all three day types and is now reported at every
+plans build, so the class cannot return unseen. Chains, plans and the 30
+run-input sets were rebuilt; `check_package.py` ALL CHECKS PASSED; the manifest
+holds 512 files.
+
+**A counter of this session's own was wrong and was fixed before it reached a
+document.** The first build reported 51,436 refused HX tours where the honest
+figure is 9,555: it counted the Poisson HX draw of UNLICENSED persons too,
+whose tours `build_day` discards, overstating the class 5x. It was caught
+because `hx_tours_requested` fell by 9,555 and the two figures did not
+reconcile. The chains were rebuilt with the corrected counter and the data came
+back byte-identical (md5 verified on `B2_activity_trips_WEEKDAY.csv` and
+`B2_escort_bindings_WEEKDAY.csv`), which is the determinism rule doing its job.
+
+**Deliberately not done.** The HX tour rate is not re-derived: refusing a
+BINDING does not change how many escort tours are drawn, so
+`lam['HX'] /= licence_frac` stands untouched and no observed rate moves. No
+registry field was added - the driver identity is a derived physical fact the
+other two passes already encoded in code, not a controllable value, and
+`check_hardcoding.py --strict` stays at 0. `B.activity.escort_requires_licence`
+keeps its meaning at the DRAW. Nothing was done about the ride gap itself: the
+pairing-versus-selection question §9.143 left open is untouched and still owes
+the user a decision.
+
+**Consequences.** Nothing run before F26 compares with anything run after it on
+the demand side; the run side, the network and `controler_sha256` are F25
+unchanged. Every F25 level - including the iteration-100 scoreboard the board
+carries - stays citable as what F25 measured and may not be differenced against
+an F26 reading. #142 is closed on the repository's own evidence. No target value
+changed, the 67/143 split is untouched, no arm ran, no approval was spent, and
+nothing here is a finding of the model.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-06 | **A declared ride driver must own a car, in every binder pass (§9.144; issue #142; twenty-ninth session; user directive "Fix and go ahead").** Demand: the escort binder and the §9.60 lift pass now test a licence AND household car availability, the identity the joint and shared passes already used; the HX tour itself is untouched, so a car-less escorter still escorts and declares no car passenger. Measured before: 6,165 WEEKDAY escort bindings on 5,426 car-less drivers, 3,154 lift bindings on 2,697, and 85,993 non-car legs on a trip the person's own `boundDriveTrips` declared them to drive. Measured after, on the rebuild: bindings 375,007 → 375,307 as the occupancy identity re-lets the freed volume to drivers who can drive, seeded ride share 0.0444 → 0.0448, non-car legs on a declared drive trip 85,993 → 0, `serve_tours_carless` 0 on all three day types. `car_available` measured to be exactly `licence_holder AND household_vehicles > 0` over 612,634 persons. Chains, plans and the 30 run-input sets rebuilt; `check_package.py` ALL CHECKS PASSED; manifest 512 files, registry 466 unchanged. Family `F26-a-driver-owns-a-car` opened at the rebuild. **No target value changed, the 67/143 split is untouched, no arm ran, no approval was spent, nothing here is a finding.** |
 | 2026-09-05 | **A stopped run can be cited; #86's three losses between binding and plan memory repaired (§9.143; issues #86, #66; twenty-eighth session; user directives).** Harness: a run ending at a DEFINED boundary (its last iteration, the gate watcher, or `--stop`) is closed out with its record, summary and findings, while a CRASH still gets none; `completion` replaces the record's mere presence as the result gate, and resume matching and the calibrated base both ask it; `reached_iteration` comes from the log's ENDS markers, never the digest's in-flight iteration. Demand: per-trip modes in a seeded plan so a partially bound tour can ride its covered leg (`B.mode.partial_bind_base`); `B.activity.escort_exclusion_scope` = `subtour`; the binder passes no longer offer a booked passenger as a driver. Measured: both-roles bookings 17,740 → 0, escort-blocked trips 33,832 → 0, partially bound trips seeded 50,665 → 60,273, seeded ride share 0.0338 → 0.0444. Reproducibility: every build writer pins LF, after a manifest hash disagreed with the blob git committed. F24 read at milestone 90: motorbike inside 10 % at -5.7 %, seven modes past 20 %, a settled 325 s an iteration. F25 read at 100 and stopped by the watcher itself - the first gate stop ever to carry a citable record: ride -43.1 % against a seeded share up 31 %, so the demand cause is falsified and the loss is downstream (pair rate 0.98 -> 0.78, `miss_window` 1 -> 7,921). **No target value changed, the 67/143 split is untouched, nothing here is a finding.** Registry 464 → 466. |
 | 2026-09-04 | **Destination choice is constrained at both ends; the three open decisions are taken; the iteration's own cost is profiled (§9.142; issues #30, #86, #129, #133, #134, #66; twenty-seventh session; user directive).** Demand: `B.activity.destination_balancing` = `doubly_constrained` balances the draw so each zone receives its attraction share of a purpose's arrivals while each purpose keeps its own observed mean distance per home LGA (Wilson 1967 / Furness; `singly_constrained` reproduces the previous build); the corridor read 0.59x of its shopping attraction share and 0.69x of its other (9.136) while its CBD end holds 8.27% of core work attraction, matching a published 8.24% of core jobs and a 9.09% journey-to-work share; after the repair it reads 1.02x / 0.99x / 0.99x of attraction on non-home trip ends. C2 re-measured on the current network AND KEPT (detour 1.3376 → 1.3276 over 595 pairs, walk 1.6938, bike 1.5570), chains, plans and the 30 run-input sets rebuilt on it. Decisions: #129 the censored-cell exclusion recorded as the pre-registered holdout treatment, measured inert on every scored target, with three build guards; #134 `sweep_role` in the field schema, all 255 swept fields roled (11 answer / 22 measurement / 222 uncertainty), 44 bases written, the resolver refusing a breach; #133 `tests/unit/` with 89 tests plus `GatedSubtourProbe` and `PtFareProbe`, which measured a latent `Long`-age adult-fare defect. Producers: `build_validation_targets.py` counted its escort legs instead of asserting a claim the §9.15 repair had falsified. Profiling: `beforeMobsimListeners` is 402-404 s of a 673-684 s iteration and IS `RidePairingEngine.notifyBeforeMobsim`; ~51,600 `TripRouter` constructions an iteration, and the same call is the whole 164 GiB log storm. **No target value changed, the 67/143 split is untouched, no arm ran, no approval spent, nothing here is a finding.** `RUN.controler.last_iteration` NOT re-declared to 250 (§9.7 measured it insufficient); `routingRandomness` NOT zeroed. |
 | 2026-09-03 | **The 3 Sep assessment's fourteen defects closed without a run; the registry refuses its own integrity breaks; every artefact has a producer that names it (§9.141; issues #112–#137; twenty-sixth session; user directive).** Harness: verdict-keyed gate watcher, card after validation, `--stop` without a registry, incremental log read, bounded retry, trim after launch, `jvm_pid`. Java: `RemodeRestore` shared by taxi and ride, SCATS donor by layout, four probes running (two had been unable to). Data: HTS, Opal-bus, scenario-table and corridor producers reproduce their artefacts; manifest 511 → 512 with a licence on every row (161 ODbL); `provenance_osm.json`. Registry 457 → 459 (`CAL.pt.censored_cell_value`, `RUN.gate.retry_interval_s`), three integrity breaks repaired, `sweep_keys` in the field schema. Documents: README launch rules and pinned package size, six record headings normalised, calibration report on the runner name. **No target value changed, the 67/143 split is untouched, no arm ran, no approval spent, nothing here is a finding.** C2 re-measured on the current network moves its values and was not kept — a decision. |

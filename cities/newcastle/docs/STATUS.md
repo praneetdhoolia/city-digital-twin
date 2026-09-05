@@ -7,15 +7,16 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 5 September 2026 — two arms ran. F24 was stopped at its
-approved gate; F25 was stopped by the runner's OWN watcher at iteration 100,
-the first time that has happened, and **both closed themselves out** — a run
-that ends at a defined boundary now carries its record, and the record's
-`completion` field, not the file's presence, is the result gate. **F25
-falsifies the demand cause for ride**: three repairs raised the seeded ride
-share 31 % and the realised share did not move, so the loss is in pairing
-(21.7 % of selected ride legs never pair) and in selection, not in the choice
-set. No mode is inside 10 %. No approval stands.
+**Last updated:** 6 September 2026 — no arm ran. **#142 is fixed and closed, so
+nothing blocks a launch** (GOAL.md requirement 10): the escort binder and the
+lift pass chose a ride driver on a licence alone, where the joint and shared
+passes also require a household vehicle, so 9,319 WEEKDAY bindings named a
+driver with no car and the seed then walked, bussed or taxied **85,993 legs the
+same person was declared to drive — now 0** (§9.144). The demand was rebuilt on
+it and **family F26 is open**. The freed volume is re-let by the occupancy
+identity to drivers who can drive, so no ride demand is lost. The scoreboard
+below is still F25's iteration-100 reading and may not be differenced against
+anything F26 produces. No mode is inside 10 %. No approval stands.
 
 ## The goal
 
@@ -63,7 +64,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the gate loop has fired five times: F21 with 8 out (§9.134); F22 with 7 out and bus inside (§9.136); F23 with 7 out (§9.139); F24 with 7 out and motorbike inside; F25 with 7 out and none (§9.143). F24 and F25 are the first arms whose readings are citable from their own records, and F25 the first stopped by the watcher itself |
+| P4 calibration | 🟡 | the gate loop has fired five times: F21 with 8 out (§9.134); F22 with 7 out and bus inside (§9.136); F23 with 7 out (§9.139); F24 with 7 out and motorbike inside; F25 with 7 out and none (§9.143). F24 and F25 are the first arms whose readings are citable from their own records, and F25 the first stopped by the watcher itself. **F26 is built and unlaunched** (§9.144) |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -71,22 +72,21 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F25-ride-reaches-plan-memory` (opened `20260905T125346`, §9.143) - nothing run before it compares with anything after it |
+| Open comparability family | `F26-a-driver-owns-a-car` (opened `20260906T013531`, §9.144) - nothing run before it compares with anything after it |
 | Input registry | **466 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (5 September 2026 (twenty-eighth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (4 September 2026 (twenty-seventh session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (5 September 2026 (twenty-eighth session)) · [runs-and-economics](positions/runs-and-economics.md) (5 September 2026 (twenty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (4 September 2026 (twenty-seventh session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (5 September 2026 (twenty-eighth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (3 September 2026) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (6 September 2026 (twenty-ninth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (6 September 2026 (twenty-ninth session)) · [runs-and-economics](positions/runs-and-economics.md) (5 September 2026 (twenty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (6 September 2026 (twenty-ninth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
-**Family F25 is open and its first arm is read** (§9.143): chains, plans and
-the 30 run-input sets were rebuilt 5 Sep so that every bound ride trip can
-become a `ride` alternative — 60,273 partially bound trips seedable, 33,832
-escort-day trips freed, 17,740 impossible passenger-and-driver bookings
-removed, seeded ride share 0.0338 → 0.0444. `check_package.py` ALL CHECKS
-PASSED. The arm `aborted_20260905T125612_300it_25pct` reached iteration 100 at
-a median 306 s and its watcher stopped it there. Pace is now MEASURED at
-~306–325 s an iteration, so 300 iterations is ~26–27 h; §9.142's 280–320 s
-projection from a 1 % probe was 25 % optimistic. No arm runs.
+**Family F26 is open and NO arm has run in it** (§9.144): chains, plans and the
+30 run-input sets were rebuilt 6 Sep so that every declared ride driver owns a
+car — escort bindings 127,073 → 120,971, lift 47,496 → 44,180, shared 116,760 →
+126,402, so all four passes total 375,007 → 375,307 and the seeded ride share
+0.0444 → 0.0448. `check_package.py` ALL CHECKS PASSED; the manifest holds 512
+files. The boundary is on the DEMAND only — the run side, the network and
+`controler_sha256` are F25 unchanged. Pace is MEASURED at ~306–325 s an
+iteration on the F25 arm, so 300 iterations is ~26–27 h. No arm runs.
 
 ## Runs on disk
 
@@ -105,11 +105,9 @@ projection from a 1 % probe was 25 % optimistic. No arm runs.
 
 ## Next
 
-1. **#142 blocks every launch, and needs no run** (§9.143): the escort pass binds
-   **5,426 licence holders whose household owns no vehicle** (4.9 % of escort
-   drivers) as ride drivers, where the joint and shared passes bind none because
-   they test car availability. Real travel, but not car-passenger travel. It
-   changes the demand, so it opens a family boundary.
+1. **Nothing blocks a launch** (§9.144): #142 is fixed and closed, and every
+   other open issue carries `awaiting-run`, so `issue_gate.py` passes. The next
+   arm is F26's first and would be the first reading on this demand.
 2. **Ride is lost downstream of the choice set — the next lane is pairing and
    selection** (§9.143, #86). F25 settles that the demand is not the cause: the
    seeded ride share rose 31 % and the realised share did not move. The arm's
@@ -130,8 +128,7 @@ projection from a 1 % probe was 25 % optimistic. No arm runs.
    a chance of being inside the bars.
 
 **Decisions required:** the root-cause pick between pairing execution and
-selection; whether §9.98's window refusal is superseded; whether a car-less
-server may serve (85,993 non-car legs on serving trips, §9.143); whether a
+selection; whether §9.98's window refusal is superseded; whether a
 fifth binder pass is needed now the reachable binding volume is ~18.7 % rather
 than 20.13 %; a stated-cost approval for any next arm (~26–27 h at 25 % × 300,
 measured); enable the Task Scheduler operational log (#66); whether the S2 base
@@ -141,18 +138,18 @@ grants the tram signal priority
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
-| The F24 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
-| Ride: the binders reach 20.13% of core trips but 46,345 bound trips never become a ride alternative in plan memory (§9.142) | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F24 gate, then the per-trip plan variant behind `GatedSubtourProbe` |
+| The first F26 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
+| Ride: the demand cause is falsified (§9.143) and every declared driver now owns a car (§9.144); the loss is pairing execution and selection | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F26 gate's `ride_pairing.csv`: pair rate and `miss_window` against F25's 0.7827 and 7,921 |
 | Heavy rail +193 % at the F23 gate; income scaling blunts the fare (§9.139) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | where rail settles once the corridor's CBD end (#30) is repaired |
-| Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F24 gate: the stops are a subset of the CBD and the mode is still chosen |
-| Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F24 gate (§9.140) |
+| Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F26 gate: the stops are a subset of the CBD and the mode is still chosen |
+| Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F26 gate (§9.140) |
 | Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals on F21 |
-| Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | F24 shares by car availability |
+| Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | F26 shares by car availability, now that a car-less escorter no longer drives (§9.144) |
 | Traffic counts far below observation at 30 stations | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) | F21 counts |
-| Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F24 arm (§9.140) |
+| Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F26 arm (§9.140) |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
-| The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F24 arm (#131) |
-| Iteration wall time: 60% of it is one hoistable `tripRouter.get()`, and 164 GiB per run is one warning (§9.142) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the phase table on the first F24 arm |
+| The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F26 arm (#131) |
+| Iteration wall time: 60% of it is one hoistable `tripRouter.get()`, and 164 GiB per run is one warning (§9.142) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the phase table on the first F26 arm |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |
 | Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
 
