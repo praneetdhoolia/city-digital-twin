@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F25 (read at its iteration-100 gate)
 
 ## What is built
 
+- **A seeded plan carries PER-TRIP modes, not one mode per tour** (§9.143). That is what lets a partially bound tour ride its covered leg while the uncovered one takes `B.mode.partial_bind_base` = `pt`, keeping the whole subtour non-chain so the chain/non-chain mix `ChooseRandomLegModeForSubtour` refuses (§9.119) is unreachable by construction. Plan memory now peaks at **7 of `RUN.replanning.max_agent_plan_memory`** = 8; `check_package.py` reads that cap from the registry rather than a hard-coded count, because MATSim removes an UNSCORED plan first when memory overflows and a seed wider than the memory silently loses part of the choice set.
 - **The seed is the choice set.** `B.mode.seed_method` = `full_choice_set` (§9.120). `src/build/build_matsim_plans.py` writes one plan per mode the person may use — car where a car is available, walk, bike where one is available and the person is old enough, pt, taxi where old enough — each mode on every tour it may take, serving tours held at car, and one further plan riding the covered tours where the demand named a driver. No mode is favoured: each is one plan, once. WEEKDAY carries 2–6 plans per person and 9,880,427 seeded legs against 2,343,321 in the selected plans (§9.126).
 - **`uniform_draw` is retained as the sweep alternative** — the pre-§9.120 single plan, tour modes drawn from `B.mode.seed_split` (uniform over the usable modes, deliberately a bad guess) — so how much the search decided is a measurement, not a claim. `B.mode.seed_split_informed` (approximately the observed split) also survives as a declared alternative, never the default.
 - **The first-executed plan is drawn uniformly** over the person's seeded plans by a sha256 hash of the person id and the master seed (`seedorder|<pid>|20260810` in `src/build/build_matsim_plans.py`), carried as the `selected="yes"` flag, so iteration 0 is a mixed traffic state like every later one (§9.121). No rng stream, no new value, no re-scoring or warm-up.
@@ -55,6 +56,7 @@
 
 ## History
 
+- §9.143 — per-trip seeded modes; the choice set is not the ride ceiling
 - §9.142 — the 250-iteration horizon reviewed and deliberately not declared
 - §9.140 — leaf mix repaired; memory census
 - §9.126 — choice-set seed converges car, walk
