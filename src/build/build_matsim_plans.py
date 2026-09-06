@@ -554,6 +554,14 @@ def write_day(day, attrs, rng, report, seed_table=None):
         if driver not in bound_driver[passenger]:
             bound_driver[passenger].append(driver)
 
+    # 9.146: household -> vehicles owned (B1 census), written on every member
+    # as `householdVehicles` for citysim.HouseholdVehicleRoster.
+    hh_vehicle_count = {}
+    with open(os.path.join(POP, 'B1_households.csv'), encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            hh_vehicle_count[int(r['household_id'])] = \
+                int(float(r['household_vehicles'] or 0))
+
     lift_hh = {}          # passenger pid -> [driver household ids, ordered]
     lift_cover = {}       # (passenger pid, tour_id) -> set of directions
     lifts = os.path.join(PLANS, 'B2_lift_bindings_%s.csv' % day)
@@ -768,14 +776,22 @@ def write_day(day, attrs, rng, report, seed_table=None):
                                 or any(r['dest_placement'] in
                                        ('escorted', 'lift_pickup', 'lift_serve')
                                        for r in rows))
+                # 9.146: nor a person the binders named as someone's
+                # PASSENGER - a rider locked to a motorbike or a truck cannot
+                # also be driven, and at the F26 gate 373 sampled locked
+                # persons held bound trips, 571 of which were selected as the
+                # lock's mode. Excluded BEFORE the draw, as 9.122 requires.
+                is_passenger = pid in bound_driver
                 moto = (bool(car_av) and bool(lic) and not names_driver
+                        and not is_passenger
                         and motorbike_user(pid)
                         and not any(r['dest_activity_type'] == 'escort'
                                     for r in rows))
                 # 9.125: the resident truck carve, same pool, one lock per
                 # person (a motorcyclist is not also a truck driver)
                 trk = (not moto and bool(car_av) and bool(lic)
-                       and not names_driver and truck_user(pid)
+                       and not names_driver and not is_passenger
+                       and truck_user(pid)
                        and not any(r['dest_activity_type'] == 'escort'
                                    for r in rows))
 
@@ -1096,6 +1112,15 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # is exactly what those two consumers test for.
                 w.write('\t\t\t<attribute name="householdId" '
                         'class="java.lang.String">%d</attribute>\n' % hh_id)
+                # 9.146: the vehicles the census gives this household (B1
+                # `household_vehicles`), consumed by citysim
+                # .HouseholdVehicleRoster under B.population.vehicle_roster =
+                # census - its drivers share exactly these cars in the
+                # mobsim. DATA, stamped on every household member; whether
+                # anything reads it is the roster's declared value.
+                w.write('\t\t\t<attribute name="householdVehicles" '
+                        'class="java.lang.Integer">%d</attribute>\n'
+                        % hh_vehicle_count.get(hh_id, 0))
             if not external and pid in lift_hh:
                 # 9.60: consumed by citysim.RidePairingEngine - the DRIVER
                 # household(s) this passenger's pairing may also search.
@@ -1306,6 +1331,20 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
             escorters.add(pid)
     for fname, col in (('B2_joint_bindings_%s.csv' % first_day, 'driver_person_id'),
                        ('B2_shared_bindings_%s.csv' % first_day, 'driver_person_id')):
+        fpath = os.path.join(PLANS, fname)
+        if os.path.exists(fpath):
+            with open(fpath, encoding='utf-8') as fh:
+                for r in csv.DictReader(fh):
+                    escorters.add(int(r[col]))
+    # 9.146: the draw (write_day) also refuses every person the binders named
+    # as a PASSENGER - a rider locked to a motorbike or a truck cannot also be
+    # driven - and a first rebuild that excluded them at the draw alone
+    # halved the seeded motorbike share (0.0006 -> 0.0003 WEEKDAY): the very
+    # trap 9.122 and 9.129 record. Known before the draw, so in the pool.
+    for fname, col in (('B2_escort_bindings_%s.csv' % first_day, 'member_person_id'),
+                       ('B2_lift_bindings_%s.csv' % first_day, 'passenger_person_id'),
+                       ('B2_joint_bindings_%s.csv' % first_day, 'companion_person_id'),
+                       ('B2_shared_bindings_%s.csv' % first_day, 'passenger_person_id')):
         fpath = os.path.join(PLANS, fname)
         if os.path.exists(fpath):
             with open(fpath, encoding='utf-8') as fh:

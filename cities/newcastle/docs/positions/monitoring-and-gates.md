@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 5 September 2026 (twenty-eighth session) · **Record read through:** §9.143 · **Open family:** F25 (read at its iteration-100 gate)
+**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.146 · **Open family:** F27 (opened at its rebuild; F26's one arm was read and stopped at its iteration-100 gate)
 
 ## What is built
 
@@ -26,6 +26,7 @@
 - **Ferry's level is printed and its deviation is not**: nothing is published for this city, and the target stays unobtained and swept (§9.87). **Freight rail is representation, not a fit**: the modelled 314 closures are the timetable (§9.91).
 - **Read the trend, not the level** (§9.108, §9.120). Every gate to date has been read on a moving curve; a level read while innovation runs is not a statement about the model. The `--trend` verdict compares the first and last readable iterations and states a rate. Under the full-choice-set seed (§9.120) car and walk reached their targets inside fifty iterations on the F17 arm `20260830T141222_300it_10pct` (§9.126); the 250-iteration horizon is no longer the constraint it was under the uniform seed.
 - **Cadence.** The goal directive asks for all twelve modes printed continuously and gated every 100 iterations (§9.120); the F17 arm onward is read every ten (§9.126), and a cause found on the yardstick or the demand is repaired between arms rather than waited for.
+- **The pairing funnel is read with the code, not by its labels** (§9.145, §9.146). A declared pair faces no clock test, so `miss_window` in `output/ride_pairing.csv` never describes one; `miss_declared_absent` (appended last since §9.145) counts unpaired legs whose named driver brought no car leg — 719 at the F26 gate — and the rest of the unpaired legs are on persons with no `boundDriver` at all, which only the experienced plans reveal (12,461 at F26). The watcher stopped F26 at iteration 100 exactly as it stopped F25: the loop's instrument has now fired live twice.
 - **Nothing is compared across a family, a sample fraction or a network build.** A boardings-basis reading does not compare with an earlier trip-share reading of the same mode (§9.130).
 
 ## What is measured

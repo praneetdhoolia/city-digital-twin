@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 · **Record read through:** §9.140 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.146 · **Open family:** F27 (opened at its rebuild; no arm has run in it)
 
 ## What is built
 
@@ -16,6 +16,8 @@
 - Physics: `B.motorbike.pce` = 0.4 (literature, sweep 0.3–0.75); `B.motorbike.length_m` = 2.2 held fixed as cosmetic in the queue model (§9.52).
 
 **Resident truck drivers** are carved by the same mechanism on the same pool, on their own hash namespace so the motorbike draws stay byte-identical; one lock per person, never both (§9.125).
+
+- **Neither carve draws a bound PASSENGER** (§9.146, #93): the pool already excluded a person the binders named as a driver (§9.125) but not one they named as someone's passenger, and at the F26 gate 373 sampled locked persons held `boundRideTrips`, 571 of them selected as the lock's mode (`truck` 334, `motorbike` 237). Excluded before the draw, as §9.122 requires, on the F27 rebuild.
 
 - `CAL.mode_split.truck_driver_journey_share` = 0.0050729 (G62 Truck, 223 of 43,959, measured, asserted on every build) and `B.truck.resident_trip_share` = 0.002993, `derived` by the motorbike identity (§9.125).
 - The carve's current solve: `q` 0.013358 against `declared_share` 0.002993 (`_plans_report.json`, `truck_carve`). Their trips count as `truck` in the twelve-mode table and at the count stations with the freight tier's vehicles (§9.125).
@@ -35,6 +37,8 @@
 - Durations: `A.crossings.closure_duration_passenger_s` = 60 per scheduled passenger train (literature, sweep 30–120); `A.crossings.closure_duration_s` = 240 for a freight movement (assumed, sweep 60–600, §9.70's "up to ten minutes").
 
 ## What is measured
+
+- F26 gate, `aborted_20260906T100429_300it_25pct` at iteration 100: **motorbike +11.1 %** (0.4207 against 0.3785), the second-closest mode after car; truck 5.76 % of road vehicles, level only (§9.146).
 
 - **Motorbike, the F22 gate** (`aborted_20260831T165127_300it_25pct`, iteration 100, 25% sample): 0.4287% against 0.3785% (+13.3%), flat across the arm (§9.136, #93). The F21 gate's +24.6% at 10% (§9.134) carried more sampling noise; the 25% reading sits near the plans' own 0.4459% delivery.
 - **The per-LGA split #93 asked for is taken, and it explains the over-delivery** (§9.136): the draw and the §9.129 pool solve are exact per LGA (delivered/intended 0.94–1.13, ~1.00 everywhere), but the `sa1_thinned` cell shares themselves aggregate **above** the LGA identity when weighted by synthetic trips — intended 0.4271% against Newcastle's 0.3829% identity (+12%), +10% Maitland, +38% Cessnock, +9% core-wide. The bias is the cell aggregation, not the draw; the fix is per-LGA conservation of the cell shares, covering the truck carve identically (§9.125) — a demand rebuild, queued behind the F22 gate's own cause.
@@ -65,6 +69,7 @@
 
 ## History
 
+- §9.146 — F26 gate +11.1 %; the carve draws no bound passenger
 - §9.140 — carve conserved per LGA, rebuilt
 - §9.136 — carve bias is the cell aggregation
 - §9.134 — F21 gate: motorbike +24.6%

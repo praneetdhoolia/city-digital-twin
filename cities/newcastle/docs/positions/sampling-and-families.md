@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 6 September 2026 (twenty-ninth session) · **Record read through:** §9.144 · **Open family:** F26 (opened at its rebuild; no arm has run in it)
+**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.146 · **Open family:** F27 (opened at its rebuild; no arm has run in it)
 
 ## What is built
 
@@ -60,10 +60,11 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 - The last asserted sample: 62,134 of 620,553 persons, 10.01% (§9.127). The population has since been rebuilt at 612,634 persons and the chains, plans and run inputs have not (§9.131), so that count is stale.
 - Resume matched the wrong run twice: the test overlay was handed the control `20260829T205738_40it_1pct` (§9.104), and a rebuild smoke passed by resuming the earlier probe on the old plans (§9.127).
 - pt2matsim: stop-to-link assignment agrees 100.000% between builds, route link sequences 81.9–82.3% (§3.5); one build per comparison.
+| `F27-a-household-drives-the-cars-it-owns` | 20260906T211406 | three physical identities the F26 gate exposed, each declared with a control member that reproduces F26 exactly: the coherence listener re-proposes DECLARED pairs only (`B.ride.coherence_scope`; 12,461 selected ride legs at the F26 gate sat on persons the demand never bound); a household drives the cars the census gives it (`B.population.vehicle_roster` = `census` with `householdVehicles` stamped, `RUN.qsim.vehicle_behavior` = `wait`; 12,317 car legs began with every household car already out); a carve never draws a bound passenger, in the pool solve and at the draw (571 bound trips made in a lock's mode). Plans and the 30 sets rebuilt on F26's chains; the run stack changes too, so the boundary is on both sides. **Opened at the REBUILD, not at a launch** | §9.146 |
 
 ## What is open
 
-- No arm runs; the newest reading is F25's, taken at its watcher's iteration-100 gate (§9.143). **The package on disk is F26's** - chains, plans and the 30 run-input sets rebuilt 6 Sep on the driver-owns-a-car identity (§9.144), over F25's per-trip seeded modes, subtour-scoped escort denial and both-roles repair (§9.143). **F26 is a boundary on the DEMAND ONLY**: the run side, the network and `controler_sha256` are F25 unchanged, and nothing is lost because no F26 arm has run. **Every F25 level is now a reading against a superseded package** - it stays citable as what F25 measured, and no F26 reading may be differenced against it. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
+- No arm runs; the newest reading is F26's, taken at its watcher's iteration-100 gate (§9.146). **The package on disk is F27's** - plans and the 30 run-input sets rebuilt 6 Sep with `householdVehicles` stamped and the carve pool excluding bound passengers (§9.146), on F26's chains (no binding moved). **F27 is a boundary on BOTH sides**: the demand (the attribute, the carve) and the run stack (`B.ride.coherence_scope`, `B.population.vehicle_roster`, `RUN.qsim.vehicle_behavior`, the roster listener, the agent source, `JointRideEngine`), so `controler_sha256` moves too; each new value's control member reproduces F26 exactly, so the family is a comparison the sweep can still make within itself. **Every F26 level is a reading against a superseded package** - citable as what F26 measured, never differenced against an F27 reading. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -82,6 +83,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.146 — F27 opens at a rebuild, on the demand and the run stack together
 - §9.144 — F26 opens at a rebuild, on the demand only
 - §9.143 — F25 opens on plan memory reaching the bound trips
 - §9.142 — F24 is a boundary on the demand, the plans and the controler

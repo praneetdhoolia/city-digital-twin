@@ -892,6 +892,23 @@
       "matsim_param": "qsim.vehiclesSource",
       "description": "Where the mobsim gets a private vehicle's characteristics. Was `defaultVehicle` while car was the only main mode; the freight layer (9.49) needs a truck to weigh more than a car, so each main mode now takes the vehicle type of its own name from the vehicles file the run inputs emit - car restating MATSim's default exactly (RUN.qsim.car_vehicle), truck carrying B.freight.pce and B.freight.max_speed_kmh. TRANSIT vehicles are unaffected - they come from the schedule's own vehicles file, whose seats RUN.sample.transit_capacity_scaling scales."
     },
+    "RUN.qsim.vehicle_behavior": {
+      "value": "wait",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "wait",
+          "teleport"
+        ],
+        "basis": "What the mobsim does when an agent departs by car and the car they are mapped to is not at their link. `teleport` is MATSim's default and every arm before 9.146: the vehicle is moved to the agent, so a shared car (B.population.vehicle_roster = census) constrains nothing and the roster is inert - which is exactly why it is the control. `wait` holds the agent at the link until the car arrives there, so a one-car household's second driver waits for the first to bring it back, pays for the wait in schedule delay, and co-evolution learns to ride, walk or take the bus; an agent whose car never returns stands until the end of the day and is counted as stuck, which is the price of the constraint being physical rather than a penalty. `exception`, MATSim's third member, stops the run and is not a modelling choice."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146",
+      "matsim_param": "qsim.vehicleBehavior",
+      "description": "What happens when a car-departing agent's mapped vehicle is not at their link: `wait` holds the agent until it arrives (the household roster's constraint is then physical); `teleport` moves the vehicle to the agent (MATSim's default, pre-9.146, under which the roster constrains nothing)."
+    },
     "RUN.qsim.car_vehicle": {
       "value": {
         "length_m": 7.5,

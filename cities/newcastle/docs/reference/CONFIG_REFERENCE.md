@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 466 fields are made of
+## What the 469 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 151 | chosen without direct empirical support |
+| `assumed` | 154 | chosen without direct empirical support |
 | `definition` | 125 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 447 | usable point value |
+| `active` | 450 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 258 sweeps are for
+### What the 261 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 11 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 225 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 228 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -1559,7 +1559,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 111 fields*
+*`cities/newcastle/registry/B_demand.json` - 113 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1647,7 +1647,9 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.licence_rate_by_age_band` | `[0.0, 0.0, 0.0823, 0.7828, 0.9402, 1.0, 0.9786, 0.972, 0.9838, 0.9172, 0.5118]` | probability | `measured` | plus/minus 5% |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
+| `B.population.vehicle_roster` | `census` | enum | `assumed` | `census`, `per_person` |
 | `B.ride.bound_pairing_window_min` | `60.0` | minutes | `derived` | derived: bound_pairing_window_min = 2 * time_mutation_range_s / 60 |
+| `B.ride.coherence_scope` | `declared` | enum | `assumed` | `declared`, `inferred` |
 | `B.ride.declared_pair_meeting` | `driver_detour` | enum | `assumed` | `driver_detour`, `passenger_links` |
 | `B.ride.escort_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
 | `B.ride.joint_coherence_rate` | `0.4` | share_per_iteration | `assumed` | 0 - 0.5 |
@@ -2321,6 +2323,14 @@ Whether `ride` is withheld from a person with nobody to drive them. MATSim's sta
 
 > **Derived from** `B.seed.master`: a person may be a car passenger only if their B1 household holds at least one vehicle AND contains at least one OTHER licence holder who could drive them; computed from B1_synthetic_population.csv household_id, household_vehicles and licence_holder, so it is derived from the synthetic population rather than chosen
 
+#### `B.population.vehicle_roster`
+
+Whether a household's drivers share the cars the census gives it: `census` - every driver is mapped to one of the household's `householdVehicles` shared cars and waits for it when it is out; `per_person` - each person drives a car of their own (MATSim's default, pre-9.146). Consumed by HouseholdVehicleRoster through householdVehicles.roster.
+
+***assumed** · status **active** · DECISIONS.md §9.146 · MATSim `householdVehicles.roster` · sweep role **uncertainty***
+
+> **Sweep basis.** Whether a household's drivers share the cars the census says it owns. `per_person` is MATSim's own behaviour and every arm before 9.146: PrepareForSim gives each person a car of their own under qsim.vehiclesSource=modeVehicleTypesFromVehiclesData, so a household can put more cars on the road than it holds. `census` maps every licensed, car-available member of a household with n >= 1 vehicles (B1 `household_vehicles`, stamped on the population as `householdVehicles`) to one of n shared vehicles hh<id>_car<k>, assigned round-robin in person-id order, at the first iteration after PrepareForSim; the agent source parks each shared car once, where the first member starts; whoever wants it while it is out waits for it under RUN.qsim.vehicle_behavior. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,317 car legs, 3.28 % of resident car legs across 5,279 households, began while every vehicle the household owns was already out - 4,265 of them a one-car household with two members driving at once - and the census holds 81,384 households (33.0 %) with more licensed drivers than vehicles. A one-car household is EXACT under `census`; a multi-car household is assigned rather than pooled, because MATSim maps a person to one vehicle per mode, and that limit is stated rather than hidden. The sweep is over the MECHANISM: running both measures how much of car's excess and ride's deficit the second car supplied.
+
 #### `B.ride.bound_pairing_window_min`
 
 SINCE 9.120 THIS IS NOT A PAIRING TOLERANCE. RidePairingEngine applies no clock test to the driver the demand named: a declared pair is paired on identity alone and the passenger's departing activity is re-timed to the driver's departure, so the planning drift this window was derived to cover (2 x the mutation range) is removed at its source rather than tolerated. The field survives with ONE consumer: the physical wait JointRideEngine allows a DECLARED booking at the meeting link before the miss falls through to the routed time - the driver's own realised drift from earlier legs, which the identity still describes. It is unchanged in value and derivation. Everything below is the pre-9.120 record. The tolerance applied when the passenger and the driver are a DECLARED pair - a companion and the driver named on their joint binding (B2_joint_bindings_<DAY>.csv), carried into the population as `boundDriver` since 9.85. It is NOT a second guess at B.ride.pairing_window_min, which stays 15 min and still governs every pairing the engine has to INFER: for two people the demand declares travel together, identity has already answered the question the window exists to answer, and what remains is only how far the model's OWN replanning has moved them apart since. So the tolerance is an identity on that drift rather than a free value, and it cannot be tuned toward a ridership target without moving the mutation range that produced the drift. Endpoints, vehicle capacity and physical boarding still decide whether the pairing is made; the realised gap becomes waiting time the passenger pays for in score, so an implausible pairing is refused by the scoring, not by a threshold. Setting this equal to B.ride.pairing_window_min recovers the pre-9.85 behaviour exactly. CORRECTED IN 9.95, and the error was in the identity rather than the value. It read time_mutation_range_s / 60, which is ONE agent half-width - but the mutator moves each member of a pair INDEPENDENTLY, as this field description already said. Two independent draws on +-1800 s can land 3600 s apart, so the relative drift a declared pair can accumulate is TWICE the half-width, not equal to it. The window was therefore half the size of the drift it exists to cover, and it was refusing pairs the model itself had separated. Measured on arm 20260829T054941 at iteration 100 with src/analyse/diagnose_ride_pairing.py: 3,987 declared ride legs (13.13% of all of them) had the driver making the SAME trip, both endpoints matching exactly, and were refused on the clock alone - median gap 53.6 minutes, minimum exactly 30.0, which is the old window showing its own edge in the data. This is a correction to a derivation, not a tuning: the value still cannot move without moving the mutation range that produces the drift, and the realised gap is still paid for as waiting time in score.
@@ -2328,6 +2338,14 @@ SINCE 9.120 THIS IS NOT A PAIRING TOLERANCE. RidePairingEngine applies no clock 
 ***derived** · status **active** · DECISIONS.md §9.85, 9.95, 9.120 · MATSim `ridePairing.boundWindowMinutes`*
 
 > **Derived from** `RUN.replanning.time_mutation_range_s`: bound_pairing_window_min = 2 * time_mutation_range_s / 60
+
+#### `B.ride.coherence_scope`
+
+Whom the coherence listener may re-propose a ride pair for: `declared` - only a demand-bound trip with its named driver (boundRideTrips / boundDriver); `inferred` - any household member matching a household car leg on endpoints and clock (pre-9.146). Consumed by EscortCoherenceListener through ridePairing.coherenceScope.
+
+***assumed** · status **active** · DECISIONS.md §9.146 · MATSim `ridePairing.coherenceScope` · sweep role **uncertainty***
+
+> **Sweep basis.** Whom EscortCoherenceListener may re-propose a pair for. `inferred` is the behaviour of every arm before 9.146 and is kept as the control: any household member whose trip matches a household car leg on endpoints and clock is offered `ride`, and a drifted household driver whose non-car trip matches a member's ride is offered `car`, whether or not the demand bound them. `declared` restricts both passes to the identity every other ride mechanism has used since 9.120 - a trip in the person's `boundRideTrips`, with a driver in their `boundDriver` - so the listener keeps DECLARED pairs coherent and invents none. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,461 of 66,909 selected ride legs sat on persons the demand never bound, the listener re-proposing ~5,000 inferred ride plans an iteration while GatedSubtourModeChoice refused 192,000 proposals of exactly that kind; the inferred legs were the ones that never paired (miss_window + miss_endpoints 13,168 against miss_declared_absent 719), executed as walk or drive, and held plan-memory slots against real alternatives. The sweep is over the MECHANISM: running both measures how much of the pairing loss and the walk/car residue the inferred proposals supplied.
 
 #### `B.ride.declared_pair_meeting`
 
@@ -3488,7 +3506,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 75 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 76 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3530,6 +3548,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
+| `RUN.qsim.vehicle_behavior` | `wait` | enum | `assumed` | `wait`, `teleport` |
 | `RUN.qsim.vehicles_source` | `modeVehicleTypesFromVehiclesData` | policy | `definition` | - |
 | `RUN.relaxation.drift_tolerance_pp` | `0.5` | percentage_points | `assumed` | 0.1 - 1 |
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `measured` | 1 - 100 |
@@ -3797,6 +3816,14 @@ Interval between mobsim vehicle-position snapshots. Zero disables them: this stu
 Mobsim start.
 
 ***definition** · status **active** · DECISIONS.md §15 · MATSim `qsim.startTime`*
+
+#### `RUN.qsim.vehicle_behavior`
+
+What happens when a car-departing agent's mapped vehicle is not at their link: `wait` holds the agent until it arrives (the household roster's constraint is then physical); `teleport` moves the vehicle to the agent (MATSim's default, pre-9.146, under which the roster constrains nothing).
+
+***assumed** · status **active** · DECISIONS.md §9.146 · MATSim `qsim.vehicleBehavior` · sweep role **uncertainty***
+
+> **Sweep basis.** What the mobsim does when an agent departs by car and the car they are mapped to is not at their link. `teleport` is MATSim's default and every arm before 9.146: the vehicle is moved to the agent, so a shared car (B.population.vehicle_roster = census) constrains nothing and the roster is inert - which is exactly why it is the control. `wait` holds the agent at the link until the car arrives there, so a one-car household's second driver waits for the first to bring it back, pays for the wait in schedule delay, and co-evolution learns to ride, walk or take the bus; an agent whose car never returns stands until the end of the day and is counted as stuck, which is the price of the constraint being physical rather than a penalty. `exception`, MATSim's third member, stops the run and is not a modelling choice.
 
 #### `RUN.qsim.vehicles_source`
 

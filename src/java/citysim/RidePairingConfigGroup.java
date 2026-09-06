@@ -72,6 +72,15 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      */
     public static final String MEETING_PASSENGER_LINKS = "passenger_links";
     public static final String MEETING_DRIVER_DETOUR = "driver_detour";
+    /** 9.146: whom the coherence listener may re-propose a pair for.
+     *  `declared` - only a trip the demand bound (`boundRideTrips`) and only
+     *  with the driver it named (`boundDriver`), the identity every other
+     *  ride mechanism already uses since 9.120; `inferred` - any household
+     *  member whose trip matches a household car leg on endpoints and clock,
+     *  which is the behaviour of every arm before 9.146 and is kept as the
+     *  control. Declared as B.ride.coherence_scope. */
+    public static final String COHERENCE_DECLARED = "declared";
+    public static final String COHERENCE_INFERRED = "inferred";
 
     private boolean enabled = false;
     private boolean physicalBoarding = false;
@@ -83,6 +92,7 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     private double jointCoherenceRate = UNSET;
     private String rule = "";
     private String declaredMeeting = "";
+    private String coherenceScope = "";
     private String unpairedFallback = "";
     private double pickupDwellSeconds = UNSET;
     private int maxPassengersPerVehicle = -1;
@@ -338,6 +348,17 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
         this.declaredMeeting = value == null ? "" : value.trim();
     }
 
+    /** B.ride.coherence_scope (9.146): `declared` or `inferred`. */
+    @StringGetter("coherenceScope")
+    public String getCoherenceScope() {
+        return this.coherenceScope;
+    }
+
+    @StringSetter("coherenceScope")
+    public void setCoherenceScope(final String value) {
+        this.coherenceScope = value == null ? "" : value.trim();
+    }
+
     /**
      * Seconds added to a paired passenger's travel time for being picked up.
      *
@@ -417,6 +438,14 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
                     + MEETING_PASSENGER_LINKS + " | " + MEETING_DRIVER_DETOUR
                     + " (B.ride.declared_pair_meeting); got '"
                     + this.declaredMeeting + "'");
+        }
+        if (!COHERENCE_DECLARED.equals(this.coherenceScope)
+                && !COHERENCE_INFERRED.equals(this.coherenceScope)) {
+            throw new IllegalArgumentException(
+                    "ridePairing.coherenceScope must be one of "
+                    + COHERENCE_DECLARED + " | " + COHERENCE_INFERRED
+                    + " (B.ride.coherence_scope); got '"
+                    + this.coherenceScope + "'");
         }
         if (!FALLBACK_WALK.equals(this.unpairedFallback)
                 && !FALLBACK_DRIVE_ELSE_WALK.equals(this.unpairedFallback)) {

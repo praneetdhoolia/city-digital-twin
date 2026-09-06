@@ -76,15 +76,33 @@ public final class TolerantAgentSource implements AgentSource {
     public void insertAgentsIntoMobsim() {
         final Set<String> mainModes = new HashSet<>(
                 this.qsim.getScenario().getConfig().qsim().getMainModes());
+        // 9.146: a vehicle two persons share (the household roster,
+        // B.population.vehicle_roster) is parked ONCE, where the first of
+        // them starts the day. A later member starting elsewhere finds no
+        // car at their link and, under qsim.vehicleBehavior=wait, waits for
+        // it - which is where the car actually is. Counted, never re-parked.
+        final java.util.Map<Id<Vehicle>, Id<org.matsim.api.core.v01.network.Link>>
+                parkedAt = new java.util.HashMap<>();
+        int elsewhere = 0;
         for (final Person person : this.population.getPersons().values()) {
             final MobsimAgent agent =
                     this.agentFactory.createMobsimAgentFromPerson(person);
-            insertVehicles(person, mainModes);
+            elsewhere += insertVehicles(person, mainModes, parkedAt);
             this.qsim.insertAgentIntoMobsim(agent);
+        }
+        if (elsewhere > 0) {
+            org.apache.logging.log4j.LogManager.getLogger(TolerantAgentSource.class)
+                    .info("agentSource: {} shared vehicle(s) wanted at a link other "
+                          + "than where they stand; the agent waits for the car "
+                          + "(qsim.vehicleBehavior)", elsewhere);
         }
     }
 
-    private void insertVehicles(final Person person, final Set<String> mainModes) {
+    private int insertVehicles(final Person person, final Set<String> mainModes,
+                               final java.util.Map<Id<Vehicle>,
+                                       Id<org.matsim.api.core.v01.network.Link>>
+                                       parkedAt) {
+        int elsewhere = 0;
         final List<Leg> legs =
                 TripStructureUtils.getLegs(person.getSelectedPlan());
         final Set<String> parked = new HashSet<>();
@@ -107,6 +125,15 @@ public final class TolerantAgentSource implements AgentSource {
                 continue;
             }
             parked.add(mode);
+            final Id<org.matsim.api.core.v01.network.Link> already =
+                    parkedAt.get(vehicleId);
+            if (already != null) {
+                if (!already.equals(route.getStartLinkId())) {
+                    elsewhere++;
+                }
+                continue;                          // 9.146: one car, parked once
+            }
+            parkedAt.put(vehicleId, route.getStartLinkId());
             final Vehicle vehicle = this.qsim.getScenario().getVehicles()
                     .getVehicles().get(vehicleId);
             if (vehicle == null) {
@@ -120,5 +147,6 @@ public final class TolerantAgentSource implements AgentSource {
                     this.qVehicleFactory.createQVehicle(vehicle),
                     route.getStartLinkId());
         }
+        return elsewhere;
     }
 }

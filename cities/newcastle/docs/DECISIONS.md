@@ -184,6 +184,7 @@ about its layout will otherwise cost you an hour:
 | **A stopped run can be cited; the partially bound tour gets a plan; the escort denial scoped to the subtour; nobody drives and is driven at once** | **§9.143** — the F24 gate read at milestone 90 with motorbike the second mode ever inside 10 %; a run that ends at a defined boundary now closes itself out and `completion` becomes the result gate, not the record's presence; #86's three losses between binding and plan memory measured and repaired — 60,273 partially bound trips seeded, 33,832 escort-day trips freed, and 17,740 person-tours that were booked to drive and be driven at once, which reopens §9.142's finding that the binder volume was at target; the F25 arm then FALSIFIED the demand cause - the seeded ride share rose 31 % and the realised share did not move, so the loss is in pairing (21.7 % of selected ride legs never pair) and in selection, not in the choice set |
 | **A declared ride driver must own a car** | **§9.144** — the escort binder and the §9.60 lift pass chose a driver on a LICENCE alone where the joint and shared passes also require a household vehicle, so 6,165 WEEKDAY escort bindings (5,426 drivers) and 3,154 lift bindings (2,697 drivers) named a driver with no car and the seed then walked, bussed or taxied 85,993 legs the same person was declared to drive; the measurement #142 asked for settles it - 100 % of the refused escort passengers are in the driver's OWN vehicle-less household, where `ride_avail` denies `ride` anyway, so the BINDING was wrong and not the seed, and the HX tour is left alone as real escort travel; `car_available` proves to be exactly `licence_holder AND household_vehicles > 0`; the freed volume is re-let by the occupancy identity to drivers who can drive (bindings 375,007 → 375,307, seeded ride share 0.0444 → 0.0448, non-car legs on a declared drive trip 85,993 → 0) and family F26 opens at the rebuild |
 | **The dominant pairing miss is not a window** | **§9.145** — `RidePairingEngine` applies the clock only to an INFERRED pair (`if (!isDeclared && gap > window)`, per §9.120), so a declared pair can never be recorded as a window miss and `miss_window` means the declared driver was ABSENT and a substitute was found at the wrong hour; at the F25 gate 14,766 of 16,778 unpaired legs (88 %) are that one class, the four buckets summing exactly to the unpaired total; `GatedSubtourModeChoice` gates proposals, not memories, so a declared driver leaves `car` only by selecting a seeded plan that never had it - the 85,993 non-car legs on declared drive trips that §9.144 took to 0. Verdict: the loss and the repair already built are the same defect, so MEASURE rather than add a mechanism; §9.98's window refusal STANDS. `ride_pairing.csv` gains `miss_declared_absent`; the coherence listener's intra-household scope (45.4 % of bindings uncovered) is measured, not repaired |
+| **The F26 gate: declared pairs hold, the lost ride never had a driver, a household drove more cars than it owns** | **§9.146** — stopped by the watcher at 100 with 8 modes out (walk newly -22.7 %); `miss_declared_absent` 719 of 77,399 so §9.144 closed the declared-driver route and §9.145's 88 % arithmetic over-attributed; 12,461 of 66,909 selected ride legs on persons the demand never bound, proposed by the coherence listener's inference while the gate refused 192,000 of the kind; of 107,526 declared bound trips 45.5 % ridden, 29,827 self-driven, 571 in a carve lock's mode; 12,317 car legs began with every household car already out (4,265 one-car households, two out). Three roots with controls: `B.ride.coherence_scope` = declared; `B.population.vehicle_roster` = census with `RUN.qsim.vehicle_behavior` = wait; the carve never draws a bound passenger (pool and draw - the draw-only rebuild halved the seeded motorbike share, the §9.122 trap mirrored). F27 opens at the rebuild; #145 opened |
 
 
 ---
@@ -14166,10 +14167,114 @@ boundary opened (`F26-a-driver-owns-a-car` stays the open family: this is a
 counter, not a model change), no arm ran, and nothing here is a finding of the
 model.
 
+## 9.146 The F26 gate: the declared pairs hold, the ride that is lost never had a driver, and a household was driving more cars than it owns (6 September 2026, thirtieth session; user directive "continue with the GOAL"; issues #86, #48, #93, #145)
+
+**The arm, read and closed out.** `aborted_20260906T100429_300it_25pct`, the first
+family-F26 arm, S2 x WEEKDAY at 25 %, was stopped by the runner's own watcher at
+the iteration-100 gate with **8 modes past the bar** and closed itself out:
+`completion` = `stopped_at_gate`, `reached_iteration` = 100, rc 1, wall 38,426 s
+(a mean 384 s an iteration). At 100: car +11.5 %, ride -41.6 %, walk **-22.7 %**
+(newly past the bar: it passed through its target at iteration 50 and kept
+falling as car rose - 3.9 pp given up between 40 and 80 against 5.5 pp taken),
+taxi +157.0 %, bike +118.1 %, motorbike +11.1 %, bus +40.5 %, heavy rail
++234.7 %, light rail -55.9 %, ferry -70.5 %; truck level only, freight rail a
+representation. No mode inside 10 %. Every level here is F26's and may not be
+differenced against F25's.
+
+**The column built that morning answered at once, and it corrects §9.145.**
+`miss_declared_absent` read **719** of 77,399 selected ride legs (~1 %) at the
+gate, flat at 665-830 from iteration 25: the declared pairs HOLD, so §9.144
+closed the route by which a declared driver left `car`. But the pair rate still
+fell to 0.7865 with 16,527 legs unpaired, so §9.145's arithmetic - "14,766 of
+16,778 misses are one class, the declared driver absent" - was wrong in its
+premise that every unpaired leg named a driver. Measured on the arm's own
+experienced plans at iteration 100: **12,461 of 66,909 selected ride legs sat on
+persons the demand never bound** (every bound passenger names a driver - 49,119
+of 49,119 in the sampled population - so these persons hold no binding at all).
+Their source is in the arm's own log: `EscortCoherenceListener` re-proposed
+**~5,000 inferred ride plans an iteration** (9,981 at iteration 0, 4,858 at 100)
+to any household member whose trip matched a household car leg on endpoints and
+clock, while `GatedSubtourModeChoice` refused **192,000** proposals putting ride
+on a trip no declared driver serves. Two mechanisms contradicted on whether
+ride may exist without a driver, and the inferred legs were the ones that never
+paired - they filled `miss_window` and `miss_endpoints` (13,168 together),
+executed as a walk or a drive, and held plan-memory slots against real
+alternatives. §9.145's verdict - measure, and do not widen a window - stands on
+the corrected reading; its 88 % does not.
+
+**The selection half, measured at the trip level for the first time.** Of
+**107,526 declared bound trips in selected plans, 48,965 (45.5 %) were ridden**;
+**29,827 were driven by the passenger themselves**, 18,495 walked, 4,993 cycled,
+2,218 took a taxi, 1,896 a bus, 491 a train, and **571 were made in the mode of a
+carve lock** (334 truck, 237 motorbike) by 373 sampled locked persons who also
+held `boundRideTrips`. The self-driven trips led to the second physical defect.
+Joining the experienced plans to the census vehicle counts (B1
+`household_vehicles`): **12,317 car legs - 3.28 % of resident car legs, across
+5,279 households - began while every vehicle the household owns was already
+out**, 4,265 of them a one-car household with two members driving at once. The
+census holds 81,384 households (33.0 %) with more licensed drivers than
+vehicles, and under `qsim.vehiclesSource = modeVehicleTypesFromVehiclesData`
+PrepareForSim gives every person a car of their own, so nothing in the mobsim
+ever enforced the count. §9.105 had recorded the simplification in one line
+("a one-car household can in principle have two members driving it"); this is
+its measurement.
+
+**Three roots, each a physical identity shipped with a control member that
+reproduces F26 exactly.** (1) **`B.ride.coherence_scope` = `declared`** (sweep
+`inferred`): the listener's passenger-side and driver-side passes act only on a
+trip in the passenger's `boundRideTrips` and only with a driver in their
+`boundDriver` - the identity every other ride mechanism has used since §9.120
+- so it keeps declared pairs coherent and invents none. Extending it
+cross-household, the question §9.145 left, is moot: the declared pairs hold.
+(2) **`B.population.vehicle_roster` = `census`** (sweep `per_person`): every
+member carries `householdVehicles`; at the first iteration - after PrepareForSim,
+which overwrites any mapping written earlier, and which is why this is not a
+startup listener - every licensed, car-available member of a household with
+n >= 1 vehicles is mapped for `car` to `hh<id>_car<k>`, k round-robin over the
+members in person-id order; `TolerantAgentSource` parks each shared car once,
+where its first member starts, and counts the members who wanted it elsewhere;
+`JointRideEngine` boards a passenger into the driver's MAPPED car. A one-car
+household is exact. A multi-car household is assigned rather than pooled,
+because MATSim maps a person to one vehicle per mode - stated, not hidden, and
+the one-car case is 81 % of the measured excess. **`RUN.qsim.vehicle_behavior` =
+`wait`** (sweep `teleport`, MATSim's default and every earlier arm, under which
+the roster constrains nothing): the second driver stands at the link until the
+car is back, pays for it in schedule delay, and co-evolution learns to ride,
+walk or take the bus; a driver whose car never returns is counted as stuck,
+which is the price of a constraint that is physical rather than a penalty.
+(3) **A carve never draws a bound passenger**, in the pool solve and at the
+draw. The first rebuild excluded passengers at the draw alone and **halved the
+seeded motorbike share** (WEEKDAY 0.0006 -> 0.0003) - the mirror of the trap §9.122
+and §9.129 record, caught by the plans report before anything ran; the pool the
+probability is solved on now excludes them too, as it already excluded named
+drivers. Locked persons (truck carve q 0.010778 -> 0.021484 on the pool without passengers, delivery held, `_plans_report.json`); seeded motorbike share 0.0006 -> 0.0005.
+
+**Measured on the rebuild.** Chains untouched (no binding moved); plans and
+the 30 run-input sets rebuilt; `householdVehicles` stamped on every household
+member (510,308 of 622,036 WEEKDAY persons, the rest boundary and freight
+tiers); seeded ride share 0.0448 -> 0.0450 as the carve releases 373 passengers
+to their bindings. A 1 % smoke (`20260906T211911_2it_1pct`, rc 0) carried all three values into its config, mapped 4,005 drivers to 3,038 shared cars across 2,100 households (620 of them sharing) with 0 placement errors, and the listener's log reads `scope declared` - a plumbing test, read for nothing else. Family **`F27-a-household-drives-the-cars-it-owns`
+opens at the rebuild** (`from_launch` 20260906T211406).
+
+**Also recorded.** The run's accounting reads "does not close" for ride (2,231
+stuck of 68,062 departures), as F25's did - unpaired ride legs waiting at their
+link at 30:00; the telemetry instrument over-assigns end-of-day aborts (#54) and
+the roster's `wait` will add a second stuck class that must be told apart from
+it. #145 opened on this session's own measurement and carries `awaiting-run`;
+evidence placed on #86, #48 and #93; no issue closed.
+
+**What did not change.** No target value moved, no mode's utility or ASC was
+altered, the 67/143 split is untouched, no pairing window moved (§9.98 stands),
+and nothing here is a finding of the model: F26's reading is citable at 100 and
+is not a result. Registry 467 -> 469 fields. A stated-cost approval is needed
+before F27's first arm: ~32 h at 25 % x 300 on F26's measured pace, and `wait`
+is the first thing the arm measures about itself.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-06 | **The F26 gate read and closed out; three physical roots built with controls; family F27 opened (§9.146; issues #86, #48, #93, #145; thirtieth session; user directive "continue with the GOAL").** `aborted_20260906T100429_300it_25pct` stopped by the watcher at iteration 100, 8 modes out, walk newly past the bar, `completion` = `stopped_at_gate`, 384 s an iteration. `miss_declared_absent` 719: the declared pairs hold and §9.145's premise that every unpaired leg named a driver was wrong - 12,461 selected ride legs sat on unbound persons, proposed by `EscortCoherenceListener` by inference (~5,000 an iteration) while the gate refused 192,000 of the same kind. Trip level: 45.5 % of 107,526 declared bound trips ridden, 29,827 self-driven; 12,317 car legs began while every household car was out. Run stack: `B.ride.coherence_scope` = declared (`inferred` = F26); `B.population.vehicle_roster` = census with `householdVehicles` stamped and `RUN.qsim.vehicle_behavior` = wait (`per_person`/`teleport` = F26); `HouseholdVehicleRoster` at the first iteration, `TolerantAgentSource` parks a shared car once, `JointRideEngine` boards into the mapped car. Demand: a carve never draws a bound passenger, in the pool solve and the draw (a draw-only rebuild halved the seeded motorbike share and was rebuilt). Plans and the 30 run-input sets rebuilt; registry 467 -> 469. **No target value changed, the 67/143 split is untouched, no arm launched in F27, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **A full history check before the next arm: the dominant pairing miss is not a window (§9.145; issues #86, #48; thirtieth session; user directive "ENSURE YOU'RE NOT PILING UP PATCHES ONE OVER THE OTHER").** The board, the brief and the ride position page named the TIME WINDOW as the dominant miss at the F25 gate and asked whether §9.98's refusal to widen it was superseded. The code exempts a declared pair from the clock entirely (§9.120), so `miss_window` cannot describe one: it means the declared driver brought no car leg and a substitute was found at the wrong hour. On the arm's own table the four buckets sum exactly to the 16,778 unpaired legs and 14,766 of them (88 %) are that single class. `GatedSubtourModeChoice` gates innovation, not plan selection, so a declared driver can leave `car` only via a seeded plan that never held it - the 85,993 non-car legs on declared drive trips §9.144 reduced to 0 (verified on disk: `serve_tours_carless` 0 on all three day types). **The loss and the repair already built are the same defect: measure, do not add a mechanism. §9.98's refusal STANDS.** Instrumentation only: `ride_pairing.csv` gains `miss_declared_absent`, appended last, the four-way funnel untouched. Recorded and NOT repaired: `EscortCoherenceListener` is intra-household on both passes, leaving 170,582 of 375,307 WEEKDAY bindings (45.4 %) with no coherence mechanism - the F26 gate decides whether that matters. **No target value changed, no registry field added, no demand rebuilt, no family opened, no arm ran, nothing here is a finding.** |
 | 2026-09-06 | **A declared ride driver must own a car, in every binder pass (§9.144; issue #142; twenty-ninth session; user directive "Fix and go ahead").** Demand: the escort binder and the §9.60 lift pass now test a licence AND household car availability, the identity the joint and shared passes already used; the HX tour itself is untouched, so a car-less escorter still escorts and declares no car passenger. Measured before: 6,165 WEEKDAY escort bindings on 5,426 car-less drivers, 3,154 lift bindings on 2,697, and 85,993 non-car legs on a trip the person's own `boundDriveTrips` declared them to drive. Measured after, on the rebuild: bindings 375,007 → 375,307 as the occupancy identity re-lets the freed volume to drivers who can drive, seeded ride share 0.0444 → 0.0448, non-car legs on a declared drive trip 85,993 → 0, `serve_tours_carless` 0 on all three day types. `car_available` measured to be exactly `licence_holder AND household_vehicles > 0` over 612,634 persons. Chains, plans and the 30 run-input sets rebuilt; `check_package.py` ALL CHECKS PASSED; manifest 512 files, registry 466 unchanged. Family `F26-a-driver-owns-a-car` opened at the rebuild. **No target value changed, the 67/143 split is untouched, no arm ran, no approval was spent, nothing here is a finding.** |
 | 2026-09-05 | **A stopped run can be cited; #86's three losses between binding and plan memory repaired (§9.143; issues #86, #66; twenty-eighth session; user directives).** Harness: a run ending at a DEFINED boundary (its last iteration, the gate watcher, or `--stop`) is closed out with its record, summary and findings, while a CRASH still gets none; `completion` replaces the record's mere presence as the result gate, and resume matching and the calibrated base both ask it; `reached_iteration` comes from the log's ENDS markers, never the digest's in-flight iteration. Demand: per-trip modes in a seeded plan so a partially bound tour can ride its covered leg (`B.mode.partial_bind_base`); `B.activity.escort_exclusion_scope` = `subtour`; the binder passes no longer offer a booked passenger as a driver. Measured: both-roles bookings 17,740 → 0, escort-blocked trips 33,832 → 0, partially bound trips seeded 50,665 → 60,273, seeded ride share 0.0338 → 0.0444. Reproducibility: every build writer pins LF, after a manifest hash disagreed with the blob git committed. F24 read at milestone 90: motorbike inside 10 % at -5.7 %, seven modes past 20 %, a settled 325 s an iteration. F25 read at 100 and stopped by the watcher itself - the first gate stop ever to carry a citable record: ride -43.1 % against a seeded share up 31 %, so the demand cause is falsified and the loss is downstream (pair rate 0.98 -> 0.78, `miss_window` 1 -> 7,921). **No target value changed, the 67/143 split is untouched, nothing here is a finding.** Registry 464 → 466. |

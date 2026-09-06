@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 6 September 2026 (twenty-ninth session) · **Record read through:** §9.144 · **Open family:** F26 (opened at its rebuild; no arm has run in it)
+**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.146 · **Open family:** F27 (opened at its rebuild; no arm has run in it)
 
 ## What is built
 
@@ -12,6 +12,7 @@
 - **The G17 income band now reaches scoring** (§9.138, #108): each resident's weekly band midpoint is stamped as the `income` plan attribute (closed bands by interval identity, the open top band at `C.income.top_band_factor` 1.25 swept; 424,190 of 621,364 WEEKDAY persons carry one) and MATSim core's `IndividualPersonScoringParameters` scales that person's marginalUtilityOfMoney by (average/personal)^`C.income.exponent` (1.0, swept 0.5–1.5). Neg_Nil (109,267 residents) carries no attribute and keeps the subpopulation value by the class's documented fallback; `external`/`freight` are excluded by name. `C.income.representation = absent` recovers the flat-money model (§9.138).
 - Age structure reads G04's grouped 80+ columns, so the 75+ population exists; employment, the full-time/part-time split and unemployment are drawn per (SA1, sex, ABS band) from G46A/B; school attendance per SA1 from G01; the 18+ full-time/part-time education split is observed per SA1 from G15, and `B.population.tertiary_ft_share` is retired (§9.47, §9.61).
 - Licence holding is **measured**: `B.population.licence_rate_by_age_band` (`measured`, sweep proportional 0.05) is the TfNSW Driver Licence Statistics July 2026 snapshot over the ABS estimated resident population at 30 June 2024, pooled 18–24 0.78, 25–34 0.94, 35–44 1.00 (capped), 45–74 0.97–0.98, 75–84 0.92, 85+ 0.51, 12–17 0.08; each person is drawn at their own LGA's rate from `data/processed/observed/licence_rates_by_age_lga.csv` (§9.131). The producing script `cities/newcastle/build/build_licence_rates.py` asserts the vector it derives against the declared field and exits non-zero on drift, so the registry cannot lag its observation (§9.133).
+- **A household drives the cars it owns, and no more** (§9.146, #145): every member carries `householdVehicles` (B1 `household_vehicles`), and under `B.population.vehicle_roster` = `census` (sweep `per_person` = MATSim's own one-car-per-person, every arm before it) each licensed car-available member is mapped to one of the household's `hh<id>_car<k>` shared vehicles, round-robin in person-id order; `RUN.qsim.vehicle_behavior` = `wait` (sweep `teleport`, under which the roster constrains nothing) holds a driver at the link until the car is back. A one-car household is exact; a multi-car one is assigned, not pooled, because MATSim maps a person to one vehicle per mode. The census holds 81,384 households (33.0 %) with more licensed drivers than vehicles (`B1_synthetic_population.csv`).
 - Car availability is a licence plus a household vehicle; bike availability is a per-person draw at `B.population.bike_available_rate` 0.493 (`literature`, CWANZ NSW 2025, sweep 0.30–1.00), gated below `B.population.bike_min_age` 12; taxi is gated below `B.taxi.min_unaccompanied_age` 18, both thresholds assumed and swept with zero disabling the gate (§9.39, §9.78, §9.84).
 
 **B2 — activity chains as tours (`src/build/build_activity_chains.py`, one file per day type: WEEKDAY, SAT, SUN).**
@@ -57,7 +58,8 @@
 
 ## What is open
 
-- #86 — passenger demand against the observed 20.6%: the four passes reach the identity on paper; realisation at F21 is the test (#86, §9.124).
+- #86 — passenger demand against the observed 20.6%: the four passes reach the identity on paper; at the F26 gate 45.5 % of declared bound trips in selected plans ride and 29,827 are driven by the passenger themselves — 12,317 car legs began with every household car already out (§9.146, #145). The roster is the repair; the first F27 arm measures it.
+- #145 — awaiting the first arm on the roster: car legs starting with every household car out (0 expected for one-car households), the wait distribution, and where the self-driven bound trips settle (§9.146).
 - #50 — no mode × age cell exists in the held data; the age gates are assumed and swept, and the modelled split is sex-invariant against G62 (§9.78, §9.84).
 - Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION` and the activity durations (§9.2, §9.61); the 2021 journey-to-work table would sharpen the interaction rate's 2011 vintage and is an attended extract (§9.140).
 - #96 and #93 are awaiting a run on the F24 build: the leaf mixes are repaired at the seed (0 leaf on every day type) and the carve is conserved per LGA (§9.140) — the seed page and the motorbike page carry the numbers.
@@ -77,6 +79,7 @@
 
 ## History
 
+- §9.146 — a household drives the cars it owns; the carve draws no bound passenger
 - §9.144 — a binder driver must own a car; F26 rebuild
 - §9.143 — per-trip seeded modes; escort denial scoped to the subtour
 - §9.142 — the demand rebuilt on balanced destinations

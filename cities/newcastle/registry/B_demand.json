@@ -1333,6 +1333,29 @@
       "decisions_ref": "15",
       "description": "Share of the synthetic population BUILT. One, always: this is the build, not the run. Sampling for a run is RUN.sample.fraction, applied by the harness to a full population - and conflating the two would make every run a sample of a sample. Declared so the distinction is visible; it was an argparse default of 1.0 sitting next to a run-time fraction of the same shape."
     },
+    "B.population.vehicle_roster": {
+      "value": "census",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "census",
+          "per_person"
+        ],
+        "basis": "Whether a household's drivers share the cars the census says it owns. `per_person` is MATSim's own behaviour and every arm before 9.146: PrepareForSim gives each person a car of their own under qsim.vehiclesSource=modeVehicleTypesFromVehiclesData, so a household can put more cars on the road than it holds. `census` maps every licensed, car-available member of a household with n >= 1 vehicles (B1 `household_vehicles`, stamped on the population as `householdVehicles`) to one of n shared vehicles hh<id>_car<k>, assigned round-robin in person-id order, at the first iteration after PrepareForSim; the agent source parks each shared car once, where the first member starts; whoever wants it while it is out waits for it under RUN.qsim.vehicle_behavior. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,317 car legs, 3.28 % of resident car legs across 5,279 households, began while every vehicle the household owns was already out - 4,265 of them a one-car household with two members driving at once - and the census holds 81,384 households (33.0 %) with more licensed drivers than vehicles. A one-car household is EXACT under `census`; a multi-car household is assigned rather than pooled, because MATSim maps a person to one vehicle per mode, and that limit is stated rather than hidden. The sweep is over the MECHANISM: running both measures how much of car's excess and ride's deficit the second car supplied."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146",
+      "matsim_param": "householdVehicles.roster",
+      "consumers": [
+        "src/java/citysim/HouseholdVehiclesConfigGroup.java",
+        "src/java/citysim/HouseholdVehicleRoster.java",
+        "src/java/citysim/TolerantAgentSource.java",
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "Whether a household's drivers share the cars the census gives it: `census` - every driver is mapped to one of the household's `householdVehicles` shared cars and waits for it when it is out; `per_person` - each person drives a car of their own (MATSim's default, pre-9.146). Consumed by HouseholdVehicleRoster through householdVehicles.roster."
+    },
     "B.ride.pairing_enabled": {
       "value": true,
       "units": "boolean",
@@ -1420,6 +1443,27 @@
         "src/java/citysim/RidePairingEngine.java"
       ],
       "description": "Where a declared ride pair meets when the two members' links differ: `driver_detour` routes the driver's car leg through the passenger's origin and destination links and the passenger boards and alights at their own; `passenger_links` requires the driver to satisfy the pairing rule on the passenger's links (pre-9.128). Consumed by RidePairingEngine through ridePairing.declaredMeeting."
+    },
+    "B.ride.coherence_scope": {
+      "value": "declared",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "declared",
+          "inferred"
+        ],
+        "basis": "Whom EscortCoherenceListener may re-propose a pair for. `inferred` is the behaviour of every arm before 9.146 and is kept as the control: any household member whose trip matches a household car leg on endpoints and clock is offered `ride`, and a drifted household driver whose non-car trip matches a member's ride is offered `car`, whether or not the demand bound them. `declared` restricts both passes to the identity every other ride mechanism has used since 9.120 - a trip in the person's `boundRideTrips`, with a driver in their `boundDriver` - so the listener keeps DECLARED pairs coherent and invents none. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,461 of 66,909 selected ride legs sat on persons the demand never bound, the listener re-proposing ~5,000 inferred ride plans an iteration while GatedSubtourModeChoice refused 192,000 proposals of exactly that kind; the inferred legs were the ones that never paired (miss_window + miss_endpoints 13,168 against miss_declared_absent 719), executed as walk or drive, and held plan-memory slots against real alternatives. The sweep is over the MECHANISM: running both measures how much of the pairing loss and the walk/car residue the inferred proposals supplied."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146",
+      "matsim_param": "ridePairing.coherenceScope",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/EscortCoherenceListener.java"
+      ],
+      "description": "Whom the coherence listener may re-propose a ride pair for: `declared` - only a demand-bound trip with its named driver (boundRideTrips / boundDriver); `inferred` - any household member matching a household car leg on endpoints and clock (pre-9.146). Consumed by EscortCoherenceListener through ridePairing.coherenceScope."
     },
     "B.ride.unpaired_fallback": {
       "value": "licensed_drive_else_walk",

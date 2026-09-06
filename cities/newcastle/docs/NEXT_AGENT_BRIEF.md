@@ -1,6 +1,8 @@
 # Brief for the next agent
 
-**Written:** 6 September 2026, twenty-ninth session · **Open family:** `F26-a-driver-owns-a-car` · **Commit:** `4a84f40` on `praneetdhoolia/escort-driver-needs-a-car`
+**Written:** 6 September 2026, thirtieth session (interim — `/handoff` rewrites this) · **Open family:** `F27-a-household-drives-the-cars-it-owns` · **Branch:** `praneetdhoolia/history-check-and-pre-run-fixes`
+
+**§0 at a glance, thirtieth session:** the F26 arm ran to its iteration-100 gate and was stopped by the watcher (8 modes out, §9.146); **the package on disk is F27's** (plans + 30 sets rebuilt 21:14 6 Sep, manifest 512, `check_package.py` see the board); #145 opened `awaiting-run`, every open issue carries the label; **no arm runs, no approval stands** — F27's first arm costs ~32 h at 25 % × 300 on F26's measured 384 s/it and is the first measurement of `wait` itself.
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
@@ -48,6 +50,13 @@ last session, measured on `aborted_20260905T125612_300it_25pct`:
    offered and mostly not chosen. Indicatively — crossing two bases, so an
    indication only — ~3 pp of the 8.9 pp gap is execution and ~6 pp is
    selection, which is a scoring question.
+
+**SUPERSEDED BY THE F26 GATE (§9.146) — read the board and the ride page; this
+section is the state before the arm ran.** The gate found the declared pairs
+holding (`miss_declared_absent` 719) and the loss in 12,461 ride legs with no
+driver, 29,827 bound trips self-driven, and 12,317 car legs with every household
+car already out. Three fixes are built with controls; F27 is open; the arm needs
+your cost approval (~32 h). The paragraph below is kept for the trap it records.
 
 **The window reading above is WRONG, and §9.145 settles it on the code.** A
 declared pair faces no clock test at all (`if (!isDeclared && gap > window)`,

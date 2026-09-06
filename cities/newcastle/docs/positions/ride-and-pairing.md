@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.145 · **Open family:** F26 (opened at the rebuild; no arm has run in it)
+**Updated:** 6 September 2026 (thirtieth session) · **Record read through:** §9.146 · **Open family:** F27 (opened at the rebuild; no arm has run in it — F26's one arm stopped at its iteration-100 gate)
 
 ## What is built
 
@@ -26,13 +26,16 @@
 - `B.ride.declared_pair_meeting` = `driver_detour`: once a driver's passengers are known, the driver's car leg is re-routed through each passenger's origin link and then each destination link, in departure order, with the run's own router; the detour is written to the driver's plan and paid in the driver's score; `passenger_links` is the swept alternative (§9.128).
 - `JointRideEngine` boards the passenger into the driver's real vehicle (`B.ride.physical_boarding` true), alights them mid-route at their destination link, and holds a booked passenger at their link up to the booking's tolerance (`B.ride.wait_for_driver` true) (§9.53, §9.60, §9.102). `B.ride.max_passengers_per_vehicle` = 4 refused 2 of 73,258 joint bindings (§9.111).
 - An unpaired ride leg executes this iteration as `B.ride.unpaired_fallback` = `licensed_drive_else_walk` (`B.ride.remode_unpaired` true) and the plan keeps `ride` at AfterMobsim — an execution, not a deletion (§9.55, §9.81, §9.105).
-- `EscortCoherenceListener` re-offers a split pair at `B.ride.escort_coherence_rate` = 0.4 and `B.ride.joint_coherence_rate` = 0.4 (sweep 0–0.5; zero recovers escort-only) (§9.84). Both its passes iterate `byHousehold`, so its scope is intra-household (§9.145).
+- `EscortCoherenceListener` re-offers a split pair at `B.ride.escort_coherence_rate` = 0.4 and `B.ride.joint_coherence_rate` = 0.4 (sweep 0–0.5; zero recovers escort-only) (§9.84). Both its passes iterate `byHousehold`, so its scope is intra-household (§9.145). **Since §9.146 it re-proposes DECLARED pairs only** — a trip in `boundRideTrips` with a driver in `boundDriver` — under `B.ride.coherence_scope` = `declared` (sweep `inferred` reproduces every arm before it): the same identity `GatedSubtourModeChoice` gates on, so the two mechanisms no longer contradict.
+- A household drives the cars the census gives it: `B.population.vehicle_roster` = `census` maps every driver to a shared `hh<id>_car<k>` and `RUN.qsim.vehicle_behavior` = `wait` holds the second driver until it returns (§9.146, #145; [population-and-demand](population-and-demand.md)). A declared passenger who would rather drive now needs a car to be at home.
 - `ride_pairing.csv` carries `miss_declared_absent` since §9.145 — unpaired legs naming a declared driver who brought no car leg — counted independently of the four-way funnel and appended last, so no earlier arm's columns shift meaning.
 
 ## What is measured
 
 Every arm below was stopped at or before its gate; levels are readings, not results.
 
+- **THE F26 GATE: the declared pairs hold, and the loss is ride with no driver at all** (§9.146, #86). `aborted_20260906T100429_300it_25pct`, stopped by the watcher at iteration 100 with 8 modes out: **ride −41.6 %** (12.03 %), flat from iteration 20. `miss_declared_absent` reads **719** of 77,399 selected ride legs (~1 %), so §9.144 closed the route by which a declared driver left `car`. The unpaired legs (16,527) are instead **12,461 ride legs on persons the demand never bound** — every bound passenger names a driver, 49,119 of 49,119 in the sample — proposed by the listener's endpoint inference (~5,000 an iteration in its own log) while the gate refused 192,000 proposals of that kind. **§9.145's "88 % one class" over-attributed**: it assumed every unpaired leg named a driver; the column built to test it says otherwise, and the verdict (measure, do not widen a window) stands on the corrected reading.
+- **Selection, measured at the trip level for the first time** (§9.146): of **107,526 declared bound trips in selected plans, 48,965 (45.5 %) ride**; 29,827 are driven by the passenger themselves, 18,495 walk, 4,993 bike, 2,218 taxi, 1,896 bus. The self-driven are the household-vehicle defect: **12,317 car legs began while every car the household owns was out**, 4,265 of them one-car households with two members driving (#145). 571 bound trips were selected as a carve lock's mode (`truck` 334, `motorbike` 237) by 373 locked persons the carve should never have drawn (#93).
 - **A declared driver now owns a car, and the ride volume did not fall** (§9.144, #142). On the F26 rebuild the freed volume is re-let by the occupancy identity to drivers who can actually drive: escort bindings 127,073 → **120,971**, lift 47,496 → **44,180**, joint 83,678 → **83,754**, shared 116,760 → **126,402**, so WEEKDAY bindings total 375,007 → **375,307** and the seeded ride share 0.0444 → **0.0448** (`_activity_chains_report.json`, `_plans_report.json`). **Non-car legs on a trip the same person is declared to drive: 85,993 → 0**, counted over all 710,813 `boundDriveTrips` entries in `population_WEEKDAY.xml.gz`; `serve_tours_carless` is 0 on all three day types and is reported every build so the class cannot return unseen.
 
 - **THE DEMAND WAS NOT THE CAUSE — F25 falsifies it** (§9.143, #86). The F25 arm `aborted_20260905T125612_300it_25pct`, stopped by its own watcher at the iteration-100 gate: **ride −43.1 %**, against F24's −42.5 % at milestone 90. Three repairs made 60,273 partially bound trips seedable, freed 33,832 escort-day trips and removed 17,740 impossible bookings, raising the SEEDED ride share 0.0338 → 0.0444, and the REALISED share did not move. Being in plan memory is necessary and **not sufficient**: the ceiling is downstream of the choice set, and the whole demand-side class of explanation is closed. This was named in the run overlay before the arm as the outcome to look for, so it is a pre-registered answer.
@@ -82,6 +85,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.146 — F26 gate: declared pairs hold; the loss is ride without a driver and a second car the household does not own
 - §9.145 — the dominant miss is not a window; measure F26 rather than patch
 - §9.144 — a declared driver owns a car, in all four passes
 - §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
