@@ -85,9 +85,17 @@ public final class TolerantAgentSource implements AgentSource {
                 parkedAt = new java.util.HashMap<>();
         int elsewhere = 0;
         for (final Person person : this.population.getPersons().values()) {
+            // 9.148: vehicles BEFORE the agent. MATSim 26's agent is built
+            // from a message that copies the plan elements, so a vehicle id
+            // stamped on the person's route after the agent exists never
+            // reaches the agent - which the netsim engine's own error note
+            // says in as many words. The old order only worked while every
+            // route already carried the id PrepareForSim gave it; under the
+            // household roster the mapped car differs, and a 1 % smoke died
+            // at the first car departure asking for the person-id vehicle.
+            elsewhere += insertVehicles(person, mainModes, parkedAt);
             final MobsimAgent agent =
                     this.agentFactory.createMobsimAgentFromPerson(person);
-            elsewhere += insertVehicles(person, mainModes, parkedAt);
             this.qsim.insertAgentIntoMobsim(agent);
         }
         if (elsewhere > 0) {

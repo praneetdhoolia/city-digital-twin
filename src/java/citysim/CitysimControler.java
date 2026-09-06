@@ -510,6 +510,15 @@ public final class CitysimControler {
                         addQSimComponentBinding("citysimTolerantAgentSource")
                                 .to(TolerantAgentSource.class);
                     }
+                    if (householdVehicles.isCensusRoster()) {
+                        // 9.148: a driver whose household car is out waits
+                        // for it - car only, so walk and taxi keep MATSim's
+                        // teleport under RUN.qsim.vehicle_behavior. Ordered
+                        // BEFORE the netsim engine's handler below.
+                        bind(HouseholdCarDepartureHandler.class).asEagerSingleton();
+                        addQSimComponentBinding(HouseholdCarDepartureHandler.COMPONENT)
+                                .to(HouseholdCarDepartureHandler.class);
+                    }
                 }
             });
             // Departure handlers are consulted in component order, and the
@@ -524,6 +533,9 @@ public final class CitysimControler {
                 components.removeNamedComponent(TeleportationModule.COMPONENT_NAME);
                 if (networkWalk) {
                     components.addNamedComponent(GenericRouteTeleporter.COMPONENT);
+                }
+                if (householdVehicles.isCensusRoster()) {
+                    components.addNamedComponent(HouseholdCarDepartureHandler.COMPONENT);
                 }
                 components.addNamedComponent(QNetsimEngineModule.COMPONENT_NAME);
                 if (physicalBoarding) {

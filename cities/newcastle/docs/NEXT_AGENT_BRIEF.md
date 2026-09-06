@@ -1,6 +1,8 @@
 # Brief for the next agent
 
-**Written:** 6 September 2026, thirtieth session (interim — `/handoff` rewrites this) · **Open family:** `F27-a-household-drives-the-cars-it-owns` · **Branch:** `praneetdhoolia/history-check-and-pre-run-fixes`
+**Written:** 7 September 2026, thirtieth session (interim — `/handoff` rewrites this) · **Open family:** `F28-the-car-waits-only-for-a-car` · **Branch:** `praneetdhoolia/history-check-and-pre-run-fixes`
+
+**Trap, newest:** `RUN.qsim.vehicle_behavior` is GLOBAL — `wait` strands walk and taxi, which are network modes with per-person vehicles and not chain-based (§9.148); the household car constraint is car-only in `HouseholdCarDepartureHandler`. And the agent source must insert vehicles BEFORE creating the agent — MATSim 26 copies the plan elements into the agent.
 
 **§0 at a glance, thirtieth session:** the F26 arm ran to its iteration-100 gate and was stopped by the watcher (8 modes out, §9.146); **the package on disk is F27's** (plans + 30 sets rebuilt 21:14 6 Sep, manifest 512, `check_package.py` see the board); #145 opened `awaiting-run`, every open issue carries the label; **no arm runs, no approval stands** — F27's first arm costs ~32 h at 25 % × 300 on F26's measured 384 s/it and is the first measurement of `wait` itself.
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and

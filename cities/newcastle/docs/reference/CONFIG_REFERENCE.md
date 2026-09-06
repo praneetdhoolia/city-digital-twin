@@ -3549,7 +3549,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.qsim.main_mode` | `["car", "truck", "motorbike", "walk", "bike", "taxi"]` | enum | `definition` | - |
 | `RUN.qsim.snapshot_period` | `00:00:00` | hh:mm:ss | `definition` | - |
 | `RUN.qsim.start_time_h` | `0` | hours | `definition` | - |
-| `RUN.qsim.vehicle_behavior` | `wait` | enum | `assumed` | `wait`, `teleport` |
+| `RUN.qsim.vehicle_behavior` | `teleport` | enum | `assumed` | `wait`, `teleport` |
 | `RUN.qsim.vehicles_source` | `modeVehicleTypesFromVehiclesData` | policy | `definition` | - |
 | `RUN.relaxation.drift_tolerance_pp` | `0.5` | percentage_points | `assumed` | 0.1 - 1 |
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `measured` | 1 - 100 |
@@ -3826,11 +3826,11 @@ Mobsim start.
 
 #### `RUN.qsim.vehicle_behavior`
 
-What happens when a car-departing agent's mapped vehicle is not at their link: `wait` holds the agent until it arrives (the household roster's constraint is then physical); `teleport` moves the vehicle to the agent (MATSim's default, pre-9.146, under which the roster constrains nothing).
+What happens when a network-mode agent's mapped vehicle is not at their link: `teleport` moves the vehicle to the agent (MATSim's default; required by the non-chain network modes walk and taxi); `wait` holds the agent until it arrives and is measured fatal for this model (9.148). The household car constraint is car-only and lives in HouseholdCarDepartureHandler, not here.
 
-***assumed** · status **active** · DECISIONS.md §9.146 · MATSim `qsim.vehicleBehavior` · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.146, 9.148 · MATSim `qsim.vehicleBehavior` · sweep role **uncertainty***
 
-> **Sweep basis.** What the mobsim does when an agent departs by car and the car they are mapped to is not at their link. `teleport` is MATSim's default and every arm before 9.146: the vehicle is moved to the agent, so a shared car (B.population.vehicle_roster = census) constrains nothing and the roster is inert - which is exactly why it is the control. `wait` holds the agent at the link until the car arrives there, so a one-car household's second driver waits for the first to bring it back, pays for the wait in schedule delay, and co-evolution learns to ride, walk or take the bus; an agent whose car never returns stands until the end of the day and is counted as stuck, which is the price of the constraint being physical rather than a penalty. `exception`, MATSim's third member, stops the run and is not a modelling choice.
+> **Sweep basis.** What the mobsim does when an agent departs by a network mode and the vehicle they are mapped to is not at their link. It is GLOBAL, and this model runs walk and taxi as network main modes with a vehicle per person, neither of them chain-based: a walk after a bus leg starts where the walk vehicle is not. `teleport` (MATSim's default, every arm before 9.146 and every arm since 9.148) moves the vehicle to the agent, which is what those modes need. `wait` is MEASURED FATAL for this model (9.148): on the F27 arm aborted_20260907T002431_300it_25pct at iteration 0 it left 55,862 car agents, 12,837 walk and 11,537 ride stuck and cut car departures from 232,394 (F26) to 82,388, and by iteration 19 co-evolution had abandoned every plan that strands, a bias rather than a constraint. It stays in the sweep as the record of that measurement, not as a candidate. The household roster's constraint (B.population.vehicle_roster = census) is enforced instead by citysim.HouseholdCarDepartureHandler, car-only: a driver whose household car is out is registered with the link as waiting and MATSim's own link departs them when the car is parked back, while everything else departs under the global behaviour declared here.
 
 #### `RUN.qsim.vehicles_source`
 

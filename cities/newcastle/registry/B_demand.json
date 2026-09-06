@@ -1351,6 +1351,7 @@
       "consumers": [
         "src/java/citysim/HouseholdVehiclesConfigGroup.java",
         "src/java/citysim/HouseholdVehicleRoster.java",
+        "src/java/citysim/HouseholdCarDepartureHandler.java",
         "src/java/citysim/TolerantAgentSource.java",
         "src/build/build_matsim_plans.py"
       ],

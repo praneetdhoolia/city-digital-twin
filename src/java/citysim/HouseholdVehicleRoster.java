@@ -70,9 +70,16 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
 
     @Override
     public void notifyIterationStarts(final IterationStartsEvent event) {
-        if (applied || cfg == null || !cfg.isCensusRoster()) {
+        if (cfg == null || !cfg.isCensusRoster()) {
             return;
         }
+        // 9.148: asserted before EVERY mobsim, not once. A 1 % smoke under the
+        // once-only version died in iteration 1 asking for a person-id car:
+        // something between iterations had put the per-person mapping back,
+        // and a fresh route then carried it. Re-mapping 155k persons costs
+        // well under a second; the log line says how many mappings it had
+        // to restore, so a rewrite by any other component is visible.
+        final boolean first = !applied;
         applied = true;
         final VehicleType carType = scenario.getVehicles().getVehicleTypes()
                 .get(Id.create(TransportMode.car, VehicleType.class));
@@ -105,6 +112,7 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
         int drivers = 0;
         int sharing = 0;                           // households with drivers > cars
         int created = 0;
+        int restored = 0;                          // 9.148: mappings put back
         for (final Map.Entry<String, List<Person>> e : byHousehold.entrySet()) {
             final int n = vehiclesOf.getOrDefault(e.getKey(), 0);
             if (n <= 0) {
@@ -131,14 +139,23 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
                 } catch (final RuntimeException none) {
                     map = new HashMap<>();
                 }
+                if (!vid.equals(map.get(TransportMode.car))) {
+                    restored++;
+                }
                 map.put(TransportMode.car, vid);
                 VehicleUtils.insertVehicleIdsIntoPersonAttributes(driver, map);
                 drivers++;
             }
         }
-        LOG.info("householdVehicles: roster=census - {} households, {} drivers "
-                 + "mapped to {} shared cars; {} households hold fewer cars than "
-                 + "drivers and will share (B.population.vehicle_roster, 9.146)",
-                 households, drivers, created, sharing);
+        if (first) {
+            LOG.info("householdVehicles: roster=census - {} households, {} drivers "
+                     + "mapped to {} shared cars; {} households hold fewer cars than "
+                     + "drivers and will share (B.population.vehicle_roster, 9.146)",
+                     households, drivers, created, sharing);
+        } else if (restored > 0) {
+            LOG.info("householdVehicles: iteration {} - {} of {} driver mappings "
+                     + "had been put back to a person-owned car and were restored "
+                     + "(9.148)", event.getIteration(), restored, drivers);
+        }
     }
 }

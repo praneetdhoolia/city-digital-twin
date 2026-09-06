@@ -40,6 +40,7 @@ Reads the run directory only. Writes nothing. Nothing here is a result.
 """
 import argparse
 import collections
+import csv
 import gzip
 import json
 import os
@@ -73,6 +74,18 @@ def plans_path(run_dir, iteration):
     p = os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % iteration,
                      '%d.experienced_plans.xml.gz' % iteration)
     return p if os.path.exists(p) else None
+
+
+def _legs_table(run_dir, iteration):
+    """An open text handle on the iteration's legs table, or None (9.148)."""
+    import csv  # noqa: F401 - the caller parses; imported here so the module
+    base = os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % iteration,
+                        '%d.legs' % iteration)
+    if os.path.exists(base + '.csv.gz'):
+        return gzip.open(base + '.csv.gz', 'rt', encoding='utf-8', newline='')
+    if os.path.exists(base + '.csv'):
+        return open(base + '.csv', encoding='utf-8', newline='')
+    return None
 
 
 def trips_table_exists(run_dir, iteration):
@@ -211,14 +224,32 @@ def boardings(run_dir, iteration, route_mode=None):
     boarded route's transportMode through the run's own schedule and to the
     access stop's name through the same schedule.
     """
-    path = plans_path(run_dir, iteration)
-    if path is None:
-        raise SystemExit('iteration %d wrote no experienced plans under %s'
-                         % (iteration, run_dir))
     if route_mode is None:
         route_mode = em.transit_route_modes(run_dir)
     stop_name = em.transit_stop_names(run_dir)
     out = collections.Counter()
+    path = plans_path(run_dir, iteration)
+    if path is None:
+        # 9.148: a milestone that wrote no experienced plans - since 9.147
+        # the plans are gate artefacts (RUN.controler.write_plans_interval)
+        # and the ten-iteration monitoring reads MATSim's own tables - still
+        # carries every pt boarding in its LEGS table: one row per leg, with
+        # the boarded transit_line / transit_route and the access_stop_id,
+        # which is exactly what the experienced-plans walk below extracts
+        # from each default_pt route. The two paths count the same legs.
+        legs = _legs_table(run_dir, iteration)
+        if legs is None:
+            raise SystemExit('iteration %d wrote neither experienced plans '
+                             'nor a legs table under %s' % (iteration, run_dir))
+        with legs as fh:
+            for r in csv.DictReader(fh, delimiter=';'):
+                if not r.get('transit_route'):
+                    continue
+                sm = route_mode.get((r.get('transit_line'), r.get('transit_route')))
+                if sm is None:
+                    continue
+                out[(sm, stop_name.get(r.get('access_stop_id'), ''))] += 1
+        return out
     with gzip.open(path, 'rb') as fh:
         in_selected = False
         for ev, el in ET.iterparse(fh, events=('start', 'end')):

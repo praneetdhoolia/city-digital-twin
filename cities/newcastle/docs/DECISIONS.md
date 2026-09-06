@@ -186,6 +186,7 @@ about its layout will otherwise cost you an hour:
 | **The dominant pairing miss is not a window** | **§9.145** — `RidePairingEngine` applies the clock only to an INFERRED pair (`if (!isDeclared && gap > window)`, per §9.120), so a declared pair can never be recorded as a window miss and `miss_window` means the declared driver was ABSENT and a substitute was found at the wrong hour; at the F25 gate 14,766 of 16,778 unpaired legs (88 %) are that one class, the four buckets summing exactly to the unpaired total; `GatedSubtourModeChoice` gates proposals, not memories, so a declared driver leaves `car` only by selecting a seeded plan that never had it - the 85,993 non-car legs on declared drive trips that §9.144 took to 0. Verdict: the loss and the repair already built are the same defect, so MEASURE rather than add a mechanism; §9.98's window refusal STANDS. `ride_pairing.csv` gains `miss_declared_absent`; the coherence listener's intra-household scope (45.4 % of bindings uncovered) is measured, not repaired |
 | **The F26 gate: declared pairs hold, the lost ride never had a driver, a household drove more cars than it owns** | **§9.146** — stopped by the watcher at 100 with 8 modes out (walk newly -22.7 %); `miss_declared_absent` 719 of 77,399 so §9.144 closed the declared-driver route and §9.145's 88 % arithmetic over-attributed; 12,461 of 66,909 selected ride legs on persons the demand never bound, proposed by the coherence listener's inference while the gate refused 192,000 of the kind; of 107,526 declared bound trips 45.5 % ridden, 29,827 self-driven, 571 in a carve lock's mode; 12,317 car legs began with every household car already out (4,265 one-car households, two out). Three roots with controls: `B.ride.coherence_scope` = declared; `B.population.vehicle_roster` = census with `RUN.qsim.vehicle_behavior` = wait; the carve never draws a bound passenger (pool and draw - the draw-only rebuild halved the seeded motorbike share, the §9.122 trap mirrored). F27 opens at the rebuild; #145 opened |
 | **A milestone iteration cost twice a plain one** | **§9.147** — the F26 stopwatch separates them for the first time: a plain iteration 319 s (mobsim 197, replanning 43, pairing 41, prepareForMobsim 35), a milestone 569–715 s (`dump all plans` 121–147, the mobsim doubled by writing events, experienced plans 33–54), every tenth iteration a milestone, and the readers derived milestones from the experienced plans only because `writeTripsInterval` had never been declared (MATSim default 50). `RUN.controler.write_trips_interval` = 10 carries the monitoring; plans and events move to 100 = the gate interval; the detour routing runs on `global.numberOfThreads` workers and is applied in order; the mobsim's thread count probed for the first time on 24 cores — a plain iteration 270-272 s at 10, 267 at 16, 264-265 at 24, and 16 declared |
+| **A global `wait` strands every non-chain mode** | **§9.148** — `RUN.qsim.vehicle_behavior` = wait is global and walk and taxi are network modes with per-person vehicles that are not chain-based: the first F27 arm's iteration 0 read car departures 82,388 against F26's 232,394 with 55,862 car agents stuck, and by iteration 19 co-evolution had abandoned every plan that strands; stopped at 19, citable for nothing. The car waits only for a car: `HouseholdCarDepartureHandler`, registered before the netsim engine, registers a driver whose household car is out as waiting with the link and MATSim's own link departs them when it is parked back; everything else teleports as before; `vehicle_behavior` back to teleport, `wait` kept in the sweep as measured fatal. The reader takes rail boardings from the legs table where the plans are absent. F28 opens at the fix |
 
 
 ---
@@ -14333,10 +14334,71 @@ runs and no number of theirs is a reading of any mode. `RUN.machine.threads`
 stays run identity and its move is recorded inside the F27 boundary. Registry
 469 -> 470 fields. No arm has run in F27 and no approval stands.
 
+## 9.148 A global `wait` strands every mode that is not chain-based; the car waits only for a car (7 September 2026, thirtieth session; user directive "continue with the GOAL"; issues #145, #66)
+
+**What was wrong, and it was mine.** §9.146 enforced the household roster with
+`RUN.qsim.vehicle_behavior` = `wait`. That parameter is GLOBAL in MATSim, and
+this model runs walk and taxi as network main modes with a vehicle per person
+(§9.54, §9.59), neither of them chain-based: a walk leg after a bus leg starts
+where the walk "vehicle" is not, and a second taxi leg starts wherever the
+first ended. Under MATSim's default `teleport` the vehicle is quietly moved to
+the agent - which is exactly why teleport is the default - and under `wait`
+the agent stands until the end of the day. The 1 % smoke could not show it:
+at 1 % almost no household has two sampled drivers and the seed's plans are
+mostly single-mode. **The first F27 arm showed it in its own iteration-0
+`legHistogram`**: car departures **82,388 against F26's 232,394**, car agents
+stuck **55,862**, walk 12,837, ride 11,537, and every later leg of a stuck
+agent lost - 360,000 departures against F26's 566,000. By iteration 19 car
+read 268,329 departed and 179 stuck, which is not recovery: co-evolution had
+abandoned every plan that strands, a bias against every multi-leg non-chain
+plan rather than a constraint on the household's cars. The arm was stopped
+at iteration 19 under the loop's step 3 - `aborted_20260907T002431_300it_25pct`,
+`completion` = `stopped_by_operator`, wall 8,104 s - and **nothing it read is
+a reading of any mode**.
+
+**Decision: the car waits only for a car, in a departure handler of our own.**
+`HouseholdCarDepartureHandler`, a QSim component registered BEFORE the netsim
+engine's handler so it sees every departure first, acts on exactly one case:
+a `car` departure by a driver mapped to a household car (`hh<id>_car<k>`)
+whose car is not parked at the departure link. That driver is registered with
+the link as waiting - `QLinkI.registerDriverAgentWaitingForCar`, the mechanism
+MATSim's own `wait` uses - and the link departs them when the car is parked
+back there (`makeVehicleAvailableToNextDriver`, verified in the pinned jar).
+Every other departure - a car that is at its link, any other mode, any
+person-owned vehicle - is left to the default handler under the declared
+global behaviour, so walk and taxi teleport as they always did.
+**`RUN.qsim.vehicle_behavior` returns to `teleport`**; `wait` stays in its sweep
+as the record of a member MEASURED FATAL for this model, the way §9.59 kept
+`oneThreadPerHandler`, not as a candidate. The handler installs only under
+`B.population.vehicle_roster` = `census`, so `per_person` still reproduces
+F26 exactly. A 1 % smoke (`20260907T025531_2it_1pct`, rc 0) installs the handler ahead of the netsim engine and reads **362 drivers waiting for a household car that was out** in iteration 0 against 4,005 rostered drivers, car departures 8,792, arrivals 8,386 and 406 stuck - the waiters whose car did not come back in time - and no exception; a plumbing test, read for nothing else. The same smoke found a second defect the roster exposed: `TolerantAgentSource` stamped the mapped vehicle onto the route AFTER creating the agent, and MATSim 26 builds the agent from a copy of the plan elements, so the stamp never reached it and the first car departure asked for the person-id vehicle - which under `teleport` is fatal and under `wait` was silently stuck. The old order only ever worked because the two ids coincided; vehicles are now inserted before the agent, as the netsim engine's own error note asks.
+
+**The reader had the same defect in mirror.** §9.147 moved the plans to the
+gate cadence and left the ten-iteration monitoring to MATSim's trips table -
+but `iteration_trips.boardings()` still read rail and tram boardings from the
+experienced plans alone, so `--trend` silently dropped every milestone that
+had a table and no plans (it.10 on the F27 arm showed nothing). The legs table
+carries `transit_line`, `transit_route` and `access_stop_id`, one row per leg,
+which is exactly what the plans walk extracts from each `default_pt` route;
+the reader now takes boardings from the legs table where the plans are absent,
+and it.10 reads.
+
+**Consequences.** The run stack changed after F27's only arm, so **family
+`F28-the-car-waits-only-for-a-car` opens at this fix** (`from_launch`
+20260907T025531); F27 holds one arm, stopped at 19, citable for nothing. The
+first F28 arm is what §9.146 and §9.147 were launched to measure - the roster,
+the declared-only listener, the carve, the cadence, the threads - and its
+iteration-0 `legHistogram` is the first thing to read: car departures near
+F26's 232,394 with the stuck count near F26's 2,699 says the handler is
+car-only; `householdCar: N driver(s) waited` in the log says it is doing its
+one job. No target value changed, no registry field was added, the demand is
+F27's untouched, the 67/143 split is untouched, no approval stands.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-07 | **A global `wait` strands every non-chain mode; the car waits only for a car; F28 opens (§9.148; issues #145, #66; thirtieth session).** The first F27 arm under `RUN.qsim.vehicle_behavior` = wait: iteration-0 car departures 82,388 against F26's 232,394, 55,862 car agents stuck, walk 12,837, ride 11,537; by 19 co-evolution had abandoned every plan that strands. Stopped at 19 (`stopped_by_operator`); nothing it read is a reading. Run stack: `HouseholdCarDepartureHandler` (car-only wait, before the netsim engine, released by the link when the car is parked back); `vehicle_behavior` back to `teleport`, `wait` kept as measured fatal. Reader: rail boardings from the legs table where the experienced plans are absent, so the ten-iteration cadence of 9.147 reads. **No target value changed, no field added, demand unchanged, no arm launched in F28, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **The iteration's cost decomposed and cut (§9.147; issues #66, #131; thirtieth session; user directive "ensure iterations have no inefficiencies").** F26 stopwatch: a plain iteration 319 s, a milestone 569–715 s (plans dump, events inside the mobsim, experienced plans), every tenth iteration a milestone; the readers take a trips table where one exists and MATSim's trips interval had sat on its default of 50. Run stack: `RUN.controler.write_trips_interval` = 10 (new), `write_plans_interval` and `write_events_interval` 10 → 100 (= the gate); `RidePairingEngine` routes detours in parallel on `global.numberOfThreads` workers and applies them in order; `RUN.machine.threads` probed on the F27 stack — a plain iteration 270-272 s at 10, 267 at 16, 264-265 at 24, and 16 declared. Registry 469 → 470. **No target value changed, the 67/143 split is untouched, no arm launched in F27, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **The F26 gate read and closed out; three physical roots built with controls; family F27 opened (§9.146; issues #86, #48, #93, #145; thirtieth session; user directive "continue with the GOAL").** `aborted_20260906T100429_300it_25pct` stopped by the watcher at iteration 100, 8 modes out, walk newly past the bar, `completion` = `stopped_at_gate`, 384 s an iteration. `miss_declared_absent` 719: the declared pairs hold and §9.145's premise that every unpaired leg named a driver was wrong - 12,461 selected ride legs sat on unbound persons, proposed by `EscortCoherenceListener` by inference (~5,000 an iteration) while the gate refused 192,000 of the same kind. Trip level: 45.5 % of 107,526 declared bound trips ridden, 29,827 self-driven; 12,317 car legs began while every household car was out. Run stack: `B.ride.coherence_scope` = declared (`inferred` = F26); `B.population.vehicle_roster` = census with `householdVehicles` stamped and `RUN.qsim.vehicle_behavior` = wait (`per_person`/`teleport` = F26); `HouseholdVehicleRoster` at the first iteration, `TolerantAgentSource` parks a shared car once, `JointRideEngine` boards into the mapped car. Demand: a carve never draws a bound passenger, in the pool solve and the draw (a draw-only rebuild halved the seeded motorbike share and was rebuilt). Plans and the 30 run-input sets rebuilt; registry 467 -> 469. **No target value changed, the 67/143 split is untouched, no arm launched in F27, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **A full history check before the next arm: the dominant pairing miss is not a window (§9.145; issues #86, #48; thirtieth session; user directive "ENSURE YOU'RE NOT PILING UP PATCHES ONE OVER THE OTHER").** The board, the brief and the ride position page named the TIME WINDOW as the dominant miss at the F25 gate and asked whether §9.98's refusal to widen it was superseded. The code exempts a declared pair from the clock entirely (§9.120), so `miss_window` cannot describe one: it means the declared driver brought no car leg and a substitute was found at the wrong hour. On the arm's own table the four buckets sum exactly to the 16,778 unpaired legs and 14,766 of them (88 %) are that single class. `GatedSubtourModeChoice` gates innovation, not plan selection, so a declared driver can leave `car` only via a seeded plan that never held it - the 85,993 non-car legs on declared drive trips §9.144 reduced to 0 (verified on disk: `serve_tours_carless` 0 on all three day types). **The loss and the repair already built are the same defect: measure, do not add a mechanism. §9.98's refusal STANDS.** Instrumentation only: `ride_pairing.csv` gains `miss_declared_absent`, appended last, the four-way funnel untouched. Recorded and NOT repaired: `EscortCoherenceListener` is intra-household on both passes, leaving 170,582 of 375,307 WEEKDAY bindings (45.4 %) with no coherence mechanism - the F26 gate decides whether that matters. **No target value changed, no registry field added, no demand rebuilt, no family opened, no arm ran, nothing here is a finding.** |

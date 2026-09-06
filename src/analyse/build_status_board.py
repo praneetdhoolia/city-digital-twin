@@ -146,13 +146,21 @@ def block_scoreboard():
     """The twelve-mode table from the newest readable run, or None.
 
     A plumbing test (a run declaring fewer iterations than the registry's
-    horizon floor) is skipped, so the reading is the newest ARM's."""
+    horizon floor) is skipped, so the reading is the newest ARM's. So is an
+    arm of a family the ledger declares `"readings": "none"` - a family
+    whose arm ran a model later found broken at the root (9.148: a global
+    `wait` that stranded every non-chain mode), which the runs block still
+    lists with its cause but the scoreboard must never present."""
     import measure_iteration_modes as mim
     import iteration_trips as itr
     floor = _horizon_floor()
+    fams, _overrides = _families()
+    no_readings = {fam_id for fam_id, fam in fams if fam.get('readings') == 'none'}
     for name in _run_dirs():
         run_dir = _dir_of(name)
         if _is_plumbing_test(run_dir, floor):
+            continue
+        if _family_of(name) in no_readings:
             continue
         try:
             have = sorted(set(mim.iterations_with_trips(run_dir))
