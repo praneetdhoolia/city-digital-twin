@@ -78,10 +78,10 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | | |
 |---|---|
 | Open comparability family | `F27-a-household-drives-the-cars-it-owns` (opened `20260906T211406`, §9.146) - nothing run before it compares with anything after it |
-| Input registry | **469 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **470 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (6 September 2026 (thirtieth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (6 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (6 September 2026 (thirtieth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (6 September 2026 (thirtieth session)) · [runs-and-economics](positions/runs-and-economics.md) (5 September 2026 (twenty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (6 September 2026 (thirtieth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (6 September 2026 (thirtieth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (6 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (6 September 2026 (thirtieth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (6 September 2026 (thirtieth session)) · [runs-and-economics](positions/runs-and-economics.md) (6 September 2026 (thirtieth session)) · [sampling-and-families](positions/sampling-and-families.md) (6 September 2026 (thirtieth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
 **Family F26 is open and NO arm has run in it** (§9.144): chains, plans and the
@@ -98,23 +98,24 @@ iteration on the F25 arm, so 300 iterations is ~26–27 h. No arm runs.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260906T211911_2it_1pct` | completed | F27-a-household-drives-the-cars-it-owns | 2 | ran_to_last_iteration `_run.json` |
-| `aborted_20260906T100429_300it_25pct` | aborted | F26-a-driver-owns-a-car | 101 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 8 mode(s) at ... |
-| `20260906T095725_2it_1pct` | completed | F26-a-driver-owns-a-car | 2 | ran_to_last_iteration `_run.json` |
-| `aborted_20260905T125612_300it_25pct` | aborted | F25-ride-reaches-plan-memory | 101 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
-| `20260905T115355_2it_1pct` | completed | F24-balanced-destinations | 2 | ran_to_last_iteration `_run.json` |
-| `aborted_20260904T181203_300it_25pct` | aborted | F24-balanced-destinations | 100 | Stopped by the operator during iteration 100, at the approved boundary: the stated-cost approval for this arm was given TO THE ITERATION-... |
+| `20260906T233901_4it_25pct` | completed | F27-a-household-drives-the-cars-it-owns | 4 | ran_to_last_iteration `_run.json` |
+| `20260906T225712_4it_25pct` | completed | F27-a-household-drives-the-cars-it-owns | 4 | ran_to_last_iteration `_run.json` |
+| `20260906T221510_4it_25pct` | completed | F27-a-household-drives-the-cars-it-owns | 4 | ran_to_last_iteration `_run.json` |
+| `aborted_20260906T221326_4it_25pct` | failed | F27-a-household-drives-the-cars-it-owns | - | launch refused before MATSim started: no modeParams/RUN/machine.threads in the config |
+| `aborted_20260906T221304_4it_25pct` | failed | F27-a-household-drives-the-cars-it-owns | - | launch refused before MATSim started: no modeParams/RUN/machine.threads in the config |
+| `aborted_20260906T221241_4it_25pct` | failed | F27-a-household-drives-the-cars-it-owns | - | launch refused before MATSim started: no modeParams/RUN/machine.threads in the config |
 
-142 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+148 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
 1. **Launch F27's first arm** (§9.146): every open issue carries
    `awaiting-run` (#145 opened on this session's own measurement), so
-   `issue_gate.py` passes. It needs a stated-cost approval — F26 measured
-   **384 s an iteration to its gate** (38,426 s to 100), so 300 iterations is
-   ~32 h, and `wait` may move that.
+   `issue_gate.py` passes. Cost: the F27 probes read a plain iteration at
+   **264–272 s** (§9.147) against F26's 319, and a milestone now adds a trips
+   table rather than ~360 s of plans and events, so 300 iterations is nearer
+   **25 h** than the 32 h F26's 384 s/it implied; `wait` may move it.
 2. **What the arm answers, in order** (§9.146): the roster — car legs starting
    with every household car out (12,317 at F26, 0 expected for one-car
    households) and where the 29,827 self-driven bound trips settle; the
@@ -131,8 +132,7 @@ iteration on the F25 arm, so 300 iterations is ~26–27 h. No arm runs.
    iteration 100; the loop won, by the user's decision. It waits for an arm with
    a chance of being inside the bars.
 
-**Decisions required:** a stated-cost approval for F27's first arm (~32 h at
-25 % × 300 on F26's measured pace); whether a fifth binder pass is needed now
+**Decisions required:** whether a fifth binder pass is needed now
 the reachable binding volume is ~18.7 % rather than 20.13 %; enable the Task
 Scheduler operational log (#66); whether the S2 base grants the tram signal
 priority ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
@@ -155,7 +155,7 @@ pairs hold (§9.146).
 | Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F26 arm (§9.140) |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
 | The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F26 arm (#131) |
-| Iteration wall time: 60% of it is one hoistable `tripRouter.get()`, and 164 GiB per run is one warning (§9.142) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the phase table on the first F26 arm |
+| Iteration wall time: a plain iteration 319 s and a milestone 569–715 s on F26's stopwatch; the trips cadence declared, plans and events moved to the gate, the detour routing parallel, the mobsim's threads probed (§9.147) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the first F27 arm's stopwatch: a plain iteration against 319 s, a milestone against 569 s |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |
 | Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
 

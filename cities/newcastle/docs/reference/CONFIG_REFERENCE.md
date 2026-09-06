@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 469 fields are made of
+## What the 470 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
 | `assumed` | 154 | chosen without direct empirical support |
-| `definition` | 125 | fixed by the formulation, not an empirical quantity |
+| `definition` | 126 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 450 | usable point value |
+| `active` | 451 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -3506,7 +3506,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 76 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 77 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3517,8 +3517,9 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.controler.first_iteration` | `0` | iterations | `definition` | - |
 | `RUN.controler.last_iteration` | `1000` | iterations | `measured` | 250 - 2000 |
 | `RUN.controler.overwrite_files` | `failIfDirectoryExists` | policy | `definition` | - |
-| `RUN.controler.write_events_interval` | `10` | iterations | `definition` | - |
-| `RUN.controler.write_plans_interval` | `10` | iterations | `definition` | - |
+| `RUN.controler.write_events_interval` | `100` | iterations | `definition` | - |
+| `RUN.controler.write_plans_interval` | `100` | iterations | `definition` | - |
+| `RUN.controler.write_trips_interval` | `10` | iterations | `definition` | - |
 | `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
 | `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
@@ -3526,7 +3527,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
-| `RUN.machine.threads` | `10` | threads | `definition` | 1 - 24 |
+| `RUN.machine.threads` | `16` | threads | `definition` | 1 - 24 |
 | `RUN.machine.xmx` | `14g` | jvm_heap | `definition` | - |
 | `RUN.mode_choice.chain_based_modes` | `["car", "bike"]` | enum | `definition` | - |
 | `RUN.mode_choice.consider_car_availability` | `true` | boolean | `definition` | - |
@@ -3623,15 +3624,21 @@ What MATSim does with an output directory that already exists. Failing is delibe
 
 #### `RUN.controler.write_events_interval`
 
-How often events are written. Affects disk and wall time, not the model.
+How often the full events stream is written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): the events are consumed at a GATE - the close-out accounting, the optional --truck-stations scoring, replay_events - and by nothing the ten-iteration monitoring reads. Measured on the F26 arm's stopwatch: writing events inside the mobsim took a milestone iteration's mobsim from 197 s to 359-398 s, so at every tenth iteration it cost ~180 s. Affects disk and wall time, not the model.
 
-***definition** · status **active** · DECISIONS.md §15 · MATSim `controler.writeEventsInterval`*
+***definition** · status **active** · DECISIONS.md §15, 9.147 · MATSim `controler.writeEventsInterval`*
 
 #### `RUN.controler.write_plans_interval`
 
-How often plans are written. Affects disk and wall time, not the model.
+How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model.
 
-***definition** · status **active** · DECISIONS.md §15 · MATSim `controler.writePlansInterval`*
+***definition** · status **active** · DECISIONS.md §15, 9.147 · MATSim `controler.writePlansInterval`*
+
+#### `RUN.controler.write_trips_interval`
+
+How often MATSim writes the trips and legs tables (`<n>.trips.csv.gz`, `<n>.legs.csv.gz`), in iterations. THE MONITORING CADENCE: GOAL.md asks for all twelve modes read continuously and the readers have taken every tenth iteration since 9.126; `report_mode_ridership.py` reads the trips table wherever it exists and derives one from the experienced plans only where it does not (iteration_trips.py). Before 9.147 this was MATSim's default of 50 and the readers derived every milestone from the experienced plans, which forced the full plans dump and the events onto the ten-iteration cadence at ~360 s a milestone (F26 stopwatch). Affects disk and wall time, not the model.
+
+***definition** · status **active** · DECISIONS.md §9.147 · MATSim `controler.writeTripsInterval`*
 
 #### `RUN.gate.interval_iterations`
 
@@ -3677,9 +3684,9 @@ MATSim random seed. Held at the master seed unless replications are being drawn.
 
 #### `RUN.machine.threads`
 
-Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim partitions the network by thread count, so changing it changes results. Until 9.59 this one field wrote global.numberOfThreads too; the pair is now two declared fields because they govern different partitionings (mobsim vs replanning/routing) with different saturation points - the 9.57 arm ran replanning at a median 59 s with 14 of 24 CPUs idle. Each field is run identity in its own right.
+Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim partitions the network by thread count, so changing it changes results. Until 9.59 this one field wrote global.numberOfThreads too; the pair is now two declared fields because they govern different partitionings (mobsim vs replanning/routing) with different saturation points. PROBED FOR THE MOBSIM ITSELF in 9.147, on the F27 stack at 25% x 4 iterations on the 24-core machine, one probe at a time (f27_timing_probe_25pct): a plain iteration 270-272 s at 10 threads, 267 s at 16, 264-265 s at 24, the mobsim phase ~140 / ~135 / ~131 s. 16 is declared: a measured gain over 10 that leaves eight cores to the events handlers (RUN.machine.event_handler_threads), the JVM's GC and the runner's own watcher, while 24's further 2-3 s sits inside one run's own iteration-to-iteration spread. The move is recorded inside the F27 boundary, which already changed the run stack, so it costs no comparability.
 
-***definition** · status **active** · DECISIONS.md §9.5, 9.59 · MATSim `qsim.numberOfThreads` · sweep role **uncertainty***
+***definition** · status **active** · DECISIONS.md §9.5, 9.59, 9.147 · MATSim `qsim.numberOfThreads` · sweep role **uncertainty***
 
 #### `RUN.machine.xmx`
 
