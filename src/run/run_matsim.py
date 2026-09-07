@@ -476,8 +476,19 @@ TS_RE = re.compile(r'^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}),(\d{3})')
 
 
 def iteration_times(log):
-    """Wall seconds per iteration, from the controller's own markers."""
+    """Wall seconds per iteration, from the controller's own markers.
+
+    Prefers the digest's running record (`_progress.json`'s
+    `iteration_seconds`, written from the same two markers as the run
+    proceeded) and falls back to walking the log when a run carries none - an
+    arm that predates the field, or one whose digest never started. The
+    fallback is a FULL sequential read: the F23 arm's matsim.log was 54.9 GB
+    (9.142), and close-out wanted a median out of it.
+    """
     import datetime as dt
+    recorded = _recorded_iteration_times(log)
+    if recorded:
+        return recorded
     begins, out = {}, {}
     with open(log, encoding='utf-8', errors='replace') as f:
         for line in f:
@@ -491,6 +502,68 @@ def iteration_times(log):
                 begins[int(m.group(1))] = ts
             elif int(m.group(1)) in begins:
                 out[int(m.group(1))] = round(ts - begins[int(m.group(1))], 2)
+    return out
+
+
+def announce_cost(iterations, fraction, cfg):
+    """Say what this run will cost BEFORE it starts, from the runs on disk.
+
+    The rule is written in three documents - price the arm on the newest arm's
+    own median - and it was still broken by hand: the F30 arm was quoted at
+    260 s an iteration from the arm before it, ran at 376, and was stopped on
+    cost at iteration 23 with nothing measured (9.153). A price a human carries
+    between documents is a price that rots, so the launcher reads it.
+
+    It never refuses a launch. The approval is the user's and the rules that
+    gate a launch are elsewhere; this only makes sure the number in front of
+    them is the newest measured one.
+    """
+    try:
+        sys.path.insert(0, os.path.join(REPO, 'src'))
+        from analyse import arm_cost
+        quote = arm_cost.price(int(iterations), fraction,
+                               arm_cost.observed_arms(),
+                               cfg.get('RUN.gate.interval_iterations'))
+    except Exception as e:                                   # noqa: BLE001
+        print('cost: not priced (%s)' % e, flush=True)
+        return
+    if quote.get('error'):
+        print('cost: %s' % quote['error'], flush=True)
+        return
+    on = quote['priced_on']
+    line = ('cost: ~%s for %d iterations plus %s of setup, priced on %s at '
+            '%.1f s an iteration (%s); the last arms at this fraction span '
+            '%s to %s'
+            % (quote['quote'], quote['iterations'],
+               arm_cost._fmt_hours(quote['setup_s']), on['name'],
+               on['median_iteration_s'], on['completion'] or 'status unknown',
+               quote['band'][0], quote['band'][1]))
+    if quote.get('first_gate_s'):
+        line += '; first gate at iteration %d after ~%s' % (
+            quote['gate_every'],
+            arm_cost._fmt_hours(quote['first_gate_s']))
+    print(line, flush=True)
+    print('      A STATED COST IS A BOUNDARY, NOT AN ESTIMATE. Stop the arm '
+          'at the cost that was approved.', flush=True)
+
+
+def _recorded_iteration_times(log):
+    """`_progress.json`'s `iteration_seconds` for this run, or {}."""
+    path = os.path.join(os.path.dirname(log), '_progress.json')
+    try:
+        with open(path, encoding='utf-8') as f:
+            doc = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    raw = doc.get('iteration_seconds')
+    if not isinstance(raw, dict) or not raw:
+        return {}
+    out = {}
+    for k, v in raw.items():
+        try:
+            out[int(k)] = float(v)
+        except (TypeError, ValueError):
+            return {}
     return out
 
 
@@ -1233,6 +1306,9 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     threads = cfg.get('RUN.machine.threads')
     xmx = cfg.get('RUN.machine.xmx')
     seed = cfg.get('RUN.machine.seed')
+    jfr = bool(cfg.get('RUN.machine.jfr_profile'))
+    gc_log = bool(cfg.get('RUN.machine.gc_log'))
+    announce_cost(iterations, fraction, cfg)
 
     warm_key = None
     if warm is not None:
@@ -1345,8 +1421,22 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     # with full-GC stalls visible during the it-110 routing pathology; a
     # pre-sized heap removes the growth path. Wall-time only - the JVM heap
     # schedule cannot change a model output.
-    cmd = [JAVA, '-Xms%s' % xmx, '-Xmx%s' % xmx, '-XX:+UseParallelGC',
-           '-cp', classpath, main_class, config_path]
+    cmd = [JAVA, '-Xms%s' % xmx, '-Xmx%s' % xmx, '-XX:+UseParallelGC']
+    # OBSERVATION ONLY (RUN.machine.jfr_profile, RUN.machine.gc_log). Neither
+    # flag reaches MATSim: JFR samples the stacks of threads that are running
+    # anyway and GC logging prints what the collector already did, so a
+    # profiled run and an unprofiled one are the same run. They are declared
+    # rather than typed here because the launcher's flag list is a set of
+    # values a script was deciding on its own.
+    if jfr:
+        cmd.append(
+            '-XX:StartFlightRecording=settings=profile,disk=true,'
+            'dumponexit=true,maxsize=2g,filename=%s'
+            % os.path.join(run_dir, 'profile.jfr'))
+    if gc_log:
+        cmd.append('-Xlog:gc*:file=%s:time,uptime,level,tags'
+                   % os.path.join(run_dir, 'gc.log').replace('\\', '/'))
+    cmd += ['-cp', classpath, main_class, config_path]
     # The live view, announced before MATSim starts so the url is on screen for
     # the whole run rather than after it. It reads the run directory and never
     # writes to it.
