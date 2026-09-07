@@ -393,6 +393,8 @@ def _detach():
     print('the run directory will appear under results/ named by the runner.')
     print('VERIFY per issue #70: matsim.log must progress past '
           'PersonPrepareForSim into iterations after this shell is closed.')
+    print('  python src/run/verify_launch.py            waits and says took/died')
+    print('  python src/run/verify_launch.py --no-wait  the state right now')
     return 0
 
 

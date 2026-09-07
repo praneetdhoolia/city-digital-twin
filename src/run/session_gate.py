@@ -166,7 +166,101 @@ GATES = [
 ]
 
 
-def gates(quick=False):
+# What `--fix` may regenerate, in dependency order (9.155).
+#
+# EVERY entry regenerates a GENERATED artefact from the artefacts it derives
+# from, and nothing else. Prose is never on this list: a number in a living
+# document is a claim a person wrote, and `check_doc_currency` deliberately
+# reports it rather than rewriting it - the record must never be edited to keep
+# a check green, and a claim whose pattern stopped matching wants re-aiming, not
+# substituting. So `doc currency`, `doc shape`, `hardcoding`, `unit tests`,
+# `city agnostic`, `registry rules`, `issues gated`, `dead runs say why` and the
+# toolchain are all deliberately absent: each reports a defect a person fixes.
+#
+# The order matters. The board reads the run index, so the index is rebuilt
+# first; the schema and the config reference read the registry, so a registry
+# addition regenerates both before the board is re-checked.
+FIXES = [
+    ('run index', [PY, 'src/analyse/build_run_index.py'],
+     'the board reads it, and a run that finished after the last session '
+     'leaves it one row short'),
+    ('config reference', [PY, 'src/registry/render_docs.py'],
+     'regenerated from the registry on every field change'),
+    ('schema', [PY, 'src/registry/render_schema.py'],
+     'required_fields.json and layers.json, regenerated from the registry'),
+    ('fit figures', [PY, 'src/analyse/build_fit_figures.py'],
+     'drawn from the run the calibrated base was written from'),
+    ('board blocks', [PY, 'src/analyse/build_status_board.py'],
+     "the board's generated blocks, rewritten from the artefacts"),
+]
+# The gates each regenerator can turn green. A gate not named here is never a
+# reason to run one.
+FIXES_FOR = {
+    'board blocks': ('run index', 'board blocks'),
+    'schema current': ('schema',),
+    'city contract': ('config reference', 'schema'),
+    # the portable contract is GENERATED from the registry, so a registry
+    # addition makes it stale and it reads as a city-agnosticism failure
+    'city agnostic': ('schema',),
+    'fit figures': ('fit figures',),
+}
+
+
+def fix(quick=False):
+    """Regenerate every stale GENERATED artefact, then re-run the gates.
+
+    This is the sequence a session otherwise types by hand every time a run
+    finishes or a registry field is added, and typing it by hand is how a
+    session starts by rediscovering which script rebuilds which file. It never
+    edits prose and never silences a defect - a gate that reports one is listed
+    afterwards as needing a person.
+    """
+    print('=' * 78)
+    print('GATE --fix: regenerating what is stale, then re-checking')
+    print('=' * 78)
+    before = gates(quick=quick, quiet_header=True)
+    stale = [g for g in before if g in FIXES_FOR]
+    if not before:
+        print('\nnothing to fix: every gate already passes.')
+        return 0
+    if not stale:
+        print('\nno failing gate is a stale generated artefact; nothing to '
+              'regenerate.')
+    else:
+        wanted, seen = [], set()
+        for g in stale:
+            for name in FIXES_FOR[g]:
+                if name not in seen:
+                    seen.add(name)
+                    wanted.append(name)
+        print('\nregenerating for: %s' % ', '.join(stale))
+        for label, cmd, why in FIXES:
+            if label not in seen:
+                continue
+            rc, out = _run(cmd, 900)
+            tail = [l for l in out.strip().splitlines() if l.strip()][-2:]
+            print('  %-18s %s  (%s)' % (label, 'ok' if rc == 0 else 'FAILED rc=%s' % rc, why))
+            for l in tail:
+                print('      ' + l[:150])
+        print('\n' + '=' * 78)
+        print('RE-CHECKING')
+        print('=' * 78)
+    after = gates(quick=quick, quiet_header=True)
+    fixed = [g for g in before if g not in after]
+    if fixed:
+        print('\nfixed by regeneration: %s' % ', '.join(fixed))
+    # "needs a person" is what is STILL failing - never what failed before and
+    # then passed. Reporting a gate as both fixed and needing attention is a
+    # tool contradicting itself, which is the thing this mode exists to stop.
+    if after:
+        print('\nSTILL FAILING - each of these is a defect a person fixes, not '
+              'a stale file: %s' % ', '.join(after))
+        return 1
+    print('\nGATE PASSED after regeneration.')
+    return 0
+
+
+def gates(quick=False, quiet_header=False):
     busy = arm_running()
     # UNKNOWN COUNTS AS BUSY. arm_running() returns None when it could not list
     # processes at all - the one case where we do not know whether an arm is up.
@@ -196,10 +290,13 @@ def gates(quick=False):
     if failed:
         print('GATE FAILED: %s - a failing gate is the session\'s first work item.'
               % ', '.join(failed))
-        return 1
-    print('GATE PASSED. (tests/check_package.py is LOCAL and separate: run it on a '
-          'workstation before declaring a data phase complete.)')
-    return 0
+        if not quiet_header:
+            print('  `--fix` regenerates any of these that is a stale GENERATED '
+                  'artefact and re-checks; it never edits prose.')
+    else:
+        print('GATE PASSED. (tests/check_package.py is LOCAL and separate: run it on a '
+              'workstation before declaring a data phase complete.)')
+    return failed
 
 
 def main():
@@ -207,11 +304,18 @@ def main():
     ap.add_argument('--digest', action='store_true', help='print the session digest only')
     ap.add_argument('--quick', action='store_true',
                     help='skip the toolchain compile')
+    ap.add_argument('--fix', action='store_true',
+                    help='regenerate every stale GENERATED artefact (run '
+                         'index, config reference, schema, fit figures, board '
+                         'blocks) and re-check. Never edits prose and never '
+                         'silences a defect.')
     a = ap.parse_args()
     if a.digest:
         digest()
         return 0
-    return gates(quick=a.quick)
+    if a.fix:
+        return fix(quick=a.quick)
+    return 1 if gates(quick=a.quick) else 0
 
 
 if __name__ == '__main__':

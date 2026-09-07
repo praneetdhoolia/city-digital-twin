@@ -2,7 +2,7 @@
 directive, 1 September 2026; DECISIONS.md 9.137).
 
 `results/raw/<run>` holds a run's bulk - matsim.log, events, plans, ITERS -
-and is a CACHE with a declared byte budget (`RUN.storage.raw_cap_gb`).
+and is a CACHE with a declared byte budget (`RUN.storage.raw_cap_gb`, GIBIBYTES).
 `results/processed/<run>` holds the run's FINDINGS - the record files and the
 mode-ridership snapshots - and is never trimmed. Every consumer resolves a run
 through this module, the way `src/city.py` is the only module that knows where
@@ -348,13 +348,43 @@ def _launch_stamp(name):
     return base
 
 
-def trim(cap_gb, log=print):
+def _record_age_s(run_dir):
+    """Seconds since this run's record was last written, or None if unreadable.
+
+    The newest of the record files, not the directory's own mtime: a directory
+    is touched by anything that walks it, while a record file is written only
+    by the harness that owns the run.
+    """
+    newest = None
+    for fname in RECORD_FILES:
+        p = os.path.join(run_dir, fname)
+        try:
+            m = os.path.getmtime(p)
+        except OSError:
+            continue
+        if newest is None or m > newest:
+            newest = m
+    return None if newest is None else max(0.0, time.time() - newest)
+
+
+def trim(cap_gb, log=print, grace_s=None):
     """Delete the oldest raw run dirs until raw is at or under `cap_gb`.
 
     Findings are extracted into processed before a dir is deleted; a live run
     is never deleted. Every deletion is appended to `processed/_trim_log.json`
     so the cache's history is itself a record.
+
+    `grace_s` is RUN.storage.extract_grace_s - how long a run whose
+    `_metrics.json` has not appeared is still presumed to be inside its
+    extraction window (9.155). Past it the run is closed out and its bulk is
+    reclaimable.
     """
+    if grace_s is None:
+        raise TypeError(
+            'trim() needs RUN.storage.extract_grace_s: pass grace_s='
+            "cfg.get('RUN.storage.extract_grace_s'). The store resolves no "
+            'declared value itself - its caller supplies them, exactly as it '
+            'does for cap_gb (9.155).')
     if not os.path.isdir(RAW):
         return []
     cap = float(cap_gb) * (1 << 30)
@@ -370,15 +400,33 @@ def trim(cap_gb, log=print):
         d = raw_dir(name)
         if _is_running(d):
             continue
-        # a completed run whose metrics are not yet extracted is never
-        # deleted (#132): run.py extracts _metrics.json after run() returns,
-        # and a concurrent harness's trim could reach the directory first.
-        # prune_run.py refuses exactly this case; so does trim now.
+        # a run whose metrics are not yet extracted is never deleted (#132):
+        # run.py extracts _metrics.json after run() returns, and a concurrent
+        # harness's trim could reach the directory first. prune_run.py refuses
+        # exactly this case; so does trim.
+        #
+        # The window is bounded (9.155). run.py writes _metrics.json only when
+        # it survives the run; an operator stop or a gate stop kills the
+        # harness first, so those runs never get one and the unbounded form of
+        # this guard kept them forever - measured 7 Sep 2026 at 13 directories
+        # and 72.8 GiB, 16% of a 90%-full cache, every one of them already
+        # mirrored into processed. When the cap was hit the store skipped all
+        # thirteen and deleted younger COMPLETE runs instead. So the guard now
+        # asks what it always meant: is this run still inside its extraction
+        # window? Past the grace it is closed out, and close_out() has already
+        # mirrored its records and snapshots into processed, which is never
+        # trimmed.
         if os.path.exists(os.path.join(d, '_run.json')) \
                 and not os.path.exists(os.path.join(d, '_metrics.json')):
-            log('trim: keeping raw/%s - completed, metrics not yet extracted'
-                % name)
-            continue
+            age = _record_age_s(d)
+            if age is None or age <= grace_s:
+                log('trim: keeping raw/%s - metrics not yet extracted '
+                    '(record %s s old, grace %s s)'
+                    % (name, 'unreadable' if age is None else int(age), grace_s))
+                continue
+            log('trim: raw/%s is past its %s s extraction grace and its '
+                'findings are in processed; reclaiming the bulk'
+                % (name, grace_s))
         process(name, extract=True)
         freed = _dir_bytes(d)
         try:
@@ -406,9 +454,9 @@ def trim(cap_gb, log=print):
     return deleted
 
 
-def maintain(cap_gb, log=print):
+def maintain(cap_gb, log=print, grace_s=None):
     """The one call a harness makes: migrate anything legacy, then trim."""
     moved = migrate()
     if moved:
         log('results store: migrated %d run(s) under results/raw' % len(moved))
-    return trim(cap_gb, log=log)
+    return trim(cap_gb, log=log, grace_s=grace_s)

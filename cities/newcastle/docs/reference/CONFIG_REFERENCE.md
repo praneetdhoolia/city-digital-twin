@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 480 fields are made of
+## What the 482 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 159 | chosen without direct empirical support |
-| `definition` | 131 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 160 | chosen without direct empirical support |
+| `definition` | 132 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 461 | usable point value |
+| `active` | 463 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,13 +56,13 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 266 sweeps are for
+### What the 267 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
-| `answer` | 11 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
+| `answer` | 12 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
 | `uncertainty` | 233 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
@@ -71,6 +71,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | Field | Value | Sweep |
 |---|---|---|
 | `A.corridor.pre_lr_lanes_per_dir` | `1` | 1 - 2 |
+| `A.lightrail.dwell_charging_baseline_s` | `20.0` | 10 - 35 |
 | `A.lightrail.dwell_charging_s` | *(null - unobtained)* | 10 - 35 |
 | `A.lightrail.tsp_enabled` | `false` | `False`, `True` |
 | `A.signals.scats_phasing` | *(null - unobtained)* | `proxy_no_priority`, `proxy_partial_priority`, `proxy_full_priority` |
@@ -117,7 +118,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 180 fields*
+*`cities/newcastle/registry/A_supply.json` - 181 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -205,6 +206,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.lightrail.capacity_standing` | `210` | persons_per_vehicle | `derived` | derived: capacity_standing = capacity_total - capacity_seated |
 | `A.lightrail.capacity_total` | `270` | persons_per_vehicle | `observed` | - |
 | `A.lightrail.corridor_speed_kmh` | `60.0` | km_per_hour | `assumed` | 40 - 70 |
+| `A.lightrail.dwell_charging_baseline_s` | `20.0` | seconds_per_intermediate_stop | `assumed` | 10 - 35 |
 | `A.lightrail.dwell_charging_s` | *(null - unobtained)* | seconds_per_intermediate_stop | `assumed` | 10 - 35 |
 | `A.lightrail.dwell_fixed_s` | `8.0` | seconds_per_stop | `assumed` | 5 - 15 |
 | `A.lightrail.dwell_sweep_grid` | `[0.0, 10.0, 20.0, 35.0]` | seconds_per_intermediate_stop | `definition` | - |
@@ -879,6 +881,14 @@ Design speed on the reserved corridor sections.
 ***assumed** · status **active** · DECISIONS.md §4.2 · sweep role **uncertainty***
 
 > **Sweep basis.** chosen interval around the assumed reserved-corridor design speed: 40 km/h is the regulated street-running ceiling measured on the trunk (A.lightrail.line_speed_kmh), 70 the class limit for Australian street-running light rail (A.network.railway_speed_default_kmh). No observed spread on this corridor.
+
+#### `A.lightrail.dwell_charging_baseline_s`
+
+The baseline sweep point for the supercapacitor charging dwell, used to BUILD the A4 dwell layer. It exists because A.lightrail.dwell_charging_s is declared unobtained with value null so that get() raises (15) - correctly, the charging dwell has never been measured - while cities/newcastle/build/build_corridor_layers.py needed a number to write data/processed/corridor/A4_stop_dwell_model.csv and decided one itself: DWELL_DEFAULTS['dwell_charging_s'] = 20.0, with the declared sweep duplicated beside it, invisible to check_hardcoding because extract_legacy_constants evaluates a dict(...) call to Ellipsis (issue #157, 9.155). Declaring it changes no value - 20.0 is what the script already used, and the rebuilt layer is byte-identical - it moves the number out of a script and under a sweep, which is what the no-invented-data rule requires of an assumed value. The UNOBTAINED field stays unobtained: this is the point the sweep starts from, not a measurement of the dwell.
+
+***assumed** · status **active** · DECISIONS.md §9.155, 4.3 · proposal §6.2 · sweep role **answer***
+
+> **Sweep basis.** DECISIONS.md 4.3, 9.155. The same interval as A.lightrail.dwell_charging_s, which this field is the BASELINE POINT of - not a second opinion about the charging dwell.
 
 #### `A.lightrail.dwell_charging_s`
 
@@ -3558,7 +3568,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 81 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 82 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3632,7 +3642,8 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.scoring.late_arrival_utils_per_h` | `-18.0` | utils_per_hour | `literature` | -36 - -6 |
 | `RUN.scoring.learning_rate` | `1.0` | share | `literature` | 0.5 - 1 |
 | `RUN.scoring.waiting_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -6 - 0 |
-| `RUN.storage.raw_cap_gb` | `500` | gigabytes | `definition` | - |
+| `RUN.storage.extract_grace_s` | `3600` | seconds | `definition` | - |
+| `RUN.storage.raw_cap_gb` | `500` | gibibytes | `definition` | - |
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
@@ -4106,9 +4117,15 @@ Disutility of general waiting, over and above the opportunity cost of the time. 
 
 > **Sweep basis.** Zero avoids double-counting: general waiting is already priced through the forgone performing utility of the time. The interval allows an additional explicit disutility for a sensitivity arm. Distinct from scoring.waitingPt, which is DERIVED from the C1 beta_wait and is not this field.
 
+#### `RUN.storage.extract_grace_s`
+
+How long after a run's record was last written the store still treats it as inside its extraction window, and so refuses to trim it. It exists because the #132 guard - keep any raw directory that has a _run.json and no _metrics.json - was written for a race that lasts seconds and had no expiry, so it protected forever every run that will NEVER get a _metrics.json: run.py writes that file after run() returns, and an operator stop or a gate stop kills the harness before it does. Measured 7 September 2026: 13 directories, 72.8 GiB, 16% of a 90%-full cache, of which seven carry a terminal completion (stopped_at_gate or stopped_by_operator) and all thirteen already had their findings mirrored into results/processed. When the cap is hit the store skipped all thirteen and deleted younger COMPLETE runs instead - the guard was costing exactly what it was meant to protect. An operational bound, not a model value: it decides how much bulk survives to re-derive a diagnostic from, never a result. One hour is far longer than the extraction it covers (seconds to a few minutes on the largest arm measured) and far shorter than the interval between launches.
+
+***definition** · status **active** · DECISIONS.md §9.155*
+
 #### `RUN.storage.raw_cap_gb`
 
-The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.
+GIBIBYTES, not gigabytes, despite the `_gb` in the key: src/run/results_store.py multiplies this by 2^30, so 500 here is 500 GiB = 536.9 GB. The units field said `gigabytes` until 7 September 2026 (9.155), a 7.4% discrepancy in a project whose convention requires units in every name. The UNITS were corrected to match the code rather than the code corrected to match the units, because shrinking the effective cap by 36.9 GB would delete run bulk to settle a naming question; the key itself is retained because dated record sections (9.137, 9.139, 9.141) cite it by name and the record is never rewritten. The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.
 
 ***definition** · status **active** · DECISIONS.md §9.137*
 

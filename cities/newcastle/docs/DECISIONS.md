@@ -196,6 +196,7 @@ about its layout will otherwise cost you an hour:
 | **The toolchain gate passed on a checkout that could not launch** | **§9.152** — every gate green, the arm approved, and the launch refused before MATSim started: `.tools/run-stack/lib` held 0 jars while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` loops over the components RECORDED in `toolchain.json`, and a stack that `--run-stack` never resolved is not recorded — so the check was green on the absence of the thing it should have failed on, the same shape as the three blind checks §9.150 widened. `verify()` now reads the declared representation and reports `MISSING run-stack` with the command; the gate and the launcher refuse on one condition. Cost: one refused launch, which stated its own cause in its `_meta.json` |
 | **F30's first arm: healthy, and stopped on its own cost** | **§9.153** — launched twice: refused before MATSim once (the run stack, §9.152), then ran and was STOPPED BY THE OPERATOR at iteration 23. Iteration 0 passed every control (car departures 232,972 against F28's 231,607, stuck 3,786 against 3,145; 8,167 declared passengers paired on 7,771 detours, 0 unroutable; 291 unpaired ride legs all restored; 8,549 drivers waiting for a household car) — and `_run.json` read **`median_iteration_s` 376.42 against F28's 260**, 45 % slower, which puts 300 iterations near 31 h against the ~22 h its approval was priced on. The it.20 readings sit on top of F28's and separate nothing. §9.150's `--stop` rebuild is tested against a live arm for the first time: one arm killed, `_operator_stop.json` written first, the operator's cause preserved, `completion` = `stopped_by_operator`. The 45 % is NOT diagnosed and is #66's |
 | **The iteration decomposed to the method, and a declared value that reached nothing** | **§9.154** — a JVM flight recording put this project's own code at **50.0 %** of a 25 % probe's CPU: `GradientLinkSpeed$Router` 17.9 %, `factor` 14.4 %, `Arrays.binarySearch` 30.5 % of which 16.2 was `Router` → `TimeVariantLinkImpl.getFreespeed`, a `synchronized` binary search over the level-crossing change events on all 143,891 links of which 16 can change. Per-link tables, filled once from the same `factor()`: a plain iteration **310 → 205.5 s**, startup **13m47s → 7m00s**, our share **50.0 → 14.5 %**, proved by `GradientTableProbe` over 3,266,754 comparisons rather than by a diff two runs cannot support. Separately `RUN.travel_time.analysed_modes` was inert — `filterModes` defaults false and was never emitted, so every pedestrian and bus fed the car router's link travel times (#154) — and 31 further MATSim defaults decide the model undeclared (#155). Registry 477 → 480; the 2-minute iteration is NOT reached, ~190 s against 120 |
+| **The events knob bracketed on both sides, and the 2-minute target priced out** | **§9.155** — the 120 s ask answered with arithmetic first: the mobsim alone is **143 s** of a 205.5 s iteration, so zeroing every other phase still lands above 120, and all three measured levers at their full CPU share land near **171 s**. `RUN.machine.event_handler_threads` was bracketed for the first time — 1 saturated (§9.56), 12 no gain (§9.59), and **2 measured +44.5 %** (205.5 → 297.0 s, mobsim +58 %) — so the 11.6 % of CPU in `LinkedBlockingQueue.offer` is **the price of short pipeline stages, not waste**, and 4 stands on evidence. `timeVariantNetwork` makes all **143,891** links time-variant for **2,441 events on 16**. The **72.8 GiB** untrimmable leak closed (`RUN.storage.extract_grace_s`); `fit.py`'s patronage scorer **refused** as a finding — it is correct and self-declaring; `session_gate.py --fix`, `compare_runs.py` and `verify_launch.py` codify three manual operations |
 
 
 ---
@@ -14988,10 +14989,150 @@ longer states one. The next runtime cut is named and measured:
 `TravelTimeCalculator` → `getFreespeed` still pays for representing two level
 crossings as a time-variant network across 143,891 links.
 
+## 9.155 The events knob bracketed on both sides, the 2-minute target priced out, and three manual operations codified (7-8 September 2026, thirty-fourth session; user directive "/onboard; analyse & implement good recommendations from the report; try to get iteration runtime under 2 mins; self assess your processes and codify manual operations"; issues #66, #132)
+
+**The 120 s target, priced before anything was changed.** §9.154 left a plain
+iteration at **205.5 s** profiled (~190 s unprofiled) and named what remained as
+MATSim's own. The arithmetic settles the ask before a knob is turned: of those
+205.5 s the mobsim is **143 s**, so **if every phase outside the mobsim went to
+zero the iteration would still be 143 s** — above the 120 s asked for. The
+target is therefore reachable only by cutting the mobsim itself, and the three
+levers measured against it are `RUN.machine.threads` (2.4x the threads bought
+5.6 %, §9.147 — saturated), the events pipeline (below) and the time-variant
+network (~7 % of CPU). Taking **all three at their full CPU share**, which
+overstates each because only part of any of them is on the critical path, lands
+the iteration near **171 s** profiled. **120 s is not reachable at 25 % on this
+machine by any measured lever**, and the two structural routes that would reach
+it are both refused on grounds the project already settled: `linkDynamics=FIFO`
+is 23 % faster in the mobsim (§9.59) and makes a 1.25 m/s pedestrian hold every
+car behind it, and teleporting walk or bike contradicts GOAL requirement 1.
+
+**The events pipeline: a hypothesis raised by the profile and falsified by a
+probe.** The §9.154 recording put **11.6 % of all CPU** in one
+`LinkedBlockingQueue.offer` → `signalNotEmpty` → `AbstractQueuedSynchronizer.release`
+inside `SimStepParallelEventsManagerImpl$ProcessEventsRunnable`, plus 2.9 % in
+`ConditionObject.await`. That manager is a CHAIN, not a fan-out — each runnable
+holds an `eventsQueue` and a `nextEventsQueue` and forwards to the next — so an
+event pays N lock-protected hops for N threads, and at §9.59's ~134.5M events an
+iteration four threads cost ~538M queue operations. The knob's two measured
+points did not bracket it: **1** was measured saturated (172–177 s CPU against a
+~265 s iteration, §9.56) and **12** bought nothing over 4 (§9.59). **2** had
+never been run and was the only value that halves the hops without putting every
+handler back on one thread.
+
+`f30_evt2_probe_25pct` is `f30_profile_probe_25pct` with
+`RUN.machine.event_handler_threads = 2` and nothing else changed. On the plain
+iterations of `20260907T233540_4it_25pct` against `20260907T192715_4it_25pct`
+(both profiled, same family, same fraction, iterations 2–3):
+**205.5 → 297.0 s, +44.5 %**, and the **mobsim 143 → 226 s, +58 %**.
+
+The result is negative and the diagnosis is the useful part: **the queueing is
+not waste to be recovered, it is the price of keeping each stage short enough
+not to throttle the mobsim.** Halving the stages doubles each stage's handler
+load, and the 16 qsim threads block on the slowest one at every sim-step
+barrier — which is what the mobsim's +58 % is. The knob is now bracketed on both
+sides for the first time (1 saturated · **2 +44.5 %** · 4 · 12 no gain), so **4
+stands as an evidenced choice rather than an untested default**, and the 11.6 %
+is closed as a lever. `event_handler_threads` is RUN IDENTITY-FREE and verified
+so (§9.56), so the probe opened no family and nothing it produced is a reading
+of any mode.
+
+**The next lever, bounded exactly.** `timeVariantNetwork = true` makes all
+**143,891** links `TimeVariantLinkImpl`, each paying a `synchronized`
+`Arrays.binarySearch` on every `getFreespeed(time)`, to represent
+`crossing_change_events.xml`: **2,441 events on 16 links** — 0.011 % of the
+network imposing the cost on 100 % of it. In the post-repair recording that is
+`TimeVariantLinkImpl.getFreespeed` 3.8 % + `Arrays.binarySearch0` 2.4 % +
+`Collections.indexedBinarySearch` 0.7 %. A link factory that returns a plain
+link for the other 143,875 is the change; it needs the change-event ids read
+before the network is built, a rebuild, and its own probe. **Not done here.**
+
+**Recommendations taken from the fifth assessment.** (1) The **72.8 GiB leak**
+is closed. It frees nothing today - `results/raw` is 451.3 GiB against a 500
+GiB cap, so `trim` returns before it reaches the guard - and that is the point:
+the space is now RECLAIMABLE at the next trim that needs it, where before it was
+protected forever and younger complete runs were deleted in its place. `results_store.trim`'s #132
+guard — keep any raw directory with a `_run.json` and no `_metrics.json` — was
+written for a race lasting seconds and had no expiry, so it protected forever
+every run that will never get a `_metrics.json`, because `run.py` writes that
+file after `run()` returns and an operator or gate stop kills the harness first.
+Measured: **13 directories, 72.8 GiB, 16 % of a 90 %-full cache**, seven of them
+carrying a terminal `completion`, **every one already mirrored into
+`results/processed`** — and when the cap was hit the store skipped all thirteen
+and deleted younger COMPLETE runs instead. `RUN.storage.extract_grace_s` = 3600
+is declared and the guard now asks what it always meant; `tests/unit/test_trim_grace.py`
+pins BOTH halves, because fixing the leak must not re-open the race. (2)
+`RUN.storage.raw_cap_gb` said `gigabytes` and is multiplied by 2^30: the UNITS
+were corrected to `gibibytes` rather than the code, because shrinking the cap by
+36.9 GB to settle a naming question would delete run bulk, and the key is kept
+because dated sections cite it. (3) `check_legacy_drift.py` stated in prose that
+the `A.lightrail.dwell_charging_s` constant "is gone". **It is not**:
+`dwell_charging_s=20.0` is live at `build_corridor_layers.py:125` inside a
+`DWELL_DEFAULTS` dict and is read at :228 and :249 to write
+`A4_stop_dwell_model.csv` (manifest row 99), while the registry declares the
+field `value: null, status: unobtained` so `get()` raises. It is invisible
+because `extract_legacy_constants.py:50-54` evaluates a `dict(...)` call to
+`Ellipsis`, so `--strict` reads TOTAL 0 over a broken rule.
+
+**The migration was then done** (#157, filed and closed the same session — it
+needs no run, and under GOAL requirement 10 an issue that can be fixed without a
+measurement is fixed before the next arm; filing it turned the issue gate red
+until it was). `A.lightrail.dwell_charging_baseline_s` = 20.0 is declared
+`assumed` with the sweep [10.0, 35.0] and `sweep_role: answer`, and
+`build_corridor_layers.py` reads both the value and the sweep instead of
+deciding them. **`A.lightrail.dwell_charging_s` stays `value: null,
+status: unobtained`** — the dwell has still never been measured and `get()`
+still raises on it; what moved is the baseline point the layer is built from.
+Proved rather than argued: the layer was rebuilt and
+`git diff --ignore-cr-at-eol` over `data/processed/corridor/` is **empty**,
+`_corridor_report.json` never changed hash, and after `normalise_eol.py` the
+working tree matches the committed blobs exactly. Registry 481 → 482.
+
+**The scanner fix is NOT done and is deliberately separate**: teaching
+`extract_legacy_constants.py` to evaluate a constant `dict(...)` would surface
+~20–40 further items — `VEHICLE = dict(...)` at `build_corridor_layers.py:101`
+among them — and turn a CI gate red, and the rule is that an item is worked
+down, never added and left.
+
+**Assessment recommendation REFUSED after checking.** The fifth assessment
+called `fit.py:148` a defect — the patronage scorer "structurally empty", the
+boardings never scored and the gap invisible. The dead `used`/`errs` locals are
+real and are a clarity smell, but the behaviour is correct and documented:
+every patronage target is unscorable by construction today, and `_fit.json`
+says so — `patronage n=0` beside **32 listed unscorable targets each with its
+reason** (§12.1). The gap is surfaced, not hidden. Recorded so it is not
+re-raised.
+
+**Three manual operations codified** (the directive's fourth part).
+`session_gate.py --fix` regenerates every stale GENERATED artefact in dependency
+order — run index, config reference, schema, fit figures, board — and re-checks;
+it is the sequence a session otherwise types by hand every time a run finishes
+or a field is added, and it was typed by hand twice this session before it
+existed. It deliberately excludes **prose**: `doc currency`, `doc shape`,
+`hardcoding`, the unit tests and the rest report a defect a person fixes, and a
+number in a living document is a claim a person wrote — the record must never be
+edited to keep a check green. `src/analyse/compare_runs.py` reads two runs'
+own `stopwatch.csv` and refuses what the project refuses — a comparison across a
+family boundary (§3.5), across sample fractions, or between a profiled and an
+unprofiled run — unless `--anyway` stamps the reason into the output; it
+reproduced §9.154's 310 → 206 s exactly before it was trusted, and it flags a
+phase that fires in only some iterations rather than reporting its median as
+typical (`dump all plans` fires at iterations 0 and 1 and would otherwise read
+as 59 s of an iteration that does not pay it). `src/run/verify_launch.py`
+executes the sentence `run.py --detach` used to print for a person to act on
+(#70). Registry 480 → 482, unit tests 125 → 139.
+
+**Deliberately not done.** The 2-minute iteration is **not reached and is
+priced as unreachable by measured levers**; the time-variant-link factory, the
+`dwell_charging_s` migration and the `dict(...)` scanner fix are specified and
+left. **No target value changed, no arm ran to a gate, no family opened, the
+67/143 split is untouched, and nothing here is a reading of the city.**
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-08 | **The events knob bracketed, the 2-minute target priced out, and three manual operations codified (§9.155; #66, #132; thirty-fourth session).** The 120 s ask is answered with arithmetic before a knob is turned: the mobsim alone is **143 s** of a 205.5 s iteration, so zeroing every other phase still lands above 120, and all three measured levers taken at their full CPU share land near **171 s**. The one untested value of `RUN.machine.event_handler_threads` was probed — 1 was saturated (§9.56), 12 bought nothing (§9.59), **2 had never been run** — and `20260907T233540_4it_25pct` is **44.5 % SLOWER** on plain iterations (205.5 → 297.0 s, mobsim 143 → 226 s, +58 %). The 11.6 % of CPU the §9.154 recording found in `LinkedBlockingQueue.offer` is therefore **not waste but the price of short pipeline stages**, and 4 now stands on evidence from both sides. Bounded for next time: `timeVariantNetwork` makes all **143,891** links time-variant to represent **2,441 events on 16**. Recommendations taken: the **72.8 GiB** untrimmable leak closed (the space becomes RECLAIMABLE at the next trim that needs it; the store is under cap today) (`RUN.storage.extract_grace_s` declared; the #132 race and the leak both pinned by `tests/unit/test_trim_grace.py`), `raw_cap_gb`'s units corrected to gibibytes, and `check_legacy_drift.py`'s false "the constant is gone" corrected — `dwell_charging_s=20.0` is live and writes a manifest artefact. One assessment recommendation **REFUSED after checking**: `fit.py`'s patronage scorer is correct and self-declaring, not empty. Codified: `session_gate.py --fix`, `src/analyse/compare_runs.py`, `src/run/verify_launch.py`. Registry 480 → 482, unit tests 125 → 139. **No target changed, no arm ran to a gate, no family opened, the 67/143 split untouched, nothing here is a result.** |
 | 2026-09-07 | **The iteration decomposed to the method, and a third of it was ours (§9.154; #66, #154, #155; thirty-third session).** Two declared OBSERVATION switches — `RUN.machine.jfr_profile`, `RUN.machine.gc_log` — let the JVM say where an iteration goes, and `src/analyse/profile_run.py` reads the recording. On `20260907T182742_4it_25pct` this project's own code was **50.0 %** of the run's CPU samples, almost all of it `GradientLinkSpeed.Router` re-deriving per link what never changes: a `synchronized` binary search for the free speed of a time-variant network, an attribute lookup and a `Double.parseDouble` of the stamped grade. Per-link tables in `GradientLinkSpeed` (both sides) and `BikeStressDisutility` cut a plain iteration **310 → 205.5 s** and startup **13m47s → 7m00s** on `20260907T192715_4it_25pct`, with our share at **14.5 %**; `citysim.GradientTableProbe` proves the tables identical to the formula over 3,266,754 comparisons on 192,162 links, because a run here is not bit-reproducible and a diff could not. **`RUN.travel_time.filter_modes` = true is newly declared and MOVES RESULTS** (#154): `analysed_modes` had been inert since the field existed, so walk, bike, bus and truck all fed the single link travel-time table the car router reads. `src/setup/dump_matsim_params.py` + `src/registry/check_matsim_defaults.py` enumerate what the framework decides undeclared — 31 unreviewed (#155) — and `src/analyse/arm_cost.py` prices an arm from the runs, printed by the launcher before every start. Registry 477 → 480, gate 17 → 18 checks. **The 2-minute iteration asked for is not reached (~190 s), no target value changed, no arm ran to a gate, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-09-07 | **F30's first arm ran to iteration 23 and was stopped on its own cost (§9.153; issues #66, #73; thirty-second session; user directive "stop the arm and /handoff").** Launched twice — once refused before MATSim for the absent signals run stack (§9.152), once run. Iteration 0 healthy on every control. `_run.json`: `completion` `stopped_by_operator`, `reached_iteration` 23, **`median_iteration_s` 376.42 against the 260 s the ~22 h approval was priced on**, 9,634 s of wall clock. The it.0–it.20 readings are citable at their own iterations and nowhere past them, and they separate F30 from F28 in nothing. §9.150's `--stop` rebuild tested live for the first time and held. **No target value changed, the 67/143 split is untouched, no family opened, the approval is SPENT, and nothing here is a finding** — the newest citable reading in the project is still F28's iteration-100 gate. |
 | 2026-09-07 | **The toolchain gate passed on a checkout that could not launch (§9.152; issue #73; thirty-second session).** With every gate green and the F30 arm approved, the launch was refused before MATSim started: `.tools/run-stack/lib` held **0 jars** while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` checks the digests of the components RECORDED in `toolchain.json`, and a run stack that `--run-stack` never resolved is not recorded — so the loop could not report it and the gate was green on the absence of the thing it should have failed on. `verify()` now reads the declared representation and reports `MISSING run-stack` with the exact command, so the gate and the launcher refuse on one condition. Cost: one refused launch (`aborted_20260907T145929_300it_25pct`), which stated its own cause in its `_meta.json`. **No arm ran.** |

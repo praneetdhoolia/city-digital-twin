@@ -20,8 +20,8 @@
   },
   "counts": {
     "factors": 72,
-    "needs_research": 5,
-    "researched": 67,
+    "needs_research": 2,
+    "researched": 70,
     "literature_half_written": 72
   },
   "factors": [
@@ -49,7 +49,7 @@
       "relevance": "high",
       "needs_research": true,
       "last_verified": "2026-09-07",
-      "query": "Australian activity-based model (AToM, Sydney STM) reported fit of modelled vs journey-to-work LGA flows - a transferable tolerance for own-LGA commute share"
+      "query": "An Australian or NZ activity-based model report that PUBLISHES a modelled-vs-census journey-to-work flow comparison at LGA/SA2-pair level with an acceptance tolerance - try the AToM full text on ResearchGate (357268039) or the matsim-melbourne GitHub validation notebooks; the FHWA validation manual chapter 3 was checked this pass and states there are no criteria guidelines for these checks."
     },
     {
       "layer": "A",
@@ -353,15 +353,14 @@
     {
       "layer": "E",
       "factor": "Person attributes: age and sex",
-      "what_research_says": "Age and sex segment travel in direction more than in coefficient: older Australians drive, walk and use taxis and make little use of bicycles, rideshare or public transport; car use declines with age and dependence on transit rises as ability to drive falls; older women are the group most likely to use public transport; the 'gender turnaround' finds young women now travelling more than young men. No transferable coefficient was recovered.",
-      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S2214367X14000465",
-      "magnitude": "unknown (direction established: car falls and PT/taxi/walk rise with age; women more PT; no central tendency)",
-      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP segment utilities by person type and age band; MATSim carries subpopulation-specific scoring.",
-      "evidence_strength": "moderate",
+      "what_research_says": "Age and sex segment travel with a transferable magnitude on the ACTIVE modes. Across 19 major cities in 13 countries and 6 continents (8 low-and-middle-income, 11 high-income), females are more likely than males to walk in every city - on average 23% more likely - and on average 6% more likely to use public transport, while the relation REVERSES for cycling, where women are typically about half as likely to cycle as men; in high-cycling cities the two genders are equally likely, and in Berlin, Munich and Hamburg women cycle more than men. The gap is age-dependent: among children under 16 the metrics are often equal, and the disparity widens with age. On age itself, older travellers drive, walk and take taxis and make little use of bicycles or rideshare, car use falls and dependence on transit rises as the ability to drive falls, and older women are the group most likely to use public transport; an urban Italian study puts men at ~1.5x the odds of choosing a private car over an active mode. No Australian mode-choice model published an age or sex coefficient this pass could read.",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7614415/",
+      "magnitude": "literature: women ~23% more likely to walk and ~6% more likely to use public transport than men; women ~half as likely to cycle (parity in high-cycling cities); parity under age 16, gap widening with age (Goel et al., Transportation 2022, 19 cities / 13 countries). Men ~1.5x odds of car over an active mode (Milan). No transferable Australian coefficient recovered.",
+      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP segment utilities by person type and age band; MATSim carries subpopulation-specific scoring and, in eqasim derivatives, person-attribute terms in the estimated mode-choice model.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
-      "last_verified": "2026-09-07",
-      "query": "Estimated age and sex coefficients in an Australian mode choice model (Sydney STM or AToM)"
+      "needs_research": false,
+      "last_verified": "2026-09-07"
     },
     {
       "layer": "E",
@@ -587,15 +586,14 @@
     {
       "layer": "F",
       "factor": "Route choice and re-routing",
-      "what_research_says": "Route choice is estimated on GPS-observed routes with path-size logit corrections for overlapping paths; length coefficients turn negative only once infrastructure attributes enter the model, and the adaptive path-size logit resolves the inconsistency of earlier forms. In iterative agent simulation the route set is co-evolved, not enumerated. No transferable share-choosing-shortest-path magnitude was recovered.",
-      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S0191261519303510",
-      "magnitude": "unknown (mechanism established; no central tendency for the shortest-path share)",
-      "how_leading_simulators_do_it": "SUMO/Aimsun iterate dynamic user equilibrium; MATSim ReRoute co-evolves the plan set; ActivitySim delegates to assignment.",
-      "evidence_strength": "moderate",
+      "what_research_says": "Route choice is estimated on GPS-observed routes with path-size logit corrections for overlapping paths, and the observed share taking the shortest path is small: over 25,157 trips by 143 subjects tracked for 8-13 weeks in Minneapolis-St Paul, 34% of all trips exactly matched the shortest-travel-time path and 40% matched within a 10% tolerance, while for commute trips alone the figures were 13.5% and 21.7%; no subject followed a shortest-DISTANCE path unless it coincided with the shortest-time one. About 50% of trips were within 30 s and about 90% within 5 minutes of the shortest-time route, so the deviation is wide in route space and narrow in time. A Chongqing trajectory study of 2,860 private-car trips by ~400 drivers puts the shortest-path match at ~67% under a looser matching rule. In iterative agent simulation the route set is co-evolved rather than enumerated.",
+      "source_url": "https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0134322",
+      "magnitude": "literature: 34% of trips take the exact shortest-time path, 40% within a 10% tolerance (commute 13.5% / 21.7%); ~90% of trips are within 5 min of the shortest-time route (Zhu & Levinson, PLOS ONE 2015, n=25,157). A looser Chongqing match gives ~67%.",
+      "how_leading_simulators_do_it": "SUMO/Aimsun iterate dynamic user equilibrium; MATSim ReRoute co-evolves the plan set against a per-mode travel-time table; ActivitySim delegates to assignment.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
-      "last_verified": "2026-09-07",
-      "query": "Share of GPS-observed car routes equal to the shortest-time path in an urban network (a benchmark for ReRoute fidelity)"
+      "needs_research": false,
+      "last_verified": "2026-09-07"
     },
     {
       "layer": "F",
@@ -626,15 +624,14 @@
     {
       "layer": "F",
       "factor": "Ride pairing / matching",
-      "what_research_says": "Pooled matching is measured on platforms, not households: New York taxi pooling reached a 13% match rate on an ordinary day with passengers accepting up to 400 s of delay for up to 49% cost saving, a Chengdu ride-pooling dataset reached an 86.6% match with a 0.12 detour ratio, and driver detours of ~9.2 min are reported when matching riders to drivers with nearby destinations; longer response windows produce better groups and smaller detours. None of this is a household-lift tolerance.",
-      "source_url": "https://arxiv.org/pdf/2104.13463",
-      "magnitude": "literature (platform pooling only): match rates 13-87% by service design; accepted delay ~400 s; detour ratio ~0.12",
-      "how_leading_simulators_do_it": "MATSim DRT and BEAM implement insertion-heuristic pooling; no comparable project matches a household lift physically.",
-      "evidence_strength": "moderate",
+      "what_research_says": "Two literatures answer this and they are not the same. On PLATFORMS, pooled matching is measured directly: New York taxi pooling reached a 13% match rate on an ordinary day with passengers accepting up to 400 s of delay for up to 49% cost saving; a Chengdu ride-pooling dataset reached 86.6% matching at a 0.12 detour ratio; driver detours of ~9.2 min are reported when riders are matched to drivers with nearby destinations. For the HOUSEHOLD lift, which is what a resident twin needs, the quantities are shares rather than tolerances: in the Paris region 2.4 million daily trips - 24 million vehicle-km, 13 million as passenger and 11 million as driver - involve travelling with at least one other household member; 11.1% of home-based tours are joint with another household member; joint tours carry a car-passenger share of 33% against 6% for solo tours and a transit share of 9% against 26%; and of joint car tours 40% are performed as driver and 60% as passenger. No household study states an accepted detour or wait for a lift.",
+      "source_url": "https://arxiv.org/html/2608.18657",
+      "magnitude": "literature (household): 11.1% of home-based tours joint; joint car tours split 40% driver / 60% passenger; car-passenger share 33% on joint tours against 6% on solo (Paris region). literature (platform, not transferable to a household lift): match rates 13-87% by service design, accepted delay ~400 s, detour ratio ~0.12.",
+      "how_leading_simulators_do_it": "MATSim DRT and BEAM implement insertion-heuristic pooling for platforms; CT-RAMP and the Paris joint-travel work assign a driver/passenger role inside the household tour; no comparable project matches a household lift physically in the mobsim.",
+      "evidence_strength": "strong",
       "relevance": "high",
-      "needs_research": true,
-      "last_verified": "2026-09-07",
-      "query": "Acceptable detour and wait for an intra-household lift (chauffeur time budget) - a household, not a platform, study"
+      "needs_research": false,
+      "last_verified": "2026-09-07"
     },
     {
       "layer": "G",
@@ -699,7 +696,7 @@
       "relevance": "medium",
       "needs_research": true,
       "last_verified": "2026-09-07",
-      "query": "Through-traffic share at Hunter cordon stations from TfNSW classified counts or a cordon origin-destination survey"
+      "query": "A published cordon or roadside origin-destination survey for the Lower Hunter / M1-New England Highway cordon giving the through-trip share - try the TfNSW Lower Hunter Freight Corridor and M1 Raymond Terrace EIS traffic chapters directly (the general search returns only the ~15% heavy-vehicle share on the New England Highway, which is a vehicle-class share, not a through share)."
     },
     {
       "layer": "G",
@@ -964,19 +961,12 @@
   ],
   "last_pass": {
     "date": "2026-09-07",
-    "head": "af7d718",
+    "head": "f40d332",
     "rounds": 6,
-    "searches_spent": 34,
+    "searches_spent": 21,
     "budget": 40,
-    "literature_halves_newly_filled": 11,
-    "literature_halves_completed": 14,
-    "note": "Second pass. The 25 rows flagged needs_research were all searched: 11 that were empty now carry a literature half, and 14 that had a literature half but no transferable magnitude were completed where the literature holds one. Five rows keep needs_research: true because the number that would close them is a coefficient or a share the literature does not state (workplace flows, household-lift detour tolerance, shortest-path share, age/sex coefficients, cordon through-share); each carries the query that would close it. Statuses are NOT stored here - they are re-read at HEAD by grep every pass.",
-    "open_gaps_highest_relevance_first": [
-      "Workplace location",
-      "Ride pairing / matching",
-      "Person attributes: age and sex",
-      "Route choice and re-routing",
-      "External and through traffic"
-    ]
+    "literature_halves_newly_filled": 0,
+    "literature_halves_completed": 3,
+    "note": "Third pass. All 72 literature halves were inside the 365-day horizon and were reused unchanged except the five rows carrying needs_research, where the whole budget went. THREE closed with a transferable magnitude: route choice (Zhu & Levinson 2015, 34% of 25,157 GPS trips take the exact shortest-time path, 40% within a 10% tolerance), ride pairing / matching (the Paris intra-household joint-travel study - 11.1% of home-based tours joint, joint car tours 40% driver / 60% passenger - the household half the platform pooling literature could not supply), and age and sex (Goel et al. 2022 across 19 cities: women ~23% more likely to walk, ~6% more likely to use PT, ~half as likely to cycle, parity under 16). TWO remain open and keep a refined query: workplace location (no published Australian journey-to-work flow tolerance; the FHWA validation manual chapter 3 was fetched and states there are no criteria guidelines for trip-distribution checks) and external and through traffic (no Hunter cordon through-share is published; the quantity is cordon-specific by construction). Two rounds of differently phrased searches added nothing to either, so the stopping rule was applied rather than a further round. Dead fetches this pass, do not retry: arxiv 2112.12071 PDF (over the size limit), tandfonline 10.1080/15472450.2024.2372894 (403), link.springer.com 10.1007/s11116-021-10259-4 (auth redirect - the PMC copy PMC7614415 works), PMC9987251 (captcha), the alogit Sydney model PDF (unreadable). One search - commercial chauffeur detour times - reached no row and was not varied."
   }
 }

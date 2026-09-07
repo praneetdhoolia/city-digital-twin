@@ -44,59 +44,84 @@ on every pass.
 
 ## State
 
-Last pass **7 September 2026**, at `af7d718`, lodged as
-[`20260907T173435_project_report.html`](../20260907T173435_project_report.html)
-(the third pass of the day; the 13:02 pass at `419b0da` is the one before it).
+Last pass **7 September 2026**, at `f40d332`, lodged as
+[`20260907T231739_project_report.html`](../20260907T231739_project_report.html)
+— the fourth pass of that day, and the one that refreshed **both** lanes (the
+previous refresh of each was the pass at `af7d718`, lodged as
+[`20260907T173435_project_report.html`](../20260907T173435_project_report.html)).
 Seeded 7 September 2026 from the `report-data` block of
 `20260907T013735_project_report.html`, read at `9cd8b4f` before that report was
 deleted in `03b5220`.
 
-### `field-survey.json` — 40 of 40 searches spent, 4 rounds (7 September 2026, third pass, at `af7d718`)
+### `field-survey.json` — 35 of 40 searches spent, 5 rounds (7 September 2026, fourth pass, at `f40d332`)
 
 | | count | this pass |
 |---|---:|---|
-| projects surveyed | **44** | **40 reused unchanged, 0 re-searched, 1 updated from a closed gap** (Dhaka, its paywalled fit read from the author's thesis), **3 added** (MWCOG Gen3 ActivitySim with the whole ladder and its acceptance standards; the UCLA Deep Activity Model; the Brussels cellphone-matrix MATSim) |
-| platforms surveyed | 12 | 6 reused unchanged; **9 of 12 `unknown` cells filled** (SUMO 1.27.1 / EPL-2.0, BEAM GPL v3 / v1.0.0 2022, SimMobility no releases, mobiTopp 0.3.1, OpenPaths 2025 Update 1); MATSim's licence still `unknown` after four failed fetches |
-| candidates excluded | 46 | 5 added (the NSW Spatial Digital Twin — visualisation and an AI predictor, no ABM — and four LLM-lane papers); the ETH Singapore entry re-written from the paper itself, which says its validation was planned, not done |
-| rows not re-verified | 34 | 3 resolved into rows or read (MWCOG, Brussels, Dhaka full text), 3 added (Virtual Singapore 404, a Springer DC open-data study, arXiv 2501.10221), 4 notes updated |
-| open gaps | 4 | 3 inherited and **narrowed**, 1 **closed** (the LLM lane's stopping rule — two further rounds added nothing), 1 added (the MUM 2026 programme, 28 September) |
+| projects surveyed | **46** | **43 reused unchanged, 0 re-searched, 1 updated** (POLARIS Chicago, its rung now carried by a verbatim 2026 validation sentence), **2 added** (the SEMCOG ActivitySim model for Detroit; the Washington DC open-data MATSim COVID study) |
+| platforms surveyed | 12 | 7 reused unchanged; **5 more `unknown` cells filled — the licence gap is CLOSED**: MATSim is the GNU GPL per the `<licenses>` block of `matsim/pom.xml` (GitHub's licence API 404s because there is no SPDX-detectable `LICENSE` at the root, which is why four earlier routes found nothing); mobiTopp 0.3.1 = 16 May 2024; eqasim v2.2.0 = 3 June 2026; OpenPaths 2025 Update 1 = 4 December 2025; SimMobility city-agnostic by design |
+| candidates excluded | 53 | 7 added — Virtual Singapore (a 3D visualisation and experimentation platform, no ABM of its own), arXiv 2501.10221 (no city), the Takamatsu MATSim study (no validation claim), and four 2026 "digital twin" papers that are not city travel models |
+| rows not re-verified | 37 | 3 added (ARC, the Brussels fit as its own entry, an eqasim French-cities 2026 lead), 2 notes updated (Monty's third and fourth failed routes; MTC/ARC/PSRC/SEMCOG split apart) |
+| open gaps | 4 | 2 inherited and **narrowed**, 1 **closed** (the platform-licence gap), 1 carried unchanged (MUM 2026, 28 September — in the future, no budget spent), 1 added (the residue of the closed platform gap) |
 
-Every stored row was inside both horizons, so the budget went to the gaps in
-order and to one never-seen candidate; three PDFs the fetches left on disk
-(MWCOG, the Dhaka thesis, ETH Singapore 2012) were read without spending a
-call. The validation ladder now stands at 7 / 9 / 22 / 6 / 0 (none / survey
-shares / road link counts / transit ridership / per-mode every mode); no
-project publishes the top rung.
+Not one stored row was re-searched: all 44 project rows and 12 platform rows
+carried `last_verified` 2026-09-07 from the same day's earlier pass, inside both
+horizons. The budget went to the library's gaps in order, then to never-seen
+candidates, then to `unknown` cells, and **the pass stopped on the stopping
+rule, not the budget** — rounds 4 and 5 were two successive rounds of
+differently phrased sweeps (agency ActivitySim programmes, Australian and
+Victorian ABMs, Japanese/Korean/Chinese MATSim scenarios, African and South
+American models, eqasim 2026, generic 2026 "digital twin validated per mode")
+and neither added a qualifying entry. Five searches were left unspent and the
+work they would have done is written back as gaps. The validation ladder now
+stands at 7 / 9 / 24 / 6 / 0 (none / survey shares / road link counts / transit
+ridership / per-mode every mode) over 46 rows; **no project publishes the top
+rung**, and our own row moved the other way — from one mode of twelve inside
+10 % to none.
 
-### `factors.json` — 34 of 40 searches spent, 6 rounds (7 September 2026, second pass, at `af7d718`)
+### `factors.json` — 21 of 40 searches spent, 6 rounds (7 September 2026, fourth pass, at `f40d332`)
 
 | | count | this pass |
 |---|---:|---|
-| factors listed | 72 | unchanged |
-| literature half filled | **72** | **11 added** (the rows the first pass never reached) and **14 completed** with a magnitude where the literature holds one; 47 reused unchanged |
-| still `needs_research` | **5** | workplace location, ride pairing / matching, age and sex, route choice, external and through traffic — each wants a coefficient or a share the literature does not state, and each keeps the query that would close it |
-| statuses stored | **0** | by design — every status is re-read at `HEAD` each pass |
+| factors listed | 72 | unchanged; none added, none retired |
+| literature half filled | **72** | **69 reused unchanged** (all inside the 365-day horizon) and **3 completed** — route choice, ride pairing / matching, age and sex |
+| still `needs_research` | **2** | workplace location and external and through traffic. Two rounds of differently phrased searches added nothing to either, so the stopping rule was applied rather than a further round; each keeps a **narrowed** query naming the exact route to try next |
+| statuses stored | **0** | by design — every status was re-read at `f40d332` for all 72 rows by `grep` of `cities/newcastle/registry/`, `src/`, `cities/newcastle/build/`, `src/java/` and `src/java_signals/`, plus a read-only `check_hardcoding.py`. This pass: **IN 37 · PARTIAL 27 · INERT 2 · ASC 1 · OUT 5** (previous pass at `af7d718`: 35 / 28 / 1 / 2 / 6) |
 
 **Where the next pass's budget goes.** The two dead lanes of the 7 September
 pass are closed. What is left:
 
-1. **5 factor rows still needing research**, two of them `high` relevance —
-   workplace location (a transferable tolerance for own-LGA commute share) and
-   ride pairing / matching (a household, not a platform, detour and wait
-   tolerance). Each keeps the query that would close it. Two sources this
-   pass were reachable only at abstract level (the Transport Reviews e-bike
-   meta-analysis, the Melbourne bicycle-ownership study); their figures are
-   labelled as such in the row.
-2. **MATSim's own licence** (four fetch routes failed) and three lesser
-   platform cells — each gap carries the exact URL to try next; do not retry
-   the ones that returned 404.
-3. **The agency programmes not reached** — Monty (New Zealand: one page empty,
-   one 403), Virtual Singapore (both official pages 404), and any MTC / ARC /
-   SEMCOG ActivitySim validation report. MWCOG is done and TfNSW resolved to a
-   visualisation platform.
-4. **Unreached fits** — Brussels (open access, yet the publisher blocks; a
-   ResearchGate copy would close it), the MDPI on-demand study, the Springer
-   Washington DC study — and, after **28 September 2026**, the **MUM 2026
-   programme**, where a new calibrated city scenario or a Wellington
-   validation would surface first. The LLM lane's stopping rule is met; do not
+1. **2 factor rows still needing research**, one of them `high` relevance —
+   **workplace location** (no published Australian journey-to-work flow
+   tolerance; the FHWA validation manual chapter 3 was fetched this pass and
+   states there are no criteria guidelines for trip-distribution checks, so try
+   the AToM full text on ResearchGate `357268039` or the `matsim-melbourne`
+   validation notebooks) and **external and through traffic** (the quantity is
+   cordon-specific by construction; try the TfNSW Lower Hunter Freight Corridor
+   and M1 Raymond Terrace EIS traffic chapters directly — a general search
+   returns only the ~15 % heavy-vehicle share on the New England Highway, which
+   is a vehicle-class share, not a through share). Dead fetches this pass, **do
+   not retry**: the AToM arXiv PDF (over the 10 MB limit), the Taylor & Francis
+   AToM full text (403), Springer `10.1007/s11116-021-10259-4` (auth redirect —
+   the PMC copy `PMC7614415` works), `PMC9987251` (captcha), the alogit Sydney
+   model PDF (unreadable). Two sources from the second pass remain
+   abstract-level (the Transport Reviews e-bike meta-analysis, the Melbourne
+   bicycle-ownership study) and stay labelled as such in their rows.
+2. **The agency programmes still not reached** — Monty (four routes have now
+   failed: both `transport.govt.nz` pages return blank bodies, Arup 403s, the
+   MATSim showcase carries no validation claim), ARC's ABM calibration report
+   (its PDF exceeds the 10 MB fetch limit; try the smaller specification
+   report), and MTC's Travel Model Two (TM2.3, still in development, no report
+   published). SEMCOG is now a row; Virtual Singapore and TfNSW are excluded.
+3. **Unreached fits** — Brussels (four routes failed, including ResearchGate,
+   which is now confirmed to 403 the agent) and the MDPI on-demand study; plus
+   the Washington DC study's **full text**, which is gold open access under
+   CC BY yet Springer 303s to its identity provider, so its SafeGraph
+   R² = 0.99 is still only a search-index snippet. The DC abstract was
+   recovered through the Semantic Scholar graph API — a route worth reusing.
+4. **The residue of the closed platform gap** — the base OpenPaths 2025
+   (v25.00.00) announcement date, the TRANSIMS 7.5 release date, and a named
+   agency or city running on SUMO.
+5. After **28 September 2026**, the **MUM 2026 programme**, where a new
+   calibrated city scenario or a Wellington validation would surface first.
+   The LLM lane's stopping rule has now been met three passes running; do not
    spend budget there without a new lead.

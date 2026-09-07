@@ -142,11 +142,43 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
     medians = sorted(a['median_iteration_s'] for a in recent)
     setup_s = newest.get('setup_s') or 0.0
     quote_s = newest['median_iteration_s'] * iterations + setup_s
+
+    # The exclusion above is right - the recorder is ~8% of a profiled run's
+    # clock - but it is SILENT, and silence is how it quoted a stale price
+    # (9.155). After 9.154 the only runs carrying the repaired stack were
+    # profiled probes, so every one was excluded and the quote fell back to a
+    # pre-repair arm at 376.4 s: 26.3 h against a measured 13.5-18 h, asking
+    # the operator to approve 8-12 hours the model no longer needs. A price
+    # that rests on a run OLDER than runs it threw away must say so.
+    stale_warning = None
+    excluded = [a for a in arms
+                if (fraction is None or a['fraction'] == fraction)
+                and a.get('profiled')]
+    # by LAUNCH STAMP, not by raw name: an `aborted_` prefix sorts after every
+    # digit, so a string compare silently hid three of the four newer probes.
+    newest_stamp = _launch_stamp(str(newest.get('name', '')))
+    newer_excluded = [a for a in excluded
+                      if _launch_stamp(str(a.get('name', ''))) > newest_stamp]
+    if newer_excluded:
+        fastest = min(a['median_iteration_s'] for a in newer_excluded)
+        stale_warning = (
+            'PRICED ON A RUN THAT IS NOT THE NEWEST. %d profiled run(s) at '
+            'this fraction are NEWER than %s and were excluded because the '
+            'flight recorder is in their clock (~8%%). The FASTEST of them '
+            'measured %.1f s an iteration against the %.1f s quoted here, so '
+            'this quote may be high by roughly %.0f%%. Take one UNPROFILED '
+            'probe before spending an approval on it.'
+            % (len(newer_excluded), newest.get('name'), fastest,
+               newest['median_iteration_s'],
+               100.0 * (1.0 - fastest / newest['median_iteration_s'])
+               if newest['median_iteration_s'] else 0.0))
     return dict(
         setup_s=setup_s,
         iterations=iterations,
         fraction=fraction,
         priced_on=newest,
+        excluded_newer_profiled=[a.get('name') for a in newer_excluded],
+        stale_warning=stale_warning,
         quote_s=quote_s,
         quote=_fmt_hours(quote_s),
         low_s=medians[0] * iterations + setup_s,
@@ -229,6 +261,12 @@ def main(argv=None) -> int:
         print('    %-44s %7.1f s/it  to it %-4d %s'
               % (a['name'], a['median_iteration_s'], a['reached_iteration'],
                  a['completion'] or ''))
+    if quote.get('stale_warning'):
+        print()
+        for i, sentence in enumerate(quote['stale_warning'].split('. ')):
+            if sentence:
+                print('  %s %s' % ('**' if i == 0 else '  ',
+                                   sentence.rstrip('.') + '.'))
     print()
     print('  A STATED COST IS A BOUNDARY, NOT AN ESTIMATE. The spread above is')
     print('  what the same stack has actually done; the quote is the newest')

@@ -25,7 +25,15 @@ src/run/                the run harness
 src/calibrate/          fit statistic, calibration loop, report generator
 src/analyse/            metric extraction, the per-mode reader, fit figures, the board
                         generator (build_status_board.py), live run view, replay
-src/run/session_gate.py the one gate both session skills run, and the session digest
+src/run/session_gate.py the one gate both session skills run, and the session digest.
+                        `--fix` regenerates every stale GENERATED artefact (run index,
+                        config reference, schema, fit figures, board) and re-checks;
+                        it never edits prose and never silences a defect
+src/run/verify_launch.py did the detached launch take? (#70) - waits for the first
+                        iteration and reports took/died, instead of telling a person to look
+src/analyse/compare_runs.py two runs' wall clock phase by phase, REFUSING a comparison
+                        across a family boundary, a sample fraction or a profiled/unprofiled
+                        pair unless `--anyway` stamps the reason into the output
 src/registry/           the registry resolver, its validators and the contract generators
 src/java/citysim/       MATSim entry point: parking, fares, ride pairing, telemetry
 src/java_signals/citysim/  the signals entry point and its tram/bus priority controller

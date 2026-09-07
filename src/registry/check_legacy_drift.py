@@ -36,8 +36,28 @@ from registry import extract_legacy_constants as legacy   # noqa: E402
 #     fallback, so there is no second copy to diverge from.
 #   A.lightrail.dwell_charging_s - it never carried a `legacy_symbol`, so this
 #     entry compared NOTHING while the handover brief told the next agent the
-#     constant was pinned and should be left alone. The constant is gone: the
-#     baseline sweep point comes from the reference scenario's overlay.
+#     constant was pinned and should be left alone.
+#
+#     CORRECTED 7 September 2026 (9.155): the sentence that stood here said
+#     "the constant is gone: the baseline sweep point comes from the reference
+#     scenario's overlay". It is NOT gone. `dwell_charging_s=20.0` is live at
+#     cities/newcastle/build/build_corridor_layers.py:125, inside a
+#     DWELL_DEFAULTS dict, and is READ at :228 and :249 to write
+#     data/processed/corridor/A4_stop_dwell_model.csv - manifest row 99, with
+#     its own hash. The registry declares A.lightrail.dwell_charging_s
+#     `value: null, status: unobtained` precisely so `get()` raises (15), so
+#     the script cannot read the field and decides the number itself, with the
+#     declared sweep (10.0, 35.0) duplicated beside it at :126.
+#
+#     It is invisible to check_hardcoding because
+#     extract_legacy_constants.py:50-54 evaluates anything built with a CALL -
+#     `dict(...)` - to Ellipsis and drops it, so the strict gate reads TOTAL 0
+#     over a rule that is broken. Migrating it needs a DECLARED baseline field
+#     (the assumed 20.0 with its sweep, which is what the no-invented-data rule
+#     requires of an assumed value) and a rebuild of the A4 layer to prove the
+#     artefact's bytes are unchanged. Both are scoped work, not a comment fix;
+#     what is fixed here is the false statement, which told every later reader
+#     the problem had been solved.
 EXPECTED_DIVERGENCE = {
     '_removed_B.activity.detour_factor': (
         'the build script keeps 1.30 as a fallback labelled "assumed - C2 factors file '
