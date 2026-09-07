@@ -399,6 +399,20 @@ STRUCTURAL = {
         'quoted as a pace. A property of the ARITHMETIC - a median over one '
         'iteration is the warm-up - not of the transport system; the script '
         'reads finished run records and cannot reach a result',
+    'src/run/verify_launch.py:_tail(limit)':
+        'how many bytes are read from the END of a matsim.log to decide '
+        'whether the launch reached an iteration. A bound on the READ, not on '
+        'the model: a growing arm log reaches tens of GB and this script must '
+        'never read one whole (9.155). It answers one operational question '
+        'about a log already written and can reach no result',
+    'src/run/verify_launch.py:--timeout':
+        'how long the launch verifier waits for the first iteration before it '
+        'reports UNDECIDED. Operational patience, not a transport parameter; '
+        'the default is set above the 7 min startup measured in 9.154 so a '
+        'healthy launch is never called dead',
+    'src/run/verify_launch.py:--poll':
+        'how often the launch verifier re-reads the log while waiting. It '
+        'observes a run that is running anyway and writes nothing',
     'src/analyse/profile_run.py:table(width)':
         'the column width of a printed table',
     'src/analyse/profile_run.py:--top':
