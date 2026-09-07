@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Open family:** F29 (opened at its rebuild; no arm has run in it)
+**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
 
 ## What is built
 
@@ -66,7 +66,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## What is open
 
-- No arm runs; the newest reading is F26's, taken at its watcher's iteration-100 gate (§9.146) — F27's arm was stopped at 19 under a stranded model and is citable for nothing (§9.148). **The package on disk is F27's, the run stack F28's** - plans and the 30 run-input sets rebuilt 6 Sep with `householdVehicles` stamped and the carve pool excluding bound passengers (§9.146), on F26's chains (no binding moved). **F27 is a boundary on BOTH sides**: the demand (the attribute, the carve) and the run stack (`B.ride.coherence_scope`, `B.population.vehicle_roster`, `RUN.qsim.vehicle_behavior`, the roster listener, the agent source, `JointRideEngine`), so `controler_sha256` moves too; each new value's control member reproduces F26 exactly, so the family is a comparison the sweep can still make within itself. **Every F26 level is a reading against a superseded package** - citable as what F26 measured, never differenced against an F27 reading. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
+- No arm runs; **the newest reading is F28's**, taken at its watcher's iteration-100 gate (§9.149, `aborted_20260907T030352_300it_25pct`) — car read +6.6 %, inside the band at a gate for the first time, with seven modes still past the bar. F27's arm was stopped at 19 under a stranded model and is citable for nothing (§9.148). **The package on disk is F29's** — chains, plans and the 30 run-input sets rebuilt 7 Sep with `B.ride.shared_lift_hash_bucket` = 0.25 and `B.ride.shared_lift_priority` = longest_first (§9.149); **F29 has no arm**. F27 was a boundary on BOTH sides — the demand (the attribute, the carve) and the run stack (`B.ride.coherence_scope`, `B.population.vehicle_roster`, `RUN.qsim.vehicle_behavior`, the roster listener, the agent source, `JointRideEngine`), so `controler_sha256` moved too. **A level from any earlier family is a reading against a superseded package** — citable as what that family measured, never differenced against a later one. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Open family:** F29 (opened at its rebuild; no arm has run in it)
+**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
 
 ## What is built
 
@@ -36,20 +36,20 @@
 - **A milestone is readable only when its experienced plans decompress to the end** (§9.143). Three weaker signals were tried this session and all three mean STARTED, not finished: the progress digest's iteration counter, the `it.N` directory, and the file's mere existence. The runner's own watcher already had this right - it retries the reporter until it succeeds.
 - **The calibrated base is F4, arm `20260821T175907_1000it_25pct`**: 35 of 67 calibration targets scorable, MAE 10.65 pp, `feasible=False` with five stated violations, ASCs held at their priors (§9.64, §9.50). `params/C5_calibration.json` names it as `best_tag`, and `README.md`'s fit figures still draw it via `src/analyse/build_fit_figures.py` (§9.80). Its light rail 1,260 boardings is a LEVEL, not an error (§9.80, #84).
 - **The seed noise floor** from the F4 pair: at most 0.11 pp per mode at fit level, light rail boardings within 3.9% (§9.64).
-- **The gate has fired three times; the third is the F23 channels' first reading (§9.139).** The F23 arm `aborted_20260901T165115_300it_25pct` read all twelve at iteration 100: 7 at or past 20% (heavy rail +193.2%, bike +111.2%, ferry −80.0%, taxi +76.6%, light rail −66.1%, ride −40.1%, walk −27.2%), with car +14.8%, motorbike +13.9% and bus +16.2% over 10% and none inside — stopped by the session under the GOAL.md loop because the watcher stayed silent (§9.139). Against the questions §9.138 posed at F22's gate: bike +185.5% → +111.2% (the stress channel works, still falling 6.55 → 4.66 in-run), walk −36.6% → −27.2% but the walk/car pair overshot their targets ~it.50 and kept going, bus +8.0% → +16.2% (lost its inside place), heavy rail +152.9% → +193.2% (income scaling weakened the fare's bite), taxi +70.9% → +76.6%, ferry unmoved at −80.0%.
+- **Every arm since F4 has ended at a gate reading rather than at its horizon; how many, and where each stopped, is the board's runs table** (`results/INDEX.md`, `python src/analyse/build_run_index.py`). The reading that first showed the channels was F23's (§9.139). The F23 arm `aborted_20260901T165115_300it_25pct` read all twelve at iteration 100: 7 at or past 20% (heavy rail +193.2%, bike +111.2%, ferry −80.0%, taxi +76.6%, light rail −66.1%, ride −40.1%, walk −27.2%), with car +14.8%, motorbike +13.9% and bus +16.2% over 10% and none inside — stopped by the session under the GOAL.md loop because the watcher stayed silent (§9.139). Against the questions §9.138 posed at F22's gate: bike +185.5% → +111.2% (the stress channel works, still falling 6.55 → 4.66 in-run), walk −36.6% → −27.2% but the walk/car pair overshot their targets ~it.50 and kept going, bus +8.0% → +16.2% (lost its inside place), heavy rail +152.9% → +193.2% (income scaling weakened the fare's bite), taxi +70.9% → +76.6%, ferry unmoved at −80.0%.
 - **Truck at its own basis**: +5.4% on 3 calibration stations and 23 modelled heavy traversals at iteration 100 of `aborted_20260829T172145_1000it_10pct`; 20 of the 24 classifying stations are holdout and were not opened (§9.101).
 
 ## What is open
 
-- **The machine is idle; the package on disk is the F24 build** (§9.140): chains, plans and run inputs rebuilt 3 Sep; F23's gate arm is read and stopped (§9.139). Every open issue is labelled `awaiting-run` (13 on 3 Sep, `python src/run/issue_gate.py`); the next arm follows the user's root-cause pick under a fresh run approval.
-- **The fixed watcher has never fired in anger** (§9.139): the fix reads `_progress.json`; the next arm to cross a gate milestone is its first live test.
+- **Whether the machine is idle, which build is on disk, and how many issues are open are all facts that expire**, and each has one home and one command: the board's state block, `python tests/check_package.py`, and `python src/run/issue_gate.py`. This page used to assert them — "the machine is idle; the package on disk is the F24 build; 13 open issues" — and every one of those was false within four days. The standing rule is what belongs here: **the next arm follows the user's root-cause pick under a fresh stated-cost approval**, and no arm launches while an open issue lacks `awaiting-run` (§9.140).
+- **The fix that made the watcher able to fire** was reading `_progress.json` rather than a log tail (§9.139): the original 64 KiB tail was measured blind at the 25 % log rate, with the ENDS marker 611 MiB behind EOF, and it idled straight through the F23 gate.
 - **Heavy rail's over-boarding has halved inside every arm and still stands**: 36,340 → 17,090 inside F21 (§9.134), 37,540 → 16,512 inside F22 under fares (§9.136), 37,568 → 19,140 inside F23 under income-scaled fares (§9.139, #98) — the F23 level at the same gate is HIGHER because income scaling weakens the fare deterrent for high-income boarders (#108).
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
 - **No arm has reached its innovation cutoff since F4**, so no post-cutoff twelve-mode level exists (§9.108).
 - **`--trend` omits `freight_train`** and its header still says resident linked trips for every row, while heavy rail and light rail rows now carry boardings (§9.130) — the header is behind the basis.
 - **`--truck-stations` is holdout-bound**: whether to spend holdout on freight is the operator's decision, not the reader's (§9.101, #82).
 - **`fit.py` still folds** (§9.87): the calibration fit scores the survey's categories, the gate scores twelve modes, and the two are distinct instruments by design.
-- **The watcher has never fired live**: its first milestone on the F24 arm is its first live test (§9.139, §9.141). The board prints `-` for truck and freight rail where it printed −63.6 % and +0.0 % against a non-target basis, and the shape check refuses a percentage beside `level only` or `representation` (§9.141, #114 closed).
+- The board prints `-` for truck and freight rail where it printed −63.6 % and +0.0 % against a non-target basis, and the shape check refuses a percentage beside `level only` or `representation` (§9.141, #114 closed).
 
 ## Refused — do not re-raise
 

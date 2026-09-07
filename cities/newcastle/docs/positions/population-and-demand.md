@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Open family:** F29 (opened at its rebuild; no arm has run in it)
+**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
 
 ## What is built
 
@@ -38,7 +38,7 @@
 
 ## The state on disk
 
-- **The package is consistent and is the F26 build** (§9.144): `cities/newcastle/demand/population/B1_synthetic_population.csv` holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`_population_report.json`, §9.131); the three day-type chains, the plans and the 30 run-input sets were rebuilt on it on 6 Sep 2026 for the driver-owns-a-car identity, and the manifest holds 512 files (`data/MANIFEST.csv`, §9.144). `check_package.py` ALL CHECKS PASSED.
+- **The synthetic population** holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`cities/newcastle/demand/population/B1_synthetic_population.csv`, `_population_report.json`, §9.131), and the manifest holds 512 files (`data/MANIFEST.csv`, §9.144). The driver-owns-a-car identity entered the chains, plans and 30 run-input sets at the 6 Sep rebuild (§9.144). **Which family's build is on disk today, and whether it is consistent, are live facts with one home each** — the board's state block and `python tests/check_package.py`; this page does not restate them, because it said "the F26 build" for a day after the disk said otherwise.
 - The figures below are the 30 Aug rebuild's where §9.133 is cited and the 3 Sep rebuild's where §9.140 is; WEEKDAY plans 622,051 persons and 9,969,564 legs on the F24 build (`_plans_report.json`, §9.140). Family F24 is declared at the first arm's launch stamp; the arm needs a stated-cost approval and none stands (`NEXT_AGENT_BRIEF.md` §3).
 
 ## What is measured

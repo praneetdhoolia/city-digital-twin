@@ -8,9 +8,12 @@ has run and been measured; that measurement is a calibration diagnostic (the
 figures in [`README.md`](../../../README.md), the full rows in
 [`audit/CALIBRATION_REPORT.md`](reference/CALIBRATION_REPORT.md)), not a result.
 **Started:** 10 August 2026 · **the newest entry is the last `## 9.x` section
-before `## 10.`, and the last row of §14** — stated as a place rather than a
+before `## 14.`, and the last row of §14** — stated as a place rather than a
 number, because a number here has to be rewritten to stay true and twice was
-not (it read §9.75 while §9.79 was in the file).
+not (it read §9.75 while §9.79 was in the file). The place was wrong too: this
+line said *before `## 10.`* until 7 September 2026, which sent a reader to
+§9.85 and a fortnight of sections short of the end. §15 sits ahead of §14 in
+file order deliberately (see the index below), so `## 14.` is the boundary.
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep

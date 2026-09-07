@@ -3,7 +3,7 @@
 Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description; `.claude/CLAUDE.md` and `STATUS.md` no longer do) describe the pre-§9.88 state; §9.88 is newer and wins. The precise statement is: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Open family:** F23 (the package on disk opens F24 at its first launch)
+**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Written against family:** `F23`
 
 ## What is built
 
@@ -45,8 +45,8 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 
 ## What is open
 
-- **#73** — signals and priority built, activated (§9.77) and adaptive (§9.88); the controller and its guard are the evidence that closes the build scope. Open for the arm-scale signal-effect measurement and for movement-level lanes (data-gated at 16% coverage, §9.76). The issue's last comment predates §9.88; the SCATS build is not yet recorded on it.
-- **#68** — crossings built, activated (§9.77) and derived (§9.90); `_crossings_report.json` with `closure_source` `schedule_derived` is the evidence that closes the build scope. Open only for the closure-effect measurement on a converged arm. Its last comment predates §9.90.
+- **The signal-effect measurement at arm scale is still owed** (#73, CLOSED on the build scope): signals and priority are built, activated (§9.77) and adaptive (§9.88), and the controller and its guard are the evidence that closed it. What remains is not a build but a reading, and it needs an arm that reaches its horizon. Movement-level lanes stay data-gated at 16% coverage (§9.76). The issue's last comment predates §9.88; the SCATS build is not yet recorded on it.
+- **The closure-effect measurement on a converged arm is still owed** (#68, CLOSED on the build scope): crossings are built, activated (§9.77) and derived (§9.90), and `_crossings_report.json` with `closure_source` `schedule_derived` is the evidence that closed it. Its last comment predates §9.90.
 - **The base scenario's priority state is not settled by the record.** `A.lightrail.tsp_enabled` (false in S2) and `A.signals.scats_phasing` (`proxy_no_priority` in S2) are unbound fields under `scats_adaptive`; the emitted S2 and S2b signal files are byte-identical and both configs carry `tramPriority.mode=green_extension`. The S2 probe of §9.88 ran with `mode=off`, but `results/aborted_20260830T083019_1000it_25pct` (S2) logs priority on. Whether S2 grants tram priority must be decided and declared before any S2-versus-S2b comparison.
 - Offsets remain a stated limitation with no derivation path short of the library itself (§9.88).
 - Charging dwell field measurement stays the second data priority of §13; `A.signals.delay_per_intersection_s` 26 [15–40] now serves only the `implicit_delay` arm (§9.76).
