@@ -119,11 +119,24 @@ VEHICLE = dict(
 # A4 dwell model. dwell_charging_s is the single most consequential assumed
 # number in the model (proposal 6.2) and is therefore a separate additive term.
 # --------------------------------------------------------------------------
+# `dwell_charging_s` and its sweep are READ, not typed (issue #157, 9.155).
+# A.lightrail.dwell_charging_s is declared unobtained with value null so that
+# get() raises (15) - the charging dwell has never been measured - and this
+# script used to decide the number itself, 20.0 with the declared sweep
+# duplicated beside it, invisible to check_hardcoding because
+# extract_legacy_constants evaluates a dict(...) call to Ellipsis. The BASELINE
+# POINT the layer is built from is now its own declared, swept field; the
+# unobtained field stays unobtained. The value is unchanged, so the rebuilt
+# layer is byte-identical.
+_DWELL_CHARGING_S = CFG.get('A.lightrail.dwell_charging_baseline_s')
+_DWELL_CHARGING_SWEEP = tuple(
+    CFG.sweep('A.lightrail.dwell_charging_baseline_s'))
+
 DWELL_DEFAULTS = dict(
     dwell_fixed_s=8.0,              # door open/close + driver reaction
     dwell_fixed_sweep=(5.0, 12.0),
-    dwell_charging_s=20.0,          # proposal's own working estimate
-    dwell_charging_sweep=(10.0, 35.0),
+    dwell_charging_s=_DWELL_CHARGING_S,
+    dwell_charging_sweep=_DWELL_CHARGING_SWEEP,
     dwell_sd_s=6.0,
     distribution_type='lognormal')
 

@@ -760,6 +760,24 @@
       "baseline_ref": "params/C1_sensitivity_sweep_grid.csv:is_baseline",
       "description": "Supercapacitor charging dwell added at each intermediate stop. NOT MEASURED - a few hours of field observation at Civic or Crown Street would resolve it (DECISIONS.md 13 priority 2). Worth about 11% of end-to-end run time, and it is the subject of secondary question S-a: the marginal cost of the wire-free decision, taken with a late 35m urban amenity package. Modelled as a SEPARATE ADDITIVE TERM so it can be toggled independently of boarding dwell (S2 vs S2a). THIS FIELD HAS NO POINT VALUE."
     },
+    "A.lightrail.dwell_charging_baseline_s": {
+      "value": 20.0,
+      "units": "seconds_per_intermediate_stop",
+      "source": "assumed",
+      "sweep": [
+        10.0,
+        35.0
+      ],
+      "sweep_basis": "DECISIONS.md 4.3, 9.155. The same interval as A.lightrail.dwell_charging_s, which this field is the BASELINE POINT of - not a second opinion about the charging dwell.",
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.155, 4.3",
+      "proposal_ref": "6.2",
+      "description": "The baseline sweep point for the supercapacitor charging dwell, used to BUILD the A4 dwell layer. It exists because A.lightrail.dwell_charging_s is declared unobtained with value null so that get() raises (15) - correctly, the charging dwell has never been measured - while cities/newcastle/build/build_corridor_layers.py needed a number to write data/processed/corridor/A4_stop_dwell_model.csv and decided one itself: DWELL_DEFAULTS['dwell_charging_s'] = 20.0, with the declared sweep duplicated beside it, invisible to check_hardcoding because extract_legacy_constants evaluates a dict(...) call to Ellipsis (issue #157, 9.155). Declaring it changes no value - 20.0 is what the script already used, and the rebuilt layer is byte-identical - it moves the number out of a script and under a sweep, which is what the no-invented-data rule requires of an assumed value. The UNOBTAINED field stays unobtained: this is the point the sweep starts from, not a measurement of the dwell.",
+      "consumers": [
+        "cities/newcastle/build/build_corridor_layers.py"
+      ]
+    },
     "A.lightrail.dwell_sweep_grid": {
       "value": [
         0.0,
