@@ -169,6 +169,12 @@
       "decisions_ref": "9.148",
       "from_launch": "20260907T025531",
       "note": "Opened at the FIX, not at an arm. F27's only arm ran under RUN.qsim.vehicle_behavior = wait, which is global in MATSim and stranded every non-chain network mode (walk, taxi): iteration-0 car departures 82,388 against F26's 232,394 with 55,862 car agents stuck, and by iteration 19 co-evolution had abandoned every plan that strands; stopped at 19, citable for nothing. The run stack changes: HouseholdCarDepartureHandler, registered before the netsim engine, holds a driver whose household car is out at the link until the car is parked back (car only, MATSim's own waiting-driver registry); vehicle_behavior returns to teleport. Demand, network, roster, coherence scope, carve, cadence and threads are F27's unchanged; the sweep members per_person / inferred / teleport reproduce F26. Nothing run before this boundary compares with anything after it."
+    },
+    "F29-lifts-are-the-long-trips": {
+      "label": "F28 run stack on a demand where the shared-ride pass may draw drivers from the whole 25 % sample and binds the longest tours first (9.149)",
+      "decisions_ref": "9.149",
+      "from_launch": "20260907T114503",
+      "note": "Opened at the REBUILD, not at an arm. A boundary on the DEMAND only; the run stack is F28's. At the F28 gate pairing was solved (0 ride legs without a declared driver, pair rate 0.9965) and the roster live (15,582 drivers waiting a day), car read +6.6% - inside for the first time - and ride stayed at -42.8% because 44% of the declared bound trips were not ridden, the walked ones at a median 1.08 km: the shared pass had bound only the short intra-suburb trips (median 2.46 km against an observed passenger trip of 9.3-9.8 km) because B.ride.shared_lift_hash_bucket = 0.05 let each passenger be served by 5% of drivers - 94% of the 27,771 car-less direct tours it could not serve had a same-SA2 driver in the window and were refused on the bucket alone, at a median 9-15 km. The bucket is now the standing campaign fraction, 0.25 (0.05 the control), and the pass, thinning for the first time on the weekday, binds the longest servable tours first (B.ride.shared_lift_priority = longest_first; uniform = before). Chains, plans and the 30 run-input sets rebuilt. Nothing run before this boundary compares with anything after it."
     }
   },
   "overrides": {

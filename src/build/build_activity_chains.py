@@ -220,6 +220,10 @@ MAX_PARTY_PASSENGERS = CFG.get('B.ride.max_passengers_per_vehicle')
 SHARED_LIFT_SCOPE = CFG.get('B.ride.shared_lift_scope')
 # 9.129: a shared-ride pair must share a sampling-hash bucket of this width
 SHARED_LIFT_HASH_BUCKET = float(CFG.get('B.ride.shared_lift_hash_bucket'))
+# 9.149: which servable tours the shared pass binds when it must thin -
+# `longest_first` (lifts are long trips, walks are short) or `uniform` (the
+# seeded draw of every build before 9.149).
+SHARED_LIFT_PRIORITY = CFG.get('B.ride.shared_lift_priority')
 PAIRING_WINDOW_MIN = float(CFG.get('B.ride.pairing_window_min'))
 # DECISIONS.md 9.127: the run's household sampler keeps a household when
 # blake2b('household|<id>|<RUN.machine.seed>') / 2^64 < fraction. A shared
@@ -2187,14 +2191,40 @@ def bind_shared_rides(path, day, pctx, seed):
                 and find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, False)):
             servable.append(cand)
     out['servable_tours'] = len(servable)
-    rng = np.random.default_rng([seed, sum(ord(ch) for ch in day), 4])
     p = min(1.0, (need_trips / 2.0) / len(servable)) if servable else 1.0
     out['thin_p'] = round(p, 4)
-    draws = rng.random(len(servable))
+    out['priority'] = SHARED_LIFT_PRIORITY
+    keep = int(round(need_trips / 2.0))
+    longest_first = SHARED_LIFT_PRIORITY == 'longest_first'
+    if longest_first:
+        # 9.149: the volume is filled from the LONGEST servable tours, not
+        # from a uniform draw. Measured: the uniform draw bound trips with a
+        # straight-line median of 2.46 km (45 % under 2 km) against an
+        # observed passenger trip of 9.3-9.8 km, and at the F28 gate the
+        # bound trips that were walked instead had a median of 1.08 km. A
+        # lift is the long trip a car-less person cannot walk; the short
+        # one they walk whatever the binder declares. The order is the two
+        # trips' straight-line length descending, ties by person and tour
+        # id, so the build is deterministic and draws nothing here.
+        sequence = sorted(
+            range(len(servable)),
+            key=lambda k: (-(float(servable[k][3]['straight_dist_km'] or 0.0)
+                             + float(servable[k][4]['straight_dist_km'] or 0.0)),
+                           int(servable[k][1]), int(servable[k][2])))
+        draws = None
+    else:
+        rng = np.random.default_rng([seed, sum(ord(ch) for ch in day), 4])
+        draws = rng.random(len(servable))
+        sequence = range(len(servable))
 
     bindings = []
-    for k, (sa1, pid, tid, o_row, r_row) in enumerate(servable):
-        if draws[k] >= p:
+    bound_km = 0.0
+    for k in sequence:
+        sa1, pid, tid, o_row, r_row = servable[k]
+        if longest_first:
+            if out['bound'] >= keep:
+                break
+        elif draws[k] >= p:
             continue
         hid = pctx[pid]['hid']
         d_out = find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, True)
@@ -2211,8 +2241,13 @@ def bind_shared_rides(path, day, pctx, seed):
                 direction=direction, passenger_dep_s=int(prow['dep_time_s']),
                 driver_person_id=drv['pid'], driver_tour_id=drv['tid'],
                 driver_household_id=drv['hid'], driver_dep_s=drv['dep']))
+            bound_km += float(prow['straight_dist_km'] or 0.0)
         out['bound'] += 1
     out['shortfall_trips'] = int(round(max(0.0, need_trips - 2 * out['bound'])))
+    # 9.149: the bound trips' mean straight-line length, reported so it can be
+    # READ against the HTS vehicle-passenger mean, never fitted to it
+    out['bound_mean_straight_km'] = round(bound_km / (2 * out['bound']), 3) \
+        if out['bound'] else None
     with open(bpath, 'w', newline='', encoding='utf-8') as fh:
         w = csv.DictWriter(fh, fieldnames=cols, lineterminator='\n')
         w.writeheader()

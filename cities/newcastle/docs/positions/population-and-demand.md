@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.148 · **Open family:** F28 (opened at a fix; no arm has run in it)
+**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Open family:** F29 (opened at its rebuild; no arm has run in it)
 
 ## What is built
 
@@ -28,7 +28,7 @@
 1. **Escort** (§9.46, §9.144): households generate whole, and an HX tour takes an already-drawn member trip's destination and departure exactly; the bound tour is immovable in the escorter's day. **A binding requires the escorter to hold a licence AND the household to own a vehicle** — the identity all four passes share (§9.144, #142); the HX TOUR is not gated by it, so a car-less escorter still escorts on foot or by pt and declares no car passenger.
 2. **Lift** (§9.60, §9.144): an unbound HX tour is re-targeted to a driverless-household passenger within `B.activity.escort_binding_nonhh_scope` = `same_zone`, the serving leg timed to the passenger's own departure; adds no tour and no trip. The re-targeted driver must own a car too (§9.144).
 3. **Joint** (§9.84, §9.111, §9.116): a household companion's HS/HO tour (`B.activity.joint_tour_purposes`) becomes a mirror of a licensed co-member's drive, `party_size` 2, the driver tour shifted into the vacated slot where needed; the volume is `B.activity.joint_tour_passenger_ratio` 0.3503 (`derived`, occupancy − 1) times the HTS driver share, counting escort- and lift-covered trips first; candidates whose household holds no other eligible driver are removed before thinning (§9.116).
-4. **Shared** (§9.124, §9.129): a car-less person's direct tour binds to another household's trip with the same origin and destination zone at `B.ride.shared_lift_scope` = `same_sa2_od`, departing within `B.ride.pairing_window_min` 15 min, the two households sharing a `B.ride.shared_lift_hash_bucket` of 0.05; thinned to the same occupancy identity, with the shortfall reported when supply is short.
+4. **Shared** (§9.124, §9.129): a car-less person's direct tour binds to another household's trip with the same origin and destination zone at `B.ride.shared_lift_scope` = `same_sa2_od`, departing within `B.ride.pairing_window_min` 15 min, the two households sharing a `B.ride.shared_lift_hash_bucket` of 0.05; thinned to the same occupancy identity, with the shortfall reported when supply is short. **The bucket is the standing campaign fraction, 0.25** (§9.149; 0.05 the control): at 0.05 the pass could serve only the short intra-suburb trips — bound median 2.46 km against an observed passenger trip of 9.3–9.8 km, and 94 % of the 27,771 unserved car-less tours, median 9–15 km, were refused on the bucket alone with a driver in the window. With five times the supply the pass thins, and **binds the LONGEST servable tours first** — `B.ride.shared_lift_priority` = `longest_first` (sweep `uniform`, every build before) — reporting the bound trips' mean length at every build to be read against the HTS mean (§9.149, #86).
 
 **Other tiers, all in the same builder.**
 
@@ -79,6 +79,7 @@
 
 ## History
 
+- §9.149 — the shared pass binds the longest tours first
 - §9.146 — a household drives the cars it owns; the carve draws no bound passenger
 - §9.144 — a binder driver must own a car; F26 rebuild
 - §9.143 — per-trip seeded modes; escort denial scoped to the subtour

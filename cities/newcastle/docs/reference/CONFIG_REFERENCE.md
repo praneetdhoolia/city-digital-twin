@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 470 fields are made of
+## What the 471 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 154 | chosen without direct empirical support |
+| `assumed` | 155 | chosen without direct empirical support |
 | `definition` | 126 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 451 | usable point value |
+| `active` | 452 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 261 sweeps are for
+### What the 262 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 11 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 228 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 229 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -1559,7 +1559,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 113 fields*
+*`cities/newcastle/registry/B_demand.json` - 114 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1660,7 +1660,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.ride.physical_boarding` | `true` | boolean | `definition` | - |
 | `B.ride.pickup_dwell_s` | `0.0` | seconds | `assumed` | 0 - 120 |
 | `B.ride.remode_unpaired` | `true` | boolean | `definition` | - |
-| `B.ride.shared_lift_hash_bucket` | `0.05` | fraction of the sampling-hash range | `assumed` | 0.05 - 0.1 |
+| `B.ride.shared_lift_hash_bucket` | `0.25` | fraction of the sampling-hash range | `assumed` | 0.05 - 0.25 |
+| `B.ride.shared_lift_priority` | `longest_first` | enum | `assumed` | `longest_first`, `uniform` |
 | `B.ride.shared_lift_scope` | `same_sa2_od` | enum | `definition` | `same_sa2_od`, `same_sa1_od`, `none` |
 | `B.ride.unpaired_fallback` | `licensed_drive_else_walk` | enum | `assumed` | `licensed_drive_else_walk`, `walk` |
 | `B.ride.wait_for_driver` | `true` | boolean | `definition` | - |
@@ -2423,11 +2424,19 @@ Whether an UNPAIRED ride leg is re-moded to network-simulated walk at the Before
 
 #### `B.ride.shared_lift_hash_bucket`
 
-Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both, without preferring low-hash households as drivers. Consumed by the fourth binder pass (bind_shared_rides).
+Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both. Equal to the standing campaign fraction (0.25) since 9.149: at 0.05 the rule cut every passenger's driver supply to 5 % and left the long trips - the observed passenger trips - unservable. Consumed by the fourth binder pass (bind_shared_rides).
 
-***assumed** · status **active** · DECISIONS.md §9.129 · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.129, 9.149 · sweep role **uncertainty***
 
-> **Sweep basis.** The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. The 9.127 rule (driver hash AT OR BELOW the passenger's) also guaranteed that, but it named LOW-hash households as drivers, and a 10% sample - which is exactly the low-hash households - then kept named drivers at 12.4% and everyone else at 7.95% (the eligible non-named pool at 6.1%, the motorbike carve at 5.5%, the truck carve at 5.1%): the count was 10%, the composition was not. A bucket prefers no hash. Measured on the WEEKDAY binder, package-identical inputs: at-or-below 98,549 servable / 59,718 bound / 0 short; bucket 0.10 86,848 / 59,806 / 0; bucket 0.05 73,509 / 59,701 / 0; unconstrained 105,515 / 59,648 / 17. 0.05 is declared because 0.10, 0.25 and 0.50 are all multiples of it, so a 25% confirmation arm keeps its pairs too; the cost is candidate supply, and the identity is still met in full. A 1% smoke is not a multiple and breaks pairs - it is a plumbing test and its pairing is never read.
+> **Sweep basis.** The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. 0.05 was chosen so that a 10 % sub-sample would keep pairs too, and it is kept as the control. MEASURED (9.149, F26/F28 WEEKDAY tables): at 0.05 every passenger may be served by only the 5 % of drivers in their own bucket, which the short intra-suburb trips survive and the long ones do not - of the 27,771 car-less direct tours the pass could not serve, 94 % had a same-SA2 driver within the window and were refused on the bucket alone, at a median 9-15 km, exactly the observed passenger trip of 9.3-9.8 km; the served ones had a median of 2.5 km and at the F28 gate 39 % of the pass's lifts were walked. 0.25 is the standing campaign fraction (user directive, 1 September 2026: 25 % runs only), the only nested sample the loop runs; a pair sharing a bucket of that width survives every sample at a multiple of 0.25, and a 1 % smoke - which never read pairing anyway (9.128) - breaks pairs as it always did. The value is the directive, not a fit: moving it changes who may drive whom, never how many ride.
+
+#### `B.ride.shared_lift_priority`
+
+How the shared-ride pass chooses among servable car-less tours when it must thin to the occupancy identity's remaining volume: `longest_first` binds the longest tours first (lifts are long trips, walks are short); `uniform` is the seeded uniform thinning of every build before 9.149.
+
+***assumed** · status **active** · DECISIONS.md §9.149 · sweep role **uncertainty***
+
+> **Sweep basis.** Which servable car-less tours the shared-ride pass binds when supply exceeds the occupancy identity's remaining volume. `uniform` is every build before 9.149: a seeded uniform draw at thin_p over the servable tours, so the pass fills its volume with whatever trips the co-location scope happens to hold. Measured on the F26 WEEKDAY tables: the shared pass's bound trips have a straight-line median of 2.46 km with 45 % under 2 km, against escort 5.59, lift 5.02 and joint 4.55 km medians and an observed Newcastle vehicle-passenger trip of 9.3-9.8 km (HTS 2020/21-2024/25, TRIP_AVG_DISTANCE); and at the F28 iteration-100 gate the 20,151 bound trips that were WALKED rather than ridden had a median of 1.08 km with 65 % under 2 km - the walk being what a person does with a trip that short (the observed walk trip is 0.7 km) - while car-less residents made 9 km trips by bike (+157 %), bus (+65 %) and taxi (+161 %), the long trips that are lifts in real life. `longest_first` sorts the servable tours by the two trips' straight-line length, descending, and binds in that order until the volume is met: no threshold and no constant, only the ordering the observed lengths imply (lifts long, walks short), and the bound trips' mean length is reported at every build so it can be read against the HTS passenger mean rather than fitted to it.
 
 #### `B.ride.shared_lift_scope`
 

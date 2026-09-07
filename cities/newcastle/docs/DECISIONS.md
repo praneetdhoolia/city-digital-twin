@@ -187,6 +187,7 @@ about its layout will otherwise cost you an hour:
 | **The F26 gate: declared pairs hold, the lost ride never had a driver, a household drove more cars than it owns** | **§9.146** — stopped by the watcher at 100 with 8 modes out (walk newly -22.7 %); `miss_declared_absent` 719 of 77,399 so §9.144 closed the declared-driver route and §9.145's 88 % arithmetic over-attributed; 12,461 of 66,909 selected ride legs on persons the demand never bound, proposed by the coherence listener's inference while the gate refused 192,000 of the kind; of 107,526 declared bound trips 45.5 % ridden, 29,827 self-driven, 571 in a carve lock's mode; 12,317 car legs began with every household car already out (4,265 one-car households, two out). Three roots with controls: `B.ride.coherence_scope` = declared; `B.population.vehicle_roster` = census with `RUN.qsim.vehicle_behavior` = wait; the carve never draws a bound passenger (pool and draw - the draw-only rebuild halved the seeded motorbike share, the §9.122 trap mirrored). F27 opens at the rebuild; #145 opened |
 | **A milestone iteration cost twice a plain one** | **§9.147** — the F26 stopwatch separates them for the first time: a plain iteration 319 s (mobsim 197, replanning 43, pairing 41, prepareForMobsim 35), a milestone 569–715 s (`dump all plans` 121–147, the mobsim doubled by writing events, experienced plans 33–54), every tenth iteration a milestone, and the readers derived milestones from the experienced plans only because `writeTripsInterval` had never been declared (MATSim default 50). `RUN.controler.write_trips_interval` = 10 carries the monitoring; plans and events move to 100 = the gate interval; the detour routing runs on `global.numberOfThreads` workers and is applied in order; the mobsim's thread count probed for the first time on 24 cores — a plain iteration 270-272 s at 10, 267 at 16, 264-265 at 24, and 16 declared |
 | **A global `wait` strands every non-chain mode** | **§9.148** — `RUN.qsim.vehicle_behavior` = wait is global and walk and taxi are network modes with per-person vehicles that are not chain-based: the first F27 arm's iteration 0 read car departures 82,388 against F26's 232,394 with 55,862 car agents stuck, and by iteration 19 co-evolution had abandoned every plan that strands; stopped at 19, citable for nothing. The car waits only for a car: `HouseholdCarDepartureHandler`, registered before the netsim engine, registers a driver whose household car is out as waiting with the link and MATSim's own link departs them when it is parked back; everything else teleports as before; `vehicle_behavior` back to teleport, `wait` kept in the sweep as measured fatal. The reader takes rail boardings from the legs table where the plans are absent. F28 opens at the fix |
+| **F28 gate: car inside; the walked lifts are the shared pass's short trips** | **§9.149** — stopped at 100 with 7 out, car +6.6 % inside for the first time; 65,960 selected ride legs all with a declared driver, pair rate 0.9965; 15,582 drivers waited for a household car; bound trips ridden 45.5 % → 56.0 %, self-driven 29,827 → 17,530; the 20,151 walked lifts have a median of 1.08 km (65 % under 2 km) and the shared pass's bound trips a median of 2.46 km against an observed passenger trip of 9.3–9.8 km; a longest-first ordering proved inert (the pass thins nothing at `thin_p` 0.9926) and classifying the 27,771 unserved car-less tours found 94 % refused on the 0.05 sampling-hash BUCKET alone with a same-SA2 driver in the window, at a median 9–15 km; `B.ride.shared_lift_hash_bucket` 0.05 → 0.25, the standing campaign fraction (0.05 the control), `longest_first` kept as the thinning rule; F29 opens at the rebuild; the experienced-plan excess metric retired |
 
 
 ---
@@ -14394,10 +14395,102 @@ car-only; `householdCar: N driver(s) waited` in the log says it is doing its
 one job. No target value changed, no registry field was added, the demand is
 F27's untouched, the 67/143 split is untouched, no approval stands.
 
+## 9.149 The F28 gate: car inside for the first time, pairing solved, and the lifts that are walked are the short ones the shared pass placed (7 September 2026, thirtieth session; user directive "continue with the GOAL"; issues #86, #145, #48)
+
+**The arm, read and closed out.** `aborted_20260907T030352_300it_25pct`, the
+first F28 arm, S2 x WEEKDAY at 25 %, was stopped by the watcher at the
+iteration-100 gate with **7 modes past the bar**: `completion` =
+`stopped_at_gate`, `reached_iteration` = 100, wall 27,657 s, **median 260 s an
+iteration** (F26: 384 mean). At 100: **car +6.6 % - INSIDE the band at a gate
+for the first time in this project** - walk -11.9 %, motorbike +16.1 %, ride
+-42.8 %, taxi +161.1 %, bike +157.3 %, bus +65.0 %, heavy rail +295.1 %, light
+rail -45.6 %, ferry -68.7 %; truck level only, freight rail a representation.
+Its iteration 0 read car departures 231,607 against F26's 232,394 and walk,
+taxi and bike within a fraction of a percent of F26's - nothing non-chain
+stranded - with **8,168 drivers waiting for a household car** (15,582 by the
+gate), so the car-only handler of §9.148 does its one job and no other.
+
+**The two mechanisms did what they were built to do.** The listener: 65,960
+selected ride legs at 100, **every one with a declared driver, 0 without**
+(F26: 12,461 without), pair rate **0.9965**, `miss_declared_absent` 219. The
+roster: bound trips driven by the passenger themselves **29,827 -> 17,530**,
+and the share of declared bound trips actually ridden **45.5 % -> 56.0 %**
+(60,811 of 108,629). One measurement of §9.146's is retired by construction:
+"car legs that start while every household car is out", read from the
+experienced plans, now counts 23,564 because a waiting driver's leg records
+its PLANNED departure with the wait inside `trav_time`; the constraint is one
+`QVehicle` per household car, which cannot be in traffic twice, and the
+measure of it is the handler's own count and the stuck agents (car stuck 842
+of 368,104 departures at 100).
+
+**What remains is selection, and it has a shape.** 108,629 bound trips would
+be 19.4 % of resident trips if every one were ridden, so the demand's
+identity reaches the 20.6 % target and placement is the whole remaining gap.
+Of the bound trips not ridden, 20,151 were WALKED, 17,530 driven, 5,548
+cycled, 2,084 bussed, 1,947 taken by taxi. **The walked ones are short: median
+1.08 km straight-line, 48 % under 1 km, 65 % under 2 km**, against 6.45 km
+for the ridden ones - the walk being what a person does with a trip that
+short (the observed walk trip is 0.7 km, `C.constraint.trip_length_km.walk`).
+And the binder pass that places them is identifiable from the F26 tables:
+the **shared pass's bound trips have a straight-line median of 2.46 km, mean
+4.48, 45 % under 2 km**, against escort 5.59 / lift 5.02 / joint 4.55 km
+medians and an observed Newcastle vehicle-passenger trip of **9.3-9.8 km**
+(HTS 2020/21-2024/25, `TRIP_AVG_DISTANCE`). The pass fills the occupancy
+identity's remaining volume with a uniform draw over whatever the co-location
+scope holds - and the shortest trips are the most numerous - while car-less
+residents make 9 km trips by bike (+157 %, mean 9.12 km), bus (+65 %) and
+taxi (+161 %): the long trips that are lifts in real life.
+
+**The first repair was inert, and finding out why located the root.** An
+ordering that binds the longest servable tours first
+(`B.ride.shared_lift_priority` = `longest_first`, sweep `uniform`) rebuilt
+the demand and moved nothing on the weekday - bound trips 126,402 -> 126,378,
+median 2.46 -> 2.50 km - because the pass THINS nothing there: `thin_p`
+0.9926, 63,657 servable tours against a remaining need of 63,189. The short
+trips are bound because they are the only ones the pass can serve. Classifying
+the **27,771 car-less direct tours it could not serve**, leg by leg, against
+its own driver index: **94 % have a same-SA2 driver within the window** (67.5 %
+within 15 min, 26.4 % within 60) **and are refused on the sampling-hash
+BUCKET alone** - §9.129's rule that a shared pair must share a 0.05-wide
+bucket so any 5 % sub-sample keeps both members - at a median of **9.13 km
+(74 % over 5 km)** and 15.12 km; 3.9 % fail the 15-minute window with a
+driver inside 60; 0.6 % have no driver within an hour; one has no same-OD
+driver at all. The bucket rule cuts every passenger's driver supply to 5 %.
+Short intra-suburb trips have enough drivers to survive that; the 9-15 km
+trips - exactly the observed passenger trip - do not. A sampling convenience
+was deciding who gets a lift.
+
+**Decision: the bucket is the standing campaign fraction.**
+`B.ride.shared_lift_hash_bucket` 0.05 -> **0.25** (sweep 0.05, the control),
+the 25 %-runs-only directive of 1 September being the only nested sample the
+loop runs; a pair in one 0.25-wide bucket survives every sample at a multiple
+of 0.25, and the 1 % smoke - which never read pairing (§9.128) - breaks pairs
+as it always did. The value is the directive, not a fit: it changes who may
+drive whom, never how many ride. `longest_first` stays as the thinning rule,
+because with five times the supply the pass now thins, and the ordering the
+observed lengths imply (lifts long, walks short) is what should decide it;
+`_activity_chains_report.json` reports the bound trips' mean straight-line
+length at every build so it is READ against the HTS passenger mean rather
+than fitted to it. Escort, lift and joint are untouched: their lengths already
+sit at the observed passenger trip.
+
+**Measured on the rebuild.** Chains, plans and the 30 run-input sets rebuilt (`_activity_chains_report.json`, `B2_shared_bindings_WEEKDAY.csv`): WEEKDAY servable tours **63,657 -> 84,066**, so the pass THINS for the first time (`thin_p` 0.9926 -> 0.7517) and the longest-first order decides which; bound 63,189 tours, 126,378 trips, unchanged in count because the volume identity is unchanged; the bound trips' straight-line **median 2.46 -> 5.79 km, mean 4.48 -> 8.14 km, under 2 km 45.1 % -> 14.7 %, over 5 km 31.6 % -> 55.8 %** - against escort 5.59 / lift 5.02 / joint 4.55 km medians and an observed passenger trip of 9.3-9.8 network km (about 7-7.4 km straight-line at the C2 detour of 1.33), so the pass now sits a little above the observation rather than far below it, which is read here and not fitted. SAT and SUN, thinned already, read 10.91 and 10.73 km. Seeded ride share 0.0451, unchanged; manifest 512 files; escort, lift and joint tables byte-identical. A first rebuild with the ordering alone (the same day, before the classification) is superseded by this one and was never launched.
+
+**Consequences.** The demand changes, so **family
+`F29-lifts-are-the-long-trips` opens at the rebuild** (`from_launch`
+20260907T114503); the run stack is F28's unchanged. The first F29 arm answers,
+in order: the share of declared bound trips ridden against 0.560 and the
+walked-bound median against 1.08 km; ride against -42.8 % read with bike,
+bus and taxi, whose excess this placement should draw down; car against
++6.6 % - the first mode inside a gate must stay inside; the pt split as a
+control. No target value moved, no mode's utility or ASC changed, the 67/143
+split is untouched, the network is unchanged, no approval stands.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-07 | **The F28 gate read and closed out; the shared pass binds the longest tours first; F29 opens (§9.149; issues #86, #145, #48; thirtieth session).** `aborted_20260907T030352_300it_25pct` stopped by the watcher at 100, 7 modes out, car +6.6 % inside for the first time, median 260 s an iteration. Listener: 0 ride legs without a declared driver, pair rate 0.9965. Roster: 15,582 drivers waited, bound trips ridden 45.5 % → 56.0 %. Walked lifts median 1.08 km; the shared pass's bound trips median 2.46 km against 9.3–9.8 km observed; 94 % of the 27,771 unserved car-less tours (median 9–15 km) refused on the 0.05 sampling-hash bucket alone. Demand: `B.ride.shared_lift_hash_bucket` 0.05 → 0.25, the standing 25 % campaign fraction (0.05 the control); `B.ride.shared_lift_priority` = longest_first (new field; `uniform` = before) as the thinning rule; chains, plans and the 30 sets rebuilt. **No target value changed, the 67/143 split is untouched, no arm launched in F29, no approval stands, nothing here is a finding.** |
 | 2026-09-07 | **A global `wait` strands every non-chain mode; the car waits only for a car; F28 opens (§9.148; issues #145, #66; thirtieth session).** The first F27 arm under `RUN.qsim.vehicle_behavior` = wait: iteration-0 car departures 82,388 against F26's 232,394, 55,862 car agents stuck, walk 12,837, ride 11,537; by 19 co-evolution had abandoned every plan that strands. Stopped at 19 (`stopped_by_operator`); nothing it read is a reading. Run stack: `HouseholdCarDepartureHandler` (car-only wait, before the netsim engine, released by the link when the car is parked back); `vehicle_behavior` back to `teleport`, `wait` kept as measured fatal. Reader: rail boardings from the legs table where the experienced plans are absent, so the ten-iteration cadence of 9.147 reads. **No target value changed, no field added, demand unchanged, no arm launched in F28, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **The iteration's cost decomposed and cut (§9.147; issues #66, #131; thirtieth session; user directive "ensure iterations have no inefficiencies").** F26 stopwatch: a plain iteration 319 s, a milestone 569–715 s (plans dump, events inside the mobsim, experienced plans), every tenth iteration a milestone; the readers take a trips table where one exists and MATSim's trips interval had sat on its default of 50. Run stack: `RUN.controler.write_trips_interval` = 10 (new), `write_plans_interval` and `write_events_interval` 10 → 100 (= the gate); `RidePairingEngine` routes detours in parallel on `global.numberOfThreads` workers and applies them in order; `RUN.machine.threads` probed on the F27 stack — a plain iteration 270-272 s at 10, 267 at 16, 264-265 at 24, and 16 declared. Registry 469 → 470. **No target value changed, the 67/143 split is untouched, no arm launched in F27, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **The F26 gate read and closed out; three physical roots built with controls; family F27 opened (§9.146; issues #86, #48, #93, #145; thirtieth session; user directive "continue with the GOAL").** `aborted_20260906T100429_300it_25pct` stopped by the watcher at iteration 100, 8 modes out, walk newly past the bar, `completion` = `stopped_at_gate`, 384 s an iteration. `miss_declared_absent` 719: the declared pairs hold and §9.145's premise that every unpaired leg named a driver was wrong - 12,461 selected ride legs sat on unbound persons, proposed by `EscortCoherenceListener` by inference (~5,000 an iteration) while the gate refused 192,000 of the same kind. Trip level: 45.5 % of 107,526 declared bound trips ridden, 29,827 self-driven; 12,317 car legs began while every household car was out. Run stack: `B.ride.coherence_scope` = declared (`inferred` = F26); `B.population.vehicle_roster` = census with `householdVehicles` stamped and `RUN.qsim.vehicle_behavior` = wait (`per_person`/`teleport` = F26); `HouseholdVehicleRoster` at the first iteration, `TolerantAgentSource` parks a shared car once, `JointRideEngine` boards into the mapped car. Demand: a carve never draws a bound passenger, in the pool solve and the draw (a draw-only rebuild halved the seeded motorbike share and was rebuilt). Plans and the 30 run-input sets rebuilt; registry 467 -> 469. **No target value changed, the 67/143 split is untouched, no arm launched in F27, no approval stands, nothing here is a finding.** |
