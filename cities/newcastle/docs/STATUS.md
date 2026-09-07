@@ -7,30 +7,28 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 7 September 2026 — **the five defects that were blocking
-every launch are ruled on and closed** (§9.151, #147–#151), so **the issue gate
-is green for the first time since it was introduced**, and **F30's first arm ran
-and was stopped by the operator at iteration 23 on its own cost** (§9.153).
-Four of the five defects moved no run value; the fifth does —
-`EscortCoherenceListener` drew a seeded rng in `HashMap` order, the order the
-sample fraction changes, and is a `TreeMap` now — so **family `F30` opens on
-that one line**, on the F29 demand and network. Repairing the duplicated HTS
-purpose map (#147) exposed a second half: `C.vot.by_purpose` was still keyed on
-the old vocabulary, so the HX weight was dropped from the value-of-time average
-and the collapse moved **16.96 → 17.317 AUD/h** against a declared 16.96. Once
-re-keyed, **140 of the 141 files under `scenarios/matsim/` came back
-byte-identical** — the disagreement changed no number the model ever scored. The
-toolchain gate was found green on a checkout that could not launch, and now
-refuses (§9.152). Registry 472 → 477, unit tests 118 → 125, `check_hardcoding`
-still 0, manifest `source` 82 → 508 of 512 and `retrieved` 59 → 443.
-**The scoreboard below is F30's arm at ITERATION 20** — its newest readable
-milestone before it was stopped at 23. That is exploration while innovation
-runs, not a verdict (§9.108) and not a gate: **the last GATE reading remains
-F28's at iteration 100** (§9.149), and no arm since F4 has passed one. A fourth assessment, lodged 17:34, measured the
-synthetic demand against the package's own observations — a fifth of departures
-after 20:00 against 6 % observed, a PT day inverted against the Hunter's taps,
-income age-flat, car-less households the wrong households, commute flows too
-inter-LGA ([docs/reports/README.md](../../../docs/reports/README.md)).
+**Last updated:** 7 September 2026 — **the iteration was decomposed to the
+method for the first time, and a third of it was ours** (§9.154). A JVM
+flight recording of a 25 % probe put `GradientLinkSpeed$Router` at 17.9 % of
+every CPU sample, `Arrays.binarySearch` at 30.5 % — 16.2 of it that method
+asking a time-variant network for a free speed that never changes — and this
+project's own code at **50.0 %** of the run. Per-link tables cut a plain
+iteration **310 → 205.5 s** and startup **13m47s → 7m00s** across two probes
+of one overlay, with our share down to **14.5 %**; `GradientTableProbe`
+proves them identical to the formula over 3,266,754 comparisons, because a
+run here is not bit-reproducible and a diff could not. **The 2-minute
+iteration the directive asked for is NOT reached** — ~190 s unprofiled
+against 120 — and what remains is MATSim's own A*, its events pipeline and a
+mobsim measured saturated. Separately, **`RUN.travel_time.analysed_modes` had
+been inert since it was declared**: `filterModes` defaults false and was
+never emitted, so every pedestrian, cyclist and bus fed the single link
+travel-time table the car router reads (#154). `filter_modes` = true is now
+declared and **moves results**. A new check enumerates what else the
+framework decides undeclared — **31 unreviewed** (#155) — and
+`src/analyse/arm_cost.py` prices an arm from the runs, printed before every
+launch. Registry 477 → 480, session gate 17 → 18 checks. **No arm ran to a
+gate; the scoreboard below is unchanged from F30's stopped arm at iteration
+20.**
 
 ## The goal
 
@@ -90,7 +88,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | Input registry | **480 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (7 September 2026 (thirty-second session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (7 September 2026 (thirty-second session)) · [population-and-demand](positions/population-and-demand.md) (7 September 2026 (thirty-second session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (7 September 2026 (thirty-second session)) · [runs-and-economics](positions/runs-and-economics.md) (7 September 2026 (thirty-second session)) · [sampling-and-families](positions/sampling-and-families.md) (7 September 2026 (thirty-second session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (7 September 2026 (thirty-third session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (7 September 2026 (thirty-third session)) · [population-and-demand](positions/population-and-demand.md) (7 September 2026 (thirty-second session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (7 September 2026 (thirty-second session)) · [runs-and-economics](positions/runs-and-economics.md) (7 September 2026 (thirty-third session)) · [sampling-and-families](positions/sampling-and-families.md) (7 September 2026 (thirty-second session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
 **Family F30 is open and its first arm is STOPPED** (§9.153).
@@ -120,24 +118,21 @@ is not diagnosed** and belongs to #66.
 
 ## Next
 
-1. **Explain 376 s against 260 s before the next long arm** (§9.153, #66). F30's
-   arm was healthy and was stopped on cost alone: `median_iteration_s` 376.42
-   over 23 iterations against F28's measured 260, which puts 300 iterations near
-   31 h rather than ~22. Candidates, none measured: machine contention (observed
-   while the arm ran, gone by the time it was stopped), the thread settings this
-   launch resolved, the freshly built signals run stack. **A short timing probe
-   on F28's own overlay on an idle machine settles it cheaply**, and it should
-   come before a horizon is quoted again.
-2. **Then relaunch F30's arm and read it at 100.** Every gate is green and the
-   toolchain is built; what it needs is a fresh stated-cost approval priced on
-   the newest median, not on 260 s. `python run.py --run-config f29_gate_25pct
-   --detach`, verify per #70 that `matsim.log` enters iterations.
+1. **Relaunch F30's arm and read it at 100.** Every gate is green, the toolchain
+   is built, and the cost is now read rather than quoted: `python
+   src/analyse/arm_cost.py --run-config f29_gate_25pct` prices it from the runs
+   on disk, and the launcher prints the same line before it starts. **It needs a
+   fresh stated-cost approval.** The arm opens a NEW family: §9.154 declared
+   `RUN.travel_time.filter_modes` = true, which moves results (#154).
+2. **The 376 s question is answered in part** (§9.154, #66). The undiagnosed
+   45 % is still undiagnosed, but the iteration itself is 34 % smaller on a
+   like-for-like probe, so the next arm is priced on its own first iterations
+   rather than on F30's 376 s.
 3. **What the arm answers, in order** (§9.149): placement — the share of
    declared bound trips ridden against 0.560 and the walked-bound median against
    1.08 km; ride against −42.8 % read with bike (+157 %), bus (+65 %) and taxi
    (+161 %); car must STAY inside (+6.6 %); the roster and the listener as
-   controls. **Read the counts differently** — both sides changed basis in
-   §9.150, so #82's −91.8 % is not the figure to expect.
+   controls. **Read the counts on the §9.150 basis**, not #82's −91.8 %.
 4. **The fourth assessment's demand findings are root causes, not constants**
    (17:34, [docs/reports/README.md](../../../docs/reports/README.md)): evening
    departures, the inverted PT day, age-flat income, inter-LGA commute flows.
@@ -146,23 +141,25 @@ is not diagnosed** and belongs to #66.
 5. **Convergence is still unmeasured** (requirement 8): no arm has passed 100
    since F4.
 
-**Decisions required:** a fresh stated-cost approval for the next F30 arm, and
-whether the timing probe comes first; whether a fifth binder pass is needed once
-an arm reports the bound-trip lengths; the Task Scheduler log (#66); whether the
-S2 base grants the tram signal priority
+**Decisions required:** a fresh stated-cost approval for the next F30 arm,
+priced with `python src/analyse/arm_cost.py --run-config f29_gate_25pct`;
+whether the 31 unreviewed MATSim defaults (#155) are worked down before the arm
+or after it; whether a fifth binder pass is needed once an arm reports the
+bound-trip lengths; the Task Scheduler log (#66); whether the S2 base grants the
+tram signal priority
 ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
-Taken this session (§9.151, §9.152, §9.153): the purpose map reconciled on HX
-and the VOT table re-keyed with it; the four network fallbacks declared, not
-refused; the escort draw ordered now rather than after an arm; telemetry
-protected by a refusal rather than by atomics; a derived file's provenance
-resolved from its lineage; the toolchain gate made to see the run stack; and the
-arm stopped rather than run past the cost it was approved at.
+Taken this session (§9.154): the iteration profiled from inside the JVM rather
+than reasoned from the source; three hot paths tabled and proved rather than
+diffed; a declared value found inert and its companion declared; what the
+framework decides undeclared enumerated and reported rather than silenced; an
+arm's price read from the runs; and three ranked IO items measured and REFUSED
+because the saving is not there.
 
 ## Open work
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
-| The first F29 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
+| The first arm of the family the next launch opens, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
 | Ride: pairing solved at the F28 gate (0.9965, 0 undeclared ride legs) and 56.0 % of bound trips ridden; the walked lifts are the shared pass's 2.5-km trips against an observed 9.5-km passenger trip — it now binds the longest tours first (§9.149) | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F29 gate: bound trips ridden against 0.560, the walked-bound median against 1.08 km, ride with bike, bus and taxi |
 | A household drives more cars than it owns: 12,317 car legs at the F26 gate with every household car out; the roster is built and enforced car-only after a global `wait` stranded the non-chain modes (§9.146, §9.148) | #145 | [population-and-demand](positions/population-and-demand.md) | the F28 arm's iteration 0: car departures and stuck against F26's 232,394 / 2,699; then the gate: that count (0 expected for one-car households), `householdCar: N waited`, where the self-driven bound trips settle |
 | Heavy rail +193 % at the F23 gate; income scaling blunts the fare (§9.139) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | where rail settles once the corridor's CBD end (#30) is repaired |
@@ -174,7 +171,7 @@ arm stopped rather than run past the cost it was approved at.
 | Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F29 arm (§9.140) |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
 | The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F29 arm (#131) |
-| Iteration wall time: a plain iteration 319 s and a milestone 569–715 s on F26's stopwatch; the trips cadence declared, plans and events moved to the gate, the detour routing parallel, the mobsim's threads probed (§9.147) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the first F27 arm's stopwatch: a plain iteration against 319 s, a milestone against 569 s |
+| Iteration wall time: decomposed to the method from a flight recording, three hot paths tabled, a plain probe iteration 310 → 205.5 s and startup 13m47s → 7m00s (§9.154) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the next arm's own stopwatch, against 205.5 s profiled / ~190 s unprofiled |
 | The 7 Sep assessment: 29 of 34 defects closed without a run (§9.150); the holdout stops informing the count targets and both sides of the count comparison share one basis | #82 #131 | [network-and-inputs](positions/network-and-inputs.md) · [monitoring-and-gates](positions/monitoring-and-gates.md) | counts at the F29 arm's gate, on the corrected basis |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |
 | Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |

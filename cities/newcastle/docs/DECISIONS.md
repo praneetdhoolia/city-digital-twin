@@ -195,6 +195,7 @@ about its layout will otherwise cost you an hour:
 | **The five defects the assessment left open, ruled on and closed** | **§9.151** — the HTS purpose map existed twice and disagreed on `Serve passenger` (demand HX since §9.15, assembler NHB, 351,645 weekday legs): one shared map now, HX wins, and the VOT table was keyed on the OLD vocabulary too — renamed `NHB` → `HX` at the same 15.2, which is what kept `C.vot.trip_weighted` at 16.96 instead of the 17.317 the half-done fix produced. `EscortCoherenceListener` drew a SEEDED rng in HashMap order, which is what the sample fraction changes: a `TreeMap` now, so the draw follows the household id — a result change, taken while F29 had no arm. Four typed network fallbacks declared (`A.road.speed_unknown_class_kmh`, `A.road.lanes_unknown_class`, `A.road.capacity_unknown_class_veh_hr_lane`, `A.active.footway_width_unknown_class_m`) and stamped `imputed_fallback`; measured, the three road ones fire on 0 of 50,182 road edges and the footway one on 830 of 40,195 active edges, no value moved. `RunTelemetry` has no memory barrier of its own and a committed overlay removed the one it borrows: the combination is declared and REFUSED before the JVM and in the dry run, rather than paying atomics on the event path. The manifest resolves a derived file s provenance from its lineage instead of leaving it blank. Registry 472 → 477, unit tests 118 → 125 |
 | **The toolchain gate passed on a checkout that could not launch** | **§9.152** — every gate green, the arm approved, and the launch refused before MATSim started: `.tools/run-stack/lib` held 0 jars while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` loops over the components RECORDED in `toolchain.json`, and a stack that `--run-stack` never resolved is not recorded — so the check was green on the absence of the thing it should have failed on, the same shape as the three blind checks §9.150 widened. `verify()` now reads the declared representation and reports `MISSING run-stack` with the command; the gate and the launcher refuse on one condition. Cost: one refused launch, which stated its own cause in its `_meta.json` |
 | **F30's first arm: healthy, and stopped on its own cost** | **§9.153** — launched twice: refused before MATSim once (the run stack, §9.152), then ran and was STOPPED BY THE OPERATOR at iteration 23. Iteration 0 passed every control (car departures 232,972 against F28's 231,607, stuck 3,786 against 3,145; 8,167 declared passengers paired on 7,771 detours, 0 unroutable; 291 unpaired ride legs all restored; 8,549 drivers waiting for a household car) — and `_run.json` read **`median_iteration_s` 376.42 against F28's 260**, 45 % slower, which puts 300 iterations near 31 h against the ~22 h its approval was priced on. The it.20 readings sit on top of F28's and separate nothing. §9.150's `--stop` rebuild is tested against a live arm for the first time: one arm killed, `_operator_stop.json` written first, the operator's cause preserved, `completion` = `stopped_by_operator`. The 45 % is NOT diagnosed and is #66's |
+| **The iteration decomposed to the method, and a declared value that reached nothing** | **§9.154** — a JVM flight recording put this project's own code at **50.0 %** of a 25 % probe's CPU: `GradientLinkSpeed$Router` 17.9 %, `factor` 14.4 %, `Arrays.binarySearch` 30.5 % of which 16.2 was `Router` → `TimeVariantLinkImpl.getFreespeed`, a `synchronized` binary search over the level-crossing change events on all 143,891 links of which 16 can change. Per-link tables, filled once from the same `factor()`: a plain iteration **310 → 205.5 s**, startup **13m47s → 7m00s**, our share **50.0 → 14.5 %**, proved by `GradientTableProbe` over 3,266,754 comparisons rather than by a diff two runs cannot support. Separately `RUN.travel_time.analysed_modes` was inert — `filterModes` defaults false and was never emitted, so every pedestrian and bus fed the car router's link travel times (#154) — and 31 further MATSim defaults decide the model undeclared (#155). Registry 477 → 480; the 2-minute iteration is NOT reached, ~190 s against 120 |
 
 
 ---
@@ -14892,10 +14893,106 @@ not be priced at 260 s an iteration until the difference between 260 and 376 is
 explained. That explanation is the next session's first task and it belongs to
 #66, which already owns iteration wall time.
 
+## 9.154 The iteration decomposed to the method, a third of it ours, and a declared value that reached nothing (7 September 2026, thirty-third session; user directive "/onboard; analyse & implement good recommendations from the report; try to get iteration runtime under 2 mins; self assess your processes and codify manual operations"; issues #66, #154, #155)
+
+**What was wrong.** Six families of arms have been argued about on MATSim's own
+stopwatch, which decomposes an iteration only as far as its named phases. At the
+F28 gate that read mobsim 168 s, replanning 50 s, prepareForMobsim 34 s — three
+numbers with nothing inside them — and §9.142 concluded from reading the source
+that the mobsim was the floor and that halving 258.5 s "would need ~130 s that no
+measured lever offers". Every cut proposed since was reasoned, not measured. The
+17:34 assessment ranked eighteen changes on the same basis.
+
+**What changed.** Two declared switches let the JVM answer instead.
+`RUN.machine.jfr_profile` (false; `src/run/run_matsim.py`,
+`src/analyse/profile_run.py`) writes a Java Flight Recorder recording beside a
+run and `RUN.machine.gc_log` (false) a GC log. Both are OBSERVATION — they
+sample threads that are running anyway and write their own files — so a profiled
+run and an unprofiled one are the same run and **no family opens**;
+`f30_profile_probe_25pct` turns them on for a four-iteration probe.
+`src/analyse/profile_run.py` reads a recording into a thread-pool, phase and
+method decomposition, attributing each sample to the OUTERMOST frame that names
+a phase, with `--iterations FIRST:LAST` reading the window from the run's own
+stopwatch.
+
+What it found is that a third of the iteration was **ours**, in one method. On
+every relaxation of every route search `GradientLinkSpeed.Router` asked the link
+three questions whose answers are constant: `getFreespeed(time)`, which on a
+time-variant network is a `synchronized` `Arrays.binarySearch` over the
+change-event times; an attribute lookup for `grade_pct`; and a
+`Double.parseDouble` of the string it returns plus two `Math.exp`. The repair is
+a per-link table filled once from the same `factor()` the qsim and the probes
+use, with the live path kept for any link a change event names.
+`GradientLinkSpeed.Mobsim` and `BikeStressDisutility` take the same treatment —
+a factor table by link index, a vehicle-type index instead of a string compare,
+and a `double[]` instead of a `HashMap` of boxed doubles.
+
+Separately, and this one MOVES RESULTS: `RUN.travel_time.analysed_modes` is
+declared `["car"]` and reached nothing, because MATSim consults `analyzedModes`
+only when `travelTimeCalculator.filterModes` is true and that parameter was
+never emitted. **`RUN.travel_time.filter_modes` = true is now declared** (#154).
+`src/setup/dump_matsim_params.py` and `src/registry/check_matsim_defaults.py`
+generalise the lesson, and `src/analyse/arm_cost.py` prices an arm from the runs
+on disk rather than from a document. Registry 477 → 480.
+
+**Measured.** Two profiled probes of one overlay on one machine,
+`20260907T182742_4it_25pct` → `20260907T192715_4it_25pct`. Before: this
+project's own code **50.0 %** of the run's CPU samples,
+`Router.getLinkTravelTime` 17.9 %, `GradientLinkSpeed.factor` 14.4 %,
+`Arrays.binarySearch` 30.5 % (16.2 of it `Router` → `getFreespeed`),
+`Double.parseDouble` 8.0 %, `BikeStressDisutility` 3.4 %. After: a plain
+iteration **310 → 205.5 s**, replanning **68.5 → 26 s**, prepareForMobsim
+**59 → 32 s**, mobsim **177.5 → 143 s**, startup **13 min 47 s → 7 min 00 s**,
+whole-probe wall **2,846 → 1,803 s**; our own code **14.5 %** of a plain
+iteration and `binarySearch` **1.7 %**. Both sides carry the recorder's ~8 %, so
+an unprofiled plain iteration is near **190 s**. Per plain iteration what
+remains is mobsim workers 32.5 %, the events pipeline 23.8 %, MATSim's own
+`PersonPrepareForSim` 22.7 % and replanning's router 17.7 %; the largest piece of
+ours is `NetworkDirectWalkPtRouter.calcRoute` at 8.2 %.
+
+Result preservation is PROVED, not argued. A run here is not bit-for-bit
+reproducible (§9.142), so a before-and-after diff cannot settle it;
+`citysim.GradientTableProbe` compares each table against the formula over the
+run's own network — **3,266,754 comparisons on 192,162 links, every one
+identical**.
+
+Three of the assessment's ranked IO items were MEASURED before implementing and
+are **not** done, because the saving is not there: caching per-run sizes in the
+results store (the walk is 0.1 s), validating the base registry once per process
+(0.064 s a load, ~1.5 s per 30-set assembly) and parsing each file once in
+`check_hardcoding` (the whole check is 1.8 s). The undeclared-defaults audit
+reports 24 modules written, 110 parameters set by a declared field, 5 supplied
+per run, 20 accepted with a written reason and **31 unreviewed** (#155).
+
+**Deliberately not done.** The 2-minute iteration the directive asked for is
+**not reached**: ~190 s against 120, and what is left is MATSim's own A*,
+its events pipeline and a mobsim measured saturated at 16 threads (§9.147). The
+network-stamping and day-table rewrites the assessment ranks first and second
+are NOT done: they optimise a pipeline that runs at family boundaries rather
+than the iteration, each needs a full rebuild to verify, and the code carries a
+comment recording that a previous refactor of it silently produced a network
+with zero walkable links. `NetworkDirectWalkPtRouter`'s second routing call is
+named and left: a lower bound that provably preserves the choice needs the
+maximum walk speed-up factor, which the downhill Tobler term makes greater than
+one. The 31 unreviewed defaults are listed, not ruled on. **No target value
+changed, no scenario was run to a gate, the 67/143 split is untouched, and
+nothing here is a finding about the city.**
+
+**Consequences.** `RUN.travel_time.filter_modes` moves results and **opens a
+family at the next launch**; the three tables do not. The two probes are
+citable for their clocks and for nothing else — four iterations is three orders
+of magnitude short of relaxation. `arm_cost.py` and the launcher's cost line are
+now the only place an arm's price should be read from; the front-door README no
+longer states one. The next runtime cut is named and measured:
+`NetworkDirectWalkPtRouter` at 8.2 %, and the ~10 % that
+`TravelTimeCalculator` → `getFreespeed` still pays for representing two level
+crossings as a time-variant network across 143,891 links.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-07 | **The iteration decomposed to the method, and a third of it was ours (§9.154; #66, #154, #155; thirty-third session).** Two declared OBSERVATION switches — `RUN.machine.jfr_profile`, `RUN.machine.gc_log` — let the JVM say where an iteration goes, and `src/analyse/profile_run.py` reads the recording. On `20260907T182742_4it_25pct` this project's own code was **50.0 %** of the run's CPU samples, almost all of it `GradientLinkSpeed.Router` re-deriving per link what never changes: a `synchronized` binary search for the free speed of a time-variant network, an attribute lookup and a `Double.parseDouble` of the stamped grade. Per-link tables in `GradientLinkSpeed` (both sides) and `BikeStressDisutility` cut a plain iteration **310 → 205.5 s** and startup **13m47s → 7m00s** on `20260907T192715_4it_25pct`, with our share at **14.5 %**; `citysim.GradientTableProbe` proves the tables identical to the formula over 3,266,754 comparisons on 192,162 links, because a run here is not bit-reproducible and a diff could not. **`RUN.travel_time.filter_modes` = true is newly declared and MOVES RESULTS** (#154): `analysed_modes` had been inert since the field existed, so walk, bike, bus and truck all fed the single link travel-time table the car router reads. `src/setup/dump_matsim_params.py` + `src/registry/check_matsim_defaults.py` enumerate what the framework decides undeclared — 31 unreviewed (#155) — and `src/analyse/arm_cost.py` prices an arm from the runs, printed by the launcher before every start. Registry 477 → 480, gate 17 → 18 checks. **The 2-minute iteration asked for is not reached (~190 s), no target value changed, no arm ran to a gate, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-09-07 | **F30's first arm ran to iteration 23 and was stopped on its own cost (§9.153; issues #66, #73; thirty-second session; user directive "stop the arm and /handoff").** Launched twice — once refused before MATSim for the absent signals run stack (§9.152), once run. Iteration 0 healthy on every control. `_run.json`: `completion` `stopped_by_operator`, `reached_iteration` 23, **`median_iteration_s` 376.42 against the 260 s the ~22 h approval was priced on**, 9,634 s of wall clock. The it.0–it.20 readings are citable at their own iterations and nowhere past them, and they separate F30 from F28 in nothing. §9.150's `--stop` rebuild tested live for the first time and held. **No target value changed, the 67/143 split is untouched, no family opened, the approval is SPENT, and nothing here is a finding** — the newest citable reading in the project is still F28's iteration-100 gate. |
 | 2026-09-07 | **The toolchain gate passed on a checkout that could not launch (§9.152; issue #73; thirty-second session).** With every gate green and the F30 arm approved, the launch was refused before MATSim started: `.tools/run-stack/lib` held **0 jars** while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` checks the digests of the components RECORDED in `toolchain.json`, and a run stack that `--run-stack` never resolved is not recorded — so the loop could not report it and the gate was green on the absence of the thing it should have failed on. `verify()` now reads the declared representation and reports `MISSING run-stack` with the exact command, so the gate and the launcher refuse on one condition. Cost: one refused launch (`aborted_20260907T145929_300it_25pct`), which stated its own cause in its `_meta.json`. **No arm ran.** |
 | 2026-09-07 | **The five defects §9.150 left open, ruled on and closed without a run (§9.151; issues #147, #148, #149, #150, #151; thirty-second session; user directive "give me the clickable approval choices and proceed to implement & test").** The HTS purpose map existed twice and disagreed on `Serve passenger` (demand HX since §9.15, assembler NHB): **one shared map, HX wins** — and the repair exposed its own second half, `C.vot.by_purpose` still keyed on the old vocabulary, which dropped the HX weight from the value-of-time average and moved the collapse **16.96 → 17.317 AUD/h** against a declared `C.vot.trip_weighted` of 16.96. Re-keyed `NHB` → `HX` at the same 15.2 (renamed, not revalued) and **140 of the 141 files under `scenarios/matsim/` came back byte-identical**, so the disagreement changed no number the model ever scored. `EscortCoherenceListener` drew a seeded rng in `HashMap` order — the order the sample fraction changes — and is a `TreeMap` now: **the one change here that moves a result**, and **family `F30-an-escort-is-priced-as-an-escort` opens on it alone**. Four typed network fallbacks declared and stamped `imputed_fallback`; measured, the three road ones fire on **0 of 50,182 road edges** and the footway one on **830 of 40,195 active edges**, no value moved. `RunTelemetry` has no memory barrier and a committed overlay removes the one it borrows: declared and **refused** before the JVM and in the dry run, rather than paying atomics on the event path. The manifest resolves a derived file's source from its lineage and a raw file inherits its directory's record: `source` **82 → 508 of 512**, `retrieved` **59 → 443**, the residue being the GTFS feeds whose records carry no date at source and the package's own record files. Registry **472 → 477**, unit tests **118 → 125**, `check_hardcoding` still 0. **No arm ran, no demand or network changed, no approval stands, the 67/143 holdout was not opened, and nothing here is a finding.** |

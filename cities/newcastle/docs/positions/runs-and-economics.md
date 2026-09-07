@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
+**Updated:** 7 September 2026 (thirty-third session) · **Record read through:** §9.154 · **Written against family:** `F30`
 
 ## What is built
 
@@ -22,6 +22,10 @@
 
 ## What is measured — what a run costs
 
+- **THE ITERATION IS DECOMPOSED TO THE METHOD FOR THE FIRST TIME, AND A THIRD OF IT WAS OURS** (§9.154, `20260907T182742_4it_25pct`). A JVM flight recording of a 25 % probe, read by `python src/analyse/profile_run.py --run <run> --iterations 2:3`: `GradientLinkSpeed$Router.getLinkTravelTime` **17.9 % of every CPU sample in the run**, `GradientLinkSpeed.factor` another **14.4 %**, `BikeStressDisutility` **3.4 %**, and `Arrays.binarySearch` **30.5 %** — of which 16.2 points were `Router.getLinkTravelTime` → `TimeVariantLinkImpl.getFreespeed`, a `synchronized` binary search over the level-crossing change events on all 143,891 links, of which 16 can change. `Double.parseDouble` of the stamped `grade_pct` was a further 8.0 %. **This project's own code was 50.0 % of the run's CPU.**
+- **The repair is a per-link table, and it is measured on two probes of the same overlay on the same machine** (§9.154, `20260907T182742_4it_25pct` → `20260907T192715_4it_25pct`): a plain iteration **310 → 205.5 s**, replanning **68.5 → 26 s**, prepareForMobsim **59 → 32 s**, mobsim **177.5 → 143 s**, startup **13 min 47 s → 7 min 00 s**, whole-probe wall **2,846 → 1,803 s**. Our own code fell to **14.5 %** of a plain iteration and `binarySearch` to **1.7 %**. Both probes carried the recorder, so the ~8 % it costs is in both sides; an unprofiled plain iteration is near **190 s**.
+- **What is left, per plain iteration, is mostly not ours** (§9.154, iterations 2–3 of `20260907T192715_4it_25pct`): mobsim workers 32.5 %, the events pipeline 23.8 %, MATSim's own `PersonPrepareForSim` re-routing 22.7 %, replanning's router 17.7 %. The largest remaining piece of our code is `NetworkDirectWalkPtRouter.calcRoute` at **8.2 %**, which routes a full network walk beside every transit request. **The 2-minute iteration the user asked for is not reached: ~190 s against 120.**
+- **An arm is priced from the runs, not from a document** (§9.154). `python src/analyse/arm_cost.py --run-config <overlay>` reads the newest median at the same sample fraction, adds that run's own measured setup, and prints the spread behind it; `run_matsim.py` prints the same line before every launch. A PROFILED run is excluded — the recorder is in its clock.
 - **THE NEWEST PACE, AND IT IS 45 % SLOWER THAN THE ARM IT WAS PRICED ON** (§9.153, `aborted_20260907T150816_300it_25pct`). `_run.json` records **`median_iteration_s` 376.42** over 23 iterations and 9,634 s of wall clock; the last ten before the stop ran at a median **381 s**. F28 measured **260 s** on the same fraction, the same demand and a run stack differing by one line. At 376 s the iteration-100 gate is ~8 h out rather than ~5.5, and 300 iterations is **near 31 h against the ~22 h the approval was priced on** — which is why the arm was stopped rather than run to its gate. **The difference is NOT diagnosed** and is #66's: it is not the §9.151 `TreeMap`, and not the demand, which is F29's throughout.
 - **A stated cost is a boundary, not an estimate** (§9.153). The 260 s that priced this arm came from F28's own stopwatch (§9.149), so the price was evidence and still missed by 45 %. **Price the NEXT arm on the newest arm's median, and re-measure before quoting a horizon.**
 - **`--stop` is tested against a live arm for the first time** (§9.153; §9.150 built it and recorded it as untested). One arm ended, no other process touched, `_operator_stop.json` written before the kill, the operator's own cause preserved, and `_run.json` closed out `completion` = `stopped_by_operator`, `reached_iteration` = 23.
@@ -82,6 +86,7 @@
 
 ## History
 
+- §9.154 — the iteration decomposed to the method; a plain one 310 → 205.5 s
 - §9.153 — F30 stopped at 23: 376 s an iteration against F28's 260
 - §9.152 — the toolchain gate was green on a checkout that could not launch
 - §9.149 — F28 to its gate at a median 260 s an iteration

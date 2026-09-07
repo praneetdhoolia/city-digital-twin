@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
+**Updated:** 7 September 2026 (thirty-third session) · **Record read through:** §9.154 · **Written against family:** `F30`
 
 ## What is built
 
@@ -50,6 +50,8 @@
 
 ## What is open
 
+- **EVERY VEHICLE ON THE NETWORK HAS BEEN SETTING THE CAR ROUTER'S LINK TRAVEL TIMES** (§9.154, #154). `RUN.travel_time.analysed_modes` is declared `["car"]` and reached nothing: MATSim consults `analyzedModes` only when `travelTimeCalculator.filterModes` is true, that parameter defaults to false, and no config in this repository ever emitted it — verified in the pinned jar, where `TravelTimeCalculator.handleEvent(LinkEnterEvent)` returns early only under `filterAnalyzedModes && vehiclesToIgnore.contains(id)`. With `RUN.travel_time.separate_modes` false MATSim builds ONE table and binds it as the observed travel time for every mode in `RUN.routing.network_modes`, so a pedestrian recording 143 s against a link a car crosses in 14 was priced into the car router's estimate. **`RUN.travel_time.filter_modes` = true is now declared** and reaches the model; it MOVES RESULTS and belongs with the next family boundary. What it is worth is unmeasured.
+- **Thirty-one MATSim defaults decide this model and none is declared** (§9.154, #155). `python src/registry/check_matsim_defaults.py` reads the pinned framework's parameter surface (`config/schema/matsim_defaults.json`) and reports, per module the model writes into, what it does not set: 24 modules, 110 parameters set by a declared field, 5 supplied per run, 20 accepted with a written reason in `config/schema/matsim_defaults_accepted.json`, **31 unreviewed** — among them `routing.routingRandomness` 3.0, `qsim.stuckTime` 10 s, `qsim.trafficDynamics`, `replanning.planSelectorForRemoval` and three `timeAllocationMutator` switches. `qsim.usingFastCapacityUpdate` is decided in Java by the signals controler, which no scanner here can see.
 - **The 3 Sep 2026 rebuild** put the derived interaction rate, the LGA-conserved motorbike carve and the leaf-subtour repair into the chains, plans and 30 run-input sets, opening family F24 at its first launch (§9.140); `tests/check_package.py` passes once §9.140 exists in the record, because its `decisions_ref` check reads the file. **Which family's build is on disk today is a live fact with one home** — the board's state block, re-derived with `python tests/check_package.py`; this page stated F24 for four days after the disk had moved twice.
 - The canonical B1 and D1 files on disk differ from a fresh rebuild only in line endings (normalised digests equal, §9.140); the manifest hashes the bytes on disk, so a rebuild moves those rows without moving a value. **That asymmetry has a consequence CI is the only place that can see** (§9.142): a producer opening a text file in this platform's default mode writes CRLF, git stores LF, so the manifest agreed with the working tree and disagreed with the commit - `check_manifest.py` passed locally and failed in CI on all 17 artefacts regenerated on 4 Sep. They are normalised to LF and the manifest regenerated on those bytes. The durable fix is for every producer of a hashed artefact to write LF explicitly (`newline=''` with an explicit `lineterminator` for csv, `newline='
 '` for json); until it does, a rebuild on Windows must be followed by that normalisation.
@@ -70,6 +72,7 @@
 
 ## History
 
+- §9.154 — a declared value voided by an undeclared one
 - §9.151 — four network fallbacks declared; three have never fired
 - §9.151 — a derived file's provenance resolved from its lineage
 

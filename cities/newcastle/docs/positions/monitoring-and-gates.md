@@ -2,10 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
+**Updated:** 7 September 2026 (thirty-third session) · **Record read through:** §9.154 · **Written against family:** `F30`
 
 ## What is built
 
+- **The JVM can now be asked where an iteration went** (§9.154). `RUN.machine.jfr_profile` writes a Java Flight Recorder recording to `<run>/profile.jfr` and `RUN.machine.gc_log` a GC log; `python src/analyse/profile_run.py --run <run> --iterations 2:3` reads the recording into a thread-pool, phase and method decomposition, attributing each sample to the OUTERMOST frame that names a phase. Both switches are OBSERVATION — they sample threads that are running anyway and write their own files — so a profiled run and an unprofiled one are the same run and **no family opens**. The recorder costs ~8 % of the clock, so a profiled run's median never prices an arm (`arm_cost.py` excludes it) and is never quoted as an arm's pace. `--iterations` is not optional for anything about an arm: without it MATSim's one-off `PersonPrepareForSim` was 61.6 % of the first recording taken this way.
+- **A run records its own per-iteration durations as it goes** (§9.154). `_progress.json` carries `iteration_seconds`, accumulated off the incremental walk the live view already does, and close-out reads it instead of the whole `matsim.log` — the F23 arm's log was 54.9 GB and the record wanted six numbers out of it. Same two markers and same arithmetic, verified identical to the log walk over 104 iterations of two runs; a run that carries no such field still falls back to the log.
 - **The functions that decide correctness have their own tests** (§9.142, #133): `tests/unit/` runs 89 pytest cases on synthetic inputs in 0.13 s - `param_config`'s rendering and target parsing, `outputs._semantic_errors`, `run_matsim.find_completed`'s identity matching, and `fit.py`'s scoring including the issue-19 modelled-zero regression. It is a CI job and a `unit tests` line in `session_gate.py`, which now runs 17 checks. Six Java probes run on the signals stack, `GatedSubtourProbe` and `PtFareProbe` added; the latter measured a latent `Long`-age adult-fare defect on its first day, now fixed and asserted.
 
 - **The hard bar of the gate is the runner's own** (§9.137): a watcher inside `run_matsim.py` reads all twelve modes every `RUN.gate.interval_iterations` = 100 iterations with the same reporter below and stops the JVM itself when any mode is at or past `CAL.gate.stop_deviation_pct`, recording the gate table as the abort cause. The trend judgement ("or heading there") stays with the session. **Its iteration source is the progress digest, not a log tail** (§9.139): the original 64 KiB tail read was measured blind at the 25% arm's log rate — the ENDS marker sat 611 MiB behind EOF — and the watcher idled through the F23 gate; fixed 2 Sep. **Its stop is keyed on the reporter's verdict file** (`--gate-json`), never on the printed `GATE:` line, which the reporter prints on a pass too (§9.141, #112 closed): a passing milestone is logged and the run continues; a milestone whose tables are not written yet is retried every `RUN.gate.retry_interval_s` = 300 s (§9.141, #131); without the digest it reads the log incrementally through `run_view.read_iterations`, never a tail (§9.141). `tests/check_gate_watcher.py` drives it against canned breach, pass and no-verdict reporters in CI. First live firing still unobserved.
@@ -68,6 +70,7 @@
 
 ## History
 
+- §9.154 — the JVM asked where the iteration went
 - §9.153 — the arm read every ten iterations, stopped at 23
 - §9.152 — a gate green on a checkout that could not launch
 - §9.151 — the issue gate green for the first time
