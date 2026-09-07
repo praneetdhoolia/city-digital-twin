@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
+**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
 
 ## What is built
 
@@ -43,6 +43,10 @@
 
 ## What is measured
 
+- **`Serve passenger` is HX everywhere, and the value-of-time table is keyed on it** (§9.151, #147). The HTS purpose map existed twice: the demand builder sent `Serve passenger` to HX — its own tour purpose since §9.15 — while the run-input assembler folded it into NHB and fed that to `scoring_from_c1()`. One shared map now (`src/build/hts_purpose.py`), HX wins. **The repair exposed a second half**: `C.vot.by_purpose` was still keyed NHB, so the HX weight matched no key, was dropped from the average and the rest renormalised — moving the collapsed value **16.96 → 17.317 AUD/h** against a `C.vot.trip_weighted` declared at 16.96. Re-keyed `NHB` → `HX` at the same 15.2: **renamed, not revalued**.
+- **And it changed no number the model ever scored** (§9.151). With both halves done, **140 of the 141 files under `scenarios/matsim/` came back byte-identical** to the build before the change; the one that differs is `_run_inputs_report.json`, which records the purpose share itself. The disagreement had stood since §9.15 and was a latent hazard, not a live error — NHB and HX both carried 15.2. `C.vot.trip_weighted` stays 16.96.
+- **The household-car roster at F30's iteration 0** (§9.153, `aborted_20260907T150816_300it_25pct`): **8,549 drivers waited for a household car that was out**, car departures **232,972** against F28's 231,607 and car stuck **3,786** against 3,145 — the car-only handler still doing its one job, and nothing like the 55,862 stuck §9.148 recorded when the model was broken. Citable at iteration 0 and nowhere past it.
+
 - **The demand was rebuilt on 4 Sep** (§9.142) on destination choice constrained at both ends and on circuity re-measured on the current network: 612,634 persons across three day types, WEEKDAY 2,185,896 legs / 989,347 tours / 3.568 legs per person, and a week average of 3.343 trips per person per day against the HTS 3.473 (`demand/plans/_activity_chains_report.json`). Every purpose x home LGA still realises its own observed mean journey distance exactly, on all 30 cells but the two already at the bisection edge. `tests/check_package.py` passes on the rebuilt package.
 
 - The literature licence vector left 14.2–14.8% of employed persons without a licence; on the measured rates the unlicensed share of the employed is 4.8–5.9% (Newcastle 12.7%, its 18–24 rate 0.68) and employed persons with a car available rose from 78.9–83.0% to 90.8–91.7% in four LGAs and 80.8% in Newcastle (§9.131).
@@ -78,6 +82,9 @@
 - Restoring the literature licence vector: superseded by the published count over the published population (§9.131).
 
 ## History
+
+- §9.153 — the roster at F30 it.0: 8,549 drivers waited
+- §9.151 — an escort is generated and priced as an escort
 
 - §9.149 — the shared pass binds the longest tours first
 - §9.146 — a household drives the cars it owns; the carve draws no bound passenger

@@ -364,6 +364,23 @@ def _verify_run_stack(component):
     return bad
 
 
+def _signals_run_stack_required():
+    """Does THIS city's declared signal representation need the run stack?
+
+    The framework names no city and no value: it reads the declared field and
+    compares it with the representation the signals stack exists to serve. A
+    registry that cannot be resolved is not treated as a refusal - the other
+    gates report that far more clearly than this one would.
+    """
+    try:
+        sys.path.insert(0, os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), '..'))
+        import registry as _registry
+        return _registry.load().get('A.signals.representation') == 'explicit_signals'
+    except Exception:                                     # noqa: BLE001
+        return False
+
+
 def verify():
     man = load_manifest()
     if not man:
@@ -387,6 +404,18 @@ def verify():
         ok = got == c['sha256']
         print('  %-8s %-9s %s' % ('ok' if ok else 'MISMATCH', c['component'], got[:16]))
         bad += 0 if ok else 1
+    # 9.151: a toolchain that cannot launch this city's runs is not OK. The
+    # signals run stack is optional to the FRAMEWORK and mandatory to a city
+    # whose declared representation is `explicit_signals` - and when it was
+    # absent, `verify` said OK because a component that was never built is not
+    # in the manifest to be checked. The gate was green and the launch was
+    # refused: the same shape of blindness 9.150 found in three other checks.
+    if not has_run_stack and _signals_run_stack_required():
+        print('  MISSING  run-stack A.signals.representation is '
+              'explicit_signals, so every run of this city needs the signals '
+              'run stack. Run: python src/setup/bootstrap_toolchain.py '
+              '--run-stack')
+        bad += 1
     # The custom controler is part of the toolchain a run depends on, and its
     # classes live under the gitignored .tools/. Recompiling here keeps --verify
     # an honest statement that this checkout can actually run.

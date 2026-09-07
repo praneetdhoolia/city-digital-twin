@@ -8,7 +8,7 @@ import sys as _sys
 _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                                   '..', '..', '..', 'src'))
 import city as _city  # noqa: E402
-import os, urllib.request, hashlib, json
+import os, urllib.request, hashlib, json, datetime
 BASE="https://opendata-gtfs.transport.nsw.gov.au/"
 OUT=_city.path("schedules/raw")
 # era_key -> list of (feed_label, s3_key)
@@ -37,14 +37,33 @@ ERAS={
    ("nswtrains","historical_gtfs/nswtrains/2026/2026-08/nswtrains_scheduled_data_20260801010800.zip"),
  ],
 }
+# 9.151 (#149): the retrieval date. These records carried none, so 15 raw
+# feeds and everything built from them showed a blank `retrieved` in the
+# manifest. It is stamped for a feed this run ACTUALLY downloads; a feed that
+# is skipped because it is already on disk keeps the date the earlier run
+# recorded, because today is not when it was retrieved. A file whose date
+# nobody recorded stays blank rather than acquiring one now.
+_PREV={}
+_prev_path=os.path.join(OUT,"provenance.json")
+if os.path.exists(_prev_path):
+    try:
+        for _r in json.load(open(_prev_path,encoding='utf-8')):
+            if _r.get("retrieved"):
+                _PREV[(_r.get("era"),_r.get("feed"))]=_r["retrieved"]
+    except Exception:
+        pass
+TODAY=datetime.date.today().isoformat()
+
 prov=[]
 for era,items in ERAS.items():
     d=os.path.join(OUT,era); os.makedirs(d,exist_ok=True)
     for label,key in items:
         p=os.path.join(d,f"{label}.zip")
+        fetched=False
         if os.path.exists(p) and os.path.getsize(p)>1000:
             print(f"SKIP {era}/{label}"); 
         else:
+            fetched=True
             url=BASE+key
             print(f"GET  {era}/{label} <- {key}",flush=True)
             try:
@@ -54,7 +73,13 @@ for era,items in ERAS.items():
         h=hashlib.sha256(open(p,'rb').read()).hexdigest()[:16]
         sz=os.path.getsize(p)
         print(f"  {sz:>12,} B sha256:{h}")
-        prov.append({"era":era,"feed":label,"s3_key":key,"bytes":sz,"sha256_16":h,
-                     "source":"TfNSW Open Data Hub historical GTFS archive","licence":"CC-BY 4.0"})
+        rec={"era":era,"feed":label,"s3_key":key,"url":BASE+key,"bytes":sz,
+             "sha256_16":h,
+             "source":"TfNSW Open Data Hub historical GTFS archive",
+             "licence":"CC-BY 4.0"}
+        retrieved=TODAY if fetched else _PREV.get((era,label))
+        if retrieved:
+            rec["retrieved"]=retrieved
+        prov.append(rec)
 json.dump(prov,open(os.path.join(OUT,"provenance.json"),"w"),indent=2)
 print("\nwrote",os.path.join(OUT,"provenance.json"))

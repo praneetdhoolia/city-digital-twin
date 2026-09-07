@@ -573,6 +573,19 @@
       "matsim_param": "eventsManager.synchronizeOnSimSteps",
       "description": "Whether the qsim waits for the events pipeline at every sim-step. Declared for the 9.59 timing probes and MEASURED A REGRESSION on this model: false swaps the manager implementation and took the it2-4 median mobsim from ~190 s to 255 s at 25%. STAYS TRUE; the value exists so the measured rejection is recorded where the knob lives."
     },
+    "RUN.machine.telemetry_requires_simstep_barrier": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.151",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/java/citysim/RunTelemetry.java"
+      ],
+      "description": "Whether RunTelemetry depends on the sim-step barrier for memory visibility. TRUE, and it is not a preference: RunTelemetry carries no volatile, no synchronized and no java.util.concurrent type in its 731 lines, while its per-vehicle array and per-mode maps are written from the event-handler threads and read and cleared from the QSim thread. The only thing that publishes those writes is RUN.machine.events_synchronize_on_simsteps = true, which supplies a happens-before edge at each sim-step. With the barrier off the telemetry has none, and the failure is SILENT - torn or stale counters that the progress digest reads as a measurement, not a crash (#151). run_matsim.py refuses the combination rather than making the hot path atomic: the barrier is measured FASTER on this model anyway (9.59), so the async path buys nothing a run wants, and paying atomics on the highest-frequency path in the simulation to keep a timing probe alive is the wrong trade. Set this false only together with making that state explicitly concurrent."
+    },
     "RUN.machine.event_handler_threads": {
       "value": 4,
       "units": "threads",

@@ -63,6 +63,11 @@ import pandas as pd
 import sys as _sys
 _sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry as _registry  # noqa: E402
+# The HTS purpose map is shared with the run-input assembler: the demand may
+# not be generated under one reading of `Serve passenger` and priced under
+# another (#147, DECISIONS.md 9.151).
+_sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import hts_purpose as _hts_purpose  # noqa: E402
 CFG = _registry.load()
 
 ZON = _city.path('data/processed/zones')
@@ -381,9 +386,7 @@ def hts_rates():
     # That preserved the trip rate and lost the trip type: an escort became a
     # two-hour discretionary stay made by anyone, rather than a drop-off made by
     # a driver. It is its own tour purpose now (DECISIONS.md 9.15).
-    pmap = {'Commute': 'HW', 'Education/childcare': 'HE', 'Shopping': 'HS',
-            'Personal business': 'HO', 'Social/recreation': 'HO',
-            'Serve passenger': 'HX', 'Work related business': 'WB', 'Other': 'HO'}
+    pmap = _hts_purpose.HTS_PURPOSE
     pur['p'] = pur.TRAVEL_PURPOSE.str.rstrip('*').map(pmap)
     pur = pur[pur.p.notna()]
     journeys = pur.groupby('p').JOURNEYS_BY_MODE.sum()

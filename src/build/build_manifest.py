@@ -5,7 +5,9 @@ Deliverable 2 of the proposal is an open data package with every derived input,
 its provenance, licence status and processing lineage. This walks the tree,
 hashes everything, counts rows, and merges the per-stage provenance records.
 """
+import io
 import os
+import re
 import csv
 import glob
 import json
@@ -51,6 +53,11 @@ SOURCES = _city.descriptor().get('sources') or []
 # artefact of any city.
 DERIVED_LICENCES = _city.descriptor().get('derived_licences') or {}
 PACKAGE_LICENCE = _city.descriptor().get('package_licence') or ''
+# What a provenance record or an acquisition log IS: this package's own record
+# of itself. It is not a source that was retrieved from anywhere, and it never
+# carries a retrieval date (9.151, #149).
+PACKAGE_RECORD = '%s - the provenance record the package keeps of itself' % (
+    _city.descriptor().get('name') or _city.CITY)
 
 # Which script produced what, for the lineage graph. THE FRAMEWORK HALF ONLY:
 # the generic pipeline scripts under src/build/. Everything a particular city
@@ -232,6 +239,126 @@ def provenance_records():
     return prov
 
 
+# 9.151 (#149): where a DERIVED file's data came from. 420 of the 512 rows
+# carried no `source` and no `retrieved` at all, because both columns were
+# filled only from a provenance record and only a raw download has one. A
+# derived file's source is not a new fact to be typed in - it is the raw
+# layers its producing script reads, transitively - so it is RESOLVED here
+# from the lineage the manifest already knows, and never declared by hand. A
+# hand-written attribution is exactly the kind of number this project cannot
+# absorb: it would look observed and be a guess.
+_INPUT_RE = re.compile(
+    r"""['"]((?:data/raw|data/processed|networks/osm|networks/matsim"""
+    r"""|schedules|demand|params|scenarios)[A-Za-z0-9_./\-]*)""")
+_RAW_PREFIXES = ('data/raw', 'networks/osm', 'schedules/raw')
+_script_inputs_cache = {}
+
+
+def _script_path(token):
+    """A lineage token to a path on disk, framework or city-owned."""
+    token = token.split(' (')[0].strip()
+    if os.path.exists(token):
+        return token
+    cand = os.path.join('cities', _city.CITY, token)
+    return cand if os.path.exists(cand) else None
+
+
+def _script_inputs(token):
+    """The city-relative paths a producing script names in its own source."""
+    if token in _script_inputs_cache:
+        return _script_inputs_cache[token]
+    _script_inputs_cache[token] = out = set()
+    p = _script_path(token)
+    if p:
+        try:
+            txt = io.open(p, encoding='utf-8', errors='replace').read()
+        except OSError:
+            txt = ''
+        for m in _INPUT_RE.findall(txt):
+            out.add(m.replace(os.sep, '/').rstrip('/'))
+    return out
+
+
+def raw_ancestors(rel, _seen=None):
+    """Every RAW layer path a derived file descends from, transitively.
+
+    The producing script of `rel` names the paths it reads; a raw path is an
+    ancestor, and a processed one is resolved through ITS producer in turn.
+    Cycles and self-references terminate on `_seen`.
+    """
+    _seen = set() if _seen is None else _seen
+    if rel in _seen:
+        return set()
+    _seen.add(rel)
+    if rel.startswith(_RAW_PREFIXES):
+        return {rel}
+    entry = lineage_for(rel)
+    if not entry:
+        return set()
+    found = set()
+    for token in entry.split(' + '):
+        for dep in _script_inputs(token):
+            # Skip only what THIS script produces. A string-prefix test would
+            # also drop `params` for `params/C1.json` - and every layer root a
+            # script names as an input.
+            if dep == rel or lineage_for(dep) == entry:
+                continue
+            found |= raw_ancestors(dep, _seen)
+    return found
+
+
+def derived_provenance(rel, prov):
+    """(source, source_url, retrieved) for a DERIVED file.
+
+    source/url: the DECLARED sources covering its raw ancestors, in the
+    descriptor's own order so one layer reads the same way in every row.
+    retrieved: the LATEST retrieval date among those ancestor raw files - the
+    vintage of the newest input the layer could embody, an upper bound on how
+    old its data is, never a build time.
+    """
+    anc = raw_ancestors(rel)
+    if not anc:
+        return '', '', ''
+    names, urls = [], []
+    for src in SOURCES:
+        for prefix in src.get('provides') or []:
+            pfx = prefix.strip('/')
+            if any(a == pfx or a.startswith(pfx + '/') for a in anc):
+                if src.get('name') and src['name'] not in names:
+                    names.append(src['name'])
+                    if src.get('url'):
+                        urls.append(src['url'])
+                break
+    dates = [r.get('retrieved') for path, r in prov.items()
+             if r.get('retrieved')
+             and any(path == a or path.startswith(a + '/') for a in anc)]
+    return ' + '.join(names), ' + '.join(urls), (max(dates) if dates else '')
+
+
+def record_for(rel, prov):
+    """The provenance record covering a raw file.
+
+    Its own, else the nearest ANCESTOR DIRECTORY's - an archive is landed with
+    one record and unpacked into many files, and every one of those members
+    was retrieved from the same place at the same moment. 9.151 (#149): five
+    speed-zone shapefile parts, and the members of every other unpacked
+    download, carried no source and no retrieval date for want of this rule.
+    """
+    if rel in prov:
+        return prov[rel]
+    parts = rel.split('/')
+    for cut in range(len(parts) - 1, 0, -1):
+        here = '/'.join(parts[:cut])
+        best = None
+        for path, rec in prov.items():
+            if path.rsplit('/', 1)[0] == here and rec.get('retrieved'):
+                if best is None or path < best[0]:
+                    best = (path, rec)
+        if best:
+            return best[1]
+    return {}
+
+
 def licence_for(rel, stage, pr):
     """The licence a manifest row carries, by declaration (#117).
 
@@ -279,19 +406,32 @@ def main():
                 sz = os.path.getsize(p)
                 stage = 'raw' if rel.startswith(('data/raw', 'networks/osm', 'schedules/raw')) \
                     else 'processed'
-                pr = prov.get(rel, {})
+                pr = record_for(rel, prov) if stage == 'raw'                     else prov.get(rel, {})
                 src = source_for(rel) if stage == 'raw' else None
+                source = (pr.get('description') or pr.get('source')
+                          or (src or {}).get('name', ''))
+                source_url = (pr.get('url') or pr.get('s3_key')
+                              or (src or {}).get('url', ''))
+                retrieved = pr.get('retrieved', '')
+                name = os.path.basename(rel)
+                if (stage == 'raw' and not source
+                        and (name.startswith('provenance')
+                             or name.startswith('_'))):
+                    # The package's own record of itself, not acquired data -
+                    # the same class licence_for() already recognises.
+                    source = PACKAGE_RECORD
+                if stage != 'raw' and not source:
+                    # 9.151 (#149): a derived file's provenance is its raw
+                    # ancestry, resolved from the lineage rather than typed in.
+                    source, source_url, retrieved = derived_provenance(rel, prov)
                 files.append(dict(
                     path=rel, bytes=sz, rows=count_rows(p),
                     sha256=sha256(p) if sz < 300 * 1 << 20 else 'skipped_large',
                     stage=stage,
                     produced_by=lineage_for(rel),
-                    source=(pr.get('description') or pr.get('source')
-                            or (src or {}).get('name', '')),
-                    source_url=(pr.get('url') or pr.get('s3_key')
-                                or (src or {}).get('url', '')),
+                    source=source, source_url=source_url,
                     licence=licence_for(rel, stage, pr),
-                    retrieved=pr.get('retrieved', '')))
+                    retrieved=retrieved))
 
     total = sum(f['bytes'] for f in files)
     man = dict(

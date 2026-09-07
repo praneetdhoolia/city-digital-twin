@@ -20,36 +20,36 @@
   },
   "counts": {
     "factors": 72,
-    "needs_research": 25,
-    "researched": 47,
-    "literature_half_written": 58
+    "needs_research": 5,
+    "researched": 67,
+    "literature_half_written": 72
   },
   "factors": [
     {
       "layer": "A",
       "factor": "Residential location (fixed from census)",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "Residential self-selection is a measured but minority share of the built-environment effect: disentangling it by housing type in one study put self-selection at 15.2%, 30.7%, 18.5% and 5.9% of the total impact on vehicle kilometres travelled for the four housing types examined, and the effect is modest for the elderly and large for younger adults. The built-environment side remains the Ewing-Cervero meta-analysis, with every 5D elasticity inelastic. A residence fixed from the census therefore carries most of the built-environment effect and mis-states only the self-selected minority.",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0264275121001852",
+      "magnitude": "literature: self-selection 6-31% of the total built-environment effect on VKT, varying by housing type; the remainder is the location itself",
+      "how_leading_simulators_do_it": "UrbanSim-class land-use models re-choose residence; ActivitySim, CT-RAMP, MATSim and eqasim all take residence from the synthetic population and never re-choose it during a run.",
+      "evidence_strength": "moderate",
       "relevance": "low",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "A Residential location (fixed from census): literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "Residential self-selection share of the built-environment effect in Australian cities (VISTA / Sydney HTS panel)"
     },
     {
       "layer": "A",
       "factor": "Workplace location",
-      "what_research_says": "Workplace/work-location choice is a calibrated model component in the leading activity-based practice rather than a fixed input: ActivitySim/CT-RAMP implementations develop, calibrate and test work location choice sequentially before the components downstream of it, with auto sufficiency and work location among the named calibration targets. No transferable magnitude was recovered this pass.",
-      "source_url": "https://cmap.illinois.gov/wp-content/uploads/dlm_uploads/CMAP_ActivitySim_ABM_Technical_Description.pdf",
-      "magnitude": "unknown (no central tendency recovered)",
-      "how_leading_simulators_do_it": "ActivitySim and CT-RAMP estimate a destination-choice model for the usual workplace, calibrated against observed commute length distributions; MATSim scenarios normally take workplace from a synthetic-population assignment and do not re-choose it during the run.",
-      "evidence_strength": "moderate",
+      "what_research_says": "Workplace location is a calibrated long-term choice in every activity-based practice: ActivitySim samples commute distances from regional distributions and selects zones to match them under land-use compatibility, then validates residence-to-work flows against the census commuting-flow table and the mandatory trip-length frequency distribution; where attractions are more reliable than the impedance the practice is doubly constrained (shadow-priced) so that both worker totals and job totals are held. The output check the field uses is the county-to-county (here LGA-to-LGA) flow table, not the mean distance.",
+      "source_url": "https://wfrc.utah.gov/wp-content/uploads/2025/07/WFRC-Activity-Based-Model-Implementation-Framework-20250221.pdf",
+      "magnitude": "unknown as a coefficient: the practice benchmark is an origin-destination flow table (census journey-to-work) and a trip-length distribution, not a central tendency",
+      "how_leading_simulators_do_it": "ActivitySim and CT-RAMP run a shadow-priced work location choice validated against census commuting flows; MATSim scenarios assign workplaces in the demand builder and hold them fixed.",
+      "evidence_strength": "strong",
       "relevance": "high",
       "needs_research": true,
       "last_verified": "2026-09-07",
-      "query": "A Workplace location: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Australian activity-based model (AToM, Sydney STM) reported fit of modelled vs journey-to-work LGA flows - a transferable tolerance for own-LGA commute share"
     },
     {
       "layer": "A",
@@ -67,15 +67,15 @@
     {
       "layer": "A",
       "factor": "Vehicle type (EV, e-bike)",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "The e-bike evidence is now meta-analysed: across experimental studies, access to an e-bike adds about 5 km of daily travel and raises e-bike mode share by about 26 percentage points, while car use falls by about 2.4 km a day (a 10% drop in car mode share); single controlled trials report car share falling 21%, and older meta-studies put e-bike-for-car substitution at 43% of trips and 63% of mileage. The effect is context-dependent: where cycling is already high the e-bike substitutes conventional cycling; where it is low it draws from car and public transport. (Figures are abstract-level; the full text was not retrievable this pass.)",
+      "source_url": "https://www.tandfonline.com/doi/full/10.1080/01441647.2025.2474556",
+      "magnitude": "literature: +5 km/day travelled and +26 pp e-bike share with e-bike access; car -2.4 km/day (~-10% car share); substitution 43% of car trips in earlier syntheses",
+      "how_leading_simulators_do_it": "MATSim's bicycle contrib carries an e-bike as a vehicle type with its own speed and gradient response; no production city model draws an e-bike or EV ownership decision - both enter as a share of the fleet.",
+      "evidence_strength": "strong",
       "relevance": "low",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "A Vehicle type (EV, e-bike): literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "E-bike share of Australian bicycle fleet and its effect on feasible cycling distance (NCPS 2023 e-bike ownership)"
     },
     {
       "layer": "A",
@@ -93,28 +93,28 @@
     {
       "layer": "A",
       "factor": "Public-transport passes / concessions",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "A smartcard natural experiment on Dutch fares separates pass holders from single-ticket users: passengers on a monthly or annual subscription have the highest travel frequency per origin-destination pair per week - almost twice that of single-ticket users - and the estimated fare elasticities split cleanly between the frequent-user products (pay-as-you-go, student and subscription) and the occasional ones (end-of-month and single tickets). A pass converts the fare from a per-trip price to a zero marginal cost, and the behavioural response is the frequency, not the mode.",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0967070X2100055X",
+      "magnitude": "literature: subscription holders travel about 2x as often per OD pair as single-ticket users; fare elasticity differs by product class",
+      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP carry a per-person fare class or pass flag into the cost term; MATSim fare handlers (as here) price per trip and per day-cap, so a pass has to be expressed as a zero marginal fare for the holder.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "A Public-transport passes / concessions: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "Opal Gold Senior / concession share of Hunter bus and rail boardings (TfNSW patronage by card type)"
     },
     {
       "layer": "A",
       "factor": "Bicycle ownership",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "Ownership is high and use is low, and the two are only weakly coupled: the National Cycling Participation Survey (2011-2019) finds more than half of Australian households own at least one bicycle while cycling is 1.4% of daily travel; Melbourne apartment households own 0.86 bicycles on average, off-street bicycle parking more than doubles the odds a household owns one, and the correlation between household bicycles and regional cycling use is 0.238. Ownership is male, younger, more educated and higher-income; renting, apartment living and foreign origin reduce it.",
+      "source_url": "https://www.sciencedirect.com/science/article/pii/S0965856424002635",
+      "magnitude": "literature: >50% of households own a bicycle against 1.4% cycling mode share (NCPS); 0.86 bikes per apartment household; ownership-use correlation 0.24",
+      "how_leading_simulators_do_it": "ActivitySim implementations gate bike by a household bicycle flag where the survey carries it; MATSim scenarios (as here) draw an availability rate per person and let mode choice decide use; no production model estimates an ownership choice.",
+      "evidence_strength": "strong",
       "relevance": "high",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "A Bicycle ownership: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "NCPS 2023 household bicycle ownership rate for NSW regional cities and the share of owners who rode in the last week"
     },
     {
       "layer": "B",
@@ -171,41 +171,41 @@
     {
       "layer": "B",
       "factor": "Day-type differences (weekday, Saturday, Sunday)",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "Weekend travel has a different shape, not just a different volume: the sharp early-morning and mid-afternoon weekday peaks are absent on the weekend day because so few trips are to and from work, and social-recreational and personal-business travel spread more evenly across the day become the dominant influence; weekend travel raises car-pooling for both youth and adults but has no measured effect on transit use, and destination land use shifts toward residential.",
+      "source_url": "https://nhts.ornl.gov/2009/pub/Weekday%20Travel%20FAQ.pdf",
+      "magnitude": "literature: weekend day loses both commute peaks; purpose mix shifts to social/recreational; carpooling up, transit unchanged (NHTS 2009)",
+      "how_leading_simulators_do_it": "CT-RAMP and ActivitySim are weekday models by default with separate weekend estimation where funded; MATSim scenarios build a weekend day from a separate plans file and timetable, as this model does for SAT and SUN.",
+      "evidence_strength": "moderate",
       "relevance": "low",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "B Day-type differences (weekday, Saturday, Sunday): literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "NSW HTS weekend vs weekday trip rate and purpose mix for the Hunter (published table)"
     },
     {
       "layer": "B",
       "factor": "Mobility impairment",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "People with a travel-limiting disability are 8-10% of the population and make fewer trips - about 18.6% fewer overall in the Utah household survey, with the disparity largest on transit (4.21 against 5.71 trips a day) and smallest for driving alone - and they choose differently: a measured shift toward car-pooling, a lower value of travel time, and a transit share that stays low despite a 50% fare concession because access, not price, is the barrier.",
+      "source_url": "https://arxiv.org/pdf/2511.11748",
+      "magnitude": "literature: ~8-10% of the population; ~19% fewer trips; transit trips 4.21 vs 5.71 per day; shift to car passenger",
+      "how_leading_simulators_do_it": "ActivitySim implementations carry a disability flag into person type where the survey supports it; MATSim scenarios seldom represent it, and this model synthesises the flag without a consumer.",
+      "evidence_strength": "moderate",
       "relevance": "medium",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "B Mobility impairment: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "ABS SDAC 2022 share of Hunter residents with a mobility limitation and their trip rate relative to others"
     },
     {
       "layer": "C",
       "factor": "Attraction by purpose (jobs, floorspace, enrolments)",
-      "what_research_says": "Destination choice is driven jointly by attraction size and impedance: interaction rises with the amount of activity at each end and falls with distance, time and cost, and per-purpose constants and parameters are adjusted in calibration to reproduce both the distribution and the average trip length. No transferable attraction-weight magnitude was recovered this pass.",
-      "source_url": "https://en.wikibooks.org/wiki/Fundamentals_of_Transportation/Destination_Choice",
-      "magnitude": "unknown (functional dependence established; no transferable weights recovered)",
-      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP use size terms per purpose (employment by category, enrolments, floorspace) inside a logsum-based destination choice; MATSim scenarios normally fix destinations in the demand builder.",
-      "evidence_strength": "moderate",
+      "what_research_says": "The practice is settled on size terms: each destination alternative's utility is a set of impedance terms plus one size function, where the size term is total or industry-specific employment for work, school enrolment for education, and for non-work purposes only the relevant categories - retail employment for shopping, restaurant employment for meals - with households or population for social purposes. Estimation results then show purpose-specific impedance coefficients (e.g. -0.01 business to -0.11 daily shopping per minute in one reported model) around a shared size term.",
+      "source_url": "https://tfresource.org/topics/Factors_Affecting_Destination_Choice.html",
+      "magnitude": "literature: size term = log of a weighted sum of purpose-relevant employment/enrolment/households; impedance coefficients purpose-specific, roughly -0.01 to -0.11 per minute in a reported estimation",
+      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP estimate the size-term weights per purpose from the survey; MATSim demand builders (as here) declare them and validate against a job distribution.",
+      "evidence_strength": "strong",
       "relevance": "high",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "C Attraction by purpose (jobs, floorspace, enrolments): literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Estimated size-term weights by employment category for an Australian ABM (AToM / Sydney STM)"
     },
     {
       "layer": "C",
@@ -223,15 +223,15 @@
     {
       "layer": "C",
       "factor": "Constraints at both ends (capacity)",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "A doubly constrained model preserves both the origin and destination totals from trip generation while a singly constrained one preserves origins only; doubly constrained is the appropriate form where the attraction totals are more reliable than the friction factors, and the standard case for work location, where predicted flows should equal both worker totals and job totals - in activity-based practice this is implemented as shadow pricing on the work and school location choices.",
+      "source_url": "https://tfresource.org/topics/Trip_distribution",
+      "magnitude": "literature: no coefficient - a structural choice; doubly constrained (shadow-priced) is standard for work and school, singly constrained for discretionary purposes",
+      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP shadow-price work and school location to hit zone job and enrolment totals; MATSim demand builders (as here) balance arrivals iteratively.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "C Constraints at both ends (capacity): literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "Reported shadow-price convergence tolerance for ActivitySim work location (share of zones within x% of jobs)"
     },
     {
       "layer": "C",
@@ -327,15 +327,15 @@
     {
       "layer": "E",
       "factor": "Tolls and road pricing",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "Road pricing is demand-elastic at the cordon: estimates for several cities put congestion reductions in the 10 to >30% range if a small share of peak traffic shifts; Singapore's ERP removed ~25,000 peak-hour vehicles and raised average speeds ~20%; a dynamic-pricing corridor simulation moved traffic density by 10-12% across the elasticity range; and the most recent live cordon recorded a 6.3% fall in vehicles entering (about 44,000 a day) against larger projections - real responses are often below the forecast.",
+      "source_url": "https://www.ctc-n.org/technologies/road-pricing",
+      "magnitude": "literature: cordon or corridor pricing cuts affected traffic ~6-30% depending on charge and alternatives; first-year observed responses sit at the low end of forecasts",
+      "how_leading_simulators_do_it": "MATSim's roadpricing contrib and Aimsun/Visum toll models price links directly; ActivitySim carries tolls in the cost term with a VOT.",
+      "evidence_strength": "moderate",
       "relevance": "low",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "E Tolls and road pricing: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "Meta-analysis of toll elasticities of traffic volume (Australian toll roads, e.g. Sydney M-series)"
     },
     {
       "layer": "E",
@@ -353,15 +353,15 @@
     {
       "layer": "E",
       "factor": "Person attributes: age and sex",
-      "what_research_says": "Sociodemographics segment mode strongly but not uniformly: males prefer car and motorcycle, higher-income travellers prefer car while lower-income travellers use bicycle and bus, and ride-hailing use is concentrated among younger, more educated and more affluent people. No single transferable coefficient was recovered this pass.",
-      "source_url": "https://www.tandfonline.com/doi/full/10.1080/01441647.2023.2208290",
-      "magnitude": "unknown (direction established across several reviews; no central tendency recovered)",
-      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP segment mode-choice utilities by person type and age band; MATSim carries them as subpopulation-specific scoring parameters.",
+      "what_research_says": "Age and sex segment travel in direction more than in coefficient: older Australians drive, walk and use taxis and make little use of bicycles, rideshare or public transport; car use declines with age and dependence on transit rises as ability to drive falls; older women are the group most likely to use public transport; the 'gender turnaround' finds young women now travelling more than young men. No transferable coefficient was recovered.",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S2214367X14000465",
+      "magnitude": "unknown (direction established: car falls and PT/taxi/walk rise with age; women more PT; no central tendency)",
+      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP segment utilities by person type and age band; MATSim carries subpopulation-specific scoring.",
       "evidence_strength": "moderate",
       "relevance": "medium",
       "needs_research": true,
       "last_verified": "2026-09-07",
-      "query": "E Person attributes: age and sex: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Estimated age and sex coefficients in an Australian mode choice model (Sydney STM or AToM)"
     },
     {
       "layer": "E",
@@ -392,15 +392,15 @@
     {
       "layer": "E",
       "factor": "Trip purpose and tour complexity",
-      "what_research_says": "Tour complexity is common enough to matter: partially joint tours - one or more passengers dropped off or picked up mid-tour - are close to 14% of all tour types in metropolitan areas, and discretionary trips show stronger sensitivity to environment quality than mandatory ones.",
-      "source_url": "https://caee.utexas.edu/prof/bhat/ABSTRACTS/Childrens_Activity_Travel_Patterns_31July09.pdf",
-      "magnitude": "unknown (share of complex tours established at ~14%; no transferable utility magnitude recovered)",
-      "how_leading_simulators_do_it": "CT-RAMP/ActivitySim model stop frequency and intermediate stop location explicitly; MATSim inherits the chain and constrains mode changes to whole subtours.",
-      "evidence_strength": "moderate",
+      "what_research_says": "Most commute tours are simple: about 80% of US work tours fall into seven dominant patterns and the remaining 20% spread over 106 more complex ones, half of transit work tours are complex, and NHTS defines chaining as at least one intermediate stop between anchors (stays over 30 min); telecommuters make more stops per tour. Discretionary tours are more sensitive to environment than mandatory ones.",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S0966692314002415",
+      "magnitude": "literature: ~20% of work tours complex (NHTS 2009); half of transit work tours complex",
+      "how_leading_simulators_do_it": "CT-RAMP/ActivitySim model stop frequency and location explicitly; MATSim inherits the chain and moves whole subtours.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "E Trip purpose and tour complexity: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "NSW HTS share of tours with an intermediate stop by purpose (published or derivable table)"
     },
     {
       "layer": "E",
@@ -470,15 +470,15 @@
     {
       "layer": "E",
       "factor": "Ride: pairing, lifts, detour, wait for driver",
-      "what_research_says": "The ridesharing literature separates informal carpooling (cost-sharing between a driver and one or more passengers, often intra-household) from app-matched dynamic ridesharing, and finds usage concentrated among younger, more educated and more affluent people; driver and passenger decisions are governed by different determinants and must be modelled as two roles, not one. No transferable pairing-rate magnitude was recovered this pass.",
-      "source_url": "https://www.tandfonline.com/doi/full/10.1080/01441647.2023.2208290",
-      "magnitude": "unknown (role asymmetry and determinant set established; no central tendency for lift rate or detour tolerance recovered)",
-      "how_leading_simulators_do_it": "No mainstream platform models the household lift as a physical paired trip: CT-RAMP/ActivitySim represent car-passenger as a mode share with an occupancy factor, and MATSim scenarios usually teleport it. Physical pairing is what this project does that the field does not.",
-      "evidence_strength": "moderate",
+      "what_research_says": "The lift is a household object: in the Greater Montreal origin-destination surveys (1987-2003), where passengers named their driver, approximately 70% of all car-passenger trips were intra-household ridesharing, and around 15% of those trips were generated exclusively for the passenger's purpose - a serve trip that creates its own return - with that share rising over the series. Ride-hailing pooling is a separate decision with its own determinants.",
+      "source_url": "https://link.springer.com/article/10.1007/s11116-006-9101-9",
+      "magnitude": "literature: ~70% of car-passenger trips are household lifts; ~15% of those are pure serve trips generating a return",
+      "how_leading_simulators_do_it": "No mainstream platform pairs the household lift physically: CT-RAMP/ActivitySim carry car-passenger as a share with an occupancy factor, MATSim scenarios teleport it. Physical pairing is what this project does that the field does not.",
+      "evidence_strength": "strong",
       "relevance": "high",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "E Ride: pairing, lifts, detour, wait for driver: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Detour and wait tolerance for a household lift (minutes) from a chauffeuring or escort study"
     },
     {
       "layer": "E",
@@ -574,28 +574,28 @@
     {
       "layer": "E",
       "factor": "Freight train",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "The road-side effect of a freight train is the level-crossing closure, and its length is set by warning-time design as much as by the train: at investigated Australian crossings warning times could be cut by 10-40 s per activation, freight trains run below line speed and so hold the boom longer than passenger trains, and closures at peak produce queue spillback into adjacent signalised intersections; a Brisbane simulation study of seven problem crossings tested treatments on exactly these delays.",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S2213624X20300407",
+      "magnitude": "literature: closure per activation is warning time plus train passage; 10-40 s of the warning time is removable; freight closures are longer than passenger closures",
+      "how_leading_simulators_do_it": "No agent-based city model simulates freight trains as vehicles; Aimsun/Vissim represent crossings as timed signal closures, which is what this model does with change events.",
+      "evidence_strength": "moderate",
       "relevance": "low",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "E Freight train: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "ARTC Hunter Valley coal train frequency and average crossing occupation time per train at St James Road / Clyde Street"
     },
     {
       "layer": "F",
       "factor": "Route choice and re-routing",
-      "what_research_says": "In an iterative agent-based model route choice is not a one-shot assignment but an innovation operator: agents create new routes on the fly while the simulation runs, and the plan set is the choice set. No transferable route-choice magnitude was recovered this pass.",
-      "source_url": "https://matsim.org/docs/userguide/terminology.html",
-      "magnitude": "unknown (mechanism established; no central tendency recovered)",
-      "how_leading_simulators_do_it": "SUMO and Aimsun assign routes by iterated dynamic user equilibrium; MATSim's ReRoute strategy re-routes a share of agents each iteration against the previous iteration's travel times; ActivitySim delegates routing to a separate assignment step.",
+      "what_research_says": "Route choice is estimated on GPS-observed routes with path-size logit corrections for overlapping paths; length coefficients turn negative only once infrastructure attributes enter the model, and the adaptive path-size logit resolves the inconsistency of earlier forms. In iterative agent simulation the route set is co-evolved, not enumerated. No transferable share-choosing-shortest-path magnitude was recovered.",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S0191261519303510",
+      "magnitude": "unknown (mechanism established; no central tendency for the shortest-path share)",
+      "how_leading_simulators_do_it": "SUMO/Aimsun iterate dynamic user equilibrium; MATSim ReRoute co-evolves the plan set; ActivitySim delegates to assignment.",
       "evidence_strength": "moderate",
       "relevance": "medium",
       "needs_research": true,
       "last_verified": "2026-09-07",
-      "query": "F Route choice and re-routing: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Share of GPS-observed car routes equal to the shortest-time path in an urban network (a benchmark for ReRoute fidelity)"
     },
     {
       "layer": "F",
@@ -626,28 +626,28 @@
     {
       "layer": "F",
       "factor": "Ride pairing / matching",
-      "what_research_says": "Willingness to share a ride in pooled on-demand services is a distinct decision from willingness to travel by car passenger, governed by its own determinants; ride-sharing trips are usually pre-arranged through matching applications that let drivers and passengers find each other. No transferable matching-rate magnitude was recovered this pass.",
-      "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8549972/",
-      "magnitude": "unknown (determinant set established; no central tendency for match rate or acceptable detour recovered)",
-      "how_leading_simulators_do_it": "MATSim's DRT contrib and BEAM implement pooled matching with insertion heuristics; no comparable project in the field matches a HOUSEHOLD lift physically, which is what this model does.",
+      "what_research_says": "Pooled matching is measured on platforms, not households: New York taxi pooling reached a 13% match rate on an ordinary day with passengers accepting up to 400 s of delay for up to 49% cost saving, a Chengdu ride-pooling dataset reached an 86.6% match with a 0.12 detour ratio, and driver detours of ~9.2 min are reported when matching riders to drivers with nearby destinations; longer response windows produce better groups and smaller detours. None of this is a household-lift tolerance.",
+      "source_url": "https://arxiv.org/pdf/2104.13463",
+      "magnitude": "literature (platform pooling only): match rates 13-87% by service design; accepted delay ~400 s; detour ratio ~0.12",
+      "how_leading_simulators_do_it": "MATSim DRT and BEAM implement insertion-heuristic pooling; no comparable project matches a household lift physically.",
       "evidence_strength": "moderate",
       "relevance": "high",
       "needs_research": true,
       "last_verified": "2026-09-07",
-      "query": "F Ride pairing / matching: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Acceptable detour and wait for an intra-household lift (chauffeur time budget) - a household, not a platform, study"
     },
     {
       "layer": "G",
       "factor": "Network detail: lanes, capacity, speed zones, gradient",
-      "what_research_says": "Downscaled agent simulations require the network's capacities to be scaled with the population, and the scaling is not free: flowCapacityFactor should follow the sample share while storageCapacityFactor is set a little higher at samples of 10% or below, and in at least one published scenario a 1% population needed a 2% flow capacity factor to reproduce the observed travel-distance distribution.",
-      "source_url": "https://matsim.org/conferences/mum2025/abstracts/MUM25_paper_30.pdf",
-      "magnitude": "unknown for lane/capacity defaults (no transferable table recovered); scaling rule established",
-      "how_leading_simulators_do_it": "SUMO and Aimsun take lanes and capacity from the network build; MATSim takes them from the OSM conversion and scales them by the sample fraction.",
-      "evidence_strength": "moderate",
+      "what_research_says": "The capacity defaults have a benchmark: the Highway Capacity Manual base saturation flow is 1,900 passenger cars per hour per lane, with practice reporting 1,800-2,000 pcu/h/lane for a single lane and arterial capacity estimated from 1,900 per lane; Austroads capacity guidance carries the same base. Downscaled agent simulations then scale flow capacity with the sample and storage a little higher at small samples.",
+      "source_url": "https://austroads.gov.au/__data/assets/pdf_file/0023/392054/Module_3-3_Capacity_Analysis.pdf",
+      "magnitude": "literature: base saturation flow 1,900 pc/h/lane (HCM), 1,800-2,000 in practice; flow capacity scaled by sample share",
+      "how_leading_simulators_do_it": "SUMO and Aimsun take lanes and capacity from the network build; MATSim takes them from the OSM conversion with per-class defaults and scales by sample.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "G Network detail: lanes, capacity, speed zones, gradient: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Measured saturation flows at Newcastle SCATS sites (TfNSW) to replace the A.road.capacity_default convention"
     },
     {
       "layer": "G",
@@ -678,41 +678,41 @@
     {
       "layer": "G",
       "factor": "Queueing model and passing",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "MATSim's default link is a spatial FIFO queue with two parameters, flow capacity and storage capacity, and no intra-link interaction; the passing-queue extension lets faster vehicles overtake slower ones within a link so that, when walking and cycling are simulated on the road, pedestrians and cyclists do not block cars in the queue - the AToM Melbourne model documents this as the required setting for a multimodal network.",
+      "source_url": "https://www.tandfonline.com/doi/full/10.1080/15472450.2024.2372894",
+      "magnitude": "literature: no coefficient - a discipline choice; FIFO blocks a queue behind the slowest agent, PassingQ does not",
+      "how_leading_simulators_do_it": "MATSim (FIFO by default, PassingQ or holes optionally); SUMO and Aimsun use car-following models where passing is physical.",
+      "evidence_strength": "strong",
       "relevance": "low",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "G Queueing model and passing: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "Parametric calibration of the MATSim queue model (flow/storage) against observed link flows - transferable factors"
     },
     {
       "layer": "G",
       "factor": "External and through traffic",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "External and through trips are surveyed at the cordon: the object of an external cordon survey is the trips that originate outside the region and end inside it or pass through, and regional practice forecasts them with Fratar or gravity models calibrated on cordon counts and updated from census journey-to-work flows; Australian guidance (ATAP) treats the external zone system as part of model design. No transferable through-share magnitude was found - it is a property of the cordon geometry.",
+      "source_url": "https://www.atap.gov.au/tools-techniques/travel-demand-modelling/3-model",
+      "magnitude": "unknown (no transferable through-traffic share; cordon-specific by construction)",
+      "how_leading_simulators_do_it": "Every regional model carries external stations with cordon-count-calibrated I-E, E-I and E-E trips; MATSim scenarios add boundary agents in the demand builder.",
+      "evidence_strength": "moderate",
       "relevance": "medium",
       "needs_research": true,
-      "last_verified": null,
-      "query": "G External and through traffic: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "last_verified": "2026-09-07",
+      "query": "Through-traffic share at Hunter cordon stations from TfNSW classified counts or a cordon origin-destination survey"
     },
     {
       "layer": "G",
       "factor": "Incidents and weather",
-      "what_research_says": "Weather has a marginal effect on mode choice overall but a large one on cycling, and a smaller and less often significant one on walking: about a 4.0-4.4 K temperature rise, a 1 mm fall in precipitation, or a 7.1 m/s fall in wind gusts each corresponds to roughly a 10% change in cycling volume, and the effect is smaller in dense urban cores than in peripheral and rural areas. No incident literature was searched this pass.",
-      "source_url": "https://doi.org/10.3390/futuretransp3030056",
-      "magnitude": "literature (weather only): ~10% change in cycling volume per 4.0-4.4 K temperature change or ~1 mm precipitation",
-      "how_leading_simulators_do_it": "No mainstream city model represents incidents or weather in a base case; both appear as scenario overlays in SUMO and Aimsun operational studies.",
-      "evidence_strength": "moderate",
+      "what_research_says": "Weather is a measured share of non-recurring delay and a measured speed effect: snow, ice and fog alone cause 15% of non-recurring delay (FHWA), a light rain raises travel-time delay 12-20%, wet pavement cuts arterial speeds 10-25% and light rain cuts freeway speed 2-13%, heavy rain reduces capacity through visibility; incidents and work zones together are about 35% of non-recurring congestion, and rain compounds an incident's speed effect. The weather effect on cycling volume (4.0-4.4 K per 10%) is on the mode-choice row.",
+      "source_url": "https://ops.fhwa.dot.gov/weather/overview.htm",
+      "magnitude": "literature: light rain +12-20% delay, arterial speed -10 to -25% on wet pavement; weather ~15% and incidents ~35% of non-recurring delay",
+      "how_leading_simulators_do_it": "No mainstream city model represents incidents or weather in a base case; SUMO and Aimsun carry them as scenario overlays (capacity and speed factors).",
+      "evidence_strength": "strong",
       "relevance": "low",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "G Incidents and weather: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "BoM Newcastle rain-day frequency and the measured cycling-volume response on Hunter counters"
     },
     {
       "layer": "H",
@@ -795,15 +795,15 @@
     {
       "layer": "I",
       "factor": "Holdout enforcement",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "Validation compares the model against information other than that used to estimate it; the common practice is a random split into estimation and holdout samples at 80/20 or 75/25, with out-of-sample performance indices computed on the withheld part, and MPO guidance asks for calibration and validation at every model step. What the guidance does not describe is enforcement - no surveyed practice makes the holdout unreadable by construction.",
+      "source_url": "https://tfresource.org/topics/Model_calibration_and_validation",
+      "magnitude": "literature: 80/20 or 75/25 estimation/holdout splits; validation on data not used in estimation",
+      "how_leading_simulators_do_it": "Standard in estimation of choice models; conventional rather than enforced in MPO validation; not a feature of MATSim or ActivitySim tooling.",
+      "evidence_strength": "moderate",
       "relevance": "high",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "I Holdout enforcement: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "A travel model that pre-registers its holdout and enforces it structurally (raise-on-read) - comparator for this project's claim"
     },
     {
       "layer": "I",
@@ -834,28 +834,28 @@
     {
       "layer": "I",
       "factor": "Sensitivity sweeps",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "The recommended method for agent-based models is variance-based global sensitivity analysis: because ABMs are non-linear, Sobol' indices decompose the output variance into first-order and total contributions of each parameter and its interactions, sampled with Sobol' sequences over the input space; one-at-a-time sweeps are the local, linear special case and miss interactions.",
+      "source_url": "https://www.sciencedirect.com/science/article/abs/pii/S0951832013000999",
+      "magnitude": "literature: no coefficient - a method; Sobol' total-order indices over a Sobol'-sequence sample, typically hundreds to thousands of runs",
+      "how_leading_simulators_do_it": "Published MATSim and SUMO studies mostly do one-at-a-time sweeps of a few parameters; the ABM literature recommends Sobol' indices as routine practice.",
+      "evidence_strength": "strong",
       "relevance": "high",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "I Sensitivity sweeps: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "A published Sobol' sensitivity analysis of a MATSim scenario (which parameters dominated mode share)"
     },
     {
       "layer": "I",
       "factor": "ASC calibration method",
-      "what_research_says": "",
-      "source_url": "",
-      "magnitude": "unknown",
-      "how_leading_simulators_do_it": "",
-      "evidence_strength": "unknown",
+      "what_research_says": "An alternative-specific constant is the net average effect of the variables the utility omits, and calibration adjusts it iteratively - run, compare modelled to observed mode shares, move the constants, repeat until the fit is acceptable. UK TAG supplementary guidance on bespoke mode choice models is the formal statement; the risk it names is that constants absorb specification error and any new alternative has no constant to inherit.",
+      "source_url": "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/939130/tag-supplementary-bespoke-mode-choice-models.pdf",
+      "magnitude": "literature: no coefficient - an iterative adjustment to observed shares; the constant is the mean of the omitted variables",
+      "how_leading_simulators_do_it": "ActivitySim/CT-RAMP calibrate ASCs to survey shares as a routine final step; MATSim scenarios adjust mode constants by hand or, as here, declare them fixed so misfit stays visible.",
+      "evidence_strength": "strong",
       "relevance": "medium",
-      "needs_research": true,
-      "last_verified": null,
-      "query": "I ASC calibration method: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "needs_research": false,
+      "last_verified": "2026-09-07",
+      "query": "Reported ASC magnitudes (utils) for an Australian MATSim/ActivitySim city model, to bound C.asc.*"
     },
     {
       "layer": "J",
@@ -912,15 +912,15 @@
     {
       "layer": "J",
       "factor": "GTFS and OSM completeness",
-      "what_research_says": "OSM road-network data is generally of high accuracy and quality in the US and Western Europe, with community oversight against vandalism; GTFS is the interoperable timetable format precisely because timetables change too frequently to hold in OSM. No Australian-specific completeness magnitude was recovered this pass.",
-      "source_url": "https://wiki.openstreetmap.org/wiki/GTFS",
-      "magnitude": "unknown for the Newcastle extent (general OSM quality established for US/W-Europe only)",
-      "how_leading_simulators_do_it": "pt2matsim (used here), OpenTripPlanner and UrbanAccess all join a GTFS feed to an OSM network; the join quality - unmapped stops, route link sequences - is the recurring failure point.",
+      "what_research_says": "OpenStreetMap road completeness is about 83% globally (Barrington-Leigh and Millard-Ball 2017) and highest in cities; a 41,000 km Australian road network study finds OSM navigation performance correlates strongly with data quality, which itself tracks city population and ICT infrastructure. GTFS is the interoperable timetable format because timetables change too often for OSM; the join between the two (pt2matsim here) is the recurring failure point.",
+      "source_url": "https://www.tandfonline.com/doi/full/10.1080/19475683.2025.2468184",
+      "magnitude": "literature: OSM roads ~83% complete globally, higher in cities; Australian OSM quality tracks population and ICT",
+      "how_leading_simulators_do_it": "pt2matsim, OpenTripPlanner and UrbanAccess join GTFS to OSM; validators (gtfs-validator) check feed integrity but not map completeness.",
       "evidence_strength": "moderate",
       "relevance": "medium",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "J GTFS and OSM completeness: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "OSM completeness for the Hunter region against the TfNSW road segment layer (km matched)"
     },
     {
       "layer": "K",
@@ -938,15 +938,15 @@
     {
       "layer": "K",
       "factor": "Iteration count and cost",
-      "what_research_says": "The only hard statement the literature supports is the stationarity one: while innovation runs the process is not stationary, and after switch-off it is stationary only within the plans each agent already holds. No transferable benchmark iteration count was recovered this pass.",
-      "source_url": "https://matsim.org/docs/userguide/terminology.html",
-      "magnitude": "unknown (no benchmark iteration count recovered; stationarity condition established)",
-      "how_leading_simulators_do_it": "Published MATSim scenarios commonly run 100-500 iterations with an innovation-off tail; no convention is documented for a twelve-mode multimodal fit.",
+      "what_research_says": "There is no standard iteration count: the process is run until the average population score stabilises, simple car-only scenarios converge fast, complex multimodal ones sometimes do not converge by iteration 100, one published scenario converged at iteration 164 and others run 500; because the simulation is stochastic, deterministic convergence criteria do not apply.",
+      "source_url": "https://link.springer.com/article/10.1007/s11116-019-10048-0",
+      "magnitude": "literature: 100-500 iterations in published scenarios; one converged at 164; no multimodal twelve-mode benchmark",
+      "how_leading_simulators_do_it": "Published MATSim scenarios commonly run 100-500 iterations with an innovation-off tail; eqasim and BEAM likewise.",
       "evidence_strength": "moderate",
       "relevance": "high",
-      "needs_research": true,
+      "needs_research": false,
       "last_verified": "2026-09-07",
-      "query": "K Iteration count and cost: literature magnitude and how MATSim / ActivitySim / eqasim implement it"
+      "query": "Iteration counts and post-cutoff windows reported by multimodal MATSim city scenarios with PT and active modes"
     },
     {
       "layer": "K",
@@ -964,21 +964,19 @@
   ],
   "last_pass": {
     "date": "2026-09-07",
-    "head": "419b0da",
-    "rounds": 9,
-    "searches_spent": 38,
+    "head": "af7d718",
+    "rounds": 6,
+    "searches_spent": 34,
     "budget": 40,
-    "literature_halves_newly_filled": 58,
-    "note": "First pass to write the literature half. Rows still empty kept needs_research: true and their query, highest-relevance first for the next pass. Statuses are NOT stored here - they are re-read at HEAD by grep every pass.",
+    "literature_halves_newly_filled": 11,
+    "literature_halves_completed": 14,
+    "note": "Second pass. The 25 rows flagged needs_research were all searched: 11 that were empty now carry a literature half, and 14 that had a literature half but no transferable magnitude were completed where the literature holds one. Five rows keep needs_research: true because the number that would close them is a coefficient or a share the literature does not state (workplace flows, household-lift detour tolerance, shortest-path share, age/sex coefficients, cordon through-share); each carries the query that would close it. Statuses are NOT stored here - they are re-read at HEAD by grep every pass.",
     "open_gaps_highest_relevance_first": [
       "Workplace location",
-      "Bicycle ownership",
-      "Attraction by purpose (jobs, floorspace, enrolments)",
-      "Ride: pairing, lifts, detour, wait for driver",
       "Ride pairing / matching",
-      "Holdout enforcement",
-      "Sensitivity sweeps",
-      "Iteration count and cost"
+      "Person attributes: age and sex",
+      "Route choice and re-routing",
+      "External and through traffic"
     ]
   }
 }

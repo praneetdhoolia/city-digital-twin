@@ -35,15 +35,19 @@ os.makedirs(OUT, exist_ok=True)
 # Trip purposes, mapped to the B2 schema codes
 #   HW  home-work (commute)          HE  home-education
 #   HS  home-shopping                HO  home-other (personal business, social)
-#   WB  work-related business        NHB non-home-based
+#   WB  work-related business        HX  serve passenger (escort)
 # --------------------------------------------------------------------------
-PURPOSES = ['HW', 'HE', 'HS', 'HO', 'WB', 'NHB']
 
 # value of travel time savings, AUD per hour, 2026 prices
 VOT = CFG.get('C.vot.by_purpose')
 _VOT_PROP = CFG.field('C.vot.by_purpose')['sweep']['proportional']
 VOT_SWEEP = {k: (round(v * (1.0 - _VOT_PROP), 2), round(v * (1.0 + _VOT_PROP), 2))
              for k, v in VOT.items()}
+
+# The purposes ARE the keys of the value-of-time table (9.151, #147): the
+# list was a second copy of them, and it is how the HX rename broke here
+# rather than in the table it was meant to follow.
+PURPOSES = list(VOT)
 # Segment adjustments, both declared: concession/student/car-unavailable pay a
 # lower money value of time, and the car-unavailable face walk and wait without
 # an alternative.
@@ -248,9 +252,16 @@ def rows_sweep():
 
 
 def _w(name, rows):
+    # `newline=''` hands the line ending to the csv module, whose default is
+    # CRLF on every platform - so these two tables were written with CRLF, git
+    # committed them as LF, and the manifest's recorded hash stopped matching
+    # the bytes in the repository. CI caught it and a workstation could not:
+    # check_manifest reads the working tree. LF explicitly, the same fix
+    # build_manifest.py already carries for MANIFEST.csv (9.153).
     cols = list(dict.fromkeys(k for r in rows for k in r))
     with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore')
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore',
+                           lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
     print('wrote %-40s %d rows x %d cols' % (name, len(rows), len(cols)))

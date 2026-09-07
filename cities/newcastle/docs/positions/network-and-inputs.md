@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.142 · **Written against family:** `F23`
+**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
 
 ## What is built
 
@@ -33,6 +33,10 @@
 | PT supply | 4 real GTFS eras and the 2026 base (§11) | day-type calendars, scenario feeds (§10, §11) | S2b 75% delay removed, S3 BRT, S4/S5 sitings (§10) | pre-2014 timetable: era 1 is reconstructed from 2016 service (§11) |
 
 ## What is measured
+
+- **The four typed network fallbacks are declared, and three have never fired** (§9.151, #148). `build_network_layers.py` applied a bare 50 km/h, 1 lane, 1000 veh/h/lane and 1.8 m when a highway class was ABSENT from the registry's class table, and stamped the edge `imputed_rule` — the label a DECLARED class default carries. Declared now as `A.road.speed_unknown_class_kmh`, `A.road.lanes_unknown_class`, `A.road.capacity_unknown_class_veh_hr_lane` and `A.active.footway_width_unknown_class_m`, each with the sweep of the table it stands in for, and stamped `imputed_fallback`. **Measured: every one of the 15 road classes in this extract is declared, so the three road fallbacks fire on 0 of 50,182 road edges.** The footway one is the only live fallback — **830 of 40,195 active edges** carry a ROAD class the footway table does not name (motorway 328, motorway_link 147, residential 98, primary 84, secondary 66, tertiary 46, trunk 34, service 13, trunk_link 6, unclassified 5, construction 3). **No value moved and no artefact was rebuilt.**
+- **A derived file's manifest provenance is resolved from its lineage, not declared** (§9.151, #149). `build_manifest.py` follows each producing script's own referenced paths through processed intermediates to their raw ancestors, then to the sources the city descriptor declares; a derived row's `retrieved` is the latest retrieval date among those ancestor raw files, an upper bound on the vintage of the data it embodies and never a build time. A raw file with no record of its own inherits its DIRECTORY's record. **`source` 82 → 508 of 512, `source_url` 80 → 499, `retrieved` 59 → 443, `licence` 512 of 512.**
+- **What stays blank, and why that is honest** (§9.151): `params/C1_*` and `C5_calibration.json` have no raw-data ancestry — C1 is emitted from the registry alone and C5 from run outputs — and the 15 GTFS feed records carry **no retrieval date at source**, which everything built from them inherits. The raw downloads are immutable; inventing a date for one is the failure this project cannot absorb. `fetch_gtfs.py` now stamps a date on a feed it actually downloads and preserves the earlier one for a feed it skips.
 
 - pt2matsim agrees with itself on stop-to-link assignment 100% and on route link sequences 81.9–82.3% between builds; hence one build per comparison and `stop_link_fingerprint` asserted exactly (§3.5).
 - Corridor trunk: 87.5% of lanes and 97.5% of speeds observed in OSM (§2.5); with speed zones, 669 of 714 corridor edges and 25,109 of 43,112 network edges carry a regulated speed, and imputation on driven roads is 2.6% (§9.34). Still imputed on the corridor: kerbside 678, lane width 704, capacity 714 of 714 (§9.34).
@@ -65,6 +69,9 @@
 - Storage capacity above flow capacity — MATSim rejects it (§15). A GTFS-Realtime collector (§9.23). Reading a service day from a route id (§9.113). Fitting the counts as a target (#82).
 
 ## History
+
+- §9.151 — four network fallbacks declared; three have never fired
+- §9.151 — a derived file's provenance resolved from its lineage
 
 - §9.142 — C2 measured on the network that runs; the censoring rule decided
 - §9.141 — producers name artefacts; licences resolved

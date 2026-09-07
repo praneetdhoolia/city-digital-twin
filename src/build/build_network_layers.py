@@ -51,6 +51,16 @@ FOOT_WIDTH = CFG.get('A.active.footway_width_default')
 # Per-lane width where OSM carries none, which is 99.2% of edges. Was a bare
 # 3.2 in this file and in no registry at all (DECISIONS.md 9.33).
 LANE_WIDTH = CFG.get('A.road.lane_width_default_m')
+# 9.151 (#148): the value applied when a highway class is ABSENT from the
+# class table above. These were bare literals - 50, 1, 1000, 1.8 - and the
+# edge was stamped `imputed_rule`, exactly the label a DECLARED class
+# default gets, so a reader could not tell a declaration from a script's
+# choice. Declared now, and stamped `imputed_fallback` where the edge
+# carries a source column.
+SPEED_UNKNOWN = CFG.get('A.road.speed_unknown_class_kmh')
+LANES_UNKNOWN = CFG.get('A.road.lanes_unknown_class')
+CAP_UNKNOWN = CFG.get('A.road.capacity_unknown_class_veh_hr_lane')
+FOOT_WIDTH_UNKNOWN = CFG.get('A.active.footway_width_unknown_class_m')
 
 
 def _write(name, rows):
@@ -97,16 +107,20 @@ def build_roads():
         hw = t['highway']
         sl = fnum(t.get('maxspeed'))
         if sl is None:
-            sl = SPEED.get(hw, 50)
-            sl_src = 'imputed_rule'
+            sl = SPEED.get(hw, SPEED_UNKNOWN)
+            sl_src = 'imputed_rule' if hw in SPEED else 'imputed_fallback'
             imp['speed_limit_kmh'] += 1
+            if hw not in SPEED:
+                imp['speed_limit_kmh_fallback'] += 1
         else:
             sl_src = 'osm'
         oneway = t.get('oneway') in ('yes', '1', '-1', 'true')
         ln = fnum(t.get('lanes'))
         if ln is None:
-            ln = LANES.get(hw, 1)
+            ln = LANES.get(hw, LANES_UNKNOWN)
             imp['num_lanes'] += 1
+            if hw not in LANES:
+                imp['num_lanes_fallback'] += 1
         elif not oneway:
             ln = max(1.0, ln / 2.0)   # OSM lanes=total both directions
         # OSM `width` on a road is the whole CARRIAGEWAY, not one lane, so it
@@ -121,12 +135,14 @@ def build_roads():
         kerb = _kerbside(t)
         if kerb == 'unknown':
             imp['kerbside_use'] += 1
+        if hw not in CAP:
+            imp['capacity_veh_hr_lane_fallback'] += 1
         rows.append(dict(
             edge_id='w' + wid, from_node=refs[0], to_node=refs[-1], n_nodes=len(refs),
             length_m=round(L, 1), road_class=hw, num_lanes=ln, lane_width_m=lw,
             speed_limit_kmh=sl, speed_limit_source=sl_src, oneway_flag=int(oneway),
             oneway_dir=(-1 if t.get('oneway') == '-1' else 1),
-            capacity_veh_hr_lane=CAP.get(hw, 1000), kerbside_use=kerb,
+            capacity_veh_hr_lane=CAP.get(hw, CAP_UNKNOWN), kerbside_use=kerb,
             gradient_pct='', bridge=int('bridge' in t), tunnel=int('tunnel' in t),
             surface=t.get('surface', ''), name=t.get('name', ''), ref=t.get('ref', ''),
             access=t.get('access', ''), psv=t.get('psv', ''),
@@ -159,8 +175,14 @@ def build_footways():
         hw = t.get('highway', 'footway')
         width = fnum(t.get('width'))
         if width is None:
-            width = FOOT_WIDTH.get(hw, 1.8)
+            width = FOOT_WIDTH.get(hw, FOOT_WIDTH_UNKNOWN)
             imp['width_m'] += 1
+            if hw not in FOOT_WIDTH:
+                # 830 roadside paths on this extract carry a ROAD class the
+                # footway table does not name. A6 has no width source column,
+                # so the count is the record and the rule identifies the edges:
+                # highway not in A.active.footway_width_default.
+                imp['width_m_fallback'] += 1
         lit = 1 if t.get('lit') == 'yes' else (0 if t.get('lit') == 'no' else -1)
         if lit == -1:
             imp['lighting'] += 1

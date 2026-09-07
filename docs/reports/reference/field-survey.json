@@ -10,123 +10,113 @@
  "seeded_on": "2026-09-07",
  "last_pass": {
   "date": "2026-09-07",
-  "report": "20260907T1215xx_project_report.html",
+  "report": "20260907T173435_project_report.html",
+  "head": "af7d718",
   "phase": "6 - the field",
   "agent": "one researcher, per the one-agent-per-phase rule",
   "budget": 40,
-  "searches_spent": 39,
-  "rounds": 7,
+  "searches_spent": 40,
+  "rounds": 4,
   "rounds_detail": [
    {
     "round": 1,
-    "spent": 6,
-    "target": "platform gap - open-source engine repositories",
+    "spent": 10,
+    "target": "gaps 1-3 opened together: platform LICENSE files, SUMO version, the Deep Activity Model abstract, Brussels and MDPI full text, TfNSW / Virtual Singapore / MWCOG / Dhaka searches",
     "queries": [
-     "github matsim-org/matsim-libs/releases",
-     "github ActivitySim/activitysim",
-     "github eclipse-sumo/sumo/releases",
-     "github LBNL-UCB-STI/beam",
-     "github smart-fm/simmobility-prod",
-     "github mobitopp/mobitopp (404)"
+     "raw matsim-libs LICENSE (404)",
+     "raw beam LICENSE.md (404)",
+     "sumo.dlr.de Downloads",
+     "arXiv 2405.17468 abs",
+     "tandfonline 10.1080/17538947.2024.2407046 (403)",
+     "mdpi 2624-6511/9/1/4 (403)",
+     "TfNSW digital twin ABM",
+     "Virtual Singapore transport ABM validation",
+     "MWCOG Gen3 calibration validation report",
+     "Dhaka BRT MATSim preprint OR repository"
     ],
-    "added": "MATSim release cadence, ActivitySim licence, BEAM, SimMobility"
+    "added": "SUMO 1.27.1 / EPL-2.0; Deep Activity Model qualifies; MWCOG report URL; the Dhaka thesis URL; NSW Spatial Digital Twin lead"
    },
    {
     "round": 2,
-    "spent": 6,
-    "target": "platform gap - commercial platforms and the repos round 1 missed",
+    "spent": 12,
+    "target": "platform cells by another route, the candidate's full text, Brussels/MDPI alternates, CSIRO and ETH Singapore pages, the MWCOG and Dhaka PDFs, MTC / Arup NZ / Bentley searches",
     "queries": [
-     "github eclipse-sumo/sumo",
-     "github anl-polaris/polaris (404)",
-     "activitysim.github.io (redirect)",
-     "PTV Visum 2026 release",
-     "Aimsun Next 2026",
-     "mobiTopp github KIT"
+     "matsim-libs licence tab (unrendered)",
+     "beam licence tab",
+     "arXiv 2405.17468 html",
+     "Brussels title search",
+     "MDPI title search",
+     "csiro.au digital twin",
+     "ethz ab790.pdf",
+     "MWCOG Gen3 Ver1.0.4 PDF",
+     "Zannat thesis PDF",
+     "MTC Travel Model Two validation",
+     "Arup NZ Monty validation",
+     "Bentley OpenPaths release"
     ],
-    "added": "SUMO licence, PTV Visum 2026 (23 Oct 2025), Aimsun Next 26.0.0, mobiTopp org"
+    "added": "BEAM GPL v3; Deep Activity Model figures; three PDFs to disk (read without budget); NSW SDT exclusion; Monty and OpenPaths 2025 leads"
    },
    {
     "round": 3,
-    "spent": 6,
-    "target": "platform gap - releases, POLARIS, Bentley, TRANSIMS, eqasim",
+    "spent": 11,
+    "target": "platform close-out (releases pages), Brussels via VUB, Virtual Singapore and Monty official pages, LLM-lane round A (three differently phrased searches incl. the Australian sweep)",
     "queries": [
-     "ActivitySim releases",
-     "Argonne POLARIS open source licence",
-     "github eqasim-org/eqasim-java",
-     "Bentley Emme Cube OpenPaths",
-     "PTV Visum FAQs",
-     "TRANSIMS status 2025"
+     "matsim.org/about-matsim (404)",
+     "beam releases",
+     "simmobility-prod releases",
+     "kit-ifv/mobitopp releases",
+     "OpenPaths 2025 What's New",
+     "VUB research portal Brussels",
+     "sla.gov.sg Virtual Singapore (404)",
+     "transport.govt.nz About Monty (empty body)",
+     "generative/LLM agent travel demand validated counts OR HTS 2026",
+     "LLM synthetic population MATSim OR SUMO validation 2026",
+     "Sydney OR Brisbane OR Perth OR Adelaide ABM calibrated 2025-2026"
     ],
-    "added": "ActivitySim v1.5.1, POLARIS 2025.12, eqasim GPL-2.0 v2.2.0, Bentley OpenPaths editions, TRANSIMS NASA OSA v7.5 dormant"
+    "added": "BEAM v1.0.0 2022; SimMobility no releases; mobiTopp 0.3.1; OpenPaths v25.00.00; Brussels row (abstract); LLM round A: nothing new qualifying (GTA, GATSim, SIMPAT, Salvador all held); Australia: Melbourne only"
    },
    {
     "round": 4,
-    "spent": 6,
-    "target": "platform gap - remaining unknown cells",
-    "queries": [
-     "github kit-ifv/mobitopp",
-     "POLARIS 2025.12 announcement (403)",
-     "ActivitySim consortium members",
-     "sumo.dlr.de docs",
-     "aimsun.com/aimsun-next (404)",
-     "national digital twin programme"
-    ],
-    "added": "mobiTopp MIT, the 14 ActivitySim consortium agencies, SUMO EPL-2.0"
-   },
-   {
-    "round": 5,
-    "spent": 2,
-    "target": "platform gap - close-out",
-    "queries": [
-     "github matsim-org/matsim-libs",
-     "aimsun.com"
-    ],
-    "added": "Aimsun named users (11 agencies), Aimsun product line"
-   },
-   {
-    "round": 6,
-    "spent": 6,
-    "target": "lane 3 gap - LLM agents and Australia",
-    "queries": [
-     "LLM agent urban mobility validated 2026",
-     "Australian agent-based transport model validation",
-     "TfNSW/QLD TMR strategic model",
-     "new MATSim scenario 2026 calibrated",
-     "generative agents travel diary 2026",
-     "New Zealand Auckland Wellington MATSim"
-    ],
-    "added": "Wellington (excluded), Dhaka lead, Brussels lead, MDPI lead; every LLM hit already in the library"
-   },
-   {
-    "round": 7,
     "spent": 7,
-    "target": "lane 3 gap - chasing the round 6 leads",
+    "target": "Monty via Arup, two unassessed candidates, MATSim README for the licence, Virtual Singapore via NRF, LLM-lane round B (two differently phrased searches)",
     "queries": [
-     "arXiv 2507.08871 (duplicate of an existing row)",
-     "Brussels IJDE (403)",
-     "Spatial Economics Wellington",
-     "MDPI Smart Cities (403)",
-     "MATSim India/Africa/SE Asia",
-     "Dhaka BRT MATSim detail",
-     "Victoria DTP ActivitySim"
+     "arup.com NZ ABM capability (403)",
+     "arXiv 2607.00910",
+     "Springer s43762-025-00214-9 (login redirect)",
+     "raw matsim-libs README.md (silent on licence)",
+     "nrf.gov.sg Virtual Singapore (404)",
+     "digital twin city residents LLM agents evaluation real-world 2026",
+     "MATSim User Meeting 2026 programme"
     ],
-    "added": "one project row (Dhaka), four exclusions, five not-re-verified rows"
+    "added": "three exclusions (Montelago study, SUMO+MCP Austin twin, CitySEIRCast) + one conceptual-framework exclusion; MUM 2026 not yet published (28 Sep 2026); LLM round B: nothing new qualifying - stopping rule met"
    }
   ],
   "reuse": {
    "project_rows_carried_unchanged": 40,
    "project_rows_re_searched": 0,
-   "note": "All 40 stored project rows carried last_verified 2026-09-07 - inside both the 180-day facts horizon and the 90-day liveness horizon - so under the reuse rule none was searched for again. The entire budget went to the two open gaps."
+   "project_rows_updated_from_a_gap": 1,
+   "project_rows_added": 3,
+   "platform_rows_carried_unchanged": 6,
+   "platform_rows_with_unknown_cells_filled": 5,
+   "platform_rows_with_unknown_cells_still_open": 1,
+   "note": "All 41 stored project rows and 12 platform rows carried last_verified 2026-09-07 (this morning's pass) - inside both the 180-day facts horizon and the 90-day liveness horizon - so none was searched for again. The budget went to the four gaps in order, one never-seen candidate (the Deep Activity Model), and the unknown platform cells. The Dhaka row changed only because gap 3 (its paywalled fit) closed through the author's thesis."
   },
+  "pdfs_read_without_budget": [
+   "MWCOG Gen3 Ver. 1.0.4 calibration and validation report (4.5 MB) - pages 1-12 and 108-126",
+   "Zannat 2023 Leeds thesis (7 MB) - pages 1-12 and 160-179 (chapter 6 = Transport Policy 148)",
+   "Erath et al. 2012 ETH IVT working paper 790 (2.7 MB) - all 39 pages"
+  ],
   "wasted_searches": [
-   "arXiv 2507.08871 was fetched as a new candidate and turned out to be the existing DeepCAM/DeepAM Los Angeles row - a reuse-rule miss. It is now on the excluded list under its arXiv id so no later pass repeats it.",
-   "Four fetches returned 404/403 without reaching a row (anl-polaris/polaris, mobitopp/mobitopp, aimsun.com/aimsun-next, vms.taps.anl.gov POLARIS release); three were recovered by a different URL in the next round."
-  ]
+   "Seven fetches returned nothing usable: raw matsim-libs LICENSE (404), matsim.org/about-matsim (404), matsim-libs README (silent), sla.gov.sg and nrf.gov.sg Virtual Singapore (404 x2), transport.govt.nz About Monty (empty body), arup.com NZ ABM page (403). MATSim's licence and Monty stay in the gaps with new queries; do not retry these URLs.",
+   "tandfonline (Brussels), mdpi (on-demand PT) and link.springer.com (Washington DC) blocked as before; the VUB portal recovered Brussels to abstract level. Use ResearchGate / europepmc copies next time, not the publishers.",
+   "One search for an MTC ActivitySim validation report reached only the MWCOG report already found."
+  ],
+  "stopping_rule": "MET for the LLM-agent lane: round A (3 queries) and round B (2 queries), differently phrased, added no qualifying entry the library does not already hold - together with the previous pass's round 6 that is three rounds. The Australian sweep returned Melbourne only for the second pass running."
  },
  "counts": {
-  "projects": 41,
+  "projects": 44,
   "platforms": 12,
-  "excluded": 41,
+  "excluded": 46,
   "not_reverified": 34,
   "gaps": 4
  },
@@ -1236,29 +1226,113 @@
   },
   {
    "name": "Dhaka BRT agent-based microsimulation (MATSim; Transport Policy 148, 2024, 92-106)",
-   "engine": "MATSim, with an externally estimated discrete-choice mode model (incl. stated-preference data) wired into MATSim scoring",
-   "city_population": "Dhaka, Bangladesh; population not stated in the accessible sources",
-   "sample_fraction": "unknown - paywalled (ScienceDirect returned 403 this pass)",
-   "modes": "bus, human-hauler, rickshaw, walk, plus the proposed BRT; full mode list unknown",
-   "active_modes": "unknown - paywalled",
-   "pt_physical": "unknown - paywalled; the BRT is represented as a service with an access/egress structure",
-   "signals": "unknown - paywalled",
-   "freight": "unknown - paywalled",
-   "fares_pricing": "yes - the BRT pricing structure is a stated driver of simulated demand",
-   "validation_rung": "survey shares - base-model mode shares stated to comply with the JICA cordon-line survey observations",
-   "best_fit": "unknown - no numeric fit is disclosed in any source reachable this pass; the article is paywalled (ScienceDirect 403). The only quantified output read is a scenario result (BRT takes 25% of trips under multi-modal access/egress), which is not a fit.",
-   "open_source": "unknown - no code URL found",
-   "reproducible": "unknown",
-   "city_agnostic": "no - a Dhaka BRT study",
-   "status": "published 2024 (Transport Policy vol. 148); no repository or later release found",
-   "does_best": "Wires a stated-preference discrete-choice model into MATSim scoring so a service that does not yet exist can be priced - the mechanism this project would need for any S1-S6 counterfactual",
+   "engine": "MATSim (default QSim) with a jointly estimated RP-SP multinomial logit (Apollo, R) supplying the ASCs, marginal utilities of time/cost and walk/bike distance disutilities to the scoring function; 10% of agents replan (reroute, mode choice) per iteration",
+   "city_population": "Dhaka Metropolitan Region (RAJUK area), >15 million people; agents built from the DTCA/TYPSA 2019 travel-diary survey of 35,000 households (about 1% of Dhaka households), activity locations randomised within TAZ to match stated travel time",
+   "sample_fraction": "1% (flow and storage capacity factor 0.015)",
+   "modes": "base: car, bus, rickshaw, human hauler, auto-rickshaw (CNG), motorbike, walk, bike; future scenarios add BRT line 3 (grade-separated, 3-min peak / 10-min off-peak headways)",
+   "active_modes": "teleported - walk 3 km/h at 1.4x beeline, bike 8 km/h at 1.3x beeline, rickshaw 10 km/h at 2x beeline (narrow roads absent from the OSM network)",
+   "pt_physical": "no - bus (16 km/h) and human hauler (13 km/h) teleported over network-derived distance because no reliable route information exists; only the proposed BRT runs as a scheduled service on its own dedicated links",
+   "signals": "not stated (OSM network, default MATSim queue model)",
+   "freight": "no",
+   "fares_pricing": "yes - per-km costs in scoring: bus 1.52, rickshaw 10, human hauler 2, auto-rickshaw 8, car 6, motorcycle 6 BDT/km; BRT tested as 1.52 BDT/km distance fare vs a 900 BDT monthly flat fare",
+   "validation_rung": "survey shares - simulated modal share vs the 2019 travel diary and the 2014 JICA inner-cordon survey; departure-time density and travel-time distribution compared graphically",
+   "best_fit": "Thesis Table 6-6 (observed / simulated / JICA 2014 passenger modal share, %): bus+human hauler 49.2 / 53.0 / 68.4; NMT (walk/rickshaw/bike) 34.8 / 16.0 / 13.4; car 3.7 / 11.0 / 8.2; auto-rickshaw 7.0 / 17.0 / 8.4; motorbike 5.3 / 3.0 / 1.6 - the authors accept a ~19 pp NMT and ~10 pp auto-rickshaw gap because the JICA cordon survey sits on their side; departure-time and travel-time curves 'very good agreement' (no statistic)",
+   "open_source": "partly - github.com/khzannat/dhaka-matsim-example-project holds the network generation (OSM), the BRT network and schedules; activity plans withheld for data privacy",
+   "reproducible": "partial - code public, survey plans private",
+   "city_agnostic": "no - a Dhaka BRT study; the RP-SP-into-scoring pattern is generic",
+   "status": "published 2024 (Transport Policy vol. 148); thesis September 2023; no later release found",
+   "does_best": "Wires a stated-preference discrete-choice model into MATSim scoring so a service that does not yet exist can be priced, and states plainly which observed-vs-simulated gaps it chose to accept and why - the mechanism this project would need for any S1-S6 counterfactual",
    "sources": [
+    "https://etheses.whiterose.ac.uk/id/eprint/34977/1/Zannat_thesis.pdf",
     "https://www.sciencedirect.com/science/article/pii/S0967070X23003426",
     "https://trid.trb.org/View/2317683"
    ],
-   "lane": "3-platform-pass-2026-09-07",
+   "lane": "3",
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
+   "reused": false
+  },
+  {
+   "name": "Deep Activity Model - generative activity-chain synthesis + LASim, Los Angeles County (UCLA Mobility Lab; arXiv 2405.17468 v3, Aug 2026)",
+   "engine": "Transformer generative model of daily activity chains conditioned on socio-demographic and household attributes, plus a location module assigning zones; demand fed to LASim, 'a large-scale, agent-based multimodal transportation simulation designed for the Greater LA area' (engine behind LASim not named in the text read)",
+   "city_population": "Los Angeles County (evaluation on a 1 million-agent population sample); transfers to California (CHTS 2010-12, 53,823 chains), Puget Sound (2017 PSRC travel study, 7,791 chains) and Mexico City (2017 OD survey, 185,233 chains)",
+   "sample_fraction": "1,000,000 agents of LA County (fraction not stated)",
+   "modes": "'multimodal' stated; the mode list is not enumerated in the text read",
+   "active_modes": "unknown",
+   "pt_physical": "unknown",
+   "signals": "unknown",
+   "freight": "unknown",
+   "fares_pricing": "no",
+   "validation_rung": "road link counts (Caltrans PeMS on the I-405 corridor) + benchmark against the SCAG activity-based model",
+   "best_fit": "vs SCAG ABM: activity-location cosine similarity 0.997, network VMT MAPE 4.97%; vs Caltrans PeMS on I-405: traffic-volume MAPE 5.85%, speed MAPE 4.36%; activity-generation JSD vs survey: chain length 0.002, duration 0.002, start 0.003, end 0.003, type 0.005",
+   "open_source": "no code URL or data-availability statement in the text read",
+   "reproducible": "partial - trained on the public 2017 NHTS (160,831 chains) and fine-tuned on regional surveys",
+   "city_agnostic": "yes in intent - one model trained nationally and fine-tuned per region (three regions shown)",
+   "status": "active - v1 24 May 2024, v3 12 August 2026; authors UCLA Mobility Lab, University of Louisville, Texas A&M",
+   "does_best": "A single nationally trained activity-chain generator re-tuned on a thin regional survey and scored on corridor detectors - the pattern for deriving a Hunter activity layer from a national HTS where the regional sample is thin; sibling of the DeepCAM/DeepAM household-coordination row",
+   "sources": [
+    "https://arxiv.org/abs/2405.17468",
+    "https://arxiv.org/html/2405.17468"
+   ],
+   "lane": "3",
+   "last_verified": "2026-09-07",
+   "verified_in": "20260907T173435_project_report",
+   "reused": false
+  },
+  {
+   "name": "MWCOG / TPB Gen3 ActivitySim model, Ver. 1.0.4 - metropolitan Washington DC (RSG + Baseline Mobility Group, calibration and validation report 25 Aug 2025)",
+   "engine": "ActivitySim (transferred from SEMCOG, re-estimated on the 2017/2018 Regional Travel Survey) for resident demand; highway and transit network processing, skimming and trip assignment inherited from the aggregate Gen2 model (assignment tool not named on the pages read)",
+   "city_population": "TPB planning area + surrounding jurisdictions; synthetic population 7,250,066 persons in 2,790,357 households (survey-expanded 7,216,700 / 2,708,349); base year 2018",
+   "sample_fraction": "100% ('Sample Rate: 100%' in the calibration summary)",
+   "modes": "tour and trip mode choice with auto (by occupancy), transit by access mode and line-haul (Metrorail, commuter rail, bus), walk and bike nests; school bus; AV ownership placeholder",
+   "active_modes": "not physically simulated (skim-based ABM)",
+   "pt_physical": "no - transit assignment of demand matrices; validated on operator boardings",
+   "signals": "no",
+   "freight": "not in the ActivitySim resident model; commercial/truck demand is a Gen2 auxiliary component (not read)",
+   "fares_pricing": "transit pass subsidy model (estimated, MTC subsidy distribution), free-parking model (transferred from MTC), auto operating cost sensitivity tested; tolls not read",
+   "validation_rung": "survey shares + road link counts + transit ridership counts (2017/2018 RTS, 2019 ACS, 7,889 directional count links, HPMS VMT, WMATA/MARC/VRE/NTD boardings)",
+   "best_fit": "Highway: estimated/observed volume 1.02 on 7,889 count links (freeway 0.99, major arterial 1.05, minor arterial 1.03, collector 0.85, expressway 0.91); VMT vs HPMS 0.99 (DC 0.89); %RMSE 43.0% overall (freeway 21.5%, major arterial 37.6%, minor arterial 50.5%, collector 77.6%, expressway 38.7%; 60,000+ vpd links 19.7% against a 19% standard); over half of screenlines within 15%, two thirds within 20%. Transit: Metrorail 0.97 (624,717 vs 641,227), commuter rail 0.96 (MARC 1.03, VRE 0.81), all bus 1.06 (Metrobus 0.94), total transit 1.01 (1,288,577 vs 1,273,449) against a +/-9% acceptable / +/-3% preferable standard; 16 of 21 Metrorail station groups within their +/-20-25% standard; commuter-rail station boardings 'a lot of variability'. Demand: tours/person 1.05 vs 1.20 surveyed, trips/person 2.73 vs 3.01, VMT 104.9M vs 101.9M",
+   "open_source": "ActivitySim BSD-3-Clause; the MWCOG implementation, reports and user guide are public on mwcog.org; inputs are agency data",
+   "reproducible": "partial (agency networks and survey)",
+   "city_agnostic": "framework yes; implementation no",
+   "status": "active - Ver. 1.0.4 report August 2025; 'ready for use with COG/TPB's production work', Phase 3 usability testing under way for the Visualize 2050 LRTP",
+   "does_best": "Publishes every rung with numbers AND the acceptance standard each number is judged against (FDOT / FSUTMS-Cube: +/-5% VMT areawide, +/-9% transit by mode, +/-20% station groups) - the external yardstick this project's 10% and 20% gates have no published equivalent of",
+   "sources": [
+    "https://www.mwcog.org/assets/1/6/Gen3_Ver1.0.4_Model_Calibration_and_Validation_Final.pdf",
+    "https://www.mwcog.org/assets/1/6/Gen3_Model_Calibration_and_Validation_Report.pdf",
+    "https://www.mwcog.org/assets/1/6/Gen3_Model_Phase_2_Model_User_Guide_final.pdf"
+   ],
+   "lane": "agency",
+   "last_verified": "2026-09-07",
+   "verified_in": "20260907T173435_project_report",
+   "reused": false
+  },
+  {
+   "name": "Brussels agent-based traffic model from aggregated cellphone matrices (Li, Rombaut, Vanhaverbeke; Int. J. Digital Earth 17(1) 2407046, Sep 2024)",
+   "engine": "MATSim; systematic ABM-generation algorithm from social-spatial data plus aggregated cellphone OD matrices (no travel survey), with external demand and multiple destinations per activity type",
+   "city_population": "Brussels, Belgium; population and agent count not stated in the abstract (full text unread - Taylor & Francis 403 despite CC BY-NC)",
+   "sample_fraction": "unknown",
+   "modes": "unknown (abstract does not enumerate)",
+   "active_modes": "unknown",
+   "pt_physical": "unknown",
+   "signals": "unknown",
+   "freight": "unknown",
+   "fares_pricing": "unknown",
+   "validation_rung": "survey shares + road link counts (abstract: validated 'against real-world data regarding mode share, distance share, travel time distribution and traffic counts')",
+   "best_fit": "unknown - figures are in the full text; the search index reports mode share and mode-distance share within 5% plus a count-station comparison, unverified",
+   "open_source": "unknown (paper CC BY-NC; no code URL in the abstract)",
+   "reproducible": "claimed - 'the algorithm demonstrates significant transferability to other regions' from ubiquitous inputs",
+   "city_agnostic": "claimed by design",
+   "status": "published 25 September 2024; VUB research portal entry",
+   "does_best": "Builds a validated MATSim demand with no household travel survey at all, from aggregated cellphone matrices - the route to the external and visitor demand this project derives from the 2011 journey-to-work flow",
+   "sources": [
+    "https://researchportal.vub.be/en/publications/agent-based-digital-traffic-model-generation-for-regions-facing-d/",
+    "https://doi.org/10.1080/17538947.2024.2407046",
+    "https://ui.adsabs.harvard.edu/abs/2024IJDE...1707046L/abstract"
+   ],
+   "lane": "1",
+   "last_verified": "2026-09-07",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   }
  ],
@@ -1266,17 +1340,18 @@
   {
    "name": "MATSim (Multi-Agent Transport Simulation)",
    "engine": "Java; co-evolutionary iterative agent-based simulation - demand, mobsim (queue-based traffic flow), replanning, iteration control, analysis, all modular and replaceable",
-   "licence": "unknown - not stated on the repository landing page or releases page fetched this pass (individual scenario repositories in this library record GPL-2.0 for their own code)",
+   "licence": "unknown - four fetches this pass did not reach it: raw LICENSE on master (404), the GitHub licence tab (not rendered), matsim.org/about-matsim (404), README.md (silent). Scenario repositories built on it record GPL-2.0 for their own code.",
    "last_release": "MATSim 2026 (Spring), released 10 April 2026; annual April cadence since 2020 (2025 Spring 11 Apr 2025, 2024 Spring 13 Apr 2024)",
    "city_agnostic": "yes by design - a toolbox, not a city model; every city is a scenario built on it",
    "does_best": "The reference open engine for large-scale agent-based transport simulation: a replaceable-component architecture in which route, mode, departure time and plan memory are all co-evolved to a stochastic user equilibrium",
-   "who_runs_on_it": "Berlin, Leipzig, Kelheim, Lausitz, Metropole Ruhr, Duesseldorf, Dresden, Hannover, Kyoto, Mexico City, Santiago de Chile, Gauteng, New York City (NYU C2SMART), Vienna (AIT), Melbourne (AToM), Tyne and Wear (Newcastle University), Dhaka, Infrastructure Victoria MABM, Wellington NZ (in build) - all from this library's project rows",
+   "who_runs_on_it": "Berlin, Leipzig, Kelheim, Lausitz, Metropole Ruhr, Duesseldorf, Dresden, Hannover, Kyoto, Mexico City, Santiago de Chile, Gauteng, New York City (NYU C2SMART), Vienna (AIT), Melbourne (AToM), Tyne and Wear (Newcastle University), Dhaka, Brussels, Infrastructure Victoria MABM, Wellington NZ (in build) - all from this library's project rows",
    "sources": [
     "https://github.com/matsim-org/matsim-libs",
-    "https://github.com/matsim-org/matsim-libs/releases"
+    "https://github.com/matsim-org/matsim-libs/releases",
+    "https://raw.githubusercontent.com/matsim-org/matsim-libs/master/README.md"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   },
   {
@@ -1292,22 +1367,23 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": false
+   "reused": true
   },
   {
    "name": "SUMO (Simulation of Urban MObility)",
    "engine": "C++; microscopic, continuous, space-continuous car-following traffic simulation with intermodal (pedestrian, bicycle, public transport) support",
-   "licence": "Eclipse Public License 2.0, with a secondary GPL-2.0-or-later option",
-   "last_release": "unknown - the GitHub releases page carries no releases and the documentation states it 'always refers to the latest development version'",
+   "licence": "Eclipse Public License 2.0, 'with GPL v2 or later as a secondary license option using only open source libraries'",
+   "last_release": "SUMO 1.27.1, release date 25 June 2026 (sumo.dlr.de downloads page)",
    "city_agnostic": "yes by design - a simulator plus a large scenario-creation toolset, no city built in",
    "does_best": "Microscopic vehicle physics at network scale: where MATSim resolves a day of choices, SUMO resolves a second of traffic, and it is the engine every LLM-driven traffic-control agent of 2025-26 drives",
    "who_runs_on_it": "Developed mainly at the DLR Institute of Transportation Systems; no city or agency named on the pages fetched this pass. This library's excluded list records six LLM/SUMO control frameworks and a MobiVerse (Westwood LA) case study built on it.",
    "sources": [
     "https://github.com/eclipse-sumo/sumo",
+    "https://sumo.dlr.de/docs/Downloads.php",
     "https://sumo.dlr.de/docs/index.html"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   },
   {
@@ -1326,7 +1402,7 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": false
+   "reused": true
   },
   {
    "name": "POLARIS (Argonne National Laboratory)",
@@ -1343,54 +1419,58 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": false
+   "reused": true
   },
   {
    "name": "BEAM (Behavior, Energy, Autonomy, and Mobility - LBNL / UC Berkeley)",
    "engine": "Scala/Java on top of MATSim; within-day agent decisions (mode, parking, charging) rather than between-iteration replanning only",
-   "licence": "unknown - a LICENSE file is present in the repository but the type is not stated on the landing page fetched this pass",
-   "last_release": "unknown - no release listed on the page fetched this pass",
+   "licence": "GPL v3 (LICENSE tab: 'GPL v3 License'; copyright 2024 The Regents of the University of California through LBNL, Alliance for Sustainable Energy through NREL, Simrise LLC, GraphHopper GmbH, TU Dortmund, Johannes Hiry)",
+   "last_release": "BEAM v1.0.0, 31 October 2022 (last tagged release; develop branch at 17,641 commits when read - the code is active, the release cadence is not)",
    "city_agnostic": "partly - 'built from scratch while relying only on free and publicly available data', but each region is its own scenario",
    "does_best": "Within-day dynamic user equilibrium: agents re-decide inside the simulated day, and the model is coupled to vehicle-energy and power-grid models - the electric half of the mobility question",
    "who_runs_on_it": "San Francisco Bay Area (this library's project row); a New York City case study is named in the repository",
    "sources": [
-    "https://github.com/LBNL-UCB-STI/beam"
+    "https://github.com/LBNL-UCB-STI/beam",
+    "https://github.com/LBNL-UCB-STI/beam/releases",
+    "https://github.com/LBNL-UCB-STI/beam?tab=License-1-ov-file"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   },
   {
    "name": "SimMobility (MIT / Singapore-MIT Alliance for Research and Technology)",
    "engine": "C++; three coupled time horizons - long-term (land use, vehicle ownership), mid-term (activity and day-level travel), short-term (second-by-second driving)",
    "licence": "SIMMOBILITY Version Control License (a project-specific licence, not a standard open licence)",
-   "last_release": "unknown - no release listed; 11,022 commits on master at the time of reading",
+   "last_release": "none - the releases page states 'There aren't any releases here' (development on master, 11,022 commits)",
    "city_agnostic": "unknown - not stated on the pages fetched this pass",
    "does_best": "An explicit long / mid / short-term split, so a vehicle-ownership or land-use change and a second-by-second traffic effect live in the same model",
    "who_runs_on_it": "Singapore (this library's project row); developed through MIT and SMART",
    "sources": [
-    "https://github.com/smart-fm/simmobility-prod"
+    "https://github.com/smart-fm/simmobility-prod",
+    "https://github.com/smart-fm/simmobility-prod/releases"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   },
   {
    "name": "mobiTopp (Karlsruhe Institute of Technology, Institute for Transport Studies)",
    "engine": "Java; agent-based travel demand simulation over a full week per agent, with actiTopp generating week activity schedules",
    "licence": "MIT",
-   "last_release": "unknown - no release or tag date shown on the repository page fetched this pass",
+   "last_release": "mobiTopp 0.3.1, released 16 May (year not shown on the releases page; the release adds a CITATION.cff)",
    "city_agnostic": "partly - example projects (mobitopp-rastatt) exist to start a new region",
    "does_best": "A seven-day activity horizon per agent, so weekly rhythm and day-to-day variation are in the model rather than split into separate day types; extensions cover parcel/CEP last-mile delivery (logiTopp) and MaaS",
    "who_runs_on_it": "Stuttgart and Karlsruhe (this library's not-re-verified row); Rastatt as the published starter example. Couplings published to MATSim, PTV Visum and FleetPy.",
    "sources": [
-    "https://github.com/kit-ifv/mobitopp",
+    "https://arxiv.org/pdf/1707.05050",
     "https://github.com/ifv-mobitopp/mobitopp-matsim-coupling",
     "https://github.com/kit-ifv/logitopp",
-    "https://arxiv.org/pdf/1707.05050"
+    "https://github.com/kit-ifv/mobitopp",
+    "https://github.com/kit-ifv/mobitopp/releases"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   },
   {
@@ -1409,7 +1489,7 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": false
+   "reused": true
   },
   {
    "name": "PTV Visum / PTV Vissim (PTV Group, Umovity)",
@@ -1426,7 +1506,7 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": false
+   "reused": true
   },
   {
    "name": "Aimsun Next / Aimsun Live (Aimsun)",
@@ -1444,23 +1524,24 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": false
+   "reused": true
   },
   {
    "name": "Bentley OpenPaths (EMME, CUBE, CityPhi, AGENT, DYNAMEQ)",
    "engine": "Proprietary suite: EMME (regional/national demand forecasting), CUBE (multimodal predictive modelling), AGENT (activity-based), DYNAMEQ (dynamic traffic assignment), CityPhi (visualisation)",
    "licence": "Commercial/proprietary - two editions, OpenPaths Advanced (EMME + CUBE + CityPhi) and OpenPaths Ultimate (adds AGENT and DYNAMEQ)",
-   "last_release": "unknown - no version or release date stated on the pages read this pass",
+   "last_release": "OpenPaths 2025 (v25.00.00) and OpenPaths 2025 Update 1 (v25.01.00) - release dates not stated on the pages read; 2025 adds AGENT car and schedule coordinators, CUBE turn-penalty editor and scenario comparison, EMME scenario access in Flow expressions and 20,000-zone applications",
    "city_agnostic": "yes by design - general forecasting applications sold to agencies worldwide",
    "does_best": "The agency default: a single licensed stack in which the strategic four-step model, the activity-based model and the dynamic assignment all coexist, so an ABM can be adopted without abandoning the existing forecasting chain",
    "who_runs_on_it": "Public, private and education sectors; no agency is named on the pages read this pass",
    "sources": [
-    "https://www.bentley.com/en/products/product-line/mobility-simulation-and-analytics/cube",
+    "https://docs.bentley.com/LiveContent/web/OpenPaths-v2025/Help/en/topics/OpenPaths/Whats_New_OpenPaths.html",
     "https://en.virtuosity.com/openpaths",
-    "https://tfresource.org/topics/Software"
+    "https://tfresource.org/topics/Software",
+    "https://www.bentley.com/en/products/product-line/mobility-simulation-and-analytics/cube"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
+   "verified_in": "20260907T173435_project_report",
    "reused": false
   }
  ],
@@ -1527,8 +1608,12 @@
   },
   {
    "name": "MATSim Singapore (ETH FCL, Erath et al.)",
-   "reason": "ETH project page has no validation claim; Erath report ab790.pdf returned 503 twice",
-   "source": "https://www.ivt.ethz.ch/en/research/matsim/singapore.html"
+   "reason": "Working paper 790 (Erath, Fourie, van Eggermond, Ordonez, Chakirov, Axhausen, June 2012) reached this pass: MATSim, ~4.3M synthetic persons, 25% sample simulated (chosen 'to prevent artefacts when simulating public transport', bus capacity 72 scaled to 21), car + PT only, GTFS schedule with bus-car interaction and bus lanes, ERP on 69 gantries, freight/Johor/tourist trips from LTA matrices; traffic lights NOT included (signal plans proprietary). Section 8.2: 'no steady state solution that would allow meaningful validation was available' - the validation (HITS distances, 200 LTA count stations, taxi speeds) was planned, not done. Stays excluded: no validation claim.",
+   "sources": [
+    "https://ethz.ch/content/dam/ethz/special-interest/baug/ivt/ivt-dam/vpl/reports/701-800/ab790.pdf",
+    "https://www.ivt.ethz.ch/en/research/matsim/singapore.html"
+   ],
+   "excluded_on": "2026-09-07"
   },
   {
    "name": "Sydney Trains network-growth ABM (Lahoorpoor & Levinson 2024)",
@@ -1729,6 +1814,48 @@
     "https://arxiv.org/abs/2507.08871"
    ],
    "excluded_on": "2026-09-07"
+  },
+  {
+   "name": "NSW Spatial Digital Twin (DCS Spatial Services + CSIRO Data61, with Transport for NSW)",
+   "reason": "A 3D/4D visualisation platform for Western Sydney (buildings, roads, utilities, live transport feeds on TerriaJS) plus a Data61 AI engine that predicts Sydney congestion two hours ahead from Opal, GPS and signal data. No agent-based travel model and no published accuracy figure on the pages read. This is the Transport for NSW 'digital twin' the agency-programme gap asked about.",
+   "sources": [
+    "https://www.csiro.au/en/research/technology-space/robotics/digital-twin",
+    "https://www.csiro.au/en/news/all/articles/2020/march/nsw-digital-twin-launches"
+   ],
+   "excluded_on": "2026-09-07"
+  },
+  {
+   "name": "Calibrating the Instrument: Controllability of an LLM-Driven Synthetic Population (Degli Esposti; arXiv 2607.00910, Jul 2026)",
+   "reason": "Fictional municipality ('Montelago'), 120 synthetic personas, internal-consistency tests only - not a real city and no observed data.",
+   "sources": [
+    "https://arxiv.org/abs/2607.00910"
+   ],
+   "excluded_on": "2026-09-07"
+  },
+  {
+   "name": "LLM-Powered Digital Twins for Interactive Urban Mobility Simulation: Integrating SUMO with AI Agents (OpenReview vEZtmnqmtO; NeurIPS 2025 workshop; Austin TX case)",
+   "reason": "An LLM (OpenAI Agents SDK + MCP) that translates natural language into SUMO configuration and TraCI commands; Austin is a demonstration, no validation claim in the abstract. Same class as the TrafficGPT / ChatSUMO exclusions.",
+   "sources": [
+    "https://openreview.net/forum?id=vEZtmnqmtO",
+    "https://neurips.cc/virtual/2025/136621"
+   ],
+   "excluded_on": "2026-09-07"
+  },
+  {
+   "name": "CitySEIRCast - agent-based city digital twin for pandemic analysis (medRxiv 2023.12.22.23300481)",
+   "reason": "Epidemic ABM, not a travel-demand model.",
+   "sources": [
+    "https://www.medrxiv.org/content/10.1101/2023.12.22.23300481.full.pdf"
+   ],
+   "excluded_on": "2026-09-07"
+  },
+  {
+   "name": "Toward LLM-Agent-Based Modeling of Transportation Systems: A Conceptual Framework (arXiv 2412.06681)",
+   "reason": "A conceptual framework paper; no city, no simulation run, no validation.",
+   "sources": [
+    "https://arxiv.org/pdf/2412.06681"
+   ],
+   "excluded_on": "2026-09-07"
   }
  ],
  "not_reverified": [
@@ -1793,11 +1920,6 @@
    "not_reverified_on": "2026-09-07"
   },
   {
-   "name": "MWCOG Gen3 ActivitySim calibration and validation report (Aug 25 2025)",
-   "note": "PDF arrived on disk via an unidentified redirect (URL not recorded); a full ActivitySim validation report exists for Washington DC",
-   "not_reverified_on": "2026-09-07"
-  },
-  {
    "name": "MATSim Tokyo, Seoul, Shanghai, Beijing (MATSim book chapters)",
    "note": "Only the search index names them; book PDF not fetched",
    "not_reverified_on": "2026-09-07"
@@ -1819,7 +1941,7 @@
   },
   {
    "name": "ActivitySim implementations at MTC, ARC, PSRC (ActivitySim), SEMCOG, Oregon, MAG, Met Council, SFCTA, TransLink, Victoria DTP",
-   "note": "Consortium membership read from activitysim.github.io / search index; per-implementation validation pages not fetched (Zephyr and AMPO listing pages returned 404)",
+   "note": "Consortium membership read earlier; one 'MTC Travel Model Two ActivitySim validation' search this pass returned only the MWCOG Gen3 reports (now a project row) and generic TMIP guidance - no MTC, ARC or SEMCOG validation report URL was reached.",
    "not_reverified_on": "2026-09-07"
   },
   {
@@ -1859,7 +1981,7 @@
   },
   {
    "name": "Queensland / Brisbane / TMR, Transport for NSW digital twin, Perth / Adelaide / Canberra agent-based models",
-   "note": "Queries were issued but did not execute (session WebSearch budget 200/200 reached). Earlier combined queries for these cities returned only Melbourne results.",
+   "note": "Transport for NSW searched this pass: the only 'digital twin' found is the NSW Spatial Digital Twin (now excluded - visualisation + AI congestion prediction, no ABM); the Sydney/Brisbane/Perth/Adelaide sweep again returned only Melbourne (AToM). Queensland TMR, Perth, Adelaide and Canberra remain unqueried individually.",
    "not_reverified_on": "2026-09-07"
   },
   {
@@ -1868,18 +1990,8 @@
    "not_reverified_on": "2026-09-07"
   },
   {
-   "name": "Dhaka BRT MATSim paper full text (Transport Policy 148, 2024)",
-   "note": "ScienceDirect returned 403; the project row is written from the abstract-level and TRID material only, so sample fraction, modes, signals, freight and every fit figure stay unknown.",
-   "not_reverified_on": "2026-09-07"
-  },
-  {
-   "name": "Agent-based digital traffic model generation for data-scarce regions from aggregated cellphone data - Brussels (Int. J. Digital Earth, 2024)",
-   "note": "Taylor & Francis returned 403. Search index reports a validation approach of mode share and mode-distance share within 5% plus count-station comparison - unverified, so no row was written.",
-   "not_reverified_on": "2026-09-07"
-  },
-  {
    "name": "AI-Powered Evaluation of On-Demand Public Transport: A Hybrid Simulation Approach (MDPI Smart Cities 9(1) 4)",
-   "note": "MDPI returned 403; surfaced in the Australian sweep as a possible Melbourne fixed-route vs on-demand case study. Unread.",
+   "note": "MDPI returned 403 again; the search index now says: agent-based simulation on the Commuter platform with Autodesk InfraWorks, STM neural network trained on smartcard data, on-demand buses cut passenger trip time 30% and lifted occupancy 8% to >50% in a companion study (Sustainability 16(19) 8477). City not identified; a ResearchGate copy exists (399081129) but was not fetched. Not a city twin with a fit claim as far as read.",
    "not_reverified_on": "2026-09-07"
   },
   {
@@ -1899,41 +2011,56 @@
   },
   {
    "name": "Arup nationwide agent-based model for New Zealand",
-   "note": "Named in a search snippet only ('ARUP uses MATSim ... to build a nation-wide ABM in New Zealand'); no source with a validation claim reached.",
+   "note": "Monty, the New Zealand National Transport Model (Ministry of Transport + Arup, MATSim, started 2019; case studies: Auckland/Wellington road pricing, flood closures, second harbour crossing) - the search index describes it but neither source could be read: transport.govt.nz 'About Monty' returned an empty body and the Arup project page returned 403. No validation claim reached.",
+   "not_reverified_on": "2026-09-07"
+  },
+  {
+   "name": "Virtual Singapore (NRF / SLA national 3D platform)",
+   "note": "Both official pages returned 404 (sla.gov.sg and nrf.gov.sg); the search for 'Virtual Singapore transport simulation validation' returned only the ETH MATSim Singapore paper (excluded, read this pass) and SimMobility (a project row). Whether the platform itself carries any travel simulation is unread.",
+   "not_reverified_on": "2026-09-07"
+  },
+  {
+   "name": "Synthetic population and urban mobility modeling using open and publicly available data - a Washington DC COVID case study (Computational Urban Science, 2025)",
+   "note": "Springer returned a login redirect (303 to idp.springer.com); surfaced in the LLM-lane sweep as a possible open-data city model with a validation claim. Unread.",
+   "not_reverified_on": "2026-09-07"
+  },
+  {
+   "name": "Synthesising Activity Participations and Scheduling with Deep Generative Machine Learning (arXiv 2501.10221)",
+   "note": "Surfaced in the LLM-lane sweep (deep generative, not LLM; references MATSim); not fetched - budget spent.",
    "not_reverified_on": "2026-09-07"
   }
  ],
  "gaps": [
   {
-   "gap": "platform licence and release dates unresolved",
-   "detail": "The platform table now exists (12 rows) but six cells could not be filled from the pages fetched: MATSim's licence, BEAM's licence and last release, SUMO's current version and release date, SimMobility's last release and city-agnosticism, mobiTopp's last release, and Bentley OpenPaths' version. Each is a single targeted fetch of a LICENSE file or a downloads page.",
-   "query": "fetch github.com/matsim-org/matsim-libs/blob/master/LICENSE ; github.com/LBNL-UCB-STI/beam/blob/develop/LICENSE.md ; sumo.dlr.de download page for the current version number ; bentley.com OpenPaths release notes",
-   "opened": "2026-09-07"
+   "gap": "platform licence and release dates - residual cells",
+   "detail": "Nine of the twelve cells named last pass are closed (SUMO 1.27.1 / EPL-2.0, BEAM GPL v3 / v1.0.0 2022, SimMobility no releases, mobiTopp 0.3.1, OpenPaths 2025 Update 1). Still open: MATSim's own licence (four fetches failed - raw LICENSE 404, licence tab unrendered, matsim.org/about-matsim 404, README silent), the year of mobiTopp 0.3.1, the dates of OpenPaths 2025 / Update 1, and whether SimMobility is city-agnostic by design.",
+   "query": "fetch https://github.com/matsim-org/matsim-libs/blob/master/matsim/pom.xml (licenses block) OR https://matsim.org/docs/ licensing page ; https://github.com/kit-ifv/mobitopp/releases/tag/0.3.1 ; bentleysystems.service-now.com OpenPaths 2025 Update 1 announcement date",
+   "opened": "2026-09-07 (narrowed this pass)"
   },
   {
-   "gap": "agency programmes as programmes",
-   "detail": "The commercial PLATFORMS are now surveyed, but the agency PROGRAMMES that commission city twins are not: Transport for NSW's own digital twin, Singapore's Virtual Singapore, the UK National Digital Twin Programme's transport arm, Arup's New Zealand nationwide ABM, and the US MPO activity-based model calibration/validation reports (MWCOG Gen3 remains in not_reverified with no citable URL). These are where a validation report with published fit figures would actually be found.",
-   "query": "Transport for NSW digital twin programme; Virtual Singapore transport model; MWCOG Gen3 ActivitySim calibration validation report PDF; MTC/ARC/PSRC ActivitySim validation report 2025",
-   "opened": "2026-09-07"
+   "gap": "agency programmes as programmes - the ones not reached",
+   "detail": "MWCOG Gen3 is now a project row with the full ladder and its acceptance standards; Transport for NSW resolves to the NSW Spatial Digital Twin (excluded, no ABM). Still unreached: Monty / the New Zealand National Transport Model (transport.govt.nz page returned an empty body, Arup page 403), Virtual Singapore (both official pages 404), and any MTC / ARC / SEMCOG ActivitySim calibration-validation report (one search reached only MWCOG).",
+   "query": "transport.govt.nz Monty national transport model validation report PDF ; Arup 'Building an Agent Based Modelling capability for New Zealand' via web.archive.org ; 'Travel Model Two' MTC calibration validation report site:mtc.ca.gov ; ARC ActivitySim 'ABM' validation report site:atlantaregional.org",
+   "opened": "2026-09-07 (narrowed this pass)"
   },
   {
-   "gap": "paywalled fits",
-   "detail": "Three qualifying or near-qualifying studies were reached only through an abstract or a search index because the publisher returned 403: Dhaka (ScienceDirect), Brussels cellphone-data MATSim (Taylor & Francis), MDPI Smart Cities on-demand PT. Their fit cells are 'unknown - paywalled' and would close with an author preprint or an institutional copy.",
-   "query": "Dhaka BRT MATSim preprint OR institutional repository; 10.1080/17538947.2024.2407046 preprint; MDPI 2624-6511/9/1/4 alternate host",
-   "opened": "2026-09-07"
+   "gap": "paywalled or unreached fits",
+   "detail": "Dhaka is closed (the author's Leeds thesis carries chapter 6 in full). Brussels is a project row at abstract level: the article is CC BY-NC yet tandfonline returned 403 and the VUB portal links only to the DOI - the mode-share, distance-share and count figures are one readable copy away. Also unread: the MDPI Smart Cities on-demand PT study (403 twice; ResearchGate 399081129 not tried), the Springer Washington DC open-data COVID case study (login redirect), and arXiv 2501.10221.",
+   "query": "researchgate.net/publication/384352737 (Brussels) ; researchgate.net/publication/399081129 (MDPI on-demand) ; arxiv.org/abs/2501.10221 ; doi.org/10.1007/s43762-025-00214-9 via europepmc or a preprint",
+   "opened": "2026-09-07 (narrowed this pass)"
   },
   {
-   "gap": "lane 3 stopping rule still not met",
-   "detail": "CARRIED FORWARD from the 7 September pass and still open. This pass spent 13 of its 40 calls here and added one project row (Dhaka) plus four exclusions; the LLM-agent sweep returned only entries this library already holds (GTA, CityBehavEx, CityReal, GATSim, CitySim), which is one round of no new qualifying entry - not yet the two the stopping rule needs. The Australian sweep surfaced no agent-based Sydney/Brisbane/Perth/Adelaide model with a published fit; Victoria DTP appears only as an ActivitySim consortium member.",
-   "query": "LLM agent urban mobility simulation validated 2026; Sydney OR Brisbane OR Perth OR Adelaide agent-based transport model calibrated validated; MATSim user meeting 2026 programme city scenarios",
-   "opened": "2026-09-07 (first opened), still open after the 2026-09-07 platform pass"
+   "gap": "MATSim User Meeting 2026 programme (Paris, 28 September 2026)",
+   "detail": "The call for papers closed 15 August 2026 and the programme is not yet published; it is the one place a new calibrated city scenario (or a Wellington / Monty validation) would surface first. Re-check after 28 September 2026. The Wellington re-check condition already recorded on its excluded entry applies here too.",
+   "query": "matsim.org/conferences/mum2026/ programme abstracts (after 2026-09-28) ; Wellington agent-based model validation smartcard counts Spatial Economics",
+   "opened": "2026-09-07"
   }
  ],
  "ours": {
   "name": "city-digital-twin - Newcastle (NSW) study (this repository)",
   "engine": "MATSim end to end, with project-owned Java extensions (src/java/citysim, src/java_signals) for signals, ride pairing and mode-specific constraints",
   "city_population": "Newcastle (NSW) region - five LGAs, 1,500 core SA1s, base year 2026",
-  "sample_fraction": "25% (standing directive; the F28 arm is aborted_20260907T030352_300it_25pct, 25% sample)",
+  "sample_fraction": "25% (standing directive since 1 Sep 2026; the F28 arm the board reads is aborted_20260907T030352_300it_25pct, 25% sample)",
   "modes": "TWELVE, each scored individually: car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry, truck, freight_train",
   "active_modes": "physical - walk and bike are simulated on the network, not teleported (positions/walk-and-bike.md)",
   "pt_physical": "yes - bus, heavy rail, light rail and ferry run the mapped GTFS schedule on the mapped network; 15 feeds mapped, 0 unmapped stops",
@@ -1941,19 +2068,19 @@
   "freight": "yes - truck as a road vehicle scored on network-wide road-vehicle share; freight rail as timetable-derived level-crossing closures rather than a mobsim vehicle",
   "fares_pricing": "yes - Opal fare schedule in the registry (A.fare.*: peak/off-peak by mode, child/senior classes, daily and weekend caps, distance bands) plus priced parking (A.parking.*: charged hours, modes, price percentiles, search time) and a monetary distance rate (C.scoring.monetary_distance_rate)",
   "validation_rung": "per-mode ridership, every simulated mode - the top rung, and the only project in this survey attempting it for twelve modes",
-  "best_fit": "NOT A RESULT. The board's scoreboard is a reading of an ABORTED run (aborted_20260907T030352_300it_25pct) at its iteration-100 gate, family F28. In calibration: ONE mode of twelve inside 10% - car +6.6%. Seven modes past the 20% stop bar (ride -42.8%, taxi +161.1%, bike +157.3%, bus +65.0%, heavy_rail +295.1%, light_rail -45.6%, ferry -68.7%); walk -11.9% and motorbike +16.1% are over 10% but under the bar. No run since family F4 has reached its declared horizon, and convergence within 250 iterations is UNMEASURED.",
+  "best_fit": "NOT A RESULT. The board's scoreboard is a reading of an ABORTED run (aborted_20260907T030352_300it_25pct) at its iteration-100 gate, family F28. In calibration: ONE mode of twelve inside 10% - car +6.6%. Seven modes past the 20% stop bar (ride -42.8%, taxi +161.1%, bike +157.3%, bus +65.0%, heavy_rail +295.1%, light_rail -45.6%, ferry -68.7%); walk -11.9% and motorbike +16.1% are over 10% but under the bar; truck level-only, freight_train representation-only. No run since family F4 has reached its declared horizon, and convergence within 250 iterations is UNMEASURED. Nothing has run since: F29 and F30 are built and unlaunched, and F30's first arm was refused at launch by the toolchain gate before MATSim started.",
   "open_source": "yes - the repository; OSM-derived layers ODbL 1.0, the rest CC-BY 4.0",
   "reproducible": "yes and gated - every derived file regenerable by a committed script from immutable hashed raw downloads, 512 files in data/MANIFEST.csv with hash, rows, producing script, source, licence and retrieval date; everything synthetic seeded (20260810)",
-  "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 471 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
-  "status": "active, in calibration - P4; family F29 open and unlaunched as of 2026-09-07; 153 run directories on disk",
-  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (471 fields), every living number pinned to its artefact by a check, and twelve modes each monitored on its own basis every tenth iteration",
+  "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 477 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
+  "status": "active, in calibration - P4; family F30 open (20260907T144147) and unlaunched as of 2026-09-07; 154 run directories on disk; the issue gate green for the first time; the F28 arm ran at a median 260 s per iteration, so a 300-iteration arm is ~22 h",
+  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (477 fields), every living number pinned to its artefact by a check, and twelve modes each monitored on its own basis every tenth iteration",
   "sources": [
-   "cities/newcastle/docs/STATUS.md (generated scoreboard block, read at HEAD 419b0da)",
+   "cities/newcastle/docs/STATUS.md (generated scoreboard, state and runs blocks, read at HEAD af7d718)",
    "cities/newcastle/registry/A_supply.json (A.fare.*, A.signals.*, A.parking.*)",
    "cities/newcastle/registry/C_behaviour.json (C.scoring.monetary_distance_rate)",
    "cities/newcastle/docs/GOAL.md"
   ],
   "last_verified": "2026-09-07",
-  "verified_in": "20260907T1215xx_project_report.html"
+  "verified_in": "20260907T173435_project_report"
  }
 }

@@ -38,6 +38,23 @@
         "src/build/build_network_layers.py"
       ]
     },
+    "A.road.lanes_unknown_class": {
+      "value": 1,
+      "units": "lanes_per_direction",
+      "source": "assumed",
+      "sweep": [
+        1.0,
+        3.0
+      ],
+      "sweep_basis": "chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.151",
+      "description": "Lane count for a road whose highway class is ABSENT from A.road.lanes_default. A bare 1 in build_network_layers.py until #148. Fires on 0 of the 50,182 road edges in this extract.",
+      "consumers": [
+        "src/build/build_network_layers.py"
+      ]
+    },
     "A.road.speed_default": {
       "value": {
         "busway": 50,
@@ -71,6 +88,23 @@
       ],
       "sweep_basis": "the union of the observed interquartile ranges across the 13 classes with at least 30 tagged edges - an observed spread, not a chosen interval",
       "sweep_role": "measurement"
+    },
+    "A.road.speed_unknown_class_kmh": {
+      "value": 50,
+      "units": "km_per_hour",
+      "source": "assumed",
+      "sweep": [
+        10.0,
+        110.0
+      ],
+      "sweep_basis": "chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.151",
+      "description": "Free-flow speed for a road whose highway class is ABSENT from A.road.speed_default. It was a bare 50 in build_network_layers.py, stamped `imputed_rule` - the same label a DECLARED class default gets, so a reader could not tell a declaration from a script choice (#148). It fires on 0 of the 50,182 road edges in this extract: every class present is declared. It is declared so that a class this city has not seen, or another city's extract, cannot decide an edge unrecorded.",
+      "consumers": [
+        "src/build/build_network_layers.py"
+      ]
     },
     "A.road.speed_zone_clip_margin_m": {
       "value": 2000.0,
@@ -184,6 +218,23 @@
       "status": "active",
       "decisions_ref": "3.2",
       "description": "Saturation flow by road class. Never observed; a class-level convention.",
+      "consumers": [
+        "src/build/build_network_layers.py"
+      ]
+    },
+    "A.road.capacity_unknown_class_veh_hr_lane": {
+      "value": 1000,
+      "units": "vehicles_per_hour_per_lane",
+      "source": "assumed",
+      "sweep": [
+        300,
+        2200
+      ],
+      "sweep_basis": "chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.151",
+      "description": "Saturation flow for a road whose highway class is ABSENT from A.road.capacity_default. A bare 1000 in build_network_layers.py until #148. Fires on 0 of the 50,182 road edges in this extract.",
       "consumers": [
         "src/build/build_network_layers.py"
       ]
@@ -1342,6 +1393,23 @@
       ],
       "sweep_basis": "the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges is [0.5, 3.0] - an observed spread, not a chosen interval - extended to 6.0 so that the interval also bounds the five classes that keep an ASSUMED width for want of coverage (pedestrian 6.0, a pedestrian mall, is the largest). The interval brackets every class value; it is not a measured spread over the assumed classes, and the pedestrian width is an assumption, not a value tuned to anything (#124)",
       "sweep_role": "measurement"
+    },
+    "A.active.footway_width_unknown_class_m": {
+      "value": 1.8,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": [
+        0.5,
+        6.0
+      ],
+      "sweep_basis": "chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.151",
+      "description": "Width for an active edge whose class is ABSENT from A.active.footway_width_default. A bare 1.8 in build_network_layers.py until #148, and the ONLY one of the four fallbacks that fires: 830 of the 40,195 active edges carry a road class the footway table does not name (motorway 328, motorway_link 147, residential 98, primary 84, secondary 66, tertiary 46, trunk 34, service 13, trunk_link 6, unclassified 5, construction 3) - the roadside paths in the footway extract. The value is unchanged from the literal, so no edge moves; what changes is that it is declared and that the edge now says `imputed_fallback` rather than `imputed_rule`.",
+      "consumers": [
+        "src/build/build_network_layers.py"
+      ]
     },
     "A.signals.scats_match_radius_m": {
       "value": 60,

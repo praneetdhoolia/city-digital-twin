@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.TreeMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,13 @@ public final class EscortCoherenceListener implements ReplanningListener {
 
     /** Household id per person, resolved once: membership never changes. */
     private final Map<Id<Person>, String> household = new HashMap<>();
-    private final Map<String, List<Person>> byHousehold = new HashMap<>();
+    // 9.151 (#150): a TreeMap, not a HashMap. Both loops below draw from a
+    // SEEDED rng while iterating this map, so the draw a household receives
+    // was assigned in HASH order of the key set - and the key set is exactly
+    // what the sample fraction changes. Seeded but not stable across
+    // fractions: a 1% probe could not predict a 25% arm on this path. Sorted
+    // by household id, the draw depends on the household's identity alone.
+    private final Map<String, List<Person>> byHousehold = new TreeMap<>();
     private boolean indexed = false;
 
     @Inject

@@ -11,7 +11,7 @@
         "HS": 15.2,
         "HO": 15.2,
         "WB": 55.4,
-        "NHB": 15.2
+        "HX": 15.2
       },
       "units": "AUD_2026_per_hour",
       "source": "literature",
@@ -21,9 +21,9 @@
       },
       "sweep_role": "uncertainty",
       "status": "active",
-      "decisions_ref": "8.3",
+      "decisions_ref": "8.3, 9.151",
       "proposal_ref": "A/C1, 6.2",
-      "description": "Value of travel time by trip purpose, ATAP PV2 / TfNSW Economic Parameter Values conventions. NOT a Newcastle measurement. MATSim scoring cannot carry per-purpose VOT, so the run inputs collapse this to a trip-weighted 16.96 AUD/h - see C.vot.trip_weighted and DECISIONS.md 9.3.",
+      "description": "Value of travel time by trip purpose, ATAP PV2 / TfNSW Economic Parameter Values conventions. NOT a Newcastle measurement. MATSim scoring cannot carry per-purpose VOT, so the run inputs collapse this to a trip-weighted 16.96 AUD/h - see C.vot.trip_weighted and DECISIONS.md 9.3. The escort key was `NHB` until 9.151: the run-input assembler mapped `Serve passenger` to NHB while the demand generated it as HX, so the two halves of the same table used different vocabularies. Once the map was made one (#147) the HX weight matched no key here, was dropped from the average and the remaining purposes renormalised - moving the collapsed value 16.96 -> 17.317 with nothing declaring it. Renamed, not revalued: 15.2 is the number Serve passenger was priced at all along, and C.vot.trip_weighted stays 16.96.",
       "consumers": [
         "src/build/build_params.py"
       ]

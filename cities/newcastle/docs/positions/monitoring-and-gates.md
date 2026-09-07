@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
+**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
 
 ## What is built
 
@@ -31,6 +31,10 @@
 - **Nothing is compared across a family, a sample fraction or a network build.** A boardings-basis reading does not compare with an earlier trip-share reading of the same mode (§9.130).
 
 ## What is measured
+
+- **A GATE WAS GREEN ON A CHECKOUT THAT COULD NOT LAUNCH** (§9.152). With all 17 checks passing and the arm approved, `run.py` refused before MATSim started: `.tools/run-stack/lib` held **0 jars** while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` checks the digests of the components RECORDED in `toolchain.json`, and a run stack that `--run-stack` never resolved is never recorded — so the loop could not report it. **The check was green on the absence of the thing it should have failed on**, the same shape as the three blind checks §9.150 widened, and the third time this project has met it. `verify()` now reads the declared representation and reports `MISSING run-stack` with the command, so the gate and the launcher refuse on one condition.
+- **The cost of that blindness was one refused launch** (`aborted_20260907T145929_300it_25pct`, §9.152) and no compute: the launcher's own pre-flight caught it and the run stated its cause in its own `_meta.json`, exactly as §9.137 requires.
+- **The issue gate is GREEN for the first time since it was introduced** (§9.151): #147–#151 are closed and every remaining open issue carries `awaiting-run` (`python src/run/issue_gate.py`).
 
 - **The gate watcher stopped an arm by itself, for the first time** (§9.143, #112). On `aborted_20260905T125612_300it_25pct` it read all twelve modes at iteration 100, found seven at or past `CAL.gate.stop_deviation_pct`, killed the JVM and wrote the gate table as the run's cause - and the arm then closed itself out with `completion` = `stopped_at_gate` and `reached_iteration` = 100, so the reading is citable without re-deriving it from a log. Every arm before it had to be stopped by a person.
 - **A milestone is readable only when its experienced plans decompress to the end** (§9.143). Three weaker signals were tried this session and all three mean STARTED, not finished: the progress digest's iteration counter, the `it.N` directory, and the file's mere existence. The runner's own watcher already had this right - it retries the reporter until it succeeds.
@@ -63,6 +67,10 @@
 - **Re-solving a mode constant against the gate**: ASCs stay priors; a violation is reported, never absorbed (§9.50, §9.64).
 
 ## History
+
+- §9.153 — the arm read every ten iterations, stopped at 23
+- §9.152 — a gate green on a checkout that could not launch
+- §9.151 — the issue gate green for the first time
 
 - §9.149 — the F28 gate: 7 out, car inside for the first time
 - §9.148 — rail boardings from the legs table; a no-readings family off the board

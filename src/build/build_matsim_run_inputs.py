@@ -49,6 +49,7 @@ import xml.etree.ElementTree as ET
 import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from det_io import gzip_writer
+import hts_purpose as _hts_purpose
 
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
@@ -1552,10 +1553,11 @@ def hts_purpose_share():
     pur = pur[pur.geography == 'lga']
     yr = sorted(pur.FINANCIAL_YEAR.unique())[-1]
     pur = pur[pur.FINANCIAL_YEAR == yr]
-    pmap = {'Commute': 'HW', 'Education/childcare': 'HE', 'Shopping': 'HS',
-            'Personal business': 'HO', 'Social/recreation': 'HO',
-            'Serve passenger': 'NHB', 'Work related business': 'WB', 'Other': 'HO'}
-    pur = pur.assign(p=pur.TRAVEL_PURPOSE.str.rstrip('*').map(pmap))
+    # 9.151 (#147): the SHARED map. This copy sent `Serve passenger` to NHB
+    # while the demand builder sent it to HX, so an escort tour was generated
+    # as an escort and priced as a non-home-based leg.
+    pur = pur.assign(p=pur.TRAVEL_PURPOSE.str.rstrip('*')
+                     .map(_hts_purpose.HTS_PURPOSE))
     pur = pur[pur.p.notna()]
     j = pur.groupby('p').JOURNEYS_BY_MODE.sum()
     return (j / j.sum()).to_dict()
