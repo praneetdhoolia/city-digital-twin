@@ -10,114 +10,107 @@
  "seeded_on": "2026-09-07",
  "last_pass": {
   "date": "2026-09-07",
-  "report": "20260907T173435_project_report.html",
-  "head": "af7d718",
+  "report": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
+  "head": "f40d332",
   "phase": "6 - the field",
   "agent": "one researcher, per the one-agent-per-phase rule",
   "budget": 40,
-  "searches_spent": 40,
-  "rounds": 4,
+  "searches_spent": 35,
+  "rounds": 5,
+  "stopped_because": "the stopping rule was met, not the budget: rounds 4 and 5 were two successive rounds of differently phrased sweeps for never-seen candidates (agency ActivitySim programmes, Australian/Victorian ABMs, Japanese/Korean/Chinese MATSim scenarios, African and South American models, eqasim 2026, generic 2026 'digital twin validated per mode') and neither added a qualifying entry the library did not already hold. Five searches were left unspent and the work they would have done is written back as gaps.",
   "rounds_detail": [
    {
     "round": 1,
     "spent": 10,
-    "target": "gaps 1-3 opened together: platform LICENSE files, SUMO version, the Deep Activity Model abstract, Brussels and MDPI full text, TfNSW / Virtual Singapore / MWCOG / Dhaka searches",
+    "target": "gap 1 (platform cells) and gap 2/3 openers, by routes the library had NOT already recorded as 404",
     "queries": [
-     "raw matsim-libs LICENSE (404)",
-     "raw beam LICENSE.md (404)",
-     "sumo.dlr.de Downloads",
-     "arXiv 2405.17468 abs",
-     "tandfonline 10.1080/17538947.2024.2407046 (403)",
-     "mdpi 2624-6511/9/1/4 (403)",
-     "TfNSW digital twin ABM",
-     "Virtual Singapore transport ABM validation",
-     "MWCOG Gen3 calibration validation report",
-     "Dhaka BRT MATSim preprint OR repository"
+     "api.github.com matsim-libs/license (404 - informative: no SPDX-detectable LICENSE at the root)",
+     "api.github.com kit-ifv/mobitopp/releases (0.3.1 = 16 May 2024)",
+     "raw matsim-libs matsim/pom.xml (<licenses>: GNU General Public License)",
+     "researchgate 384352737 Brussels (403)",
+     "arxiv.org/abs/2501.10221 (no city - excluded)",
+     "Monty NZ validation report search",
+     "transport.govt.nz about-monty/inner (blank body - third route)",
+     "Brussels title search (only the four already-blocked hosts)",
+     "MTC Travel Model Two ActivitySim validation search",
+     "Washington DC open-data study title search (abstract + R2 snippet)"
     ],
-    "added": "SUMO 1.27.1 / EPL-2.0; Deep Activity Model qualifies; MWCOG report URL; the Dhaka thesis URL; NSW Spatial Digital Twin lead"
+    "added": "MATSim licence CLOSED; mobiTopp date CLOSED; the DC study as a qualifying candidate; arXiv 2501.10221 resolved to an exclusion"
    },
    {
     "round": 2,
-    "spent": 12,
-    "target": "platform cells by another route, the candidate's full text, Brussels/MDPI alternates, CSIRO and ETH Singapore pages, the MWCOG and Dhaka PDFs, MTC / Arup NZ / Bentley searches",
+    "spent": 9,
+    "target": "the agency lane and the DC/Brussels full texts",
     "queries": [
-     "matsim-libs licence tab (unrendered)",
-     "beam licence tab",
-     "arXiv 2405.17468 html",
-     "Brussels title search",
-     "MDPI title search",
-     "csiro.au digital twin",
-     "ethz ab790.pdf",
-     "MWCOG Gen3 Ver1.0.4 PDF",
-     "Zannat thesis PDF",
-     "MTC Travel Model Two validation",
-     "Arup NZ Monty validation",
-     "Bentley OpenPaths release"
+     "link.springer.com PDF for the DC study (303 to idp.springer.com)",
+     "ARC ActivitySim calibration validation search",
+     "SEMCOG ActivitySim validation search",
+     "Virtual Singapore transport ABM validation search",
+     "rsginc.com SEMCOG case study (the validation sentence)",
+     "ARC abm-calibration-report.pdf (>10 MB)",
+     "ADS 2025CmpUS...5...57R abstract (405)",
+     "atlantaregional.org modelling page (403)",
+     "link.springer.com article for the DC study (303 again)"
     ],
-    "added": "BEAM GPL v3; Deep Activity Model figures; three PDFs to disk (read without budget); NSW SDT exclusion; Monty and OpenPaths 2025 leads"
+    "added": "SEMCOG qualifies (project row); Virtual Singapore resolved to an exclusion; ARC recorded as not_reverified with the index facts"
    },
    {
     "round": 3,
-    "spent": 11,
-    "target": "platform close-out (releases pages), Brussels via VUB, Virtual Singapore and Monty official pages, LLM-lane round A (three differently phrased searches incl. the Australian sweep)",
+    "spent": 4,
+    "target": "gap 1 residue, then the first never-seen-candidate sweep",
     "queries": [
-     "matsim.org/about-matsim (404)",
-     "beam releases",
-     "simmobility-prod releases",
-     "kit-ifv/mobitopp releases",
-     "OpenPaths 2025 What's New",
-     "VUB research portal Brussels",
-     "sla.gov.sg Virtual Singapore (404)",
-     "transport.govt.nz About Monty (empty body)",
-     "generative/LLM agent travel demand validated counts OR HTS 2026",
-     "LLM synthetic population MATSim OR SUMO validation 2026",
-     "Sydney OR Brisbane OR Perth OR Adelaide ABM calibrated 2025-2026"
+     "Bentley OpenPaths 2025 Update 1 release date (4 Dec 2025)",
+     "2026 agent-based city model calibrated/validated sweep",
+     "Indian-city MATSim validated sweep",
+     "'digital twin' city mobility validated per-mode 2026 sweep"
     ],
-    "added": "BEAM v1.0.0 2022; SimMobility no releases; mobiTopp 0.3.1; OpenPaths v25.00.00; Brussels row (abstract); LLM round A: nothing new qualifying (GTA, GATSim, SIMPAT, Salvador all held); Australia: Melbourne only"
+    "added": "OpenPaths Update 1 date CLOSED; no qualifying project (Riyadh Metro, Wakayama park, Caserta parking all excluded)"
    },
    {
     "round": 4,
-    "spent": 7,
-    "target": "Monty via Arup, two unassessed candidates, MATSim README for the licence, Virtual Singapore via NRF, LLM-lane round B (two differently phrased searches)",
+    "spent": 4,
+    "target": "never-seen candidates, differently phrased: the remaining agency programmes and Australia",
     "queries": [
-     "arup.com NZ ABM capability (403)",
-     "arXiv 2607.00910",
-     "Springer s43762-025-00214-9 (login redirect)",
-     "raw matsim-libs README.md (silent on licence)",
-     "nrf.gov.sg Virtual Singapore (404)",
-     "digital twin city residents LLM agents evaluation real-world 2026",
-     "MATSim User Meeting 2026 programme"
+     "PSRC / Met Council / TransLink ActivitySim validation",
+     "Victoria DTP ActivitySim Melbourne validation",
+     "MATSim Japan/Korea/China 2026 calibrated",
+     "new agent-based multimodal city model 2026 validated boardings + counts"
     ],
-    "added": "three exclusions (Montelago study, SUMO+MCP Austin twin, CitySEIRCast) + one conceptual-framework exclusion; MUM 2026 not yet published (28 Sep 2026); LLM round B: nothing new qualifying - stopping rule met"
+    "added": "NOTHING QUALIFYING NEW. One lead that updates an existing row: arXiv 2609.00327 (POLARIS Chicago 2050)"
+   },
+   {
+    "round": 5,
+    "spent": 8,
+    "target": "the POLARIS lead, a third never-seen sweep, and the highest-value unknown cells",
+    "queries": [
+     "arxiv 2609.00327 (POLARIS Chicago validation sentence, verbatim)",
+     "Takamatsu Japan MATSim validation (no claim - excluded)",
+     "African / South American ABM sweep (nothing new)",
+     "eqasim 2026 new city validation (one lead, ScienceDirect 403)",
+     "api.github.com eqasim-java/releases (v2.2.0 = 3 Jun 2026)",
+     "rsginc SEMCOG PDF (read from disk)",
+     "simmobility-prod wiki (city-agnostic by design)",
+     "Semantic Scholar graph API for the DC study DOI (full abstract)"
+    ],
+    "added": "POLARIS row updated with a verbatim 2026 validation sentence; eqasim and SimMobility cells CLOSED; the DC project row completed at abstract level; Takamatsu excluded. Two successive rounds with no new qualifying entry - STOP."
    }
   ],
   "reuse": {
-   "project_rows_carried_unchanged": 40,
+   "project_rows_carried_unchanged": 43,
    "project_rows_re_searched": 0,
-   "project_rows_updated_from_a_gap": 1,
-   "project_rows_added": 3,
-   "platform_rows_carried_unchanged": 6,
+   "project_rows_updated": 1,
+   "project_rows_added": 2,
+   "platform_rows_carried_unchanged": 7,
    "platform_rows_with_unknown_cells_filled": 5,
-   "platform_rows_with_unknown_cells_still_open": 1,
-   "note": "All 41 stored project rows and 12 platform rows carried last_verified 2026-09-07 (this morning's pass) - inside both the 180-day facts horizon and the 90-day liveness horizon - so none was searched for again. The budget went to the four gaps in order, one never-seen candidate (the Deep Activity Model), and the unknown platform cells. The Dhaka row changed only because gap 3 (its paywalled fit) closed through the author's thesis."
-  },
-  "pdfs_read_without_budget": [
-   "MWCOG Gen3 Ver. 1.0.4 calibration and validation report (4.5 MB) - pages 1-12 and 108-126",
-   "Zannat 2023 Leeds thesis (7 MB) - pages 1-12 and 160-179 (chapter 6 = Transport Policy 148)",
-   "Erath et al. 2012 ETH IVT working paper 790 (2.7 MB) - all 39 pages"
-  ],
-  "wasted_searches": [
-   "Seven fetches returned nothing usable: raw matsim-libs LICENSE (404), matsim.org/about-matsim (404), matsim-libs README (silent), sla.gov.sg and nrf.gov.sg Virtual Singapore (404 x2), transport.govt.nz About Monty (empty body), arup.com NZ ABM page (403). MATSim's licence and Monty stay in the gaps with new queries; do not retry these URLs.",
-   "tandfonline (Brussels), mdpi (on-demand PT) and link.springer.com (Washington DC) blocked as before; the VUB portal recovered Brussels to abstract level. Use ResearchGate / europepmc copies next time, not the publishers.",
-   "One search for an MTC ActivitySim validation report reached only the MWCOG report already found."
-  ],
-  "stopping_rule": "MET for the LLM-agent lane: round A (3 queries) and round B (2 queries), differently phrased, added no qualifying entry the library does not already hold - together with the previous pass's round 6 that is three rounds. The Australian sweep returned Melbourne only for the second pass running."
+   "platform_rows_with_unknown_cells_still_open": 2,
+   "note": "All 44 stored project rows and 12 platform rows carried last_verified 2026-09-07 (the same day's third pass) - inside both the 180-day facts horizon and the 90-day liveness horizon - so NOT ONE was re-searched. The whole budget went to the library's gaps in the order its README states, then to never-seen candidates, then to unknown cells. The only row whose facts changed is our own, and it changed because the board moved, not because anything was re-searched."
+  }
  },
  "counts": {
-  "projects": 44,
+  "projects": 46,
   "platforms": 12,
-  "excluded": 46,
-  "not_reverified": 34,
+  "excluded": 53,
+  "not_reverified": 37,
   "gaps": 4
  },
  "projects": [
@@ -782,14 +775,14 @@
    "engine": "POLARIS (C++ agent-based ABM + multimodal DTA, Lagrangian multi-class flow model)",
    "city_population": "Chicago metropolitan region; households/persons synthesised from Census/PUMA/ACS; agent count not stated in the 2024 paper; docs list 20+ regions (Atlanta, Austin, Chicago, Dallas-Ft Worth, Detroit, Honolulu, Los Angeles ... 'Fully Operational')",
    "sample_fraction": "unknown (full population implied: 'millions of agents')",
-   "modes": "driving, taxi/TNC (single, pooled), truck/delivery, walk, bike, transit (bus on congestible network, rail on GTFS times), walk-/drive-/TNC-to-transit",
+   "modes": "driving, taxi/TNC (single, pooled), truck/delivery, walk, bike, transit (bus on congestible network, rail on GTFS times), walk-/drive-/TNC-to-transit | 2026 paper: private auto, transit, walk, bike, TNCs and freight, with intermodal combinations",
    "active_modes": "routed on walking and biking networks (time-dependent intermodal A*)",
    "pt_physical": "yes - buses move on the congestible roadway network, trains on GTFS times; boarding, seating, standing, alighting simulated",
    "signals": "unknown (tfresource: traffic control / VMS / HAR supported)",
    "freight": "yes - CRISTAL firm synthesis, truck and e-commerce delivery trips",
    "fares_pricing": "transit pass model; parking model; pricing not detailed",
-   "validation_rung": "transit ridership counts (2024 paper: 'POLARIS has been validated and used in multiple large-scale studies', incl. 'validating POLARIS ride-hail simulation through back-casting in Chicago'); no numbers in fetched sources",
-   "best_fit": "unknown",
+   "validation_rung": "transit ridership counts + survey shares + departure-time and trip-length distributions. Verbatim, from the 2026 case-study paper: 'The Chicago region model was calibrated and validated against transit boardings, mode shares, departure-time distributions, and trip-length profiles to establish behavioral fidelity before projecting any future year.' The paper states no quantitative figure, percent error or correlation for any of the four, and refers the statistics to prior work.",
+   "best_fit": "unknown - no number published in either fetched source. The 2026 paper names the four validation targets (transit boardings, mode shares, departure-time distributions, trip-length profiles) but publishes no figure against any of them.",
    "open_source": "described as open-source (anl-polaris.github.io); docs require a licence request (government / private portals); search index cites BSD",
    "reproducible": "partial - PolarisStudio pip install with Windows binaries and apptainer image",
    "city_agnostic": "yes - 'Creating and Calibrating POLARIS Models' (MUM 2025), 20+ regional models, national model",
@@ -800,12 +793,13 @@
     "https://polaris.taps.anl.gov/polaris/getting_started/index.html",
     "https://tfresource.org/topics/Polaris.html",
     "https://anl-polaris.github.io/",
-    "https://matsim.org/conferences/mum2025.html"
+    "https://matsim.org/conferences/mum2025.html",
+    "https://arxiv.org/html/2609.00327 (Alam et al., 'Modeling of Mobility and Energy Policies in an Agent-Based Framework: Case Studies for Chicago Region in 2050', arXiv 2609.00327v1, 31 August 2026)"
    ],
    "lane": "1",
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
+   "reused": false
   },
   {
    "name": "BEAM - San Francisco Bay Area (LBNL)",
@@ -1250,7 +1244,7 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": false
+   "reused": true
   },
   {
    "name": "Deep Activity Model - generative activity-chain synthesis + LASim, Los Angeles County (UCLA Mobility Lab; arXiv 2405.17468 v3, Aug 2026)",
@@ -1277,7 +1271,7 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": false
+   "reused": true
   },
   {
    "name": "MWCOG / TPB Gen3 ActivitySim model, Ver. 1.0.4 - metropolitan Washington DC (RSG + Baseline Mobility Group, calibration and validation report 25 Aug 2025)",
@@ -1305,7 +1299,7 @@
    "lane": "agency",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": false
+   "reused": true
   },
   {
    "name": "Brussels agent-based traffic model from aggregated cellphone matrices (Li, Rombaut, Vanhaverbeke; Int. J. Digital Earth 17(1) 2407046, Sep 2024)",
@@ -1333,6 +1327,62 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
+   "reused": true
+  },
+  {
+   "name": "SEMCOG ActivitySim activity-based travel demand model - Southeast Michigan / Detroit region (SEMCOG + RSG, phases I-II from 2019)",
+   "engine": "ActivitySim (Python activity-based microsimulation), two-zone with microzones (MAZ); assignment outside ActivitySim, plus a separately contracted disaggregate commercial vehicle model for freight and truck movements",
+   "city_population": "The federally designated MPO area for Southeast Michigan (Detroit region); population not stated in the fetched case study",
+   "sample_fraction": "unknown - not stated (ActivitySim runs a full synthetic population; no sample fraction published)",
+   "modes": "unknown in detail - the case study names transit subsidies, transit pass ownership, work-from-home and telecommuting as modelled levers, and a separate disaggregate commercial vehicle model for freight/truck; the mode list itself is not published on the fetched page",
+   "active_modes": "unknown - ActivitySim assigns demand; walk and bike are not physically simulated by the platform itself",
+   "pt_physical": "no - ActivitySim carries no traffic or transit mobsim of its own; skims come from the assignment model",
+   "signals": "no - not in the ActivitySim platform",
+   "freight": "yes - 'a disaggregate commercial vehicle model in a separate contract to better represent the freight and truck movements in the region'",
+   "fares_pricing": "partly - transit subsidies, transit pass ownership and 'the cost of transportation' are named as levers tested in the sensitivity analyses",
+   "validation_rung": "survey shares + road link counts. Verbatim: 'To conclude phase two and ensure accurate predictions, RSG developed and used a set of automated calibration tools and validated the model against detailed observed survey and count data.' The case study does not disambiguate road counts from transit boardings, and names no survey year.",
+   "best_fit": "unknown - no figure published in the case study; a SEMCOG Phase II model calibration/validation report is referenced but was not reached this pass",
+   "open_source": "partly - built on open-source ActivitySim; SEMCOG's own configuration is on GitHub (semcog.github.io carries the trip-based E8Plus documentation), the ABM calibration report was not located",
+   "reproducible": "unknown",
+   "city_agnostic": "yes by inheritance - ActivitySim is configuration-driven and forked per region",
+   "status": "active but not in production - 'SEMCOG is still undergoing a transition to the new and improved activity-based model'; the trip-based model remained the production model for conformity analysis, with in-house sensitivity analysis of the ABM as of spring 2024",
+   "does_best": "Automated calibration tooling plus a designed sensitivity programme: the model is not only fitted, it is exercised against demographic, land-use, infrastructure and cost changes to show that its response is reasonable - the second half of validation this project has not yet built",
+   "sources": [
+    "https://rsginc.com/case-study/semcog-activity-based-model/",
+    "https://rsginc.com/wp-content/uploads/2023/05/RSG-SEMCOG-Activity-Based-Model.pdf (read from disk; the validation sentence is quoted from page 2)",
+    "https://zephyrtransport.org/ActivitySim/activitysim-implementations/"
+   ],
+   "lane": "agency activity-based models",
+   "last_verified": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
+   "reused": false
+  },
+  {
+   "name": "Washington DC metro MATSim model from open data - COVID case study (Ruan, Khan, Xin, Zufle, Pfoser; Computational Urban Science 5:57, 2025)",
+   "engine": "MATSim, with a population generation algorithm run on US CENSUS data and a network built from OpenStreetMap",
+   "city_population": "Washington, DC metro area - 'a population of four million people'",
+   "sample_fraction": "unknown - the abstract states four million people modelled and no scaling factor; full text not reachable (Springer redirected to its identity provider on both the article and the PDF, twice)",
+   "modes": "multimodal - road network, the metro system, and 'a number of bus services'; the full mode list is in the unread full text",
+   "active_modes": "unknown",
+   "pt_physical": "yes - the metro system and bus services are represented in the multimodal network",
+   "signals": "unknown",
+   "freight": "unknown",
+   "fares_pricing": "unknown",
+   "validation_rung": "road link counts - 'In comparing the simulation output with ground-truth flows, we show that indeed our approach is capable to accurately capturing traffic flows in this multimodal network as observed before and during the COVID pandemic.' No transit boarding validation is claimed in the abstract.",
+   "best_fit": "unknown at source level. The abstract states accuracy against ground-truth flows without a figure; a search-index snippet reports 'a strong correlation between synthetic and SafeGraph data (R-square = 0.99, P-value < 0.001)' - SNIPPET ONLY, not read in the paper, and recorded here as unverified.",
+   "open_source": "the paper is gold open access (CC BY); whether the pipeline code is released is unknown - the full text was not reachable",
+   "reproducible": "claimed in principle - the whole point of the paper is that CENSUS + OSM alone are enough to build the model; not verified",
+   "city_agnostic": "claimed in principle - the method is described as leveraging publicly available population and infrastructure data, so it should re-point at another US metro; not verified",
+   "status": "published October 2025, Computational Urban Science (Springer)",
+   "does_best": "The nearest published statement of this project's own thesis - that a whole metropolitan multimodal model can be built from open public data alone - and it publishes an accuracy claim against ground-truth flows for both a pre-COVID and a during-COVID day, i.e. a model validated on two different worlds rather than one",
+   "sources": [
+    "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1007/s43762-025-00214-9 (title, authors, venue, full abstract)",
+    "https://link.springer.com/article/10.1007/s43762-025-00214-9 (303 to idp.springer.com, twice - full text unread)",
+    "https://ui.adsabs.harvard.edu/abs/2025CmpUS...5...57R/abstract (405)"
+   ],
+   "lane": "open-data city models",
+   "last_verified": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
    "reused": false
   }
  ],
@@ -1340,7 +1390,7 @@
   {
    "name": "MATSim (Multi-Agent Transport Simulation)",
    "engine": "Java; co-evolutionary iterative agent-based simulation - demand, mobsim (queue-based traffic flow), replanning, iteration control, analysis, all modular and replaceable",
-   "licence": "unknown - four fetches this pass did not reach it: raw LICENSE on master (404), the GitHub licence tab (not rendered), matsim.org/about-matsim (404), README.md (silent). Scenario repositories built on it record GPL-2.0 for their own code.",
+   "licence": "GNU General Public License - declared in the <licenses> block of matsim/pom.xml on master: name 'GNU General Public License', url ${basedir}/COPYING, comments 'See also the LICENSE file'. Note that GitHub's own licence API returns 404 for the repository (no SPDX-detectable LICENSE at the root), which is why four earlier fetch routes found nothing; scenario repositories built on it record GPL-2.0 for their own code. CLOSED this pass.",
    "last_release": "MATSim 2026 (Spring), released 10 April 2026; annual April cadence since 2020 (2025 Spring 11 Apr 2025, 2024 Spring 13 Apr 2024)",
    "city_agnostic": "yes by design - a toolbox, not a city model; every city is a scenario built on it",
    "does_best": "The reference open engine for large-scale agent-based transport simulation: a replaceable-component architecture in which route, mode, departure time and plan memory are all co-evolved to a stochastic user equilibrium",
@@ -1348,26 +1398,29 @@
    "sources": [
     "https://github.com/matsim-org/matsim-libs",
     "https://github.com/matsim-org/matsim-libs/releases",
-    "https://raw.githubusercontent.com/matsim-org/matsim-libs/master/README.md"
+    "https://raw.githubusercontent.com/matsim-org/matsim-libs/master/README.md",
+    "https://raw.githubusercontent.com/matsim-org/matsim-libs/master/matsim/pom.xml",
+    "https://api.github.com/repos/matsim-org/matsim-libs/license (404 - no SPDX-detectable LICENSE at the root)"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T173435_project_report",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
    "reused": false
   },
   {
    "name": "eqasim (MATSim extension + open pipelines)",
    "engine": "MATSim plus discrete-choice mode models and a synthetic-population pipeline run from raw open data",
    "licence": "GPL-2.0",
-   "last_release": "version 2.2.0; release date not stated on the fetched page (unknown)",
+   "last_release": "v2.2.0, published 3 June 2026 (v2.1.0 19 February 2026; v2.0.0 8 May 2025) - the release date was 'unknown' in the library until this pass",
    "city_agnostic": "partly - the pipeline is designed to be re-pointed at a new city, but each city carries its own scenario repository",
    "does_best": "Turns raw public datasets into a runnable, reproducible MATSim scenario end to end - the closest published analogue of this project's build layer",
    "who_runs_on_it": "Ile-de-France / Paris, California (SF Bay, LA, San Diego), Sao Paulo, Switzerland / Zurich, Bavaria, Montreal (auckland-example is a demo only)",
    "sources": [
-    "https://github.com/eqasim-org/eqasim-java"
+    "https://github.com/eqasim-org/eqasim-java",
+    "https://api.github.com/repos/eqasim-org/eqasim-java/releases"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T1215xx_project_report.html",
-   "reused": true
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
+   "reused": false
   },
   {
    "name": "SUMO (Simulation of Urban MObility)",
@@ -1384,7 +1437,7 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": false
+   "reused": true
   },
   {
    "name": "ActivitySim",
@@ -1436,29 +1489,30 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": false
+   "reused": true
   },
   {
    "name": "SimMobility (MIT / Singapore-MIT Alliance for Research and Technology)",
    "engine": "C++; three coupled time horizons - long-term (land use, vehicle ownership), mid-term (activity and day-level travel), short-term (second-by-second driving)",
    "licence": "SIMMOBILITY Version Control License (a project-specific licence, not a standard open licence)",
    "last_release": "none - the releases page states 'There aren't any releases here' (development on master, 11,022 commits)",
-   "city_agnostic": "unknown - not stated on the pages fetched this pass",
+   "city_agnostic": "yes in design - the project wiki carries a 'Step-by-step guide for data preparation (for a new city)' and tooling to 'generate Network input data from OSM data' and check its consistency, so the platform is architected for an arbitrary region; the wiki's Case Studies page did not load, so no second deployment city could be named",
    "does_best": "An explicit long / mid / short-term split, so a vehicle-ownership or land-use change and a second-by-second traffic effect live in the same model",
    "who_runs_on_it": "Singapore (this library's project row); developed through MIT and SMART",
    "sources": [
     "https://github.com/smart-fm/simmobility-prod",
-    "https://github.com/smart-fm/simmobility-prod/releases"
+    "https://github.com/smart-fm/simmobility-prod/releases",
+    "https://github.com/smart-fm/simmobility-prod/wiki"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T173435_project_report",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
    "reused": false
   },
   {
    "name": "mobiTopp (Karlsruhe Institute of Technology, Institute for Transport Studies)",
    "engine": "Java; agent-based travel demand simulation over a full week per agent, with actiTopp generating week activity schedules",
    "licence": "MIT",
-   "last_release": "mobiTopp 0.3.1, released 16 May (year not shown on the releases page; the release adds a CITATION.cff)",
+   "last_release": "mobiTopp 0.3.1, published 16 May 2024 (previous tag 0.2.3, 3 May 2021) - the year was 'not shown' in the library until this pass",
    "city_agnostic": "partly - example projects (mobitopp-rastatt) exist to start a new region",
    "does_best": "A seven-day activity horizon per agent, so weekly rhythm and day-to-day variation are in the model rather than split into separate day types; extensions cover parcel/CEP last-mile delivery (logiTopp) and MaaS",
    "who_runs_on_it": "Stuttgart and Karlsruhe (this library's not-re-verified row); Rastatt as the published starter example. Couplings published to MATSim, PTV Visum and FleetPy.",
@@ -1467,10 +1521,11 @@
     "https://github.com/ifv-mobitopp/mobitopp-matsim-coupling",
     "https://github.com/kit-ifv/logitopp",
     "https://github.com/kit-ifv/mobitopp",
-    "https://github.com/kit-ifv/mobitopp/releases"
+    "https://github.com/kit-ifv/mobitopp/releases",
+    "https://api.github.com/repos/kit-ifv/mobitopp/releases"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T173435_project_report",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
    "reused": false
   },
   {
@@ -1530,7 +1585,7 @@
    "name": "Bentley OpenPaths (EMME, CUBE, CityPhi, AGENT, DYNAMEQ)",
    "engine": "Proprietary suite: EMME (regional/national demand forecasting), CUBE (multimodal predictive modelling), AGENT (activity-based), DYNAMEQ (dynamic traffic assignment), CityPhi (visualisation)",
    "licence": "Commercial/proprietary - two editions, OpenPaths Advanced (EMME + CUBE + CityPhi) and OpenPaths Ultimate (adds AGENT and DYNAMEQ)",
-   "last_release": "OpenPaths 2025 (v25.00.00) and OpenPaths 2025 Update 1 (v25.01.00) - release dates not stated on the pages read; 2025 adds AGENT car and schedule coordinators, CUBE turn-penalty editor and scenario comparison, EMME scenario access in Flow expressions and 20,000-zone applications",
+   "last_release": "OpenPaths 2025 Update 1 (v25.01.00), announced 4 December 2025 on the Bentley OpenPaths Announcements community blog, with a later maintenance release v25.01.01; the base OpenPaths 2025 (v25.00.00) announcement date is still unread. 2025 adds AGENT car and schedule coordinators, a CUBE turn-penalty editor and scenario comparison, EMME scenario access in Flow expressions and 20,000-zone applications",
    "city_agnostic": "yes by design - general forecasting applications sold to agencies worldwide",
    "does_best": "The agency default: a single licensed stack in which the strategic four-step model, the activity-based model and the dynamic assignment all coexist, so an ABM can be adopted without abandoning the existing forecasting chain",
    "who_runs_on_it": "Public, private and education sectors; no agency is named on the pages read this pass",
@@ -1538,10 +1593,11 @@
     "https://docs.bentley.com/LiveContent/web/OpenPaths-v2025/Help/en/topics/OpenPaths/Whats_New_OpenPaths.html",
     "https://en.virtuosity.com/openpaths",
     "https://tfresource.org/topics/Software",
-    "https://www.bentley.com/en/products/product-line/mobility-simulation-and-analytics/cube"
+    "https://www.bentley.com/en/products/product-line/mobility-simulation-and-analytics/cube",
+    "https://bentleysystems.service-now.com/community?id=community_blog&sys_id=8b105fee1b21329074968730604bcba6"
    ],
    "last_verified": "2026-09-07",
-   "verified_in": "20260907T173435_project_report",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
    "reused": false
   }
  ],
@@ -1856,6 +1912,70 @@
     "https://arxiv.org/pdf/2412.06681"
    ],
    "excluded_on": "2026-09-07"
+  },
+  {
+   "name": "Virtual Singapore (NRF / SLA national 3D digital twin)",
+   "reason": "A national high-resolution 3D city model whose stated capabilities are virtual experimentation, virtual test-bedding, planning and decision-making, and R&D - a data-rich visualisation and experimentation platform, not an agent-based travel-demand model with a validation claim of its own. The only agent-based transport result attached to Singapore in the search is the ETH FCL MATSim study, already excluded on its own entry. Both official pages (sla.gov.sg, nrf.gov.sg) returned 404 on the previous pass; the OECD OPSI record is the readable source. RESOLVES the Virtual Singapore half of the agency-programmes gap.",
+   "sources": [
+    "https://oecd-opsi.org/innovations/virtual-twin-singapore/"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Evaluating Public Transit Reforms for Shrinking and Aging Populations: The Case of Takamatsu, Japan (Future Transportation 1(3):26, October 2021)",
+   "reason": "A MATSim scenario study of a real city (Takamatsu, population 420,000) that simulates transit-network redesign to 2050 with the before and after timetables. No calibration or validation claim against observed data appears in the abstract or in any search-index snippet; the MDPI page follows this library's recorded 403 pattern and was not fetched. Re-check if a validation statement surfaces.",
+   "sources": [
+    "https://doi.org/10.3390/futuretransp1030026",
+    "https://www.mdpi.com/2673-7590/1/3/26 (not fetched - MDPI 403 pattern)"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Synthesising Activity Participations and Scheduling with Deep Generative Machine Learning (Shone & Hillel; arXiv 2501.10221, Jan 2025 / Jul 2025)",
+   "reason": "A deep generative method for synthetic activity schedules with its own evaluation framework, but NO city or region is modelled and no comparison against a city's observed travel is made - the authors position it as applicable to transport, energy and epidemiology models generally. Fails the 'models a real city' half of the qualification. RESOLVES this entry from not_reverified.",
+   "sources": [
+    "https://arxiv.org/abs/2501.10221"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Masar - AI-powered digital twin prototype for the Riyadh Metro (Sustainability 18(15) 7688)",
+   "reason": "A metro crowd-management prototype: synthetic passenger-flow simulation, short-term congestion forecasting, real-time monitoring and an Arabic conversational assistant. Single-operator crowd management, not a multimodal city travel-demand model, and no city-wide validation claim.",
+   "sources": [
+    "https://www.mdpi.com/2071-1050/18/15/7688"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Human-Flow Digital Twin for Predicting the Effects of Mobility Introduction on Visitor Circulation (arXiv 2605.17426, MDM 2026)",
+   "reason": "Validated on human-flow data collected within Wakayama Castle Park - a park, not a city or region.",
+   "sources": [
+    "https://arxiv.org/html/2605.17426v1"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Digital twin framework for urban parking management and mobility forecasting (Caserta, Italy; PMC12549869)",
+   "reason": "Parking management plus predictive/generative/optimisation modules deployed on real Caserta data; not an agent-based travel-demand model of the city and no mode-level validation claim.",
+   "sources": [
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12549869/"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Digital twin federation for urban mobility assessment (Transportation Research Part A, 2026)",
+   "reason": "A definition-and-architecture paper (pillars, human-in-the-loop functional architecture) that reviews BEAM CORE, POLARIS, SimMobility and PILATES; not itself a city model and carries no validation of one.",
+   "sources": [
+    "https://www.sciencedirect.com/science/article/pii/S0965856426002272"
+   ],
+   "checked_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
   }
  ],
  "not_reverified": [
@@ -1941,7 +2061,7 @@
   },
   {
    "name": "ActivitySim implementations at MTC, ARC, PSRC (ActivitySim), SEMCOG, Oregon, MAG, Met Council, SFCTA, TransLink, Victoria DTP",
-   "note": "Consortium membership read earlier; one 'MTC Travel Model Two ActivitySim validation' search this pass returned only the MWCOG Gen3 reports (now a project row) and generic TMIP guidance - no MTC, ARC or SEMCOG validation report URL was reached.",
+   "note": "Consortium membership read earlier; one 'MTC Travel Model Two ActivitySim validation' search this pass returned only the MWCOG Gen3 reports (now a project row) and generic TMIP guidance - no MTC, ARC or SEMCOG validation report URL was reached. | 7 Sep 2026 (4th pass): SEMCOG RESOLVED into a project row (RSG case study, validated 'against detailed observed survey and count data'). MTC: Travel Model Two is at TM2.3 (Emme only, ActivitySim core) and still 'currently in development'; two searches found no TM2 calibration/validation report - only MWCOG's Gen3 reports. ARC: the modeling page returned 403 and the 2015 ABM calibration report PDF exceeds the 10 MB fetch limit; see the ARC entry below. PSRC's public validation report is for UrbanSim (land use), not the travel model.",
    "not_reverified_on": "2026-09-07"
   },
   {
@@ -2011,7 +2131,7 @@
   },
   {
    "name": "Arup nationwide agent-based model for New Zealand",
-   "note": "Monty, the New Zealand National Transport Model (Ministry of Transport + Arup, MATSim, started 2019; case studies: Auckland/Wellington road pricing, flood closures, second harbour crossing) - the search index describes it but neither source could be read: transport.govt.nz 'About Monty' returned an empty body and the Arup project page returned 403. No validation claim reached.",
+   "note": "Monty, the New Zealand National Transport Model (Ministry of Transport + Arup, MATSim, started 2019; case studies: Auckland/Wellington road pricing, flood closures, second harbour crossing) - the search index describes it but neither source could be read: transport.govt.nz 'About Monty' returned an empty body and the Arup project page returned 403. No validation claim reached. | 7 Sep 2026 (4th pass): a THIRD route failed - transport.govt.nz/statistics-and-insights/the-national-transport-model/about-monty/inner returned a blank body, as the sibling page did. What the search index carries: Project Monty began in 2019 as a co-development partnership between the Ministry of Transport and Arup; it 'brings together modelling elements under a software framework called Multi Agent Transport Simulation (MATSim)'; it is intended to become the primary New Zealand tool for testing infrastructure and policy 'in a statistically robust manner'; case studies to date are Auckland and Wellington road pricing, the 2023 North Island flooding road closures, and a second Auckland harbour crossing with congestion charging. NO validation claim is published on any page reached in four attempts.",
    "not_reverified_on": "2026-09-07"
   },
   {
@@ -2028,39 +2148,70 @@
    "name": "Synthesising Activity Participations and Scheduling with Deep Generative Machine Learning (arXiv 2501.10221)",
    "note": "Surfaced in the LLM-lane sweep (deep generative, not LLM; references MATSim); not fetched - budget spent.",
    "not_reverified_on": "2026-09-07"
+  },
+  {
+   "name": "Atlanta Regional Commission (ARC) activity-based model and its ActivitySim replacement",
+   "note": "Qualifies on the face of it but no source was readable this pass. Search index: ARC's current ABM is CT-RAMP-based, the regional travel demand model behind the 2050 Metropolitan Transportation Plan, 'calibrated and validated using the 2011 Regional Household Travel Survey and the 2019 Regional On-Board Transit Survey' - which would place it at survey shares + transit ridership. The ActivitySim replacement is in development with planned 'acceptance criteria for roadway & transit validation, mode choice, activity location, auto ownership, and post-pandemic travel behavior'. atlantaregional.org returned 403; documents.atlantaregional.com/The-Atlanta-Region-s-Plan/RTP/abm-calibration-report.pdf (Nov 2015) exceeded the 10 MB fetch limit.",
+   "sources": [
+    "https://atlantaregional.org/what-we-do/transportation-planning/modeling/ (403)",
+    "https://documents.atlantaregional.com/The-Atlanta-Region-s-Plan/RTP/abm-calibration-report.pdf (>10 MB)",
+    "https://documents.atlantaregional.com/The-Atlanta-Region-s-Plan/RTP/abm-specification-report.pdf (not tried)"
+   ],
+   "not_reverified_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Brussels agent-based model - the published fit (Int. J. Digital Earth 17(1) 2407046)",
+   "note": "The project row stands at abstract level for a third pass. Routes tried and failed: tandfonline full article (403, earlier pass), VUB research portal (DOI link only, earlier pass), researchgate.net/publication/384352737 (403 this pass), and a title search that returned only those same four hosts plus the ADS abstract. The mode-share, distance-share, travel-time-distribution and traffic-count figures remain one readable copy away. ADS abstract record: 2024IJDE...1707046L.",
+   "sources": [
+    "https://www.researchgate.net/publication/384352737 (403)",
+    "https://ui.adsabs.harvard.edu/abs/2024IJDE...1707046L/abstract",
+    "https://www.tandfonline.com/doi/full/10.1080/17538947.2024.2407046 (403)"
+   ],
+   "not_reverified_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
+  },
+  {
+   "name": "Quantitative assessment of peer-to-peer car-sharing potential in French cities (eqasim; ScienceDirect S2210539526001756, 2026)",
+   "note": "New lead this pass. An eqasim/MATSim study across French cities that 'discusses mode sequences for daily trip patterns by accounting for walking, cycling, road and public transportation alternatives'. Whether it carries a validation claim of its own, or inherits Ile-de-France's, is unread - ScienceDirect follows this library's recorded 403 pattern.",
+   "sources": [
+    "https://www.sciencedirect.com/science/article/pii/S2210539526001756"
+   ],
+   "not_reverified_on": "2026-09-07",
+   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
   }
  ],
  "gaps": [
   {
-   "gap": "platform licence and release dates - residual cells",
-   "detail": "Nine of the twelve cells named last pass are closed (SUMO 1.27.1 / EPL-2.0, BEAM GPL v3 / v1.0.0 2022, SimMobility no releases, mobiTopp 0.3.1, OpenPaths 2025 Update 1). Still open: MATSim's own licence (four fetches failed - raw LICENSE 404, licence tab unrendered, matsim.org/about-matsim 404, README silent), the year of mobiTopp 0.3.1, the dates of OpenPaths 2025 / Update 1, and whether SimMobility is city-agnostic by design.",
-   "query": "fetch https://github.com/matsim-org/matsim-libs/blob/master/matsim/pom.xml (licenses block) OR https://matsim.org/docs/ licensing page ; https://github.com/kit-ifv/mobitopp/releases/tag/0.3.1 ; bentleysystems.service-now.com OpenPaths 2025 Update 1 announcement date",
-   "opened": "2026-09-07 (narrowed this pass)"
-  },
-  {
-   "gap": "agency programmes as programmes - the ones not reached",
-   "detail": "MWCOG Gen3 is now a project row with the full ladder and its acceptance standards; Transport for NSW resolves to the NSW Spatial Digital Twin (excluded, no ABM). Still unreached: Monty / the New Zealand National Transport Model (transport.govt.nz page returned an empty body, Arup page 403), Virtual Singapore (both official pages 404), and any MTC / ARC / SEMCOG ActivitySim calibration-validation report (one search reached only MWCOG).",
-   "query": "transport.govt.nz Monty national transport model validation report PDF ; Arup 'Building an Agent Based Modelling capability for New Zealand' via web.archive.org ; 'Travel Model Two' MTC calibration validation report site:mtc.ca.gov ; ARC ActivitySim 'ABM' validation report site:atlantaregional.org",
-   "opened": "2026-09-07 (narrowed this pass)"
+   "gap": "agency programmes as programmes - the ones still not reached",
+   "detail": "Narrowed twice. RESOLVED this pass: SEMCOG (now a project row), Virtual Singapore (now excluded - a 3D visualisation and experimentation platform, no ABM of its own). STILL OPEN: (a) Monty / the New Zealand National Transport Model - four routes have now failed (transport.govt.nz About Monty and its /inner sibling both return blank bodies, the Arup page 403s, the MATSim showcase carries no validation claim); (b) ARC's ABM calibration report, whose PDF exceeds the 10 MB fetch limit and whose modelling page 403s; (c) MTC Travel Model Two, still 'in development' at TM2.3 with no published calibration/validation report.",
+   "query": "web.archive.org snapshot of transport.govt.nz/statistics-and-insights/the-national-transport-model/sheet/about-monty ; ARC documents.atlantaregional.com/The-Atlanta-Region-s-Plan/RTP/abm-specification-report.pdf (smaller than the calibration report) or the ARC ActivitySim acceptance-criteria memo at abmfiles.atlantaregional.com ; 'Travel Model Two' TM2.3 calibration report site:github.com/BayAreaMetro",
+   "opened": "2026-09-07 (narrowed twice; third pass in a row)"
   },
   {
    "gap": "paywalled or unreached fits",
-   "detail": "Dhaka is closed (the author's Leeds thesis carries chapter 6 in full). Brussels is a project row at abstract level: the article is CC BY-NC yet tandfonline returned 403 and the VUB portal links only to the DOI - the mode-share, distance-share and count figures are one readable copy away. Also unread: the MDPI Smart Cities on-demand PT study (403 twice; ResearchGate 399081129 not tried), the Springer Washington DC open-data COVID case study (login redirect), and arXiv 2501.10221.",
-   "query": "researchgate.net/publication/384352737 (Brussels) ; researchgate.net/publication/399081129 (MDPI on-demand) ; arxiv.org/abs/2501.10221 ; doi.org/10.1007/s43762-025-00214-9 via europepmc or a preprint",
-   "opened": "2026-09-07 (narrowed this pass)"
+   "detail": "RESOLVED this pass: arXiv 2501.10221 (excluded - no city), and the Washington DC study, whose abstract and authorship were recovered through the Semantic Scholar graph API and are now a project row. STILL OPEN: (a) Brussels - four routes have failed, the four validation figures are one readable copy away; (b) the MDPI Smart Cities on-demand PT study (403 three times; ResearchGate is now confirmed to 403 the agent, so publication 399081129 is not a route); (c) the Washington DC FULL TEXT - the paper is gold open access under CC BY yet Springer 303s to its identity provider on both the article and the PDF, so the SafeGraph R-square = 0.99 figure remains a search-index snippet, unverified.",
+   "query": "Brussels: core.ac.uk or openaire or biblio.vub.ac.be full text for DOI 10.1080/17538947.2024.2407046 ; DC full text: doaj.org article record or the CC-BY copy on a repository mirror for 10.1007/s43762-025-00214-9 ; MDPI on-demand: scholar cache or the authors' institutional repository",
+   "opened": "2026-09-07 (narrowed twice; third pass in a row)"
   },
   {
    "gap": "MATSim User Meeting 2026 programme (Paris, 28 September 2026)",
-   "detail": "The call for papers closed 15 August 2026 and the programme is not yet published; it is the one place a new calibrated city scenario (or a Wellington / Monty validation) would surface first. Re-check after 28 September 2026. The Wellington re-check condition already recorded on its excluded entry applies here too.",
+   "detail": "CARRIED FORWARD UNCHANGED - the meeting is in the future and no budget was spent on it this pass. The call for papers closed 15 August 2026 and the programme is not yet published; it is the one place a new calibrated city scenario (or a Wellington / Monty validation) would surface first. Re-check after 28 September 2026. The Wellington re-check condition recorded on its excluded entry applies here too.",
    "query": "matsim.org/conferences/mum2026/ programme abstracts (after 2026-09-28) ; Wellington agent-based model validation smartcard counts Spatial Economics",
    "opened": "2026-09-07"
+  },
+  {
+   "gap": "platform cells - the residue after this pass closed the rest",
+   "detail": "The platform-licence gap is CLOSED: MATSim's licence is the GNU General Public License per the <licenses> block of matsim/pom.xml (GitHub's licence API 404s because there is no SPDX-detectable LICENSE at the root, which is why four earlier routes found nothing); mobiTopp 0.3.1 is 16 May 2024; eqasim v2.2.0 is 3 June 2026; OpenPaths 2025 Update 1 was announced 4 December 2025; SimMobility is city-agnostic by design per its wiki's new-city data-preparation guide. What is left is small: the base OpenPaths 2025 (v25.00.00) announcement date, the TRANSIMS 7.5 release date, and a named agency or city running on SUMO.",
+   "query": "bentleysystems.service-now.com 'OpenPaths 2025 Now Available' post date (sys_id eac95276870c22945bea87380cbb358b) ; sourceforge.net/projects/transims/files/ release history ; sumo.dlr.de/docs/Other/Projects.html or the SUMO user-list of deployments",
+   "opened": "2026-09-07 (new - the residue of the closed platform-licence gap)"
   }
  ],
  "ours": {
   "name": "city-digital-twin - Newcastle (NSW) study (this repository)",
   "engine": "MATSim end to end, with project-owned Java extensions (src/java/citysim, src/java_signals) for signals, ride pairing and mode-specific constraints",
   "city_population": "Newcastle (NSW) region - five LGAs, 1,500 core SA1s, base year 2026",
-  "sample_fraction": "25% (standing directive since 1 Sep 2026; the F28 arm the board reads is aborted_20260907T030352_300it_25pct, 25% sample)",
+  "sample_fraction": "25% (standing directive since 1 Sep 2026; the F30 arm the board reads is aborted_20260907T150816_300it_25pct, 25% sample, read at iteration 20)",
   "modes": "TWELVE, each scored individually: car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry, truck, freight_train",
   "active_modes": "physical - walk and bike are simulated on the network, not teleported (positions/walk-and-bike.md)",
   "pt_physical": "yes - bus, heavy rail, light rail and ferry run the mapped GTFS schedule on the mapped network; 15 feeds mapped, 0 unmapped stops",
@@ -2068,19 +2219,19 @@
   "freight": "yes - truck as a road vehicle scored on network-wide road-vehicle share; freight rail as timetable-derived level-crossing closures rather than a mobsim vehicle",
   "fares_pricing": "yes - Opal fare schedule in the registry (A.fare.*: peak/off-peak by mode, child/senior classes, daily and weekend caps, distance bands) plus priced parking (A.parking.*: charged hours, modes, price percentiles, search time) and a monetary distance rate (C.scoring.monetary_distance_rate)",
   "validation_rung": "per-mode ridership, every simulated mode - the top rung, and the only project in this survey attempting it for twelve modes",
-  "best_fit": "NOT A RESULT. The board's scoreboard is a reading of an ABORTED run (aborted_20260907T030352_300it_25pct) at its iteration-100 gate, family F28. In calibration: ONE mode of twelve inside 10% - car +6.6%. Seven modes past the 20% stop bar (ride -42.8%, taxi +161.1%, bike +157.3%, bus +65.0%, heavy_rail +295.1%, light_rail -45.6%, ferry -68.7%); walk -11.9% and motorbike +16.1% are over 10% but under the bar; truck level-only, freight_train representation-only. No run since family F4 has reached its declared horizon, and convergence within 250 iterations is UNMEASURED. Nothing has run since: F29 and F30 are built and unlaunched, and F30's first arm was refused at launch by the toolchain gate before MATSim started.",
+  "best_fit": "NOT A RESULT. The board's scoreboard is a reading of an ABORTED run (aborted_20260907T150816_300it_25pct) at ITERATION 20, family F30-an-escort-is-priced-as-an-escort, 25% sample. IN CALIBRATION, NO MODE IS INSIDE 10%. car -13.0% and motorbike +15.8% are over 10% but under the stop bar; EIGHT modes are past the 20% stop bar - ride -45.2%, walk +64.7%, taxi +105.6%, bike +198.4%, bus +106.9%, heavy_rail +417.1%, light_rail -30.0%, ferry -63.7%; truck is level-only and freight_train representation-only. This is a CHANGE from the previous pass, which read F28 at its iteration-100 gate with one mode of twelve inside 10% (car +6.6%): the reading has moved back to none, and it is a reading at iteration 20 rather than 100, so the two are not comparable as fits. No run since family F4 has reached its declared horizon, and convergence within 250 iterations is UNMEASURED.",
   "open_source": "yes - the repository; OSM-derived layers ODbL 1.0, the rest CC-BY 4.0",
   "reproducible": "yes and gated - every derived file regenerable by a committed script from immutable hashed raw downloads, 512 files in data/MANIFEST.csv with hash, rows, producing script, source, licence and retrieval date; everything synthetic seeded (20260810)",
-  "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 477 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
-  "status": "active, in calibration - P4; family F30 open (20260907T144147) and unlaunched as of 2026-09-07; 154 run directories on disk; the issue gate green for the first time; the F28 arm ran at a median 260 s per iteration, so a 300-iteration arm is ~22 h",
-  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (477 fields), every living number pinned to its artefact by a check, and twelve modes each monitored on its own basis every tenth iteration",
+  "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 480 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
+  "status": "active, in calibration - P4; family F30 open and its first arm aborted at iteration 20; registry 480 fields, session gate 18 checks. The 7 Sep work decomposed the iteration to the method for the first time (this project's own code at 50.0% of CPU samples), cut a plain iteration 310 -> 205.5 s and startup 13m47s -> 7m00s with per-link gradient tables, and found RUN.travel_time.analysed_modes inert since declaration (#154) - every pedestrian, cyclist and bus had been feeding the car router's link travel-time table. The 2-minute iteration the directive asked for is NOT reached (~190 s unprofiled against 120).",
+  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (480 fields), every living number pinned to its artefact by a check, and twelve modes each monitored on its own basis every tenth iteration",
   "sources": [
-   "cities/newcastle/docs/STATUS.md (generated scoreboard, state and runs blocks, read at HEAD af7d718)",
+   "cities/newcastle/docs/STATUS.md (generated scoreboard, state and runs blocks, read at HEAD f40d332)",
    "cities/newcastle/registry/A_supply.json (A.fare.*, A.signals.*, A.parking.*)",
    "cities/newcastle/registry/C_behaviour.json (C.scoring.monetary_distance_rate)",
    "cities/newcastle/docs/GOAL.md"
   ],
   "last_verified": "2026-09-07",
-  "verified_in": "20260907T173435_project_report"
+  "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)"
  }
 }
