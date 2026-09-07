@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 471 fields are made of
+## What the 472 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
 | `assumed` | 155 | chosen without direct empirical support |
-| `definition` | 126 | fixed by the formulation, not an empirical quantity |
+| `definition` | 127 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 452 | usable point value |
+| `active` | 453 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -117,7 +117,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 175 fields*
+*`cities/newcastle/registry/A_supply.json` - 176 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -176,6 +176,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.fare.lightrail_band_upper_km` | `[3, 8]` | km | `observed` | - |
 | `A.fare.lightrail_child_offpeak` | `[1.15, 1.56, 2.01]` | AUD | `observed` | - |
 | `A.fare.lightrail_child_peak` | `[1.65, 2.24, 2.88]` | AUD | `observed` | - |
+| `A.fare.off_peak_all_day_day_types` | `["SAT", "SUN"]` | enum | `definition` | - |
 | `A.fare.peak_evening_end_h` | `19.0` | hours | `observed` | - |
 | `A.fare.peak_evening_start_h` | `15.0` | hours | `observed` | - |
 | `A.fare.peak_morning_end_h` | `10.0` | hours | `observed` | - |
@@ -672,6 +673,12 @@ Child/Youth light rail off-peak fare per band. Observed: archived at cities/newc
 Child/Youth light rail peak fare per band. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json.
 
 ***observed** · status **active** · DECISIONS.md §9.135*
+
+#### `A.fare.off_peak_all_day_day_types`
+
+The day types Opal prices as off-peak all day and charges the weekend daily cap on. Declared because the assembler tested `day != 'WEEKDAY'` instead - one city's day-type token typed into the framework, in the same file that derives every other day-type decision from the city's descriptor. Fridays and public holidays are off-peak in the published rule; WEEKDAY prices as Monday-Thursday, which is the stated simplification of 9.135.
+
+***definition** · status **active** · DECISIONS.md §9.135*
 
 #### `A.fare.peak_evening_end_h`
 
@@ -1892,7 +1899,7 @@ Probability an employed person or student attends on a given day type.
 
 ***assumed** · status **active** · DECISIONS.md §2.4, 9.2 · sweep role **uncertainty***
 
-> **Sweep basis.** the work entry is bounded BELOW by the census G62 observed attendance of 0.651, which bounds the sweep and is not allowed to set the value, because census night was August 2021 with 19.2% working from home
+> **Sweep basis.** the work entry is bounded BELOW by the census G62 observed attendance of 0.651, which bounds the sweep and is not allowed to set the value, because census night was August 2021 with 19.2% working from home. THE INTERVAL IS A WEEKDAY BOUND and applies to the WEEKDAY entries only, which is what sweep_keys now states: the census attendance it rests on is a working-day observation, so it cannot bound SAT (work 0.16, education 0.03) or SUN (work 0.09, education 0.01), where attendance is low by the nature of the day and not by uncertainty. Those four entries stand outside the interval deliberately. Until the resolver's sweep check recursed into nested dicts (7 Sep 2026) it saw only the first level and never tested them at all.
 
 #### `B.activity.p_second_stop`
 

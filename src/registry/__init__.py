@@ -44,6 +44,7 @@ import glob
 import io
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -126,15 +127,22 @@ def _sweep_interval(sweep):
     return None
 
 
-def _numeric_leaves(value):
-    """(suffix, number) for a numeric value or the numeric entries of a dict."""
+def _numeric_leaves(value, _prefix=''):
+    """(suffix, number) for a numeric value or the numeric leaves of a dict.
+
+    RECURSES. A one-level walk left every leaf of a dict-of-dicts unchecked
+    against the field's own sweep, so a nested value could sit outside the
+    interval its own declaration states and no check would say so.
+    """
     if isinstance(value, bool):
         return []
     if isinstance(value, (int, float)):
-        return [('', value)]
+        return [(_prefix, value)]
     if isinstance(value, dict):
-        return [('[%s]' % k, v) for k, v in sorted(value.items())
-                if isinstance(v, (int, float)) and not isinstance(v, bool)]
+        out = []
+        for k, v in sorted(value.items(), key=lambda kv: str(kv[0])):
+            out.extend(_numeric_leaves(v, '%s[%s]' % (_prefix, k)))
+        return out
     return []
 
 
@@ -226,7 +234,14 @@ def _intrinsic_errors(fields):
             # city does not carry (a mode it lacks) is simply not checked
             keys = f.get('sweep_keys')
             for suffix, leaf in _numeric_leaves(f['value']):
-                if keys and suffix[1:-1] not in keys:
+                # A leaf's suffix is its bracket path: `[car]` when the value is
+                # a flat dict, `[WEEKDAY][work]` when it nests. An entry matches
+                # if sweep_keys names its full dotted path OR any one segment of
+                # it, so a nested field can be scoped by its branch (`WEEKDAY`)
+                # and a flat one still by its own key (`car`), as before.
+                segs = re.findall(r'\[([^\]]*)\]', suffix)
+                if keys and not ('.'.join(segs) in keys
+                                 or any(s in keys for s in segs)):
                     continue                  # the sweep is declared not to apply
                 if not (lo <= float(leaf) <= hi):
                     errors.append('%s%s: value %r lies outside its own sweep [%g, %g] - '

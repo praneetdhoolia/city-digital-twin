@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Open family:** F29 (opened at its rebuild; no arm has run in it)
+**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
 
 ## What is built
 
@@ -53,7 +53,7 @@
 
 - **#93 (awaiting-run)** — the conservation fix is built and the plans rebuilt on it (§9.140); what closes it is a gate reading at or under the identity on the F24 package.
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
-- **#68 is still open on GitHub** though the crossings are built and activated (§9.77, §9.90); it should close on the record or state what remains.
+- **The crossings' closure effect has never been measured on a converged arm** (§9.77, §9.90). #68 is closed on its build scope; what is left is a reading, and no arm since F4 has reached a horizon to take it from.
 - The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 60 s — the registry is the newer statement and wins; the CSV text should be regenerated.
 - Truck routing unconstrained; no port-gate constraint is enforced — the Mayfield precinct cap (1,268 movements/day) is recorded as an upper bound only, never a target (§9.70).
 

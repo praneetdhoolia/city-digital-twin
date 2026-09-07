@@ -185,6 +185,22 @@ def check_positions(city: Path, spec: dict, family_keys: list[str]) -> list[str]
                 if NUMBER.search(l) and not ref.search(l):
                     problems.append(f"{rel}:{i}: a figure with no source on its line - "
                                     f"add the §, the issue or the path it comes from")
+        # THE STAMP NAMES THE FAMILY THE PAGE WAS WRITTEN AGAINST, and the
+        # ledger has to know it. The stamp used to read "Open family", a LIVE
+        # fact with its home on the board; seven of thirteen pages were two or
+        # three boundaries out of date before anything looked, because the
+        # brief was the only document whose stamp was checked.
+        stamp_re = spec.get("family_stamp")
+        if stamp_re:
+            m = re.search(stamp_re, text)
+            if not m:
+                problems.append(f"{rel}: no family stamp matching {stamp_re!r} - a "
+                                f"position page states the family it was written against")
+            else:
+                stamp = m.group(1)
+                if not any(stamp == k or k.startswith(stamp + "-") for k in family_keys):
+                    problems.append(f"{rel}: family stamp '{stamp}' names no family in "
+                                    f"the ledger")
         if page.name == spec.get("families_page"):
             for key in family_keys:
                 if key not in text:

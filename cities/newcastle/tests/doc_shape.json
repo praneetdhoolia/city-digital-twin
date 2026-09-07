@@ -1,71 +1,73 @@
 {
-  "description": "Newcastle's DOCUMENT SHAPE rules - the city-owned half of tests/check_doc_shape.py. check_doc_currency.py pins the NUMBERS a living document states; this pins the SHAPE: the board stays a board, the brief stays short and stamped with the family it was written for, the record grows in order and on a template, the position pages carry a source for every number, and a frozen document says so at the top. Every rule here was breached at least once in August 2026 (DECISIONS.md 9.132).",
-  "board": {
-    "path": "docs/STATUS.md",
-    "max_hand_lines": 170,
-    "max_line_chars": 600,
-    "allowed_h2": [
-      "The goal",
-      "Scoreboard",
-      "Where the build is",
-      "State",
-      "Runs on disk",
-      "Next",
-      "Open work",
-      "Do not re-raise",
-      "How to resume"
-    ],
-    "required_blocks": [
-      "scoreboard",
-      "runs",
-      "state"
-    ],
-    "no_deviation_flags": [
-      "level only",
-      "representation"
-    ]
-  },
-  "brief": {
-    "path": "docs/NEXT_AGENT_BRIEF.md",
-    "max_lines": 180,
-    "required_headings": [
-      "§0",
-      "§1",
-      "§2",
-      "§3"
-    ],
-    "family_stamp": "\\*\\*Open family:\\*\\*\\s*`([^`]+)`"
-  },
-  "record": {
-    "path": "docs/DECISIONS.md",
-    "section_pattern": "^## 9\\.(\\d+)\\b",
-    "frozen_through": 131,
-    "max_new_section_lines": 140,
-    "index_reference": "§9\\.{n}\\b"
-  },
-  "positions": {
-    "dir": "docs/positions",
-    "max_lines": 130,
-    "required_headings": [
-      "## What is built",
-      "## What is measured",
-      "## What is open",
-      "## History"
-    ],
-    "numbers_need_reference": true,
-    "reference_pattern": "§|#\\d+|`[^`]+`",
-    "families_page": "sampling-and-families.md"
-  },
-  "families": {
-    "path": "docs/run_families.json"
-  },
-  "archives": {
-    "dirs": [
-      "docs/archived"
-    ],
-    "live": [],
-    "banner_pattern": "ARCHIVE|FROZEN|frozen|Frozen",
-    "within_lines": 12,
-    "note": "Every .md and .html under docs/archived carries a frozen/archive banner in its first lines; JSON evidence files are not prose and are skipped."
-  }
+    "description": "Newcastle's DOCUMENT SHAPE rules - the city-owned half of tests/check_doc_shape.py. check_doc_currency.py pins the NUMBERS a living document states; this pins the SHAPE: the board stays a board, the brief stays short and stamped with the family it was written for, the record grows in order and on a template, the position pages carry a source for every number, and a frozen document says so at the top. Every rule here was breached at least once in August 2026 (DECISIONS.md 9.132).",
+    "board": {
+        "path": "docs/STATUS.md",
+        "max_hand_lines": 170,
+        "max_line_chars": 600,
+        "allowed_h2": [
+            "The goal",
+            "Scoreboard",
+            "Where the build is",
+            "State",
+            "Runs on disk",
+            "Next",
+            "Open work",
+            "Do not re-raise",
+            "How to resume"
+        ],
+        "required_blocks": [
+            "scoreboard",
+            "runs",
+            "state"
+        ],
+        "no_deviation_flags": [
+            "level only",
+            "representation"
+        ]
+    },
+    "brief": {
+        "path": "docs/NEXT_AGENT_BRIEF.md",
+        "max_lines": 180,
+        "required_headings": [
+            "§0",
+            "§1",
+            "§2",
+            "§3"
+        ],
+        "family_stamp": "\\*\\*Open family:\\*\\*\\s*`([^`]+)`"
+    },
+    "record": {
+        "path": "docs/DECISIONS.md",
+        "section_pattern": "^## 9\\.(\\d+)\\b",
+        "frozen_through": 131,
+        "max_new_section_lines": 140,
+        "index_reference": "§9\\.{n}\\b"
+    },
+    "positions": {
+        "dir": "docs/positions",
+        "max_lines": 130,
+        "required_headings": [
+            "## What is built",
+            "## What is measured",
+            "## What is open",
+            "## History"
+        ],
+        "numbers_need_reference": true,
+        "reference_pattern": "§|#\\d+|`[^`]+`",
+        "families_page": "sampling-and-families.md",
+        "family_stamp": "\\*\\*Written against family:\\*\\*\\s*`(F[^`]+)`",
+        "family_stamp_note": "A position page is stamped with the family it was WRITTEN AGAINST, which is a frozen fact and cannot go stale. It used to say \"Open family\" - a LIVE fact whose home is the board and the ledger - and by 7 September 2026 seven of thirteen pages carried a family two or three boundaries old, because the brief was the only document whose stamp was checked. The stamp must name a family the ledger knows."
+    },
+    "families": {
+        "path": "docs/run_families.json"
+    },
+    "archives": {
+        "dirs": [
+            "docs/archived"
+        ],
+        "live": [],
+        "banner_pattern": "ARCHIVE|FROZEN|frozen|Frozen",
+        "within_lines": 12,
+        "note": "Every .md and .html under docs/archived carries a frozen/archive banner in its first lines; JSON evidence files are not prose and are skipped."
+    }
 }

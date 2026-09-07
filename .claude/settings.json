@@ -41,6 +41,11 @@
             "type": "command",
             "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/block-session-ref-in-pr.sh\"",
             "statusMessage": "Checking PR for forbidden session reference"
+          },
+          {
+            "type": "command",
+            "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/gate-pr-on-docs.sh\"",
+            "statusMessage": "A PR cannot open on stale documents"
           }
         ]
       },

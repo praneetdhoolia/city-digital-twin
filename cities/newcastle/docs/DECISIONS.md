@@ -8,9 +8,12 @@ has run and been measured; that measurement is a calibration diagnostic (the
 figures in [`README.md`](../../../README.md), the full rows in
 [`audit/CALIBRATION_REPORT.md`](reference/CALIBRATION_REPORT.md)), not a result.
 **Started:** 10 August 2026 · **the newest entry is the last `## 9.x` section
-before `## 10.`, and the last row of §14** — stated as a place rather than a
+before `## 14.`, and the last row of §14** — stated as a place rather than a
 number, because a number here has to be rewritten to stay true and twice was
-not (it read §9.75 while §9.79 was in the file).
+not (it read §9.75 while §9.79 was in the file). The place was wrong too: this
+line said *before `## 10.`* until 7 September 2026, which sent a reader to
+§9.85 and a fortnight of sections short of the end. §15 sits ahead of §14 in
+file order deliberately (see the index below), so `## 14.` is the boundary.
 
 Proposal §8.1: *"`DECISIONS.md` is not optional. Every parameter chosen without
 direct empirical support must be recorded here with its rationale and its sweep
@@ -188,6 +191,7 @@ about its layout will otherwise cost you an hour:
 | **A milestone iteration cost twice a plain one** | **§9.147** — the F26 stopwatch separates them for the first time: a plain iteration 319 s (mobsim 197, replanning 43, pairing 41, prepareForMobsim 35), a milestone 569–715 s (`dump all plans` 121–147, the mobsim doubled by writing events, experienced plans 33–54), every tenth iteration a milestone, and the readers derived milestones from the experienced plans only because `writeTripsInterval` had never been declared (MATSim default 50). `RUN.controler.write_trips_interval` = 10 carries the monitoring; plans and events move to 100 = the gate interval; the detour routing runs on `global.numberOfThreads` workers and is applied in order; the mobsim's thread count probed for the first time on 24 cores — a plain iteration 270-272 s at 10, 267 at 16, 264-265 at 24, and 16 declared |
 | **A global `wait` strands every non-chain mode** | **§9.148** — `RUN.qsim.vehicle_behavior` = wait is global and walk and taxi are network modes with per-person vehicles that are not chain-based: the first F27 arm's iteration 0 read car departures 82,388 against F26's 232,394 with 55,862 car agents stuck, and by iteration 19 co-evolution had abandoned every plan that strands; stopped at 19, citable for nothing. The car waits only for a car: `HouseholdCarDepartureHandler`, registered before the netsim engine, registers a driver whose household car is out as waiting with the link and MATSim's own link departs them when it is parked back; everything else teleports as before; `vehicle_behavior` back to teleport, `wait` kept in the sweep as measured fatal. The reader takes rail boardings from the legs table where the plans are absent. F28 opens at the fix |
 | **F28 gate: car inside; the walked lifts are the shared pass's short trips** | **§9.149** — stopped at 100 with 7 out, car +6.6 % inside for the first time; 65,960 selected ride legs all with a declared driver, pair rate 0.9965; 15,582 drivers waited for a household car; bound trips ridden 45.5 % → 56.0 %, self-driven 29,827 → 17,530; the 20,151 walked lifts have a median of 1.08 km (65 % under 2 km) and the shared pass's bound trips a median of 2.46 km against an observed passenger trip of 9.3–9.8 km; a longest-first ordering proved inert (the pass thins nothing at `thin_p` 0.9926) and classifying the 27,771 unserved car-less tours found 94 % refused on the 0.05 sampling-hash BUCKET alone with a same-SA2 driver in the window, at a median 9–15 km; `B.ride.shared_lift_hash_bucket` 0.05 → 0.25, the standing campaign fraction (0.05 the control), `longest_first` kept as the thinning rule; F29 opens at the rebuild; the experienced-plan excess metric retired |
+| **The repository assessed; 29 of 34 defects closed without a run** | **§9.150** — a whole-repository assessment at `419b0da` (`docs/reports/20260907T130247_project_report.html`) found 95 findings, 34 of them defects, every one invisible to CI. The 67/143 split was informing the calibration targets: the heavy share converting 31 of 34 count targets was a median over 23 classified stations of which 20 are holdout, and the artefact printed `calibration_stations_observed 3` itself — now calibration-only, `heavy_vehicle_share` 0.0652 → 0.1120, and the truck gate target filtered by the same rule with no change to its value. The count comparison was scored on two bases (observed light vehicles against modelled `vol_car` alone); `vehicles_per_leg` now declares every road mode and `extract_metrics` reads it. Three checks were green on rules they could not test — the AST scanner walked module level only, the sweep check saw one dict level, a test fixture counted as a consumer — all three widened, `check_hardcoding` back at 0 with 30 structural exceptions. The framework held one city's clip rectangle and one city's weekday: both declared, and the coordinate scan now catches a box at any precision. Seven position pages were stamped with a stale open family; the stamp is now `Written against family` and `check_doc_shape` enforces it. `--stop` ended every arm on the machine and discarded the operator's cause; a marker is written before the kill. Registry 471 → 472, unit tests 108 → 118. Five defects left open with reasons: the duplicated HTS purpose map and the two Java defects open a family, the network-layer fallbacks need a decision, the manifest's blank provenance columns are a data job. No arm ran; no family opened |
 
 
 ---
@@ -14486,10 +14490,150 @@ bus and taxi, whose excess this placement should draw down; car against
 control. No target value moved, no mode's utility or ASC changed, the 67/143
 split is untouched, the network is unchanged, no approval stands.
 
+## 9.150 The whole repository assessed, and twenty-nine of its thirty-four defects closed without a run (7 September 2026, thirty-first session; user directive "fix the defects according to the report"; issues #131, #82, #66)
+
+**What was wrong.** A whole-repository assessment was lodged at `419b0da`
+(`docs/reports/20260907T130247_project_report.html`) and found **95 findings —
+34 defects, 37 risks, 24 smells** — each with a `file:line` and a failure
+scenario. The pattern was not bad code. It was a **gap between what a check
+asserts and what it can see**, and every instance was invisible to CI:
+
+- **The holdout was informing the calibration targets.** The heavy-vehicle
+  share that converts 31 of 34 calibration count targets to a light-vehicle
+  basis was a median over all 23 classified stations, of which **20 are
+  holdout**. The artefact printed its own contradiction — `stations_observed 23,
+  calibration_stations_observed 3` — and had done since it was written. The
+  truck gate target had the same leak in `build_mode_targets.py`.
+- **Three checks were green on rules they could not test.**
+  `extract_legacy_constants.py` walked `tree.body` only, so no constant assigned
+  inside a function could ever be reported by *values decided in code = 0*.
+  `registry._numeric_leaves` saw one dict level, so a nested value was never
+  tested against its own sweep. `check_hardcoding.unwired` counted a key named
+  only by a test fixture as reaching the model.
+- **The count comparison was scored on two different bases**: the observed side
+  light-vehicle, the modelled side `vol_car` alone — so motorbike, taxi and the
+  household roster's second car were compared against nothing, biasing every
+  count error low while #82 tracks counts at −91.8 %.
+- **A live fact had a second home in seven documents.** Position pages were
+  stamped `Open family`, and seven of thirteen carried a family two or three
+  boundaries old; four documents gave four answers to *what is the package on
+  disk*; the gate page said the watcher had fired and twice that it never had.
+- **The framework held one city's rectangle and one city's weekday.**
+  `gtfs_tools.STUDY` was the default clip box for every era feed, and
+  `build_matsim_run_inputs` tested `day != 'WEEKDAY'`. `check_city_agnostic`
+  passes and imports neither file; the coordinate scan needs four decimals and
+  the rectangle carried two.
+
+**What changed.** Twenty-nine defects closed, in six commits, none of them a
+model change:
+
+- **The 67/143 split is now enforced where it was being crossed.**
+  `build_validation_targets.py` derives the heavy share from CALIBRATION
+  stations only and refuses rather than falling back if none is classified;
+  `build_mode_targets.py` filters the truck target by the same rule (permanent
+  = calibration). **`heavy_vehicle_share` 0.0652 → 0.1120**, sweep unchanged —
+  a target CONVERSION moved, deliberately, because the old value was not
+  admissible. On the recent years that decide the truck target the two bases
+  are identical, so that leak closed without moving its number.
+- **`vehicles_per_leg` now declares every road mode's vehicle contribution**
+  (car 1, motorbike 1, taxi 1; ride 0, truck 0, bike 0, walk 0), and
+  `extract_metrics` reads that declaration instead of naming a mode list, so
+  the two sides of a count target share one basis.
+- **The three blind checks now see.** The AST scanner walks any depth — which
+  surfaced six real items, five copies of the Earth's mean radius and a
+  spatial-index cell size, each now a STRUCTURAL exception with its reason;
+  `_numeric_leaves` recurses and `sweep_keys` matches a path segment, which
+  immediately caught `B.activity.p_mandatory`, whose SAT and SUN entries stand
+  outside a sweep whose basis is a weekday census attendance (now scoped with
+  `sweep_keys: [WEEKDAY]`); and a test fixture stops counting as a consumer,
+  with `tests/check_package.py` named as the one genuine exception because it is
+  the package contract.
+- **A live fact stops having a second home.** The position-page stamp is now
+  **`Written against family`**, which is frozen and cannot go stale, and
+  `doc_shape.json` gains a `positions.family_stamp` rule that
+  `check_doc_shape.py` enforces against the ledger — verified by planting a bad
+  stamp. Three pages no longer answer *what is on disk*; they point at the board
+  and `check_package.py`.
+- **The framework stops holding a place.** The clip box is declared as
+  `gtfs_clip` in `cities/<city>/geometry/analysis_extents.json` at exactly its
+  typed values, and `clip()`'s box is now a REQUIRED argument;
+  `A.fare.off_peak_all_day_day_types` (SAT, SUN) replaces the WEEKDAY literal.
+  `check_hardcoding` also reports a line naming three box corners with
+  latitude/longitude-shaped numbers **at any precision** — verified by
+  re-planting the exact line.
+- **The harness stops taking other arms with it.** `run.py --stop` ended EVERY
+  `citysim_run_*` task; it now ends the named run's own. `stop_run` killed the
+  JVM first, waking the harness into its crash path, which recorded `failed` and
+  renamed the directory — discarding the operator's cause, so no
+  `stopped_by_operator` record had ever been written. An `_operator_stop.json`
+  marker is written BEFORE the kill and the harness consults it as it already
+  consults the gate's. Metrics are extracted for any run carrying a
+  `completion`, not only `rc = 0`, so a gate-stopped arm is no longer kept
+  forever by trim for want of a `_metrics.json`. The toolchain gate treats
+  "cannot tell whether an arm is running" as busy.
+- **Four readers stopped contradicting records they had already read**: the
+  board printed the highest `it.N` on disk (101) against the record's
+  `reached_iteration` (100); `build_fit_figures` never read `completion`, so a
+  stopped arm could become the README's fit; `iteration_trips.boardings`
+  defaulted an unstamped plan to *not selected* while `derive()` on the same
+  file defaulted it to selected; `--truck-stations` read the roster's
+  `hh<hid>_car<k>` as mode `car1` and dropped every roster car from the road
+  denominator.
+
+**Measured.** Registry **471 → 472** fields. Manifest 512 files, `check_manifest`
+OK. `check_hardcoding --strict` back at **0** with 30 structural exceptions (was
+24) after the scanner was widened. Unit tests **108 → 118**
+(`tests/unit/test_stop_run.py` pins the stop marker and the task a stop may
+end). Core WEEKDAY legs on disk **2,225,838** against the committed B2 report's
+2,189,888 — the report counted before the binders rewrote the file and now
+counts after it. The session gate is **16 PASS, 1 FAIL**: `toolchain`, because
+`.tools/` has never been bootstrapped in this checkout — the same failure the
+session opened with, unchanged by this work.
+
+**Deliberately not done.** Five defects are left open, each for a stated reason,
+and each is in the report with its `file:line`:
+
+- **The HTS purpose map exists twice and the two copies disagree**
+  (`build_matsim_run_inputs.py:1550` sends *Serve passenger* to NHB,
+  `build_activity_chains.py:384` to HX). Reconciling it changes the demand and
+  **opens a comparability family**; which copy is right is a modelling decision,
+  not a defect fix.
+- **Four typed fallbacks in `build_network_layers.py`** (speed 50, lanes 1,
+  capacity 1000, footway width 1.8) are applied when a class is absent from the
+  registry table and then labelled `imputed_rule` exactly like a declared
+  default. Declaring them needs a decision about defaults-of-defaults.
+- **430 of 512 manifest rows carry a blank `source`**, 432 a blank
+  `source_url`, 453 a blank `retrieved`; `check_manifest` refuses only a blank
+  licence. Backfilling is a data job across every provenance record.
+- **Two Java defects are untouched**: `EscortCoherenceListener` consumes its
+  seeded RNG while iterating a HashMap of households, so which household gets
+  which draw depends on hash order — which the sample fraction changes; and
+  `RunTelemetry` writes per-vehicle arrays from event-handler threads and reads
+  them from the QSim thread with no barrier of its own, while a committed
+  overlay turns off the barrier it depends on. Both change results, so both
+  **open a family**, and `.tools/` is absent so neither could be compiled or
+  tested here.
+
+**The chains were NOT rebuilt.** The B2 report fix is a reporting change; the
+F29 package on disk is the one the next arm runs, and it is left alone. The
+committed `_activity_chains_report.json` carries the old counts until the next
+rebuild, which is stated here rather than hidden.
+
+**Consequences.** **No arm ran and nothing here is a result.** One target
+conversion moved (`heavy_vehicle_share` 0.0652 → 0.1120), so **counts scored
+before this change are not comparable with counts scored after it** — the
+modelled side of the same comparison also changed basis, and both changes make
+the comparison correct rather than moving the model. No simulation input moved,
+so **no comparability family opens**: F29 is still the open family and still has
+no arm. The next session's lane is unchanged — launch F29's first arm under a
+fresh stated-cost approval — and it should expect the count deviations to read
+differently from #82's −91.8 % for reasons that are arithmetic, not behaviour.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-07 | **The repository assessed and 29 of its 34 defects closed without a run (§9.150; issues #131, #82, #66; thirty-first session; user directive "fix the defects according to the report").** 95 findings at `419b0da`, none of which failed CI. **The 67/143 split was crossed**: the heavy-vehicle share converting 31 of 34 calibration count targets was a median over 23 classified stations, 20 of them holdout — now derived from the 3 calibration stations, **`heavy_vehicle_share` 0.0652 → 0.1120**, sweep unchanged; the truck gate target filtered by the same rule, its value unmoved. **The count comparison used two bases**: `vehicles_per_leg` now declares car 1, motorbike 1, taxi 1, ride/truck/bike/walk 0 and `extract_metrics` reads it. Checks widened: the AST scanner to any depth (6 items surfaced, all structural exceptions with reasons), the sweep check to nested dicts (`B.activity.p_mandatory` scoped with `sweep_keys`), the unwired check to discount test fixtures. Framework de-placed: `gtfs_clip` declared in `geometry/analysis_extents.json`, `A.fare.off_peak_all_day_day_types` declared; the coordinate scan now sees a box at any precision. Documents: position pages stamped **`Written against family`** with a new `check_doc_shape` rule; three pages stop restating what is on disk. Harness: `--stop` no longer ends every arm, an `_operator_stop.json` marker preserves the operator's cause, stopped arms are extracted. Registry 471 → 472; manifest 512; unit tests 108 → 118. **No arm ran, no demand or network changed, no comparability family opened, no approval stands, nothing here is a finding.** One target CONVERSION moved, so counts scored before and after are not comparable. Left open with reasons: the duplicated HTS purpose map, four network-layer fallbacks, 430 blank manifest `source` cells, and two Java defects (`EscortCoherenceListener` hash-order RNG, `RunTelemetry` thread safety) that open a family. |
 | 2026-09-07 | **The F28 gate read and closed out; the shared pass binds the longest tours first; F29 opens (§9.149; issues #86, #145, #48; thirtieth session).** `aborted_20260907T030352_300it_25pct` stopped by the watcher at 100, 7 modes out, car +6.6 % inside for the first time, median 260 s an iteration. Listener: 0 ride legs without a declared driver, pair rate 0.9965. Roster: 15,582 drivers waited, bound trips ridden 45.5 % → 56.0 %. Walked lifts median 1.08 km; the shared pass's bound trips median 2.46 km against 9.3–9.8 km observed; 94 % of the 27,771 unserved car-less tours (median 9–15 km) refused on the 0.05 sampling-hash bucket alone. Demand: `B.ride.shared_lift_hash_bucket` 0.05 → 0.25, the standing 25 % campaign fraction (0.05 the control); `B.ride.shared_lift_priority` = longest_first (new field; `uniform` = before) as the thinning rule; chains, plans and the 30 sets rebuilt. **No target value changed, the 67/143 split is untouched, no arm launched in F29, no approval stands, nothing here is a finding.** |
 | 2026-09-07 | **A global `wait` strands every non-chain mode; the car waits only for a car; F28 opens (§9.148; issues #145, #66; thirtieth session).** The first F27 arm under `RUN.qsim.vehicle_behavior` = wait: iteration-0 car departures 82,388 against F26's 232,394, 55,862 car agents stuck, walk 12,837, ride 11,537; by 19 co-evolution had abandoned every plan that strands. Stopped at 19 (`stopped_by_operator`); nothing it read is a reading. Run stack: `HouseholdCarDepartureHandler` (car-only wait, before the netsim engine, released by the link when the car is parked back); `vehicle_behavior` back to `teleport`, `wait` kept as measured fatal. Reader: rail boardings from the legs table where the experienced plans are absent, so the ten-iteration cadence of 9.147 reads. **No target value changed, no field added, demand unchanged, no arm launched in F28, no approval stands, nothing here is a finding.** |
 | 2026-09-06 | **The iteration's cost decomposed and cut (§9.147; issues #66, #131; thirtieth session; user directive "ensure iterations have no inefficiencies").** F26 stopwatch: a plain iteration 319 s, a milestone 569–715 s (plans dump, events inside the mobsim, experienced plans), every tenth iteration a milestone; the readers take a trips table where one exists and MATSim's trips interval had sat on its default of 50. Run stack: `RUN.controler.write_trips_interval` = 10 (new), `write_plans_interval` and `write_events_interval` 10 → 100 (= the gate); `RidePairingEngine` routes detours in parallel on `global.numberOfThreads` workers and applies them in order; `RUN.machine.threads` probed on the F27 stack — a plain iteration 270-272 s at 10, 267 at 16, 264-265 at 24, and 16 declared. Registry 469 → 470. **No target value changed, the 67/143 split is untouched, no arm launched in F27, no approval stands, nothing here is a finding.** |

@@ -162,10 +162,19 @@ GATES = [
 
 def gates(quick=False):
     busy = arm_running()
+    # UNKNOWN COUNTS AS BUSY. arm_running() returns None when it could not list
+    # processes at all - the one case where we do not know whether an arm is up.
+    # Treating that as idle ran the toolchain compile, which rewrites
+    # .tools/classes under a running arm: the single thing the rule above this
+    # forbids. A skipped gate is recoverable; a recompiled class tree under a
+    # 22-hour arm is not.
+    unknown = busy is None
     failed = []
     for label, cmd, needs_toolchain in GATES:
-        if needs_toolchain and (quick or busy):
-            why = 'an arm is running - never recompile .tools/classes under it' if busy else '--quick'
+        if needs_toolchain and (quick or busy or unknown):
+            why = ('an arm is running - never recompile .tools/classes under it' if busy
+                   else 'could not tell whether an arm is running - treating as busy'
+                   if unknown else '--quick')
             print('  %-18s SKIPPED  (%s)' % (label, why))
             continue
         rc, out = _run(cmd, 900)      # fifteen minutes: the toolchain compile is the slowest gate

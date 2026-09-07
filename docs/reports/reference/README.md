@@ -44,26 +44,44 @@ on every pass.
 
 ## State
 
+Last pass **7 September 2026**, at `419b0da`, lodged as
+[`20260907T130247_project_report.html`](../20260907T130247_project_report.html).
 Seeded 7 September 2026 from the `report-data` block of
 `20260907T013735_project_report.html`, read at `9cd8b4f` before that report was
 deleted in `03b5220`.
 
-| | count | note |
-|---|---:|---|
-| projects surveyed | 40 | each with source URLs, verified 7 Sep 2026 |
-| platforms surveyed | 0 | **open gap** — the lane never delivered |
-| candidates excluded | 37 | with the reason each failed to qualify |
-| rows not re-verified | 27 | source unreachable on the 7 Sep pass |
-| factors listed | 72 | across layers A–K |
-| factors with their literature half filled | **0** | **open gap** — see below |
-| open gaps | 2 | platforms and agency programmes; lane 3's unmet stopping rule |
+### `field-survey.json` — 39 of 40 searches spent, 7 rounds
 
-**Where the next pass's budget goes.** The 7 September pass ran three field
-lanes and three factor lanes in parallel, exhausted its web-search budget, and
-delivered no platform table and not one literature cell across its 72 factor
-rows — every one reads *"not researched this pass (search budget exhausted
-before the factor lanes wrote)"*. That is the duplicated-search problem this
-library and the one-agent-per-phase rule exist to end. The 40 project rows it
-did produce are now reusable rather than lost, and the next pass should spend
-Phase 6 on the platform gap and Phase 7 on the 72 `needs_research` rows,
-highest `relevance` first, instead of re-surveying what is already here.
+| | count | this pass |
+|---|---:|---|
+| projects surveyed | 41 | **40 reused unchanged, 0 re-searched, 1 added** (Dhaka BRT MATSim) |
+| platforms surveyed | **12** | **12 added** — the lane that had never delivered a row |
+| candidates excluded | 41 | 4 added, each with the reason it failed to qualify |
+| rows not re-verified | 34 | 7 added; every one keeps its stored attributes |
+| open gaps | 4 | 1 inherited and still open, 3 added |
+
+The whole budget went to the two inherited gaps, because all 40 stored project
+rows were inside both horizons. That is the library working as designed: reuse
+paid for the platform table.
+
+### `factors.json` — 38 of 40 searches spent, 9 rounds
+
+| | count | this pass |
+|---|---:|---|
+| factors listed | 72 | unchanged |
+| literature half filled | **58** | **58 added** — the previous pass filled none |
+| still `needs_research` | 25 | 14 filled but without a transferable magnitude, 11 never reached |
+| statuses stored | **0** | by design — every status is re-read at `HEAD` each pass |
+
+**Where the next pass's budget goes.** The two dead lanes of the 7 September
+pass are closed. What is left:
+
+1. **25 factor rows still needing research**, eight of them `high` relevance —
+   led by bicycle ownership, ride pairing/lifts/detour, and workplace location.
+   Each keeps the query that would close it.
+2. **Platform licence and release dates** — six cells the sources did not state
+   (MATSim's own licence among them) are recorded `unknown`, not guessed.
+3. **Agency programmes as programmes** — TfNSW, Virtual Singapore and the US
+   MPO validation reports are still unsurveyed.
+4. **Paywalled fits**, and **lane 3's stopping rule**, which has still not been
+   met: only one round of no new qualifying entry, where two are required.

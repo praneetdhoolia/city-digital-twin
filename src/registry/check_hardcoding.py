@@ -73,6 +73,12 @@ CODE_EXT = ('.py', '.java', '.html')
 # the same reason and this is the same list, imported rather than repeated.
 MEASUREMENT_LAYERS = ('src/analyse/', 'src/calibrate/')
 
+# The one file under tests/ that CONSUMES declared values rather than fixturing
+# them: the package contract reads the registry to decide what the built package
+# must contain. Every other test naming a key is a fixture, and a fixture is not
+# a consumer - see unwired().
+VALIDATION_CONSUMERS = ('tests/check_package.py',)
+
 # How many lines either side of a <param> match are searched for the regex call
 # that would make it a pattern rather than a value. A pattern is often built
 # over several lines, so one line is not enough of a window.
@@ -92,6 +98,20 @@ SELF_REFERENTIAL = ('src/registry/check_hardcoding.py',
 # place, whatever brackets are around it.
 FLOAT = re.compile(r'-?\d{1,3}\.\d{4,}')
 LAT_MAX, LON_MAX, PLACE_MIN = 90.0, 180.0, 1.0
+
+# A BOX GIVES ITSELF AWAY BY ITS CORNER NAMES, not by its precision. Three or
+# more of these on one line, with numbers that could be a latitude and a
+# longitude, is a hand-drawn extent however few decimals it carries - the class
+# the four-decimal FLOAT rule above cannot see. Requires the corner names, so a
+# line of ordinary two-decimal numbers is not reported.
+EXTENT_KEYS = re.compile(
+    r'(?:(?<![A-Za-z_])(?:s|w|n|e|south|west|north|east|lat_min|lat_max|'
+    r'lon_min|lon_max|min_lat|max_lat|min_lon|max_lon)\s*[=:]).*?'
+    r'(?:(?<![A-Za-z_])(?:s|w|n|e|south|west|north|east|lat_min|lat_max|'
+    r'lon_min|lon_max|min_lat|max_lat|min_lon|max_lon)\s*[=:]).*?'
+    r'(?:(?<![A-Za-z_])(?:s|w|n|e|south|west|north|east|lat_min|lat_max|'
+    r'lon_min|lon_max|min_lat|max_lat|min_lon|max_lon)\s*[=:])')
+COARSE_FLOAT = re.compile(r'-?\d{1,3}\.\d+')
 
 
 def is_lat(v):
@@ -343,6 +363,28 @@ TOOL_BINDINGS = ('matsim_param',
 # it is one.
 # --------------------------------------------------------------------------
 STRUCTURAL = {
+    # Surfaced when the scanner was widened past module level (7 Sep 2026): a
+    # constant assigned inside a function had never been visible to this check.
+    # The Earth's mean radius is a physical constant, not a modelling choice -
+    # it cannot be swept, and a city cannot declare a different one. The five
+    # copies are a REDUNDANCY finding (one haversine would do), not a
+    # hardcoding one.
+    'src/build/osm_parse.py:R':
+        'the Earth\'s mean radius in metres, inside a haversine. A physical '
+        'constant of the planet, not a parameter of this model',
+    'src/build/build_gtfs_extras.py:R':
+        'the Earth\'s mean radius in metres, inside a haversine',
+    '<city>/build/build_corridor_layers.py:R':
+        'the Earth\'s mean radius in metres, inside a haversine',
+    '<city>/build/build_era1_reconstruction.py:R':
+        'the Earth\'s mean radius in metres, inside a haversine',
+    '<city>/build/build_scenario_schedules.py:R':
+        'the Earth\'s mean radius in metres, inside a haversine',
+    '<city>/build/build_corridor_road_attributes.py:CELL':
+        'the cell size of a grid INDEX over alignment points, in metres. It '
+        'decides how many candidates a nearest-point search examines, never '
+        'which point is nearest - the answer is identical at any cell size, '
+        'only the speed changes',
     'src/analyse/run_view.py:RAMP_MIN':
         'a display scale: the narrowest and widest a congestion ramp is drawn. '
         'The live view reads the run and never writes to it, so no number here '
@@ -449,11 +491,28 @@ def unwired(fields, uses):
     written into a tool's config by the emitter and is tested by moving it. A
     field without one has to be read by name somewhere, and if its key appears
     nowhere as a value then nothing can be reading it.
+
+    A USE INSIDE `tests/` IS NOT A USE, with one named exception. `sources()`
+    walks the test tree so that a test may not hide a hardcoded number either,
+    but a key named only by a unit-test FIXTURE reaches no model: the fixture is
+    the thing being checked, not a consumer. Counting it wired is how a field
+    that nothing reads can sit in the registry looking consumed.
+
+    The exception is `tests/check_package.py`, which is not a unit test but the
+    PACKAGE CONTRACT: it reads declared values to decide what the built package
+    must contain (which scenarios must exist, what a mode's minimum trip time
+    is). A field it reads is doing work - the same role the measurement layer
+    plays for `MEASUREMENT_OWNED_KEYS` - so it counts, and it is named here
+    rather than the whole tree being excused.
     """
+    def model_uses(k):
+        return {f for f in uses.get(k, ())
+                if not is_test(f) or f in VALIDATION_CONSUMERS}
+
     return [(k, fields[k].get('source'), fields[k].get('status'))
             for k in sorted(fields)
             if isinstance(fields[k], dict) and not is_bound(fields[k])
-            and k not in uses and k not in PENDING_CONSUMER]
+            and not model_uses(k) and k not in PENDING_CONSUMER]
 
 
 def pending(fields, uses):
@@ -728,6 +787,18 @@ def coordinates(corpus):
             vals = [float(m.group(0)) for m in FLOAT.finditer(src)]
             if any(is_lat(v) for v in vals) and any(is_lon(v) for v in vals):
                 out.append((r, line, src.strip()[:96]))
+                continue
+            # A HAND-DRAWN EXTENT, AT ANY PRECISION. The scan above needs four
+            # decimal places, because that is what a placed coordinate looks
+            # like. A BOX does not: `dict(s=-33.20,w=151.10,n=-32.55,e=151.95)`
+            # sat in src/build/gtfs_tools.py as the framework default that
+            # clipped every era feed, and carried two decimals, so nothing saw
+            # it. A line that names at least three corners of a box AND
+            # carries numbers is an extent wherever it is written.
+            if EXTENT_KEYS.search(src) and COARSE_FLOAT.search(src):
+                coarse = [float(m.group(0)) for m in COARSE_FLOAT.finditer(src)]
+                if any(is_lat(v) for v in coarse) and any(is_lon(v) for v in coarse):
+                    out.append((r, line, src.strip()[:96]))
     return out
 
 

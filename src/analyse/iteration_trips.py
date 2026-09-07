@@ -255,7 +255,13 @@ def boardings(run_dir, iteration, route_mode=None):
         for ev, el in ET.iterparse(fh, events=('start', 'end')):
             if ev == 'start':
                 if el.tag == 'plan':
-                    in_selected = (el.get('selected') == 'yes')
+                    # SAME DEFAULT AS derive() ABOVE. Experienced plans carry
+                    # ONE plan per person, and MATSim's writer does not always
+                    # stamp `selected` on it. This read `== 'yes'`, so against
+                    # an unstamped file it selected nothing and reported zero
+                    # boardings - a silent zero, not an error - while derive()
+                    # on the same file counted every trip.
+                    in_selected = el.get('selected', 'yes') != 'no'
                 continue
             if el.tag == 'route' and in_selected and el.get('type') == 'default_pt' and el.text:
                 try:

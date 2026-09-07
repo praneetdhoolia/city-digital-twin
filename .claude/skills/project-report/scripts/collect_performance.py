@@ -55,6 +55,19 @@ MAX_MEM = re.compile(r"max\. Memory: ([\d.]+)MB")
 INNOV_OFF = re.compile(r"fractionOfIterationsToDisableInnovation")
 PHASES = ("iterationStartsListeners", "replanning", "dump all plans", "beforeMobsimListeners", "prepareForMobsim",
           "mobsim", "afterMobsimListeners", "scoring", "iterationEndsListeners", "iteration")
+# `dump all plans` is NESTED INSIDE `beforeMobsimListeners` in stopwatch.csv
+# (the header runs BEGIN beforeMobsimListeners / BEGIN dump all plans / END dump
+# all plans / END beforeMobsimListeners), and its duration column is EMPTY on
+# every iteration that does not dump. Reporting it beside the top-level phases
+# made the shares sum to 1.187 on the F23 run, and made its own "share" the
+# share of a DUMP iteration while every other phase's median was over all of
+# them - F28's 0.319 read as 32% of the run against a true 0.9%. It is reported
+# separately, against its own denominator and its own parent.
+NESTED = {"dump all plans": "beforeMobsimListeners"}
+# The phases that partition an iteration. Their shares are comparable and sum
+# to about 1; anything in NESTED is already counted inside one of them.
+EXCLUSIVE = ("iterationStartsListeners", "replanning", "beforeMobsimListeners", "prepareForMobsim",
+             "mobsim", "afterMobsimListeners", "scoring", "iterationEndsListeners")
 
 
 def sh(args: list[str]) -> str:
@@ -116,13 +129,33 @@ def stopwatch(p: Path, innovation_off_at: int | None) -> dict | None:
     def summarise(d):
         it = statistics.median(d["iteration"]) if d.get("iteration") else None
         out = {}
-        for name in PHASES:
+        for name in EXCLUSIVE + ("iteration",):
             if d.get(name):
                 med = statistics.median(d[name])
-                out[name] = dict(median_s=med, max_s=max(d[name]), share=round(med / it, 3) if it else None)
+                out[name] = dict(median_s=med, max_s=max(d[name]), n=len(d[name]),
+                                 share=round(med / it, 3) if it else None)
+        # Nested phases carry their own denominator, never the iteration's.
+        for name, parent in NESTED.items():
+            if not d.get(name):
+                continue
+            med = statistics.median(d[name])
+            par = out.get(parent, {}).get("median_s")
+            out[name] = dict(
+                median_s=med, max_s=max(d[name]),
+                # how many iterations actually dumped, against how many ran
+                n=len(d[name]), of_iterations=len(d.get("iteration") or []),
+                nested_in=parent,
+                # the honest run-level cost: this phase's total over the whole run
+                share_of_run=(round(sum(d[name]) / (it * len(d["iteration"])), 4)
+                              if it and d.get("iteration") else None),
+                share_of_parent_when_it_runs=(round(med / par, 3) if par else None),
+                share=None,
+                note="nested inside %s and absent on iterations that do not dump; "
+                     "not comparable with an exclusive phase share" % parent)
         return out
 
     return dict(iterations_timed=n_iter, phases=summarise(per_phase),
+                exclusive_phases=EXCLUSIVE, nested_phases=NESTED,
                 innovation_off_tail=summarise(tail) if tail else None,
                 slowest_iterations=sorted(((v, k + 1) for k, v in enumerate(per_phase.get("iteration", []))), reverse=True)[:5])
 

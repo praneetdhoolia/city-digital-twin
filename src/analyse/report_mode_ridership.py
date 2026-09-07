@@ -307,16 +307,35 @@ def truck_at_count_stations(run_dir, iteration):
     if not _os.path.exists(path):
         return None, observed, 0, 0, len(cal_keys), len(held_keys)
     pat = _re.compile(r'type="entered link" link="([^"]+)" vehicle="([^"]+)"')
+    # A VEHICLE'S MODE IS THE ONE IT ENTERED TRAFFIC IN, not a guess from its
+    # id. The id suffix rule read `hh<hid>_car<k>` - the household roster's own
+    # naming (HouseholdVehicleRoster) - as the mode `car1`, which is in no mode
+    # list, so every roster car fell out of the road denominator entirely and
+    # inflated the heavy share this function reports. `vehicle enters traffic`
+    # carries `networkMode` and always precedes that vehicle's `entered link`
+    # events, so one pass still serves. The suffix stays as the fallback for a
+    # vehicle that entered traffic before this iteration's file began.
+    enters = _re.compile(r'type="vehicle enters traffic".*?vehicle="([^"]+)".*?'
+                         r'networkMode="([^"]+)"')
+    veh_mode = {}
     tally = collections.Counter()
     with gzip.open(path, 'rt') as fh:
         for line in fh:
+            if 'vehicle enters traffic' in line:
+                e = enters.search(line)
+                if e is not None:
+                    veh_mode[e.group(1)] = e.group(2)
+                continue
             if 'entered link' not in line:
                 continue
             m = pat.search(line)
             if m is None or m.group(1) not in want:
                 continue
             veh = m.group(2)
-            tally[veh.rsplit('_', 1)[-1] if '_' in veh else 'car'] += 1
+            mode = veh_mode.get(veh)
+            if mode is None:
+                mode = veh.rsplit('_', 1)[-1] if '_' in veh else 'car'
+            tally[mode] += 1
     road = sum(v for k, v in tally.items() if k in ROAD_VEHICLE_MODES)
     if not road:
         return None, observed, 0, 0, len(cal_keys), len(held_keys)

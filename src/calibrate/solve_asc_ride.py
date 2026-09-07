@@ -87,7 +87,13 @@ def evaluate(value, args, overrides):
     cfg = run_matsim.resolve(args.scenario, args.day, args.run_config, overrides)
     doc = run_matsim.run(args.scenario, args.day, cfg,
                          {'ride.constant': '%g' % value})
-    run_dir = os.path.join(run_matsim.RESULTS, doc['name'])
+    # THROUGH THE STORE, like every other consumer. This built
+    # `results/<name>`, but the store has kept runs under `results/raw/<name>`
+    # since 9.137 and renames a dead one to `aborted_<name>`, so the directory
+    # never existed and `shares_of` could not find a run it had just launched.
+    # Eleven other modules resolve a run this way; this one did not.
+    run_dir = (run_matsim.results_store.resolve(doc['name'])
+               or run_matsim.results_store.raw_dir(doc['name']))
     shares = shares_of(run_dir)
     return dict(asc_car_passenger=value, shares=shares, ride_per_car=ratio(shares),
                 run=doc.get('name'), rc=doc.get('rc'))

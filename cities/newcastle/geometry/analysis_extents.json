@@ -2,13 +2,12 @@
   "description": "Hand-drawn extents that were typed into framework build scripts. They are declared here, in the city they belong to, at EXACTLY the values they had - this file relocates them, it does not correct them. Each carries what it selects, what it is worth, and whether it is still open.",
   "crs": "EPSG:4326",
   "note": "A typed rectangle cannot be wrong in a way anyone notices. The OSM harvest box of issue #32 clipped 87 of 1,500 core SA1s out of the road network and survived three phases. Every entry below is the same class of object and is treated as assumed until it is derived from a boundary or a tag.",
-
   "extents": {
     "cbd_buildings": {
-      "south": -32.9450,
-      "west": 151.7250,
-      "north": -32.9050,
-      "east": 151.8050,
+      "south": -32.945,
+      "west": 151.725,
+      "north": -32.905,
+      "east": 151.805,
       "source": "assumed",
       "was_typed_in": "src/build/build_landuse_parking.py",
       "selects": "The buildings whose floorspace D1_frontage_segments.csv attributes per 50 m of frontage.",
@@ -16,17 +15,27 @@
       "issue": 34,
       "status": "open - do not change without measuring what it moves"
     },
-
     "harbourside_corridor_search": {
-      "south": -32.930,
-      "west": 151.770,
-      "north": -32.920,
+      "south": -32.93,
+      "west": 151.77,
+      "north": -32.92,
       "east": 151.795,
       "source": "assumed",
       "was_typed_in": "src/build/shape_tools.py (harbourside_corridor)",
       "selects": "The window searched for the Foreshore Footpath, the surviving harbour-side strip of the former rail corridor between Wickham and Newcastle. The track was lifted in 2014 and OSM carries no continuous disused way, so the eastern half of the alignment is observed geometry found inside this window and the western half is interpolated.",
       "why_it_matters": "It bounds which observed geometry the S0 and era-1 alignments are anchored on. Too wide and an unrelated named way is picked up; too narrow and the alignment falls back to interpolation over its whole length. Both halves are reported by the builder.",
       "status": "assumed - never derived from a boundary"
+    },
+    "gtfs_clip": {
+      "south": -33.2,
+      "west": 151.1,
+      "north": -32.55,
+      "east": 151.95,
+      "source": "assumed",
+      "was_typed_in": "src/build/gtfs_tools.py (STUDY, the module default of clip() and in_study())",
+      "selects": "The GTFS trips kept when an era feed is clipped: a trip is kept if it touches at least one stop inside this box, and all of that trip's stops are then kept. build_era_feeds.py called clip(f) with no box, so this rectangle decided every era feed on disk.",
+      "why_it_matters": "It was a FRAMEWORK default, so one city's rectangle clipped the schedules of any city the framework was pointed at, and no check could see it: check_hardcoding's coordinate scan requires four decimal places and these have two. It is relocated here at EXACTLY its typed values - the era feeds on disk are unchanged - and is assumed until it is derived from the LGA boundary the OSM harvest already uses.",
+      "status": "open - derive from the dissolved LGA boundary plus a margin, as cities/newcastle/extract/overpass.py already does for the OSM harvest"
     }
   }
 }

@@ -50,6 +50,10 @@ OUT_DIR = _city.path('docs', 'reference', 'figures')
 CALIBRATION_FILE = _city.path('params/C5_calibration.json')
 FAMILIES_FILE = _city.path('docs', 'run_families.json')
 RESULTS_DIR = _os.path.join(_city.REPO, 'results')
+# The one completion value that means a run executed the horizon it declared
+# (src/run/run_matsim.py:RAN_TO_LAST). Named here rather than imported so this
+# analysis module does not pull in the launcher.
+RAN_TO_LAST = 'ran_to_last_iteration'
 LEDGER = 'FIGURES.json'
 
 # Page geometry, in SVG user units. Every number here decides where ink lands on
@@ -144,6 +148,34 @@ def find_run(tag=None):
     # Deterministic: the launch stamp leads the directory name, so the last one
     # sorted is the most recent run of that tag.
     return hits[-1]
+
+
+def _refuse_unless_ran_to_last(run_dir):
+    """The front door draws a RESULT, so its run must have executed its horizon.
+
+    `_fit.json` alone was the test, and a stopped arm carries one: its reading
+    at `reached_iteration` is citable, but it is not a result and may not become
+    the README's picture of the model's fit. Only `ran_to_last_iteration`
+    anchors a calibrated base (9.143). A record written before the `completion`
+    field existed was only ever written on rc = 0, so a missing value reads as
+    `ran_to_last_iteration` - a frozen record is never rewritten to satisfy a
+    newer schema.
+    """
+    path = _os.path.join(run_dir, '_run.json')
+    if not _os.path.exists(path):
+        raise SystemExit(
+            '%s carries no _run.json, so it never ended at a defined boundary '
+            'and cannot be drawn as the model\'s fit.'
+            % _os.path.relpath(run_dir, _city.REPO))
+    completion = _load(path).get('completion') or RAN_TO_LAST
+    if completion != RAN_TO_LAST:
+        raise SystemExit(
+            '%s ended as %r, not %r: a stopped arm is a citable reading at its '
+            'reached_iteration, never the fit on the front page. Point '
+            'C5_calibration.json at a run that executed the horizon it '
+            'declared, or pass --run explicitly to draw a diagnostic.'
+            % (_os.path.relpath(run_dir, _city.REPO), completion, RAN_TO_LAST))
+    return run_dir
 
 
 def family_of(run_name):
@@ -616,7 +648,7 @@ def main():
                     help='exit 1 if the committed figures are not current')
     args = ap.parse_args()
 
-    run_dir = find_run(args.run)
+    run_dir = _refuse_unless_ran_to_last(find_run(args.run))
     out_dir = args.out or OUT_DIR
     files = build(run_dir)
     rel_run = _os.path.relpath(run_dir, _city.REPO).replace(_os.sep, '/')

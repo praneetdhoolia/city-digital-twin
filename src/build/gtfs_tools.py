@@ -3,7 +3,13 @@
 import zipfile, csv, io, os, collections, datetime
 import det_io
 
-STUDY=dict(s=-33.20,w=151.10,n=-32.55,e=151.95)
+# NO EXTENT LIVES HERE. This module held a typed rectangle as the default box
+# of clip() and in_study(), and build_era_feeds.py called clip(f) with no box -
+# so one city's hand-drawn extent, in the FRAMEWORK, decided which trips every
+# era feed kept. It is declared in cities/<city>/geometry/analysis_extents.json
+# as `gtfs_clip`, at exactly the values it had. The box is now a required
+# argument: a caller that does not say which city it is clipping for is a bug,
+# not a caller that gets Newcastle.
 FILES=['agency','stops','routes','trips','stop_times','calendar','calendar_dates',
        'shapes','frequencies','transfers','feed_info','pathways','levels']
 
@@ -27,12 +33,12 @@ def write_feed(feed,path):
             w.writeheader(); w.writerows(rows)
             z.writestr(det_io.zip_entry(name+'.txt'),buf.getvalue())
 
-def in_study(s,box=STUDY):
+def in_study(s,box):
     try: lat=float(s['stop_lat']); lon=float(s['stop_lon'])
     except: return False
     return box['s']<=lat<=box['n'] and box['w']<=lon<=box['e']
 
-def clip(feed,box=STUDY):
+def clip(feed,box):
     """Keep trips that touch >=1 stop in the box; keep all stops of those trips."""
     stops={s['stop_id']:s for s in feed.get('stops',[])}
     inside={sid for sid,s in stops.items() if in_study(s,box)}

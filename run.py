@@ -30,7 +30,9 @@ not this file's: the banner reads it out of the overlay it selected.
 see docs/STATUS.md.
 """
 import argparse
+import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -207,17 +209,28 @@ def main():
         if not a.cause:
             raise SystemExit('--stop needs --cause: a dead run must say why '
                              'it died, in the words of whoever stopped it')
-        # the scheduled task self-deletes when its command tree ends; ending
-        # any citysim_run_* task first is belt and braces
+        # The scheduled task self-deletes when its command tree ends; ending
+        # THIS RUN'S task first is belt and braces.
+        #
+        # ONLY THIS RUN'S. The sweep used to end every task whose name contained
+        # `citysim_run_`, so stopping one arm killed every other detached arm on
+        # the machine. One arm at a time is the standing rule (#66), not a
+        # guarantee - probes and a gate arm have overlapped - and `--stop` is the
+        # one sanctioned manual path, so it may not take anything with it.
+        # A run is named `<stamp>_<n>it_<p>pct`, optionally prefixed `aborted_`
+        # once mark_dead has renamed it, and its task is `citysim_run_<stamp>`.
         if os.name == 'nt':
             import subprocess
-            for line in subprocess.run(
-                    ['schtasks', '/query', '/fo', 'csv'],
-                    capture_output=True, text=True).stdout.splitlines():
-                if 'citysim_run_' in line:
+            stamp = re.search(r'\d{8}T\d{6}', a.stop)
+            if stamp:
+                want = 'citysim_run_%s' % stamp.group(0)
+                for line in subprocess.run(
+                        ['schtasks', '/query', '/fo', 'csv'],
+                        capture_output=True, text=True).stdout.splitlines():
                     tn = line.split(',')[0].strip('"').lstrip('\\')
-                    subprocess.run(['schtasks', '/end', '/tn', tn],
-                                   capture_output=True)
+                    if tn.rsplit('\\', 1)[-1] == want:
+                        subprocess.run(['schtasks', '/end', '/tn', tn],
+                                       capture_output=True)
         return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
 
     # The one defaulting decision this script makes, and it is made loudly.
@@ -275,11 +288,28 @@ def main():
     doc = run_matsim.run(a.scenario, a.day, cfg,
                          dict(run_matsim.parse_override(s) for s in a.set),
                          a.force, warm=warm)
-    if doc.get('rc') != 0:
-        return 1
+    rc_ok = doc.get('rc') == 0
 
     run_dir = run_matsim.results_store.resolve(doc['name']) \
         or run_matsim.results_store.raw_dir(doc['name'])
+
+    # A RUN THAT ENDED AT A DEFINED BOUNDARY IS EXTRACTED, WHATEVER ITS rc.
+    # The gate watcher and `--stop` both kill the JVM, so the arm returns
+    # rc != 0 and this used to `return 1` before extraction - leaving every
+    # gate-stopped arm without a `_metrics.json`. Trim then keeps that
+    # directory forever, because its rule is a `_run.json` present and a
+    # `_metrics.json` absent; two such arms hold 336 GiB of a 500 GiB cache.
+    # The record's `completion` field is the boundary test (9.143), and a
+    # stopped arm's reading is citable at its `reached_iteration`.
+    completion = None
+    try:
+        with open(os.path.join(run_dir, '_run.json'), encoding='utf-8') as fh:
+            completion = json.load(fh).get('completion')
+    except (OSError, ValueError):
+        pass
+    if not rc_ok and not completion:
+        return 1
+
     if not a.no_metrics:
         try:
             _extract(run_dir)
@@ -298,7 +328,9 @@ def main():
         print('\nreminder: this ran under the default_25pct overlay. Its '
               'iteration count is provisional (issue #5), and nothing is a '
               'result until the model has a calibrated base.')
-    return 0
+    # The exit code still reports what the JVM did: a gate- or operator-stopped
+    # arm is a non-zero exit that has been fully closed out and extracted.
+    return 0 if rc_ok else 1
 
 
 def _extract(run_dir):

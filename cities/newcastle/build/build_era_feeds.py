@@ -83,7 +83,7 @@ for era,cfg in ERAS.items():
         if not os.path.exists(p): print('MISSING',p); continue
         print(f'[{era}] reading {label} ...',flush=True)
         f=read_feed(p)
-        f=clip(f)
+        f=clip(f,_city.extent('gtfs_clip'))
         if not f.get('trips'): print(f'   {label}: no trips in study area'); continue
         chosen={}
         slices=[]

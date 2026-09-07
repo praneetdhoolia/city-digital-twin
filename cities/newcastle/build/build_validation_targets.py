@@ -305,33 +305,68 @@ def main():
     # by a calibrated constant (DECISIONS.md 12.2a). Written as a parameter
     # artefact rather than left in prose so the sweep-range rule can be tested.
     obs = aadt_out[aadt_out['heavy_share_source'] == 'observed']
-    hs = pd.to_numeric(obs['heavy_share'], errors='coerce').dropna()
+    # THE FALLBACK SHARE IS DERIVED FROM CALIBRATION STATIONS ONLY. It converts
+    # calibration count targets to a light-vehicle basis, so deriving it over
+    # the holdout as well would let held-out observations reach the calibrated
+    # model - the one split this project never opens. The station's OWN share is
+    # still used wherever it is classified, holdout stations included: that is
+    # the station scoring itself, not the holdout informing calibration.
+    obs_cal = obs[obs['split'] == 'calibration']
+    hs = pd.to_numeric(obs_cal['heavy_share'], errors='coerce').dropna()
+    hs_all = pd.to_numeric(obs['heavy_share'], errors='coerce').dropna()
+    if hs.empty:
+        raise SystemExit('no classified calibration station: the heavy-vehicle '
+                         'share has no admissible basis, and the holdout is not '
+                         'one. Fix the split or the classification, not this.')
     corr = {
         'heavy_vehicle_share': {
             'value': round(float(hs.median()), 4),
             'sweep': [round(float(hs.min()), 4), round(float(hs.max()), 4)],
             'source': 'measured - NSW Roads traffic volume counts, LIGHT vs '
-                      'HEAVY VEHICLES classification, %s period, two-way' % PERIOD,
+                      'HEAVY VEHICLES classification, %s period, two-way, '
+                      'CALIBRATION STATIONS ONLY' % PERIOD,
+            'basis_split': 'calibration',
             'stations_observed': int(len(hs)),
+            'stations_observed_all_splits': int(len(hs_all)),
             'stations_total': int(len(aadt_out)),
-            'calibration_stations_observed':
-                int((obs['split'] == 'calibration').sum()),
+            'calibration_stations_observed': int(len(hs)),
             'mean': round(float(hs.mean()), 4),
             'note': 'The model represents no freight. At the %d stations with a '
                     'classified count the station\'s own observed share is used; '
-                    'at the remaining %d it is assumed, and the sweep is the '
-                    'observed range across the classified stations. Only %d of '
-                    'the 34 calibration stations carry a classified count, so '
-                    'the assumed case is the usual one.'
-                    % (len(hs), len(aadt_out) - len(hs),
-                       int((obs['split'] == 'calibration').sum())),
+                    'at the remaining %d it is assumed. The assumed value, its '
+                    'sweep and its mean are derived from the %d CALIBRATION '
+                    'stations that carry a classified count - not from all %d '
+                    'classified stations, because this share converts '
+                    'calibration targets and the 67/143 holdout is never opened '
+                    '(GOAL.md; DECISIONS.md 12.2a). The assumed case is the '
+                    'usual one.'
+                    % (len(hs_all), len(aadt_out) - len(hs_all),
+                       len(hs), len(hs_all)),
         },
         'vehicles_per_leg': {
+            # EVERY MODE THAT PUTS A VEHICLE ON A COUNTED LINK, not just car.
+            # The observed side of a count target is converted to a LIGHT
+            # vehicle basis, so the modelled side has to be every light motor
+            # vehicle the model runs. It summed `vol_car` alone, so a
+            # motorbike, a taxi and - once the household roster arrived - a
+            # second household car were each compared against nothing, and
+            # every count error was biased low while #82 tracked counts at
+            # -91.8 %.
             'car': 1.0,
             'ride': 0.0,
+            'motorbike': 1.0,
+            'taxi': 1.0,
+            # Heavy: the observed side already had the heavy share removed, so
+            # counting trucks here would put freight back on one side only.
+            'truck': 0.0,
+            # Not motor vehicles, and not in a classified vehicle count.
+            'bike': 0.0,
+            'walk': 0.0,
             'source': 'derived - HTS vehicle occupancy 1.3503 persons per '
                       'vehicle (params/C4_mode_constraints.json) means observed '
-                      'vehicle trips ARE driver trips',
+                      'vehicle trips ARE driver trips; the remaining modes are '
+                      'one vehicle each where they are light motor vehicles, '
+                      'zero where the observed basis already excludes them',
             # 9.142: this note is MEASURED from the demand each build rather
             # than asserted. It used to say "B2 generates none" of the escort
             # trip, which the 9.15 repair had made false; the committed

@@ -535,7 +535,10 @@
         0.6,
         0.95
       ],
-      "sweep_basis": "the work entry is bounded BELOW by the census G62 observed attendance of 0.651, which bounds the sweep and is not allowed to set the value, because census night was August 2021 with 19.2% working from home",
+      "sweep_keys": [
+        "WEEKDAY"
+      ],
+      "sweep_basis": "the work entry is bounded BELOW by the census G62 observed attendance of 0.651, which bounds the sweep and is not allowed to set the value, because census night was August 2021 with 19.2% working from home. THE INTERVAL IS A WEEKDAY BOUND and applies to the WEEKDAY entries only, which is what sweep_keys now states: the census attendance it rests on is a working-day observation, so it cannot bound SAT (work 0.16, education 0.03) or SUN (work 0.09, education 0.01), where attendance is low by the nature of the day and not by uncertainty. Those four entries stand outside the interval deliberately. Until the resolver's sweep check recursed into nested dicts (7 Sep 2026) it saw only the first level and never tested them at all.",
       "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "2.4, 9.2",

@@ -7,35 +7,24 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 7 September 2026 — the first F26 arm ran to its
-iteration-100 gate and the watcher stopped it with **8 modes out**, walk newly
-past the bar (−22.7 %) and car at +11.5 %; no mode inside 10 %. The column
-built that morning (§9.145) answered at once: **the declared pairs hold**
-(`miss_declared_absent` 719 of 77,399) and the pairing loss is **12,461 ride
-legs on persons the demand never bound**, proposed by the coherence listener's
-inference while the gate refused 192,000 of the same kind. Selection measured
-at the trip level for the first time: **45.5 % of declared bound trips ride;
-29,827 are driven by the passenger** — and **12,317 car legs began while every
-car the household owns was already out** (§9.146, #145). Three roots, all
-physical identities with a control member: the listener re-proposes declared
-pairs only; a household drives the cars the census gives it and the second
-driver waits; a carve never draws a bound passenger. **Then the iteration
-itself was cut** (§9.147: a milestone cost twice a plain one; trips every 10,
-plans and events at the gate; the detour routing parallel, 41 s → 2 s; 16
-mobsim threads on a probe) **and the first F27 arm exposed my own error**
-(§9.148): `wait` is global in MATSim and stranded walk and taxi — 55,862 car
-agents stuck at iteration 0 — so the arm was stopped at 19, the constraint
-is now car-only in a handler of our own. **The F28 arm then ran to its gate
-at 260 s an iteration and stopped with 7 out — and car INSIDE at +6.6 %, the
-first mode ever inside at a gate** (§9.149). Pairing is solved (0 ride legs
-without a driver, pair rate 0.9965), the roster is live (15,582 drivers
-waiting a day), and the ride that is still lost is placement: the shared pass
-put its lifts on 2.5-km trips people walk, against an observed 9.5-km
-passenger trip — because a 0.05 sampling-hash bucket let each passenger be
-served by only 5 % of drivers, and 94 % of the 9–15-km tours it could not
-serve had a driver in the window. The bucket is now the campaign fraction,
-0.25; **F29 opens at that rebuild.** The scoreboard below is F28's reading at
-100 and compares with nothing after it.
+**Last updated:** 7 September 2026 — **the F28 arm ran to its iteration-100
+gate and stopped with 7 modes out and car INSIDE at +6.6 %, the first mode ever
+inside at a gate** (§9.149). Pairing is solved (0 ride legs without a declared
+driver, pair rate 0.9965) and the roster is live (15,582 drivers waiting a day);
+the ride still lost is PLACEMENT — the shared pass put its lifts on 2.5-km trips
+people walk, against an observed 9.5-km passenger trip, because a 0.05
+sampling-hash bucket let each passenger see 5 % of drivers. The bucket is now
+the campaign fraction 0.25 and **F29 opens at that rebuild; it has no arm.**
+Since then the repository was assessed whole (§9.150,
+[`docs/reports/`](../../../docs/reports/README.md)): 95 findings, 34 of them
+defects, **none of which failed CI**, and 29 closed here without a run. The one
+that touches a number: the heavy-vehicle share converting 31 of 34 calibration
+count targets was a median over 23 stations of which **20 are holdout**, so
+**`heavy_vehicle_share` moved 0.0652 → 0.1120** and the modelled side of the
+same comparison stopped counting `vol_car` alone — **counts scored before and
+after this change are not comparable**, and #82's −91.8 % should be re-read.
+No simulation input moved, so no family opened. The scoreboard below is F28's
+reading at 100 and compares with nothing after it.
 
 ## The goal
 
@@ -92,7 +81,7 @@ Inside 10%: **car**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail,
 | | |
 |---|---|
 | Open comparability family | `F29-lifts-are-the-long-trips` (opened `20260907T114503`, §9.149) - nothing run before it compares with anything after it |
-| Input registry | **471 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **472 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (7 September 2026 (thirtieth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (7 September 2026 (thirtieth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (7 September 2026 (thirtieth session)) · [runs-and-economics](positions/runs-and-economics.md) (7 September 2026 (thirtieth session)) · [sampling-and-families](positions/sampling-and-families.md) (7 September 2026 (thirtieth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
@@ -111,11 +100,11 @@ ran at a median 260 s an iteration, so 300 iterations is ~22 h. No arm runs.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `aborted_20260907T030352_300it_25pct` | aborted | F28-the-car-waits-only-for-a-car | 101 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
+| `aborted_20260907T030352_300it_25pct` | aborted | F28-the-car-waits-only-for-a-car | 100 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260907T025531_2it_1pct` | completed | F28-the-car-waits-only-for-a-car | 2 | ran_to_last_iteration `_run.json` |
 | `aborted_20260907T025046_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
 | `aborted_20260907T024623_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
-| `aborted_20260907T002431_300it_25pct` | aborted | F27-a-household-drives-the-cars-it-owns | 20 | Stopped by the operator at iteration ~21 under the GOAL.md loop, step 3 (fix from the root): RUN.qsim.vehicle_behavior=wait is GLOBAL in ... |
+| `aborted_20260907T002431_300it_25pct` | aborted | F27-a-household-drives-the-cars-it-owns | 19 | Stopped by the operator at iteration ~21 under the GOAL.md loop, step 3 (fix from the root): RUN.qsim.vehicle_behavior=wait is GLOBAL in ... |
 | `20260906T233901_4it_25pct` | completed | F27-a-household-drives-the-cars-it-owns | 4 | ran_to_last_iteration `_run.json` |
 
 153 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
@@ -123,10 +112,14 @@ ran at a median 260 s an iteration, so 300 iterations is ~22 h. No arm runs.
 
 ## Next
 
-1. **Launch F29's first arm once the rebuild lands** (§9.149): every open
-   issue carries `awaiting-run`, so `issue_gate.py` passes. Cost: the F28 arm
-   ran at a **median 260 s an iteration**, 27,657 s to its gate, so 300
-   iterations is ~22 h.
+1. **Rule on #147–#151, then launch F29's first arm** (§9.149, §9.150):
+   the issue gate now **refuses** — 20 open, 15 `awaiting-run`, **5 blocking**,
+   four needing a decision; #150 and #151 open a family, so they are cheaper
+   before this arm than after it. Cost: the F28 arm ran at a
+   **median 260 s an iteration**, 27,657 s to its gate, so 300 iterations is
+   ~22 h. Needs a fresh stated-cost approval. **Read the counts differently**:
+   both sides of the count comparison changed basis in §9.150, so #82's
+   −91.8 % is not the figure to expect.
 2. **What the arm answers, in order** (§9.149): placement — the share of
    declared bound trips ridden against 0.560 and the walked-bound median
    against 1.08 km; ride against −42.8 % read with bike (+157 %), bus (+65 %)
@@ -153,19 +146,20 @@ pairs hold (§9.146).
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
-| The first F26 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
+| The first F29 arm's gate, every issue awaiting it | #48 #86 #49 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
 | Ride: pairing solved at the F28 gate (0.9965, 0 undeclared ride legs) and 56.0 % of bound trips ridden; the walked lifts are the shared pass's 2.5-km trips against an observed 9.5-km passenger trip — it now binds the longest tours first (§9.149) | #86 | [ride-and-pairing](positions/ride-and-pairing.md) | the F29 gate: bound trips ridden against 0.560, the walked-bound median against 1.08 km, ride with bike, bus and taxi |
 | A household drives more cars than it owns: 12,317 car legs at the F26 gate with every household car out; the roster is built and enforced car-only after a global `wait` stranded the non-chain modes (§9.146, §9.148) | #145 | [population-and-demand](positions/population-and-demand.md) | the F28 arm's iteration 0: car departures and stuck against F26's 232,394 / 2,699; then the gate: that count (0 expected for one-car households), `householdCar: N waited`, where the self-driven bound trips settle |
 | Heavy rail +193 % at the F23 gate; income scaling blunts the fare (§9.139) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | where rail settles once the corridor's CBD end (#30) is repaired |
-| Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F26 gate: the stops are a subset of the CBD and the mode is still chosen |
-| Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F26 gate (§9.140) |
-| Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals on F21 |
-| Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | F26 shares by car availability, now that a car-less escorter no longer drives (§9.144) |
-| Traffic counts far below observation at 30 stations | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) | F21 counts |
-| Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F26 arm (§9.140) |
+| Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #84 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the F29 arm's gate: the stops are a subset of the CBD and the mode is still chosen |
+| Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the F29 arm's gate (§9.140) |
+| Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals at the F29 arm's gate |
+| Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | F29 shares by car availability, now that a car-less escorter no longer drives (§9.144) |
+| Traffic counts far below observation at 30 stations | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) | counts at the F29 arm's gate |
+| Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full F29 arm (§9.140) |
 | Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
-| The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F26 arm (#131) |
+| The 3 Sep assessment: 14 defects closed (§9.141) and its three decisions taken (§9.142) | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the F29 arm (#131) |
 | Iteration wall time: a plain iteration 319 s and a milestone 569–715 s on F26's stopwatch; the trips cadence declared, plans and events moved to the gate, the detour routing parallel, the mobsim's threads probed (§9.147) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the first F27 arm's stopwatch: a plain iteration against 319 s, a milestone against 569 s |
+| The 7 Sep assessment: 29 of 34 defects closed without a run (§9.150); the holdout stops informing the count targets and both sides of the count comparison share one basis | #82 #131 | [network-and-inputs](positions/network-and-inputs.md) · [monitoring-and-gates](positions/monitoring-and-gates.md) | counts at the F29 arm's gate, on the corrected basis |
 | Machine-level stalls and unexplained arm deaths | #66 | [runs-and-economics](positions/runs-and-economics.md) | the scheduler log |
 | Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
 
