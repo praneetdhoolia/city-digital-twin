@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.151 · **Written against family:** `F30`
+**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
 
 ## What is built
 
@@ -68,7 +68,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 ## What is open
 
 - The first F30 arm (`20260907T150816_300it_25pct`) has run since 7 Sep 15:08; **the newest citable reading is F28's**, taken at its watcher's iteration-100 gate (§9.149, `aborted_20260907T030352_300it_25pct`) — car read +6.6 %, inside the band at a gate for the first time, with seven modes still past the bar. F27's arm was stopped at 19 under a stranded model and is citable for nothing (§9.148). **The package on disk is F29's** — chains, plans and the 30 run-input sets rebuilt 7 Sep with `B.ride.shared_lift_hash_bucket` = 0.25 and `B.ride.shared_lift_priority` = longest_first (§9.149); **F29 has no arm**. F27 was a boundary on BOTH sides — the demand (the attribute, the carve) and the run stack (`B.ride.coherence_scope`, `B.population.vehicle_roster`, `RUN.qsim.vehicle_behavior`, the roster listener, the agent source, `JointRideEngine`), so `controler_sha256` moved too. **A level from any earlier family is a reading against a superseded package** — citable as what that family measured, never differenced against a later one. The 25%-runs-only directive (1 Sep) sets the standing fraction; the §9.129 bucket rule keeps shared pairs at any fraction that is a multiple of 0.05.
-- **F30 is open and its first arm is running** (§9.151; launched 7 Sep 15:08). It is a run-stack boundary of one line — the escort listener's draw order — taken while F29 still had no arm, so nothing is stranded by it. The demand on disk is still F29's. The other four defects closed with it moved no run value: the purpose-map repair left the 30 emitted configs byte-identical, the four declared network fallbacks left every edge unchanged, the telemetry ruling is a refusal, and the manifest change is provenance only.
+- **F30 has ONE arm and it is STOPPED** (§9.153): `aborted_20260907T150816_300it_25pct`, `completion` `stopped_by_operator`, `reached_iteration` **23** — stopped on its own cost (`median_iteration_s` 376.42 against the 260 s its approval was priced on, §9.149), not on a model fault: iteration 0 passed every control. Its it.0–it.20 readings are citable at those iterations and nowhere past them, and they separate F30 from F28 in nothing, so **the newest CITABLE reading in the project is still F28's iteration-100 gate**. The boundary itself is one run-stack line — the escort listener's draw order — taken while F29 still had no arm; the demand on disk is F29's. The other four defects closed with it moved no run value: the purpose-map repair left 140 of the 141 files under `scenarios/matsim/` byte-identical, the four declared network fallbacks left every edge unchanged, the telemetry ruling is a refusal, and the manifest change is provenance only.
 - The confirmation arm after the loop: whether a separate 25% confirmation is still needed now that the loop itself runs at 25% (§9.129) is the user's call at convergence.
 - The design-effect penalty of household cluster sampling is unestimated and no seed-variance measurement exists; `n_replications` stays 30 (§9.45). The threshold between 10% and 25% is unmeasured (§9.12).
 - One arm at a time; the machine-level stall that hit two concurrent arms is #66.
@@ -87,6 +87,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.153 — F30's first arm stopped at 23 on its own cost
 - §9.151 — F30 opens at a rebuild, on the escort listener's draw order alone
 - §9.149 — F29 opens at a rebuild: the bucket is the campaign fraction
 - §9.148 — F28 opens at a fix: the car waits only for a car

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
+**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
 
 ## What is built
 
@@ -21,6 +21,11 @@
 - **The toolchain** is fetched by `src/setup/bootstrap_toolchain.py` and pinned by sha256 in `.tools/toolchain.json`: JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25, §9.73), Maven 3.9.9 and the 201-jar signals run stack at that same MATSim version (§9.76). Signal runs execute `citysim.CitysimSignalsControler` on the run stack; every other run uses the shaded jar; the two never share a classpath. `--verify` re-hashes both and recompiles both class trees.
 
 ## What is measured — what a run costs
+
+- **THE NEWEST PACE, AND IT IS 45 % SLOWER THAN THE ARM IT WAS PRICED ON** (§9.153, `aborted_20260907T150816_300it_25pct`). `_run.json` records **`median_iteration_s` 376.42** over 23 iterations and 9,634 s of wall clock; the last ten before the stop ran at a median **381 s**. F28 measured **260 s** on the same fraction, the same demand and a run stack differing by one line. At 376 s the iteration-100 gate is ~8 h out rather than ~5.5, and 300 iterations is **near 31 h against the ~22 h the approval was priced on** — which is why the arm was stopped rather than run to its gate. **The difference is NOT diagnosed** and is #66's: it is not the §9.151 `TreeMap`, and not the demand, which is F29's throughout.
+- **A stated cost is a boundary, not an estimate** (§9.153). The 260 s that priced this arm came from F28's own stopwatch (§9.149), so the price was evidence and still missed by 45 %. **Price the NEXT arm on the newest arm's median, and re-measure before quoting a horizon.**
+- **`--stop` is tested against a live arm for the first time** (§9.153; §9.150 built it and recorded it as untested). One arm ended, no other process touched, `_operator_stop.json` written before the kill, the operator's own cause preserved, and `_run.json` closed out `completion` = `stopped_by_operator`, `reached_iteration` = 23.
+- **The signals run stack is ~300 MB of Maven resolution and 201 jars** (§9.152, `.tools/run-stack/lib`), plus `.tools/classes-signals` compiled from 50 sources. It is a one-off per checkout and it is NOT part of the plain `bootstrap_toolchain.py` run.
 
 - **A milestone iteration costs twice a plain one, and the record had never separated them** (§9.147). The F26 arm's own `output/stopwatch.csv`: iteration 99, which wrote nothing, took **319 s** — mobsim 197, replanning 43, `beforeMobsimListeners` 41 (all of it `RidePairingEngine`, `elapsed_ms` 40,282), prepareForMobsim 35, ends 3 — while iterations 90 and 100 took **569–715 s**: `dump all plans` 121–147 s, the mobsim 359–398 s with the events stream written inside it, `iterationEndsListeners` 33–54 s for the experienced plans. Every tenth iteration was a milestone, so ~36 s of every iteration on average was output the monitoring never read: the readers derive a milestone from the experienced plans only where no trips table exists, and MATSim's trips writer was on its default of 50.
 - **The cadence is now declared by what reads it** (§9.147): `RUN.controler.write_trips_interval` = 10 carries the ten-iteration monitoring (the readers take the trips table wherever it exists), and `RUN.controler.write_plans_interval` and `RUN.controler.write_events_interval` = 100 = `RUN.gate.interval_iterations`, because the full plans dump, the experienced plans and the events are gate artefacts — warm start, the trip-level diagnostics of §9.146, the close-out accounting, `--truck-stations`.
@@ -77,6 +82,8 @@
 
 ## History
 
+- §9.153 — F30 stopped at 23: 376 s an iteration against F28's 260
+- §9.152 — the toolchain gate was green on a checkout that could not launch
 - §9.149 — F28 to its gate at a median 260 s an iteration
 - §9.148 — a global `wait` stranded the non-chain modes; car-only handler
 - §9.147 — a milestone cost twice a plain iteration; cadence, detours, threads cut

@@ -194,6 +194,7 @@ about its layout will otherwise cost you an hour:
 | **The repository assessed; 29 of 34 defects closed without a run** | **§9.150** — a whole-repository assessment at `419b0da` (`docs/reports/20260907T130247_project_report.html`) found 95 findings, 34 of them defects, every one invisible to CI. The 67/143 split was informing the calibration targets: the heavy share converting 31 of 34 count targets was a median over 23 classified stations of which 20 are holdout, and the artefact printed `calibration_stations_observed 3` itself — now calibration-only, `heavy_vehicle_share` 0.0652 → 0.1120, and the truck gate target filtered by the same rule with no change to its value. The count comparison was scored on two bases (observed light vehicles against modelled `vol_car` alone); `vehicles_per_leg` now declares every road mode and `extract_metrics` reads it. Three checks were green on rules they could not test — the AST scanner walked module level only, the sweep check saw one dict level, a test fixture counted as a consumer — all three widened, `check_hardcoding` back at 0 with 30 structural exceptions. The framework held one city's clip rectangle and one city's weekday: both declared, and the coordinate scan now catches a box at any precision. Seven position pages were stamped with a stale open family; the stamp is now `Written against family` and `check_doc_shape` enforces it. `--stop` ended every arm on the machine and discarded the operator's cause; a marker is written before the kill. Registry 471 → 472, unit tests 108 → 118. Five defects left open with reasons: the duplicated HTS purpose map and the two Java defects open a family, the network-layer fallbacks need a decision, the manifest's blank provenance columns are a data job. No arm ran; no family opened |
 | **The five defects the assessment left open, ruled on and closed** | **§9.151** — the HTS purpose map existed twice and disagreed on `Serve passenger` (demand HX since §9.15, assembler NHB, 351,645 weekday legs): one shared map now, HX wins, and the VOT table was keyed on the OLD vocabulary too — renamed `NHB` → `HX` at the same 15.2, which is what kept `C.vot.trip_weighted` at 16.96 instead of the 17.317 the half-done fix produced. `EscortCoherenceListener` drew a SEEDED rng in HashMap order, which is what the sample fraction changes: a `TreeMap` now, so the draw follows the household id — a result change, taken while F29 had no arm. Four typed network fallbacks declared (`A.road.speed_unknown_class_kmh`, `A.road.lanes_unknown_class`, `A.road.capacity_unknown_class_veh_hr_lane`, `A.active.footway_width_unknown_class_m`) and stamped `imputed_fallback`; measured, the three road ones fire on 0 of 50,182 road edges and the footway one on 830 of 40,195 active edges, no value moved. `RunTelemetry` has no memory barrier of its own and a committed overlay removed the one it borrows: the combination is declared and REFUSED before the JVM and in the dry run, rather than paying atomics on the event path. The manifest resolves a derived file s provenance from its lineage instead of leaving it blank. Registry 472 → 477, unit tests 118 → 125 |
 | **The toolchain gate passed on a checkout that could not launch** | **§9.152** — every gate green, the arm approved, and the launch refused before MATSim started: `.tools/run-stack/lib` held 0 jars while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` loops over the components RECORDED in `toolchain.json`, and a stack that `--run-stack` never resolved is not recorded — so the check was green on the absence of the thing it should have failed on, the same shape as the three blind checks §9.150 widened. `verify()` now reads the declared representation and reports `MISSING run-stack` with the command; the gate and the launcher refuse on one condition. Cost: one refused launch, which stated its own cause in its `_meta.json` |
+| **F30's first arm: healthy, and stopped on its own cost** | **§9.153** — launched twice: refused before MATSim once (the run stack, §9.152), then ran and was STOPPED BY THE OPERATOR at iteration 23. Iteration 0 passed every control (car departures 232,972 against F28's 231,607, stuck 3,786 against 3,145; 8,167 declared passengers paired on 7,771 detours, 0 unroutable; 291 unpaired ride legs all restored; 8,549 drivers waiting for a household car) — and `_run.json` read **`median_iteration_s` 376.42 against F28's 260**, 45 % slower, which puts 300 iterations near 31 h against the ~22 h its approval was priced on. The it.20 readings sit on top of F28's and separate nothing. §9.150's `--stop` rebuild is tested against a live arm for the first time: one arm killed, `_operator_stop.json` written first, the operator's cause preserved, `completion` = `stopped_by_operator`. The 45 % is NOT diagnosed and is #66's |
 
 
 ---
@@ -14806,10 +14807,84 @@ to run when it is not.
 **Not done:** making `--verify` build the missing stack. A gate reports; it does
 not acquire ~300 MB over the network as a side effect of being run.
 
+## 9.153 F30's first arm: launched, healthy, and stopped on its own cost (7 September 2026, thirty-second session; user directives "give me the clickable approval choices and proceed to implement & test" and "stop the arm and /handoff"; issues #66, #73)
+
+**What happened.** With every gate green the user approved the F30 arm at a
+stated cost of ~22 h, priced on the F28 arm's measured median of 260 s an
+iteration (§9.149). It was launched twice. The first launch
+(`aborted_20260907T145929_300it_25pct`) was **refused before MATSim started** —
+the signals run stack was absent (§9.152) — and cost no compute. The second
+(`aborted_20260907T150816_300it_25pct`) ran, and was **stopped by the operator
+at iteration 23** once its own stopwatch contradicted the price it had been
+approved at.
+
+**What changed.** Nothing in the model. The signals run stack was resolved
+(201 jars) and `.tools/classes-signals` compiled from 50 sources, both changes
+of §9.151 included.
+
+**Measured — the arm was healthy.** Iteration 0's controls all passed:
+
+| control | F30 it.0 | reference | source |
+|---|---:|---:|---|
+| car departures | **232,972** | 231,607 (F28) | `0.legHistogram.txt` |
+| car stuck | **3,786** | 3,145 (F28) | `0.legHistogram.txt` |
+| declared passengers paired | **8,167** on 7,771 detours | 7,092 on 6,697 (F22 it.0, §9.136) | `matsim.log` |
+| mean driver detour | **594 s** | 538 s (F22 it.0) | `matsim.log` |
+| unpaired ride legs | **291**, all 291 restored | — | `matsim.log` |
+| drivers waiting for a household car | **8,549** | — | `HouseholdCarDepartureHandler` |
+
+Nothing was stranded — total stuck across all modes 26,343, of which walk is
+15,498, the ordinary iteration-0 picture and not the 55,862 car agents §9.148
+recorded when the model was actually broken.
+
+**Measured — and 45 % slower than the arm it was priced on.** `_run.json`
+records **`median_iteration_s` 376.42** over 23 iterations, 9,634 s of wall
+clock, against F28's **260 s**. The last ten before the stop ran at a median
+381 s. At that rate the iteration-100 gate was ~8 h out rather than ~5.5 h and
+300 iterations would have been **near 31 h against the ~22 h the approval was
+priced on**. The approval was for a stated cost, and the arm was not going to
+meet it.
+
+**The mode readings, citable at their own iterations and nowhere past them.**
+At iteration 20 (`20260907T150816_300it_25pct`, `--trend`): car 50.73 (F28 it.20
+51.33), ride 11.30 (10.79), walk 22.07 (21.41), bike 6.59 (7.02), taxi 2.04
+(2.05), bus 4.93 (5.01), heavy rail 33,756 (36,160), light rail 2,068 (2,240),
+ferry 0.0518 (0.0447), motorbike 0.4383 (0.4480). **Nothing here separates F30
+from F28**: iteration 20 is far short of the gate, co-evolution is still moving
+every mode, and the placement question the arm exists to answer reads only at
+100. **No reading past iteration 23 exists.**
+
+**A trap tested for the first time.** §9.150 rebuilt `--stop` so it ends ONE arm
+and writes `_operator_stop.json` before anything is killed, and recorded that
+the fix was **untested against a live arm**. It is tested now: the JVM was gone,
+no other process was touched, `_operator_stop.json` carried the operator's own
+words, and `_run.json` closed out `completion` = `stopped_by_operator`,
+`reached_iteration` = 23. The cause was not overwritten by the harness.
+
+**Deliberately not done: the 45 % is not diagnosed.** It is not the §9.151
+`TreeMap` — a per-household iteration order cannot cost 45 % — and it is not the
+demand, which is F29's and unchanged. Three candidates, none measured: **machine
+contention** (concurrent python processes were observed on the machine while the
+arm ran, and the machine was idle again by the time it was stopped, so the
+observation can no longer be reproduced); the **thread settings** this launch
+resolved against the `f27_timing_probe` runs §9.147 priced 260 s on; and the
+**signals run stack** being freshly built in this checkout. Naming one without
+measuring it would be exactly the workaround GOAL.md step 3 forbids. **The
+measurement that would settle it is a short timing probe against F28's own
+overlay on an idle machine — cheap, and it belongs before the next long arm.**
+
+**Consequences.** **F30 has no gate reading, and the newest citable reading in
+the project is still F28's at its iteration-100 gate.** The user's ~22 h
+approval is **SPENT** on this arm; the next arm needs a fresh one, and it should
+not be priced at 260 s an iteration until the difference between 260 and 376 is
+explained. That explanation is the next session's first task and it belongs to
+#66, which already owns iteration wall time.
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-07 | **F30's first arm ran to iteration 23 and was stopped on its own cost (§9.153; issues #66, #73; thirty-second session; user directive "stop the arm and /handoff").** Launched twice — once refused before MATSim for the absent signals run stack (§9.152), once run. Iteration 0 healthy on every control. `_run.json`: `completion` `stopped_by_operator`, `reached_iteration` 23, **`median_iteration_s` 376.42 against the 260 s the ~22 h approval was priced on**, 9,634 s of wall clock. The it.0–it.20 readings are citable at their own iterations and nowhere past them, and they separate F30 from F28 in nothing. §9.150's `--stop` rebuild tested live for the first time and held. **No target value changed, the 67/143 split is untouched, no family opened, the approval is SPENT, and nothing here is a finding** — the newest citable reading in the project is still F28's iteration-100 gate. |
 | 2026-09-07 | **The toolchain gate passed on a checkout that could not launch (§9.152; issue #73; thirty-second session).** With every gate green and the F30 arm approved, the launch was refused before MATSim started: `.tools/run-stack/lib` held **0 jars** while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` checks the digests of the components RECORDED in `toolchain.json`, and a run stack that `--run-stack` never resolved is not recorded — so the loop could not report it and the gate was green on the absence of the thing it should have failed on. `verify()` now reads the declared representation and reports `MISSING run-stack` with the exact command, so the gate and the launcher refuse on one condition. Cost: one refused launch (`aborted_20260907T145929_300it_25pct`), which stated its own cause in its `_meta.json`. **No arm ran.** |
 | 2026-09-07 | **The five defects §9.150 left open, ruled on and closed without a run (§9.151; issues #147, #148, #149, #150, #151; thirty-second session; user directive "give me the clickable approval choices and proceed to implement & test").** The HTS purpose map existed twice and disagreed on `Serve passenger` (demand HX since §9.15, assembler NHB): **one shared map, HX wins** — and the repair exposed its own second half, `C.vot.by_purpose` still keyed on the old vocabulary, which dropped the HX weight from the value-of-time average and moved the collapse **16.96 → 17.317 AUD/h** against a declared `C.vot.trip_weighted` of 16.96. Re-keyed `NHB` → `HX` at the same 15.2 (renamed, not revalued) and **140 of the 141 files under `scenarios/matsim/` came back byte-identical**, so the disagreement changed no number the model ever scored. `EscortCoherenceListener` drew a seeded rng in `HashMap` order — the order the sample fraction changes — and is a `TreeMap` now: **the one change here that moves a result**, and **family `F30-an-escort-is-priced-as-an-escort` opens on it alone**. Four typed network fallbacks declared and stamped `imputed_fallback`; measured, the three road ones fire on **0 of 50,182 road edges** and the footway one on **830 of 40,195 active edges**, no value moved. `RunTelemetry` has no memory barrier and a committed overlay removes the one it borrows: declared and **refused** before the JVM and in the dry run, rather than paying atomics on the event path. The manifest resolves a derived file's source from its lineage and a raw file inherits its directory's record: `source` **82 → 508 of 512**, `retrieved` **59 → 443**, the residue being the GTFS feeds whose records carry no date at source and the package's own record files. Registry **472 → 477**, unit tests **118 → 125**, `check_hardcoding` still 0. **No arm ran, no demand or network changed, no approval stands, the 67/143 holdout was not opened, and nothing here is a finding.** |
 | 2026-09-07 | **The repository assessed and 29 of its 34 defects closed without a run (§9.150; issues #131, #82, #66; thirty-first session; user directive "fix the defects according to the report").** 95 findings at `419b0da`, none of which failed CI. **The 67/143 split was crossed**: the heavy-vehicle share converting 31 of 34 calibration count targets was a median over 23 classified stations, 20 of them holdout — now derived from the 3 calibration stations, **`heavy_vehicle_share` 0.0652 → 0.1120**, sweep unchanged; the truck gate target filtered by the same rule, its value unmoved. **The count comparison used two bases**: `vehicles_per_leg` now declares car 1, motorbike 1, taxi 1, ride/truck/bike/walk 0 and `extract_metrics` reads it. Checks widened: the AST scanner to any depth (6 items surfaced, all structural exceptions with reasons), the sweep check to nested dicts (`B.activity.p_mandatory` scoped with `sweep_keys`), the unwired check to discount test fixtures. Framework de-placed: `gtfs_clip` declared in `geometry/analysis_extents.json`, `A.fare.off_peak_all_day_day_types` declared; the coordinate scan now sees a box at any precision. Documents: position pages stamped **`Written against family`** with a new `check_doc_shape` rule; three pages stop restating what is on disk. Harness: `--stop` no longer ends every arm, an `_operator_stop.json` marker preserves the operator's cause, stopped arms are extracted. Registry 471 → 472; manifest 512; unit tests 108 → 118. **No arm ran, no demand or network changed, no comparability family opened, no approval stands, nothing here is a finding.** One target CONVERSION moved, so counts scored before and after are not comparable. Left open with reasons: the duplicated HTS purpose map, four network-layer fallbacks, 430 blank manifest `source` cells, and two Java defects (`EscortCoherenceListener` hash-order RNG, `RunTelemetry` thread safety) that open a family. |
