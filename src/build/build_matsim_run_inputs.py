@@ -1421,7 +1421,12 @@ def config_runtime(cfg, scoring, day, paths):
         # all day, with their own caps. WEEKDAY is priced as Monday-Thursday
         # (Friday's off-peak pricing inside the WEEKDAY day type is a stated
         # simplification, DECISIONS.md 9.135).
-        weekend = day != 'WEEKDAY'
+        # DECLARED, not typed. This read `day != 'WEEKDAY'`, which puts one
+        # city's day-type token into the framework - in the very file that
+        # derives DAY_TYPES and DAY_TOKEN_RE from the city's own descriptor.
+        # A city whose off-peak week is shaped differently could not be built
+        # without editing this line.
+        weekend = day in set(cfg.get('A.fare.off_peak_all_day_day_types'))
         runtime['ptFare.offPeakAllDay'] = (
             weekend, 'derived',
             'the published rule: weekends are off-peak all day; WEEKDAY '

@@ -99,6 +99,20 @@ SELF_REFERENTIAL = ('src/registry/check_hardcoding.py',
 FLOAT = re.compile(r'-?\d{1,3}\.\d{4,}')
 LAT_MAX, LON_MAX, PLACE_MIN = 90.0, 180.0, 1.0
 
+# A BOX GIVES ITSELF AWAY BY ITS CORNER NAMES, not by its precision. Three or
+# more of these on one line, with numbers that could be a latitude and a
+# longitude, is a hand-drawn extent however few decimals it carries - the class
+# the four-decimal FLOAT rule above cannot see. Requires the corner names, so a
+# line of ordinary two-decimal numbers is not reported.
+EXTENT_KEYS = re.compile(
+    r'(?:(?<![A-Za-z_])(?:s|w|n|e|south|west|north|east|lat_min|lat_max|'
+    r'lon_min|lon_max|min_lat|max_lat|min_lon|max_lon)\s*[=:]).*?'
+    r'(?:(?<![A-Za-z_])(?:s|w|n|e|south|west|north|east|lat_min|lat_max|'
+    r'lon_min|lon_max|min_lat|max_lat|min_lon|max_lon)\s*[=:]).*?'
+    r'(?:(?<![A-Za-z_])(?:s|w|n|e|south|west|north|east|lat_min|lat_max|'
+    r'lon_min|lon_max|min_lat|max_lat|min_lon|max_lon)\s*[=:])')
+COARSE_FLOAT = re.compile(r'-?\d{1,3}\.\d+')
+
 
 def is_lat(v):
     return PLACE_MIN <= abs(v) <= LAT_MAX
@@ -773,6 +787,18 @@ def coordinates(corpus):
             vals = [float(m.group(0)) for m in FLOAT.finditer(src)]
             if any(is_lat(v) for v in vals) and any(is_lon(v) for v in vals):
                 out.append((r, line, src.strip()[:96]))
+                continue
+            # A HAND-DRAWN EXTENT, AT ANY PRECISION. The scan above needs four
+            # decimal places, because that is what a placed coordinate looks
+            # like. A BOX does not: `dict(s=-33.20,w=151.10,n=-32.55,e=151.95)`
+            # sat in src/build/gtfs_tools.py as the framework default that
+            # clipped every era feed, and carried two decimals, so nothing saw
+            # it. A line that names at least three corners of a box AND
+            # carries numbers is an extent wherever it is written.
+            if EXTENT_KEYS.search(src) and COARSE_FLOAT.search(src):
+                coarse = [float(m.group(0)) for m in COARSE_FLOAT.finditer(src)]
+                if any(is_lat(v) for v in coarse) and any(is_lon(v) for v in coarse):
+                    out.append((r, line, src.strip()[:96]))
     return out
 
 

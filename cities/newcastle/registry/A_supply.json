@@ -2508,6 +2508,21 @@
       "decisions_ref": "9.135",
       "description": "Adult daily cap on Fridays, Saturdays, Sundays and public holidays. Observed: archived at cities/newcastle/data/raw/fares/, quoted in data/raw/fares/provenance_fares.json."
     },
+    "A.fare.off_peak_all_day_day_types": {
+      "value": [
+        "SAT",
+        "SUN"
+      ],
+      "units": "enum",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.135",
+      "description": "The day types Opal prices as off-peak all day and charges the weekend daily cap on. Declared because the assembler tested `day != 'WEEKDAY'` instead - one city's day-type token typed into the framework, in the same file that derives every other day-type decision from the city's descriptor. Fridays and public holidays are off-peak in the published rule; WEEKDAY prices as Monday-Thursday, which is the stated simplification of 9.135.",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
     "A.fare.daily_cap_child": {
       "value": 9.65,
       "units": "AUD",
