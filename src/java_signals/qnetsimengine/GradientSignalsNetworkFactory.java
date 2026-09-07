@@ -63,7 +63,7 @@ public final class GradientSignalsNetworkFactory implements QNetworkFactory {
         }
         this.delegate = new ConfigurableQNetworkFactory(events, scenario);
         this.delegate.setLinkSpeedCalculator(
-                new GradientLinkSpeed.Mobsim(gradient));
+                new GradientLinkSpeed.Mobsim(gradient, scenario.getNetwork()));
     }
 
     @Override

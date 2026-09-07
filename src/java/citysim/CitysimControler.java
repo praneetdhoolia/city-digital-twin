@@ -350,7 +350,7 @@ public final class CitysimControler {
                         addTravelTimeBinding(mode).toInstance(
                                 new GradientLinkSpeed.Router(
                                         mode, type.getMaximumVelocity(),
-                                        gradient));
+                                        gradient, scenario.getNetwork()));
                     } else {
                         addTravelTimeBinding(mode).toInstance(
                                 new CappedSpeedTravelTime(
@@ -566,7 +566,8 @@ public final class CitysimControler {
                                                   .linkspeedcalculator
                                                   .LinkSpeedCalculator.class)
                             .addBinding()
-                            .toInstance(new GradientLinkSpeed.Mobsim(gradient));
+                            .toInstance(new GradientLinkSpeed.Mobsim(
+                                    gradient, scenario.getNetwork()));
                 }
             });
         }

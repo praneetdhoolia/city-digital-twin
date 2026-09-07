@@ -116,6 +116,23 @@ public final class PtFareChargeHandler implements
     private final Map<Id<Person>, List<FareLeg>> journeys = new HashMap<>();
     private final Map<Id<Person>, Double> chargedToday = new HashMap<>();
     private final List<PersonMoneyEvent> pending = new ArrayList<>();
+    /**
+     * The published Opal tables, parsed once each.
+     *
+     * <p>The nine fare strings are constants of the run - the declared bands
+     * and the adult and child rates for rail, tram and bus, peak and off-peak.
+     * Splitting and parsing them again for every priced fare leg was work the
+     * value of the string could never change. Keyed on the string itself, so
+     * two tables that happen to carry the same rates share one array and a
+     * table that is edited is a different key.
+     */
+    private final Map<String, double[]> tables =
+            new java.util.concurrent.ConcurrentHashMap<>();
+
+    /** {@link PtFareConfigGroup#parse}, memoised - the same array, once. */
+    private double[] parsed(final String csv) {
+        return this.tables.computeIfAbsent(csv, PtFareConfigGroup::parse);
+    }
     private long fareLegs;
     private long journeysCharged;
     private double totalCharged;
@@ -371,7 +388,7 @@ public final class PtFareChargeHandler implements
             childCsv = peak ? this.cfg.getBusChildPeak()
                     : this.cfg.getBusChildOffpeak();
         }
-        final double[] upper = PtFareConfigGroup.parse(bands);
+        final double[] upper = parsed(bands);
         int band = upper.length;  // the open last band
         for (int i = 0; i < upper.length; i++) {
             if (km <= upper[i]) {
@@ -379,8 +396,8 @@ public final class PtFareChargeHandler implements
                 break;
             }
         }
-        final double adult = PtFareConfigGroup.parse(adultCsv)[band];
-        final double child = PtFareConfigGroup.parse(childCsv)[band];
+        final double adult = parsed(adultCsv)[band];
+        final double child = parsed(childCsv)[band];
         return classFare(rc, adult, child);
     }
 
