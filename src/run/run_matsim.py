@@ -79,6 +79,33 @@ JAVA_SRC = os.path.join(REPO, 'src', 'java')
 JAVA_SIGNALS_SRC = os.path.join(REPO, 'src', 'java_signals')
 
 
+def refuse_unsafe_telemetry(cfg):
+    """Refuse a run whose telemetry would have no memory barrier (#151).
+
+    RunTelemetry's per-vehicle array and per-mode maps are written from the
+    event-handler threads and read and cleared from the QSim thread, and it
+    carries no volatile, no synchronized and no concurrent type. The sim-step
+    barrier is the only thing publishing those writes. Turning it off does not
+    crash the run - it silently tears the counters the progress digest then
+    reports as a measurement, which is the worst shape a defect can take here.
+    Checked before the JVM starts, and in the dry run, so a committed overlay
+    that cannot legally run says so when it is resolved rather than hours in.
+    """
+    if (cfg.get('RUN.machine.telemetry_requires_simstep_barrier')
+            and not cfg.get('RUN.machine.events_synchronize_on_simsteps')):
+        raise SystemExit(
+            'refused: RUN.machine.events_synchronize_on_simsteps is false '
+            'while RUN.machine.telemetry_requires_simstep_barrier is true. '
+            'RunTelemetry carries no volatile, no synchronized and no '
+            'concurrent type; the sim-step barrier is the only thing that '
+            'publishes its writes to the reading thread. Without it the live '
+            'counters and the progress digest are silently torn, rather than '
+            'wrong in a way anyone would see (#151). The barrier is also '
+            'MEASURED faster on this model (DECISIONS.md 9.59). To run '
+            'without it, make the shared state in RunTelemetry explicitly '
+            'concurrent and declare the field false.')
+
+
 def controler_sha256():
     """Hash the committed source of the entry point this run will execute.
 
@@ -296,6 +323,8 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         else:
             shutil.copyfile(veh_src, veh_dst)
             scaled = []
+
+    refuse_unsafe_telemetry(cfg)
 
     # The parking price table sits beside the scenario network, one per scenario.
     # Checked rather than assumed: a config that lost its price file would run

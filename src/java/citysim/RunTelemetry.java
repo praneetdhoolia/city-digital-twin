@@ -95,6 +95,23 @@ import org.matsim.vehicles.Vehicle;
  * the network but adds no vehicle to the mobsim (issue #31), so it experiences
  * congestion without causing it. A map drawn from this is therefore
  * <em>vehicular</em> congestion, and the page must say so.
+ *
+ * <p><b>Thread safety: this class has none of its own.</b> Its per-vehicle
+ * array and its per-mode maps are written from the EVENT-HANDLER threads
+ * (RUN.machine.event_handler_threads = 4) and read and cleared from the QSIM
+ * thread, and there is no {@code volatile}, no {@code synchronized} and no
+ * {@code java.util.concurrent} type anywhere below. What publishes those
+ * writes is the sim-step barrier -
+ * {@code RUN.machine.events_synchronize_on_simsteps = true}, MATSim's
+ * {@code eventsManager.synchronizeOnSimSteps} - which supplies a
+ * happens-before edge at every sim-step. Turn it off and the counters tear
+ * SILENTLY: no crash, just stale numbers that the progress digest reports as
+ * a measurement. The dependency is declared as
+ * {@code RUN.machine.telemetry_requires_simstep_barrier} and
+ * {@code src/run/run_matsim.py} refuses the combination before the JVM
+ * starts (#151, DECISIONS.md 9.151). Making this state concurrent would put
+ * atomics on the highest-frequency path in the simulation; the barrier is
+ * measured FASTER on this model anyway (9.59), so the refusal is the trade.
  */
 public final class RunTelemetry implements
         PersonDepartureEventHandler, PersonArrivalEventHandler,

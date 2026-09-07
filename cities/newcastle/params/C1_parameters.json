@@ -5,7 +5,7 @@
     "HS": 15.2,
     "HO": 15.2,
     "WB": 55.4,
-    "NHB": 15.2
+    "HX": 15.2
   },
   "weights": {
     "beta_ivt": {
@@ -133,30 +133,30 @@
     "C1_all_HS",
     "C1_all_HO",
     "C1_all_WB",
-    "C1_all_NHB",
+    "C1_all_HX",
     "C1_car_available_HW",
     "C1_car_available_HE",
     "C1_car_available_HS",
     "C1_car_available_HO",
     "C1_car_available_WB",
-    "C1_car_available_NHB",
+    "C1_car_available_HX",
     "C1_car_unavailable_HW",
     "C1_car_unavailable_HE",
     "C1_car_unavailable_HS",
     "C1_car_unavailable_HO",
     "C1_car_unavailable_WB",
-    "C1_car_unavailable_NHB",
+    "C1_car_unavailable_HX",
     "C1_concession_HW",
     "C1_concession_HE",
     "C1_concession_HS",
     "C1_concession_HO",
     "C1_concession_WB",
-    "C1_concession_NHB",
+    "C1_concession_HX",
     "C1_student_HW",
     "C1_student_HE",
     "C1_student_HS",
     "C1_student_HO",
     "C1_student_WB",
-    "C1_student_NHB"
+    "C1_student_HX"
   ]
 }

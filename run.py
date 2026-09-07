@@ -270,6 +270,10 @@ def main():
 
     cfg = run_matsim.resolve(a.scenario, a.day, run_config, overrides)
 
+    # An overlay that cannot legally run should say so when it is RESOLVED,
+    # not hours into an arm (#151, DECISIONS.md 9.151).
+    run_matsim.refuse_unsafe_telemetry(cfg)
+
     if a.dry_run:
         print('scenario %s  day %s  overlay %s'
               % (a.scenario, a.day, run_config or '(none)'))

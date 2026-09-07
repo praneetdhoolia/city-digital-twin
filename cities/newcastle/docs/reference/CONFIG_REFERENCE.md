@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 472 fields are made of
+## What the 477 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 39 | computed from observed data in this package |
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 155 | chosen without direct empirical support |
-| `definition` | 127 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 159 | chosen without direct empirical support |
+| `definition` | 128 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 453 | usable point value |
+| `active` | 458 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 262 sweeps are for
+### What the 266 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 11 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 229 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 233 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -117,13 +117,14 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 176 fields*
+*`cities/newcastle/registry/A_supply.json` - 180 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
 | `A.active.footway_width_default` | `{"bridleway": 2.0, "corridor": 2.0, "cycleway": 2.0, "footway": 2.0, "path": 1.0, "pedestrian": 6.0, "steps...` | metres | `measured` | 0.5 - 6 |
+| `A.active.footway_width_unknown_class_m` | `1.8` | metres | `assumed` | 0.5 - 6 |
 | `A.bike_stress.aadt_class_by_highway` | `{"trunk": "high", "trunk_link": "high", "primary": "high", "primary_link": "high", "secondary": "moderate_h...` | aadt_proxy_class_by_osm_highway | `assumed` | **held fixed** |
 | `A.bike_stress.felt_factor_high` | `7.68` | felt_distance_ratio | `literature` | 7.19 - 8.16 |
 | `A.bike_stress.felt_factor_moderate` | `1.3` | felt_distance_ratio | `literature` | 1.22 - 1.37 |
@@ -241,9 +242,12 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.parking.search_min_max` | `8.1` | minutes | `literature` | 3.5 - 14 |
 | `A.parking.search_time_representation` | `scoring` | enum | `assumed` | `absent`, `scoring` |
 | `A.road.capacity_default` | `{"motorway": 2000, "trunk": 1800, "primary": 1600, "secondary": 1400, "tertiary": 1200, "unclassified": 100...` | vehicles_per_hour_per_lane | `assumed` | 300 - 2200 |
+| `A.road.capacity_unknown_class_veh_hr_lane` | `1000` | vehicles_per_hour_per_lane | `assumed` | 300 - 2200 |
 | `A.road.lane_width_default_m` | `3.5` | metres | `measured` | 2.5 - 4.5 |
 | `A.road.lanes_default` | `{"busway": 1, "living_street": 1.0, "motorway": 2.0, "motorway_link": 1.0, "primary": 2.0, "primary_link": ...` | lanes_per_direction | `measured` | 1 - 3 |
+| `A.road.lanes_unknown_class` | `1` | lanes_per_direction | `assumed` | 1 - 3 |
 | `A.road.speed_default` | `{"busway": 50, "living_street": 10.0, "motorway": 110.0, "motorway_link": 80.0, "primary": 60.0, "primary_l...` | km_per_hour | `measured` | 10 - 110 |
+| `A.road.speed_unknown_class_kmh` | `50` | km_per_hour | `assumed` | 10 - 110 |
 | `A.road.speed_zone_clip_margin_m` | `2000.0` | metres | `assumed` | 500 - 5000 |
 | `A.road.speed_zone_excluded_classes` | `["service"]` | enum | `definition` | - |
 | `A.road.speed_zone_match_m` | `10.0` | metres | `assumed` | 5 - 20 |
@@ -307,6 +311,14 @@ Fallback footway width. Footway widths were not obtained for Newcastle. MEASURED
 ***measured** · status **active** · DECISIONS.md §9.33 · sweep role **measurement***
 
 > **Sweep basis.** the union of the observed interquartile ranges across the 3 classes with at least 30 tagged edges is [0.5, 3.0] - an observed spread, not a chosen interval - extended to 6.0 so that the interval also bounds the five classes that keep an ASSUMED width for want of coverage (pedestrian 6.0, a pedestrian mall, is the largest). The interval brackets every class value; it is not a measured spread over the assumed classes, and the pedestrian width is an assumption, not a value tuned to anything (#124)
+
+#### `A.active.footway_width_unknown_class_m`
+
+Width for an active edge whose class is ABSENT from A.active.footway_width_default. A bare 1.8 in build_network_layers.py until #148, and the ONLY one of the four fallbacks that fires: 830 of the 40,195 active edges carry a road class the footway table does not name (motorway 328, motorway_link 147, residential 98, primary 84, secondary 66, tertiary 46, trunk 34, service 13, trunk_link 6, unclassified 5, construction 3) - the roadside paths in the footway extract. The value is unchanged from the literal, so no edge moves; what changes is that it is declared and that the edge now says `imputed_fallback` rather than `imputed_rule`.
+
+***assumed** · status **active** · DECISIONS.md §9.151 · sweep role **uncertainty***
+
+> **Sweep basis.** chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.
 
 #### `A.bike_stress.aadt_class_by_highway`
 
@@ -1136,6 +1148,14 @@ Saturation flow by road class. Never observed; a class-level convention.
 
 > **Sweep basis.** chosen interval bracketing every class value in the table, from the living_street 300 to a little above the motorway 2000. DECISIONS.md 3.2 records the per-class values as Austroads-style conventions, assumed, with a +/-20% sweep where corridor results prove sensitive, and 9.33 that saturation flow is not measured at all: OSM does not record it and the package holds no per-class count to estimate it from. No observed spread.
 
+#### `A.road.capacity_unknown_class_veh_hr_lane`
+
+Saturation flow for a road whose highway class is ABSENT from A.road.capacity_default. A bare 1000 in build_network_layers.py until #148. Fires on 0 of the 50,182 road edges in this extract.
+
+***assumed** · status **active** · DECISIONS.md §9.151 · sweep role **uncertainty***
+
+> **Sweep basis.** chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.
+
 #### `A.road.lane_width_default_m`
 
 Per-lane carriageway width where OSM carries no width, applied to 99.2% of road edges. It had NO registry field: build_network_layers.py carried a bare 3.2. Derived as width/lanes on the 265 edges carrying both tags. The width tag ALONE is the whole carriageway and stands at 6.5 m; writing that into a per-lane field would double every carriageway in the model.
@@ -1152,6 +1172,14 @@ Fallback lane count where OSM carries no lanes tag. Applied only to edges with n
 
 > **Sweep basis.** the union of the observed interquartile ranges across the 13 classes with at least 30 tagged edges - an observed spread, not a chosen interval
 
+#### `A.road.lanes_unknown_class`
+
+Lane count for a road whose highway class is ABSENT from A.road.lanes_default. A bare 1 in build_network_layers.py until #148. Fires on 0 of the 50,182 road edges in this extract.
+
+***assumed** · status **active** · DECISIONS.md §9.151 · sweep role **uncertainty***
+
+> **Sweep basis.** chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.
+
 #### `A.road.speed_default`
 
 Fallback free-flow speed where OSM carries no maxspeed tag. MEASURED from the observed OSM maxspeed tag over this extract: 13 of 16 classes carry at least 30 tagged edges and take their own median; busway, road, tertiary_link keep the assumed value for want of coverage and say so in params/C2_osm_defaults.json, which carries the per-class counts and quantiles.
@@ -1159,6 +1187,14 @@ Fallback free-flow speed where OSM carries no maxspeed tag. MEASURED from the ob
 ***measured** · status **active** · DECISIONS.md §9.33 · sweep role **measurement***
 
 > **Sweep basis.** the union of the observed interquartile ranges across the 13 classes with at least 30 tagged edges - an observed spread, not a chosen interval
+
+#### `A.road.speed_unknown_class_kmh`
+
+Free-flow speed for a road whose highway class is ABSENT from A.road.speed_default. It was a bare 50 in build_network_layers.py, stamped `imputed_rule` - the same label a DECLARED class default gets, so a reader could not tell a declaration from a script choice (#148). It fires on 0 of the 50,182 road edges in this extract: every class present is declared. It is declared so that a class this city has not seen, or another city's extract, cannot decide an edge unrecorded.
+
+***assumed** · status **active** · DECISIONS.md §9.151 · sweep role **uncertainty***
+
+> **Sweep basis.** chosen interval bracketing every value in the class table this field stands in for, so the fallback is swept over the same range as the declaration it substitutes. No observed spread: the case is a class the table does not name, so there is nothing to observe.
 
 #### `A.road.speed_zone_clip_margin_m`
 
@@ -2822,7 +2858,7 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.time_weights.beta_walk_mode` | `1.04` | ratio_to_ivt | `literature` | 1 - 1.3 |
 | `C.transfer.beta_transfer_penalty_min` | `8.0` | minutes_equivalent | `assumed` | 3 - 15 |
 | `C.transfer.penalty_sweep_grid` | `[3.0, 5.0, 6.5, 8.0, 10.0, 12.0, 15.0]` | minutes_equivalent | `definition` | - |
-| `C.vot.by_purpose` | `{"HW": 18.6, "HE": 9.3, "HS": 15.2, "HO": 15.2, "WB": 55.4, "NHB": 15.2}` | AUD_2026_per_hour | `literature` | plus/minus 30% |
+| `C.vot.by_purpose` | `{"HW": 18.6, "HE": 9.3, "HS": 15.2, "HO": 15.2, "WB": 55.4, "HX": 15.2}` | AUD_2026_per_hour | `literature` | plus/minus 30% |
 | `C.vot.car_unavailable_walk_factor` | `1.15` | ratio | `assumed` | 1 - 1.3 |
 | `C.vot.concession_factor` | `0.75` | ratio | `literature` | 0.6 - 0.9 |
 | `C.vot.trip_weighted` | `16.96` | AUD_2026_per_hour | `derived` | plus/minus 30% |
@@ -3207,9 +3243,9 @@ The points at which C.transfer.beta_transfer_penalty_min is sampled for the mand
 
 #### `C.vot.by_purpose`
 
-Value of travel time by trip purpose, ATAP PV2 / TfNSW Economic Parameter Values conventions. NOT a Newcastle measurement. MATSim scoring cannot carry per-purpose VOT, so the run inputs collapse this to a trip-weighted 16.96 AUD/h - see C.vot.trip_weighted and DECISIONS.md 9.3.
+Value of travel time by trip purpose, ATAP PV2 / TfNSW Economic Parameter Values conventions. NOT a Newcastle measurement. MATSim scoring cannot carry per-purpose VOT, so the run inputs collapse this to a trip-weighted 16.96 AUD/h - see C.vot.trip_weighted and DECISIONS.md 9.3. The escort key was `NHB` until 9.151: the run-input assembler mapped `Serve passenger` to NHB while the demand generated it as HX, so the two halves of the same table used different vocabularies. Once the map was made one (#147) the HX weight matched no key here, was dropped from the average and the remaining purposes renormalised - moving the collapsed value 16.96 -> 17.317 with nothing declaring it. Renamed, not revalued: 15.2 is the number Serve passenger was priced at all along, and C.vot.trip_weighted stays 16.96.
 
-***literature** · status **active** · DECISIONS.md §8.3 · proposal §A/C1, 6.2 · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §8.3, 9.151 · proposal §A/C1, 6.2 · sweep role **uncertainty***
 
 > **Sweep basis.** DECISIONS.md 8.3 sweeps VOT by plus or minus 30% on every purpose
 
@@ -3522,7 +3558,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 77 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 78 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3543,6 +3579,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
+| `RUN.machine.telemetry_requires_simstep_barrier` | `true` | boolean | `definition` | - |
 | `RUN.machine.threads` | `16` | threads | `definition` | 1 - 24 |
 | `RUN.machine.xmx` | `14g` | jvm_heap | `definition` | - |
 | `RUN.mode_choice.chain_based_modes` | `["car", "bike"]` | enum | `definition` | - |
@@ -3697,6 +3734,12 @@ Thread count for replanning, routing and everything else global.numberOfThreads 
 MATSim random seed. Held at the master seed unless replications are being drawn.
 
 ***definition** · status **active** · DECISIONS.md §9.7 · MATSim `global.randomSeed`*
+
+#### `RUN.machine.telemetry_requires_simstep_barrier`
+
+Whether RunTelemetry depends on the sim-step barrier for memory visibility. TRUE, and it is not a preference: RunTelemetry carries no volatile, no synchronized and no java.util.concurrent type in its 731 lines, while its per-vehicle array and per-mode maps are written from the event-handler threads and read and cleared from the QSim thread. The only thing that publishes those writes is RUN.machine.events_synchronize_on_simsteps = true, which supplies a happens-before edge at each sim-step. With the barrier off the telemetry has none, and the failure is SILENT - torn or stale counters that the progress digest reads as a measurement, not a crash (#151). run_matsim.py refuses the combination rather than making the hot path atomic: the barrier is measured FASTER on this model anyway (9.59), so the async path buys nothing a run wants, and paying atomics on the highest-frequency path in the simulation to keep a timing probe alive is the wrong trade. Set this false only together with making that state explicitly concurrent.
+
+***definition** · status **active** · DECISIONS.md §9.151*
 
 #### `RUN.machine.threads`
 

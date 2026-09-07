@@ -192,6 +192,7 @@ about its layout will otherwise cost you an hour:
 | **A global `wait` strands every non-chain mode** | **§9.148** — `RUN.qsim.vehicle_behavior` = wait is global and walk and taxi are network modes with per-person vehicles that are not chain-based: the first F27 arm's iteration 0 read car departures 82,388 against F26's 232,394 with 55,862 car agents stuck, and by iteration 19 co-evolution had abandoned every plan that strands; stopped at 19, citable for nothing. The car waits only for a car: `HouseholdCarDepartureHandler`, registered before the netsim engine, registers a driver whose household car is out as waiting with the link and MATSim's own link departs them when it is parked back; everything else teleports as before; `vehicle_behavior` back to teleport, `wait` kept in the sweep as measured fatal. The reader takes rail boardings from the legs table where the plans are absent. F28 opens at the fix |
 | **F28 gate: car inside; the walked lifts are the shared pass's short trips** | **§9.149** — stopped at 100 with 7 out, car +6.6 % inside for the first time; 65,960 selected ride legs all with a declared driver, pair rate 0.9965; 15,582 drivers waited for a household car; bound trips ridden 45.5 % → 56.0 %, self-driven 29,827 → 17,530; the 20,151 walked lifts have a median of 1.08 km (65 % under 2 km) and the shared pass's bound trips a median of 2.46 km against an observed passenger trip of 9.3–9.8 km; a longest-first ordering proved inert (the pass thins nothing at `thin_p` 0.9926) and classifying the 27,771 unserved car-less tours found 94 % refused on the 0.05 sampling-hash BUCKET alone with a same-SA2 driver in the window, at a median 9–15 km; `B.ride.shared_lift_hash_bucket` 0.05 → 0.25, the standing campaign fraction (0.05 the control), `longest_first` kept as the thinning rule; F29 opens at the rebuild; the experienced-plan excess metric retired |
 | **The repository assessed; 29 of 34 defects closed without a run** | **§9.150** — a whole-repository assessment at `419b0da` (`docs/reports/20260907T130247_project_report.html`) found 95 findings, 34 of them defects, every one invisible to CI. The 67/143 split was informing the calibration targets: the heavy share converting 31 of 34 count targets was a median over 23 classified stations of which 20 are holdout, and the artefact printed `calibration_stations_observed 3` itself — now calibration-only, `heavy_vehicle_share` 0.0652 → 0.1120, and the truck gate target filtered by the same rule with no change to its value. The count comparison was scored on two bases (observed light vehicles against modelled `vol_car` alone); `vehicles_per_leg` now declares every road mode and `extract_metrics` reads it. Three checks were green on rules they could not test — the AST scanner walked module level only, the sweep check saw one dict level, a test fixture counted as a consumer — all three widened, `check_hardcoding` back at 0 with 30 structural exceptions. The framework held one city's clip rectangle and one city's weekday: both declared, and the coordinate scan now catches a box at any precision. Seven position pages were stamped with a stale open family; the stamp is now `Written against family` and `check_doc_shape` enforces it. `--stop` ended every arm on the machine and discarded the operator's cause; a marker is written before the kill. Registry 471 → 472, unit tests 108 → 118. Five defects left open with reasons: the duplicated HTS purpose map and the two Java defects open a family, the network-layer fallbacks need a decision, the manifest's blank provenance columns are a data job. No arm ran; no family opened |
+| **The five defects the assessment left open, ruled on and closed** | **§9.151** — the HTS purpose map existed twice and disagreed on `Serve passenger` (demand HX since §9.15, assembler NHB, 351,645 weekday legs): one shared map now, HX wins, and the VOT table was keyed on the OLD vocabulary too — renamed `NHB` → `HX` at the same 15.2, which is what kept `C.vot.trip_weighted` at 16.96 instead of the 17.317 the half-done fix produced. `EscortCoherenceListener` drew a SEEDED rng in HashMap order, which is what the sample fraction changes: a `TreeMap` now, so the draw follows the household id — a result change, taken while F29 had no arm. Four typed network fallbacks declared (`A.road.speed_unknown_class_kmh`, `A.road.lanes_unknown_class`, `A.road.capacity_unknown_class_veh_hr_lane`, `A.active.footway_width_unknown_class_m`) and stamped `imputed_fallback`; measured, the three road ones fire on 0 of 50,182 road edges and the footway one on 830 of 40,195 active edges, no value moved. `RunTelemetry` has no memory barrier of its own and a committed overlay removed the one it borrows: the combination is declared and REFUSED before the JVM and in the dry run, rather than paying atomics on the event path. The manifest resolves a derived file s provenance from its lineage instead of leaving it blank. Registry 472 → 477, unit tests 118 → 125 |
 
 
 ---
@@ -14629,10 +14630,151 @@ no arm. The next session's lane is unchanged — launch F29's first arm under a
 fresh stated-cost approval — and it should expect the count deviations to read
 differently from #82's −91.8 % for reasons that are arithmetic, not behaviour.
 
+## 9.151 The five defects the assessment left open, ruled on and closed without a run (7 September 2026, thirty-second session; user directive "give me the clickable approval choices and proceed to implement & test"; issues #147, #148, #149, #150, #151)
+
+**What was wrong.** §9.150 closed 29 of the assessment's 34 defects and left
+five, each because what it needed was a ruling and not a fix. None was waiting
+on a measurement, so none could honestly be labelled `awaiting-run`, and the
+issue gate refused every launch from the moment they were opened (GOAL.md
+requirement 10). All five are settled here. **No arm ran, and none needed one.**
+
+**§9.151.1 The HTS purpose map existed twice and disagreed (#147).** The map
+from an HTS travel purpose to this model's purpose vocabulary was written out
+twice and the copies disagreed on one key. `build_activity_chains.py` sent
+`Serve passenger` to **HX** — its own tour purpose since §9.15 — while the
+run-input assembler's `hts_purpose_share()` sent it to **NHB**, and that
+function feeds `scoring_from_c1()`. HX carries **351,645 weekday legs**
+(`params/C3_count_comparison.json`), so it was not a rare cell.
+
+**Decided: HX wins, and there is one map.** The demand's reading is the model's
+own vocabulary; a purpose the demand generates under one name may not be priced
+under another. `src/build/hts_purpose.py` holds the only copy and both callers
+import it. The fix would have been **inert** without re-assembling — the trap
+§9.149 recorded — so all 30 run-input sets were rebuilt.
+
+**And the repair exposed its own second half.** With one map the assembled
+purpose share carried **HX 0.1681** where it had carried NHB — but
+`C.vot.by_purpose` was still keyed on the OLD vocabulary. `scoring_from_c1()`
+averages the value of time over the keys of THAT table, so the HX weight matched
+nothing, was **dropped from the average, and the remaining purposes
+renormalised**: the collapsed value moved **16.96 → 17.317 AUD/h** against a
+`C.vot.trip_weighted` of 16.96 that nothing had changed. Silently, and in the
+direction of a model that values time more. The table is now keyed **`HX`,
+renamed from `NHB`, at the same 15.2** — not revalued: 15.2 is what
+`Serve passenger` was priced at all along, under either name. `PURPOSES` in
+`build_params.py` was a second copy of those keys — which is why the rename
+broke there rather than in the table it follows; it is `list(VOT)` now.
+
+**Measured, and this is the finding.** With both halves done, **140 of the 141
+files under `scenarios/matsim/` are byte-identical** to the build before any of
+this, checked against the pre-change manifest hashes; the one that differs is
+`_run_inputs_report.json`, which records the purpose share itself. So the
+disagreement that had stood since §9.15 **changed no number the model ever
+scored** — NHB and HX carry the same 15.2 — and the issue's framing, that an
+escort was *priced* as a non-home-based leg, is true in name and nil in
+arithmetic. It was a latent hazard, not a live error, and it can only be stated
+that way because both halves were fixed and the output compared. A unit test
+asserts the literal mapping appears in exactly one file under `src/`.
+
+**§9.151.2 A seeded draw was made in hash order, and hash order is what the
+sample fraction changes (#150).** `EscortCoherenceListener` consumes a seeded
+`Random` while iterating `byHousehold`, a `HashMap`, in both its passenger-side
+and its driver-side pass. The draw a household received was assigned in **hash
+order of the key set**, and the key set is exactly what changes when the sample
+fraction changes. The path was seeded, so it *looked* deterministic, and was —
+for one fixed key set. What it was not is stable across fractions: a 1 % probe
+assigned different draws to the same households than a 25 % arm, so no probe
+could predict an arm on this path.
+
+**Decided: fix it now, inside a family boundary that is already free.**
+`byHousehold` is a `TreeMap`, so the draw follows the household id. It reassigns
+which household gets which draw — a result change — but F29 had never run an
+arm, so the boundary costs nothing today and would have cost a rebuild later. A
+unit test pins the collection as ordered, the issue's own REOPEN condition.
+
+**§9.151.3 Four typed fallbacks decided a network edge, and three of them have
+never fired (#148).** `build_network_layers.py` applied a bare 50 km/h, 1 lane,
+1000 veh/h/lane and 1.8 m when a highway class was **absent from the registry's
+own class table**, and stamped the edge `imputed_rule` — the same label a
+DECLARED class default gets, so a reader could not tell a declaration from a
+script's choice.
+
+**Decided: declare them, and label them apart.** Four fields —
+`A.road.speed_unknown_class_kmh`, `A.road.lanes_unknown_class`,
+`A.road.capacity_unknown_class_veh_hr_lane`,
+`A.active.footway_width_unknown_class_m` — each carrying the sweep of the class
+table it stands in for, and the edge stamped `imputed_fallback` where a source
+column exists. **Measured, and this is the part worth keeping:** every one of
+the 15 road classes present in this extract is declared, so the three road
+fallbacks fire on **0 of 50,182 road edges**. The footway fallback is the only
+live one — **830 of 40,195 active edges** carry a ROAD class the footway table
+does not name (motorway 328, motorway_link 147, residential 98, primary 84,
+secondary 66, tertiary 46, trunk 34, service 13, trunk_link 6, unclassified 5,
+construction 3): the roadside paths in the footway extract. **No value moved**, so no artefact was rebuilt and no edge changed. A6 carries
+no width source column, so the 830 are identified by rule — `highway` not in
+`A.active.footway_width_default` — and counted in `_build_report.json` rather
+than labelled per edge. Whether those 11 classes should instead be given their
+own declared widths is a modelling question this did not answer.
+
+**§9.151.4 Telemetry has no memory barrier, and a committed overlay took away
+the one it borrows (#151).** `RunTelemetry` carries no `volatile`, no
+`synchronized` and no `java.util.concurrent` type in 731 lines, while its
+per-vehicle array and per-mode maps are written from the event-handler threads
+(`RUN.machine.event_handler_threads` = 4) and read and cleared from the QSim
+thread. The only thing publishing those writes is
+`RUN.machine.events_synchronize_on_simsteps` = true, which
+`overlays/runs/phys_timing2_async_25pct.json` turns off. The failure is silent:
+not a crash, but torn counters the progress digest reports as a measurement.
+
+**Decided: refuse the combination rather than make the hot path atomic.**
+`RUN.machine.telemetry_requires_simstep_barrier` is declared true and
+`run_matsim.refuse_unsafe_telemetry()` refuses before the JVM starts — and in
+the **dry run**, so an overlay that cannot legally run says so when it is
+resolved, not hours into an arm. Atomics on the highest-frequency path in the
+simulation, against the standing directive that iterations take as little time
+as possible, to keep alive a timing probe whose barrier-off path was **measured
+a regression anyway** (§9.59: it2–4 median mobsim 190 s → 255 s at 25 %), is the
+wrong trade. The field is the way back: declare it false together with making
+the state concurrent. Verified on the async overlay's own dry run, now refused,
+and the smoke overlay's, which is not.
+
+**§9.151.5 A derived file's provenance is its ancestry, not a blank column
+(#149).** 430 of 512 manifest rows carried no `source` and 453 no `retrieved` —
+dominated by the 420 PROCESSED rows, every one of which carried `produced_by`
+and a licence and none of which could carry a source, because both columns were
+filled only from a provenance record and only a raw download has one.
+
+**Decided: resolve it, never declare it.** A derived file's source is not a new
+fact to be typed in — it is the raw layers its producing script reads,
+transitively — so `build_manifest.py` resolves it from the lineage the manifest
+already holds: each producing script's referenced paths, followed through
+processed intermediates to their raw ancestors, then to the DECLARED sources
+covering them. A hand-written attribution was rejected as the option that would
+look observed and be a guess. `retrieved` on a derived row is the **latest
+retrieval date among those ancestor raw files** — an upper bound on the vintage
+of the data the layer embodies, never a build time. Two smaller rules close the
+rest: a raw file with no record of its own inherits its **directory's** record
+(an archive is landed with one record and unpacked into many members), and the
+package's own `provenance*.json` and `_`-prefixed logs are named as the record
+the package keeps of itself, with no retrieval date by definition.
+`fetch_gtfs.py` now stamps a date on a feed it actually downloads and preserves
+the earlier one for a feed it skips, so a date nobody recorded is never acquired
+after the fact.
+
+**What opens.** **One** of the five changes a result: which household receives
+which coherence draw (§9.151.2). The purpose-map repair left the emitted configs
+byte-identical, the declared network fallbacks left every edge unchanged, the
+telemetry ruling is a refusal, and the manifest change is provenance only. So
+**family `F30-an-escort-is-priced-as-an-escort` opens at this rebuild on the
+draw order alone**, on the F29 demand and network, unchanged. F29 never ran an
+arm, so nothing is stranded by the boundary. **Nothing here is a finding, no arm
+ran, no approval stands, and the 67/143 holdout was not opened.**
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-07 | **The five defects §9.150 left open, ruled on and closed without a run (§9.151; issues #147, #148, #149, #150, #151; thirty-second session; user directive "give me the clickable approval choices and proceed to implement & test").** The HTS purpose map existed twice and disagreed on `Serve passenger` (demand HX since §9.15, assembler NHB): **one shared map, HX wins** — and the repair exposed its own second half, `C.vot.by_purpose` still keyed on the old vocabulary, which dropped the HX weight from the value-of-time average and moved the collapse **16.96 → 17.317 AUD/h** against a declared `C.vot.trip_weighted` of 16.96. Re-keyed `NHB` → `HX` at the same 15.2 (renamed, not revalued) and **140 of the 141 files under `scenarios/matsim/` came back byte-identical**, so the disagreement changed no number the model ever scored. `EscortCoherenceListener` drew a seeded rng in `HashMap` order — the order the sample fraction changes — and is a `TreeMap` now: **the one change here that moves a result**, and **family `F30-an-escort-is-priced-as-an-escort` opens on it alone**. Four typed network fallbacks declared and stamped `imputed_fallback`; measured, the three road ones fire on **0 of 50,182 road edges** and the footway one on **830 of 40,195 active edges**, no value moved. `RunTelemetry` has no memory barrier and a committed overlay removes the one it borrows: declared and **refused** before the JVM and in the dry run, rather than paying atomics on the event path. The manifest resolves a derived file's source from its lineage and a raw file inherits its directory's record: `source` **82 → 508 of 512**, `retrieved` **59 → 443**, the residue being the GTFS feeds whose records carry no date at source and the package's own record files. Registry **472 → 477**, unit tests **118 → 125**, `check_hardcoding` still 0. **No arm ran, no demand or network changed, no approval stands, the 67/143 holdout was not opened, and nothing here is a finding.** |
 | 2026-09-07 | **The repository assessed and 29 of its 34 defects closed without a run (§9.150; issues #131, #82, #66; thirty-first session; user directive "fix the defects according to the report").** 95 findings at `419b0da`, none of which failed CI. **The 67/143 split was crossed**: the heavy-vehicle share converting 31 of 34 calibration count targets was a median over 23 classified stations, 20 of them holdout — now derived from the 3 calibration stations, **`heavy_vehicle_share` 0.0652 → 0.1120**, sweep unchanged; the truck gate target filtered by the same rule, its value unmoved. **The count comparison used two bases**: `vehicles_per_leg` now declares car 1, motorbike 1, taxi 1, ride/truck/bike/walk 0 and `extract_metrics` reads it. Checks widened: the AST scanner to any depth (6 items surfaced, all structural exceptions with reasons), the sweep check to nested dicts (`B.activity.p_mandatory` scoped with `sweep_keys`), the unwired check to discount test fixtures. Framework de-placed: `gtfs_clip` declared in `geometry/analysis_extents.json`, `A.fare.off_peak_all_day_day_types` declared; the coordinate scan now sees a box at any precision. Documents: position pages stamped **`Written against family`** with a new `check_doc_shape` rule; three pages stop restating what is on disk. Harness: `--stop` no longer ends every arm, an `_operator_stop.json` marker preserves the operator's cause, stopped arms are extracted. Registry 471 → 472; manifest 512; unit tests 108 → 118. **No arm ran, no demand or network changed, no comparability family opened, no approval stands, nothing here is a finding.** One target CONVERSION moved, so counts scored before and after are not comparable. Left open with reasons: the duplicated HTS purpose map, four network-layer fallbacks, 430 blank manifest `source` cells, and two Java defects (`EscortCoherenceListener` hash-order RNG, `RunTelemetry` thread safety) that open a family. |
 | 2026-09-07 | **The F28 gate read and closed out; the shared pass binds the longest tours first; F29 opens (§9.149; issues #86, #145, #48; thirtieth session).** `aborted_20260907T030352_300it_25pct` stopped by the watcher at 100, 7 modes out, car +6.6 % inside for the first time, median 260 s an iteration. Listener: 0 ride legs without a declared driver, pair rate 0.9965. Roster: 15,582 drivers waited, bound trips ridden 45.5 % → 56.0 %. Walked lifts median 1.08 km; the shared pass's bound trips median 2.46 km against 9.3–9.8 km observed; 94 % of the 27,771 unserved car-less tours (median 9–15 km) refused on the 0.05 sampling-hash bucket alone. Demand: `B.ride.shared_lift_hash_bucket` 0.05 → 0.25, the standing 25 % campaign fraction (0.05 the control); `B.ride.shared_lift_priority` = longest_first (new field; `uniform` = before) as the thinning rule; chains, plans and the 30 sets rebuilt. **No target value changed, the 67/143 split is untouched, no arm launched in F29, no approval stands, nothing here is a finding.** |
 | 2026-09-07 | **A global `wait` strands every non-chain mode; the car waits only for a car; F28 opens (§9.148; issues #145, #66; thirtieth session).** The first F27 arm under `RUN.qsim.vehicle_behavior` = wait: iteration-0 car departures 82,388 against F26's 232,394, 55,862 car agents stuck, walk 12,837, ride 11,537; by 19 co-evolution had abandoned every plan that strands. Stopped at 19 (`stopped_by_operator`); nothing it read is a reading. Run stack: `HouseholdCarDepartureHandler` (car-only wait, before the netsim engine, released by the link when the car is parked back); `vehicle_behavior` back to `teleport`, `wait` kept as measured fatal. Reader: rail boardings from the legs table where the experienced plans are absent, so the ten-iteration cadence of 9.147 reads. **No target value changed, no field added, demand unchanged, no arm launched in F28, no approval stands, nothing here is a finding.** |

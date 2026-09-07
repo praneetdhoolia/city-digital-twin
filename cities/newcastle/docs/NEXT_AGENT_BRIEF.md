@@ -1,40 +1,40 @@
 # Brief for the next agent
 
-**Written:** 7 September 2026, thirty-first session · **Open family:** `F29-lifts-are-the-long-trips` · **Commit:** see `git log -1 origin/main` after the session's PR merges; the branch was `praneetdhoolia/assessment-and-defect-fixes`
+**Written:** 7 September 2026, thirty-second session · **Open family:** `F30-an-escort-is-priced-as-an-escort` · **Commit:** see `git log -1 origin/main` after the session's PR merges; the branch was `praneetdhoolia/rule-on-the-five-blocking-defects`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-No arm ran. The repository was assessed whole and 29 of its 34 defects were
-closed (§9.150; the report is [`docs/reports/`](../../../docs/reports/README.md)).
-**None of the 34 would have failed CI.** One of them was crossing the 67/143
-split: the heavy-vehicle share converting 31 of 34 calibration count targets was
-a median over 23 classified stations of which **20 are holdout**. It is now
-calibration-only — **`heavy_vehicle_share` 0.0652 → 0.1120** — and the modelled
-side of the same comparison stopped counting `vol_car` alone. **F29 is still
-built and unlaunched**; no simulation input moved, so no family opened.
+No arm ran. **The five defects that were blocking every launch are ruled on and
+closed** (§9.151, issues #147–#151): the issue gate is green, the toolchain is
+bootstrapped, and **the lane is now the F29/F30 arm itself**. Four of the five
+moved no run value; the fifth — the escort listener's seeded draw, which was
+made in `HashMap` order and therefore was not stable across sample fractions —
+does, and **family `F30` opens on it alone**. Fixing the duplicated purpose map
+(#147) exposed a second half nobody had asked about: `C.vot.by_purpose` was
+still keyed on the old vocabulary, so the HX weight was dropped from the
+value-of-time average and the collapse moved **16.96 → 17.317 AUD/h** against a
+declared 16.96. Re-keyed, and **140 of the 141 files under `scenarios/matsim/`
+came back byte-identical**.
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **Machine idle; no arm runs.** The newest reading is F28's at its iteration-100 gate (`aborted_20260907T030352_300it_25pct`). | `python src/run/session_gate.py --digest` (MACHINE line) |
-| **The package on disk is the F29 build** (§9.149) — chains, plans and the 30 run-input sets rebuilt 7 Sep. `check_package.py` was NOT re-run this session; the C3 target artefact and the manifest changed after it last passed. | `python tests/check_package.py` (~10 min) |
-| **The session gate is 16 PASS, 1 FAIL: `toolchain`** — `.tools/` has never been bootstrapped in this checkout, so the run stack is absent. **No arm can launch until it is.** | `python src/setup/bootstrap_toolchain.py` (no `--verify` first), then `python src/run/session_gate.py` |
-| **This session's PR** — check whether it merged and whether the branch is gone. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
-| **THE ISSUE GATE NOW BLOCKS A LAUNCH.** 20 open issues, 15 `awaiting-run`, **5 blocking** — #147–#151, the defects §9.150 left open. Four need a ruling (`decision-needed`), one is a data job. Two of them (#150, #151) **open a family**, so they are cheaper before the F29 arm than after it. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| Registry **472** fields, 512 manifest files, `F29-lifts-are-the-long-trips` newest in the ledger. | `python src/analyse/build_status_board.py --check` |
+| **Machine idle; no arm runs.** The newest reading is still F28's at its iteration-100 gate (`aborted_20260907T030352_300it_25pct`), and it is an F28 reading — F29 and F30 have no arm. | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **The package on disk is the F29 demand with the F30 run stack.** `check_package.py` ALL CHECKS PASSED this session, after the run inputs were re-assembled twice and the manifest regenerated. | `python tests/check_package.py` (~10 min) |
+| **The session gate is GREEN, all 17 checks.** `.tools/` is bootstrapped in this checkout and the Java run stack compiles with both changes. | `python src/run/session_gate.py` |
+| **The issue gate is GREEN**: #147–#151 are closed, and every remaining open issue carries `awaiting-run`. **This is what was blocking the launch.** | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| Registry **477** fields, **512** manifest files, `F30-an-escort-is-priced-as-an-escort` newest in the ledger. | `python src/analyse/build_status_board.py --check` |
 | **No run approval stands.** Every approval to date is SPENT. **25 % runs only.** | assume none; ask |
 
 ## §1 The lane
 
-**Clear the five blocking issues, bootstrap the toolchain, then launch F29's
-first arm and read it at 100.** The issue gate refuses a launch until #147–#151
-are closed or labelled `awaiting-run`; that is GOAL.md requirement 10 doing its
-job, and the ruling is the user's.
+**Launch the first arm in `F30` and read it at 100.** Nothing blocks it any
+more: the gate is green, the issue gate is green, the toolchain is present.
 `python run.py --run-config f29_gate_25pct --detach`, then verify per #70 that
 `matsim.log` enters iterations. Cost: the F28 arm ran at a **median 260 s an
-iteration, 27,657 s to its gate** (§9.149), so ~22 h for 300 iterations; needs a
-stated-cost approval. Read, in order:
+iteration, 27,657 s to its gate** (§9.149), so ~22 h for 300 iterations; **needs
+a stated-cost approval**. Read, in order:
 
 1. **Iteration 0's `legHistogram`** — car departures near F28's 231,607 and
    stuck near 3,145 say the car-only handler still does its one job; tens of
@@ -48,49 +48,47 @@ stated-cost approval. Read, in order:
    +16.1 %.
 4. **The counts, on their corrected basis** (§9.150). Both sides changed:
    `heavy_vehicle_share` 0.0652 → 0.1120 and the modelled side now sums car,
-   motorbike and taxi. **#82's −91.8 % is not the figure to expect**, and the
-   first reading on the new basis is what tells you whether #82 was ever as bad
-   as it looked.
+   motorbike and taxi. **#82's −91.8 % is not the figure to expect.**
 5. Controls: `householdCar: N waited` near 15,582; pair rate near 0.9965; 0
-   ride legs without a declared driver.
+   ride legs without a declared driver. The escort listener's draw order changed
+   (§9.151), so its per-household proposals will differ from F28's; the
+   aggregate proposal and decohere counts should not.
 
-**Decisions the user must take** (the board's *Next*): a stated-cost approval
-for the F29 arm; whether to close the five defects §9.150 deliberately left
-open, two of which open a family; whether a fifth binder pass is needed once
-F29 reports the bound-trip lengths; the Task Scheduler log (#66); the S2 tram
-signal priority.
+**Decisions the user must take:** a stated-cost approval for the arm; whether a
+fifth binder pass is needed once F30 reports the bound-trip lengths; the Task
+Scheduler log (#66); the S2 tram signal priority. **Left deliberately undone**
+by §9.151, each worth an issue if it is wanted: the 11 road classes that take
+the footway width fallback have no declared width of their own (830 edges);
+`params/C1_*` and `C5_calibration.json` carry no manifest `source` because they
+have no raw-data ancestry; the 15 GTFS feed records carry no retrieval date at
+source and cannot honestly acquire one now.
 
 ## §2 Traps — newest first, at most ten
 
-1. **A check can be green on a rule it cannot test** (§9.150). Three were: the
-   hardcoding scanner read module level and ALL-CAPS only, the sweep check saw
-   one dict level, and a test fixture counted as a consumer. All three were at
-   0 and all three were blind. **Widen a check before trusting its zero.**
-2. **`--stop` used to end every arm on the machine** and the harness overwrote
-   the operator's cause (§9.150). Fixed, with `_operator_stop.json` written
-   before the kill — but the fix is untested against a live arm.
-3. **`qsim.vehicleBehavior` is GLOBAL** (§9.148). `wait` strands walk and taxi,
-   which are network modes with per-person vehicles and not chain-based:
+1. **Fixing one half of a vocabulary leaves the other half silently wrong**
+   (§9.151). Making `Serve passenger` → HX everywhere put HX in the purpose
+   share while `C.vot.by_purpose` still said NHB — so the weight matched no key,
+   was dropped, the rest renormalised, and the value of time rose 16.96 →
+   17.317 with nothing declaring it. **After a rename, grep for the old key.**
+2. **A defect can be real and numerically nil** (§9.151). The purpose map had
+   disagreed since §9.15; both names carried the same 15.2, so the configs came
+   back byte-identical. State what a fix MEASURED, not what the issue predicted.
+3. **A check can be green on a rule it cannot test** (§9.150). Three were.
+   **Widen a check before trusting its zero.**
+4. **`--stop` used to end every arm on the machine** and the harness overwrote
+   the operator's cause (§9.150). Fixed, but untested against a live arm.
+5. **`qsim.vehicleBehavior` is GLOBAL** (§9.148). `wait` strands walk and taxi:
    55,862 car agents stuck at iteration 0, an arm wasted.
-4. **Insert vehicles BEFORE creating the agent** (§9.148). MATSim 26 builds the
-   agent from a copy of the plan elements; a vehicle id stamped afterwards
-   never reaches it.
-5. **A binder change can be inert** (§9.149). The longest-first ordering
-   rebuilt the demand and moved nothing, because the pass thins nothing on
-   the weekday (`thin_p` 0.9926). Read the pass's own counters before
-   rebuilding; a rebuild is ~35 min.
-6. **A sampling rule can decide the demand** (§9.149). The 0.05 hash bucket
-   cut every shared passenger's driver supply to 5 %.
-7. **The B2 report described a file that had been rewritten three times**
-   (§9.150): it counted legs before the binder passes. Fixed in the producer,
-   but **the committed `_activity_chains_report.json` still carries the old
-   counts until the next rebuild** — 2,189,888 against 2,225,838 on disk.
-8. **`miss_window` is not a window** (§9.145): a declared pair faces no clock;
-   the column means the declared driver was absent.
+6. **Insert vehicles BEFORE creating the agent** (§9.148). MATSim 26 builds the
+   agent from a copy of the plan elements.
+7. **A binder change can be inert** (§9.149), and so can a builder change: a fix
+   in `src/build` reaches nothing until the artefact is rebuilt.
+8. **A sampling rule can decide the demand** (§9.149). The 0.05 hash bucket cut
+   every shared passenger's driver supply to 5 %.
 9. **`--set` is the scoring-parameter override; `--config-set` is the registry
-   override** (§9.147). Three probes were refused at launch before that was read.
-10. **A dry run that resolves is not a launch that runs** — a probe overlay
-    outside a field's sweep needs `allow_outside_sweep` with a justification.
+   override** (§9.147).
+10. **A dry run that resolves is not a launch that runs** — though since §9.151
+    the telemetry refusal at least fires in the dry run too.
 
 ## §3 Standing directives and approvals
 
@@ -99,17 +97,16 @@ signal priority.
 - **25 % runs only** (user directive, 1 Sep); the shared-ride bucket is that
   fraction since §9.149.
 - **No open issue behind a run** (user directive, 3 Sep; GOAL.md requirement
-  10) — enforced by `src/run/issue_gate.py`, **RED at handoff**: #147–#151
-  block, by design. Fix or rule on them; do not label them `awaiting-run` to
-  get past the gate, because none of them is waiting on a measurement.
+  10) — enforced by `src/run/issue_gate.py`, **GREEN at handoff** for the first
+  time since it was introduced.
 - **"Proceed" on a verified plan authorises the lane and its PR, never an arm**
   (user directive, 3 Sep).
 - **Ensure iterations have no inefficiencies and take as little time as
   possible** (user directive, 6 Sep) — §9.147 is the record; the F28 arm's
-  260 s median is the measurement.
+  260 s median is the measurement, and §9.151 declined to put atomics on the
+  event path for that reason.
 - **Fix the defects according to the report** (user directive, 7 Sep) — §9.150
-  is the record; **SPENT** on the 29 closed there. The five left open are named
-  in that section with the reason each was left.
+  and §9.151 are the record; **SPENT**: all 34 are now closed.
 - **The goal directive lives in [`GOAL.md`](GOAL.md)**: twelve modes physical,
   monitored, scored; <10 % each; gate every 100 iterations; stop on ≥20 %; fix
   from the root; converge in ≤250; derive, never assume.
