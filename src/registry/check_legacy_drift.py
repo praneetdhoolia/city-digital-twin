@@ -127,7 +127,21 @@ def main():
         for p in problems:
             print('  %s' % p)
         raise SystemExit(1)
-    print('registry and source constants agree')
+    if not checked:
+        # A CHECK THAT COMPARED NOTHING MAY NOT REPORT AGREEMENT. No field
+        # carries `legacy_symbol` any more - the one-time migration that
+        # pinned each registry value to the literal it replaced is complete -
+        # so this printed "registry and source constants agree" over an empty
+        # comparison, in CI and in check_package.py, which reads as evidence
+        # and is not. It is a vacuous pass, and it now says so.
+        print('NOTHING TO COMPARE: no registry field declares `legacy_symbol`, '
+              'so this check verified nothing. That is the expected state now '
+              'the build-layer migration is complete - it is NOT evidence that '
+              'the registry and the source agree. What holds that line today is '
+              'check_hardcoding.py, which reports any value decided in a script '
+              'at all.')
+        return
+    print('%d registry field(s) agree with the constant they replaced' % checked)
 
 
 if __name__ == '__main__':

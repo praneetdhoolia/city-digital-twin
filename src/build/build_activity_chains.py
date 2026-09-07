@@ -1995,6 +1995,25 @@ EMPLOYMENT_ANZSIC = _city.path(
     'data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv')
 
 
+def _count_core(path):
+    """(legs, tours, travelling persons) for the CORE rows of a day file.
+
+    Read from the closed file so the report describes what is on disk after the
+    binder passes, not what the generation loop accumulated before them.
+    """
+    legs = 0
+    tours = set()
+    people = set()
+    with open(path, encoding='utf-8') as fh:
+        for r in csv.DictReader(fh):
+            if r.get('agent_tier') != 'core':
+                continue
+            legs += 1
+            people.add(r['person_id'])
+            tours.add((r['person_id'], r['tour_id']))
+    return legs, len(tours), len(people)
+
+
 def bind_shared_rides(path, day, pctx, seed):
     """Bind car-less residents' direct tours to non-household drivers making
     the same SA1-to-SA1 trip at the same time (DECISIONS.md 9.124, #86, #91).
@@ -3164,7 +3183,21 @@ def main(seed=SEED, max_persons=None, day_types=None):
         # the joint pass left, so its remainder accounts for every earlier
         # binding. It re-times nothing and adds no trip.
         shared = bind_shared_rides(path, d, pctx, seed)
+        # COUNT THE FILE THAT EXISTS, NOT THE ONE GENERATION BUILT. n_legs,
+        # n_tours and n_travel are accumulated in the generation loop above,
+        # and the four binder passes then rewrite the day file. The committed
+        # report therefore described a file that had been replaced three times:
+        # it stated 2,189,888 WEEKDAY core legs against 2,225,838 on disk, and
+        # published realised_week_trip_rate 3.348 against the HTS 3.473 as a
+        # shortfall the file does not actually show. The generated figures are
+        # kept beside the realised ones, because the difference between them is
+        # exactly what the binders did.
+        n_legs_gen, n_tours_gen, n_travel_gen = n_legs, n_tours, n_travel
+        n_legs, n_tours, n_travel = _count_core(path)
         stats['by_day'][d] = dict(
+            legs_generated_before_binders=n_legs_gen,
+            tours_generated_before_binders=n_tours_gen,
+            travelling_persons_before_binders=n_travel_gen,
             shared_binding=shared,
             external_agents=n_ext, external_legs=len(ext_legs),
             through_agents=n_thr, through_legs=len(thr_legs),

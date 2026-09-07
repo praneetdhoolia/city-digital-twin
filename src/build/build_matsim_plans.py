@@ -1277,6 +1277,15 @@ def write_day(day, attrs, rng, report, seed_table=None):
 
 
 def main(seed=SEED, day_types=None, seed_mode='uninformed'):
+    # ONE SEED, READ BY EVERY DRAW. `--seed` bound this parameter and nothing
+    # else: the motorbike carve, the resident-truck carve and the seeded plan
+    # ORDER each hash the MODULE-LEVEL `SEED`, which no argument rebound. A run
+    # with `--seed 123` therefore moved the numpy draws and left all three hash
+    # decisions on the default seed - a half-applied seed, which is worse than
+    # no seed at all, because the output looks reseeded and is not. Rebinding
+    # the global is what makes the seed single-valued for every consumer.
+    global SEED
+    SEED = seed
     day_types = day_types or DAY_TYPES
     seed_table = (SEED_MODE_SPLIT_INFORMED if seed_mode == 'informed'
                   else SEED_MODE_SPLIT)
