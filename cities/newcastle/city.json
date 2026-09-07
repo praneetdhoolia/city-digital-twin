@@ -179,7 +179,9 @@
     "data/processed/corridor/*": "ODbL 1.0",
     "data/processed/landuse/*": "ODbL 1.0",
     "networks/matsim/*": "ODbL 1.0",
-    "scenarios/matsim/*network*.xml.gz": "ODbL 1.0"
+    "scenarios/matsim/*network*.xml.gz": "ODbL 1.0",
+    "scenarios/matsim/*transitSchedule*.xml.gz": "ODbL 1.0",
+    "scenarios/matsim/*parking_prices.tsv": "ODbL 1.0"
   },
   "derived_licences_basis": "The layers built from OpenStreetMap geometry carry its share-alike ODbL label (#117): the road, active, signal, parking and gradient network layers; the corridor layers (OSM signals and alignment); the land-use and parking layers (OSM parking, POI and buildings); the MATSim networks and the run networks patched from them. Population, plans, schedules, targets, observations and census-derived layers are CC-BY 4.0: the plans reference OSM way ids as link ids but carry no OSM geometry or tags. Declared here by glob because which of a city's layers embed OSM is a fact about that city's build; the framework names no artefact.",
 

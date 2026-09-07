@@ -110,14 +110,14 @@ is not diagnosed** and belongs to #66.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260908T014214_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
+| `aborted_20260908T012355_4it_25pct` | aborted | F30-an-escort-is-priced-as-an-escort | 0 | Stopped by the agent, and the run is citable for NOTHING - not even its clock, which is the only thing it existed to measure. It was the ... |
 | `20260907T233540_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260907T215740_4it_25pct` | aborted | F30-an-escort-is-priced-as-an-escort | 3 | Stopped by the operator: the session was reset to the merged PR #156. The probe was measuring an uncommitted PT-router bound and event_ha... |
 | `20260907T192715_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
 | `20260907T182742_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
-| `aborted_20260907T150816_300it_25pct` | aborted | F30-an-escort-is-priced-as-an-escort | 23 | Stopped by the operator at iteration ~24 under the GOAL.md loop, before the iteration-100 gate. The arm was healthy - iteration 0 control... |
-| `aborted_20260907T145929_300it_25pct` | failed | F30-an-escort-is-priced-as-an-escort | - | launch refused before MATSim started: A.signals.representation is explicit_signals but the signals run stack is not built. Run: python sr... |
 
-159 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+161 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
