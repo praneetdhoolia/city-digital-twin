@@ -131,8 +131,16 @@ def scan_decisions(path):
         return dict(form=form, name=name, value=value, line=line,
                     kind=kind, n_numbers=n)
 
+    # ANY DEPTH, not just module level. A constant does not stop deciding the
+    # model because it is assigned inside a function: the 25 June audit read
+    # `tree.body` only, so every in-function literal was structurally invisible
+    # to the check that reports VALUES DECIDED IN CODE = 0. The ALL-CAPS filter
+    # below is kept deliberately - it is what stops ordinary locals (`i = 0`,
+    # `n = len(rows)`) flooding the ledger - and it IS a remaining blind spot:
+    # a lower-case in-function literal is still not reported. That limit is
+    # stated here rather than left for another audit to discover.
     out = []
-    for node in tree.body:
+    for node in ast.walk(tree):
         if not isinstance(node, ast.Assign):
             continue
         for target in node.targets:

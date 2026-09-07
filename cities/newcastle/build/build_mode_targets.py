@@ -680,6 +680,17 @@ def main():
     # the stations that classify them.
     av = pd.read_csv(os.path.join(OBS, 'traffic_aadt.csv'), low_memory=False)
     av = av[av.period == 'WEEKDAYS']
+    # CALIBRATION STATIONS ONLY. This is a scored gate target, so it may not be
+    # derived over the holdout half of the 67/143 split. The split rule is the
+    # one build_validation_targets.py applies: a calibration station is a
+    # PERMANENT station. report_mode_ridership.truck_at_count_stations already
+    # scores truck against calibration stations only; deriving the target over
+    # both halves scored the model against an observation it must not see.
+    _stn = pd.read_csv(os.path.join(OBS, 'traffic_count_stations_newcastle.csv'),
+                       low_memory=False)
+    _perm = set(_stn.loc[_stn['permanent_station'].astype(str)
+                         .isin(['1', 'True', 'true']), 'station_key'].astype(str))
+    av = av[av['station_key'].astype(str).isin(_perm)]
     yrs = sorted(int(y) for y in av.year.dropna().unique())
     span = []
     for y in yrs:
@@ -693,7 +704,8 @@ def main():
     recent = [v for y, v in span if y >= int(cfg.get('CAL.truck.count_year_from'))]
     add('truck', sum(recent) / len(recent) if recent else None,
         'weekday vehicles at classified count stations', 'derived',
-        'TfNSW classified weekday counts: heavy vehicles as a share of all '
+        'TfNSW classified weekday counts at CALIBRATION (permanent) stations '
+        'only, the holdout excluded: heavy vehicles as a share of all '
         'vehicles, mean of %s. NOT a person-trip share and NOT comparable '
         'with one - only a handful of stations classify, and they sit on '
         'freight routes, so this is the share where heavy vehicles are '
