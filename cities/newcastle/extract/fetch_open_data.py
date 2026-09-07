@@ -9,6 +9,22 @@ _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                                   '..', '..', '..', 'src'))
 import city as _city  # noqa: E402
 import os, json, hashlib, urllib.request, datetime
+
+
+def _sha256(path):
+    """Chunked, so peak memory is one buffer rather than one download.
+
+    The whole file was read into memory to hash it, which at the 871 MB hourly
+    counts archive meant a peak RSS of the largest thing this ever fetches.
+    The same chunked shape build_manifest.py and extract_speed_zones.py already
+    use; the digest is identical.
+    """
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
 B="https://opendata.transport.nsw.gov.au/data/dataset/"
 M=[
  # ---- B4 Opal patronage ----
@@ -66,7 +82,7 @@ for rel,url,desc,lic in M:
                     f.write(c)
         except Exception as e:
             print(f"  FAIL {e}"); continue
-    sz=os.path.getsize(p); h=hashlib.sha256(open(p,'rb').read()).hexdigest()
+    sz=os.path.getsize(p); h=_sha256(p)
     print(f"  {sz:>13,} B")
     prov.append({"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,
                  "sha256":h,"retrieved":datetime.date.today().isoformat()})

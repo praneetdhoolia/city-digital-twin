@@ -109,6 +109,13 @@ def stopwatch(p: Path, innovation_off_at: int | None) -> dict | None:
     cols = {name: i for i, name in enumerate(header) if i > sep}
     per_phase = collections.defaultdict(list)
     tail = collections.defaultdict(list)
+    # The PARENT's duration on the iterations where a nested phase actually ran.
+    # share_of_parent_when_it_runs divided the nested median by the parent's
+    # median over EVERY iteration, including the ones on which the nested phase
+    # is absent - which reported the dump as 41.25 of its parent, a share above
+    # 1 that says nothing. The denominator has to be the same iterations as the
+    # numerator.
+    parent_when_nested = collections.defaultdict(list)
     n_iter = 0
     for r in rows[1:]:
         try:
@@ -118,15 +125,20 @@ def stopwatch(p: Path, innovation_off_at: int | None) -> dict | None:
         if it == 0 or len(r) <= sep:
             continue
         n_iter += 1
+        values = {}
         for name, i in cols.items():
             v = _hms(r[i]) if i < len(r) else None
             if v is None:
                 continue
+            values[name] = v
             per_phase[name].append(v)
             if innovation_off_at is not None and it >= innovation_off_at:
                 tail[name].append(v)
+        for name, parent in NESTED.items():
+            if name in values and parent in values:
+                parent_when_nested[name].append(values[parent])
 
-    def summarise(d):
+    def summarise(d, parent_when=None):
         it = statistics.median(d["iteration"]) if d.get("iteration") else None
         out = {}
         for name in EXCLUSIVE + ("iteration",):
@@ -139,7 +151,9 @@ def stopwatch(p: Path, innovation_off_at: int | None) -> dict | None:
             if not d.get(name):
                 continue
             med = statistics.median(d[name])
-            par = out.get(parent, {}).get("median_s")
+            same = (parent_when or {}).get(name)
+            par = (statistics.median(same) if same
+                   else out.get(parent, {}).get("median_s"))
             out[name] = dict(
                 median_s=med, max_s=max(d[name]),
                 # how many iterations actually dumped, against how many ran
@@ -149,12 +163,14 @@ def stopwatch(p: Path, innovation_off_at: int | None) -> dict | None:
                 share_of_run=(round(sum(d[name]) / (it * len(d["iteration"])), 4)
                               if it and d.get("iteration") else None),
                 share_of_parent_when_it_runs=(round(med / par, 3) if par else None),
+                parent_median_on_those_iterations_s=par,
                 share=None,
                 note="nested inside %s and absent on iterations that do not dump; "
                      "not comparable with an exclusive phase share" % parent)
         return out
 
-    return dict(iterations_timed=n_iter, phases=summarise(per_phase),
+    return dict(iterations_timed=n_iter,
+                phases=summarise(per_phase, parent_when_nested),
                 exclusive_phases=EXCLUSIVE, nested_phases=NESTED,
                 innovation_off_tail=summarise(tail) if tail else None,
                 slowest_iterations=sorted(((v, k + 1) for k, v in enumerate(per_phase.get("iteration", []))), reverse=True)[:5])

@@ -87,7 +87,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | | |
 |---|---|
 | Open comparability family | `F30-an-escort-is-priced-as-an-escort` (opened `20260907T144147`, §9.151) - nothing run before it compares with anything after it |
-| Input registry | **477 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **480 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (7 September 2026 (thirty-second session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (7 September 2026 (thirty-second session)) · [population-and-demand](positions/population-and-demand.md) (7 September 2026 (thirty-second session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (7 September 2026 (thirty-second session)) · [runs-and-economics](positions/runs-and-economics.md) (7 September 2026 (thirty-second session)) · [sampling-and-families](positions/sampling-and-families.md) (7 September 2026 (thirty-second session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
@@ -108,14 +108,14 @@ is not diagnosed** and belongs to #66.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260907T192715_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
+| `20260907T182742_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260907T150816_300it_25pct` | aborted | F30-an-escort-is-priced-as-an-escort | 23 | Stopped by the operator at iteration ~24 under the GOAL.md loop, before the iteration-100 gate. The arm was healthy - iteration 0 control... |
 | `aborted_20260907T145929_300it_25pct` | failed | F30-an-escort-is-priced-as-an-escort | - | launch refused before MATSim started: A.signals.representation is explicit_signals but the signals run stack is not built. Run: python sr... |
 | `aborted_20260907T030352_300it_25pct` | aborted | F28-the-car-waits-only-for-a-car | 100 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260907T025531_2it_1pct` | completed | F28-the-car-waits-only-for-a-car | 2 | ran_to_last_iteration `_run.json` |
-| `aborted_20260907T025046_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
-| `aborted_20260907T024623_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
 
-155 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+157 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
