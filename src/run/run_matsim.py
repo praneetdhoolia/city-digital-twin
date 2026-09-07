@@ -771,6 +771,15 @@ def reconcile_stale():
 
 
 GATE_STOP = '_gate_stop.json'
+# The operator's counterpart to GATE_STOP, written by stop_run BEFORE it kills
+# anything. Both processes race for the terminal record: --stop kills the JVM,
+# and the harness sitting in proc.wait() can wake first, find no marker, and
+# record `failed` - renaming the directory out from under the stop, which then
+# closes out a run whose card already says something else. With the marker on
+# disk before the kill, whichever process gets there writes `aborted` with the
+# operator's own words (9.143: a dead run says why, in the words of whoever
+# stopped it).
+OPERATOR_STOP = '_operator_stop.json'
 # the reporter's verdict file, written per milestone and read by the watcher;
 # module-level so a test can point the watcher at a canned reporter
 GATE_VERDICT = '_gate_verdict.json'
@@ -967,6 +976,34 @@ def _gate_stop_cause(run_dir):
                ' | '.join(lines[:10])))
 
 
+def _operator_stop_cause(run_dir):
+    """The cause the operator gave to `--stop`, read from its marker, or None."""
+    path = os.path.join(run_dir, OPERATOR_STOP)
+    if not os.path.exists(path):
+        return None
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+    return doc.get('cause') or None
+
+
+def _stop_marker(run_dir):
+    """(cause, completion) for a run stopped at a DEFINED BOUNDARY, or (None, None).
+
+    Consulted by the harness's terminal path so that a killed JVM is never
+    recorded as a crash when somebody or something stopped it deliberately.
+    """
+    gate = _gate_stop_cause(run_dir)
+    if gate:
+        return gate, STOPPED_AT_GATE
+    op = _operator_stop_cause(run_dir)
+    if op:
+        return ('Stopped by the operator through run.py --stop: %s' % op,
+                STOPPED_BY_OPERATOR)
+    return None, None
+
+
 def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
               stop_cause=None, extra=None, cfg=None):
     """Write a run's record and summary at whichever boundary ended it.
@@ -1096,10 +1133,23 @@ def stop_run(name, cause):
     if meta.get('status') != 'running':
         raise SystemExit('%s is not running (status %s)'
                          % (name, meta.get('status')))
-    # the JVM's own pid is recorded on the card (#128): on Windows the
-    # harness's process tree carries it, on POSIX killing the harness alone
-    # left the JVM running
-    for victim in (meta.get('jvm_pid'), meta.get('pid')):
+    # THE MARKER GOES DOWN BEFORE ANYTHING DIES. Whoever writes the terminal
+    # record - this process, or the harness waking out of proc.wait() when the
+    # JVM dies - then finds the operator's own cause and records `aborted`
+    # rather than `failed`.
+    try:
+        with open(os.path.join(run_dir, OPERATOR_STOP), 'w',
+                  encoding='utf-8', newline='\n') as fh:
+            json.dump(dict(cause=cause, at=_now()), fh, indent=1)
+    except OSError:
+        pass
+    # THE HARNESS DIES FIRST, THEN THE JVM. Killing the JVM first woke the
+    # harness out of proc.wait() into its own terminal path, where it renamed
+    # the directory - so the stop below then closed out a directory that had
+    # moved. The jvm pid is still killed after, because on POSIX killing the
+    # harness alone left the JVM running (#128); on Windows /T takes the tree
+    # and the second kill is a no-op.
+    for victim in (meta.get('pid'), meta.get('jvm_pid')):
         if not victim:
             continue
         if os.name == 'nt':
@@ -1108,6 +1158,10 @@ def stop_run(name, cause):
         else:
             subprocess.run(['kill', '-9', str(victim)], capture_output=True)
     time.sleep(3)
+    # The harness may have written the terminal record and renamed the
+    # directory before it died; re-resolve so this close-out targets the run
+    # where it actually is.
+    run_dir = results_store.resolve(name) or run_dir
     dead = mark_dead(run_dir, 'aborted', cause=cause)
     # THE STOP IS A BOUNDARY, NOT A DEATH, so the run is closed out here rather
     # than left as a directory. It has to happen in THIS process: --stop kills
@@ -1295,10 +1349,12 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         raise
     wall = time.time() - t0
     if rc != 0:
-        gate_cause = _gate_stop_cause(run_dir)
+        gate_cause, completion = _stop_marker(run_dir)
         dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
                          rc=rc, wall_s=round(wall, 1), cause=gate_cause)
-        print(('GATE-STOPPED after %.0fs - %s' % (wall, gate_cause))
+        print(('%s after %.0fs - %s'
+               % ('GATE-STOPPED' if completion == STOPPED_AT_GATE
+                  else 'STOPPED BY THE OPERATOR', wall, gate_cause))
               if gate_cause else
               ('FAILED rc=%d after %.0fs - see %s'
                % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)
@@ -1309,7 +1365,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
             # for, and it stops being an orphan the next session must re-derive.
             # The record says `stopped_at_gate`, so it can never be handed back
             # as a finished arm.
-            doc = close_out(dead, STOPPED_AT_GATE, rc=rc, wall_s=wall,
+            doc = close_out(dead, completion, rc=rc, wall_s=wall,
                             stop_cause=gate_cause, cfg=cfg)
             if doc is not None:
                 print('closed out at iteration %s: %s'
