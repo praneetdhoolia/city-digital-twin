@@ -1333,6 +1333,30 @@
       "decisions_ref": "15",
       "description": "Share of the synthetic population BUILT. One, always: this is the build, not the run. Sampling for a run is RUN.sample.fraction, applied by the harness to a full population - and conflating the two would make every run a sample of a sample. Declared so the distinction is visible; it was an argparse default of 1.0 sitting next to a run-time fraction of the same shape."
     },
+    "B.population.vehicle_roster": {
+      "value": "census",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "census",
+          "per_person"
+        ],
+        "basis": "Whether a household's drivers share the cars the census says it owns. `per_person` is MATSim's own behaviour and every arm before 9.146: PrepareForSim gives each person a car of their own under qsim.vehiclesSource=modeVehicleTypesFromVehiclesData, so a household can put more cars on the road than it holds. `census` maps every licensed, car-available member of a household with n >= 1 vehicles (B1 `household_vehicles`, stamped on the population as `householdVehicles`) to one of n shared vehicles hh<id>_car<k>, assigned round-robin in person-id order, at the first iteration after PrepareForSim; the agent source parks each shared car once, where the first member starts; whoever wants it while it is out waits for it under RUN.qsim.vehicle_behavior. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,317 car legs, 3.28 % of resident car legs across 5,279 households, began while every vehicle the household owns was already out - 4,265 of them a one-car household with two members driving at once - and the census holds 81,384 households (33.0 %) with more licensed drivers than vehicles. A one-car household is EXACT under `census`; a multi-car household is assigned rather than pooled, because MATSim maps a person to one vehicle per mode, and that limit is stated rather than hidden. The sweep is over the MECHANISM: running both measures how much of car's excess and ride's deficit the second car supplied."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146",
+      "matsim_param": "householdVehicles.roster",
+      "consumers": [
+        "src/java/citysim/HouseholdVehiclesConfigGroup.java",
+        "src/java/citysim/HouseholdVehicleRoster.java",
+        "src/java/citysim/HouseholdCarDepartureHandler.java",
+        "src/java/citysim/TolerantAgentSource.java",
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "Whether a household's drivers share the cars the census gives it: `census` - every driver is mapped to one of the household's `householdVehicles` shared cars and waits for it when it is out; `per_person` - each person drives a car of their own (MATSim's default, pre-9.146). Consumed by HouseholdVehicleRoster through householdVehicles.roster."
+    },
     "B.ride.pairing_enabled": {
       "value": true,
       "units": "boolean",
@@ -1420,6 +1444,27 @@
         "src/java/citysim/RidePairingEngine.java"
       ],
       "description": "Where a declared ride pair meets when the two members' links differ: `driver_detour` routes the driver's car leg through the passenger's origin and destination links and the passenger boards and alights at their own; `passenger_links` requires the driver to satisfy the pairing rule on the passenger's links (pre-9.128). Consumed by RidePairingEngine through ridePairing.declaredMeeting."
+    },
+    "B.ride.coherence_scope": {
+      "value": "declared",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "declared",
+          "inferred"
+        ],
+        "basis": "Whom EscortCoherenceListener may re-propose a pair for. `inferred` is the behaviour of every arm before 9.146 and is kept as the control: any household member whose trip matches a household car leg on endpoints and clock is offered `ride`, and a drifted household driver whose non-car trip matches a member's ride is offered `car`, whether or not the demand bound them. `declared` restricts both passes to the identity every other ride mechanism has used since 9.120 - a trip in the person's `boundRideTrips`, with a driver in their `boundDriver` - so the listener keeps DECLARED pairs coherent and invents none. Measured at the F26 iteration-100 gate (aborted_20260906T100429_300it_25pct): 12,461 of 66,909 selected ride legs sat on persons the demand never bound, the listener re-proposing ~5,000 inferred ride plans an iteration while GatedSubtourModeChoice refused 192,000 proposals of exactly that kind; the inferred legs were the ones that never paired (miss_window + miss_endpoints 13,168 against miss_declared_absent 719), executed as walk or drive, and held plan-memory slots against real alternatives. The sweep is over the MECHANISM: running both measures how much of the pairing loss and the walk/car residue the inferred proposals supplied."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146",
+      "matsim_param": "ridePairing.coherenceScope",
+      "consumers": [
+        "src/java/citysim/RidePairingConfigGroup.java",
+        "src/java/citysim/EscortCoherenceListener.java"
+      ],
+      "description": "Whom the coherence listener may re-propose a ride pair for: `declared` - only a demand-bound trip with its named driver (boundRideTrips / boundDriver); `inferred` - any household member matching a household car leg on endpoints and clock (pre-9.146). Consumed by EscortCoherenceListener through ridePairing.coherenceScope."
     },
     "B.ride.unpaired_fallback": {
       "value": "licensed_drive_else_walk",
@@ -1553,22 +1598,41 @@
       ],
       "description": "Where a resident without a car may be given a lift by someone outside their household. Measured motivation (9.123): on the F17 arm residents without a car made 24.7% of trips and, with only the bound rides available, walked 48%, cycled 17% and took pt 15% of them - bike's, bus's and walk's excess were ride's deficit. `same_sa2_od`: the passenger's direct tour is bound, both directions, to non-household drivers making a trip between the same origin SA2 and destination SA2 within B.ride.pairing_window_min (a colleague from the same suburb driving to the same suburb at the same hour), each driver trip carrying at most B.ride.max_passengers_per_vehicle, the nearest departure first, sorted traversal; the volume is the joint binder's identity - (occupancy - 1) x the driver share x core trips - less every trip the earlier passes cover, thinned deterministically to it. Consumed by build_activity_chains.py; the bindings reach the run as boundDriver / boundRideTrips / boundDriveTrips like the lift table's, and the runtime pairing re-times the passenger to the driver (9.120). SAMPLING (9.127): a passenger is bound only to drivers whose household unit hash (blake2b over 'household|<id>|RUN.machine.seed', the sampler's own) is at or below the passenger's, so every nested household sample that keeps the passenger keeps the driver by construction; the sampler excludes these households from its lift clusters (`sharedDriverHousehold`). Measured: unioning them made the 10% sample 31,262 persons where 62,134 were due; a directed closure made it 17.65% of persons."
     },
+    "B.ride.shared_lift_priority": {
+      "value": "longest_first",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "longest_first",
+          "uniform"
+        ],
+        "basis": "Which servable car-less tours the shared-ride pass binds when supply exceeds the occupancy identity's remaining volume. `uniform` is every build before 9.149: a seeded uniform draw at thin_p over the servable tours, so the pass fills its volume with whatever trips the co-location scope happens to hold. Measured on the F26 WEEKDAY tables: the shared pass's bound trips have a straight-line median of 2.46 km with 45 % under 2 km, against escort 5.59, lift 5.02 and joint 4.55 km medians and an observed Newcastle vehicle-passenger trip of 9.3-9.8 km (HTS 2020/21-2024/25, TRIP_AVG_DISTANCE); and at the F28 iteration-100 gate the 20,151 bound trips that were WALKED rather than ridden had a median of 1.08 km with 65 % under 2 km - the walk being what a person does with a trip that short (the observed walk trip is 0.7 km) - while car-less residents made 9 km trips by bike (+157 %), bus (+65 %) and taxi (+161 %), the long trips that are lifts in real life. `longest_first` sorts the servable tours by the two trips' straight-line length, descending, and binds in that order until the volume is met: no threshold and no constant, only the ordering the observed lengths imply (lifts long, walks short), and the bound trips' mean length is reported at every build so it can be read against the HTS passenger mean rather than fitted to it."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.149",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ],
+      "description": "How the shared-ride pass chooses among servable car-less tours when it must thin to the occupancy identity's remaining volume: `longest_first` binds the longest tours first (lifts are long trips, walks are short); `uniform` is the seeded uniform thinning of every build before 9.149."
+    },
     "B.ride.shared_lift_hash_bucket": {
-      "value": 0.05,
+      "value": 0.25,
       "units": "fraction of the sampling-hash range",
       "source": "assumed",
       "sweep": [
         0.05,
-        0.1
+        0.25
       ],
-      "sweep_basis": "The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. The 9.127 rule (driver hash AT OR BELOW the passenger's) also guaranteed that, but it named LOW-hash households as drivers, and a 10% sample - which is exactly the low-hash households - then kept named drivers at 12.4% and everyone else at 7.95% (the eligible non-named pool at 6.1%, the motorbike carve at 5.5%, the truck carve at 5.1%): the count was 10%, the composition was not. A bucket prefers no hash. Measured on the WEEKDAY binder, package-identical inputs: at-or-below 98,549 servable / 59,718 bound / 0 short; bucket 0.10 86,848 / 59,806 / 0; bucket 0.05 73,509 / 59,701 / 0; unconstrained 105,515 / 59,648 / 17. 0.05 is declared because 0.10, 0.25 and 0.50 are all multiples of it, so a 25% confirmation arm keeps its pairs too; the cost is candidate supply, and the identity is still met in full. A 1% smoke is not a multiple and breaks pairs - it is a plumbing test and its pairing is never read.",
+      "sweep_basis": "The width of the sampling-hash bucket a shared-ride passenger and driver must share (9.129). The household sampler keeps a household when blake2b('household|<id>|RUN.machine.seed') / 2^64 < fraction; two households in one bucket of width w are kept together by every nested sample whose fraction is a multiple of w, so the pair survives sampling with no cluster and no closure. 0.05 was chosen so that a 10 % sub-sample would keep pairs too, and it is kept as the control. MEASURED (9.149, F26/F28 WEEKDAY tables): at 0.05 every passenger may be served by only the 5 % of drivers in their own bucket, which the short intra-suburb trips survive and the long ones do not - of the 27,771 car-less direct tours the pass could not serve, 94 % had a same-SA2 driver within the window and were refused on the bucket alone, at a median 9-15 km, exactly the observed passenger trip of 9.3-9.8 km; the served ones had a median of 2.5 km and at the F28 gate 39 % of the pass's lifts were walked. 0.25 is the standing campaign fraction (user directive, 1 September 2026: 25 % runs only), the only nested sample the loop runs; a pair sharing a bucket of that width survives every sample at a multiple of 0.25, and a 1 % smoke - which never read pairing anyway (9.128) - breaks pairs as it always did. The value is the directive, not a fit: moving it changes who may drive whom, never how many ride.",
       "sweep_role": "uncertainty",
       "status": "active",
-      "decisions_ref": "9.129",
+      "decisions_ref": "9.129, 9.149",
       "consumers": [
         "src/build/build_activity_chains.py"
       ],
-      "description": "Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both, without preferring low-hash households as drivers. Consumed by the fourth binder pass (bind_shared_rides)."
+      "description": "Width of the sampling-hash bucket a shared-ride passenger and their bound driver must share, so that every nested household sample at a fraction that is a multiple of it keeps both. Equal to the standing campaign fraction (0.25) since 9.149: at 0.05 the rule cut every passenger's driver supply to 5 % and left the long trips - the observed passenger trips - unservable. Consumed by the fourth binder pass (bind_shared_rides)."
     },
     "B.ride.wait_for_driver": {
       "value": true,

@@ -190,7 +190,17 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             // driver hours away who was never going to serve it, and widening
             // the tolerance is only defensible against the first. The buckets
             // are minutes of |driver departure - passenger departure|.
-            + "gap_le30,gap_le45,gap_le60,gap_le120,gap_gt120,gap_median_min\n";
+            + "gap_le30,gap_le45,gap_le60,gap_le120,gap_gt120,gap_median_min,"
+            // 9.145: of the unpaired legs that NAMED a declared driver, how
+            // many brought no car leg to the pairing pass at all. A declared
+            // pair faces no clock test (9.120), so it can never be recorded
+            // as a window miss: whenever the declared driver is present the
+            // leg pairs unless the car is full. `miss_window` therefore does
+            // NOT mean the tolerance was too tight - it means a SUBSTITUTE
+            // driver was found at the wrong hour because the declared one was
+            // absent. This column names that class directly, so the funnel
+            // cannot be read as an argument for widening a window.
+            + "miss_declared_absent\n";
 
     private final Scenario scenario;
     private final OutputDirectoryHierarchy io;
@@ -308,6 +318,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     private int missNoCandidate = 0;
     private int missWindow = 0;
     private int missEndpoints = 0;
+    /** 9.145: unpaired legs that named a declared driver who brought no car
+     *  leg to this pass. Orthogonal to the four-way funnel above, which is
+     *  left exactly as it was so no earlier arm's columns shift meaning. */
+    private int missDeclaredAbsent = 0;
     /** Pairings whose driver was the DECLARED partner (9.85), and the
      *  subset of those the inference window alone would have refused -
      *  which is this mechanism's effect, measured rather than argued. */
@@ -491,6 +505,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         missWindow = 0;
         missEndpoints = 0;
         missCapacity = 0;
+        missDeclaredAbsent = 0;
         missGapMinutes.clear();
         pairedDeclared = 0;
         pairedByIdentity = 0;
@@ -656,6 +671,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             int sawCandidate = 0;
             boolean sawInWindow = false;
             boolean sawEndpoints = false;
+            // 9.145: was the driver the demand NAMED among the candidates at
+            // all? Every other gate below is downstream of this one.
+            boolean sawDeclared = false;
             // The nearest driver making a geometrically matching trip, whatever
             // the clock said. This is what decides whether a window miss was a
             // near miss or a driver who was never going to serve it.
@@ -672,6 +690,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // already settled whether this is the same trip, so the
                 // clock only has to cover the drift replanning introduced.
                 final boolean isDeclared = declared.contains(driver.person.toString());
+                if (isDeclared) {
+                    sawDeclared = true;            // 9.145
+                }
                 // 9.120: for the driver the demand NAMED there is no clock
                 // test at all. The two members were generated as ONE trip
                 // and only MATSim's independent time mutation ever moved
@@ -723,6 +744,14 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // from a hopeless one is whether a matching TRIP exists at all.
                 final boolean matchedEver =
                         sawEndpoints || nearestMatchingGap < Double.MAX_VALUE;
+                // 9.145: counted BEFORE the four-way funnel and independently
+                // of it. A leg the demand bound to a named driver, unpaired
+                // because that driver brought no car leg, is one defect
+                // whichever of the four buckets the substitute search lands
+                // it in.
+                if (!declared.isEmpty() && !sawDeclared) {
+                    missDeclaredAbsent++;
+                }
                 if (sawCandidate == 0) {
                     missNoCandidate++;              // no household car leg at all
                 } else if (!matchedEver) {
@@ -876,21 +905,38 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         // routeDetour's own tripRouter.get() - built ~51,600 routers per
         // iteration on the F23 arm and cost 402 s of the 673 s iteration
         // (measured: beforeMobsimListeners 402 s against this class's own
-        // elapsed_ms of 401,955). A TripRouter is reusable and this loop is
-        // single-threaded, so one is all it needs.
+        // elapsed_ms of 401,955). A TripRouter is reusable, so ONE PER
+        // WORKER is all the parallel pass below needs (9.147).
         //
-        // Obtained here rather than at the top of the method so that a run
-        // with nothing to detour still constructs NO router, exactly as
-        // before: RandomizingTimeDistanceTravelDisutility draws from
-        // MatsimRandom.getLocalInstance() on construction, so the NUMBER of
-        // routers built is part of the random sequence.
-        final TripRouter router = detours.isEmpty() ? null : tripRouter.get();
-        for (final Map.Entry<DriverLeg, List<RideLeg>> e : detours.entrySet()) {
+        // Obtained inside the workers rather than at the top of the method
+        // so that a run with nothing to detour still constructs NO router,
+        // exactly as before: RandomizingTimeDistanceTravelDisutility draws
+        // from MatsimRandom.getLocalInstance() on construction, so the
+        // NUMBER of routers built is part of the random sequence - now
+        // exactly one per worker in any iteration that detours anything,
+        // fixed by global.numberOfThreads rather than by the driver count.
+        //
+        // 9.147: ROUTED IN PARALLEL, APPLIED IN ORDER. routeDetour touches
+        // only its own driver's leg, route and fields and reads the shared
+        // network and population, so drivers partition cleanly across
+        // workers; the loop below then consumes the results in the
+        // deterministic driver order the map holds, so every counter,
+        // passenger re-timing and booking is made in the order it always
+        // was. Measured before: ~40 s of a 319 s plain iteration on the F26
+        // arm (ride_pairing.csv elapsed_ms), on one thread of 24.
+        final List<Map.Entry<DriverLeg, List<RideLeg>>> order =
+                new ArrayList<>(detours.entrySet());
+        for (final Map.Entry<DriverLeg, List<RideLeg>> e : order) {
+            e.getValue().sort(Comparator.<RideLeg>comparingDouble(r -> r.departure)
+                                      .thenComparing(r -> r.person));
+        }
+        final List<Map<RideLeg, Double>> routedDetours =
+                routeDetoursInParallel(order);
+        for (int di = 0; di < order.size(); di++) {
+            final Map.Entry<DriverLeg, List<RideLeg>> e = order.get(di);
             final DriverLeg driver = e.getKey();
             final List<RideLeg> carried = e.getValue();
-            carried.sort(Comparator.<RideLeg>comparingDouble(r -> r.departure)
-                                 .thenComparing(r -> r.person));
-            final Map<RideLeg, Double> passAt = routeDetour(router, driver, carried);
+            final Map<RideLeg, Double> passAt = routedDetours.get(di);
             if (passAt == null) {
                 detourRefused += carried.size();
                 missEndpoints += carried.size();
@@ -1062,6 +1108,50 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         driver.routedTravelTime = clock - driver.departure;
         driver.path = path;
         return passAt;
+    }
+
+    /**
+     * 9.147: every driver's detour routed on {@code global.numberOfThreads}
+     * workers, one {@link TripRouter} each, results returned in the order
+     * given so the caller applies them deterministically. A worker's failure
+     * is the iteration's failure, never a silently unrouted driver.
+     */
+    private List<Map<RideLeg, Double>> routeDetoursInParallel(
+            final List<Map.Entry<DriverLeg, List<RideLeg>>> order) {
+        final int n = order.size();
+        final List<Map<RideLeg, Double>> out =
+                new ArrayList<>(Collections.nCopies(n, (Map<RideLeg, Double>) null));
+        if (n == 0) {
+            return out;
+        }
+        final int workers = Math.max(1, Math.min(
+                n, scenario.getConfig().global().getNumberOfThreads()));
+        final java.util.concurrent.ExecutorService pool =
+                java.util.concurrent.Executors.newFixedThreadPool(workers);
+        final List<java.util.concurrent.Future<?>> futures = new ArrayList<>(workers);
+        for (int w = 0; w < workers; w++) {
+            final int from = (int) ((long) w * n / workers);
+            final int to = (int) ((long) (w + 1) * n / workers);
+            futures.add(pool.submit(() -> {
+                final TripRouter router = tripRouter.get();
+                for (int i = from; i < to; i++) {
+                    final Map.Entry<DriverLeg, List<RideLeg>> e = order.get(i);
+                    out.set(i, routeDetour(router, e.getKey(), e.getValue()));
+                }
+            }));
+        }
+        pool.shutdown();
+        try {
+            for (final java.util.concurrent.Future<?> f : futures) {
+                f.get();
+            }
+        } catch (final InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("detour routing interrupted", ex);
+        } catch (final java.util.concurrent.ExecutionException ex) {
+            throw new IllegalStateException("detour routing failed", ex.getCause());
+        }
+        return out;
     }
 
     // ---- the rules --------------------------------------------------------
@@ -1444,6 +1534,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 .append(',').append(missGapMinutes.size() - gapAtMost(120.0))
                 .append(',').append(String.format(java.util.Locale.ROOT, "%.1f",
                                                   gapMedian()))
+                .append(',').append(missDeclaredAbsent)      // 9.145
                 .append('\n');
         try {
             Files.write(Paths.get(io.getOutputFilename(OUT_FILE)),

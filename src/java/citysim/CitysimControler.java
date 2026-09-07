@@ -205,8 +205,14 @@ public final class CitysimControler {
         final BikeStressConfigGroup bikeStress = new BikeStressConfigGroup();
         final IncomeScoringConfigGroup incomeScoring =
                 new IncomeScoringConfigGroup();
+        // A household drives the cars the census gives it (DECISIONS.md
+        // 9.146, B.population.vehicle_roster): registered on every stack like
+        // the others; absent from the emitted config the group reads
+        // per_person and nothing below installs.
+        final HouseholdVehiclesConfigGroup householdVehicles =
+                new HouseholdVehiclesConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[14 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[15 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -221,8 +227,9 @@ public final class CitysimControler {
         groups[11] = ptFare;
         groups[12] = bikeStress;
         groups[13] = incomeScoring;
+        groups[14] = householdVehicles;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[14 + i] = extraGroups.get(i);
+            groups[15 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -452,6 +459,20 @@ public final class CitysimControler {
                 }
             });
         }
+        if (householdVehicles.isCensusRoster()) {
+            // A household drives the cars the census gives it (DECISIONS.md
+            // 9.146, B.population.vehicle_roster): the roster maps every
+            // driver to a shared hh<id>_car<k> at the first iteration, after
+            // PrepareForSim has done its per-person mapping, and the agent
+            // source parks each shared car once.
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    bind(HouseholdVehicleRoster.class).in(Singleton.class);
+                    addControllerListenerBinding().to(HouseholdVehicleRoster.class);
+                }
+            });
+        }
         final boolean physicalBoarding =
                 ridePairing.isEnabled() && ridePairing.isPhysicalBoarding();
         final boolean networkWalk =
@@ -489,6 +510,15 @@ public final class CitysimControler {
                         addQSimComponentBinding("citysimTolerantAgentSource")
                                 .to(TolerantAgentSource.class);
                     }
+                    if (householdVehicles.isCensusRoster()) {
+                        // 9.148: a driver whose household car is out waits
+                        // for it - car only, so walk and taxi keep MATSim's
+                        // teleport under RUN.qsim.vehicle_behavior. Ordered
+                        // BEFORE the netsim engine's handler below.
+                        bind(HouseholdCarDepartureHandler.class).asEagerSingleton();
+                        addQSimComponentBinding(HouseholdCarDepartureHandler.COMPONENT)
+                                .to(HouseholdCarDepartureHandler.class);
+                    }
                 }
             });
             // Departure handlers are consulted in component order, and the
@@ -503,6 +533,9 @@ public final class CitysimControler {
                 components.removeNamedComponent(TeleportationModule.COMPONENT_NAME);
                 if (networkWalk) {
                     components.addNamedComponent(GenericRouteTeleporter.COMPONENT);
+                }
+                if (householdVehicles.isCensusRoster()) {
+                    components.addNamedComponent(HouseholdCarDepartureHandler.COMPONENT);
                 }
                 components.addNamedComponent(QNetsimEngineModule.COMPONENT_NAME);
                 if (physicalBoarding) {

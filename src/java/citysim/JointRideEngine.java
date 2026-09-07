@@ -220,8 +220,25 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
 
     private MobsimVehicle vehicleOf(
             final Id<org.matsim.api.core.v01.population.Person> driver) {
-        MobsimVehicle vehicle = this.qsim.getVehicles().get(
-                Id.create(driver.toString(), Vehicle.class));
+        // 9.146: the vehicle the driver is MAPPED to, first - under the
+        // household roster a driver's car is `hh<id>_car<k>`, shared with
+        // the household's other drivers, not a vehicle named after them.
+        final org.matsim.api.core.v01.population.Person p =
+                this.qsim.getScenario().getPopulation().getPersons().get(driver);
+        MobsimVehicle vehicle = null;
+        if (p != null) {
+            try {
+                vehicle = this.qsim.getVehicles().get(
+                        org.matsim.vehicles.VehicleUtils.getVehicleId(
+                                p, TransportMode.car));
+            } catch (final RuntimeException noMapping) {
+                vehicle = null;                    // no `vehicles` attribute
+            }
+        }
+        if (vehicle == null) {
+            vehicle = this.qsim.getVehicles().get(
+                    Id.create(driver.toString(), Vehicle.class));
+        }
         if (vehicle == null) {
             vehicle = this.qsim.getVehicles().get(
                     Id.create(driver.toString() + "_" + TransportMode.car,

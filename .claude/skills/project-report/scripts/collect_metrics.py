@@ -11,7 +11,9 @@ from anywhere else.
     python .claude/skills/project-report/scripts/collect_metrics.py OUT_DIR --no-github
     python .claude/skills/project-report/scripts/collect_metrics.py OUT_DIR --no-growth
 
-Writes OUT_DIR/metrics.json, OUT_DIR/prs_full.md (one block per PR with its
+Writes OUT_DIR/metrics.json, OUT_DIR/timeline.json (every dated event from
+the root commit to today: PR merges, record rows, family boundaries, runs and
+gates, the phase table and the stage spans), OUT_DIR/prs_full.md (one block per PR with its
 commits, files and full body, for the milestone reviewer) and
 OUT_DIR/issues_full.md. Needs `git`; the GitHub half needs `gh` logged in.
 The growth series calls `git show` for every source file at every merge
@@ -126,24 +128,33 @@ def _show(sha: str, path: str) -> str | None:
 
 
 def growth_series(root: Path) -> list[dict]:
-    """Registry fields, manifest rows and code lines at every first-parent commit."""
+    """Registry fields, manifest rows and code lines at every first-parent commit.
+
+    Code lines come from ONE `git grep -c` per commit (every .py and .java
+    file's line count in a single process) rather than a `git show` per file,
+    which was a few thousand processes on this repository's history."""
     merges = [l for l in sh(["git", "log", "--first-parent", "--format=%h|%ad|%s", "--date=short"]).strip().split("\n") if l]
     out = []
     for m in reversed(merges):
         sha, date, msg = m.split("|", 2)
         tree = sh(["git", "ls-tree", "-r", "--name-only", sha]).split("\n")
         py = java = 0
+        r = subprocess.run(["git", "grep", "-c", "", sha, "--", "*.py", "*.java"], capture_output=True, text=True, encoding="utf-8", errors="ignore")
+        for line in r.stdout.split("\n"):
+            # <sha>:<path>:<count>
+            parts = line.rsplit(":", 1)
+            if len(parts) != 2 or not parts[1].isdigit():
+                continue
+            path = parts[0].split(":", 1)[-1]
+            if path.endswith(".py"):
+                py += int(parts[1])
+            elif path.endswith(".java"):
+                java += int(parts[1])
         fields = None
         manifest = None
         registry_files = []
         for f in tree:
-            if f.endswith(".py"):
-                t = _show(sha, f)
-                py += t.count("\n") if t else 0
-            elif f.endswith(".java"):
-                t = _show(sha, f)
-                java += t.count("\n") if t else 0
-            elif f.endswith("required_fields.json"):
+            if f.endswith("required_fields.json"):
                 t = _show(sha, f)
                 try:
                     j = json.loads(t)
@@ -228,6 +239,99 @@ def run_index(root: Path) -> dict | None:
                 with_run_record=sum(1 for r in rows if r.get("run_record") == "yes"))
 
 
+def timeline(root: Path, m: dict) -> dict:
+    """Every dated event the artefacts hold, from the root commit to today, so the
+    report's day-0 timeline is assembled and never remembered.
+
+    Sources, each row carrying its own: the first-parent history (root, every
+    PR merge, every direct commit), the record's §14 change log (one row per
+    dated change with its section refs), the family ledger (every comparability
+    boundary at its launch stamp), the run index (every run that reached 50
+    iterations or stopped at a gate, plus the first run of all), the board's
+    phase table (undated: the writer dates a phase from the rows above it), and
+    the stage spans (first and last commit carrying each P<n> prefix)."""
+    city = os.environ.get("CITYSIM_CITY", "newcastle")
+    events = []
+    pr_titles = {p["number"]: p["title"] for p in m.get("github", {}).get("prs", [])} if m.get("github") else {}
+    for line in sh(["git", "log", "--first-parent", "--reverse", "--format=%h|%ad|%s", "--date=short"]).strip().split("\n"):
+        if not line:
+            continue
+        sha, date, subj = line.split("|", 2)
+        pr = re.match(r"Merge pull request #(\d+)", subj)
+        if pr:
+            n = int(pr.group(1))
+            events.append(dict(date=date, kind="pr", title=pr_titles.get(n, subj), ref=f"#{n}", sha=sha))
+        elif not events:
+            events.append(dict(date=date, kind="root", title=subj, ref=sha, sha=sha))
+        else:
+            events.append(dict(date=date, kind="direct", title=subj, ref=sha, sha=sha))
+    dec = root / "cities" / city / "docs" / "DECISIONS.md"
+    if dec.exists():
+        in_log = False
+        for line in dec.read_text(encoding="utf-8", errors="ignore").split("\n"):
+            if re.match(r"^## 14\. Change log", line):
+                in_log = True
+                continue
+            if in_log and line.startswith("## "):
+                break
+            row = re.match(r"^\| (\d{4}-\d{2}-\d{2}) \| (.*)", line) if in_log else None
+            if not row:
+                continue
+            body = row.group(2)
+            head = re.match(r"\*\*(.+?)\*\*", body)
+            title = (head.group(1) if head else body.split(". ")[0]).rstrip(".")
+            events.append(dict(date=row.group(1), kind="record", title=title[:220], ref=", ".join(sorted(set(re.findall(r"§9\.\d+|§\d+\.\d+", title)))) or None))
+    fam = root / "cities" / city / "docs" / "run_families.json"
+    if fam.exists():
+        try:
+            for key, f in json.loads(fam.read_text(encoding="utf-8")).get("families", {}).items():
+                s = f.get("from_launch", "")
+                if len(s) >= 8:
+                    events.append(dict(date=f"{s[:4]}-{s[4:6]}-{s[6:8]}", kind="family", title=f"{key}: {f.get('label', '')}", ref=f.get("decisions_ref")))
+        except ValueError:
+            pass
+    idx = root / "results" / "INDEX.csv"
+    if idx.exists():
+        rows = list(csv.DictReader(idx.open(encoding="utf-8")))
+        rows.sort(key=lambda r: re.sub(r"^(aborted|failed)_", "", r["name"]))
+        for i, r in enumerate(rows):
+            stamp = re.sub(r"^(aborted|failed)_", "", r["name"])[:8]
+            date = f"{stamp[:4]}-{stamp[4:6]}-{stamp[6:8]}"
+            its = int(r.get("iterations") or 0)
+            gate = "gate" in (r.get("cause") or "").lower()
+            if i == 0 or its >= 50 or gate:
+                kind = "gate" if gate else "run"
+                events.append(dict(date=date, kind=kind, title=f"{r['name']} {r.get('status')} ({r.get('fraction')} sample, {its} it declared, family {r.get('family')})",
+                                   ref=r["name"], cause=(r.get("cause") or "")[:140] or None))
+    phases = []
+    board = root / "cities" / city / "docs" / "STATUS.md"
+    if board.exists():
+        for line in board.read_text(encoding="utf-8", errors="ignore").split("\n"):
+            pm = re.match(r"^\| (P\d[^|]*) \| ([^|]*) \| (.*) \|\s*$", line)
+            if pm:
+                phases.append(dict(phase=pm.group(1).strip(), state=pm.group(2).strip(), evidence=pm.group(3).strip()[:200]))
+    stages = {}
+    for line in sh(["git", "log", "--reverse", "--format=%ad|%s", "--date=short"]).strip().split("\n"):
+        if "|" not in line:
+            continue
+        date, subj = line.split("|", 1)
+        pm = re.match(r"^(P\d)\b", subj)
+        if pm:
+            s = stages.setdefault(pm.group(1), dict(first=date, last=date, commits=0))
+            s["last"] = date
+            s["commits"] += 1
+    events.sort(key=lambda e: (e["date"], {"root": 0, "pr": 1, "direct": 1, "record": 2, "family": 3, "run": 4, "gate": 4}.get(e["kind"], 9)))
+    day0 = events[0]["date"] if events else None
+    today = datetime.now(timezone.utc).date().isoformat()
+    days = (datetime.fromisoformat(today) - datetime.fromisoformat(day0)).days if day0 else None
+    firsts = {}
+    for e in events:
+        if e["kind"] in ("run", "gate", "family", "record") and "first_" + e["kind"] not in firsts:
+            firsts["first_" + e["kind"]] = e
+    return dict(day0=day0, today=today, days_elapsed=days, events=events, phases=phases, stages=stages,
+                counts=collections.Counter(e["kind"] for e in events).most_common(), firsts=firsts)
+
+
 def main(argv: list[str]) -> int:
     if len(argv) < 2:
         print(__doc__)
@@ -251,8 +355,11 @@ def main(argv: list[str]) -> int:
         print("github ...", flush=True)
         m["github"] = github(root, out_dir)
     m["run_index"] = run_index(root)
+    print("timeline ...", flush=True)
+    m["timeline"] = timeline(root, m)
+    (out_dir / "timeline.json").write_text(json.dumps(m["timeline"], indent=1, default=str), encoding="utf-8")
     (out_dir / "metrics.json").write_text(json.dumps(m, indent=1, default=str), encoding="utf-8")
-    print(f"wrote {out_dir / 'metrics.json'}")
+    print(f"wrote {out_dir / 'metrics.json'} and timeline.json ({len(m['timeline']['events'])} dated events over {m['timeline']['days_elapsed']} days)")
     return 0
 
 

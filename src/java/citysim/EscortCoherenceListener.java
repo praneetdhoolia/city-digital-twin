@@ -4,9 +4,11 @@ import com.google.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.Id;
@@ -118,6 +120,19 @@ public final class EscortCoherenceListener implements ReplanningListener {
         // endpoints a co-member's trip shares, whatever activity it arrives
         // at. Zero recovers the escort-only behaviour exactly.
         final double jointRate = cfg.getJointCoherenceRate();
+        // 9.146: B.ride.coherence_scope. Under `declared` this listener keeps
+        // the pairs the DEMAND declared coherent and proposes nothing else -
+        // a trip in `boundRideTrips`, with the driver in `boundDriver` - the
+        // identity GatedSubtourModeChoice gates on since 9.120. Under
+        // `inferred` it matches any household member's trip to any household
+        // car leg on endpoints and clock, as every arm before 9.146 did.
+        // Measured at the F26 gate: 12,461 of 66,909 selected ride legs sat
+        // on persons the demand never bound, proposed here by inference,
+        // while the gate refused 192,000 proposals of exactly that kind; the
+        // two mechanisms contradicted, and the inferred legs were the ones
+        // that never paired.
+        final boolean declaredOnly = RidePairingConfigGroup.COHERENCE_DECLARED
+                .equals(cfg.getCoherenceScope());
         int proposed = 0;
         int decohered = 0;
 
@@ -177,9 +192,21 @@ public final class EscortCoherenceListener implements ReplanningListener {
                         avail != null && CAR_ALWAYS.equals(avail.toString());
                 Trip target = null;
                 boolean targetEscort = false;
+                final Set<Integer> boundRide = declaredOnly
+                        ? GatedSubtourModeChoice.GatedModule.boundTrips(
+                                plan, GatedSubtourModeChoice.GatedModule
+                                        .BOUND_RIDE_ATTRIBUTE)
+                        : null;
+                final Set<String> namedDrivers =
+                        declaredOnly ? boundDrivers(member) : null;
+                int tripNo = 0;                    // 1-based, plan order (9.120)
                 for (final Trip trip : TripStructureUtils.getTrips(plan)) {
+                    tripNo++;
                     if (isAllMode(trip, TransportMode.ride)) {
                         continue;                  // already coherent
+                    }
+                    if (declaredOnly && !boundRide.contains(tripNo)) {
+                        continue;                  // 9.146: not a declared trip
                     }
                     final Id<Link> from = trip.getOriginActivity().getLinkId();
                     final Id<Link> to = trip.getDestinationActivity().getLinkId();
@@ -190,6 +217,10 @@ public final class EscortCoherenceListener implements ReplanningListener {
                         }
                         if (escortFlags.get(i) && carAvailable) {
                             continue;              // escort path: unlicensed only
+                        }
+                        if (declaredOnly && !namedDrivers.contains(
+                                escortDrivers.get(i).toString())) {
+                            continue;              // 9.146: not the named driver
                         }
                         if (from.equals(escortEnds.get(i)[0])
                                 && to.equals(escortEnds.get(i)[1])
@@ -289,9 +320,21 @@ public final class EscortCoherenceListener implements ReplanningListener {
                 if (pplan == null) {
                     continue;
                 }
+                final Set<Integer> pBound = declaredOnly
+                        ? GatedSubtourModeChoice.GatedModule.boundTrips(
+                                pplan, GatedSubtourModeChoice.GatedModule
+                                        .BOUND_RIDE_ATTRIBUTE)
+                        : null;
+                final Set<String> pDrivers =
+                        declaredOnly ? boundDrivers(passenger) : null;
+                int pTripNo = 0;
                 for (final Trip ptrip : TripStructureUtils.getTrips(pplan)) {
+                    pTripNo++;
                     if (!isAllMode(ptrip, TransportMode.ride)) {
                         continue;
+                    }
+                    if (declaredOnly && !pBound.contains(pTripNo)) {
+                        continue;                  // 9.146: not a declared trip
                     }
                     final Id<Link> from = ptrip.getOriginActivity().getLinkId();
                     final Id<Link> to =
@@ -326,6 +369,10 @@ public final class EscortCoherenceListener implements ReplanningListener {
                     for (final Person driver : members) {
                         if (driver == passenger) {
                             continue;
+                        }
+                        if (declaredOnly && !pDrivers.contains(
+                                driver.getId().toString())) {
+                            continue;              // 9.146: not the named driver
                         }
                         final Object avail =
                                 driver.getAttributes().getAttribute(CAR_AVAIL);
@@ -413,10 +460,28 @@ public final class EscortCoherenceListener implements ReplanningListener {
         if (decohered > 0 || driverDecohered > 0) {
             LOG.info("escortCoherence: passenger side {} decohered / {} "
                      + "re-proposed as ride; driver side {} decohered / {} "
-                     + "re-proposed as car; rates {}/{} - proposed, never "
-                     + "imposed", decohered, proposed, driverDecohered,
-                     driverProposed, rate, jointRate);
+                     + "re-proposed as car; rates {}/{}, scope {} - proposed, "
+                     + "never imposed", decohered, proposed, driverDecohered,
+                     driverProposed, rate, jointRate, cfg.getCoherenceScope());
         }
+    }
+
+    /** The driver person ids the demand named for this passenger
+     *  (`boundDriver`, written by build_matsim_plans.py; 9.85), or empty. */
+    private static Set<String> boundDrivers(final Person person) {
+        final Object raw = person.getAttributes()
+                .getAttribute(RidePairingEngine.BOUND_DRIVER_ATTRIBUTE);
+        final Set<String> ids = new HashSet<>();
+        if (raw == null) {
+            return ids;
+        }
+        for (final String id : raw.toString().split(",")) {
+            final String t = id.trim();
+            if (!t.isEmpty()) {
+                ids.add(t);
+            }
+        }
+        return ids;
     }
 
     /** The trips of the subtour that contains `trip`, or empty if unresolved.

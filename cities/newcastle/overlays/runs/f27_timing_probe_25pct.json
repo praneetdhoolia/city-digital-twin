@@ -1,0 +1,14 @@
+{
+  "overlay": "f27_timing_probe_25pct",
+  "description": "A TIMING probe, not a modelling run: four iterations at the campaign fraction on the F27 stack (DECISIONS.md 9.147) to measure the iteration's cost under the declared knobs, with the mobsim thread count varied from the command line (`--set RUN.machine.threads=N`) - this overlay deliberately pins NO thread count so the registry's declared value is the base and a --set can move it. Iterations 1-3 are the comparison window (0 pays JIT and cache warm-up). It exists because the mobsim is 197 s of a 319 s plain iteration on the F26 arm and RUN.machine.threads = 10 was declared on a 24-core machine without a probe of its own (9.59 swept the events and replanning pools, not the mobsim's); F27 is already a family boundary on the run stack, so the mobsim's partitioning - RUN IDENTITY - can move now at no comparability cost. Nothing produced under it is a reading of any mode. Graph rendering OFF (9.59).",
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 4,
+    "RUN.controler.create_graphs": false,
+    "RUN.machine.xmx": "40g"
+  },
+  "allow_outside_sweep": ["RUN.controler.last_iteration"],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This overlay is not one: it measures the wall-clock cost of an iteration under a thread count, and four iterations are the window that measurement needs (0 warms up, 1-3 compare). The value is deliberately far below the range so that any output carrying it is obviously not a result."
+  }
+}

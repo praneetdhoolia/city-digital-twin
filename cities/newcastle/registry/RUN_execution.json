@@ -129,24 +129,34 @@
       "description": "Whether MATSim renders its per-iteration diagnostic PNGs (mode stats, leg histograms - eight images every iteration). Wall time and disk only, never the model; declared so a long arm's overlay can turn the rendering off instead of paying it a thousand times (9.59)."
     },
     "RUN.controler.write_events_interval": {
-      "value": 10,
+      "value": 100,
       "units": "iterations",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "15",
+      "decisions_ref": "15, 9.147",
       "matsim_param": "controler.writeEventsInterval",
-      "description": "How often events are written. Affects disk and wall time, not the model."
+      "description": "How often the full events stream is written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): the events are consumed at a GATE - the close-out accounting, the optional --truck-stations scoring, replay_events - and by nothing the ten-iteration monitoring reads. Measured on the F26 arm's stopwatch: writing events inside the mobsim took a milestone iteration's mobsim from 197 s to 359-398 s, so at every tenth iteration it cost ~180 s. Affects disk and wall time, not the model."
     },
     "RUN.controler.write_plans_interval": {
+      "value": 100,
+      "units": "iterations",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "15, 9.147",
+      "matsim_param": "controler.writePlansInterval",
+      "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model."
+    },
+    "RUN.controler.write_trips_interval": {
       "value": 10,
       "units": "iterations",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "controler.writePlansInterval",
-      "description": "How often plans are written. Affects disk and wall time, not the model."
+      "decisions_ref": "9.147",
+      "matsim_param": "controler.writeTripsInterval",
+      "description": "How often MATSim writes the trips and legs tables (`<n>.trips.csv.gz`, `<n>.legs.csv.gz`), in iterations. THE MONITORING CADENCE: GOAL.md asks for all twelve modes read continuously and the readers have taken every tenth iteration since 9.126; `report_mode_ridership.py` reads the trips table wherever it exists and derives one from the experienced plans only where it does not (iteration_trips.py). Before 9.147 this was MATSim's default of 50 and the readers derived every milestone from the experienced plans, which forced the full plans dump and the events onto the ten-iteration cadence at ~360 s a milestone (F26 stopwatch). Affects disk and wall time, not the model."
     },
     "RUN.controler.compression_type": {
       "value": "gzip",
@@ -516,7 +526,7 @@
       "description": "Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Under per_submode the emitter writes the swissRailRaptor module and one scoring modeParams block per submode: bus takes C1's asc_bus, tram asc_lr, rail asc_rail; FERRY HAS NO C1 CONSTANT and keeps the pt aggregate's, stated in the run-inputs report rather than invented. Time is priced at the one declared beta_ivt for every submode - C1 declares no per-submode time weight. The router prices each submode from its own scoring entry (RaptorUtils.createParameters reads scoring.getModes() per mode - verified in the jar), so the constants and any swept divergence reach ROUTE choice as well as plan scoring. Plan-level choice stays `pt`: subtourModeChoice.modes never carries a submode, only the router assigns submode legs, and citysim.PtSubmodeMainModeIdentifier folds them back to `pt` for every main_mode analysis, keeping the HTS aggregate comparison unchanged. A MODEL CHANGE: part of the #48 batched family boundary."
     },
     "RUN.machine.threads": {
-      "value": 10,
+      "value": 16,
       "units": "threads",
       "source": "definition",
       "sweep": [
@@ -525,9 +535,9 @@
       ],
       "sweep_role": "uncertainty",
       "status": "active",
-      "decisions_ref": "9.5, 9.59",
+      "decisions_ref": "9.5, 9.59, 9.147",
       "matsim_param": "qsim.numberOfThreads",
-      "description": "Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim partitions the network by thread count, so changing it changes results. Until 9.59 this one field wrote global.numberOfThreads too; the pair is now two declared fields because they govern different partitionings (mobsim vs replanning/routing) with different saturation points - the 9.57 arm ran replanning at a median 59 s with 14 of 24 CPUs idle. Each field is run identity in its own right."
+      "description": "Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim partitions the network by thread count, so changing it changes results. Until 9.59 this one field wrote global.numberOfThreads too; the pair is now two declared fields because they govern different partitionings (mobsim vs replanning/routing) with different saturation points. PROBED FOR THE MOBSIM ITSELF in 9.147, on the F27 stack at 25% x 4 iterations on the 24-core machine, one probe at a time (f27_timing_probe_25pct): a plain iteration 270-272 s at 10 threads, 267 s at 16, 264-265 s at 24, the mobsim phase ~140 / ~135 / ~131 s. 16 is declared: a measured gain over 10 that leaves eight cores to the events handlers (RUN.machine.event_handler_threads), the JVM's GC and the runner's own watcher, while 24's further 2-3 s sits inside one run's own iteration-to-iteration spread. The move is recorded inside the F27 boundary, which already changed the run stack, so it costs no comparability."
     },
     "RUN.machine.replanning_threads": {
       "value": 20,
@@ -891,6 +901,23 @@
       "decisions_ref": "9.49",
       "matsim_param": "qsim.vehiclesSource",
       "description": "Where the mobsim gets a private vehicle's characteristics. Was `defaultVehicle` while car was the only main mode; the freight layer (9.49) needs a truck to weigh more than a car, so each main mode now takes the vehicle type of its own name from the vehicles file the run inputs emit - car restating MATSim's default exactly (RUN.qsim.car_vehicle), truck carrying B.freight.pce and B.freight.max_speed_kmh. TRANSIT vehicles are unaffected - they come from the schedule's own vehicles file, whose seats RUN.sample.transit_capacity_scaling scales."
+    },
+    "RUN.qsim.vehicle_behavior": {
+      "value": "teleport",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "wait",
+          "teleport"
+        ],
+        "basis": "What the mobsim does when an agent departs by a network mode and the vehicle they are mapped to is not at their link. It is GLOBAL, and this model runs walk and taxi as network main modes with a vehicle per person, neither of them chain-based: a walk after a bus leg starts where the walk vehicle is not. `teleport` (MATSim's default, every arm before 9.146 and every arm since 9.148) moves the vehicle to the agent, which is what those modes need. `wait` is MEASURED FATAL for this model (9.148): on the F27 arm aborted_20260907T002431_300it_25pct at iteration 0 it left 55,862 car agents, 12,837 walk and 11,537 ride stuck and cut car departures from 232,394 (F26) to 82,388, and by iteration 19 co-evolution had abandoned every plan that strands, a bias rather than a constraint. It stays in the sweep as the record of that measurement, not as a candidate. The household roster's constraint (B.population.vehicle_roster = census) is enforced instead by citysim.HouseholdCarDepartureHandler, car-only: a driver whose household car is out is registered with the link as waiting and MATSim's own link departs them when the car is parked back, while everything else departs under the global behaviour declared here."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.146, 9.148",
+      "matsim_param": "qsim.vehicleBehavior",
+      "description": "What happens when a network-mode agent's mapped vehicle is not at their link: `teleport` moves the vehicle to the agent (MATSim's default; required by the non-chain network modes walk and taxi); `wait` holds the agent until it arrives and is measured fatal for this model (9.148). The household car constraint is car-only and lives in HouseholdCarDepartureHandler, not here."
     },
     "RUN.qsim.car_vehicle": {
       "value": {
