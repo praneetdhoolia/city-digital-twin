@@ -20,21 +20,22 @@ came back byte-identical**.
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **Machine idle; no arm runs.** The newest reading is still F28's at its iteration-100 gate (`aborted_20260907T030352_300it_25pct`), and it is an F28 reading — F29 and F30 have no arm. | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **An arm RUNS**: `20260907T150816_300it_25pct`, F30's first, launched 15:08 7 Sep (25 %, 300 it, 16 threads, 40 g) at ~375 s an iteration; its iteration-100 gate is due about 01:30 8 Sep. The newest CITABLE reading is still F28's gate (`aborted_20260907T030352_300it_25pct`); the board's blocks now read the running arm every ten iterations. | `python src/run/session_gate.py --digest` (MACHINE line) · `results/raw/20260907T150816_300it_25pct/_progress.json` |
 | **The package on disk is the F29 demand with the F30 run stack.** `check_package.py` ALL CHECKS PASSED this session, after the run inputs were re-assembled twice and the manifest regenerated. | `python tests/check_package.py` (~10 min) |
-| **The session gate is GREEN, all 17 checks.** `.tools/` is bootstrapped in this checkout and the Java run stack compiles with both changes. | `python src/run/session_gate.py` |
+| **The session gate: 16 pass, board blocks regenerated 17:50, toolchain SKIPPED under the running arm.** `.tools/` is bootstrapped in this checkout and the Java run stack compiled with both changes before the launch. | `python src/run/session_gate.py` |
 | **The issue gate is GREEN**: #147–#151 are closed, and every remaining open issue carries `awaiting-run`. **This is what was blocking the launch.** | `python src/run/issue_gate.py` · `gh issue list --state open` |
 | Registry **477** fields, **512** manifest files, `F30-an-escort-is-priced-as-an-escort` newest in the ledger. | `python src/analyse/build_status_board.py --check` |
-| **No run approval stands.** Every approval to date is SPENT. **25 % runs only.** | assume none; ask |
+| **No run approval stands.** Every approval to date is SPENT, the F30 arm's included. **25 % runs only.** | assume none; ask |
 
 ## §1 The lane
 
-**Launch the first arm in `F30` and read it at 100.** Nothing blocks it any
-more: the gate is green, the issue gate is green, the toolchain is present.
-`python run.py --run-config f29_gate_25pct --detach`, then verify per #70 that
-`matsim.log` enters iterations. Cost: the F28 arm ran at a **median 260 s an
-iteration, 27,657 s to its gate** (§9.149), so ~22 h for 300 iterations; **needs
-a stated-cost approval**. Read, in order:
+**Read the running `F30` arm at its iteration-100 gate.** It was launched at
+15:08 with `python run.py --run-config f29_gate_25pct --detach` and entered
+iterations; at ~375 s an iteration (F28 ran 260) the gate is due about 01:30 on
+8 Sep. The 17:34 assessment ([docs/reports/README.md](../../../docs/reports/README.md))
+measured the demand itself — evening departures 3× observed, the PT day
+inverted, income age-flat, commute flows too inter-LGA — and those are the
+root causes to take after the gate, not constants. Read, in order:
 
 1. **Iteration 0's `legHistogram`** — car departures near F28's 231,607 and
    stuck near 3,145 say the car-only handler still does its one job; tens of

@@ -20,9 +20,14 @@ and the collapse moved **16.96 → 17.317 AUD/h** against a declared 16.96. Once
 re-keyed, **140 of the 141 files under `scenarios/matsim/` came back
 byte-identical** — the disagreement had changed no number the model ever
 scored. Registry 472 → 477, unit tests 118 → 125, `check_hardcoding` still 0,
-manifest `source` 82 → 508 of 512 and `retrieved` 59 → 443. **No arm ran; the
-scoreboard below is still F28's reading at 100 and compares with nothing after
-it.**
+manifest `source` 82 → 508 of 512 and `retrieved` 59 → 443. **The first F30
+arm launched at 15:08 and is running; the scoreboard below is its iteration-10
+reading — exploration, not a gate — and F28's gate reading (§9.149) stays the
+last citable one.** A fourth assessment, lodged 17:34, measured the synthetic
+demand against the package's own observations: a fifth of departures after
+20:00 against 6 % observed, a PT day inverted against the Hunter's taps, income
+age-flat, car-less households the wrong households, commute flows too
+inter-LGA ([docs/reports/README.md](../../../docs/reports/README.md)).
 
 ## The goal
 
@@ -41,25 +46,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260907T030352_300it_25pct` at **iteration 100** (family `F28-the-car-waits-only-for-a-car`, status `aborted`, 25% sample, launched 2026-09-07T03:03:52, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260907T030352_300it_25pct --it 100` (`--trend` for the direction).
+Read from `20260907T150816_300it_25pct` at **iteration 10** (family `F30-an-escort-is-priced-as-an-escort`, status `running`, 25% sample, launched 2026-09-07T15:08:16, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260907T150816_300it_25pct --it 10` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 62.1626 | 58.3222 | +6.6% | ok | share of resident linked trips |
-| 2 | ride | 11.7778 | 20.6000 | -42.8% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 11.8082 | 13.4000 | -11.9% | over 10% | share of resident linked trips |
-| 4 | taxi | 2.5889 | 0.9916 | +161.1% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.6820 | 2.2084 | +157.3% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4396 | 0.3785 | +16.1% | over 10% | share of resident linked trips |
-| 7 | bus | 3.9302 | 2.3819 | +65.0% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 25,792 | 6,529 | +295.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,608 | 2,954 | -45.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0447 | 0.1429 | -68.7% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.9618 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 48.3143 | 58.3222 | -17.2% | over 10% | share of resident linked trips |
+| 2 | ride | 9.2614 | 20.6000 | -55.0% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 26.1100 | 13.4000 | +94.9% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.9942 | 0.9916 | +101.1% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.6622 | 2.2084 | +201.7% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4417 | 0.3785 | +16.7% | over 10% | share of resident linked trips |
+| 7 | bus | 5.2684 | 2.3819 | +121.2% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 34,796 | 6,529 | +433.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 2,556 | 2,954 | -13.5% | over 10% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0344 | 0.1429 | -75.9% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 7.7585 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -85,37 +90,37 @@ Inside 10%: **car**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail,
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (4 September 2026 (twenty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (7 September 2026 (thirtieth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (4 September 2026 (twenty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (7 September 2026 (thirtieth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (7 September 2026 (thirtieth session)) · [runs-and-economics](positions/runs-and-economics.md) (7 September 2026 (thirtieth session)) · [sampling-and-families](positions/sampling-and-families.md) (7 September 2026 (thirty-second session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
-**Family F30 is open and NO arm has run in it** (§9.151), and neither did F29.
-The boundary is ONE line of the run stack — the escort listener's draw order —
-on the F29 demand rebuilt 7 Sep (shared-ride bucket at the campaign fraction,
-the pass binding the longest tours first). `check_package.py` ALL CHECKS PASSED;
-the manifest holds 512 files. The F28 arm ran at a median 260 s an iteration, so
-300 iterations is ~22 h. No arm runs.
+**Family F30 is open and its first arm, `20260907T150816_300it_25pct`, has run
+since 15:08** (§9.151; F29 never ran one). The boundary is ONE line of the run
+stack — the escort listener's draw order — on the F29 demand rebuilt 7 Sep.
+`check_package.py` ALL CHECKS PASSED; the manifest holds 512 files. The arm runs
+at ~375 s an iteration against F28's 260, beside a stray report-session python
+burning a core since 6 Sep; its iteration-100 gate is due about 01:30 on 8 Sep.
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260907T150816_300it_25pct` | running | F30-an-escort-is-priced-as-an-escort | 24 | - |
 | `aborted_20260907T145929_300it_25pct` | failed | F30-an-escort-is-priced-as-an-escort | - | launch refused before MATSim started: A.signals.representation is explicit_signals but the signals run stack is not built. Run: python sr... |
 | `aborted_20260907T030352_300it_25pct` | aborted | F28-the-car-waits-only-for-a-car | 100 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260907T025531_2it_1pct` | completed | F28-the-car-waits-only-for-a-car | 2 | ran_to_last_iteration `_run.json` |
 | `aborted_20260907T025046_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
 | `aborted_20260907T024623_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
-| `aborted_20260907T002431_300it_25pct` | aborted | F27-a-household-drives-the-cars-it-owns | 19 | Stopped by the operator at iteration ~21 under the GOAL.md loop, step 3 (fix from the root): RUN.qsim.vehicle_behavior=wait is GLOBAL in ... |
 
-154 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+155 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **Launch F30's first arm and read it at 100.** Nothing blocks it any more:
-   the session gate is green on all 17 checks, the issue gate is green (every
-   open issue carries `awaiting-run`), and `.tools/` is bootstrapped. Cost: the
-   F28 arm ran at a **median 260 s an iteration**, 27,657 s to its gate, so 300
-   iterations is ~22 h. **Needs a fresh stated-cost approval.** **Read the
-   counts differently**: both sides of the count comparison changed basis in
-   §9.150, so #82's −91.8 % is not the figure to expect.
+1. **Read the running F30 arm at its iteration-100 gate** (due about 01:30,
+   8 Sep). It was launched on a green issue gate and a built toolchain; the
+   board's blocks regenerate from its trips table every ten iterations, and a
+   level read while innovation runs is exploration, not a verdict (§9.108).
+   **Read the counts differently**: both sides of the count comparison changed
+   basis in §9.150, so #82's −91.8 % is not the figure to expect. After the
+   gate, the demand findings above are the causes to fix from the root.
 2. **What the arm answers, in order** (§9.149): placement — the share of
    declared bound trips ridden against 0.560 and the walked-bound median against
    1.08 km; ride against −42.8 % read with bike (+157 %), bus (+65 %) and taxi
@@ -130,7 +135,8 @@ the manifest holds 512 files. The F28 arm ran at a median 260 s an iteration, so
 4. **Convergence is still unmeasured** (requirement 8). It waits for an arm with
    a chance of being inside the bars.
 
-**Decisions required:** a stated-cost approval for the F30 arm; whether a fifth
+**Decisions required:** whether to kill the stray python (pid 25480) the
+assessment found burning a core beside every arm since 6 Sep; whether a fifth
 binder pass is needed now the reachable binding volume is ~18.7 %; enable the
 Task Scheduler operational log (#66); whether the S2 base grants the tram signal
 priority ([positions/signals-and-crossings](positions/signals-and-crossings.md)).
