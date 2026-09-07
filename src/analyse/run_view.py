@@ -103,6 +103,11 @@ def _ts(s):
 _ITER_CACHE = {}
 _ITER_LOCK = threading.Lock()
 
+# Both markers, so ONE incremental walk of the log serves the live view (which
+# wants the BEGINS clock) and the record (which wants BEGINS-to-ENDS).
+ITER_MARK_RE = re.compile(
+    r'^(\S+)\s+INFO AbstractController.*ITERATION (\d+) (BEGINS|ENDS)')
+
 
 def read_iterations(log_path):
     """(iteration, wall clock) for every iteration the log has begun.
@@ -115,17 +120,44 @@ def read_iterations(log_path):
     directory) resets the offset. Thread-safe: the digest and the gate
     watcher share one cache.
     """
+    return _read_markers(log_path)[0]
+
+
+def read_iteration_spans(log_path):
+    """{iteration: wall seconds} from BEGINS to ENDS, incrementally.
+
+    The same quantity `run_matsim.iteration_times` reads out of the whole log
+    at close-out, from the same two markers - but accumulated as the run goes,
+    off the offset the live view is already advancing. The record's
+    `median_iteration_s` is this, so the two must agree exactly: an iteration
+    appears here only once its ENDS marker has been read, which is the property
+    the record needs.
+    """
+    return _read_markers(log_path)[1]
+
+
+def _read_markers(log_path):
+    """([(iteration, begin clock)], {iteration: span seconds}), incremental.
+
+    ONE walk of the log serves both. The first call reads it once; every later
+    call reads only the bytes appended since (#131) - the digest called a
+    whole-file reader twice every 30 s, which at a 25% arm's 51 GiB log was
+    about 100 GiB of decoded reads a cycle competing with the JVM for the disk.
+    A log that shrinks (a new run in the same directory) resets the offset.
+    Thread-safe: the digest and the gate watcher share one cache.
+    """
     with _ITER_LOCK:
-        offset, out = _ITER_CACHE.get(log_path, (0, []))
+        offset, out, begins, spans = _ITER_CACHE.get(
+            log_path, (0, [], {}, {}))
         try:
             size = os.path.getsize(log_path)
         except OSError:
-            return []
+            return [], {}
         if size < offset:
-            offset, out = 0, []
+            offset, out, begins, spans = 0, [], {}, {}
         if size == offset:
-            return list(out)
-        out = list(out)
+            return list(out), dict(spans)
+        out, begins, spans = list(out), dict(begins), dict(spans)
         try:
             with open(log_path, 'rb') as f:
                 f.seek(offset)
@@ -139,18 +171,28 @@ def read_iterations(log_path):
                     lines = buf.split(b'\n')
                     carry = lines.pop()
                     for raw in lines:
-                        if b'ITERATION' not in raw or b'BEGINS' not in raw:
+                        if b'ITERATION' not in raw:
                             continue
-                        m = ITER_RE.match(raw.decode('utf-8', errors='replace'))
-                        if m:
-                            t = _ts(m.group(1))
-                            if t is not None:
-                                out.append((int(m.group(2)), t))
+                        if b'BEGINS' not in raw and b'ENDS' not in raw:
+                            continue
+                        m = ITER_MARK_RE.match(
+                            raw.decode('utf-8', errors='replace'))
+                        if not m:
+                            continue
+                        t = _ts(m.group(1))
+                        if t is None:
+                            continue
+                        n = int(m.group(2))
+                        if m.group(3) == 'BEGINS':
+                            out.append((n, t))
+                            begins[n] = t
+                        elif n in begins:
+                            spans[n] = round(t - begins[n], 2)
                     pos = f.tell() - len(carry)
         except OSError:
-            return list(out)
-        _ITER_CACHE[log_path] = (pos, out)
-        return list(out)
+            return list(out), dict(spans)
+        _ITER_CACHE[log_path] = (pos, out, begins, spans)
+        return list(out), dict(spans)
 
 
 def read_series(path, keep=None):

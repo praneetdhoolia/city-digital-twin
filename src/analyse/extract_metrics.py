@@ -110,13 +110,23 @@ def rows(run_dir, stem):
             yield r
 
 
+_HOME_LGA_CACHE = {}
+
+
 def home_lga():
     """person id -> LGA, via B1's home SA1 and the ABS boundary join.
+
+    MEMOISED per process. The map is 622k population rows joined to the SA1
+    boundary table, and it was rebuilt on every call - `report_mode_ridership
+    --trend` calls it once per iteration read. Neither file changes while a
+    process runs; a process that wants a fresh read starts again.
 
     Built by `map_sa1_to_lga.py`; `zones_SA1.csv` carries SA2/SA3/SA4 but no
     LGA, and SA3 `Newcastle` is not Newcastle LGA. External-tier agents are not
     in B1 and map to '' rather than being counted as residents of anywhere.
     """
+    if _HOME_LGA_CACHE:
+        return _HOME_LGA_CACHE['map']
     if not os.path.exists(SA1_LGA):
         raise SystemExit('%s missing - run cities/<city>/build/map_sa1_to_lga.py'
                          % SA1_LGA)
@@ -128,6 +138,7 @@ def home_lga():
     with open(POP, encoding='utf-8') as f:
         for p in csv.DictReader(f):
             out[p['person_id']] = lga.get(p['home_sa1'], '')
+    _HOME_LGA_CACHE['map'] = out
     return out
 
 
@@ -229,45 +240,34 @@ def pt_boardings(run_dir, fraction):
                 by_line={k: round(v * scale) for k, v in by_line.most_common(40)})
 
 
-def transit_stop_names(run_dir):
-    """stopFacility id -> name, from the run's OWN schedule (9.130)."""
-    import re
-    import xml.etree.ElementTree as ET
-    cfg_text = open(os.path.join(run_dir, 'config.xml'), encoding='utf-8').read()
-    m = re.search(r'name="transitScheduleFile" value="([^"]+)"', cfg_text)
-    if not m:
-        return {}
-    path = m.group(1)
-    if not os.path.isabs(path):
-        path = os.path.normpath(os.path.join(run_dir, path))
-    opener = gzip.open if path.endswith('.gz') else open
-    out = {}
-    with opener(path, 'rt', encoding='utf-8') as f:
-        for ev, el in ET.iterparse(f, events=('end',)):
-            if el.tag == 'stopFacility':
-                out[el.get('id')] = (el.get('name') or '').strip()
-            el.clear()
-    return out
+_SCHEDULE_CACHE = {}
 
 
-def transit_route_modes(run_dir):
-    """(transit_line, transit_route) -> the schedule's transportMode.
+def _schedule_index(run_dir):
+    """ONE pass of the run's own schedule, giving both indexes it is read for.
 
-    Read from the run's OWN schedule (the path its config names), so the split
-    can never disagree with what the mobsim actually drove. Route ids are only
-    unique within a line, which is why the key is the pair.
+    It was parsed TWICE per `_metrics.json` - once for stop names, once for
+    route modes - each time re-reading config.xml to find the same path, and
+    the schedule is a gzipped XML of every stop and route in the city. The two
+    readers wanted different fields of the same document, so they are one pass
+    now, memoised per run directory: a schedule does not change while a process
+    reads it (the run that produced it has ended), and the callers below are
+    unchanged in what they return.
     """
+    if run_dir in _SCHEDULE_CACHE:
+        return _SCHEDULE_CACHE[run_dir]
     import re
     import xml.etree.ElementTree as ET
     cfg_text = open(os.path.join(run_dir, 'config.xml'), encoding='utf-8').read()
     m = re.search(r'name="transitScheduleFile" value="([^"]+)"', cfg_text)
     if not m:
-        return {}
+        _SCHEDULE_CACHE[run_dir] = ({}, {})
+        return _SCHEDULE_CACHE[run_dir]
     path = m.group(1)
     if not os.path.isabs(path):
         path = os.path.normpath(os.path.join(run_dir, path))
     opener = gzip.open if path.endswith('.gz') else open
-    modes = {}
+    stops, modes = {}, {}
     with opener(path, 'rt', encoding='utf-8') as f:
         line_id = None
         route_id = None
@@ -277,12 +277,31 @@ def transit_route_modes(run_dir):
                     line_id = el.get('id')
                 elif el.tag == 'transitRoute':
                     route_id = el.get('id')
-            else:
-                if el.tag == 'transportMode' and line_id and route_id:
-                    modes[(line_id, route_id)] = (el.text or '').strip()
-                elif el.tag == 'transitLine':
-                    el.clear()
-    return modes
+                continue
+            if el.tag == 'stopFacility':
+                stops[el.get('id')] = (el.get('name') or '').strip()
+                el.clear()
+            elif el.tag == 'transportMode' and line_id and route_id:
+                modes[(line_id, route_id)] = (el.text or '').strip()
+            elif el.tag == 'transitLine':
+                el.clear()
+    _SCHEDULE_CACHE[run_dir] = (stops, modes)
+    return _SCHEDULE_CACHE[run_dir]
+
+
+def transit_stop_names(run_dir):
+    """stopFacility id -> name, from the run's OWN schedule (9.130)."""
+    return _schedule_index(run_dir)[0]
+
+
+def transit_route_modes(run_dir):
+    """(transit_line, transit_route) -> the schedule's transportMode.
+
+    Read from the run's OWN schedule (the path its config names), so the split
+    can never disagree with what the mobsim actually drove. Route ids are only
+    unique within a line, which is why the key is the pair.
+    """
+    return _schedule_index(run_dir)[1]
 
 
 def pt_submode_split(run_dir, person_lga, mode_share_doc):

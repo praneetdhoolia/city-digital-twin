@@ -119,6 +119,16 @@ def digest(run_dir, band=None, solo_iters=None):
         'mode_share_last_iteration': mode_share_last,
         'relaxation': scan.get('relaxation'),
         'pace': pace,
+        # THE RECORD'S OWN SOURCE. Every iteration that has ENDED, with the
+        # seconds it took, accumulated off the walk the live view is already
+        # doing. Close-out reads this instead of walking matsim.log end to end:
+        # the F23 arm's log was 54.9 GB (9.142) and the record needed six
+        # numbers out of it. Same two markers, same arithmetic, so the median
+        # a record quotes is unchanged - it is only read from a file that is
+        # kilobytes instead of gigabytes.
+        'iteration_seconds': {str(n): v for n, v in sorted(
+            run_view.read_iteration_spans(
+                os.path.join(run_dir, 'matsim.log')).items())},
         'warm_started_from': (meta or {}).get('warm_started_from'),
         'rc': scan.get('rc'),
     }

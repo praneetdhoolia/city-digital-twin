@@ -394,6 +394,20 @@ STRUCTURAL = {
     'src/analyse/run_view.py:_send(code)':
         'an HTTP status code. The default 200 is the HTTP specification, not a '
         'transport parameter',
+    'src/analyse/arm_cost.py:observed_arms(min_iterations)':
+        'how many iterations a run must have reached before its median is '
+        'quoted as a pace. A property of the ARITHMETIC - a median over one '
+        'iteration is the warm-up - not of the transport system; the script '
+        'reads finished run records and cannot reach a result',
+    'src/analyse/profile_run.py:table(width)':
+        'the column width of a printed table',
+    'src/analyse/profile_run.py:--top':
+        'how many rows of each profile table are printed. A reading of a '
+        'flight recording; nothing here reaches the model',
+    'src/analyse/profile_run.py:--depth':
+        'how many stack frames are read from each sample. Deeper costs time '
+        'and finds the same phase root; it changes what the READER sees of a '
+        'recording that is already written, never the run',
     'src/analyse/replay_events.py:--step':
         'replay animation step in seconds - how often the REPLAY PAGE redraws a '
         'finished run. It reads events already written and changes nothing',

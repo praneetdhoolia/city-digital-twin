@@ -27,10 +27,20 @@ import org.matsim.vehicles.Vehicle;
 public final class BikeStressDisutility implements TravelDisutility {
 
     private final TravelTime travelTime;
-    private final Map<Id<Link>, Double> factorByLink;
+    /**
+     * The stress factor by {@code Id<Link>.index()}, 1.0 where there is none.
+     *
+     * <p>It was a {@code Map<Id<Link>, Double>}, and the lookup was measured
+     * (DECISIONS.md 9.154) at <b>3.3 % of every CPU sample in a 25 % probe</b>
+     * - a hash of the link id and an unbox on every relaxation of every bike
+     * route search. The membership is fixed when the network is read, so it is
+     * an array indexed by the id MATSim already assigns. Same factors, same
+     * arithmetic, same answer.
+     */
+    private final double[] factorByLink;
 
     private BikeStressDisutility(final TravelTime travelTime,
-                                 final Map<Id<Link>, Double> factorByLink) {
+                                 final double[] factorByLink) {
         this.travelTime = travelTime;
         this.factorByLink = factorByLink;
     }
@@ -41,8 +51,14 @@ public final class BikeStressDisutility implements TravelDisutility {
                                           final Vehicle vehicle) {
         final double t = this.travelTime.getLinkTravelTime(
                 link, time, person, vehicle);
-        final Double factor = this.factorByLink.get(link.getId());
-        return factor == null ? t : t * factor;
+        final int i = link.getId().index();
+        if (i < 0 || i >= this.factorByLink.length) {
+            return t;
+        }
+        final double factor = this.factorByLink[i];
+        // 1.0 is the "no stamped factor" entry, and multiplying by it is the
+        // identity - so the branch the map's null took is not needed.
+        return t * factor;
     }
 
     @Override
@@ -56,9 +72,15 @@ public final class BikeStressDisutility implements TravelDisutility {
      * scenario network exactly as {@link BikeStressScoring} does. */
     public static final class Factory implements TravelDisutilityFactory {
 
-        private final Map<Id<Link>, Double> factorByLink = new HashMap<>();
+        private final double[] factorByLink;
 
         public Factory(final Network network) {
+            int highest = -1;
+            for (final Link link : network.getLinks().values()) {
+                highest = Math.max(highest, link.getId().index());
+            }
+            this.factorByLink = new double[highest + 1];
+            java.util.Arrays.fill(this.factorByLink, 1.0);
             for (final Link link : network.getLinks().values()) {
                 final Object raw = link.getAttributes()
                         .getAttribute(BikeStressConfigGroup.STRESS_ATTRIBUTE);
@@ -66,10 +88,21 @@ public final class BikeStressDisutility implements TravelDisutility {
                     continue;
                 }
                 final double factor = Double.parseDouble(raw.toString());
-                if (factor > 1.0) {
-                    this.factorByLink.put(link.getId(), factor);
+                final int i = link.getId().index();
+                // > 1.0 only, exactly as before: the stamp is a SURPLUS and a
+                // value at or below 1 would make a stressed link cheaper.
+                if (factor > 1.0 && i >= 0) {
+                    this.factorByLink[i] = factor;
                 }
             }
+        }
+
+        /** The tabled factor for one link - the probe's window into the
+         * table, so a test can compare it against the stamped attribute. */
+        public double factorOf(final Link link) {
+            final int i = link.getId().index();
+            return i >= 0 && i < this.factorByLink.length
+                    ? this.factorByLink[i] : 1.0;
         }
 
         @Override

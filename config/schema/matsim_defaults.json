@@ -1,0 +1,236 @@
+{
+  "groups": {
+    "changeMode": {
+      "ignoreCarAvailability": "true",
+      "modeSwitchBehavior": "fromSpecifiedModesToSpecifiedModes",
+      "modes": "car,pt"
+    },
+    "controller": {
+      "cleanItersAtEnd": "keep",
+      "compressionType": "zst",
+      "createGraphsInterval": "1",
+      "createScoringFunctionType": "IterationStarts",
+      "dumpDataAtEnd": "true",
+      "enableLinkToLinkRouting": "false",
+      "eventsFileFormat": "xml",
+      "firstIteration": "0",
+      "lastIteration": "1000",
+      "legDurationsInterval": "1",
+      "legHistogramInterval": "1",
+      "memoryObserverInterval": "60",
+      "mobsim": "qsim",
+      "outputDirectory": "./output",
+      "overwriteFiles": "failIfDirectoryExists",
+      "routingAlgorithmType": "SpeedyALT",
+      "runId": "null",
+      "snapshotFormat": "",
+      "writeEventsInterval": "50",
+      "writePlansInterval": "50",
+      "writeSnapshotsInterval": "1",
+      "writeTripsInterval": "50"
+    },
+    "counts": {
+      "analyzedModes": "car",
+      "averageCountsOverIterations": "5",
+      "countsScaleFactor": "1.0",
+      "distanceFilter": "null",
+      "distanceFilterCenterNode": "null",
+      "filterModes": "false",
+      "inputCRS": "null",
+      "inputCountsFile": "null",
+      "outputformat": "txt",
+      "writeCountsInterval": "10"
+    },
+    "dsim": {
+      "endTime": "24:00:00",
+      "linkDynamics": "PassingQ",
+      "networkModes": "car",
+      "partitioning": "bisect",
+      "startTime": "00:00:00",
+      "stuckTime": "30.0",
+      "threads": "0",
+      "trafficDynamics": "kinematicWaves",
+      "vehicleBehavior": "teleport"
+    },
+    "eventsManager": {
+      "estimatedNumberOfEvents": "null",
+      "eventsQueueSize": "131072",
+      "numberOfThreads": "null",
+      "oneThreadPerHandler": "false",
+      "synchronizeOnSimSteps": "true"
+    },
+    "facilities": {
+      "facilitiesSource": "none",
+      "idPrefix": "f_auto_",
+      "inputCRS": "null",
+      "inputFacilitiesFile": "null",
+      "inputFacilityAttributesFile": "null",
+      "insistingOnUsingDeprecatedFacilitiesAttributeFile": "false"
+    },
+    "global": {
+      "coordinateSystem": "Atlantis",
+      "defaultDelimiter": ";",
+      "insistingOnDeprecatedConfigVersion": "false",
+      "numberOfThreads": "2",
+      "randomSeed": "4711",
+      "relativeToleranceForSampleSizeFactors": "0.0"
+    },
+    "hermes": {
+      "endTime": "30:00:00",
+      "flowCapacityFactor": "1.0",
+      "mainMode": "car",
+      "storageCapacityFactor": "1.0",
+      "stuckTime": "10",
+      "useDeterministicPt": "false"
+    },
+    "households": {
+      "inputFile": "null",
+      "inputHouseholdAttributesFile": "null",
+      "insistingOnUsingDeprecatedHouseholdsAttributeFile": "false"
+    },
+    "linkStats": {
+      "averageLinkStatsOverIterations": "5",
+      "writeLinkStatsInterval": "50"
+    },
+    "network": {
+      "inputCRS": "null",
+      "inputChangeEventsFile": "null",
+      "inputNetworkFile": "null",
+      "laneDefinitionsFile": "null",
+      "timeVariantNetwork": "false"
+    },
+    "planInheritance": {
+      "enabled": "false"
+    },
+    "plans": {
+      "activityDurationInterpretation": "tryEndTimeThenDuration",
+      "handlingOfPlansWithoutRoutingMode": "reject",
+      "inputCRS": "null",
+      "inputPersonAttributesFile": "null",
+      "inputPlansFile": "null",
+      "insistingOnUsingDeprecatedPersonAttributeFile": "false",
+      "networkRouteType": "LinkNetworkRoute",
+      "removingUnnecessaryPlanAttributes": "false",
+      "tripDurationHandling": "ignoreDelays"
+    },
+    "qsim": {
+      "delayInstantTeleportationArrivals": "true",
+      "endTime": "undefined",
+      "filterSnapshots": "no",
+      "flowCapacityFactor": "1.0",
+      "insertingWaitingVehiclesBeforeDrivingVehicles": "true",
+      "isRestrictingSeepage": "true",
+      "isSeepModeStorageFree": "false",
+      "linkDynamics": "FIFO",
+      "linkWidth": "30.0",
+      "mainMode": "car",
+      "nodeOffset": "0.0",
+      "notifyAboutStuckVehicles": "false",
+      "numberOfThreads": "1",
+      "personInitializedEvents": "none",
+      "removeStuckVehicles": "false",
+      "seepMode": "bike",
+      "simEndtimeInterpretation": "null",
+      "simStarttimeInterpretation": "maxOfStarttimeAndEarliestActivityEnd",
+      "snapshotStyle": "queue",
+      "snapshotperiod": "00:00:00",
+      "startTime": "undefined",
+      "storageCapacityFactor": "1.0",
+      "stuckTime": "10.0",
+      "timeStepSize": "00:00:01",
+      "trafficDynamics": "queue",
+      "useLanes": "false",
+      "usePersonIdForMissingVehicleId": "true",
+      "usingFastCapacityUpdate": "true",
+      "vehicleBehavior": "teleport",
+      "vehiclesSource": "defaultVehicle"
+    },
+    "replanning": {
+      "ExternalExeConfigTemplate": "null",
+      "ExternalExeTimeOut": "3600",
+      "ExternalExeTmpFileRootDir": "null",
+      "fractionOfIterationsToDisableInnovation": "Infinity",
+      "maxAgentPlanMemorySize": "5",
+      "planSelectorForRemoval": "WorstPlanSelector"
+    },
+    "replanningAnnealer": {
+      "activateAnnealingModule": "false"
+    },
+    "routing": {
+      "accessEgressConsistencyCheck": "reroute",
+      "accessEgressType": "accessEgressModeToLink",
+      "clearDefaultTeleportedModeParams": "false",
+      "networkModes": "car",
+      "networkRouteConsistencyCheck": "abortOnInconsistency",
+      "routingRandomness": "3.0"
+    },
+    "scenario": {},
+    "scoring": {
+      "brainExpBeta": "1.0",
+      "fractionOfIterationsToStartScoreMSA": "null",
+      "learningRate": "1.0",
+      "pathSizeLogitBeta": "1.0",
+      "usingOldScoringBelowZeroUtilityDuration": "false",
+      "writeExperiencedPlans": "true",
+      "writeScoreExplanations": "false"
+    },
+    "subtourModeChoice": {
+      "behavior": "fromSpecifiedModesToSpecifiedModes",
+      "chainBasedModes": "car,bike",
+      "considerCarAvailability": "false",
+      "coordDistance": "0.0",
+      "modes": "car,pt,bike,walk",
+      "probaForRandomSingleTripMode": "0.0"
+    },
+    "timeAllocationMutator": {
+      "latestActivityEndTime": "Infinity",
+      "mutateAroundInitialEndTimeOnly": "false",
+      "mutationAffectsDuration": "true",
+      "mutationRange": "1800.0",
+      "mutationRangeStep": "1.0"
+    },
+    "transit": {
+      "inputScheduleCRS": "null",
+      "insistingOnUsingDeprecatedAttributeFiles": "false",
+      "routingAlgorithmType": "SwissRailRaptor",
+      "transitLinesAttributesFile": "null",
+      "transitModes": "pt",
+      "transitScheduleFile": "null",
+      "transitStopsAttributesFile": "null",
+      "useTransit": "false",
+      "usingTransitInMobsim": "true",
+      "vehiclesFile": "null"
+    },
+    "transitRouter": {
+      "additionalTransferTime": "0.0",
+      "directWalkFactor": "1.0",
+      "extensionRadius": "200.0",
+      "maxBeelineWalkConnectionDistance": "100.0",
+      "searchRadius": "1000.0"
+    },
+    "travelTimeCalculator": {
+      "analyzedModes": "car",
+      "calculateLinkToLinkTravelTimes": "false",
+      "calculateLinkTravelTimes": "true",
+      "filterModes": "false",
+      "maxTime": "108000",
+      "separateModes": "true",
+      "travelTimeAggregator": "optimistic",
+      "travelTimeBinSize": "900.0",
+      "travelTimeGetter": "average"
+    },
+    "vehicles": {
+      "vehiclesFile": "null"
+    },
+    "vspExperimental": {
+      "isAbleToOverwritePtInteractionParams": "false",
+      "isGeneratingBoardingDeniedEvent": "false",
+      "isUsingOpportunityCostOfTimeForLocationChoice": "true",
+      "logitScaleParamForPlansRemoval": "1.0",
+      "vspDefaultsCheckingLevel": "ignore",
+      "writingOutputEvents": "true"
+    }
+  },
+  "matsim_version": "2027.0-2026w25",
+  "purpose": "every parameter the pinned MATSim exposes, with the default it takes when nothing sets it. Generated by src/setup/dump_matsim_params.py; read by src/registry/check_matsim_defaults.py. A parameter here that the model does not emit is a value the FRAMEWORK is deciding."
+}

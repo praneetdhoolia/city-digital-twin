@@ -605,6 +605,31 @@
       "decisions_ref": "9.5",
       "description": "JVM heap. Must exceed 9.6 GiB + 87 GiB x fraction or the run dies."
     },
+    "RUN.machine.jfr_profile": {
+      "value": false,
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.154",
+      "consumers": [
+        "src/run/run_matsim.py",
+        "src/analyse/profile_run.py"
+      ],
+      "description": "Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. OBSERVATION ONLY - JFR samples the already-running threads and writes its own file; it changes no MATSim state, no random draw and no output, so a profiled run and an unprofiled one are the same run and DO NOT open a family. It exists because the iteration's cost has been argued from the MATSim stopwatch alone, which decomposes an iteration only as far as its named phases: the mobsim's 168 s at the F28 gate is one undivided number, and every cut proposed against it since 9.142 has been reasoned rather than measured. `settings=profile` samples every thread's stack, so the mobsim, the replanning pool and the event-handler pool each decompose to the method. Default false because a recording costs a few per cent of wall time and a file; turn it on in a timing-probe overlay, never in an arm whose stopwatch is being quoted."
+    },
+    "RUN.machine.gc_log": {
+      "value": false,
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.154",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it."
+    },
     "RUN.machine.seed": {
       "value": 20260810,
       "units": "integer_seed",
@@ -969,6 +994,16 @@
       "decisions_ref": "9.29, 15",
       "matsim_param": "travelTimeCalculator.analyzedModes",
       "description": "Which modes contribute observed link travel times. Of the physically simulated modes (RUN.qsim.main_mode) only car is analysed here: the observed link travel time this feeds back to routing is the car stream's, and truck, motorbike, bike, walk and taxi (9.86) each ride that stream at their own declared PCE rather than defining a separate one. See RUN.travel_time.separate_modes: the two are one decision in two parameters."
+    },
+    "RUN.travel_time.filter_modes": {
+      "value": true,
+      "units": "boolean",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.154",
+      "matsim_param": "travelTimeCalculator.filterModes",
+      "description": "Whether the travel-time calculator RESTRICTS itself to RUN.travel_time.analysed_modes. It is the switch that makes that field mean anything, and it was never emitted: MATSim's default is false, and with it false `analyzedModes` is read into a field that no handler consults - verified in the pinned jar, where TravelTimeCalculator.handleEvent(LinkEnterEvent) returns early only `if (filterAnalyzedModes && vehiclesToIgnore.contains(...))`. So every vehicle on the network contributed to the ONE table that RUN.travel_time.separate_modes=false creates and that TravelTimeCalculatorModule then binds as the observed travel time for EVERY mode in RUN.routing.network_modes: a pedestrian crossing a link at 1.4 m/s, a cyclist at 4, a bus that stopped on it, a truck at its declared cap - all averaged into the seconds the CAR router believes that link costs. The declaration said car; the run used everything. True restores the declared pairing - one table, fed by car alone, read by every network mode, which is what makes `ride` read the car travel time it is routed on (issue 28) - and MOVES RESULTS, because route choice changes wherever a walked or ridden link had been inflating the car estimate. Not a performance change: the filter costs a set lookup per event and saves the recording work for every non-car vehicle."
     },
     "RUN.travel_time.bin_size_s": {
       "value": 300,

@@ -9,6 +9,22 @@ _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                                   '..', '..', '..', 'src'))
 import city as _city  # noqa: E402
 import os,urllib.request,hashlib,json,datetime
+
+
+def _sha256(path):
+    """Chunked, so peak memory is one buffer rather than one download.
+
+    The whole file was read into memory to hash it, which at the 871 MB hourly
+    counts archive meant a peak RSS of the largest thing this ever fetches.
+    The same chunked shape build_manifest.py and extract_speed_zones.py already
+    use; the digest is identical.
+    """
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
+
 ABS="https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/"
 DP="https://www.abs.gov.au/census/find-census-data/datapacks/download/"
 COP="https://copernicus-dem-30m.s3.amazonaws.com/"
@@ -99,7 +115,7 @@ for rel,url,desc,lic in M:
         except Exception as e:
             print(f"  FAIL {e}",flush=True); continue
     sz=os.path.getsize(p)
-    h=hashlib.sha256(open(p,'rb').read()).hexdigest()
+    h=_sha256(p)
     print(f"  {sz:>13,} B",flush=True)
     prov.append({"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,"sha256":h,
                  "retrieved":datetime.date.today().isoformat()})

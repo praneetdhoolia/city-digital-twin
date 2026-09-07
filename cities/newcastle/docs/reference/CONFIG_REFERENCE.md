@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 477 fields are made of
+## What the 480 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 39 | follows from another registry field by identity |
 | `literature` | 74 | a published value, not specific to this city |
 | `assumed` | 159 | chosen without direct empirical support |
-| `definition` | 128 | fixed by the formulation, not an empirical quantity |
+| `definition` | 131 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 458 | usable point value |
+| `active` | 461 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -3558,7 +3558,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 78 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 81 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3577,6 +3577,8 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
+| `RUN.machine.gc_log` | `false` | boolean | `definition` | - |
+| `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
 | `RUN.machine.telemetry_requires_simstep_barrier` | `true` | boolean | `definition` | - |
@@ -3641,6 +3643,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.transit_router.search_radius_m` | `1000.0` | metres | `literature` | 500 - 2000 |
 | `RUN.travel_time.analysed_modes` | `["car"]` | mode_names | `definition` | - |
 | `RUN.travel_time.bin_size_s` | `300` | seconds | `literature` | 60 - 900 |
+| `RUN.travel_time.filter_modes` | `true` | boolean | `definition` | - |
 | `RUN.travel_time.separate_modes` | `false` | boolean | `definition` | - |
 
 #### `RUN.controler.compression_type`
@@ -3722,6 +3725,18 @@ Give each registered event handler its own thread instead of sharing RUN.machine
 Whether the qsim waits for the events pipeline at every sim-step. Declared for the 9.59 timing probes and MEASURED A REGRESSION on this model: false swaps the manager implementation and took the it2-4 median mobsim from ~190 s to 255 s at 25%. STAYS TRUE; the value exists so the measured rejection is recorded where the knob lives.
 
 ***definition** · status **active** · DECISIONS.md §9.59 · MATSim `eventsManager.synchronizeOnSimSteps`*
+
+#### `RUN.machine.gc_log`
+
+Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it.
+
+***definition** · status **active** · DECISIONS.md §9.154*
+
+#### `RUN.machine.jfr_profile`
+
+Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. OBSERVATION ONLY - JFR samples the already-running threads and writes its own file; it changes no MATSim state, no random draw and no output, so a profiled run and an unprofiled one are the same run and DO NOT open a family. It exists because the iteration's cost has been argued from the MATSim stopwatch alone, which decomposes an iteration only as far as its named phases: the mobsim's 168 s at the F28 gate is one undivided number, and every cut proposed against it since 9.142 has been reasoned rather than measured. `settings=profile` samples every thread's stack, so the mobsim, the replanning pool and the event-handler pool each decompose to the method. Default false because a recording costs a few per cent of wall time and a file; turn it on in a timing-probe overlay, never in an arm whose stopwatch is being quoted.
+
+***definition** · status **active** · DECISIONS.md §9.154*
 
 #### `RUN.machine.replanning_threads`
 
@@ -4168,6 +4183,12 @@ The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s defaul
 ***literature** · status **active** · DECISIONS.md §9.76, 9.77 · MATSim `travelTimeCalculator.travelTimeBinSize` · sweep role **uncertainty***
 
 > **Sweep basis.** MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded.
+
+#### `RUN.travel_time.filter_modes`
+
+Whether the travel-time calculator RESTRICTS itself to RUN.travel_time.analysed_modes. It is the switch that makes that field mean anything, and it was never emitted: MATSim's default is false, and with it false `analyzedModes` is read into a field that no handler consults - verified in the pinned jar, where TravelTimeCalculator.handleEvent(LinkEnterEvent) returns early only `if (filterAnalyzedModes && vehiclesToIgnore.contains(...))`. So every vehicle on the network contributed to the ONE table that RUN.travel_time.separate_modes=false creates and that TravelTimeCalculatorModule then binds as the observed travel time for EVERY mode in RUN.routing.network_modes: a pedestrian crossing a link at 1.4 m/s, a cyclist at 4, a bus that stopped on it, a truck at its declared cap - all averaged into the seconds the CAR router believes that link costs. The declaration said car; the run used everything. True restores the declared pairing - one table, fed by car alone, read by every network mode, which is what makes `ride` read the car travel time it is routed on (issue 28) - and MOVES RESULTS, because route choice changes wherever a walked or ridden link had been inflating the car estimate. Not a performance change: the filter costs a set lookup per event and saves the recording work for every non-car vehicle.
+
+***definition** · status **active** · DECISIONS.md §9.154 · MATSim `travelTimeCalculator.filterModes`*
 
 #### `RUN.travel_time.separate_modes`
 

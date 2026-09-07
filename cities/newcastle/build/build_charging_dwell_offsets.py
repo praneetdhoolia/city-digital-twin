@@ -42,6 +42,7 @@ import sys as _sys
 _REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
     _os.path.dirname(_os.path.abspath(__file__)))))
 _sys.path.insert(0, _os.path.join(_REPO, 'src'))
+_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
 import city as _city  # noqa: E402
 import registry as _registry  # noqa: E402
 
@@ -49,6 +50,7 @@ import gzip
 import json
 import os
 import xml.etree.ElementTree as ET
+import det_io
 
 SCHEDULES = _city.path('networks', 'matsim', 'schedules')
 OUT_REPORT = os.path.join(SCHEDULES, '_dwell_report.json')
@@ -109,7 +111,10 @@ def transform_schedule(src, dst, dwell_s):
                 max_hold = max(max_hold, hold)
             if touched:
                 routes_touched += 1
-    with gzip.open(dst, 'wt', encoding='utf-8') as f:
+    # det_io, not gzip.open: the stdlib writes the wall clock into the
+    # gzip header, so a byte-identical rebuild produced a different
+    # sha256 and churned the manifest for no change in the data.
+    with det_io.gzip_writer(dst) as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
         f.write('<!DOCTYPE transitSchedule SYSTEM '
                 '"http://www.matsim.org/files/dtd/transitSchedule_v2.dtd">\n')

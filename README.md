@@ -76,7 +76,12 @@ python run.py --run-config smoke   # a plumbing test: 1% sample, 2 iterations
 python run.py --detach --run-config <overlay>   # an arm: S2, weekday, the overlay's sample and horizon
 ```
 
-**An arm is a multi-hour run** — about 45–50 hours at 25 % × 300 iterations
+**An arm is a multi-hour run** — the arms measured on the current stack put
+25 % × 300 iterations between **~22 and ~31 hours**, and the figure moves with
+the stack, so **do not quote it from here**: read it from the runs themselves
+with `python src/analyse/arm_cost.py --run-config <overlay>`, which prices the
+arm on the newest run's own stopwatch at the same sample fraction and prints
+the spread behind it
 ([`positions/runs-and-economics.md`](cities/newcastle/docs/positions/runs-and-economics.md)
 carries the measured seconds-per-iteration for each stack). Four rules stand
 before any launch, and the launcher enforces the third:
@@ -231,7 +236,7 @@ python src/calibrate/report.py --run <run dir>
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 477 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
+| Input registry | 480 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -285,7 +290,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 477 declared values, with units, provenance, sweeps
+  registry/                  the 480 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

@@ -1,0 +1,28 @@
+{
+  "$comment": "PORTABLE. Every parameter the pinned framework decides for itself in a module this model writes into, with the reason its default is accepted. It carries no model value: a value the model CHOOSES is declared in a city registry, not accepted here. An entry is a claim - 'the framework's choice here is right, or irrelevant, for this model' - and it is reviewable because it had to be written down. A parameter that decides something about the transport system MUST NOT be added here: declare it. Read by src/registry/check_matsim_defaults.py; the surface it is checked against is config/schema/matsim_defaults.json.",
+  "matsim_version": "2027.0-2026w25",
+  "opened": "2026-09-07",
+  "why": "DECISIONS.md 9.154. RUN.travel_time.analysed_modes was declared ['car'], swept, rendered into the reference and proven to reach the config - and meant nothing, because travelTimeCalculator.filterModes was never emitted and its default of false tells MATSim to ignore analyzedModes (#154). Every check here asked whether a DECLARED value reaches the model; none could ask what an UNDECLARED one was deciding beside it. This ledger is that question, asked once per parameter.",
+  "accepted": {
+    "eventsManager.estimatedNumberOfEvents": "a sizing hint for the events pipeline's buffers. It changes how much memory the manager pre-allocates, never which events are produced or in what order.",
+    "eventsManager.eventsQueueSize": "the depth of the queue between the qsim and the handler threads. A wall-time and memory knob; every handler still receives the complete stream in per-handler order (9.56).",
+    "global.defaultDelimiter": "the delimiter MATSim writes its own tabular outputs with. A file format, not a model value.",
+    "global.insistingOnDeprecatedConfigVersion": "false refuses a config written to a superseded schema. Accepting the refusal is the conservative choice and the emitter writes the current version anyway.",
+    "global.relativeToleranceForSampleSizeFactors": "0.0 is the STRICTEST setting: MATSim throws when qsim.flowCapacityFactor and qsim.storageCapacityFactor differ at all. RUN.sample.storage_capacity_exponent is 1.0 precisely so they are equal (its own field says so), and a looser tolerance would let them drift silently.",
+    "qsim.filterSnapshots": "which vehicles a snapshot file would show. RUN.qsim.snapshot_period is 0, so no snapshot is ever written.",
+    "qsim.linkWidth": "the width a link is DRAWN at in a visualiser. No snapshots are written.",
+    "qsim.nodeOffset": "how far a drawn link is offset from its node in a visualiser. No snapshots are written.",
+    "qsim.snapshotStyle": "the shape a visualiser would draw vehicles in. No snapshots are written.",
+    "qsim.timeStepSize": "the mobsim's clock, 1 s. It is MATSim's own step and the step every published MATSim result is computed on; changing it would change the physics of every queue in the model, and there is no reason from this city to move it. Recorded here so that a future change is a decision rather than a discovery.",
+    "qsim.useLanes": "false. Lanes are not modelled and are refused LOUDLY where they would matter: GradientSignalsNetworkFactory throws if gradient.representation is link_speed and lanes are on, because the lanes delegate is not ported (9.84).",
+    "replanning.ExternalExeConfigTemplate": "configuration for MATSim's external-executable replanning module, which this model does not install.",
+    "replanning.ExternalExeTimeOut": "the same external-executable module.",
+    "replanning.ExternalExeTmpFileRootDir": "the same external-executable module.",
+    "scoring.writeScoreExplanations": "whether MATSim writes a per-agent prose explanation of its score. Output only, and large.",
+    "transit.inputScheduleCRS": "null means the schedule is already in the run's coordinate system, which it is: the schedule is built by pt2matsim against the same EPSG:28356 network the run loads.",
+    "transit.insistingOnUsingDeprecatedAttributeFiles": "false refuses a superseded attribute-file format. The schedules this model builds do not use one.",
+    "travelTimeCalculator.calculateLinkToLinkTravelTimes": "false, and it must be: controler.linkToLinkRouting is false, and MATSim throws outright if link-to-link travel times are calculated together with separateModes.",
+    "travelTimeCalculator.calculateLinkTravelTimes": "true - the observed link travel times ARE the feedback this model routes on (issue #28). Accepting the default is accepting the mechanism the study depends on.",
+    "travelTimeCalculator.maxTime": "108000 s = 30 h, which equals RUN.qsim.end_time_h x 3600 exactly. It is the horizon past which the calculator stops binning; a shorter one would silently drop the late tail of the simulated day. IT MUST TRACK RUN.qsim.end_time_h: if that field ever moves past 30 h, this stops being an accepted default and becomes a declaration."
+  }
+}
