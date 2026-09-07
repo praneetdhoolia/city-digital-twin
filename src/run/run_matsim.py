@@ -1031,7 +1031,8 @@ def _trim_async(cfg):
 
     def go():
         try:
-            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                               grace_s=cfg.get('RUN.storage.extract_grace_s'))
         except Exception as e:                               # noqa: BLE001
             print('raw cache trim failed (the run is unaffected): %s' % e,
                   flush=True)
@@ -1199,7 +1200,8 @@ def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
     try:
         results_store.process(name, extract=True)
         if cfg is not None:
-            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                               grace_s=cfg.get('RUN.storage.extract_grace_s'))
     except Exception as e:                                   # noqa: BLE001
         print('post-run processing failed: %s' % e, flush=True)
     return doc
@@ -1496,7 +1498,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
         # cache re-trimmed, both unattended (9.137).
         try:
             results_store.process(os.path.basename(dead), extract=True)
-            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+            results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                               grace_s=cfg.get('RUN.storage.extract_grace_s'))
         except Exception as e:                               # noqa: BLE001
             print('post-run processing failed: %s' % e, flush=True)
         return dict(name=os.path.basename(dead), rc=rc, wall_s=round(wall, 1))
@@ -1544,7 +1547,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     # (9.137) - a completed run's readings survive any later trim
     try:
         results_store.process(name, extract=True)
-        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'))
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                               grace_s=cfg.get('RUN.storage.extract_grace_s'))
     except Exception as e:                                   # noqa: BLE001
         print('post-run processing failed: %s' % e, flush=True)
     return doc
