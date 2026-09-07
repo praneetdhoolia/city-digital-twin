@@ -357,7 +357,17 @@ def pt_submode_split(run_dir, person_lga, mode_share_doc):
 
 
 def link_volumes(run_dir, fraction):
-    """Modelled vehicles per station, two-way, scaled to full population."""
+    """Modelled vehicles per station, two-way, scaled to full population.
+
+    EVERY MODE C3 DECLARES AS A VEHICLE, weighted by `vehicles_per_leg`. This
+    summed `vol_car` alone while the observed side of the same comparison is
+    converted to a LIGHT-vehicle basis, so a motorbike, a taxi and - since the
+    household roster - a second household car were compared against nothing.
+    The bias runs one way: modelled counts too low, at every station, in every
+    arm, while #82 tracked counts at -91.8 %. The mode list is not written
+    here; it is read from the declared artefact, so a city that runs different
+    road modes gets them by declaring them.
+    """
     want = collections.defaultdict(list)
     meta = {}
     with open(STATION_LINKS, encoding='utf-8') as f:
@@ -371,12 +381,22 @@ def link_volumes(run_dir, fraction):
             m['links'].append(r['link'])
             m['max_distance_m'] = max(m['max_distance_m'], float(r['distance_m']))
 
+    # {mode: vehicles per leg} for the modes that contribute a vehicle at all.
+    per_leg = json.load(open(C3, encoding='utf-8'))['vehicles_per_leg']
+    weights = {m: float(v) for m, v in per_leg.items()
+               if isinstance(v, (int, float)) and float(v) > 0}
+    if not weights:
+        raise SystemExit('C3 vehicles_per_leg declares no mode that puts a '
+                         'vehicle on a link - a count comparison has no '
+                         'modelled side')
+
     found = 0
     for l in rows(run_dir, 'output_links'):
         lid = l['link']
         if lid not in want:
             continue
-        vol = float(l.get('vol_car') or 0)
+        vol = sum(float(l.get('vol_%s' % m) or 0) * w
+                  for m, w in weights.items())
         found += 1
         for key in want[lid]:
             meta[key]['modelled_vehicles'] += vol
@@ -385,8 +405,11 @@ def link_volumes(run_dir, fraction):
         m['modelled_vehicles'] = round(m['modelled_vehicles'] * scale)
         m['links'] = ';'.join(m['links'])
     return dict(links_matched_in_output=found, links_expected=len(want),
-                scale=scale, stations=sorted(meta.values(),
-                                             key=lambda r: r['station_key']))
+                scale=scale,
+                # states the basis rather than leaving a reader to infer it
+                vehicle_modes_counted={m: w for m, w in sorted(weights.items())},
+                stations=sorted(meta.values(),
+                                key=lambda r: r['station_key']))
 
 
 def taxi_volume(run_dir, fraction):

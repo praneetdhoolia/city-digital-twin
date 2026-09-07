@@ -232,7 +232,7 @@ params/C1_parameters.json,processed,3171,,src/build/build_params.py,,,CC-BY 4.0,
 params/C1_sensitivity_sweep_grid.csv,processed,573,28,src/build/build_params.py,,,CC-BY 4.0,,61075e0ad62ad5a7e2202dfee962a581aff226758e1bc1f7d38263242fc05212
 params/C2_network_factors.json,processed,3310,,src/build/measure_network_factors.py,,,CC-BY 4.0,,7535f3a49ab59b41e26cb2d8037a142bd1ca97b4856bf283cea219e31258059c
 params/C2_osm_defaults.json,processed,8777,,src/build/measure_osm_defaults.py,,,CC-BY 4.0,,a27fe43a693cc4e3f10f333e9f53a3bf8816604bbfea7fab5348b54ebde84abd
-params/C3_count_comparison.json,processed,1448,,cities/newcastle/build/build_validation_targets.py,,,CC-BY 4.0,,dc1d5e8388a92beccc13fe11e11ea863b0ee0ab5b9459e8ef8998372ed6d1910
+params/C3_count_comparison.json,processed,1907,,cities/newcastle/build/build_validation_targets.py,,,CC-BY 4.0,,fd1add1fc1a17b73dbf796134f0b6b12942ab3a7d259ee9c4882e2152560c877
 params/C4_mode_constraints.json,processed,5914,,src/calibrate/measure_mode_constraints.py,,,CC-BY 4.0,,c262dfd72c27bf682b02c63117be04222863bdaec3d05810b303fddbf0e8afc0
 params/C5_calibration.json,processed,1921,,src/calibrate/calibrate.py,,,CC-BY 4.0,,093b930b75142f3f7ea110d1a0970c5880d0c081c296667524a6f51c908a37e0
 params/C6_departure_profile_check.json,processed,5267,,src/calibrate/measure_departure_constraint.py,,,CC-BY 4.0,,18c51c652eb65a974f16bdf604c8cc3424d8a7ac303cfb1ccaad23e28aa8140a

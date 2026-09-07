@@ -236,13 +236,20 @@ def block_runs():
     for name in names[:6]:
         run_dir = _dir_of(name)
         meta = _json(os.path.join(run_dir, '_meta.json')) or {}
-        reached = _iterations_reached(run_dir)
         cause = (meta.get('cause') or '').replace('|', '/').replace('\n', ' ')
         if len(cause) > 140:
             cause = cause[:137] + '...'
         # A record no longer means the run reached its horizon - one stopped at
         # a gate carries one too - so the cell says WHICH boundary ended it.
         rec = _json(os.path.join(run_dir, '_run.json'))
+        # THE RECORD'S OWN reached_iteration WINS. The directory scan returns
+        # the highest `it.N` on disk, which counts an iteration that STARTED
+        # and never ended: the F28 arm read 101 here against the 100 its record
+        # states, and 100 is the iteration the gate was read at. The scan stays
+        # as the fallback for a run that died without a record.
+        reached = (rec or {}).get('reached_iteration')
+        if reached is None:
+            reached = _iterations_reached(run_dir)
         record = ('%s `_run.json`'
                   % rec.get('completion', 'ran_to_last_iteration')) if rec else ''
         lines.append('| `%s` | %s | %s | %s | %s |'

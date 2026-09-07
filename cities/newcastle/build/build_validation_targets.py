@@ -344,11 +344,29 @@ def main():
                        len(hs), len(hs_all)),
         },
         'vehicles_per_leg': {
+            # EVERY MODE THAT PUTS A VEHICLE ON A COUNTED LINK, not just car.
+            # The observed side of a count target is converted to a LIGHT
+            # vehicle basis, so the modelled side has to be every light motor
+            # vehicle the model runs. It summed `vol_car` alone, so a
+            # motorbike, a taxi and - once the household roster arrived - a
+            # second household car were each compared against nothing, and
+            # every count error was biased low while #82 tracked counts at
+            # -91.8 %.
             'car': 1.0,
             'ride': 0.0,
+            'motorbike': 1.0,
+            'taxi': 1.0,
+            # Heavy: the observed side already had the heavy share removed, so
+            # counting trucks here would put freight back on one side only.
+            'truck': 0.0,
+            # Not motor vehicles, and not in a classified vehicle count.
+            'bike': 0.0,
+            'walk': 0.0,
             'source': 'derived - HTS vehicle occupancy 1.3503 persons per '
                       'vehicle (params/C4_mode_constraints.json) means observed '
-                      'vehicle trips ARE driver trips',
+                      'vehicle trips ARE driver trips; the remaining modes are '
+                      'one vehicle each where they are light motor vehicles, '
+                      'zero where the observed basis already excludes them',
             # 9.142: this note is MEASURED from the demand each build rather
             # than asserted. It used to say "B2 generates none" of the escort
             # trip, which the 9.15 repair had made false; the committed

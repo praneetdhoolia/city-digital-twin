@@ -111,11 +111,11 @@ ran at a median 260 s an iteration, so 300 iterations is ~22 h. No arm runs.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `aborted_20260907T030352_300it_25pct` | aborted | F28-the-car-waits-only-for-a-car | 101 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
+| `aborted_20260907T030352_300it_25pct` | aborted | F28-the-car-waits-only-for-a-car | 100 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260907T025531_2it_1pct` | completed | F28-the-car-waits-only-for-a-car | 2 | ran_to_last_iteration `_run.json` |
 | `aborted_20260907T025046_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
 | `aborted_20260907T024623_2it_1pct` | failed | F27-a-household-drives-the-cars-it-owns | 0 | RuntimeException: could not find requested vehicle 271437 in simulation for agent BasicPlanAgentImpl{plan=[score=undefined][nof_acts_legs... |
-| `aborted_20260907T002431_300it_25pct` | aborted | F27-a-household-drives-the-cars-it-owns | 20 | Stopped by the operator at iteration ~21 under the GOAL.md loop, step 3 (fix from the root): RUN.qsim.vehicle_behavior=wait is GLOBAL in ... |
+| `aborted_20260907T002431_300it_25pct` | aborted | F27-a-household-drives-the-cars-it-owns | 19 | Stopped by the operator at iteration ~21 under the GOAL.md loop, step 3 (fix from the root): RUN.qsim.vehicle_behavior=wait is GLOBAL in ... |
 | `20260906T233901_4it_25pct` | completed | F27-a-household-drives-the-cars-it-owns | 4 | ran_to_last_iteration `_run.json` |
 
 153 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.

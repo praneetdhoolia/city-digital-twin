@@ -1,21 +1,28 @@
 {
   "heavy_vehicle_share": {
-    "value": 0.0652,
+    "value": 0.112,
     "sweep": [
       0.0129,
       0.1529
     ],
-    "source": "measured - NSW Roads traffic volume counts, LIGHT vs HEAVY VEHICLES classification, WEEKDAYS period, two-way",
-    "stations_observed": 23,
+    "source": "measured - NSW Roads traffic volume counts, LIGHT vs HEAVY VEHICLES classification, WEEKDAYS period, two-way, CALIBRATION STATIONS ONLY",
+    "basis_split": "calibration",
+    "stations_observed": 3,
+    "stations_observed_all_splits": 23,
     "stations_total": 119,
     "calibration_stations_observed": 3,
-    "mean": 0.0776,
-    "note": "The model represents no freight. At the 23 stations with a classified count the station's own observed share is used; at the remaining 96 it is assumed, and the sweep is the observed range across the classified stations. Only 3 of the 34 calibration stations carry a classified count, so the assumed case is the usual one."
+    "mean": 0.0926,
+    "note": "The model represents no freight. At the 23 stations with a classified count the station's own observed share is used; at the remaining 96 it is assumed. The assumed value, its sweep and its mean are derived from the 3 CALIBRATION stations that carry a classified count - not from all 23 classified stations, because this share converts calibration targets and the 67/143 holdout is never opened (GOAL.md; DECISIONS.md 12.2a). The assumed case is the usual one."
   },
   "vehicles_per_leg": {
     "car": 1.0,
     "ride": 0.0,
-    "source": "derived - HTS vehicle occupancy 1.3503 persons per vehicle (params/C4_mode_constraints.json) means observed vehicle trips ARE driver trips",
-    "note": "A passenger rides in a vehicle that is already counted, so the modelled vehicle count is the car legs alone and a ride leg correctly contributes none. This holds only while the modelled ride:car ratio matches the observed passenger:driver ratio, which is what DECISIONS.md 9.8 constrains asc_car_passenger to reproduce. Escort tours ARE generated since the 9.15 repair - B2 carries HX as its own tour purpose (351,645 weekday legs), driven by the escorting licence holder. What stays genuinely unmodelled here is freight (issue 24)."
+    "motorbike": 1.0,
+    "taxi": 1.0,
+    "truck": 0.0,
+    "bike": 0.0,
+    "walk": 0.0,
+    "source": "derived - HTS vehicle occupancy 1.3503 persons per vehicle (params/C4_mode_constraints.json) means observed vehicle trips ARE driver trips; the remaining modes are one vehicle each where they are light motor vehicles, zero where the observed basis already excludes them",
+    "note": "A passenger rides in a vehicle that is already counted, so the modelled vehicle count is the car legs alone and a ride leg correctly contributes none. This holds only while the modelled ride:car ratio matches the observed passenger:driver ratio, which is what DECISIONS.md 9.8 constrains asc_car_passenger to reproduce. Escort tours ARE generated since the 9.15 repair - B2 carries HX as its own tour purpose (349,923 weekday legs), driven by the escorting licence holder. What stays genuinely unmodelled here is freight (issue 24)."
   }
 }
