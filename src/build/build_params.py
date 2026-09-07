@@ -252,9 +252,16 @@ def rows_sweep():
 
 
 def _w(name, rows):
+    # `newline=''` hands the line ending to the csv module, whose default is
+    # CRLF on every platform - so these two tables were written with CRLF, git
+    # committed them as LF, and the manifest's recorded hash stopped matching
+    # the bytes in the repository. CI caught it and a workstation could not:
+    # check_manifest reads the working tree. LF explicitly, the same fix
+    # build_manifest.py already carries for MANIFEST.csv (9.153).
     cols = list(dict.fromkeys(k for r in rows for k in r))
     with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore')
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore',
+                           lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
     print('wrote %-40s %d rows x %d cols' % (name, len(rows), len(cols)))

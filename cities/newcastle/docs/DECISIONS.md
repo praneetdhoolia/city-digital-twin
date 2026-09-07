@@ -14873,6 +14873,18 @@ measuring it would be exactly the workaround GOAL.md step 3 forbids. **The
 measurement that would settle it is a short timing probe against F28's own
 overlay on an idle machine — cheap, and it belongs before the next long arm.**
 
+**And one defect the close-out itself surfaced: CI caught a CRLF the workstation
+could not.** `build_params.py` wrote `C1_behavioural_parameters.csv` and
+`C1_sensitivity_sweep_grid.csv` with the csv module's default CRLF; git stores
+them as LF, so the manifest's recorded hash matched the working tree and not the
+committed blob. `check_manifest.py` reads the working tree and passed locally;
+CI reads the checkout and failed on exactly those two files. Fixed at the root -
+`lineterminator='
+'`, the same fix `build_manifest.py` already carried for
+`MANIFEST.csv` - then `normalise_eol.py`, `build_manifest.py`, `normalise_eol.py`
+as the contract prescribes. **A local green on this check is not evidence; the
+committed blob is.**
+
 **Consequences.** **F30 has no gate reading, and the newest citable reading in
 the project is still F28's at its iteration-100 gate.** The user's ~22 h
 approval is **SPENT** on this arm; the next arm needs a fresh one, and it should
