@@ -692,15 +692,27 @@
     },
     "RUN.storage.raw_cap_gb": {
       "value": 500,
-      "units": "gigabytes",
+      "units": "gibibytes",
       "source": "definition",
       "sweep": null,
       "status": "active",
       "decisions_ref": "9.137",
-      "description": "The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.",
+      "description": "GIBIBYTES, not gigabytes, despite the `_gb` in the key: src/run/results_store.py multiplies this by 2^30, so 500 here is 500 GiB = 536.9 GB. The units field said `gigabytes` until 7 September 2026 (9.155), a 7.4% discrepancy in a project whose convention requires units in every name. The UNITS were corrected to match the code rather than the code corrected to match the units, because shrinking the effective cap by 36.9 GB would delete run bulk to settle a naming question; the key itself is retained because dated record sections (9.137, 9.139, 9.141) cite it by name and the record is never rewritten. The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.",
       "consumers": [
         "src/run/results_store.py",
         "src/run/run_matsim.py"
+      ]
+    },
+    "RUN.storage.extract_grace_s": {
+      "value": 3600,
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.155",
+      "description": "How long after a run's record was last written the store still treats it as inside its extraction window, and so refuses to trim it. It exists because the #132 guard - keep any raw directory that has a _run.json and no _metrics.json - was written for a race that lasts seconds and had no expiry, so it protected forever every run that will NEVER get a _metrics.json: run.py writes that file after run() returns, and an operator stop or a gate stop kills the harness before it does. Measured 7 September 2026: 13 directories, 72.8 GiB, 16% of a 90%-full cache, of which seven carry a terminal completion (stopped_at_gate or stopped_by_operator) and all thirteen already had their findings mirrored into results/processed. When the cap is hit the store skipped all thirteen and deleted younger COMPLETE runs instead - the guard was costing exactly what it was meant to protect. An operational bound, not a model value: it decides how much bulk survives to re-derive a diagnostic from, never a result. One hour is far longer than the extraction it covers (seconds to a few minutes on the largest arm measured) and far shorter than the interval between launches.",
+      "consumers": [
+        "src/run/results_store.py"
       ]
     },
     "RUN.gate.retry_interval_s": {
