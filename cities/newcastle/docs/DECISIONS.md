@@ -196,6 +196,7 @@ about its layout will otherwise cost you an hour:
 | **The toolchain gate passed on a checkout that could not launch** | **§9.152** — every gate green, the arm approved, and the launch refused before MATSim started: `.tools/run-stack/lib` held 0 jars while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` loops over the components RECORDED in `toolchain.json`, and a stack that `--run-stack` never resolved is not recorded — so the check was green on the absence of the thing it should have failed on, the same shape as the three blind checks §9.150 widened. `verify()` now reads the declared representation and reports `MISSING run-stack` with the command; the gate and the launcher refuse on one condition. Cost: one refused launch, which stated its own cause in its `_meta.json` |
 | **F30's first arm: healthy, and stopped on its own cost** | **§9.153** — launched twice: refused before MATSim once (the run stack, §9.152), then ran and was STOPPED BY THE OPERATOR at iteration 23. Iteration 0 passed every control (car departures 232,972 against F28's 231,607, stuck 3,786 against 3,145; 8,167 declared passengers paired on 7,771 detours, 0 unroutable; 291 unpaired ride legs all restored; 8,549 drivers waiting for a household car) — and `_run.json` read **`median_iteration_s` 376.42 against F28's 260**, 45 % slower, which puts 300 iterations near 31 h against the ~22 h its approval was priced on. The it.20 readings sit on top of F28's and separate nothing. §9.150's `--stop` rebuild is tested against a live arm for the first time: one arm killed, `_operator_stop.json` written first, the operator's cause preserved, `completion` = `stopped_by_operator`. The 45 % is NOT diagnosed and is #66's |
 | **The iteration decomposed to the method, and a declared value that reached nothing** | **§9.154** — a JVM flight recording put this project's own code at **50.0 %** of a 25 % probe's CPU: `GradientLinkSpeed$Router` 17.9 %, `factor` 14.4 %, `Arrays.binarySearch` 30.5 % of which 16.2 was `Router` → `TimeVariantLinkImpl.getFreespeed`, a `synchronized` binary search over the level-crossing change events on all 143,891 links of which 16 can change. Per-link tables, filled once from the same `factor()`: a plain iteration **310 → 205.5 s**, startup **13m47s → 7m00s**, our share **50.0 → 14.5 %**, proved by `GradientTableProbe` over 3,266,754 comparisons rather than by a diff two runs cannot support. Separately `RUN.travel_time.analysed_modes` was inert — `filterModes` defaults false and was never emitted, so every pedestrian and bus fed the car router's link travel times (#154) — and 31 further MATSim defaults decide the model undeclared (#155). Registry 477 → 480; the 2-minute iteration is NOT reached, ~190 s against 120 |
+| **The objective measures the goal, the search can finally run, and the reading point cannot score it** | **§9.158** - the calibration loop had NEVER executed: its objective was a MEAN over five FOLDED survey categories in pp while requirement 7 is a MAXIMUM over twelve UNFOLDED modes in relative per cent (**3.664 pp** on a model whose heavy rail is **+247.2 %**), it handed registry keys to a raw MATSim `--set`, and its movable set was **5** fields. Now `goal_modes.max_abs_rel_pct` computed by the board's own reader, `--config-set`, and **21** movable fields reaching ride, taxi and bike. `extract_metrics` reads a gate-stopped arm at `reached_iteration`, so an arm has a `_fit.json` for the first time since F4. **Iteration 100 cannot score a candidate**: within one run the objective drifts **0.272-0.418 pp** between iterations 80 and 100 on all six 25 % arms, upward on every one, and `--execute` refuses. The PT routing failure is diagnosed - **60.5 %** of **2,553,357** requests come back as a walk because one second walking costs **1.0400 s** riding. Crowding scored; `C.asc.bus`, `C.asc.light_rail` and `C.asc.cycle` OPENED and `C.asc.ferry` / `C.asc.motorbike` created, with the §8.5 departure logged; #159 closed, lineage per output, undetermined **512 -> 0**. Registry 482 -> 489 |
 | **The F31 gate: ride places the right lengths and still carries too few** | **§9.157** - `aborted_20260908T100009_300it_25pct` stopped by the watcher at iteration 100 with 7 modes past 20 %, **1 of 12 inside** (car +5.4 %). Ride's mean trip is **9.17 km against an observed 9.76**, so its gap is VOLUME not placement - which retires the question F29 and F30 were built around. Ride's **-7.830 pp** is the **+9.500 pp** excess in the modes beating it, and a pro-rata recovery would put **three** inside 10 %. The restored progress line reports **33.4 %** of pt routing requests finding NO transit route and **40.6 %** of the rest taking the network walk. Requirement 8 still unmeasured |
 | **The arm priced on the iteration it repeats, and a log guard that had never counted** | **§9.156** — `arm_cost.py` was quoting a median over EVERY iteration, and on a probe most of those are iterations an arm pays once: **282.6 s** quoted against a recurring **216.0 s** (`20260908T014214_4it_25pct`, iterations 2 and 3), so the next 300-iteration arm prices at **18.2–21.8 h** with the gate at **6.1 h**, against **31.5 h** at HEAD. `NetworkDirectWalkPtRouter`'s counters were instance fields under an UNSCOPED provider: **19,469** sample lines on the F28 arm and the progress line firing **0** times ever; now **3** and firing. **40** manifest rows moved CC-BY → ODbL on **357,893** OSM link references and `link_id`-keyed parking tables; the other **129** were REFUSED and filed as **#159**. Tram priority refused as a lever — it IS the S2b intervention. Family **F31** opens at the arm |
 | **The events knob bracketed on both sides, and the 2-minute target priced out** | **§9.155** — the 120 s ask answered with arithmetic first: the mobsim alone is **143 s** of a 205.5 s iteration, so zeroing every other phase still lands above 120, and all three measured levers at their full CPU share land near **171 s**. `RUN.machine.event_handler_threads` was bracketed for the first time — 1 saturated (§9.56), 12 no gain (§9.59), and **2 measured +44.5 %** (205.5 → 297.0 s, mobsim +58 %) — so the 11.6 % of CPU in `LinkedBlockingQueue.offer` is **the price of short pipeline stages, not waste**, and 4 stands on evidence. `timeVariantNetwork` makes all **143,891** links time-variant for **2,441 events on 16**. The **72.8 GiB** untrimmable leak closed (`RUN.storage.extract_grace_s`); `fit.py`'s patronage scorer **refused** as a finding — it is correct and self-declaring; `session_gate.py --fix`, `compare_runs.py` and `verify_launch.py` codify three manual operations |
@@ -15291,10 +15292,149 @@ iteration 100 and nowhere past it - the arm did not reach its horizon, so
 The approval is SPENT. **No target value changed, no demand or network was
 rebuilt, the 67/143 split is untouched.**
 
+## 9.158 The objective measures the goal, the search can finally run, and the reading point cannot score it (8 September 2026, thirty-sixth session; user directive "Implement ALL of your recommendations"; issues #159, #98, #94, #107, #86, #49, #50, #155)
+
+**What was wrong.** The calibration loop had never once executed, for three measured reasons. (1) The
+OBJECTIVE was `{"mode_share.mean_abs_pp": 1.0}` - a MEAN over FIVE FOLDED survey categories in PERCENTAGE
+POINTS - while GOAL.md requirement 7 is a MAXIMUM over TWELVE UNFOLDED modes in RELATIVE per cent. Heavy
+rail and light rail sit in one folded "Public transport" cell with OPPOSITE signs, so a search could improve
+the old objective while making both worse: on the F31 gate it reads **3.664 pp** on a model whose heavy rail
+is **+247.2 %**. (2) `calibrate.py:486-491` handed REGISTRY keys to `run_matsim.py`'s RAW MATSim `--set`,
+which splits on the first dot and raises, so `--execute` died on its first candidate; `rebuild_stage`
+excluded any field whose consumer's BASENAME it did not classify, including fields carrying a declared
+`matsim_param` binding that reach the config on every run; and `run_inputs` sat in `STAGES_IMPLEMENTED`
+while `evaluate()` rebuilt nothing, so such a candidate ran the SHIPPED value and the search compared a
+parameter against itself. (3) `extract_metrics` raised `output_trips not found` on every arm stopped at its
+gate - EVERY arm since F4 - so no gate arm had a `_metrics.json` or a `_fit.json`, and **the fit half of the
+pipeline had never run on the kind of run this project produces**.
+
+**What changed.** The objective is `{"goal_modes.max_abs_rel_pct": 1.0}`, computed by
+`fit.score_goal_modes()` CALLING THE BOARD'S OWN READER (`report_mode_ridership.report` + `LAST['rows']`),
+so objective and gate cannot drift apart; `CAL.objective.independent_targets` 4 -> **10**. `--config-set`
+replaces `--set`; a `matsim_param` binding is now evidence of run-time realisability, taking the movable set
+**5 -> 21** and reaching `B.ride.*`, `B.taxi.*`, `B.population.bike_min_age` and `A.gradient.bike_speed_*` -
+three of the seven failing modes, where before it reached NONE; `evaluate()` re-assembles the scenario x day
+per candidate off the ALREADY-MAPPED schedule (§3.5 not engaged), restoring the shipped assembly in a
+`finally`. `rows()` falls back to `ITERS/it.<reached>/<reached>.<table>` when `completion` is not
+`ran_to_last_iteration`, reading AT `reached_iteration` and nowhere past it - the policy §9.143 stated, now
+implemented; `output_links` has no per-iteration counterpart, so the counts block reports itself
+`unavailable` with the reason rather than substituting a different basis (§9.101's error class). Crowding
+reaches scoring for the first time: MATSim core scores NO crowding term (verified against the pinned jar and
+the MUM 2025 TUM paper), so `citysim.PtCrowdingScoring` integrates m(n)-1 per vehicle against its own
+runtime seat count at `penaltyUtilsPerHour` 16.961, `PtCrowdingConfigGroup` joins `CitysimControler` (15 ->
+16 groups), and `C.crowding.*` are BOUND to `ptCrowding.*`. Two Java equilibrium defects:
+`EscortCoherenceListener` added and selected plans every iteration with NO innovation cutoff, so plans were
+still created through the tail on whose emptiness `summarise_run.relaxation` declares a run relaxed -
+**every relaxation verdict recorded rests on that** - and it now reads the cutoff from
+`replanning().getFractionOfIterationsToDisableInnovation()` (verified with `javap`);
+`GenericRouteTeleporter` refuses per mode on a singleton-scoped binding with no `% N` guard (§9.156's trap).
+#159 is CLOSED: ancestry is computed per OUTPUT from a module-level `OUTPUT_INPUTS` read STATICALLY, with
+two new manifest columns and `check_lineage_licence()` in `tests/check_manifest.py`. `issue_gate.py` now
+requires an `AWAITING-RUN: <measurement>` line with real content, scoped to the run overlay's lane, its
+override refused without `--override-reason`. Registry **482 -> 489 fields**.
+
+**§8.5 - THE DEPARTURE FOR OPENING `C.asc.bus` AND `C.asc.light_rail`, AND FOR CARRYING A FERRY CONSTANT AT
+ALL. Logged here, BEFORE ANY RUN READS THEM.** §8.5 holds the mode constants at their priors because
+proposal 9 names ASC absorption as the primary threat to validity, and it permits two exits: estimate on the
+pre-intervention era and hold fixed, or CONSTRAIN AND REPORT THE CONSTRAINT. This is the second exit, taken
+per mode; the rule stays in force everywhere it is not taken. **The departure is that the blanket freeze is
+over-broad for a mode with no NAMED missing mechanism.** It is right for heavy rail, whose scoring carried
+no crowding disutility at all - a constant there would price a physical omission into a taste - right for
+walk, which is absorbing a PT routing failure, and right for car passenger, whose deficit is volume and not
+utility. `C.asc.bus` and `C.asc.light_rail` have no such named absence: they are ordinary
+alternative-specific constants of the kind every eqasim, ActivitySim and Open Berlin model fits, and
+freezing them froze a taste parameter never estimated on this city. **`C.asc.ferry` is created because its
+absence was itself a defect** - ferry is a scored pt submode under `RUN.routing.pt_submode_scoring` =
+`per_submode` (§9.78) and silently INHERITED `asc_bus`, so the run-input report stated an inheritance where
+a declared value belonged; it ships at the inherited -1.05, so creating it moves nothing. **The constraints,
+reported as §8.5 requires.** (a) The intervals are BRACKETS: `C.asc.bus` and `C.asc.ferry` [-2.05, -0.05],
+`C.asc.light_rail` [-1.75, 0.25]. No published half-width for an ASC in this form exists, so the interval is
+chosen-with-a-DERIVED-width and says so: `C.taxi.asc` (§9.76) is the registry's only existing mode-ASC sweep
+and is 2.0 utils wide, and one util is 60 / (16.961 x 1.0 x 1.0) = **3.54 minutes of in-vehicle time** at
+this model's own scale, narrower than the +/-6 min already declared on
+`C.transfer.beta_transfer_penalty_min`. (b) `C.asc.light_rail` is the constant the effect under test runs
+through, so a SOLVE of it against light rail's own patronage target is REFUSED and recorded as refused; the
+loop that reads it is a two-round contraction test. (c) `C.asc.cycle` [-4.0, -1.35] is not a new interval -
+it is the solve range §9.28 already named, carried onto the field so the loop can reach it, constrained
+against the OBSERVED trip lengths in `C.constraint.trip_length_km.*` and never against a mode share. (d)
+`C.asc.motorbike` is created with source `definition` and NO sweep, deliberately: motorbike is a locked
+person-level carve (§9.52) outside `RUN.mode_choice.modes`, so its constant cannot change any choice and a
+sweep would have a band of exactly zero. (e) `C.asc.rail`, `C.asc.walk` and `C.asc.car_passenger` stay
+FROZEN, each with its per-mode reason written onto its own `held_fixed` rule.
+
+**Measured.** THE READING POINT CANNOT SCORE A CANDIDATE (`src/analyse/measure_reading_stability.py`,
+WITHIN-run only, over all SIX 25 % arms that ever reached iteration 100 - F22, F23, F25, F26, F28, F31).
+With nothing changed the old folded objective drifts **0.272 to 0.418 pp** between iteration 80 and 100 -
+**1.09x to 1.67x the 0.25 pp `CAL.search.convergence_delta` as it stood** - and UPWARD on every arm, so
+systematic movement toward relaxation, not seed scatter. The worst scored mode's deviation moves **15.72 to
+24.88 points** (heavy rail worst on four arms, bike on one, taxi on one), and three modes clear the WHOLE 10
+% band inside that window: heavy rail 6/6 (24.88), bike 4/6 (17.76), taxi 3/6 (15.72).
+`CAL.search.reading_drift_pct` = 24.88 (`measured`, sweep [15.72, 24.88]); `CAL.search.convergence_delta` is
+DERIVED from it, and **`calibrate.py --execute` REFUSES while the drift exceeds
+`CAL.gate.pass_deviation_pct`** - a reading that moves further than the band cannot say whether a mode is
+inside it. `--plan` still costs the search; the remedy is to change the READING, not the rule.
+`results/raw/aborted_20260908T100009_300it_25pct` is **the first gate arm in this project's history with a
+`_metrics.json` and a `_fit.json`**: objective **247.2131** on heavy_rail, 1 mode inside, 7 past the stop
+bar, `is_a_result: false`, read at iteration 100, its twelve deviations reproducing the board EXACTLY. THE
+PT ROUTING FAILURE IS DIAGNOSED (`src/analyse/diagnose_pt_routing.py`): **2,553,357 pt routing requests**
+over 100 iterations, ~25,280 an iteration, of trips already ASSIGNED pt; **33.4 % get no transit route**
+(SwissRailRaptor genuinely returns null, verified in the pinned jar with `javap`) and **40.6 % of the
+answered choose the network walk**, so **60.5 % of every request comes back as a walk**. Access radius,
+search parameters and schedule integrity are each REFUTED with their numbers on the public-transport
+position page; time of day is confirmed and minority. **THE CAUSE IS PRICING**: `(marginalUtilityOfTraveling
+- performing)/3600` makes **one second walking cost 1.0400 seconds riding** at `direct_walk_factor` 1.0, so
+walking is priced as riding; the sweep gives 1.5 -> 27.3 %, 2.0 -> 21.7 %, 3.0 -> 16.2 %, and walk-answered
+trips have a beeline mean of **7.81 km** (p90 12.43), which is why walk's modelled mean is 4.58 km against
+an observed 0.70. **And the raptor's cost carries NO mode constant, NO fare and NO distance term**, so the
+bus/rail/tram/ferry split is decided on travel time alone and no declared PT constant can move it - which is
+why the four pt modes fail in opposite directions, and which QUALIFIES the ASC experiment for light rail and
+ferry. **A CORRECTION belongs here**: the claim that `standingRoomInPersons=0` was WRONG. The fleet carries
+bus 44 seated / 18 standing, ferry 149/51, rail 98/48, patched from published figures at
+`build_matsim_run_inputs.py:274-297` (§9.30, #18) and verified this session in
+`S0/WEEKDAY/transitVehicles.xml.gz` with no `standingRoom persons="0"` anywhere. Capacity DID bind
+physically; what was absent was the DISUTILITY. On lineage: OSM-in-source-while-CC-BY **129 -> 0**, ODbL
+without an OSM ancestor **21 -> 0**, undetermined **512 -> 0**, ratchet 0; the largest of 35 evidence-based
+corrections is that the demand and plans DO carry OSM geometry (3,000 of 3,000 sampled `dest_placement=poi`
+destinations within 5 m of an OSM POI or building, median 1.49 m), against `city.json`'s claim that they
+carry none; licences 293/201 -> **264 CC-BY / 233 ODbL** plus 15 bespoke, rows UNCHANGED at 512. The issue
+gate went **16 blocking -> 3** and is RED at handoff for the first honest reason in its
+existence; this session then filed two further non-run defects (#164, #165), so the
+unscoped gate reads five.
+
+**Deliberately not done.** NO ARM WAS LAUNCHED and no approval was sought or spent: the authorisation
+covered the lane and the pull request, not machine time. The store was NOT trimmed - the two big arms fail
+the reclaim tests, and reclaiming them needs `extract_snapshots` (~35 min each) and then eleven
+position-page lines re-aimed at `processed/` FIRST. The 10 % arm was not priced. The decisive experiment is
+BUILT AND NOT RUN: `src/calibrate/asc_fixed_point.py` is a PROPOSER whose step for mode i against reference
+car is `damping * [ln(target_i/modelled_i) - ln(target_ref/modelled_ref)]` - the contraction a logit's share
+equation implies, the same object as the Berry (1994) inversion, and what `matsim-vsp/matsim-python-tools`
+computes verbatim - at `CAL.asc.damping` 0.6 (`literature`, sweep [0.3, 1.0]: matsim-python-tools ships
+`linear_scheduler(start=0.6, end=1, interval=3)`, ActivitySim practice a flat 0.5) under
+`CAL.asc.max_step_utils` 1.5 (`definition`, held_fixed - a step past it is REFUSED, not clipped, because
+clipping hides the signal). Round 1, proposed from the real F31 gate: bike **-0.5121**, bus **-0.2301**,
+ferry **+0.6713**, light_rail **+0.4143** - all inside their declared sweeps and under the 1.5 bound.
+`CAL.asc.mode_to_constant` omits taxi: it has no independent target, so there is no ratio to invert.
+
+**Consequences.** **THE NEXT ARM OPENS A COMPARABILITY FAMILY, and no family row is added here** - a family
+opens at a LAUNCH or a REBUILD and neither happened. THE CONTROLER IS RECOMPILED AND GREEN:
+`session_gate.py`'s toolchain gate passed with the machine idle, and 86 class files under `.tools/classes`
+carry a newest timestamp of 21:12:04 against Java sources last modified at 20:47:40, so all four changed or
+new Java files compile against the pinned `matsim-2027.0-2026w25` run stack rather than against the scratch
+syntax checks three separate lanes had each recorded as owed. **The DEPLOYED BYTECODE has changed**, a
+stronger statement than "the source changed": nothing on disk from an earlier arm was produced by this
+controler, so a hand comparison against an old run's outputs is a cross-boundary comparison whatever the
+file names suggest (§3.5). The ASC experiment's observable is whether |delta asc| SHRINKS between round 1
+and round 2 - contraction means the residual is taste and constants will close it, no contraction means it
+is mechanism and no constant ever will. It costs ~15 h and opens no family of its own, but it is BLOCKED by
+the reading-stability finding unless the reading point changes first: the honest first move may be to read
+deeper than iteration 100 or average a window. **No target value changed, no demand or network was rebuilt,
+the 67/143 split is untouched, and nothing here is a reading of any mode.**
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-08 | **The objective measures the goal, the search can finally run, and the reading point cannot score it (§9.158; #159, #98, #94, #107, #86, #49, #50, #155; thirty-sixth session).** The calibration loop had never once executed. Its objective was a MEAN over FIVE FOLDED survey categories in percentage points while GOAL.md requirement 7 is a MAXIMUM over TWELVE UNFOLDED modes in relative per cent - **3.664 pp** on the F31 gate, on a model whose heavy rail is **+247.2 %** - and it is now `goal_modes.max_abs_rel_pct`, computed by calling the board's own reader so objective and gate cannot drift apart (`CAL.objective.independent_targets` 4 -> **10**). `--execute` had died on its first candidate because registry keys went to a raw MATSim `--set`; the movable set was **5 -> 21** once a declared `matsim_param` binding counted as evidence of run-time realisability, and it now reaches `B.ride.*`, `B.taxi.*`, `B.population.bike_min_age` and `A.gradient.bike_speed_*`. `extract_metrics` now reads a gate-stopped arm at its `reached_iteration`, so `aborted_20260908T100009_300it_25pct` is the **first gate arm in this project's history with a `_metrics.json` and a `_fit.json`** (objective **247.2131** on heavy_rail, 1 inside, 7 past the stop bar, `is_a_result: false`). **AND THE READING POINT CANNOT SCORE A CANDIDATE**: within one run, nothing changed, the objective drifts **0.272-0.418 pp** between iterations 80 and 100 on all SIX 25 % arms that ever reached 100, UPWARD on every one, and the worst mode moves **15.72-24.88 points**; `CAL.search.reading_drift_pct` = 24.88 (`measured`), `convergence_delta` is derived from it, and `calibrate.py --execute` REFUSES. The PT routing failure is diagnosed: of **2,553,357** pt routing requests, **33.4 %** get no transit route and **40.6 %** of the answered take the network walk - **60.5 % come back as a walk** - because `(marginalUtilityOfTraveling - performing)/3600` makes **one second walking cost 1.0400 seconds riding**, and the raptor's cost carries no mode constant, fare or distance term at all. Crowding is implemented (`citysim.PtCrowdingScoring`, `C.crowding.*` bound to `ptCrowding.*`), **correcting the earlier claim that `standingRoomInPersons=0`** - the fleet carries bus 44/18, ferry 149/51, rail 98/48 and capacity always bound physically; what was absent was the disutility. `C.asc.bus`, `C.asc.light_rail` and `C.asc.cycle` OPENED to sweeps and `C.asc.ferry` and `C.asc.motorbike` CREATED, **with the §8.5 departure logged before any run reads them**. #159 CLOSED: lineage resolved per OUTPUT, two new manifest columns, OSM-in-source-while-CC-BY **129 -> 0**, ODbL without an OSM ancestor **21 -> 0**, undetermined **512 -> 0** with the ratchet at 0, licences **264 CC-BY / 233 ODbL** plus 15 bespoke, rows unchanged at 512. Dependencies pinned for the first time (`requirements.txt`, `tests/check_requirements.py` in CI) - a dependency change is now a model change. The issue gate went **16 blocking -> 3**, and with two further non-run defects filed by this session (#164, #165) the unscoped gate reads **5** and is RED at handoff. Registry **482 -> 489**. **NO ARM WAS LAUNCHED, no approval was sought or spent, no target value changed, no demand or network was rebuilt, the 67/143 split is untouched, and nothing here is a reading of any mode. The controler IS recompiled and green, so the NEXT arm opens a comparability family - and no family row is added, because no launch happened.** |
 | 2026-09-08 | **The F31 gate: ride places the right lengths and still carries too few (§9.157; #86, #48, #98, #94, #107; thirty-fifth session).** `aborted_20260908T100009_300it_25pct`, the first arm of family F31 and the first run to carry `RUN.travel_time.filter_modes` = true, was stopped by the gate watcher at **iteration 100** with 7 modes at or past 20 % - `stopped_at_gate`, median **261.03 s**, wall **7.66 h**, inside its 18.2-21.8 h approval. car **+5.4 %** (1 of 12 inside), walk -11.1 %, motorbike +13.7 %, ride -38.0 %, bus +54.6 %, ferry -65.6 %, bike +147.4 %, taxi +178.4 %, light rail -47.2 %, heavy rail +247.2 %. **Nothing is compared with F28, F29 or F30** - three family boundaries separate them. Ride's mean trip is **9.17 km against an observed 9.76**, so what remains is VOLUME, not placement. Inside this reading the twelve deviations sum to +0.086 pp, ride is -7.830 pp and the modes beating it total +9.500 pp; a pro-rata recovery would put car, bus and motorbike inside 10 %. The progress line §9.156 restored reports **33.4 %** of pt routing requests with no transit route and **40.6 %** of the rest choosing the network walk, beside walk's mean of 4.51 km against an observed 0.70. The counter fix held (3 sample lines against F28's 19,469) and the arm's 261.03 s landed 0.5 % from the quoted top anchor. **No value changed, no cause fixed, requirement 8 still unmeasured, the 67/143 split untouched.** |
 | 2026-09-08 | **The arm priced on the iteration it repeats, a log guard that had never counted, and forty licence crossings closed (§9.156; #159, #66, #154; thirty-fifth session).** `arm_cost.py` priced on `median_iteration_s`, a median over every iteration a run ran; on `20260908T014214_4it_25pct` that read **282.6 s** against a recurring **216.0 s** (iterations 2 and 3 at 213 and 219 s), the one-offs being iteration 0 at 326 s, iteration 1 at 282 s and the final iteration at 350 s. It now prices the recurring iteration, carries the one-offs once each, and warns when the priced run never met a milestone. The next 300-iteration arm: **18.2 h bottom / 21.8 h top**, gate at **6.1 h**, against **31.5 h** at HEAD. `f30_plain_probe_25pct` declares the unprofiled pricing probe. `NetworkDirectWalkPtRouter` counted in instance fields under an UNSCOPED Guice provider, so its "first 3" sample wrote **19,469** lines on the F28 arm (~36 % of its log) and its progress line had fired **0** times in the project's history; run-lifetime atomics give **3** lines and the first firing ever. **40** manifest rows moved CC-BY → ODbL — the scenario schedules carry **357,893** OSM route link references and the parking tables are keyed on `link_id` — taking ODbL rows **161 → 201**; the other **129** were refused and filed as **#159**, because the ancestry that would relabel them credits a script's inputs to every output it writes. `PT2MATSIM_SHA256` pinned (it alone fetched with no expected digest); CI given least privilege; `RUN.monitor.stall_s` keeps 300 and loses a false reason. **REFUSED after checking:** switching on tram priority (it IS the S2b intervention, `sweep_role: answer`) and moving build wall time out of the hashed set (§3.5 already churns the hash). Unit tests **139 → 147**. **Family `F31-the-car-router-reads-only-cars` opened at the arm** — `RUN.travel_time.filter_modes` = true reaches a run for the first time and the controler was recompiled — and `20260908T100009_300it_25pct` is running under an 18.2–21.8 h stated-cost approval, with #159 overridden by `--allow-open-issues` on the operator's decision. **No target value changed, no demand or network was rebuilt, the 67/143 split is untouched, and nothing here is a reading of any mode.** |
 | 2026-09-08 | **The events knob bracketed, the 2-minute target priced out, and three manual operations codified (§9.155; #66, #132; thirty-fourth session).** The 120 s ask is answered with arithmetic before a knob is turned: the mobsim alone is **143 s** of a 205.5 s iteration, so zeroing every other phase still lands above 120, and all three measured levers taken at their full CPU share land near **171 s**. The one untested value of `RUN.machine.event_handler_threads` was probed — 1 was saturated (§9.56), 12 bought nothing (§9.59), **2 had never been run** — and `20260907T233540_4it_25pct` is **44.5 % SLOWER** on plain iterations (205.5 → 297.0 s, mobsim 143 → 226 s, +58 %). The 11.6 % of CPU the §9.154 recording found in `LinkedBlockingQueue.offer` is therefore **not waste but the price of short pipeline stages**, and 4 now stands on evidence from both sides. Bounded for next time: `timeVariantNetwork` makes all **143,891** links time-variant to represent **2,441 events on 16**. Recommendations taken: the **72.8 GiB** untrimmable leak closed (the space becomes RECLAIMABLE at the next trim that needs it; the store is under cap today) (`RUN.storage.extract_grace_s` declared; the #132 race and the leak both pinned by `tests/unit/test_trim_grace.py`), `raw_cap_gb`'s units corrected to gibibytes, and `check_legacy_drift.py`'s false "the constant is gone" corrected — `dwell_charging_s=20.0` is live and writes a manifest artefact. One assessment recommendation **REFUSED after checking**: `fit.py`'s patronage scorer is correct and self-declaring, not empty. Codified: `session_gate.py --fix`, `src/analyse/compare_runs.py`, `src/run/verify_launch.py`. Registry 480 → 482, unit tests 125 → 139. **No target changed, no arm ran to a gate, no family opened, the 67/143 split untouched, nothing here is a result.** |

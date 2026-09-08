@@ -69,6 +69,20 @@ A2 = _city.path('data/processed/corridor/A2_signal_control_corridor.csv')
 E1 = _city.path('scenarios/E1_scenarios.csv')
 SCHEDULES = _city.path('networks', 'matsim', 'schedules')
 OUT_ROOT = _city.path('networks', 'matsim', 'signals')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. Every signal system, group,
+# control and timing file is written from the same corridor control table and
+# the scenario's own mapped network, so one glob covers the subtree. The
+# corridor table is OpenStreetMap-descended (its signal nodes come from the
+# Overpass signals extract, matched to the published TfNSW inventory), and
+# the mapped network is too, so the signal layer carries the obligation.
+OUTPUT_INPUTS = {
+    'networks/matsim/signals/*': [
+        'data/processed/corridor/A2_signal_control_corridor.csv',
+        'scenarios/E1_scenarios.csv',
+        'networks/matsim/schedules'],
+}
 OUT_REPORT = os.path.join(OUT_ROOT, '_signals_report.json')
 
 MIN_GREEN_S = CFG.get('A.signals.min_green_s')
@@ -588,4 +602,14 @@ def main():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

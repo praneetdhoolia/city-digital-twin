@@ -37,6 +37,44 @@ HTS = _city.path('data/processed/hts')
 CEN = _city.path('data/processed/census')
 COR = _city.path('data/processed/corridor')
 OUT = _city.path('data/processed/validation')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. This is the script the issue was
+# opened on: it writes eight files from four unrelated observations, and the
+# manifest credited every one of them with the OpenStreetMap corridor extract,
+# so a TfNSW patronage time series carried a parking and a signals harvest in
+# its provenance. Five of the eight touch no OSM-descended input at all. The
+# three that do are named here, and they do descend from one: the corridor
+# report is built on the OSM alignment, and the count-comparison file reads
+# the activity chains, whose destinations are placed on Overpass features.
+OUTPUT_INPUTS = {
+    'data/processed/validation/lr_monthly_series.csv': [
+        'data/processed/observed/opal_lr_newcastle_by_month_cardtype.csv'],
+    'data/processed/validation/lr_taps_by_stop.csv': [
+        'data/processed/observed/opal_lr_newcastle_by_stop.csv'],
+    'data/processed/validation/bus_monthly_series.csv': [
+        'data/processed/observed/opal_bus_newcastle_hunter.csv'],
+    'data/processed/validation/station_entries_exits_mean.csv': [
+        'data/processed/observed/station_entries_exits_newcastle.csv'],
+    'data/processed/validation/road_aadt_targets.csv': [
+        'data/processed/observed/traffic_aadt.csv',
+        'data/processed/observed/traffic_count_stations_newcastle.csv'],
+    'params/C3_count_comparison.json': [
+        'data/processed/observed/traffic_aadt.csv',
+        'data/processed/observed/traffic_count_stations_newcastle.csv',
+        'demand/plans/B2_activity_trips_WEEKDAY.csv'],
+    'data/processed/validation/validation_targets.csv': [
+        'data/processed/observed/opal_lr_newcastle_by_month_cardtype.csv',
+        'data/processed/observed/opal_lr_newcastle_by_stop.csv',
+        'data/processed/observed/opal_bus_newcastle_hunter.csv',
+        'data/processed/observed/station_entries_exits_newcastle.csv',
+        'data/processed/observed/traffic_aadt.csv',
+        'data/processed/observed/traffic_count_stations_newcastle.csv',
+        'data/processed/hts/hts_mode.csv',
+        'data/processed/corridor/_corridor_report.json'],
+    'data/processed/validation/_validation_report.json': [
+        'data/processed/validation/validation_targets.csv'],
+}
 os.makedirs(OUT, exist_ok=True)
 
 rows = []
@@ -427,4 +465,14 @@ def main():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

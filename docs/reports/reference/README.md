@@ -44,84 +44,98 @@ on every pass.
 
 ## State
 
-Last pass **7 September 2026**, at `f40d332`, lodged as
-[`20260907T231739_project_report.html`](../20260907T231739_project_report.html)
-— the fourth pass of that day, and the one that refreshed **both** lanes (the
-previous refresh of each was the pass at `af7d718`, lodged as
-[`20260907T173435_project_report.html`](../20260907T173435_project_report.html)).
-Seeded 7 September 2026 from the `report-data` block of
-`20260907T013735_project_report.html`, read at `9cd8b4f` before that report was
-deleted in `03b5220`.
+Last pass **8 September 2026**, at `6cf0ffd` (the PR #161 merge), lodged as
+[`20260908T192638_project_report.html`](../20260908T192638_project_report.html)
+— the fifth pass of the library and the first at this commit. The previous
+refresh of both lanes was the pass at `f40d332`, lodged as
+[`20260907T231739_project_report.html`](../20260907T231739_project_report.html),
+six hours earlier.
 
-### `field-survey.json` — 35 of 40 searches spent, 5 rounds (7 September 2026, fourth pass, at `f40d332`)
+That six-hour gap is the clearest demonstration yet of what the library is for.
+Every stored row was **one day old and inside its horizon**, so across both lanes
+**not one stored fact was re-searched**: 58 field rows and 67 factor literature
+halves were carried in as they stand, and all 71 calls the two lanes spent went
+to gaps and to this session's new question. A pass that had to re-establish the
+field from scratch could not have afforded the calibration research at all.
 
-| | count | this pass |
-|---|---:|---|
-| projects surveyed | **46** | **43 reused unchanged, 0 re-searched, 1 updated** (POLARIS Chicago, its rung now carried by a verbatim 2026 validation sentence), **2 added** (the SEMCOG ActivitySim model for Detroit; the Washington DC open-data MATSim COVID study) |
-| platforms surveyed | 12 | 7 reused unchanged; **5 more `unknown` cells filled — the licence gap is CLOSED**: MATSim is the GNU GPL per the `<licenses>` block of `matsim/pom.xml` (GitHub's licence API 404s because there is no SPDX-detectable `LICENSE` at the root, which is why four earlier routes found nothing); mobiTopp 0.3.1 = 16 May 2024; eqasim v2.2.0 = 3 June 2026; OpenPaths 2025 Update 1 = 4 December 2025; SimMobility city-agnostic by design |
-| candidates excluded | 53 | 7 added — Virtual Singapore (a 3D visualisation and experimentation platform, no ABM of its own), arXiv 2501.10221 (no city), the Takamatsu MATSim study (no validation claim), and four 2026 "digital twin" papers that are not city travel models |
-| rows not re-verified | 37 | 3 added (ARC, the Brussels fit as its own entry, an eqasim French-cities 2026 lead), 2 notes updated (Monty's third and fourth failed routes; MTC/ARC/PSRC/SEMCOG split apart) |
-| open gaps | 4 | 2 inherited and **narrowed**, 1 **closed** (the platform-licence gap), 1 carried unchanged (MUM 2026, 28 September — in the future, no budget spent), 1 added (the residue of the closed platform gap) |
-
-Not one stored row was re-searched: all 44 project rows and 12 platform rows
-carried `last_verified` 2026-09-07 from the same day's earlier pass, inside both
-horizons. The budget went to the library's gaps in order, then to never-seen
-candidates, then to `unknown` cells, and **the pass stopped on the stopping
-rule, not the budget** — rounds 4 and 5 were two successive rounds of
-differently phrased sweeps (agency ActivitySim programmes, Australian and
-Victorian ABMs, Japanese/Korean/Chinese MATSim scenarios, African and South
-American models, eqasim 2026, generic 2026 "digital twin validated per mode")
-and neither added a qualifying entry. Five searches were left unspent and the
-work they would have done is written back as gaps. The validation ladder now
-stands at 7 / 9 / 24 / 6 / 0 (none / survey shares / road link counts / transit
-ridership / per-mode every mode) over 46 rows; **no project publishes the top
-rung**, and our own row moved the other way — from one mode of twelve inside
-10 % to none.
-
-### `factors.json` — 21 of 40 searches spent, 6 rounds (7 September 2026, fourth pass, at `f40d332`)
+### `field-survey.json` — 38 of 40 searches spent, 7 rounds (8 September 2026, at `6cf0ffd`)
 
 | | count | this pass |
 |---|---:|---|
-| factors listed | 72 | unchanged; none added, none retired |
-| literature half filled | **72** | **69 reused unchanged** (all inside the 365-day horizon) and **3 completed** — route choice, ride pairing / matching, age and sex |
-| still `needs_research` | **2** | workplace location and external and through traffic. Two rounds of differently phrased searches added nothing to either, so the stopping rule was applied rather than a further round; each keeps a **narrowed** query naming the exact route to try next |
-| statuses stored | **0** | by design — every status was re-read at `f40d332` for all 72 rows by `grep` of `cities/newcastle/registry/`, `src/`, `cities/newcastle/build/`, `src/java/` and `src/java_signals/`, plus a read-only `check_hardcoding.py`. This pass: **IN 37 · PARTIAL 27 · INERT 2 · ASC 1 · OUT 5** (previous pass at `af7d718`: 35 / 28 / 1 / 2 / 6) |
+| projects surveyed | **48** | **46 reused unchanged, 0 re-searched**, **2 added** — the ARC ABM (Atlanta CT-RAMP), promoted out of `not_reverified` because the *specification* report was the smaller route the last pass named and it worked; and Barcelona's SUMO traffic twin |
+| platforms surveyed | 12 | all 12 reused; 5 gained a new cell |
+| candidates excluded | **56** | 3 added — the Bloomington GP-emulator paper, the Las Palmas smart-cities architecture, the Rzeszów roundabout study |
+| rows not re-verified | 37 | unchanged in count; ARC's note rewritten as it left the list |
+| open gaps | **6** | SUMO's named-city cell **CLOSED** (Barcelona, plus Cologne, Nuremberg, Berlin, Rome, Ingolstadt); TRANSIMS partly closed (SourceForge evidences **7.1, 2018-07-12** — the stored "7.5" is *not* evidenced and is now marked so) |
+| **`calibration_methods`** | **10 — NEW** | added for the session's directive: how the field actually calibrates, one row per method with its published objective-evaluation count |
 
-**Where the next pass's budget goes.** The two dead lanes of the 7 September
-pass are closed. What is left:
+The validation ladder over 48 rows is **7 / 9 / 25 / 7 / 0** (none / survey shares
+/ road link counts / transit ridership / per-mode every mode). **The top rung is
+still empty.** Our own row is counted separately, is the only attempt at that rung
+anywhere, and reads 1 of 12 inside 10 % — recorded as a new reading rather than an
+improvement, because three family boundaries and a different iteration separate it
+from the previous pass's 0 of 12.
 
-1. **2 factor rows still needing research**, one of them `high` relevance —
-   **workplace location** (no published Australian journey-to-work flow
-   tolerance; the FHWA validation manual chapter 3 was fetched this pass and
-   states there are no criteria guidelines for trip-distribution checks, so try
-   the AToM full text on ResearchGate `357268039` or the `matsim-melbourne`
-   validation notebooks) and **external and through traffic** (the quantity is
-   cordon-specific by construction; try the TfNSW Lower Hunter Freight Corridor
-   and M1 Raymond Terrace EIS traffic chapters directly — a general search
-   returns only the ~15 % heavy-vehicle share on the New England Highway, which
-   is a vehicle-class share, not a through share). Dead fetches this pass, **do
-   not retry**: the AToM arXiv PDF (over the 10 MB limit), the Taylor & Francis
-   AToM full text (403), Springer `10.1007/s11116-021-10259-4` (auth redirect —
-   the PMC copy `PMC7614415` works), `PMC9987251` (captcha), the alogit Sydney
-   model PDF (unreadable). Two sources from the second pass remain
-   abstract-level (the Transport Reviews e-bike meta-analysis, the Melbourne
-   bicycle-ownership study) and stay labelled as such in their rows.
-2. **The agency programmes still not reached** — Monty (four routes have now
-   failed: both `transport.govt.nz` pages return blank bodies, Arup 403s, the
-   MATSim showcase carries no validation claim), ARC's ABM calibration report
-   (its PDF exceeds the 10 MB fetch limit; try the smaller specification
-   report), and MTC's Travel Model Two (TM2.3, still in development, no report
-   published). SEMCOG is now a row; Virtual Singapore and TfNSW are excluded.
-3. **Unreached fits** — Brussels (four routes failed, including ResearchGate,
-   which is now confirmed to 403 the agent) and the MDPI on-demand study; plus
-   the Washington DC study's **full text**, which is gold open access under
-   CC BY yet Springer 303s to its identity provider, so its SafeGraph
-   R² = 0.99 is still only a search-index snippet. The DC abstract was
-   recovered through the Semantic Scholar graph API — a route worth reusing.
-4. **The residue of the closed platform gap** — the base OpenPaths 2025
-   (v25.00.00) announcement date, the TRANSIMS 7.5 release date, and a named
-   agency or city running on SUMO.
-5. After **28 September 2026**, the **MUM 2026 programme**, where a new
-   calibrated city scenario or a Wellington validation would surface first.
-   The LLM lane's stopping rule has now been met three passes running; do not
-   spend budget there without a new lead.
+**The new `calibration_methods` array is the most reusable thing this pass
+produced.** Two findings in it are worth more than the table: **no project or
+framework anywhere in the survey publishes an objective-evaluation count** — the
+cost of calibration is the field's unreported number; and the leading open
+implementation of the standard answer, `matsim-vsp/matsim-python-tools`, computes
+the ASC update verbatim as
+`math.log(z_i) - math.log(m_i) - (math.log(z_0) - math.log(m_0))` under Optuna
+while its `TerminationCondition.check_termination` carries `# TODO: not used yet`
+and no default learning-rate scheduler. The standard answer is standard, widely
+used, and unfinished.
+
+### `factors.json` — 33 of 40 searches spent, 5 rounds (8 September 2026, at `6cf0ffd`)
+
+| | count | this pass |
+|---|---:|---|
+| factors listed | **79** | **7 added**, all in Layers H and I, for the session's directive |
+| literature half filled | **79** | 67 of 72 reused unchanged inside the 365-day horizon; 5 rewritten |
+| still `needs_research` | **0** | **both remaining rows CLOSED** — workplace location (the finding is that *no* OD-flow tolerance exists anywhere; AToM validates work travel as a mode share to ±1 pp against the 2016 census) and external/through traffic (the M1 Raymond Terrace EIS puts the divertible share at the Hexham cordon at **25–45 %**, and `B.external.through_share = 0.35` sits inside it) |
+| statuses stored | **0** | by design. All 79 were re-read at `6cf0ffd` by grep of the registry, `src/`, the city build layer and both Java trees, plus a read-only `check_hardcoding.py`. This pass: **IN 39 · PARTIAL 29 · INERT 2 · ASC 1 · OUT 8** (previous pass: 37 / 27 / 2 / 1 / 5) |
+
+**Not one of the 72 carried-over factors changed status class.** The entire delta
+is the seven rows added. Between two reports a day apart, spanning a full
+comparability family and a gate firing, the model's *behavioural surface* did not
+move — which is itself the result.
+
+The seven new rows carry the evaluation counts that price every candidate method:
+SPSA (2 evaluations per gradient step, but 120 % → 117 % in fifteen iterations on
+a 30,000-dimension problem); Osorio's analytical metamodel (**120 % → 32 % within
+one simulation iteration**, an improved plan at n=10 over 51 variables);
+random-forest surrogate under Bayesian optimisation (**477 parameters fitted from
+aggregate mode shares alone**, best point at ~150 evaluations); cross-entropy
+(**98,304 evaluations** for a three-intersection SUMO model); and in-loop CMA-ES
+(zero extra runs, but it needs unit-record survey plans, which the NSW HTS does
+not have).
+
+## Where the next pass's budget goes
+
+1. **The residue of the platform gap** — the base OpenPaths 2025 (v25.00.00)
+   announcement date is all that is left of it.
+2. **Unreached fits** — Brussels (five routes have now failed) and the MDPI
+   on-demand study; and the Washington DC study's full text, gold open access
+   under CC BY yet Springer 303s to its identity provider.
+3. **After 28 September 2026, the MUM 2026 programme**, where a new calibrated
+   city scenario or a Wellington validation would surface first. Nothing was
+   spent on it this pass because the date is in the future.
+4. **Monty (NZ)** now has *five* failed routes including `web.archive.org`, which
+   this repository's own network sandbox blocks and which therefore can never
+   work from here. Treat it as closed unless a new lead appears.
+
+**Routes that work, and should be reused.** The **Semantic Scholar graph API**
+recovered three sources this pass and is the recommended way past MDPI and
+Springer. A PDF that `WebFetch` returns as binary can be **saved locally and read
+with page ranges at no search-budget cost** — that recovered five of this pass's
+best sources, including the Osorio n=10 figure, which was read directly from the
+PDF rather than from an abstract.
+
+**Dead routes, recorded so no later pass pays for them again:** `web.archive.org`
+(sandbox-blocked), MDPI article HTML (403 on three DOIs), ScienceDirect (403),
+ResearchGate (403 to the agent), `arxiv.org/pdf/2112.12071` (over the 10 MB fetch
+limit), CMAP's PDF (an image-only scan), `matsim-org/matsim-python-tools` (404 —
+it lives under `matsim-vsp`), the eqasim docs path (404), the Open Berlin paper
+(403) and opdyts' page (404). The last two are why those methods' outer-run counts
+are marked `unknown` rather than guessed.

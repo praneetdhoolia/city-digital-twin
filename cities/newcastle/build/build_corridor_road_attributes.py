@@ -77,6 +77,35 @@ import registry as _registry  # noqa: E402
 CFG = _registry.load()
 
 OUT = _city.path('data/processed/network')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The four corridor attribute
+# files are written from one pass over the OpenStreetMap road and signal
+# extracts, the road edge table cut from them, the E1 variant declaration and
+# the light rail alignment feeds.
+OUTPUT_INPUTS = {
+    'data/processed/network/A1_corridor_road_edges.csv': [
+        'networks/osm/roads.osm', 'networks/osm/signals.osm',
+        'data/processed/network/A1_road_edges.csv',
+        'scenarios/E1_road_variants.csv',
+        'schedules/raw/base2026/lightrail.zip'],
+    'data/processed/network/A1_road_variant_patches.csv': [
+        'networks/osm/roads.osm', 'networks/osm/signals.osm',
+        'data/processed/network/A1_road_edges.csv',
+        'scenarios/E1_road_variants.csv',
+        'schedules/raw/base2026/lightrail.zip',
+        'schedules/scenarios/S2c.zip', 'schedules/scenarios/S4.zip',
+        'schedules/scenarios/S5.zip'],
+    'data/processed/network/A2_turn_restrictions_resolved.csv': [
+        'networks/osm/roads.osm', 'networks/osm/signals.osm',
+        'data/processed/network/A1_road_edges.csv'],
+    'data/processed/network/_corridor_attributes_report.json': [
+        'networks/osm/roads.osm', 'networks/osm/signals.osm',
+        'data/processed/network/A1_road_edges.csv',
+        'scenarios/E1_road_variants.csv',
+        'schedules/raw/base2026/lightrail.zip'],
+}
+
 ROADS_OSM = _city.path('networks/osm/roads.osm')
 SIGNALS_OSM = _city.path('networks/osm/signals.osm')
 E1_ROAD_VARIANTS = _city.path('scenarios/E1_road_variants.csv')
@@ -695,4 +724,14 @@ def write_csv(name, rows):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     build()

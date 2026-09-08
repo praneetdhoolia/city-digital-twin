@@ -38,6 +38,18 @@ import registry as _registry  # noqa: E402
 CFG = _registry.load()
 
 OUT = _city.path('data/processed/corridor')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The corridor layers are one pass
+# over the same three inputs: the OpenStreetMap signal nodes cut from the
+# road network, the published TfNSW traffic-lights inventory they are matched
+# against, and the light rail feed that defines the alignment.
+OUTPUT_INPUTS = {
+    'data/processed/corridor/*': [
+        'data/processed/network/A2_signal_nodes_osm.csv',
+        'data/raw/signals/tfnsw_traffic_lights_location.xlsx',
+        'schedules/raw/base2026/lightrail.zip'],
+}
 os.makedirs(OUT, exist_ok=True)
 LRZIP = _city.path('schedules/raw/base2026/lightrail.zip')
 
@@ -410,4 +422,14 @@ def build():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     build()

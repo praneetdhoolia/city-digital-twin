@@ -89,6 +89,35 @@ CEN = _city.path('data/processed/census')
 OUT = _city.path('data/processed/validation')
 ZON = _city.path('data/processed/zones')
 
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The boardings file is written
+# before the level-crossing report is opened and carries none of it: it is
+# the disclosed Opal and station-entry series against this city's mapped
+# stops. The mode target table IS partly OpenStreetMap-descended, through the
+# freight_train row - the level-crossing closures are counted on crossings
+# matched to road links that came from Overpass.
+OUTPUT_INPUTS = {
+    'data/processed/validation/pt_boardings_targets.json': [
+        'data/processed/observed/opal_lr_newcastle_by_month_cardtype.csv',
+        'data/processed/observed/station_entries_exits_newcastle.csv',
+        'data/processed/zones/zones_LGA.gpkg',
+        'schedules/base2026.zip'],
+    'data/processed/validation/mode_targets_by_mode.csv': [
+        'data/processed/hts/hts_mode.csv',
+        'data/processed/census/census2021_G62_SA1.csv',
+        'data/processed/zones/sa1_to_lga.csv',
+        'data/processed/zones/zones_LGA.gpkg',
+        'data/processed/observed/opal_lr_newcastle_by_month_cardtype.csv',
+        'data/processed/observed/station_entries_exits_newcastle.csv',
+        'data/processed/observed/traffic_aadt.csv',
+        'data/processed/observed/traffic_count_stations_newcastle.csv',
+        'schedules/base2026.zip',
+        'networks/matsim/crossings/_crossings_report.json'],
+    'data/processed/validation/_mode_targets_report.json': [
+        'data/processed/validation/mode_targets_by_mode.csv',
+        'data/processed/validation/pt_boardings_targets.json'],
+}
+
 MON = {'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04', 'May': '05',
        'Jun': '06', 'Jul': '07', 'Aug': '08', 'Sep': '09', 'Oct': '10',
        'Nov': '11', 'Dec': '12'}
@@ -807,4 +836,14 @@ def main():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

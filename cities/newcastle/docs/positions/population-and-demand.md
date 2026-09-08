@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
+**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
 
 ## What is built
 
@@ -43,6 +43,8 @@
 
 ## What is measured
 
+- **THE PLANS CARRY OSM GEOMETRY, AND THE PACKAGE HAD SAID THEY DID NOT** (§9.158, #159). `city.json`'s `derived_licences_basis` claimed the plans "reference OSM way ids as link ids but carry no OSM geometry or tags". That was wrong: `place_in_zone()` returns the attractor's OWN coordinate, and **3,000 of 3,000 sampled `dest_placement=poi` destinations sit within 5 m of an OSM POI or CBD building coordinate, median 1.49 m** — the residual a reprojection difference. `demand/plans/*` is therefore **ODbL 1.0, share-alike**, along with the validation, mode-target and count-comparison artefacts built on it. The synthetic POPULATION stays CC-BY: the synthesiser reads only the ABS identity, tier, area, centroid and population columns of the mixed zone table, which its producer declares as a column subset. Manifest licences now **264 CC-BY / 233 ODbL / 15 bespoke**, `share_alike_ancestor` undetermined **0**.
+- **`B.population.bike_min_age` is movable by the calibration loop for the first time** (§9.158): the movable set went 5 → 21 once a declared `matsim_param` binding was accepted as evidence that a field reaches the run. `B.population.licence_rate_by_age_band` is not and should not be — it is `measured`, not `assumed`.
 - **`Serve passenger` is HX everywhere, and the value-of-time table is keyed on it** (§9.151, #147). The HTS purpose map existed twice: the demand builder sent `Serve passenger` to HX — its own tour purpose since §9.15 — while the run-input assembler folded it into NHB and fed that to `scoring_from_c1()`. One shared map now (`src/build/hts_purpose.py`), HX wins. **The repair exposed a second half**: `C.vot.by_purpose` was still keyed NHB, so the HX weight matched no key, was dropped from the average and the rest renormalised — moving the collapsed value **16.96 → 17.317 AUD/h** against a `C.vot.trip_weighted` declared at 16.96. Re-keyed `NHB` → `HX` at the same 15.2: **renamed, not revalued**.
 - **And it changed no number the model ever scored** (§9.151). With both halves done, **140 of the 141 files under `scenarios/matsim/` came back byte-identical** to the build before the change; the one that differs is `_run_inputs_report.json`, which records the purpose share itself. The disagreement had stood since §9.15 and was a latent hazard, not a live error — NHB and HX both carried 15.2. `C.vot.trip_weighted` stays 16.96.
 - **The household-car roster at F30's iteration 0** (§9.153, `aborted_20260907T150816_300it_25pct`): **8,549 drivers waited for a household car that was out**, car departures **232,972** against F28's 231,607 and car stuck **3,786** against 3,145 — the car-only handler still doing its one job, and nothing like the 55,862 stuck §9.148 recorded when the model was broken. Citable at iteration 0 and nowhere past it.
@@ -64,7 +66,8 @@
 
 - #86 — passenger demand against the observed 20.6%: the four passes reach the identity on paper; at the F26 gate 45.5 % of declared bound trips in selected plans ride and 29,827 are driven by the passenger themselves — 12,317 car legs began with every household car already out (§9.146, #145). The roster is the repair; the first F27 arm measures it.
 - #145 — awaiting the first arm on the roster: car legs starting with every household car out (0 expected for one-car households), the wait distribution, and where the self-driven bound trips settle (§9.146).
-- #50 — no mode × age cell exists in the held data; the age gates are assumed and swept, and the modelled split is sex-invariant against G62 (§9.78, §9.84).
+- **A TfNSW unit-record request for the NSW Household Travel Survey is OUTSTANDING, and until this entry it lived in no repository artefact at all.** The published NSW HTS is AGGREGATE ONLY - shares, trip rates and purpose splits, no person- or trip-level records - so a discrete-choice model cannot be ESTIMATED on it; every behavioural coefficient in `params/` is transferred or solved rather than fitted, and #50's mode × age cell has no source to come from. Victoria's VISTA publishes unit records and NSW does not. The request is the one thing that would unblock estimating choice on this city's own observed behaviour; it is not a run, not a derivation and not something a sweep substitutes for (requirement 6), and it has no owner, no lodgement date and no reference number recorded. **Record its lodgement here when it is made.**
+- **#50 IS NOT AWAITING A RUN — its next step is an ACQUISITION**, and saying so is what unblocked reading it honestly (§9.158). No mode × age cell exists in any held dataset, so no arm can settle it; the age gates stay assumed and swept and the modelled split stays sex-invariant against G62 (§9.78, §9.84). It is one of the three issues BLOCKING the launcher today, and re-scoping or splitting it is the operator's decision, not a close-out's.
 - Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION` and the activity durations (§9.2, §9.61); the 2021 journey-to-work table would sharpen the interaction rate's 2011 vintage and is an attended extract (§9.140).
 - #96 and #93 are awaiting a run on the F24 build: the leaf mixes are repaired at the seed (0 leaf on every day type) and the carve is conserved per LGA (§9.140) — the seed page and the motorbike page carry the numbers.
 - The 9,376 `driver_is_the_companion` refusals that survive the filter are emergent, not structural, and stay reported (`_activity_chains_report.json`, §9.116).
@@ -83,6 +86,7 @@
 
 ## History
 
+- §9.158 — the plans carry OSM geometry and are share-alike; #50 is an acquisition
 - §9.153 — the roster at F30 it.0: 8,549 drivers waited
 - §9.151 — an escort is generated and priced as an escort
 

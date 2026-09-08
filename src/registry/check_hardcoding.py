@@ -413,6 +413,12 @@ STRUCTURAL = {
     'src/run/verify_launch.py:--poll':
         'how often the launch verifier re-reads the log while waiting. It '
         'observes a run that is running anyway and writes nothing',
+    'src/run/issue_gate.py:MIN_EVIDENCE_CHARS':
+        'how much text after "AWAITING-RUN:" on a GitHub issue counts as a '
+        'stated measurement rather than the label written out again. A '
+        'threshold on PROSE IN THE TRACKER, not on anything the model reads: '
+        'the gate refuses a launch, and no value here can reach a run, a '
+        'config or a result',
     'src/analyse/profile_run.py:table(width)':
         'the column width of a printed table',
     'src/analyse/profile_run.py:--top':
