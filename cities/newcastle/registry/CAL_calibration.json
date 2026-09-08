@@ -1,398 +1,417 @@
 {
-  "layer": "CAL",
-  "title": "Calibration (P4 deliverables 4-6)",
-  "description": "What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.",
-  "decisions_ref": "9.16",
-  "fields": {
-    "CAL.objective.components": {
-      "value": {
-        "goal_modes.max_abs_rel_pct": 1.0
-      },
-      "units": "weight_per_fit_component",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.16, 12.1, 9.87",
-      "description": "Dotted paths into _fit.json that form the scalar objective, with their weights. It is `goal_modes.max_abs_rel_pct`: the MAXIMUM absolute deviation, in RELATIVE per cent, over the twelve modes of data/processed/validation/mode_targets_by_mode.csv, each on the basis its own target is stated on, computed by calling the board's own reader (src/analyse/report_mode_ridership.py) so the objective and the gate cannot drift apart. IT WAS `mode_share.mean_abs_pp` AND THAT MEASURED A DIFFERENT THING FROM THE GOAL: a MEAN over FIVE FOLDED survey categories in PERCENTAGE POINTS, where GOAL.md requirement 7 is a MAXIMUM over TWELVE UNFOLDED modes in RELATIVE per cent. The fold is what makes them disagree - heavy rail and light rail sit inside one 'Public transport' cell with OPPOSITE SIGNS (+247.2% and -47.2% at the F31 gate), so a search minimising the mean of the folds could improve its own objective while making both modes worse, and a folded car+motorbike error near zero hides motorbike at +13.7%. A mean also cannot express 'every mode inside 10%': only a maximum can, because the requirement is satisfied exactly when the worst mode is inside the band. Truck and freight rail are REPORTED and never optimised against - the reader itself scores truck on a basis that is not the target's ground (9.101) and freight rail as representation rather than fit. A component named here that is missing from a fit output is a hard error, never a silent zero.",
-      "consumers": [
-        "src/calibrate/calibrate.py"
-      ]
-    },
-    "CAL.objective.include_counts": {
-      "value": false,
-      "units": "boolean",
-      "source": "derived",
-      "derived_from": {
-        "fields": [
-          "B.external.interaction_rate"
-        ],
-        "identity": "the external tier represents boundary demand from one SA4 to the north-west and no through traffic at all, so every boundary-adjacent count is biased low by construction; tuning core network parameters against those counts would be compensating for demand the model does not contain, which is the count analogue of the ASC absorption proposal 9 names as the primary threat to validity (DECISIONS.md 9.14, 9.15)"
-      },
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.14, 9.15",
-      "description": "Whether traffic counts may enter the calibration objective. FALSE, and the loop refuses to start if it is set true without a recorded departure. Counts are still SCORED and REPORTED on every run; they are simply not optimised against.",
-      "consumers": [
-        "src/calibrate/calibrate.py"
-      ]
-    },
-    "CAL.objective.independent_targets": {
-      "value": 10,
-      "units": "count",
-      "source": "derived",
-      "derived_from": {
-        "fields": [
-          "CAL.objective.components"
-        ],
-        "identity": "The objective is now the twelve-mode board, so the count is the number of INDEPENDENT numbers that board contains. Twelve rows, less truck (scored 'level only' - a network-wide vehicle share against a freight-route observation, not the target's own basis, 9.101) and less freight_train (representation: the crossing closures ARE the timetable, so its 0.0% is a tautology), leaves TEN scored modes. All ten are independent: EIGHT are shares of resident linked trips (car, ride, walk, taxi, bike, motorbike, bus, ferry) and TWO are weekday boardings (heavy_rail, light_rail) on a different basis entirely. The adding-up identity that removed one degree of freedom from the old five folded shares DOES NOT BIND here: the eight share targets sum to 98.42%, and the residual is taken up by the two rail modes, whose SHARE is not itself a declared target - they are targeted on boardings. So no linear constraint ties the ten together and the count is ten, not nine. It was 4, which was correct for the OLD objective (five HTS mode shares summing to one, hence four independent) and is the reason the loop refused to move five parameters: it was refusing to fit the twelve-mode goal with the four-number folded objective's budget."
-      },
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "12.1, 9.87",
-      "description": "How many independent numbers the objective actually contains. The loop refuses to move more free parameters than this, because a fit of more parameters than data is not a calibration. This is the ceiling on the search's width, not a target for it: a search should still move the fewest parameters that can reach the residual.",
-      "consumers": [
-        "src/calibrate/calibrate.py"
-      ]
-    },
-    "CAL.search.points_per_parameter": {
-      "value": 3,
-      "units": "count",
-      "source": "assumed",
-      "sweep": [
-        3,
-        7
-      ],
-      "sweep_basis": "DECISIONS.md 9.16: three is the smallest number of points that can show curvature along a sweep interval and each point is a full run, so the interval runs from that floor to seven. A control of the calibration search, never of the model. No observed spread.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.16",
-      "description": "Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Three is the smallest number that can show curvature. Each point is a full run, so this multiplies wall clock directly.",
-      "consumers": [
-        "src/calibrate/calibrate.py"
-      ]
-    },
-    "CAL.search.max_rounds": {
-      "value": 3,
-      "units": "count",
-      "source": "assumed",
-      "sweep": [
-        1,
-        6
-      ],
-      "sweep_basis": "DECISIONS.md 9.16 names this a control of the search loop itself, and calibrating the search against itself is the failure it guards; the interval runs from a single pass to twice the declared three. No observed spread.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.16",
-      "description": "Maximum coordinate-descent passes over the free parameters. The loop stops earlier if a pass improves the objective by less than CAL.search.convergence_delta.",
-      "consumers": [
-        "src/calibrate/calibrate.py"
-      ]
-    },
-    "CAL.search.convergence_delta": {
-      "value": 24.88,
-      "units": "per cent",
-      "source": "derived",
-      "derived_from": {
-        "fields": [
-          "CAL.search.reading_drift_pct"
-        ],
-        "identity": "convergence_delta = reading_drift_pct. A coordinate pass that 'improves' the objective by less than the reading's own noise has not been shown to improve anything: the same run read twenty iterations later moves further than that by itself, on all six arms measured. So the stopping rule is the noise floor, and it is derived from it rather than chosen beside it. IT WAS 0.25 pp, in the units of the OLD folded objective, and it was SMALLER THAN THE MEASURED DRIFT ON EVERY ARM (by 1.09x to 1.67x) - a search under it would have stopped, or failed to stop, on noise. Its stated floor of 0.1 pp cited the seed spread 9.7 measured; that was the right instinct pointed at the wrong quantity, because seed spread is the spread BETWEEN runs and this is the drift WITHIN one."
-      },
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.16, 9.7",
-      "description": "A coordinate pass that improves the objective by less than this ends the search, in the units of the objective - which is now the maximum relative deviation across the twelve modes, in per cent. A CONSEQUENCE WORTH READING PLAINLY: at 17.76 the rule is coarser than most candidates will move the objective, so a search scored at iteration 100 will stop almost immediately. That is not a defect in the rule - it is the measurement telling us the reading point cannot resolve a search. calibrate.py refuses to start one rather than run a search that would be reading noise.",
-      "consumers": [
-        "src/calibrate/calibrate.py"
-      ]
-    },
-    "CAL.pt_split.window_months": {
-      "value": 12,
-      "units": "months",
-      "source": "assumed",
-      "sweep": [
-        6,
-        24
-      ],
-      "sweep_basis": "DECISIONS.md 9.87 declares 12 swept 6-24: twelve months removes the seasonal cycle exactly once, six is a half-cycle and seasonally biased, twenty-four reaches back into the patronage recovery. A window on the observed series, not a spread of it.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.87",
-      "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
-    },
-    "CAL.pt.weekday_factor": {
-      "value": 1.0727,
-      "units": "ratio",
-      "source": "assumed",
-      "sweep": [
-        1.0,
-        1.3
-      ],
-      "sweep_basis": "Set from the demand's own day-type trip ratio - demand/plans/matsim/_plans_report.json: by_day.WEEKDAY.legs_selected_plan / ((5 x WEEKDAY + SAT + SUN) / 7) = 2,343,321 / 2,184,254 - the demand's own weekday-to-mean-day trip ratio, applied to an all-days daily boardings count to state it per WEEKDAY - and declared assumed because the schema's `derived` means implied by other registry fields, which this is not: it is read from the demand build. The published patronage series are monthly totals with no day-type split, and the run is a WEEKDAY. The ratio of a weekday's trips to the mean day's is taken from the demand's own three day types (1.0727 for all trips); public transport is more weekday-peaked than travel as a whole, so the sweep runs from no uplift to 1.3. Never fitted.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.130",
-      "consumers": [
-        "cities/newcastle/build/build_mode_targets.py"
-      ],
-      "description": "Weekday uplift applied to an all-days daily boardings count (light rail line boardings, heavy rail station entries) so the target is stated per WEEKDAY, the day type the gated arms run. Derived from the demand's own day-type trip ratio."
-    },
-    "CAL.pt_split.station_scope": {
-      "value": "target_lga",
-      "units": "enum",
-      "source": "assumed",
-      "sweep": {
-        "categorical": [
-          "target_lga",
-          "all_observed"
-        ],
-        "basis": "The HTS level the PT split scales is a share of trips made by residents of the TARGET LGA, so the boardings composition that splits it must be measured over the same ground. `target_lga` counts only stations the city's own mapped schedule contains AND that fall inside the target LGA boundary - both tested, never named in a script. `all_observed` reproduces the pre-9.100 behaviour, which pooled every station the publication happened to carry: three LGAs of train boardings and a light rail stop belonging to another city entirely. It is kept as the sweep's other arm because the bus series has no station-level breakdown and so cannot be restricted the same way, which leaves a real asymmetry between the legs rather than a settled one."
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.100",
-      "description": "Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all."
-    },
-    "CAL.pt_split.break_ratio": {
-      "value": 0.5,
-      "units": "ratio",
-      "source": "assumed",
-      "sweep": [
-        0.35,
-        0.7
-      ],
-      "sweep_basis": "DECISIONS.md 9.100: a genuine seasonal trough in the held series is about 20% below the trailing median and the Newcastle bus contract break of 2025-04 is 88% below, so the half-way threshold is separated from both by a wide margin and the interval spans the width of that margin rather than probing a boundary anything sits near. No observed spread.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.100",
-      "description": "A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near."
-    },
-    "CAL.pt_split.lr_observed_stop_share": {
-      "value": 0.3696,
-      "units": "share_of_line_boardings",
-      "source": "measured",
-      "sweep": [
-        0.3372,
-        0.3755
-      ],
-      "sweep_role": "measurement",
-      "status": "active",
-      "decisions_ref": "9.100",
-      "description": "The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged."
-    },
-    "CAL.mode_split.commute_transfer_tolerance": {
-      "value": 0.25,
-      "units": "ratio",
-      "source": "assumed",
-      "sweep": [
-        0.1,
-        0.5
-      ],
-      "sweep_basis": "DECISIONS.md 9.87 declares 0.25 swept 0.1-0.5: the half-width of the interval placed on any target derived by applying a census commute composition to an all-purpose HTS level, spanning a tight 10% to a loose 50%. It bounds a transfer whose error is unmeasured; no observed spread.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.87",
-      "description": "The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%."
-    },
-    "CAL.mode_split.vehicle_driver_level": {
-      "value": 0.59,
-      "units": "share_of_trips",
-      "source": "measured",
-      "sweep": [
-        0.5605,
-        0.6195
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.115",
-      "description": "The survey's all-purpose Vehicle driver level - the share of resident person trips made as the driver of a private vehicle - READ from the household travel survey level table that build_mode_targets.py already splits into car, motorbike and resident truck driving, and asserted against that source on every build. It is declared here because it is the CONVERSION that carries a census commute-JOURNEY share to an all-purpose TRIP share, and a carve that omits it overstates its mode by the ratio of the two driver shares (9.115). The sweep is a DECLARED +/-5% band on the transfer, not a measured spread: the survey publishes this level as a single figure and no repeated measurement of it exists in the package, so the band expresses how far the conversion may be wrong rather than an observed variation. It is not a free parameter.",
-      "consumers": [
-        "cities/newcastle/build/build_mode_targets.py",
-        "src/build/build_matsim_plans.py"
-      ]
-    },
-    "CAL.mode_split.motorbike_driver_journey_share": {
-      "value": 0.0064151,
-      "units": "share_of_driver_journeys",
-      "source": "measured",
-      "sweep": [
-        0.0060943,
-        0.0067359
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.115, 9.122",
-      "description": "Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.",
-      "consumers": [
-        "cities/newcastle/build/build_mode_targets.py"
-      ]
-    },
-    "CAL.mode_split.truck_driver_journey_share": {
-      "value": 0.0050729,
-      "units": "share_of_driver_journeys",
-      "source": "measured",
-      "sweep": [
-        0.0048193,
-        0.0053265
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.125",
-      "consumers": [
-        "cities/newcastle/build/build_mode_targets.py"
-      ],
-      "description": "Census G62 one-method Truck journeys to work as a share of one-method DRIVER journeys to work for the target LGA's SA1s - 223 of 43959 - READ from the census extract and asserted against it on every build. The cell build_mode_targets.py has always deducted from the driver level as the resident-truck slice (0.2993% of resident trips); since 9.125 the plans builder also carves residents locked to `truck` from it, so the directive's resident truck drivers exist in the population and the yardstick's deduction describes them."
-    },
-    "CAL.truck.count_year_from": {
-      "value": 2023,
-      "units": "year",
-      "source": "assumed",
-      "sweep": [
-        2019,
-        2025
-      ],
-      "sweep_basis": "DECISIONS.md 9.87 declares 2023 swept 2019-2025: 2023 is the first full year clear of the pandemic freight anomaly, 2019 the pre-pandemic year on a different network, 2025 the newest full year of classified counts. A choice of pooling window over the observed series, not a spread of it.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.87",
-      "description": "The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year)."
-    },
-    "CAL.gate.stop_deviation_pct": {
-      "value": 20.0,
-      "units": "per cent",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.87",
-      "description": "The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading."
-    },
-    "CAL.pt.censored_cell_value": {
-      "value": 0.0,
-      "units": "trips per month",
-      "source": "assumed",
-      "sweep": [
-        0.0,
-        25.0
-      ],
-      "sweep_basis": "the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.130",
-      "description": "The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series, where the statistic is a SUM over stations and dropping a cell would drop a station's whole contribution. The validation-target builder EXCLUDES censored cells from its station means instead, and that exclusion is now RECORDED as the pre-registered treatment of those 143 holdout rows rather than left open (#129 decided 4 Sep 2026, DECISIONS.md 9.142): a mean over station-months is missing data when a month is censored, not a zero month. Measured before deciding: the whole package holds ONE censored cell (Tarro Station, Exit, 1 month of 21; the other three Opal series carry none), it lies outside the (Train, Entry) series this field's heavy-rail target sums, so the two rules AGREE on every scored target and this field's sweep moves no target at either end - 0 and 25 both reproduce mode_targets_by_mode.csv byte for byte. The exclusion's only effect is Tarro's own holdout mean, 106.2 trips/month excluded against 101.1 at 0 and 102.3 at 25. build_validation_targets.py measures rather than assumes that this stays true: it refuses to build if a censored cell reaches the (Train, Entry) series, if any station-direction group becomes wholly censored, or if censoring exceeds CAL.pt.censored_share_max.",
-      "consumers": [
-        "cities/newcastle/build/build_mode_targets.py"
-      ]
-    },
-    "CAL.pt.censored_share_max": {
-      "value": 0.05,
-      "units": "share of cells",
-      "source": "definition",
-      "sweep": null,
-      "held_fixed": {
-        "rule": "A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must stop, and no model output varies with it - at any value in a wide neighbourhood the guard's verdict on the held series is the same, because that series is at 0.09% (1 censored cell in 1,092). Sweeping it would sweep the point at which the project refuses to keep building, which is a rule about honesty rather than a quantity about Newcastle.",
-        "decisions_ref": "9.142"
-      },
-      "status": "active",
-      "decisions_ref": "9.142",
-      "description": "The share of cells in the station entries/exits series above which build_validation_targets.py REFUSES to build rather than quietly exclude censored cells from its holdout means (#129). Excluding a censored station-month is defensible while censoring is marginal - the mean simply rests on the months that were published - but every excluded cell is known to be BELOW 50, so exclusion biases the mean upward, and past some density that bias stops being negligible. Rather than assume the series stays sparse, the builder measures it against this ceiling each time it runs. The held series sits at 0.09% (1 of 1,092), so the guard is dormant by a wide margin and exists to catch a future republication, not today's data.",
-      "consumers": [
-        "cities/newcastle/build/build_validation_targets.py"
-      ]
-    },
-    "CAL.gate.pass_deviation_pct": {
-      "value": 10.0,
-      "units": "per cent",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.87",
-      "description": "The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything."
-    },
-    "CAL.taxi.lga_concentration": {
-      "value": 1.0,
-      "units": "ratio",
-      "source": "assumed",
-      "sweep": [
-        1.0,
-        2.0
-      ],
-      "sweep_basis": "DECISIONS.md 9.91: no published LGA split of point-to-point trips exists, so the join is declared at the neutral 1.0 and swept upward only to 2.0, because the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link and the true concentration is more likely above 1.0 than below. No observed spread.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.91",
-      "description": "How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned."
-    },
-    "CAL.asc.damping": {
-      "value": 0.6,
-      "units": "share_of_the_log_ratio_step",
-      "source": "literature",
-      "sweep": [
-        0.3,
-        1.0
-      ],
-      "sweep_basis": "The two published implementations of this update rule bracket the interval. matsim-vsp/matsim-python-tools applies the log-ratio step under `linear_scheduler(start=0.6, end=1, interval=3)` - damped to 0.6 of the raw step at first and relaxed toward the full step as the rounds proceed - and the ActivitySim agency practice uses a flat 0.5 dampener on the same ln(observed/modelled) adjustment. The interval runs from below the more cautious of the two to the undamped step, which is what a fixed point converges to when it converges at all. Undamped (1.0) is included deliberately: it is the boundary case, and whether the step needs damping AT ALL in this model is one of the things the two-round test measures.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "8.5",
-      "description": "How much of the raw log-ratio step an ASC round applies. The raw step for mode i against reference mode 0 is ln(target_i/modelled_i) - ln(target_0/modelled_0), which is the contraction a multinomial logit's share equation implies and is the same object as the Berry (1994) share inversion. Damping trades convergence speed for stability: an undamped step overshoots when the shares are far from target, which is where this model currently is.",
-      "consumers": [
-        "src/calibrate/asc_fixed_point.py"
-      ]
-    },
-    "CAL.asc.max_step_utils": {
-      "value": 1.5,
-      "units": "utility",
-      "source": "definition",
-      "sweep": null,
-      "held_fixed": {
-        "rule": "A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step stops being a calibration and becomes an admission that the residual is not a taste parameter at all: a shift of 1.5 utils against a marginal utility of travel time of order 1 util/hour is worth more than an hour of travel time, which no alternative-specific constant should have to carry. A proposal above it is REFUSED and the mode is reported as needing a mechanism, never silently clipped - clipping would hide exactly the signal this experiment exists to read.",
-        "decisions_ref": "8.5"
-      },
-      "status": "active",
-      "decisions_ref": "8.5",
-      "description": "The largest single-round |delta ASC| this loop will propose before it refuses outright and says the mode needs a mechanism rather than a constant.",
-      "consumers": [
-        "src/calibrate/asc_fixed_point.py"
-      ]
-    },
-    "CAL.asc.mode_to_constant": {
-      "value": {
-        "car": "C.asc.car_driver",
-        "ride": "C.asc.car_passenger",
-        "walk": "C.asc.walk",
-        "bike": "C.asc.cycle",
-        "motorbike": "C.asc.motorbike",
-        "bus": "C.asc.bus",
-        "heavy_rail": "C.asc.rail",
-        "light_rail": "C.asc.light_rail",
-        "ferry": "C.asc.ferry"
-      },
-      "units": "board_mode_to_registry_key",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "8.5, 9.78",
-      "description": "Which declared alternative-specific constant carries which board mode. The board names modes in the vocabulary of data/processed/validation/mode_targets_by_mode.csv; the registry names constants in the survey's driver/passenger/cycle vocabulary, and the two do not coincide. Declared here rather than typed into the loop, because a map between two vocabularies is a modelling choice: it says that a heavy-rail deviation is answerable by C.asc.rail and by nothing else. TAXI IS DELIBERATELY ABSENT - C.taxi.asc exists but taxi has no independent target (fit.py folds bike and taxi into one survey category), so there is no ratio to invert and a fixed-point step for it would be fitting a constant to a number that is not there. TRUCK and FREIGHT RAIL are absent because neither is a mode choice.",
-      "consumers": [
-        "src/calibrate/asc_fixed_point.py"
-      ]
-    },
-    "CAL.search.reading_drift_pct": {
-      "value": 24.88,
-      "units": "per cent",
-      "source": "measured",
-      "sweep": [
-        15.72,
-        24.88
-      ],
-      "sweep_role": "measurement",
-      "status": "active",
-      "decisions_ref": "9.7, 9.16",
-      "description": "How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Measured by src/analyse/measure_reading_stability.py over all SIX 25% arms that have ever reached iteration 100, WITHIN each run: the worst scored mode's |relative deviation| moves 15.72 to 24.88 points (median 17.76), the worst mode being heavy_rail on four of the six arms, bike on one and taxi on one. THREE modes move further than the WHOLE 10% band inside that twenty-iteration window - heavy_rail on 6 of 6 (max 24.88), bike on 4 of 6 (17.76), taxi on 3 of 6 (15.72). The point value is the MAXIMUM over all ten scored modes, because the objective is itself a maximum over those modes and a stopping rule has to survive the noisiest reading it will meet. The old folded objective moves 0.272 to 0.418 pp over the same window - upward on every one of the six arms, so this is systematic movement toward relaxation, not seed scatter. THIS IS A PROPERTY OF THE READING POINT, NOT OF THE MODEL: iteration 100 was adopted as the reading unit on COST and never once tested for stability, and a candidate read there would be resolved by how far the run had got rather than by its parameters. Reading deeper, or averaging a window of iterations instead of taking a point, is what would lower it.",
-      "consumers": [
-        "src/calibrate/calibrate.py",
-        "src/analyse/measure_reading_stability.py"
-      ]
-    }
+ "layer": "CAL",
+ "title": "Calibration (P4 deliverables 4-6)",
+ "description": "What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.",
+ "decisions_ref": "9.16",
+ "fields": {
+  "CAL.objective.components": {
+   "value": {
+    "goal_modes.max_abs_rel_pct": 1.0
+   },
+   "units": "weight_per_fit_component",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.16, 12.1, 9.87",
+   "description": "Dotted paths into _fit.json that form the scalar objective, with their weights. It is `goal_modes.max_abs_rel_pct`: the MAXIMUM absolute deviation, in RELATIVE per cent, over the twelve modes of data/processed/validation/mode_targets_by_mode.csv, each on the basis its own target is stated on, computed by calling the board's own reader (src/analyse/report_mode_ridership.py) so the objective and the gate cannot drift apart. IT WAS `mode_share.mean_abs_pp` AND THAT MEASURED A DIFFERENT THING FROM THE GOAL: a MEAN over FIVE FOLDED survey categories in PERCENTAGE POINTS, where GOAL.md requirement 7 is a MAXIMUM over TWELVE UNFOLDED modes in RELATIVE per cent. The fold is what makes them disagree - heavy rail and light rail sit inside one 'Public transport' cell with OPPOSITE SIGNS (+247.2% and -47.2% at the F31 gate), so a search minimising the mean of the folds could improve its own objective while making both modes worse, and a folded car+motorbike error near zero hides motorbike at +13.7%. A mean also cannot express 'every mode inside 10%': only a maximum can, because the requirement is satisfied exactly when the worst mode is inside the band. Truck and freight rail are REPORTED and never optimised against - the reader itself scores truck on a basis that is not the target's ground (9.101) and freight rail as representation rather than fit. A component named here that is missing from a fit output is a hard error, never a silent zero.",
+   "consumers": [
+    "src/calibrate/calibrate.py"
+   ]
+  },
+  "CAL.objective.include_counts": {
+   "value": false,
+   "units": "boolean",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "B.external.interaction_rate"
+    ],
+    "identity": "the external tier represents boundary demand from one SA4 to the north-west and no through traffic at all, so every boundary-adjacent count is biased low by construction; tuning core network parameters against those counts would be compensating for demand the model does not contain, which is the count analogue of the ASC absorption proposal 9 names as the primary threat to validity (DECISIONS.md 9.14, 9.15)"
+   },
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.14, 9.15",
+   "description": "Whether traffic counts may enter the calibration objective. FALSE, and the loop refuses to start if it is set true without a recorded departure. Counts are still SCORED and REPORTED on every run; they are simply not optimised against.",
+   "consumers": [
+    "src/calibrate/calibrate.py"
+   ]
+  },
+  "CAL.objective.independent_targets": {
+   "value": 10,
+   "units": "count",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "CAL.objective.components"
+    ],
+    "identity": "The objective is now the twelve-mode board, so the count is the number of INDEPENDENT numbers that board contains. Twelve rows, less truck (scored 'level only' - a network-wide vehicle share against a freight-route observation, not the target's own basis, 9.101) and less freight_train (representation: the crossing closures ARE the timetable, so its 0.0% is a tautology), leaves TEN scored modes. All ten are independent: EIGHT are shares of resident linked trips (car, ride, walk, taxi, bike, motorbike, bus, ferry) and TWO are weekday boardings (heavy_rail, light_rail) on a different basis entirely. The adding-up identity that removed one degree of freedom from the old five folded shares DOES NOT BIND here: the eight share targets sum to 98.42%, and the residual is taken up by the two rail modes, whose SHARE is not itself a declared target - they are targeted on boardings. So no linear constraint ties the ten together and the count is ten, not nine. It was 4, which was correct for the OLD objective (five HTS mode shares summing to one, hence four independent) and is the reason the loop refused to move five parameters: it was refusing to fit the twelve-mode goal with the four-number folded objective's budget."
+   },
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "12.1, 9.87",
+   "description": "How many independent numbers the objective actually contains. The loop refuses to move more free parameters than this, because a fit of more parameters than data is not a calibration. This is the ceiling on the search's width, not a target for it: a search should still move the fewest parameters that can reach the residual.",
+   "consumers": [
+    "src/calibrate/calibrate.py"
+   ]
+  },
+  "CAL.search.points_per_parameter": {
+   "value": 3,
+   "units": "count",
+   "source": "assumed",
+   "sweep": [
+    3,
+    7
+   ],
+   "sweep_basis": "DECISIONS.md 9.16: three is the smallest number of points that can show curvature along a sweep interval and each point is a full run, so the interval runs from that floor to seven. A control of the calibration search, never of the model. No observed spread.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.16",
+   "description": "Points evaluated along each parameter's declared sweep interval in one coordinate pass, endpoints included. Three is the smallest number that can show curvature. Each point is a full run, so this multiplies wall clock directly.",
+   "consumers": [
+    "src/calibrate/calibrate.py"
+   ]
+  },
+  "CAL.search.max_rounds": {
+   "value": 3,
+   "units": "count",
+   "source": "assumed",
+   "sweep": [
+    1,
+    6
+   ],
+   "sweep_basis": "DECISIONS.md 9.16 names this a control of the search loop itself, and calibrating the search against itself is the failure it guards; the interval runs from a single pass to twice the declared three. No observed spread.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.16",
+   "description": "Maximum coordinate-descent passes over the free parameters. The loop stops earlier if a pass improves the objective by less than CAL.search.convergence_delta.",
+   "consumers": [
+    "src/calibrate/calibrate.py"
+   ]
+  },
+  "CAL.search.convergence_delta": {
+   "value": 24.88,
+   "units": "per cent",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "CAL.search.reading_drift_pct"
+    ],
+    "identity": "convergence_delta = reading_drift_pct. A coordinate pass that 'improves' the objective by less than the reading's own noise has not been shown to improve anything: the same run read twenty iterations later moves further than that by itself, on all six arms measured. So the stopping rule is the noise floor, and it is derived from it rather than chosen beside it. IT WAS 0.25 pp, in the units of the OLD folded objective, and it was SMALLER THAN THE MEASURED DRIFT ON EVERY ARM (by 1.09x to 1.67x) - a search under it would have stopped, or failed to stop, on noise. Its stated floor of 0.1 pp cited the seed spread 9.7 measured; that was the right instinct pointed at the wrong quantity, because seed spread is the spread BETWEEN runs and this is the drift WITHIN one."
+   },
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.16, 9.7",
+   "description": "A coordinate pass that improves the objective by less than this ends the search, in the units of the objective - which is now the maximum relative deviation across the twelve modes, in per cent. A CONSEQUENCE WORTH READING PLAINLY: at 17.76 the rule is coarser than most candidates will move the objective, so a search scored at iteration 100 will stop almost immediately. That is not a defect in the rule - it is the measurement telling us the reading point cannot resolve a search. calibrate.py refuses to start one rather than run a search that would be reading noise.",
+   "consumers": [
+    "src/calibrate/calibrate.py"
+   ]
+  },
+  "CAL.pt_split.window_months": {
+   "value": 12,
+   "units": "months",
+   "source": "assumed",
+   "sweep": [
+    6,
+    24
+   ],
+   "sweep_basis": "DECISIONS.md 9.87 declares 12 swept 6-24: twelve months removes the seasonal cycle exactly once, six is a half-cycle and seasonally biased, twenty-four reaches back into the patronage recovery. A window on the observed series, not a spread of it.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.87",
+   "description": "How many of the most recent months the three PT patronage publications all cover are pooled to measure the bus / heavy rail / light rail boardings split (build_mode_targets.py). Twelve removes the seasonal cycle exactly once, which is why it is the point value; the sweep runs from six (a half-cycle, so seasonally biased) to twenty-four (two cycles, but reaching back into a period whose patronage recovery was still moving). The window is the INTERSECTION of the three sources, never each source's own newest data: a split taken over mismatched periods measures the calendar rather than the mode."
+  },
+  "CAL.pt.weekday_factor": {
+   "value": 1.0727,
+   "units": "ratio",
+   "source": "assumed",
+   "sweep": [
+    1.0,
+    1.3
+   ],
+   "sweep_basis": "Set from the demand's own day-type trip ratio - demand/plans/matsim/_plans_report.json: by_day.WEEKDAY.legs_selected_plan / ((5 x WEEKDAY + SAT + SUN) / 7) = 2,343,321 / 2,184,254 - the demand's own weekday-to-mean-day trip ratio, applied to an all-days daily boardings count to state it per WEEKDAY - and declared assumed because the schema's `derived` means implied by other registry fields, which this is not: it is read from the demand build. The published patronage series are monthly totals with no day-type split, and the run is a WEEKDAY. The ratio of a weekday's trips to the mean day's is taken from the demand's own three day types (1.0727 for all trips); public transport is more weekday-peaked than travel as a whole, so the sweep runs from no uplift to 1.3. Never fitted.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.130",
+   "consumers": [
+    "cities/newcastle/build/build_mode_targets.py"
+   ],
+   "description": "Weekday uplift applied to an all-days daily boardings count (light rail line boardings, heavy rail station entries) so the target is stated per WEEKDAY, the day type the gated arms run. Derived from the demand's own day-type trip ratio."
+  },
+  "CAL.pt_split.station_scope": {
+   "value": "target_lga",
+   "units": "enum",
+   "source": "assumed",
+   "sweep": {
+    "categorical": [
+     "target_lga",
+     "all_observed"
+    ],
+    "basis": "The HTS level the PT split scales is a share of trips made by residents of the TARGET LGA, so the boardings composition that splits it must be measured over the same ground. `target_lga` counts only stations the city's own mapped schedule contains AND that fall inside the target LGA boundary - both tested, never named in a script. `all_observed` reproduces the pre-9.100 behaviour, which pooled every station the publication happened to carry: three LGAs of train boardings and a light rail stop belonging to another city entirely. It is kept as the sweep's other arm because the bus series has no station-level breakdown and so cannot be restricted the same way, which leaves a real asymmetry between the legs rather than a settled one."
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.100",
+   "description": "Which observed PT stations may enter the bus / heavy rail / light rail boardings composition. Restricting to the target LGA moved the train leg from 2,221,425 to 1,191,526 boardings and removed a stop that is not in this city at all."
+  },
+  "CAL.pt_split.break_ratio": {
+   "value": 0.5,
+   "units": "ratio",
+   "source": "assumed",
+   "sweep": [
+    0.35,
+    0.7
+   ],
+   "sweep_basis": "DECISIONS.md 9.100: a genuine seasonal trough in the held series is about 20% below the trailing median and the Newcastle bus contract break of 2025-04 is 88% below, so the half-way threshold is separated from both by a wide margin and the interval spans the width of that margin rather than probing a boundary anything sits near. No observed spread.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.100",
+   "description": "A month is treated as a STRUCTURAL BREAK in a patronage series, and the composition window may not contain it, when that month falls below this fraction of the series' own trailing median. It exists because the Newcastle bus contract region collapses 319,770 -> 37,414 boardings between 2025-03 and 2025-04 (-88%) while every other contract region in the same publication continues normally, and the window in use before 9.100 lay ENTIRELY inside that broken stretch. Half is the point value because a genuine seasonal trough in these series is ~20% below median and a real break here is ~88% below, so the two are separated by a wide margin; the sweep spans the width of that margin rather than probing a boundary anything sits near."
+  },
+  "CAL.pt_split.lr_observed_stop_share": {
+   "value": 0.3696,
+   "units": "share_of_line_boardings",
+   "source": "measured",
+   "sweep": [
+    0.3372,
+    0.3755
+   ],
+   "sweep_role": "measurement",
+   "status": "active",
+   "decisions_ref": "9.100",
+   "description": "The share of the whole light rail line's boardings taken at the one stop the CURRENT station-entries publication carries. The recent publication reports the interchange alone; the line has six stops, and the per-stop series that covers all six ends before the recent window opens, so the recent figure is scaled to the line by this measured share rather than being used as if it were the line. The point value is the mean over the last twelve months the per-stop series covers; the sweep is the MEASURED year-to-year spread of the same quantity, 2019-2024, which is narrow (0.3372-0.3755) and is why the transfer is defensible at all. MEASURED directly from data/processed/observed/opal_lr_newcastle_by_stop.csv: the observed stop's boardings divided by all six stops' boardings, per month, then averaged."
+  },
+  "CAL.mode_split.commute_transfer_tolerance": {
+   "value": 0.25,
+   "units": "ratio",
+   "source": "assumed",
+   "sweep": [
+    0.1,
+    0.5
+   ],
+   "sweep_basis": "DECISIONS.md 9.87 declares 0.25 swept 0.1-0.5: the half-width of the interval placed on any target derived by applying a census commute composition to an all-purpose HTS level, spanning a tight 10% to a loose 50%. It bounds a transfer whose error is unmeasured; no observed spread.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.87",
+   "description": "The fractional half-width of the sweep placed on every per-mode target derived by applying a CENSUS COMMUTE composition to an ALL-PURPOSE HTS level (build_mode_targets.py: the car/motorbike split of Vehicle driver, the bicycle/taxi split of Other). Commuting is not a random sample of travel - it is longer, more peaked and more car-driver heavy than the average trip - so the transfer is a genuine assumption and the derived target is an interval, not a point. This value is the width of that interval, NOT a correction applied to the point value: nothing is shifted, only bounded. The sweep on the width itself spans a tight 10% to a loose 50%."
+  },
+  "CAL.mode_split.vehicle_driver_level": {
+   "value": 0.59,
+   "units": "share_of_trips",
+   "source": "measured",
+   "sweep": [
+    0.5605,
+    0.6195
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.115",
+   "description": "The survey's all-purpose Vehicle driver level - the share of resident person trips made as the driver of a private vehicle - READ from the household travel survey level table that build_mode_targets.py already splits into car, motorbike and resident truck driving, and asserted against that source on every build. It is declared here because it is the CONVERSION that carries a census commute-JOURNEY share to an all-purpose TRIP share, and a carve that omits it overstates its mode by the ratio of the two driver shares (9.115). The sweep is a DECLARED +/-5% band on the transfer, not a measured spread: the survey publishes this level as a single figure and no repeated measurement of it exists in the package, so the band expresses how far the conversion may be wrong rather than an observed variation. It is not a free parameter.",
+   "consumers": [
+    "cities/newcastle/build/build_mode_targets.py",
+    "src/build/build_matsim_plans.py"
+   ]
+  },
+  "CAL.mode_split.motorbike_driver_journey_share": {
+   "value": 0.0064151,
+   "units": "share_of_driver_journeys",
+   "source": "measured",
+   "sweep": [
+    0.0060943,
+    0.0067359
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.115, 9.122",
+   "description": "Census G62 one-method motorbike/scooter journeys to work as a share of one-method DRIVER journeys to work for the TARGET LGA's SA1s - 282 of 43959 - READ from the census extract and asserted against it on every build. SINCE 9.122 the cell is the target LGA's, not the five-LGA core's (653 of 160,103 = 0.0040786): every other target rests on the LGA's own HTS levels and the fit measures the LGA's residents, and the core cell had motorbike generated for one geography and scored against another. The denominator is DRIVER journeys, not all journeys: conditioning on the driving population is what makes the survey's own driver level the right factor to carry this cell to all purposes.",
+   "consumers": [
+    "cities/newcastle/build/build_mode_targets.py"
+   ]
+  },
+  "CAL.mode_split.truck_driver_journey_share": {
+   "value": 0.0050729,
+   "units": "share_of_driver_journeys",
+   "source": "measured",
+   "sweep": [
+    0.0048193,
+    0.0053265
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.125",
+   "consumers": [
+    "cities/newcastle/build/build_mode_targets.py"
+   ],
+   "description": "Census G62 one-method Truck journeys to work as a share of one-method DRIVER journeys to work for the target LGA's SA1s - 223 of 43959 - READ from the census extract and asserted against it on every build. The cell build_mode_targets.py has always deducted from the driver level as the resident-truck slice (0.2993% of resident trips); since 9.125 the plans builder also carves residents locked to `truck` from it, so the directive's resident truck drivers exist in the population and the yardstick's deduction describes them."
+  },
+  "CAL.truck.count_year_from": {
+   "value": 2023,
+   "units": "year",
+   "source": "assumed",
+   "sweep": [
+    2019,
+    2025
+   ],
+   "sweep_basis": "DECISIONS.md 9.87 declares 2023 swept 2019-2025: 2023 is the first full year clear of the pandemic freight anomaly, 2019 the pre-pandemic year on a different network, 2025 the newest full year of classified counts. A choice of pooling window over the observed series, not a spread of it.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.87",
+   "description": "The earliest classified-count year pooled into the heavy-vehicle share that road freight is checked against (build_mode_targets.py). Only a handful of stations classify vehicles, so a single year is a small sample; pooling widens it at the cost of reaching back towards the pandemic freight anomaly, when heavy share rose because light traffic fell. 2023 is the first year clear of that. The sweep spans back to 2019 (pre-pandemic, but a different network) and forward to 2025 (the newest full year)."
+  },
+  "CAL.gate.stop_deviation_pct": {
+   "value": 20.0,
+   "units": "per cent",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.87",
+   "description": "The per-mode deviation from its real-life target at which the standing gate-loop directive says to STOP the run rather than let it converge on a wrong answer. Not an empirical quantity and not swept: it is the acceptance criterion the work is judged by, so sweeping it would sweep the question rather than the model. Read by src/analyse/report_mode_ridership.py, which is the gate reading."
+  },
+  "CAL.pt.censored_cell_value": {
+   "value": 0.0,
+   "units": "trips per month",
+   "source": "assumed",
+   "sweep": [
+    0.0,
+    25.0
+   ],
+   "sweep_basis": "the Opal series censors a station-month below 50 trips as the text 'Less than 50': zero is the floor of the censored range and 25 its midpoint, and the true value lies between them. Declared once so every target builder treats a censored cell the same way (#129); the value 0 reproduces the mode targets as they stood before the field existed",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.130",
+   "description": "The number of trips a CENSORED Opal patronage cell ('Less than 50') counts as when a target is built from the series. The mode-target builder reads it for the heavy-rail boardings target and the station series, where the statistic is a SUM over stations and dropping a cell would drop a station's whole contribution. The validation-target builder EXCLUDES censored cells from its station means instead, and that exclusion is now RECORDED as the pre-registered treatment of those 143 holdout rows rather than left open (#129 decided 4 Sep 2026, DECISIONS.md 9.142): a mean over station-months is missing data when a month is censored, not a zero month. Measured before deciding: the whole package holds ONE censored cell (Tarro Station, Exit, 1 month of 21; the other three Opal series carry none), it lies outside the (Train, Entry) series this field's heavy-rail target sums, so the two rules AGREE on every scored target and this field's sweep moves no target at either end - 0 and 25 both reproduce mode_targets_by_mode.csv byte for byte. The exclusion's only effect is Tarro's own holdout mean, 106.2 trips/month excluded against 101.1 at 0 and 102.3 at 25. build_validation_targets.py measures rather than assumes that this stays true: it refuses to build if a censored cell reaches the (Train, Entry) series, if any station-direction group becomes wholly censored, or if censoring exceeds CAL.pt.censored_share_max.",
+   "consumers": [
+    "cities/newcastle/build/build_mode_targets.py"
+   ]
+  },
+  "CAL.pt.censored_share_max": {
+   "value": 0.05,
+   "units": "share of cells",
+   "source": "definition",
+   "sweep": null,
+   "held_fixed": {
+    "rule": "A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must stop, and no model output varies with it - at any value in a wide neighbourhood the guard's verdict on the held series is the same, because that series is at 0.09% (1 censored cell in 1,092). Sweeping it would sweep the point at which the project refuses to keep building, which is a rule about honesty rather than a quantity about Newcastle.",
+    "decisions_ref": "9.142"
+   },
+   "status": "active",
+   "decisions_ref": "9.142",
+   "description": "The share of cells in the station entries/exits series above which build_validation_targets.py REFUSES to build rather than quietly exclude censored cells from its holdout means (#129). Excluding a censored station-month is defensible while censoring is marginal - the mean simply rests on the months that were published - but every excluded cell is known to be BELOW 50, so exclusion biases the mean upward, and past some density that bias stops being negligible. Rather than assume the series stays sparse, the builder measures it against this ceiling each time it runs. The held series sits at 0.09% (1 of 1,092), so the guard is dormant by a wide margin and exists to catch a future republication, not today's data.",
+   "consumers": [
+    "cities/newcastle/build/build_validation_targets.py"
+   ]
+  },
+  "CAL.gate.pass_deviation_pct": {
+   "value": 10.0,
+   "units": "per cent",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.87",
+   "description": "The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything."
+  },
+  "CAL.gate.reading_window_iterations": {
+   "value": 40,
+   "units": "iterations",
+   "source": "assumed",
+   "sweep": [
+    20,
+    80
+   ],
+   "sweep_role": "uncertainty",
+   "sweep_basis": "The window is an INSTRUMENT setting, not a model value, so its bracket is what the evidence can bound rather than what a literature reports. The floor of 20 is two readings at the 10-iteration write interval - the narrowest thing that is an average rather than a point. The ceiling of 80 is where the window reaches back to iteration 20 and begins averaging in the run's early transient: past it the reading would look steadier because it is measuring a different regime, which is the one way this field could pass by measuring less. Nothing in the store reaches past iteration 104, so no window ending deeper than 100 can be tested at all today; a first arm past its gate would let the bracket be re-derived at depth.",
+   "status": "active",
+   "decisions_ref": "9.159, 9.158",
+   "description": "How deep behind the reading point the gate reading is AVERAGED, in iterations. The reading is the mean of every readable trips table in (point - this, point], so at the declared 40 and a 10-iteration write interval an iteration-100 reading is the mean of it.60, 70, 80, 90 and 100. IT EXISTS BECAUSE A POINT READING CANNOT SCORE A CANDIDATE: 9.158 measured, within six separate 25% arms with nothing changed, that heavy rail, bike and taxi each move further from or towards target between iteration 80 and 100 than the WHOLE CAL.gate.pass_deviation_pct band, upward on every arm - the model still relaxing, not seed scatter. A search scored at a point would rank how far each run had got. The directive 9.158 left was to change the READING, not the rule, and this is that change. WHY 40 AND NOT DEEPER: nothing in the store reaches past iteration 104, so a window ending at 100 is the deepest that can be TESTED at all, and 40 is the widest that leaves the whole window inside what every arm holds (all seven hold it.40 through it.100). The sweep runs from 20 - two readings, the narrowest thing that is an average at all - to 80, where the window reaches back to iteration 20 and starts averaging in the run's early transient, which would flatter the reading by measuring a different regime rather than by the reading being steadier. WHAT IS AVERAGED: the modelled level and the trip count only. The target, basis and denominator are the endpoint's, and the deviation and gate flag are RECOMPUTED from the averaged level - averaging deviations would put a mean of ratios where a ratio of means belongs. THIS IS A PROPERTY OF THE INSTRUMENT, NOT OF THE MODEL: no agent sees it, and changing it cannot move a mode share - it changes only how confidently two candidates can be told apart. Measured with src/analyse/measure_reading_stability.py --window.",
+   "consumers": [
+    "src/analyse/report_mode_ridership.py",
+    "src/analyse/measure_reading_stability.py",
+    "src/calibrate/fit.py"
+   ]
+  },
+  "CAL.taxi.lga_concentration": {
+   "value": 1.0,
+   "units": "ratio",
+   "source": "assumed",
+   "sweep": [
+    1.0,
+    2.0
+   ],
+   "sweep_basis": "DECISIONS.md 9.91: no published LGA split of point-to-point trips exists, so the join is declared at the neutral 1.0 and swept upward only to 2.0, because the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link and the true concentration is more likely above 1.0 than below. No observed spread.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.91",
+   "description": "How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned."
+  },
+  "CAL.asc.damping": {
+   "value": 0.6,
+   "units": "share_of_the_log_ratio_step",
+   "source": "literature",
+   "sweep": [
+    0.3,
+    1.0
+   ],
+   "sweep_basis": "The two published implementations of this update rule bracket the interval. matsim-vsp/matsim-python-tools applies the log-ratio step under `linear_scheduler(start=0.6, end=1, interval=3)` - damped to 0.6 of the raw step at first and relaxed toward the full step as the rounds proceed - and the ActivitySim agency practice uses a flat 0.5 dampener on the same ln(observed/modelled) adjustment. The interval runs from below the more cautious of the two to the undamped step, which is what a fixed point converges to when it converges at all. Undamped (1.0) is included deliberately: it is the boundary case, and whether the step needs damping AT ALL in this model is one of the things the two-round test measures.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "8.5",
+   "description": "How much of the raw log-ratio step an ASC round applies. The raw step for mode i against reference mode 0 is ln(target_i/modelled_i) - ln(target_0/modelled_0), which is the contraction a multinomial logit's share equation implies and is the same object as the Berry (1994) share inversion. Damping trades convergence speed for stability: an undamped step overshoots when the shares are far from target, which is where this model currently is.",
+   "consumers": [
+    "src/calibrate/asc_fixed_point.py"
+   ]
+  },
+  "CAL.asc.max_step_utils": {
+   "value": 1.5,
+   "units": "utility",
+   "source": "definition",
+   "sweep": null,
+   "held_fixed": {
+    "rule": "A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step stops being a calibration and becomes an admission that the residual is not a taste parameter at all: a shift of 1.5 utils against a marginal utility of travel time of order 1 util/hour is worth more than an hour of travel time, which no alternative-specific constant should have to carry. A proposal above it is REFUSED and the mode is reported as needing a mechanism, never silently clipped - clipping would hide exactly the signal this experiment exists to read.",
+    "decisions_ref": "8.5"
+   },
+   "status": "active",
+   "decisions_ref": "8.5",
+   "description": "The largest single-round |delta ASC| this loop will propose before it refuses outright and says the mode needs a mechanism rather than a constant.",
+   "consumers": [
+    "src/calibrate/asc_fixed_point.py"
+   ]
+  },
+  "CAL.asc.mode_to_constant": {
+   "value": {
+    "car": "C.asc.car_driver",
+    "ride": "C.asc.car_passenger",
+    "walk": "C.asc.walk",
+    "bike": "C.asc.cycle",
+    "motorbike": "C.asc.motorbike",
+    "bus": "C.asc.bus",
+    "heavy_rail": "C.asc.rail",
+    "light_rail": "C.asc.light_rail",
+    "ferry": "C.asc.ferry"
+   },
+   "units": "board_mode_to_registry_key",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "8.5, 9.78",
+   "description": "Which declared alternative-specific constant carries which board mode. The board names modes in the vocabulary of data/processed/validation/mode_targets_by_mode.csv; the registry names constants in the survey's driver/passenger/cycle vocabulary, and the two do not coincide. Declared here rather than typed into the loop, because a map between two vocabularies is a modelling choice: it says that a heavy-rail deviation is answerable by C.asc.rail and by nothing else. TAXI IS DELIBERATELY ABSENT - C.taxi.asc exists but taxi has no independent target (fit.py folds bike and taxi into one survey category), so there is no ratio to invert and a fixed-point step for it would be fitting a constant to a number that is not there. TRUCK and FREIGHT RAIL are absent because neither is a mode choice.",
+   "consumers": [
+    "src/calibrate/asc_fixed_point.py"
+   ]
+  },
+  "CAL.search.reading_drift_pct": {
+   "value": 24.88,
+   "units": "per cent",
+   "source": "measured",
+   "sweep": [
+    15.72,
+    24.88
+   ],
+   "sweep_role": "measurement",
+   "status": "active",
+   "decisions_ref": "9.7, 9.16",
+   "description": "How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Measured by src/analyse/measure_reading_stability.py over all SIX 25% arms that have ever reached iteration 100, WITHIN each run: the worst scored mode's |relative deviation| moves 15.72 to 24.88 points (median 17.76), the worst mode being heavy_rail on four of the six arms, bike on one and taxi on one. THREE modes move further than the WHOLE 10% band inside that twenty-iteration window - heavy_rail on 6 of 6 (max 24.88), bike on 4 of 6 (17.76), taxi on 3 of 6 (15.72). The point value is the MAXIMUM over all ten scored modes, because the objective is itself a maximum over those modes and a stopping rule has to survive the noisiest reading it will meet. The old folded objective moves 0.272 to 0.418 pp over the same window - upward on every one of the six arms, so this is systematic movement toward relaxation, not seed scatter. THIS IS A PROPERTY OF THE READING POINT, NOT OF THE MODEL: iteration 100 was adopted as the reading unit on COST and never once tested for stability, and a candidate read there would be resolved by how far the run had got rather than by its parameters. Reading deeper, or averaging a window of iterations instead of taking a point, is what would lower it.",
+   "consumers": [
+    "src/calibrate/calibrate.py",
+    "src/analyse/measure_reading_stability.py"
+   ]
   }
+ }
 }

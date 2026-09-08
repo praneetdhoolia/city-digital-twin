@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
 
 ## What is built
 
@@ -41,6 +41,9 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 - **Heavy rail and light rail** are disclosed counts, used exactly: every traveller who boards, all subpopulations, × 1/fraction, heavy rail at the 24 disclosed stations only (§9.130). The PT total is still read against the HTS 3.8% level. **Ferry** is derived and its sweep is 0 to twice the point value (§9.89); it is never labelled observed.
 
 ## What is measured
+
+- **THE TELEPORTED ACCESS LEG IS FIXED AT THE ROUTER AND REFUSED BY THE MOBSIM** (§9.159, #167, filed this session after three sessions carrying it unfiled). `javap` against the pinned `matsim-2027.0-2026w25.jar` established the route — `DefaultRaptorStopFinder.findStops` branches on `isUseIntermodalAccessEgress()`, and the true branch resolves a real `RoutingModule` per declared mode — so the `intermodalAccessEgress` parameterset was declared with four DERIVED fields, the three radii equal to the beeline search's own reach (1000 m, 200 m, their sum 1200 m) so the change moves what an access leg IS and not how far the router looks. **It works at the router**: the two switches coexist (1,270 routes, 4,123 stop facilities, no consistency throw) and `genericRouteTeleporter` fell to **6 [walk via pt=6]** against ~5,200 expected at that scale.
+- **And then the mobsim refuses the landing link, for a reason that is measured rather than inferred** (§9.159): `TransitAgentTriesToTeleportException`, agent 355102 at link 158102 boarding at 128983 — 128983 carries `modes="pt,rail,train"` and 158102 carries walk. **675 of the 4,123 stop facilities (16.4 %) sit on a link walk cannot use**: 382 pt/rail/train, 199 pt2matsim artificial `stopFacilityLink`s, 62 road links omitting walk, 18 rail, 18 artificial rail — the heavy-rail and light-rail platforms among them. So routing to the stop's own link is impossible for one stop in six. MATSim's own bridge is refused for a fourth measured reason: `accessEgressModeToLink` dies at `PersonPrepareForSim` — "Found a trip whose legs have different routingModes", **40 agents** — a DIFFERENT failure from the `ClassCastException` §9.54 recorded, and earlier than the mobsim. `RUN.transit_router.access_egress_basis` therefore ships at `beeline`, the state every arm has run, with all four measurements in its derivation.
 
 Latest twelve-mode reading: the F31 gate at iteration 100 (`results/raw/aborted_20260908T100009_300it_25pct`, `completion` `stopped_at_gate`, §9.157) — citable there and nowhere past it, and comparable with no earlier family. Reproduce with `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100`.
 

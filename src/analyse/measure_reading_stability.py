@@ -89,6 +89,11 @@ BAND_PCT = float(_CFG.get('CAL.gate.pass_deviation_pct'))
 CONVERGENCE_DELTA = float(_CFG.get('CAL.search.convergence_delta'))
 CONVERGENCE_DELTA_UNITS = _CFG.field('CAL.search.convergence_delta')['units']
 GATE_INTERVAL = int(_CFG.get('RUN.gate.interval_iterations'))
+# The windowed reading (9.159). A reading may be taken AT an iteration or
+# AVERAGED over the declared window ending there; which one is under test is the
+# analyst's question, so the default is the declared value and --window overrides
+# it. 0 means the point reading this script was written to condemn.
+READING_WINDOW = int(_CFG.get('CAL.gate.reading_window_iterations'))
 
 # THE STOPPING DELTA IS COMPARED ONLY WITH A DRIFT IN ITS OWN UNITS. It has
 # been declared both ways - percentage points of a folded mean, and relative
@@ -107,21 +112,38 @@ PP_UNITS = 'percentage points'
 LEVEL_UNITS = 'mode-specific (see denominator)'
 
 
-def read_iteration(run_dir, iteration):
-    """One iteration's twelve-mode table and the search objective, silenced.
+def read_iteration(run_dir, iteration, window):
+    """One reading of this run, and the search objective, silenced.
 
-    `report_mode_ridership.report` is the gate reading a person would take; it
-    prints a table and leaves the numbers behind it in `LAST`. Nothing is
-    re-implemented here - the same reader, at two iterations.
+    `report_mode_ridership` is the gate reading a person would take; it leaves
+    the numbers behind it in `LAST`. Nothing is re-implemented here - the same
+    reader, at two depths. With `window` non-zero the reading is the mean over
+    the readable tables inside that window ending at `iteration` (9.159), which
+    is the same reader again: the window lives inside it precisely so this
+    script cannot measure a different quantity from the one the gate uses.
     """
     buf = io.StringIO()
     with contextlib.redirect_stdout(buf):
-        rmr.report(run_dir, iteration)
+        if window:
+            rmr.report_window(run_dir, iteration, window)
+        else:
+            rmr.report(run_dir, iteration)
     rows = {r['mode']: dict(r) for r in rmr.LAST['rows']}
     source = rmr.LAST['source']
-    with contextlib.redirect_stdout(buf):
-        _share, scored, _out = mim.score(run_dir, iteration)
+    window_its = (rmr.LAST.get('window') or {}).get('iterations') or [iteration]
+    # the folded objective over the same readings, so both statistics in this
+    # report describe ONE reading rather than two different ones
+    objs = []
+    for _it in window_its:
+        with contextlib.redirect_stdout(buf):
+            _share, _scored, _out = mim.score(run_dir, _it)
+        if (_scored or {}).get('mean_abs_pp') is not None:
+            objs.append(_scored['mean_abs_pp'])
+    scored = dict(mean_abs_pp=(round(sum(objs) / len(objs), 4) if objs
+                               else None),
+                  errors=(_scored or {}).get('errors', []))
     return dict(iteration=iteration, modes=rows, source=source,
+                window_iterations=list(window_its),
                 objective_mean_abs_pp=(scored or {}).get('mean_abs_pp'),
                 objective_categories={e['hts_category']: e['modelled']
                                       for e in (scored or {}).get('errors', [])})
@@ -175,10 +197,10 @@ def drift_table(early, late):
     return out
 
 
-def measure(run_dir, it_early, it_late):
+def measure(run_dir, it_early, it_late, window):
     """Both readings of ONE run and the drift between them."""
-    early = read_iteration(run_dir, it_early)
-    late = read_iteration(run_dir, it_late)
+    early = read_iteration(run_dir, it_early, window)
+    late = read_iteration(run_dir, it_late, window)
     rows = drift_table(early, late)
     obj0, obj1 = early['objective_mean_abs_pp'], late['objective_mean_abs_pp']
     obj_drift = None if (obj0 is None or obj1 is None) else round(obj1 - obj0, 4)
@@ -190,6 +212,11 @@ def measure(run_dir, it_early, it_late):
     return dict(
         run=_os.path.basename(_os.path.normpath(run_dir)),
         iteration_early=it_early, iteration_late=it_late,
+        reading_window_iterations=window,
+        window_early=early.get('window_iterations'),
+        window_late=late.get('window_iterations'),
+        windows_overlap=bool(set(early.get('window_iterations') or [])
+                             & set(late.get('window_iterations') or [])),
         fraction=rmr.sample_fraction(run_dir),
         source=late['source'],
         modes=rows,
@@ -221,6 +248,15 @@ def print_run(block):
     print('WITHIN-RUN DRIFT   run %s   iteration %d -> %d   fraction %s'
           % (block['run'], block['iteration_early'], block['iteration_late'],
              block['fraction']))
+    if block.get('reading_window_iterations'):
+        print('reading WINDOWED over %d iterations: %s  vs  %s%s'
+              % (block['reading_window_iterations'],
+                 ','.join('it.%d' % i for i in block['window_early'] or []),
+                 ','.join('it.%d' % i for i in block['window_late'] or []),
+                 '   *** THE TWO WINDOWS SHARE AN ITERATION, which damps the '
+                 'drift by construction - read the non-overlapping pair beside '
+                 'it' if block.get('windows_overlap') else
+                 '   (no shared iteration)'))
     print('basis  %s; the SAME run at two depths - never differenced against '
           'another run' % block['source'])
     print('=' * 104)
@@ -397,6 +433,16 @@ def main():
     # this repo does not allow a number to do.
     ap.add_argument('--from', dest='frm', type=int, required=True,
                     help='the earlier iteration the reading is compared with')
+    # The DEFAULT IS THE DECLARED WINDOW, not a point. A default of 0 here
+    # would put the reading this project measured to be unscorable back in the
+    # instrument as its resting state, decided in a script rather than in the
+    # registry. `--window 0` asks for the point reading explicitly.
+    ap.add_argument('--window', type=int, default=READING_WINDOW, metavar='N',
+                    help='average the reading over the readable iterations in '
+                         'the last N (CAL.gate.reading_window_iterations = %d) '
+                         'instead of taking it at a point; 0 is the point '
+                         'reading (9.159). Default: the declared '
+                         'CAL.gate.reading_window_iterations' % READING_WINDOW)
     ap.add_argument('--json', help='write the whole measurement to this path')
     a = ap.parse_args()
 
@@ -426,18 +472,26 @@ def main():
 
     blocks = []
     for bulk in dirs:
-        missing = [i for i in (it_early, it_late) if not readable(bulk, i)]
+        needed = [it_early, it_late]
+        if a.window:
+            needed = sorted(set(
+                rmr.window_iterations(bulk, it_early, a.window)
+                + rmr.window_iterations(bulk, it_late, a.window)) or needed)
+        missing = [i for i in needed if not readable(bulk, i)]
         if missing:
             print('skipping %s: nothing readable at iteration %s'
                   % (_os.path.basename(_os.path.normpath(bulk)),
                      ', '.join(str(i) for i in missing)), flush=True)
             continue
-        block = measure(bulk, it_early, it_late)
+        block = measure(bulk, it_early, it_late, a.window)
         print_run(block)
         blocks.append(block)
 
-    doc = dict(question='is an iteration-%d reading stable enough to score a '
-                        'candidate on?' % it_late,
+    doc = dict(question='is a%s reading at iteration %d stable enough to '
+                        'score a candidate on?'
+                        % (' %d-iteration WINDOWED' % a.window if a.window
+                           else ' POINT', it_late),
+               reading_window_iterations=a.window,
                verdict=verdict(blocks, it_early, it_late),
                comparison='WITHIN-RUN ONLY: one run at iteration %d against '
                           'the same run at iteration %d. No two runs are '

@@ -39,6 +39,10 @@
           "key_param": "activityType",
           "comment": "One block per activity type. Membership comes from the field that supplies typical durations."
         },
+        "intermodalAccessEgress": {
+          "key_param": "mode",
+          "comment": "One block per mode SwissRailRaptor may use to reach a stop. Its PRESENCE, with swissRailRaptor.useIntermodalAccessEgress, is what makes the raptor route access and egress with a real RoutingModule instead of drawing a beeline: DefaultRaptorStopFinder.findStops branches on isUseIntermodalAccessEgress(), and the true branch resolves the module for each set's `mode` out of the injected map, while the false branch builds the leg from RaptorStaticConfig.getBeelineWalkDistanceFactor(). Verified against the pinned jar's bytecode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup$IntermodalAccessEgressParameterSet: parameterset type `intermodalAccessEgress`, params mode, initialSearchRadius, searchExtensionRadius, maxRadius, shareTripSearchRadius), whose own defaults are the sentinels maxRadius=+Inf and initialSearchRadius=-Inf - so every radius must be set explicitly or the search is unbounded. Membership comes from the city's declared access mode."
+        },
         "modeMapping": {
           "key_param": "routeMode",
           "comment": "One block per scheduled route transportMode, mapping it to the passenger mode SwissRailRaptor assigns its legs. MATSim's own vocabulary, verified against the pinned jar's bytecode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup$ModeMappingForPassengersParameterSet: parameterset type `modeMapping`, params `routeMode` and `passengerMode` in the `swissRailRaptor` module). Membership comes from the city's declared transit-mode vocabulary."

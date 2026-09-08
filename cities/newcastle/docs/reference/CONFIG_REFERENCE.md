@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 489 fields are made of
+## What the 494 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
 | `measured` | 40 | computed from observed data in this package |
-| `derived` | 40 | follows from another registry field by identity |
+| `derived` | 44 | follows from another registry field by identity |
 | `literature` | 75 | a published value, not specific to this city |
-| `assumed` | 161 | chosen without direct empirical support |
+| `assumed` | 162 | chosen without direct empirical support |
 | `definition` | 135 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 469 | usable point value |
+| `active` | 474 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 273 sweeps are for
+### What the 274 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 12 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 238 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 239 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 23 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -2625,7 +2625,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 25 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 26 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -2635,6 +2635,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.asc.max_step_utils` | `1.5` | utility | `definition` | **held fixed** |
 | `CAL.asc.mode_to_constant` | `{"car": "C.asc.car_driver", "ride": "C.asc.car_passenger", "walk": "C.asc.walk", "bike": "C.asc.cycle", "mo...` | board_mode_to_registry_key | `definition` | - |
 | `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
+| `CAL.gate.reading_window_iterations` | `40` | iterations | `assumed` | 20 - 80 |
 | `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
 | `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
 | `CAL.mode_split.motorbike_driver_journey_share` | `0.0064151` | share_of_driver_journeys | `measured` | 0.0060943 - 0.0067359 |
@@ -2686,6 +2687,14 @@ Which declared alternative-specific constant carries which board mode. The board
 The per-mode deviation the model must be INSIDE for every mode before the standing directive is satisfied. Between this and CAL.gate.stop_deviation_pct a mode is neither passing nor stopping the run, and the gate reading says so rather than rounding it to one or the other. Definitional for the same reason: it states the bar, it does not model anything.
 
 ***definition** · status **active** · DECISIONS.md §9.87*
+
+#### `CAL.gate.reading_window_iterations`
+
+How deep behind the reading point the gate reading is AVERAGED, in iterations. The reading is the mean of every readable trips table in (point - this, point], so at the declared 40 and a 10-iteration write interval an iteration-100 reading is the mean of it.60, 70, 80, 90 and 100. IT EXISTS BECAUSE A POINT READING CANNOT SCORE A CANDIDATE: 9.158 measured, within six separate 25% arms with nothing changed, that heavy rail, bike and taxi each move further from or towards target between iteration 80 and 100 than the WHOLE CAL.gate.pass_deviation_pct band, upward on every arm - the model still relaxing, not seed scatter. A search scored at a point would rank how far each run had got. The directive 9.158 left was to change the READING, not the rule, and this is that change. WHY 40 AND NOT DEEPER: nothing in the store reaches past iteration 104, so a window ending at 100 is the deepest that can be TESTED at all, and 40 is the widest that leaves the whole window inside what every arm holds (all seven hold it.40 through it.100). The sweep runs from 20 - two readings, the narrowest thing that is an average at all - to 80, where the window reaches back to iteration 20 and starts averaging in the run's early transient, which would flatter the reading by measuring a different regime rather than by the reading being steadier. WHAT IS AVERAGED: the modelled level and the trip count only. The target, basis and denominator are the endpoint's, and the deviation and gate flag are RECOMPUTED from the averaged level - averaging deviations would put a mean of ratios where a ratio of means belongs. THIS IS A PROPERTY OF THE INSTRUMENT, NOT OF THE MODEL: no agent sees it, and changing it cannot move a mode share - it changes only how confidently two candidates can be told apart. Measured with src/analyse/measure_reading_stability.py --window.
+
+***assumed** · status **active** · DECISIONS.md §9.159, 9.158 · sweep role **uncertainty***
+
+> **Sweep basis.** The window is an INSTRUMENT setting, not a model value, so its bracket is what the evidence can bound rather than what a literature reports. The floor of 20 is two readings at the 10-iteration write interval - the narrowest thing that is an average rather than a point. The ceiling of 80 is where the window reaches back to iteration 20 and begins averaging in the run's early transient: past it the reading would look steadier because it is measuring a different regime, which is the one way this field could pass by measuring less. Nothing in the store reaches past iteration 104, so no window ending deeper than 100 can be tested at all today; a first arm past its gate would let the bracket be re-derived at depth.
 
 #### `CAL.gate.stop_deviation_pct`
 
@@ -3619,7 +3628,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 82 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 86 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3698,6 +3707,10 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
+| `RUN.transit_router.access_egress_basis` | `beeline` | enum | `derived` | derived: access_egress_basis = network only where the routed leg can actually b |
+| `RUN.transit_router.access_initial_search_radius_m` | `1000.0` | metres | `derived` | derived: access_initial_search_radius_m = search_radius_m. The intermodal stop  |
+| `RUN.transit_router.access_max_radius_m` | `1200.0` | metres | `derived` | derived: access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 20 |
+| `RUN.transit_router.access_search_extension_radius_m` | `200.0` | metres | `derived` | derived: access_search_extension_radius_m = extension_radius_m, the same reach- |
 | `RUN.transit_router.direct_walk_basis` | `network` | enum | `derived` | derived: direct_walk_basis = network whenever walk is routed and simulated on t |
 | `RUN.transit_router.direct_walk_factor` | `1.0` | ratio | `literature` | 1 - 2 |
 | `RUN.transit_router.extension_radius_m` | `200.0` | metres | `literature` | 100 - 500 |
@@ -4197,6 +4210,38 @@ The mode strings the mobsim serves transit passengers under, and - minus the `pt
 Whether the mobsim simulates the transit schedule at all. False would make every scenario in this study meaningless, which is exactly why it is declared rather than left as a literal nobody can see.
 
 ***definition** · status **active** · DECISIONS.md §15 · MATSim `transit.useTransit`*
+
+#### `RUN.transit_router.access_egress_basis`
+
+What the PT router's access and egress legs ARE: `beeline` (a straight line at the raptor's own walk speed, teleported in the mobsim) or `network` (routed by the registered walk RoutingModule, which in this scenario is the network walk router because walk is a network mode). It emits swissRailRaptor.useIntermodalAccessEgress and the intermodalAccessEgress parameter set. CHANGING IT IS A FAMILY BOUNDARY: it changes what the router returns for every pt trip, so no run before it compares with any run after it (3.5).
+
+***derived** · status **active** · DECISIONS.md §9.159, 9.156, 9.54*
+
+> **Derived from** `RUN.routing.network_modes`, `RUN.qsim.main_mode`, `RUN.routing.access_egress_type`: access_egress_basis = network only where the routed leg can actually be EXECUTED, and 8 September 2026 it cannot, so it is beeline. The requirement is not in doubt: GOAL.md requirement 1 forbids teleportation, walk is in RUN.routing.network_modes and is a qsim main mode, and at beeline the raptor draws access and egress straight and citysim.GenericRouteTeleporter teleports them - 520,385 such legs over arm 20260906T233901's 3.77 M (9.156, 9.158, #167). What is in doubt is executability, and THREE MEASUREMENTS decide it (9.159). (1) At network the routing works: the raptor accepts useIntermodalAccessEgress beside useModeMappingForPassengers with no consistency throw, and the teleport count falls to 6 [walk via pt] on probe aborted_20260908T231109_4it_1pct. (2) The MOBSIM then refuses the result - TransitAgentTriesToTeleportException, agent 355102 at link 158102 trying to board at 128983 - because the walk router lands the agent on a walk link near the stop while the stop is on its own link. (3) That is not fixable by routing to the stop's link, because 675 of 4,123 stop facilities (16.4%) sit on a link walk cannot use: 382 pt/rail/train, 199 pt2matsim artificial stopFacilityLinks, 62 road links omitting walk, 18 rail, 18 artificial rail - the heavy-rail and light-rail platforms among them. MATSim's own bridge is refused for a fourth measured reason: RUN.routing.access_egress_type = accessEgressModeToLink fails at PersonPrepareForSim on this demand, "Found a trip whose legs have different routingModes", 40 agents on probe aborted_20260908T232051_4it_1pct - a different failure from the ClassCastException 9.54 recorded, and earlier than the mobsim. So the identity resolves to beeline until a bridge exists that puts the agent on the stop's link without breaking trip consistency; the machinery, the parameter set and the three derived radii stay declared and ready, and #167 stays open with what each probe measured.
+
+#### `RUN.transit_router.access_initial_search_radius_m`
+
+Radius around a trip end within which the raptor collects candidate access/egress stops when access/egress is routed rather than drawn. The intermodal counterpart of transitRouter.searchRadius, and equal to it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].initialSearchRadius.
+
+***derived** · status **active** · DECISIONS.md §9.159, 9.120*
+
+> **Derived from** `RUN.transit_router.search_radius_m`: access_initial_search_radius_m = search_radius_m. The intermodal stop search is given the SAME reach the beeline search already had, so that turning access/egress into network legs changes the route and not the market. Declaring a different number here would move two things at once and make the arm that follows uninterpretable - and it would re-open a question 9.158 already closed with numbers, that radius is NOT what makes 60.5% of pt requests come back as a walk. The raptor's own default for this parameter is the sentinel -Infinity, so it must be set explicitly or the initial search is unbounded.
+
+#### `RUN.transit_router.access_max_radius_m`
+
+The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists, so it is derived as the furthest the beeline path could reach. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.
+
+***derived** · status **active** · DECISIONS.md §9.159, 9.120*
+
+> **Derived from** `RUN.transit_router.search_radius_m`, `RUN.transit_router.extension_radius_m`: access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 200. The beeline search has no separate hard ceiling: it reaches the search radius, and where no stop lies inside it, out to the nearest stop plus the extension. The furthest that path can ever reach is therefore the sum, and that is the ceiling declared here - the identity that leaves the routed search covering the same ground as the drawn one. The raptor's own default is the sentinel +Infinity, which would let one agent's access search run to the far side of the region.
+
+#### `RUN.transit_router.access_search_extension_radius_m`
+
+How far past the nearest found stop the intermodal search continues. The intermodal counterpart of transitRouter.extensionRadius, and equal to it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].searchExtensionRadius.
+
+***derived** · status **active** · DECISIONS.md §9.159, 9.120*
+
+> **Derived from** `RUN.transit_router.extension_radius_m`: access_search_extension_radius_m = extension_radius_m, the same reach-preserving identity as the initial radius above. MATSim's own default for this one is 500 m rather than a sentinel, which would have widened the search by 300 m as a side effect of a change that is not about reach at all.
 
 #### `RUN.transit_router.direct_walk_basis`
 

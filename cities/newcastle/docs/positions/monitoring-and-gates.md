@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
 
 ## What is built
 
@@ -41,6 +41,9 @@
 - **Nothing is compared across a family, a sample fraction or a network build.** A boardings-basis reading does not compare with an earlier trip-share reading of the same mode (§9.130).
 
 ## What is measured
+
+- **THE WINDOWED READING WAS BUILT AND IS MEASURED WORSE THAN THE POINT IT REPLACES** (§9.159, #163). §9.158 left the remedy open between reading deeper and averaging a window; the window is now declared (`CAL.gate.reading_window_iterations` = 40, sweep [20, 80]), built inside `report_mode_ridership.report_window` so the board, the gate and the objective cannot read a different quantity from each other, and measured over the SAME six 25 % arms WITHIN each run. Point reading: heavy rail 6/6 arms at a worst **24.88** points, bike 4/6 at 17.76, taxi 3/6 at 15.72 — **three** modes past the whole `CAL.gate.pass_deviation_pct` band. Windowed at 40: heavy rail 6/6 at **41.46**, bike **6/6** at 19.90, taxi 2/6 at 13.53, bus 1/6 at 12.86 — **four** modes, worst nearly doubled. Objective drift **0.081–0.5395 pp**, still one-signed on every arm. `results/processed/_reading_window_measurement.json`.
+- **THE CAUSE RETIRES THE REMEDY: the movement is a monotone TREND, so there is no noise for an average to remove** (§9.159). On the F23 arm every scored mode's series over it.40–it.100 runs one way without a single reversal — car **59.78 → 66.94**, walk **14.55 → 9.76**, bike **6.23 → 4.66**, heavy rail **27,948 → 19,140**. A mean over a monotone series is its centre, so a window ending at 100 reads about iteration 80 and two windowed readings differ by the gap between their centres. §9.158's own observation that the drift ran UPWARD on all six arms was already that signature. **The reading point is a CONVERGENCE problem, not a measurement one**, and it cannot be settled while nothing is read past iteration 104.
 
 - **A GATE WAS GREEN ON A CHECKOUT THAT COULD NOT LAUNCH** (§9.152). With all 17 checks passing and the arm approved, `run.py` refused before MATSim started: `.tools/run-stack/lib` held **0 jars** while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` checks the digests of the components RECORDED in `toolchain.json`, and a run stack that `--run-stack` never resolved is never recorded — so the loop could not report it. **The check was green on the absence of the thing it should have failed on.** `verify()` now reads the declared representation and reports `MISSING run-stack` with the command. The cost was one refused launch (`aborted_20260907T145929_300it_25pct`) and no compute.
 - **The issue gate has been overridden once, deliberately and on the record** (§9.156): #159 was filed on 8 September and the operator chose `--allow-open-issues` for the F31 arm rather than delay it, on the ground that the defect was in how the manifest DESCRIBES ancestry. `run.py` printed the override and the run record carries it; #159 is now closed (§9.158).

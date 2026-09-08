@@ -71,6 +71,15 @@ OUT = _city.path('networks/matsim')
 # schedules - descends from all of them. The signals, crossings and
 # charging-dwell subtrees are other scripts' outputs and carry their own
 # lineage entries.
+#
+# EXCEPT the vehicles (#165). pt2matsim writes transitVehicles.xml.gz in the
+# same pass, but that file is not mapped onto anything: it carries the GTFS
+# vehicle types and their published capacities, one vehicle per departure, and
+# NO link id, node id, coordinate or osm reference (measured over all 15 of
+# them, DECISIONS.md 9.159). The assembler downstream already declares its own
+# copy against the schedules alone, so the package labelled the DERIVED copy
+# CC-BY while its own SOURCE was ODbL - a file cannot be freer than what it was
+# cut from, and the contradiction was the blanket glob's, not the assembler's.
 OUTPUT_INPUTS = {
     'networks/matsim/*': [
         'networks/osm/roads.osm',
@@ -79,6 +88,7 @@ OUTPUT_INPUTS = {
         'data/processed/network/A1_road_variant_patches.csv',
         'scenarios/E1_road_variants.csv',
         'schedules'],
+    'networks/matsim/schedules/*/transitVehicles.xml.gz': ['schedules'],
 }
 
 WORK = os.path.join(OUT, '_work')

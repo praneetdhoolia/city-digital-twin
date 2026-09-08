@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-08T21:12:01",
+  "generated": "2026-09-08T23:34:40",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 512,
-  "total_bytes": 4378690306,
+  "total_bytes": 4378699692,
   "total_gib": 4.08,
   "by_stage": {
     "raw": 92,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2728269562,
-    "processed": 1650420744
+    "processed": 1650430130
   },
   "by_lineage_scope": {
     "raw": 86,
@@ -21,8 +21,8 @@
     "none": 0
   },
   "by_share_alike_ancestor": {
-    "yes": 233,
-    "no": 279,
+    "yes": 218,
+    "no": 294,
     "undetermined": 0
   },
   "files": [
@@ -3528,9 +3528,9 @@
     },
     {
       "path": "scenarios/matsim/_run_inputs_report.json",
-      "bytes": 46918,
+      "bytes": 47484,
       "rows": null,
-      "sha256": "c990ad9d34e9ed1e76f80fc484eeaf2a2ab35d3e58ca067f85e61571406f40b1",
+      "sha256": "bf08819f8e67892eb3f3e587db14197d16aac0247c5bafa20c226f7714cd1d3d",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + Australian Bureau of Statistics - Census DataPacks, ASGS boundaries + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
@@ -3570,9 +3570,9 @@
     },
     {
       "path": "scenarios/matsim/S0/SAT/config.xml",
-      "bytes": 17614,
+      "bytes": 17908,
       "rows": null,
-      "sha256": "b75f1c594adab2bfa30a2ea62471a4f26826dab2fcda4a0bde4a0a708422d63b",
+      "sha256": "1bddb807ee04ba3321280c3e40bdb8eb502201d7ead26a421bf5a243b71b165b",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -3626,9 +3626,9 @@
     },
     {
       "path": "scenarios/matsim/S0/SUN/config.xml",
-      "bytes": 17613,
+      "bytes": 17907,
       "rows": null,
-      "sha256": "c2672bfdad47c0a737ceb616af0adf45a9f0012f8abc7d12e3bab694ef6fca6f",
+      "sha256": "6d74925c81d91719de5f62a9ef472370076ce8b06082e98060059cd104362f91",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -3682,9 +3682,9 @@
     },
     {
       "path": "scenarios/matsim/S0/WEEKDAY/config.xml",
-      "bytes": 17620,
+      "bytes": 17914,
       "rows": null,
-      "sha256": "f271bda737bd4f97d0ec5d8a80abfa3d582374b77ebde9de833f1998125cea61",
+      "sha256": "d90aeb9a89f54a15ffe35f538453ba7e62ab5e70d147c68c70437ae35e0b37db",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -3766,9 +3766,9 @@
     },
     {
       "path": "scenarios/matsim/S1/SAT/config.xml",
-      "bytes": 17614,
+      "bytes": 17908,
       "rows": null,
-      "sha256": "ac4cc8cf56732d2291e0c07cc042a75bfd8151e5c7beea21d442ea67ba4a6042",
+      "sha256": "3c4863cdaee2f761f0ebd4fb60efb695dc0e5f9f2d0bbdb052d22ed2cf56433b",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -3822,9 +3822,9 @@
     },
     {
       "path": "scenarios/matsim/S1/SUN/config.xml",
-      "bytes": 17613,
+      "bytes": 17907,
       "rows": null,
-      "sha256": "473db5e8f5cf5bd699cc06d6fd81347f4b9233011f45be18f8d0282491cc0f6b",
+      "sha256": "a21517bdd5748185fa056aba747a7e085cf3537f37740b82e9e08957bd1e696d",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -3878,9 +3878,9 @@
     },
     {
       "path": "scenarios/matsim/S1/WEEKDAY/config.xml",
-      "bytes": 17620,
+      "bytes": 17914,
       "rows": null,
-      "sha256": "4bab7d7d7198d39a8a31389d0baa58f250da82e64aea20ad2fcadcb60e7d12c7",
+      "sha256": "3f1ca0b51dcf6d104a1049c7b3f871da711e6b42fdcbfb7114f268d3ff6d944b",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -3962,9 +3962,9 @@
     },
     {
       "path": "scenarios/matsim/S2/SAT/config.xml",
-      "bytes": 17614,
+      "bytes": 17908,
       "rows": null,
-      "sha256": "0816e30710c32c47bc87193644af09e0fec95d0cb4c36e0ad59a74b05d220059",
+      "sha256": "046494d0c16f1dd04906603c9f316c880876d860d9efe1ab879f0ed71d6a9820",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4018,9 +4018,9 @@
     },
     {
       "path": "scenarios/matsim/S2/SUN/config.xml",
-      "bytes": 17613,
+      "bytes": 17907,
       "rows": null,
-      "sha256": "2a097d510443c87620a7a3d030fb699679a69c128eb7f3bc1ad29df5f22eff5b",
+      "sha256": "8a93aa8e6481ed8949e501a404982e88896249fbaea1233673cd7a27c3bc377f",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4074,9 +4074,9 @@
     },
     {
       "path": "scenarios/matsim/S2/WEEKDAY/config.xml",
-      "bytes": 17620,
+      "bytes": 17914,
       "rows": null,
-      "sha256": "74ab6ff25c3359fc84728df830729271ff5da9e2a89f7f99fa6699600ff399fa",
+      "sha256": "c84ab21cd5dc1de173a4ce8ad8727f95b5f192f212ba98756554cb6779d79d63",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4158,9 +4158,9 @@
     },
     {
       "path": "scenarios/matsim/S2a/SAT/config.xml",
-      "bytes": 17617,
+      "bytes": 17911,
       "rows": null,
-      "sha256": "e4a4d441956c3be419b062787ec39b1d2eb80abcfe7da1eb80cbcb43e525b103",
+      "sha256": "934555d5f481a99e6e7653df10d3ddaf03a1210517f09fc2f0bb82ac0fac4bee",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4214,9 +4214,9 @@
     },
     {
       "path": "scenarios/matsim/S2a/SUN/config.xml",
-      "bytes": 17616,
+      "bytes": 17910,
       "rows": null,
-      "sha256": "b1a0f2399e9299b183e0d605f5303f4bb738e5ce7141e37c02be18a1fd05c73c",
+      "sha256": "5eeafde4c7b74f08de1c4c393948fb3b97b8a155d4be12d62b823843c88af2f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4270,9 +4270,9 @@
     },
     {
       "path": "scenarios/matsim/S2a/WEEKDAY/config.xml",
-      "bytes": 17623,
+      "bytes": 17917,
       "rows": null,
-      "sha256": "f926a4170c5f2ce37b87e2f3735157eba6343eea11dccf2e33f788cec7250ad1",
+      "sha256": "022b80e1c408b477453574d75ab2f1f59a65a62c7e0ead9c8fb4a3b13b25a0d0",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4354,9 +4354,9 @@
     },
     {
       "path": "scenarios/matsim/S2b/SAT/config.xml",
-      "bytes": 17617,
+      "bytes": 17911,
       "rows": null,
-      "sha256": "4a26db9b531990dfe41e4b8c097dc46d2653c0c58ccba9b62e19b401a3ff5e77",
+      "sha256": "648d74ebc81588ef8cc0ab4bab4b1f5ec4ebf0311013542467257fb0baa8fdd4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4410,9 +4410,9 @@
     },
     {
       "path": "scenarios/matsim/S2b/SUN/config.xml",
-      "bytes": 17616,
+      "bytes": 17910,
       "rows": null,
-      "sha256": "64220084797e80eb5219d9f7ccc4346d036f75651985f9f7466706396ecfffe3",
+      "sha256": "727c7db4bfca84d21046f2b99de2dc1846942ab499592725200d7755eeb62aa7",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4466,9 +4466,9 @@
     },
     {
       "path": "scenarios/matsim/S2b/WEEKDAY/config.xml",
-      "bytes": 17623,
+      "bytes": 17917,
       "rows": null,
-      "sha256": "2a706fef26e71b3c4c943aa54376ffe74a537d8d0873dd80789cc27b8832fb80",
+      "sha256": "ac3dd074fc89341b3d4bcc920d67fb87f8f50bce8c5ed202cb7e3b999f85e4e8",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4550,9 +4550,9 @@
     },
     {
       "path": "scenarios/matsim/S2c/SAT/config.xml",
-      "bytes": 17617,
+      "bytes": 17911,
       "rows": null,
-      "sha256": "531aa7c97a2460e4c0d8b3e5e10e26b59fbc75f43a9b599381b79c97aeb61051",
+      "sha256": "285ca9bfab41dd1b9e3ce7ec27a72f848825955cfc8186efb167bb7a0aee6b84",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4606,9 +4606,9 @@
     },
     {
       "path": "scenarios/matsim/S2c/SUN/config.xml",
-      "bytes": 17616,
+      "bytes": 17910,
       "rows": null,
-      "sha256": "7158b33bb554720c605166f4be2f46d57ab45ff07c239cfafebb1e40830d29aa",
+      "sha256": "ea7b24f21904add2b8bc7f8e8e4d65c7244c3028ab7c1b558d2f93b91afef34c",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4662,9 +4662,9 @@
     },
     {
       "path": "scenarios/matsim/S2c/WEEKDAY/config.xml",
-      "bytes": 17623,
+      "bytes": 17917,
       "rows": null,
-      "sha256": "ac77b2fd6c6fd3bfec6b66b3b7dd3fa2eb4cef65651fdc8dcd5b60192c78b04d",
+      "sha256": "a8b62731dd85baa97962ed43951f0826fc1b9ed9e1f35dfd2c7fd118bbcd40aa",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4746,9 +4746,9 @@
     },
     {
       "path": "scenarios/matsim/S3/SAT/config.xml",
-      "bytes": 17618,
+      "bytes": 17912,
       "rows": null,
-      "sha256": "b90b9781c7e582afd4a93071337543362e709d233f7a6428cf589708b3ee2799",
+      "sha256": "0f733ee54295cf18fdbe649451fc4b71c510cc222f8d566d91046ac3a6386454",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4802,9 +4802,9 @@
     },
     {
       "path": "scenarios/matsim/S3/SUN/config.xml",
-      "bytes": 17617,
+      "bytes": 17911,
       "rows": null,
-      "sha256": "5ec952993470453705b619b4117ec584aa422dea0b33dc60962bb6fea93ec745",
+      "sha256": "347d0a1003527bfc7fc7af7a4a31b59bf757e450168f950e3afdb3d5e76381c3",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4858,9 +4858,9 @@
     },
     {
       "path": "scenarios/matsim/S3/WEEKDAY/config.xml",
-      "bytes": 17624,
+      "bytes": 17918,
       "rows": null,
-      "sha256": "57a58e6c556ff179431ab7a44c381f0999d7d9eaac1883c57b3eb0d2abd5ee06",
+      "sha256": "b96d19d4eb9360c41b0f3f69f902ffdd2d4697d86728fe7052428b1abb9ce4c7",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4942,9 +4942,9 @@
     },
     {
       "path": "scenarios/matsim/S4/SAT/config.xml",
-      "bytes": 17614,
+      "bytes": 17908,
       "rows": null,
-      "sha256": "95004452c2e6dd9b0571eb82321713407ef38f0a0b5e06bd3dc2e9b31cc3ccc0",
+      "sha256": "53cc85fa99c6ba9335517e3c3dea6af49674a45266952b9b7586c50a8fa9fd64",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -4998,9 +4998,9 @@
     },
     {
       "path": "scenarios/matsim/S4/SUN/config.xml",
-      "bytes": 17613,
+      "bytes": 17907,
       "rows": null,
-      "sha256": "79e87b5ce7f9157e1001a735939f6ef9fb731fab78c63356c5ffaa17474db900",
+      "sha256": "d532452821c4b549cfe3a04fa1dc929d0a28361f91241dfc5cab60a630098d4d",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5054,9 +5054,9 @@
     },
     {
       "path": "scenarios/matsim/S4/WEEKDAY/config.xml",
-      "bytes": 17620,
+      "bytes": 17914,
       "rows": null,
-      "sha256": "cd84b60c99200aeb8c83a1fe7564e924c3a8244771447c7d61ac631dcd73cbcf",
+      "sha256": "134c0faee214a1dfeead4d5c2550063d1b4748bfa0062260904f5479c025e56d",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5138,9 +5138,9 @@
     },
     {
       "path": "scenarios/matsim/S5/SAT/config.xml",
-      "bytes": 17614,
+      "bytes": 17908,
       "rows": null,
-      "sha256": "533e09b06a0e54aff87c29a2cec68ce8dbaff2f1e108b717b21eb5a51f3b05e5",
+      "sha256": "ea9864a304a42e5812413ba3beb58f18f96ff25da9ebbcd61020e91194a14976",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5194,9 +5194,9 @@
     },
     {
       "path": "scenarios/matsim/S5/SUN/config.xml",
-      "bytes": 17613,
+      "bytes": 17907,
       "rows": null,
-      "sha256": "2aec167f31e74a397cd2e54fdfb0116edb4055b060eeb284de753b07da540b92",
+      "sha256": "11e94a2f27152e7ce26d0f51f2db66d272a39761866a80f2b50219d1354993bc",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5250,9 +5250,9 @@
     },
     {
       "path": "scenarios/matsim/S5/WEEKDAY/config.xml",
-      "bytes": 17620,
+      "bytes": 17914,
       "rows": null,
-      "sha256": "657cf4c16c88200e15764256be02a301676e6aec71fce58d6d3e8e07d1dfab6e",
+      "sha256": "f4b11c11102976d3f564e595806f07baeb9226f3e50637a101b5780fb136bc18",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5334,9 +5334,9 @@
     },
     {
       "path": "scenarios/matsim/S6/SAT/config.xml",
-      "bytes": 17614,
+      "bytes": 17908,
       "rows": null,
-      "sha256": "c3e91261f3cd3a2af1ea49d5fc681fd958f56583da4912ce81552543ee5ad05a",
+      "sha256": "05ce9ea939ab38014f0565bca519c248fa67a39bf8db23d5ff8111ce71f2653c",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5390,9 +5390,9 @@
     },
     {
       "path": "scenarios/matsim/S6/SUN/config.xml",
-      "bytes": 17613,
+      "bytes": 17907,
       "rows": null,
-      "sha256": "5ea90c145cf00c626b063a0207ae2df943ff4242816431842247fa0623538cb6",
+      "sha256": "75530d07d06ffd4ddddfca399d53e423fc199d55497d902c7c93e848933d1f15",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5446,9 +5446,9 @@
     },
     {
       "path": "scenarios/matsim/S6/WEEKDAY/config.xml",
-      "bytes": 17620,
+      "bytes": 17914,
       "rows": null,
-      "sha256": "f7395c8d240ead90d5cdd93af78b600a92522552dc7e3ea232d7512a5ca1c04c",
+      "sha256": "0c5247f20c2ae2033ba902863d506fec2d2e18959493c2804ab4b5f787ceffa7",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_run_inputs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -5745,12 +5745,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/era1_pre2014_reconstructed/network.xml.gz",
@@ -5787,12 +5787,12 @@
       "sha256": "869ab36d5e8ff384b803cd45f810cf6574daea69553c718c96a787693f4f39a9",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/era2_2016_rail_truncated/network.xml.gz",
@@ -5829,12 +5829,12 @@
       "sha256": "869ab36d5e8ff384b803cd45f810cf6574daea69553c718c96a787693f4f39a9",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/era3_2018_keolis_interchange/network.xml.gz",
@@ -5871,12 +5871,12 @@
       "sha256": "1ad2fa14e6b9aeae3df522df3b0f7305e57f461ac4da978dd55eec1118633288",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/era4_2019_lr_open/network.xml.gz",
@@ -5913,12 +5913,12 @@
       "sha256": "b41c70cc20e04ca547f78eb192d5ac2750e3ae16fac460c1b4ea5aa4b41f0c83",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S0/network.xml.gz",
@@ -5955,12 +5955,12 @@
       "sha256": "d6946293bbabf0107839d8e58d7ea6dda9cbb3ff63e634eb46a0a3a9dd72830c",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S1/network.xml.gz",
@@ -5997,12 +5997,12 @@
       "sha256": "b5725a47ca416a9b1b10cad0f709fa683bbb20978566fa526317a520027f979e",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S2/network.xml.gz",
@@ -6053,12 +6053,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S2a/network.xml.gz",
@@ -6109,12 +6109,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S2b/network.xml.gz",
@@ -6165,12 +6165,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S2c/network.xml.gz",
@@ -6221,12 +6221,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S3/network.xml.gz",
@@ -6263,12 +6263,12 @@
       "sha256": "fa1a1c0ddd19efc98797d281acc1521481108251e9a78ea57c6ec9fa33c17828",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S4/network.xml.gz",
@@ -6319,12 +6319,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S5/network.xml.gz",
@@ -6375,12 +6375,12 @@
       "sha256": "680f30b769a0b5396989c8ca8e69b0cf48df49e6ed9621c99e00a0f3854078f4",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/schedules/S6/network.xml.gz",
@@ -6417,12 +6417,12 @@
       "sha256": "4f786707baa4b8e592747f5fe3d142ddecda8675ab64ee250630136b7f8df5a3",
       "stage": "processed",
       "produced_by": "src/build/build_matsim_network.py (pt2matsim 26.6)",
-      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
-      "source_url": "https://opendata.transport.nsw.gov.au/ + https://www.openstreetmap.org/ + https://copernicus-dem-30m.s3.amazonaws.com/",
-      "licence": "ODbL 1.0",
-      "retrieved": "2026-08-16T00:37:54",
+      "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
+      "source_url": "https://opendata.transport.nsw.gov.au/",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
       "lineage_scope": "output",
-      "share_alike_ancestor": "yes"
+      "share_alike_ancestor": "no"
     },
     {
       "path": "networks/matsim/signals/_signals_report.json",
