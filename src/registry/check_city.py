@@ -27,6 +27,7 @@ and hiding them would defeat the purpose.
 """
 import argparse
 import ast
+import glob
 import io
 import json
 import os
@@ -390,6 +391,57 @@ def check_no_cwd_relative_output(name):
                    'working directory' % name)
 
 
+def check_consumers_are_true(city_dir, name):
+    """Every `consumers` entry names a file that exists and cites the key.
+
+    This check lived in `tests/check_package.py`, which is LOCAL ONLY and needs
+    the full ~2.3 GiB package, so nothing in CI could see it. It was RED at
+    781cf41 on two claims added the day before - `CAL.gate.reading_window_iterations`
+    naming `src/calibrate/fit.py` and `CAL.search.reading_drift_pct` naming
+    `src/analyse/measure_reading_stability.py`, neither of which mentions its
+    key - and a false consumer is not cosmetic: `calibrate.rebuild_stage` reads
+    `consumers` to decide which fields the search may move, so a claim that
+    names the wrong file puts a field in the movable set that the named file
+    would never read. It needs no bulk data, so it belongs here.
+
+    A field BOUND to a tool parameter reaches it through the binding, and
+    `src/registry/param_config.py` builds the config by walking bindings rather
+    than by spelling any key, so naming it as the emitter is a true claim this
+    check cannot verify by text - `check_hardcoding` question 7 verifies it far
+    better, by changing the value and watching the config move.
+    """
+    reg = os.path.join(city_dir, 'registry')
+    if not os.path.isdir(reg):
+        return
+    fields = {}
+    for path in sorted(glob.glob(os.path.join(reg, '*.json'))):
+        fields.update(read_json(path).get('fields', {}))
+    lies = []
+    claims = 0
+    for key, spec in sorted(fields.items()):
+        for consumer in (spec.get('consumers') or []):
+            claims += 1
+            target = os.path.join(REPO, consumer)
+            if not os.path.exists(target):
+                lies.append('%s -> %s (no such file)' % (key, consumer))
+                continue
+            with io.open(target, encoding='utf-8', errors='replace') as fh:
+                text = fh.read()
+            if key in text:
+                continue
+            bound = any(spec.get(b) for b in ('matsim_param',
+                                              'pt2matsim_osm_param',
+                                              'pt2matsim_mapper_param'))
+            if bound and consumer == 'src/registry/param_config.py':
+                continue
+            lies.append('%s -> %s (does not reference the key)' % (key, consumer))
+    for lie in lies:
+        check(False, '%s: false consumer claim - %s' % (name, lie))
+    check(not lies,
+          '%s: every `consumers` entry is TRUE - the named file exists and '
+          'references the field key (%d claim(s))' % (name, claims))
+
+
 def check_city(name):
     city_dir = os.path.join(citymod.CITIES_DIR, name)
     print('\n=== %s (%s) ===' % (name, city_dir))
@@ -403,6 +455,7 @@ def check_city(name):
 
     doc = check_descriptor(city_dir, name)
     check_fields(city_dir, name, doc)
+    check_consumers_are_true(city_dir, name)
     check_overlays(city_dir, name, doc)
     check_layers(city_dir, name, doc)
     check_no_cwd_relative_output(name)
