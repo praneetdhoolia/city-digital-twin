@@ -1334,7 +1334,8 @@ def stop_run(name, cause):
     return dead
 
 
-def run(scenario, day, cfg, overrides, force=False, warm=None):
+def run(scenario, day, cfg, overrides, force=False, warm=None,
+        registry_overrides=None):
     src_dir = os.path.join(SETS, scenario, day)
     if not os.path.isdir(src_dir):
         raise SystemExit('no run inputs at %s' % src_dir)
@@ -1563,7 +1564,15 @@ def run(scenario, day, cfg, overrides, force=False, warm=None):
     steady = sorted(v for k, v in per.items() if k > 0)
     doc = dict(name=name, scenario=scenario, day=day, fraction=fraction,
                iterations=iterations, threads=threads, xmx=xmx, seed=seed,
-               overrides=overrides, rc=rc, wall_s=round(wall, 1),
+               overrides=overrides,
+               # The RAW `--set` channel above and the REGISTRY `--config-set`
+               # channel here are different things, and the record now says so.
+               # `values_sha256` already fingerprints every resolved value, so
+               # run identity was never wrong; what was missing is legibility -
+               # neither a reader nor the calibration loop could see WHICH
+               # declared values a run moved without re-resolving its overlay.
+               registry_overrides=dict(registry_overrides or {}),
+               rc=rc, wall_s=round(wall, 1),
                median_iteration_s=steady[len(steady) // 2] if steady else None,
                # The run executed every iteration it declared. That is NOT a
                # claim of convergence - 9.7 holds that separately - and it is
@@ -1678,7 +1687,7 @@ def main():
 
     cfg = resolve(a.scenario, a.day, a.run_config, overrides)
     run(a.scenario, a.day, cfg, dict(parse_override(s) for s in a.set), a.force,
-        warm=warm)
+        warm=warm, registry_overrides=overrides)
 
 
 if __name__ == '__main__':

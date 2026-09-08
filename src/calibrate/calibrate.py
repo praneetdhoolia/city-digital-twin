@@ -77,6 +77,9 @@ import sys as _sys_rs, os as _os_rs
 _sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
     _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
 import results_store as _results_store  # noqa: E402
+# the runner owns run identity: `find_completed` is what resume
+# already trusts, and this loop must not keep a second opinion
+import run_matsim as _run_matsim  # noqa: E402
 
 
 def _resolve_run(name_or_path):
@@ -546,30 +549,39 @@ def main():
     base = 'cal_%s_%s_%s' % (a.scenario, a.day, a.run_config)
 
     def find_run(overrides):
-        """The completed run carrying exactly these --set overrides.
+        """The completed run this candidate's overrides produced, if any.
 
-        The runner names every run directory itself (launch stamp, iterations,
-        sample pct - the 24 Aug 2026 owner directive), so a candidate is located
-        by what was actually run - the overrides in its `_run.json` - never by a
-        name this loop invented.
+        DELEGATED, and deliberately so. This was a hand-rolled glob matching
+        `_run.json`'s `overrides` - the RAW MATSim `--set` channel - while
+        `evaluate()` sends its candidate through `--config-set`, the REGISTRY
+        channel. A candidate therefore recorded `overrides: {}`, never matched,
+        and the loop raised AFTER paying a full arm's wall clock. The copy also
+        missed `results/processed/`, where the store keeps findings for ever,
+        and accepted any record with `rc == 0`, so an arm stopped at its gate
+        could have become the calibrated base the README is drawn from.
+
+        `run_matsim.find_completed` answers all three and is the function resume
+        already trusts: it searches RAW, PROCESSED and RESULTS, it requires
+        `completion == ran_to_last_iteration` (9.143), and it compares
+        `values_sha256`, the fingerprint of every resolved registry value, which
+        is precisely what distinguishes one `--config-set` candidate from
+        another (9.104). A candidate is still located by what was actually run
+        and never by a name this loop invented - the same rule, now enforced by
+        the code that owns it.
         """
-        import glob
-        want = {k: '%s' % v for k, v in overrides.items()}
-        # newest first: a forced re-run supersedes what it re-ran
-        for record in sorted(glob.glob(
-                os.path.join(_city.REPO, 'results', 'raw', '*', '_run.json'))
-            + glob.glob(
-                os.path.join(_city.REPO, 'results', '*', '_run.json')),
-                reverse=True):
-            try:
-                doc = json.load(open(record, encoding='utf-8'))
-            except (OSError, ValueError):
-                continue
-            if (doc.get('scenario') == a.scenario and doc.get('day') == a.day
-                    and (doc.get('overrides') or {}) == want
-                    and doc.get('rc') == 0):
-                return os.path.dirname(record)
-        return None
+        cand = _run_matsim.resolve(a.scenario, a.day, a.run_config, overrides)
+        rec = _run_matsim.find_completed(
+            a.scenario, a.day,
+            cand.get('RUN.sample.fraction'),
+            cand.get('RUN.controler.last_iteration'),
+            cand.get('RUN.machine.seed'),
+            {},                    # this loop sends no raw `--set` overrides
+            values=_run_matsim.values_sha256(cand))
+        if not rec:
+            return None
+        # the record names the directory that actually holds it; the store
+        # knows where that is, whether raw or processed
+        return _results_store.resolve(rec['name'])
 
     def rebuild_run_inputs(overrides):
         """Re-assemble this scenario x day's run inputs under the candidate.

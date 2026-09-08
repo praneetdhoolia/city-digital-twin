@@ -128,6 +128,32 @@ def truth_registry_fields(city_root: Path, spec: dict) -> int:
     return total
 
 
+def truth_registry_value(city_root: Path, spec: dict) -> float:
+    """A single declared field's VALUE, from the city's own registry.
+
+    Most figures a position page states are declared values - a pairing window,
+    a write interval, a hash bucket - and the registry owns each in exactly one
+    place. A page that states one is therefore making a checkable claim, and
+    before this resolver existed nothing checked it: the 9 September assessment
+    found `B.ride.shared_lift_hash_bucket` stated as 0.05 against a declared
+    0.25, and both write intervals stated as 10 against a declared 100.
+    """
+    reg = city_root / "registry"
+    if not reg.is_dir():
+        raise Skip("registry/ absent")
+    key = spec["key"]
+    for path in sorted(reg.glob("*.json")):
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        fields = doc.get("fields", doc)
+        if key in fields:
+            value = fields[key]
+            value = value.get("value") if isinstance(value, dict) else value
+            if not isinstance(value, (int, float)) or isinstance(value, bool):
+                raise Skip(f"{key} is not a number")
+            return value
+    raise Skip(f"registry declares no {key}")
+
+
 def truth_json_number(city_root: Path, spec: dict) -> float:
     """A number under a dotted key path in a committed JSON report.
 
@@ -272,6 +298,7 @@ RESOLVERS = {
     "manifest_files": truth_manifest_files,
     "manifest_artefact_rows": truth_manifest_artefact_rows,
     "registry_fields": truth_registry_fields,
+    "registry_value": truth_registry_value,
     "json_number": truth_json_number,
     "csv_value_count": truth_csv_value_count,
     "path_count": truth_path_count,

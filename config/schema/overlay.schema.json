@@ -59,6 +59,14 @@
       "additionalProperties": {
         "type": "string"
       }
+    },
+    "answers_issues": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1
+      },
+      "description": "The GitHub issue numbers this run's reading actually settles - the lane GOAL.md requirement 10 scopes by. When present this IS the lane, exactly and only; when absent the lane is scraped from the overlay's prose, which cannot read a negation and cannot tell a mention from a claim. Declare it for any arm whose launch is gated."
     }
   }
 }

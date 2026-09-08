@@ -80,11 +80,45 @@ LABEL = 'awaiting-run'
 # prose form ("Labelled awaiting-run: the next arm's gate reads ...") is
 # evidence exactly as the structured "AWAITING-RUN: ..." form is - a convention
 # already in use is not broken to make a check easier to write.
-EVIDENCE = re.compile(r'(?:^|[\s*_`(\[>-])awaiting[ -]run\s*:[ \t]*(\S.*)',
+# NOTE the absence of a backtick in the allowed-prefix class, and it is
+# deliberate: `AWAITING-RUN:` inside a code span is how this repository REFERS
+# to the convention, not how it invokes it. Allowing it made the gate green on
+# three issues whose own text said "writing an `AWAITING-RUN:` line on it would
+# be inventing a measurement to turn the gate green" - the check was satisfied
+# by the sentence explaining why it should not be. The prose form the class
+# exists to protect ("Labelled awaiting-run: the next arm's gate reads ...") is
+# preceded by a space and still matches.
+EVIDENCE = re.compile(r'(?:^|[\s*_(\[>-])awaiting[ -]run\s*:[ \t]*(\S.*)',
                       re.IGNORECASE | re.MULTILINE)
 # How much statement counts as a statement. A bare "awaiting-run:" with nothing
 # after it is the label again under another name.
 MIN_EVIDENCE_CHARS = 40
+
+# Two statements that clear MIN_EVIDENCE_CHARS and are still not measurements.
+# Both were measured green at 781cf41 while the issues carrying them said in
+# terms that they block the launcher, so the length rule alone is not enough.
+#
+# TEMPLATE: the gate's own documentation matches the gate's own regex. A comment
+# reading `requires an "AWAITING-RUN: <measurement>" line with real content`
+# captures "<measurement>" plus the rest of the sentence. A statement that opens
+# with a <placeholder> is the template, not an instance of it.
+TEMPLATE_EVIDENCE = re.compile(r'^<[^>]{0,80}>')
+# NOTHING: "AWAITING-RUN: nothing. **This issue does not await a run** - it
+# awaits an operator decision / a content pass / a mechanism." The issue is
+# telling the truth; an issue whose stated measurement is "nothing" is not
+# awaiting a run, and requirement 10 is about issues that ARE.
+NOTHING_EVIDENCE = re.compile(r'^nothing\b', re.IGNORECASE)
+
+
+def _is_a_measurement(stated):
+    """Whether a captured statement states something a run could measure."""
+    if len(stated) < MIN_EVIDENCE_CHARS:
+        return False
+    if TEMPLATE_EVIDENCE.match(stated):
+        return False
+    if NOTHING_EVIDENCE.match(stated):
+        return False
+    return True
 
 # An issue reference inside a run overlay's declaration of what the arm answers.
 LANE_REF = re.compile(r'#(\d+)')
@@ -131,11 +165,16 @@ def evidence(issue):
     Read from the issue body and every comment, so an issue that was labelled
     first and explained afterwards is evidenced by the explanation.
     """
+    latest = None
     for text in [issue.get('body', '')] + list(issue.get('comments', [])):
         for match in EVIDENCE.finditer(text or ''):
-            stated = match.group(1).strip().strip('*_`').strip()
-            if len(stated) >= MIN_EVIDENCE_CHARS:
-                return stated
+            # the LAST statement wins, not the first. Comments are
+            # chronological, so an issue that stated a measurement, had it
+            # measured, and then said it now awaits a mechanism is not still
+            # awaiting the measurement it already has.
+            latest = match.group(1).strip().strip('*_`').strip()
+    if latest is not None and _is_a_measurement(latest):
+        return latest
     return None
 
 
@@ -163,8 +202,28 @@ def lane(run_config):
             doc = json.load(fh)
     except (OSError, ValueError):
         return None
+    # DECLARED beats scraped. An overlay that names its lane is read exactly;
+    # nothing else in the file can widen or narrow it, and a description is
+    # then free to explain why an issue is NOT in the lane without putting it
+    # back in - which is what prose scraping did when the depth arm's
+    # description was corrected to exclude #167.
+    declared_lane = doc.get('answers_issues')
+    if isinstance(declared_lane, list) and declared_lane:
+        return set(int(n) for n in declared_lane)
+
+    # Fallback for the overlays that declare nothing, and it is a WEAK one:
+    # `#(\d+)` over free prose cannot tell a claim from a mention. Measured on
+    # `default_25pct.json`, what a bare `python run.py` selects, it yields the
+    # lane {5} from the sentence "issue #5 re-measures relaxation" and defers
+    # every other open issue. Say so rather than scope silently.
     declared = ' '.join(str(doc.get(k, '')) for k in ('overlay', 'description'))
     numbers = set(int(n) for n in LANE_REF.findall(declared))
+    if numbers:
+        sys.stderr.write(
+            'issue gate: %s declares no `answers_issues`, so its lane is '
+            'SCRAPED from its prose and reads %s. A scraped lane cannot tell a '
+            'claim from a mention - declare the lane on the overlay.\n'
+            % (run_config, sorted(numbers)))
     return numbers or None
 
 
@@ -199,9 +258,12 @@ def _why_blocking(issue):
     if LABEL not in issue['labels']:
         return 'not labelled %s' % LABEL
     if evidence(issue) is None:
-        return ('labelled %s but states no measurement - add a line '
-                '"AWAITING-RUN: <the measurement that would settle this>"'
-                % LABEL)
+        return ('labelled %s but states no measurement a run could make - add '
+                'a line "AWAITING-RUN: " naming the observable and where it is '
+                'read. A <placeholder> and the word "nothing" are both refused: '
+                'an issue that awaits a decision, an acquisition or a mechanism '
+                'is not awaiting a run, and requirement 10 is about the ones '
+                'that are' % LABEL)
     return None
 
 
