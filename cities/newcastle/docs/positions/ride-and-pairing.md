@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.156 · **Written against family:** `F31`
+**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.157 · **Written against family:** `F31`
 
 ## What is built
 
@@ -66,6 +66,9 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - **Ride's deficit IS the over-supply in the modes that beat it, and the arithmetic closes** (§9.156, from the F28 gate `aborted_20260907T030352_300it_25pct` at iteration 100). In percentage points of resident linked trips the twelve deviations sum to **+0.008**, as they must. Ride is **−8.822 pp**; the modes above target are car **+3.840**, bike **+3.474**, taxi **+1.597**, bus **+1.548**, motorbike **+0.061** — **10.521 pp** in total. If ride recovered its full deficit pro rata from them: car **+6.6 % → +1.1 %**, motorbike **+16.1 % → +2.6 %** (inside the band), bus **+65.0 % → +10.5 %** (its edge), bike **+157.3 % → +25.4 %**, taxi **+161.1 % → +26.0 %**. **Pro rata is an arithmetic upper bound on what ride placement alone can do, not a prediction** — which agents switch decides the real split — and it is read off a STOPPED arm, citable at iteration 100 and nowhere past it (§9.143).
 - **The geometry says the same thing independently** (§9.156, same reading). The over-supplied modes are over-supplied ON LONG TRIPS: bike's modelled mean is **9.12 km** against an observed **5.21**, taxi **9.52** against **5.20**, walk **5.26** against **0.70**; ride, which should carry a **9.81 km** passenger trip, is 42.8 % short and its own mean (8.63 km) is the closest of any mode to its observation. Long car-less trips that should be RIDDEN are being walked, cycled and taxied. That is precisely what `B.ride.shared_lift_priority` = `longest_first` was built to fix (§9.149), so the arithmetic validates the pending arm's design rather than proposing a new lever.
 
+- **THE F31 GATE: PLACEMENT IS SOLVED AND THE REMAINING GAP IS VOLUME** (§9.157). `aborted_20260908T100009_300it_25pct` at iteration 100, `stopped_at_gate`: ride **-38.0 %** (12.77 %) with a **mean modelled trip of 9.17 km against an observed 9.76 km, -6 %** - the closest geometry of any mode on that board. The lifts the binder places are now the right LENGTH; there are too few of them. That answers what F29 and F30 were both built for (§9.149, §9.151) and moves the lane to volume - #86's question, and the only one left on ride. Controls at the gate: 27,251 declared passengers picked up on 24,792 drivers' detours (mean detour 428 s), 202 unpaired ride legs re-moded and **202 of 202 restored**, 15,550 drivers waiting on a household car, escort coherence 7,155 decohered / 2,835 re-proposed. **Not comparable with any F28 figure** - three family boundaries separate them (§3.5).
+- **The deficit structure reproduces inside F31's own reading** (§9.157). The twelve deviations sum to **+0.086 pp**; ride is **-7.830 pp** and the modes beating it total **+9.500 pp** (car +3.125, bike +3.254, taxi +1.769, bus +1.301, motorbike +0.052). A pro-rata recovery of ride's full deficit would land car at **+0.9 %**, bus at **+9.6 %** and motorbike at **+2.4 %** - **three modes inside 10 %** - with bike at +25.9 % and taxi at +31.4 %. An arithmetic upper bound on what ride volume alone can do, not a prediction.
+
 ## What is open
 
 - #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
@@ -92,6 +95,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.157 — the F31 gate: placement solved, the gap is volume
 - §9.156 — ride's deficit is the small modes' excess, to 0.008 pp
 - §9.153 — F30 it.0: 8,167 paired on 7,771 detours, 0 unroutable
 - §9.151 — the escort listener draws in household-id order

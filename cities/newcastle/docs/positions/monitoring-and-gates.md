@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.156 · **Written against family:** `F31`
+**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.157 · **Written against family:** `F31`
 
 ## What is built
 
@@ -41,6 +41,9 @@
 
 - **A log guard that had never once done what it said** (§9.156). `NetworkDirectWalkPtRouter` counted its decisions in plain `int` fields, but its Guice binding - `addRoutingModuleBinding(pt).toProvider(RouterProvider)` - carries NO scope, so a new router and a new set of counters is built for every routing thread in every iteration. Two consequences, both measured on disk: the "log the first 3" sample became the first 3 PER THREAD PER ITERATION and wrote **19,469** lines on the F28 arm (`aborted_20260907T030352_300it_25pct`), about 36% of its log, **4,766** on F30's stopped arm and **716** on a 4-iteration probe; and the `decided % 100000` progress line fired **0** times in any of them, because no single thread-iteration ever reaches 100,000 decisions. Run-lifetime atomics, with the progress line evaluated before the branch that returns the walk. Measured on the next run (`20260908T014214_4it_25pct`): **3** sample lines and the progress line firing for the first time in the project's history. `tests/unit/test_direct_walk_counters.py` pins the shape and was verified to fail on the old source.
 - **The first thing that line said, on its first firing, is not yet a finding** (§9.156). During `PersonPrepareForSim` it reported 100,000 decisions / 47,622 network walks chosen / 99,207 with no transit route, then 200,000 / 85,355 / 132,214 - so roughly 40% of pt routing requests find no transit route at all and roughly 43% of those that do take the network walk instead. It is a ROUTER statistic from a pricing probe, not a reading of any mode, and it bears on walk's 5.26 km mean modelled trip against an observed 0.70 km (§9.149). **Confirm it at the F31 gate before acting on it.**
+- **THE ROUTER STATISTIC IS CONFIRMED AT RUN SCALE** (§9.157). What §9.156 could only see on a pricing probe, the F31 arm measured over **1,700,000** routing decisions: **853,357 requests with no transit route at all** and **690,635 network walks chosen**. So **33.4 % of every pt routing request finds no transit route**, and **40.6 % of those that do take the network walk instead**. It stands beside walk's modelled mean of **4.51 km against an observed 0.70 km** (§9.157) and the three failing pt modes. **The cause is not established and no value was changed on it** - it is the largest unexplained signal on the board.
+- **The counter repair held in production** (§9.156, §9.157): across a 7.66 h, 100-iteration arm the direct-walk sample wrote **3** lines where the F28 arm wrote **19,469**, and the progress line fired where it had fired **0** times in the project's history.
+- **The gate watcher has now fired live four times** (§9.157): it stopped `aborted_20260908T100009_300it_25pct` at iteration 100 with 7 modes at or past 20 %, and the arm closed itself out with `completion` `stopped_at_gate` and `reached_iteration` 100.
 - **The gate watcher stopped an arm by itself, for the first time** (§9.143, #112). On `aborted_20260905T125612_300it_25pct` it read all twelve modes at iteration 100, found seven at or past `CAL.gate.stop_deviation_pct`, killed the JVM and wrote the gate table as the run's cause - and the arm then closed itself out with `completion` = `stopped_at_gate` and `reached_iteration` = 100, so the reading is citable without re-deriving it from a log. Every arm before it had to be stopped by a person.
 - **A milestone is readable only when its experienced plans decompress to the end** (§9.143). Three weaker signals were tried this session and all three mean STARTED, not finished: the progress digest's iteration counter, the `it.N` directory, and the file's mere existence. The runner's own watcher already had this right - it retries the reporter until it succeeds.
 - **The calibrated base is F4, arm `20260821T175907_1000it_25pct`**: 35 of 67 calibration targets scorable, MAE 10.65 pp, `feasible=False` with five stated violations, ASCs held at their priors (§9.64, §9.50). `params/C5_calibration.json` names it as `best_tag`, and `README.md`'s fit figures still draw it via `src/analyse/build_fit_figures.py` (§9.80). Its light rail 1,260 boardings is a LEVEL, not an error (§9.80, #84).
@@ -73,6 +76,7 @@
 
 ## History
 
+- §9.157 — a third of pt routing finds no service, at run scale
 - §9.156 — a log guard that had never counted; a threshold re-anchored
 - §9.154 — the JVM asked where the iteration went
 - §9.153 — the arm read every ten iterations, stopped at 23
