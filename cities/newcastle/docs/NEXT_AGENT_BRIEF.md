@@ -17,7 +17,7 @@ the binding constraint.
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **THE DEPTH ARM IS RUNNING.** Quoted **22.3 h** from 01:52, so it should land about **00:10 on 10 September**; the approved ceiling is **32 h**, which falls at **09:52 on 10 September**. | `python src/run/session_gate.py --digest` (MACHINE line) · `python src/run/run_view.py` |
+| **THE DEPTH ARM IS RUNNING.** Quoted **22.3 h** from 01:52, so it should land about **00:10 on 10 September**; the approved ceiling is **32 h**, which falls at **09:52 on 10 September**. | `python src/run/session_gate.py --digest` (MACHINE line) · `python src/analyse/progress_digest.py --run 20260909T015217_300it_25pct --once` |
 | **ITS CEILING IS STILL ENFORCED BY HAND.** `RUN.gate.wall_ceiling_h` and `start_ceiling_watch` now exist and are tested (§9.161, #169), but **this arm launched before them** and its `_config.json` carries no ceiling. On its own recurring pace of 247.6 s it quotes **20.1 h**. | `python run.py --stop 20260909T015217_300it_25pct --cause "past the approved 32 h ceiling"` |
 | **NOTHING IT PRODUCES IS A READING UNTIL IT LANDS**, and no parameter may be tuned on anything it reads (§9.159's scoped departure). The newest CITABLE reading is still F31's iteration-100 gate. | `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100` |
 | **Family `F32-crowding-reaches-scoring` opened at `20260909T011135`** — at the probe's LAUNCH, not the arm. Nothing before it compares with anything after it. | `python -c "import json;print(list(json.load(open('cities/newcastle/docs/run_families.json'))['families'])[-1])"` |

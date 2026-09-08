@@ -44,25 +44,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260909T015217_300it_25pct` at **iteration 0** (family `F32-crowding-reaches-scoring`, status `running`, 25% sample, launched 2026-09-09T01:52:17, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260909T015217_300it_25pct --it 0` (`--trend` for the direction).
+Read from `20260909T015217_300it_25pct` at **iteration 110** (family `F32-crowding-reaches-scoring`, status `running`, 25% sample, launched 2026-09-09T01:52:17, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260909T015217_300it_25pct --it 110` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 43.5473 | 58.3222 | -25.3% | **STOP** >=20% | share of resident linked trips |
-| 2 | ride | 4.6594 | 20.6000 | -77.4% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 34.5073 | 13.4000 | +157.5% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.8690 | 0.9916 | +88.5% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.4763 | 2.2084 | +193.3% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4674 | 0.3785 | +23.5% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 6.5410 | 2.3819 | +174.6% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 37,768 | 6,529 | +478.5% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 2,720 | 2,954 | -7.9% | ok | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0331 | 0.1429 | -76.8% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 9.0826 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 61.7494 | 58.3222 | +5.9% | ok | share of resident linked trips |
+| 2 | ride | 12.8384 | 20.6000 | -37.7% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 12.1072 | 13.4000 | -9.6% | ok | share of resident linked trips |
+| 4 | taxi | 2.7066 | 0.9916 | +173.0% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.1795 | 2.2084 | +134.5% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4285 | 0.3785 | +13.2% | over 10% | share of resident linked trips |
+| 7 | bus | 3.4855 | 2.3819 | +46.3% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 21,236 | 6,529 | +225.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,356 | 2,954 | -54.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0432 | 0.1429 | -69.7% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.9397 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **light_rail**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, ferry**.
+Inside 10%: **car, walk**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -105,7 +105,7 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 10 | - |
+| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 122 | - |
 | `20260909T011135_4it_25pct` | completed | F32-crowding-reaches-scoring | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260908T232051_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
 | `aborted_20260908T231109_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | TransitQSimEngine$TransitAgentTriesToTeleportException: Agent 355102 tries to enter a transit stop at link 128983 but really is at 158102! |
@@ -156,9 +156,9 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 
 **Decisions required:** **how the last hop onto a platform is made** (#167 -
 neither stock MATSim mechanism does it in this scenario, and it awaits an
-implementation rather than a run); **whether to build the wall-clock ceiling
-watcher** (#169 - an approved ceiling is enforced by nobody, and the arm running
-now has no automatic stop of any kind); the three product calls behind #49, #50
+implementation rather than a run); **the ceiling watcher is BUILT, not proven**
+(#169, §9.161 - it awaits a 1 % smoke probe on an IDLE machine, and until then
+the running arm has no automatic stop); the three product calls behind #49, #50
 and #155, each of which now states what it awaits; whether **the real Newcastle
 corridor operates transit signal priority** - `A.lightrail.tsp_enabled` is
 `source: assumed` and requirement 6 says derive it, settled on evidence about
@@ -177,7 +177,7 @@ a run.
 |---|---|---|---|
 | **THE READING POINT IS A CONVERGENCE PROBLEM.** The windowed remedy is built and MEASURED WORSE - heavy rail 41.46 points against 24.88, four modes past the whole band instead of three - because every mode's series over it.40-it.100 is monotone and an average of a trend is its centre (§9.159) | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | one arm read past iteration 100: where does each mode's series flatten, and by which iteration? |
 | **The ASC contraction test, built and NOT run** (~15 h, opens no family): two damped rounds settle whether the residual is a TASTE or a MECHANISM. Round 1 is proposed off the F31 gate - bike -0.5121, bus -0.2301, ferry +0.6713, light rail +0.4143 (§9.158). Blocked by the reading point | #98 #94 #107 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | whether \|Δasc\| SHRINKS between round 1 and round 2 |
-| **The issue gate is GREEN unscoped for the first time**: 20 open, every one awaiting a STATED measurement, 0 blocking. #164 and #165 were closed by doing the work rather than by labelling it (§9.159) | - | [monitoring-and-gates](positions/monitoring-and-gates.md) | it stays green only if each new defect is fixed or states its measurement |
+| **The issue gate is GREEN unscoped**: 21 open - 16 awaiting a run with a STATED measurement, 5 awaiting a decision (#49 #50 #155 #167 #169), 0 blocking (§9.160's third state) | - | [monitoring-and-gates](positions/monitoring-and-gates.md) | it stays green only if each new defect is fixed or states its measurement |
 | **Pt access/egress teleportation: fixed at the router, refused by the mobsim.** Teleports fall 520,385 -> 6 with the raptor's intermodal branch on, and then the agent cannot board because 675 of 4,123 stops (16.4 %) sit on a link walk cannot use (§9.159) | #167 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | a mechanism for the last hop onto a platform, then probe 1 re-run: teleports near zero AND four iterations completed |
 | The first arm of the family the next launch opens, every issue awaiting it | #48 #86 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
 | Ride VOLUME, and placement is answered: at the F31 gate the modelled mean ride trip is 9.17 km against an observed 9.76 (-6 %) while the share is -38.0 %, so the lifts the binder places are the right length and there are too few of them (§9.157) | #86 #48 | [ride-and-pairing](positions/ride-and-pairing.md) | the next arm's gate: the declared-bound-trip funnel - bound trips declared, surviving into plan memory, and selected |
