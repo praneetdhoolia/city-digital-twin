@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.161 · **Written against family:** `F32`
 
 ## What is built
 
@@ -41,6 +41,11 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 - **Heavy rail and light rail** are disclosed counts, used exactly: every traveller who boards, all subpopulations, × 1/fraction, heavy rail at the 24 disclosed stations only (§9.130). The PT total is still read against the HTS 3.8% level. **Ferry** is derived and its sweep is 0 to twice the point value (§9.89); it is never labelled observed.
 
 ## What is measured
+
+- **#167'S `accessEgressModeToLink` FAILURE IS DIAGNOSED, AND THE CAUSE IS IN OUR PLANS RATHER THAN IN MATSim** (§9.161). Read from `aborted_20260908T232051_4it_1pct`'s own `plans.xml.gz`: **zero lines mention `routingMode`** (§9.161).
+  There are no interaction activities at all — activity types are only home 70,486, other 20,876, work 10,883, shopping 10,708, escort 10,044, education 2,490, business 1,128 (§9.161) — so **every trip in the input is a single leg** (§9.161).
+  The mixture is therefore created INSIDE `PersonPrepareForSim`: under `accessEgressModeToLink` the router inserts walk access and egress legs, and with no declared routing mode to inherit MATSim infers each leg's from its own mode — `walk` beside a `car` main leg — and rejects the trip it has just built (§9.161).
+  The same invariant is already recorded from the other direction at `src/java/citysim/RidePairingEngine.java:1193-1198`, where a restored leg left on `walk` beside `ride` siblings killed arm `20260826T053741` with the identical message (§9.161).
 
 - **THE FOUR PT MODES ARE DECIDED IN A LAYER WITH NO CONTROL VARIABLE** (§9.160).
   `RUN.mode_choice.modes` makes `pt` ONE alternative (§9.160); `output/modestats.csv` carries a single `pt` column while `ITERS/it.100/100.legs.csv.gz` resolves it into bus 18,034 / rail 6,404 / tram 381 / ferry 314 (§9.160).
@@ -94,6 +99,7 @@ Latest twelve-mode reading: the F31 gate at iteration 100 (`results/raw/aborted_
 
 ## History
 
+- §9.161 — #167 diagnosed: our plans declare no routingMode
 - §9.160 — pt submode has no control; 0.63 % of memory differs
 - §9.158 — pt routing diagnosed: walking is priced as riding; crowding scored
 - §9.157 — the F31 gate: heavy rail +247.2 %, light rail −47.2 %

@@ -191,7 +191,8 @@
           "completed": "RAN TO ITS LAST ITERATION",
           "failed": "DEAD WITHOUT A RECORD",
           "aborted": "DEAD WITHOUT A RECORD",
-          "unknown": "UNKNOWN"
+          "unknown": "UNKNOWN",
+          "stopped_at_ceiling": "STOPPED AT ITS CEILING"
         }
       },
       "note": "THE ONE ERROR THIS BOARD HAS MADE TWICE. The phase table said F30's arm 'is RUNNING' while it was dead, and then said F31's arm 'is RUNNING' while its own _run.json said stopped_at_gate at iteration 100 - with the State block, the Runs block, the Next section and the brief all saying otherwise on the same page. A run's state is a fact its record holds, so the cell that states it is pinned to the record. The words are the board's; the mapping is here because the harness holds no city's wording."

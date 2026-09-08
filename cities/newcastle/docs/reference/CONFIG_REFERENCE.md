@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 494 fields are made of
+## What the 496 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 44 | follows from another registry field by identity |
 | `literature` | 75 | a published value, not specific to this city |
 | `assumed` | 162 | chosen without direct empirical support |
-| `definition` | 135 | fixed by the formulation, not an empirical quantity |
+| `definition` | 137 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 474 | usable point value |
+| `active` | 476 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -3628,7 +3628,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 86 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 88 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3642,8 +3642,10 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.controler.write_events_interval` | `100` | iterations | `definition` | - |
 | `RUN.controler.write_plans_interval` | `100` | iterations | `definition` | - |
 | `RUN.controler.write_trips_interval` | `10` | iterations | `definition` | - |
+| `RUN.gate.ceiling_poll_s` | `60` | seconds | `definition` | - |
 | `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
 | `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
+| `RUN.gate.wall_ceiling_h` | `0` | hours | `definition` | - |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
@@ -3771,6 +3773,12 @@ How often MATSim writes the trips and legs tables (`<n>.trips.csv.gz`, `<n>.legs
 
 ***definition** · status **active** · DECISIONS.md §9.147 · MATSim `controler.writeTripsInterval`*
 
+#### `RUN.gate.ceiling_poll_s`
+
+How often the ceiling watcher looks at the clock. An OBSERVER cadence like RUN.gate.retry_interval_s and RUN.monitor.progress_interval_s, and it bounds only how far past its ceiling a run can get before it is stopped - at 60 s an arm overruns by at most a minute on a ceiling measured in hours. It affects nothing the model computes.
+
+***definition** · status **active** · DECISIONS.md §9.161*
+
 #### `RUN.gate.interval_iterations`
 
 How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.
@@ -3782,6 +3790,12 @@ How often the runner's own gate watcher reads all twelve modes against their tar
 How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else.
 
 ***definition** · status **active** · DECISIONS.md §9.137*
+
+#### `RUN.gate.wall_ceiling_h`
+
+The wall-clock ceiling the runner enforces on its own run, in hours. ZERO MEANS NO CEILING and is the default, so nothing changes for a run that does not set one - the same idiom RUN.gate.interval_iterations uses for its own watcher. Set it on the OVERLAY, beside the approval it encodes, so the approved number and the enforced number are the same number. It exists because every multi-hour arm is launched against a stated-cost approval and nothing enforced it: the only automatic stop was the gate watcher, which stops on a MODELLING condition and knows nothing about clocks, and an arm that disables it - as depth_convergence_25pct does, correctly - had no automatic stop at all (#169). It is a SECOND watcher, never a branch of the first: RUN.gate.interval_iterations = 0 means 'do not judge my modes', never 'do not enforce my budget'. It can only END a run, never extend one, and a run it stops carries completion `stopped_at_ceiling` - citable at its reached_iteration and nowhere past it, like any stopped arm (9.143).
+
+***definition** · status **active** · DECISIONS.md §9.161*
 
 #### `RUN.machine.event_handler_threads`
 
