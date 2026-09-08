@@ -64,6 +64,14 @@ JDK_DIRNAME = 'jdk-25.0.4+7'
 PT2MATSIM_VERSION = '26.6'
 PT2MATSIM_URL = ('https://repo.matsim.org/repository/matsim/org/matsim/pt2matsim/'
                  '26.6/pt2matsim-26.6-shaded.jar')
+# The jar that mapped every schedule in this package. It was TRUST-ON-FIRST-USE
+# until now (the fifth assessment, recommendation 10): the JDK and Maven passed
+# their expected digest to download(), pt2matsim passed None, so whatever the
+# repository served was accepted and then RECORDED as the pin - a pin that
+# describes what arrived rather than what was expected. This value is the
+# digest of the jar every mapped schedule on disk was built with, verified
+# against .tools/jars/pt2matsim-26.6-shaded.jar on 8 September 2026.
+PT2MATSIM_SHA256 = '86c7fcedc2de43d07baff3263d7c15f189dced5484df1e8c1b0d953f4eebeaa6'
 
 MAVEN_VERSION = '3.9.9'
 MAVEN_URL = ('https://repo1.maven.org/maven2/org/apache/maven/apache-maven/'
@@ -139,7 +147,7 @@ def install_jdk():
 
 def install_pt2matsim():
     jar = os.path.join(TOOLS, 'jars', 'pt2matsim-%s-shaded.jar' % PT2MATSIM_VERSION)
-    digest = download(PT2MATSIM_URL, jar)
+    digest = download(PT2MATSIM_URL, jar, PT2MATSIM_SHA256)
     return dict(component='pt2matsim', version=PT2MATSIM_VERSION, url=PT2MATSIM_URL,
                 sha256=digest, jar=jar.replace('\\', '/'), licence=LICENCES['pt2matsim'])
 

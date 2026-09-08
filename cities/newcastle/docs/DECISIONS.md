@@ -196,6 +196,7 @@ about its layout will otherwise cost you an hour:
 | **The toolchain gate passed on a checkout that could not launch** | **§9.152** — every gate green, the arm approved, and the launch refused before MATSim started: `.tools/run-stack/lib` held 0 jars while `A.signals.representation` is `explicit_signals`. `bootstrap_toolchain.verify()` loops over the components RECORDED in `toolchain.json`, and a stack that `--run-stack` never resolved is not recorded — so the check was green on the absence of the thing it should have failed on, the same shape as the three blind checks §9.150 widened. `verify()` now reads the declared representation and reports `MISSING run-stack` with the command; the gate and the launcher refuse on one condition. Cost: one refused launch, which stated its own cause in its `_meta.json` |
 | **F30's first arm: healthy, and stopped on its own cost** | **§9.153** — launched twice: refused before MATSim once (the run stack, §9.152), then ran and was STOPPED BY THE OPERATOR at iteration 23. Iteration 0 passed every control (car departures 232,972 against F28's 231,607, stuck 3,786 against 3,145; 8,167 declared passengers paired on 7,771 detours, 0 unroutable; 291 unpaired ride legs all restored; 8,549 drivers waiting for a household car) — and `_run.json` read **`median_iteration_s` 376.42 against F28's 260**, 45 % slower, which puts 300 iterations near 31 h against the ~22 h its approval was priced on. The it.20 readings sit on top of F28's and separate nothing. §9.150's `--stop` rebuild is tested against a live arm for the first time: one arm killed, `_operator_stop.json` written first, the operator's cause preserved, `completion` = `stopped_by_operator`. The 45 % is NOT diagnosed and is #66's |
 | **The iteration decomposed to the method, and a declared value that reached nothing** | **§9.154** — a JVM flight recording put this project's own code at **50.0 %** of a 25 % probe's CPU: `GradientLinkSpeed$Router` 17.9 %, `factor` 14.4 %, `Arrays.binarySearch` 30.5 % of which 16.2 was `Router` → `TimeVariantLinkImpl.getFreespeed`, a `synchronized` binary search over the level-crossing change events on all 143,891 links of which 16 can change. Per-link tables, filled once from the same `factor()`: a plain iteration **310 → 205.5 s**, startup **13m47s → 7m00s**, our share **50.0 → 14.5 %**, proved by `GradientTableProbe` over 3,266,754 comparisons rather than by a diff two runs cannot support. Separately `RUN.travel_time.analysed_modes` was inert — `filterModes` defaults false and was never emitted, so every pedestrian and bus fed the car router's link travel times (#154) — and 31 further MATSim defaults decide the model undeclared (#155). Registry 477 → 480; the 2-minute iteration is NOT reached, ~190 s against 120 |
+| **The arm priced on the iteration it repeats, and a log guard that had never counted** | **§9.156** — `arm_cost.py` was quoting a median over EVERY iteration, and on a probe most of those are iterations an arm pays once: **282.6 s** quoted against a recurring **216.0 s** (`20260908T014214_4it_25pct`, iterations 2 and 3), so the next 300-iteration arm prices at **18.2–21.8 h** with the gate at **6.1 h**, against **31.5 h** at HEAD. `NetworkDirectWalkPtRouter`'s counters were instance fields under an UNSCOPED provider: **19,469** sample lines on the F28 arm and the progress line firing **0** times ever; now **3** and firing. **40** manifest rows moved CC-BY → ODbL on **357,893** OSM link references and `link_id`-keyed parking tables; the other **129** were REFUSED and filed as **#159**. Tram priority refused as a lever — it IS the S2b intervention. Family **F31** opens at the arm |
 | **The events knob bracketed on both sides, and the 2-minute target priced out** | **§9.155** — the 120 s ask answered with arithmetic first: the mobsim alone is **143 s** of a 205.5 s iteration, so zeroing every other phase still lands above 120, and all three measured levers at their full CPU share land near **171 s**. `RUN.machine.event_handler_threads` was bracketed for the first time — 1 saturated (§9.56), 12 no gain (§9.59), and **2 measured +44.5 %** (205.5 → 297.0 s, mobsim +58 %) — so the 11.6 % of CPU in `LinkedBlockingQueue.offer` is **the price of short pipeline stages, not waste**, and 4 stands on evidence. `timeVariantNetwork` makes all **143,891** links time-variant for **2,441 events on 16**. The **72.8 GiB** untrimmable leak closed (`RUN.storage.extract_grace_s`); `fit.py`'s patronage scorer **refused** as a finding — it is correct and self-declaring; `session_gate.py --fix`, `compare_runs.py` and `verify_launch.py` codify three manual operations |
 
 
@@ -15128,10 +15129,104 @@ priced as unreachable by measured levers**; the time-variant-link factory, the
 left. **No target value changed, no arm ran to a gate, no family opened, the
 67/143 split is untouched, and nothing here is a reading of the city.**
 
+## 9.156 The arm priced on the iteration it repeats, a log guard that had never counted, and forty licence crossings closed (8 September 2026, thirty-fifth session; user directive "/onboard and read the latest report; analyse and apply any good recommendations/fixes; continue tuning the model towards GOAL.md"; issues #159, #66, #154)
+
+**What was wrong.** Three things, each measured before it was touched. (1) The
+launcher was pricing the next arm on `median_iteration_s`, a median over EVERY
+iteration a run ran; on a short probe most of those are iterations an arm pays
+ONCE — iteration 0 warms the JIT, `dump all plans` fires at iterations 0 and 1
+only, and the last iteration writes the run's final output. This is trap 4 of
+the brief, which §9.155 taught `compare_runs.py` to flag and left in the pricer,
+where it sets what an operator approves. (2) `NetworkDirectWalkPtRouter` counted
+in plain `int` instance fields while its Guice binding —
+`addRoutingModuleBinding(pt).toProvider(RouterProvider)` — carries NO scope, so a
+new router and a new set of counters is built for every routing thread in every
+iteration. (3) Forty manifest rows carried CC-BY 4.0 beside byte-identical ODbL
+content, crossing the share-alike boundary this project names as a hard
+constraint.
+
+**What changed.** `arm_cost.py` reads the priced run's own
+`output/stopwatch.csv`, prices the iterations that pay only what every iteration
+pays, carries the one-offs once each, and **warns when the priced run never
+reached a milestone iteration and therefore cannot have priced one**, naming the
+newest long arm as the top of the band. `f30_plain_probe_25pct` is declared: the
+profiling probe with `RUN.machine.jfr_profile` and `RUN.machine.gc_log` off and
+nothing else changed, so its clock is the arm's own; it opens no family. The
+router's counters became run-lifetime `AtomicLong`s with the progress line
+evaluated BEFORE the branch that returns the walk. The city's own
+`derived_licences` gained two globs — `scenarios/matsim/*transitSchedule*.xml.gz`
+and `scenarios/matsim/*parking_prices.tsv` — so the framework still names no
+artefact of any city. `PT2MATSIM_SHA256` is declared: pt2matsim was the one
+toolchain component passing `expect=None` to `download()`, so its recorded pin
+described what arrived rather than what was expected. `RUN.monitor.stall_s` keeps
+its value 300 and loses a false reason. **Family
+`F31-the-car-router-reads-only-cars` opens at the arm**: `RUN.travel_time.filter_modes`
+= true (§9.154, #154) reaches a run for the first time, and the controler was
+recompiled.
+
+**Measured.** The pricing probe `20260908T014214_4it_25pct`,
+`ran_to_last_iteration`, startup 7m22s: its record median is **282.6 s** while
+the iterations that recur — 2 and 3 — took **213 s and 219 s**, a median of
+**216.0 s**; the one-offs are iteration 0 at 326 s, iteration 1 at 282 s and the
+final iteration at 350 s. The 300-iteration arm therefore prices at **18.2 h
+bottom / 21.8 h top** (the top from `aborted_20260907T030352_300it_25pct`'s
+all-in 259.6 s, because a 4-iteration probe never meets a milestone) with the
+iteration-100 gate at **6.1 h**, against **31.5 h** quoted at HEAD before the
+probe. The unprofiled 216.0 s sits ABOVE the profiled 205.5 s of
+`20260907T192715_4it_25pct` — the wrong way round for a ~8 % recorder, and
+inside this model's known non-reproducibility (§9.142) rather than explained
+away. The router's log, on disk: **19,469** sample lines on the F28 arm (about
+36 % of its log), **4,766** on F30's stopped arm, **716** on a 4-iteration
+probe, and the `decided % 100000` progress line firing **0** times in any of
+them; after the fix, **3** sample lines and the line firing for the first time
+in the project's history. Its first firing reported 100,000 decisions / 47,622
+network walks / 99,207 with no transit route, then 200,000 / 85,355 / 132,214.
+The licence rows: the scenario schedules carry **357,893** OSM route link
+references and the parking tables are keyed on `link_id`; manifest ODbL rows
+**161 → 201**. From the F28 gate reading, no run required: the twelve deviations
+sum to **+0.008 pp**, ride is **−8.822 pp**, and the modes above target total
+**10.521 pp** (car +3.840, bike +3.474, taxi +1.597, bus +1.548, motorbike
++0.061). Unit tests **139 → 147**; registry **482**, unchanged in count.
+
+**Deliberately not done.** Two assessment recommendations **REFUSED after
+checking**. Switching on the tram priority controller was ranked "the shortest
+distance between existing code and a number on the board"; `A.lightrail.tsp_enabled`
+has `sweep_role: answer` and IS the S2b intervention, so turning it on in the
+base would put the intervention inside the base and close light rail's gap with
+the compensating constant the GOAL loop forbids — the FIDELITY question beneath
+it (does the real corridor operate priority?) is separate, is `source: assumed`,
+and is the operator's. Moving build wall time out of the hashed set cannot
+deliver its stated benefit, because §3.5 measured that ~18 % of pt2matsim route
+link sequences differ between IDENTICAL builds, so the report churns on the
+mapping and the wall time is dominated noise; regenerating it would also re-run
+the mapper, which one-build-per-comparison forbids. The other **129** rows whose
+manifest `source` names an OSM ancestor were NOT relabelled: `_script_inputs`
+credits a producing script's inputs to every output it writes, so
+`bus_monthly_series.csv` is credited with the buildings, parking and signals
+extracts while the single-purpose `C2_osm_defaults.json` is correct — filed as
+**#159** rather than guessed, because inheriting licence from that ancestry would
+move **169** rows and give the licence column the defect the source column has.
+The crowding disutility against heavy rail's +295 % is designed and NOT built.
+
+**Consequences.** Nothing that ran before `20260908T095937` compares with
+anything after it. The F31 arm `20260908T100009_300it_25pct` is running under a
+stated-cost approval of 18.2–21.8 h with the watcher's iteration-100 gate at
+~6.1 h; **#159 was filed and the launcher overridden with `--allow-open-issues`**
+on the operator's decision, the first deliberate override of GOAL requirement 10,
+on the ground that the defect is in how the manifest DESCRIBES ancestry and is
+not something the arm measures around. A rule already written down was broken and
+it cost a probe: `bootstrap_toolchain.py --verify` RECOMPILES, and running it
+under the first pricing probe rewrote both class trees at 01:38:36 beneath the
+live JVM, so `aborted_20260908T012355_4it_25pct` is recorded as citable for
+nothing — not even the clock it existed to measure. **No target value changed, no
+demand or network was rebuilt, the 67/143 split is untouched, and nothing here is
+a reading of any mode.**
+
 ## 14. Change log
 
 | Date | Change |
 |---|---|
+| 2026-09-08 | **The arm priced on the iteration it repeats, a log guard that had never counted, and forty licence crossings closed (§9.156; #159, #66, #154; thirty-fifth session).** `arm_cost.py` priced on `median_iteration_s`, a median over every iteration a run ran; on `20260908T014214_4it_25pct` that read **282.6 s** against a recurring **216.0 s** (iterations 2 and 3 at 213 and 219 s), the one-offs being iteration 0 at 326 s, iteration 1 at 282 s and the final iteration at 350 s. It now prices the recurring iteration, carries the one-offs once each, and warns when the priced run never met a milestone. The next 300-iteration arm: **18.2 h bottom / 21.8 h top**, gate at **6.1 h**, against **31.5 h** at HEAD. `f30_plain_probe_25pct` declares the unprofiled pricing probe. `NetworkDirectWalkPtRouter` counted in instance fields under an UNSCOPED Guice provider, so its "first 3" sample wrote **19,469** lines on the F28 arm (~36 % of its log) and its progress line had fired **0** times in the project's history; run-lifetime atomics give **3** lines and the first firing ever. **40** manifest rows moved CC-BY → ODbL — the scenario schedules carry **357,893** OSM route link references and the parking tables are keyed on `link_id` — taking ODbL rows **161 → 201**; the other **129** were refused and filed as **#159**, because the ancestry that would relabel them credits a script's inputs to every output it writes. `PT2MATSIM_SHA256` pinned (it alone fetched with no expected digest); CI given least privilege; `RUN.monitor.stall_s` keeps 300 and loses a false reason. **REFUSED after checking:** switching on tram priority (it IS the S2b intervention, `sweep_role: answer`) and moving build wall time out of the hashed set (§3.5 already churns the hash). Unit tests **139 → 147**. **Family `F31-the-car-router-reads-only-cars` opened at the arm** — `RUN.travel_time.filter_modes` = true reaches a run for the first time and the controler was recompiled — and `20260908T100009_300it_25pct` is running under an 18.2–21.8 h stated-cost approval, with #159 overridden by `--allow-open-issues` on the operator's decision. **No target value changed, no demand or network was rebuilt, the 67/143 split is untouched, and nothing here is a reading of any mode.** |
 | 2026-09-08 | **The events knob bracketed, the 2-minute target priced out, and three manual operations codified (§9.155; #66, #132; thirty-fourth session).** The 120 s ask is answered with arithmetic before a knob is turned: the mobsim alone is **143 s** of a 205.5 s iteration, so zeroing every other phase still lands above 120, and all three measured levers taken at their full CPU share land near **171 s**. The one untested value of `RUN.machine.event_handler_threads` was probed — 1 was saturated (§9.56), 12 bought nothing (§9.59), **2 had never been run** — and `20260907T233540_4it_25pct` is **44.5 % SLOWER** on plain iterations (205.5 → 297.0 s, mobsim 143 → 226 s, +58 %). The 11.6 % of CPU the §9.154 recording found in `LinkedBlockingQueue.offer` is therefore **not waste but the price of short pipeline stages**, and 4 now stands on evidence from both sides. Bounded for next time: `timeVariantNetwork` makes all **143,891** links time-variant to represent **2,441 events on 16**. Recommendations taken: the **72.8 GiB** untrimmable leak closed (the space becomes RECLAIMABLE at the next trim that needs it; the store is under cap today) (`RUN.storage.extract_grace_s` declared; the #132 race and the leak both pinned by `tests/unit/test_trim_grace.py`), `raw_cap_gb`'s units corrected to gibibytes, and `check_legacy_drift.py`'s false "the constant is gone" corrected — `dwell_charging_s=20.0` is live and writes a manifest artefact. One assessment recommendation **REFUSED after checking**: `fit.py`'s patronage scorer is correct and self-declaring, not empty. Codified: `session_gate.py --fix`, `src/analyse/compare_runs.py`, `src/run/verify_launch.py`. Registry 480 → 482, unit tests 125 → 139. **No target changed, no arm ran to a gate, no family opened, the 67/143 split untouched, nothing here is a result.** |
 | 2026-09-07 | **The iteration decomposed to the method, and a third of it was ours (§9.154; #66, #154, #155; thirty-third session).** Two declared OBSERVATION switches — `RUN.machine.jfr_profile`, `RUN.machine.gc_log` — let the JVM say where an iteration goes, and `src/analyse/profile_run.py` reads the recording. On `20260907T182742_4it_25pct` this project's own code was **50.0 %** of the run's CPU samples, almost all of it `GradientLinkSpeed.Router` re-deriving per link what never changes: a `synchronized` binary search for the free speed of a time-variant network, an attribute lookup and a `Double.parseDouble` of the stamped grade. Per-link tables in `GradientLinkSpeed` (both sides) and `BikeStressDisutility` cut a plain iteration **310 → 205.5 s** and startup **13m47s → 7m00s** on `20260907T192715_4it_25pct`, with our share at **14.5 %**; `citysim.GradientTableProbe` proves the tables identical to the formula over 3,266,754 comparisons on 192,162 links, because a run here is not bit-reproducible and a diff could not. **`RUN.travel_time.filter_modes` = true is newly declared and MOVES RESULTS** (#154): `analysed_modes` had been inert since the field existed, so walk, bike, bus and truck all fed the single link travel-time table the car router reads. `src/setup/dump_matsim_params.py` + `src/registry/check_matsim_defaults.py` enumerate what the framework decides undeclared — 31 unreviewed (#155) — and `src/analyse/arm_cost.py` prices an arm from the runs, printed by the launcher before every start. Registry 477 → 480, gate 17 → 18 checks. **The 2-minute iteration asked for is not reached (~190 s), no target value changed, no arm ran to a gate, the 67/143 split is untouched and nothing here is a result.** |
 | 2026-09-07 | **F30's first arm ran to iteration 23 and was stopped on its own cost (§9.153; issues #66, #73; thirty-second session; user directive "stop the arm and /handoff").** Launched twice — once refused before MATSim for the absent signals run stack (§9.152), once run. Iteration 0 healthy on every control. `_run.json`: `completion` `stopped_by_operator`, `reached_iteration` 23, **`median_iteration_s` 376.42 against the 260 s the ~22 h approval was priced on**, 9,634 s of wall clock. The it.0–it.20 readings are citable at their own iterations and nowhere past them, and they separate F30 from F28 in nothing. §9.150's `--stop` rebuild tested live for the first time and held. **No target value changed, the 67/143 split is untouched, no family opened, the approval is SPENT, and nothing here is a finding** — the newest citable reading in the project is still F28's iteration-100 gate. |

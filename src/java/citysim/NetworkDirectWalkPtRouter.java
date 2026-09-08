@@ -11,6 +11,7 @@ import com.google.inject.name.Named;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.TransportMode;
@@ -60,9 +61,23 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
     private final RaptorParametersForPerson parameters;
     private final double directWalkFactor;
     private final Set<String> transitModes;
-    private int decided = 0;
-    private int walked = 0;
-    private int noTransit = 0;
+    // RUN-LIFETIME counters, and they must be static (issue #159). The
+    // binding is `addRoutingModuleBinding(pt).toProvider(RouterProvider)`
+    // with NO scope, so Guice builds a NEW router for every routing thread in
+    // every iteration: instance counters restart at zero perhaps 1,600 times
+    // in a 100-iteration arm. Two things followed. The "log the first 3"
+    // sample became "log the first 3 PER THREAD PER ITERATION" and emitted
+    // 19,469 lines on the F28 arm - about 36% of its log - and the
+    // `decided % 100000` progress line has NEVER fired once, because no
+    // single thread-iteration ever reaches 100,000 decisions. Static is
+    // correct rather than convenient here: one JVM runs exactly one scenario,
+    // so the class IS the run, and the counters describe it. Atomic because
+    // the routing threads increment them concurrently; each increment is read
+    // back once, from the value the increment returned, so no line reports a
+    // count that never existed.
+    private static final AtomicLong DECIDED = new AtomicLong();
+    private static final AtomicLong WALKED = new AtomicLong();
+    private static final AtomicLong NO_TRANSIT = new AtomicLong();
 
     NetworkDirectWalkPtRouter(final RoutingModule transit, final RoutingModule walk,
                               final RaptorParametersForPerson parameters,
@@ -81,7 +96,7 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
         if (transitLegs == null || !boardsTransit(transitLegs)) {
             // the raptor found no transit route: the walk is the walk the
             // network offers, not a line across the map
-            this.noTransit++;
+            NO_TRANSIT.incrementAndGet();
             return walkLegs;
         }
         final double transitCost = transitCost(transitLegs);
@@ -94,19 +109,21 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
         final double walkSeconds = travelSeconds(walkLegs);
         // the raptor's own pricing of a direct walk, applied to the network walk
         final double walkCost = -walkUtlPerS * walkSeconds * this.directWalkFactor;
-        this.decided++;
+        final long decisions = DECIDED.incrementAndGet();
+        // the progress line is evaluated on EVERY decision, before the branch
+        // below returns: hang it off the walk branch and the run skips the
+        // line whenever its 100,000th decision happens to choose the walk.
+        if (decisions % 100000 == 0) {
+            LOG.info("ptDirectWalk: {} decisions, {} network walks chosen, {} without any transit route",
+                     decisions, WALKED.get(), NO_TRANSIT.get());
+        }
         if (walkCost < transitCost) {
-            this.walked++;
-            if (this.walked <= 3) {
+            if (WALKED.incrementAndGet() <= 3) {
                 LOG.info("ptDirectWalk: network walk {} s (cost {}) beats transit (cost {}) for person {}",
                          Math.round(walkSeconds), Math.round(walkCost), Math.round(transitCost),
                          person == null ? "?" : person.getId());
             }
             return walkLegs;
-        }
-        if (this.decided % 100000 == 0) {
-            LOG.info("ptDirectWalk: {} decisions, {} network walks chosen, {} without any transit route",
-                     this.decided, this.walked, this.noTransit);
         }
         return transitLegs;
     }

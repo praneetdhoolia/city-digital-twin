@@ -37,6 +37,8 @@ from __future__ import annotations
 
 import argparse
 import json
+import csv
+import io
 import os
 import sys
 
@@ -58,6 +60,95 @@ def _read(path):
 
 def _launch_stamp(name: str) -> str:
     return name[len('aborted_'):] if name.startswith('aborted_') else name
+
+
+def _hms(v):
+    """Seconds from a stopwatch HH:MM:SS cell, or None when it did not fire."""
+    if not v or ':' not in v:
+        return None
+    try:
+        h, m, s = v.split(':')
+        return int(h) * 3600 + int(m) * 60 + int(s)
+    except ValueError:
+        return None
+
+
+def plain_iteration_pace(run_dir):
+    """The pace of an iteration a 300-iteration arm actually REPEATS.
+
+    A run's `median_iteration_s` is a median over every iteration it ran, and
+    on a short probe most of those iterations are not the iteration an arm
+    pays 300 times:
+
+      * iteration 0 warms the JIT and writes the first plan dump;
+      * `dump all plans` fires at iterations 0 and 1 ONLY - 59 s and 61 s of a
+        213 s iteration on 20260908T014214_4it_25pct - and never again;
+      * the LAST iteration writes the run's final output (350 s against 213 s
+        on the same probe).
+
+    On a 4-iteration probe that is three of five iterations, and the median
+    lands 31% above the recurring cost: 282.6 s quoted against 213 and 219 s
+    measured. This is trap 4 of the brief - "a median over a phase that fires
+    in some iterations is not a cost" - which 9.155 taught `compare_runs.py`
+    to flag and left in the pricer, where it prices approvals.
+
+    Returns None when the stopwatch is unreadable, else the plain median, how
+    many iterations it rests on, the one-off iterations by name, and the
+    highest iteration index the run reached (a run that never reached a
+    milestone iteration cannot have priced one).
+    """
+    path = os.path.join(run_dir, 'output', 'stopwatch.csv')
+    if not os.path.exists(path):
+        return None
+    try:
+        with io.open(path, encoding='utf-8') as fh:
+            rows = list(csv.reader(fh, delimiter=';'))
+    except (OSError, csv.Error):
+        return None
+    if len(rows) < 2:
+        return None
+    head = rows[0]
+    # The header repeats its phase names - the first block holds clock STAMPS
+    # and the second holds DURATIONS - so every lookup takes the LAST match.
+    def last_index(name):
+        for i in range(len(head) - 1, -1, -1):
+            if head[i] == name:
+                return i
+        return None
+    i_total = last_index('iteration')
+    i_dump = last_index('dump all plans')
+    if i_total is None or i_total == 0:
+        return None
+    seen = {}
+    for r in rows[1:]:
+        if not r or not r[0].strip().isdigit() or len(r) <= i_total:
+            continue
+        total = _hms(r[i_total])
+        if total is None:
+            continue
+        dump = _hms(r[i_dump]) if i_dump is not None and len(r) > i_dump else None
+        seen[int(r[0])] = (total, dump or 0)
+    if not seen:
+        return None
+    last_it = max(seen)
+    one_off, plain = {}, {}
+    for it, (total, dump) in seen.items():
+        if it == 0:
+            one_off[it] = total          # JIT warm-up and the first dump
+        elif dump > 0:
+            one_off[it] = total          # `dump all plans` fires here and nowhere else
+        elif it == last_it and len(seen) > 1:
+            one_off[it] = total          # the final output write
+        else:
+            plain[it] = total
+    if not plain:
+        return None
+    vals = sorted(plain.values())
+    median = (vals[len(vals) // 2] if len(vals) % 2
+              else 0.5 * (vals[len(vals) // 2 - 1] + vals[len(vals) // 2]))
+    return dict(plain_median_s=float(median), n_plain=len(plain),
+                plain_iterations=sorted(plain), one_off_s=dict(one_off),
+                last_iteration=last_it)
 
 
 def observed_arms(min_iterations: int = 2) -> list:
@@ -102,6 +193,9 @@ def observed_arms(min_iterations: int = 2) -> list:
             setup = max(0.0, float(wall) - spent)
         out.append(dict(
             name=name,
+            # What an iteration costs when it pays only what every iteration
+            # pays - read from the run's own stopwatch, not from its median.
+            plain=plain_iteration_pace(d),
             # A run that carried a flight recorder paid for it: the first two
             # profiled probes ran ~8 % slower than the same stack unprofiled.
             # Its clock prices its own conditions and nothing else, so it is
@@ -143,6 +237,40 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
     setup_s = newest.get('setup_s') or 0.0
     quote_s = newest['median_iteration_s'] * iterations + setup_s
 
+    # Price the RECURRING iteration, and carry the one-offs once each. The
+    # record's median is a median over every iteration the run ran, and on a
+    # short probe that is dominated by iterations an arm pays once: on
+    # 20260908T014214_4it_25pct it quoted 282.6 s against a measured 213 and
+    # 219 s, because three of its five iterations were iteration 0, the second
+    # `dump all plans` and the final output write.
+    plain = newest.get('plain')
+    priced_on_plain = False
+    if plain and iterations > len(plain['one_off_s']):
+        one_off_total = float(sum(plain['one_off_s'].values()))
+        recurring = iterations - len(plain['one_off_s'])
+        quote_s = setup_s + one_off_total + plain['plain_median_s'] * recurring
+        priced_on_plain = True
+
+    # A probe that never reached a milestone iteration cannot have priced one.
+    # The honest top of the band is the newest LONG arm's all-in median, which
+    # paid every milestone it met.
+    long_arm = next((a for a in same if a['reached_iteration'] >= 50), None)
+    long_quote_s = (long_arm['median_iteration_s'] * iterations + setup_s
+                    if long_arm else None)
+    milestone_warning = None
+    if priced_on_plain and plain['last_iteration'] < 10:
+        milestone_warning = (
+            'THE PRICED RUN REACHED ITERATION %d, so no milestone iteration is '
+            'in this quote. A long arm writes milestone output periodically and '
+            'pays for it, and a 4-iteration probe never meets one.%s'
+            % (plain['last_iteration'],
+               (' The newest arm at this fraction that ran past 50 - %s - held '
+                '%.1f s an iteration all-in, which prices the same %d '
+                'iterations at %s. Treat that as the TOP of the band and this '
+                'quote as the bottom.'
+                % (long_arm['name'], long_arm['median_iteration_s'], iterations,
+                   _fmt_hours(long_quote_s))) if long_arm else ''))
+
     # The exclusion above is right - the recorder is ~8% of a profiled run's
     # clock - but it is SILENT, and silence is how it quoted a stale price
     # (9.155). After 9.154 the only runs carrying the repaired stack were
@@ -179,6 +307,11 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
         priced_on=newest,
         excluded_newer_profiled=[a.get('name') for a in newer_excluded],
         stale_warning=stale_warning,
+        milestone_warning=milestone_warning,
+        priced_on_plain=priced_on_plain,
+        plain=plain,
+        long_arm=long_arm,
+        long_quote_s=long_quote_s,
         quote_s=quote_s,
         quote=_fmt_hours(quote_s),
         low_s=medians[0] * iterations + setup_s,
@@ -187,8 +320,9 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
               _fmt_hours(medians[-1] * iterations + setup_s)],
         recent=recent,
         gate_every=gate_every,
-        first_gate_s=(newest['median_iteration_s'] * gate_every
-                      if gate_every else None),
+        first_gate_s=(((plain['plain_median_s'] if priced_on_plain
+                        else newest['median_iteration_s']) * gate_every
+                       + setup_s) if gate_every else None),
     )
 
 
@@ -239,14 +373,38 @@ def main(argv=None) -> int:
           % (quote['iterations'], ('%g%%' % (quote['fraction'] * 100))
              if quote['fraction'] else '?'))
     print('=' * 72)
-    print('  quote          %s   (%d iterations x %.1f s, plus %s of setup '
-          'before iteration 0)'
-          % (quote['quote'], quote['iterations'], on['median_iteration_s'],
-             _fmt_hours(quote['setup_s'])))
+    pl = quote.get('plain')
+    if quote.get('priced_on_plain'):
+        print('  quote          %s   (%d recurring iterations x %.1f s, the '
+              'one-off iterations at their own cost,' 
+              % (quote['quote'],
+                 quote['iterations'] - len(pl['one_off_s']),
+                 pl['plain_median_s']))
+        print('                 plus %s of setup before iteration 0)'
+              % _fmt_hours(quote['setup_s']))
+    else:
+        print('  quote          %s   (%d iterations x %.1f s, plus %s of setup '
+              'before iteration 0)'
+              % (quote['quote'], quote['iterations'], on['median_iteration_s'],
+                 _fmt_hours(quote['setup_s'])))
     print('  priced on      %s' % on['name'])
-    print('                 median %.1f s an iteration over %d iteration(s), '
-          '%s' % (on['median_iteration_s'], on['reached_iteration'],
-                  on['completion'] or 'status unrecorded'))
+    if quote.get('priced_on_plain'):
+        print('                 %.1f s on the %d iteration(s) that pay only '
+              'what every iteration pays (%s), %s'
+              % (pl['plain_median_s'], pl['n_plain'],
+                 ', '.join(str(i) for i in pl['plain_iterations']),
+                 on['completion'] or 'status unrecorded'))
+        print('                 one-off: %s'
+              % '; '.join('iteration %s %s s' % (k, v)
+                          for k, v in sorted(pl['one_off_s'].items(),
+                                             key=lambda kv: int(kv[0]))))
+        print('                 (its own record says median %.1f s over every '
+              'iteration - that median is NOT the recurring cost)'
+              % on['median_iteration_s'])
+    else:
+        print('                 median %.1f s an iteration over %d iteration(s), '
+              '%s' % (on['median_iteration_s'], on['reached_iteration'],
+                      on['completion'] or 'status unrecorded'))
     if on.get('family'):
         print('                 family %s' % on['family'])
     if quote.get('first_gate_s'):
@@ -261,12 +419,13 @@ def main(argv=None) -> int:
         print('    %-44s %7.1f s/it  to it %-4d %s'
               % (a['name'], a['median_iteration_s'], a['reached_iteration'],
                  a['completion'] or ''))
-    if quote.get('stale_warning'):
-        print()
-        for i, sentence in enumerate(quote['stale_warning'].split('. ')):
-            if sentence:
-                print('  %s %s' % ('**' if i == 0 else '  ',
-                                   sentence.rstrip('.') + '.'))
+    for key in ('stale_warning', 'milestone_warning'):
+        if quote.get(key):
+            print()
+            for i, sentence in enumerate(quote[key].split('. ')):
+                if sentence:
+                    print('  %s %s' % ('**' if i == 0 else '  ',
+                                       sentence.rstrip('.') + '.'))
     print()
     print('  A STATED COST IS A BOUNDARY, NOT AN ESTIMATE. The spread above is')
     print('  what the same stack has actually done; the quote is the newest')

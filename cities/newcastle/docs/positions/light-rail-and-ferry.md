@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 4 September 2026 (twenty-seventh session) · **Record read through:** §9.140 · **Written against family:** `F23`
+**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.156 · **Written against family:** `F31`
 
 ## What is built
 
@@ -60,6 +60,10 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## Refused — do not re-raise
 
+- **Switching on transit signal priority to close light rail's shortfall** (§9.156). The fifth assessment ranked it as "the shortest distance in the factor ledger between existing code and a number on the board" — light rail is the only pt mode below target and `TramPriorityConfigGroup` is written and registered with `A.lightrail.tsp_enabled` false. That is exactly why it must not be done: the field's `sweep_role` is `answer` and it IS the S2b intervention, the 38 % corridor swing S2b exists to measure (`cities/newcastle/registry/E_scenario.json`). Turning it on in the base would put the intervention inside the base, destroy the S2/S2b comparison, and close a gap with the very compensating constant GOAL loop step 3 forbids.
+- **The FIDELITY question underneath it is real, is NOT this, and is open** (§9.156). `A.lightrail.tsp_enabled` is `source: assumed`, and GOAL requirement 6 says an unobtained value is derived rather than assumed. Whether the Newcastle corridor actually operates signal priority today is a question about the real world; if it does, the S2 base is wrong and S2b is mis-specified. It is the board's standing operator decision and it is settled with evidence about the corridor, never with the −30 % on the scoreboard.
+
+
 - Lowering the light rail target on the corridor-market measurement: the market is modelled, and that would fit the yardstick to the answer (§9.103, §9.92).
 - Quoting a light rail error against the 2019–20 V001/V002 boardings: pre-pandemic and unscorable (§9.80, #84).
 - Rebuilding the schedule because tram and ferry route ids read SAT/SUN: the departures are present and exact (§9.113).
@@ -72,6 +76,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.156 — tsp refused as a lever; the fidelity question separated
 - §9.142 — the corridor gets its arrivals: destination choice constrained at both ends
 - §9.140 — ferry market and memory measured
 - §9.139 — F23 gate: both unmoved again

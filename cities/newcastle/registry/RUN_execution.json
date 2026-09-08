@@ -685,7 +685,7 @@
       "sweep": null,
       "status": "active",
       "decisions_ref": "9.19",
-      "description": "How long the log may go untouched before the live view calls a run stalled rather than running. Comfortably longer than the slowest iteration measured (56.4 s at 25%) and than the events and plans writes that punctuate every tenth iteration, so a working run is never reported as stalled.",
+      "description": "How long the log may go untouched before the live view calls a run stalled rather than running. THE VALUE IS UNCHANGED AND THE REASON FOR IT IS CORRECTED (8 September 2026, the fifth assessment recommendation 15). It used to justify itself by \"the slowest iteration measured (56.4 s at 25%)\", which stopped being true long ago - a plain iteration at HEAD is ~200 s, four times that figure - and a threshold anchored to iteration length would have had to move with it. It never did, and did not need to, because the log is not quiet for an iteration: MATSim's MemoryObserver writes a used/free RAM line every 60 s independently of what the mobsim is doing (measured on 20260908T014214_4it_25pct: 01:45:47, 01:46:47, 01:47:47). So what this value must clear is that 60 s heartbeat plus the longest single write that can delay it, not the iteration - 300 s is five heartbeats, and a log 300 s old means the JVM itself has stopped writing. Re-anchored to the heartbeat, the threshold is independent of how long an iteration takes and does not go stale again when the pace moves.",
       "consumers": [
         "src/analyse/run_view.py"
       ]

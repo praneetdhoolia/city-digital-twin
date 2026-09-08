@@ -1,0 +1,14 @@
+{
+  "overlay": "f30_plain_probe_25pct",
+  "description": "A PRICING probe, not a modelling run: four iterations at the campaign fraction on the F30 stack with NOTHING observing it - no flight recorder, no GC log. It exists because a price is only honest if it is measured on the stack that will be run, by a clock that carries nothing the arm will not pay. src/analyse/arm_cost.py:131 excludes every profiled run because the recorder is ~8% of its clock, so after 9.154 - when the only runs carrying the travel-time repair were profiled probes - the launcher priced the next arm on F30's PRE-repair arm at 376.4 s an iteration and quoted 31.5 h against a measured band of 13.5-18 h, asking an operator to approve 13-18 hours the model no longer needs (9.155, the fifth assessment's first recommendation). This overlay is that recommendation made repeatable: run it, then re-read arm_cost.py, then spend the approval. It is f30_profile_probe_25pct with RUN.machine.jfr_profile and RUN.machine.gc_log left off and nothing else changed, so its clock is the arm's own. Iterations 1-3 are the window (0 pays JIT warm-up). Graph rendering OFF (9.59). It opens NO family: the fields it sets are the fraction, the horizon and the heap, none of which is part of a run's identity, and observation is what it deliberately does not do. NOTHING IT PRODUCES IS A READING OF ANY MODE - four iterations is a clock, not a model.",
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 4,
+    "RUN.controler.create_graphs": false,
+    "RUN.machine.xmx": "40g"
+  },
+  "allow_outside_sweep": ["RUN.controler.last_iteration"],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This overlay is not one: it measures the wall-clock cost of an iteration so an approval can be priced on it, and four iterations are the window that measurement needs (0 warms up, 1-3 compare). The value is deliberately far below the range so that any output carrying it is obviously not a result. Same reasoning as f27_timing_probe_25pct (9.147) and f30_profile_probe_25pct (9.154)."
+  }
+}
