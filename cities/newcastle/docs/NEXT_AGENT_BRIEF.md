@@ -1,6 +1,6 @@
 # Brief for the next agent
 
-**Written:** 8 September 2026, thirty-seventh session · **Open family:** `F31-the-car-router-reads-only-cars` · **Commit:** see `git log -1 origin/main` after this session's PR merges; the branch is `praneetdhoolia/the-gate-clears-and-the-reading-averages-a-window`
+**Written:** 8 September 2026, thirty-seventh session · **Open family:** `F31-the-car-router-reads-only-cars` · **Commit:** see `git log -1 origin/main` after this session's PR merges; the branch is `praneetdhoolia/a-window-cannot-flatten-a-trend`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
