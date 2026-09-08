@@ -1347,11 +1347,20 @@ def scoring_from_c1(cfg, c1, purpose_share):
                'reaches mode choice through nothing; it remains used for '
                'corridor grades'),
             'PT walk-access decay curve: RETIRED 3 Sep 2026 (9.140, issue '
-            '21). The access and egress walk is routed on the walk network '
-            'and scored at its full walking time - the continuous penalty '
-            'proposal 6.3 asked for, with no catchment cut-off - and the '
-            'declared RUN.transit_router.search_radius_m / '
-            'extension_radius_m bound the raptor search, never the utility',
+            '21) in favour of scoring the access walk at its full walking '
+            'time, with no catchment cut-off - the continuous penalty '
+            'proposal 6.3 asked for; the declared '
+            'RUN.transit_router.search_radius_m / extension_radius_m bound '
+            'the raptor search, never the utility. CORRECTED 8 Sep 2026 '
+            '(9.159, #167): this line used to say that access and egress '
+            'walk "is routed on the walk network", and it is not. At '
+            'RUN.transit_router.access_egress_basis = %s the raptor draws '
+            'those legs as BEELINES and the mobsim teleports them - 520,385 '
+            'such legs on one arm - so the time scored is a straight-line '
+            'time. What IS network-routed is the DIRECT walk '
+            '(RUN.transit_router.direct_walk_basis, 9.121), which is the '
+            'walk instead of pt rather than the walk to the stop'
+            % cfg.get('RUN.transit_router.access_egress_basis'),
         ])
 
 
@@ -1485,6 +1494,41 @@ def config_runtime(cfg, scoring, day, paths):
             'each scheduled transportMode routes as a passenger mode of the '
             'same name; vocabulary = RUN.transit.transit_modes minus the pt '
             'umbrella')
+
+    # ACCESS AND EGRESS ROUTED, NOT DRAWN (DECISIONS.md 9.159, #167). At
+    # `beeline` nothing is emitted and the config is byte-identical to every
+    # config before this change: SwissRailRaptor draws its access and egress
+    # legs straight, and citysim.GenericRouteTeleporter teleports them under
+    # its STUB_MODE carve-out - the last teleportation left in the model, and a
+    # standing breach of GOAL.md requirement 1. At `network` the raptor's
+    # intermodal branch is switched on and given one parameter set for the
+    # access mode, so DefaultRaptorStopFinder resolves that mode's real
+    # RoutingModule - which is the network walk router, because walk is in
+    # RUN.routing.network_modes - instead of the beeline.
+    #
+    # The MEMBERSHIP is emitted here as a list, which creates the set and lets
+    # the writer supply its own `mode` key; the three radii ride in on their
+    # own declared fields' `[*]` bindings, each DERIVED from the beeline
+    # search's own reach so this change moves the route and not the market.
+    if cfg.get('RUN.transit_router.access_egress_basis') == 'network':
+        access_mode = 'walk'
+        runtime['swissRailRaptor.useIntermodalAccessEgress'] = (
+            True, 'derived',
+            "RUN.transit_router.access_egress_basis == 'network'")
+        runtime['swissRailRaptor.intermodalAccessEgress[*].mode'] = (
+            [access_mode], 'derived',
+            'the one access/egress mode: walk, which is a network mode and a '
+            'qsim main mode, so its routing module returns a network route')
+        for param, key in (
+                ('initialSearchRadius',
+                 'RUN.transit_router.access_initial_search_radius_m'),
+                ('searchExtensionRadius',
+                 'RUN.transit_router.access_search_extension_radius_m'),
+                ('maxRadius', 'RUN.transit_router.access_max_radius_m')):
+            runtime['swissRailRaptor.intermodalAccessEgress[*].%s' % param] = (
+                {access_mode: cfg.get(key)}, 'derived',
+                key + ', which derives from the beeline search own reach, '
+                'so the routed search covers the same ground')
 
     # The published Opal fare schedule (DECISIONS.md 9.135, #98): every pt
     # journey is charged its published fare by citysim.PtFareChargeHandler.

@@ -1,0 +1,22 @@
+{
+  "overlay": "intermodal_access_bridge_probe_1pct",
+  "description": "THE SECOND SMOKE PROBE FOR #167, AND IT RE-OPENS A QUESTION 9.54 CLOSED. The first probe (aborted_20260908T231109_4it_1pct) established two things and broke on a third. (1) SwissRailRaptor accepts useIntermodalAccessEgress ALONGSIDE useModeMappingForPassengers - no consistency throw, 1,270 routes and 4,123 stop facilities prepared. (2) The teleportation COLLAPSED: genericRouteTeleporter reported teleported=6 [walk via pt=6] against 520,385 such legs on a full arm, so the access and egress legs really are being routed on the walk network. (3) And then the mobsim threw TransitAgentTriesToTeleportException: agent 355102 tries to enter a transit stop at link 128983 but really is at 158102. MEASURED CAUSE, not inferred: 128983 carries modes=pt,rail,train and 158102 carries walk - the stop sits on TRACK, and 675 of the 4,123 stop facilities (16.4%) sit on a link walk cannot use at all (382 pt/rail/train, 199 pt2matsim artificial stopFacilityLinks, 62 road links that omit walk, 18 rail, 18 artificial rail). So the access leg cannot simply be told to end at the stop's own link: for one stop in six there is no walk route to it, and those are the heavy-rail and light-rail platforms. THIS PROBE ASKS MATSIM TO BRIDGE IT, WHICH 9.54 MEASURED TO FAIL. Setting routing.accessEgressType = accessEgressModeToLink is what the field's own description says was tried when walk became a network mode: the stub access legs it creates carry a generic route, and PopulationAgentSource cast every main-mode leg route to a NetworkRoute at agent insertion, so the probe died on a ClassCastException. WHAT HAS CHANGED SINCE is citysim.GenericRouteTeleporter, which exists to claim exactly those legs before the vehicular machinery reaches them, and which did not exist at 9.54. Whether it claims the accessEgressModeToLink stubs too is the one thing this probe asks. THE ANSWER IS NOT AUTOMATICALLY GOOD NEWS: if it runs, the stubs are teleported rather than simulated, which trades a long access teleport for a short activity-to-link one and is STILL a requirement-1 compromise - a smaller one, and a named one, but not a clean fix. Read the teleport table and the modes in it, not just the exit code. Nothing here may be read as a model result: 1%, four iterations, no share, count or fit. Answers #167.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 4,
+    "RUN.controler.create_graphs": false,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "12g",
+    "RUN.routing.access_egress_type": "accessEgressModeToLink"
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration",
+    "RUN.sample.fraction",
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "A four-iteration structural smoke test is not an arm and cannot be one. The horizon sweep [250, 2000] is the range at which a RUN means something; this run is asked a yes-or-no about whether the controler starts and whether the intermodal parameter set is honoured, and four iterations is the fewest that produces a mobsim table to read the answer off. Nothing here may be read as a model result (#167).",
+    "RUN.sample.fraction": "The same refusal in the other direction: 1% is the cheapest fraction that still exercises the raptor over the whole schedule, and DECISIONS.md 9 forbids reading any mode share, count or fit from it - at 1% flow-capacity granularity strands car legs that 25% does not. The standing 25% directive (user, 1 September 2026) governs ARMS, whose readings enter the record; this probe has no reading, only a yes or a no (#167).",
+    "RUN.gate.interval_iterations": "The gate watcher is disabled because a four-iteration run never reaches a 100-iteration milestone, so the watcher would do nothing but poll a run that has already ended. This is not the GOAL.md loop being suspended - there is no gate reading here to suspend."
+  }
+}

@@ -1,1118 +1,1189 @@
 {
-  "layer": "RUN",
-  "title": "Execution control",
-  "description": "Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.",
-  "decisions_ref": "9.5, 9.6, 9.7, 15",
-  "fields": {
-    "RUN.sample.fraction": {
-      "value": 0.01,
-      "units": "share_of_population",
-      "source": "assumed",
-      "sweep": [
-        0.01,
-        0.4
-      ],
-      "sweep_basis": "measured: 9.8 s/iteration and 9.8 GiB at 1%, 29.9 s and 18.4 GiB at 10%, ~64 s and 31.5 GiB at 25%. time = 3.1 s + 268 s x fraction, memory = 9.6 + 87 GiB x fraction, so 100% needs ~97 GiB and DOES NOT FIT in 63.5 GiB. The upper bound is the machine ceiling, not a modelling judgement",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.5, 15",
-      "description": "Share of the synthetic population simulated. The subsample is NESTED - a person is kept if a hash of their id falls below the fraction, so 1% is a strict subset of 10% and a difference between fractions is a sample-size effect rather than a sampling one. EVERY P4 BEHAVIOURAL RESULT SO FAR WAS MEASURED AT 1% (5,209 persons, 0.85% of the population)."
-    },
-    "RUN.sample.flow_capacity_factor": {
-      "value": null,
-      "units": "share_of_capacity",
-      "source": "derived",
-      "status": "computed",
-      "decisions_ref": "15",
-      "matsim_param": "qsim.flowCapacityFactor",
-      "description": "Road flow capacity scaled to the sample. DERIVED: equals RUN.sample.fraction exactly, which is the standard MATSim rule and is not a free choice. Set by the harness at run time. NOTE the SHIPPED scenario config carries 1.0, so running scenarios/matsim/<S>/<DAY>/config.xml DIRECTLY simulates a sampled demand against full supply - the harness must be used.",
-      "derived_from": {
-        "fields": [
-          "RUN.sample.fraction"
-        ],
-        "identity": "flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling rule"
-      }
-    },
-    "RUN.sample.storage_capacity_exponent": {
-      "value": 1.0,
-      "units": "exponent",
-      "source": "derived",
-      "status": "active",
-      "decisions_ref": "15",
-      "derived_from": {
-        "fields": [
-          "RUN.sample.fraction"
-        ],
-        "identity": "storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim enforces the equality: GlobalConfigGroup.checkConsistency throws when the two differ by more than global.relativeTolerance, which defaults to 0.0"
-      },
-      "description": "The exponent relating storage capacity to the sample fraction. IT IS AN EXPONENT, NOT THE PARAMETER: this field carried matsim_param qsim.storageCapacityFactor until the config emitter was built, which would have written the exponent 1.0 straight into the factor at every sample fraction - MATSim rejects 1.0 against a flow factor of 0.01 in one second. The factor is RUN.sample.storage_capacity_factor, computed from this and the fraction. IT IS 1.0 AND IT IS NOT FREE. An earlier revision of this registry declared it assumed with a 0.75-1.0 sweep, on the reasoning that MATSim floors link storage at one vehicle so a 1% sample would produce spurious spillback, and that raising storage relative to flow is the usual treatment. That reasoning is superseded. MATSim rejects any value below 1.0 outright and states the reason: 'the old approach of setting the stor cap fact larger than the flow cap fact is no longer needed since the qsim became a lot more deterministic'. The sweep was therefore a range whose members the tool will not accept, which is exactly the undisciplined declaration this registry exists to prevent. Corrected after the diagnostic run that tried to use it failed in one second. The remaining question - whether behaviour moves with the SAMPLE FRACTION itself - is unaffected and is what the 1% versus 10% arms test."
-    },
-    "RUN.sample.storage_capacity_factor": {
-      "value": null,
-      "units": "share_of_capacity",
-      "source": "derived",
-      "status": "computed",
-      "decisions_ref": "15",
-      "matsim_param": "qsim.storageCapacityFactor",
-      "derived_from": {
-        "fields": [
-          "RUN.sample.fraction",
-          "RUN.sample.storage_capacity_exponent"
-        ],
-        "identity": "storageCapacityFactor = RUN.sample.fraction ** RUN.sample.storage_capacity_exponent, which at the declared exponent of 1.0 equals flowCapacityFactor exactly. MATSim's GlobalConfigGroup.checkConsistency throws when the two differ by more than global.relativeTolerance, which defaults to 0.0"
-      },
-      "description": "Link storage capacity scaled to the sample. NOT A FREE CHOICE and not the exponent: it is the exponent applied to the fraction, and the harness computes it per run. Split out from RUN.sample.storage_capacity_exponent when the config emitter was built, because the exponent had been bound directly to the factor parameter - two quantities in one field, of which only one is what MATSim reads."
-    },
-    "RUN.sample.transit_capacity_scaling": {
-      "value": true,
-      "units": "boolean",
-      "source": "derived",
-      "status": "active",
-      "decisions_ref": "15",
-      "description": "Scale transit vehicle seats by the sample fraction. NOT OPTIONAL in practice: at a 10% sample an unscaled bus carries 70 sampled agents, i.e. 700 real ones, so capacity never binds and crowding silently disappears.",
-      "derived_from": {
-        "fields": [
-          "RUN.sample.fraction"
-        ],
-        "identity": "seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it would give every vehicle 1/fraction times its real capacity"
-      }
-    },
-    "RUN.sample.transit_capacity_floor": {
-      "value": 1,
-      "units": "seats",
-      "source": "assumed",
-      "sweep": [
-        1,
-        4
-      ],
-      "sweep_basis": "chosen interval: 1 seat is the smallest usable vehicle, and the floor binds below about a 1.5% sample, where it makes capacity systematically too generous; the top of 4 tests whether a larger floor changes anything while crowding scoring is off (issue 12). No observed spread.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "15",
-      "description": "Minimum seats after scaling, so a vehicle never becomes unusable. Capacity floors at 1 seat below about a 1.5% sample, which makes capacity systematically too generous at small fractions. Acceptable while crowding scoring is off; revisit if it is enabled (issue 12)."
-    },
-    "RUN.controler.last_iteration": {
-      "value": 1000,
-      "units": "iterations",
-      "source": "measured",
-      "sweep": {
-        "interval": [
-          250,
-          2000
-        ],
-        "basis": "the lower bound is the largest value MEASURED to be insufficient. The upper bound is NOT a budget limit any more: it is the open half of the question. 1000 is measured to leave the post-cutoff state settled, and is NOT measured to be enough SEARCH - the pre-cutoff creep was still decaying geometrically when innovation froze it (9.43), so the range above 1000 stays declared rather than closed"
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.7, 9.43, 15",
-      "matsim_param": "controler.lastIteration",
-      "description": "Iterations to relaxation. MEASURED at 1000 by two full post-rebuild arms - 10% x 1000 (11.0 h, 54,617 agents) and 25% x 1000 (30.8 h, 136,068 agents), one arm at a time, same network build, seed 20260810 - and declared on that evidence (9.43, issue 5). WHAT IS MEASURED IS NARROWER THAN THE FIELD NAME: at 1000 the post-snap state is settled at both fractions (worst-mode drift +0.22 pp / +0.17 pp over the snap-aware window, inside RUN.relaxation.drift_tolerance_pp), and that result is fraction-independent. WHAT IS NOT MEASURED is whether 1000 iterations of SEARCH suffice: car mode share was still creeping +0.76 pp per 100 iterations at the cutoff, decaying x0.73 per 100, which extrapolates to roughly 2 pp of movement left in the innovated state when innovation was disabled. The 1500-iteration arm that would have measured that directly was CANCELLED by instruction for compute economy; the residual is carried as declared uncertainty, not resolved. Read this value with 9.43 beside it. Prior state, kept because it is the floor: two 1% runs of 250 iterations showed the model had NOT converged - innovation switches off at iteration 200 and ride still moved 0.619 to 0.664 over the last 50 iterations with no new plans being created. Shipped scenario configs now carry this measured value rather than the sweep floor; run_matsim.py still gives --iterations no default so a run states its own horizon."
-    },
-    "RUN.controler.first_iteration": {
-      "value": 0,
-      "units": "iterations",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "controler.firstIteration",
-      "description": "Start iteration."
-    },
-    "RUN.controler.create_graphs": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.59",
-      "matsim_param": "controler.createGraphs",
-      "description": "Whether MATSim renders its per-iteration diagnostic PNGs (mode stats, leg histograms - eight images every iteration). Wall time and disk only, never the model; declared so a long arm's overlay can turn the rendering off instead of paying it a thousand times (9.59)."
-    },
-    "RUN.controler.write_events_interval": {
-      "value": 100,
-      "units": "iterations",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15, 9.147",
-      "matsim_param": "controler.writeEventsInterval",
-      "description": "How often the full events stream is written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): the events are consumed at a GATE - the close-out accounting, the optional --truck-stations scoring, replay_events - and by nothing the ten-iteration monitoring reads. Measured on the F26 arm's stopwatch: writing events inside the mobsim took a milestone iteration's mobsim from 197 s to 359-398 s, so at every tenth iteration it cost ~180 s. Affects disk and wall time, not the model."
-    },
-    "RUN.controler.write_plans_interval": {
-      "value": 100,
-      "units": "iterations",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15, 9.147",
-      "matsim_param": "controler.writePlansInterval",
-      "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model."
-    },
-    "RUN.controler.write_trips_interval": {
-      "value": 10,
-      "units": "iterations",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.147",
-      "matsim_param": "controler.writeTripsInterval",
-      "description": "How often MATSim writes the trips and legs tables (`<n>.trips.csv.gz`, `<n>.legs.csv.gz`), in iterations. THE MONITORING CADENCE: GOAL.md asks for all twelve modes read continuously and the readers have taken every tenth iteration since 9.126; `report_mode_ridership.py` reads the trips table wherever it exists and derives one from the experienced plans only where it does not (iteration_trips.py). Before 9.147 this was MATSim's default of 50 and the readers derived every milestone from the experienced plans, which forced the full plans dump and the events onto the ten-iteration cadence at ~360 s a milestone (F26 stopwatch). Affects disk and wall time, not the model."
-    },
-    "RUN.controler.compression_type": {
-      "value": "gzip",
-      "units": "enum",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "controler.compressionType",
-      "description": "Output compression. MUST be gzip: runs made before this was set write .zst, which extract_metrics.py can only read if zstandard happens to be installed, and the repo does not require it."
-    },
-    "RUN.qsim.start_time_h": {
-      "value": 0,
-      "units": "hours",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "qsim.startTime",
-      "matsim_format": "hh:mm:ss",
-      "description": "Mobsim start."
-    },
-    "RUN.qsim.end_time_h": {
-      "value": 30,
-      "units": "hours",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "qsim.endTime",
-      "matsim_format": "hh:mm:ss",
-      "description": "Mobsim end. Matches B.activity.day_horizon_h; a 30-hour day catches after-midnight returns."
-    },
-    "RUN.qsim.main_mode": {
-      "value": [
-        "car",
-        "truck",
-        "motorbike",
-        "walk",
-        "bike",
-        "taxi"
-      ],
-      "units": "enum",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.54, 9.86",
-      "matsim_param": "qsim.mainMode",
-      "description": "The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53)."
-    },
-    "RUN.replanning.max_agent_plan_memory": {
-      "value": 8,
-      "units": "plans",
-      "source": "literature",
-      "sweep": [
-        3,
-        10
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3",
-      "matsim_param": "replanning.maxAgentPlanMemorySize",
-      "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep."
-    },
-    "RUN.replanning.time_mutation_range_s": {
-      "value": 1800.0,
-      "units": "seconds",
-      "source": "literature",
-      "sweep": [
-        600.0,
-        1800.0
-      ],
-      "sweep_basis": "MATSim ships 1800 s and this model inherited it SILENTLY - the value reached the mobsim through no declaration at all until 9.85, which is exactly the undeclared modelling choice this registry exists to prevent. It is swept rather than pinned because it is MEASURED to be load-bearing on a quantity that is not its own: it sets how far the two members of a DECLARED joint pair drift apart, and at 1800 s the measured median gap between a companion and their declared driver is 10.3 min with p90 at 45.1 min, against a pairing tolerance of 15 min. The lower bound is the coarsest bin the travel-time calculator resolves (RUN.travel_time.bin_size_s = 300) doubled; the upper is MATSim's own default. Narrowing it is NOT a way to buy pairings - B.ride.bound_pairing_window_min is derived from it, so the tolerance follows the drift rather than chasing it.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.85",
-      "matsim_param": "timeAllocationMutator.mutationRange",
-      "description": "The half-width of the uniform departure-time mutation TimeAllocationMutator applies. A property of the MATSim search, not an observable of Newcastle - but a CONTROLLABLE one, and it was reaching the model as a framework default that no layer stated and no sweep covered. It is declared here because it is the mechanism measured (9.85) to decohere the joint household pairs the B2 binder generates: the mutator moves each member independently, so a pair generated to depart together drifts apart at this scale."
-    },
-    "RUN.replanning.fraction_to_disable_innovation": {
-      "value": 0.8,
-      "units": "share_of_iterations",
-      "source": "literature",
-      "sweep": [
-        0.7,
-        0.9
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.7",
-      "matsim_param": "replanning.fractionOfIterationsToDisableInnovation",
-      "description": "Share of iterations after which no new plans are created. At 250 iterations innovation stopped at 200 and mode share was still moving, which is how the non-convergence was identified."
-    },
-    "RUN.relaxation.drift_tolerance_pp": {
-      "value": 0.5,
-      "units": "percentage_points",
-      "source": "assumed",
-      "sweep": {
-        "interval": [
-          0.1,
-          1.0
-        ],
-        "basis": "There is no standard for how flat a MATSim mode-share trace must be before a run may be called settled, so the tolerance is swept rather than asserted. The lower bound is about the resolution a 10% sample can support; the upper bound is loose enough that a run failing it is unarguably still moving. The verdict is always reported WITH the tolerance beside it and with the two iteration numbers it was measured between, so a reader can apply their own."
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.27",
-      "consumers": [
-        "src/analyse/summarise_run.py",
-        "src/analyse/run_view.py"
-      ],
-      "description": "Largest absolute mode-share movement, in percentage points, that a run may still show after innovation is disabled and still be reported as settled. Measured per mode between the SETTLE POINT (the innovation cutoff plus RUN.relaxation.settle_margin_iterations) and the final iteration: after the cutoff MATSim creates no new plans, so whatever movement remains is relaxation rather than search. This decides a VERDICT ABOUT A RUN, not a model input - no agent sees it and changing it cannot move a mode share. It was 0.5 hard-coded as DRIFT_THRESHOLD_PP in summarise_run.py; the value is carried over unchanged so the migration is a move, not a re-decision. 9.7 measured mode share still drifting while innovation was already off and 9.27 put the iteration count needed at ~1000, so this is a floor for calling a run unsettled, never a claim that anything under it has converged. NOTE the window moved in 9.43: it used to start AT the cutoff, which included the one-iteration selection snap and made the gate unpassable at any horizon."
-    },
-    "RUN.relaxation.settle_margin_iterations": {
-      "value": 10,
-      "units": "iterations",
-      "source": "measured",
-      "sweep": {
-        "interval": [
-          1,
-          100
-        ],
-        "basis": "the lower bound is the MEASURED duration of the snap itself - one iteration, at both fractions - so it is the smallest margin that can exclude it. The upper bound is where the excluded window starts to be a meaningful share of a 200-iteration post-cutoff tail: beyond it the metric passes by measuring less rather than by the run being flatter, which is the failure mode this field must not have"
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.43",
-      "consumers": [
-        "src/analyse/summarise_run.py"
-      ],
-      "description": "Iterations to skip AFTER the innovation cutoff before drift is measured, so the relaxation verdict scores relaxation and not the selection snap. When MATSim disables innovation, exploration noise stops in a single step and selection concentrates every agent onto its best-scoring plan: measured at iteration 801 of both 1000-iteration arms, car jumps +3.256 pp (10%) and +3.380 pp (25%) in that ONE iteration, walk falls 3.97 to 1.02% and pt 1.08 to 0.25%. That is a property of the scoring structure, not a run failing to settle - but the old window started at the cutoff and swept it into the drift number, so EVERY run of EVERY length failed the gate by ~3.5 pp regardless of horizon (9.43). The margin is 10 rather than 1 because a 10x guard on a one-iteration phenomenon costs nothing and matches the 10-iteration interval the outputs are written on; it is NOT tuned to pass. HONEST RESIDUAL: at 10 the worst-mode drift is +0.22 pp (10%) and +0.17 pp (25%), which passes the declared 0.5 pp tolerance but NOT the 0.1 pp floor of that tolerance's own sweep. The movement keeps decaying with margin (+0.089/+0.088 pp at 50, -0.008/+0.033 at 100), which is the signature of relaxation rather than of a metric artefact - a larger margin would pass the whole sweep, and is declined precisely because it would pass by measuring a shorter window."
-    },
-    "RUN.replanning.weights": {
-      "value": {
-        "ChangeExpBeta": 0.7,
-        "ReRoute": 0.15,
-        "SubtourModeChoice": 0.1,
-        "TimeAllocationMutator": 0.05
-      },
-      "units": "strategy_weight",
-      "source": "literature",
-      "sweep": {
-        "proportional": 0.5,
-        "basis": "DECISIONS.md 9.3 sweeps the SubtourModeChoice weight over 0.05-0.20"
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3",
-      "matsim_param": "replanning.strategysettings[*].weight",
-      "description": "Replanning strategy weights, applied to every subpopulation EXCEPT where RUN.replanning.strategy_subpopulations withholds a strategy (9.58: SubtourModeChoice is person-only - a boundary-tier agent's vehicle class is measured cordon data, not a choice). Properties of the scoring formulation, not observable quantities of Newcastle."
-    },
-    "RUN.replanning.strategy_subpopulations": {
-      "value": {
-        "SubtourModeChoice": [
-          "person"
-        ]
-      },
-      "units": "subpopulation_names_per_strategy",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.58",
-      "description": "Which subpopulations each replanning strategy is emitted for; a strategy absent from this dict goes to all of them. SubtourModeChoice is restricted to `person` because an external or freight agent's mode IS its data: the through tier is seeded from classified cordon vehicle counts (9.41, 9.49), so a through car that innovates into another mode falsifies the count it was built from. MEASURED before this was declared: by iteration 100 of the first all-physical arm, 405 external agents had abandoned car - 451 walk legs, 164 bike, 62 pt, 256 ride - i.e. 40 km boundary crossings on foot, each also wedging at walk-less gate links (9.58). Read by the emitter through the schema's repeat_over.restrict clause, like RUN.replanning.subpopulations."
-    },
-    "RUN.mode_choice.modes": {
-      "value": [
-        "car",
-        "ride",
-        "pt",
-        "bike",
-        "walk",
-        "taxi"
-      ],
-      "units": "enum",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.6, 9.77",
-      "matsim_param": "subtourModeChoice.modes",
-      "description": "Modes subtour mode choice may switch between. IF RIDE IS OMITTED, MATSim defaults to car,pt,bike,walk and a ride subtour becomes an ABSORBING STATE - ride sat at 0.18311 in every iteration to five decimals, and 18.6% of legs were an input wearing the costume of a result."
-    },
-    "RUN.mode_choice.chain_based_modes": {
-      "value": [
-        "car",
-        "bike"
-      ],
-      "units": "enum",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.6",
-      "matsim_param": "subtourModeChoice.chainBasedModes",
-      "description": "Modes whose vehicle must return home, so a tour cannot abandon it mid-chain."
-    },
-    "RUN.mode_choice.consider_car_availability": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.6",
-      "matsim_param": "subtourModeChoice.considerCarAvailability",
-      "description": "MATSim defaults this to FALSE, which made mode choice ignore the car availability B1 synthesised. Must stay true."
-    },
-    "RUN.mode_choice.subtour_behavior": {
-      "value": "betweenAllAndFewerConstraints",
-      "units": "enum",
-      "source": "literature",
-      "sweep": {
-        "categorical": [
-          "betweenAllAndFewerConstraints",
-          "fromSpecifiedModesToSpecifiedModes"
-        ],
-        "basis": "the two values MATSim offers. Open Berlin, Leipzig and Kelheim all set the former; the latter is the MATSim default and was live here unset."
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.28",
-      "matsim_param": "subtourModeChoice.behavior",
-      "description": "How subtour mode choice treats tours it cannot close. Under the MATSim default fromSpecifiedModesToSpecifiedModes, AN AGENT WITH AN OPEN OR UNCLOSED SUBTOUR CANNOT CHANGE MODE AT ALL and is frozen at its seeded mode for the whole run - MATSim's own javadoc says to use betweenAllAndFewerConstraints if open subtours exist in the data (9.28)."
-    },
-    "RUN.mode_choice.proba_random_single_trip_mode": {
-      "value": 0.5,
-      "units": "probability",
-      "source": "literature",
-      "sweep": [
-        0.0,
-        0.5
-      ],
-      "sweep_basis": "0.0 is the MATSim default, which its own source annotates as a backwards-compatibility setting that should be changed; 0.5 is the value Open Berlin, Leipzig and Kelheim all use.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.28",
-      "matsim_param": "subtourModeChoice.probaForRandomSingleTripMode",
-      "description": "Probability that mode choice reassigns a SINGLE trip rather than a whole subtour. At the MATSim default of 0.0 every trip in a subtour must share one mode, so with chainBasedModes = car,bike there is no single-trip escape from a bike subtour and agents lock into bike once it wins (9.28)."
-    },
-    "RUN.mode_choice.coord_distance_m": {
-      "value": 100.0,
-      "units": "metres",
-      "source": "literature",
-      "sweep": [
-        0.0,
-        100.0
-      ],
-      "sweep_basis": "0 is the MATSim default and was live here unset; 100 is Open Berlin's value.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.28",
-      "matsim_param": "subtourModeChoice.coordDistance",
-      "description": "Distance within which two activity coordinates count as the same subtour location. At the default 0 two activities metres apart open a subtour that can never close."
-    },
-    "RUN.transit_router.max_beeline_walk_connection_m": {
-      "value": 300.0,
-      "units": "metres",
-      "source": "literature",
-      "sweep": [
-        100.0,
-        500.0
-      ],
-      "sweep_basis": "100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.28",
-      "matsim_param": "transitRouter.maxBeelineWalkConnectionDistance",
-      "description": "Maximum stop-to-stop distance at which the PT router will create a transfer. THIS PARAMETER ALONE CREATES EVERY INTERCHANGE IN THE MODEL: none of the five raw TfNSW feeds carries a transfers.txt, so the schedule holds zero minimalTransferTimes and nothing backstops it. At the unset default of 100 m the light rail at Newcastle Interchange reached Stand A (49.0 m), Stand B (95.1 m) and the heavy rail platforms (53.9-57.8 m) but NOT Stand C at 119.2-139.0 m, which carries the regional buses and NSW TrainLink - the external-origin connection hypothesis A3 falsifies on (9.28)."
-    },
-    "RUN.transit_router.search_radius_m": {
-      "value": 1000.0,
-      "units": "metres",
-      "source": "literature",
-      "sweep": [
-        500.0,
-        2000.0
-      ],
-      "sweep_basis": "MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.120",
-      "matsim_param": "transitRouter.searchRadius",
-      "description": "Radius around a trip end within which the PT router considers stop facilities as access or egress points. If no stop lies within it, the router extends to the nearest stop plus RUN.transit_router.extension_radius_m. It governs the reach of every submode and is the one value that decides whether a resident 1.5 km from Stockton wharf can be routed onto the ferry (#94); it had been governing silently as the jar default."
-    },
-    "RUN.transit_router.extension_radius_m": {
-      "value": 200.0,
-      "units": "metres",
-      "source": "literature",
-      "sweep": [
-        100.0,
-        500.0
-      ],
-      "sweep_basis": "MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.120",
-      "matsim_param": "transitRouter.extensionRadius",
-      "description": "When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default."
-    },
-    "RUN.transit_router.direct_walk_factor": {
-      "value": 1.0,
-      "units": "ratio",
-      "source": "literature",
-      "sweep": [
-        1.0,
-        2.0
-      ],
-      "sweep_basis": "MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.121",
-      "matsim_param": "transitRouter.directWalkFactor",
-      "description": "Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default."
-    },
-    "RUN.transit_router.direct_walk_basis": {
-      "value": "network",
-      "units": "enum",
-      "source": "derived",
-      "derived_from": {
-        "fields": [
-          "RUN.routing.network_modes"
-        ],
-        "identity": "direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121), by bank: of 256 harbour-crossing trips in residents' PT plans the raptor returned a beeline walk across the harbour for 174 and a ferry leg for 23; those walks executed as the ~19 km road detour, and over all residents 38.3% of PT-plan trips were walk-only. On the F17 arm at the same depth 209 of 359 crossings route with a ferry leg. `beeline` recovers the stock raptor exactly."
-      },
-      "status": "active",
-      "decisions_ref": "9.121",
-      "matsim_param": "ptDirectWalk.basis",
-      "consumers": [
-        "src/java/citysim/PtDirectWalkConfigGroup.java",
-        "src/java/citysim/CitysimControler.java",
-        "src/java/citysim/NetworkDirectWalkPtRouter.java"
-      ],
-      "description": "What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it."
-    },
-    "RUN.routing.network_modes": {
-      "value": [
-        "car",
-        "ride",
-        "truck",
-        "motorbike",
-        "walk",
-        "bike",
-        "taxi"
-      ],
-      "units": "enum",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.6, 9.77",
-      "matsim_param": "routing.networkModes",
-      "description": "Modes routed on the road graph. Ride must be here AND permitted on the links (143,891 of them): declaring it a network mode that no link permits gives 'checking 0 nodes and 0 links' and a throw in PrepareForSim."
-    },
-    "RUN.routing.pt_submode_scoring": {
-      "value": "per_submode",
-      "units": "enum",
-      "source": "assumed",
-      "sweep": {
-        "categorical": [
-          "per_submode",
-          "aggregate"
-        ],
-        "basis": "the two representations the pinned MATSim (2027.0-2026w25) supports, verified against the jar's bytecode rather than memory: per_submode uses the `swissRailRaptor` config module's `useModeMappingForPassengers` with one `modeMapping` parameterset (routeMode -> passengerMode) per scheduled transportMode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup), so each submode's legs carry its own mode and score with C1's own per-submode constants; aggregate is the pre-9.78 state - one `pt` passenger mode carrying asc_bus for bus, tram, rail and ferry alike, the collapse DECISIONS.md 9.3 recorded as not representable."
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.78",
-      "consumers": [
-        "src/build/build_matsim_run_inputs.py"
-      ],
-      "description": "Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Under per_submode the emitter writes the swissRailRaptor module and one scoring modeParams block per submode: bus takes C1's asc_bus, tram asc_lr, rail asc_rail; FERRY HAS NO C1 CONSTANT and keeps the pt aggregate's, stated in the run-inputs report rather than invented. Time is priced at the one declared beta_ivt for every submode - C1 declares no per-submode time weight. The router prices each submode from its own scoring entry (RaptorUtils.createParameters reads scoring.getModes() per mode - verified in the jar), so the constants and any swept divergence reach ROUTE choice as well as plan scoring. Plan-level choice stays `pt`: subtourModeChoice.modes never carries a submode, only the router assigns submode legs, and citysim.PtSubmodeMainModeIdentifier folds them back to `pt` for every main_mode analysis, keeping the HTS aggregate comparison unchanged. A MODEL CHANGE: part of the #48 batched family boundary."
-    },
-    "RUN.machine.threads": {
-      "value": 16,
-      "units": "threads",
-      "source": "definition",
-      "sweep": [
-        1,
-        24
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.5, 9.59, 9.147",
-      "matsim_param": "qsim.numberOfThreads",
-      "description": "Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim partitions the network by thread count, so changing it changes results. Until 9.59 this one field wrote global.numberOfThreads too; the pair is now two declared fields because they govern different partitionings (mobsim vs replanning/routing) with different saturation points. PROBED FOR THE MOBSIM ITSELF in 9.147, on the F27 stack at 25% x 4 iterations on the 24-core machine, one probe at a time (f27_timing_probe_25pct): a plain iteration 270-272 s at 10 threads, 267 s at 16, 264-265 s at 24, the mobsim phase ~140 / ~135 / ~131 s. 16 is declared: a measured gain over 10 that leaves eight cores to the events handlers (RUN.machine.event_handler_threads), the JVM's GC and the runner's own watcher, while 24's further 2-3 s sits inside one run's own iteration-to-iteration spread. The move is recorded inside the F27 boundary, which already changed the run stack, so it costs no comparability."
-    },
-    "RUN.machine.replanning_threads": {
-      "value": 20,
-      "units": "threads",
-      "source": "definition",
-      "sweep": [
-        1,
-        24
-      ],
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.59",
-      "matsim_param": "global.numberOfThreads",
-      "description": "Thread count for replanning, routing and everything else global.numberOfThreads governs. RUN IDENTITY like RUN.machine.threads (per-thread work partitioning changes results); split from it in 9.59 so the replanning pool can be sized to the machine independently of the mobsim's declared partitioning. MEASURED (9.59, 25% x 5 probes on the 9.58 network): 20 threads took replanning from a median 76 s to 33 s and PersonPrepareForSim from ~15 s to ~6 s per iteration against the 10-thread base; the mobsim keeps its own declared 10."
-    },
-    "RUN.machine.events_one_thread_per_handler": {
-      "value": false,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.59",
-      "matsim_param": "eventsManager.oneThreadPerHandler",
-      "description": "Give each registered event handler its own thread instead of sharing RUN.machine.event_handler_threads workers. Declared for the 9.59 timing probes and MEASURED FATAL on the pinned build: the probe crashed mid-run with IllegalStateException '.initProcessing() has to be called before processing events!' - the experimental path 9.56 declined to touch, now known broken rather than merely untried. STAYS FALSE; the value exists so the refusal is recorded where the knob lives, not as an absence."
-    },
-    "RUN.machine.events_synchronize_on_simsteps": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.59",
-      "matsim_param": "eventsManager.synchronizeOnSimSteps",
-      "description": "Whether the qsim waits for the events pipeline at every sim-step. Declared for the 9.59 timing probes and MEASURED A REGRESSION on this model: false swaps the manager implementation and took the it2-4 median mobsim from ~190 s to 255 s at 25%. STAYS TRUE; the value exists so the measured rejection is recorded where the knob lives."
-    },
-    "RUN.machine.telemetry_requires_simstep_barrier": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.151",
-      "consumers": [
-        "src/run/run_matsim.py",
-        "src/java/citysim/RunTelemetry.java"
-      ],
-      "description": "Whether RunTelemetry depends on the sim-step barrier for memory visibility. TRUE, and it is not a preference: RunTelemetry carries no volatile, no synchronized and no java.util.concurrent type in its 731 lines, while its per-vehicle array and per-mode maps are written from the event-handler threads and read and cleared from the QSim thread. The only thing that publishes those writes is RUN.machine.events_synchronize_on_simsteps = true, which supplies a happens-before edge at each sim-step. With the barrier off the telemetry has none, and the failure is SILENT - torn or stale counters that the progress digest reads as a measurement, not a crash (#151). run_matsim.py refuses the combination rather than making the hot path atomic: the barrier is measured FASTER on this model anyway (9.59), so the async path buys nothing a run wants, and paying atomics on the highest-frequency path in the simulation to keep a timing probe alive is the wrong trade. Set this false only together with making that state explicitly concurrent."
-    },
-    "RUN.machine.event_handler_threads": {
-      "value": 4,
-      "units": "threads",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.56",
-      "matsim_param": "eventsManager.numberOfThreads",
-      "description": "Threads for MATSim's parallel events manager. UNLIKE RUN.machine.threads this is a wall-time knob, NOT run identity: event handlers are observers - each still receives the complete stream in per-handler order, so scores, plans and every model output are unchanged (verified bit-identical against the single-thread default, DECISIONS.md 9.56). Declared because the framework default (null = one thread) was measured saturated on the all-physical model: 172-177 s CPU per ~265 s iteration at 25%, throttling ten qsim threads at every sim-step sync. 12 threads were probed on the 9.58 network and bought NOTHING over 4 (it2-4 median mobsim ~190 s either way, 9.59) - 4 stands."
-    },
-    "RUN.machine.xmx": {
-      "value": "14g",
-      "units": "jvm_heap",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.5",
-      "description": "JVM heap. Must exceed 9.6 GiB + 87 GiB x fraction or the run dies."
-    },
-    "RUN.machine.jfr_profile": {
-      "value": false,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.154",
-      "consumers": [
-        "src/run/run_matsim.py",
-        "src/analyse/profile_run.py"
-      ],
-      "description": "Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. OBSERVATION ONLY - JFR samples the already-running threads and writes its own file; it changes no MATSim state, no random draw and no output, so a profiled run and an unprofiled one are the same run and DO NOT open a family. It exists because the iteration's cost has been argued from the MATSim stopwatch alone, which decomposes an iteration only as far as its named phases: the mobsim's 168 s at the F28 gate is one undivided number, and every cut proposed against it since 9.142 has been reasoned rather than measured. `settings=profile` samples every thread's stack, so the mobsim, the replanning pool and the event-handler pool each decompose to the method. Default false because a recording costs a few per cent of wall time and a file; turn it on in a timing-probe overlay, never in an arm whose stopwatch is being quoted."
-    },
-    "RUN.machine.gc_log": {
-      "value": false,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.154",
-      "consumers": [
-        "src/run/run_matsim.py"
-      ],
-      "description": "Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it."
-    },
-    "RUN.machine.seed": {
-      "value": 20260810,
-      "units": "integer_seed",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.7",
-      "matsim_param": "global.randomSeed",
-      "description": "MATSim random seed. Held at the master seed unless replications are being drawn."
-    },
-    "RUN.monitor.enabled": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.19",
-      "description": "Serve the live run view while a run is in flight. An OBSERVER only: it reads the run directory, holds no lock and writes nothing, so a run observed is byte-for-byte a run unobserved. It is not part of the run identity and cannot alter a result.",
-      "consumers": [
-        "src/run/run_matsim.py"
-      ]
-    },
-    "RUN.monitor.port": {
-      "value": 8731,
-      "units": "tcp_port",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.19",
-      "description": "Loopback port for the live run view. Bound on 127.0.0.1 only. If it is taken - a second concurrent run - the next free port is used and the actual url is printed, so parallel runs do not collide.",
-      "consumers": [
-        "src/run/run_matsim.py",
-        "src/analyse/run_view.py"
-      ]
-    },
-    "RUN.monitor.poll_s": {
-      "value": 3,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.19",
-      "description": "How often the page re-reads status. Well under a single iteration at any usable sample fraction (9.8 s at 1%, 56.4 s at 25%), so no iteration passes unseen.",
-      "consumers": [
-        "src/run/run_matsim.py",
-        "src/analyse/run_view.py"
-      ]
-    },
-    "RUN.monitor.stall_s": {
-      "value": 300,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.19",
-      "description": "How long the log may go untouched before the live view calls a run stalled rather than running. THE VALUE IS UNCHANGED AND THE REASON FOR IT IS CORRECTED (8 September 2026, the fifth assessment recommendation 15). It used to justify itself by \"the slowest iteration measured (56.4 s at 25%)\", which stopped being true long ago - a plain iteration at HEAD is ~200 s, four times that figure - and a threshold anchored to iteration length would have had to move with it. It never did, and did not need to, because the log is not quiet for an iteration: MATSim's MemoryObserver writes a used/free RAM line every 60 s independently of what the mobsim is doing (measured on 20260908T014214_4it_25pct: 01:45:47, 01:46:47, 01:47:47). So what this value must clear is that 60 s heartbeat plus the longest single write that can delay it, not the iteration - 300 s is five heartbeats, and a log 300 s old means the JVM itself has stopped writing. Re-anchored to the heartbeat, the threshold is independent of how long an iteration takes and does not go stale again when the pace moves.",
-      "consumers": [
-        "src/analyse/run_view.py"
-      ]
-    },
-    "RUN.storage.raw_cap_gb": {
-      "value": 500,
-      "units": "gibibytes",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.137",
-      "description": "GIBIBYTES, not gigabytes, despite the `_gb` in the key: src/run/results_store.py multiplies this by 2^30, so 500 here is 500 GiB = 536.9 GB. The units field said `gigabytes` until 7 September 2026 (9.155), a 7.4% discrepancy in a project whose convention requires units in every name. The UNITS were corrected to match the code rather than the code corrected to match the units, because shrinking the effective cap by 36.9 GB would delete run bulk to settle a naming question; the key itself is retained because dated record sections (9.137, 9.139, 9.141) cite it by name and the record is never rewritten. The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.",
-      "consumers": [
-        "src/run/results_store.py",
-        "src/run/run_matsim.py"
-      ]
-    },
-    "RUN.storage.extract_grace_s": {
-      "value": 3600,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.155",
-      "description": "How long after a run's record was last written the store still treats it as inside its extraction window, and so refuses to trim it. It exists because the #132 guard - keep any raw directory that has a _run.json and no _metrics.json - was written for a race that lasts seconds and had no expiry, so it protected forever every run that will NEVER get a _metrics.json: run.py writes that file after run() returns, and an operator stop or a gate stop kills the harness before it does. Measured 7 September 2026: 13 directories, 72.8 GiB, 16% of a 90%-full cache, of which seven carry a terminal completion (stopped_at_gate or stopped_by_operator) and all thirteen already had their findings mirrored into results/processed. When the cap is hit the store skipped all thirteen and deleted younger COMPLETE runs instead - the guard was costing exactly what it was meant to protect. An operational bound, not a model value: it decides how much bulk survives to re-derive a diagnostic from, never a result. One hour is far longer than the extraction it covers (seconds to a few minutes on the largest arm measured) and far shorter than the interval between launches.",
-      "consumers": [
-        "src/run/results_store.py"
-      ]
-    },
-    "RUN.gate.retry_interval_s": {
-      "value": 300,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.137",
-      "consumers": [
-        "src/run/run_matsim.py"
-      ],
-      "description": "How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else."
-    },
-    "RUN.gate.interval_iterations": {
-      "value": 100,
-      "units": "iterations",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.137",
-      "description": "How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.",
-      "consumers": [
-        "src/run/run_matsim.py"
-      ]
-    },
-    "RUN.monitor.live_poll_s": {
-      "value": 0.5,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.36",
-      "consumers": [
-        "src/analyse/run_view.py"
-      ],
-      "description": "How often the live view re-reads status WHILE THE MOBSIM IS SWEEPING. The mobsim runs a 30 h simulated day in about 15 s of wall clock, so the shipped RUN.monitor.poll_s of 3 s would sample the whole day five times and the peak would build and dissipate between two reads. 0.5 s matches the rate at which the run publishes windows at RUN.telemetry.live_interval_s = 3600 simulated seconds. Between mobsims the page falls back to RUN.monitor.poll_s, because nothing it shows changes during replanning and scoring."
-    },
-    "RUN.monitor.progress_interval_s": {
-      "value": 30,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.76",
-      "consumers": [
-        "src/run/run_matsim.py",
-        "src/analyse/progress_digest.py"
-      ],
-      "description": "How often the machine-readable _progress.json digest is refreshed (issue #76). An OBSERVER cadence like RUN.monitor.poll_s: the digest is written by a harness daemon thread that reads the run directory and is structurally unable to touch the mobsim (the telemetry isolation rule, DECISIONS.md 9.36), so this affects how stale the digest can be and nothing else. 30 s sits under the slowest measured iteration (217-253 s at 25% on the all-physical model), so no iteration completes unseen."
-    },
-    "RUN.monitor.pace_band_s": {
-      "value": [
-        217,
-        253
-      ],
-      "units": "seconds_per_iteration",
-      "source": "measured",
-      "held_fixed": {
-        "rule": "A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechanises the conditional-replication rule - arm B launches only if arm A's solo iterations 2-5 land inside this band. Changing it changes what the digest FLAGS, never what the model does; it is re-measured per comparability family rather than swept.",
-        "decisions_ref": "9.72, 9.76",
-        "departure_requires": "a new family's measured pace, recorded in DECISIONS.md"
-      },
-      "status": "active",
-      "decisions_ref": "9.72, 9.76",
-      "consumers": [
-        "src/analyse/progress_digest.py"
-      ],
-      "description": "The measured s/iteration band a healthy 25% x 1000 WEEKDAY arm paces inside on this machine (median 234 s through iteration 135 on the arm itself; 217-253 s across the closed family's solo iterations 2-5, DECISIONS.md 9.72). _progress.json reports median/last/solo-iteration pace against it, so a slow launch is visible from one file instead of a log read. Measured on the 9.58-9.63 family; a new family re-measures it."
-    },
-    "RUN.monitor.solo_check_iterations": {
-      "value": [
-        2,
-        5
-      ],
-      "units": "iteration_range",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.72, 9.76",
-      "consumers": [
-        "src/analyse/progress_digest.py"
-      ],
-      "description": "Which solo iterations the conditional-replication rule reads (DECISIONS.md 9.72: arm B launches only if arm A's SOLO ITERATIONS 2-5 pace inside RUN.monitor.pace_band_s). Iterations 0-1 warm caches and are excluded by the rule itself; the digest evaluates exactly this window."
-    },
-    "RUN.scoring.brain_exp_beta": {
-      "value": 1.0,
-      "units": "logit_scale",
-      "source": "literature",
-      "sweep": [
-        0.5,
-        2.0
-      ],
-      "sweep_basis": "MATSim's own default is 1.0 and the manual treats it as the conventional starting point rather than a measured quantity. The interval spans the range in common use: below 1 agents respond more softly to a utility difference and mode shares flatten, above 1 they respond more sharply and the model can lock in. Nothing about Newcastle bears on it.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3, 15",
-      "matsim_param": "scoring.BrainExpBeta",
-      "description": "The logit scale in the ChangeExpBeta plan-selection rule: how sharply an agent's probability of switching plans responds to the score difference between them. IT WAS UNDECLARED AND TYPED INTO THE CONFIG TEMPLATE until this change, which made the single parameter governing choice sharpness the one value in the scoring block that could not be swept. Not a property of Newcastle."
-    },
-    "RUN.scoring.learning_rate": {
-      "value": 1.0,
-      "units": "share",
-      "source": "literature",
-      "sweep": [
-        0.5,
-        1.0
-      ],
-      "sweep_basis": "MATSim's default is 1.0, meaning a plan's score is replaced outright by the latest execution rather than blended with its history. Values below 1 blend, which damps oscillation at the cost of slower relaxation - directly relevant to issue 5, and therefore swept rather than pinned.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3, 9.7, 15",
-      "matsim_param": "scoring.learningRate",
-      "description": "How much of a plan's newly executed score replaces its remembered score. Governs how fast the co-evolution forgets, and therefore interacts with the iteration count the pilot exists to measure. A property of the MATSim formulation, not of Newcastle."
-    },
-    "RUN.scoring.late_arrival_utils_per_h": {
-      "value": -18.0,
-      "units": "utils_per_hour",
-      "source": "literature",
-      "sweep": [
-        -36.0,
-        -6.0
-      ],
-      "sweep_basis": "MATSim's conventional value is -18 utils/h, three times a typical performing rate, and the manual presents it as a convention rather than an estimate. The interval spans one third to twice that. No Newcastle observation bears on it: the HTS held is aggregate and carries no schedule-adherence measure.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3, 15",
-      "matsim_param": "scoring.lateArrival",
-      "description": "Penalty for arriving at an activity after its latest start time. Behavioural scoring, undeclared and typed into the config template until this change."
-    },
-    "RUN.scoring.early_departure_utils_per_h": {
-      "value": 0.0,
-      "units": "utils_per_hour",
-      "source": "assumed",
-      "sweep": [
-        -18.0,
-        0.0
-      ],
-      "sweep_basis": "Zero is an assumption that leaving an activity early costs nothing beyond the activity utility already forgone, which is the usual MATSim treatment and avoids charging the same shortfall twice. The interval allows an explicit penalty up to the late-arrival rate for a sensitivity arm.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3, 15",
-      "matsim_param": "scoring.earlyDeparture",
-      "description": "Penalty for leaving an activity before its earliest end time. ZERO IS A CHOICE, not an absence of one, and it was typed into the config template rather than declared."
-    },
-    "RUN.scoring.waiting_utils_per_h": {
-      "value": 0.0,
-      "units": "utils_per_hour",
-      "source": "assumed",
-      "sweep": [
-        -6.0,
-        0.0
-      ],
-      "sweep_basis": "Zero avoids double-counting: general waiting is already priced through the forgone performing utility of the time. The interval allows an additional explicit disutility for a sensitivity arm. Distinct from scoring.waitingPt, which is DERIVED from the C1 beta_wait and is not this field.",
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.3, 9.28, 15",
-      "matsim_param": "scoring.waiting",
-      "description": "Disutility of general waiting, over and above the opportunity cost of the time. NOT the public-transport wait - that is scoring.waitingPt, derived from C.time_weights.beta_wait, and confusing the two is the DECISIONS.md 9.28 defect class."
-    },
-    "RUN.replanning.subpopulations": {
-      "value": [
-        "person",
-        "external",
-        "freight"
-      ],
-      "units": "subpopulation_names",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "description": "The subpopulations the replanning strategies are applied to. A vocabulary the model is defined over, not a value to tune: `person` is a modelled resident of the study area, `external` is a boundary-tier agent, and `freight` is a heavy-vehicle background agent (9.49) whose mode is locked to truck. The strategy set is emitted once per subpopulation, so this decides HOW MANY strategysettings blocks the config carries."
-    },
-    "RUN.transit.use_transit": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "transit.useTransit",
-      "description": "Whether the mobsim simulates the transit schedule at all. False would make every scenario in this study meaningless, which is exactly why it is declared rather than left as a literal nobody can see."
-    },
-    "RUN.transit.transit_modes": {
-      "value": [
-        "pt",
-        "bus",
-        "tram",
-        "rail",
-        "ferry"
-      ],
-      "units": "mode_names",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15, 9.78",
-      "matsim_param": "transit.transitModes",
-      "description": "The mode strings the mobsim serves transit passengers under, and - minus the `pt` umbrella - the city's scheduled submode vocabulary. `pt` is the plan-level mode every PT trip keeps; bus/tram/rail/ferry are the mapped fleet's own per-route transportModes (the values Tier R already reads from the schedules). The submodes are here because TransitQSimEngine.handleDeparture serves ONLY leg modes in this set (verified in the pinned jar), so a passenger leg mapped to `tram` under RUN.routing.pt_submode_scoring=per_submode would otherwise fall through to teleportation - and because the emitter derives its swissRailRaptor modeMapping vocabulary from this declared list rather than a literal (split_schedule refuses a schedule route whose transportMode is outside it). Under `aggregate` the submode entries are inert: no leg ever carries them. Was one value (`pt`) while the study scored public transport as a single mode; superseded at the 9.78 Tier C boundary."
-    },
-    "RUN.controler.overwrite_files": {
-      "value": "failIfDirectoryExists",
-      "units": "policy",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "controler.overwriteFiles",
-      "description": "What MATSim does with an output directory that already exists. Failing is deliberate: silently overwriting would let a re-run blend into a previous one, which is the same failure mode as a timing series outliving its run."
-    },
-    "RUN.qsim.snapshot_period": {
-      "value": "00:00:00",
-      "units": "hh:mm:ss",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "15",
-      "matsim_param": "qsim.snapshotperiod",
-      "description": "Interval between mobsim vehicle-position snapshots. Zero disables them: this study reads movement through RunTelemetry from inside the mobsim and through the event stream, not through snapshot files, which are large and are not part of any result."
-    },
-    "RUN.qsim.link_dynamics": {
-      "value": "PassingQ",
-      "units": "enum",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.59",
-      "matsim_param": "qsim.linkDynamics",
-      "description": "The queue discipline vehicles obey within a link: FIFO (MATSim's default - vehicles exit in entry order), PassingQ (a faster vehicle may overtake within the link), or SeepageQ. The emitted config carried NO value, so the all-physical model ran FIFO by silent default - under which a 1.25 m/s pedestrian at the head of a shared link's queue blocks every car behind it regardless of its PCE 0.0, directly contradicting 9.54's declared semantics ('neither impeding nor impeded by motor traffic': PCE governs capacity arithmetic, not exit order). PassingQ restores the declared semantics - a car overtakes a walker on the carriageway, which is also what a street does - and is the standard setting for multimodal single-network MATSim models. A MODEL CHANGE: part of the 9.58/9.59 family boundary."
-    },
-    "RUN.qsim.vehicles_source": {
-      "value": "modeVehicleTypesFromVehiclesData",
-      "units": "policy",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.49",
-      "matsim_param": "qsim.vehiclesSource",
-      "description": "Where the mobsim gets a private vehicle's characteristics. Was `defaultVehicle` while car was the only main mode; the freight layer (9.49) needs a truck to weigh more than a car, so each main mode now takes the vehicle type of its own name from the vehicles file the run inputs emit - car restating MATSim's default exactly (RUN.qsim.car_vehicle), truck carrying B.freight.pce and B.freight.max_speed_kmh. TRANSIT vehicles are unaffected - they come from the schedule's own vehicles file, whose seats RUN.sample.transit_capacity_scaling scales."
-    },
-    "RUN.qsim.vehicle_behavior": {
-      "value": "teleport",
-      "units": "enum",
-      "source": "assumed",
-      "sweep": {
-        "categorical": [
-          "wait",
-          "teleport"
-        ],
-        "basis": "What the mobsim does when an agent departs by a network mode and the vehicle they are mapped to is not at their link. It is GLOBAL, and this model runs walk and taxi as network main modes with a vehicle per person, neither of them chain-based: a walk after a bus leg starts where the walk vehicle is not. `teleport` (MATSim's default, every arm before 9.146 and every arm since 9.148) moves the vehicle to the agent, which is what those modes need. `wait` is MEASURED FATAL for this model (9.148): on the F27 arm aborted_20260907T002431_300it_25pct at iteration 0 it left 55,862 car agents, 12,837 walk and 11,537 ride stuck and cut car departures from 232,394 (F26) to 82,388, and by iteration 19 co-evolution had abandoned every plan that strands, a bias rather than a constraint. It stays in the sweep as the record of that measurement, not as a candidate. The household roster's constraint (B.population.vehicle_roster = census) is enforced instead by citysim.HouseholdCarDepartureHandler, car-only: a driver whose household car is out is registered with the link as waiting and MATSim's own link departs them when the car is parked back, while everything else departs under the global behaviour declared here."
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.146, 9.148",
-      "matsim_param": "qsim.vehicleBehavior",
-      "description": "What happens when a network-mode agent's mapped vehicle is not at their link: `teleport` moves the vehicle to the agent (MATSim's default; required by the non-chain network modes walk and taxi); `wait` holds the agent until it arrives and is measured fatal for this model (9.148). The household car constraint is car-only and lives in HouseholdCarDepartureHandler, not here."
-    },
-    "RUN.qsim.car_vehicle": {
-      "value": {
-        "length_m": 7.5,
-        "width_m": 1.0,
-        "pce": 1.0
-      },
-      "units": "metres/metres/passenger_car_equivalents",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.49",
-      "description": "The car vehicle type written into the run inputs' vehicles file: MATSim's own default vehicle, restated explicitly because qsim.vehiclesSource=modeVehicleTypesFromVehiclesData replaces the implicit default. Equality with MATSim's default (7.5 m, 1.0 m, PCE 1.0) is what keeps the car fleet's physics unchanged by the freight change - a value here that drifted from the default would silently change every car in the model.",
-      "consumers": [
-        "src/build/build_matsim_run_inputs.py"
-      ]
-    },
-    "RUN.travel_time.separate_modes": {
-      "value": false,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.29, 15",
-      "matsim_param": "travelTimeCalculator.separateModes",
-      "description": "Whether travel times are accumulated per mode rather than once for the network. False with analysedModes=car is the pairing that makes `ride` read the car travel time it is routed on - the mechanism at the centre of issue 28. Declared so that pairing is visible and swept together, not typed into two adjacent lines of a template."
-    },
-    "RUN.travel_time.analysed_modes": {
-      "value": [
-        "car"
-      ],
-      "units": "mode_names",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.29, 15",
-      "matsim_param": "travelTimeCalculator.analyzedModes",
-      "description": "Which modes contribute observed link travel times. Of the physically simulated modes (RUN.qsim.main_mode) only car is analysed here: the observed link travel time this feeds back to routing is the car stream's, and truck, motorbike, bike, walk and taxi (9.86) each ride that stream at their own declared PCE rather than defining a separate one. See RUN.travel_time.separate_modes: the two are one decision in two parameters."
-    },
-    "RUN.travel_time.filter_modes": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.154",
-      "matsim_param": "travelTimeCalculator.filterModes",
-      "description": "Whether the travel-time calculator RESTRICTS itself to RUN.travel_time.analysed_modes. It is the switch that makes that field mean anything, and it was never emitted: MATSim's default is false, and with it false `analyzedModes` is read into a field that no handler consults - verified in the pinned jar, where TravelTimeCalculator.handleEvent(LinkEnterEvent) returns early only `if (filterAnalyzedModes && vehiclesToIgnore.contains(...))`. So every vehicle on the network contributed to the ONE table that RUN.travel_time.separate_modes=false creates and that TravelTimeCalculatorModule then binds as the observed travel time for EVERY mode in RUN.routing.network_modes: a pedestrian crossing a link at 1.4 m/s, a cyclist at 4, a bus that stopped on it, a truck at its declared cap - all averaged into the seconds the CAR router believes that link costs. The declaration said car; the run used everything. True restores the declared pairing - one table, fed by car alone, read by every network mode, which is what makes `ride` read the car travel time it is routed on (issue 28) - and MOVES RESULTS, because route choice changes wherever a walked or ridden link had been inflating the car estimate. Not a performance change: the filter costs a set lookup per event and saves the recording work for every non-car vehicle."
-    },
-    "RUN.travel_time.bin_size_s": {
-      "value": 300,
-      "units": "seconds",
-      "source": "literature",
-      "sweep": {
-        "interval": [
-          60,
-          900
-        ],
-        "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded."
-      },
-      "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.76, 9.77",
-      "matsim_param": "travelTimeCalculator.travelTimeBinSize",
-      "description": "The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s default to 300 s at the 9.77 activation boundary so the router can see a level-crossing closure (60-600 s swept) that is shorter than a bin. 300 s is the largest bin that resolves the sweep's central 240 s closure."
-    },
-    "RUN.telemetry.live_interval_s": {
-      "value": 3600,
-      "units": "seconds",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.19",
-      "matsim_param": "telemetry.liveIntervalS",
-      "consumers": [
-        "src/java/citysim/TelemetryConfigGroup.java",
-        "src/registry/param_config.py"
-      ],
-      "description": "Simulated seconds between live telemetry snapshots while the mobsim runs. The boundary is SIMULATED time, never wall clock, so a repeated run writes the same snapshots in the same places - the determinism rule applies to an observer as much as to a build script. 3600 puts one snapshot per simulated hour, which at the measured sweep rate (a 30 h day in about 15 s of wall clock) is roughly one every half second. Lowering it loses nothing - the file carries the accumulating profile of the day, not a single instant - it only refines the bins. This does NOT require writeEventsInterval to change: a registered handler receives the full event stream on every iteration whether or not that stream is also written to disk, which the package demonstrates at 26 event files against 251 leg histograms."
-    },
-    "RUN.sample.unit": {
-      "value": "household",
-      "units": "enum",
-      "source": "derived",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.45",
-      "proposal_ref": "9",
-      "derived_from": {
-        "fields": [
-          "RUN.sample.fraction"
-        ],
-        "identity": "a sample drawn per PERSON keeps each household member independently, so a household of size n retains on average f*n of its members and the probability that a given person keeps any co-member at all is 1-(1-f)^(n-1) - 0.14 at f=0.10 and 0.32 at f=0.25 for the mean household size here. Every household-coupled mechanism is therefore destroyed by the sampler in a way that is a function of the fraction, which is the one thing a sample fraction must not be. Sampling by household makes the retained population a set of WHOLE households, so the coupling is fraction-independent by construction. The identity, not a preference: it follows from what a fraction is meant to mean."
-      },
-      "description": "Whether the population subsample keeps whole HOUSEHOLDS or independent PERSONS. It was person-wise and undeclared until 9.45, and the cost was measured on the completed pilot arms: the share of ride legs whose household drives at all was 32.6% at a 10% sample and 43.1% at 25%, rising with the fraction because the sampler - not the demand - was deciding it. The sample still NESTS (a household id hashes to one number, so the 1% sample stays a strict subset of the 10%) and is still seeded and deterministic. The external and through boundary tiers hold no household by construction and continue to hash on their own id. What this buys is bought at a price that is stated rather than hidden: a household-clustered sample has higher variance at a given size than a person-wise one. Consumed by src/run/sample_population.py."
-    },
-    "RUN.routing.clear_default_teleported_params": {
-      "value": true,
-      "units": "boolean",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.54",
-      "matsim_param": "routing.clearDefaultTeleportedModeParams",
-      "description": "Clear MATSim built-in default teleportation parameters. Required once walk and bike are NETWORK modes (9.54): the built-in walk/bike defaults conflict with network routing outright (the config consistency check refuses the run - measured, the first 9.54 probe died on it), and a default that silently teleports a mode this model simulates is the right-by-accident defect class. Clearing also removes the non_network_walk helper defaults, so those are DECLARED below instead of inherited."
-    },
-    "RUN.routing.access_walk_speed_ms": {
-      "value": 1.25,
-      "units": "m/s",
-      "source": "derived",
-      "status": "active",
-      "decisions_ref": "9.54",
-      "matsim_param": "routing.teleportedModeParameters[non_network_walk].teleportedModeSpeed",
-      "derived_from": {
-        "fields": [
-          "A.transit.walk_speed_ms"
-        ],
-        "identity": "the same physical walking speed - the access/egress stub walk to and from a network link is walking, at the one declared walking speed"
-      },
-      "description": "Speed of the teleported access/egress stub walk (non_network_walk) that connects an activity to its network link. The MAIN walk mode is network-simulated (9.54); this helper covers only the stub, and it carries the same declared walking speed."
-    },
-    "RUN.routing.access_walk_beeline_factor": {
-      "value": 1.6938,
-      "units": "ratio",
-      "source": "measured",
-      "sweep": [
-        1.286,
-        1.741
-      ],
-      "sweep_basis": "Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use, and re-measured on the current network 4 Sep 2026 (9.142) - 1.6902 over 531 routed pairs became 1.6938 over 560. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.",
-      "sweep_role": "measurement",
-      "status": "active",
-      "decisions_ref": "9.54",
-      "matsim_param": "routing.teleportedModeParameters[non_network_walk].beelineDistanceFactor",
-      "description": "Straight-line to path-distance ratio for the teleported access/egress stub walk. The measured walk detour factor, retired from the MAIN walk mode when walk became network-simulated (whose realised detour is now the road graph own), surviving here in its remaining teleported role."
-    },
-    "RUN.routing.access_egress_type": {
-      "value": "none",
-      "units": "policy",
-      "source": "definition",
-      "sweep": null,
-      "status": "active",
-      "decisions_ref": "9.54",
-      "matsim_param": "routing.accessEgressType",
-      "description": "How a network-mode trip connects an activity to its first link. Set to none when walk became a NETWORK mode (9.54), because the default (accessEgressModeToLink) creates beeline stub legs of MODE walk - and the qsim casts every main-mode leg route to a NetworkRoute at agent insertion (PopulationAgentSource, measured: the 9.54 probe died on exactly that ClassCastException). The alternative (walkConstantTimeToLink) needs per-mode access/egress-time attributes on every link - a declared constant nobody has observed. Consequence stated: the stub access walk between an activity and its link is no longer a scored leg; it was a beeline artefact, and the 9.54 comparability break owns the scoring change."
-    }
+ "layer": "RUN",
+ "title": "Execution control",
+ "description": "Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.",
+ "decisions_ref": "9.5, 9.6, 9.7, 15",
+ "fields": {
+  "RUN.sample.fraction": {
+   "value": 0.01,
+   "units": "share_of_population",
+   "source": "assumed",
+   "sweep": [
+    0.01,
+    0.4
+   ],
+   "sweep_basis": "measured: 9.8 s/iteration and 9.8 GiB at 1%, 29.9 s and 18.4 GiB at 10%, ~64 s and 31.5 GiB at 25%. time = 3.1 s + 268 s x fraction, memory = 9.6 + 87 GiB x fraction, so 100% needs ~97 GiB and DOES NOT FIT in 63.5 GiB. The upper bound is the machine ceiling, not a modelling judgement",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.5, 15",
+   "description": "Share of the synthetic population simulated. The subsample is NESTED - a person is kept if a hash of their id falls below the fraction, so 1% is a strict subset of 10% and a difference between fractions is a sample-size effect rather than a sampling one. EVERY P4 BEHAVIOURAL RESULT SO FAR WAS MEASURED AT 1% (5,209 persons, 0.85% of the population)."
+  },
+  "RUN.sample.flow_capacity_factor": {
+   "value": null,
+   "units": "share_of_capacity",
+   "source": "derived",
+   "status": "computed",
+   "decisions_ref": "15",
+   "matsim_param": "qsim.flowCapacityFactor",
+   "description": "Road flow capacity scaled to the sample. DERIVED: equals RUN.sample.fraction exactly, which is the standard MATSim rule and is not a free choice. Set by the harness at run time. NOTE the SHIPPED scenario config carries 1.0, so running scenarios/matsim/<S>/<DAY>/config.xml DIRECTLY simulates a sampled demand against full supply - the harness must be used.",
+   "derived_from": {
+    "fields": [
+     "RUN.sample.fraction"
+    ],
+    "identity": "flowCapacityFactor = RUN.sample.fraction, the standard MATSim scaling rule"
+   }
+  },
+  "RUN.sample.storage_capacity_exponent": {
+   "value": 1.0,
+   "units": "exponent",
+   "source": "derived",
+   "status": "active",
+   "decisions_ref": "15",
+   "derived_from": {
+    "fields": [
+     "RUN.sample.fraction"
+    ],
+    "identity": "storageCapacityFactor = fraction ** 1.0 = flowCapacityFactor. MATSim enforces the equality: GlobalConfigGroup.checkConsistency throws when the two differ by more than global.relativeTolerance, which defaults to 0.0"
+   },
+   "description": "The exponent relating storage capacity to the sample fraction. IT IS AN EXPONENT, NOT THE PARAMETER: this field carried matsim_param qsim.storageCapacityFactor until the config emitter was built, which would have written the exponent 1.0 straight into the factor at every sample fraction - MATSim rejects 1.0 against a flow factor of 0.01 in one second. The factor is RUN.sample.storage_capacity_factor, computed from this and the fraction. IT IS 1.0 AND IT IS NOT FREE. An earlier revision of this registry declared it assumed with a 0.75-1.0 sweep, on the reasoning that MATSim floors link storage at one vehicle so a 1% sample would produce spurious spillback, and that raising storage relative to flow is the usual treatment. That reasoning is superseded. MATSim rejects any value below 1.0 outright and states the reason: 'the old approach of setting the stor cap fact larger than the flow cap fact is no longer needed since the qsim became a lot more deterministic'. The sweep was therefore a range whose members the tool will not accept, which is exactly the undisciplined declaration this registry exists to prevent. Corrected after the diagnostic run that tried to use it failed in one second. The remaining question - whether behaviour moves with the SAMPLE FRACTION itself - is unaffected and is what the 1% versus 10% arms test."
+  },
+  "RUN.sample.storage_capacity_factor": {
+   "value": null,
+   "units": "share_of_capacity",
+   "source": "derived",
+   "status": "computed",
+   "decisions_ref": "15",
+   "matsim_param": "qsim.storageCapacityFactor",
+   "derived_from": {
+    "fields": [
+     "RUN.sample.fraction",
+     "RUN.sample.storage_capacity_exponent"
+    ],
+    "identity": "storageCapacityFactor = RUN.sample.fraction ** RUN.sample.storage_capacity_exponent, which at the declared exponent of 1.0 equals flowCapacityFactor exactly. MATSim's GlobalConfigGroup.checkConsistency throws when the two differ by more than global.relativeTolerance, which defaults to 0.0"
+   },
+   "description": "Link storage capacity scaled to the sample. NOT A FREE CHOICE and not the exponent: it is the exponent applied to the fraction, and the harness computes it per run. Split out from RUN.sample.storage_capacity_exponent when the config emitter was built, because the exponent had been bound directly to the factor parameter - two quantities in one field, of which only one is what MATSim reads."
+  },
+  "RUN.sample.transit_capacity_scaling": {
+   "value": true,
+   "units": "boolean",
+   "source": "derived",
+   "status": "active",
+   "decisions_ref": "15",
+   "description": "Scale transit vehicle seats by the sample fraction. NOT OPTIONAL in practice: at a 10% sample an unscaled bus carries 70 sampled agents, i.e. 700 real ones, so capacity never binds and crowding silently disappears.",
+   "derived_from": {
+    "fields": [
+     "RUN.sample.fraction"
+    ],
+    "identity": "seats = max(floor, round(seats x RUN.sample.fraction)); not scaling it would give every vehicle 1/fraction times its real capacity"
+   }
+  },
+  "RUN.sample.transit_capacity_floor": {
+   "value": 1,
+   "units": "seats",
+   "source": "assumed",
+   "sweep": [
+    1,
+    4
+   ],
+   "sweep_basis": "chosen interval: 1 seat is the smallest usable vehicle, and the floor binds below about a 1.5% sample, where it makes capacity systematically too generous; the top of 4 tests whether a larger floor changes anything while crowding scoring is off (issue 12). No observed spread.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "15",
+   "description": "Minimum seats after scaling, so a vehicle never becomes unusable. Capacity floors at 1 seat below about a 1.5% sample, which makes capacity systematically too generous at small fractions. Acceptable while crowding scoring is off; revisit if it is enabled (issue 12)."
+  },
+  "RUN.controler.last_iteration": {
+   "value": 1000,
+   "units": "iterations",
+   "source": "measured",
+   "sweep": {
+    "interval": [
+     250,
+     2000
+    ],
+    "basis": "the lower bound is the largest value MEASURED to be insufficient. The upper bound is NOT a budget limit any more: it is the open half of the question. 1000 is measured to leave the post-cutoff state settled, and is NOT measured to be enough SEARCH - the pre-cutoff creep was still decaying geometrically when innovation froze it (9.43), so the range above 1000 stays declared rather than closed"
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.7, 9.43, 15",
+   "matsim_param": "controler.lastIteration",
+   "description": "Iterations to relaxation. MEASURED at 1000 by two full post-rebuild arms - 10% x 1000 (11.0 h, 54,617 agents) and 25% x 1000 (30.8 h, 136,068 agents), one arm at a time, same network build, seed 20260810 - and declared on that evidence (9.43, issue 5). WHAT IS MEASURED IS NARROWER THAN THE FIELD NAME: at 1000 the post-snap state is settled at both fractions (worst-mode drift +0.22 pp / +0.17 pp over the snap-aware window, inside RUN.relaxation.drift_tolerance_pp), and that result is fraction-independent. WHAT IS NOT MEASURED is whether 1000 iterations of SEARCH suffice: car mode share was still creeping +0.76 pp per 100 iterations at the cutoff, decaying x0.73 per 100, which extrapolates to roughly 2 pp of movement left in the innovated state when innovation was disabled. The 1500-iteration arm that would have measured that directly was CANCELLED by instruction for compute economy; the residual is carried as declared uncertainty, not resolved. Read this value with 9.43 beside it. Prior state, kept because it is the floor: two 1% runs of 250 iterations showed the model had NOT converged - innovation switches off at iteration 200 and ride still moved 0.619 to 0.664 over the last 50 iterations with no new plans being created. Shipped scenario configs now carry this measured value rather than the sweep floor; run_matsim.py still gives --iterations no default so a run states its own horizon."
+  },
+  "RUN.controler.first_iteration": {
+   "value": 0,
+   "units": "iterations",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "controler.firstIteration",
+   "description": "Start iteration."
+  },
+  "RUN.controler.create_graphs": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.59",
+   "matsim_param": "controler.createGraphs",
+   "description": "Whether MATSim renders its per-iteration diagnostic PNGs (mode stats, leg histograms - eight images every iteration). Wall time and disk only, never the model; declared so a long arm's overlay can turn the rendering off instead of paying it a thousand times (9.59)."
+  },
+  "RUN.controler.write_events_interval": {
+   "value": 100,
+   "units": "iterations",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15, 9.147",
+   "matsim_param": "controler.writeEventsInterval",
+   "description": "How often the full events stream is written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): the events are consumed at a GATE - the close-out accounting, the optional --truck-stations scoring, replay_events - and by nothing the ten-iteration monitoring reads. Measured on the F26 arm's stopwatch: writing events inside the mobsim took a milestone iteration's mobsim from 197 s to 359-398 s, so at every tenth iteration it cost ~180 s. Affects disk and wall time, not the model."
+  },
+  "RUN.controler.write_plans_interval": {
+   "value": 100,
+   "units": "iterations",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15, 9.147",
+   "matsim_param": "controler.writePlansInterval",
+   "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model."
+  },
+  "RUN.controler.write_trips_interval": {
+   "value": 10,
+   "units": "iterations",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.147",
+   "matsim_param": "controler.writeTripsInterval",
+   "description": "How often MATSim writes the trips and legs tables (`<n>.trips.csv.gz`, `<n>.legs.csv.gz`), in iterations. THE MONITORING CADENCE: GOAL.md asks for all twelve modes read continuously and the readers have taken every tenth iteration since 9.126; `report_mode_ridership.py` reads the trips table wherever it exists and derives one from the experienced plans only where it does not (iteration_trips.py). Before 9.147 this was MATSim's default of 50 and the readers derived every milestone from the experienced plans, which forced the full plans dump and the events onto the ten-iteration cadence at ~360 s a milestone (F26 stopwatch). Affects disk and wall time, not the model."
+  },
+  "RUN.controler.compression_type": {
+   "value": "gzip",
+   "units": "enum",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "controler.compressionType",
+   "description": "Output compression. MUST be gzip: runs made before this was set write .zst, which extract_metrics.py can only read if zstandard happens to be installed, and the repo does not require it."
+  },
+  "RUN.qsim.start_time_h": {
+   "value": 0,
+   "units": "hours",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "qsim.startTime",
+   "matsim_format": "hh:mm:ss",
+   "description": "Mobsim start."
+  },
+  "RUN.qsim.end_time_h": {
+   "value": 30,
+   "units": "hours",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "qsim.endTime",
+   "matsim_format": "hh:mm:ss",
+   "description": "Mobsim end. Matches B.activity.day_horizon_h; a 30-hour day catches after-midnight returns."
+  },
+  "RUN.qsim.main_mode": {
+   "value": [
+    "car",
+    "truck",
+    "motorbike",
+    "walk",
+    "bike",
+    "taxi"
+   ],
+   "units": "enum",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.54, 9.86",
+   "matsim_param": "qsim.mainMode",
+   "description": "The modes physically simulated in the mobsim: car; truck (9.49) and motorbike (9.52) at their declared PCE; walk and bike (9.54) - a pedestrian at PCE 0.0 capped at walking speed occupies the network without consuming road capacity (the sidewalk, expressed in queue arithmetic), a cyclist at the declared PCE genuinely takes road space; and taxi (9.86) at the car body it already declares, because a hired car is a car on the road and a mode that is routed over the network and then teleported occupies none of it - 39,892 of 39,923 taxi legs per iteration were leaving the carriageway empty. A car passenger is not a second vehicle: ride stays routed, with PAIRED passengers physically boarded (9.53)."
+  },
+  "RUN.replanning.max_agent_plan_memory": {
+   "value": 8,
+   "units": "plans",
+   "source": "literature",
+   "sweep": [
+    3,
+    10
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3",
+   "matsim_param": "replanning.maxAgentPlanMemorySize",
+   "description": "Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep."
+  },
+  "RUN.replanning.time_mutation_range_s": {
+   "value": 1800.0,
+   "units": "seconds",
+   "source": "literature",
+   "sweep": [
+    600.0,
+    1800.0
+   ],
+   "sweep_basis": "MATSim ships 1800 s and this model inherited it SILENTLY - the value reached the mobsim through no declaration at all until 9.85, which is exactly the undeclared modelling choice this registry exists to prevent. It is swept rather than pinned because it is MEASURED to be load-bearing on a quantity that is not its own: it sets how far the two members of a DECLARED joint pair drift apart, and at 1800 s the measured median gap between a companion and their declared driver is 10.3 min with p90 at 45.1 min, against a pairing tolerance of 15 min. The lower bound is the coarsest bin the travel-time calculator resolves (RUN.travel_time.bin_size_s = 300) doubled; the upper is MATSim's own default. Narrowing it is NOT a way to buy pairings - B.ride.bound_pairing_window_min is derived from it, so the tolerance follows the drift rather than chasing it.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.85",
+   "matsim_param": "timeAllocationMutator.mutationRange",
+   "description": "The half-width of the uniform departure-time mutation TimeAllocationMutator applies. A property of the MATSim search, not an observable of Newcastle - but a CONTROLLABLE one, and it was reaching the model as a framework default that no layer stated and no sweep covered. It is declared here because it is the mechanism measured (9.85) to decohere the joint household pairs the B2 binder generates: the mutator moves each member independently, so a pair generated to depart together drifts apart at this scale."
+  },
+  "RUN.replanning.fraction_to_disable_innovation": {
+   "value": 0.8,
+   "units": "share_of_iterations",
+   "source": "literature",
+   "sweep": [
+    0.7,
+    0.9
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.7",
+   "matsim_param": "replanning.fractionOfIterationsToDisableInnovation",
+   "description": "Share of iterations after which no new plans are created. At 250 iterations innovation stopped at 200 and mode share was still moving, which is how the non-convergence was identified."
+  },
+  "RUN.relaxation.drift_tolerance_pp": {
+   "value": 0.5,
+   "units": "percentage_points",
+   "source": "assumed",
+   "sweep": {
+    "interval": [
+     0.1,
+     1.0
+    ],
+    "basis": "There is no standard for how flat a MATSim mode-share trace must be before a run may be called settled, so the tolerance is swept rather than asserted. The lower bound is about the resolution a 10% sample can support; the upper bound is loose enough that a run failing it is unarguably still moving. The verdict is always reported WITH the tolerance beside it and with the two iteration numbers it was measured between, so a reader can apply their own."
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.27",
+   "consumers": [
+    "src/analyse/summarise_run.py",
+    "src/analyse/run_view.py"
+   ],
+   "description": "Largest absolute mode-share movement, in percentage points, that a run may still show after innovation is disabled and still be reported as settled. Measured per mode between the SETTLE POINT (the innovation cutoff plus RUN.relaxation.settle_margin_iterations) and the final iteration: after the cutoff MATSim creates no new plans, so whatever movement remains is relaxation rather than search. This decides a VERDICT ABOUT A RUN, not a model input - no agent sees it and changing it cannot move a mode share. It was 0.5 hard-coded as DRIFT_THRESHOLD_PP in summarise_run.py; the value is carried over unchanged so the migration is a move, not a re-decision. 9.7 measured mode share still drifting while innovation was already off and 9.27 put the iteration count needed at ~1000, so this is a floor for calling a run unsettled, never a claim that anything under it has converged. NOTE the window moved in 9.43: it used to start AT the cutoff, which included the one-iteration selection snap and made the gate unpassable at any horizon."
+  },
+  "RUN.relaxation.settle_margin_iterations": {
+   "value": 10,
+   "units": "iterations",
+   "source": "measured",
+   "sweep": {
+    "interval": [
+     1,
+     100
+    ],
+    "basis": "the lower bound is the MEASURED duration of the snap itself - one iteration, at both fractions - so it is the smallest margin that can exclude it. The upper bound is where the excluded window starts to be a meaningful share of a 200-iteration post-cutoff tail: beyond it the metric passes by measuring less rather than by the run being flatter, which is the failure mode this field must not have"
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.43",
+   "consumers": [
+    "src/analyse/summarise_run.py"
+   ],
+   "description": "Iterations to skip AFTER the innovation cutoff before drift is measured, so the relaxation verdict scores relaxation and not the selection snap. When MATSim disables innovation, exploration noise stops in a single step and selection concentrates every agent onto its best-scoring plan: measured at iteration 801 of both 1000-iteration arms, car jumps +3.256 pp (10%) and +3.380 pp (25%) in that ONE iteration, walk falls 3.97 to 1.02% and pt 1.08 to 0.25%. That is a property of the scoring structure, not a run failing to settle - but the old window started at the cutoff and swept it into the drift number, so EVERY run of EVERY length failed the gate by ~3.5 pp regardless of horizon (9.43). The margin is 10 rather than 1 because a 10x guard on a one-iteration phenomenon costs nothing and matches the 10-iteration interval the outputs are written on; it is NOT tuned to pass. HONEST RESIDUAL: at 10 the worst-mode drift is +0.22 pp (10%) and +0.17 pp (25%), which passes the declared 0.5 pp tolerance but NOT the 0.1 pp floor of that tolerance's own sweep. The movement keeps decaying with margin (+0.089/+0.088 pp at 50, -0.008/+0.033 at 100), which is the signature of relaxation rather than of a metric artefact - a larger margin would pass the whole sweep, and is declined precisely because it would pass by measuring a shorter window."
+  },
+  "RUN.replanning.weights": {
+   "value": {
+    "ChangeExpBeta": 0.7,
+    "ReRoute": 0.15,
+    "SubtourModeChoice": 0.1,
+    "TimeAllocationMutator": 0.05
+   },
+   "units": "strategy_weight",
+   "source": "literature",
+   "sweep": {
+    "proportional": 0.5,
+    "basis": "DECISIONS.md 9.3 sweeps the SubtourModeChoice weight over 0.05-0.20"
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3",
+   "matsim_param": "replanning.strategysettings[*].weight",
+   "description": "Replanning strategy weights, applied to every subpopulation EXCEPT where RUN.replanning.strategy_subpopulations withholds a strategy (9.58: SubtourModeChoice is person-only - a boundary-tier agent's vehicle class is measured cordon data, not a choice). Properties of the scoring formulation, not observable quantities of Newcastle."
+  },
+  "RUN.replanning.strategy_subpopulations": {
+   "value": {
+    "SubtourModeChoice": [
+     "person"
+    ]
+   },
+   "units": "subpopulation_names_per_strategy",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.58",
+   "description": "Which subpopulations each replanning strategy is emitted for; a strategy absent from this dict goes to all of them. SubtourModeChoice is restricted to `person` because an external or freight agent's mode IS its data: the through tier is seeded from classified cordon vehicle counts (9.41, 9.49), so a through car that innovates into another mode falsifies the count it was built from. MEASURED before this was declared: by iteration 100 of the first all-physical arm, 405 external agents had abandoned car - 451 walk legs, 164 bike, 62 pt, 256 ride - i.e. 40 km boundary crossings on foot, each also wedging at walk-less gate links (9.58). Read by the emitter through the schema's repeat_over.restrict clause, like RUN.replanning.subpopulations."
+  },
+  "RUN.mode_choice.modes": {
+   "value": [
+    "car",
+    "ride",
+    "pt",
+    "bike",
+    "walk",
+    "taxi"
+   ],
+   "units": "enum",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.6, 9.77",
+   "matsim_param": "subtourModeChoice.modes",
+   "description": "Modes subtour mode choice may switch between. IF RIDE IS OMITTED, MATSim defaults to car,pt,bike,walk and a ride subtour becomes an ABSORBING STATE - ride sat at 0.18311 in every iteration to five decimals, and 18.6% of legs were an input wearing the costume of a result."
+  },
+  "RUN.mode_choice.chain_based_modes": {
+   "value": [
+    "car",
+    "bike"
+   ],
+   "units": "enum",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.6",
+   "matsim_param": "subtourModeChoice.chainBasedModes",
+   "description": "Modes whose vehicle must return home, so a tour cannot abandon it mid-chain."
+  },
+  "RUN.mode_choice.consider_car_availability": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.6",
+   "matsim_param": "subtourModeChoice.considerCarAvailability",
+   "description": "MATSim defaults this to FALSE, which made mode choice ignore the car availability B1 synthesised. Must stay true."
+  },
+  "RUN.mode_choice.subtour_behavior": {
+   "value": "betweenAllAndFewerConstraints",
+   "units": "enum",
+   "source": "literature",
+   "sweep": {
+    "categorical": [
+     "betweenAllAndFewerConstraints",
+     "fromSpecifiedModesToSpecifiedModes"
+    ],
+    "basis": "the two values MATSim offers. Open Berlin, Leipzig and Kelheim all set the former; the latter is the MATSim default and was live here unset."
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.28",
+   "matsim_param": "subtourModeChoice.behavior",
+   "description": "How subtour mode choice treats tours it cannot close. Under the MATSim default fromSpecifiedModesToSpecifiedModes, AN AGENT WITH AN OPEN OR UNCLOSED SUBTOUR CANNOT CHANGE MODE AT ALL and is frozen at its seeded mode for the whole run - MATSim's own javadoc says to use betweenAllAndFewerConstraints if open subtours exist in the data (9.28)."
+  },
+  "RUN.mode_choice.proba_random_single_trip_mode": {
+   "value": 0.5,
+   "units": "probability",
+   "source": "literature",
+   "sweep": [
+    0.0,
+    0.5
+   ],
+   "sweep_basis": "0.0 is the MATSim default, which its own source annotates as a backwards-compatibility setting that should be changed; 0.5 is the value Open Berlin, Leipzig and Kelheim all use.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.28",
+   "matsim_param": "subtourModeChoice.probaForRandomSingleTripMode",
+   "description": "Probability that mode choice reassigns a SINGLE trip rather than a whole subtour. At the MATSim default of 0.0 every trip in a subtour must share one mode, so with chainBasedModes = car,bike there is no single-trip escape from a bike subtour and agents lock into bike once it wins (9.28)."
+  },
+  "RUN.mode_choice.coord_distance_m": {
+   "value": 100.0,
+   "units": "metres",
+   "source": "literature",
+   "sweep": [
+    0.0,
+    100.0
+   ],
+   "sweep_basis": "0 is the MATSim default and was live here unset; 100 is Open Berlin's value.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.28",
+   "matsim_param": "subtourModeChoice.coordDistance",
+   "description": "Distance within which two activity coordinates count as the same subtour location. At the default 0 two activities metres apart open a subtour that can never close."
+  },
+  "RUN.transit_router.max_beeline_walk_connection_m": {
+   "value": 300.0,
+   "units": "metres",
+   "source": "literature",
+   "sweep": [
+    100.0,
+    500.0
+   ],
+   "sweep_basis": "100 m is the MATSim default that was live here unset; 300 m is the value Open Berlin, Leipzig and Kelheim all set. The upper bound spans Leipzig and Kelheim's 500 m extensionRadius.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.28",
+   "matsim_param": "transitRouter.maxBeelineWalkConnectionDistance",
+   "description": "Maximum stop-to-stop distance at which the PT router will create a transfer. THIS PARAMETER ALONE CREATES EVERY INTERCHANGE IN THE MODEL: none of the five raw TfNSW feeds carries a transfers.txt, so the schedule holds zero minimalTransferTimes and nothing backstops it. At the unset default of 100 m the light rail at Newcastle Interchange reached Stand A (49.0 m), Stand B (95.1 m) and the heavy rail platforms (53.9-57.8 m) but NOT Stand C at 119.2-139.0 m, which carries the regional buses and NSW TrainLink - the external-origin connection hypothesis A3 falsifies on (9.28)."
+  },
+  "RUN.transit_router.search_radius_m": {
+   "value": 1000.0,
+   "units": "metres",
+   "source": "literature",
+   "sweep": [
+    500.0,
+    2000.0
+   ],
+   "sweep_basis": "MATSim ships 1000 m and it was live here UNSET until 9.120 - the emitted config carried it as a jar default no reader could see. The sweep spans half to twice the default: the ferry's two wharves have 8,243 residents within 1 km and the value decides which of them the router lets walk to a wharf at all.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.120",
+   "matsim_param": "transitRouter.searchRadius",
+   "description": "Radius around a trip end within which the PT router considers stop facilities as access or egress points. If no stop lies within it, the router extends to the nearest stop plus RUN.transit_router.extension_radius_m. It governs the reach of every submode and is the one value that decides whether a resident 1.5 km from Stockton wharf can be routed onto the ferry (#94); it had been governing silently as the jar default."
+  },
+  "RUN.transit_router.extension_radius_m": {
+   "value": 200.0,
+   "units": "metres",
+   "source": "literature",
+   "sweep": [
+    100.0,
+    500.0
+   ],
+   "sweep_basis": "MATSim ships 200 m and it was live here UNSET until 9.120. Leipzig and Kelheim set 500 m, the upper bound.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.120",
+   "matsim_param": "transitRouter.extensionRadius",
+   "description": "When no stop lies within RUN.transit_router.search_radius_m of a trip end, the router searches out to the nearest stop's distance plus this margin. Declared with the search radius so the pair that bounds PT access is visible and sweepable rather than a jar default."
+  },
+  "RUN.transit_router.direct_walk_factor": {
+   "value": 1.0,
+   "units": "ratio",
+   "source": "literature",
+   "sweep": [
+    1.0,
+    2.0
+   ],
+   "sweep_basis": "MATSim ships 1.0 and it was live here UNSET until 9.121: the PT router returns a direct walk whenever walk time x this factor x the walk disutility undercuts the best transit route. Declared so the comparison the ferry lost (#94) is visible; the value is unchanged. The upper bound is the largest value MATSim scenarios use to discourage long direct walks; the repair for the ferry is RUN.transit_router.direct_walk_basis, not this factor.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.121",
+   "matsim_param": "transitRouter.directWalkFactor",
+   "description": "Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default."
+  },
+  "RUN.transit_router.access_egress_basis": {
+   "value": "beeline",
+   "units": "enum",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "RUN.routing.network_modes",
+     "RUN.qsim.main_mode",
+     "RUN.routing.access_egress_type"
+    ],
+    "identity": "access_egress_basis = network only where the routed leg can actually be EXECUTED, and 8 September 2026 it cannot, so it is beeline. The requirement is not in doubt: GOAL.md requirement 1 forbids teleportation, walk is in RUN.routing.network_modes and is a qsim main mode, and at beeline the raptor draws access and egress straight and citysim.GenericRouteTeleporter teleports them - 520,385 such legs over arm 20260906T233901's 3.77 M (9.156, 9.158, #167). What is in doubt is executability, and THREE MEASUREMENTS decide it (9.159). (1) At network the routing works: the raptor accepts useIntermodalAccessEgress beside useModeMappingForPassengers with no consistency throw, and the teleport count falls to 6 [walk via pt] on probe aborted_20260908T231109_4it_1pct. (2) The MOBSIM then refuses the result - TransitAgentTriesToTeleportException, agent 355102 at link 158102 trying to board at 128983 - because the walk router lands the agent on a walk link near the stop while the stop is on its own link. (3) That is not fixable by routing to the stop's link, because 675 of 4,123 stop facilities (16.4%) sit on a link walk cannot use: 382 pt/rail/train, 199 pt2matsim artificial stopFacilityLinks, 62 road links omitting walk, 18 rail, 18 artificial rail - the heavy-rail and light-rail platforms among them. MATSim's own bridge is refused for a fourth measured reason: RUN.routing.access_egress_type = accessEgressModeToLink fails at PersonPrepareForSim on this demand, \"Found a trip whose legs have different routingModes\", 40 agents on probe aborted_20260908T232051_4it_1pct - a different failure from the ClassCastException 9.54 recorded, and earlier than the mobsim. So the identity resolves to beeline until a bridge exists that puts the agent on the stop's link without breaking trip consistency; the machinery, the parameter set and the three derived radii stay declared and ready, and #167 stays open with what each probe measured."
+   },
+   "status": "active",
+   "decisions_ref": "9.159, 9.156, 9.54",
+   "consumers": [
+    "src/build/build_matsim_run_inputs.py"
+   ],
+   "description": "What the PT router's access and egress legs ARE: `beeline` (a straight line at the raptor's own walk speed, teleported in the mobsim) or `network` (routed by the registered walk RoutingModule, which in this scenario is the network walk router because walk is a network mode). It emits swissRailRaptor.useIntermodalAccessEgress and the intermodalAccessEgress parameter set. CHANGING IT IS A FAMILY BOUNDARY: it changes what the router returns for every pt trip, so no run before it compares with any run after it (3.5)."
+  },
+  "RUN.transit_router.access_initial_search_radius_m": {
+   "value": 1000.0,
+   "units": "metres",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "RUN.transit_router.search_radius_m"
+    ],
+    "identity": "access_initial_search_radius_m = search_radius_m. The intermodal stop search is given the SAME reach the beeline search already had, so that turning access/egress into network legs changes the route and not the market. Declaring a different number here would move two things at once and make the arm that follows uninterpretable - and it would re-open a question 9.158 already closed with numbers, that radius is NOT what makes 60.5% of pt requests come back as a walk. The raptor's own default for this parameter is the sentinel -Infinity, so it must be set explicitly or the initial search is unbounded."
+   },
+   "status": "active",
+   "decisions_ref": "9.159, 9.120",
+   "description": "Radius around a trip end within which the raptor collects candidate access/egress stops when access/egress is routed rather than drawn. The intermodal counterpart of transitRouter.searchRadius, and equal to it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].initialSearchRadius.",
+   "consumers": [
+    "src/build/build_matsim_run_inputs.py"
+   ]
+  },
+  "RUN.transit_router.access_search_extension_radius_m": {
+   "value": 200.0,
+   "units": "metres",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "RUN.transit_router.extension_radius_m"
+    ],
+    "identity": "access_search_extension_radius_m = extension_radius_m, the same reach-preserving identity as the initial radius above. MATSim's own default for this one is 500 m rather than a sentinel, which would have widened the search by 300 m as a side effect of a change that is not about reach at all."
+   },
+   "status": "active",
+   "decisions_ref": "9.159, 9.120",
+   "description": "How far past the nearest found stop the intermodal search continues. The intermodal counterpart of transitRouter.extensionRadius, and equal to it. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].searchExtensionRadius.",
+   "consumers": [
+    "src/build/build_matsim_run_inputs.py"
+   ]
+  },
+  "RUN.transit_router.access_max_radius_m": {
+   "value": 1200.0,
+   "units": "metres",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "RUN.transit_router.search_radius_m",
+     "RUN.transit_router.extension_radius_m"
+    ],
+    "identity": "access_max_radius_m = search_radius_m + extension_radius_m = 1000 + 200. The beeline search has no separate hard ceiling: it reaches the search radius, and where no stop lies inside it, out to the nearest stop plus the extension. The furthest that path can ever reach is therefore the sum, and that is the ceiling declared here - the identity that leaves the routed search covering the same ground as the drawn one. The raptor's own default is the sentinel +Infinity, which would let one agent's access search run to the far side of the region."
+   },
+   "status": "active",
+   "decisions_ref": "9.159, 9.120",
+   "description": "The hard ceiling on how far the raptor will look for an access or egress stop. No beeline counterpart exists, so it is derived as the furthest the beeline path could reach. EMITTED WITH THE PARAMETER SET, NOT BOUND SEPARATELY FROM IT: the set exists only when RUN.transit_router.access_egress_basis is `network`, and a `[*]` binding whose set nothing creates is a fault the emitter refuses outright - correctly, since a radius broadcast onto no set is a value that silently reaches nothing. So all four values are emitted together by build_matsim_run_inputs.py under the `derived` runtime role, or not at all. Emits swissRailRaptor.intermodalAccessEgress[*].maxRadius.",
+   "consumers": [
+    "src/build/build_matsim_run_inputs.py"
+   ]
+  },
+  "RUN.transit_router.direct_walk_basis": {
+   "value": "network",
+   "units": "enum",
+   "source": "derived",
+   "derived_from": {
+    "fields": [
+     "RUN.routing.network_modes"
+    ],
+    "identity": "direct_walk_basis = network whenever walk is routed and simulated on the network (walk is in RUN.routing.network_modes and a qsim main mode), because the walk the router compares must be the walk the agent would make. Measured on the F16 arm at iteration 10 (9.121), by bank: of 256 harbour-crossing trips in residents' PT plans the raptor returned a beeline walk across the harbour for 174 and a ferry leg for 23; those walks executed as the ~19 km road detour, and over all residents 38.3% of PT-plan trips were walk-only. On the F17 arm at the same depth 209 of 359 crossings route with a ferry leg. `beeline` recovers the stock raptor exactly."
+   },
+   "status": "active",
+   "decisions_ref": "9.121",
+   "matsim_param": "ptDirectWalk.basis",
+   "consumers": [
+    "src/java/citysim/PtDirectWalkConfigGroup.java",
+    "src/java/citysim/CitysimControler.java",
+    "src/java/citysim/NetworkDirectWalkPtRouter.java"
+   ],
+   "description": "What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it."
+  },
+  "RUN.routing.network_modes": {
+   "value": [
+    "car",
+    "ride",
+    "truck",
+    "motorbike",
+    "walk",
+    "bike",
+    "taxi"
+   ],
+   "units": "enum",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.6, 9.77",
+   "matsim_param": "routing.networkModes",
+   "description": "Modes routed on the road graph. Ride must be here AND permitted on the links (143,891 of them): declaring it a network mode that no link permits gives 'checking 0 nodes and 0 links' and a throw in PrepareForSim."
+  },
+  "RUN.routing.pt_submode_scoring": {
+   "value": "per_submode",
+   "units": "enum",
+   "source": "assumed",
+   "sweep": {
+    "categorical": [
+     "per_submode",
+     "aggregate"
+    ],
+    "basis": "the two representations the pinned MATSim (2027.0-2026w25) supports, verified against the jar's bytecode rather than memory: per_submode uses the `swissRailRaptor` config module's `useModeMappingForPassengers` with one `modeMapping` parameterset (routeMode -> passengerMode) per scheduled transportMode (ch.sbb.matsim.config.SwissRailRaptorConfigGroup), so each submode's legs carry its own mode and score with C1's own per-submode constants; aggregate is the pre-9.78 state - one `pt` passenger mode carrying asc_bus for bus, tram, rail and ferry alike, the collapse DECISIONS.md 9.3 recorded as not representable."
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.78",
+   "consumers": [
+    "src/build/build_matsim_run_inputs.py"
+   ],
+   "description": "Whether the scheduled PT submodes are score-distinct passenger modes (issue #49 Tier C - every mode individually, per the 20 Aug 2026 directive). Under per_submode the emitter writes the swissRailRaptor module and one scoring modeParams block per submode: bus takes C1's asc_bus, tram asc_lr, rail asc_rail; FERRY HAS NO C1 CONSTANT and keeps the pt aggregate's, stated in the run-inputs report rather than invented. Time is priced at the one declared beta_ivt for every submode - C1 declares no per-submode time weight. The router prices each submode from its own scoring entry (RaptorUtils.createParameters reads scoring.getModes() per mode - verified in the jar), so the constants and any swept divergence reach ROUTE choice as well as plan scoring. Plan-level choice stays `pt`: subtourModeChoice.modes never carries a submode, only the router assigns submode legs, and citysim.PtSubmodeMainModeIdentifier folds them back to `pt` for every main_mode analysis, keeping the HTS aggregate comparison unchanged. A MODEL CHANGE: part of the #48 batched family boundary."
+  },
+  "RUN.machine.threads": {
+   "value": 16,
+   "units": "threads",
+   "source": "definition",
+   "sweep": [
+    1,
+    24
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.5, 9.59, 9.147",
+   "matsim_param": "qsim.numberOfThreads",
+   "description": "Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim partitions the network by thread count, so changing it changes results. Until 9.59 this one field wrote global.numberOfThreads too; the pair is now two declared fields because they govern different partitionings (mobsim vs replanning/routing) with different saturation points. PROBED FOR THE MOBSIM ITSELF in 9.147, on the F27 stack at 25% x 4 iterations on the 24-core machine, one probe at a time (f27_timing_probe_25pct): a plain iteration 270-272 s at 10 threads, 267 s at 16, 264-265 s at 24, the mobsim phase ~140 / ~135 / ~131 s. 16 is declared: a measured gain over 10 that leaves eight cores to the events handlers (RUN.machine.event_handler_threads), the JVM's GC and the runner's own watcher, while 24's further 2-3 s sits inside one run's own iteration-to-iteration spread. The move is recorded inside the F27 boundary, which already changed the run stack, so it costs no comparability."
+  },
+  "RUN.machine.replanning_threads": {
+   "value": 20,
+   "units": "threads",
+   "source": "definition",
+   "sweep": [
+    1,
+    24
+   ],
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.59",
+   "matsim_param": "global.numberOfThreads",
+   "description": "Thread count for replanning, routing and everything else global.numberOfThreads governs. RUN IDENTITY like RUN.machine.threads (per-thread work partitioning changes results); split from it in 9.59 so the replanning pool can be sized to the machine independently of the mobsim's declared partitioning. MEASURED (9.59, 25% x 5 probes on the 9.58 network): 20 threads took replanning from a median 76 s to 33 s and PersonPrepareForSim from ~15 s to ~6 s per iteration against the 10-thread base; the mobsim keeps its own declared 10."
+  },
+  "RUN.machine.events_one_thread_per_handler": {
+   "value": false,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.59",
+   "matsim_param": "eventsManager.oneThreadPerHandler",
+   "description": "Give each registered event handler its own thread instead of sharing RUN.machine.event_handler_threads workers. Declared for the 9.59 timing probes and MEASURED FATAL on the pinned build: the probe crashed mid-run with IllegalStateException '.initProcessing() has to be called before processing events!' - the experimental path 9.56 declined to touch, now known broken rather than merely untried. STAYS FALSE; the value exists so the refusal is recorded where the knob lives, not as an absence."
+  },
+  "RUN.machine.events_synchronize_on_simsteps": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.59",
+   "matsim_param": "eventsManager.synchronizeOnSimSteps",
+   "description": "Whether the qsim waits for the events pipeline at every sim-step. Declared for the 9.59 timing probes and MEASURED A REGRESSION on this model: false swaps the manager implementation and took the it2-4 median mobsim from ~190 s to 255 s at 25%. STAYS TRUE; the value exists so the measured rejection is recorded where the knob lives."
+  },
+  "RUN.machine.telemetry_requires_simstep_barrier": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.151",
+   "consumers": [
+    "src/run/run_matsim.py",
+    "src/java/citysim/RunTelemetry.java"
+   ],
+   "description": "Whether RunTelemetry depends on the sim-step barrier for memory visibility. TRUE, and it is not a preference: RunTelemetry carries no volatile, no synchronized and no java.util.concurrent type in its 731 lines, while its per-vehicle array and per-mode maps are written from the event-handler threads and read and cleared from the QSim thread. The only thing that publishes those writes is RUN.machine.events_synchronize_on_simsteps = true, which supplies a happens-before edge at each sim-step. With the barrier off the telemetry has none, and the failure is SILENT - torn or stale counters that the progress digest reads as a measurement, not a crash (#151). run_matsim.py refuses the combination rather than making the hot path atomic: the barrier is measured FASTER on this model anyway (9.59), so the async path buys nothing a run wants, and paying atomics on the highest-frequency path in the simulation to keep a timing probe alive is the wrong trade. Set this false only together with making that state explicitly concurrent."
+  },
+  "RUN.machine.event_handler_threads": {
+   "value": 4,
+   "units": "threads",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.56",
+   "matsim_param": "eventsManager.numberOfThreads",
+   "description": "Threads for MATSim's parallel events manager. UNLIKE RUN.machine.threads this is a wall-time knob, NOT run identity: event handlers are observers - each still receives the complete stream in per-handler order, so scores, plans and every model output are unchanged (verified bit-identical against the single-thread default, DECISIONS.md 9.56). Declared because the framework default (null = one thread) was measured saturated on the all-physical model: 172-177 s CPU per ~265 s iteration at 25%, throttling ten qsim threads at every sim-step sync. 12 threads were probed on the 9.58 network and bought NOTHING over 4 (it2-4 median mobsim ~190 s either way, 9.59) - 4 stands."
+  },
+  "RUN.machine.xmx": {
+   "value": "14g",
+   "units": "jvm_heap",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.5",
+   "description": "JVM heap. Must exceed 9.6 GiB + 87 GiB x fraction or the run dies."
+  },
+  "RUN.machine.jfr_profile": {
+   "value": false,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.154",
+   "consumers": [
+    "src/run/run_matsim.py",
+    "src/analyse/profile_run.py"
+   ],
+   "description": "Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. OBSERVATION ONLY - JFR samples the already-running threads and writes its own file; it changes no MATSim state, no random draw and no output, so a profiled run and an unprofiled one are the same run and DO NOT open a family. It exists because the iteration's cost has been argued from the MATSim stopwatch alone, which decomposes an iteration only as far as its named phases: the mobsim's 168 s at the F28 gate is one undivided number, and every cut proposed against it since 9.142 has been reasoned rather than measured. `settings=profile` samples every thread's stack, so the mobsim, the replanning pool and the event-handler pool each decompose to the method. Default false because a recording costs a few per cent of wall time and a file; turn it on in a timing-probe overlay, never in an arm whose stopwatch is being quoted."
+  },
+  "RUN.machine.gc_log": {
+   "value": false,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.154",
+   "consumers": [
+    "src/run/run_matsim.py"
+   ],
+   "description": "Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it."
+  },
+  "RUN.machine.seed": {
+   "value": 20260810,
+   "units": "integer_seed",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.7",
+   "matsim_param": "global.randomSeed",
+   "description": "MATSim random seed. Held at the master seed unless replications are being drawn."
+  },
+  "RUN.monitor.enabled": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.19",
+   "description": "Serve the live run view while a run is in flight. An OBSERVER only: it reads the run directory, holds no lock and writes nothing, so a run observed is byte-for-byte a run unobserved. It is not part of the run identity and cannot alter a result.",
+   "consumers": [
+    "src/run/run_matsim.py"
+   ]
+  },
+  "RUN.monitor.port": {
+   "value": 8731,
+   "units": "tcp_port",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.19",
+   "description": "Loopback port for the live run view. Bound on 127.0.0.1 only. If it is taken - a second concurrent run - the next free port is used and the actual url is printed, so parallel runs do not collide.",
+   "consumers": [
+    "src/run/run_matsim.py",
+    "src/analyse/run_view.py"
+   ]
+  },
+  "RUN.monitor.poll_s": {
+   "value": 3,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.19",
+   "description": "How often the page re-reads status. Well under a single iteration at any usable sample fraction (9.8 s at 1%, 56.4 s at 25%), so no iteration passes unseen.",
+   "consumers": [
+    "src/run/run_matsim.py",
+    "src/analyse/run_view.py"
+   ]
+  },
+  "RUN.monitor.stall_s": {
+   "value": 300,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.19",
+   "description": "How long the log may go untouched before the live view calls a run stalled rather than running. THE VALUE IS UNCHANGED AND THE REASON FOR IT IS CORRECTED (8 September 2026, the fifth assessment recommendation 15). It used to justify itself by \"the slowest iteration measured (56.4 s at 25%)\", which stopped being true long ago - a plain iteration at HEAD is ~200 s, four times that figure - and a threshold anchored to iteration length would have had to move with it. It never did, and did not need to, because the log is not quiet for an iteration: MATSim's MemoryObserver writes a used/free RAM line every 60 s independently of what the mobsim is doing (measured on 20260908T014214_4it_25pct: 01:45:47, 01:46:47, 01:47:47). So what this value must clear is that 60 s heartbeat plus the longest single write that can delay it, not the iteration - 300 s is five heartbeats, and a log 300 s old means the JVM itself has stopped writing. Re-anchored to the heartbeat, the threshold is independent of how long an iteration takes and does not go stale again when the pace moves.",
+   "consumers": [
+    "src/analyse/run_view.py"
+   ]
+  },
+  "RUN.storage.raw_cap_gb": {
+   "value": 500,
+   "units": "gibibytes",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.137",
+   "description": "GIBIBYTES, not gigabytes, despite the `_gb` in the key: src/run/results_store.py multiplies this by 2^30, so 500 here is 500 GiB = 536.9 GB. The units field said `gigabytes` until 7 September 2026 (9.155), a 7.4% discrepancy in a project whose convention requires units in every name. The UNITS were corrected to match the code rather than the code corrected to match the units, because shrinking the effective cap by 36.9 GB would delete run bulk to settle a naming question; the key itself is retained because dated record sections (9.137, 9.139, 9.141) cite it by name and the record is never rewritten. The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.",
+   "consumers": [
+    "src/run/results_store.py",
+    "src/run/run_matsim.py"
+   ]
+  },
+  "RUN.storage.extract_grace_s": {
+   "value": 3600,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.155",
+   "description": "How long after a run's record was last written the store still treats it as inside its extraction window, and so refuses to trim it. It exists because the #132 guard - keep any raw directory that has a _run.json and no _metrics.json - was written for a race that lasts seconds and had no expiry, so it protected forever every run that will NEVER get a _metrics.json: run.py writes that file after run() returns, and an operator stop or a gate stop kills the harness before it does. Measured 7 September 2026: 13 directories, 72.8 GiB, 16% of a 90%-full cache, of which seven carry a terminal completion (stopped_at_gate or stopped_by_operator) and all thirteen already had their findings mirrored into results/processed. When the cap is hit the store skipped all thirteen and deleted younger COMPLETE runs instead - the guard was costing exactly what it was meant to protect. An operational bound, not a model value: it decides how much bulk survives to re-derive a diagnostic from, never a result. One hour is far longer than the extraction it covers (seconds to a few minutes on the largest arm measured) and far shorter than the interval between launches.",
+   "consumers": [
+    "src/run/results_store.py"
+   ]
+  },
+  "RUN.gate.retry_interval_s": {
+   "value": 300,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.137",
+   "consumers": [
+    "src/run/run_matsim.py"
+   ],
+   "description": "How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else."
+  },
+  "RUN.gate.interval_iterations": {
+   "value": 100,
+   "units": "iterations",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.137",
+   "description": "How often the runner's own gate watcher reads all twelve modes against their targets and stops the run if any is at or past CAL.gate.stop_deviation_pct - the GOAL.md loop's 'every 100 iterations', executed by the harness instead of by a person watching. The trend half of the loop ('or heading there') stays a session judgement; the hard bar is deterministic and automated.",
+   "consumers": [
+    "src/run/run_matsim.py"
+   ]
+  },
+  "RUN.monitor.live_poll_s": {
+   "value": 0.5,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.36",
+   "consumers": [
+    "src/analyse/run_view.py"
+   ],
+   "description": "How often the live view re-reads status WHILE THE MOBSIM IS SWEEPING. The mobsim runs a 30 h simulated day in about 15 s of wall clock, so the shipped RUN.monitor.poll_s of 3 s would sample the whole day five times and the peak would build and dissipate between two reads. 0.5 s matches the rate at which the run publishes windows at RUN.telemetry.live_interval_s = 3600 simulated seconds. Between mobsims the page falls back to RUN.monitor.poll_s, because nothing it shows changes during replanning and scoring."
+  },
+  "RUN.monitor.progress_interval_s": {
+   "value": 30,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.76",
+   "consumers": [
+    "src/run/run_matsim.py",
+    "src/analyse/progress_digest.py"
+   ],
+   "description": "How often the machine-readable _progress.json digest is refreshed (issue #76). An OBSERVER cadence like RUN.monitor.poll_s: the digest is written by a harness daemon thread that reads the run directory and is structurally unable to touch the mobsim (the telemetry isolation rule, DECISIONS.md 9.36), so this affects how stale the digest can be and nothing else. 30 s sits under the slowest measured iteration (217-253 s at 25% on the all-physical model), so no iteration completes unseen."
+  },
+  "RUN.monitor.pace_band_s": {
+   "value": [
+    217,
+    253
+   ],
+   "units": "seconds_per_iteration",
+   "source": "measured",
+   "held_fixed": {
+    "rule": "A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechanises the conditional-replication rule - arm B launches only if arm A's solo iterations 2-5 land inside this band. Changing it changes what the digest FLAGS, never what the model does; it is re-measured per comparability family rather than swept.",
+    "decisions_ref": "9.72, 9.76",
+    "departure_requires": "a new family's measured pace, recorded in DECISIONS.md"
+   },
+   "status": "active",
+   "decisions_ref": "9.72, 9.76",
+   "consumers": [
+    "src/analyse/progress_digest.py"
+   ],
+   "description": "The measured s/iteration band a healthy 25% x 1000 WEEKDAY arm paces inside on this machine (median 234 s through iteration 135 on the arm itself; 217-253 s across the closed family's solo iterations 2-5, DECISIONS.md 9.72). _progress.json reports median/last/solo-iteration pace against it, so a slow launch is visible from one file instead of a log read. Measured on the 9.58-9.63 family; a new family re-measures it."
+  },
+  "RUN.monitor.solo_check_iterations": {
+   "value": [
+    2,
+    5
+   ],
+   "units": "iteration_range",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.72, 9.76",
+   "consumers": [
+    "src/analyse/progress_digest.py"
+   ],
+   "description": "Which solo iterations the conditional-replication rule reads (DECISIONS.md 9.72: arm B launches only if arm A's SOLO ITERATIONS 2-5 pace inside RUN.monitor.pace_band_s). Iterations 0-1 warm caches and are excluded by the rule itself; the digest evaluates exactly this window."
+  },
+  "RUN.scoring.brain_exp_beta": {
+   "value": 1.0,
+   "units": "logit_scale",
+   "source": "literature",
+   "sweep": [
+    0.5,
+    2.0
+   ],
+   "sweep_basis": "MATSim's own default is 1.0 and the manual treats it as the conventional starting point rather than a measured quantity. The interval spans the range in common use: below 1 agents respond more softly to a utility difference and mode shares flatten, above 1 they respond more sharply and the model can lock in. Nothing about Newcastle bears on it.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3, 15",
+   "matsim_param": "scoring.BrainExpBeta",
+   "description": "The logit scale in the ChangeExpBeta plan-selection rule: how sharply an agent's probability of switching plans responds to the score difference between them. IT WAS UNDECLARED AND TYPED INTO THE CONFIG TEMPLATE until this change, which made the single parameter governing choice sharpness the one value in the scoring block that could not be swept. Not a property of Newcastle."
+  },
+  "RUN.scoring.learning_rate": {
+   "value": 1.0,
+   "units": "share",
+   "source": "literature",
+   "sweep": [
+    0.5,
+    1.0
+   ],
+   "sweep_basis": "MATSim's default is 1.0, meaning a plan's score is replaced outright by the latest execution rather than blended with its history. Values below 1 blend, which damps oscillation at the cost of slower relaxation - directly relevant to issue 5, and therefore swept rather than pinned.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3, 9.7, 15",
+   "matsim_param": "scoring.learningRate",
+   "description": "How much of a plan's newly executed score replaces its remembered score. Governs how fast the co-evolution forgets, and therefore interacts with the iteration count the pilot exists to measure. A property of the MATSim formulation, not of Newcastle."
+  },
+  "RUN.scoring.late_arrival_utils_per_h": {
+   "value": -18.0,
+   "units": "utils_per_hour",
+   "source": "literature",
+   "sweep": [
+    -36.0,
+    -6.0
+   ],
+   "sweep_basis": "MATSim's conventional value is -18 utils/h, three times a typical performing rate, and the manual presents it as a convention rather than an estimate. The interval spans one third to twice that. No Newcastle observation bears on it: the HTS held is aggregate and carries no schedule-adherence measure.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3, 15",
+   "matsim_param": "scoring.lateArrival",
+   "description": "Penalty for arriving at an activity after its latest start time. Behavioural scoring, undeclared and typed into the config template until this change."
+  },
+  "RUN.scoring.early_departure_utils_per_h": {
+   "value": 0.0,
+   "units": "utils_per_hour",
+   "source": "assumed",
+   "sweep": [
+    -18.0,
+    0.0
+   ],
+   "sweep_basis": "Zero is an assumption that leaving an activity early costs nothing beyond the activity utility already forgone, which is the usual MATSim treatment and avoids charging the same shortfall twice. The interval allows an explicit penalty up to the late-arrival rate for a sensitivity arm.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3, 15",
+   "matsim_param": "scoring.earlyDeparture",
+   "description": "Penalty for leaving an activity before its earliest end time. ZERO IS A CHOICE, not an absence of one, and it was typed into the config template rather than declared."
+  },
+  "RUN.scoring.waiting_utils_per_h": {
+   "value": 0.0,
+   "units": "utils_per_hour",
+   "source": "assumed",
+   "sweep": [
+    -6.0,
+    0.0
+   ],
+   "sweep_basis": "Zero avoids double-counting: general waiting is already priced through the forgone performing utility of the time. The interval allows an additional explicit disutility for a sensitivity arm. Distinct from scoring.waitingPt, which is DERIVED from the C1 beta_wait and is not this field.",
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.3, 9.28, 15",
+   "matsim_param": "scoring.waiting",
+   "description": "Disutility of general waiting, over and above the opportunity cost of the time. NOT the public-transport wait - that is scoring.waitingPt, derived from C.time_weights.beta_wait, and confusing the two is the DECISIONS.md 9.28 defect class."
+  },
+  "RUN.replanning.subpopulations": {
+   "value": [
+    "person",
+    "external",
+    "freight"
+   ],
+   "units": "subpopulation_names",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "description": "The subpopulations the replanning strategies are applied to. A vocabulary the model is defined over, not a value to tune: `person` is a modelled resident of the study area, `external` is a boundary-tier agent, and `freight` is a heavy-vehicle background agent (9.49) whose mode is locked to truck. The strategy set is emitted once per subpopulation, so this decides HOW MANY strategysettings blocks the config carries."
+  },
+  "RUN.transit.use_transit": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "transit.useTransit",
+   "description": "Whether the mobsim simulates the transit schedule at all. False would make every scenario in this study meaningless, which is exactly why it is declared rather than left as a literal nobody can see."
+  },
+  "RUN.transit.transit_modes": {
+   "value": [
+    "pt",
+    "bus",
+    "tram",
+    "rail",
+    "ferry"
+   ],
+   "units": "mode_names",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15, 9.78",
+   "matsim_param": "transit.transitModes",
+   "description": "The mode strings the mobsim serves transit passengers under, and - minus the `pt` umbrella - the city's scheduled submode vocabulary. `pt` is the plan-level mode every PT trip keeps; bus/tram/rail/ferry are the mapped fleet's own per-route transportModes (the values Tier R already reads from the schedules). The submodes are here because TransitQSimEngine.handleDeparture serves ONLY leg modes in this set (verified in the pinned jar), so a passenger leg mapped to `tram` under RUN.routing.pt_submode_scoring=per_submode would otherwise fall through to teleportation - and because the emitter derives its swissRailRaptor modeMapping vocabulary from this declared list rather than a literal (split_schedule refuses a schedule route whose transportMode is outside it). Under `aggregate` the submode entries are inert: no leg ever carries them. Was one value (`pt`) while the study scored public transport as a single mode; superseded at the 9.78 Tier C boundary."
+  },
+  "RUN.controler.overwrite_files": {
+   "value": "failIfDirectoryExists",
+   "units": "policy",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "controler.overwriteFiles",
+   "description": "What MATSim does with an output directory that already exists. Failing is deliberate: silently overwriting would let a re-run blend into a previous one, which is the same failure mode as a timing series outliving its run."
+  },
+  "RUN.qsim.snapshot_period": {
+   "value": "00:00:00",
+   "units": "hh:mm:ss",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "15",
+   "matsim_param": "qsim.snapshotperiod",
+   "description": "Interval between mobsim vehicle-position snapshots. Zero disables them: this study reads movement through RunTelemetry from inside the mobsim and through the event stream, not through snapshot files, which are large and are not part of any result."
+  },
+  "RUN.qsim.link_dynamics": {
+   "value": "PassingQ",
+   "units": "enum",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.59",
+   "matsim_param": "qsim.linkDynamics",
+   "description": "The queue discipline vehicles obey within a link: FIFO (MATSim's default - vehicles exit in entry order), PassingQ (a faster vehicle may overtake within the link), or SeepageQ. The emitted config carried NO value, so the all-physical model ran FIFO by silent default - under which a 1.25 m/s pedestrian at the head of a shared link's queue blocks every car behind it regardless of its PCE 0.0, directly contradicting 9.54's declared semantics ('neither impeding nor impeded by motor traffic': PCE governs capacity arithmetic, not exit order). PassingQ restores the declared semantics - a car overtakes a walker on the carriageway, which is also what a street does - and is the standard setting for multimodal single-network MATSim models. A MODEL CHANGE: part of the 9.58/9.59 family boundary."
+  },
+  "RUN.qsim.vehicles_source": {
+   "value": "modeVehicleTypesFromVehiclesData",
+   "units": "policy",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.49",
+   "matsim_param": "qsim.vehiclesSource",
+   "description": "Where the mobsim gets a private vehicle's characteristics. Was `defaultVehicle` while car was the only main mode; the freight layer (9.49) needs a truck to weigh more than a car, so each main mode now takes the vehicle type of its own name from the vehicles file the run inputs emit - car restating MATSim's default exactly (RUN.qsim.car_vehicle), truck carrying B.freight.pce and B.freight.max_speed_kmh. TRANSIT vehicles are unaffected - they come from the schedule's own vehicles file, whose seats RUN.sample.transit_capacity_scaling scales."
+  },
+  "RUN.qsim.vehicle_behavior": {
+   "value": "teleport",
+   "units": "enum",
+   "source": "assumed",
+   "sweep": {
+    "categorical": [
+     "wait",
+     "teleport"
+    ],
+    "basis": "What the mobsim does when an agent departs by a network mode and the vehicle they are mapped to is not at their link. It is GLOBAL, and this model runs walk and taxi as network main modes with a vehicle per person, neither of them chain-based: a walk after a bus leg starts where the walk vehicle is not. `teleport` (MATSim's default, every arm before 9.146 and every arm since 9.148) moves the vehicle to the agent, which is what those modes need. `wait` is MEASURED FATAL for this model (9.148): on the F27 arm aborted_20260907T002431_300it_25pct at iteration 0 it left 55,862 car agents, 12,837 walk and 11,537 ride stuck and cut car departures from 232,394 (F26) to 82,388, and by iteration 19 co-evolution had abandoned every plan that strands, a bias rather than a constraint. It stays in the sweep as the record of that measurement, not as a candidate. The household roster's constraint (B.population.vehicle_roster = census) is enforced instead by citysim.HouseholdCarDepartureHandler, car-only: a driver whose household car is out is registered with the link as waiting and MATSim's own link departs them when the car is parked back, while everything else departs under the global behaviour declared here."
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.146, 9.148",
+   "matsim_param": "qsim.vehicleBehavior",
+   "description": "What happens when a network-mode agent's mapped vehicle is not at their link: `teleport` moves the vehicle to the agent (MATSim's default; required by the non-chain network modes walk and taxi); `wait` holds the agent until it arrives and is measured fatal for this model (9.148). The household car constraint is car-only and lives in HouseholdCarDepartureHandler, not here."
+  },
+  "RUN.qsim.car_vehicle": {
+   "value": {
+    "length_m": 7.5,
+    "width_m": 1.0,
+    "pce": 1.0
+   },
+   "units": "metres/metres/passenger_car_equivalents",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.49",
+   "description": "The car vehicle type written into the run inputs' vehicles file: MATSim's own default vehicle, restated explicitly because qsim.vehiclesSource=modeVehicleTypesFromVehiclesData replaces the implicit default. Equality with MATSim's default (7.5 m, 1.0 m, PCE 1.0) is what keeps the car fleet's physics unchanged by the freight change - a value here that drifted from the default would silently change every car in the model.",
+   "consumers": [
+    "src/build/build_matsim_run_inputs.py"
+   ]
+  },
+  "RUN.travel_time.separate_modes": {
+   "value": false,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.29, 15",
+   "matsim_param": "travelTimeCalculator.separateModes",
+   "description": "Whether travel times are accumulated per mode rather than once for the network. False with analysedModes=car is the pairing that makes `ride` read the car travel time it is routed on - the mechanism at the centre of issue 28. Declared so that pairing is visible and swept together, not typed into two adjacent lines of a template."
+  },
+  "RUN.travel_time.analysed_modes": {
+   "value": [
+    "car"
+   ],
+   "units": "mode_names",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.29, 15",
+   "matsim_param": "travelTimeCalculator.analyzedModes",
+   "description": "Which modes contribute observed link travel times. Of the physically simulated modes (RUN.qsim.main_mode) only car is analysed here: the observed link travel time this feeds back to routing is the car stream's, and truck, motorbike, bike, walk and taxi (9.86) each ride that stream at their own declared PCE rather than defining a separate one. See RUN.travel_time.separate_modes: the two are one decision in two parameters."
+  },
+  "RUN.travel_time.filter_modes": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.154",
+   "matsim_param": "travelTimeCalculator.filterModes",
+   "description": "Whether the travel-time calculator RESTRICTS itself to RUN.travel_time.analysed_modes. It is the switch that makes that field mean anything, and it was never emitted: MATSim's default is false, and with it false `analyzedModes` is read into a field that no handler consults - verified in the pinned jar, where TravelTimeCalculator.handleEvent(LinkEnterEvent) returns early only `if (filterAnalyzedModes && vehiclesToIgnore.contains(...))`. So every vehicle on the network contributed to the ONE table that RUN.travel_time.separate_modes=false creates and that TravelTimeCalculatorModule then binds as the observed travel time for EVERY mode in RUN.routing.network_modes: a pedestrian crossing a link at 1.4 m/s, a cyclist at 4, a bus that stopped on it, a truck at its declared cap - all averaged into the seconds the CAR router believes that link costs. The declaration said car; the run used everything. True restores the declared pairing - one table, fed by car alone, read by every network mode, which is what makes `ride` read the car travel time it is routed on (issue 28) - and MOVES RESULTS, because route choice changes wherever a walked or ridden link had been inflating the car estimate. Not a performance change: the filter costs a set lookup per event and saves the recording work for every non-car vehicle."
+  },
+  "RUN.travel_time.bin_size_s": {
+   "value": 300,
+   "units": "seconds",
+   "source": "literature",
+   "sweep": {
+    "interval": [
+     60,
+     900
+    ],
+    "basis": "MATSim's own default is 900 s. The level-crossing closures (#68) last 60-600 s (A.crossings.closure_duration_s), and the router only sees a closure that spans a travel-time bin - so the crossings activation needs <=300 s. Lowered to 300 at the batched family boundary (9.77), exactly as the 9.76 checklist recorded."
+   },
+   "sweep_role": "uncertainty",
+   "status": "active",
+   "decisions_ref": "9.76, 9.77",
+   "matsim_param": "travelTimeCalculator.travelTimeBinSize",
+   "description": "The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s default to 300 s at the 9.77 activation boundary so the router can see a level-crossing closure (60-600 s swept) that is shorter than a bin. 300 s is the largest bin that resolves the sweep's central 240 s closure."
+  },
+  "RUN.telemetry.live_interval_s": {
+   "value": 3600,
+   "units": "seconds",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.19",
+   "matsim_param": "telemetry.liveIntervalS",
+   "consumers": [
+    "src/java/citysim/TelemetryConfigGroup.java",
+    "src/registry/param_config.py"
+   ],
+   "description": "Simulated seconds between live telemetry snapshots while the mobsim runs. The boundary is SIMULATED time, never wall clock, so a repeated run writes the same snapshots in the same places - the determinism rule applies to an observer as much as to a build script. 3600 puts one snapshot per simulated hour, which at the measured sweep rate (a 30 h day in about 15 s of wall clock) is roughly one every half second. Lowering it loses nothing - the file carries the accumulating profile of the day, not a single instant - it only refines the bins. This does NOT require writeEventsInterval to change: a registered handler receives the full event stream on every iteration whether or not that stream is also written to disk, which the package demonstrates at 26 event files against 251 leg histograms."
+  },
+  "RUN.sample.unit": {
+   "value": "household",
+   "units": "enum",
+   "source": "derived",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.45",
+   "proposal_ref": "9",
+   "derived_from": {
+    "fields": [
+     "RUN.sample.fraction"
+    ],
+    "identity": "a sample drawn per PERSON keeps each household member independently, so a household of size n retains on average f*n of its members and the probability that a given person keeps any co-member at all is 1-(1-f)^(n-1) - 0.14 at f=0.10 and 0.32 at f=0.25 for the mean household size here. Every household-coupled mechanism is therefore destroyed by the sampler in a way that is a function of the fraction, which is the one thing a sample fraction must not be. Sampling by household makes the retained population a set of WHOLE households, so the coupling is fraction-independent by construction. The identity, not a preference: it follows from what a fraction is meant to mean."
+   },
+   "description": "Whether the population subsample keeps whole HOUSEHOLDS or independent PERSONS. It was person-wise and undeclared until 9.45, and the cost was measured on the completed pilot arms: the share of ride legs whose household drives at all was 32.6% at a 10% sample and 43.1% at 25%, rising with the fraction because the sampler - not the demand - was deciding it. The sample still NESTS (a household id hashes to one number, so the 1% sample stays a strict subset of the 10%) and is still seeded and deterministic. The external and through boundary tiers hold no household by construction and continue to hash on their own id. What this buys is bought at a price that is stated rather than hidden: a household-clustered sample has higher variance at a given size than a person-wise one. Consumed by src/run/sample_population.py."
+  },
+  "RUN.routing.clear_default_teleported_params": {
+   "value": true,
+   "units": "boolean",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.54",
+   "matsim_param": "routing.clearDefaultTeleportedModeParams",
+   "description": "Clear MATSim built-in default teleportation parameters. Required once walk and bike are NETWORK modes (9.54): the built-in walk/bike defaults conflict with network routing outright (the config consistency check refuses the run - measured, the first 9.54 probe died on it), and a default that silently teleports a mode this model simulates is the right-by-accident defect class. Clearing also removes the non_network_walk helper defaults, so those are DECLARED below instead of inherited."
+  },
+  "RUN.routing.access_walk_speed_ms": {
+   "value": 1.25,
+   "units": "m/s",
+   "source": "derived",
+   "status": "active",
+   "decisions_ref": "9.54",
+   "matsim_param": "routing.teleportedModeParameters[non_network_walk].teleportedModeSpeed",
+   "derived_from": {
+    "fields": [
+     "A.transit.walk_speed_ms"
+    ],
+    "identity": "the same physical walking speed - the access/egress stub walk to and from a network link is walking, at the one declared walking speed"
+   },
+   "description": "Speed of the teleported access/egress stub walk (non_network_walk) that connects an activity to its network link. The MAIN walk mode is network-simulated (9.54); this helper covers only the stub, and it carries the same declared walking speed."
+  },
+  "RUN.routing.access_walk_beeline_factor": {
+   "value": 1.6938,
+   "units": "ratio",
+   "source": "measured",
+   "sweep": [
+    1.286,
+    1.741
+   ],
+   "sweep_basis": "Carried over verbatim from the retired RUN.routing.beeline_distance_factor_walk (9.54): measured over the observed A6 active network unioned with every road class a pedestrian may use, and re-measured on the current network 4 Sep 2026 (9.142) - 1.6902 over 531 routed pairs became 1.6938 over 560. The quantity survives in the ACCESS-WALK role - the stub walk from an activity to its link is beeline-teleported, and this is the measured straight-line-to-path ratio for walking.",
+   "sweep_role": "measurement",
+   "status": "active",
+   "decisions_ref": "9.54",
+   "matsim_param": "routing.teleportedModeParameters[non_network_walk].beelineDistanceFactor",
+   "description": "Straight-line to path-distance ratio for the teleported access/egress stub walk. The measured walk detour factor, retired from the MAIN walk mode when walk became network-simulated (whose realised detour is now the road graph own), surviving here in its remaining teleported role."
+  },
+  "RUN.routing.access_egress_type": {
+   "value": "none",
+   "units": "policy",
+   "source": "definition",
+   "sweep": null,
+   "status": "active",
+   "decisions_ref": "9.54",
+   "matsim_param": "routing.accessEgressType",
+   "description": "How a network-mode trip connects an activity to its first link. Set to none when walk became a NETWORK mode (9.54), because the default (accessEgressModeToLink) creates beeline stub legs of MODE walk - and the qsim casts every main-mode leg route to a NetworkRoute at agent insertion (PopulationAgentSource, measured: the 9.54 probe died on exactly that ClassCastException). The alternative (walkConstantTimeToLink) needs per-mode access/egress-time attributes on every link - a declared constant nobody has observed. Consequence stated: the stub access walk between an activity and its link is no longer a scored leg; it was a beeline artefact, and the 9.54 comparability break owns the scoring change."
   }
+ }
 }

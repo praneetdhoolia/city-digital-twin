@@ -624,6 +624,139 @@ def report(run_dir, iteration, truck_stations=False):
     return breaches
 
 
+
+# --------------------------------------------------------- the windowed reading
+#
+# A READING TAKEN AT ONE ITERATION CANNOT SCORE A CANDIDATE, and that was
+# measured rather than suspected (9.158): between iteration 80 and 100 of the
+# SAME run, with nothing changed, heavy rail, bike and taxi each move further
+# from or towards their target than the WHOLE 10% acceptance band, upward on
+# every arm - the model still relaxing, not seed scatter. A search scored on a
+# point reading would be ranking how far each candidate's run happened to get.
+#
+# The remedy is to change the READING, not the rule (9.158, 9.159). This is that
+# reading: the mean of every readable table inside the last
+# `CAL.gate.reading_window_iterations` iterations, endpoint included. It is
+# built HERE, inside the one reader the board, the gate watcher, the GOAL.md
+# loop and the calibration objective all call, for the reason 9.158 gave for
+# the objective itself - two readings of the same quantity drift apart the
+# moment they are computed in two places.
+#
+# WHAT IS AVERAGED AND WHAT IS NOT. The modelled level and the trip count are
+# averaged, because they are what moves. The target, the basis and the
+# denominator are the endpoint's, because they are properties of the target
+# artefact and do not vary with depth. The deviation and the gate flag are
+# RECOMPUTED from the averaged level against that target - never averaged
+# themselves, which would be a mean of ratios standing in for a ratio of means.
+
+
+def window_iterations(run_dir, iteration, window):
+    """The readable iterations inside (iteration - window, iteration].
+
+    A run writes its trips table on a declared interval, so which iterations
+    are readable is a fact about the run and is asked of it rather than
+    assumed. The endpoint must itself be readable: a window is a reading AT a
+    point, taken with the depth behind it, and one that cannot be read at its
+    own point is not that reading.
+    """
+    import measure_iteration_modes as _mim
+    import iteration_trips as _itr
+    try:
+        have = set(_mim.iterations_with_trips(run_dir))
+    except OSError:
+        have = set()
+    # AN ITERATION CAN BE PERFECTLY READABLE AND STILL HAVE NO TRIPS TABLE.
+    # The table is written on its own declared interval, while the linked trips
+    # can always be derived from that iteration's experienced plans - the same
+    # numbers, validated to reproduce the table wherever both exist. Asking for
+    # the table alone dropped four of the six arms that reached the reading
+    # point once already (9.158), and it dropped one here before this line
+    # existed.
+    lo = iteration - int(window)
+    step = 1
+    if len(have) > 1:
+        ordered = sorted(have)
+        step = min(b - a for a, b in zip(ordered, ordered[1:])) or 1
+    for i in range(max(lo + 1, 0), iteration + 1):
+        if i in have or (i % step == 0 and _itr.plans_path(run_dir, i)):
+            have.add(i)
+    if iteration not in have:
+        return []
+    return [i for i in sorted(have) if lo < i <= iteration]
+
+
+def report_window(run_dir, iteration, window, truck_stations=False):
+    """The twelve-mode reading averaged over a window, in `report`'s own shape.
+
+    Returns the same document `LAST` carries after `report`, with the modelled
+    level and trip count meaned over `window_iterations` and the deviation and
+    flag recomputed from that mean. `LAST` is left holding this windowed
+    document, so every caller that reads `LAST['rows']` - the objective, the
+    stability measurement, the board - reads the window without knowing it is
+    one. A window of 0 or one readable iteration IS the point reading, returned
+    unchanged rather than special-cased by the caller.
+    """
+    import contextlib
+    import io as _io
+
+    its = window_iterations(run_dir, iteration, window)
+    if not its:
+        raise SystemExit(
+            'nothing readable at iteration %d in %s, so no window ends there'
+            % (iteration, _os.path.basename(_os.path.normpath(run_dir))))
+    if len(its) == 1:
+        report(run_dir, iteration, truck_stations=truck_stations)
+        LAST['window'] = dict(iterations=list(its), window=int(window),
+                              is_a_window=False)
+        return LAST
+
+    per_it = []
+    for it in its:
+        with contextlib.redirect_stdout(_io.StringIO()):
+            report(run_dir, it, truck_stations=truck_stations)
+        per_it.append({r['mode']: dict(r) for r in LAST['rows']})
+    # the endpoint's own reading carries the targets, bases and denominators
+    with contextlib.redirect_stdout(_io.StringIO()):
+        report(run_dir, iteration, truck_stations=truck_stations)
+    end = list(LAST['rows'])
+
+    rows = []
+    for r in end:
+        mode = r['mode']
+        levels = [p[mode]['modelled'] for p in per_it
+                  if mode in p and isinstance(p[mode]['modelled'], (int, float))]
+        counts = [p[mode]['count'] for p in per_it
+                  if mode in p and isinstance(p[mode]['count'], (int, float))]
+        row = dict(r)
+        if levels:
+            row['modelled'] = round(sum(levels) / len(levels), 4)
+            row['modelled_window_min'] = round(min(levels), 4)
+            row['modelled_window_max'] = round(max(levels), 4)
+        if counts:
+            row['count'] = int(round(sum(counts) / len(counts)))
+        t = r.get('target')
+        if (r.get('deviation_pct') is not None and levels
+                and isinstance(t, (int, float)) and t):
+            dev = 100.0 * (row['modelled'] - t) / t
+            row['deviation_pct'] = dev
+            if abs(dev) >= GATE_STOP_PCT:
+                row['flag'] = 'STOP  >=%.0f%%' % GATE_STOP_PCT
+            elif abs(dev) >= GATE_PASS_PCT:
+                row['flag'] = 'over %.0f%%' % GATE_PASS_PCT
+            else:
+                row['flag'] = 'ok'
+        row['readings'] = len(levels)
+        rows.append(row)
+
+    LAST['rows'] = rows
+    LAST['iteration'] = iteration
+    LAST['window'] = dict(iterations=list(its), window=int(window),
+                          is_a_window=True)
+    LAST['source'] = '%s, meaned over %d readings (%s)' % (
+        LAST.get('source', 'trips table'), len(its),
+        ', '.join('it.%d' % i for i in its))
+    return LAST
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)

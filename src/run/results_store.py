@@ -517,3 +517,119 @@ def maintain(cap_gb, log=print, grace_s=None):
     if moved:
         log('results store: migrated %d run(s) under results/raw' % len(moved))
     return trim(cap_gb, log=log, grace_s=grace_s)
+
+
+def reclaim(name, log=print):
+    """Reclaim ONE run's bulk on purpose, once its findings are safe (#164).
+
+    `trim` reclaims oldest-first and only while the store is OVER its cap, which
+    is the wrong instrument for the case #164 filed: two arms holding 336.4 GiB
+    between them in a store at 93.4 % of cap, each of them reclaimable in
+    principle and neither reclaimed, because the cap had not yet been crossed.
+    Waiting for it to be crossed means the reclaim happens DURING the next long
+    arm rather than before it - which is what the issue was about.
+
+    So an operator may reclaim a named run, and the guard is the same one trim
+    applies and is not negotiable here either: the findings must already be in
+    processed, and the run must not be running. Nothing is deleted from
+    `processed/` ever (9.137), so what goes is the re-derivable bulk - the log,
+    the events, the plans and the per-iteration tables - and what stays is every
+    reading anyone has quoted. A run whose findings are NOT mirrored is refused
+    rather than extracted-then-deleted in one step: extraction is a separate,
+    checkable act, and fusing them is how a silent extraction failure becomes a
+    deletion.
+    """
+    d = raw_dir(name)
+    if not os.path.isdir(d):
+        log('reclaim: raw/%s is not in the store (already reclaimed?)' % name)
+        return None
+    if _is_running(d):
+        log('reclaim: REFUSED - raw/%s is running' % name)
+        return None
+    if not _findings_in_processed(name):
+        log('reclaim: REFUSED - raw/%s has no findings in processed. Extract '
+            'them first (results_store.process(name, extract=True)), confirm '
+            'they carry the readings anything cites, then reclaim.' % name)
+        return None
+    freed = _dir_bytes(d)
+    try:
+        shutil.rmtree(d)
+    except OSError as e:
+        log('reclaim: could not delete raw/%s (%s)' % (name, e))
+        return None
+    entry = dict(name=name, bytes=freed, reclaimed_by='operator',
+                 deleted=time.strftime('%Y-%m-%dT%H:%M:%S'))
+    path = os.path.join(PROCESSED, '_trim_log.json')
+    history = []
+    if os.path.exists(path):
+        try:
+            with io.open(path, encoding='utf-8') as fh:
+                history = json.load(fh)
+        except (OSError, ValueError):
+            history = []
+    history.append(entry)
+    with io.open(path, 'w', encoding='utf-8', newline='\n') as fh:
+        json.dump(history, fh, indent=1)
+    log('reclaim: deleted raw/%s (%.1f GiB); its findings stay in processed/'
+        % (name, freed / (1 << 30)))
+    return entry
+
+
+def report(cap_gb=None):
+    """What the store holds, and which runs could be reclaimed today.
+
+    The state anyone needs before launching a long arm: how full the cache is,
+    and which directories are bulk that is already mirrored. Printed rather
+    than returned because it is a thing a person reads.
+    """
+    size = raw_size_bytes()
+    print('results store: raw %.1f GiB%s' % (
+        size / (1 << 30),
+        '' if cap_gb is None else ' of %g GiB cap (%.1f%%)' % (
+            float(cap_gb), 100.0 * size / (float(cap_gb) * (1 << 30)))))
+    rows = []
+    for name in sorted(os.listdir(RAW) if os.path.isdir(RAW) else []):
+        d = raw_dir(name)
+        if not os.path.isdir(d):
+            continue
+        rows.append((_dir_bytes(d), name,
+                     os.path.exists(os.path.join(d, '_run.json')),
+                     _findings_in_processed(name), _is_running(d)))
+    rows.sort(reverse=True)
+    print('%10s  %-52s %-8s %-9s %s'
+          % ('GiB', 'run', 'record', 'findings', 'reclaimable now'))
+    for b, name, rec, found, running in rows[:20]:
+        print('%10.1f  %-52s %-8s %-9s %s'
+              % (b / (1 << 30), name[:52], 'yes' if rec else 'NO',
+                 'yes' if found else 'NO',
+                 'RUNNING' if running else ('yes' if found else 'no')))
+    if len(rows) > 20:
+        print('... and %d more' % (len(rows) - 20))
+    return rows
+
+
+def main(argv=None):
+    import argparse  # noqa: PLC0415
+    ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
+    ap.add_argument('--report', action='store_true',
+                    help='what the store holds and what could be reclaimed')
+    ap.add_argument('--reclaim', action='append', default=[], metavar='RUN',
+                    help='reclaim one run\'s bulk; repeatable. Refused unless '
+                         'its findings are already in processed/')
+    a = ap.parse_args(argv)
+    cap = None
+    try:
+        sys.path.insert(0, os.path.join(REPO, 'src'))
+        import registry as _registry  # noqa: PLC0415
+        cap = _registry.load(strict=True).get('RUN.storage.raw_cap_gb')
+    except Exception:
+        pass
+    for name in a.reclaim:
+        reclaim(name)
+    if a.report or not a.reclaim:
+        report(cap)
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

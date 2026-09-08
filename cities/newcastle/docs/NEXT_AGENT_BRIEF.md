@@ -1,138 +1,124 @@
 # Brief for the next agent
 
-**Written:** 8 September 2026, thirty-sixth session · **Open family:** `F31-the-car-router-reads-only-cars` · **Commit:** see `git log -1 origin/main` after this session's PR merges; the branch is `praneetdhoolia/the-tuner-can-run-and-the-score-matches-the-goal`
+**Written:** 8 September 2026, thirty-seventh session · **Open family:** `F31-the-car-router-reads-only-cars` · **Commit:** see `git log -1 origin/main` after this session's PR merges; the branch is `praneetdhoolia/a-window-cannot-flatten-a-trend`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-**NO ARM RAN THIS SESSION. The scoreboard is unchanged.** What changed is the
-INSTRUMENT. The calibration loop had never once executed — its objective was a
-MEAN over five FOLDED survey categories in percentage points while GOAL
-requirement 7 is a MAXIMUM over twelve UNFOLDED modes in relative per cent, it
-handed registry keys to a raw MATSim `--set`, and its movable set was **5**
-fields. It is now the goal's own maximum, computed by calling the board's own
-reader, with **21** movable fields reaching ride, taxi and bike. **And then it
-refused to start**: iteration 100 cannot resolve the goal band, measured within
-six separate runs. That refusal is the session's most important finding.
+**NO ARM RAN. The scoreboard is unchanged.** Two 1 % smoke probes ran and are
+readings of nothing. The session's largest finding is a NEGATIVE one: the
+windowed reading that §9.158 proposed as the repair for the reading point was
+built, declared and measured, and it is **WORSE** than the point reading it
+replaces — because the movement it was meant to average away is a monotone
+TREND, not noise. **The reading point is a convergence problem.** Alongside
+that, the two issues blocking the gate were closed by doing the work, and #167's
+fix was built to the point where the one thing still missing is named exactly.
 
 ## §0 Verify first - facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **The machine is IDLE.** No arm is running; nothing was launched this session. | `python src/run/session_gate.py --digest` (MACHINE line) |
-| **The newest citable reading is F31's iteration-100 gate**, citable there and nowhere past it. **No arm has passed 100 since F4.** | `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100` |
-| **NO APPROVAL STANDS.** None was sought or spent this session. | `python src/analyse/arm_cost.py --run-config f29_gate_25pct` for the next quote |
-| **The issue gate is RED on FIVE issues** in its UNSCOPED view - #49, #50, #155 (standing directives, an operator decision) and #164, #165 (this session's own non-run defects). None of the five is a run question. A run whose overlay declares a lane is gated only on that lane. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| **This session's PR** carries the whole close-out; #159 is closed. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
-| Registry **489** fields, **512** manifest files (**264 CC-BY / 233 ODbL** + 15 bespoke, undetermined 0). | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
-| **`.tools/classes` IS COMPILED AND GREEN** (86 class files, newest 21:12:04, sources 20:47:40). | `python src/run/session_gate.py` (toolchain line) |
-| **The package on disk is unchanged** - no data artefact was rebuilt. | `python tests/check_package.py` (~10 min) |
+| **The machine is IDLE.** No arm ran; two 1 % probes did, and neither is a reading. | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **The newest READING is still F31's iteration-100 gate**, citable there and nowhere past it. The two newer directories are smoke probes. **No arm has passed 100 since F4.** | `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100` |
+| **AN ARM IS APPROVED AND UNSPENT**: 300 iterations at 25 %, ceiling **32 h**, overlay `depth_convergence_25pct`, held at the operator's direction until this record existed. Confirm before spending it - an approval that crosses a session should be re-stated, not assumed. | `python src/analyse/arm_cost.py --run-config depth_convergence_25pct` |
+| **The issue gate is GREEN UNSCOPED** - 20 open, every one awaiting a STATED measurement, 0 blocking. First time in its existence. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| **#164 and #165 are CLOSED; #167 is open and awaits a mechanism, not a run.** | `gh issue view 167` |
+| Registry **494** fields, **512** manifest files (**279 CC-BY / 218 ODbL** + 15 bespoke, undetermined 0). | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
+| **The store is at 130.7 GiB of 500 (26.1 %)**, down from 93.4 %. | `python src/run/results_store.py --report` |
+| **The package on disk: only the run-input sets were reassembled**, off the already-mapped schedule (§3.5 not engaged). | `python tests/check_package.py` (~10 min) |
 
 Then: `python src/run/session_gate.py`.
 
 ## §1 The lane
 
-**Recompiling is DONE. The lane is the ASC contraction test — and it is blocked
-by the reading point, which must be settled first.**
+**Depth. Everything else waits on one arm that is read past iteration 100.**
 
-1. **THE READING POINT, and nothing tunes until it moves** (§9.158). Between
-   iteration 80 and 100 of the SAME run, nothing changed, the objective drifts
-   **0.272–0.418 pp** on all SIX 25 % arms that ever reached 100 — **upward on
-   every one**, so systematic movement toward relaxation, not seed scatter — and
-   the worst scored mode moves **15.72–24.88 points**, with heavy rail (6/6),
-   bike (4/6) and taxi (3/6) each clearing the WHOLE 10 % acceptance band inside
-   that twenty-iteration window. `CAL.search.reading_drift_pct` = 24.88
-   (`measured`), `CAL.search.convergence_delta` is derived from it, and
-   `calibrate.py --execute` REFUSES rather than search on noise. **The remedy is
-   to change the READING — read deeper than 100, or average a window of
-   iterations — not the rule.** Re-measure with
-   `python src/analyse/measure_reading_stability.py --all --from 80 --to 100`.
-   **This is the honest first move.**
-2. **THE ASC CONTRACTION TEST, built and NOT run** (~15 h for two rounds; it
-   opens NO family of its own, because a `C.asc.*` change is a run-inputs rebuild
-   off the already-mapped schedule). `src/calibrate/asc_fixed_point.py` PROPOSES
-   a damped log-ratio step per mode against reference car — the contraction a
-   logit's share equation implies, the same object as the Berry (1994) inversion.
-   Round 1, already proposed off the F31 gate: bike **−0.5121**, bus **−0.2301**,
-   ferry **+0.6713**, light rail **+0.4143**, all inside their declared sweeps
-   and under the `CAL.asc.max_step_utils` 1.5 refusal bound. **The observable is
-   whether |Δasc| SHRINKS between round 1 and round 2, not whether the shares
-   move**: contraction means the residual is a TASTE and constants will close it;
-   no contraction means it is a MECHANISM and no constant ever will. Either
-   answer ends a question eleven families have not answered. **Blocked by item 1
-   unless the reading point changes.**
-3. **The PT routing failure is DIAGNOSED and its remedy is undecided** (§9.158).
-   Of **2,553,357** pt routing requests on the F31 arm, **33.4 %** get no transit
-   route at all and **40.6 %** of the answered take the network walk — **60.5 %
-   of every request comes back as a walk** — because
-   `(marginalUtilityOfTraveling − performing)/3600` makes **one second walking
-   cost 1.0400 seconds riding**. Radius, search parameters and schedule integrity
-   are each REFUTED with numbers. `RUN.transit_router.direct_walk_factor` is a
-   declared field with a sweep to 2.0 (1.5 → 27.3 % walk-answered, 2.0 → 21.7 %,
-   3.0 → 16.2 %), and moving it is a family boundary and a FIDELITY decision.
-   **It must not be picked to land a mode share.**
+1. **THE DEPTH ARM, approved and not launched** (§9.159, #163).
+   `depth_convergence_25pct`: 300 iterations at 25 %, innovation off at 240 so
+   the post-cutoff window straddles 250. `arm_cost.py` quotes **22.2 h** against
+   a measured spread of **22.0–31.7 h**; the approved ceiling is **32 h**. It
+   carries a SCOPED DEPARTURE — `RUN.gate.interval_iterations = 0` — because the
+   gate watcher killing every arm at its first gate is precisely why nothing has
+   been read past iteration **104** in eleven families, and an arm that exists to
+   find where the reading settles cannot be stopped at the point under test. The
+   departure is justified on the overlay and recorded at §9.159; the loop stays
+   in force everywhere else and **no parameter may be tuned on anything this arm
+   reads**. It answers two questions at once: where each mode's series flattens,
+   and requirement 8, unmeasured since F4.
+2. **WHY THE WINDOW IS NOT THE ANSWER, so nobody rebuilds it** (§9.159). Over
+   the same six arms: heavy rail **41.46** points against the point reading's
+   24.88, bike 4/6 arms → **6/6**, four modes past the whole 10 % band instead of
+   three. Every scored mode's series over it.40–it.100 is monotone without a
+   reversal (car 59.78 → 66.94, walk 14.55 → 9.76, heavy rail 27,948 → 19,140),
+   and a mean over a monotone series is its centre. The field
+   (`CAL.gate.reading_window_iterations`) stays declared and says so itself.
+3. **#167: the last hop onto a platform** (§9.159). The routing half is SOLVED —
+   the raptor's intermodal branch coexists with the mode mapping and teleports
+   fall **520,385 → 6** — and the mobsim then refuses the landing link, because
+   **675 of 4,123 stop facilities (16.4 %)** sit on a link walk cannot use (382
+   pt/rail/train, 199 artificial `stopFacilityLink`s, 62 road links omitting
+   walk, 36 rail). `accessEgressModeToLink` dies at `PersonPrepareForSim` on 40
+   agents — a DIFFERENT failure from the `ClassCastException` §9.54 recorded. It
+   ships at `beeline`; the parameter set and its four derived fields stay ready.
+4. **The ASC contraction test, still built and not run** (§9.158, ~15 h, opens no
+   family). Round 1 proposed off the F31 gate: bike **−0.5121**, bus **−0.2301**,
+   ferry **+0.6713**, light rail **+0.4143**. Blocked by the reading point, which
+   the depth arm is what unblocks.
 
-**Decisions the user must take:** whether the reading point moves (item 1);
-**which of #49, #50 and #155 is stated, split or closed** — the gate is RED on
-them, none is a run question, and closing someone's standing product directives
-is not a close-out's call (#164 and #165 are this session's own non-run defects
-and block the unscoped gate the same way); whether the **real Newcastle corridor
-operates transit signal priority** (`A.lightrail.tsp_enabled` is
-`source: assumed`, requirement 6 says derive it, and it is settled on evidence
-about the corridor, never on light rail's −47.2 %); whether the two 336.4 GiB
-arms in the store are reclaimed; whether the pt-walk teleportation is filed; #66.
+**Decisions the user must take:** whether the approved depth arm launches; how
+the last hop onto a platform is made (#167 — neither stock MATSim mechanism does
+it in this scenario); whether the **real Newcastle corridor operates transit
+signal priority** (`A.lightrail.tsp_enabled` is `source: assumed`, requirement 6
+says derive it, and it is settled on evidence about the corridor, never on light
+rail's −47.2 %); #66's Task Scheduler log.
 
 ## §2 Traps - newest first, each with what it cost
 
-1. **`.tools/classes` NO LONGER MATCHES ANY EARLIER ARM'S BYTECODE.** The
-   controler was recompiled this session, so nothing on disk from an earlier arm
-   was produced by it. A hand comparison against an old run's outputs is a
-   cross-boundary comparison whatever the file names suggest (§3.5, §9.158).
-2. **A search that stops on a delta smaller than its own reading's drift is
-   reading noise.** The old `convergence_delta` was 0.25 pp against a measured
-   within-run drift of 0.272–0.418 pp on every arm — it would have stopped, or
-   failed to stop, on nothing (§9.158).
-3. **A folded objective can improve while the goal gets worse.** Heavy rail and
-   light rail sat in ONE folded survey cell with OPPOSITE signs. Never score a
-   twelve-mode goal on a five-category instrument (§9.158).
-4. **A field the loop cannot reach is not a field the loop should ignore.**
-   `rebuild_stage` classified by a consumer's BASENAME and silently dropped every
-   field carrying a `matsim_param` binding, which reaches the emitted config on
-   every run. The movable set went 5 → 21 on that one correction (§9.158).
-5. **Do not compare across a family boundary, however tempting the story.** F28
-   and F31 are separated by three boundaries (§9.157, §3.5).
-6. **`bootstrap_toolchain.py --verify` RECOMPILES.** It reads as a read-only word
-   and is not; run under a live probe on 8 Sep it rewrote both class trees
-   beneath the JVM and cost that probe its only purpose (§9.156).
-7. **Quote the band, never the point.** The probe's recurring 216.0 s was 17 %
-   optimistic while the long-arm top anchor of 259.6 s was right to 0.5 %
-   (§9.156, §9.157).
-8. **A counter on an unscoped Guice provider counts nothing** — "log the first 3"
-   wrote 19,469 lines and `% 100000` never fired once (§9.156). The new
-   teleport counters are singleton-scoped for exactly this reason (§9.158).
-9. **Verify an assessment finding before fixing it.** Tram priority IS the S2b
-   intervention; switching it on would have destroyed the comparison the study
-   exists to make (§9.156).
-10. **A run is a result only if `_run.json` says `ran_to_last_iteration`.** F31's
-    arm says `stopped_at_gate`: citable at iteration 100 and nowhere past it
-    (§9.143).
+1. **AVERAGING REMOVES NOISE, NOT TREND — and this model's movement is trend.**
+   The windowed reading was built on the assumption that iteration-100 drift was
+   scatter. It is not: every mode's series runs one way without a reversal, and
+   the window made the worst mode's drift nearly double. Check the SHAPE of a
+   series before proposing a statistic for it (§9.159).
+2. **A CONTENT PASS WRITTEN AS A REGEX WILL BE WRONG, PROBABLY TWICE.** An
+   attribute-name pattern missed `linkIdRef="45339"`; a bare token match then
+   flagged seat counts as link ids; and `signal_groups.xml` hides a link id
+   INSIDE a composite (`NLR_SIG_01.45339`). Three false readings before the right
+   test — an identifier in a slot that NAMES the network (§9.159, #165).
+3. **A PROBE THAT "STARTS" HAS NOT PASSED.** The intermodal probe started, the
+   raptor accepted both switches, and the teleport count collapsed — and then the
+   mobsim threw four seconds later. Read the run to its end, and read the
+   teleport table, not the exit code (§9.159, #167).
+4. **BUILDING ONE SCENARIO REWRITES THE WHOLE RUN-INPUTS REPORT.**
+   `build_matsim_run_inputs.py --scenarios S2 --day-types WEEKDAY` left
+   `_run_inputs_report.json` holding one scenario of thirty. Rebuild all of them
+   before the manifest (§9.159).
+5. **`.tools/classes` NO LONGER MATCHES ANY ARM BEFORE 8 SEPTEMBER.** A hand
+   comparison against an old run's outputs is a cross-boundary comparison
+   whatever the file names suggest (§3.5, §9.158).
+6. **Do not compare across a family boundary, however tempting the story.** F28
+   and F31 are separated by three (§9.157, §3.5).
+7. **`bootstrap_toolchain.py --verify` RECOMPILES.** It reads as a read-only word
+   and is not (§9.156).
+8. **Quote the band, never the point** (§9.156, §9.157).
+9. **A run is a result only if `_run.json` says `ran_to_last_iteration`.** F31's
+   arm says `stopped_at_gate`: citable at iteration 100 and nowhere past it
+   (§9.143).
 
 ## §3 Standing directives and approvals
 
-- **NO APPROVAL STANDS, and none was sought or spent this session.** The
-  authorisation behind this work covered the lane and the pull request, not
-  machine time. Quote the next arm as a RANGE from `arm_cost.py`.
-- **25 % runs only** (user directive, 1 September 2026).
+- **ONE APPROVAL STANDS AND IS UNSPENT**: the depth arm, 300 iterations at 25 %,
+  ceiling **32 h** (user, 8 September 2026, on `arm_cost.py`'s quoted range). It
+  was held for this record. **An approval that crosses a session should be
+  re-stated before it is spent, not assumed.**
+- **25 % runs only** (user directive, 1 September 2026) — for ARMS. A structural
+  smoke probe whose whole output is a yes or a no may run at 1 %, states that it
+  may in its overlay, and may not be read for any share, count or fit (§9.159).
 - **One arm at a time**; never recompile `.tools/classes` under one.
 - **No launch while an open issue in the RUN'S LANE is not awaiting a STATED
-  measurement** (GOAL requirement 10). A label is not evidence: an issue must
-  carry `AWAITING-RUN: <the measurement>` with real content. **Five issues fail
-  that today in the unscoped view — #49, #50, #155 and this session's own #164,
-  #165 — and none of the five is a run question.**
-  `--allow-open-issues` needs `--override-reason`, is ledgered and is counted.
-- **§8.5 still binds on `C.asc.rail`, `C.asc.walk` and `C.asc.car_passenger`.**
-  Three constants were opened this session with the departure logged at §9.158;
-  these three stay FROZEN, each with a per-mode reason on its own `held_fixed`
-  rule. Do not open one without logging its own departure first.
+  measurement** (GOAL requirement 10). The unscoped gate is GREEN — keep it that
+  way by fixing a new defect or stating its measurement, not by labelling it.
+- **§8.5 binds on `C.asc.rail`, `C.asc.walk` and `C.asc.car_passenger`.** Three
+  constants were opened at §9.158 with the departure logged; these three stay
+  FROZEN. Do not open one without logging its own departure first.
 - **The 67/143 holdout stays shut until the end** (§12).
 - **Never commit to `main`**; the session's PR opens at `/handoff`.
 - The record is never rewritten; superseded text is corrected on the position
