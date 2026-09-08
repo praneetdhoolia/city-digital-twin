@@ -74,6 +74,101 @@ OUT = _city.path('scenarios/matsim')
 PARK_PRICE_ZONES = _city.path('data/processed/landuse/A5_parking_price_zones.csv')
 PARK_PRICE_FILE = 'parking_prices.tsv'
 
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. This assembler is the case the
+# defect was worst for: it writes 141 of the manifest's rows from one input
+# list, so before this every one of them claimed every input - a vehicle
+# definition file credited with the road network, a config credited with the
+# parking price zones. The rule below is CONTENT, not contact: an input is
+# named where its data ends up inside the output, and a file the assembler
+# merely opens to validate, or merely names in a path string, is not an
+# ancestor of what it did not put anything into.
+#
+# Two rulings that decide 31 of these rows, both with the measurement behind
+# them:
+#
+#   config.xml carries no OSM content. It is written from the resolved
+#   registry, the C1 parameter file and the HTS purpose shares, plus RELATIVE
+#   PATHS to the network, plans, schedule, vehicle and signal files. A path is
+#   a reference, not content: the config would be byte-identical if the file
+#   behind the path were replaced by a different network of the same name, and
+#   it carries no link id, no coordinate and no tag (measured: zero
+#   occurrences of `osm`, `way:`, `highway`, `maxspeed` or a node id in an
+#   emitted config; its three matches for "link" are the MATSim parameter
+#   names `linkDynamics`, `both_links` and `link_speed`). Referencing a
+#   share-alike database does not extract from it, so no obligation travels
+#   down a filename.
+#
+#   transitVehicles.xml.gz likewise. It is the mapped vehicle definitions
+#   filtered to the day type's surviving departures - vehicle types, capacities
+#   and one vehicle per departure, all of it GTFS - and it carries nothing of
+#   the network it was mapped onto (measured: zero occurrences of `osm`,
+#   `way`, `link`, `node` or `highway` in either the mapped file or the
+#   assembled one). It is declared against the schedule feeds, which is where
+#   every byte of it comes from.
+#
+# `_run_inputs_report.json` is the opposite case and is declared as such. Its
+# figures are not references: links touched, links priced, car links, routes
+# and departures kept are quantities MEASURED FROM the mapped network and
+# schedules and the priced zones, so the share-alike obligation reaches it the
+# same way it reaches any other layer built from those.
+OUTPUT_INPUTS = {
+    # Per scenario. The run network IS the scenario's own mapped network with
+    # the E1 variant patch applied, the signal saturation re-capacitation
+    # written in, and a signed gradient stamped from the node elevations the
+    # A1/A6 edge tables carry.
+    'scenarios/matsim/*/network.xml.gz': [
+        'networks/matsim/schedules',
+        'networks/matsim/signals',
+        'data/processed/network/A1_road_variant_patches.csv',
+        'data/processed/network/A1_road_edges.csv',
+        'data/processed/network/A6_footway_edges.csv',
+        'scenarios/E1_scenarios.csv',
+        'scenarios/E1_road_variants.csv'],
+    # The priced links are the run network's own car links, joined to the SA1
+    # zone the link midpoint falls in and priced from the parking zone table.
+    # The mapped network and the variant patch are named because the link ids
+    # this file is keyed on come from them, through the run network it reads.
+    'scenarios/matsim/*/parking_prices.tsv': [
+        'data/processed/landuse/A5_parking_price_zones.csv',
+        'data/processed/zones/zones_SA1.gpkg',
+        'networks/matsim/schedules',
+        'data/processed/network/A1_road_variant_patches.csv'],
+    # Per scenario x day type. The schedule is the scenario's own mapped
+    # schedule filtered to the day's routes, so it carries that schedule's OSM
+    # route link references.
+    'scenarios/matsim/*/transitSchedule.xml.gz': [
+        'networks/matsim/schedules',
+        'networks/matsim/signals'],
+    # GTFS vehicle definitions filtered to the surviving departures - see the
+    # ruling above.
+    'scenarios/matsim/*/transitVehicles.xml.gz': [
+        'schedules'],
+    # The private-mode vehicle types are written entirely from declared
+    # registry values. It reads no artefact at all, and an empty list is the
+    # honest statement of that rather than an absent declaration.
+    'scenarios/matsim/*/vehicles.xml': [],
+    # See the ruling above: the registry, the C1 parameters and the HTS
+    # purpose shares, and paths to everything else.
+    'scenarios/matsim/*/config.xml': [
+        'params/C1_parameters.json',
+        'data/processed/hts/hts_purpose.csv'],
+    # The assembly's own record: counts measured from everything above.
+    'scenarios/matsim/_run_inputs_report.json': [
+        'networks/matsim/schedules',
+        'networks/matsim/signals',
+        'data/processed/network/A1_road_variant_patches.csv',
+        'data/processed/network/A1_road_edges.csv',
+        'data/processed/network/A6_footway_edges.csv',
+        'data/processed/landuse/A5_parking_price_zones.csv',
+        'data/processed/zones/zones_SA1.gpkg',
+        'params/C1_parameters.json',
+        'data/processed/hts/hts_purpose.csv',
+        'scenarios/E1_scenarios.csv',
+        'scenarios/E1_road_variants.csv',
+        'schedules'],
+}
+
 # The day types come from the city's own descriptor. They were a list literal
 # here, which meant a city with a different service week could not be built
 # without editing the framework.
@@ -1027,7 +1122,13 @@ def _weight_sweep(cfg, strategy):
 # keeps the pt aggregate's constant and the report SAYS so - stating the gap
 # is the rule, inventing a value would be the violation this project cannot
 # absorb.
-PT_SUBMODE_ASC = {'bus': 'asc_bus', 'tram': 'asc_lr', 'rail': 'asc_rail'}
+# Every scheduled passenger submode maps to a DECLARED C1 constant. `ferry`
+# joined when C.asc.ferry was created: until then it was the one submode C1
+# declared nothing for, so it silently took the pt aggregate's asc_bus - a mode
+# scored with a value nobody had chosen for it. C.asc.ferry ships asc_bus's own
+# value, so the emission did not move when the inheritance ended.
+PT_SUBMODE_ASC = {'bus': 'asc_bus', 'tram': 'asc_lr', 'rail': 'asc_rail',
+                  'ferry': 'asc_ferry'}
 
 
 def pt_passenger_submodes(cfg):
@@ -1107,10 +1208,17 @@ def scoring_from_c1(cfg, c1, purpose_share):
         # truck (DECISIONS.md 9.49) and motorbike (9.52): scoring params must
         # exist for any leg mode MATSim scores, but these agents' modes are
         # LOCKED - the choice this block prices never happens for them. The
-        # car time rate is carried so the values are unremarkable, and the
-        # constants are zero because there is no alternative to be relative to.
+        # car time rate is carried so the values are unremarkable.
+        #
+        # Truck's constant is zero because there is no alternative to be
+        # relative to. MOTORBIKE'S IS DECLARED: it was the same literal 0.0,
+        # which made it the one scored mode whose constant lived in this file
+        # rather than in the registry. C.asc.motorbike ships 0.0 and is a
+        # `definition` with no sweep for exactly the reason the literal was
+        # defensible - a locked mode's constant cannot move a choice - so this
+        # line changes what is auditable, not what is emitted.
         'truck': dict(constant=0.0, marginalUtilityOfTraveling=traveling(1.0)),
-        'motorbike': dict(constant=0.0,
+        'motorbike': dict(constant=asc['asc_motorbike'][0],
                           marginalUtilityOfTraveling=traveling(1.0)),
         # the teleported access/egress stub (DECISIONS.md 9.54): its time IS
         # walking time, so it carries walk's marginal rate BY IDENTITY, and a
@@ -1132,9 +1240,10 @@ def scoring_from_c1(cfg, c1, purpose_share):
     # entry itself stays: it is the plan-level mode subtour mode choice runs
     # over, and the raptor's direct-walk fallback still produces pt-routed
     # trips. Time is priced at the one declared beta_ivt for every submode
-    # because C1 declares no per-submode in-vehicle time weight; a submode
-    # without a C1 constant (ferry) keeps the pt aggregate's, and the
-    # not_representable list below states it.
+    # because C1 declares no per-submode in-vehicle time weight. A submode
+    # with no C1 constant would keep the pt aggregate's and the
+    # not_representable list below would say so; there are none left, because
+    # ferry - the only one there ever was - now declares C.asc.ferry.
     submodes = pt_passenger_submodes(cfg)
     for sm in submodes:
         asc_key = PT_SUBMODE_ASC.get(sm)
@@ -1159,9 +1268,11 @@ def scoring_from_c1(cfg, c1, purpose_share):
     # What survives the translation and what does not is REPRESENTATION-
     # dependent now (9.78): under per_submode the asc_lr/asc_rail collapse is
     # gone from this list because it is gone from the config; under aggregate
-    # it is stated instead of silently absorbed. Ferry's missing constant is
-    # a gap in C1 itself and is stated on the arm that would otherwise hide
-    # it behind a value nobody declared.
+    # it is stated instead of silently absorbed. The branch below stays even
+    # though it is now empty for this city's vocabulary: it is what would
+    # report a NEW submode arriving without a C1 constant, and ferry - the one
+    # that used to be reported here - was closed by declaring C.asc.ferry
+    # rather than by deleting the check.
     if submodes:
         no_c1_constant = sorted(sm for sm in submodes
                                 if sm not in PT_SUBMODE_ASC)
@@ -1209,8 +1320,20 @@ def scoring_from_c1(cfg, c1, purpose_share):
             'per-purpose value of time: MATSim scores per mode, so a '
             'trip-weighted average (%.2f AUD/h) is used in place of the six '
             'purpose-specific values' % vot_avg,
-            'crowding multipliers (beta_crowding_*): require an explicit '
-            'capacity-dependent scoring extension, not enabled here',
+            'crowding multipliers (beta_crowding_*): REPRESENTED as of '
+            'C.crowding.representation, and %s'
+            % ('carried into scoring by citysim.PtCrowdingScoring - each '
+               "passenger's in-vehicle seconds are re-priced against the "
+               "vehicle's own seat count and the surplus over an uncrowded "
+               'ride is charged as a PersonScoreEvent. MATSim core scores no '
+               'crowding term and the raptor prices load factor in the ROUTER '
+               'only, so the extension is what makes them reach a plan score '
+               'at all'
+               if cfg.get('C.crowding.representation') == 'in_vehicle_time'
+               else 'with C.crowding.representation=absent the extension does '
+               'not install, so the declared multipliers reach scoring '
+               'through nothing and a full vehicle costs what an empty one '
+               'does'),
             'gradient UTILITY penalties: RETIRED 3 Sep 2026 (9.140, issue '
             '21). MATSim scores a leg from time and distance and has no '
             'gradient utility term; %s'
@@ -1497,6 +1620,22 @@ def config_runtime(cfg, scoring, day, paths):
             'trip-weighted VOT x C.time_weights.beta_bike_mode x '
             'C.scoring.marginal_utility_of_money: a felt extra hour on a '
             'stressed link costs what an hour of cycling costs')
+    # In-vehicle PT crowding in SCORING (the Mode-Choice Ledger's rank-4 gap).
+    # The two multipliers arrive by their own matsim_param bindings; this one
+    # derived parameter prices a felt extra hour ABOARD exactly as an hour
+    # aboard is priced, which is the same identity chain bikeStress uses for a
+    # felt extra hour on a stressed link. Emitted only under the declared
+    # representation, so `absent` leaves the module holding
+    # representation=absent and citysim.PtCrowdingScoring never installs.
+    if cfg.get('C.crowding.representation') == 'in_vehicle_time':
+        runtime['ptCrowding.penaltyUtilsPerHour'] = (
+            round(scoring['vot_aud_hr_used']
+                  * cfg.get('C.time_weights.beta_ivt')
+                  * cfg.get('C.scoring.marginal_utility_of_money'), 4),
+            'derived',
+            'trip-weighted VOT x C.time_weights.beta_ivt x '
+            'C.scoring.marginal_utility_of_money: a felt extra hour in a '
+            'crowded vehicle costs what an hour in the vehicle costs')
     # Parking search/access time (9.138): the MINUTES are the price file's
     # derived third column; this prices one minute at the utilityOfLineSwitch
     # identity, per minute instead of per transfer.

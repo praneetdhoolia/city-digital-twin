@@ -134,16 +134,27 @@ if TRANSFER_PENALTY['base'] not in TRANSFER_PENALTY['grid']:
                      'grid, so no grid row is the baseline'
                      % TRANSFER_PENALTY['base'])
 
-# alternative-specific constants, relative to car driver = 0. HELD FIXED under
-# DECISIONS.md 8.5 - calibrating them would fit away the effect under test - so
-# they carry no sweep, and _lo_hi collapses to the point value.
+# Alternative-specific constants, relative to car driver = 0. ONE PER SCORED
+# CHOICE MODE: motorbike and ferry joined the list when they stopped being
+# decided in the builder - motorbike was a literal 0.0 beside the mode table and
+# ferry inherited the pt aggregate's asc_bus, so a mode nobody could see was
+# scored with a value nobody had declared. Both ship at the value that
+# reproduces the previous emission exactly, so adding them moved nothing.
+#
+# DECISIONS.md 8.5 no longer holds all of them fixed. asc_bus, asc_lr and
+# asc_cycle carry sweeps a calibration loop can reach; asc_rail, asc_walk and
+# asc_car_passenger stay held_fixed, each with the per-mode reason on its own
+# registry field. Only the point value reaches C1 either way - the sweeps are
+# read from the registry, not from here.
 ASC_FIELDS = [('asc_car_driver', 'C.asc.car_driver'),
               ('asc_car_passenger', 'C.asc.car_passenger'),
               ('asc_bus', 'C.asc.bus'),
               ('asc_lr', 'C.asc.light_rail'),
               ('asc_rail', 'C.asc.rail'),
               ('asc_walk', 'C.asc.walk'),
-              ('asc_cycle', 'C.asc.cycle')]
+              ('asc_cycle', 'C.asc.cycle'),
+              ('asc_motorbike', 'C.asc.motorbike'),
+              ('asc_ferry', 'C.asc.ferry')]
 ASC = {name: (float(CFG.get(key)), CFG.source(key)) for name, key in ASC_FIELDS}
 
 # The PT walk-access decay curve (C.walk.decay_*, C.walk.gaussian_*,
@@ -268,6 +279,16 @@ def _w(name, rows):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     c1 = rows_c1()
     _w('C1_behavioural_parameters.csv', c1)
     sw = rows_sweep()
