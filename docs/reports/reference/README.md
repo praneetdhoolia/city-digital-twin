@@ -44,98 +44,125 @@ on every pass.
 
 ## State
 
-Last pass **8 September 2026**, at `6cf0ffd` (the PR #161 merge), lodged as
-[`20260908T192638_project_report.html`](../20260908T192638_project_report.html)
-— the fifth pass of the library and the first at this commit. The previous
-refresh of both lanes was the pass at `f40d332`, lodged as
-[`20260907T231739_project_report.html`](../20260907T231739_project_report.html),
-six hours earlier.
+Last pass **9 September 2026**, at `781cf41` (the PR #168 merge), lodged as
+[`20260909T003402_project_report.html`](../20260909T003402_project_report.html)
+— the sixth pass of the library. The previous refresh of both lanes was the pass
+at `6cf0ffd`, lodged as
+[`20260908T192638_project_report.html`](../20260908T192638_project_report.html),
+about five hours earlier.
 
-That six-hour gap is the clearest demonstration yet of what the library is for.
-Every stored row was **one day old and inside its horizon**, so across both lanes
-**not one stored fact was re-searched**: 58 field rows and 67 factor literature
-halves were carried in as they stand, and all 71 calls the two lanes spent went
-to gaps and to this session's new question. A pass that had to re-establish the
-field from scratch could not have afforded the calibration research at all.
+Two passes a day apart is the second demonstration of what the library is for,
+and a sharper one than the first. Every stored row was **one day old and inside
+its horizon**, so across both lanes **not one stored fact was re-searched**: 48
+of 49 project rows, all 12 platform rows, all 10 stored `calibration_methods`
+and all 79 factor literature halves were carried in as they stand. The field
+lane spent 39 calls and the factor lane 13 — **52 calls, every one of them on a
+gap or on this pass's new question**, which was: *what architectures exist for
+reaching equilibrium across many simultaneously-targeted variables?* A pass that
+had to re-establish the field from scratch could not have asked it.
 
-### `field-survey.json` — 38 of 40 searches spent, 7 rounds (8 September 2026, at `6cf0ffd`)
-
-| | count | this pass |
-|---|---:|---|
-| projects surveyed | **48** | **46 reused unchanged, 0 re-searched**, **2 added** — the ARC ABM (Atlanta CT-RAMP), promoted out of `not_reverified` because the *specification* report was the smaller route the last pass named and it worked; and Barcelona's SUMO traffic twin |
-| platforms surveyed | 12 | all 12 reused; 5 gained a new cell |
-| candidates excluded | **56** | 3 added — the Bloomington GP-emulator paper, the Las Palmas smart-cities architecture, the Rzeszów roundabout study |
-| rows not re-verified | 37 | unchanged in count; ARC's note rewritten as it left the list |
-| open gaps | **6** | SUMO's named-city cell **CLOSED** (Barcelona, plus Cologne, Nuremberg, Berlin, Rome, Ingolstadt); TRANSIMS partly closed (SourceForge evidences **7.1, 2018-07-12** — the stored "7.5" is *not* evidenced and is now marked so) |
-| **`calibration_methods`** | **10 — NEW** | added for the session's directive: how the field actually calibrates, one row per method with its published objective-evaluation count |
-
-The validation ladder over 48 rows is **7 / 9 / 25 / 7 / 0** (none / survey shares
-/ road link counts / transit ridership / per-mode every mode). **The top rung is
-still empty.** Our own row is counted separately, is the only attempt at that rung
-anywhere, and reads 1 of 12 inside 10 % — recorded as a new reading rather than an
-improvement, because three family boundaries and a different iteration separate it
-from the previous pass's 0 of 12.
-
-**The new `calibration_methods` array is the most reusable thing this pass
-produced.** Two findings in it are worth more than the table: **no project or
-framework anywhere in the survey publishes an objective-evaluation count** — the
-cost of calibration is the field's unreported number; and the leading open
-implementation of the standard answer, `matsim-vsp/matsim-python-tools`, computes
-the ASC update verbatim as
-`math.log(z_i) - math.log(m_i) - (math.log(z_0) - math.log(m_0))` under Optuna
-while its `TerminationCondition.check_termination` carries `# TODO: not used yet`
-and no default learning-rate scheduler. The standard answer is standard, widely
-used, and unfinished.
-
-### `factors.json` — 33 of 40 searches spent, 5 rounds (8 September 2026, at `6cf0ffd`)
+### `field-survey.json` — 39 of 40 searches spent, 8 rounds (9 September 2026, at `781cf41`)
 
 | | count | this pass |
 |---|---:|---|
-| factors listed | **79** | **7 added**, all in Layers H and I, for the session's directive |
-| literature half filled | **79** | 67 of 72 reused unchanged inside the 365-day horizon; 5 rewritten |
-| still `needs_research` | **0** | **both remaining rows CLOSED** — workplace location (the finding is that *no* OD-flow tolerance exists anywhere; AToM validates work travel as a mode share to ±1 pp against the 2016 census) and external/through traffic (the M1 Raymond Terrace EIS puts the divertible share at the Hexham cordon at **25–45 %**, and `B.external.through_share = 0.35` sits inside it) |
-| statuses stored | **0** | by design. All 79 were re-read at `6cf0ffd` by grep of the registry, `src/`, the city build layer and both Java trees, plus a read-only `check_hardcoding.py`. This pass: **IN 39 · PARTIAL 29 · INERT 2 · ASC 1 · OUT 8** (previous pass: 37 / 27 / 2 / 1 / 5) |
+| projects surveyed | **49** | **48 reused unchanged, 0 re-searched**, **1 added** — Munich (PNAS Nexus 3(11) pgae489): MATSim + MITO against a multicommodity-network-flow model and an inertial-random-walk model, on one network and one observed dataset (MVV stop-level boardings, 7 Oct – 20 Dec 2019), at **25 % and 5 %** — the two fractions this project sweeps between |
+| platforms surveyed | 12 | all 12 reused unchanged |
+| candidates excluded | **59** | 3 added — GATSim (a stylised Nguyen–Dupuis network with 70 GPT-4o agents and no empirical validation); **WFTDM** (four-step, not agent-based, but recorded in full for its per-mode table); the SPSA/PSO/ADAM destination-choice study (small synthetic network) |
+| rows not re-verified | 37 | unchanged; no row was searched for and lost |
+| open gaps | **8** | two closed by elimination (the Springer and Bentley routes are confirmed dead); two added — whether a four-step model's per-mode validation counts as the same rung, and an unsourced "myopic heuristics" claim about coupled choice-model calibration, **the single highest-value item for the next pass** |
+| `calibration_methods` | **14** | **4 added** — the staged agency protocol; history matching / NROY; multi-objective formulations; and the Calibration Illusion counter-finding |
 
-**Not one of the 72 carried-over factors changed status class.** The entire delta
-is the seven rows added. Between two reports a day apart, spanning a full
-comparability family and a gate firing, the model's *behavioural surface* did not
-move — which is itself the result.
+The validation ladder over 49 rows is **7 / 9 / 25 / 8 / 0** (none / survey
+shares / road link counts / transit ridership / per-mode every mode). **The top
+rung is still empty across every agent-based project**, and ours remains the
+only attempt at it.
 
-The seven new rows carry the evaluation counts that price every candidate method:
-SPSA (2 evaluations per gradient step, but 120 % → 117 % in fifteen iterations on
-a 30,000-dimension problem); Osorio's analytical metamodel (**120 % → 32 % within
-one simulation iteration**, an improved plan at n=10 over 51 variables);
-random-forest surrogate under Bayesian optimisation (**477 parameters fitted from
-aggregate mode shares alone**, best point at ~150 evaluations); cross-entropy
-(**98,304 evaluations** for a three-intersection SUMO model); and in-loop CMA-ES
-(zero extra runs, but it needs unit-record survey plans, which the NSW HTS does
-not have).
+**This pass qualified that claim for the first time, and the qualification is
+honest rather than flattering.** A trip-based **four-step** model — WFTDM,
+Wasatch Front — *does* report the top rung: six transit modes separately, all
+inside 10 %, most inside 5 %, verbatim *"All mode shares were calibrated to
+within 5% of observed data"*. It is excluded for having no agents, which is
+correct, but it means the empty rung is **partly a reporting convention among
+agent-based models** rather than purely a difficulty. Written back as a gap.
+
+**The most reusable thing this pass produced is the answer to its own question,
+and it is a negative one.** Across 49 projects the mechanisms actually in use
+are (a) a weighted sum of normalised deviations, (b) a log-ratio constant update
+applied mode by mode, and (c) a human deciding when to stop. **There is no
+published architecture in transport that treats "all N targets inside their
+bands" as the object being solved.** Two architectures exist for it elsewhere
+and neither is used here: **history matching**, whose implausibility statistic
+is computed per output with model discrepancy as an explicit term and whose
+empty NROY region is a formal verdict that a deficit is structural; and
+**epsilon-constraint** multi-objective formulations, the textbook way to express
+a feasibility goal as constraints rather than as a sum. NSGA-II has been coupled
+to MATSim — for *network design*, not calibration.
+
+Three further findings worth carrying: the profession publishes this project's
+own §8.5 rule verbatim (*mode-constant adjustment "should be considered 'a last
+resort'"*); **there is no published acceptance bar for mode choice at all**
+(*"There are no applicable criteria guidelines for checks of mode choice"*), so
+the 10 % band is self-imposed; and *The Calibration Illusion in Traffic
+Microsimulation* (Hickert et al., 2026) explains why no one publishes an
+evaluation count — automatic calibration hides *"a significant and unquantified
+amount of bespoke manual work"*.
+
+### `factors.json` — 13 of 40 searches spent, 3 rounds (9 September 2026, at `781cf41`)
+
+| | count | this pass |
+|---|---:|---|
+| factors listed | **83** | **4 added**, all in Layer I, all on this pass's question: sequential versus simultaneous calibration; the damping and step-size *schedule*; diagnosing a residual as constant versus mechanism; multi-objective aggregation across many targets |
+| literature half filled | **83** | **79 reused unchanged, 0 re-searched**; 4 written for the new rows |
+| still `needs_research` | **0** | unchanged |
+| statuses stored | **0** | by design. All 83 re-read at `781cf41` by grep of the registry, `src/`, the city build layer and both Java trees. This pass: **IN 45 · PARTIAL 27 · INERT 2 · ASC 1 · OUT 8** (previous pass: 39 / 29 / 2 / 1 / 8) |
+
+**Five carried factors changed class — the first movement the library has ever
+recorded.** The previous pass reported that not one did. Every one of the five
+traces to a named commit in `6cf0ffd..781cf41`: crowding (E11) and boarding /
+denied boarding (F3) went PARTIAL → IN when `PtCrowdingScoring.java` was bound
+end to end; the ASC calibration method (I6) and aggregate-only estimation (I10)
+went PARTIAL → IN when `asc_fixed_point.py` landed; and access/egress/wait/
+transfer weights (E2) went **IN → PARTIAL**, a regression on evidence that did
+not exist a day earlier — `RUN.transit_router.access_egress_basis` ships at
+`beeline`, so the raptor draws those legs as straight lines.
+
+The top mover is now **E12, reliability and headway, and it is INERT**:
+`C.time_weights.beta_headway` = 0.5 and `beta_reliability` = 1.3 are declared
+with literature sweeps and written into `params/C1_parameters.json`, and neither
+carries a `matsim_param` or a consumer. Bus at +54.6 % against light rail at
+−47.2 % is a service-quality inversion, and the two parameters that would price
+service quality reach a JSON file and stop there.
 
 ## Where the next pass's budget goes
 
-1. **The residue of the platform gap** — the base OpenPaths 2025 (v25.00.00)
-   announcement date is all that is left of it.
-2. **Unreached fits** — Brussels (five routes have now failed) and the MDPI
-   on-demand study; and the Washington DC study's full text, gold open access
-   under CC BY yet Springer 303s to its identity provider.
+1. **The "myopic heuristics" claim** about coupled choice-model calibration —
+   unsourced, and the highest-value single item in the gap list.
+2. **Whether a four-step model's per-mode validation is the same rung.** It
+   decides whether the top rung is empty because the problem is hard or because
+   agent-based projects do not report that way, and the two have different
+   consequences for this project's claim.
 3. **After 28 September 2026, the MUM 2026 programme**, where a new calibrated
    city scenario or a Wellington validation would surface first. Nothing was
-   spent on it this pass because the date is in the future.
-4. **Monty (NZ)** now has *five* failed routes including `web.archive.org`, which
-   this repository's own network sandbox blocks and which therefore can never
-   work from here. Treat it as closed unless a new lead appears.
+   spent on it this pass or the last because the date is still in the future.
+4. **Unreached fits** — Brussels (five failed routes) and the MDPI on-demand
+   study. The Washington DC study's full text is gold open access under CC BY
+   and Springer still 303s to its identity provider.
 
-**Routes that work, and should be reused.** The **Semantic Scholar graph API**
-recovered three sources this pass and is the recommended way past MDPI and
-Springer. A PDF that `WebFetch` returns as binary can be **saved locally and read
-with page ranges at no search-budget cost** — that recovered five of this pass's
-best sources, including the Osorio n=10 figure, which was read directly from the
-PDF rather than from an abstract.
+**Routes that work, and should be reused.** `tfresource.org/topics/<Page>.html`
+was the single best source of this pass. Also live:
+`api.semanticscholar.org/graph/v1/paper/DOI:<doi>` (three successes),
+`arxiv.org/html/<id>v<n>` where the abs page carries nothing,
+`www.mdpi.com/<j>/<v>/<i>/<n>/pdf?version=...` even though MDPI article HTML
+403s, and open-access articles on `academic.oup.com`. A PDF that `WebFetch`
+returns as binary can be **saved locally and read with page ranges at no
+search-budget cost**.
 
-**Dead routes, recorded so no later pass pays for them again:** `web.archive.org`
-(sandbox-blocked), MDPI article HTML (403 on three DOIs), ScienceDirect (403),
-ResearchGate (403 to the agent), `arxiv.org/pdf/2112.12071` (over the 10 MB fetch
-limit), CMAP's PDF (an image-only scan), `matsim-org/matsim-python-tools` (404 —
-it lives under `matsim-vsp`), the eqasim docs path (404), the Open Berlin paper
-(403) and opdyts' page (404). The last two are why those methods' outer-run counts
-are marked `unknown` rather than guessed.
+**Dead routes, recorded so no later pass pays for them again:**
+`link.springer.com` (both `/content/pdf/` and `/article/` 303 to
+`idp.springer.com` — never retry) · `www.tandfonline.com` (403) ·
+`blog.bentley.com` → `www.bentley.com/blog/` (301, then a sign-in interstitial) ·
+`pubmed.ncbi.nlm.nih.gov` (cookie-consent page only) ·
+`api.semanticscholar.org/graph/v1/paper/search` (429 on both attempts) ·
+`arxiv.org/pdf/2112.12071` (over the 10 MB fetch limit) · `web.archive.org`
+(blocked by this repository's own network sandbox, so it can never work from
+here) · ScienceDirect and ResearchGate (403) · CMAP's PDF (an image-only scan).
