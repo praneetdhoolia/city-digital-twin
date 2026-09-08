@@ -7,27 +7,28 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 8 September 2026 — **the arm is priced on the iteration it
-repeats, and a log guard that had never once counted is counting** (§9.156).
-`arm_cost.py` was quoting a median over EVERY iteration a run ran, and on a
-probe most of those are iterations an arm pays once: **282.6 s** quoted against
-a recurring **216.0 s** (`20260908T014214_4it_25pct`, iterations 2 and 3 at 213
-and 219 s; the one-offs are iteration 0 at 326 s, iteration 1 at 282 s and the
-final iteration at 350 s). The next 300-iteration arm therefore prices at
-**18.2 h bottom / 21.8 h top** with the iteration-100 gate at **6.1 h**, against
-**31.5 h** quoted at HEAD before the probe. `NetworkDirectWalkPtRouter` counted
-in instance fields under an UNSCOPED Guice provider, so its "log the first 3"
-sample wrote **19,469** lines on the F28 arm — about 36 % of its log — while its
-progress line had fired **0** times in the project's history; run-lifetime
-atomics give **3** lines and the first firing ever. **40** manifest rows moved
-CC-BY → ODbL on **357,893** OSM route link references and `link_id`-keyed
-parking tables (ODbL rows **161 → 201**); the other **129** were REFUSED and
-filed as **#159**. Two assessment recommendations refused after checking: tram
-priority IS the S2b intervention, and the build report already churns on the
-mapping. Unit tests **139 → 147**. **Family `F31-the-car-router-reads-only-cars`
-is open and its first arm is RUNNING** — `20260908T100009_300it_25pct`, 300
-iterations at 25 %, under an 18.2–21.8 h stated-cost approval. The scoreboard
-below is unchanged and is still F30's stopped arm at iteration 20.
+**Last updated:** 8 September 2026 - **the F31 gate: ride places the right
+lengths and still carries too few, and a third of pt routing finds no service**
+(§9.157). `aborted_20260908T100009_300it_25pct`, the first arm of family F31 and
+the first run ever to carry `RUN.travel_time.filter_modes` = true, was stopped by
+the gate watcher at **iteration 100** with 7 modes at or past 20 % - median
+**261.03 s**, wall **7.66 h**, inside its 18.2-21.8 h approval. **1 of 12 inside
+10 %** (car +5.4 %). **Nothing here is compared with F28, F29 or F30**: three
+family boundaries separate them. What is new is that **ride's mean modelled trip
+is 9.17 km against an observed 9.76 (-6 %)**, the closest geometry on the board,
+so ride's remaining gap is **VOLUME, not placement** - which retires the question
+F29 and F30 were built around. Inside this reading the twelve deviations sum to
+**+0.086 pp**, ride is **-7.830 pp** and the modes beating it total **+9.500 pp**;
+a pro-rata recovery of ride's deficit would put car (+0.9 %), bus (+9.6 %) and
+motorbike (+2.4 %) **all inside 10 %**. The progress line §9.156 restored - which
+had fired 0 times in the project's history - reports **33.4 %** of pt routing
+requests finding NO transit route and **40.6 %** of the rest taking the network
+walk, beside walk's modelled mean of **4.51 km against an observed 0.70**. Two of
+the day's repairs held in production: 3 sample lines across the whole arm against
+F28's 19,469, and the arm's 261.03 s landed **0.5 %** from the quoted top anchor
+while the probe's 216.0 s was 17 % optimistic - the band, not the point, was true.
+**Requirement 8 is still unmeasured**: the arm stopped at 100, as every arm since
+F4 has.
 
 ## The goal
 
@@ -39,32 +40,32 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **12 of 12** — freight rail as timetable-derived crossing closures, not a mobsim vehicle | [positions/motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md), §9.70 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
-| Every mode inside 10 % | **1 of 12** at the F28 iteration-100 gate — **car +6.6 %**, the first time car has been inside at a gate; walk −11.9 % and motorbike +16.1 % next. Before it only bus's F22 +8.0 % and F24's motorbike had been inside | below, §9.149, §9.136 |
+| Every mode inside 10 % | **1 of 12 at the F31 iteration-100 gate** - **car +5.4 %**, the second gate running at which car has been inside; walk -11.1 % and motorbike +13.7 % next. Not comparable with F28's reading - three family boundaries separate them | below, §9.157 |
 | Convergence in ≤ 250 iterations | **Unmeasured** — the deepest arms (F21, F22, F23) each stopped at their iteration-100 gate. `RUN.controler.last_iteration` stays 1000 and was deliberately NOT re-declared to 250: §9.7 measured 250 insufficient. The instrument exists — a 300-iteration arm switches innovation off at 240, so its post-cutoff window straddles 250 — and the first arm to pass its gate measures it | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.142, §9.7 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); pt fares from the published Opal schedule (§9.135); the external interaction rate from the 2011 journey-to-work flow and the S0 detour from the alignment (§9.140); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260908T100009_300it_25pct` at **iteration 0** (family `F31-the-car-router-reads-only-cars`, status `running`, 25% sample, launched 2026-09-08T10:00:09, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260908T100009_300it_25pct --it 0` (`--trend` for the direction).
+Read from `aborted_20260908T100009_300it_25pct` at **iteration 100** (family `F31-the-car-router-reads-only-cars`, status `aborted`, 25% sample, launched 2026-09-08T10:00:09, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 43.5320 | 58.3222 | -25.4% | **STOP** >=20% | share of resident linked trips |
-| 2 | ride | 4.6609 | 20.6000 | -77.4% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 34.5165 | 13.4000 | +157.6% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.8764 | 0.9916 | +89.2% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.4754 | 2.2084 | +193.2% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4674 | 0.3785 | +23.5% | **STOP** >=20% | share of resident linked trips |
-| 7 | bus | 6.5429 | 2.3819 | +174.7% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 37,792 | 6,529 | +478.9% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 2,720 | 2,954 | -7.9% | ok | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0338 | 0.1429 | -76.4% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 9.0841 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 61.4469 | 58.3222 | +5.4% | ok | share of resident linked trips |
+| 2 | ride | 12.7702 | 20.6000 | -38.0% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 11.9095 | 13.4000 | -11.1% | over 10% | share of resident linked trips |
+| 4 | taxi | 2.7605 | 0.9916 | +178.4% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 5.4627 | 2.2084 | +147.4% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4303 | 0.3785 | +13.7% | over 10% | share of resident linked trips |
+| 7 | bus | 3.6825 | 2.3819 | +54.6% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 22,668 | 6,529 | +247.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,560 | 2,954 | -47.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0492 | 0.1429 | -65.6% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.9823 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **light_rail**. Past the 20% stop bar: **car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, ferry**.
+Inside 10%: **car**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -90,23 +91,22 @@ Inside 10%: **light_rail**. Past the 20% stop bar: **car, ride, walk, taxi, bike
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (8 September 2026 (thirty-fifth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (8 September 2026 (thirty-fifth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (8 September 2026 (thirty-fifth session)) · [population-and-demand](positions/population-and-demand.md) (7 September 2026 (thirty-second session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (4 September 2026 (twenty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (8 September 2026 (thirty-fifth session)) · [runs-and-economics](positions/runs-and-economics.md) (8 September 2026 (thirty-fifth session)) · [sampling-and-families](positions/sampling-and-families.md) (8 September 2026 (thirty-fifth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (5 September 2026 (twenty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (3 September 2026 (twenty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (4 September 2026 (twenty-seventh session)) |
 <!-- generated:state end -->
 
-**Family F31 is open and its first arm is RUNNING** (§9.156).
-`20260908T100009_300it_25pct` launched 8 Sep at 10:00, S2 × WEEKDAY, 25 %, 300
-iterations, innovation off at 240, under a stated-cost approval of **18.2–21.8 h**
-priced from `20260908T014214_4it_25pct`'s recurring iteration — with the
-watcher's iteration-100 gate at **6.1 h**, which is where it will stop while any
-mode is past 20 %. The boundary is `RUN.travel_time.filter_modes` = true plus a
-recompiled controler. **#159 was filed and the launcher overridden with
-`--allow-open-issues`** on the operator's decision — the first deliberate
-override of GOAL requirement 10. `check_package.py` last passed on 7 Sep; the
-manifest holds 512 files, 40 of whose licences moved this session.
+**Family F31's first arm is STOPPED AT ITS GATE** (§9.157).
+`aborted_20260908T100009_300it_25pct` ran 10:00-17:39 and the watcher stopped it
+itself at **iteration 100** under the GOAL.md loop with 7 modes at or past 20 %:
+`completion` `stopped_at_gate`, `reached_iteration` **100**, median **261.03 s**,
+wall **27,570.2 s**. It cost 7.66 h of an 18.2-21.8 h approval, which is now
+SPENT. Controls at the gate: 27,251 declared passengers paired on 24,792 detours,
+202 unpaired ride legs re-moded and **202 of 202 restored**, 15,550 drivers
+waiting on a household car. The watcher has now fired live four times.
+`check_package.py` last passed on 7 Sep; the manifest holds 512 files.
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260908T100009_300it_25pct` | running | F31-the-car-router-reads-only-cars | 1 | - |
+| `aborted_20260908T100009_300it_25pct` | aborted | F31-the-car-router-reads-only-cars | 100 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260908T014214_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260908T012355_4it_25pct` | aborted | F30-an-escort-is-priced-as-an-escort | 0 | Stopped by the agent, and the run is citable for NOTHING - not even its clock, which is the only thing it existed to measure. It was the ... |
 | `20260907T233540_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
@@ -118,50 +118,50 @@ manifest holds 512 files, 40 of whose licences moved this session.
 
 ## Next
 
-1. **Read the F31 arm at iteration 100 — that reading is the lane.**
-   `20260908T100009_300it_25pct` is running; the watcher stops it at 100 while
-   any mode is past 20 %, so ~6.1 h is the likely spend of an 18.2–21.8 h
-   approval. Read with `python src/analyse/report_mode_ridership.py --run
-   20260908T100009_300it_25pct --it 100`.
-2. **What the arm answers, in order** (§9.149, §9.156): placement — declared
-   bound trips ridden against **0.560** and the walked-bound median against
-   **1.08 km**; **ride against −42.8 % read TOGETHER with bike (+157.3 %), taxi
-   (+161.1 %) and bus (+65.0 %)**, because ride's **−8.822 pp** deficit is the
-   whole of their **10.521 pp** excess and a full pro-rata recovery would put car
-   at +1.1 %, motorbike at +2.6 % and bus at +10.5 % (§9.156); car must STAY
-   inside (+6.6 %). **Expect movement everywhere from #154** — every mode's
-   router had been reading link travel times a pedestrian helped set. Read the
-   counts on the §9.150 basis, not #82's −91.8 %.
-3. **Confirm the router statistic the log can finally report** (§9.156). On its
-   first firing the progress line said roughly **40 %** of pt routing requests
-   find no transit route at all and roughly **43 %** of the rest take the network
-   walk. It came from a pricing probe and is not a reading of any mode; it bears
-   on walk's 5.26 km modelled mean against an observed 0.70 km and on the three
-   failing pt modes. **Confirm at the gate before acting.**
-4. **The assessments' demand findings are root causes, not constants**
-   ([docs/reports/README.md](../../../docs/reports/README.md)): evening
-   departures, the inverted PT day, age-flat income, inter-LGA commute flows.
-   They bear on modes the gate keeps failing and are worth issues before an arm
-   is spent measuring around them.
-5. **Convergence is still unmeasured** (requirement 8): no arm has passed 100
-   since F4, across 160 runs and 29 days. F31 is the first arm since F25 with a
-   horizon rather than a gate, so it is the first that CAN measure it — but only
-   if every mode clears the 20 % bar at 100.
+1. **Ride VOLUME is the lane, and placement is no longer it** (§9.157). At the
+   F31 gate ride's mean modelled trip is **9.17 km against an observed 9.76
+   (-6 %)** - the closest geometry on the board - while its share is **-38.0 %**.
+   The lifts the binder places are the right length; there are too few of them.
+   F29 and F30 were both built for placement (`shared_lift_priority` =
+   `longest_first`, `shared_lift_hash_bucket` 0.25, §9.149, §9.151), and that
+   question is answered. **The next measurement is the declared-bound-trip
+   funnel**: how many bound trips the demand declares, how many reach plan
+   memory, and how many are selected - which is #86's question, unchanged and now
+   the only one left on ride.
+2. **A third of pt routing finds no service at all** (§9.157, and the brief's
+   confirmation task). Over 1,700,000 decisions the restored progress line
+   reports **853,357 requests with no transit route (33.4 % of all)** and
+   **690,635 of the remaining 1,700,000 choosing the network walk (40.6 %)**.
+   It stands beside walk's modelled mean of **4.51 km against an observed 0.70**
+   and the three failing pt modes. **The cause is not established** and nothing
+   was changed on it. It is the largest unexplained signal on the board.
+3. **Heavy rail is +247.2 % and has no brake at all** (§9.156, #98). Capacity
+   binds physically; the crowding disutility is declared
+   (`C.crowding.seated_multiplier`, `standing_multiplier`) and carried into no
+   scoring, and the run-input assembler lists it as not-representable. The
+   extension is designed and **not built** - it is the operator's call whether it
+   is built before the next arm.
+4. **Pt walk legs are teleported and no issue records it** (§9.156, measured
+   again this session). Of 1,978 teleported walk legs on a 1 % run, **70.9 % end
+   at a `pt interaction`** and only **67** have no pt leg on either side. It is a
+   narrow but real gap against GOAL requirement 1, and it is unfiled only because
+   a new issue that is not `awaiting-run` blocks the next launch.
+5. **Convergence is still unmeasured** (requirement 8): the arm stopped at 100,
+   as every arm since F4 has, across 161 runs and 29 days.
 
-**Decisions required:** whether the crowding disutility against heavy rail's
-+295 % (designed, not built, §9.156) is built before the next arm; whether the
-31 unreviewed MATSim defaults (#155) are worked down; **whether the real
-Newcastle corridor operates transit signal priority** — `A.lightrail.tsp_enabled`
-is `source: assumed` and requirement 6 says derive it, and it must be settled on
-evidence about the corridor rather than on light rail's −30 %
-([positions/light-rail-and-ferry](positions/light-rail-and-ferry.md), §9.156);
-the Task Scheduler log (#66); output-level lineage (#159).
-Taken this session (§9.156): the arm priced on the iteration it repeats rather
-than on a median that includes the ones it does not; a log guard fixed at the
-binding rather than at the symptom; forty licence crossings closed on
-demonstrated content and 129 refused rather than guessed; two ranked
-recommendations refused after checking; and requirement 10 overridden once,
-deliberately and on the record.
+**Decisions required:** whether the crowding disutility is built before the next
+arm; whether the pt-walk teleportation is filed now or after the next gate;
+whether **the real Newcastle corridor operates transit signal priority** -
+`A.lightrail.tsp_enabled` is `source: assumed` and requirement 6 says derive it,
+and it must be settled on evidence about the corridor rather than on light rail's
+-47.2 % ([positions/light-rail-and-ferry](positions/light-rail-and-ferry.md),
+§9.156); output-level lineage (#159), which blocks the next launch until it is
+fixed or overridden again; the Task Scheduler log (#66).
+Taken this session (§9.156, §9.157): the arm priced on the iteration it repeats;
+a log guard fixed at its binding; forty licence crossings closed on demonstrated
+content and 129 refused rather than guessed; two ranked recommendations refused
+after checking; requirement 10 overridden once, deliberately and on the record;
+and the F31 gate read without comparing it across a family boundary.
 
 ## Open work
 

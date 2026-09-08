@@ -1,123 +1,104 @@
 # Brief for the next agent
 
-**Written:** 8 September 2026, thirty-fifth session · **Open family:** `F31-the-car-router-reads-only-cars` · **Commit:** see `git log -1 origin/main` after the session's PR merges; the branch was `praneetdhoolia/an-honest-price-and-a-log-that-can-count`
+**Written:** 8 September 2026, thirty-fifth session (after the F31 gate) · **Open family:** `F31-the-car-router-reads-only-cars` · **Commit:** see `git log -1 origin/main` after the session's second PR merges; the branch was `praneetdhoolia/the-f31-gate-ride-places-right-lengths`
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md) and
 the [position pages](positions) win wherever this disagrees with them.*
 
-**AN ARM IS RUNNING AND ITS GATE READING IS YOUR FIRST JOB.**
-`20260908T100009_300it_25pct` launched 8 Sep 10:00 under an **18.2-21.8 h**
-stated-cost approval, S2 x WEEKDAY, 25 %, 300 iterations, innovation off at 240.
-The watcher stops it at iteration 100 while any mode is past 20 %, so the likely
-spend is ~6.1 h. **It is the first arm of family F31** and the first run ever to
-carry `RUN.travel_time.filter_modes` = true, so **expect movement in every mode**:
-until now every mode's router read link travel times a pedestrian, a cyclist and
-a stopped bus helped set (§9.154, #154).
+**THE F31 GATE IS READ AND THE LANE HAS MOVED.** `aborted_20260908T100009_300it_25pct`
+was stopped by the watcher at **iteration 100** with 7 modes at or past 20 %;
+**1 of 12 inside** (car +5.4 %). The finding that changes the plan: **ride's mean
+modelled trip is 9.17 km against an observed 9.76 (-6 %)**, the closest geometry
+on the board, while its share is -38.0 %. **Ride's gap is VOLUME, not placement**
+- which is what F29 and F30 were both built to fix, so that question is answered
+and closed.
 
 ## §0 Verify first - facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **An arm is RUNNING**: `20260908T100009_300it_25pct`. Do NOT recompile `.tools/classes` under it - and note `bootstrap_toolchain.py --verify` IS a recompile. | `python src/run/session_gate.py --digest` (MACHINE line) |
-| **The last GATE reading is still F28's at iteration 100** (§9.149) until this arm reaches 100. The board's scoreboard is F30's stopped arm at it.20 - exploration, not a gate. **No arm has passed 100 since F4.** | `python src/analyse/report_mode_ridership.py --run 20260908T100009_300it_25pct --it 100` |
-| **The approval is SPENT on this arm.** If it stops at the gate, the next one needs a fresh stated cost. | `python src/analyse/arm_cost.py --run-config f29_gate_25pct` |
-| **#159 is open and NOT `awaiting-run`**; the launcher was overridden once with `--allow-open-issues` on the operator's decision. The issue gate will refuse the NEXT launch until #159 is fixed or the operator overrides again. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| **This session's PR** - check whether it merged and whether the branch is gone. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
-| Registry **482** fields, **512** manifest files (40 licences moved, ODbL 161 -> 201). | `python src/registry/render_docs.py --check` |
+| **The machine is IDLE.** No arm is running; F31's first arm stopped at its gate. | `python src/run/session_gate.py --digest` (MACHINE line) |
+| **The newest citable reading is F31's iteration-100 gate**, citable there and nowhere past it. **No arm has passed 100 since F4**, across 161 runs. | `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100` |
+| **No approval stands.** The 18.2-21.8 h approval was SPENT on that arm (it used 7.66 h). | `python src/analyse/arm_cost.py --run-config f29_gate_25pct` |
+| **#159 is open and NOT `awaiting-run`**, so the issue gate is RED and the launcher will refuse. It was overridden once by operator decision for the F31 arm. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| **This session's PRs** - #160 merged; the second one carries the gate close-out. | `gh pr list --state open` · `gh pr list --state merged --limit 3` |
+| Registry **482** fields, **512** manifest files. Unit tests **147**. | `python src/registry/render_docs.py --check` · `python -m pytest tests/unit -q` |
 | **The package on disk is unchanged** - no data artefact was rebuilt this session. | `python tests/check_package.py` (~10 min) |
-| Unit tests **147**. | `python -m pytest tests/unit -q` |
 
-Then: `python src/run/session_gate.py` (it skips the toolchain compile while an
-arm runs, for exactly the reason above).
+Then: `python src/run/session_gate.py`.
 
 ## §1 The lane
 
-**Read the arm at 100, in this order** (§9.149, §9.156):
+**Three root causes are on the table and none is fixed. Pick with the operator.**
 
-1. **Iteration 0's `legHistogram`** against F30's iteration-0 controls (§9.153):
-   car departures 232,972, stuck 3,786, 8,167 declared passengers paired on
-   7,771 detours, 291 unpaired ride legs restored, 8,549 drivers waiting.
-2. **Placement**: declared bound trips ridden against F28's **0.560**, the
-   walked-bound median against **1.08 km**.
-3. **Ride with the modes it feeds.** Ride's **-8.822 pp** deficit at F28 is
-   essentially the WHOLE of the excess in the modes that beat it - car +3.840,
-   bike +3.474, taxi +1.597, bus +1.548, motorbike +0.061, **10.521 pp** - and
-   the twelve deviations sum to +0.008 pp as they must. A full pro-rata recovery
-   would put car at **+1.1 %**, motorbike at **+2.6 %** and bus at **+10.5 %**.
-   **That is an arithmetic upper bound on what ride placement alone can do, not
-   a prediction.** The geometry agrees independently: bike's modelled mean is
-   9.12 km against an observed 5.21, taxi 9.52 against 5.20, walk 5.26 against
-   0.70 - long car-less trips that should be RIDDEN are walked, cycled and
-   taxied (§9.156).
-4. **Car must STAY inside** (+6.6 % at F28); walk -11.9 %, motorbike +16.1 %.
-5. **The counts on their corrected basis** (§9.150). **#82's -91.8 % is not the
-   figure to expect.**
-6. Controls: `householdCar: N waited`; pair rate near 0.9965; 0 ride legs
-   without a declared driver.
-7. **Confirm the router statistic** (§9.156). The direct-walk router's progress
-   line fires now, and on its first firing reported ~40 % of pt routing requests
-   finding NO transit route and ~43 % of the rest taking the network walk. That
-   came from a pricing probe and is not a reading of any mode. Confirm it here
-   before acting on it; it bears on walk's 5.26 km mean and on bus, light rail
-   and ferry.
+1. **RIDE VOLUME** (#86, #48). Placement is solved: the lifts are the right
+   length (9.17 km against an observed 9.76). What is short is how many. The next
+   measurement is the declared-bound-trip funnel - how many bound trips the
+   demand declares, how many survive into plan memory, how many are selected.
+   **Why it matters most:** inside F31's own reading the twelve deviations sum to
+   +0.086 pp, ride is **-7.830 pp**, and the modes beating it total **+9.500 pp**
+   (car +3.125, bike +3.254, taxi +1.769, bus +1.301, motorbike +0.052). A
+   pro-rata recovery would put car (+0.9 %), bus (+9.6 %) and motorbike (+2.4 %)
+   **all inside 10 %**. It is an arithmetic upper bound, not a prediction, but no
+   other single change on the table moves three modes.
+2. **A THIRD OF PT ROUTING FINDS NO SERVICE** (§9.157). Over 1,700,000 decisions:
+   **853,357 requests with no transit route at all (33.4 % of all)** and
+   **690,635 of the rest choosing the network walk (40.6 %)**. It sits beside
+   walk's modelled mean of **4.51 km against an observed 0.70** and the three
+   failing pt modes. **The cause is not established.** This is the largest
+   unexplained signal on the board and it did not exist as a measurement before
+   §9.156 restored the log line that reports it.
+3. **HEAVY RAIL HAS NO BRAKE** (#98, +247.2 %). Capacity binds physically; the
+   crowding disutility is declared (`C.crowding.seated_multiplier`,
+   `standing_multiplier`) and carried into no scoring. Designed, **not built**.
 
-**Decisions the user must take:** whether the crowding disutility against heavy
-rail's +295 % is built before the next arm (designed, not built - §9.156);
-**whether the real Newcastle corridor operates transit signal priority**
-(`A.lightrail.tsp_enabled` is `source: assumed`, requirement 6 says derive it,
-and it must be settled on evidence about the corridor, never on light rail's
--30 %); whether the 31 unreviewed MATSim defaults (#155) are ruled on; output-
-level lineage (#159); the Task Scheduler operational log (#66).
+**Decisions the user must take:** which of the three above is worked first;
+whether the **pt-walk teleportation** is filed (1,978 teleported walk legs on a
+1 % run, **70.9 % ending at a `pt interaction`**, only **67** with no pt leg
+either side - a narrow but real gap against GOAL requirement 1, unfiled only
+because a new non-`awaiting-run` issue blocks the launcher); **whether the real
+Newcastle corridor operates transit signal priority** (`A.lightrail.tsp_enabled`
+is `source: assumed`, requirement 6 says derive it, and it must be settled on
+evidence about the corridor, never on light rail's -47.2 %); #159; #155; #66.
 
 ## §2 Traps - newest first, each with what it cost
 
-1. **`bootstrap_toolchain.py --verify` RECOMPILES.** It reads as a read-only
-   word and is not. Run under the first pricing probe on 8 Sep it rewrote
-   `.tools/classes` and `.tools/classes-signals` at 01:38:36 beneath the live
-   JVM: the javac burst was CPU the probe's own stopwatch charged to its
-   iterations, and the tree on disk stopped matching the tree the JVM had
-   loaded. `aborted_20260908T012355_4it_25pct` is citable for NOTHING - not even
-   the clock it existed to measure (§9.156).
-2. **A median over every iteration is not what an arm pays.** Iteration 0 warms
-   the JIT, `dump all plans` fires at iterations 0 and 1 only, and the last
-   iteration writes the final output. On a 4-iteration probe that is three of
-   five, and the median read 282.6 s against a recurring 216.0 s - a 31 %
-   overstatement, in the tool that sets what an operator approves (§9.156).
-3. **A counter on an unscoped Guice provider counts nothing.**
-   `addRoutingModuleBinding(...).toProvider(...)` with no scope builds a new
-   object per thread per iteration, so "log the first 3" wrote 19,469 lines and
-   `% 100000` never fired once. Fix the binding's consequence, not the symptom
-   (§9.156).
-4. **Verify an assessment finding before fixing it.** Tram priority was ranked
-   the cheapest way to move the board; it IS the S2b intervention
-   (`sweep_role: answer`), and switching it on would have destroyed the
-   comparison the study exists to make (§9.156). `fit.py`'s patronage scorer was
-   called empty and is correct (§9.155).
-5. **Ancestry that is right for a one-output script is wrong for a many-output
-   one.** `_script_inputs` credits every path a SCRIPT mentions to every file it
-   writes, so 129 rows claim an OSM ancestor; relabelling their licences on that
-   basis would have moved 169 rows and given the licence column the defect the
-   source column has (§9.156, #159).
-6. **A silent exclusion is how a stale price survives** (§9.155).
-7. **A guard written for a race needs an expiry** - 13 directories and 72.8 GiB
-   protected forever (§9.155).
-8. **A profile shows where CPU goes, not what to cut.** Halving the event
-   threads to halve the hops made the iteration 44.5 % slower (§9.155).
-9. **`RUN.storage.raw_cap_gb` is GIBIBYTES** despite its name (§9.155).
-10. **A run is a result only if `_run.json` says `ran_to_last_iteration`.** A
-    stopped arm's reading is citable at its `reached_iteration` and nowhere past
-    it (§9.143).
+1. **Do not compare across a family boundary, however tempting the story.** F28
+   and F31 are separated by three boundaries, and "ride improved from -42.8 % to
+   -38.0 %" is exactly the sentence §3.5 exists to prevent. Read a gate on its
+   own terms and do the arithmetic inside it (§9.157).
+2. **`bootstrap_toolchain.py --verify` RECOMPILES.** It reads as a read-only word
+   and is not. Run under a live probe on 8 Sep it rewrote both class trees at
+   01:38:36 beneath the JVM; that probe is citable for NOTHING, not even the
+   clock it existed to measure (§9.156).
+3. **A median over every iteration is not what an arm pays**, and the arm proved
+   it from the other side: the probe's recurring 216.0 s was **17 % optimistic**
+   while the long-arm top anchor of 259.6 s was right to **0.5 %** (261.03 s
+   measured). **Quote the band, never the point** (§9.156, §9.157).
+4. **A counter on an unscoped Guice provider counts nothing** - "log the first 3"
+   wrote 19,469 lines and `% 100000` never fired once (§9.156).
+5. **Verify an assessment finding before fixing it.** Tram priority IS the S2b
+   intervention; switching it on would have destroyed the comparison the study
+   exists to make (§9.156).
+6. **Ancestry right for a one-output script is wrong for a many-output one**
+   (§9.156, #159).
+7. **A watch that polls a run's ORIGINAL path misses its close-out**: a stopped
+   run is renamed with an `aborted_` prefix, so a 7 h watch reported nothing
+   while the arm had finished hours earlier (this session).
+8. **A silent exclusion is how a stale price survives** (§9.155).
+9. **A profile shows where CPU goes, not what to cut** (§9.155).
+10. **A run is a result only if `_run.json` says `ran_to_last_iteration`.** F31's
+    arm says `stopped_at_gate`: its reading is citable at iteration 100 and
+    nowhere past it (§9.143).
 
 ## §3 Standing directives and approvals
 
-- **The 18.2-21.8 h approval is SPENT on `20260908T100009_300it_25pct`.** No
-  other approval stands. Quote the next one as a RANGE from `arm_cost.py`, which
-  now prices the recurring iteration and warns when the run it priced never met
-  a milestone.
+- **No approval stands. Every approval is SPENT**, including the 18.2-21.8 h one.
+  Quote the next as a RANGE from `arm_cost.py`.
 - **25 % runs only** (user directive, 1 September 2026).
 - **One arm at a time**; never recompile `.tools/classes` under one.
-- **No launch while an open issue lacks `awaiting-run`** (GOAL requirement 10;
-  `issue_gate.py` enforces it). It has been overridden ONCE, deliberately, for
-  #159 - an override is the operator's call and is recorded in the run.
+- **No launch while an open issue lacks `awaiting-run`** (GOAL requirement 10).
+  The gate is RED on #159 right now. It has been overridden ONCE, deliberately;
+  an override is the operator's call and is recorded in the run.
 - **The 67/143 holdout stays shut until the end** (§12).
-- **Never commit to `main`**; the session's ONE PR opens at `/handoff`.
+- **Never commit to `main`**; the session's PR opens at `/handoff`.
 - The record is never rewritten; superseded text is bannered and pointed past.
