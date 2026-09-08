@@ -82,7 +82,7 @@ Inside 10%: **light_rail**. Past the 20% stop bar: **car, ride, walk, taxi, bike
 | | |
 |---|---|
 | Open comparability family | `F32-crowding-reaches-scoring` (opened `20260909T011135`, §9.158, 9.160) - nothing run before it compares with anything after it |
-| Input registry | **494 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **496 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (8 September 2026 (thirty-sixth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (9 September 2026 (thirty-eighth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (7 September 2026 (thirtieth session)) · [network-and-inputs](positions/network-and-inputs.md) (8 September 2026 (thirty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (8 September 2026 (thirty-sixth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (9 September 2026 (thirty-eighth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (9 September 2026 (thirty-eighth session)) · [runs-and-economics](positions/runs-and-economics.md) (9 September 2026 (thirty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (9 September 2026 (thirty-eighth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (9 September 2026 (thirty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (8 September 2026 (thirty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (8 September 2026 (thirty-sixth session)) |
@@ -105,7 +105,7 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 2 | - |
+| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 10 | - |
 | `20260909T011135_4it_25pct` | completed | F32-crowding-reaches-scoring | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260908T232051_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
 | `aborted_20260908T231109_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | TransitQSimEngine$TransitAgentTriesToTeleportException: Agent 355102 tries to enter a transit stop at link 128983 but really is at 158102! |
@@ -126,10 +126,12 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
    anything it reads.** It tests three falsifiable predictions from §9.160:
    the system settles near iteration **200-210**; **ride does not move**; and
    **car drifts further out** of the band it is the only mode inside.
-2. **ITS CEILING IS ENFORCED BY NOBODY** (§9.160, #169). No `RUN.*` field
-   declares a wall-clock limit and nothing reads one; the only automatic stop
-   is the gate watcher, which this arm disables. **If it overruns 32 h it must
-   be stopped by hand**: `python run.py --stop 20260909T015217_300it_25pct`.
+2. **THE CEILING IS NOW ENFORCED - BUT NOT FOR THIS ARM** (§9.161, #169).
+   `RUN.gate.wall_ceiling_h` and `start_ceiling_watch` exist and are tested,
+   and every future arm overlay should set the field beside its approval. **The
+   running arm launched before the mechanism, so its 32 h ceiling is still
+   enforced by hand**: `python run.py --stop 20260909T015217_300it_25pct`. On
+   its own recurring pace of 247.6 s it now quotes **20.1 h**.
 3. **GIVE LAYER 3 A CONTROL - DECIDED, DESIGNED, NOT BUILT** (§9.160, user
    decision). The mode constant, the fare and a distance term go into the
    raptor's cost: `RaptorInVehicleCostCalculator.getInVehicleCost(...)` is
@@ -137,12 +139,18 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
    boarding. It ships behind `C.raptor.mode_cost_representation` = `absent` and
    is what finally gives `beta_headway` and `beta_reliability` a consumer.
    **Java, so it opens a family and cannot be compiled under the running arm.**
-4. **The ASC contraction test is HELD until layer 3 has a control** (§9.160,
+4. **#167 IS DIAGNOSED AND THE FIX IS ONE ATTRIBUTE** (§9.161). The input plans
+   declare **no `routingMode` on any leg**, so under `accessEgressModeToLink`
+   MATSim infers `walk` for the access leg it inserts beside a `car` main leg
+   and rejects its own trip. Emit `routingMode` per leg in
+   `build_matsim_plans.py` - a no-op at `access_egress_type = none` - and
+   rebuild the demand in the SAME change, then re-run the 1 % intermodal probe.
+5. **The ASC contraction test is HELD until layer 3 has a control** (§9.160,
    user decision). Of its four modes only **bike** sits on an alternative the
    mode-choice operator can switch to; on bus, light rail and ferry a null
    result proves nothing, because only **0.63 %** of agents hold plans that
    differ in pt submode.
-5. **Heavy rail's brake is running for the first time** (§9.158, §9.160, #98).
+6. **Heavy rail's brake is running for the first time** (§9.158, §9.160, #98).
    `citysim.PtCrowdingScoring` is live in this arm; its paired reading against
    `C.crowding.representation` = `absent` is a later arm's.
 

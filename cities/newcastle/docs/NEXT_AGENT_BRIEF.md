@@ -18,7 +18,7 @@ the binding constraint.
 | Fact at handoff | Re-derive with |
 |---|---|
 | **THE DEPTH ARM IS RUNNING.** Quoted **22.3 h** from 01:52, so it should land about **00:10 on 10 September**; the approved ceiling is **32 h**, which falls at **09:52 on 10 September**. | `python src/run/session_gate.py --digest` (MACHINE line) · `python src/run/run_view.py` |
-| **ITS CEILING IS ENFORCED BY NOBODY** (#169). It disables the gate watcher by a scoped departure, so it has no automatic stop on deviation OR on cost. If it overruns, stop it by hand. | `python run.py --stop 20260909T015217_300it_25pct --cause "past the approved 32 h ceiling"` |
+| **ITS CEILING IS STILL ENFORCED BY HAND.** `RUN.gate.wall_ceiling_h` and `start_ceiling_watch` now exist and are tested (§9.161, #169), but **this arm launched before them** and its `_config.json` carries no ceiling. On its own recurring pace of 247.6 s it quotes **20.1 h**. | `python run.py --stop 20260909T015217_300it_25pct --cause "past the approved 32 h ceiling"` |
 | **NOTHING IT PRODUCES IS A READING UNTIL IT LANDS**, and no parameter may be tuned on anything it reads (§9.159's scoped departure). The newest CITABLE reading is still F31's iteration-100 gate. | `python src/analyse/report_mode_ridership.py --run aborted_20260908T100009_300it_25pct --it 100` |
 | **Family `F32-crowding-reaches-scoring` opened at `20260909T011135`** — at the probe's LAUNCH, not the arm. Nothing before it compares with anything after it. | `python -c "import json;print(list(json.load(open('cities/newcastle/docs/run_families.json'))['families'])[-1])"` |
 | The issue gate reads **21 open, 16 awaiting a run with a stated measurement, 5 awaiting a decision, 0 blocking**. The five are #49, #50, #155, #167, #169. | `python src/run/issue_gate.py` · `gh issue list --state open` |
@@ -66,14 +66,22 @@ under one by itself, so the rule finally has a mechanism.
    mode-choice operator can switch to; on bus, light rail and ferry a null
    result proves nothing, because only **974 of 154,347 agents (0.63 %)** hold
    plans that differ in pt submode.
-4. **#169 — build the wall-clock ceiling watcher on an idle machine.** A
-   declared `RUN.gate.wall_ceiling_h`, a watcher beside `start_gate_watch` that
-   stops through the existing marker path, and a 1 % smoke probe with a
-   deliberately tiny ceiling to prove it fires. Minutes of work; it could not be
-   done this session because it sits in the launch path of the arm it protects.
+4. **#169 — the ceiling watcher is BUILT and NOT PROVEN ON A RUN** (§9.161).
+   `RUN.gate.wall_ceiling_h` (0 = no ceiling), `RUN.gate.ceiling_poll_s`,
+   `start_ceiling_watch`, the `stopped_at_ceiling` completion and seven unit
+   tests against a fake process. What remains is the 1 % smoke probe with a
+   deliberately tiny ceiling, on an idle machine, and setting the field on every
+   future arm overlay beside the approval it encodes.
+5. **#167 — the fix is ONE ATTRIBUTE, and it needs a rebuild** (§9.161). The
+   input plans declare **no `routingMode` on any leg**, so under
+   `accessEgressModeToLink` MATSim infers `walk` for the access leg it inserts
+   beside a `car` main leg and rejects its own trip. Emit `routingMode` per leg
+   in `build_matsim_plans.py` — a no-op at `access_egress_type = none` — and
+   rebuild the demand and the 30 run-input sets in the SAME change, or the
+   committed builder can no longer reproduce the package. Then re-run
+   `intermodal_access_probe_1pct`.
 
-**Decisions the user must take:** how the last hop onto a platform is made
-(#167); whether to build #169's watcher; the three product calls behind #49,
+**Decisions the user must take:** the three product calls behind #49,
 #50 and #155; whether the **real Newcastle corridor operates transit signal
 priority** (`A.lightrail.tsp_enabled` is `source: assumed`, requirement 6 says
 derive it, and it is settled on evidence about the corridor, never on light

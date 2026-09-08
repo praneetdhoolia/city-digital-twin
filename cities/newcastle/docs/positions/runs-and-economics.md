@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.161 · **Written against family:** `F32`
 
 ## What is built
 
@@ -78,7 +78,11 @@
 
 ## What is open
 
-- **AN ARM'S APPROVED COST CEILING IS ENFORCED BY NOBODY** (§9.160, #169). No `RUN.*` field declares a wall-clock limit and nothing reads one; the only automatic stop is `start_gate_watch`, which stops on a MODELLING condition and knows nothing about clocks (`src/run/run_matsim.py:959`, §9.160).
+- **AN APPROVED COST CEILING IS NOW ENFORCED BY THE RUNNER, AND THE ARM RUNNING NOW PREDATES IT** (§9.161, #169). `RUN.gate.wall_ceiling_h` is declared with **0 = no ceiling** as its default, so nothing changes for a run that names none (§9.161).
+  `start_ceiling_watch` runs beside `start_gate_watch` as a SECOND watcher, never a branch of it: `RUN.gate.interval_iterations = 0` must keep meaning "do not judge my modes" and never "do not enforce my budget" (§9.161).
+  It stops through §9.143's marker path and carries its own completion, `stopped_at_ceiling`, so a run stopped on COST is distinguishable from one stopped at a gate or by a person (§9.161). Seven tests drive it against a fake process, and **no MATSim run has yet been stopped by it** (§9.161).
+  **`20260909T015217_300it_25pct` launched before the mechanism existed**, so its 32 h approval is still enforced by hand alone (§9.161). Every future arm overlay should set the field beside the approval it encodes, and the launch banner now says so when it does not (§9.161).
+- **What the ceiling watcher does NOT yet do** (§9.161, #169). No `RUN.*` field declares a wall-clock limit and nothing reads one; the only automatic stop is `start_gate_watch`, which stops on a MODELLING condition and knows nothing about clocks (`src/run/run_matsim.py:959`, §9.160).
   The arm running now disables that watcher by a scoped departure, so it has **no automatic stop at all** — not on deviation and not on cost (§9.159, §9.160). Its ceiling is **32 h** and must be enforced by hand with `python run.py --stop` (§9.160).
   Not built this session because it sits in the launch path of the very arm it would protect and cannot be tested end-to-end without a second arm, which #66 forbids (§9.160, #169).
 
@@ -105,6 +109,7 @@
 
 ## History
 
+- §9.161 — the runner enforces its own approved ceiling
 - §9.160 — the new stack priced: +3.0 s; the ceiling has no enforcer
 - §9.159 — 336.4 GiB reclaimed, the store 93.4 % → 26.1 %; `reclaim()` is the verb
 - §9.158 — dependencies pinned; the store refuses to delete what it cannot reconstruct

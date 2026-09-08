@@ -543,8 +543,23 @@ def announce_cost(iterations, fraction, cfg):
             quote['gate_every'],
             arm_cost._fmt_hours(quote['first_gate_s']))
     print(line, flush=True)
-    print('      A STATED COST IS A BOUNDARY, NOT AN ESTIMATE. Stop the arm '
-          'at the cost that was approved.', flush=True)
+    # A stated ceiling is only a boundary if something holds it. Until #169 the
+    # sentence below was the whole mechanism, and an arm that disabled the gate
+    # watcher had no automatic stop at all - so say which of the two this run is.
+    try:
+        ceiling_h = float(cfg.get('RUN.gate.wall_ceiling_h'))
+    except Exception:                                        # noqa: BLE001
+        ceiling_h = 0.0
+    if ceiling_h > 0:
+        print('      A STATED COST IS A BOUNDARY, AND THIS ONE IS ENFORCED: '
+              'the runner stops itself at RUN.gate.wall_ceiling_h = %.1f h '
+              '(#169).' % ceiling_h, flush=True)
+    else:
+        print('      A STATED COST IS A BOUNDARY, NOT AN ESTIMATE. Stop the '
+              'arm at the cost that was approved. THIS RUN DECLARES NO '
+              'CEILING (RUN.gate.wall_ceiling_h = 0), so nothing will stop it '
+              'on cost - set it on the overlay beside the approval it encodes '
+              '(#169).', flush=True)
 
 
 def _recorded_iteration_times(log):
@@ -672,6 +687,8 @@ def values_sha256(cfg):
 # DECISIONS.md 9.7. A run that CRASHED reaches none of them and gets no record.
 RAN_TO_LAST = 'ran_to_last_iteration'
 STOPPED_AT_GATE = 'stopped_at_gate'
+# The COST boundary, as against the gate's modelling one (#169).
+STOPPED_AT_CEILING = 'stopped_at_ceiling'
 STOPPED_BY_OPERATOR = 'stopped_by_operator'
 
 
@@ -882,6 +899,10 @@ GATE_STOP = '_gate_stop.json'
 # operator's own words (9.143: a dead run says why, in the words of whoever
 # stopped it).
 OPERATOR_STOP = '_operator_stop.json'
+# The ceiling watcher's marker, written BEFORE the kill for the same
+# reason OPERATOR_STOP is (9.143): whichever process reaches the
+# terminal record first must find the stated cause already on disk.
+CEILING_STOP = '_ceiling_stop.json'
 # the reporter's verdict file, written per milestone and read by the watcher;
 # module-level so a test can point the watcher at a canned reporter
 GATE_VERDICT = '_gate_verdict.json'
@@ -954,6 +975,68 @@ def _last_ended_iteration(run_dir):
     except Exception:                                     # noqa: BLE001
         return -1
     return iters[-1][0] if iters else -1
+
+
+def start_ceiling_watch(run_dir, cfg, proc, t0):
+    """Stop the run when its wall clock passes the approved cost (#169).
+
+    A SECOND watcher, deliberately not a branch of the gate's: that one stops
+    on a modelling condition and this one on a budget, they carry different
+    departures, and `RUN.gate.interval_iterations = 0` must keep meaning "do
+    not judge my modes" rather than "do not enforce my budget". The arm that
+    exposed the gap disables the gate watcher for a good reason and therefore
+    had no automatic stop of any kind.
+
+    `RUN.gate.wall_ceiling_h` = 0 means no ceiling and is the default, so a run
+    that does not set one behaves exactly as before. The watcher can only END a
+    run, never extend one: it does not read the pace, does not project, and
+    does not negotiate - it compares the clock it was given against the number
+    the approval named.
+
+    Like the gate watcher it is a daemon and swallows its own failures: a
+    watcher that cannot read something must never kill a healthy run.
+    """
+    try:
+        ceiling_h = float(cfg.get('RUN.gate.wall_ceiling_h'))
+    except Exception:                                        # noqa: BLE001
+        return None
+    if ceiling_h <= 0:
+        return None
+    # an OBSERVER cadence, declared like the gate watcher's retry interval; it
+    # bounds only how far past its ceiling a run can get, never the ceiling
+    try:
+        poll_s = float(cfg.get('RUN.gate.ceiling_poll_s'))
+    except Exception:                                        # noqa: BLE001
+        poll_s = 60.0
+    import threading
+    limit_s = ceiling_h * 3600.0
+
+    def loop():
+        while proc.poll() is None:
+            # checked BEFORE the sleep, so a ceiling already passed at launch
+            # stops the run at once rather than one cadence later
+            spent = time.time() - t0
+            if spent < limit_s:
+                time.sleep(poll_s)
+                continue
+            verdict = dict(stopped=_now(), ceiling_h=ceiling_h,
+                           wall_s=round(spent, 1),
+                           reached_iteration=_last_ended_iteration(run_dir))
+            try:
+                with open(os.path.join(run_dir, CEILING_STOP), 'w',
+                          encoding='utf-8', newline='\n') as fh:
+                    json.dump(verdict, fh, indent=1)
+            except OSError:
+                pass
+            print('ceiling watcher: stopping the run - %.2f h spent against an '
+                  'approved ceiling of %.2f h (RUN.gate.wall_ceiling_h)'
+                  % (spent / 3600.0, ceiling_h), flush=True)
+            proc.kill()
+            return
+
+    t = threading.Thread(target=loop, daemon=True, name='ceiling-watch')
+    t.start()
+    return t
 
 
 def start_gate_watch(run_dir, cfg, proc):
@@ -1115,6 +1198,23 @@ def _gate_stop_cause(run_dir):
                ' | '.join(lines[:10])))
 
 
+def _ceiling_stop_cause(run_dir):
+    """The cause composed from the ceiling watcher's marker, or None."""
+    path = os.path.join(run_dir, CEILING_STOP)
+    if not os.path.exists(path):
+        return None
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+    return ('Stopped automatically by the ceiling watcher at %.2f h against an '
+            'approved ceiling of %s h (RUN.gate.wall_ceiling_h), at iteration '
+            '%s. The run is citable at that iteration and nowhere past it; it '
+            'is NOT a complete arm (9.143, #169).'
+            % ((doc.get('wall_s') or 0) / 3600.0, doc.get('ceiling_h'),
+               doc.get('reached_iteration')))
+
+
 def _operator_stop_cause(run_dir):
     """The cause the operator gave to `--stop`, read from its marker, or None."""
     path = os.path.join(run_dir, OPERATOR_STOP)
@@ -1136,6 +1236,13 @@ def _stop_marker(run_dir):
     gate = _gate_stop_cause(run_dir)
     if gate:
         return gate, STOPPED_AT_GATE
+    # The gate is read first because a modelling breach says more about the
+    # model than a budget does; a run that hit both is described by the more
+    # informative boundary. The operator is read last because a person who
+    # stopped a run already knows why.
+    ceiling = _ceiling_stop_cause(run_dir)
+    if ceiling:
+        return ceiling, STOPPED_AT_CEILING
     op = _operator_stop_cause(run_dir)
     if op:
         return ('Stopped by the operator through run.py --stop: %s' % op,
@@ -1513,6 +1620,10 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
             # the runner gates its own run every RUN.gate.interval_iterations
             # (9.137): a failing hard bar stops the JVM from inside
             start_gate_watch(run_dir, cfg, proc)
+            # and the runner enforces its own approved cost (#169): the gate
+            # watcher stops on a modelling condition and knows nothing about
+            # clocks, so an arm that disables it had no automatic stop at all
+            start_ceiling_watch(run_dir, cfg, proc, t0)
             rc = proc.wait()
     except BaseException:
         # Ctrl+C or a harness kill that still unwinds: record the abort and
