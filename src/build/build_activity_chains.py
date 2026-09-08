@@ -76,6 +76,37 @@ HTS = _city.path('data/processed/hts')
 POP = _city.path('demand/population')
 OUT = _city.path('demand/plans')
 
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. Every file this writes - the
+# trip table and the four binding tables, for each day type, plus the report -
+# comes out of ONE tour-generation pass over the same inputs, so the
+# declaration is a single glob rather than a row per file. It DOES descend
+# from OpenStreetMap and the manifest should say so: destinations are placed
+# on Overpass POIs and CBD building footprints (`dest_placement` records
+# which), and the road network decides the network factors applied to every
+# straight-line distance.
+OUTPUT_INPUTS = {
+    'demand/plans/*': [
+        'data/processed/hts/hts_purpose.csv',
+        'data/processed/hts/hts_mode.csv',
+        'data/processed/zones/zones_SA1.gpkg',
+        'data/processed/zones/zones_SA1.csv',
+        'data/processed/zones/zones_LGA.gpkg',
+        'data/processed/zones/sa1_to_lga.csv',
+        'data/processed/landuse/D1_zone_attractions_SA1.csv',
+        'data/processed/landuse/D1_poi.csv',
+        'data/processed/landuse/D1_buildings_cbd.csv',
+        'data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv',
+        'data/processed/network/A1_road_edges.csv',
+        'data/processed/observed/light_day_factors.csv',
+        'data/processed/observed/freight_day_factors.csv',
+        'data/processed/observed/freight_hourly_profile.csv',
+        'data/processed/validation/road_aadt_targets.csv',
+        'demand/population/B1_households.csv',
+        'demand/population/B1_synthetic_population.csv',
+        'params/C2_network_factors.json'],
+}
+
 SEED = CFG.get('B.seed.master')
 # Purposes that choose a destination: each one has an HTS journey distance to
 # calibrate its gravity decay against, and an attractor set to draw from.
@@ -3280,6 +3311,16 @@ def main(seed=SEED, max_persons=None, day_types=None):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     ap = argparse.ArgumentParser()
     ap.add_argument('--seed', type=int, default=SEED)
     ap.add_argument('--max-persons', type=int, default=None)

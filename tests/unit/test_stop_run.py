@@ -122,3 +122,116 @@ def test_a_stop_does_not_end_a_sibling_arm():
     ended = [t for t in running if t == want]
     assert ended == ['citysim_run_20260907T030352']
     assert 'citysim_run_20260906T233901' not in ended
+
+
+# ------------------------------------- the stop reaches the metric extraction
+#
+# THE COMPOSITION NO TEST EXERCISED. `run.py --stop` returns from its own
+# branch; the extraction that writes `_metrics.json` lives after `run()`
+# returns in the OTHER branch, and `--stop` kills the harness that would have
+# returned there. So an operator-stopped arm never got a `_metrics.json` - and
+# that file is precisely what the results store's trim guard reads to decide a
+# raw directory is past its extraction window. Thirteen directories were held
+# on the raw cap in that state on 7 September 2026, and the guard was given a
+# grace (9.155) so they could age out at all. This pins the other half: the
+# stop itself now ends where the harness path ends.
+import time                                                        # noqa: E402
+from types import SimpleNamespace                                  # noqa: E402
+
+LOG = (
+    '2026-09-04T10:00:00,000  INFO AbstractController:137 ### ITERATION 0 BEGINS\n'
+    '2026-09-04T10:05:00,000  INFO AbstractController:184 ### ITERATION 0 ENDS\n'
+    '2026-09-04T10:05:00,000  INFO AbstractController:137 ### ITERATION 1 BEGINS\n'
+    '2026-09-04T10:10:00,000  INFO AbstractController:184 ### ITERATION 1 ENDS\n'
+)
+
+
+@pytest.fixture
+def stopping(tmp_path, monkeypatch):
+    """A running arm wired so `stop_run` acts on it without killing anything.
+
+    Everything the stop triggers is recorded rather than performed: the record
+    is real (it is what the extraction depends on), the extraction, the mirror
+    and the trim are observed.
+    """
+    d = tmp_path / '20260904T100000_300it_25pct'
+    d.mkdir()
+    card = dict(
+        status='running', scenario='S2', day='WEEKDAY', fraction=0.25,
+        sample_pct=25.0, iterations=300, seed=20260810, threads=10, xmx='40g',
+        overrides={}, controler_sha256='c' * 64, inputs_sha256='i' * 64,
+        values_sha256='v' * 64, config_snapshot='_config.json',
+        sample=dict(persons_in=1000, persons_kept=250,
+                    transit_capacity_scaled=[]),
+        started=time.strftime('%Y-%m-%dT%H:%M:%S'), ended=None, wall_s=None,
+        rc=None, pid=os.getpid(), jvm_pid=os.getpid() + 1)
+    _write(d, '_meta.json', card)
+    (d / 'matsim.log').write_text(LOG, encoding='utf-8')
+
+    seen = SimpleNamespace(extracted=[], mirrored=[], trimmed=[], record_at=[])
+
+    def fake_extract(run_dir):
+        seen.extracted.append(run_dir)
+        # THE RECORD MUST ALREADY BE THERE: the extractor reads `_run.json` for
+        # the run's identity and its reached_iteration, so an extraction
+        # ordered before the close-out would read nothing.
+        seen.record_at.append(os.path.exists(os.path.join(run_dir, '_run.json')))
+        return True
+
+    monkeypatch.setattr(run_matsim, 'extract_metrics', fake_extract)
+    monkeypatch.setattr(run_matsim.results_store, 'resolve', lambda name: str(d))
+    monkeypatch.setattr(run_matsim.results_store, 'rename', lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.results_store, 'process', lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.results_store, 'mirror',
+                        lambda run_dir: seen.mirrored.append(run_dir))
+    monkeypatch.setattr(run_matsim.results_store, 'trim',
+                        lambda *a, **k: seen.trimmed.append(a) or [])
+    monkeypatch.setattr(run_matsim.summarise_run, 'summarise',
+                        lambda *a, **k: None)
+    monkeypatch.setattr(run_matsim.subprocess, 'run', lambda cmd, **k: None)
+    monkeypatch.setattr(run_matsim.time, 'sleep', lambda s: None)
+    return SimpleNamespace(dir=d, seen=seen,
+                           name='20260904T100000_300it_25pct')
+
+
+def test_an_operator_stop_reaches_the_metrics_extraction(stopping):
+    """The defect: `--stop` closed the arm out and stopped there."""
+    dead = run_matsim.stop_run(stopping.name, 'stopped at the approved gate')
+    assert stopping.seen.extracted == [dead], (
+        'an operator-stopped arm must reach the same _metrics.json extraction '
+        'run.py performs for the harness path, or the store keeps its bulk')
+
+
+def test_the_extraction_happens_after_the_record_is_written(stopping):
+    """Order is part of the composition: the extractor reads `_run.json`."""
+    run_matsim.stop_run(stopping.name, 'stopped at the approved gate')
+    assert stopping.seen.record_at == [True]
+
+
+def test_the_extracted_metrics_are_mirrored_into_processed(stopping):
+    """`_metrics.json` lands after close_out's own mirror, so it needs another.
+
+    Findings live in processed forever; the bulk is a budgeted cache. A metrics
+    file that stayed only in raw would die with the bulk it was extracted from.
+    """
+    dead = run_matsim.stop_run(stopping.name, 'stopped at the approved gate')
+    assert dead in stopping.seen.mirrored
+
+
+def test_the_stop_trims_the_cache_it_just_freed(stopping):
+    """The stop ends under budget, the way the harness path does."""
+    run_matsim.stop_run(stopping.name, 'stopped at the approved gate')
+    assert stopping.seen.trimmed, 'the raw cache is trimmed after a stop'
+
+
+def test_a_stop_that_could_not_be_recorded_extracts_nothing(stopping,
+                                                            monkeypatch):
+    """No record, no extraction - the extractor has nothing to read.
+
+    `close_out` refuses to manufacture a record it cannot state the identity
+    of, and that refusal must not be routed around here: the bulk is then left
+    to the store's own grace (9.155) rather than extracted blind.
+    """
+    monkeypatch.setattr(run_matsim, 'close_out', lambda *a, **k: None)
+    run_matsim.stop_run(stopping.name, 'stopped')
+    assert stopping.seen.extracted == []

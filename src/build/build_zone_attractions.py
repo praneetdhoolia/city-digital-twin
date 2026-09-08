@@ -39,6 +39,33 @@ LU = _city.path('data/processed/landuse')
 READERS = _city.readers()
 OUT = _city.path('data/processed/landuse')
 
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The zone table is the package's
+# one genuinely MIXED artefact: its identity, tier, area, centroid and
+# population come from the ABS statistical geography and census, while every
+# category count, the job index built from them and the attraction terms are
+# OpenStreetMap POIs joined into the zone. A reader that touches only the
+# first group carries no share-alike obligation, and the `#` key below is
+# what lets it say so - without it the whole file is one undivided ancestor
+# and the synthetic population inherits an ODbL label it does not earn.
+OUTPUT_INPUTS = {
+    'data/processed/landuse/D1_zone_attractions_SA1.csv': [
+        'data/processed/zones/zones_SA1.gpkg',
+        'data/processed/landuse/D1_poi.csv',
+        'data/processed/census'],
+    'data/processed/landuse/D1_zone_attractions_SA1.csv'
+    '#SA1_CODE21,zone_tier,area_km2,x_mga56,y_mga56,lon,lat,population': [
+        'data/processed/zones/zones_SA1.gpkg',
+        'data/processed/census'],
+    'data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv': [
+        'data/processed/zones/zones_SA1.gpkg',
+        'data/processed/census'],
+    'data/processed/landuse/_attractions_report.json': [
+        'data/processed/zones/zones_SA1.gpkg',
+        'data/processed/landuse/D1_poi.csv',
+        'data/processed/census'],
+}
+
 # relative workplace intensity per POI group (jobs per establishment, indicative)
 JOB_WEIGHT = CFG.get('D.attraction.job_weight_by_category')
 # relative pull for each trip purpose
@@ -130,6 +157,16 @@ def main(out_dir=None):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     import argparse
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', default=None,

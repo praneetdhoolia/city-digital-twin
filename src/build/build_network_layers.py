@@ -38,6 +38,22 @@ import registry as _registry  # noqa: E402
 CFG = _registry.load()
 
 OUT = _city.path('data/processed/network')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. Every layer here is cut from the
+# same Overpass harvest in one pass - the road, active, signal and parking
+# extracts, with the elevation raster attached afterwards - so one glob is
+# the honest statement rather than a row per file. The regulated speed-zone
+# layer shares this directory but is landed by the city's own TfNSW adapter
+# and is not this script's output.
+OUTPUT_INPUTS = {
+    'data/processed/network/*': [
+        'networks/osm/roads.osm',
+        'networks/osm/footways.osm',
+        'networks/osm/signals.osm',
+        'networks/osm/parking.osm',
+        'data/raw/dem'],
+}
 os.makedirs(OUT, exist_ok=True)
 
 # ---- defaults applied where OSM is silent (all recorded in DECISIONS.md) ----
@@ -281,6 +297,16 @@ def build_parking():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     r = build_roads()
     print('A1 road edges         : %d  | %.1f km | imputed %s' % (r[0], r[2] / 1000, r[1]), flush=True)
     f = build_footways()

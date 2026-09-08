@@ -5,6 +5,12 @@
 # Every city-specific rule is written `cities/*/...`, so a second city inherits
 # the same boundary without a second copy of this file.
 
+# --- the build's own wall time ---
+# Not part of the data package and not a manifest row: a wall time differs on
+# every build, so a hashed artefact must never carry one. Regenerable by
+# re-running the builders; read with `python src/build/build_timing.py`.
+cities/*/data/_build_timing.json
+
 # --- immutable third-party downloads (~1.8 GiB) ---
 cities/*/data/raw/**
 !cities/*/data/raw/provenance_*.json

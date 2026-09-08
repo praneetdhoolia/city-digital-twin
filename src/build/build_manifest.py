@@ -5,6 +5,7 @@ Deliverable 2 of the proposal is an open data package with every derived input,
 its provenance, licence status and processing lineage. This walks the tree,
 hashes everything, counts rows, and merges the per-stage provenance records.
 """
+import ast
 import io
 import os
 import re
@@ -53,6 +54,12 @@ SOURCES = _city.descriptor().get('sources') or []
 # artefact of any city.
 DERIVED_LICENCES = _city.descriptor().get('derived_licences') or {}
 PACKAGE_LICENCE = _city.descriptor().get('package_licence') or ''
+# The share-alike licence labels THIS CITY declares, taken from the sources it
+# marked `share_alike`. The framework names no licence of its own: a city that
+# harvests a different share-alike source declares that source's label and the
+# lineage check follows it.
+SHARE_ALIKE_LICENCES = tuple(sorted(
+    {s['licence'] for s in SOURCES if s.get('share_alike') and s.get('licence')}))
 # What a provenance record or an acquisition log IS: this package's own record
 # of itself. It is not a source that was retrieved from anywhere, and it never
 # carries a retrieval date (9.151, #149).
@@ -251,7 +258,61 @@ _INPUT_RE = re.compile(
     r"""['"]((?:data/raw|data/processed|networks/osm|networks/matsim"""
     r"""|schedules|demand|params|scenarios)[A-Za-z0-9_./\-]*)""")
 _RAW_PREFIXES = ('data/raw', 'networks/osm', 'schedules/raw')
+# The package's own layer roots - the same set `_INPUT_RE` alternates over, as
+# a tuple, so a path built by a `*.path(...)` call is admitted on the same
+# terms as one written as a literal.
+_LAYER_PREFIXES = ('data/raw', 'data/processed', 'networks/osm',
+                   'networks/matsim', 'schedules', 'demand', 'params',
+                   'scenarios')
 _script_inputs_cache = {}
+
+
+# #159: OUTPUT-LEVEL LINEAGE. The regex above finds every path a
+# producing script mentions, and until now every one of them was credited to
+# every file that script writes. A script with one output got a correct
+# answer; a script with many got an ancestry as wide as its whole source, and
+# 129 rows named an OpenStreetMap ancestor they may never have carried. A
+# provenance wider than the truth is still a wrong provenance, and on the
+# licence side it decides whether a row is ODbL share-alike or CC-BY.
+#
+# So a producing script may DECLARE which of its inputs feed which of its
+# outputs, in a module-level `OUTPUT_INPUTS` mapping:
+#
+#     OUTPUT_INPUTS = {
+#         'demand/population/B1_households.csv': [
+#             'data/processed/landuse/D1_zone_attractions_SA1.csv#SA1_CODE21,population',
+#             'data/processed/census'],
+#     }
+#
+# Keys are city-relative output paths (or fnmatch globs); values are the
+# city-relative INPUT paths that output descends from. A value may carry a
+# `#col,col` selector, which resolves through the input producer's OWN
+# declaration for exactly that column subset - the granularity at which a
+# mixed-provenance table (ABS columns beside OSM POI counts) stops being one
+# undivided ancestor.
+#
+# WHY A DECLARATION IN THE SCRIPT, and not the two alternatives weighed:
+#   - in the script's `_*_report.json`: a report exists only after that script
+#     has run, so a fresh clone could determine no row's licence at all; and a
+#     gitignored, regenerated file is not somewhere a licence-bearing claim
+#     can be reviewed in a diff.
+#   - derived from the columns an output carries: cannot decide for the
+#     `.xml.gz` and `.gpkg` outputs that are most of the package, and cannot
+#     tell an OSM-placed coordinate from an ABS zone centroid.
+#   - a table in this file: it would name one city's artefacts inside the
+#     framework, which the hard constraint forbids outright.
+# The declaration sits beside the code that writes the output, is read
+# STATICALLY (never imported, never executed), and moves in the same diff as
+# the write it describes.
+#
+# WHERE NOTHING IS DECLARED the script-level union is still used, but it is
+# recorded as such: `lineage_scope` says `script` and the share-alike verdict
+# says `undetermined` rather than guessing in either direction. The union is a
+# sound OVER-approximation, so one conclusion survives without a declaration:
+# a union holding no share-alike source proves the true ancestry holds none.
+_OUTPUT_INPUTS_NAME = 'OUTPUT_INPUTS'
+_declared_cache = {}
+_sole_cache = {}
 
 
 def _script_path(token):
@@ -261,6 +322,39 @@ def _script_path(token):
         return token
     cand = os.path.join('cities', _city.CITY, token)
     return cand if os.path.exists(cand) else None
+
+
+def _city_path_calls(txt):
+    """City-relative paths built by a MULTI-ARGUMENT `*.path(...)` call.
+
+    `_city.path('networks', 'matsim', 'schedules')` is invisible to a regex
+    over string literals, and the miss is not academic: the charging-dwell
+    builder names its only OSM-descended input that way, so the union that
+    the share-alike verdict rests on was missing it entirely. The whole
+    over-approximation argument for a `no` verdict depends on the extractor
+    not missing an input, so the two forms this repository actually uses are
+    both read.
+    """
+    out = set()
+    try:
+        tree = ast.parse(txt)
+    except SyntaxError:
+        return out
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        fn = node.func
+        if not (isinstance(fn, ast.Attribute) and fn.attr == 'path'):
+            continue
+        parts = []
+        for a in node.args:
+            if isinstance(a, ast.Constant) and isinstance(a.value, str):
+                parts.append(a.value.replace(os.sep, '/').strip('/'))
+            else:
+                break
+        if len(parts) > 1:
+            out.add('/'.join(parts))
+    return out
 
 
 def _script_inputs(token):
@@ -276,38 +370,249 @@ def _script_inputs(token):
             txt = ''
         for m in _INPUT_RE.findall(txt):
             out.add(m.replace(os.sep, '/').rstrip('/'))
+        out |= _city_path_calls(txt)
+    return {m for m in out if m.startswith(_LAYER_PREFIXES)}
+
+
+def _script_declarations(token):
+    """A producing script's `OUTPUT_INPUTS` mapping, read WITHOUT running it.
+
+    The module is parsed, the module-level assignment is located and its value
+    is `ast.literal_eval`ed. A script that does not declare returns {}. A
+    declaration that is not a literal mapping of str -> sequence of str is
+    reported and ignored, never half-read.
+    """
+    if token in _declared_cache:
+        return _declared_cache[token]
+    _declared_cache[token] = out = {}
+    p = _script_path(token)
+    if not p:
+        return out
+    try:
+        tree = ast.parse(io.open(p, encoding='utf-8', errors='replace').read())
+    except (OSError, SyntaxError) as e:                      # noqa: BLE001
+        print('warn: %s (%s)' % (p, e))
+        return out
+    for node in tree.body:
+        if not isinstance(node, ast.Assign):
+            continue
+        if not any(isinstance(t, ast.Name) and t.id == _OUTPUT_INPUTS_NAME
+                   for t in node.targets):
+            continue
+        try:
+            value = ast.literal_eval(node.value)
+        except ValueError:
+            print('warn: %s declares a non-literal %s' % (p, _OUTPUT_INPUTS_NAME))
+            continue
+        if not isinstance(value, dict):
+            print('warn: %s declares a non-mapping %s' % (p, _OUTPUT_INPUTS_NAME))
+            continue
+        for k, v in value.items():
+            if (isinstance(k, str) and isinstance(v, (list, tuple))
+                    and all(isinstance(x, str) for x in v)):
+                out[k.replace(os.sep, '/')] = tuple(v)
     return out
 
 
-def raw_ancestors(rel, _seen=None):
-    """Every RAW layer path a derived file descends from, transitively.
+def _declared_inputs(rel, entry, selector=''):
+    """(inputs, True) where a producing script declares this output's inputs.
 
-    The producing script of `rel` names the paths it reads; a raw path is an
-    ancestor, and a processed one is resolved through ITS producer in turn.
-    Cycles and self-references terminate on `_seen`.
+    `selector` is the `#col,col` suffix a consumer asked for; the declaration
+    must carry that exact key or the request is undeclared - a column subset
+    nobody wrote down is not evidence about which ancestor reached it. Exact
+    keys win over globs, and a longer glob over a shorter one.
+    """
+    want = rel + selector
+    best, best_len, found = None, -1, False
+    for token in (entry or '').split(' + '):
+        decl = _script_declarations(token)
+        if not decl:
+            continue
+        if want in decl:
+            return set(decl[want]), True
+        if selector:
+            continue
+        for pat, ins in decl.items():
+            if '#' in pat:
+                continue
+            if fnmatch.fnmatch(rel, pat) and len(pat) > best_len:
+                best, best_len, found = set(ins), len(pat), True
+    if found:
+        return (best or set()), True
+    # A consumer that names a DIRECTORY (`data/processed/network`) rather than
+    # a file resolves to the union of every declared output under it, which is
+    # the widest thing reading that directory could have pulled - and is still
+    # output-level, because each of those outputs was declared.
+    union, any_under = set(), False
+    for token in (entry or '').split(' + '):
+        for pat, ins in _script_declarations(token).items():
+            if '#' in pat:
+                continue
+            if pat.startswith(rel.rstrip('/') + '/'):
+                union |= set(ins)
+                any_under = True
+    return (union, True) if any_under else (set(), False)
+
+
+def index_outputs(paths):
+    """Record which producing script writes exactly ONE manifest row.
+
+    Such a script cannot mis-attribute: the union of everything its source
+    names IS that one output's ancestry. Called by main() before any row is
+    resolved, so the scope of those rows is `output` without a declaration.
+    """
+    counts = {}
+    for rel in paths:
+        entry = lineage_for(rel)
+        if entry:
+            counts.setdefault(entry, []).append(rel)
+    _sole_cache.clear()
+    for entry, rels in counts.items():
+        if len(rels) == 1:
+            _sole_cache[entry] = rels[0]
+
+
+def explicit_share_alike(rel):
+    """True where the city EXPLICITLY declares this derived path share-alike.
+
+    `derived_licences` is the city's own reviewed statement that a built layer
+    carries the share-alike obligation - the scenario schedules were put there
+    on measured evidence (357,893 OSM route link references). Reading such a
+    file is therefore proof enough that the obligation reaches the reader,
+    without re-deriving the whole chain behind it. The PACKAGE default is not
+    such a statement, so only a matching glob counts.
+    """
+    best = ''
+    for pat in DERIVED_LICENCES:
+        if fnmatch.fnmatch(rel, pat) and len(pat) > len(best):
+            best = pat
+    return bool(best) and is_share_alike(DERIVED_LICENCES.get(best) or '')
+
+
+def ancestry(rel, selector='', _seen=None):
+    """(proven, possible, scope) for one manifest path.
+
+    `possible` is every raw layer (or explicitly share-alike derived layer)
+    the file MIGHT descend from; `proven` is the subset reached without ever
+    falling back to a script-level union. `proven` is always a subset of
+    `possible`, and the gap between them is exactly what #159 was hiding.
+
+    scope is `raw` (the file IS a raw download), `output` (every step of the
+    resolution was output-level - the producing script declared this output's
+    inputs, or it writes this one output), `script` (some step fell back to
+    the script-level union), or `none` (no producing script is known).
     """
     _seen = set() if _seen is None else _seen
     if rel in _seen:
-        return set()
+        return set(), set(), 'output'
     _seen.add(rel)
     if rel.startswith(_RAW_PREFIXES):
-        return {rel}
+        return {rel}, {rel}, 'raw'
     entry = lineage_for(rel)
     if not entry:
-        return set()
-    found = set()
-    for token in entry.split(' + '):
-        for dep in _script_inputs(token):
-            # Skip only what THIS script produces. A string-prefix test would
-            # also drop `params` for `params/C1.json` - and every layer root a
-            # script names as an input.
-            if dep == rel or lineage_for(dep) == entry:
-                continue
-            found |= raw_ancestors(dep, _seen)
-    return found
+        return set(), set(), 'none'
+    deps, declared = _declared_inputs(rel, entry, selector)
+    if declared:
+        scope = 'output'
+    elif selector:
+        # the column subset was asked for and nobody declared it: fall back to
+        # the whole file, where the imprecision is then recorded
+        return ancestry(rel, '', _seen)
+    else:
+        deps = set()
+        for token in entry.split(' + '):
+            deps |= _script_inputs(token)
+        scope = 'output' if _sole_cache.get(entry) == rel else 'script'
+    proven, possible = set(), set()
+    for dep in sorted(deps):
+        dep, _, sel = dep.partition('#')
+        dep = dep.replace(os.sep, '/').rstrip('/')
+        if dep == rel:
+            continue
+        # In the UNDECLARED fallback, skip what this script produces: the
+        # regex cannot tell a script's outputs from its inputs, and a string
+        # prefix test would also drop `params` for `params/C1.json`. A
+        # DECLARATION is the author saying this input feeds this output, so
+        # it stands even for a sibling written by the same producer pair -
+        # the zone table really is built from the POI table beside it.
+        if not declared and lineage_for(dep) == entry:
+            continue
+        sel_arg = ('#' + sel) if sel else ''
+        sub_p, sub_a, _sub_scope = ancestry(dep, sel_arg, _seen)
+        # A city's blanket `derived_licences` glob is a statement about a
+        # WHOLE file. Where the reader narrowed it to columns and the input's
+        # producer declared that subset, the blanket claim is not evidence
+        # about what was read - which is the entire point of the selector.
+        narrowed = bool(sel_arg) and _declared_inputs(
+            dep, lineage_for(dep), sel_arg)[1]
+        if explicit_share_alike(dep) and not narrowed:
+            sub_p = sub_p | {dep}
+            sub_a = sub_a | {dep}
+        possible |= sub_a
+        if scope == 'output':
+            proven |= sub_p
+    return proven, possible, scope
 
 
-def derived_provenance(rel, prov):
+def is_share_alike(licence):
+    """True where a licence label names a share-alike licence this city
+    declares. The labels come from the city's own `sources`, never from a
+    list of licence names typed into the framework."""
+    return any(lic and lic in (licence or '') for lic in SHARE_ALIKE_LICENCES)
+
+
+def share_alike_sources(anc):
+    """The declared sources with `share_alike` true that cover an ancestor."""
+    out = []
+    for src in SOURCES:
+        if not src.get('share_alike'):
+            continue
+        for prefix in src.get('provides') or []:
+            pfx = prefix.strip('/')
+            if any(a == pfx or a.startswith(pfx + '/') for a in anc):
+                out.append(src)
+                break
+    return out
+
+
+def share_alike_verdict(proven, possible, scope):
+    """`yes`, `no` or `undetermined` for one row.
+
+    `yes` needs a PROVEN share-alike ancestor: claiming one from a
+    script-level union is exactly the error #159 is about, and it is the
+    direction that over-restricts a row.
+
+    `no` may rest on the POSSIBLE set, because that set OVER-approximates in
+    the one direction #159 names - a script's whole input list credited to
+    each of its outputs - so a union holding no share-alike source proves the
+    true ancestry holds none. The residual risk is the opposite one: static
+    extraction can MISS an input that is neither a path literal nor a
+    `*.path(...)` call. That is not left to trust either. The row's licence is
+    an independent, human-reviewed claim, and `check_lineage_licence()` fails
+    on any disagreement in EITHER direction - which is how the charging-dwell
+    builder's dynamically named input was found in the first place.
+
+    Between the two - a share-alike ancestor that is possible but not proven -
+    the row says `undetermined`. It is not a licence, and it is not a guess.
+    """
+    if scope == 'none':
+        return 'undetermined'
+    if holds_share_alike(proven):
+        return 'yes'
+    if holds_share_alike(possible):
+        return 'undetermined'
+    return 'no'
+
+
+def holds_share_alike(paths):
+    """True where a path set carries the share-alike obligation - either
+    through a declared share-alike SOURCE, or through a derived layer the
+    city itself declared share-alike."""
+    return bool(share_alike_sources(paths)) or any(explicit_share_alike(p)
+                                                   for p in paths)
+
+
+def derived_provenance(rel, prov, anc):
     """(source, source_url, retrieved) for a DERIVED file.
 
     source/url: the DECLARED sources covering its raw ancestors, in the
@@ -316,7 +621,6 @@ def derived_provenance(rel, prov):
     vintage of the newest input the layer could embody, an upper bound on how
     old its data is, never a build time.
     """
-    anc = raw_ancestors(rel)
     if not anc:
         return '', '', ''
     names, urls = [], []
@@ -386,10 +690,9 @@ def licence_for(rel, stage, pr):
     return DERIVED_LICENCES.get(best) or PACKAGE_LICENCE
 
 
-def main():
-    prov = provenance_records()
-
-    files = []
+def scan_paths():
+    """Every city-relative path the manifest will carry, in walk order."""
+    out = []
     for base in SCAN:
         base = os.path.join(ROOT, base)
         if not os.path.isdir(base):
@@ -397,41 +700,62 @@ def main():
         for dirpath, _, names in os.walk(base):
             for n in sorted(names):
                 p = os.path.join(dirpath, n)
-                ext = os.path.splitext(n)[1].lower()
-                if ext in SKIP_EXT or '__pycache__' in dirpath:
+                if os.path.splitext(n)[1].lower() in SKIP_EXT \
+                        or '__pycache__' in dirpath:
                     continue
                 rel = os.path.relpath(p, ROOT).replace('\\', '/')
                 if rel.startswith(SKIP_DIRS):
                     continue
-                sz = os.path.getsize(p)
-                stage = 'raw' if rel.startswith(('data/raw', 'networks/osm', 'schedules/raw')) \
-                    else 'processed'
-                pr = record_for(rel, prov) if stage == 'raw'                     else prov.get(rel, {})
-                src = source_for(rel) if stage == 'raw' else None
-                source = (pr.get('description') or pr.get('source')
-                          or (src or {}).get('name', ''))
-                source_url = (pr.get('url') or pr.get('s3_key')
-                              or (src or {}).get('url', ''))
-                retrieved = pr.get('retrieved', '')
-                name = os.path.basename(rel)
-                if (stage == 'raw' and not source
-                        and (name.startswith('provenance')
-                             or name.startswith('_'))):
-                    # The package's own record of itself, not acquired data -
-                    # the same class licence_for() already recognises.
-                    source = PACKAGE_RECORD
-                if stage != 'raw' and not source:
-                    # 9.151 (#149): a derived file's provenance is its raw
-                    # ancestry, resolved from the lineage rather than typed in.
-                    source, source_url, retrieved = derived_provenance(rel, prov)
-                files.append(dict(
-                    path=rel, bytes=sz, rows=count_rows(p),
-                    sha256=sha256(p) if sz < 300 * 1 << 20 else 'skipped_large',
-                    stage=stage,
-                    produced_by=lineage_for(rel),
-                    source=source, source_url=source_url,
-                    licence=licence_for(rel, stage, pr),
-                    retrieved=retrieved))
+                out.append(rel)
+    return out
+
+
+def main():
+    prov = provenance_records()
+    paths = scan_paths()
+    # which producing scripts write exactly one row - resolved before any row,
+    # because a sole output's script-level union IS its output-level ancestry
+    index_outputs(paths)
+
+    files = []
+    for rel in paths:
+        p = os.path.join(ROOT, rel.replace('/', os.sep))
+        sz = os.path.getsize(p)
+        stage = 'raw' if rel.startswith(('data/raw', 'networks/osm', 'schedules/raw')) \
+            else 'processed'
+        pr = record_for(rel, prov) if stage == 'raw' else prov.get(rel, {})
+        src = source_for(rel) if stage == 'raw' else None
+        source = (pr.get('description') or pr.get('source')
+                  or (src or {}).get('name', ''))
+        source_url = (pr.get('url') or pr.get('s3_key')
+                      or (src or {}).get('url', ''))
+        retrieved = pr.get('retrieved', '')
+        name = os.path.basename(rel)
+        proven, possible, scope = ancestry(rel)
+        if (stage == 'raw' and not source
+                and (name.startswith('provenance')
+                     or name.startswith('_'))):
+            # The package's own record of itself, not acquired data -
+            # the same class licence_for() already recognises.
+            source = PACKAGE_RECORD
+            proven, possible, scope = set(), set(), 'output'
+        if stage != 'raw' and not source:
+            # 9.151 (#149): a derived file's provenance is its raw
+            # ancestry, resolved from the lineage rather than typed in.
+            # #159: that ancestry is now OUTPUT-level where the
+            # producing script declares it, and says so in `lineage_scope`.
+            source, source_url, retrieved = derived_provenance(rel, prov,
+                                                               possible)
+        files.append(dict(
+            path=rel, bytes=sz, rows=count_rows(p),
+            sha256=sha256(p) if sz < 300 * 1 << 20 else 'skipped_large',
+            stage=stage,
+            produced_by=lineage_for(rel),
+            source=source, source_url=source_url,
+            licence=licence_for(rel, stage, pr),
+            retrieved=retrieved,
+            lineage_scope=scope,
+            share_alike_ancestor=share_alike_verdict(proven, possible, scope)))
 
     total = sum(f['bytes'] for f in files)
     man = dict(
@@ -445,10 +769,16 @@ def main():
         by_stage={s: sum(1 for f in files if f['stage'] == s) for s in ('raw', 'processed')},
         bytes_by_stage={s: sum(f['bytes'] for f in files if f['stage'] == s)
                         for s in ('raw', 'processed')},
+        by_lineage_scope={s: sum(1 for f in files if f['lineage_scope'] == s)
+                          for s in ('raw', 'output', 'script', 'none')},
+        by_share_alike_ancestor={
+            v: sum(1 for f in files if f['share_alike_ancestor'] == v)
+            for v in ('yes', 'no', 'undetermined')},
         files=files)
     json.dump(man, open(os.path.join(ROOT, 'data', 'MANIFEST.json'), 'w', newline='\n'), indent=2)
     cols = ['path', 'stage', 'bytes', 'rows', 'produced_by', 'source', 'source_url',
-            'licence', 'retrieved', 'sha256']
+            'licence', 'retrieved', 'lineage_scope', 'share_alike_ancestor',
+            'sha256']
     with open(os.path.join(ROOT, 'data', 'MANIFEST.csv'), 'w', newline='',
           encoding='utf-8') as fh:
         # `newline=''` hands the line ending to the csv module, whose default
@@ -462,6 +792,8 @@ def main():
         w.writerows(files)
     print('files=%d  total=%.2f GiB' % (len(files), man['total_gib']))
     print('by stage:', man['by_stage'], man['bytes_by_stage'])
+    print('lineage scope:', man['by_lineage_scope'])
+    print('share-alike ancestor:', man['by_share_alike_ancestor'])
     print('\nlargest 12:')
     for f in sorted(files, key=lambda x: -x['bytes'])[:12]:
         print('  %10.1f MB  %s' % (f['bytes'] / 1e6, f['path']))

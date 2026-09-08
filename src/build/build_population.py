@@ -44,6 +44,38 @@ CFG = _registry.load()
 
 LU = _city.path('data/processed/landuse')
 OUT = _city.path('demand')
+
+# Which of this script's inputs feed which of its outputs (#159). Read
+# statically by src/build/build_manifest.py, which without it credits every
+# path a script mentions to every file it writes - and that is how the
+# synthetic population came to name an OpenStreetMap ancestor it does not
+# carry. The zone table it reads IS partly OSM (its POI counts and the
+# attraction terms built from them are Overpass features), but this
+# synthesiser touches none of those columns: it takes the ABS zone identity,
+# tier, area, centroid and population, so the `#` selector names exactly the
+# columns read and the ancestry resolves through the zone builder's own
+# declaration for that subset.
+# The declaration is a LITERAL mapping: build_manifest.py reads it with
+# ast.literal_eval and never imports this module, so no name may appear in it.
+OUTPUT_INPUTS = {
+    'demand/population/B1_households.csv': [
+        'data/processed/landuse/D1_zone_attractions_SA1.csv'
+        '#SA1_CODE21,zone_tier,area_km2,x_mga56,y_mga56,lon,lat,population',
+        'data/processed/census',
+        'data/processed/zones/sa1_to_lga.csv'],
+    'demand/population/B1_synthetic_population.csv': [
+        'data/processed/landuse/D1_zone_attractions_SA1.csv'
+        '#SA1_CODE21,zone_tier,area_km2,x_mga56,y_mga56,lon,lat,population',
+        'data/processed/census',
+        'data/processed/zones/sa1_to_lga.csv',
+        'data/processed/observed/licence_rates_by_age_lga.csv'],
+    'demand/population/_population_report.json': [
+        'data/processed/landuse/D1_zone_attractions_SA1.csv'
+        '#SA1_CODE21,zone_tier,area_km2,x_mga56,y_mga56,lon,lat,population',
+        'data/processed/census',
+        'data/processed/zones/sa1_to_lga.csv',
+        'data/processed/observed/licence_rates_by_age_lga.csv'],
+}
 os.makedirs(os.path.join(OUT, 'population'), exist_ok=True)
 os.makedirs(os.path.join(OUT, 'plans'), exist_ok=True)
 # The census is read through the city's reader adapter (issue #62 A5,
@@ -410,6 +442,16 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     ap = argparse.ArgumentParser()
     ap.add_argument('--seed', type=int, help='override B.seed.master')
     ap.add_argument('--sample', type=float,

@@ -886,6 +886,42 @@ OPERATOR_STOP = '_operator_stop.json'
 # module-level so a test can point the watcher at a canned reporter
 GATE_VERDICT = '_gate_verdict.json'
 REPORTER = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
+EXTRACTOR = os.path.join(REPO, 'src', 'analyse', 'extract_metrics.py')
+
+
+def extract_metrics(run_dir):
+    """Write a closed-out run's `_metrics.json`, best effort (9.137, #132).
+
+    `run.py` does this after `run()` returns, for every run that ended at a
+    defined boundary. **`--stop` never reaches it**: it kills the harness's own
+    pid, so `run()` returns to nobody and `run.py` returns from its `--stop`
+    branch long before the extraction. An operator-stopped arm therefore never
+    got a `_metrics.json` at all - and that file is exactly what the store's
+    trim guard reads to decide a run is out of its extraction window, so every
+    such directory was held against the raw cap until 9.155 gave the guard a
+    grace to expire. Thirteen directories were in that state on 7 September
+    2026. The composition is fixed here rather than by weakening the guard.
+
+    Returns True when the file was written. A failure is REPORTED, never
+    raised: the record and the summary are already on disk, the run's findings
+    are already mirrored into processed, and metrics can be re-extracted by
+    hand. The extractor owns its own CLI contract, so this shells out to it
+    exactly as `run.py` does rather than importing it.
+    """
+    try:
+        out = subprocess.run([sys.executable, EXTRACTOR, '--run', run_dir],
+                             capture_output=True, text=True, cwd=REPO)
+    except (OSError, subprocess.SubprocessError) as e:
+        print('metric extraction could not be started (the run itself is '
+              'intact): %s' % e, flush=True)
+        return False
+    if out.stdout:
+        print(out.stdout.rstrip(), flush=True)
+    if out.returncode != 0:
+        print('metric extraction failed (the run itself is intact): rc=%s %s'
+              % (out.returncode, (out.stderr or '').strip()[-400:]), flush=True)
+        return False
+    return True
 
 
 def _last_ended_iteration(run_dir):
@@ -1278,6 +1314,23 @@ def stop_run(name, cause):
           % (os.path.basename(dead),
              (' (closed out at iteration %s)' % doc.get('reached_iteration'))
              if doc else ''), flush=True)
+    # AND THEN THE SAME MATERIALS THE HARNESS PATH PRODUCES. A stop is a
+    # boundary, not a death, so it ends where `run.py` ends a run that returned
+    # to it: metrics extracted from the closed-out directory, the file mirrored
+    # into processed, and the raw cache trimmed back under its budget. Only the
+    # record is a precondition - the extractor reads `_run.json` for the run's
+    # identity and its `reached_iteration` - so a close-out that wrote none
+    # leaves the bulk to the store's grace rather than being extracted blind.
+    if doc is not None:
+        extract_metrics(dead)
+        results_store.mirror(dead)
+    try:
+        cfg = registry.load()
+        results_store.trim(cfg.get('RUN.storage.raw_cap_gb'),
+                           grace_s=cfg.get('RUN.storage.extract_grace_s'))
+    except Exception as e:                                   # noqa: BLE001
+        print('raw cache trim failed (the stop is recorded): %s' % e,
+              flush=True)
     return dead
 
 

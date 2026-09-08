@@ -1,7 +1,7 @@
 {
   "description": "Newcastle's LIVE-STATE documentation claims - the CITY-OWNED half of tests/check_doc_currency.py. Each entry pins one number written into a document to the artefact that decides it, so a figure cannot silently outlive the thing it describes. A second city supplies its own copy at cities/<city>/tests/doc_currency.json; the harness in tests/ names no city, no document and no number.",
   "what_belongs_here": "ONLY live-state cells - a table row or sentence that must equal the artefact TODAY. A dated record is frozen and must never be claimed: DECISIONS.md 14 saying 'manifest 436' on 24 August is history, and STATUS.md's dated task rows are the same. Claiming a record would force the project to rewrite its own past to keep a check green, which is the exact opposite of the reproducibility rule.",
-  "why_these_two_documents": "README.md is the front door, STATUS.md is the board, .claude/CLAUDE.md and docs/README.md frame the project for every session, and GOAL.md states what it is for - all are read for current state. NEXT_AGENT_BRIEF.md carries no pinned NUMBER (it is rewritten every session and its family stamp is checked by tests/check_doc_shape.py), but it does carry the banned-statement claims: a stale sentence is exactly as wrong in a brief as anywhere else.",
+  "why_these_two_documents": "README.md is the front door, STATUS.md is the board, .claude/CLAUDE.md and docs/README.md frame the project for every session, and GOAL.md states what it is for - all are read for current state. NEXT_AGENT_BRIEF.md carries no pinned NUMBER (it is rewritten every session and its family stamp is checked by tests/check_doc_shape.py), but it does carry the banned-statement claims: a stale sentence is exactly as wrong in a brief as anywhere else. ONE position page is pinned as well, from 8 September 2026 (DECISIONS.md 9.158): positions/network-and-inputs.md is the only one that states the package's live counts - the registry's field count and the manifest's row count - and its field count had been stale at 472 for weeks. Every OTHER position page stays outside this check by design: they are topic pages rewritten at every /handoff, and their vintage is guarded by the family stamp in tests/check_doc_shape.py rather than by a pinned number.",
   "claims": [
     {
       "id": "readme.package-gib",
@@ -163,6 +163,38 @@
       "truth": {
         "kind": "registry_fields"
       }
+    },
+    {
+      "id": "status.newest-arm-name",
+      "kind": "text",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "newest arm `([^`]+)` is \\*\\*",
+      "truth": {
+        "kind": "newest_run",
+        "field": "name"
+      },
+      "note": "the phase table's P4 cell names the arm whose state it then states; naming a run the store does not hold at the top of the board is how a stale cell survives a family boundary"
+    },
+    {
+      "id": "status.newest-arm-state",
+      "kind": "text",
+      "doc": "cities/newcastle/docs/STATUS.md",
+      "pattern": "newest arm `[^`]+` is \\*\\*([A-Z][A-Z ]*[A-Z])\\*\\*",
+      "truth": {
+        "kind": "newest_run",
+        "field": "state",
+        "states": {
+          "running": "RUNNING",
+          "stopped_at_gate": "STOPPED AT ITS GATE",
+          "stopped_by_operator": "STOPPED BY THE OPERATOR",
+          "ran_to_last_iteration": "RAN TO ITS LAST ITERATION",
+          "completed": "RAN TO ITS LAST ITERATION",
+          "failed": "DEAD WITHOUT A RECORD",
+          "aborted": "DEAD WITHOUT A RECORD",
+          "unknown": "UNKNOWN"
+        }
+      },
+      "note": "THE ONE ERROR THIS BOARD HAS MADE TWICE. The phase table said F30's arm 'is RUNNING' while it was dead, and then said F31's arm 'is RUNNING' while its own _run.json said stopped_at_gate at iteration 100 - with the State block, the Runs block, the Next section and the brief all saying otherwise on the same page. A run's state is a fact its record holds, so the cell that states it is pinned to the record. The words are the board's; the mapping is here because the harness holds no city's wording."
     },
     {
       "id": "status.osm-harvest-pending",
@@ -430,6 +462,26 @@
       "doc": "README.md",
       "pattern": "generated phase plans, declared minimum greens and saturation flows, run on MATSim's signals contrib\\. The real SCATS phasing was refused",
       "reason": "The corridor signals run the SCATS algorithm (9.88), not fixed generated plans; see positions/signals-and-crossings.md."
+    },
+    {
+      "id": "positions.network-and-inputs.registry-fields",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/positions/network-and-inputs.md",
+      "pattern": "\\*\\*([\\d,]+) fields\\*\\* \\(`docs/reference/CONFIG_REFERENCE\\.md`",
+      "truth": {
+        "kind": "registry_fields"
+      },
+      "note": "the only position page that states the package's live counts, and the only one this check pins. It read 472 for weeks and 482 at the start of the session that took it to 489 (DECISIONS.md 9.158) - the drift class this check exists for, sitting on the page that describes it. Position pages are otherwise deliberately OUTSIDE this check: they are topic pages rewritten at every /handoff and guarded by the family stamp in tests/check_doc_shape.py, not live-state boards."
+    },
+    {
+      "id": "positions.network-and-inputs.manifest-files",
+      "kind": "number",
+      "doc": "cities/newcastle/docs/positions/network-and-inputs.md",
+      "pattern": "([\\d,]+) files in `data/MANIFEST\\.csv`",
+      "truth": {
+        "kind": "manifest_files"
+      },
+      "note": "the same page states the manifest row count beside the licence split; regenerate with python src/build/build_manifest.py inside the normalise_eol sandwich"
     }
   ]
 }

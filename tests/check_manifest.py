@@ -16,6 +16,7 @@ cross-layer integrity checks that need the bulk data.
 Exits non-zero on any mismatch or unmanifested tracked file.
 """
 import csv
+import json
 import hashlib
 import os
 import subprocess
@@ -54,6 +55,65 @@ def tracked_files():
     return {norm(p)[len(prefix):] for p in out.split(chr(0)) if p}
 
 
+# The share-alike licence labels THIS city declares, from the sources it
+# marked `share_alike`. Nothing here names a licence, a source or a city.
+SHARE_ALIKE = tuple(sorted({
+    s['licence'] for s in (city.descriptor().get('sources') or [])
+    if s.get('share_alike') and s.get('licence')}))
+# What an undetermined row costs. It is a RATCHET, not a target: a row whose
+# ancestry the evidence does not decide is an honest outcome, but the number
+# may only fall. The cap is the city's, beside its other document rules.
+UNDETERMINED_CAP = city.descriptor().get('manifest_undetermined_lineage_max')
+
+
+def check_lineage_licence(rows):
+    """The manifest's two provenance claims must agree, row by row (#159).
+
+    A row states an ancestry (`share_alike_ancestor`, resolved from the
+    producing scripts' declared per-output inputs) and a licence (resolved
+    from the city's declaration). They are arrived at independently, and
+    nothing in this repository compared them until now - so 129 rows named an
+    OpenStreetMap ancestor while carrying a CC-BY licence and nobody saw it.
+
+    Both directions are failures. A share-alike ancestor under a permissive
+    licence UNDER-restricts, which is a licence breach; a share-alike licence
+    with no such ancestor OVER-restricts a file the package is free to
+    publish. `undetermined` is neither: the row says the evidence does not
+    decide, and it is counted against a ratchet rather than asserted.
+    """
+    if not SHARE_ALIKE:
+        return []
+    out, undetermined = [], []
+    for row in rows:
+        verdict = (row.get('share_alike_ancestor') or '').strip()
+        licence = row.get('licence') or ''
+        share_alike = any(lic in licence for lic in SHARE_ALIKE)
+        if verdict == 'yes' and not share_alike:
+            out.append('%s: ancestry is share-alike (%s) but the licence is '
+                       '"%s"' % (norm(row['path']), SHARE_ALIKE[0],
+                                 licence[:60]))
+        elif verdict == 'no' and share_alike:
+            out.append('%s: licence is share-alike but no share-alike '
+                       'ancestor was found' % norm(row['path']))
+        elif verdict == 'undetermined':
+            undetermined.append(norm(row['path']))
+        elif verdict not in ('yes', 'no'):
+            out.append('%s: no share_alike_ancestor verdict - regenerate the '
+                       'manifest' % norm(row['path']))
+    cap = UNDETERMINED_CAP
+    print('lineage/licence: %d row(s) agree, %d undetermined%s'
+          % (len(rows) - len(out) - len(undetermined), len(undetermined),
+             '' if cap is None else ' (cap %d)' % cap))
+    if cap is not None and len(undetermined) > cap:
+        producers = sorted({r['produced_by'] for r in rows
+                            if norm(r['path']) in set(undetermined)})
+        out.append('%d manifest row(s) have an undetermined share-alike '
+                   'ancestry, above the declared cap of %d. The producing '
+                   'script must declare OUTPUT_INPUTS: %s'
+                   % (len(undetermined), cap, ', '.join(producers[:4])))
+    return out
+
+
 def main():
     if not os.path.exists(MANIFEST):
         print('FAIL  %s not found' % MANIFEST)
@@ -63,9 +123,11 @@ def main():
     failures = []
     manifested = set()
     unlicensed = []
+    rows = []
 
     with open(MANIFEST, encoding='utf-8') as f:
         for row in csv.DictReader(f):
+            rows.append(row)
             path = norm(row['path'])
             manifested.add(path)
             # every row carries a licence (#117): a blank is a file nobody
@@ -97,6 +159,8 @@ def main():
 
     for path in sorted(tracked_files() - manifested):
         failures.append('%s: tracked but absent from %s' % (path, MANIFEST))
+
+    failures += check_lineage_licence(rows)
 
     print('verified %d present file(s) (%d size-only, no digest recorded); '
           '%d manifest entr(ies) not in this checkout (gitignored bulk data)'

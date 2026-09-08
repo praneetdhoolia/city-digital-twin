@@ -44,6 +44,16 @@ import registry as _registry  # noqa: E402
 CFG = _registry.load()
 
 NET = _city.path('data/processed/network')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The report counts how many road
+# edges the regulated speed-zone layer reached, so it descends from both -
+# and through the edge table, from the Overpass road extract.
+OUTPUT_INPUTS = {
+    'data/processed/network/_speed_zone_report.json': [
+        'data/processed/network/A1_road_edges.csv',
+        'data/processed/network/A1_speed_zones.gpkg'],
+}
 ZONES = os.path.join(NET, 'A1_speed_zones.gpkg')
 EDGES = os.path.join(NET, 'A1_road_edges.csv')
 GEOM = os.path.join(NET, 'A1_road_geometry.jsonl')
@@ -146,5 +156,15 @@ def main():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     argparse.ArgumentParser().parse_args()
     main()

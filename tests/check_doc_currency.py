@@ -39,7 +39,10 @@ Two claim kinds:
   text     a regex with ONE capture group, matched against a STRING derived
            from an artefact. The number claims cannot see a stale NAME, and a
            figure captioned with the run it no longer draws is exactly as wrong
-           as a stale count.
+           as a stale count. A RUN'S STATE is such a string: the board's phase
+           table said an arm "is RUNNING" while that arm's own `_run.json` said
+           `stopped_at_gate`, and it said it about two different families two
+           weeks apart, so the `newest_run` truth pins the cell to the record.
 
   absent   a regex that must NOT appear - for a statement that was true once and
            is now false in a way no number would catch ("the re-harvest has not
@@ -175,6 +178,86 @@ def truth_json_text(city_root: Path, spec: dict) -> str:
     return node
 
 
+def _newest_run() -> tuple[str, Path]:
+    """The newest run the results store knows, and the directory of its records.
+
+    Newest is by LAUNCH STAMP, which is what the run's own name carries and what
+    the board's generated runs block sorts on, so the two cannot disagree about
+    which run is at the top of the page. The store is asked for the directory:
+    nothing outside `src/run/results_store.py` composes a `results/...` path.
+    """
+    store_dir = str(REPO / "src" / "run")
+    if store_dir not in sys.path:
+        sys.path.insert(0, store_dir)
+    try:
+        import results_store  # noqa: PLC0415
+    except ImportError as exc:  # pragma: no cover - the store is committed
+        raise Skip(f"the results store is not importable ({exc})")
+    names = results_store.run_names()
+    if not names:
+        raise Skip("the results store holds no run (expected in CI - run "
+                   "outputs are gitignored)")
+    stamp = re.compile(r"\d{8}T\d{6}")
+    def _key(name: str) -> tuple[str, str]:
+        found = stamp.search(name)
+        return (found.group(0) if found else "", name)
+    newest = sorted(names, key=_key)[-1]
+    records = results_store.resolve_records(newest)
+    if records is None:
+        raise Skip(f"{newest} has no record directory")
+    return newest, Path(records)
+
+
+def _record(records: Path, filename: str) -> dict:
+    path = records / filename
+    if not path.exists():
+        return {}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except ValueError:
+        return {}
+
+
+def truth_newest_run(city_root: Path, spec: dict) -> str:
+    """The newest run's NAME, or the state its own record puts it in.
+
+    This is the resolver behind the one claim class the number claims could
+    never see: a hand-written cell that says a run is still going. The board's
+    phase table said *"F30 ... is RUNNING"* while F30's record said the arm was
+    dead, and then said *"F31 ... is RUNNING"* while F31's `_run.json` said
+    `stopped_at_gate` at iteration 100 - the same sentence, the same error, two
+    families apart, with four other lines of the same document contradicting it
+    both times. A run's state is a fact its own record holds, so the cell that
+    states it is a live claim like any count.
+
+    `field` is `name` or `state`. The RAW state is read here - `running` from
+    the status card, else `_run.json`'s `completion`, else the card's terminal
+    status - and the claim's own `states` map turns it into the words the
+    document uses, because the wording is the city's and this harness holds
+    none. An unmapped state is returned raw, so it fails loudly and visibly
+    rather than being skipped into silence.
+    """
+    name, records = _newest_run()
+    field = spec.get("field", "name")
+    if field == "name":
+        return name
+    if field != "state":
+        raise SystemExit(f"newest_run: unknown field {field!r} (name, state)")
+    meta = _record(records, "_meta.json")
+    if meta.get("status") == "running":
+        raw = "running"
+    else:
+        run = _record(records, "_run.json")
+        if run:
+            # A record written before `completion` existed was only ever
+            # written on rc=0, so a missing value reads as a full horizon; a
+            # frozen record is never rewritten to satisfy a newer schema.
+            raw = run.get("completion") or "ran_to_last_iteration"
+        else:
+            raw = meta.get("status") or "unknown"
+    return spec.get("states", {}).get(raw, raw)
+
+
 def truth_path_count(city_root: Path, spec: dict) -> int:
     """How many paths match a city-relative glob (directories or files)."""
     matches = sorted(city_root.glob(spec["glob"]))
@@ -196,6 +279,7 @@ RESOLVERS = {
 
 TEXT_RESOLVERS = {
     "json_text": truth_json_text,
+    "newest_run": truth_newest_run,
 }
 
 
