@@ -12,15 +12,37 @@ reported by fit itself*, so a leak would have to defeat both.
 
 **It cannot move a parameter it is not allowed to move.** The search space is
 derived from the registry, not listed here: a field is free only if it is
-`assumed`, carries a numeric sweep interval, and is NOT `held_fixed`. The six
-fields held fixed under DECISIONS.md 8.5 - the mode constants - are therefore
-unreachable from this loop by construction, which is the whole point of 8.5.
-Proposal 9 names ASC absorption as the primary threat to validity.
+`assumed`, carries a numeric sweep interval, and is NOT `held_fixed`. A field
+held fixed under DECISIONS.md 8.5 is unreachable from this loop by
+construction, which is the whole point of 8.5 - proposal 9 names ASC absorption
+as the primary threat to validity.
+
+**It optimises the goal the project actually states.** The objective is
+`goal_modes.max_abs_rel_pct`: the MAXIMUM absolute deviation, in RELATIVE per
+cent, over the twelve modes of `mode_targets_by_mode.csv`, computed by calling
+the board's own reader so the objective and the gate cannot drift apart. It was
+`mode_share.mean_abs_pp`, a MEAN over FIVE FOLDED survey categories in
+PERCENTAGE POINTS, and the two are different measurement systems: heavy rail
+and light rail sit inside one folded "Public transport" cell with OPPOSITE
+signs, so a search minimising the fold could improve its own objective while
+making both modes worse. Measured at the moment of the change, on one real run:
+the folded objective read 11.18 pp on a model whose heavy rail was +471.7%.
 
 **It refuses to fit more parameters than the data identifies.** The objective
-contains four independent numbers (five HTS mode shares that sum to one). A
-search over more free parameters than that is not a calibration, and the loop
-exits rather than producing one.
+contains ten independent numbers (twelve modes, less truck - scored on a basis
+that is not the target's own ground - and less freight rail, a representation
+rather than a fit). A search over more free parameters than that is not a
+calibration, and the loop exits rather than producing one. That refusal is the
+loop working, not failing: it names the movable set and asks for a subset with
+a stated reason.
+
+**A stage it claims it can carry out, it carries out.** A `run_inputs`-stage
+field is only real once the assembled set carries it - the runner runs a set
+out of `scenarios/matsim/`, it does not re-derive one - so `evaluate()`
+re-assembles the scenario x day per candidate, from the ALREADY-MAPPED schedule
+only, and restores the shipped assembly when the search ends. The stage was
+listed as implemented and carried out by nothing, so such a candidate ran the
+shipped value and the search compared a parameter against itself.
 
 **It does not calibrate against traffic counts.** DECISIONS.md 9.14 and 9.15:
 the external tier carries no through traffic, so every boundary-adjacent count is
@@ -116,10 +138,34 @@ def rebuild_stage(key, field):
         return 'excluded', ('run identity and compute, not a property of %s'
                             % _city.descriptor()['name'])
     stage, why = 'none', None
-    for c in field.get('consumers') or []:
+    consumers = field.get('consumers') or []
+    for c in consumers:
         if any(c.startswith(m) for m in MEASUREMENT_LAYERS):
             return 'excluded', ('consumed by %s: measurement apparatus, not the '
                                 'model' % c)
+
+    # A field carrying a `matsim_param` binding is EMITTED INTO THE CONFIG AT
+    # RUN TIME by src/registry/param_config.py, whatever else lists itself as a
+    # consumer. That makes it run-time realisable by definition, and the
+    # consumer table must not be able to say otherwise.
+    #
+    # This is the half of the movable set the table was silently eating. The
+    # lookup below keys on a consumer's BASENAME and excludes anything it does
+    # not recognise - a deliberately conservative default, and the right one,
+    # because the permissive default once put the OSM harvest margins in the
+    # movable set. But a field whose declared consumer is a Java config group
+    # (`GradientConfigGroup.java`) or which declares no consumer at all was
+    # excluded as "would reach nothing" while carrying a binding that reaches
+    # the config on every single run. Four scalar swept fields with real
+    # bindings were excluded that way, which is how a search space of 482
+    # declared fields collapsed to five.
+    #
+    # The binding is the evidence. A conservative default over a NAME is right;
+    # a conservative default over a DECLARED BINDING is just wrong.
+    if field.get('matsim_param'):
+        return 'none', None
+
+    for c in consumers:
         st = STAGE_OF_CONSUMER.get(c.rsplit('/', 1)[-1])
         if st == 'forbidden':
             return 'forbidden', ('consumed by %s: realising it needs the '
@@ -174,8 +220,10 @@ def free_parameters(cfg, report=None):
             if report is not None:
                 report.append((key, why))
             continue
+        stage, _ = rebuild_stage(key, f)
         free.append(dict(key=key, value=float(f['value']), lo=lo, hi=hi,
-                         units=f.get('units'), decisions_ref=f.get('decisions_ref')))
+                         units=f.get('units'), stage=stage,
+                         decisions_ref=f.get('decisions_ref')))
     return free
 
 
@@ -400,6 +448,8 @@ def main():
     ppp = int(cfg.get('CAL.search.points_per_parameter'))
     max_rounds = int(cfg.get('CAL.search.max_rounds'))
     delta = float(cfg.get('CAL.search.convergence_delta'))
+    reading_drift = float(cfg.get('CAL.search.reading_drift_pct'))
+    pass_band = float(cfg.get('CAL.gate.pass_deviation_pct'))
 
     excluded = []
     free = free_parameters(cfg, excluded)
@@ -410,6 +460,11 @@ def main():
         if missing:
             raise SystemExit('not free parameters (measured, held fixed, or no '
                              'scalar sweep): %s' % ', '.join(sorted(missing)))
+
+    # Does any candidate need the run inputs re-assembled? A `run_inputs`-stage
+    # field is not realised by an override alone - the runner runs a set that
+    # was assembled earlier - so the loop must rebuild that set per candidate.
+    needs_run_inputs = any(p['stage'] == 'run_inputs' for p in free)
 
     print('%d registry fields are movable by this loop (assumed, scalar sweep, '
           'not held fixed, not excluded).' % len(free))
@@ -438,9 +493,48 @@ def main():
     print('at most %d run(s); each is a full MATSim run at the overlay settings'
           % evals)
     for p in free:
-        print('   %-46s start %10.5g   points %s'
+        print('   %-46s start %10.5g   points %s   [%s]'
               % (p['key'], p['value'],
-                 ', '.join('%g' % x for x in grid(p, ppp))))
+                 ', '.join('%g' % x for x in grid(p, ppp)), p['stage']))
+    if needs_run_inputs:
+        print('at least one parameter is run_inputs-staged, so each candidate '
+              're-assembles %s x %s from the ALREADY-MAPPED schedule before it '
+              'runs (3.5: the mapper is never re-run inside a comparison). The '
+              'shipped assembly is restored when the search ends.'
+              % (a.scenario, a.day))
+    # THE READING POINT HAS TO BE ABLE TO RESOLVE THE ANSWER.
+    #
+    # A gate reading is taken at one iteration, and iteration 100 was adopted
+    # as that point on COST - it was never once tested for stability. It has now
+    # been measured, within-run, on all six 25% arms that ever reached it: the
+    # objective moves CAL.search.reading_drift_pct between iteration 80 and 100
+    # OF THE SAME RUN, with nothing changed at all. If that drift is larger than
+    # the band the goal asks a mode to sit inside, then a reading there cannot
+    # decide whether a mode is inside the band - let alone which of two
+    # candidates is better - and a search scored on it would be ranking noise.
+    #
+    # This refuses rather than warns. A search that cannot resolve its own
+    # objective produces a `calibrated` block and a `best_tag` that look exactly
+    # like a result, which is the one failure this project cannot absorb.
+    print('\nreading point: the objective drifts %.4g%% between iteration 80 '
+          'and 100 WITHIN one run (%d arms measured), against a pass band of '
+          '%.4g%%' % (reading_drift, 6, pass_band))
+    if reading_drift > pass_band:
+        print('\nA reading at this point cannot decide whether a mode is inside '
+              'the %.4g%% band: the reading moves further than the band by '
+              'itself.' % pass_band)
+        if a.execute:
+            raise SystemExit(
+                'refusing to search on a reading that cannot resolve the goal '
+                'band. Lower CAL.search.reading_drift_pct by changing the '
+                'READING, not the rule - read deeper than iteration 100, or '
+                'average a window of iterations instead of taking a point - and '
+                're-measure with src/analyse/measure_reading_stability.py. '
+                'Until then a search would rank noise and hand back a '
+                'best_tag that looks like a result.')
+        print('--plan continues so the search can be costed, but --execute is '
+              'refused until the reading resolves the band.')
+
     if a.plan:
         print('\n--plan: nothing was run.')
         return
@@ -477,15 +571,58 @@ def main():
                 return os.path.dirname(record)
         return None
 
+    def rebuild_run_inputs(overrides):
+        """Re-assemble this scenario x day's run inputs under the candidate.
+
+        A `run_inputs`-stage field (a mode constant, the gradient clamp) is only
+        real once the assembled set carries it: `run_matsim.py` runs a set out
+        of `scenarios/matsim/<S>/<DAY>/`, it does not re-derive one. The loop
+        listed `run_inputs` in STAGES_IMPLEMENTED and then never carried it
+        out, so such a candidate ran the SHIPPED value and the search compared
+        a parameter against itself.
+
+        This re-assembles ONLY the scenario and day under test, and only from
+        the ALREADY-MAPPED schedule - `build_matsim_run_inputs.py` filters
+        `transitRoute` ids off the existing mapping and never re-runs the
+        pt2matsim mapper, which DECISIONS.md 3.5 forbids inside a comparison.
+        Fields whose consumer DOES need the mapper are `forbidden`, not
+        `run_inputs`, and never reach here.
+
+        It writes into the committed, manifest-hashed assembled set, so the
+        caller restores the shipped assembly when the search ends.
+        """
+        r = subprocess.run(
+            [sys.executable, 'src/build/build_matsim_run_inputs.py',
+             '--scenarios', a.scenario, '--day-types', a.day]
+            + [x for k, v in sorted(overrides.items())
+               for x in ('--set', '%s=%s' % (k, v))])
+        if r.returncode != 0:
+            raise SystemExit('build_matsim_run_inputs.py failed (%d) while '
+                             'assembling a candidate' % r.returncode)
+
     def evaluate(label, overrides):
-        """One candidate: run, extract, fit, score. Resumable by its overrides."""
+        """One candidate: assemble if needed, run, extract, fit, score.
+
+        Resumable by its overrides.
+        """
         # the declared pipeline, invoked exactly as a reader would by hand:
-        # run_matsim.py -> extract_metrics.py -> fit.py
+        # build_matsim_run_inputs.py -> run_matsim.py -> extract_metrics.py -> fit.py
         run_dir = find_run(overrides)
         if run_dir is None:
+            if needs_run_inputs:
+                rebuild_run_inputs(overrides)
+            # `--config-set`, NOT `--set`. They are different channels and the
+            # loop was using the wrong one: `--config-set` takes a REGISTRY key,
+            # validates it against its declared sweep and refuses a held-fixed
+            # field; `--set` takes a RAW MATSim config key and
+            # `build_config` splits it on its first dot, so a registry key
+            # arriving there raised inside `set_mode_param` and the search died
+            # on its first candidate. `--execute` had therefore never completed
+            # one. The correct channel was always 40 lines away in
+            # solve_asc_ride.py, which resolves through the registry.
             sets = []
             for k, v in sorted(overrides.items()):
-                sets += ['--set', '%s=%s' % (k, v)]
+                sets += ['--config-set', '%s=%s' % (k, v)]
             r = subprocess.run([sys.executable, 'src/run/run_matsim.py',
                                 '--scenario', a.scenario, '--day', a.day,
                                 '--run-config', a.run_config] + sets)
@@ -515,21 +652,34 @@ def main():
         print('   %-58s obj %8.4f %s' % (label, obj, '' if ok else '  INFEASIBLE'))
         return rec
 
-    for rnd in range(max_rounds):
-        print('\nround %d' % (rnd + 1))
-        start = best_obj
-        for p in free:
-            for value in grid(p, ppp):
-                ov = dict(current)
-                ov[p['key']] = value
-                rec = evaluate(candidate_tag(base, p['key'], value), ov)
-                if rec['feasible'] and (best_obj is None or rec['objective'] < best_obj):
-                    best_obj, best_tag = rec['objective'], rec['tag']
-                    current[p['key']] = value
-        if start is not None and best_obj is not None and start - best_obj < delta:
-            print('round improved the objective by %.4f < %.4f: stopping'
-                  % (start - best_obj, delta))
-            break
+    try:
+        for rnd in range(max_rounds):
+            print('\nround %d' % (rnd + 1))
+            start = best_obj
+            for p in free:
+                for value in grid(p, ppp):
+                    ov = dict(current)
+                    ov[p['key']] = value
+                    rec = evaluate(candidate_tag(base, p['key'], value), ov)
+                    if rec['feasible'] and (best_obj is None
+                                            or rec['objective'] < best_obj):
+                        best_obj, best_tag = rec['objective'], rec['tag']
+                        current[p['key']] = value
+            if start is not None and best_obj is not None and start - best_obj < delta:
+                print('round improved the objective by %.4f < %.4f: stopping'
+                      % (start - best_obj, delta))
+                break
+    finally:
+        # The assembled sets are COMMITTED and MANIFEST-HASHED. A search that
+        # rebuilt them per candidate leaves the tree holding the last
+        # candidate's values, which would show up as an unexplained manifest
+        # drift in whatever session came next. Restore the shipped assembly
+        # whatever happened - including on a failure or a Ctrl-C, which is why
+        # this is a finally and not a line at the end.
+        if needs_run_inputs:
+            print('\nrestoring the shipped assembly for %s x %s'
+                  % (a.scenario, a.day))
+            rebuild_run_inputs({})
 
     result = dict(
         generated=datetime.datetime.now(datetime.timezone.utc)

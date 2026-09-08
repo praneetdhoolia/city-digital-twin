@@ -262,3 +262,122 @@ def test_the_occupancy_constraint_is_none_when_the_run_has_no_drivers():
     c4 = dict(passenger_per_driver=dict(value=0.2, sweep=[0.15, 0.25]))
     assert fit.score_occupancy(
         dict(mode_share=dict(target_lga_pct={'ride': 1.0})), c4) is None
+
+
+# --------------------------------------------------------------------------
+# the GOAL's twelve modes: the objective the goal actually states
+#
+# These lock in the change that made the objective and the gate the same
+# statistic. The loop previously minimised `mode_share.mean_abs_pp` - a MEAN
+# over five FOLDED survey categories in percentage points - while GOAL.md
+# requirement 7 is a MAXIMUM over twelve UNFOLDED modes in relative per cent.
+# Measured on a real run at the moment of the change: the folded objective read
+# 11.18 pp on a model whose heavy rail was +471.7%.
+# --------------------------------------------------------------------------
+class _StubReader:
+    """Stands in for src/analyse/report_mode_ridership, whose real `report`
+    parses a run's trips table. The contract under test is the one this module
+    depends on: `report()` fills `LAST['rows']`, one dict per mode, and a row
+    the reader refuses to score on the target's own ground carries
+    `deviation_pct=None`."""
+
+    GATE_PASS_PCT = 10.0
+    GATE_STOP_PCT = 20.0
+
+    def __init__(self, rows):
+        self.LAST = {'rows': rows}
+
+    def report(self, run_dir, iteration):
+        return []
+
+
+def _row(mode, dev, flag='ok', modelled=1.0, target=1.0):
+    return dict(mode=mode, modelled=modelled, target=target,
+                deviation_pct=dev, basis='share of resident linked trips',
+                flag=flag, count=10)
+
+
+def _goal(monkeypatch, rows, iteration=100):
+    monkeypatch.setitem(__import__('sys').modules,
+                        'report_mode_ridership', _StubReader(rows))
+    return fit.score_goal_modes('/nowhere', iteration)
+
+
+def test_the_objective_is_the_worst_mode_not_the_average(monkeypatch):
+    g = _goal(monkeypatch, [_row('car', 5.0), _row('heavy_rail', 247.2),
+                            _row('light_rail', -47.2)])
+    # the mean of these is 99.8; the goal is satisfied by the WORST mode alone
+    assert g['max_abs_rel_pct'] == 247.2
+    assert g['worst_mode'] == 'heavy_rail'
+    assert g['goal_met'] is False
+
+
+def test_truck_and_freight_rail_are_reported_and_never_optimised_against(
+        monkeypatch):
+    g = _goal(monkeypatch, [
+        _row('car', 5.0),
+        _row('truck', None, flag='level only'),
+        _row('freight_train', None, flag='representation')])
+    assert g['n'] == 1                      # only car entered the maximum
+    assert g['max_abs_rel_pct'] == 5.0
+    modes = {m['mode']: m for m in g['modes']}
+    assert modes['truck']['optimised'] is False
+    assert modes['freight_train']['optimised'] is False
+    # reported, not dropped: a mode that vanishes from the block is a mode
+    # nobody notices is unscored
+    assert len(g['modes']) == 3
+
+
+def test_the_objective_is_inside_the_band_exactly_when_every_mode_is(
+        monkeypatch):
+    """The guard the change was made for: objective <= the pass band if and
+    only if the gate would say every mode is inside it."""
+    all_inside = _goal(monkeypatch, [_row('car', 5.0), _row('bus', -9.9),
+                                     _row('ride', 0.0)])
+    assert all_inside['max_abs_rel_pct'] <= all_inside['pass_band_pct']
+    assert all_inside['goal_met'] is True
+    assert all_inside['n_inside_pass_band'] == 3
+
+    one_outside = _goal(monkeypatch, [_row('car', 5.0), _row('bus', -9.9),
+                                      _row('ride', 10.1)])
+    assert one_outside['max_abs_rel_pct'] > one_outside['pass_band_pct']
+    assert one_outside['goal_met'] is False
+    assert one_outside['n_inside_pass_band'] == 2
+
+
+def test_a_run_the_reader_cannot_score_says_so_rather_than_scoring_zero(
+        monkeypatch):
+    g = _goal(monkeypatch, [])
+    assert g['max_abs_rel_pct'] is None
+    assert 'no rows' in g['reason']
+
+
+def test_the_gate_thresholds_come_from_the_reader_not_from_fit(monkeypatch):
+    """One registry field, one loader. If fit re-declared the pass band it
+    could drift from the gate that judges the same run."""
+    stub = _StubReader([_row('car', 12.0)])
+    stub.GATE_PASS_PCT, stub.GATE_STOP_PCT = 15.0, 30.0
+    monkeypatch.setitem(__import__('sys').modules,
+                        'report_mode_ridership', stub)
+    g = fit.score_goal_modes('/nowhere', 100)
+    assert g['pass_band_pct'] == 15.0 and g['stop_bar_pct'] == 30.0
+    assert g['goal_met'] is True            # 12.0 is inside a 15.0 band
+
+
+# --------------------------------------------------------------------------
+# the key the consumers read
+# --------------------------------------------------------------------------
+def test_the_patronage_level_uses_the_name_its_consumers_read():
+    """`report.py` and `build_fit_figures.py` both read
+    `intervention_boardings`. This block wrote a third name nothing read, so
+    the calibration report's patronage section and FIGURES.json's block were
+    silently empty from the rename at f1f0a09 until it was found by audit. A
+    silently empty section is the failure mode a test exists to stop."""
+    p = fit.score_patronage([], dict(pt=dict(intervention_boardings=1234)),
+                            dict(unscorable=[]))
+    assert p['intervention_boardings'] == 1234
+    # the orphaned name is kept so a _fit.json written before the fix renders
+    assert p['modelled_intervention_weekday_boardings'] == 1234
+    # n=0 is CORRECT here and is not a gap: every patronage target is
+    # unscorable against a 2026 base (DECISIONS.md 12.1)
+    assert p['n'] == 0

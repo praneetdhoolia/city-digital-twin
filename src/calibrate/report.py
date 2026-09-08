@@ -119,19 +119,48 @@ def section_scope(w, fits):
 
 
 def section_runs(w, fits, tags):
+    """The runs, on what they REACHED - never on what they declared.
+
+    This gated its "Not a result" warning on `iterations`, the DECLARED
+    horizon. An arm that declared 1000 and stopped at 23 therefore passed the
+    `< 500` test and was reported as though it had run - which is the exact
+    inversion of the project's own rule that a run is a result only when its
+    `_run.json` says `ran_to_last_iteration` (9.143). The declared horizon says
+    what was asked for; `reached_iteration` says what happened.
+    """
     w('\n## The runs this report covers\n\n')
-    w('| run | scenario | day | sample | iterations |\n|---|---|---|---:|---:|\n')
+    w('| run | scenario | day | sample | declared | reached | completion |\n'
+      '|---|---|---|---:|---:|---:|---|\n')
     for t, f in zip(tags, fits):
-        w('| %s | %s | %s | %g%% | %d |\n'
+        reached = f.get('reached_iteration')
+        completion = f.get('completion')
+        w('| %s | %s | %s | %g%% | %d | %s | %s |\n'
           % (run_name(f, t), f['scenario'], f['day'], f['fraction'] * 100,
-             f['iterations']))
+             f['iterations'],
+             '%d' % reached if isinstance(reached, int) else '—',
+             '`%s`' % completion if completion else 'no record'))
     w('\n')
-    if any(f['iterations'] < 500 for f in fits):
-        w('> **Not a result.** DECISIONS.md §9.7 measured mode share still '
-          'drifting after innovation was switched off at 250 iterations, so a '
-          'run at or below that is short of relaxation. Issue #5 holds the '
-          'iteration count open; nothing here is reportable as a converged '
-          'model outcome.\n')
+
+    not_results = [t for t, f in zip(tags, fits)
+                   if f.get('completion') != 'ran_to_last_iteration']
+    if not_results:
+        w('> **Not a result.** %d of the %d run(s) here did not run to their '
+          'last iteration: %s. Only a run whose `_run.json` says '
+          '`ran_to_last_iteration` is a result; a stopped arm is citable at its '
+          '`reached_iteration` and nowhere past it (GOAL.md, §9.143). A run '
+          'carrying no record at all predates the contract and is citable for '
+          'no depth whatever.\n\n'
+          % (len(not_results), len(fits),
+             ', '.join('`%s`' % x for x in not_results)))
+    shallow = [t for t, f in zip(tags, fits)
+               if isinstance(f.get('reached_iteration'), int)
+               and f['reached_iteration'] < 500]
+    if shallow:
+        w('> **Short of relaxation.** DECISIONS.md §9.7 measured mode share '
+          'still drifting after innovation was switched off at 250 iterations, '
+          'so a run that REACHED at or below that is short of relaxation: %s. '
+          'Nothing here is reportable as a converged model outcome.\n'
+          % ', '.join('`%s`' % x for x in shallow))
 
 
 def section_mode_share(w, fits, tags):
@@ -199,8 +228,12 @@ def section_patronage(w, fits, tags):
     w('\n## The intervention\'s patronage\n\n')
     for t, f in zip(tags, fits):
         p = f.get('patronage') or {}
+        # three names for one quantity, because it has been renamed twice and
+        # each rename silently emptied this section (f1f0a09). The canonical
+        # name is first; the other two render a `_fit.json` written earlier.
         level = p.get('intervention_boardings',
-                      p.get('modelled_lr_weekday_boardings'))
+                      p.get('modelled_intervention_weekday_boardings',
+                            p.get('modelled_lr_weekday_boardings')))
         if level is None:
             continue
         w('**`%s`** — the intervention carries **%s boardings** on the '
