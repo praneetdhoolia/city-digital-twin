@@ -138,3 +138,46 @@ def test_a_declared_lane_beats_a_scraped_one():
         '#167 is named in the description in order to be EXCLUDED - it ships '
         'at access_egress_basis = beeline and carries neither half of the '
         'routing repair, so this arm cannot settle it')
+
+
+# ------------------------------------------------------- 5. the third state
+
+def test_an_issue_may_declare_it_awaits_something_other_than_a_run():
+    """Requirement 10 gained a third state on 9 September 2026.
+
+    The rule was binary - an open issue either awaited a run with a stated
+    measurement, or it blocked - and four open issues were neither: #49 and #50
+    are standing product directives no single arm settles, #155 waits on 31
+    accept-or-declare decisions, #167 on a mechanism. Under the binary rule the
+    only ways to go green were to invent a measurement, which is the failure
+    the evidence check exists to stop, or to strip the label and make the issue
+    invisible to the launcher again.
+    """
+    for label in issue_gate.DECISION_LABELS:
+        i = _issue(labels=(label,), body=(
+            'AWAITING-DECISION: an operator call between re-scoping this, '
+            'splitting it into the per-mode issues, or closing it as satisfied '
+            'at the level of representation.'))
+        assert issue_gate._why_blocking(i) is None, (
+            '%s with a stated declaration must not block' % label)
+        assert i['number'] in [x['number'] for x in
+                               issue_gate.awaiting_decision([i])], (
+            'and it must be REPORTED - the point of the state is visibility')
+
+
+def test_the_third_state_needs_a_statement_like_the_first_does():
+    """A label anyone can attach is not a declaration."""
+    for label in issue_gate.DECISION_LABELS:
+        bare = _issue(labels=(label,), body='This needs a decision.')
+        assert issue_gate._why_blocking(bare) is not None, (
+            '%s without a stated declaration must still block' % label)
+        placeholder = _issue(labels=(label,), body=(
+            'AWAITING-DECISION: <what, and who takes it> is the form this '
+            'line has to take, per the gate documentation quoted here.'))
+        assert issue_gate._why_blocking(placeholder) is not None, (
+            'the template is not an instance of itself here either')
+
+
+def test_an_unlabelled_issue_still_blocks():
+    """The third state widens the ways to declare, not the ways to be silent."""
+    assert issue_gate._why_blocking(_issue(labels=())) is not None
