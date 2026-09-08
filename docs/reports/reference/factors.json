@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 79,
+  "factors": 83,
   "needs_research": 0,
-  "researched": 79,
-  "literature_half_written": 79
+  "researched": 83,
+  "literature_half_written": 83
  },
  "factors": [
   {
@@ -54,7 +54,8 @@
    "additional_sources": [
     "https://wfrc.utah.gov/wp-content/uploads/2025/07/WFRC-Activity-Based-Model-Implementation-Framework-20250221.pdf"
    ],
-   "verified_in": "pass 2026-09-08 (6cf0ffd)"
+   "verified_in": "pass 2026-09-08 (6cf0ffd)",
+   "reused": true
   },
   {
    "layer": "A",
@@ -754,7 +755,8 @@
    "additional_sources": [
     "https://www.transport.nsw.gov.au/projects/current-projects/m1-pacific-motorway-extension-to-raymond-terrace"
    ],
-   "verified_in": "pass 2026-09-08 (6cf0ffd)"
+   "verified_in": "pass 2026-09-08 (6cf0ffd)",
+   "reused": true
   },
   {
    "layer": "G",
@@ -827,7 +829,8 @@
    "additional_sources": [
     "https://ethz.ch/content/dam/ethz/special-interest/baug/ivt/ivt-dam/events/2023/09/05/abstracts/Floetteroed_MUM_2023.pdf"
    ],
-   "verified_in": "pass 2026-09-08 (6cf0ffd)"
+   "verified_in": "pass 2026-09-08 (6cf0ffd)",
+   "reused": true
   },
   {
    "layer": "H",
@@ -845,7 +848,8 @@
     "https://arxiv.org/abs/2506.23306",
     "https://www.sciencedirect.com/science/article/abs/pii/S1569190X25001698"
    ],
-   "verified_in": "pass 2026-09-08 (6cf0ffd)"
+   "verified_in": "pass 2026-09-08 (6cf0ffd)",
+   "reused": true
   },
   {
    "layer": "H",
@@ -864,7 +868,8 @@
    "last_verified": "2026-09-08",
    "query": "A measured equilibrium-gap trajectory for a MULTIMODAL MATSim scenario over iterations, with the iteration at which the gap flattens - the Greater Stockholm benchmark behind the greedo contrib is the target; the hEART 2023 abstract announces it but publishes no curve.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "H",
@@ -883,7 +888,8 @@
    "last_verified": "2026-09-08",
    "query": "The published paper (not the MUM 2024 slide deck) behind the MATSim planParamCalibration extension, with the estimated coefficients and their standard errors against a biogeme benchmark - the deck lists that comparison as future work.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "H",
@@ -904,7 +910,8 @@
    "last_verified": "2026-09-08",
    "query": "A study that puts a machine-learned choice model INSIDE an agent-based equilibrium loop (where alternative attributes are simulation outputs) and reports the resulting aggregate mode shares against observation - not found this pass; all hits are offline predictive benchmarks.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "I",
@@ -992,7 +999,8 @@
     "https://depositonce.tu-berlin.de/items/499d9240-b7c7-41e3-8f04-1ba86e421e02",
     "https://cmap.illinois.gov/wp-content/uploads/dlm_uploads/CMAP_ActivitySim_ABM_Technical_Description.pdf"
    ],
-   "verified_in": "pass 2026-09-08 (6cf0ffd)"
+   "verified_in": "pass 2026-09-08 (6cf0ffd)",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1013,7 +1021,8 @@
    "last_verified": "2026-09-08",
    "query": "A head-to-head comparison of CMA-ES, Bayesian optimisation and coordinate descent on a MULTIMODAL MATSim scenario reporting simulation runs to reach a stated per-mode tolerance - the Hoerl accelerated-evolutionary-search paper (hal-03676897) was the target this pass and both HAL routes failed (access denied, then socket hang-up); try the boptx paper on arXiv or the MUM proceedings instead.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1034,7 +1043,8 @@
    "last_verified": "2026-09-08",
    "query": "A surrogate-assisted calibration of a MULTIMODAL agent-based model whose targets are per-mode ridership rather than link counts or an OD matrix - Osorio's 2020 metamodel-based calibration of large-scale multimodal microscopic traffic simulation (S0968090X20307592) is the obvious candidate and is paywalled; try an author preprint on web.mit.edu/osorioc.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1054,7 +1064,8 @@
    "last_verified": "2026-09-08",
    "query": "A transport-specific treatment of set-valued calibration (eligibility sets or confidence regions over behavioural parameters) rather than a point estimate - none found this pass; enter through the ACM TOMACS 2025 eligibility-set paper's transport citations.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1075,7 +1086,8 @@
    "last_verified": "2026-09-08",
    "query": "A transport application of BLP-style share inversion to MODE shares, with zones or time periods as the markets and the instruments named - the search returned only industrial-organisation applications this pass.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "added_on": "2026-09-08"
+   "added_on": "2026-09-08",
+   "reused": true
   },
   {
    "layer": "J",
@@ -1188,32 +1200,93 @@
    "last_verified": "2026-09-07",
    "query": "K Reproducibility of a run: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true
+  },
+  {
+   "layer": "I",
+   "factor": "Sequential versus simultaneous calibration of many targets",
+   "what_research_says": "The field states the choice explicitly and it is a real fork, not a matter of taste. In dynamic OD calibration, 'the first formulation estimates the whole set of time-dependent OD matrices SIMULTANEOUSLY for the entire time period in one calibration round. The second formulation estimates and calibrates OD matrices SEQUENTIALLY one at a time for each time frame. Most optimization-based studies have used the simultaneous approach, since the available sequential methods may lose accuracy due to giving up some information in the transition between time frames' - while the simultaneous form 'is incapable of handling a stream of data for real-time or online demand calibration'. The same paper states the bind that makes the choice matter at all: 'this optimization problem is underdetermined for large-scale networks since the number of roads with traffic measurement is usually several orders of magnitude smaller than the number of all roads in the network', and it names the standard architecture as BI-LEVEL - an upper-level discrepancy minimisation over an inner assignment that must be re-solved at every candidate, where 'performing several DTAs for each optimization task demand considerable computational resources'. In DTA practice the sequential form is supply first and then demand with the supply held fixed; the reported weakness of decomposing is that the stages need not be internally consistent, because each stage's assumed input is not the other stage's output.",
+   "source_url": "https://arxiv.org/pdf/2210.17315",
+   "magnitude": "literature: no numeric tolerance - a structural statement. Simultaneous calibration is the majority practice and the one that keeps the stages consistent; sequential decomposition buys tractability and streaming at the cost of the information lost between stages",
+   "how_leading_simulators_do_it": "DTA practice (Ben-Akiva / Balakrishna) calibrates supply first and demand second by default, with simultaneous demand-and-supply estimation as the published improvement; ActivitySim and CT-RAMP calibrate component by component down the model chain (long-term, tour, trip) and move tour and trip constants together only because tour mode conditions trip mode; the MATSim ASC loops move every open constant in one round.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "query": "A head-to-head on a MULTIMODAL agent-based model of moving every mode constant in one round against moving them one mode at a time, reporting simulation runs to a stated per-mode tolerance.",
+   "additional_sources": [
+    "https://www.fhwa.dot.gov/planning/tmip/publications/other_reports/validation_and_reasonableness_2010/ch07.cfm"
+   ],
+   "needs_research": false,
+   "last_verified": "2026-09-09",
+   "added_on": "2026-09-09",
+   "verified_in": "pass 2026-09-09 (781cf41)"
+  },
+  {
+   "layer": "I",
+   "factor": "Damping and step-size schedule in the constant-adjustment contraction",
+   "what_research_says": "The log-ratio ASC step is a contraction only if it is damped, and the two open implementations of it disagree on how. The leading open MATSim calibrator, matsim-vsp/matsim-python-tools, computes the raw step verbatim as 'math.log(z_i) - math.log(m_i) - (math.log(z_0) - math.log(m_0))' and applies it under a SCHEDULE whose default is 'linear_scheduler(start=0.6, end=1, interval=3)' - the early rounds take 0.6 of the raw step and the fraction relaxes to the full step over three intervals, i.e. cautious while the shares are far from target and undamped once they are near. The agency practice in the ActivitySim world applies a FLAT dampener instead of a schedule. Neither publishes a convergence proof, and the same library's 'TerminationCondition.check_termination' still carries '# TODO: not used yet' - so the field's standard answer ships a damping default and no working stopping rule at all. The undamped step (1.0) is the boundary case: it is what a fixed point converges to when it converges, and what overshoots when the shares are far out.",
+   "source_url": "https://github.com/matsim-vsp/matsim-python-tools/blob/master/matsim/calibration/utils.py",
+   "magnitude": "literature: damping about 0.5-0.6 of the raw log-ratio step at the start, relaxed toward 1.0 over roughly three rounds (the matsim-vsp default); a flat 0.5 in the ActivitySim agency practice. No published convergence rate for either.",
+   "how_leading_simulators_do_it": "matsim-vsp/matsim-python-tools schedules the step with linear_scheduler(0.6 -> 1 over 3 intervals) under Optuna; ActivitySim / CT-RAMP practice uses a flat dampener on the same ln(observed/modelled) increment; eqasim's boptx runs a general optimiser instead and has no damping parameter of this kind; Cadyts adjusts no parameter at all and so has no step to damp.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "query": "A published convergence or oscillation study of the damped ln(observed/modelled) ASC update on a MULTIMODAL agent-based model - round-over-round |delta| against the damping factor. Nothing found this pass beyond the two implementations' shipped defaults.",
+   "additional_sources": [
+    "https://github.com/matsim-vsp/matsim-python-tools/blob/master/matsim/calibration/base.py",
+    "https://tfresource.org/topics/Model_Validation_and_Reasonableness_Checking_Mode_Choice.html"
+   ],
+   "needs_research": false,
+   "last_verified": "2026-09-09",
+   "added_on": "2026-09-09",
+   "verified_in": "pass 2026-09-09 (781cf41)"
+  },
+  {
+   "layer": "I",
+   "factor": "Diagnosing a residual: constant versus missing mechanism",
+   "what_research_says": "The profession's own manual puts constant adjustment LAST and lists what must be exhausted first. FHWA's Travel Model Validation and Reasonableness Checking Manual, chapter 7 (Mode Choice / Vehicle Occupancy), states that 'simple adjustments to modal constants estimated using weighted samples should be considered \"a last resort\" after all other possible causes for error and calibration adjustments have been considered', and its Table 7.6 orders the checks ahead of it: verify trip distribution for the market segment, check that the implied transit share is reasonable, recheck the skim data (networks, time periods, geographic scope), consider revising the model STRUCTURE, evaluate indicator variables or adjust their coefficients - and only then revise an alternative-specific constant. The same chapter states plainly that 'there are no applicable criteria guidelines for checks of mode choice', so the field supplies an ORDER of diagnosis and no numeric bar. What it does not supply anywhere reached this pass is a TEST that separates the two cases: no source reviewed proposes reading the round-over-round behaviour of the constant update itself as the diagnostic.",
+   "source_url": "https://www.fhwa.dot.gov/planning/tmip/publications/other_reports/validation_and_reasonableness_2010/ch07.cfm",
+   "magnitude": "literature: an ORDERED CHECKLIST, not a coefficient - five classes of check ahead of any constant revision, and no numeric acceptance criterion for mode choice at all",
+   "how_leading_simulators_do_it": "US MPO practice follows the manual's order and records the checks in a calibration report; MATSim and eqasim scenarios in the published literature adjust the constants against reference shares without reporting a preceding diagnosis; no surveyed project publishes a test that separates a taste residual from a missing mechanism.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "query": "A published TEST (not a checklist) that distinguishes a residual an alternative-specific constant can legitimately absorb from one caused by an absent mechanism - for instance reading the contraction behaviour of the ASC update over successive rounds. None found this pass.",
+   "additional_sources": [
+    "https://tfresource.org/topics/Model_Validation_and_Reasonableness_Checking_Mode_Choice.html"
+   ],
+   "needs_research": false,
+   "last_verified": "2026-09-09",
+   "added_on": "2026-09-09",
+   "verified_in": "pass 2026-09-09 (781cf41)"
+  },
+  {
+   "layer": "I",
+   "factor": "Multi-objective aggregation across many simultaneous targets",
+   "what_research_says": "Aggregating many targets into one number has a known and specific failure. Jakob and Blume set it out: with a weighted sum, 'by varying the weights, any point of a convex Pareto front can be obtained... On the other hand, it is possible that parts of the Pareto front cannot be found in case of a non-convex problem... the part between points A and B of the Pareto front cannot be obtained for any weights. This is a serious drawback.' The counterweight is cost: 'the computational effort to determine all or at least most of the Pareto front increases significantly with the number of conflicting objectives', and the paper's framing is that the real-world question arises 'where either more than four objectives have to be considered, or the same type of task is repeated again and again with only minor modifications'. So beyond about four conflicting targets a full Pareto treatment is expensive and scalarisation is the practical route - while the scalarisation chosen decides which compromises are reachable at all. A weighted sum of squared deviations across targets is the standard form in simulation-based transport calibration.",
+   "source_url": "https://arxiv.org/pdf/2203.02697",
+   "magnitude": "literature: a weighted sum cannot reach the non-convex parts of a Pareto front for ANY weights; Pareto methods' cost rises sharply past about four conflicting objectives",
+   "how_leading_simulators_do_it": "SPSA-family and boptx calibrations minimise a weighted sum of squared deviations across targets; the SimMobility MT surrogate work aggregates aggregate benchmarks into one objective; the ABM literature recommends evolutionary multi-objective optimisation with a Pareto set where the trade-offs must be seen. Whether a MIN-MAX / Chebyshev scalarisation over the targets escapes the non-convexity limitation is NOT stated by this source and was not verified this pass - it is recorded as a gap, not asserted.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "query": "Whether a MIN-MAX (Chebyshev / worst-target) scalarisation reaches Pareto points a weighted sum cannot, stated in a transport-calibration source - and any transport application that reports a Pareto set over per-mode deviations rather than one aggregated number.",
+   "additional_sources": [
+    "https://www.sciencedirect.com/science/article/abs/pii/S016792361930140X",
+    "https://doi.org/10.3390/futuretransp5030118"
+   ],
+   "needs_research": false,
+   "last_verified": "2026-09-09",
+   "added_on": "2026-09-09",
+   "verified_in": "pass 2026-09-09 (781cf41)"
   }
  ],
  "last_pass": {
-  "date": "2026-09-08",
-  "head": "6cf0ffd",
-  "rounds": 5,
-  "searches_spent": 33,
+  "date": "2026-09-09",
+  "head": "781cf41",
+  "rounds": 3,
+  "searches_spent": 13,
   "budget": 40,
   "literature_halves_newly_filled": 0,
-  "literature_halves_completed": 2,
-  "factors_added": 7,
-  "note": "Fourth pass of the library, first at 6cf0ffd. 67 of the 72 stored literature halves were inside the 365-day horizon and were REUSED unchanged. Five were rewritten and two of those were the last rows carrying needs_research, which are now CLOSED: WORKPLACE LOCATION (AToM validates work travel as a mode share to plus-or-minus one percentage point against the 2016 census - driving 74.8 vs 75.2, PT 21.5 vs 19.3, walk 2.1 vs 3.7, cycle 1.6 vs 1.7 - and shows destinations only as an SA3 map, so the absence of any published OD flow tolerance is now the finding, corroborating the FHWA manual) and EXTERNAL AND THROUGH TRAFFIC (the TfNSW M1 Raymond Terrace EIS puts the divertible share at the Hexham cordon between 25 and 45 per cent, an agency FORECAST rather than a cordon survey, read as quoted in a newspaper report of the EIS). The other three rewrites are LLM-driven agents (now carrying the first systematic evaluation against observed Paris and Shanghai mobility), ASC calibration method, and learning / replanning (which gains the equilibrium-gap statement). SEVEN NEW ROWS were written in Layers H and I on the user's standing question - automatic calibration and its evaluation budget, surrogate / metamodel calibration, identifiability under many targets, estimation from aggregate data only, whether the replanning loop is an equilibrium fixed point, in-loop estimation from a ground-truth subpopulation, and machine-learned choice models - each carrying an evaluations_required field where its source states one. NO STATUS IS STORED HERE: all 79 were re-read at 6cf0ffd this pass.",
-  "dead_fetches_do_not_retry": [
-   "https://www.mdpi.com/2673-7590/5/3/118 (403)",
-   "https://www.sciencedirect.com/science/article/pii/S2352146525003382 (403 - the Advancing MATSim Open Berlin calibration paper)",
-   "https://hal.science/hal-03676897v1/document (access denied) and https://hal.science/hal-03676897 (socket hang up)",
-   "https://depositonce.tu-berlin.de/bitstreams/... (login page; the item page carries only the first abstract sentence)",
-   "https://arxiv.org/pdf/2112.12071 (over the 10 MB limit - USE https://ar5iv.labs.arxiv.org/html/2112.12071, which worked this pass)",
-   "https://www.tandfonline.com/doi/full/10.1080/15472450.2024.2372894 (403)",
-   "https://link.springer.com/article/10.1007/s11116-021-10259-4 (auth redirect; PMC7614415 works)",
-   "https://pmc.ncbi.nlm.nih.gov/articles/PMC9987251/ (captcha)",
-   "https://alogit.com/papers/Sydney%20model.pdf (unreadable)"
-  ],
-  "route_that_worked": "A PDF that WebFetch returns as binary is saved to the tool-results directory and can then be read locally with the Read tool's pages parameter at no further budget cost. That route recovered the Salt Lake City metamodel figures, the Floetteroed equilibrium-gap abstract, the MUM 2024 planParamCalibration deck and the Tallinn Bayesian-optimisation results this pass. Use it first next time.",
-  "still_needs_research": [],
-  "gaps_open": 5
+  "literature_halves_completed": 0,
+  "factors_added": 4,
+  "note": "Fifth pass of the library, first at 781cf41 and one day after the fourth. The library reported needs_research 0 and every one of the 79 stored literature halves was inside the 365-day horizon, so ALL 79 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED - which is what let all 13 calls go to the session's directive. FOUR NEW ROWS, all Layer I, on the user's question about attaining equilibrium across many simultaneously-targeted variables: (1) SEQUENTIAL VERSUS SIMULTANEOUS CALIBRATION - the two formulations are named explicitly in the dynamic-OD literature, most optimisation-based studies use the simultaneous form because sequential methods lose information between stages, and the problem is underdetermined because measured roads are orders of magnitude fewer than roads; (2) DAMPING AND STEP-SIZE SCHEDULE - the matsim-vsp default was read from source this pass and is a SCHEDULE, linear_scheduler(start=0.6, end=1, interval=3), not a flat factor, while its TerminationCondition still carries '# TODO: not used yet'; (3) DIAGNOSING A RESIDUAL, CONSTANT VERSUS MISSING MECHANISM - FHWA chapter 7 supplies an ORDERED CHECKLIST with constant revision last and states that 'there are no applicable criteria guidelines for checks of mode choice', and no source reached this pass supplies a TEST rather than a checklist; (4) MULTI-OBJECTIVE AGGREGATION - a weighted sum cannot reach the non-convex parts of a Pareto front for any weights, and Pareto methods' cost rises sharply past about four conflicting objectives. Two searches were spent and wasted on damping (the query returned robotics and camera calibration); the useful route was reading the matsim-vsp source directly. TWO PDFs that WebFetch returned as binary were saved and read locally at no budget cost - arXiv 2210.17315 and 2203.02697 - which supplied the two exact quotations above; that route is confirmed again and should be reused. No factor was retired. The crowding scorer that landed at this HEAD was checked against the ledger for a factor it reveals as missing and raised NONE: seat availability and denied boarding are already row F3, and load-factor-dependent dwell is already row G3.",
+  "statuses_note": "0 statuses stored, by design. All 83 were re-read at 781cf41 by grep of the registry, src/, cities/newcastle/build/ and both Java trees, plus a read-only check_hardcoding.py run for the declared-but-unwired list (0 unwired; 4 declared-ahead-of-consumer). This pass: IN 45, PARTIAL 27, INERT 2, ASC 1, OUT 8 over 83 rows (previous pass: IN 39, PARTIAL 29, INERT 2, ASC 1, OUT 8 over 79). FIVE CARRIED FACTORS CHANGED CLASS - the first movement the library has recorded: crowding PARTIAL->IN, boarding/denied boarding PARTIAL->IN, ASC calibration method PARTIAL->IN, aggregate-only estimation PARTIAL->IN, and access/egress/wait/transfer IN->PARTIAL. The four new rows are IN, PARTIAL, IN, IN."
  },
  "field_aliases": {
   "how_leading_simulators_do_it": "the field Phase 7 also calls how_leading_simulators_implement_it",
@@ -1226,7 +1299,7 @@
   },
   {
    "lane": "I7 search algorithms",
-   "query": "A head-to-head comparison of CMA-ES, Bayesian optimisation and coordinate descent on a MULTIMODAL MATSim scenario reporting simulation runs to a stated per-mode tolerance. hal-03676897 failed twice this pass; try the boptx paper on arXiv or the MUM proceedings."
+   "query": "A head-to-head comparison of CMA-ES, Bayesian optimisation and coordinate descent on a MULTIMODAL MATSim scenario reporting simulation runs to a stated per-mode tolerance. hal-03676897 failed twice; try the boptx paper on arXiv or the MUM proceedings."
   },
   {
    "lane": "A2 workplace location (residual)",
@@ -1234,11 +1307,23 @@
   },
   {
    "lane": "G5 through traffic (residual)",
-   "query": "The PRIMARY traffic chapter of the M1 Raymond Terrace EIS (SSI-7319) on the NSW Planning Portal, for the diverted-volume table behind the 45% / 25% figures read this pass only as newspaper quotation."
+   "query": "The PRIMARY traffic chapter of the M1 Raymond Terrace EIS (SSI-7319) on the NSW Planning Portal, for the diverted-volume table behind the 45% / 25% figures read only as newspaper quotation."
   },
   {
    "lane": "I8 surrogate (residual)",
    "query": "Osorio 2020, metamodel-based calibration of large-scale MULTIMODAL microscopic traffic simulation (S0968090X20307592) - paywalled; try an author preprint on web.mit.edu/osorioc."
+  },
+  {
+   "lane": "I14 min-max scalarisation (NEW 2026-09-09)",
+   "query": "Whether a MIN-MAX / Chebyshev / worst-target scalarisation reaches Pareto points a weighted sum cannot - stated in a source this project can cite, ideally transport-calibration rather than general MOO. Jakob and Blume 2014 compares Pareto against the weighted sum only and does not treat the min-max form."
+  },
+  {
+   "lane": "I12 damping schedule (NEW 2026-09-09)",
+   "query": "A published convergence or oscillation study of the damped ln(observed/modelled) ASC update on a MULTIMODAL agent-based model: round-over-round |delta| against the damping factor. Two searches this pass returned robotics and camera-calibration damping instead; enter through Rakow and Nagel 2024 or the matsim-vsp issue tracker, not through a generic damping query."
+  },
+  {
+   "lane": "I13 constant-versus-mechanism test (NEW 2026-09-09)",
+   "query": "A published TEST rather than a checklist that separates a residual an ASC may absorb from one caused by an absent mechanism. FHWA chapter 7 gives the ordered checklist and explicitly no numeric criteria; nothing found offers a test."
   }
  ]
 }

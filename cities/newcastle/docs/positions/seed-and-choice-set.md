@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
 
 ## What is built
 
@@ -23,6 +23,14 @@
 - **The gate is read on the trend, not the level**, against a scored choice set: iterations 0–6 execute the unscored seeds, 10–30 are exploration (§9.108, §9.120; brief directive 3). The reader is `src/analyse/report_mode_ridership.py` over `src/analyse/iteration_trips.py`, validated against `<n>.trips.csv.gz` wherever both exist (§9.120).
 
 ## What is measured
+
+- **REQUIREMENT 8 HAS A DERIVED ANSWER FOR THE FIRST TIME: THE SYSTEM SETTLES ABOUT ITERATION 200–210** (§9.160). Aitken three-point extrapolation over the F31 arm's own `output/modestats.csv` and `scorestats.csv` at iterations 40 / 70 / 100 (§9.160).
+  Asymptote and the iteration each series is within 1 % of its own level: car **0.65267** at ~130, walk **0.08894** at ~154, taxi **0.02821** at ~161, pt **0.02713** at ~191, bike **0.03405** at ~208 (§9.160).
+  **The run is NOT relaxed at 100**: the average plan score is **11.8311** against an asymptote of **15.4730**, 24 % below it and still rising monotonically (§9.160). It is an EXTRAPOLATION from one arm, and the depth arm is the experiment that tests it (§9.160).
+- **THE CHOICE SET CLOSES AT ITERATION 74, AND EVERYTHING AFTER IT IS RE-SELECTION** (§9.160). From `output/modeChoiceCoverage1x.txt`, the first iteration each mode is within 1 % of its final coverage: walk 7, car 8, bike 11, ride 12, taxi 13, **pt 74** (§9.160).
+  pt is the last to close and closes at only **24.58 %** of agents — three quarters of the population has never held a pt plan (§9.160). motorbike **0.00236** and truck **0.04158** never move at all, confirming both are locked carves outside `RUN.mode_choice.modes` (§9.160).
+- **Three falsifiable predictions the depth arm tests** (§9.160): **ride is already converged** — decay r **0.054**, asymptote equal to its it-100 value to five decimals — so no further iteration and no constant moves it off **−38.0 %** (§9.160);
+  **car, the only mode inside the band, is drifting further out** (+2.41 % relative still to come, §9.160); and **walk gets worse** (−5.95 % still to come, §9.160). Basis caveat: `modestats` is unlinked legs over the whole population, the board is resident linked trips — directions and decay constants transfer, exact deviations do not (§9.160).
 
 - **The deepest reading of any family**, F17 `aborted_20260830T141222_300it_10pct` (every seed scored, one traffic state, network direct walk), residents' linked trips at 10% (§9.126): car 36.26 → 59.32% and walk 42.27 → 14.88% by iteration 50 — +1.7% and +11.0% of target — ride 2.23 → 10.09% (the demand's ceiling, #86), bike flat at 8.29%. Stopped at iteration 60 when F18 built. The 250-iteration horizon is not the constraint it looked like under the uniform seed.
 - **Under the uniform seed the same modes needed hundreds of iterations**: at iteration 100 of the F12 arm car moved +0.001019 per iteration with ~136 more needed, walk ~100 more, pt ~248 more; ride and bike diverging (§9.108). At F14 iteration 30, 65.1% of cyclists held no bike-free plan in memory — the level was random innovation's progress through the seed, not the model (§9.120).
@@ -59,6 +67,7 @@
 
 ## History
 
+- §9.160 — convergence ~200-210 derived; choice set closes at 74
 - §9.158 — a listener innovated past the cutoff; the reading point drifts
 - §9.157 — the F31 gate, still stopped at 100
 - §9.143 — per-trip seeded modes; the choice set is not the ride ceiling
@@ -74,6 +83,3 @@
 - §9.94 — uniform seed recoverable for three
 - §9.92 — seed stays uniform, deliberately bad
 - §9.57 — horizon 1000 kept, 500 rejected
-- §9.43 — 1000 declared; snap-aware drift window
-- §9.7 — seed test; 250 not converged
-- §9.6 — ride enters choice set; uninformed seed

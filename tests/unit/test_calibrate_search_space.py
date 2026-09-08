@@ -163,3 +163,47 @@ def test_the_stopping_rule_is_derived_from_the_reading_noise():
     assert delta['units'] == drift['units'] == 'per cent'
     # the measurement carries its own spread, as a measurement must
     assert drift['source'] == 'measured' and drift['sweep_role'] == 'measurement'
+
+
+# ----------------------------------------------- reached through a derivation
+
+def test_a_field_reached_through_a_derived_from_is_reachable():
+    """`rebuild_stage` learnt this for bindings and missed it one step out.
+
+    `C.asc.bus` carries no `consumers` and no `matsim_param`. It reaches
+    `scoring.modeParams[*].constant` through `C.scoring.mode_constant`, whose
+    `derived_from.fields` names it - so it is realised at run time by
+    construction, and the loop excluded it as "no declared consumer: nothing
+    would read a change".
+
+    That is why the DECISIONS.md 8.5 departure logged at 9.158 - taken
+    specifically so a search could reach `C.asc.bus` and `C.asc.light_rail` -
+    bought the search nothing.
+    """
+    realisers = calibrate.derived_realisers()
+    assert realisers.get('C.asc.bus') == 'C.scoring.mode_constant', (
+        'the reverse index must find the parent whose binding realises it')
+    stage, why = calibrate.rebuild_stage('C.asc.bus', {'value': -1.05})
+    assert stage == 'none', why
+    assert why is None
+
+
+def test_making_it_reachable_is_not_permission_to_fit_it():
+    """The guards that actually decide are elsewhere, and still refuse."""
+    import registry
+    cfg = registry.load(scenario='S2', day='WEEKDAY', run='default_25pct')
+
+    # held_fixed still refuses, whatever the derivation says
+    rail = cfg.field('C.asc.rail')
+    assert 'held_fixed' in rail
+    free = [f['key'] for f in calibrate.free_parameters(cfg)]
+    assert 'C.asc.rail' not in free
+
+    # a placeholder is not a value to fit
+    for key in ('C.asc.ferry', 'C.asc.cycle'):
+        assert cfg.field(key).get('status') == 'placeholder'
+        assert key not in free
+
+    # and the two the departure opened ARE now reachable
+    assert 'C.asc.bus' in free
+    assert 'C.asc.light_rail' in free

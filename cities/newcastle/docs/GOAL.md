@@ -54,11 +54,24 @@ comes first; the questions are applications of it.
    `run.py`) may not be tuned to Newcastle; everything specific to a city —
    data, parameters, adapters, documents — lives under `cities/<city>/`.
 10. **No open issue behind a run.** Before the simulator is tuned or tested —
-    before any arm is launched — every GitHub issue is either closed or
-    labelled `awaiting-run`, meaning the only thing left to do on it is a
-    measurement that needs the run. An issue that can be fixed without a run
-    is fixed first. The launcher and the session gate refuse while an open
-    issue carries no `awaiting-run` label (set by the user, 3 September 2026).
+    before any arm is launched — every GitHub issue is closed, or declares what
+    it is waiting for. An issue that can be fixed without a run is fixed first.
+    There are two ways to declare, and the declaration is CHECKED, never taken
+    on the label alone (set by the user, 3 September 2026; the third state
+    added 9 September 2026):
+    - `awaiting-run` **plus a line `AWAITING-RUN: <the measurement>`** — the
+      only thing left to do is a measurement that needs the run. **These block
+      the launcher** until they are closed or measured.
+    - `decision-needed` or `awaiting-implementation` **plus a line
+      `AWAITING-DECISION: <what is awaited, and who takes it>`** — what it
+      waits on is a decision, an acquisition or a mechanism, and no arm at any
+      horizon settles it. **These are reported at every gate and every launch
+      and do not block.** The third state exists because the rule was binary
+      and four open issues were neither: the only ways to go green were to
+      invent a measurement — the exact failure the evidence check exists to
+      stop — or to strip the label and make the issue invisible again.
+    The purpose is that nothing open passes quietly, not that everything open
+    must be a run question.
 
 ## The loop
 
@@ -72,7 +85,8 @@ comes first; the questions are applications of it.
    fix it from the root. No workarounds, no compensating constants. A
    deviation in one mode is often another mode's deficit: consider them
    together.
-4. Work every open issue to closed or `awaiting-run` before the next arm
+4. Work every open issue to closed, to `awaiting-run` with its measurement,
+   or to `decision-needed` / `awaiting-implementation` with what it awaits
    (requirement 10); the arm then measures what the issues left to it.
 5. Repeat until every mode is inside 10 %.
 

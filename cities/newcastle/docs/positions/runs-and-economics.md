@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
 
 ## What is built
 
@@ -31,6 +31,11 @@
 
 ## What is measured — what a run costs
 
+- **THE NEW BYTECODE IS ESSENTIALLY FREE, and it is the first ever measured** (§9.160). `20260909T011135_4it_25pct`, a 4-iteration 25 % probe of the deployed controler, `ran_to_last_iteration`, wall 39.6 min (§9.160).
+  Per recurring iteration against the F31 arm's own stopwatch: total **263.5 s** against 260.5, **+3.0 s (+1.2 %)** (§9.160); mobsim **188.5** against 198.0 (§9.160); `prepareForMobsim` **39.0** against 29.0 (§9.160); replanning **32.5** against 29.0 (§9.160).
+  The rise is in `prepareForMobsim`, **not** the mobsim — `citysim.PtCrowdingScoring` charges through a `PersonScoreEvent` inside event handling, and its two handlers on the highest-volume event classes did not slow the mobsim (§9.160). **Thin basis, stated: two recurring iterations against F31's 98** (§9.160).
+- **THE PRICER CAN NOW SEE A STALE BUILD** (§9.160). `arm_cost.observed_arms()` filtered on fraction and profiled and on nothing else, so on 9 September it quoted 22.2 h from five arms that ALL predated `PtCrowdingScoring` — a price for a stack that no longer existed (§9.160). It now compares the priced run's `controler_sha256`, the hash resume has refused to match across since #28, and names the probe that would settle it (§9.160).
+
 - **THE STORE'S TWO BIGGEST TENANTS ARE RECLAIMED, AND THE VERB NOW EXISTS** (§9.159, #164). Both un-closed-out arms were extracted through the store's own `process(extract=True)` in **4.0 and 3.8 minutes** — not the ~35 each the issue projected — and their findings were VERIFIED against the eleven position-page lines citing them before a byte moved: `modes_final.json` reproduces taxi **+76.62 %**, ride **−40.11 %**, walk **−27.16 %**, car **+14.78 %** exactly. Then reclaimed: **173.4 + 163.0 = 336.4 GiB**, and raw fell from **467.1 GiB (93.4 % of the 500 GiB cap) to 130.7 GiB (26.1 %)**. `results_store` gained `reclaim()`, `report()` and a CLI, because `trim()` was the wrong instrument and always would be — it reclaims oldest-first and ONLY over cap, so two reclaimable arms waited in a 93.4 %-full store for a threshold whose crossing would have landed inside the next long arm.
 
 - **THE ITERATION IS DECOMPOSED TO THE METHOD FOR THE FIRST TIME, AND A THIRD OF IT WAS OURS** (§9.154, `20260907T182742_4it_25pct`). A JVM flight recording of a 25 % probe, read by `python src/analyse/profile_run.py --run <run> --iterations 2:3`: `GradientLinkSpeed$Router.getLinkTravelTime` **17.9 % of every CPU sample in the run**, `GradientLinkSpeed.factor` another **14.4 %**, `BikeStressDisutility` **3.4 %**, and `Arrays.binarySearch` **30.5 %** — of which 16.2 points were `Router.getLinkTravelTime` → `TimeVariantLinkImpl.getFreespeed`, a `synchronized` binary search over the level-crossing change events on all 143,891 links, of which 16 can change. `Double.parseDouble` of the stamped `grade_pct` was a further 8.0 %. **This project's own code was 50.0 % of the run's CPU.**
@@ -55,7 +60,7 @@
 - **A 25% arm's log is ~51 GiB by its gate** (§9.156; measured at 47.7 and 51.4 GiB on the two arms 9.159 has since reclaimed, their findings kept in `results/processed/`).
 - **Memory.** The 10% arms run at `--xmx 30g` (the F20 arm's `_meta.json`); 25% arms peaked ~27 GiB each under the two-arm pattern (§9.62) and 33–38 GiB working set on 40g alone (§9.43). Memory model ≈ 24 GiB fixed + 0.09–0.3 MB/agent, so 100% needs ~80–160 GiB of heap and does not fit the 63.5 GiB machine (§9.43, §9.5). The driver pins `-Xms` to `-Xmx` (§9.59), so declared heap is committed heap.
 - **Threads.** `RUN.machine.threads` = 16 since §9.147 (qsim; run identity — MATSim partitions the network by it; 10 until the F27 probe) and `RUN.machine.replanning_threads` = 20 (run identity; the one clean win, replanning 76 → 33 s, §9.59). `RUN.machine.event_handler_threads` = 4 is a wall-time knob, not identity: ~21% off the wall at 25%, at the price that within-timestep event order is no longer byte-reproducible (§9.56). **It is now bracketed on both sides and 4 stands on evidence**: 1 is saturated (§9.56), 12 buys nothing over 4 (§9.59), and **2 is 44.5% SLOWER** (205.5 → 297.0 s, mobsim 143 → 226 s, `20260907T233540_4it_25pct`, §9.155). The 11.6% of CPU the §9.154 recording found in `LinkedBlockingQueue.offer` inside the manager's chain is therefore **the price of keeping each stage short enough not to throttle the 16 qsim threads, not waste to be recovered**. **The "event multisets verified bit-identical" this line used to claim is SUPERSEDED and was never true of a whole run** (§9.142): three runs of ONE unmodified build on the same package and the same seed produced 5,620,710 / 5,620,410 / 5,620,710 iteration-0 events, and every pair diverges by iteration 2. `global.numberOfThreads` = 20 and MATSim's `MatsimRandom.getLocalInstance()` increments an UNSYNCHRONISED static counter, so the routing disutility's random draws race and a handful of agents get different routes. Mode shares were identical across all three, so a gate reading is not at risk, but a run of this model is NOT reproducible bit for bit and any A/B claim needs a multi-run band rather than a diff. `RUN.machine.events_synchronize_on_simsteps` stays true (false is a 65 s/it regression) and `RUN.machine.events_one_thread_per_handler` stays false (measured fatal) (§9.59).
-- **Wall-time-only controler fields.** `RUN.controler.write_events_interval` / `write_plans_interval` = 10 in the registry, 100 in long-arm overlays; `RUN.controler.create_graphs` is switched off for long arms (§9.56, §9.59). `RUN.controler.last_iteration` = 1000 is measured to leave the model relaxed, not measured to be enough search (§9.43).
+- **Wall-time-only controler fields.** `RUN.controler.write_events_interval` / `write_plans_interval` = **100** in the registry (`write_trips_interval` is the one that stays at 10, so every tenth iteration is still readable); `RUN.controler.create_graphs` is switched off for long arms (§9.56, §9.59). `RUN.controler.last_iteration` = 1000 is measured to leave the model relaxed, not measured to be enough search (§9.43).
 - The registry default `RUN.machine.xmx` = 14g and its stated sizing rule are the §9.5 model; every arm overrides it, and the §9.43 model above is the one to cost against.
 
 ## Rules that stand
@@ -73,6 +78,10 @@
 
 ## What is open
 
+- **AN ARM'S APPROVED COST CEILING IS ENFORCED BY NOBODY** (§9.160, #169). No `RUN.*` field declares a wall-clock limit and nothing reads one; the only automatic stop is `start_gate_watch`, which stops on a MODELLING condition and knows nothing about clocks (`src/run/run_matsim.py:959`, §9.160).
+  The arm running now disables that watcher by a scoped departure, so it has **no automatic stop at all** — not on deviation and not on cost (§9.159, §9.160). Its ceiling is **32 h** and must be enforced by hand with `python run.py --stop` (§9.160).
+  Not built this session because it sits in the launch path of the very arm it would protect and cannot be tested end-to-end without a second arm, which #66 forbids (§9.160, #169).
+
 - **The time-variant link factory is the one named runtime cut left** (§9.155). `timeVariantNetwork = true` makes all **143,891** links `TimeVariantLinkImpl`, each paying a `synchronized` `Arrays.binarySearch` on every `getFreespeed(time)`, to represent `crossing_change_events.xml`: **2,441 events on 16 links**. Worth ~7 % of CPU (`getFreespeed` 3.8 % + `binarySearch0` 2.4 % + `indexedBinarySearch` 0.7 %); needs the change-event ids read before the network is built, a rebuild, and its own probe. **It does not reach 120 s** — that is priced as unreachable by any measured lever.
 - **A SURROGATE/EMULATOR CALIBRATION ROUTE IS HELD IN RESERVE, and it is the one machine-learning route this project's aggregate-only data does not block.** Bayesian optimisation over a random-forest surrogate of the simulator - fit the surrogate to (parameter vector → aggregate mode shares) pairs, optimise on the surrogate, spend real evaluations only where it is uncertain - needs no unit records, only the aggregate mode shares this project already scores against, which is why it survives where estimating a discrete-choice model on the NSW HTS does not (see the population page's TfNSW request). The reserve figure is ~150 objective evaluations for a several-hundred-parameter vector; **at this project's own measured cost of 7.66 h to an iteration-100 gate (`aborted_20260908T100009_300it_25pct`, §9.157) that is ~48 days of wall clock at 25 %**, so it is worth starting only if the ASC contraction test shows the residual is genuinely multi-parameter rather than a handful of constants. **The published result behind the ~150 figure is not yet recorded in this repository and must be cited here before the route is costed as evidence rather than as a plan.**
 - **#66 — the machine-level stall.** A 10% iteration once took 2,415 s against a ~20 s median, and on 22 August it hit both concurrent arms at the same wall-clock time in different iterations (#66). Unattributed — OS maintenance, antivirus or standby trimming are the candidates. The F21 arm added one candidate event: iteration 30 took 355 s against a 219–228 s neighbourhood (00:19–00:25, 31 Aug), isolated, with the ten-iteration write load ruled out by iterations 10 and 20 (§9.134).
@@ -81,7 +90,7 @@
 - `src/run/run_failure.py` quotes the first exception it finds: the F20 arm's `cause_detail` names a benign Guice/ASM warning (`Unsupported class file major version 69`) while its `cause` is the stop by direction — the reader does not distinguish a logged warning from a terminating exception.
 - `RUN.monitor.pace_band_s` = [217, 253] is the 25% × 1000 band; the `_progress.json` digest applies it to 10% arms and reports them out of band (§9.72). **It no longer brackets the stack**: F28 ran 258.5 s above it and the measured unprofiled plain iteration runs **216.0 s** below it, so the flag means nothing either way until it is re-measured — and its `departure_requires` rule says a new family's measured pace, which F31 is now producing (§9.155, §9.156).
 - **From the 3 Sep assessment, still to measure:** the incremental log read and the bounded retry are built, and their disk effect on a 25 % arm is the next arm's to measure (#131, awaiting-run). **72.8 GiB was permanently untrimmable** until §9.155: the #132 guard kept any raw directory with a `_run.json` and no `_metrics.json`, which an operator or gate stop never gets. `RUN.storage.extract_grace_s` = 3600 bounds the window; the trim runs beside the launched arm rather than before it (§9.141). No Linux detach path exists — `--detach` is the Task Scheduler — and the README states it (#128 closed on that statement).
-- **TWO ARMS IN THE STORE ARE AT RISK AND THE STORE WAS DELIBERATELY NOT TRIMMED** (§9.158). `results/raw` sits at **93.4 % of its 500 GiB cap** and the two largest directories are **336.4 GiB** of it — the 2nd and 7th oldest, carrying no `_run.json`, holding no snapshots, and cited by **eleven lines across eight position pages**. They fail the reclaim tests, so the guard now refuses them; reclaiming them means running `extract_snapshots` (~35 min each) and re-aiming those eleven citations at `processed/` FIRST. **Filed with its numbers; not done this session.** The 10 % arm was not priced either.
+- **THE TWO ARMS AT RISK WERE EXTRACTED AND RECLAIMED** (§9.159, #164 closed). `results/raw` now sits at **26.2 % of its 500 GiB cap** (130.8 GiB), and this line records what it said before: `results/raw` sat at **93.4 % of its 500 GiB cap** and the two largest directories are **336.4 GiB** of it — the 2nd and 7th oldest, carrying no `_run.json`, holding no snapshots, and cited by **eleven lines across eight position pages**. They fail the reclaim tests, so the guard now refuses them; reclaiming them means running `extract_snapshots` (~35 min each) and re-aiming those eleven citations at `processed/` FIRST. **Filed with its numbers; not done this session.** The 10 % arm was not priced either.
 
 ## Refused — do not re-raise
 
@@ -96,6 +105,7 @@
 
 ## History
 
+- §9.160 — the new stack priced: +3.0 s; the ceiling has no enforcer
 - §9.159 — 336.4 GiB reclaimed, the store 93.4 % → 26.1 %; `reclaim()` is the verb
 - §9.158 — dependencies pinned; the store refuses to delete what it cannot reconstruct
 - §9.157 — the quoted band held; the top anchor right to 0.5 %
@@ -110,21 +120,3 @@
 - §9.142 — the iteration profiled; 60% is one hoistable call
 - §9.140 — launcher refuses behind open issues
 - §9.139 — gate watcher blind at 25%, fixed
-- §9.138 — F23 arm launched under goal directive
-- §9.137 — results store; runs gate themselves
-- §9.136 — 25% pace measured; log read bounded
-- §9.134 — F21 arm to its gate; pace measured
-- §9.127 — population hash joins run key
-- §9.120 — console stop; dead-pid check
-- §9.119 — F14 arm cleared iteration 6
-- §9.104 — resume gained resolved-values hash
-- §9.94 — F12 gate at 108 s/it
-- §9.76 — detached launch, digest, run stack
-- §9.73 — MATSim re-affirmed, version recorded
-- §9.72 — silent launch deaths; approval spent
-- §9.66 — status card, aborted_ naming
-- §9.65 — runner names every directory
-- §9.62 — two-arm relaunch at 30g
-- §9.59 — every wall-time knob probed
-- §9.56 — events pipeline threads measured
-- §9.43, §9.5 — 1000 iterations declared measured; the first run cost measured

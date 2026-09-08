@@ -23,11 +23,15 @@
 # top-level import under `src/`, `tests/`, `cities/` and `run.py` has a line
 # here, and every line is exactly pinned.
 #
-# NO HASHES. `--require-hashes` needs each artefact's sha256, which means
-# downloading the wheels; this repository's network sandbox admits ABS, TfNSW,
-# Overpass, Copernicus and GitHub and not the Python package index, so a hash
-# taken here could not be verified here. Exact version pins are what can be
-# stated honestly today. Adding hashes is a follow-up, not a claim to make now.
+# NO HASHES, AND THE REASON PREVIOUSLY GIVEN HERE WAS FALSE. This block said
+# the Python package index sits outside the network sandbox; `pypi.org` and
+# `files.pythonhosted.org` have been on the allowlist in `.claude/settings.json`
+# since 10 August, so nothing about the sandbox prevents a hash being taken or
+# verified here. The honest reason is narrower: `--require-hashes` is all-or-
+# nothing across the file and applies transitively, so it means pinning every
+# transitive dependency by digest as well, on every platform this package is
+# installed on. Exact version pins are what is stated today; hashes are a
+# follow-up with a real cost, not a claim blocked by a sandbox rule.
 #
 # Python itself: 3.14 (CI's `actions/setup-python`; recorded 8 September 2026
 # against 3.14.4 on the workstation the package was last built on).

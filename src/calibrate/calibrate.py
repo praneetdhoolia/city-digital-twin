@@ -77,6 +77,9 @@ import sys as _sys_rs, os as _os_rs
 _sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
     _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
 import results_store as _results_store  # noqa: E402
+# the runner owns run identity: `find_completed` is what resume
+# already trusts, and this loop must not keep a second opinion
+import run_matsim as _run_matsim  # noqa: E402
 
 
 def _resolve_run(name_or_path):
@@ -130,6 +133,43 @@ MEASUREMENT_LAYERS = ('src/analyse/', 'src/calibrate/')
 STAGES_IMPLEMENTED = ('none', 'run_inputs')
 
 
+_DERIVED_REALISERS = None
+
+
+def derived_realisers():
+    """Fields that reach the config through ANOTHER field's `derived_from`.
+
+    Maps a child key to the parent whose binding realises it. Built once from
+    the registry: a parent qualifies when it carries a `matsim_param` (so it
+    reaches the config on every run) and its `derived_from.fields` names the
+    child. The DERIVATION is the evidence, exactly as the BINDING is in
+    `rebuild_stage` - a conservative default over a NAME is right, a
+    conservative default over a DECLARED IDENTITY is wrong for the same reason.
+    """
+    global _DERIVED_REALISERS
+    if _DERIVED_REALISERS is not None:
+        return _DERIVED_REALISERS
+    out = {}
+    try:
+        import glob as _glob
+        pattern = os.path.join(_city.CITY_DIR, 'registry', '*.json')
+        for path in sorted(_glob.glob(pattern)):
+            with open(path, encoding='utf-8') as fh:
+                fields = json.load(fh).get('fields', {})
+            for parent, spec in fields.items():
+                if not spec.get('matsim_param'):
+                    continue
+                derived = spec.get('derived_from') or {}
+                for child in (derived.get('fields') or []):
+                    out.setdefault(child, parent)
+    except Exception:                                          # noqa: BLE001
+        # A registry this cannot read is one `rebuild_stage` should stay
+        # conservative about, not one it should guess for.
+        out = {}
+    _DERIVED_REALISERS = out
+    return out
+
+
 def rebuild_stage(key, field):
     """What a change to this field would require. 'none' means run-time only."""
     if key.startswith('CAL.'):
@@ -163,6 +203,17 @@ def rebuild_stage(key, field):
     # The binding is the evidence. A conservative default over a NAME is right;
     # a conservative default over a DECLARED BINDING is just wrong.
     if field.get('matsim_param'):
+        return 'none', None
+
+    # ... and a field REACHED THROUGH one. `C.asc.bus` carries no consumer and
+    # no binding of its own; it reaches `scoring.modeParams[*].constant`
+    # through `C.scoring.mode_constant`'s `derived_from.fields`. Excluding it
+    # as "nothing would read a change" is false - the derivation reads it on
+    # every run - and it is why the 8.5 departure logged at 9.158, taken so a
+    # search could reach `C.asc.bus` and `C.asc.light_rail`, bought the search
+    # nothing.
+    parent = derived_realisers().get(key)
+    if parent:
         return 'none', None
 
     for c in consumers:
@@ -546,30 +597,39 @@ def main():
     base = 'cal_%s_%s_%s' % (a.scenario, a.day, a.run_config)
 
     def find_run(overrides):
-        """The completed run carrying exactly these --set overrides.
+        """The completed run this candidate's overrides produced, if any.
 
-        The runner names every run directory itself (launch stamp, iterations,
-        sample pct - the 24 Aug 2026 owner directive), so a candidate is located
-        by what was actually run - the overrides in its `_run.json` - never by a
-        name this loop invented.
+        DELEGATED, and deliberately so. This was a hand-rolled glob matching
+        `_run.json`'s `overrides` - the RAW MATSim `--set` channel - while
+        `evaluate()` sends its candidate through `--config-set`, the REGISTRY
+        channel. A candidate therefore recorded `overrides: {}`, never matched,
+        and the loop raised AFTER paying a full arm's wall clock. The copy also
+        missed `results/processed/`, where the store keeps findings for ever,
+        and accepted any record with `rc == 0`, so an arm stopped at its gate
+        could have become the calibrated base the README is drawn from.
+
+        `run_matsim.find_completed` answers all three and is the function resume
+        already trusts: it searches RAW, PROCESSED and RESULTS, it requires
+        `completion == ran_to_last_iteration` (9.143), and it compares
+        `values_sha256`, the fingerprint of every resolved registry value, which
+        is precisely what distinguishes one `--config-set` candidate from
+        another (9.104). A candidate is still located by what was actually run
+        and never by a name this loop invented - the same rule, now enforced by
+        the code that owns it.
         """
-        import glob
-        want = {k: '%s' % v for k, v in overrides.items()}
-        # newest first: a forced re-run supersedes what it re-ran
-        for record in sorted(glob.glob(
-                os.path.join(_city.REPO, 'results', 'raw', '*', '_run.json'))
-            + glob.glob(
-                os.path.join(_city.REPO, 'results', '*', '_run.json')),
-                reverse=True):
-            try:
-                doc = json.load(open(record, encoding='utf-8'))
-            except (OSError, ValueError):
-                continue
-            if (doc.get('scenario') == a.scenario and doc.get('day') == a.day
-                    and (doc.get('overrides') or {}) == want
-                    and doc.get('rc') == 0):
-                return os.path.dirname(record)
-        return None
+        cand = _run_matsim.resolve(a.scenario, a.day, a.run_config, overrides)
+        rec = _run_matsim.find_completed(
+            a.scenario, a.day,
+            cand.get('RUN.sample.fraction'),
+            cand.get('RUN.controler.last_iteration'),
+            cand.get('RUN.machine.seed'),
+            {},                    # this loop sends no raw `--set` overrides
+            values=_run_matsim.values_sha256(cand))
+        if not rec:
+            return None
+        # the record names the directory that actually holds it; the store
+        # knows where that is, whether raw or processed
+        return _results_store.resolve(rec['name'])
 
     def rebuild_run_inputs(overrides):
         """Re-assemble this scenario x day's run inputs under the candidate.
