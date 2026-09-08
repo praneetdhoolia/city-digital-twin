@@ -57,6 +57,17 @@ import xml.etree.ElementTree as ET
 
 CFG = _registry.load()
 
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. Both files are written from the
+# same match of the OpenStreetMap rail alignment against the mapped road
+# network and the corridor signal table.
+OUTPUT_INPUTS = {
+    'networks/matsim/crossings/*': [
+        'networks/osm/railways.osm',
+        'networks/matsim/base/network.xml.gz',
+        'data/processed/corridor/A2_signal_control_corridor.csv'],
+}
+
 RAILWAYS_OSM = _city.path('networks/osm/railways.osm')
 BASE_NETWORK = _city.path('networks/matsim/base/network.xml.gz')
 A2_SIGNALS = _city.path('data/processed/corridor/A2_signal_control_corridor.csv')
@@ -509,4 +520,14 @@ def main():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

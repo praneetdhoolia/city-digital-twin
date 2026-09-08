@@ -62,7 +62,7 @@
     "S6": null
   },
 
-  "held_fixed_asc_fields": ["C.asc.light_rail", "C.asc.bus", "C.asc.rail"],
+  "held_fixed_asc_fields": ["C.asc.rail", "C.asc.walk", "C.asc.car_passenger"],
 
   "c1_value_pairs": {
     "C.transfer.beta_transfer_penalty_min": ["transfer_penalty", "base"],

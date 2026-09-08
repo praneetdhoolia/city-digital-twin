@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.156 · **Written against family:** `F31`
+**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
 
 ## What is built
 
@@ -23,11 +23,21 @@
 - Supply: 107 WEEKDAY departures on two routes, exact to GTFS; the same route-id trap applies (§9.113).
 - Target: no Newcastle ferry patronage is published, so the target is derived — the census G62 one-method ferry share within public transport on the target LGA's cell (34 of 904 PT journeys) scaled by the HTS PT level = 0.1429% of resident trips, status derived, sweep 0–0.2858% (§9.89, §9.122; row `ferry` of `mode_targets_by_mode.csv`).
 - Router: `citysim.NetworkDirectWalkPtRouter` (`src/java/citysim/NetworkDirectWalkPtRouter.java`) wraps SwissRailRaptor — the raptor answers with its best transit route, the wrapper routes the direct walk on the walk network, prices it by the raptor's own rule × `RUN.transit_router.direct_walk_factor` = 1.0 (literature, sweep 1.0–2.0), and returns the cheaper; `RUN.transit_router.direct_walk_basis` = `network` (derived; `beeline` recovers the stock raptor exactly); registered as the `ptDirectWalk` config module (§9.121).
-- Reach: `RUN.transit_router.search_radius_m` = 1000, `RUN.transit_router.extension_radius_m` = 200 and `RUN.transit_router.max_beeline_walk_connection_m` = 300, declared literature values that had reached every config as undeclared jar defaults (§9.120).
+- Reach: `RUN.transit_router.search_radius_m` = 1000, `RUN.transit_router.extension_radius_m` = 200 and `RUN.transit_router.max_beeline_walk_connection_m` = 300, declared literature values that had reached every config as undeclared jar defaults (§9.120). **The radius cannot by itself refuse a route** (§9.158): `DefaultRaptorStopFinder.findNearbyStops` falls back to the nearest stop plus the extension radius when fewer than two are inside, verified in the pinned jar.
+
+**The constants, and what they can and cannot reach.**
+
+- **`C.asc.ferry` DID NOT EXIST until §9.158.** Ferry is a scored pt submode under `RUN.routing.pt_submode_scoring` = `per_submode` (§9.78) and it silently inherited `asc_bus`, so the run-input report stated an inheritance rather than a declared value. It is now declared at −1.05 — the inherited value, so creating it is behaviour-neutral — with a sweep [−2.05, −0.05]. `C.asc.light_rail` −0.75 moves from `held_fixed` to [−1.75, 0.25]. Half-width derived two ways: `C.taxi.asc` (§9.76) is the registry's only other mode-ASC sweep at 2.0 utils wide, and one util is 3.54 minutes of in-vehicle time at this model's own scale. **The §8.5 departure for both is logged at §9.158, before any run reads them.**
+- **A PT constant is a PLAN-CHOICE lever and never a SUBMODE lever** (§9.158, §9.130). SwissRailRaptor's cost carries **no mode constant, no fare and no distance term** — `RaptorUtils.createParameters` prices travel time, waiting and a line switch and nothing else, read out of the pinned jar. So `C.asc.light_rail` can make a person choose pt over car; it cannot make the raptor choose the tram over the bus. **The interval is a BRACKET, not a licence to fit**: light rail is the mode the intervention runs through, and §8.5's refusal binds hardest here.
 
 ## What is measured
 
 Every arm below was stopped at or before its gate; these are readings, not results.
+
+**Both modes, at the newest citable reading.**
+
+- **The F31 gate** (`aborted_20260908T100009_300it_25pct` at iteration 100, `stopped_at_gate`, §9.157): light rail **1,560 boardings against 2,954, −47.2 %**; ferry **0.0492 % of resident trips against 0.1429 %, −65.6 %**. Citable at iteration 100 and nowhere past it, and comparable with no earlier family (§3.5).
+- **The ASC fixed point PROPOSES a step for both, and it has NOT been run** (§9.158, `src/calibrate/asc_fixed_point.py`). Read off that gate at `CAL.asc.damping` 0.6: **ferry +0.6713 (to −0.3787)** and **light_rail +0.4143 (to −0.3357)**, both inside their declared sweeps and both under the `CAL.asc.max_step_utils` 1.5 refusal bound. The light-rail row is marked `basis_is_boardings`: the logit inversion is exact for a share and only a monotone proxy for a boardings target, and the contraction verdict is reported with and without it. **The test is whether |Δasc| SHRINKS between round 1 and round 2**, not whether the shares move — contraction means the residual is taste, no contraction means it is mechanism and no constant will ever close it.
 
 **Light rail.**
 
@@ -51,7 +61,8 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## What is open
 
-- Light rail: where the missing ~1,300 boardings a weekday are — longer corridor trips, rail transferees, visitors — is the mode's question at the next gate (§9.130, `NEXT_AGENT_BRIEF.md`).
+- Light rail: where the missing ~1,400 boardings a weekday are — longer corridor trips, rail transferees, visitors — is the mode's question at the next gate (§9.130, §9.157).
+- **A THIRD OF ALL PT ROUTING FINDS NO SERVICE, AND THAT NOW BEARS ON BOTH MODES** (§9.158). Over **2,553,357** pt routing requests on the F31 arm, **33.4 %** got no transit route at all and **40.6 %** of the answered took the network walk — **60.5 % of every pt routing request came back as a walk**, because `(marginalUtilityOfTraveling − performing)/3600` prices **one second walking at 1.0400 seconds riding**. A tram or ferry leg cannot be chosen inside a journey the router answered with a walk. Supply, radius and schedule integrity are all exonerated (252 tram and 107 ferry weekday departures, §9.113; 1,270 routes with 0 lacking departures, §9.158), so this is the first mechanism proposed for either shortfall that is neither pricing-of-the-mode nor demand.
 - **#30 is repaired at the demand level** (§9.142). The deficit had survived two rebuilds unchanged (shopping 0.59x, other 0.69x, work 1.09x of the attraction share, §9.136) and was measured structural: a size x distance gravity constrained only at the ORIGIN end cannot concentrate arrivals the way an agglomeration does, at any decay. Destination choice is now constrained at the destination end too, and the CBD SA2 receives its own attraction share of non-home weekday core trip ends: **work 1.02x, shopping 0.99x, other 0.99x**, education 0.91x. Shopping is the one purpose whose WORST-ZONE gap does not reach the declared tolerance (0.37 against 0.01, the inner cap binding in all three passes): one destination multiplier cannot match the column shares of a two-component mixture, and a multiplier per component is the next demand lane (§9.142). Whether that reaches the tram is the F24 gate's reading, not a claim this page makes: the corridor's stops are a subset of the CBD and the mode still has to be chosen.
 - #94 (awaiting-run) — supply, hour of service and routing are exonerated (§9.140); the residual is the reach bound (three quarters of the market beyond the 1 km walk radius with no feeder — a declared, swept field, not a constant to guess) and a competitive-but-losing plan the memory drops; the next gate reads the near-wharf split on the F24 package (§9.140).
 - The ferry target's vintage: the census cell is a lockdown month, which is why the sweep runs from 0 to twice the point value (§9.89).
@@ -71,11 +82,14 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 - Re-running pt2matsim to produce a per-scenario dwell schedule: it is derived from the mapped schedule (§3.5, §9.76).
 - Reading charging dwell as additive to boarding dwell: double-counts boarding (§9.76).
 - Naming the ferry's residual cause before measuring it: three asserted mechanisms reached committed entries in one session and were refuted (§9.112, #94).
-- A light rail mode constant to move the router: SwissRailRaptor chooses on time and line-switch cost, not on an ASC (§9.130).
+- A light rail mode constant to move the ROUTER: SwissRailRaptor chooses on time, waiting and line-switch cost, and its parameters carry no constant, no fare and no distance term at all (§9.130, §9.158 verified in the pinned jar). Opening `C.asc.light_rail` changes pt-against-car, never tram-against-bus.
+- **Solving `C.asc.light_rail` against light rail's own patronage target** (§8.5, §9.158): that would fit away the very effect the study exists to measure. The sweep is a bracket and the ASC loop is a two-round CONTRACTION TEST, not a solve.
 - Counting ferry or tram trips off `main_mode`: a public-transport trip carries `pt`; submodes come from the legs table (§9.112).
 
 ## History
 
+- §9.158 — a ferry constant declared, light rail's opened; the raptor prices no constant
+- §9.157 — the F31 gate: light rail −47.2 %, ferry −65.6 %
 - §9.156 — tsp refused as a lever; the fidelity question separated
 - §9.142 — the corridor gets its arrivals: destination choice constrained at both ends
 - §9.140 — ferry market and memory measured

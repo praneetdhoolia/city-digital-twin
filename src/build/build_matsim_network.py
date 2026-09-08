@@ -62,6 +62,25 @@ def fwd(path):
     return path.replace(os.sep, '/')
 
 OUT = _city.path('networks/matsim')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. pt2matsim converts the Overpass
+# road, rail and signal extracts into the MATSim network and maps each GTFS
+# era and scenario feed onto it in the same pass, so every file under
+# networks/matsim that this script writes - base, variants and the mapped
+# schedules - descends from all of them. The signals, crossings and
+# charging-dwell subtrees are other scripts' outputs and carry their own
+# lineage entries.
+OUTPUT_INPUTS = {
+    'networks/matsim/*': [
+        'networks/osm/roads.osm',
+        'networks/osm/railways.osm',
+        'networks/osm/signals.osm',
+        'data/processed/network/A1_road_variant_patches.csv',
+        'scenarios/E1_road_variants.csv',
+        'schedules'],
+}
+
 WORK = os.path.join(OUT, '_work')
 CRS = _city.crs()
 PATCHES = _city.path('data/processed/network/A1_road_variant_patches.csv')
@@ -612,4 +631,14 @@ def network_stats(path):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

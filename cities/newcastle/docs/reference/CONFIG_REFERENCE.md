@@ -27,22 +27,22 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 482 fields are made of
+## What the 489 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
-| `measured` | 39 | computed from observed data in this package |
-| `derived` | 39 | follows from another registry field by identity |
-| `literature` | 74 | a published value, not specific to this city |
-| `assumed` | 160 | chosen without direct empirical support |
-| `definition` | 132 | fixed by the formulation, not an empirical quantity |
+| `measured` | 40 | computed from observed data in this package |
+| `derived` | 40 | follows from another registry field by identity |
+| `literature` | 75 | a published value, not specific to this city |
+| `assumed` | 161 | chosen without direct empirical support |
+| `definition` | 135 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 463 | usable point value |
+| `active` | 469 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
-| `placeholder` | 5 | a structural stand-in; the model runs but the field is not defensible |
+| `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
 
 ### The 4 fields with no value
@@ -56,15 +56,15 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 267 sweeps are for
+### What the 273 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 12 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 233 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
-| `measurement` | 22 | an observed spread on a measured or derived value; it describes the data, not a run to make |
+| `uncertainty` | 238 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `measurement` | 23 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
 
@@ -83,7 +83,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `E.s3.brt_speed_kmh` | `40.0` | 25 - 55 |
 | `E.s3.headway_s` | `450` | 300 - 900 |
 
-### The 28 fields held fixed
+### The 26 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -106,12 +106,10 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fare_per_km_taxi` - The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not mode
 - `B.taxi.flagfall_taxi` - The legal instrument itself: the Point to Point Transport (Fares) Order 2025 urban Hiring Charge, and clause 2(g)(ii) names the Newcastle Transport District an Urban Area. A regula
-- `C.asc.bus` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.car_passenger` - Constrained, not calibrated. DECISIONS.md 9.8 solves this constant so the modelled ride:car leg ratio reproduces the OBSERVED passenger:driver ratio (0.3503, HTS). That is the seco
-- `C.asc.cycle` - Constrained, not calibrated - the second branch DECISIONS.md 8.5 permits. THE DEPARTURE IS LOGGED AT 9.28, before any run on the changed specification. The shipped -1.35 stays as t
-- `C.asc.light_rail` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.rail` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `C.asc.walk` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
+- `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.pt.censored_share_max` - A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must sto
 - `E.s2b.lr_segment_count` - MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this fie
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
@@ -2627,21 +2625,24 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 21 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 25 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
+| `CAL.asc.damping` | `0.6` | share_of_the_log_ratio_step | `literature` | 0.3 - 1 |
+| `CAL.asc.max_step_utils` | `1.5` | utility | `definition` | **held fixed** |
+| `CAL.asc.mode_to_constant` | `{"car": "C.asc.car_driver", "ride": "C.asc.car_passenger", "walk": "C.asc.walk", "bike": "C.asc.cycle", "mo...` | board_mode_to_registry_key | `definition` | - |
 | `CAL.gate.pass_deviation_pct` | `10.0` | per cent | `definition` | - |
 | `CAL.gate.stop_deviation_pct` | `20.0` | per cent | `definition` | - |
 | `CAL.mode_split.commute_transfer_tolerance` | `0.25` | ratio | `assumed` | 0.1 - 0.5 |
 | `CAL.mode_split.motorbike_driver_journey_share` | `0.0064151` | share_of_driver_journeys | `measured` | 0.0060943 - 0.0067359 |
 | `CAL.mode_split.truck_driver_journey_share` | `0.0050729` | share_of_driver_journeys | `measured` | 0.0048193 - 0.0053265 |
 | `CAL.mode_split.vehicle_driver_level` | `0.59` | share_of_trips | `measured` | 0.5605 - 0.6195 |
-| `CAL.objective.components` | `{"mode_share.mean_abs_pp": 1.0}` | weight_per_fit_component | `definition` | - |
+| `CAL.objective.components` | `{"goal_modes.max_abs_rel_pct": 1.0}` | weight_per_fit_component | `definition` | - |
 | `CAL.objective.include_counts` | `false` | boolean | `derived` | derived: the external tier represents boundary demand from one SA4 to the north |
-| `CAL.objective.independent_targets` | `4` | count | `derived` | derived: five HTS mode-share targets are reported but they are shares of one to |
+| `CAL.objective.independent_targets` | `10` | count | `derived` | derived: The objective is now the twelve-mode board, so the count is the number |
 | `CAL.pt.censored_cell_value` | `0.0` | trips per month | `assumed` | 0 - 25 |
 | `CAL.pt.censored_share_max` | `0.05` | share of cells | `definition` | **held fixed** |
 | `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
@@ -2649,11 +2650,36 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
 | `CAL.pt_split.station_scope` | `target_lga` | enum | `assumed` | `target_lga`, `all_observed` |
 | `CAL.pt_split.window_months` | `12` | months | `assumed` | 6 - 24 |
-| `CAL.search.convergence_delta` | `0.25` | percentage_points | `assumed` | 0.1 - 1 |
+| `CAL.search.convergence_delta` | `24.88` | per cent | `derived` | derived: convergence_delta = reading_drift_pct. A coordinate pass that 'improve |
 | `CAL.search.max_rounds` | `3` | count | `assumed` | 1 - 6 |
 | `CAL.search.points_per_parameter` | `3` | count | `assumed` | 3 - 7 |
+| `CAL.search.reading_drift_pct` | `24.88` | per cent | `measured` | 15.72 - 24.88 |
 | `CAL.taxi.lga_concentration` | `1.0` | ratio | `assumed` | 1 - 2 |
 | `CAL.truck.count_year_from` | `2023` | year | `assumed` | 2019 - 2025 |
+
+#### `CAL.asc.damping`
+
+How much of the raw log-ratio step an ASC round applies. The raw step for mode i against reference mode 0 is ln(target_i/modelled_i) - ln(target_0/modelled_0), which is the contraction a multinomial logit's share equation implies and is the same object as the Berry (1994) share inversion. Damping trades convergence speed for stability: an undamped step overshoots when the shares are far from target, which is where this model currently is.
+
+***literature** · status **active** · DECISIONS.md §8.5 · sweep role **uncertainty***
+
+> **Sweep basis.** The two published implementations of this update rule bracket the interval. matsim-vsp/matsim-python-tools applies the log-ratio step under `linear_scheduler(start=0.6, end=1, interval=3)` - damped to 0.6 of the raw step at first and relaxed toward the full step as the rounds proceed - and the ActivitySim agency practice uses a flat 0.5 dampener on the same ln(observed/modelled) adjustment. The interval runs from below the more cautious of the two to the undamped step, which is what a fixed point converges to when it converges at all. Undamped (1.0) is included deliberately: it is the boundary case, and whether the step needs damping AT ALL in this model is one of the things the two-round test measures.
+
+#### `CAL.asc.max_step_utils`
+
+The largest single-round |delta ASC| this loop will propose before it refuses outright and says the mode needs a mechanism rather than a constant.
+
+***definition** · status **active** · DECISIONS.md §8.5*
+
+> **Held fixed.** A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step stops being a calibration and becomes an admission that the residual is not a taste parameter at all: a shift of 1.5 utils against a marginal utility of travel time of order 1 util/hour is worth more than an hour of travel time, which no alternative-specific constant should have to carry. A proposal above it is REFUSED and the mode is reported as needing a mechanism, never silently clipped - clipping would hide exactly the signal this experiment exists to read.
+>
+> *Departure requires: a logged decision*
+
+#### `CAL.asc.mode_to_constant`
+
+Which declared alternative-specific constant carries which board mode. The board names modes in the vocabulary of data/processed/validation/mode_targets_by_mode.csv; the registry names constants in the survey's driver/passenger/cycle vocabulary, and the two do not coincide. Declared here rather than typed into the loop, because a map between two vocabularies is a modelling choice: it says that a heavy-rail deviation is answerable by C.asc.rail and by nothing else. TAXI IS DELIBERATELY ABSENT - C.taxi.asc exists but taxi has no independent target (fit.py folds bike and taxi into one survey category), so there is no ratio to invert and a fixed-point step for it would be fitting a constant to a number that is not there. TRUCK and FREIGHT RAIL are absent because neither is a mode choice.
+
+***definition** · status **active** · DECISIONS.md §8.5, 9.78*
 
 #### `CAL.gate.pass_deviation_pct`
 
@@ -2695,9 +2721,9 @@ The survey's all-purpose Vehicle driver level - the share of resident person tri
 
 #### `CAL.objective.components`
 
-Dotted paths into _fit.json that form the scalar objective, with their weights. ONE component, and that is not an oversight: patronage scores n=0 in a single day-type run (the contemporary monthly target needs WEEKDAY, SAT and SUN composed over a calendar month, and the rest are a pre-pandemic PT market), and counts are excluded by CAL.objective.include_counts. Mode share is what is left. A component named here that is missing from a fit output is a hard error, never a silent zero.
+Dotted paths into _fit.json that form the scalar objective, with their weights. It is `goal_modes.max_abs_rel_pct`: the MAXIMUM absolute deviation, in RELATIVE per cent, over the twelve modes of data/processed/validation/mode_targets_by_mode.csv, each on the basis its own target is stated on, computed by calling the board's own reader (src/analyse/report_mode_ridership.py) so the objective and the gate cannot drift apart. IT WAS `mode_share.mean_abs_pp` AND THAT MEASURED A DIFFERENT THING FROM THE GOAL: a MEAN over FIVE FOLDED survey categories in PERCENTAGE POINTS, where GOAL.md requirement 7 is a MAXIMUM over TWELVE UNFOLDED modes in RELATIVE per cent. The fold is what makes them disagree - heavy rail and light rail sit inside one 'Public transport' cell with OPPOSITE SIGNS (+247.2% and -47.2% at the F31 gate), so a search minimising the mean of the folds could improve its own objective while making both modes worse, and a folded car+motorbike error near zero hides motorbike at +13.7%. A mean also cannot express 'every mode inside 10%': only a maximum can, because the requirement is satisfied exactly when the worst mode is inside the band. Truck and freight rail are REPORTED and never optimised against - the reader itself scores truck on a basis that is not the target's ground (9.101) and freight rail as representation rather than fit. A component named here that is missing from a fit output is a hard error, never a silent zero.
 
-***definition** · status **active** · DECISIONS.md §9.16, 12.1*
+***definition** · status **active** · DECISIONS.md §9.16, 12.1, 9.87*
 
 #### `CAL.objective.include_counts`
 
@@ -2709,11 +2735,11 @@ Whether traffic counts may enter the calibration objective. FALSE, and the loop 
 
 #### `CAL.objective.independent_targets`
 
-How many independent numbers the objective actually contains. The loop refuses to move more free parameters than this, because a fit of more parameters than data is not a calibration.
+How many independent numbers the objective actually contains. The loop refuses to move more free parameters than this, because a fit of more parameters than data is not a calibration. This is the ceiling on the search's width, not a target for it: a search should still move the fewest parameters that can reach the residual.
 
-***derived** · status **active** · DECISIONS.md §12.1*
+***derived** · status **active** · DECISIONS.md §12.1, 9.87*
 
-> **Derived from** `CAL.objective.components`: five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts
+> **Derived from** `CAL.objective.components`: The objective is now the twelve-mode board, so the count is the number of INDEPENDENT numbers that board contains. Twelve rows, less truck (scored 'level only' - a network-wide vehicle share against a freight-route observation, not the target's own basis, 9.101) and less freight_train (representation: the crossing closures ARE the timetable, so its 0.0% is a tautology), leaves TEN scored modes. All ten are independent: EIGHT are shares of resident linked trips (car, ride, walk, taxi, bike, motorbike, bus, ferry) and TWO are weekday boardings (heavy_rail, light_rail) on a different basis entirely. The adding-up identity that removed one degree of freedom from the old five folded shares DOES NOT BIND here: the eight share targets sum to 98.42%, and the residual is taken up by the two rail modes, whose SHARE is not itself a declared target - they are targeted on boardings. So no linear constraint ties the ten together and the count is ten, not nine. It was 4, which was correct for the OLD objective (five HTS mode shares summing to one, hence four independent) and is the reason the loop refused to move five parameters: it was refusing to fit the twelve-mode goal with the four-number folded objective's budget.
 
 #### `CAL.pt.censored_cell_value`
 
@@ -2773,11 +2799,11 @@ How many of the most recent months the three PT patronage publications all cover
 
 #### `CAL.search.convergence_delta`
 
-A coordinate pass that improves the objective by less than this ends the search. In the units of the objective, which is mean absolute mode-share error in percentage points. Below roughly 0.1 pp the search would be chasing seed noise rather than parameter effects, which DECISIONS.md 9.7 measured at the same order.
+A coordinate pass that improves the objective by less than this ends the search, in the units of the objective - which is now the maximum relative deviation across the twelve modes, in per cent. A CONSEQUENCE WORTH READING PLAINLY: at 17.76 the rule is coarser than most candidates will move the objective, so a search scored at iteration 100 will stop almost immediately. That is not a defect in the rule - it is the measurement telling us the reading point cannot resolve a search. calibrate.py refuses to start one rather than run a search that would be reading noise.
 
-***assumed** · status **active** · DECISIONS.md §9.16 · sweep role **uncertainty***
+***derived** · status **active** · DECISIONS.md §9.16, 9.7*
 
-> **Sweep basis.** chosen interval around the 0.25 pp stopping delta: the floor of 0.1 pp is the order of the seed noise DECISIONS.md 9.7 measured, below which the search would chase noise, and 1.0 pp is a coarse stop. A control of the calibration loop (9.16), not a model input. No observed spread.
+> **Derived from** `CAL.search.reading_drift_pct`: convergence_delta = reading_drift_pct. A coordinate pass that 'improves' the objective by less than the reading's own noise has not been shown to improve anything: the same run read twenty iterations later moves further than that by itself, on all six arms measured. So the stopping rule is the noise floor, and it is derived from it rather than chosen beside it. IT WAS 0.25 pp, in the units of the OLD folded objective, and it was SMALLER THAN THE MEASURED DRIFT ON EVERY ARM (by 1.09x to 1.67x) - a search under it would have stopped, or failed to stop, on noise. Its stated floor of 0.1 pp cited the seed spread 9.7 measured; that was the right instinct pointed at the wrong quantity, because seed spread is the spread BETWEEN runs and this is the drift WITHIN one.
 
 #### `CAL.search.max_rounds`
 
@@ -2794,6 +2820,12 @@ Points evaluated along each parameter's declared sweep interval in one coordinat
 ***assumed** · status **active** · DECISIONS.md §9.16 · sweep role **uncertainty***
 
 > **Sweep basis.** DECISIONS.md 9.16: three is the smallest number of points that can show curvature along a sweep interval and each point is a full run, so the interval runs from that floor to seven. A control of the calibration search, never of the model. No observed spread.
+
+#### `CAL.search.reading_drift_pct`
+
+How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Measured by src/analyse/measure_reading_stability.py over all SIX 25% arms that have ever reached iteration 100, WITHIN each run: the worst scored mode's |relative deviation| moves 15.72 to 24.88 points (median 17.76), the worst mode being heavy_rail on four of the six arms, bike on one and taxi on one. THREE modes move further than the WHOLE 10% band inside that twenty-iteration window - heavy_rail on 6 of 6 (max 24.88), bike on 4 of 6 (17.76), taxi on 3 of 6 (15.72). The point value is the MAXIMUM over all ten scored modes, because the objective is itself a maximum over those modes and a stopping rule has to survive the noisiest reading it will meet. The old folded objective moves 0.272 to 0.418 pp over the same window - upward on every one of the six arms, so this is systematic movement toward relaxation, not seed scatter. THIS IS A PROPERTY OF THE READING POINT, NOT OF THE MODEL: iteration 100 was adopted as the reading unit on COST and never once tested for stability, and a candidate read there would be resolved by how far the run had got rather than by its parameters. Reading deeper, or averaging a window of iterations instead of taking a point, is what would lower it.
+
+***measured** · status **active** · DECISIONS.md §9.7, 9.16 · sweep role **measurement***
 
 #### `CAL.taxi.lga_concentration`
 
@@ -2813,17 +2845,19 @@ The earliest classified-count year pooled into the heavy-vehicle share that road
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 53 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 56 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
 | Field | Value | Units | Provenance | Sweep |
 |---|---|---|---|---|
-| `C.asc.bus` | `-1.05` | utils | `assumed` | **held fixed** |
+| `C.asc.bus` | `-1.05` | utils | `assumed` | -2.05 - -0.05 |
 | `C.asc.car_driver` | `0.0` | utils | `definition` | - |
 | `C.asc.car_passenger` | `-0.85` | utils | `assumed` | **held fixed** |
-| `C.asc.cycle` | `-1.35` | utils | `assumed` | **held fixed** |
-| `C.asc.light_rail` | `-0.75` | utils | `assumed` | **held fixed** |
+| `C.asc.cycle` | `-1.35` | utils | `assumed` | -4 - -1.35 |
+| `C.asc.ferry` | `-1.05` | utils | `assumed` | -2.05 - -0.05 |
+| `C.asc.light_rail` | `-0.75` | utils | `assumed` | -1.75 - 0.25 |
+| `C.asc.motorbike` | `0.0` | utils | `definition` | - |
 | `C.asc.rail` | `-0.65` | utils | `assumed` | **held fixed** |
 | `C.asc.walk` | `0.35` | utils | `assumed` | **held fixed** |
 | `C.constraint.passenger_per_driver` | `0.3503` | ratio | `derived` | 0.2493 - 0.394 |
@@ -2838,6 +2872,7 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.constraint.trip_time_min.ride` | `15.5` | minutes_per_trip | `measured` | 12.2 - 15.5 |
 | `C.constraint.trip_time_min.walk` | `12.3` | minutes_per_trip | `measured` | 10.6 - 14.8 |
 | `C.constraint.vehicle_occupancy` | `1.3503` | persons_per_vehicle | `measured` | 1.2493 - 1.394 |
+| `C.crowding.representation` | `in_vehicle_time` | enum | `assumed` | `absent`, `in_vehicle_time` |
 | `C.crowding.seated_multiplier` | `1.0` | ratio | `literature` | 1 - 1.15 |
 | `C.crowding.standing_multiplier` | `1.45` | ratio | `literature` | 1.2 - 1.8 |
 | `C.income.exponent` | `1.0` | exponent | `literature` | 0.5 - 1.5 |
@@ -2875,13 +2910,11 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 
 #### `C.asc.bus`
 
-Alternative-specific constant relative to car driver = 0.
+Alternative-specific constant relative to car driver = 0. OPENED from held_fixed so a calibration loop can reach it at all; the shipped -1.05 is unchanged and remains the 8.5 prior. What 8.5 still forbids is not the interval but the TARGET: fitting this constant to an observed patronage level is the ASC absorption proposal 9 names as the primary threat to validity, so a solve over this range must be constrained against a measured quantity and must report the constraint, exactly as C.asc.car_passenger is against observed occupancy (9.8).
 
-***assumed** · status **active** · DECISIONS.md §8.5*
+***assumed** · status **active** · DECISIONS.md §8.5 · sweep role **uncertainty***
 
-> **Held fixed.** DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold fixed, or constrain them and report the constraint. Proposal 9 names ASC absorption as the PRIMARY threat to validity: calibrating mode constants to observed patronage fits away the effect under test.
->
-> *Departure requires: a departure logged in DECISIONS.md BEFORE results are seen*
+> **Sweep basis.** A CHOSEN INTERVAL - no observation bears on a mode constant, which is by construction the net average effect of the variables the utility OMITS (UK DfT TAG, supplementary guidance on bespoke mode-choice models) - but the half-width is derived, not picked. Two things fix it at one util. (1) The only other mode-ASC sweep this registry declares, C.taxi.asc (9.76), is 2.0 utils wide, so this is the width the project has already accepted for a constant in this utility. (2) At this model's own scoring scale one util is 60 / (trip-weighted VOT 16.961 AUD/h x C.time_weights.beta_ivt 1.0 x C.scoring.marginal_utility_of_money 1.0) = 3.54 minutes of in-vehicle time, so the bracket is +/-3.54 min of bus time - NARROWER than the +/-6 min half-width already declared on C.transfer.beta_transfer_penalty_min (8.0, swept 3-15), the parameter proposal 6.2 says the whole policy question turns on. THE 8.5 DEPARTURE FOR OPENING THIS CONSTANT IS OWED IN DECISIONS.md BEFORE ANY RUN READS IT.
 
 #### `C.asc.car_driver`
 
@@ -2895,49 +2928,59 @@ Car-passenger constant. The shipped -0.85 is the 8.5 prior; the solved value is 
 
 ***assumed** · status **placeholder** · DECISIONS.md §8.5, 9.8*
 
-> **Held fixed.** Constrained, not calibrated. DECISIONS.md 9.8 solves this constant so the modelled ride:car leg ratio reproduces the OBSERVED passenger:driver ratio (0.3503, HTS). That is the second branch DECISIONS.md 8.5 permits - constrain and report the constraint - with the constraining quantity measured. It is not ASC absorption: the constrained constant is car passenger, the constraining quantity is how many people fit in a car, and asc_light_rail, asc_bus and asc_rail stay at their 8.5 priors.
+> **Held fixed.** Constrained, not calibrated. DECISIONS.md 9.8 solves this constant so the modelled ride:car leg ratio reproduces the OBSERVED passenger:driver ratio (0.3503, HTS). That is the second branch DECISIONS.md 8.5 permits - constrain and report the constraint - with the constraining quantity measured. It is not ASC absorption: the constrained constant is car passenger, the constraining quantity is how many people fit in a car, and asc_rail stays at its 8.5 prior. THE PER-MODE REASON IT IS NOT ALSO OPENED TO A FREE SWEEP: ride's remaining deficit is VOLUME, not utility. At the F31 gate (9.157) ride's mean modelled trip is 9.17 km against an observed 9.76 - a -6% gap, the closest geometry of any mode on the board - while its share is -38.0%. The lifts the binder places are the RIGHT LENGTH and there are too few of them, which is plan generation, not scoring. No constant creates a trip the binder never created, so a constant moved to close a volume gap would be pricing a demand-side shortfall into a taste parameter.
 >
 > *Departure requires: re-solving once the iteration count is settled - the current solve ran at a fixed 250-iteration protocol which DECISIONS.md 9.7 shows is NOT equilibrium, so the value is PROVISIONAL (issue 9)*
 
 #### `C.asc.cycle`
 
-Cycle alternative-specific constant relative to car driver = 0. Status is placeholder because the 8.5 prior is known too weak - AToM's estimated walk-to-bike ASC gap is 3.418 against this model's 1.70 - and the constrained solve has not been built. The point value is deliberately NOT hand-moved: substituting one unjustified number for another is exactly what 8.5 exists to prevent.
+Cycle alternative-specific constant relative to car driver = 0. Status is placeholder because the 8.5 prior is known too weak - AToM's estimated walk-to-bike ASC gap is 3.418 against this model's 1.70 - and the constrained solve has not been built. The point value is deliberately NOT hand-moved: substituting one unjustified number for another is exactly what 8.5 exists to prevent. The held_fixed rule became the sweep above, unchanged in substance: 9.28 named the interval before this field carried it.
 
-***assumed** · status **placeholder** · DECISIONS.md §8.5, 9.28*
+***assumed** · status **placeholder** · DECISIONS.md §8.5, 9.28 · sweep role **uncertainty***
 
-> **Held fixed.** Constrained, not calibrated - the second branch DECISIONS.md 8.5 permits. THE DEPARTURE IS LOGGED AT 9.28, before any run on the changed specification. The shipped -1.35 stays as the 8.5 prior; a solve over [-4.0, -1.35] is to be constrained against the OBSERVED walk and bike trip lengths already measured into C.constraint.trip_length_km.*, never against a mode share and never against a patronage level. This is not ASC absorption: the constant opened is CYCLE, asc_light_rail, asc_bus and asc_rail stay at their 8.5 priors, and no hypothesis in proposal 3 turns on it.
->
-> *Departure requires: the constrained solve must run AFTER the 9.28 scoring repair, never before - calibrating a constant against a known structural error is the failure proposal 9 names as the primary threat to validity*
+> **Sweep basis.** NOT a chosen interval and not a new one: it is the solve range DECISIONS.md 9.28 already names for this constant, now carried as the field's own sweep so the loop can reach it. The TOP is the shipped 8.5 prior (-1.35, a gap of 1.70 from asc_walk = +0.35). The BOTTOM is past the gap AToM estimates between walk and bike, 3.418 - which from asc_walk = +0.35 lands at -3.07 - with headroom to -4.0. THE 8.5 DEPARTURE IS ALREADY LOGGED, AT 9.28. The solve is CONSTRAINED, not calibrated: it is constrained against the OBSERVED walk and bike trip lengths already measured into C.constraint.trip_length_km.*, never against a mode share and never against a patronage level, and it must run AFTER the 9.28 scoring repair - solving a constant against a known structural error is the failure proposal 9 names as the primary threat to validity.
+
+#### `C.asc.ferry`
+
+Ferry alternative-specific constant relative to car driver = 0. THE SHIPPED VALUE IS C.asc.bus's SHIPPED VALUE, -1.05, AND IS THERE FOR THAT REASON ALONE: before this field existed, ferry - the one scheduled submode C1 declared no constant for - inherited the pt aggregate's asc_bus in src/build/build_matsim_run_inputs.py (9.78), so shipping -1.05 reproduces today's emission exactly and creating the field changes no behaviour. The identity is deliberately NOT declared as derived_from: ferry inheriting bus is an accident of what C1 happened to declare, not a relation between the two modes, and a derived_from would freeze that accident into the schema. Status is placeholder for exactly that reason - the value is a stand-in that nothing about ferries supports, and it stays one until a ferry-specific constant is estimated or constrained. When the two numbers next differ, the difference is intended.
+
+***assumed** · status **placeholder** · DECISIONS.md §8.5, 9.78 · sweep role **uncertainty***
+
+> **Sweep basis.** The same derived one-util half-width as C.asc.bus (the C.taxi.asc precedent at 9.76, and one util = 3.54 minutes of in-vehicle time at this model's own scale), around the same centre - because the centre IS asc_bus's value. Ferry is a scored pt submode under RUN.routing.pt_submode_scoring = per_submode (9.78) and it is a live mode on the board (-65.6% at the F31 gate, 9.157), so unlike motorbike this constant has real leverage and a bracket over it is not a band of zero. THE 8.5 DEPARTURE FOR CARRYING A FERRY CONSTANT AT ALL IS OWED IN DECISIONS.md BEFORE ANY RUN MOVES IT off the inherited value.
 
 #### `C.asc.light_rail`
 
-Alternative-specific constant relative to car driver = 0. This is the constant the effect under test runs through; it is never fitted.
+Alternative-specific constant relative to car driver = 0. OPENED from held_fixed so a calibration loop can reach it; the shipped -0.75 is unchanged and remains the 8.5 prior. This is the constant the effect under test runs through and it is still NEVER fitted to light-rail patronage - the sweep is the sensitivity bracket the headline is reported across (proposal 3.4 S-d), not a free parameter.
 
-***assumed** · status **active** · DECISIONS.md §8.5*
+***assumed** · status **active** · DECISIONS.md §8.5 · sweep role **uncertainty***
 
-> **Held fixed.** DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold fixed, or constrain them and report the constraint. Proposal 9 names ASC absorption as the PRIMARY threat to validity: calibrating mode constants to observed patronage fits away the effect under test.
->
-> *Departure requires: a departure logged in DECISIONS.md BEFORE results are seen*
+> **Sweep basis.** The same derived one-util half-width as C.asc.bus: the C.taxi.asc precedent (9.76, 2.0 utils wide) and this model's own scale, where one util is 60 / (16.961 x 1.0 x 1.0) = 3.54 minutes of in-vehicle time - inside the +/-6 min the transfer penalty is already swept over. THE INTERVAL IS A BRACKET, NOT A LICENCE TO FIT: this is the constant the light-rail effect under test runs through, so 8.5's refusal binds hardest here - a solve of THIS constant against light rail's own patronage target would fit away the very effect the study exists to measure. THE 8.5 DEPARTURE FOR OPENING IT IS OWED IN DECISIONS.md BEFORE ANY RUN READS IT.
+
+#### `C.asc.motorbike`
+
+Motorbike alternative-specific constant relative to car driver = 0. DECLARED rather than typed into src/build/build_matsim_run_inputs.py, where it was a literal 0.0 beside the mode table; the shipped value reproduces that emission exactly, so creating the field is behaviour-neutral. It is a DEFINITION and carries no sweep for the same reason C.asc.car_driver does not: motorbike is a person-level LOCKED carve from car-driver demand (9.52), the rider's day is locked to the mode and motorbike is not a member of RUN.mode_choice.modes, so this constant is a level shift on every plan that person can hold and cannot change any choice they make. A sweep over it would have a sensitivity band of exactly zero BY CONSTRUCTION - the defect class 9.22 retired the walk-decay axis for, where an interval reaching nothing gets reported as insensitivity. It becomes a free parameter, with a sweep and a basis, on the day motorbike joins RUN.mode_choice.modes and the lock is lifted.
+
+***definition** · status **active** · DECISIONS.md §8.5, 9.52*
 
 #### `C.asc.rail`
 
-Alternative-specific constant relative to car driver = 0.
+Alternative-specific constant relative to car driver = 0. Deliberately NOT opened alongside asc_bus and asc_light_rail: rail's excess has a named missing mechanism in front of it (crowding), and a constant fitted over a known structural error is the failure proposal 9 names as the primary threat to validity.
 
 ***assumed** · status **active** · DECISIONS.md §8.5*
 
-> **Held fixed.** DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold fixed, or constrain them and report the constraint. Proposal 9 names ASC absorption as the PRIMARY threat to validity: calibrating mode constants to observed patronage fits away the effect under test.
+> **Held fixed.** DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold fixed, or constrain them and report the constraint. Proposal 9 names ASC absorption as the PRIMARY threat to validity: calibrating mode constants to observed patronage fits away the effect under test. THE PER-MODE REASON, over and above 8.5: heavy rail read +247.2% at the F31 gate (9.157) while the scoring function carried NO CROWDING DISUTILITY AT ALL - an unlimited number of agents could board a full train at zero cost. Moving this constant to close that gap would price a MISSING MECHANISM into a taste parameter, which is the compensating constant the project's conventions ban outright. It stays frozen until the crowding disutility is built AND measured on a run.
 >
-> *Departure requires: a departure logged in DECISIONS.md BEFORE results are seen*
+> *Departure requires: a departure logged in DECISIONS.md BEFORE results are seen, and not before a run has measured heavy rail WITH the in-vehicle crowding disutility in scoring - until then the excess this constant would absorb has a named structural cause*
 
 #### `C.asc.walk`
 
-Alternative-specific constant relative to car driver = 0.
+Alternative-specific constant relative to car driver = 0. Deliberately NOT opened alongside asc_bus and asc_light_rail: walk's share and its trip length are currently carrying pt's unrouted demand, so this constant has no clean quantity to be solved against.
 
 ***assumed** · status **active** · DECISIONS.md §8.5*
 
-> **Held fixed.** DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold fixed, or constrain them and report the constraint. Proposal 9 names ASC absorption as the PRIMARY threat to validity: calibrating mode constants to observed patronage fits away the effect under test.
+> **Held fixed.** DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold fixed, or constrain them and report the constraint. Proposal 9 names ASC absorption as the PRIMARY threat to validity: calibrating mode constants to observed patronage fits away the effect under test. THE PER-MODE REASON, over and above 8.5: walk's modelled mean trip is 4.51 km against an observed 0.70 km, and at the same F31 gate 33.4% of all pt routing requests found no transit route whatsoever while 40.6% of those that did find one took the network walk instead (9.157). Walk is ABSORBING A ROUTING FAILURE, so its constant would absorb that failure too - the mode would be tuned to a number produced by the router, not by any taste.
 >
-> *Departure requires: a departure logged in DECISIONS.md BEFORE results are seen*
+> *Departure requires: a departure logged in DECISIONS.md BEFORE results are seen, and not before the pt no-route and network-walk shares measured at 9.157 are explained - a constant solved against a walk share that is one third routing failure is solved against the failure*
 
 #### `C.constraint.passenger_per_driver`
 
@@ -3033,17 +3076,25 @@ Newcastle LGA vehicle occupancy, HTS 2024/25 driver and passenger trip counts. B
 
 > **Sweep basis.** the observed spread across all 7 survey years in the file, not a chosen interval
 
+#### `C.crowding.representation`
+
+The representation gate for in-vehicle public-transport crowding (the Mode-Choice Ledger's rank-4 gap). MATSim core scores no crowding term: SwissRailRaptor's CapacityDependentInVehicleCostCalculator prices load factor in the ROUTER's path cost only, and denied boarding is physical, so the discomfort had to be an explicit scoring extension.
+
+***assumed** · status **active** · DECISIONS.md §8.4, 9.3 · MATSim `ptCrowding.representation` · sweep role **uncertainty***
+
+> **Sweep basis.** Whether in-vehicle crowding reaches SCORING at all. absent: the pre-change state - the vehicle refuses boarding when it is full (MATSim's own capacity constraint) but the discomfort that precedes the refusal costs nothing, so an agent could ride a train at 146 of 146 for the same score as one riding it empty, and heavy rail read +247.2% at the F31 gate (9.157) with no crowding term in its utility. in_vehicle_time: every passenger's in-vehicle seconds are re-priced by the seated/standing multipliers against the vehicle's OWN seat count, and the surplus over an uncrowded ride is charged as a PersonScoreEvent by citysim.PtCrowdingScoring. One-gate discipline mirroring A.gradient.representation and A.bike_stress.representation - `absent` recovers the previous model exactly.
+
 #### `C.crowding.seated_multiplier`
 
-Crowding multiplier, seated. NOT carried into MATSim scoring (DECISIONS.md 9.3).
+Crowding multiplier, seated: what a minute seated in a vehicle at capacity costs relative to a minute in an empty one. CARRIED INTO MATSIM SCORING under C.crowding.representation = in_vehicle_time, by citysim.PtCrowdingScoring, which charges each passenger the surplus over an uncrowded ride. At the shipped 1.0 a seated passenger pays nothing extra, so the whole charge is the standing one; the sweep to 1.15 sits inside the 1.00-1.78 range of the 84 seated valuations in Wardman and Whelan's synthesis.
 
-***literature** · status **active** · DECISIONS.md §8.4, 9.3 · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §8.4, 9.3 · MATSim `ptCrowding.seatedMultiplier` · sweep role **uncertainty***
 
 #### `C.crowding.standing_multiplier`
 
-Crowding multiplier, standing. NOT carried into MATSim scoring (DECISIONS.md 9.3), and the transit fleet carries standingRoomInPersons=0, so standing does not occur in the current fleet at all.
+Crowding multiplier, standing: what a minute standing costs relative to a minute seated in an empty vehicle. CARRIED INTO MATSIM SCORING under C.crowding.representation = in_vehicle_time, by citysim.PtCrowdingScoring. It can bind because the fleet has standing room: every vehicle type is patched to its published seated/standing split by src/build/build_matsim_run_inputs.py (9.30) - bus 44/18, ferry 149/51, rail 98/48, tram 60/210 - and both numbers scale with the sample fraction, so an agent standing on a full train is physically possible and now costs something. The shipped 1.45 is conservative against Wardman and Whelan's 2.32 mean over 124 standing valuations; the 1.2-1.8 sweep is well inside their 0.94-6.05 range.
 
-***literature** · status **active** · DECISIONS.md §8.4, 9.3 · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §8.4, 9.3 · MATSim `ptCrowding.standingMultiplier` · sweep role **uncertainty***
 
 #### `C.income.exponent`
 
@@ -3133,11 +3184,11 @@ The MATSim per-mode marginal utility of travel time. COMPUTED, NOT DECLARED: the
 
 #### `C.scoring.mode_constant`
 
-The MATSim alternative-specific constant per scored mode. Computed, because C1 is a nested-logit specification over named alternatives and MATSim scores over its own mode vocabulary - the mapping between them is the translation, and it is stated here rather than left implicit in a builder. The C.asc.* fields remain the declared quantities and are what a calibration moves; DECISIONS.md 8.5 holds them fixed.
+The MATSim alternative-specific constant per scored mode. Computed, because C1 is a nested-logit specification over named alternatives and MATSim scores over its own mode vocabulary - the mapping between them is the translation, and it is stated here rather than left implicit in a builder. The C.asc.* fields remain the declared quantities and are what a calibration moves. DECISIONS.md 8.5 no longer holds all of them fixed: asc_bus, asc_light_rail and asc_cycle carry sweeps a loop can reach, while asc_rail, asc_walk and asc_car_passenger stay held_fixed, each with the per-mode reason on its own field.
 
 ***derived** · status **computed** · DECISIONS.md §8.5, 9.8 · MATSim `scoring.modeParams[*].constant`*
 
-> **Derived from** `C.asc.car_driver`, `C.asc.car_passenger`, `C.asc.bus`, `C.asc.light_rail`, `C.asc.rail`, `C.asc.walk`, `C.asc.cycle`: constant[m] = the C1 alternative-specific constant for the mode m maps to, translated in src/build/build_matsim_run_inputs.py: car<-asc_car_driver, ride<-asc_car_passenger, pt<-asc_bus, walk<-asc_walk, bike<-asc_cycle; under RUN.routing.pt_submode_scoring=per_submode (9.78) additionally bus<-asc_bus, tram<-asc_lr, rail<-asc_rail, and ferry keeps the pt aggregate's asc_bus because C1 declares no ferry constant - stated in the run-inputs report, never invented
+> **Derived from** `C.asc.car_driver`, `C.asc.car_passenger`, `C.asc.bus`, `C.asc.light_rail`, `C.asc.rail`, `C.asc.walk`, `C.asc.cycle`, `C.asc.motorbike`, `C.asc.ferry`: constant[m] = the C1 alternative-specific constant for the mode m maps to, translated in src/build/build_matsim_run_inputs.py: car<-asc_car_driver, ride<-asc_car_passenger, pt<-asc_bus, walk<-asc_walk, bike<-asc_cycle, motorbike<-asc_motorbike; under RUN.routing.pt_submode_scoring=per_submode (9.78) additionally bus<-asc_bus, tram<-asc_lr, rail<-asc_rail and ferry<-asc_ferry. EVERY SCORED CHOICE MODE NOW HAS ITS OWN DECLARED CONSTANT: motorbike was a literal 0.0 in the builder and ferry inherited the pt aggregate's asc_bus, and both are declared fields as of this change (C.asc.motorbike, C.asc.ferry) at values that reproduce those two emissions exactly. What remains undeclared is truck and the non_network_walk stub, which are zero because their mode is locked and because a stub's constant belongs to the trip's MAIN mode - stated in the run-inputs report, never invented
 
 #### `C.scoring.monetary_distance_rate`
 

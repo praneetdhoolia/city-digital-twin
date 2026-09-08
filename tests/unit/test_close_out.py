@@ -77,6 +77,10 @@ def run_dir(tmp_path, monkeypatch):
     monkeypatch.setattr(run_matsim.results_store, 'process',
                         lambda *a, **k: None)
     monkeypatch.setattr(run_matsim.results_store, 'trim', lambda *a, **k: None)
+    # the metric extraction a stop now reaches is a separate process over a
+    # real MATSim output directory; that it HAPPENS is pinned in
+    # test_stop_run.py, and here it is stubbed like the summary and the store
+    monkeypatch.setattr(run_matsim, 'extract_metrics', lambda *a, **k: True)
     return d
 
 

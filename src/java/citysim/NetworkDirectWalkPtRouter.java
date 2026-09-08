@@ -68,13 +68,24 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
     // in a 100-iteration arm. Two things followed. The "log the first 3"
     // sample became "log the first 3 PER THREAD PER ITERATION" and emitted
     // 19,469 lines on the F28 arm - about 36% of its log - and the
-    // `decided % 100000` progress line has NEVER fired once, because no
-    // single thread-iteration ever reaches 100,000 decisions. Static is
+    // every-100,000th progress line has NEVER fired once, because no
+    // single thread-iteration ever reaches 100,000 of anything. Static is
     // correct rather than convenient here: one JVM runs exactly one scenario,
     // so the class IS the run, and the counters describe it. Atomic because
     // the routing threads increment them concurrently; each increment is read
     // back once, from the value the increment returned, so no line reports a
     // count that never existed.
+    //
+    // REQUESTS is the denominator and the other three are its parts. It exists
+    // because they did not share one: DECIDED counted only the requests that
+    // reached the comparison, so the 853,357 requests the raptor could not
+    // answer on the F31 gate arm were reported ALONGSIDE a "decisions" total
+    // that excluded them, and the line could be read as either a third or a
+    // half of the traffic depending on what the reader assumed. Worse, the
+    // no-transit branch returns before the progress gate, so a third of the
+    // arm's requests could never fire the line the comment below promises is
+    // evaluated on every one of them.
+    private static final AtomicLong REQUESTS = new AtomicLong();
     private static final AtomicLong DECIDED = new AtomicLong();
     private static final AtomicLong WALKED = new AtomicLong();
     private static final AtomicLong NO_TRANSIT = new AtomicLong();
@@ -91,6 +102,15 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
 
     @Override
     public List<? extends PlanElement> calcRoute(final RoutingRequest request) {
+        final long requests = REQUESTS.incrementAndGet();
+        // Every request, before any branch can return: the counters below are
+        // parts of THIS total, and a line that reports parts against a total
+        // they are not parts of is a line nobody can act on.
+        if (requests % 100000 == 0) {
+            LOG.info("ptDirectWalk: {} pt routing requests, {} without any transit route, "
+                     + "{} compared, of which {} chose the network walk",
+                     requests, NO_TRANSIT.get(), DECIDED.get(), WALKED.get());
+        }
         final List<? extends PlanElement> transitLegs = this.transit.calcRoute(request);
         final List<? extends PlanElement> walkLegs = this.walk.calcRoute(request);
         if (transitLegs == null || !boardsTransit(transitLegs)) {
@@ -109,14 +129,7 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
         final double walkSeconds = travelSeconds(walkLegs);
         // the raptor's own pricing of a direct walk, applied to the network walk
         final double walkCost = -walkUtlPerS * walkSeconds * this.directWalkFactor;
-        final long decisions = DECIDED.incrementAndGet();
-        // the progress line is evaluated on EVERY decision, before the branch
-        // below returns: hang it off the walk branch and the run skips the
-        // line whenever its 100,000th decision happens to choose the walk.
-        if (decisions % 100000 == 0) {
-            LOG.info("ptDirectWalk: {} decisions, {} network walks chosen, {} without any transit route",
-                     decisions, WALKED.get(), NO_TRANSIT.get());
-        }
+        DECIDED.incrementAndGet();
         if (walkCost < transitCost) {
             if (WALKED.incrementAndGet() <= 3) {
                 LOG.info("ptDirectWalk: network walk {} s (cost {}) beats transit (cost {}) for person {}",

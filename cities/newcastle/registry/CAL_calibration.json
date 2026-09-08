@@ -6,14 +6,14 @@
   "fields": {
     "CAL.objective.components": {
       "value": {
-        "mode_share.mean_abs_pp": 1.0
+        "goal_modes.max_abs_rel_pct": 1.0
       },
       "units": "weight_per_fit_component",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.16, 12.1",
-      "description": "Dotted paths into _fit.json that form the scalar objective, with their weights. ONE component, and that is not an oversight: patronage scores n=0 in a single day-type run (the contemporary monthly target needs WEEKDAY, SAT and SUN composed over a calendar month, and the rest are a pre-pandemic PT market), and counts are excluded by CAL.objective.include_counts. Mode share is what is left. A component named here that is missing from a fit output is a hard error, never a silent zero.",
+      "decisions_ref": "9.16, 12.1, 9.87",
+      "description": "Dotted paths into _fit.json that form the scalar objective, with their weights. It is `goal_modes.max_abs_rel_pct`: the MAXIMUM absolute deviation, in RELATIVE per cent, over the twelve modes of data/processed/validation/mode_targets_by_mode.csv, each on the basis its own target is stated on, computed by calling the board's own reader (src/analyse/report_mode_ridership.py) so the objective and the gate cannot drift apart. IT WAS `mode_share.mean_abs_pp` AND THAT MEASURED A DIFFERENT THING FROM THE GOAL: a MEAN over FIVE FOLDED survey categories in PERCENTAGE POINTS, where GOAL.md requirement 7 is a MAXIMUM over TWELVE UNFOLDED modes in RELATIVE per cent. The fold is what makes them disagree - heavy rail and light rail sit inside one 'Public transport' cell with OPPOSITE SIGNS (+247.2% and -47.2% at the F31 gate), so a search minimising the mean of the folds could improve its own objective while making both modes worse, and a folded car+motorbike error near zero hides motorbike at +13.7%. A mean also cannot express 'every mode inside 10%': only a maximum can, because the requirement is satisfied exactly when the worst mode is inside the band. Truck and freight rail are REPORTED and never optimised against - the reader itself scores truck on a basis that is not the target's ground (9.101) and freight rail as representation rather than fit. A component named here that is missing from a fit output is a hard error, never a silent zero.",
       "consumers": [
         "src/calibrate/calibrate.py"
       ]
@@ -37,19 +37,19 @@
       ]
     },
     "CAL.objective.independent_targets": {
-      "value": 4,
+      "value": 10,
       "units": "count",
       "source": "derived",
       "derived_from": {
         "fields": [
           "CAL.objective.components"
         ],
-        "identity": "five HTS mode-share targets are reported but they are shares of one total and sum to 1, so only four are independent; DECISIONS.md 12.1 reaches the same number from the other direction, that the effective information in the calibration half is roughly four mode-share degrees of freedom plus one patronage level plus the counts"
+        "identity": "The objective is now the twelve-mode board, so the count is the number of INDEPENDENT numbers that board contains. Twelve rows, less truck (scored 'level only' - a network-wide vehicle share against a freight-route observation, not the target's own basis, 9.101) and less freight_train (representation: the crossing closures ARE the timetable, so its 0.0% is a tautology), leaves TEN scored modes. All ten are independent: EIGHT are shares of resident linked trips (car, ride, walk, taxi, bike, motorbike, bus, ferry) and TWO are weekday boardings (heavy_rail, light_rail) on a different basis entirely. The adding-up identity that removed one degree of freedom from the old five folded shares DOES NOT BIND here: the eight share targets sum to 98.42%, and the residual is taken up by the two rail modes, whose SHARE is not itself a declared target - they are targeted on boardings. So no linear constraint ties the ten together and the count is ten, not nine. It was 4, which was correct for the OLD objective (five HTS mode shares summing to one, hence four independent) and is the reason the loop refused to move five parameters: it was refusing to fit the twelve-mode goal with the four-number folded objective's budget."
       },
       "sweep": null,
       "status": "active",
-      "decisions_ref": "12.1",
-      "description": "How many independent numbers the objective actually contains. The loop refuses to move more free parameters than this, because a fit of more parameters than data is not a calibration.",
+      "decisions_ref": "12.1, 9.87",
+      "description": "How many independent numbers the objective actually contains. The loop refuses to move more free parameters than this, because a fit of more parameters than data is not a calibration. This is the ceiling on the search's width, not a target for it: a search should still move the fewest parameters that can reach the residual.",
       "consumers": [
         "src/calibrate/calibrate.py"
       ]
@@ -89,18 +89,19 @@
       ]
     },
     "CAL.search.convergence_delta": {
-      "value": 0.25,
-      "units": "percentage_points",
-      "source": "assumed",
-      "sweep": [
-        0.1,
-        1.0
-      ],
-      "sweep_basis": "chosen interval around the 0.25 pp stopping delta: the floor of 0.1 pp is the order of the seed noise DECISIONS.md 9.7 measured, below which the search would chase noise, and 1.0 pp is a coarse stop. A control of the calibration loop (9.16), not a model input. No observed spread.",
-      "sweep_role": "uncertainty",
+      "value": 24.88,
+      "units": "per cent",
+      "source": "derived",
+      "derived_from": {
+        "fields": [
+          "CAL.search.reading_drift_pct"
+        ],
+        "identity": "convergence_delta = reading_drift_pct. A coordinate pass that 'improves' the objective by less than the reading's own noise has not been shown to improve anything: the same run read twenty iterations later moves further than that by itself, on all six arms measured. So the stopping rule is the noise floor, and it is derived from it rather than chosen beside it. IT WAS 0.25 pp, in the units of the OLD folded objective, and it was SMALLER THAN THE MEASURED DRIFT ON EVERY ARM (by 1.09x to 1.67x) - a search under it would have stopped, or failed to stop, on noise. Its stated floor of 0.1 pp cited the seed spread 9.7 measured; that was the right instinct pointed at the wrong quantity, because seed spread is the spread BETWEEN runs and this is the drift WITHIN one."
+      },
+      "sweep": null,
       "status": "active",
-      "decisions_ref": "9.16",
-      "description": "A coordinate pass that improves the objective by less than this ends the search. In the units of the objective, which is mean absolute mode-share error in percentage points. Below roughly 0.1 pp the search would be chasing seed noise rather than parameter effects, which DECISIONS.md 9.7 measured at the same order.",
+      "decisions_ref": "9.16, 9.7",
+      "description": "A coordinate pass that improves the objective by less than this ends the search, in the units of the objective - which is now the maximum relative deviation across the twelve modes, in per cent. A CONSEQUENCE WORTH READING PLAINLY: at 17.76 the rule is coarser than most candidates will move the objective, so a search scored at iteration 100 will stop almost immediately. That is not a defect in the rule - it is the measurement telling us the reading point cannot resolve a search. calibrate.py refuses to start one rather than run a search that would be reading noise.",
       "consumers": [
         "src/calibrate/calibrate.py"
       ]
@@ -320,6 +321,78 @@
       "status": "active",
       "decisions_ref": "9.91",
       "description": "How concentrated point-to-point travel is in the target LGA relative to its share of regional trips. B.taxi.daily_trips_band counts taxi and rideshare trips across the whole STUDY AREA, while the per-mode targets are shares of TARGET-LGA resident trips, so the two have to be joined. The point value of 1.0 is the neutral join - taxi trips distributed in proportion to trips - and it is deliberately neutral rather than flattering: the target LGA holds the regional CBD, the base hospital, the nightlife precinct and the airport link, so the true concentration is more likely above 1.0 than below it, which is why the sweep runs upward only. No published LGA split of point-to-point trips exists; if one is obtained this field is retired rather than re-tuned."
+    },
+    "CAL.asc.damping": {
+      "value": 0.6,
+      "units": "share_of_the_log_ratio_step",
+      "source": "literature",
+      "sweep": [
+        0.3,
+        1.0
+      ],
+      "sweep_basis": "The two published implementations of this update rule bracket the interval. matsim-vsp/matsim-python-tools applies the log-ratio step under `linear_scheduler(start=0.6, end=1, interval=3)` - damped to 0.6 of the raw step at first and relaxed toward the full step as the rounds proceed - and the ActivitySim agency practice uses a flat 0.5 dampener on the same ln(observed/modelled) adjustment. The interval runs from below the more cautious of the two to the undamped step, which is what a fixed point converges to when it converges at all. Undamped (1.0) is included deliberately: it is the boundary case, and whether the step needs damping AT ALL in this model is one of the things the two-round test measures.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "8.5",
+      "description": "How much of the raw log-ratio step an ASC round applies. The raw step for mode i against reference mode 0 is ln(target_i/modelled_i) - ln(target_0/modelled_0), which is the contraction a multinomial logit's share equation implies and is the same object as the Berry (1994) share inversion. Damping trades convergence speed for stability: an undamped step overshoots when the shares are far from target, which is where this model currently is.",
+      "consumers": [
+        "src/calibrate/asc_fixed_point.py"
+      ]
+    },
+    "CAL.asc.max_step_utils": {
+      "value": 1.5,
+      "units": "utility",
+      "source": "definition",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step stops being a calibration and becomes an admission that the residual is not a taste parameter at all: a shift of 1.5 utils against a marginal utility of travel time of order 1 util/hour is worth more than an hour of travel time, which no alternative-specific constant should have to carry. A proposal above it is REFUSED and the mode is reported as needing a mechanism, never silently clipped - clipping would hide exactly the signal this experiment exists to read.",
+        "decisions_ref": "8.5"
+      },
+      "status": "active",
+      "decisions_ref": "8.5",
+      "description": "The largest single-round |delta ASC| this loop will propose before it refuses outright and says the mode needs a mechanism rather than a constant.",
+      "consumers": [
+        "src/calibrate/asc_fixed_point.py"
+      ]
+    },
+    "CAL.asc.mode_to_constant": {
+      "value": {
+        "car": "C.asc.car_driver",
+        "ride": "C.asc.car_passenger",
+        "walk": "C.asc.walk",
+        "bike": "C.asc.cycle",
+        "motorbike": "C.asc.motorbike",
+        "bus": "C.asc.bus",
+        "heavy_rail": "C.asc.rail",
+        "light_rail": "C.asc.light_rail",
+        "ferry": "C.asc.ferry"
+      },
+      "units": "board_mode_to_registry_key",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "8.5, 9.78",
+      "description": "Which declared alternative-specific constant carries which board mode. The board names modes in the vocabulary of data/processed/validation/mode_targets_by_mode.csv; the registry names constants in the survey's driver/passenger/cycle vocabulary, and the two do not coincide. Declared here rather than typed into the loop, because a map between two vocabularies is a modelling choice: it says that a heavy-rail deviation is answerable by C.asc.rail and by nothing else. TAXI IS DELIBERATELY ABSENT - C.taxi.asc exists but taxi has no independent target (fit.py folds bike and taxi into one survey category), so there is no ratio to invert and a fixed-point step for it would be fitting a constant to a number that is not there. TRUCK and FREIGHT RAIL are absent because neither is a mode choice.",
+      "consumers": [
+        "src/calibrate/asc_fixed_point.py"
+      ]
+    },
+    "CAL.search.reading_drift_pct": {
+      "value": 24.88,
+      "units": "per cent",
+      "source": "measured",
+      "sweep": [
+        15.72,
+        24.88
+      ],
+      "sweep_role": "measurement",
+      "status": "active",
+      "decisions_ref": "9.7, 9.16",
+      "description": "How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Measured by src/analyse/measure_reading_stability.py over all SIX 25% arms that have ever reached iteration 100, WITHIN each run: the worst scored mode's |relative deviation| moves 15.72 to 24.88 points (median 17.76), the worst mode being heavy_rail on four of the six arms, bike on one and taxi on one. THREE modes move further than the WHOLE 10% band inside that twenty-iteration window - heavy_rail on 6 of 6 (max 24.88), bike on 4 of 6 (17.76), taxi on 3 of 6 (15.72). The point value is the MAXIMUM over all ten scored modes, because the objective is itself a maximum over those modes and a stopping rule has to survive the noisiest reading it will meet. The old folded objective moves 0.272 to 0.418 pp over the same window - upward on every one of the six arms, so this is systematic movement toward relaxation, not seed scatter. THIS IS A PROPERTY OF THE READING POINT, NOT OF THE MODEL: iteration 100 was adopted as the reading unit on COST and never once tested for stability, and a candidate read there would be resolved by how far the run had got rather than by its parameters. Reading deeper, or averaging a window of iterations instead of taking a point, is what would lower it.",
+      "consumers": [
+        "src/calibrate/calibrate.py",
+        "src/analyse/measure_reading_stability.py"
+      ]
     }
   }
 }

@@ -540,8 +540,13 @@ def unscored_context(fit):
     """
     patronage = fit.get('patronage') or {}
     out = {}
+    # three names for one quantity: it has been renamed twice and each rename
+    # silently emptied this block (f1f0a09). Canonical first, then the two
+    # historical spellings so an older `_fit.json` still draws.
     modelled = patronage.get('intervention_boardings',
-                             patronage.get('modelled_lr_weekday_boardings'))
+                             patronage.get(
+                                 'modelled_intervention_weekday_boardings',
+                                 patronage.get('modelled_lr_weekday_boardings')))
     if modelled is not None:
         # Selected on the METRIC each unscored target names, not on its id: an
         # id is an opaque sequence number, and matching one would silently

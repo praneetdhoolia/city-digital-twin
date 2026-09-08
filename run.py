@@ -191,9 +191,14 @@ def main():
                     help='why --stop is stopping the run; recorded verbatim '
                          'as the abort cause')
     ap.add_argument('--allow-open-issues', action='store_true',
-                    help='launch although an open GitHub issue is not labelled '
-                         'awaiting-run (GOAL.md requirement 10); say why in '
-                         'the run record')
+                    help='launch although an open GitHub issue in this run\'s '
+                         'lane is not awaiting a stated measurement (GOAL.md '
+                         'requirement 10); needs --override-reason, is '
+                         'recorded in the override ledger and counted')
+    ap.add_argument('--override-reason', metavar='TEXT',
+                    help='why this arm launches with requirement 10 unmet; '
+                         'recorded verbatim in the override ledger and to be '
+                         'repeated in the run record')
     ap.add_argument('--dry-run', action='store_true',
                     help='resolve the registry, print the snapshot, execute nothing')
     ap.add_argument('--list', action='store_true',
@@ -243,10 +248,15 @@ def main():
 
     # GOAL.md requirement 10: no open issue behind a run. Checked before
     # --detach re-invokes this command under the scheduler, so the refusal
-    # is printed to the person launching, not to a log nobody reads.
+    # is printed to the person launching, not to a log nobody reads. The run
+    # overlay is handed across because it is the only committed artefact that
+    # declares WHICH issues this arm answers - the gate scopes itself to that
+    # lane, and to the whole open set when the overlay declares none.
     if not a.dry_run:
         import issue_gate
-        why = issue_gate.refuse_launch(a.allow_open_issues)
+        why = issue_gate.refuse_launch(a.allow_open_issues,
+                                       reason=a.override_reason,
+                                       run_config=run_config)
         if why:
             raise SystemExit('refusing to launch: ' + why)
 

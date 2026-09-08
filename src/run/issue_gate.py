@@ -2,41 +2,113 @@
 """No open issue behind a run (GOAL.md requirement 10).
 
 Before the simulator is tuned or tested - before any arm is launched - every
-GitHub issue must be either closed or labelled ``awaiting-run``: the label
-says the only thing left on it is a measurement the run itself makes. An
-issue that can be fixed without a run is fixed first. This module asks
-GitHub through the ``gh`` CLI and refuses when an open issue carries no
-``awaiting-run`` label.
+GitHub issue must be either closed or **awaiting a run**: the only thing left
+on it is a measurement the run itself makes. An issue that can be fixed
+without a run is fixed first. This module asks GitHub through the ``gh`` CLI
+and refuses a launch while an issue in the run's lane is neither.
 
-Used by ``src/run/session_gate.py`` (one gate line) and by ``run.py`` before
-a launch. It names no city and no issue: the rule is the framework's, the
-issues are whatever the repository's tracker holds. Where ``gh`` is not
-installed or not authenticated the gate cannot see the tracker and says so
-rather than pretending the tracker is empty - a launch then needs the
-explicit override, which is recorded in the run's own record.
+Used by ``src/run/session_gate.py`` (one gate line) and by ``run.py`` before a
+launch. It names no city and no issue: the rule is the framework's, the issues
+are whatever the repository's tracker holds, the lane is whatever the run's own
+committed overlay declares.
+
+**A label is not evidence, and the first version of this gate tested only a
+label.** ``awaiting-run`` was a string anyone could attach, so requirement 10
+was satisfiable for ever by labelling: two of the eighteen open issues on
+8 September 2026 were product directions ("Align modelled mode distributions
+with demographics", "Individualise modes") that no single run settles, and both
+carried the label. Meanwhile a measured defect - PT walk legs teleported,
+70.9 % of 1,978 teleported walk legs on a 1 % run ending at a ``pt
+interaction`` - was deliberately LEFT UNFILED, because filing it would have
+turned the launcher red. **A gate that makes filing a defect costly is
+selecting against being told.** So this gate now asks for three things instead
+of one:
+
+  EVIDENCE   an issue claiming the label states the measurement it waits on,
+             in the repository's own wording - a line reading
+             ``AWAITING-RUN: <the measurement that would settle this>``
+             (case-insensitive, so the existing prose "Labelled awaiting-run:
+             the next gate reads heavy rail on the F24 package" counts) in the
+             issue body or any comment, carrying at least
+             ``MIN_EVIDENCE_CHARS`` of statement. What the gate can check is
+             that a measurement was NAMED; whether it is the right one is a
+             reader's judgement, and this file does not pretend otherwise.
+
+  LANE       an arm is blocked by the issues it is meant to settle, not by
+             every issue in the tracker. A run's lane is DECLARED by its run
+             overlay - the committed ``cities/<city>/overlays/runs/<name>.json``
+             whose description names the issues the arm answers (the F29
+             overlay's clause (g) is the established form). **Nothing else in
+             this repository identifies a run's lane**: neither ``_run.json``,
+             nor ``run_families.json``, nor any issue label carries a topic,
+             and the phase label (``P4``) is on every open issue at once. So the
+             lane is read from the one artefact that states it, and when an
+             overlay declares none the gate falls back to the WHOLE open set -
+             the strict behaviour, unchanged. Narrowing a lane is therefore a
+             visible edit to a committed file, never a silent bypass, and the
+             out-of-lane blockers are still printed at every launch.
+
+  OVERRIDE   ``--allow-open-issues`` is a first-class, COUNTED act. It needs a
+             stated reason (without one the launch is still refused), it is
+             appended to an override ledger beside the run records, and its
+             running total is printed by this gate every session. It was used
+             once, deliberately, on 8 September 2026; a bypass nobody counts is
+             a bypass that becomes the habit.
+
+Where ``gh`` is not installed or not authenticated the gate cannot see the
+tracker and says so rather than pretending the tracker is empty - a launch then
+needs the same explicit, reasoned override.
 """
+import io
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
+import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+REPO = os.path.dirname(os.path.dirname(HERE))
+for _p in (os.path.join(REPO, 'src'), HERE):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
 
 LABEL = 'awaiting-run'
 
+# The measurement statement. Case-insensitive so the repository's existing
+# prose form ("Labelled awaiting-run: the next arm's gate reads ...") is
+# evidence exactly as the structured "AWAITING-RUN: ..." form is - a convention
+# already in use is not broken to make a check easier to write.
+EVIDENCE = re.compile(r'(?:^|[\s*_`(\[>-])awaiting[ -]run\s*:[ \t]*(\S.*)',
+                      re.IGNORECASE | re.MULTILINE)
+# How much statement counts as a statement. A bare "awaiting-run:" with nothing
+# after it is the label again under another name.
+MIN_EVIDENCE_CHARS = 40
+
+# An issue reference inside a run overlay's declaration of what the arm answers.
+LANE_REF = re.compile(r'#(\d+)')
+
+# The override ledger: one JSON list beside the run records, appended to and
+# never rewritten. `results/processed/` is the half of the store that is kept
+# for ever (DECISIONS.md 9.137), and `_trim_log.json` already lives at its root.
+OVERRIDE_LEDGER = '_issue_gate_overrides.json'
+
+
+# ------------------------------------------------------------------ the tracker
 
 def open_issues():
     """(status, issues): status is 'ok', 'no-gh' or 'error'; issues is the
-    list of open issues as dicts with number, title and labels."""
+    list of open issues as dicts with number, title, labels, body and
+    comments."""
     gh = shutil.which('gh')
     if not gh:
         return 'no-gh', []
     try:
         out = subprocess.run(
             [gh, 'issue', 'list', '--state', 'open', '--limit', '500',
-             '--json', 'number,title,labels'],
-            capture_output=True, text=True, timeout=60,
-            cwd=os.path.dirname(os.path.dirname(os.path.dirname(
-                os.path.abspath(__file__)))))
+             '--json', 'number,title,labels,body,comments'],
+            capture_output=True, text=True, timeout=120, cwd=REPO)
     except (OSError, subprocess.SubprocessError):
         return 'error', []
     if out.returncode != 0:
@@ -46,18 +118,151 @@ def open_issues():
     except ValueError:
         return 'error', []
     return 'ok', [dict(number=i['number'], title=i['title'],
-                       labels=sorted(l['name'] for l in i.get('labels', [])))
+                       labels=sorted(l['name'] for l in i.get('labels', [])),
+                       body=i.get('body') or '',
+                       comments=[(c.get('body') or '')
+                                 for c in (i.get('comments') or [])])
                   for i in issues]
 
 
-def blocking(issues):
-    """The open issues that are not labelled awaiting-run."""
-    return [i for i in issues if LABEL not in i['labels']]
+def evidence(issue):
+    """The measurement an issue says it is waiting on, else None.
+
+    Read from the issue body and every comment, so an issue that was labelled
+    first and explained afterwards is evidenced by the explanation.
+    """
+    for text in [issue.get('body', '')] + list(issue.get('comments', [])):
+        for match in EVIDENCE.finditer(text or ''):
+            stated = match.group(1).strip().strip('*_`').strip()
+            if len(stated) >= MIN_EVIDENCE_CHARS:
+                return stated
+    return None
 
 
-def check(verbose=True):
-    """0 when every open issue is closed or awaiting a run; 1 when one is
-    not; 2 when the tracker could not be read."""
+# --------------------------------------------------------------------- the lane
+
+def lane(run_config):
+    """The issue numbers a run's own overlay declares it will settle, or None.
+
+    None means the overlay declares no lane - there is nothing to scope by, so
+    every open issue is in scope. The overlay is resolved through `src/city.py`,
+    the one module that knows where a city lives.
+    """
+    if not run_config:
+        return None
+    try:
+        import city as city_module  # noqa: PLC0415
+        overlay = os.path.join(city_module.CITY_DIR, 'overlays', 'runs',
+                               '%s.json' % run_config)
+    except Exception:
+        return None
+    if not os.path.isfile(overlay):
+        return None
+    try:
+        with io.open(overlay, encoding='utf-8') as fh:
+            doc = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    declared = ' '.join(str(doc.get(k, '')) for k in ('overlay', 'description'))
+    numbers = set(int(n) for n in LANE_REF.findall(declared))
+    return numbers or None
+
+
+def blocking(issues, in_lane=None):
+    """The open issues that stand between this repository and a launch.
+
+    An issue blocks when it carries no `awaiting-run` label, or carries the
+    label without stating the measurement it waits on. `in_lane`, when given,
+    is the set of issue numbers the run declares it answers; issues outside it
+    are deferred rather than blocking, and `deferred()` reports them.
+    """
+    out = []
+    for i in issues:
+        why = _why_blocking(i)
+        if why is None:
+            continue
+        if in_lane is not None and i['number'] not in in_lane:
+            continue
+        out.append(dict(i, why=why))
+    return out
+
+
+def deferred(issues, in_lane):
+    """Issues that would block but sit outside the run's declared lane."""
+    if in_lane is None:
+        return []
+    return [dict(i, why=_why_blocking(i)) for i in issues
+            if _why_blocking(i) is not None and i['number'] not in in_lane]
+
+
+def _why_blocking(issue):
+    if LABEL not in issue['labels']:
+        return 'not labelled %s' % LABEL
+    if evidence(issue) is None:
+        return ('labelled %s but states no measurement - add a line '
+                '"AWAITING-RUN: <the measurement that would settle this>"'
+                % LABEL)
+    return None
+
+
+# ----------------------------------------------------------------- the override
+
+def _ledger_path():
+    try:
+        import results_store  # noqa: PLC0415
+        root = results_store.PROCESSED
+    except Exception:
+        root = os.path.join(REPO, 'results', 'processed')
+    return os.path.join(root, OVERRIDE_LEDGER)
+
+
+def override_log():
+    """Every recorded override, oldest first. An empty list when none."""
+    path = _ledger_path()
+    if not os.path.isfile(path):
+        return []
+    try:
+        with io.open(path, encoding='utf-8') as fh:
+            entries = json.load(fh)
+    except (OSError, ValueError):
+        return []
+    return entries if isinstance(entries, list) else []
+
+
+def record_override(reason, overridden, run_config=None):
+    """Append one override to the ledger and return its number in the series.
+
+    Append-only: a bypass of a hard requirement is a decision, and a decision
+    that is not counted is a decision nobody can audit later.
+    """
+    entries = override_log()
+    entry = {
+        'n': len(entries) + 1,
+        'when': time.strftime('%Y-%m-%dT%H:%M:%S'),
+        'run_config': run_config,
+        'reason': reason,
+        'issues': [{'number': i['number'], 'title': i['title'],
+                    'why': i.get('why', '')} for i in overridden],
+    }
+    entries.append(entry)
+    path = _ledger_path()
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with io.open(path, 'w', encoding='utf-8', newline='\n') as fh:
+            json.dump(entries, fh, indent=2, ensure_ascii=False)
+            fh.write('\n')
+    except OSError as exc:
+        print('issue gate: the override could NOT be recorded (%s) - it is '
+              'still the operator\'s to write into the run record' % exc,
+              flush=True)
+    return entry['n']
+
+
+# ------------------------------------------------------------------- the checks
+
+def check(verbose=True, run_config=None):
+    """0 when nothing blocks, 1 when something does, 2 when the tracker could
+    not be read."""
     status, issues = open_issues()
     if status != 'ok':
         if verbose:
@@ -66,22 +271,41 @@ def check(verbose=True):
                       'gh CLI not installed' if status == 'no-gh'
                       else 'gh issue list failed'))
         return 2
-    bad = blocking(issues)
+    in_lane = lane(run_config)
+    bad = blocking(issues, in_lane)
+    later = deferred(issues, in_lane)
     if verbose:
-        print('issue gate: %d open issue(s), %d awaiting a run, %d blocking'
-              % (len(issues), len(issues) - len(bad), len(bad)))
+        scope = ('the whole open set' if in_lane is None
+                 else '%d issue(s) the %s overlay declares'
+                      % (len(in_lane), run_config))
+        evidenced = sum(1 for i in issues
+                        if LABEL in i['labels'] and evidence(i) is not None)
+        print('issue gate: %d open issue(s), %d awaiting a run WITH a stated '
+              'measurement, %d blocking (scope: %s)'
+              % (len(issues), evidenced, len(bad), scope))
         for i in bad:
-            print('  #%-4d %s   [%s]' % (i['number'], i['title'][:90],
-                                         ', '.join(i['labels']) or 'no label'))
+            print('  #%-4d %s' % (i['number'], i['title'][:88]))
+            print('        %s' % i['why'])
+        for i in later:
+            print('  #%-4d %s   [deferred: outside this run\'s lane]'
+                  % (i['number'], i['title'][:70]))
         if bad:
-            print('  GOAL.md requirement 10: fix these without a run, or '
-                  'label them %s when only a run can move them.' % LABEL)
+            print('  GOAL.md requirement 10: fix these without a run, or say '
+                  'on the issue what only a run can settle -')
+            print('  a line "AWAITING-RUN: <the measurement>" beside the %s '
+                  'label.' % LABEL)
+        overrides = override_log()
+        if overrides:
+            last = overrides[-1]
+            print('  overrides recorded: %d (last %s, %s)'
+                  % (len(overrides), last.get('when', '?'),
+                     (last.get('reason') or '')[:70]))
     return 1 if bad else 0
 
 
-def refuse_launch(allow_open_issues=False):
+def refuse_launch(allow_open_issues=False, reason=None, run_config=None):
     """Called by the launcher. Returns None to proceed, else the reason to
-    refuse. With the override, returns None but prints what was overridden."""
+    refuse. The override needs a stated reason of its own and is counted."""
     status, issues = open_issues()
     if status != 'ok':
         msg = ('the issue tracker could not be read (%s), so GOAL.md '
@@ -89,22 +313,73 @@ def refuse_launch(allow_open_issues=False):
                    'gh CLI not installed' if status == 'no-gh'
                    else 'gh issue list failed'))
         if allow_open_issues:
-            print('issue gate OVERRIDDEN: ' + msg, flush=True)
+            stated = (reason or '').strip()
+            if not stated:
+                return _needs_reason(msg)
+            n = record_override(stated, [], run_config)
+            print('issue gate OVERRIDDEN (override %d in this repository\'s '
+                  'history): %s\n  reason: %s' % (n, msg, stated), flush=True)
             return None
-        return msg + '; pass --allow-open-issues to launch regardless'
-    bad = blocking(issues)
+        return msg + '; pass --allow-open-issues with --override-reason to ' \
+                     'launch regardless'
+
+    in_lane = lane(run_config)
+    bad = blocking(issues, in_lane)
+    for i in deferred(issues, in_lane):
+        print('issue gate: #%d is open and not awaiting a run, but sits '
+              'outside the lane the %s overlay declares - it does not block '
+              'this arm and it is not closed either'
+              % (i['number'], run_config), flush=True)
     if not bad:
         return None
-    lines = ['#%d %s' % (i['number'], i['title'][:80]) for i in bad]
+    lines = ['#%d %s (%s)' % (i['number'], i['title'][:70], i['why'])
+             for i in bad]
     if allow_open_issues:
-        print('issue gate OVERRIDDEN: %d open issue(s) not awaiting a run: %s'
-              % (len(bad), '; '.join(lines)), flush=True)
+        stated = (reason or '').strip()
+        if not stated:
+            return _needs_reason(
+                '%d open issue(s) in this run\'s lane are neither closed nor '
+                'awaiting a stated measurement: %s' % (len(bad), '; '.join(lines)))
+        n = record_override(stated, bad, run_config)
+        print('issue gate OVERRIDDEN (override %d in this repository\'s '
+              'history): %d open issue(s) not awaiting a run: %s\n  reason: %s'
+              % (n, len(bad), '; '.join(lines), stated), flush=True)
         return None
-    return ('%d open issue(s) are neither closed nor labelled %s (GOAL.md '
-            'requirement 10): %s. Fix them first, or pass --allow-open-issues '
-            'and say why in the run record.'
+    return ('%d open issue(s) in this run\'s lane are neither closed nor '
+            'labelled %s with a stated measurement (GOAL.md requirement 10): '
+            '%s. Fix them first, state on each what only a run can settle '
+            '("AWAITING-RUN: <the measurement>"), or pass --allow-open-issues '
+            'with --override-reason and repeat that reason in the run record.'
             % (len(bad), LABEL, '; '.join(lines)))
 
 
+def _needs_reason(msg):
+    return (msg + '. --allow-open-issues needs --override-reason "<why this '
+            'arm launches anyway>": the override is recorded and counted, not '
+            'an ad-hoc bypass.')
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if '--overrides' in argv:
+        entries = override_log()
+        print('issue gate: %d override(s) recorded' % len(entries))
+        for e in entries:
+            print('  %-3d %s  run-config %s' % (e.get('n', 0),
+                                                e.get('when', '?'),
+                                                e.get('run_config') or '-'))
+            print('      %s' % (e.get('reason') or ''))
+            for i in e.get('issues', []):
+                print('      overrode #%s %s' % (i.get('number'),
+                                                 (i.get('title') or '')[:70]))
+        return 0
+    run_config = None
+    if '--run-config' in argv:
+        idx = argv.index('--run-config')
+        if idx + 1 < len(argv):
+            run_config = argv[idx + 1]
+    return check(run_config=run_config)
+
+
 if __name__ == '__main__':
-    sys.exit(check())
+    sys.exit(main())

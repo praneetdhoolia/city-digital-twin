@@ -104,10 +104,50 @@ def open_output(run_dir, stem):
     raise SystemExit('%s not found in %s/output' % (stem, run_dir))
 
 
+# The iteration a stopped arm is read at, set once by main() from the run's own
+# `reached_iteration`. None means "read the final output", which is what a run
+# that reached its last iteration has.
+_READ_AT = {'iteration': None, 'used': set()}
+
+
+def iteration_stem(stem, iteration):
+    """The per-iteration spelling of a final-output table, or None.
+
+    MATSim writes `output_trips` ONLY at controler end. An arm stopped at its
+    gate therefore has no final table at all - and every arm this project has
+    produced since F4 was stopped at its gate, so `extract_metrics` failed on
+    every one of them with `output_trips not found`, which is why no gate arm
+    has ever had a `_metrics.json` or a `_fit.json`.
+    """
+    if iteration is None or not stem.startswith('output_'):
+        return None
+    return 'ITERS/it.%d/%d.%s' % (iteration, iteration, stem[len('output_'):])
+
+
 def rows(run_dir, stem):
+    """A MATSim output table, from the final output or the reached iteration.
+
+    READING A STOPPED ARM AT ITS `reached_iteration` IS NOT A NEW POLICY - it
+    is the policy the project already states, implemented. GOAL.md and 9.143
+    say a stopped arm's reading is citable AT its `reached_iteration` and
+    nowhere past it; this reads it exactly there. What would be new, and is
+    refused, is presenting that as a final-output reading: `_metrics.json`
+    records which iteration each table came from, and `read_from` says so.
+    """
+    it = _READ_AT['iteration']
+    alt = iteration_stem(stem, it)
+    if alt is not None and not _final_exists(run_dir, stem):
+        _READ_AT['used'].add('%s <- %s' % (stem, alt))
+        stem = alt
     with open_output(run_dir, stem) as f:
         for r in csv.DictReader(f, delimiter=';'):
             yield r
+
+
+def _final_exists(run_dir, stem):
+    base = os.path.join(run_dir, 'output', stem)
+    return any(os.path.exists(base + ext)
+               for ext in ('.csv.gz', '.csv', '.csv.zst'))
 
 
 _HOME_LGA_CACHE = {}
@@ -409,6 +449,30 @@ def link_volumes(run_dir, fraction):
                          'vehicle on a link - a count comparison has no '
                          'modelled side')
 
+    # `output_links` is written ONLY at controler end and has no per-iteration
+    # spelling - MATSim's per-iteration link file is `linkstats`, a different
+    # table with a different shape. So a stopped arm HAS no modelled count side,
+    # and this block says that rather than raising and taking the whole
+    # extraction down with it: mode share, the pt split and trip geometry are
+    # all readable at the reached iteration, and refusing to write any of them
+    # because one block is unavailable is what kept every gate arm without a
+    # `_metrics.json` at all.
+    if _READ_AT['iteration'] is not None and not _final_exists(run_dir,
+                                                              'output_links'):
+        return dict(
+            links_matched_in_output=0, links_expected=len(want), scale=None,
+            vehicle_modes_counted={m: w for m, w in sorted(weights.items())},
+            stations=[],
+            unavailable=(
+                'this run stopped at iteration %d and MATSim writes '
+                'output_links only at controler end. Its per-iteration '
+                'counterpart, linkstats, is a different table and is NOT '
+                'substituted here: comparing a linkstats volume against a '
+                'target derived for output_links would be a basis error of '
+                'exactly the kind 9.101 records for truck. The count '
+                'comparison is unavailable for this run, and no count '
+                'statistic may be quoted from it.' % _READ_AT['iteration']))
+
     found = 0
     for l in rows(run_dir, 'output_links'):
         lid = l['link']
@@ -460,11 +524,29 @@ def main():
     rec = json.load(open(os.path.join(run_dir, '_run.json'), encoding='utf-8'))
     fraction = rec['fraction']
 
+    # A run that did not reach its last iteration has no final output tables,
+    # so every table is read at the iteration it DID reach. Nothing is read
+    # past it: that is the whole of the rule (GOAL.md, 9.143).
+    if rec.get('completion') != 'ran_to_last_iteration':
+        reached = rec.get('reached_iteration')
+        if isinstance(reached, int):
+            _READ_AT['iteration'] = reached
+
     c3 = json.load(open(C3, encoding='utf-8'))
     person_lga = home_lga()
     ms = mode_share(run_dir, person_lga)
     doc = dict(run=rec['name'], scenario=rec['scenario'], day=rec['day'],
                fraction=fraction, iterations=rec['iterations'],
+               # what the run REACHED and how it ended, carried beside what it
+               # DECLARED. `iterations` is the horizon that was asked for;
+               # every consumer that wants to know whether this reading is a
+               # result needs `completion == 'ran_to_last_iteration'`, and
+               # every consumer that wants to know how deep it got needs
+               # `reached_iteration`. Both were previously available only by
+               # re-opening `_run.json`, and the consumers that did not
+               # (report.py) mistook the declared horizon for a reached one.
+               completion=rec.get('completion'),
+               reached_iteration=rec.get('reached_iteration'),
                overrides=rec.get('overrides', {}),
                mode_share=ms,
                pt_split=pt_submode_split(run_dir, person_lga, ms),
@@ -477,6 +559,18 @@ def main():
                    heavy_vehicle_share=c3['heavy_vehicle_share']),
                note='Modelled quantities only. No validation target is read '
                     'here; scoring is src/calibrate/fit.py.')
+    # WHERE EACH TABLE WAS READ FROM, in the document itself. A reader of
+    # `_metrics.json` must never have to guess whether a figure came from a
+    # completed run's final output or from the iteration a stopped arm reached.
+    doc['read_from'] = (
+        'final output (the run reached its last iteration)'
+        if _READ_AT['iteration'] is None else
+        'iteration %d, the iteration this run REACHED - it did not run to its '
+        'last iteration, so it has no final output tables and nothing here is '
+        'citable past iteration %d'
+        % (_READ_AT['iteration'], _READ_AT['iteration']))
+    doc['tables_read_at_iteration'] = sorted(_READ_AT['used'])
+
     out = a.out or os.path.join(run_dir, '_metrics.json')
     json.dump(doc, open(out, 'w'), indent=2)
     ms = doc['mode_share']

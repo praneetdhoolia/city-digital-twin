@@ -95,3 +95,53 @@ def test_trim_refuses_to_invent_the_grace(store):
     """The store resolves no declared value itself; its caller supplies them."""
     with pytest.raises(TypeError, match='extract_grace_s'):
         results_store.trim(0, log=lambda *a: None)
+
+
+def _unrecorded_dir(root, name, *, age_s):
+    """A raw run with a CAUSE but no record — what every pre-contract arm is."""
+    d = os.path.join(root, name)
+    os.makedirs(d)
+    with open(os.path.join(d, '_meta.json'), 'w', encoding='utf-8') as fh:
+        json.dump(dict(status='aborted', pid=None, cause='stopped'), fh)
+    with open(os.path.join(d, 'matsim.log'), 'w', encoding='utf-8') as fh:
+        fh.write('x' * 4096)
+    when = time.time() - age_s
+    for fname in os.listdir(d):
+        os.utime(os.path.join(d, fname), (when, when))
+    return d
+
+
+def test_a_run_that_was_never_closed_out_is_kept_when_nothing_was_extracted(store):
+    """The grace guard reasons about a run that HAS a record: past its window it
+    has been closed out and its snapshots are already in processed. A run with
+    no record has had none of that happen and is not covered by that guard at
+    all — it fell straight through to the delete.
+
+    Measured 8 Sep 2026: the two largest directories in a store at 93.4% of its
+    cap (336.4 GiB between them) carry no `_run.json`, have no snapshots in
+    processed, and are cited by eleven lines across eight position pages. The
+    next launch that found the cap exceeded would have deleted both, and the
+    readings with them."""
+    _unrecorded_dir(str(store), '20260101T000000_norecord', age_s=7200)
+    deleted = results_store.trim(0, log=lambda *a: None, grace_s=3600)
+    assert deleted == [], 'the only copy of a cited reading must not be deleted'
+
+
+def test_it_is_reclaimed_once_its_findings_are_in_processed(store, tmp_path):
+    """The guard is about the FINDINGS, not about the record: once the readings
+    are safe in processed, the bulk is a duplicate and goes."""
+    _unrecorded_dir(str(store), '20260101T000000_norecord', age_s=7200)
+    dest = tmp_path / 'processed' / '20260101T000000_norecord'
+    dest.mkdir(parents=True)
+    (dest / results_store.FINAL_JSON).write_text('{}', encoding='utf-8')
+    deleted = results_store.trim(0, log=lambda *a: None, grace_s=3600)
+    assert [d['name'] for d in deleted] == ['20260101T000000_norecord']
+
+
+def test_a_meta_json_alone_does_not_count_as_a_finding(store, tmp_path):
+    """`_meta.json` carries the run's CAUSE, not its readings. Treating it as a
+    finding would let the guard pass on exactly the runs it exists to hold."""
+    dest = tmp_path / 'processed' / 'r_meta_only'
+    dest.mkdir(parents=True)
+    (dest / '_meta.json').write_text('{}', encoding='utf-8')
+    assert results_store._findings_in_processed('r_meta_only') is False

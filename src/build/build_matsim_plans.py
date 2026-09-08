@@ -215,6 +215,29 @@ BIKE_MIN_AGE = CFG.get('B.population.bike_min_age')
 PLANS = _city.path('demand/plans')
 POP = _city.path('demand/population')
 OUT = os.path.join(PLANS, 'matsim')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The three population files and
+# the report are one write of the same tours, so one glob covers them. The
+# activity chains they carry place their destinations on OpenStreetMap
+# features, so the plans inherit that ancestry through the trip table rather
+# than by reading anything of OSM's directly.
+OUTPUT_INPUTS = {
+    'demand/plans/matsim/*': [
+        'demand/plans/B2_activity_trips_WEEKDAY.csv',
+        'demand/plans/B2_activity_trips_SAT.csv',
+        'demand/plans/B2_activity_trips_SUN.csv',
+        'demand/plans/B2_lift_bindings_WEEKDAY.csv',
+        'demand/plans/B2_shared_bindings_WEEKDAY.csv',
+        'demand/plans/B2_escort_bindings_WEEKDAY.csv',
+        'demand/plans/B2_joint_bindings_WEEKDAY.csv',
+        'demand/population/B1_households.csv',
+        'demand/population/B1_synthetic_population.csv',
+        'data/processed/census/census2021_G62_SA1.csv',
+        'data/processed/zones/zones_SA1.csv',
+        'data/processed/zones/sa1_to_lga.csv'],
+}
+
 SEED = CFG.get('B.seed.master')
 # the CITY's day-type vocabulary, not the framework's (city.json day_types)
 DAY_TYPES = list(_city.descriptor()['day_types'])
@@ -1520,6 +1543,16 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '.'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     ap = argparse.ArgumentParser()
     ap.add_argument('--seed', type=int, default=SEED)
     ap.add_argument('--day-types', default=','.join(DAY_TYPES))

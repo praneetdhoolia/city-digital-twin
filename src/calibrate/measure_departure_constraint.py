@@ -39,6 +39,16 @@ ROOT = os.path.dirname(os.path.dirname(_HERE))
 sys.path.insert(0, os.path.join(ROOT, 'src'))
 import city as _city  # noqa: E402
 
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. The check compares the generated
+# departure profile against the observed hourly one, so it descends from the
+# activity chains as well as from the count profile.
+OUTPUT_INPUTS = {
+    'params/C6_departure_profile_check.json': [
+        'data/processed/observed/light_hourly_profile.csv',
+        'demand/plans/B2_activity_trips_WEEKDAY.csv'],
+}
+
 OBSERVED = _city.path('data/processed/observed/light_hourly_profile.csv')
 PLANS = _city.path('demand', 'plans')
 OUT = _city.path('params', 'C6_departure_profile_check.json')

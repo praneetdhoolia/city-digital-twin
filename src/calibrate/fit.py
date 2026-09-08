@@ -85,6 +85,111 @@ def load_targets():
     return rows
 
 
+def run_record(run_dir):
+    """The run's own `_run.json`, or {} when it carries none.
+
+    A run that carries no record is not a result and the caller must say so.
+    Reading it here is what lets every downstream consumer state the run's
+    `completion` and `reached_iteration` beside the fit, instead of each one
+    re-deriving them or - as `report.py` did - gating its "not a result"
+    warning on the DECLARED horizon, which reports an arm that declared 1000
+    and stopped at 23 as though it had run.
+    """
+    path = os.path.join(run_dir, '_run.json')
+    if not os.path.exists(path):
+        return {}
+    try:
+        return json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        return {}
+
+
+def score_goal_modes(run_dir, iteration):
+    """The GOAL's own twelve modes, on the GOAL's own basis (GOAL.md req. 7).
+
+    This is the objective the goal actually states, and it is deliberately a
+    DIFFERENT statistic from `mode_share.mean_abs_pp` above.
+
+    `mean_abs_pp` is a MEAN over FIVE FOLDED survey categories in PERCENTAGE
+    POINTS. `GOAL.md` requirement 7 is "ridership within 10% of real life for
+    EVERY mode" - a MAXIMUM over TWELVE UNFOLDED modes in RELATIVE per cent.
+    The two disagree in the way that matters: heavy rail (+247%) and light rail
+    (-47%) sit inside ONE folded "Public transport" cell with OPPOSITE SIGNS, so
+    a search minimising `mean_abs_pp` can improve its own objective while making
+    both of them worse; and a folded car+motorbike error near zero hides
+    motorbike at +13.7%. A loop that optimises the fold is not optimising the
+    goal.
+
+    **It is computed by CALLING THE BOARD'S OWN READER**, not by re-deriving the
+    deviations here. `src/analyse/report_mode_ridership.py` is what the board,
+    the gate watcher and the GOAL.md loop all read; if the objective re-derived
+    the same quantity independently the two would drift apart silently, and the
+    project would be steering by one number and judged by another. One basis, one
+    reader, by construction. The cost is one extra parse of the run's trips table
+    per candidate - against a candidate that costs hours, that is not a cost.
+
+    Truck and freight rail are excluded from the maximum: the reader itself
+    marks truck as scored on a basis that is NOT the target's ground
+    (network-wide vehicle share against a freight-route observation, 9.101) and
+    freight rail as representation rather than fit. They are reported, never
+    optimised against.
+    """
+    _sys.path.insert(0, _os.path.join(
+        _os.path.dirname(_os.path.abspath(__file__)), '..', 'analyse'))
+    import io
+    import contextlib
+    import report_mode_ridership as rmr
+
+    # the reader prints its table; the objective wants the rows, not the noise
+    with contextlib.redirect_stdout(io.StringIO()):
+        rmr.report(run_dir, iteration)
+    rows = list(rmr.LAST['rows'])
+    if not rows:
+        return dict(n=0, modes=[], max_abs_rel_pct=None,
+                    reason='the board reader returned no rows for this run')
+
+    scored, reported = [], []
+    for r in rows:
+        row = dict(mode=r['mode'], modelled=r['modelled'], target=r['target'],
+                   deviation_pct=r['deviation_pct'], basis=r['basis'],
+                   flag=r['flag'], trips=r['count'])
+        reported.append(row)
+        # a mode the reader itself refuses to score on the target's ground is
+        # reported and never optimised against - the same refusal fit.py makes
+        # for an unscorable calibration target
+        if r['deviation_pct'] is None or r['flag'] in ('decision', 'level only',
+                                                       'representation'):
+            row['optimised'] = False
+            continue
+        row['optimised'] = True
+        scored.append(row)
+
+    if not scored:
+        return dict(n=0, modes=reported, max_abs_rel_pct=None,
+                    reason='no mode was scorable on the target basis')
+
+    # the gate's two thresholds come from the READER, which declares them from
+    # CAL.gate.*: one registry field, one loader, so the objective cannot drift
+    # from the gate that judges it
+    gate_pass, gate_stop = rmr.GATE_PASS_PCT, rmr.GATE_STOP_PCT
+    devs = [abs(float(r['deviation_pct'])) for r in scored]
+    worst = max(scored, key=lambda r: abs(float(r['deviation_pct'])))
+    return dict(
+        n=len(scored), modes=reported,
+        max_abs_rel_pct=round(max(devs), 4),
+        worst_mode=worst['mode'],
+        mean_abs_rel_pct=round(sum(devs) / len(devs), 4),
+        n_inside_pass_band=sum(1 for d in devs if d <= gate_pass),
+        n_past_stop_bar=sum(1 for d in devs if d >= gate_stop),
+        pass_band_pct=gate_pass, stop_bar_pct=gate_stop,
+        goal_met=bool(max(devs) <= gate_pass),
+        iteration=iteration,
+        note='GOAL.md requirement 7 is met if and only if max_abs_rel_pct <= '
+             '%.4g. Truck and freight rail are reported and never optimised '
+             'against: the reader scores neither on the target\'s own ground.'
+             % gate_pass)
+
+
 def scale_error(modelled, observed):
     if observed in (None, 0) or modelled is None:
         return None
@@ -174,7 +279,23 @@ def score_patronage(targets, metrics, out):
                        'and the 20.8% share is algebraically V001/(V001+V023)'
                 if period.startswith('2019') else
                        'no modelled counterpart in a single day-type run'))
+    # ONE vocabulary across the pipeline. `_metrics.json` calls this
+    # `pt.intervention_boardings` and both consumers (report.section_patronage,
+    # build_fit_figures) read `intervention_boardings` - but this block wrote
+    # `modelled_intervention_weekday_boardings`, a third name nothing read, so
+    # the calibration report's patronage section and FIGURES.json's block have
+    # been SILENTLY EMPTY since the rename at f1f0a09. The orphan name is kept
+    # beside the canonical one so a `_fit.json` written before this change still
+    # renders, and tests/unit/test_fit.py asserts the key this writes is a key
+    # the consumers read.
+    #
+    # n=0 here is CORRECT, not a gap: every patronage target is unscorable
+    # against a 2026 base - the monthly one needs three day types composed, and
+    # the rest are a pre-pandemic market (12.1). The level is REPORTED beside
+    # the reason no target applies; it is never given a denominator it has not
+    # earned (9.80, #84).
     return dict(targets=used, n=len(used), errors=errs,
+                intervention_boardings=lr_daily,
                 modelled_intervention_weekday_boardings=lr_daily)
 
 
@@ -367,9 +488,23 @@ def main():
     c4 = json.load(open(C4, encoding='utf-8'))
     targets = load_targets()
 
+    # WHAT THE RUN ACTUALLY DID, carried into the fit so no consumer has to
+    # re-derive it and none can mistake a declared horizon for a reached one.
+    # `iterations` below is what the run DECLARED; `reached_iteration` is what
+    # it reached, and only `completion == 'ran_to_last_iteration'` makes the
+    # reading a RESULT (GOAL.md, and 9.143). report.py gated its "not a result"
+    # warning on the declared horizon and therefore reported an arm that
+    # declared 1000 and stopped at 23 as though it had run.
+    record = run_record(run_dir)
+    completion = record.get('completion')
+    reached = record.get('reached_iteration')
+
     out = dict(run=metrics['run'], scenario=metrics['scenario'],
                day=metrics['day'], fraction=metrics['fraction'],
                iterations=metrics['iterations'],
+               completion=completion,
+               reached_iteration=reached,
+               is_a_result=(completion == 'ran_to_last_iteration'),
                overrides=metrics.get('overrides', {}),
                calibration_targets_available=len(targets),
                unscorable=[])
@@ -378,6 +513,22 @@ def main():
     out['counts'] = score_counts(targets, metrics, corrections, out)
     out['occupancy_constraint'] = score_occupancy(metrics, c4)
     out['trip_geometry_constraint'] = score_trip_geometry(metrics, c4)
+
+    # The GOAL's twelve modes, read at the iteration the run REACHED - never at
+    # the one it declared. A stopped arm is citable at its `reached_iteration`
+    # and nowhere past it.
+    read_at = reached if isinstance(reached, int) else metrics['iterations']
+    try:
+        out['goal_modes'] = score_goal_modes(run_dir, read_at)
+    except Exception as exc:                              # noqa: BLE001
+        # A document is still produced, carrying the REASON rather than a zero.
+        # The loud failure belongs where it matters: calibrate.objective()
+        # refuses a missing component rather than treating it as zero, so a
+        # search over this run stops here instead of optimising nothing.
+        out['goal_modes'] = dict(
+            n=0, modes=[], max_abs_rel_pct=None, iteration=read_at,
+            reason='the board reader could not score this run at iteration %s: '
+                   '%s: %s' % (read_at, type(exc).__name__, exc))
 
     account_for_the_rest(targets, out)
     scored = (out['mode_share']['n'] + out['patronage']['n'] + out['counts']['n'])

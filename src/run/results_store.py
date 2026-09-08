@@ -225,13 +225,34 @@ def extract_snapshots(name):
     return ok
 
 
+def _findings_in_processed(name):
+    """Does processed already hold a substantive finding for this run?
+
+    A `_meta.json` alone does NOT count: it carries the run's cause, not its
+    readings. What counts is a metrics document or the mode snapshots - the
+    things a living document actually cites.
+    """
+    dest = processed_dir(name)
+    return any(os.path.exists(os.path.join(dest, f))
+               for f in ('_metrics.json', TREND_TXT, FINAL_JSON))
+
+
 def process(name, extract=False):
-    """Mirror one run's records into processed; optionally extract snapshots."""
+    """Mirror one run's records into processed; optionally extract snapshots.
+
+    Returns whether the findings are now SAFE IN PROCESSED - True when the
+    snapshots were written (or none were asked for), False when the extraction
+    was attempted and did not produce them. `trim` refuses to delete a bulk
+    directory on a False, because deleting it would destroy the only copy of a
+    reading rather than reclaim a duplicate of one.
+    """
     bulk = resolve(name)
-    if bulk is not None:
-        mirror(bulk)
-        if extract:
-            extract_snapshots(name)
+    if bulk is None:
+        return False
+    mirror(bulk)
+    if extract:
+        return bool(extract_snapshots(name))
+    return True
 
 
 def reconcile_names():
@@ -427,7 +448,43 @@ def trim(cap_gb, log=print, grace_s=None):
             log('trim: raw/%s is past its %s s extraction grace and its '
                 'findings are in processed; reclaiming the bulk'
                 % (name, grace_s))
-        process(name, extract=True)
+        # A RUN THAT WAS NEVER CLOSED OUT HAS NEVER HAD ITS FINDINGS MIRRORED.
+        #
+        # The grace guard above reasons about a run that HAS a `_run.json`: past
+        # its window it has been closed out, and close_out() has already put its
+        # records and snapshots in processed, which is never trimmed. A run with
+        # NO record at all has had none of that happen, and it is not covered by
+        # that guard at all - it falls straight through to the delete.
+        #
+        # The oldest directories in this store are exactly those, because they
+        # predate the record contract. Measured 8 Sep 2026:
+        # `aborted_20260901T165115_300it_25pct` (173.40 GiB) and
+        # `aborted_20260831T165127_300it_25pct` (163.03 GiB) are the 2nd and 7th
+        # oldest in a store at 93.4% of its cap, carry no `_run.json`, have no
+        # snapshots in processed, and are cited by ELEVEN lines across eight
+        # position pages - one of which gives a reproduce command that reads the
+        # bulk directly. Oldest-first with no pin would have deleted both on the
+        # next launch that found the cap exceeded, and the readings would have
+        # gone with them.
+        #
+        # So: no record, and no findings already in processed, means the bulk is
+        # the ONLY copy of whatever it is cited for. Extraction is attempted; if
+        # it does not produce the snapshots, the directory stays and says why.
+        # The store then sits over its cap, which is a visible problem someone
+        # must act on, rather than quietly becoming the place a cited figure
+        # used to live.
+        if not os.path.exists(os.path.join(d, '_run.json')) \
+                and not _findings_in_processed(name):
+            if not process(name, extract=True):
+                log('trim: KEEPING raw/%s - it carries no run record, so it was '
+                    'never closed out and its findings were never mirrored; the '
+                    'extraction did not produce them either, so deleting the '
+                    'bulk would destroy the reading rather than reclaim a copy '
+                    'of it. Extract it by hand, re-aim whatever cites it at '
+                    'processed/, then trim.' % name)
+                continue
+        else:
+            process(name, extract=True)
         freed = _dir_bytes(d)
         try:
             shutil.rmtree(d)

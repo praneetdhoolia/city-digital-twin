@@ -371,6 +371,11 @@
     "derived_licences_basis": {
       "type": "string",
       "description": "Why each derived_licences glob carries the licence it does."
+    },
+    "manifest_undetermined_lineage_max": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Ratchet: how many manifest rows may carry share_alike_ancestor=undetermined, i.e. an ancestry the evidence does not decide because a producing script writes several outputs and declares no OUTPUT_INPUTS mapping (#159). tests/check_manifest.py fails above it. A refused row beats a guessed one, so the number is allowed to be non-zero - but it may only fall."
     }
   }
 }

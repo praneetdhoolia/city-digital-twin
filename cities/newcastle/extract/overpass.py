@@ -349,6 +349,16 @@ def write_provenance(names, reconstructed=False, outdir=_city.path("networks/osm
 
 
 if __name__ == "__main__":
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     print("STUDY     S,W,N,E = %s" % (STUDY,), flush=True)
     print("BUILDINGS S,W,N,E = %s" % (CORRIDOR,), flush=True)
     args = [a for a in sys.argv[1:] if not a.startswith("--")]

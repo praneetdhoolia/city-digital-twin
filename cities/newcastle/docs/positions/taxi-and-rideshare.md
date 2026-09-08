@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Written against family:** `F23`
+**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
 
 ## What is built
 
@@ -17,8 +17,13 @@
 - **Age gate:** `B.taxi.min_unaccompanied_age` 18 (assumed, swept [0, 18], zero disables), consumed through the `modeAvailability` module and, since §9.120, by the plans builder (§9.84). `GatedSubtourModeChoice` closes the stock single-trip seam that let under-18s hail 5.5% of taxi trips (§9.84).
 - **Target:** `taxi` 0.9916% of resident linked trips, status `derived`, sweep 0.7437–1.2395%, in `data/processed/validation/mode_targets_by_mode.csv`: the IPART band against 2,017,000 study-area weekday trips, times `CAL.taxi.lga_concentration` 1.0 (assumed, swept upward only to 2.0) (§9.91). Bike takes the residual of the HTS "Other" fold, so the two targets move together (§9.91, §9.87).
 
+- **THE CALIBRATION LOOP CAN NOW REACH TAXI, WHERE BEFORE IT REACHED NOTHING** (§9.158). `rebuild_stage` excluded any field whose consumer's basename it did not classify, including fields carrying a declared `matsim_param` binding that reach the emitted config on every run; a binding is now evidence of run-time realisability and the movable set went **5 → 21**. It includes `B.taxi.deadhead_min`, `B.taxi.max_wait_min`, `B.taxi.min_unaccompanied_age`, `C.taxi.asc` and `C.taxi.wait_min` — the whole supply-and-price axis §9.99 named as the lever. Verify with `python src/calibrate/calibrate.py --run-config f29_gate_25pct --plan`.
+- **TAXI IS DELIBERATELY ABSENT FROM THE ASC FIXED POINT** (§9.158). `CAL.asc.mode_to_constant` maps board modes to constants and omits taxi on purpose: `C.taxi.asc` exists, but `fit.py` folds bike and taxi into one survey category, so **taxi has no independent target**, there is no ratio to invert, and a fixed-point step would fit a constant to a number that is not there. Truck and freight rail are absent because neither is a mode choice.
+
 ## What is measured
 
+- **Gate reading, F31 iteration 100: taxi 2.7605 % against 0.9916 %, +178.4 %, mean modelled trip 8.99 km** (`results/raw/aborted_20260908T100009_300it_25pct`, `stopped_at_gate`, §9.157) — citable at 100 and nowhere past it, and comparable with no earlier family (§3.5).
+- **TAXI IS ONE OF THE THREE MODES THE READING POINT CANNOT RESOLVE** (§9.158). Between iteration 80 and 100 of the SAME run, with nothing changed, taxi's deviation moves further than the WHOLE 10 % acceptance band on **3 of the 6** arms that ever reached 100 — **15.72 points on the F31 arm itself**, the largest single-mode drift that arm shows (`CAL.search.reading_drift_pct`, `python src/analyse/measure_reading_stability.py --all --from 80 --to 100`). A taxi level read at 100 is partly a statement about how far the run had got.
 - **Gate reading, F23 iteration 100: taxi 1.75% against 0.99%, +76.6%, flat at 1.52–1.75% across the arm, mean trip 12.82 km** (`results/raw/aborted_20260901T165115_300it_25pct`, §9.139). The flat band has now widened slightly at each pricing change it did not share in: F21 +67.4% (§9.134), F22 +70.9% under pt fares (§9.136), F23 +76.6% under income-scaled money sensitivity (§9.139, #108) — everything else got costlier or its cost got lighter for the rich; taxi's meter did not move.
 - **F17 iteration 50 read 1.51% (+52%)**, flat while car and walk converged (§9.126); every arm since F15 reads taxi flat between +36% and +67% (§9.120, §9.126, §9.134).
 - **The fleet binds under load and relaxes when it does not:** probe `20260829T171626_2it_1pct` refused 24 of 274 requests (8.8%) at iteration 1 and none of 177 at iteration 2 (§9.99). Under the full-choice-set seed the iteration-0 flood is 34,870 requests with 85.7% refused, decaying as plans are scored (§9.121).
@@ -29,7 +34,7 @@
 
 ## What is open
 
-- **The remaining excess is a fleet-size question, untouched since §9.99** (§9.120, §9.126, `docs/NEXT_AGENT_BRIEF.md`). `B.taxi.vehicle_trips_per_day` is the lever, and it is a sweep, not a fit: it moves the fleet by a factor of 2.3 (§9.99). No arm since F13 has been run with `absent` to measure the fleet's own effect (§9.99).
+- **The remaining excess is a fleet-size question, and the loop can now reach it** (§9.99, §9.158): `B.taxi.max_wait_min` and `B.taxi.deadhead_min` are movable, and `B.taxi.vehicle_trips_per_day` remains the lever §9.99 named — a sweep, not a fit. **But the reading point cannot yet score a candidate on taxi** (15.72 points of within-run drift at the F31 gate, §9.158), so a search over them is refused until the reading changes. `B.taxi.vehicle_trips_per_day` is the lever, and it is a sweep, not a fit: it moves the fleet by a factor of 2.3 (§9.99). No arm since F13 has been run with `absent` to measure the fleet's own effect (§9.99).
 - **The refused-request fallback is still walk.** §9.105 replaced ride's unpaired fallback with `B.ride.unpaired_fallback` = `licensed_drive_else_walk` and named the same walk for a refused taxi; the taxi engine still walks a refusal (`src/java/citysim/TaxiFleetEngine.java`). Whether taxi should take the same member is undecided.
 - **Two stated simplifications:** empty running loads no link, and there is no spatial dispatch; `B.taxi.deadhead_min` stands in for both (§9.99). A full demand-responsive fleet would add the routed empty legs (§9.86, §9.99).
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order and nothing else (§9.94). Acquiring the incidence is the honest route to any person-level availability.
@@ -50,6 +55,8 @@
 
 ## History
 
+- §9.158 — the loop reaches taxi's supply and price; no ASC step, no independent target
+- §9.157 — F31 gate: taxi +178.4 %
 - §9.141 — refused trip restored by endpoints
 - §9.139 — F23 gate: band widens to +77%
 - §9.134 — F21 gate: taxi flat at +67%

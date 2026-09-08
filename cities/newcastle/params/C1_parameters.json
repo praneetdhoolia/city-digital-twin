@@ -101,6 +101,14 @@
     "asc_cycle": [
       -1.35,
       "assumed"
+    ],
+    "asc_motorbike": [
+      0.0,
+      "definition"
+    ],
+    "asc_ferry": [
+      -1.05,
+      "assumed"
     ]
   },
   "nesting": {

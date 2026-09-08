@@ -74,6 +74,50 @@ import org.matsim.core.router.TripStructureUtils.Trip;
  * ({@code B.ride.escort_coherence_rate}, {@code B.ride.joint_coherence_rate})
  * govern both sides, and zero recovers the unassisted behaviour exactly so
  * the effect stays measurable rather than assumed.
+ *
+ * <h2>It stops at the innovation cutoff, and the tail is MEASURED, not held</h2>
+ *
+ * <p>MATSim switches innovation off for a terminal fraction of the run so the
+ * population relaxes onto the choice set it already has. The switch-off point
+ * is not this project's arithmetic — it is copied from the pinned run stack's
+ * own {@code StrategyManager} constructor
+ * ({@code matsim-2027.0-2026w25.jar}, disassembled: {@code (int)((lastIteration
+ * - firstIteration) * fractionOfIterationsToDisableInnovation + firstIteration)},
+ * logged there as <i>"global innovation switch off after iteration: {}"</i>,
+ * after which every strategy that is not {@code ReplanningUtils.isOnlySelector}
+ * has its weight set to zero from {@code disableAfter + 1}). Innovation is
+ * therefore still ON at the cutoff iteration itself and OFF from the next one;
+ * the fraction is read from {@code replanning()}, never typed in, and MATSim's
+ * default {@code Infinity} casts to {@code Integer.MAX_VALUE} exactly as it
+ * does inside the stack, so an unconfigured run never reaches the tail.
+ *
+ * <p><b>Until 8 September 2026 this listener ignored that point entirely</b> —
+ * it added and selected plans on EVERY replanning, the innovation-off tail
+ * included. {@code summarise_run.relaxation} then declared a run "relaxed" on
+ * the stated basis that no plans are being created after the cutoff, which was
+ * false while this ran: the one listener creating plans in the tail was the one
+ * the relaxation verdict assumed silent. Every relaxation verdict recorded
+ * before this change rests on that basis and is re-opened by it.
+ *
+ * <p><b>In the tail this scans and counts, and proposes nothing.</b> The
+ * alternative was considered and rejected on the doctrine this class is built
+ * on. Coherence CAN be enforced past the cutoff without creating a plan — the
+ * coherent plan is often still in the agent's memory, and {@code setSelectedPlan}
+ * on an existing plan innovates nothing by MATSim's own definition (a pure
+ * selector is not an innovative strategy). But selecting it would IMPOSE the
+ * pair over {@code ChangeExpBeta}'s own selection, in the exact stretch of the
+ * run whose purpose is to let each agent settle on its own best-scoring plan.
+ * A pair that survives only because a listener re-selects it every iteration is
+ * a held state, not a relaxed one, and a relaxation measured over it would say
+ * nothing. So the tail keeps the diagnostic and drops the intervention: the
+ * decoherence counts are still computed and logged each iteration, marked
+ * {@code TAIL}, and they are the evidence for whether the escort pairs hold on
+ * their own scores or only under this listener's hand. <b>The trade-off is
+ * real and is stated rather than hidden</b>: a pair CAN decohere in the tail,
+ * because {@code ChangeExpBeta} may re-select an incoherent plan from memory.
+ * That is not left unpriced — an unpaired {@code ride} leg is scored as what it
+ * is by {@code RidePairingEngine}, so the agent's own score carries the signal
+ * back, which is the only mechanism the tail is allowed to use.
  */
 public final class EscortCoherenceListener implements ReplanningListener {
 
@@ -100,6 +144,10 @@ public final class EscortCoherenceListener implements ReplanningListener {
     private final Map<String, List<Person>> byHousehold = new TreeMap<>();
     private boolean indexed = false;
 
+    /** Last iteration on which MATSim still runs innovative strategies. */
+    private int innovationOffAfter;
+    private boolean cutoffResolved = false;
+
     @Inject
     EscortCoherenceListener(final Scenario scenario) {
         this.scenario = scenario;
@@ -115,6 +163,11 @@ public final class EscortCoherenceListener implements ReplanningListener {
             return;
         }
         index();
+        // THE INNOVATION CUTOFF. Past it this listener creates and selects
+        // nothing: it scans, counts and reports. See the class Javadoc for
+        // why the tail is measured rather than held, and for the API this
+        // arithmetic is copied from.
+        final boolean innovating = event.getIteration() <= innovationOffAfter();
         // Seeded on the iteration so a run is reproducible; never wall-clock.
         final Random rng = new Random(scenario.getConfig().global().getRandomSeed()
                                       + 7919L * event.getIteration());
@@ -245,6 +298,9 @@ public final class EscortCoherenceListener implements ReplanningListener {
                     continue;
                 }
                 decohered++;
+                if (!innovating) {
+                    continue;   // the tail counts the pair, and proposes nothing
+                }
                 if (rng.nextDouble() >= (targetEscort ? rate : jointRate)) {
                     continue;                      // re-proposed only sometimes
                 }
@@ -408,6 +464,9 @@ public final class EscortCoherenceListener implements ReplanningListener {
                             continue;
                         }
                         driverDecohered++;
+                        if (!innovating) {
+                            break;  // the tail counts the pair, proposes nothing
+                        }
                         final boolean escortPair = ESCORT_ACTIVITY.equals(
                                 match.getDestinationActivity().getType());
                         if (rng.nextDouble() >= (escortPair ? rate : jointRate)) {
@@ -465,12 +524,47 @@ public final class EscortCoherenceListener implements ReplanningListener {
             }
         }
         if (decohered > 0 || driverDecohered > 0) {
-            LOG.info("escortCoherence: passenger side {} decohered / {} "
+            LOG.info("escortCoherence [{}]: passenger side {} decohered / {} "
                      + "re-proposed as ride; driver side {} decohered / {} "
-                     + "re-proposed as car; rates {}/{}, scope {} - proposed, "
-                     + "never imposed", decohered, proposed, driverDecohered,
-                     driverProposed, rate, jointRate, cfg.getCoherenceScope());
+                     + "re-proposed as car; rates {}/{}, scope {}",
+                     innovating
+                         ? "innovating - proposed, never imposed"
+                         : "TAIL, innovation off after iteration "
+                           + innovationOffAfter()
+                           + " - measured, nothing proposed or selected",
+                     decohered, proposed, driverDecohered, driverProposed,
+                     rate, jointRate, cfg.getCoherenceScope());
         }
+    }
+
+    /**
+     * The last iteration on which MATSim still runs innovative strategies.
+     *
+     * <p>The arithmetic is the pinned run stack's own, not this project's:
+     * {@code StrategyManager}'s constructor in
+     * {@code matsim-2027.0-2026w25.jar} computes
+     * {@code (int)((lastIteration - firstIteration) * fraction + firstIteration)}
+     * and then zeroes every innovative strategy from {@code that + 1}. Read
+     * from config, never typed in; MATSim's {@code Infinity} default casts to
+     * {@code Integer.MAX_VALUE} here exactly as it does there, so a run that
+     * never disables innovation never enters the tail.
+     */
+    private int innovationOffAfter() {
+        if (!cutoffResolved) {
+            final int first =
+                    scenario.getConfig().controller().getFirstIteration();
+            final int last =
+                    scenario.getConfig().controller().getLastIteration();
+            final double fraction = scenario.getConfig().replanning()
+                    .getFractionOfIterationsToDisableInnovation();
+            innovationOffAfter = (int) ((last - first) * fraction + first);
+            cutoffResolved = true;
+            LOG.info("escortCoherence: innovation off after iteration {} "
+                     + "(iterations {}..{}, fraction {}); past it this "
+                     + "listener measures and proposes nothing",
+                     innovationOffAfter, first, last, fraction);
+        }
+        return innovationOffAfter;
     }
 
     /** The driver person ids the demand named for this passenger

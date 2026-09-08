@@ -53,6 +53,17 @@ import xml.etree.ElementTree as ET
 import det_io
 
 SCHEDULES = _city.path('networks', 'matsim', 'schedules')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. Every dwell-adjusted schedule is
+# the scenario's own MAPPED schedule with a stop dwell rewritten, so it
+# carries that schedule's OpenStreetMap route link references. The manifest
+# could not see the input at all until now: it is named by a multi-argument
+# `_city.path(...)` call rather than a path literal, which is why the row
+# read as free of any OSM ancestor while carrying an ODbL label.
+OUTPUT_INPUTS = {
+    'networks/matsim/schedules/*': ['networks/matsim/schedules'],
+}
 OUT_REPORT = os.path.join(SCHEDULES, '_dwell_report.json')
 INTERVENTION_MODE = _city.descriptor()['intervention']['mode']
 
@@ -164,4 +175,14 @@ def main():
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     main()

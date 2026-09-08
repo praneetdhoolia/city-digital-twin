@@ -47,6 +47,37 @@ CFG = _registry.load()
 
 OUT = _city.path('data/processed/landuse')
 NET = _city.path('data/processed/network')
+
+# Which of this script's inputs feed which of its outputs (#159), read
+# statically by src/build/build_manifest.py. Named file by file rather than by
+# glob because this script shares its lineage entry with the framework's zone
+# attraction builder, whose outputs are declared in that script instead. All
+# five layers are Overpass features - parking, points of interest and CBD
+# building footprints - joined to the road network and the statistical zones.
+OUTPUT_INPUTS = {
+    'data/processed/landuse/D1_poi.csv': [
+        'networks/osm/poi.osm',
+        'data/processed/zones/zones_SA1.gpkg'],
+    'data/processed/landuse/D1_buildings_cbd.csv': [
+        'networks/osm/buildings_cbd.osm',
+        'data/processed/zones/zones_SA1.gpkg'],
+    'data/processed/landuse/D1_frontage_segments.csv': [
+        'networks/osm/buildings_cbd.osm',
+        'data/processed/network/A1_road_geometry.jsonl',
+        'data/processed/network/A1_road_edges.csv'],
+    'data/processed/landuse/A5_parking_facilities.csv': [
+        'data/processed/network/A5_parking_osm.csv',
+        'data/processed/network/A1_road_edges.csv'],
+    'data/processed/landuse/A5_parking_price_zones.csv': [
+        'data/processed/network/A5_parking_osm.csv',
+        'data/processed/network/A1_road_geometry.jsonl',
+        'data/processed/zones/zones_SA1.gpkg'],
+    'data/processed/landuse/_landuse_report.json': [
+        'networks/osm/poi.osm',
+        'networks/osm/buildings_cbd.osm',
+        'data/processed/network/A5_parking_osm.csv',
+        'data/processed/zones/zones_SA1.gpkg'],
+}
 os.makedirs(OUT, exist_ok=True)
 
 CRS_M = _city.crs()
@@ -464,6 +495,16 @@ def _w(name, rows):
 
 
 if __name__ == '__main__':
+    # This builder's own wall time: the reproduction
+    # pipeline's cost was recorded nowhere. It lands in
+    # cities/<city>/data/_build_timing.json, which no manifest row
+    # hashes - a wall time inside a hashed artefact would make the
+    # digest differ on every otherwise identical build.
+    import sys as _sys_t, os as _os_t  # noqa: E401
+    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
+        _os_t.path.abspath(__file__)), '../../../src/build'))
+    import build_timing as _timing  # noqa: E402
+    _timing.start(__file__)
     print('POI ...', flush=True)
     poi = build_poi()
     print('buildings ...', flush=True)

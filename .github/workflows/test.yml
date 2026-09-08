@@ -43,6 +43,15 @@ jobs:
         run: python tests/check_launch_refusal.py
       - name: The registry resolver's integrity rules fire on the breaks they guard (#124)
         run: python tests/check_registry_rules.py
+      # The Python half of the toolchain pin. The JDK, pt2matsim and Maven are
+      # sha256-pinned by src/setup/bootstrap_toolchain.py and a toolchain change
+      # is a model change - but the Python that BUILDS every input the simulator
+      # reads was pinned nowhere, so a geopandas release that changed a spatial
+      # predicate could move the zone joins with nothing recording it. This
+      # parses the imports rather than trusting a hand-kept list, so a new
+      # dependency fails on the diff that introduced it. Standard library only.
+      - name: Every third-party import is exactly pinned in requirements.txt
+        run: python tests/check_requirements.py --strict
 
   unit:
     name: unit tests (the functions that decide correctness)
@@ -64,8 +73,12 @@ jobs:
       #
       # pandas is not the tests' own dependency: importing src/run/run_matsim.py
       # pulls in the run-input builder, which reads a committed csv with it.
-      - name: Install pytest and the run module's one dependency
-        run: pip install pytest pandas
+      # `-c requirements.txt` is the pin, applied as a CONSTRAINTS file: this job
+      # gets the two packages it needs at exactly the versions the package was
+      # built with, without installing the geospatial stack it does not use. A
+      # pin that has drifted out of the file fails here as well as in `syntax`.
+      - name: Install pytest and the run module's one dependency, at the pinned versions
+        run: pip install -c requirements.txt pytest pandas
       - name: Every unit test passes
         run: python -m pytest -q tests/unit
 
@@ -130,7 +143,7 @@ jobs:
         with:
           python-version: "3.14"
       - name: Install the JSON Schema validator
-        run: pip install jsonschema
+        run: pip install -c requirements.txt jsonschema
       # The portable contract is GENERATED from the reference city, so it cannot be
       # allowed to drift from it - the same rule CONFIG_REFERENCE.md is held to.
       - name: The input contract is current
@@ -163,7 +176,7 @@ jobs:
       # Without it the probe reports PROBE FAILED and the gate exits 1, which
       # is the failure this job showed on its first CI execution.
       - name: Install the probe's one dependency
-        run: pip install pandas
+        run: pip install -c requirements.txt pandas
       - name: No value is decided in a script
         run: python src/registry/check_hardcoding.py --strict
 
@@ -176,7 +189,7 @@ jobs:
         with:
           python-version: "3.14"
       - name: Install the JSON Schema validator
-        run: pip install jsonschema
+        run: pip install -c requirements.txt jsonschema
       # G2 said "structurally in place, never exercised" for the whole life of
       # the restructure. This exercises it: a second city is built from the
       # reference city's declarations under a different identity, and the

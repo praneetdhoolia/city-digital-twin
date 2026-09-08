@@ -211,8 +211,15 @@ public final class CitysimControler {
         // per_person and nothing below installs.
         final HouseholdVehiclesConfigGroup householdVehicles =
                 new HouseholdVehiclesConfigGroup();
+        // In-vehicle PT crowding in SCORING: registered on every stack like
+        // the others, because its two multipliers are registry-bound and the
+        // `ptCrowding` module is therefore emitted into every config - an
+        // unmaterialised module fails MATSim's consistency check. Absent from
+        // the emitted config the group holds representation=absent and nothing
+        // below installs, which is the uncrowded model byte for byte.
+        final PtCrowdingConfigGroup ptCrowding = new PtCrowdingConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[15 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[16 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -228,8 +235,9 @@ public final class CitysimControler {
         groups[12] = bikeStress;
         groups[13] = incomeScoring;
         groups[14] = householdVehicles;
+        groups[15] = ptCrowding;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[15 + i] = extraGroups.get(i);
+            groups[16 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -583,6 +591,23 @@ public final class CitysimControler {
                     bind(BikeStressScoring.class).in(Singleton.class);
                     addEventHandlerBinding().to(BikeStressScoring.class);
                     addControllerListenerBinding().to(BikeStressScoring.class);
+                }
+            });
+        }
+        if (ptCrowding.isInVehicleTime()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    // In-vehicle PT crowding reaches SCORING: one instance in
+                    // both roles, accumulating each passenger's felt surplus
+                    // seconds as an event handler and emitting the deferred
+                    // PersonScoreEvents as a controler listener - the same
+                    // ParkingChargeHandler discipline BikeStressScoring uses,
+                    // and for the same reason (an event emitted from inside a
+                    // handler re-enters the manager mid-drain).
+                    bind(PtCrowdingScoring.class).in(Singleton.class);
+                    addEventHandlerBinding().to(PtCrowdingScoring.class);
+                    addControllerListenerBinding().to(PtCrowdingScoring.class);
                 }
             });
         }

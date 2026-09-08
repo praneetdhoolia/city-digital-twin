@@ -4,7 +4,7 @@
   "contract": "A city must produce every artefact below, at the same city-relative path, before the framework can run against it. The producing script may be entirely different - that is what a jurisdiction adapter is for - but the path and the columns the framework reads are the contract. Paths and columns carry tokens ({scenario}, {day_type}, {zone_id}, {coord_suffix}, {currency}) that each city expands with its OWN city.json declarations (intervention.scenarios, day_types, zone_system.id_column, crs.coord_suffix, currency) - the contract enumerates no city's vocabulary (issue #62 A2).",
   "caveat": "`columns_in_reference_city` is the header of the reference city's own copy, not a proven minimum: a column here may be incidental. Narrowing it to the columns framework code actually reads is not done, and the tokenisation is not complete either: secondary zone levels (SA2_*), lowercase level names inside compound columns (home_sa1) and agency vocabulary are still the reference city's naming. Recorded when the reference artefact is on disk and carried forward from the committed document when it is not, so the document regenerates identically on a checkout without the bulk data. Whether an artefact is PRESENT locally is a report, not part of this contract, and is never stored here.",
   "n_artefacts": 117,
-  "n_paths_built_at_runtime": 17,
+  "n_paths_built_at_runtime": 19,
   "artefacts": {
     "data/MANIFEST.csv": {
       "kind": "file",
@@ -23,6 +23,8 @@
         "source_url",
         "licence",
         "retrieved",
+        "lineage_scope",
+        "share_alike_ancestor",
         "sha256"
       ]
     },
@@ -1279,6 +1281,10 @@
         "asc_walk_source",
         "asc_cycle",
         "asc_cycle_source",
+        "asc_motorbike",
+        "asc_motorbike_source",
+        "asc_ferry",
+        "asc_ferry_source",
         "source"
       ]
     },
