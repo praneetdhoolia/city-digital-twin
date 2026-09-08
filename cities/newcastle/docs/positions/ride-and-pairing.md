@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
 
 ## What is built
 
@@ -34,6 +34,10 @@
 - **The calibration loop can reach ride's own parameters for the first time** (§9.158). The movable set went **5 → 21** and now includes `B.ride.pairing_window_min`, `B.ride.escort_coherence_rate`, `B.ride.joint_coherence_rate`, `B.ride.max_passengers_per_vehicle` and `B.ride.pickup_dwell_s`. `B.ride.shared_lift_hash_bucket` stays excluded, correctly: realising it needs B2, the plans and the run inputs rebuilt per candidate.
 
 ## What is measured
+
+- **RIDE IS CONVERGED AT −38.0 % AND NO CONSTANT WILL EVER MOVE IT** (§9.160). Over the F31 arm's own `output/modestats.csv`, ride's decay constant is **r = 0.054** and its asymptote **0.12515** equals its iteration-100 value **0.12514** to five decimal places (§9.160).
+  Every other scored mode is still moving at 100 — car settles about iteration 130, bike about 208 (§9.160) — and ride is not. **Its deficit is not an equilibration lag; it is plan generation** (§9.160), which is what §9.157's geometry reading already implied when the modelled mean ride trip came within 6 % of observation while the share sat 38 % short.
+  This retires the possibility that more iterations, or a `C.asc.car_passenger` departure, closes ride. `C.asc.car_passenger` stays frozen under §8.5 for exactly this reason (§9.158, §9.160).
 
 - **The escort listener's seeded draw is ordered by household id since §9.151** (#150). Both its passes consumed a seeded rng while iterating a `HashMap`, so which household received which draw was assigned in HASH order of the key set — and the key set is exactly what the sample fraction changes. Seeded, therefore looking deterministic, and **not stable across fractions**: a 1 % probe could not predict a 25 % arm on this path. `byHousehold` is a `TreeMap` now. It moves results, so **F30 opens on it alone**; a unit test pins the collection as ordered.
 - **F30's first arm, iteration 0** (§9.153, `aborted_20260907T150816_300it_25pct`): **8,167 declared passengers picked up on 7,771 drivers' detours, mean detour 594 s, 0 refused for an unroutable detour**; 8,141 passengers re-timed to their driver's departure, mean shift 1,025 s; **291 unpaired ride legs re-moded to walk and all 291 restored to ride after the mobsim**. Against F22's iteration 0 at the same fraction (7,092 on 6,697, mean detour 538 s, §9.136) the pairing is healthy and the detours are longer, as a pass placing lifts on longer trips should make them. The arm was stopped at 23 on its cost, so **there is no gate reading for F30** and the pairing figures above are citable at iteration 0 and nowhere past it.
@@ -97,12 +101,12 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.160 — ride measured CONVERGED at -38.0 %; it is supply
 - §9.158 — the escort listener stops proposing past the innovation cutoff
 - §9.157 — the F31 gate: placement solved, the gap is volume
 - §9.156 — ride's deficit is the small modes' excess, to 0.008 pp
 - §9.153 — F30 it.0: 8,167 paired on 7,771 detours, 0 unroutable
 - §9.151 — the escort listener draws in household-id order
-
 - §9.149 — F28 gate: pairing solved, car inside; the walked lifts are the shared pass's short trips
 - §9.146 — F26 gate: declared pairs hold; the loss is ride without a driver and a second car the household does not own
 - §9.145 — the dominant miss is not a window; measure F26 rather than patch
@@ -113,17 +117,3 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - §9.136 — ceiling decomposed: 19/16/12
 - §9.134 — F21 gate: ride capped at 12%
 - §9.131 — licence rate measured; F21 pending
-- §9.129 — bucket rule replaces at-or-below
-- §9.128 — driver detour serves declared pair
-- §9.127 — shared pair is sampling unit
-- §9.126 — F17 realised what was bound
-- §9.124 — fourth binder pass: shared rides
-- §9.123 — car-less quarter wears ride deficit
-- §9.120 — ride gated to bound trips
-- §9.116 — servability filter; joint 82,384
-- §9.111 — refusals classified: companion is driver
-- §9.109 — 42% of ride demand unservable
-- §9.105 — denied lift drives, not walks
-- §9.102 — `route_contains` changes nothing
-- §9.98 — window correction real, not bottleneck
-- §9.85 — `boundDriver` survives translation

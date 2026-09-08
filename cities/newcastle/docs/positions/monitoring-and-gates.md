@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
 
 ## What is built
 
@@ -42,6 +42,13 @@
 
 ## What is measured
 
+- **THREE WAYS THE ISSUE GATE WAS SATISFIED BY PROSE ABOUT THE ISSUE GATE** (§9.160). It read *20 open, every one awaiting a stated measurement, 0 blocking* while three of those issues opened with "This issue BLOCKS the launcher" (§9.160).
+  (1) The allowed-prefix class admitted a backtick, so `` `AWAITING-RUN:` `` — how every document here REFERS to the convention rather than invokes it — matched as an invocation, and the captured statement was the sentence saying writing one would be inventing a measurement (§9.160).
+  (2) The gate's own documentation matched its own regex, capturing the literal `<measurement>` placeholder (§9.160). (3) `evidence()` returned the FIRST match over body-then-comments, so a statement already discharged outlived its own supersession (§9.160).
+  All three are closed: no code span, a `<placeholder>` and the word "nothing" refused, and the LAST statement wins (§9.160).
+- **THE LANE IS DECLARED, NOT SCRAPED** (§9.160). `#(\d+)` over an overlay's prose gave `default_25pct` — what a bare `python run.py` selects — a lane of **{5}**, from the sentence "issue #5 re-measures relaxation", deferring every other open issue (§9.160).
+  Prose also cannot read a negation: correcting the depth arm's description to record that **#167** is deliberately excluded put #167 straight back into its lane (§9.160). Overlays gained `answers_issues`, which IS the lane when present; the scrape survives as a fallback that now says out loud when it is used (§9.160).
+
 - **THE WINDOWED READING WAS BUILT AND IS MEASURED WORSE THAN THE POINT IT REPLACES** (§9.159, #163). §9.158 left the remedy open between reading deeper and averaging a window; the window is now declared (`CAL.gate.reading_window_iterations` = 40, sweep [20, 80]), built inside `report_mode_ridership.report_window` so the board, the gate and the objective cannot read a different quantity from each other, and measured over the SAME six 25 % arms WITHIN each run. Point reading: heavy rail 6/6 arms at a worst **24.88** points, bike 4/6 at 17.76, taxi 3/6 at 15.72 — **three** modes past the whole `CAL.gate.pass_deviation_pct` band. Windowed at 40: heavy rail 6/6 at **41.46**, bike **6/6** at 19.90, taxi 2/6 at 13.53, bus 1/6 at 12.86 — **four** modes, worst nearly doubled. Objective drift **0.081–0.5395 pp**, still one-signed on every arm. `results/processed/_reading_window_measurement.json`.
 - **THE CAUSE RETIRES THE REMEDY: the movement is a monotone TREND, so there is no noise for an average to remove** (§9.159). On the F23 arm every scored mode's series over it.40–it.100 runs one way without a single reversal — car **59.78 → 66.94**, walk **14.55 → 9.76**, bike **6.23 → 4.66**, heavy rail **27,948 → 19,140**. A mean over a monotone series is its centre, so a window ending at 100 reads about iteration 80 and two windowed readings differ by the gap between their centres. §9.158's own observation that the drift ran UPWARD on all six arms was already that signature. **The reading point is a CONVERGENCE problem, not a measurement one**, and it cannot be settled while nothing is read past iteration 104.
 
@@ -62,6 +69,10 @@
 - **Truck at its own basis**: +5.4% on 3 calibration stations and 23 modelled heavy traversals at iteration 100 of `aborted_20260829T172145_1000it_10pct`; 20 of the 24 classifying stations are holdout and were not opened (§9.101).
 
 ## What is open
+
+- **REQUIREMENT 10 HAS A THIRD STATE, AND THE GATE IS HONEST FOR THE FIRST TIME** (§9.160, user decision 9 September 2026). An issue may declare it awaits something OTHER than a run — a decision, an acquisition, a mechanism — and say what; it is reported at every gate and launch and does not block (§9.160).
+  No new label: the tracker already had `decision-needed` and `awaiting-implementation`, and no open issue used either (§9.160). Both carry the same evidence discipline as `awaiting-run` (§9.160).
+  The gate now reads **21 open, 16 awaiting a run with a stated measurement, 5 awaiting a decision, 0 blocking** (§9.160) — #49, #50, #155, #167 and the new #169 (§9.160).
 
 - **Whether the machine is idle, which build is on disk, and how many issues are open are all facts that expire**, and each has one home and one command: the board's state block, `python tests/check_package.py`, and `python src/run/issue_gate.py`. This page used to assert them — "the machine is idle; the package on disk is the F24 build; 13 open issues" — and every one of those was false within four days. The standing rule is what belongs here: **the next arm follows the user's root-cause pick under a fresh stated-cost approval**, and no arm launches while an open issue lacks `awaiting-run` (§9.140).
 - **The fix that made the watcher able to fire** was reading `_progress.json` rather than a log tail (§9.139): the original 64 KiB tail was measured blind at the 25 % log rate, with the ENDS marker 611 MiB behind EOF, and it idled straight through the F23 gate.
@@ -88,6 +99,7 @@
 
 ## History
 
+- §9.160 — the gate stops passing on prose about itself
 - §9.158 — the objective measures the goal; iteration 100 cannot score a candidate
 - §9.157 — a third of pt routing finds no service, at run scale
 - §9.156 — a log guard that had never counted; a threshold re-anchored
@@ -95,7 +107,6 @@
 - §9.153 — the arm read every ten iterations, stopped at 23
 - §9.152 — a gate green on a checkout that could not launch
 - §9.151 — the issue gate green for the first time
-
 - §9.149 — the F28 gate: 7 out, car inside for the first time
 - §9.148 — rail boardings from the legs table; a no-readings family off the board
 - §9.147 — the trips cadence declared; plans and events at the gate
@@ -104,23 +115,3 @@
 - §9.142 — 89 unit tests, two probes, the tracker clear of blockers
 - §9.141 — watcher keyed on a verdict; retry bounded
 - §9.140 — issue gate; requirement 10
-- §9.139 — third gate; watcher blind, fixed
-- §9.134 — first gate since F4; stop fired
-- §9.133 — board skips plumbing tests
-- §9.137 — the hard bar becomes the runner's
-- §9.136 — second gate fires; bus first inside
-- §9.131 — licence rate rebuilt; F21 opens
-- §9.130 — rail modes on disclosed boardings
-- §9.126 — F17 car and walk converged
-- §9.120 — every written iteration readable; trend
-- §9.108 — read the trend, not level
-- §9.101 — truck scored on its own basis
-- §9.100 — PT yardstick's three defects found
-- §9.92 — seed is a bad guess deliberately
-- §9.91 — gate fired; taxi target wrong
-- §9.87 — twelve modes, twelve targets, thresholds
-- §9.83 — gate quantity is linked trips
-- §9.80 — light rail error banned; #84
-- §9.64 — F4 base, C5, noise floor
-- §9.50 — constrain and report, ASCs held
-- §9.16 — calibration loop; counts never optimised

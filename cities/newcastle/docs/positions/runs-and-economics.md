@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
 
 ## What is built
 
@@ -30,6 +30,11 @@
 - **The toolchain** is fetched by `src/setup/bootstrap_toolchain.py` and pinned by sha256 in `.tools/toolchain.json`: JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25, §9.73), Maven 3.9.9 and the 201-jar signals run stack at that same MATSim version (§9.76). Signal runs execute `citysim.CitysimSignalsControler` on the run stack; every other run uses the shaded jar; the two never share a classpath. `--verify` re-hashes both and **recompiles both class trees** — it is not the read-only word it looks like (§9.156). Every component now passes an EXPECTED digest to `download()`: `PT2MATSIM_SHA256` was added 8 Sep because pt2matsim alone passed `None`, so its recorded pin described what arrived rather than what was expected, and it is pinned to the jar every mapped schedule in this package was built with (§9.156).
 
 ## What is measured — what a run costs
+
+- **THE NEW BYTECODE IS ESSENTIALLY FREE, and it is the first ever measured** (§9.160). `20260909T011135_4it_25pct`, a 4-iteration 25 % probe of the deployed controler, `ran_to_last_iteration`, wall 39.6 min (§9.160).
+  Per recurring iteration against the F31 arm's own stopwatch: total **263.5 s** against 260.5, **+3.0 s (+1.2 %)** (§9.160); mobsim **188.5** against 198.0 (§9.160); `prepareForMobsim` **39.0** against 29.0 (§9.160); replanning **32.5** against 29.0 (§9.160).
+  The rise is in `prepareForMobsim`, **not** the mobsim — `citysim.PtCrowdingScoring` charges through a `PersonScoreEvent` inside event handling, and its two handlers on the highest-volume event classes did not slow the mobsim (§9.160). **Thin basis, stated: two recurring iterations against F31's 98** (§9.160).
+- **THE PRICER CAN NOW SEE A STALE BUILD** (§9.160). `arm_cost.observed_arms()` filtered on fraction and profiled and on nothing else, so on 9 September it quoted 22.2 h from five arms that ALL predated `PtCrowdingScoring` — a price for a stack that no longer existed (§9.160). It now compares the priced run's `controler_sha256`, the hash resume has refused to match across since #28, and names the probe that would settle it (§9.160).
 
 - **THE STORE'S TWO BIGGEST TENANTS ARE RECLAIMED, AND THE VERB NOW EXISTS** (§9.159, #164). Both un-closed-out arms were extracted through the store's own `process(extract=True)` in **4.0 and 3.8 minutes** — not the ~35 each the issue projected — and their findings were VERIFIED against the eleven position-page lines citing them before a byte moved: `modes_final.json` reproduces taxi **+76.62 %**, ride **−40.11 %**, walk **−27.16 %**, car **+14.78 %** exactly. Then reclaimed: **173.4 + 163.0 = 336.4 GiB**, and raw fell from **467.1 GiB (93.4 % of the 500 GiB cap) to 130.7 GiB (26.1 %)**. `results_store` gained `reclaim()`, `report()` and a CLI, because `trim()` was the wrong instrument and always would be — it reclaims oldest-first and ONLY over cap, so two reclaimable arms waited in a 93.4 %-full store for a threshold whose crossing would have landed inside the next long arm.
 
@@ -73,6 +78,10 @@
 
 ## What is open
 
+- **AN ARM'S APPROVED COST CEILING IS ENFORCED BY NOBODY** (§9.160, #169). No `RUN.*` field declares a wall-clock limit and nothing reads one; the only automatic stop is `start_gate_watch`, which stops on a MODELLING condition and knows nothing about clocks (`src/run/run_matsim.py:959`, §9.160).
+  The arm running now disables that watcher by a scoped departure, so it has **no automatic stop at all** — not on deviation and not on cost (§9.159, §9.160). Its ceiling is **32 h** and must be enforced by hand with `python run.py --stop` (§9.160).
+  Not built this session because it sits in the launch path of the very arm it would protect and cannot be tested end-to-end without a second arm, which #66 forbids (§9.160, #169).
+
 - **The time-variant link factory is the one named runtime cut left** (§9.155). `timeVariantNetwork = true` makes all **143,891** links `TimeVariantLinkImpl`, each paying a `synchronized` `Arrays.binarySearch` on every `getFreespeed(time)`, to represent `crossing_change_events.xml`: **2,441 events on 16 links**. Worth ~7 % of CPU (`getFreespeed` 3.8 % + `binarySearch0` 2.4 % + `indexedBinarySearch` 0.7 %); needs the change-event ids read before the network is built, a rebuild, and its own probe. **It does not reach 120 s** — that is priced as unreachable by any measured lever.
 - **A SURROGATE/EMULATOR CALIBRATION ROUTE IS HELD IN RESERVE, and it is the one machine-learning route this project's aggregate-only data does not block.** Bayesian optimisation over a random-forest surrogate of the simulator - fit the surrogate to (parameter vector → aggregate mode shares) pairs, optimise on the surrogate, spend real evaluations only where it is uncertain - needs no unit records, only the aggregate mode shares this project already scores against, which is why it survives where estimating a discrete-choice model on the NSW HTS does not (see the population page's TfNSW request). The reserve figure is ~150 objective evaluations for a several-hundred-parameter vector; **at this project's own measured cost of 7.66 h to an iteration-100 gate (`aborted_20260908T100009_300it_25pct`, §9.157) that is ~48 days of wall clock at 25 %**, so it is worth starting only if the ASC contraction test shows the residual is genuinely multi-parameter rather than a handful of constants. **The published result behind the ~150 figure is not yet recorded in this repository and must be cited here before the route is costed as evidence rather than as a plan.**
 - **#66 — the machine-level stall.** A 10% iteration once took 2,415 s against a ~20 s median, and on 22 August it hit both concurrent arms at the same wall-clock time in different iterations (#66). Unattributed — OS maintenance, antivirus or standby trimming are the candidates. The F21 arm added one candidate event: iteration 30 took 355 s against a 219–228 s neighbourhood (00:19–00:25, 31 Aug), isolated, with the ten-iteration write load ruled out by iterations 10 and 20 (§9.134).
@@ -96,6 +105,7 @@
 
 ## History
 
+- §9.160 — the new stack priced: +3.0 s; the ceiling has no enforcer
 - §9.159 — 336.4 GiB reclaimed, the store 93.4 % → 26.1 %; `reclaim()` is the verb
 - §9.158 — dependencies pinned; the store refuses to delete what it cannot reconstruct
 - §9.157 — the quoted band held; the top anchor right to 0.5 %
@@ -110,21 +120,3 @@
 - §9.142 — the iteration profiled; 60% is one hoistable call
 - §9.140 — launcher refuses behind open issues
 - §9.139 — gate watcher blind at 25%, fixed
-- §9.138 — F23 arm launched under goal directive
-- §9.137 — results store; runs gate themselves
-- §9.136 — 25% pace measured; log read bounded
-- §9.134 — F21 arm to its gate; pace measured
-- §9.127 — population hash joins run key
-- §9.120 — console stop; dead-pid check
-- §9.119 — F14 arm cleared iteration 6
-- §9.104 — resume gained resolved-values hash
-- §9.94 — F12 gate at 108 s/it
-- §9.76 — detached launch, digest, run stack
-- §9.73 — MATSim re-affirmed, version recorded
-- §9.72 — silent launch deaths; approval spent
-- §9.66 — status card, aborted_ naming
-- §9.65 — runner names every directory
-- §9.62 — two-arm relaunch at 30g
-- §9.59 — every wall-time knob probed
-- §9.56 — events pipeline threads measured
-- §9.43, §9.5 — 1000 iterations declared measured; the first run cost measured

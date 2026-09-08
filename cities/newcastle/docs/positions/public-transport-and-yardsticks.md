@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
 
 ## What is built
 
@@ -42,6 +42,15 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 
 ## What is measured
 
+- **THE FOUR PT MODES ARE DECIDED IN A LAYER WITH NO CONTROL VARIABLE** (§9.160).
+  `RUN.mode_choice.modes` makes `pt` ONE alternative (§9.160); `output/modestats.csv` carries a single `pt` column while `ITERS/it.100/100.legs.csv.gz` resolves it into bus 18,034 / rail 6,404 / tram 381 / ferry 314 (§9.160).
+  The submode is chosen downstream by the raptor, whose cost carries **no mode constant, no fare and no distance term** (§9.158).
+- **The channel a scoring constant does have is measured at 0.63 % of agents** (§9.160). Over the F31 arm's whole plan memory, `ITERS/it.100/100.plans.xml.gz`, **154,347 persons** (§9.160):
+  memory is saturated for every agent — 111,746 hold 8 plans, 42,601 hold 9 (§9.160); **17,616 (11.4 %)** hold any pt leg (§9.160);
+  and **974 — 0.63 % of the population — hold plans that DIFFER in which pt submode they use** (§9.160). Tram is **3,817 of 242,891** pt legs in memory, ferry **2,715** (§9.160).
+  So a constant cannot move a trip from heavy rail to light rail: essentially no agent holds both plans to choose between (§9.160).
+- **The ASC contraction test is decisive for bike and undecidable for the three pt modes** (§9.160). A null result on bus, light rail or ferry would be equally consistent with taste, with mechanism, and with the control not being connected to the choice. HELD until the raptor has a control (user decision, 9 September 2026, §9.160).
+
 - **THE TELEPORTED ACCESS LEG IS FIXED AT THE ROUTER AND REFUSED BY THE MOBSIM** (§9.159, #167, filed this session after three sessions carrying it unfiled). `javap` against the pinned `matsim-2027.0-2026w25.jar` established the route — `DefaultRaptorStopFinder.findStops` branches on `isUseIntermodalAccessEgress()`, and the true branch resolves a real `RoutingModule` per declared mode — so the `intermodalAccessEgress` parameterset was declared with four DERIVED fields, the three radii equal to the beeline search's own reach (1000 m, 200 m, their sum 1200 m) so the change moves what an access leg IS and not how far the router looks. **It works at the router**: the two switches coexist (1,270 routes, 4,123 stop facilities, no consistency throw) and `genericRouteTeleporter` fell to **6 [walk via pt=6]** against ~5,200 expected at that scale.
 - **And then the mobsim refuses the landing link, for a reason that is measured rather than inferred** (§9.159): `TransitAgentTriesToTeleportException`, agent 355102 at link 158102 boarding at 128983 — 128983 carries `modes="pt,rail,train"` and 158102 carries walk. **675 of the 4,123 stop facilities (16.4 %) sit on a link walk cannot use**: 382 pt/rail/train, 199 pt2matsim artificial `stopFacilityLink`s, 62 road links omitting walk, 18 rail, 18 artificial rail — the heavy-rail and light-rail platforms among them. So routing to the stop's own link is impossible for one stop in six. MATSim's own bridge is refused for a fourth measured reason: `accessEgressModeToLink` dies at `PersonPrepareForSim` — "Found a trip whose legs have different routingModes", **40 agents** — a DIFFERENT failure from the `ClassCastException` §9.54 recorded, and earlier than the mobsim. `RUN.transit_router.access_egress_basis` therefore ships at `beeline`, the state every arm has run, with all four measurements in its derivation.
 
@@ -65,10 +74,11 @@ Latest twelve-mode reading: the F31 gate at iteration 100 (`results/raw/aborted_
 
 ## What is open
 
+- **THE REMEDY FOR THE MISSING CONTROL IS DECIDED AND NOT BUILT** (§9.160, user decision 9 September 2026): the mode constant, the fare and a distance term go INTO THE RAPTOR'S COST. Established against the pinned jar by `javap`: `RaptorInVehicleCostCalculator.getInVehicleCost(...)` is handed the `Vehicle`, so the submode is recoverable from the vehicle type and the call is once per boarding — where an ASC belongs in a router — and `CapacityDependentInVehicleCostCalculator` is SBB's own precedent for the shape. It ships behind a new `C.raptor.mode_cost_representation` = `absent`, the one-gate discipline `C.crowding.representation` already uses, and it is what finally gives `C.time_weights.beta_headway` and `beta_reliability` a consumer. **Java, so it opens a family, and it was NOT built this session because `.tools/classes` must not be recompiled under a running arm.**
 - **The pt routing failure is the largest unexplained signal on the board and is now a NAMED cause, not a mystery** (§9.158). What is undecided is the remedy: `RUN.transit_router.direct_walk_factor` is a declared field with a sweep to 2.0, and moving it is a family boundary and a fidelity decision, not a fit. **It must not be picked to land a mode share.** Filed with its measured numbers.
 - **#98 — heavy rail at +247.2 % now has a brake for the first time** (§9.158): the crowding disutility is built and bound. What it is WORTH is unmeasured — no arm has run with `C.crowding.representation` = `in_vehicle_time`, and the paired reading against `absent` is the next arm's to take.
 - **#94** — the ferry captures a hundredth of its captive market; the reach bound and a competitive-but-losing plan remain the residual, and the routing diagnosis now supplies a mechanism the earlier candidates lacked (§9.112, §9.140, §9.158).
-- **#49** — a standing product directive, not a run question. It is one of the three issues that BLOCK the launcher today because it states no measurement; re-scoping or splitting it is the operator's decision, not this session's (§9.158).
+- **#49** — a standing product directive, not a run question, and it no longer blocks: requirement 10 gained a third state on 9 September 2026 (§9.160), so it carries `decision-needed` and an `AWAITING-DECISION:` line naming the operator's choice between re-scoping, splitting into the per-mode issues, and closing as satisfied at the level of representation. It is REPORTED at every gate and launch and blocks neither.
 - **Bus stays on the composition basis as a recorded limitation** (§9.140, #99 closed): the Opal `NISC 1` series falls 88 % in April 2025 (319,770 → 37,414 trips a month), recovering only to 226,956 by May 2026, and no allowlisted source publishes Newcastle's bus boardings. REOPEN #99 if a regional count becomes obtainable.
 - The composition's own coverage: the three operator series total 14,858 boardings a day against an HTS-implied 76,646 PT trips, so the sweep on bus is live, not decorative (§9.100). Time is priced at the one declared `beta_ivt` for every submode; C1 declares no per-submode time weight (§9.78).
 
@@ -84,6 +94,7 @@ Latest twelve-mode reading: the F31 gate at iteration 100 (`results/raw/aborted_
 
 ## History
 
+- §9.160 — pt submode has no control; 0.63 % of memory differs
 - §9.158 — pt routing diagnosed: walking is priced as riding; crowding scored
 - §9.157 — the F31 gate: heavy rail +247.2 %, light rail −47.2 %
 - §9.142 — the corridor repaired; the censoring rule named in the basis
