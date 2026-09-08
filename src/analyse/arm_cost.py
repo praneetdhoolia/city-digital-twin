@@ -207,6 +207,12 @@ def observed_arms(min_iterations: int = 2) -> list:
             setup_s=setup,
             completion=rec.get('completion') or meta.get('status'),
             family=rec.get('family') or meta.get('family'),
+            # The committed Java this run EXECUTED. Resume detection has
+            # refused to match across a change in it since issue #28; the
+            # pricer never looked, and so priced a stack that no longer
+            # existed.
+            controler_sha256=rec.get('controler_sha256')
+            or meta.get('controler_sha256'),
         ))
     return out
 
@@ -300,6 +306,41 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
                newest['median_iteration_s'],
                100.0 * (1.0 - fastest / newest['median_iteration_s'])
                if newest['median_iteration_s'] else 0.0))
+    # A STALE BUILD, which is a different thing from a stale RUN and was
+    # invisible here. The quote above rests on what a JVM did; if the JVM that
+    # will run the arm is built from different sources, the quote prices
+    # something else. 9.153: the F30 arm ran 45 % over a price read from a
+    # stack differing by ONE LINE.
+    build_warning = None
+    try:
+        import sys as _sys
+        _here = os.path.dirname(os.path.abspath(__file__))
+        _run = os.path.join(os.path.dirname(_here), 'run')
+        if _run not in _sys.path:
+            _sys.path.insert(0, _run)
+        import run_matsim as _rm
+        current = _rm.controler_sha256()
+    except Exception:                                          # noqa: BLE001
+        current = None
+    priced_build = (newest or {}).get('controler_sha256')
+    if current and priced_build and current != priced_build:
+        build_warning = (
+            'PRICED ON A DIFFERENT BUILD. %s executed controler %s; the arm '
+            'this quote is for would execute %s. The committed Java has '
+            'changed since the priced run, so this is a price for a stack that '
+            'no longer exists - and a new scoring term or event handler lands '
+            'inside the mobsim, which is three quarters of an iteration. Take '
+            'ONE short unprofiled probe at this fraction on the current build '
+            'before spending an approval on this number (9.153: an arm once '
+            'ran 45%% over a price read from a stack differing by one line).'
+            % (newest.get('name'), priced_build[:16], current[:16]))
+    elif current and not priced_build:
+        build_warning = (
+            'THE PRICED RUN DOES NOT RECORD ITS BUILD. %s carries no '
+            'controler_sha256, so whether it executed the Java this arm would '
+            'execute cannot be told from its record. Treat the quote as a '
+            'lower bound.' % (newest or {}).get('name'))
+
     return dict(
         setup_s=setup_s,
         iterations=iterations,
@@ -308,6 +349,7 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
         excluded_newer_profiled=[a.get('name') for a in newer_excluded],
         stale_warning=stale_warning,
         milestone_warning=milestone_warning,
+        build_warning=build_warning,
         priced_on_plain=priced_on_plain,
         plain=plain,
         long_arm=long_arm,
@@ -419,7 +461,7 @@ def main(argv=None) -> int:
         print('    %-44s %7.1f s/it  to it %-4d %s'
               % (a['name'], a['median_iteration_s'], a['reached_iteration'],
                  a['completion'] or ''))
-    for key in ('stale_warning', 'milestone_warning'):
+    for key in ('build_warning', 'stale_warning', 'milestone_warning'):
         if quote.get(key):
             print()
             for i, sentence in enumerate(quote[key].split('. ')):
