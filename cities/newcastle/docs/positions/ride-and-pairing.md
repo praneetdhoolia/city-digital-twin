@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirty-second session) · **Record read through:** §9.153 · **Written against family:** `F30`
+**Updated:** 8 September 2026 (thirty-fifth session) · **Record read through:** §9.156 · **Written against family:** `F31`
 
 ## What is built
 
@@ -63,6 +63,9 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - Demand ceiling: 42.4% of generated ride legs were unservable by the household at any hour (§9.109); 41.7% of multi-person households have at most one licensed travelling member (§9.111); the servability filter moved joint bindings 74,663 → 82,384, not the ~110,000 §9.111 estimated (§9.116).
 - Escort scope is spent: 98.0% of unbound HX tours bind at `same_zone`, so driver supply, not scope, constrains (§9.84).
 
+- **Ride's deficit IS the over-supply in the modes that beat it, and the arithmetic closes** (§9.156, from the F28 gate `aborted_20260907T030352_300it_25pct` at iteration 100). In percentage points of resident linked trips the twelve deviations sum to **+0.008**, as they must. Ride is **−8.822 pp**; the modes above target are car **+3.840**, bike **+3.474**, taxi **+1.597**, bus **+1.548**, motorbike **+0.061** — **10.521 pp** in total. If ride recovered its full deficit pro rata from them: car **+6.6 % → +1.1 %**, motorbike **+16.1 % → +2.6 %** (inside the band), bus **+65.0 % → +10.5 %** (its edge), bike **+157.3 % → +25.4 %**, taxi **+161.1 % → +26.0 %**. **Pro rata is an arithmetic upper bound on what ride placement alone can do, not a prediction** — which agents switch decides the real split — and it is read off a STOPPED arm, citable at iteration 100 and nowhere past it (§9.143).
+- **The geometry says the same thing independently** (§9.156, same reading). The over-supplied modes are over-supplied ON LONG TRIPS: bike's modelled mean is **9.12 km** against an observed **5.21**, taxi **9.52** against **5.20**, walk **5.26** against **0.70**; ride, which should carry a **9.81 km** passenger trip, is 42.8 % short and its own mean (8.63 km) is the closest of any mode to its observation. Long car-less trips that should be RIDDEN are being walked, cycled and taxied. That is precisely what `B.ride.shared_lift_priority` = `longest_first` was built to fix (§9.149), so the arithmetic validates the pending arm's design rather than proposing a new lever.
+
 ## What is open
 
 - #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
@@ -89,6 +92,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.156 — ride's deficit is the small modes' excess, to 0.008 pp
 - §9.153 — F30 it.0: 8,167 paired on 7,771 detours, 0 unroutable
 - §9.151 — the escort listener draws in household-id order
 
