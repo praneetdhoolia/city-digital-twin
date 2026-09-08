@@ -38,6 +38,7 @@ Usage:
     python src/setup/bootstrap_toolchain.py --run-stack  # also build the signals run stack
 """
 import os
+import re
 import sys
 import glob
 import json
@@ -249,6 +250,71 @@ CLASSES = os.path.join(TOOLS, 'classes')
 CLASSES_SIGNALS = os.path.join(TOOLS, 'classes-signals')
 
 
+# ---------------------------------------------------------------- the guard
+
+# An arm is a JVM in the tens of GB; VS Code's language server sits under 1 GB.
+# The same classifier `src/run/session_gate.arm_running` uses - a threshold, not
+# a model value.
+ARM_RSS_KB = 2_000_000
+
+
+def arm_running():
+    """PIDs of any JVM big enough to be an arm. None when it cannot be told.
+
+    None is NOT "idle". `session_gate` already treats unknown as busy, and for
+    the same reason: the one time this was got wrong, the compile ran.
+    """
+    import subprocess as _sp
+    try:
+        if os.name == 'nt':
+            out = _sp.run(['tasklist', '/FI', 'IMAGENAME eq java.exe',
+                           '/FO', 'CSV'], capture_output=True, text=True,
+                          timeout=30)
+            if out.returncode != 0:
+                return None
+            big = []
+            for line in (out.stdout or '').splitlines()[1:]:
+                cells = [c.strip('"') for c in line.split('","')]
+                if len(cells) >= 5:
+                    kb = int(re.sub(r'[^\d]', '', cells[4]) or 0)
+                    if kb > ARM_RSS_KB:
+                        big.append('pid %s (%d MB)' % (cells[1], kb // 1024))
+            return big
+        out = _sp.run(['ps', '-eo', 'pid,rss,comm'], capture_output=True,
+                      text=True, timeout=30)
+        if out.returncode != 0:
+            return None
+        big = []
+        for line in (out.stdout or '').splitlines()[1:]:
+            parts = line.split()
+            if len(parts) >= 3 and 'java' in parts[2] and int(parts[1]) > ARM_RSS_KB:
+                big.append('pid %s (%d MB)' % (parts[0], int(parts[1]) // 1024))
+        return big
+    except Exception:                                          # noqa: BLE001
+        return None
+
+
+def refuse_if_arm_running(what):
+    """True when compiling must not happen now, having said why."""
+    if '--force-compile' in sys.argv:
+        return False
+    busy = arm_running()
+    if busy is None:
+        print('\nREFUSING to %s: the running processes could not be listed, '
+              'and UNKNOWN COUNTS AS BUSY. Recompiling .tools/classes under a '
+              'live arm swaps the bytecode a running JVM was launched against '
+              '(#66, DECISIONS.md 9.156). Re-run with --force-compile if you '
+              'know no arm is up.' % what)
+        return True
+    if busy:
+        print('\nREFUSING to %s: an arm appears to be running - %s. Never '
+              'recompile .tools/classes under one (#66). Wait for it, or '
+              're-run with --force-compile if that JVM is not an arm.'
+              % (what, ', '.join(busy)))
+        return True
+    return False
+
+
 def javac_path():
     for cand in (os.path.join(TOOLS, 'jdk', 'bin', 'javac.exe'),
                  os.path.join(TOOLS, 'jdk', 'bin', 'javac')):
@@ -268,6 +334,8 @@ def compile_java():
     would simply lack the main class. Compiling here, with the pinned javac
     against the pinned jar, is what makes a run reproducible from a clone.
     """
+    if refuse_if_arm_running('compile the citysim classes'):
+        return False
     javac = javac_path()
     jar = pt2matsim_jar()
     if not javac or not jar:
@@ -299,6 +367,8 @@ def compile_java_signals():
     into their own class directory. A checkout without the run stack skips
     this quietly: the default (non-signal) harness never needs it.
     """
+    if refuse_if_arm_running('compile the signals classes'):
+        return False
     javac = javac_path()
     jars = run_stack_jars()
     if not javac or not jars:
