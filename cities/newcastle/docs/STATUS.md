@@ -76,7 +76,7 @@ Inside 10%: **car**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail,
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | six gate firings F21-F26, 7-8 modes out each; F27 citable for nothing; **F28 with 7 out and car inside**; F30 stopped at 23 on cost (§9.149, §9.153). The newest arm `aborted_20260908T232051_4it_1pct` is **DEAD WITHOUT A RECORD** - a 1 % smoke probe, not a calibration arm (§9.159, #167); the newest arm that READS is `aborted_20260908T100009_300it_25pct` at its gate, and the scoreboard is its reading (§9.157). The tuning loop refused to start, and its windowed repair measures WORSE (§9.158, §9.159). *Pinned by `check_doc_currency.py`.* |
+| P4 calibration | 🟡 | six gate firings F21-F26, 7-8 modes out each; F27 citable for nothing; **F28 with 7 out and car inside**; F30 stopped at 23 on cost (§9.149, §9.153). The newest arm `20260909T015217_300it_25pct` is **RUNNING** - the DEPTH arm (§9.160), the first since F4 allowed past iteration 100 and the first ever to run `citysim.PtCrowdingScoring`; **22.3 h** against a **32 h** ceiling. It reads nothing yet, so the arm that READS is still `aborted_20260908T100009_300it_25pct` at its gate (§9.157). *Pinned by `check_doc_currency.py`.* |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -108,14 +108,14 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260909T015217_300it_25pct` | running | F31-the-car-router-reads-only-cars | - | - |
+| `20260909T011135_4it_25pct` | completed | F31-the-car-router-reads-only-cars | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260908T232051_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
 | `aborted_20260908T231109_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | TransitQSimEngine$TransitAgentTriesToTeleportException: Agent 355102 tries to enter a transit stop at link 128983 but really is at 158102! |
 | `aborted_20260908T100009_300it_25pct` | aborted | F31-the-car-router-reads-only-cars | 100 | Stopped automatically by the gate watcher at iteration 100 under the GOAL.md loop (RUN.gate.interval_iterations=100): GATE: 7 mode(s) at ... |
 | `20260908T014214_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
-| `aborted_20260908T012355_4it_25pct` | aborted | F30-an-escort-is-priced-as-an-escort | 0 | Stopped by the agent, and the run is citable for NOTHING - not even its clock, which is the only thing it existed to measure. It was the ... |
-| `20260907T233540_4it_25pct` | completed | F30-an-escort-is-priced-as-an-escort | 4 | ran_to_last_iteration `_run.json` |
 
-164 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+166 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next

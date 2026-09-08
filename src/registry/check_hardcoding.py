@@ -363,6 +363,20 @@ TOOL_BINDINGS = ('matsim_param',
 # it is one.
 # --------------------------------------------------------------------------
 STRUCTURAL = {
+    # A PROCESS-SIZE CLASSIFIER, not a model value. `bootstrap_toolchain`
+    # refuses to recompile `.tools/classes` while an arm is up (#66, and the
+    # rule had nothing behind it until 9 Sep 2026), and it tells an arm from
+    # VS Code's language server by resident size: an arm sits in the tens of
+    # GB, the language server under one. Nothing about this city or any other
+    # decides it, it cannot be swept, and a different city would use the same
+    # number. `src/run/session_gate.py` applies the identical threshold and is
+    # invisible here only because it inlines the literal rather than naming it
+    # - which is the wrong lesson to learn, so this one stays named and
+    # exempted.
+    'src/setup/bootstrap_toolchain.py:ARM_RSS_KB':
+        'the resident-size threshold that tells a running arm from the java '
+        'process an IDE keeps alive, in KB. A classifier over '
+        'operating-system processes, not a parameter of the model',
     # Surfaced when the scanner was widened past module level (7 Sep 2026): a
     # constant assigned inside a function had never been visible to this check.
     # The Earth's mean radius is a physical constant, not a modelling choice -
