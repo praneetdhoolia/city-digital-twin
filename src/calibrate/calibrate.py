@@ -133,6 +133,43 @@ MEASUREMENT_LAYERS = ('src/analyse/', 'src/calibrate/')
 STAGES_IMPLEMENTED = ('none', 'run_inputs')
 
 
+_DERIVED_REALISERS = None
+
+
+def derived_realisers():
+    """Fields that reach the config through ANOTHER field's `derived_from`.
+
+    Maps a child key to the parent whose binding realises it. Built once from
+    the registry: a parent qualifies when it carries a `matsim_param` (so it
+    reaches the config on every run) and its `derived_from.fields` names the
+    child. The DERIVATION is the evidence, exactly as the BINDING is in
+    `rebuild_stage` - a conservative default over a NAME is right, a
+    conservative default over a DECLARED IDENTITY is wrong for the same reason.
+    """
+    global _DERIVED_REALISERS
+    if _DERIVED_REALISERS is not None:
+        return _DERIVED_REALISERS
+    out = {}
+    try:
+        import glob as _glob
+        pattern = os.path.join(_city.CITY_DIR, 'registry', '*.json')
+        for path in sorted(_glob.glob(pattern)):
+            with open(path, encoding='utf-8') as fh:
+                fields = json.load(fh).get('fields', {})
+            for parent, spec in fields.items():
+                if not spec.get('matsim_param'):
+                    continue
+                derived = spec.get('derived_from') or {}
+                for child in (derived.get('fields') or []):
+                    out.setdefault(child, parent)
+    except Exception:                                          # noqa: BLE001
+        # A registry this cannot read is one `rebuild_stage` should stay
+        # conservative about, not one it should guess for.
+        out = {}
+    _DERIVED_REALISERS = out
+    return out
+
+
 def rebuild_stage(key, field):
     """What a change to this field would require. 'none' means run-time only."""
     if key.startswith('CAL.'):
@@ -166,6 +203,17 @@ def rebuild_stage(key, field):
     # The binding is the evidence. A conservative default over a NAME is right;
     # a conservative default over a DECLARED BINDING is just wrong.
     if field.get('matsim_param'):
+        return 'none', None
+
+    # ... and a field REACHED THROUGH one. `C.asc.bus` carries no consumer and
+    # no binding of its own; it reaches `scoring.modeParams[*].constant`
+    # through `C.scoring.mode_constant`'s `derived_from.fields`. Excluding it
+    # as "nothing would read a change" is false - the derivation reads it on
+    # every run - and it is why the 8.5 departure logged at 9.158, taken so a
+    # search could reach `C.asc.bus` and `C.asc.light_rail`, bought the search
+    # nothing.
+    parent = derived_realisers().get(key)
+    if parent:
         return 'none', None
 
     for c in consumers:
