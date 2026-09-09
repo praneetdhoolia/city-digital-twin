@@ -44,25 +44,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260909T015217_300it_25pct` at **iteration 110** (family `F32-crowding-reaches-scoring`, status `running`, 25% sample, launched 2026-09-09T01:52:17, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and every arm since F4 stopped before its gate.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260909T015217_300it_25pct --it 110` (`--trend` for the direction).
+Read from `20260909T015217_300it_25pct` at **iteration 300** (family `F32-crowding-reaches-scoring`, status `completed`, 25% sample, launched 2026-09-09T01:52:17, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 300, the only completion that means the run executed the horizon it declared.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260909T015217_300it_25pct --it 300` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 61.7494 | 58.3222 | +5.9% | ok | share of resident linked trips |
-| 2 | ride | 12.8384 | 20.6000 | -37.7% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 12.1072 | 13.4000 | -9.6% | ok | share of resident linked trips |
-| 4 | taxi | 2.7066 | 0.9916 | +173.0% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 5.1795 | 2.2084 | +134.5% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4285 | 0.3785 | +13.2% | over 10% | share of resident linked trips |
-| 7 | bus | 3.4855 | 2.3819 | +46.3% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 21,236 | 6,529 | +225.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,356 | 2,954 | -54.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0432 | 0.1429 | -69.7% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.9397 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 64.9110 | 58.3222 | +11.3% | over 10% | share of resident linked trips |
+| 2 | ride | 12.1553 | 20.6000 | -41.0% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 9.8490 | 13.4000 | -26.5% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 2.9971 | 0.9916 | +202.2% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 4.7045 | 2.2084 | +113.0% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4259 | 0.3785 | +12.5% | over 10% | share of resident linked trips |
+| 7 | bus | 3.4480 | 2.3819 | +44.8% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 21,220 | 6,529 | +225.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,260 | 2,954 | -57.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0571 | 0.1429 | -60.1% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6321 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, walk**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -73,7 +73,7 @@ Inside 10%: **car, walk**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | six gate firings F21-F26, 7-8 modes out each; F27 citable for nothing; **F28 with 7 out and car inside**; F30 stopped at 23 on cost (§9.149, §9.153). The newest arm `20260909T015217_300it_25pct` is **RUNNING** - the DEPTH arm (§9.160), the first since F4 allowed past iteration 100 and the first ever to run `citysim.PtCrowdingScoring`; **22.3 h** against a **32 h** ceiling. It reads nothing yet, so the arm that READS is still `aborted_20260908T100009_300it_25pct` at its gate (§9.157). *Pinned by `check_doc_currency.py`.* |
+| P4 calibration | 🟡 | six gate firings F21-F26, 7-8 modes out each; **F28 with 7 out and car inside**; F30 stopped at 23 on cost (§9.149, §9.153). The newest arm `20260909T015217_300it_25pct` is **RAN TO ITS LAST ITERATION** - 300 of 300 in **21.5 h**, the FIRST result since F4 on 21 August. It **RELAXED** (drift 0.261 pp over it.250-300 against 0.5) and reads **0 of 12 inside 10 %, 8 past the stop bar**: the cutoff at 240 snapped car **+2.211 pp**. *Pinned by `check_doc_currency.py`.* |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -105,7 +105,7 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 126 | - |
+| `20260909T015217_300it_25pct` | completed | F32-crowding-reaches-scoring | 300 | ran_to_last_iteration `_run.json` |
 | `20260909T011135_4it_25pct` | completed | F32-crowding-reaches-scoring | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260908T232051_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
 | `aborted_20260908T231109_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | TransitQSimEngine$TransitAgentTriesToTeleportException: Agent 355102 tries to enter a transit stop at link 128983 but really is at 158102! |

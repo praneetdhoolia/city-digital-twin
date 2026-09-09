@@ -186,13 +186,28 @@ def block_scoreboard():
         fam = _family_of(name) or '-'
         frac = rmr.LAST.get('fraction')
         lines = []
+        # The standing sentence said "Not a result" of EVERY reading, because for
+        # nineteen days every arm stopped before its gate and no other case could
+        # arise. The first arm to reach its declared horizon made that sentence
+        # false on the board's own front block, which is the failure the currency
+        # check exists to catch and could not see: a GENERATED claim about the
+        # artefact it was generated from. The record decides it now.
+        record = _json(os.path.join(run_dir, '_run.json')) or {}
+        if record.get('completion') == 'ran_to_last_iteration':
+            standing = ('**A RESULT** - its `_run.json` says '
+                        '`ran_to_last_iteration` at iteration %s, the only '
+                        'completion that means the run executed the horizon it '
+                        'declared.' % record.get('reached_iteration', '?'))
+        else:
+            standing = ('**Not a result** - only a run whose `_run.json` says '
+                        '`ran_to_last_iteration` is one, and this reading is '
+                        'citable at its `reached_iteration` and nowhere past it.')
         lines.append('Read from `%s` at **iteration %d** (family `%s`, status `%s`, '
-                     '%s%% sample, launched %s, %s). **Not a result** - only a run '
-                     'whose `_run.json` says `ran_to_last_iteration` is one, and '
-                     'every arm since F4 stopped before its gate.'
+                     '%s%% sample, launched %s, %s). %s'
                      % (name, it, fam, meta.get('status', 'unknown'),
                         ('%g' % (100 * frac)) if frac else '?',
-                        meta.get('started', '?'), rmr.LAST.get('source', '')))
+                        meta.get('started', '?'), rmr.LAST.get('source', ''),
+                        standing))
         lines.append('Reproduce: `python src/analyse/report_mode_ridership.py '
                      '--run %s --it %d` (`--trend` for the direction).' % (name, it))
         lines.append('')
