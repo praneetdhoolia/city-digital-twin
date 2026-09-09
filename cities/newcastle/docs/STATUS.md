@@ -105,7 +105,7 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 125 | - |
+| `20260909T015217_300it_25pct` | running | F32-crowding-reaches-scoring | 126 | - |
 | `20260909T011135_4it_25pct` | completed | F32-crowding-reaches-scoring | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260908T232051_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
 | `aborted_20260908T231109_4it_1pct` | failed | F31-the-car-router-reads-only-cars | 0 | TransitQSimEngine$TransitAgentTriesToTeleportException: Agent 355102 tries to enter a transit stop at link 128983 but really is at 158102! |
@@ -132,13 +132,18 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
    running arm launched before the mechanism, so its 32 h ceiling is still
    enforced by hand**: `python run.py --stop 20260909T015217_300it_25pct`. On
    its own recurring pace of 247.6 s it now quotes **20.1 h**.
-3. **GIVE LAYER 3 A CONTROL - DECIDED, DESIGNED, NOT BUILT** (§9.160, user
-   decision). The mode constant, the fare and a distance term go into the
-   raptor's cost: `RaptorInVehicleCostCalculator.getInVehicleCost(...)` is
-   handed the `Vehicle`, so the submode is recoverable and the call is once per
-   boarding. It ships behind `C.raptor.mode_cost_representation` = `absent` and
-   is what finally gives `beta_headway` and `beta_reliability` a consumer.
-   **Java, so it opens a family and cannot be compiled under the running arm.**
+3. **LAYER 3 HAS A CONTROL - BUILT, UNCOMPILED, UNRUN** (§9.160, user
+   decision). `citysim.RaptorModeCostCalculator` adds the boarded submode's own
+   `scoring.modeParams` constant to the raptor's in-vehicle cost, once per
+   boarded leg, behind `C.raptor.mode_cost_representation` = `absent`. It
+   declares NO new value - the constants are already `C.asc.*` - so it is a
+   CONSISTENCY between the router and the scoring function, not a taste.
+   **The fare and the distance term are NOT in it**: `getInVehicleCost` is
+   handed no distance and no stop or route identity (its `RouteSegmentIterator`
+   is `hasNext/next/getInVehicleTime/getPassengerCount/getTimeOfDay`), and the
+   Opal schedule is banded in km, so the fare stays in scoring where the route
+   is known. **Java: it opens a family, and `.tools/classes` is NOT recompiled
+   under the running arm, so it ships type-checked and not deployed.**
 4. **#167 IS DIAGNOSED AND THE FIX IS ONE ATTRIBUTE** (§9.161). The input plans
    declare **no `routingMode` on any leg**, so under `accessEgressModeToLink`
    MATSim infers `walk` for the access leg it inserts beside a `car` main leg

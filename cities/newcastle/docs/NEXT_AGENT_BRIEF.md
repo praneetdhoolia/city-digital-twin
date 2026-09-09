@@ -47,9 +47,11 @@ under one by itself, so the rule finally has a mechanism.
    Any of them being wrong is worth as much as its being right. Read with
    `report_mode_ridership.py --run <arm> --it <n>` at several `n`, and
    `--trend`.
-2. **GIVE LAYER 3 A CONTROL — decided, designed, NOT built** (§9.160, user
-   decision). The mode constant, the fare and a distance term go into the
-   raptor's cost. Established against the pinned jar by `javap`:
+2. **LAYER 3 HAS A CONTROL — built, type-checked, NOT COMPILED OR RUN**
+   (§9.160, user decision). The mode constant goes into the raptor's cost; the
+   fare and the distance term CANNOT (no distance and no stop identity reach
+   the hook, and Opal is banded in km). Established against the pinned jar by
+   `javap`:
    `RaptorInVehicleCostCalculator.getInVehicleCost(...)` is handed the
    `Vehicle`, so the submode is recoverable from the vehicle type and the call
    is **once per boarding** — where an ASC belongs in a router — and
