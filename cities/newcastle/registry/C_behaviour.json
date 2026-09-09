@@ -349,6 +349,23 @@
       "matsim_param": "ptCrowding.standingMultiplier",
       "description": "Crowding multiplier, standing: what a minute standing costs relative to a minute seated in an empty vehicle. CARRIED INTO MATSIM SCORING under C.crowding.representation = in_vehicle_time, by citysim.PtCrowdingScoring. It can bind because the fleet has standing room: every vehicle type is patched to its published seated/standing split by src/build/build_matsim_run_inputs.py (9.30) - bus 44/18, ferry 149/51, rail 98/48, tram 60/210 - and both numbers scale with the sample fraction, so an agent standing on a full train is physically possible and now costs something. The shipped 1.45 is conservative against Wardman and Whelan's 2.32 mean over 124 standing valuations; the 1.2-1.8 sweep is well inside their 0.94-6.05 range."
     },
+    "C.raptor.mode_cost_representation": {
+      "value": "absent",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "mode_constant"
+        ],
+        "basis": "Whether a PT SUBMODE'S OWN CONSTANT reaches the router that picks the submode. absent: the pre-change state - SwissRailRaptor prices a boarded leg as DefaultRaptorInVehicleCostCalculator does, in-vehicle seconds times one coefficient and nothing else, so the constants C.asc.bus/-.rail/-.light_rail/-.ferry reach SCORING and not the ROUTER, and the one per-submode value RaptorUtils.createParameters does copy across (marginalUtilityOfTraveling) is emitted identically for all four submodes; over the F31 arm's whole plan memory only 974 of 154,347 persons (0.63%) held plans differing in PT submode at all (9.160). mode_constant: citysim.RaptorModeCostCalculator adds the boarded submode's own scoring.modeParams constant to the raptor's in-vehicle cost, once per boarded leg. It introduces NO NEW VALUE - the constants are already declared as C.asc.* - so this gate is not a taste to calibrate but a consistency between the router's objective and the scoring function the plan is judged by. It also makes PT dearer against the raptor's direct walk, which is a real behavioural change and is why `absent` is shipped. One-gate discipline mirroring C.crowding.representation and A.bike_stress.representation - `absent` recovers the previous model exactly."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "8.5, 9.160",
+      "matsim_param": "raptorModeCost.representation",
+      "description": "The representation gate for the PT mode constant in the TRANSIT ROUTER's cost. The fare and a distance term were designed into the same change and are NOT here: RaptorInVehicleCostCalculator.getInVehicleCost is handed no distance and no stop or route identity (javap, pinned jar - its RouteSegmentIterator exposes hasNext/next/getInVehicleTime/getPassengerCount/getTimeOfDay only), and the published Opal schedule is banded in kilometres, so the fare stays where it can be charged - in scoring, by citysim.PtFareChargeHandler, on the route actually ridden."
+    },
     "C.asc.car_driver": {
       "value": 0.0,
       "units": "utils",

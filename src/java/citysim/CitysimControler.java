@@ -218,8 +218,18 @@ public final class CitysimControler {
         // the emitted config the group holds representation=absent and nothing
         // below installs, which is the uncrowded model byte for byte.
         final PtCrowdingConfigGroup ptCrowding = new PtCrowdingConfigGroup();
+        // The PT submode's own scoring constant reaching the ROUTER that picks
+        // the submode (DECISIONS.md 9.160, #49): registered on every stack like
+        // the others, because its gate is registry-bound and the
+        // `raptorModeCost` module is therefore emitted into every config - an
+        // unmaterialised module fails MATSim's consistency check. Absent from
+        // the emitted config the group holds representation=absent and nothing
+        // below installs, which leaves SwissRailRaptorModule's own
+        // DefaultRaptorInVehicleCostCalculator in place.
+        final RaptorModeCostConfigGroup raptorModeCost =
+                new RaptorModeCostConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[16 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[17 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -236,8 +246,9 @@ public final class CitysimControler {
         groups[13] = incomeScoring;
         groups[14] = householdVehicles;
         groups[15] = ptCrowding;
+        groups[16] = raptorModeCost;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[16 + i] = extraGroups.get(i);
+            groups[17 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -608,6 +619,23 @@ public final class CitysimControler {
                     bind(PtCrowdingScoring.class).in(Singleton.class);
                     addEventHandlerBinding().to(PtCrowdingScoring.class);
                     addControllerListenerBinding().to(PtCrowdingScoring.class);
+                }
+            });
+        }
+        if (raptorModeCost.isModeConstant()) {
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    // SwissRailRaptorModule binds
+                    // RaptorInVehicleCostCalculator -> Default... unconditionally
+                    // (read from the pinned jar; useCapacityConstraints binds an
+                    // OccupancyTracker and does NOT swap this), so an overriding
+                    // module is the sanctioned way to replace it, and
+                    // SwissRailRaptorFactory takes it by constructor injection.
+                    bind(ch.sbb.matsim.routing.pt.raptor
+                            .RaptorInVehicleCostCalculator.class)
+                            .to(RaptorModeCostCalculator.class)
+                            .in(Singleton.class);
                 }
             });
         }

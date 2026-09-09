@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 496 fields are made of
+## What the 497 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 40 | computed from observed data in this package |
 | `derived` | 44 | follows from another registry field by identity |
 | `literature` | 75 | a published value, not specific to this city |
-| `assumed` | 162 | chosen without direct empirical support |
+| `assumed` | 163 | chosen without direct empirical support |
 | `definition` | 137 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 476 | usable point value |
+| `active` | 477 | usable point value |
 | `computed` | 10 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 274 sweeps are for
+### What the 275 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 12 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 239 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 240 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 23 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -2854,7 +2854,7 @@ The earliest classified-count year pooled into the heavy-vehicle share that road
 
 ## Behavioural parameters (C1)
 
-*`cities/newcastle/registry/C_behaviour.json` - 56 fields*
+*`cities/newcastle/registry/C_behaviour.json` - 57 fields*
 
 Proposal 6.2 calls this the layer that decides the answer. It is also the layer with no Newcastle measurement in it: of the twenty distinct parameters, ten are assumed, eight are literature and two are definitional. Everything here is therefore either swept or explicitly held fixed under a stated rule - see the sweep and held_fixed keys. The per-segment C1 table (30 sets = 5 segments x 6 purposes) is generated from these fields by src/build/build_params.py; the registry holds the parameters, the CSV holds their expansion.
 
@@ -2890,6 +2890,7 @@ Proposal 6.2 calls this the layer that decides the answer. It is also the layer 
 | `C.nesting.active_coefficient` | `0.7` | dimensionless | `assumed` | 0.5 - 0.95 |
 | `C.nesting.private_coefficient` | `0.8` | dimensionless | `assumed` | 0.5 - 0.95 |
 | `C.nesting.pt_coefficient` | `0.65` | dimensionless | `assumed` | 0.5 - 0.95 |
+| `C.raptor.mode_cost_representation` | `absent` | enum | `assumed` | `absent`, `mode_constant` |
 | `C.scoring.activity_minimal_applied_s` | *(null - unobtained)* | seconds | `derived` | derived: minimalDuration[a] = min(C.scoring.activity_minimal_duration_s, C.scor |
 | `C.scoring.activity_minimal_duration_s` | `900` | seconds | `assumed` | 300 - 1800 |
 | `C.scoring.activity_typical_duration_s` | `{"home": 43200, "work": 28800, "education": 21600, "shopping": 3600, "other": 7200, "business": 3600, "esco...` | seconds | `assumed` | plus/minus 25% |
@@ -3152,6 +3153,14 @@ Nested-logit nest coefficient. SPECIFIED IN C1 BUT NOT PRESENT IN MATSim SCORING
 ***assumed** · status **placeholder** · DECISIONS.md §8.6, 9.3 · sweep role **uncertainty***
 
 > **Sweep basis.** DECISIONS.md 8.6 declares the nest coefficients assumed, and 9.3 records that MATSim's co-evolutionary mode choice has nowhere to put one: the field is a placeholder nothing consumes. The interval is the admissible range of a nest coefficient short of independence (1.0), bracketing a value no run reads. No observed spread.
+
+#### `C.raptor.mode_cost_representation`
+
+The representation gate for the PT mode constant in the TRANSIT ROUTER's cost. The fare and a distance term were designed into the same change and are NOT here: RaptorInVehicleCostCalculator.getInVehicleCost is handed no distance and no stop or route identity (javap, pinned jar - its RouteSegmentIterator exposes hasNext/next/getInVehicleTime/getPassengerCount/getTimeOfDay only), and the published Opal schedule is banded in kilometres, so the fare stays where it can be charged - in scoring, by citysim.PtFareChargeHandler, on the route actually ridden.
+
+***assumed** · status **active** · DECISIONS.md §8.5, 9.160 · MATSim `raptorModeCost.representation` · sweep role **uncertainty***
+
+> **Sweep basis.** Whether a PT SUBMODE'S OWN CONSTANT reaches the router that picks the submode. absent: the pre-change state - SwissRailRaptor prices a boarded leg as DefaultRaptorInVehicleCostCalculator does, in-vehicle seconds times one coefficient and nothing else, so the constants C.asc.bus/-.rail/-.light_rail/-.ferry reach SCORING and not the ROUTER, and the one per-submode value RaptorUtils.createParameters does copy across (marginalUtilityOfTraveling) is emitted identically for all four submodes; over the F31 arm's whole plan memory only 974 of 154,347 persons (0.63%) held plans differing in PT submode at all (9.160). mode_constant: citysim.RaptorModeCostCalculator adds the boarded submode's own scoring.modeParams constant to the raptor's in-vehicle cost, once per boarded leg. It introduces NO NEW VALUE - the constants are already declared as C.asc.* - so this gate is not a taste to calibrate but a consistency between the router's objective and the scoring function the plan is judged by. It also makes PT dearer against the raptor's direct walk, which is a real behavioural change and is why `absent` is shipped. One-gate discipline mirroring C.crowding.representation and A.bike_stress.representation - `absent` recovers the previous model exactly.
 
 #### `C.scoring.activity_minimal_applied_s`
 

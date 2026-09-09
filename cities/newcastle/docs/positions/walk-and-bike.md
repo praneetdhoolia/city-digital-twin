@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -22,7 +22,7 @@
 
 ## What is measured
 
-- **Gate reading, F31 iteration 100** (`results/raw/aborted_20260908T100009_300it_25pct`, §9.157): **bike 5.4627 % against 2.2084 % (+147.4 %)** and **walk 11.9095 % against 13.4000 % (−11.1 %)** — walk is the second-closest mode on the board and the only one besides car within 15 %. Read on its own terms: three family boundaries separate this from F28, so no earlier gate is a comparison (§3.5).
+- **THE FIRST RESULT, AND WALK FELL PAST THE STOP BAR ON THE WAY TO IT** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): **bike 4.7045 % against 2.2084 % (+113.0 %)** and **walk 9.8490 % against 13.4000 % (−26.5 %)**. Walk was INSIDE the 10 % band at iteration 110 (−9.6 %), left it by 200 (−14.4 %) and was pushed past the 20 % bar by the innovation cutoff, which took **−0.941 pp** off it in one step (`snap_pp`, §9.162). Walk does not overshoot its target and settle - it descends THROUGH it, so the mode was never converged when the gates read it near the band. Comparable with no earlier family (§3.5).
 - **WALK IS PRICED AS A TRANSIT RIDE, AND THAT IS WHY ITS GEOMETRY IS WRONG** (§9.158). Inside the pt router, `(marginalUtilityOfTraveling − performing)/3600` makes **one second walking cost 1.0400 seconds riding**, with `RUN.transit_router.direct_walk_factor` = 1.0. Measured on the F31 arm: **2,553,357 pt routing requests**, **33.4 % with no transit route at all**, **40.6 % of the answered choosing the network walk** — **60.5 % of all pt routing requests come back as a walk**, and those walk-answered trips have a **beeline mean of 7.81 km (p90 12.43)**. Walk's modelled mean of **4.58 km against an observed 0.70** (`_fit.json`, Newcastle LGA both ends; §9.157 quotes 4.51 on the resident-trip basis) is substantially that. Sweeping the factor: 1.5 → 27.3 % walk-answered, 2.0 → 21.7 %, 3.0 → 16.2 % (§9.158).
 - **THE READING POINT ITSELF CANNOT RESOLVE BIKE** (§9.158). Between iteration 80 and 100 of the SAME run, with nothing changed, bike's deviation moves further than the whole 10 % acceptance band on **4 of the 6** arms that ever reached 100 (max 17.76 points; `CAL.search.reading_drift_pct`, `python src/analyse/measure_reading_stability.py --all --from 80 --to 100`). On the F31 arm itself bike moved 8.66 points in that window. A bike level read at 100 is partly a statement about how far the run had got.
 - **Gate reading, F23 iteration 100** (§9.139): bike 4.66 % (+111.2 %), from +185.5 % at F22's gate — the stress channel's first measured effect — still falling at the stop; walk 9.76 % (−27.2 %). The walk/car pair crossed their targets near iteration 45–50 under the parking search time and kept going.
@@ -57,6 +57,7 @@
 ## History
 
 - §9.158 — walk is priced as a transit ride; `C.asc.cycle` opened, `C.asc.walk` frozen
+- §9.162 — the first result: walk −26.5 %, descending through target
 - §9.157 — F31 gate: bike +147.4 %, walk −11.1 %
 - §9.142 — short trips drawn against balanced arrivals; bands unmoved
 - §9.140 — gradient weights and decay retired

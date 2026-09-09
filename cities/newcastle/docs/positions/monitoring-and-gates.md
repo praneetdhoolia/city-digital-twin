@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -41,6 +41,10 @@
 - **Nothing is compared across a family, a sample fraction or a network build.** A boardings-basis reading does not compare with an earlier trip-share reading of the same mode (§9.130).
 
 ## What is measured
+
+- **A GENERATED BLOCK ASSERTED SOMETHING ABOUT THE ARTEFACT IT WAS GENERATED FROM, AND NO CHECK COULD SEE IT** (§9.162). The board's scoreboard header said **"Not a result"** of every reading it had ever written - true for nineteen days because no arm reached its horizon, and false the moment one did. `check_doc_currency.py` pins PROSE claims against artefacts and does not read inside a generated block, so the first result in the project made the board's own front block wrong with every gate green. `src/analyse/build_status_board.py` now reads the run's `_run.json`: a run whose `completion` is `ran_to_last_iteration` is announced as a result, and anything else keeps the citable-at-its-`reached_iteration` wording.
+- **THE PHASE TABLE'S "is RUNNING" WAS CAUGHT BY A CHECK RATHER THAN BY A READER, FOR THE FIRST TIME** (§9.162). The `status.newest-arm-state` claim fired the moment the arm's record said `ran_to_last_iteration` while the cell still said RUNNING - the error that board had already made twice (§9.156, §9.158), found by a person both previous times.
+- **THE FIT PIPELINE RAN ON A RESULT** (§9.162). `python src/calibrate/fit.py --run 20260909T015217_300it_25pct` writes the project's first `_fit.json` carrying `is_a_result: true`: 5 scored mode-share targets, mean absolute error **4.734 pp**; 30 traffic-count stations, mean absolute **91.69 %** with **7 modelled zeros**; patronage **n = 0**; occupancy **0.1860** passengers per driver against an observed 0.3503, OUTSIDE its [0.2493, 0.394] range; **32 targets unscorable**, each with its stated reason.
 
 - **THREE WAYS THE ISSUE GATE WAS SATISFIED BY PROSE ABOUT THE ISSUE GATE** (§9.160). It read *20 open, every one awaiting a stated measurement, 0 blocking* while three of those issues opened with "This issue BLOCKS the launcher" (§9.160).
   (1) The allowed-prefix class admitted a backtick, so `` `AWAITING-RUN:` `` — how every document here REFERS to the convention rather than invokes it — matched as an invocation, and the captured statement was the sentence saying writing one would be inventing a measurement (§9.160).
