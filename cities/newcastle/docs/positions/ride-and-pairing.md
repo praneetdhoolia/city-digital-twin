@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.160 · **Written against family:** `F32`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -35,7 +35,7 @@
 
 ## What is measured
 
-- **RIDE IS CONVERGED AT −38.0 % AND NO CONSTANT WILL EVER MOVE IT** (§9.160). Over the F31 arm's own `output/modestats.csv`, ride's decay constant is **r = 0.054** and its asymptote **0.12515** equals its iteration-100 value **0.12514** to five decimal places (§9.160).
+- **RIDE IS CONVERGED, AND THE DEPTH ARM CONFIRMED THE PREDICTION** (§9.160, §9.162). §9.160 predicted from F31's `output/modestats.csv` (decay **r = 0.054**, asymptote **0.12515** equal to its it-100 value to five decimals) that no further iteration would move ride. On the first result it held: ride sat between **12.73 % and 12.89 %** of resident linked trips from iteration 50 to 240 - 190 iterations without moving - and only the innovation cutoff shifted it, by **−0.489 pp** (`snap_pp`), landing at **−41.0 %** at iteration 300. **Depth is not ride's problem and no constant is its remedy.**
   Every other scored mode is still moving at 100 — car settles about iteration 130, bike about 208 (§9.160) — and ride is not. **Its deficit is not an equilibration lag; it is plan generation** (§9.160), which is what §9.157's geometry reading already implied when the modelled mean ride trip came within 6 % of observation while the share sat 38 % short.
   This retires the possibility that more iterations, or a `C.asc.car_passenger` departure, closes ride. `C.asc.car_passenger` stays frozen under §8.5 for exactly this reason (§9.158, §9.160).
 
@@ -103,6 +103,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 - §9.160 — ride measured CONVERGED at -38.0 %; it is supply
 - §9.158 — the escort listener stops proposing past the innovation cutoff
+- §9.162 — the first result: ride converged at −41.0 %
 - §9.157 — the F31 gate: placement solved, the gap is volume
 - §9.156 — ride's deficit is the small modes' excess, to 0.008 pp
 - §9.153 — F30 it.0: 8,167 paired on 7,771 detours, 0 unroutable

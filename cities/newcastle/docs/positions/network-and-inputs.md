@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
 
-**Updated:** 8 September 2026 (thirty-seventh session) · **Record read through:** §9.159 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -36,7 +36,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 **Both modes, at the newest citable reading.**
 
-- **The F31 gate** (`aborted_20260908T100009_300it_25pct` at iteration 100, `stopped_at_gate`, §9.157): light rail **1,560 boardings against 2,954, −47.2 %**; ferry **0.0492 % of resident trips against 0.1429 %, −65.6 %**. Citable at iteration 100 and nowhere past it, and comparable with no earlier family (§3.5).
+- **The first RESULT** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): light rail **1,260 boardings against 2,954, −57.3 %**; ferry **0.0571 % of resident trips against 0.1429 %, −60.1 %**. **Light rail moved AWAY across the whole run** - 2,720 boardings at iteration 0, 1,436 at 200, 1,260 at 300 - so depth did not help it and the DIRECTION is the finding. Comparable with no earlier family (§3.5); F31's gate read −47.2 % and −65.6 % at iteration 100 (§9.157) and is not differenced against this.
 - **The ASC fixed point PROPOSES a step for both, and it has NOT been run** (§9.158, `src/calibrate/asc_fixed_point.py`). Read off that gate at `CAL.asc.damping` 0.6: **ferry +0.6713 (to −0.3787)** and **light_rail +0.4143 (to −0.3357)**, both inside their declared sweeps and both under the `CAL.asc.max_step_utils` 1.5 refusal bound. The light-rail row is marked `basis_is_boardings`: the logit inversion is exact for a share and only a monotone proxy for a boardings target, and the contraction verdict is reported with and without it. **The test is whether |Δasc| SHRINKS between round 1 and round 2**, not whether the shares move — contraction means the residual is taste, no contraction means it is mechanism and no constant will ever close it.
 
 **Light rail.**
@@ -89,6 +89,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 ## History
 
 - §9.158 — a ferry constant declared, light rail's opened; the raptor prices no constant
+- §9.162 — the first result: light rail −57.3 %, moving away
 - §9.157 — the F31 gate: light rail −47.2 %, ferry −65.6 %
 - §9.156 — tsp refused as a lever; the fidelity question separated
 - §9.142 — the corridor gets its arrivals: destination choice constrained at both ends

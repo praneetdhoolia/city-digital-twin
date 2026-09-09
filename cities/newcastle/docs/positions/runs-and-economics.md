@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 9 September 2026 (thirty-eighth session) · **Record read through:** §9.161 · **Written against family:** `F32`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -30,6 +30,9 @@
 - **The toolchain** is fetched by `src/setup/bootstrap_toolchain.py` and pinned by sha256 in `.tools/toolchain.json`: JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25, §9.73), Maven 3.9.9 and the 201-jar signals run stack at that same MATSim version (§9.76). Signal runs execute `citysim.CitysimSignalsControler` on the run stack; every other run uses the shaded jar; the two never share a classpath. `--verify` re-hashes both and **recompiles both class trees** — it is not the read-only word it looks like (§9.156). Every component now passes an EXPECTED digest to `download()`: `PT2MATSIM_SHA256` was added 8 Sep because pt2matsim alone passed `None`, so its recorded pin described what arrived rather than what was expected, and it is pinned to the jar every mapped schedule in this package was built with (§9.156).
 
 ## What is measured — what a run costs
+
+- **THE FIRST RUN SINCE F4 TO EXECUTE THE HORIZON IT DECLARED** (§9.162). `20260909T015217_300it_25pct`: `completion` `ran_to_last_iteration`, `reached_iteration` 300, rc 0, wall **77,309 s (21.5 h)**, `median_iteration_s` **244.05**. Its `_fit.json` is the first in the project's history with `is_a_result: true`. It was quoted at **22.3 h** against a **32 h** approved ceiling and landed **3.6 % under the quote** - the first arm whose price was right.
+- **THE PACE OSCILLATED WITHIN THE RUN, WHICH NO EARLIER ARM RAN LONG ENOUGH TO SHOW** (§9.162). Median per-iteration seconds by band, from the run's own `_progress.json`: it.0-120 **~222 s**, it.120-140 **264.7**, it.140-160 **293.9**, it.160-180 **308.2**, then recovering to **~250** and closing at a whole-run median of **244.05 s**. `RUN.monitor.pace_band_s` = [217, 253] brackets the whole-run median and NOT the middle third, so a mid-run out-of-band reading is not by itself a defect - which cost one false alarm this session before the run closed inside the band.
 
 - **THE NEW BYTECODE IS ESSENTIALLY FREE, and it is the first ever measured** (§9.160). `20260909T011135_4it_25pct`, a 4-iteration 25 % probe of the deployed controler, `ran_to_last_iteration`, wall 39.6 min (§9.160).
   Per recurring iteration against the F31 arm's own stopwatch: total **263.5 s** against 260.5, **+3.0 s (+1.2 %)** (§9.160); mobsim **188.5** against 198.0 (§9.160); `prepareForMobsim` **39.0** against 29.0 (§9.160); replanning **32.5** against 29.0 (§9.160).

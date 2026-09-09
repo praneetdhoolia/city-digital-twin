@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 7 September 2026 (thirtieth session) · **Record read through:** §9.149 · **Written against family:** `F29`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -37,6 +37,8 @@
 - Durations: `A.crossings.closure_duration_passenger_s` = 60 per scheduled passenger train (literature, sweep 30–120); `A.crossings.closure_duration_s` = 240 for a freight movement (assumed, sweep 60–600, §9.70's "up to ten minutes").
 
 ## What is measured
+
+- **All three at the first result** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): motorbike **0.4259 % against 0.3785 %, +12.5 %** - the closest mode on the board after car and the only one that never moved, holding 0.4259-0.4674 % across all 300 iterations; truck **5.6321 %** network-wide road-vehicle share, which is NOT its target basis (§9.101); freight rail **314 movements**, the timetable by construction. **Motorbike and truck are locked carves outside `RUN.mode_choice.modes`** and the depth arm confirms it - their `snap_pp` at the innovation cutoff is **0.000** for both, where every choosable mode moved (§9.162).
 
 - F26 gate, `aborted_20260906T100429_300it_25pct` at iteration 100: **motorbike +11.1 %** (0.4207 against 0.3785), the second-closest mode after car; truck 5.76 % of road vehicles, level only (§9.146).
 

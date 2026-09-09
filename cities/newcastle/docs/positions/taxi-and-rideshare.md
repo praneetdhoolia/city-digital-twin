@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
 ## What is built
 
@@ -22,7 +22,7 @@
 
 ## What is measured
 
-- **Gate reading, F31 iteration 100: taxi 2.7605 % against 0.9916 %, +178.4 %, mean modelled trip 8.99 km** (`results/raw/aborted_20260908T100009_300it_25pct`, `stopped_at_gate`, §9.157) — citable at 100 and nowhere past it, and comparable with no earlier family (§3.5).
+- **THE FIRST RESULT: taxi 2.9971 % against 0.9916 %, +202.2 %, mean modelled trip 8.58 km** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162). **Taxi is one of only two modes whose direction was AWAY across the run** (the other is light rail): it rose from +88.5 % at iteration 0 through +178.7 % at 200 to +202.2 % at 300, and the cutoff took **−0.583 pp** off it without reversing the trend. Depth makes taxi worse, so its excess is not an unconverged search. Comparable with no earlier family (§3.5).
 - **TAXI IS ONE OF THE THREE MODES THE READING POINT CANNOT RESOLVE** (§9.158). Between iteration 80 and 100 of the SAME run, with nothing changed, taxi's deviation moves further than the WHOLE 10 % acceptance band on **3 of the 6** arms that ever reached 100 — **15.72 points on the F31 arm itself**, the largest single-mode drift that arm shows (`CAL.search.reading_drift_pct`, `python src/analyse/measure_reading_stability.py --all --from 80 --to 100`). A taxi level read at 100 is partly a statement about how far the run had got.
 - **Gate reading, F23 iteration 100: taxi 1.75% against 0.99%, +76.6%, flat at 1.52–1.75% across the arm, mean trip 12.82 km** (`results/processed/aborted_20260901T165115_300it_25pct/modes_final.json`, §9.139 - the arm's bulk was reclaimed once its findings were extracted, #164). The flat band has now widened slightly at each pricing change it did not share in: F21 +67.4% (§9.134), F22 +70.9% under pt fares (§9.136), F23 +76.6% under income-scaled money sensitivity (§9.139, #108) — everything else got costlier or its cost got lighter for the rich; taxi's meter did not move.
 - **F17 iteration 50 read 1.51% (+52%)**, flat while car and walk converged (§9.126); every arm since F15 reads taxi flat between +36% and +67% (§9.120, §9.126, §9.134).
@@ -56,6 +56,7 @@
 ## History
 
 - §9.158 — the loop reaches taxi's supply and price; no ASC step, no independent target
+- §9.162 — the first result: taxi +202.2 %, and still moving away
 - §9.157 — F31 gate: taxi +178.4 %
 - §9.141 — refused trip restored by endpoints
 - §9.139 — F23 gate: band widens to +77%
