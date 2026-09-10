@@ -1,0 +1,18 @@
+{
+  "overlay": "f33_pricing_probe_25pct",
+  "description": "A PRICING PROBE, NOT A MODELLING RUN - it is citable for its CLOCK and for nothing else, and no share, count, boarding or fit from it may be quoted, compared or fitted. Family F33 has no arm and its bytecode has never been executed by one, so the landed arm's `median_iteration_s` of 244.05 s (`20260909T015217_300it_25pct`, §9.162) is not a price for it: the demand was rebuilt, the seeded plan count per person changed, and the controler gained citysim.ServiceQualityScoring, citysim.SubmodeRaptorProvider and citysim.PtSubmodeChoiceConfigGroup. All three ship at their off value, so this probe is the BASELINE - no control is switched on - which is the same configuration the first F33 arm will carry. It is the established idiom: §9.160 priced the F32 stack the same way at four iterations and 25 %, measuring +3.0 s an iteration on the previous stack. WHAT IT MEASURES: the recurring iteration's wall clock on this bytecode at the arm's own fraction, so the arm that follows is quoted on a number rather than on an inherited one. Four iterations at 25 % is far too shallow to read anything else - the choice set does not close until about iteration 27 and pt's not until 233 (§9.163) - and a mode share taken here would be a reading of a model that has not begun to relax.",
+  "answers_issues": [],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 4,
+    "RUN.gate.wall_ceiling_h": 1.5,
+    "RUN.gate.interval_iterations": 0
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one. Four iterations is this repository's established pricing horizon at 25 % (`20260909T011135_4it_25pct`, §9.160): it is the shortest depth at which the recurring iteration - replanning, a re-routed plan executed and scored, and a router reading the previous iteration's travel times - has actually run, which is the only iteration whose clock predicts an arm's. The value sits two orders below the range so any output carrying it is obviously not a result.",
+    "RUN.gate.interval_iterations": "The mode gate is switched OFF because this probe has no modes to judge: at four iterations every deviation it could compute is a transient the board may not read, and stopping on one would report a pricing question as a modelling failure. The COST watcher stays armed in its place at 1.5 h - roughly four times the 39.6 min the equivalent F32 probe took - so the run is not left with no automatic stop of either kind, which src/run/run_matsim.py refuses before the JVM starts (§9.163, #169). The ceiling is not a budget here; it is the tripwire for a stack that has become dramatically slower, which is precisely what this probe exists to find out."
+  }
+}

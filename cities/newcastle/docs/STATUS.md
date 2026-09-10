@@ -71,7 +71,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the newest run on disk is `aborted_20260910T205517_20it_1pct`, which **STOPPED AT ITS CEILING** at iteration 3 - a 1 % probe proving the watcher, not a reading of anything (§9.164). The newest RESULT is still `20260909T015217_300it_25pct`, 300 of 300 in 21.5 h, **0 of 12 inside 10 %, 8 past the stop bar** (§9.162), and it belongs to the family BEFORE the open one. **F33 has no arm.** *Pinned by `check_doc_currency.py`.* |
+| P4 calibration | 🟡 | the newest run on disk is `20260910T222830_300it_25pct`, which is **RUNNING** - **F33's arm 0**, the baseline with no control switched on, priced at 19.0 h against an approved 26 h ceiling and holding the control half of five paired arms (§9.164, #172). The newest RESULT is still `20260909T015217_300it_25pct`, 300 of 300 in 21.5 h, **0 of 12 inside 10 %, 8 past the stop bar** (§9.162), and it belongs to the family BEFORE the open one. *Pinned by `check_doc_currency.py`.* |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -105,14 +105,14 @@ unit suite is **324** tests.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260910T222830_300it_25pct` | running | F33-the-passenger-is-put-on-ride | - | - |
+| `20260910T215129_4it_25pct` | completed | F33-the-passenger-is-put-on-ride | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260910T205517_20it_1pct` | aborted | F33-the-passenger-is-put-on-ride | 3 | Stopped automatically by the ceiling watcher at 0.05 h against an approved ceiling of 0.05 h (RUN.gate.wall_ceiling_h), at iteration 4. T... |
 | `20260910T204747_4it_1pct` | completed | F33-the-passenger-is-put-on-ride | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260910T204626_4it_1pct` | failed | F33-the-passenger-is-put-on-ride | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
 | `aborted_20260910T204513_4it_1pct` | failed | F33-the-passenger-is-put-on-ride | - | launch refused before MATSim started: no modeParams/RUN/routing.access_egress_type in the config |
-| `aborted_20260910T203622_4it_1pct` | failed | F33-the-passenger-is-put-on-ride | 0 | RuntimeException: Exception while processing persons. Cannot guarantee that all persons have been fully processed. |
-| `20260909T015217_300it_25pct` | completed | F32-crowding-reaches-scoring | 300 | ran_to_last_iteration `_run.json` |
 
-171 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+173 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
