@@ -1,0 +1,19 @@
+{
+  "overlay": "f33_baseline_25pct",
+  "description": "ARM 0 OF FAMILY F33: the baseline, with NO control switched on. It exists for two reasons and both are stated. (a) It is the CONTROL HALF of all five paired arms the separation design orders (#172, decided 10 September 2026): scoring (`RUN.replanning.score_msa_representation`), the choice set (`RUN.replanning.plan_selector_for_removal`), service quality (`C.time_weights.service_quality_representation`), the routers (`C.raptor.mode_cost_representation`) and the pt submodes (`RUN.mode_choice.pt_submode_alternatives`) - every one of which ships at its off value here, so this single arm is what all five are differenced against and it is never wasted. (b) It MEASURES the one control already spent: `B.mode.bound_passenger_placement` = `every_plan`, which puts the declared passenger of an escort pair on `ride` in every seeded plan as the demand has always put the declared driver on `car` (§9.164, #86, #48). Folding a control into this arm was considered and REFUSED - the demand change and the control would then move together and neither would be attributable, which is the failure #172 exists to prevent. WHAT IT MUST READ: all twelve modes on their own bases with choice-set coverage beside each (#174 - a paired difference is not attributable without coverage on both sides); `modes_car_car` and the household roster's own `householdCar: N waited` counter against the landed arm's 10,224 of 20,902 self-driven declared pairs and its 8,550 -> 15,580 waited, because a fall in self-driven bound trips bought by agents queueing for a household car is not the fix #86 asks for (#145); the share of trips under one kilometre against 11.17 % (#30); and the cutoff snap beside the level, not the level alone (§9.162).",
+  "answers_issues": [86, 48, 30, 145, 172],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 300,
+    "RUN.gate.wall_ceiling_h": 26,
+    "RUN.gate.interval_iterations": 0
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration",
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "300 is below the declared sweep's floor of 250-2000 and is the horizon every gate arm since F15 has used, for the reason §9.120 gives: innovation is switched off at 240 under `RUN.replanning.fraction_to_disable_innovation` = 0.8, so a 300-iteration arm's post-cutoff window straddles the 250 GOAL.md requirement 8 asks about, and the relaxation instrument reads exactly there. The declared 1000 was reviewed at §9.142 and deliberately not re-declared to 250, because §9.7 measured 250 insufficient on the pre-rebuild stack and declaring it would assert a value against a measurement.",
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the §9.159 scoped departure, not a new one. Eight modes are past the 20 % stop bar on the landed reading, so the watcher would stop this arm at iteration 100 - and an arm whose whole purpose is to be the control half of five pairs cannot be stopped at a point none of those pairs will be read at. The same departure was taken, with the same reasoning, for `depth_convergence_25pct` (§9.159), and it produced the project's first result since F4. What made that arm indefensible was the OTHER half: it declared no ceiling, so it had no automatic stop of any kind and its approved 32 h was held by a person watching a clock (#169). This arm declares `RUN.gate.wall_ceiling_h` = 26, the operator's stated-cost approval of 10 September 2026, and the ceiling watcher is now PROVEN on a run (`aborted_20260910T205517_20it_1pct`, `completion` `stopped_at_ceiling`). The cost is priced on this family's own bytecode: `20260910T215129_4it_25pct` recurs at 225.0 s, quoting 300 iterations at 19.0 h, with 20.5 h the top of the priced pair and 24.7 h the top of the last five arms' observed spread at this fraction."
+  }
+}

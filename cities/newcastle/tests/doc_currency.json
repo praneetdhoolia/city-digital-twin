@@ -168,7 +168,7 @@
       "id": "status.newest-arm-name",
       "kind": "text",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "newest run on disk is `([^`]+)`, which \\*\\*",
+      "pattern": "newest run on disk is `([^`]+)`, which (?:is )?\\*\\*",
       "truth": {
         "kind": "newest_run",
         "field": "name"
@@ -179,7 +179,7 @@
       "id": "status.newest-arm-state",
       "kind": "text",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "newest run on disk is `[^`]+`, which \\*\\*([A-Z][A-Z ]*[A-Z])\\*\\*",
+      "pattern": "newest run on disk is `[^`]+`, which (?:is )?\\*\\*([A-Z][A-Z ]*[A-Z])\\*\\*",
       "truth": {
         "kind": "newest_run",
         "field": "state",
