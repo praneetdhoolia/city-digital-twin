@@ -1154,6 +1154,40 @@ def pt_passenger_submodes(cfg):
     return [m for m in cfg.get('RUN.transit.transit_modes') if m != 'pt']
 
 
+#: What MATSim writes for `fractionOfIterationsToStartScoreMSA` when nothing
+#: sets it. Taken from the framework's own parameter dump
+#: (config/schema/matsim_defaults.json), never typed as a guess: emitting it is
+#: what makes RUN.replanning.score_msa_representation = `absent` recover the
+#: previous model byte-identically rather than approximately.
+_SCORE_MSA_OFF = 'null'
+
+
+def _score_msa(cfg):
+    """The `derived` runtime entry for score averaging, from its gate.
+
+    A plan's score is either its last execution's (MATSim's default) or a moving
+    average over its executions. The registry declares WHICH as a mode; MATSim
+    reads the iteration fraction at which averaging starts. This is the join,
+    and it invents nothing: the only number it can emit is the innovation cutoff
+    that is already declared.
+    """
+    gate = cfg.get('RUN.replanning.score_msa_representation')
+    if gate == 'absent':
+        return (_SCORE_MSA_OFF, 'derived',
+                'RUN.replanning.score_msa_representation = absent - the literal '
+                'MATSim writes for its own default, so no score averaging')
+    if gate == 'at_innovation_cutoff':
+        return (cfg.get('RUN.replanning.fraction_to_disable_innovation'),
+                'derived',
+                'RUN.replanning.score_msa_representation = at_innovation_cutoff '
+                '- score averaging starts where innovation stops, at '
+                'RUN.replanning.fraction_to_disable_innovation')
+    raise SystemExit(
+        'RUN.replanning.score_msa_representation is %r, which is neither '
+        '`absent` nor `at_innovation_cutoff`. A gate with an unknown value has '
+        'no emission and must not be guessed at.' % (gate,))
+
+
 def scoring_from_c1(cfg, c1, purpose_share):
     """Translate the C1 nested-logit parameters into MATSim scoring.
 
@@ -1414,6 +1448,12 @@ def config_runtime(cfg, scoring, day, paths):
             paths['fraction'] ** cfg.get('RUN.sample.storage_capacity_exponent'),
             'derived', 'storageCapacityFactor = fraction ** '
                        'RUN.sample.storage_capacity_exponent'),
+        # Score averaging is a MODE the registry declares and a NUMBER MATSim
+        # reads, so the gate cannot bind the parameter directly. At `absent`
+        # this writes the literal MATSim writes for its own default, which is
+        # what made the declaration behaviour-neutral; at `at_innovation_cutoff`
+        # it writes the innovation cutoff itself, introducing no new value.
+        'scoring.fractionOfIterationsToStartScoreMSA': _score_msa(cfg),
         # The charged parking window is one field carrying a window per day type;
         # MATSim reads two parameters. Which day this set is for is not a
         # registry value, so the selection happens here.

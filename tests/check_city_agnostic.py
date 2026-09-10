@@ -253,6 +253,8 @@ def emit_for(city_id, scenario, day):
         '  "parking.priceFile": ("k", "path", ""),\n'
         '  "qsim.flowCapacityFactor": (cfg.get("RUN.sample.fraction"), "derived", "f"),\n'
         '  "qsim.storageCapacityFactor": (cfg.get("RUN.sample.fraction"), "derived", "f"),\n'
+        '  "scoring.fractionOfIterationsToStartScoreMSA": '
+        '("null", "derived", "fixture"),\n'
         '  "parking.chargedStartHour": (0.0, "derived", "fixture"),\n'
         '  "parking.chargedEndHour": (0.0, "derived", "fixture"),\n'
         '  "scoring.waitingPt": (-1.0, "derived", "fixture"),\n'

@@ -236,6 +236,41 @@
       "matsim_param": "timeAllocationMutator.mutationRange",
       "description": "The half-width of the uniform departure-time mutation TimeAllocationMutator applies. A property of the MATSim search, not an observable of Newcastle - but a CONTROLLABLE one, and it was reaching the model as a framework default that no layer stated and no sweep covered. It is declared here because it is the mechanism measured (9.85) to decohere the joint household pairs the B2 binder generates: the mutator moves each member independently, so a pair generated to depart together drifts apart at this scale."
     },
+    "RUN.replanning.score_msa_representation": {
+      "value": "absent",
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "at_innovation_cutoff"
+        ],
+        "basis": "Whether a plan's score is a MOVING AVERAGE over its executions once innovation stops, or the single most recent execution. absent: the pre-change state and MATSim's own default - scoring.fractionOfIterationsToStartScoreMSA is `null`, every plan carries the score of its last execution, and at the innovation cutoff every agent selects the maximum of noisy single-execution scores simultaneously. at_innovation_cutoff: the fraction is set to RUN.replanning.fraction_to_disable_innovation, so score averaging begins exactly where new-plan creation ends, which is the pairing the MATSim reference text describes. It introduces NO NEW NUMBER - the fraction is the innovation cutoff already declared - so this gate is not a value to calibrate but a consistency between what the search stops doing and what the score starts meaning. `absent` is shipped because switching it on is a real change to how every plan is scored and belongs to an arm that declares it. Named as the one-field candidate cause of the convergence penalty by the 10 September 2026 assessment: it predicts BOTH measured symptoms of `20260909T015217_300it_25pct` - the +2.211 pp car snap at the cutoff and the average plan score peaking at 19.2049 and then falling to 14.5679 - and no other single field predicts either. One-gate discipline mirroring C.crowding.representation and C.raptor.mode_cost_representation: `absent` recovers the previous model exactly, and it is emitted as the literal MATSim writes for its own default, so the recovery is byte-identical rather than asserted. WHAT THE SWEEP ANSWERS: Which of the three candidate causes of the convergence penalty - the scoring function, the choice set, or the routers - is responsible is the open question (#163, #172). This gate tests the scoring-function branch at the cost of one arm and is the only one of the three that is a single field."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.7, 9.162",
+      "consumers": [
+        "src/build/build_matsim_run_inputs.py"
+      ],
+      "description": "The representation gate for score averaging after the innovation cutoff. It has no matsim_param of its own because the parameter it decides takes a NUMBER, not a mode: the builder supplies scoring.fractionOfIterationsToStartScoreMSA under the `derived` runtime role - the string MATSim writes for its own default when this is `absent`, and RUN.replanning.fraction_to_disable_innovation when it is `at_innovation_cutoff`. Declaring it is behaviour-neutral; the arm that flips it is not."
+    },
+    "RUN.replanning.score_msa_fraction": {
+      "value": null,
+      "units": "share_of_iterations",
+      "source": "derived",
+      "status": "computed",
+      "decisions_ref": "9.7, 9.162",
+      "matsim_param": "scoring.fractionOfIterationsToStartScoreMSA",
+      "description": "The iteration fraction at which a plan's score becomes a moving average over its executions. DERIVED and never free: it is MATSim's own `null` while RUN.replanning.score_msa_representation is `absent`, and exactly RUN.replanning.fraction_to_disable_innovation when the gate is `at_innovation_cutoff`. There is no third value, and inventing one would separate the moment the search stops creating plans from the moment the score stops being a single noisy execution - which is the pairing the whole change exists to make. Set by the harness at run time; src/build/build_matsim_run_inputs.py supplies it under the `derived` runtime role.",
+      "derived_from": {
+        "fields": [
+          "RUN.replanning.score_msa_representation",
+          "RUN.replanning.fraction_to_disable_innovation"
+        ],
+        "identity": "absent -> MATSim's own default literal `null` (no averaging); at_innovation_cutoff -> RUN.replanning.fraction_to_disable_innovation"
+      }
+    },
     "RUN.replanning.fraction_to_disable_innovation": {
       "value": 0.8,
       "units": "share_of_iterations",
