@@ -168,18 +168,18 @@
       "id": "status.newest-arm-name",
       "kind": "text",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "newest arm `([^`]+)` is \\*\\*",
+      "pattern": "newest run on disk is `([^`]+)`, which \\*\\*",
       "truth": {
         "kind": "newest_run",
         "field": "name"
       },
-      "note": "the phase table's P4 cell names the arm whose state it then states; naming a run the store does not hold at the top of the board is how a stale cell survives a family boundary"
+      "note": "the phase table's P4 cell names the arm whose state it then states; naming a run the store does not hold at the top of the board is how a stale cell survives a family boundary RE-AIMED 10 Sep 2026 (§9.164): the cell said \"newest arm\" and the newest run is now a 1 % PROBE, which this project does not call an arm. The claim is about whatever the store holds newest, so it is re-aimed rather than retired."
     },
     {
       "id": "status.newest-arm-state",
       "kind": "text",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "newest arm `[^`]+` is \\*\\*([A-Z][A-Z ]*[A-Z])\\*\\*",
+      "pattern": "newest run on disk is `[^`]+`, which \\*\\*([A-Z][A-Z ]*[A-Z])\\*\\*",
       "truth": {
         "kind": "newest_run",
         "field": "state",

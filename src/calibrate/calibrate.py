@@ -295,8 +295,39 @@ def sweep_interval(field):
     return None, None
 
 
-def objective(fit, components):
-    """Scalar objective from a fit block. A missing component is an error."""
+def objective(fit, components, band_pp):
+    """Scalar objective from a fit block. A missing component is an error.
+
+    ``band_pp`` is the REPLICATION BAND (DECISIONS.md 9.164, #163): the spread
+    a component takes across runs of the SAME configuration, in the component's
+    own units. A MATSim run is not bit-reproducible - within
+    ``20260909T015217_300it_25pct``, with nothing changed, the folded objective
+    moves 0.272-0.418 pp between iterations 80 and 100 - so some part of every
+    deviation this loop chases is seed scatter, and a search that chases it is
+    fitting noise.
+
+    The form is the one history matching uses. Its implausibility statistic is
+    ``|observed - modelled|`` over a denominator that includes model
+    discrepancy and observational noise; this objective was a bare maximum over
+    twelve modes with NO DENOMINATOR AT ALL. Dividing by the band makes the
+    objective count HOW MANY BANDS OUT a mode is, so a deviation inside the
+    noise scores below one and stops being worth an arm.
+
+    A band of zero divides by nothing: the objective is the raw maximum,
+    exactly as before, and that is the value
+    ``CAL.objective.replication_band_pp`` ships at. **THE BAND MUST BE MEASURED
+    BEFORE IT IS SET.** Inventing a denominator would be precisely the failure
+    this project cannot absorb, which is why the field that carries it ships at
+    zero and why this function refuses a negative one rather than taking its
+    absolute value. There is deliberately NO DEFAULT on this argument: a
+    default here would be the same value decided in two places, and every
+    caller reads it from the registry through :func:`replication_band`.
+    """
+    if band_pp < 0.0:
+        raise SystemExit(
+            'the replication band is %r. A negative band is not a spread; it '
+            'is a sign error that would flip the objective. It is declared as '
+            'CAL.objective.replication_band_pp.' % band_pp)
     total = 0.0
     parts = {}
     for path, weight in sorted(components.items()):
@@ -312,8 +343,19 @@ def objective(fit, components):
         if not isinstance(node, (int, float)):
             raise SystemExit('objective component %r is not a number' % path)
         parts[path] = node
-        total += weight * float(node)
+        total += weight * (float(node) / band_pp if band_pp > 0.0
+                           else float(node))
     return total, parts
+
+
+def replication_band(cfg):
+    """The declared replication band, and the note that goes with it."""
+    band = float(cfg.get('CAL.objective.replication_band_pp'))
+    note = ('none - the objective is the raw maximum, and no deviation on the '
+            'board carries an error bar (#163)' if band <= 0.0 else
+            'CAL.objective.replication_band_pp = %g: the objective counts how '
+            'many bands out the worst mode is' % band)
+    return band, note
 
 
 def feasible(fit):
@@ -410,7 +452,8 @@ def write_constrained_base(scenario, day, run_config, tag):
     audit_no_holdout(f)
     ok, why = feasible(f)
     comps = cfg.get('CAL.objective.components')
-    obj, parts = objective(f, comps)
+    band, band_note = replication_band(cfg)
+    obj, parts = objective(f, comps, band)
     excluded = []
     free = free_parameters(cfg, excluded)
     result = dict(
@@ -420,6 +463,8 @@ def write_constrained_base(scenario, day, run_config, tag):
         branch='constrain-and-report (DECISIONS.md 8.5 second branch, 9.50)',
         decisions_ref='9.50',
         objective_components=comps,
+        replication_band_pp=band,
+        replication_band=band_note,
         independent_targets=int(cfg.get('CAL.objective.independent_targets')),
         free_parameters=[],
         search_declined=dict(
@@ -703,7 +748,7 @@ def main():
                                      % (step, r.returncode, label))
         f = json.load(open(fit_path, encoding='utf-8'))
         audit_no_holdout(f)
-        obj, parts = objective(f, comps)
+        obj, parts = objective(f, comps, replication_band(cfg)[0])
         ok, why = feasible(f)
         rec = dict(tag=name, candidate=label, overrides=dict(overrides),
                    objective=obj, components=parts, feasible=ok,

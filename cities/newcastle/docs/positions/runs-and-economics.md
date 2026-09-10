@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 
@@ -28,6 +28,9 @@
 - **Warm restart.** `--warm-start <dead run dir>` resumes from a dead run's newest plans checkpoint and records `warm_started_from` in `_run.json`; it is crash recovery, not a bit-identical continuation, and whether a warm-completed arm counts as an arm is a project ruling, not the harness's (#75, §9.76).
 - **Live view.** `RUN.monitor.enabled` = true serves an observer-only page on `RUN.monitor.port` = 8731, re-reading every `RUN.monitor.poll_s` = 3 s and calling a run stalled after `RUN.monitor.stall_s` = 300 s of log silence (§9.36).
 - **The toolchain** is fetched by `src/setup/bootstrap_toolchain.py` and pinned by sha256 in `.tools/toolchain.json`: JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25, §9.73), Maven 3.9.9 and the 201-jar signals run stack at that same MATSim version (§9.76). Signal runs execute `citysim.CitysimSignalsControler` on the run stack; every other run uses the shaded jar; the two never share a classpath. `--verify` re-hashes both and **recompiles both class trees** — it is not the read-only word it looks like (§9.156). Every component now passes an EXPECTED digest to `download()`: `PT2MATSIM_SHA256` was added 8 Sep because pt2matsim alone passed `None`, so its recorded pin described what arrived rather than what was expected, and it is pinned to the jar every mapped schedule in this package was built with (§9.156).
+
+- **FOUR 1 % STRUCTURAL PROBES, AND THE ONLY THING THEY MAY BE READ FOR IS A YES OR A NO** (§9.164). `aborted_20260910T203622_4it_1pct` and `aborted_20260910T204626_4it_1pct` died at `PersonPrepareForSim` under `accessEgressModeToLink` (38-39 s each); `20260910T204747_4it_1pct` closed `ran_to_last_iteration` at 4 of 4 on the rebuilt demand with the field at `none`; `aborted_20260910T205517_20it_1pct` closed **`stopped_at_ceiling`** at `reached_iteration` 3 after 181 s against a 0.05 h ceiling. **No share, count, boarding or fit from any of them may be quoted** - the fraction is a twenty-fifth of an arm's and the horizon a seventy-fifth. Total machine time this session: **under five minutes of JVM**, and no approval was sought or spent.
+- **THE LAUNCH BANNER STATED A CEILING THAT WAS NOT THE ONE ENFORCED** (§9.164). It printed `%.1f h`, so the 0.05 h ceiling the probe actually ran under was announced as 0.1 h. A run stopped on cost also announced itself as `STOPPED BY THE OPERATOR` while its own record said `stopped_at_ceiling`. Both are fixed; both are the class where the label and the record disagree.
 
 ## What is measured — what a run costs
 
@@ -113,6 +116,7 @@
 
 ## History
 
+- §9.164 — four probes; the ceiling watcher stops a run for the first time
 - §9.163 — 21.5 h uninterrupted; the stall is unattributed, not absent
 - §9.161 — the runner enforces its own approved ceiling
 - §9.160 — the new stack priced: +3.0 s; the ceiling has no enforcer
@@ -123,8 +127,4 @@
 - §9.155 — the events knob bracketed; 120 s priced as unreachable
 - §9.154 — the iteration decomposed to the method; a plain one 310 → 205.5 s
 - §9.153 — F30 stopped at 23: 376 s an iteration against F28's 260
-- §9.152 — the toolchain gate was green on a checkout that could not launch
 - §9.149 — F28 to its gate at a median 260 s an iteration
-- §9.147 — a milestone cost twice a plain iteration; cadence, detours, threads cut
-- §9.143 — a stopped run closes itself out; the pace measured
-- §9.142 — the iteration profiled; 60% is one hoistable call

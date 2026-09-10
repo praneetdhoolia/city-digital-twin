@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 
@@ -29,6 +29,9 @@
 
 - **`C.asc.ferry` DID NOT EXIST until §9.158.** Ferry is a scored pt submode under `RUN.routing.pt_submode_scoring` = `per_submode` (§9.78) and it silently inherited `asc_bus`, so the run-input report stated an inheritance rather than a declared value. It is now declared at −1.05 — the inherited value, so creating it is behaviour-neutral — with a sweep [−2.05, −0.05]. `C.asc.light_rail` −0.75 moves from `held_fixed` to [−1.75, 0.25]. Half-width derived two ways: `C.taxi.asc` (§9.76) is the registry's only other mode-ASC sweep at 2.0 utils wide, and one util is 3.54 minutes of in-vehicle time at this model's own scale. **The §8.5 departure for both is logged at §9.158, before any run reads them.**
 - **A PT constant is a PLAN-CHOICE lever and never a SUBMODE lever** (§9.158, §9.130). SwissRailRaptor's cost carries **no mode constant, no fare and no distance term** — `RaptorUtils.createParameters` prices travel time, waiting and a line switch and nothing else, read out of the pinned jar. So `C.asc.light_rail` can make a person choose pt over car; it cannot make the raptor choose the tram over the bus. **The interval is a BRACKET, not a licence to fit**: light rail is the mode the intervention runs through, and §8.5's refusal binds hardest here.
+
+- **THE PT SUBMODES CAN BECOME PLAN-LEVEL ALTERNATIVES** (§9.164, #49). `RUN.mode_choice.modes` offers `pt` as ONE alternative and the raptor picks the submode downstream, which is why only **974 of 154,347 persons (0.63 %)** ever held plans differing in submode (§9.160) - so a scoring constant reallocates between bus, rail, tram and ferry for under one per cent of the population, and light rail's -57.3 % against heavy rail's +225.0 % is decided in a layer with almost no control. `citysim.SubmodeRaptorProvider` builds one SwissRailRaptor per submode over a schedule FILTERED to that submode's own routes and binds each as a plan-level routing module, behind `RUN.mode_choice.pt_submode_alternatives` (`aggregate` shipped; `alternatives`). It filters the SCHEDULE and not the ANSWER on purpose: refusing an itinerary because it used the wrong submode would report a submode as infeasible exactly where it competes hardest.
+- **What turning it on COSTS is stated, not hidden** (§9.164): under `alternatives` the umbrella leaves the choice set, so no single plan-level trip can combine two submodes and a bus-then-train journey is no longer representable. **The arm that spends it must read multi-leg pt trips on both sides**, which is why the gate ships at `aggregate`. Seeded `pt` legs are rewritten to `RUN.mode_choice.pt_submode_seed` (`bus`) with a count in the log, because a seeded subtour on a mode outside the choice set is the absorbing state `RUN.mode_choice.modes` already records for `ride`.
 
 ## What is measured
 
@@ -90,6 +93,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.164 — the pt submodes get a plan-level control
 - §9.163 — the ferry market is present at 3.60 %; the mode is not chosen
 - §9.158 — a ferry constant declared, light rail's opened; the raptor prices no constant
 - §9.162 — the first result: light rail −57.3 %, moving away

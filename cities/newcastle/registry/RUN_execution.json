@@ -443,6 +443,42 @@
       "matsim_param": "subtourModeChoice.coordDistance",
       "description": "Distance within which two activity coordinates count as the same subtour location. At the default 0 two activities metres apart open a subtour that can never close."
     },
+    "RUN.mode_choice.pt_submode_alternatives": {
+      "value": "aggregate",
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "aggregate",
+          "alternatives"
+        ],
+        "basis": "Whether the four scheduled PT submodes are ALTERNATIVES A PLAN CAN HOLD, or one `pt` alternative whose submode a router picks. `aggregate` is the pre-change state and every arm this project has run: RUN.mode_choice.modes offers `pt`, SwissRailRaptor decides bus against rail against tram against ferry downstream, and a whole-file pass over the F31 arm's plan memory found 974 of 154,347 persons - 0.63 % - holding plans that differ in which submode they use (9.160). So a declared submode constant reallocates between submodes for under one per cent of the population, and C.asc.bus and C.asc.light_rail are plan-choice levers (pt against car) rather than submode levers. `alternatives` installs one SwissRailRaptor per submode over that submode's own routes and binds each as the routing module for a plan-level mode of the same name, so SubtourModeChoice proposes `bus` against `rail` the way it proposes `car` against `bike`. WHAT THE SWEEP ANSWERS: how much of light rail's -57.3 % against heavy rail's +225.0 % - two halves of one split - is a preference and how much is a choice set that never held the alternative. IT COSTS SOMETHING REAL AND THE ARM MUST READ IT: under `alternatives` no single plan-level trip can combine two submodes, because the umbrella that represented a bus-then-train journey is out of the choice set. Multi-leg pt trips must be read on BOTH arms of the pair, and the gate ships at `aggregate` for that reason."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "ptSubmodeChoice.representation",
+      "description": "The representation gate for plan-level PT submode choice (#49; the 20 August 2026 individualise-every-mode directive, Tier C). `aggregate` recovers the previous model exactly - nothing installs and the stock single raptor answers `pt`. Under `alternatives` citysim.SubmodeRaptorProvider builds a filtered-schedule raptor per submode, and citysim.PtSubmodeChoiceConfigGroup.applyChoiceSet derives the plan-level choice set by replacing `pt` in RUN.mode_choice.modes with RUN.transit.transit_modes minus the umbrella - a DERIVED transformation logged at startup, because subtourModeChoice.modes already has one declared writer and a second is refused by the emitter. Seeded `pt` legs are rewritten to RUN.mode_choice.pt_submode_seed at startup, with a count, since a seeded subtour on a mode outside the choice set is an absorbing state."
+    },
+    "RUN.mode_choice.pt_submode_seed": {
+      "value": "bus",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "bus",
+          "rail",
+          "tram",
+          "ferry"
+        ],
+        "basis": "The declared submode vocabulary. `bus` is the value because it is the only submode with network-wide coverage - 1,448 of the 2,139 mapped transit vehicles - so a seeded pt leg rewritten to it is a plan the router can answer almost anywhere, while a rewrite to `ferry` (107 vehicles, one crossing) would be refused for nearly every seeded trip and the person would start the search with no pt plan at all. WHAT THE SWEEP ANSWERS: whether the submode split the search settles at depends on where it starts. It is inert unless RUN.mode_choice.pt_submode_alternatives is `alternatives`, and the seed biases where the search starts, never what selection keeps."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "ptSubmodeChoice.seedSubmode",
+      "description": "The submode a seeded `pt` leg is rewritten to when RUN.mode_choice.pt_submode_alternatives is `alternatives`. Inert under `aggregate`, where `pt` stays in the choice set and no rewrite happens. Consumed by citysim.SubmodeRaptorProvider.reseedPtLegs, which logs the leg and person counts it rewrote."
+    },
     "RUN.transit_router.max_beeline_walk_connection_m": {
       "value": 300.0,
       "units": "metres",
@@ -593,6 +629,23 @@
         "src/java/citysim/NetworkDirectWalkPtRouter.java"
       ],
       "description": "What the PT router's direct-walk alternative IS: `beeline` (SwissRailRaptor's own, drawn straight across the map at transitRouter.beelineWalkSpeed) or `network` (citysim.NetworkDirectWalkPtRouter: the walk routing module's route on the walk network, priced with the raptor's own walk disutility and RUN.transit_router.direct_walk_factor, compared against the transit route's own cost). The ferry's market is a 640 m water crossing with a 20 km road detour; a beeline direct walk erases it."
+    },
+    "RUN.transit_router.additional_transfer_time_s": {
+      "value": 0.0,
+      "units": "s",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          120.0
+        ],
+        "basis": "0.0 is the framework default this model has been running - a transferring passenger is assumed to need no time at all beyond the walk between stops. The upper bound is two minutes, the order of a safety margin a real passenger allows at an interchange. WHAT THE SWEEP ANSWERS: whether the raptor's willingness to build multi-leg itineraries is an artefact of costless transferring. It is NOT the same quantity as C.time_weights.beta_transfer_penalty_min, which prices the DISUTILITY of a transfer in the scoring function; this one changes which itineraries the router will return at all. #175 names it as the parameter anything charged in the raptor layer would interact with."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "transitRouter.additionalTransferTime",
+      "description": "Extra seconds the transit router allocates at a line switch, MATSim's own \"safety time that agents need to safely transfer from one line to another\". One of the 21 undeclared defaults (#155), declared at the framework's 0.0 so the shipped model is unchanged."
     },
     "RUN.routing.network_modes": {
       "value": [
@@ -1003,6 +1056,23 @@
       "matsim_param": "scoring.waiting",
       "description": "Disutility of general waiting, over and above the opportunity cost of the time. NOT the public-transport wait - that is scoring.waitingPt, derived from C.time_weights.beta_wait, and confusing the two is the DECISIONS.md 9.28 defect class."
     },
+    "RUN.scoring.path_size_logit_beta": {
+      "value": 1.0,
+      "units": "dimensionless",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.5,
+          2.0
+        ],
+        "basis": "The path-size correction's exponent in the path-size logit of Ben-Akiva and Bierlaire (1999); 1.0 is the standard formulation and the framework default. WHAT THE SWEEP ANSWERS: how strongly two plans that overlap are treated as one alternative rather than two. It reads only under a path-size-logit selector, which is why it is declared in the same change as RUN.replanning.plan_selector_for_removal: `PathSizeLogitSelectorForRemoval` is one of that field's sweep members, and an arm that spent it would otherwise be spending this undeclared value with it."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "scoring.pathSizeLogitBeta",
+      "description": "The path-size logit's beta. Inert under the shipped RUN.replanning.plan_selector_for_removal = WorstPlanSelector and under the shipped plan-selection strategies, and declared anyway because it stops being inert the moment the selector sweep is spent (#155, #174). Declared at the framework's 1.0 so the shipped model is unchanged."
+    },
     "RUN.replanning.subpopulations": {
       "value": [
         "person",
@@ -1015,6 +1085,26 @@
       "status": "active",
       "decisions_ref": "15",
       "description": "The subpopulations the replanning strategies are applied to. A vocabulary the model is defined over, not a value to tune: `person` is a modelled resident of the study area, `external` is a boundary-tier agent, and `freight` is a heavy-vehicle background agent (9.49) whose mode is locked to truck. The strategy set is emitted once per subpopulation, so this decides HOW MANY strategysettings blocks the config carries."
+    },
+    "RUN.replanning.plan_selector_for_removal": {
+      "value": "WorstPlanSelector",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "WorstPlanSelector",
+          "SelectRandom",
+          "SelectExpBetaForRemoval",
+          "ChangeExpBetaForRemoval",
+          "PathSizeLogitSelectorForRemoval"
+        ],
+        "basis": "MATSim's own five shipped selectors, and its own comment on the parameter: \"The current default, WorstPlanSelector is not a good choice from a discrete choice theoretical perspective. Alternatives, however, have not been systematically tested.\" WHAT THE SWEEP ANSWERS: whether a mode's choice-set coverage is a preference or an artefact of deletion (#174). Coverage at iteration 300 of 20260909T015217_300it_25pct ranks the modes in the SAME ORDER as their attractiveness under the current scoring - car 77.55 %, walk 63.95 %, taxi 54.62 %, bike 29.03 %, pt 25.78 %, ride 20.05 % - which is exactly the pattern WorstPlanSelector would produce, since a mode whose plans score badly is evicted before it can be chosen, and its low share is then read at the gate as taste. `SelectRandom` breaks that feedback and is the control arm. The correlation has an innocent explanation too (an unattractive mode is proposed less often), and separating them is what the paired arm is for."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "replanning.planSelectorForRemoval",
+      "description": "Which of an agent's plans is deleted when a new one arrives and plan memory (RUN.replanning.max_agent_plan_memory = 8) is full. It was the sharpest of the 21 undeclared defaults (#155, #174): the choice set is one of the three layers #172 names as a candidate cause of the convergence penalty, and it was the only one of the three with NO CONTROL AT ALL until this field existed. Declared at the framework's WorstPlanSelector so the shipped model is unchanged and the control is now spendable."
     },
     "RUN.transit.use_transit": {
       "value": true,
@@ -1115,6 +1205,57 @@
         "src/build/build_matsim_run_inputs.py"
       ]
     },
+    "RUN.qsim.traffic_dynamics": {
+      "value": "queue",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "queue",
+          "kinematicWaves"
+        ],
+        "basis": "MATSim's own two implemented alternatives for the qsim (withHoles is present in the enum and documented `not implemented` in the framework's hermes comment, so it is not a member here). `queue` is a vertical queue: a link's storage fills, but the fact that it is full propagates upstream instantly rather than at the speed a real jam's tail travels. `kinematicWaves` propagates the backward wave at a finite speed, which is what a congested arterial actually does. WHAT THE SWEEP ANSWERS: how much of the network's congestion pattern - and therefore of car's route and mode choice - is an artefact of instantaneous spillback. It bears directly on GOAL.md requirement 1 (real roads, real layouts): a twin that propagates jams instantly is not reproducing the physics it claims. Shipped at `queue`, the value every arm this project has run used, so declaring it changes nothing."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "qsim.trafficDynamics",
+      "description": "How a full link's storage capacity is released back to the vehicles behind it. One of the 21 MATSim defaults that decided this model unreviewed (#155): the framework chose `queue` on every arm this project ever ran and no layer of this repository had ever said so. Declared at that same value, so the shipped model is unchanged and the choice is now visible and swept."
+    },
+    "RUN.qsim.stuck_time_s": {
+      "value": 10.0,
+      "units": "s",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          10.0,
+          600.0
+        ],
+        "basis": "The lower bound is the framework default this model has been running; the upper is ten minutes, past which a vehicle that has not moved is better described as a demand defect than as congestion. WHAT THE SWEEP ANSWERS: how much of the network's throughput is vehicles being TELEPORTED forward rather than driven. With qsim.removeStuckVehicles false, a vehicle stuck for this long is pushed onto the next link REGARDLESS OF AVAILABLE CAPACITY - a capacity violation the model commits silently, and at 10 s it commits it early. It matters more now than it did: B.population.vehicle_roster = census plus RUN.qsim.vehicle_behavior = wait deliberately holds a second driver at a link until the household car returns (#145), and a wait is not a stuck vehicle."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "qsim.stuckTime",
+      "description": "Seconds the frontmost vehicle on a link may fail to move before the mobsim calls it stuck. One of the 21 undeclared defaults (#155). Declared at the framework's own 10.0 so the shipped model is unchanged; it is the threshold at which RUN.qsim.remove_stuck_vehicles decides what happens next."
+    },
+    "RUN.qsim.remove_stuck_vehicles": {
+      "value": false,
+      "units": "boolean",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          false,
+          true
+        ],
+        "basis": "MATSim's own comment on this parameter reads \"`false' is probably the better choice\" - a framework author's judgement, not an observation of Newcastle, which is why this is `assumed` and not `definition`. WHAT THE SWEEP ANSWERS: whether the throughput this network reports is real. At false a stuck vehicle is forced onto the next link with no capacity available, so a saturated corridor keeps discharging and its count reads higher than the road could carry; at true the plan is aborted instead, which shows up as stuck agents and a lost trip. The count-station rung (+16.30 % mean on the repaired map, 9.163) is the reading this bears on."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "qsim.removeStuckVehicles",
+      "description": "What the mobsim does with a vehicle that has been stuck for RUN.qsim.stuck_time_s: false forces it onto the next link regardless of capacity, true removes it and aborts the plan. One of the 21 undeclared defaults (#155), declared at the framework's false so the shipped model is unchanged."
+    },
     "RUN.travel_time.separate_modes": {
       "value": false,
       "units": "boolean",
@@ -1163,6 +1304,40 @@
       "decisions_ref": "9.76, 9.77",
       "matsim_param": "travelTimeCalculator.travelTimeBinSize",
       "description": "The travel-time calculator's aggregation bin. Lowered from MATSim's 900 s default to 300 s at the 9.77 activation boundary so the router can see a level-crossing closure (60-600 s swept) that is shorter than a bin. 300 s is the largest bin that resolves the sweep's central 240 s closure."
+    },
+    "RUN.travel_time.aggregator": {
+      "value": "optimistic",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "optimistic",
+          "experimental_LastMile"
+        ],
+        "basis": "MATSim's own two alternatives, with its own comment naming the flaw in each: \"`optimistic' assumes free speed (too optimistic); 'experimental_LastMile' is experimental and probably too pessimistic.\" WHAT THE SWEEP ANSWERS: what the router believes a link costs in a five-minute bin no vehicle entered. Under `optimistic` a link that is jammed solid - so jammed that nothing entered it in the bin - is priced at FREE SPEED, which is the worst possible estimate at exactly the moment the estimate matters. #154 names this and travelTimeGetter as the two unstated defaults that would otherwise sit inside the filter_modes paired difference."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "travelTimeCalculator.travelTimeAggregator",
+      "description": "How a congested time bin with no link entry event is priced for the router. One of the 21 undeclared defaults (#155), and one of the two #154 asks be declared BEFORE the filtered-travel-time arm, so the paired difference does not carry two unstated defaults inside it. Declared at the framework's `optimistic` so the shipped model is unchanged."
+    },
+    "RUN.travel_time.getter": {
+      "value": "average",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "average",
+          "linearinterpolation"
+        ],
+        "basis": "MATSim's own two alternatives. `average` returns one number for the whole RUN.travel_time.bin_size_s bin, so a departure at the start of a bin and one at its end are told the same travel time; `linearinterpolation` interpolates between adjacent bins. WHAT THE SWEEP ANSWERS: how much of the peak-shoulder behaviour in this model is a 300-second step function. It matters most where the gradient is steepest - the shoulders of the morning peak, which is where the departure-time mutator is doing its work."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "travelTimeCalculator.travelTimeGetter",
+      "description": "How a link entry time inside a travel-time bin is turned into a travel time for the router. The second of the two defaults #154 asks be declared before the filtered-travel-time arm (#155). Declared at the framework's `average` so the shipped model is unchanged."
     },
     "RUN.telemetry.live_interval_s": {
       "value": 3600,
@@ -1234,15 +1409,57 @@
       "matsim_param": "routing.teleportedModeParameters[non_network_walk].beelineDistanceFactor",
       "description": "Straight-line to path-distance ratio for the teleported access/egress stub walk. The measured walk detour factor, retired from the MAIN walk mode when walk became network-simulated (whose realised detour is now the road graph own), surviving here in its remaining teleported role."
     },
+    "RUN.routing.access_egress_consistency_check": {
+      "value": "reroute",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "reroute",
+          "disable",
+          "abortOnInconsistency"
+        ],
+        "basis": "MATSim's own three settings for what happens when an input plan's trips do not carry the access and egress legs the routing configuration says they should. It was one of the 21 undeclared MATSim defaults (#155) and it was ACCEPTED there, on the reasoning that RUN.routing.access_egress_type was `none` so no leg was expected to carry an access stub and the check had nothing to find - with the entry stating in terms that it becomes a decision the moment that field stops being `none`. It has. WHAT THE SWEEP ANSWERS: whether MATSim's own repair of an input plan is the mechanism that produces the trips PersonPrepareForSim then rejects. `reroute` repairs rather than aborts and is the conservative setting when nothing is expected to be wrong; `abortOnInconsistency` refuses instead of repairing, which is the diagnostic setting - it names the trips rather than rewriting them; `disable` leaves input plans alone and lets the ordinary router build the access legs on its own first pass."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "routing.accessEgressConsistencyCheck",
+      "description": "What MATSim does with an input plan whose trips carry no access or egress legs. Declared, and shipped at the framework's `reroute` so the emitted config is unchanged, because RUN.routing.access_egress_type is no longer `none` and this parameter stopped being inert the moment it changed. It is the field an accessEgressModeToLink arm sweeps when PersonPrepareForSim rejects a trip the model did not write."
+    },
     "RUN.routing.access_egress_type": {
       "value": "none",
       "units": "policy",
-      "source": "definition",
-      "sweep": null,
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "none",
+          "accessEgressModeToLink"
+        ],
+        "basis": "Whether a network-mode trip pays anything to REACH the network. `none` is the shipped value and it means a car trip costs its travel time and 18 c/km and nothing else - no walk to the parked car at either end, no walk from it at the destination. The consequence is measured and it is the sharpest single mechanism on the board: car's share is nearly INDEPENDENT OF DISTANCE - 63.1 % of trips under one kilometre against 76.9 % over twenty - and its share of sub-kilometre trips rises monotonically 45.4 -> 63.1 % as the search converges (10 September 2026 assessment, recommendation 4). A fixed per-trip cost is what separates a short trip from a long one, and this model charges none. WHAT THE SWEEP ANSWERS: how much of car's +11.3 %, walk's -26.5 % and bike's +113.0 % is the absence of that cost. IT IS NOT YET RUNNABLE AND THE REASON IS MEASURED, NOT ASSUMED (9.164, #167): at `accessEgressModeToLink` the run dies in PersonPrepareForSim on \"Found a trip whose legs have different routingModes\" - 40 agents at 1 % before this project's plans declared a routing mode, and **20 after**, so the missing attribute 9.161 named was real and was HALF the cause. The residual is created inside MATSim's own pre-sim pass, not in the input: MATSim's own reader finds 0 multi-leg trips and 0 mixed trips over all 6,347 persons of the probe's population (measured), and RUN.routing.access_egress_consistency_check = `disable` leaves the count at 20 unchanged. The same package at `none` runs its four iterations clean (20260910T204747_4it_1pct, 0 routingMode errors)."
+      },
       "status": "active",
-      "decisions_ref": "9.54",
+      "decisions_ref": "9.54, 9.161, 9.164",
       "matsim_param": "routing.accessEgressType",
-      "description": "How a network-mode trip connects an activity to its first link. Set to none when walk became a NETWORK mode (9.54), because the default (accessEgressModeToLink) creates beeline stub legs of MODE walk - and the qsim casts every main-mode leg route to a NetworkRoute at agent insertion (PopulationAgentSource, measured: the 9.54 probe died on exactly that ClassCastException). The alternative (walkConstantTimeToLink) needs per-mode access/egress-time attributes on every link - a declared constant nobody has observed. Consequence stated: the stub access walk between an activity and its link is no longer a scored leg; it was a beeline artefact, and the 9.54 comparability break owns the scoring change."
+      "description": "How a network-mode trip connects an activity to its first link. Held at `none` since 9.54, when walk became a NETWORK mode: the default creates beeline stub legs, and MATSim's qsim casts every main-mode leg's route to a NetworkRoute at agent insertion, so a stub of mode `walk` killed the 9.54 probe with a ClassCastException. BOTH obstacles are now gone and neither was removed for this field's sake. (1) citysim.TolerantAgentSource and citysim.GenericRouteTeleporter already carry a main-mode leg with a generic route - built for the transit router's own stubs, with `walk` the single declared exception and every other network mode refused loudly. (2) The second failure, measured on 9.161, was ours: under accessEgressModeToLink the router turns a one-leg trip into three, and because this project's plans declared NO routingMode, MATSim inferred each inserted leg's from its own mode - `walk` stubs against a `car` main leg - and PersonPrepareForSim rejected the trip the router had just built on 40 agents. src/build/build_matsim_plans.py now emits routingMode on every leg, equal to that leg's own mode, which is a no-op at `none` and the whole of what was missing here. For every main mode but walk the inserted stub is `non_network_walk`, whose teleported parameters this model already declares; for walk itself it is a walk stub, claimed by the teleporter under its one declared exception. A MODEL CHANGE and a family boundary: it puts a fixed cost on every network-mode trip for the first time.",
+      "sweep_role": "answer"
+    },
+    "RUN.routing.routing_randomness": {
+      "value": 3.0,
+      "units": "dimensionless",
+      "source": "literature",
+      "sweep": {
+        "interval": [
+          0.0,
+          5.0
+        ],
+        "basis": "0.0 is a deterministic least-cost router - every agent between one pair of links takes the identical path - and 3.0 is the value MATSim's own comment recommends (\"3.0 seems to be a good value\"), the width parameter of the log-normal distribution the money-versus-time trade-off is drawn from. WHAT THE SWEEP ANSWERS: how much of the route spread on this network is heterogeneous taste and how much is the network's own geometry. It bears on the count rung directly, because a deterministic router concentrates flow onto single links and a random one spreads it across parallel ones."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "routing.routingRandomness",
+      "description": "The width of the random utility the least-cost-path router draws per agent, so that two agents with the same origin, destination and departure time need not take the same road. One of the 21 undeclared defaults (#155); declared at the framework's 3.0 so the shipped model is unchanged."
     }
   }
 }

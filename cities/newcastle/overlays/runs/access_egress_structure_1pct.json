@@ -1,0 +1,19 @@
+{
+  "overlay": "access_egress_structure_1pct",
+  "description": "A STRUCTURAL SMOKE PROBE, NOT A MODELLING RUN - its whole output is a yes or a no, and no share, count, boarding or fit from it may be quoted, compared or fitted (the 1 % probe rule of DECISIONS.md 9.159). It asks ONE question: does the rebuilt demand run at all under RUN.routing.access_egress_type = accessEgressModeToLink? Four things landed together in DECISIONS.md 9.164 and every one of them is unproven on a JVM: (a) build_matsim_plans.py now emits `routingMode` on every leg, which is what PersonPrepareForSim rejected 40 agents over when accessEgressModeToLink was last attempted (9.161); (b) the access and egress stubs are `non_network_walk` for every main mode but walk and a generic-route `walk` leg for walk itself, which citysim.GenericRouteTeleporter claims under its single declared exception and citysim.TolerantAgentSource declines to demand a vehicle for; (c) B.mode.bound_passenger_placement = every_plan puts a declared passenger on `ride` in every seeded plan, changing the shape of plan memory for 20,902 declared pairs; (d) the tour-placement fix in build_activity_chains.py no longer discards the rest of an agent's day when one tour will not fit (#30). THE OBSERVABLE IS BINARY AND STRUCTURAL: four iterations complete, no ClassCastException at agent insertion, no `Found a trip whose legs have different routingModes`, and the teleport table citysim.GenericRouteTeleporter writes at afterMobsim names only `walk` (issues #167, #86, #48, #30). Anything it reports about a MODE is not evidence of anything - the fraction is a fortieth of an arm's and the horizon a seventy-fifth.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 4,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "RUN.gate.wall_ceiling_h": 1.0,
+    "RUN.gate.interval_iterations": 0
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one. Four iterations is the established structural-probe horizon in this repository (20260909T011135_4it_25pct, 20260908T014214_4it_25pct): it is the shortest depth at which replanning has run, a re-routed plan has been executed and scored, and the second iteration's router has read the first's travel times - which is the whole of what a structural question needs. The value sits two orders below the range so any output carrying it is obviously not a result.",
+    "RUN.gate.interval_iterations": "The mode gate is switched OFF because this probe has no modes to judge: at 1 % and four iterations every deviation it could compute would be a transient at a fraction the board may not read, and stopping on one would report a structural pass as a modelling failure. The COST watcher stays armed in its place - RUN.gate.wall_ceiling_h is 1.0 h - so the run is not left with no automatic stop of either kind, which src/run/run_matsim.py refuses before the JVM starts (9.163, #169)."
+  }
+}

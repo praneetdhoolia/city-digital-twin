@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 - **THE ROUTER THAT PICKS THE SUBMODE NOW HAS A CONSTANT TO PICK IT WITH, BEHIND A GATE** (§9.162, #49). `citysim.RaptorModeCostCalculator` is the stock `DefaultRaptorInVehicleCostCalculator` plus the boarded submode's own `scoring.modeParams` constant, negated because `getInVehicleCost` returns a cost and a constant is a utility. It declares **no value of its own** - the constants are already `C.asc.*` - so it is a CONSISTENCY between the router's objective and the scoring function the plan is judged by, not a second set of tastes to calibrate. The submode comes from the transit vehicle type's own `networkMode` (`bus`/`rail`/`tram`/`ferry` in the mapped schedule), so no mode name is typed into the framework. Gated by `C.raptor.mode_cost_representation`, **shipped `absent`**, categorical `[absent, mode_constant]`; at `absent` `SwissRailRaptorModule`'s own binding is left in place and the previous model is recovered exactly. **Built and deployed, NEVER RUN** - it opens a comparability family and no arm has carried it.
@@ -42,6 +42,9 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 
 - **Bus** is the only PT mode still on the composition basis, because its published series is one contract region with an 88% structural break at 2025-04 (§9.100); the window is the contiguous break-free overlap chosen by `CAL.pt_split.break_ratio` 0.5, stations are scoped by `CAL.pt_split.station_scope` = `target_lga`, and light rail's one reported stop is scaled to the line by `CAL.pt_split.lr_observed_stop_share` 0.3696 (§9.100).
 - **Heavy rail and light rail** are disclosed counts, used exactly: every traveller who boards, all subpopulations, × 1/fraction, heavy rail at the 24 disclosed stations only (§9.130). The PT total is still read against the HTS 3.8% level. **Ferry** is derived and its sweep is 0 to twice the point value (§9.89); it is never labelled observed.
+
+- **HEADWAY AND RELIABILITY REACH MATSIM** (§9.164, #175). `C.time_weights.beta_headway` (0.5) and `C.time_weights.beta_reliability` (1.3) were declared with literature sweeps, written into `params/C1_parameters.json` and read by nothing; two consecutive assessments asked *"wire them or retire them"* and neither landed. `citysim.ServiceQualityScoring` now charges a boarding passenger `beta_headway × headway_minutes` of the boarded route and `beta_reliability × sd_minutes` of that route's own arrival delay, both at the trip-weighted VOT identity every other derived scoring value uses, behind `C.time_weights.service_quality_representation` (`absent` shipped; `headway` | `headway_and_reliability`). **Both weights are used exactly as the literature defines them** - at 0.5 the headway penalty IS the half-service-interval convention, and 1.3 IS the reliability ratio - so no new number enters. The gradient precedent (§9.140, #21) does NOT transfer: a MATSim agent has perfect timetable knowledge and pays no schedule-delay cost at all.
+- **THE STANDARD DEVIATION IS MEASURED, NEVER SEEDED** (§9.164). It is the spread of `VehicleArrivesAtFacilityEvent.getDelay()` over every stop the route served in the PREVIOUS mobsim, so a bus held on a shared carriageway becomes unreliable because this model delayed it while a tram on its own alignment does not. The first scored iteration carries NO reliability charge and says so in the log: a seeded standard deviation would be an invented observation.
 
 ## What is measured
 
@@ -84,6 +87,8 @@ Latest twelve-mode reading, and the project's FIRST RESULT: `results/raw/2026090
 - **The light rail's shortfall is not supply, not the destination market and not the Interchange transfer (§9.130).** 252 weekday tram departures (§9.113); work ends within 400 m of a tram stop are 5.8 % of all work ends; the rail-to-tram walk is 54–58 m. **The ferry's market exists and walks around it**: 450 trips a day take the road detour around the water the ferry crosses, and 3 of them take public transport (§9.112, #94).
 - **Bus is read against a target its own basis doubts.** The HTS level and the operator series differ by roughly 3–10× by mode (#99); two independent indications put bus nearer 75–78 % of PT boardings than the 62.7 % point value (§9.100).
 
+- **#167 IS HALF SOLVED AND THE OTHER HALF IS NOW MEASURED RATHER THAN NAMED** (§9.164). §9.161 diagnosed the `accessEgressModeToLink` failure as this project's plans declaring no `routingMode`. That was HALF the cause and the half is fixed: `build_matsim_plans.py` emits it on every leg and the failure falls **40 agents → 20** at 1 %. The residual is NOT in the input - MATSim's own reader finds **0 multi-leg trips and 0 mixed trips over all 6,347 persons** of the probe population - and `RUN.routing.access_egress_consistency_check` = `disable` leaves the count at 20, so that is not the mechanism either. The same package at `none` runs clean (`20260910T204747_4it_1pct`, 0 routingMode errors). The mixture is created inside MATSim's own pre-sim pass and what remains is to name where.
+
 ## What is open
 
 - **THE REMEDY FOR THE MISSING CONTROL IS DECIDED AND NOT BUILT** (§9.160, user decision 9 September 2026): the mode constant, the fare and a distance term go INTO THE RAPTOR'S COST. Established against the pinned jar by `javap`: `RaptorInVehicleCostCalculator.getInVehicleCost(...)` is handed the `Vehicle`, so the submode is recoverable from the vehicle type and the call is once per boarding — where an ASC belongs in a router — and `CapacityDependentInVehicleCostCalculator` is SBB's own precedent for the shape. It ships behind a new `C.raptor.mode_cost_representation` = `absent`, the one-gate discipline `C.crowding.representation` already uses, and it is what finally gives `C.time_weights.beta_headway` and `beta_reliability` a consumer. **Java, so it opens a family, and it was NOT built this session because `.tools/classes` must not be recompiled under a running arm.**
@@ -106,6 +111,7 @@ Latest twelve-mode reading, and the project's FIRST RESULT: `results/raw/2026090
 
 ## History
 
+- §9.164 — headway and reliability finally reach the model
 - §9.163 — the walk fallback holds at depth; pt reaches 25.78 %
 - §9.161 — #167 diagnosed: our plans declare no routingMode
 - §9.160 — pt submode has no control; 0.63 % of memory differs

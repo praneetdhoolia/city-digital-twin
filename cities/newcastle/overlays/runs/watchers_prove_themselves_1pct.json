@@ -1,0 +1,19 @@
+{
+  "overlay": "watchers_prove_themselves_1pct",
+  "description": "A STRUCTURAL SMOKE PROBE, NOT A MODELLING RUN - its whole output is a yes or a no, and no share, count, boarding or fit from it may be quoted, compared or fitted (the 1 % probe rule of DECISIONS.md 9.159). It proves the two AUTOMATIC STOPS on their own behaviour rather than on their unit tests, and it is the only thing left on two issues. (1) #169: RUN.gate.wall_ceiling_h and start_ceiling_watch are BUILT AND UNPROVEN ON A RUN - seven unit tests drive a fake process with a clock already past its ceiling, and no MATSim run has ever been stopped by the mechanism. The ceiling here is deliberately tiny, so the run is killed while it is genuinely working; the observable is that it stops inside it, that `_ceiling_stop.json` is written BEFORE anything is killed, and that the record closes out `stopped_at_ceiling` rather than `failed` or `aborted`. (2) #131: RUN.gate silently DEPENDS ON RUN.monitor - the gate watcher's fallback tail was measured 611 MiB behind EOF, so with the monitor off the gate is blind. The monitor is off here and the mode gate is armed at every iteration; the observable is whether the watcher arms, reaches its interval check and writes its verdict JSON with nothing feeding it, or refuses to arm and says so. EITHER ANSWER CLOSES THE ISSUE; what it must not do is arm and quietly judge nothing. Nothing about the model is under test and nothing it reports about a mode is evidence of anything.",
+  "set": {
+    "RUN.sample.fraction": 0.01,
+    "RUN.controler.last_iteration": 20,
+    "RUN.machine.threads": 8,
+    "RUN.machine.xmx": "12g",
+    "RUN.monitor.enabled": false,
+    "RUN.gate.interval_iterations": 2,
+    "RUN.gate.wall_ceiling_h": 0.05
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one: the horizon exists only to be LONGER than the ceiling will allow, so that the ceiling is what ends the run and the ending is attributable. Twenty iterations at 1 % runs past 0.05 h with room to spare, and the value sits an order below the range so any output carrying it is obviously not a result."
+  }
+}

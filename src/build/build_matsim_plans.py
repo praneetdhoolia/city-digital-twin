@@ -304,6 +304,11 @@ SEED_METHOD = CFG.get('B.mode.seed_method')
 # a partially bound tour, so its covered leg can be seeded as `ride` without
 # the chain/non-chain subtour mix MATSim refuses (9.119).
 PARTIAL_BIND_BASE = CFG.get('B.mode.partial_bind_base')
+# 9.164 (#86, #48): whether a bound passenger's covered tour carries `ride` in
+# EVERY seeded plan - the symmetric counterpart of the serving driver, who is
+# put on `car` in every plan - or in one variant among several, which is what
+# left 10,224 of 20,902 declared pairs with the passenger driving their own car.
+BOUND_PASSENGER_PLACEMENT = CFG.get('B.mode.bound_passenger_placement')
 # The taxi age gate the run enforces (citysim.AvailabilityModesCalculator):
 # a seeded taxi plan for a person under it would be an illegal plan in
 # memory (the 9.15 class), so the seed reads the same declared value.
@@ -702,6 +707,13 @@ def write_day(day, attrs, rng, report, seed_table=None):
     # by the two identities that deny it, because they are different defects
     # and only one of them is this change's.
     partial_bind = {'tours': 0, 'trips': 0, 'plans_added': 0, 'persons': set()}
+    # 9.164 (#86, #48): what B.mode.bound_passenger_placement = every_plan
+    # reached - the bound tours now carrying `ride` in EVERY seeded plan
+    # rather than in one variant, and the seeded plans that folded because two
+    # bases became the same plan once the bound tours agreed.
+    bound_placement = {'ride_tours': 0, 'partial_tours': 0,
+                       'plans_folded': 0, 'alternatives_kept': 0,
+                       'persons': set()}
     unreachable = {'escort_day_trips': 0, 'escort_day_persons': set(),
                    'no_vehicle_trips': 0, 'no_vehicle_persons': set()}
 
@@ -967,16 +979,85 @@ def write_day(day, attrs, rng, report, seed_table=None):
                             ride_tours.add(tid)
                         else:
                             partial_tours[tid] = covered
+                # 9.164 (#86, #48): THE DECLARED PASSENGER IS PUT ON `ride`,
+                # exactly as the declared driver is put on `car`. A serving
+                # tour reads `p[tid] = 'car'` in EVERY seeded plan two lines
+                # below - the demand states that the driver drives - while the
+                # passenger they carry got a ride variant as ONE alternative
+                # among several and drew a mode in the rest. The asymmetry is
+                # measurable: of 20,902 declared escort pairs in sample, 10,224
+                # have the passenger driving THEIR OWN CAR against 7,821
+                # co-assigned (9.163). It also bounds the calibration - ride's
+                # target of 20.6000 % sits above the 20.05 % of agents who have
+                # ever held a ride plan, so no scoring constant reaches it and
+                # the only layer that can is this one.
+                bound_every = (BOUND_PASSENGER_PLACEMENT == 'every_plan'
+                               and (ride_tours or partial_tours))
                 plan_set = []
                 for base in base_modes:
-                    p = {}
+                    p, over = {}, {}
                     for tid in by_tour:
                         if tid in serve_tours and car_av:
                             p[tid] = 'car'
+                        elif bound_every and tid in ride_tours:
+                            p[tid] = 'ride'
+                            covered_seed_tids.add(tid)
+                        elif bound_every and tid in partial_tours:
+                            # the uncovered leg cannot be chain-based or the
+                            # subtour mixes (9.119); a base that already is
+                            # non-chain is kept, so the person's own plan for
+                            # that mode is not silently replaced
+                            p[tid] = (PARTIAL_BIND_BASE
+                                      if base in CHAIN_BASED_MODES else base)
+                            covered_seed_tids.add(tid)
+                            for i in partial_tours[tid]:
+                                over[i] = 'ride'
                         else:
                             p[tid] = base
-                    plan_set.append((p, {}))
-                if ride_tours:
+                    plan_set.append((p, over))
+                if bound_every:
+                    # with every plan carrying the same bound assignment, two
+                    # bases can collapse onto one plan (a person whose whole
+                    # day is bound has no free tour left to differ on). A
+                    # duplicate in plan memory is a wasted slot of eight, so
+                    # they are folded rather than seeded.
+                    seen, uniq = set(), []
+                    for p, over in plan_set:
+                        key = (tuple(sorted(p.items())),
+                               tuple(sorted(over.items())))
+                        if key in seen:
+                            continue
+                        seen.add(key)
+                        uniq.append((p, over))
+                    bound_placement['plans_folded'] += len(plan_set) - len(uniq)
+                    if len(uniq) < 2 and len(base_modes) > 1:
+                        # A PERSON WHOSE WHOLE DAY IS BOUND WOULD BE LEFT WITH
+                        # ONE PLAN, and that contradicts the seed's own reason
+                        # for existing. B.mode.seed_method = full_choice_set
+                        # holds one plan per usable mode precisely so that no
+                        # mode is favoured and the whole set is SCORED inside
+                        # the first few iterations - and 9.120 measured what
+                        # happens without it: at the F14 gate 65% of the agents
+                        # still cycling held no bike-free plan in memory,
+                        # because random innovation had not yet offered the
+                        # alternative. So the fold keeps ONE alternative in
+                        # which the bound tours take the person's first base
+                        # mode, which is exactly the plan the pre-change seed
+                        # gave them. The binding still holds in every OTHER
+                        # plan, which is what `every_plan` means.
+                        alt = {}
+                        for tid in by_tour:
+                            if tid in serve_tours and car_av:
+                                alt[tid] = 'car'
+                            else:
+                                alt[tid] = base_modes[0]
+                        uniq.append((alt, {}))
+                        bound_placement['alternatives_kept'] += 1
+                    plan_set = uniq
+                    bound_placement['ride_tours'] += len(ride_tours)
+                    bound_placement['partial_tours'] += len(partial_tours)
+                    bound_placement['persons'].add(pid)
+                if ride_tours and not bound_every:
                     # the bound-ride variant on the car base when a car is
                     # available (the uncovered tours are driven), else on walk
                     base = 'car' if car_av else 'walk'
@@ -1011,7 +1092,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
                 # variant above is already walk-based, so the override rides
                 # on it. Only a car-available person gets this extra plan,
                 # which is why the seed's plan count rises by at most one.
-                if partial_tours:
+                if partial_tours and not bound_every:
                     base = PARTIAL_BIND_BASE if car_av else 'walk'
                     p, over = {}, {}
                     for tid in by_tour:
@@ -1220,7 +1301,26 @@ def write_day(day, attrs, rng, report, seed_table=None):
                     # which is what lets one leg of a partially bound tour ride
                     # while the other takes a non-chain base
                     mode = trip_modes.get(i + 1) or plan_modes[int(r['tour_id'])]
-                    w.write('\t\t\t<leg mode="%s" />\n' % mode)
+                    # 9.164 (#167): every leg STATES its routing mode. A
+                    # single-leg trip's inferred routing mode already equals
+                    # its own mode, so this is a no-op while
+                    # RUN.routing.access_egress_type is `none` - and it is the
+                    # whole of what stopped it being anything else. Under
+                    # accessEgressModeToLink the router turns a one-leg trip
+                    # into three by inserting access and egress walk legs; with
+                    # no routingMode declared MATSim infers each inserted leg's
+                    # from its OWN mode, so the stubs read `walk` against a main
+                    # leg reading `car`, and PersonPrepareForSim rejects the
+                    # trip the router has just built ("Found a trip whose legs
+                    # have different routingModes", measured on 40 agents,
+                    # 9.161). Stating it makes the whole trip one routing mode
+                    # whatever the router inserts around it.
+                    w.write('\t\t\t<leg mode="%s">\n'
+                            '\t\t\t\t<attributes>\n'
+                            '\t\t\t\t\t<attribute name="routingMode" '
+                            'class="java.lang.String">%s</attribute>\n'
+                            '\t\t\t\t</attributes>\n'
+                            '\t\t\t</leg>\n' % (mode, mode))
                     modes[mode] += 1
                     if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
                         covered_ride_legs[0] += 1
@@ -1276,6 +1376,16 @@ def write_day(day, attrs, rng, report, seed_table=None):
                        # 9.143 (#86): what the per-trip variant reached - the
                        # partially bound tours whose covered leg can now be
                        # seeded as `ride` at all
+                       # 9.164 (#86, #48): the declared passenger put on
+                       # `ride` in every seeded plan, as the declared driver
+                       # is put on `car`
+                       bound_placement=dict(
+                           placement=BOUND_PASSENGER_PLACEMENT,
+                           ride_tours=bound_placement['ride_tours'],
+                           partial_tours=bound_placement['partial_tours'],
+                           plans_folded=bound_placement['plans_folded'],
+                           alternatives_kept=bound_placement['alternatives_kept'],
+                           persons=len(bound_placement['persons'])),
                        partial_bind=dict(
                            tours=partial_bind['tours'],
                            trips=partial_bind['trips'],

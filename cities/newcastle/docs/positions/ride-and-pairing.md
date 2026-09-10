@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 
@@ -32,6 +32,8 @@
 - **THE ESCORT LISTENER RAN PAST THE INNOVATION CUTOFF, AND EVERY RELAXATION VERDICT IN THE PROJECT RESTS ON THAT** (§9.158). `EscortCoherenceListener` added AND selected plans on EVERY iteration with no innovation cutoff, so plans were still being created through the innovation-off tail on whose emptiness `summarise_run.relaxation` declares a run "relaxed". It now reads the cutoff from `replanning().getFractionOfIterationsToDisableInnovation()` — API verified with `javap` against the pinned `matsim-2027.0-2026w25.jar` — and past it MEASURES decoherence and proposes nothing. **The controler is recompiled and green** (86 class files, newest 21:12:04 against sources at 20:47:40, `session_gate.py` toolchain PASS), so the deployed bytecode has changed and **the next arm opens a comparability family**.
 - **`GenericRouteTeleporter` now refuses per mode** (§9.158). Its guard was mode-agnostic, so a car, truck or bike leg holding a generic route was silently teleported; it refuses for any mode in `qsim.mainMode ∩ routing.networkModes` (car, truck, motorbike, bike, taxi) and keeps per-mode counters on a **singleton-scoped** binding with **no `% N` sampling guard** — §9.156's trap, avoided by construction. Measured: in `20260906T233901_4it_25pct`'s `output_plans.xml.gz` every generic-route main-mode leg is walk, so **the refusal fires on nothing today** and stands as a tripwire.
 - **The calibration loop can reach ride's own parameters for the first time** (§9.158). The movable set went **5 → 21** and now includes `B.ride.pairing_window_min`, `B.ride.escort_coherence_rate`, `B.ride.joint_coherence_rate`, `B.ride.max_passengers_per_vehicle` and `B.ride.pickup_dwell_s`. `B.ride.shared_lift_hash_bucket` stays excluded, correctly: realising it needs B2, the plans and the run inputs rebuilt per candidate.
+
+- **THE DEMAND NOW STATES THAT THE PASSENGER RIDES** (§9.164, #86, #48). `B.mode.bound_passenger_placement` = `every_plan` puts a round-trip-covered tour on `ride` in EVERY seeded plan, which is exactly what the demand already did for the driver of the same pair - a serving tour reads `car` in every plan. Under the previous `alternative` the passenger got ride in ONE variant among five or six and drew a mode in the rest, and of 20,902 declared escort pairs in sample **10,224 had the passenger driving their own car** against 7,821 co-assigned (§9.163). It is the only layer that can reach ride's target at all: 20.6000 % sits above the 20.05 % of agents who have ever held a ride plan, so no value of any scoring constant closes it (§9.163, #174). The seed biases where the search starts and never what selection keeps - `SubtourModeChoice` may move the tour off ride from iteration 1.
 
 ## What is measured
 
@@ -77,6 +79,9 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - **THE F31 GATE: PLACEMENT IS SOLVED AND THE REMAINING GAP IS VOLUME** (§9.157). `aborted_20260908T100009_300it_25pct` at iteration 100, `stopped_at_gate`: ride **-38.0 %** (12.77 %) with a **mean modelled trip of 9.17 km against an observed 9.76 km, -6 %** - the closest geometry of any mode on that board. The lifts the binder places are now the right LENGTH; there are too few of them. That answers what F29 and F30 were both built for (§9.149, §9.151) and moves the lane to volume - #86's question, and the only one left on ride. Controls at the gate: 27,251 declared passengers picked up on 24,792 drivers' detours (mean detour 428 s), 202 unpaired ride legs re-moded and **202 of 202 restored**, 15,550 drivers waiting on a household car, escort coherence 7,155 decohered / 2,835 re-proposed. **Not comparable with any F28 figure** - three family boundaries separate them (§3.5).
 - **The deficit structure reproduces inside F31's own reading** (§9.157). The twelve deviations sum to **+0.086 pp**; ride is **-7.830 pp** and the modes beating it total **+9.500 pp** (car +3.125, bike +3.254, taxi +1.769, bus +1.301, motorbike +0.052). A pro-rata recovery of ride's full deficit would land car at **+0.9 %**, bus at **+9.6 %** and motorbike at **+2.4 %** - **three modes inside 10 %** - with bike at +25.9 % and taxi at +31.4 %. An arithmetic upper bound on what ride volume alone can do, not a prediction.
 
+- **WHAT THE REBUILT SEED CARRIES** (§9.164, `_plans_report.json` `bound_placement`): WEEKDAY **194,131** fully bound and **59,705** partially bound tours over **199,329** persons; SAT 167,389 / 34,624 / 165,652; SUN 148,686 / 26,239 / 147,561. The seeded weekday ride share is **0.1114** of legs and `seed_ride_covered_share` is the same figure, so every seeded ride leg is a declared binding. **268,306** duplicate weekday plans were folded rather than seeded, because a person whose whole day is bound has no free tour left for two bases to differ on.
+- **The package runs on it** (§9.164): `20260910T204747_4it_1pct` closed `ran_to_last_iteration` at 4 of 4 with 0 routingMode errors. It is a 1 % structural probe and **no share, count or deviation from it may be quoted**.
+
 ## What is open
 
 - #48 — every ride physically in a car. The physical channel works at 25%: 7,092 picked up, 0 unroutable at F22 iteration 0 (§9.136).
@@ -104,6 +109,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.164 — the declared passenger is put on ride at the demand
 - §9.163 — the target is above the choice set; the passenger drives
 - §9.160 — ride measured CONVERGED at -38.0 %; it is supply
 - §9.158 — the escort listener stops proposing past the innovation cutoff

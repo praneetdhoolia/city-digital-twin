@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 
@@ -39,6 +39,8 @@
 - **The feasibility bound**: `B.mode.walk_feasible_km` at its derived p99 of 3.22 km made the fit worse (sum of deviations 509.9 % to 577.1 %) and moved walk's mean 8.84 to 8.72 km (§9.106); `B.mode.bike_feasible_km` likewise. Both held at 0.0.
 - **Gradient's motivation**: 30.5 % of 50,182 road edges exceed 4 % grade, and modelled bike trips ran 9.21 km / 41.7 min against a measured 5.2 / 19.2 before the channel existed (§9.84). No paired arm has measured the channel's effect.
 
+- **THE SUPPLY HALF OF WALK'S DEFICIT MOVED, A LITTLE, AND THE SHAPE HALF CANNOT MOVE WITHOUT AN OBSERVATION** (§9.164, #30). The placement loop no longer discards every tour still to be placed when one will not fit: **547** weekday tours, 241 Saturday and 77 Sunday are attempted that were not, and the week trip rate reads **3.398 against the HTS 3.473**. That is a real correction and a small one - **18,446** weekday tours are still dropped over the horizon by a different mechanism. The sub-1 km SHARE is a property of the gravity kernel's SHAPE, and the destination model is already solved to the observed MEAN per (purpose × home LGA); the published HTS gives a mean and no distribution, so there is no short-end target in this package that is not invented (§9.8, §9.13).
+
 ## What is open
 
 - **Walk's geometry now has a NAMED mechanism and an undecided remedy** (§9.158). `RUN.transit_router.direct_walk_factor` is a declared field with a sweep to 2.0 and moving it is a family boundary and a FIDELITY decision — it must not be picked to land walk's share. Filed with its measured numbers; the operator decides.
@@ -61,6 +63,7 @@
 
 ## History
 
+- §9.164 — the whole-day discard repaired; the short end is unobserved
 - §9.163 — short-trip supply flat, car takes 63 % of it; bike too far
 - §9.158 — walk is priced as a transit ride; `C.asc.cycle` opened, `C.asc.walk` frozen
 - §9.162 — the first result: walk −26.5 %, descending through target

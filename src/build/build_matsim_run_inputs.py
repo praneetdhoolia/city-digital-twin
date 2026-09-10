@@ -1720,6 +1720,45 @@ def config_runtime(cfg, scoring, day, paths):
             'trip-weighted VOT x C.time_weights.beta_ivt x '
             'C.scoring.marginal_utility_of_money: a felt extra hour in a '
             'crowded vehicle costs what an hour in the vehicle costs')
+    # Service quality in scoring (9.164, #175): the two declared time weights
+    # that reached params/C1_parameters.json and stopped there. Each derived
+    # price is one literature definition applied at the identity chain every
+    # other derived scoring value uses - a felt extra minute costs what a
+    # minute in the vehicle costs - so neither weight is re-interpreted to make
+    # it wireable and no new number enters. Emitted only under the declared
+    # representation, so `absent` leaves the module holding
+    # representation=absent and citysim.ServiceQualityScoring never installs.
+    if cfg.get('C.time_weights.service_quality_representation') != 'absent':
+        runtime['serviceQuality.headwayUtilsPerMin'] = (
+            round(scoring['vot_aud_hr_used']
+                  * cfg.get('C.time_weights.beta_headway')
+                  * cfg.get('C.scoring.marginal_utility_of_money') / 60.0, 6),
+            'derived',
+            '(trip-weighted VOT x C.time_weights.beta_headway x '
+            'C.scoring.marginal_utility_of_money) / 60 - a minute of the '
+            "boarded route's service interval costs beta_headway of a minute "
+            'in the vehicle, which at 0.5 is the half-headway convention')
+        # The cap a single-departure route is charged at. A route with one
+        # departure has no gap to measure and its honest interval is the
+        # service day, so the day is what it pays - taken from the declared
+        # mobsim window rather than typed into the Java.
+        runtime['serviceQuality.headwayCapMin'] = (
+            round(60.0 * (float(cfg.get('RUN.qsim.end_time_h'))
+                          - float(cfg.get('RUN.qsim.start_time_h'))), 4),
+            'derived',
+            '(RUN.qsim.end_time_h - RUN.qsim.start_time_h) x 60: the service '
+            'day, which is the interval of a route with one daily departure')
+    if cfg.get('C.time_weights.service_quality_representation')             == 'headway_and_reliability':
+        runtime['serviceQuality.reliabilityUtilsPerMin'] = (
+            round(scoring['vot_aud_hr_used']
+                  * cfg.get('C.time_weights.beta_reliability')
+                  * cfg.get('C.scoring.marginal_utility_of_money') / 60.0, 6),
+            'derived',
+            '(trip-weighted VOT x C.time_weights.beta_reliability x '
+            'C.scoring.marginal_utility_of_money) / 60 - one minute of '
+            "MEASURED standard deviation in the route's own arrival delays "
+            'costs beta_reliability of a minute in the vehicle, which is the '
+            'reliability ratio in its standard form')
     # Parking search/access time (9.138): the MINUTES are the price file's
     # derived third column; this prices one minute at the utilityOfLineSwitch
     # identity, per minute instead of per transfer.

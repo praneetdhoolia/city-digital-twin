@@ -54,6 +54,25 @@
         "src/calibrate/calibrate.py"
       ]
     },
+    "CAL.objective.replication_band_pp": {
+      "value": 0.0,
+      "units": "relative_percent",
+      "source": "assumed",
+      "sweep": {
+        "interval": [
+          0.0,
+          2.0
+        ],
+        "basis": "0.0 is NO BAND - the objective is the raw maximum over the twelve modes, exactly as every reading so far has been scored - and it is the shipped value because THE BAND HAS NOT BEEN MEASURED. The upper bound is 2.0 relative per cent, twice the largest within-run movement anyone has observed: inside 20260909T015217_300it_25pct, with nothing changed, the folded objective moves 0.272-0.418 pp between iterations 80 and 100 (9.162). WHAT THE SWEEP ANSWERS: how much of what the calibration loop is chasing is seed scatter rather than misfit. A MATSim run is not bit-reproducible and no deviation on the board carries an error bar - asked for by three consecutive assessments (#163) - so a mode 3 % out and a mode 30 % out are today treated as the same KIND of evidence. THIS VALUE MUST NOT BE PINNED FROM THE SWEEP. It is measured: three arms at a short horizon differing only in RUN.machine.seed, and the band is the spread of the objective across them. Choosing a denominator from the interval instead would be inventing the observation the denominator exists to represent, which is the one failure this project cannot absorb - so the sweep is the honesty bracket for an unmeasured quantity and never a value to select."
+      },
+      "sweep_role": "measurement",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "consumers": [
+        "src/calibrate/calibrate.py"
+      ],
+      "description": "The replication band the calibration objective is divided by (#163) - the spread the objective takes across runs of the SAME configuration differing only in seed. It is the denominator history matching's implausibility statistic carries and this project's objective does not: dividing by it makes the objective count HOW MANY BANDS OUT the worst mode is, so a deviation inside the noise scores below one and is not chased. At the shipped 0.0 nothing is divided and the objective is the raw maximum, so declaring it changes no reading. Recorded in every C5 calibration output as `replication_band_pp` with a note saying whether one was applied."
+    },
     "CAL.search.points_per_parameter": {
       "value": 3,
       "units": "count",

@@ -1131,8 +1131,24 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
             t_start = hit[1] + 600
             legs_m = None
         if legs_m is None:
-            dropped[0] += len(order) - order.index(oi)
-            break
+            # 9.164 (#30): DROP THIS TOUR, NOT THE REST OF THE DAY. This
+            # branch used to `break`, discarding every tour still to be placed
+            # - `dropped[0] += len(order) - order.index(oi)` - on the reasoning
+            # that a tour which ran out of day makes its successors hopeless.
+            # Its own neighbour four lines below says otherwise: a tour whose
+            # timing overruns the horizon `continue`s and the next one is
+            # still tried. The two paths reach the same state by different
+            # routes, and only one of them abandoned the day. They differ in
+            # fact as well as in form: this branch fires when a tour is pushed
+            # past the horizon by a COLLISION with an immovable escort
+            # interval, and a later, shorter tour can still sit in a gap the
+            # pushed one could not. The whole-day discard is measured at a
+            # -4.35 % trip-rate shortfall and it falls hardest on the short
+            # trips that would have been walked, which is the supply half of
+            # walk's -26.5 % (#30).
+            dropped[0] += 1
+            dropped[2] += len(order) - order.index(oi) - 1
+            continue
         if arr_home > DAY_HORIZON_S:
             dropped[0] += 1
             continue
@@ -3049,7 +3065,9 @@ def main(seed=SEED, max_persons=None, day_types=None):
                   for p in ('HS', 'HO', 'WB', 'HX')}
 
         n_legs = n_tours = n_travel = 0
-        dropped = [0, 0]   # [over-horizon, midnight-collision (issue #37)]
+        # [over-horizon, midnight-collision (issue #37), tours the pre-9.164
+        #  whole-day `break` would have discarded unattempted (#30)]
+        dropped = [0, 0, 0]
         by_purpose = collections.Counter()
         tours_hist = collections.Counter()
         esc = dict(requested=0, bound=0, unbound=0, refused_no_vehicle=0,
@@ -3243,6 +3261,11 @@ def main(seed=SEED, max_persons=None, day_types=None):
             tours_per_traveller=round(n_tours / max(n_travel, 1), 3),
             tours_dropped_over_horizon=dropped[0],
             tours_dropped_midnight_collision=dropped[1],
+            # 9.164 (#30): tours the pre-change whole-day `break` would
+            # have discarded WITHOUT trying them. The ones that still do
+            # not fit are counted in tours_dropped_over_horizon above, so
+            # this is the upper bound on what the fix recovered.
+            tours_reattempted_after_a_failed_tour=dropped[2],
             by_purpose=dict(by_purpose),
             # DECISIONS.md 9.46. The trip-length comparison is REPORTED, never
             # tuned: an escort's length is now the escorted trip's own.
