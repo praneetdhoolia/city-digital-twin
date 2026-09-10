@@ -160,6 +160,19 @@ def _refuse_unless_ran_to_last(run_dir):
     field existed was only ever written on rc = 0, so a missing value reads as
     `ran_to_last_iteration` - a frozen record is never rewritten to satisfy a
     newer schema.
+
+    THAT FALLBACK IS NARROW, AND IT SAYS WHEN IT FIRES. Written as an
+    unconditional `or`, a missing `completion` was a PASS for any reason it
+    might be missing, on the one artefact the front door draws from - the
+    project's own result gate reading vacuously true in the most public place
+    it has. The pre-schema case it exists for is evidenced, so the evidence is
+    now required: `rc` must be 0, and the record must not carry a
+    `reached_iteration` short of the horizon it declared. Every arm this
+    project has stopped carries `rc` of 1 or none and a short
+    `reached_iteration`, so none of them can reach the front page through the
+    hole; the 21 August F4 arm the calibrated base rests on carries rc = 0 and
+    no `reached_iteration`, and still can. A fallback nobody can see fire is a
+    fallback nobody audits, so it prints.
     """
     path = _os.path.join(run_dir, '_run.json')
     if not _os.path.exists(path):
@@ -167,7 +180,27 @@ def _refuse_unless_ran_to_last(run_dir):
             '%s carries no _run.json, so it never ended at a defined boundary '
             'and cannot be drawn as the model\'s fit.'
             % _os.path.relpath(run_dir, _city.REPO))
-    completion = _load(path).get('completion') or RAN_TO_LAST
+    rec = _load(path)
+    completion = rec.get('completion')
+    if completion is None:
+        rc = rec.get('rc')
+        declared = rec.get('iterations')
+        reached = rec.get('reached_iteration')
+        short = (reached is not None and declared is not None
+                 and reached < declared)
+        if rc != 0 or short:
+            raise SystemExit(
+                '%s carries no `completion` and cannot be read as one: the '
+                'pre-schema records this fallback exists for were written on '
+                'rc = 0 having executed their declared horizon, and this one '
+                'has rc = %r and reached %r of %r declared iterations. A '
+                'missing field is not evidence of success.'
+                % (_os.path.relpath(run_dir, _city.REPO), rc, reached, declared))
+        completion = RAN_TO_LAST
+        print('note: %s predates the `completion` field; read as %r on its '
+              'rc = 0 and its full %r iterations, which is the only case the '
+              'fallback covers.'
+              % (_os.path.relpath(run_dir, _city.REPO), RAN_TO_LAST, declared))
     if completion != RAN_TO_LAST:
         raise SystemExit(
             '%s ended as %r, not %r: a stopped arm is a citable reading at its '

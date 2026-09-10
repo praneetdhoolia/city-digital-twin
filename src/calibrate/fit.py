@@ -339,7 +339,17 @@ def score_counts(targets, metrics, corrections, out):
                  heavy_share=round(hs, 4),
                  heavy_share_source='observed' if key in obs_heavy else 'assumed',
                  matched_by=s['matched_by'],
-                 max_link_distance_m=s['max_distance_m'])
+                 max_link_distance_m=s['max_distance_m'],
+                 # WHICH links were counted, carried onto the fit itself. Without
+                 # them a counts error is unauditable from its own output: a
+                 # reader who doubts a station's number has to re-run the mapper
+                 # to discover which road it actually scored. That is not
+                 # hypothetical - every counts reading between 16 August and
+                 # 10 September was taken against links whose road names had
+                 # changed under a rebuilt network, and the fit block recorded
+                 # nothing that could reveal it (see check_package.py 7b).
+                 road_name=s.get('road_name'),
+                 links=s.get('links'))
         # A modelled zero is a RESULT - the model routes no traffic over a link
         # that carries observed volume - not a target that cannot be scored. It
         # is flagged so it is visible rather than buried in an aggregate.

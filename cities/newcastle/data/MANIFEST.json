@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-08T23:34:40",
+  "generated": "2026-09-10T16:46:31",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 512,
-  "total_bytes": 4378699692,
+  "total_bytes": 4378700080,
   "total_gib": 4.08,
   "by_stage": {
     "raw": 92,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 2728269562,
-    "processed": 1650430130
+    "processed": 1650430518
   },
   "by_lineage_scope": {
     "raw": 86,
@@ -2114,9 +2114,9 @@
     },
     {
       "path": "data/processed/validation/count_station_links.csv",
-      "bytes": 17665,
-      "rows": 195,
-      "sha256": "cbcc69ee328bd377c969fbe0af183e6fb0ecb2ee287759f5f7153eb6a94fb2ee",
+      "bytes": 18053,
+      "rows": 197,
+      "sha256": "2121f2d1ffa7d9ad9697c943fd1c9ab0f97bf19b15e03c9b5f6df7c1056c08f4",
       "stage": "processed",
       "produced_by": "src/analyse/map_count_stations.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
