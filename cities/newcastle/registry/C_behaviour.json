@@ -333,7 +333,9 @@
       "status": "active",
       "decisions_ref": "8.4, 9.3",
       "matsim_param": "ptCrowding.seatedMultiplier",
-      "description": "Crowding multiplier, seated: what a minute seated in a vehicle at capacity costs relative to a minute in an empty one. CARRIED INTO MATSIM SCORING under C.crowding.representation = in_vehicle_time, by citysim.PtCrowdingScoring, which charges each passenger the surplus over an uncrowded ride. At the shipped 1.0 a seated passenger pays nothing extra, so the whole charge is the standing one; the sweep to 1.15 sits inside the 1.00-1.78 range of the 84 seated valuations in Wardman and Whelan's synthesis."
+      "description": "Crowding multiplier, seated: what a minute seated in a vehicle at capacity costs relative to a minute in an empty one. CARRIED INTO MATSIM SCORING under C.crowding.representation = in_vehicle_time, by citysim.PtCrowdingScoring, which charges each passenger the surplus over an uncrowded ride. At the shipped 1.0 a seated passenger pays nothing extra, so the whole charge is the standing one; the sweep to 1.15 sits inside the 1.00-1.78 range of the 84 seated valuations in Wardman and Whelan's synthesis.",
+      "inert_at": 1.0,
+      "inert_reason": "citysim.PtCrowdingScoring charges the SURPLUS over an uncrowded ride, so at a multiplier of 1.0 a seated passenger pays exactly nothing and the whole crowding charge is the standing one. The sweep to 1.15 sits inside the 1.00-1.78 range of the 84 seated valuations in Wardman and Whelan; what would decide otherwise is the paired crowding arm on #98, which has never been run."
     },
     "C.crowding.standing_multiplier": {
       "value": 1.45,
