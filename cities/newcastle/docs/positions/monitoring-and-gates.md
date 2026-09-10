@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 
@@ -41,6 +41,10 @@
 - **A milestone is MATSim's own tables since §9.147**: `RUN.controler.write_trips_interval` = 10 writes the trips and legs tables the readers take first; the full plans, the experienced plans and the events are gate artefacts (`write_plans_interval`, `write_events_interval` = 100). Rail and tram boardings come from the legs table (`transit_line`, `transit_route`, `access_stop_id`) where the experienced plans are absent (§9.148) — the reader had silently dropped such milestones until it did.
 - **The pairing funnel is read with the code, not by its labels** (§9.145, §9.146). A declared pair faces no clock test, so `miss_window` in `output/ride_pairing.csv` never describes one; `miss_declared_absent` (appended last since §9.145) counts unpaired legs whose named driver brought no car leg — 719 at the F26 gate — and the rest of the unpaired legs are on persons with no `boundDriver` at all, which only the experienced plans reveal (12,461 at F26). The watcher stopped F26 at iteration 100 exactly as it stopped F25: the loop's instrument has now fired live twice.
 - **Nothing is compared across a family, a sample fraction or a network build.** A boardings-basis reading does not compare with an earlier trip-share reading of the same mode (§9.130).
+
+- **THE CEILING WATCHER IS PROVEN ON A RUN** (§9.164, #169). `RUN.gate.wall_ceiling_h` and `start_ceiling_watch` had seven unit tests against a fake process and had never stopped a MATSim run. `aborted_20260910T205517_20it_1pct` declared 0.05 h, ran past it, and was stopped: `_ceiling_stop.json` written BEFORE the kill, `_run.json` `completion` **`stopped_at_ceiling`** at `reached_iteration` **3**, and the cause quoted on `_meta.json`. All four observables the overlay named.
+- **A GATE INTERVAL IS NOT A GATE, AND THAT IS NOW ENFORCED** (§9.164, #131). The same probe declared `RUN.gate.interval_iterations` = 2 with `RUN.monitor.enabled` = false and reached iteration 3: **no verdict file, no gate line and no warning of any kind**. `RUN.gate` had silently depended on `RUN.monitor`, and the launch refusal counted such a run as protected because it read the interval alone. `start_gate_watch` now REFUSES to arm without the monitor and says so on the banner, and `refuse_if_no_automatic_stop` reads all three fields, so the state is refused before the JVM starts unless a ceiling carries it.
+- **THE OBJECTIVE HAS A DENOMINATOR AND IT IS SET TO NONE** (§9.164, #163). `CAL.objective.replication_band_pp` is declared at **0.0** (`sweep_role: measurement`, honesty bracket [0.0, 2.0]) and `calibrate.objective()` divides by it, so the objective counts HOW MANY BANDS OUT the worst mode is - the history-matching form the project did not have. At zero nothing is divided and no existing reading moves. **The band must be MEASURED before it is set**: three arms at a short horizon differing only in `RUN.machine.seed`. Choosing one from the sweep would invent the observation the denominator exists to represent.
 
 ## What is measured
 
@@ -108,6 +112,7 @@
 
 ## History
 
+- §9.164 — the ceiling watcher fires; the gate needed the monitor
 - §9.163 — the counts rung repaired; the gate reports the choice-set bound
 - §9.160 — the gate stops passing on prose about itself
 - §9.158 — the objective measures the goal; iteration 100 cannot score a candidate

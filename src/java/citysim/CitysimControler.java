@@ -2,6 +2,8 @@ package citysim;
 
 import com.google.inject.Singleton;
 import java.io.File;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
@@ -76,6 +78,8 @@ import org.matsim.core.scenario.ScenarioUtils;
  * committed source by the pinned javac, which is what makes it reproducible.
  */
 public final class CitysimControler {
+
+    private static final Logger LOG = LogManager.getLogger(CitysimControler.class);
 
     private CitysimControler() {
     }
@@ -228,8 +232,20 @@ public final class CitysimControler {
         // DefaultRaptorInVehicleCostCalculator in place.
         final RaptorModeCostConfigGroup raptorModeCost =
                 new RaptorModeCostConfigGroup();
+        // #49, DECISIONS.md 9.164: whether the PT submodes are alternatives a
+        // PLAN can hold. Materialised for the same reason as every group
+        // above - a config that names an unmaterialised module fails MATSim's
+        // consistency check - and absent from the emitted config it holds
+        // representation=aggregate, under which nothing below installs.
+        final PtSubmodeChoiceConfigGroup ptSubmodeChoice =
+                new PtSubmodeChoiceConfigGroup();
+        // #175, DECISIONS.md 9.164: what a passenger pays for a service's
+        // frequency and its variability - the two declared time weights that
+        // reached a params JSON and stopped there.
+        final ServiceQualityConfigGroup serviceQuality =
+                new ServiceQualityConfigGroup();
         final org.matsim.core.config.ConfigGroup[] groups =
-                new org.matsim.core.config.ConfigGroup[17 + extraGroups.size()];
+                new org.matsim.core.config.ConfigGroup[19 + extraGroups.size()];
         groups[0] = parking;
         groups[1] = telemetry;
         groups[2] = ridePairing;
@@ -247,8 +263,10 @@ public final class CitysimControler {
         groups[14] = householdVehicles;
         groups[15] = ptCrowding;
         groups[16] = raptorModeCost;
+        groups[17] = ptSubmodeChoice;
+        groups[18] = serviceQuality;
         for (int i = 0; i < extraGroups.size(); i++) {
-            groups[17 + i] = extraGroups.get(i);
+            groups[19 + i] = extraGroups.get(i);
         }
         final Config config = ConfigUtils.loadConfig(configPath, groups);
         // The price file is written beside the config, like the network and the
@@ -636,6 +654,72 @@ public final class CitysimControler {
                             .RaptorInVehicleCostCalculator.class)
                             .to(RaptorModeCostCalculator.class)
                             .in(Singleton.class);
+                }
+            });
+        }
+        if (serviceQuality.isEnabled()) {
+            // #175, DECISIONS.md 9.164. Singleton and every binding on the
+            // same instance: the class carries the measured per-route spread
+            // ACROSS iterations, so a second instance would carry an empty
+            // measurement into a scored boarding - the scoping mistake
+            // NetworkDirectWalkPtRouter's counters already paid for once.
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    bind(ServiceQualityScoring.class).in(Singleton.class);
+                    addEventHandlerBinding().to(ServiceQualityScoring.class);
+                    addControllerListenerBinding().to(ServiceQualityScoring.class);
+                }
+            });
+        }
+        if (ptSubmodeChoice.isAlternatives()) {
+            // #49, DECISIONS.md 9.164: bus / rail / tram / ferry become
+            // alternatives a PLAN holds, each answered by a raptor that can
+            // see only that submode's routes. Under `aggregate` this block
+            // does not run and the stock single-raptor model is untouched.
+            //
+            // The seeded `pt` legs are rewritten BEFORE the controler runs,
+            // because with `pt` out of subtourModeChoice.modes a seeded pt
+            // subtour would be absorbing - the failure RUN.mode_choice.modes
+            // already records for `ride`.
+            SubmodeRaptorProvider.reseedPtLegs(
+                    scenario, ptSubmodeChoice.getSeedSubmode());
+            final String[] offered =
+                    PtSubmodeChoiceConfigGroup.applyChoiceSet(config);
+            LOG.info("ptSubmodeChoice: plan-level choice set is now {} - the "
+                     + "umbrella mode `pt` is replaced by the declared submodes, "
+                     + "derived from RUN.mode_choice.modes and "
+                     + "RUN.transit.transit_modes",
+                     java.util.Arrays.toString(offered));
+            final java.util.Set<String> submodes =
+                    PtSubmodeChoiceConfigGroup.submodes(config);
+            controler.addOverridingModule(new AbstractModule() {
+                @Override
+                public void install() {
+                    // One eager-singleton factory; one provider instance per
+                    // submode, each holding its own filtered index. A provider
+                    // bound per routing thread would rebuild the index per
+                    // thread - the scoping mistake NetworkDirectWalkPtRouter's
+                    // counters already paid for once.
+                    bind(SubmodeRaptorProvider.Factory.class).in(Singleton.class);
+                    for (final String submode : submodes) {
+                        addRoutingModuleBinding(submode).toProvider(
+                                new com.google.inject.Provider<
+                                        org.matsim.core.router.RoutingModule>() {
+                                    @com.google.inject.Inject
+                                    SubmodeRaptorProvider.Factory factory;
+                                    private SubmodeRaptorProvider delegate;
+
+                                    @Override
+                                    public org.matsim.core.router.RoutingModule get() {
+                                        if (this.delegate == null) {
+                                            this.delegate =
+                                                    this.factory.forMode(submode);
+                                        }
+                                        return this.delegate.get();
+                                    }
+                                });
+                    }
                 }
             });
         }

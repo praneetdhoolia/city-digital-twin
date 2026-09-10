@@ -159,14 +159,35 @@ def test_the_binding_is_installed_only_under_the_gate():
 
 
 def test_the_group_is_registered_on_every_stack():
-    """An unmaterialised config module fails MATSim's own consistency check."""
+    """An unmaterialised config module fails MATSim's own consistency check.
+
+    The assertion is STRUCTURAL, not a pinned index. It used to read
+    ``groups[16] = raptorModeCost`` against ``ConfigGroup[17 + ...]``, which
+    made every later module's arrival a failure of THIS test rather than of
+    anything about the raptor gate - the test asserting its neighbours'
+    positions instead of its own invariant. What actually has to hold is that
+    the group is assigned a slot, that the array is exactly big enough for
+    every fixed slot, and that the extra groups start immediately after the
+    last of them.
+    """
     code = _code(CONTROLER)
     assert 'new RaptorModeCostConfigGroup()' in code
-    assert re.search(r'groups\[16\]\s*=\s*raptorModeCost\s*;', code)
-    assert re.search(r'ConfigGroup\[17\s*\+\s*extraGroups\.size\(\)\]', code), (
-        'the groups array was not grown for the new module')
-    assert re.search(r'groups\[17\s*\+\s*i\]\s*=\s*extraGroups\.get\(i\)', code), (
-        'the extra-group offset was not moved past the new module')
+    slots = {int(i): name for i, name
+             in re.findall(r'groups\[(\d+)\]\s*=\s*(\w+)\s*;', code)}
+    assert 'raptorModeCost' in slots.values(), (
+        'raptorModeCost is not assigned a slot in the groups array')
+    fixed = max(slots) + 1
+    assert sorted(slots) == list(range(fixed)), (
+        'the groups array has a hole in it: %s' % sorted(slots))
+    size = re.search(r'ConfigGroup\[(\d+)\s*\+\s*extraGroups\.size\(\)\]', code)
+    assert size and int(size.group(1)) == fixed, (
+        'the groups array is sized for %s fixed slot(s) against %d assigned'
+        % (size.group(1) if size else 'no', fixed))
+    offset = re.search(r'groups\[(\d+)\s*\+\s*i\]\s*=\s*extraGroups\.get\(i\)', code)
+    assert offset and int(offset.group(1)) == fixed, (
+        'the extra groups start at %s against %d fixed slot(s), so one would '
+        'overwrite a materialised module'
+        % (offset.group(1) if offset else 'no offset', fixed))
 
 
 def test_the_gate_is_declared_and_ships_absent():

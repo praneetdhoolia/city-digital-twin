@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
+**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
 
 ## What is built
 
@@ -41,6 +41,9 @@
 - **The synthetic population** holds 612,634 persons in 246,865 households, 53.4% of persons employed, 6.0% of households with no car (`cities/newcastle/demand/population/B1_synthetic_population.csv`, `_population_report.json`, §9.131), and the manifest holds 512 files (`data/MANIFEST.csv`, §9.144). The driver-owns-a-car identity entered the chains, plans and 30 run-input sets at the 6 Sep rebuild (§9.144). **Which family's build is on disk today, and whether it is consistent, are live facts with one home each** — the board's state block and `python tests/check_package.py`; this page does not restate them, because it said "the F26 build" for a day after the disk said otherwise.
 - The figures below are the 30 Aug rebuild's where §9.133 is cited and the 3 Sep rebuild's where §9.140 is; WEEKDAY plans 622,051 persons and 9,969,564 legs on the F24 build (`_plans_report.json`, §9.140). Family F24 is declared at the first arm's launch stamp; the arm needs a stated-cost approval and none stands (`NEXT_AGENT_BRIEF.md` §3).
 
+- **A TOUR THAT WILL NOT FIT NO LONGER DISCARDS THE REST OF THE DAY** (§9.164, #30). `src/build/build_activity_chains.py` used to `break` out of the placement loop when a tour was pushed past the horizon by a collision with an immovable escort interval, dropping every tour still to be placed - four lines above a branch that reaches the same state and `continue`s. It now drops that tour alone and counts what the old path discarded unattempted.
+- **THE DEMAND IS REBUILT AND THE 30 RUN-INPUT SETS WITH IT** (§9.164). The builders and the package on disk agree again, which is what makes the committed builder able to reproduce it; family `F33` opens on it.
+
 ## What is measured
 
 - **THE HOUSEHOLD-CAR ROSTER BINDS HARDER AS THE SEARCH CONVERGES** (§9.163, #145). `HouseholdCarDepartureHandler` on `20260909T015217_300it_25pct`: **8,550** drivers waited for a household car that was out on the first iteration and **15,580** on the last. Car's share rose 64.71 % → 68.42 % on the all-resident denominator over the same interval and jumped +2.211 pp at the innovation cutoff alone.
@@ -66,6 +69,8 @@
 - Short trips: 4.45% of generated legs were under 1 km against an observed all-purpose band share of 18.8%; the mixture targets the distribution, and the walk share it buys is an arm's measurement (§9.69).
 - The committed builder had stopped reproducing the committed demand for the life of PR #95; caught from the build report, not a gate, and `build_mode_targets.py` now asserts its declared inputs against their sources (§9.116). `check_package.py` was failing on `main` while three documents said it passed (§9.117); it was failing again on `main` from 30 August 19:31 to the rebuild, as the board said (§9.131, §9.133).
 
+- **WHAT THE DISCARD FIX RECOVERED, AND WHAT IT DID NOT** (§9.164, `_activity_chains_report.json` `tours_reattempted_after_a_failed_tour`): **547** weekday tours, **241** Saturday and **77** Sunday were attempted that the old `break` discarded unattempted. The week trip rate reads **3.398 trips/person/day against the HTS 3.473**. It is a real correction and a SMALL one: the bulk of the shortfall is elsewhere - **18,446** weekday tours are still dropped over the horizon and 3,326 midnight-capped, and those are a different mechanism.
+
 ## What is open
 
 - #86 — passenger demand against the observed 20.6%: the four passes reach the identity on paper; at the F26 gate 45.5 % of declared bound trips in selected plans ride and 29,827 are driven by the passenger themselves — 12,317 car legs began with every household car already out (§9.146, #145). The roster is the repair; the first F27 arm measures it.
@@ -75,6 +80,8 @@
 - Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION` and the activity durations (§9.2, §9.61); the 2021 journey-to-work table would sharpen the interaction rate's 2011 vintage and is an attended extract (§9.140).
 - #96 and #93 are awaiting a run on the F24 build: the leaf mixes are repaired at the seed (0 leaf on every day type) and the carve is conserved per LGA (§9.140) — the seed page and the motorbike page carry the numbers.
 - The 9,376 `driver_is_the_companion` refusals that survive the filter are emergent, not structural, and stay reported (`_activity_chains_report.json`, §9.116).
+
+- **The sub-1 km SUPPLY is still fixed at build time and its SHAPE is unobserved** (§9.164, #30). The destination model is solved per (purpose × home LGA) against that LGA's own HTS mean journey distance and is doubly constrained (§9.40, §9.136), so the MEAN is matched by construction. The share of trips under one kilometre is a property of the exponential kernel's SHAPE, and the published HTS gives a mean and no distribution - so no short-end target exists in this package that is not invented. What the next arm reads is the sub-1 km share on the rebuilt demand against the landed arm's 11.17 %; what it cannot do is score a target nobody observed (§9.8, §9.13).
 
 ## Refused — do not re-raise
 
@@ -90,6 +97,7 @@
 
 ## History
 
+- §9.164 — the whole-day discard is repaired; the demand rebuilt
 - §9.163 — the roster binds harder; half of declared passengers drive
 - §9.158 — the plans carry OSM geometry and are share-alike; #50 is an acquisition
 - §9.153 — the roster at F30 it.0: 8,549 drivers waited

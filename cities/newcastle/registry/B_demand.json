@@ -1213,6 +1213,25 @@
         "src/build/build_matsim_plans.py"
       ]
     },
+    "B.mode.bound_passenger_placement": {
+      "value": "every_plan",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "every_plan",
+          "alternative"
+        ],
+        "basis": "Whether the demand STATES that a declared passenger rides, or merely OFFERS it. `alternative` is the pre-change behaviour: the round-trip-covered tour got `ride` in ONE seeded plan among the person's five or six, and drew its mode in the rest. `every_plan` puts `ride` on every seeded plan's covered tour, which is exactly what the demand already does for the OTHER half of the same pair - a serving tour reads `car` in every seeded plan, because the demand declares that the driver drives. WHAT THE SWEEP ANSWERS: how much of ride's -41.0 % is the passenger's mode assignment rather than pairing, selection or scoring. The asymmetry is measured: of 20,902 declared escort pairs in sample on 20260909T015217_300it_25pct, 10,224 have the passenger DRIVING THEIR OWN CAR against 7,821 co-assigned, with 99.6 % of tours realised and the windows ample (9.163) - so the pair exists, the seats exist, and the passenger is somewhere else. It is also the only layer that CAN answer it: ride's target of 20.6000 % sits above the 20.05 % of agents who have ever held a ride plan, and a scoring constant reallocates only between plans an agent already holds, so no value of any constant reaches the target (9.163, #174). The seed biases where the search starts, never what selection keeps: SubtourModeChoice may move the tour off ride from iteration 1 and ChangeExpBeta keeps the result only if it scores."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "consumers": [
+        "src/build/build_matsim_plans.py"
+      ],
+      "description": "Where a bound passenger's `ride` sits in plan memory: on every seeded plan's covered tour (`every_plan`, symmetric with the serving driver's `car`) or on one variant (`alternative`, the pre-change seed). A partially bound tour carries the per-trip override of B.mode.partial_bind_base under either setting, since a chain-based base on the uncovered leg would mix the subtour (9.119). Duplicate plans created when two bases collapse onto one assignment are folded rather than seeded, so plan memory is not spent on copies. Consumed by build_matsim_plans.py; reported as `bound_placement` in the build report."
+    },
     "B.mode.seed_split": {
       "value": {
         "car_available": {

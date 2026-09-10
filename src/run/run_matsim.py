@@ -552,7 +552,7 @@ def announce_cost(iterations, fraction, cfg):
         ceiling_h = 0.0
     if ceiling_h > 0:
         print('      A STATED COST IS A BOUNDARY, AND THIS ONE IS ENFORCED: '
-              'the runner stops itself at RUN.gate.wall_ceiling_h = %.1f h '
+              'the runner stops itself at RUN.gate.wall_ceiling_h = %g h '
               '(#169).' % ceiling_h, flush=True)
     else:
         print('      A STATED COST IS A BOUNDARY, NOT AN ESTIMATE. Stop the '
@@ -595,12 +595,24 @@ def refuse_if_no_automatic_stop(cfg):
         ceiling_h = float(cfg.get('RUN.gate.wall_ceiling_h'))
     except (TypeError, ValueError):
         ceiling_h = 0.0
-    if interval > 0 or ceiling_h > 0:
+    # 9.164 (#131): AN INTERVAL IS NOT A GATE. The watcher reads what the
+    # monitor maintains and refuses to arm without it, so an interval declared
+    # beside `RUN.monitor.enabled = false` is a stop that does not exist -
+    # measured on 20260910T205517_20it_1pct, which declared an interval of 2,
+    # reached iteration 3 and wrote no verdict, no gate line and no warning.
+    # This refusal counted such a run as protected because it read the
+    # interval alone.
+    monitored = bool(cfg.get('RUN.monitor.enabled'))
+    if (interval > 0 and monitored) or ceiling_h > 0:
         return
     raise SystemExit(
         'REFUSED: this run has no automatic stop of any kind.\n'
-        '  RUN.gate.interval_iterations = 0  (the gate watcher is off, so '
-        'nothing stops it on the model being wrong)\n'
+        '  RUN.gate.interval_iterations = %d, RUN.monitor.enabled = %s  (%s, '
+        'so nothing stops it on the model being wrong)\n'
+        % (interval, str(monitored).lower(),
+           'the gate watcher is off' if interval <= 0
+           else 'the gate watcher cannot arm without the monitor it reads, '
+                '#131') +
         '  RUN.gate.wall_ceiling_h      = 0  (no ceiling, so nothing stops it '
         'on cost)\n'
         'An arm in this state runs until it finishes or a person notices, and '
@@ -1107,6 +1119,23 @@ def start_gate_watch(run_dir, cfg, proc):
     except Exception:                                        # noqa: BLE001
         return None
     if interval <= 0:
+        return None
+    # 9.164 (#131): RUN.gate SILENTLY DEPENDED ON RUN.monitor, and the
+    # dependency was measured rather than argued. On the probe
+    # 20260910T205517_20it_1pct the monitor was off, the interval was 2 and the
+    # run reached iteration 3: the watcher should have judged at iteration 2
+    # and there is no verdict file, no gate line and no warning anywhere in the
+    # run. The watcher's own reader needs what the monitor maintains, and its
+    # fallback - a 64 KiB tail - was measured 611 MiB behind EOF on a 25% arm.
+    # A watcher that arms and judges nothing is worse than one that refuses:
+    # the launch banner says the run has an automatic stop, and it has not.
+    if not bool(cfg.get('RUN.monitor.enabled')):
+        print('      GATE WATCHER NOT ARMED: RUN.gate.interval_iterations is '
+              '%d but RUN.monitor.enabled is false, and the watcher reads what '
+              'the monitor maintains. This run has NO modelling stop (#131). '
+              'Turn the monitor on, or state that the run is deliberately '
+              'unjudged beside the approval on its overlay.' % interval,
+              flush=True)
         return None
     import threading
     reporter = REPORTER
@@ -1688,8 +1717,10 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
         dead = mark_dead(run_dir, 'aborted' if gate_cause else 'failed',
                          rc=rc, wall_s=round(wall, 1), cause=gate_cause)
         print(('%s after %.0fs - %s'
-               % ('GATE-STOPPED' if completion == STOPPED_AT_GATE
-                  else 'STOPPED BY THE OPERATOR', wall, gate_cause))
+               % ({STOPPED_AT_GATE: 'GATE-STOPPED',
+                   STOPPED_AT_CEILING: 'CEILING-STOPPED'}.get(
+                       completion, 'STOPPED BY THE OPERATOR'),
+                  wall, gate_cause))
               if gate_cause else
               ('FAILED rc=%d after %.0fs - see %s'
                % (rc, wall, os.path.join(dead, 'matsim.log'))), flush=True)

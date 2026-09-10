@@ -279,8 +279,12 @@
       ],
       "sweep_role": "uncertainty",
       "status": "active",
-      "decisions_ref": "8.4",
-      "description": "Weight on service headway."
+      "decisions_ref": "8.4, 9.164",
+      "description": "Weight on service headway, as a ratio to in-vehicle time. It prices SCHEDULE DELAY - the cost of a service's frequency constraining WHEN a traveller may go at all - which is a cost this twin does not otherwise carry, because a MATSim agent has perfect timetable knowledge and times its arrival at the stop to the departure it chose. So it is NOT a proxy for the wait C.time_weights.beta_wait already prices, and the argument that retired the two gradient weights (9.140, #21) does not transfer. At 0.5 the penalty is exactly the appraisal convention of half the service interval, so wiring it introduces no assumption the registry had not already declared. Reaches MATSim through the derived serviceQuality.headwayUtilsPerMin, charged by citysim.ServiceQualityScoring on the route the passenger actually boarded, and only while C.time_weights.service_quality_representation is on (#175).",
+      "consumers": [
+        "src/build/build_params.py",
+        "src/build/build_matsim_run_inputs.py"
+      ]
     },
     "C.time_weights.beta_reliability": {
       "value": 1.3,
@@ -292,8 +296,30 @@
       ],
       "sweep_role": "uncertainty",
       "status": "active",
-      "decisions_ref": "8.4",
-      "description": "Weight on travel time variability."
+      "decisions_ref": "8.4, 9.164",
+      "description": "Weight on travel time variability, as a ratio to in-vehicle time - the RELIABILITY RATIO in its standard form, the standard deviation of journey time valued as a multiple of its mean. It is not a proxy for congestion the mobsim already produces: the mobsim produces REALISED delay, which beta_ivt prices on the time actually taken, while this prices the disutility of not knowing in advance. The standard deviation it multiplies is MEASURED, never assumed - the spread of VehicleArrivesAtFacilityEvent delays over every stop the route served in the PREVIOUS mobsim, so a bus held on a shared carriageway becomes unreliable because this model delayed it while a tram on its own alignment does not. The first scored iteration has no previous mobsim and carries NO reliability charge, stated in the log rather than back-filled. Reaches MATSim through the derived serviceQuality.reliabilityUtilsPerMin, and only under C.time_weights.service_quality_representation = headway_and_reliability (#175).",
+      "consumers": [
+        "src/build/build_params.py",
+        "src/build/build_matsim_run_inputs.py"
+      ]
+    },
+    "C.time_weights.service_quality_representation": {
+      "value": "absent",
+      "units": "categorical",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "absent",
+          "headway",
+          "headway_and_reliability"
+        ],
+        "basis": "Whether a passenger pays anything for a service's FREQUENCY, and then for its VARIABILITY. `absent` is the pre-change state and every arm this project has run: C.time_weights.beta_headway and C.time_weights.beta_reliability are declared with literature sweeps, written into params/C1_parameters.json by build_params.py, and read by NOTHING after that - the last cheap INERT on the board, asked for as recommendation 7 of the 9 September assessment and recommendation 13 of the 10 September one, and landed by neither. `headway` charges the service interval alone; `headway_and_reliability` adds the measured spread. WHAT THE SWEEP ANSWERS: whether bus at +44.8 % against light rail at -57.3 % is a SERVICE-QUALITY INVERSION - a model preferring the infrequent, unreliable mode to the frequent, reliable one - and how much of it these two prices close. It is the only pair of declared parameters in the registry that pushes both deviations the way they need to go, which is a reason to TEST it and not evidence that it is right: both deviations have other candidate causes already named (#98 crowding, #162 the router returning a walk, #49 the raptor's mode constant). The three-way split is deliberate: reliability's standard deviation is measured from the previous mobsim, so `headway` isolates the half that needs no measurement and is identical in the first scored iteration to the half that does."
+      },
+      "sweep_role": "answer",
+      "status": "active",
+      "decisions_ref": "9.164",
+      "matsim_param": "serviceQuality.representation",
+      "description": "The representation gate for service quality in scoring (#175). `absent` recovers the previous model exactly - citysim.ServiceQualityScoring never installs and no PersonScoreEvent of kind `serviceQuality` is emitted. The two prices it needs are DERIVED by build_matsim_run_inputs.py from the trip-weighted VOT identity every other derived scoring value uses, and the config group holds no default for either, so a gate turned on without them is refused before the JVM reaches the mobsim."
     },
     "C.time_weights.beta_ivt": {
       "value": 1.0,

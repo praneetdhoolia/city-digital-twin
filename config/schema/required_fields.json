@@ -4,15 +4,15 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 499,
+  "n_fields": 514,
   "n_by_layer": {
     "A": 182,
-    "B": 113,
-    "C": 57,
-    "CAL": 26,
+    "B": 114,
+    "C": 58,
+    "CAL": 27,
     "D": 5,
     "E": 26,
-    "RUN": 90
+    "RUN": 102
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -2193,6 +2193,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.mode.bound_passenger_placement": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.mode.bound_passenger_seed": {
       "layer": "B",
       "units": "enum",
@@ -3129,6 +3138,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "C_behaviour.json"
     },
+    "C.time_weights.service_quality_representation": {
+      "layer": "C",
+      "units": "categorical",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "C_behaviour.json"
+    },
     "C.transfer.beta_transfer_penalty_min": {
       "layer": "C",
       "units": "minutes_equivalent",
@@ -3296,6 +3314,15 @@
       "units": "count",
       "type": "number",
       "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.objective.replication_band_pp": {
+      "layer": "CAL",
+      "units": "relative_percent",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "CAL_calibration.json"
@@ -3939,6 +3966,24 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.mode_choice.pt_submode_alternatives": {
+      "layer": "RUN",
+      "units": "categorical",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.mode_choice.pt_submode_seed": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.mode_choice.subtour_behavior": {
       "layer": "RUN",
       "units": "enum",
@@ -4056,6 +4101,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.qsim.remove_stuck_vehicles": {
+      "layer": "RUN",
+      "units": "boolean",
+      "type": "boolean",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.qsim.snapshot_period": {
       "layer": "RUN",
       "units": "hh:mm:ss",
@@ -4071,6 +4125,24 @@
       "type": "number",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.qsim.stuck_time_s": {
+      "layer": "RUN",
+      "units": "s",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.qsim.traffic_dynamics": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
@@ -4124,6 +4196,15 @@
       "units": "plans",
       "type": "number",
       "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.replanning.plan_selector_for_removal": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
@@ -4182,12 +4263,21 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.routing.access_egress_consistency_check": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.routing.access_egress_type": {
       "layer": "RUN",
       "units": "policy",
       "type": "string",
-      "source_in_reference_city": "definition",
-      "sweep_required": false,
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
@@ -4232,6 +4322,15 @@
       "units": "enum",
       "type": "string",
       "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.routing.routing_randomness": {
+      "layer": "RUN",
+      "units": "dimensionless",
+      "type": "number",
+      "source_in_reference_city": "literature",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
@@ -4335,6 +4434,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.scoring.path_size_logit_beta": {
+      "layer": "RUN",
+      "units": "dimensionless",
+      "type": "number",
+      "source_in_reference_city": "literature",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.scoring.waiting_utils_per_h": {
       "layer": "RUN",
       "units": "utils_per_hour",
@@ -4425,6 +4533,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.transit_router.additional_transfer_time_s": {
+      "layer": "RUN",
+      "units": "s",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.transit_router.direct_walk_basis": {
       "layer": "RUN",
       "units": "enum",
@@ -4470,6 +4587,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.travel_time.aggregator": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.travel_time.analysed_modes": {
       "layer": "RUN",
       "units": "mode_names",
@@ -4494,6 +4620,15 @@
       "type": "boolean",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.travel_time.getter": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
