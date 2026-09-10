@@ -1,6 +1,6 @@
 # Population and demand — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
 **Updated:** 8 September 2026 (thirty-sixth session) · **Record read through:** §9.158 · **Written against family:** `F31`
 
@@ -43,6 +43,10 @@
 
 ## What is measured
 
+- **THE HOUSEHOLD-CAR ROSTER BINDS HARDER AS THE SEARCH CONVERGES** (§9.163, #145). `HouseholdCarDepartureHandler` on `20260909T015217_300it_25pct`: **8,550** drivers waited for a household car that was out on the first iteration and **15,580** on the last. Car's share rose 64.71 % → 68.42 % on the all-resident denominator over the same interval and jumped +2.211 pp at the innovation cutoff alone.
+- **AND THE REASON THE SECOND CAR IS WANTED IS THAT A DECLARED PASSENGER IS DRIVING IT** (§9.163, #145, #86). Of 20,902 declared escort pairs with both members in sample, **10,224 (48.9 %)** have the passenger driving their **own car** against **7,821 (37.4 %)** co-assigned car + ride. The roster is the symptom's brake, not its cure: a fix at the demand that puts a declared passenger on `ride` should drive that 10,224 toward zero without the roster's counter having to rise to hold it.
+- **The modelled mode × demographics table exists for the first time** (§9.163, #50; `mode_by_demographics.py` over the whole realised trips table joined to B1). By licence: no licence — car 0.0 %, ride 50.9 %, walk 27.6 %, bike 8.8 %, pt 9.1 %, taxi 3.5 % (74,243 trips); licence — car 82.5 %, ride 6.1 %, walk 4.6 %, bike 2.5 %, pt 1.7 % (467,836). By employment: not in labour force car 57.9 % / ride 20.4 % / pt 4.1 %, full-time car 79.8 % / ride 7.3 % / pt 1.9 %. By sex the split is flat to within 0.5 pp on every mode. **This is the modelled half only** — the observed mode × age counterpart is the blocked acquisition #50 waits on, and no observed value appears in it.
+- **Income's own effect is not separable from this arm** (§9.163, #108). Every mode the four money charges touch is OVER target except light rail — bus +44.8 %, heavy rail +225.0 %, taxi +202.2 % — and taxi is over target while carrying the largest money charge per trip, which is the opposite sign to a binding income-scaled money sensitivity. But nothing has ever been read with `C.income.representation` OFF at the same depth in the same family, so a single-arm reading with income live attributes nothing to income.
 - **THE PLANS CARRY OSM GEOMETRY, AND THE PACKAGE HAD SAID THEY DID NOT** (§9.158, #159). `city.json`'s `derived_licences_basis` claimed the plans "reference OSM way ids as link ids but carry no OSM geometry or tags". That was wrong: `place_in_zone()` returns the attractor's OWN coordinate, and **3,000 of 3,000 sampled `dest_placement=poi` destinations sit within 5 m of an OSM POI or CBD building coordinate, median 1.49 m** — the residual a reprojection difference. `demand/plans/*` is therefore **ODbL 1.0, share-alike**, along with the validation, mode-target and count-comparison artefacts built on it. The synthetic POPULATION stays CC-BY: the synthesiser reads only the ABS identity, tier, area, centroid and population columns of the mixed zone table, which its producer declares as a column subset. Manifest licences now **279 CC-BY / 218 ODbL / 15 bespoke**, `share_alike_ancestor` undetermined **0** (the split moved again on 8 September when a content pass took the 15 mapped-schedule `transitVehicles.xml.gz` files to CC-BY, §9.159, #165).
 - **`B.population.bike_min_age` is movable by the calibration loop for the first time** (§9.158): the movable set went 5 → 21 once a declared `matsim_param` binding was accepted as evidence that a field reaches the run. `B.population.licence_rate_by_age_band` is not and should not be — it is `measured`, not `assumed`.
 - **`Serve passenger` is HX everywhere, and the value-of-time table is keyed on it** (§9.151, #147). The HTS purpose map existed twice: the demand builder sent `Serve passenger` to HX — its own tour purpose since §9.15 — while the run-input assembler folded it into NHB and fed that to `scoring_from_c1()`. One shared map now (`src/build/hts_purpose.py`), HX wins. **The repair exposed a second half**: `C.vot.by_purpose` was still keyed NHB, so the HX weight matched no key, was dropped from the average and the rest renormalised — moving the collapsed value **16.96 → 17.317 AUD/h** against a `C.vot.trip_weighted` declared at 16.96. Re-keyed `NHB` → `HX` at the same 15.2: **renamed, not revalued**.
@@ -86,10 +90,10 @@
 
 ## History
 
+- §9.163 — the roster binds harder; half of declared passengers drive
 - §9.158 — the plans carry OSM geometry and are share-alike; #50 is an acquisition
 - §9.153 — the roster at F30 it.0: 8,549 drivers waited
 - §9.151 — an escort is generated and priced as an escort
-
 - §9.149 — the shared pass binds the longest tours first
 - §9.146 — a household drives the cars it owns; the carve draws no bound passenger
 - §9.144 — a binder driver must own a car; F26 rebuild
@@ -101,14 +105,3 @@
 - §9.131 — licence rate measured per LGA
 - §9.129 — bucket rule; carves on drawn pool
 - §9.125 — resident truck drivers carved from G62
-- §9.124 — fourth pass binds shared rides
-- §9.123 — car-less quarter wears ride's deficit
-- §9.117 — local suite failing, record reconstructed
-- §9.116 — builder stopped reproducing its demand
-- §9.111 — companion was their own driver
-- §9.84 — joint binder and age gates
-- §9.83 — ride gap is a demand ceiling
-- §9.69 — short trips get observed distribution
-- §9.61 — three assumptions became measurements
-- §9.60 — unbound escorts re-targeted to passengers
-- §9.46 — escort binds to the escorted

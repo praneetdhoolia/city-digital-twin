@@ -965,6 +965,51 @@ def audit():
     return corpus, fields, led, len(reaching), owned, pending(fields, uses)
 
 
+# --------------------------------------------------------------------------
+# What "reaches the config" does NOT prove
+# --------------------------------------------------------------------------
+#
+# Section 7 nudges every bound field and watches the config bytes move. That
+# proves the value ARRIVES. It cannot prove the consumer does anything with it,
+# and three fields in this city are live counter-examples: their consumer treats
+# the shipped value as an OFF switch, so they are declared, swept, rendered into
+# the reference, proven to reach - and inert.
+#
+# `inert_at` is the consumer's documented off value, declared on the field.
+# A field shipped at it is reported here and NOT counted: being switched off is
+# a modelling decision with a record behind it, not a defect. What would be a
+# defect is a reader taking "137 of 137 proven to reach" as "137 of 137 doing
+# something", which is what this section exists to stop.
+
+def switched_off(fields):
+    """(key, shipped, inert_at, why) for every field shipped at its off value."""
+    out = []
+    for key in sorted(fields):
+        field = fields[key]
+        if not isinstance(field, dict) or 'inert_at' not in field:
+            continue
+        shipped, off = field.get('value'), field['inert_at']
+        try:
+            same = float(shipped) == float(off)
+        except (TypeError, ValueError):
+            same = shipped == off
+        if same:
+            out.append((key, shipped, off, field.get('inert_reason', '')))
+    return out
+
+
+def _print_switched_off(fields):
+    rows = switched_off(fields)
+    print('     of those, SHIPPED AT THE CONSUMER\'S OFF VALUE - the field '
+          'reaches the config and the consumer ignores it:')
+    for key, shipped, off, why in rows:
+        print('       %-42s = %-8s (off at %s) %s'
+              % (key, shipped, off, why[:60]))
+    print('       %d  (not counted: switching a mechanism off is a decision '
+          'with a record, but "proven to reach" is not "doing something")'
+          % len(rows))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument('--strict', action='store_true',
@@ -1023,7 +1068,9 @@ def main():
     for (why,) in led.get('reach_probe_failed', []):
         print('     PROBE FAILED (not a pass): %s' % why)
     print('     %d of %d bound field(s) proven to reach the config by changing '
-          'them\n' % (n_reaching, n_reaching + len(led['inert_bindings'])))
+          'them' % (n_reaching, n_reaching + len(led['inert_bindings'])))
+    _print_switched_off(fields)
+    print('')
 
     print('8. STALE EXCEPTIONS - a STRUCTURAL entry whose symbol is gone')
     for (key,) in led['stale_structural']:

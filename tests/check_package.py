@@ -249,6 +249,86 @@ if check(os.path.exists(C4), 'observed mode constraints present (%s)' % C4):
           'the constraint names the constant it binds and records that the PT '
           'constants are NOT touched, so the effect under test is untouched')
 
+# ---- 7b. the count-station map still names the roads it claims ----
+#
+# The map from a traffic count station to the network links it counts is keyed
+# on MATSim LINK IDS, and those ids are re-issued whenever the network is
+# rebuilt. The map is therefore a DERIVATIVE OF THE NETWORK and rots silently
+# the moment the network moves underneath it: nothing in the manifest, whose
+# job is the file's own hash, can see that a row now points at a different
+# road.
+#
+# It did rot, and for twenty-five days. The map was written 2026-08-16T00:37:54
+# and the scenario network rewritten 47 minutes later, after which NONE of its
+# 195 rows still named the road it claimed - 64 pointed at service roads, 61 at
+# residential streets and 8 at links that no longer existed. The station on the
+# M1 was scored against an unnamed service road of capacity 400; one station was
+# scored for `vol_car` against a link whose modes are `pt,rail,train`. Every
+# counts reading taken in that window (mean -89.35%, median -98.7%, seven
+# stations modelled at exactly zero) measured nothing, and a through-traffic
+# tier was built to explain the deficit. Regenerating the map moved the same
+# run's counts to a median of +4.3% with no zeros.
+#
+# The invariant that would have caught it on the first run: a mapped link id
+# must RESOLVE in an assembled scenario network AND carry the road name the map
+# recorded for it. This names no scenario - it asks only that the map agree
+# with one of the networks the package actually assembled.
+STATION_LINKS = _city.path('data/processed/validation/count_station_links.csv')
+if os.path.exists(STATION_LINKS) and os.path.exists(RUN_REPORT_EARLY := _city.path(
+        'scenarios/matsim/_run_inputs_report.json')):
+    _sl = rows(STATION_LINKS)
+
+    def _link_names(net_path):
+        """{link id: osm:way:name} streamed from a MATSim network."""
+        out, cur = {}, None
+        with gzip.open(net_path, 'rt', encoding='utf-8') as fh:
+            for line in fh:
+                m = re.search(r'<link id="([^"]+)"', line)
+                if m:
+                    cur = m.group(1)
+                    out.setdefault(cur, '')
+                elif cur:
+                    n = re.search(r'name="osm:way:name"[^>]*>([^<]+)<', line)
+                    if n:
+                        out[cur] = n.group(1)
+        return out
+
+    _best, _best_sid, _best_detail = None, None, ''
+    for _sid in sorted(json.load(open(RUN_REPORT_EARLY, encoding='utf-8'))
+                       .get('scenarios', {})):
+        _net = _city.path('scenarios/matsim/%s/network.xml.gz') % _sid
+        if not os.path.exists(_net):
+            continue
+        _names = _link_names(_net)
+        _missing = [r for r in _sl if r['link'] not in _names]
+        _renamed = [r for r in _sl
+                    if r['link'] in _names
+                    and (r.get('link_name') or '').strip().lower()
+                    != (_names[r['link']] or '').strip().lower()]
+        _bad = len(_missing) + len(_renamed)
+        if _best is None or _bad < _best:
+            _best, _best_sid = _bad, _sid
+            _best_detail = ('%d row(s) name a link the network does not have, '
+                            '%d name a link whose road name has changed'
+                            % (len(_missing), len(_renamed)))
+            if _renamed:
+                _r = _renamed[0]
+                _best_detail += ('; e.g. station %s claims link %s is %r, the '
+                                 'network says %r'
+                                 % (_r['station_key'], _r['link'],
+                                    _r.get('link_name'), _names[_r['link']]))
+        if _bad == 0:
+            break
+    if _best is not None:
+        check(_best == 0,
+              'every count-station link resolves on an assembled scenario '
+              'network and still carries the road name the map recorded '
+              '(%d row(s), best match %s: %s). Regenerate with '
+              'src/analyse/map_count_stations.py whenever the network is '
+              'rebuilt - a stale map scores the model against the wrong roads '
+              'and no hash can see it'
+              % (len(_sl), _best_sid, _best_detail or 'all rows agree'))
+
 # ---- 8. assumed values carry sweep ranges ----
 c1 = rows(_city.path('params/C1_behavioural_parameters.csv'))
 check(all(r.get('beta_transfer_penalty_low') and r.get('beta_transfer_penalty_high')

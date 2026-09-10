@@ -29,8 +29,8 @@ jobs:
     name: python sources compile (offline)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       # Compile-only: catches syntax errors across the acquisition/build code without
@@ -57,8 +57,8 @@ jobs:
     name: unit tests (the functions that decide correctness)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       # Until 4 Sep 2026 every verification in this repository was a WHOLE-PACKAGE
@@ -86,8 +86,8 @@ jobs:
     name: manifest integrity (committed files)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       - name: Every committed data file matches its MANIFEST.csv hash and size
@@ -97,8 +97,8 @@ jobs:
     name: living documents match the artefacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       # The counterpart of the hardcoding gate, pointed at prose. A number written
@@ -115,8 +115,8 @@ jobs:
     name: living documents keep their shape
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       # The companion of doc_currency: a number can be right while the document
@@ -138,8 +138,8 @@ jobs:
     name: city contract (schema, required fields, artefacts)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       - name: Install the JSON Schema validator
@@ -161,8 +161,8 @@ jobs:
     name: zero hardcoding (declared, wired, and proven to reach)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       # THE GATE. Every controllable value is declared, every declared field
@@ -184,8 +184,8 @@ jobs:
     name: a second city runs the framework unchanged (G2)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       - name: Install the JSON Schema validator
@@ -202,8 +202,8 @@ jobs:
     name: provenance + decision-record presence
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
         with:
           python-version: "3.14"
       # The credibility claim in DECISIONS.md rests on these files existing and parsing;

@@ -44,7 +44,28 @@ on every pass.
 
 ## State
 
-Last pass **9 September 2026**, at `781cf41` (the PR #168 merge), lodged as
+Last pass **10 September 2026**, at `4d1d1bc` (the PR #173 merge), lodged as
+[`20260910T134723_project_report.html`](../20260910T134723_project_report.html)
+— the **seventh** pass of the library, one day after the sixth.
+
+| | rows | this pass |
+|---|---:|---|
+| `field-survey.json` projects | **50** | 49 reused unchanged, **0 re-searched**, 1 added (Tallinn/SimMobility — 477 parameters, Bayesian optimisation over a random-forest surrogate, ~1,000 machine hours) |
+| `field-survey.json` platforms | 12 | all reused unchanged |
+| excluded · not re-verified · gaps | 62 · 37 · **12** | 1 gap closed with its source (the "myopic heuristics" claim → Chen et al., *TR-C* 119 (2020) 102650), 1 partly closed, 1 corrected, 4 opened |
+| `calibration_methods` | **20** | 14 → 20; 6 added, 1 updated |
+| `factors.json` rows | **90** | **83 reused unchanged, 0 re-searched**, **7 added** (router–scorer consistency; equilibrium selection at the innovation cutoff; choice-set coverage as a binding constraint; mode availability by distance; distributional targets beyond mode share; flow/storage correction at a sample; expanding a sampled run's link volumes) |
+| `needs_research` | **0** | unchanged |
+
+Budgets: field lane **38 of 40** calls over 10 rounds; factor lane **18 of 40**
+over 3. Every call went to a named gap or to this pass's question. Statuses in
+this model are stored nowhere here and all 90 were re-read at `4d1d1bc`:
+**IN 46 · PARTIAL 32 · INERT 2 · ASC 1 · OUT 9**, with exactly one class change
+(iteration count and cost, PARTIAL → IN, at `8bb30d9`).
+
+### The previous pass
+
+Lodged as
 [`20260909T003402_project_report.html`](../20260909T003402_project_report.html)
 — the sixth pass of the library. The previous refresh of both lanes was the pass
 at `6cf0ffd`, lodged as

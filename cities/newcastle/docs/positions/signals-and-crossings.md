@@ -1,7 +1,7 @@
 # Signals, SCATS and level crossings — current position
 
 Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description; `.claude/CLAUDE.md` and `STATUS.md` no longer do) describe the pre-§9.88 state; §9.88 is newer and wins. The precise statement is: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
 **Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Written against family:** `F23`
 

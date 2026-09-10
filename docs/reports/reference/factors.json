@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 83,
+  "factors": 90,
   "needs_research": 0,
-  "researched": 83,
-  "literature_half_written": 83
+  "researched": 90,
+  "literature_half_written": 90
  },
  "factors": [
   {
@@ -37,7 +37,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Residential self-selection share of the built-environment effect in Australian cities (VISTA / Sydney HTS panel)",
-   "reused": true
+   "reused": true,
+   "id": "A1"
   },
   {
    "layer": "A",
@@ -55,7 +56,8 @@
     "https://wfrc.utah.gov/wp-content/uploads/2025/07/WFRC-Activity-Based-Model-Implementation-Framework-20250221.pdf"
    ],
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "reused": true
+   "reused": true,
+   "id": "A2"
   },
   {
    "layer": "A",
@@ -69,7 +71,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "A Vehicle ownership per household: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "A3"
   },
   {
    "layer": "A",
@@ -83,7 +86,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E-bike share of Australian bicycle fleet and its effect on feasible cycling distance (NCPS 2023 e-bike ownership)",
-   "reused": true
+   "reused": true,
+   "id": "A4"
   },
   {
    "layer": "A",
@@ -97,7 +101,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "A Licence holding: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "A5"
   },
   {
    "layer": "A",
@@ -111,7 +116,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Opal Gold Senior / concession share of Hunter bus and rail boardings (TfNSW patronage by card type)",
-   "reused": true
+   "reused": true,
+   "id": "A6"
   },
   {
    "layer": "A",
@@ -125,7 +131,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "NCPS 2023 household bicycle ownership rate for NSW regional cities and the share of owners who rode in the last week",
-   "reused": true
+   "reused": true,
+   "id": "A7"
   },
   {
    "layer": "B",
@@ -139,7 +146,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "B Activity generation and scheduling: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "B1"
   },
   {
    "layer": "B",
@@ -153,7 +161,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "B Joint household decisions: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "B2"
   },
   {
    "layer": "B",
@@ -167,7 +176,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "B Escort of children: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "B3"
   },
   {
    "layer": "B",
@@ -181,7 +191,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "B Telework / work-from-home: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "B4"
   },
   {
    "layer": "B",
@@ -195,7 +206,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "NSW HTS weekend vs weekday trip rate and purpose mix for the Hunter (published table)",
-   "reused": true
+   "reused": true,
+   "id": "B5"
   },
   {
    "layer": "B",
@@ -209,7 +221,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "ABS SDAC 2022 share of Hunter residents with a mobility limitation and their trip rate relative to others",
-   "reused": true
+   "reused": true,
+   "id": "B6"
   },
   {
    "layer": "C",
@@ -223,7 +236,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Estimated size-term weights by employment category for an Australian ABM (AToM / Sydney STM)",
-   "reused": true
+   "reused": true,
+   "id": "C1"
   },
   {
    "layer": "C",
@@ -237,7 +251,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "C Distance decay: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "C2"
   },
   {
    "layer": "C",
@@ -251,7 +266,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Reported shadow-price convergence tolerance for ActivitySim work location (share of zones within x% of jobs)",
-   "reused": true
+   "reused": true,
+   "id": "C3"
   },
   {
    "layer": "C",
@@ -265,7 +281,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "C Intra-zonal trips: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "C4"
   },
   {
    "layer": "D",
@@ -279,7 +296,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "D Departure-time profile by purpose: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "D1"
   },
   {
    "layer": "D",
@@ -293,7 +311,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "D Schedule delay / activity duration preferences: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "D2"
   },
   {
    "layer": "E",
@@ -307,7 +326,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E In-vehicle time and value of time by purpose: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E1"
   },
   {
    "layer": "E",
@@ -321,7 +341,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Access, egress, wait and transfer time weights: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E2"
   },
   {
    "layer": "E",
@@ -335,7 +356,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Fares and money (income-scaled): literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E3"
   },
   {
    "layer": "E",
@@ -349,7 +371,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Parking cost and search time: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E4"
   },
   {
    "layer": "E",
@@ -363,7 +386,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Meta-analysis of toll elasticities of traffic volume (Australian toll roads, e.g. Sydney M-series)",
-   "reused": true
+   "reused": true,
+   "id": "E5"
   },
   {
    "layer": "E",
@@ -377,7 +401,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Car availability and competition for household cars: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E6"
   },
   {
    "layer": "E",
@@ -390,7 +415,8 @@
    "relevance": "medium",
    "needs_research": false,
    "last_verified": "2026-09-07",
-   "reused": true
+   "reused": true,
+   "id": "E7"
   },
   {
    "layer": "E",
@@ -404,7 +430,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Person attributes: income: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E8"
   },
   {
    "layer": "E",
@@ -418,7 +445,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Built form: density, diversity, design, distance to transit: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E9"
   },
   {
    "layer": "E",
@@ -432,7 +460,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "NSW HTS share of tours with an intermediate stop by purpose (published or derivable table)",
-   "reused": true
+   "reused": true,
+   "id": "E10"
   },
   {
    "layer": "E",
@@ -446,7 +475,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Crowding (seated / standing): literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E11"
   },
   {
    "layer": "E",
@@ -460,7 +490,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Reliability and headway: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E12"
   },
   {
    "layer": "E",
@@ -474,7 +505,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Comfort, safety, habit, weather, scenery: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E13"
   },
   {
    "layer": "E",
@@ -488,7 +520,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Bike: stress (traffic), gradient, e-bike: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E14"
   },
   {
    "layer": "E",
@@ -502,7 +535,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Walk: footway width, gradient, crossings, directness: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E15"
   },
   {
    "layer": "E",
@@ -516,7 +550,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Detour and wait tolerance for a household lift (minutes) from a chauffeuring or escort study",
-   "reused": true
+   "reused": true,
+   "id": "E16"
   },
   {
    "layer": "E",
@@ -530,7 +565,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Taxi / rideshare: wait, fleet, refusal, surge: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E17"
   },
   {
    "layer": "E",
@@ -544,7 +580,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Motorbike: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E18"
   },
   {
    "layer": "E",
@@ -558,7 +595,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Bus: frequency, stop access, fares: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E19"
   },
   {
    "layer": "E",
@@ -572,7 +610,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Light rail: tram priority, dwell: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E20"
   },
   {
    "layer": "E",
@@ -586,7 +625,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Heavy rail: capacity, fare, station access: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E21"
   },
   {
    "layer": "E",
@@ -600,7 +640,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Ferry: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E22"
   },
   {
    "layer": "E",
@@ -614,7 +655,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "E Truck / freight: commodity, time windows, vehicle class: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "E23"
   },
   {
    "layer": "E",
@@ -628,7 +670,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "ARTC Hunter Valley coal train frequency and average crossing occupation time per train at St James Road / Clyde Street",
-   "reused": true
+   "reused": true,
+   "id": "E24"
   },
   {
    "layer": "F",
@@ -641,7 +684,8 @@
    "relevance": "medium",
    "needs_research": false,
    "last_verified": "2026-09-07",
-   "reused": true
+   "reused": true,
+   "id": "F1"
   },
   {
    "layer": "F",
@@ -655,7 +699,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "F Parking search and occupancy: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "F2"
   },
   {
    "layer": "F",
@@ -669,7 +714,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "F Boarding, denied boarding and crowding: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "F3"
   },
   {
    "layer": "F",
@@ -682,7 +728,8 @@
    "relevance": "high",
    "needs_research": false,
    "last_verified": "2026-09-07",
-   "reused": true
+   "reused": true,
+   "id": "F4"
   },
   {
    "layer": "G",
@@ -696,7 +743,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Measured saturation flows at Newcastle SCATS sites (TfNSW) to replace the A.road.capacity_default convention",
-   "reused": true
+   "reused": true,
+   "id": "G1"
   },
   {
    "layer": "G",
@@ -710,7 +758,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "G Signals: adaptive control and transit priority: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "G2"
   },
   {
    "layer": "G",
@@ -724,7 +773,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "G Transit operations: dwell, headway, capacity: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "G3"
   },
   {
    "layer": "G",
@@ -738,7 +788,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Parametric calibration of the MATSim queue model (flow/storage) against observed link flows - transferable factors",
-   "reused": true
+   "reused": true,
+   "id": "G4"
   },
   {
    "layer": "G",
@@ -756,7 +807,8 @@
     "https://www.transport.nsw.gov.au/projects/current-projects/m1-pacific-motorway-extension-to-raymond-terrace"
    ],
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "reused": true
+   "reused": true,
+   "id": "G5"
   },
   {
    "layer": "G",
@@ -770,7 +822,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "BoM Newcastle rain-day frequency and the measured cycling-volume response on Hunter counters",
-   "reused": true
+   "reused": true,
+   "id": "G6"
   },
   {
    "layer": "H",
@@ -784,7 +837,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "H Utility form (Charypar-Nagel scoring): literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "H1"
   },
   {
    "layer": "H",
@@ -798,7 +852,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "H Heterogeneity / value-of-time segments: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "H2"
   },
   {
    "layer": "H",
@@ -812,7 +867,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "H Choice-set generation and mode availability: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "H3"
   },
   {
    "layer": "H",
@@ -830,7 +886,8 @@
     "https://ethz.ch/content/dam/ethz/special-interest/baug/ivt/ivt-dam/events/2023/09/05/abstracts/Floetteroed_MUM_2023.pdf"
    ],
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "reused": true
+   "reused": true,
+   "id": "H4"
   },
   {
    "layer": "H",
@@ -849,7 +906,8 @@
     "https://www.sciencedirect.com/science/article/abs/pii/S1569190X25001698"
    ],
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "reused": true
+   "reused": true,
+   "id": "H5"
   },
   {
    "layer": "H",
@@ -869,7 +927,8 @@
    "query": "A measured equilibrium-gap trajectory for a MULTIMODAL MATSim scenario over iterations, with the iteration at which the gap flattens - the Greater Stockholm benchmark behind the greedo contrib is the target; the hEART 2023 abstract announces it but publishes no curve.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "H6"
   },
   {
    "layer": "H",
@@ -889,7 +948,8 @@
    "query": "The published paper (not the MUM 2024 slide deck) behind the MATSim planParamCalibration extension, with the estimated coefficients and their standard errors against a biogeme benchmark - the deck lists that comparison as future work.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "H7"
   },
   {
    "layer": "H",
@@ -911,7 +971,8 @@
    "query": "A study that puts a machine-learned choice model INSIDE an agent-based equilibrium loop (where alternative attributes are simulation outputs) and reports the resulting aggregate mode shares against observation - not found this pass; all hits are offline predictive benchmarks.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "H8"
   },
   {
    "layer": "I",
@@ -925,7 +986,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "I Targets and the validation ladder: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "I1"
   },
   {
    "layer": "I",
@@ -939,7 +1001,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "A travel model that pre-registers its holdout and enforces it structurally (raise-on-read) - comparator for this project's claim",
-   "reused": true
+   "reused": true,
+   "id": "I2"
   },
   {
    "layer": "I",
@@ -953,7 +1016,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "I Convergence criterion: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "I3"
   },
   {
    "layer": "I",
@@ -967,7 +1031,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "I Replication across seeds / run-to-run noise: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "I4"
   },
   {
    "layer": "I",
@@ -981,7 +1046,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "A published Sobol' sensitivity analysis of a MATSim scenario (which parameters dominated mode share)",
-   "reused": true
+   "reused": true,
+   "id": "I5"
   },
   {
    "layer": "I",
@@ -1000,7 +1066,8 @@
     "https://cmap.illinois.gov/wp-content/uploads/dlm_uploads/CMAP_ActivitySim_ABM_Technical_Description.pdf"
    ],
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
-   "reused": true
+   "reused": true,
+   "id": "I6"
   },
   {
    "layer": "I",
@@ -1022,7 +1089,8 @@
    "query": "A head-to-head comparison of CMA-ES, Bayesian optimisation and coordinate descent on a MULTIMODAL MATSim scenario reporting simulation runs to reach a stated per-mode tolerance - the Hoerl accelerated-evolutionary-search paper (hal-03676897) was the target this pass and both HAL routes failed (access denied, then socket hang-up); try the boptx paper on arXiv or the MUM proceedings instead.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "I7"
   },
   {
    "layer": "I",
@@ -1044,7 +1112,8 @@
    "query": "A surrogate-assisted calibration of a MULTIMODAL agent-based model whose targets are per-mode ridership rather than link counts or an OD matrix - Osorio's 2020 metamodel-based calibration of large-scale multimodal microscopic traffic simulation (S0968090X20307592) is the obvious candidate and is paywalled; try an author preprint on web.mit.edu/osorioc.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "I8"
   },
   {
    "layer": "I",
@@ -1065,7 +1134,8 @@
    "query": "A transport-specific treatment of set-valued calibration (eligibility sets or confidence regions over behavioural parameters) rather than a point estimate - none found this pass; enter through the ACM TOMACS 2025 eligibility-set paper's transport citations.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "I9"
   },
   {
    "layer": "I",
@@ -1087,7 +1157,8 @@
    "query": "A transport application of BLP-style share inversion to MODE shares, with zones or time periods as the markets and the instruments named - the search returned only industrial-organisation applications this pass.",
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
-   "reused": true
+   "reused": true,
+   "id": "I10"
   },
   {
    "layer": "J",
@@ -1101,7 +1172,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "J Population synthesis: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "J1"
   },
   {
    "layer": "J",
@@ -1115,7 +1187,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "J Travel survey (HTS) weighting and vintage: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "J2"
   },
   {
    "layer": "J",
@@ -1129,7 +1202,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "J Smartcard (Opal) and station counts: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "J3"
   },
   {
    "layer": "J",
@@ -1143,7 +1217,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "J Road counts: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "J4"
   },
   {
    "layer": "J",
@@ -1157,7 +1232,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "OSM completeness for the Hunter region against the TfNSW road segment layer (km matched)",
-   "reused": true
+   "reused": true,
+   "id": "J5"
   },
   {
    "layer": "K",
@@ -1171,7 +1247,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "K Sample fraction and scaling rules: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "K1"
   },
   {
    "layer": "K",
@@ -1185,7 +1262,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "Iteration counts and post-cutoff windows reported by multimodal MATSim city scenarios with PT and active modes",
-   "reused": true
+   "reused": true,
+   "id": "K2"
   },
   {
    "layer": "K",
@@ -1199,7 +1277,8 @@
    "needs_research": false,
    "last_verified": "2026-09-07",
    "query": "K Reproducibility of a run: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
-   "reused": true
+   "reused": true,
+   "id": "K3"
   },
   {
    "layer": "I",
@@ -1217,7 +1296,9 @@
    "needs_research": false,
    "last_verified": "2026-09-09",
    "added_on": "2026-09-09",
-   "verified_in": "pass 2026-09-09 (781cf41)"
+   "verified_in": "pass 2026-09-09 (781cf41)",
+   "id": "I11",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1236,7 +1317,9 @@
    "needs_research": false,
    "last_verified": "2026-09-09",
    "added_on": "2026-09-09",
-   "verified_in": "pass 2026-09-09 (781cf41)"
+   "verified_in": "pass 2026-09-09 (781cf41)",
+   "id": "I12",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1254,7 +1337,9 @@
    "needs_research": false,
    "last_verified": "2026-09-09",
    "added_on": "2026-09-09",
-   "verified_in": "pass 2026-09-09 (781cf41)"
+   "verified_in": "pass 2026-09-09 (781cf41)",
+   "id": "I13",
+   "reused": true
   },
   {
    "layer": "I",
@@ -1273,20 +1358,127 @@
    "needs_research": false,
    "last_verified": "2026-09-09",
    "added_on": "2026-09-09",
-   "verified_in": "pass 2026-09-09 (781cf41)"
+   "verified_in": "pass 2026-09-09 (781cf41)",
+   "id": "I14",
+   "reused": true
+  },
+  {
+   "layer": "F",
+   "id": "F5",
+   "factor": "Router-scorer consistency: does the search optimise the utility the plan is scored by?",
+   "what_research_says": "MATSim's own choice-model chapter makes the split explicit: an agent's realised behaviour is P(i|U) = sum over choice sets of P(i|C) x P(C|U) - the choice model AND the way the choice set was generated. The router is the choice-set generator, so a router that optimises a different objective from the scoring function generates alternatives the scorer will then reject, and 'alternatives that never appear in the choice set cannot be chosen'. MATSim's stock car routing keeps the two aligned by deriving the link travel cost from the scoring parameters (the negative marginal utility of travelling plus the marginal utility of performing); the alignment is deliberate and is broken wherever a specialised router is used. The SwissRailRaptor's DefaultRaptorInVehicleCostCalculator prices a boarded leg as in-vehicle seconds times one coefficient, so a per-submode constant, a fare or a crowding surcharge that lives only in scoring is invisible to the transit search that picks the submode.",
+   "source_url": "https://d-nb.info/1172809151/34",
+   "magnitude": "literature: no coefficient - a structural identity. The realised choice distribution is the product of the choice model and the choice-set generator, so any objective the generator does not carry can only act by rejecting alternatives after they are built",
+   "how_leading_simulators_do_it": "MATSim core derives the car router's disutility from the scoring parameters; eqasim and the discrete-mode-choice contrib move the whole decision into an explicit choice model evaluated over an enumerated set, which removes the split; ActivitySim/CT-RAMP evaluate skims that are by construction the same quantities the utility uses; SUMO and Aimsun route on a generalised cost that is the objective.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "A measured effect on mode share of aligning versus not aligning a MATSim transit router's in-vehicle cost with the scoring function's mode constant",
+   "reused": false
+  },
+  {
+   "layer": "H",
+   "id": "H9",
+   "factor": "Equilibrium selection and the innovation cutoff: what the reported share is a share OF",
+   "what_research_says": "MATSim's iterative loop is not stationary while innovation runs: its own terminology page states that 'as long as innovation is still switched on in MATSim (new routes, new times, ...), the result is not truly stationary', and that once innovation is disabled 'the result is indeed a stationary process, but limited to the set of plans that every agent has at that point in time'. The selection protocol before the cutoff 'resembles a MNL choice model', P(i|C) = exp(mu S_i)/sum exp(mu S_j) with mu = brainExpBeta, and the chapter notes that BestPlanSelector is the same selector with an infinite mu. So the pre-cutoff share is a logit-dispersed mixture over each agent's remembered plans and the post-cutoff share is the same population collapsed toward its arg-max: switching innovation off changes the estimator, not only the amount of search. Assignment theory says the same thing from the other side - a low dispersion parameter concentrates flow on the perceived-best alternative and the pattern approaches deterministic user equilibrium, which is the classic 'unrealistic route concentration' that stochastic user equilibrium was introduced to cure. The efficiency loss of that concentration is bounded and modest on real networks - a data-driven estimate for Eastern Massachusetts puts the price of anarchy near 1.30, and other empirical work finds it close to 1 in both light and heavy traffic - so an equilibrium being reached is no guarantee that it resembles the observed day, which is itself a non-equilibrium average.",
+   "source_url": "https://matsim.org/docs/userguide/terminology.html",
+   "magnitude": "literature: the post-cutoff state is stationary but confined to the plans already held; selection is a logit at mu = brainExpBeta before the cutoff and effectively arg-max after it. Empirical price of anarchy about 1.30 (Eastern Massachusetts) and near 1.0 in light and heavy traffic - the equilibrium's inefficiency is bounded, its distance from an observed day is not",
+   "how_leading_simulators_do_it": "MATSim exposes fractionOfIterationsToDisableInnovation and fractionOfIterationsToStartScoreMSA and the field's usual setting is about 0.8; SUMO and Aimsun stop on an explicit relative gap rather than by disabling search; static four-step models solve a stochastic user equilibrium whose dispersion parameter is calibrated, so the spread is a fitted quantity rather than a by-product of when search was turned off; ActivitySim has no network equilibrium of its own.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "A published measurement of the mode-share step at the innovation cutoff in a multimodal MATSim scenario, and whether the pre-cutoff or post-cutoff share is the one validated against observation",
+   "reused": false
+  },
+  {
+   "layer": "H",
+   "id": "H10",
+   "factor": "Choice-set coverage as a binding constraint on any constant or price",
+   "what_research_says": "Flotterod and Kickhofer state the mechanism in one line and it is an identity, not a tendency: 'the generation of the choice sets affects the simulated choices. The simplest illustration of this mechanism is that alternatives that never appear in the choice set cannot be chosen. Similarly, including certain alternatives with a low (high) probability in the choice set decreases (increases) their probability of being chosen, given that the choice model is not changed.' They add the consequence for a calibration exercise directly: 'When a choice study's synthetic choice sets are very different from the alternatives considered in the real world, it is unlikely that the simulation will display correct aggregated quantities or useful sensitivities for policy measures', and that MATSim's mutation and innovation procedures 'constitute concrete, yet heuristic, approaches to the choice set generation problem' whose biases 'can, however, be difficult to quantify'. The plan memory is the other half of the constraint: the choice set is bounded by maxAgentPlanMemorySize, plans past it are deleted by a PlanSelectorForRemoval, and the MATSim user guide records that 'a problem is that the process that generates the choice set at this point is not systematic'. A mode constant therefore has an upper bound on what it can move that is set by the fraction of agents who ever held that mode in memory, not by its own magnitude.",
+   "source_url": "https://d-nb.info/1172809151/34",
+   "magnitude": "literature: an alternative absent from an agent's set has probability zero for that agent regardless of its utility, so the reachable share of mode m is bounded above by the fraction of agents whose plan memory has ever contained m; MATSim's choice-set generation is explicitly heuristic and its bias is stated to be hard to quantify",
+   "how_leading_simulators_do_it": "The discrete-mode-choice contrib and eqasim replace on-the-fly innovation with an explicit, enumerated choice set per trip or tour, which makes coverage 100 per cent by construction; ActivitySim/CT-RAMP enumerate every alternative in a nested logit; MATSim core offers diversity-increasing replanning modules and path-size-logit-style corrections, described in the same chapter as 'ad-hoc solutions, with little theoretical foundation in the simulation context'.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "A published coverage figure - the fraction of agents that ever held a given mode in plan memory - for a calibrated multimodal MATSim scenario, and any guidance on a minimum coverage before a mode constant is calibrated. modeChoiceCoverage is undocumented outside the source",
+   "reused": false
+  },
+  {
+   "layer": "H",
+   "id": "H11",
+   "factor": "Mode availability by distance: an upper bound on a walk or bike alternative",
+   "what_research_says": "Cycling distance is short and its distribution is well measured. Australian travel survey data for 2012-2020 put the median home-based cycling trip at 3.5 km, varying strongly by purpose - 1.8 km utilitarian, 5.3 km commuting, 3.7 km recreational - with trip purpose the strongest predictor and men cycling further than women. The Montreal metropolitan survey puts the 85th percentile of cycling distance at 5,517 m, and the 85th-percentile access distance is the field's usual way of setting a catchment. Distance decay for cycling fits an exponential or lognormal curve rather than a cliff, so the correct representation is a decaying utility rather than a hard cut-off - but a simulator that offers the mode at any distance with no decay term places mass far out in a tail the survey does not contain.",
+   "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11675929/",
+   "magnitude": "literature: median home-based cycling trip 3.5 km (Australia, 2012-2020); 1.8 km utilitarian, 5.3 km commuting, 3.7 km recreational; 85th percentile 5.5 km (Montreal). Distance decay exponential or lognormal, not a cut-off",
+   "how_leading_simulators_do_it": "The discrete-mode-choice contrib ships explicit availability filters, including maximum-distance constraints per mode, as a first-class configuration; ActivitySim/CT-RAMP apply availability rules plus a distance term in the mode utility; MATSim core's SubtourModeChoice applies no distance test at all - a mode is offered wherever the chain-based resource rule allows it.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "Whether an agent-based model that adds a maximum-distance availability filter for bike and walk reports a measured change in those modes' shares, and what threshold was used",
+   "reused": false
+  },
+  {
+   "layer": "I",
+   "id": "I15",
+   "factor": "Distributional targets beyond mode share: trip length, intrazonal share, occupancy",
+   "what_research_says": "The profession does not accept a mode share as a model's validation on its own; it validates the distribution the share is drawn from. The standing guidance is explicit and numeric: 'Generally, the modeled average trip lengths for each trip purpose should be within five percent of observed for each trip purpose'; the trip length frequency distribution is compared as a whole using the coincidence ratio - 'the area under both curves divided by the area under at least one of the curves' - and 'it is preferable for the coincidence ratio for each trip purpose to be at least 70 percent'; and 'regionwide intrazonal trip percentages should be within three percentage points of observed for each trip purpose'. Vehicle occupancy has moved into the same class: in trip-based models the vehicle occupancy factor was an input converting person trips to vehicle trips, while 'in activity-based models (ABM), the role of VOF transitioned from a major input to a validation target for shared-rides'. On the assignment side the same manuals give volume tolerances by facility class - Ohio's VMT guidance is plus or minus 7 per cent on freeways and expressways, 10 per cent on principal and minor arterials, 15 per cent on collectors, with Michigan DOT at 5 and 10 per cent for screenlines and cutlines and Florida at 20 per cent for transit screenlines - while stating that 'the guidelines in this section should not be construed as standards'.",
+   "source_url": "https://tfresource.org/topics/Model_Validation_and_Reasonableness_Checking_Distribution.html",
+   "magnitude": "literature: mean trip length within 5 per cent of observed by purpose; trip-length-frequency coincidence ratio at least 70 per cent; intrazonal share within 3 percentage points; VMT within 7-15 per cent by facility class; screenline 5 per cent, cutline 10 per cent, transit screenline 20 per cent; vehicle occupancy a validation target in an activity-based model rather than an input",
+   "how_leading_simulators_do_it": "Every four-step and activity-based practice model in the FHWA/TMIP tradition reports trip length distributions by purpose and a coincidence ratio alongside shares; ActivitySim calibration reports carry TLFD plots per purpose; published MATSim scenarios most often report mode share and link counts, and trip length distributions where a survey supports them - Open Berlin and the Munich comparison do, most do not.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "Whether any agent-based city model publishes a coincidence ratio for its trip length frequency distribution, and what value it reached",
+   "reused": false
+  },
+  {
+   "layer": "K",
+   "id": "K4",
+   "factor": "Flow-capacity, storage-capacity and stuck-time correction at a sample fraction",
+   "what_research_says": "The correction rules for a downscaled run are contested and were measured again this year. Mersini and Ziemke (MUM 2025, TU Berlin) set out the position: former recommendations scaled storage less than flow, flowCapacityFactor = sample share and storageCapacityFactor = sample share^alpha with alpha = 0.75 'to prevent breakdowns in small samples', while 'more recently, flow and storage capacities are usually scaled equally, i.e., with alpha = 1', the Open Berlin practice; Llorca and Moeckel found 'no substantial differences in average travel times for a given MATSim scenario when comparing different sample shares using both alpha values', and Ben-Dor, Ben-Elia and Benenson again recommend 0.75. Their measured result on a 100 per cent Lausitz benchmark is that scores and travel times are close to the full-scale run at 25 and 50 per cent, deviate at 5 per cent and clearly at 1 per cent, and that 'even average statistics (such as score and travel time) become unreliable when sampling below 10%'. The sharper finding is on the third parameter nobody scales: stuck-time violations, normalised by the inverse sample share, rise from about 40,000 at 100 per cent (about one agent in eight stuck once per day) to three times as many at 1 per cent, and with equal scaling of flow and storage 'even more than four and a half times as many' - so alpha = 1 costs stuck agents at small samples, and the paper flags that stuck time itself should be scaled with the sample size, larger for smaller samples.",
+   "source_url": "https://matsim.org/conferences/mum2025/abstracts/MUM25_paper_30.pdf",
+   "magnitude": "literature: flowCapacityFactor = sample share; storageCapacityFactor = sample share^alpha with alpha between 0.75 and 1.0, alpha = 1 the current mainstream; at alpha = 1 stuck-time violations rise to about 4.5x the full-scale rate at a 1 per cent sample and about 3x at equal-alpha 0.75; averages unreliable below a 10 per cent sample; 25 per cent close to full scale",
+   "how_leading_simulators_do_it": "MATSim scales both capacity factors with the sample and MATSim's own GlobalConfigGroup refuses a storage factor that differs from the flow factor by more than global.relativeTolerance; SUMO and BEAM scale link capacities with the sample; the field's usual sample is 1-10 per cent and 25 per cent sits at the high end of published scenarios.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "The completed version of Mersini and Ziemke's stuck-time scaling runs - a recommended stuck-time value as a function of sample share for MATSim",
+   "reused": false
+  },
+  {
+   "layer": "K",
+   "id": "K5",
+   "factor": "Expanding a sampled run's link volumes for a counts comparison",
+   "what_research_says": "A downscaled run's link volumes must be multiplied back before they mean anything against an observed count, and MATSim carries the factor as a first-class setting: countsScaleFactor 'represents a multiplier for scaling model results back to real-world volumes, so that when a model is based on a countsScaleFactor of 10, the real fleet sizes would be ten times higher'. The expansion is only the first of three basis decisions, and the other two are where practice models put their error bars: WHICH simulated vehicles count (the observed detector counts every vehicle class, so the modelled side must either add its heavy vehicles or the observed side must be converted to a light-vehicle basis - one or the other, never neither), and WHICH link a station maps to (a two-way station is the sum of both directions and a station matched to a service road or the wrong carriageway reads near zero). The tolerance guidance is by volume class rather than per link, and the manuals warn against reading it as a standard: 'the guidelines in this section should not be construed as standards; matching or exceeding the guidelines is not sufficient to determine the validity of a model.'",
+   "source_url": "https://tfresource.org/topics/Model_Validation_and_Reasonableness_Checking_Assignment.html",
+   "magnitude": "literature: modelled volumes multiplied by 1/sample fraction (MATSim countsScaleFactor); tolerances by facility class rather than per link - VMT within 7-15 per cent, screenlines 5 per cent, cutlines 10 per cent; %RMSE summarised by facility type or volume group, never by single link",
+   "how_leading_simulators_do_it": "MATSim's counts module applies countsScaleFactor and plots hourly modelled against counted volumes per link; regional four-step models compare screenlines and cutlines and report %RMSE by volume group; ActivitySim hands assignment to a separate step whose counts validation follows the same manuals.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-10",
+   "query": "A published agent-based scenario's counts validation that reports how many stations modelled zero and why - the failure mode of station-to-link matching rather than the aggregate %RMSE",
+   "reused": false
   }
  ],
  "last_pass": {
-  "date": "2026-09-09",
-  "head": "781cf41",
+  "date": "2026-09-10",
+  "head": "4d1d1bc",
   "rounds": 3,
-  "searches_spent": 13,
+  "searches_spent": 18,
   "budget": 40,
-  "literature_halves_newly_filled": 0,
+  "literature_halves_newly_filled": 7,
   "literature_halves_completed": 0,
-  "factors_added": 4,
-  "note": "Fifth pass of the library, first at 781cf41 and one day after the fourth. The library reported needs_research 0 and every one of the 79 stored literature halves was inside the 365-day horizon, so ALL 79 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED - which is what let all 13 calls go to the session's directive. FOUR NEW ROWS, all Layer I, on the user's question about attaining equilibrium across many simultaneously-targeted variables: (1) SEQUENTIAL VERSUS SIMULTANEOUS CALIBRATION - the two formulations are named explicitly in the dynamic-OD literature, most optimisation-based studies use the simultaneous form because sequential methods lose information between stages, and the problem is underdetermined because measured roads are orders of magnitude fewer than roads; (2) DAMPING AND STEP-SIZE SCHEDULE - the matsim-vsp default was read from source this pass and is a SCHEDULE, linear_scheduler(start=0.6, end=1, interval=3), not a flat factor, while its TerminationCondition still carries '# TODO: not used yet'; (3) DIAGNOSING A RESIDUAL, CONSTANT VERSUS MISSING MECHANISM - FHWA chapter 7 supplies an ORDERED CHECKLIST with constant revision last and states that 'there are no applicable criteria guidelines for checks of mode choice', and no source reached this pass supplies a TEST rather than a checklist; (4) MULTI-OBJECTIVE AGGREGATION - a weighted sum cannot reach the non-convex parts of a Pareto front for any weights, and Pareto methods' cost rises sharply past about four conflicting objectives. Two searches were spent and wasted on damping (the query returned robotics and camera calibration); the useful route was reading the matsim-vsp source directly. TWO PDFs that WebFetch returned as binary were saved and read locally at no budget cost - arXiv 2210.17315 and 2203.02697 - which supplied the two exact quotations above; that route is confirmed again and should be reused. No factor was retired. The crowding scorer that landed at this HEAD was checked against the ledger for a factor it reveals as missing and raised NONE: seat availability and denied boarding are already row F3, and load-factor-dependent dwell is already row G3.",
-  "statuses_note": "0 statuses stored, by design. All 83 were re-read at 781cf41 by grep of the registry, src/, cities/newcastle/build/ and both Java trees, plus a read-only check_hardcoding.py run for the declared-but-unwired list (0 unwired; 4 declared-ahead-of-consumer). This pass: IN 45, PARTIAL 27, INERT 2, ASC 1, OUT 8 over 83 rows (previous pass: IN 39, PARTIAL 29, INERT 2, ASC 1, OUT 8 over 79). FIVE CARRIED FACTORS CHANGED CLASS - the first movement the library has recorded: crowding PARTIAL->IN, boarding/denied boarding PARTIAL->IN, ASC calibration method PARTIAL->IN, aggregate-only estimation PARTIAL->IN, and access/egress/wait/transfer IN->PARTIAL. The four new rows are IN, PARTIAL, IN, IN."
+  "factors_added": 7,
+  "note": "Sixth pass of the library, at 4d1d1bc (the PR #173 merge), one day after the fifth. needs_research was 0 and every one of the 83 stored literature halves was one day old and inside the 365-day horizon, so ALL 83 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. All 18 calls went to this pass's question - what it takes to attain an organically simulated equilibrium that reproduces many variables at once - and to factors the library had no row for. SEVEN NEW ROWS. (1) F5 ROUTER-SCORER CONSISTENCY: Flotterod and Kickhofer's identity P(i|U) = sum P(i|C) P(C|U) makes the router the choice-set generator, so an objective the router does not carry can only reject alternatives after they are built. (2) H9 EQUILIBRIUM SELECTION AND THE INNOVATION CUTOFF: MATSim's own terminology page states that with innovation on the result is not stationary and that once it is off the process is stationary BUT LIMITED TO THE PLANS EACH AGENT ALREADY HOLDS; selection is a logit at mu = brainExpBeta before the cutoff and effectively arg-max after it, so switching innovation off changes the ESTIMATOR. The empirical price of anarchy is about 1.30 and near 1.0 in light and heavy traffic, so reaching an equilibrium is no guarantee of resembling an observed day. (3) H10 CHOICE-SET COVERAGE AS A BINDING CONSTRAINT: \"alternatives that never appear in the choice set cannot be chosen\", and when synthetic choice sets differ from real ones \"it is unlikely that the simulation will display correct aggregated quantities\". (4) H11 MODE AVAILABILITY BY DISTANCE: Australian survey median home-based cycling trip 3.5 km, 85th percentile 5.5 km in Montreal. (5) I15 DISTRIBUTIONAL TARGETS BEYOND MODE SHARE: mean trip length within 5 per cent by purpose, coincidence ratio at least 70 per cent, intrazonal share within 3 percentage points, and vehicle occupancy now a VALIDATION TARGET in an activity-based model rather than an input. (6) K4 CAPACITY AND STUCK-TIME CORRECTION AT A SAMPLE: Mersini and Ziemke MUM 2025 measured alpha = 1 against alpha = 0.75 on a full-scale Lausitz benchmark - averages unreliable below 10 per cent, 25 per cent close to full scale, and stuck-time violations 4.5x the full-scale rate at 1 per cent under equal scaling. (7) K5 EXPANDING A SAMPLED RUN'S LINK VOLUMES: countsScaleFactor plus the two basis decisions - which vehicle classes count and which link a station maps to. TWO PDFs that WebFetch returned as binary were saved and read locally at no budget cost (MUM25_paper_30 and the CC-BY chapter 49 at d-nb.info/1172809151/34); that route is confirmed a third time. ONE GAP CLOSED: I14 min-max scalarisation - Chebyshev/weighted-min-max reaches Pareto points a weighted sum provably cannot, for convex and non-convex fronts alike, which is the form this project's own objective already takes. ONE GAP ADDED: modeChoiceCoverage is undocumented outside the MATSim source, and four differently phrased searches found no published coverage figure for any scenario.",
+  "statuses_note": "0 statuses stored, by design. All 90 were re-read at 4d1d1bc by grep of the registry (497 declared fields over 204 source files), src/, cities/newcastle/build/ and both Java trees, plus a read-only check_hardcoding.py run (TOTAL 0 items; 0 declared-but-unwired; the same 4 declared-ahead-of-consumer). Every registry key and every file path named in the 83 carried proofs was resolved mechanically against the tree at HEAD and all 83 resolved; line numbers in CitysimControler.java and calibrate.py had MOVED and were re-read and corrected. This pass over the 83 carried rows: IN 46, PARTIAL 26, INERT 2, ASC 1, OUT 8 (previous pass: 45 / 27 / 2 / 1 / 8). ONE CARRIED FACTOR CHANGED CLASS: K2 iteration count and cost, PARTIAL -> IN at commit 8bb30d9 - the previous proof's reason for PARTIAL was that the GOAL's 250-iteration requirement was UNMEASURED, and 20260909T015217_300it_25pct ran 300 of 300 in 21.5 h and relaxed at 0.261 pp. The seven new rows are PARTIAL, PARTIAL, PARTIAL, OUT, PARTIAL, PARTIAL, PARTIAL."
  },
  "field_aliases": {
   "how_leading_simulators_do_it": "the field Phase 7 also calls how_leading_simulators_implement_it",
@@ -1314,16 +1506,24 @@
    "query": "Osorio 2020, metamodel-based calibration of large-scale MULTIMODAL microscopic traffic simulation (S0968090X20307592) - paywalled; try an author preprint on web.mit.edu/osorioc."
   },
   {
-   "lane": "I14 min-max scalarisation (NEW 2026-09-09)",
-   "query": "Whether a MIN-MAX / Chebyshev / worst-target scalarisation reaches Pareto points a weighted sum cannot - stated in a source this project can cite, ideally transport-calibration rather than general MOO. Jakob and Blume 2014 compares Pareto against the weighted sum only and does not treat the min-max form."
-  },
-  {
    "lane": "I12 damping schedule (NEW 2026-09-09)",
    "query": "A published convergence or oscillation study of the damped ln(observed/modelled) ASC update on a MULTIMODAL agent-based model: round-over-round |delta| against the damping factor. Two searches this pass returned robotics and camera-calibration damping instead; enter through Rakow and Nagel 2024 or the matsim-vsp issue tracker, not through a generic damping query."
   },
   {
    "lane": "I13 constant-versus-mechanism test (NEW 2026-09-09)",
    "query": "A published TEST rather than a checklist that separates a residual an ASC may absorb from one caused by an absent mechanism. FHWA chapter 7 gives the ordered checklist and explicitly no numeric criteria; nothing found offers a test."
+  },
+  {
+   "lane": "H10 choice-set coverage (NEW 2026-09-10)",
+   "query": "A published coverage figure - the fraction of agents whose plan memory ever contained a given mode - for any calibrated multimodal MATSim scenario, and any guidance on a minimum coverage before a mode constant may be calibrated. MATSim's own modeChoiceCoverage output is undocumented outside the source; four differently phrased searches this pass returned nothing. Enter through the matsim-libs source for the analysis class, or the discrete-mode-choice contrib's comparison papers, not through a generic query."
+  },
+  {
+   "lane": "H9 innovation cutoff (NEW 2026-09-10)",
+   "query": "A published measurement of the mode-share STEP at the innovation cutoff in a multimodal MATSim scenario, and which of the two shares - pre-cutoff or post-cutoff - the scenario validated against observation. The terminology page states the mechanism; no source found states its size."
+  },
+  {
+   "lane": "K4 stuck time (NEW 2026-09-10)",
+   "query": "The completed version of Mersini and Ziemke (MUM 2025): a recommended stuck-time value as a function of sample share. The abstract read this pass reports preliminary results and says the scaled-stuck-time runs are still to come."
   }
  ]
 }

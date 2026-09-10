@@ -7,25 +7,22 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 9 September 2026 - **the first result since F4: the twin
-relaxes, and relaxing makes the fit worse** (§9.162). `20260909T015217_300it_25pct` closed `ran_to_last_iteration` at iteration
-**300**, 21.5 h, rc 0 - the first run since 21 August to execute the horizon it
-declared, and the first `_fit.json` with `is_a_result: true`. **IT RELAXED**:
-drift **0.261 pp** over it.250-300 against a 0.5 pp tolerance, conservation
-closing on all twelve modes. **AND IT READS 0 OF 12 INSIDE 10 %, 8 PAST THE STOP
-BAR** - worse than every gate that preceded it. **THE CAUSE IS THE CUTOFF SNAP**:
-when innovation stops at 240 every agent settles onto its best remembered plan
-and car jumps **+2.211 pp**, walk **-0.941**, taxi -0.583, ride -0.489 - so the
-search was sampling behaviour 2.2 pp of car away from the plans agents already
-held, and the average plan score peaks at the cutoff (**19.2049**) then FALLS to
-**14.5679** as the road everyone chose congests. **WHY CONVERGENCE MAKES THE FIT
-WORSE IS NOW THE OPEN QUESTION.** §9.160's predictions scored: ride did not move
-(HELD), car left the only band any mode was inside (HELD), "settles at 200-210"
-right on the plateau and wrong on the level. **LAYER 3 HAS A CONTROL**:
-`citysim.RaptorModeCostCalculator` gives the submode-picking router the constant
-it never read, behind `C.raptor.mode_cost_representation` = `absent`, declaring
-no value of its own - **built, deployed, never run**. The fare and a distance
-term CANNOT go at that hook and the reason is recorded, not worked around.
+**Last updated:** 10 September 2026 - **a deviation no constant can reach**
+(§9.163). MATSim has written the choice-set coverage table on every arm this
+project ever ran and nothing read it. It bounds the whole calibration: a
+scoring constant reallocates between plans an agent already holds, so a mode's
+coverage is a ceiling on its share. On the landed result at iteration 300 the
+bound bites once and decisively - **ride's target of 20.6000 % sits ABOVE the
+20.05 % of agents who have ever held a ride plan**, against a 12.1553 % share,
+so no value of any constant closes ride's -41.0 %. Every mode's choice set is
+within a point of its final coverage by iteration 5-10 and shut by 16-27,
+**except pt**, still opening at 233 and reaching only **25.78 %**. **THE COUNTS
+RUNG HAD BEEN MEASURING THE WRONG ROADS FOR 25 DAYS** - the station-to-link map
+was written 47 minutes before the network it keys was rewritten, **0 of 195 rows
+still named their road** - and on the repaired map counts read **+16.30 % mean,
+-1.1 % median, 0 modelled zeros** against -89.35 % / -98.7 % / 7. Fourteen of
+sixteen issues marked `awaiting-run` were measured from a run that had already
+finished. **No arm ran and no approval was sought or spent.**
 
 ## The goal
 
@@ -37,7 +34,7 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 |---|---|---|
 | Twelve modes physically simulated | **PARTIAL — 12 of 12 modes, but not every leg.** Every mode has a mobsim representation (freight rail as timetable-derived crossing closures, not a vehicle), and **pt access/egress walk legs are still TELEPORTED**: 70.9 % of 1,978 teleported walk legs on a 1 % run end at a `pt interaction` (§9.156). Requirement 1 says no teleportation, so this row is not met until they are network legs; **still unfiled** | [positions/motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md), §9.70, §9.156 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
-| Every mode inside 10 % | **0 of 12 at the first RESULT** (§9.162, iteration 300) - nearest are motorbike **+12.5 %** and car **+11.3 %**, and car was inside the band until the innovation cutoff pushed it out. Eight modes past the 20 % stop bar | below, §9.162 |
+| Every mode inside 10 % | **0 of 12 at the first RESULT** (§9.162, iteration 300) - nearest are motorbike **+12.5 %** and car **+11.3 %**. Eight modes past the 20 % stop bar, and **one of them is out of reach of any constant**: ride's target exceeds its own choice-set coverage (§9.163) | below, §9.162, §9.163 |
 | Convergence in ≤ 250 iterations | **MEASURED, and met only in the weak sense** (§9.162): the run RELAXES - drift **0.261 pp** over it.250-300 against a 0.5 pp tolerance - but the cutoff snap of **+2.211 pp** on car says the search was still 2.2 pp from its own optimum at 240. The §9.160 derivation it supersedes (settling ~200-210) was right on the plateau and wrong on the level | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.162, §9.160 |
 | Unobtained data derived, not assumed | SCATS as its published algorithm (§9.88); rail and tram on disclosed boardings (§9.130); licence rates from the published count (§9.131); pt fares from the published Opal schedule (§9.135); the external interaction rate from the 2011 journey-to-work flow and the S0 detour from the alignment (§9.140); still swept: transfer penalty, charging dwell, SCATS offsets | [positions/network-and-inputs](positions/network-and-inputs.md) |
 
@@ -82,23 +79,26 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | | |
 |---|---|
 | Open comparability family | `F32-crowding-reaches-scoring` (opened `20260909T011135`, §9.158, 9.160) - nothing run before it compares with anything after it |
-| Input registry | **497 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **499 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (9 September 2026 (thirty-ninth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (9 September 2026 (thirty-ninth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (9 September 2026 (thirty-ninth session)) · [network-and-inputs](positions/network-and-inputs.md) (9 September 2026 (thirty-ninth session)) · [population-and-demand](positions/population-and-demand.md) (8 September 2026 (thirty-sixth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (9 September 2026 (thirty-ninth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (9 September 2026 (thirty-ninth session)) · [runs-and-economics](positions/runs-and-economics.md) (9 September 2026 (thirty-ninth session)) · [sampling-and-families](positions/sampling-and-families.md) (9 September 2026 (thirty-ninth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (9 September 2026 (thirty-ninth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (9 September 2026 (thirty-ninth session)) · [walk-and-bike](positions/walk-and-bike.md) (9 September 2026 (thirty-ninth session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (10 September 2026 (fortieth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (10 September 2026 (fortieth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (10 September 2026 (fortieth session)) · [network-and-inputs](positions/network-and-inputs.md) (10 September 2026 (fortieth session)) · [population-and-demand](positions/population-and-demand.md) (8 September 2026 (thirty-sixth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (10 September 2026 (fortieth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (10 September 2026 (fortieth session)) · [runs-and-economics](positions/runs-and-economics.md) (10 September 2026 (fortieth session)) · [sampling-and-families](positions/sampling-and-families.md) (9 September 2026 (thirty-ninth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (10 September 2026 (fortieth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (10 September 2026 (fortieth session)) · [walk-and-bike](positions/walk-and-bike.md) (10 September 2026 (fortieth session)) |
 <!-- generated:state end -->
 
-**No arm ran on 8 September's second session, and the next one opens a family**
-(§9.158). The machine stayed idle, no approval was sought or spent, and no family
-row was added - a family opens at a LAUNCH or a REBUILD. But the CONTROLER IS
-RECOMPILED AND GREEN (86 class files under `.tools/classes`, newest 21:12:04
-against Java sources at 20:47:40), so the deployed bytecode now carries
-`citysim.PtCrowdingScoring`, an escort listener that stops proposing at the
-innovation cutoff and a mode-aware teleport refusal. Nothing on disk from an
-earlier arm was produced by this controler. `check_package.py` last passed on
-7 Sep; no data artefact was rebuilt, and the manifest still holds 512 files -
-now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
-(the 15 mapped-schedule vehicle files moved on a content pass, #165).
+**No arm ran this session either, and the next one opens a family.** The machine
+stayed idle throughout, no approval was sought or spent, and no family row was
+added - a family opens at a LAUNCH or a REBUILD. But the CONTROLER IS RECOMPILED
+AND GREEN, so the deployed bytecode carries `citysim.RaptorModeCostCalculator`
+(at `absent`), `citysim.PtCrowdingScoring`, an escort listener that stops
+proposing at the innovation cutoff, a mode-aware teleport refusal, and the
+running counts on both mixed-subtour diagnostics that were capped at five dumps
+(§9.163). Nothing on disk from an earlier arm was produced by this controler.
+`check_package.py` last passed on 7 Sep; **one derived artefact changed** -
+`data/processed/validation/count_station_links.csv`, regenerated against the
+network it is scored on and re-hashed in the manifest (§9.163, #82) - and the
+manifest still holds 512 files, **279 CC-BY / 218 ODbL** plus 15 bespoke, with
+undetermined lineage at 0. The registry is **499** fields after two behaviour-
+neutral declarations, and undeclared MATSim defaults fell **31 -> 21**.
 
 ## Runs on disk
 
@@ -117,62 +117,76 @@ now **279 CC-BY / 218 ODbL** plus 15 bespoke, with undetermined lineage at 0
 
 ## Next
 
-1. **THE FIRST RESULT IS IN AND IT ASKS ONE QUESTION** (§9.162, #163). Running to
-   convergence made the fit WORSE: 0 of 12 inside against 1 of 12 at F31's gate. The
-   snap says agents' best plans were always more car-heavy than their sampled
-   behaviour, so every gate reading ever taken flattered the model. **Whether the
-   cause is the scoring function, the choice set or the routers is not settled by
-   this arm**, and separating those is the next arm's job. Nothing may be tuned on
-   this reading until that separation is designed.
-2. **PT REACHES A QUARTER OF THE POPULATION** (§9.162). Final choice-set coverage at
-   iteration 300: car 77.55 %, walk 63.95 %, taxi 54.62 %, bike 29.03 %, **pt
-   25.78 %**, ride 20.05 %. Three quarters of agents have never held a pt plan, which
-   bounds what the new raptor control can do before it is ever switched on.
-3. **THE RAPTOR CONTROL IS BUILT AND DEPLOYED, NEVER RUN** (§9.162, #49).
-   `C.raptor.mode_cost_representation` = `mode_constant` against its `absent` control
-   is an arm, and **it opens a family**. No approval stands.
-4. **#169 - THE CEILING WATCHER IS BUILT AND UNPROVEN** (§9.161). The 1 % smoke probe
-   with a deliberately tiny ceiling needs only an idle machine, which it now has.
-5. **#167 - ONE ATTRIBUTE, AND A REBUILD** (§9.161). Emit `routingMode` per leg in
-   `build_matsim_plans.py` and rebuild the demand and the 30 run-input sets in the
-   SAME change, then re-run the 1 % intermodal probe.
-6. **The ASC contraction test stays HELD** (§9.160): of its four modes only bike sits
-   on an alternative the mode-choice operator can switch to.
+1. **THE CHOICE SET IS THE CEILING, AND ONE TARGET IS ALREADY ABOVE IT** (§9.163,
+   #174, #86). Ride cannot reach 20.6000 % because only 20.05 % of agents have
+   ever held a ride plan; every other mode's set is shut by iteration 27 and pt's
+   reaches 25.78 %. **Read coverage on both arms of every pair from now on** - a
+   crowding or raptor arm makes a mode's plans score worse, and the worst plan is
+   the one MATSim deletes, so a share fall can be a smaller choice set rather
+   than a changed preference.
+2. **THREE ONE-FIELD CONTROLS EXIST AND EACH OPENS A FAMILY** (§9.163, #172).
+   Scoring: `RUN.replanning.score_msa_representation` = `at_innovation_cutoff`,
+   the only candidate that predicts BOTH measured symptoms. Router:
+   `C.raptor.mode_cost_representation` = `mode_constant`, built and never run.
+   Choice set: `replanning.planSelectorForRemoval`, which has no control until it
+   is declared (#155, #174). **The order they are spent in is the decision** -
+   all three move the same quantity, and no approval stands.
+3. **#169 - the ceiling watcher is BUILT and UNPROVEN** (§9.161). The 1 % smoke
+   probe needs only an idle machine, which it has. A launch with no automatic
+   stop of either kind is now refused before the JVM starts (§9.163).
+4. **#167 - ONE ATTRIBUTE, AND A REBUILD** (§9.161). Emit `routingMode` per leg
+   in `build_matsim_plans.py` and rebuild the demand and the 30 run-input sets in
+   the SAME change, then re-run the 1 % intermodal probe. The same field
+   (`routing.accessEgressType` = `none`) is why a car trip costs only its travel
+   time and 18 c/km, which is why car takes 63.12 % of sub-kilometre trips.
+5. **The ASC contraction test stays HELD** (§9.160). Of its four modes only bike
+   sits on an alternative the mode-choice operator can switch to - and bike is
+   now confirmed to have 24.32 pp of headroom, so it is the one it can answer.
 
-**Decisions required:** whether the next arm carries the raptor control, a scoring
-change, or neither - and at what stated cost, since **no approval stands**; the
-three product calls behind #49, #50 and #155; whether the real Newcastle corridor
-operates transit signal priority (`A.lightrail.tsp_enabled` is `source: assumed`,
-settled on evidence about the corridor and never on light rail's -57.3 %); and the
-Task Scheduler log (#66). Taken this session: the raptor control shipped carrying
-the mode constant ALONE, with the fare and the distance term refused at that hook
-on measured grounds rather than deferred (§9.162).
+**Decisions required:** the ORDER the three one-field controls are spent in, and
+at what stated cost, since **no approval stands** (§9.163); whether
+`replanning.planSelectorForRemoval` and the other 20 undeclared MATSim defaults
+become registry fields (#155, #174); whether `C.time_weights.beta_headway` and
+`beta_reliability` are wired or retired - the gradient precedent does NOT
+transfer, because a MATSim agent has perfect timetable knowledge and so pays no
+schedule-delay cost at all (#175); whether the declared passenger of an escort
+pair is PUT on `ride` at the demand (#86, #48); the three product calls behind
+#49, #50 and #155; whether the real Newcastle corridor operates transit signal
+priority (`A.lightrail.tsp_enabled` is `source: assumed`, settled on evidence
+about the corridor and never on light rail's -57.3 %); and whether the Windows
+Task Scheduler operational log is enabled, without which #66 stays
+unattributable. Taken this session: fourteen of sixteen `awaiting-run` issues
+measured from the landed arm rather than a new one, #82 and #93 closed on
+evidence, and `beta_headway` NOT retired on the record's own precedent.
 
 ## Open work
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
-| **THE READING POINT IS A CONVERGENCE PROBLEM.** The windowed remedy is built and MEASURED WORSE - heavy rail 41.46 points against 24.88, four modes past the whole band instead of three - because every mode's series over it.40-it.100 is monotone and an average of a trend is its centre (§9.159) | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | one arm read past iteration 100: where does each mode's series flatten, and by which iteration? |
-| **The ASC contraction test, built and NOT run** (~15 h, opens no family): two damped rounds settle whether the residual is a TASTE or a MECHANISM. Round 1 is proposed off the F31 gate - bike -0.5121, bus -0.2301, ferry +0.6713, light rail +0.4143 (§9.158). Blocked by the reading point | #98 #94 #107 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | whether \|Δasc\| SHRINKS between round 1 and round 2 |
-| **The issue gate is GREEN unscoped**: 22 open - 16 awaiting a run with a STATED measurement, 6 awaiting a decision (#49 #50 #155 #167 #169 #172), 0 blocking (§9.160's third state) | #172 | [monitoring-and-gates](positions/monitoring-and-gates.md) | which of the three candidate causes of the convergence penalty is tested first (#172) |
-| **Pt access/egress teleportation: fixed at the router, refused by the mobsim.** Teleports fall 520,385 -> 6 with the raptor's intermodal branch on, and then the agent cannot board because 675 of 4,123 stops (16.4 %) sit on a link walk cannot use (§9.159) | #167 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | a mechanism for the last hop onto a platform, then probe 1 re-run: teleports near zero AND four iterations completed |
-| The first arm of the family the next launch opens, every issue awaiting it | #48 #86 #30 #93 #94 #96 #82 #107 #108 | all | the next arm's iteration-100 gate |
-| Ride VOLUME, and placement is answered: at the F31 gate the modelled mean ride trip is 9.17 km against an observed 9.76 (-6 %) while the share is -38.0 %, so the lifts the binder places are the right length and there are too few of them (§9.157) | #86 #48 | [ride-and-pairing](positions/ride-and-pairing.md) | the next arm's gate: the declared-bound-trip funnel - bound trips declared, surviving into plan memory, and selected |
-| A household drives more cars than it owns: 12,317 car legs at the F26 gate with every household car out; the roster is built and enforced car-only after a global `wait` stranded the non-chain modes (§9.146, §9.148) | #145 | [population-and-demand](positions/population-and-demand.md) | the next arm's iteration 0 and gate: car departures and stuck against F26's 232,394 / 2,699 (0 expected for one-car households), `householdCar: N waited`, where the self-driven bound trips settle |
-| Heavy rail +247.2 % at the F31 gate, and it now HAS a brake: `citysim.PtCrowdingScoring` charges the load-factor surplus and `C.crowding.*` are bound to `ptCrowding.*`; the fleet always carried standing room (bus 44/18, ferry 149/51, rail 98/48) and it was the DISUTILITY that was missing (§9.158) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | the next arm's gate with `C.crowding.representation` = `in_vehicle_time`, against its `absent` control |
-| Light rail and heavy rail: the corridor's arrivals are repaired at the demand (work 1.02x, shopping 0.99x, other 0.99x of attraction, §9.142) | #30 #98 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | both modes at the next arm's gate: the stops are a subset of the CBD and the mode is still chosen |
-| Ferry: the market beyond the walk radius and a plan the memory drops | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the next arm's gate (§9.140) |
-| Taxi above target | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals at the next arm's gate |
-| Bike, bus and walk residues — the car-less quarter | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | shares by car availability at the next arm's gate, now that a car-less escorter no longer drives (§9.144) |
-| Traffic counts far below observation at 30 stations, both sides of the comparison now on one basis (§9.150) | #82 | [monitoring-and-gates](positions/monitoring-and-gates.md) · [network-and-inputs](positions/network-and-inputs.md) | counts at the next arm's gate, on the corrected basis |
-| Leaf subtour mixes repaired at the seed (0 on every day type); the choice set decays in memory | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside log and mode survival on a full arm (§9.140) |
-| Mode fidelity by age, sex and employment | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
-| **The TfNSW unit-record request for the NSW HTS is OUTSTANDING and had no home in this repository until now** — the published HTS is AGGREGATE ONLY, so no discrete-choice model can be estimated on this city's own observed behaviour and every behavioural coefficient is transferred or solved. Not lodged; no owner, date or reference recorded | #50 #49 | [population-and-demand](positions/population-and-demand.md) | the request's lodgement, then TfNSW's answer |
-| **Surrogate/emulator calibration, held in reserve** — Bayesian optimisation over a random-forest surrogate needs only the aggregate mode shares this project already scores, which is why it is the one machine-learning route the aggregate-only data does not block; ~150 objective evaluations at the F31 arm's measured 7.66 h to a gate is ~48 days of wall clock at 25 % | — | [runs-and-economics](positions/runs-and-economics.md) | the ASC contraction test: worth starting only if the residual is genuinely multi-parameter |
-| The 3 and 7 Sep assessments: 14 then 29 defects closed without a run (§9.141, §9.150); the digest's disk read is still unmeasured | #131 | [runs-and-economics](positions/runs-and-economics.md) · [network-and-inputs](positions/network-and-inputs.md) | the digest's disk read on the next arm (#131) |
-| Iteration wall time and unexplained arm deaths: the F31 arm ran a median **261.03 s**, **0.5 %** from the quoted band's top anchor while the short probe's 216.0 s was 17 % optimistic, so the band is confirmed and the point never was (§9.157) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the Task Scheduler operational log once enabled - the machine-level stall is still unattributed |
-| Lineage is resolved PER OUTPUT and the licence boundary is checked: OSM-in-source-while-CC-BY 129 → 0, ODbL without an OSM ancestor 21 → 0, undetermined 512 → 0 with the ratchet at 0 (§9.158, #159 closed). The blanket `networks/matsim/*` ODbL glob HAS had its content pass (§9.159, #165): 110 of 111 rows are confirmed ODbL on their own content and the 15 `transitVehicles.xml.gz` moved to CC-BY. What remains is a correctness problem and not a breach | — | [network-and-inputs](positions/network-and-inputs.md) | a content pass over those ~111 rows |
-| Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the first arm past the 240 cutoff |
+| **THE CHOICE SET IS AN ARITHMETIC CEILING AND IT IS NOW READ.** Coverage on the landed arm: car 77.55 %, walk 63.95 %, taxi 54.62 %, bike 29.03 %, pt 25.78 %, ride 20.05 %. **Ride's 20.60 % target is above its own coverage**, so no constant reaches it; every other set shut by iteration 27, pt still opening at 233 (§9.163) | #86 #48 #174 | [seed-and-choice-set](positions/seed-and-choice-set.md) | coverage on BOTH arms of the next pair - a mode whose plans score worse is the one deleted, so a share fall can be a smaller choice set |
+| **THREE ONE-FIELD CONTROLS, EACH OPENING A FAMILY, AND THE ORDER IS THE DECISION** (§9.163): scoring (`RUN.replanning.score_msa_representation`), router (`C.raptor.mode_cost_representation`), choice set (`replanning.planSelectorForRemoval`, undeclared). No approval stands | #172 #174 #155 #49 | [seed-and-choice-set](positions/seed-and-choice-set.md) | which is spent first, and at what stated cost |
+| **THE READING POINT IS A CONVERGENCE PROBLEM.** The windowed remedy is built and MEASURED WORSE (§9.159); #163 now awaits a DECISION on scale-normalising a per-mode deviation, which no arm settles, and the denominator is blocked on measuring a replication band | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | the replication band: 2-3 short arms, then the objective's denominator |
+| **The ASC contraction test, built and NOT run** (~15 h, opens no family). Of its four modes only **bike** sits on an alternative the operator can switch to - now confirmed, at 24.32 pp of headroom against a 29.03 % coverage | #98 #94 #107 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | whether \|Δasc\| SHRINKS between round 1 and round 2 |
+| **The issue gate is GREEN unscoped**: 22 open - **9** awaiting a run with a stated measurement (each a PAIRED arm or a probe), 6 awaiting implementation, 7 awaiting a decision, 0 blocking. Sixteen were `awaiting-run` at session start and fourteen were measured from a run that had already finished (§9.163) | #172 | [monitoring-and-gates](positions/monitoring-and-gates.md) | the next arm, whichever control it carries |
+| **Pt access/egress teleportation: fixed at the router, refused by the mobsim.** Teleports fall 520,385 -> 6 with the raptor's intermodal branch on, and then the agent cannot board because 675 of 4,123 stops (16.4 %) sit on a link walk cannot use (§9.159). The same field decides whether a car trip carries any fixed cost at all | #167 #30 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | a mechanism for the last hop onto a platform, then probe 1 re-run: teleports near zero AND four iterations completed |
+| **Ride's loss is the passenger's MODE ASSIGNMENT, not pairing and not selection** (§9.163): of 20,902 declared escort pairs in sample, 10,224 have the passenger driving their own car against 7,821 co-assigned, with 99.6 % of tours realised and the windows ample | #86 #48 #145 | [ride-and-pairing](positions/ride-and-pairing.md) | whether a demand fix drives `modes_car_car` toward zero WITHOUT the roster's wait count rising to hold it |
+| A household drives more cars than it owns: the roster's wait count runs **8,550 -> 15,580** across the landed arm, binding harder as car converges (§9.163) | #145 | [population-and-demand](positions/population-and-demand.md) | the roster counter and the co-assignment split at the next arm's gate |
+| Heavy rail **+225.0 %** at the landed result, with a brake that has never had a control: `C.crowding.representation` was `in_vehicle_time` on this arm and no arm in this family has run it `absent` (§9.158, §9.163) | #98 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | the paired crowding arm, reading coverage on both sides |
+| Light rail **-57.3 %** and heavy rail **+225.0 %** are two halves of ONE split decided by a router that read no mode constant until PR #173 | #30 #98 #49 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the paired raptor arm at `mode_constant` against `absent` |
+| Ferry **-60.1 %** with its market present: 3.60 % of modelled trip ends within 1 km of a wharf against 5.18 % of observed POI weight, and pt coverage well above the submode targets (§9.163) | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at the next arm's gate |
+| Taxi **+202.2 %** with **51.62 pp of headroom** - the largest on the board, so the excess is a level a constant can move (§9.163) | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | fleet refusals at the next arm's gate |
+| Bike **+113.0 %**, ridden 7.32 km against an observed 5.2, and **8.8 % of trips among non-licence-holders against 2.5 %** among holders; both distance feasibility bounds ship at 0.0, which is their consumer's off switch (§9.163) | #49 #50 #30 #107 | [walk-and-bike](positions/walk-and-bike.md) | bike by car availability at the next arm's gate |
+| Walk **-26.5 %** with a supply ceiling: sub-1 km trips move 11.06 % -> 10.97 % across 200 iterations while car's share of them rises 60.67 % -> 63.12 % (§9.163) | #30 | [walk-and-bike](positions/walk-and-bike.md) | a demand rebuild; no equilibrium moves a quantity fixed at build time |
+| Traffic counts: **#82 CLOSED**. The map was orphaned by a network rebuild and 0 of 195 rows named their road; repaired, counts read **+16.30 % mean, -1.1 % median, 0 zeros** (§9.163) | — | [network-and-inputs](positions/network-and-inputs.md) | check 7b holds the map to the network it is scored on |
+| Leaf subtour mixes repaired at the seed (0 on every day type); the stand-aside diagnostic was capped at five dumps and now carries a running count (§9.163) | #96 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the stand-aside total on a full arm - decidable for the first time |
+| Mode fidelity by age, sex and employment: the MODELLED table exists (§9.163); the observed counterpart is the blocked acquisition | #50 | [population-and-demand](positions/population-and-demand.md) | the mode × age acquisition |
+| **The TfNSW unit-record request for the NSW HTS is OUTSTANDING** — the published HTS is AGGREGATE ONLY, so no discrete-choice model can be estimated on this city's own behaviour. Named on the board since 8 Sep and asked for by three consecutive assessments; still not lodged, no owner, no date | #50 #49 | [population-and-demand](positions/population-and-demand.md) | the request's lodgement, then TfNSW's answer |
+| **Surrogate/emulator calibration, held in reserve** — Bayesian optimisation over a random-forest surrogate needs only the aggregate mode shares this project already scores; ~150 evaluations at 21.5 h is ~134 days at 25 % | — | [runs-and-economics](positions/runs-and-economics.md) | the ASC contraction test: worth starting only if the residual is genuinely multi-parameter |
+| **Thirty-one MATSim defaults decided the model unreviewed; 21 remain and every one decides queue physics, route choice, scoring or the choice set** (§9.163) | #155 #174 | [network-and-inputs](positions/network-and-inputs.md) | each ACCEPTED with a reason or DECLARED with units, provenance and a sweep |
+| **Headway and reliability are declared, swept and never reach MATSim** — and the gradient precedent does not transfer, because a MATSim agent has perfect timetable knowledge and pays no schedule-delay cost at all | #175 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | wired at a hook whose signature was read first, or retired with that reason recorded |
+| Iteration wall time and unexplained arm deaths: the landed arm ran 21.5 h uninterrupted with a recovered mid-run excursion to 301.5 s, closing at 244.05 s (§9.163) | #66 | [runs-and-economics](positions/runs-and-economics.md) | the Task Scheduler operational log, which is off and records nothing until enabled |
+| **No deviation on the board carries an error bar**, and a MATSim run is not bit-reproducible: within the landed arm the folded objective moves 0.272-0.418 pp between iterations 80 and 100. Asked for by three consecutive assessments | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | three seeds at a short horizon, then the objective's denominator |
+| Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7); the first arm past the 240 cutoff has now run (§9.162) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the second arm past a cutoff, in whatever family opens next |
 
 ## Do not re-raise
 

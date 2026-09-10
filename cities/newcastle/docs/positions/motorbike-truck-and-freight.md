@@ -1,8 +1,8 @@
 # Motorbike, truck and freight rail — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 
@@ -38,6 +38,8 @@
 
 ## What is measured
 
+- **MOTORBIKE'S BASIS DEFECT IS MEASURED FIXED AND #93 IS CLOSED** (§9.163). On `20260909T015217_300it_25pct` at iteration 300, motorbike reads **0.4259 %** of resident linked trips against the **0.3785 %** target-LGA identity the carve is conserved to — **+12.5 %**, a level difference on one shared basis rather than the basis mismatch the issue was opened for. Generation and scoring now describe the same quantity.
+- **It is the most stable mode on the board, and the choice-set table says why** (§9.163). Motorbike holds **0.24 %** coverage against a **0.4259 %** share: the share EXCEEDS the coverage, which is only possible because motorbike is a person-level locked carve whose riders hold no alternative for the mode-choice operator to switch them off. `report_choice_set_coverage.py` refuses to print a headroom for it and for truck for that reason. Its `snap_pp` at the innovation cutoff is exactly **0.000** where car moved +2.211, and it drifts 0.2406 % → 0.2391 % across iterations 100–300 on the all-resident denominator.
 - **All three at the first result** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): motorbike **0.4259 % against 0.3785 %, +12.5 %** - the closest mode on the board after car and the only one that never moved, holding 0.4259-0.4674 % across all 300 iterations; truck **5.6321 %** network-wide road-vehicle share, which is NOT its target basis (§9.101); freight rail **314 movements**, the timetable by construction. **Motorbike and truck are locked carves outside `RUN.mode_choice.modes`** and the depth arm confirms it - their `snap_pp` at the innovation cutoff is **0.000** for both, where every choosable mode moved (§9.162).
 
 - F26 gate, `aborted_20260906T100429_300it_25pct` at iteration 100: **motorbike +11.1 %** (0.4207 against 0.3785), the second-closest mode after car; truck 5.76 % of road vehicles, level only (§9.146).
@@ -71,6 +73,7 @@
 
 ## History
 
+- §9.163 — motorbike on one basis at +12.5 %; #93 closed
 - §9.146 — F26 gate +11.1 %; the carve draws no bound passenger
 - §9.140 — carve conserved per LGA, rebuilt
 - §9.136 — carve bias is the cell aggregation
@@ -85,7 +88,3 @@
 - §9.112 — carve told one share, scored another
 - §9.101 — truck scored at its own stations
 - §9.90 — crossings derived from the timetable
-- §9.77 — crossing closures activated in runs
-- §9.70 — coal chain scoped out; crossings named
-- §9.52 — motorbike carved as physical mode
-- §9.49 — freight enters as physical truck

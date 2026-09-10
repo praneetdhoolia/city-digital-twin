@@ -562,6 +562,54 @@ def announce_cost(iterations, fraction, cfg):
               '(#169).', flush=True)
 
 
+def refuse_if_no_automatic_stop(cfg):
+    """A run must be able to stop itself on SOMETHING. This refuses one that cannot.
+
+    Two independent stops exist and they have different owners: the gate
+    watcher stops on the MODEL being wrong (`RUN.gate.interval_iterations`
+    iterations, any mode past the stop bar) and the ceiling watcher stops on
+    the RUN being expensive (`RUN.gate.wall_ceiling_h`). Either is a boundary.
+    Neither is a boundary that holds when both are off, and #169 named that
+    state precisely: an arm that disables the gate watcher "has no automatic
+    stop at all - not on deviation, and not on cost".
+
+    That is not hypothetical. `depth_convergence_25pct` set
+    `RUN.gate.interval_iterations = 0` for a defensible, recorded reason - an
+    arm measuring where a reading settles cannot be stopped at the point under
+    test (9.159) - and declared no ceiling, so its approved 32 h was enforced
+    by a person watching a clock. It ran 21.5 h unattended. The precedent it
+    was launched against is on the record: at 9.153 an arm ran 45% over its
+    price and was stopped by whoever happened to be looking.
+
+    The launcher otherwise never refuses a launch, and this does not change
+    that for any run that keeps one stop. Turning the gate watcher off stays
+    entirely legitimate; it now costs one more line on the overlay, beside the
+    approval that line encodes. `RUN.gate.interval_iterations = 0` keeps
+    meaning "do not judge my modes" and never "do not enforce my budget".
+    """
+    try:
+        interval = int(cfg.get('RUN.gate.interval_iterations'))
+    except (TypeError, ValueError):
+        interval = 0
+    try:
+        ceiling_h = float(cfg.get('RUN.gate.wall_ceiling_h'))
+    except (TypeError, ValueError):
+        ceiling_h = 0.0
+    if interval > 0 or ceiling_h > 0:
+        return
+    raise SystemExit(
+        'REFUSED: this run has no automatic stop of any kind.\n'
+        '  RUN.gate.interval_iterations = 0  (the gate watcher is off, so '
+        'nothing stops it on the model being wrong)\n'
+        '  RUN.gate.wall_ceiling_h      = 0  (no ceiling, so nothing stops it '
+        'on cost)\n'
+        'An arm in this state runs until it finishes or a person notices, and '
+        'a stated-cost approval it cannot enforce is a sentence rather than a '
+        'boundary (#169).\n'
+        'Set RUN.gate.wall_ceiling_h on the overlay, beside the approval it '
+        'encodes - turning the gate watcher off is legitimate and stays so.')
+
+
 def _recorded_iteration_times(log):
     """`_progress.json`'s `iteration_seconds` for this run, or {}."""
     path = os.path.join(os.path.dirname(log), '_progress.json')
@@ -1472,6 +1520,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     jfr = bool(cfg.get('RUN.machine.jfr_profile'))
     gc_log = bool(cfg.get('RUN.machine.gc_log'))
     announce_cost(iterations, fraction, cfg)
+    refuse_if_no_automatic_stop(cfg)
 
     warm_key = None
     if warm is not None:

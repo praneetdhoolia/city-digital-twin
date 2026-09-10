@@ -1512,7 +1512,9 @@
       "consumers": [
         "src/java/citysim/ModeAvailabilityConfigGroup.java",
         "src/java/citysim/GatedSubtourModeChoice.java"
-      ]
+      ],
+      "inert_at": 0.0,
+      "inert_reason": "citysim.GatedSubtourModeChoice.beyondReach treats a limit of 0.0 as OFF and returns false without measuring anything, so at the shipped value no walk trip is ever refused for being too long. Disabled on measurement (9.106) and reproducing; the derived 3.22 km sits at the far end of its own sweep. What would decide otherwise: walk runs -26.5% on share while its trips are 4.69x too long (mean 3.283 km against an observed 0.70), so the bound is the wrong lever for the deficit and the right one for the geometry - see #30."
     },
     "B.mode.bike_feasible_km": {
       "value": 0.0,
@@ -1536,7 +1538,9 @@
       "consumers": [
         "src/java/citysim/ModeAvailabilityConfigGroup.java",
         "src/java/citysim/GatedSubtourModeChoice.java"
-      ]
+      ],
+      "inert_at": 0.0,
+      "inert_reason": "the same off switch in the same consumer. Bike runs +113.0% on 6,261 people with a mean trip of 7.32 km against an observed 5.2, and there is no distance feasibility limit at all - see #107. The derived p99 is 23.95 km."
     },
     "B.ride.pickup_dwell_s": {
       "value": 0.0,

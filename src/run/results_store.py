@@ -127,6 +127,31 @@ def resolve_records(name_or_path):
     return None
 
 
+def resolve_or_die(name_or_path, what='--run'):
+    """`resolve`, but a reader's front door: a run NAME or a path, and a
+    message that names the store when neither works.
+
+    Thirteen readers accepted a bare run name and seven accepted only a path,
+    so `--run 20260909T015217_300it_25pct` worked or did not depending on which
+    instrument was asked - the same class of defect the 10 September 2026
+    assessment is named for, at the operator's hand rather than in the model.
+    Every reader that takes a run now goes through here.
+    """
+    resolved = resolve(name_or_path)
+    if resolved is not None:
+        return resolved
+    records = resolve_records(name_or_path)
+    if records is not None:
+        raise SystemExit(
+            '%s %s: the bulk output was trimmed and only the permanent findings '
+            'remain, at %s. A reader that needs the iteration files cannot run '
+            'on it.' % (what, name_or_path, os.path.relpath(records, REPO)))
+    raise SystemExit(
+        '%s %s: no such run. Give a run name from the store or a path to a run '
+        'directory; `python src/run/results_store.py --report` lists what is '
+        'held.' % (what, name_or_path))
+
+
 def run_names():
     """Every run name the store knows - raw and processed united, deduped."""
     names = set()

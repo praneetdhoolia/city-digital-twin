@@ -27,21 +27,21 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 497 fields are made of
+## What the 499 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
 | `measured` | 40 | computed from observed data in this package |
-| `derived` | 44 | follows from another registry field by identity |
+| `derived` | 45 | follows from another registry field by identity |
 | `literature` | 75 | a published value, not specific to this city |
-| `assumed` | 163 | chosen without direct empirical support |
+| `assumed` | 164 | chosen without direct empirical support |
 | `definition` | 137 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 477 | usable point value |
-| `computed` | 10 | written at run time from other fields; do not hand-edit |
+| `active` | 478 | usable point value |
+| `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
 
@@ -56,13 +56,13 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 275 sweeps are for
+### What the 276 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
-| `answer` | 12 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
+| `answer` | 13 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
 | `uncertainty` | 240 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 23 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
@@ -82,6 +82,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `E.s2c.signal_delay_removed_share` | `0.6` | 0.4 - 0.9 |
 | `E.s3.brt_speed_kmh` | `40.0` | 25 - 55 |
 | `E.s3.headway_s` | `450` | 300 - 900 |
+| `RUN.replanning.score_msa_representation` | `absent` | `absent`, `at_innovation_cutoff` |
 
 ### The 26 fields held fixed
 
@@ -3637,7 +3638,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 88 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 90 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3691,6 +3692,8 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.relaxation.settle_margin_iterations` | `10` | iterations | `measured` | 1 - 100 |
 | `RUN.replanning.fraction_to_disable_innovation` | `0.8` | share_of_iterations | `literature` | 0.7 - 0.9 |
 | `RUN.replanning.max_agent_plan_memory` | `8` | plans | `literature` | 3 - 10 |
+| `RUN.replanning.score_msa_fraction` | *(null - unobtained)* | share_of_iterations | `derived` | derived: absent -> MATSim's own default literal `null` (no averaging); at_innov |
+| `RUN.replanning.score_msa_representation` | `absent` | categorical | `assumed` | `absent`, `at_innovation_cutoff` |
 | `RUN.replanning.strategy_subpopulations` | `{"SubtourModeChoice": ["person"]}` | subpopulation_names_per_strategy | `definition` | - |
 | `RUN.replanning.subpopulations` | `["person", "external", "freight"]` | subpopulation_names | `definition` | - |
 | `RUN.replanning.time_mutation_range_s` | `1800.0` | seconds | `literature` | 600 - 1800 |
@@ -4037,6 +4040,22 @@ Share of iterations after which no new plans are created. At 250 iterations inno
 Plans retained per agent. A property of the MATSim formulation, not of Newcastle. Raised 5 -> 8 in 9.120 for the full-choice-set seed (B.mode.seed_method): up to six plans are seeded per person and MATSim removes an UNSCORED plan first when memory overflows, so a memory of 5 would discard seeded modes before they were ever executed; 8 keeps every seed plus the first innovations. Inside the declared 3-10 sweep.
 
 ***literature** · status **active** · DECISIONS.md §9.3 · MATSim `replanning.maxAgentPlanMemorySize` · sweep role **uncertainty***
+
+#### `RUN.replanning.score_msa_fraction`
+
+The iteration fraction at which a plan's score becomes a moving average over its executions. DERIVED and never free: it is MATSim's own `null` while RUN.replanning.score_msa_representation is `absent`, and exactly RUN.replanning.fraction_to_disable_innovation when the gate is `at_innovation_cutoff`. There is no third value, and inventing one would separate the moment the search stops creating plans from the moment the score stops being a single noisy execution - which is the pairing the whole change exists to make. Set by the harness at run time; src/build/build_matsim_run_inputs.py supplies it under the `derived` runtime role.
+
+***derived** · status **computed** · DECISIONS.md §9.7, 9.162 · MATSim `scoring.fractionOfIterationsToStartScoreMSA`*
+
+> **Derived from** `RUN.replanning.score_msa_representation`, `RUN.replanning.fraction_to_disable_innovation`: absent -> MATSim's own default literal `null` (no averaging); at_innovation_cutoff -> RUN.replanning.fraction_to_disable_innovation
+
+#### `RUN.replanning.score_msa_representation`
+
+The representation gate for score averaging after the innovation cutoff. It has no matsim_param of its own because the parameter it decides takes a NUMBER, not a mode: the builder supplies scoring.fractionOfIterationsToStartScoreMSA under the `derived` runtime role - the string MATSim writes for its own default when this is `absent`, and RUN.replanning.fraction_to_disable_innovation when it is `at_innovation_cutoff`. Declaring it is behaviour-neutral; the arm that flips it is not.
+
+***assumed** · status **active** · DECISIONS.md §9.7, 9.162 · sweep role **answer***
+
+> **Sweep basis.** Whether a plan's score is a MOVING AVERAGE over its executions once innovation stops, or the single most recent execution. absent: the pre-change state and MATSim's own default - scoring.fractionOfIterationsToStartScoreMSA is `null`, every plan carries the score of its last execution, and at the innovation cutoff every agent selects the maximum of noisy single-execution scores simultaneously. at_innovation_cutoff: the fraction is set to RUN.replanning.fraction_to_disable_innovation, so score averaging begins exactly where new-plan creation ends, which is the pairing the MATSim reference text describes. It introduces NO NEW NUMBER - the fraction is the innovation cutoff already declared - so this gate is not a value to calibrate but a consistency between what the search stops doing and what the score starts meaning. `absent` is shipped because switching it on is a real change to how every plan is scored and belongs to an arm that declares it. Named as the one-field candidate cause of the convergence penalty by the 10 September 2026 assessment: it predicts BOTH measured symptoms of `20260909T015217_300it_25pct` - the +2.211 pp car snap at the cutoff and the average plan score peaking at 19.2049 and then falling to 14.5679 - and no other single field predicts either. One-gate discipline mirroring C.crowding.representation and C.raptor.mode_cost_representation: `absent` recovers the previous model exactly, and it is emitted as the literal MATSim writes for its own default, so the recovery is byte-identical rather than asserted. WHAT THE SWEEP ANSWERS: Which of the three candidate causes of the convergence penalty - the scoring function, the choice set, or the routers - is responsible is the open question (#163, #172). This gate tests the scoring-function branch at the cost of one arm and is the only one of the three that is a single field.
 
 #### `RUN.replanning.strategy_subpopulations`
 

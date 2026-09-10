@@ -202,6 +202,14 @@
       ],
       "description": "Set only where MATSim's parameter format differs from the field's declared units - a clock time or a duration, declared in hours or seconds because that is what it is, and read by MATSim as hh:mm:ss. The conversion uses the field's own `units`, so a field cannot say hours in one place and be treated as seconds in another. Without this the config template held a second representation of the value (the literal `30:00:00` beside a field declaring 30), which is the drift the registry exists to stop."
     },
+    "inert_at": {
+      "description": "The value at which this field's CONSUMER ignores it - a documented off switch, not a bound. `check_hardcoding.py` proves that a bound field's value reaches the config by nudging it and watching the bytes move; that says the value ARRIVES and says nothing about whether anything acts on it. A field shipped at its `inert_at` is declared, swept, rendered into the reference, proven to reach - and doing nothing, which is a state a reader of \"N of N proven to reach\" would not suspect. Declaring it makes that state countable. It is REPORTED and never counted as a defect: switching a mechanism off is a modelling decision with a record behind it. Requires `inert_reason`."
+    },
+    "inert_reason": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Why the consumer's off value is the shipped one, and what would decide otherwise. Required with `inert_at`, so a switched-off mechanism cannot become invisible again by being merely declared."
+    },
     "pt2matsim_osm_param": {
       "type": "string",
       "description": "The pt2matsim OsmConverter config path this field writes to. Same grammar as matsim_param; a different tool, so a different binding."
@@ -371,6 +379,18 @@
               }
             }
           }
+        ]
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "inert_at"
+        ]
+      },
+      "then": {
+        "required": [
+          "inert_reason"
         ]
       }
     }

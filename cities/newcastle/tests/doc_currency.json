@@ -488,7 +488,7 @@
       "id": "status.licence-ccby",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "now \\*\\*([\\d,]+) CC-BY / [\\d,]+ ODbL\\*\\* plus",
+      "pattern": "\\*\\*([\\d,]+) CC-BY / [\\d,]+ ODbL\\*\\* plus",
       "truth": {
         "kind": "csv_value_count",
         "file": "data/MANIFEST.csv",
@@ -501,7 +501,7 @@
       "id": "status.licence-odbl",
       "kind": "number",
       "doc": "cities/newcastle/docs/STATUS.md",
-      "pattern": "now \\*\\*[\\d,]+ CC-BY / ([\\d,]+) ODbL\\*\\* plus",
+      "pattern": "\\*\\*[\\d,]+ CC-BY / ([\\d,]+) ODbL\\*\\* plus",
       "truth": {
         "kind": "csv_value_count",
         "file": "data/MANIFEST.csv",

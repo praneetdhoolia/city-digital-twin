@@ -9,161 +9,177 @@
  "seeded_from": "20260907T013735_project_report.html (report-data block, read from 9cd8b4f before its deletion in 03b5220)",
  "seeded_on": "2026-09-07",
  "last_pass": {
-  "date": "2026-09-09",
-  "report": "20260909_project_report (sixth pass, at 781cf41)",
-  "head": "781cf41",
+  "date": "2026-09-10",
+  "report": "20260910_project_report (seventh pass, at 4d1d1bc)",
+  "head": "4d1d1bc",
   "phase": "6 - the field",
   "agent": "one researcher, per the one-agent-per-phase rule",
   "budget": 40,
-  "searches_spent": 39,
-  "rounds": 8,
-  "stopped_because": "the stopping rule, with 1 search unspent. Rounds 7 and 8 were two successive rounds of differently phrased searches (NSGA-II/Pareto multi-objective calibration; per-mode transit boarding validation tables; published run counts; constraint-satisfaction and minimax formulations; coupled mode-share fixed points) and neither added a qualifying project the library does not hold. Round 8 did add substance - the WFTDM per-mode table and its exclusion - but no new row.",
-  "special_directive": "The user's question for this pass: what ARCHITECTURES exist for attaining equilibrium across MANY simultaneously-targeted variables, and how do comparable projects actually close a multi-target calibration? 29 of the 39 calls went to that lane; the other 10 went to the library's stated gaps first, per the phase order.",
-  "reuse": "48 of 49 project rows and all 12 platform rows were carried in UNCHANGED and were not re-searched - every stored row was ONE DAY old and inside both horizons. One project row was added (Munich). Ten calibration_methods rows were reused and four were added.",
+  "searches_spent": 38,
+  "rounds": 10,
+  "stopped_because": "the budget was effectively spent (38 of 40) with the pass's two priority lanes both answered and a third structurally explained. Rounds 9 and 10 each still added a qualifying entry - the AToM procedure and the WFRC protocol in round 9, the MUM 2025 downsampling study in round 10 - so the two-barren-rounds rule never fired. Two calls were left deliberately unspent rather than started on a fifth lane that could not be finished.",
+  "special_directive": "The user's question for this pass: how does anyone reach an ORGANICALLY SIMULATED EQUILIBRIUM that simultaneously reproduces many real-world variables at once - twelve mode shares AND absolute road volumes at 30 count stations AND trip-length distributions AND vehicle occupancy? Priority order given: (1) the stored 'myopic heuristics' gap, (2) this question in four sub-lanes, (3) the remaining stored gaps. 5 calls went to lane 1 (closed on the first two), 27 to lane 2, 6 to lane 3.",
+  "reuse": "49 of 50 project rows and all 12 platform rows were carried in and NOT re-searched - every stored row was one day old and inside both horizons. TWO stored rows were UPDATED with material verified this pass (AToM's calibration_method and validation rung; Lausitz gains a related methods study), ONE was added (Tallinn / SimMobility MT Preday). Of 14 stored calibration_methods, 13 were reused unchanged, ONE was substantially updated (history matching, which gained a worked application with wave sizes, run counts and NROY volumes), and SIX were added.",
   "validation_ladder": {
    "none": 7,
-   "survey_shares": 9,
+   "survey_shares": 10,
    "road_link_counts": 25,
    "transit_ridership_counts": 8,
    "per_mode_ridership_every_mode": 0,
-   "_total": 49
+   "_total": 50
   },
-  "validation_ladder_note": "The top rung is STILL EMPTY across all 49 agent-based projects, and our own row remains the only attempt at it. BUT THIS PASS QUALIFIED THAT CLAIM for the first time: a trip-based FOUR-STEP model (WFTDM, Utah) does report six transit modes separately with every reported mode inside 10%. The top rung may be empty among agent-based models partly because agent-based projects do not REPORT at that granularity, not only because it is hard to reach. That question is written back as a new gap.",
+  "validation_ladder_note": "The top rung is STILL EMPTY across all 50 agent-based projects and ours remains the only attempt at it - but the reason is now better understood and less flattering than 'nobody can'. The 9 September pass found a four-step model (WFTDM) reporting six transit modes inside 10%. THIS pass found that the WFRC/RSG ActivitySim framework lists 'Transit boardings by transit mode' among its standard validation summaries - so per-transit-mode granularity is planned agency practice for ACTIVITY-BASED models too. The rung is empty in this survey because published artefacts do not carry the per-mode deviation table with bands, not because the granularity is unreachable. The new Tallinn row sits at survey shares (three simultaneous target families, no per-mode transit rung). AToM was re-classed within its rung: it validates FIVE observation families, including 48 cycling and 48 pedestrian sensors and a trip-length comparison, but reports no per-transit-mode boardings.",
   "headline_findings": [
-   "THE PROFESSION PUBLISHES THE PROJECT'S OWN RULE, VERBATIM: mode-constant adjustment 'should be considered \"a last resort\" after all other possible causes for error and calibration adjustments have been considered' (TF Resource). The project's DECISIONS.md 8.5 freeze is mainstream practice, not an idiosyncrasy.",
-   "THE SAME PAGE STATES THERE IS NO ACCEPTANCE BAR: 'There are no applicable criteria guidelines for checks of mode choice.' The 10% band in GOAL.md is self-imposed; no published criterion exists to be measured against.",
-   "THE COUPLING IS ACKNOWLEDGED AND UNSOLVED: 'adjustments that increase the transit shares may further decrease the nonmotorized mode shares'. The field's answer to many simultaneous targets is a weighted sum and a human in the loop.",
-   "HISTORY MATCHING IS THE ONE ARCHITECTURE BUILT FOR MANY TARGETS AT ONCE, computing implausibility per output independently and returning the NROY set - and an EMPTY NROY region is a formal test that no parameter value can satisfy the targets, i.e. a published 'the deficit is structural' verdict. No source applies it to a transport ABM.",
-   "'THE CALIBRATION ILLUSION' (Hickert et al., 2026) explains why no evaluation count is ever published: automatic calibration hides 'a significant - and unquantified - amount of bespoke manual work', and joint calibration is not identifiable - 'it may not be clear whether the CFM parameters or the OD parameters need adjustment'."
+   "THE 'MYOPIC HEURISTICS' GAP IS CLOSED, AND THE PAPER IS ABOUT EXACTLY THIS PROJECT'S PROBLEM. Chen, Prakash, Lima De Azevedo & Ben-Akiva, TR-C 119:102650 (2020): 'Existing calibration approaches are myopic heuristics in the sense that they do not consider the fundamental inter-dependencies among choice-models and do not have a systematic way to adjust model parameters.' Their target set is this project's target set, verbatim: 'activity shares, mode shares, time-dependent & mode-specific OD flows, and time-dependent & mode-specific sensor counts.'",
+   "THE PROFESSION HAS PUT IN WRITING THAT THE THING THIS PROJECT IS TRYING TO DO IS NOT NORMALLY ATTEMPTED. WFRC/RSG ActivitySim Implementation Framework, section 4.4, verbatim: 'It is typically the case that not all calibration and validation targets can be achieved simultaneously. Therefore, model calibration and validation requires judgement on when the models are reasonably calibrated and validated and ready for applications.' The state of practice substitutes professional judgement for the goal.",
+   "BUT THE ARCHITECTURE THAT DOES SOLVE IT EXISTS, IT IS A MAXIMUM AND NOT A SUM, AND IT NOW HAS A WORKED POLICY-ABM APPLICATION. O'Gara et al. (arXiv 2501.00616) on Covasim: 'since the system at hand contains multiple outputs, we use the maximum implausibility measure across Q outputs I_M(theta) = max_q I_q(theta).' A parameter set survives only if EVERY output is plausible - 'all N targets inside their bands' as the object being solved. Four waves, ~50 designs x 20-25 replicates each, cutoff tightened 3.0 -> 2.5, outputs ADDED wave by wave, NROY volume 7.23% -> 5.58% -> 0.82%, >99% of space ruled out, then ABC over the survivor. Model discrepancy is an EXPLICIT term in the denominator, and an empty NROY region is a formal verdict that 'this would require revisiting both the model itself and the model discrepancy'.",
+   "WHY CONVERGENCE MADE THIS PROJECT'S FIT WORSE HAS A PUBLISHED DIAGNOSIS, IN MATSim'S OWN BOOK, AND IT IS NOT A TASTE PARAMETER. Floetteroed & Kickhoefer, ch. 49, verbatim: 'When a policy study's synthetic choice sets are very different from the alternatives considered in the real world, it is unlikely that the simulation will display correct aggregated quantities or useful sensitivities for policy measures.' The board records final PT choice-set coverage at 25.78%. The same chapter pairs disabling innovation with SCORE MSA - 'fractionOfIterationsToDisableInnovation' AND 'fractionOfIterationsToStartScoreMSA' - and this project disabled innovation alone, then watched car snap +2.211 pp and the average plan score fall from 19.2049 to 14.5679. And from the developers' own thread (tduberne, matsim-code-examples #25): 'it is quite typical to have the executed score pretty close to the worst score, for those simulation with mode choice enabled', and 'Yes, mode shares do stabilize as well, only slower' than scores - so a flat score curve is not evidence that shares have settled.",
+   "THE AGENCY ASC RULE THIS PROJECT IMPLEMENTED IS THE PUBLISHED STANDARD, INSIDE A CYCLIC PROTOCOL THIS PROJECT DOES NOT HAVE. WFRC/RSG, verbatim: 'New ASC = Old ASC + ln(Target Proportion / Model Proportion)', and 'several models must be calibrated in tandem... calibration of ActivitySim should be performed in an iterative, cyclic fashion... Each cycle of re-calibration achieves increasingly precise matches between the modeled outcomes and the targets as the influences between model components reached an equilibrium.' The same document maps residuals to MECHANISMS: screenline count errors indicate 'the need to improve the quality of the input network or land-use data, modify the skimming process, or introduce an adjustment in destination choice', and a boarding-rate error indicates 'the need for a lower or higher transfer penalty in mode choice'.",
+   "SOMEBODY HAS PAID FOR A LARGE SIMULTANEOUS MULTI-TARGET CALIBRATION AND PUBLISHED THE PRICE. Tallinn / SimMobility MT Preday (Agriesti et al.): 477 behavioural parameters - 'prior literature had only tackled up to 98' - against a custom objective of THREE equally weighted components (OD matrix, mode-share distribution, employment coverage), by Bayesian optimisation over a Random-Forest surrogate; up to 500 iterations, satisfactory at 150-182, '6-8 hours on a laptop' per full-population run; final 'error for the overall number of trips is equal to 4% and the average error in the OD matrix is 15.92 vehicles per day'. Order 1,000 machine hours. This project's own coordinate-descent budget line prices ~18 arms and ~140 machine hours and has never been run to completion.",
+   "THE COUNTS DEFICIT IS NOT EXPLAINED BY THE SAMPLE, AND THE LITERATURE POINTS SOMEWHERE ELSE. TF Resource, verbatim: 'Auxiliary demand refers to trips that are not represented in the activity-based model system, such as truck trips, visitor trips, internal-external and external-external trips, and special generator trips.' Meanwhile the MUM 2025 downsampling study (Mersini & Ziemke, TU Berlin, on the Lausitz 100% scenario) concludes that average statistics 'become unreliable when sampling below 10%' - placing this project's 25% inside the reliable band. No source read this pass attributes a ~99% volume deficit to sample scaling.",
+   "THE ACCEPTANCE-BAR VACUUM IS WIDER THAN THE LIBRARY RECORDED. Last pass established 'There are no applicable criteria guidelines for checks of mode choice.' This pass read TF Resource's Amount-Of-Travel validation page and found the same for the count side: 'There are no specific criteria guidelines associated with the trip generation checks described above', and for external models, truck models and special generators, 'There are no applicable criteria guidelines.' The only numeric ranges on that page are 0.90-1.10 for regionwide productions to attractions and 1.20-1.55 home-based work attractions per employee. So neither the 10% mode band NOR any count tolerance this project might adopt has a published criterion behind it."
   ],
   "rounds_detail": [
    {
     "round": 1,
-    "spent": 5,
-    "target": "the library's gaps, in their stated order",
+    "spent": 2,
+    "target": "the stored 'myopic heuristics' gap",
     "queries": [
-     "Semantic Scholar graph API, Brussels DOI (abstract only, no figures - a sixth route eliminated)",
-     "Semantic Scholar graph API, Washington DC DOI (abstract recovered; openAccessPdf points at Springer)",
-     "MASS-GT web search (candidate confirmed to exist and to be validated, no citable route)",
-     "link.springer.com DC PDF (303 to idp.springer.com - route confirmed dead)",
-     "Semantic Scholar search API for MASS-GT (HTTP 429)"
+     "exact-phrase search on 'myopic heuristics' + 'inter-dependencies among choice'",
+     "nested logit ABM system calibrated to aggregate statistics incl. mode-specific OD flows"
     ],
-    "added": "Brussels and DC abstracts re-verified; MASS-GT written back as a named gap with a new query"
+    "added": "the paper identified on the first call: OSTI biblio/1848218"
    },
    {
     "round": 2,
-    "spent": 5,
-    "target": "the new question - a broad sweep across all five sub-questions",
+    "spent": 3,
+    "target": "citing it, and following its lineage",
     "queries": [
-     "simultaneous multi-mode ridership validation targets",
-     "sequential/staged calibration protocol, structure before constants",
-     "multi-objective Pareto / epsilon-constraint calibration with evaluation counts",
-     "history matching / NROY / implausibility for a transport ABM",
-     "published 'number of simulation runs' for an ABM calibration"
+     "WebFetch osti.gov/biblio/1848218 (full citation + quotes)",
+     "Bayesian optimisation for large-scale ABM calibration (arXiv 2302.03480)",
+     "WebFetch Semantic Scholar DOI:10.1016/j.trc.2020.102650 (full abstract, second independent route)"
     ],
-    "added": "the leads that carried the rest of the pass: TF Resource, the FHWA manual, the ABM-UQ tutorial, the screenline two-step, the Bentley post, WFTDM"
+    "added": "GAP CLOSED with two independent sources; and the Tallinn lead"
    },
    {
     "round": 3,
-    "spent": 6,
-    "target": "fetching the six highest-value leads",
+    "spent": 1,
+    "target": "the demand/supply equilibrium sub-lane",
     "queries": [
-     "FHWA validation manual ch10 (it is the TEMPORAL validation chapter - no calibration ordering, no tolerances)",
-     "TF Resource Model_calibration_and_validation (stepwise named; component tolerances given)",
-     "arXiv 2108.05995 screenline two-step (SimMobility FREIGHT, sequential, no run count)",
-     "arXiv 2409.16776 ABM UQ tutorial (implausibility formula; three waves; no per-wave count)",
-     "Bentley blog (301)",
-     "tandfonline AToM full text (403 - dead route)"
+     "WebFetch arxiv.org/html/2404.07789v1 - equilibrium-seeking search for ABM + DTA"
     ],
-    "added": "the history-matching row's formula and the staged-protocol lead"
+    "added": "the 15-iteration equilibrium criterion and Tallinn's observed modal split"
    },
    {
     "round": 4,
-    "spent": 5,
-    "target": "the named stepwise page, the per-mode transit tolerances, and the redirects",
+    "spent": 4,
+    "target": "shares-vs-volumes, and convergence-hurts-fit",
     "queries": [
-     "TF Resource Stepwise_Model_Calibration_Validation (philosophy, not a numbered protocol)",
-     "TF Resource Mode Choice validation (THE 'last resort' QUOTE, the coupling quote, and 'no applicable criteria guidelines')",
-     "WFTDM v9.1 mode choice (per-mode transit deviations)",
-     "www.bentley.com redirect ('Signing in' - dead route)",
-     "2026 LLM generative-agent mobility simulators with validated mode split"
+     "ABM matches shares but underestimates counts / cordon through traffic",
+     "MATSim link volumes far below observed",
+     "MATSim convergence worsens fit / innovation off / best-plan selection bias",
+     "day-to-day learning SUE overconcentration"
     ],
-    "added": "the staged-calibration method row; the GATSim candidate; the WFTDM finding"
+    "added": "the MATSim book chapter 49 lead, the matsim-code-examples threads, the auxiliary-demand thread"
    },
    {
     "round": 5,
-    "spent": 5,
-    "target": "the top rung, the constant-vs-mechanism rule, and the new LLM candidate",
+    "spent": 4,
+    "target": "the MATSim developers' own primary answers",
     "queries": [
-     "GATSim abs page",
-     "MATSim per-mode boardings validation",
-     "ASC absorbing misspecification",
-     "goal programming / weighted sum / normalised multi-target objectives",
-     "benchmark comparisons of calibration algorithms by run budget"
+     "WebFetch github issue #25 (comments not rendered)",
+     "WebFetch github issue #203 (comments not rendered)",
+     "WebFetch d-nb.info/1172809151/34 - chapter 49 (returned a PDF, SAVED LOCALLY and read free)",
+     "WebFetch api.github.com issues/25/comments (WORKED - the API renders what the HTML page does not)"
     ],
-    "added": "the multi-objective row's normalisation and weighted-sum quotes; leads to the Munich paper, the Calibration Illusion and the Springer structured approach"
+    "added": "the choice-set bias diagnosis, the MSA pairing, and tduberne's two verbatim answers"
    },
    {
     "round": 6,
-    "spent": 5,
-    "target": "a published structured protocol, a 2026 critique, and Munich",
+    "spent": 4,
+    "target": "history matching / ABC / SBI / multi-objective, brought into transport",
     "queries": [
-     "Springer 'Calibration of large-scale transport planning models: a structured approach' (303 - dead)",
-     "arXiv 2608.19642 The Calibration Illusion (CENTRAL FINDING)",
-     "PNAS Nexus Munich multi-model PT (NEW PROJECT ROW)",
-     "Semantic Scholar futuretransp5030118 (excluded; MDPI /pdf route proven live)",
-     "arXiv GATSim HTML v3 (EXCLUDED - stylised network, 70 agents, no empirical validation)"
+     "history matching implausibility NROY for a transport ABM",
+     "ABC calibration ABM with multiple summary statistics",
+     "simulation-based inference / neural posterior estimation for mobility",
+     "multi-objective NSGA-II / epsilon-constraint MATSim calibration"
     ],
-    "added": "the Munich project row, the Calibration Illusion method row, two exclusions"
+    "added": "arXiv 2501.00616 (the worked history-matching ABM), ASNPE on OD calibration; NSGA-II in MATSim confirmed AGAIN as network design, not calibration"
    },
    {
     "round": 7,
     "spent": 4,
-    "target": "Pareto/multi-objective, the top rung, MASS-GT retry",
+    "target": "fetching the history-matching case study and the missing-demand cause",
     "queries": [
-     "NSGA-II with MATSim (network design, not calibration)",
-     "per-mode transit boardings validation tables (four-step agency reports)",
-     "Semantic Scholar MASS-GT retry (429 again)",
-     "published MATSim calibration run counts (nothing)"
+     "arxiv.org/html/2501.00616 (404)",
+     "ASNPE travel-demand calibration (arXiv 2412.05590 identified)",
+     "activity-based model underestimates link volumes / missing demand components",
+     "arxiv.org/abs/2501.00616 (abstract only)"
     ],
-    "added": "NO qualifying project row - first of the two stopping-rule rounds"
+    "added": "the 'auxiliary demand' term - the structural answer to the counts lane"
    },
    {
     "round": 8,
     "spent": 4,
-    "target": "the per-mode boarding table, a general autocalibration architecture, the satisficing formulation",
+    "target": "the PDF, and the TF Resource routes",
     "queries": [
-     "WFTDM v9.0 mode choice (model type CONFIRMED four-step; the full per-mode table)",
-     "PubMed metamodel autocalibration tool (cookie interstitial - dead route)",
-     "constraint satisfaction / minimax 'all targets within tolerance' (nothing in transport)",
-     "coupled mode shares / fixed point / damping (the 'myopic heuristics' snippet, written back as a gap because no URL was fetched)"
+     "arxiv.org/pdf/2501.00616 (PDF, SAVED LOCALLY and read free - the whole method, waves and NROY volumes)",
+     "tfresource.org/topics/Auxiliary_Demand_Models.html (404)",
+     "site:tfresource.org auxiliary demand (found the right page)",
+     "tfresource Model_Validation_and_Reasonableness_Checking_Amount_Of_Travel (the acceptance-bar vacuum)"
     ],
-    "added": "NO qualifying project row - second stopping-rule round, so the pass stopped"
+    "added": "the full history-matching architecture; the count-side criteria vacuum"
+   },
+   {
+    "round": 9,
+    "spent": 6,
+    "target": "the remaining stored gaps and the auxiliary-demand source",
+    "queries": [
+     "tfresource Activity_based_models.html (no auxiliary-demand passage)",
+     "trip-length-distribution joint calibration (nothing qualifying)",
+     "arxiv.org/html/2112.12071v2 (404) then v1 (WORKED - AToM gap CLOSED)",
+     "api.semanticscholar.org search for MASS-GT (429, third pass running)",
+     "tfresource Integrated_Travel_Demand_and_Network_Models.html (the auxiliary-demand definition, verbatim)",
+     "WFRC ActivitySim framework PDF (SAVED LOCALLY, 109 pages, read free - the protocol, the ASC rule, the simultaneity admission, Table 29)"
+    ],
+    "added": "AToM closed; the four-step-rung gap partly closed; the agency protocol in full"
+   },
+   {
+    "round": 10,
+    "spent": 2,
+    "target": "MASS-GT and the sample-scaling explanation for the counts deficit",
+    "queries": [
+     "Semantic Scholar DOI:10.1016/j.simpat.2025.103186 - PROVED THE RECORDED MASS-GT DOI WRONG (it is a soil-rock mixtures paper)",
+     "MATSim sample scaling and link counts -> MUM 2025 paper 30, fetched as a PDF, SAVED LOCALLY and read free"
+    ],
+    "added": "the downsampling study; and a corrected dead DOI written back into the MASS-GT gap"
    }
   ],
   "dead_routes_recorded_this_pass": [
-   "link.springer.com - BOTH /content/pdf/ and /article/ 303 to idp.springer.com (confirmed twice more this pass; never retry)",
-   "www.tandfonline.com - 403 to this agent",
-   "blog.bentley.com -> www.bentley.com/blog/ - 301 then a 'Signing in' interstitial",
-   "pubmed.ncbi.nlm.nih.gov - returns only a cookie-consent page to this agent",
-   "api.semanticscholar.org /paper/search - HTTP 429 on both attempts this pass (the /paper/DOI: endpoint kept working)",
-   "arxiv.org/pdf/2112.12071 - still over the 10 MB WebFetch limit (do not retry)"
+   "arxiv.org/html/<id> for papers with no HTML rendering - 2501.00616 and 2112.12071v2 both 404. ALWAYS TRY v1 BEFORE v2, and fall back to arxiv.org/pdf/<id>, which returns a PDF that is SAVED LOCALLY and readable at no budget cost.",
+   "github.com/<org>/<repo>/issues/<n> as an HTML fetch returns ONLY the opening post - every comment is invisible. Use api.github.com/repos/<org>/<repo>/issues/<n>/comments instead; it worked first time.",
+   "tfresource.org/topics/Auxiliary_Demand_Models.html and tfresource.org/topics/Activity_based_models.html do NOT carry the auxiliary-demand definition; tfresource.org/topics/Integrated_Travel_Demand_and_Network_Models.html does.",
+   "api.semanticscholar.org/graph/v1/paper/search - HTTP 429 on a THIRD consecutive pass. Treat as dead; use Crossref or the DOI endpoint instead.",
+   "DOI 10.1016/j.simpat.2025.103186, recorded in this library as the MASS-GT fallback, is NOT MASS-GT. Do not use it."
   ],
   "live_routes_confirmed_this_pass": [
-   "api.semanticscholar.org/graph/v1/paper/DOI:<doi>?fields=... - worked three times",
-   "arxiv.org/html/<id>v<n> - worked for 2409.16776, 2506.23306 and 2608.19642 where the abs page carried nothing",
-   "tfresource.org/topics/<Page>.html - the profession's shared reference, and the best single source found this pass",
-   "www.mdpi.com/<j>/<v>/<i>/<n>/pdf?version=... - live, even though MDPI article HTML 403s",
-   "academic.oup.com - open-access PNAS Nexus articles fetch cleanly"
+   "www.osti.gov/biblio/<id> - full citation plus verbatim abstract quotes, first try",
+   "api.semanticscholar.org/graph/v1/paper/DOI:<doi> - the DOI endpoint still works where the search endpoint 429s",
+   "api.github.com/repos/<org>/<repo>/issues/<n>/comments - the only way to read a GitHub thread's replies",
+   "arxiv.org/html/<id>v1 and arxiv.org/pdf/<id>",
+   "tfresource.org/topics/<Page>.html - the best single source of two consecutive passes",
+   "matsim.org/conferences/mum<year>/abstracts/<paper>.pdf - MATSim User Meeting abstracts are directly fetchable",
+   "agency PDFs on wfrc.utah.gov - a 109-page framework document came back whole and was read locally at no budget cost",
+   "ANY PDF WebFetch returns as binary is saved to the session's tool-results directory and can be read with pypdf at NO SEARCH-BUDGET COST. Four of this pass's five most valuable sources were read that way."
   ]
  },
  "counts": {
-  "projects": 49,
+  "projects": 50,
   "platforms": 12,
-  "excluded": 59,
+  "excluded": 62,
   "not_reverified": 37,
-  "gaps": 8,
-  "calibration_methods": 14
+  "gaps": 12,
+  "calibration_methods": 20
  },
  "projects": [
   {
@@ -205,7 +221,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Leipzig Scenario",
@@ -232,7 +249,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Kelheim Scenario (KelRide)",
@@ -259,7 +277,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Lausitz Scenario",
@@ -285,7 +304,20 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10",
+   "related_methods_study": {
+    "title": "Scaling traffic flow properties of MATSim to correctly cooperate for population downsampling",
+    "authors": "Theresa-Maria Mersini and Theresa Ziemke, Transport Systems Planning and Transport Telematics, TU Berlin",
+    "venue": "MATSim User Meeting 2025, paper 30 (preliminary results; the full study is not yet published)",
+    "why_it_matters_here": "The ONLY systematic study read in seven passes of what a sample fraction does to a MATSim result, and it is run on a project row this library already holds. It uses the Lausitz scenario as a rare full-scale (100%) reference - 470k links, 260k nodes, 1,195,422 agents, filtered to a 305,200-agent car-leg benchmark - and simulates the shares 0.01, 0.05, 0.1, 0.25, 0.5, 1.0 at 500 iterations each, with ten differently sampled populations per small share and ten seeds on two of them. VERBATIM CONCLUSION: 'Preliminary comparisons of scores and travel times suggest that even average statistics (such as score and travel time) become unreliable when sampling below 10%.' It also finds stuck-time violations scale badly: about 40k in the 100% sample ('almost 1/8 of the agents getting stuck once per day'), three times as many at 1%, and 'more than four and a half times as many' at 1% with equal flow/storage scaling. On alpha it is agnostic so far: 'adjusting the scaling of storage capacity may not be necessary', but only because travel times hide the stuck-time damage.",
+    "bearing_on_our_row": "This project runs at 25% by standing directive, which this study places comfortably inside the reliable band and ABOVE the 10% line where its own averages break down. It does NOT explain a counts deficit: nothing in it says a correctly scaled sample loses link volume. So the -98.75% median at our 30 count stations is NOT diagnosed by sample scaling on the evidence read this pass.",
+    "sources": [
+     "https://matsim.org/conferences/mum2025/abstracts/MUM25_paper_30.pdf"
+    ],
+    "last_verified": "2026-09-10",
+    "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+   }
   },
   {
    "name": "MATSim Metropole Ruhr Scenario (incl. Gladbeck sub-scenario)",
@@ -313,7 +345,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Ruhrgebiet Scenario v1.1 (NEMO)",
@@ -340,7 +373,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Düsseldorf Scenario",
@@ -366,7 +400,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Dresden Scenario",
@@ -392,7 +427,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Oberlausitz/Dresden Scenario",
@@ -418,7 +454,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Hannover Scenario",
@@ -445,7 +482,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Velbert Scenario",
@@ -471,7 +509,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Kyoto Scenario",
@@ -499,7 +538,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Open Mexico City Scenario",
@@ -526,7 +566,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Santiago de Chile Scenario",
@@ -554,7 +595,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Gauteng (South Africa)",
@@ -581,7 +623,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim-NYC (NYU C2SMART)",
@@ -617,7 +660,8 @@
     "sources": [],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MATSim Model Vienna (AIT)",
@@ -644,7 +688,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "AToM - Activity-based and agent-based Transport model of Melbourne",
@@ -657,7 +702,7 @@
    "signals": "unknown",
    "freight": "unknown",
    "fares_pricing": "unknown",
-   "validation_rung": "survey shares + road link counts (abstract: compared 'mode share, road volume, travel time, and travel distance' with real-world observations)",
+   "validation_rung": "survey shares + road link counts + ACTIVE-MODE counts + PT station access + trip length/time distribution. Read in full this pass: Census MTW 2016 and VISTA 2016-18 mode shares; VicRoads Typical Hourly Traffic Volumes on 87 major road segments; 48 automatic cycling sensors; 48 City of Melbourne pedestrian sensors; PT Station Access survey aggregated to LGA; travel distance and time for 1,000 sampled trips against the Google Distance Matrix API. It does NOT report per-transit-mode boardings, so it does not reach the top rung.",
    "best_fit": "unknown - figures only in full text (tandfonline 403; arXiv PDF exceeded fetch limit)",
    "open_source": "yes - paper CC-BY 4.0; matsim-melbourne repos MIT (demand, network, useful-scripts, choice-model)",
    "reproducible": "yes - open workflow: demand generator, network generator (OSM + GTFS + DEM), mode choice, post-processing",
@@ -670,20 +715,27 @@
     "https://github.com/matsim-scenarios/matsim-melbourne",
     "https://matsim-melbourne.github.io/",
     "https://www.worldtransitresearch.info/research/11342/",
-    "https://www.tandfonline.com/doi/full/10.1080/15472450.2024.2372894 (403)"
+    "https://www.tandfonline.com/doi/full/10.1080/15472450.2024.2372894 (403)",
+    "https://arxiv.org/html/2112.12071v1 (full text reached this pass; the abs page and the tandfonline route both failed in earlier passes)"
    ],
    "lane": "1",
-   "last_verified": "2026-09-07",
-   "verified_in": "20260907T013735_project_report.html",
-   "reused": true,
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)",
+   "reused": false,
    "calibration_method": {
-    "family": "unknown",
-    "what_the_source_says": "not reached within this pass's budget; see the gap 'calibration-method cells still unknown'.",
-    "objective_evaluations": "unknown",
-    "sources": [],
-    "last_verified": "2026-09-08",
-    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+    "family": "iterative MANUAL mode-constant calibration against a single mode-share target, in two-stage cycles. CLOSED THIS PASS (the cell was unknown through three passes).",
+    "what_the_source_says": "Read from arxiv.org/html/2112.12071v1 this pass. An initial simulation runs for '200 iterations'; mode-share outputs are then compared against Census MTW 2016 and 'mode-specific constants were adjusted to achieve a better match'; subsequent simulation experiments run for '100 iterations' using the already-optimised plans, and the cycle repeats until convergence. ONLY the mode-specific constants are adjusted. The calibration target is work-trip mode shares 'within +/-1% error threshold of the observation from Census MTW' - a TIGHTER band than this project's 10%, but on ONE statistic (work-trip mode share) rather than on twelve modes.",
+    "objective_evaluations": "unpublished as a count; the procedure is 200 iterations then repeated 100-iteration cycles, with the number of cycles not stated.",
+    "convergence_criterion": "a human judging 'a better match' against the +/-1% work-trip mode-share threshold; validation is then reported separately and is NOT part of the loop.",
+    "why_it_matters_here": "AToM validates against FIVE independent observation families - mode share (Census MTW 2016 + VISTA 2016-18), 87 major road segments of VicRoads hourly volumes, 48 automatic cycling sensors, 48 City of Melbourne pedestrian sensors, PT station-access survey by LGA, and travel distance/time for 1,000 sampled trips against the Google Distance Matrix API - but CALIBRATES against only one of them. That is the single clearest published instance of the split this project is trying to close: many targets validated, one target optimised.",
+    "sources": [
+     "https://arxiv.org/html/2112.12071v1"
+    ],
+    "last_verified": "2026-09-10",
+    "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+   },
+   "carried_to": "2026-09-10",
+   "updated_this_pass": "calibration_method filled from the full text; validation_rung widened to the five observation families actually used."
   },
   {
    "name": "eqasim Île-de-France (Paris) synthetic population + MATSim scenario",
@@ -723,7 +775,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "eqasim/MATSim Montreal (Manout & Ciari 2021)",
@@ -749,7 +802,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "SimMobility Singapore (MIT / SMART FM)",
@@ -785,7 +839,8 @@
     "sources": [],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "SANDAG ABM3 (ActivitySim)",
@@ -823,7 +878,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "CMAP ActivitySim ABM (Chicago)",
@@ -859,7 +915,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "PSRC SoundCast (DaySim + Emme)",
@@ -894,7 +951,8 @@
     "sources": [],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "POLARIS - Chicago Metropolitan Region (Argonne)",
@@ -933,7 +991,8 @@
     "sources": [],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "BEAM - San Francisco Bay Area (LBNL)",
@@ -972,7 +1031,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "TRANSIMS Track-1 - Fort Meade / MD-175, Maryland (Jeihani & Ardeshiri 2014); Chittenden County VT (Lawe et al. 2009, cited)",
@@ -999,7 +1059,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "LLMob - Large Language Models as Urban Residents (NeurIPS 2024)",
@@ -1027,7 +1088,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "CoPB - Chain-of-Planned-Behaviour mobility generation (Tsinghua)",
@@ -1055,7 +1117,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MobAgent - Be More Real: travel diary generation (Shenzhen University)",
@@ -1082,7 +1145,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "OpenCity - scalable urban activity simulation with massive LLM agents (Tsinghua / HKUST-GZ)",
@@ -1110,7 +1174,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "AgentSociety (Tsinghua FIB lab) - with third-party mobility validation by Santos, Viana & Silva (SIGSPATIAL 2026)",
@@ -1140,7 +1205,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "CitySim (2025) / CityReal (2026) - Woven by Toyota, Tokyo",
@@ -1169,7 +1235,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "CityBehavEx - scalable, empirically validated LLM-assisted urban simulation (UTFPR / Inria / U. Toronto)",
@@ -1197,7 +1264,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "GTA - Generative Traffic Agents (Leipzig University / UCL / ScaDS.AI; CHI 2026)",
@@ -1225,7 +1293,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "LLM-enhanced general transportation agent for synthetic travel-survey generation (Salvador, Furno, Derrible; TRR 2026)",
@@ -1252,7 +1321,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "DeepCAM / DeepAM generative household activity pipeline + MATSim, Los Angeles (UCLA Mobility Lab)",
@@ -1278,7 +1348,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "AToM extension for Suburban Rail Loop East, Melbourne (Abdollahyar, Both, Jafari, Pemberton, Singh, Giles-Corti, Gunn; TRIP 2026)",
@@ -1305,7 +1376,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Greater Bendigo MATSim demand generation - multistep location assignment (Tiwari, Jafari, Both, Singh; RMIT + CSIRO Data61; MUM 2025)",
@@ -1332,7 +1404,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Tyne and Wear MATSim model (Newcastle University; DARe hub) - baseline, cycling scenarios, Tyne Bridge and 'Toon Monsoon' disruption",
@@ -1361,7 +1434,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T013735_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Dhaka BRT agent-based microsimulation (MATSim; Transport Policy 148, 2024, 92-106)",
@@ -1389,7 +1463,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Deep Activity Model - generative activity-chain synthesis + LASim, Los Angeles County (UCLA Mobility Lab; arXiv 2405.17468 v3, Aug 2026)",
@@ -1416,7 +1491,8 @@
    "lane": "3",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "MWCOG / TPB Gen3 ActivitySim model, Ver. 1.0.4 - metropolitan Washington DC (RSG + Baseline Mobility Group, calibration and validation report 25 Aug 2025)",
@@ -1454,7 +1530,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Brussels agent-based traffic model from aggregated cellphone matrices (Li, Rombaut, Vanhaverbeke; Int. J. Digital Earth 17(1) 2407046, Sep 2024)",
@@ -1482,7 +1559,8 @@
    "lane": "1",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T173435_project_report",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "SEMCOG ActivitySim activity-based travel demand model - Southeast Michigan / Detroit region (SEMCOG + RSG, phases I-II from 2019)",
@@ -1520,7 +1598,8 @@
     ],
     "last_verified": "2026-09-08",
     "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
-   }
+   },
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Washington DC metro MATSim model from open data - COVID case study (Ruan, Khan, Xin, Zufle, Pfoser; Computational Urban Science 5:57, 2025)",
@@ -1548,7 +1627,8 @@
    "lane": "open-data city models",
    "last_verified": "2026-09-07",
    "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "ARC ABM - Atlanta Regional Commission CT-RAMP activity-based model (promoted from not_reverified this pass)",
@@ -1585,7 +1665,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "added_this_pass": true
+   "added_this_pass": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Barcelona traffic digital twin (SUMO; Getting Real, ISPRS IJGI 11(1) 24)",
@@ -1621,7 +1702,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "added_this_pass": true
+   "added_this_pass": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Munich public transport across models and scales (MATSim + MITO vs MCNF vs IRW; PNAS Nexus 3(11) pgae489, 2024)",
@@ -1656,7 +1738,38 @@
     ],
     "last_verified": "2026-09-09",
     "verified_in": "20260909_project_report (sixth pass, at 781cf41)"
-   }
+   },
+   "carried_to": "2026-09-10"
+  },
+  {
+   "name": "Tallinn (Estonia) - SimMobility MT Preday activity-based model, with a dynamic-assignment equilibrium loop",
+   "engine": "SimMobility MT 'Preday' (MIT/SMART lineage) for the activity-based demand, coupled to a dynamic traffic assignment for supply; Aalto University / Tallinn University of Technology (Agriesti, Kuzmanovski, Hollmen, Roncoli, Nahmias-Biran)",
+   "city_population": "Tallinn, Estonia - 'a population of ~400.000 synthetic individuals, matching the city's whole population'; 'more than 1,100,000 trips in a typical day'. FULL population, not a sample.",
+   "sample_fraction": "100% (full synthetic population)",
+   "modes": "four transport modes reported in the mode-share comparison; the equilibrium paper names private vehicle 49%, public transport 25%, walking 24% as the observed modal split it settles against",
+   "active_modes": "unknown",
+   "pt_physical": "unknown - PT appears as a mode share and in the OD matrices; no statement read that vehicles run a timetable",
+   "signals": "unknown",
+   "freight": "unknown",
+   "fares_pricing": "unknown",
+   "validation_rung": "survey shares + trip totals + OD matrix. Calibrated and reported against THREE simultaneous target families: OD matrix match, mode-share distribution, and employment coverage. The equilibrium paper adds morning car-trip totals (~103,000-113,000 legs, 7.9% error) and work/education trip distributions. NO per-mode transit ridership counts, so it does not reach the top rung.",
+   "best_fit": "'The error for the overall number of trips is equal to 4% and the average error in the OD matrix is 15.92 vehicles per day.' Mode-share predictions matched observed data across four modes (figures not read). The equilibrium loop reaches 'values of the measure of error lower than 10%' in 15 iterations - final 12% (morning) and 8% (afternoon).",
+   "open_source": "unknown - SimMobility itself is open (MIT licence); this city's configuration is not stated to be",
+   "reproducible": "unknown",
+   "city_agnostic": "partly - SimMobility is a platform; the paper's contribution is a transferable calibration method",
+   "status": "active - Bayesian-optimisation paper arXiv 2302.03480 (Feb 2023), published in IEEE Open Journal of Intelligent Transportation Systems; equilibrium-seeking paper arXiv 2404.07789 (2024)",
+   "does_best": "The LARGEST published simultaneous parameter calibration of an activity-based model, and the only one read in seven passes that states its own cost honestly. It calibrates 477 behavioural parameters across nested-logit utility functions - 'prior literature had only tackled up to 98 parameters' - against a custom objective combining THREE EQUALLY WEIGHTED components (OD matrix, mode-share distribution, employment coverage), using Bayesian optimisation over an improved Random Forest surrogate. It ran up to 500 iterations, reaching satisfactory performance at iteration 150-182, with each individual run taking '6-8 hours on a laptop' for the full population. It also publishes a SEPARATE architecture for the demand/supply equilibrium: an equilibrium-seeking search that measures 'the difference in traffic patterns between consecutive iterations' and needs 15 iterations to bring it under 10%.",
+   "sources": [
+    "https://arxiv.org/html/2302.03480v1",
+    "https://arxiv.org/abs/2302.03480",
+    "https://arxiv.org/html/2404.07789v1",
+    "https://ieeexplore.ieee.org/document/10268587/"
+   ],
+   "lane": "7 - this pass's question",
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)",
+   "reused": false,
+   "added_this_pass": true
   }
  ],
  "platforms": [
@@ -1678,7 +1791,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "calibration_tooling": "Three named routes, all read this pass: (1) matsim.calibration in matsim-vsp/matsim-python-tools - an ASCCalibrator driving an Optuna study, whose update is literally log(z_i) - log(m_i) - (log(z_0) - log(m_0)), i.e. the classic ASC fixed-point loop normalised on a fixed reference mode, with a pluggable learning-rate scheduler and a TerminationCondition dataclass whose check_termination carries \"# TODO: not used yet\"; (2) Cadyts, a Bayesian count calibration that adjusts NO parameter and instead adds a utility bonus so agents select the plans matching observed counts; (3) opdyts (Flotterod, TR-B 2017), which approximates point equilibria of the mobsim/scoring/replanning loop, with a Berlin mode-constant example. See calibration_methods."
+   "calibration_tooling": "Three named routes, all read this pass: (1) matsim.calibration in matsim-vsp/matsim-python-tools - an ASCCalibrator driving an Optuna study, whose update is literally log(z_i) - log(m_i) - (log(z_0) - log(m_0)), i.e. the classic ASC fixed-point loop normalised on a fixed reference mode, with a pluggable learning-rate scheduler and a TerminationCondition dataclass whose check_termination carries \"# TODO: not used yet\"; (2) Cadyts, a Bayesian count calibration that adjusts NO parameter and instead adds a utility bonus so agents select the plans matching observed counts; (3) opdyts (Flotterod, TR-B 2017), which approximates point equilibria of the mobsim/scoring/replanning loop, with a Berlin mode-constant example. See calibration_methods.",
+   "carried_to": "2026-09-10"
   },
   {
    "name": "eqasim (MATSim extension + open pipelines)",
@@ -1695,7 +1809,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "calibration_tooling": "boptx (CMA-ES, xNES, FDSA, SPSA; Bayesian optimisation written but not released) and its predecessor octras (random walk, FDSA, SPSA, opdyts, CMA-ES, all of scipy.optimize), both by sebhoerl, both driving eqasim."
+   "calibration_tooling": "boptx (CMA-ES, xNES, FDSA, SPSA; Bayesian optimisation written but not released) and its predecessor octras (random walk, FDSA, SPSA, opdyts, CMA-ES, all of scipy.optimize), both by sebhoerl, both driving eqasim.",
+   "carried_to": "2026-09-10"
   },
   {
    "name": "SUMO (Simulation of Urban MObility)",
@@ -1713,7 +1828,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "calibration_tooling": "Cadyts has been used to calibrate SUMO (SUMO-Cadyts); boptx carries a SUMO Monaco example."
+   "calibration_tooling": "Cadyts has been used to calibrate SUMO (SUMO-Cadyts); boptx carries a SUMO Monaco example.",
+   "carried_to": "2026-09-10"
   },
   {
    "name": "ActivitySim",
@@ -1732,7 +1848,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "calibration_tooling": "integrated core capability to \"automate the calibration of selected model coefficients and alternative specific constants\", iterating run-compare-adjust, with per-iteration displays so a user can see whether a constant \"displays a monotonic pattern or oscillates across iterations\" (AMPO procurement RFP, 2020)."
+   "calibration_tooling": "integrated core capability to \"automate the calibration of selected model coefficients and alternative specific constants\", iterating run-compare-adjust, with per-iteration displays so a user can see whether a constant \"displays a monotonic pattern or oscillates across iterations\" (AMPO procurement RFP, 2020).",
+   "carried_to": "2026-09-10"
   },
   {
    "name": "POLARIS (Argonne National Laboratory)",
@@ -1749,7 +1866,8 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "BEAM (Behavior, Energy, Autonomy, and Mobility - LBNL / UC Berkeley)",
@@ -1767,7 +1885,8 @@
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
    "reused": true,
-   "calibration_tooling": "parallel Bayesian optimisation over the mode ASCs via HpBandSter (BOHB), kiranchhatre/BEAM-Bayes-Opt, LOD 2022."
+   "calibration_tooling": "parallel Bayesian optimisation over the mode ASCs via HpBandSter (BOHB), kiranchhatre/BEAM-Bayes-Opt, LOD 2022.",
+   "carried_to": "2026-09-10"
   },
   {
    "name": "SimMobility (MIT / Singapore-MIT Alliance for Research and Technology)",
@@ -1784,7 +1903,8 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "mobiTopp (Karlsruhe Institute of Technology, Institute for Transport Studies)",
@@ -1804,7 +1924,8 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "TRANSIMS (TRansportation ANalysis SIMulation System)",
@@ -1822,7 +1943,8 @@
    ],
    "last_verified": "2026-09-08",
    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "PTV Visum / PTV Vissim (PTV Group, Umovity)",
@@ -1839,7 +1961,8 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Aimsun Next / Aimsun Live (Aimsun)",
@@ -1857,7 +1980,8 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T1215xx_project_report.html",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   },
   {
    "name": "Bentley OpenPaths (EMME, CUBE, CityPhi, AGENT, DYNAMEQ)",
@@ -1876,7 +2000,8 @@
    ],
    "last_verified": "2026-09-07",
    "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
-   "reused": true
+   "reused": true,
+   "carried_to": "2026-09-10"
   }
  ],
  "excluded": [
@@ -2310,6 +2435,24 @@
    ],
    "excluded_on": "2026-09-09",
    "excluded_in": "20260909_project_report (sixth pass, at 781cf41)"
+  },
+  {
+   "candidate": "Covasim history-matching case study (O'Gara, Kerr, Klein, Binois, Garnett & Hammond, arXiv 2501.00616)",
+   "reason": "not a transport model and not a city - an epidemiological ABM. RECORDED IN FULL as a calibration_methods row because it is the only worked, published application of history matching to a policy-used stochastic ABM, with wave sizes, run counts, cutoffs and NROY volumes stated. Do not price it again as a project.",
+   "excluded_on": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "candidate": "WFRC Activity-Based Model Implementation Framework (Wasatch Front, ActivitySim, 21 Feb 2025)",
+   "reason": "a model DEVELOPMENT PLAN, not a built and validated model - it specifies what will be calibrated and validated in phases 1-3, and reports no fit. RECORDED IN FULL as a calibration_methods row for its verbatim ASC update rule, its cyclic component protocol, its residual-to-mechanism diagnosis table, and its Table 29 validation summaries (which include 'Transit boardings by transit mode'). Do not price it again as a project.",
+   "excluded_on": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "candidate": "Chen, Prakash, Lima De Azevedo & Ben-Akiva (2020), 'Formulation and solution approach for calibrating activity-based travel demand model-system via microsimulation', TR-C 119:102650",
+   "reason": "a METHOD paper, not a city model - and it does not name the city of its 'real-world application' in the abstract, which was the only text reachable (the accepted manuscript sits on a sciencedirect.com route this library records as 403). Recorded in full as a calibration_methods row; it is the source of the previously unsourced 'myopic heuristics' claim, now closed.",
+   "excluded_on": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
   }
  ],
  "not_reverified": [
@@ -2516,84 +2659,121 @@
    "detail": "CARRIED UNCHANGED, no budget spent this pass. STILL OPEN: (a) Monty / the NZ National Transport Model - five routes have failed including web.archive.org, which this repository's own network sandbox blocks, so it can never work from here; treat as closed unless a new lead appears; (b) ARC's CALIBRATION report, whose PDF exceeds the 10 MB WebFetch limit; (c) MTC Travel Model Two TM2.3, still unpublished.",
    "query": "ARC: abmfiles.atlantaregional.com for a SPLIT or per-chapter copy of the calibration report; Monty: ask the operator to add transport.govt.nz to sandbox.network; MTC: 'Travel Model Two' TM2.3 calibration site:github.com/BayAreaMetro",
    "opened": "2026-09-07 (narrowed three passes running)",
-   "carried_to": "2026-09-09"
+   "carried_to": "2026-09-10"
   },
   {
    "gap": "paywalled or unreached fits",
    "detail": "NARROWED BY ELIMINATION, not by success. (a) Brussels - the Semantic Scholar graph API was re-run this pass and returns title, venue and an abstract naming the four validation metrics ('mode share, distance share, travel time distribution, and traffic counts') but NO FIGURES; its openAccessPdf field is only the DOI redirect, so a SIXTH route has now been eliminated. (b) Washington DC full text - THE SPRINGER ROUTE IS NOW CONFIRMED DEAD THREE TIMES: link.springer.com/content/pdf/10.1007/s43762-025-00214-9.pdf returns 303 to idp.springer.com, and link.springer.com/article/... does the same. The abstract WAS recovered and its claim recorded verbatim ('we show that indeed our approach is capable to accurately capturing traffic flows'), with a population of 'four million people' - but no figure. DO NOT RETRY ANY link.springer.com URL. (c) MDPI - PARTLY REOPENED: MDPI 403s article HTML but the /pdf?version=... path returned by the Semantic Scholar graph API IS live (proven on futuretransp5030118 this pass), so the on-demand PT study should be retried by that path.",
    "query": "Brussels: core.ac.uk or biblio.vub.ac.be full text of 10.1080/17538947.2024.2407046 for the four figures. DC: a DOAJ mirror or an institutional repository copy of 10.1007/s43762-025-00214-9 - NEVER link.springer.com. MDPI: get openAccessPdf from api.semanticscholar.org/graph/v1/paper/DOI:<doi>?fields=openAccessPdf and fetch that /pdf?version= URL directly.",
    "opened": "2026-09-07 (narrowed four passes running)",
-   "carried_to": "2026-09-09"
+   "carried_to": "2026-09-10"
   },
   {
    "gap": "MATSim User Meeting 2026 programme (Paris, 28 September 2026)",
    "detail": "CARRIED FORWARD UNCHANGED for a THIRD pass - the meeting is still in the FUTURE and NO budget was spent on it. It is the one place a new calibrated city scenario, a Wellington/Monty validation, or a successor to the MUM 2024 CMA-ES plan-parameter extension would surface first. Re-check after 2026-09-28.",
    "query": "matsim.org/conferences/mum2026/ programme abstracts (after 2026-09-28)",
    "opened": "2026-09-07",
-   "carried_to": "2026-09-09"
+   "carried_to": "2026-09-10"
   },
   {
    "gap": "platform cells - the OpenPaths date, now with its route eliminated too",
    "detail": "STILL ONE ITEM, and this pass spent one call on it and failed usefully. blog.bentley.com 301s to www.bentley.com/blog/..., and that page returns only a 'Signing in' interstitial to this agent - so the Bentley BLOG is a dead route. The post itself is real and is the right source: it describes OpenPaths automated calibration against 'current traffic counts and transit ridership data along with household travel survey data' as simultaneous targets, which is a platform capability worth a cell once a readable copy is found.",
    "query": "bentleysystems.service-now.com 'OpenPaths 2025 Now Available' post date (sys_id eac95276870c22945bea87380cbb358b); or a syndicated copy of the automated-calibration interview on a trade site rather than bentley.com; and, for TRANSIMS 7.5, the SourceForge git/svn tags rather than the files listing",
    "opened": "2026-09-07",
-   "carried_to": "2026-09-09"
+   "carried_to": "2026-09-10"
   },
   {
    "gap": "calibration_method cells still unknown",
-   "detail": "CARRIED. Still unknown, in priority order: SimMobility Singapore (W-SPSA is the family the SimMobility/DynaMIT lineage is known for, but NO source ties it to SimMobility - do not write it in without one; NOTE the related screenline two-step paper found this pass applies to SimMobility FREIGHT, which is a different model); POLARIS; AToM Melbourne; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. ONE PARTIAL ADVANCE ON ATOM, NOT WRITTEN IN: a search snippet describes AToM as running '200 iterations initially... followed by another simulation run for 100 iterations with adjusted parameters', but the two full-text routes both failed this pass (tandfonline 403; arxiv PDF 2112.12071 over the 10 MB limit), so the cell STAYS unknown rather than being filled from a snippet.",
-   "query": "AToM: arxiv.org/html/2112.12071v2 or the ar5iv HTML, or the ScienceDirect .org mirror S1547245024000306; SimMobility: 'SimMobility' mid-term calibration W-SPSA Ben-Akiva Lu; POLARIS: site:anl.gov POLARIS calibration",
+   "detail": "CARRIED. Still unknown, in priority order: SimMobility Singapore (W-SPSA is the family the SimMobility/DynaMIT lineage is known for, but NO source ties it to SimMobility - do not write it in without one; NOTE the related screenline two-step paper found this pass applies to SimMobility FREIGHT, which is a different model); POLARIS; AToM Melbourne; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. ONE PARTIAL ADVANCE ON ATOM, NOT WRITTEN IN: a search snippet describes AToM as running '200 iterations initially... followed by another simulation run for 100 iterations with adjusted parameters', but the two full-text routes both failed this pass (tandfonline 403; arxiv PDF 2112.12071 over the 10 MB limit), so the cell STAYS unknown rather than being filled from a snippet. | 2026-09-10: ATOM IS CLOSED. arxiv.org/html/2112.12071v1 (the v2 path 404s; v1 works - RECORD THAT ROUTE) gave the full procedure: 200 iterations initially, then repeated 100-iteration cycles on the already-optimised plans with ONLY the mode-specific constants adjusted, against a work-trip mode-share target of '+/-1% error threshold of the observation from Census MTW'. Written into the AToM row. STILL UNKNOWN, in priority order: SimMobility Singapore (NOTE: the Chen/Prakash/Lima De Azevedo/Ben-Akiva 2020 paper found this pass is the same MIT lineage and is a strong candidate for the family, but it does NOT name SimMobility Singapore, so the cell stays unknown - do not write it in); POLARIS; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. THE ACTIVITYSIM ROWS ARE NOW PARTLY ANSWERABLE BY THE GENERIC PROTOCOL - the WFRC framework's cyclic ASC method is the ActivitySim standard - but a per-agency cell still needs that agency's own calibration report.",
+   "query": "SimMobility: 'SimMobility' mid-term calibration W-SPSA Ben-Akiva Lu; POLARIS: site:anl.gov POLARIS calibration; SoundCast: psrc.github.io soundcast calibration; and for each ActivitySim agency row, that agency's own 'Model Calibration and Validation Report' rather than the framework document.",
    "opened": "2026-09-08",
-   "carried_to": "2026-09-09"
+   "carried_to": "2026-09-10"
   },
   {
    "gap": "MASS-GT - the freight candidate, still unpriced after two attempts",
-   "detail": "CARRIED AND NOT CLOSED. MASS-GT (Multi-Agent Simulation System for Goods Transport, de Bok / Tavasszy / Thoen, Netherlands) is an agent-based urban freight model of a real region with a real validation claim - calibrated on Dutch freight surveys, truck trip travel diaries collected from transport management systems, supply-use tables, e-commerce data AND traffic counts - so it very likely QUALIFIES. It was not written in as a row because every route to a citable source failed this pass: ScienceDirect 403s by standing record, ResearchGate 403s, and the Semantic Scholar graph API returned HTTP 429 (rate limited) on BOTH attempts. It remains the first candidate the next pass should price, and freight is a mode this survey scores that no existing row models as a logistics chain.",
-   "query": "retry api.semanticscholar.org/graph/v1/paper/search?query=MASS-GT (rate limit is transient - space the calls); or DOI 10.1016/j.simpat.2025.103186 via openAccessPdf; or repository.tudelft.nl for de Bok, 'MASS-GT: An empirical model for the simulation of freight policies'",
+   "detail": "CARRIED AND NOT CLOSED. MASS-GT (Multi-Agent Simulation System for Goods Transport, de Bok / Tavasszy / Thoen, Netherlands) is an agent-based urban freight model of a real region with a real validation claim - calibrated on Dutch freight surveys, truck trip travel diaries collected from transport management systems, supply-use tables, e-commerce data AND traffic counts - so it very likely QUALIFIES. It was not written in as a row because every route to a citable source failed this pass: ScienceDirect 403s by standing record, ResearchGate 403s, and the Semantic Scholar graph API returned HTTP 429 (rate limited) on BOTH attempts. It remains the first candidate the next pass should price, and freight is a mode this survey scores that no existing row models as a logistics chain. | THIRD ATTEMPT, 2026-09-10, FAILED AND CORRECTED A RECORDED ERROR: api.semanticscholar.org/graph/v1/paper/search returned HTTP 429 AGAIN (third consecutive pass), and the DOI this library recorded as the fallback route - 10.1016/j.simpat.2025.103186 - IS NOT MASS-GT. Resolved via the Semantic Scholar DOI endpoint it returns 'Mesoscopic deformation mechanisms and engineering applications of soil-rock mixtures: effects of varying stone content' (Wu, Yang, Ma, Ran & Cheng, 2025, Simulation Modelling Practice and Theory). DO NOT USE THAT DOI AGAIN.",
+   "query": "repository.tudelft.nl for de Bok, 'MASS-GT: An empirical model for the simulation of freight policies' (a TU Delft institutional repository copy is the only untried route); or Crossref (api.crossref.org/works?query=MASS-GT+freight+agent-based) to get the CORRECT DOI first, since the recorded one is now proven wrong. The Semantic Scholar SEARCH endpoint has 429'd on three consecutive passes - stop using it.",
    "opened": "2026-09-08",
-   "carried_to": "2026-09-09"
+   "carried_to": "2026-09-10"
   },
   {
    "gap": "NEW - is a four-step model's per-mode transit validation the same rung, or a different ladder?",
    "detail": "This pass found the top rung reached - but by a TRIP-BASED FOUR-STEP model, not by an agent-based one. WFTDM (Utah) reports six transit modes separately with every reported mode inside 10% and most inside 5%. It is excluded from the survey because it has no agents, which is correct under the qualification rule, but it exposes a real question the ladder does not currently ask: the top rung may be empty among AGENT-BASED models not because it is hard to reach but because agent-based projects do not report at that granularity, while the agency four-step world routinely does. Answering it changes what 'nobody else attempts this' means in the report.",
-   "query": "sweep three or four agency ACTIVITY-BASED model validation reports (SEMCOG, MWCOG Gen3, SANDAG ABM3, PSRC SoundCast) for a per-transit-mode boardings table with deviations, e.g. 'boardings by mode' validation site:semcog.org OR site:mwcog.org activity-based; and check whether ActivitySim's own acceptance criteria name per-mode boardings",
-   "opened": "2026-09-09"
+   "query": "SEMCOG / MWCOG Gen3 / SANDAG ABM3 / CMAP 'Model Calibration and Validation Report' PDFs specifically - look for a boardings-by-mode table with an observed column and a percent-difference column. Try semcog.org and mwcog.org direct PDF paths; CMAP's own PDF is recorded as an image-only scan.",
+   "opened": "2026-09-09",
+   "carried_to": "2026-09-10",
+   "status": "PARTLY CLOSED 2026-09-10",
+   "closed_note": "PARTLY CLOSED, and the answer moves the report's claim in an honest direction. The WFRC/RSG ActivitySim Implementation Framework (21 Feb 2025), read in full this pass, lists under 'Validation summaries' in its Table 29: 'Traffic counts and VMT by volume group', 'Traffic counts and VMT by facility type', 'Traffic counts by screenline', 'Transit boardings by operator', 'TRANSIT BOARDINGS BY TRANSIT MODE', and 'Number of transfers'. So per-transit-mode boardings IS a standard planned validation summary for an agency ACTIVITY-BASED model, not only for the four-step world. The top rung of this survey is therefore empty not because agent-based projects cannot report at that granularity, but because the PUBLISHED artefacts read in seven passes do not carry the per-mode deviation TABLE WITH BANDS. STILL OPEN: an actual agency ABM validation report showing per-transit-mode boardings with deviations, which is what would settle whether the rung is reached in practice or only planned."
   },
   {
    "gap": "NEW - the 'myopic heuristics' claim about coupled choice-model calibration",
    "detail": "A search snippet this pass stated that existing calibration approaches 'are myopic heuristics that do not consider the fundamental inter-dependencies among choice-models and lack a systematic way to adjust model parameters', apparently from a paper on calibrating utility-maximising nested-logit activity-based model systems to aggregate statistics including mode shares and mode-specific OD flows. THIS IS EXACTLY THIS PASS'S QUESTION and it was NOT written into the library, because no URL for it was fetched - the rule is that a claim carries a source read this pass or it does not go in. Finding that paper is the single highest-value item for the next pass.",
    "query": "'calibration' 'nested logit' activity-based model system aggregate statistics mode shares 'mode-specific OD flows' interdependencies myopic heuristic - try arxiv and Semantic Scholar search rather than a general web search",
-   "opened": "2026-09-09"
+   "opened": "2026-09-09",
+   "carried_to": "2026-09-10",
+   "status": "CLOSED 2026-09-10",
+   "closed_note": "CLOSED ON THE FIRST TWO SEARCHES OF THE PASS, and it was worth the priority it was given. The source is Siyu Chen, A. Arun Prakash, Carlos Lima De Azevedo and Moshe Ben-Akiva, 'Formulation and solution approach for calibrating activity-based travel demand model-system via microsimulation', Transportation Research Part C: Emerging Technologies 119 (Aug 2020), 102650, doi 10.1016/j.trc.2020.102650. The claim is verbatim in its abstract and was recovered from TWO independent routes (osti.gov/biblio/1848218 and api.semanticscholar.org/graph/v1/paper/DOI:10.1016/j.trc.2020.102650). It calibrates exactly this project's target set at once - 'activity shares, mode shares, time-dependent & mode-specific OD flows, and time-dependent & mode-specific sensor counts' - by formulating calibration as a simulation-based optimisation problem solved by a stochastic gradient derived from the model system's own nested-logit structure. Written up in full as a calibration_methods row. REMAINING SLIVER, carried as a new gap: the full text was not reached, so the evaluation count, the application city and the achieved fit stay unknown.",
+   "closed_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "gap": "NEW - the full text of Chen et al. (2020): the run count and the application city for the only non-myopic simultaneous ABM-system calibration",
+   "detail": "The abstract closed the 'myopic heuristics' gap completely and gave the target set verbatim. What it does NOT give is (a) how many microsimulation evaluations the stochastic-gradient procedure needed, (b) which city the 'real-world application' was, and (c) the actual fit achieved across the four target families. Those three numbers are what would let this project price the method against its own 21.5 h arm. The accepted manuscript is at sciencedirect.com/science/article/am/pii/S0968090X20305659 - a host this library records as 403. NOT ATTEMPTED this pass, to avoid spending budget on a recorded dead route.",
+   "query": "try dspace.mit.edu or a Ben-Akiva/Lima De Azevedo institutional copy of 10.1016/j.trc.2020.102650 (DTU Orbit is likely - Lima De Azevedo is at DTU); or api.semanticscholar.org/graph/v1/paper/DOI:10.1016/j.trc.2020.102650?fields=openAccessPdf,tldr for a non-Elsevier mirror. NEVER sciencedirect.com.",
+   "opened": "2026-09-10",
+   "priority": "1 - highest value remaining; it is the run count that decides whether the method is affordable here"
+  },
+  {
+   "gap": "NEW - nobody has published an account of an agent-based model matching mode SHARES while missing absolute link VOLUMES by two orders of magnitude",
+   "detail": "This was the pass's second-priority lane and it produced a STRUCTURAL explanation but no matching case. What was found: (a) 'auxiliary demand' - trucks, visitors, internal-external, external-external and special-generator trips are outside a resident ABM by construction and must be supplied separately (TF Resource, verbatim, written into calibration_methods); (b) TF Resource states there are no numeric acceptance criteria for count validation, external models, truck models or special generators; (c) the MUM 2025 downsampling study (Mersini & Ziemke, TU Berlin) finds average statistics 'become unreliable when sampling below 10%', which places this project's 25% INSIDE the reliable band and therefore does NOT explain the deficit. WHAT IS MISSING is a published case with a number: an ABM whose mode shares were acceptable and whose counts were out by ~90-99%, with the cause diagnosed. Four differently phrased searches (cordon/through traffic; MATSim link volumes; missing demand components; capacity scaling) returned no such case. It may simply not be publishable - a model that far out on counts does not get written up.",
+   "query": "try the diagnosis from the OTHER end: 'GEH' 'percent of links' failed validation MATSim scenario report; or a MATSim scenario's own calibration report (matsim-scenarios GitHub repos often carry a `calibration` notebook with a counts scatter) - specifically matsim-scenarios/matsim-lausitz and matsim-scenarios/matsim-berlin, whose counts comparisons are committed artefacts rather than papers. Also worth one call: whether this project's own station-to-link matching (189 of 203 by name AND proximity, 14 by proximity alone) is the deficit rather than the demand - that is an INTERNAL question and needs no search.",
+   "opened": "2026-09-10",
+   "priority": "2 - it bears directly on the largest single deviation in the project's own _fit.json"
+  },
+  {
+   "gap": "NEW - joint calibration of a TRIP-LENGTH DISTRIBUTION alongside mode shares, in an agent-based model",
+   "detail": "Searched once this pass and it returned nothing that qualifies. The nearest findings are indirect: AToM validates travel distance and time for 1,000 sampled trips against the Google Distance Matrix API but does not calibrate on it; the WFRC framework lists 'Home to work average distance and trip length frequency distribution' and 'Home to primary destination average distance and trip length frequency distribution' as CALIBRATION summaries for the location and destination-choice components (not for mode choice); and TF Resource records no numeric tolerance for trip-length distributions. This matters here because the landed run is outside its observed distance range on ALL FIVE reported modes, most severely walk (3.283 km modelled against 0.7 observed, ratio 4.69) and pt (ratio 0.4685) - and the WFRC evidence says the lever for that residual is DESTINATION CHOICE, not a mode constant.",
+   "query": "'trip length frequency distribution' calibration destination choice MATSim OR ActivitySim k-factors; and specifically whether any MATSim scenario calibrates the distance decay of its destination choice against an observed TLFD rather than against mode share",
+   "opened": "2026-09-10",
+   "priority": "3"
+  },
+  {
+   "gap": "NEW - the MUM 2025 downsampling study's FULL results, and whether they reach the count comparison",
+   "detail": "Mersini & Ziemke (TU Berlin), 'Scaling traffic flow properties of MATSim to correctly cooperate for population downsampling', MUM 2025 paper 30, was read in full this pass but its own text says 'not all simulation runs have been completed' and 'Further analyses, including travel-time deviations and distances, and the influence of random numbers on the results, are planned for inclusion'. Its preliminary conclusion - average statistics 'become unreliable when sampling below 10%' - is already the most useful sampling evidence this library holds, and it validates this project's 25% directive. The completed study would say whether LINK VOLUMES specifically survive downsampling, which the preliminary version does not address.",
+   "query": "matsim.org/conferences/mum2026/ for a Mersini/Ziemke follow-up (after 2026-09-28), or a TU Berlin VSP working paper / svn.vsp.tu-berlin.de publications listing for the completed version",
+   "opened": "2026-09-10",
+   "priority": "4 - couple it to the MUM 2026 programme check, which is due after 28 September"
   }
  ],
  "ours": {
   "name": "city-digital-twin - Newcastle (NSW) study (this repository)",
   "engine": "MATSim end to end, with project-owned Java extensions (src/java/citysim, src/java_signals) for signals, ride pairing and mode-specific constraints",
   "city_population": "Newcastle (NSW) region - five LGAs, 1,500 core SA1s, base year 2026",
-  "sample_fraction": "25% (standing directive since 1 Sep 2026). The board still reads the F31 arm aborted_20260908T100009_300it_25pct at ITERATION 100 - NO ARM HAS RUN SINCE, so the scoreboard at this HEAD is the same reading as the previous pass's.",
+  "sample_fraction": "25% (standing directive since 1 Sep 2026). THE READING IS NO LONGER FROM A STOPPED ARM: `20260909T015217_300it_25pct` closed `ran_to_last_iteration` at iteration 300 in 21.5 h, rc 0 - the first run since family F4 (21 August) to execute the horizon it declared, and the first `_fit.json` carrying `is_a_result: true`.",
   "modes": "TWELVE, each scored individually: car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry, truck, freight_train",
   "active_modes": "physical - walk and bike are simulated on the network, not teleported (positions/walk-and-bike.md)",
   "pt_physical": "yes - bus, heavy rail, light rail and ferry run the mapped GTFS schedule on the mapped network; 15 feeds mapped, 0 unmapped stops",
   "signals": "yes - SCATS implemented as its published algorithm (registry A.signals.scats.*: target degree of saturation, cycle bounds, ds smoothing/deadband, cycle step) plus transit signal priority (A.signals.tsp.*)",
   "freight": "yes - truck as a road vehicle scored on network-wide road-vehicle share; freight rail as timetable-derived level-crossing closures rather than a mobsim vehicle",
   "fares_pricing": "yes - Opal fare schedule in the registry (A.fare.*: peak/off-peak by mode, child/senior classes, daily and weekend caps, distance bands) plus priced parking (A.parking.*: charged hours, modes, price percentiles, search time) and a monetary distance rate (C.scoring.monetary_distance_rate)",
-  "validation_rung": "per-mode ridership, every simulated mode - the top rung, and the only project in this survey attempting it for twelve modes",
-  "best_fit": "NOT A RESULT. The board's scoreboard is a reading of an ABORTED run (aborted_20260908T100009_300it_25pct) at ITERATION 100, family F31-the-car-router-reads-only-cars, 25% sample, stopped by the gate watcher. 1 OF 12 IS INSIDE 10%: car +5.4%. Over 10% but under the stop bar: walk -11.1%, motorbike +13.7%. SEVEN modes are past the 20% stop bar - ride -38.0%, taxi +178.4%, bike +147.4%, bus +54.6%, heavy_rail +247.2%, light_rail -47.2%, ferry -65.6%; truck is level-only and freight_train representation-only. This is a MOVE UP from the previous pass's reading (F30 at iteration 20, none inside 10%, eight past the bar), but it is NOT comparable with it: three family boundaries separate F28, F29, F30 and F31, and the previous reading was at iteration 20 rather than 100. No run since family F4 has reached its declared horizon, and convergence within 250 iterations is UNMEASURED across 162 run directories and 29 days.",
+  "validation_rung": "per-mode ridership, every simulated mode - the top rung, and still the only project in this survey of 50 attempting it for twelve modes. The pass of 9 September qualified the claim (a four-step model, WFTDM, does report six transit modes inside 10%); THIS pass qualifies it further and more precisely: the WFRC ActivitySim framework's own Table 29 lists 'Transit boardings by transit mode' as a standard validation summary, so per-transit-mode granularity is normal agency practice for an activity-based model. What no other row does is treat every one of twelve modes as a SCORED TARGET WITH A BAND that the calibration is obliged to satisfy simultaneously.",
+  "best_fit": "A RESULT, for the first time. `20260909T015217_300it_25pct`, family `F32-crowding-reaches-scoring`, 25% sample, 300 of 300 iterations, 21.5 h, `ran_to_last_iteration`, `is_a_result: true`. THE READING IS 0 OF 12 INSIDE 10%, EIGHT PAST THE 20% STOP BAR - WORSE THAN EVERY GATE THAT PRECEDED IT (F31 at iteration 100 had car inside at +5.4%). Nearest now: car +11.3% (64.9110 vs 58.3222), motorbike +12.5%. Past the bar: ride -41.0%, walk -26.5%, taxi +202.2%, bike +113.0%, bus +44.8%, heavy_rail +225.0% (21,220 vs 6,529 boardings), light_rail -57.3% (1,260 vs 2,954), ferry -60.1%. Truck is level-only, freight_train representation-only. THE RUN'S OWN `_fit.json`, ON ALL FOUR TARGET FAMILIES AT ONCE: 5 scored mode-share targets, mean absolute 4.734 pp; 30 traffic-count stations, mean absolute 91.69% with 7 modelled zeros, MEDIAN -98.75%, best +35.13%, worst -100.0%; patronage n = 0; occupancy 0.1860 passengers per driver against 0.3503 observed, outside its [0.2493, 0.394] range; trip geometry outside its observed range on all five reported modes (walk 3.283 km modelled against 0.7 observed, ratio 4.69; pt 10.96 against 23.4, ratio 0.4685; bike ratio 1.408; car 1.1427; ride 1.0863). 35 of 67 calibration targets scored, 32 unscorable each with a stated reason. THE OPEN QUESTION THIS CREATES IS THE ONE NO SURVEYED PROJECT ANSWERS: convergence made the fit worse. The run RELAXED - drift 0.261 pp over it.250-300 against a 0.5 pp tolerance - and the innovation cutoff at 240 snapped car +2.211 pp, walk -0.941, taxi -0.583, ride -0.489, with the average plan score peaking at 19.2049 at the cutoff and falling to 14.5679 after. Final choice-set coverage: car 77.55%, walk 63.95%, taxi 54.62%, bike 29.03%, PT 25.78%, ride 20.05%.",
   "open_source": "yes - the repository; OSM-derived layers ODbL 1.0, the rest CC-BY 4.0",
   "reproducible": "yes and gated - every derived file regenerable by a committed script from immutable hashed raw downloads, 512 files in data/MANIFEST.csv with hash, rows, producing script, source, licence and retrieval date; everything synthetic seeded (20260810)",
   "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 480 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
-  "status": "active, in calibration - P4 at HEAD 781cf41 (PR #168). NO ARM RAN since the last pass: the scoreboard is unchanged. Registry now 494 fields (was 482), manifest 512 files (279 CC-BY / 218 ODbL / 15 bespoke). Family F31 is open. TWO NEW MECHANISMS EXIST AND NEITHER HAS BEEN EXERCISED: (1) src/java/citysim/PtCrowdingScoring.java exists and IS BOUND in CitysimControler.java:608-610 (bind, addEventHandlerBinding, addControllerListenerBinding), so in-vehicle crowding disutility reaches MATSim SCORING for the first time, gated by C.crowding.representation = in_vehicle_time with C.crowding.seated_multiplier and C.crowding.standing_multiplier - but NO ARM HAS RUN WITH IT, so its effect on heavy rail's +247.2% is unmeasured; (2) src/calibrate/asc_fixed_point.py exists, so the ASC log-ratio fixed point is IMPLEMENTED - but it has NEVER BEEN RUN. The board also records that the windowed reading built to replace the point reading MEASURED WORSE and was retired by its own field, and that pt access/egress walk legs are still teleported (issue #167, half fixed).",
-  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (494 fields), every living number pinned to its artefact by a check, twelve modes each monitored on its own basis every tenth iteration - and, unique in this survey, a REGISTRY-ENFORCED refusal to fit a constant over a named missing mechanism: C.asc.rail carries a per-field departure_requires clause stating that it stays frozen until the crowding disutility is built AND measured on a run, and the ASC loop reads held_fixed from the registry and refuses those modes structurally.",
+  "status": "active, in calibration - P4 at HEAD 4d1d1bc (PR #173 merge, 9 Sep 2026). Registry 497 fields (was 494), manifest 512 files (279 CC-BY / 218 ODbL / 15 bespoke), 30 assembled run-input sets, 166 run directories on disk. Family F32-crowding-reaches-scoring is open. THE FIRST RESULT SINCE F4 IS IN AND IT READS WORSE THAN THE GATES THAT PRECEDED IT (see best_fit). `citysim.RaptorModeCostCalculator` gives the submode-picking router a mode constant behind `C.raptor.mode_cost_representation` = `absent` - built, deployed, NEVER RUN. PT access/egress walk legs are still teleported (issue #167, half fixed): 70.9% of 1,978 teleported walk legs on a 1% run end at a `pt interaction`, so requirement 1 is not met. The ASC contraction test stays HELD - of its four modes only bike sits on an alternative the mode-choice operator can switch to.",
+  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (497 fields), every living number pinned to its artefact by a check, twelve modes each monitored on its own basis every tenth iteration - and, unique in this survey, a REGISTRY-ENFORCED refusal to fit a constant over a named missing mechanism (`C.asc.rail`'s `departure_requires` clause). THIS PASS ADDS A SECOND UNIQUENESS, AND IT IS THE HONEST ONE: the project's `_fit.json` scores mode shares, absolute link counts, trip-length geometry and vehicle occupancy IN ONE ARTEFACT FROM ONE RUN, names its 32 unscorable targets with reasons, and refuses to call a stopped arm a result. Across 50 surveyed projects, the closest published analogues each hold part of that - AToM validates five observation families but calibrates against one; Tallinn optimises three target families at once but reports no per-mode transit rung; the WFRC framework enumerates every validation summary but states outright that not all of them can be met simultaneously.",
   "sources": [
-   "cities/newcastle/docs/STATUS.md (generated scoreboard, state and runs blocks, read at HEAD 781cf41)",
+   "cities/newcastle/docs/STATUS.md (generated scoreboard, state and runs blocks, read at HEAD 4d1d1bc)",
+   "results/raw/20260909T015217_300it_25pct/_fit.json (the first `is_a_result: true` fit; counts median computed from its own counts.errors array)",
+   "cities/newcastle/docs/positions/monitoring-and-gates.md",
    "cities/newcastle/registry/A_supply.json (A.fare.*, A.signals.*, A.parking.*)",
-   "cities/newcastle/registry/C_behaviour.json (C.asc.*, C.crowding.representation / seated_multiplier / standing_multiplier)",
-   "src/java/citysim/PtCrowdingScoring.java and src/java/citysim/CitysimControler.java:608-610 (the crowding binding)",
-   "src/calibrate/asc_fixed_point.py, src/calibrate/calibrate.py, src/calibrate/solve_asc_ride.py",
+   "cities/newcastle/registry/C_behaviour.json (C.asc.*, C.crowding.*, C.raptor.mode_cost_representation)",
+   "cities/newcastle/registry/B_demand.json (B.demand through-traffic gate; truck carve; B.counts.*)",
+   "src/calibrate/asc_fixed_point.py, src/calibrate/calibrate.py, src/calibrate/fit.py",
    "cities/newcastle/docs/GOAL.md"
   ],
-  "last_verified": "2026-09-09",
-  "verified_in": "20260909_project_report (sixth pass, at 781cf41)",
+  "last_verified": "2026-09-10",
+  "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)",
   "calibration_method": {
    "family": "coordinate descent over registry-declared sweeps (unchanged, never run to completion) PLUS, NEW AT THIS HEAD AND NEVER RUN, an implemented ASC log-ratio fixed point - src/calibrate/asc_fixed_point.py. Read from the source at HEAD 781cf41, not searched.",
    "what_the_source_says": "src/calibrate/calibrate.py:508-533 runs coordinate descent: per round, per free parameter, per grid point across that parameter's registry sweep, a FULL MATSim run -> extract_metrics -> fit -> a weighted scalar objective over declared _fit.json components, keeping a point only if it is feasible against the C4 occupancy and trip-length constraints; the round stops when the improvement falls below delta. The search space is DERIVED FROM THE REGISTRY, not listed in the script: a field is free only if it is source=assumed, carries a scalar sweep and is not held_fixed. The six mode constants are held_fixed under DECISIONS.md 8.5 and are therefore unreachable from the loop by construction - so this project has NO log(target/modelled) ASC loop of any kind. The one constant that is solved, asc_car_passenger, is solved in a separate module (solve_asc_ride.py:101-121) by SECANT INTERPOLATION ON log(ride_per_car) against the observed passenger:driver ratio, and is reported as a CONSTRAINT, not an estimate. The loop refuses to fit more parameters than the objective identifies (four independent numbers) and cannot read a holdout row by construction.",
@@ -2605,9 +2785,10 @@
     "src/calibrate/fit.py",
     "cities/newcastle/registry/C_behaviour.json"
    ],
-   "last_verified": "2026-09-09",
-   "verified_in": "20260909_project_report (sixth pass, at 781cf41)",
-   "asc_fixed_point_new_this_pass": "src/calibrate/asc_fixed_point.py EXISTS and PROPOSES ONLY; it has NEVER BEEN RUN. It applies delta_i = damping * [ ln(target_i/modelled_i) - ln(target_ref/modelled_ref) ] against car as reference - the same object as the Berry (1994) share inversion and the same expression matsim-vsp/matsim-python-tools computes verbatim, with the damping declared on CAL.asc.damping. THREE DESIGN CHOICES ARE UNUSUAL AND WORTH RECORDING: (1) THE TEST IS THE CONTRACTION, NOT THE SHARES - two damped rounds are compared mode by mode, and if |delta| shrinks the residual is a taste that constants will close, while if it does not shrink the deficit is STRUCTURAL and no constant will ever close it. That is a cheap, decisive, published-in-spirit answer to the 'constant or mechanism' question that the agency protocol answers only by ordering. (2) It CANNOT REACH A FROZEN CONSTANT: it reads held_fixed from the registry and refuses, structurally, the way the holdout guard refuses. (3) On heavy rail and light rail the step is marked basis_is_boardings and reported as a PROXY, because the logit inversion is exact only for shares of a common total. ROUND 1 IS PROPOSED OFF THE F31 GATE AND NOT APPLIED: bike -0.5121, bus -0.2301, ferry +0.6713, light rail +0.4143."
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)",
+   "asc_fixed_point_new_this_pass": "src/calibrate/asc_fixed_point.py EXISTS and PROPOSES ONLY; it has NEVER BEEN RUN. It applies delta_i = damping * [ ln(target_i/modelled_i) - ln(target_ref/modelled_ref) ] against car as reference - the same object as the Berry (1994) share inversion and the same expression matsim-vsp/matsim-python-tools computes verbatim, with the damping declared on CAL.asc.damping. THREE DESIGN CHOICES ARE UNUSUAL AND WORTH RECORDING: (1) THE TEST IS THE CONTRACTION, NOT THE SHARES - two damped rounds are compared mode by mode, and if |delta| shrinks the residual is a taste that constants will close, while if it does not shrink the deficit is STRUCTURAL and no constant will ever close it. That is a cheap, decisive, published-in-spirit answer to the 'constant or mechanism' question that the agency protocol answers only by ordering. (2) It CANNOT REACH A FROZEN CONSTANT: it reads held_fixed from the registry and refuses, structurally, the way the holdout guard refuses. (3) On heavy rail and light rail the step is marked basis_is_boardings and reported as a PROXY, because the logit inversion is exact only for shares of a common total. ROUND 1 IS PROPOSED OFF THE F31 GATE AND NOT APPLIED: bike -0.5121, bus -0.2301, ferry +0.6713, light rail +0.4143.",
+   "read_against_the_field_this_pass": "Two published methods now bracket this project's loop and both were read this pass. (1) Chen, Prakash, Lima de Azevedo & Ben-Akiva (2020, TR-C 119:102650) names this project's coordinate descent for what it is: 'myopic heuristics in the sense that they do not consider the fundamental inter-dependencies among choice-models and do not have a systematic way to adjust model parameters' - and their non-myopic alternative calibrates precisely this project's target set at once (activity shares, mode shares, mode-specific OD flows, mode-specific sensor counts). (2) The WFRC/RSG ActivitySim framework publishes `New ASC = Old ASC + ln(Target Proportion / Model Proportion)` verbatim - the exact expression in asc_fixed_point.py - inside a CYCLIC protocol over model components, and states plainly that 'It is typically the case that not all calibration and validation targets can be achieved simultaneously.'"
   }
  },
  "calibration_methods": [
@@ -2795,18 +2976,21 @@
   {
    "method": "History matching with an emulator - implausibility and the NROY region (waves, not a point estimate)",
    "family": "set-valued calibration: it returns the set of parameter values NOT YET RULED OUT rather than one best point, and it is natively multi-target",
-   "implemented_in": "the agent-based-model UQ literature; the tutorial read this pass demonstrates it on a wolf-sheep ABM with a Gaussian-process emulator, and the same machinery is standard in climate and epidemiological model calibration",
+   "implemented_in": "the agent-based-model UQ literature. THIS PASS FOUND A FULL WORKED APPLICATION TO A POLICY ABM: O'Gara, Kerr, Klein, Binois, Garnett & Hammond, 'Improving Policy-Oriented Agent-Based Modeling with History Matching: A Case Study' (arXiv 2501.00616), on COVASIM - a real, policy-used, stochastic agent-based model. Still NO application to a transport ABM.",
    "what_it_adjusts": "nothing directly - each WAVE fits a Gaussian process emulator to a design of simulator runs, computes an implausibility for every candidate parameter set, discards the implausible, and draws the next design only from what survives",
-   "update_rule": "implausibility, verbatim: 'I(x) = |z - E(f(x))| / sqrt(Var(e) + Var(d) + Var(f(x)))' - the distance between output and observation normalised by the SUM of observation error, MODEL DISCREPANCY and emulator variance. Model discrepancy is an explicit term: the method assumes from the start that the simulator is wrong somewhere and asks only to be inconsistent within that admission.",
-   "objective_evaluations": "unknown as a total. The tutorial reports 'Three waves of history matching have been performed' on its example and states no per-wave design size, and it makes NO quantitative comparison against Bayesian calibration or ABC on run count. The evaluation count for history matching on a transport ABM is UNPUBLISHED - no source read this pass applies it to one.",
-   "convergence_criterion": "the NROY region stops shrinking between waves, or it empties - and an EMPTY NROY region is itself the finding: no parameter value is consistent with the targets, so the model is structurally wrong. That is a formal, published test of exactly the 'taste or mechanism' question.",
-   "why_it_matters_here": "It is the only architecture read this pass that is BUILT for many simultaneous targets and that can return 'no parameter set satisfies these twelve targets' as a result rather than as a failure. Its implausibility per output is computed INDEPENDENTLY per metric, which is the same shape as the board's twelve per-mode deviations. Cost is the barrier: it needs a design of full runs per wave, and at 25% one arm is 7.66 h wall.",
+   "update_rule": "implausibility, verbatim: 'I(x) = |z - E(f(x))| / sqrt(Var(e) + Var(d) + Var(f(x)))' - the distance between output and observation normalised by the SUM of observation error, MODEL DISCREPANCY and emulator variance. Model discrepancy is an explicit term: the method assumes from the start that the simulator is wrong somewhere and asks only to be inconsistent within that admission. CONCRETE FORM READ THIS PASS (O'Gara et al.): the data-generating process is assumed to be 'Y = g(theta) + sigma_md(theta) + sigma_o', where sigma_md 'represents the model discrepancy (accounting for any systematic deviations between simulation and reality)'. AND THE MULTI-TARGET RULE IS A MAXIMUM, NOT A SUM, VERBATIM: 'since the system at hand contains multiple outputs, we use the maximum implausibility measure across Q outputs I_M(theta) = max_{q in Q} I_q(theta).' A parameter set survives only if EVERY output is plausible - which is exactly 'all N targets inside their bands' expressed as the object being solved. The cutoff is principled rather than self-imposed: 'A common cutoff value I(theta) is 3, inspired from (Pukelsheim 1994) showing that at least 95% of any continuous unimodal distribution is contained within three standard deviations'.",
+   "objective_evaluations": "NOW PUBLISHED FOR A POLICY ABM (O'Gara et al.): 'a maximin Latin hypercube design of 50 model parameterizations, with 25 replicates at each design location, and at subsequent waves, used 20 replicates per design location' - so roughly 1,000-1,250 simulator runs PER WAVE, over four waves: order 4,000-5,000 runs. Covasim costs 'about 30 seconds per model run'. The emulator is what buys the search: a grid of '40 input locations for each of the four model parameters... a total of 40^4 = 2,560,000 candidate model parameterizations, which would correspond to nearly 2.5 years of computing time using the simulator, but can be evaluated via emulation in a matter of minutes'. STILL UNPUBLISHED for a transport ABM.",
+   "convergence_criterion": "the NROY region stops shrinking between waves, or it empties - and an EMPTY NROY region is itself the finding: no parameter value is consistent with the targets, so the model is structurally wrong. That is a formal, published test of exactly the 'taste or mechanism' question. MEASURED THIS PASS: the NROY volume fell 7.23% -> 5.58% -> 0.82% of parameter space over three reported waves, 'we removed over 99% of parameter space from consideration' after four; the implausibility cutoff was TIGHTENED as waves proceeded (3.0 -> 2.5) and OUTPUTS WERE ADDED wave by wave. The empty-NROY verdict is stated verbatim: model discrepancy 'could also be revisited under the condition where NROY space is estimated to be empty (stated differently, if we were not able to identify non-implausible model parameters, this would require revisiting both the model itself and the model discrepancy)'. The pipeline then runs ABC over the surviving region for a posterior.",
+   "why_it_matters_here": "It is the only architecture read this pass that is BUILT for many simultaneous targets and that can return 'no parameter set satisfies these twelve targets' as a result rather than as a failure. Its implausibility per output is computed INDEPENDENTLY per metric, which is the same shape as the board's twelve per-mode deviations. Cost is the barrier: it needs a design of full runs per wave, and at 25% one arm is 7.66 h wall. THE COST BARRIER IS NOW QUANTIFIED AND IT IS THE WHOLE STORY. Covasim runs in 30 seconds; this project's landed arm took 21.5 h at 25%. Four waves at O'Gara's design would be ~4,000 arms, i.e. ~86,000 machine hours - impossible. But the paper's own argument cuts the other way too: the emulator turned 2.5 years of simulator time into minutes. The transferable design for this project is a wave over CHEAP arms (1% or a short horizon) to fit an emulator, with expensive 25% arms spent only inside NROY - and the max-implausibility rule adopted in place of fit.py's weighted scalar, so that 'twelve modes inside their bands' becomes the object rather than a sum that can trade one mode off against another.",
    "sources": [
     "https://arxiv.org/html/2409.16776",
-    "https://arxiv.org/pdf/2409.16776"
+    "https://arxiv.org/pdf/2409.16776",
+    "https://arxiv.org/abs/2501.00616",
+    "https://arxiv.org/pdf/2501.00616"
    ],
-   "last_verified": "2026-09-09",
-   "verified_in": "20260909_project_report (sixth pass, at 781cf41)"
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)",
+   "updated_this_pass": true
   },
   {
    "method": "Multi-objective formulations - weighted sum with normalisation (standard), Pareto/NSGA-II with the simulator in the loop (rare), epsilon-constraint (not found in transport calibration)",
@@ -2839,7 +3023,110 @@
    ],
    "last_verified": "2026-09-09",
    "verified_in": "20260909_project_report (sixth pass, at 781cf41)"
+  },
+  {
+   "method": "NON-MYOPIC simultaneous calibration of a nested-logit activity-based model SYSTEM by stochastic gradient (Chen, Prakash, Lima de Azevedo & Ben-Akiva 2020) - THE SOURCE OF THE 'MYOPIC HEURISTICS' CLAIM, FOUND AND CLOSED THIS PASS",
+   "family": "simulation-based optimisation with an APPROXIMATE ANALYTICAL GRADIENT derived from the model system's own nested-logit structure, evaluated on mini-batches of the population",
+   "implemented_in": "Transportation Research Part C: Emerging Technologies 119 (Aug 2020), 102650, doi 10.1016/j.trc.2020.102650. Siyu Chen, A. Arun Prakash, Carlos Lima De Azevedo, Moshe Ben-Akiva (the SimMobility/DynaMIT lineage; the paper does not name the city of its 'real-world application').",
+   "what_it_adjusts": "the parameters of the estimated nested-logit activity-based model system - not one component's constants, the whole coupled system at once",
+   "update_rule": "VERBATIM, and it is the exact indictment this library recorded unsourced on 9 September: 'Existing calibration approaches are myopic heuristics in the sense that they do not consider the fundamental inter-dependencies among choice-models and do not have a systematic way to adjust model parameters. Also, other purely simulation-based approaches do not perform well in large-scale applications.' The remedy, verbatim: 'We formulate the calibration problem as a simulation-based optimization problem and propose a stochastic gradient-based solution procedure to solve it. The solution procedure relies on microsimulation to calculate expectations of the aggregate statistics of interest to the calibration problem. Additionally, we derive approximate analytical expressions for the gradient of the objective function - that are evaluated through microsimulation on mini-batches of the population. The proposed solution procedure is sensitive to the fundamental structure of the activity-based model-system and is non-myopic in considering the dependencies across its model components.'",
+   "the_targets": "THE CLOSEST PUBLISHED MATCH TO THIS PROJECT'S QUESTION. Verbatim: 'we focus on utility-maximizing nested logit activity-based model-systems and calibrating aggregate statistics such as activity shares, mode shares, time-dependent & mode-specific OD flows, and time-dependent & mode-specific sensor counts.' That is mode shares AND link/sensor counts AND OD flows, in one objective, by design.",
+   "objective_evaluations": "unknown - the abstract claims the procedure 'outperforms other state-of-the-art purely simulation-based optimization approaches in terms of computational efficiency, stability, and convergence' but states no run count; the full text was not reached (the accepted manuscript sits behind sciencedirect.com/science/article/am/pii/S0968090X20305659, a route this library records as 403).",
+   "convergence_criterion": "not stated in the abstract. The paper explicitly warns the landscape is hostile: 'The formulated optimization problem is non-convex, highly nonlinear, and potentially has multiple-minima.'",
+   "why_it_matters_here": "It answers the question this project has been asking from the inside. The reason a mode-by-mode constant update cannot close twelve targets is NOT that the arithmetic is wrong - it is that each component's parameter moves every other component's output, and a per-mode heuristic has no representation of that coupling. This project's src/calibrate/calibrate.py coordinate descent is, in this paper's terms, exactly a myopic heuristic: it moves one registry field at a time and re-reads a scalar. The paper's alternative needs the model system's ANALYTICAL structure to derive a gradient - which MATSim's co-evolutionary loop does not expose, so the method is not directly portable. The transferable part is the DIAGNOSIS and the target set, not the algorithm.",
+   "sources": [
+    "https://www.osti.gov/biblio/1848218",
+    "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1016/j.trc.2020.102650",
+    "https://doi.org/10.1016/j.trc.2020.102650"
+   ],
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "method": "Bayesian optimisation over a Random-Forest surrogate against a THREE-COMPONENT equally weighted objective, at 477 parameters (Agriesti et al., Tallinn / SimMobility MT Preday)",
+   "family": "surrogate-based global optimisation; the surrogate is 'an improved Random Forest' rather than a Gaussian process",
+   "implemented_in": "arXiv 2302.03480, IEEE Open Journal of Intelligent Transportation Systems. Serio Agriesti, Vladimir Kuzmanovski, Jaakko Hollmen, Claudio Roncoli, Bat-hen Nahmias-Biran.",
+   "what_it_adjusts": "477 behavioural parameters across the nested-logit utility functions of a full activity-based model system - 'prior literature had only tackled up to 98 parameters'",
+   "update_rule": "Bayesian optimisation acquisition over the surrogate; the objective is a CUSTOM COMBINATION OF THREE EQUALLY WEIGHTED COMPONENTS - OD matrix match, transport mode-share distribution, and employment coverage (that employed individuals have scheduled work tours). A weighted sum, but a declared and equal one, over structurally different target families.",
+   "objective_evaluations": "PUBLISHED AND USABLE: up to 500 iterations, with satisfactory performance reached around iteration 150-182; 'Each individual run took 6-8 hours on a laptop (Intel core i5 - 1.60 GHz x 8)' for a full-population simulation. So the demonstrated price of a 477-parameter three-target automatic calibration is order 150 runs x 7 h ~ 1,000 machine hours.",
+   "convergence_criterion": "no improvement over the surrogate within the iteration budget; final reported fit 'The error for the overall number of trips is equal to 4% and the average error in the OD matrix is 15.92 vehicles per day.'",
+   "why_it_matters_here": "The single most useful cost benchmark this library holds. This project's calibrate.py budget line (calibrate.py:433) prices a 3-point 3-parameter 2-round coordinate descent at ~18 arms and ~140 machine hours and it has NEVER been run to completion. Tallinn paid ~1,000 machine hours and got 477 parameters against three simultaneous targets. The gap is not compute, it is the search: a surrogate lets a wave of runs inform the whole space, where coordinate descent spends each run on one axis. It also records, verbatim, why the manual route is not an option at this size: manual calibration of hundreds of parameters 'would hardly be performed by hand', and 'a unified calibration approach... able to include hundreds of parameters, is still needed.'",
+   "sources": [
+    "https://arxiv.org/html/2302.03480v1",
+    "https://arxiv.org/abs/2302.03480"
+   ],
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "method": "CYCLIC component-by-component ASC calibration driven to an internal equilibrium - the ActivitySim agency protocol, written down (WFRC / RSG, Activity-Based Model Implementation Framework, 21 Feb 2025)",
+   "family": "sequential coordinate-wise fixed point over MODEL COMPONENTS, repeated in cycles until the components stop moving one another; a human judges the stop",
+   "implemented_in": "Wasatch Front Regional Council 'Activity-Based Model Implementation Framework' (ActivitySim; Wasatch Front region, Utah), sections 4.3 Model Calibration and 4.4 Model Validation, read in full this pass.",
+   "what_it_adjusts": "the alternative-specific constants (and other limited parameters) of each MNL/NL component in turn - auto ownership, work-from-home, location choice, daily activity pattern, tour frequency, tour mode, stop frequency, trip mode, and the rest of Table 29",
+   "update_rule": "THE LOG-RATIO FIXED POINT, PUBLISHED AS AGENCY PRACTICE AND VERBATIM: 'New ASC = Old ASC + ln(Target Proportion / Model Proportion)'. Steps, verbatim: '2. The ActivitySim specification and coefficients file for the appropriate model is updated with the new coefficients. 3. The model is run with the updated coefficients. 4. If the model reasonably matches the observed data, stop; otherwise, go to step 1.' This is character-for-character the update in this project's src/calibrate/asc_fixed_point.py, which has still never been run.",
+   "the_coupling_rule": "THE PART THAT ANSWERS THIS PASS'S QUESTION, VERBATIM: 'Each of the series of models in ActivitySim influences other models in the system. Not only are long-term decisions made in early models used to determine short-term decisions in later models, but the parameters in the later short-term decisions also influence long-term decisions through the inclusion of the maximum expected utility, or logsum, from key short-term models as an explanatory variable in some of the long-term models. Therefore, several models must be calibrated in tandem. Because of these influences between model components, calibration of ActivitySim should be performed in an iterative, cyclic fashion. The calibration team progresses through each step in the model system in order, adjusting or re-estimating model parameters until the aggregate outcomes from the model matches the targets. Each cycle of re-calibration achieves increasingly precise matches between the modeled outcomes and the targets as the influences between model components reached an equilibrium.'",
+   "the_admission": "AND THE PROFESSION'S OWN VERDICT ON WHETHER ALL TARGETS CAN BE MET AT ONCE, VERBATIM AND UNQUALIFIED: 'It is typically the case that not all calibration and validation targets can be achieved simultaneously. Therefore, model calibration and validation requires judgement on when the models are reasonably calibrated and validated and ready for applications.' This is the clearest published statement found in seven passes that the state of practice does NOT solve 'all N targets inside their bands' - it declares the goal unattainable in general and substitutes professional judgement.",
+   "the_residual_diagnosis_table": "ALSO PUBLISHED HERE, and directly reusable, VERBATIM: 'comparison of assignment results to traffic counts on screenlines might indicate the need to improve the quality of the input network or land-use data, modify the skimming process, or introduce an adjustment in destination choice. A boarding rate comparison in transit assignment might indicate the need for a lower or higher transfer penalty in mode choice.' That maps a residual to a MECHANISM rather than to a constant - the question this project's ASC contraction test was built to answer.",
+   "objective_evaluations": "unstated as a number: one full model run per cycle per component adjusted, cycles 'until the aggregate outcomes from the model matches the targets'.",
+   "convergence_criterion": "'If the model reasonably matches the observed data, stop' - a human, explicitly. No numeric acceptance band is given for any calibration summary.",
+   "why_it_matters_here": "Three things this project can use immediately. (1) Its ASC fixed point is not an idiosyncrasy; it is the agency standard, written out. (2) The published protocol is CYCLIC over components until the components' influences on each other reach an equilibrium - a structure this project's coordinate descent over registry FIELDS does not have, because it has no notion of components. (3) The framework's own Table 29 'Validation summaries' row lists 'Transit boardings by transit mode' alongside 'Transit boardings by operator', 'Traffic counts and VMT by volume group', 'Traffic counts and VMT by facility type', 'Traffic counts by screenline' and 'Number of transfers' - so an agent-based agency model DOES plan per-transit-mode validation. It is not reported as a deviation table with bands, which is why the survey's top rung stays empty, but the granularity is standard practice, not unheard of.",
+   "sources": [
+    "https://wfrc.utah.gov/wp-content/uploads/2025/07/WFRC-Activity-Based-Model-Implementation-Framework-20250221.pdf"
+   ],
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "method": "EQUILIBRIUM-SEEKING SEARCH between an activity-based demand model and a dynamic traffic assignment (Tallinn) - the only architecture read that measures equilibrium as a DISTANCE BETWEEN CONSECUTIVE ITERATIONS rather than as a score plateau",
+   "family": "fixed-point iteration between two coupled models, with a perturbation phase when the iterate stalls",
+   "implemented_in": "arXiv 2404.07789, 'An equilibrium-seeking search algorithm for integrating large-scale activity-based and dynamic traffic assignment models', applied to Tallinn (~400,000 inhabitants, >1,100,000 trips per typical day)",
+   "what_it_adjusts": "the demand/supply iterate itself - not calibration parameters. It is the loop that makes the coupled system settle.",
+   "update_rule": "the error measure is the integrated difference in traffic patterns between consecutive iterations, verbatim as rendered: 'Delta_Tf_i = Delta_A_i = |A_i - A_{i-1}| = integral |v_i(mod) - v_{i-1}(mod)| d(mod) for all mod' - i.e. the L1 distance between this iteration's and last iteration's flow pattern, summed over modes.",
+   "objective_evaluations": "PUBLISHED: 'Overall, 15 iterations are needed to reach values of the measure of error lower than 10%.' Trajectory read this pass: iterations 1-4 at 0.71, 0.63, 0.60; after a deliberate perturbation, iterations 5-8 fall to 0.34 then 0.14-0.16; the dynamic-assignment phase (9-16) ends at 12% (morning) and 8% (afternoon).",
+   "convergence_criterion": "the inter-iteration flow difference falling below 10%; validated afterwards against modal share (private vehicle 49%, PT 25%, walking 24%), morning car-trip totals (~103,000-113,000 legs, 7.9% error) and work/education OD distributions.",
+   "why_it_matters_here": "This is the closest published analogue to the board's own drift test - and it differs in two ways worth taking. (1) It measures the distance between consecutive FLOW PATTERNS, not between consecutive mode-share points; a 0.261 pp drift on twelve shares can hide a flow pattern still moving underneath. (2) It uses a deliberate PERTURBATION when the iterate stalls: the run went 0.71 -> 0.63 -> 0.60 and then only broke to 0.34 after being perturbed. This project's landed arm plateaued and was then FORCED to settle by switching innovation off - the opposite intervention, and the one that produced the +2.211 pp car snap. The published loop perturbs a stalled iterate; ours freezes one.",
+   "sources": [
+    "https://arxiv.org/html/2404.07789v1"
+   ],
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "method": "WHY A CONVERGED MATSim NEED NOT MATCH OBSERVED SHARES - the theory, from MATSim's own book (Floetteroed & Kickhoefer, 'Choice Models in MATSim', ch. 49) and the developers' own thread",
+   "family": "not a calibration method - the published account of what MATSim's stationary state IS, and of the biases that decide whether it can reproduce an observation at all",
+   "implemented_in": "Chapter 49 of 'The Multi-Agent Transport Simulation MATSim' (Gunnar Floetteroed and Benjamin Kickhoefer), read in full this pass; plus matsim-org/matsim-code-examples issue #25 (Oct 2018), read through the GitHub comments API.",
+   "what_it_adjusts": "nothing - it explains the object the other methods are calibrating",
+   "update_rule": "The chapter's central identity is that an executed plan's probability is a SUM OVER CHOICE SETS: the choice-set-independent probability of selecting plan i factorises into the probability that the concrete choice set C_n arises (which the plan innovation modules draw) and the probability that i is chosen from it (which the plan selection modules draw). The choice set is therefore PART OF the model, not scaffolding around it.",
+   "the_finding": "THE SENTENCE THAT DIAGNOSES THIS PROJECT'S LANDED ARM, VERBATIM: 'When a policy study's synthetic choice sets are very different from the alternatives considered in the real world, it is unlikely that the simulation will display correct aggregated quantities or useful sensitivities for policy measures.' And on the measurability of that damage, verbatim: 'MATSim's currently implemented mutation and innovation procedures constitute concrete, yet heuristic, approaches to the choice set generation problem, aiming at valid predictions at the system level. Possible biases induced by these procedures can, however, be difficult to quantify. For example, the current MATSim implementation might, under certain conditions, yield incomplete choice sets and correlated alternatives'.",
+   "the_configuration_finding": "AND THE CONFIGURATION THAT THIS PROJECT IS HALF-USING, VERBATIM: a deterministic, plain-MNL-like stationary state needs BOTH settings, not one - 'A fixed choice set C_n is eventually obtained by setting the configuration option fractionOfIterationsToDisableInnovation below one' AND 'Score convergence to its expectation value can be achieved by setting the configuration option fractionOfIterationsToStartScoreMSA below one, meaning that scores will be averaged according to MSA (Method of Successive Averages) for the remaining fraction of iterations.' Disabling innovation WITHOUT score MSA freezes the choice set while leaving the scores to fluctuate with congestion - which is the configuration under which this project's arm snapped +2.211 pp on car at the cutoff and then watched the average plan score fall from 19.2049 to 14.5679.",
+   "objective_evaluations": "n/a",
+   "convergence_criterion": "The developers' own answer on the executed-vs-best score gap, from matsim-code-examples issue #25: tduberne, 26 Oct 2018 - 'it is quite typical to have the executed score pretty close to the worst score, for those simulation with mode choice enabled'; and, 31 Oct 2018, on whether shares settle - 'Yes, mode shares do stabilize as well, only slower' than scores. So a flat score curve is NOT evidence that shares have settled, and the profession already knows it.",
+   "why_it_matters_here": "It converts the board's open question - why running to convergence made the fit worse - from a mystery into a named, published mechanism with two testable branches. Branch one is CHOICE SET: the board records final pt choice-set coverage at 25.78%, so three quarters of agents never held a pt plan at all, and the chapter says outright that a simulation whose synthetic choice sets differ from the real alternative set is unlikely to display correct aggregated quantities. Branch two is the CUTOFF CONFIGURATION: the book pairs disabling innovation with score MSA, and this project disabled innovation alone. Neither branch is a taste parameter, so neither is reachable by any ASC loop - which is precisely why the board's refusal to tune on this reading is the right call.",
+   "sources": [
+    "https://d-nb.info/1172809151/34",
+    "https://api.github.com/repos/matsim-org/matsim-code-examples/issues/25/comments",
+    "https://github.com/matsim-org/matsim-code-examples/issues/25"
+   ],
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
+  },
+  {
+   "method": "AUXILIARY DEMAND - the published reason a resident activity-based model cannot reproduce absolute link volumes, and the acceptance-bar vacuum around it",
+   "family": "not a calibration method - a structural completeness requirement on the demand before any count comparison is meaningful",
+   "implemented_in": "TF Resource, 'Integrated Travel Demand and Network Models'; and TF Resource, 'Model Validation and Reasonableness Checking / Amount Of Travel'",
+   "what_it_adjusts": "the composition of the assigned trip table",
+   "update_rule": "VERBATIM: 'Auxiliary demand refers to trips that are not represented in the activity-based model system, such as truck trips, visitor trips, internal-external and external-external trips, and special generator trips.' And: 'in most cases, the auxiliary trip models used in conjunction with activity-based models are similar to those used in conjunction with trip-based models, although additional temporal or spatial detail may be included.'",
+   "the_bar": "THE ACCEPTANCE-BAR VACUUM IS WIDER THAN THE LIBRARY RECORDED. The 9 September pass established that TF Resource states 'There are no applicable criteria guidelines for checks of mode choice.' This pass read the Amount-Of-Travel validation page and found the SAME formula applied to the count-side families: 'There are no specific criteria guidelines associated with the trip generation checks described above', and, for external models, truck models and special generators, 'There are no applicable criteria guidelines.' The only two numeric ranges on that page are for trip generation - regionwide productions to attractions 'should fall in the range of 0.90 to 1.10 prior to balancing', and 'a reasonable range is between 1.20 and 1.55 home-based work attractions per employee'. No numeric guideline was found for percent RMSE by volume group, GEH, screenline tolerance, trip-length distribution or average trip length.",
+   "objective_evaluations": "n/a",
+   "convergence_criterion": "n/a",
+   "why_it_matters_here": "This is the best structural candidate found for this project's -98.75% MEDIAN at its 30 count stations (mean absolute 91.69%, 7 modelled zeros, best station +35.13%, worst -100.0%, from the landed run's own _fit.json). The published answer is that an activity-based model's RESIDENT trip table is not the thing a count station measures: trucks, visitors, internal-external, external-external and special-generator trips are all outside it by construction and must be supplied separately. This project HAS built two of those - a truck carve and a through-traffic gate seeded from cordon count rows (B.demand registry) - but the deficit's size says the assigned table is still not the population a station counts. IMPORTANT NEGATIVE: no source read this pass attributes a volume deficit of this magnitude to sample scaling; the MUM 2025 downsampling study finds 25% well inside the reliable band. So 'the sample explains it' is NOT supported, and 'auxiliary demand plus station-to-link matching' is where the published literature points instead.",
+   "sources": [
+    "https://tfresource.org/topics/Integrated_Travel_Demand_and_Network_Models.html",
+    "https://tfresource.org/topics/Model_Validation_and_Reasonableness_Checking_Amount_Of_Travel.html"
+   ],
+   "last_verified": "2026-09-10",
+   "verified_in": "20260910_project_report (seventh pass, at 4d1d1bc)"
   }
  ],
- "last_updated": "2026-09-09"
+ "last_updated": "2026-09-10"
 }
