@@ -736,7 +736,8 @@
       "read_by": [
         "src/analyse/extract_metrics.py",
         "src/analyse/map_count_stations.py",
-        "src/analyse/report_mode_ridership.py"
+        "src/analyse/report_mode_ridership.py",
+        "tests/check_package.py"
       ],
       "columns_in_reference_city": [
         "station_key",
