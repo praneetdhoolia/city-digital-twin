@@ -111,10 +111,14 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
          *  it is called twice per proposal. (Named ...Set because the stock
          *  SubtourModeChoice has a private `chainBasedModes` of its own.) */
         private final java.util.Set<String> chainBasedModeSet;
-        /** Caps the diagnostic to the first few offenders, across all threads. */
+        /** Plans this strategy stood aside for because they arrived already
+         *  mixed, across all threads. The COUNT, not a cap: the first five are
+         *  dumped in full and every thousandth thereafter carries the running
+         *  total, so a full arm's log states how often it happened (#96). */
         private static final java.util.concurrent.atomic.AtomicInteger
                 PREMIX_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
-        /** Same cap, for mixes this strategy is caught creating. */
+        /** Same counter and same cadence, for mixes this strategy is caught
+         *  creating. */
         private static final java.util.concurrent.atomic.AtomicInteger
                 CREATED_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
         /** 9.120: person attributes written by build_matsim_plans.py - the
@@ -396,14 +400,23 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                     // forgotten, and the repair is tracked on its own issue.
                     final boolean mixedBefore = isAnySubtourMixed(plan);
                     if (mixedBefore) {
-                        if (PREMIX_DUMPS.getAndIncrement() < 5) {
+                        // The count, not only the first five. Issue #96's own
+                        // close condition is "the stand-aside path logs nothing
+                        // on a full arm", and a diagnostic capped at five
+                        // cannot decide it: the 300-iteration arm of 9 Sep 2026
+                        // printed exactly five lines and the true total was
+                        // never readable from the log. Same cadence as the
+                        // refusal counters below - the first few in full, then
+                        // every thousandth as a running total.
+                        final int n = PREMIX_DUMPS.incrementAndGet();
+                        if (n <= 5 || n % 1000 == 0) {
                             org.apache.logging.log4j.LogManager
                                     .getLogger(GatedSubtourModeChoice.class)
-                                    .warn("mode choice STOOD ASIDE for a plan "
-                                            + "that arrived with a mixed "
+                                    .warn("mode choice STOOD ASIDE #{} for a "
+                                            + "plan that arrived with a mixed "
                                             + "subtour (a demand defect, not "
-                                            + "one this strategy made) - "
-                                            + describe(plan));
+                                            + "one this strategy made) - {}",
+                                          n, describe(plan));
                         }
                         return;
                     }
@@ -464,13 +477,17 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                     // above and it enforces an invariant MATSim itself states.
                     if (!infeasible && !mixedBefore && isAnySubtourMixed(plan)) {
                         infeasible = true;
-                        if (CREATED_DUMPS.getAndIncrement() < 5) {
+                        // Counted the same way and for the same reason as the
+                        // stand-aside above: a cap of five reports that it
+                        // happened, never how often.
+                        final int n = CREATED_DUMPS.incrementAndGet();
+                        if (n <= 5 || n % 1000 == 0) {
                             org.apache.logging.log4j.LogManager
                                     .getLogger(GatedSubtourModeChoice.class)
-                                    .warn("refused a proposal that would leave "
-                                            + "a subtour mixing chain- and "
-                                            + "non-chain-based modes - "
-                                            + describe(plan));
+                                    .warn("refused proposal #{} that would "
+                                            + "leave a subtour mixing chain- "
+                                            + "and non-chain-based modes - {}",
+                                          n, describe(plan));
                         }
                     }
                     // 9.120: `ride` is a trip somebody drives, and `car` on

@@ -753,6 +753,7 @@
     "data/processed/validation/mode_targets_by_mode.csv": {
       "kind": "file",
       "read_by": [
+        "src/analyse/report_choice_set_coverage.py",
         "src/analyse/report_mode_ridership.py"
       ],
       "columns_in_reference_city": [

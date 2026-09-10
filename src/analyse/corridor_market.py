@@ -83,6 +83,16 @@ def main():
     ap.add_argument('--radius-m', type=float, required=True, help='corridor radius around a stop, metres')
     a = ap.parse_args()
 
+    # `--run` means the same thing in every reader: a run NAME from the store,
+    # or a path to a run directory (src/run/results_store.py).
+    import os as _os_r, sys as _sys_r
+    _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
+        _os_r.path.abspath(__file__))), 'run')
+    if _r not in _sys_r.path:
+        _sys_r.path.insert(0, _r)
+    import results_store as _store_r
+    a.run = _store_r.resolve_or_die(a.run)
+
     pts = stop_points(schedule_path(a.run), a.mode)
     r2 = a.radius_m * a.radius_m
     print('%s stop points served: %d' % (a.mode, len(pts)))

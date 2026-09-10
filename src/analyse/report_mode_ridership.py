@@ -621,7 +621,86 @@ def report(run_dir, iteration, truck_stations=False):
                   % (mode, m, t, dev))
     else:
         print('\nGATE: no mode at or past %.0f%% deviation.' % GATE_STOP_PCT)
+
+    _print_coverage_bound(run_dir, iteration, breaches)
     return breaches
+
+
+# ------------------------------------------------- the bound beside the gate
+#
+# A deviation and the reason it cannot be tuned away belong on the same page.
+# A scoring constant reallocates between plans an agent already holds, so a
+# mode's plan-holding coverage is an arithmetic ceiling on its share, and a
+# deficit larger than the headroom is a CHOICE-SET finding that no constant can
+# close. MATSim writes the coverage on every arm and, until this was added,
+# nothing in this repository read it - so every gate this project ever took
+# attributed its deficits to constants without checking whether a constant
+# could reach them.
+#
+# This prints; it never changes the gate verdict. The stop bar is the goal's
+# and stays exactly where GOAL.md puts it.
+
+def _print_coverage_bound(run_dir, iteration, breaches):
+    try:
+        import report_choice_set_coverage as _cov
+    except ImportError:                                   # pragma: no cover
+        return
+    try:
+        table = _cov.read_coverage(run_dir)
+    except SystemExit:
+        return                     # a run too short to have written one
+    if not table:
+        return
+    at = iteration if iteration in table else max(table)
+    row = table[at]
+
+    targets = load_targets()
+    print('\nCHOICE-SET BOUND at iteration %d%s - the share of agents holding '
+          'any plan for the mode, which is the MOST a constant for it can '
+          'reach:' % (at, '' if at == iteration else
+                      ' (nearest written to %d)' % iteration))
+    unreachable = []
+    for mode, modelled, target, dev in sorted(breaches, key=lambda x: -abs(x[3])):
+        key = _coverage_key(mode)
+        if key is None or key not in row:
+            continue
+        c = row[key] * 100.0
+        if key in _cov.LOCKED_MODES:
+            print('   %-14s coverage n/a - %s is a locked carve, not a '
+                  'choice-set member' % (mode, key))
+            continue
+        # A coverage PERCENTAGE bounds only a target stated as a share of the
+        # same population. Heavy and light rail are boardings per weekday;
+        # holding "25.78 %" beside "6,528 boardings" and calling one smaller
+        # than the other is precisely the mismatch this block exists to catch.
+        denominator = (targets.get(mode) or {}).get('denominator', '')
+        comparable = denominator == _cov.SHARE_DENOMINATOR
+        note = ''
+        if not comparable:
+            note = ('  (target is `%s`; a coverage %% cannot bound it)'
+                    % denominator)
+        elif target > c:
+            note = '  <- TARGET IS UNREACHABLE: no constant can get there'
+            unreachable.append((mode, c, target))
+        print('   %-14s coverage %7.2f%% (as `%s`)  target %8.4f%s'
+              % (mode, c, key, target, note))
+    if unreachable:
+        print('   %d mode(s) above cannot reach their target at this coverage. '
+              'That is a choice-set finding, not a constant finding: read '
+              '`python src/analyse/report_choice_set_coverage.py --run <run> '
+              '--trend` for where each choice set closed.' % len(unreachable))
+
+
+def _coverage_key(mode):
+    """The coverage table's key for a scoreboard mode, or None where there is
+    none. MATSim offers `pt` as ONE alternative and the submode is chosen
+    downstream by the router, so every pt submode shares the `pt` coverage and
+    none of them has one of its own."""
+    if mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+        return 'pt'
+    if mode == 'freight_train':
+        return None
+    return mode
 
 
 
