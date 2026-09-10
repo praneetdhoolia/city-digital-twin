@@ -1,8 +1,8 @@
 # Public transport and its yardsticks — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 - **THE ROUTER THAT PICKS THE SUBMODE NOW HAS A CONSTANT TO PICK IT WITH, BEHIND A GATE** (§9.162, #49). `citysim.RaptorModeCostCalculator` is the stock `DefaultRaptorInVehicleCostCalculator` plus the boarded submode's own `scoring.modeParams` constant, negated because `getInVehicleCost` returns a cost and a constant is a utility. It declares **no value of its own** - the constants are already `C.asc.*` - so it is a CONSISTENCY between the router's objective and the scoring function the plan is judged by, not a second set of tastes to calibrate. The submode comes from the transit vehicle type's own `networkMode` (`bus`/`rail`/`tram`/`ferry` in the mapped schedule), so no mode name is typed into the framework. Gated by `C.raptor.mode_cost_representation`, **shipped `absent`**, categorical `[absent, mode_constant]`; at `absent` `SwissRailRaptorModule`'s own binding is left in place and the previous model is recovered exactly. **Built and deployed, NEVER RUN** - it opens a comparability family and no arm has carried it.
@@ -45,6 +45,9 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 
 ## What is measured
 
+- **THREE IN FIVE PT ROUTING REQUESTS STILL COME BACK AS A WALK, AND DEPTH DOES NOT CHANGE IT** (§9.163, #162). The `ptDirectWalk` counters at the end of `20260909T015217_300it_25pct`: **4,800,000** pt routing requests, **1,492,178 (31.09 %)** with no transit route at all, 3,307,818 compared, of which **1,343,350 (40.61 %)** chose the raptor's direct network walk — **59.07 % returned as a walk either way**. Against the F31 gate's 33.4 % / 40.6 % at iteration 100: a different family and not a difference, but the same instrument reading the same quantities 200 iterations deeper and giving the same answer. The effect is not an artefact of a shallow read.
+- **The larger half is out of `direct_walk_factor`'s reach entirely** (§9.163). A request that finds NO transit route is not a comparison the direct-walk factor can lose; it is a coverage or a schedule question, and it is 31.09 % of all requests. Whatever the paired arm on `RUN.transit_router.direct_walk_factor` shows, it speaks only to the 40.61 %.
+- **Pt reaches a quarter of agents, and it is the only mode whose choice set was still opening at the cutoff** (§9.163). Coverage **25.78 %** at iteration 300, first within one percentage point of that at iteration **123** and still moving at **233**, where every other mode had closed by 27. Boardings by submode on the same arm: bus 16,177, rail 6,009, tram 306, ferry 277. The pt submodes' trip-share targets sum to 2.52 %, well inside the 25.78 %, so no pt submode target is out of reach of the choice set — unlike ride.
 - **#167'S `accessEgressModeToLink` FAILURE IS DIAGNOSED, AND THE CAUSE IS IN OUR PLANS RATHER THAN IN MATSim** (§9.161). Read from `aborted_20260908T232051_4it_1pct`'s own `plans.xml.gz`: **zero lines mention `routingMode`** (§9.161).
   There are no interaction activities at all — activity types are only home 70,486, other 20,876, work 10,883, shopping 10,708, escort 10,044, education 2,490, business 1,128 (§9.161) — so **every trip in the input is a single leg** (§9.161).
   The mixture is therefore created INSIDE `PersonPrepareForSim`: under `accessEgressModeToLink` the router inserts walk access and egress legs, and with no declared routing mode to inherit MATSim infers each leg's from its own mode — `walk` beside a `car` main leg — and rejects the trip it has just built (§9.161).
@@ -103,6 +106,7 @@ Latest twelve-mode reading, and the project's FIRST RESULT: `results/raw/2026090
 
 ## History
 
+- §9.163 — the walk fallback holds at depth; pt reaches 25.78 %
 - §9.161 — #167 diagnosed: our plans declare no routingMode
 - §9.160 — pt submode has no control; 0.63 % of memory differs
 - §9.158 — pt routing diagnosed: walking is priced as riding; crowding scored
@@ -117,14 +121,3 @@ Latest twelve-mode reading, and the project's FIRST RESULT: `results/raw/2026090
 - §9.131 — licence rate now measured, rail cause
 - §9.130 — rail modes held to disclosed boardings
 - §9.113 — day tag is not service; supply exonerated
-- §9.112 — ferry market walks the detour
-- §9.101 — truck target not a person share
-- §9.100 — Sydney stop, three LGAs, broken series
-- §9.91 — check the yardstick before the model
-- §9.90 — crossing closures from the timetable
-- §9.89 — ferry gets a derived target
-- §9.87 — twelve modes get twelve targets
-- §9.78 — submodes score-distinct via raptor mapping
-- §9.30 — fleet carries published capacities
-- §9.18 — light rail vehicle corrected
-- §12 — 67/143 split fixed, never opened

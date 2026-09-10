@@ -1,6 +1,6 @@
 # Sampling and comparability families — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
 **Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
 
@@ -108,18 +108,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 - §9.140 — F24 package built, unlaunched
 - §9.139 — F23 gate arm read at 25%
 - §9.138 — F23 opens on the behaviour channels
-- §9.131 — F21 opens on licence rebuild
-- §9.129 — bucket rule replaces at-or-below
-- §9.128 — driver detour opens F19
-- §9.127 — coupling is a sampling unit
-- §9.121 — F16 and F17 opened
-- §9.120 — F13 declared, F15 opened
-- §9.116 — F14 rebuild boundary
-- §9.104 — resolved values join key
-- §9.99 — taxi fleet boundary F13
-- §9.66 — status card, dead-run naming
-- §9.65 — runner names run directories
-- §9.60 — lift couplings join unit
-- §9.45 — household is the unit
-- §9.12 — 1% is unusable
-- §9.10 — fraction split car and PT

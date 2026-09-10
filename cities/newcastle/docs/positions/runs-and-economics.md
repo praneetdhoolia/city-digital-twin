@@ -1,8 +1,8 @@
 # Runs, harness and economics — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 
@@ -31,6 +31,7 @@
 
 ## What is measured — what a run costs
 
+- **THE LONGEST WINDOW THE MACHINE-LEVEL STALL WILL EVER GET, AND IT DID NOT KILL THE ARM** (§9.163, #66). `20260909T015217_300it_25pct` ran **300 iterations in 21.5 h**, rc 0. What it does show is a mid-run pace excursion — the running median rose to **301.5 s** between iterations 120 and 190 against a quoted band of [217, 253] and closed at **244.05 s**, inside it. That excursion was read as a stall while the arm ran and was a false alarm. **37.4 % of all machine hours bought no citable reading** — 151.6 of 405.3 — and this arm had **no automatic stop of any kind**: its gate watcher was deliberately and defensibly disabled and it declared no wall ceiling, so its approved 32 h was held by a person watching a clock. `run_matsim.py` now refuses exactly that state (#169). One 21.5 h window, no fatal stall, one recovered slowdown: not an attribution, and the attribution needs an operating-system record that is not being kept.
 - **THE FIRST RUN SINCE F4 TO EXECUTE THE HORIZON IT DECLARED** (§9.162). `20260909T015217_300it_25pct`: `completion` `ran_to_last_iteration`, `reached_iteration` 300, rc 0, wall **77,309 s (21.5 h)**, `median_iteration_s` **244.05**. Its `_fit.json` is the first in the project's history with `is_a_result: true`. It was quoted at **22.3 h** against a **32 h** approved ceiling and landed **3.6 % under the quote** - the first arm whose price was right.
 - **THE PACE OSCILLATED WITHIN THE RUN, WHICH NO EARLIER ARM RAN LONG ENOUGH TO SHOW** (§9.162). Median per-iteration seconds by band, from the run's own `_progress.json`: it.0-120 **~222 s**, it.120-140 **264.7**, it.140-160 **293.9**, it.160-180 **308.2**, then recovering to **~250** and closing at a whole-run median of **244.05 s**. `RUN.monitor.pace_band_s` = [217, 253] brackets the whole-run median and NOT the middle third, so a mid-run out-of-band reading is not by itself a defect - which cost one false alarm this session before the run closed inside the band.
 
@@ -96,7 +97,7 @@
 - `run_failure.py` now reads only the log's last 64 MiB (`TAIL_BYTES`, §9.136): the whole-file read held every decoded byte in memory and a 25% arm's 6.9 GB log pushed the machine to exhaustion while its death was being recorded. `read_from` names the window when truncated.
 - `src/run/run_failure.py` quotes the first exception it finds: the F20 arm's `cause_detail` names a benign Guice/ASM warning (`Unsupported class file major version 69`) while its `cause` is the stop by direction — the reader does not distinguish a logged warning from a terminating exception.
 - `RUN.monitor.pace_band_s` = [217, 253] is the 25% × 1000 band; the `_progress.json` digest applies it to 10% arms and reports them out of band (§9.72). **It no longer brackets the stack**: F28 ran 258.5 s above it and the measured unprofiled plain iteration runs **216.0 s** below it, so the flag means nothing either way until it is re-measured — and its `departure_requires` rule says a new family's measured pace, which F31 is now producing (§9.155, §9.156).
-- **From the 3 Sep assessment, still to measure:** the incremental log read and the bounded retry are built, and their disk effect on a 25 % arm is the next arm's to measure (#131, awaiting-run). **72.8 GiB was permanently untrimmable** until §9.155: the #132 guard kept any raw directory with a `_run.json` and no `_metrics.json`, which an operator or gate stop never gets. `RUN.storage.extract_grace_s` = 3600 bounds the window; the trim runs beside the launched arm rather than before it (§9.141). No Linux detach path exists — `--detach` is the Task Scheduler — and the README states it (#128 closed on that statement).
+- **The incremental log read is MEASURED, not awaited** (§9.163, #131): a later call reads ≤ growth + 4 KiB, an unchanged log 0 bytes, and the gate watcher shares the walk (`tests/unit/test_incremental_log_read.py`). What remains of #131 is the gate arming with `RUN.monitor.enabled = false`. **72.8 GiB was permanently untrimmable** until §9.155: the #132 guard kept any raw directory with a `_run.json` and no `_metrics.json`, which an operator or gate stop never gets. `RUN.storage.extract_grace_s` = 3600 bounds the window; the trim runs beside the launched arm rather than before it (§9.141). No Linux detach path exists — `--detach` is the Task Scheduler — and the README states it (#128 closed on that statement).
 - **THE TWO ARMS AT RISK WERE EXTRACTED AND RECLAIMED** (§9.159, #164 closed). `results/raw` now sits at **26.2 % of its 500 GiB cap** (130.8 GiB), and this line records what it said before: `results/raw` sat at **93.4 % of its 500 GiB cap** and the two largest directories are **336.4 GiB** of it — the 2nd and 7th oldest, carrying no `_run.json`, holding no snapshots, and cited by **eleven lines across eight position pages**. They fail the reclaim tests, so the guard now refuses them; reclaiming them means running `extract_snapshots` (~35 min each) and re-aiming those eleven citations at `processed/` FIRST. **Filed with its numbers; not done this session.** The 10 % arm was not priced either.
 
 ## Refused — do not re-raise
@@ -112,6 +113,7 @@
 
 ## History
 
+- §9.163 — 21.5 h uninterrupted; the stall is unattributed, not absent
 - §9.161 — the runner enforces its own approved ceiling
 - §9.160 — the new stack priced: +3.0 s; the ceiling has no enforcer
 - §9.159 — 336.4 GiB reclaimed, the store 93.4 % → 26.1 %; `reclaim()` is the verb
@@ -126,5 +128,3 @@
 - §9.147 — a milestone cost twice a plain iteration; cadence, detours, threads cut
 - §9.143 — a stopped run closes itself out; the pace measured
 - §9.142 — the iteration profiled; 60% is one hoistable call
-- §9.140 — launcher refuses behind open issues
-- §9.139 — gate watcher blind at 25%, fixed

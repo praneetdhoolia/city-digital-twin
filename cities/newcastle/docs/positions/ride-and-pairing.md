@@ -1,8 +1,8 @@
 # Ride and pairing — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 
@@ -35,6 +35,9 @@
 
 ## What is measured
 
+- **RIDE'S TARGET IS ABOVE RIDE'S CHOICE SET, SO NO CONSTANT REACHES IT** (§9.163, #86, #48). On `20260909T015217_300it_25pct` at iteration 300, **20.05 %** of agents have ever held a ride plan against a target of **20.60 %** of resident linked trips; ride sits at **12.1553 %**. Ride's choice set was also the earliest to close — within one percentage point of final coverage by iteration **5**, last moving by more than 0.01 pp at iteration **17**. This is the question #48 and #86 had circled since August, and the answer is arithmetic rather than behavioural.
+- **IN HALF OF ALL DECLARED ESCORT PAIRS THE PASSENGER DRIVES THEMSELVES** (§9.163, `measure_realisation_gap.py` on the same arm). Of 84,710 bound pairs reconstructed from B2 (from 120,895 escorted anchors), **20,902** have both members in the run sample: co-assigned car + ride **7,821 (37.4 %)**, mode not co-assigned **12,989 (62.1 %)**, of which the passenger drives their **own car 10,224 (48.9 % of all)**, walks 1,498, takes pt 503, cycles 500, takes a taxi 219. Both tours are realised in **20,810 (99.6 %)**, endpoints identical in 5,879 and inside the realised window in 6,496 against 1,325 outside.
+- **So the loss is neither in selection nor at binding time — it is in the passenger's mode assignment** (§9.163). The pair is declared, both tours run, the endpoints and the window are ample, and the passenger's plan simply carries `car`. `occupancy_from_pairings` reads **0.186** against an observed 0.3503 (declared band 0.2493–0.3940), outside the range.
 - **RIDE IS CONVERGED, AND THE DEPTH ARM CONFIRMED THE PREDICTION** (§9.160, §9.162). §9.160 predicted from F31's `output/modestats.csv` (decay **r = 0.054**, asymptote **0.12515** equal to its it-100 value to five decimals) that no further iteration would move ride. On the first result it held: ride sat between **12.73 % and 12.89 %** of resident linked trips from iteration 50 to 240 - 190 iterations without moving - and only the innovation cutoff shifted it, by **−0.489 pp** (`snap_pp`), landing at **−41.0 %** at iteration 300. **Depth is not ride's problem and no constant is its remedy.**
   Every other scored mode is still moving at 100 — car settles about iteration 130, bike about 208 (§9.160) — and ride is not. **Its deficit is not an equilibration lag; it is plan generation** (§9.160), which is what §9.157's geometry reading already implied when the modelled mean ride trip came within 6 % of observation while the share sat 38 % short.
   This retires the possibility that more iterations, or a `C.asc.car_passenger` departure, closes ride. `C.asc.car_passenger` stays frozen under §8.5 for exactly this reason (§9.158, §9.160).
@@ -101,6 +104,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.163 — the target is above the choice set; the passenger drives
 - §9.160 — ride measured CONVERGED at -38.0 %; it is supply
 - §9.158 — the escort listener stops proposing past the innovation cutoff
 - §9.162 — the first result: ride converged at −41.0 %
@@ -115,6 +119,3 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
 - §9.142 — the binders reach target; the loss is in plan memory
 - §9.140 — #91 closed; ride survives memory
-- §9.136 — ceiling decomposed: 19/16/12
-- §9.134 — F21 gate: ride capped at 12%
-- §9.131 — licence rate measured; F21 pending

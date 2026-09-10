@@ -1,11 +1,14 @@
 # Network, inputs and the data package — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has reached its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 
+- **Ten more MATSim defaults are reviewed and the remaining 21 all decide something** (§9.163, #155). `config/schema/matsim_defaults_accepted.json` holds **29** accepted parameters, each an event convention, an identifier convention, an output, a refusal, or the explicit basis of a recorded design — and none that decides anything about the transport system, which the ledger's own contract forbids. Undeclared defaults **31 → 21**. The 21 that remain decide queue physics, route choice, scoring or the choice set: `qsim.trafficDynamics`, `qsim.stuckTime`, `qsim.seepMode` and its two seepage flags, `routing.routingRandomness`, `scoring.pathSizeLogitBeta`, the four `timeAllocationMutator` shape parameters, both `travelTimeCalculator` getters, and **`replanning.planSelectorForRemoval`** (#174).
+- **Three declared fields reach the config and are switched off** (§9.163). `B.mode.walk_feasible_km` 0.0, `B.mode.bike_feasible_km` 0.0 and `C.crowding.seated_multiplier` 1.0 all sit at their consumer's off value. They now declare `inert_at` with an `inert_reason` the schema requires, and `check_hardcoding.py` reports them under section 7 rather than counting them among the "137 of 137 proven to reach" — a headline that says a value ARRIVES and had been read as saying something acts on it.
+- **The five GitHub Actions are pinned to commit SHAs** (§9.163), with `tests/unit/test_actions_pinned.py` rejecting a non-SHA ref. A repository that hashes 201 jars individually had been running its CI on mutable major tags, two jobs holding `pages: write` and `id-token: write`.
 - **Extent.** Every harvest and clip extent is derived: the study area from the dissolved five-LGA boundary in `zones_LGA.gpkg` plus `A.osm.harvest_margin_m` (5000 m), the CBD building extent from the observed light rail stop set plus `A.osm.buildings_margin_m` (3500 m). No rectangle is typed anywhere (§9.35, #32 closed). Study area 4,086 km², 1,500 core SA1s, external tier at SA2 (§1).
 - **OSM harvest.** Ten layers fetched over a tile grid no larger than `A.osm.harvest_tile_deg` (0.4), rotated across three Overpass mirrors, merged by element id and verified before any tile is deleted (§9.35). The 16 August re-harvest grew the extent 2.02x; core SA1s without a road node went 99 → 4, with no agents in them (§9.35, `STATUS.md`). `networks/osm_pre_issue32/` is the pre-repair reference copy. The harvester writes `data/raw/provenance_osm.json` — query, extent, bytes, sha256, harvest time, ODbL, no `[date:]` pin because a live query has none — and the 15–16 August harvest's record is reconstructed from the files and says so (§9.141, #118 closed).
 - **Road and active layers.** 50,182 road edges / 11,434 km and 40,195 active edges / 7,920 km (`README.md`), every edge carrying a Copernicus GLO-30 gradient from a boundary-derived DEM tile set (§3.3). Gradient reaches link travel time as physics under `A.gradient.representation` = `link_speed` (§9.84). Speed is the TfNSW regulated zone where one matches within `A.road.speed_zone_match_m` (10 m), `service` excluded by class; class defaults are measured from the city's own tags — `A.road.lane_width_default_m` 3.5 m, trunk 60 km/h, motorway 110 km/h (§9.33, §9.34). One copy of every default, resolved from the registry; the network takes the declared speed (§9.34, §9.38).
@@ -34,6 +37,7 @@
 
 ## What is measured
 
+- **THE COUNT-STATION MAP WAS ORPHANED BY A NETWORK REBUILD AND NOBODY SAW IT FOR 25 DAYS** (§9.163, #82 closed). `data/processed/validation/count_station_links.csv` keys stations to MATSim link ids, which are re-issued on every rebuild. Written `2026-08-16T00:37:54`; the S2 network rewritten 47 minutes later. Of 195 rows, **0** still named the road they claimed. Regenerated against the network they are scored on: **197 rows, all matched by name, 0 unresolved**, and the same run then reads counts at mean **+16.30 %** and median **−1.1 %** with no station modelled at zero. `check_package.py` check 7b now requires every mapped link to resolve on an assembled scenario network AND still carry its recorded road name.
 - **THE BLANKET `networks/matsim/*` ODbL GLOB IS NARROWED ON A CONTENT PASS, AND TWO OF THE THREE PASSES WERE WRONG IN OPPOSITE DIRECTIONS** (§9.159, #165). An attribute-NAME regex missed `linkIdRef="45339"` in `signal_systems.xml` and would have relabelled a file referencing 59 network links; a bare TOKEN intersection with the network's id sets then matched `transitVehicles.xml.gz` on "4 network link ids" that are seat counts. The passing form asks whether an identifier sits in a SLOT NAMING THE NETWORK — an attribute, column or JSON key mentioning link, node, way or osm — AND is an id the base network holds. **110 of 111 rows are confirmed ODbL on their own content**, including `signal_groups.xml`, which encodes a link id INSIDE each composite signal id (`NLR_SIG_01.45339`) — a third false negative caught only by looking.
 - **The 15 `networks/matsim/schedules/*/transitVehicles.xml.gz` move to CC-BY 4.0 on INTERNAL evidence** (§9.159): the assembled `scenarios/matsim/*/transitVehicles.xml.gz`, cut from those very files, was already resolved CC-BY with no share-alike ancestor in the #159 pass — **the package labelled a derived copy freer than its own source**. Ancestry moved with the licence (`build_matsim_network.py`'s `OUTPUT_INPUTS` declares the vehicles against the GTFS feeds alone), and `check_manifest.py` reports **512 rows agree, 0 undetermined**, licences **279 CC-BY / 218 ODbL** plus 15 bespoke. `signal_control.xml` and the four reports were deliberately NOT moved: their content carries no identifier, but which intersections exist is selected by OSM-node matching (`A2_signal_control_corridor.csv` carries an `osm_node_id` column), and relabelling on incomplete evidence turns an over-restriction into a breach.
 
@@ -82,12 +86,12 @@
 
 ## History
 
+- §9.163 — the counts map repaired; ten defaults reviewed; three fields off
 - §9.158 — lineage per output; the share-alike boundary checked, 512 rows agree
 - §9.156 — forty licence crossings closed; the ancestry defect named
 - §9.154 — a declared value voided by an undeclared one
 - §9.151 — four network fallbacks declared; three have never fired
 - §9.151 — a derived file's provenance resolved from its lineage
-
 - §9.142 — C2 measured on the network that runs; the censoring rule decided
 - §9.141 — producers name artefacts; licences resolved
 - §9.140 — contract city-free; two assumptions measured
@@ -97,12 +101,3 @@
 - §9.116 — builder stopped reproducing committed demand
 - §9.113 — count departures, not route tags
 - §9.90 — crossings timed from rail timetable
-- §9.88 — SCATS becomes an implemented algorithm
-- §9.84 — gradient reaches link speed physically
-- §9.79 — documents drifted; currency check added
-- §9.78 — seven 0b source upgrades landed
-- §9.76 — SUMO out; signals run stack pinned
-- §9.71 — pre-LR cross-section from OSM history
-- §9.61 — 0b backlog enumerated, three measured
-- §9.38 — config emitted from the registry
-- §9.35 — harvest extent derived from boundary

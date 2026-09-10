@@ -1,11 +1,12 @@
 # Walk and bike — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 
+- **The two distance feasibility bounds are declared, reach the config, and are switched OFF** (§9.163). `B.mode.walk_feasible_km` and `B.mode.bike_feasible_km` both ship at **0.0**, and `citysim.GatedSubtourModeChoice.beyondReach` returns false on any limit ≤ 0, so no walk or bike trip is ever refused for being too long. Both now declare `inert_at: 0.0` with a reason, so `check_hardcoding.py` reports them under section 7 instead of counting them among the "137 of 137 proven to reach". Their derived values are 3.22 km and 23.95 km (§9.106).
 - **Both modes are physical in the qsim** (§9.54). `walk` and `bike` are qsim main modes routed and simulated on the road graph, which stands in for the footpath network because §3.5 forbids a remap. A pedestrian is `B.walk.pce` 0.0, speed-capped at `A.transit.walk_speed_ms` 1.25: present on every link, exchanging no capacity with motor traffic. A cyclist is `B.bike.pce` 0.2 (literature, swept 0.1–0.4) at `B.bike.speed_ms` 4.2 (§9.54). The router's estimate (`CappedSpeedTravelTime`) and the mobsim read the same loaded vehicle type, so estimate and physics cannot drift.
 - **Link dynamics** are `RUN.qsim.link_dynamics` = `PassingQ` (§9.59). Under MATSim's silent FIFO default a walker at the head of a shared link's queue held every car behind it whatever its PCE; a car now overtakes a walker, at about 42 s per iteration (§9.59).
 - **Road rules**: `A.network.pedestrian_excluded_classes` and `A.network.bicycle_excluded_classes` are both `[motorway, motorway_link]` — §9.58 corrected the walk list from §9.54's trunk exclusion, which mis-stated the law and severed the walkable city. Each mode is stripped from links outside its largest strongly connected component, and a one-way carriageway carries a walk/bike reverse complement (16,603 on S2, §9.58).
@@ -22,6 +23,10 @@
 
 ## What is measured
 
+- **THE SUPPLY OF SHORT TRIPS DOES NOT MOVE, AND CAR'S GRIP ON IT TIGHTENS** (§9.163, #30). From `20260909T015217_300it_25pct`'s own trips tables: trips under 1 km are **11.06 %** of all trips at iteration 100 and **10.97 %** at iteration 300 — 0.09 pp across 200 iterations of search, because destination placement fixes the short end at build time. Car's share of those sub-kilometre trips rises **60.67 % → 63.12 %** while walk's barely moves, 23.04 % → 23.48 %. Walk's −26.5 % on share therefore has a ceiling no behavioural parameter can lift: the lever is not in the loop.
+- **Walk is being used as a long-distance mode** (§9.163). Modelled mean walk trip **3.283 km** against an observed 0.70 (4.69×), median 1.249 km, mean duration **49.0 min** against an observed 12.3. On the all-trips denominator the mean falls 6.94 km → 5.17 km between iterations 100 and 300, so the search shortens walk and does not reach the observed length.
+- **BIKE IS RIDDEN TOO FAR AND CONCENTRATED IN THE CAR-LESS QUARTER** (§9.163, #107). Bike **+113.0 %** at 4.7045 % against 2.2084 %; modelled mean **7.3217 km** against an observed 5.2 (sweep 3.1–5.2, outside it), mean time **43.71 min** against 19.2, on 7,288 target-LGA trips. By licence (`mode_by_demographics.py`, whole trips table joined to B1): **no licence 8.8 %** of trips against **licence 2.5 %**. By age: 12–17 **15.4 %**, 18–24 4.8 %, 85+ 4.9 %, everyone else 2.5–3.1 %.
+- **Bike's excess IS reachable by a constant, and walk's deficit is not the same kind of problem** (§9.163). Bike coverage **29.03 %** against a 4.70 % share leaves 24.32 pp of headroom; walk coverage **63.95 %** against 9.85 % leaves 54.10 pp. Neither target is above its coverage, so both are constant-movable in the arithmetic sense — which is what makes bike the mode the ASC contraction test is decisive for, and which does NOT rescue walk, whose deficit is bounded by the sub-1 km supply above rather than by its choice set.
 - **THE FIRST RESULT, AND WALK FELL PAST THE STOP BAR ON THE WAY TO IT** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): **bike 4.7045 % against 2.2084 % (+113.0 %)** and **walk 9.8490 % against 13.4000 % (−26.5 %)**. Walk was INSIDE the 10 % band at iteration 110 (−9.6 %), left it by 200 (−14.4 %) and was pushed past the 20 % bar by the innovation cutoff, which took **−0.941 pp** off it in one step (`snap_pp`, §9.162). Walk does not overshoot its target and settle - it descends THROUGH it, so the mode was never converged when the gates read it near the band. Comparable with no earlier family (§3.5).
 - **WALK IS PRICED AS A TRANSIT RIDE, AND THAT IS WHY ITS GEOMETRY IS WRONG** (§9.158). Inside the pt router, `(marginalUtilityOfTraveling − performing)/3600` makes **one second walking cost 1.0400 seconds riding**, with `RUN.transit_router.direct_walk_factor` = 1.0. Measured on the F31 arm: **2,553,357 pt routing requests**, **33.4 % with no transit route at all**, **40.6 % of the answered choosing the network walk** — **60.5 % of all pt routing requests come back as a walk**, and those walk-answered trips have a **beeline mean of 7.81 km (p90 12.43)**. Walk's modelled mean of **4.58 km against an observed 0.70** (`_fit.json`, Newcastle LGA both ends; §9.157 quotes 4.51 on the resident-trip basis) is substantially that. Sweeping the factor: 1.5 → 27.3 % walk-answered, 2.0 → 21.7 %, 3.0 → 16.2 % (§9.158).
 - **THE READING POINT ITSELF CANNOT RESOLVE BIKE** (§9.158). Between iteration 80 and 100 of the SAME run, with nothing changed, bike's deviation moves further than the whole 10 % acceptance band on **4 of the 6** arms that ever reached 100 (max 17.76 points; `CAL.search.reading_drift_pct`, `python src/analyse/measure_reading_stability.py --all --from 80 --to 100`). On the F31 arm itself bike moved 8.66 points in that window. A bike level read at 100 is partly a statement about how far the run had got.
@@ -56,6 +61,7 @@
 
 ## History
 
+- §9.163 — short-trip supply flat, car takes 63 % of it; bike too far
 - §9.158 — walk is priced as a transit ride; `C.asc.cycle` opened, `C.asc.walk` frozen
 - §9.162 — the first result: walk −26.5 %, descending through target
 - §9.157 — F31 gate: bike +147.4 %, walk −11.1 %
@@ -70,13 +76,3 @@
 - §9.123 — car-less quarter explains bike
 - §9.121 — direct walk becomes network walk
 - §9.114 — most cyclists own cars
-- §9.108 — walk geometry converging on trend
-- §9.107 — walk and car swapped ends
-- §9.106 — feasibility bound fails, disabled
-- §9.105 — denied lift drives, not walks
-- §9.84 — gradient as link speed built
-- §9.69 — short-trip observed distribution added
-- §9.59 — PassingQ link dynamics declared
-- §9.58 — walk wedge repaired four ways
-- §9.54 — walk and bike become physical
-- §9.39 — bike availability drawn, declared

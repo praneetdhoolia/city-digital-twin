@@ -1,8 +1,8 @@
 # Light rail and ferry — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Nothing here is a result: no run since family F4 has passed its gate.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 9 September 2026 (thirty-ninth session) · **Record read through:** §9.162 · **Written against family:** `F32`
+**Updated:** 10 September 2026 (fortieth session) · **Record read through:** §9.163 · **Written against family:** `F32`
 
 ## What is built
 
@@ -32,6 +32,8 @@
 
 ## What is measured
 
+- **THE FERRY'S MARKET IS THERE AND THE MODE IS NOT CHOSEN** (§9.163, #94). `corridor_market.py --mode ferry --radius-m 1000` on `20260909T015217_300it_25pct` (2 stop points): **84,293 of 2,343,637** modelled weekday trip ends within 1 km of a wharf — **3.60 %** — against an observed **5.18 %** of POI attraction weight and **5.12 %** of jobs, and by purpose shopping 7.59 %, other 5.86 %, work 4.84 %. Food POI weight is **11.88 %** within the same radius. So the demand builder has put trips near the wharves at the same order as the attraction layer implies, not the near-zero the "20 km road detour" framing suggested.
+- **And it is not a choice-set bound either** (§9.163). Ferry rides on the single `pt` alternative, whose coverage is **25.78 %** of agents, against pt submode trip-share targets summing to 2.52 %. Ferry's **−60.1 %** (0.0571 % against 0.1429 %) is therefore neither a missing market nor an unreachable target: agents with a wharf at both ends are not choosing it. The three live candidates are the router never offering it (#162: 31.09 % of pt requests find no route), the plan being evicted from memory (#174), and `C.asc.ferry`, which is `placeholder` and outside the movable set.
 Every arm below was stopped at or before its gate; these are readings, not results.
 
 **Both modes, at the newest citable reading.**
@@ -88,6 +90,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.163 — the ferry market is present at 3.60 %; the mode is not chosen
 - §9.158 — a ferry constant declared, light rail's opened; the raptor prices no constant
 - §9.162 — the first result: light rail −57.3 %, moving away
 - §9.157 — the F31 gate: light rail −47.2 %, ferry −65.6 %
@@ -102,13 +105,3 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 - §9.122 — ferry target moves to LGA cell
 - §9.121 — network direct walk repairs ferry
 - §9.120 — corridor market measured; router reach declared
-- §9.113 — supply ruled out; count departures
-- §9.112 — ferry market walks the detour
-- §9.103 — out of reach, not out-competed
-- §9.89 — ferry gets a derived target
-- §9.87 — folded target left ferry ungated
-- §9.80 — V001 unscorable; no error quoted
-- §9.77 — native dwell live in inputs
-- §9.76 — charging dwell concurrent with boarding
-- §9.30 — ferry fleet gets published capacity
-- §9.18 — tram carries published 270
