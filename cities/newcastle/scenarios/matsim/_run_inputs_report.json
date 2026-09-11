@@ -6,7 +6,7 @@
       "links_touched": {
         "companion_mode_links": 168033,
         "num_lanes_per_dir": 54,
-        "kerbside_use": 59,
+        "kerbside_use_attribute_unread_by_any_run": 59,
         "banned_turns_removed": 8,
         "nonmotor_reverse_links": 16602,
         "walk_stripped_unreachable": 5692,
@@ -168,7 +168,7 @@
       "links_touched": {
         "companion_mode_links": 168033,
         "num_lanes_per_dir": 54,
-        "kerbside_use": 59,
+        "kerbside_use_attribute_unread_by_any_run": 59,
         "banned_turns_removed": 8,
         "nonmotor_reverse_links": 16602,
         "walk_stripped_unreachable": 5692,
@@ -879,7 +879,7 @@
       "links_touched": {
         "companion_mode_links": 168033,
         "num_lanes_per_dir": 54,
-        "kerbside_use": 59,
+        "kerbside_use_attribute_unread_by_any_run": 59,
         "banned_turns_removed": 8,
         "nonmotor_reverse_links": 16602,
         "walk_stripped_unreachable": 5692,
@@ -1224,7 +1224,7 @@
       "links_touched": {
         "companion_mode_links": 168033,
         "num_lanes_per_dir": 180,
-        "kerbside_use": 302,
+        "kerbside_use_attribute_unread_by_any_run": 302,
         "nonmotor_reverse_links": 16602,
         "walk_stripped_unreachable": 5692,
         "bike_stripped_unreachable": 5692
@@ -1409,7 +1409,7 @@
       "links_touched": {
         "companion_mode_links": 168033,
         "num_lanes_per_dir": 280,
-        "kerbside_use": 498,
+        "kerbside_use_attribute_unread_by_any_run": 498,
         "nonmotor_reverse_links": 16602,
         "walk_stripped_unreachable": 5692,
         "bike_stripped_unreachable": 5692
@@ -1594,7 +1594,7 @@
       "links_touched": {
         "companion_mode_links": 168033,
         "num_lanes_per_dir": 54,
-        "kerbside_use": 59,
+        "kerbside_use_attribute_unread_by_any_run": 59,
         "banned_turns_removed": 8,
         "nonmotor_reverse_links": 16602,
         "walk_stripped_unreachable": 5692,
@@ -1880,7 +1880,7 @@
       "per-purpose value of time: MATSim scores per mode, so a trip-weighted average (16.96 AUD/h) is used in place of the six purpose-specific values",
       "crowding multipliers (beta_crowding_*): REPRESENTED as of C.crowding.representation, and carried into scoring by citysim.PtCrowdingScoring - each passenger's in-vehicle seconds are re-priced against the vehicle's own seat count and the surplus over an uncrowded ride is charged as a PersonScoreEvent. MATSim core scores no crowding term and the raptor prices load factor in the ROUTER only, so the extension is what makes them reach a plan score at all",
       "gradient UTILITY penalties: RETIRED 3 Sep 2026 (9.140, issue 21). MATSim scores a leg from time and distance and has no gradient utility term; the gradient DATA reaches mode choice through link travel time instead - grade_pct on the run network, walk and bike slowed by the declared published relations on both the router and the mobsim side (A.gradient.representation=link_speed, 9.84)",
-      "PT walk-access decay curve: RETIRED 3 Sep 2026 (9.140, issue 21) in favour of scoring the access walk at its full walking time, with no catchment cut-off - the continuous penalty proposal 6.3 asked for; the declared RUN.transit_router.search_radius_m / extension_radius_m bound the raptor search, never the utility. CORRECTED 8 Sep 2026 (9.159, #167): this line used to say that access and egress walk \"is routed on the walk network\", and it is not. At RUN.transit_router.access_egress_basis = beeline the raptor draws those legs as BEELINES and the mobsim teleports them - 520,385 such legs on one arm - so the time scored is a straight-line time. What IS network-routed is the DIRECT walk (RUN.transit_router.direct_walk_basis, 9.121), which is the walk instead of pt rather than the walk to the stop"
+      "PT walk-access decay curve: RETIRED 3 Sep 2026 (9.140, issue 21) in favour of scoring the access walk at its full walking time, with no catchment cut-off - the continuous penalty proposal 6.3 asked for; the declared RUN.transit_router.search_radius_m / extension_radius_m bound the raptor search, never the utility. CORRECTED 8 Sep 2026 (9.159, #167): until 12 Sep 2026 the raptor drew access and egress walk as BEELINES and the mobsim teleported them - 520,385 such legs on one arm - so the time scored was a straight-line time. SETTLED 12 Sep 2026 (9.167, #167): at RUN.transit_router.access_egress_basis = network the access, egress AND transfer walks are routed on the walk network and executed by the qsim (teleported=0 on the 4/4 probe); at beeline they are drawn straight again. The DIRECT walk (RUN.transit_router.direct_walk_basis, 9.121) - the walk instead of pt - was network-routed before either"
     ]
   }
 }
