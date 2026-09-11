@@ -290,7 +290,16 @@ def scan(run_dir):
     except OSError:
         age = None
     if done:
-        state = 'finished' if run_rec.get('rc') == 0 else 'failed'
+        # since 9.143 a gate-, ceiling-, stall- or operator-stopped arm
+        # carries a record with rc != 0; its `completion` names the boundary
+        # and it is not a failure (eighth project report, area 3)
+        completion = run_rec.get('completion')
+        if run_rec.get('rc') == 0 or completion == 'ran_to_last_iteration':
+            state = 'finished'
+        elif completion and completion.startswith('stopped_'):
+            state = completion
+        else:
+            state = 'failed'
     elif age is None:
         state = 'starting'
     elif age > STALL_S:

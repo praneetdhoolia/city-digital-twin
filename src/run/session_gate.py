@@ -24,6 +24,8 @@ import os
 import re
 import subprocess
 import sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from procs import arm_running  # noqa: E402
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
@@ -45,32 +47,6 @@ def _run(cmd, timeout):
         return 124, 'timed out after %ss' % timeout
     except OSError as exc:
         return 127, str(exc)
-
-
-def arm_running():
-    """A MATSim arm is up when a java process holds more than ~2 GB.
-
-    VS Code's own java (the language server) sits under 1 GB; an arm sits in
-    the tens of GB. The threshold is a classifier, not a model value.
-    """
-    if os.name == 'nt':
-        rc, out = _run(['tasklist', '/FI', 'IMAGENAME eq java.exe', '/FO', 'CSV'], 30)
-        if rc != 0:
-            return None
-        big = []
-        for line in out.splitlines()[1:]:
-            cells = [c.strip('"') for c in line.split('","')]
-            if len(cells) >= 5:
-                kb = int(re.sub(r'[^\d]', '', cells[4]) or 0)
-                if kb > 2_000_000:
-                    big.append('pid %s (%d MB)' % (cells[1], kb // 1024))
-        return big
-    rc, out = _run(['ps', '-eo', 'pid,rss,comm'], 30)
-    if rc != 0:
-        return None
-    return ['pid %s (%d MB)' % (l.split()[0], int(l.split()[1]) // 1024)
-            for l in out.splitlines()[1:]
-            if 'java' in l and int(l.split()[1]) > 2_000_000]
 
 
 def git_ahead():

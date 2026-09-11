@@ -133,7 +133,7 @@ def main(argv=None):
         return 0
     if verdict == 'died':
         print('\nThe launch did NOT take. The run states its own cause; read '
-              'it with:\n  python src/run/run_failure.py --run %s' % run)
+              'it with:\n  python src/run/run_failure.py results/raw/%s' % run)
         return 1
     if verdict == 'timeout':
         print('\nUndecided, which is not the same as working. Look at the log '

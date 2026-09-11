@@ -25,6 +25,7 @@ import shutil
 import subprocess
 import sys
 import time
+from procs import pid_alive as _pid_alive  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
@@ -360,24 +361,7 @@ def raw_size_bytes():
     return _dir_bytes(RAW) if os.path.isdir(RAW) else 0
 
 
-def _pid_alive(pid):
-    if os.name == 'nt':
-        import ctypes
-        k32 = ctypes.windll.kernel32
-        handle = k32.OpenProcess(0x00100000, 0, int(pid))     # SYNCHRONIZE
-        if not handle:
-            return False
-        rc = k32.WaitForSingleObject(handle, 0)
-        k32.CloseHandle(handle)
-        return rc == 0x102
-    try:
-        os.kill(int(pid), 0)
-        return True
-    except OSError:
-        return False
-
-
-def _is_running(run_dir):
+def _is_running(run_dir, recent_s=None):
     meta = os.path.join(run_dir, '_meta.json')
     try:
         with io.open(meta, encoding='utf-8') as fh:
@@ -391,7 +375,19 @@ def _is_running(run_dir):
     # it had ended, its harness pid dead and its JVM writing - a trim keyed on
     # the harness alone would have deleted the run it was writing (eighth
     # report, 11 September 2026).
-    return any(doc.get(k) and _pid_alive(doc[k]) for k in ('pid', 'jvm_pid'))
+    if any(doc.get(k) and _pid_alive(doc[k]) for k in ('pid', 'jvm_pid')):
+        return True
+    # A SECOND LOCK, against a reused pid or a `_meta.json` read mid-write: a
+    # `matsim.log` written within `recent_s` is a run whatever the pid table
+    # says. `recent_s` is the caller's grace (RUN.storage.extract_grace_s).
+    if recent_s:
+        try:
+            age = time.time() - os.path.getmtime(os.path.join(run_dir, 'matsim.log'))
+            if age <= recent_s:
+                return True
+        except OSError:
+            pass
+    return False
 
 
 def _launch_stamp(name):
@@ -450,7 +446,7 @@ def trim(cap_gb, log=print, grace_s=None):
         if size <= cap:
             break
         d = raw_dir(name)
-        if _is_running(d):
+        if _is_running(d, recent_s=grace_s):
             continue
         # a run whose metrics are not yet extracted is never deleted (#132):
         # run.py extracts _metrics.json after run() returns, and a concurrent
@@ -540,14 +536,6 @@ def trim(cap_gb, log=print, grace_s=None):
         with io.open(path, 'w', encoding='utf-8', newline='\n') as fh:
             json.dump(history, fh, indent=1)
     return deleted
-
-
-def maintain(cap_gb, log=print, grace_s=None):
-    """The one call a harness makes: migrate anything legacy, then trim."""
-    moved = migrate()
-    if moved:
-        log('results store: migrated %d run(s) under results/raw' % len(moved))
-    return trim(cap_gb, log=log, grace_s=grace_s)
 
 
 def reclaim(name, log=print):

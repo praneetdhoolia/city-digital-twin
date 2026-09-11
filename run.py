@@ -129,11 +129,18 @@ def listing():
                  (doc.get('description', '')[:60] + '...')
                  if len(doc.get('description', '')) > 60 else doc.get('description', '')))
 
-    print('\nfinished runs in %s:' % run_matsim.RESULTS)
+    print('\nrun records in %s (completion per _run.json):' % run_matsim.RESULTS)
     if os.path.isdir(run_matsim.RESULTS):
         for d in sorted(os.listdir(run_matsim.RESULTS)):
-            done = os.path.exists(os.path.join(run_matsim.RESULTS, d, '_run.json'))
-            print('  %-40s %s' % (d, 'complete' if done else 'incomplete'))
+            # since 9.143 a gate-, ceiling-, stall- or operator-stopped arm
+            # carries a `_run.json` too; its `completion` says which
+            try:
+                with open(os.path.join(run_matsim.RESULTS, d, '_run.json'),
+                          encoding='utf-8') as fh:
+                    state = json.load(fh).get('completion') or 'record without completion'
+            except (OSError, ValueError):
+                state = 'incomplete'
+            print('  %-40s %s' % (d, state))
     return 0
 
 
@@ -266,9 +273,6 @@ def main():
         if why:
             raise SystemExit('refusing to launch: ' + why)
 
-    if a.detach:
-        return _detach()
-
     overrides = registry.parse_set(a.config_set)
     for flag, key in (('fraction', 'RUN.sample.fraction'),
                       ('iterations', 'RUN.controler.last_iteration'),
@@ -290,8 +294,16 @@ def main():
     cfg = run_matsim.resolve(a.scenario, a.day, run_config, overrides)
 
     # An overlay that cannot legally run should say so when it is RESOLVED,
-    # not hours into an arm (#151, DECISIONS.md 9.151).
-    run_matsim.refuse_unsafe_telemetry(cfg)
+    # not hours into an arm (#151, DECISIONS.md 9.151) - and BEFORE --detach
+    # hands the launch to the scheduler, where a refusal reaches only a
+    # log (eighth project report, 11 September 2026). `preflight` runs
+    # every refusal the launch itself runs, except the subsample.
+    raw_overrides = dict(run_matsim.parse_override(x) for x in a.set)
+    run_matsim.preflight(a.scenario, a.day, cfg, raw_overrides, warm=warm,
+                         quiet=False)
+
+    if a.detach:
+        return _detach()
 
     if a.dry_run:
         print('scenario %s  day %s  overlay %s'
@@ -308,8 +320,7 @@ def main():
         print('\ndry run: nothing was executed')
         return 0
 
-    doc = run_matsim.run(a.scenario, a.day, cfg,
-                         dict(run_matsim.parse_override(s) for s in a.set),
+    doc = run_matsim.run(a.scenario, a.day, cfg, raw_overrides,
                          a.force, warm=warm, registry_overrides=overrides)
     rc_ok = doc.get('rc') == 0
 
@@ -392,7 +403,12 @@ def _detach():
     wrapper = os.path.join(launch_dir, '%s.cmd' % task)
 
     args = [x for x in sys.argv[1:] if x != '--detach'] + ['--issue-gate-passed']
-    quoted = ' '.join('"%s"' % x if (' ' in x or not x) else x for x in args)
+    # Quoted the way CreateProcess parses it (embedded quotes and
+    # backslashes escaped), then `%` doubled because the command lives in
+    # a batch file: the old `"%s"`-if-space rule passed `--cause "he said
+    # \"stop\""` and `X=50%` to a different command whose only record
+    # was a log (eighth project report, 11 September 2026).
+    quoted = subprocess.list2cmdline(args).replace('%', '%%')
     with open(wrapper, 'w', encoding='ascii', newline='\r\n') as f:
         f.write('@echo off\r\n')
         f.write('cd /d "%s"\r\n' % HERE)

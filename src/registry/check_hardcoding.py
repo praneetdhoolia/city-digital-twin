@@ -369,14 +369,16 @@ STRUCTURAL = {
     # VS Code's language server by resident size: an arm sits in the tens of
     # GB, the language server under one. Nothing about this city or any other
     # decides it, it cannot be swept, and a different city would use the same
-    # number. `src/run/session_gate.py` applies the identical threshold and is
-    # invisible here only because it inlines the literal rather than naming it
-    # - which is the wrong lesson to learn, so this one stays named and
-    # exempted.
-    'src/setup/bootstrap_toolchain.py:ARM_RSS_KB':
+    # number. Since 12 Sep 2026 it is named ONCE, in `src/run/procs.py`, and
+    # `session_gate` and `bootstrap_toolchain` both import it - the inlined
+    # copy that was invisible here is gone.
+    'src/run/procs.py:ARM_RSS_KB':
         'the resident-size threshold that tells a running arm from the java '
         'process an IDE keeps alive, in KB. A classifier over '
         'operating-system processes, not a parameter of the model',
+    'src/run/procs.py:arm_running(timeout)':
+        'how long the process list is waited for, in seconds. An operating-'
+        'system call\'s patience; nothing here reaches the model',
     # Surfaced when the scanner was widened past module level (7 Sep 2026): a
     # constant assigned inside a function had never been visible to this check.
     # The Earth's mean radius is a physical constant, not a modelling choice -
