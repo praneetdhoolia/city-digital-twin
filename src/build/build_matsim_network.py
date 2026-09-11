@@ -49,6 +49,7 @@ import zipfile
 import argparse
 import subprocess
 import collections
+import glob
 import concurrent.futures as futures
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'setup'))
@@ -104,23 +105,16 @@ OSM_INPUTS = [_city.path('networks/osm/roads.osm'),
               _city.path('networks/osm/railways.osm'),
               _city.path('networks/osm/signals.osm')]
 
-FEEDS = collections.OrderedDict([
-    ('base2026', _city.path('schedules/base2026.zip')),
-    ('era1_pre2014_reconstructed', _city.path('schedules/era1_pre2014_reconstructed.zip')),
-    ('era2_2016_rail_truncated', _city.path('schedules/era2_2016_rail_truncated.zip')),
-    ('era3_2018_keolis_interchange', _city.path('schedules/era3_2018_keolis_interchange.zip')),
-    ('era4_2019_lr_open', _city.path('schedules/era4_2019_lr_open.zip')),
-    ('S0', _city.path('schedules/scenarios/S0.zip')),
-    ('S1', _city.path('schedules/scenarios/S1.zip')),
-    ('S2', _city.path('schedules/scenarios/S2.zip')),
-    ('S2a', _city.path('schedules/scenarios/S2a.zip')),
-    ('S2b', _city.path('schedules/scenarios/S2b.zip')),
-    ('S2c', _city.path('schedules/scenarios/S2c.zip')),
-    ('S3', _city.path('schedules/scenarios/S3.zip')),
-    ('S4', _city.path('schedules/scenarios/S4.zip')),
-    ('S5', _city.path('schedules/scenarios/S5.zip')),
-    ('S6', _city.path('schedules/scenarios/S6.zip')),
-])
+# EVERY GTFS BUNDLE THE CITY HOLDS IS A FEED TO MAP - the era feeds under
+# schedules/ and the scenario variants under schedules/scenarios/. The list
+# was fifteen of one city's feed names typed into the framework (eighth
+# project report, 11 September 2026); a second city inherited them. Derived
+# from what is on disk, sorted so the build order is the same on every
+# machine.
+FEEDS = collections.OrderedDict(sorted(
+    [(os.path.splitext(os.path.basename(z))[0], z)
+     for pattern in ('schedules/*.zip', 'schedules/scenarios/*.zip')
+     for z in glob.glob(_city.path(pattern))]))
 
 # All three day types are converted into a single schedule ("all"). The era and
 # scenario feeds namespace their trip ids by day type (WEEKDAY./SAT./SUN., see

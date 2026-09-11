@@ -510,8 +510,10 @@ def _best_run_dir(tag):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--scenario', default='S2')
-    ap.add_argument('--day', default='WEEKDAY')
+    # the CITY's base scenario and first day type, not ids typed here
+    ap.add_argument('--scenario',
+                    default=_city.descriptor()['intervention']['base_scenario'])
+    ap.add_argument('--day', default=list(_city.descriptor()['day_types'])[0])
     ap.add_argument('--run-config', required=True,
                     help='committed overlay giving fraction, iterations, threads')
     ap.add_argument('--plan', action='store_true',

@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 521 fields are made of
+## What the 528 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
 | `measured` | 42 | computed from observed data in this package |
 | `derived` | 45 | follows from another registry field by identity |
-| `literature` | 77 | a published value, not specific to this city |
-| `assumed` | 182 | chosen without direct empirical support |
+| `literature` | 80 | a published value, not specific to this city |
+| `assumed` | 186 | chosen without direct empirical support |
 | `definition` | 137 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 500 | usable point value |
+| `active` | 507 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 296 sweeps are for
+### What the 301 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 253 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 258 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -90,7 +90,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 | `RUN.routing.access_egress_type` | `none` | `none`, `accessEgressModeToLink` |
 
-### The 28 fields held fixed
+### The 30 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -103,6 +103,8 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `A.signals.scats_match_radius_m` - A data-join tolerance, not a model parameter. It decides which observed TfNSW signal is the same physical intersection as a clustered OSM one, and no behaviour, run time or score r
 - `A.transit.ferry_capacity_seated` - Published seated capacity, held on the same reasoning as the total: it is a fact about the vessel. This is the ONLY vehicle in the fleet whose seated/standing split is published - 
 - `A.transit.ferry_capacity_total` - A published vessel capacity is a fact about the boat, not a behavioural parameter, and sweeping it would assert an uncertainty that does not exist. Both Stockton ferries carry the 
+- `A.transit.platform_height_lr_mm` - A PUBLISHED VEHICLE-FLOOR HEIGHT, not a tunable: the low-floor tram class the corridor runs boards from a ~300 mm platform (A4 vehicle specification, cities/<city>/build/build_corr
+- `A.transit.platform_height_rail_mm` - A PUBLISHED STANDARD, not a tunable: the NSW heavy-rail platform height is 1,080 mm above rail (TfNSW / Sydney Trains standard). It labels the stop-extras artefact and reaches no r
 - `B.activity.balancing_passes` - A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): a pass re-solves every decay on the balanced attraction, and the sequence converges be
 - `B.activity.balancing_rounds` - A CONVERGENCE BOUND, not a model parameter (the A.corridor.nearest_node_max_rings precedent): the balancing runs until the worst arrival gap is inside B.activity.balancing_toleranc
 - `B.activity.balancing_tolerance` - A CONVERGENCE TOLERANCE, not a model parameter (the A.corridor.dedupe_tolerance_m precedent): it says when the two margins are close enough to call the matrix balanced, at a tightn
@@ -125,7 +127,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 181 fields*
+*`cities/newcastle/registry/A_supply.json` - 188 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -306,11 +308,18 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.transit.ferry_capacity_standing` | `51` | persons_per_vehicle | `derived` | derived: ferry_capacity_standing = ferry_capacity_total - ferry_capacity_seated |
 | `A.transit.ferry_capacity_total` | `200` | persons_per_vehicle | `literature` | **held fixed** |
 | `A.transit.interchange_radius_m` | `250` | metres | `assumed` | 150 - 400 |
+| `A.transit.platform_height_lr_mm` | `300` | millimetres | `literature` | **held fixed** |
+| `A.transit.platform_height_rail_mm` | `1080` | millimetres | `literature` | **held fixed** |
 | `A.transit.rail_capacity_seated` | `98` | persons_per_vehicle | `assumed` | 80 - 120 |
 | `A.transit.rail_capacity_standing` | `48` | persons_per_vehicle | `derived` | derived: rail_capacity_standing = rail_capacity_total - rail_capacity_seated |
 | `A.transit.rail_capacity_total` | `146` | persons_per_vehicle | `literature` | 146 - 177 |
 | `A.transit.s0_join_tolerance_m` | `1500.0` | metres | `assumed` | 800 - 2500 |
 | `A.transit.sbc_extension_km` | `6.65` | kilometres | `observed` | - |
+| `A.transit.transfer_crossing_delay_s` | `22` | seconds | `assumed` | 10 - 45 |
+| `A.transit.transfer_crossing_threshold_m` | `60` | metres | `assumed` | 30 - 120 |
+| `A.transit.transfer_detour_factor` | `1.25` | ratio | `literature` | 1.1 - 1.5 |
+| `A.transit.transfer_same_mode_radius_m` | `150` | metres | `assumed` | 80 - 250 |
+| `A.transit.transfer_search_radius_m` | `400` | metres | `assumed` | 250 - 600 |
 | `A.transit.walk_speed_ms` | `1.25` | metres_per_second | `literature` | 1 - 1.4 |
 
 #### `A.active.footway_width_default`
@@ -1573,6 +1582,26 @@ Radius within which two stops are treated as one interchange for transfer genera
 
 > **Sweep basis.** chosen interval around the assumed 250 m within which two stops are one interchange for transfer generation. The measured Newcastle Interchange stop pairs span 49-139 m (9.28) and sit inside every member, so the interval tests how far beyond the interchange precinct transfers are generated, not the interchange itself. No observed spread.
 
+#### `A.transit.platform_height_lr_mm`
+
+Platform height written for light-rail stops in A3_stop_extras.csv. Was the literal 300 in build_gtfs_extras.py.
+
+***literature** · status **active** · DECISIONS.md §11, 9.167*
+
+> **Held fixed.** A PUBLISHED VEHICLE-FLOOR HEIGHT, not a tunable: the low-floor tram class the corridor runs boards from a ~300 mm platform (A4 vehicle specification, cities/<city>/build/build_corridor_layers.py). It labels the stop-extras artefact and reaches no run.
+>
+> *Departure requires: a different rolling stock on the corridor*
+
+#### `A.transit.platform_height_rail_mm`
+
+Platform height written for heavy-rail stops in A3_stop_extras.csv. Was the literal 1080 in build_gtfs_extras.py.
+
+***literature** · status **active** · DECISIONS.md §11, 9.167*
+
+> **Held fixed.** A PUBLISHED STANDARD, not a tunable: the NSW heavy-rail platform height is 1,080 mm above rail (TfNSW / Sydney Trains standard). It labels the stop-extras artefact and reaches no run.
+>
+> *Departure requires: a jurisdiction with a different platform standard*
+
 #### `A.transit.rail_capacity_seated`
 
 Seats on a two-car Hunter Line set. Only the SPLIT is assumed - the total it comes from is published.
@@ -1610,6 +1639,46 @@ Tolerance for joining the retained heavy rail alignment to the observed network 
 Broadmeadow extension length as STATED in the Strategic Business Case. The alignment routed over observed OSM centreline is 7.00 km, 5.3% longer. The model uses the routed geometry; this field records the published figure.
 
 ***observed** · status **active** · DECISIONS.md §3.4*
+
+#### `A.transit.transfer_crossing_delay_s`
+
+Delay charged per road crossing on a generated transfer. Was the literal 22 in build_gtfs_extras.py.
+
+***assumed** · status **active** · DECISIONS.md §11, 9.167 · sweep role **uncertainty***
+
+> **Sweep basis.** the mean pedestrian wait at a signalised crossing is roughly half the cycle minus the walk phase; at the SCATS cycle lengths the corridor runs (A.signals.*) that is 10-45 s. No local pedestrian-delay observation is in the package.
+
+#### `A.transit.transfer_crossing_threshold_m`
+
+Straight-line distance above which a transfer outside the interchange group is charged one signalised road crossing. Was the literal 60 in build_gtfs_extras.py.
+
+***assumed** · status **active** · DECISIONS.md §11, 9.167 · sweep role **uncertainty***
+
+> **Sweep basis.** a transfer walk longer than this outside a declared interchange group is assumed to cross a road once; the interval brackets a kerb-to-kerb hop and a full block.
+
+#### `A.transit.transfer_detour_factor`
+
+Straight-line to walk-distance detour factor applied to every generated transfer. Was the literal 1.25 in build_gtfs_extras.py.
+
+***literature** · status **active** · DECISIONS.md §11, 9.167 · sweep role **uncertainty***
+
+> **Sweep basis.** network walking distance over straight-line distance for short urban walks; the pedestrian-routing literature places the ratio between 1.1 (grid) and 1.5 (cul-de-sac suburbs).
+
+#### `A.transit.transfer_same_mode_radius_m`
+
+Radius within which a same-mode stop pair is still written as a transfer. Was the literal 150 in build_gtfs_extras.py.
+
+***assumed** · status **active** · DECISIONS.md §11, 9.167 · sweep role **uncertainty***
+
+> **Sweep basis.** a transfer between two stops served by the SAME set of modes is generated only inside this shorter radius - it is a platform change, not an interchange. The interval brackets one platform length and a long station forecourt.
+
+#### `A.transit.transfer_search_radius_m`
+
+Maximum straight-line distance between two stops for a transfer row to be generated in A3_transfer_extras.csv. Was the literal 400 typed into src/build/build_gtfs_extras.py (eighth project report, 11 September 2026).
+
+***assumed** · status **active** · DECISIONS.md §11, 9.167 · sweep role **uncertainty***
+
+> **Sweep basis.** the straight-line distance within which two stops are offered as a transfer pair in the schedule-extras layer. 400 m is the walk most transit-planning guidance treats as an acceptable transfer; the interval brackets a tight precinct and a long interchange walk. Reference artefact only (A3_transfer_extras.csv); nothing at run time reads it.
 
 #### `A.transit.walk_speed_ms`
 

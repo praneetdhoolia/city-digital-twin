@@ -32,5 +32,12 @@
       "valid_from": "",
       "valid_to": ""
     }
-  }
+  },
+  "vehicle_type_by_route_type": {
+    "0": "CAF_URBOS_100_NLR",
+    "2": "HEAVY_RAIL_EMU",
+    "3": "BUS_RIGID_12M"
+  },
+  "vehicle_type_default": "BUS_RIGID_12M",
+  "vehicle_type_note": "GTFS route_type -> the vehicle type id written to A3_route_extras.csv. These were three literals in src/build/build_gtfs_extras.py naming this city's fleet (eighth project report, 11 September 2026)."
 }

@@ -1060,6 +1060,123 @@
         "src/build/build_matsim_run_inputs.py"
       ]
     },
+    "A.transit.transfer_search_radius_m": {
+      "value": 400,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": [
+        250,
+        600
+      ],
+      "sweep_basis": "the straight-line distance within which two stops are offered as a transfer pair in the schedule-extras layer. 400 m is the walk most transit-planning guidance treats as an acceptable transfer; the interval brackets a tight precinct and a long interchange walk. Reference artefact only (A3_transfer_extras.csv); nothing at run time reads it.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "11, 9.167",
+      "description": "Maximum straight-line distance between two stops for a transfer row to be generated in A3_transfer_extras.csv. Was the literal 400 typed into src/build/build_gtfs_extras.py (eighth project report, 11 September 2026).",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
+    "A.transit.transfer_same_mode_radius_m": {
+      "value": 150,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": [
+        80,
+        250
+      ],
+      "sweep_basis": "a transfer between two stops served by the SAME set of modes is generated only inside this shorter radius - it is a platform change, not an interchange. The interval brackets one platform length and a long station forecourt.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "11, 9.167",
+      "description": "Radius within which a same-mode stop pair is still written as a transfer. Was the literal 150 in build_gtfs_extras.py.",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
+    "A.transit.transfer_detour_factor": {
+      "value": 1.25,
+      "units": "ratio",
+      "source": "literature",
+      "sweep": [
+        1.1,
+        1.5
+      ],
+      "sweep_basis": "network walking distance over straight-line distance for short urban walks; the pedestrian-routing literature places the ratio between 1.1 (grid) and 1.5 (cul-de-sac suburbs).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "11, 9.167",
+      "description": "Straight-line to walk-distance detour factor applied to every generated transfer. Was the literal 1.25 in build_gtfs_extras.py.",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
+    "A.transit.transfer_crossing_threshold_m": {
+      "value": 60,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": [
+        30,
+        120
+      ],
+      "sweep_basis": "a transfer walk longer than this outside a declared interchange group is assumed to cross a road once; the interval brackets a kerb-to-kerb hop and a full block.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "11, 9.167",
+      "description": "Straight-line distance above which a transfer outside the interchange group is charged one signalised road crossing. Was the literal 60 in build_gtfs_extras.py.",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
+    "A.transit.transfer_crossing_delay_s": {
+      "value": 22,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        10,
+        45
+      ],
+      "sweep_basis": "the mean pedestrian wait at a signalised crossing is roughly half the cycle minus the walk phase; at the SCATS cycle lengths the corridor runs (A.signals.*) that is 10-45 s. No local pedestrian-delay observation is in the package.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "11, 9.167",
+      "description": "Delay charged per road crossing on a generated transfer. Was the literal 22 in build_gtfs_extras.py.",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
+    "A.transit.platform_height_lr_mm": {
+      "value": 300,
+      "units": "millimetres",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "A PUBLISHED VEHICLE-FLOOR HEIGHT, not a tunable: the low-floor tram class the corridor runs boards from a ~300 mm platform (A4 vehicle specification, cities/<city>/build/build_corridor_layers.py). It labels the stop-extras artefact and reaches no run.",
+        "decisions_ref": "11",
+        "departure_requires": "a different rolling stock on the corridor"
+      },
+      "decisions_ref": "11, 9.167",
+      "description": "Platform height written for light-rail stops in A3_stop_extras.csv. Was the literal 300 in build_gtfs_extras.py.",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
+    "A.transit.platform_height_rail_mm": {
+      "value": 1080,
+      "units": "millimetres",
+      "source": "literature",
+      "status": "active",
+      "held_fixed": {
+        "rule": "A PUBLISHED STANDARD, not a tunable: the NSW heavy-rail platform height is 1,080 mm above rail (TfNSW / Sydney Trains standard). It labels the stop-extras artefact and reaches no run.",
+        "decisions_ref": "11",
+        "departure_requires": "a jurisdiction with a different platform standard"
+      },
+      "decisions_ref": "11, 9.167",
+      "description": "Platform height written for heavy-rail stops in A3_stop_extras.csv. Was the literal 1080 in build_gtfs_extras.py.",
+      "consumers": [
+        "src/build/build_gtfs_extras.py"
+      ]
+    },
     "A.transit.era1_line_speed_kmh": {
       "value": 60.0,
       "units": "km_per_hour",
