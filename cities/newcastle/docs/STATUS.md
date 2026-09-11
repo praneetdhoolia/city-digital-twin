@@ -78,7 +78,7 @@ Inside 10%: **car, walk, motorbike**. Past the 20% stop bar: **ride, taxi, bike,
 | | |
 |---|---|
 | Open comparability family | `F33-the-passenger-is-put-on-ride` (opened `20260910T203622`, §9.164) - nothing run before it compares with anything after it |
-| Input registry | **514 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **517 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
 | Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (10 September 2026 (forty-first session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (10 September 2026 (forty-first session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (10 September 2026 (forty-first session)) · [network-and-inputs](positions/network-and-inputs.md) (10 September 2026 (forty-first session)) · [population-and-demand](positions/population-and-demand.md) (10 September 2026 (forty-first session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (10 September 2026 (forty-first session)) · [ride-and-pairing](positions/ride-and-pairing.md) (10 September 2026 (forty-first session)) · [runs-and-economics](positions/runs-and-economics.md) (11 September 2026 (forty-second session)) · [sampling-and-families](positions/sampling-and-families.md) (11 September 2026 (forty-second session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (10 September 2026 (forty-first session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (10 September 2026 (forty-first session)) · [walk-and-bike](positions/walk-and-bike.md) (10 September 2026 (forty-first session)) |
@@ -95,7 +95,7 @@ agree again. The controler carries `citysim.ServiceQualityScoring`,
 three shipped at their off value - beside everything F32 carried. The manifest
 still holds **512** files, **279 CC-BY / 218 ODbL** plus 15 bespoke, with
 undetermined lineage at 0; `check_manifest.py` is green on the rebuilt demand.
-The registry is **514** fields, undeclared MATSim defaults are at **0**, and the
+The registry is **517** fields, undeclared MATSim defaults are at **0**, and the
 unit suite is **324** tests.
 
 ## Runs on disk

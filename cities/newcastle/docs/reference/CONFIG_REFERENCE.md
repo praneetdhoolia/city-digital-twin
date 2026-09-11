@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 514 fields are made of
+## What the 517 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
-| `measured` | 40 | computed from observed data in this package |
+| `measured` | 42 | computed from observed data in this package |
 | `derived` | 45 | follows from another registry field by identity |
 | `literature` | 77 | a published value, not specific to this city |
 | `assumed` | 178 | chosen without direct empirical support |
-| `definition` | 136 | fixed by the formulation, not an empirical quantity |
+| `definition` | 137 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 493 | usable point value |
+| `active` | 496 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -90,7 +90,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 | `RUN.routing.access_egress_type` | `none` | `none`, `accessEgressModeToLink` |
 
-### The 26 fields held fixed
+### The 28 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -119,6 +119,8 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.pt.censored_share_max` - A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must sto
 - `E.s2b.lr_segment_count` - MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this fie
+- `RUN.machine.heap_floor_gib` - A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms 
+- `RUN.machine.heap_per_fraction_gib` - A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib;
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
 
 ## Network supply (A1-A6)
@@ -3671,7 +3673,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 102 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 105 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -3688,11 +3690,14 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.gate.ceiling_poll_s` | `60` | seconds | `definition` | - |
 | `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
 | `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
+| `RUN.gate.stall_kill_s` | `1800` | seconds | `definition` | - |
 | `RUN.gate.wall_ceiling_h` | `0` | hours | `definition` | - |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
-| `RUN.machine.gc_log` | `false` | boolean | `definition` | - |
+| `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
+| `RUN.machine.heap_floor_gib` | `9.6` | GiB | `measured` | **held fixed** |
+| `RUN.machine.heap_per_fraction_gib` | `87` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
@@ -3848,6 +3853,12 @@ How long the runner's gate watcher waits before trying a milestone again whose p
 
 ***definition** · status **active** · DECISIONS.md §9.137*
 
+#### `RUN.gate.stall_kill_s`
+
+How long the run's own log may go silent before the runner stops the JVM, writing `stopped_at_stall` with the silence and the last ended iteration. The LIVENESS boundary beside the gate's modelling boundary and the ceiling's cost boundary. RUN.monitor.stall_s (300 s) is what the live view CALLS a stall and only observes; this acts, at six times that, because the alternative was measured: F33's arm 0 spent 13.1 h inside iteration 89 on an awake machine - the Task Scheduler log shows ~450 launches and no gap - with the digest reporting the stall at 05:13 and nothing having the job of killing it (9.165, #66). Silence is the test, not iteration length: MATSim prints every simulated hour of the mobsim and the memory observer every minute, so no healthy iteration at any fraction is quiet for half an hour, while a JVM in back-to-back full collections is quiet for hours. ZERO DISABLES IT, the idiom RUN.gate.wall_ceiling_h uses. A stall stop is a defined boundary: the run is closed out and citable at its reached_iteration, and it is not a complete arm.
+
+***definition** · status **active** · DECISIONS.md §9.19, 9.165*
+
 #### `RUN.gate.wall_ceiling_h`
 
 The wall-clock ceiling the runner enforces on its own run, in hours. ZERO MEANS NO CEILING and is the default, so nothing changes for a run that does not set one - the same idiom RUN.gate.interval_iterations uses for its own watcher. Set it on the OVERLAY, beside the approval it encodes, so the approved number and the enforced number are the same number. It exists because every multi-hour arm is launched against a stated-cost approval and nothing enforced it: the only automatic stop was the gate watcher, which stops on a MODELLING condition and knows nothing about clocks, and an arm that disables it - as depth_convergence_25pct does, correctly - had no automatic stop at all (#169). It is a SECOND watcher, never a branch of the first: RUN.gate.interval_iterations = 0 means 'do not judge my modes', never 'do not enforce my budget'. It can only END a run, never extend one, and a run it stops carries completion `stopped_at_ceiling` - citable at its reached_iteration and nowhere past it, like any stopped arm (9.143).
@@ -3874,9 +3885,29 @@ Whether the qsim waits for the events pipeline at every sim-step. Declared for t
 
 #### `RUN.machine.gc_log`
 
-Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it.
+Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it. DEFAULT TRUE since 11 September 2026: the first arm to die of heap (F33 arm 0, 9.165) spent 13.1 h inside one iteration with no collector account of it, and a GC log costs nothing a stopwatch can see; an overlay that wants none says so.
 
 ***definition** · status **active** · DECISIONS.md §9.154*
+
+#### `RUN.machine.heap_floor_gib`
+
+The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers. The 25 % arms that lived ran at 40g and peaked at 36.2 GB; the one that ran at 14g died (9.165).
+
+***measured** · status **active** · DECISIONS.md §9.5, 9.165*
+
+> **Held fixed.** A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms that died and the arms that lived. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.
+>
+> *Departure requires: a heap-after-full-GC reading from an arm's gc.log at two fractions, recorded in DECISIONS.md*
+
+#### `RUN.machine.heap_per_fraction_gib`
+
+The sample-dependent part of the heap rule. At 25 % it is 21.75 GiB on top of the floor - 31.4 GiB in all - which is why 14g died and 40g lived (9.165).
+
+***measured** · status **active** · DECISIONS.md §9.5, 9.165*
+
+> **Held fixed.** A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib; it changes what the launcher refuses, never what the model does.
+>
+> *Departure requires: the same GC-log reading as RUN.machine.heap_floor_gib*
 
 #### `RUN.machine.jfr_profile`
 
@@ -3910,9 +3941,9 @@ Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim pa
 
 #### `RUN.machine.xmx`
 
-JVM heap. Must exceed 9.6 GiB + 87 GiB x fraction or the run dies.
+JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction, 31.4 GiB at 25 % - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on this 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations.
 
-***definition** · status **active** · DECISIONS.md §9.5*
+***definition** · status **active** · DECISIONS.md §9.5, 9.165*
 
 #### `RUN.mode_choice.chain_based_modes`
 

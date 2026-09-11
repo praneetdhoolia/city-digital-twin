@@ -120,6 +120,12 @@ def sample_fraction(run_dir):
     return None
 
 
+def station_of(stop_name):
+    """'Hamilton Station Platform 1' -> 'hamilton', the disclosed-list form."""
+    return re.split(r'\s+station\b', str(stop_name or '').strip().lower(),
+                    maxsplit=1)[0].strip()
+
+
 def disclosed_stations():
     """Lower-cased names of the stations the heavy-rail target counts (9.130)."""
     import json as _json
@@ -410,7 +416,7 @@ def report(run_dir, iteration, truck_stations=False):
         import iteration_trips as itr
         counts = itr.boardings(run_dir, iteration)
         frac = sample_fraction(run_dir)
-        disclosed = disclosed_stations()
+        disclosed = set(disclosed_stations())
         for m in boarding_modes:
             sm = {'heavy_rail': 'rail', 'light_rail': 'tram', 'bus': 'bus',
                   'ferry': 'ferry'}.get(m, m)
@@ -418,8 +424,13 @@ def report(run_dir, iteration, truck_stations=False):
             for (s, stop), c in counts.items():
                 if s != sm:
                     continue
-                if m == 'heavy_rail' and disclosed and not any(
-                        d in stop.lower() for d in disclosed):
+                # the STATION the stop belongs to - the name before "Station"
+                # in "Hamilton Station Platform 1" - compared whole, never a
+                # substring: `d in stop.lower()` would have let a disclosed
+                # name inside an undisclosed stop's name count (eighth
+                # report, 11 September 2026; reproduces 5,305 on the landed
+                # result exactly)
+                if m == 'heavy_rail' and disclosed and                         station_of(stop) not in disclosed:
                     continue
                 n += c
             boarded[m] = (n, n / frac if frac else float(n))

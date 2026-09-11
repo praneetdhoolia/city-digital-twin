@@ -190,6 +190,8 @@ def main():
     ap.add_argument('--cause', metavar='TEXT',
                     help='why --stop is stopping the run; recorded verbatim '
                          'as the abort cause')
+    ap.add_argument('--issue-gate-passed', action='store_true',
+                    help=argparse.SUPPRESS)   # set by --detach on its child
     ap.add_argument('--allow-open-issues', action='store_true',
                     help='launch although an open GitHub issue in this run\'s '
                          'lane is not awaiting a stated measurement (GOAL.md '
@@ -252,7 +254,11 @@ def main():
     # overlay is handed across because it is the only committed artefact that
     # declares WHICH issues this arm answers - the gate scopes itself to that
     # lane, and to the whole open set when the overlay declares none.
-    if not a.dry_run:
+    # The detached child is re-invoked with `--issue-gate-passed` so the gate
+    # runs ONCE per launch: it used to run again in the child, and with
+    # --allow-open-issues recorded the override twice in the ledger (eighth
+    # report, 11 September 2026).
+    if not a.dry_run and not a.issue_gate_passed:
         import issue_gate
         why = issue_gate.refuse_launch(a.allow_open_issues,
                                        reason=a.override_reason,
@@ -276,7 +282,10 @@ def main():
     warm = None
     if a.warm_start:
         warm = run_matsim.resolve_warm_start(a.warm_start)
-        overrides['RUN.controler.first_iteration'] = warm['iteration']
+        # firstIteration AND the innovation fraction, so the cutoff iteration
+        # is the parent's (#192)
+        overrides = run_matsim.warm_start_overrides(warm, overrides, a.scenario,
+                                                    a.day, run_config)
 
     cfg = run_matsim.resolve(a.scenario, a.day, run_config, overrides)
 
@@ -301,7 +310,7 @@ def main():
 
     doc = run_matsim.run(a.scenario, a.day, cfg,
                          dict(run_matsim.parse_override(s) for s in a.set),
-                         a.force, warm=warm)
+                         a.force, warm=warm, registry_overrides=overrides)
     rc_ok = doc.get('rc') == 0
 
     run_dir = run_matsim.results_store.resolve(doc['name']) \
@@ -382,7 +391,7 @@ def _detach():
     log = os.path.join(launch_dir, '%s.log' % task)
     wrapper = os.path.join(launch_dir, '%s.cmd' % task)
 
-    args = [x for x in sys.argv[1:] if x != '--detach']
+    args = [x for x in sys.argv[1:] if x != '--detach'] + ['--issue-gate-passed']
     quoted = ' '.join('"%s"' % x if (' ' in x or not x) else x for x in args)
     with open(wrapper, 'w', encoding='ascii', newline='\r\n') as f:
         f.write('@echo off\r\n')

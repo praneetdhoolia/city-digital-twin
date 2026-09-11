@@ -228,19 +228,20 @@ def boardings(run_dir, iteration, route_mode=None):
         route_mode = em.transit_route_modes(run_dir)
     stop_name = em.transit_stop_names(run_dir)
     out = collections.Counter()
-    path = plans_path(run_dir, iteration)
-    if path is None:
-        # 9.148: a milestone that wrote no experienced plans - since 9.147
-        # the plans are gate artefacts (RUN.controler.write_plans_interval)
-        # and the ten-iteration monitoring reads MATSim's own tables - still
-        # carries every pt boarding in its LEGS table: one row per leg, with
-        # the boarded transit_line / transit_route and the access_stop_id,
-        # which is exactly what the experienced-plans walk below extracts
-        # from each default_pt route. The two paths count the same legs.
-        legs = _legs_table(run_dir, iteration)
-        if legs is None:
-            raise SystemExit('iteration %d wrote neither experienced plans '
-                             'nor a legs table under %s' % (iteration, run_dir))
+    # ONE SOURCE FIRST, AT EVERY ITERATION. MATSim's own legs table is read
+    # whenever it exists and the experienced plans only when it does not.
+    # The two do NOT count the same legs, as the comment here used to claim:
+    # on 20260909T015217_300it_25pct at iteration 300 the plans walk counted
+    # 23,070 boarded pt legs against the table's 22,769 (tram 315 vs 306,
+    # rail 6,091 vs 6,009) - the table omits a leg that never arrived, which
+    # is what a stuck agent leaves behind. Reading the plans at a gate and
+    # the table at a milestone put two light-rail figures for one run on one
+    # position page (1,260 and 1,224; eighth report, 11 September 2026).
+    # The table is the basis `extract_metrics.pt_boardings` and `fit.py`
+    # already score on, so the board and the fit now agree by construction.
+    legs = _legs_table(run_dir, iteration)
+    path = None if legs is not None else plans_path(run_dir, iteration)
+    if legs is not None:
         with legs as fh:
             for r in csv.DictReader(fh, delimiter=';'):
                 if not r.get('transit_route'):
@@ -250,6 +251,9 @@ def boardings(run_dir, iteration, route_mode=None):
                     continue
                 out[(sm, stop_name.get(r.get('access_stop_id'), ''))] += 1
         return out
+    if path is None:
+        raise SystemExit('iteration %d wrote neither a legs table nor '
+                         'experienced plans under %s' % (iteration, run_dir))
     with gzip.open(path, 'rb') as fh:
         in_selected = False
         for ev, el in ET.iterparse(fh, events=('start', 'end')):

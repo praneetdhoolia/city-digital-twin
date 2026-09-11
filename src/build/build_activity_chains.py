@@ -3323,6 +3323,11 @@ def main(seed=SEED, max_persons=None, day_types=None):
               flush=True)
 
     stats['placement'] = dict(stats['placement'])
+    # the top-level counter is the SUM over day types; it was initialised to 0
+    # and never updated, so the committed report said 0 at the top against
+    # 28,251 in by_day (eighth report, 11 September 2026)
+    stats['tours_dropped_over_horizon'] = sum(
+        stats['by_day'][d].get('tours_dropped_over_horizon', 0) for d in day_types)
     wk = sum(DAYS_PER_WEEK[d] for d in day_types)
     week_rate = sum(DAYS_PER_WEEK[d] * stats['by_day'][d]['legs_per_person']
                     for d in day_types) / wk

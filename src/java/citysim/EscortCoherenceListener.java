@@ -22,6 +22,8 @@ import org.matsim.api.core.v01.population.Plan;
 import org.matsim.core.controler.events.ReplanningEvent;
 import org.matsim.core.controler.listener.ReplanningListener;
 import org.matsim.core.population.PopulationUtils;
+import org.matsim.core.replanning.selectors.PlanSelector;
+import org.matsim.core.replanning.selectors.RandomPlanSelector;
 import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.router.TripStructureUtils.Trip;
@@ -132,6 +134,16 @@ public final class EscortCoherenceListener implements ReplanningListener {
 
     private final Scenario scenario;
     private final RidePairingConfigGroup cfg;
+    /**
+     * MATSim's own removal selector - the one replanning.planSelectorForRemoval
+     * names (RUN.replanning.plan_selector_for_removal) - injected un-named as
+     * StrategyManagerModule binds it. Until 11 September 2026 trim() below
+     * dropped the lowest-scored plan by its own rule, so a person pushed over
+     * plan memory by a coherence proposal was trimmed by a WorstPlanSelector
+     * whatever the registry declared, and the SelectRandom arm of #174 would
+     * have measured a half-switched control (eighth report).
+     */
+    private final PlanSelector<Plan, Person> removal;
 
     /** Household id per person, resolved once: membership never changes. */
     private final Map<Id<Person>, String> household = new HashMap<>();
@@ -149,8 +161,10 @@ public final class EscortCoherenceListener implements ReplanningListener {
     private boolean cutoffResolved = false;
 
     @Inject
-    EscortCoherenceListener(final Scenario scenario) {
+    EscortCoherenceListener(final Scenario scenario,
+                            final PlanSelector<Plan, Person> removal) {
         this.scenario = scenario;
+        this.removal = removal;
         this.cfg = (RidePairingConfigGroup) scenario.getConfig().getModules()
                 .get(RidePairingConfigGroup.NAME);
     }
@@ -664,26 +678,29 @@ public final class EscortCoherenceListener implements ReplanningListener {
         return 0.0;
     }
 
-    /** Keep the agent inside the declared plan memory, dropping the worst. */
+    /**
+     * Keep the agent inside the declared plan memory, removing plans the way
+     * MATSim's StrategyManager does - through the DECLARED removal selector,
+     * and re-selecting at random if the selector took the selected plan
+     * (GenericStrategyManagerImpl.removePlans does the same). A proposal
+     * this listener just made and selected can therefore be the one removed
+     * under SelectRandom; that is the declared behaviour, not a bypass of it.
+     */
     private void trim(final Person person) {
         final int cap = scenario.getConfig().replanning().getMaxAgentPlanMemorySize();
         if (cap <= 0) {
             return;
         }
         while (person.getPlans().size() > cap) {
-            Plan worst = null;
-            for (final Plan p : person.getPlans()) {
-                if (p == person.getSelectedPlan() || p.getScore() == null) {
-                    continue;
-                }
-                if (worst == null || p.getScore() < worst.getScore()) {
-                    worst = p;
-                }
+            final Plan drop = removal.selectPlan(person);
+            if (drop == null) {
+                return;                            // nothing the selector will drop
             }
-            if (worst == null) {
-                return;                            // nothing safe to drop
+            final boolean wasSelected = drop == person.getSelectedPlan();
+            person.removePlan(drop);
+            if (wasSelected && !person.getPlans().isEmpty()) {
+                person.setSelectedPlan(new RandomPlanSelector<Plan, Person>().selectPlan(person));
             }
-            person.removePlan(worst);
         }
     }
 

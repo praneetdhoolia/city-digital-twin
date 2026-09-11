@@ -31,7 +31,7 @@ relaunches.
 | **The Task Scheduler operational log is ENABLED** for the first time (#66). | `wevtutil gl Microsoft-Windows-TaskScheduler/Operational` reads `enabled: true` |
 | The issue ledger after #131, #155 and #169 closed on evidence. | `python src/run/issue_gate.py` · `gh issue list --state open` |
 | This session's PR. | `gh pr list --state open` |
-| Registry **514** fields, **512** manifest files (**279 CC-BY / 218 ODbL** + 15 bespoke), undeclared MATSim defaults **0**, unit tests **324**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python src/registry/check_matsim_defaults.py` · `python -m pytest tests/unit -q` |
+| Registry **517** fields, **512** manifest files (**279 CC-BY / 218 ODbL** + 15 bespoke), undeclared MATSim defaults **0**, unit tests **324**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python src/registry/check_matsim_defaults.py` · `python -m pytest tests/unit -q` |
 | `check_package.py` passed on the rebuilt demand (10 September). | `python tests/check_package.py` (LOCAL) |
 
 Then: `python src/run/session_gate.py`. The toolchain step compiles

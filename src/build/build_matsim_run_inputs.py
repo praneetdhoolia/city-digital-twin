@@ -771,7 +771,9 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
                     head = '<link ' + ' '.join('%s="%s"' % kv for kv in a.items())
                     applied['num_lanes_per_dir'] += 1
             except (ValueError, ZeroDivisionError):
-                pass
+                # counted, never swallowed: a lane patch that cannot be applied
+                # is a row of the E1 patch the scenario silently does not carry
+                applied['num_lanes_per_dir_unapplied'] += 1
         if 'kerbside_use' in changed and p.get('field_kerbside_use_to'):
             new_tail = set_link_attribute(tail, 'osm:way:kerbside',
                                           p['field_kerbside_use_to'])

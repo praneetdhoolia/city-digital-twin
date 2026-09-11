@@ -134,7 +134,7 @@ def log(msg):
 
 
 def java(args, tag):
-    j, jar, _nc, _sh = tc.require()
+    j, jar = tc.require()   # (java, pt2matsim jar) since the SUMO retirement (47f63c7)
     cmd = [j, JAVA_XMX, '-cp', jar] + args
     t0 = time.time()
     p = subprocess.run(cmd, capture_output=True, text=True)
