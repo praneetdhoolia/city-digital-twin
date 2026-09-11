@@ -940,6 +940,23 @@ def reconcile_stale():
             continue
         if doc.get('pid') and _pid_alive(doc['pid']):
             continue
+        # 9.165: THE LOG IS ASKED FIRST. A run whose harness died can still
+        # have died on its own account - `20260910T222830_300it_25pct` threw
+        # OutOfMemoryError in iteration 98 with the harness long gone, and this
+        # branch would have headlined "the harness is no longer running" over
+        # a JVM that died of a 14 GB heap. If the run's own log records a
+        # terminating exception, that is the cause and the status is `failed`;
+        # the dead-harness reading is the fallback for a log that ends quietly.
+        log_path = os.path.join(run_dir, 'matsim.log')
+        died_on_its_own = (run_failure.from_log(log_path)
+                           or run_failure._last_error(log_path))
+        if died_on_its_own:
+            dead = mark_dead(run_dir, 'failed', cause=None)
+            print('reconciled: %s claimed to be running under a dead harness, '
+                  'and its own log says why it died; marked failed -> %s'
+                  % (os.path.basename(run_dir), os.path.basename(dead)),
+                  flush=True)
+            continue
         dead = mark_dead(run_dir, 'aborted',
                          cause='the harness that launched this run is no longer '
                                'running and the run never reported an end; '

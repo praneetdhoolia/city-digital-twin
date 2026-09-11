@@ -7,23 +7,21 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 10 September 2026 - **every open issue worked to done or to
-one measurement, and a fix that was half a fix** (§9.164). The twenty-one MATSim
-defaults deciding this model with nobody's reason written down are at **0**.
-**THE DEMAND NOW STATES THAT A DECLARED PASSENGER RIDES**: a bound tour carries
-`ride` in EVERY seeded plan, as the declared driver has always carried `car` -
-**194,131** fully bound weekday tours over **199,329** persons - and the demand,
-the plans and the 30 run-input sets were rebuilt on it, opening family **`F33`**.
-A tour that will not fit no longer discards the rest of the day (**547** weekday
-tours recovered; week trip rate **3.398** against the HTS 3.473). Headway and
-reliability REACH MATSim after two reports asked; the pt submodes get a
-plan-level control; the objective gets the replication-band denominator it never
-had. **THE CEILING WATCHER STOPPED A RUN FOR THE FIRST TIME** (`stopped_at_ceiling`
-at iteration 3), and the same probe caught the gate watcher arming over a
-disabled monitor and judging nothing. **§9.161's #167 diagnosis was HALF right**:
-`routingMode` takes the failure 40 agents -> 20 and the input is clean, so
-`accessEgressModeToLink` still cannot start and ships `none`. **No arm ran, no
-approval was sought or spent, and nothing here reads a mode share.**
+**Last updated:** 11 September 2026 - **F33's first arm died on a heap I failed
+to set** (§9.165). `aborted_20260910T222830_300it_25pct` threw
+`OutOfMemoryError: Java heap space` in the replanning of iteration 98, after 97
+completed iterations and 6.5 h. Its overlay copied the landed arm's horizon and
+gate settings and NOT its 40 GB heap, so it inherited the registry's 14 GB while
+the landed arm had peaked at 36.2 GB; a four-iteration pricing probe cannot see
+memory that grows with plan memory. `write_plans_interval` is 100, so nothing
+past iteration 1 can be warm-started and the 6.5 h is lost. The record is
+honest - `reconcile_stale` now asks the run's own log before blaming a dead
+harness, and the card reads `failed` with the OOM chain - and the overlay now
+states 40g. **F33 still has no reading.** The forty-first session's close-out
+stands (§9.164): every open issue is closed, awaiting a paired arm, or awaiting
+one stated decision; the ordered separation design is on #172; the Task
+Scheduler operational log is enabled for the first time (#66). **No approval
+stands** - the 26 h one was spent on the arm that died.
 
 ## The goal
 
@@ -42,25 +40,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260909T015217_300it_25pct` at **iteration 300** (family `F32-crowding-reaches-scoring`, status `completed`, 25% sample, launched 2026-09-09T01:52:17, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 300, the only completion that means the run executed the horizon it declared.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260909T015217_300it_25pct --it 300` (`--trend` for the direction).
+Read from `aborted_20260910T222830_300it_25pct` at **iteration 90** (family `F33-the-passenger-is-put-on-ride`, status `failed`, 25% sample, launched 2026-09-10T22:28:30, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260910T222830_300it_25pct --it 90` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 64.9110 | 58.3222 | +11.3% | over 10% | share of resident linked trips |
-| 2 | ride | 12.1553 | 20.6000 | -41.0% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 9.8490 | 13.4000 | -26.5% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 2.9971 | 0.9916 | +202.2% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 4.7045 | 2.2084 | +113.0% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.4259 | 0.3785 | +12.5% | over 10% | share of resident linked trips |
-| 7 | bus | 3.4480 | 2.3819 | +44.8% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 21,220 | 6,529 | +225.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,260 | 2,954 | -57.3% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0571 | 0.1429 | -60.1% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6321 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 58.8585 | 58.3222 | +0.9% | ok | share of resident linked trips |
+| 2 | ride | 15.5705 | 20.6000 | -24.4% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 13.0363 | 13.4000 | -2.7% | ok | share of resident linked trips |
+| 4 | taxi | 2.6201 | 0.9916 | +164.2% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 4.3623 | 2.2084 | +97.5% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3614 | 0.3785 | -4.5% | ok | share of resident linked trips |
+| 7 | bus | 3.7408 | 2.3819 | +57.0% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 23,984 | 6,529 | +267.4% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,340 | 2,954 | -54.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0263 | 0.1429 | -81.6% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 6.1748 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 314.0000 | 314.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car, walk, motorbike**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -71,7 +69,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 16 Aug on the boundary-derived extent; 15 feeds mapped, 0 unmapped stops; one build per comparison (§3.5, §9.35) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains, plans and the 30 run-input sets rebuilt on it 30 Aug, `check_package.py` ALL CHECKS PASSED (§9.133) |
-| P4 calibration | 🟡 | the newest run on disk is `20260910T222830_300it_25pct`, which is **RUNNING** - **F33's arm 0**, the baseline with no control switched on, priced at 19.0 h against an approved 26 h ceiling and holding the control half of five paired arms (§9.164, #172). The newest RESULT is still `20260909T015217_300it_25pct`, 300 of 300 in 21.5 h, **0 of 12 inside 10 %, 8 past the stop bar** (§9.162), and it belongs to the family BEFORE the open one. *Pinned by `check_doc_currency.py`.* |
+| P4 calibration | 🟡 | the newest run on disk is `aborted_20260910T222830_300it_25pct`, which is **DEAD AND ITS RECORD SAYS WHY** - F33's arm 0, `OutOfMemoryError` in iteration 98 on a 14 GB heap its overlay failed to raise to the landed arm's 40 GB (§9.165); no warm-start point. **F33 has no reading.** The newest RESULT is `20260909T015217_300it_25pct`, **0 of 12 inside 10 %, 8 past the stop bar** (§9.162), in the family before the open one. *Pinned by `check_doc_currency.py`.* |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -83,7 +81,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | Input registry | **514 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **512 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (10 September 2026 (forty-first session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (10 September 2026 (forty-first session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (10 September 2026 (forty-first session)) · [network-and-inputs](positions/network-and-inputs.md) (10 September 2026 (forty-first session)) · [population-and-demand](positions/population-and-demand.md) (10 September 2026 (forty-first session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (10 September 2026 (forty-first session)) · [ride-and-pairing](positions/ride-and-pairing.md) (10 September 2026 (forty-first session)) · [runs-and-economics](positions/runs-and-economics.md) (10 September 2026 (forty-first session)) · [sampling-and-families](positions/sampling-and-families.md) (10 September 2026 (forty-first session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (10 September 2026 (forty-first session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (10 September 2026 (forty-first session)) · [walk-and-bike](positions/walk-and-bike.md) (10 September 2026 (forty-first session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (10 September 2026 (forty-first session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (10 September 2026 (forty-first session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (10 September 2026 (forty-first session)) · [network-and-inputs](positions/network-and-inputs.md) (10 September 2026 (forty-first session)) · [population-and-demand](positions/population-and-demand.md) (10 September 2026 (forty-first session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (10 September 2026 (forty-first session)) · [ride-and-pairing](positions/ride-and-pairing.md) (10 September 2026 (forty-first session)) · [runs-and-economics](positions/runs-and-economics.md) (11 September 2026 (forty-second session)) · [sampling-and-families](positions/sampling-and-families.md) (11 September 2026 (forty-second session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (10 September 2026 (forty-first session)) · [signals-and-crossings](positions/signals-and-crossings.md) (3 September 2026 (twenty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (10 September 2026 (forty-first session)) · [walk-and-bike](positions/walk-and-bike.md) (10 September 2026 (forty-first session)) |
 <!-- generated:state end -->
 
 **NO ARM RAN, AND A FAMILY OPENED ANYWAY - because a family opens at a LAUNCH
@@ -105,7 +103,7 @@ unit suite is **324** tests.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260910T222830_300it_25pct` | running | F33-the-passenger-is-put-on-ride | - | - |
+| `aborted_20260910T222830_300it_25pct` | failed | F33-the-passenger-is-put-on-ride | 98 | OutOfMemoryError: Java heap space |
 | `20260910T215129_4it_25pct` | completed | F33-the-passenger-is-put-on-ride | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260910T205517_20it_1pct` | aborted | F33-the-passenger-is-put-on-ride | 3 | Stopped automatically by the ceiling watcher at 0.05 h against an approved ceiling of 0.05 h (RUN.gate.wall_ceiling_h), at iteration 4. T... |
 | `20260910T204747_4it_1pct` | completed | F33-the-passenger-is-put-on-ride | 4 | ran_to_last_iteration `_run.json` |
