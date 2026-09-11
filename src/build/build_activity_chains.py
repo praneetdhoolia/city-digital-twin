@@ -1210,6 +1210,91 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
     return legs, anchors
 
 
+# --------------------------------------------------------------------------
+# The binder passes' shared skeleton (#191). Four passes - escort (9.46),
+# lift (9.60), joint (9.84), shared (9.124) - are four RULE SETS over one
+# skeleton: read the closed day file, index its core rows by person, test a
+# candidate against a person's busy intervals, resequence and rewrite the
+# day grouped by person under the #65 contiguity invariant, write the
+# bindings table. The skeleton lives here once; the rules stay in each pass
+# because their candidate order IS the model - it decides who is bound to
+# whom - and a shared abstraction over four different orders would be a
+# fifth model nobody declared. Every helper is the verbatim block it
+# replaced: the committed B2 tables rebuild byte-identical.
+# --------------------------------------------------------------------------
+def read_day(path):
+    """The closed day file's rows, in file order."""
+    with open(path, encoding='utf-8') as fh:
+        return list(csv.DictReader(fh))
+
+
+def core_rows_of(rows):
+    """person_id -> row indexes, core tier only, in file order."""
+    rows_of = collections.defaultdict(list)
+    for ix, r in enumerate(rows):
+        if r['agent_tier'] == 'core':
+            rows_of[r['person_id']].append(ix)
+    return rows_of
+
+
+def collides(start, end, busy):
+    """True when [start, end] overlaps any busy interval inside the buffer."""
+    return any(start < e + COMPANION_BUFFER_S and end > s - COMPANION_BUFFER_S
+               for s, e in busy)
+
+
+def resequence(day_rows):
+    """A person's rows in departure order, trip_seq renumbered from 1."""
+    day_rows.sort(key=lambda r: (int(r['dep_time_s']), int(r['tour_id'])))
+    for seq, r in enumerate(day_rows, start=1):
+        r['trip_seq'] = seq
+    return day_rows
+
+
+def assert_contiguous(by_person, who, day):
+    """The #65 invariant: a person's tours stay CONTIGUOUS in trip_seq. With
+    one mode per tour and every tour anchored at home, contiguity is what
+    structurally excludes the mixed chain/non-chain subtours
+    SubtourModeChoice refuses."""
+    for p, day_rows in by_person.items():
+        prev, seen_tours = None, set()
+        for r in day_rows:
+            t = r['tour_id']
+            if t != prev:
+                if t in seen_tours:
+                    raise SystemExit(
+                        '%s: interleaved tours for person %s on %s - refusing '
+                        'to write a demand that crashes SubtourModeChoice '
+                        '(#65)' % (who, p, day))
+                seen_tours.add(t)
+                prev = t
+
+
+def rewrite_day(path, rows, by_person):
+    """Rewrite the day file grouped by person, persons in first-seen order."""
+    seen = set()
+    with open(path, 'w', newline='', encoding='utf-8') as fh:
+        w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
+                           lineterminator='\n')
+        w.writeheader()
+        for r in rows:
+            p = r['person_id']
+            if p in seen:
+                continue
+            seen.add(p)
+            for row in by_person[p]:
+                w.writerow(row)
+
+
+def write_bindings(bpath, cols, bindings, key=None):
+    """The pass's bindings table, in the order the pass declares."""
+    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, lineterminator='\n')
+        w.writeheader()
+        for b in (sorted(bindings, key=key) if key else bindings):
+            w.writerow(b)
+
+
 def bind_escort_tours(n_hx, candidates, claimed, pending):
     """Choose which household trips up to `n_hx` escort tours are bound to.
 
@@ -1326,13 +1411,8 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
                drivers_refused_no_vehicle=0)
     if not out['enabled'] or not ESCORT_BINDING:
         return out
-    with open(path, encoding='utf-8') as fh:
-        rows = list(csv.DictReader(fh))
-
-    rows_of = collections.defaultdict(list)   # person_id -> row indexes
-    for ix, r in enumerate(rows):
-        if r['agent_tier'] == 'core':
-            rows_of[r['person_id']].append(ix)
+    rows = read_day(path)
+    rows_of = core_rows_of(rows)              # person_id -> row indexes
 
     round_trip = ESCORT_DIRECTIONS == 'round_trip'
     out['directions'] = ESCORT_DIRECTIONS
@@ -1433,8 +1513,7 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
             iv = busy[r['tour_id']]
             iv[0] = min(iv[0], int(r['dep_time_s']))
             iv[1] = max(iv[1], int(r['arr_time_s']))
-        if any(t_start < e + COMPANION_BUFFER_S and arr_home > s - COMPANION_BUFFER_S
-               for s, e in busy.values()):
+        if collides(t_start, arr_home, busy.values()):
             out['skipped_infeasible'] += 1
             return None
         tail_s = DAY_HORIZON_S - 24 * 3600
@@ -1543,52 +1622,17 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
         for (d_pid, d_tid), new_rows in replaced.items():
             day_rows = [r for r in by_person[d_pid] if r['tour_id'] != d_tid]
             day_rows += new_rows
-            day_rows.sort(key=lambda r: (int(r['dep_time_s']),
-                                         int(r['tour_id'])))
-            for seq, r in enumerate(day_rows, start=1):
-                r['trip_seq'] = seq
-            by_person[d_pid] = day_rows
-        # The invariant the splice must preserve: a person's tours stay
-        # CONTIGUOUS in trip_seq. With one mode per tour and every tour
-        # anchored at home, contiguity is what structurally excludes the
-        # mixed chain/non-chain subtours SubtourModeChoice refuses (#65).
-        for p, day_rows in by_person.items():
-            prev, seen_tours = None, set()
-            for r in day_rows:
-                t = r['tour_id']
-                if t != prev:
-                    if t in seen_tours:
-                        raise SystemExit(
-                            'bind_nonhousehold_lifts: interleaved tours for '
-                            'person %s on %s - refusing to write a demand '
-                            'that crashes SubtourModeChoice (#65)' % (p, day))
-                    seen_tours.add(t)
-                    prev = t
-        seen = set()
-        with open(path, 'w', newline='', encoding='utf-8') as fh:
-            w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
-                               lineterminator='\n')
-            w.writeheader()
-            for r in rows:
-                p = r['person_id']
-                if p in seen:
-                    continue
-                seen.add(p)
-                for row in by_person[p]:
-                    w.writerow(row)
+            by_person[d_pid] = resequence(day_rows)
+        assert_contiguous(by_person, 'bind_nonhousehold_lifts', day)
+        rewrite_day(path, rows, by_person)
 
     bpath = os.path.join(OUT, 'B2_lift_bindings_%s.csv' % day)
-    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=[
-            'passenger_person_id', 'passenger_tour_id', 'passenger_dep_s',
-            'priority', 'direction', 'origin_x', 'origin_y', 'dest_x',
-            'dest_y', 'driver_person_id', 'driver_household_id',
-            'driver_tour_id'], lineterminator='\n')
-        w.writeheader()
-        for b in sorted(bindings,
-                        key=lambda b: (int(b['passenger_person_id']),
-                                       b['passenger_tour_id'])):
-            w.writerow(b)
+    write_bindings(bpath, [
+        'passenger_person_id', 'passenger_tour_id', 'passenger_dep_s',
+        'priority', 'direction', 'origin_x', 'origin_y', 'dest_x',
+        'dest_y', 'driver_person_id', 'driver_household_id',
+        'driver_tour_id'], bindings,
+        key=lambda b: (int(b['passenger_person_id']), b['passenger_tour_id']))
     return out
 
 
@@ -1640,14 +1684,9 @@ def bind_joint_tours(path, day, pctx, seed):
                            lineterminator='\n').writeheader()
         return out
 
-    with open(path, encoding='utf-8') as fh:
-        rows = list(csv.DictReader(fh))
-    rows_of = collections.defaultdict(list)   # person_id -> row indexes
-    n_core = 0
-    for ix, r in enumerate(rows):
-        if r['agent_tier'] == 'core':
-            rows_of[r['person_id']].append(ix)
-            n_core += 1
+    rows = read_day(path)
+    rows_of = core_rows_of(rows)              # person_id -> row indexes
+    n_core = sum(len(v) for v in rows_of.values())
 
     # trips already coordinated by the earlier passes count toward the
     # target first: a member tour covered round-trip by 9.46/9.68 escorts,
@@ -1849,7 +1888,7 @@ def bind_joint_tours(path, day, pctx, seed):
             d_rows = effective_rows(d_pid, d_tid)
             t_start = min(int(r['dep_time_s']) for r in d_rows)
             t_end = max(int(r['arr_time_s']) for r in d_rows)
-            if any(t_start < e + COMPANION_BUFFER_S and t_end > s - COMPANION_BUFFER_S for s, e in busy):
+            if collides(t_start, t_end, busy):
                 why['as_timed_collides_with_companion'] += 1
                 continue
             chosen = (d_pid, d_tid, d_rows, t_start, t_end, 0)
@@ -1878,12 +1917,10 @@ def bind_joint_tours(path, day, pctx, seed):
                 if s_start < 0 or s_end > DAY_HORIZON_S:
                     why['shift_leaves_day_horizon'] += 1
                     continue
-                if any(s_start < e + COMPANION_BUFFER_S and s_end > s - COMPANION_BUFFER_S
-                       for s, e in busy):
+                if collides(s_start, s_end, busy):
                     why['shift_collides_with_companion'] += 1
                     continue
-                if any(s_start < e + COMPANION_BUFFER_S and s_end > s - COMPANION_BUFFER_S
-                       for s, e in intervals_of(d_pid, d_tid)):
+                if collides(s_start, s_end, intervals_of(d_pid, d_tid)):
                     why['shift_collides_with_driver'] += 1
                     continue
                 for r in d_rows:
@@ -1946,45 +1983,13 @@ def bind_joint_tours(path, day, pctx, seed):
         resort = ({c for (c, _t) in replaced}
                   | {d for (d, _t) in shifted})
         for p in resort:
-            day_rows = by_person[p]
-            day_rows.sort(key=lambda r: (int(r['dep_time_s']),
-                                         int(r['tour_id'])))
-            for seq, r in enumerate(day_rows, start=1):
-                r['trip_seq'] = seq
-            by_person[p] = day_rows
-        # the #65 invariant: a person's tours stay CONTIGUOUS in trip_seq
-        for p, day_rows in by_person.items():
-            prev, seen_tours = None, set()
-            for r in day_rows:
-                t = r['tour_id']
-                if t != prev:
-                    if t in seen_tours:
-                        raise SystemExit(
-                            'bind_joint_tours: interleaved tours for person '
-                            '%s on %s - refusing to write a demand that '
-                            'crashes SubtourModeChoice (#65)' % (p, day))
-                    seen_tours.add(t)
-                    prev = t
-        seen = set()
-        with open(path, 'w', newline='', encoding='utf-8') as fh:
-            w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
-                               lineterminator='\n')
-            w.writeheader()
-            for r in rows:
-                p = r['person_id']
-                if p in seen:
-                    continue
-                seen.add(p)
-                for row in by_person[p]:
-                    w.writerow(row)
+            by_person[p] = resequence(by_person[p])
+        assert_contiguous(by_person, 'bind_joint_tours', day)
+        rewrite_day(path, rows, by_person)
 
-    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=bind_cols, lineterminator='\n')
-        w.writeheader()
-        for b in sorted(bindings,
-                        key=lambda b: (int(b['companion_person_id']),
-                                       int(b['companion_tour_id']))):
-            w.writerow(b)
+    write_bindings(bpath, bind_cols, bindings,
+                   key=lambda b: (int(b['companion_person_id']),
+                                  int(b['companion_tour_id'])))
     out['refusal_reasons'] = dict(refusal.most_common())
     return out
 
@@ -2132,8 +2137,7 @@ def bind_shared_rides(path, day, pctx, seed):
         with open(bpath, 'w', newline='', encoding='utf-8') as fh:
             csv.DictWriter(fh, fieldnames=cols, lineterminator='\n').writeheader()
         return out
-    with open(path, encoding='utf-8') as fh:
-        rows = list(csv.DictReader(fh))
+    rows = read_day(path)
     core = [r for r in rows if r['agent_tier'] == 'core']
     n_core = len(core)
 
@@ -2336,11 +2340,7 @@ def bind_shared_rides(path, day, pctx, seed):
     # READ against the HTS vehicle-passenger mean, never fitted to it
     out['bound_mean_straight_km'] = round(bound_km / (2 * out['bound']), 3) \
         if out['bound'] else None
-    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, lineterminator='\n')
-        w.writeheader()
-        for b in bindings:
-            w.writerow(b)
+    write_bindings(bpath, cols, bindings)
     return out
 
 
