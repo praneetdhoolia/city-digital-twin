@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -86,6 +86,7 @@
 
 ## History
 
+- §9.166 — 521 fields; superseded bullets retired; reports under the city
 - §9.164 — no MATSim default decides the model unreviewed
 - §9.163 — the counts map repaired; ten defaults reviewed; three fields off
 - §9.158 — lineage per output; the share-alike boundary checked, 512 rows agree
@@ -100,5 +101,3 @@
 - §9.130 — rail boardings held to disclosed
 - §9.117 — local suite failing on main
 - §9.116 — builder stopped reproducing committed demand
-- §9.113 — count departures, not route tags
-- §9.90 — crossings timed from rail timetable

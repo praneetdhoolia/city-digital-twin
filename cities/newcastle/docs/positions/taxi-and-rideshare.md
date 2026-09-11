@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -36,6 +36,8 @@
 
 ## What is open
 
+- **The fare stress probe DID reach the run** (§9.166): `taxi_fare_stress_1pct` set both per-km fares in a run overlay, and the emission test of the new override refusal confirms `config_runtime`'s blend carries them into `monetaryDistanceRate` at launch — the calibrator's stage table, which classes every field `build_matsim_run_inputs.py` consumes as needing the run inputs rebuilt, is too coarse for the fields `config_runtime` derives. A study-area trip COUNT remains the observation taxi lacks: the P2P Commissioner's levy counts are unpublished and were refused as a request at §9.42; the IPART consultant report is acquirable into `data/raw/p2p/` (eighth report, factor lane).
+
 - **The remaining excess is a fleet-size question, and the loop can now reach it** (§9.99, §9.158): `B.taxi.max_wait_min` and `B.taxi.deadhead_min` are movable, and `B.taxi.vehicle_trips_per_day` remains the lever §9.99 named — a sweep, not a fit. **But the reading point cannot yet score a candidate on taxi** (15.72 points of within-run drift at the F31 gate, §9.158), so a search over them is refused until the reading changes. `B.taxi.vehicle_trips_per_day` is the lever, and it is a sweep, not a fit: it moves the fleet by a factor of 2.3 (§9.99). No arm since F13 has been run with `absent` to measure the fleet's own effect (§9.99).
 - **The refused-request fallback is still walk.** §9.105 replaced ride's unpaired fallback with `B.ride.unpaired_fallback` = `licensed_drive_else_walk` and named the same walk for a refused taxi; the taxi engine still walks a refusal (`src/java/citysim/TaxiFleetEngine.java`). Whether taxi should take the same member is undecided.
 - **Two stated simplifications:** empty running loads no link, and there is no spatial dispatch; `B.taxi.deadhead_min` stands in for both (§9.99). A full demand-responsive fleet would add the routed empty legs (§9.86, §9.99).
@@ -57,6 +59,7 @@
 
 ## History
 
+- §9.166 — the fare probe did reach the run (config_runtime); P2P counts refused by 9.42
 - §9.163 — taxi has 51.6 pp of headroom; the excess is a level
 - §9.158 — the loop reaches taxi's supply and price; no ASC step, no independent target
 - §9.162 — the first result: taxi +202.2 %, and still moving away
@@ -71,4 +74,3 @@
 - §9.99 — finite fleet, refused request walks
 - §9.94 — supply is the cause; fleet blocked
 - §9.91 — IPART band replaces census target
-- §9.87 — twelve targets, census split taxi

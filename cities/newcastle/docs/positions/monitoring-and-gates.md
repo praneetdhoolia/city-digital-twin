@@ -2,9 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
+
+- **PT BOARDINGS ARE READ FROM ONE SOURCE AT EVERY ITERATION** (§9.166): MATSim's legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`). The plans carry ~1.3 % more boarded pt legs than the table on `20260909T015217_300it_25pct` at 300 (23,070 vs 22,769 — the in-progress legs of stuck agents), so a gate read from plans and a milestone read from the table disagreed on one run; the board and `fit.py` now share the table's basis. The disclosed-station filter matches the station name whole (`station_of`), never as a substring; it reproduces 5,305 rail boardings at the disclosed stations exactly. `_metrics.json` and `_fit.json` are written through their output contracts.
+- **The eighth project report** (`reports/20260911T210144_project_report.html`, §9.166) is the first rendered by `render_report.py` from the lanes' JSON; the skill states its cadence — one report per reading, never two on one — after its own audit found 9 reports in 8 days with 76 of 105 recommendations taken and the goal count unmoved.
 
 - **A run that can stop itself on nothing is refused before the JVM starts** (§9.163, #169). Two independent stops exist with different owners: the gate watcher stops on the model being wrong, the wall ceiling on the run being expensive. `run_matsim.py` refuses a launch only when BOTH are off, which is the state `depth_convergence_25pct` was in — its approved 32 h held by a person watching a clock while the arm ran 21.5 h unattended. Turning the gate watcher off stays legitimate and costs one more line on the overlay. `RUN.gate.interval_iterations` defaults to 100 and the gate watcher is ON by default; only the wall ceiling defaults to absent.
 - **`check_package.py` check 7b ties the count-station map to the network it is scored on** (§9.163): every mapped link must resolve on an assembled scenario network AND still carry the road name the map recorded. It fails on the pre-repair map and passes on the current one, so a rebuild cannot silently orphan the rung again.
@@ -111,6 +114,7 @@
 
 ## History
 
+- §9.166 — one boardings source; three launch refusals; the eighth report
 - §9.164 — the ceiling watcher fires; the gate needed the monitor
 - §9.163 — the counts rung repaired; the gate reports the choice-set bound
 - §9.160 — the gate stops passing on prose about itself
@@ -124,6 +128,3 @@
 - §9.149 — the F28 gate: 7 out, car inside for the first time
 - §9.148 — rail boardings from the legs table; a no-readings family off the board
 - §9.147 — the trips cadence declared; plans and events at the gate
-- §9.145 — `miss_declared_absent`; the funnel read with the code
-- §9.143 — the watcher stopped an arm itself, and it closed itself out
-- §9.142 — 89 unit tests, two probes, the tracker clear of blockers

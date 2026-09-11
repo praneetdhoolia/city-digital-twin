@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
+
+- **BOTH PLAN-REMOVAL PATHS HONOUR `RUN.replanning.plan_selector_for_removal`** (§9.166, #174). `EscortCoherenceListener.trim()` removed the lowest-scored plan by its own rule whenever a coherence proposal overfilled plan memory, so the `SelectRandom` control would have switched MATSim's removal and not the listener's; it now injects the selector MATSim binds and re-selects at random if the selector took the selected plan, as `GenericStrategyManagerImpl.removePlans` does (`tests/unit/test_plan_removal_one_selector.py`). `GatedSubtourModeChoice` treats a plan whose subtour decomposition throws as MIXED, not clean. The controler is recompiled; F33 has no reading, so the boundary costs nothing measured.
 
 - **A seeded plan carries PER-TRIP modes, not one mode per tour** (§9.143). That is what lets a partially bound tour ride its covered leg while the uncovered one takes `B.mode.partial_bind_base` = `pt`, keeping the whole subtour non-chain so the chain/non-chain mix `ChooseRandomLegModeForSubtour` refuses (§9.119) is unreachable by construction. Plan memory now peaks at **7 of `RUN.replanning.max_agent_plan_memory`** = 8; `check_package.py` reads that cap from the registry rather than a hard-coded count, because MATSim removes an UNSCORED plan first when memory overflows and a seed wider than the memory silently loses part of the choice set.
 - **The seed is the choice set.** `B.mode.seed_method` = `full_choice_set` (§9.120). `src/build/build_matsim_plans.py` writes one plan per mode the person may use — car where a car is available, walk, bike where one is available and the person is old enough, pt, taxi where old enough — each mode on every tour it may take, serving tours held at car, and one further plan riding the covered tours where the demand named a driver. No mode is favoured: each is one plan, once. WEEKDAY carries 2–6 plans per person and 9,880,427 seeded legs against 2,343,321 in the selected plans (§9.126).
@@ -79,6 +81,7 @@
 
 ## History
 
+- §9.166 — plan removal honours the selector on both paths (#174)
 - §9.164 — the passenger is put on ride; the selector is declared
 - §9.163 — coverage bounds the constants; ride's target unreachable
 - §9.162 — the first result: it relaxes, 0 of 12 inside
@@ -93,5 +96,3 @@
 - §9.120 — seed becomes the full choice set
 - §9.119 — mixed proposals refused, arrivals aside
 - §9.118 — coherence listener converts root subtour
-- §9.108 — read the trend, not level
-- §9.96 — ride's seed share was the draw

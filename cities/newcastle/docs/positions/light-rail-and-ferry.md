@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -93,6 +93,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.166 — the tsp bullet re-aimed at the landed −57.3 %
 - §9.164 — the pt submodes get a plan-level control
 - §9.163 — the ferry market is present at 3.60 %; the mode is not chosen
 - §9.158 — a ferry constant declared, light rail's opened; the raptor prices no constant
@@ -107,5 +108,3 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 - §9.131 — licence rebuild pending; F21 next
 - §9.130 — disclosed boardings target 2,954
 - §9.122 — ferry target moves to LGA cell
-- §9.121 — network direct walk repairs ferry
-- §9.120 — corridor market measured; router reach declared

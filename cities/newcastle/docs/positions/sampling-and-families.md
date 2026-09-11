@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-second session) · **Record read through:** §9.165 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -94,6 +94,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 
 ## History
 
+- §9.166 — the families table rejoined; F33 still has no reading
 - §9.165 — F33's arm 0 dies on heap; the family has no reading
 - §9.164 — F33 opens at the probe; the demand is rebuilt
 - §9.160 — F32 opens at the probe; crowding reaches scoring
@@ -108,6 +109,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (the va
 - §9.144 — F26 opens at a rebuild, on the demand only
 - §9.143 — F25 opens on plan memory reaching the bound trips
 - §9.142 — F24 is a boundary on the demand, the plans and the controler
-- §9.140 — F24 package built, unlaunched
-- §9.139 — F23 gate arm read at 25%
-- §9.138 — F23 opens on the behaviour channels

@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-second session) · **Record read through:** §9.165 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
+
+- **THREE REFUSALS AND ONE KILL NOW STAND BETWEEN A LAUNCH AND A LOST DAY** (§9.166, eighth report). The launcher refuses a heap below the registry's own rule — `RUN.machine.heap_floor_gib` 9.6 + `RUN.machine.heap_per_fraction_gib` 87 × fraction = 31.4 GiB at 25 % — which `RUN.machine.xmx` had carried as prose since §9.5 and nothing read (`src/run/run_matsim.py` `refuse_small_heap`); it refuses a run overlay or `--config-set` that, put back to its registry value, changes neither the emitted config nor the vehicle types (`refuse_unrealised_overrides`, tested on all 66 committed overlays); and a log silent for `RUN.gate.stall_kill_s` = 1800 s is stopped with the new `stopped_at_stall` boundary, citable at its `reached_iteration` like a ceiling stop. `RUN.machine.gc_log` is on by default. A warm start re-derives `RUN.replanning.fraction_to_disable_innovation` so the cutoff ITERATION is the parent's — the pinned jar's `first + f × (last − first)` moved it 240 → 260 at N = 100 (#192). `RUN.controler.create_graphs` is off on `f33_baseline_25pct` (112 MB of PNGs on the dead arm).
 
 - **THE DEPENDENCIES ARE PINNED, AND A DEPENDENCY CHANGE IS NOW A MODEL CHANGE** (§9.158). `requirements.txt` pins 11 directly-imported packages and 15 transitive ones, all at `==`, and `tests/check_requirements.py` **parses the repository's own imports** rather than trusting a hand-kept list; it is a CI job. No hashes: `--require-hashes` needs wheel downloads at install time, which `.claude/settings.json` admits (`pypi.org`, `files.pythonhosted.org`) but which the pinning session did not spend, and the file says so rather than leaving the gap unstated. Until this the toolchain was pinned by sha256 while the Python that builds every artefact was whatever `pip` last resolved.
 - **Build wall time is recorded for the first time, and it is OUTSIDE the hashed set** (§9.158). `src/build/build_timing.py` is called by 30 builders and lands in `cities/<city>/data/_build_timing.json`, gitignored and outside the manifest — **proved: 0 of 512 sha256 values moved**. A wall time inside a hashed artefact would churn every hash on every rebuild, which §9.155 already refused for a different reason.
@@ -119,12 +121,10 @@
 
 ## History
 
+- §9.166 — the heap rule, the stall kill and the override refusal reach the launcher
 - §9.165 — arm 0 dies at 98 on a 14g heap; reconcile reads the log first
 - §9.164 — four probes; the ceiling watcher stops a run for the first time
 - §9.163 — 21.5 h uninterrupted; the stall is unattributed, not absent
 - §9.161 — the runner enforces its own approved ceiling
 - §9.160 — the new stack priced: +3.0 s; the ceiling has no enforcer
 - §9.159 — 336.4 GiB reclaimed, the store 93.4 % → 26.1 %; `reclaim()` is the verb
-- §9.158 — dependencies pinned; the store refuses to delete what it cannot reconstruct
-- §9.157 — the quoted band held; the top anchor right to 0.5 %
-- §9.149 — F28 to its gate at a median 260 s an iteration

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -96,6 +96,7 @@
 
 ## History
 
+- §9.166 — TfNSW bespoke tables obtainable; mobility draw declared
 - §9.164 — the whole-day discard is repaired; the demand rebuilt
 - §9.163 — the roster binds harder; half of declared passengers drive
 - §9.158 — the plans carry OSM geometry and are share-alike; #50 is an acquisition
@@ -110,5 +111,3 @@
 - §9.138 — census income reaches money scoring
 - §9.133 — demand chain rebuilt on licence-rate population
 - §9.131 — licence rate measured per LGA
-- §9.129 — bucket rule; carves on drawn pool
-- §9.125 — resident truck drivers carved from G62

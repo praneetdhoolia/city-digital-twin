@@ -2,9 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
+
+- **THE NINE `C.asc.*` CONSTANTS REACH THE RUN FROM THE REGISTRY** (§9.166). Until 11 September `scoring_from_c1` took them from `params/C1_parameters.json`, a table `build_params.py` writes from the registry at BUILD time, so `--config-set C.asc.bus=-1.5` — which `calibrate.rebuild_stage` classes as run-time realisable — was validated, recorded and never executed; the ASC contraction test (§9.160) would have measured nothing. The emitter reads them at every launch, byte-identical for the shipped values (`tests/unit/test_override_reaches_the_run.py`); the name-to-key mapping is `src/build/asc_fields.py`, shared by both builders.
 - **THE ROUTER THAT PICKS THE SUBMODE NOW HAS A CONSTANT TO PICK IT WITH, BEHIND A GATE** (§9.162, #49). `citysim.RaptorModeCostCalculator` is the stock `DefaultRaptorInVehicleCostCalculator` plus the boarded submode's own `scoring.modeParams` constant, negated because `getInVehicleCost` returns a cost and a constant is a utility. It declares **no value of its own** - the constants are already `C.asc.*` - so it is a CONSISTENCY between the router's objective and the scoring function the plan is judged by, not a second set of tastes to calibrate. The submode comes from the transit vehicle type's own `networkMode` (`bus`/`rail`/`tram`/`ferry` in the mapped schedule), so no mode name is typed into the framework. Gated by `C.raptor.mode_cost_representation`, **shipped `absent`**, categorical `[absent, mode_constant]`; at `absent` `SwissRailRaptorModule`'s own binding is left in place and the previous model is recovered exactly. **Built and deployed, NEVER RUN** - it opens a comparability family and no arm has carried it.
 - **Where the constant lands, read from the pinned jar** (§9.162). `SwissRailRaptorCore` calls `getInVehicleCost` once per CANDIDATE ALIGHTING STOP with the in-vehicle time from boarding to that candidate - the whole ride, not an increment - and adds the result to the cost accumulated at boarding. So a constant added there is charged exactly **once per boarded leg**, cannot distort the choice of alighting stop within a leg, and discriminates between legs on different submodes and between one boarding and two.
 - **The fare and a distance term were designed into the same change and CANNOT go at that hook** (§9.162). `getInVehicleCost` is handed no distance and no stop or route identity: its `RouteSegmentIterator` exposes `hasNext`, `next`, `getInVehicleTime`, `getPassengerCount` and `getTimeOfDay` and nothing else (javap, `matsim-2027.0-2026w25.jar`), and the published Opal schedule is banded in KILOMETRES ([`PtFareConfigGroup`](../../../../src/java/citysim/PtFareConfigGroup.java)). The fare therefore stays where the route is known - in scoring, charged by `citysim.PtFareChargeHandler` on the route actually ridden. Deriving a distance from in-vehicle time and an assumed speed was considered and REFUSED: it would be an invented input inside a router.
@@ -111,6 +113,7 @@ Latest twelve-mode reading, and the project's FIRST RESULT: `results/raw/2026090
 
 ## History
 
+- §9.166 — light rail 1,224 on the legs-table basis; C.asc.* reach the run
 - §9.164 — headway and reliability finally reach the model
 - §9.163 — the walk fallback holds at depth; pt reaches 25.78 %
 - §9.161 — #167 diagnosed: our plans declare no routingMode
@@ -125,5 +128,3 @@ Latest twelve-mode reading, and the project's FIRST RESULT: `results/raw/2026090
 - §9.135 — the published Opal fare priced in
 - §9.134 — F21 gate: rail halved, tram away
 - §9.131 — licence rate now measured, rail cause
-- §9.130 — rail modes held to disclosed boardings
-- §9.113 — day tag is not service; supply exonerated

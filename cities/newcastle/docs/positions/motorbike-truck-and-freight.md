@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -72,6 +72,7 @@
 
 ## History
 
+- §9.166 — #93's closed bullet retired
 - §9.163 — motorbike on one basis at +12.5 %; #93 closed
 - §9.146 — F26 gate +11.1 %; the carve draws no bound passenger
 - §9.140 — carve conserved per LGA, rebuilt
@@ -86,4 +87,3 @@
 - §9.115 — carve and target one identity
 - §9.112 — carve told one share, scored another
 - §9.101 — truck scored at its own stations
-- §9.90 — crossings derived from the timetable

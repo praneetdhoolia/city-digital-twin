@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -109,6 +109,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.166 — trim() removes through the declared selector; arm 0 lost
 - §9.164 — the declared passenger is put on ride at the demand
 - §9.163 — the target is above the choice set; the passenger drives
 - §9.160 — ride measured CONVERGED at -38.0 %; it is supply
@@ -123,5 +124,3 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - §9.145 — the dominant miss is not a window; measure F26 rather than patch
 - §9.144 — a declared driver owns a car, in all four passes
 - §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
-- §9.142 — the binders reach target; the loss is in plan memory
-- §9.140 — #91 closed; ride survives memory
