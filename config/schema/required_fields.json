@@ -4,13 +4,13 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 528,
+  "n_fields": 549,
   "n_by_layer": {
-    "A": 189,
-    "B": 118,
+    "A": 198,
+    "B": 126,
     "C": 58,
     "CAL": 27,
-    "D": 5,
+    "D": 9,
     "E": 26,
     "RUN": 105
   },
@@ -150,6 +150,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.corridor.ped_clearance_s": {
+      "layer": "A",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.corridor.pre_lr_lanes_per_dir": {
       "layer": "A",
       "units": "lanes_per_direction",
@@ -168,6 +177,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.corridor.reserved_alignment_delay_factor": {
+      "layer": "A",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.corridor.shape_coverage_tolerance_m": {
       "layer": "A",
       "units": "metres",
@@ -177,9 +195,54 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.corridor.signal_cycle_time_s": {
+      "layer": "A",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.corridor.signal_delay_share_of_cycle": {
+      "layer": "A",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.corridor.signal_phase_split_pct": {
+      "layer": "A",
+      "units": "percent",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.corridor.trunk_buffer_m": {
       "layer": "A",
       "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.corridor.tsp_delay_factor": {
+      "layer": "A",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.corridor.tsp_max_extension_s": {
+      "layer": "A",
+      "units": "seconds",
       "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
@@ -1545,6 +1608,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.transit.era1_alignment_detour_factor": {
+      "layer": "A",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.transit.era1_line_speed_kmh": {
       "layer": "A",
       "units": "km_per_hour",
@@ -1662,6 +1734,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.transit.scenario_alignment_detour_factor": {
+      "layer": "A",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.transit.transfer_crossing_delay_s": {
       "layer": "A",
       "units": "seconds",
@@ -1755,6 +1836,15 @@
     "B.activity.child_tour_retention": {
       "layer": "B",
       "units": "probability",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.activity.companion_buffer_s": {
+      "layer": "B",
+      "units": "seconds",
       "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
@@ -1873,6 +1963,15 @@
       "layer": "B",
       "units": "enum",
       "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.activity.escort_dwell_s": {
+      "layer": "B",
+      "units": "seconds",
+      "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
@@ -2436,6 +2535,51 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.population.home_jitter_radius_factor": {
+      "layer": "B",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.population.household_size_tail_p": {
+      "layer": "B",
+      "units": "probability",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.population.household_size_top_band_mean": {
+      "layer": "B",
+      "units": "persons",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.population.labour_force_min_age": {
+      "layer": "B",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.population.licence_min_age": {
+      "layer": "B",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.population.licence_rate_by_age_band": {
       "layer": "B",
       "units": "probability",
@@ -2486,6 +2630,15 @@
       "units": "boolean",
       "type": "boolean",
       "source_in_reference_city": "derived",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.population.school_full_time_max_age": {
+      "layer": "B",
+      "units": "years",
+      "type": "number",
+      "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
@@ -3543,6 +3696,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "CAL_calibration.json"
     },
+    "D.attraction.education_population_floor": {
+      "layer": "D",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "D_landuse.json"
+    },
     "D.attraction.job_weight_by_category": {
       "layer": "D",
       "units": "jobs_per_poi_weight",
@@ -3576,6 +3738,33 @@
       "type": "number",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "D_landuse.json"
+    },
+    "D.landuse.frontage_unit_m": {
+      "layer": "D",
+      "units": "metres",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "D_landuse.json"
+    },
+    "D.landuse.poi_attraction_weights": {
+      "layer": "D",
+      "units": "ratio",
+      "type": "object",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "D_landuse.json"
+    },
+    "D.landuse.retail_gfa_share": {
+      "layer": "D",
+      "units": "ratio",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "D_landuse.json"
     },

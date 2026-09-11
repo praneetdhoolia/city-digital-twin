@@ -26,6 +26,11 @@ import rasterio
 from rasterio.merge import merge
 
 DEM_DIR = _city.path('data/raw/dem')
+_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..'))
+import registry as _registry  # noqa: E402
+_CFG = _registry.load()
+TOBLER_SLOPE = float(_CFG.get('A.gradient.walk_tobler_slope_coeff'))
+TOBLER_OFFSET = float(_CFG.get('A.gradient.walk_tobler_offset'))
 NET = _city.path('data/processed/network')
 
 TILES = [os.path.join(DEM_DIR, f) for f in sorted(os.listdir(DEM_DIR)) if f.endswith('.tif')]
@@ -61,10 +66,15 @@ def sampler(arr, tf, nod):
 
 def tobler_factor(g):
     """Walking speed multiplier relative to flat, from Tobler's hiking function
-    normalised so that a 0% grade gives 1.0."""
+    normalised so that a 0% grade gives 1.0.
+
+    The two constants are the DECLARED ones - A.gradient.walk_tobler_slope_coeff
+    and A.gradient.walk_tobler_offset - which the run's GradientConfigGroup
+    reads for the same function; they were typed here a second time (#188).
+    """
     s = g / 100.0
-    v = math.exp(-3.5 * abs(s + 0.05))
-    return v / math.exp(-3.5 * 0.05)
+    v = math.exp(-TOBLER_SLOPE * abs(s + TOBLER_OFFSET))
+    return v / math.exp(-TOBLER_SLOPE * TOBLER_OFFSET)
 
 
 def process(edges_csv, geom_jsonl, id_field, out_csv):

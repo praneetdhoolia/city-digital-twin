@@ -309,6 +309,11 @@ BALANCE_TOL = CFG.get('B.activity.balancing_tolerance')
 # Applied as per-tour thinning, not as a scaling of the count.
 CHILD_TOUR_RETENTION = CFG.get('B.activity.child_tour_retention')
 CHILD_TOUR_RETENTION_SWEEP = tuple(CFG.sweep('B.activity.child_tour_retention'))
+# the clearance a companion tour keeps from a busy interval, and the dwell
+# at each end of a serve tour: both were inline literals (600 s, 300 s)
+# in four functions until 12 Sep 2026 (#188)
+COMPANION_BUFFER_S = int(CFG.get('B.activity.companion_buffer_s'))
+ESCORT_DWELL_S = int(CFG.get('B.activity.escort_dwell_s'))
 P_INTERMEDIATE_SWEEP = tuple(CFG.sweep('B.activity.p_intermediate_stop'))
 
 # Straight-line to network distance, used to compare the gravity model against
@@ -795,8 +800,15 @@ def load_network_factors():
     """
     global DETOUR_FACTOR, DETOUR_SWEEP, DETOUR_SOURCE
     global P_MANDATORY_WORK_SWEEP
-    shape = {'WEEKDAY': 1.0, 'SAT': 0.95, 'SUN': 0.80}
-    shape_source = 'assumed - C2 factors file not found'
+    if not os.path.exists(NETWORK_FACTORS):
+        # No silent fallback: the day-type shape used to fall back to an
+        # ASSUMED {SAT 0.95, SUN 0.80} typed here when the C2 measurements
+        # were missing (#188). The measurements exist and are what the build
+        # rests on; a package without them is rebuilt, not guessed at.
+        raise SystemExit('no C2 network factors at %s - run '
+                         'src/build/measure_network_factors.py first; the '
+                         'day-type shape is MEASURED there and is not assumed '
+                         'here' % NETWORK_FACTORS)
     if os.path.exists(NETWORK_FACTORS):
         c2 = json.load(open(NETWORK_FACTORS, encoding='utf-8'))
         d = c2['detour_factor']
@@ -1123,8 +1135,8 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
     for oi in order:
         purpose = tours[oi]
         t_start = starts[oi]
-        if t_now is not None and t_start < t_now + 600:
-            t_start = t_now + 600
+        if t_now is not None and t_start < t_now + COMPANION_BUFFER_S:
+            t_start = t_now + COMPANION_BUFFER_S
         spec = draw_tour_spec(purpose, hz, CUM, store, zone_arr, u)
         # flow around the immovable escort tours: a movable tour that would
         # overlap one is pushed past its end and re-timed (never redrawn)
@@ -1132,10 +1144,10 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
         while t_start <= DAY_HORIZON_S - 3600:
             legs_m, arr_home = time_tour(spec, t_start, person, hx, hy, hz, SA1)
             hit = next(((fs, fe) for fs, fe in fixed_intervals
-                        if t_start < fe + 600 and arr_home > fs), None)
+                        if t_start < fe + COMPANION_BUFFER_S and arr_home > fs), None)
             if hit is None:
                 break
-            t_start = hit[1] + 600
+            t_start = hit[1] + COMPANION_BUFFER_S
             legs_m = None
         if legs_m is None:
             # 9.164 (#30): DROP THIS TOUR, NOT THE REST OF THE DAY. This
@@ -1393,7 +1405,7 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
         committed, so a round-trip pair is checked as a whole (9.68).
         """
         ctx_d = pctx[d_pid]
-        spec = dict(purpose='HX', chain=chain, durs=[300, 300])
+        spec = dict(purpose='HX', chain=chain, durs=[ESCORT_DWELL_S, ESCORT_DWELL_S])
         person_d = dict(cav=ctx_d['cav'])
         probe, _ = time_tour(spec, 0, person_d, ctx_d['hx'], ctx_d['hy'],
                              ctx_d['hz'], SA1)
@@ -1421,7 +1433,7 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
             iv = busy[r['tour_id']]
             iv[0] = min(iv[0], int(r['dep_time_s']))
             iv[1] = max(iv[1], int(r['arr_time_s']))
-        if any(t_start < e + 600 and arr_home > s - 600
+        if any(t_start < e + COMPANION_BUFFER_S and arr_home > s - COMPANION_BUFFER_S
                for s, e in busy.values()):
             out['skipped_infeasible'] += 1
             return None
@@ -1837,7 +1849,7 @@ def bind_joint_tours(path, day, pctx, seed):
             d_rows = effective_rows(d_pid, d_tid)
             t_start = min(int(r['dep_time_s']) for r in d_rows)
             t_end = max(int(r['arr_time_s']) for r in d_rows)
-            if any(t_start < e + 600 and t_end > s - 600 for s, e in busy):
+            if any(t_start < e + COMPANION_BUFFER_S and t_end > s - COMPANION_BUFFER_S for s, e in busy):
                 why['as_timed_collides_with_companion'] += 1
                 continue
             chosen = (d_pid, d_tid, d_rows, t_start, t_end, 0)
@@ -1866,11 +1878,11 @@ def bind_joint_tours(path, day, pctx, seed):
                 if s_start < 0 or s_end > DAY_HORIZON_S:
                     why['shift_leaves_day_horizon'] += 1
                     continue
-                if any(s_start < e + 600 and s_end > s - 600
+                if any(s_start < e + COMPANION_BUFFER_S and s_end > s - COMPANION_BUFFER_S
                        for s, e in busy):
                     why['shift_collides_with_companion'] += 1
                     continue
-                if any(s_start < e + 600 and s_end > s - 600
+                if any(s_start < e + COMPANION_BUFFER_S and s_end > s - COMPANION_BUFFER_S
                        for s, e in intervals_of(d_pid, d_tid)):
                     why['shift_collides_with_driver'] += 1
                     continue

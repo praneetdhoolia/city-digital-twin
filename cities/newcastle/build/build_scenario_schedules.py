@@ -50,6 +50,7 @@ from shape_tools import (RoadGraph, harbourside_corridor, project_onto,
 import sys as _sys
 import registry as _registry  # noqa: E402
 CFG = _registry.load()
+ALIGNMENT_DETOUR = float(CFG.get('A.transit.scenario_alignment_detour_factor'))
 
 BASE = _city.path('schedules/base2026.zip')
 OUT = _city.path('schedules/scenarios')
@@ -248,7 +249,7 @@ def scale_lr_runtime(feed, delta_per_intermediate_s=0.0, delta_per_segment_s=0.0
             pa = stops.get(a['stop_id'])
             pb = stops.get(b['stop_id'])
             d = hav((float(pa['stop_lat']), float(pa['stop_lon'])),
-                    (float(pb['stop_lat']), float(pb['stop_lon']))) * 1.06
+                    (float(pb['stop_lat']), float(pb['stop_lon']))) * ALIGNMENT_DETOUR
             base_seg = sec(b['arrival_time']) - sec(a['departure_time'])
             if speed_kmh:
                 seg = kin(d, speed_kmh) + max(0.0, base_seg - kin(d, LINE_SPEED)) \

@@ -44,6 +44,12 @@ import pyproj
 import sys as _sys
 import registry as _registry  # noqa: E402
 CFG = _registry.load()
+# declared (#188): the POI pull weights, the retail floor-space share, the
+# frontage unit and the base year were inline literals until 12 Sep 2026
+POI_WEIGHTS = {k: float(v) for k, v in CFG.get('D.landuse.poi_attraction_weights').items()}
+RETAIL_GFA_SHARE = float(CFG.get('D.landuse.retail_gfa_share'))
+FRONTAGE_UNIT_M = float(CFG.get('D.landuse.frontage_unit_m'))
+BASE_YEAR = int(_city.descriptor()['base_year'])
 
 OUT = _city.path('data/processed/landuse')
 NET = _city.path('data/processed/network')
@@ -153,15 +159,13 @@ def build_poi():
         # attraction weight: relative pedestrian pull, used by the accessibility
         # and frontage-throughput measures. Assumed, swept in sensitivity.
         head = cat.split(':')[0]
-        w = {'retail': 1.0, 'food': 1.2, 'civic': 1.5, 'office': 0.8,
-             'tourism': 1.1, 'leisure': 0.9, 'health': 1.0,
-             'amenity': 0.4, 'landuse': 0.1}.get(head, 0.3)
+        w = POI_WEIGHTS.get(head, POI_WEIGHTS['other'])
         rows.append(dict(poi_id='%s%s' % (kind, i), lat=round(lat, 7), lon=round(lon, 7),
                          category=cat, category_group=head, attraction_weight=w,
                          name=t.get('name', ''), brand=t.get('brand', ''),
                          opening_hours=t.get('opening_hours', ''),
                          levels=t.get('building:levels', ''),
-                         in_cbd=int(in_cbd(lat, lon)), year=2026,
+                         in_cbd=int(in_cbd(lat, lon)), year=BASE_YEAR,
                          weight_source='assumed'))
     _w('D1_poi.csv', rows)
     return rows
@@ -201,7 +205,7 @@ def build_buildings():
                          gross_floor_area_m2=round(poly.area * lv, 1),
                          building_type=t.get('building', 'yes'),
                          shop=t.get('shop', ''), amenity=t.get('amenity', ''),
-                         name=t.get('name', ''), year=2026))
+                         name=t.get('name', ''), year=BASE_YEAR))
     _w('D1_buildings_cbd.csv', rows)
     return rows, {r['building_id']: Polygon([TO_M(p[1], p[0])
                                              for p in [idx[x] for x in w[1] if x in idx]])
@@ -286,7 +290,7 @@ def build_frontages(poi_rows, bld_rows):
                 # retail/food share of the POI mix. Modelled, not observed.
                 act = (npoi['retail'] + npoi['food'])
                 retail_frac = (act / biz) if biz else 0.0
-                retail_fsa = gfa * 0.35 * retail_frac
+                retail_fsa = gfa * RETAIL_GFA_SHARE * retail_frac
                 mid = sub.interpolate(0.5, normalized=True)
                 lon, lat = TO_LL(mid.x, mid.y)
                 rows.append(dict(
@@ -304,10 +308,10 @@ def build_frontages(poi_rows, bld_rows):
                     n_buildings=nb, gross_floor_area_m2=round(gfa, 1),
                     retail_floorspace_m2=round(retail_fsa, 1),
                     retail_floorspace_source='modelled',
-                    active_frontage_pct=round(min(100.0, biz / (seg_len / 25.0) * 100), 1) if seg_len else 0,
+                    active_frontage_pct=round(min(100.0, biz / (seg_len / FRONTAGE_UNIT_M) * 100), 1) if seg_len else 0,
                     vacancy_rate='', vacancy_source='not_available',
                     awning_coverage_pct='', awning_source='not_available',
-                    year=2026, scenario_variant_ref='base2026'))
+                    year=BASE_YEAR, scenario_variant_ref='base2026'))
     _w('D1_frontage_segments.csv', rows)
     return rows
 
@@ -468,7 +472,7 @@ def build_parking():
                    occupancy_by_hour=occ,
                    occupancy_source='assumed',
                    walk_time_to_frontages_s='',
-                   year=2026)
+                   year=BASE_YEAR)
         out.append(rec)
     _w('A5_parking_facilities.csv', out)
     capsum = collections.Counter()

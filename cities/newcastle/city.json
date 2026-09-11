@@ -3,14 +3,12 @@
   "id": "newcastle",
   "name": "Newcastle (NSW) region",
   "description": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-
   "jurisdiction": {
     "country": "Australia",
     "subdivision": "New South Wales",
     "statistical_agency": "Australian Bureau of Statistics (ABS)",
     "transport_agency": "Transport for NSW (TfNSW)"
   },
-
   "crs": {
     "epsg": 28356,
     "datum": "GDA94",
@@ -19,30 +17,49 @@
     "coord_suffix": "mga56"
   },
   "base_year": 2026,
+  "census_year": 2021,
   "currency": "AUD",
   "seed": 20260810,
-
   "boundary": {
     "dataset": "ABS ASGS Edition 3 (2021) digital boundaries",
     "level": "LGA",
-    "selector": ["Newcastle", "Lake Macquarie", "Maitland", "Cessnock", "Port Stephens"],
+    "selector": [
+      "Newcastle",
+      "Lake Macquarie",
+      "Maitland",
+      "Cessnock",
+      "Port Stephens"
+    ],
     "external_tier": {
       "level": "SA2",
-      "selector": ["Singleton", "Muswellbrook", "Upper Hunter", "Dungog"],
+      "selector": [
+        "Singleton",
+        "Muswellbrook",
+        "Upper Hunter",
+        "Dungog"
+      ],
       "reason": "The remainder of SA4 'Hunter Valley exc Newcastle', retained only as a boundary treatment for Hunter Line through-demand. It is not modelled at SA1 and carries no intra-zonal detail."
     }
   },
-
   "zone_system": {
     "residence": "SA1",
     "external": "SA2",
     "workplace": "DZN",
     "id_column": "SA1_CODE21"
   },
-
-  "modes": ["car", "ride", "pt", "bike", "walk", "taxi"],
-  "day_types": ["WEEKDAY", "SAT", "SUN"],
-
+  "modes": [
+    "car",
+    "ride",
+    "pt",
+    "bike",
+    "walk",
+    "taxi"
+  ],
+  "day_types": [
+    "WEEKDAY",
+    "SAT",
+    "SUN"
+  ],
   "mode_share_target": {
     "source": "NSW Household Travel Survey",
     "geography": "Newcastle LGA, both trip ends",
@@ -50,66 +67,99 @@
     "column": "target_lga_pct",
     "note": "The LGA series, NOT the all-residents series. The package holds both, they are computed over different populations, and reading the wrong one has inverted a headline. src/calibrate/fit.py reads this key from the metrics document."
   },
-
   "intervention": {
     "name": "Newcastle Light Rail",
     "opened": "2019-02",
     "base_scenario": "S2",
     "mode": "tram",
-    "scenarios": ["S0", "S1", "S2", "S2a", "S2b", "S2c", "S3", "S4", "S5", "S6"]
+    "scenarios": [
+      "S0",
+      "S1",
+      "S2",
+      "S2a",
+      "S2b",
+      "S2c",
+      "S3",
+      "S4",
+      "S5",
+      "S6"
+    ]
   },
-
   "adapters": {
     "osm": {
       "script": "extract/overpass.py",
-      "produces": ["networks/osm"],
+      "produces": [
+        "networks/osm"
+      ],
       "description": "Overpass harvest over a tiled extent DERIVED from the resolved LGA boundary. Never a typed rectangle."
     },
     "gtfs": {
       "script": "extract/fetch_gtfs.py",
-      "produces": ["schedules/raw"],
+      "produces": [
+        "schedules/raw"
+      ],
       "description": "Era-variant GTFS bundles from the TfNSW historical GTFS S3 archive."
     },
     "open_data": {
       "script": "extract/fetch_open_data.py",
-      "produces": ["data/raw/opal", "data/raw/counts", "data/raw/hts", "data/raw/jtw"],
+      "produces": [
+        "data/raw/opal",
+        "data/raw/counts",
+        "data/raw/hts",
+        "data/raw/jtw"
+      ],
       "description": "Opal patronage, road traffic counts, the Household Travel Survey and the 2011 journey-to-work origin-destination flow from the TfNSW Open Data Hub."
     },
     "statistical": {
       "script": "extract/fetch_abs_dem.py",
-      "produces": ["data/raw/boundaries", "data/raw/census", "data/raw/dem"],
+      "produces": [
+        "data/raw/boundaries",
+        "data/raw/census",
+        "data/raw/dem"
+      ],
       "description": "ABS ASGS boundaries and 2021 Census DataPacks, plus Copernicus GLO-30 DEM tiles."
     },
     "speed_zones": {
       "script": "extract/extract_speed_zones.py",
-      "produces": ["data/processed/network/A1_speed_zones.gpkg"],
+      "produces": [
+        "data/processed/network/A1_speed_zones.gpkg"
+      ],
       "description": "TfNSW regulated speed zones - the legal instrument rather than a mapper's transcription of a sign."
     },
     "zones": {
       "script": "extract/extract_zones.py",
-      "produces": ["data/processed/zones"]
+      "produces": [
+        "data/processed/zones"
+      ]
     },
     "census": {
       "script": "extract/extract_census.py",
-      "produces": ["data/processed/census"]
+      "produces": [
+        "data/processed/census"
+      ]
     },
     "hts": {
       "script": "extract/extract_hts.py",
-      "produces": ["data/processed/hts"]
+      "produces": [
+        "data/processed/hts"
+      ]
     },
     "observed": {
       "script": "extract/slice_newcastle.py",
-      "produces": ["data/processed/observed"],
+      "produces": [
+        "data/processed/observed"
+      ],
       "description": "Slices the national and statewide open datasets down to the study area."
     },
     "freight_profile": {
       "script": "extract/extract_freight_profile.py",
-      "produces": ["data/processed/observed/freight_hourly_profile.csv",
-                   "data/processed/observed/freight_day_factors.csv"],
+      "produces": [
+        "data/processed/observed/freight_hourly_profile.csv",
+        "data/processed/observed/freight_day_factors.csv"
+      ],
       "description": "Heavy-vehicle hourly departure profile and weekend day factors, MEASURED from the classified RMS permanent hourly counts at study-area stations (DECISIONS.md 9.49)."
     }
   },
-
   "lineage": {
     "data/processed/corridor": "build/build_corridor_layers.py",
     "data/processed/landuse": "build/build_landuse_parking.py + src/build/build_zone_attractions.py",
@@ -141,38 +191,51 @@
     "networks/matsim/schedules/S4/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py",
     "networks/matsim/schedules/S5/transitSchedule_dwell.xml.gz": "build/build_charging_dwell_offsets.py"
   },
-
   "sources": [
     {
       "name": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
       "share_alike": false,
-      "provides": ["schedules", "data/raw/opal", "data/raw/counts", "data/raw/hts", "data/raw/jtw", "data/raw/speedzones"]
+      "provides": [
+        "schedules",
+        "data/raw/opal",
+        "data/raw/counts",
+        "data/raw/hts",
+        "data/raw/jtw",
+        "data/raw/speedzones"
+      ]
     },
     {
       "name": "Australian Bureau of Statistics - Census DataPacks, ASGS boundaries",
       "url": "https://www.abs.gov.au/",
       "licence": "CC-BY 4.0",
       "share_alike": false,
-      "provides": ["data/raw/census", "data/raw/boundaries"]
+      "provides": [
+        "data/raw/census",
+        "data/raw/boundaries"
+      ]
     },
     {
       "name": "OpenStreetMap, via Overpass",
       "url": "https://www.openstreetmap.org/",
       "licence": "ODbL 1.0",
       "share_alike": true,
-      "provides": ["networks/osm", "data/raw/osm_attic"]
+      "provides": [
+        "networks/osm",
+        "data/raw/osm_attic"
+      ]
     },
     {
       "name": "Copernicus GLO-30 Digital Elevation Model",
       "url": "https://copernicus-dem-30m.s3.amazonaws.com/",
       "licence": "ESA, free and open",
       "share_alike": false,
-      "provides": ["data/raw/dem"]
+      "provides": [
+        "data/raw/dem"
+      ]
     }
   ],
-
   "package_licence": "CC-BY 4.0",
   "derived_licences": {
     "data/processed/network/*": "ODbL 1.0",
@@ -199,9 +262,7 @@
     "scenarios/matsim/_run_inputs_report.json": "ODbL 1.0"
   },
   "derived_licences_basis": "The layers built from OpenStreetMap geometry carry its share-alike ODbL label (#117): the road, active, signal, parking and gradient network layers; the corridor layers (OSM signals and alignment); the land-use and parking layers (OSM parking, POI and buildings); the MATSim networks and the run networks patched from them. Revised 8 September 2026 (#159) once the manifest could resolve lineage PER OUTPUT rather than per producing script. Two directions of error were found and both are corrected here. UNDER-restricting: the activity chains and the MATSim plans built from them do carry OSM geometry, contrary to the earlier claim that they reference only way ids - `place_in_zone()` returns the attractor's OWN coordinate, and 100% of a 3,000-leg sample of `dest_placement=poi` destinations sits within 5 m of an OSM POI or CBD building coordinate (median 1.49 m, the residual a reprojection difference), so demand/plans is ODbL and so are the count-comparison, validation and mode-target artefacts built on it, the basemap, the count-station link map and the two OSM-measured parameter files. OVER-restricting: the regulated speed-zone layer and the place-of-work employment table sit inside ODbL-labelled directories but descend from TfNSW and ABS alone, and are CC-BY 4.0. Population and household files stay CC-BY: the synthesiser reads only the ABS identity, tier, area, centroid and population columns of the mixed zone table, which its producer declares as a column subset. The assembled run inputs were settled the same way once the assembler declared its outputs: the run networks, the parking price tables and the day-filtered schedules carry OSM content and stay ODbL, while a config carries only relative PATHS to them and an assembled transitVehicles carries only GTFS vehicle definitions (measured: zero occurrences of osm/way/link/node/highway in either), so both stay CC-BY. The one row that moved is scenarios/matsim/_run_inputs_report.json, whose figures - links touched, links priced, car links, routes and departures kept - are quantities MEASURED FROM the mapped network and schedules rather than references to them. Declared here by glob because which of a city's layers embed OSM is a fact about that city's build; the framework names no artefact. Revised again 8 September 2026 (#165) by a CONTENT PASS over all 111 networks/matsim rows - asking of each file what it embodies, not which directory it sits in. 110 of the 111 are confirmed ODbL on their own content: the networks declare <node> elements and projected coordinates, the mapped and dwell-adjusted schedules carry linkRefId values that are network link ids, signal_systems.xml carries linkIdRef, the capacity patch has a link column of them, and signal_groups.xml encodes a link id inside each composite signal id (NLR_SIG_01.45339). The 15 networks/matsim/schedules/*/transitVehicles.xml.gz files are the exception and move to CC-BY 4.0: they carry GTFS vehicle types, their published capacities and one vehicle per departure, with no link id, node id, coordinate or osm reference anywhere in them. The decisive evidence is internal - the ASSEMBLED scenarios/matsim/*/transitVehicles.xml.gz, cut from these very files, was already resolved CC-BY with no share-alike ancestor in the #159 pass, so the package labelled a derived copy freer than its own source. Deliberately NOT moved: signal_control.xml, signal_groups.xml's siblings already covered above, and the four _*_report.json files. Their CONTENT carries no network identifier, but which intersections exist and which links they meter is selected by matching OSM nodes (A2_signal_control_corridor.csv carries an osm_node_id column), so the ancestry claim is not refuted by the absence of an id in the output. An over-broad share-alike label OVER-restricts, which is a correctness problem; relabelling one on incomplete evidence would UNDER-restrict, which is a breach. Where the evidence does not decide, the label stays as it is and the reason is written down.",
-
   "manifest_undetermined_lineage_max": 0,
-
   "unobtained": [
     {
       "input": "SCATS signal phasing",

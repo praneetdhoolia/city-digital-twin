@@ -40,6 +40,7 @@ from gtfs_tools import read_feed, write_feed
 import sys as _sys
 import registry as _registry  # noqa: E402
 CFG = _registry.load()
+ALIGNMENT_DETOUR = float(CFG.get('A.transit.era1_alignment_detour_factor'))
 
 SRC = _city.path('schedules/era2_2016_rail_truncated.zip')
 OUT = _city.path('schedules/era1_pre2014_reconstructed.zip')
@@ -134,7 +135,7 @@ def main():
         t = sec(rows[-1]['arrival_time'])
         out = [dict(r) for r in rows]
         for sid, (nm, la, lo) in zip(ids, CLOSED_STATIONS):
-            d = hav(cur, (la, lo)) * 1.08
+            d = hav(cur, (la, lo)) * ALIGNMENT_DETOUR
             if d < 50:                      # already at/next to this site
                 cur = (la, lo)
                 continue

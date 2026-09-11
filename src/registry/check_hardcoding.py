@@ -668,6 +668,171 @@ def template_literals(corpus):
     return out
 
 
+# Inline literals that are structure, not modelling values (#188), keyed
+# `<file>:<function>:<value>`. Every entry says why. A value that decides the
+# demand, the network or a target is NOT entered here - it is declared.
+_TOL = ('a DRIFT TOLERANCE between a declared value and the observation it restates: '
+        'the build refuses when the two differ by more than this, and any value that is '
+        'small against the quantity gives the same refusals')
+_HASH = ('a HASH WIDTH: the number of hex digits or bits of a seeded sha256 digest read as '
+         'a uniform draw; identical draws at any width above ~40 bits, no modelling content')
+_RETRY = ('an ACQUISITION retry/backoff/page size for an HTTP download; the bytes '
+          'retrieved are the same at any value that succeeds')
+STRUCTURAL_INLINE = {
+    # ---- solver and arithmetic structure
+    'src/build/build_activity_chains.py:solve:0.005':
+        'the LOWER BRACKET of a bisection over the gravity decay; the solution is '
+        'interior and identical for any bracket that contains it',
+    'src/build/build_activity_chains.py:solve_short:0.005':
+        'the lower bracket of the short-trip decay bisection - as above',
+    'src/build/build_activity_chains.py:calibrate_one:0.8':
+        'a FLOOR on the long-trip target mean (0.8 km beeline) that keeps the '
+        'solver off a degenerate target; never binding on this city\'s observed means',
+    'src/build/build_activity_chains.py:draw_hour:23':
+        'the last hour of the day, in the hour-of-day wraparound',
+    'src/build/build_activity_chains.py:__init__:20':
+        'a buffer size (1 << 20 draws) for the seeded random stream',
+    'src/build/build_activity_chains.py:sample_unit_hash:8':
+        _HASH,
+    'src/build/build_activity_chains.py:sample_unit_hash:64':
+        _HASH,
+    'src/build/build_activity_chains.py:bind_joint_tours:984':
+        'a seed-stream SALT that separates this pass\'s draws from every other '
+        'pass seeded from the same registry seed; any constant does the same',
+    'src/build/build_activity_chains.py:cordon_nodes:64':
+        'a chunk size for a vectorised distance computation',
+    'src/build/build_activity_chains.py:<module>:0.0005':
+        _TOL,
+    'src/build/build_matsim_plans.py:truck_user:48':
+        _HASH,
+    'src/build/build_matsim_plans.py:motorbike_user:48':
+        _HASH,
+    'src/build/build_matsim_plans.py:write_day:20':
+        'a buffer size (1 << 20 draws) for the seeded random stream',
+    'src/build/build_matsim_plans.py:u:20':
+        'the same buffer size, refilled',
+    'src/build/build_matsim_plans.py:main:0.05':
+        _TOL,
+    'src/build/build_matsim_run_inputs.py:stamp:0.05':
+        'a REPORTING bin: a grade within 0.05 % of flat is counted as flat in the '
+        'run-inputs report; the link carries its exact grade regardless',
+    'src/build/build_population.py:main:6':
+        'the lower bound of the census "6 or more persons" band, which is the '
+        'band\'s own definition; its mean and tail are declared fields',
+    'src/build/attach_gradient.py:sample:400':
+        'a DEM plausibility bound: an elevation below -400 m is a nodata artefact '
+        '(the continent\'s lowest point is -15 m); any bound between -15 and the '
+        'raster\'s nodata value gives the same result',
+    'src/build/attach_gradient.py:sample:3000':
+        'a DEM plausibility bound: above 3,000 m is an artefact (the continent\'s '
+        'highest point is 2,228 m)',
+    'src/build/measure_network_factors.py:measure_day_type:0.2':
+        'a plausibility bound on a station-year weekend/weekday ratio (below 0.2 is '
+        'a counter outage); the measured median is insensitive to it',
+    'src/build/measure_osm_defaults.py:_lane_widths:1.5':
+        'a plausibility bound on an OSM width tag per lane (below 1.5 m is a tag '
+        'recorded for something else); a filter on the measurement, not a value',
+    'src/build/measure_osm_defaults.py:_lane_widths:6':
+        'the upper plausibility bound of the same filter',
+    'src/build/shape_tools.py:_build:200':
+        'a spatial grid resolution (cells per degree) for a nearest-node index; the '
+        'nearest node is the same at any resolution',
+    'src/build/shape_tools.py:nearest_node:200':
+        'the same grid resolution, at lookup',
+    # ---- output formatting and file structure
+    'src/build/build_data_dictionary.py:sniff:400':
+        'how many rows are sampled to infer a column type in the data dictionary',
+    'src/build/build_data_dictionary.py:<module>:92':
+        'a column width in the rendered dictionary',
+    'src/build/build_data_dictionary.py:<module>:34':
+        'a column width in the rendered dictionary',
+    'src/build/build_data_dictionary.py:<module>:124':
+        'a column width in the rendered dictionary',
+    'src/build/build_manifest.py:sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing',
+    'src/build/build_manifest.py:main:30':
+        'a column width in the printed manifest summary',
+    'src/build/det_io.py:gzip_writer:6':
+        'the gzip compression level of every deterministic writer; bytes differ, '
+        'content does not',
+    'src/build/det_io.py:zip_entry:16':
+        'the bit shift that places POSIX permission bits in a zip entry header',
+    'src/build/det_io.py:zip_entry:420':
+        'POSIX permissions 0o644 in the zip entry header',
+    # ---- the city's own scripts
+    '<city>/build/build_corridor_layers.py:build:45':
+        'a JOIN TOLERANCE: OSM places one signal node per approach, and nodes within '
+        '45 m are one intersection; a whole intersection spans 30-60 m and the '
+        'nearest other one on the corridor is hundreds of metres away, so any value '
+        'in that gap clusters identically',
+    '<city>/build/build_corridor_road_attributes.py:build:200':
+        'a search margin (metres) added to the declared parallel buffer when '
+        'measuring a way\'s distance to the alignment; the distance is the same '
+        'at any margin that contains the answer',
+    '<city>/build/build_corridor_road_attributes.py:build:40':
+        'a REPORTING band: turn restrictions within 40 m of the alignment are '
+        'counted in the build report',
+    '<city>/build/build_corridor_road_attributes.py:build:80':
+        'a reporting band (80 m) in the same report',
+    '<city>/build/build_corridor_road_attributes.py:build:300':
+        'a reporting band (300 m) in the same report',
+    '<city>/build/build_era1_reconstruction.py:main:50':
+        'a JOIN TOLERANCE: the reconstruction is already at a closed station when '
+        'within 50 m of its position',
+    '<city>/build/build_era1_reconstruction.py:main:8':
+        'how many truncation termini the build report lists',
+    '<city>/build/build_external_interaction.py:main:0.0005':
+        _TOL,
+    '<city>/build/build_licence_rates.py:erp_single_years:120':
+        'the upper age of an open-ended "85 and over" band when it is expanded to '
+        'single years; nobody in the ERP is older',
+    '<city>/build/build_licence_rates.py:main:5e-05':
+        _TOL,
+    '<city>/build/build_mode_targets.py:main:5e-05':
+        _TOL,
+    '<city>/build/build_validation_targets.py:main:30.4':
+        'the mean number of days in a month (365 / 12), converting a monthly '
+        'publication to a daily one',
+    '<city>/extract/extract_speed_zones.py:sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing',
+    '<city>/extract/fetch_abs_dem.py:_sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing',
+    '<city>/extract/fetch_abs_dem.py:<module>:20':
+        'a read chunk size while downloading',
+    '<city>/extract/fetch_open_data.py:_sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing',
+    '<city>/extract/fetch_open_data.py:<module>:20':
+        'a read chunk size while downloading',
+    '<city>/extract/fetch_open_data.py:<module>:500':
+        _RETRY,
+    '<city>/extract/fetch_licences.py:<module>:20':
+        'a read chunk size while downloading',
+    '<city>/extract/fetch_licences.py:<module>:500':
+        _RETRY,
+    '<city>/extract/osm_tiles.py:verify:2000':
+        'a VERIFICATION threshold on a tile file\'s byte size (below 2,000 bytes an '
+        'Overpass answer is an error page, not a tile); the harvest is unchanged',
+    '<city>/extract/osm_tiles.py:verify:0.9':
+        'a verification threshold: a tile under 90 %% of its neighbours\' size is '
+        're-checked; the harvest is unchanged',
+    '<city>/extract/overpass.py:_get:20':
+        _RETRY,
+    '<city>/extract/overpass.py:_get:15':
+        _RETRY,
+    '<city>/extract/overpass.py:fetch:20000':
+        _RETRY,
+    '<city>/extract/overpass.py:fetch:200':
+        _RETRY,
+    '<city>/extract/overpass.py:write_provenance:20':
+        'a read chunk size (1 << 20 bytes) while hashing',
+    '<city>/extract/reader_shapes.py:education_groups:25':
+        'the lower age of the ABS "25 and over" attendance band - the publication\'s '
+        'own band edge, restated so the reader can expand it',
+    '<city>/extract/reader_shapes.py:education_groups:200':
+        'the open upper age of the same band; nobody is older',
+}
+
+
 # --------------------------------------------------------------------------
 # 4. values decided in code
 # --------------------------------------------------------------------------
@@ -932,6 +1097,161 @@ def config_reach():
     return reaching, inert, None
 
 
+# --------------------------------------------------------------------------
+# 9. Inline literals in the build layer (#188)
+# --------------------------------------------------------------------------
+# The constant scan above sees ALL-CAPS assignments, keyword defaults, argparse
+# defaults and containers of four or more numbers - and a decided value inside
+# an expression (`age - 70) / 30`, `population * 0.02`, `t_now + 600`) passed
+# the gate at 0 for as long as the gate existed (eighth project report, 11
+# September 2026; #188). This walks every numeric literal in the build and
+# extract layers' function bodies, drops the shapes that are structure rather
+# than decision (indices, unit conversions, format widths, the arguments of
+# calls that shape data rather than decide it, subscripts, f-strings), and
+# reports the rest. An item leaves the list by being DECLARED - a registry
+# field the script reads - or by being entered in STRUCTURAL_INLINE with the
+# reason it is not a modelling value. The category gates like every other.
+INLINE_LAYERS = ('src/build/', '<city>/build/', '<city>/extract/')
+INLINE_ALLOW = {0, 1, 2, 3, 4, 5, 10, 100, 1000, 60, 3600, 24, 7, 12, 365, 1024, 255,
+                0.5, 90, 180, 360, 1e3, 1e6, 1e9, 1e-3, 1e-6, 1e-9, 1e-12, 111320, 6371000,
+                6371, 111000, 110540, 3.6}
+INLINE_STRUCTURAL_CALLS = {
+    'round', 'range', 'enumerate', 'ljust', 'rjust', 'zfill', 'seek', 'read', 'print',
+    'format', 'sample', 'head', 'tail', 'islice', 'getsizeof', 'sleep', 'timeout', 'zip',
+    'log', 'split', 'rsplit', 'join', 'index', 'get', 'setdefault', 'insert', 'pop',
+    'sort', 'exit', 'SystemExit', 'ValueError', 'randint', 'reshape', 'zeros', 'ones',
+    'full', 'linspace', 'arange', 'repeat', 'tile', 'percentile', 'quantile',
+    'nanpercentile', 'digitize', 'histogram', 'cut', 'qcut', 'to_datetime', 'Period',
+    'timedelta', 'strftime', 'isoformat', 'to_crs', 'set_crs', 'from_epsg', 'Transformer',
+    'from_crs', 'writestr', 'open', 'Counter', 'defaultdict', 'seed', 'Random',
+    'RandomState', 'default_rng', 'dump', 'dumps', 'loads', 'load', 'isclose',
+    'allclose', 'assertIf', 'ceil', 'floor', 'sqrt', 'pow', 'abs', 'min', 'max', 'sum',
+    'len', 'int', 'float', 'str', 'bool', 'sha256', 'md5', 'urlretrieve', 'urlopen',
+    'Request', 'run', 'check_call', 'check_output', 'Popen', 'wait', 'Thread', 'fold',
+    'wrap', 'truncate', 'quantize', 'ZipFile', 'GzipFile', 'BytesIO', 'StringIO',
+    'progress', 'batched', 'chunked', 'nsmallest', 'nlargest', 'query_ball_point',
+    'query', 'cKDTree', 'KDTree', 'sjoin_nearest', 'buffer', 'simplify', 'densify',
+    'array', 'asarray', 'clip', 'where', 'searchsorted', 'partition', 'argpartition',
+    'std', 'var', 'mean', 'median', 'nanmean', 'nanmedian', 'isfinite', 'iloc', 'loc',
+    'rename', 'astype', 'fillna', 'replace', 'startswith', 'endswith', 'strip', 'find'}
+
+
+class _InlineScan(ast.NodeVisitor):
+    """Every numeric literal that is a decision rather than structure.
+
+    A literal is structure when it is a DIRECT argument of a call that shapes
+    data rather than deciding it (`round(x, 2)`, `range(3)`), an index or
+    slice bound, an f-string format spec, or an ALL-CAPS assignment (category
+    4's business). Only the direct argument is exempt: `int(age >= 16)` still
+    reports the 16, because the call wraps a decision rather than making one.
+    """
+
+    def __init__(self):
+        self.hits = []
+        self.exempt = set()            # id() of Constant nodes that are structure
+        self.func = ['<module>']
+
+    def visit_FunctionDef(self, node):
+        self.func.append(node.name)
+        self.generic_visit(node)
+        self.func.pop()
+
+    visit_AsyncFunctionDef = visit_FunctionDef
+
+    @staticmethod
+    def _leaf_constants(node):
+        """The Constant under a direct argument: itself, or inside a unary minus."""
+        if isinstance(node, ast.Constant):
+            return [node]
+        if isinstance(node, ast.UnaryOp) and isinstance(node.operand, ast.Constant):
+            return [node.operand]
+        return []
+
+    def visit_Call(self, node):
+        name = node.func.id if isinstance(node.func, ast.Name) else (
+            node.func.attr if isinstance(node.func, ast.Attribute) else None)
+        if name in INLINE_STRUCTURAL_CALLS:
+            for a in list(node.args) + [k.value for k in node.keywords]:
+                for c in self._leaf_constants(a):
+                    self.exempt.add(id(c))
+        self.generic_visit(node)
+
+    def visit_Subscript(self, node):
+        sl = node.slice
+        parts = [sl] if not isinstance(sl, ast.Slice) else [sl.lower, sl.upper, sl.step]
+        for part in parts:
+            if part is None:
+                continue
+            for c in self._leaf_constants(part):
+                self.exempt.add(id(c))
+            if isinstance(part, ast.Tuple):
+                for e in part.elts:
+                    for c in self._leaf_constants(e):
+                        self.exempt.add(id(c))
+        self.generic_visit(node)
+
+    def visit_Assign(self, node):
+        if any(isinstance(t, ast.Name) and t.id.isupper() for t in node.targets):
+            return                         # category 4's business
+        self.generic_visit(node)
+
+    def visit_JoinedStr(self, node):
+        return                             # f-string format specs
+
+    def visit_Constant(self, node):
+        v = node.value
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            return
+        if v in INLINE_ALLOW or abs(v) in INLINE_ALLOW or id(node) in self.exempt:
+            return
+        self.hits.append((node.lineno, self.func[-1], v))
+
+
+def inline_literals(corpus):
+    """(file, line, function, value) for every undeclared inline literal."""
+    out = []
+    for path, text in sorted(corpus.items()):
+        if not path.endswith('.py'):
+            continue
+        rp = portable(rel(path))
+        if not any(rp.startswith(layer) for layer in INLINE_LAYERS):
+            continue
+        if rp in SELF_REFERENTIAL:
+            continue
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            continue
+        scan = _InlineScan()
+        scan.visit(tree)
+        for line, func, value in scan.hits:
+            key = '%s:%s:%s' % (rp, func, ('%g' % value))
+            if key in STRUCTURAL_INLINE:
+                continue
+            out.append((rp, line, func, value))
+    return out
+
+
+def stale_structural_inline(corpus):
+    """A STRUCTURAL_INLINE entry whose literal is no longer in the source."""
+    live = set()
+    for path, text in corpus.items():
+        if not path.endswith('.py'):
+            continue
+        rp = portable(rel(path))
+        if not any(rp.startswith(layer) for layer in INLINE_LAYERS):
+            continue
+        try:
+            tree = ast.parse(text)
+        except SyntaxError:
+            continue
+        scan = _InlineScan()
+        scan.visit(tree)
+        for line, func, value in scan.hits:
+            live.add('%s:%s:%s' % (rp, func, ('%g' % value)))
+    return sorted(k for k in STRUCTURAL_INLINE if k not in live)
+
+
 def audit():
     """The whole ledger, as data. `--json` writes it; the gate checks it."""
     corpus = {}
@@ -964,6 +1284,8 @@ def audit():
         coordinates=coordinates(corpus),
         java_shadow_defaults=java_shadow_defaults(corpus, fields),
         inert_bindings=[(k,) for k in inert],
+        inline_literals=inline_literals(corpus),
+        stale_structural_inline=[(k,) for k in stale_structural_inline(corpus)],
     )
     if error:
         led['reach_probe_failed'] = [(error,)]
@@ -1086,6 +1408,16 @@ def main():
         print('     %s is now wired - drop its PENDING_CONSUMER entry' % key)
     print('     %d of %d pending-consumer entr(ies) are kept promises to prune\n'
           % (len(led['stale_pending']), len(PENDING_CONSUMER)))
+
+    print('9. INLINE LITERALS in the build and extract layers - a number inside '
+          'an expression, declared by no field (#188)')
+    for f, ln, func, val in led['inline_literals']:
+        print('     %s:%d  %s()  %g' % (f, ln, func, val))
+    print('     %d  (an item leaves by a registry field the script reads, or a '
+          'STRUCTURAL_INLINE entry stating why it is not a modelling value)\n'
+          % len(led['inline_literals']))
+    for (key,) in led['stale_structural_inline']:
+        print('     STALE STRUCTURAL_INLINE entry: %s' % key)
 
     total = sum(len(v) for v in led.values())
     print('TOTAL %d item(s). A number in a script is a modelling choice nobody '

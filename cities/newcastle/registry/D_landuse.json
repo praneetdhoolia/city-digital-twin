@@ -135,6 +135,84 @@
       "decisions_ref": "7, 13",
       "proposal_ref": "6.1",
       "description": "Frontage-level retail vacancy. NOT OBTAINED and not currently consumed by any metric. Registered so that hypothesis B2, which weights catchment by floorspace, cannot quietly acquire a vacancy assumption later without one appearing here."
+    },
+    "D.attraction.education_population_floor": {
+      "value": 0.02,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        0.05
+      ],
+      "sweep_basis": "0 is no floor (attraction from mapped POIs only); 0.05 puts a school-sized attractor in every zone.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "Education attraction is floored at this share of a zone's population, so residential SA1s can host primary schools OSM has not mapped. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_zone_attractions.py"
+      ]
+    },
+    "D.landuse.poi_attraction_weights": {
+      "value": {
+        "retail": 1.0,
+        "food": 1.2,
+        "civic": 1.5,
+        "office": 0.8,
+        "tourism": 1.1,
+        "leisure": 0.9,
+        "health": 1.0,
+        "amenity": 0.4,
+        "landuse": 0.1,
+        "other": 0.3
+      },
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": {
+        "proportional": 0.5
+      },
+      "sweep_basis": "no observed pull per category exists in the package; every weight is swept by half either way.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "Relative pedestrian pull per POI category group, used by the accessibility and frontage-throughput measures of the corridor landuse layer. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "cities/newcastle/build/build_landuse_parking.py"
+      ]
+    },
+    "D.landuse.retail_gfa_share": {
+      "value": 0.35,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.2,
+        0.5
+      ],
+      "sweep_basis": "ground-floor retail in a two- to four-storey main-street building is a quarter to a half of its GFA.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The share of a frontage building's gross floor area taken as retail floor space, scaled by the retail/food share of its POI mix. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "cities/newcastle/build/build_landuse_parking.py"
+      ]
+    },
+    "D.landuse.frontage_unit_m": {
+      "value": 25.0,
+      "units": "metres",
+      "source": "assumed",
+      "sweep": [
+        15.0,
+        40.0
+      ],
+      "sweep_basis": "a narrow shop is ~15 m of frontage, a large tenancy ~40.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The frontage length one business is taken to occupy when the active-frontage percentage of a segment is computed. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "cities/newcastle/build/build_landuse_parking.py"
+      ]
     }
   }
 }

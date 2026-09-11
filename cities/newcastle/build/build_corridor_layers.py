@@ -36,6 +36,17 @@ import collections
 import sys as _sys
 import registry as _registry  # noqa: E402
 CFG = _registry.load()
+# the A2 signal table's values, declared (#188); the run's own signal plans
+# come from build_matsim_signals.py and the A.signals.scats.* fields
+SIG_CYCLE_S = int(CFG.get('A.corridor.signal_cycle_time_s'))
+SIG_CYCLE_SWEEP = tuple(int(x) for x in CFG.sweep('A.corridor.signal_cycle_time_s'))
+SIG_PHASE_SPLIT = str(CFG.get('A.corridor.signal_phase_split_pct'))
+PED_CLEARANCE_S = int(CFG.get('A.corridor.ped_clearance_s'))
+SIG_DELAY_SHARE = float(CFG.get('A.corridor.signal_delay_share_of_cycle'))
+TSP_DETECTION_M = int(float(CFG.get('A.signals.tsp.detection_distance_m')))  # the table prints an integer metre
+TSP_MAX_EXT_S = int(CFG.get('A.corridor.tsp_max_extension_s'))
+TSP_DELAY_FACTOR = float(CFG.get('A.corridor.tsp_delay_factor'))
+RESERVED_DELAY_FACTOR = float(CFG.get('A.corridor.reserved_alignment_delay_factor'))
 
 OUT = _city.path('data/processed/corridor')
 
@@ -328,22 +339,23 @@ def build():
             n_approach_nodes=r.get('n_approach_nodes',''),
             lat=ll[0], lon=ll[1], dist_to_alignment_m=round(dmin, 1),
             control_type='adaptive',            # SCATS is adaptive by definition
-            cycle_time_s=110, cycle_time_sweep_low=80, cycle_time_sweep_high=140,
-            n_phases=4, phase_split_pct='45|15|30|10', offset_s=0,
+            cycle_time_s=SIG_CYCLE_S, cycle_time_sweep_low=SIG_CYCLE_SWEEP[0],
+            cycle_time_sweep_high=SIG_CYCLE_SWEEP[1],
+            n_phases=len(SIG_PHASE_SPLIT.split('|')), phase_split_pct=SIG_PHASE_SPLIT, offset_s=0,
             coordination_group='HUNTER_SCOTT',
             pedestrian_phase_flag=1 if r.get('ped_phase_flag') == '1' else 0,
-            ped_clearance_s=8,
+            ped_clearance_s=PED_CLEARANCE_S,
             tsp_enabled=0, tsp_type='', tsp_detection_distance_m=0,
             tsp_max_extension_s=0,
-            mean_delay_to_tram_s=round(110 * 0.5 * 0.45, 1),
+            mean_delay_to_tram_s=round(SIG_CYCLE_S * 0.5 * SIG_DELAY_SHARE, 1),
             source='assumed', scenario_variant_ref='S2_base'))
     # S2b variant: full transit signal priority on the corridor
     tsp_rows = []
     for r in sig_rows:
         q = dict(r)
         q.update(tsp_enabled=1, tsp_type='green_extension+early_start',
-                 tsp_detection_distance_m=120, tsp_max_extension_s=12,
-                 mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * 0.25, 1),
+                 tsp_detection_distance_m=TSP_DETECTION_M, tsp_max_extension_s=TSP_MAX_EXT_S,
+                 mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * TSP_DELAY_FACTOR, 1),
                  scenario_variant_ref='S2b_full_tsp')
         tsp_rows.append(q)
 
@@ -366,7 +378,7 @@ def build():
     reserved_rows = []
     for r in sig_rows:
         q = dict(r)
-        q.update(mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * 0.40, 1),
+        q.update(mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * RESERVED_DELAY_FACTOR, 1),
                  tsp_enabled=0, tsp_type='', source='assumed',
                  scenario_variant_ref='S2c_reserved_alignment')
         reserved_rows.append(q)
@@ -377,8 +389,8 @@ def build():
     for r in sig_rows:
         q = dict(r)
         q.update(tsp_enabled=1, tsp_type='green_extension+early_start',
-                 tsp_detection_distance_m=120, tsp_max_extension_s=12,
-                 mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * 0.25, 1),
+                 tsp_detection_distance_m=TSP_DETECTION_M, tsp_max_extension_s=TSP_MAX_EXT_S,
+                 mean_delay_to_tram_s=round(float(r['mean_delay_to_tram_s']) * TSP_DELAY_FACTOR, 1),
                  source='assumed', scenario_variant_ref='S3_brt_priority')
         brt_rows.append(q)
 

@@ -471,7 +471,7 @@ def resolve_restrictions(node_idx, ways, near_by_variant):
                    lat=round(pt[0], 7), lon=round(pt[1], 7),
                    located_by=how, source='osm')
         for name, nr in near_by_variant.items():
-            row['dist_to_%s_m' % name] = round(nr.dist_way([pt], cutoff=3000.0), 1)
+            row['dist_to_%s_m' % name] = round(nr.dist_way([pt], cutoff=None), 1)
         d0 = row['dist_to_base2026_m']
         row['corridor_flag'] = int(d0 <= CORRIDOR_CROSS_M)
         rows.append(row)
