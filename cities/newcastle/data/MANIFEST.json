@@ -1,22 +1,22 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-12T05:16:46",
+  "generated": "2026-09-12T05:18:16",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 959,
-  "total_bytes": 6936501269,
+  "total_bytes": 6936501338,
   "total_gib": 6.46,
   "by_stage": {
     "raw": 532,
     "processed": 427
   },
   "bytes_by_stage": {
-    "raw": 5283274271,
+    "raw": 5283274340,
     "processed": 1653226998
   },
   "by_lineage_scope": {
-    "raw": 526,
-    "output": 332,
+    "raw": 524,
+    "output": 334,
     "script": 101,
     "none": 0
   },
@@ -69,10 +69,38 @@
       "share_alike_ancestor": "no"
     },
     {
+      "path": "data/raw/provenance_boam.json",
+      "bytes": 2528,
+      "rows": null,
+      "sha256": "613ff68d93706caee42778b0449208f5035531dee4be10a9c2265a97f7df4417",
+      "stage": "raw",
+      "produced_by": "",
+      "source": "Newcastle (NSW) region - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
+      "lineage_scope": "output",
+      "share_alike_ancestor": "no"
+    },
+    {
       "path": "data/raw/provenance_licences.json",
       "bytes": 1115,
       "rows": null,
       "sha256": "3884276eaefeba5423fb5014fe30db7bec6f6075c9fca4f6bc1a43e6bacaf81b",
+      "stage": "raw",
+      "produced_by": "",
+      "source": "Newcastle (NSW) region - the provenance record the package keeps of itself",
+      "source_url": "",
+      "licence": "CC-BY 4.0",
+      "retrieved": "",
+      "lineage_scope": "output",
+      "share_alike_ancestor": "no"
+    },
+    {
+      "path": "data/raw/provenance_opal_patronage.json",
+      "bytes": 130909,
+      "rows": null,
+      "sha256": "235f345705fc4db73326a14ee0334ba9b3bb10ad9a15816cf719a4f7ca93744a",
       "stage": "raw",
       "produced_by": "",
       "source": "Newcastle (NSW) region - the provenance record the package keeps of itself",
@@ -259,20 +287,6 @@
       "produced_by": "cities/newcastle/extract/fetch_tpa_daily.py",
       "source": "occupancy range (bands of 20) per bus trip at each stop, state-wide; from 25 Feb 2026 the OAM allocation model, per documentation v2.0",
       "source_url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260816.txt",
-      "licence": "CC-BY 4.0",
-      "retrieved": "2026-09-12",
-      "lineage_scope": "raw",
-      "share_alike_ancestor": "no"
-    },
-    {
-      "path": "data/raw/boam/provenance.json",
-      "bytes": 2501,
-      "rows": null,
-      "sha256": "cb11ea87734fad0d7515b0b3b46eb08f08ed8d85e6cc4a049f1ef6beb080ceb7",
-      "stage": "raw",
-      "produced_by": "cities/newcastle/extract/fetch_tpa_daily.py",
-      "source": "occupancy range (bands of 20) per bus trip at each stop, state-wide; from 25 Feb 2026 the OAM allocation model, per documentation v2.0",
-      "source_url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260810.txt",
       "licence": "CC-BY 4.0",
       "retrieved": "2026-09-12",
       "lineage_scope": "raw",
@@ -6867,20 +6881,6 @@
       "produced_by": "cities/newcastle/extract/fetch_tpa_daily.py",
       "source": "hourly tap-ons/offs by mode and key commercial centre; values rounded to the nearest 100, \"<100\" below; \"Newcastle and surrounds\" = Newcastle Interchange, the light rail and bus stops in postcodes 2293 and 2300",
       "source_url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260831.txt",
-      "licence": "CC-BY 4.0",
-      "retrieved": "2026-09-12",
-      "lineage_scope": "raw",
-      "share_alike_ancestor": "no"
-    },
-    {
-      "path": "data/raw/opal/opal_patronage/provenance.json",
-      "bytes": 130867,
-      "rows": null,
-      "sha256": "0c072e63365b653ca4deadb75801256bd23e6c6c9a04784c94329d2aa16216f4",
-      "stage": "raw",
-      "produced_by": "cities/newcastle/extract/fetch_tpa_daily.py",
-      "source": "hourly tap-ons/offs by mode and key commercial centre; values rounded to the nearest 100, \"<100\" below; \"Newcastle and surrounds\" = Newcastle Interchange, the light rail and bus stops in postcodes 2293 and 2300",
-      "source_url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250701.txt",
       "licence": "CC-BY 4.0",
       "retrieved": "2026-09-12",
       "lineage_scope": "raw",

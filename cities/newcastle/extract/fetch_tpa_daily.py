@@ -20,7 +20,8 @@ measured 12 September 2026: 200 with the header, 403 without). No API key.
     the series: 7 x 400 MB is a raw acquisition, 2,000 x 400 MB is not.
 
 Raw files land unmodified under data/raw/<series>/ with a provenance record
-carrying the URL pattern, retrieval date, licence and every file's sha256.
+(data/raw/provenance_<series>.json, the tracked location) carrying the URL
+pattern, retrieval date, licence and every file's sha256.
 Re-running skips files already held (raw downloads are immutable).
 """
 import os as _os
@@ -77,7 +78,9 @@ def fetch(series, start, end):
     spec = SERIES[series]
     root = _city.path(spec['raw_dir'])
     os.makedirs(root, exist_ok=True)
-    prov_path = os.path.join(root, 'provenance.json')
+    # the record sits where the repository tracks provenance - data/raw/provenance_*.json
+    # - and names its files relative to `base`, the series' own directory
+    prov_path = _city.path('data/raw/provenance_%s.json' % series)
     prov = {}
     if os.path.exists(prov_path):
         prov = {r['path']: r for r in json.load(open(prov_path, encoding='utf-8'))['files']}
@@ -113,6 +116,7 @@ def fetch(series, start, end):
                          retrieved=datetime.date.today().isoformat())
         print('  GET  %s  %12s B' % (name, format(prov[rel]['bytes'], ',')), flush=True)
     doc = dict(source=spec['source'], dataset=spec['dataset'], licence=LICENCE,
+               base=spec['raw_dir'],
                access='%s/%s/<YYYY-MM>/%s<YYYYMMDD>.txt with header Referer: '
                       'https://opendata.transport.nsw.gov.au/ (no login, no API key)'
                       % (BASE, spec['folder'], spec['prefix']),

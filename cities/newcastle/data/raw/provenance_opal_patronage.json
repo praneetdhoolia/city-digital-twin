@@ -1,0 +1,2999 @@
+{
+  "source": "TfNSW Open Data Hub - Opal Patronage (Opal Tap Data), daily files",
+  "dataset": "https://opendata.transport.nsw.gov.au/data/dataset/opal-patronage",
+  "licence": "CC-BY 4.0",
+  "base": "data/raw/opal/opal_patronage",
+  "access": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/<YYYY-MM>/Opal_Patronage_<YYYYMMDD>.txt with header Referer: https://opendata.transport.nsw.gov.au/ (no login, no API key)",
+  "note": "hourly tap-ons/offs by mode and key commercial centre; values rounded to the nearest 100, \"<100\" below; \"Newcastle and surrounds\" = Newcastle Interchange, the light rail and bus stops in postcodes 2293 and 2300",
+  "files": [
+    {
+      "path": "Opal_Patronage_20250701.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250701.txt",
+      "bytes": 28570,
+      "sha256": "0d8e8569bed6f5c422cc019e7ac9ea56bd180df8b448a7579c0899cf4423924e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250702.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250702.txt",
+      "bytes": 28259,
+      "sha256": "ce8da1977b11d3449aaa8891c455cf6633f64a59a36bdaf62cdced5707793192",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250703.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250703.txt",
+      "bytes": 28974,
+      "sha256": "8a85bd869e0deaa01aa53c72f6be22107ac067f5eb6d14bbbbf11c62df9bfe30",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250704.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250704.txt",
+      "bytes": 29138,
+      "sha256": "931f5276fbe86816c4a82115e5ea76a1a8b47585ad958da2755da342142a6573",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250705.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250705.txt",
+      "bytes": 29448,
+      "sha256": "c5755d6d151eb706fa3e622e978f6c9d5c51f3b550ed514b057207560abba26d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250706.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250706.txt",
+      "bytes": 28983,
+      "sha256": "19ba0052cbec307a9e326e21692a55b9c92307efae0ea2d5200e55c1a0053ce0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250707.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250707.txt",
+      "bytes": 28418,
+      "sha256": "d5fa095d2437342c5dc39de07813b0f5532fbdf9391e0d1458c5eddce5dfb62d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250708.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250708.txt",
+      "bytes": 28729,
+      "sha256": "48764d5cacab4027a09e10a637491ec20ab7d00c803f2c6a86d0873b358b5dca",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250709.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250709.txt",
+      "bytes": 28887,
+      "sha256": "67c61d6ede351bbfb63e35e5a94638727f4e4ca4c9f266d7ebcfee6679e28ddb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250710.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250710.txt",
+      "bytes": 29088,
+      "sha256": "54f0db474dea9300b0f3b01d6d0345dbaee99109cccac3699665fba73ba7e920",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250711.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250711.txt",
+      "bytes": 29101,
+      "sha256": "5fb86a4bdf49efd956b1c1aa4b8ebf86e123c53df9d8ff2d9289239346dd6ce9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250712.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250712.txt",
+      "bytes": 29342,
+      "sha256": "d47a886108b6d7f7363d3e4c71024d95d9f35afa67cdf456d53bb595776dfd82",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250713.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250713.txt",
+      "bytes": 28913,
+      "sha256": "48d2c55e886e8c7b7efba8d7483a07e3c79c1ecbf3b9119fa5c3788833aec12c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250714.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250714.txt",
+      "bytes": 28591,
+      "sha256": "190c88f6813424d33719224b98d634f257f406e6cbd6c98384eb145edb65cfe3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250715.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250715.txt",
+      "bytes": 28779,
+      "sha256": "ae76420ea2e46c45850e0977e840785e8d8ec7a3377885690e9bcc759ee618f9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250716.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250716.txt",
+      "bytes": 28843,
+      "sha256": "0046ea5113e96e406212ae3151de62b8e57868720542b2e7f2342235b2fa0061",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250717.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250717.txt",
+      "bytes": 28760,
+      "sha256": "89fdfc9af81e3695c7bf2ba8fa5b2499a1c9aab96666acb2c77cfa87d6883671",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250718.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250718.txt",
+      "bytes": 29011,
+      "sha256": "271178322a8901aeb62707e0d8e190f6da4a841078a2e2c8a3ab4c012d513f46",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250719.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250719.txt",
+      "bytes": 29010,
+      "sha256": "359641a0e199cb82b09f11912df8511ff3e9549c751f203902d60997a18f9e9b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250720.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250720.txt",
+      "bytes": 28839,
+      "sha256": "ff573fb825c1cd759d61eb5c9006213224057dd7bb147e006ef6bb662da49c64",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250721.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250721.txt",
+      "bytes": 28932,
+      "sha256": "94300ef4e9330906e80503f936ee9fd0dc780b57057171ab0610406626857aca",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250722.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250722.txt",
+      "bytes": 29007,
+      "sha256": "66da7117bf87dffd3a60b739d7691f0140cf7bfec9e8383010df702d98e6d0fb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250723.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250723.txt",
+      "bytes": 28982,
+      "sha256": "99a396982108e7467ad98ae9d711a024124653062a2ae31c65b566f0615debed",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250724.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250724.txt",
+      "bytes": 29029,
+      "sha256": "ab979dfacf3d85d1c72e7116873b2f0f906cdb9c8f5f8aa77e3578c6f6c5ccfe",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250725.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250725.txt",
+      "bytes": 29194,
+      "sha256": "f67a093e21457173592f6ea8dd1c6aa7cfd9e70e676890926a693f60535ccb5e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250726.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250726.txt",
+      "bytes": 29315,
+      "sha256": "8b896cb14e8a4f1fe9dd0bb8f2753f4b2390b05780c06ecba92b005f3d8993fb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250727.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250727.txt",
+      "bytes": 28563,
+      "sha256": "e66e6ca3b3d37f1c329792f27194e36db72b5bcb829b4b4881e84eba2d4878ef",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250728.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250728.txt",
+      "bytes": 29028,
+      "sha256": "98fe4f7ccd1b38d6e87c42942d5cbfbcf0a938eff0adc699d1d569f1830a527e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250729.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250729.txt",
+      "bytes": 30126,
+      "sha256": "fa575510c30d659d8374c13e444810fed7dfbedfaf05cddc89b5f064fe3166d1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250730.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250730.txt",
+      "bytes": 28913,
+      "sha256": "fc941a360e058548a21212ed477c7e1907d460ceb4a515e2302df66917c2c7dd",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250731.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-07/Opal_Patronage_20250731.txt",
+      "bytes": 19768,
+      "sha256": "a13d773b39047b28026439efd822d120ca54a7d0e7294816a265550fd3458437",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250801.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250801.txt",
+      "bytes": 19877,
+      "sha256": "b39715cea01b69f77914c34480982ee4d4a0b281bb7c059b057bb922fce8dcf4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250802.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250802.txt",
+      "bytes": 28084,
+      "sha256": "94ac287df3f2cd778ed4a824396941ca9ffff0a4dfb0217763e9b584aa76bf8d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250803.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250803.txt",
+      "bytes": 28106,
+      "sha256": "b7ff630abc4e237c0163702030ba235cf686fdaedd788b80e449cef13f602a19",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250804.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250804.txt",
+      "bytes": 29154,
+      "sha256": "95fde5212e8f83a1d763ed7f497be9744f3e9bdec6360ac27eddf2eb71157695",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250805.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250805.txt",
+      "bytes": 28794,
+      "sha256": "8ebffb553887ec2b7155af552dba24575591a482e11f283be2c0baf9a66c736f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250806.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250806.txt",
+      "bytes": 28998,
+      "sha256": "e00c97b1aec89b5e12ded7398c93912fd47900313d47eed4ce803294e29b5b3d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250807.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250807.txt",
+      "bytes": 29042,
+      "sha256": "775a314626b18a0ff7caa4b115466c8b9eed98a9b44bb0408231981ecfdc2b6c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250808.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250808.txt",
+      "bytes": 29164,
+      "sha256": "2b593088b417b9eaef2612950b30f3bf3c3c66145b72f8199ecc53fab15acc53",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250809.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250809.txt",
+      "bytes": 29202,
+      "sha256": "284df4ef453e0ad31b02bf29839a765e38e93f65d5396be81c9609370e1a6032",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250810.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250810.txt",
+      "bytes": 29374,
+      "sha256": "9c40cd2137f0f0cce128a68df02555c7623bea8ba1b2ecdbb2bd2b0a85643feb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250811.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250811.txt",
+      "bytes": 28808,
+      "sha256": "3a9a0a6156930ca74f6b694faed7f7da6ada505e2afb608255f8673e33b32cc5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250812.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250812.txt",
+      "bytes": 29159,
+      "sha256": "462f24081806d24cdae55b5ef92b18ff6744fdf3a8812db98e35da0f3fbf654f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250813.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250813.txt",
+      "bytes": 28973,
+      "sha256": "f234449eed68824281f7061349aa57c5475806471dc0d22138b107244578dc9d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250814.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250814.txt",
+      "bytes": 29131,
+      "sha256": "d8835a179fafed45cdfff0160678163e54fbb53e1e4bd5b9da9914e00fc99a71",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250815.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250815.txt",
+      "bytes": 28989,
+      "sha256": "7fbf8fb3607f9d3b66b7715259b71e7ffa17804d834ff5fa64137ab56258c797",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250816.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250816.txt",
+      "bytes": 29187,
+      "sha256": "1787bd23dcf2875e31c7b7da9133ef76902b6198f5a53473eed4a51bd1f4c501",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250817.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250817.txt",
+      "bytes": 28850,
+      "sha256": "f399287ab0711f8af7f47c21c05821c8814d9e6d1621cc030ea8c201f3d1d6bf",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250818.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250818.txt",
+      "bytes": 28593,
+      "sha256": "132a11a4e14217126cf90a5113a22c3dbc3d388cfdfd4a2cca013dc2d333dd79",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250819.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250819.txt",
+      "bytes": 28629,
+      "sha256": "34d325d6ed42eff9e876379c254f88b96410d729fcc6e1f0d6f0a804c1427d6e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250820.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250820.txt",
+      "bytes": 28846,
+      "sha256": "cbba88f1b3617c7845a4ab6614f0a628ab83a6e7919ff9edd112acf19c824eb0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250821.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250821.txt",
+      "bytes": 28505,
+      "sha256": "adb3a15ad3ba6d09f5e7f96f6f823f1c51809dfb746e6ec9491d697bce8f57fb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250822.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250822.txt",
+      "bytes": 28686,
+      "sha256": "7d83157c183daa5836b0055f4d2c3043ac2aa76a7cd7639162bc1d3e2c510269",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250823.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250823.txt",
+      "bytes": 29229,
+      "sha256": "77c0a5a2d292a9b1b9d170efa4643f44811202fe01f5d9ca3ac54600c9597545",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250824.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250824.txt",
+      "bytes": 28526,
+      "sha256": "4eed10c3154c958ead84bbccafd9dfe05a122a10d2b67c3354ef13d73e8a48f1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250825.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250825.txt",
+      "bytes": 29077,
+      "sha256": "7b17e62ae6f45255bc88a522a623ab4bc63204dd08634df419ea1684bf3d65e7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250826.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250826.txt",
+      "bytes": 29034,
+      "sha256": "878ca839e1c7688a88b206c8205f47435a5ab1689f1d0efd107dc2c2f56b2454",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250827.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250827.txt",
+      "bytes": 29181,
+      "sha256": "701976cb0ea4fec0557e651a2ed9ed9bc0f035776c5987cd971ee2726d984060",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250828.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250828.txt",
+      "bytes": 29115,
+      "sha256": "ca26451ebe458f68c2291ae622a36fc170ff499ef40b2fceead07ea421148589",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250829.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250829.txt",
+      "bytes": 29421,
+      "sha256": "8bd54b3b466c6d08ab1cce38417b52d4515d055c51995f1a327b973429a369a5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250830.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250830.txt",
+      "bytes": 29170,
+      "sha256": "a6abaddd21ad4e242a8a31eebf3bffce2eebcb90f14ca3345c01567fc15bbd6a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250831.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-08/Opal_Patronage_20250831.txt",
+      "bytes": 28954,
+      "sha256": "baebb07028cc86e373dfb189f9582c5241f4cba41724e68fbfb70071ac469b8f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250901.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250901.txt",
+      "bytes": 28737,
+      "sha256": "290fa69508ef007d9bc9e2f025cc5312220ea5b64e0f365e3b98b0ce8a18f5db",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250902.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250902.txt",
+      "bytes": 28328,
+      "sha256": "8818d652214de4d7b18c4fc61e135a95be19e363de05749cd4963764652d75e7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250903.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250903.txt",
+      "bytes": 29115,
+      "sha256": "555f5f815d34d0096acaafcb6ff206e97d6054a6f8f4a3fffc60c3e8c520162f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250904.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250904.txt",
+      "bytes": 29310,
+      "sha256": "2c7fca57014be05182947448df4bcd9c0ca43d0b72bb8ccb0454c99b7dcbeecc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250905.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250905.txt",
+      "bytes": 29297,
+      "sha256": "54dad47c18a9911019e3374a5d29cb1d6684a4c98dfec3530cfd4ff35e482a30",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250906.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250906.txt",
+      "bytes": 29308,
+      "sha256": "858d6bdfeed7408307ef36feb38ffb1f8f174a65159eec41e982780abb0fcf1a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250907.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250907.txt",
+      "bytes": 28606,
+      "sha256": "dd680af4e20a03b115ea19084711e316c5bcfadba13e8e83ee5647b22791428f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250908.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250908.txt",
+      "bytes": 29216,
+      "sha256": "aaaaa97b0a3e4296e8b4072ef8a874f16eab4a4ca1f5081ac3aee1193aa2f7d7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250909.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250909.txt",
+      "bytes": 28933,
+      "sha256": "7ac03340ea92996c98e4023602722debc0ae5b4f7e987f67f2a2670b6b644162",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250910.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250910.txt",
+      "bytes": 28757,
+      "sha256": "e409539371c332cba1bd4954f4a7c3893084a071f259b76b9e7064be3b0e57fc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250911.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250911.txt",
+      "bytes": 28630,
+      "sha256": "4f533b970878421700c5ffd71566305e2d6ff2febd9a7279aa8a6d9f8542ad2a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250912.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250912.txt",
+      "bytes": 28940,
+      "sha256": "a20a2ad1c2f8c3f987afc2d6027e8d57ffb0d3f3d38acb57798c008b9897f673",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250913.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250913.txt",
+      "bytes": 28898,
+      "sha256": "c94cf2043197c67ea4522a8efca4a3a60f07fff1cce1234461ffa4a2a731e4ea",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250914.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250914.txt",
+      "bytes": 29078,
+      "sha256": "e60730c108bb6f8e152ce3d517b26905ffc658d399f03c2bc0215e5059ed7610",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250915.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250915.txt",
+      "bytes": 28925,
+      "sha256": "fe288d603605ba11611b9050b66cbcdbbf517277e269c850e3bcd0b5685361c2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250916.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250916.txt",
+      "bytes": 29256,
+      "sha256": "e3e9fd1fb216c609c9b5688fd557a799f4fd4973167084f849494728c18d31a1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250917.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250917.txt",
+      "bytes": 28931,
+      "sha256": "c7ef5c3f198df59a844106aa536ec431f5b5ca4ac9ebb8aacfc2c30b12bf2ae1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250918.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250918.txt",
+      "bytes": 28467,
+      "sha256": "189c29660e5408a279bf10f537565b89675881285126449b7b9daa2dcf6232bc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250919.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250919.txt",
+      "bytes": 29146,
+      "sha256": "a5bda3cd0a26599b68cb9441cfd05d4af360e157484952e83061a04cbbc39bdd",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250920.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250920.txt",
+      "bytes": 29114,
+      "sha256": "621779787c2316583d18c75e93c7327db2227129f89c7812039d74400586b81b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250921.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250921.txt",
+      "bytes": 28786,
+      "sha256": "8ab36777375c47e041a4dcbffacb99da4ec098bf82cc81b822509aaf25b8c934",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250922.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250922.txt",
+      "bytes": 28727,
+      "sha256": "9b965aa9eecfea331b699f0377eb83c50cb723d633ba711b7b5aa71a04da19c2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250923.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250923.txt",
+      "bytes": 28848,
+      "sha256": "fd2d2960902282885f5bad71ecc4d59aaa9f019049d7d95e96ca9e600901cf7d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250924.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250924.txt",
+      "bytes": 28861,
+      "sha256": "4e3c2d1b39aa762963850ed5052f105cf79c88c4c4a901cd2adda0a28ff00e8c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250925.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250925.txt",
+      "bytes": 28743,
+      "sha256": "2490078b708323eb39ae2bd3f855a23a5508c0231486095102920f231b7a4dd7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250926.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250926.txt",
+      "bytes": 29066,
+      "sha256": "5f8e42f2235a0f4880e721657390879f35b422617bc638ab45d5615f691f41e1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250927.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250927.txt",
+      "bytes": 28784,
+      "sha256": "5f42213be250feb2e28b4da518dc3e4419f5b0a511c41ca896bef0fed5945db5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250928.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250928.txt",
+      "bytes": 28694,
+      "sha256": "d54c2e6a145da12e25305ee08401872800c4cd8abc40cccf9e97d8c81ea44428",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250929.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250929.txt",
+      "bytes": 28908,
+      "sha256": "14e85eb7e22c316a2de75cb431e5a142d5bdbc1794e4377ae922794e179e08f8",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20250930.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-09/Opal_Patronage_20250930.txt",
+      "bytes": 28528,
+      "sha256": "7f6a9e35e9dd8fb751807a17f9aa00927671194aa4ddb39c8aec0c1d29fa7c95",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251001.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251001.txt",
+      "bytes": 28684,
+      "sha256": "10bc1d73c281ceb99a8047c1cbce8bf6ca60b346b6de3e1129f44269ea3ad912",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251002.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251002.txt",
+      "bytes": 28947,
+      "sha256": "5f7ba4677766514038b906c6d7f83ef98ee4bea091b602f9d48550b1593c651a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251003.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251003.txt",
+      "bytes": 29408,
+      "sha256": "6808868a97a229856399e1685604fc1e90b7877728c8728239755af150e660e2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251004.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251004.txt",
+      "bytes": 29269,
+      "sha256": "d6a1893252ca42766480d945d68b96e46f9a99a2da6aab0dfb840cfcdae23164",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251005.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251005.txt",
+      "bytes": 28495,
+      "sha256": "190dcf6d4369937bda7df5879a4a9aab88c192529b91d7b983f6eb8950cf7be6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251006.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251006.txt",
+      "bytes": 28511,
+      "sha256": "507fc131d3d3dbe407013f8b0f1da1cc410566a7dee708c4f26e9e03bfe07590",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251007.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251007.txt",
+      "bytes": 28720,
+      "sha256": "69fb2f3cd7c2e4fcc989d90c2e3f2ea6cfde05b944fff35e3e601bf0b34af3b6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251008.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251008.txt",
+      "bytes": 28837,
+      "sha256": "045bff569088df22350cdc289f221961e5a1de7b67e8200260ccac55e08126da",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251009.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251009.txt",
+      "bytes": 28851,
+      "sha256": "d72917bbc2f1455d7f5ca61b976751b4ba441b1c2622800d994b4db504c80a91",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251010.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251010.txt",
+      "bytes": 29200,
+      "sha256": "4353384545cbcd45a00bb0837fc963d1cd9888b56dd062ebb0ee212a308047a4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251011.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251011.txt",
+      "bytes": 29113,
+      "sha256": "cf57e8da28edd539201f0fa5afe51b39d1afbaeff92232fa6bd67423ea067fbc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251012.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251012.txt",
+      "bytes": 28583,
+      "sha256": "1ebd3d939277f9e1a5954f415032e4fd32d5416e80bb7510586637b51f42d0a4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251013.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251013.txt",
+      "bytes": 29126,
+      "sha256": "3ad03d91cb8ea42dc834a6d2de5453f45976959b2707fb6c0361d6ddb2b5db82",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251014.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251014.txt",
+      "bytes": 28417,
+      "sha256": "15fceab61ced6a1c3dd6600d09616656d010e84edb325935d9561c05484b82fa",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251015.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251015.txt",
+      "bytes": 28386,
+      "sha256": "a407d14cb8aa967fea77562ffc7ef8c5abc3f0ba310fa082b5fde95963269c9b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251016.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251016.txt",
+      "bytes": 29249,
+      "sha256": "5d3743547c19c6e76f3db3bd87276a466725d9a7fd91cf0011fdf75657cf3577",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251017.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251017.txt",
+      "bytes": 29365,
+      "sha256": "b1e847cf3a8113d3ee2b9b3bbfadb2905e458439d45dbc9e0e9010247973c3ab",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251018.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251018.txt",
+      "bytes": 29285,
+      "sha256": "4728821e90c0f49313792a1cf6209e6835c2ff68a5939b59c4343fbaf06a2a9b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251019.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251019.txt",
+      "bytes": 28575,
+      "sha256": "dd8cdbc0ad71b477d9df7d07f013f1f2d2093f3189f9167a0d7eb419711b24e2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251020.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251020.txt",
+      "bytes": 28618,
+      "sha256": "183a9fe25db97c2256b4992bd42f53fbba1536a457eebcdb3b714dfc1b44b7f6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251021.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251021.txt",
+      "bytes": 28963,
+      "sha256": "e6fd7ebed9b5303c5fdf3eb3c329ac524b4a819a53292e13c10fe3a42b767be1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251022.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251022.txt",
+      "bytes": 28685,
+      "sha256": "139898e366fa00b389af817bb245cbc17a56602f85cf57cff371371d4d955f67",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251023.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251023.txt",
+      "bytes": 29035,
+      "sha256": "4da7361e164ce38ecbd270a8e7c0c16fc1066ac5173ff671438b7ca58250e460",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251024.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251024.txt",
+      "bytes": 29281,
+      "sha256": "a31914ccb1b3d938734f898b350d31dff1af7c631297bf5a6809814cace3383f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251025.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251025.txt",
+      "bytes": 29169,
+      "sha256": "f3c3a8a01452b161529c61d6f1d6d9b199555fa7f39f8f19253aa939d5847a59",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251026.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251026.txt",
+      "bytes": 28716,
+      "sha256": "196a9ee3c3357f884d40f368910d5d6ee980123633f8b2f7ef401cc1808a9407",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251027.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251027.txt",
+      "bytes": 29063,
+      "sha256": "ff4b26aa86b557c264881b88f598bdf7a2c9d8dd58af0f18dc787ac8e39d1b25",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251028.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251028.txt",
+      "bytes": 29148,
+      "sha256": "a1b9385b7a1104c74519c3d84660e1590c74d5ef2c94d49ba1bdec6931bc3973",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251029.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251029.txt",
+      "bytes": 29067,
+      "sha256": "59aa4cf005f0a23f3f6bf52812e16051d95ab33b219979b6cc0cf0b705604c16",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251030.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251030.txt",
+      "bytes": 28764,
+      "sha256": "d33ddc4afe18dbf993a37f85cf41438e674ca6857480a87a2665f189cde3eaea",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251031.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-10/Opal_Patronage_20251031.txt",
+      "bytes": 29346,
+      "sha256": "9b8cd964deafa80c04bdefe83fe20366aa00397e0ce44dcd4368b363aa54cba4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251101.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251101.txt",
+      "bytes": 28838,
+      "sha256": "f9417d53369fc2a3ee07da2262d15c58cc79fa203b1b3e1f3e4a9b00f714075e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251102.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251102.txt",
+      "bytes": 28992,
+      "sha256": "21f81960802b6b6752a28da73ce17aba0429bc72d4e7dd6e8cc2172113efe477",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251103.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251103.txt",
+      "bytes": 29164,
+      "sha256": "c8b7cae7c72282699febbb5d884080bd52b06ee05b8391a661b61894582ccbae",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251104.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251104.txt",
+      "bytes": 28714,
+      "sha256": "0a5d63a8ac3d87474829c845a2eed3c071b199c4428e424055aa814dd7c9aff4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251105.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251105.txt",
+      "bytes": 28980,
+      "sha256": "6d5ff7535bcf48e5fa706a0d8e780c2df9f746321ebc191ad015f8a6043b4b60",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251106.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251106.txt",
+      "bytes": 28718,
+      "sha256": "80ccccd4ed65a84c053dc9814dd39b93e42a9a76e9266fd14c712ff94fb725d9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251107.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251107.txt",
+      "bytes": 28870,
+      "sha256": "2be5fd10ad4fe56d51f265e83ea352d90d5b502acf2b10a88a0c77f53fac2462",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251108.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251108.txt",
+      "bytes": 29173,
+      "sha256": "c3c78e966d9851e783b81c73cb97174a3400b67b075d14822420af59f6a191e4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251109.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251109.txt",
+      "bytes": 28784,
+      "sha256": "4cad72b089409d7c5587dffd751df4e3c0b16eee78f1b43a7ba1d58adc6fa7eb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251110.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251110.txt",
+      "bytes": 29014,
+      "sha256": "125c73aac215941348f9a2831f3ebf2c4a5fc1b25369e47bbf954f021fec8360",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251111.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251111.txt",
+      "bytes": 28889,
+      "sha256": "7fa8fc8596b926f76838a5076f2f96a5a2302bc098a51d05308de2ef99357729",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251112.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251112.txt",
+      "bytes": 28868,
+      "sha256": "f41b56365d8800f8e798983a32e7308731207abcd245214576a5c93c0e346c28",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251113.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251113.txt",
+      "bytes": 29029,
+      "sha256": "3779e2f1dfd2c97f3acf8f2fb1b1d8d5b7e10247efa2eee32c63894518bbedbf",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251114.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251114.txt",
+      "bytes": 29053,
+      "sha256": "9196c58802be3b198c51b683b6d91ddaaa4c9aecb2bddaa31f5b90c4e5879b83",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251115.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251115.txt",
+      "bytes": 28973,
+      "sha256": "b448b7839d50c1ff8f0045ec98f252b3325b4e1cc204bec7807c7b9d71b46e74",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251116.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251116.txt",
+      "bytes": 28724,
+      "sha256": "d9a44e961af5cddb0959ba8dfd13167e8cad099a3cedd488fb194c71e3f33aa0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251117.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251117.txt",
+      "bytes": 28843,
+      "sha256": "00f23ee02cba2e37fde84ea05847062b3c00749204b21b2af95560342c024550",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251118.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251118.txt",
+      "bytes": 28903,
+      "sha256": "1f08771d9360f339ab3843f7ad3982f298be6b8f2fc8460e1f2a87b93b1cfb18",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251119.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251119.txt",
+      "bytes": 28793,
+      "sha256": "d91b0cc6c5a53dcf6e18071d07654a3073bcd254ff71c53a821814dad2d09d36",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251120.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251120.txt",
+      "bytes": 28202,
+      "sha256": "16c6d5903183a03e5ab0fde5583d849d378519563582c561930cf2c8bf3af3a0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251121.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251121.txt",
+      "bytes": 28602,
+      "sha256": "997dd18a2c8396fd7f9b3ce856df8fd98fc90fdbd94b9a931ce65a6e6e629070",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251122.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251122.txt",
+      "bytes": 28064,
+      "sha256": "e9049baed5efea0fc8e17828dae4b46b2cb685a7906fb53e6becad291de9ad30",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251123.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251123.txt",
+      "bytes": 28471,
+      "sha256": "02cc34e403c083914a5c5541ddca58aa4beea94e9f0f084efe0468feaa082e7b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251124.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251124.txt",
+      "bytes": 28925,
+      "sha256": "6e6a4f03613faaddb61b1b08ab3c57bd925b9269dedd47ce9c2f4316e533742c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251125.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251125.txt",
+      "bytes": 29086,
+      "sha256": "f757b0d94630a6b7ed4dc69df46b0fc08b4ca2ad6d9f292a939e08ec011d1f47",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251126.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251126.txt",
+      "bytes": 29313,
+      "sha256": "476fe5b941feb51d31e678693029934f6988b552e2b4d2971b53709d5a9c5d1c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251127.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251127.txt",
+      "bytes": 28987,
+      "sha256": "c247ef1b7b0d5dae3eda9f18fbf0c3ab7432bad2896a03a3e9ece2c3f664d417",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251128.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251128.txt",
+      "bytes": 29165,
+      "sha256": "06824af7585f7c9159a62d1af3792b2f6aa775adbcb68b07203a61ea77a0bebd",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251129.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251129.txt",
+      "bytes": 28584,
+      "sha256": "fd1f3eaf8f010026d1f2b6bdbe60f530b9eff02c6f48ff6880237e7623af9146",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251130.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-11/Opal_Patronage_20251130.txt",
+      "bytes": 27508,
+      "sha256": "55b9e9e5f338694bbfbd813492bca5271bf44dd39d696f0694f9315b258b2a57",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251201.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251201.txt",
+      "bytes": 27550,
+      "sha256": "ffaffd8ec69d0b90abaf9db23c0216cda4980f67c8ce80f7228e99c7b3b7f255",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251202.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251202.txt",
+      "bytes": 27863,
+      "sha256": "78d90be7f5e0af4aac927edf8a5527502ab47231773236abdb084d155db54fad",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251203.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251203.txt",
+      "bytes": 27592,
+      "sha256": "a662c6c093160ac344de34c628a8d3490314afd243b921e1132386905f05beb0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251204.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251204.txt",
+      "bytes": 27692,
+      "sha256": "936bdb33d34c1560438788aad285a1e698f0d266773afe1d9cfcf359eb37ce35",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251205.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251205.txt",
+      "bytes": 28923,
+      "sha256": "20618ac3960c0ea273946e5f16f8d6bdb64dd965a86965fbf7558e55d7130a87",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251206.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251206.txt",
+      "bytes": 29018,
+      "sha256": "e67865c18b5b99d1b498f788fdea4ac15a4a6c7717cee6ee1b07c8af5ee13806",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251207.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251207.txt",
+      "bytes": 28576,
+      "sha256": "68cc22bfaf432b76868dee3111c70c72b13918e75f9f18ae0c23188929ac5895",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251208.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251208.txt",
+      "bytes": 28754,
+      "sha256": "24d1ce2f97f1f8eb77102696067d8d294fd2616628794dceb1a81fd7bffd1585",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251209.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251209.txt",
+      "bytes": 28959,
+      "sha256": "8f1f91a487bc7c33eac3ee9442305adf0ee2975ffbcd2819e7113134465ec8a4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251210.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251210.txt",
+      "bytes": 28831,
+      "sha256": "88757bfeea807632190c688aa243e23a42962a7af4644419b4b178a3943192ac",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251211.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251211.txt",
+      "bytes": 29327,
+      "sha256": "8eb1688575e0155ba8b9a7d45dc1c77643eddbe89288408635656093dbc06b1e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251212.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251212.txt",
+      "bytes": 28288,
+      "sha256": "79cc78d9907135438b1bc59079af3dedffd04f6f10f60e04f4e6bc988dee5d55",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251213.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251213.txt",
+      "bytes": 28407,
+      "sha256": "9bb4acd0e5a679710a5b0ac9469c1b9fb07e3c99ef7b573cff5c24644b4abb65",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251214.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251214.txt",
+      "bytes": 27938,
+      "sha256": "2e4ba8ed26fb7b9ff819aa823508aa8e2096ea0e63871fff58e4e95a2829dafd",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251215.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251215.txt",
+      "bytes": 28212,
+      "sha256": "84d6bff7468968e5593db064d2468a97047957bd4e8fca96097a53054e4bc6a3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251216.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251216.txt",
+      "bytes": 28176,
+      "sha256": "2e5ba7ed8cf278b67f27d5bf72348c5ca8f4be5e21f1210d100eeab84016cd93",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251217.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251217.txt",
+      "bytes": 29216,
+      "sha256": "4f974cf77501f7f73556f4daea4e14a60c60d93a3dd5745e1bbf4d6e7d36863c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251218.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251218.txt",
+      "bytes": 28782,
+      "sha256": "3937bca05ee6d420a97790c72965db2f60fab06b0f4166f58d493ce1eaae493f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251219.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251219.txt",
+      "bytes": 29213,
+      "sha256": "977cd957f2a94d0d6437dc3184c4237aa676bdc4d826b5cb53ac0059142fbe62",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251220.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251220.txt",
+      "bytes": 28711,
+      "sha256": "0251aefee289030bacd8768f07a8e4d69b7758e4abe569b613bf3d508ac9be96",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251221.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251221.txt",
+      "bytes": 28665,
+      "sha256": "f72052c72d7145e9728f38f8e5921522976a60ba8a20351f1befa429210be4f0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251222.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251222.txt",
+      "bytes": 28887,
+      "sha256": "c32c6cf1230103251775643d7cea9d8ca249578cce970135619e58f8418b1f01",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251223.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251223.txt",
+      "bytes": 28808,
+      "sha256": "db9e9ace85f8ab6078c05271e2682507a7c88e1921d986210f3a0677e808976a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251224.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251224.txt",
+      "bytes": 29024,
+      "sha256": "bef24d2a4148d25e87b76f5a24cac1ccd111ef2afd1917f11fa24586d04aa5e8",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251225.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251225.txt",
+      "bytes": 27613,
+      "sha256": "d68a1157452255e9bdfd21eeaf11e105b0adb601d5693a78b4b76846613c17b4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251226.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251226.txt",
+      "bytes": 28182,
+      "sha256": "ecafab24b90f387f03dff0d3acb5994c65e3103c46446205e81924527a923ff5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251227.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251227.txt",
+      "bytes": 28800,
+      "sha256": "a1e35e80ad399e18639c2a3c3fd116a1324d67fbe8ab3ce04b254bb7d99e6629",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251228.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251228.txt",
+      "bytes": 28637,
+      "sha256": "0f0730db1918d1977f62bb7974019d870a7db35a0a328363ace8ff2dcad35ba2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251229.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251229.txt",
+      "bytes": 28928,
+      "sha256": "54339e2342ac536ed24715fae547a6611c466c4c9c807e3f519a099260a09a3c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251230.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251230.txt",
+      "bytes": 28905,
+      "sha256": "8251a39b80e2cadb551cd587795ca1da7e34e2853af70da55852f09eabff2620",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20251231.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2025-12/Opal_Patronage_20251231.txt",
+      "bytes": 29268,
+      "sha256": "aff3d0aab5b012b20e5e004d6c22d6268b17b233bf4625c705b915b381044c39",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260101.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260101.txt",
+      "bytes": 29389,
+      "sha256": "68cd2f931a0c59e4348510e6ff80ce798ffedc17d9140c550424f3dc05509ce2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260102.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260102.txt",
+      "bytes": 28998,
+      "sha256": "19fb0f4a14397d2fd1f52ef160ec59832222d74971abb6e9f8f1322bf09bed92",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260103.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260103.txt",
+      "bytes": 28842,
+      "sha256": "c0cf807a5270c6f87c4367c8273dacd3bd754e0c5294a763e624b579d6a79045",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260104.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260104.txt",
+      "bytes": 28313,
+      "sha256": "c696f16326077f11fdebeec8bfd7335b83355e21d22e9c929caa1c8abde8326e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260105.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260105.txt",
+      "bytes": 28743,
+      "sha256": "4662c7b1cb9bda9ee151abe3fbeedb9a849c8c0378da7ed6ea9e39af659492bf",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260106.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260106.txt",
+      "bytes": 28708,
+      "sha256": "68f32d8fcfdf0cb49b6afe7c51a489bfd64f184de4913e1ff3ef42d64a142a70",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260107.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260107.txt",
+      "bytes": 28689,
+      "sha256": "58cd71c908751b87c5454bc7195623d488f57a1f0a8b46c58d43e3b999aba743",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260108.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260108.txt",
+      "bytes": 28935,
+      "sha256": "9aced8a54a7cae3ecc636d34b027c135c8189a6bc77cb8e36b91afe467a97612",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260109.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260109.txt",
+      "bytes": 29122,
+      "sha256": "2850e2ca1646e4a44f31e6a5e68ef5c8e1c1d26a606e7921c3033da1dc615de9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260110.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260110.txt",
+      "bytes": 28855,
+      "sha256": "d18313ecab988ad5636ba5924515f37ec8b73ba3cfa3399bdaff92512654a191",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260111.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260111.txt",
+      "bytes": 28110,
+      "sha256": "49810c814ef9c5655faa9c92d4476d921e9395ac1a5a88ad42023bcbd0d0e544",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260112.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260112.txt",
+      "bytes": 28894,
+      "sha256": "34fbe44b8d2ddd9ac74bcac156efd784253036194dac802cec0fb4133a806c28",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260113.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260113.txt",
+      "bytes": 28832,
+      "sha256": "69e390960f83b64b39a5a530af8d7085e09e301eef367b076f8c6e23ec738849",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260114.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260114.txt",
+      "bytes": 29150,
+      "sha256": "c61e13348e04f57078e8a28a9993f5c487a90a1f02cb05bb95a8ae906706bc27",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260115.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260115.txt",
+      "bytes": 29049,
+      "sha256": "a7cd7e39a71fbd0e4995b618326f679704722ed20d8df5c69cb44599cdc49b81",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260116.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260116.txt",
+      "bytes": 29235,
+      "sha256": "5cd9cdbd6722e51c50f1e465a8c3299605b5f9849529729f8d18516289350a70",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260117.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260117.txt",
+      "bytes": 28461,
+      "sha256": "3a5452922dea11176bbcb40afbb54df3c721ea67c0681b9f011df648e2d60862",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260118.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260118.txt",
+      "bytes": 28002,
+      "sha256": "212be549c94b682c2e2e6a646fa00cfc0ac901841e2f594963d645429840e800",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260119.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260119.txt",
+      "bytes": 28784,
+      "sha256": "08f466230c48f6357b2d24b26b5ae72a5d3edd599ac48f72c9f604a828f222f2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260120.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260120.txt",
+      "bytes": 28571,
+      "sha256": "205e2d82b705b4b2230e6f072beeb21725db381bf2f555c5f91e0079b2b7fc48",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260121.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260121.txt",
+      "bytes": 28782,
+      "sha256": "f4a8d6f96706e96a3588738e73ccc3d28130adc2be59c6428a4b19838c07099a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260122.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260122.txt",
+      "bytes": 28937,
+      "sha256": "ceee07c76089f44d79cf57a7484d0f4dce992e05c6b03a190a1b1f5a7edb9ae9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260123.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260123.txt",
+      "bytes": 28765,
+      "sha256": "f35a6d77a1b1c142e483b74838ebde301b4fb139005c8d473051d72dae9c1180",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260124.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260124.txt",
+      "bytes": 29194,
+      "sha256": "23a9c046a5bd65067d7cc1c5be5d20874e11b689ea9c08966e23b7a42f002fcd",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260125.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260125.txt",
+      "bytes": 28877,
+      "sha256": "01cb5c8e93176051e4356be347ed62f097078fb4ef2e4eadff550339cf430f2c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260126.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260126.txt",
+      "bytes": 28459,
+      "sha256": "65dbb6af380ee0669ce7fc26bf8fafefae6ec872bd863cdbc58b0a107bd8125d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260127.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260127.txt",
+      "bytes": 28944,
+      "sha256": "c1a4cc68ebcc6ca2e959ac9c8a6d617cf90680c1b562a57c4c3344ba1b720c50",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260128.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260128.txt",
+      "bytes": 28790,
+      "sha256": "7a59aaf2f3365a36b03a9960a301774bbac521f23217f318b5af9735b38783c0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260129.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260129.txt",
+      "bytes": 28608,
+      "sha256": "66833dc98baeb829817a8dde03f912ae63a592dda156d38f413ea3ff2f8c1329",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260130.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260130.txt",
+      "bytes": 28844,
+      "sha256": "81f200f9c729eabd554d05a41c602a1223a0f3c73dccbdd0974b4f93a170ce61",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260131.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-01/Opal_Patronage_20260131.txt",
+      "bytes": 28462,
+      "sha256": "96a307c59b1a77cbd8b95a1ce924b2c733f3e62ff84186bfb02690c90820d8c6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260201.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260201.txt",
+      "bytes": 28115,
+      "sha256": "046c1b62a253311a95056524ebabefda51e681189b6ab844b44a583b74e1b08a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260202.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260202.txt",
+      "bytes": 28417,
+      "sha256": "d95abc3b3783b4594913898df47a8eb24c8961fa26be3f5684cccb4f86d7f6b5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260203.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260203.txt",
+      "bytes": 28708,
+      "sha256": "0d9e52236fc6c3b36726e2b49e2aead48fc9f6f32cb886f8bf3271bcd6632ed0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260204.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260204.txt",
+      "bytes": 28571,
+      "sha256": "3f66ee1d9a700d770c937bb93f91ff5c3dddb4fb578198d503e34a451ef6389e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260205.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260205.txt",
+      "bytes": 28618,
+      "sha256": "cb1a4ab00e7de30468d89dee55bbda232787ce860fd11cc24360509d1b0341fb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260206.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260206.txt",
+      "bytes": 29122,
+      "sha256": "0f982bd2bc6ac69cac9b89ffd1428d5a2cddbfb718d806f20984d3e3ccbb4477",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260207.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260207.txt",
+      "bytes": 29136,
+      "sha256": "b12f94aeb4bfbb32c7446c815eb559e0a96bbf81a6d2703c8dcecb5a77188ae3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260208.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260208.txt",
+      "bytes": 28591,
+      "sha256": "fc3858f5e997de4a634191573a020756522c55312eec76b32f28d71a0ffca631",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260209.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260209.txt",
+      "bytes": 28938,
+      "sha256": "fcb791ddfa3eafa139e83931b3d9b0f04b77a3c4cbf09e4e8181e0cedc157c5d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260210.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260210.txt",
+      "bytes": 29151,
+      "sha256": "dde3698414853216ea2570b6b6cec2f0dec0f1554075c7df77b58a747733ffea",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260211.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260211.txt",
+      "bytes": 29153,
+      "sha256": "826e524abc8a633fe614b30a3cf03380ccc9e35eb165b1eeef611ab672a85773",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260212.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260212.txt",
+      "bytes": 29391,
+      "sha256": "cb5f8ef216c2dd8e664d2c26626bb8bfccfd0d84bfdf354993ba574faa5e4b73",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260213.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260213.txt",
+      "bytes": 29491,
+      "sha256": "630b83798765234251b50016188132af2932cae2e72dc56648f06fe66e10a405",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260214.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260214.txt",
+      "bytes": 29125,
+      "sha256": "bb568522e34edf8c0ba3c2860b82a38ed67149cc1c6d5420c27ac745264843f6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260215.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260215.txt",
+      "bytes": 28504,
+      "sha256": "7223d13df493ff6eb491467106e2a2b13714836fbf489f25a8e2c9be29a9a9d2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260216.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260216.txt",
+      "bytes": 28986,
+      "sha256": "c54c2b0c7f6271ada8c8b7c5a3a0f8e198b5a9044e99e58efcdfcb21a94d7340",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260217.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260217.txt",
+      "bytes": 28936,
+      "sha256": "1e526a7c29bf7590dc2ba8289be09060d43d9d162fb9aea4a60bebedb34a630c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260218.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260218.txt",
+      "bytes": 29199,
+      "sha256": "e9c4d45ed31c8684dadf18cd22d6e2abf7721448cdcbb89abbcfcc7806162fa6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260219.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260219.txt",
+      "bytes": 28990,
+      "sha256": "019ed082e8c9af65edfeb2352e17cb26a2ca684b4bb9743119acc8a0e988c563",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260220.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260220.txt",
+      "bytes": 29161,
+      "sha256": "4f108473960c18a514d861b005c3dcf133dea0bbda980e1455096f2314780389",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260221.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260221.txt",
+      "bytes": 29217,
+      "sha256": "476235e421e32226a0fb942048e9fc647475dbe702fde44274ad839d64abd05a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260222.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260222.txt",
+      "bytes": 28410,
+      "sha256": "95c9f13f7bcceb493baed985488af7b8d32501886b3bc7f41d237955255de884",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260223.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260223.txt",
+      "bytes": 29027,
+      "sha256": "dc212931e2ad2cf5ea5105db580a270e9b1e5e9ba61c08a315c807013a58cc28",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260224.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260224.txt",
+      "bytes": 28967,
+      "sha256": "73f7c07cc30d5bbf5e98aff89c6170c0d2eedfc768b670a89830b33df11e1dd0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260225.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260225.txt",
+      "bytes": 28834,
+      "sha256": "2b617f530a4c28d4b6548912ab54113aeb3e023ecaf3f784682b4bc3b09d90a3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260226.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260226.txt",
+      "bytes": 29004,
+      "sha256": "305ab51f568d9aa5801ac63bb2acf1a2d7d10ee08dc2b87e14be330870bd8cbb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260227.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260227.txt",
+      "bytes": 28495,
+      "sha256": "4f54f786705dbfda6eb55b15c2978023c4b70ea9eeb48b4aff6db8a3bbb1106b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260228.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-02/Opal_Patronage_20260228.txt",
+      "bytes": 28540,
+      "sha256": "23e4b76670aae288e71f4789d2a71e20752b01fe838dd39d2b5c413596211d82",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260301.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260301.txt",
+      "bytes": 29186,
+      "sha256": "7369afaeaf3e45c0bab3dacf0e820973872823a33ace5c51aad71a5c045c00bc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260302.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260302.txt",
+      "bytes": 29159,
+      "sha256": "bddf79737540fe6404d2673791fb10207d05d418840acfc6b885ed124f0f4a04",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260303.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260303.txt",
+      "bytes": 28901,
+      "sha256": "01e6669ac3f807b213a6a2595cb49230b2df02d8bde3fa7aac5d9476229c6cda",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260304.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260304.txt",
+      "bytes": 29288,
+      "sha256": "19290743dd781b6ae14352d982382239a35f2c3cd74614cc061de14a805860f7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260305.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260305.txt",
+      "bytes": 29281,
+      "sha256": "eacc39b6243ceedd305c1c256e3f0a033017ca43b2fe35270e520d021d988ab4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260306.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260306.txt",
+      "bytes": 29282,
+      "sha256": "2b7727d18786a9ee6ac14f59c7b171392db121064a4cfa8d4f1bfbe47740679e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260307.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260307.txt",
+      "bytes": 28379,
+      "sha256": "d2eab6933955acefdd2e0abda4734c34c1029c845469430b2946c5327b8a1bcb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260308.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260308.txt",
+      "bytes": 27876,
+      "sha256": "36e8f9a3b5985a4ec4556aa9a5b938e4e459115983ffadb2c98c4b3d5e558fa7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260309.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260309.txt",
+      "bytes": 29440,
+      "sha256": "b4495cdff36391aeaecb7555a9d0d76f67de836ed22dd3245964c78c839d1b48",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260310.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260310.txt",
+      "bytes": 29030,
+      "sha256": "537ea056de5cfca44791836e8e1e924e12cf52145646787c96eeec34dc30ce67",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260311.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260311.txt",
+      "bytes": 29080,
+      "sha256": "1b5be70714835a649228b760827367536f263ded733be2569854beb91385d004",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260312.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260312.txt",
+      "bytes": 29325,
+      "sha256": "e3fd01412329ee0dc0c661bdc347ca6a39b9f695f36d7353d80570cecfc18f2c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260313.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260313.txt",
+      "bytes": 29220,
+      "sha256": "797e21c88b725cce5f43039f49cd7415eee3f39811b70c80c6234ffb27adf644",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260314.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260314.txt",
+      "bytes": 29317,
+      "sha256": "c79c274898b166397e36c0d682286d4862c38f6f809e81d50d1f9e7106609a18",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260315.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260315.txt",
+      "bytes": 28782,
+      "sha256": "3e9e00cb49a390bd3bbfd7fb7e7ef8cd7922bdd474a40b0caf62cc87c2b2d399",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260316.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260316.txt",
+      "bytes": 28984,
+      "sha256": "9bb41cb3f30c3f6057f2bf6c22776438e7a8abc0351036d11cfe80868a597069",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260317.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260317.txt",
+      "bytes": 29181,
+      "sha256": "fd590dedd285e2ef936dfbcc74a9538f8814508d37daf4c388974115a2bc4b1b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260318.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260318.txt",
+      "bytes": 28883,
+      "sha256": "40e691f39a28a9b3070f57518cd742f0e8004ef88dba1ec1ac4437269a5ad64c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260319.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260319.txt",
+      "bytes": 28853,
+      "sha256": "d55b8940bece9fa8ebd9e48986f6769749d1b4386db5b2f81b9606b12404fd5e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260320.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260320.txt",
+      "bytes": 29218,
+      "sha256": "987a914c5c504f6a9a2ebfdf1ac27b80a70614c4e3f71ddeed755c1f93b655e3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260321.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260321.txt",
+      "bytes": 28177,
+      "sha256": "aa66cf651a9c0885b0f2554a6b719f7798c3c584f4049d54803d9fe5943d746e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260322.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260322.txt",
+      "bytes": 27747,
+      "sha256": "02c13385c15310a6d7a7fae7f1fbfc9125444c10b2d90bbd566b86b018ed4b2a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260323.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260323.txt",
+      "bytes": 28998,
+      "sha256": "02097c63e1d2b18863180d2c98bf0dc9acb3deffcbcc8b552a0b839a1a236cd3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260324.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260324.txt",
+      "bytes": 29309,
+      "sha256": "b31b675085a0883fe8e453ae586569751bb3b3019fd0b2fe119e83c69989f97f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260325.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260325.txt",
+      "bytes": 28885,
+      "sha256": "4700355f8b76d75ad529616a533e875967f9b32376aaf24e233a2155e51568d1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260326.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260326.txt",
+      "bytes": 29019,
+      "sha256": "24d1874a046ee766332f05e0fcee52b8c4005282a0788ac4f60f21e8ab6c4ea2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260327.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260327.txt",
+      "bytes": 29095,
+      "sha256": "2f3023b7c9606249e062cb3ac1cd53e973e4c7ff53487299615320a05c1e2dd3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260328.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260328.txt",
+      "bytes": 29003,
+      "sha256": "6d5c2ee1668f7a0cfec402de9f5e0f830d7182566c78965d0af29aa713f0f875",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260329.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260329.txt",
+      "bytes": 28752,
+      "sha256": "4ad072dbe91cac5e8251c696a795262d69c1bb54e81612d8c48e7ac72ee1511f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260330.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260330.txt",
+      "bytes": 29043,
+      "sha256": "c6bc91afb851a3c5c4eb81efca7482ee5beb8fa92ad5bad36e268c95e3fc5c5d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260331.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-03/Opal_Patronage_20260331.txt",
+      "bytes": 29006,
+      "sha256": "e2fe58fe6c082075ff4761149c62eb3243ec388df20e86e6ad5a58cc61d087c9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260401.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260401.txt",
+      "bytes": 28896,
+      "sha256": "115298db9c34b39a6fea9feb00e49abec534b9f67bb845293419a726f29c626d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260402.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260402.txt",
+      "bytes": 29199,
+      "sha256": "f67f44c6c589d582115c82cfff09593b58188e6f775b4b5bc2b23b4fe9909b01",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260403.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260403.txt",
+      "bytes": 27407,
+      "sha256": "c83e7ff2c39ed13de3ea29debc19b65528dcd1036f18dc2e6423b1f5f8093bc5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260404.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260404.txt",
+      "bytes": 28017,
+      "sha256": "56d850943c651c3fde713daaebd74364f95af01d9a2caeb329366d3bd9265a72",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260405.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260405.txt",
+      "bytes": 28113,
+      "sha256": "7af6c46ae391f95f2c0ca183478464f8e4264fd74c9dcb5ec93b81970b2620ef",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260406.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260406.txt",
+      "bytes": 27351,
+      "sha256": "a2b657201afda6ef79dee422ec6e6ef9393d71361a21a0558673f8e798648bd9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260407.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260407.txt",
+      "bytes": 28706,
+      "sha256": "c0d1b49951aead38ff5094abd31a4750dd0fd8940437ca76ce77ff5fa67c88f0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260408.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260408.txt",
+      "bytes": 28710,
+      "sha256": "81e71a55e427145dd0966dca56e43befa11e2f71a3542632208dcee0375e2c7d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260409.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260409.txt",
+      "bytes": 29008,
+      "sha256": "e348f977a1657687b6beb270fe89f1d483485b66a05fe892f9a86a92b05259c4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260410.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260410.txt",
+      "bytes": 29026,
+      "sha256": "93e0d372975ddacf900d8cf5f15509ce8273724d400c254526c972330b60311f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260411.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260411.txt",
+      "bytes": 29089,
+      "sha256": "cef20ccba72d06428b82699cdea01cda72a4922d6ec8fada3302702b4e310e78",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260412.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260412.txt",
+      "bytes": 28576,
+      "sha256": "df83f081adf539449058a6d5474609d77e65a295635d724bf7a9f52381aeb584",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260413.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260413.txt",
+      "bytes": 28752,
+      "sha256": "b8ea83d135dc9aa3bec76f5040825be62a22aa43d3aaec8678386a28615c1922",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260414.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260414.txt",
+      "bytes": 28944,
+      "sha256": "e833d038b8ac5b9f4eb11e2e20d0dc347ed909fae0fa0556449594fb40217380",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260415.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260415.txt",
+      "bytes": 29050,
+      "sha256": "8afe4cc21b7e27634f1a040d07827f35e66372e166e0a11db199d898dec65a41",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260416.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260416.txt",
+      "bytes": 28820,
+      "sha256": "3e9f1e7e7a3bdd62a706491b2b6490651841dff27b6cbc2f4c2447c12de3457e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260417.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260417.txt",
+      "bytes": 29072,
+      "sha256": "8869cf67ec75229cf38adafc74277fea314fa830e72f4204a2f4c7915e2d1210",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260418.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260418.txt",
+      "bytes": 28502,
+      "sha256": "2450fdbe408b17da18e5524774b4a8a51dfe82fa2508b05bc283e53c896432aa",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260419.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260419.txt",
+      "bytes": 28483,
+      "sha256": "6495c988d4b0fa69fa68f64db8f7d9038708c90ca724c3326380351d01df3888",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260420.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260420.txt",
+      "bytes": 28996,
+      "sha256": "d975e7bd33d110100ee859009be035b31000790fea38fcd6b0b15e6ec5aedbcc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260421.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260421.txt",
+      "bytes": 28832,
+      "sha256": "689c10ba6cfc367988cbcb3db0fa74e51d29f8cb3081f6f2da0d9744aaaf7130",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260422.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260422.txt",
+      "bytes": 29058,
+      "sha256": "7cf93e9ea3e58ec4234d0e1dac98565d29456a93a987575bccb8a2fcf62e0994",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260423.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260423.txt",
+      "bytes": 28881,
+      "sha256": "f52c8b94b32eb7b71cea06d2102a666b80b0e664e3a008fa55e7a9fad507e4e3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260424.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260424.txt",
+      "bytes": 29307,
+      "sha256": "68454531c1a6a49bb726e703c522ba458ffb001d7d065e421fc79b138e3aa0b0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260425.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260425.txt",
+      "bytes": 29619,
+      "sha256": "e3d2f5e2dfc1bd0bcbbe9896cb3b675d3fa7c5e36fe14ef5ec8a743529283805",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260426.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260426.txt",
+      "bytes": 28460,
+      "sha256": "6bcd054a867637ba45ed6b52451f9a0db930e3088ae5a34341356824fd2aa90b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260427.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260427.txt",
+      "bytes": 28515,
+      "sha256": "ded272eb2806233842a82b5609f46541726a376090bdad2f81935ad6e8efc951",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260428.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260428.txt",
+      "bytes": 28819,
+      "sha256": "e1f388fab1dba475df7004a978dbeaaf5b0b0edfc22f0f25b533a7138feddd96",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260429.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260429.txt",
+      "bytes": 29073,
+      "sha256": "f74e8a74d84bcfeefce319efa6aa017bcf7b975ca5824ed06250b6535b696be2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260430.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-04/Opal_Patronage_20260430.txt",
+      "bytes": 28527,
+      "sha256": "85479680bba65401301a367d68b82c1b1f5fc840399ed79cdc9cdff94dba78a5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260501.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260501.txt",
+      "bytes": 28931,
+      "sha256": "cea2af9644bd749fe95a2fe8094ad8dcf3b2bc1bfb76f30a31cbdda839a49718",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260502.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260502.txt",
+      "bytes": 29068,
+      "sha256": "334d274a78483c57a7b722b61ef289941ea2cb0f1879230d3216f7eaf1b5e138",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260503.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260503.txt",
+      "bytes": 28485,
+      "sha256": "e1a22b0940f6b4fa697cff33e50be882b65c5774ab668077a5fdf876ffdad816",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260504.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260504.txt",
+      "bytes": 29103,
+      "sha256": "1df59cc2c76366918701bb73540e65bac22b84c4c9fdfae42ea6621b4d440286",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260505.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260505.txt",
+      "bytes": 29301,
+      "sha256": "75c1814845a4900d2ab53eb2a2f3af51f10700caec4530d3b89b6f6da3367c29",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260506.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260506.txt",
+      "bytes": 29000,
+      "sha256": "13001b98c1c5017e6857e7fc553ec072240ee4af5550130dab45224b03739c85",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260507.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260507.txt",
+      "bytes": 29011,
+      "sha256": "65821c2f4f17228e885a60fdcad6cb7bfd12acde2886b6092d09fb50136dc47f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260508.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260508.txt",
+      "bytes": 29190,
+      "sha256": "9a505ce723a7c573f3bc736f5bf85e1a65dc3a25c81d76387e6c2b81acb7b877",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260509.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260509.txt",
+      "bytes": 28575,
+      "sha256": "bbc65e54e37388b56b4c51cfde529b8f7d02972b8adf3065826c076d7564c8ba",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260510.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260510.txt",
+      "bytes": 28169,
+      "sha256": "ebc4c2ef8781b4310cfac41756e0504bd3e8d51fa14a851bced7cdd996832ae6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260511.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260511.txt",
+      "bytes": 29119,
+      "sha256": "d5e01f1624887c3d0da3d44c8f78136ed9909de2ae72f35ceb9070e13bb67854",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260512.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260512.txt",
+      "bytes": 29078,
+      "sha256": "8aade5594b06deee88a28dfcf17a2ef6b5e45f6c3767a51522b41c4e49b9d044",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260513.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260513.txt",
+      "bytes": 29101,
+      "sha256": "b34af06867d7169223e0b3c7925944347434bff9536c073caf6bee42505930e1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260514.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260514.txt",
+      "bytes": 28983,
+      "sha256": "3eff6127d2aaac79dd6dfa7942cec7175b6a33673d4bbb9f2cfd2cc6fdcbc1bc",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260515.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260515.txt",
+      "bytes": 29122,
+      "sha256": "c3f4dbf42e887fd5da297b81e12362cdf9beca2e0402d9004b18a7a7eb9dc985",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260516.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260516.txt",
+      "bytes": 28692,
+      "sha256": "0e4fc9e5c83d5ffcd72cac1d3e5d4fc7c12f04400d56d41f4c52f1cd581c312b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260517.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260517.txt",
+      "bytes": 28211,
+      "sha256": "139e509906cde723c78de3146a53fcd3578e69fa2da872c5ee48d14da8700a54",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260518.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260518.txt",
+      "bytes": 28960,
+      "sha256": "2d97cffba06a0f48532a8907cd5c85c392de341372864e771a3b9f632d8271d9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260519.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260519.txt",
+      "bytes": 29069,
+      "sha256": "d6f21281ebf59b1d3c1b27715543145a6b5b765d1b0a004b6d665d9e7c74dd93",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260520.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260520.txt",
+      "bytes": 29070,
+      "sha256": "a77e830ebce9ba7ce578da82a2a207199ef5aa0b69b781a12b1f40203fcaa353",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260521.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260521.txt",
+      "bytes": 29218,
+      "sha256": "3600c9604342654f540eb92018970e4e60884ee77f0446be62ae16798ef3aa46",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260522.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260522.txt",
+      "bytes": 29449,
+      "sha256": "c835b496e4f9244f0299a42323b6debfde8f560ed950794bb7e80276751a8035",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260523.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260523.txt",
+      "bytes": 29059,
+      "sha256": "5f51e9013832c50c9ae02941789ca10202b41876431f46f234fb0ec97ff96743",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260524.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260524.txt",
+      "bytes": 28867,
+      "sha256": "9c3c7b0d427d8894fbe04a773b3e242b4c64a3b9aa4fddf2c4cd82422eec5892",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260525.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260525.txt",
+      "bytes": 28995,
+      "sha256": "140304ab61b92ce20f6901f43b39b823d57fe379f914015154beec079110b89d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260526.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260526.txt",
+      "bytes": 28781,
+      "sha256": "01889f43b4d550b20f27503edd3b0ecc8682021c402d196558b8ac7d85d1446f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260527.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260527.txt",
+      "bytes": 29220,
+      "sha256": "eeaf60e8aaf0b196958582e6e1adc34b1711638a76815e41e44d6c7dbe4cf7de",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260528.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260528.txt",
+      "bytes": 28726,
+      "sha256": "53cbe60eeb7181d8cb8387604b57b119a010a37a25fed404fc846229ba613093",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260529.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260529.txt",
+      "bytes": 29186,
+      "sha256": "3985d5e359e6a638d3cf00e1178b872eaac0d94c4c38181d94cae345e5be6cb5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260530.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260530.txt",
+      "bytes": 29145,
+      "sha256": "a2924e86a9b692f0a2f59de472b26395a35f0f0fce73630473c0050148fe57de",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260531.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-05/Opal_Patronage_20260531.txt",
+      "bytes": 29049,
+      "sha256": "f5278f5d09f3a8692437383e9620cedd8bf427216e238a4179535b0f5b8a1b8e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260601.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260601.txt",
+      "bytes": 28984,
+      "sha256": "5b0d9e74e780d2a58ab21da34f1cf024573c8d5ceb6928c3751d4f7e8e46ead5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260602.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260602.txt",
+      "bytes": 29156,
+      "sha256": "c90e469dbb8454ccde33b52c41fd3b1f9e6669a5b5f6e552a5fe5397f611506f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260603.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260603.txt",
+      "bytes": 29035,
+      "sha256": "e5ce91fa6a38830ba17cfaff6516d6fe4aff859b2da95620c146d0b416026c61",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260604.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260604.txt",
+      "bytes": 29108,
+      "sha256": "bfd5d86257f047764d7c68f11a40a2adcfbe0b2bbe3ffaf22461440f27c7e2d9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260605.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260605.txt",
+      "bytes": 29214,
+      "sha256": "825d0b64da843754004bae84eb76e71db4427d0544d9e985166c34fc207cedad",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260606.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260606.txt",
+      "bytes": 29077,
+      "sha256": "da3e6472d3996460dbcf6678e39ec25dfe8dc51b3d481599fb3450b9a7d18fa0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260607.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260607.txt",
+      "bytes": 28870,
+      "sha256": "07a833f500d34d1bfb28934bebbfa97c50f07b6be4c8e15be875d205d514013f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260608.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260608.txt",
+      "bytes": 28279,
+      "sha256": "60ac136f04aaa38d94b156fd0cec7af5a183a0177eee5d6be404f83c99010221",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260609.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260609.txt",
+      "bytes": 28668,
+      "sha256": "803db9431f847b0cffecd518acf3c5baab47cfe0582d0f661949bd3c33876339",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260610.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260610.txt",
+      "bytes": 29028,
+      "sha256": "f1fd6a99e2354414ca25c554e2f5fce09237aa4c95515b71e12019f92c9ab0b9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260611.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260611.txt",
+      "bytes": 28905,
+      "sha256": "42d694e2e0c35ec40a8fc6b1e06d079b57a9578aa88b82da66f86d424281de8b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260612.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260612.txt",
+      "bytes": 28843,
+      "sha256": "da4c53ac14979d43045ebad15453adf120ca481623867ceff8aad10d65c0a5e8",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260613.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260613.txt",
+      "bytes": 29098,
+      "sha256": "1e7cce97cc0c297d00099694864c8cfd51b1cd72066d21afebb4d7d06be3e94e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260614.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260614.txt",
+      "bytes": 28626,
+      "sha256": "d44b8c1aa1fec85b67e9f16fbfbd3cb3356bb768fb0a4196f477f1acc202d4ca",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260615.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260615.txt",
+      "bytes": 28924,
+      "sha256": "4429964e9b08b9d8d66b5246b72b06d8e4c19756ea41c4285732292f8d4a896c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260616.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260616.txt",
+      "bytes": 29043,
+      "sha256": "2482952c10609d4c5a5c5ecba5b481865bc7a41acbaee1f67986f042a696dfcb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260617.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260617.txt",
+      "bytes": 29372,
+      "sha256": "b013d5ee906b81a1e9dc46d867f164b9933d61f864b365b76854a3c1b503ab43",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260618.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260618.txt",
+      "bytes": 28997,
+      "sha256": "fbe878e6771911edebac9388019c919905c49a37e55baea2268e316ffc08e30a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260619.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260619.txt",
+      "bytes": 29353,
+      "sha256": "0ced69ded3a710560b10d9b2ef63ffa5930c19936fb401e523fb07e67866a42c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260620.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260620.txt",
+      "bytes": 29041,
+      "sha256": "5291957e131bb05ff2c58b99b6f114de2ef50424c7703dca08a90317cee93074",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260621.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260621.txt",
+      "bytes": 28931,
+      "sha256": "22d9a0131e55a25a42ae66754fe6d22120e819ada285569aed85ad8c2864a2a2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260622.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260622.txt",
+      "bytes": 28949,
+      "sha256": "498bdb922f99eb387eb4f0129a6afdbe78731044bf0d5f8220d663b347c563c2",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260623.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260623.txt",
+      "bytes": 28613,
+      "sha256": "9d7f0cd38aa2bbb588d9af09b0a2521012a8a6de7984370a63bd32b2b012d7a8",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260624.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260624.txt",
+      "bytes": 28870,
+      "sha256": "97ef57c1894b2dd587a7851e4dc65dfe098400e59d36bc2eb904ad2a996d060a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260625.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260625.txt",
+      "bytes": 28851,
+      "sha256": "e13742addacec8179bcb978f7dca06e48c9bc4bf63345c1469b55a8289c51299",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260626.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260626.txt",
+      "bytes": 29003,
+      "sha256": "837465b486c22dd6692feb7f96be37499f5831ec7cee0b352286d7092495eb77",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260627.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260627.txt",
+      "bytes": 28817,
+      "sha256": "271f0deb5eca774524cce859214b6be030398dc70407575e8cfe6b6d6a523154",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260628.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260628.txt",
+      "bytes": 28638,
+      "sha256": "ae6d6abc790943bdfb0fa622368e79d14fe68cff9daad2d70484482bd6a8c2b7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260629.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260629.txt",
+      "bytes": 29034,
+      "sha256": "9a96bcbe5de87bd741da302c8f672d58541735914ce6f128f99a981e3f346efe",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260630.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-06/Opal_Patronage_20260630.txt",
+      "bytes": 28838,
+      "sha256": "73dfbc280c2d70de905b8cf72456aff794a9b1cfa9ac2254ec4d44f114e6bb63",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260701.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260701.txt",
+      "bytes": 29140,
+      "sha256": "a232314fb2c93d9a909140ddf4466253816188a1a2e94db3197e136e501f5b90",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260702.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260702.txt",
+      "bytes": 29105,
+      "sha256": "a0976775692e41d8f51dc73db01ef76f27f77c009fe0f40d99fcdc6eae136728",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260703.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260703.txt",
+      "bytes": 29409,
+      "sha256": "6a26bef1e338febbc202e34cd707868cbb09c5bb2774e06371e97899b5a4a3d0",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260704.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260704.txt",
+      "bytes": 29551,
+      "sha256": "3966b4c0464ed68fd4832e5092b9cc578fbcb95d8795686f7a4a78a327772984",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260705.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260705.txt",
+      "bytes": 28599,
+      "sha256": "3aca8a2732b98dde45ac20c94d76e7b01404538688ff74df0e92e2aae4a29919",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260706.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260706.txt",
+      "bytes": 28486,
+      "sha256": "d3c30bc3288f2528a6f6a1e73d6e06423be3d0457b457a8fcfdfbdbdf79fe920",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260707.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260707.txt",
+      "bytes": 28774,
+      "sha256": "209ade5d3d3da44dc0768f148a4c5fe5895cada1173b6119adceec32a69fff41",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260708.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260708.txt",
+      "bytes": 28952,
+      "sha256": "0324b665c16f584f165d4fd4caa81b61509f2c246766c33bc2d8b84dbd3cd62a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260709.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260709.txt",
+      "bytes": 28382,
+      "sha256": "6bdb47e85dd8af2954b46da96b7286f583d53d6bf2a242b381cb68b535ffb7a4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260710.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260710.txt",
+      "bytes": 28935,
+      "sha256": "24edf8c08c4a4adcad2e7f4963f86e8d6c253331ff3e2578845b81be02c57795",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260711.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260711.txt",
+      "bytes": 29333,
+      "sha256": "8f90ffaf3d0d7b18852495ca133894be885e9e394d4cb876d2c6ab2414a71bbe",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260712.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260712.txt",
+      "bytes": 28486,
+      "sha256": "ffc527ed796c218a9c362cba99f7dc7122cfef6aef43b45df2b742936229a00f",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260713.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260713.txt",
+      "bytes": 28689,
+      "sha256": "7ea97582df41062571965945ee8edab3b9d87738b2b0055c1df90d838be39b1d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260714.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260714.txt",
+      "bytes": 28756,
+      "sha256": "d9b1b89c3780f0359c3388f8d6eee90aae4efb8171c764035acc25091b2b7ba7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260715.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260715.txt",
+      "bytes": 28785,
+      "sha256": "d83d28d97559cd89e374fe039b98491221e4f9cbb7792d8f48b0c03ca776a39c",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260716.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260716.txt",
+      "bytes": 28694,
+      "sha256": "857e85c8341a290d6494e7a240a3eda4c248b297ace3e310b8715d3b23e08e22",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260717.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260717.txt",
+      "bytes": 28835,
+      "sha256": "3e12a473b9dd21999359b2c320f8b82f7a56ac250648e56293a18be7a99fabed",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260718.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260718.txt",
+      "bytes": 29147,
+      "sha256": "b062a5c4b976a1e348569a5a7fd9031b5d1e05d249b91d7ecfda9d629600bfee",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260719.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260719.txt",
+      "bytes": 28497,
+      "sha256": "85d265b50545e9bfc4b7facfd7022505299d3de1d89fef275cbe4937d4314bd7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260720.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260720.txt",
+      "bytes": 28774,
+      "sha256": "3ff0d90b1e6c2139924ff6401bb9f528142dff411877332a7221fdeca02d507d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260721.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260721.txt",
+      "bytes": 29075,
+      "sha256": "dcb097195daec715fdc4ab5df5e39c315fbe5749da0da36a526e423b842d4003",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260722.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260722.txt",
+      "bytes": 28699,
+      "sha256": "e3c970442a26f80073b799478bb29d92c99a8ddca9f2f3a8d1d151b738edeb91",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260723.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260723.txt",
+      "bytes": 29227,
+      "sha256": "b74db7e9b0ed665437ccc15b37c5f08f86fc9a1d5258bae9a69bcc74f69c89ef",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260724.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260724.txt",
+      "bytes": 28947,
+      "sha256": "06e89062a4fbafe6815f3c03f5cfc84e81b279391ceda3d4266fb61208b0e682",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260725.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260725.txt",
+      "bytes": 29037,
+      "sha256": "4b265090780334d1f6e652f2acec5ef2dcb37a7fe302eab80426f451ad63a816",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260726.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260726.txt",
+      "bytes": 28631,
+      "sha256": "a67e88608c68e4ebf02623a58e612c73c0040aa5f13cc765b07fdc9bfab64a49",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260727.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260727.txt",
+      "bytes": 28833,
+      "sha256": "eed00cbce9e9ba6d35972799308c863bcc89e190e89b05802265b056096b41e3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260728.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260728.txt",
+      "bytes": 29184,
+      "sha256": "f1e50df13ac569dc141bd7ec6e5e9af10bc7de4a4f6313467a802598b8a0b08a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260729.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260729.txt",
+      "bytes": 29157,
+      "sha256": "17ceb3cc52c3b578a572555a944eb352db5dc65b5e36e02fbc682158b41196e9",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260730.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260730.txt",
+      "bytes": 28850,
+      "sha256": "0bcd4adce42cb5012ed57577e10173f61549a870d5ae6d40b2dc180dd697a379",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260731.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-07/Opal_Patronage_20260731.txt",
+      "bytes": 28459,
+      "sha256": "db2780ac2543f24c2799753ebbdadc59e5651a1e7bcff588349ca626bf5331ae",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260801.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260801.txt",
+      "bytes": 29057,
+      "sha256": "4cfd35447ea75151ef6598f143156b7105fdb204f0bcf791fc27eb32049d99f8",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260802.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260802.txt",
+      "bytes": 28768,
+      "sha256": "6d7af71cfe331022b8ede9221d3260778f7be597863a734946809035bc766d26",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260803.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260803.txt",
+      "bytes": 28938,
+      "sha256": "984a8b4d4a3664d4b98665f8a97a823474421f29566389c0dcbcb2677c42ca69",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260804.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260804.txt",
+      "bytes": 29184,
+      "sha256": "08dca06699b5e87d83164174658bbd5fbe2e3ff17d20839b20005caf05f1acb3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260805.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260805.txt",
+      "bytes": 28851,
+      "sha256": "da837e92241de5c2891df76b8d8581d86f96e7659295b5cb24df16aecc17366a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260806.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260806.txt",
+      "bytes": 28749,
+      "sha256": "104f108ee364ba831e6d141f698e154665eec5c15ff87d9a7fefdae8dcc6fa17",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260807.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260807.txt",
+      "bytes": 29423,
+      "sha256": "3fb1c1a0662a1fd4718305eb3a60abeb44075af007752b8c97b7c0208fe0f4df",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260808.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260808.txt",
+      "bytes": 29118,
+      "sha256": "1c9e54c5d26764b6fa3c9e8de1a933e38f7c497e373004924670acf4c9b18a2d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260809.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260809.txt",
+      "bytes": 29092,
+      "sha256": "b5ee953c2f9f6340ccf4af19bb538ef5d0719b24ad8c99d7e94a3d215ff5dd52",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260810.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260810.txt",
+      "bytes": 28589,
+      "sha256": "ee5bb2e53571047e7e26743da4745569bfaf7471cb25f073c2b20d2eae642615",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260811.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260811.txt",
+      "bytes": 29205,
+      "sha256": "b6f1b1bf3e62c4cabca1c08df1254fc3b157e1c31919cfb7bb08e0af083593dd",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260812.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260812.txt",
+      "bytes": 28952,
+      "sha256": "f3d9ff992447094317b958fce55735f549a26ee6fddeabeb1858b761e60d254d",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260813.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260813.txt",
+      "bytes": 28943,
+      "sha256": "84c1e1dfa06b0ecab4d88cd2f5ca004db9394dcf07dd8279fb3bb41b87005593",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260814.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260814.txt",
+      "bytes": 29127,
+      "sha256": "e972ca430f79d8c8a9e69c4c8c83482549cd9af0c554c84b4d88e29f5d09126a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260815.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260815.txt",
+      "bytes": 28918,
+      "sha256": "1d819a62ac5e8006e5b636f927b9ea7b0c50e58ecc79eb6ce278e6d3c5725fef",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260816.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260816.txt",
+      "bytes": 28534,
+      "sha256": "98f4d8d0c8f03c57096d6f225f1705f8c3fde0ca713875b40e2c857979e653d6",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260817.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260817.txt",
+      "bytes": 28939,
+      "sha256": "786c0cc801daaf87e3f67448d00c1899b39c21734909db64d2ef23e8d5e920f7",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260818.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260818.txt",
+      "bytes": 28968,
+      "sha256": "915497d3e5548fb105c12e5db05df05ae52fed5c4bff879f9fd51b7887544d02",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260819.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260819.txt",
+      "bytes": 28907,
+      "sha256": "1a0bb0b73dac7f5a6664097e228fce31da1a3e60017adfd6ce159b63964e36ae",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260820.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260820.txt",
+      "bytes": 29144,
+      "sha256": "d879ecbaf6596c382c02ce31c60d5915d70ef792d2b41df1bbdc9369f9e3d3ac",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260821.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260821.txt",
+      "bytes": 29292,
+      "sha256": "a59aa27e42e37dcb2bd53b5b3146fe03625d0419fadaa3436867fcb146914a65",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260822.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260822.txt",
+      "bytes": 29120,
+      "sha256": "65eabe6bfd37060ad6189c95f88887c187713292d768f79e68f2b552282939e1",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260823.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260823.txt",
+      "bytes": 28706,
+      "sha256": "f4a6358522322dd4b965d9eb870e2499714f03b6c1b6a85b74199041fdb67494",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260824.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260824.txt",
+      "bytes": 29030,
+      "sha256": "abfa6f0b720d1da8351583ec50e5cd231c7f45b797aefe08b3491e855d63f313",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260825.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260825.txt",
+      "bytes": 28753,
+      "sha256": "d22a1924181223dc9504d951b0559d384f1c2777415031817eb32baaa6c066fa",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260826.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260826.txt",
+      "bytes": 29169,
+      "sha256": "de8cbfb974ca9f8b2e498a95d6f1318ddf4d79cf7f3ba5984fad5d1343e077c8",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260827.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260827.txt",
+      "bytes": 29045,
+      "sha256": "5e24acccb55e33735a4e6126db14d20ceff691ad337e2a5a273167be8f0fcef4",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260828.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260828.txt",
+      "bytes": 28960,
+      "sha256": "13696a91600b6716f4e3b6f161e1e72273cbbd03f1fc3fc71ecbd7f2c9f9427b",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260829.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260829.txt",
+      "bytes": 29191,
+      "sha256": "a17a7384dac7ec253a6e9194d967fd8ff325f96a4aefeeb558be04b486062af3",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260830.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260830.txt",
+      "bytes": 29064,
+      "sha256": "d05c707b786da2990ea430a71f9a91344cc5270d34161864c85112b448db5ccb",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "Opal_Patronage_20260831.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/Opal_Patronage/2026-08/Opal_Patronage_20260831.txt",
+      "bytes": 29055,
+      "sha256": "49f44c746143126c14d42a3343859ee1499aba5d146e0e97d2872d16157eaedc",
+      "retrieved": "2026-09-12"
+    }
+  ]
+}

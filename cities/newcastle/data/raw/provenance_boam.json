@@ -1,0 +1,59 @@
+{
+  "source": "TfNSW Open Data Hub - BOAM Bus Opal Assignment Model, daily files",
+  "dataset": "https://opendata.transport.nsw.gov.au/data/dataset/boam-bus-opal-assignment-model",
+  "licence": "CC-BY 4.0",
+  "base": "data/raw/boam",
+  "access": "https://opendata-tpa.transport.nsw.gov.au/BOAM/<YYYY-MM>/BOAM_<YYYYMMDD>.txt with header Referer: https://opendata.transport.nsw.gov.au/ (no login, no API key)",
+  "note": "occupancy range (bands of 20) per bus trip at each stop, state-wide; from 25 Feb 2026 the OAM allocation model, per documentation v2.0",
+  "files": [
+    {
+      "path": "BOAM_20260810.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260810.txt",
+      "bytes": 403009268,
+      "sha256": "6302069b3a426543701a25457b26a7a7043bca97110b6aa14c272c4fcabf25b5",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "BOAM_20260811.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260811.txt",
+      "bytes": 404148047,
+      "sha256": "5c0515e6142f2a8cb2e0f29f65d6d75a162ec5cdc5595575ea4985ce396faa7e",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "BOAM_20260812.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260812.txt",
+      "bytes": 403988346,
+      "sha256": "6f648582ad97d3795323c3bd9b054af17b92dbc2cb9ba3b635698b703a700c65",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "BOAM_20260813.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260813.txt",
+      "bytes": 403490650,
+      "sha256": "0482137bf2286517880b97e6315e6995d6f62584ad88f116418cc64e5a9098af",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "BOAM_20260814.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260814.txt",
+      "bytes": 403078562,
+      "sha256": "d89a4d8c15b03560ca2501fad6d5b28a7bbf30d9c454818e7e08ab15da1b8b66",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "BOAM_20260815.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260815.txt",
+      "bytes": 256819285,
+      "sha256": "28e5c02dc268bb216f650dc2802cb32182a3745e0cb83e143c4aff04360bd95a",
+      "retrieved": "2026-09-12"
+    },
+    {
+      "path": "BOAM_20260816.txt",
+      "url": "https://opendata-tpa.transport.nsw.gov.au/BOAM/2026-08/BOAM_20260816.txt",
+      "bytes": 207368135,
+      "sha256": "144997e0f3b258b1c2c04bb7763b5105be7865f50210bb27da561c755290e908",
+      "retrieved": "2026-09-12"
+    }
+  ]
+}
