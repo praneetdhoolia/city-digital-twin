@@ -81,6 +81,13 @@ def ensure_compiled(jars):
     newest_src = max(os.path.getmtime(s) for s in srcs)
     if os.path.exists(marker) and os.path.getmtime(marker) >= newest_src:
         return
+    # the same refusal bootstrap_toolchain.py makes: never recompile a class
+    # tree under a live arm (#66); this path had no guard (eighth report,
+    # 11 September 2026)
+    sys.path.insert(0, os.path.join(ROOT, 'src', 'setup'))
+    import bootstrap_toolchain                                # noqa: PLC0415
+    if bootstrap_toolchain.refuse_if_arm_running('compile the signals classes'):
+        raise SystemExit(2)
     os.makedirs(CLASSES_SIGNALS, exist_ok=True)
     out = subprocess.run(
         [javac_exe(), '-cp', os.pathsep.join(jars), '-d', CLASSES_SIGNALS]

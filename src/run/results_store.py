@@ -384,8 +384,14 @@ def _is_running(run_dir):
             doc = json.load(fh)
     except (OSError, ValueError):
         return False
-    return doc.get('status') == 'running' and doc.get('pid') \
-        and _pid_alive(doc['pid'])
+    if doc.get('status') != 'running':
+        return False
+    # EITHER process alive keeps the directory: the harness (`pid`) or the JVM
+    # (`jvm_pid`, #128). F33's arm 0 ran 20 h after the session that launched
+    # it had ended, its harness pid dead and its JVM writing - a trim keyed on
+    # the harness alone would have deleted the run it was writing (eighth
+    # report, 11 September 2026).
+    return any(doc.get(k) and _pid_alive(doc[k]) for k in ('pid', 'jvm_pid'))
 
 
 def _launch_stamp(name):
