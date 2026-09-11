@@ -179,11 +179,15 @@ def resolve_warm_start(source):
 
     THE CAVEAT IS STRUCTURAL, NOT FIXABLE HERE: a warm-started run is not
     bit-identical to an uninterrupted one - the RNG stream and the travel-time
-    memory reset at the restart even though the plans carry over. Whether a
-    warm-completed arm counts as a valid arm or a diagnostic is a project
-    decision (DECISIONS.md 9.76); the provenance link written into `_meta.json`
-    and `_run.json` (`warm_started_from`) is what makes that ruling possible
-    after the fact.
+    memory reset at the restart even though the plans carry over. RULED, 12
+    September 2026 (DECISIONS.md 9.167, #192, superseding the open question of
+    9.76): a warm-completed arm IS a result - `completion` stays
+    `ran_to_last_iteration` - because no two runs of one build are
+    bit-identical anyway (9.143), so the stream a restart breaks is no more a
+    seed than any other run's; the provenance link written into `_meta.json`
+    and `_run.json` (`warm_started_from`) is what lets a reader see it. The
+    innovation cutoff is re-derived for the resumed run (warm_start_overrides)
+    so it is the parent's, not 20 iterations later.
     """
     source = os.path.abspath(source)
     meta_path = os.path.join(source, META)

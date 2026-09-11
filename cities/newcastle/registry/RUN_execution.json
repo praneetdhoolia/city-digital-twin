@@ -144,9 +144,9 @@
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "15, 9.147",
+      "decisions_ref": "15, 9.147, 9.167",
       "matsim_param": "controler.writePlansInterval",
-      "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model."
+      "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model. SINCE 12 SEPTEMBER 2026 (9.167, #192) an ARM overlay sets it to 25: a warm-completed arm is ruled a RESULT (MATSim runs are not bit-reproducible run to run in any case, 9.143, so the seed stream a restart breaks is no more a seed than any other run's), so a checkpoint every 25 iterations bounds a crash to 25 at +1.4-1.9 % wall and ~+6 GB per 300-iteration arm; the gate interval it equalled by design stays a separate field."
     },
     "RUN.controler.write_trips_interval": {
       "value": 10,
