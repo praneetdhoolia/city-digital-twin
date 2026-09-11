@@ -2,147 +2,147 @@
   "generated_by": "src/analyse/build_fit_figures.py",
   "note": "Regenerate; do not edit. Carries no wall-clock stamp: the provenance is the run, and the run does not move.",
   "run": {
-    "directory": "20260821T175907_1000it_25pct",
-    "tag": "phys1000a_25pct",
-    "family": "F4-walk-wedge",
+    "directory": "20260909T015217_300it_25pct",
+    "tag": "20260909T015217_300it_25pct",
+    "family": "F32-crowding-reaches-scoring",
     "scenario": "S2",
     "day": "WEEKDAY",
     "fraction": 0.25,
-    "iterations": 1000,
+    "iterations": 300,
     "state": "pre-calibration diagnostic of the base arm; not a scenario comparison and not a finding about the intervention"
   },
   "targets": {
     "available": 67,
-    "scored": 35,
-    "unscored": 32
+    "scored": 36,
+    "unscored": 31
   },
   "mode_share": {
-    "mean_abs_pp": 10.65,
+    "mean_abs_pp": 4.734,
     "n_scored": 5,
     "rows": [
       {
         "hts_category": "Vehicle driver",
         "matsim_mode": "car+motorbike",
-        "modelled_pct": 73.19,
+        "modelled_pct": 65.34,
         "observed_pct": 59.0,
-        "error_pp": 14.19,
+        "error_pp": 6.34,
         "target_id": "V204"
       },
       {
         "hts_category": "Vehicle passenger",
         "matsim_mode": "ride",
-        "modelled_pct": 0.09,
+        "modelled_pct": 12.16,
         "observed_pct": 20.6,
-        "error_pp": -20.51,
+        "error_pp": -8.44,
         "target_id": "V205"
       },
       {
         "hts_category": "Walk only",
         "matsim_mode": "walk",
-        "modelled_pct": 7.28,
+        "modelled_pct": 9.85,
         "observed_pct": 13.4,
-        "error_pp": -6.12,
+        "error_pp": -3.55,
         "target_id": "V207"
       },
       {
         "hts_category": "Public transport",
         "matsim_mode": "pt",
-        "modelled_pct": 8.22,
+        "modelled_pct": 4.64,
         "observed_pct": 3.8,
-        "error_pp": 4.42,
+        "error_pp": 0.84,
         "target_id": "V203"
       },
       {
         "hts_category": "Other",
-        "matsim_mode": "bike",
-        "modelled_pct": 11.21,
+        "matsim_mode": "bike+taxi",
+        "modelled_pct": 7.7,
         "observed_pct": 3.2,
-        "error_pp": 8.01,
+        "error_pp": 4.5,
         "target_id": "V202"
       }
     ]
   },
   "trip_length_constraint": {
     "geography": "Newcastle LGA, both trip ends",
-    "modes_inside_observed_range": 1,
+    "modes_inside_observed_range": 0,
     "modes": [
       {
         "mode": "pt",
-        "modelled_km": 10.4002,
+        "modelled_km": 10.9635,
         "observed_km": 23.4,
         "observed_sweep_km": [
           15.9,
           24.5
         ],
         "inside_observed_range": false,
-        "ratio": 0.4445
+        "ratio": 0.4685
       },
       {
         "mode": "car",
-        "modelled_km": 10.9357,
+        "modelled_km": 11.656,
         "observed_km": 10.2,
         "observed_sweep_km": [
           6.6,
           10.8
         ],
         "inside_observed_range": false,
-        "ratio": 1.0721
+        "ratio": 1.1427
       },
       {
         "mode": "ride",
-        "modelled_km": 7.8432,
+        "modelled_km": 10.6457,
         "observed_km": 9.8,
         "observed_sweep_km": [
           5.6,
           9.8
         ],
-        "inside_observed_range": true,
-        "ratio": 0.8003
+        "inside_observed_range": false,
+        "ratio": 1.0863
       },
       {
         "mode": "bike",
-        "modelled_km": 8.6151,
+        "modelled_km": 7.3217,
         "observed_km": 5.2,
         "observed_sweep_km": [
           3.1,
           5.2
         ],
         "inside_observed_range": false,
-        "ratio": 1.6567
+        "ratio": 1.408
       },
       {
         "mode": "walk",
-        "modelled_km": 5.5612,
+        "modelled_km": 3.283,
         "observed_km": 0.7,
         "observed_sweep_km": [
           0.7,
           1.1
         ],
         "inside_observed_range": false,
-        "ratio": 7.9446
+        "ratio": 4.69
       }
     ]
   },
   "occupancy_constraint": {
-    "modelled_passenger_per_driver": 0.0013,
+    "modelled_passenger_per_driver": 0.186,
     "observed": 0.3503,
     "observed_sweep": [
       0.2493,
       0.394
     ],
     "inside_observed_range": false,
-    "modelled_vehicle_occupancy": 1.0013,
+    "modelled_vehicle_occupancy": 1.186,
     "note": "a constraint, not a validation target; it is not counted in any fit statistic"
   },
   "counts_constraint": {
-    "stations": 30,
-    "mean_pct_error": -91.8,
-    "mean_abs_pct_error": 92.7,
-    "modelled_zero_stations": 6
+    "stations": 31,
+    "mean_pct_error": 16.3,
+    "mean_abs_pct_error": 66.73,
+    "modelled_zero_stations": 0
   },
   "not_scored": {
     "intervention_boardings": {
-      "modelled_per_weekday": 1260,
+      "modelled_per_weekday": 1224,
       "scored": false,
       "unscored_targets": {
         "V001": {

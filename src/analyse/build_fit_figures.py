@@ -212,20 +212,19 @@ def _refuse_unless_ran_to_last(run_dir):
 
 
 def family_of(run_name):
-    """The declared comparability family a run belongs to, or 'unattributed'."""
+    """The declared comparability family a run belongs to, or 'unattributed'.
+
+    ONE derivation, the run index's, shared with the board. This module had
+    its own, which walked the families in ALPHABETICAL key order, so `F9`
+    out-sorted `F32` and the F32 result was captioned as an F9 arm - a
+    cross-family caption on the front page (found 12 September 2026 while
+    moving the calibrated base onto that result).
+    """
     if not _os.path.exists(FAMILIES_FILE):
         return 'unattributed'
-    doc = _load(FAMILIES_FILE)
-    fams = doc.get('families', doc)
-    overrides = doc.get('overrides', {})
-    if run_name in overrides and overrides[run_name].get('family'):
-        return overrides[run_name]['family']
-    best = 'unattributed'
-    for key, fam in sorted(fams.items()):
-        start = fam.get('from_launch')
-        if start and run_name >= start:
-            best = key
-    return best
+    import build_run_index as bri                             # noqa: PLC0415
+    fams, overrides = bri.load_families()
+    return bri.family_of(run_name, fams, overrides)[0] or 'unattributed'
 
 
 # --------------------------------------------------------------- svg drawing
@@ -662,9 +661,40 @@ def write(files, out_dir):
     return sorted(files)
 
 
+def c5_objective_drift():
+    """A sentence when C5 records an objective the registry has retired, else None.
+
+    `C5_calibration.json` said `mode_share.mean_abs_pp` for eighteen days after
+    the registry declared `CAL.objective.components = goal_modes.max_abs_rel_pct`
+    (eighth project report, 11 September 2026, area 3): the front page drew
+    from a base written at an objective the project no longer holds, and no
+    check compared the two. This one does, and `--check` fails on it.
+    """
+    if not _os.path.exists(CALIBRATION_FILE):
+        return None
+    try:
+        _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.dirname(
+            _os.path.abspath(__file__))), 'registry'))
+        import registry as _registry                          # noqa: PLC0415
+        declared = _registry.load(strict=True).get('CAL.objective.components')
+    except Exception as e:                                     # noqa: BLE001
+        return 'CAL.objective.components could not be resolved: %s' % e
+    recorded = _load(CALIBRATION_FILE).get('objective_components')
+    if recorded != declared:
+        return ('C5_calibration.json records objective_components %r while the '
+                'registry declares CAL.objective.components %r: the calibrated '
+                'base was written at a retired objective. Rewrite it with '
+                'src/calibrate/calibrate.py --constrained-base <result>'
+                % (recorded, declared))
+    return None
+
+
 def check(files, out_dir):
     """Which committed figures no longer match the run they claim to draw."""
     stale = []
+    drift = c5_objective_drift()
+    if drift:
+        stale.append(('C5_calibration.json', drift))
     for name in sorted(files):
         path = _os.path.join(out_dir, name)
         if not _os.path.exists(path):

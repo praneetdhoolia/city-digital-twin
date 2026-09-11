@@ -370,6 +370,19 @@ def score_counts(targets, metrics, corrections, out):
                     100.0 * math.sqrt(sum(sq) / len(sq)) / (sum(obs) / len(obs)), 2),
                 heavy_share_assumed_at=sum(1 for e in errs
                                            if e['heavy_share_source'] == 'assumed'),
+                # The error statistic is QUALIFIED by its own denominator: at
+                # every unclassified station the observed all-classes count
+                # is put on a light-vehicle basis with the pooled ASSUMED heavy
+                # share, so the pct error there rests on an assumption, and a
+                # statistic printed to two decimals over such rows must say so
+                # (eighth project report, 11 September 2026, area 3).
+                basis_note=(
+                    'light-vehicle basis; the observed side at %d of %d '
+                    'station(s) is divided by the pooled ASSUMED heavy-vehicle '
+                    'share (%.4f), so the error there is conditional on that '
+                    'assumption and its sweep'
+                    % (sum(1 for e in errs if e['heavy_share_source'] == 'assumed'),
+                       len(errs), default_heavy)),
                 modelled_zero_stations=[e['target_id'] for e in errs
                                         if e.get('modelled_zero')])
 
@@ -589,8 +602,8 @@ def main():
               'RMSE %.0f (%.1f%% of mean observed)'
               % (c['mean_pct_error'], c['mean_abs_pct_error'], c['rmse'],
                  c['rmse_pct_of_mean_observed']))
-        print('  heavy-vehicle share assumed at %d of %d stations'
-              % (c['heavy_share_assumed_at'], c['n']))
+        print('  heavy-vehicle share assumed at %d of %d stations - %s'
+              % (c['heavy_share_assumed_at'], c['n'], c.get('basis_note', '')))
         if c['modelled_zero_stations']:
             print('  MODELLED ZERO at %d station(s): %s - the model routes no '
                   'traffic over a link that carries observed volume. Scored at '

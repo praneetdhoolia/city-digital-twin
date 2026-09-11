@@ -1,44 +1,157 @@
 {
-  "generated": "2026-08-24T03:25:16Z",
+  "generated": "2026-09-11T16:39:31Z",
   "scenario": "S2",
   "day": "WEEKDAY",
-  "run_config": "phys1000_arm_a_25pct",
+  "run_config": "depth_convergence_25pct",
   "branch": "constrain-and-report (DECISIONS.md 8.5 second branch, 9.50)",
   "decisions_ref": "9.50",
   "objective_components": {
-    "mode_share.mean_abs_pp": 1.0
+    "goal_modes.max_abs_rel_pct": 1.0
   },
-  "independent_targets": 4,
+  "replication_band_pp": 0.0,
+  "replication_band": "none - the objective is the raw maximum, and no deviation on the board carries an error bar (#163)",
+  "independent_targets": 10,
   "free_parameters": [],
   "search_declined": {
     "movable": {
+      "A.gradient.bike_speed_ceiling_factor": {
+        "value": 1.3,
+        "lo": 1.0,
+        "hi": 1.5
+      },
+      "A.gradient.bike_speed_floor_factor": {
+        "value": 0.2,
+        "lo": 0.1,
+        "hi": 0.3
+      },
+      "A.gradient.grade_clamp_pct": {
+        "value": 20.0,
+        "lo": 10.0,
+        "hi": 35.0
+      },
       "A.parking.max_stay_min": {
         "value": 120.0,
         "lo": 60.0,
         "hi": 180.0
       },
+      "A.signals.scats.ds_deadband": {
+        "value": 0.05,
+        "lo": 0.02,
+        "hi": 0.1
+      },
+      "A.signals.scats.ds_smoothing": {
+        "value": 0.5,
+        "lo": 0.1,
+        "hi": 0.9
+      },
+      "A.signals.tsp.detection_distance_m": {
+        "value": 120.0,
+        "lo": 60.0,
+        "hi": 250.0
+      },
+      "A.signals.tsp.extension_window_s": {
+        "value": 12.0,
+        "lo": 5.0,
+        "hi": 20.0
+      },
+      "A.signals.tsp.lateness_threshold_s": {
+        "value": 60.0,
+        "lo": 0.0,
+        "hi": 300.0
+      },
+      "B.population.bike_min_age": {
+        "value": 12.0,
+        "lo": 0.0,
+        "hi": 16.0
+      },
+      "B.ride.escort_coherence_rate": {
+        "value": 0.4,
+        "lo": 0.0,
+        "hi": 0.5
+      },
+      "B.ride.joint_coherence_rate": {
+        "value": 0.4,
+        "lo": 0.0,
+        "hi": 0.5
+      },
+      "B.ride.max_passengers_per_vehicle": {
+        "value": 4.0,
+        "lo": 1.0,
+        "hi": 4.0
+      },
+      "B.ride.pairing_window_min": {
+        "value": 15.0,
+        "lo": 5.0,
+        "hi": 60.0
+      },
+      "B.ride.pickup_dwell_s": {
+        "value": 0.0,
+        "lo": 0.0,
+        "hi": 120.0
+      },
+      "B.taxi.deadhead_min": {
+        "value": 12.0,
+        "lo": 0.0,
+        "hi": 30.0
+      },
+      "B.taxi.max_wait_min": {
+        "value": 20.0,
+        "lo": 10.0,
+        "hi": 45.0
+      },
+      "B.taxi.min_unaccompanied_age": {
+        "value": 18.0,
+        "lo": 0.0,
+        "hi": 18.0
+      },
+      "C.asc.bus": {
+        "value": -1.05,
+        "lo": -2.05,
+        "hi": -0.05
+      },
+      "C.asc.light_rail": {
+        "value": -0.75,
+        "lo": -1.75,
+        "hi": 0.25
+      },
       "C.scoring.activity_minimal_duration_s": {
         "value": 900.0,
         "lo": 300.0,
         "hi": 1800.0
+      },
+      "C.taxi.asc": {
+        "value": 0.0,
+        "lo": -2.0,
+        "hi": 0.0
+      },
+      "C.taxi.wait_min": {
+        "value": 5.0,
+        "lo": 2.0,
+        "hi": 12.0
+      },
+      "C.transfer.beta_transfer_penalty_min": {
+        "value": 8.0,
+        "lo": 3.0,
+        "hi": 15.0
       }
     },
     "reason": "the loop can legitimately move only these parameters, at ~21 full 25% x 1000 runs; neither reaches the structural misfits (9.25, 9.28), so the search was DECLINED with the cost stated rather than run for its appearance (9.50)"
   },
-  "best_tag": "phys1000a_25pct",
-  "best_objective": 10.65,
+  "best_tag": "20260909T015217_300it_25pct",
+  "best_objective": 225.0336,
   "objective_parts": {
-    "mode_share.mean_abs_pp": 10.65
+    "goal_modes.max_abs_rel_pct": 225.0336
   },
   "calibrated": {},
   "constraints": {
     "feasible": false,
     "violations": [
-      "vehicle occupancy 0.0013 passengers/driver is outside the observed range [0.2493, 0.394]",
-      "bike trip length 8.62 km is outside the observed range",
-      "car trip length 10.94 km is outside the observed range",
-      "pt trip length 10.40 km is outside the observed range",
-      "walk trip length 5.56 km is outside the observed range"
+      "vehicle occupancy 0.1860 passengers/driver is outside the observed range [0.2493, 0.394]",
+      "bike trip length 7.32 km is outside the observed range",
+      "car trip length 11.66 km is outside the observed range",
+      "pt trip length 10.96 km is outside the observed range",
+      "ride trip length 10.65 km is outside the observed range",
+      "walk trip length 3.28 km is outside the observed range"
     ]
   },
   "history": [],

@@ -37,6 +37,8 @@ _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
 import city as _city  # noqa: E402
 import argparse
 import csv
+import hashlib
+import json
 import gzip
 import math
 import os
@@ -56,7 +58,16 @@ import registry                            # noqa: E402
 
 STATIONS = _city.path('data/processed/validation/road_aadt_targets.csv')
 OUT = _city.path('data/processed/validation/count_station_links.csv')
-DEFAULT_NETWORK = _city.path('scenarios/matsim/S2/network.xml.gz')
+# The map records WHICH network it was cut against, so the reader that scores
+# against it can refuse a network it was not (the previous map was orphaned
+# by a rebuild 47 minutes after it was written and scored the wrong roads for
+# 25 days, #82; the check that caught it lives in tests/check_package.py,
+# which runs on a workstation only).
+PROVENANCE = _city.path('data/processed/validation/count_station_links_provenance.json')
+# the CITY's base scenario, not a scenario id typed into the framework
+DEFAULT_NETWORK = _city.path(
+    'scenarios/matsim/%s/network.xml.gz'
+    % _city.descriptor()['intervention']['base_scenario'])
 
 NODE_RE = re.compile(r'<node id="([^"]+)"[^>]*x="([-\d.eE]+)"[^>]*y="([-\d.eE]+)"')
 LINK_RE = re.compile(r'<link id="([^"]+)" from="([^"]+)" to="([^"]+)"[^>]*>')
@@ -91,6 +102,14 @@ def name_key(name):
     that differ by more than their spacing.
     """
     return normalise(name).replace(' ', '')
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, 'rb') as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def load_network(path):
@@ -209,6 +228,14 @@ def main():
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
         w.writerows(rows)
+    with open(PROVENANCE, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(dict(
+            network=_city.rel(a.network),
+            network_sha256=_sha256(a.network),
+            radius_m=radius, rows=len(rows),
+            note='the network this map was cut against; extract_metrics '
+                 'refuses to score counts on a run whose network differs'),
+            f, indent=1)
 
     matched = {r['station_key'] for r in rows}
     by_how = {}
