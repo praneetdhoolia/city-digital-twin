@@ -892,6 +892,74 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.population.mobility_impairment_base_rate": {
+      "value": 0.05,
+      "units": "share",
+      "source": "assumed",
+      "sweep": [
+        0.02,
+        0.1
+      ],
+      "sweep_basis": "ASSUMED, and until 11 September 2026 typed into src/build/build_population.py as `0.05 + 0.25 * max(0, age - 70) / 30` with no field, no sweep and no record - the eighth project report's code lane found it (the constant scan sees ALL-CAPS assignments only, #188). No disability-by-age observation has been acquired for this city; the ABS Survey of Disability, Ageing and Carers is the publication that would replace the assumption with a measured profile. The sweep brackets the base rate below and above the typed value. The attribute it draws (`mobilityImpaired` on every person in the plans file) is READ BY NOTHING at run time - the same class as income (#108) - so no arm moves on it until a consumer exists; it is declared because the rule is that every value is, not because it reaches the model today.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.166",
+      "consumers": [
+        "src/build/build_population.py"
+      ],
+      "description": "The share of persons drawn as mobility-impaired at and below the onset age (B.population.mobility_impairment_onset_age); above it the rate rises linearly by B.population.mobility_impairment_rise over B.population.mobility_impairment_rise_span_years. Written as the `mobilityImpaired` person attribute by build_matsim_plans.py; no scorer, router or engine reads it (11 September 2026)."
+    },
+    "B.population.mobility_impairment_onset_age": {
+      "value": 70,
+      "units": "years",
+      "source": "assumed",
+      "sweep": [
+        60,
+        80
+      ],
+      "sweep_basis": "ASSUMED, the age from which the typed formula began to raise the rate (see B.population.mobility_impairment_base_rate). The sweep brackets it by a decade either way.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.166",
+      "consumers": [
+        "src/build/build_population.py"
+      ],
+      "description": "The age from which the mobility-impairment rate rises above its base."
+    },
+    "B.population.mobility_impairment_rise": {
+      "value": 0.25,
+      "units": "share",
+      "source": "assumed",
+      "sweep": [
+        0.0,
+        0.45
+      ],
+      "sweep_basis": "ASSUMED: the typed formula added 0.25 to the base rate across B.population.mobility_impairment_rise_span_years past the onset age, so the rate reads 0.30 at 100. Zero (no rise with age) is the lower member; the upper reaches about 0.50 at 100. Declared as the rise and its span rather than a slope so the builder evaluates exactly the expression it always did and the rebuilt population is byte-identical.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.166",
+      "consumers": [
+        "src/build/build_population.py"
+      ],
+      "description": "How much the mobility-impairment rate rises, in total, over the span past the onset age."
+    },
+    "B.population.mobility_impairment_rise_span_years": {
+      "value": 30,
+      "units": "years",
+      "source": "assumed",
+      "sweep": [
+        20,
+        40
+      ],
+      "sweep_basis": "ASSUMED: the typed formula spread the rise over thirty years past the onset age. The sweep brackets it by a decade either way.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.166",
+      "consumers": [
+        "src/build/build_population.py"
+      ],
+      "description": "The number of years past the onset age over which the mobility-impairment rise is spread (linear)."
+    },
     "B.population.bike_available_rate": {
       "value": 0.493,
       "units": "share",

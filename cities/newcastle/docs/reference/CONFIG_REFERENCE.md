@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 517 fields are made of
+## What the 521 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -35,12 +35,12 @@ Three things are refused at every layer:
 | `measured` | 42 | computed from observed data in this package |
 | `derived` | 45 | follows from another registry field by identity |
 | `literature` | 77 | a published value, not specific to this city |
-| `assumed` | 178 | chosen without direct empirical support |
+| `assumed` | 182 | chosen without direct empirical support |
 | `definition` | 137 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 496 | usable point value |
+| `active` | 500 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 292 sweeps are for
+### What the 296 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 249 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 253 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -1619,7 +1619,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 115 fields*
+*`cities/newcastle/registry/B_demand.json` - 119 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1707,6 +1707,10 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.population.bike_min_age` | `12` | years | `assumed` | 0 - 16 |
 | `B.population.build_sample_share` | `1.0` | share_of_population | `definition` | - |
 | `B.population.licence_rate_by_age_band` | `[0.0, 0.0, 0.0823, 0.7828, 0.9402, 1.0, 0.9786, 0.972, 0.9838, 0.9172, 0.5118]` | probability | `measured` | plus/minus 5% |
+| `B.population.mobility_impairment_base_rate` | `0.05` | share | `assumed` | 0.02 - 0.1 |
+| `B.population.mobility_impairment_onset_age` | `70` | years | `assumed` | 60 - 80 |
+| `B.population.mobility_impairment_rise` | `0.25` | share | `assumed` | 0 - 0.45 |
+| `B.population.mobility_impairment_rise_span_years` | `30` | years | `assumed` | 20 - 40 |
 | `B.population.ride_requires_household_driver` | `true` | boolean | `derived` | derived: a person may be a car passenger only if their B1 household holds at le |
 | `B.population.vehicle_roster` | `census` | enum | `assumed` | `census`, `per_person` |
 | `B.ride.bound_pairing_window_min` | `60.0` | minutes | `derived` | derived: bound_pairing_window_min = 2 * time_mutation_range_s / 60 |
@@ -2384,6 +2388,38 @@ Share of the synthetic population BUILT. One, always: this is the build, not the
 Driver-licence holding rate by age band, aligned to B.population.age_bands - the POOLED value over the core LGAs, written by cities/newcastle/build/build_licence_rates.py from the TfNSW Driver Licence Statistics snapshot (202607: primary licence of any class, non-learner, by age group and customer-address LGA) over the ABS estimated resident population by age and LGA at 30 June 2024, split to single years by the census G04 profile. The population builder draws each person's licence from the PER-LGA rate in data/processed/observed/licence_rates_by_age_lga.csv and falls back to this vector only where an LGA has no row. Before 9.131 this was a literature vector (18-24 0.62, 25-34 0.88, 35-44 0.93, 45-54 0.94, 55-64 0.93, 65-74 0.88, 75-84 0.72, 85+ 0.45) that left 14.2-14.8% of employed persons without a licence; the measured rates are 18-24 0.78, 25-34 0.94, 35-44 1.00 (holders exceed the 2024 ERP - address staleness and two years of growth - and the rate is capped at 1), 45-74 0.97-0.98, 75-84 0.92, 85+ 0.51, and 12-17 0.08 (provisional drivers aged 16-17). Suppressed cells (<=5) are taken at 3. The sweep is the suppression and the denominator vintage.
 
 ***measured** · status **active** · DECISIONS.md §9.1, 9.131 · sweep role **uncertainty***
+
+#### `B.population.mobility_impairment_base_rate`
+
+The share of persons drawn as mobility-impaired at and below the onset age (B.population.mobility_impairment_onset_age); above it the rate rises linearly by B.population.mobility_impairment_rise over B.population.mobility_impairment_rise_span_years. Written as the `mobilityImpaired` person attribute by build_matsim_plans.py; no scorer, router or engine reads it (11 September 2026).
+
+***assumed** · status **active** · DECISIONS.md §9.166 · sweep role **uncertainty***
+
+> **Sweep basis.** ASSUMED, and until 11 September 2026 typed into src/build/build_population.py as `0.05 + 0.25 * max(0, age - 70) / 30` with no field, no sweep and no record - the eighth project report's code lane found it (the constant scan sees ALL-CAPS assignments only, #188). No disability-by-age observation has been acquired for this city; the ABS Survey of Disability, Ageing and Carers is the publication that would replace the assumption with a measured profile. The sweep brackets the base rate below and above the typed value. The attribute it draws (`mobilityImpaired` on every person in the plans file) is READ BY NOTHING at run time - the same class as income (#108) - so no arm moves on it until a consumer exists; it is declared because the rule is that every value is, not because it reaches the model today.
+
+#### `B.population.mobility_impairment_onset_age`
+
+The age from which the mobility-impairment rate rises above its base.
+
+***assumed** · status **active** · DECISIONS.md §9.166 · sweep role **uncertainty***
+
+> **Sweep basis.** ASSUMED, the age from which the typed formula began to raise the rate (see B.population.mobility_impairment_base_rate). The sweep brackets it by a decade either way.
+
+#### `B.population.mobility_impairment_rise`
+
+How much the mobility-impairment rate rises, in total, over the span past the onset age.
+
+***assumed** · status **active** · DECISIONS.md §9.166 · sweep role **uncertainty***
+
+> **Sweep basis.** ASSUMED: the typed formula added 0.25 to the base rate across B.population.mobility_impairment_rise_span_years past the onset age, so the rate reads 0.30 at 100. Zero (no rise with age) is the lower member; the upper reaches about 0.50 at 100. Declared as the rise and its span rather than a slope so the builder evaluates exactly the expression it always did and the rebuilt population is byte-identical.
+
+#### `B.population.mobility_impairment_rise_span_years`
+
+The number of years past the onset age over which the mobility-impairment rise is spread (linear).
+
+***assumed** · status **active** · DECISIONS.md §9.166 · sweep role **uncertainty***
+
+> **Sweep basis.** ASSUMED: the typed formula spread the rise over thirty years past the onset age. The sweep brackets it by a decade either way.
 
 #### `B.population.ride_requires_household_driver`
 
