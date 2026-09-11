@@ -59,6 +59,7 @@ def _resolve_run(name_or_path):
 
 
 import registry as _registry  # noqa: E402
+import iteration_reading as _reading  # noqa: E402
 import argparse
 import collections
 import hashlib
@@ -143,6 +144,17 @@ def rows(run_dir, stem):
     if alt is not None and not _final_exists(run_dir, stem):
         _READ_AT['used'].add('%s <- %s' % (stem, alt))
         stem = alt
+    # ONE decode per table per process (#182): the trips table used to be
+    # parsed four times and the legs table twice inside one extraction.
+    if stem.startswith('output_') and stem[len('output_'):] in ('trips', 'legs'):
+        return iter(_reading.table(run_dir, stem[len('output_'):], None))
+    m = re.match(r'ITERS/it\.(\d+)/\d+\.(trips|legs)$', stem)
+    if m:
+        return iter(_reading.table(run_dir, m.group(2), int(m.group(1))))
+    return _stream(run_dir, stem)
+
+
+def _stream(run_dir, stem):
     with open_output(run_dir, stem) as f:
         for r in csv.DictReader(f, delimiter=';'):
             yield r

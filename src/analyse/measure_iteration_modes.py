@@ -77,11 +77,10 @@ def trip_rows(run_dir, iteration):
     validated to reproduce the table exactly wherever both exist. Returns
     (rows, source) so a reader can say which it read.
     """
-    stem = TRIPS_STEM % (iteration, iteration)
-    base = _os.path.join(run_dir, 'output', stem)
-    if any(_os.path.exists(base + ext) for ext in ('.csv.gz', '.csv', '.csv.zst')):
-        with em.open_output(run_dir, stem) as fh:
-            return list(csv.DictReader(fh, delimiter=';')), 'trips table'
+    import iteration_reading as _reading
+    if _reading.table_path(run_dir, 'trips', iteration) is not None:
+        # the cached decode every reader in this process shares (#182)
+        return _reading.table(run_dir, 'trips', iteration), 'trips table'
     import iteration_trips as itr
     if itr.plans_path(run_dir, iteration) is None:
         raise SystemExit('iteration %d wrote neither a trips table nor '

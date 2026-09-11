@@ -180,9 +180,9 @@ def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
         rows = list(itr.as_trip_rows(derived))
     else:
         route_mode = em.transit_route_modes(run_dir)
-        stem = 'ITERS/it.%d/%d.legs' % (iteration, iteration)
-        with em.open_output(run_dir, stem) as fh:
-            for l in csv.DictReader(fh, delimiter=';'):
+        import iteration_reading as _reading
+        if True:                            # the cached legs table (#182)
+            for l in _reading.table(run_dir, 'legs', iteration):
                 line = (l.get('transit_line') or '').strip()
                 if not line:
                     continue

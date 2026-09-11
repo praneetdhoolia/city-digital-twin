@@ -239,11 +239,12 @@ def boardings(run_dir, iteration, route_mode=None):
     # position page (1,260 and 1,224; eighth report, 11 September 2026).
     # The table is the basis `extract_metrics.pt_boardings` and `fit.py`
     # already score on, so the board and the fit now agree by construction.
-    legs = _legs_table(run_dir, iteration)
-    path = None if legs is not None else plans_path(run_dir, iteration)
-    if legs is not None:
-        with legs as fh:
-            for r in csv.DictReader(fh, delimiter=';'):
+    import iteration_reading as _reading
+    has_legs = _reading.table_path(run_dir, 'legs', iteration) is not None
+    path = None if has_legs else plans_path(run_dir, iteration)
+    if has_legs:
+        if True:                            # the cached legs table (#182)
+            for r in _reading.table(run_dir, 'legs', iteration):
                 if not r.get('transit_route'):
                     continue
                 sm = route_mode.get((r.get('transit_line'), r.get('transit_route')))
