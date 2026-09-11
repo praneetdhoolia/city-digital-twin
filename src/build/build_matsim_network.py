@@ -3,11 +3,14 @@
 
 Runs pt2matsim 26.6 (see `src/setup/bootstrap_toolchain.py`) in three stages:
 
-  1. merge the road and railway OSM extracts into one multimodal file, since
-     pt2matsim reads a single .osm and the P1 extracts are themed;
+  1. merge the road, railway and footway OSM extracts into one multimodal
+     file, since pt2matsim reads a single .osm and the P1 extracts are themed;
   2. `Osm2MultimodalNetwork` -> the base MATSim network in EPSG:28356, using the
      capacity and speed defaults recorded in DECISIONS.md 3.2 rather than
      pt2matsim's own, so the MATSim and SUMO corridors share one set of numbers;
+     the footway classes (`A.network.path_modes_by_class`) become walk- and
+     bike-capable links, then each way's own foot=/bicycle= tag overrides its
+     class default (`A.network.path_access_overrides`, #183);
   3. `Gtfs2TransitSchedule` + `PublicTransitMapper` for each of the 5 era feeds
      and 10 scenario feeds -> mapped schedules and their networks.
 
@@ -77,6 +80,7 @@ OUTPUT_INPUTS = {
         'networks/osm/roads.osm',
         'networks/osm/railways.osm',
         'networks/osm/signals.osm',
+        'networks/osm/footways.osm',
         'data/processed/network/A1_road_variant_patches.csv',
         'scenarios/E1_road_variants.csv',
         'schedules'],
@@ -92,9 +96,16 @@ JAVA_XMX = '-Xmx6g'
 # The signals extract is merged for its `type=restriction` relations - the road
 # extract carries none, so without it pt2matsim writes no `disallowedNextLinks`
 # and every banned turn on the corridor would silently vanish from the network.
+# The footway extract (#183) carries the 40,203 footway, path, cycleway, steps,
+# track, pedestrian, bridleway and corridor ways - and 830 road ways it shares
+# with the road extract, which the merge keeps once, from the road extract.
+# Footways meet the roads at their shared OSM nodes (26,615 of them, measured
+# 12 September 2026): a crossing way ends on the road node it crosses, which
+# is what makes the walk graph one graph rather than a road graph plus islands.
 OSM_INPUTS = [_city.path('networks/osm/roads.osm'),
               _city.path('networks/osm/railways.osm'),
-              _city.path('networks/osm/signals.osm')]
+              _city.path('networks/osm/signals.osm'),
+              _city.path('networks/osm/footways.osm')]
 
 # EVERY GTFS BUNDLE THE CITY HOLDS IS A FEED TO MAP - the era feeds under
 # schedules/ and the scenario variants under schedules/scenarios/. The list
@@ -147,10 +158,19 @@ def merge_osm(dest):
     output digest - is fixed by this function, not by a library's iteration.
     """
     from lxml import etree
-    if os.path.exists(dest):
-        log('   merged OSM already present (%s, %.0f MB)'
-            % (dest, os.path.getsize(dest) / 1e6))
-        return dest
+    # the cached merge is reused only for the SAME inputs: a harvest added to
+    # OSM_INPUTS (the footways, #183) or a re-harvested extract must re-merge,
+    # and a file that merely exists cannot say what it was merged from
+    inputs_key = [dict(path=_city.rel(p), bytes=os.path.getsize(p),
+                       sha256=_sha256(p)) for p in OSM_INPUTS]
+    key_path = dest + '.inputs.json'
+    if os.path.exists(dest) and os.path.exists(key_path):
+        with open(key_path, encoding='utf-8') as f:
+            if json.load(f) == inputs_key:
+                log('   merged OSM already present (%s, %.0f MB) from these inputs'
+                    % (dest, os.path.getsize(dest) / 1e6))
+                return dest
+        log('   merged OSM present but from other inputs - re-merging')
     os.makedirs(os.path.dirname(dest), exist_ok=True)
     seen = {'node': set(), 'way': set(), 'relation': set()}
     counts = collections.Counter()
@@ -176,8 +196,18 @@ def merge_osm(dest):
                 log('   %-8s after %s: %d' % (kind, os.path.basename(src), counts[kind]))
         out.write(b'</osm>\n')
     os.replace(tmp, dest)
+    with open(key_path, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(inputs_key, f, indent=2)
     log('   merged -> %s (%.0f MB) %s' % (dest, os.path.getsize(dest) / 1e6, dict(counts)))
     return dest
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, 'rb') as f:
+        for chunk in iter(lambda: f.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 # ---------------------------------------------------------------------------
@@ -207,6 +237,13 @@ def way_defaults(cfg):
     rail_capacity = cfg.get('A.network.railway_lane_capacity_veh_h')
     oneway = cfg.get('A.network.way_default_oneway')
     subnets = cfg.get('A.network.routable_subnetworks')
+    # the footway classes (#183): walk- and bike-capable links at the two
+    # declared mode speeds, one lane, uncongested by definition, two-way
+    # unless the way's own oneway tag says otherwise (pt2matsim reads it)
+    path_modes = cfg.get('A.network.path_modes_by_class')
+    path_capacity = cfg.get('A.network.path_lane_capacity_veh_h')
+    walk_ms = float(cfg.get('A.transit.walk_speed_ms'))
+    bike_ms = float(cfg.get('B.bike.speed_ms'))
 
     # Which subnetwork admits a class decides the modes written beside it, so
     # the two cannot disagree: a busway that admitted `bus` here but sat outside
@@ -222,6 +259,9 @@ def way_defaults(cfg):
 
     out = {}
     for value in sorted(set(speed) | set(rail_speed)):
+        if value in path_modes:
+            raise SystemExit('%s is both a road/railway class and a path class '
+                             '(A.network.path_modes_by_class) - one table must own it' % value)
         is_rail = value in rail_speed
         kmh = rail_speed[value] if is_rail else speed[value]
         out[value] = dict(
@@ -235,6 +275,13 @@ def way_defaults(cfg):
                                else capacity.get(value, 0.0)),
             oneway=bool(oneway.get(value, False)),
             allowedTransportModes=modes_of[value])
+    for value in sorted(path_modes):
+        modes = list(path_modes[value])
+        ms = bike_ms if 'bike' in modes else walk_ms
+        out[value] = dict(
+            osmKey='highway', lanes=1.0, freespeed=round(ms, 6),
+            laneCapacity=float(path_capacity), oneway=False,
+            allowedTransportModes=modes)
     return out
 
 
@@ -249,8 +296,10 @@ def config_runtime_osm(cfg, osm_file, network_out):
     identity = ('A.road.lanes_default / A.road.speed_default / '
                 'A.road.capacity_default for a highway class, '
                 'A.network.railway_speed_default_kmh and '
-                'A.network.railway_lane_capacity_veh_h for a railway class; '
-                'free speed converted km/h -> m/s')
+                'A.network.railway_lane_capacity_veh_h for a railway class, '
+                'A.network.path_modes_by_class with A.transit.walk_speed_ms or '
+                'B.bike.speed_ms and A.network.path_lane_capacity_veh_h for a '
+                'path class; free speed converted km/h -> m/s')
     for param in ('osmKey', 'lanes', 'freespeed', 'laneCapacity', 'oneway',
                   'allowedTransportModes'):
         runtime['OsmConverter.wayDefaultParams[*].%s' % param] = (
@@ -278,7 +327,102 @@ def build_base_network():
     log('Osm2MultimodalNetwork -> %s' % net)
     dt = java(['org.matsim.pt2matsim.run.Osm2MultimodalNetwork', cfg], 'osm2network')
     log('   done in %.0f s, %.0f MB' % (dt, os.path.getsize(net) / 1e6))
+    build_base_network.access_report = apply_path_access_tags(net)
     return net
+
+
+PATH_HIGHWAY_RE = re.compile(r'name="osm:way:highway"[^>]*>([^<]+)<')
+
+
+def osm_access_tags(keys):
+    """way id -> {access key: value} over every merged OSM input, for the keys
+    the override declares. Read from the harvest itself: pt2matsim keeps a
+    fixed subset of tags as `osm:way:*` link attributes (highway, name,
+    footway, lanes, oneway, access, ...) and foot= and bicycle= are not in it
+    (measured on the 12 September 2026 base network)."""
+    from lxml import etree
+    out = {}
+    for src in OSM_INPUTS:
+        for _, el in etree.iterparse(src, events=('end',), tag='way'):
+            tags = {t.get('k'): (t.get('v') or '').strip()
+                    for t in el.iter('tag') if t.get('k') in keys}
+            if tags:
+                out.setdefault(el.get('id'), tags)      # first extract wins, as in the merge
+            el.clear()
+            while el.getprevious() is not None:
+                del el.getparent()[0]
+    return out
+
+
+def apply_path_access_tags(net_path, cfg=None):
+    """A path link's own access tags override its class default (#183).
+
+    pt2matsim writes every path-class link with the modes its class admits
+    (`A.network.path_modes_by_class`) and reads no access tag itself. This
+    pass does: `A.network.path_access_overrides` maps each OSM access key to
+    the mode it governs (`all` for the general access= key) and says which
+    values grant and which deny; keys apply in the declared order, so a
+    specific foot= or bicycle= tag overrides a general access= tag, as the
+    OSM access hierarchy says it should. A cycleway tagged foot=no loses
+    walk, a footway tagged bicycle=yes gains bike, a private track loses
+    both, and a link whose override strips its last mode is dropped from the
+    network with its count reported - a link with no mode is one nothing can
+    use. Road links are left alone: their walk/bike rule is the class-based
+    one applied at run-input assembly.
+
+    Rewritten in place with a zero-header gzip so the base network stays
+    byte-reproducible.
+    """
+    cfg = cfg if cfg is not None else _registry.load()
+    classes = set(cfg.get('A.network.path_modes_by_class'))
+    ov = cfg.get('A.network.path_access_overrides')
+    keys, grant, deny = ov['keys'], set(ov['grant']), set(ov['deny'])
+    tags_of = osm_access_tags(set(keys))
+    with gzip.open(net_path, 'rt', encoding='utf-8') as f:
+        xml = f.read()
+    counts = collections.Counter()
+
+    def rewrite(m):
+        s = m.group(0)
+        hw = PATH_HIGHWAY_RE.search(s)
+        if not hw or hw.group(1).strip() not in classes:
+            return s
+        counts['path_links'] += 1
+        head_end = s.index('>')
+        head, tail = s[:head_end], s[head_end:]
+        mm = re.search(r'modes="([^"]*)"', head)
+        modes = [x for x in mm.group(1).split(',') if x]
+        wid = WAY_ID_RE.search(tail)
+        tags = tags_of.get(wid.group(1), {}) if wid else {}
+        before = list(modes)
+        for key, mode in keys.items():
+            v = tags.get(key)
+            if v is None:
+                continue
+            governed = list(before) if mode == 'all' else [mode]
+            for g in governed:
+                if v in grant and g not in modes and mode != 'all':
+                    modes.append(g)
+                    counts['%s=%s grants %s' % (key, v, g)] += 1
+                elif v in deny and g in modes:
+                    modes.remove(g)
+                    counts['%s=%s denies %s' % (key, v, g)] += 1
+        if modes == before:
+            return s
+        if not modes:
+            counts['links_dropped_no_mode_left'] += 1
+            return ''
+        counts['links_rewritten'] += 1
+        return head[:mm.start()] + 'modes="%s"' % ','.join(sorted(modes)) + head[mm.end():] + tail
+
+    body = LINK_BLOCK_RE.sub(rewrite, xml)
+    with open(net_path, 'wb') as fh:
+        g = gzip.GzipFile(fileobj=fh, mode='wb', mtime=0)
+        g.write(body.encode('utf-8'))
+        g.close()
+    log('   access tags over %d path links: %s' % (
+        counts.pop('path_links', 0), dict(counts) or 'no override fired'))
+    return dict(counts)
 
 
 # ---------------------------------------------------------------------------
@@ -573,6 +717,7 @@ def main():
     if a.stage in ('all', 'network') or not os.path.exists(base_net):
         base_net = build_base_network()
         report['base_network'] = network_stats(base_net)
+        report['base_network']['path_access_overrides'] = build_base_network.access_report
 
     if a.stage in ('all', 'variants'):
         log('applying E1 road variants')

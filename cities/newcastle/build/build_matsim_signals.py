@@ -191,6 +191,7 @@ def corridor_axis(inters, i):
 
 
 def bearing(nodes, link):
+    (x1, y1), (x2, y2) = nodes[link['frm']], nodes[link['to']]
     return math.atan2(y2 - y1, x2 - x1)
 
 

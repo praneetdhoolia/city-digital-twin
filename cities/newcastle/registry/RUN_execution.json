@@ -756,32 +756,32 @@
       "description": "Threads for MATSim's parallel events manager. UNLIKE RUN.machine.threads this is a wall-time knob, NOT run identity: event handlers are observers - each still receives the complete stream in per-handler order, so scores, plans and every model output are unchanged (verified bit-identical against the single-thread default, DECISIONS.md 9.56). Declared because the framework default (null = one thread) was measured saturated on the all-physical model: 172-177 s CPU per ~265 s iteration at 25%, throttling ten qsim threads at every sim-step sync. 12 threads were probed on the 9.58 network and bought NOTHING over 4 (it2-4 median mobsim ~190 s either way, 9.59) - 4 stands."
     },
     "RUN.machine.xmx": {
-      "value": "14g",
+      "value": "18g",
       "units": "jvm_heap",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.5, 9.165",
+      "decisions_ref": "9.5, 9.165, 9.167",
       "consumers": [
         "src/run/run_matsim.py"
       ],
-      "description": "JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction, 31.4 GiB at 25 % - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on this 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations."
+      "description": "JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on the then 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap - 18g against the 16.5 GiB the rule reads at 1 % on the footpath network (9.167; it was 14g against 10.5 on the road graph) - and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations."
     },
     "RUN.machine.heap_floor_gib": {
-      "value": 9.6,
+      "value": 15.6,
       "units": "GiB",
       "source": "measured",
       "held_fixed": {
-        "rule": "A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms that died and the arms that lived. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.",
-        "decisions_ref": "9.5, 9.165",
+        "rule": "A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from the arms that died and the arms that lived on the road-graph network; RE-MEASURED 12 September 2026 on the footpath network (9.167, #183): the 1 % probe's heap after a full collection rose from 2.8 GB (20260912T042953, the last probe of the old network) to 8.6-8.8 GB (20260912T065939), a 12g heap thrashed at 10.3 GB live in the first replanning (aborted_20260912T065345), and 24g ran 4 of 4. The sample-independent part rose by 6.0 GiB and the floor with it: 9.6 + 6.0. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.",
+        "decisions_ref": "9.5, 9.165, 9.167",
         "departure_requires": "a heap-after-full-GC reading from an arm's gc.log at two fractions, recorded in DECISIONS.md"
       },
       "status": "active",
-      "decisions_ref": "9.5, 9.165",
+      "decisions_ref": "9.5, 9.165, 9.167",
       "consumers": [
         "src/run/run_matsim.py"
       ],
-      "description": "The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers. The 25 % arms that lived ran at 40g and peaked at 36.2 GB; the one that ran at 14g died (9.165)."
+      "description": "The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers; re-measured on 12 September 2026 when the footpath network doubled the link count (#183) and the seven per-mode routing copies of a time-variant network put the 1 % probe out of a 12g heap (citysim.SharedModeNetworks now makes one copy per distinct link set, and the floor is measured with it). At 1 % the rule reads 16.5 GiB; at 25 % 37.4 GiB, so the 40g the F33 arms carried is marginal and the F34 arm-0 overlay carries 48g on the 63 GB machine. The slope (RUN.machine.heap_per_fraction_gib) is NOT re-measured on this network - a route's link sequence is longer on a finer graph and plan memory may grow with it - and the first F34 arm's gc.log is the reading that settles it."
     },
     "RUN.machine.heap_per_fraction_gib": {
       "value": 87,

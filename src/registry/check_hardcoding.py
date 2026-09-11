@@ -748,6 +748,8 @@ STRUCTURAL_INLINE = {
         'a column width in the rendered dictionary',
     'src/build/build_manifest.py:sha256:20':
         'a read chunk size (1 << 20 bytes) while hashing',
+    'src/build/build_matsim_network.py:_sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing the OSM inputs the merge is keyed on',
     'src/build/build_manifest.py:main:30':
         'a column width in the printed manifest summary',
     'src/build/det_io.py:gzip_writer:6':

@@ -1173,6 +1173,7 @@
     "networks/osm/footways.osm": {
       "kind": "file",
       "read_by": [
+        "src/build/build_matsim_network.py",
         "src/build/build_network_layers.py",
         "src/build/measure_osm_defaults.py",
         "src/build/shape_tools.py"

@@ -6,7 +6,7 @@
     "RUN.controler.last_iteration": 4,
     "RUN.controler.create_graphs": false,
     "RUN.gate.interval_iterations": 0,
-    "RUN.machine.xmx": "12g"
+    "RUN.machine.xmx": "18g"
   },
   "allow_outside_sweep": [
     "RUN.controler.last_iteration",

@@ -291,6 +291,11 @@ public final class CitysimControler {
         // disconnected first hop, aborting the agents mid-day.
         ActivityLinkAssigner.run(scenario);
         final Controler controler = new Controler(scenario);
+        // One plain routing network per distinct link set instead of one
+        // time-variant copy per mode: the footpath network (#183) doubled the
+        // link count and the seven per-mode copies of a TimeVariantLinkImpl
+        // network put a 1 % probe out of heap. Nothing about a route changes.
+        installSingleton(controler, SharedModeNetworks.class, false, true, false);
         controler.addOverridingModule(new AbstractModule() {
             @Override
             public void install() {

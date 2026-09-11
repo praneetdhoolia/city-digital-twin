@@ -1924,15 +1924,17 @@
     },
     "A.schedule_mapping.modes_to_keep_on_cleanup": {
       "value": [
-        "car"
+        "car",
+        "walk",
+        "bike"
       ],
       "units": "mode_names",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.34, 15",
+      "decisions_ref": "9.34, 9.167, 15",
       "pt2matsim_mapper_param": "PublicTransitMapping.modesToKeepOnCleanUp",
-      "description": "Network modes preserved when the mapper removes links no route uses. Car is kept because the road network is the thing being modelled; removing it to suit a schedule would delete the study."
+      "description": "Network modes preserved when the mapper removes links no route uses. Car is kept because the road network is the thing being modelled; removing it to suit a schedule would delete the study. Walk and bike since 12 September 2026 (#183): the footpath links carry neither car nor a transit route, and the mapper would otherwise delete every one of them from the scenario networks."
     },
     "A.schedule_mapping.n_link_threshold": {
       "value": 6,
@@ -2100,6 +2102,89 @@
       "status": "active",
       "decisions_ref": "9.34, 15",
       "description": "Lane capacity written for a railway link. A SENTINEL MEANING UNCONSTRAINED, not a measurement: rail headway is governed by the signalling system and the timetable, neither of which a MATSim link capacity represents. It must stay far above any plausible flow so the queue never binds on a rail link."
+    },
+    "A.network.path_modes_by_class": {
+      "value": {
+        "bridleway": [
+          "walk",
+          "bike"
+        ],
+        "corridor": [
+          "walk"
+        ],
+        "cycleway": [
+          "bike",
+          "walk"
+        ],
+        "footway": [
+          "walk"
+        ],
+        "path": [
+          "walk",
+          "bike"
+        ],
+        "pedestrian": [
+          "walk"
+        ],
+        "steps": [
+          "walk"
+        ],
+        "track": [
+          "walk",
+          "bike"
+        ]
+      },
+      "units": "mode_names_by_osm_highway_class",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The OSM highway classes of the footway harvest (networks/osm/footways.osm, the same eight classes A.active.footway_width_default names) that the network build converts into walk- and bike-capable links, and the modes each class admits BY DEFAULT - the OSM wiki's meaning of the tag: footway, steps, pedestrian and corridor are for pedestrians; cycleway is for cyclists and walkable; path, track and bridleway are shared. A way's own foot= / bicycle= tag overrides the class default (A.network.path_access_overrides). Until 12 September 2026 (#183) none of these 40,203 ways was in the run network and walk was routed on the road graph alone.",
+      "consumers": [
+        "src/build/build_matsim_network.py"
+      ]
+    },
+    "A.network.path_access_overrides": {
+      "value": {
+        "keys": {
+          "access": "all",
+          "foot": "walk",
+          "bicycle": "bike"
+        },
+        "grant": [
+          "yes",
+          "designated",
+          "permissive",
+          "official"
+        ],
+        "deny": [
+          "no",
+          "private",
+          "use_sidepath",
+          "dismount"
+        ]
+      },
+      "units": "osm_access_vocabulary",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "How a path way's own OSM access tags override its class default: `keys` maps the access key to the mode it governs, in the order applied - the general access= key governs every mode (`all`) and is applied first, then the specific foot= and bicycle= keys override it, as the OSM access hierarchy says; a value in `grant` adds the mode (a specific key only), a value in `deny` removes it (bicycle=dismount means walk the bike, so bike is removed and walk stays), any other value leaves the class default. The OSM access vocabulary, not a judgement. The tags are read from the harvest itself, because pt2matsim keeps only a fixed subset as link attributes. Applied to links of the A.network.path_modes_by_class classes only: road links keep the class-based walk/bike rule (A.network.pedestrian_excluded_classes, A.network.bicycle_excluded_classes).",
+      "consumers": [
+        "src/build/build_matsim_network.py"
+      ]
+    },
+    "A.network.path_lane_capacity_veh_h": {
+      "value": 9999.0,
+      "units": "vehicles_per_hour",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "Lane capacity written for a footpath, cycleway, path, track, steps, pedestrian or bridleway link. A SENTINEL MEANING UNCONSTRAINED, like the railway's: a pedestrian occupies the network at B.walk.pce = 0 and no path congestion is represented in this model, so the queue must never bind on a path link. Free speed on these links is the declared walking speed (A.transit.walk_speed_ms) where only walk is admitted and the declared cycling speed (B.bike.speed_ms) where bike is - a mode's own vehicle type caps it below the link.",
+      "consumers": [
+        "src/build/build_matsim_network.py"
+      ]
     },
     "A.network.way_default_oneway": {
       "value": {
@@ -2398,7 +2483,15 @@
         "busway": "moderate",
         "residential": "base",
         "living_street": "base",
-        "service": "base"
+        "service": "base",
+        "cycleway": "base",
+        "path": "base",
+        "track": "base",
+        "bridleway": "base",
+        "footway": "base",
+        "pedestrian": "base",
+        "steps": "base",
+        "corridor": "base"
       },
       "units": "aadt_proxy_class_by_osm_highway",
       "source": "assumed",
@@ -2408,11 +2501,11 @@
         "departure_requires": "a per-link traffic-volume layer for this city (e.g. classified counts joined to OSM ways), which would replace the class proxy with the observed band"
       },
       "status": "active",
-      "decisions_ref": "9.138",
+      "decisions_ref": "9.138, 9.167",
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ],
-      "description": "AADT-band proxy per OSM highway class, keyed on the classes present on the run network's bike-capable links (100% coverage measured on the S2 build). base carries factor 1.0 by identity; the other bands take their declared felt_factor fields."
+      "description": "AADT-band proxy per OSM highway class, keyed on the classes present on the run network's bike-capable links (100% coverage measured on the S2 build). base carries factor 1.0 by identity; the other bands take their declared felt_factor fields. The eight path classes (A.network.path_modes_by_class, #183) are base by identity: a separated cycleway, path or track carries no motor traffic, which is the condition the low-traffic baseline names."
     },
     "A.bike_stress.felt_factor_moderate": {
       "value": 1.3,

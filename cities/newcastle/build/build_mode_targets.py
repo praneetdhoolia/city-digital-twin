@@ -788,22 +788,26 @@ def main():
     crep = json.load(open(crep_path, encoding='utf-8')) if os.path.exists(crep_path) else None
     if crep and crep.get('closure_source') == 'schedule_derived':
         per_site = crep['closures_per_site']
-        total = sum(per_site.values())
+        freight = crep.get('freight_closures_per_day') or {}
+        scheduled = sum(per_site.values())
+        total = scheduled + sum(freight.values())
         add('freight_train', float(total),
             'level-crossing closures per weekday', 'derived',
             'ROAD EFFECT SIMULATED, train not a mobsim vehicle. The coal chain '
             'has run on dedicated grade-separated track since 2006 (ARTC/PWCS/'
             'NCIG, ~110 movements/day), so the only real road interaction is '
-            'the level crossings - and those are now DERIVED from the mapped '
-            'rail timetable rather than assumed (9.90): one closure per '
-            'scheduled train that crosses, at the time it crosses. %s, '
-            '%d/weekday in total, each %.0f s. Non-timetabled freight is added '
-            'on top at A.crossings.freight_closures_per_day, zero by default '
-            'because the coal chain does not cross these roads at grade and '
-            'ARTC publishes no movement log for what else might. A modelled '
-            'count of train VEHICLES of zero is the decision, not a defect'
+            'the level crossings - and those are DERIVED, not assumed: one '
+            'closure per scheduled passenger train that crosses, at the time '
+            'it crosses (9.90; %s, %d/weekday, each %.0f s), plus the freight '
+            'movements the 2012 Cobbora Coal environmental assessment survey '
+            'counted at these two crossings (9.167, #184; %s, each %.0f s, '
+            'spread over the day because no freight timetable is published). '
+            '%d closures/weekday in total. A modelled count of train VEHICLES '
+            'of zero is the decision, not a defect'
             % (', '.join('%s %d' % (k, v) for k, v in sorted(per_site.items())),
-               total, float(cfg.get('A.crossings.closure_duration_s'))),
+               scheduled, float(cfg.get('A.crossings.closure_duration_passenger_s')),
+               ', '.join('%s %d' % (k, v) for k, v in sorted(freight.items())) or 'none',
+               float(cfg.get('A.crossings.closure_duration_s')), total),
             None)
     else:
         per = float(cfg.get('A.crossings.closures_per_day'))

@@ -4,12 +4,12 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in that city's docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 549,
+  "n_fields": 553,
   "n_by_layer": {
-    "A": 198,
+    "A": 201,
     "B": 126,
     "C": 58,
-    "CAL": 27,
+    "CAL": 28,
     "D": 9,
     "E": 26,
     "RUN": 105
@@ -280,7 +280,7 @@
       "layer": "A",
       "units": "seconds",
       "type": "number",
-      "source_in_reference_city": "assumed",
+      "source_in_reference_city": "literature",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
@@ -324,8 +324,8 @@
     "A.crossings.freight_closures_per_day": {
       "layer": "A",
       "units": "closures_per_day_per_site",
-      "type": "number",
-      "source_in_reference_city": "assumed",
+      "type": "object",
+      "source_in_reference_city": "derived",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
@@ -928,6 +928,33 @@
       "layer": "A",
       "units": "boolean",
       "type": "boolean",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.network.path_access_overrides": {
+      "layer": "A",
+      "units": "osm_access_vocabulary",
+      "type": "object",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.network.path_lane_capacity_veh_h": {
+      "layer": "A",
+      "units": "vehicles_per_hour",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.network.path_modes_by_class": {
+      "layer": "A",
+      "units": "mode_names_by_osm_highway_class",
+      "type": "object",
       "source_in_reference_city": "definition",
       "sweep_required": false,
       "unobtained_in_reference_city": false,
@@ -3591,6 +3618,15 @@
     "CAL.pt.censored_share_max": {
       "layer": "CAL",
       "units": "share of cells",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.pt.opal_patronage_rounding": {
+      "layer": "CAL",
+      "units": "tap-ons",
       "type": "number",
       "source_in_reference_city": "definition",
       "sweep_required": false,

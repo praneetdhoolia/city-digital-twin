@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 549 fields are made of
+## What the 553 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 46 | follows from another registry field by identity |
 | `literature` | 81 | a published value, not specific to this city |
 | `assumed` | 203 | chosen without direct empirical support |
-| `definition` | 139 | fixed by the formulation, not an empirical quantity |
+| `definition` | 143 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 528 | usable point value |
+| `active` | 532 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -122,13 +122,13 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.pt.censored_share_max` - A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must sto
 - `E.s2b.lr_segment_count` - MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this fie
-- `RUN.machine.heap_floor_gib` - A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms 
+- `RUN.machine.heap_floor_gib` - A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from t
 - `RUN.machine.heap_per_fraction_gib` - A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib;
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 197 fields*
+*`cities/newcastle/registry/A_supply.json` - 200 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -236,6 +236,9 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.network.keep_ways_with_public_transit` | `true` | boolean | `definition` | - |
 | `A.network.max_link_length_m` | `500.0` | metres | `assumed` | 200 - 2000 |
 | `A.network.parse_turn_restrictions` | `true` | boolean | `definition` | - |
+| `A.network.path_access_overrides` | `{"keys": {"access": "all", "foot": "walk", "bicycle": "bike"}, "grant": ["yes", "designated", "permissive",...` | osm_access_vocabulary | `definition` | - |
+| `A.network.path_lane_capacity_veh_h` | `9999.0` | vehicles_per_hour | `definition` | - |
+| `A.network.path_modes_by_class` | `{"bridleway": ["walk", "bike"], "corridor": ["walk"], "cycleway": ["bike", "walk"], "footway": ["walk"], "p...` | mode_names_by_osm_highway_class | `definition` | - |
 | `A.network.pedestrian_excluded_classes` | `["motorway", "motorway_link"]` | osm_highway_classes | `definition` | - |
 | `A.network.railway_lane_capacity_veh_h` | `9999.0` | vehicles_per_hour | `definition` | - |
 | `A.network.railway_speed_default_kmh` | `{"rail": 160.0, "light_rail": 70.0, "tram": 70.0}` | km_per_hour | `assumed` | 40 - 180 |
@@ -275,7 +278,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.schedule_mapping.max_link_candidate_distance_m` | `90.0` | metres | `assumed` | 50 - 150 |
 | `A.schedule_mapping.max_travel_cost_factor` | `5.0` | factor | `assumed` | 2 - 10 |
 | `A.schedule_mapping.mode_specific_rules` | `false` | boolean | `definition` | - |
-| `A.schedule_mapping.modes_to_keep_on_cleanup` | `["car"]` | mode_names | `definition` | - |
+| `A.schedule_mapping.modes_to_keep_on_cleanup` | `["car", "walk", "bike"]` | mode_names | `definition` | - |
 | `A.schedule_mapping.n_link_threshold` | `6` | links | `assumed` | 3 - 12 |
 | `A.schedule_mapping.network_router` | `SpeedyALT` | router_name | `definition` | - |
 | `A.schedule_mapping.remove_not_used_stop_facilities` | `true` | boolean | `definition` | - |
@@ -350,9 +353,9 @@ Width for an active edge whose class is ABSENT from A.active.footway_width_defau
 
 #### `A.bike_stress.aadt_class_by_highway`
 
-AADT-band proxy per OSM highway class, keyed on the classes present on the run network's bike-capable links (100% coverage measured on the S2 build). base carries factor 1.0 by identity; the other bands take their declared felt_factor fields.
+AADT-band proxy per OSM highway class, keyed on the classes present on the run network's bike-capable links (100% coverage measured on the S2 build). base carries factor 1.0 by identity; the other bands take their declared felt_factor fields. The eight path classes (A.network.path_modes_by_class, #183) are base by identity: a separated cycleway, path or track carries no motor traffic, which is the condition the low-traffic baseline names.
 
-***assumed** · status **active** · DECISIONS.md §9.138*
+***assumed** · status **active** · DECISIONS.md §9.138, 9.167*
 
 > **Held fixed.** A CLASSIFICATION, not a tunable: no per-link AADT observation is held for this city, so each OSM highway class a cyclist may legally ride is mapped to the Broach et al. 2012 traffic-volume band its class typically carries (trunk/primary arterials to 30k+, secondary to 20-30k, tertiary/unclassified collectors to 10-20k, residential/living_street/service to the low-traffic baseline). The MAGNITUDE per band is what is swept, on the three felt_factor fields.
 >
@@ -1058,6 +1061,24 @@ Whether OSM turn restrictions become MATSim disallowed next links. The base netw
 
 ***definition** · status **active** · DECISIONS.md §9.34, 15*
 
+#### `A.network.path_access_overrides`
+
+How a path way's own OSM access tags override its class default: `keys` maps the access key to the mode it governs, in the order applied - the general access= key governs every mode (`all`) and is applied first, then the specific foot= and bicycle= keys override it, as the OSM access hierarchy says; a value in `grant` adds the mode (a specific key only), a value in `deny` removes it (bicycle=dismount means walk the bike, so bike is removed and walk stays), any other value leaves the class default. The OSM access vocabulary, not a judgement. The tags are read from the harvest itself, because pt2matsim keeps only a fixed subset as link attributes. Applied to links of the A.network.path_modes_by_class classes only: road links keep the class-based walk/bike rule (A.network.pedestrian_excluded_classes, A.network.bicycle_excluded_classes).
+
+***definition** · status **active** · DECISIONS.md §9.167*
+
+#### `A.network.path_lane_capacity_veh_h`
+
+Lane capacity written for a footpath, cycleway, path, track, steps, pedestrian or bridleway link. A SENTINEL MEANING UNCONSTRAINED, like the railway's: a pedestrian occupies the network at B.walk.pce = 0 and no path congestion is represented in this model, so the queue must never bind on a path link. Free speed on these links is the declared walking speed (A.transit.walk_speed_ms) where only walk is admitted and the declared cycling speed (B.bike.speed_ms) where bike is - a mode's own vehicle type caps it below the link.
+
+***definition** · status **active** · DECISIONS.md §9.167*
+
+#### `A.network.path_modes_by_class`
+
+The OSM highway classes of the footway harvest (networks/osm/footways.osm, the same eight classes A.active.footway_width_default names) that the network build converts into walk- and bike-capable links, and the modes each class admits BY DEFAULT - the OSM wiki's meaning of the tag: footway, steps, pedestrian and corridor are for pedestrians; cycleway is for cyclists and walkable; path, track and bridleway are shared. A way's own foot= / bicycle= tag overrides the class default (A.network.path_access_overrides). Until 12 September 2026 (#183) none of these 40,203 ways was in the run network and walk was routed on the road graph alone.
+
+***definition** · status **active** · DECISIONS.md §9.167*
+
 #### `A.network.pedestrian_excluded_classes`
 
 Road classes a network-simulated pedestrian may not use. NSW Road Rules prohibit pedestrians on motorways (rule 288, signposted roads) and NOWHERE ELSE: an urban trunk road (Stewart Avenue, Maitland Road) is a legal pedestrian route with footpaths, and the 9.54 list wrongly extended the motorway prohibition to trunk/trunk_link - which severed the walkable city (9.58: 16.7k walk links stripped as unreachable because whole neighbourhoods connect only through a trunk segment; 30,330 activities stranded on walk-less links at 25%). The walk mode is simulated on the road graph as the footpath proxy (the observed footway network is data, not part of the one mapped MATSim build - 3.5 forbids a remap). A vocabulary of the road rules, not a tunable.
@@ -1352,9 +1373,9 @@ Whether pt2matsim applies its own per-mode routing rules. False: the mode-to-net
 
 #### `A.schedule_mapping.modes_to_keep_on_cleanup`
 
-Network modes preserved when the mapper removes links no route uses. Car is kept because the road network is the thing being modelled; removing it to suit a schedule would delete the study.
+Network modes preserved when the mapper removes links no route uses. Car is kept because the road network is the thing being modelled; removing it to suit a schedule would delete the study. Walk and bike since 12 September 2026 (#183): the footpath links carry neither car nor a transit route, and the mapper would otherwise delete every one of them from the scenario networks.
 
-***definition** · status **active** · DECISIONS.md §9.34, 15*
+***definition** · status **active** · DECISIONS.md §9.34, 9.167, 15*
 
 #### `A.schedule_mapping.n_link_threshold`
 
@@ -2902,7 +2923,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 27 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 28 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -2924,6 +2945,7 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.objective.replication_band_pp` | `0.0` | relative_percent | `assumed` | 0 - 2 |
 | `CAL.pt.censored_cell_value` | `0.0` | trips per month | `assumed` | 0 - 25 |
 | `CAL.pt.censored_share_max` | `0.05` | share of cells | `definition` | **held fixed** |
+| `CAL.pt.opal_patronage_rounding` | `100` | tap-ons | `definition` | - |
 | `CAL.pt.weekday_factor` | `1.0727` | ratio | `assumed` | 1 - 1.3 |
 | `CAL.pt_split.break_ratio` | `0.5` | ratio | `assumed` | 0.35 - 0.7 |
 | `CAL.pt_split.lr_observed_stop_share` | `0.3696` | share_of_line_boardings | `measured` | 0.3372 - 0.3755 |
@@ -3053,6 +3075,12 @@ The share of cells in the station entries/exits series above which build_validat
 > **Held fixed.** A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must stop, and no model output varies with it - at any value in a wide neighbourhood the guard's verdict on the held series is the same, because that series is at 0.09% (1 censored cell in 1,092). Sweeping it would sweep the point at which the project refuses to keep building, which is a rule about honesty rather than a quantity about Newcastle.
 >
 > *Departure requires: a logged decision*
+
+#### `CAL.pt.opal_patronage_rounding`
+
+The rounding unit of TfNSW's Opal Patronage daily files: every hourly cell is rounded to the nearest 100 tap-ons and printed '<100' below it (Opal Tap Data documentation v2.0, May 2026). The extract writes each day's total as the sum of the hourly intervals this implies - a lower and an upper bound - so no reader quotes a centre value the publication never gave (#185).
+
+***definition** · status **active** · DECISIONS.md §9.167*
 
 #### `CAL.pt.weekday_factor`
 
@@ -3991,14 +4019,14 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
-| `RUN.machine.heap_floor_gib` | `9.6` | GiB | `measured` | **held fixed** |
+| `RUN.machine.heap_floor_gib` | `15.6` | GiB | `measured` | **held fixed** |
 | `RUN.machine.heap_per_fraction_gib` | `87` | GiB_per_unit_fraction | `measured` | **held fixed** |
 | `RUN.machine.jfr_profile` | `false` | boolean | `definition` | - |
 | `RUN.machine.replanning_threads` | `20` | threads | `definition` | 1 - 24 |
 | `RUN.machine.seed` | `20260810` | integer_seed | `definition` | - |
 | `RUN.machine.telemetry_requires_simstep_barrier` | `true` | boolean | `definition` | - |
 | `RUN.machine.threads` | `16` | threads | `definition` | 1 - 24 |
-| `RUN.machine.xmx` | `14g` | jvm_heap | `definition` | - |
+| `RUN.machine.xmx` | `18g` | jvm_heap | `definition` | - |
 | `RUN.mode_choice.chain_based_modes` | `["car", "bike"]` | enum | `definition` | - |
 | `RUN.mode_choice.consider_car_availability` | `true` | boolean | `definition` | - |
 | `RUN.mode_choice.coord_distance_m` | `100.0` | metres | `literature` | 0 - 100 |
@@ -4186,11 +4214,11 @@ Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.mach
 
 #### `RUN.machine.heap_floor_gib`
 
-The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers. The 25 % arms that lived ran at 40g and peaked at 36.2 GB; the one that ran at 14g died (9.165).
+The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers; re-measured on 12 September 2026 when the footpath network doubled the link count (#183) and the seven per-mode routing copies of a time-variant network put the 1 % probe out of a 12g heap (citysim.SharedModeNetworks now makes one copy per distinct link set, and the floor is measured with it). At 1 % the rule reads 16.5 GiB; at 25 % 37.4 GiB, so the 40g the F33 arms carried is marginal and the F34 arm-0 overlay carries 48g on the 63 GB machine. The slope (RUN.machine.heap_per_fraction_gib) is NOT re-measured on this network - a route's link sequence is longer on a finer graph and plan memory may grow with it - and the first F34 arm's gc.log is the reading that settles it.
 
-***measured** · status **active** · DECISIONS.md §9.5, 9.165*
+***measured** · status **active** · DECISIONS.md §9.5, 9.165, 9.167*
 
-> **Held fixed.** A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms that died and the arms that lived. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.
+> **Held fixed.** A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from the arms that died and the arms that lived on the road-graph network; RE-MEASURED 12 September 2026 on the footpath network (9.167, #183): the 1 % probe's heap after a full collection rose from 2.8 GB (20260912T042953, the last probe of the old network) to 8.6-8.8 GB (20260912T065939), a 12g heap thrashed at 10.3 GB live in the first replanning (aborted_20260912T065345), and 24g ran 4 of 4. The sample-independent part rose by 6.0 GiB and the floor with it: 9.6 + 6.0. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.
 >
 > *Departure requires: a heap-after-full-GC reading from an arm's gc.log at two fractions, recorded in DECISIONS.md*
 
@@ -4236,9 +4264,9 @@ Mobsim thread count. PART OF THE RUN IDENTITY, NOT A PERFORMANCE KNOB: MATSim pa
 
 #### `RUN.machine.xmx`
 
-JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction, 31.4 GiB at 25 % - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on this 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations.
+JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on the then 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap - 18g against the 16.5 GiB the rule reads at 1 % on the footpath network (9.167; it was 14g against 10.5 on the road graph) - and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations.
 
-***definition** · status **active** · DECISIONS.md §9.5, 9.165*
+***definition** · status **active** · DECISIONS.md §9.5, 9.165, 9.167*
 
 #### `RUN.mode_choice.chain_based_modes`
 
