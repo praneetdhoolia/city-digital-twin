@@ -146,15 +146,7 @@ if TRANSFER_PENALTY['base'] not in TRANSFER_PENALTY['grid']:
 # asc_car_passenger stay held_fixed, each with the per-mode reason on its own
 # registry field. Only the point value reaches C1 either way - the sweeps are
 # read from the registry, not from here.
-ASC_FIELDS = [('asc_car_driver', 'C.asc.car_driver'),
-              ('asc_car_passenger', 'C.asc.car_passenger'),
-              ('asc_bus', 'C.asc.bus'),
-              ('asc_lr', 'C.asc.light_rail'),
-              ('asc_rail', 'C.asc.rail'),
-              ('asc_walk', 'C.asc.walk'),
-              ('asc_cycle', 'C.asc.cycle'),
-              ('asc_motorbike', 'C.asc.motorbike'),
-              ('asc_ferry', 'C.asc.ferry')]
+from asc_fields import ASC_FIELDS  # noqa: E402  - shared with the emitter
 ASC = {name: (float(CFG.get(key)), CFG.source(key)) for name, key in ASC_FIELDS}
 
 # The PT walk-access decay curve (C.walk.decay_*, C.walk.gaussian_*,

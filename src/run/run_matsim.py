@@ -51,7 +51,7 @@ import city  # noqa: E402
 import results_store  # noqa: E402
 import run_failure  # noqa: E402
 import summarise_run  # noqa: E402
-from registry import outputs  # noqa: E402
+from registry import outputs, param_config  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 
@@ -422,6 +422,12 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         **signal_paths)
     config_path = build_inputs.write_config(
         os.path.join(run_dir, 'config.xml'), cfg, scoring, day, paths)
+    # an override the run would record and not execute is refused here, with
+    # the emitted config and vehicle types in hand to test it against
+    refuse_unrealised_overrides(
+        cfg, scoring, day, paths,
+        dict(config=open(config_path, encoding='utf-8').read(),
+             vehicles=open(mode_veh, encoding='utf-8').read()))
 
     # Raw MATSim overrides (`--set ride.constant=-3.4`) are applied after the
     # emission, deliberately: they are an escape hatch BELOW the registry, for
@@ -612,6 +618,82 @@ def refuse_small_heap(cfg, xmx, fraction):
         'Set RUN.machine.xmx on the overlay, beside the approval it encodes.'
         % (xmx, float(fraction), need, cfg.get('RUN.machine.heap_floor_gib'),
            cfg.get('RUN.machine.heap_per_fraction_gib')))
+
+
+class _AtBase(object):
+    """A resolution with ONE field answered from the registry, not the overlay."""
+
+    def __init__(self, inner, key):
+        self._inner, self._key = inner, key
+
+    def get(self, k, caller=None):
+        if k == self._key:
+            return self._inner.field(k).get('value')
+        return self._inner.get(k, caller=caller)
+
+    def __getattr__(self, name):
+        return getattr(self._inner, name)
+
+
+def refuse_unrealised_overrides(cfg, scoring, day, paths, emitted):
+    """Refuse a run overlay or --config-set that moves a field this run cannot read.
+
+    No registry field carries a stage, so the resolver admits any field into a
+    run overlay on membership alone: `A.parking.search_min_max` is baked into
+    the run inputs at assembly, and an overlay setting it is validated,
+    recorded in `_config.json` as moved, and executes the base value (eighth
+    project report, 11 September 2026; area 4). The test here is the exact
+    one: with the field put back to its registry value, does anything this
+    run READS change - the emitted config, or the per-mode vehicle types the
+    runner regenerates? If neither moves, the override would be recorded and
+    not executed, which is the defect this refusal exists for, and the launch
+    is refused with the key and where its change would have to be realised.
+
+    RUN.* and CAL.* keys are the run's own and the loop's own; the former are
+    read by the runner itself rather than through the config (threads, heap,
+    the watchers), so they are never tested here. The calibrator's stage table
+    (`calibrate.rebuild_stage`) is the coarser reading of the same question
+    and classes every field `build_matsim_run_inputs.py` consumes as needing
+    the run inputs regenerated - which is wrong for the fields `config_runtime`
+    derives at launch (the taxi fare blend, the score-MSA fraction, the
+    capacity factors); this test sees those as realised because they are.
+    """
+    import tempfile                                           # noqa: PLC0415
+    snap = cfg.snapshot()
+    keys = [k for k, origin in snap['resolved_from'].items()
+            if (origin.startswith('run:') or origin in ('set', 'env'))
+            and not (k.startswith('RUN.') or k.startswith('CAL.'))]
+    if not keys:
+        return
+    bad = []
+    for key in keys:
+        at_base = _AtBase(cfg, key)
+        try:
+            base_scoring = build_inputs.scoring_from_c1(
+                at_base, json.load(open(build_inputs.PARAMS, encoding='utf-8')),
+                purpose_share())
+            runtime = build_inputs.config_runtime(at_base, base_scoring, day, paths)
+            text = param_config.emit('matsim', at_base, runtime)
+            with tempfile.TemporaryDirectory() as td:
+                veh = build_inputs.write_mode_vehicles(
+                    os.path.join(td, 'vehicles.xml'), at_base)
+                veh_text = open(veh, encoding='utf-8').read()
+        except Exception as e:                                # noqa: BLE001
+            # a derivation that cannot run at the base value is a change the
+            # run does read - it is the override making the derivation valid
+            continue
+        if text != emitted['config'] or veh_text != emitted['vehicles']:
+            continue
+        consumers = ', '.join(cfg.field(key).get('consumers') or []) or 'no declared consumer'
+        bad.append('  %s (from %s): consumed by %s' % (key, snap['resolved_from'][key], consumers))
+    if not bad:
+        return
+    raise SystemExit(
+        'REFUSED: this run would RECORD a change it cannot EXECUTE. Put back to '
+        'the registry value, none of these keys changes the emitted config or the '
+        'vehicle types this run reads - their change is realised only by a '
+        'rebuild of the stage their consumer belongs to:\n%s\nRebuild that '
+        'stage, or drop the key from the overlay.' % '\n'.join(bad))
 
 
 def refuse_if_no_automatic_stop(cfg):
