@@ -291,6 +291,20 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
             return;
         }
         this.refusedThisMobsim.add(new Refused(r.personId, r.from, r.to));
+        // the WHOLE trip where it has more than one leg (#167): under
+        // accessEgressModeToLink the taxi leg has walk access/egress siblings
+        // carrying routingMode taxi; re-moding leg by leg left a mixed trip
+        // PersonPrepareForSim refuses. Under `none` the trip is one leg and
+        // the in-place re-mode below is what it always was.
+        final Person person = this.scenario.getPopulation().getPersons().get(r.personId);
+        final Plan plan = person == null ? null : person.getSelectedPlan();
+        final TripStructureUtils.Trip whole =
+                plan == null || r.legs.isEmpty() ? null
+                : RemodeRestore.tripOf(plan, r.legs.get(0));
+        if (whole != null && whole.getLegsOnly().size() > 1) {
+            RemodeRestore.remodeTrip(plan, whole, TransportMode.walk);
+            return;
+        }
         for (final Leg leg : r.legs) {
             leg.setMode(TransportMode.walk);
             TripStructureUtils.setRoutingMode(leg, TransportMode.walk);

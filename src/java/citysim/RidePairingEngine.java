@@ -630,6 +630,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         final Map<String, int[]> unpaired = new HashMap<>();
         int nPaired = 0;
         int remoded = 0;
+        int remodedWholeTrips = 0;         // multi-leg trips replaced whole (#167)
         // 9.120: declared passengers whose departure was moved to the
         // driver's, and by how much in total - the drift the re-timing removed
         int retimed = 0;
@@ -794,6 +795,22 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     remodedThisMobsim.add(ride);
                     final String fallback = fallbackMode(ride.person);
                     remodedAs.put(ride, fallback);
+                    // THE WHOLE TRIP where it has more than one leg (#167):
+                    // under accessEgressModeToLink the ride leg has four
+                    // sibling access/egress legs carrying routingMode ride,
+                    // and re-moding it alone made a mixed trip that
+                    // PersonPrepareForSim refused before iteration 0's
+                    // mobsim on every unpaired passenger. Under `none` the
+                    // trip is this one leg and the in-place re-mode below
+                    // is what it always was.
+                    final org.matsim.core.router.TripStructureUtils.Trip whole =
+                            RemodeRestore.tripOf(ride.plan, ride.leg);
+                    if (whole != null && whole.getLegsOnly().size() > 1) {
+                        RemodeRestore.remodeTrip(ride.plan, whole, fallback);
+                        remodedWholeTrips++;
+                        remoded++;
+                        continue;
+                    }
                     ride.leg.setMode(fallback);
                     org.matsim.core.router.TripStructureUtils.setRoutingMode(
                             ride.leg, fallback);
@@ -1020,7 +1037,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
             org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
                     .info("ridePairing: {} unpaired ride legs re-moded to "
-                          + "network walk (DECISIONS.md 9.55)", remoded);
+                          + "network walk (DECISIONS.md 9.55); {} of them "
+                          + "multi-leg trips replaced whole (#167)", remoded,
+                          remodedWholeTrips);
         }
         org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
                 .info("ridePairing: {} declared passengers re-timed to their "

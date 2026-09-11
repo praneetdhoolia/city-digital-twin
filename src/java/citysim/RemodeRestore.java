@@ -106,6 +106,44 @@ final class RemodeRestore {
     }
 
     /**
+     * The trip the engine forced, executed as ONE leg of the fallback mode.
+     *
+     * <p>The whole trip is replaced, never one leg of it (#167, 12 September
+     * 2026): under {@code routing.accessEgressType = accessEgressModeToLink}
+     * a ride or taxi trip is five legs - {@code non_network_walk}, {@code
+     * walk}, the main leg, {@code walk}, {@code non_network_walk} - every one
+     * carrying the main mode as its routingMode. Re-moding the main leg alone
+     * left its four siblings at the old routingMode, and MATSim's
+     * {@code PersonPrepareForSim} refused the trip before iteration 0's
+     * mobsim ("Found a trip whose legs have different routingModes") on every
+     * such agent - which is what killed every intermodal probe and was read
+     * as a failure inside MATSim's pre-simulation pass. Under {@code none} a
+     * trip is one leg and the two treatments are identical, so callers keep
+     * the in-place re-mode there and this is the multi-leg path. The route
+     * is left null so the router rebuilds the trip in the fallback mode.
+     */
+    static void remodeTrip(final Plan plan, final Trip trip, final String mode) {
+        final Leg leg = PopulationUtils.createLeg(mode);
+        TripStructureUtils.setRoutingMode(leg, mode);
+        leg.setRoute(null);
+        TripRouter.insertTrip(plan, trip.getOriginActivity(),
+                Collections.singletonList(leg),
+                trip.getDestinationActivity());
+    }
+
+    /** The trip of the plan holding this exact leg object, or null. */
+    static Trip tripOf(final Plan plan, final Leg leg) {
+        for (final Trip trip : TripStructureUtils.getTrips(plan)) {
+            for (final Object pe : trip.getTripElements()) {
+                if (pe == leg) {
+                    return trip;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
      * The same test on legs the caller already holds.
      *
      * <p>{@code Trip.getLegsOnly()} builds a fresh filtered list on every call,
@@ -119,7 +157,14 @@ final class RemodeRestore {
             return false;
         }
         for (final Leg leg : legs) {
-            if (!mode.equals(leg.getMode())) {
+            // the trip's identity is its ROUTING mode where one is set: under
+            // accessEgressModeToLink a taxi trip's access legs are walk legs
+            // carrying routingMode taxi, and the leg-mode test found no taxi
+            // trip at all ("taxiFleet: no taxi legs in the selected plans" on
+            // every intermodal probe, #167). A leg without a routingMode is
+            // judged by its own mode, exactly as before.
+            final String rm = TripStructureUtils.getRoutingMode(leg);
+            if (!mode.equals(rm != null ? rm : leg.getMode())) {
                 return false;
             }
         }

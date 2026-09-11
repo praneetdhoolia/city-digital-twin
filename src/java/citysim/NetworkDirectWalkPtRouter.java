@@ -15,11 +15,17 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.matsim.api.core.v01.TransportMode;
+import org.matsim.api.core.v01.network.Link;
+import org.matsim.api.core.v01.network.Network;
 import org.matsim.api.core.v01.population.Leg;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.PlanElement;
 import org.matsim.core.config.Config;
+import org.matsim.core.population.routes.NetworkRoute;
+import org.matsim.core.router.DefaultRoutingRequest;
+import org.matsim.core.router.LinkWrapperFacility;
 import org.matsim.core.router.RoutingModule;
+import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.router.RoutingRequest;
 
 /**
@@ -61,6 +67,7 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
     private final RaptorParametersForPerson parameters;
     private final double directWalkFactor;
     private final Set<String> transitModes;
+    private final Network network;
     // RUN-LIFETIME counters, and they must be static (issue #159). The
     // binding is `addRoutingModuleBinding(pt).toProvider(RouterProvider)`
     // with NO scope, so Guice builds a NEW router for every routing thread in
@@ -89,13 +96,22 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
     private static final AtomicLong DECIDED = new AtomicLong();
     private static final AtomicLong WALKED = new AtomicLong();
     private static final AtomicLong NO_TRANSIT = new AtomicLong();
+    // #167: the beeline walk legs INSIDE a transit answer - the raptor's
+    // transfers between stops, and any access or egress it could not route -
+    // put on the walk network here, or left as the beeline they were when
+    // the walk network cannot reach one end (a stop on a link walk is not
+    // permitted on). Both counted, so the residual the mobsim teleports is
+    // named at its source.
+    private static final AtomicLong INNER_WALKS_ROUTED = new AtomicLong();
+    private static final AtomicLong INNER_WALKS_UNROUTABLE = new AtomicLong();
 
     NetworkDirectWalkPtRouter(final RoutingModule transit, final RoutingModule walk,
                               final RaptorParametersForPerson parameters,
-                              final Config config) {
+                              final Config config, final Network network) {
         this.transit = transit;
         this.walk = walk;
         this.parameters = parameters;
+        this.network = network;
         this.directWalkFactor = config.transitRouter().getDirectWalkFactor();
         this.transitModes = new HashSet<>(config.transit().getTransitModes());
     }
@@ -119,9 +135,11 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
             NO_TRANSIT.incrementAndGet();
             return walkLegs;
         }
-        final double transitCost = transitCost(transitLegs);
+        final List<? extends PlanElement> transitOnNetwork =
+                networkWalksInside(transitLegs, request);
+        final double transitCost = transitCost(transitOnNetwork);
         if (Double.isNaN(transitCost)) {
-            return transitLegs;              // cost unreadable: keep the raptor's answer
+            return transitOnNetwork;         // cost unreadable: keep the raptor's answer
         }
         final Person person = request.getPerson();
         final RaptorParameters p = this.parameters.getRaptorParameters(person);
@@ -138,7 +156,83 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
             }
             return walkLegs;
         }
-        return transitLegs;
+        return transitOnNetwork;
+    }
+
+    /**
+     * Put every beeline walk leg of a transit answer on the walk network.
+     *
+     * <p>SwissRailRaptor draws its transfers between stops as beelines with a
+     * generic route whatever {@code useIntermodalAccessEgress} says, and the
+     * mobsim can only teleport such a leg (GOAL.md requirement 1 breach,
+     * #167: 386 of 553 teleported walk legs on the 12 September probe had
+     * BOTH ends on walkable links - transfers, not landings). Each such leg
+     * is replaced by the walk router's WHOLE answer between the leg's own two
+     * links: the network walk leg, and where a stop sits on a link walk is
+     * not permitted on, MATSim's own last-metre {@code non_network_walk}
+     * stub from the nearest walkable link to the stop - the same way a car
+     * trip reaches its parked car under {@code accessEgressModeToLink}. The
+     * first cut kept only the network route and dropped the stub, and the
+     * transit engine refused the agent for arriving at the wrong link
+     * ("tries to enter a transit stop at link 24641 but really is at 7522").
+     * Every inserted leg carries the trip's own routing mode, so the trip's
+     * identity is untouched. Where the walk router cannot answer at all the
+     * beeline stays and is counted.
+     */
+    private List<? extends PlanElement> networkWalksInside(
+            final List<? extends PlanElement> legs, final RoutingRequest request) {
+        final List<PlanElement> out = new java.util.ArrayList<>(legs.size() + 4);
+        for (final PlanElement pe : legs) {
+            if (!(pe instanceof Leg)) {
+                out.add(pe);
+                continue;
+            }
+            final Leg leg = (Leg) pe;
+            if (!TransportMode.walk.equals(leg.getMode()) || leg.getRoute() == null
+                    || leg.getRoute() instanceof NetworkRoute) {
+                out.add(pe);
+                continue;
+            }
+            final Link from = this.network.getLinks().get(leg.getRoute().getStartLinkId());
+            final Link to = this.network.getLinks().get(leg.getRoute().getEndLinkId());
+            List<? extends PlanElement> routed = null;
+            if (from != null && to != null) {
+                try {
+                    routed = this.walk.calcRoute(DefaultRoutingRequest.withoutAttributes(
+                            new LinkWrapperFacility(from), new LinkWrapperFacility(to),
+                            request.getDepartureTime(), request.getPerson()));
+                } catch (final RuntimeException unroutable) {   // counted below
+                    routed = null;
+                }
+            }
+            boolean hasNetworkLeg = false;
+            if (routed != null) {
+                for (final PlanElement r : routed) {
+                    if (r instanceof Leg && ((Leg) r).getRoute() instanceof NetworkRoute) {
+                        hasNetworkLeg = true;
+                    }
+                }
+            }
+            if (!hasNetworkLeg) {
+                INNER_WALKS_UNROUTABLE.incrementAndGet();
+                out.add(pe);
+                continue;
+            }
+            final String routingMode = TripStructureUtils.getRoutingMode(leg);
+            for (final PlanElement r : routed) {
+                if (r instanceof Leg && routingMode != null) {
+                    TripStructureUtils.setRoutingMode((Leg) r, routingMode);
+                }
+                out.add(r);
+            }
+            final long n = INNER_WALKS_ROUTED.incrementAndGet();
+            if (n % 100000 == 0) {
+                LOG.info("ptDirectWalk: {} beeline walk legs inside transit answers put on the "
+                         + "walk network, {} left as beelines (no walk route at all, #167)",
+                         n, INNER_WALKS_UNROUTABLE.get());
+            }
+        }
+        return out;
     }
 
     private boolean boardsTransit(final List<? extends PlanElement> legs) {
@@ -211,11 +305,13 @@ public final class NetworkDirectWalkPtRouter implements RoutingModule {
         private RaptorParametersForPerson parameters;
         @Inject
         private Config config;
+        @Inject
+        private Network network;
 
         @Override
         public RoutingModule get() {
             return new NetworkDirectWalkPtRouter(this.raptorModule.get(), this.walkRouter,
-                                                 this.parameters, this.config);
+                                                 this.parameters, this.config, this.network);
         }
     }
 }
