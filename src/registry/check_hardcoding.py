@@ -799,6 +799,10 @@ STRUCTURAL_INLINE = {
         'a read chunk size (1 << 20 bytes) while hashing',
     '<city>/extract/fetch_abs_dem.py:<module>:20':
         'a read chunk size while downloading',
+    '<city>/extract/fetch_tpa_daily.py:_sha256:20':
+        'a read chunk size (1 << 20 bytes) while hashing',
+    '<city>/extract/fetch_tpa_daily.py:fetch:20':
+        'a read chunk size while downloading',
     '<city>/extract/fetch_open_data.py:_sha256:20':
         'a read chunk size (1 << 20 bytes) while hashing',
     '<city>/extract/fetch_open_data.py:<module>:20':

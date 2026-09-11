@@ -428,6 +428,17 @@
       "consumers": [
         "src/calibrate/calibrate.py"
       ]
+    },
+    "CAL.pt.opal_patronage_rounding": {
+      "value": 100,
+      "units": "tap-ons",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The rounding unit of TfNSW's Opal Patronage daily files: every hourly cell is rounded to the nearest 100 tap-ons and printed '<100' below it (Opal Tap Data documentation v2.0, May 2026). The extract writes each day's total as the sum of the hourly intervals this implies - a lower and an upper bound - so no reader quotes a centre value the publication never gave (#185).",
+      "consumers": [
+        "cities/newcastle/extract/extract_opal_patronage.py"
+      ]
     }
   }
 }

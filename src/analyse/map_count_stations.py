@@ -64,6 +64,17 @@ OUT = _city.path('data/processed/validation/count_station_links.csv')
 # 25 days, #82; the check that caught it lives in tests/check_package.py,
 # which runs on a workstation only).
 PROVENANCE = _city.path('data/processed/validation/count_station_links_provenance.json')
+
+# Which inputs feed which outputs (#159), read statically by build_manifest:
+# both descend from the station coordinates and the mapped scenario network,
+# which carries OSM geometry - so both are ODbL.
+OUTPUT_INPUTS = {
+    'data/processed/validation/count_station_links.csv': [
+        'data/processed/validation/road_aadt_targets.csv',
+        'scenarios/matsim/S2/network.xml.gz'],
+    'data/processed/validation/count_station_links_provenance.json': [
+        'scenarios/matsim/S2/network.xml.gz'],
+}
 # the CITY's base scenario, not a scenario id typed into the framework
 DEFAULT_NETWORK = _city.path(
     'scenarios/matsim/%s/network.xml.gz'

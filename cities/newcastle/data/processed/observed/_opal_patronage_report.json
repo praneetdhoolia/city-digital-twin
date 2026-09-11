@@ -1,0 +1,78 @@
+{
+ "region": "Newcastle and surrounds",
+ "files": 427,
+ "first": "2025-07-01",
+ "last": "2026-08-31",
+ "rounding": "hourly cells rounded to the nearest 100, \"<100\" below; a day is the sum of the hourly intervals, so every figure here is a BOUND",
+ "source": "TfNSW Open Data Hub - Opal Patronage (CC-BY 4.0); see data/raw/opal/opal_patronage/provenance.json",
+ "tap_ons_by_mode_and_day_type": {
+  "Bus": {
+   "WEEKDAY": {
+    "days": 305,
+    "tap_ons_mean_lower": 240.3,
+    "tap_ons_mean_upper": 1381.5
+   },
+   "SAT": {
+    "days": 61,
+    "tap_ons_mean_lower": 87.7,
+    "tap_ons_mean_upper": 1153.8
+   },
+   "SUN": {
+    "days": 61,
+    "tap_ons_mean_lower": 51.6,
+    "tap_ons_mean_upper": 1081.7
+   }
+  },
+  "Ferry": {
+   "WEEKDAY": {
+    "days": 300,
+    "tap_ons_mean_lower": 234.0,
+    "tap_ons_mean_upper": 1346.6
+   },
+   "SAT": {
+    "days": 61,
+    "tap_ons_mean_lower": 309.0,
+    "tap_ons_mean_upper": 1538.5
+   },
+   "SUN": {
+    "days": 60,
+    "tap_ons_mean_lower": 216.7,
+    "tap_ons_mean_upper": 1172.4
+   }
+  },
+  "Light rail": {
+   "WEEKDAY": {
+    "days": 305,
+    "tap_ons_mean_lower": 2089.8,
+    "tap_ons_mean_upper": 3750.8
+   },
+   "SAT": {
+    "days": 61,
+    "tap_ons_mean_lower": 1814.8,
+    "tap_ons_mean_upper": 3531.5
+   },
+   "SUN": {
+    "days": 61,
+    "tap_ons_mean_lower": 1135.2,
+    "tap_ons_mean_upper": 2696.0
+   }
+  },
+  "Train": {
+   "WEEKDAY": {
+    "days": 303,
+    "tap_ons_mean_lower": 1126.4,
+    "tap_ons_mean_upper": 2875.2
+   },
+   "SAT": {
+    "days": 61,
+    "tap_ons_mean_lower": 583.6,
+    "tap_ons_mean_upper": 2276.3
+   },
+   "SUN": {
+    "days": 61,
+    "tap_ons_mean_lower": 452.5,
+    "tap_ons_mean_upper": 2033.8
+   }
+  }
+ }
+}

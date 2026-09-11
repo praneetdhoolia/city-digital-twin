@@ -34,6 +34,9 @@ M=[
  ("boundaries/SA3_2021_AUST_SHP_GDA2020.zip",ABS+"SA3_2021_AUST_SHP_GDA2020.zip","ABS ASGS Ed3 SA3 2021 digital boundaries","CC-BY 4.0"),
  ("boundaries/DZN_2021_AUST_GDA2020_SHP.zip",ABS+"DZN_2021_AUST_GDA2020_SHP.zip","ABS Destination Zones 2021 (workplace geography)","CC-BY 4.0"),
  ("boundaries/LGA_2021_AUST_GDA2020_SHP.zip",ABS+"LGA_2021_AUST_GDA2020_SHP.zip","ABS LGA 2021 boundaries","CC-BY 4.0"),
+ # the postal areas, so a registrations-by-postcode publication (BITRE, #185)
+ # can be joined to the study area by geometry rather than by a typed list
+ ("boundaries/POA_2021_AUST_GDA2020_SHP.zip",ABS+"POA_2021_AUST_GDA2020_SHP.zip","ABS ASGS Ed3 Postal Areas 2021 digital boundaries","CC-BY 4.0"),
  ("boundaries/MB_2021_NSW_SHP_GDA2020.zip",ABS+"MB_2021_NSW_SHP_GDA2020.zip","ABS Mesh Blocks 2021 NSW","CC-BY 4.0"),
  ("census/2021_GCP_SA1_for_NSW_short-header.zip",DP+"2021_GCP_SA1_for_NSW_short-header.zip","ABS Census 2021 General Community Profile, SA1, NSW","CC-BY 4.0"),
  ("census/2021_GCP_SA2_for_NSW_short-header.zip",DP+"2021_GCP_SA2_for_NSW_short-header.zip","ABS Census 2021 GCP, SA2, NSW","CC-BY 4.0"),
@@ -99,11 +102,20 @@ def dem_tiles():
 
 M += dem_tiles()
 root=_city.path('data/raw'); prov=[]
+_prev_path=os.path.join(root,'provenance_abs_dem.json')
+_prev={}
+if os.path.exists(_prev_path):
+    try:
+        _prev={r['path']:r for r in json.load(open(_prev_path,encoding='utf-8'))}
+    except (OSError,ValueError,TypeError,KeyError):
+        _prev={}
 for rel,url,desc,lic in M:
     p=os.path.join(root,rel); os.makedirs(os.path.dirname(p),exist_ok=True)
+    fetched=False
     if os.path.exists(p) and os.path.getsize(p)>1000:
         print(f"SKIP {rel} ({os.path.getsize(p):,})",flush=True)
     else:
+        fetched=True
         print(f"GET  {rel}",flush=True)
         try:
             req=urllib.request.Request(url,headers={'User-Agent':'newcastle-lr-sim/0.1 (research)'})
@@ -117,7 +129,10 @@ for rel,url,desc,lic in M:
     sz=os.path.getsize(p)
     h=_sha256(p)
     print(f"  {sz:>13,} B",flush=True)
+    # a held file keeps the day it was retrieved; only a fetched one is today's
+    retrieved=(datetime.date.today().isoformat() if fetched
+               else (_prev.get(rel) or {}).get('retrieved') or datetime.date.today().isoformat())
     prov.append({"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,"sha256":h,
-                 "retrieved":datetime.date.today().isoformat()})
-json.dump(prov,open(os.path.join(root,'provenance_abs_dem.json'),'w'),indent=2)
+                 "retrieved":retrieved})
+json.dump(prov,open(os.path.join(root,'provenance_abs_dem.json'),'w',encoding='utf-8',newline='\n'),indent=2)
 print("wrote provenance_abs_dem.json",len(prov))

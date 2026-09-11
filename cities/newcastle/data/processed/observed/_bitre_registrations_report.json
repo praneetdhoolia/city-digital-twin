@@ -1,0 +1,20 @@
+{
+ "source": "BITRE Road Vehicles Australia, 31 January 2025 (data.gov.au, CC-BY 3.0 AU); see data/raw/provenance_open_data.json",
+ "postcodes": 44,
+ "rows": 418,
+ "vehicles_by_type": {
+  "Articulated trucks": 1420,
+  "Campervans": 3684,
+  "Heavy buses": 707,
+  "Heavy rigid trucks": 6333,
+  "Light buses": 1125,
+  "Light commercial vehicles": 98058,
+  "Light rigid trucks": 5800,
+  "Motorcycles": 29635,
+  "Non-freight-carrying vehicles": 348,
+  "Passenger vehicles": 372167
+ },
+ "light_fleet": 499860,
+ "motorcycle_share_of_light_fleet": 0.05929,
+ "note": "postal areas kept where more than half their area lies inside the core LGA boundary; a registration is where the owner lives, not where the vehicle is used. A constraint on the fleet beside census G62, never a target (9.8, 9.13)."
+}

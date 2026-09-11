@@ -78,6 +78,7 @@ LINEAGE = {
     'data/processed/basemap.json': 'src/analyse/build_basemap.py',
     'data/processed/network/_speed_zone_report.json': 'src/build/attach_speed_zones.py',
     'data/processed/validation/count_station_links.csv': 'src/analyse/map_count_stations.py',
+    'data/processed/validation/count_station_links_provenance.json': 'src/analyse/map_count_stations.py',
     'demand/population': 'src/build/build_population.py',
     'demand/plans': 'src/build/build_activity_chains.py',
     'demand/plans/matsim': 'src/build/build_matsim_plans.py',
