@@ -404,7 +404,8 @@ def main():
             # Non-timetabled freight on top, spread evenly because no movement
             # log is published - zero by default on 9.70's grade separation -
             # and at the FREIGHT duration, which is what that 240 s describes.
-            nf = int(FREIGHT_CLOSURES)
+            nf = int(FREIGHT_CLOSURES[site['road_name']]
+                     if isinstance(FREIGHT_CLOSURES, dict) else FREIGHT_CLOSURES)
             for i in range(nf):
                 start = w0 + (i + 0.5) * ((w1 - w0) / max(1, nf))
                 start = min(start, w1 - CLOSURE_DURATION_S)

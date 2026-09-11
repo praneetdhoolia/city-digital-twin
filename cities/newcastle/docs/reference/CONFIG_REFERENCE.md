@@ -33,9 +33,9 @@ Three things are refused at every layer:
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
 | `measured` | 42 | computed from observed data in this package |
-| `derived` | 45 | follows from another registry field by identity |
-| `literature` | 80 | a published value, not specific to this city |
-| `assumed` | 205 | chosen without direct empirical support |
+| `derived` | 46 | follows from another registry field by identity |
+| `literature` | 81 | a published value, not specific to this city |
+| `assumed` | 203 | chosen without direct empirical support |
 | `definition` | 139 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
@@ -162,13 +162,13 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.corridor.tsp_max_extension_s` | `12` | seconds | `assumed` | 6 - 20 |
 | `A.crossings.closed_flow_capacity_veh_h` | `0.0` | vehicles_per_hour | `definition` | - |
 | `A.crossings.closed_freespeed_ms` | `0.1` | metres_per_second | `definition` | - |
-| `A.crossings.closure_duration_passenger_s` | `60.0` | s | `literature` | 30 - 120 |
-| `A.crossings.closure_duration_s` | `240` | seconds | `assumed` | 60 - 600 |
+| `A.crossings.closure_duration_passenger_s` | `160.0` | s | `literature` | 120 - 200 |
+| `A.crossings.closure_duration_s` | `277` | seconds | `literature` | 240 - 600 |
 | `A.crossings.closure_source` | `schedule_derived` | enum | `assumed` | `assumed_uniform`, `schedule_derived` |
 | `A.crossings.closure_window_h` | `[0.0, 24.0]` | hours | `definition` | - |
 | `A.crossings.closures_per_day` | `30` | closures_per_day | `assumed` | 10 - 60 |
 | `A.crossings.corridor_exclusion_m` | `500.0` | metres | `definition` | - |
-| `A.crossings.freight_closures_per_day` | `0` | closures_per_day_per_site | `assumed` | 0 - 30 |
+| `A.crossings.freight_closures_per_day` | `{"Saint James Road": 44, "Clyde Street": 48}` | closures_per_day_per_site | `derived` | 30 - 70 |
 | `A.crossings.freight_road_names` | `["Saint James Road", "Clyde Street"]` | road_names | `literature` | **held fixed** |
 | `A.crossings.link_match_radius_m` | `30.0` | metres | `definition` | **held fixed** |
 | `A.crossings.node_cluster_m` | `50.0` | metres | `definition` | - |
@@ -560,15 +560,17 @@ The freespeed FLOOR written during a closure. A numerical guard, not a model val
 
 How long the boom stays down for ONE scheduled PASSENGER train. Under the schedule-derived closure source a closure is emitted per train, so the duration has to be a per-train figure - and the 240 s of A.crossings.closure_duration_s is not one. That value is anchored on the TfNSW statement that closures run "up to ten minutes", which describes a long coal train, and applying it per passenger train would hold the Islington boom down 204 x 240 s = 13.6 hours a weekday, which is not what that crossing does. A boom-gate closure decomposes into a warning/lead time before arrival, the train transit itself, and a short lag before the booms lift; a two-to-four-car Hunter Line set clears the crossing in seconds, so the lead and lag dominate. 60 s is that sum at standard operation and is swept 30-120 s because neither the operated lead time nor the boom lag is published for these two sites.
 
-***literature** · status **active** · DECISIONS.md §9.90 · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.90, 9.167 · sweep role **uncertainty***
+
+> **Sweep basis.** MEASURED closure per scheduled passenger train at St James Road, 2 min 40 s = 160 s (Cobbora Coal Project Environmental Assessment, chapter 13 'Rail transport' (EMM, report J11030RP5, 2012; NSW Major Projects MP10_0001, retrieved 12 September 2026 from https://majorprojects.planningportal.nsw.gov.au/prweb/PRRestService/mp/01/getContent?AttachRef=MP10_0001%2120190805T060218.440+GMT): a March 2012 five-day survey of the St James Road (Adamstown) and Clyde Street (Islington) level crossings); the interval brackets a shorter modern set and the survey's multi-movement closures. The previous 60 s was a single boom cycle reasoned from first principles (9.90) and is a third of the measured figure.
 
 #### `A.crossings.closure_duration_s`
 
-Closure duration for a FREIGHT movement, and for every closure under the assumed_uniform member of A.crossings.closure_source. Retained at its recorded basis - the TfNSW "up to ten minutes" statement describes a long coal train, not a passenger set - while passenger closures take A.crossings.closure_duration_passenger_s (9.90). How long one closure holds the crossing shut. ASSUMED and swept against the official "up to ten minutes" bound; the point value is a mid-band working value, never a claim.
+Closure duration for a FREIGHT movement at a boom-gated crossing, and for every closure under the assumed_uniform member of A.crossings.closure_source. Measured by the March 2012 survey for a general freight train (4 min 37 s); it was an assumed 240 s until 12 September 2026 (#184). Passenger closures take A.crossings.closure_duration_passenger_s.
 
-***assumed** · status **active** · DECISIONS.md §9.70, 9.76 · sweep role **uncertainty***
+***literature** · status **active** · DECISIONS.md §9.70, 9.76, 9.167 · sweep role **uncertainty***
 
-> **Sweep basis.** TfNSW (Lower Hunter Freight Corridor Draft SEA, 2021): commuters experience delays "up to ten minutes", especially with freight in both directions - the sweep top. A single boom cycle for one passenger train bounds the bottom at about a minute.
+> **Sweep basis.** MEASURED closure per interstate/general freight train at St James Road, 4 min 37 s = 277 s (Cobbora Coal Project Environmental Assessment, chapter 13 'Rail transport' (EMM, report J11030RP5, 2012; NSW Major Projects MP10_0001, retrieved 12 September 2026 from https://majorprojects.planningportal.nsw.gov.au/prweb/PRRestService/mp/01/getContent?AttachRef=MP10_0001%2120190805T060218.440+GMT): a March 2012 five-day survey of the St James Road (Adamstown) and Clyde Street (Islington) level crossings); the TfNSW Lower Hunter Freight Corridor Draft SEA (2021) statement that delays run 'up to ten minutes' is the top, and describes a long coal train; the previous assumed 240 s is the floor.
 
 #### `A.crossings.closure_source`
 
@@ -600,11 +602,11 @@ The Stewart Avenue guard (9.75): the builder REFUSES to emit a closure within th
 
 #### `A.crossings.freight_closures_per_day`
 
-NON-TIMETABLED freight movements added on top of the schedule-derived passenger closures at each crossing. The point value is ZERO on the recorded evidence of 9.70: the coal chain - the overwhelming majority of freight on this network at ~110 movements/day - has run on dedicated track grade-separated since 2006, so it does not cross these roads at grade at all. What the zero does NOT assert is that no non-coal freight ever uses these lines; that is unquantified because ARTC publishes no movement log, which is why the field exists and is swept to 30 rather than being left out. Read only under A.crossings.closure_source = schedule_derived.
+NON-TIMETABLED freight movements a day at each boom-gated crossing, keyed by the road names of A.crossings.freight_road_names, added on top of the schedule-derived passenger closures. Until 12 September 2026 the value was ZERO on the reasoning that the coal chain is grade-separated (9.70) - true, and beside the point: the Main North carries interstate and general freight through both gates, and the June 2026 press (#184) described them. The count is now derived from a published survey (see sweep_basis); each movement closes the road for A.crossings.closure_duration_s. A city may declare one number instead of a per-site map.
 
-***assumed** · status **active** · DECISIONS.md §9.90 · sweep role **uncertainty***
+***derived** · status **active** · DECISIONS.md §9.70, 9.90, 9.167 · sweep role **uncertainty***
 
-> **Sweep basis.** DECISIONS.md 9.90: zero on the recorded evidence that the coal chain is grade-separated at these roads; the upper bound 30 is the former per-site closure count of the assumed_uniform member (A.crossings.closures_per_day), kept so that a non-coal freight load up to the old assumption is a sweep member rather than left out. ARTC publishes no movement log; no observed spread.
+> **Sweep basis.** DERIVED, per site, from Cobbora Coal Project Environmental Assessment, chapter 13 'Rail transport' (EMM, report J11030RP5, 2012; NSW Major Projects MP10_0001, retrieved 12 September 2026 from https://majorprojects.planningportal.nsw.gov.au/prweb/PRRestService/mp/01/getContent?AttachRef=MP10_0001%2120190805T060218.440+GMT): a March 2012 five-day survey of the St James Road (Adamstown) and Clyde Street (Islington) level crossings. The survey counted 130 daily train movements at St James Road and 142 at Clyde Street, closures of 432 and 463 minutes a day, and the closure per train by type: 2 min 40 s scheduled passenger, 4 min 37 s interstate/general freight, 7 min 32 s loaded coal, 5 min 40 s empty coal. Adamstown is on the Main North south of Broadmeadow, which the coal chain does not use (9.70), so its movements are passenger and general freight: 2.667 p + 4.617 g = 432 with p + g = 130 gives g = 44 freight movements a day (p = 86, which is the 2012 intercity and regional timetable through Adamstown). An independent 2007 RTA finding reported by the Newcastle Herald (4 March 2024; 'gates closed for more than six hours a day, two hours if freight trains were removed') gives 240 min / 4.617 = 52 at the earlier vintage. Clyde Street's survey day closed for a similar time per movement (3.26 against 3.32 min), so the SAME FREIGHT SHARE (34 %) is assumed for it: 48 of 142. The interval brackets both vintages and the same-mix assumption. A movement log would replace this; ARTC publishes none.
 
 #### `A.crossings.freight_road_names`
 
