@@ -1045,7 +1045,6 @@ def config_reach():
         return [], [], 'param_config unavailable: %s' % exc
     try:
         import sys as _s
-        _s.path.insert(0, os.path.join(REPO, 'src', 'build'))
         import build_matsim_run_inputs as builder         # noqa: PLC0415
     except Exception as exc:                              # noqa: BLE001
         return [], [], 'the run-input builder does not import: %s' % exc

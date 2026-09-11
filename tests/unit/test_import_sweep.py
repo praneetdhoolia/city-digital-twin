@@ -46,8 +46,9 @@ THIRD_PARTY = {'geopandas', 'pyproj', 'rasterio', 'shapely', 'numpy', 'pandas',
 RUNNER = r'''
 import importlib, json, os, sys, traceback
 repo, path, name = sys.argv[1], sys.argv[2], sys.argv[3]
-for sub in ('run', 'analyse', 'registry', 'calibrate', 'build', 'setup', ''):
-    sys.path.insert(0, os.path.join(repo, 'src', sub) if sub else os.path.join(repo, 'src'))
+sys.path.insert(0, os.path.join(repo, 'src', 'setup'))
+import install_paths                       # the one root set, this process only (#181)
+install_paths.activate(persist=False)
 sys.path.insert(0, os.path.dirname(path))
 try:
     importlib.import_module(name)
