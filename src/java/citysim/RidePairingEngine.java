@@ -443,6 +443,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     RidePairingEngine(final Scenario scenario, final OutputDirectoryHierarchy io,
                       final Provider<TripRouter> tripRouter) {
         this.scenario = scenario;
+        // its inFlight/current maps are written by the handler threads and
+        // read at BeforeMobsim; the same precondition as RunTelemetry (#186)
+        RunTelemetry.requireSimStepBarrier(scenario.getConfig(), "RidePairingEngine");
         this.io = io;
         this.tripRouter = tripRouter;
         this.cfg = (RidePairingConfigGroup) scenario.getConfig().getModules()

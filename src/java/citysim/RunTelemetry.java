@@ -112,6 +112,18 @@ import org.matsim.vehicles.Vehicle;
  * starts (#151, DECISIONS.md 9.151). Making this state concurrent would put
  * atomics on the highest-frequency path in the simulation; the barrier is
  * measured FASTER on this model anyway (9.59), so the refusal is the trade.
+ *
+ * <p><b>The class enforces its own precondition (#186, 12 September 2026).</b>
+ * A Python refusal is a launcher's rule; a memory-model precondition belongs
+ * on the class that has it, so the constructor throws when the emitted config
+ * runs the events manager without the sim-step barrier - whatever launched
+ * the JVM. The contract this rests on, stated so it can be checked against
+ * the pinned jar: under {@code synchronizeOnSimSteps} MATSim's
+ * {@code SimStepParallelEventsManagerImpl} binds each handler INSTANCE to one
+ * handler thread for the whole run and blocks the QSim thread at
+ * {@code afterSimStep} until every event of the step is handled, so this
+ * object's state has exactly one writer thread and its reader runs after a
+ * barrier that publishes the writes.
  */
 public final class RunTelemetry implements
         PersonDepartureEventHandler, PersonArrivalEventHandler,
@@ -251,9 +263,27 @@ public final class RunTelemetry implements
         final TelemetryConfigGroup cfg = (TelemetryConfigGroup) scenario.getConfig()
                 .getModules().get(TelemetryConfigGroup.NAME);
         this.liveIntervalS = cfg == null ? 3600.0 : cfg.getLiveIntervalS();
+        requireSimStepBarrier(scenario.getConfig(), "RunTelemetry");
         for (final Link link : network.getLinks().values()) {
             final double v = link.getFreespeed();
             freeflow.put(link.getId(), v > 0 ? link.getLength() / v : 0.0);
+        }
+    }
+
+    /** Refuse to exist without the barrier that publishes this state (#186).
+     *  Shared with every other citysim handler that keeps unsynchronised
+     *  per-iteration state written by the handler threads. */
+    static void requireSimStepBarrier(final org.matsim.core.config.Config config,
+                                      final String who) {
+        final Boolean sync = config.eventsManager().getSynchronizeOnSimSteps();
+        if (sync == null || !sync) {
+            throw new IllegalStateException(
+                    who + " keeps per-iteration state written by the event-handler "
+                    + "threads and read by the QSim thread with no synchronisation "
+                    + "of its own; it needs eventsManager.synchronizeOnSimSteps = "
+                    + "true (RUN.machine.events_synchronize_on_simsteps) for its "
+                    + "writes to be published, and this config sets it "
+                    + sync + " (#151, #186)");
         }
     }
 
