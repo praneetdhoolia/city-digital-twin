@@ -28,13 +28,9 @@ Every fit statistic carries the list of target ids it was computed over. A
 statistic that does not name its targets is not reportable.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
 import os as _os
 import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
@@ -134,8 +130,6 @@ def score_goal_modes(run_dir, iteration):
     freight rail as representation rather than fit. They are reported, never
     optimised against.
     """
-    _sys.path.insert(0, _os.path.join(
-        _os.path.dirname(_os.path.abspath(__file__)), '..', 'analyse'))
     import io
     import contextlib
     import report_mode_ridership as rmr

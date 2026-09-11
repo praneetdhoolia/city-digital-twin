@@ -21,7 +21,6 @@ faithful reading of the two literature definitions rather than a lever:
 """
 import os
 import re
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -29,9 +28,6 @@ GROUP = os.path.join(REPO, 'src', 'java', 'citysim', 'ServiceQualityConfigGroup.
 SCORING = os.path.join(REPO, 'src', 'java', 'citysim', 'ServiceQualityScoring.java')
 CONTROLER = os.path.join(REPO, 'src', 'java', 'citysim', 'CitysimControler.java')
 EMITTER = os.path.join(REPO, 'src', 'build', 'build_matsim_run_inputs.py')
-
-if os.path.join(REPO, 'src') not in sys.path:
-    sys.path.insert(0, os.path.join(REPO, 'src'))
 
 
 def _code(path):

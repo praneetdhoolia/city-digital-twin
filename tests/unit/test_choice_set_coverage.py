@@ -20,13 +20,10 @@ from __future__ import annotations
 
 import json
 import pathlib
-import sys
 
 import pytest
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / 'src' / 'analyse'))
-sys.path.insert(0, str(REPO / 'src'))
 
 import report_choice_set_coverage as cov                          # noqa: E402
 

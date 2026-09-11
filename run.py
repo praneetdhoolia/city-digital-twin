@@ -36,8 +36,12 @@ import re
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-for sub in ('run', 'analyse', 'registry', ''):
-    sys.path.insert(0, os.path.join(HERE, 'src', sub) if sub else os.path.join(HERE, 'src'))
+# The front door is one of three entry points that install the import roots
+# themselves, so a fresh clone's first `run.py` works before any setup (#181);
+# every other script imports its neighbours by name through the installed roots.
+sys.path.insert(0, os.path.join(HERE, 'src', 'setup'))
+import install_paths                 # noqa: E402
+install_paths.activate()
 
 import city                          # noqa: E402
 import registry                      # noqa: E402

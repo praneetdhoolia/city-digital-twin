@@ -32,23 +32,15 @@ Reads the run directory only. Writes nothing. Nothing here is a result: a run
 without `_run.json` is not a result no matter how it scores.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
 import os as _os
-import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
-import csv
 import glob
 import json
 import argparse
 import collections
 
-import extract_metrics as em                                      # noqa: E402
-import fit as fitmod                                              # noqa: E402
+import extract_metrics as em
+import fit as fitmod
 
 TRIPS_STEM = 'ITERS/it.%d/%d.trips'
 

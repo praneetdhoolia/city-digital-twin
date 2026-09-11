@@ -36,20 +36,14 @@ Reads the run directory only. Writes nothing. **Nothing here is a result.**
 """
 
 import os as _os
-import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
 import gzip
 import re
-import json
 import time
 import argparse
 import collections
 
-import registry as _registry                                      # noqa: E402
+import registry as _registry
 
 CONFIG_RE = re.compile(
     r'name="(boundWindowMinutes|pairingWindowMinutes|maxPassengersPerVehicle)"'

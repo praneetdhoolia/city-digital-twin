@@ -34,10 +34,7 @@ import json
 import os
 import sys
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # Which of this script's inputs feed which of its outputs (#159), read
 # statically by src/build/build_manifest.py. The check compares the generated

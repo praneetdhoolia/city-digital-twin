@@ -1,10 +1,11 @@
-"""Put `src/` on the path the way the whole-package check scripts do.
+"""Put the repository's import roots on the path for this process.
 
 The unit layer imports the modules under test directly - `import fit`, not
 `from src.calibrate import fit` - because that is how every script in this
-repository imports its neighbours (`src/` is not a package and the run scripts
-insert these same directories themselves). Doing it once here keeps each test
-module free of path plumbing.
+repository imports its neighbours: `src/` and its subdirectories are import
+roots, installed once per interpreter by `src/setup/install_paths.py` (#181).
+The suite activates them for its own process rather than relying on the
+install, and never persists: a test writes nothing outside the repository.
 
 Nothing in this directory reads the data package, opens a network connection or
 touches `results/`: a unit test builds its own inputs. The two exceptions are
@@ -18,7 +19,6 @@ import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 
-for _sub in ('run', 'analyse', 'registry', 'calibrate', ''):
-    _path = os.path.join(REPO, 'src', _sub) if _sub else os.path.join(REPO, 'src')
-    if _path not in sys.path:
-        sys.path.insert(0, _path)
+sys.path.insert(0, os.path.join(REPO, 'src', 'setup'))
+import install_paths  # noqa: E402
+install_paths.activate(persist=False)

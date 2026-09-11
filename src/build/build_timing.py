@@ -46,7 +46,6 @@ import sys
 import time
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(_HERE, '..'))
 import city as _city  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(_HERE, '..', '..'))

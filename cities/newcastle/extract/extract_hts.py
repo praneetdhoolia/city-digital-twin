@@ -8,13 +8,7 @@ current behaviour can be separated - proposal section 4.1 lists the pandemic as
 one of the six confounded changes, so the model must be able to see both.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import json
 import pandas as pd
@@ -80,7 +74,7 @@ for kind, fl in frames.items():
     d = pd.concat(fl, ignore_index=True)
     # the names the reads below and every consumer use (#115): the reads were
     # renamed in 047b7a0 and this write was not, so a clean rebuild died
-    d.to_csv(os.path.join(OUT, 'hts_%s.csv' % kind), index=False)
+    d.to_csv(os.path.join(OUT, 'hts_%s.csv' % kind), index=False, lineterminator='\n')
     report['%s_rows' % kind] = len(d)
     report['%s_years' % kind] = sorted(d['FINANCIAL_YEAR'].astype(str).unique().tolist())
 

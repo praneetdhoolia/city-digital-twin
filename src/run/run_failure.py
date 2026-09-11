@@ -27,8 +27,7 @@ import sys
 import json
 import glob
 import argparse
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from procs import pid_alive as _pid_alive  # noqa: E402
+from procs import pid_alive as _pid_alive
 
 # `Exception in thread "main" pkg.Cls: message` - the JVM's own last word. The
 # thread is captured because a run can also die on a mobsim worker.

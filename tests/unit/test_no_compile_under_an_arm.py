@@ -13,17 +13,12 @@ two behaviours that decide whether it helps: that a running arm refuses, and
 that an UNKNOWN process list also refuses. The second is the one that matters -
 treating "I could not tell" as "idle" is exactly how the compile ran.
 """
-import os
 import sys
 
 import pytest
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _p in (os.path.join(REPO, 'src'), os.path.join(REPO, 'src', 'setup')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
-import bootstrap_toolchain as bt  # noqa: E402
+import bootstrap_toolchain as bt
 
 
 @pytest.fixture(autouse=True)

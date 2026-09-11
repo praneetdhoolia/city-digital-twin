@@ -13,11 +13,7 @@ report with the motorcycle share of the light fleet, which is the second
 anchor for the motorbike carve beside census G62 (B.motorbike.trip_share).
 A constraint on the fleet, never a target (DECISIONS.md 9.8, 9.13).
 """
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import csv
 import json
 import os

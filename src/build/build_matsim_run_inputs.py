@@ -30,13 +30,7 @@ Three things have to come together, and each has a constraint attached.
 Nothing here runs a scenario. It writes the inputs a run would consume.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import re
 import csv
@@ -46,19 +40,15 @@ import argparse
 import collections
 import xml.etree.ElementTree as ET
 
-import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from det_io import gzip_writer
 import hts_purpose as _hts_purpose
 
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
-import subpopulations  # noqa: E402
-from registry import param_config as _param_config  # noqa: E402
+import registry as _registry
+import subpopulations
+from registry import param_config as _param_config
 
 MATSIM = _city.path('networks/matsim')
 PATCHES = _city.path('data/processed/network/A1_road_variant_patches.csv')

@@ -33,12 +33,8 @@ import sys
 import threading
 import time
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
-sys.path.insert(0, _HERE)
-import run_view  # noqa: E402
-from registry import outputs  # noqa: E402
+import run_view
+from registry import outputs
 
 PROGRESS = '_progress.json'
 REPLACE_ATTEMPTS = 5

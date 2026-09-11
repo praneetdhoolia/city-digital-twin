@@ -22,17 +22,11 @@ These tests exercise the mechanism instead:
 import io
 import json
 import os
-import sys
 
 import pytest
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _p in (os.path.join(REPO, 'src'), os.path.join(REPO, 'src', 'run'),
-           os.path.join(REPO, 'src', 'calibrate')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
-import run_matsim  # noqa: E402
+import run_matsim
 
 
 SCENARIO, DAY = 'S2', 'WEEKDAY'

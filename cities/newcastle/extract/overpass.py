@@ -30,19 +30,11 @@ Overpass returns a whole way when any part of it matches, so a way crossing a
 tile boundary arrives in both.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import sys, os, re, time, urllib.request, urllib.parse
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import osm_tiles  # noqa: E402
+import registry as _registry
+import osm_tiles
 CFG = _registry.load()
 
 #: Overpass mirrors, tried in order. One endpoint returning 504 on a tile that
@@ -187,7 +179,6 @@ QUERY_TEMPLATES = {
   way["landuse"~"^(forest|grass|meadow|recreation_ground|cemetery|village_green)$"]({bb}););
  (._;>;); out body qt;""",
 }
-
 
 
 #: Which derived extent each layer is harvested over.
@@ -349,11 +340,7 @@ def write_provenance(names, reconstructed=False, outdir=_city.path("networks/osm
 
 
 if __name__ == "__main__":
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '../../../src/build'))

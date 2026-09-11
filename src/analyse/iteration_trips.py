@@ -45,13 +45,10 @@ import gzip
 import json
 import os
 import re
-import sys
 import xml.etree.ElementTree as ET
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-import extract_metrics as em                                      # noqa: E402
+import extract_metrics as em
 
 WALK_MODES = ('walk', 'non_network_walk', 'transit_walk')
 

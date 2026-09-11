@@ -16,15 +16,12 @@ import fnmatch
 import hashlib
 import datetime
 import zipfile
-import sys
 
 # The manifest describes ONE CITY. Its paths stay city-relative - `data/...`,
 # not `cities/newcastle/data/...` - so the manifest does not repeat the city's
 # own name on all 376 of its rows, and a second city's manifest is comparable
 # to this one row for row.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 ROOT = _city.CITY_DIR
 SCAN = ['data/raw', 'data/processed', 'schedules', 'demand', 'params',

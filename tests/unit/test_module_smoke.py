@@ -15,8 +15,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 for _sub in ('build', 'setup'):
     _p = os.path.join(REPO, 'src', _sub)
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 
 def test_network_build_calls_the_toolchain_with_two_values(monkeypatch, tmp_path):

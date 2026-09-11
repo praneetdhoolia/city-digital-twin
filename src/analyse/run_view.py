@@ -40,7 +40,6 @@ COMPLETED (`_metrics.json`) - DECISIONS.md 9.12. `extract_metrics.py` ->
 import os
 import re
 import csv
-import sys
 import json
 import time
 import argparse
@@ -52,7 +51,6 @@ import socketserver
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
 RESULTS = os.path.join(ROOT, 'results')
-sys.path.insert(0, os.path.join(ROOT, 'src'))
 import registry as _registry  # noqa: E402
 import city as _city  # noqa: E402
 
@@ -69,7 +67,6 @@ def _resolve_run(name_or_path):
     return _results_store.resolve(name_or_path) or name_or_path
 
 
-sys.path.insert(0, _HERE)
 import summarise_run as _summarise  # noqa: E402
 
 ITER_RE = re.compile(r'^(\S+)\s+INFO AbstractController.*ITERATION (\d+) BEGINS')

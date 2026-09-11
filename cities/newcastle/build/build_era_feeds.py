@@ -10,13 +10,7 @@ feed is directly comparable and consumable by pt2matsim.
 # This builder encodes THIS CITY's intervention, corridor or history, so it lives
 # with the city rather than in the framework. It still uses the framework's
 # generic machinery, which is two directories up.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-import city as _city  # noqa: E402
+import city as _city
 import os, json, datetime
 from gtfs_tools import read_feed, write_feed, clip, prefix_feed, merge, active_services
 

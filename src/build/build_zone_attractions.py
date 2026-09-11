@@ -9,13 +9,7 @@ disaggregated within each SA2 in proportion to a workplace-weighted POI index,
 and the result is flagged source='modelled'.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import json
 import warnings
@@ -26,9 +20,7 @@ import geopandas as gpd
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
 EDU_POP_FLOOR = float(CFG.get('D.attraction.education_population_floor'))
 CENSUS_YEAR = int(_city.descriptor()['census_year'])
@@ -113,7 +105,7 @@ def main(out_dir=None):
         emp = industry.reset_index().rename(columns={'workplace_zone': 'SA2_CODE21'})
         emp = emp.merge(jobs_sa2, on='SA2_CODE21', how='left')
         emp['year'] = CENSUS_YEAR
-        emp.to_csv(os.path.join(OUT, 'D1_employment_by_anzsic_POW_SA2.csv'), index=False)
+        emp.to_csv(os.path.join(OUT, 'D1_employment_by_anzsic_POW_SA2.csv'), index=False, lineterminator='\n')
         print('wrote D1_employment_by_anzsic_POW_SA2.csv: %d SA2 x %d industry columns'
               % (len(emp), n_ind))
 
@@ -143,7 +135,7 @@ def main(out_dir=None):
             [c for c in ['dwellings_total', 'dwellings_occupied'] if c in d.columns] +
             list(JOB_WEIGHT) + ['job_index', 'jobs_sa2', 'jobs', 'jobs_source'] +
             ['attr_' + p for p in PURPOSE_WEIGHT])
-    d[cols].to_csv(os.path.join(OUT, 'D1_zone_attractions_SA1.csv'), index=False)
+    d[cols].to_csv(os.path.join(OUT, 'D1_zone_attractions_SA1.csv'), index=False, lineterminator='\n')
 
     rep = dict(sa1_zones=len(d),
                population_total=int(d['population'].sum()),
@@ -159,11 +151,7 @@ def main(out_dir=None):
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '.'))

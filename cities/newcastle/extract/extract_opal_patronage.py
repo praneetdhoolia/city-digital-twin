@@ -18,11 +18,7 @@ held against (a bound, and stated as one).
 Reads data/raw/opal/opal_patronage/*.txt; writes
 data/processed/observed/opal_patronage_newcastle_daily.csv and a report.
 """
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import csv
 import datetime
 import glob
@@ -33,7 +29,6 @@ RAW = _city.path('data/raw/opal/opal_patronage')
 OUT = _city.path('data/processed/observed/opal_patronage_newcastle_daily.csv')
 REPORT = _city.path('data/processed/observed/_opal_patronage_report.json')
 REGION = _city.descriptor().get('opal_patronage_region', 'Newcastle and surrounds')
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), '..', '..', '..', 'src', 'registry'))
 import registry as _registry  # noqa: E402
 # the publication's rounding unit, declared as the definition it is (#188)
 ROUND = int(_registry.load().get('CAL.pt.opal_patronage_rounding'))

@@ -28,22 +28,14 @@ validation target value**, so it is indifferent to the calibration/holdout split
 and maps all 119 stations alike.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import argparse
 import csv
 import hashlib
 import json
 import gzip
 import math
-import os
 import re
-import sys
 
 import pyproj
 
@@ -53,7 +45,6 @@ TO_M = pyproj.Transformer.from_crs('EPSG:4326', CRS_M, always_xy=True).transform
 # The match radius is a registry field, not a literal typed here: it decides
 # which road_aadt targets are scorable at all, so it is a lever on the
 # reported fit (issue 19). See B.counts.station_match_radius_m.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry                            # noqa: E402
 
 STATIONS = _city.path('data/processed/validation/road_aadt_targets.csv')
@@ -236,7 +227,7 @@ def main():
     rows, unmatched = match(stations, links, radius)
 
     with open(OUT, 'w', encoding='utf-8', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()), lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
     with open(PROVENANCE, 'w', encoding='utf-8', newline='\n') as f:

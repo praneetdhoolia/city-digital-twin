@@ -65,24 +65,20 @@ asked. **Nothing here is a result** - it is an account of one run's routing.
 import os as _os
 import sys as _sys
 
-_HERE = _os.path.dirname(_os.path.abspath(_os.path.realpath(__file__)))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'run')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
-import argparse                                                   # noqa: E402
-import bisect                                                     # noqa: E402
-import collections                                                # noqa: E402
-import gzip                                                       # noqa: E402
-import io                                                         # noqa: E402
-import json                                                       # noqa: E402
-import math                                                       # noqa: E402
-import random                                                     # noqa: E402
-import re                                                         # noqa: E402
-import xml.etree.ElementTree as ET                                # noqa: E402
+import argparse
+import bisect
+import collections
+import gzip
+import io
+import json
+import math
+import random
+import re
+import xml.etree.ElementTree as ET
 
-import city as _city                                              # noqa: E402
-import results_store as _store                                    # noqa: E402
+import city as _city
+import results_store as _store
 
 # Two spellings of the same line. The FIRST is what every arm up to and
 # including the F31 gate wrote, and its "decisions" total excluded the

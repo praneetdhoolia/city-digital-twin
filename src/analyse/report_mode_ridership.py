@@ -38,10 +38,6 @@ matter how it scores.
 import os as _os
 import re
 import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
 import csv
 import gzip
@@ -50,10 +46,10 @@ import time
 import argparse
 import collections
 
-import city as _city                                              # noqa: E402
-import registry as _registry                                      # noqa: E402
-import extract_metrics as em                                      # noqa: E402
-import measure_iteration_modes as mim                             # noqa: E402
+import city as _city
+import registry as _registry
+import extract_metrics as em
+import measure_iteration_modes as mim
 
 # The city's own submode vocabulary maps onto the target file's mode names.
 # A schedule calls the heavy-rail mode `rail` and the light-rail mode `tram`;
@@ -271,7 +267,6 @@ def road_vehicle_share(counts_all):
     if not tot:
         return None, 0
     return 100.0 * counts_all.get('truck', 0) / tot, tot
-
 
 
 def truck_at_count_stations(run_dir, iteration):
@@ -724,7 +719,6 @@ def _coverage_key(mode):
     return mode
 
 
-
 # THE WINDOWED READING IS A MEASUREMENT INSTRUMENT, NOT THE OBJECTIVE. The
 # board (`build_status_board.block_scoreboard`), the gate watcher
 # (`run_matsim.start_gate_watch` -> `--it`), the objective
@@ -880,8 +874,6 @@ def main():
     # a bare run name resolves through the results store (results/raw first,
     # then legacy results/<name>); a path that exists is used as given
     import sys as _sys
-    _sys.path.insert(0, _os.path.join(_os.path.dirname(
-        _os.path.dirname(_os.path.abspath(__file__))), 'run'))
     import results_store as _store
     resolved = _store.resolve(a.run)
     if resolved is None:

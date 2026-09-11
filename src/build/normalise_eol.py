@@ -43,8 +43,6 @@ CITY_GLOBS = ['data/raw/provenance*.json', 'data/raw/_*.txt', 'data/raw/_*.log',
               'schedules/scenarios/_*.json',
               'data/MANIFEST.csv', 'data/MANIFEST.json']
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', 'src'))
 import city as _city  # noqa: E402
 
 ROOTS = [os.path.join(REPO, r) for r in REPO_ROOTS] +         [_city.path(r) for r in CITY_ROOTS]

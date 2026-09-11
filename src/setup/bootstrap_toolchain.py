@@ -54,7 +54,10 @@ import urllib.request
 # anywhere, `.tools` is the same tree (eighth project report, area 2)
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 TOOLS = os.path.join(REPO, '.tools')
-sys.path.insert(0, os.path.join(REPO, 'src', 'run'))
+# the Python half of the setup: the import roots every script relies on
+# (#181) - for this process here, for the interpreter in main()
+import install_paths  # noqa: E402
+install_paths.activate(persist=False)
 from procs import arm_running, ARM_RSS_KB  # noqa: E402
 
 # ---------------------------------------------------------------------------
@@ -414,8 +417,6 @@ def _signals_run_stack_required():
     gates report that far more clearly than this one would.
     """
     try:
-        sys.path.insert(0, os.path.join(
-            os.path.dirname(os.path.abspath(__file__)), '..'))
         import registry as _registry
         return _registry.load().get('A.signals.representation') == 'explicit_signals'
     except Exception:                                     # noqa: BLE001
@@ -479,6 +480,8 @@ def main():
     if a.verify:
         raise SystemExit(verify())
 
+    print('import roots:')
+    install_paths.activate()
     os.makedirs(TOOLS, exist_ok=True)
     comps = []
     print('JDK:')

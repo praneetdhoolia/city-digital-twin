@@ -27,12 +27,9 @@ import csv
 import io
 import json
 import os
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
-if REPO not in sys.path:
-    sys.path.insert(0, REPO)
 
 from src.run import results_store                                # noqa: E402
 

@@ -18,18 +18,10 @@ audit in the proposal's fallback plan replaces it.
 # This builder encodes THIS CITY's intervention, corridor or statistical
 # geography, so it lives with the city rather than in the framework. It still
 # uses the framework's generic machinery, which is two directories up.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'analyse'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import csv
 import json
-import sys
 import math
 import collections
 
@@ -41,8 +33,7 @@ import pyproj
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
 # declared (#188): the POI pull weights, the retail floor-space share, the
 # frontage unit and the base year were inline literals until 12 Sep 2026
@@ -492,18 +483,14 @@ def _w(name, rows):
         return
     cols = list(dict.fromkeys(k for r in rows for k in r))
     with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
-        wr = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore')
+        wr = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore', lineterminator='\n')
         wr.writeheader()
         wr.writerows(rows)
     print('   wrote %-34s %d rows' % (name, len(rows)))
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '../../../src/build'))

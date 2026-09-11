@@ -11,13 +11,7 @@ construction - only the trunk-mode-dependent refs differ.
 # This builder encodes THIS CITY's intervention, corridor or history, so it lives
 # with the city rather than in the framework. It still uses the framework's
 # generic machinery, which is two directories up.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import csv
 import json
@@ -25,8 +19,7 @@ import json
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
 
 OUT = _city.path('scenarios')
@@ -175,14 +168,14 @@ def main():
         rows.append(r)
     cols = list(dict.fromkeys(k for r in rows for k in r))
     with open(os.path.join(OUT, 'E1_scenarios.csv'), 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore')
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore', lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
     for name, data in [('E1_road_variants.csv', ROAD_VARIANTS),
                        ('E1_parking_variants.csv', PARKING_VARIANTS)]:
         c = list(dict.fromkeys(k for r in data for k in r))
         with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
-            w = csv.DictWriter(fh, fieldnames=c)
+            w = csv.DictWriter(fh, fieldnames=c, lineterminator='\n')
             w.writeheader()
             w.writerows(data)
     # one JSON config per scenario, the form the run harness consumes
@@ -198,11 +191,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '../../../src/build'))

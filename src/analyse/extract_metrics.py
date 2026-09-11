@@ -37,13 +37,7 @@ alone a holdout value. Scoring against targets is `src/calibrate/fit.py`, which
 reads the calibration rows only.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,

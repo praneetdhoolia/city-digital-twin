@@ -49,11 +49,9 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from city import path as city_path  # noqa: E402
-from build_run_index import load_families, family_of  # noqa: E402
-import registry as _registry  # noqa: E402
+from city import path as city_path
+from build_run_index import load_families, family_of
+import registry as _registry
 
 # --- observed side -----------------------------------------------------------
 # G62 one-method journey-to-work column stems (ABS 2021 DataPack naming) and

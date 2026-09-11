@@ -26,16 +26,12 @@ invariants are asserted against the real registry.
 """
 import os
 import re
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 GROUP = os.path.join(REPO, 'src', 'java', 'citysim', 'PtSubmodeChoiceConfigGroup.java')
 PROVIDER = os.path.join(REPO, 'src', 'java', 'citysim', 'SubmodeRaptorProvider.java')
 CONTROLER = os.path.join(REPO, 'src', 'java', 'citysim', 'CitysimControler.java')
-
-if os.path.join(REPO, 'src') not in sys.path:
-    sys.path.insert(0, os.path.join(REPO, 'src'))
 
 
 def _code(path):

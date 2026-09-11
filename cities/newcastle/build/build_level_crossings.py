@@ -40,13 +40,8 @@ JSON beside it), regenerable from the committed inputs.
 
 # This builder encodes THIS CITY's freight-crossing interactions, so it lives
 # with the city rather than in the framework.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-import city as _city  # noqa: E402
-import registry as _registry  # noqa: E402
+import city as _city
+import registry as _registry
 
 import gzip
 import json
@@ -521,11 +516,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '../../../src/build'))

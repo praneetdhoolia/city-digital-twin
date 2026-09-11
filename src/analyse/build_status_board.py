@@ -45,15 +45,9 @@ import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
-for _p in (os.path.join(ROOT, 'src'), _HERE):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 import city as _city                                              # noqa: E402
 
-for _p in (os.path.join(ROOT, 'src', 'run'),):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 import results_store as _store                                    # noqa: E402
 
 RESULTS = os.path.join(ROOT, 'results')

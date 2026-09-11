@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 """ABS boundaries + Census DataPacks, and Copernicus DEM tiles."""
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
 import os as _os
 import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os,urllib.request,hashlib,json,datetime
 
 
@@ -72,8 +68,6 @@ def dem_tiles():
     import math
     try:
         import geopandas as gpd
-        _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                          '..', '..', '..', 'src'))
         import registry as _registry
         margin = _registry.load().get('A.osm.harvest_margin_m')
         lga = gpd.read_file(_city.path('data/processed/zones/zones_LGA.gpkg'))

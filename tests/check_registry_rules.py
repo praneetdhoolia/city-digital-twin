@@ -10,13 +10,9 @@ load. This check feeds each rule the break it guards and asserts it fires,
 and feeds it a clean case and asserts it does not. Stdlib only, sub-second,
 no package. Exit 1 on any failure.
 """
-import os
 import sys
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, '..'))
-sys.path.insert(0, os.path.join(REPO, 'src'))
-import registry  # noqa: E402
+import registry
 
 FAILS = []
 

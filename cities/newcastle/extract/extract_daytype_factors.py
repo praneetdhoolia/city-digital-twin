@@ -31,13 +31,7 @@ public holidays excluded; complete days only; no year filter.
 Deterministic: pure aggregation of a hashed raw download, no randomness.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 import zipfile
 
@@ -124,7 +118,7 @@ def main():
         profiles[dt] = share
         for h in range(24):
             rows.append(dict(day_type=dt, hour=h, share=round(float(share[h]), 6)))
-    pd.DataFrame(rows).to_csv(OUT_PROFILE, index=False)
+    pd.DataFrame(rows).to_csv(OUT_PROFILE, index=False, lineterminator='\n')
 
     per_station = (df.groupby(['station_key', 'day_type'])
                    .daily_total.mean().unstack())
@@ -141,7 +135,7 @@ def main():
         out.append(dict(day_type=dt, factor=round(factor, 4),
                         depart_shift_h=shift, stations=n_st,
                         station_days=int((df.day_type == dt).sum())))
-    pd.DataFrame(out).to_csv(OUT_FACTORS, index=False)
+    pd.DataFrame(out).to_csv(OUT_FACTORS, index=False, lineterminator='\n')
 
     f = {r['day_type']: r for r in out}
     sat, sun = f.get('SAT', {}), f.get('SUN', {})
@@ -157,11 +151,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '../../../src/build'))

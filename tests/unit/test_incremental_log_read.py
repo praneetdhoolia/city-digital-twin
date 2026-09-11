@@ -17,12 +17,10 @@ from __future__ import annotations
 
 import builtins
 import pathlib
-import sys
 
 import pytest
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / 'src' / 'analyse'))
 
 import run_view                                                   # noqa: E402
 

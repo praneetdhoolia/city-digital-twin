@@ -18,17 +18,10 @@ The record already carried what was needed - `controler_sha256`, which resume
 detection has refused to match across since issue #28. The pricer just never
 looked.
 """
-import os
-import sys
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _p in (os.path.join(REPO, 'src'), os.path.join(REPO, 'src', 'analyse'),
-           os.path.join(REPO, 'src', 'run')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
-import arm_cost  # noqa: E402
-import run_matsim  # noqa: E402
+import arm_cost
+import run_matsim
 
 
 def _arm(**kw):

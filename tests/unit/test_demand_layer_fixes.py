@@ -24,16 +24,12 @@ import io
 import json
 import os
 import re
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 CITY = os.path.join(REPO, 'cities', os.environ.get('CITYSIM_CITY', 'newcastle'))
 PLANS = os.path.join(REPO, 'src', 'build', 'build_matsim_plans.py')
 CHAINS = os.path.join(REPO, 'src', 'build', 'build_activity_chains.py')
-
-if os.path.join(REPO, 'src') not in sys.path:
-    sys.path.insert(0, os.path.join(REPO, 'src'))
 
 
 def _src(path):

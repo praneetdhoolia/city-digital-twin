@@ -37,15 +37,11 @@ import time
 
 import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(HERE, '..'))
-sys.path.insert(0, os.path.join(HERE, '..', 'analyse'))
 from sample_population import subsample_plans, scale_transit_capacity  # noqa: E402
 import registry  # noqa: E402
 # The run emits its config through the SAME registry-driven path the builder
 # uses. Importing the builder is deliberate: two code paths writing one config
 # is how the shipped config and the run config came to disagree.
-sys.path.insert(0, os.path.join(HERE, '..', 'build'))
 import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
 import results_store  # noqa: E402
@@ -552,7 +548,6 @@ def announce_cost(iterations, fraction, cfg):
     them is the newest measured one.
     """
     try:
-        sys.path.insert(0, os.path.join(REPO, 'src'))
         from analyse import arm_cost
         quote = arm_cost.price(int(iterations), fraction,
                                arm_cost.observed_arms(),
@@ -956,7 +951,6 @@ def start_progress_digest(run_dir, cfg):
     except Exception as exc:                              # noqa: BLE001
         print('progress digest unavailable: %s' % exc, flush=True)
         return None
-
 
 
 def inputs_sha256(day):

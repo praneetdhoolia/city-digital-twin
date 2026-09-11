@@ -60,7 +60,6 @@ REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 # used to re-read the environment with its OWN default, so the framework had
 # two copies of the default city name - and a change to one would silently
 # resolve the registry of a different city from the one the paths pointed at.
-sys.path.insert(0, os.path.join(REPO, 'src'))
 import city as _city  # noqa: E402
 CITY = _city.CITY
 CITY_DIR = _city.CITY_DIR

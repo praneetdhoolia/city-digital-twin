@@ -24,11 +24,8 @@ Raw files land unmodified under data/raw/<series>/ with a provenance record
 pattern, retrieval date, licence and every file's sha256.
 Re-running skips files already held (raw downloads are immutable).
 """
-import os as _os
 import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import argparse
 import datetime
 import hashlib

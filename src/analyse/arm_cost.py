@@ -40,16 +40,11 @@ import json
 import csv
 import io
 import os
-import sys
 
 REPO = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, REPO)
-sys.path.insert(0, os.path.join(REPO, 'src'))
 
 RAW = os.path.join(REPO, 'results', 'raw')
-
-
 
 
 def stall_kill_s():
@@ -59,8 +54,6 @@ def stall_kill_s():
     from the registry so the pricer and the killer cannot disagree."""
     try:
         import sys as _sys
-        _sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(
-            os.path.abspath(__file__))), 'registry'))
         import registry as _registry                          # noqa: PLC0415
         return float(_registry.load().get('RUN.gate.stall_kill_s'))
     except Exception:                                          # noqa: BLE001
@@ -349,8 +342,6 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
         import sys as _sys
         _here = os.path.dirname(os.path.abspath(__file__))
         _run = os.path.join(os.path.dirname(_here), 'run')
-        if _run not in _sys.path:
-            _sys.path.insert(0, _run)
         import run_matsim as _rm
         current = _rm.controler_sha256()
     except Exception:                                          # noqa: BLE001

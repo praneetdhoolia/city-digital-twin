@@ -40,10 +40,8 @@ import argparse
 import json
 import os
 import re
-import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, os.path.join(REPO, 'src'))
 
 DEFAULTS = os.path.join(REPO, 'config', 'schema', 'matsim_defaults.json')
 ACCEPTED = os.path.join(REPO, 'config', 'schema',

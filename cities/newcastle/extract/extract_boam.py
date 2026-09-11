@@ -14,11 +14,7 @@ capacity. It is an OBSERVATION of bus loading for the bus-vs-light-rail
 split and the crowding multiplier (#185), entered as a constraint, never a
 target (DECISIONS.md 9.8, 9.13).
 """
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import collections
 import csv
 import glob
@@ -28,8 +24,6 @@ import os
 RAW = _city.path('data/raw/boam')
 OUT = _city.path('data/processed/observed/boam_bus_occupancy_week.csv')
 REPORT = _city.path('data/processed/observed/_boam_report.json')
-
-
 
 
 def inside_boundary():

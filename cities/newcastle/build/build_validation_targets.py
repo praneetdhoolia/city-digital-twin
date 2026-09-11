@@ -15,14 +15,8 @@ Split rule, fixed before any scenario is run:
 # This builder encodes THIS CITY's intervention, corridor or history, so it lives
 # with the city rather than in the framework. It still uses the framework's
 # generic machinery, which is two directories up.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-import city as _city  # noqa: E402
-import registry as _registry  # noqa: E402
+import city as _city
+import registry as _registry
 import os
 import json
 import pandas as pd
@@ -138,7 +132,7 @@ def main():
             'TfNSW Opal Trips - Light Rail', 'calibration',
             'Post-2024 methodology epoch; not comparable with pre-2024 series')
     ser.assign(Year_Month=ser.index).to_csv(
-        os.path.join(OUT, 'lr_monthly_series.csv'), index=False)
+        os.path.join(OUT, 'lr_monthly_series.csv'), index=False, lineterminator='\n')
 
     # card-type mix, used to segment fares and concession behaviour
     mix = lr.groupby('Card_type')['Trip'].sum()
@@ -158,7 +152,7 @@ def main():
             round(float(v) / tots * 100, 2), 'per cent of tap-ons',
             'TfNSW Opal Light Rail by tap-on station', 'holdout',
             'Pre-2024 methodology epoch')
-    bystop.to_frame('taps').to_csv(os.path.join(OUT, 'lr_taps_by_stop.csv'))
+    bystop.to_frame('taps').to_csv(os.path.join(OUT, 'lr_taps_by_stop.csv'), lineterminator='\n')
 
     # ---------------- bus patronage ----------------
     bus = pd.read_csv(os.path.join(OBS, 'opal_bus_newcastle_hunter.csv'))
@@ -172,7 +166,7 @@ def main():
             round(float(bpre.trips.mean()), 0), 'boardings/month',
             'TfNSW Opal Trips - Bus (NISC 1)', 'calibration', '')
     bser.assign(Year_Month=bser.index).to_csv(
-        os.path.join(OUT, 'bus_monthly_series.csv'), index=False)
+        os.path.join(OUT, 'bus_monthly_series.csv'), index=False, lineterminator='\n')
 
     # LR share of Newcastle PT, the A1 falsification metric
     if len(pre) and len(bpre):
@@ -245,7 +239,7 @@ def main():
             str(r['Station']).strip(), 'from 2024-11',
             round(float(r['Trip_num']), 0), 'trips/month',
             'TfNSW station entries and exits (Opal batch)', 'holdout', note)
-    g.to_csv(os.path.join(OUT, 'station_entries_exits_mean.csv'), index=False)
+    g.to_csv(os.path.join(OUT, 'station_entries_exits_mean.csv'), index=False, lineterminator='\n')
 
     # ---------------- road traffic ----------------
     aadt = pd.read_csv(os.path.join(OBS, 'traffic_aadt.csv'), low_memory=False)
@@ -335,7 +329,7 @@ def main():
                                             else 'not_classified_at_this_station'),
                         survey_year=yr, split=split))
     aadt_out = pd.DataFrame(out)
-    aadt_out.to_csv(os.path.join(OUT, 'road_aadt_targets.csv'), index=False)
+    aadt_out.to_csv(os.path.join(OUT, 'road_aadt_targets.csv'), index=False, lineterminator='\n')
 
     # ---------------- comparison corrections for the count targets -----------
     # A modelled link volume is not directly comparable to an observed
@@ -450,7 +444,7 @@ def main():
             'TfNSW GTFS shapes', 'calibration', '')
 
     d = pd.DataFrame(rows)
-    d.to_csv(os.path.join(OUT, 'validation_targets.csv'), index=False)
+    d.to_csv(os.path.join(OUT, 'validation_targets.csv'), index=False, lineterminator='\n')
     rep = dict(n_targets=len(d),
                by_split=d['split'].value_counts().to_dict(),
                by_metric=d['metric'].value_counts().to_dict())
@@ -465,11 +459,7 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '../../../src/build'))

@@ -34,7 +34,6 @@ run directory that already holds telemetry:
 """
 import os
 import csv
-import sys
 import json
 import argparse
 import datetime
@@ -42,7 +41,6 @@ import datetime
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
 RESULTS = os.path.join(ROOT, 'results')
-sys.path.insert(0, os.path.join(ROOT, 'src'))
 import city as _city  # noqa: E402
 
 # a run name resolves through the results store - results/raw first, then a

@@ -26,16 +26,12 @@ asserted against the real registry and the real binding resolver.
 """
 import os
 import re
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 CALC = os.path.join(REPO, 'src', 'java', 'citysim', 'RaptorModeCostCalculator.java')
 GROUP = os.path.join(REPO, 'src', 'java', 'citysim', 'RaptorModeCostConfigGroup.java')
 CONTROLER = os.path.join(REPO, 'src', 'java', 'citysim', 'CitysimControler.java')
-
-if os.path.join(REPO, 'src') not in sys.path:
-    sys.path.insert(0, os.path.join(REPO, 'src'))
 
 
 def _src(path):

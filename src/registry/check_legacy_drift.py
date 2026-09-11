@@ -17,11 +17,9 @@ and the `legacy_symbol` key is removed with the constant.
 """
 import argparse
 import os
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-sys.path.insert(0, os.path.join(REPO, 'src'))
 
 import registry                                   # noqa: E402
 from registry import extract_legacy_constants as legacy   # noqa: E402

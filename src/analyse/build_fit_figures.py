@@ -33,18 +33,14 @@ No wall-clock anywhere: a figure that restamps itself on every regeneration
 churns the diff and cannot be checked for currency. The run's own launch stamp -
 its directory name - is the provenance, and it does not move.
 """
-# City-relative paths resolve through src/city.py: `params/...` names a location
-# inside cities/<city>/, not inside the repository root.
 import os as _os
 import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..'))
-import city as _city  # noqa: E402
-import io  # noqa: E402
-import json  # noqa: E402
-import glob  # noqa: E402
-import math  # noqa: E402
-import argparse  # noqa: E402
+import city as _city
+import io
+import json
+import glob
+import math
+import argparse
 
 OUT_DIR = _city.path('docs', 'reference', 'figures')
 CALIBRATION_FILE = _city.path('params/C5_calibration.json')
@@ -673,8 +669,6 @@ def c5_objective_drift():
     if not _os.path.exists(CALIBRATION_FILE):
         return None
     try:
-        _sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.dirname(
-            _os.path.abspath(__file__))), 'registry'))
         import registry as _registry                          # noqa: PLC0415
         declared = _registry.load(strict=True).get('CAL.objective.components')
     except Exception as e:                                     # noqa: BLE001

@@ -29,16 +29,9 @@ Usage:
     python src/build/build_matsim_network.py --workers 3
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import re
-import sys
 import csv
 import json
 import gzip
@@ -52,11 +45,9 @@ import collections
 import glob
 import concurrent.futures as futures
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'setup'))
-import bootstrap_toolchain as tc  # noqa: E402
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
-from registry import param_config as _param_config  # noqa: E402
+import bootstrap_toolchain as tc
+import registry as _registry
+from registry import param_config as _param_config
 
 
 def fwd(path):
@@ -276,7 +267,6 @@ def write_osm_config(path, osm_file, network_out, cfg=None):
         raise SystemExit('the OSM converter config carries %d parameter(s) from '
                          'neither a field nor a declared role: %s' % (len(leaks), leaks))
     return _param_config.write(path, 'pt2matsim_osm', cfg, runtime)
-
 
 
 def build_base_network():
@@ -641,11 +631,7 @@ def network_stats(path):
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
     _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
         _os_t.path.abspath(__file__)), '.'))

@@ -57,6 +57,7 @@ would report a gain that the street never saw.
 
 ```bash
 pip install requests pandas numpy shapely pyproj lxml geopandas pyogrio rasterio openpyxl
+python src/setup/install_paths.py                   # the import roots, once per interpreter (a .pth)
 python src/setup/bootstrap_toolchain.py             # JDK 25, pt2matsim 26.6, Maven -> .tools/
 python src/setup/bootstrap_toolchain.py --run-stack # + the MATSim signals run stack
 python tests/check_manifest.py                      # the committed subset is intact

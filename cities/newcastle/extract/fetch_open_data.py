@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 """Download the open observed-data bundle with provenance."""
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os, json, hashlib, urllib.request, datetime
 
 

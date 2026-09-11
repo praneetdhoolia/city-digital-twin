@@ -62,13 +62,7 @@ it a target, and the 67/143 split is pre-registered.
         --run-config cordon_escort_10pct --execute
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
@@ -92,7 +86,6 @@ import json
 import argparse
 import datetime
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry as _registry                                    # noqa: E402
 
 OUT = _city.path('params/C5_calibration.json')

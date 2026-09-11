@@ -24,12 +24,15 @@ import os
 import re
 import subprocess
 import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from procs import arm_running  # noqa: E402
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
+# the session opener installs the import roots before anything else is
+# imported, so a fresh clone's first gate works (#181)
+sys.path.insert(0, os.path.join(ROOT, 'src', 'setup'))
+import install_paths                                              # noqa: E402
+install_paths.activate()
+from procs import arm_running                                     # noqa: E402
 import city as _city                                              # noqa: E402
 
 PY = sys.executable
@@ -114,6 +117,7 @@ def digest():
 
 GATES = [
     # (label, command, needs_toolchain)
+    ('import roots', [PY, 'src/setup/install_paths.py', '--check'], False),
     ('manifest', [PY, 'tests/check_manifest.py'], False),
     ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests'], False),
     ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),

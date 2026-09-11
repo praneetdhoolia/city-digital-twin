@@ -12,13 +12,7 @@ Outputs zone geometries (GeoPackage), attributes (CSV) and centroids in
 EPSG:28356 (GDA2020 / MGA Zone 56), the project CRS from Appendix A1.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import json
 import geopandas as gpd
@@ -63,7 +57,7 @@ core_m = core.to_crs(CRS_M)
 core_union = core_m.geometry.union_all()
 core_ll = enrich(core, 'LGA_CODE21', core_union)
 core_ll.to_file(os.path.join(OUT, 'zones_LGA.gpkg'), driver='GPKG')
-core_ll.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_LGA.csv'), index=False)
+core_ll.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_LGA.csv'), index=False, lineterminator='\n')
 print('  core LGAs: %d, %.0f km2' % (len(core), core['LGA_CODE21'].size and core_m.geometry.area.sum() / 1e6))
 
 report = {'LGA': {'n': len(core), 'area_km2': round(float(core_m.geometry.area.sum() / 1e6), 1),
@@ -86,7 +80,7 @@ for level, zf, shp, key in SPECS:
     if level == 'SA1':
         sa1_core = sel
     sel.to_file(os.path.join(OUT, 'zones_%s.gpkg' % level), driver='GPKG')
-    sel.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_%s.csv' % level), index=False)
+    sel.drop(columns='geometry').to_csv(os.path.join(OUT, 'zones_%s.csv' % level), index=False, lineterminator='\n')
     t = sel['zone_tier'].value_counts().to_dict()
     a = sel.groupby('zone_tier')['area_km2'].sum().round(1).to_dict()
     report[level] = {'n': len(sel), 'key': key, 'by_tier': t, 'area_km2_by_tier': a}
@@ -96,7 +90,7 @@ for level, zf, shp, key in SPECS:
 sa1 = pd.read_csv(os.path.join(OUT, 'zones_SA1.csv'))
 keep = ['SA1_CODE21', 'SA2_CODE21', 'SA2_NAME21', 'SA3_CODE21', 'SA3_NAME21',
         'SA4_CODE21', 'SA4_NAME21', 'zone_tier', 'area_km2', 'x_mga56', 'y_mga56', 'lon', 'lat']
-sa1[[c for c in keep if c in sa1.columns]].to_csv(os.path.join(OUT, 'zone_lookup_SA1.csv'), index=False)
+sa1[[c for c in keep if c in sa1.columns]].to_csv(os.path.join(OUT, 'zone_lookup_SA1.csv'), index=False, lineterminator='\n')
 
 json.dump(report, open(os.path.join(OUT, '_zones_report.json'), 'w'), indent=2)
 print(json.dumps(report, indent=2))

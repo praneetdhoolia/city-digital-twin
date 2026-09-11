@@ -70,9 +70,6 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
-for _p in (os.path.join(REPO, 'src'), HERE):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 LABEL = 'awaiting-run'
 

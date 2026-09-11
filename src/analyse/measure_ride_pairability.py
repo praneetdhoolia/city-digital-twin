@@ -35,12 +35,10 @@ import collections
 import gzip
 import json
 import os
-import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
 RESULTS = os.path.join(ROOT, 'results')
-sys.path.insert(0, os.path.join(ROOT, 'src'))
 
 import city as _city          # noqa: E402
 

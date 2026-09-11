@@ -63,7 +63,6 @@ from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / "src"))
 
 
 # ---------------------------------------------------------------- truth resolvers
@@ -212,9 +211,6 @@ def _newest_run() -> tuple[str, Path]:
     which run is at the top of the page. The store is asked for the directory:
     nothing outside `src/run/results_store.py` composes a `results/...` path.
     """
-    store_dir = str(REPO / "src" / "run")
-    if store_dir not in sys.path:
-        sys.path.insert(0, store_dir)
     try:
         import results_store  # noqa: PLC0415
     except ImportError as exc:  # pragma: no cover - the store is committed

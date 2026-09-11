@@ -52,21 +52,11 @@ not a decision this file makes.
     python src/calibrate/asc_fixed_point.py --run <run> --previous round1.json
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', 'run'))
-import results_store as _results_store  # noqa: E402
+import results_store as _results_store
 
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
 
 import argparse
 import json
@@ -76,7 +66,7 @@ import os
 # the movability contract is ONE contract: whether a field carries a scalar
 # sweep is decided in exactly one place, and both the search and this round ask
 # the same question of it
-from calibrate import sweep_interval as _sweep_interval  # noqa: E402
+from calibrate import sweep_interval as _sweep_interval
 
 BOARDING_BASIS = 'boardings'
 

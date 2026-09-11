@@ -17,7 +17,6 @@ user directive (9.137): findings are kept forever in processed, bulk is a
 budgeted cache. A person never renames, deletes or edits anything under
 `results/` by hand.
 """
-import glob
 import io
 import json
 import os
@@ -25,7 +24,7 @@ import shutil
 import subprocess
 import sys
 import time
-from procs import pid_alive as _pid_alive  # noqa: E402
+from procs import pid_alive as _pid_alive
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
@@ -638,7 +637,6 @@ def main(argv=None):
     a = ap.parse_args(argv)
     cap = None
     try:
-        sys.path.insert(0, os.path.join(REPO, 'src'))
         import registry as _registry  # noqa: PLC0415
         cap = _registry.load(strict=True).get('RUN.storage.raw_cap_gb')
     except Exception:
