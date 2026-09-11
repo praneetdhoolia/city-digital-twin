@@ -35,14 +35,14 @@ imposes on the street is represented rather than netted out.
 | Vehicle passenger (`ride`) | A passenger **physically in a driver's car**, paired to a real household or escort trip; unpaired demand re-modes rather than teleporting |
 | Freight (`truck`) | Physical, at declared PCE, seeded from each cordon station's own observed heavy-vehicle share |
 | Bus, heavy rail, light rail, ferry | Scheduled transit on the mapped GTFS, **scored as distinct submodes** so a bus and a tram are not interchangeable in route choice |
-| Bike, walk | Physical on the active network, with gradient and directional walk-speed factors |
+| Bike, walk | Physical on the footpath-and-road network — every harvested footway, path, cycleway, steps, track and shared path is a link, with gradient and directional walk-speed factors; a pt access, egress or transfer walk is a network leg the simulation executes, never a teleport |
 | Taxi / rideshare | **Physical on the road with a finite fleet** — a request the fleet cannot serve is refused; priced on the published 2025 fares; scored against a target derived from the IPART trips-per-day band |
 
 | Corridor mechanisms | How |
 |---|---|
 | Traffic signals | **SCATS, implemented as its published algorithm** at the 14 corridor intersections on MATSim's signals contrib: degree of saturation measured at every stop line, cycle and splits adapted toward a target DS, clearances preserved. The operated phase plans and the offset library are the parts TfNSW does not release, so offsets are not adapted (see [below](#what-is-derived-rather-than-observed)) |
 | Transit priority | Green extension with a declared priority budget and repayment, keyed to the **tram** in the light-rail scenarios and to the **bus** in the bus-priority counterfactual |
-| Level crossings | Freight-train closures at two named crossings, as time-varying link capacity |
+| Level crossings | Every scheduled passenger train and the published survey's freight movements close two named crossings, as time-varying link capacity |
 | Light rail charging dwell | Native, concurrent with boarding — the wire-free design's cost in run time |
 | Lane, kerbside and turn changes | Per scenario, patched onto the network by OSM way id |
 
@@ -250,15 +250,15 @@ python src/calibrate/report.py --run <run dir>
 
 | | |
 |---|---|
-| Files in the manifest | **512** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
-| Package on disk | 4.08 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
+| Files in the manifest | **959** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
+| Package on disk | 6.64 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
 | Population | 611,915 (2021 Census) → 612,634 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
-| Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
+| Active network | 40,195 edges, 7,920 km, directional walk-speed factors — and, since 12 September 2026, walk- and bike-capable links of the MATSim network itself (368,230 links with the roads and railways) |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 521 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
+| Input registry | 553 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -312,7 +312,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 521 declared values, with units, provenance, sweeps
+  registry/                  the 553 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,
@@ -378,6 +378,7 @@ python cities/newcastle/build/build_validation_targets.py
 # --- P2 network build (needs the toolchain) ---
 python cities/newcastle/build/build_corridor_road_attributes.py
 python src/build/build_matsim_network.py        # MATSim network + 15 mapped schedules
+python cities/newcastle/build/build_charging_dwell_offsets.py  # the dwell-transformed schedules the signals read
 python cities/newcastle/build/build_matsim_signals.py    # explicit corridor signal data
 python cities/newcastle/build/build_level_crossings.py   # level-crossing closure events
 
