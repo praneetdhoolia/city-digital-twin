@@ -1014,18 +1014,18 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/count_station_links.csv`
 
-195 rows, 8 columns
+197 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `station_key` | int | 55710 | 195/195 |
-| `split` | str | calibration | 195/195 |
-| `station_name` | str | Pacific Highway | 195/195 |
-| `road_name` | str | Pacific Highway | 195/195 |
-| `link` | int | 95461 | 195/195 |
-| `link_name` | str | Pacific Highway | 195/195 |
-| `distance_m` | float | 50.2 | 195/195 |
-| `matched_by` | str | name_and_proximity | 195/195 |
+| `station_key` | int | 55710 | 197/197 |
+| `split` | str | calibration | 197/197 |
+| `station_name` | str | Pacific Highway | 197/197 |
+| `road_name` | str | Pacific Highway | 197/197 |
+| `link` | int | 56286 | 197/197 |
+| `link_name` | str | Pacific Highway | 197/197 |
+| `distance_m` | float | 50.2 | 197/197 |
+| `matched_by` | str | name_and_proximity | 197/197 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/lr_monthly_series.csv`
 
@@ -1115,7 +1115,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/params/C1_behavioural_parameters.csv`
 
-30 rows, 61 columns
+30 rows, 65 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1179,6 +1179,10 @@ Appendix A of the proposal.
 | `asc_walk_source` | str | assumed | 30/30 |
 | `asc_cycle` | float | -1.35 | 30/30 |
 | `asc_cycle_source` | str | assumed | 30/30 |
+| `asc_motorbike` | int | 0.0 | 30/30 |
+| `asc_motorbike_source` | str | definition | 30/30 |
+| `asc_ferry` | float | -1.05 | 30/30 |
+| `asc_ferry_source` | str | assumed | 30/30 |
 | `source` | str | mixed | 30/30 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/params/C1_sensitivity_sweep_grid.csv`
@@ -1254,7 +1258,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_activity_trips_SAT.csv`
 
-1903250 rows, 22 columns
+1901712 rows, 22 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1269,12 +1273,12 @@ Appendix A of the proposal.
 | `dest_sa1` | int | 10602161611 | 401/401 |
 | `origin_x` | float | 348659.1 | 401/401 |
 | `origin_y` | float | 6383994.3 | 401/401 |
-| `dest_x` | float | 360626.1 | 401/401 |
-| `dest_y` | float | 6379814.1 | 401/401 |
-| `dep_time_s` | int | 49581 | 401/401 |
-| `arr_time_s` | int | 51576 | 401/401 |
-| `straight_dist_km` | float | 12.676 | 401/401 |
-| `activity_duration_s` | int | 2217 | 401/401 |
+| `dest_x` | float | 360308.3 | 401/401 |
+| `dest_y` | float | 6379846.9 | 401/401 |
+| `dep_time_s` | int | 53673 | 401/401 |
+| `arr_time_s` | int | 55625 | 401/401 |
+| `straight_dist_km` | float | 12.365 | 401/401 |
+| `activity_duration_s` | int | 2688 | 401/401 |
 | `is_tour_anchor` | int | 1 | 401/401 |
 | `party_size` | int | 1 | 401/401 |
 | `time_flexibility_band` | str | flexible | 401/401 |
@@ -1283,7 +1287,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_activity_trips_SUN.csv`
 
-1665435 rows, 22 columns
+1666589 rows, 22 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1295,15 +1299,15 @@ Appendix A of the proposal.
 | `tour_purpose` | str | HO | 401/401 |
 | `dest_activity_type` | str | other | 401/401 |
 | `origin_sa1` | int | 10601110701 | 401/401 |
-| `dest_sa1` | int | 10602161611 | 401/401 |
+| `dest_sa1` | int | 10601110701 | 401/401 |
 | `origin_x` | float | 348659.1 | 401/401 |
 | `origin_y` | float | 6383994.3 | 401/401 |
-| `dest_x` | float | 359436.2 | 401/401 |
-| `dest_y` | float | 6380312.0 | 401/401 |
-| `dep_time_s` | int | 35958 | 401/401 |
-| `arr_time_s` | int | 37774 | 401/401 |
-| `straight_dist_km` | float | 11.389 | 401/401 |
-| `activity_duration_s` | int | 6713 | 401/401 |
+| `dest_x` | float | 348468.4 | 401/401 |
+| `dest_y` | float | 6383908.1 | 401/401 |
+| `dep_time_s` | int | 55118 | 401/401 |
+| `arr_time_s` | int | 55386 | 401/401 |
+| `straight_dist_km` | float | 0.209 | 401/401 |
+| `activity_duration_s` | int | 5176 | 401/401 |
 | `is_tour_anchor` | int | 1 | 401/401 |
 | `party_size` | int | 2 | 401/401 |
 | `time_flexibility_band` | str | flexible | 401/401 |
@@ -1312,7 +1316,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_activity_trips_WEEKDAY.csv`
 
-2341980 rows, 22 columns
+2343400 rows, 22 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1341,7 +1345,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_escort_bindings_SAT.csv`
 
-69442 rows, 4 columns
+65903 rows, 4 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1352,7 +1356,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_escort_bindings_SUN.csv`
 
-48683 rows, 4 columns
+46232 rows, 4 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1363,7 +1367,7 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_escort_bindings_WEEKDAY.csv`
 
-127073 rows, 4 columns
+121008 rows, 4 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1374,33 +1378,33 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_SAT.csv`
 
-109882 rows, 6 columns
+110361 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `companion_person_id` | int | 10 | 401/401 |
-| `companion_tour_id` | int | 1 | 401/401 |
-| `driver_person_id` | int | 12 | 401/401 |
-| `driver_tour_id` | int | 2 | 401/401 |
+| `companion_person_id` | int | 8 | 401/401 |
+| `companion_tour_id` | int | 2 | 401/401 |
+| `driver_person_id` | int | 10 | 401/401 |
+| `driver_tour_id` | int | 1 | 401/401 |
 | `driver_household_id` | int | 5 | 401/401 |
-| `dep_s` | int | 40491 | 401/401 |
+| `dep_s` | int | 56885 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_SUN.csv`
 
-100629 rows, 6 columns
+100790 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
 | `companion_person_id` | int | 1 | 401/401 |
 | `companion_tour_id` | int | 1 | 401/401 |
 | `driver_person_id` | int | 2 | 401/401 |
-| `driver_tour_id` | int | 2 | 401/401 |
+| `driver_tour_id` | int | 3 | 401/401 |
 | `driver_household_id` | int | 1 | 401/401 |
-| `dep_s` | int | 35958 | 401/401 |
+| `dep_s` | int | 55118 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_WEEKDAY.csv`
 
-83678 rows, 6 columns
+83331 rows, 6 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1413,45 +1417,45 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_lift_bindings_SAT.csv`
 
-26928 rows, 12 columns
+25236 rows, 12 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
 | `passenger_person_id` | int | 3 | 401/401 |
-| `passenger_tour_id` | int | 1 | 401/401 |
-| `passenger_dep_s` | int | 62461 | 401/401 |
+| `passenger_tour_id` | int | 2 | 401/401 |
+| `passenger_dep_s` | int | 47627 | 401/401 |
 | `priority` | int | 3 | 401/401 |
 | `direction` | str | drop | 401/401 |
 | `origin_x` | float | 348415.0 | 401/401 |
 | `origin_y` | float | 6383957.4 | 401/401 |
-| `dest_x` | float | 360585.7 | 401/401 |
-| `dest_y` | float | 6379680.8 | 401/401 |
-| `driver_person_id` | int | 22 | 401/401 |
-| `driver_household_id` | int | 12 | 401/401 |
+| `dest_x` | float | 344883.7 | 401/401 |
+| `dest_y` | float | 6382944.4 | 401/401 |
+| `driver_person_id` | int | 36 | 401/401 |
+| `driver_household_id` | int | 16 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_lift_bindings_SUN.csv`
 
-19682 rows, 12 columns
+18416 rows, 12 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
 | `passenger_person_id` | int | 3 | 401/401 |
 | `passenger_tour_id` | int | 1 | 401/401 |
-| `passenger_dep_s` | int | 40594 | 401/401 |
+| `passenger_dep_s` | int | 58132 | 401/401 |
 | `priority` | int | 3 | 401/401 |
 | `direction` | str | drop | 401/401 |
 | `origin_x` | float | 348415.0 | 401/401 |
 | `origin_y` | float | 6383957.4 | 401/401 |
-| `dest_x` | float | 360261.6 | 401/401 |
-| `dest_y` | float | 6379939.7 | 401/401 |
-| `driver_person_id` | int | 38 | 401/401 |
-| `driver_household_id` | int | 17 | 401/401 |
+| `dest_x` | float | 348615.5 | 401/401 |
+| `dest_y` | float | 6383939.2 | 401/401 |
+| `driver_person_id` | int | 18 | 401/401 |
+| `driver_household_id` | int | 9 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_lift_bindings_WEEKDAY.csv`
 
-47496 rows, 12 columns
+44258 rows, 12 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
@@ -1470,48 +1474,48 @@ Appendix A of the proposal.
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_SAT.csv`
 
-66706 rows, 8 columns
+70598 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 11 | 401/401 |
-| `passenger_tour_id` | int | 1 | 401/401 |
+| `passenger_person_id` | int | 461810 | 401/401 |
+| `passenger_tour_id` | int | 2 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 54817 | 401/401 |
-| `driver_person_id` | int | 2684 | 401/401 |
+| `passenger_dep_s` | int | 53956 | 401/401 |
+| `driver_person_id` | int | 39265 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 1011 | 401/401 |
-| `driver_dep_s` | int | 54736 | 401/401 |
+| `driver_household_id` | int | 15072 | 401/401 |
+| `driver_dep_s` | int | 53809 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_SUN.csv`
 
-63922 rows, 8 columns
+67442 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 86 | 401/401 |
+| `passenger_person_id` | int | 542846 | 401/401 |
 | `passenger_tour_id` | int | 2 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 44902 | 401/401 |
-| `driver_person_id` | int | 3683 | 401/401 |
-| `driver_tour_id` | int | 2 | 401/401 |
-| `driver_household_id` | int | 1402 | 401/401 |
-| `driver_dep_s` | int | 44836 | 401/401 |
+| `passenger_dep_s` | int | 34290 | 401/401 |
+| `driver_person_id` | int | 38566 | 401/401 |
+| `driver_tour_id` | int | 1 | 401/401 |
+| `driver_household_id` | int | 14819 | 401/401 |
+| `driver_dep_s` | int | 35101 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_WEEKDAY.csv`
 
-116760 rows, 8 columns
+126958 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `passenger_person_id` | int | 17 | 401/401 |
-| `passenger_tour_id` | int | 1 | 401/401 |
+| `passenger_person_id` | int | 508356 | 401/401 |
+| `passenger_tour_id` | int | 2 | 401/401 |
 | `direction` | str | drop | 401/401 |
-| `passenger_dep_s` | int | 28166 | 401/401 |
-| `driver_person_id` | int | 6832 | 401/401 |
+| `passenger_dep_s` | int | 49380 | 401/401 |
+| `driver_person_id` | int | 35190 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
-| `driver_household_id` | int | 2534 | 401/401 |
-| `driver_dep_s` | int | 27737 | 401/401 |
+| `driver_household_id` | int | 13645 | 401/401 |
+| `driver_dep_s` | int | 49399 | 401/401 |
 
 ### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/population/B1_households.csv`
 

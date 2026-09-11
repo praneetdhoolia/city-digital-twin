@@ -596,6 +596,114 @@
         "key": "B.ride.max_passengers_per_vehicle"
       },
       "note": "the occupancy ceiling the binder enforces; two position pages quote its refusal counts against different demands and the value itself is what anchors them"
+    },
+    {
+      "id": "overlay.weekday.persons",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/WEEKDAY.json",
+      "pattern": "([\\d,]+) persons",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.WEEKDAY.persons"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.weekday.legs",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/WEEKDAY.json",
+      "pattern": "([\\d,]+) selected-plan legs",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.WEEKDAY.legs_selected_plan"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.weekday.tours",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/WEEKDAY.json",
+      "pattern": "([\\d,]+) tours",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.WEEKDAY.tours"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.sat.persons",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/SAT.json",
+      "pattern": "([\\d,]+) persons",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.SAT.persons"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.sat.legs",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/SAT.json",
+      "pattern": "([\\d,]+) selected-plan legs",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.SAT.legs_selected_plan"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.sat.tours",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/SAT.json",
+      "pattern": "([\\d,]+) tours",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.SAT.tours"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.sun.persons",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/SUN.json",
+      "pattern": "([\\d,]+) persons",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.SUN.persons"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.sun.legs",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/SUN.json",
+      "pattern": "([\\d,]+) selected-plan legs",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.SUN.legs_selected_plan"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
+    },
+    {
+      "id": "overlay.sun.tours",
+      "kind": "number",
+      "doc": "cities/newcastle/overlays/day/SUN.json",
+      "pattern": "([\\d,]+) tours",
+      "truth": {
+        "kind": "json_number",
+        "file": "demand/plans/matsim/_plans_report.json",
+        "key": "by_day.SUN.tours"
+      },
+      "note": "a run overlay description is printed by run.py --list and the digest; it said 521,502 persons against 622,318 in the plans report (eighth project report, 11 September 2026)"
     }
   ]
 }

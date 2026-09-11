@@ -779,7 +779,10 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
             new_tail = set_link_attribute(tail, 'osm:way:kerbside',
                                           p['field_kerbside_use_to'])
             if new_tail != tail:
-                applied['kerbside_use'] += 1
+                # an attribute NO run reads (grep src/java: no reader of
+                # osm:way:kerbside): recorded for the E1 delta, and named so a
+                # reader of the report cannot take it for a physical change
+                applied['kerbside_use_attribute_unread_by_any_run'] += 1
                 tail = new_tail
         merged, extended = allow_car_companions(head + tail, excluded_of_mode)
         if extended:

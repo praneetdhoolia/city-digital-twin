@@ -362,12 +362,18 @@ def apply_variants(base_net):
                     applied['num_lanes_per_dir'] += 1
 
                 if 'kerbside_use' in changed and p['field_kerbside_use_to']:
+                    # the SAME attribute name the run network carries
+                    # (`osm:way:kerbside`, build_matsim_run_inputs); it was
+                    # `kerbsideUse` here and `osm:way:kerbside` there, and no
+                    # Java class reads either - so it is counted as an unread
+                    # attribute, never as a link whose physics changed
+                    # (eighth project report, 11 September 2026)
                     tail = tail.replace(
                         '</attributes>',
-                        '\t<attribute name="kerbsideUse" class="java.lang.String">'
+                        '\t<attribute name="osm:way:kerbside" class="java.lang.String">'
                         '%s</attribute>\n\t\t\t</attributes>'
                         % p['field_kerbside_use_to'], 1)
-                    applied['kerbside_use'] += 1
+                    applied['kerbside_use_attribute_unread_by_any_run'] += 1
 
                 if drop_turns and 'disallowedNextLinks' in tail:
                     tail = DISALLOWED_RE.sub('', tail)

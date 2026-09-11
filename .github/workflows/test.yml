@@ -36,7 +36,7 @@ jobs:
       # Compile-only: catches syntax errors across the acquisition/build code without
       # installing the heavy geo stack (geopandas, rasterio, …) those modules import.
       - name: Byte-compile every source and test module
-        run: python -m compileall -q src tests
+        run: python -m compileall -q src tests cities run.py
       - name: The gate watcher stops on a breach and only on a breach (#112)
         run: python tests/check_gate_watcher.py
       - name: A refused launch leaves a card that says why (#127)

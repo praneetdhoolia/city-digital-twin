@@ -3,7 +3,9 @@
     "era": "era2_2016_rail_truncated",
     "feed": "sydneytrains",
     "s3_key": "historical_gtfs/sydneytrains/2016/2016-09/sydneytrains_schedule_data_20160920000000.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2016/2016-09/sydneytrains_schedule_data_20160920000000.zip",
     "bytes": 7031489,
+    "sha256": "86d15542464fc55339bf86a27f2f58a0e4783c112eafc344ca339821dd5c4079",
     "sha256_16": "86d15542464fc553",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -12,7 +14,9 @@
     "era": "era2_2016_rail_truncated",
     "feed": "nswtrains",
     "s3_key": "historical_gtfs/nswtrains/2016/2016-09/nswtrains_schedule_data_20160923000000.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2016/2016-09/nswtrains_schedule_data_20160923000000.zip",
     "bytes": 10214611,
+    "sha256": "6c458baed9faf887c57926abfc2a84ee581f48201661bf2bb46e5d7b690ffdc5",
     "sha256_16": "6c458baed9faf887",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -21,7 +25,9 @@
     "era": "era2_2016_rail_truncated",
     "feed": "complete",
     "s3_key": "historical_gtfs/complete_gtfs/2016/2016-08/full_greater_sydney_gtfs_static_20160829.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/complete_gtfs/2016/2016-08/full_greater_sydney_gtfs_static_20160829.zip",
     "bytes": 101718167,
+    "sha256": "aed7ade7c02675048d1da5f33738a5fb4390bb0bbb004bd9d599543603080b34",
     "sha256_16": "aed7ade7c0267504",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -30,7 +36,9 @@
     "era": "era3_2018_keolis_interchange",
     "feed": "nisc001",
     "s3_key": "historical_gtfs/NISC001/2018/2018-10/NISC001_scheduled_data_20181019.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/NISC001/2018/2018-10/NISC001_scheduled_data_20181019.zip",
     "bytes": 5011206,
+    "sha256": "c599185939f379b36ce7b3ca163149ff20d98f6aa0bcc179aa26d8bacf7645f3",
     "sha256_16": "c599185939f379b3",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -39,7 +47,9 @@
     "era": "era3_2018_keolis_interchange",
     "feed": "sydneytrains",
     "s3_key": "historical_gtfs/sydneytrains/2018/2018-10/SydneyTrains_scheduled_data_20181030.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2018/2018-10/SydneyTrains_scheduled_data_20181030.zip",
     "bytes": 9854740,
+    "sha256": "df60a66ccdc1ba91df3e852b1638d654e6c0e487927825ddc7b5ff353b671c89",
     "sha256_16": "df60a66ccdc1ba91",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -48,7 +58,9 @@
     "era": "era3_2018_keolis_interchange",
     "feed": "nswtrains",
     "s3_key": "historical_gtfs/nswtrains/2018/2018-10/nswtrains_scheduled_data_20181007011000.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2018/2018-10/nswtrains_scheduled_data_20181007011000.zip",
     "bytes": 9328311,
+    "sha256": "f03cebc8f8c575aa5bb3bf4658d1a1c48d3244046430c5b5ff712879f6c4309e",
     "sha256_16": "f03cebc8f8c575aa",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -57,7 +69,9 @@
     "era": "era4_2019_lr_open",
     "feed": "nisc001",
     "s3_key": "historical_gtfs/NISC001/2019/2019-03/NISC001_scheduled_data_20190325210300.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/NISC001/2019/2019-03/NISC001_scheduled_data_20190325210300.zip",
     "bytes": 4717085,
+    "sha256": "723a86123958da00e41c72ac88e15786b46c864886cee1b761374776101c6402",
     "sha256_16": "723a86123958da00",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -66,7 +80,9 @@
     "era": "era4_2019_lr_open",
     "feed": "sydneytrains",
     "s3_key": "historical_gtfs/sydneytrains/2019/2019-03/sydneytrains_scheduled_data_20190331010300.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2019/2019-03/sydneytrains_scheduled_data_20190331010300.zip",
     "bytes": 9911544,
+    "sha256": "8ecb229d61e48fa1e483e5741f257710f9ab173ebd1ed4d2d0a702824090f0b6",
     "sha256_16": "8ecb229d61e48fa1",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -75,7 +91,9 @@
     "era": "era4_2019_lr_open",
     "feed": "nswtrains",
     "s3_key": "historical_gtfs/nswtrains/2019/2019-03/nswtrains_scheduled_data_20190330010300.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2019/2019-03/nswtrains_scheduled_data_20190330010300.zip",
     "bytes": 9823981,
+    "sha256": "5de7913d92aae747c33da3c3e43808172cb144a5cd37e60b33adcacbd25c9c41",
     "sha256_16": "5de7913d92aae747",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -84,7 +102,9 @@
     "era": "era4_2019_lr_open",
     "feed": "lightrail",
     "s3_key": "historical_gtfs/lightrail-newcastle/2020/2020-02/lightrail-newcastle_scheduled_data_20200218010200.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/lightrail-newcastle/2020/2020-02/lightrail-newcastle_scheduled_data_20200218010200.zip",
     "bytes": 37275,
+    "sha256": "597a58a524208e50cf5eba54c66769b70eabe63d5c0cf176d6dfb144ddfe5151",
     "sha256_16": "597a58a524208e50",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -93,7 +113,9 @@
     "era": "base2026",
     "feed": "nisc001",
     "s3_key": "historical_gtfs/NISC001/2026/2026-08/NISC001_scheduled_data_20260805190800.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/NISC001/2026/2026-08/NISC001_scheduled_data_20260805190800.zip",
     "bytes": 3459002,
+    "sha256": "76f701acb32d0c54c31ea40492ae69349612742c577e60ece3faab29f4379a05",
     "sha256_16": "76f701acb32d0c54",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -102,7 +124,9 @@
     "era": "base2026",
     "feed": "lightrail",
     "s3_key": "historical_gtfs/lightrail-newcastle/2026/2026-08/lightrail-newcastle_scheduled_data_20260804010800.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/lightrail-newcastle/2026/2026-08/lightrail-newcastle_scheduled_data_20260804010800.zip",
     "bytes": 53308,
+    "sha256": "987777bb6841cc8390f9ee20bece40cc107b99083fa1c5009819e9a4aee5aa6d",
     "sha256_16": "987777bb6841cc83",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -111,7 +135,9 @@
     "era": "base2026",
     "feed": "regionbuses",
     "s3_key": "historical_gtfs/regionbuses-newcastlehunter/2026/2026-08/regionbuses-newcastlehunter_scheduled_data_20260801200800.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/regionbuses-newcastlehunter/2026/2026-08/regionbuses-newcastlehunter_scheduled_data_20260801200800.zip",
     "bytes": 6884155,
+    "sha256": "0b5abc43851700adce7f083ddd390ff8e732000a58dcf0ac6a01be0f6d49a47a",
     "sha256_16": "0b5abc43851700ad",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -120,7 +146,9 @@
     "era": "base2026",
     "feed": "sydneytrains",
     "s3_key": "historical_gtfs/sydneytrains/2026/2026-08/sydneytrains_scheduled_data_20260808010800.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2026/2026-08/sydneytrains_scheduled_data_20260808010800.zip",
     "bytes": 14499105,
+    "sha256": "dcbea41e838612c9ec52a7e259e7d4f1c65360ae492d720d54f881e6c8a47dcf",
     "sha256_16": "dcbea41e838612c9",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"
@@ -129,7 +157,9 @@
     "era": "base2026",
     "feed": "nswtrains",
     "s3_key": "historical_gtfs/nswtrains/2026/2026-08/nswtrains_scheduled_data_20260801010800.zip",
+    "url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2026/2026-08/nswtrains_scheduled_data_20260801010800.zip",
     "bytes": 39662943,
+    "sha256": "ec8627698f779043d4bdcefefda58758792ecd4fe61c0a5946a432894fc0929d",
     "sha256_16": "ec8627698f779043",
     "source": "TfNSW Open Data Hub historical GTFS archive",
     "licence": "CC-BY 4.0"

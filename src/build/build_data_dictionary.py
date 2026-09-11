@@ -36,7 +36,8 @@ def kind(vals):
     try:
         [float(v) for v in vals]
         return 'int' if all(float(v).is_integer() for v in vals) else 'float'
-    except: return 'str'
+    except (TypeError, ValueError):
+        return 'str'
 out=['# Data dictionary','',
      'Auto-generated from the produced files by `src/build/build_data_dictionary.py`.',
      'Column types are inferred from the first 400 rows. Schema letters refer to',
@@ -64,6 +65,6 @@ for title,pat in GROUPS:
             if len(ex)>34: ex=ex[:31]+'...'
             out.append('| `%s` | %s | %s | %d/%d |'%(c,kind(vals),ex.replace(chr(124),'/'),nz,len(vals)))
         out.append('')
-os.makedirs('docs',exist_ok=True)
+os.makedirs(_city.path('docs','reference'),exist_ok=True)
 open(_city.path('docs','reference','DATA_DICTIONARY.md'),'w',encoding='utf-8',newline='\n').write('\n'.join(out))
 print('wrote DATA_DICTIONARY.md (%d lines)'%len(out))

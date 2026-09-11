@@ -62,7 +62,7 @@ python src/setup/bootstrap_toolchain.py --run-stack # + the MATSim signals run s
 python tests/check_manifest.py                      # the committed subset is intact
 ```
 
-Python 3.11+. The toolchain is ~1.4 GiB, gitignored, and **pinned by sha256** —
+Python 3.11+ (CI and the workstation run 3.14). The toolchain is ~1.4 GiB, gitignored, and **pinned by sha256** —
 `--verify` re-checks the digests and compiles the Java without downloading. Signal
 runs need the `--run-stack` half: the signals contrib is not in the shaded jar and
 must never share a classpath with it. **A toolchain change is a model change.**

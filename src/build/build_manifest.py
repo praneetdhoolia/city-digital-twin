@@ -748,7 +748,12 @@ def main():
                                                                possible)
         files.append(dict(
             path=rel, bytes=sz, rows=count_rows(p),
-            sha256=sha256(p) if sz < 300 * 1 << 20 else 'skipped_large',
+            # EVERY file is hashed. Three were size-only under a 300 MB cap -
+            # two raw downloads the immutability rule protects and the WEEKDAY
+            # trip table every plan derives from - so a rebuilt demand of the
+            # same byte length passed the gate (eighth project report, 11
+            # September 2026). ~1.6 GB more to hash, about ten seconds.
+            sha256=sha256(p),
             stage=stage,
             produced_by=lineage_for(rel),
             source=source, source_url=source_url,
