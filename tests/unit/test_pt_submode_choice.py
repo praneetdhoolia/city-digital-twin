@@ -73,7 +73,9 @@ def test_the_seed_submode_is_declared_and_the_java_holds_no_default():
     field = _fields()['RUN.mode_choice.pt_submode_seed']
     assert field['matsim_param'] == 'ptSubmodeChoice.seedSubmode'
     code = _code(GROUP)
-    assert 'private String seedSubmode = "";' in code, (
+    # the field form since #180: a public @Parameter field, still with no
+    # literal default beyond the empty string the gate refuses
+    assert 'public String seedSubmode = "";' in code, (
         'the config group carries a literal seed submode, which shadows '
         'RUN.mode_choice.pt_submode_seed (check_hardcoding.py category 6)')
     assert 'seedSubmode.isEmpty()' in code, (

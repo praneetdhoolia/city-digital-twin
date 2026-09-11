@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `scats` config module: the parameters of the SCATS adaptive control
@@ -47,15 +48,24 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
     /** Re-time cycle and splits every cycle from measured saturation. */
     public static final String REGIME_SCATS = "scats_adaptive";
 
-    private String regime = "";
-    private double targetDegreeSaturation = UNSET;
-    private double dsDeadband = UNSET;
-    private double cycleStepS = UNSET;
-    private double minCycleS = UNSET;
-    private double maxCycleS = UNSET;
-    private double dsSmoothing = UNSET;
-    private double saturationFlowVehHLane = UNSET;
-    private double minGreenS = UNSET;
+    @Parameter("regime")
+    public String regime = "";
+    @Parameter("targetDegreeSaturation")
+    public double targetDegreeSaturation = UNSET;
+    @Parameter("dsDeadband")
+    public double dsDeadband = UNSET;
+    @Parameter("cycleStepS")
+    public double cycleStepS = UNSET;
+    @Parameter("minCycleS")
+    public double minCycleS = UNSET;
+    @Parameter("maxCycleS")
+    public double maxCycleS = UNSET;
+    @Parameter("dsSmoothing")
+    public double dsSmoothing = UNSET;
+    @Parameter("saturationFlowVehHLane")
+    public double saturationFlowVehHLane = UNSET;
+    @Parameter("minGreenS")
+    public double minGreenS = UNSET;
 
     public ScatsConfigGroup() {
         super(NAME);
@@ -69,14 +79,8 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * comparable within one build. {@code scats_adaptive} keeps the generated
      * plan as the STARTING point and re-times it each cycle.
      */
-    @StringGetter("regime")
     public String getRegime() {
         return this.regime;
-    }
-
-    @StringSetter("regime")
-    public void setRegime(final String value) {
-        this.regime = value == null ? "" : value.trim();
     }
 
     public boolean isScats() {
@@ -92,14 +96,8 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * operation put the working target near 0.9 — high enough to use the
      * intersection, low enough to leave recovery room.
      */
-    @StringGetter("targetDegreeSaturation")
     public double getTargetDegreeSaturation() {
         return this.targetDegreeSaturation;
-    }
-
-    @StringSetter("targetDegreeSaturation")
-    public void setTargetDegreeSaturation(final double value) {
-        this.targetDegreeSaturation = value;
     }
 
     /**
@@ -109,14 +107,8 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * one direction or the other, because a measured DS is never exactly the
      * target. SCATS is deliberately sluggish, and this is that sluggishness.
      */
-    @StringGetter("dsDeadband")
     public double getDsDeadband() {
         return this.dsDeadband;
-    }
-
-    @StringSetter("dsDeadband")
-    public void setDsDeadband(final double value) {
-        this.dsDeadband = value;
     }
 
     /**
@@ -126,36 +118,18 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * computed optimum, so that coordination with neighbouring intersections
      * is not destroyed by a single noisy measurement.
      */
-    @StringGetter("cycleStepS")
     public double getCycleStepS() {
         return this.cycleStepS;
     }
 
-    @StringSetter("cycleStepS")
-    public void setCycleStepS(final double value) {
-        this.cycleStepS = value;
-    }
-
     /** Shortest cycle the controller may choose, in seconds. */
-    @StringGetter("minCycleS")
     public double getMinCycleS() {
         return this.minCycleS;
     }
 
-    @StringSetter("minCycleS")
-    public void setMinCycleS(final double value) {
-        this.minCycleS = value;
-    }
-
     /** Longest cycle the controller may choose, in seconds. */
-    @StringGetter("maxCycleS")
     public double getMaxCycleS() {
         return this.maxCycleS;
-    }
-
-    @StringSetter("maxCycleS")
-    public void setMaxCycleS(final double value) {
-        this.maxCycleS = value;
     }
 
     /**
@@ -165,14 +139,8 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * 1.0 would react to the last cycle alone (noisy at low flow, which is
      * most of the day), 0.0 would never react at all.
      */
-    @StringGetter("dsSmoothing")
     public double getDsSmoothing() {
         return this.dsSmoothing;
-    }
-
-    @StringSetter("dsSmoothing")
-    public void setDsSmoothing(final double value) {
-        this.dsSmoothing = value;
     }
 
     /**
@@ -183,14 +151,8 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * and shared with the plan generator, so the measurement and the plan that
      * produced it cannot drift apart.
      */
-    @StringGetter("saturationFlowVehHLane")
     public double getSaturationFlowVehHLane() {
         return this.saturationFlowVehHLane;
-    }
-
-    @StringSetter("saturationFlowVehHLane")
-    public void setSaturationFlowVehHLane(final double value) {
-        this.saturationFlowVehHLane = value;
     }
 
     /**
@@ -200,14 +162,8 @@ public final class ScatsConfigGroup extends ReflectiveConfigGroup {
      * movement below the pedestrian and clearance minimum is not a re-timing
      * a real controller would execute.
      */
-    @StringGetter("minGreenS")
     public double getMinGreenS() {
         return this.minGreenS;
-    }
-
-    @StringSetter("minGreenS")
-    public void setMinGreenS(final double value) {
-        this.minGreenS = value;
     }
 
     @Override

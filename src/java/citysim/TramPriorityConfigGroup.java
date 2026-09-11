@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `tramPriority` config module: how the corridor's explicit signals treat
@@ -35,13 +36,20 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
     public static final String MODE_EXTENSION_RECALL = "extension_recall";
     public static final String MODE_CONDITIONAL = "conditional";
 
-    private String mode = "";
-    private String priorityGroupId = "";
-    private double extensionWindowS = UNSET;
-    private double detectionDistanceM = UNSET;
-    private double priorityBudgetShare = UNSET;
-    private boolean compensationEnabled = false;
-    private double latenessThresholdS = UNSET;
+    @Parameter("mode")
+    public String mode = "";
+    @Parameter("priorityGroupId")
+    public String priorityGroupId = "";
+    @Parameter("extensionWindowS")
+    public double extensionWindowS = UNSET;
+    @Parameter("detectionDistanceM")
+    public double detectionDistanceM = UNSET;
+    @Parameter("priorityBudgetShare")
+    public double priorityBudgetShare = UNSET;
+    @Parameter("compensationEnabled")
+    public boolean compensationEnabled = false;
+    @Parameter("latenessThresholdS")
+    public double latenessThresholdS = UNSET;
 
     public TramPriorityConfigGroup() {
         super(NAME);
@@ -58,14 +66,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * recall the tram stage early; {@code conditional} grants either action
      * only to a tram already late by more than {@link #getLatenessThresholdS}.
      */
-    @StringGetter("mode")
     public String getMode() {
         return this.mode;
-    }
-
-    @StringSetter("mode")
-    public void setMode(final String value) {
-        this.mode = value == null ? "" : value.trim();
     }
 
     /**
@@ -83,14 +85,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * {@code A.signals.tsp.priority_group}; no usable Java default, per this
      * class's contract.
      */
-    @StringGetter("priorityGroupId")
     public String getPriorityGroupId() {
         return this.priorityGroupId;
-    }
-
-    @StringSetter("priorityGroupId")
-    public void setPriorityGroupId(final String value) {
-        this.priorityGroupId = value == null ? "" : value.trim();
     }
 
     /**
@@ -98,14 +94,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * still be held green for a detected tram, and the maximum length of that
      * hold, in seconds.
      */
-    @StringGetter("extensionWindowS")
     public double getExtensionWindowS() {
         return this.extensionWindowS;
-    }
-
-    @StringSetter("extensionWindowS")
-    public void setExtensionWindowS(final double value) {
-        this.extensionWindowS = value;
     }
 
     /**
@@ -120,14 +110,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * it and so a future lane-resolved corridor can honour it literally; the
      * present mechanism does not vary with it.
      */
-    @StringGetter("detectionDistanceM")
     public double getDetectionDistanceM() {
         return this.detectionDistanceM;
-    }
-
-    @StringSetter("detectionDistanceM")
-    public void setDetectionDistanceM(final double value) {
-        this.detectionDistanceM = value;
     }
 
     /**
@@ -138,14 +122,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * arrive, the cross-street cannot lose more than this share of its cycle,
      * so fixed-time coordination degrades gracefully instead of collapsing.
      */
-    @StringGetter("priorityBudgetShare")
     public double getPriorityBudgetShare() {
         return this.priorityBudgetShare;
-    }
-
-    @StringSetter("priorityBudgetShare")
-    public void setPriorityBudgetShare(final double value) {
-        this.priorityBudgetShare = value;
     }
 
     /**
@@ -158,14 +136,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * it is the absence of the mechanism, the same contract as
      * {@code ridePairing.enabled}.
      */
-    @StringGetter("compensationEnabled")
     public boolean isCompensationEnabled() {
         return this.compensationEnabled;
-    }
-
-    @StringSetter("compensationEnabled")
-    public void setCompensationEnabled(final boolean value) {
-        this.compensationEnabled = value;
     }
 
     /**
@@ -176,14 +148,8 @@ public final class TramPriorityConfigGroup extends ReflectiveConfigGroup {
      * ({@code VehicleArrivesAtFacilityEvent#getDelay()} at the stop the tram
      * most recently touched), never from a parallel clock of ours.
      */
-    @StringGetter("latenessThresholdS")
     public double getLatenessThresholdS() {
         return this.latenessThresholdS;
-    }
-
-    @StringSetter("latenessThresholdS")
-    public void setLatenessThresholdS(final double value) {
-        this.latenessThresholdS = value;
     }
 
     /**

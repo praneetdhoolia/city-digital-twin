@@ -1,6 +1,7 @@
 package citysim;
 
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * How the PT router evaluates the DIRECT WALK it compares every transit
@@ -32,29 +33,33 @@ public final class PtDirectWalkConfigGroup extends ReflectiveConfigGroup {
     public static final String BEELINE = "beeline";
     public static final String NETWORK = "network";
 
-    private String basis = BEELINE;
+    @Parameter("basis")
+    public String basis = BEELINE;
 
     public PtDirectWalkConfigGroup() {
         super(NAME);
     }
 
-    @StringGetter("basis")
     public String getBasis() {
         return this.basis;
     }
 
-    @StringSetter("basis")
-    public void setBasis(final String value) {
-        final String v = value == null ? BEELINE : value.trim();
-        if (!BEELINE.equals(v) && !NETWORK.equals(v)) {
-            throw new IllegalArgumentException(
-                    "ptDirectWalk.basis must be `beeline` or `network`, got `"
-                            + value + "`");
-        }
-        this.basis = v;
-    }
-
     public boolean isNetwork() {
         return NETWORK.equals(this.basis);
+    }
+
+    /** The rule the removed setter applied: only the two declared members
+     *  (RUN.transit_router.direct_walk_basis) are a basis (#180). */
+    @Override
+    public void checkConsistency(final org.matsim.core.config.Config config) {
+        super.checkConsistency(config);
+        final String v = this.basis == null ? BEELINE : this.basis.trim();
+        if (!BEELINE.equals(v) && !NETWORK.equals(v)) {
+            throw new IllegalArgumentException(
+                    "ptDirectWalk.basis must be " + BEELINE + " or " + NETWORK
+                    + " (RUN.transit_router.direct_walk_basis); got '"
+                    + this.basis + "'");
+        }
+        this.basis = v;
     }
 }

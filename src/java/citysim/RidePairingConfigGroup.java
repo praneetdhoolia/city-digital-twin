@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `ridePairing` config module: how a car passenger names the household
@@ -82,20 +83,34 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
     public static final String COHERENCE_DECLARED = "declared";
     public static final String COHERENCE_INFERRED = "inferred";
 
-    private boolean enabled = false;
-    private boolean physicalBoarding = false;
-    private boolean remodeUnpaired = false;
-    private boolean waitForDriver = false;
-    private double windowMinutes = UNSET;
-    private double boundWindowMinutes = UNSET;
-    private double escortCoherenceRate = UNSET;
-    private double jointCoherenceRate = UNSET;
-    private String rule = "";
-    private String declaredMeeting = "";
-    private String coherenceScope = "";
-    private String unpairedFallback = "";
-    private double pickupDwellSeconds = UNSET;
-    private int maxPassengersPerVehicle = -1;
+    @Parameter("enabled")
+    public boolean enabled = false;
+    @Parameter("physicalBoarding")
+    public boolean physicalBoarding = false;
+    @Parameter("remodeUnpaired")
+    public boolean remodeUnpaired = false;
+    @Parameter("waitForDriver")
+    public boolean waitForDriver = false;
+    @Parameter("windowMinutes")
+    public double windowMinutes = UNSET;
+    @Parameter("boundWindowMinutes")
+    public double boundWindowMinutes = UNSET;
+    @Parameter("escortCoherenceRate")
+    public double escortCoherenceRate = UNSET;
+    @Parameter("jointCoherenceRate")
+    public double jointCoherenceRate = UNSET;
+    @Parameter("rule")
+    public String rule = "";
+    @Parameter("declaredMeeting")
+    public String declaredMeeting = "";
+    @Parameter("coherenceScope")
+    public String coherenceScope = "";
+    @Parameter("unpairedFallback")
+    public String unpairedFallback = "";
+    @Parameter("pickupDwellSeconds")
+    public double pickupDwellSeconds = UNSET;
+    @Parameter("maxPassengersPerVehicle")
+    public int maxPassengersPerVehicle = -1;
 
     public RidePairingConfigGroup() {
         super(NAME);
@@ -112,14 +127,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * price file defaults to empty: an absent binding must not switch a
      * mechanism on.
      */
-    @StringGetter("enabled")
     public boolean isEnabled() {
         return this.enabled;
-    }
-
-    @StringSetter("enabled")
-    public void setEnabled(final boolean value) {
-        this.enabled = value;
     }
 
     /**
@@ -134,14 +143,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * teleport-on-the-driver's-clock, counted and reported — never hidden.
      * False restores Tier 1 exactly (DECISIONS.md 9.44).
      */
-    @StringGetter("physicalBoarding")
     public boolean isPhysicalBoarding() {
         return this.physicalBoarding;
-    }
-
-    @StringSetter("physicalBoarding")
-    public void setPhysicalBoarding(final boolean value) {
-        this.physicalBoarding = value;
     }
 
     /**
@@ -156,14 +159,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * price. False keeps Tier 1's teleport for the unpaired, for
      * comparability within one build.
      */
-    @StringGetter("remodeUnpaired")
     public boolean isRemodeUnpaired() {
         return this.remodeUnpaired;
-    }
-
-    @StringSetter("remodeUnpaired")
-    public void setRemodeUnpaired(final boolean value) {
-        this.remodeUnpaired = value;
     }
 
     /**
@@ -177,14 +174,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * costs what waiting costs. False restores the 9.53 behaviour (any miss
      * falls back immediately).
      */
-    @StringGetter("waitForDriver")
     public boolean isWaitForDriver() {
         return this.waitForDriver;
-    }
-
-    @StringSetter("waitForDriver")
-    public void setWaitForDriver(final boolean value) {
-        this.waitForDriver = value;
     }
 
     /**
@@ -198,14 +189,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * unmodelled sub-window adjustment is a stated limitation, and
      * {@link #getPickupDwellSeconds()} is the only friction that is priced.
      */
-    @StringGetter("windowMinutes")
     public double getWindowMinutes() {
         return this.windowMinutes;
-    }
-
-    @StringSetter("windowMinutes")
-    public void setWindowMinutes(final double value) {
-        this.windowMinutes = value;
     }
 
     /**
@@ -232,14 +217,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * than by a threshold. Setting it equal to {@code windowMinutes}
      * recovers the pre-9.85 behaviour exactly.
      */
-    @StringGetter("boundWindowMinutes")
     public double getBoundWindowMinutes() {
         return this.boundWindowMinutes;
-    }
-
-    @StringSetter("boundWindowMinutes")
-    public void setBoundWindowMinutes(final double value) {
-        this.boundWindowMinutes = value;
     }
 
     /**
@@ -257,14 +236,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * search parameter - how often an unreachable alternative is offered - and
      * never a preference: nothing here changes any mode's utility.
      */
-    @StringGetter("escortCoherenceRate")
     public double getEscortCoherenceRate() {
         return this.escortCoherenceRate;
-    }
-
-    @StringSetter("escortCoherenceRate")
-    public void setEscortCoherenceRate(final double value) {
-        this.escortCoherenceRate = value;
     }
 
     /**
@@ -281,14 +254,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * behaviour exactly</b>, so the joint extension is measurable on its
      * own. A search parameter, never a preference.
      */
-    @StringGetter("jointCoherenceRate")
     public double getJointCoherenceRate() {
         return this.jointCoherenceRate;
-    }
-
-    @StringSetter("jointCoherenceRate")
-    public void setJointCoherenceRate(final double value) {
-        this.jointCoherenceRate = value;
     }
 
     /**
@@ -318,45 +285,21 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * the ride alternative is restored at AfterMobsim - 9.81's ratchet must
      * not come back.
      */
-    @StringGetter("unpairedFallback")
     public String getUnpairedFallback() {
         return this.unpairedFallback;
     }
 
-    @StringSetter("unpairedFallback")
-    public void setUnpairedFallback(final String value) {
-        this.unpairedFallback = value == null ? "" : value.trim();
-    }
-
-    @StringGetter("rule")
     public String getRule() {
         return this.rule;
     }
 
-    @StringSetter("rule")
-    public void setRule(final String value) {
-        this.rule = value == null ? "" : value.trim();
-    }
-
-    @StringGetter("declaredMeeting")
     public String getDeclaredMeeting() {
         return this.declaredMeeting;
     }
 
-    @StringSetter("declaredMeeting")
-    public void setDeclaredMeeting(final String value) {
-        this.declaredMeeting = value == null ? "" : value.trim();
-    }
-
     /** B.ride.coherence_scope (9.146): `declared` or `inferred`. */
-    @StringGetter("coherenceScope")
     public String getCoherenceScope() {
         return this.coherenceScope;
-    }
-
-    @StringSetter("coherenceScope")
-    public void setCoherenceScope(final String value) {
-        this.coherenceScope = value == null ? "" : value.trim();
     }
 
     /**
@@ -371,14 +314,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * SWEPT — no local observation of pickup dwell exists — and its value is
      * never fitted.
      */
-    @StringGetter("pickupDwellSeconds")
     public double getPickupDwellSeconds() {
         return this.pickupDwellSeconds;
-    }
-
-    @StringSetter("pickupDwellSeconds")
-    public void setPickupDwellSeconds(final double value) {
-        this.pickupDwellSeconds = value;
     }
 
     /**
@@ -388,14 +325,8 @@ public final class RidePairingConfigGroup extends ReflectiveConfigGroup {
      * offered, which is the same unbounded-supply defect
      * {@code rideAvail} removed on the availability side.
      */
-    @StringGetter("maxPassengersPerVehicle")
     public int getMaxPassengersPerVehicle() {
         return this.maxPassengersPerVehicle;
-    }
-
-    @StringSetter("maxPassengersPerVehicle")
-    public void setMaxPassengersPerVehicle(final int value) {
-        this.maxPassengersPerVehicle = value;
     }
 
     /**

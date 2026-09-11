@@ -749,16 +749,19 @@ def _numeric_constants(tree):
 # --------------------------------------------------------------------------
 # 8. Java-side defaults that shadow a declared value
 # --------------------------------------------------------------------------
-# A MATSim ConfigGroup field is a config parameter when a @StringSetter names
-# it. Its Java initialiser is the value used IF THE CONFIG NEVER SETS IT - so a
+# A MATSim ConfigGroup field is a config parameter when a @StringSetter or a
+# @Parameter annotation names it. Its Java initialiser is the value used IF THE CONFIG NEVER SETS IT - so a
 # default equal to the declared value is the worst case the handover brief
 # names: right by accident, every test passing, and silently wrong the moment
 # anyone sweeps the field, because a config that lost the binding would run on
 # the Java number and report success.
 JAVA_FIELD = re.compile(
-    r'private\s+(?:static\s+)?(?:final\s+)?(?:double|int|long|float|boolean|String)\s+'
+    r'(?:private|public)\s+(?:static\s+)?(?:final\s+)?(?:double|int|long|float|boolean|String)\s+'
     r'(\w+)\s*=\s*([^;]+);')
-JAVA_SETTER = re.compile(r'@StringSetter\("([^"]+)"\)')
+# a parameter is named by a @StringSetter (the getter/setter form) or by a
+# @Parameter annotation on a public field (the field form, since #180 - the
+# pinned ReflectiveConfigGroup reads both)
+JAVA_SETTER = re.compile(r'@(?:StringSetter|Parameter)\("([^"]+)"\)')
 
 
 def _java_literal(text):

@@ -123,23 +123,23 @@ public final class ScatsPriorityProbe {
     private static Run run(final String mode, final int tramStage,
                            final int detectAt) {
         final ScatsConfigGroup params = new ScatsConfigGroup();
-        params.setRegime(ScatsConfigGroup.REGIME_FIXED_TIME);
-        params.setTargetDegreeSaturation(0.9);
-        params.setDsDeadband(0.05);
-        params.setCycleStepS(6);
-        params.setMinCycleS(60);
-        params.setMaxCycleS(150);
-        params.setDsSmoothing(0.5);
-        params.setSaturationFlowVehHLane(1900);
-        params.setMinGreenS(5);
+        params.regime = ScatsConfigGroup.REGIME_FIXED_TIME;
+        params.targetDegreeSaturation = 0.9;
+        params.dsDeadband = 0.05;
+        params.cycleStepS = 6;
+        params.minCycleS = 60;
+        params.maxCycleS = 150;
+        params.dsSmoothing = 0.5;
+        params.saturationFlowVehHLane = 1900;
+        params.minGreenS = 5;
         final TramPriorityConfigGroup priority = new TramPriorityConfigGroup();
-        priority.setMode(mode);
-        priority.setPriorityGroupId(TRAM);
-        priority.setExtensionWindowS(10);
-        priority.setDetectionDistanceM(100);
-        priority.setPriorityBudgetShare(0.2);
-        priority.setCompensationEnabled(false);
-        priority.setLatenessThresholdS(0);
+        priority.mode = mode;
+        priority.priorityGroupId = TRAM;
+        priority.extensionWindowS = 10;
+        priority.detectionDistanceM = 100;
+        priority.priorityBudgetShare = 0.2;
+        priority.compensationEnabled = false;
+        priority.latenessThresholdS = 0;
 
         final TramPriorityController.TramDetection detection =
                 new TramPriorityController.TramDetection();

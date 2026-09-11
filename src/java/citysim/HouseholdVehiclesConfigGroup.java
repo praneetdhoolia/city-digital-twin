@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * Whether a household's drivers share the cars the census says it owns.
@@ -28,33 +29,30 @@ public final class HouseholdVehiclesConfigGroup extends ReflectiveConfigGroup {
     public static final String ROSTER_CENSUS = "census";
     public static final String ROSTER_PER_PERSON = "per_person";
 
-    private String roster = ROSTER_PER_PERSON;
+    @Parameter("roster")
+    public String roster = ROSTER_PER_PERSON;
 
     public HouseholdVehiclesConfigGroup() {
         super(NAME);
     }
 
     /** B.population.vehicle_roster: `census` or `per_person`. */
-    @StringGetter("roster")
     public String getRoster() {
-        return this.roster;
-    }
-
-    @StringSetter("roster")
-    public void setRoster(final String value) {
-        this.roster = value == null || value.trim().isEmpty()
-                ? ROSTER_PER_PERSON : value.trim();
+        // an empty or blank value is the per-person default, the rule the
+        // removed setter applied (#180)
+        return this.roster == null || this.roster.trim().isEmpty()
+               ? ROSTER_PER_PERSON : this.roster.trim();
     }
 
     public boolean isCensusRoster() {
-        return ROSTER_CENSUS.equals(this.roster);
+        return ROSTER_CENSUS.equals(getRoster());
     }
 
     @Override
     public void checkConsistency(final Config config) {
         super.checkConsistency(config);
-        if (!ROSTER_CENSUS.equals(this.roster)
-                && !ROSTER_PER_PERSON.equals(this.roster)) {
+        if (!ROSTER_CENSUS.equals(getRoster())
+                && !ROSTER_PER_PERSON.equals(getRoster())) {
             throw new IllegalArgumentException(
                     "householdVehicles.roster must be one of " + ROSTER_CENSUS
                     + " | " + ROSTER_PER_PERSON

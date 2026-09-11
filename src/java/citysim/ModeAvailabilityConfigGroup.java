@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `modeAvailability` config module: the age gates on taxi and bike
@@ -24,14 +25,18 @@ public final class ModeAvailabilityConfigGroup extends ReflectiveConfigGroup {
 
     public static final String NAME = "modeAvailability";
 
-    private int taxiMinAge = 0;
-    private int bikeMinAge = 0;
+    @Parameter("taxiMinAge")
+    public int taxiMinAge = 0;
+    @Parameter("bikeMinAge")
+    public int bikeMinAge = 0;
     /** NaN until the config sets it. The DECLARED value is 0.0 (the bound
      *  disabled), so a Java default of 0.0 would be right by accident and
      *  would hide a wiring that had stopped working - which is exactly what
      *  check_hardcoding.py refuses. NaN cannot be mistaken for a decision. */
-    private double walkFeasibleKm = Double.NaN;
-    private double bikeFeasibleKm = Double.NaN;
+    @Parameter("walkFeasibleKm")
+    public double walkFeasibleKm = Double.NaN;
+    @Parameter("bikeFeasibleKm")
+    public double bikeFeasibleKm = Double.NaN;
 
     public ModeAvailabilityConfigGroup() {
         super(NAME);
@@ -48,48 +53,24 @@ public final class ModeAvailabilityConfigGroup extends ReflectiveConfigGroup {
      * agent a sixty-kilometre walk and charge them fifteen hours for it. Zero
      * disables the bound and reproduces every arm before 9.106.
      */
-    @StringGetter("walkFeasibleKm")
     public double getWalkFeasibleKm() {
         return this.walkFeasibleKm;
     }
 
-    @StringSetter("walkFeasibleKm")
-    public void setWalkFeasibleKm(final double value) {
-        this.walkFeasibleKm = value;
-    }
-
     /** The same bound for bike; zero disables it. */
-    @StringGetter("bikeFeasibleKm")
     public double getBikeFeasibleKm() {
         return this.bikeFeasibleKm;
     }
 
-    @StringSetter("bikeFeasibleKm")
-    public void setBikeFeasibleKm(final double value) {
-        this.bikeFeasibleKm = value;
-    }
-
-    @StringGetter("taxiMinAge")
     public int getTaxiMinAge() {
         return this.taxiMinAge;
-    }
-
-    @StringSetter("taxiMinAge")
-    public void setTaxiMinAge(final int value) {
-        this.taxiMinAge = value;
     }
 
     /** Minimum age at which `bike` is in the choice set; 0 disables the
      * gate. Declared as {@code B.population.bike_min_age}, composing with
      * the CWANZ ownership draw ({@code B.population.bike_available_rate}). */
-    @StringGetter("bikeMinAge")
     public int getBikeMinAge() {
         return this.bikeMinAge;
-    }
-
-    @StringSetter("bikeMinAge")
-    public void setBikeMinAge(final int value) {
-        this.bikeMinAge = value;
     }
 
     @Override

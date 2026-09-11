@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `bikeStress` config module: whether motor-traffic stress reaches
@@ -41,8 +42,10 @@ public final class BikeStressConfigGroup extends ReflectiveConfigGroup {
      * {@link TelemetryConfigGroup} lesson). */
     private static final double UNSET = -1.0;
 
-    private String representation = REPRESENTATION_ABSENT;
-    private double penaltyUtilsPerHour = UNSET;
+    @Parameter("representation")
+    public String representation = REPRESENTATION_ABSENT;
+    @Parameter("penaltyUtilsPerHour")
+    public double penaltyUtilsPerHour = UNSET;
 
     public BikeStressConfigGroup() {
         super(NAME);
@@ -52,28 +55,16 @@ public final class BikeStressConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_FELT_TIME.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
-    }
-
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
     }
 
     /** Utils per felt EXTRA hour of cycling on a stressed link:
      * trip-weighted VOT x C.time_weights.beta_bike_mode x
      * marginalUtilityOfMoney, derived by the emitter and recorded in
      * {@code _config.json} like every other derived scoring value. */
-    @StringGetter("penaltyUtilsPerHour")
     public double getPenaltyUtilsPerHour() {
         return this.penaltyUtilsPerHour;
-    }
-
-    @StringSetter("penaltyUtilsPerHour")
-    public void setPenaltyUtilsPerHour(final double value) {
-        this.penaltyUtilsPerHour = value;
     }
 
     @Override

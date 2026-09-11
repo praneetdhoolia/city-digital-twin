@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The {@code serviceQuality} module: what a passenger pays for a service's
@@ -92,16 +93,20 @@ public final class ServiceQualityConfigGroup extends ReflectiveConfigGroup {
     public static final String REPRESENTATION_HEADWAY = "headway";
     public static final String REPRESENTATION_BOTH = "headway_and_reliability";
 
-    private String representation = REPRESENTATION_ABSENT;
+    @Parameter("representation")
+    public String representation = REPRESENTATION_ABSENT;
     /**
      * NO DEFAULTS. Each is a derived price the emitter computes from the
      * already-declared VOT identity; a literal here would be the same value
      * decided in two places (check_hardcoding.py category 6).
      */
-    private double headwayUtilsPerMin = Double.NaN;
-    private double reliabilityUtilsPerMin = Double.NaN;
+    @Parameter("headwayUtilsPerMin")
+    public double headwayUtilsPerMin = Double.NaN;
+    @Parameter("reliabilityUtilsPerMin")
+    public double reliabilityUtilsPerMin = Double.NaN;
     /** The longest headway a single-departure route may be charged for. */
-    private double headwayCapMin = Double.NaN;
+    @Parameter("headwayCapMin")
+    public double headwayCapMin = Double.NaN;
 
     public ServiceQualityConfigGroup() {
         super(NAME);
@@ -116,44 +121,20 @@ public final class ServiceQualityConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_BOTH.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
     }
 
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
-    }
-
-    @StringGetter("headwayUtilsPerMin")
     public double getHeadwayUtilsPerMin() {
         return this.headwayUtilsPerMin;
     }
 
-    @StringSetter("headwayUtilsPerMin")
-    public void setHeadwayUtilsPerMin(final double value) {
-        this.headwayUtilsPerMin = value;
-    }
-
-    @StringGetter("reliabilityUtilsPerMin")
     public double getReliabilityUtilsPerMin() {
         return this.reliabilityUtilsPerMin;
     }
 
-    @StringSetter("reliabilityUtilsPerMin")
-    public void setReliabilityUtilsPerMin(final double value) {
-        this.reliabilityUtilsPerMin = value;
-    }
-
-    @StringGetter("headwayCapMin")
     public double getHeadwayCapMin() {
         return this.headwayCapMin;
-    }
-
-    @StringSetter("headwayCapMin")
-    public void setHeadwayCapMin(final double value) {
-        this.headwayCapMin = value;
     }
 
     @Override

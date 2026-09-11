@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `taxiFleet` config module: taxi as a FINITE fleet (DECISIONS.md 9.99,
@@ -49,11 +50,16 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
     /** A finite fleet: a request unserved by any vehicle is refused. */
     public static final String REPRESENTATION_FLEET = "finite_fleet";
 
-    private String representation = "";
-    private double fleetSize = UNSET;
-    private double maxWaitMinutes = UNSET;
-    private double deadheadMinutes = UNSET;
-    private boolean remodeRefused = false;
+    @Parameter("representation")
+    public String representation = "";
+    @Parameter("fleetSize")
+    public double fleetSize = UNSET;
+    @Parameter("maxWaitMinutes")
+    public double maxWaitMinutes = UNSET;
+    @Parameter("deadheadMinutes")
+    public double deadheadMinutes = UNSET;
+    @Parameter("remodeRefused")
+    public boolean remodeRefused = false;
 
     public TaxiFleetConfigGroup() {
         super(NAME);
@@ -66,14 +72,8 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
      * 9.99 exactly, which is what makes the fleet's effect measurable rather
      * than asserted.
      */
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
-    }
-
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
     }
 
     public boolean isFleet() {
@@ -88,14 +88,8 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
      * small city, it is a city whose capacities were scaled, and a full-scale
      * fleet serving a tenth of the demand would not constrain anything.
      */
-    @StringGetter("fleetSize")
     public double getFleetSize() {
         return this.fleetSize;
-    }
-
-    @StringSetter("fleetSize")
-    public void setFleetSize(final double value) {
-        this.fleetSize = value;
     }
 
     /**
@@ -105,14 +99,8 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
      * is what makes the fleet bind. Without it a finite fleet would only delay
      * every request rather than turning any of them away.
      */
-    @StringGetter("maxWaitMinutes")
     public double getMaxWaitMinutes() {
         return this.maxWaitMinutes;
-    }
-
-    @StringSetter("maxWaitMinutes")
-    public void setMaxWaitMinutes(final double value) {
-        this.maxWaitMinutes = value;
     }
 
     /**
@@ -125,14 +113,8 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
      * rather than modelled as routed empty legs, and that simplification is
      * stated: the deadhead does NOT load the road network here.
      */
-    @StringGetter("deadheadMinutes")
     public double getDeadheadMinutes() {
         return this.deadheadMinutes;
-    }
-
-    @StringSetter("deadheadMinutes")
-    public void setDeadheadMinutes(final double value) {
-        this.deadheadMinutes = value;
     }
 
     /**
@@ -144,14 +126,8 @@ public final class TaxiFleetConfigGroup extends ReflectiveConfigGroup {
      * AfterMobsim so the plan keeps taxi as an alternative - a refusal must
      * not be a one-way ratchet, which is the defect 9.81 records.
      */
-    @StringGetter("remodeRefused")
     public boolean isRemodeRefused() {
         return this.remodeRefused;
-    }
-
-    @StringSetter("remodeRefused")
-    public void setRemodeRefused(final boolean value) {
-        this.remodeRefused = value;
     }
 
     @Override
