@@ -57,6 +57,7 @@ import hts_purpose as _hts_purpose
 import sys as _sys
 _sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry as _registry  # noqa: E402
+import subpopulations  # noqa: E402
 from registry import param_config as _param_config  # noqa: E402
 
 MATSIM = _city.path('networks/matsim')
@@ -1788,13 +1789,15 @@ def config_runtime(cfg, scoring, day, paths):
     # Income-dependent money sensitivity (9.138, #108): the exponent and the
     # representation gate arrive by their declared matsim_param bindings; the
     # exclusion list is the demand builder's own non-resident subpopulation
-    # vocabulary, which is a property of the plans, not a registry value.
+    # vocabulary, which is a property of the plans, not a registry value -
+    # and it is imported from the one module that names it, so the writer
+    # and this emitter cannot drift apart.
     if cfg.get('C.income.representation') == 'person_marginal_utility_of_money':
         runtime['incomeScoring.excludeSubpopulations'] = (
-            'external,freight', 'derived',
+            ','.join(subpopulations.NON_RESIDENT), 'derived',
             "the demand builder's non-resident subpopulation names "
-            '(build_matsim_plans.py): volumes, not budgets - they carry no '
-            'income attribute either, so the exclusion is belt and braces')
+            '(src/build/subpopulations.py): volumes, not budgets - they carry '
+            'no income attribute either, so the exclusion is belt and braces')
 
     # Level crossings (#68): the closures reach the router only as a
     # time-variant network, and only when the declared representation gate

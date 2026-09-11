@@ -185,16 +185,23 @@ DAY_PURPOSE_MIX = CFG.get('B.activity.day_purpose_mix')
 # working from home, so it carries the lockdown with it and cannot set the
 # value (DECISIONS.md 2.4 rules G62 out as a behavioural rate) - it bounds the
 # sweep instead. The upper bound allows for leave and illness.
-P_MANDATORY_WORK_SWEEP = (None, 0.90)     # lower bound filled from C2 at load
-P_MANDATORY_EDUCATION_SWEEP = (0.70, 0.95)
+# THE SWEEP IS THE FIELD'S OWN, not a tuple typed beside it: two per-purpose
+# brackets lived here - work (census attendance, 0.90) and education (0.70,
+# 0.95) - that no registry field declared, and the report published them as
+# if declared (eighth project report, 11 September 2026). The declared
+# interval bounds both WEEKDAY entries; `load_measured_factors` replaces the
+# work lower bound with the C2-measured census-day attendance, which is what
+# the field's own sweep_basis says bounds it.
 P_MANDATORY = CFG.get('B.activity.p_mandatory')
+P_MANDATORY_WORK_SWEEP = tuple(CFG.sweep('B.activity.p_mandatory'))
+P_MANDATORY_EDUCATION_SWEEP = tuple(CFG.sweep('B.activity.p_mandatory'))
 
 # Probability a tour includes an intermediate stop, by tour purpose. This is
 # what creates genuine sub-tours, and therefore what lets MATSim's mode choice
 # vary within a day rather than for the whole day at once. Assumed.
 P_INTERMEDIATE_STOP = CFG.get('B.activity.p_intermediate_stop')
 P_SECOND_STOP = CFG.get('B.activity.p_second_stop')
-P_SECOND_STOP_SWEEP = (0.12, 0.40)
+P_SECOND_STOP_SWEEP = tuple(CFG.sweep('B.activity.p_second_stop'))
 
 # An escort tour is made by the person doing the driving, so a non-licence
 # holder cannot make one. Derived from the same identity as the `ride` driver
@@ -301,8 +308,8 @@ BALANCE_TOL = CFG.get('B.activity.balancing_tolerance')
 # Share of an under-12's drawn secondary tours that are actually made alone.
 # Applied as per-tour thinning, not as a scaling of the count.
 CHILD_TOUR_RETENTION = CFG.get('B.activity.child_tour_retention')
-CHILD_TOUR_RETENTION_SWEEP = (0.25, 0.60)
-P_INTERMEDIATE_SWEEP = (0.10, 0.35)
+CHILD_TOUR_RETENTION_SWEEP = tuple(CFG.sweep('B.activity.child_tour_retention'))
+P_INTERMEDIATE_SWEEP = tuple(CFG.sweep('B.activity.p_intermediate_stop'))
 
 # Straight-line to network distance, used to compare the gravity model against
 # the HTS journey distances, which are network distances. **Measured**, not
@@ -2541,6 +2548,16 @@ def through_gates():
     name_key = edges['name'].astype(str).str.strip().str.lower().to_numpy()
 
     gates = []
+    # EVERY CANDIDATE CROSSING IS ACCOUNTED FOR. The three `continue`s below
+    # used to drop a crossing silently, so "3 gates survived" was 3 out of an
+    # unreported number and a corridor lost to the name-match rule could not
+    # be told from one that never crossed the boundary (eighth project
+    # report, 11 September 2026). Counted by reason and by road, and written
+    # to the report beside the gates that survived.
+    dropped = collections.OrderedDict(
+        no_outward_evidence=collections.Counter(),
+        no_same_named_calibration_station=collections.Counter(),
+        station_beyond_corridor_km=collections.Counter())
     for k in np.flatnonzero(cross):
         inside_start = bool(s_in[k])
         row = edges.iloc[k]
@@ -2553,14 +2570,17 @@ def through_gates():
                    | ((out_d_e[mask] >= THROUGH_OUTSIDE_MIN_M)
                       & (np.hypot(exe[mask] - gx, eye[mask] - gy) <= near)))
         if not bool(outward.any()):
+            dropped['no_outward_evidence'][str(row['name'])] += 1
             continue
         same = t[t.road_key == road_key]
         if same.empty:
+            dropped['no_same_named_calibration_station'][str(row['name'])] += 1
             continue
         pos = same.index.to_numpy()
         d = np.hypot(sx[pos] - gx, sy[pos] - gy)
         j = int(d.argmin())
         if float(d[j]) > THROUGH_CORRIDOR_KM * 1000.0:
+            dropped['station_beyond_corridor_km'][str(row['name'])] += 1
             continue
         st = same.iloc[j]
         # The gate's heavy share (DECISIONS.md 9.49): the station's own
@@ -2603,6 +2623,11 @@ def through_gates():
         codes = joined.groupby(joined.index)['SA1_CODE21'].first()
         for i, g in enumerate(kept):
             g['sa1'] = str(codes.get(i, ''))
+    through_gates.accounting = dict(
+        candidate_crossings=int(cross.sum()),
+        gates_before_corridor_collapse=len(gates),
+        gates=len(kept),
+        dropped={reason: dict(sorted(c.items())) for reason, c in dropped.items()})
     return kept
 
 
@@ -3023,6 +3048,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
                  through_corridor_match_km=THROUGH_CORRIDOR_KM,
                  through_outside_min_m=THROUGH_OUTSIDE_MIN_M,
                  through_min_separation_km=THROUGH_MIN_SEP_KM,
+                 through_gate_accounting=getattr(through_gates, 'accounting', None),
                  through_gates=[dict(road=g['road'], station=g['station_key'],
                                      name=g['station_name'],
                                      volume=g['volume'],

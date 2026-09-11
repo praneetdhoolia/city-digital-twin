@@ -51,6 +51,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from det_io import gzip_writer
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry as _registry  # noqa: E402
+import subpopulations  # noqa: E402
 CFG = _registry.load()
 # Whether `ride` is withheld from a person with nobody to drive them. Derived
 # from B1 household composition; see DECISIONS.md 15 and src/java/citysim/.
@@ -1178,8 +1179,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
             w.write('\t<person id="%d">\n' % pid)
             w.write('\t\t<attributes>\n')
             w.write('\t\t\t<attribute name="subpopulation" class="java.lang.String">'
-                    '%s</attribute>\n' % ('freight' if tier == 'freight' else
-                                          'external' if external else 'person'))
+                    '%s</attribute>\n' % subpopulations.label(tier, external))
             w.write('\t\t\t<attribute name="carAvail" class="java.lang.String">'
                     '%s</attribute>\n' % ('always' if car_av else 'never'))
             w.write('\t\t\t<attribute name="hasLicense" class="java.lang.String">'

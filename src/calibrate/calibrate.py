@@ -395,6 +395,31 @@ def audit_no_holdout(fit):
             raise SystemExit('fit block %r scored %s targets without naming '
                              'them; a statistic that does not name its targets '
                              'is not reportable' % (block, b.get('n')))
+    # THE GOAL-MODES BLOCK READS NO STATION-LEVEL ROW (#189, 12 September
+    # 2026). The heavy-rail per-mode target is a SUM over the station
+    # publication whose per-station MEANS are the pre-registered holdout;
+    # the sum is the calibration observation and the means stay shut. This
+    # asserts the block names no target id at all - its rows come from
+    # mode_targets_by_mode.csv, never from validation_targets.csv - so a
+    # future reader that scored a station mean here would be refused.
+    holdout_ids = set()
+    try:
+        import csv as _csv                                     # noqa: PLC0415
+        with open(_city.path('data/processed/validation/validation_targets.csv'),
+                  encoding='utf-8') as fh:
+            holdout_ids = {r['target_id'] for r in _csv.DictReader(fh)
+                           if r.get('split') == 'holdout'}
+    except OSError:
+        pass
+    for row in (fit.get('goal_modes') or {}).get('modes') or []:
+        named = {row.get('target_id')} | set(row.get('target_ids') or [])
+        hit = sorted(t for t in named if t and t in holdout_ids)
+        if hit:
+            raise SystemExit('goal_modes row %r scores holdout target(s) %s: '
+                             'the twelve-mode objective may sum a disclosed '
+                             'publication but may never read a pre-registered '
+                             'holdout row (DECISIONS.md 12, #189)'
+                             % (row.get('mode'), hit))
 
 
 def grid(p, n):

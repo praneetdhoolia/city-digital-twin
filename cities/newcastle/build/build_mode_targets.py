@@ -72,16 +72,31 @@ def _censored():
     return _CENSORED
 
 
+# The publication's ONE censoring form. Anything else that float() refuses is
+# a vintage this builder has not seen and must stop the build, not count as a
+# censored cell: `n.p.`, `N/A` or `-` in a future series would otherwise
+# silently add CAL.pt.censored_cell_value trips per station-month to the
+# heavy-rail target (eighth project report, 11 September 2026, area 5).
+CENSORED_CELL = re.compile(r'^less than \d+$', re.I)
+
+
 def _trip_cell(raw):
     """A Trip cell to a number: numeric text as it is, an empty cell as 0,
-    a censored cell as the declared value."""
+    the publication's censored cell ('Less than 50') as the declared value,
+    and any other text a refusal."""
     s = str(raw if raw is not None else '').replace(',', '').strip()
     if not s or s.lower() == 'nan':
         return 0.0
     try:
         return float(s)
     except ValueError:
-        return _censored()
+        if CENSORED_CELL.match(s):
+            return _censored()
+        raise SystemExit(
+            'station-entries Trip cell %r is neither a number nor the '
+            'publication\'s censored form (%r): a new vintage prints its '
+            'suppression differently, and this builder will not guess what '
+            'it means' % (raw, CENSORED_CELL.pattern))
 
 OBS = _city.path('data/processed/observed')
 HTS = _city.path('data/processed/hts')
@@ -148,7 +163,7 @@ def hts_trip_means():
     """
     year = _city.readers().survey_vintage()
     lga = _city.target_lga()
-    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm = _hts_mode()
     sel = hm[(hm.geography == 'lga')
              & (hm.area_name.str.strip() == lga)
              & (hm.FINANCIAL_YEAR.astype(str) == year)]
@@ -186,7 +201,7 @@ def hts_levels(cfg):
     """
     year = _city.readers().survey_vintage()
     lga = _city.target_lga()
-    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm = _hts_mode()
     hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
     sel = hm[(hm.geography == 'lga')
              & (hm.area_name.str.strip() == lga)
@@ -208,7 +223,7 @@ def region_trip_totals(year):
     Walk-linked rows are excluded because the survey excludes them from
     MODE_SHARE, and mixing the two bases would inflate the denominator.
     """
-    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm = _hts_mode()
     hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
     hm['TRIPS_BY_MODE'] = pd.to_numeric(hm['TRIPS_BY_MODE'], errors='coerce')
     sel = hm[(hm.geography == 'lga')
@@ -249,6 +264,19 @@ def _norm_stop(name):
     return t
 
 
+_HTS_MODE = []
+
+
+def _hts_mode():
+    """hts_mode.csv, read once per build (it was read three times)."""
+    if not _HTS_MODE:
+        _HTS_MODE.append(pd.read_csv(os.path.join(HTS, 'hts_mode.csv')))
+    return _HTS_MODE[0].copy()
+
+
+_PT_STATIONS = []
+
+
 def model_pt_stations():
     """Every rail/light-rail stop THIS CITY's own mapped schedule contains,
     with the LGA the boundary layer puts it in.
@@ -260,6 +288,8 @@ def model_pt_stations():
     the schedule does not is not this city's - the published Newcastle series
     carries a light rail stop belonging to another city entirely (9.100).
     """
+    if _PT_STATIONS:
+        return _PT_STATIONS[0]
     import geopandas as gpd
     from shapely.geometry import Point
 
@@ -285,7 +315,8 @@ def model_pt_stations():
         hit = lga[lga.geometry.contains(
             Point(float(st['stop_lon']), float(st['stop_lat'])))]
         out[key] = None if hit.empty else str(hit.iloc[0]['LGA_NAME21'])
-    return out
+    _PT_STATIONS.append(out)
+    return _PT_STATIONS[0]
 
 
 def _unbroken_months(series_by_month, ratio):
@@ -627,7 +658,7 @@ def main():
     lr_day, rail_day, rail_stations, pt_windows, rail_excluded, rail_censored = \
         disclosed_pt_boardings(cfg)
     wf = float(cfg.get('CAL.pt.weekday_factor'))
-    wf_lo, wf_hi = 1.0, 1.3
+    wf_lo, wf_hi = (float(x) for x in cfg.sweep('CAL.pt.weekday_factor'))
     add('heavy_rail', rail_day * wf,
         'boardings per weekday at the disclosed stations (all travellers)',
         'measured',
@@ -635,7 +666,14 @@ def main():
         'stations this city\'s mapped schedule contains, %s..%s, %.0f a day '
         'over all days, x CAL.pt.weekday_factor %.4f. Every traveller who '
         'boards is counted, as the publication counts them; %d published '
-        'station(s) the model cannot board are excluded%s. %s. The '
+        'station(s) the model cannot board are excluded%s. %s. THE SUM IS THE '
+        'CALIBRATION OBSERVATION AND THE PER-STATION MEANS ARE THE HOLDOUT '
+        '(decision, 12 September 2026, #189): every station-direction mean '
+        'from this publication is a pre-registered holdout row (DECISIONS.md '
+        '12), and this target reads none of them - it sums the published '
+        'entries, a different observation from any station\'s mean, so a '
+        'model can match this total with the wrong stations and the holdout '
+        'catches exactly that at the end. The '
         'composition-derived trip share this replaces (HTS "%s" PT %.1f%% x '
         'the boardings split) was %.4f%% of resident trips'
         % (len(rail_stations), pt_windows['heavy_rail'][0],
