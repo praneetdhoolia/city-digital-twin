@@ -28,7 +28,7 @@ each pointed at whole — cost forty minutes of reading before any work.
 | Board | `cities/<city>/docs/STATUS.md` | ≤ 170 hand + generated | the scoreboard, where the build is, what runs, what is next |
 | Brief | `cities/<city>/docs/NEXT_AGENT_BRIEF.md` | ≤ 180 | what expires, the lane, the traps, the approvals |
 | Position | `cities/<city>/docs/positions/<topic>.md` | ≤ 130 each | the current truth for the lane's topic, every figure sourced |
-| Record | `cities/<city>/docs/DECISIONS.md` | 13,000+ | why — one section at a time, never whole |
+| Record | `cities/<city>/docs/DECISIONS.md` | 16,000+ | why — one section at a time, never whole |
 
 **Never read `DECISIONS.md`, `SESSION_LOG.md` or `reference/CONFIG_REFERENCE.md`
 whole.** Find a section with `grep -n "^## 9\.NNN"` and read it with `sed -n`.

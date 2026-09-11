@@ -55,7 +55,6 @@
 
 ## What is open
 
-- **#93 (awaiting-run)** — the conservation fix is built and the plans rebuilt on it (§9.140); what closes it is a gate reading at or under the identity on the F24 package.
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
 - **The crossings' closure effect has never been measured on a converged arm** (§9.77, §9.90). #68 is closed on its build scope; what is left is a reading, and no arm since F4 has reached a horizon to take it from.
 - The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 60 s — the registry is the newer statement and wins; the CSV text should be regenerated.

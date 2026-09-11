@@ -5,7 +5,7 @@
 The dated reports in the parent directory are prunable files — a reader may
 delete one, and two were deleted on 7 September 2026. This directory is the
 durable half. `/project-report`'s two research phases
-([`.claude/skills/project-report/SKILL.md`](../../../.claude/skills/project-report/SKILL.md),
+([`.claude/skills/project-report/SKILL.md`](../../../../../.claude/skills/project-report/SKILL.md),
 Phases 6 and 7) **read these files before running a single search** and spend
 their budget only on what the files do not already answer.
 

@@ -1,13 +1,15 @@
 ---
 name: project-report
-description: Documents the entire city-digital-twin project in one call and places it in its field - every tracked file read by area with file:line findings and ratings, a code redundancy / quality / efficiency / simplification pass, a simulator performance pass over every run's own timing, the twelve modes one row each with what each is simulated by, what data it has and lacks and what would move it, the dated timeline of every stage and milestone from day 0, every PR, issue (past, present and the risks that are not yet issues), CI run and run on disk, an audit of whether the previous reports were followed and were worth their cost, plus two research passes that start from a standing reference library under docs/reports/reference/ and search only what it cannot already answer - every comparable city twin and platform with what each does best, and every factor a real-world decision simulator must contain scored against this model - lodged as one dated, self-contained HTML report under docs/reports/. Use when the user runs /project-report, asks for "a full project assessment", "a code-quality review of everything", "a milestone report across all PRs", "how do we compare to other city twins", "what are we missing", "could this be simpler", "is more data needed", or "where does the whole project stand". Not /onboard and not /handoff - it reads and changes nothing in the model, the data or the living documents.
+description: Documents the entire city-digital-twin project in one call and places it in its field - every tracked file read by area with file:line findings and ratings, a code redundancy / quality / efficiency / simplification pass, a simulator performance pass over every run's own timing, the twelve modes one row each with what each is simulated by, what data it has and lacks and what would move it, the dated timeline of every stage and milestone from day 0, every PR, issue (past, present and the risks that are not yet issues), CI run and run on disk, an audit of whether the previous reports were followed and were worth their cost, plus two research passes that start from a standing reference library under cities/<city>/docs/reports/reference/ and search only what it cannot already answer - every comparable city twin and platform with what each does best, and every factor a real-world decision simulator must contain scored against this model - lodged as one dated, self-contained HTML report under cities/<city>/docs/reports/. Use when the user runs /project-report, asks for "a full project assessment", "a code-quality review of everything", "a milestone report across all PRs", "how do we compare to other city twins", "what are we missing", "could this be simpler", "is more data needed", or "where does the whole project stand". Not /onboard and not /handoff - it reads and changes nothing in the model, the data or the living documents.
 ---
 
 # /project-report — the whole project, assessed, placed in its field, and lodged
 
 Produce **one dated HTML report** at `REPORT_DIR/<yyyymmddThhmmss>_project_report.html`,
-where `REPORT_DIR` is `docs/reports/` (named here once; every other mention in
-this file means this directory). In it every number is drawn from an artefact,
+where `REPORT_DIR` is `cities/<city>/docs/reports/` (named here once; every
+other mention in this file means this directory - a report assesses ONE
+city's study, so it lives under that city's documents; the six reports before
+11 September 2026 sat under the framework's `docs/` and were moved). In it every number is drawn from an artefact,
 every code finding cites `file:line`, every milestone cites its pull request
 or record section, every research claim cites the source it was read from
 this time, and a reader who has never opened the repository can say what the
@@ -24,6 +26,17 @@ the user decides on. The report file lands through the session's one pull
 request at `/handoff`, like any other change. The only files it writes are
 the dated report, the `REPORT_DIR/README.md` index and the reference library
 at `REPORT_DIR/reference/` that Phases 6 and 7 keep.
+
+**When a report runs: once per READING, not once per session.** The eighth
+report's audit of its own series found nine reports in eight days, three of
+them on 7 September 4.5 h and 5.7 h apart with one PR and no reading between
+them, 125 findings repeated across consecutive reports and 76 of 105
+recommendations taken without the goal count moving — because between two
+readings a report can add instruments and nothing else. A pass is warranted
+after an arm reaches a gate or its horizon, after a family opens on a rebuild,
+or when the user asks and says why; the index row names the reading the
+report followed. A second report on the same reading is a cost, not an
+instrument.
 
 ```
 Project report:

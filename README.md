@@ -217,6 +217,11 @@ recorded as unscored, with the reason, in
 
 Full rows, every unscorable target and the parameter provenance:
 [`CALIBRATION_REPORT.md`](cities/newcastle/docs/reference/CALIBRATION_REPORT.md).
+**Licence:** the figures and the report are derived from the synthetic plans, which
+carry the OSM-derived network's share-alike ancestry (`share_alike_ancestor` yes in
+the manifest, `DECISIONS.md` §9.158), so they are published under **ODbL 1.0**, not
+the package's CC-BY 4.0 — the boundary the manifest keeps visible applies to what
+is drawn from the data as much as to the data.
 Regenerate the figures and the report together after a new arm:
 
 ```bash

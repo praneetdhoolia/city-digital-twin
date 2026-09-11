@@ -1,7 +1,7 @@
 # Project reports
 
 Dated, self-contained assessments of the whole repository, produced by the
-`/project-report` skill ([`.claude/skills/project-report/SKILL.md`](../../.claude/skills/project-report/SKILL.md)).
+`/project-report` skill ([`.claude/skills/project-report/SKILL.md`](../../../../.claude/skills/project-report/SKILL.md)).
 Since 11 September 2026 a report is rendered by `render_report.py` from the lanes' JSON; the six before it were written by hand. Each is a reading of one commit: every file by area, code quality with
 file-and-line evidence, the milestones of every pull request and commit, the
 issue ledger, CI, runs, data and documents. Newest first; a report is never
