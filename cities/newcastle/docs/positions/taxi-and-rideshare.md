@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
+- **A refused request walks the WHOLE trip, and the engine finds its trips by routing mode** (§9.167, #167): under `accessEgressModeToLink` `TaxiFleetEngine.refuse` found no taxi trip at all (it matched the leg's mode, and the trip's identity is its routing mode) and re-moded one leg where it did; both go through `RemodeRestore.remodeTrip` now.
 - **One mode, `taxi`, standing for taxi and rideshare together.** It blends the two services at `B.taxi.rideshare_trip_share` 0.66 (IPART 2025 last-trip split, swept 0.4–0.8, §9.76). The two are never separate modes: no observation splits them (§9.21, §9.42).
 - **It is a physical vehicle on the road.** `taxi` is in `RUN.qsim.main_mode`, `RUN.mode_choice.modes` and `RUN.routing.network_modes`; its body restates `RUN.qsim.car_vehicle` exactly, PCE 1.0, because a hired car is a car (§9.86, family F11). Travel time is bound to the congested car network so a taxi cannot out-run the traffic it rides in (§9.77).
 - **It is served by a finite fleet.** `A.taxi.fleet_representation` = `finite_fleet` (members `absent`, `finite_fleet`; `absent` reproduces every arm before §9.99). `citysim.TaxiFleetEngine` (`src/java/citysim/TaxiFleetEngine.java`) collects every taxi leg at `BeforeMobsim`, sorts by departure, and serves greedily from the earliest-free vehicle, which is the fleet's best case (§9.99, family F13).
@@ -59,6 +60,7 @@
 
 ## History
 
+- §9.167 — the refusal re-modes the whole trip
 - §9.166 — the fare probe did reach the run (config_runtime); P2P counts refused by 9.42
 - §9.163 — taxi has 51.6 pp of headroom; the excess is a level
 - §9.158 — the loop reaches taxi's supply and price; no ASC step, no independent target

@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
+- **THE ENGINES RE-MODE A TRIP WHOLE, AND THE CLOCK OVERRIDE IS RESTORED AFTER THE MOBSIM** (§9.167, #167, #187, decision "execution-time override, restored at AfterMobsim"). Under `accessEgressModeToLink` a ride trip is five legs carrying `routingMode` ride; `RidePairingEngine` re-moded one of them (970 unpaired legs on the 1 % probe) and `PrepareForMobsim` refused the trip - the failure §9.164 placed inside MATSim's pre-simulation pass. `RemodeRestore.remodeTrip` replaces the whole trip. The activity end-time override the engine writes for a driver is an execution-time override: the plan keeps the passenger's own declared time, the engine writes the driver's clock for the iteration and restores it at AfterMobsim through an activity still in the selected plan, logging the count. `HouseholdVehicleRoster`'s per-iteration remap measured 0 restores over 398 iterations and is a WARN naming the person.
 **Demand — four binder passes in `src/build/build_activity_chains.py`, each naming the driver.**
 
 - Escort: an HX tour binds to the household member it escorts, at that person's own school and own hour (§9.46); an unbound HX tour is re-targeted to a passenger in a driverless household within `B.activity.escort_binding_nonhh_scope` = `same_zone`, with the serving leg re-timed to the passenger's departure (§9.60).
@@ -109,6 +110,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.167 — whole-trip re-mode; the clock override restored after the mobsim
 - §9.166 — trim() removes through the declared selector; arm 0 lost
 - §9.164 — the declared passenger is put on ride at the demand
 - §9.163 — the target is above the choice set; the passenger drives

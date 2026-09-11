@@ -340,10 +340,10 @@
       },
       "signal_capacity_links": 54,
       "gradient": {
-        "links": 382735,
+        "links": 382734,
         "no_elevation": 154236,
         "flat": 48643,
-        "stamped": 179856
+        "stamped": 179855
       },
       "bike_stress": {
         "bike_links": 265523,
@@ -400,9 +400,9 @@
           ],
           "vehicle_types_unpatched": [],
           "vehicle_refs": 2139,
-          "stop_facilities_kept": 4136,
+          "stop_facilities_kept": 4134,
           "stop_facilities_dropped": 72,
-          "transfer_relations_kept": 1304,
+          "transfer_relations_kept": 1294,
           "transfer_relations_dropped": 28
         },
         "SAT": {
@@ -451,9 +451,9 @@
           "vehicle_types_unpatched": [],
           "vehicle_refs": 1128,
           "stop_facilities_kept": 2150,
-          "stop_facilities_dropped": 2058,
+          "stop_facilities_dropped": 2056,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1054
         },
         "SUN": {
           "routes_kept": 314,
@@ -501,9 +501,9 @@
           "vehicle_types_unpatched": [],
           "vehicle_refs": 1002,
           "stop_facilities_kept": 2170,
-          "stop_facilities_dropped": 2038,
+          "stop_facilities_dropped": 2036,
           "transfer_relations_kept": 258,
-          "transfer_relations_dropped": 1074
+          "transfer_relations_dropped": 1064
         }
       }
     },
@@ -892,10 +892,10 @@
       },
       "signal_capacity_links": 54,
       "gradient": {
-        "links": 382734,
+        "links": 382735,
         "no_elevation": 154236,
         "flat": 48643,
-        "stamped": 179855
+        "stamped": 179856
       },
       "bike_stress": {
         "bike_links": 265523,
@@ -952,9 +952,9 @@
           ],
           "vehicle_types_unpatched": [],
           "vehicle_refs": 2139,
-          "stop_facilities_kept": 4134,
+          "stop_facilities_kept": 4136,
           "stop_facilities_dropped": 72,
-          "transfer_relations_kept": 1294,
+          "transfer_relations_kept": 1304,
           "transfer_relations_dropped": 28
         },
         "SAT": {
@@ -1003,9 +1003,9 @@
           "vehicle_types_unpatched": [],
           "vehicle_refs": 1128,
           "stop_facilities_kept": 2150,
-          "stop_facilities_dropped": 2056,
+          "stop_facilities_dropped": 2058,
           "transfer_relations_kept": 268,
-          "transfer_relations_dropped": 1054
+          "transfer_relations_dropped": 1064
         },
         "SUN": {
           "routes_kept": 314,
@@ -1053,9 +1053,9 @@
           "vehicle_types_unpatched": [],
           "vehicle_refs": 1002,
           "stop_facilities_kept": 2170,
-          "stop_facilities_dropped": 2036,
+          "stop_facilities_dropped": 2038,
           "transfer_relations_kept": 258,
-          "transfer_relations_dropped": 1064
+          "transfer_relations_dropped": 1074
         }
       }
     },

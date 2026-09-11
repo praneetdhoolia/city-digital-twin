@@ -416,6 +416,22 @@ def apply_path_access_tags(net_path, cfg=None):
         return head[:mm.start()] + 'modes="%s"' % ','.join(sorted(modes)) + head[mm.end():] + tail
 
     body = LINK_BLOCK_RE.sub(rewrite, xml)
+    if counts.get('links_dropped_no_mode_left'):
+        # a dropped link can leave its end nodes attached to nothing;
+        # pt2matsim removed such nodes before this pass ran, and a node no
+        # link references is what the package check refuses (784 of them
+        # on the first footpath build, 12 September 2026)
+        used = set()
+        for m in LINK_HEAD_RE.finditer(body):
+            used.add(m.group(2))
+            used.add(m.group(3))
+
+        def drop_orphan(m):
+            if m.group(1) in used:
+                return m.group(0)
+            counts['nodes_dropped_orphaned'] += 1
+            return ''
+        body = NODE_RE.sub(drop_orphan, body)
     with open(net_path, 'wb') as fh:
         g = gzip.GzipFile(fileobj=fh, mode='wb', mtime=0)
         g.write(body.encode('utf-8'))
@@ -423,6 +439,10 @@ def apply_path_access_tags(net_path, cfg=None):
     log('   access tags over %d path links: %s' % (
         counts.pop('path_links', 0), dict(counts) or 'no override fired'))
     return dict(counts)
+
+
+LINK_HEAD_RE = re.compile(r'<link id="([^"]+)" from="([^"]+)" to="([^"]+)"')
+NODE_RE = re.compile(r'\s*<node id="([^"]+)"[^>]*?(?:/>|>.*?</node>)', re.S)
 
 
 # ---------------------------------------------------------------------------
