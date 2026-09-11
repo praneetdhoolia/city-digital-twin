@@ -1,13 +1,15 @@
 ---
 name: project-report
-description: Documents the entire city-digital-twin project in one call and places it in its field - every tracked file read by area with file:line findings and ratings, a code redundancy / quality / efficiency pass, a simulator performance pass over every run's own timing, the dated timeline of every stage and milestone from day 0, every PR, issue, CI run and run on disk, plus two research passes that start from a standing reference library under docs/reports/reference/ and search only what it cannot already answer - every comparable city twin and platform with what each does best, and every factor a real-world decision simulator must contain scored against this model - lodged as one dated, self-contained HTML report under docs/reports/. Use when the user runs /project-report, asks for "a full project assessment", "a code-quality review of everything", "a milestone report across all PRs", "how do we compare to other city twins", "what are we missing", or "where does the whole project stand". Not /onboard and not /handoff - it reads and changes nothing in the model, the data or the living documents.
+description: Documents the entire city-digital-twin project in one call and places it in its field - every tracked file read by area with file:line findings and ratings, a code redundancy / quality / efficiency / simplification pass, a simulator performance pass over every run's own timing, the twelve modes one row each with what each is simulated by, what data it has and lacks and what would move it, the dated timeline of every stage and milestone from day 0, every PR, issue (past, present and the risks that are not yet issues), CI run and run on disk, an audit of whether the previous reports were followed and were worth their cost, plus two research passes that start from a standing reference library under cities/<city>/docs/reports/reference/ and search only what it cannot already answer - every comparable city twin and platform with what each does best, and every factor a real-world decision simulator must contain scored against this model - lodged as one dated, self-contained HTML report under cities/<city>/docs/reports/. Use when the user runs /project-report, asks for "a full project assessment", "a code-quality review of everything", "a milestone report across all PRs", "how do we compare to other city twins", "what are we missing", "could this be simpler", "is more data needed", or "where does the whole project stand". Not /onboard and not /handoff - it reads and changes nothing in the model, the data or the living documents.
 ---
 
 # /project-report — the whole project, assessed, placed in its field, and lodged
 
 Produce **one dated HTML report** at `REPORT_DIR/<yyyymmddThhmmss>_project_report.html`,
-where `REPORT_DIR` is `docs/reports/` (named here once; every other mention in
-this file means this directory). In it every number is drawn from an artefact,
+where `REPORT_DIR` is `cities/<city>/docs/reports/` (named here once; every
+other mention in this file means this directory - a report assesses ONE
+city's study, so it lives under that city's documents; the six reports before
+11 September 2026 sat under the framework's `docs/` and were moved). In it every number is drawn from an artefact,
 every code finding cites `file:line`, every milestone cites its pull request
 or record section, every research claim cites the source it was read from
 this time, and a reader who has never opened the repository can say what the
@@ -25,14 +27,25 @@ request at `/handoff`, like any other change. The only files it writes are
 the dated report, the `REPORT_DIR/README.md` index and the reference library
 at `REPORT_DIR/reference/` that Phases 6 and 7 keep.
 
+**When a report runs: once per READING, not once per session.** The eighth
+report's audit of its own series found nine reports in eight days, three of
+them on 7 September 4.5 h and 5.7 h apart with one PR and no reading between
+them, 125 findings repeated across consecutive reports and 76 of 105
+recommendations taken without the goal count moving — because between two
+readings a report can add instruments and nothing else. A pass is warranted
+after an arm reaches a gate or its horizon, after a family opens on a rebuild,
+or when the user asks and says why; the index row names the reading the
+report followed. A second report on the same reading is a cost, not an
+instrument.
+
 ```
 Project report:
 - [ ] Phase 0  Ground: gate, tree, digest, the previous report
 - [ ] Phase 1  Collect the mechanical half (three scripts)
-- [ ] Phase 2  Code: every area read, plus the redundancy / quality / efficiency pass
+- [ ] Phase 2  Code: every area read, plus the redundancy / quality / efficiency / simplification pass
 - [ ] Phase 3  Simulator: the performance pass
-- [ ] Phase 4  History: every PR, the commit log, the timeline from day 0
-- [ ] Phase 5  Documents, process and controls
+- [ ] Phase 4  History: every PR, the commit log, the timeline from day 0, the report series
+- [ ] Phase 5  Documents (placement, currency), controls, the issue ledger
 - [ ] Phase 6  The field: the reference library refreshed, only its gaps searched
 - [ ] Phase 7  The factors: the library's literature half, this repository's status half
 - [ ] Phase 8  Synthesise: findings ranked, ratings evidenced, deltas since last time
@@ -153,12 +166,27 @@ is examined for on top of the project's hard constraints in
 | Acquisition and data | `cities/<city>/extract/`, `data/MANIFEST.*`, every `provenance_*.json`, the build reports, the validation targets, the data dictionary | typed-in extents, blank licence or source cells, observed labels on derived values, hosts outside the sandbox allowlist, the holdout's enforcement |
 | MATSim extensions | `src/java/`, `src/java_signals/` | thread safety under parallel events and replanning, per-iteration memory growth, plan mutation outside sanctioned boundaries, unseeded Random, id-suffix parsing, string work inside event handlers, anything that could silently teleport a leg |
 
+**The simplification lens.** For every module in its area the reviewer also
+asks the question the optimisation ledger does not: *could this be greatly
+simpler?* One line per module — what it does in a sentence, what the simplest
+correct implementation of that would need (lines, dependencies, a library that
+already does it, a MATSim feature that already does it), and the gap between
+that and what is there. A module whose gap is large gets a ledger row of kind
+*simplification*. The lens is aimed at structure, not style: a layer that
+exists only to feed another layer, an abstraction with one consumer, a script
+that re-derives what an artefact already holds, three readers of one file
+where one pass would do, a bootstrap every script repeats (a `sys.path` edit
+in every file is one such), a bespoke mechanism where the engine ships one.
+**Retaining every function the module has is the constraint**; a
+simplification that drops a behaviour is a defect proposal and is filed as
+such.
+
 **The optimisation ledger.** Every reviewer returns, for its area, one row per
 candidate change under these headings, and nothing vaguer than a row:
 
 | Column | Meaning |
 |---|---|
-| kind | *redundancy* (duplicated code, same helper in N files, dead definition, dead module, unused import, unwired registry field) · *quality* (long / complex / deeply nested function, swallowed exception, silent fallback, missing test, unclear ownership) · *efficiency* (repeated parse, nested loop over the population, row-wise pandas, subprocess in a loop, regex compiled per call, whole-file read of a growing log) |
+| kind | *redundancy* (duplicated code, same helper in N files, dead definition, dead module, unused import, unwired registry field) · *quality* (long / complex / deeply nested function, swallowed exception, silent fallback, missing test, unclear ownership) · *efficiency* (repeated parse, nested loop over the population, row-wise pandas, subprocess in a loop, regex compiled per call, whole-file read of a growing log) · *simplification* (a component that could be a fraction of its size with every function kept, a bespoke mechanism the engine or a library already provides, a layer with one consumer) |
 | where | `file:line` (both sites for a duplicate) |
 | what it costs today | measured where an artefact holds it (a build report's wall time, a log's read size, a line count), reasoned otherwise, and marked which |
 | the change | one sentence, concrete enough to file |
@@ -212,7 +240,7 @@ measurement that needs a run is written as "unmeasured — needs a probe arm"**,
 never estimated as though it had been made. The pass launches nothing and
 recompiles nothing.
 
-## Phase 4 — History: every PR, the commit log, the timeline from day 0
+## Phase 4 — History: every PR, the commit log, the timeline from day 0, the report series
 
 One historian reads `prs_full.md` end to end and returns a **ledger with one
 block per PR**: delivered (model, data, harness, documents), measured (numbers
@@ -249,6 +277,23 @@ commit of each `P<n>` stage — the historian builds:
    dates, machine hours per family from `performance.json`, PRs per week; and
    a narrative of at most twelve lines saying what happened when.
 
+**The report process itself.** Every previous report in `REPORT_DIR/README.md`
+is a recommendation set with a date; this section reads the whole series and
+answers, with counts: how many reports, how many days apart, how many
+recommendations each made; for every recommendation of every previous report,
+whether it was **taken** (name the PR or commit), **overtaken** (the model moved
+so it no longer applies), **repeated** (issued again by a later report without
+being taken — count how many times) or **open**; how many findings were
+re-reported in two, three or more consecutive reports; what a report costs
+(agents, search calls, the size of the file lodged); and what the project
+measurably did between reports (PRs merged, arms launched, arms that reached
+their horizon, modes that entered or left the 10 % band). The verdict says
+whether the reports are being followed, whether following them has moved the
+scoreboard or the gate count, and whether the cadence is right — a report a
+day that repeats itself is a cost, not an instrument. The verdict is written
+against this report too: it names the recommendations below that are repeats.
+
+
 ## Phase 5 — Documents, process and controls
 
 One reviewer reads every living and archived document (never `DECISIONS.md`
@@ -264,6 +309,29 @@ hook or workflow could do with the permissions it holds and whether it needs
 them, which dependencies and toolchain versions are pinned by hash and which
 by name, and whether the ODbL / CC-BY boundary is visible in every artefact
 that crosses it.
+
+**Documents: placed right, and current.** For every document the reviewer
+states whether it is in the layer its content belongs to (`GOAL.md` /
+the board / a position page / the record / the framework's `docs/` / a city's
+`docs/` / a skill) and names each one that is not, with where it belongs; and
+for every living document, the newest artefact it describes and whether the
+description still holds. A document is *misplaced* when a reader looking for
+its content would open a different file first, and *stale* when an artefact it
+describes has moved since its stamp.
+
+**The issue ledger: past, present, upcoming.** From `issues_full.md` and the
+GitHub API output in `metrics.json`: (a) **past** — every closed issue with its
+open and close dates, days open, and whether it closed on evidence (a PR, a
+run, a measurement it cites) or by decision; the median days open and the
+oldest ever; (b) **present** — every open issue with its state under
+`GOAL.md` requirement 10 (`awaiting-run` + measurement / `decision-needed` /
+`awaiting-implementation`), the run or decision it waits on, and **whether the
+record has overtaken it** (a position page or a merged PR says the thing it
+asks for is built or measured); (c) **upcoming** — every risk the reviewers of
+Phases 2, 3 and 5 raised that is not an issue yet, ranked by what it would cost
+if it fired, each with the one-line issue title it would be filed under. The
+upcoming list is the raw material for the issue-filing step that follows a
+report; it is written so a user can file it without re-deriving it.
 
 ## Phase 6 — The field: the library first, only its gaps searched
 
@@ -425,6 +493,25 @@ factors added, factors retired, literature halves newly filled).
 4. **Milestones against the goal**: for each hard requirement in
    `cities/<city>/docs/GOAL.md`, met / unmet / unmeasured, with the PR and the
    record section that decided it, and the date from the timeline.
+4b. **The twelve modes, one row each.** Built from the board's reader
+   (`report_mode_ridership.py` on the newest RESULT and, separately, on the
+   newest citable reading), the validation targets, the registry, the position
+   pages and the reviewers' reports — never from memory. Columns: modelled ·
+   target · deviation at the newest result · at the newest citable reading
+   (labelled as not a result) · **target provenance** (disclosed / derived /
+   vintage, with the file) · **how the mode is simulated** (which engine
+   carries it, physical or teleported, which legs are not) · **data it has**
+   (the observations in the package that bear on it) · **data it lacks** (the
+   observation that would settle its deviation, whether it is obtainable, and
+   from whom) · **the mechanism** the evidence names for its deviation · the
+   **controls** that exist for it (built / run / unrun, by registry key) · the
+   **next measurement**. Then a **supply-fidelity table** for the physical
+   layer the modes share — roads and lanes, speeds, signals, level crossings,
+   PT timetables and dwell, vehicles and capacity, parking, fares and
+   pricing, freight and external traffic — each row: what is real (from which
+   artefact), what is derived, what is assumed, what is absent. These two
+   tables answer, from evidence, whether more data is needed for a mode and
+   whether a more realistic implementation of the traffic system is needed.
 5. **The project in its field**: where our row sits on the validation ladder,
    what no other project attempts, what several do that we do not, and the
    factor ledger's counts (IN / PARTIAL / INERT / ASC / OUT) with the top
@@ -445,28 +532,47 @@ factors added, factors retired, literature halves newly filled).
 
 ## Phase 9 — Write, lodge, index, verify
 
-1. Load the `artifact-design` and `dataviz` skills before writing. The report
-   is a **standalone** file: full `<!doctype html>`, `<html lang="en-AU">`,
-   `<head>` with `<meta charset>` and viewport, all CSS and JS inline, fonts
-   with real fallback stacks, no external resources except optionally Google
-   Fonts, light and dark themes, no horizontal page scroll (tables inside
-   `overflow-x:auto`). Charts are inline SVG built from the data in the file.
+1. **The report is rendered, not hand-written.** Every lane writes JSON
+   (`<scratch>/reviews/phase{2,3,4,5}_*.json`, `<scratch>/research/{field,factors}.json`),
+   Phase 8 writes `<scratch>/modes_table.json` and `<scratch>/synthesis.json`
+   (verdict, method, the goal table, the merged findings and ledger, ratings,
+   since-last-report, recommendations, own verifications), and
+
+   ```bash
+   python .claude/skills/project-report/scripts/render_report.py <scratch> REPORT_DIR/<stamp>_project_report.html
+   ```
+
+   renders the whole file: a standalone `<!doctype html>`, `<html lang="en-AU">`,
+   inline CSS, Google Fonts with real fallback stacks, light and dark themes,
+   every table inside `overflow-x:auto`, the charts as inline SVG from the same
+   JSON (the per-mode deviation bars, the stage strip, the growth and
+   report-series lines), and the `report-data` block at the end. A lane's key
+   that is missing renders as a stated gap, never as an empty box, and an
+   unknown shape falls back to a generic table or list, so a lane may add a
+   field without the renderer changing. Load `artifact-design` and `dataviz`
+   before changing the renderer's CSS or charts, not before every pass: the
+   design is fixed in the script and the pass's craft goes into the JSON. The
+   six reports before 11 September 2026 were written by hand at 0.8–1.8 MB
+   each; the renderer is what makes the ninth pass cost what the eighth did.
 2. Sections, in order: masthead (date, HEAD, branch, gate result, one-paragraph
    verdict) · at-a-glance tiles · method (what was read, by whom, the rating
    rubric, the search rounds run) · **the timeline from day 0** (stage strip,
    milestone table, cadence) · repository anatomy (inventory, growth series,
    churn) · code quality by area · the ranked findings table · **the
-   optimisation ledger** (redundancy / quality / efficiency, with the
-   touches-a-result column) · **the simulator performance pass** (phase shares,
-   pace scaling, memory, writing, the ranked changes, the 250-iteration
-   verdict) · testing and CI · the PR ledger · the commit log · the issue
-   ledger · runs on disk and their cost · milestones against the goal ·
-   **the project in its field** (the survey table, the platform table, the
-   validation ladder, what the comparison says) · **the factor ledger** (by
-   layer, with the status tiles and the ranked movers) · the document and
-   process layer · in-flight work seen in the tree · **since the last report** ·
-   recommendations · appendix (rubric, sources, how this report was produced
-   and how to reproduce it, search rounds per lane).
+   optimisation ledger** (redundancy / quality / efficiency / simplification,
+   with the touches-a-result column) · **the simulator performance pass**
+   (phase shares, pace scaling, memory, writing, the ranked changes, the
+   250-iteration verdict) · testing and CI · the PR ledger · the commit log ·
+   **the issue ledger** (past, present, upcoming) · runs on disk and their
+   cost · milestones against the goal · **the twelve modes, one row each, and
+   the supply-fidelity table** · **the project in its field** (the survey
+   table, the platform table, the validation ladder, what the comparison
+   says) · **the factor ledger** (by layer, with the status tiles and the
+   ranked movers) · the document and process layer (placement and currency
+   included) · in-flight work seen in the tree · **since the last report, and
+   the report process itself** · recommendations · appendix (rubric, sources,
+   how this report was produced and how to reproduce it, search rounds per
+   lane).
 3. **Embed the data** the report was written from at the end of the file, in
    `<script type="application/json" id="report-data">`: the summaries from
    the three collectors, the findings table, the optimisation ledger,
@@ -478,8 +584,11 @@ factors added, factors retired, literature halves newly filled).
    earlier report; the directory is a dated series.
 5. Add a row for the new report to `REPORT_DIR/README.md` (create it from the
    previous report's row if absent) — newest first, with the HEAD it read and a
-   headline that states the verdict, the count of findings, the top optimisation,
-   where we sit on the validation ladder and the top missing factor.
+   headline of **at most 80 words** that states the verdict, the count of
+   findings, the top optimisation, where we sit on the validation ladder and
+   the top missing factor. The headline is an index entry, not the report:
+   every earlier row that ran to several hundred words made the index
+   unreadable, and the detail it carried is in the report it points at.
 6. **Confirm the reference library was written.** `REFERENCE_DIR/field-survey.json`
    and `factors.json` must carry this pass's stamp, and `REFERENCE_DIR/README.md`
    must state, for each file, its row count, how many rows were reused, refreshed
@@ -517,3 +626,7 @@ factors added, factors retired, literature halves newly filled).
 - Never presents a literature value as observed, never fills an `unknown`
   from memory, never fetches with `curl`.
 - Never reads `DECISIONS.md`, `SESSION_LOG.md` or `CONFIG_REFERENCE.md` whole.
+- Never proposes a simplification that drops a function the component has:
+  that is a defect proposal, and is filed as one.
+- Never judges its own series kindly: the process audit counts this report's
+  repeats too.

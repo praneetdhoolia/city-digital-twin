@@ -761,8 +761,43 @@
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.5",
-      "description": "JVM heap. Must exceed 9.6 GiB + 87 GiB x fraction or the run dies."
+      "decisions_ref": "9.5, 9.165",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction, 31.4 GiB at 25 % - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on this 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations."
+    },
+    "RUN.machine.heap_floor_gib": {
+      "value": 9.6,
+      "units": "GiB",
+      "source": "measured",
+      "held_fixed": {
+        "rule": "A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms that died and the arms that lived. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.",
+        "decisions_ref": "9.5, 9.165",
+        "departure_requires": "a heap-after-full-GC reading from an arm's gc.log at two fractions, recorded in DECISIONS.md"
+      },
+      "status": "active",
+      "decisions_ref": "9.5, 9.165",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers. The 25 % arms that lived ran at 40g and peaked at 36.2 GB; the one that ran at 14g died (9.165)."
+    },
+    "RUN.machine.heap_per_fraction_gib": {
+      "value": 87,
+      "units": "GiB_per_unit_fraction",
+      "source": "measured",
+      "held_fixed": {
+        "rule": "A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib; it changes what the launcher refuses, never what the model does.",
+        "decisions_ref": "9.5, 9.165",
+        "departure_requires": "the same GC-log reading as RUN.machine.heap_floor_gib"
+      },
+      "status": "active",
+      "decisions_ref": "9.5, 9.165",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "The sample-dependent part of the heap rule. At 25 % it is 21.75 GiB on top of the floor - 31.4 GiB in all - which is why 14g died and 40g lived (9.165)."
     },
     "RUN.machine.jfr_profile": {
       "value": false,
@@ -778,7 +813,7 @@
       "description": "Whether the JVM records a Java Flight Recorder profile of the run into <run>/profile.jfr. OBSERVATION ONLY - JFR samples the already-running threads and writes its own file; it changes no MATSim state, no random draw and no output, so a profiled run and an unprofiled one are the same run and DO NOT open a family. It exists because the iteration's cost has been argued from the MATSim stopwatch alone, which decomposes an iteration only as far as its named phases: the mobsim's 168 s at the F28 gate is one undivided number, and every cut proposed against it since 9.142 has been reasoned rather than measured. `settings=profile` samples every thread's stack, so the mobsim, the replanning pool and the event-handler pool each decompose to the method. Default false because a recording costs a few per cent of wall time and a file; turn it on in a timing-probe overlay, never in an arm whose stopwatch is being quoted."
     },
     "RUN.machine.gc_log": {
-      "value": false,
+      "value": true,
       "units": "boolean",
       "source": "definition",
       "sweep": null,
@@ -787,7 +822,7 @@
       "consumers": [
         "src/run/run_matsim.py"
       ],
-      "description": "Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it."
+      "description": "Whether the JVM writes a GC log to <run>/gc.log. OBSERVATION ONLY, like RUN.machine.jfr_profile. Declared because the heap has been 40 g on every 25 % arm against a measured post-collection live set of 13.3 GiB, which is above the 32 GiB compressed-oops threshold, and no arm has ever been run with a GC log - so whether the heap size costs wall time is unmeasured rather than settled. The log is what settles it. DEFAULT TRUE since 11 September 2026: the first arm to die of heap (F33 arm 0, 9.165) spent 13.1 h inside one iteration with no collector account of it, and a GC log costs nothing a stopwatch can see; an overlay that wants none says so."
     },
     "RUN.machine.seed": {
       "value": 20260810,
@@ -885,6 +920,18 @@
         "src/run/run_matsim.py"
       ],
       "description": "How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else."
+    },
+    "RUN.gate.stall_kill_s": {
+      "value": 1800,
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.19, 9.165",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "How long the run's own log may go silent before the runner stops the JVM, writing `stopped_at_stall` with the silence and the last ended iteration. The LIVENESS boundary beside the gate's modelling boundary and the ceiling's cost boundary. RUN.monitor.stall_s (300 s) is what the live view CALLS a stall and only observes; this acts, at six times that, because the alternative was measured: F33's arm 0 spent 13.1 h inside iteration 89 on an awake machine - the Task Scheduler log shows ~450 launches and no gap - with the digest reporting the stall at 05:13 and nothing having the job of killing it (9.165, #66). Silence is the test, not iteration length: MATSim prints every simulated hour of the mobsim and the memory observer every minute, so no healthy iteration at any fraction is quiet for half an hour, while a JVM in back-to-back full collections is quiet for hours. ZERO DISABLES IT, the idiom RUN.gate.wall_ceiling_h uses. A stall stop is a defined boundary: the run is closed out and citable at its reached_iteration, and it is not a complete arm."
     },
     "RUN.gate.wall_ceiling_h": {
       "value": 0,

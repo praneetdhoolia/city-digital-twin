@@ -152,11 +152,12 @@ GATES = [
     ('launch refusal', [PY, 'tests/check_launch_refusal.py'], False),
     ('registry rules', [PY, 'tests/check_registry_rules.py'], False),
     # 9.154: what the FRAMEWORK is deciding in the modules the model writes
-    # into. Runs WITHOUT --strict deliberately: 31 of MATSim's own defaults are
-    # still unreviewed, so strict would block every session on a backlog rather
-    # than on a regression. The line reports the count each session; it becomes
-    # a gate when the backlog is worked down, exactly as check_hardcoding did.
-    ('matsim defaults', [PY, 'src/registry/check_matsim_defaults.py'], False),
+    # into. STRICT since 11 September 2026: the backlog it deferred strict for
+    # (31 unreviewed defaults) was worked to 0 at 9.164, and the rule this line
+    # stated - it becomes a gate when the backlog is worked down, exactly as
+    # check_hardcoding did - is now applied. A new default decided unreviewed
+    # is a regression, not a backlog.
+    ('matsim defaults', [PY, 'src/registry/check_matsim_defaults.py', '--strict'], False),
     # #133: the functions that decide correctness, on synthetic inputs
     ('unit tests', [PY, '-m', 'pytest', '-q', 'tests/unit'], False),
     ('fit figures', [PY, 'src/analyse/build_fit_figures.py', '--check'], False),

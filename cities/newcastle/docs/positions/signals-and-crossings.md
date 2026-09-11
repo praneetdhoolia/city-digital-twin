@@ -3,7 +3,7 @@
 Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description; `.claude/CLAUDE.md` and `STATUS.md` no longer do) describe the pre-§9.88 state; §9.88 is newer and wins. The precise statement is: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 3 September 2026 (twenty-sixth session) · **Record read through:** §9.141 · **Written against family:** `F23`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -45,6 +45,8 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 
 ## What is open
 
+- **Freight trains at the two crossings, on evidence the registry does not cite** (#184). `A.crossings.freight_closures_per_day` = 0 rests on the coal chain's grade separation (§9.70, §9.90); the eighth report's factor lane (11 September 2026) found a Newcastle Herald report of 10 June 2026 describing freight trains traversing the Adamstown and Clyde Street crossings. The value stays 0 until an ARTC train plan, the Lower Hunter Freight Corridor business case or a count at the gates settles it; a change opens a family.
+
 - **The signal-effect measurement at arm scale is still owed** (#73, CLOSED on the build scope): signals and priority are built, activated (§9.77) and adaptive (§9.88), and the controller and its guard are the evidence that closed it. What remains is not a build but a reading, and it needs an arm that reaches its horizon. Movement-level lanes stay data-gated at 16% coverage (§9.76). The issue's last comment predates §9.88; the SCATS build is not yet recorded on it.
 - **The closure-effect measurement on a converged arm is still owed** (#68, CLOSED on the build scope): crossings are built, activated (§9.77) and derived (§9.90), and `_crossings_report.json` with `closure_source` `schedule_derived` is the evidence that closed it. Its last comment predates §9.90.
 - **The base scenario's priority state is not settled by the record.** `A.lightrail.tsp_enabled` (false in S2) and `A.signals.scats_phasing` (`proxy_no_priority` in S2) are unbound fields under `scats_adaptive`; the emitted S2 and S2b signal files are byte-identical and both configs carry `tramPriority.mode=green_extension`. The S2 probe of §9.88 ran with `mode=off`, but `results/aborted_20260830T083019_1000it_25pct` (S2) logs priority on. Whether S2 grants tram priority must be decided and declared before any S2-versus-S2b comparison.
@@ -65,6 +67,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 
 ## History
 
+- §9.166 — re-read against F33; freight trains at the crossings (#184)
 - §9.141 — priority donor by layout; probes run
 - §9.90 — crossings derived from rail timetable
 - §9.88 — SCATS algorithm implemented, F12 opens

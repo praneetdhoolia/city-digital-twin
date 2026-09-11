@@ -42,11 +42,11 @@ jobs:
           # Only act when a session reference is actually present — this keeps the workflow
           # idempotent and loop-safe: the stripped body has no match, so the `edited` event
           # this edit triggers re-runs and no-ops.
-          if printf '%s' "$PR_BODY" | grep -qiE 'https?://claude\.ai/code|^[[:space:]]*Claude-Session:[[:space:]]'; then
+          if printf '%s' "$PR_BODY" | grep -qiE 'https?://claude\.ai/code|^[[:space:]]*Claude-Session:[[:space:]]*'; then
             # Delete the session-link line(s) and any Claude-Session: trailer (case-insensitive).
             # Command substitution drops the resulting trailing newlines, so no extra trim is needed.
             cleaned="$(printf '%s' "$PR_BODY" \
-              | sed -E '/https?:\/\/claude\.ai\/code/Id; /^[[:space:]]*Claude-Session:[[:space:]]/Id')"
+              | sed -E '/https?:\/\/claude\.ai\/code/Id; /^[[:space:]]*Claude-Session:[[:space:]]*/Id')"
             printf '%s\n' "$cleaned" | gh pr edit "$PR_NUMBER" --body-file -
             echo "Stripped claude.ai/code session reference from PR #$PR_NUMBER body."
           else

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -43,6 +43,8 @@
 
 ## What is open
 
+- **A footpath network is a decision, not a sweep** (#183, §9.166). Walk is routed on the road graph because §3.5 forbids a remap; 40,195 harvested footway edges are not routed; the modelled mean walk trip is 4.58 km against 0.70 observed (`_fit.json`). Either one deliberate rebuild with footways as walk links (a family) or a recorded acceptance with the cost stated — the operator's call.
+
 - **Walk's geometry now has a NAMED mechanism and an undecided remedy** (§9.158). `RUN.transit_router.direct_walk_factor` is a declared field with a sweep to 2.0 and moving it is a family boundary and a FIDELITY decision — it must not be picked to land walk's share. Filed with its measured numbers; the operator decides.
 - **#30** — the sub-1 km trips are generated (§9.107) and the short-trip band shares still match their observed values to three decimals after the 4 Sep rebuild (§9.142). The walk/car allocation of those trips is unchanged as the open question (§9.107).
 - **The gradient channel's effect is unmeasured**: no paired arm differing only in `A.gradient.representation` has read bike's mean trip and time against the observed 5.2 km / 19.2 min (§9.84).
@@ -63,6 +65,7 @@
 
 ## History
 
+- §9.166 — footpath network filed as a decision (#183)
 - §9.164 — the whole-day discard repaired; the short end is unobserved
 - §9.163 — short-trip supply flat, car takes 63 % of it; bike too far
 - §9.158 — walk is priced as a transit ride; `C.asc.cycle` opened, `C.asc.walk` frozen
@@ -77,5 +80,3 @@
 - §9.131 — licence rate measured from counts
 - §9.126 — F17 converged car and walk
 - §9.123 — car-less quarter explains bike
-- §9.121 — direct walk becomes network walk
-- §9.114 — most cyclists own cars

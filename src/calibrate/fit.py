@@ -556,7 +556,10 @@ def main():
         % (scored, len(targets), len(targets) - scored))
 
     path = a.out or os.path.join(run_dir, '_fit.json')
-    json.dump(out, open(path, 'w'), indent=2)
+    # through the output contract (config/schema/outputs/fit.schema.json); a
+    # bare json.dump bypassed it (eighth report, 11 September 2026)
+    from registry import outputs                              # noqa: PLC0415
+    outputs.write_checked(path, out, 'fit')
     print(out['headline'])
     ms = out['mode_share']
     if ms['errors']:

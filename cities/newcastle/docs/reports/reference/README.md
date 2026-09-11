@@ -5,7 +5,7 @@
 The dated reports in the parent directory are prunable files — a reader may
 delete one, and two were deleted on 7 September 2026. This directory is the
 durable half. `/project-report`'s two research phases
-([`.claude/skills/project-report/SKILL.md`](../../../.claude/skills/project-report/SKILL.md),
+([`.claude/skills/project-report/SKILL.md`](../../../../../.claude/skills/project-report/SKILL.md),
 Phases 6 and 7) **read these files before running a single search** and spend
 their budget only on what the files do not already answer.
 
@@ -44,26 +44,39 @@ on every pass.
 
 ## State
 
-Last pass **10 September 2026**, at `4d1d1bc` (the PR #173 merge), lodged as
-[`20260910T134723_project_report.html`](../20260910T134723_project_report.html)
-— the **seventh** pass of the library, one day after the sixth.
+Last pass **11 September 2026**, at `20ae4e9` (the PR #179 merge), lodged as
+[`20260911T210144_project_report.html`](../20260911T210144_project_report.html)
+— the **eighth** pass of the library, one day after the seventh, at the full
+40-call budget per lane by the user's choice.
 
 | | rows | this pass |
 |---|---:|---|
-| `field-survey.json` projects | **50** | 49 reused unchanged, **0 re-searched**, 1 added (Tallinn/SimMobility — 477 parameters, Bayesian optimisation over a random-forest surrogate, ~1,000 machine hours) |
+| `field-survey.json` projects | **50** | all 50 carried, **6 updated with verified material** (MATSim-NYC, AToM, POLARIS, Munich, SoundCast, Lausitz), 0 added; every row gains `data_acquired_per_mode` and `physical_fidelity` cells (verified on 6, from stored cells on 7, `unknown` on 37) |
 | `field-survey.json` platforms | 12 | all reused unchanged |
-| excluded · not re-verified · gaps | 62 · 37 · **12** | 1 gap closed with its source (the "myopic heuristics" claim → Chen et al., *TR-C* 119 (2020) 102650), 1 partly closed, 1 corrected, 4 opened |
-| `calibration_methods` | **20** | 14 → 20; 6 added, 1 updated |
-| `factors.json` rows | **90** | **83 reused unchanged, 0 re-searched**, **7 added** (router–scorer consistency; equilibrium selection at the innovation cutoff; choice-set coverage as a binding constraint; mode availability by distance; distributional targets beyond mode share; flow/storage correction at a sample; expanding a sampled run's link volumes) |
+| excluded · not re-verified · gaps | 64 · 39 · **16** | 3 gaps closed (the four-step rung, POLARIS's method, MASS-GT — whose recorded DOI was a soil-mechanics paper), 2 narrowed, 4 opened (Barcelona actuated signals, Ziemke–Braun signals-vs-counts, a current 25 % MATSim wall/heap pair, smartcard-validated ABMs) |
+| `calibration_methods` | **20** | unchanged |
+| `factors.json` rows | **93** | **90 reused unchanged, 0 re-searched**, **3 added** (E25 rail bonus; J6 APC/AVL/occupancy feeds; J7 bespoke survey tables), 12 dated addenda; a new `per_mode_data` block, one row per mode, literature half only |
 | `needs_research` | **0** | unchanged |
 
-Budgets: field lane **38 of 40** calls over 10 rounds; factor lane **18 of 40**
-over 3. Every call went to a named gap or to this pass's question. Statuses in
-this model are stored nowhere here and all 90 were re-read at `4d1d1bc`:
-**IN 46 · PARTIAL 32 · INERT 2 · ASC 1 · OUT 9**, with exactly one class change
-(iteration count and cost, PARTIAL → IN, at `8bb30d9`).
+Budgets: field lane **40 of 40** calls over 10 rounds; factor lane **37 of 40**
+over 4. Statuses in this model are stored nowhere here and all 93 were re-read
+at `20ae4e9`: **IN 44 · PARTIAL 34 · INERT 2 · ASC 1 · OUT 9** over the carried
+rows (the three new rows OUT), with four class changes and their commits — E12
+reliability/headway INERT → PARTIAL (`8d3d4cf`), H10 choice-set coverage
+PARTIAL → IN (`89d6c08`), J4 road counts PARTIAL → IN (`efca641`), H11
+distance availability OUT → INERT (`2f8c938`). Two findings this pass bear on
+the registry: TfNSW supplies bespoke HTS tables on request though not unit
+records, and press reports freight trains at the Adamstown and Clyde Street
+crossings against `A.crossings.freight_closures_per_day` = 0.
 
-### The previous pass
+### The previous pass (10 September 2026, at `4d1d1bc`)
+
+Lodged as
+[`20260910T134723_project_report.html`](../20260910T134723_project_report.html)
+— the seventh pass: field 49 of 50 rows reused, 1 added (Tallinn/SimMobility),
+6 calibration methods added; factors 83 reused, 7 added; field lane 38 of 40
+calls, factor lane 18 of 40; statuses IN 46 · PARTIAL 32 · INERT 2 · ASC 1 · OUT 9.
+
 
 Lodged as
 [`20260909T003402_project_report.html`](../20260909T003402_project_report.html)

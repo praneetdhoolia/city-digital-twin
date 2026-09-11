@@ -117,6 +117,9 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
          *  total, so a full arm's log states how often it happened (#96). */
         private static final java.util.concurrent.atomic.AtomicInteger
                 PREMIX_DUMPS = new java.util.concurrent.atomic.AtomicInteger();
+        /** Plans whose subtour decomposition threw, treated as mixed. */
+        private static final java.util.concurrent.atomic.AtomicInteger
+                DECOMPOSE_FAILED = new java.util.concurrent.atomic.AtomicInteger();
         /** Same counter and same cadence, for mixes this strategy is caught
          *  creating. */
         private static final java.util.concurrent.atomic.AtomicInteger
@@ -263,8 +266,25 @@ public final class GatedSubtourModeChoice implements Provider<PlanStrategy> {
                         return true;
                     }
                 }
-            } catch (final RuntimeException ignored) {
-                return false;
+            } catch (final RuntimeException e) {
+                // A plan whose subtour decomposition THROWS is not a clean
+                // plan: until 11 September 2026 this returned false, so an
+                // undecomposable plan passed both gates - the stand-aside
+                // before a proposal and the reversion after one - as if it
+                // were consistent (eighth report, area 6). Treated as mixed,
+                // it takes the conservative branch at both call sites (the
+                // strategy stands aside, or reverts its own proposal), and
+                // the count is logged at the refusal counters' cadence so a
+                // full arm states how often it happened.
+                final int n = DECOMPOSE_FAILED.incrementAndGet();
+                if (n <= 5 || n % 1000 == 0) {
+                    org.apache.logging.log4j.LogManager
+                            .getLogger(GatedSubtourModeChoice.class)
+                            .warn("subtour decomposition failed (" + n
+                                    + " so far), plan treated as MIXED: "
+                                    + e + " on " + describe(plan));
+                }
+                return true;
             }
             return false;
         }

@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -75,10 +75,9 @@
 
 - #86 — passenger demand against the observed 20.6%: the four passes reach the identity on paper; at the F26 gate 45.5 % of declared bound trips in selected plans ride and 29,827 are driven by the passenger themselves — 12,317 car legs began with every household car already out (§9.146, #145). The roster is the repair; the first F27 arm measures it.
 - #145 — awaiting the first arm on the roster: car legs starting with every household car out (0 expected for one-car households), the wait distribution, and where the self-driven bound trips settle (§9.146).
-- **A TfNSW unit-record request for the NSW Household Travel Survey is OUTSTANDING, and until this entry it lived in no repository artefact at all.** The published NSW HTS is AGGREGATE ONLY - shares, trip rates and purpose splits, no person- or trip-level records - so a discrete-choice model cannot be ESTIMATED on it; every behavioural coefficient in `params/` is transferred or solved rather than fitted, and #50's mode × age cell has no source to come from. Victoria's VISTA publishes unit records and NSW does not. The request is the one thing that would unblock estimating choice on this city's own observed behaviour; it is not a run, not a derivation and not something a sweep substitutes for (requirement 6), and it has no owner, no lodgement date and no reference number recorded. **Record its lodgement here when it is made.**
+- **The TfNSW acquisition is OBTAINABLE and re-aimed** (#50). The published NSW HTS is AGGREGATE ONLY and TfNSW does not release its unit records; it does supply bespoke aggregate tables on request (opendataprogram@transport.nsw.gov.au — eighth report, factor lane, 11 September 2026). The owner and a lodgement date are recorded on #50 (10 September); the request is re-aimed at four cells: mode × age band, trip-length distribution by mode for the five LGAs, vehicle occupancy by purpose, and the unfolded "Other" (bike / taxi). Until it is answered no discrete-choice model can be estimated on this city's own behaviour, and mode fidelity by age (the modelled table exists, `_mode_by_demographics.json`) has no observed counterpart.
 - **#50 IS NOT AWAITING A RUN — its next step is an ACQUISITION**, and saying so is what unblocked reading it honestly (§9.158). No mode × age cell exists in any held dataset, so no arm can settle it; the age gates stay assumed and swept and the modelled split stays sex-invariant against G62 (§9.78, §9.84). It is one of the three issues BLOCKING the launcher today, and re-scoping or splitting it is the operator's decision, not a close-out's.
 - Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION` and the activity durations (§9.2, §9.61); the 2021 journey-to-work table would sharpen the interaction rate's 2011 vintage and is an attended extract (§9.140).
-- #96 and #93 are awaiting a run on the F24 build: the leaf mixes are repaired at the seed (0 leaf on every day type) and the carve is conserved per LGA (§9.140) — the seed page and the motorbike page carry the numbers.
 - The 9,376 `driver_is_the_companion` refusals that survive the filter are emergent, not structural, and stay reported (`_activity_chains_report.json`, §9.116).
 
 - **The sub-1 km SUPPLY is still fixed at build time and its SHAPE is unobserved** (§9.164, #30). The destination model is solved per (purpose × home LGA) against that LGA's own HTS mean journey distance and is doubly constrained (§9.40, §9.136), so the MEAN is matched by construction. The share of trips under one kilometre is a property of the exponential kernel's SHAPE, and the published HTS gives a mean and no distribution - so no short-end target exists in this package that is not invented. What the next arm reads is the sub-1 km share on the rebuilt demand against the landed arm's 11.17 %; what it cannot do is score a target nobody observed (§9.8, §9.13).
@@ -97,6 +96,7 @@
 
 ## History
 
+- §9.166 — TfNSW bespoke tables obtainable; mobility draw declared
 - §9.164 — the whole-day discard is repaired; the demand rebuilt
 - §9.163 — the roster binds harder; half of declared passengers drive
 - §9.158 — the plans carry OSM geometry and are share-alike; #50 is an acquisition
@@ -111,5 +111,3 @@
 - §9.138 — census income reaches money scoring
 - §9.133 — demand chain rebuilt on licence-rate population
 - §9.131 — licence rate measured per LGA
-- §9.129 — bucket rule; carves on drawn pool
-- §9.125 — resident truck drivers carved from G62

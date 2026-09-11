@@ -26,7 +26,7 @@ session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it fir
   every value that is not observed and every decision, with its rationale and
   sweep. It is append-only and frozen: never rewritten, only pointed past. **Consult
   it through its topical index or a position page, never by reading it whole** — it
-  is over 13,000 lines. Do not re-litigate a settled decision without new evidence.
+  is over 16,000 lines. Do not re-litigate a settled decision without new evidence.
 - [`README.md`](../README.md) is the **usage guide**: install, run a scenario with
   `run.py`, reproduce the data package. It is the only document at the repo root;
   every other one is under [`docs/`](../docs/README.md).
@@ -34,8 +34,8 @@ session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it fir
   is the **frozen origin design** — the light-rail counterfactual that started the
   study and is now its first application; read it for scenario vocabulary only.
 - Stage: the board's phase table says where the build is. Nothing is a result until
-  a run's `_run.json` says `ran_to_last_iteration`, and no run since family F4 has
-  reached its gate. A run stopped at a gate or by the operator is closed out with a
+  a run's `_run.json` says `ran_to_last_iteration`; the board's runs block says
+  which runs have. A run stopped at a gate or by the operator is closed out with a
   record too — its reading is citable at that record's `reached_iteration` and
   nowhere past it — but only that one value means the run executed the horizon it
   declared, and only it satisfies resume or anchors a calibrated base.
@@ -235,7 +235,7 @@ session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it fir
 | `python src/run/session_gate.py` (every gate above, one line each; `--digest` for the session opener) | local, at `/onboard` and `/handoff` | skips the toolchain compile while an arm runs |
 | `python src/registry/check_city.py --all` · `render_schema.py --check` | CI | nothing |
 | `python tests/check_city_agnostic.py` | CI | nothing |
-| `python tests/check_package.py` | **local only** | the full ~2.3 GiB package |
+| `python tests/check_package.py` | **local only** | the full package (the manifest states its size) |
 | `python src/analyse/build_fit_figures.py --check` | `check_package.py` + local | a run with a `_fit.json` |
 | `python src/run/run_failure.py --check` | **local only** | `results/` |
 
@@ -306,7 +306,7 @@ those depend on ABS/TfNSW/Overpass availability and on compute, not on the diff.
 | `run.py` | The front door: run a scenario with defaults or custom arguments. |
 | `src/city.py` | Resolves which city's inputs a run reads. The only module that knows. |
 | `cities/<city>/` | **ONE CITY - everything specific to it.** Selected by `CITYSIM_CITY` (default `newcastle`). |
-| `cities/<city>/docs/` | That city's study: `GOAL.md`, `STATUS.md` (board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), the GENERATED `reference/`, and `archived/` — everything frozen, bannered as such. |
+| `cities/<city>/docs/` | That city's study: `GOAL.md`, `STATUS.md` (board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), `reports/` (the dated `/project-report` assessments and their reference library), the GENERATED `reference/`, and `archived/` — everything frozen, bannered as such. |
 | `cities/<city>/build/` | Builders that encode that city's intervention, corridor, history and statistical geography. |
 | `cities/<city>/geometry/` | Declared extents that were once typed into scripts. |
 | `cities/<city>/registry/` | That city's declared values, with units, provenance and a sweep or held-fixed rule. |

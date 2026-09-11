@@ -92,6 +92,12 @@ BAND_LABEL = ['0-4', '5-11', '12-17', '18-24', '25-34', '35-44',
 # observed per LGA (Newcastle's 18-24 hold at 0.68, Port Stephens' at 0.84)
 # and a pooled number would put the same licence in every suburb.
 LICENCE_RATE = CFG.get('B.population.licence_rate_by_age_band')
+# the mobility-impairment draw, declared on 11 September 2026: it was typed
+# here as 0.05 + 0.25 * max(0, age - 70) / 30 and reached no field
+MOB_BASE = CFG.get('B.population.mobility_impairment_base_rate')
+MOB_ONSET = CFG.get('B.population.mobility_impairment_onset_age')
+MOB_RISE = CFG.get('B.population.mobility_impairment_rise')
+MOB_SPAN = float(CFG.get('B.population.mobility_impairment_rise_span_years'))
 LICENCE_RATE_BY_LGA = {}   # (lga, band index) -> rate
 _LICENCE_TABLE = _city.path('data/processed/observed/licence_rates_by_age_lga.csv')
 _SA1_LGA_TABLE = _city.path('data/processed/zones/sa1_to_lga.csv')
@@ -406,7 +412,10 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
                                    else 'part_time')
                 else:
                     student = 'none'
-                mob = int(rng.random() < (0.05 + 0.25 * max(0, (age - 70)) / 30.0))
+                # evaluated in exactly the order the typed formula was, so the
+                # rebuilt population is byte-identical: base + rise * years / span
+                mob = int(rng.random() < (MOB_BASE + MOB_RISE
+                                          * max(0, (age - MOB_ONSET)) / MOB_SPAN))
                 cav = int(lic == 1 and nv > 0)
                 pw.writerow([pid, hid, sa1, BAND_LABEL[b], age, sex, est, occ, ib, lic,
                              nv, size, dt, student, mob, cav, round(1.0 / sample, 4)])

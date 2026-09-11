@@ -51,7 +51,7 @@ import city  # noqa: E402
 import results_store  # noqa: E402
 import run_failure  # noqa: E402
 import summarise_run  # noqa: E402
-from registry import outputs  # noqa: E402
+from registry import outputs, param_config  # noqa: E402
 
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 
@@ -422,6 +422,12 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         **signal_paths)
     config_path = build_inputs.write_config(
         os.path.join(run_dir, 'config.xml'), cfg, scoring, day, paths)
+    # an override the run would record and not execute is refused here, with
+    # the emitted config and vehicle types in hand to test it against
+    refuse_unrealised_overrides(
+        cfg, scoring, day, paths,
+        dict(config=open(config_path, encoding='utf-8').read(),
+             vehicles=open(mode_veh, encoding='utf-8').read()))
 
     # Raw MATSim overrides (`--set ride.constant=-3.4`) are applied after the
     # emission, deliberately: they are an escape hatch BELOW the registry, for
@@ -562,6 +568,134 @@ def announce_cost(iterations, fraction, cfg):
               '(#169).', flush=True)
 
 
+def parse_heap_gib(xmx):
+    """The GiB a JVM `-Xmx` string denotes ('40g', '14000m', '2t'), or None."""
+    m = re.match(r'^\s*(\d+(?:\.\d+)?)\s*([kmgt]?)\s*$', str(xmx or ''), re.I)
+    if not m:
+        return None
+    n, unit = float(m.group(1)), m.group(2).lower()
+    return n * {'k': 1.0 / 1048576, 'm': 1.0 / 1024, 'g': 1.0, 't': 1024.0,
+                '': 1.0 / (1024 ** 3)}[unit]
+
+
+def heap_floor_gib(cfg, fraction):
+    """The smallest heap the registry's own rule admits at this fraction.
+
+    `RUN.machine.xmx` has carried the rule "must exceed 9.6 GiB + 87 GiB x
+    fraction or the run dies" in its description since 9.5, and nothing read
+    it: F33's arm 0 launched on the 14 g default at 25 % (31.4 GiB by the
+    rule), ran 20.9 h and threw OutOfMemoryError at iteration 98. The two
+    terms are declared fields now, so the rule is a number the launcher can
+    compare rather than a sentence a person has to remember (eighth report,
+    11 September 2026; #66, #172).
+    """
+    return (float(cfg.get('RUN.machine.heap_floor_gib'))
+            + float(cfg.get('RUN.machine.heap_per_fraction_gib')) * float(fraction))
+
+
+def refuse_small_heap(cfg, xmx, fraction):
+    """Refuse a launch whose heap the registry's own rule says will die.
+
+    A pricing probe prices TIME and cannot price HEAP: plan memory fills over
+    the first ~100 iterations and a four-iteration probe sees none of it, so
+    the only protection that costs nothing is to read the rule before the JVM
+    starts. Like the other refusals this prints the fields and the overlay
+    line that would satisfy it; it never adjusts the heap on its own, because
+    the heap is part of the approved cost.
+    """
+    have = parse_heap_gib(xmx)
+    if have is None:
+        raise SystemExit('REFUSED: RUN.machine.xmx = %r is not a JVM heap size '
+                         '(expected e.g. 40g).' % (xmx,))
+    need = heap_floor_gib(cfg, fraction)
+    if have + 1e-9 >= need:
+        return
+    raise SystemExit(
+        'REFUSED: RUN.machine.xmx = %s is below the heap the registry\'s own rule '
+        'requires at a %.2f sample: %.1f GiB (RUN.machine.heap_floor_gib %s + '
+        'RUN.machine.heap_per_fraction_gib %s x fraction). F33\'s arm 0 launched '
+        'on 14g at 25%% and died of OutOfMemoryError at iteration 98 after 20.9 h. '
+        'Set RUN.machine.xmx on the overlay, beside the approval it encodes.'
+        % (xmx, float(fraction), need, cfg.get('RUN.machine.heap_floor_gib'),
+           cfg.get('RUN.machine.heap_per_fraction_gib')))
+
+
+class _AtBase(object):
+    """A resolution with ONE field answered from the registry, not the overlay."""
+
+    def __init__(self, inner, key):
+        self._inner, self._key = inner, key
+
+    def get(self, k, caller=None):
+        if k == self._key:
+            return self._inner.field(k).get('value')
+        return self._inner.get(k, caller=caller)
+
+    def __getattr__(self, name):
+        return getattr(self._inner, name)
+
+
+def refuse_unrealised_overrides(cfg, scoring, day, paths, emitted):
+    """Refuse a run overlay or --config-set that moves a field this run cannot read.
+
+    No registry field carries a stage, so the resolver admits any field into a
+    run overlay on membership alone: `A.parking.search_min_max` is baked into
+    the run inputs at assembly, and an overlay setting it is validated,
+    recorded in `_config.json` as moved, and executes the base value (eighth
+    project report, 11 September 2026; area 4). The test here is the exact
+    one: with the field put back to its registry value, does anything this
+    run READS change - the emitted config, or the per-mode vehicle types the
+    runner regenerates? If neither moves, the override would be recorded and
+    not executed, which is the defect this refusal exists for, and the launch
+    is refused with the key and where its change would have to be realised.
+
+    RUN.* and CAL.* keys are the run's own and the loop's own; the former are
+    read by the runner itself rather than through the config (threads, heap,
+    the watchers), so they are never tested here. The calibrator's stage table
+    (`calibrate.rebuild_stage`) is the coarser reading of the same question
+    and classes every field `build_matsim_run_inputs.py` consumes as needing
+    the run inputs regenerated - which is wrong for the fields `config_runtime`
+    derives at launch (the taxi fare blend, the score-MSA fraction, the
+    capacity factors); this test sees those as realised because they are.
+    """
+    import tempfile                                           # noqa: PLC0415
+    snap = cfg.snapshot()
+    keys = [k for k, origin in snap['resolved_from'].items()
+            if (origin.startswith('run:') or origin in ('set', 'env'))
+            and not (k.startswith('RUN.') or k.startswith('CAL.'))]
+    if not keys:
+        return
+    bad = []
+    for key in keys:
+        at_base = _AtBase(cfg, key)
+        try:
+            base_scoring = build_inputs.scoring_from_c1(
+                at_base, json.load(open(build_inputs.PARAMS, encoding='utf-8')),
+                purpose_share())
+            runtime = build_inputs.config_runtime(at_base, base_scoring, day, paths)
+            text = param_config.emit('matsim', at_base, runtime)
+            with tempfile.TemporaryDirectory() as td:
+                veh = build_inputs.write_mode_vehicles(
+                    os.path.join(td, 'vehicles.xml'), at_base)
+                veh_text = open(veh, encoding='utf-8').read()
+        except Exception as e:                                # noqa: BLE001
+            # a derivation that cannot run at the base value is a change the
+            # run does read - it is the override making the derivation valid
+            continue
+        if text != emitted['config'] or veh_text != emitted['vehicles']:
+            continue
+        consumers = ', '.join(cfg.field(key).get('consumers') or []) or 'no declared consumer'
+        bad.append('  %s (from %s): consumed by %s' % (key, snap['resolved_from'][key], consumers))
+    if not bad:
+        return
+    raise SystemExit(
+        'REFUSED: this run would RECORD a change it cannot EXECUTE. Put back to '
+        'the registry value, none of these keys changes the emitted config or the '
+        'vehicle types this run reads - their change is realised only by a '
+        'rebuild of the stage their consumer belongs to:\n%s\nRebuild that '
+        'stage, or drop the key from the overlay.' % '\n'.join(bad))
+
+
 def refuse_if_no_automatic_stop(cfg):
     """A run must be able to stop itself on SOMETHING. This refuses one that cannot.
 
@@ -639,6 +773,42 @@ def _recorded_iteration_times(log):
             out[int(k)] = float(v)
         except (TypeError, ValueError):
             return {}
+    return out
+
+
+def warm_start_overrides(warm, overrides, scenario, day, run_config):
+    """The overrides a warm start needs so the resumed run keeps its cutoff.
+
+    `firstIteration` alone is not enough. The pinned jar computes the
+    innovation cutoff as `first + f x (last - first)` (StrategyManager.class,
+    read with javap), so a resume at N = 100 with the declared f = 0.8 over a
+    300-iteration horizon innovates to 100 + 0.8 x 200 = 260, not the 240 the
+    parent arm was searching to - the comment that used to sit here claimed
+    the two lined up, and they did not (eighth report, 11 September 2026;
+    #192). The fraction is re-derived so the cutoff ITERATION is preserved:
+    f' = (cutoff - N) / (last - N). It goes through the registry's own set
+    layer like every override, so a derived value outside the field's sweep
+    is refused there with the field's own message - a resume that cannot keep
+    its cutoff inside the declared sweep is a run the operator must overlay
+    deliberately, not one the harness may quietly reshape.
+    """
+    base = registry.load(scenario=scenario, day=day, run=run_config,
+                         set=dict(overrides))
+    first = int(base.get('RUN.controler.first_iteration'))
+    last = int(base.get('RUN.controler.last_iteration'))
+    f = float(base.get('RUN.replanning.fraction_to_disable_innovation'))
+    n = int(warm['iteration'])
+    cutoff = first + f * (last - first)
+    if last <= n:
+        raise SystemExit('warm start: the checkpoint iteration %d is not below '
+                         'RUN.controler.last_iteration = %d' % (n, last))
+    derived = (cutoff - n) / float(last - n)
+    out = dict(overrides)
+    out['RUN.controler.first_iteration'] = n
+    out['RUN.replanning.fraction_to_disable_innovation'] = round(derived, 6)
+    print('warm start: innovation cutoff kept at iteration %.0f - '
+          'fraction_to_disable_innovation %g -> %g for firstIteration %d'
+          % (cutoff, f, round(derived, 6), n), flush=True)
     return out
 
 
@@ -749,6 +919,11 @@ RAN_TO_LAST = 'ran_to_last_iteration'
 STOPPED_AT_GATE = 'stopped_at_gate'
 # The COST boundary, as against the gate's modelling one (#169).
 STOPPED_AT_CEILING = 'stopped_at_ceiling'
+# The LIVENESS boundary (eighth report, 11 September 2026): a JVM that writes
+# nothing for RUN.gate.stall_kill_s is stopped, because the alternative was
+# measured - 13.1 h of one iteration on an awake machine, seen by the digest
+# at 05:13 and killed by nobody.
+STOPPED_AT_STALL = 'stopped_at_stall'
 STOPPED_BY_OPERATOR = 'stopped_by_operator'
 
 
@@ -950,8 +1125,20 @@ def reconcile_stale():
         log_path = os.path.join(run_dir, 'matsim.log')
         died_on_its_own = (run_failure.from_log(log_path)
                            or run_failure._last_error(log_path))
+        # The card is filled from the log, not left at None: the F33 arm 0
+        # card said `launched: None, reached_iteration: None` while the board
+        # printed both (eighth report, 11 September 2026).
+        reached = _last_ended_iteration(run_dir)
+        wall_s = None
+        try:
+            t0 = time.mktime(time.strptime(doc.get('started') or '',
+                                           '%Y-%m-%dT%H:%M:%S'))
+            wall_s = round(max(0.0, os.path.getmtime(log_path) - t0), 1)
+        except (TypeError, ValueError, OSError):
+            pass
+        update_meta(run_dir, reached_iteration=reached if reached >= 0 else None)
         if died_on_its_own:
-            dead = mark_dead(run_dir, 'failed', cause=None)
+            dead = mark_dead(run_dir, 'failed', wall_s=wall_s, cause=None)
             print('reconciled: %s claimed to be running under a dead harness, '
                   'and its own log says why it died; marked failed -> %s'
                   % (os.path.basename(run_dir), os.path.basename(dead)),
@@ -980,6 +1167,8 @@ OPERATOR_STOP = '_operator_stop.json'
 # reason OPERATOR_STOP is (9.143): whichever process reaches the
 # terminal record first must find the stated cause already on disk.
 CEILING_STOP = '_ceiling_stop.json'
+# The stall watcher's marker, written BEFORE the kill for the same reason.
+STALL_STOP = '_stall_stop.json'
 # the reporter's verdict file, written per milestone and read by the watcher;
 # module-level so a test can point the watcher at a canned reporter
 GATE_VERDICT = '_gate_verdict.json'
@@ -1112,6 +1301,67 @@ def start_ceiling_watch(run_dir, cfg, proc, t0):
             return
 
     t = threading.Thread(target=loop, daemon=True, name='ceiling-watch')
+    t.start()
+    return t
+
+
+def start_stall_watch(run_dir, cfg, proc, log):
+    """Stop the run when its log has gone silent for RUN.gate.stall_kill_s (#66).
+
+    The liveness watcher. `RUN.monitor.stall_s` (300 s) is what the live view
+    CALLS a stall and it observes only; this one acts, at a much longer
+    silence, because the alternative was measured on 11 September 2026:
+    `aborted_20260910T222830_300it_25pct` spent 13.1 h inside iteration 89 on
+    an awake machine (Task Scheduler log: ~450 launches, no gap, no sleep),
+    the progress digest reported the stall at 05:13, and nothing had the job
+    of killing it. The ceiling watcher could not - the overlay carried a 26 h
+    ceiling - and the gate watcher needs an iteration to END.
+
+    Silence, not iteration length, is the test: MATSim prints every simulated
+    hour of the mobsim and the memory observer prints every minute, so a
+    healthy iteration at any fraction never goes quiet for the half hour the
+    default names, while a JVM in back-to-back full collections goes quiet
+    for hours. Zero disables it. Like the other watchers it is a daemon that
+    swallows its own failures and can only END a run.
+    """
+    try:
+        kill_s = float(cfg.get('RUN.gate.stall_kill_s'))
+    except Exception:                                        # noqa: BLE001
+        return None
+    if kill_s <= 0:
+        return None
+    try:
+        poll_s = float(cfg.get('RUN.gate.ceiling_poll_s'))
+    except Exception:                                        # noqa: BLE001
+        poll_s = 60.0
+    import threading
+
+    def loop():
+        while proc.poll() is None:
+            try:
+                silent = time.time() - os.path.getmtime(log)
+            except OSError:
+                silent = 0.0
+            if silent < kill_s:
+                time.sleep(poll_s)
+                continue
+            verdict = dict(stopped=_now(), stall_kill_s=kill_s,
+                           silent_s=round(silent, 1),
+                           reached_iteration=_last_ended_iteration(run_dir))
+            try:
+                with open(os.path.join(run_dir, STALL_STOP), 'w',
+                          encoding='utf-8', newline='\n') as fh:
+                    json.dump(verdict, fh, indent=1)
+            except OSError:
+                pass
+            print('stall watcher: stopping the run - the log has been silent '
+                  'for %.0f s against RUN.gate.stall_kill_s = %.0f s, after '
+                  'iteration %s' % (silent, kill_s, verdict['reached_iteration']),
+                  flush=True)
+            proc.kill()
+            return
+
+    t = threading.Thread(target=loop, daemon=True, name='stall-watch')
     t.start()
     return t
 
@@ -1309,6 +1559,23 @@ def _ceiling_stop_cause(run_dir):
                doc.get('reached_iteration')))
 
 
+def _stall_stop_cause(run_dir):
+    """The cause composed from the stall watcher's marker, or None."""
+    path = os.path.join(run_dir, STALL_STOP)
+    if not os.path.exists(path):
+        return None
+    try:
+        doc = json.load(open(path, encoding='utf-8'))
+    except (OSError, ValueError):
+        return None
+    return ('Stopped automatically by the stall watcher: the log was silent for '
+            '%s s against RUN.gate.stall_kill_s = %s s, after iteration %s. The '
+            'run is citable at that iteration and nowhere past it; it is NOT a '
+            'complete arm. Read gc.log for the collector\'s account (#66).'
+            % (doc.get('silent_s'), doc.get('stall_kill_s'),
+               doc.get('reached_iteration')))
+
+
 def _operator_stop_cause(run_dir):
     """The cause the operator gave to `--stop`, read from its marker, or None."""
     path = os.path.join(run_dir, OPERATOR_STOP)
@@ -1337,6 +1604,9 @@ def _stop_marker(run_dir):
     ceiling = _ceiling_stop_cause(run_dir)
     if ceiling:
         return ceiling, STOPPED_AT_CEILING
+    stall = _stall_stop_cause(run_dir)
+    if stall:
+        return stall, STOPPED_AT_STALL
     op = _operator_stop_cause(run_dir)
     if op:
         return ('Stopped by the operator through run.py --stop: %s' % op,
@@ -1567,6 +1837,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     gc_log = bool(cfg.get('RUN.machine.gc_log'))
     announce_cost(iterations, fraction, cfg)
     refuse_if_no_automatic_stop(cfg)
+    refuse_small_heap(cfg, xmx, fraction)
+    print('heap: -Xmx%s against the registry rule\'s %.1f GiB at a %.2f sample; '
+          'GC log %s (RUN.machine.gc_log)'
+          % (xmx, heap_floor_gib(cfg, fraction), float(fraction),
+             'ON' if gc_log else 'OFF'), flush=True)
 
     warm_key = None
     if warm is not None:
@@ -1719,6 +1994,9 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
             # watcher stops on a modelling condition and knows nothing about
             # clocks, so an arm that disables it had no automatic stop at all
             start_ceiling_watch(run_dir, cfg, proc, t0)
+            # and it refuses to hold the machine for a JVM that has stopped
+            # writing (#66): the third watcher, on liveness
+            start_stall_watch(run_dir, cfg, proc, log)
             rc = proc.wait()
     except BaseException:
         # Ctrl+C or a harness kill that still unwinds: record the abort and
@@ -1735,7 +2013,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
                          rc=rc, wall_s=round(wall, 1), cause=gate_cause)
         print(('%s after %.0fs - %s'
                % ({STOPPED_AT_GATE: 'GATE-STOPPED',
-                   STOPPED_AT_CEILING: 'CEILING-STOPPED'}.get(
+                   STOPPED_AT_CEILING: 'CEILING-STOPPED',
+                   STOPPED_AT_STALL: 'STALL-STOPPED'}.get(
                        completion, 'STOPPED BY THE OPERATOR'),
                   wall, gate_cause))
               if gate_cause else
@@ -1887,11 +2166,11 @@ def main():
     warm = None
     if a.warm_start:
         warm = resolve_warm_start(a.warm_start)
-        # firstIteration aligned to the checkpoint, so innovation-cutoff
-        # fractions and strategy schedules line up with the parent's timeline.
-        # Injected through the registry's own set layer, so it is validated,
-        # recorded in _config.json and reaches the config like any override.
-        overrides['RUN.controler.first_iteration'] = warm['iteration']
+        # firstIteration AND the innovation fraction, derived so the cutoff
+        # iteration is the parent's; through the registry's set layer, so it
+        # is validated, recorded in _config.json and reaches the config.
+        overrides = warm_start_overrides(warm, overrides, a.scenario, a.day,
+                                         a.run_config)
 
     cfg = resolve(a.scenario, a.day, a.run_config, overrides)
     run(a.scenario, a.day, cfg, dict(parse_override(s) for s in a.set), a.force,

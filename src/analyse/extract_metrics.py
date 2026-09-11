@@ -486,7 +486,9 @@ def link_volumes(run_dir, fraction):
     scale = 1.0 / fraction
     for m in meta.values():
         m['modelled_vehicles'] = round(m['modelled_vehicles'] * scale)
-        m['links'] = ';'.join(m['links'])
+        # a LIST, as the metrics contract states; the ';'-joined string this
+        # wrote until 11 September 2026 was the one thing that failed the
+        # schema, and nothing enforced it because the file was written bare
     return dict(links_matched_in_output=found, links_expected=len(want),
                 scale=scale,
                 # states the basis rather than leaving a reader to infer it
@@ -572,7 +574,11 @@ def main():
     doc['tables_read_at_iteration'] = sorted(_READ_AT['used'])
 
     out = a.out or os.path.join(run_dir, '_metrics.json')
-    json.dump(doc, open(out, 'w'), indent=2)
+    # through the output contract (config/schema/outputs/metrics.schema.json),
+    # like _run.json and _meta.json: a bare json.dump wrote whatever it was
+    # handed (eighth report, 11 September 2026)
+    from registry import outputs                              # noqa: PLC0415
+    outputs.write_checked(out, doc, 'metrics')
     ms = doc['mode_share']
     print('%s: %d trips (%d by %s residents)'
           % (rec['name'], ms['all_residents_trips'], ms['target_lga_trips'],

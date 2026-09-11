@@ -3,7 +3,7 @@ name: pages
 # Deploys the GitHub Pages site from README.md: the repository's front door is
 # the site's front page, rendered by GitHub's own Markdown renderer so the two
 # read identically. The fit figures README references and the dated reports
-# under docs/reports/ are carried along. Nothing is typed into the site that is
+# under cities/<city>/docs/reports/ are carried along. Nothing is typed into the site that is
 # not in the repository; see .github/scripts/build_pages.py.
 #
 # The repository's Pages source must be "GitHub Actions" (build_type: workflow)
@@ -14,7 +14,7 @@ on:
     branches: ["main"]
     paths:
       - "README.md"
-      - "docs/reports/**"
+      - "cities/*/docs/reports/**"
       - "cities/*/docs/reference/figures/**"
       - ".github/scripts/build_pages.py"
       - ".github/workflows/pages.yml"

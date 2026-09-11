@@ -192,7 +192,8 @@
           "failed": "DEAD AND ITS RECORD SAYS WHY",
           "aborted": "DEAD WITHOUT A RECORD",
           "unknown": "UNKNOWN",
-          "stopped_at_ceiling": "STOPPED AT ITS CEILING"
+          "stopped_at_ceiling": "STOPPED AT ITS CEILING",
+          "stopped_at_stall": "STOPPED AT A STALL"
         }
       },
       "note": "THE ONE ERROR THIS BOARD HAS MADE TWICE. The phase table said F30's arm 'is RUNNING' while it was dead, and then said F31's arm 'is RUNNING' while its own _run.json said stopped_at_gate at iteration 100 - with the State block, the Runs block, the Next section and the brief all saying otherwise on the same page. A run's state is a fact its record holds, so the cell that states it is pinned to the record. The words are the board's; the mapping is here because the harness holds no city's wording. REWORDED 11 Sep 2026 (§9.165): `failed` read \"DEAD WITHOUT A RECORD\", which stopped being true the day `run_failure.py` started writing a cause onto every failed card (the gate \"dead runs say why\" is green). `aborted` keeps the old words because an aborted run's own completion states its boundary."

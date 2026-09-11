@@ -771,7 +771,9 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
                     head = '<link ' + ' '.join('%s="%s"' % kv for kv in a.items())
                     applied['num_lanes_per_dir'] += 1
             except (ValueError, ZeroDivisionError):
-                pass
+                # counted, never swallowed: a lane patch that cannot be applied
+                # is a row of the E1 patch the scenario silently does not carry
+                applied['num_lanes_per_dir_unapplied'] += 1
         if 'kerbside_use' in changed and p.get('field_kerbside_use_to'):
             new_tail = set_link_attribute(tail, 'osm:way:kerbside',
                                           p['field_kerbside_use_to'])
@@ -1129,6 +1131,9 @@ def _weight_sweep(cfg, strategy):
 # value, so the emission did not move when the inheritance ended.
 PT_SUBMODE_ASC = {'bus': 'asc_bus', 'tram': 'asc_lr', 'rail': 'asc_rail',
                   'ferry': 'asc_ferry'}
+# C1 name -> registry key, the one mapping build_params.py writes the C1 table
+# from; imported rather than restated so the two cannot disagree
+from asc_fields import ASC_FIELDS  # noqa: E402
 
 
 def pt_passenger_submodes(cfg):
@@ -1212,7 +1217,18 @@ def scoring_from_c1(cfg, c1, purpose_share):
     vot_avg = (sum(vot[p] * purpose_share.get(p, 0.0) for p in vot) / wsum
                if wsum > 0 else sum(vot.values()) / len(vot))
     w = c1['weights']
-    asc = c1['asc']
+    # THE CONSTANTS ARE READ FROM THE REGISTRY AT EMISSION, not from the C1
+    # params file. `C.scoring.mode_constant` declares them `derived_from` the
+    # nine `C.asc.*` fields, and the calibrator's `rebuild_stage` reads that
+    # identity as "run-time realisable" - but until 11 September 2026 this
+    # function took `c1['asc']`, a table build_params.py had written from the
+    # registry at BUILD time, so a run overlay or `--config-set` moving
+    # `C.asc.bus` was validated, recorded in `_config.json` as moved, and
+    # executed the built value (the eighth report's emission test found it,
+    # and the launcher now refuses exactly that class). The C1 table is kept
+    # as what it is - the built record of the same values - and read for
+    # nothing here; check_package.py holds the two together.
+    asc = {name: [float(cfg.get(key))] for name, key in ASC_FIELDS}
     perf = cfg.get('C.scoring.performing_utils_per_h')
     mm = cfg.get('C.scoring.marginal_utility_of_money')
 

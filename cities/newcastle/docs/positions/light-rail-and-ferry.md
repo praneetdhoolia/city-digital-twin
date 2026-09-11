@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -77,7 +77,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 ## Refused — do not re-raise
 
 - **Switching on transit signal priority to close light rail's shortfall** (§9.156). The fifth assessment ranked it as "the shortest distance in the factor ledger between existing code and a number on the board" — light rail is the only pt mode below target and `TramPriorityConfigGroup` is written and registered with `A.lightrail.tsp_enabled` false. That is exactly why it must not be done: the field's `sweep_role` is `answer` and it IS the S2b intervention, the 38 % corridor swing S2b exists to measure (`cities/newcastle/registry/E_scenario.json`). Turning it on in the base would put the intervention inside the base, destroy the S2/S2b comparison, and close a gap with the very compensating constant GOAL loop step 3 forbids.
-- **The FIDELITY question underneath it is real, is NOT this, and is open** (§9.156). `A.lightrail.tsp_enabled` is `source: assumed`, and GOAL requirement 6 says an unobtained value is derived rather than assumed. Whether the Newcastle corridor actually operates signal priority today is a question about the real world; if it does, the S2 base is wrong and S2b is mis-specified. It is the board's standing operator decision and it is settled with evidence about the corridor, never with the −30 % on the scoreboard.
+- **The FIDELITY question underneath it is real, is NOT this, and is open** (§9.156). `A.lightrail.tsp_enabled` is `source: assumed`, and GOAL requirement 6 says an unobtained value is derived rather than assumed. Whether the Newcastle corridor actually operates signal priority today is a question about the real world; if it does, the S2 base is wrong and S2b is mis-specified. It is the board's standing operator decision and it is settled with evidence about the corridor, never with the deficit on the scoreboard (−30 % when this was written, −57.3 % at the landed result).
 
 
 - Lowering the light rail target on the corridor-market measurement: the market is modelled, and that would fit the yardstick to the answer (§9.103, §9.92).
@@ -93,6 +93,7 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 
 ## History
 
+- §9.166 — the tsp bullet re-aimed at the landed −57.3 %
 - §9.164 — the pt submodes get a plan-level control
 - §9.163 — the ferry market is present at 3.60 %; the mode is not chosen
 - §9.158 — a ferry constant declared, light rail's opened; the raptor prices no constant
@@ -107,5 +108,3 @@ Every arm below was stopped at or before its gate; these are readings, not resul
 - §9.131 — licence rebuild pending; F21 next
 - §9.130 — disclosed boardings target 2,954
 - §9.122 — ferry target moves to LGA cell
-- §9.121 — network direct walk repairs ferry
-- §9.120 — corridor market measured; router reach declared

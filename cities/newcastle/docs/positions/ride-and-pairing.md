@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 10 September 2026 (forty-first session) · **Record read through:** §9.164 · **Written against family:** `F33`
+**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
 
 ## What is built
 
@@ -24,7 +24,7 @@
 - A declared pair is accepted on identity whatever the links; the passenger's preceding activity end is set to the driver's departure less the planned access walk, so the plan converges on the driver's clock (§9.120). `B.ride.bound_pairing_window_min` = 60 min, derived as 2 × `RUN.replanning.time_mutation_range_s` (1800 s), is now only the physical-wait bound on a declared booking (§9.95 derived it as the identification tolerance; §9.120 is newer and re-purposes it).
 - An inferred pair uses `B.ride.pairing_rule` = `both_links` inside `B.ride.pairing_window_min` = 15 min (sweep 5–60) (§9.81, §9.102); `route_contains` is implemented and a sweep member (§9.102).
 - `B.ride.declared_pair_meeting` = `driver_detour`: once a driver's passengers are known, the driver's car leg is re-routed through each passenger's origin link and then each destination link, in departure order, with the run's own router; the detour is written to the driver's plan and paid in the driver's score; `passenger_links` is the swept alternative (§9.128).
-- `JointRideEngine` boards the passenger into the driver's real vehicle (`B.ride.physical_boarding` true), alights them mid-route at their destination link, and holds a booked passenger at their link up to the booking's tolerance (`B.ride.wait_for_driver` true) (§9.53, §9.60, §9.102). `B.ride.max_passengers_per_vehicle` = 4 refused 2 of 73,258 joint bindings (§9.111).
+- `JointRideEngine` boards the passenger into the driver's real vehicle (`B.ride.physical_boarding` true), alights them mid-route at their destination link, and holds a booked passenger at their link up to the booking's tolerance (`B.ride.wait_for_driver` true) (§9.53, §9.60, §9.102). `B.ride.max_passengers_per_vehicle` = 4 refused 2 of 73,258 joint bindings when it was built (§9.111) and 1 of 84,436 on the rebuilt demand (`_activity_chains_report.json`).
 - An unpaired ride leg executes this iteration as `B.ride.unpaired_fallback` = `licensed_drive_else_walk` (`B.ride.remode_unpaired` true) and the plan keeps `ride` at AfterMobsim — an execution, not a deletion (§9.55, §9.81, §9.105).
 - `EscortCoherenceListener` re-offers a split pair at `B.ride.escort_coherence_rate` = 0.4 and `B.ride.joint_coherence_rate` = 0.4 (sweep 0–0.5; zero recovers escort-only) (§9.84). Both its passes iterate `byHousehold`, so its scope is intra-household (§9.145). **Since §9.146 it re-proposes DECLARED pairs only** — a trip in `boundRideTrips` with a driver in `boundDriver` — under `B.ride.coherence_scope` = `declared` (sweep `inferred` reproduces every arm before it): the same identity `GatedSubtourModeChoice` gates on, so the two mechanisms no longer contradict.
 - A household drives the cars the census gives it: `B.population.vehicle_roster` = `census` maps every driver to a shared `hh<id>_car<k>`, and `HouseholdCarDepartureHandler` holds a driver whose car is out at the link until MATSim's own link parks it back — car-only, because `RUN.qsim.vehicle_behavior` is global and its `wait` strands walk and taxi (§9.146, §9.148, #145; [population-and-demand](population-and-demand.md)). A declared passenger who would rather drive now needs a car to be at home: self-driven bound trips 29,827 → 17,530 at the F28 gate (§9.149).
@@ -109,6 +109,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.166 — trim() removes through the declared selector; arm 0 lost
 - §9.164 — the declared passenger is put on ride at the demand
 - §9.163 — the target is above the choice set; the passenger drives
 - §9.160 — ride measured CONVERGED at -38.0 %; it is supply
@@ -123,5 +124,3 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - §9.145 — the dominant miss is not a window; measure F26 rather than patch
 - §9.144 — a declared driver owns a car, in all four passes
 - §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
-- §9.142 — the binders reach target; the loss is in plan memory
-- §9.140 — #91 closed; ride survives memory

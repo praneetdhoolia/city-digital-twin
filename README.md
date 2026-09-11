@@ -217,6 +217,11 @@ recorded as unscored, with the reason, in
 
 Full rows, every unscorable target and the parameter provenance:
 [`CALIBRATION_REPORT.md`](cities/newcastle/docs/reference/CALIBRATION_REPORT.md).
+**Licence:** the figures and the report are derived from the synthetic plans, which
+carry the OSM-derived network's share-alike ancestry (`share_alike_ancestor` yes in
+the manifest, `DECISIONS.md` §9.158), so they are published under **ODbL 1.0**, not
+the package's CC-BY 4.0 — the boundary the manifest keeps visible applies to what
+is drawn from the data as much as to the data.
 Regenerate the figures and the report together after a new arm:
 
 ```bash
@@ -246,7 +251,7 @@ python src/calibrate/report.py --run <run dir>
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
 | Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 514 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
+| Input registry | 521 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -300,7 +305,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 514 declared values, with units, provenance, sweeps
+  registry/                  the 521 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,

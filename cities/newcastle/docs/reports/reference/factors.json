@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 90,
+  "factors": 93,
   "needs_research": 0,
-  "researched": 90,
-  "literature_half_written": 90
+  "researched": 93,
+  "literature_half_written": 93
  },
  "factors": [
   {
@@ -177,7 +177,14 @@
    "last_verified": "2026-09-07",
    "query": "B Escort of children: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "B3"
+   "id": "B3",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "How ActivitySim does it (read this pass): an explicit school_escorting model for drop-off and pick-up and a joint_tour_frequency_composition model deciding how much joint travel occurs and who participates (adults-only, children-only, mixed), calibrated in the MWCOG Gen3 report.",
+     "source_url": "https://activitysim.github.io/activitysim/develop/users-guide/other_examples.html"
+    }
+   ]
   },
   {
    "layer": "B",
@@ -372,7 +379,14 @@
    "last_verified": "2026-09-07",
    "query": "E Parking cost and search time: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E4"
+   "id": "E4",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Newcastle parking occupancy observation exists in part: City of Newcastle in-pavement sensors at Darby Street and Beaumont Street (Hunter Street and Orchardtown Road planned) record occupancy duration and are not published on an open portal.",
+     "source_url": "https://newcastle.nsw.gov.au/living/transport-and-parking/parking/parking-sensors"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -521,7 +535,14 @@
    "last_verified": "2026-09-07",
    "query": "E Bike: stress (traffic), gradient, e-bike: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E14"
+   "id": "E14",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Cycling network connectivity scoping review (Transport Reviews 2024) and a Melbourne corridor study (Transportation 2025) read this pass: more connected LOW-STRESS kilometres correlate with rising cycling share, and the relationship is estimated on census-area cycling counts against an LTS connectivity score, so the data a simulator needs are an LTS-classified network and area-level cycling counts.",
+     "source_url": "https://www.tandfonline.com/doi/full/10.1080/01441647.2024.2337880"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -566,7 +587,14 @@
    "last_verified": "2026-09-07",
    "query": "E Taxi / rideshare: wait, fleet, refusal, surge: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E17"
+   "id": "E17",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Ride-hailing demand elasticity literature read this pass: fare elasticities are low (an Uber estimate of -0.154 from experimental fare variation; cross-price elasticity 0.26 between ride-hailing and taxi), waiting time is the second service attribute after fare, and any fare change feeds back through wait time. Labelled literature; none is a Newcastle observation.",
+     "source_url": "https://www.sciencedirect.com/science/article/pii/S2185556023000263"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -581,7 +609,14 @@
    "last_verified": "2026-09-07",
    "query": "E Motorbike: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E18"
+   "id": "E18",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Australian evidence read this pass: powered-two-wheeler commuters are concentrated in city-centre commutes and skew to high-income males in professional occupations; free parking is the most important stated factor for commuting by PTW into the city (Rose and Delbosc ATRF 2013; Journal of Transport Geography 2016). Income's sign on ownership is mixed across the literature.",
+     "source_url": "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/2013_rose_delbosc.pdf"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -626,7 +661,14 @@
    "last_verified": "2026-09-07",
    "query": "E Heavy rail: capacity, fare, station access: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E21"
+   "id": "E21",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Station-level direct ridership models read this pass: service quantity, population density and station location drive boardings; feeder-bus connections add boardings, and park-and-ride supply was the most significant variable across Chicago, Dallas and Atlanta (Duncan 2010; Shantz et al. 2022 on GO Transit).",
+     "source_url": "https://doi.org/10.1177/0739456X10385935"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -641,7 +683,14 @@
    "last_verified": "2026-09-07",
    "query": "E Ferry: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E22"
+   "id": "E22",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Ferry forecasting literature read this pass: Outwater et al. 2004 (TRR 1872) found water-transit riders 'often choose their travel mode based on factors other than travel time and cost' and forecast ferry ridership by attitudinal market segments; the practitioner rule (Human Transit, 2016) is that a walk-access circle around a wharf is mostly water, so ferry success needs high density inside the walk radius and high frequency.",
+     "source_url": "https://doi.org/10.3141/1872-09"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -656,7 +705,14 @@
    "last_verified": "2026-09-07",
    "query": "E Truck / freight: commodity, time windows, vehicle class: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E23"
+   "id": "E23",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Freight trip generation narrative review (TRR 2025) read this pass: establishment-level sales, storage space, location and commodity type improve on employment-and-area models; the data collection framework for large urban areas combines establishment-based freight surveys with vehicle observation, GPS and commodity-flow surveys (Holguin-Veras et al.).",
+     "source_url": "https://journals.sagepub.com/doi/10.1177/03611981251393157"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -1067,7 +1123,14 @@
    ],
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "reused": true,
-   "id": "I6"
+   "id": "I6",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Primary source for the log-ratio step read this pass: Rakow and Nagel 2024 (see I12 addendum). The reference-mode correction term (ln z_0 - ln m_0) is part of the published rule, which is the form src/calibrate/asc_fixed_point.py already takes with car as reference.",
+     "source_url": "https://depositonce.tu-berlin.de/items/499d9240-b7c7-41e3-8f04-1ba86e421e02"
+    }
+   ]
   },
   {
    "layer": "I",
@@ -1090,7 +1153,14 @@
    "verified_in": "pass 2026-09-08 (6cf0ffd)",
    "added_on": "2026-09-08",
    "reused": true,
-   "id": "I7"
+   "id": "I7",
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "boptx (Hoerl, GitHub README read this pass) implements CMA-ES and xNES, FDSA and SPSA, with Bayesian optimisation 'awaiting cleanup', targets MATSim/eqasim (Berlin, Ile-de-France), and cites Floetteroed 2017 opdyts and Agarwal et al. hEART 2017; the README publishes no head-to-head evaluation counts.",
+     "source_url": "https://github.com/sebhoerl/boptx"
+    }
+   ]
   },
   {
    "layer": "I",
@@ -1319,7 +1389,14 @@
    "added_on": "2026-09-09",
    "verified_in": "pass 2026-09-09 (781cf41)",
    "id": "I12",
-   "reused": true
+   "reused": true,
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Rakow and Nagel (2024, TU Berlin depositonce-20593, CC BY 4.0, 3 pages, read in full this pass) state the rule as asc_i <- asc_i + [ln z_i - ln m_i - (ln z_0 - ln m_0)] with one mode fixed as reference, prove it exact for two alternatives under FIXED utilities, and say of the schedule only: 'In real-world scenarios, it is recommended to adjust the update step by a fraction. This fraction can be modified based on the difference between simulated and reference mode shares.' No damping value, no schedule and no convergence or oscillation curve is published; the method is 'implemented into the MATSim Python tools package'. The idea is credited to Gunnar Floetteroed and to Orme and Johnson (2006) for conjoint share adjustment.",
+     "source_url": "https://depositonce.tu-berlin.de/items/499d9240-b7c7-41e3-8f04-1ba86e421e02"
+    }
+   ]
   },
   {
    "layer": "I",
@@ -1375,7 +1452,7 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "A measured effect on mode share of aligning versus not aligning a MATSim transit router's in-vehicle cost with the scoring function's mode constant",
-   "reused": false
+   "reused": true
   },
   {
    "layer": "H",
@@ -1390,7 +1467,7 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "A published measurement of the mode-share step at the innovation cutoff in a multimodal MATSim scenario, and whether the pre-cutoff or post-cutoff share is the one validated against observation",
-   "reused": false
+   "reused": true
   },
   {
    "layer": "H",
@@ -1405,7 +1482,14 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "A published coverage figure - the fraction of agents that ever held a given mode in plan memory - for a calibrated multimodal MATSim scenario, and any guidance on a minimum coverage before a mode constant is calibrated. modeChoiceCoverage is undocumented outside the source",
-   "reused": false
+   "reused": true,
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "The MATSim source (org.matsim.analysis.ModeChoiceCoverageControlerListener, read this pass) defines coverage PER TRIP, not per agent: 'Mode choice coverage percentage of trips have used a certain mode at least once (or 5x, 10x, ...) in previous iterations', keyed on the main mode of the EXECUTED selected plan each iteration, written to modeChoiceCoverage{1,5,10}x.txt. So a coverage figure is the share of person-trips that have experienced the mode, which is at or below the share whose plan memory holds it; the bound 'a target above coverage is unreachable by a constant' therefore holds a fortiori, and a trip share compared against a trip coverage is a like-for-like comparison.",
+     "source_url": "https://raw.githubusercontent.com/matsim-org/matsim-libs/master/matsim/src/main/java/org/matsim/analysis/ModeChoiceCoverageControlerListener.java"
+    }
+   ]
   },
   {
    "layer": "H",
@@ -1420,7 +1504,7 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "Whether an agent-based model that adds a maximum-distance availability filter for bike and walk reports a measured change in those modes' shares, and what threshold was used",
-   "reused": false
+   "reused": true
   },
   {
    "layer": "I",
@@ -1435,7 +1519,7 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "Whether any agent-based city model publishes a coincidence ratio for its trip length frequency distribution, and what value it reached",
-   "reused": false
+   "reused": true
   },
   {
    "layer": "K",
@@ -1450,7 +1534,14 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "The completed version of Mersini and Ziemke's stuck-time scaling runs - a recommended stuck-time value as a function of sample share for MATSim",
-   "reused": false
+   "reused": true,
+   "addenda": [
+    {
+     "date": "2026-09-11",
+     "text": "Searched again this pass (11 September 2026): only the MUM 2025 abstract (MUM25_paper_30) is published; the completed scaled-stuck-time results are not.",
+     "source_url": "https://matsim.org/conferences/mum2025/abstracts/MUM25_paper_30.pdf"
+    }
+   ]
   },
   {
    "layer": "K",
@@ -1465,10 +1556,79 @@
    "needs_research": false,
    "last_verified": "2026-09-10",
    "query": "A published agent-based scenario's counts validation that reports how many stations modelled zero and why - the failure mode of station-to-link matching rather than the aggregate %RMSE",
-   "reused": false
+   "reused": true
+  },
+  {
+   "id": "E25",
+   "layer": "E",
+   "factor": "Rail bonus: the submode preference for rail over bus at equal service",
+   "what_research_says": "Across the comparative literature a rail vehicle attracts more riders than a bus offering the same travel time, frequency and walk distance: transport models find 5-15 % higher expected ridership for rail than for bus with similar characteristics, and Scherer and Dziekan measured a 'psychological rail factor' - a stated preference for rail at equal service - of 63 % for regional train and 75 % for tram against bus. Currie and Delbosc's BRT/LRT comparison attributes part of the gap to load factor, reliability, comfort and visibility, and part to perception. The consequence for a simulator is that a router which allocates a pt trip between bus and tram on time alone cannot reproduce an observed bus/tram split, whatever constants the plan-level scorer carries.",
+   "source_url": "https://www.worldtransitresearch.info/research/4219/",
+   "magnitude": "literature: 5-15 % more ridership for rail than for an otherwise equal bus; 75 % tram preference at equal service (stated), 63 % for regional train",
+   "how_leading_simulators_do_it": "Four-step and ActivitySim-class models carry a submode-specific constant in the transit path or mode nest; MATSim SwissRailRaptor prices in-vehicle time per submode only, and a submode constant enters the router only through a custom RaptorInVehicleCostCalculator or by splitting pt into per-submode plan alternatives.",
+   "evidence_strength": "moderate",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-11",
+   "query": "A Newcastle-specific stated preference for the tram over the bus at equal service; none is published",
+   "reused": false,
+   "additional_sources": [
+    "https://www.sciencedirect.com/science/article/pii/S0739885926000776",
+    "https://digitalcommons.usf.edu/jpt/vol16/iss2/3/"
+   ]
+  },
+  {
+   "id": "J6",
+   "layer": "J",
+   "factor": "Automatic passenger counts, vehicle location and occupancy feeds as calibration data",
+   "what_research_says": "Where an agency instruments its buses, per-service occupancy and on-time running become observations a simulator can be scored against below the monthly contract total. TfNSW publishes BOAM (Bus Opal Assignment Model), 'an indicator of historic bus occupancy for individual bus services from January 2020' under Creative Commons Attribution, with a v2.0 field document behind login; its regional coverage is not stated on the page. Every Hunter and Lower North Coast bus has been fitted with GPS and automatic passenger counting under the Transport Connected Bus programme (233 buses), and PTIPS-based on-time running is published for Sydney Metropolitan and Outer Metropolitan contracts from 2010. GTFS-Realtime for the Hunter is live and can be archived by the user.",
+   "source_url": "https://opendata.transport.nsw.gov.au/dataset/boam-bus-opal-assignment-model",
+   "magnitude": "literature: n/a (a data source, not a coefficient)",
+   "how_leading_simulators_do_it": "Agency ABMs validate transit by route-level boardings from APC; MATSim projects (Berlin, Munich) validate against stop-level or line-level counts.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-11",
+   "query": "Whether BOAM covers the Newcastle (OM Region 2 / NISC1) contract and at what granularity - the field document is behind login",
+   "reused": false,
+   "additional_sources": [
+    "https://www.transport.nsw.gov.au/news-and-events/media-releases/real-time-tracking-now-available-on-all-hunter-and-lower-north-coast",
+    "https://www.transport.nsw.gov.au/data-and-research/data-and-insights/buses-on-time-running"
+   ]
+  },
+  {
+   "id": "J7",
+   "layer": "J",
+   "factor": "Bespoke aggregate tables from the travel survey where unit records are not released",
+   "what_research_says": "TfNSW publishes the Household Travel Survey by Region, LGA and SA3 (2020/21-2024/25 released 9 March 2026; dashboards) and states that to protect respondents it is 'unable to provide the data in any alternative form or at a more granular level'; the same programme supplies BESPOKE tables - the dataset page says 'If you have been supplied bespoke journey data for historical years recently, please request updated tables' (contact opendataprogram@transport.nsw.gov.au). A model that cannot estimate on unit records can still request the specific cross-tabulation its target needs (mode by age band, trip-length distribution by mode, occupancy by purpose) for its study area.",
+   "source_url": "https://opendata.transport.nsw.gov.au/dataset/household-travel-survey",
+   "magnitude": "literature: n/a",
+   "how_leading_simulators_do_it": "Australian ABMs (AToM) estimate on VISTA unit records; where a survey is aggregate-only the practice is targeted custom tabulations from the survey owner.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-11",
+   "query": "The written policy text on the HTS page (transport.nsw.gov.au returned 403 to this pass; the sentence was read through the search summary and should be quoted from the page itself next pass)",
+   "reused": false,
+   "additional_sources": [
+    "https://www.transport.nsw.gov.au/data-and-research/data-and-insights/surveys/household-travel-survey-hts"
+   ]
   }
  ],
  "last_pass": {
+  "date": "2026-09-11",
+  "head": "20ae4e9",
+  "rounds": 4,
+  "searches_spent": 37,
+  "budget": 40,
+  "literature_halves_newly_filled": 3,
+  "literature_halves_completed": 0,
+  "factors_added": 3,
+  "addenda_written": 12,
+  "note": "Eighth pass of the library, at 20ae4e9 (the PR #179 merge), one day after the seventh. needs_research was 0 and every one of the 90 stored literature halves was inside the 365-day horizon, so ALL 90 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. This pass's question was the user's: for each of the twelve modes, what does the literature say decides its share, what data does a simulator need, which of those data does this package hold or lack, and is the lacking item obtainable. 25 of the 37 calls went to that question and are written as the new top-level `per_mode_data` block (literature half only); the this-model half is in the writer copy. THREE NEW ROWS: E25 rail bonus (5-15 % ridership; Scherer and Dziekan 75 % tram preference at equal service), J6 APC/AVL/occupancy feeds (TfNSW BOAM, CC-BY, from Jan 2020; Hunter buses carry GPS and APC), J7 bespoke survey tables (TfNSW: no unit records, bespoke tables on request). TWELVE ADDENDA appended to stored rows without rewriting them. TWO GAPS CLOSED WITH THEIR SOURCE: H10 - the MATSim source defines modeChoiceCoverage per TRIP executed >= 1x, not per agent; I12 - Rakow and Nagel 2024 (read in full from a PDF saved locally at no budget cost) publish the reference-mode log-ratio rule and recommend 'a fraction ... modified based on the difference', with no schedule and no curve. ONE ROUTE DIED: researchdata.edu.au for the M1 EIS appendix. FOUR GAPS OPENED: BOAM coverage, the Opal Patronage dataset as a ferry observation, freight trains at the Newcastle crossings (press evidence contradicts a registry value of 0), and the HTS bespoke-table request. Three calls of the 40 were left unspent. Dead routes confirmed again: transport.nsw.gov.au pages 403 to WebFetch; depositonce.tu-berlin.de bitstreams 302 to api-depositonce and return binary, which pypdf reads.",
+  "statuses_note": "0 statuses stored, by design. All 90 carried rows plus the 3 new ones were re-read at 20ae4e9 by grep of the registry (514 declared fields), src/, cities/newcastle/build/ and both Java trees, plus a read-only check_hardcoding.py run (514 fields over 220 source files, 150 of 150 bound fields proven to reach the config, TOTAL 0; 0 declared-but-unwired, 4 declared-ahead-of-consumer, 3 shipped at the consumer's off value). The previous pass's per-row statuses were not persisted beyond its ranked top movers (the report-data block stores counts and the ranked list only), so the per-row delta below is against the named rows of that pass and its counts by class and by layer. This pass over the 90 carried rows: IN 44, PARTIAL 34, INERT 2, ASC 1, OUT 9 (previous pass: IN 46, PARTIAL 32, INERT 2, ASC 1, OUT 9). CLASS CHANGES: (1) E12 reliability and headway INERT -> PARTIAL at 8d3d4cf (#175, DECISIONS 9.164): citysim.ServiceQualityScoring charges beta_headway x headway and beta_reliability x the measured arrival-delay spread per route, gated by C.time_weights.service_quality_representation, which ships `absent` - the previous pass's top INERT is now a built, switched-off mechanism. (2) H10 choice-set coverage PARTIAL -> IN at 89d6c08 (with d42088c, 8d3d4cf): src/analyse/report_choice_set_coverage.py reads the coverage file, prints headroom per mode and the board reading classifies a deviation above its headroom as a choice-set finding; ride's -41.0 is the first deviation so named. (3) J4 road counts PARTIAL -> IN at efca641/3a4496d/f8922ba (#82 closed): the count-station map had named the wrong roads for 25 days; regenerated 197/197 matched, counts read +16.3 % mean. (4) H11 mode availability by distance OUT -> INERT at 2f8c938: a reclassification on evidence, not a model change - B.mode.walk_feasible_km and bike_feasible_km were already declared and bound at 0.0, and inert_at now records them as shipped at the consumer's off value (check_hardcoding section 7). PROOFS MOVED WITH NO CLASS CHANGE: E16 (B.mode.bound_passenger_placement = every_plan, 8d3d4cf), F5 (SubmodeRaptorProvider and RUN.mode_choice.pt_submode_alternatives added, both off), H4/H9 (RUN.replanning.score_msa_representation and plan_selector_for_removal declared, 38dbdbe), I4 (CAL.objective.replication_band_pp declared at 0.0, 8d3d4cf), I13 (the coverage classification is a second residual test), K2 (F33 arm 0 died on an unset heap, cause recorded, 1185832), K5 (station matching repaired, heavy share still assumed). The three new rows are OUT, OUT, OUT. READER-JUDGEMENT DIFFERENCES WITH NO COMMIT BEHIND THEM: the carried-row totals move 46/32/2/1/9 -> 44/34/2/1/9, which the four class changes alone would put at 48/31/2/1/8; the previous pass did not persist per-row statuses, and its layer counts locate the remaining differences in B (one row read PARTIAL there and OUT here: B4 telework or B6 impairment), C (C4 intra-zonal, IN there and PARTIAL here - no intrazonal share is a target), E (two rows IN there and PARTIAL here, among E7/E9/E10/E14/E17/E19/E21 where a named sub-mechanism is absent or switched off) and I (I9 identifiability, IN there and PARTIAL here - independent_targets is declared, no test is computed). None of these is a movement of the model."
+ },
+ "previous_pass": {
   "date": "2026-09-10",
   "head": "4d1d1bc",
   "rounds": 3,
@@ -1478,7 +1638,237 @@
   "literature_halves_completed": 0,
   "factors_added": 7,
   "note": "Sixth pass of the library, at 4d1d1bc (the PR #173 merge), one day after the fifth. needs_research was 0 and every one of the 83 stored literature halves was one day old and inside the 365-day horizon, so ALL 83 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. All 18 calls went to this pass's question - what it takes to attain an organically simulated equilibrium that reproduces many variables at once - and to factors the library had no row for. SEVEN NEW ROWS. (1) F5 ROUTER-SCORER CONSISTENCY: Flotterod and Kickhofer's identity P(i|U) = sum P(i|C) P(C|U) makes the router the choice-set generator, so an objective the router does not carry can only reject alternatives after they are built. (2) H9 EQUILIBRIUM SELECTION AND THE INNOVATION CUTOFF: MATSim's own terminology page states that with innovation on the result is not stationary and that once it is off the process is stationary BUT LIMITED TO THE PLANS EACH AGENT ALREADY HOLDS; selection is a logit at mu = brainExpBeta before the cutoff and effectively arg-max after it, so switching innovation off changes the ESTIMATOR. The empirical price of anarchy is about 1.30 and near 1.0 in light and heavy traffic, so reaching an equilibrium is no guarantee of resembling an observed day. (3) H10 CHOICE-SET COVERAGE AS A BINDING CONSTRAINT: \"alternatives that never appear in the choice set cannot be chosen\", and when synthetic choice sets differ from real ones \"it is unlikely that the simulation will display correct aggregated quantities\". (4) H11 MODE AVAILABILITY BY DISTANCE: Australian survey median home-based cycling trip 3.5 km, 85th percentile 5.5 km in Montreal. (5) I15 DISTRIBUTIONAL TARGETS BEYOND MODE SHARE: mean trip length within 5 per cent by purpose, coincidence ratio at least 70 per cent, intrazonal share within 3 percentage points, and vehicle occupancy now a VALIDATION TARGET in an activity-based model rather than an input. (6) K4 CAPACITY AND STUCK-TIME CORRECTION AT A SAMPLE: Mersini and Ziemke MUM 2025 measured alpha = 1 against alpha = 0.75 on a full-scale Lausitz benchmark - averages unreliable below 10 per cent, 25 per cent close to full scale, and stuck-time violations 4.5x the full-scale rate at 1 per cent under equal scaling. (7) K5 EXPANDING A SAMPLED RUN'S LINK VOLUMES: countsScaleFactor plus the two basis decisions - which vehicle classes count and which link a station maps to. TWO PDFs that WebFetch returned as binary were saved and read locally at no budget cost (MUM25_paper_30 and the CC-BY chapter 49 at d-nb.info/1172809151/34); that route is confirmed a third time. ONE GAP CLOSED: I14 min-max scalarisation - Chebyshev/weighted-min-max reaches Pareto points a weighted sum provably cannot, for convex and non-convex fronts alike, which is the form this project's own objective already takes. ONE GAP ADDED: modeChoiceCoverage is undocumented outside the MATSim source, and four differently phrased searches found no published coverage figure for any scenario.",
-  "statuses_note": "0 statuses stored, by design. All 90 were re-read at 4d1d1bc by grep of the registry (497 declared fields over 204 source files), src/, cities/newcastle/build/ and both Java trees, plus a read-only check_hardcoding.py run (TOTAL 0 items; 0 declared-but-unwired; the same 4 declared-ahead-of-consumer). Every registry key and every file path named in the 83 carried proofs was resolved mechanically against the tree at HEAD and all 83 resolved; line numbers in CitysimControler.java and calibrate.py had MOVED and were re-read and corrected. This pass over the 83 carried rows: IN 46, PARTIAL 26, INERT 2, ASC 1, OUT 8 (previous pass: 45 / 27 / 2 / 1 / 8). ONE CARRIED FACTOR CHANGED CLASS: K2 iteration count and cost, PARTIAL -> IN at commit 8bb30d9 - the previous proof's reason for PARTIAL was that the GOAL's 250-iteration requirement was UNMEASURED, and 20260909T015217_300it_25pct ran 300 of 300 in 21.5 h and relaxed at 0.261 pp. The seven new rows are PARTIAL, PARTIAL, PARTIAL, OUT, PARTIAL, PARTIAL, PARTIAL."
+  "statuses_note": "0 statuses stored, by design. All 90 were re-read at 4d1d1bc by grep of the registry (497 declared fields over 204 source files), src/, cities/newcastle/build/ and both Java trees, plus a read-only check_hardcoding.py run (TOTAL 0 items; 0 declared-but-unwired; the same 4 declared-ahead-of-consumer). Every registry key and every file path named in the 83 carried proofs was resolved mechanically against the tree at HEAD and all 83 resolved; line numbers in CitysimControler.java and calibrate.py had MOVED and were re-read and corrected. This pass over the 83 carried rows: IN 46, PARTIAL 26, INERT 2, ASC 1, OUT 8 (previous pass: 45 / 27 / 2 / 1 / 8). ONE CARRIED FACTOR CHANGED CLASS: K2 iteration count and cost, PARTIAL -> IN at commit 8bb30d9 - the previous proof's reason for PARTIAL was that the GOAL's 250-iteration requirement was UNMEASURED, and 20260909T015217_300it_25pct ran 300 of 300 in 21.5 h and relaxed at 0.261 pp. The seven new rows are PARTIAL, PARTIAL, PARTIAL, OUT, PARTIAL, PARTIAL, PARTIAL.",
+  "kept_because": "The statuses_note of a pass is the only per-pass record of which statuses changed; kept verbatim so the next pass can compute its delta without the report HTML."
+ },
+ "per_mode_data": {
+  "written": "2026-09-11",
+  "head": "20ae4e9",
+  "purpose": "LITERATURE HALF ONLY: for each of the twelve modes, what the research says decides its share and what data a simulator needs to reproduce it, with sources. Which of those data THIS package holds, lacks and can obtain is re-read at HEAD every pass and lives in the writer copy, never here.",
+  "modes": {
+   "car": {
+    "decisive_factors_literature": [
+     "household car availability and competition for the household car (E6, A3)",
+     "parking cost, search time and supply at the destination (E4; Shoup)",
+     "in-vehicle time under congestion and the per-km operating cost (E1, E3)",
+     "income (E8) and licence holding (A5)",
+     "built form: the 5D elasticities are all inelastic, density and distance-to-transit the largest (E9)"
+    ],
+    "data_a_simulator_needs": [
+     "census vehicles per household and licence holding by age",
+     "a parking inventory with prices and occupancy by zone",
+     "a congested network with observed speeds and link counts (AADT, hourly, classified)",
+     "the survey car-driver share and its mean trip length",
+     "an occupancy observation (persons per car) to split driver from passenger"
+    ],
+    "sources": [
+     "https://www.sciencedirect.com/science/article/pii/S1361920924000440",
+     "https://newcastle.nsw.gov.au/living/transport-and-parking/parking/parking-sensors"
+    ]
+   },
+   "ride": {
+    "decisive_factors_literature": [
+     "household structure and the escort obligation: school drop-off and pick-up as an explicit sub-model (ActivitySim school_escorting)",
+     "joint tours and who participates (joint_tour_frequency_composition)",
+     "licence and car availability of the DRIVER, not the passenger",
+     "age: children and no-licence adults are the passenger population",
+     "the pairing itself: a lift exists only where a driver makes the same trip in the same window"
+    ],
+    "data_a_simulator_needs": [
+     "survey passenger share with party size and driver relationship",
+     "occupancy by purpose",
+     "school enrolment locations and hours",
+     "household composition with licence holding per member",
+     "a mode-by-age table to place the passengers where the survey puts them"
+    ],
+    "sources": [
+     "https://activitysim.github.io/activitysim/develop/users-guide/other_examples.html",
+     "https://www.mwcog.org/assets/1/6/Gen3_Model_Calibration_and_Validation_Report.pdf"
+    ]
+   },
+   "walk": {
+    "decisive_factors_literature": [
+     "distance: the walk share is a property of the sub-1 km trip supply (H11, C4)",
+     "density and destination mix within walking distance (E9)",
+     "footpath continuity, crossings and directness (E15)",
+     "gradient (Tobler) and the pt access walk (E2)"
+    ],
+    "data_a_simulator_needs": [
+     "the survey walk share AND its trip-length distribution, not only its mean",
+     "a footpath network with crossings, or at least a pedestrian graph distinct from the carriageway",
+     "pedestrian counts at cordon or centre points",
+     "land-use points at parcel resolution"
+    ],
+    "sources": [
+     "https://www.sciencedirect.com/science/article/pii/S1361920924000440"
+    ]
+   },
+   "bike": {
+    "decisive_factors_literature": [
+     "distance (median home-based cycling trip 3.5 km, H11)",
+     "traffic stress: connected LOW-STRESS kilometres raise cycling share (E14)",
+     "gradient",
+     "bicycle ownership and age",
+     "e-bike share (extends the distance and flattens the gradient effect, A4)"
+    ],
+    "data_a_simulator_needs": [
+     "an LTS-classified network (traffic volume, speed, separation per link)",
+     "area-level cycling counts or automatic bike counters",
+     "ownership by household and e-bike share",
+     "the survey bike share unfolded from taxi (the HTS folds them)"
+    ],
+    "sources": [
+     "https://www.tandfonline.com/doi/full/10.1080/01441647.2024.2337880",
+     "https://link.springer.com/article/10.1007/s11116-025-10599-5"
+    ]
+   },
+   "motorbike": {
+    "decisive_factors_literature": [
+     "free or available parking at the city-centre destination (the top stated factor)",
+     "rider licence holding",
+     "demographics: high-income male professionals commuting to the centre",
+     "congestion on the commute corridor"
+    ],
+    "data_a_simulator_needs": [
+     "motorcycle registrations by postcode (BITRE Road Vehicles Australia, CC-BY) as an ownership anchor",
+     "rider licence class counts by LGA (TfNSW licence statistics)",
+     "census journey-to-work motorcycle cell (held)",
+     "motorcycle parking inventory in the centre"
+    ],
+    "sources": [
+     "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/2013_rose_delbosc.pdf",
+     "https://data.gov.au/data/dataset/road-vehicles-australia-january-2024"
+    ]
+   },
+   "taxi": {
+    "decisive_factors_literature": [
+     "fare (low elasticity, ~-0.15 in an experimental Uber estimate) and waiting time",
+     "fleet supply and refusal, which set the wait",
+     "car ownership and age of the traveller; night and leisure purposes",
+     "surge and dynamic pricing (recorded, not charged here)"
+    ],
+    "data_a_simulator_needs": [
+     "point-to-point trip volumes for the study area (IPART annual survey covers Newcastle and Hunter as its own region; the P2P Commissioner levy counts are unpublished)",
+     "fare schedule (held) and rideshare share",
+     "fleet size and vehicle-trips per day",
+     "an unfolded taxi share from the survey (the HTS folds it with bike)"
+    ],
+    "sources": [
+     "https://www.ipart.nsw.gov.au/sites/default/files/cm9_documents/Consultant-Report-ORIMA-Research-2025-Point-to-Point-Transport-Survey.PDF",
+     "https://www.sciencedirect.com/science/article/pii/S2185556023000263"
+    ]
+   },
+   "bus": {
+    "decisive_factors_literature": [
+     "headway and reliability (E12; reliability ratio ~1.3, headway at half the interval)",
+     "stop access distance (E2)",
+     "fare (E3)",
+     "crowding (E11)",
+     "the rail bonus against it where a tram or train runs the same corridor (E25)"
+    ],
+    "data_a_simulator_needs": [
+     "per-service occupancy (BOAM) and APC boardings by stop",
+     "on-time running / arrival-delay spread per route (PTIPS or an archived GTFS-Realtime feed)",
+     "monthly Opal totals by contract region (held, with its 2025-04 break)",
+     "a stop-level boarding series to place the target below the region total"
+    ],
+    "sources": [
+     "https://opendata.transport.nsw.gov.au/dataset/boam-bus-opal-assignment-model",
+     "https://opendata.transport.nsw.gov.au/data/dataset/opal-patronage"
+    ]
+   },
+   "light_rail": {
+    "decisive_factors_literature": [
+     "the rail bonus at equal service (E25)",
+     "stop access and corridor land use within 800 m (E9, C1)",
+     "dwell, priority and run time (E20, G2)",
+     "frequency",
+     "transfer from heavy rail at the interchange (E2)"
+    ],
+    "data_a_simulator_needs": [
+     "stop-level tap-on series (held to Jun 2024, before the series break)",
+     "the line's monthly Opal series (held)",
+     "corridor floorspace and attraction at parcel level",
+     "a stated or revealed tram-vs-bus preference for the corridor"
+    ],
+    "sources": [
+     "https://www.worldtransitresearch.info/research/4219/",
+     "https://digitalcommons.usf.edu/jpt/vol16/iss2/3/"
+    ]
+   },
+   "heavy_rail": {
+    "decisive_factors_literature": [
+     "service quantity and station location",
+     "station access: park-and-ride supply and feeder bus (the most significant variables in multi-city station models)",
+     "fare and crowding",
+     "population density in the catchment"
+    ],
+    "data_a_simulator_needs": [
+     "station entries by station (held: 24 stations, monthly)",
+     "park-and-ride occupancy (TfNSW Car Park API: Sydney Metro car parks only today)",
+     "station access-mode survey shares",
+     "feeder bus timetables (held in GTFS)"
+    ],
+    "sources": [
+     "https://doi.org/10.1177/0739456X10385935",
+     "https://opendata.transport.nsw.gov.au/dataset/car-park-api"
+    ]
+   },
+   "ferry": {
+    "decisive_factors_literature": [
+     "walk-access density on both banks (a wharf's walk circle is mostly water)",
+     "frequency and hours",
+     "attitudinal factors beyond time and cost (Outwater et al. 2004)",
+     "the road alternative's length (the Stockton detour)"
+    ],
+    "data_a_simulator_needs": [
+     "a wharf-level or line-level patronage series (none in the package; the Opal Patronage daily dataset by mode and key commercial centre, CC-BY, is the candidate)",
+     "bank-by-bank population and jobs (held)",
+     "timetable (held)"
+    ],
+    "sources": [
+     "https://doi.org/10.3141/1872-09",
+     "https://opendata.transport.nsw.gov.au/data/dataset/opal-patronage",
+     "https://humantransit.org/2016/12/ferries-opportunities-and-challenges.html"
+    ]
+   },
+   "truck": {
+    "decisive_factors_literature": [
+     "freight trip generation by establishment: employment, area, sector, sales, storage, commodity type",
+     "commodity flows and tour structure (multi-stop)",
+     "port and industrial gate volumes",
+     "time-of-day profile and weekend factors (held from classified counts)"
+    ],
+    "data_a_simulator_needs": [
+     "an establishment-based freight survey or its proxy (business register by ANZSIC x floorspace)",
+     "commodity flow forecasts (TfNSW Strategic Freight Model SFM22, by commodity, 2021-2061)",
+     "heavy-vehicle counts at classifying stations (held) and LGA heavy-vehicle telematics (National Freight Data Hub)",
+     "port gate movements (Port of Newcastle)"
+    ],
+    "sources": [
+     "https://journals.sagepub.com/doi/10.1177/03611981251393157",
+     "https://www.transport.nsw.gov.au/data-and-research/freight-data",
+     "https://datahub.freightaustralia.gov.au/"
+    ]
+   },
+   "freight_train": {
+    "decisive_factors_literature": [
+     "the train plan: which freight services traverse which level crossings and when",
+     "closure duration per movement (a long train takes longer to clear)",
+     "the coal chain's separation from the passenger network (grade-separated paths do not close roads)"
+    ],
+    "data_a_simulator_needs": [
+     "a daily train plan or closure log per crossing (ARTC Hunter Valley network; the Lower Hunter Freight Corridor business case)",
+     "closure durations by train type",
+     "the passenger timetable (held, GTFS)"
+    ],
+    "sources": [
+     "https://www.newcastleherald.com.au/story/9288904/drivers-face-continued-gridlock-at-adamstown-gates-despite-intersection-upgrade/",
+     "https://www.artc.com.au/uploads/2024-HVCCS-FINAL.pdf"
+    ],
+    "note": "Newcastle Herald, 10 June 2026 (Matthew Kelly), quoted this pass: 'Freight trains take additional time to cross the level crossing because it takes them a while to get to line speed' and the Lower Hunter Freight Corridor 'will provide an alternate path for freight trains, eliminating the need for them to travel through Newcastle' - i.e. freight trains DO traverse the Adamstown (St James Road) and Clyde Street crossings today. Newspaper quotation, not a count."
+   }
+  }
  },
  "field_aliases": {
   "how_leading_simulators_do_it": "the field Phase 7 also calls how_leading_simulators_implement_it",
@@ -1498,24 +1888,12 @@
    "query": "An OD-pair journey-to-work flow tolerance from ANY activity-based model. Three passes have failed; the ARC and SEMCOG calibration reports are the last route, and if they too validate only shares, record the absence as the finding."
   },
   {
-   "lane": "G5 through traffic (residual)",
-   "query": "The PRIMARY traffic chapter of the M1 Raymond Terrace EIS (SSI-7319) on the NSW Planning Portal, for the diverted-volume table behind the 45% / 25% figures read only as newspaper quotation."
-  },
-  {
    "lane": "I8 surrogate (residual)",
    "query": "Osorio 2020, metamodel-based calibration of large-scale MULTIMODAL microscopic traffic simulation (S0968090X20307592) - paywalled; try an author preprint on web.mit.edu/osorioc."
   },
   {
-   "lane": "I12 damping schedule (NEW 2026-09-09)",
-   "query": "A published convergence or oscillation study of the damped ln(observed/modelled) ASC update on a MULTIMODAL agent-based model: round-over-round |delta| against the damping factor. Two searches this pass returned robotics and camera-calibration damping instead; enter through Rakow and Nagel 2024 or the matsim-vsp issue tracker, not through a generic damping query."
-  },
-  {
    "lane": "I13 constant-versus-mechanism test (NEW 2026-09-09)",
    "query": "A published TEST rather than a checklist that separates a residual an ASC may absorb from one caused by an absent mechanism. FHWA chapter 7 gives the ordered checklist and explicitly no numeric criteria; nothing found offers a test."
-  },
-  {
-   "lane": "H10 choice-set coverage (NEW 2026-09-10)",
-   "query": "A published coverage figure - the fraction of agents whose plan memory ever contained a given mode - for any calibrated multimodal MATSim scenario, and any guidance on a minimum coverage before a mode constant may be calibrated. MATSim's own modeChoiceCoverage output is undocumented outside the source; four differently phrased searches this pass returned nothing. Enter through the matsim-libs source for the analysis class, or the discrete-mode-choice contrib's comparison papers, not through a generic query."
   },
   {
    "lane": "H9 innovation cutoff (NEW 2026-09-10)",
@@ -1524,6 +1902,30 @@
   {
    "lane": "K4 stuck time (NEW 2026-09-10)",
    "query": "The completed version of Mersini and Ziemke (MUM 2025): a recommended stuck-time value as a function of sample share. The abstract read this pass reports preliminary results and says the scaled-stuck-time runs are still to come."
+  },
+  {
+   "lane": "G5 through traffic (residual, route updated 2026-09-11)",
+   "query": "The M1 Raymond Terrace EIS Appendix G traffic and transport working paper: the researchdata.edu.au record (m1-pacific-motorway-working-paper/1766469) renders only the portal shell to WebFetch - dead route; try the planning-portal attachment EXH-23251502 (majorprojects.planningportal.nsw.gov.au/prweb/PRRestService/mp/01/getContent?AttachRef=EXH-23251502) next, expecting a >10 MB PDF."
+  },
+  {
+   "lane": "I12 damping schedule (residual, 2026-09-11)",
+   "query": "Rakow and Nagel 2024 publish the rule and recommend a fraction with no schedule and no curve. The matsim-tools Python package (pypi matsim-tools) implements it: read its calibration module for the fraction it applies and any adaptive rule, and the matsim-vsp issue tracker for a reported oscillation."
+  },
+  {
+   "lane": "J6 BOAM coverage (NEW 2026-09-11)",
+   "query": "Whether the BOAM bus occupancy dataset covers the Newcastle / Hunter (OM Region 2, NISC1) contract and at what granularity (per trip, per timepoint); the v2.0 field document is behind the Open Data Hub login."
+  },
+  {
+   "lane": "E22 ferry observation (NEW 2026-09-11)",
+   "query": "Whether the Opal Patronage daily dataset (by mode x key commercial centre, CC-BY) names Newcastle as a centre and carries ferry tap-ons - it would replace the census-derived ferry target with a disclosed daily count. The Newcastle Herald quoted 516,000 ferry passengers in 2018 (about 1,410 a day), a pre-pandemic newspaper figure, not an observation for this base year."
+  },
+  {
+   "lane": "E24 freight trains at the Newcastle crossings (NEW 2026-09-11)",
+   "query": "A daily count of freight movements through the Adamstown (St James Road) and Clyde Street crossings: the Lower Hunter Freight Corridor business case or ARTC train plan. Press evidence (Newcastle Herald 10 June 2026) says freight trains use them; the registry declares A.crossings.freight_closures_per_day = 0 on the basis that the coal chain is grade-separated."
+  },
+  {
+   "lane": "J7 HTS bespoke tables (NEW 2026-09-11)",
+   "query": "Quote the HTS page's privacy sentence from the page itself (transport.nsw.gov.au returned 403 this pass) and lodge the bespoke-table request for mode x age band and trip-length distribution by mode for the five LGAs."
   }
  ]
 }

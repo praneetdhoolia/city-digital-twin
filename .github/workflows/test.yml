@@ -156,6 +156,11 @@ jobs:
         run: python src/registry/render_docs.py --check
       - name: The build layer has not drifted from the registry
         run: python src/registry/check_legacy_drift.py
+      # Every MATSim default this model runs on is declared or accepted with a
+      # reason; the backlog reached 0 on 10 September 2026 and the check is a
+      # gate from 11 September, as its own docstring always said it would be.
+      - name: No MATSim default decides the model unreviewed
+        run: python src/registry/check_matsim_defaults.py --strict
 
   hardcoding:
     name: zero hardcoding (declared, wired, and proven to reach)
