@@ -7,20 +7,18 @@ hand-written rest is capped by `tests/check_doc_shape.py`. The current truth
 per topic is in [`positions/`](positions); the dated history and every
 rationale are in [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 12 September 2026 - **every finding of the eighth report
-fixed or awaiting a run, the pt access leg walks a network, and the network is
-rebuilt with its footpaths** (§9.167). The #167 refusal was this project's own
-ride and taxi engines re-moding one leg of a five-leg trip, not MATSim's
-pre-simulation pass; access, egress and the raptor's transfer walks are network
-legs the qsim executes (`teleported=0` at 1 %). The 40,203 footway ways are
-walk- and bike-capable links on a network rebuilt and re-mapped once
-(181,892 → 368,230 links), and **family F34 opens at the rebuild**. The four
-consolidations (#180 #181 #182 #191) landed byte-identical; the crossings carry
-the Cobbora survey's freight movements (#184); Opal tap-ons give the ferry its
-first disclosed observation (#185, bounds); the heap floor is re-measured
-(9.6 → 15.6 GiB) after the routing cache's seven copies put a probe out of
-heap. **F34 has no reading; arm 0 (`f34_baseline_25pct`) is not launched; no
-approval stands.**
+**Last updated:** 12 September 2026 - **the footpath iteration profiled, the
+engines route what they re-mode, and F35's arm 0 is running on a measured
+price** (§9.168). The footpath network cost 555.5 s a recurring iteration at
+25 % against 244.5 on the road graph (`20260912T135825_4it_25pct`); the JFR
+profile (`20260912T162831_4it_25pct`) put a quarter of every CPU sample under
+`PersonPrepareForSim`, which re-routes a WHOLE plan over any null route - and
+the taxi engine's ~48,000 refusals an iteration left one in every plan they
+touched. Both engines now route the trip they re-mode and restore the
+original, `JointRideEngine` caches the driver's vehicle, and **family F35
+opens at the controler**; its probe reads **460.0 s** (-17 %). **Arm 0
+`20260912T202242_300it_25pct` launched 20:22:42 on a 39.0 h quote under a
+44 h ceiling; the approval is spent; F35 has no reading.**
 
 ## The goal
 
@@ -68,7 +66,7 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds re-mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164), the 30 run-input sets re-assembled on the footpath network 12 Sep, `check_package.py` passed (§9.167) |
-| P4 calibration | 🟡 | the newest run on disk is `20260912T135825_4it_25pct`, which is **RUNNING** - a 4-iteration 25 % PRICING PROBE of the footpath network on the current build, citable for its clock and its heap and for nothing else (`f34_pricing_probe_25pct`, §9.160 idiom). The newest ARM, `aborted_20260910T222830_300it_25pct`, is dead and its record says why (§9.165); F34's arm 0 is not launched |
+| P4 calibration | 🟡 | the newest run on disk is `20260912T202242_300it_25pct`, which is **RUNNING** - arm 0 of F35 (`f35_baseline_25pct`, 300 it, 25 %, no control on, 48 g), launched 12 Sep 20:22:42 at a 44 h ceiling on a 39.0 h quote (§9.168); its gates are the next reading. The newest completed ARM is F32's `20260909T015217_300it_25pct`, the only RESULT |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -76,67 +74,64 @@ Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heav
 <!-- generated:state start -->
 | | |
 |---|---|
-| Open comparability family | `F34-walk-has-a-footpath-network` (opened `20260912T062457`, §9.167) - nothing run before it compares with anything after it |
+| Open comparability family | `F35-the-engines-route-what-they-remode` (opened `20260912T184108`, §9.168) - nothing run before it compares with anything after it |
 | Input registry | **553 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **959 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (12 September 2026 (forty-fourth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (12 September 2026 (forty-fourth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (12 September 2026 (forty-fourth session)) · [network-and-inputs](positions/network-and-inputs.md) (12 September 2026 (forty-fourth session)) · [population-and-demand](positions/population-and-demand.md) (12 September 2026 (forty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (12 September 2026 (forty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (12 September 2026 (forty-fourth session)) · [runs-and-economics](positions/runs-and-economics.md) (12 September 2026 (forty-fourth session)) · [sampling-and-families](positions/sampling-and-families.md) (12 September 2026 (forty-fourth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (12 September 2026 (forty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (12 September 2026 (forty-fourth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (12 September 2026 (forty-fourth session)) · [walk-and-bike](positions/walk-and-bike.md) (12 September 2026 (forty-fourth session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (12 September 2026 (forty-fourth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (12 September 2026 (forty-fifth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (12 September 2026 (forty-fourth session)) · [network-and-inputs](positions/network-and-inputs.md) (12 September 2026 (forty-fourth session)) · [population-and-demand](positions/population-and-demand.md) (12 September 2026 (forty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (12 September 2026 (forty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (12 September 2026 (forty-fifth session)) · [runs-and-economics](positions/runs-and-economics.md) (12 September 2026 (forty-fifth session)) · [sampling-and-families](positions/sampling-and-families.md) (12 September 2026 (forty-fifth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (12 September 2026 (forty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (12 September 2026 (forty-fourth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (12 September 2026 (forty-fifth session)) · [walk-and-bike](positions/walk-and-bike.md) (12 September 2026 (forty-fourth session)) |
 <!-- generated:state end -->
 
-**F34 IS OPEN AND HAS NO READING** (§9.167): it opened at the network rebuild
-of 12 September, and nothing before it compares with anything after it. The
-demand and plans are those of `20260910T203622` (§9.164); the 30 run-input sets
-are re-assembled on the footpath network. The manifest holds **959** files,
-**721 CC-BY / 220 ODbL** plus 18 bespoke, every one hashed. The registry is
-**553** fields, undeclared MATSim defaults **0**, inline literals **0**, the
-unit suite **457** tests. The heap rule reads 37.4 GiB at 25 % and the 25 %
-slope is unmeasured on this network: arm 0 carries 48 g and its `gc.log` is
-the measurement.
+**F35 IS OPEN, ARM 0 IS RUNNING, AND IT HAS NO READING** (§9.168): it opened at
+the controler fix of 12 September (`20260912T184108`), and nothing before it
+compares with anything after it. The network is F34's footpath rebuild, the
+demand and plans those of `20260910T203622` (§9.164); the 30 run-input sets
+are unchanged. The manifest holds **959** files, **721 CC-BY / 220 ODbL** plus
+18 bespoke, every one hashed. The registry is **553** fields, undeclared
+MATSim defaults **0**, inline literals **0**, the unit suite **457** tests. The
+heap rule reads 37.4 GiB at 25 %; the probes' live heap is 19.9-20.3 GB under
+48 g and arm 0's `gc.log` is the 25 % slope's measurement.
 
 ## Runs on disk
 
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
-| `20260912T135825_4it_25pct` | running | F34-walk-has-a-footpath-network | - | - |
+| `20260912T202242_300it_25pct` | running | F35-the-engines-route-what-they-remode | 0 | - |
+| `20260912T185005_4it_25pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
+| `20260912T184134_4it_1pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
+| `20260912T162831_4it_25pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
+| `20260912T135825_4it_25pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
 | `20260912T065939_4it_1pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
-| `aborted_20260912T065345_4it_1pct` | aborted | F34-walk-has-a-footpath-network | 0 | 1% probe of the footpath network: heap exhausted at iteration 1 replanning under -Xmx12g (registry rule 10.5 GiB measured on the previous... |
-| `aborted_20260912T065144_4it_1pct` | failed | F34-walk-has-a-footpath-network | - | IllegalArgumentException: Link 20166 is not timeVariant. Did you make the network factory time variant? The easiest way to achieve this i... |
-| `aborted_20260912T064707_4it_1pct` | failed | F34-walk-has-a-footpath-network | 1 | OutOfMemoryError: Java heap space |
-| `aborted_20260912T064211_4it_1pct` | failed | F34-walk-has-a-footpath-network | 1 | OutOfMemoryError: Java heap space |
 
-186 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+190 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
-1. **LAUNCH ARM 0 ON A FRESH APPROVAL** (§9.167, #172). `f34_baseline_25pct.json`:
-   no control on, 48 g, GC log on, `create_graphs` off, stall kill at 1800 s,
-   plans every 25 iterations; the cost is UNPRICED on this network (the 1 %
-   pace rose 29.5 → 40 s an iteration) - dry-run for the launcher's quote, ask,
-   set the ceiling to what is approved, launch with `--detach`. It measures the
-   demand fix (#86, #48, #145, #30) on a walk network with footpaths for the
-   first time and is the control half of all five pairs.
-2. **THEN THE FIVE PAIRS IN THE DECIDED ORDER** (#172): scoring -> choice set ->
-   service quality -> routers -> submodes, one arm each, coverage read on both
-   sides (#174).
-3. **READ `gc.log` ON ARM 0** (#66, §9.167): the heap after a full collection at
-   25 % re-derives `RUN.machine.heap_per_fraction_gib`; the first stall with a
-   collector's account decides whether 11 September was a heap event.
-4. **READ THE ACCESS LEGS** (#167, #183): the pt access and egress leg lengths
-   and the count of stub walks over 1 km on the footpath network, against 388
-   of 42,209 on the 1 % probe.
-5. **The ASC contraction test can measure something** (§9.166) and stays HELD
+1. **READ ARM 0 AT ITS GATES** (§9.168, #172): `20260912T202242_300it_25pct`,
+   quoted 39.0 h + 33 min, ceiling 44 h, stall kill 1800 s, plans every 25.
+   Every 100 iterations: all twelve modes with coverage beside each (#174);
+   `modes_car_car` against the roster's wait count (#86, #145); the sub-1 km
+   share against 11.17 % (#30); the pt access and egress leg lengths and the
+   stub count (#167, #183); the cutoff snap beside the level (§9.162). It is
+   the control half of all five pairs. If it dies, relaunch warm from the
+   newest plans dump (`--warm-start`, #192).
+2. **READ `gc.log` AGAINST `_progress.json` ON ARM 0** (#66, §9.168): the heap
+   after a full collection over 300 iterations re-derives
+   `RUN.machine.heap_per_fraction_gib` (the probes read 19.9-20.3 GB, a lower
+   bound); the first stall with a collector's account decides #66.
+3. **THEN THE FIVE PAIRS IN THE DECIDED ORDER** (#172): scoring -> choice set ->
+   service quality -> routers -> submodes, one arm each, its own approval and
+   family each, coverage read on both sides (#174).
+4. **The ASC contraction test can measure something** (§9.166) and stays HELD
    until arm 0 reads. **The ninth report runs after arm 0's gate**, not before.
 
-**Decisions required:** a stated-cost approval for arm 0 (none stands);
-whether to send the drafted TfNSW bespoke-table request (#50). Taken this
-session on clickable choices (§9.167): today's directive over the 11 September
-hold on the consolidations; diagnose and fix #167; rebuild the footpath
-network before arm 0 (#183); derive the crossings' freight from published
-sources (#184); the ride engine's override restored at AfterMobsim (#187);
-keep the heavy-rail sum and record the distinction (#189); a warm-completed
-arm is a result (#192); pursue #50 and #185 through every API first.
+**Decisions required:** whether to send the drafted TfNSW bespoke-table
+request (#50); each pair arm's approval when arm 0 has read. Taken this
+session on clickable choices (§9.168): price arm 0 on a probe before
+approving; profile before paying 47 h six times; fix both the whole-plan
+re-route and the vehicle cache; open F35 at the fix rather than annotate F34;
+fix both board drifts; approve arm 0 at a 44 h ceiling on the 39.0 h quote.
 
 ## Open work
 
@@ -146,7 +141,7 @@ arm is a result (#192); pursue #50 and #185 through every API first.
 | **FIVE ONE-FIELD CONTROLS, EACH OPENING A FAMILY, AND THE ORDER IS THE DECISION** (§9.164): scoring, choice set (`RUN.replanning.plan_selector_for_removal`, declared this session), routers, service quality (#175) and pt submodes (#49). A sixth is already SPENT - the demand's `B.mode.bound_passenger_placement`. No approval stands | #172 #174 #49 #175 | [seed-and-choice-set](positions/seed-and-choice-set.md) | which is spent first, and at what stated cost |
 | **THE READING POINT IS A CONVERGENCE PROBLEM.** The windowed remedy is built and MEASURED WORSE (§9.159); #163 now awaits a DECISION on scale-normalising a per-mode deviation, which no arm settles, and the denominator is blocked on measuring a replication band | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | the replication band: 2-3 short arms, then the objective's denominator |
 | **The ASC contraction test, built and NOT run** (~15 h, opens no family). Of its four modes only **bike** sits on an alternative the operator can switch to - now confirmed, at 24.32 pp of headroom against a 29.03 % coverage | #98 #94 #107 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | whether \|Δasc\| SHRINKS between round 1 and round 2 |
-| **The issue gate is GREEN unscoped, and every open issue now awaits a run or a decision the tracker names** (§9.167): the thirteen issues the eighth report filed were worked in one session, the four consolidations landing byte-identical | #172 | [monitoring-and-gates](positions/monitoring-and-gates.md) | arm 0, then the pairs |
+| **The engines route what they re-mode, and the taxi fleet refuses four requests in five** (§9.168): 47,797 of 58,558 refused at fleet 200, each now a network walk routed by the engine (~60 s of a 460 s iteration) where before each nulled a route and `PersonPrepareForSim` re-routed the whole plan every iteration | #49 #172 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | taxi's share and the refusal count at arm 0's gates |
 | **Pt access, egress and transfer walks are NETWORK LEGS the qsim executes** (§9.167, #167): the refusal was the ride and taxi engines re-moding one leg of a five-leg trip; whole-trip re-mode, the raptor's transfer beelines routed, `teleported=0` on the 1 % probes of both networks; MATSim's coordinate-to-link stubs remain (median 54 m, 388 over 1 km on the footpath network against 511) | #167 #183 | [walk-and-bike](positions/walk-and-bike.md) | the access and egress leg lengths and the stub count on arm 0 |
 | **WALK AND BIKE HAVE A FOOTPATH NETWORK** (§9.167, #183): 40,203 harvested ways as walk/bike links, S2 weekday walk on 363,818 links (35,381 km, 168,550 footpath-only); the modelled mean walk trip was 4.58 km against 0.70 on the road graph and its first reading on footpaths is arm 0's | #183 #30 | [walk-and-bike](positions/walk-and-bike.md) | the sub-1 km share and the mean walk trip at arm 0's gate |
 | **The ferry has a disclosed observation, as bounds** (§9.167, #185): weekday tap-ons 234–1,347 at the Newcastle wharf under the publication's rounding to 100; light rail 2,090–3,751 brackets the 2,954 target. Constraints, never targets | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split at arm 0's gate against the bounds |
@@ -165,7 +160,7 @@ arm is a result (#192); pursue #50 and #185 through every API first.
 | **Surrogate/emulator calibration, held in reserve** — Bayesian optimisation over a random-forest surrogate needs only the aggregate mode shares this project already scores; ~150 evaluations at 21.5 h is ~134 days at 25 % | — | [runs-and-economics](positions/runs-and-economics.md) | the ASC contraction test: worth starting only if the residual is genuinely multi-parameter |
 | **Not one MATSim default decides this model unreviewed** (§9.164): 21 -> 0, nine DECLARED at the framework's own values and twelve ACCEPTED with a written reason. #155 CLOSED | — | [network-and-inputs](positions/network-and-inputs.md) | whether any of the nine new sweeps is worth an arm |
 | **Headway and reliability REACH MATSim** (§9.164): `citysim.ServiceQualityScoring` charges the boarded route's service interval and its MEASURED arrival-delay spread, both at their literature definitions, behind a gate shipped `absent` | #175 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | the paired arm at `headway` and at `headway_and_reliability` |
-| Stalls and heap: 13.1 h of F33's arm 0 was one iteration on an awake machine (§9.166); the heap floor is re-measured on the footpath network (9.6 → 15.6 GiB, the routing cache's seven copies reduced to four) and the 25 % slope is unmeasured (§9.167) | #66 | [runs-and-economics](positions/runs-and-economics.md) | `gc.log` against `_progress.json` on arm 0 |
+| Stalls and heap: 13.1 h of F33's arm 0 was one iteration on an awake machine (§9.166); the 25 % probes' live heap is 19.9-20.3 GB under 48 g with GC ~1 % of the wall (§9.168), a lower bound on the slope that a 4-iteration probe cannot see | #66 | [runs-and-economics](positions/runs-and-economics.md) | `gc.log` against `_progress.json` on arm 0 |
 | **The objective HAS a denominator now and it is set to none** (§9.164): `CAL.objective.replication_band_pp` = 0.0 divides nothing until a band is measured, because choosing one from its own sweep would invent the observation it represents | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | three seeds at a short horizon, then the band |
 | Convergence horizon: 250 asked, 1000 declared and deliberately not re-declared (§9.142, §9.7); the first arm past the 240 cutoff has now run (§9.162) | — | [seed-and-choice-set](positions/seed-and-choice-set.md) | the second arm past a cutoff, in whatever family opens next |
 

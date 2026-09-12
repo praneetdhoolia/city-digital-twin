@@ -2,11 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
+**Updated:** 12 September 2026 (forty-fifth session) · **Record read through:** §9.168 · **Written against family:** `F35`
 
 ## What is built
 
-- **THE ENGINES RE-MODE A TRIP WHOLE, AND THE CLOCK OVERRIDE IS RESTORED AFTER THE MOBSIM** (§9.167, #167, #187, decision "execution-time override, restored at AfterMobsim"). Under `accessEgressModeToLink` a ride trip is five legs carrying `routingMode` ride; `RidePairingEngine` re-moded one of them (970 unpaired legs on the 1 % probe) and `PrepareForMobsim` refused the trip - the failure §9.164 placed inside MATSim's pre-simulation pass. `RemodeRestore.remodeTrip` replaces the whole trip. The activity end-time override the engine writes for a driver is an execution-time override: the plan keeps the passenger's own declared time, the engine writes the driver's clock for the iteration and restores it at AfterMobsim through an activity still in the selected plan, logging the count. `HouseholdVehicleRoster`'s per-iteration remap measured 0 restores over 398 iterations and is a WARN naming the person.
+- **THE ENGINE ROUTES THE TRIP IT RE-MODES AND RESTORES THE ORIGINAL; THE CLOCK OVERRIDE IS RESTORED AFTER THE MOBSIM** (§9.168, §9.167, #167, #187). Under `accessEgressModeToLink` a ride trip is five legs carrying `routingMode` ride, and the trip is replaced whole. Until F35 the replacement was one fallback leg with a NULL route, left for MATSim's `PersonPrepareForSim` - which re-routes the WHOLE plan over any null route; `RidePairingEngine.routeRemodes` now routes every unpaired leg's trip in its fallback mode on `global.numberOfThreads` workers (**644 in 0.9 s** at 25 %, `20260912T185005_4it_25pct`), inserts in pass order and keeps the ride trip it took out, which the restore puts back whole (`RemodeRestore.Remode`). The activity end-time override the engine writes for a driver is an execution-time override restored at AfterMobsim through an activity still in the selected plan (§9.167). `JointRideEngine` resolves a waiting passenger's driver vehicle once per wait, not every sim-second (3.2 % of CPU on `20260912T162831_4it_25pct`, byte-identical).
 **Demand — four binder passes in `src/build/build_activity_chains.py`, each naming the driver.**
 
 - Escort: an HX tour binds to the household member it escorts, at that person's own school and own hour (§9.46); an unbound HX tour is re-targeted to a passenger in a driverless household within `B.activity.escort_binding_nonhh_scope` = `same_zone`, with the serving leg re-timed to the passenger's departure (§9.60).
@@ -110,6 +110,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.168 — the unpaired leg's walk is routed by the engine; the original restored
 - §9.167 — whole-trip re-mode; the clock override restored after the mobsim
 - §9.166 — trim() removes through the declared selector; arm 0 lost
 - §9.164 — the declared passenger is put on ride at the demand
@@ -124,5 +125,3 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 - §9.149 — F28 gate: pairing solved, car inside; the walked lifts are the shared pass's short trips
 - §9.146 — F26 gate: declared pairs hold; the loss is ride without a driver and a second car the household does not own
 - §9.145 — the dominant miss is not a window; measure F26 rather than patch
-- §9.144 — a declared driver owns a car, in all four passes
-- §9.143 — plan memory repaired and the demand cause FALSIFIED; the loss is in pairing and selection
