@@ -62,24 +62,15 @@ it a target, and the 67/143 split is pre-registered.
         --run-config cordon_escort_10pct --execute
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
 # here, instead of each composing its own results/ path
-import sys as _sys_rs, os as _os_rs
-_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
-    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
-import results_store as _results_store  # noqa: E402
+import results_store as _results_store
 # the runner owns run identity: `find_completed` is what resume
 # already trusts, and this loop must not keep a second opinion
-import run_matsim as _run_matsim  # noqa: E402
+import run_matsim as _run_matsim
 
 
 def _resolve_run(name_or_path):
@@ -92,7 +83,6 @@ import json
 import argparse
 import datetime
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry as _registry                                    # noqa: E402
 
 OUT = _city.path('params/C5_calibration.json')
@@ -395,6 +385,31 @@ def audit_no_holdout(fit):
             raise SystemExit('fit block %r scored %s targets without naming '
                              'them; a statistic that does not name its targets '
                              'is not reportable' % (block, b.get('n')))
+    # THE GOAL-MODES BLOCK READS NO STATION-LEVEL ROW (#189, 12 September
+    # 2026). The heavy-rail per-mode target is a SUM over the station
+    # publication whose per-station MEANS are the pre-registered holdout;
+    # the sum is the calibration observation and the means stay shut. This
+    # asserts the block names no target id at all - its rows come from
+    # mode_targets_by_mode.csv, never from validation_targets.csv - so a
+    # future reader that scored a station mean here would be refused.
+    holdout_ids = set()
+    try:
+        import csv as _csv                                     # noqa: PLC0415
+        with open(_city.path('data/processed/validation/validation_targets.csv'),
+                  encoding='utf-8') as fh:
+            holdout_ids = {r['target_id'] for r in _csv.DictReader(fh)
+                           if r.get('split') == 'holdout'}
+    except OSError:
+        pass
+    for row in (fit.get('goal_modes') or {}).get('modes') or []:
+        named = {row.get('target_id')} | set(row.get('target_ids') or [])
+        hit = sorted(t for t in named if t and t in holdout_ids)
+        if hit:
+            raise SystemExit('goal_modes row %r scores holdout target(s) %s: '
+                             'the twelve-mode objective may sum a disclosed '
+                             'publication but may never read a pre-registered '
+                             'holdout row (DECISIONS.md 12, #189)'
+                             % (row.get('mode'), hit))
 
 
 def grid(p, n):
@@ -510,8 +525,10 @@ def _best_run_dir(tag):
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument('--scenario', default='S2')
-    ap.add_argument('--day', default='WEEKDAY')
+    # the CITY's base scenario and first day type, not ids typed here
+    ap.add_argument('--scenario',
+                    default=_city.descriptor()['intervention']['base_scenario'])
+    ap.add_argument('--day', default=list(_city.descriptor()['day_types'])[0])
     ap.add_argument('--run-config', required=True,
                     help='committed overlay giving fraction, iterations, threads')
     ap.add_argument('--plan', action='store_true',

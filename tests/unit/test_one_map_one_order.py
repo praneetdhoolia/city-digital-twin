@@ -60,7 +60,6 @@ def test_both_callers_read_that_one_map():
 
 def test_serve_passenger_is_an_escort_not_a_non_home_based_leg():
     import sys
-    sys.path.insert(0, os.path.join(REPO, 'src', 'build'))
     import hts_purpose
     assert hts_purpose.HTS_PURPOSE['Serve passenger'] == 'HX'
     assert 'NHB' not in hts_purpose.HTS_PURPOSE.values()

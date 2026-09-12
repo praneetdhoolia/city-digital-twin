@@ -36,20 +36,14 @@ Reads the run directory only. Writes nothing. **Nothing here is a result.**
 """
 
 import os as _os
-import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
 import gzip
 import re
-import json
 import time
 import argparse
 import collections
 
-import registry as _registry                                      # noqa: E402
+import registry as _registry
 
 CONFIG_RE = re.compile(
     r'name="(boundWindowMinutes|pairingWindowMinutes|maxPassengersPerVehicle)"'
@@ -211,8 +205,6 @@ def main():
     import os as _os_r, sys as _sys_r
     _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
         _os_r.path.abspath(__file__))), 'run')
-    if _r not in _sys_r.path:
-        _sys_r.path.insert(0, _r)
     import results_store as _store_r
     a.run = _store_r.resolve_or_die(a.run)
 

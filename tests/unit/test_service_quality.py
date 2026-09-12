@@ -21,7 +21,6 @@ faithful reading of the two literature definitions rather than a lever:
 """
 import os
 import re
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -29,9 +28,6 @@ GROUP = os.path.join(REPO, 'src', 'java', 'citysim', 'ServiceQualityConfigGroup.
 SCORING = os.path.join(REPO, 'src', 'java', 'citysim', 'ServiceQualityScoring.java')
 CONTROLER = os.path.join(REPO, 'src', 'java', 'citysim', 'CitysimControler.java')
 EMITTER = os.path.join(REPO, 'src', 'build', 'build_matsim_run_inputs.py')
-
-if os.path.join(REPO, 'src') not in sys.path:
-    sys.path.insert(0, os.path.join(REPO, 'src'))
 
 
 def _code(path):
@@ -77,7 +73,8 @@ def test_the_prices_are_derived_by_the_emitter_and_absent_from_the_java():
     """A default in the config group would be a taste typed into the code."""
     code = _code(GROUP)
     for setter in ('headwayUtilsPerMin', 'reliabilityUtilsPerMin', 'headwayCapMin'):
-        assert re.search(r'private double %s = Double\.NaN;' % setter, code), (
+        # a public @Parameter field since #180, still initialised to NaN
+        assert re.search(r'public double %s = Double\.NaN;' % setter, code), (
             '%s carries a literal default, which is a price decided in the '
             'code rather than derived from the declared weights' % setter)
     emitter = _code(EMITTER)
@@ -132,7 +129,8 @@ def test_the_binding_is_only_under_the_gate():
                   code, re.S)
     assert m, 'no `if (serviceQuality.isEnabled())` block in CitysimControler'
     assert 'ServiceQualityScoring.class' in m.group(1)
-    assert 'Singleton.class' in m.group(1), (
+    # installSingleton (#180) binds the instance in Singleton scope
+    assert 'Singleton.class' in m.group(1) or 'installSingleton(' in m.group(1), (
         'the scoring handler is not a singleton, so the measured spread would '
         'not survive from one iteration to the next')
     outside = code.replace(m.group(0), '')

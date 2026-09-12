@@ -202,13 +202,13 @@ public final class TramPriorityProbe {
         final TramPriorityConfigGroup tramPriority =
                 org.matsim.core.config.ConfigUtils.addOrGetModule(
                         controler.getConfig(), TramPriorityConfigGroup.class);
-        tramPriority.setMode(mode);
+        tramPriority.mode = mode;
         if (!TramPriorityConfigGroup.MODE_OFF.equals(mode)) {
-            tramPriority.setPriorityGroupId(groupId);
-            tramPriority.setExtensionWindowS(10.0);
-            tramPriority.setDetectionDistanceM(100.0);
-            tramPriority.setPriorityBudgetShare(0.25);
-            tramPriority.setCompensationEnabled(true);
+            tramPriority.priorityGroupId = groupId;
+            tramPriority.extensionWindowS = 10.0;
+            tramPriority.detectionDistanceM = 100.0;
+            tramPriority.priorityBudgetShare = 0.25;
+            tramPriority.compensationEnabled = true;
         }
         final Scenario scenario = controler.getScenario();
         scenario.addScenarioElement(SignalsData.ELEMENT_NAME,

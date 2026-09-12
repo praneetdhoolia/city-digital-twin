@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `ptCrowding` config module: whether in-vehicle crowding reaches PUBLIC
@@ -41,10 +42,14 @@ public final class PtCrowdingConfigGroup extends ReflectiveConfigGroup {
      * {@code check_hardcoding.py}'s java-shadow-defaults test looks for). */
     private static final double UNSET = -1.0;
 
-    private String representation = REPRESENTATION_ABSENT;
-    private double seatedMultiplier = UNSET;
-    private double standingMultiplier = UNSET;
-    private double penaltyUtilsPerHour = UNSET;
+    @Parameter("representation")
+    public String representation = REPRESENTATION_ABSENT;
+    @Parameter("seatedMultiplier")
+    public double seatedMultiplier = UNSET;
+    @Parameter("standingMultiplier")
+    public double standingMultiplier = UNSET;
+    @Parameter("penaltyUtilsPerHour")
+    public double penaltyUtilsPerHour = UNSET;
 
     public PtCrowdingConfigGroup() {
         super(NAME);
@@ -54,38 +59,20 @@ public final class PtCrowdingConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_IN_VEHICLE_TIME.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
     }
 
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
-    }
-
     /** What a minute SEATED in a vehicle at capacity costs relative to a
      * minute in an empty one. C.crowding.seated_multiplier. */
-    @StringGetter("seatedMultiplier")
     public double getSeatedMultiplier() {
         return this.seatedMultiplier;
     }
 
-    @StringSetter("seatedMultiplier")
-    public void setSeatedMultiplier(final double value) {
-        this.seatedMultiplier = value;
-    }
-
     /** What a minute STANDING costs relative to a minute seated in an empty
      * vehicle. C.crowding.standing_multiplier. */
-    @StringGetter("standingMultiplier")
     public double getStandingMultiplier() {
         return this.standingMultiplier;
-    }
-
-    @StringSetter("standingMultiplier")
-    public void setStandingMultiplier(final double value) {
-        this.standingMultiplier = value;
     }
 
     /** Utils per EXTRA felt hour aboard: trip-weighted VOT x
@@ -93,14 +80,8 @@ public final class PtCrowdingConfigGroup extends ReflectiveConfigGroup {
      * by the emitter and recorded in {@code _config.json} like every other
      * derived scoring value. It is the price of an in-vehicle hour, so a
      * multiplier of m makes an hour aboard cost m hours of it. */
-    @StringGetter("penaltyUtilsPerHour")
     public double getPenaltyUtilsPerHour() {
         return this.penaltyUtilsPerHour;
-    }
-
-    @StringSetter("penaltyUtilsPerHour")
-    public void setPenaltyUtilsPerHour(final double value) {
-        this.penaltyUtilsPerHour = value;
     }
 
     @Override

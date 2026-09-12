@@ -17,15 +17,11 @@ paths, so no plans are sampled and nothing is launched.
 """
 import json
 import os
-import sys
 import tempfile
 
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _p in (os.path.join(REPO, 'src'), os.path.join(REPO, 'src', 'run')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 import registry  # noqa: E402
 import run_matsim as rm  # noqa: E402

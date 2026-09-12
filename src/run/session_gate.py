@@ -27,7 +27,12 @@ import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
+# the session opener installs the import roots before anything else is
+# imported, so a fresh clone's first gate works (#181)
+sys.path.insert(0, os.path.join(ROOT, 'src', 'setup'))
+import install_paths                                              # noqa: E402
+install_paths.activate()
+from procs import arm_running                                     # noqa: E402
 import city as _city                                              # noqa: E402
 
 PY = sys.executable
@@ -45,32 +50,6 @@ def _run(cmd, timeout):
         return 124, 'timed out after %ss' % timeout
     except OSError as exc:
         return 127, str(exc)
-
-
-def arm_running():
-    """A MATSim arm is up when a java process holds more than ~2 GB.
-
-    VS Code's own java (the language server) sits under 1 GB; an arm sits in
-    the tens of GB. The threshold is a classifier, not a model value.
-    """
-    if os.name == 'nt':
-        rc, out = _run(['tasklist', '/FI', 'IMAGENAME eq java.exe', '/FO', 'CSV'], 30)
-        if rc != 0:
-            return None
-        big = []
-        for line in out.splitlines()[1:]:
-            cells = [c.strip('"') for c in line.split('","')]
-            if len(cells) >= 5:
-                kb = int(re.sub(r'[^\d]', '', cells[4]) or 0)
-                if kb > 2_000_000:
-                    big.append('pid %s (%d MB)' % (cells[1], kb // 1024))
-        return big
-    rc, out = _run(['ps', '-eo', 'pid,rss,comm'], 30)
-    if rc != 0:
-        return None
-    return ['pid %s (%d MB)' % (l.split()[0], int(l.split()[1]) // 1024)
-            for l in out.splitlines()[1:]
-            if 'java' in l and int(l.split()[1]) > 2_000_000]
 
 
 def git_ahead():
@@ -138,6 +117,7 @@ def digest():
 
 GATES = [
     # (label, command, needs_toolchain)
+    ('import roots', [PY, 'src/setup/install_paths.py', '--check'], False),
     ('manifest', [PY, 'tests/check_manifest.py'], False),
     ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests'], False),
     ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),

@@ -45,6 +45,15 @@
     "retrieved": "2026-08-16"
   },
   {
+    "path": "boundaries/POA_2021_AUST_GDA2020_SHP.zip",
+    "url": "https://www.abs.gov.au/statistics/standards/australian-statistical-geography-standard-asgs/edition-3-july-2021-june-2026/access-and-downloads/digital-boundary-files/POA_2021_AUST_GDA2020_SHP.zip",
+    "description": "ABS ASGS Ed3 Postal Areas 2021 digital boundaries",
+    "licence": "CC-BY 4.0",
+    "bytes": 55939167,
+    "sha256": "92182d5e491a2dc0d49bd282283722701eef8a347ae072c04c344b4aeac2c49a",
+    "retrieved": "2026-09-12"
+  },
+  {
     "path": "census/2021_GCP_SA1_for_NSW_short-header.zip",
     "url": "https://www.abs.gov.au/census/find-census-data/datapacks/download/2021_GCP_SA1_for_NSW_short-header.zip",
     "description": "ABS Census 2021 General Community Profile, SA1, NSW",
@@ -75,7 +84,7 @@
     "path": "dem/Copernicus_DSM_COG_10_S34_00_E150_00_DEM.tif",
     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S34_00_E150_00_DEM/Copernicus_DSM_COG_10_S34_00_E150_00_DEM.tif",
     "description": "Copernicus GLO-30 DEM tile S34E150 (cell derived from the dissolved LGA boundary + harvest margin)",
-    "licence": "ESA / open",
+    "licence": "ESA, free and open",
     "bytes": 46978700,
     "sha256": "9c3979e63a959a7dcf668b0a88b7557c48f6d02b10bbe9589eae34babda83dab",
     "retrieved": "2026-08-16"
@@ -84,7 +93,7 @@
     "path": "dem/Copernicus_DSM_COG_10_S34_00_E151_00_DEM.tif",
     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S34_00_E151_00_DEM/Copernicus_DSM_COG_10_S34_00_E151_00_DEM.tif",
     "description": "Copernicus GLO-30 DEM tile S34E151 (cell derived from the dissolved LGA boundary + harvest margin)",
-    "licence": "ESA / open",
+    "licence": "ESA, free and open",
     "bytes": 20882213,
     "sha256": "6e20871096986cd00fc3903ea95670a0d83860236a0e4f1360ac9ac67def485d",
     "retrieved": "2026-08-16"
@@ -93,7 +102,7 @@
     "path": "dem/Copernicus_DSM_COG_10_S33_00_E150_00_DEM.tif",
     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S33_00_E150_00_DEM/Copernicus_DSM_COG_10_S33_00_E150_00_DEM.tif",
     "description": "Copernicus GLO-30 DEM tile S33E150 (cell derived from the dissolved LGA boundary + harvest margin)",
-    "licence": "ESA / open",
+    "licence": "ESA, free and open",
     "bytes": 45551917,
     "sha256": "592b412e79f7185350fea4371eabf92602155ca2366df05bc001af2c57ba9f87",
     "retrieved": "2026-08-16"
@@ -102,7 +111,7 @@
     "path": "dem/Copernicus_DSM_COG_10_S33_00_E151_00_DEM.tif",
     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S33_00_E151_00_DEM/Copernicus_DSM_COG_10_S33_00_E151_00_DEM.tif",
     "description": "Copernicus GLO-30 DEM tile S33E151 (cell derived from the dissolved LGA boundary + harvest margin)",
-    "licence": "ESA / open",
+    "licence": "ESA, free and open",
     "bytes": 46923232,
     "sha256": "5a758a39d86b673167581a78494b9a0bb911b5df57a72fc90b2890da622065e5",
     "retrieved": "2026-08-16"
@@ -111,7 +120,7 @@
     "path": "dem/Copernicus_DSM_COG_10_S33_00_E152_00_DEM.tif",
     "url": "https://copernicus-dem-30m.s3.amazonaws.com/Copernicus_DSM_COG_10_S33_00_E152_00_DEM/Copernicus_DSM_COG_10_S33_00_E152_00_DEM.tif",
     "description": "Copernicus GLO-30 DEM tile S33E152 (cell derived from the dissolved LGA boundary + harvest margin)",
-    "licence": "ESA / open",
+    "licence": "ESA, free and open",
     "bytes": 15920354,
     "sha256": "d5e8a5bec2180feb22deb9dfd08324e106b4ad5f1c0faff889ccba8642a6bb44",
     "retrieved": "2026-08-16"

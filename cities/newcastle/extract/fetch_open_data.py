@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 """Download the open observed-data bundle with provenance."""
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os, json, hashlib, urllib.request, datetime
 
 
@@ -64,14 +58,30 @@ M=[
  #      item 7). 2011 is the newest release TfNSW publishes at SA2 x SA2: the
  #      2016 release was withdrawn by the publisher (ABS confidentialisation)
  #      and 2021 exists only as an attended ABS TableBuilder extract.
+ # ---- BITRE Road Vehicles Australia (#185): registrations by vehicle type and
+ #      postcode, the second anchor for the motorbike carve beside census G62.
+ #      data.gov.au, CC-BY 3.0 AU. Both the REGISTERED and the GARAGING postcode
+ #      tables, because a fleet vehicle is registered where its owner is.
+ ("bitre/rva-2025-mvs-vehtype-streg-poareg-rpc.csv","https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/ed63dd4a-72af-48a6-bab8-78a6d199fc5c/download/rva-2025-mvs-vehtype-streg-poareg-rpc.csv","BITRE Road Vehicles Australia, 31 January 2025: registered road vehicles by vehicle type, state of registration and REGISTERED postcode","CC-BY 3.0 AU"),
+ ("bitre/rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv","https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/fc222132-0efa-4838-97f4-fffa1d40d4da/download/rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv","BITRE Road Vehicles Australia, 31 January 2025: registered road vehicles by vehicle type, state of registration, GARAGING postcode and motive power","CC-BY 3.0 AU"),
+ ("bitre/road-vehicles-australia-january-2025-explanatory-notes.txt","https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/c93f027f-48d2-43f0-8b68-ab1dfb2122ed/download/road-vehicles-australia-january-2025-explanatory-notes.txt","BITRE Road Vehicles Australia, January 2025: explanatory notes","CC-BY 3.0 AU"),
  ("jtw/bts_jtw_table01_2011_v1_0.zip",B+"66ee70ff-eb4f-45e5-b45b-90ce484ec178/resource/2dd13d56-2894-4153-bbab-972550629bfe/download/bts_jtw_table01_2011_v1_0.zip","TfNSW Journey to Work 2011, Table 01: origin SA2 x destination SA2, employed persons (2011 Census)","CC-BY 4.0"),
 ]
 root=_city.path('data/raw'); prov=[]
+_prev_path=os.path.join(root,'provenance_open_data.json')
+_prev={}
+if os.path.exists(_prev_path):
+    try:
+        _prev={r['path']:r for r in json.load(open(_prev_path,encoding='utf-8'))}
+    except (OSError,ValueError,TypeError,KeyError):
+        _prev={}
 for rel,url,desc,lic in M:
     p=os.path.join(root,rel); os.makedirs(os.path.dirname(p),exist_ok=True)
+    fetched=False
     if os.path.exists(p) and os.path.getsize(p)>500:
         print(f"SKIP {rel}")
     else:
+        fetched=True
         print(f"GET  {rel}",flush=True)
         try:
             req=urllib.request.Request(url,headers={'User-Agent':'newcastle-lr-sim/0.1 (research)'})
@@ -84,7 +94,11 @@ for rel,url,desc,lic in M:
             print(f"  FAIL {e}"); continue
     sz=os.path.getsize(p); h=_sha256(p)
     print(f"  {sz:>13,} B")
+    # a file already held keeps the day it was retrieved (the wall-clock drift
+    # the eighth report named: a re-run restamped every record with today)
+    retrieved=(datetime.date.today().isoformat() if fetched
+               else (_prev.get(rel) or {}).get('retrieved') or datetime.date.today().isoformat())
     prov.append({"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,
-                 "sha256":h,"retrieved":datetime.date.today().isoformat()})
-json.dump(prov,open(os.path.join(root,'provenance_open_data.json'),'w'),indent=2)
+                 "sha256":h,"retrieved":retrieved})
+json.dump(prov,open(os.path.join(root,'provenance_open_data.json'),'w',encoding='utf-8',newline='\n'),indent=2)
 print("\nwrote data/raw/provenance_open_data.json  (%d files)"%len(prov))

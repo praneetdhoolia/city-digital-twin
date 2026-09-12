@@ -40,13 +40,8 @@ JSON beside it), regenerable from the committed inputs.
 
 # This builder encodes THIS CITY's freight-crossing interactions, so it lives
 # with the city rather than in the framework.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-import city as _city  # noqa: E402
-import registry as _registry  # noqa: E402
+import city as _city
+import registry as _registry
 
 import gzip
 import json
@@ -65,6 +60,7 @@ OUTPUT_INPUTS = {
     'networks/matsim/crossings/*': [
         'networks/osm/railways.osm',
         'networks/matsim/base/network.xml.gz',
+        'networks/matsim/schedules',
         'data/processed/corridor/A2_signal_control_corridor.csv'],
 }
 
@@ -87,14 +83,23 @@ CORRIDOR_EXCLUSION_M = CFG.get('A.crossings.corridor_exclusion_m')
 CLOSURE_SOURCE = CFG.get('A.crossings.closure_source')
 FREIGHT_CLOSURES = CFG.get('A.crossings.freight_closures_per_day')
 
-# The mapped WEEKDAY schedule is the timetable a closure is derived from. It is
-# the scenario's own already-mapped feed, never a re-run of the mapper
-# (DECISIONS.md 3.5): schedule mapping is not reproducible run to run, so a
-# second mapping would put the trains on different links from the ones the
-# scenario actually simulates.
+# The mapped schedule's WEEKDAY routes are the timetable a closure is derived
+# from. It is the scenario's own already-mapped feed, never a re-run of the
+# mapper (DECISIONS.md 3.5): schedule mapping is not reproducible run to run,
+# so a second mapping would put the trains on different links from the ones
+# the scenario actually simulates. Read from the MAPPED schedule under
+# networks/matsim/schedules/, not from the assembled run-input set: the set
+# is cut from this file by day-type token and carries the same links, and
+# reading it here made a cycle - the assembler refuses to run without the
+# closure events, and the events could not be derived until it had run
+# (found at the 12 September 2026 network rebuild, #183).
 SCHEDULE = _city.path(
-    'scenarios/matsim/%s/WEEKDAY/transitSchedule.xml.gz'
+    'networks/matsim/schedules/%s/transitSchedule.xml.gz'
     % _city.descriptor()['intervention']['base_scenario'])
+SCHEDULE_DAY = 'WEEKDAY'
+# the city's own day-type vocabulary, as build_matsim_run_inputs.py reads it
+DAY_TOKEN_RE = re.compile(r'(?:^|[.:_])(%s)(?:[._]|$)'
+                          % '|'.join(re.escape(d) for d in _city.descriptor()['day_types']))
 RAIL_MATCH_M = CFG.get('A.crossings.rail_match_radius_m')
 CLOSURE_DURATION_PASSENGER_S = CFG.get(
     'A.crossings.closure_duration_passenger_s')
@@ -214,6 +219,9 @@ def rail_movements(site, rail_links, schedule_text, fac):
     times = []
     for rid, body in re.findall(r'<transitRoute id="([^"]+)">(.*?)</transitRoute>',
                                 schedule_text, re.S):
+        day = DAY_TOKEN_RE.search(rid)
+        if not day or day.group(1) != SCHEDULE_DAY:
+            continue
         mode = re.search(r'<transportMode>([^<]+)</transportMode>', body)
         if not mode or mode.group(1) != 'rail':
             continue
@@ -404,7 +412,8 @@ def main():
             # Non-timetabled freight on top, spread evenly because no movement
             # log is published - zero by default on 9.70's grade separation -
             # and at the FREIGHT duration, which is what that 240 s describes.
-            nf = int(FREIGHT_CLOSURES)
+            nf = int(FREIGHT_CLOSURES[site['road_name']]
+                     if isinstance(FREIGHT_CLOSURES, dict) else FREIGHT_CLOSURES)
             for i in range(nf):
                 start = w0 + (i + 0.5) * ((w1 - w0) / max(1, nf))
                 start = min(start, w1 - CLOSURE_DURATION_S)
@@ -520,14 +529,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '../../../src/build'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

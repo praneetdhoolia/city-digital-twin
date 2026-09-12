@@ -3,10 +3,11 @@
 Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description; `.claude/CLAUDE.md` and `STATUS.md` no longer do) describe the pre-§9.88 state; §9.88 is newer and wins. The precise statement is: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
+- **The crossings and the corridor signals are re-derived on the footpath network** (§9.167, #183, #184): 16 rail links at the two sites, 2,478 change events, Clyde Street 203 scheduled closures (204 on the previous mapping - pt2matsim's own drift, §3.5) plus 48 freight, Saint James Road 110 plus 44, at 160 s passenger / 277 s freight. The crossings builder reads the MAPPED schedule's weekday routes (`networks/matsim/schedules/`), not the assembled run-input set: reading the set made a cycle with the assembler's refusal to run without the closure events. The signal systems match 54 signalised approaches on the finer network (49 before).
 - **SCATS is implemented, not assumed.** `A.signals.control_regime` = `scats_adaptive`; all 14 corridor systems in every scenario name `CitysimScats` (`src/java_signals/citysim/ScatsSignalController.java`), and every emitted config carries the `scats` module (§9.88). The controller measures degree of saturation at each stop line from the mobsim's `LinkLeaveEvent`s — served against saturation flow × lanes × green, the denominator scaled by `qsim.flowCapacityFactor` — and at each cycle boundary steps cycle length toward the target on the critical movement and re-splits green to equalise DS across stages; clearances are preserved as safety geometry (§9.88).
 - Algorithm parameters, all bound into the `scats` module: `A.signals.scats.target_degree_saturation` 0.90, `cycle_step_s` 6, `min_cycle_s` 30, `max_cycle_s` 150, `ds_deadband` 0.05, `ds_smoothing` 0.5, with `A.signals.min_green_s` 6 (§9.88). `fixed_time` is the kept sweep member and reproduces every pre-§9.88 arm; `run_matsim.py` refuses a declared regime that disagrees with the committed control file (§9.88).
 - The 14 intersections (`A.signals.n_corridor_intersections`, observed) are explicit MATSim signal systems generated per scenario by `cities/newcastle/build/build_matsim_signals.py` from the A2 declared values against that scenario's own mapped network, into `cities/newcastle/networks/matsim/signals/<S>/` (§9.76). Phase structure is link-level: corridor approaches, cross approaches, and a tram group tied to the corridor phase because the T-aspect moves with parallel traffic; a site with no cross-street car approach is a mid-block crossing signal (§9.76).
@@ -67,6 +68,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 
 ## History
 
+- §9.167 — crossings and signals re-derived; freight closures from the survey
 - §9.166 — re-read against F33; freight trains at the crossings (#184)
 - §9.141 — priority donor by layout; probes run
 - §9.90 — crossings derived from rail timetable

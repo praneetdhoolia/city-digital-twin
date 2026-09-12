@@ -2,10 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
+- **THE FREIGHT TRAINS AT THE TWO BOOM-GATED CROSSINGS ARE DERIVED FROM A PUBLISHED SURVEY, NOT ASSUMED ZERO** (§9.167, #184, decision "research published sources"). The Cobbora Coal Project Environmental Assessment (EMM J11030RP5, ch. 13) reports a March 2012 five-day survey of St James Road and Clyde Street: 130 and 142 daily train movements, 432 and 463 minutes closed, closure per train by type. Adamstown carries no coal (§9.70), so 130 − 86 passenger (the 2012 timetable) = **44 general-freight movements a day**; Clyde Street takes the same freight share, **48**, under a stated assumption (`A.crossings.freight_closures_per_day`, per site). Closure durations are the survey's: passenger 60 → **160 s**, freight 240 → **277 s**. The rebuilt events close Adamstown 416 min/day against the survey's 432, and the `freight_train` representation counts every closure: **314 → 405 a weekday** (110 + 203 scheduled, 44 + 48 freight).
+- **Motorcycles are 5.93 % of the light fleet by registration** (§9.167, #185): BITRE's Road Vehicles tables by postal area (data.gov.au, CC-BY 3.0 AU) joined to the 44 postal areas inside the boundary by geometry - a constraint on the carve, never a target.
 **Motorbike** is a person-level locked carve from car-driver demand, not a choice mode (§9.52). A licensed, car-available resident is drawn by a hash of person id and master seed, and the whole day locks to `motorbike`; the escort-day fallback of §9.52 is retained. The carve draws no new trip: car loses exactly what motorbike gains (§9.52).
 
 - Anchor: census G62 one-method motorbike/scooter journeys over one-method driver journeys, on the target LGA's own SA1s — `CAL.mode_split.motorbike_driver_journey_share` = 0.0064151 (282 of 43,959), measured and asserted against the extract on every build (§9.122).
@@ -72,6 +74,7 @@
 
 ## History
 
+- §9.167 — freight movements derived from the Cobbora survey; BITRE registrations acquired
 - §9.166 — #93's closed bullet retired
 - §9.163 — motorbike on one basis at +12.5 %; #93 closed
 - §9.146 — F26 gate +11.1 %; the carve draws no bound passenger

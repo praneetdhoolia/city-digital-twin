@@ -36,8 +36,6 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-sys.path.insert(0, os.path.join(REPO, 'src'))
-sys.path.insert(0, HERE)
 
 import city as citymod                                        # noqa: E402
 import registry                                               # noqa: E402

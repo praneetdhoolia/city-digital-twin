@@ -15,12 +15,8 @@ Two official series, both CC-BY:
 Both land under data/raw/ and are never edited in place; the rates are built
 from them by cities/<city>/build/build_licence_rates.py.
 """
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
-import os, json, hashlib, urllib.request, datetime  # noqa: E402
+import city as _city
+import os, json, hashlib, urllib.request, datetime
 
 B = "https://opendata.transport.nsw.gov.au/data/dataset/"
 M = [

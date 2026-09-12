@@ -35,7 +35,7 @@ def write_feed(feed,path):
 
 def in_study(s,box):
     try: lat=float(s['stop_lat']); lon=float(s['stop_lon'])
-    except: return False
+    except (KeyError, TypeError, ValueError): return False
     return box['s']<=lat<=box['n'] and box['w']<=lon<=box['e']
 
 def clip(feed,box):

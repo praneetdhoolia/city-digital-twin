@@ -5,6 +5,7 @@ import java.util.Set;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The {@code raptorModeCost} module: whether a PT SUBMODE'S OWN CONSTANT
@@ -66,7 +67,8 @@ public final class RaptorModeCostConfigGroup extends ReflectiveConfigGroup {
     public static final String REPRESENTATION_ABSENT = "absent";
     public static final String REPRESENTATION_MODE_CONSTANT = "mode_constant";
 
-    private String representation = REPRESENTATION_ABSENT;
+    @Parameter("representation")
+    public String representation = REPRESENTATION_ABSENT;
 
     public RaptorModeCostConfigGroup() {
         super(NAME);
@@ -76,14 +78,8 @@ public final class RaptorModeCostConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_MODE_CONSTANT.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
-    }
-
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
     }
 
     /**

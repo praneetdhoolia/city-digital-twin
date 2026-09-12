@@ -41,13 +41,7 @@ Outputs `data/processed/validation/mode_targets_by_mode.csv`.
 
 # This builder encodes THIS CITY's survey vocabulary and patronage sources, so
 # it lives with the city rather than in the framework.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import re
 import csv
@@ -57,7 +51,7 @@ import zipfile
 import collections
 import pandas as pd
 
-import registry as _registry  # noqa: E402
+import registry as _registry
 
 _CENSORED = None
 
@@ -72,16 +66,31 @@ def _censored():
     return _CENSORED
 
 
+# The publication's ONE censoring form. Anything else that float() refuses is
+# a vintage this builder has not seen and must stop the build, not count as a
+# censored cell: `n.p.`, `N/A` or `-` in a future series would otherwise
+# silently add CAL.pt.censored_cell_value trips per station-month to the
+# heavy-rail target (eighth project report, 11 September 2026, area 5).
+CENSORED_CELL = re.compile(r'^less than \d+$', re.I)
+
+
 def _trip_cell(raw):
     """A Trip cell to a number: numeric text as it is, an empty cell as 0,
-    a censored cell as the declared value."""
+    the publication's censored cell ('Less than 50') as the declared value,
+    and any other text a refusal."""
     s = str(raw if raw is not None else '').replace(',', '').strip()
     if not s or s.lower() == 'nan':
         return 0.0
     try:
         return float(s)
     except ValueError:
-        return _censored()
+        if CENSORED_CELL.match(s):
+            return _censored()
+        raise SystemExit(
+            'station-entries Trip cell %r is neither a number nor the '
+            'publication\'s censored form (%r): a new vintage prints its '
+            'suppression differently, and this builder will not guess what '
+            'it means' % (raw, CENSORED_CELL.pattern))
 
 OBS = _city.path('data/processed/observed')
 HTS = _city.path('data/processed/hts')
@@ -148,7 +157,7 @@ def hts_trip_means():
     """
     year = _city.readers().survey_vintage()
     lga = _city.target_lga()
-    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm = _hts_mode()
     sel = hm[(hm.geography == 'lga')
              & (hm.area_name.str.strip() == lga)
              & (hm.FINANCIAL_YEAR.astype(str) == year)]
@@ -186,7 +195,7 @@ def hts_levels(cfg):
     """
     year = _city.readers().survey_vintage()
     lga = _city.target_lga()
-    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm = _hts_mode()
     hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
     sel = hm[(hm.geography == 'lga')
              & (hm.area_name.str.strip() == lga)
@@ -208,7 +217,7 @@ def region_trip_totals(year):
     Walk-linked rows are excluded because the survey excludes them from
     MODE_SHARE, and mixing the two bases would inflate the denominator.
     """
-    hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
+    hm = _hts_mode()
     hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
     hm['TRIPS_BY_MODE'] = pd.to_numeric(hm['TRIPS_BY_MODE'], errors='coerce')
     sel = hm[(hm.geography == 'lga')
@@ -249,6 +258,19 @@ def _norm_stop(name):
     return t
 
 
+_HTS_MODE = []
+
+
+def _hts_mode():
+    """hts_mode.csv, read once per build (it was read three times)."""
+    if not _HTS_MODE:
+        _HTS_MODE.append(pd.read_csv(os.path.join(HTS, 'hts_mode.csv')))
+    return _HTS_MODE[0].copy()
+
+
+_PT_STATIONS = []
+
+
 def model_pt_stations():
     """Every rail/light-rail stop THIS CITY's own mapped schedule contains,
     with the LGA the boundary layer puts it in.
@@ -260,6 +282,8 @@ def model_pt_stations():
     the schedule does not is not this city's - the published Newcastle series
     carries a light rail stop belonging to another city entirely (9.100).
     """
+    if _PT_STATIONS:
+        return _PT_STATIONS[0]
     import geopandas as gpd
     from shapely.geometry import Point
 
@@ -285,7 +309,8 @@ def model_pt_stations():
         hit = lga[lga.geometry.contains(
             Point(float(st['stop_lon']), float(st['stop_lat'])))]
         out[key] = None if hit.empty else str(hit.iloc[0]['LGA_NAME21'])
-    return out
+    _PT_STATIONS.append(out)
+    return _PT_STATIONS[0]
 
 
 def _unbroken_months(series_by_month, ratio):
@@ -627,7 +652,7 @@ def main():
     lr_day, rail_day, rail_stations, pt_windows, rail_excluded, rail_censored = \
         disclosed_pt_boardings(cfg)
     wf = float(cfg.get('CAL.pt.weekday_factor'))
-    wf_lo, wf_hi = 1.0, 1.3
+    wf_lo, wf_hi = (float(x) for x in cfg.sweep('CAL.pt.weekday_factor'))
     add('heavy_rail', rail_day * wf,
         'boardings per weekday at the disclosed stations (all travellers)',
         'measured',
@@ -635,7 +660,14 @@ def main():
         'stations this city\'s mapped schedule contains, %s..%s, %.0f a day '
         'over all days, x CAL.pt.weekday_factor %.4f. Every traveller who '
         'boards is counted, as the publication counts them; %d published '
-        'station(s) the model cannot board are excluded%s. %s. The '
+        'station(s) the model cannot board are excluded%s. %s. THE SUM IS THE '
+        'CALIBRATION OBSERVATION AND THE PER-STATION MEANS ARE THE HOLDOUT '
+        '(decision, 12 September 2026, #189): every station-direction mean '
+        'from this publication is a pre-registered holdout row (DECISIONS.md '
+        '12), and this target reads none of them - it sums the published '
+        'entries, a different observation from any station\'s mean, so a '
+        'model can match this total with the wrong stations and the holdout '
+        'catches exactly that at the end. The '
         'composition-derived trip share this replaces (HTS "%s" PT %.1f%% x '
         'the boardings split) was %.4f%% of resident trips'
         % (len(rail_stations), pt_windows['heavy_rail'][0],
@@ -756,22 +788,26 @@ def main():
     crep = json.load(open(crep_path, encoding='utf-8')) if os.path.exists(crep_path) else None
     if crep and crep.get('closure_source') == 'schedule_derived':
         per_site = crep['closures_per_site']
-        total = sum(per_site.values())
+        freight = crep.get('freight_closures_per_day') or {}
+        scheduled = sum(per_site.values())
+        total = scheduled + sum(freight.values())
         add('freight_train', float(total),
             'level-crossing closures per weekday', 'derived',
             'ROAD EFFECT SIMULATED, train not a mobsim vehicle. The coal chain '
             'has run on dedicated grade-separated track since 2006 (ARTC/PWCS/'
             'NCIG, ~110 movements/day), so the only real road interaction is '
-            'the level crossings - and those are now DERIVED from the mapped '
-            'rail timetable rather than assumed (9.90): one closure per '
-            'scheduled train that crosses, at the time it crosses. %s, '
-            '%d/weekday in total, each %.0f s. Non-timetabled freight is added '
-            'on top at A.crossings.freight_closures_per_day, zero by default '
-            'because the coal chain does not cross these roads at grade and '
-            'ARTC publishes no movement log for what else might. A modelled '
-            'count of train VEHICLES of zero is the decision, not a defect'
+            'the level crossings - and those are DERIVED, not assumed: one '
+            'closure per scheduled passenger train that crosses, at the time '
+            'it crosses (9.90; %s, %d/weekday, each %.0f s), plus the freight '
+            'movements the 2012 Cobbora Coal environmental assessment survey '
+            'counted at these two crossings (9.167, #184; %s, each %.0f s, '
+            'spread over the day because no freight timetable is published). '
+            '%d closures/weekday in total. A modelled count of train VEHICLES '
+            'of zero is the decision, not a defect'
             % (', '.join('%s %d' % (k, v) for k, v in sorted(per_site.items())),
-               total, float(cfg.get('A.crossings.closure_duration_s'))),
+               scheduled, float(cfg.get('A.crossings.closure_duration_passenger_s')),
+               ', '.join('%s %d' % (k, v) for k, v in sorted(freight.items())) or 'none',
+               float(cfg.get('A.crossings.closure_duration_s')), total),
             None)
     else:
         per = float(cfg.get('A.crossings.closures_per_day'))
@@ -806,7 +842,7 @@ def main():
                 'evidence about one mode' % shared[cat]))
     d = pd.DataFrame(rows)
     dst = os.path.join(OUT, 'mode_targets_by_mode.csv')
-    d.to_csv(dst, index=False)
+    d.to_csv(dst, index=False, lineterminator='\n')
 
     rep = dict(
         hts_vintage=year, target_lga=lga,
@@ -836,14 +872,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '../../../src/build'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

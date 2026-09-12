@@ -46,11 +46,9 @@ import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
 import city  # noqa: E402
 import registry as _registry  # noqa: E402
 
-sys.path.insert(0, os.path.join(ROOT, 'src', 'run'))
 import results_store  # noqa: E402
 
 RESULTS = os.path.join(ROOT, 'results')
@@ -194,7 +192,7 @@ def build():
 
     csv_path = os.path.join(RESULTS, 'INDEX.csv')
     with io.open(csv_path, 'w', encoding='utf-8', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=CSV_COLUMNS)
+        w = csv.DictWriter(f, fieldnames=CSV_COLUMNS, lineterminator='\n')
         w.writeheader()
         for row in rows:
             w.writerow({k: ('' if row.get(k) is None else row.get(k))

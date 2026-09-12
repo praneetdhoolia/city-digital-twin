@@ -5,6 +5,6 @@
     "RUN.sample.fraction": 0.01,
     "RUN.controler.last_iteration": 250,
     "RUN.machine.threads": 10,
-    "RUN.machine.xmx": "14g"
+    "RUN.machine.xmx": "18g"
   }
 }

@@ -213,6 +213,12 @@ public final class GenericRouteTeleporter implements MobsimEngine, DepartureHand
         this.queue.add(new Pending(now + time.seconds(), agent,
                                    agent.getDestinationLinkId(), this.seq++,
                                    key(mode, routingMode)));
+        // WHY this leg had no network route (#167): a walk leg is teleported
+        // when the walk router could not reach one of its ends, and the ends
+        // it cannot reach are stop facilities on links walk is not permitted
+        // on. Counting the legs by which end is unwalkable names the fix -
+        // the landing link - and measures how much of the residual it is.
+        classifyEnds(linkId, agent.getDestinationLinkId());
         return true;
     }
 
@@ -306,11 +312,41 @@ public final class GenericRouteTeleporter implements MobsimEngine, DepartureHand
                     .append(e.getValue().get());
         }
         LOG.info("genericRouteTeleporter: teleported={} [{}] "
-                 + "abortedAtSimEnd={} [{}]",
+                 + "abortedAtSimEnd={} [{}] ends: [{}] (#167: an UNWALKABLE end "
+                 + "is a stop facility on a link walk is not permitted on)",
                  teleported,
                  perMode.length() == 0 ? "none" : perMode.toString(),
                  aborted,
-                 perModeAborted.length() == 0 ? "none" : perModeAborted.toString());
+                 perModeAborted.length() == 0 ? "none" : perModeAborted.toString(),
+                 endsSummary());
+    }
+
+    private final Map<String, AtomicLong> endsByWalkability = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private void classifyEnds(final Id<Link> from, final Id<Link> to) {
+        final org.matsim.api.core.v01.network.Network net =
+                this.internalInterface.getMobsim().getScenario().getNetwork();
+        final org.matsim.api.core.v01.network.Link a = net.getLinks().get(from);
+        final org.matsim.api.core.v01.network.Link b = net.getLinks().get(to);
+        final boolean fromWalk = a != null && a.getAllowedModes().contains(STUB_MODE);
+        final boolean toWalk = b != null && b.getAllowedModes().contains(STUB_MODE);
+        final String key = (fromWalk ? "from walkable" : "from UNWALKABLE") + " / "
+                + (toWalk ? "to walkable" : "to UNWALKABLE");
+        this.endsByWalkability.computeIfAbsent(key, k -> new AtomicLong()).incrementAndGet();
+    }
+
+    /** The per-end classification, for the summary line; cleared with it. */
+    private String endsSummary() {
+        final StringBuilder sb = new StringBuilder();
+        for (final Map.Entry<String, AtomicLong> e
+                : new TreeMap<>(this.endsByWalkability).entrySet()) {
+            if (sb.length() > 0) {
+                sb.append(", ");
+            }
+            sb.append(e.getKey()).append('=').append(e.getValue().get());
+        }
+        this.endsByWalkability.clear();
+        return sb.length() == 0 ? "none" : sb.toString();
     }
 
     @Override

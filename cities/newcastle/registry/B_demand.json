@@ -514,6 +514,40 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.companion_buffer_s": {
+      "value": 600,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        300,
+        1200
+      ],
+      "sweep_basis": "ten minutes is a chosen minimum between two engagements of one person or vehicle; five minutes is the smallest gap the plans can express usefully, twenty a whole activity.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The minimum clearance between a companion tour and the busy interval it must not overlap when binding joint, escort and serve tours, and between one tour and the next in a day; a tour is shifted or the binding refused inside it. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.escort_dwell_s": {
+      "value": 300,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        120,
+        600
+      ],
+      "sweep_basis": "a kerbside drop is minutes, not tens of minutes; the bracket spans two to ten.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The duration of the escort activity at each end of a serve tour (the drop-off and the pick-up). Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.p_mandatory": {
       "value": {
         "WEEKDAY": {
@@ -959,6 +993,96 @@
         "src/build/build_population.py"
       ],
       "description": "The number of years past the onset age over which the mobility-impairment rise is spread (linear)."
+    },
+    "B.population.household_size_top_band_mean": {
+      "value": 6.6,
+      "units": "persons",
+      "source": "assumed",
+      "sweep": [
+        6.0,
+        7.5
+      ],
+      "sweep_basis": "the open top band has no published mean at SA1; 6.0 is its floor and 7.5 brackets the largest Australian household sizes the census tabulates.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The mean household size assumed for the census top band (\"6 or more persons\"), used with the band midpoints 1-5 to size households. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.household_size_tail_p": {
+      "value": 0.55,
+      "units": "probability",
+      "source": "assumed",
+      "sweep": [
+        0.4,
+        0.8
+      ],
+      "sweep_basis": "a chosen bracket: 0.4 gives a long tail of very large households, 0.8 nearly none above six. No observed spread at SA1.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The geometric-tail parameter that spreads a \"6 or more\" household above six persons (size = 6 + Geometric(p) - 1, capped at 10). Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.home_jitter_radius_factor": {
+      "value": 0.6,
+      "units": "ratio",
+      "source": "assumed",
+      "sweep": [
+        0.3,
+        1.0
+      ],
+      "sweep_basis": "0.3 keeps homes near the centroid, 1.0 spreads them to the equivalent-circle edge; a placement convention, swept because it moves every home-end walk distance.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "Home locations are jittered inside their SA1 within a radius of this factor times the circle-equivalent radius of the zone area, so homes are not stacked on the centroid. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.labour_force_min_age": {
+      "value": 15,
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The ABS labour-force scope: a person under this age is not in the labour force and draws no employment status or income band (ABS Labour Force definitions). Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.licence_min_age": {
+      "value": 16,
+      "units": "years",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The minimum age at which a person can hold a driving licence (NSW learner licence at 16); below it the licence draw is not made. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
+    },
+    "B.population.school_full_time_max_age": {
+      "value": 18,
+      "units": "years",
+      "source": "assumed",
+      "sweep": [
+        17,
+        19
+      ],
+      "sweep_basis": "NSW schooling is compulsory to 17 and secondary school ends at 18; the bracket is one year either side.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "An attendee below this age is written as a full-time student; at and above it the full/part-time split is drawn from the declared tertiary shares. Was an inline literal in the script until 12 September 2026 (#188).",
+      "consumers": [
+        "src/build/build_population.py"
+      ]
     },
     "B.population.bike_available_rate": {
       "value": 0.493,

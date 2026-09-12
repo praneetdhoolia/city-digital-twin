@@ -27,6 +27,7 @@ import sys
 import json
 import glob
 import argparse
+from procs import pid_alive as _pid_alive
 
 # `Exception in thread "main" pkg.Cls: message` - the JVM's own last word. The
 # thread is captured because a run can also die on a mobsim worker.
@@ -234,37 +235,6 @@ def backfill(results_dir, dry_run=False):
             json.dump(meta, fh, indent=2, ensure_ascii=False)
             fh.write('\n')
     return changed
-
-
-def _pid_alive(pid):
-    """Is this pid a live process? Never signals it.
-
-    The same test `run_matsim._pid_alive` makes (not imported: run_matsim
-    imports this module). On Windows `os.kill(pid, 0)` would TERMINATE the
-    process, so liveness is asked of the kernel handle.
-    """
-    try:
-        pid = int(pid)
-    except (TypeError, ValueError):
-        return False
-    if pid <= 0:
-        return False
-    if os.name == 'nt':
-        import ctypes
-        k32 = ctypes.windll.kernel32
-        handle = k32.OpenProcess(0x00100000, 0, pid)          # SYNCHRONIZE
-        if not handle:
-            return False
-        try:
-            # WAIT_TIMEOUT (258) means still running; 0 means signalled/exited
-            return k32.WaitForSingleObject(handle, 0) == 258
-        finally:
-            k32.CloseHandle(handle)
-    try:
-        os.kill(pid, 0)
-    except OSError:
-        return False
-    return True
 
 
 def stale_running(results_dir):

@@ -32,23 +32,15 @@ Reads the run directory only. Writes nothing. Nothing here is a result: a run
 without `_run.json` is not a result no matter how it scores.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
 import os as _os
-import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
-import csv
 import glob
 import json
 import argparse
 import collections
 
-import extract_metrics as em                                      # noqa: E402
-import fit as fitmod                                              # noqa: E402
+import extract_metrics as em
+import fit as fitmod
 
 TRIPS_STEM = 'ITERS/it.%d/%d.trips'
 
@@ -77,11 +69,10 @@ def trip_rows(run_dir, iteration):
     validated to reproduce the table exactly wherever both exist. Returns
     (rows, source) so a reader can say which it read.
     """
-    stem = TRIPS_STEM % (iteration, iteration)
-    base = _os.path.join(run_dir, 'output', stem)
-    if any(_os.path.exists(base + ext) for ext in ('.csv.gz', '.csv', '.csv.zst')):
-        with em.open_output(run_dir, stem) as fh:
-            return list(csv.DictReader(fh, delimiter=';')), 'trips table'
+    import iteration_reading as _reading
+    if _reading.table_path(run_dir, 'trips', iteration) is not None:
+        # the cached decode every reader in this process shares (#182)
+        return _reading.table(run_dir, 'trips', iteration), 'trips table'
     import iteration_trips as itr
     if itr.plans_path(run_dir, iteration) is None:
         raise SystemExit('iteration %d wrote neither a trips table nor '
@@ -192,8 +183,6 @@ def main():
     import os as _os_r, sys as _sys_r
     _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
         _os_r.path.abspath(__file__))), 'run')
-    if _r not in _sys_r.path:
-        _sys_r.path.insert(0, _r)
     import results_store as _store_r
     a.run = _store_r.resolve_or_die(a.run)
 

@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `parking` config module: what a car is charged to stand still.
@@ -30,13 +31,20 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
     // is right by accident, and it would keep charging cars if the binding that
     // writes the parameter were ever lost. Empty now, and checkConsistency
     // refuses a priced run that never named a mode.
-    private String priceFile = "";
-    private double maxStayMinutes = 0.0;
-    private double chargedStartHour = 0.0;
-    private double chargedEndHour = 0.0;
-    private String chargedModes = "";
-    private String exemptActivityTypes = "";
-    private double searchPenaltyUtilsPerMin = 0.0;
+    @Parameter("priceFile")
+    public String priceFile = "";
+    @Parameter("maxStayMinutes")
+    public double maxStayMinutes = 0.0;
+    @Parameter("chargedStartHour")
+    public double chargedStartHour = 0.0;
+    @Parameter("chargedEndHour")
+    public double chargedEndHour = 0.0;
+    @Parameter("chargedModes")
+    public String chargedModes = "";
+    @Parameter("exemptActivityTypes")
+    public String exemptActivityTypes = "";
+    @Parameter("searchPenaltyUtilsPerMin")
+    public double searchPenaltyUtilsPerMin = 0.0;
 
     public ParkingConfigGroup() {
         super(GROUP_NAME);
@@ -48,14 +56,8 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
      * of the run network's ~144k car links rather than all of them. Empty
      * disables parking charging entirely.
      */
-    @StringGetter("priceFile")
     public String getPriceFile() {
         return this.priceFile;
-    }
-
-    @StringSetter("priceFile")
-    public void setPriceFile(final String value) {
-        this.priceFile = value == null ? "" : value.trim();
     }
 
     /**
@@ -64,25 +66,13 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
      * which is a declared modelling choice - representing over-stay properly
      * needs an infringement rate nobody has measured here.
      */
-    @StringGetter("maxStayMinutes")
     public double getMaxStayMinutes() {
         return this.maxStayMinutes;
     }
 
-    @StringSetter("maxStayMinutes")
-    public void setMaxStayMinutes(final double value) {
-        this.maxStayMinutes = value;
-    }
-
     /** Start of the charged window, in hours after midnight. */
-    @StringGetter("chargedStartHour")
     public double getChargedStartHour() {
         return this.chargedStartHour;
-    }
-
-    @StringSetter("chargedStartHour")
-    public void setChargedStartHour(final double value) {
-        this.chargedStartHour = value;
     }
 
     /**
@@ -90,14 +80,8 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
      * the start means nothing is charged on this day type - which is how a
      * free Sunday is expressed, rather than by a separate flag.
      */
-    @StringGetter("chargedEndHour")
     public double getChargedEndHour() {
         return this.chargedEndHour;
-    }
-
-    @StringSetter("chargedEndHour")
-    public void setChargedEndHour(final double value) {
-        this.chargedEndHour = value;
     }
 
     /**
@@ -105,14 +89,8 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
      * passenger does not pay to park the vehicle they are riding in, and
      * charging `ride` as well would bill the same vehicle twice.
      */
-    @StringGetter("chargedModes")
     public String getChargedModes() {
         return this.chargedModes;
-    }
-
-    @StringSetter("chargedModes")
-    public void setChargedModes(final String value) {
-        this.chargedModes = value == null ? "" : value.trim();
     }
 
     /**
@@ -120,14 +98,8 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
      * `home` by default - see DECISIONS.md 9.31 for why charging it would be a
      * standing levy on living in a dense zone rather than a price on travel.
      */
-    @StringGetter("exemptActivityTypes")
     public String getExemptActivityTypes() {
         return this.exemptActivityTypes;
-    }
-
-    @StringSetter("exemptActivityTypes")
-    public void setExemptActivityTypes(final String value) {
-        this.exemptActivityTypes = value == null ? "" : value.trim();
     }
 
     /**
@@ -140,14 +112,8 @@ public final class ParkingConfigGroup extends ReflectiveConfigGroup {
      * pre-9.138 model and the A.parking.search_time_representation=absent
      * state.
      */
-    @StringGetter("searchPenaltyUtilsPerMin")
     public double getSearchPenaltyUtilsPerMin() {
         return this.searchPenaltyUtilsPerMin;
-    }
-
-    @StringSetter("searchPenaltyUtilsPerMin")
-    public void setSearchPenaltyUtilsPerMin(final double value) {
-        this.searchPenaltyUtilsPerMin = value;
     }
 
     /**

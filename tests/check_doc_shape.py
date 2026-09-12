@@ -44,7 +44,6 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / "src"))
 
 NUMBER = re.compile(r"(?<![\w/.-])\d{1,3}(,\d{3})+(?![\w-])|\d+\.\d+|\d+(\.\d+)?\s?%")
 GENERATED = re.compile(r"<!-- generated:(\w+) start -->.*?<!-- generated:\1 end -->", re.S)

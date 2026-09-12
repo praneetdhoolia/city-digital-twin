@@ -144,9 +144,9 @@
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "15, 9.147",
+      "decisions_ref": "15, 9.147, 9.167",
       "matsim_param": "controler.writePlansInterval",
-      "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model."
+      "description": "How often the full plans dump (every plan in memory, ~8 per person) and the experienced plans are written, in iterations. Equal to RUN.gate.interval_iterations by design (9.147): both are gate artefacts - warm start and resume, the trip-level diagnostics of 9.146 - and the ten-iteration monitoring reads the trips table (RUN.controler.write_trips_interval), which MATSim derives from the experienced plans it already holds in memory. Measured on the F26 arm's stopwatch: `dump all plans` 121-147 s and iterationEndsListeners 33-54 s at every tenth iteration. Affects disk and wall time, not the model. SINCE 12 SEPTEMBER 2026 (9.167, #192) an ARM overlay sets it to 25: a warm-completed arm is ruled a RESULT (MATSim runs are not bit-reproducible run to run in any case, 9.143, so the seed stream a restart breaks is no more a seed than any other run's), so a checkpoint every 25 iterations bounds a crash to 25 at +1.4-1.9 % wall and ~+6 GB per 300-iteration arm; the gate interval it equalled by design stays a separate field."
     },
     "RUN.controler.write_trips_interval": {
       "value": 10,
@@ -540,7 +540,7 @@
       "description": "Multiplier on the direct-walk cost the PT router compares every transit route against. 1.0 is MATSim's default and the value in force; it had reached every emitted config as a jar default."
     },
     "RUN.transit_router.access_egress_basis": {
-      "value": "beeline",
+      "value": "network",
       "units": "enum",
       "source": "derived",
       "derived_from": {
@@ -549,10 +549,10 @@
           "RUN.qsim.main_mode",
           "RUN.routing.access_egress_type"
         ],
-        "identity": "access_egress_basis = network only where the routed leg can actually be EXECUTED, and 8 September 2026 it cannot, so it is beeline. The requirement is not in doubt: GOAL.md requirement 1 forbids teleportation, walk is in RUN.routing.network_modes and is a qsim main mode, and at beeline the raptor draws access and egress straight and citysim.GenericRouteTeleporter teleports them - 520,385 such legs over arm 20260906T233901's 3.77 M (9.156, 9.158, #167). What is in doubt is executability, and THREE MEASUREMENTS decide it (9.159). (1) At network the routing works: the raptor accepts useIntermodalAccessEgress beside useModeMappingForPassengers with no consistency throw, and the teleport count falls to 6 [walk via pt] on probe aborted_20260908T231109_4it_1pct. (2) The MOBSIM then refuses the result - TransitAgentTriesToTeleportException, agent 355102 at link 158102 trying to board at 128983 - because the walk router lands the agent on a walk link near the stop while the stop is on its own link. (3) That is not fixable by routing to the stop's link, because 675 of 4,123 stop facilities (16.4%) sit on a link walk cannot use: 382 pt/rail/train, 199 pt2matsim artificial stopFacilityLinks, 62 road links omitting walk, 18 rail, 18 artificial rail - the heavy-rail and light-rail platforms among them. MATSim's own bridge is refused for a fourth measured reason: RUN.routing.access_egress_type = accessEgressModeToLink fails at PersonPrepareForSim on this demand, \"Found a trip whose legs have different routingModes\", 40 agents on probe aborted_20260908T232051_4it_1pct - a different failure from the ClassCastException 9.54 recorded, and earlier than the mobsim. So the identity resolves to beeline until a bridge exists that puts the agent on the stop's link without breaking trip consistency; the machinery, the parameter set and the three derived radii stay declared and ready, and #167 stays open with what each probe measured."
+        "identity": "access_egress_basis = network only where the routed leg can actually be EXECUTED, and since 12 September 2026 it can (9.167, #167). The requirement was never in doubt: GOAL.md requirement 1 forbids teleportation, walk is in RUN.routing.network_modes and is a qsim main mode, and at beeline the raptor draws access and egress straight and citysim.GenericRouteTeleporter teleports them - 520,385 such legs over arm 20260906T233901's 3.77 M (9.156, 9.158). What was in doubt was executability, and it was settled by three measurements on 1 % probes (9.167): (1) the accessEgressModeToLink refusal that killed every intermodal probe since 8 September was made by this project's own ride and taxi engines re-moding ONE leg of a five-leg trip at BeforeMobsim, not by MATSim's pre-simulation pass - PrepareForSim completed over all 6,347 persons and PrepareForMobsim refused the re-moded trips; the engines now replace the whole trip. (2) With the raptor's intermodal branch on, 553 walk legs an iteration were still teleported, and 386 of them had both ends on walkable links: the raptor's TRANSFERS between stops, which it draws as beelines whatever this setting says; citysim.NetworkDirectWalkPtRouter now splices the walk router's whole answer over every beeline walk leg inside a transit answer. (3) The other 167 had an end on a link walk cannot use - 675 of 4,123 stop facilities sit on one - and the walk router's own last-metre non_network_walk stub from the nearest walkable link is what carries them, exactly as a car trip reaches its parked car. Result: 20260912T042953_4it_1pct, teleported=0 on every iteration, ran_to_last_iteration 4 of 4, 0 routingMode errors, pace unchanged at ~30 s an iteration at 1 %. Nothing is teleported but MATSim's coordinate-to-link stubs (median 55 m, p90 181 m, one outlier at 12.6 km - a stop whose nearest walkable link is far, which the footpath network rebuild (#183) is for). Every reading before this value is in a family that does not compare with any after it."
       },
       "status": "active",
-      "decisions_ref": "9.159, 9.156, 9.54",
+      "decisions_ref": "9.167, 9.159, 9.156, 9.54",
       "consumers": [
         "src/build/build_matsim_run_inputs.py"
       ],
@@ -756,32 +756,32 @@
       "description": "Threads for MATSim's parallel events manager. UNLIKE RUN.machine.threads this is a wall-time knob, NOT run identity: event handlers are observers - each still receives the complete stream in per-handler order, so scores, plans and every model output are unchanged (verified bit-identical against the single-thread default, DECISIONS.md 9.56). Declared because the framework default (null = one thread) was measured saturated on the all-physical model: 172-177 s CPU per ~265 s iteration at 25%, throttling ten qsim threads at every sim-step sync. 12 threads were probed on the 9.58 network and bought NOTHING over 4 (it2-4 median mobsim ~190 s either way, 9.59) - 4 stands."
     },
     "RUN.machine.xmx": {
-      "value": "14g",
+      "value": "18g",
       "units": "jvm_heap",
       "source": "definition",
       "sweep": null,
       "status": "active",
-      "decisions_ref": "9.5, 9.165",
+      "decisions_ref": "9.5, 9.165, 9.167",
       "consumers": [
         "src/run/run_matsim.py"
       ],
-      "description": "JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction, 31.4 GiB at 25 % - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on this 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations."
+      "description": "JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on the then 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap - 18g against the 16.5 GiB the rule reads at 1 % on the footpath network (9.167; it was 14g against 10.5 on the road graph) - and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations."
     },
     "RUN.machine.heap_floor_gib": {
-      "value": 9.6,
+      "value": 15.6,
       "units": "GiB",
       "source": "measured",
       "held_fixed": {
-        "rule": "A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars), measured at 9.5 from the arms that died and the arms that lived. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.",
-        "decisions_ref": "9.5, 9.165",
+        "rule": "A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from the arms that died and the arms that lived on the road-graph network; RE-MEASURED 12 September 2026 on the footpath network (9.167, #183): the 1 % probe's heap after a full collection rose from 2.8 GB (20260912T042953, the last probe of the old network) to 8.6-8.8 GB (20260912T065939), a 12g heap thrashed at 10.3 GB live in the first replanning (aborted_20260912T065345), and 24g ran 4 of 4. The sample-independent part rose by 6.0 GiB and the floor with it: 9.6 + 6.0. The launcher refuses a heap below floor + per_fraction x fraction (src/run/run_matsim.py refuse_small_heap). It changes what the launcher REFUSES, never what the model does; re-measured from a GC log (RUN.machine.gc_log) rather than swept.",
+        "decisions_ref": "9.5, 9.165, 9.167",
         "departure_requires": "a heap-after-full-GC reading from an arm's gc.log at two fractions, recorded in DECISIONS.md"
       },
       "status": "active",
-      "decisions_ref": "9.5, 9.165",
+      "decisions_ref": "9.5, 9.165, 9.167",
       "consumers": [
         "src/run/run_matsim.py"
       ],
-      "description": "The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers. The 25 % arms that lived ran at 40g and peaked at 36.2 GB; the one that ran at 14g died (9.165)."
+      "description": "The sample-independent part of the heap rule RUN.machine.xmx used to carry as prose. Declared on 11 September 2026 so the rule is a number the launcher compares rather than a sentence a person remembers; re-measured on 12 September 2026 when the footpath network doubled the link count (#183) and the seven per-mode routing copies of a time-variant network put the 1 % probe out of a 12g heap (citysim.SharedModeNetworks now makes one copy per distinct link set, and the floor is measured with it). At 1 % the rule reads 16.5 GiB; at 25 % 37.4 GiB, so the 40g the F33 arms carried is marginal and the F34 arm-0 overlay carries 48g on the 63 GB machine. The slope (RUN.machine.heap_per_fraction_gib) is NOT re-measured on this network - a route's link sequence is longer on a finer graph and plan memory may grow with it - and the first F34 arm's gc.log is the reading that settles it."
     },
     "RUN.machine.heap_per_fraction_gib": {
       "value": 87,
@@ -1475,7 +1475,7 @@
       "description": "What MATSim does with an input plan whose trips carry no access or egress legs. Declared, and shipped at the framework's `reroute` so the emitted config is unchanged, because RUN.routing.access_egress_type is no longer `none` and this parameter stopped being inert the moment it changed. It is the field an accessEgressModeToLink arm sweeps when PersonPrepareForSim rejects a trip the model did not write."
     },
     "RUN.routing.access_egress_type": {
-      "value": "none",
+      "value": "accessEgressModeToLink",
       "units": "policy",
       "source": "assumed",
       "sweep": {
@@ -1483,12 +1483,12 @@
           "none",
           "accessEgressModeToLink"
         ],
-        "basis": "Whether a network-mode trip pays anything to REACH the network. `none` is the shipped value and it means a car trip costs its travel time and 18 c/km and nothing else - no walk to the parked car at either end, no walk from it at the destination. The consequence is measured and it is the sharpest single mechanism on the board: car's share is nearly INDEPENDENT OF DISTANCE - 63.1 % of trips under one kilometre against 76.9 % over twenty - and its share of sub-kilometre trips rises monotonically 45.4 -> 63.1 % as the search converges (10 September 2026 assessment, recommendation 4). A fixed per-trip cost is what separates a short trip from a long one, and this model charges none. WHAT THE SWEEP ANSWERS: how much of car's +11.3 %, walk's -26.5 % and bike's +113.0 % is the absence of that cost. IT IS NOT YET RUNNABLE AND THE REASON IS MEASURED, NOT ASSUMED (9.164, #167): at `accessEgressModeToLink` the run dies in PersonPrepareForSim on \"Found a trip whose legs have different routingModes\" - 40 agents at 1 % before this project's plans declared a routing mode, and **20 after**, so the missing attribute 9.161 named was real and was HALF the cause. The residual is created inside MATSim's own pre-sim pass, not in the input: MATSim's own reader finds 0 multi-leg trips and 0 mixed trips over all 6,347 persons of the probe's population (measured), and RUN.routing.access_egress_consistency_check = `disable` leaves the count at 20 unchanged. The same package at `none` runs its four iterations clean (20260910T204747_4it_1pct, 0 routingMode errors)."
+        "basis": "Whether a network-mode trip pays anything to REACH the network. `accessEgressModeToLink` is the shipped value since 12 September 2026 (9.167, #167): a car trip now walks from its activity to its link and from its link to its destination - MATSim's own access and egress - and pays for it. Under `none`, the value every arm to 11 September ran on, a car trip cost its travel time and 18 c/km and nothing else, and the consequence was measured as the sharpest single mechanism on the board: car's share was nearly INDEPENDENT OF DISTANCE - 63.1 % of trips under one kilometre against 76.9 % over twenty - and its share of sub-kilometre trips rose monotonically 45.4 -> 63.1 % as the search converged (10 September 2026 assessment, recommendation 4). WHAT THE SWEEP ANSWERS: how much of car's +11.3 %, walk's -26.5 % and bike's +113.0 % was the absence of that cost - `none` is the control. WHY IT WAS NOT RUNNABLE UNTIL NOW, MEASURED: the run died at \"Found a trip whose legs have different routingModes\" - 40 agents at 1 % before this project's plans declared a routing mode (9.161), 20 after (9.164) - and the 20 were the thread count: PrepareForSim completed over all 6,347 persons, and PrepareForMobsim at iteration 0 refused the trips citysim.RidePairingEngine had just re-moded, one leg of a five-leg trip, on every one of its PersonPrepareForSim threads. The engines replace the whole trip now (RemodeRestore.remodeTrip) and the probe runs 4 of 4 (20260912T041054_4it_1pct, 0 routingMode errors)."
       },
       "status": "active",
-      "decisions_ref": "9.54, 9.161, 9.164",
+      "decisions_ref": "9.167, 9.54, 9.161, 9.164",
       "matsim_param": "routing.accessEgressType",
-      "description": "How a network-mode trip connects an activity to its first link. Held at `none` since 9.54, when walk became a NETWORK mode: the default creates beeline stub legs, and MATSim's qsim casts every main-mode leg's route to a NetworkRoute at agent insertion, so a stub of mode `walk` killed the 9.54 probe with a ClassCastException. BOTH obstacles are now gone and neither was removed for this field's sake. (1) citysim.TolerantAgentSource and citysim.GenericRouteTeleporter already carry a main-mode leg with a generic route - built for the transit router's own stubs, with `walk` the single declared exception and every other network mode refused loudly. (2) The second failure, measured on 9.161, was ours: under accessEgressModeToLink the router turns a one-leg trip into three, and because this project's plans declared NO routingMode, MATSim inferred each inserted leg's from its own mode - `walk` stubs against a `car` main leg - and PersonPrepareForSim rejected the trip the router had just built on 40 agents. src/build/build_matsim_plans.py now emits routingMode on every leg, equal to that leg's own mode, which is a no-op at `none` and the whole of what was missing here. For every main mode but walk the inserted stub is `non_network_walk`, whose teleported parameters this model already declares; for walk itself it is a walk stub, claimed by the teleporter under its one declared exception. A MODEL CHANGE and a family boundary: it puts a fixed cost on every network-mode trip for the first time.",
+      "description": "How a network-mode trip connects an activity to its first link. `accessEgressModeToLink` since 12 September 2026 (9.167): the router inserts MATSim's own access and egress legs - a `non_network_walk` stub from the activity's coordinate to the nearest link of the mode, a network walk where the mode's link is not walkable - so a trip of every network mode pays to reach the network for the first time. Held at `none` from 9.54 to 9.166 because walk became a NETWORK mode and the qsim cast every main-mode leg's route to a NetworkRoute at agent insertion (a ClassCastException, since carried by citysim.TolerantAgentSource and citysim.GenericRouteTeleporter), then because this project's plans declared no routingMode (9.161, fixed), then because the ride and taxi engines re-moded one leg of a multi-leg trip (9.167, fixed). A MODEL CHANGE and a family boundary: it puts a fixed cost on every network-mode trip.",
       "sweep_role": "answer"
     },
     "RUN.routing.routing_randomness": {

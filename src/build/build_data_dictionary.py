@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 """Emit cities/<city>/docs/reference/DATA_DICTIONARY.md from that city's CSVs."""
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os, csv, glob
 ROOT='.'
 GROUPS=[
@@ -36,7 +30,8 @@ def kind(vals):
     try:
         [float(v) for v in vals]
         return 'int' if all(float(v).is_integer() for v in vals) else 'float'
-    except: return 'str'
+    except (TypeError, ValueError):
+        return 'str'
 out=['# Data dictionary','',
      'Auto-generated from the produced files by `src/build/build_data_dictionary.py`.',
      'Column types are inferred from the first 400 rows. Schema letters refer to',
@@ -64,6 +59,6 @@ for title,pat in GROUPS:
             if len(ex)>34: ex=ex[:31]+'...'
             out.append('| `%s` | %s | %s | %d/%d |'%(c,kind(vals),ex.replace(chr(124),'/'),nz,len(vals)))
         out.append('')
-os.makedirs('docs',exist_ok=True)
+os.makedirs(_city.path('docs','reference'),exist_ok=True)
 open(_city.path('docs','reference','DATA_DICTIONARY.md'),'w',encoding='utf-8',newline='\n').write('\n'.join(out))
 print('wrote DATA_DICTIONARY.md (%d lines)'%len(out))

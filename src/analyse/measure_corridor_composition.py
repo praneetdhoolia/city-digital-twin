@@ -66,9 +66,7 @@ import xml.etree.ElementTree as ET
 from collections import Counter, defaultdict
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_run_index import load_families, family_of  # noqa: E402
+from build_run_index import load_families, family_of
 
 def runs_along_band(n_inband_locations):
     """A route runs ALONG the corridor (rather than merely crossing or

@@ -79,6 +79,19 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
         // and a fresh route then carried it. Re-mapping 155k persons costs
         // well under a second; the log line says how many mappings it had
         // to restore, so a rewrite by any other component is visible.
+        //
+        // MEASURED, 12 September 2026 (eighth project report, area 6, asked
+        // what rewrites the mapping): the restore line was printed 0 times
+        // across the 300 iterations of 20260909T015217_300it_25pct and the
+        // 98 of aborted_20260910T222830_300it_25pct, and `javap` over the
+        // pinned jar finds ONE writer of the per-person vehicle map -
+        // PrepareForSimImpl.createAndAddVehiclesForEveryNetworkMode, run
+        // once at controler start, before iteration 0. So the once-only
+        // version died because it ran BEFORE PrepareForSim overwrote its
+        // work, not because anything fights the roster between iterations;
+        // the per-iteration pass is kept as the guard it is, and a restore
+        // after iteration 0 is now a WARN that names the person and the id
+        // it found, so a writer that ever appears can be traced.
         final boolean first = !applied;
         applied = true;
         final VehicleType carType = scenario.getVehicles().getVehicleTypes()
@@ -140,6 +153,16 @@ public final class HouseholdVehicleRoster implements IterationStartsListener {
                     map = new HashMap<>();
                 }
                 if (!vid.equals(map.get(TransportMode.car))) {
+                    if (restored == 0 && !first) {
+                        LOG.warn("householdVehicles: iteration {} - person {} "
+                                 + "carried car vehicle {} instead of the roster's "
+                                 + "{}; SOMETHING REWROTE THE MAPPING BETWEEN "
+                                 + "ITERATIONS (9.148 - measured 0 times over "
+                                 + "398 iterations to 12 Sep 2026; PrepareForSim "
+                                 + "is the only writer in the pinned jar)",
+                                 event.getIteration(), driver.getId(),
+                                 map.get(TransportMode.car), vid);
+                    }
                     restored++;
                 }
                 map.put(TransportMode.car, vid);

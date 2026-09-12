@@ -5,7 +5,7 @@
     "RUN.sample.fraction": 0.01,
     "RUN.controler.last_iteration": 20,
     "RUN.machine.threads": 8,
-    "RUN.machine.xmx": "12g",
+    "RUN.machine.xmx": "18g",
     "RUN.monitor.enabled": false,
     "RUN.gate.interval_iterations": 2,
     "RUN.gate.wall_ceiling_h": 0.05

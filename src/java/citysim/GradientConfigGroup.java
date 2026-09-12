@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `gradient` config module: whether and how link gradient reaches walk
@@ -39,13 +40,20 @@ public final class GradientConfigGroup extends ReflectiveConfigGroup {
      * {@link TelemetryConfigGroup} lesson). */
     private static final double UNSET = -1.0;
 
-    private String representation = REPRESENTATION_ABSENT;
-    private double bikeUphillSlowdownPerPct = UNSET;
-    private double bikeDownhillSpeedupPerPct = UNSET;
-    private double bikeFloorFactor = UNSET;
-    private double bikeCeilingFactor = UNSET;
-    private double walkToblerSlopeCoeff = UNSET;
-    private double walkToblerOffset = UNSET;
+    @Parameter("representation")
+    public String representation = REPRESENTATION_ABSENT;
+    @Parameter("bikeUphillSlowdownPerPct")
+    public double bikeUphillSlowdownPerPct = UNSET;
+    @Parameter("bikeDownhillSpeedupPerPct")
+    public double bikeDownhillSpeedupPerPct = UNSET;
+    @Parameter("bikeFloorFactor")
+    public double bikeFloorFactor = UNSET;
+    @Parameter("bikeCeilingFactor")
+    public double bikeCeilingFactor = UNSET;
+    @Parameter("walkToblerSlopeCoeff")
+    public double walkToblerSlopeCoeff = UNSET;
+    @Parameter("walkToblerOffset")
+    public double walkToblerOffset = UNSET;
 
     public GradientConfigGroup() {
         super(NAME);
@@ -55,74 +63,32 @@ public final class GradientConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_LINK_SPEED.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
     }
 
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
-    }
-
-    @StringGetter("bikeUphillSlowdownPerPct")
     public double getBikeUphillSlowdownPerPct() {
         return this.bikeUphillSlowdownPerPct;
     }
 
-    @StringSetter("bikeUphillSlowdownPerPct")
-    public void setBikeUphillSlowdownPerPct(final double value) {
-        this.bikeUphillSlowdownPerPct = value;
-    }
-
-    @StringGetter("bikeDownhillSpeedupPerPct")
     public double getBikeDownhillSpeedupPerPct() {
         return this.bikeDownhillSpeedupPerPct;
     }
 
-    @StringSetter("bikeDownhillSpeedupPerPct")
-    public void setBikeDownhillSpeedupPerPct(final double value) {
-        this.bikeDownhillSpeedupPerPct = value;
-    }
-
-    @StringGetter("bikeFloorFactor")
     public double getBikeFloorFactor() {
         return this.bikeFloorFactor;
     }
 
-    @StringSetter("bikeFloorFactor")
-    public void setBikeFloorFactor(final double value) {
-        this.bikeFloorFactor = value;
-    }
-
-    @StringGetter("bikeCeilingFactor")
     public double getBikeCeilingFactor() {
         return this.bikeCeilingFactor;
     }
 
-    @StringSetter("bikeCeilingFactor")
-    public void setBikeCeilingFactor(final double value) {
-        this.bikeCeilingFactor = value;
-    }
-
-    @StringGetter("walkToblerSlopeCoeff")
     public double getWalkToblerSlopeCoeff() {
         return this.walkToblerSlopeCoeff;
     }
 
-    @StringSetter("walkToblerSlopeCoeff")
-    public void setWalkToblerSlopeCoeff(final double value) {
-        this.walkToblerSlopeCoeff = value;
-    }
-
-    @StringGetter("walkToblerOffset")
     public double getWalkToblerOffset() {
         return this.walkToblerOffset;
-    }
-
-    @StringSetter("walkToblerOffset")
-    public void setWalkToblerOffset(final double value) {
-        this.walkToblerOffset = value;
     }
 
     @Override

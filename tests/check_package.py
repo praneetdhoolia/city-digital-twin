@@ -17,13 +17,7 @@ check whose LOGIC is still city-shaped is a remaining item for #62, not a
 licence to add new constants here.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import sys
 import csv
@@ -35,7 +29,6 @@ import re
 import hashlib
 import zipfile
 import collections
-import time
 
 # The city-owned half of this check suite (see THE SPLIT RULE above).
 EXP = json.load(open(_city.path('tests/package_expectations.json'),
@@ -1335,7 +1328,6 @@ check(not _orphans,
 # the rules rather than trusting them: proposal 8.1 requires a rationale and a
 # sweep range for every value chosen without direct empirical support, and the
 # three unobtained inputs (DECISIONS.md 0, 13) must stay unpinned.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'src'))
 try:
     import registry as _registry
     from registry import outputs as _outputs
@@ -1685,7 +1677,6 @@ if _registry is not None:
               % ('' if not _escaped else ': ' + ', '.join(_escaped[:4])), warn=True)
 
 
-
     # ---- the SUMO registry section is RETIRED (9.74 descope, issue #72) ----
     # The simulator left the study; its 17 RUN.sumo.* fields, the netconvert
     # option checks and the MATSim<->SUMO outer-loop tolerance (deliverable 7,
@@ -1749,7 +1740,6 @@ if _registry is not None:
 # These checks drive fit.py's scoring functions on SYNTHETIC metrics, so they need
 # no completed run - `results/` is gitignored and a check may not depend on one.
 if True:
-    sys.path.insert(0, os.path.join('src', 'calibrate'))
     try:
         import fit as _fit
     except ImportError as _e:

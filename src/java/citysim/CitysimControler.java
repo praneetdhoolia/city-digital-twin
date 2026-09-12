@@ -278,7 +278,7 @@ public final class CitysimControler {
             if (!declared.isAbsolute()) {
                 final File base =
                         new File(configPath).getAbsoluteFile().getParentFile();
-                parking.setPriceFile(new File(base, parking.getPriceFile()).getPath());
+                parking.priceFile = new File(base, parking.getPriceFile()).getPath();
             }
         }
         final org.matsim.api.core.v01.Scenario scenario =
@@ -291,6 +291,11 @@ public final class CitysimControler {
         // disconnected first hop, aborting the agents mid-day.
         ActivityLinkAssigner.run(scenario);
         final Controler controler = new Controler(scenario);
+        // One plain routing network per distinct link set instead of one
+        // time-variant copy per mode: the footpath network (#183) doubled the
+        // link count and the seven per-mode copies of a TimeVariantLinkImpl
+        // network put a 1 % probe out of heap. Nothing about a route changes.
+        installSingleton(controler, SharedModeNetworks.class, false, true, false);
         controler.addOverridingModule(new AbstractModule() {
             @Override
             public void install() {
@@ -413,50 +418,29 @@ public final class CitysimControler {
             }
         });
         if (!parking.getPriceFile().isEmpty()) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    // One instance serving both roles: it accumulates as an
-                    // event handler and emits as a controler listener.
-                    bind(ParkingChargeHandler.class).in(Singleton.class);
-                    addEventHandlerBinding().to(ParkingChargeHandler.class);
-                    addControllerListenerBinding().to(ParkingChargeHandler.class);
-                }
-            });
+            // One instance serving both roles: it accumulates as an
+            // event handler and emits as a controler listener.
+            installSingleton(controler, ParkingChargeHandler.class, true, true, false);
         }
         if (ptFare.isEnabled()) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    // The published Opal fare on every pt journey
-                    // (DECISIONS.md 9.135, #98): one instance in both roles,
-                    // accumulating per-journey charges as an event handler
-                    // and emitting the deferred PersonMoneyEvents as a
-                    // controler listener - the ParkingChargeHandler
-                    // discipline. Installed only when the emitted config
-                    // carries the fare tables.
-                    bind(PtFareChargeHandler.class).in(Singleton.class);
-                    addEventHandlerBinding().to(PtFareChargeHandler.class);
-                    addControllerListenerBinding().to(PtFareChargeHandler.class);
-                }
-            });
+            // The published Opal fare on every pt journey
+            // (DECISIONS.md 9.135, #98): one instance in both roles,
+            // accumulating per-journey charges as an event handler
+            // and emitting the deferred PersonMoneyEvents as a
+            // controler listener - the ParkingChargeHandler
+            // discipline. Installed only when the emitted config
+            // carries the fare tables.
+            installSingleton(controler, PtFareChargeHandler.class, true, true, false);
         }
         if (fare.isEnabled()) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    // The point-to-point flagfall (issue #49): one instance in
-                    // both roles, accumulating per-departure charges as an
-                    // event handler and emitting the deferred PersonMoneyEvents
-                    // as a controler listener - the ParkingChargeHandler
-                    // discipline. Installed only when the emitted config names
-                    // a mode and a flagfall, so a config without the fare
-                    // module behaves exactly as before.
-                    bind(FareChargeHandler.class).in(Singleton.class);
-                    addEventHandlerBinding().to(FareChargeHandler.class);
-                    addControllerListenerBinding().to(FareChargeHandler.class);
-                }
-            });
+            // The point-to-point flagfall (issue #49): one instance in
+            // both roles, accumulating per-departure charges as an
+            // event handler and emitting the deferred PersonMoneyEvents
+            // as a controler listener - the ParkingChargeHandler
+            // discipline. Installed only when the emitted config names
+            // a mode and a flagfall, so a config without the fare
+            // module behaves exactly as before.
+            installSingleton(controler, FareChargeHandler.class, true, true, false);
         }
         // Taxi as a finite fleet (DECISIONS.md 9.99, issue #90). Installed
         // whenever the declared representation asks for it, independently of
@@ -467,13 +451,7 @@ public final class CitysimControler {
         // dependency, the MATSim DRT contrib being absent from this project's
         // pinned run stack and unreachable from its network sandbox.
         if (taxiFleet.isFleet()) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    bind(TaxiFleetEngine.class).in(Singleton.class);
-                    addControllerListenerBinding().to(TaxiFleetEngine.class);
-                }
-            });
+            installSingleton(controler, TaxiFleetEngine.class, false, true, false);
         }
         if (ridePairing.isEnabled()) {
             controler.addOverridingModule(new AbstractModule() {
@@ -502,13 +480,7 @@ public final class CitysimControler {
             // driver to a shared hh<id>_car<k> at the first iteration, after
             // PrepareForSim has done its per-person mapping, and the agent
             // source parks each shared car once.
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    bind(HouseholdVehicleRoster.class).in(Singleton.class);
-                    addControllerListenerBinding().to(HouseholdVehicleRoster.class);
-                }
-            });
+            installSingleton(controler, HouseholdVehicleRoster.class, false, true, false);
         }
         final boolean physicalBoarding =
                 ridePairing.isEnabled() && ridePairing.isPhysicalBoarding();
@@ -609,36 +581,22 @@ public final class CitysimControler {
             });
         }
         if (bikeStress.isFeltTime()) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    // The SCORE half of the bike stress channel (DECISIONS.md
-                    // 9.138, #107): one instance in both roles, accumulating
-                    // felt surplus seconds as an event handler and emitting
-                    // the deferred PersonScoreEvents as a controler listener
-                    // - the ParkingChargeHandler discipline.
-                    bind(BikeStressScoring.class).in(Singleton.class);
-                    addEventHandlerBinding().to(BikeStressScoring.class);
-                    addControllerListenerBinding().to(BikeStressScoring.class);
-                }
-            });
+            // The SCORE half of the bike stress channel (DECISIONS.md
+            // 9.138, #107): one instance in both roles, accumulating
+            // felt surplus seconds as an event handler and emitting
+            // the deferred PersonScoreEvents as a controler listener
+            // - the ParkingChargeHandler discipline.
+            installSingleton(controler, BikeStressScoring.class, true, true, false);
         }
         if (ptCrowding.isInVehicleTime()) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    // In-vehicle PT crowding reaches SCORING: one instance in
-                    // both roles, accumulating each passenger's felt surplus
-                    // seconds as an event handler and emitting the deferred
-                    // PersonScoreEvents as a controler listener - the same
-                    // ParkingChargeHandler discipline BikeStressScoring uses,
-                    // and for the same reason (an event emitted from inside a
-                    // handler re-enters the manager mid-drain).
-                    bind(PtCrowdingScoring.class).in(Singleton.class);
-                    addEventHandlerBinding().to(PtCrowdingScoring.class);
-                    addControllerListenerBinding().to(PtCrowdingScoring.class);
-                }
-            });
+            // In-vehicle PT crowding reaches SCORING: one instance in
+            // both roles, accumulating each passenger's felt surplus
+            // seconds as an event handler and emitting the deferred
+            // PersonScoreEvents as a controler listener - the same
+            // ParkingChargeHandler discipline BikeStressScoring uses,
+            // and for the same reason (an event emitted from inside a
+            // handler re-enters the manager mid-drain).
+            installSingleton(controler, PtCrowdingScoring.class, true, true, false);
         }
         if (raptorModeCost.isModeConstant()) {
             controler.addOverridingModule(new AbstractModule() {
@@ -663,14 +621,7 @@ public final class CitysimControler {
             // ACROSS iterations, so a second instance would carry an empty
             // measurement into a scored boarding - the scoping mistake
             // NetworkDirectWalkPtRouter's counters already paid for once.
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    bind(ServiceQualityScoring.class).in(Singleton.class);
-                    addEventHandlerBinding().to(ServiceQualityScoring.class);
-                    addControllerListenerBinding().to(ServiceQualityScoring.class);
-                }
-            });
+            installSingleton(controler, ServiceQualityScoring.class, true, true, false);
         }
         if (ptSubmodeChoice.isAlternatives()) {
             // #49, DECISIONS.md 9.164: bus / rail / tram / ferry become
@@ -765,19 +716,46 @@ public final class CitysimControler {
             });
         }
         if (config.getModules().containsKey(TelemetryConfigGroup.NAME)) {
-            controler.addOverridingModule(new AbstractModule() {
-                @Override
-                public void install() {
-                    // One instance in three roles: it accumulates as an event
-                    // handler, flushes live as a mobsim listener, and closes the
-                    // iteration as a controler listener.
-                    bind(RunTelemetry.class).in(Singleton.class);
-                    addEventHandlerBinding().to(RunTelemetry.class);
-                    addMobsimListenerBinding().to(RunTelemetry.class);
-                    addControllerListenerBinding().to(RunTelemetry.class);
-                }
-            });
+            // One instance in three roles: it accumulates as an event
+            // handler, flushes live as a mobsim listener, and closes the
+            // iteration as a controler listener.
+            installSingleton(controler, RunTelemetry.class, true, true, true);
         }
         return controler;
     }
+
+    /**
+     * One singleton instance in every role it plays (#180): the "one
+     * instance in two roles" module was pasted seven times in
+     * {@link #assemble} - accumulate as an event handler, emit as a
+     * controler listener, flush as a mobsim listener - and the scoping
+     * mistake it guards against (a second instance carrying an empty
+     * measurement into a scored event) had been made once already
+     * (ServiceQualityScoring's note). One place to get it right.
+     */
+    static <T> void installSingleton(final Controler controler,
+                                     final Class<T> type,
+                                     final boolean eventHandler,
+                                     final boolean controlerListener,
+                                     final boolean mobsimListener) {
+        controler.addOverridingModule(new AbstractModule() {
+            @Override
+            public void install() {
+                bind(type).in(Singleton.class);
+                if (eventHandler) {
+                    addEventHandlerBinding().to(type.asSubclass(
+                            org.matsim.core.events.handler.EventHandler.class));
+                }
+                if (controlerListener) {
+                    addControllerListenerBinding().to(type.asSubclass(
+                            org.matsim.core.controler.listener.ControllerListener.class));
+                }
+                if (mobsimListener) {
+                    addMobsimListenerBinding().to(type.asSubclass(
+                            org.matsim.core.mobsim.framework.listeners.MobsimListener.class));
+                }
+            }
+        });
+    }
+
 }

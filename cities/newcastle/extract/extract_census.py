@@ -8,13 +8,7 @@ Workplace side (WPP, POW SA2) -> jobs by industry and occupation for the
 accessibility measures (A4) and the destination-side mode split.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import io
 import json
@@ -86,7 +80,7 @@ for t, desc in GCP_TABLES.items():
     d[key] = d[key].astype(str)
     s = d[d[key].isin(sa1_ids)].copy()
     s.insert(1, 'zone_tier', s[key].map(tier1))
-    s.to_csv(os.path.join(OUT, 'census2021_%s_SA1.csv' % t), index=False)
+    s.to_csv(os.path.join(OUT, 'census2021_%s_SA1.csv' % t), index=False, lineterminator='\n')
     report['gcp_sa1'][t] = {'desc': desc, 'rows': len(s), 'cols': len(s.columns)}
     print('GCP %-5s %-58s rows=%5d cols=%4d' % (t, desc[:58], len(s), len(s.columns)), flush=True)
 
@@ -99,7 +93,7 @@ for t, desc in WPP_TABLES.items():
     d[key] = d[key].astype(str).str.replace('POW', '', regex=False)
     s = d[d[key].isin(sa2_ids)].copy()
     s.insert(1, 'zone_tier', s[key].map(tier2))
-    s.to_csv(os.path.join(OUT, 'census2021_%s_POW_SA2.csv' % t), index=False)
+    s.to_csv(os.path.join(OUT, 'census2021_%s_POW_SA2.csv' % t), index=False, lineterminator='\n')
     report['wpp_sa2'][t] = {'desc': desc, 'rows': len(s), 'cols': len(s.columns)}
     print('WPP %-5s %-58s rows=%5d cols=%4d' % (t, desc[:58], len(s), len(s.columns)), flush=True)
 

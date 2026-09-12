@@ -23,12 +23,10 @@ import csv
 import gzip
 import os
 import re
-import sys
 import xml.etree.ElementTree as ET
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 
-import city as _city                                              # noqa: E402
+import city as _city
 
 
 def schedule_path(run_dir):
@@ -88,8 +86,6 @@ def main():
     import os as _os_r, sys as _sys_r
     _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
         _os_r.path.abspath(__file__))), 'run')
-    if _r not in _sys_r.path:
-        _sys_r.path.insert(0, _r)
     import results_store as _store_r
     a.run = _store_r.resolve_or_die(a.run)
 

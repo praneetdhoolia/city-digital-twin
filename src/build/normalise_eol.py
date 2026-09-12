@@ -9,6 +9,7 @@ Downloaded raw files are never touched - they are immutable (CLAUDE.md). Only fi
 this project generates are normalised, including the provenance and listing files
 under data/raw/ that our own extract scripts wrote.
 """
+import glob
 import os
 import sys
 
@@ -32,21 +33,21 @@ CITY_ROOTS += ['networks/matsim']
 # docs/ and .claude/, both already walked by REPO_ROOTS. README.md and run.py are
 # the only files left at the repo root, so they are the only ones named here.
 REPO_SINGLE = ['README.md', 'run.py', '.gitignore', '.gitattributes']
-CITY_SINGLE = ['data/raw/provenance_open_data.json', 'data/raw/provenance_abs_dem.json',
-               'data/raw/provenance_osm.json',
-               'data/raw/_s3_historical_gtfs_listing.txt', 'data/raw/_osm_fetch.log',
-               'schedules/provenance.json', 'schedules/raw/provenance.json',
-               'schedules/era_build_summary.json',
-               'schedules/_era1_reconstruction_report.json',
-               'schedules/scenarios/_scenario_schedule_report.json',
-               'data/MANIFEST.csv', 'data/MANIFEST.json']
+# The provenance records, listings and build reports that sit BESIDE the
+# immutable raw downloads: matched by shape, not by one city's file names
+# (the list used to name provenance_open_data.json and its siblings, and
+# missed provenance_licences.json when it arrived). A raw DOWNLOAD is never
+# touched - only the metadata this repository writes about one.
+CITY_GLOBS = ['data/raw/provenance*.json', 'data/raw/_*.txt', 'data/raw/_*.log',
+              'schedules/*.json', 'schedules/raw/provenance*.json',
+              'schedules/scenarios/_*.json',
+              'data/MANIFEST.csv', 'data/MANIFEST.json']
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', 'src'))
 import city as _city  # noqa: E402
 
 ROOTS = [os.path.join(REPO, r) for r in REPO_ROOTS] +         [_city.path(r) for r in CITY_ROOTS]
-SINGLE = [os.path.join(REPO, s) for s in REPO_SINGLE] +          [_city.path(s) for s in CITY_SINGLE]
+SINGLE = [os.path.join(REPO, s) for s in REPO_SINGLE] + \
+         sorted(p for g in CITY_GLOBS for p in glob.glob(_city.path(g)))
 
 
 def candidates():

@@ -99,6 +99,12 @@
       "minimum": 1900,
       "maximum": 2200
     },
+    "census_year": {
+      "type": "integer",
+      "minimum": 1900,
+      "maximum": 2200,
+      "description": "The census vintage the population and the employment layers are built from; stamped on derived tables as `year`. Was the literal 2021 in src/build/build_zone_attractions.py (#188)."
+    },
     "currency": {
       "type": "string",
       "pattern": "^[A-Z]{3}$",

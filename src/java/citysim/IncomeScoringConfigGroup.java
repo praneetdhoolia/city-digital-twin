@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `incomeScoring` config module: whether the synthesised census income
@@ -37,9 +38,12 @@ public final class IncomeScoringConfigGroup extends ReflectiveConfigGroup {
      * {@link TelemetryConfigGroup} lesson). */
     private static final double UNSET = -1.0;
 
-    private String representation = REPRESENTATION_ABSENT;
-    private double incomeExponent = UNSET;
-    private String excludeSubpopulations = "";
+    @Parameter("representation")
+    public String representation = REPRESENTATION_ABSENT;
+    @Parameter("incomeExponent")
+    public double incomeExponent = UNSET;
+    @Parameter("excludeSubpopulations")
+    public String excludeSubpopulations = "";
 
     public IncomeScoringConfigGroup() {
         super(NAME);
@@ -49,35 +53,17 @@ public final class IncomeScoringConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_PERSONAL.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
     }
 
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
-    }
-
-    @StringGetter("incomeExponent")
     public double getIncomeExponent() {
         return this.incomeExponent;
     }
 
-    @StringSetter("incomeExponent")
-    public void setIncomeExponent(final double value) {
-        this.incomeExponent = value;
-    }
-
     /** Comma-separated subpopulation names excluded from income scaling. */
-    @StringGetter("excludeSubpopulations")
     public String getExcludeSubpopulations() {
         return this.excludeSubpopulations;
-    }
-
-    @StringSetter("excludeSubpopulations")
-    public void setExcludeSubpopulations(final String value) {
-        this.excludeSubpopulations = value == null ? "" : value.trim();
     }
 
     @Override

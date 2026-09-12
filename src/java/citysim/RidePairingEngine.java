@@ -443,6 +443,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     RidePairingEngine(final Scenario scenario, final OutputDirectoryHierarchy io,
                       final Provider<TripRouter> tripRouter) {
         this.scenario = scenario;
+        // its inFlight/current maps are written by the handler threads and
+        // read at BeforeMobsim; the same precondition as RunTelemetry (#186)
+        RunTelemetry.requireSimStepBarrier(scenario.getConfig(), "RidePairingEngine");
         this.io = io;
         this.tripRouter = tripRouter;
         this.cfg = (RidePairingConfigGroup) scenario.getConfig().getModules()
@@ -627,6 +630,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         final Map<String, int[]> unpaired = new HashMap<>();
         int nPaired = 0;
         int remoded = 0;
+        int remodedWholeTrips = 0;         // multi-leg trips replaced whole (#167)
         // 9.120: declared passengers whose departure was moved to the
         // driver's, and by how much in total - the drift the re-timing removed
         int retimed = 0;
@@ -791,6 +795,22 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     remodedThisMobsim.add(ride);
                     final String fallback = fallbackMode(ride.person);
                     remodedAs.put(ride, fallback);
+                    // THE WHOLE TRIP where it has more than one leg (#167):
+                    // under accessEgressModeToLink the ride leg has four
+                    // sibling access/egress legs carrying routingMode ride,
+                    // and re-moding it alone made a mixed trip that
+                    // PersonPrepareForSim refused before iteration 0's
+                    // mobsim on every unpaired passenger. Under `none` the
+                    // trip is this one leg and the in-place re-mode below
+                    // is what it always was.
+                    final org.matsim.core.router.TripStructureUtils.Trip whole =
+                            RemodeRestore.tripOf(ride.plan, ride.leg);
+                    if (whole != null && whole.getLegsOnly().size() > 1) {
+                        RemodeRestore.remodeTrip(ride.plan, whole, fallback);
+                        remodedWholeTrips++;
+                        remoded++;
+                        continue;
+                    }
                     ride.leg.setMode(fallback);
                     org.matsim.core.router.TripStructureUtils.setRoutingMode(
                             ride.leg, fallback);
@@ -833,9 +853,15 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 // members' clocks were one clock when the demand generated
                 // the trip. Refused only when the driver leaves before this
                 // activity could start, which is a genuine miss and stays
-                // one. The plan keeps the new end time, so the passenger's
-                // memory converges on the driver's clock rather than being
-                // re-drawn from it every round.
+                // one. AN EXECUTION-TIME OVERRIDE, RESTORED AFTER THE MOBSIM
+                // (decision, 12 September 2026, #187): the plan keeps the
+                // passenger's OWN declared end time, the engine overrides it
+                // for this iteration's execution and puts it back at
+                // AfterMobsim, exactly as the unpaired re-mode is restored -
+                // replanning stays the only owner of plan memory, and the
+                // experienced plan (what is scored) carries the driver's
+                // clock. Until this decision the write was permanent and
+                // TimeAllocationMutator then mutated the overwritten value.
                 if (ride.origin != null) {
                     final double target = best.departure - ride.accessTravel;
                     final OptionalTime start = ride.origin.getStartTime();
@@ -843,6 +869,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                         final OptionalTime was = ride.origin.getEndTime();
                         if (!was.isDefined()
                                 || Math.abs(was.seconds() - target) > 0.5) {
+                            retimedThisMobsim.add(
+                                    new Retime(ride.person, ride.origin, was));
                             ride.origin.setEndTime(target);
                             retimed++;
                             retimeShiftSum += Math.abs(
@@ -961,6 +989,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                         final OptionalTime was = ride.origin.getEndTime();
                         if (!was.isDefined()
                                 || Math.abs(was.seconds() - target) > 0.5) {
+                            retimedThisMobsim.add(
+                                    new Retime(ride.person, ride.origin, was));
                             ride.origin.setEndTime(target);
                             retimed++;
                             retimeShiftSum += Math.abs(
@@ -1007,7 +1037,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         if (cfg.isPhysicalBoarding() && cfg.isRemodeUnpaired()) {
             org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
                     .info("ridePairing: {} unpaired ride legs re-moded to "
-                          + "network walk (DECISIONS.md 9.55)", remoded);
+                          + "network walk (DECISIONS.md 9.55); {} of them "
+                          + "multi-leg trips replaced whole (#167)", remoded,
+                          remodedWholeTrips);
         }
         org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
                 .info("ridePairing: {} declared passengers re-timed to their "
@@ -1177,6 +1209,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         if (!enabled()) {
             return;
         }
+        restoreRetimed();
         // The leg object CANNOT be held across the mobsim. The re-mode nulls
         // the route so the walk is routed on the walk network, and a null route
         // is exactly what makes PersonPrepareForSim run PlanRouter over that
@@ -1224,6 +1257,66 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                           + "alternative kept", restored, remodedThisMobsim.size());
         }
         remodedThisMobsim.clear();
+    }
+
+    /** One activity end time the engine overrode for this mobsim (#187). */
+    private static final class Retime {
+        final Id<Person> person;
+        final Activity activity;
+        final OptionalTime was;
+
+        Retime(final Id<Person> person, final Activity activity,
+               final OptionalTime was) {
+            this.person = person;
+            this.activity = activity;
+            this.was = was;
+        }
+    }
+
+    private final List<Retime> retimedThisMobsim = new ArrayList<>();
+
+    /** Put back every activity end time this mobsim's pairing overrode, so
+     *  plan memory carries the passenger's own declared time (#187). The
+     *  activity is restored only if it is still an element of the person's
+     *  selected plan - PersonPrepareForSim's PlanRouter keeps the activities
+     *  and replaces the legs between them, but a plan swapped by anything
+     *  else must not be written through a stale reference. */
+    private void restoreRetimed() {
+        int put = 0;
+        int orphan = 0;
+        for (final Retime r : retimedThisMobsim) {
+            final Person person =
+                    scenario.getPopulation().getPersons().get(r.person);
+            final Plan plan = person == null ? null : person.getSelectedPlan();
+            boolean live = false;
+            if (plan != null) {
+                for (final PlanElement pe : plan.getPlanElements()) {
+                    if (pe == r.activity) {
+                        live = true;
+                        break;
+                    }
+                }
+            }
+            if (!live) {
+                orphan++;
+                continue;
+            }
+            if (r.was.isDefined()) {
+                r.activity.setEndTime(r.was.seconds());
+            } else {
+                r.activity.setEndTimeUndefined();
+            }
+            put++;
+        }
+        if (!retimedThisMobsim.isEmpty()) {
+            org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                    .info("ridePairing: {} of {} overridden activity end time(s) "
+                          + "restored after the mobsim ({} no longer in a "
+                          + "selected plan) - the driver's clock was executed "
+                          + "and scored, the passenger's own stays in plan "
+                          + "memory (#187)", put, retimedThisMobsim.size(), orphan);
+        }
+        retimedThisMobsim.clear();
     }
 
     /**

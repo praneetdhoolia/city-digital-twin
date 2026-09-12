@@ -24,16 +24,11 @@ Each is pinned below, because each was green and none was visible: the gate's
 own output said the opposite of what its inputs said.
 """
 import os
-import sys
 
 import pytest
 
-REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _p in (os.path.join(REPO, 'src'), os.path.join(REPO, 'src', 'run')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
-import issue_gate  # noqa: E402
+import issue_gate
 
 
 def _issue(number=1, body='', comments=(), labels=('awaiting-run',)):

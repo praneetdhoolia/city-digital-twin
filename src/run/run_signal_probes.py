@@ -84,7 +84,6 @@ def ensure_compiled(jars):
     # the same refusal bootstrap_toolchain.py makes: never recompile a class
     # tree under a live arm (#66); this path had no guard (eighth report,
     # 11 September 2026)
-    sys.path.insert(0, os.path.join(ROOT, 'src', 'setup'))
     import bootstrap_toolchain                                # noqa: PLC0415
     if bootstrap_toolchain.refuse_if_arm_running('compile the signals classes'):
         raise SystemExit(2)

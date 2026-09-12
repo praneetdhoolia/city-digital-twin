@@ -8,29 +8,19 @@ whether it is sheltered, whether it requires a signalised road crossing - has to
 be an explicit input rather than an implicit constant.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
-import sys
 import csv
 import json
 import math
 import collections
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gtfs_tools import read_feed
 
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
 
 OUT = _city.path('data/processed/schedule_extras')
@@ -39,6 +29,15 @@ BASE = _city.path('schedules/base2026.zip')
 
 WALK_SPEED_MS = CFG.get('A.transit.walk_speed_ms')
 INTERCHANGE_RADIUS_M = CFG.get('A.transit.interchange_radius_m')
+# The transfer geometry, declared (eighth project report, 11 September 2026):
+# seven numbers were typed into the loop below and no city could sweep them.
+TRANSFER_SEARCH_M = CFG.get('A.transit.transfer_search_radius_m')
+TRANSFER_SAME_MODE_M = CFG.get('A.transit.transfer_same_mode_radius_m')
+TRANSFER_DETOUR = CFG.get('A.transit.transfer_detour_factor')
+CROSSING_THRESHOLD_M = CFG.get('A.transit.transfer_crossing_threshold_m')
+CROSSING_DELAY_S = CFG.get('A.transit.transfer_crossing_delay_s')
+PLATFORM_LR_MM = CFG.get('A.transit.platform_height_lr_mm')
+PLATFORM_RAIL_MM = CFG.get('A.transit.platform_height_rail_mm')
 
 # GTFS route_type is the GTFS specification's own vocabulary, not a city's.
 MODE_BY_TYPE = {'0': 'lr', '1': 'metro', '2': 'heavy_rail', '3': 'bus', '4': 'ferry'}
@@ -51,6 +50,12 @@ _FEEDS = json.load(open(_city.path('schedules/operators.json'),
 OPERATOR = {k: v['operator'] for k, v in _FEEDS.items()}
 CONTRACT = {k: v['contract'] for k, v in _FEEDS.items()}
 VALID = {k: (v['valid_from'], v['valid_to']) for k, v in _FEEDS.items()}
+# WHICH FLEET RUNS EACH GTFS route_type IS THE CITY'S TOO: the vehicle type
+# ids were three literals in the route-extras loop (eighth project report,
+# 11 September 2026). The city declares them beside its operators.
+_OPS = json.load(open(_city.path('schedules/operators.json'), encoding='utf-8'))
+VEHICLE_TYPE_BY_ROUTE_TYPE = _OPS['vehicle_type_by_route_type']
+VEHICLE_TYPE_DEFAULT = _OPS['vehicle_type_default']
 
 # The transfer point whose stops are grouped into one interchange. Declared with
 # its position in cities/<city>/geometry/, because it is a place.
@@ -69,6 +74,45 @@ def hav(a, b):
     dp = p2 - p1
     return 2 * R * math.asin(math.sqrt(
         math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+
+
+def _pairs_within(ll, ids, radius_m):
+    """(a, b, distance) for every unordered stop pair within `radius_m`.
+
+    A degree grid whose cell is at least one search radius on each side - ONE
+    cell size for the whole set, from the latitude with the smallest cosine,
+    so every stop's cell index is on the same grid (a per-stop cell width
+    put two stops at different latitudes on different grids and lost 21 of
+    3,584 pairs on the first cut). A pair within range is then always in the
+    same or a neighbouring cell, so examining those cells finds every pair
+    the all-pairs loop found, in the same order, with the same haversine.
+    """
+    m_per_deg = 111_320.0
+    cell_lat = radius_m / m_per_deg
+    min_cos = min(max(0.1, math.cos(math.radians(ll[s][0]))) for s in ids) if ids else 1.0
+    cell_lon = radius_m / (m_per_deg * min_cos)
+    grid = collections.defaultdict(list)
+    cell = {}
+    for sid in ids:
+        la, lo = ll[sid]
+        key = (int(la // cell_lat), int(lo // cell_lon))
+        cell[sid] = key
+        grid[key].append(sid)
+    out = []
+    for sid in ids:
+        ci, cj = cell[sid]
+        for di in (-1, 0, 1):
+            for dj in (-1, 0, 1):
+                for other in grid.get((ci + di, cj + dj), ()):
+                    if sid >= other:
+                        continue
+                    d = hav(ll[sid], ll[other])
+                    if d <= radius_m:
+                        out.append((sid, other, d))
+    # the all-pairs order: `a` in ids order, `b` in ids order, a < b as strings
+    pos = {sid: i for i, sid in enumerate(ids)}
+    out.sort(key=lambda t: (pos[t[0]], pos[t[1]]))
+    return out
 
 
 def main():
@@ -96,10 +140,8 @@ def main():
                           mode=MODE_BY_TYPE.get(r.get('route_type'), 'other'),
                           route_short_name=r.get('route_short_name', ''),
                           route_long_name=r.get('route_long_name', ''),
-                          vehicle_type_id=('CAF_URBOS_100_NLR'
-                                           if r.get('route_type') == '0' else
-                                           'HEAVY_RAIL_EMU' if r.get('route_type') == '2'
-                                           else 'BUS_RIGID_12M'),
+                          vehicle_type_id=VEHICLE_TYPE_BY_ROUTE_TYPE.get(
+                              str(r.get('route_type')), VEHICLE_TYPE_DEFAULT),
                           contract_area=CONTRACT.get(feed, ''),
                           franchise_operator=OPERATOR.get(feed, ''),
                           valid_from=VALID.get(feed, ('', ''))[0],
@@ -136,7 +178,7 @@ def main():
             seating=1 if (is_rail or is_lr) else -1,
             real_time_info=1 if (is_rail or is_lr or sid in inter_ids) else -1,
             step_free=1 if (is_lr or is_rail) else -1,
-            platform_height_mm=300 if is_lr else (1080 if is_rail else 0),
+            platform_height_mm=PLATFORM_LR_MM if is_lr else (PLATFORM_RAIL_MM if is_rail else 0),
             interchange_group_id=INTERCHANGE_GROUP_ID if sid in inter_ids else '',
             attribute_source='assumed' if not (is_rail or is_lr) else 'inferred_from_mode'))
     _w('A3_stop_extras.csv', srows)
@@ -146,21 +188,18 @@ def main():
     trows = []
     ids = [sid for sid in ll if stop_modes.get(sid)]
     inter_list = [sid for sid in ids if sid in inter_ids]
-    for i, a in enumerate(ids):
-        pa = ll[a]
-        for b in ids:
-            if a >= b:
-                continue
-            pb = ll[b]
-            d = hav(pa, pb)
-            if d > 400:
-                continue
+    # Candidate pairs from a grid index at the search radius, not every pair:
+    # the all-pairs loop was 8.5 M haversines over 4,123 stops and an hour for
+    # a city with 20,000 (eighth project report, 11 September 2026). The
+    # index changes which pairs are EXAMINED, never which are within range.
+    for a, b, d in _pairs_within(ll, ids, TRANSFER_SEARCH_M):
             ma, mb = stop_modes.get(a, set()), stop_modes.get(b, set())
-            if not (ma - mb or mb - ma) and d > 150:
+            if not (ma - mb or mb - ma) and d > TRANSFER_SAME_MODE_M:
                 continue
-            walk = d * 1.25          # network detour factor on a straight line
-            crossing = int(d > 60 and not (a in inter_ids and b in inter_ids))
-            delay = 22 if crossing else 0
+            walk = d * TRANSFER_DETOUR   # network detour factor on a straight line
+            crossing = int(d > CROSSING_THRESHOLD_M
+                           and not (a in inter_ids and b in inter_ids))
+            delay = CROSSING_DELAY_S if crossing else 0
             trows.append(dict(
                 from_stop=a, to_stop=b,
                 from_name=stops[a].get('stop_name', ''), to_name=stops[b].get('stop_name', ''),
@@ -199,21 +238,15 @@ def _w(name, rows):
         return
     cols = list(dict.fromkeys(k for r in rows for k in r))
     with open(os.path.join(OUT, name), 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore')
+        w = csv.DictWriter(fh, fieldnames=cols, extrasaction='ignore', lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
     print('   wrote %-30s %d rows' % (name, len(rows)))
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '.'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

@@ -1,6 +1,7 @@
 package citysim;
 
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * Declares the per-trip fare charge for the point-to-point priced mode
@@ -16,31 +17,21 @@ public final class FareConfigGroup extends ReflectiveConfigGroup {
 
     public static final String GROUP_NAME = "fare";
 
-    private double flagfall = 0.0;
-    private String mode = "";
+    @Parameter("flagfall")
+    public double flagfall = 0.0;
+    @Parameter("mode")
+    public String mode = "";
 
     public FareConfigGroup() {
         super(GROUP_NAME);
     }
 
-    @StringGetter("flagfall")
     public double getFlagfall() {
         return this.flagfall;
     }
 
-    @StringSetter("flagfall")
-    public void setFlagfall(final double value) {
-        this.flagfall = value;
-    }
-
-    @StringGetter("mode")
     public String getMode() {
         return this.mode;
-    }
-
-    @StringSetter("mode")
-    public void setMode(final String value) {
-        this.mode = value;
     }
 
     /** The module is live only when a mode is named and the flagfall is set. */

@@ -35,14 +35,14 @@ imposes on the street is represented rather than netted out.
 | Vehicle passenger (`ride`) | A passenger **physically in a driver's car**, paired to a real household or escort trip; unpaired demand re-modes rather than teleporting |
 | Freight (`truck`) | Physical, at declared PCE, seeded from each cordon station's own observed heavy-vehicle share |
 | Bus, heavy rail, light rail, ferry | Scheduled transit on the mapped GTFS, **scored as distinct submodes** so a bus and a tram are not interchangeable in route choice |
-| Bike, walk | Physical on the active network, with gradient and directional walk-speed factors |
+| Bike, walk | Physical on the footpath-and-road network — every harvested footway, path, cycleway, steps, track and shared path is a link, with gradient and directional walk-speed factors; a pt access, egress or transfer walk is a network leg the simulation executes, never a teleport |
 | Taxi / rideshare | **Physical on the road with a finite fleet** — a request the fleet cannot serve is refused; priced on the published 2025 fares; scored against a target derived from the IPART trips-per-day band |
 
 | Corridor mechanisms | How |
 |---|---|
 | Traffic signals | **SCATS, implemented as its published algorithm** at the 14 corridor intersections on MATSim's signals contrib: degree of saturation measured at every stop line, cycle and splits adapted toward a target DS, clearances preserved. The operated phase plans and the offset library are the parts TfNSW does not release, so offsets are not adapted (see [below](#what-is-derived-rather-than-observed)) |
 | Transit priority | Green extension with a declared priority budget and repayment, keyed to the **tram** in the light-rail scenarios and to the **bus** in the bus-priority counterfactual |
-| Level crossings | Freight-train closures at two named crossings, as time-varying link capacity |
+| Level crossings | Every scheduled passenger train and the published survey's freight movements close two named crossings, as time-varying link capacity |
 | Light rail charging dwell | Native, concurrent with boarding — the wire-free design's cost in run time |
 | Lane, kerbside and turn changes | Per scenario, patched onto the network by OSM way id |
 
@@ -57,12 +57,13 @@ would report a gain that the street never saw.
 
 ```bash
 pip install requests pandas numpy shapely pyproj lxml geopandas pyogrio rasterio openpyxl
+python src/setup/install_paths.py                   # the import roots, once per interpreter (a .pth)
 python src/setup/bootstrap_toolchain.py             # JDK 25, pt2matsim 26.6, Maven -> .tools/
 python src/setup/bootstrap_toolchain.py --run-stack # + the MATSim signals run stack
 python tests/check_manifest.py                      # the committed subset is intact
 ```
 
-Python 3.11+. The toolchain is ~1.4 GiB, gitignored, and **pinned by sha256** —
+Python 3.11+ (CI and the workstation run 3.14). The toolchain is ~1.4 GiB, gitignored, and **pinned by sha256** —
 `--verify` re-checks the digests and compiles the Java without downloading. Signal
 runs need the `--run-stack` half: the signals contrib is not in the shaded jar and
 must never share a classpath with it. **A toolchain change is a model change.**
@@ -165,54 +166,60 @@ any iteration after it. A run that CRASHED gets no record at all; its
 
 The figures below are drawn by
 [`src/analyse/build_fit_figures.py`](src/analyse/build_fit_figures.py) from the run
-the calibrated base was written from — `20260821T175907_1000it_25pct`, S2 × WEEKDAY,
-25% sample, 1,000 iterations, comparability family `F4-walk-wedge`. They are a
-**pre-calibration diagnostic of the base arm**, they predate the ride and walk
-repairs now in the model, and they compare no scenario against any other.
+the calibrated base was written from — `20260909T015217_300it_25pct`, S2 × WEEKDAY,
+25% sample, 300 iterations, comparability family `F32-crowding-reaches-scoring`. It
+is the first arm to have executed the horizon it declared since family F4, and the
+base is written from it as **constrain-and-report** (`DECISIONS.md` §9.50): no
+parameter was fitted, and the run is reported as it came out. The figures compare
+no scenario against any other.
 
 **Mode share** — the only block that carries the fit statistic. Of 67 calibration
-targets, **35 are scored** and 32 could not be, each with a stated reason; mean
-absolute error over the five scored mode shares is **10.65 percentage points**.
+targets, **36 are scored** and 31 could not be, each with a stated reason; mean
+absolute error over the five scored mode shares is **4.73 percentage points**.
+The objective the twin is actually held to is the twelve-mode one on the board
+([`STATUS.md`](cities/newcastle/docs/STATUS.md)): at this result **0 of 12** modes
+are inside 10 % and the largest deviation is heavy rail at +225 %.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_mode_share.dark.svg">
-  <img alt="Modelled against observed mode share: vehicle driver +14.19 pp, vehicle passenger -20.51 pp, walk -6.12 pp, public transport +4.42 pp, bike +8.01 pp" src="cities/newcastle/docs/reference/figures/fit_mode_share.light.svg">
+  <img alt="Modelled against observed mode share: vehicle driver +6.34 pp, vehicle passenger -8.44 pp, walk -3.55 pp, public transport +0.84 pp, other (bike and taxi) +4.50 pp" src="cities/newcastle/docs/reference/figures/fit_mode_share.light.svg">
 </picture>
 
-The errors come in two near-mirror pairs, which is what makes them structural
-rather than a matter of tuning: passengers become drivers (−20.51 against
-+14.19), and walking trips become cycling trips (−6.12 against +8.01). Both
-pairs have since been repaired in the inputs — round-trip passenger bindings and
-an observed short-trip distance distribution — and **neither repair has been
-measured**. That is what the next arm is for.
+The five folded shares hide what the twelve unfolded modes show: the passenger
+deficit (−8.44 pp) is still a driver surplus (+6.34 pp), and the "Other" surplus
+(+4.50 pp) is bike at +113 % and taxi at +202 % sharing one survey cell. The
+demand now puts the passenger on `ride` in every seeded plan (§9.164) and **that
+repair has not been measured** — it is what the next arm is for.
 
-**Trip length** — a constraint, checked and reported, never fitted to. **1 of 5**
-modes falls inside its observed range.
+**Trip length** — a constraint, checked and reported, never fitted to. **0 of 5**
+modes falls inside its observed range; walk is modelled at 3.28 km against an
+observed 0.70, a supply ceiling set at build time ([issue #30](https://github.com/praneetdhoolia/city-digital-twin/issues/30)).
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_trip_length.dark.svg">
-  <img alt="Modelled mean trip length against the observed range, by mode: only ride falls inside its range" src="cities/newcastle/docs/reference/figures/fit_trip_length.light.svg">
+  <img alt="Modelled mean trip length against the observed range, by mode: no mode falls inside its range" src="cities/newcastle/docs/reference/figures/fit_trip_length.light.svg">
 </picture>
 
 **Traffic counts** — scored and reported, deliberately **not** optimised against:
 tuning the network to these would compensate for whatever the model is still
-missing rather than diagnose it. Across **30** count stations the mean error is
-**-91.8%**, and **6** stations model to zero. The residual is unexplained — the
-explanation the record used to give was retired when the boundary through-traffic
-tier was built and measured as making no difference — and it is tracked as
-[issue #82](https://github.com/praneetdhoolia/city-digital-twin/issues/82).
+missing rather than diagnose it. Across **31** count stations the mean error is
+**16.3%** (median −1.1 %), and **0** stations model to zero. The −91.8 % this page
+carried until 12 September 2026 was a stale station map scoring the wrong roads
+(§9.163); the map now records the network it was cut against and the reader refuses
+any other.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_counts.dark.svg">
-  <img alt="Modelled against observed weekday traffic counts on log axes: every station falls below the line of perfect agreement" src="cities/newcastle/docs/reference/figures/fit_counts.light.svg">
+  <img alt="Modelled against observed weekday traffic counts on log axes" src="cities/newcastle/docs/reference/figures/fit_counts.light.svg">
 </picture>
 
-**On light rail patronage.** The arm puts the light rail at **1,260** weekday
-boardings. The nearest published observation — 3,417 boardings/day — is the
-March 2019 to February 2020 market, and `fit.py` **refuses to score it**: PT mode
-share roughly halved between that vintage and the 2024/25 base the model calibrates
-to, so the difference between the two numbers is not an error statistic. It is
-recorded as unscored, with the reason, in
+**On light rail patronage.** The arm puts the light rail at **1,224** weekday
+boardings, against a derived target of 2,954 (−58.6 %, the board's row 9). The
+nearest published observation — 3,417 boardings/day — is the March 2019 to
+February 2020 market, and `fit.py` **refuses to score it**: PT mode share roughly
+halved between that vintage and the 2024/25 base the model calibrates to, so the
+difference between the two numbers is not an error statistic. It is recorded as
+unscored, with the reason, in
 [`FIGURES.json`](cities/newcastle/docs/reference/figures/FIGURES.json).
 
 Full rows, every unscorable target and the parameter provenance:
@@ -243,15 +250,15 @@ python src/calibrate/report.py --run <run dir>
 
 | | |
 |---|---|
-| Files in the manifest | **512** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
-| Package on disk | 4.08 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
+| Files in the manifest | **959** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
+| Package on disk | 6.64 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` (the manifest's total) — mostly gitignored and regenerable |
 | Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
 | Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
 | Population | 611,915 (2021 Census) → 612,634 synthetic agents |
 | Road network | 50,182 edges, 11,434 km, gradient-attached |
-| Active network | 40,195 edges, 7,920 km, directional walk-speed factors |
+| Active network | 40,195 edges, 7,920 km, directional walk-speed factors — and, since 12 September 2026, walk- and bike-capable links of the MATSim network itself (368,230 links with the roads and railways) |
 | PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 521 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
+| Input registry | 553 controllable fields, each with units, provenance and a sweep or a held-fixed rule, and each sweep saying what it is for |
 | Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
 | Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
 
@@ -305,7 +312,7 @@ tests/                       check_manifest.py, check_doc_currency.py,
 results/                     run outputs (gitignored): raw/ the budgeted bulk cache, processed/ the permanent findings
 
 cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific input
-  registry/                  the 521 declared values, with units, provenance, sweeps
+  registry/                  the 553 declared values, with units, provenance, sweeps
   overlays/scenarios|day|runs  per-scenario, per-day-type and per-run value overlays
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention,
@@ -371,6 +378,7 @@ python cities/newcastle/build/build_validation_targets.py
 # --- P2 network build (needs the toolchain) ---
 python cities/newcastle/build/build_corridor_road_attributes.py
 python src/build/build_matsim_network.py        # MATSim network + 15 mapped schedules
+python cities/newcastle/build/build_charging_dwell_offsets.py  # the dwell-transformed schedules the signals read
 python cities/newcastle/build/build_matsim_signals.py    # explicit corridor signal data
 python cities/newcastle/build/build_level_crossings.py   # level-crossing closure events
 

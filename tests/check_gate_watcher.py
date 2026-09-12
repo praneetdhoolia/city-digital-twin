@@ -20,12 +20,7 @@ import sys
 import tempfile
 import time
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, '..'))
-for sub in ('run', 'analyse', 'registry', ''):
-    sys.path.insert(0, os.path.join(REPO, 'src', sub) if sub
-                    else os.path.join(REPO, 'src'))
-import run_matsim  # noqa: E402
+import run_matsim
 
 FAILS = []
 

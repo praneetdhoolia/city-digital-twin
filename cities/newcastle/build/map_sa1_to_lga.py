@@ -21,14 +21,7 @@ gap shows up rather than silently reassigning agents.
 # This builder encodes THIS CITY's intervention, corridor or statistical
 # geography, so it lives with the city rather than in the framework. It still
 # uses the framework's generic machinery, which is two directories up.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'analyse'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 
 import geopandas as gpd
@@ -56,7 +49,7 @@ def main():
     out = joined[['SA1_CODE21', 'zone_tier', name_col, code_col]].rename(
         columns={name_col: 'lga_name', code_col: 'lga_code'})
     out['lga_name'] = out['lga_name'].fillna('')
-    out.to_csv(OUT, index=False)
+    out.to_csv(OUT, index=False, lineterminator='\n')
 
     missing = int((out['lga_name'] == '').sum())
     core = out[out['zone_tier'] == 'core']
@@ -68,14 +61,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '../../../src/build'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

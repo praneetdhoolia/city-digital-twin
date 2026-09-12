@@ -5,6 +5,7 @@ import java.util.Set;
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The {@code ptSubmodeChoice} module: whether bus, rail, tram and ferry are
@@ -69,7 +70,8 @@ public final class PtSubmodeChoiceConfigGroup extends ReflectiveConfigGroup {
     public static final String REPRESENTATION_AGGREGATE = "aggregate";
     public static final String REPRESENTATION_ALTERNATIVES = "alternatives";
 
-    private String representation = REPRESENTATION_AGGREGATE;
+    @Parameter("representation")
+    public String representation = REPRESENTATION_AGGREGATE;
     /**
      * NO DEFAULT ON PURPOSE. A literal here would shadow
      * {@code RUN.mode_choice.pt_submode_seed} - the same value decided in
@@ -78,7 +80,8 @@ public final class PtSubmodeChoiceConfigGroup extends ReflectiveConfigGroup {
      * legitimate under {@code aggregate}, where nothing reads it, and
      * refused under {@code alternatives} below.
      */
-    private String seedSubmode = "";
+    @Parameter("seedSubmode")
+    public String seedSubmode = "";
 
     public PtSubmodeChoiceConfigGroup() {
         super(NAME);
@@ -88,24 +91,12 @@ public final class PtSubmodeChoiceConfigGroup extends ReflectiveConfigGroup {
         return REPRESENTATION_ALTERNATIVES.equals(this.representation);
     }
 
-    @StringGetter("representation")
     public String getRepresentation() {
         return this.representation;
     }
 
-    @StringSetter("representation")
-    public void setRepresentation(final String value) {
-        this.representation = value == null ? "" : value.trim();
-    }
-
-    @StringGetter("seedSubmode")
     public String getSeedSubmode() {
         return this.seedSubmode;
-    }
-
-    @StringSetter("seedSubmode")
-    public void setSeedSubmode(final String value) {
-        this.seedSubmode = value == null ? "" : value.trim();
     }
 
     /** The scheduled submodes, {@code pt} excluded — the alternatives. */

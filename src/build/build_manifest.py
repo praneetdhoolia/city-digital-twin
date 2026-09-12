@@ -16,15 +16,12 @@ import fnmatch
 import hashlib
 import datetime
 import zipfile
-import sys
 
 # The manifest describes ONE CITY. Its paths stay city-relative - `data/...`,
 # not `cities/newcastle/data/...` - so the manifest does not repeat the city's
 # own name on all 376 of its rows, and a second city's manifest is comparable
 # to this one row for row.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 ROOT = _city.CITY_DIR
 SCAN = ['data/raw', 'data/processed', 'schedules', 'demand', 'params',
@@ -78,6 +75,7 @@ LINEAGE = {
     'data/processed/basemap.json': 'src/analyse/build_basemap.py',
     'data/processed/network/_speed_zone_report.json': 'src/build/attach_speed_zones.py',
     'data/processed/validation/count_station_links.csv': 'src/analyse/map_count_stations.py',
+    'data/processed/validation/count_station_links_provenance.json': 'src/analyse/map_count_stations.py',
     'demand/population': 'src/build/build_population.py',
     'demand/plans': 'src/build/build_activity_chains.py',
     'demand/plans/matsim': 'src/build/build_matsim_plans.py',
@@ -748,7 +746,12 @@ def main():
                                                                possible)
         files.append(dict(
             path=rel, bytes=sz, rows=count_rows(p),
-            sha256=sha256(p) if sz < 300 * 1 << 20 else 'skipped_large',
+            # EVERY file is hashed. Three were size-only under a 300 MB cap -
+            # two raw downloads the immutability rule protects and the WEEKDAY
+            # trip table every plan derives from - so a rebuilt demand of the
+            # same byte length passed the gate (eighth project report, 11
+            # September 2026). ~1.6 GB more to hash, about ten seconds.
+            sha256=sha256(p),
             stage=stage,
             produced_by=lineage_for(rel),
             source=source, source_url=source_url,

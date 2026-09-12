@@ -207,6 +207,33 @@
     "retrieved": "2026-08-12"
   },
   {
+    "path": "bitre/rva-2025-mvs-vehtype-streg-poareg-rpc.csv",
+    "url": "https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/ed63dd4a-72af-48a6-bab8-78a6d199fc5c/download/rva-2025-mvs-vehtype-streg-poareg-rpc.csv",
+    "description": "BITRE Road Vehicles Australia, 31 January 2025: registered road vehicles by vehicle type, state of registration and REGISTERED postcode",
+    "licence": "CC-BY 3.0 AU",
+    "bytes": 1460930,
+    "sha256": "4ab011b00392a06c0ea480c70e89f7e6877021f5e2061f8a1d7cb546dda47a29",
+    "retrieved": "2026-09-12"
+  },
+  {
+    "path": "bitre/rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv",
+    "url": "https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/fc222132-0efa-4838-97f4-fffa1d40d4da/download/rva-2025-mvs-vehtype-streg-poagar-mtvpwr-rpc.csv",
+    "description": "BITRE Road Vehicles Australia, 31 January 2025: registered road vehicles by vehicle type, state of registration, GARAGING postcode and motive power",
+    "licence": "CC-BY 3.0 AU",
+    "bytes": 3246352,
+    "sha256": "5e2f21eddd0144a6ce49645d186a06640093b0d803e564ea6f21440a0e9a9219",
+    "retrieved": "2026-09-12"
+  },
+  {
+    "path": "bitre/road-vehicles-australia-january-2025-explanatory-notes.txt",
+    "url": "https://data.gov.au/data/dataset/f6e0a290-7d47-4b88-ac3b-34824b0ab334/resource/c93f027f-48d2-43f0-8b68-ab1dfb2122ed/download/road-vehicles-australia-january-2025-explanatory-notes.txt",
+    "description": "BITRE Road Vehicles Australia, January 2025: explanatory notes",
+    "licence": "CC-BY 3.0 AU",
+    "bytes": 5779,
+    "sha256": "fa1e813b89ede71efde6c14b031dff277f4d7f31bb70ea7c6e174a58445d34bc",
+    "retrieved": "2026-09-12"
+  },
+  {
     "path": "jtw/bts_jtw_table01_2011_v1_0.zip",
     "url": "https://opendata.transport.nsw.gov.au/data/dataset/66ee70ff-eb4f-45e5-b45b-90ce484ec178/resource/2dd13d56-2894-4153-bbab-972550629bfe/download/bts_jtw_table01_2011_v1_0.zip",
     "description": "TfNSW Journey to Work 2011, Table 01: origin SA2 x destination SA2, employed persons (2011 Census)",

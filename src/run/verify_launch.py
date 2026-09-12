@@ -25,15 +25,10 @@ import io
 import json
 import os
 import re
-import sys
 import time
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(os.path.dirname(HERE))
-if REPO not in sys.path:
-    sys.path.insert(0, REPO)
 
-from src.run import results_store                                # noqa: E402
+from src.run import results_store
 
 # MATSim announces an iteration with a banner; the startup that precedes it is
 # PersonPrepareForSim, which on this model runs for minutes (9.154: 7 min 00 s).
@@ -133,7 +128,7 @@ def main(argv=None):
         return 0
     if verdict == 'died':
         print('\nThe launch did NOT take. The run states its own cause; read '
-              'it with:\n  python src/run/run_failure.py --run %s' % run)
+              'it with:\n  python src/run/run_failure.py results/raw/%s' % run)
         return 1
     if verdict == 'timeout':
         print('\nUndecided, which is not the same as working. Look at the log '

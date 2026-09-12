@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
@@ -81,6 +81,7 @@
 
 ## History
 
+- §9.167 — no change to the seed or the choice set; the network under them is F34's
 - §9.166 — plan removal honours the selector on both paths (#174)
 - §9.164 — the passenger is put on ride; the selector is declared
 - §9.163 — coverage bounds the constants; ride's target unreachable

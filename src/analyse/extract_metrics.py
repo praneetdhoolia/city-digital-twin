@@ -37,21 +37,12 @@ alone a holdout value. Scoring against targets is `src/calibrate/fit.py`, which
 reads the calibration rows only.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
 # here, instead of each composing its own results/ path
-import sys as _sys_rs, os as _os_rs
-_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
-    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
-import results_store as _results_store  # noqa: E402
+import results_store as _results_store
 
 
 def _resolve_run(name_or_path):
@@ -59,15 +50,20 @@ def _resolve_run(name_or_path):
 
 
 import registry as _registry  # noqa: E402
+import iteration_reading as _reading  # noqa: E402
 import argparse
 import collections
+import hashlib
 import csv
 import gzip
 import json
+import re
 import os
 
 CRS_M = _city.crs()
 STATION_LINKS = _city.path('data/processed/validation/count_station_links.csv')
+STATION_LINKS_PROVENANCE = _city.path(
+    'data/processed/validation/count_station_links_provenance.json')
 C3 = _city.path('params/C3_count_comparison.json')
 POP = _city.path('demand/population/B1_synthetic_population.csv')
 SA1_LGA = _city.path('data/processed/zones/sa1_to_lga.csv')
@@ -139,6 +135,17 @@ def rows(run_dir, stem):
     if alt is not None and not _final_exists(run_dir, stem):
         _READ_AT['used'].add('%s <- %s' % (stem, alt))
         stem = alt
+    # ONE decode per table per process (#182): the trips table used to be
+    # parsed four times and the legs table twice inside one extraction.
+    if stem.startswith('output_') and stem[len('output_'):] in ('trips', 'legs'):
+        return iter(_reading.table(run_dir, stem[len('output_'):], None))
+    m = re.match(r'ITERS/it\.(\d+)/\d+\.(trips|legs)$', stem)
+    if m:
+        return iter(_reading.table(run_dir, m.group(2), int(m.group(1))))
+    return _stream(run_dir, stem)
+
+
+def _stream(run_dir, stem):
     with open_output(run_dir, stem) as f:
         for r in csv.DictReader(f, delimiter=';'):
             yield r
@@ -415,6 +422,45 @@ def pt_submode_split(run_dir, person_lga, mode_share_doc):
              'a CONSTRAINT, never a target (issue #49, 9.76).')
 
 
+def _run_network(run_dir):
+    """The network path the run's own config names, or None."""
+    for name in ('config.xml', os.path.join('output', 'output_config.xml')):
+        p = os.path.join(run_dir, name)
+        if not os.path.exists(p):
+            continue
+        with open(p, encoding='utf-8') as fh:
+            for line in fh:
+                m = re.search(r'name="inputNetworkFile"\s+value="([^"]+)"', line)
+                if m:
+                    return m.group(1)
+    return None
+
+
+def _stale_station_map(run_dir):
+    """A sentence saying why the station map cannot score this run, or None."""
+    if not os.path.exists(STATION_LINKS_PROVENANCE):
+        return ('count_station_links.csv carries no provenance record; '
+                'regenerate it with src/analyse/map_count_stations.py so the '
+                'network it was cut against is known')
+    prov = json.load(open(STATION_LINKS_PROVENANCE, encoding='utf-8'))
+    net = _run_network(run_dir)
+    if not net or not os.path.exists(net):
+        return None                       # nothing to compare against; scored as before
+    h = hashlib.sha256()
+    with open(net, 'rb') as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b''):
+            h.update(chunk)
+    if h.hexdigest() != prov.get('network_sha256'):
+        return ('count_station_links.csv was cut against %s (sha256 %s...) and '
+                'this run executed %s (sha256 %s...): a stale map scores the '
+                'model against the wrong roads, so the counts are NOT scored. '
+                'Regenerate the map with src/analyse/map_count_stations.py '
+                '--network <this run\'s network>'
+                % (prov.get('network'), (prov.get('network_sha256') or '')[:12],
+                   net, h.hexdigest()[:12]))
+    return None
+
+
 def link_volumes(run_dir, fraction):
     """Modelled vehicles per station, two-way, scaled to full population.
 
@@ -427,6 +473,15 @@ def link_volumes(run_dir, fraction):
     here; it is read from the declared artefact, so a city that runs different
     road modes gets them by declaring them.
     """
+    # THE MAP MUST HAVE BEEN CUT AGAINST THE NETWORK THIS RUN EXECUTED. The
+    # previous map was orphaned by a rebuild 47 minutes after it was written
+    # and 0 of 195 rows named their road for 25 days (#82); the assertion
+    # that caught it runs on a workstation only. The map now records the
+    # sha256 of its network and this reader compares it with the run's own.
+    stale = _stale_station_map(run_dir)
+    if stale:
+        return dict(links_matched_in_output=0, links_expected=0, scale=None,
+                    stations=[], stale_map=stale)
     want = collections.defaultdict(list)
     meta = {}
     with open(STATION_LINKS, encoding='utf-8') as f:

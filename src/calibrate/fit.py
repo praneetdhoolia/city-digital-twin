@@ -28,21 +28,12 @@ Every fit statistic carries the list of target ids it was computed over. A
 statistic that does not name its targets is not reportable.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
 # here, instead of each composing its own results/ path
-import sys as _sys_rs, os as _os_rs
-_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
-    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
-import results_store as _results_store  # noqa: E402
+import results_store as _results_store
 
 
 def _resolve_run(name_or_path):
@@ -134,8 +125,6 @@ def score_goal_modes(run_dir, iteration):
     freight rail as representation rather than fit. They are reported, never
     optimised against.
     """
-    _sys.path.insert(0, _os.path.join(
-        _os.path.dirname(_os.path.abspath(__file__)), '..', 'analyse'))
     import io
     import contextlib
     import report_mode_ridership as rmr
@@ -370,6 +359,19 @@ def score_counts(targets, metrics, corrections, out):
                     100.0 * math.sqrt(sum(sq) / len(sq)) / (sum(obs) / len(obs)), 2),
                 heavy_share_assumed_at=sum(1 for e in errs
                                            if e['heavy_share_source'] == 'assumed'),
+                # The error statistic is QUALIFIED by its own denominator: at
+                # every unclassified station the observed all-classes count
+                # is put on a light-vehicle basis with the pooled ASSUMED heavy
+                # share, so the pct error there rests on an assumption, and a
+                # statistic printed to two decimals over such rows must say so
+                # (eighth project report, 11 September 2026, area 3).
+                basis_note=(
+                    'light-vehicle basis; the observed side at %d of %d '
+                    'station(s) is divided by the pooled ASSUMED heavy-vehicle '
+                    'share (%.4f), so the error there is conditional on that '
+                    'assumption and its sweep'
+                    % (sum(1 for e in errs if e['heavy_share_source'] == 'assumed'),
+                       len(errs), default_heavy)),
                 modelled_zero_stations=[e['target_id'] for e in errs
                                         if e.get('modelled_zero')])
 
@@ -589,8 +591,8 @@ def main():
               'RMSE %.0f (%.1f%% of mean observed)'
               % (c['mean_pct_error'], c['mean_abs_pct_error'], c['rmse'],
                  c['rmse_pct_of_mean_observed']))
-        print('  heavy-vehicle share assumed at %d of %d stations'
-              % (c['heavy_share_assumed_at'], c['n']))
+        print('  heavy-vehicle share assumed at %d of %d stations - %s'
+              % (c['heavy_share_assumed_at'], c['n'], c.get('basis_note', '')))
         if c['modelled_zero_stations']:
             print('  MODELLED ZERO at %d station(s): %s - the model routes no '
                   'traffic over a link that carries observed volume. Scored at '

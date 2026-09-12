@@ -38,10 +38,6 @@ matter how it scores.
 import os as _os
 import re
 import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'), _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
 import csv
 import gzip
@@ -50,10 +46,10 @@ import time
 import argparse
 import collections
 
-import city as _city                                              # noqa: E402
-import registry as _registry                                      # noqa: E402
-import extract_metrics as em                                      # noqa: E402
-import measure_iteration_modes as mim                             # noqa: E402
+import city as _city
+import registry as _registry
+import extract_metrics as em
+import measure_iteration_modes as mim
 
 # The city's own submode vocabulary maps onto the target file's mode names.
 # A schedule calls the heavy-rail mode `rail` and the light-rail mode `tram`;
@@ -65,7 +61,17 @@ SUBMODE_TO_TARGET = {
     'tram': 'light_rail',
     'light_rail': 'light_rail',
     'ferry': 'ferry',
+    # GTFS route_type 1 - a city with a metro reads it as its own target
+    # rather than as nothing (eighth project report, 11 September 2026)
+    'subway': 'metro',
+    'metro': 'metro',
 }
+# The vocabulary ABOVE decides these; they used to be six literal tuples in
+# the one reader the board, the gate and the objective share, so a submode
+# added to the map was still absent from the boardings, the km table and the
+# coverage lookup.
+PT_SUBMODES = ('pt',) + tuple(sorted(set(SUBMODE_TO_TARGET)))
+PT_TARGET_MODES = frozenset(SUBMODE_TO_TARGET.values())
 
 # Road vehicles, for the freight denominator. A ride passenger is NOT a
 # vehicle - they travel in a car that is already counted - so ride is absent
@@ -170,9 +176,9 @@ def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
         rows = list(itr.as_trip_rows(derived))
     else:
         route_mode = em.transit_route_modes(run_dir)
-        stem = 'ITERS/it.%d/%d.legs' % (iteration, iteration)
-        with em.open_output(run_dir, stem) as fh:
-            for l in csv.DictReader(fh, delimiter=';'):
+        import iteration_reading as _reading
+        if True:                            # the cached legs table (#182)
+            for l in _reading.table(run_dir, 'legs', iteration):
                 line = (l.get('transit_line') or '').strip()
                 if not line:
                     continue
@@ -261,7 +267,6 @@ def road_vehicle_share(counts_all):
     if not tot:
         return None, 0
     return 100.0 * counts_all.get('truck', 0) / tot, tot
-
 
 
 def truck_at_count_stations(run_dir, iteration):
@@ -390,8 +395,8 @@ def report(run_dir, iteration, truck_stations=False):
         km_n[t['main_mode']] += 1
     # a linked pt trip is one trip; its distance belongs to the submode the
     # reader allocated it to, which is what `sub` already decided
-    pt_km = sum(km_sum[m] for m in ('pt', 'bus', 'rail', 'tram', 'ferry'))
-    pt_n = sum(km_n[m] for m in ('pt', 'bus', 'rail', 'tram', 'ferry'))
+    pt_km = sum(km_sum[m] for m in PT_SUBMODES)
+    pt_n = sum(km_n[m] for m in PT_SUBMODES)
     truck_pct, road_tot = road_vehicle_share(all_counts)
     truck_note = ('NOT the target\'s basis - network-wide share vs a '
                   'freight-route observation (9.101); --truck-stations scores it')
@@ -440,7 +445,7 @@ def report(run_dir, iteration, truck_stations=False):
         if mode in boarding_modes:
             trips[mode] = boarded[mode][0]
             modelled[mode] = boarded[mode][1]
-        elif mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+        elif mode in PT_TARGET_MODES:
             n = sub.get(mode, 0)
             modelled[mode] = 100.0 * n / lga_tot if lga_tot else 0.0
             trips[mode] = n
@@ -492,7 +497,7 @@ def report(run_dir, iteration, truck_stations=False):
         A mode can sit on its share and still be carrying trips of entirely the
         wrong length, which no share can show (9.107).
         """
-        if mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+        if mode in PT_TARGET_MODES:
             n, s_ = pt_n, pt_km          # the survey folds all four into one
         else:
             n, s_ = km_n.get(mode, 0), km_sum.get(mode, 0.0)
@@ -707,39 +712,24 @@ def _coverage_key(mode):
     none. MATSim offers `pt` as ONE alternative and the submode is chosen
     downstream by the router, so every pt submode shares the `pt` coverage and
     none of them has one of its own."""
-    if mode in ('bus', 'heavy_rail', 'light_rail', 'ferry'):
+    if mode in PT_TARGET_MODES:
         return 'pt'
     if mode == 'freight_train':
         return None
     return mode
 
 
-
-# --------------------------------------------------------- the windowed reading
-#
-# A READING TAKEN AT ONE ITERATION CANNOT SCORE A CANDIDATE, and that was
-# measured rather than suspected (9.158): between iteration 80 and 100 of the
-# SAME run, with nothing changed, heavy rail, bike and taxi each move further
-# from or towards their target than the WHOLE 10% acceptance band, upward on
-# every arm - the model still relaxing, not seed scatter. A search scored on a
-# point reading would be ranking how far each candidate's run happened to get.
-#
-# The remedy is to change the READING, not the rule (9.158, 9.159). This is that
-# reading: the mean of every readable table inside the last
-# `CAL.gate.reading_window_iterations` iterations, endpoint included. It is
-# built HERE, inside the one reader the board, the gate watcher, the GOAL.md
-# loop and the calibration objective all call, for the reason 9.158 gave for
-# the objective itself - two readings of the same quantity drift apart the
-# moment they are computed in two places.
-#
-# WHAT IS AVERAGED AND WHAT IS NOT. The modelled level and the trip count are
-# averaged, because they are what moves. The target, the basis and the
-# denominator are the endpoint's, because they are properties of the target
-# artefact and do not vary with depth. The deviation and the gate flag are
-# RECOMPUTED from the averaged level against that target - never averaged
-# themselves, which would be a mean of ratios standing in for a ratio of means.
-
-
+# THE WINDOWED READING IS A MEASUREMENT INSTRUMENT, NOT THE OBJECTIVE. The
+# board (`build_status_board.block_scoreboard`), the gate watcher
+# (`run_matsim.start_gate_watch` -> `--it`), the objective
+# (`fit.score_goal_modes`) and `results_store.extract_snapshots` all call the
+# POINT reading `report()`, which DECISIONS.md 9.159 measured as the right
+# call (the windowed remedy for the reading-point problem was built and
+# measured WORSE). `report_window` below is kept for ONE caller,
+# `measure_reading_stability.py`, which measures the reading's own noise;
+# the comment that stood here until 12 September 2026 said the window was
+# built inside the reader "the board, the gate watcher, the GOAL.md loop and
+# the calibration objective all call", and none of the four uses it.
 def window_iterations(run_dir, iteration, window):
     """The readable iterations inside (iteration - window, iteration].
 
@@ -884,8 +874,6 @@ def main():
     # a bare run name resolves through the results store (results/raw first,
     # then legacy results/<name>); a path that exists is used as given
     import sys as _sys
-    _sys.path.insert(0, _os.path.join(_os.path.dirname(
-        _os.path.dirname(_os.path.abspath(__file__))), 'run'))
     import results_store as _store
     resolved = _store.resolve(a.run)
     if resolved is None:

@@ -18,13 +18,10 @@ from __future__ import annotations
 
 import json
 import pathlib
-import sys
 
 import pytest
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
-for p in ('src', 'src/registry', 'src/build'):
-    sys.path.insert(0, str(REPO / p))
 
 import registry                                                   # noqa: E402
 import build_matsim_run_inputs as build                           # noqa: E402

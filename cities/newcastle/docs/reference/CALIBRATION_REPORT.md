@@ -8,10 +8,10 @@ Every number below comes from `fit.py`, which reads **only** the calibration hal
 | | |
 |---|---:|
 | Calibration targets available | 67 |
-| Scored | **35** |
-| Could not be scored, each with a reason | 32 |
+| Scored | **36** |
+| Could not be scored, each with a reason | 31 |
 
-Scoring 35 of 67 is **not** the same as fitting 67. DECISIONS.md §12.1 sets out why: several targets identify nothing in MATSim, several are duplicates or schedule inputs, and only the 2024/25 mode-share vintage applies to a 2026 base. The effective independent information is roughly **four mode-share degrees of freedom**, one patronage level, and the counts.
+Scoring 36 of 67 is **not** the same as fitting 67. DECISIONS.md §12.1 sets out why: several targets identify nothing in MATSim, several are duplicates or schedule inputs, and only the 2024/25 mode-share vintage applies to a 2026 base. The effective independent information is roughly **four mode-share degrees of freedom**, one patronage level, and the counts.
 
 **Traffic counts are scored and reported here but were not optimised against.** The original reason (DECISIONS.md §9.14, §9.15) was that the external tier carried no boundary through traffic, so boundary-adjacent counts were biased low by construction. §9.41 added that through tier at the cordon's own observed volumes, and §9.64 re-measured: the count error did not move. The residual is therefore **unexplained**, and tuning the core network against these stations would compensate for whatever the model is still missing rather than diagnose it. They stay a reported constraint, never a target.
 
@@ -19,42 +19,39 @@ Scoring 35 of 67 is **not** the same as fitting 67. DECISIONS.md §12.1 sets out
 
 | run | scenario | day | sample | declared | reached | completion |
 |---|---|---|---:|---:|---:|---|
-| `20260821T175907_1000it_25pct` (recorded as `phys1000a_25pct`) | S2 | WEEKDAY | 25% | 1000 | — | no record |
+| `20260909T015217_300it_25pct` | S2 | WEEKDAY | 25% | 300 | 300 | `ran_to_last_iteration` |
 
-> **Not a result.** 1 of the 1 run(s) here did not run to their last iteration: `phys1000a_25pct`. Only a run whose `_run.json` says `ran_to_last_iteration` is a result; a stopped arm is citable at its `reached_iteration` and nowhere past it (GOAL.md, §9.143). A run carrying no record at all predates the contract and is citable for no depth whatever.
-
+> **Short of relaxation.** DECISIONS.md §9.7 measured mode share still drifting after innovation was switched off at 250 iterations, so a run that REACHED at or below that is short of relaxation: `20260909T015217_300it_25pct`. Nothing here is reportable as a converged model outcome.
 
 ## Mode share — the one block that carries the objective
 
-**`phys1000a_25pct`** — 5 targets, mean absolute error **10.65 pp**
+**`20260909T015217_300it_25pct`** — 5 targets, mean absolute error **4.73 pp**
 
 | HTS category | modelled % | observed % | error (pp) |
 |---|---:|---:|---:|
-| Other | 11.21 | 3.20 | +8.01 |
-| Public transport | 8.22 | 3.80 | +4.42 |
-| Vehicle driver | 73.19 | 59.00 | +14.19 |
-| Vehicle passenger | 0.09 | 20.60 | -20.51 |
-| Walk only | 7.28 | 13.40 | -6.12 |
+| Other | 7.70 | 3.20 | +4.50 |
+| Public transport | 4.64 | 3.80 | +0.84 |
+| Vehicle driver | 65.34 | 59.00 | +6.34 |
+| Vehicle passenger | 12.16 | 20.60 | -8.44 |
+| Walk only | 9.85 | 13.40 | -3.55 |
 
 Five shares that sum to one carry four independent numbers. That is the ceiling on how many parameters a calibration against this block can identify, and `calibrate.py` enforces it rather than trusting anyone to remember it.
 
 ## Traffic counts — scored, reported, not fitted
 
-**`phys1000a_25pct`** — 30 stations, light-vehicle basis
+**`20260909T015217_300it_25pct`** — 31 stations, light-vehicle basis
 
 | statistic | value |
 |---|---:|
-| mean percentage error | -91.8% |
-| mean absolute percentage error | 92.7% |
-| RMSE | 27333 vehicles (111.6% of mean observed) |
-| heavy-vehicle share assumed at | 27 of 30 stations |
-
-**The model routes no traffic at all over 6 station(s):** `V086`, `V099`, `V103`, `V107`, `V109`, `V112`. These are scored at −100%, not dropped: a modelled zero is a result, and the worst one in the set (issue #19). Dropping them flattered the fit by removing exactly where the model fails hardest.
+| mean percentage error | +16.3% |
+| mean absolute percentage error | 66.7% |
+| RMSE | 16843 vehicles (74.3% of mean observed) |
+| heavy-vehicle share assumed at | 28 of 31 stations |
 
 
 ## The intervention's patronage
 
-**`phys1000a_25pct`** — the intervention carries **1,260 boardings** on the simulated day.
+**`20260909T015217_300it_25pct`** — the intervention carries **1,224 boardings** on the simulated day.
 
 **No patronage target scored this run, so this is a level and not an error.** Every patronage-family observation in the calibration half is listed below with the reason it identifies nothing here; a percentage difference against any of them would be a statistic the fit itself declines to compute. The bus and share rows are included because the published share is algebraically the two boarding series, so they stand or fall together.
 
@@ -71,31 +68,31 @@ Five shares that sum to one carry four independent numbers. That is the ceiling 
 
 These are observables the model is held against but **never optimised towards**. They are not part of the 67, they are not targets, and they are reported apart from the fit so they cannot be counted as evidence of it. A model can satisfy every one of them and still fit badly.
 
-**`phys1000a_25pct`**
+**`20260909T015217_300it_25pct`**
 
-- Vehicle occupancy: modelled **0.0013** passengers per driver against an observed **0.3503** (range [0.2493, 0.394]) — **OUTSIDE**
+- Vehicle occupancy: modelled **0.1860** passengers per driver against an observed **0.3503** (range [0.2493, 0.394]) — **OUTSIDE**
 
 | mode | modelled km | observed km | ratio | in observed range |
 |---|---:|---:|---:|---|
-| bike | 8.62 | 5.20 | 1.66 | **no** |
-| car | 10.94 | 10.20 | 1.07 | **no** |
-| pt | 10.40 | 23.40 | 0.44 | **no** |
-| ride | 7.84 | 9.80 | 0.80 | yes |
-| walk | 5.56 | 0.70 | 7.94 | **no** |
+| bike | 7.32 | 5.20 | 1.41 | **no** |
+| car | 11.66 | 10.20 | 1.14 | **no** |
+| pt | 10.96 | 23.40 | 0.47 | **no** |
+| ride | 10.65 | 9.80 | 1.09 | **no** |
+| walk | 3.28 | 0.70 | 4.69 | **no** |
 
-Ride-to-car trip length: modelled **0.717** against observed **0.961**. A ratio is robust to the geography mismatch that levels are not (§9.13).
+Ride-to-car trip length: modelled **0.913** against observed **0.961**. A ratio is robust to the geography mismatch that levels are not (§9.13).
 
 
 ## What could not be scored, and why
 
-32 of the 67 calibration targets could not be compared with this run. Each is named, because "fits 67 targets" is a much stronger claim than this data supports.
+31 of the 67 calibration targets could not be compared with this run. Each is named, because "fits 67 targets" is a much stronger claim than this data supports.
 
 | n | targets | why not |
 |---:|---|---|
 | 13 | `V004`, `V005`, `V006`, `V007`, `V008`, `V009`, `V010`, `V011`, … (5 more) | MATSim has no fare-product dimension, and 31.7% of the observed mix is CTP - contactless payment, an instrument rather than a person attribute, so the mix is not decomposable into anything the model represents (DECISIONS.md 12.1) |
 | 6 | `V196`, `V197`, `V198`, `V199`, `V200`, `V201` | 2018/19 vintage: a different mode vocabulary from the base year, and a pre-pandemic PT market (DECISIONS.md 12.1) |
 | 4 | `V001`, `V002`, `V023`, `V024` | Mar 2019 - Feb 2020 is a pre-pandemic PT market; the base year is 2026 and PT mode share roughly halved (DECISIONS.md 12). V002 is also V001 divided by 30.4, and the 20.8% share is algebraically V001/(V001+V023) |
-| 4 | `V079`, `V091`, `V096`, `V187` | station did not resolve to any link on the run network, so the model carries no counterpart to compare (outside the modelled area - issue 10) |
+| 3 | `V091`, `V096`, `V187` | station did not resolve to any link on the run network, so the model carries no counterpart to compare (outside the modelled area - issue 10) |
 | 2 | `V208`, `V209` | a schedule INPUT: MATSim runs transit on the timetable, so it reproduces 12.00 min by construction. It is a SUMO corridor target, not a MATSim one |
 | 1 | `V206` | no MATSim mode corresponds to this HTS category ("Walk linked" is 0.0 by construction: the walk stage of a PT trip is counted as PT in a linked mode share) |
 | 1 | `V003` | monthly total: needs WEEKDAY, SAT and SUN runs composed over a calendar month. A single day-type run cannot be compared with it |
@@ -107,11 +104,11 @@ From `params/C5_calibration.json`, written by `calibrate.py`.
 
 | | |
 |---|---|
-| Objective | `mode_share.mean_abs_pp` x1 |
-| Independent numbers in it | 4 |
+| Objective | `goal_modes.max_abs_rel_pct` x1 |
+| Independent numbers in it | 10 |
 | Free parameters | none |
 | Candidates evaluated | 0 |
-| Best objective | 10.6500 |
+| Best objective | 225.0336 |
 
 **Calibrated values**
 
@@ -122,17 +119,14 @@ Every parameter *not* listed above kept its declared registry value. The mode co
 
 ## Where the fit is poor — stated plainly
 
-On `phys1000a_25pct`:
+On `20260909T015217_300it_25pct`:
 
-- **Other** is +8.01 pp out (modelled 11.21 against observed 3.20)
-- **Vehicle driver** is +14.19 pp out (modelled 73.19 against observed 59.00)
-- **Vehicle passenger** is -20.51 pp out (modelled 0.09 against observed 20.60)
-- **Walk only** is -6.12 pp out (modelled 7.28 against observed 13.40)
-- **traffic counts** average -91.8% across 30 stations
-- **6 station(s) carry no modelled traffic at all**
-- **bike trip length** is 8.62 km against an observed 5.20 km
-- **car trip length** is 10.94 km against an observed 10.20 km
-- **pt trip length** is 10.40 km against an observed 23.40 km
-- **walk trip length** is 5.56 km against an observed 0.70 km
+- **Vehicle driver** is +6.34 pp out (modelled 65.34 against observed 59.00)
+- **Vehicle passenger** is -8.44 pp out (modelled 12.16 against observed 20.60)
+- **bike trip length** is 7.32 km against an observed 5.20 km
+- **car trip length** is 11.66 km against an observed 10.20 km
+- **pt trip length** is 10.96 km against an observed 23.40 km
+- **ride trip length** is 10.65 km against an observed 9.80 km
+- **walk trip length** is 3.28 km against an observed 0.70 km
 
 These are reported because deliverable 3 asks for honest reporting of where fit is poor, not because they are surprising.

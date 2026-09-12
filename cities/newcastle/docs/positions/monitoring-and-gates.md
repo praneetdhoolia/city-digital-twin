@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
+- **EVERY FINDING OF THE EIGHTH REPORT IS FIXED OR AWAITS A RUN** (§9.167, user directive 12 September 2026): the thirteen issues it filed (#180–#192) were worked in one session, the four consolidations the 11 September decision had held (#180, #181, #182, #191) landing byte-identical. The gate itself: `check_hardcoding` category 9 sees inline literals (124 → 0, 14 fields declared, #188); `session_gate` checks the installed import roots (`src/setup/install_paths.py`, #181); every one of 99 modules is imported by a test and the unit suite reads **455** (#190); the pricer books a stall as neither pace nor setup (F33 arm 0's next-arm quote 34.9 → 21.7 h); `build_fit_figures --check` refuses a C5 whose objective drifted from the declared components (it had, for eighteen days).
 - **PT BOARDINGS ARE READ FROM ONE SOURCE AT EVERY ITERATION** (§9.166): MATSim's legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`). The plans carry ~1.3 % more boarded pt legs than the table on `20260909T015217_300it_25pct` at 300 (23,070 vs 22,769 — the in-progress legs of stuck agents), so a gate read from plans and a milestone read from the table disagreed on one run; the board and `fit.py` now share the table's basis. The disclosed-station filter matches the station name whole (`station_of`), never as a substring; it reproduces 5,305 rail boardings at the disclosed stations exactly. `_metrics.json` and `_fit.json` are written through their output contracts.
 - **The eighth project report** (`reports/20260911T210144_project_report.html`, §9.166) is the first rendered by `render_report.py` from the lanes' JSON; the skill states its cadence — one report per reading, never two on one — after its own audit found 9 reports in 8 days with 76 of 105 recommendations taken and the goal count unmoved.
 
@@ -88,13 +89,11 @@
 
 - **REQUIREMENT 10 HAS A THIRD STATE, AND THE GATE IS HONEST FOR THE FIRST TIME** (§9.160, user decision 9 September 2026). An issue may declare it awaits something OTHER than a run — a decision, an acquisition, a mechanism — and say what; it is reported at every gate and launch and does not block (§9.160).
   No new label: the tracker already had `decision-needed` and `awaiting-implementation`, and no open issue used either (§9.160). Both carry the same evidence discipline as `awaiting-run` (§9.160).
-  The gate now reads **21 open, 16 awaiting a run with a stated measurement, 5 awaiting a decision, 0 blocking** (§9.160) — #49, #50, #155, #167 and the new #169 (§9.160).
+  It read **21 open, 16 awaiting a run with a stated measurement, 5 awaiting a decision, 0 blocking** at §9.160; the live count is `python src/run/issue_gate.py`, and after the 12 September session (§9.167) every open issue is either awaiting a run or awaiting a decision the tracker names.
 
 - **Whether the machine is idle, which build is on disk, and how many issues are open are all facts that expire**, and each has one home and one command: the board's state block, `python tests/check_package.py`, and `python src/run/issue_gate.py`. This page used to assert them — "the machine is idle; the package on disk is the F24 build; 13 open issues" — and every one of those was false within four days. The standing rule is what belongs here: **the next arm follows the user's root-cause pick under a fresh stated-cost approval**, and no arm launches while an open issue lacks `awaiting-run` (§9.140).
-- **The fix that made the watcher able to fire** was reading `_progress.json` rather than a log tail (§9.139): the original 64 KiB tail was measured blind at the 25 % log rate, with the ENDS marker 611 MiB behind EOF, and it idled straight through the F23 gate.
 - **Heavy rail's over-boarding has halved inside every arm and still stands**: 36,340 → 17,090 inside F21 (§9.134), 37,540 → 16,512 inside F22 under fares (§9.136), 37,568 → 19,140 inside F23 under income-scaled fares (§9.139, #98) — the F23 level at the same gate is HIGHER because income scaling weakens the fare deterrent for high-income boarders (#108).
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
-- **`--trend` omits `freight_train`** and its header still says resident linked trips for every row, while heavy rail and light rail rows now carry boardings (§9.130) — the header is behind the basis.
 - **`--truck-stations` is holdout-bound**: whether to spend holdout on freight is the operator's decision, not the reader's (§9.101, #82).
 - **`fit.py` still folds for the SURVEY targets, and no longer for the OBJECTIVE** (§9.87, §9.158): `score_mode_share` scores the survey's five folded categories as a calibration diagnostic, `score_goal_modes` scores the twelve unfolded modes, and the search now optimises the second. They stay distinct instruments by design.
 - **The calibration search is BUILT, WIRED AND BLOCKED** (§9.158). Everything that made `--execute` impossible is fixed, and it now refuses for a measured reason instead of failing on its first candidate: iteration 100 cannot resolve the goal band. **The honest first move is to change the reading point** — read deeper than 100, or average a window of iterations — and until then the search is priced with `--plan` and not run. The refusal is the finding, not an obstacle to route around.
@@ -114,6 +113,7 @@
 
 ## History
 
+- §9.167 — the eighth report worked down; inline literals gated; import roots gated
 - §9.166 — one boardings source; three launch refusals; the eighth report
 - §9.164 — the ceiling watcher fires; the gate needed the monitor
 - §9.163 — the counts rung repaired; the gate reports the choice-set bound

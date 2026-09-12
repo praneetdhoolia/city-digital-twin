@@ -46,14 +46,8 @@ family boundary flips `A.signals.representation` to `explicit_signals`.
 """
 
 # This builder encodes THIS CITY's corridor, so it lives with the city.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-import city as _city  # noqa: E402
-import registry as _registry  # noqa: E402
+import city as _city
+import registry as _registry
 
 import csv
 import gzip
@@ -135,7 +129,6 @@ def read_network(path):
 
 
 def project(lon, lat):
-    import pyproj
     if not hasattr(project, '_tf'):
         project._tf = __import__('pyproj').Transformer.from_crs(
             'EPSG:4326', _city.crs(), always_xy=True)
@@ -365,7 +358,9 @@ def capacity_patch(systems, out_dir):
                     capacity_saturation_veh_h=round(SAT_FLOW * l['lanes'], 1)))
     path = os.path.join(out_dir, 'signals_capacity_patch.csv')
     with open(path, 'w', encoding='utf-8', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0]))
+        # lineterminator pinned: the csv module's default is CRLF on every
+        # platform, and the manifest hashes LF (the 5 September rule)
+        w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
     return rows
@@ -602,14 +597,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '../../../src/build'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

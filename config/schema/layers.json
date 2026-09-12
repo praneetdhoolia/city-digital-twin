@@ -3,8 +3,8 @@
   "generated_from": "static reads of city.path(...) under src/ and tests/",
   "contract": "A city must produce every artefact below, at the same city-relative path, before the framework can run against it. The producing script may be entirely different - that is what a jurisdiction adapter is for - but the path and the columns the framework reads are the contract. Paths and columns carry tokens ({scenario}, {day_type}, {zone_id}, {coord_suffix}, {currency}) that each city expands with its OWN city.json declarations (intervention.scenarios, day_types, zone_system.id_column, crs.coord_suffix, currency) - the contract enumerates no city's vocabulary (issue #62 A2).",
   "caveat": "`columns_in_reference_city` is the header of the reference city's own copy, not a proven minimum: a column here may be incidental. Narrowing it to the columns framework code actually reads is not done, and the tokenisation is not complete either: secondary zone levels (SA2_*), lowercase level names inside compound columns (home_sa1) and agency vocabulary are still the reference city's naming. Recorded when the reference artefact is on disk and carried forward from the committed document when it is not, so the document regenerates identically on a checkout without the bulk data. Whether an artefact is PRESENT locally is a report, not part of this contract, and is never stored here.",
-  "n_artefacts": 117,
-  "n_paths_built_at_runtime": 19,
+  "n_artefacts": 113,
+  "n_paths_built_at_runtime": 21,
   "artefacts": {
     "data/MANIFEST.csv": {
       "kind": "file",
@@ -750,6 +750,13 @@
         "matched_by"
       ]
     },
+    "data/processed/validation/count_station_links_provenance.json": {
+      "kind": "file",
+      "read_by": [
+        "src/analyse/extract_metrics.py",
+        "src/analyse/map_count_stations.py"
+      ]
+    },
     "data/processed/validation/mode_targets_by_mode.csv": {
       "kind": "file",
       "read_by": [
@@ -805,6 +812,7 @@
     "data/processed/validation/validation_targets.csv": {
       "kind": "file",
       "read_by": [
+        "src/calibrate/calibrate.py",
         "src/calibrate/fit.py",
         "tests/check_package.py"
       ],
@@ -1091,6 +1099,12 @@
         "src/analyse/build_status_board.py"
       ]
     },
+    "docs/reference": {
+      "kind": "directory",
+      "read_by": [
+        "src/build/build_data_dictionary.py"
+      ]
+    },
     "docs/reference/CALIBRATION_REPORT.md": {
       "kind": "file",
       "read_by": [
@@ -1159,6 +1173,7 @@
     "networks/osm/footways.osm": {
       "kind": "file",
       "read_by": [
+        "src/build/build_matsim_network.py",
         "src/build/build_network_layers.py",
         "src/build/measure_osm_defaults.py",
         "src/build/shape_tools.py"
@@ -1461,13 +1476,6 @@
         "tests/check_package.py"
       ]
     },
-    "scenarios/matsim/{scenario}/network.xml.gz": {
-      "kind": "pattern",
-      "read_by": [
-        "src/analyse/map_count_stations.py"
-      ],
-      "instantiated_by": "city.json intervention.scenarios / day_types: one artefact per {scenario} / {day_type} value"
-    },
     "schedules/*.zip": {
       "kind": "pattern",
       "read_by": [
@@ -1477,32 +1485,7 @@
     "schedules/base2026.zip": {
       "kind": "file",
       "read_by": [
-        "src/build/build_gtfs_extras.py",
-        "src/build/build_matsim_network.py"
-      ]
-    },
-    "schedules/era1_pre2014_reconstructed.zip": {
-      "kind": "file",
-      "read_by": [
-        "src/build/build_matsim_network.py"
-      ]
-    },
-    "schedules/era2_2016_rail_truncated.zip": {
-      "kind": "file",
-      "read_by": [
-        "src/build/build_matsim_network.py"
-      ]
-    },
-    "schedules/era3_2018_keolis_interchange.zip": {
-      "kind": "file",
-      "read_by": [
-        "src/build/build_matsim_network.py"
-      ]
-    },
-    "schedules/era4_2019_lr_open.zip": {
-      "kind": "file",
-      "read_by": [
-        "src/build/build_matsim_network.py"
+        "src/build/build_gtfs_extras.py"
       ]
     },
     "schedules/operators.json": {
@@ -1516,13 +1499,6 @@
       "read_by": [
         "tests/check_package.py"
       ]
-    },
-    "schedules/scenarios/{scenario}.zip": {
-      "kind": "pattern",
-      "read_by": [
-        "src/build/build_matsim_network.py"
-      ],
-      "instantiated_by": "city.json intervention.scenarios / day_types: one artefact per {scenario} / {day_type} value"
     },
     "tests/package_expectations.json": {
       "kind": "file",

@@ -125,6 +125,12 @@ public final class PtCrowdingScoring implements TransitDriverStartsEventHandler,
     private final Map<Id<Vehicle>, Aboard> inService = new HashMap<>();
     /** Where a passenger currently aboard found the vehicle's integral. */
     private final Map<Id<Person>, Double> boardedAt = new HashMap<>();
+    /** Which vehicle each passenger currently aboard is in, so a passenger the
+     *  mobsim ends on can be charged for the time aboard up to its end. */
+    private final Map<Id<Person>, Id<Vehicle>> vehicleOf = new HashMap<>();
+    /** The last event clock seen, the honest "end" of a day whose qsim end
+     *  time is unbounded. */
+    private double lastEventTime = 0.0;
     private final Map<Id<Person>, Double> surplusSeconds = new HashMap<>();
     /** Transit vehicle types with no declared seat count - reported rather
      *  than silently treated as uncrowdable, the 9.12 defect class. */
@@ -174,6 +180,8 @@ public final class PtCrowdingScoring implements TransitDriverStartsEventHandler,
         advance(aboard, event.getTime());
         aboard.occupancy++;
         this.boardedAt.put(event.getPersonId(), aboard.surplusIntegral);
+        this.vehicleOf.put(event.getPersonId(), event.getVehicleId());
+        this.lastEventTime = Math.max(this.lastEventTime, event.getTime());
     }
 
     @Override
@@ -183,9 +191,11 @@ public final class PtCrowdingScoring implements TransitDriverStartsEventHandler,
             return;
         }
         final Double boarded = this.boardedAt.remove(event.getPersonId());
+        this.vehicleOf.remove(event.getPersonId());
         if (boarded == null) {
             return;                      // the driver, or boarded before this
         }
+        this.lastEventTime = Math.max(this.lastEventTime, event.getTime());
         advance(aboard, event.getTime());
         if (aboard.occupancy > 0) {
             aboard.occupancy--;
@@ -243,6 +253,15 @@ public final class PtCrowdingScoring implements TransitDriverStartsEventHandler,
 
     @Override
     public void notifyAfterMobsim(final AfterMobsimEvent event) {
+        // A PASSENGER STILL ABOARD WHEN THE MOBSIM ENDS never fires
+        // PersonLeavesVehicleEvent, so their `boardedAt` entry was never
+        // redeemed and `clear()` discarded it: the penalty was systematically
+        // under-charged on exactly the vehicles most likely to be full at
+        // day's end (eighth project report, 11 September 2026, area 6).
+        // Redeem each at the day's end - the qsim's end time where it is
+        // bounded, else the last event clock - at the load the vehicle was
+        // carrying, exactly as an alighting would.
+        redeemStillAboard(endOfDay());
         // Deterministic emission order: scores are additive so order cannot
         // change a result, but a sorted event stream diffs cleanly.
         final List<Map.Entry<Id<Person>, Double>> charges =
@@ -262,10 +281,48 @@ public final class PtCrowdingScoring implements TransitDriverStartsEventHandler,
         clear();
     }
 
+    private double endOfDay() {
+        final org.matsim.core.utils.misc.OptionalTime qsimEnd =
+                this.scenario.getConfig().qsim().getEndTime();
+        final double end = qsimEnd.isDefined() ? qsimEnd.seconds()
+                                               : Double.POSITIVE_INFINITY;
+        return Double.isFinite(end) ? Math.max(end, this.lastEventTime)
+                                    : this.lastEventTime;
+    }
+
+    private void redeemStillAboard(final double end) {
+        final List<Id<Person>> aboardAtEnd = new ArrayList<>(this.boardedAt.keySet());
+        aboardAtEnd.sort(null);
+        for (final Id<Person> person : aboardAtEnd) {
+            final Id<Vehicle> vehicleId = this.vehicleOf.get(person);
+            final Aboard aboard = vehicleId == null ? null
+                                  : this.inService.get(vehicleId);
+            final Double boarded = this.boardedAt.get(person);
+            if (aboard == null || boarded == null) {
+                continue;
+            }
+            advance(aboard, end);
+            if (aboard.occupancy > 0) {
+                aboard.occupancy--;
+            }
+            final double surplus = aboard.surplusIntegral - boarded;
+            if (surplus > 0.0) {
+                this.surplusSeconds.merge(person, surplus, Double::sum);
+            }
+            this.stillAboardAtEnd++;
+        }
+    }
+
+    /** Passengers charged at the day's end rather than at an alighting, over
+     *  the run - printed by toString for the run's console. */
+    private long stillAboardAtEnd = 0;
+
     private void clear() {
         this.surplusSeconds.clear();
         this.boardedAt.clear();
+        this.vehicleOf.clear();
         this.inService.clear();
+        this.lastEventTime = 0.0;
     }
 
     /** Logged once at startup, so a run's console says what it charges. */
@@ -274,6 +331,8 @@ public final class PtCrowdingScoring implements TransitDriverStartsEventHandler,
         return "ptCrowding: seated x" + this.seatedMultiplier + ", standing x"
                 + this.standingMultiplier + ", " + this.penaltyUtilsPerHour
                 + " utils per felt extra hour aboard"
+                + "; passengers redeemed at the day's end so far: "
+                + this.stillAboardAtEnd
                 + (this.vehiclesWithoutSeats.isEmpty() ? ""
                    : "; NO SEAT COUNT (uncrowdable): "
                      + this.vehiclesWithoutSeats);

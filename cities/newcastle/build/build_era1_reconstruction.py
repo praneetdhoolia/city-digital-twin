@@ -20,14 +20,7 @@ remains an outstanding data task, recorded in DECISIONS.md.
 # This builder encodes THIS CITY's intervention, corridor or history, so it lives
 # with the city rather than in the framework. It still uses the framework's
 # generic machinery, which is two directories up.
-import os as _os
-import sys as _sys
-_REPO = _os.path.dirname(_os.path.dirname(_os.path.dirname(
-    _os.path.dirname(_os.path.abspath(__file__)))))
-_sys.path.insert(0, _os.path.join(_REPO, 'src'))
-_sys.path.insert(0, _os.path.join(_REPO, 'src', 'build'))
-import city as _city  # noqa: E402
-import sys
+import city as _city
 import json
 import math
 import collections
@@ -37,9 +30,9 @@ from gtfs_tools import read_feed, write_feed
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
+ALIGNMENT_DETOUR = float(CFG.get('A.transit.era1_alignment_detour_factor'))
 
 SRC = _city.path('schedules/era2_2016_rail_truncated.zip')
 OUT = _city.path('schedules/era1_pre2014_reconstructed.zip')
@@ -134,7 +127,7 @@ def main():
         t = sec(rows[-1]['arrival_time'])
         out = [dict(r) for r in rows]
         for sid, (nm, la, lo) in zip(ids, CLOSED_STATIONS):
-            d = hav(cur, (la, lo)) * 1.08
+            d = hav(cur, (la, lo)) * ALIGNMENT_DETOUR
             if d < 50:                      # already at/next to this site
                 cur = (la, lo)
                 continue
@@ -176,14 +169,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '../../../src/build'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

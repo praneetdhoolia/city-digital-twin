@@ -34,15 +34,10 @@ Nothing here reads a validation target, let alone a holdout one.
 import argparse
 import gzip
 import hashlib
-import os
 import re
 
-import sys
-_HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(_HERE, '..', 'build'))
-sys.path.insert(0, os.path.join(_HERE, '..'))
-from det_io import gzip_writer  # noqa: E402
-import registry                 # noqa: E402
+from det_io import gzip_writer
+import registry
 
 # The registry is read ON FIRST USE, not at import (#126). This module is
 # imported by run_matsim.py, which run.py imports unconditionally, so a

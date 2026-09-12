@@ -39,12 +39,9 @@ byte-identical output, which is what lets `reach()` diff them at all.
 import io
 import json
 import os
-import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-sys.path.insert(0, os.path.join(REPO, 'src'))
-sys.path.insert(0, HERE)
 
 import registry as _registry  # noqa: E402
 

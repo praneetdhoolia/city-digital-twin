@@ -40,14 +40,24 @@ import json
 import csv
 import io
 import os
-import sys
 
 REPO = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
-sys.path.insert(0, REPO)
-sys.path.insert(0, os.path.join(REPO, 'src'))
 
 RAW = os.path.join(REPO, 'results', 'raw')
+
+
+def stall_kill_s():
+    """The registry's own stall rule, RUN.gate.stall_kill_s - an iteration
+    longer than the silence that kills a run IS a stall by that definition,
+    and the pricer excludes it from the pace and the setup it carries. Read
+    from the registry so the pricer and the killer cannot disagree."""
+    try:
+        import sys as _sys
+        import registry as _registry                          # noqa: PLC0415
+        return float(_registry.load().get('RUN.gate.stall_kill_s'))
+    except Exception:                                          # noqa: BLE001
+        return None
 
 
 def _read(path):
@@ -188,7 +198,21 @@ def observed_arms(min_iterations: int = 2) -> list:
         # probe - so it is carried rather than folded into the median.
         wall = rec.get('wall_s') or meta.get('wall_s')
         setup = None
-        if wall and reached:
+        # From the run's OWN per-iteration clock where the digest recorded
+        # one: `wall - median x n` booked F33 arm 0's 13.1 h stall inside
+        # iteration 89 as "13.9 h of setup" and quoted the next arm at 34.9 h
+        # against a measured 6 min of setup (12 September 2026). A stall is
+        # neither pace nor setup; it is named here and priced as neither.
+        recorded = prog.get('iteration_seconds') or {}
+        stalls = {}
+        if recorded:
+            secs = {int(k): float(v) for k, v in recorded.items()}
+            limit = stall_kill_s()
+            if limit:
+                stalls = {k: v for k, v in secs.items() if v > limit}
+            if wall:
+                setup = max(0.0, float(wall) - sum(secs.values()))
+        elif wall and reached:
             spent = float(median) * (int(reached) + 1)
             setup = max(0.0, float(wall) - spent)
         out.append(dict(
@@ -205,6 +229,8 @@ def observed_arms(min_iterations: int = 2) -> list:
             median_iteration_s=float(median),
             reached_iteration=int(reached),
             setup_s=setup,
+            # iterations that were a stall, not a pace (seconds each)
+            stalls_s=stalls,
             completion=rec.get('completion') or meta.get('status'),
             family=rec.get('family') or meta.get('family'),
             # The committed Java this run EXECUTED. Resume detection has
@@ -316,8 +342,6 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
         import sys as _sys
         _here = os.path.dirname(os.path.abspath(__file__))
         _run = os.path.join(os.path.dirname(_here), 'run')
-        if _run not in _sys.path:
-            _sys.path.insert(0, _run)
         import run_matsim as _rm
         current = _rm.controler_sha256()
     except Exception:                                          # noqa: BLE001
@@ -341,7 +365,17 @@ def price(iterations: int, fraction, arms: list, gate_every=None) -> dict:
             'execute cannot be told from its record. Treat the quote as a '
             'lower bound.' % (newest or {}).get('name'))
 
+    stall_warning = None
+    if newest.get('stalls_s'):
+        stall_warning = (
+            'THE PRICED RUN STALLED: iteration(s) %s took %s in all, excluded '
+            'from the pace and from the setup carried here. Whatever stalled '
+            'it (a heap at its ceiling, #66) is a risk the quote does not '
+            'price.' % (', '.join(str(k) for k in sorted(newest['stalls_s'])),
+                        _fmt_hours(sum(newest['stalls_s'].values()))))
+
     return dict(
+        stall_warning=stall_warning,
         setup_s=setup_s,
         iterations=iterations,
         fraction=fraction,

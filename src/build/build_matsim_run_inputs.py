@@ -30,13 +30,7 @@ Three things have to come together, and each has a constraint attached.
 Nothing here runs a scenario. It writes the inputs a run would consume.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import re
 import csv
@@ -46,18 +40,15 @@ import argparse
 import collections
 import xml.etree.ElementTree as ET
 
-import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from det_io import gzip_writer
 import hts_purpose as _hts_purpose
 
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
-from registry import param_config as _param_config  # noqa: E402
+import registry as _registry
+import subpopulations
+from registry import param_config as _param_config
 
 MATSIM = _city.path('networks/matsim')
 PATCHES = _city.path('data/processed/network/A1_road_variant_patches.csv')
@@ -778,7 +769,10 @@ def patch_network(src_net, dst_net, patches, drop_turns, excluded_of_mode,
             new_tail = set_link_attribute(tail, 'osm:way:kerbside',
                                           p['field_kerbside_use_to'])
             if new_tail != tail:
-                applied['kerbside_use'] += 1
+                # an attribute NO run reads (grep src/java: no reader of
+                # osm:way:kerbside): recorded for the E1 delta, and named so a
+                # reader of the report cannot take it for a physical change
+                applied['kerbside_use_attribute_unread_by_any_run'] += 1
                 tail = new_tail
         merged, extended = allow_car_companions(head + tail, excluded_of_mode)
         if extended:
@@ -1402,14 +1396,16 @@ def scoring_from_c1(cfg, c1, purpose_share):
             'proposal 6.3 asked for; the declared '
             'RUN.transit_router.search_radius_m / extension_radius_m bound '
             'the raptor search, never the utility. CORRECTED 8 Sep 2026 '
-            '(9.159, #167): this line used to say that access and egress '
-            'walk "is routed on the walk network", and it is not. At '
-            'RUN.transit_router.access_egress_basis = %s the raptor draws '
-            'those legs as BEELINES and the mobsim teleports them - 520,385 '
-            'such legs on one arm - so the time scored is a straight-line '
-            'time. What IS network-routed is the DIRECT walk '
-            '(RUN.transit_router.direct_walk_basis, 9.121), which is the '
-            'walk instead of pt rather than the walk to the stop'
+            '(9.159, #167): until 12 Sep 2026 the raptor drew access and '
+            'egress walk as BEELINES and the mobsim teleported them - '
+            '520,385 such legs on one arm - so the time scored was a '
+            'straight-line time. SETTLED 12 Sep 2026 (9.167, #167): at '
+            'RUN.transit_router.access_egress_basis = %s the access, egress '
+            'AND transfer walks are routed on the walk network and executed '
+            'by the qsim (teleported=0 on the 4/4 probe); at beeline they are '
+            'drawn straight again. The DIRECT walk '
+            '(RUN.transit_router.direct_walk_basis, 9.121) - the walk '
+            'instead of pt - was network-routed before either'
             % cfg.get('RUN.transit_router.access_egress_basis'),
         ])
 
@@ -1788,13 +1784,15 @@ def config_runtime(cfg, scoring, day, paths):
     # Income-dependent money sensitivity (9.138, #108): the exponent and the
     # representation gate arrive by their declared matsim_param bindings; the
     # exclusion list is the demand builder's own non-resident subpopulation
-    # vocabulary, which is a property of the plans, not a registry value.
+    # vocabulary, which is a property of the plans, not a registry value -
+    # and it is imported from the one module that names it, so the writer
+    # and this emitter cannot drift apart.
     if cfg.get('C.income.representation') == 'person_marginal_utility_of_money':
         runtime['incomeScoring.excludeSubpopulations'] = (
-            'external,freight', 'derived',
+            ','.join(subpopulations.NON_RESIDENT), 'derived',
             "the demand builder's non-resident subpopulation names "
-            '(build_matsim_plans.py): volumes, not budgets - they carry no '
-            'income attribute either, so the exclusion is belt and braces')
+            '(src/build/subpopulations.py): volumes, not budgets - they carry '
+            'no income attribute either, so the exclusion is belt and braces')
 
     # Level crossings (#68): the closures reach the router only as a
     # time-variant network, and only when the declared representation gate

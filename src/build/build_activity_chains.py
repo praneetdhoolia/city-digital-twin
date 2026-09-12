@@ -40,13 +40,7 @@ Determinism: one seeded generator, persons visited in sorted id order, zone and
 POI arrays built in sorted order. Same seed reproduces the file byte for byte.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import csv
 import json
@@ -60,14 +54,11 @@ import pandas as pd
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
 # The HTS purpose map is shared with the run-input assembler: the demand may
 # not be generated under one reading of `Serve passenger` and priced under
 # another (#147, DECISIONS.md 9.151).
-_sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import hts_purpose as _hts_purpose  # noqa: E402
+import hts_purpose as _hts_purpose
 CFG = _registry.load()
 
 ZON = _city.path('data/processed/zones')
@@ -185,16 +176,23 @@ DAY_PURPOSE_MIX = CFG.get('B.activity.day_purpose_mix')
 # working from home, so it carries the lockdown with it and cannot set the
 # value (DECISIONS.md 2.4 rules G62 out as a behavioural rate) - it bounds the
 # sweep instead. The upper bound allows for leave and illness.
-P_MANDATORY_WORK_SWEEP = (None, 0.90)     # lower bound filled from C2 at load
-P_MANDATORY_EDUCATION_SWEEP = (0.70, 0.95)
+# THE SWEEP IS THE FIELD'S OWN, not a tuple typed beside it: two per-purpose
+# brackets lived here - work (census attendance, 0.90) and education (0.70,
+# 0.95) - that no registry field declared, and the report published them as
+# if declared (eighth project report, 11 September 2026). The declared
+# interval bounds both WEEKDAY entries; `load_measured_factors` replaces the
+# work lower bound with the C2-measured census-day attendance, which is what
+# the field's own sweep_basis says bounds it.
 P_MANDATORY = CFG.get('B.activity.p_mandatory')
+P_MANDATORY_WORK_SWEEP = tuple(CFG.sweep('B.activity.p_mandatory'))
+P_MANDATORY_EDUCATION_SWEEP = tuple(CFG.sweep('B.activity.p_mandatory'))
 
 # Probability a tour includes an intermediate stop, by tour purpose. This is
 # what creates genuine sub-tours, and therefore what lets MATSim's mode choice
 # vary within a day rather than for the whole day at once. Assumed.
 P_INTERMEDIATE_STOP = CFG.get('B.activity.p_intermediate_stop')
 P_SECOND_STOP = CFG.get('B.activity.p_second_stop')
-P_SECOND_STOP_SWEEP = (0.12, 0.40)
+P_SECOND_STOP_SWEEP = tuple(CFG.sweep('B.activity.p_second_stop'))
 
 # An escort tour is made by the person doing the driving, so a non-licence
 # holder cannot make one. Derived from the same identity as the `ride` driver
@@ -301,8 +299,13 @@ BALANCE_TOL = CFG.get('B.activity.balancing_tolerance')
 # Share of an under-12's drawn secondary tours that are actually made alone.
 # Applied as per-tour thinning, not as a scaling of the count.
 CHILD_TOUR_RETENTION = CFG.get('B.activity.child_tour_retention')
-CHILD_TOUR_RETENTION_SWEEP = (0.25, 0.60)
-P_INTERMEDIATE_SWEEP = (0.10, 0.35)
+CHILD_TOUR_RETENTION_SWEEP = tuple(CFG.sweep('B.activity.child_tour_retention'))
+# the clearance a companion tour keeps from a busy interval, and the dwell
+# at each end of a serve tour: both were inline literals (600 s, 300 s)
+# in four functions until 12 Sep 2026 (#188)
+COMPANION_BUFFER_S = int(CFG.get('B.activity.companion_buffer_s'))
+ESCORT_DWELL_S = int(CFG.get('B.activity.escort_dwell_s'))
+P_INTERMEDIATE_SWEEP = tuple(CFG.sweep('B.activity.p_intermediate_stop'))
 
 # Straight-line to network distance, used to compare the gravity model against
 # the HTS journey distances, which are network distances. **Measured**, not
@@ -788,8 +791,15 @@ def load_network_factors():
     """
     global DETOUR_FACTOR, DETOUR_SWEEP, DETOUR_SOURCE
     global P_MANDATORY_WORK_SWEEP
-    shape = {'WEEKDAY': 1.0, 'SAT': 0.95, 'SUN': 0.80}
-    shape_source = 'assumed - C2 factors file not found'
+    if not os.path.exists(NETWORK_FACTORS):
+        # No silent fallback: the day-type shape used to fall back to an
+        # ASSUMED {SAT 0.95, SUN 0.80} typed here when the C2 measurements
+        # were missing (#188). The measurements exist and are what the build
+        # rests on; a package without them is rebuilt, not guessed at.
+        raise SystemExit('no C2 network factors at %s - run '
+                         'src/build/measure_network_factors.py first; the '
+                         'day-type shape is MEASURED there and is not assumed '
+                         'here' % NETWORK_FACTORS)
     if os.path.exists(NETWORK_FACTORS):
         c2 = json.load(open(NETWORK_FACTORS, encoding='utf-8'))
         d = c2['detour_factor']
@@ -1116,8 +1126,8 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
     for oi in order:
         purpose = tours[oi]
         t_start = starts[oi]
-        if t_now is not None and t_start < t_now + 600:
-            t_start = t_now + 600
+        if t_now is not None and t_start < t_now + COMPANION_BUFFER_S:
+            t_start = t_now + COMPANION_BUFFER_S
         spec = draw_tour_spec(purpose, hz, CUM, store, zone_arr, u)
         # flow around the immovable escort tours: a movable tour that would
         # overlap one is pushed past its end and re-timed (never redrawn)
@@ -1125,10 +1135,10 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
         while t_start <= DAY_HORIZON_S - 3600:
             legs_m, arr_home = time_tour(spec, t_start, person, hx, hy, hz, SA1)
             hit = next(((fs, fe) for fs, fe in fixed_intervals
-                        if t_start < fe + 600 and arr_home > fs), None)
+                        if t_start < fe + COMPANION_BUFFER_S and arr_home > fs), None)
             if hit is None:
                 break
-            t_start = hit[1] + 600
+            t_start = hit[1] + COMPANION_BUFFER_S
             legs_m = None
         if legs_m is None:
             # 9.164 (#30): DROP THIS TOUR, NOT THE REST OF THE DAY. This
@@ -1189,6 +1199,91 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
                             k=first[1], dx=first[2], dy=first[3],
                             escorted=(first[4] == 'escorted')))
     return legs, anchors
+
+
+# --------------------------------------------------------------------------
+# The binder passes' shared skeleton (#191). Four passes - escort (9.46),
+# lift (9.60), joint (9.84), shared (9.124) - are four RULE SETS over one
+# skeleton: read the closed day file, index its core rows by person, test a
+# candidate against a person's busy intervals, resequence and rewrite the
+# day grouped by person under the #65 contiguity invariant, write the
+# bindings table. The skeleton lives here once; the rules stay in each pass
+# because their candidate order IS the model - it decides who is bound to
+# whom - and a shared abstraction over four different orders would be a
+# fifth model nobody declared. Every helper is the verbatim block it
+# replaced: the committed B2 tables rebuild byte-identical.
+# --------------------------------------------------------------------------
+def read_day(path):
+    """The closed day file's rows, in file order."""
+    with open(path, encoding='utf-8') as fh:
+        return list(csv.DictReader(fh))
+
+
+def core_rows_of(rows):
+    """person_id -> row indexes, core tier only, in file order."""
+    rows_of = collections.defaultdict(list)
+    for ix, r in enumerate(rows):
+        if r['agent_tier'] == 'core':
+            rows_of[r['person_id']].append(ix)
+    return rows_of
+
+
+def collides(start, end, busy):
+    """True when [start, end] overlaps any busy interval inside the buffer."""
+    return any(start < e + COMPANION_BUFFER_S and end > s - COMPANION_BUFFER_S
+               for s, e in busy)
+
+
+def resequence(day_rows):
+    """A person's rows in departure order, trip_seq renumbered from 1."""
+    day_rows.sort(key=lambda r: (int(r['dep_time_s']), int(r['tour_id'])))
+    for seq, r in enumerate(day_rows, start=1):
+        r['trip_seq'] = seq
+    return day_rows
+
+
+def assert_contiguous(by_person, who, day):
+    """The #65 invariant: a person's tours stay CONTIGUOUS in trip_seq. With
+    one mode per tour and every tour anchored at home, contiguity is what
+    structurally excludes the mixed chain/non-chain subtours
+    SubtourModeChoice refuses."""
+    for p, day_rows in by_person.items():
+        prev, seen_tours = None, set()
+        for r in day_rows:
+            t = r['tour_id']
+            if t != prev:
+                if t in seen_tours:
+                    raise SystemExit(
+                        '%s: interleaved tours for person %s on %s - refusing '
+                        'to write a demand that crashes SubtourModeChoice '
+                        '(#65)' % (who, p, day))
+                seen_tours.add(t)
+                prev = t
+
+
+def rewrite_day(path, rows, by_person):
+    """Rewrite the day file grouped by person, persons in first-seen order."""
+    seen = set()
+    with open(path, 'w', newline='', encoding='utf-8') as fh:
+        w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
+                           lineterminator='\n')
+        w.writeheader()
+        for r in rows:
+            p = r['person_id']
+            if p in seen:
+                continue
+            seen.add(p)
+            for row in by_person[p]:
+                w.writerow(row)
+
+
+def write_bindings(bpath, cols, bindings, key=None):
+    """The pass's bindings table, in the order the pass declares."""
+    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
+        w = csv.DictWriter(fh, fieldnames=cols, lineterminator='\n')
+        w.writeheader()
+        for b in (sorted(bindings, key=key) if key else bindings):
+            w.writerow(b)
 
 
 def bind_escort_tours(n_hx, candidates, claimed, pending):
@@ -1272,7 +1367,6 @@ def bind_escort_tours(n_hx, candidates, claimed, pending):
     return fixed
 
 
-
 def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
     """Re-target unbound HX tours to passengers no household driver can serve.
 
@@ -1307,13 +1401,8 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
                drivers_refused_no_vehicle=0)
     if not out['enabled'] or not ESCORT_BINDING:
         return out
-    with open(path, encoding='utf-8') as fh:
-        rows = list(csv.DictReader(fh))
-
-    rows_of = collections.defaultdict(list)   # person_id -> row indexes
-    for ix, r in enumerate(rows):
-        if r['agent_tier'] == 'core':
-            rows_of[r['person_id']].append(ix)
+    rows = read_day(path)
+    rows_of = core_rows_of(rows)              # person_id -> row indexes
 
     round_trip = ESCORT_DIRECTIONS == 'round_trip'
     out['directions'] = ESCORT_DIRECTIONS
@@ -1386,7 +1475,7 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
         committed, so a round-trip pair is checked as a whole (9.68).
         """
         ctx_d = pctx[d_pid]
-        spec = dict(purpose='HX', chain=chain, durs=[300, 300])
+        spec = dict(purpose='HX', chain=chain, durs=[ESCORT_DWELL_S, ESCORT_DWELL_S])
         person_d = dict(cav=ctx_d['cav'])
         probe, _ = time_tour(spec, 0, person_d, ctx_d['hx'], ctx_d['hy'],
                              ctx_d['hz'], SA1)
@@ -1414,8 +1503,7 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
             iv = busy[r['tour_id']]
             iv[0] = min(iv[0], int(r['dep_time_s']))
             iv[1] = max(iv[1], int(r['arr_time_s']))
-        if any(t_start < e + 600 and arr_home > s - 600
-               for s, e in busy.values()):
+        if collides(t_start, arr_home, busy.values()):
             out['skipped_infeasible'] += 1
             return None
         tail_s = DAY_HORIZON_S - 24 * 3600
@@ -1524,52 +1612,17 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
         for (d_pid, d_tid), new_rows in replaced.items():
             day_rows = [r for r in by_person[d_pid] if r['tour_id'] != d_tid]
             day_rows += new_rows
-            day_rows.sort(key=lambda r: (int(r['dep_time_s']),
-                                         int(r['tour_id'])))
-            for seq, r in enumerate(day_rows, start=1):
-                r['trip_seq'] = seq
-            by_person[d_pid] = day_rows
-        # The invariant the splice must preserve: a person's tours stay
-        # CONTIGUOUS in trip_seq. With one mode per tour and every tour
-        # anchored at home, contiguity is what structurally excludes the
-        # mixed chain/non-chain subtours SubtourModeChoice refuses (#65).
-        for p, day_rows in by_person.items():
-            prev, seen_tours = None, set()
-            for r in day_rows:
-                t = r['tour_id']
-                if t != prev:
-                    if t in seen_tours:
-                        raise SystemExit(
-                            'bind_nonhousehold_lifts: interleaved tours for '
-                            'person %s on %s - refusing to write a demand '
-                            'that crashes SubtourModeChoice (#65)' % (p, day))
-                    seen_tours.add(t)
-                    prev = t
-        seen = set()
-        with open(path, 'w', newline='', encoding='utf-8') as fh:
-            w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
-                               lineterminator='\n')
-            w.writeheader()
-            for r in rows:
-                p = r['person_id']
-                if p in seen:
-                    continue
-                seen.add(p)
-                for row in by_person[p]:
-                    w.writerow(row)
+            by_person[d_pid] = resequence(day_rows)
+        assert_contiguous(by_person, 'bind_nonhousehold_lifts', day)
+        rewrite_day(path, rows, by_person)
 
     bpath = os.path.join(OUT, 'B2_lift_bindings_%s.csv' % day)
-    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=[
-            'passenger_person_id', 'passenger_tour_id', 'passenger_dep_s',
-            'priority', 'direction', 'origin_x', 'origin_y', 'dest_x',
-            'dest_y', 'driver_person_id', 'driver_household_id',
-            'driver_tour_id'], lineterminator='\n')
-        w.writeheader()
-        for b in sorted(bindings,
-                        key=lambda b: (int(b['passenger_person_id']),
-                                       b['passenger_tour_id'])):
-            w.writerow(b)
+    write_bindings(bpath, [
+        'passenger_person_id', 'passenger_tour_id', 'passenger_dep_s',
+        'priority', 'direction', 'origin_x', 'origin_y', 'dest_x',
+        'dest_y', 'driver_person_id', 'driver_household_id',
+        'driver_tour_id'], bindings,
+        key=lambda b: (int(b['passenger_person_id']), b['passenger_tour_id']))
     return out
 
 
@@ -1621,14 +1674,9 @@ def bind_joint_tours(path, day, pctx, seed):
                            lineterminator='\n').writeheader()
         return out
 
-    with open(path, encoding='utf-8') as fh:
-        rows = list(csv.DictReader(fh))
-    rows_of = collections.defaultdict(list)   # person_id -> row indexes
-    n_core = 0
-    for ix, r in enumerate(rows):
-        if r['agent_tier'] == 'core':
-            rows_of[r['person_id']].append(ix)
-            n_core += 1
+    rows = read_day(path)
+    rows_of = core_rows_of(rows)              # person_id -> row indexes
+    n_core = sum(len(v) for v in rows_of.values())
 
     # trips already coordinated by the earlier passes count toward the
     # target first: a member tour covered round-trip by 9.46/9.68 escorts,
@@ -1830,7 +1878,7 @@ def bind_joint_tours(path, day, pctx, seed):
             d_rows = effective_rows(d_pid, d_tid)
             t_start = min(int(r['dep_time_s']) for r in d_rows)
             t_end = max(int(r['arr_time_s']) for r in d_rows)
-            if any(t_start < e + 600 and t_end > s - 600 for s, e in busy):
+            if collides(t_start, t_end, busy):
                 why['as_timed_collides_with_companion'] += 1
                 continue
             chosen = (d_pid, d_tid, d_rows, t_start, t_end, 0)
@@ -1859,12 +1907,10 @@ def bind_joint_tours(path, day, pctx, seed):
                 if s_start < 0 or s_end > DAY_HORIZON_S:
                     why['shift_leaves_day_horizon'] += 1
                     continue
-                if any(s_start < e + 600 and s_end > s - 600
-                       for s, e in busy):
+                if collides(s_start, s_end, busy):
                     why['shift_collides_with_companion'] += 1
                     continue
-                if any(s_start < e + 600 and s_end > s - 600
-                       for s, e in intervals_of(d_pid, d_tid)):
+                if collides(s_start, s_end, intervals_of(d_pid, d_tid)):
                     why['shift_collides_with_driver'] += 1
                     continue
                 for r in d_rows:
@@ -1927,45 +1973,13 @@ def bind_joint_tours(path, day, pctx, seed):
         resort = ({c for (c, _t) in replaced}
                   | {d for (d, _t) in shifted})
         for p in resort:
-            day_rows = by_person[p]
-            day_rows.sort(key=lambda r: (int(r['dep_time_s']),
-                                         int(r['tour_id'])))
-            for seq, r in enumerate(day_rows, start=1):
-                r['trip_seq'] = seq
-            by_person[p] = day_rows
-        # the #65 invariant: a person's tours stay CONTIGUOUS in trip_seq
-        for p, day_rows in by_person.items():
-            prev, seen_tours = None, set()
-            for r in day_rows:
-                t = r['tour_id']
-                if t != prev:
-                    if t in seen_tours:
-                        raise SystemExit(
-                            'bind_joint_tours: interleaved tours for person '
-                            '%s on %s - refusing to write a demand that '
-                            'crashes SubtourModeChoice (#65)' % (p, day))
-                    seen_tours.add(t)
-                    prev = t
-        seen = set()
-        with open(path, 'w', newline='', encoding='utf-8') as fh:
-            w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
-                               lineterminator='\n')
-            w.writeheader()
-            for r in rows:
-                p = r['person_id']
-                if p in seen:
-                    continue
-                seen.add(p)
-                for row in by_person[p]:
-                    w.writerow(row)
+            by_person[p] = resequence(by_person[p])
+        assert_contiguous(by_person, 'bind_joint_tours', day)
+        rewrite_day(path, rows, by_person)
 
-    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=bind_cols, lineterminator='\n')
-        w.writeheader()
-        for b in sorted(bindings,
-                        key=lambda b: (int(b['companion_person_id']),
-                                       int(b['companion_tour_id']))):
-            w.writerow(b)
+    write_bindings(bpath, bind_cols, bindings,
+                   key=lambda b: (int(b['companion_person_id']),
+                                  int(b['companion_tour_id'])))
     out['refusal_reasons'] = dict(refusal.most_common())
     return out
 
@@ -2113,8 +2127,7 @@ def bind_shared_rides(path, day, pctx, seed):
         with open(bpath, 'w', newline='', encoding='utf-8') as fh:
             csv.DictWriter(fh, fieldnames=cols, lineterminator='\n').writeheader()
         return out
-    with open(path, encoding='utf-8') as fh:
-        rows = list(csv.DictReader(fh))
+    rows = read_day(path)
     core = [r for r in rows if r['agent_tier'] == 'core']
     n_core = len(core)
 
@@ -2317,11 +2330,7 @@ def bind_shared_rides(path, day, pctx, seed):
     # READ against the HTS vehicle-passenger mean, never fitted to it
     out['bound_mean_straight_km'] = round(bound_km / (2 * out['bound']), 3) \
         if out['bound'] else None
-    with open(bpath, 'w', newline='', encoding='utf-8') as fh:
-        w = csv.DictWriter(fh, fieldnames=cols, lineterminator='\n')
-        w.writeheader()
-        for b in bindings:
-            w.writerow(b)
+    write_bindings(bpath, cols, bindings)
     return out
 
 
@@ -2541,6 +2550,16 @@ def through_gates():
     name_key = edges['name'].astype(str).str.strip().str.lower().to_numpy()
 
     gates = []
+    # EVERY CANDIDATE CROSSING IS ACCOUNTED FOR. The three `continue`s below
+    # used to drop a crossing silently, so "3 gates survived" was 3 out of an
+    # unreported number and a corridor lost to the name-match rule could not
+    # be told from one that never crossed the boundary (eighth project
+    # report, 11 September 2026). Counted by reason and by road, and written
+    # to the report beside the gates that survived.
+    dropped = collections.OrderedDict(
+        no_outward_evidence=collections.Counter(),
+        no_same_named_calibration_station=collections.Counter(),
+        station_beyond_corridor_km=collections.Counter())
     for k in np.flatnonzero(cross):
         inside_start = bool(s_in[k])
         row = edges.iloc[k]
@@ -2553,14 +2572,17 @@ def through_gates():
                    | ((out_d_e[mask] >= THROUGH_OUTSIDE_MIN_M)
                       & (np.hypot(exe[mask] - gx, eye[mask] - gy) <= near)))
         if not bool(outward.any()):
+            dropped['no_outward_evidence'][str(row['name'])] += 1
             continue
         same = t[t.road_key == road_key]
         if same.empty:
+            dropped['no_same_named_calibration_station'][str(row['name'])] += 1
             continue
         pos = same.index.to_numpy()
         d = np.hypot(sx[pos] - gx, sy[pos] - gy)
         j = int(d.argmin())
         if float(d[j]) > THROUGH_CORRIDOR_KM * 1000.0:
+            dropped['station_beyond_corridor_km'][str(row['name'])] += 1
             continue
         st = same.iloc[j]
         # The gate's heavy share (DECISIONS.md 9.49): the station's own
@@ -2603,6 +2625,11 @@ def through_gates():
         codes = joined.groupby(joined.index)['SA1_CODE21'].first()
         for i, g in enumerate(kept):
             g['sa1'] = str(codes.get(i, ''))
+    through_gates.accounting = dict(
+        candidate_crossings=int(cross.sum()),
+        gates_before_corridor_collapse=len(gates),
+        gates=len(kept),
+        dropped={reason: dict(sorted(c.items())) for reason, c in dropped.items()})
     return kept
 
 
@@ -3023,6 +3050,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
                  through_corridor_match_km=THROUGH_CORRIDOR_KM,
                  through_outside_min_m=THROUGH_OUTSIDE_MIN_M,
                  through_min_separation_km=THROUGH_MIN_SEP_KM,
+                 through_gate_accounting=getattr(through_gates, 'accounting', None),
                  through_gates=[dict(road=g['road'], station=g['station_key'],
                                      name=g['station_name'],
                                      volume=g['volume'],
@@ -3339,14 +3367,8 @@ def main(seed=SEED, max_persons=None, day_types=None):
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '.'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     ap = argparse.ArgumentParser()

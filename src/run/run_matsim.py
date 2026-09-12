@@ -37,19 +37,16 @@ import time
 
 import sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, HERE)
-sys.path.insert(0, os.path.join(HERE, '..'))
-sys.path.insert(0, os.path.join(HERE, '..', 'analyse'))
 from sample_population import subsample_plans, scale_transit_capacity  # noqa: E402
 import registry  # noqa: E402
 # The run emits its config through the SAME registry-driven path the builder
 # uses. Importing the builder is deliberate: two code paths writing one config
 # is how the shipped config and the run config came to disagree.
-sys.path.insert(0, os.path.join(HERE, '..', 'build'))
 import build_matsim_run_inputs as build_inputs  # noqa: E402
 import city  # noqa: E402
 import results_store  # noqa: E402
 import run_failure  # noqa: E402
+from procs import pid_alive as _pid_alive  # noqa: E402
 import summarise_run  # noqa: E402
 from registry import outputs, param_config  # noqa: E402
 
@@ -178,11 +175,15 @@ def resolve_warm_start(source):
 
     THE CAVEAT IS STRUCTURAL, NOT FIXABLE HERE: a warm-started run is not
     bit-identical to an uninterrupted one - the RNG stream and the travel-time
-    memory reset at the restart even though the plans carry over. Whether a
-    warm-completed arm counts as a valid arm or a diagnostic is a project
-    decision (DECISIONS.md 9.76); the provenance link written into `_meta.json`
-    and `_run.json` (`warm_started_from`) is what makes that ruling possible
-    after the fact.
+    memory reset at the restart even though the plans carry over. RULED, 12
+    September 2026 (DECISIONS.md 9.167, #192, superseding the open question of
+    9.76): a warm-completed arm IS a result - `completion` stays
+    `ran_to_last_iteration` - because no two runs of one build are
+    bit-identical anyway (9.143), so the stream a restart breaks is no more a
+    seed than any other run's; the provenance link written into `_meta.json`
+    and `_run.json` (`warm_started_from`) is what lets a reader see it. The
+    innovation cutoff is re-derived for the resumed run (warm_start_overrides)
+    so it is the parent's, not 20 iterations later.
     """
     source = os.path.abspath(source)
     meta_path = os.path.join(source, META)
@@ -325,7 +326,25 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
             scaled = []
 
     refuse_unsafe_telemetry(cfg)
+    price_src, signal_paths = scenario_inputs(cfg, scenario, base, fraction)
+    config_path = emit_run_config(run_dir, cfg, day, fraction, base, src_dir,
+                                  plans_dst, veh_dst, price_src, signal_paths,
+                                  overrides)
+    return config_path, dict(persons_in=n_in, persons_kept=n_out,
+                             unit=cfg.get('RUN.sample.unit'),
+                             persons_without_household=n_hhless,
+                             transit_capacity_scaled=sorted(set(scaled)))
 
+
+def scenario_inputs(cfg, scenario, base, fraction):
+    """The scenario-level inputs a run reads and the checks on them, in 0.1 s.
+
+    Factored out of `build_config` so `preflight()` can run every refusal
+    that does not need the subsample BEFORE `--detach` hands the launch to
+    the scheduler (eighth project report, 11 September 2026: an invalid
+    overlay used to be refused only inside the scheduled task's log).
+    Returns the parking price path and the signal/crossing paths.
+    """
     # The parking price table sits beside the scenario network, one per scenario.
     # Checked rather than assumed: a config that lost its price file would run
     # with free parking and look exactly like a correct run (issue #33).
@@ -400,6 +419,13 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
             'RUN.sample.storage_capacity_exponent is 1.0 by derivation, not by '
             'assumption - see DECISIONS.md 15.' % (storage, fraction))
 
+    return price_src, signal_paths
+
+
+def emit_run_config(run_dir, cfg, day, fraction, base, src_dir, plans_dst,
+                    veh_dst, price_src, signal_paths, overrides=None):
+    """Emit config.xml and the per-mode vehicle types into `run_dir` from `cfg`,
+    and refuse an override the run would record and not execute."""
     build_inputs.check_scoring_order(cfg)
     scoring = build_inputs.scoring_from_c1(
         cfg, json.load(open(build_inputs.PARAMS, encoding='utf-8')),
@@ -443,10 +469,7 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
             else:
                 text = setp(text, key, value)
         open(config_path, 'w', encoding='utf-8', newline='\n').write(text)
-    return config_path, dict(persons_in=n_in, persons_kept=n_out,
-                             unit=cfg.get('RUN.sample.unit'),
-                             persons_without_household=n_hhless,
-                             transit_capacity_scaled=sorted(set(scaled)))
+    return config_path
 
 
 _PURPOSE_SHARE = {}
@@ -525,7 +548,6 @@ def announce_cost(iterations, fraction, cfg):
     them is the newest measured one.
     """
     try:
-        sys.path.insert(0, os.path.join(REPO, 'src'))
         from analyse import arm_cost
         quote = arm_cost.price(int(iterations), fraction,
                                arm_cost.observed_arms(),
@@ -549,6 +571,10 @@ def announce_cost(iterations, fraction, cfg):
             quote['gate_every'],
             arm_cost._fmt_hours(quote['first_gate_s']))
     print(line, flush=True)
+    for key in ('stall_warning', 'milestone_warning', 'stale_warning',
+                'build_warning'):
+        if quote.get(key):
+            print('      ' + quote[key], flush=True)
     # A stated ceiling is only a boundary if something holds it. Until #169 the
     # sentence below was the whole mechanism, and an arm that disabled the gate
     # watcher had no automatic stop at all - so say which of the two this run is.
@@ -566,6 +592,14 @@ def announce_cost(iterations, fraction, cfg):
               'CEILING (RUN.gate.wall_ceiling_h = 0), so nothing will stop it '
               'on cost - set it on the overlay beside the approval it encodes '
               '(#169).', flush=True)
+
+
+def announce_heap(cfg, xmx, fraction):
+    """The heap beside the price, so the reader sees the rule it passed."""
+    print('heap: -Xmx%s against the registry rule\'s %.1f GiB at a %.2f sample; '
+          'GC log %s (RUN.machine.gc_log)'
+          % (xmx, heap_floor_gib(cfg, fraction), float(fraction),
+             'ON' if bool(cfg.get('RUN.machine.gc_log')) else 'OFF'), flush=True)
 
 
 def parse_heap_gib(xmx):
@@ -812,6 +846,53 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     return out
 
 
+def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False):
+    """Every refusal a launch can meet WITHOUT the subsample, in a few seconds.
+
+    `run.py --detach` used to return before `resolve`, the telemetry refusal,
+    the heap rule, the automatic-stop rule and the unrealised-override test,
+    so an overlay that could not legally run was refused only inside the
+    scheduled task's log, and the launcher had already printed "detached
+    launch registered" (eighth project report, 11 September 2026, area 2).
+    This runs the same checks the launch path runs, in the same order, into a
+    temporary directory, so the person launching sees the refusal. The
+    subsample - the one expensive step - is left to the launch itself.
+    """
+    import tempfile                                           # noqa: PLC0415
+    src_dir = os.path.join(SETS, scenario, day)
+    if not os.path.isdir(src_dir):
+        raise SystemExit('no run inputs at %s' % src_dir)
+    fraction = cfg.get('RUN.sample.fraction')
+    try:
+        iterations = cfg.get('RUN.controler.last_iteration')
+    except registry.RegistryError as e:
+        raise SystemExit('%s\n\nSet it with --iterations N, --set '
+                         'RUN.controler.last_iteration=N, or a run overlay.' % e)
+    xmx = cfg.get('RUN.machine.xmx')
+    if not quiet:
+        announce_cost(iterations, fraction, cfg)
+    refuse_if_no_automatic_stop(cfg)
+    refuse_small_heap(cfg, xmx, fraction)
+    if not quiet:
+        announce_heap(cfg, xmx, fraction)
+    refuse_unsafe_telemetry(cfg)
+    if warm is not None:
+        check_warm_compatibility(warm, scenario, day, fraction,
+                                 cfg.get('RUN.machine.seed'),
+                                 cfg.get('RUN.machine.threads'), overrides)
+    base = os.path.join(SETS, scenario)
+    price_src, signal_paths = scenario_inputs(cfg, scenario, base, fraction)
+    with tempfile.TemporaryDirectory() as td:
+        emit_run_config(td, cfg, day, fraction, base, src_dir,
+                        os.path.join(td, 'plans.xml.gz'),
+                        os.path.join(td, 'transitVehicles.xml.gz'),
+                        price_src, signal_paths, overrides)
+    if not quiet:
+        print('preflight: inputs, stop rule, heap rule, telemetry and every '
+              'override pass; only the subsample is left to the launch',
+              flush=True)
+
+
 def resolve(scenario, day, run_config=None, set_overrides=None):
     """Resolve the input registry for this run, and fail loudly if it will not.
 
@@ -870,7 +951,6 @@ def start_progress_digest(run_dir, cfg):
     except Exception as exc:                              # noqa: BLE001
         print('progress digest unavailable: %s' % exc, flush=True)
         return None
-
 
 
 def inputs_sha256(day):
@@ -1023,29 +1103,6 @@ def update_meta(run_dir, **changes):
         print('run metadata not updated (%s): %s' % (path, e), flush=True)
 
 
-def _pid_alive(pid):
-    """Is this pid a live process? Never signals anything.
-
-    On Windows `os.kill(pid, 0)` TERMINATES the process (os.kill there only
-    wraps TerminateProcess and the CTRL events), so liveness is asked of the
-    kernel handle instead.
-    """
-    if os.name == 'nt':
-        import ctypes
-        k32 = ctypes.windll.kernel32
-        handle = k32.OpenProcess(0x00100000, 0, int(pid))    # SYNCHRONIZE
-        if not handle:
-            return False
-        rc = k32.WaitForSingleObject(handle, 0)
-        k32.CloseHandle(handle)
-        return rc == 0x102                                   # WAIT_TIMEOUT: alive
-    try:
-        os.kill(int(pid), 0)
-        return True
-    except OSError:
-        return False
-
-
 def mark_dead(run_dir, status, rc=None, wall_s=None, cause=None):
     """Record a run's death in its metadata and rename it aborted_<name>.
 
@@ -1128,7 +1185,7 @@ def reconcile_stale():
         # The card is filled from the log, not left at None: the F33 arm 0
         # card said `launched: None, reached_iteration: None` while the board
         # printed both (eighth report, 11 September 2026).
-        reached = _last_ended_iteration(run_dir)
+        reached = _last_completed_iteration(run_dir)
         wall_s = None
         try:
             t0 = time.mktime(time.strptime(doc.get('started') or '',
@@ -1243,6 +1300,35 @@ def _last_ended_iteration(run_dir):
     return iters[-1][0] if iters else -1
 
 
+def _last_completed_iteration(run_dir):
+    """The newest iteration whose ENDS marker has been read - never one in flight.
+
+    `_last_ended_iteration` takes the digest's `iteration`, which is an
+    iteration that has BEGUN; that is right for the gate watcher (it retries
+    until the milestone's tables appear) and wrong in a stop marker, whose
+    figure is quoted into the record's `cause`. The first closed-out arm read
+    "at iteration 100" in its cause beside `reached_iteration: 90` in the same
+    document (eighth project report, 11 September 2026, area 2). The digest's
+    `iteration_seconds` holds an iteration only once it ended, and so does
+    `run_view.read_iteration_spans`; both are read here.
+    """
+    try:
+        with open(os.path.join(run_dir, '_progress.json'),
+                  encoding='utf-8') as fh:
+            spans = json.load(fh).get('iteration_seconds') or {}
+        if spans:
+            return max(int(k) for k in spans)
+    except (OSError, ValueError):
+        pass
+    try:
+        import run_view                                   # noqa: PLC0415
+        spans = run_view.read_iteration_spans(
+            os.path.join(run_dir, 'matsim.log'))
+    except Exception:                                     # noqa: BLE001
+        return -1
+    return max(spans) if spans else -1
+
+
 def start_ceiling_watch(run_dir, cfg, proc, t0):
     """Stop the run when its wall clock passes the approved cost (#169).
 
@@ -1287,7 +1373,7 @@ def start_ceiling_watch(run_dir, cfg, proc, t0):
                 continue
             verdict = dict(stopped=_now(), ceiling_h=ceiling_h,
                            wall_s=round(spent, 1),
-                           reached_iteration=_last_ended_iteration(run_dir))
+                           reached_iteration=_last_completed_iteration(run_dir))
             try:
                 with open(os.path.join(run_dir, CEILING_STOP), 'w',
                           encoding='utf-8', newline='\n') as fh:
@@ -1347,7 +1433,7 @@ def start_stall_watch(run_dir, cfg, proc, log):
                 continue
             verdict = dict(stopped=_now(), stall_kill_s=kill_s,
                            silent_s=round(silent, 1),
-                           reached_iteration=_last_ended_iteration(run_dir))
+                           reached_iteration=_last_completed_iteration(run_dir))
             try:
                 with open(os.path.join(run_dir, STALL_STOP), 'w',
                           encoding='utf-8', newline='\n') as fh:
@@ -1594,24 +1680,27 @@ def _stop_marker(run_dir):
     Consulted by the harness's terminal path so that a killed JVM is never
     recorded as a crash when somebody or something stopped it deliberately.
     """
-    gate = _gate_stop_cause(run_dir)
-    if gate:
-        return gate, STOPPED_AT_GATE
     # The gate is read first because a modelling breach says more about the
     # model than a budget does; a run that hit both is described by the more
-    # informative boundary. The operator is read last because a person who
+    # informative boundary, and the other boundary is APPENDED rather than
+    # lost: two independent killers each write their own marker, and a run
+    # that crossed its wall ceiling inside one gate cycle of a breach used to
+    # record one cause and drop the other (eighth project report, 11
+    # September 2026, area 2). The operator is read last because a person who
     # stopped a run already knows why.
-    ceiling = _ceiling_stop_cause(run_dir)
-    if ceiling:
-        return ceiling, STOPPED_AT_CEILING
-    stall = _stall_stop_cause(run_dir)
-    if stall:
-        return stall, STOPPED_AT_STALL
     op = _operator_stop_cause(run_dir)
-    if op:
-        return ('Stopped by the operator through run.py --stop: %s' % op,
-                STOPPED_BY_OPERATOR)
-    return None, None
+    found = [(cause, completion) for cause, completion in (
+        (_gate_stop_cause(run_dir), STOPPED_AT_GATE),
+        (_ceiling_stop_cause(run_dir), STOPPED_AT_CEILING),
+        (_stall_stop_cause(run_dir), STOPPED_AT_STALL),
+        (('Stopped by the operator through run.py --stop: %s' % op) if op
+         else None, STOPPED_BY_OPERATOR)) if cause]
+    if not found:
+        return None, None
+    cause, completion = found[0]
+    if len(found) > 1:
+        cause += ' ALSO stopped by: ' + ' | '.join(c for c, _ in found[1:])
+    return cause, completion
 
 
 def close_out(run_dir, completion, rc, wall_s, reached_iteration=None,
@@ -1838,10 +1927,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     announce_cost(iterations, fraction, cfg)
     refuse_if_no_automatic_stop(cfg)
     refuse_small_heap(cfg, xmx, fraction)
-    print('heap: -Xmx%s against the registry rule\'s %.1f GiB at a %.2f sample; '
-          'GC log %s (RUN.machine.gc_log)'
-          % (xmx, heap_floor_gib(cfg, fraction), float(fraction),
-             'ON' if gc_log else 'OFF'), flush=True)
+    announce_heap(cfg, xmx, fraction)
 
     warm_key = None
     if warm is not None:

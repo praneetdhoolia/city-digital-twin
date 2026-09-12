@@ -43,10 +43,8 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-sys.path.insert(0, os.path.join(REPO, 'src'))
 
 import city as _city                                          # noqa: E402
-sys.path.insert(0, HERE)
 import registry                                               # noqa: E402
 
 SCHEMA_DIR = os.path.join(REPO, 'config', 'schema')

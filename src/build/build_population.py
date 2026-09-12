@@ -19,13 +19,7 @@ Everything is seeded. Re-running with the same seed reproduces the population
 exactly; the seed is recorded in the scenario configuration (schema E1).
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import csv
 import json
@@ -37,10 +31,16 @@ import pandas as pd
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
+# the household-size, home-placement and age-threshold values the draw uses,
+# declared (#188): each was an inline literal in main() until 12 Sep 2026
+HH_TOP_BAND_MEAN = float(CFG.get('B.population.household_size_top_band_mean'))
+HH_TAIL_P = float(CFG.get('B.population.household_size_tail_p'))
+HOME_JITTER_FACTOR = float(CFG.get('B.population.home_jitter_radius_factor'))
+LABOUR_FORCE_MIN_AGE = int(CFG.get('B.population.labour_force_min_age'))
+LICENCE_MIN_AGE = int(CFG.get('B.population.licence_min_age'))
+SCHOOL_FT_MAX_AGE = int(CFG.get('B.population.school_full_time_max_age'))
 
 LU = _city.path('data/processed/landuse')
 OUT = _city.path('demand')
@@ -290,8 +290,8 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
 
     hh_f = open(os.path.join(out_dir, 'population', 'B1_households.csv'), 'w', newline='', encoding='utf-8')
     pp_f = open(os.path.join(out_dir, 'population', 'B1_synthetic_population.csv'), 'w', newline='', encoding='utf-8')
-    hw = csv.writer(hh_f)
-    pw = csv.writer(pp_f)
+    hw = csv.writer(hh_f, lineterminator='\n')
+    pw = csv.writer(pp_f, lineterminator='\n')
     hw.writerow(['household_id', 'home_sa1', 'home_x_mga56', 'home_y_mga56', 'home_lon', 'home_lat',
                  'household_size', 'household_vehicles', 'dwelling_type', 'weight'])
     pw.writerow(['person_id', 'household_id', 'home_sa1', 'age_band', 'age', 'sex',
@@ -329,7 +329,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
 
         # household size distribution (1..6+)
         hs = norm(m['household_size'])
-        hs_vals = np.array([1, 2, 3, 4, 5, 6.6])
+        hs_vals = np.array([1, 2, 3, 4, 5, HH_TOP_BAND_MEAN])
         # vehicles per dwelling (0..4+)
         veh = norm(m['vehicles'])
         veh_vals = np.array([0, 1, 2, 3, 4])
@@ -348,14 +348,14 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
         p_inc = norm(inc_tot) if sum(inc_tot) > 0 else norm(np.ones(len(INCOME_BANDS)))
 
         # jitter radius from zone area so homes are not all stacked on the centroid
-        rad = math.sqrt(max(float(z['area_km2']), 1e-4) * 1e6 / math.pi) * 0.6
+        rad = math.sqrt(max(float(z['area_km2']), 1e-4) * 1e6 / math.pi) * HOME_JITTER_FACTOR
 
         made = 0
         while made < pop:
             hid += 1
             bsz = int(rng.choice(len(hs_vals), p=hs))
             # the top category is "6 or more"; give it a small tail
-            size = 6 + int(rng.geometric(0.55)) - 1 if bsz == 5 else int(hs_vals[bsz])
+            size = 6 + int(rng.geometric(HH_TAIL_P)) - 1 if bsz == 5 else int(hs_vals[bsz])
             size = max(1, min(size, 10))
             if made + size > pop + 2:
                 size = max(1, pop - made)
@@ -382,7 +382,7 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
                 lo, hi = AGE_BANDS[b]
                 age = int(rng.integers(lo, min(hi, 95) + 1))
                 sex = 'M' if rng.random() < p_sex_given_age[b] else 'F'
-                if age < 15:
+                if age < LABOUR_FORCE_MIN_AGE:
                     est = 'not_in_labour_force'
                 else:
                     er, fts, us = lf[(sex, abs_lf_band(age))]
@@ -394,15 +394,15 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
                                else 'not_in_labour_force')
                 employed = est.startswith('employed')
                 occ = OCCUPATIONS[int(rng.choice(len(OCCUPATIONS), p=p_occ))] if employed else ''
-                ib = INCOME_BANDS[int(rng.choice(len(INCOME_BANDS), p=p_inc))] if age >= 15 else 'Neg_Nil'
+                ib = INCOME_BANDS[int(rng.choice(len(INCOME_BANDS), p=p_inc))] if age >= LABOUR_FORCE_MIN_AGE else 'Neg_Nil'
                 # 9.131: drawn at the LGA's measured rate; 16 is the
                 # provisional minimum and the 12-17 band's rate is the
                 # 16-17-year-olds' holding spread over the band
-                lic = int(age >= 16 and rng.random() < licence_rate(sa1, b))
+                lic = int(age >= LICENCE_MIN_AGE and rng.random() < licence_rate(sa1, b))
                 # attendance is observed (G01); how an 18+ attendee splits
                 # full/part-time is not held and is declared and swept
                 if rng.random() < edu[edu_group_of(age)]:
-                    if age < 18:
+                    if age < SCHOOL_FT_MAX_AGE:
                         student = 'full_time'
                     else:
                         band_key = '18_24' if age <= 24 else '25_ov'
@@ -451,14 +451,8 @@ def main(seed=None, sample=None, max_sa1=None, out_dir=None):
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '.'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     ap = argparse.ArgumentParser()

@@ -22,14 +22,11 @@ be able to part in silence).
 import io
 import json
 import os
-import sys
 import zipfile
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', '..', '..', 'src'))
-import city as _city  # noqa: E402
-import registry as _registry  # noqa: E402
-import pandas as pd  # noqa: E402
+import city as _city
+import registry as _registry
+import pandas as pd
 
 CFG = _registry.load()
 RAW = _city.path('data/raw/jtw/bts_jtw_table01_2011_v1_0.zip')
@@ -116,14 +113,8 @@ def main():
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '../../../src/build'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     main()

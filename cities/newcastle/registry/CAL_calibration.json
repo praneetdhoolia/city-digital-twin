@@ -341,7 +341,6 @@
       "decisions_ref": "9.159, 9.158",
       "description": "How deep behind the reading point the gate reading is AVERAGED, in iterations. The reading is the mean of every readable trips table in (point - this, point], so at the declared 40 and a 10-iteration write interval an iteration-100 reading is the mean of it.60, 70, 80, 90 and 100. IT EXISTS BECAUSE A POINT READING CANNOT SCORE A CANDIDATE: 9.158 measured, within six separate 25% arms with nothing changed, that heavy rail, bike and taxi each move further from or towards target between iteration 80 and 100 than the WHOLE CAL.gate.pass_deviation_pct band, upward on every arm - the model still relaxing, not seed scatter. A search scored at a point would rank how far each run had got. The directive 9.158 left was to change the READING, not the rule, and this is that change. WHY 40 AND NOT DEEPER: nothing in the store reaches past iteration 104, so a window ending at 100 is the deepest that can be TESTED at all, and 40 is the widest that leaves the whole window inside what every arm holds (all seven hold it.40 through it.100). The sweep runs from 20 - two readings, the narrowest thing that is an average at all - to 80, where the window reaches back to iteration 20 and starts averaging in the run's early transient, which would flatter the reading by measuring a different regime rather than by the reading being steadier. WHAT IS AVERAGED: the modelled level and the trip count only. The target, basis and denominator are the endpoint's, and the deviation and gate flag are RECOMPUTED from the averaged level - averaging deviations would put a mean of ratios where a ratio of means belongs. THIS IS A PROPERTY OF THE INSTRUMENT, NOT OF THE MODEL: no agent sees it, and changing it cannot move a mode share - it changes only how confidently two candidates can be told apart. Measured with src/analyse/measure_reading_stability.py --window.",
       "consumers": [
-        "src/analyse/report_mode_ridership.py",
         "src/analyse/measure_reading_stability.py"
       ]
     },
@@ -428,6 +427,17 @@
       "description": "How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Measured by src/analyse/measure_reading_stability.py over all SIX 25% arms that have ever reached iteration 100, WITHIN each run: the worst scored mode's |relative deviation| moves 15.72 to 24.88 points (median 17.76), the worst mode being heavy_rail on four of the six arms, bike on one and taxi on one. THREE modes move further than the WHOLE 10% band inside that twenty-iteration window - heavy_rail on 6 of 6 (max 24.88), bike on 4 of 6 (17.76), taxi on 3 of 6 (15.72). The point value is the MAXIMUM over all ten scored modes, because the objective is itself a maximum over those modes and a stopping rule has to survive the noisiest reading it will meet. The old folded objective moves 0.272 to 0.418 pp over the same window - upward on every one of the six arms, so this is systematic movement toward relaxation, not seed scatter. THIS IS A PROPERTY OF THE READING POINT, NOT OF THE MODEL: iteration 100 was adopted as the reading unit on COST and never once tested for stability, and a candidate read there would be resolved by how far the run had got rather than by its parameters. Reading deeper, or averaging a window of iterations instead of taking a point, is what would lower it.",
       "consumers": [
         "src/calibrate/calibrate.py"
+      ]
+    },
+    "CAL.pt.opal_patronage_rounding": {
+      "value": 100,
+      "units": "tap-ons",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.167",
+      "description": "The rounding unit of TfNSW's Opal Patronage daily files: every hourly cell is rounded to the nearest 100 tap-ons and printed '<100' below it (Opal Tap Data documentation v2.0, May 2026). The extract writes each day's total as the sum of the hourly intervals this implies - a lower and an upper bound - so no reader quotes a centre value the publication never gave (#185).",
+      "consumers": [
+        "cities/newcastle/extract/extract_opal_patronage.py"
       ]
     }
   }

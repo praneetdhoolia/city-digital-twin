@@ -16,15 +16,12 @@ cross-layer integrity checks that need the bulk data.
 Exits non-zero on any mismatch or unmanifested tracked file.
 """
 import csv
-import json
 import hashlib
 import os
 import subprocess
 import sys
 
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                '..', 'src'))
-import city  # noqa: E402
+import city
 
 # Manifest rows are CITY-RELATIVE (`data/processed/...`), so they are resolved
 # against the city directory rather than the working directory. The same row in

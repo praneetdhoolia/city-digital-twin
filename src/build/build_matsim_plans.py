@@ -30,13 +30,7 @@ Determinism: one seeded generator, persons consumed in the file's own sorted
 order, so the same B2 reproduces the same plans byte for byte.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import os
 import csv
 import json
@@ -46,11 +40,9 @@ import collections
 import numpy as np
 import pandas as pd
 
-import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from det_io import gzip_writer
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
+import subpopulations
 CFG = _registry.load()
 # Whether `ride` is withheld from a person with nobody to drive them. Derived
 # from B1 household composition; see DECISIONS.md 15 and src/java/citysim/.
@@ -1178,8 +1170,7 @@ def write_day(day, attrs, rng, report, seed_table=None):
             w.write('\t<person id="%d">\n' % pid)
             w.write('\t\t<attributes>\n')
             w.write('\t\t\t<attribute name="subpopulation" class="java.lang.String">'
-                    '%s</attribute>\n' % ('freight' if tier == 'freight' else
-                                          'external' if external else 'person'))
+                    '%s</attribute>\n' % subpopulations.label(tier, external))
             w.write('\t\t\t<attribute name="carAvail" class="java.lang.String">'
                     '%s</attribute>\n' % ('always' if car_av else 'never'))
             w.write('\t\t\t<attribute name="hasLicense" class="java.lang.String">'
@@ -1653,14 +1644,8 @@ def main(seed=SEED, day_types=None, seed_mode='uninformed'):
 
 
 if __name__ == '__main__':
-    # This builder's own wall time: the reproduction
-    # pipeline's cost was recorded nowhere. It lands in
-    # cities/<city>/data/_build_timing.json, which no manifest row
-    # hashes - a wall time inside a hashed artefact would make the
-    # digest differ on every otherwise identical build.
+    # this builder's own wall time, for cities/<city>/data/_build_timing.json (build_timing.py)
     import sys as _sys_t, os as _os_t  # noqa: E401
-    _sys_t.path.insert(0, _os_t.path.join(_os_t.path.dirname(
-        _os_t.path.abspath(__file__)), '.'))
     import build_timing as _timing  # noqa: E402
     _timing.start(__file__)
     ap = argparse.ArgumentParser()

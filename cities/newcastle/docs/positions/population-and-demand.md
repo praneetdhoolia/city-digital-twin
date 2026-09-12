@@ -2,10 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 11 September 2026 (forty-third session) · **Record read through:** §9.166 · **Written against family:** `F33`
+**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
 
 ## What is built
 
+- **The four binder passes share one skeleton, declared once** (§9.167, #191): reading the day file, indexing core rows by person, the busy-interval test, the resequence and the grouped rewrite under the #65 contiguity invariant, and the bindings writer live once; the four rule bodies stay apart by design, since each pass's candidate order is the model. All 15 B2 tables rebuild byte-identical. **The heavy-rail target keeps summing the station publication and says so** (§9.167, #189, decision "keep the sum; record the distinction"): all 26 station-direction means are holdout, the sum is the calibration observation, and `audit_no_holdout` refuses a goal-modes row naming a holdout id.
+- **The TfNSW bespoke-table request is DRAFTED, not sent** (§9.167, #50): the hub's CKAN API carries no mode × age, trip-length-by-mode or occupancy-by-purpose table on any geography; `docs/requests/tfnsw_hts_bespoke_tables.md` asks for the four cells. Sending it is the operator's.
 **B1 — persons and households (`src/build/build_population.py`, seed 20260810, the 1,500 core SA1s only).**
 
 - Fitted per SA1 to the census marginals: household size (G35), vehicles (G34), dwelling structure (G36), age–sex (G04), labour force (G43/G46), income (G17), occupation (G60); home coordinates jittered within the SA1 at 0.6 of the equivalent-circle radius (§9.1). Since 3 Sep 2026 the synthesiser reads those tables through the city's reader adapter (`cities/newcastle/extract/reader_shapes.py`, shapes in `config/schema/reader_shapes.json`) and names no ABS column; the population rebuilds byte-identically across the change (§9.140, #62).
@@ -96,6 +98,7 @@
 
 ## History
 
+- §9.167 — one binder skeleton; the holdout sum recorded; the HTS request drafted
 - §9.166 — TfNSW bespoke tables obtainable; mobility draw declared
 - §9.164 — the whole-day discard is repaired; the demand rebuilt
 - §9.163 — the roster binds harder; half of declared passengers drive

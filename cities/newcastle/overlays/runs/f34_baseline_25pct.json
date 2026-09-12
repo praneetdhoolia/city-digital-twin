@@ -1,0 +1,30 @@
+{
+  "overlay": "f34_baseline_25pct",
+  "description": "ARM 0 OF FAMILY F34: the F33 baseline (f33_baseline_25pct, which never produced a reading - its one launch died of heap at iteration 98) relaunched on the footpath network, with NO control switched on. F34 opened at the network rebuild of 12 September 2026 (9.167, #183): the 40,203 harvested footway, path, cycleway, steps, track, pedestrian, bridleway and corridor ways are walk- and bike-capable links, meeting the roads at their 26,615 shared nodes, and pt access, egress and transfer walks are routed on that network and executed by the qsim (RUN.routing.access_egress_type = accessEgressModeToLink, RUN.transit_router.access_egress_basis = network, #167). Nothing run on the road-graph network compares with this arm. EVERYTHING ELSE IS F33's: (a) it is the CONTROL HALF of the five paired arms the separation design orders (#172): scoring, the choice set, service quality, the routers and the pt submodes all ship at their off value here, so this single arm is what all five are differenced against. (b) It measures B.mode.bound_passenger_placement = every_plan (9.164, #86, #48). WHAT IT MUST READ: all twelve modes on their own bases with choice-set coverage beside each (#174); modes_car_car and the roster's waited count (#86, #145); the share of trips under one kilometre against 11.17 % (#30) - for the first time on a walk network with footpaths; the pt access and egress legs' distances and the count of stub walks over 1 km (388 of 42,209 on the 1 % probe, 511 before; #167, #183); and the cutoff snap beside the level (9.162). HEAP: the footpath network raised the sample-independent heap by 6.0 GiB (RUN.machine.heap_floor_gib 9.6 -> 15.6, measured on the 1 % probes 20260912T042953 / T065939 / aborted_T065345); the rule reads 37.4 GiB at 25 % and the slope is unmeasured on this network, so this arm carries 48g on the 63 GB machine and ITS GC LOG IS THE MEASUREMENT that re-derives RUN.machine.heap_per_fraction_gib. The launcher refuses a heap below the rule, the GC log is on, a log silent for RUN.gate.stall_kill_s stops the run, RUN.controler.create_graphs is off, and RUN.controler.write_plans_interval = 25 keeps a warm start within 25 iterations (#192). COST: unpriced on this network - a 4-iteration 1 % probe ran at 40 s an iteration against 29.5 s before the rebuild (+35 %, the network has 2.1x the links); the launcher prices the arm on the newest arm at this fraction and the 26 h ceiling is the operator's 10 September approval carried over, which a NEW stated-cost approval must renew before launch.",
+  "answers_issues": [
+    86,
+    48,
+    30,
+    145,
+    172,
+    167,
+    183
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 300,
+    "RUN.gate.wall_ceiling_h": 26,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration",
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "300 is below the declared sweep's floor of 250-2000 and is the horizon every gate arm since F15 has used, for the reason §9.120 gives: innovation is switched off at 240 under `RUN.replanning.fraction_to_disable_innovation` = 0.8, so a 300-iteration arm's post-cutoff window straddles the 250 GOAL.md requirement 8 asks about, and the relaxation instrument reads exactly there. The declared 1000 was reviewed at §9.142 and deliberately not re-declared to 250, because §9.7 measured 250 insufficient on the pre-rebuild stack and declaring it would assert a value against a measurement.",
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, and this is the §9.159 scoped departure, not a new one. Eight modes are past the 20 % stop bar on the landed reading, so the watcher would stop this arm at iteration 100 - and an arm whose whole purpose is to be the control half of five pairs cannot be stopped at a point none of those pairs will be read at. The same departure was taken, with the same reasoning, for `depth_convergence_25pct` (§9.159), and it produced the project's first result since F4. What made that arm indefensible was the OTHER half: it declared no ceiling, so it had no automatic stop of any kind and its approved 32 h was held by a person watching a clock (#169). This arm declares `RUN.gate.wall_ceiling_h` = 26, the operator's stated-cost approval of 10 September 2026, and the ceiling watcher is now PROVEN on a run (`aborted_20260910T205517_20it_1pct`, `completion` `stopped_at_ceiling`). The cost is priced on this family's own bytecode: `20260910T215129_4it_25pct` recurs at 225.0 s, quoting 300 iterations at 19.0 h, with 20.5 h the top of the priced pair and 24.7 h the top of the last five arms' observed spread at this fraction."
+  }
+}

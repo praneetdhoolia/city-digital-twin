@@ -27,29 +27,18 @@ ties on node id, and no dict iteration order reaches a result. Repeat runs
 produce byte-identical output.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
-import os
+import city as _city
 import csv
 import json
 import heapq
 import collections
 
-import sys
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from osm_parse import parse, haversine
 
 # Model inputs come from cities/<city>/registry/, not from literals here. Every
 # value below carries its units, provenance and either a sweep, a held-fixed rule
 # or a derived-from identity there. See DECISIONS.md 15.
-import sys as _sys
-_sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-import registry as _registry  # noqa: E402
+import registry as _registry
 CFG = _registry.load()
 
 ROAD_EDGES = _city.path('data/processed/network/A1_road_edges.csv')

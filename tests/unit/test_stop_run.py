@@ -24,16 +24,11 @@ import io
 import json
 import os
 import re
-import sys
 
 import pytest
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.dirname(os.path.dirname(HERE))
-sys.path.insert(0, os.path.join(REPO, 'src'))
-sys.path.insert(0, os.path.join(REPO, 'src', 'run'))
 
-import run_matsim                                            # noqa: E402
+import run_matsim
 
 
 def _write(d, name, doc):

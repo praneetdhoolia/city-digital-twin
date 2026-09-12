@@ -8,17 +8,12 @@ two columns. These drive the three functions that decide it on synthetic
 inputs - a declaration, an ancestor set, a scope - so a regression shows up in
 the diff that caused it rather than in a rebuild nobody runs.
 """
-import os
-import sys
 import textwrap
 
 import pytest
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
-sys.path.insert(0, os.path.join(REPO, 'src', 'build'))
 
-import build_manifest as bm  # noqa: E402
+import build_manifest as bm
 
 
 # --------------------------------------------------------------------------

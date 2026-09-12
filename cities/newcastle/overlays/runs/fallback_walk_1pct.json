@@ -5,7 +5,7 @@
     "RUN.sample.fraction": 0.01,
     "RUN.controler.last_iteration": 40,
     "RUN.machine.threads": 8,
-    "RUN.machine.xmx": "12g",
+    "RUN.machine.xmx": "18g",
     "B.ride.unpaired_fallback": "walk"
   },
   "allow_outside_sweep": [

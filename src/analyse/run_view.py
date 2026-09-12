@@ -40,7 +40,6 @@ COMPLETED (`_metrics.json`) - DECISIONS.md 9.12. `extract_metrics.py` ->
 import os
 import re
 import csv
-import sys
 import json
 import time
 import argparse
@@ -52,16 +51,12 @@ import socketserver
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
 RESULTS = os.path.join(ROOT, 'results')
-sys.path.insert(0, os.path.join(ROOT, 'src'))
 import registry as _registry  # noqa: E402
 import city as _city  # noqa: E402
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
 # here, instead of each composing its own results/ path
-import sys as _sys_rs, os as _os_rs
-_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
-    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
 import results_store as _results_store  # noqa: E402
 
 
@@ -69,7 +64,6 @@ def _resolve_run(name_or_path):
     return _results_store.resolve(name_or_path) or name_or_path
 
 
-sys.path.insert(0, _HERE)
 import summarise_run as _summarise  # noqa: E402
 
 ITER_RE = re.compile(r'^(\S+)\s+INFO AbstractController.*ITERATION (\d+) BEGINS')
@@ -290,7 +284,16 @@ def scan(run_dir):
     except OSError:
         age = None
     if done:
-        state = 'finished' if run_rec.get('rc') == 0 else 'failed'
+        # since 9.143 a gate-, ceiling-, stall- or operator-stopped arm
+        # carries a record with rc != 0; its `completion` names the boundary
+        # and it is not a failure (eighth project report, area 3)
+        completion = run_rec.get('completion')
+        if run_rec.get('rc') == 0 or completion == 'ran_to_last_iteration':
+            state = 'finished'
+        elif completion and completion.startswith('stopped_'):
+            state = completion
+        else:
+            state = 'failed'
     elif age is None:
         state = 'starting'
     elif age > STALL_S:

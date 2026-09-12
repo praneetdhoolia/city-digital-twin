@@ -1,0 +1,7 @@
+{
+ "network": "scenarios/matsim/S2/network.xml.gz",
+ "network_sha256": "f24e087699a833edcb647773bb9bb06711b944b1b77e3cae1156749ec3d419d4",
+ "radius_m": 120.0,
+ "rows": 202,
+ "note": "the network this map was cut against; extract_metrics refuses to score counts on a run whose network differs"
+}

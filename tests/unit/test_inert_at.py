@@ -16,13 +16,9 @@ from __future__ import annotations
 
 import json
 import pathlib
-import sys
 
-import pytest
 
 REPO = pathlib.Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO / 'src'))
-sys.path.insert(0, str(REPO / 'src' / 'registry'))
 
 import registry                                                   # noqa: E402
 import check_hardcoding                                            # noqa: E402

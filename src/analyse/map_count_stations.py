@@ -28,20 +28,14 @@ validation target value**, so it is indifferent to the calibration/holdout split
 and maps all 119 stations alike.
 """
 
-# City-relative paths resolve through src/city.py: `data/...` names a
-# location inside cities/<city>/, not inside the repository root.
-import os as _os
-import sys as _sys
-_sys.path.insert(0, _os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
-                                  '..', '..', 'src'))
-import city as _city  # noqa: E402
+import city as _city
 import argparse
 import csv
+import hashlib
+import json
 import gzip
 import math
-import os
 import re
-import sys
 
 import pyproj
 
@@ -51,12 +45,31 @@ TO_M = pyproj.Transformer.from_crs('EPSG:4326', CRS_M, always_xy=True).transform
 # The match radius is a registry field, not a literal typed here: it decides
 # which road_aadt targets are scorable at all, so it is a lever on the
 # reported fit (issue 19). See B.counts.station_match_radius_m.
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import registry                            # noqa: E402
 
 STATIONS = _city.path('data/processed/validation/road_aadt_targets.csv')
 OUT = _city.path('data/processed/validation/count_station_links.csv')
-DEFAULT_NETWORK = _city.path('scenarios/matsim/S2/network.xml.gz')
+# The map records WHICH network it was cut against, so the reader that scores
+# against it can refuse a network it was not (the previous map was orphaned
+# by a rebuild 47 minutes after it was written and scored the wrong roads for
+# 25 days, #82; the check that caught it lives in tests/check_package.py,
+# which runs on a workstation only).
+PROVENANCE = _city.path('data/processed/validation/count_station_links_provenance.json')
+
+# Which inputs feed which outputs (#159), read statically by build_manifest:
+# both descend from the station coordinates and the mapped scenario network,
+# which carries OSM geometry - so both are ODbL.
+OUTPUT_INPUTS = {
+    'data/processed/validation/count_station_links.csv': [
+        'data/processed/validation/road_aadt_targets.csv',
+        'scenarios/matsim/S2/network.xml.gz'],
+    'data/processed/validation/count_station_links_provenance.json': [
+        'scenarios/matsim/S2/network.xml.gz'],
+}
+# the CITY's base scenario, not a scenario id typed into the framework
+DEFAULT_NETWORK = _city.path(
+    'scenarios/matsim/%s/network.xml.gz'
+    % _city.descriptor()['intervention']['base_scenario'])
 
 NODE_RE = re.compile(r'<node id="([^"]+)"[^>]*x="([-\d.eE]+)"[^>]*y="([-\d.eE]+)"')
 LINK_RE = re.compile(r'<link id="([^"]+)" from="([^"]+)" to="([^"]+)"[^>]*>')
@@ -91,6 +104,14 @@ def name_key(name):
     that differ by more than their spacing.
     """
     return normalise(name).replace(' ', '')
+
+
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, 'rb') as fh:
+        for chunk in iter(lambda: fh.read(1 << 20), b''):
+            h.update(chunk)
+    return h.hexdigest()
 
 
 def load_network(path):
@@ -206,9 +227,17 @@ def main():
     rows, unmatched = match(stations, links, radius)
 
     with open(OUT, 'w', encoding='utf-8', newline='') as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()), lineterminator='\n')
         w.writeheader()
         w.writerows(rows)
+    with open(PROVENANCE, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(dict(
+            network=_city.rel(a.network),
+            network_sha256=_sha256(a.network),
+            radius_m=radius, rows=len(rows),
+            note='the network this map was cut against; extract_metrics '
+                 'refuses to score counts on a run whose network differs'),
+            f, indent=1)
 
     matched = {r['station_key'] for r in rows}
     by_how = {}

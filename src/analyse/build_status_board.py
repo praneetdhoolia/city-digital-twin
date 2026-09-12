@@ -45,15 +45,9 @@ import sys
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(os.path.dirname(_HERE))
-for _p in (os.path.join(ROOT, 'src'), _HERE):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 import city as _city                                              # noqa: E402
 
-for _p in (os.path.join(ROOT, 'src', 'run'),):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 import results_store as _store                                    # noqa: E402
 
 RESULTS = os.path.join(ROOT, 'results')
@@ -217,10 +211,12 @@ def block_scoreboard():
             dev = r.get('deviation_pct')
             dev_s = '-' if dev is None else '%+.1f%%' % dev
             flag = r.get('flag') or ''
+            # the thresholds are the reader's declared ones (CAL.gate.*), so a
+            # sweep of them moves the flags AND these headers together
             if flag.startswith('STOP'):
-                gate = '**STOP** >=20%'
+                gate = '**STOP** >=%.0f%%' % rmr.GATE_STOP_PCT
             elif flag.startswith('over'):
-                gate = 'over 10%'
+                gate = 'over %.0f%%' % rmr.GATE_PASS_PCT
             elif flag == 'ok':
                 gate = 'ok'
             else:
@@ -232,8 +228,9 @@ def block_scoreboard():
         stop = [r['mode'] for r in rows if (r.get('flag') or '').startswith('STOP')]
         inside = [r['mode'] for r in rows if r.get('flag') == 'ok']
         lines.append('')
-        lines.append('Inside 10%%: **%s**. Past the 20%% stop bar: **%s**.'
-                     % (', '.join(inside) or 'none', ', '.join(stop) or 'none'))
+        lines.append('Inside %.0f%%: **%s**. Past the %.0f%% stop bar: **%s**.'
+                     % (rmr.GATE_PASS_PCT, ', '.join(inside) or 'none',
+                        rmr.GATE_STOP_PCT, ', '.join(stop) or 'none'))
         return '\n'.join(lines) + '\n'
     return None
 

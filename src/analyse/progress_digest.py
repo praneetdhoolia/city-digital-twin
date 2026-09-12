@@ -33,12 +33,8 @@ import sys
 import threading
 import time
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
-sys.path.insert(0, _HERE)
-import run_view  # noqa: E402
-from registry import outputs  # noqa: E402
+import run_view
+from registry import outputs
 
 PROGRESS = '_progress.json'
 REPLACE_ATTEMPTS = 5
@@ -273,8 +269,6 @@ def main():
     import os as _os_r, sys as _sys_r
     _r = _os_r.path.join(_os_r.path.dirname(_os_r.path.dirname(
         _os_r.path.abspath(__file__))), 'run')
-    if _r not in _sys_r.path:
-        _sys_r.path.insert(0, _r)
     import results_store as _store_r
     a.run = _store_r.resolve_or_die(a.run)
 

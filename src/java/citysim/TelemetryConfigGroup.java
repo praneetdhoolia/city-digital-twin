@@ -2,6 +2,7 @@ package citysim;
 
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ReflectiveConfigGroup;
+import org.matsim.core.config.ReflectiveConfigGroup.Parameter;
 
 /**
  * The `telemetry` config module: how often the run publishes what it is doing.
@@ -37,7 +38,8 @@ public final class TelemetryConfigGroup extends ReflectiveConfigGroup {
      */
     private static final double UNSET = -1.0;
 
-    private double liveIntervalS = UNSET;
+    @Parameter("liveIntervalS")
+    public double liveIntervalS = UNSET;
 
     public TelemetryConfigGroup() {
         super(NAME);
@@ -58,14 +60,8 @@ public final class TelemetryConfigGroup extends ReflectiveConfigGroup {
      * file carries the accumulating profile of the day, not a single instant —
      * it only refines the bins.
      */
-    @StringGetter("liveIntervalS")
     public double getLiveIntervalS() {
         return this.liveIntervalS;
-    }
-
-    @StringSetter("liveIntervalS")
-    public void setLiveIntervalS(final double value) {
-        this.liveIntervalS = value;
     }
 
     /**

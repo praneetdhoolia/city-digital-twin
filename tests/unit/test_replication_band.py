@@ -22,8 +22,6 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 for _sub in ('calibrate', 'registry', ''):
     _p = os.path.join(REPO, 'src', _sub) if _sub else os.path.join(REPO, 'src')
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 import calibrate  # noqa: E402
 

@@ -17,15 +17,10 @@ runs nobody asked it to stop.
 import io
 import json
 import os
-import sys
 import time
 
-import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-for _p in (os.path.join(REPO, 'src'), os.path.join(REPO, 'src', 'run')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 import run_matsim as rm  # noqa: E402
 

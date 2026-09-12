@@ -65,22 +65,16 @@ nowhere past it.
 
 import os as _os
 import sys as _sys
-_HERE = _os.path.dirname(_os.path.abspath(__file__))
-for _p in (_os.path.join(_HERE, '..'),
-           _os.path.join(_HERE, '..', 'run'),
-           _os.path.join(_HERE, '..', 'calibrate')):
-    if _p not in _sys.path:
-        _sys.path.insert(0, _p)
 
 import io
 import json
 import argparse
 import contextlib
 
-import registry as _registry                                      # noqa: E402
-import results_store as _store                                    # noqa: E402
-import measure_iteration_modes as mim                             # noqa: E402
-import report_mode_ridership as rmr                               # noqa: E402
+import registry as _registry
+import results_store as _store
+import measure_iteration_modes as mim
+import report_mode_ridership as rmr
 
 # The acceptance band and the search's stopping delta are DECLARED values, not
 # this script's opinion, so they are resolved like every other one.

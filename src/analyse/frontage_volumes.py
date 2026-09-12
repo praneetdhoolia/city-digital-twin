@@ -30,23 +30,16 @@ import os
 import sys
 import xml.etree.ElementTree as ET
 
-_HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.dirname(os.path.dirname(_HERE))
-sys.path.insert(0, os.path.join(ROOT, 'src'))
-import city as _city  # noqa: E402
+import city as _city
 
 # a run name resolves through the results store - results/raw first, then a
 # legacy top-level dir - so consumers survived the 9.137 layout change once,
 # here, instead of each composing its own results/ path
-import sys as _sys_rs, os as _os_rs
-_sys_rs.path.insert(0, _os_rs.path.join(_os_rs.path.dirname(
-    _os_rs.path.dirname(_os_rs.path.abspath(__file__))), 'run'))
-import results_store as _results_store  # noqa: E402
+import results_store as _results_store
 
 
 def _resolve_run(name_or_path):
     return _results_store.resolve(name_or_path) or name_or_path
-
 
 
 CORRIDOR = _city.path('data/processed/network/A1_corridor_road_edges.csv')
@@ -152,7 +145,7 @@ def main():
     with io.open(out, 'w', encoding='utf-8', newline='') as f:
         w = csv.DictWriter(f, fieldnames=['link', 'osm_way_id', 'length_m',
                                           'hour', 'walk_traversals',
-                                          'walk_traversals_scaled'])
+                                          'walk_traversals_scaled'], lineterminator='\n')
         w.writeheader()
         w.writerows(rows_out)
     summary = dict(
