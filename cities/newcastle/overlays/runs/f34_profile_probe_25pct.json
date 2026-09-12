@@ -1,0 +1,23 @@
+{
+  "overlay": "f34_profile_probe_25pct",
+  "description": "A PROFILING PROBE, NOT A MODELLING RUN - nothing produced under it is a reading of any mode. f34_pricing_probe_25pct with the JVM's flight recorder on (RUN.machine.jfr_profile), read afterwards by src/analyse/profile_run.py --run <run> --iterations 2:3. It exists because the pricing probe 20260912T135825_4it_25pct measured the recurring iteration on the footpath network at 555.5 s against 244-264 s on the road graph (+127 % at 25 %, where the 1 % probes had shown +35 %): replanning 25.5 -> 130 s, prepareForMobsim 25 -> 92 s, mobsim 169 -> 328 s, and arm 0 prices at ~47 h with five paired arms behind it. The heap is not the cause (live heap after a full collection 20.3 GB under 48g, GC ~1 % of the wall). The stopwatch stops at MATSim's phase names; the last time an iteration was decomposed to the method (9.154) a third of it was this project's own code and one repair took a plain iteration 310 -> 205 s. What this probe answers is whether the 2.2x is the engine routing and simulating walk and bike on 368,230 links - the price of GOAL.md requirement 1 - or our own routers and listeners doing twice the work on twice the graph, which is cheaper to fix than to pay six times. The recorder costs ~8 % of the clock (9.154), so this probe prices nothing; the cost tripwire is 2.5 h against the pricing probe's 84 min.",
+  "answers_issues": [
+    66
+  ],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 4,
+    "RUN.gate.wall_ceiling_h": 2.5,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.machine.jfr_profile": true,
+    "RUN.controler.create_graphs": false
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one. Four iterations is the profiling horizon 9.154 established at 25 %: iterations 2-3 are the recurring window (0 warms the JIT, 1 dumps plans), and a profile of those two is a profile of the iteration an arm repeats 297 times. The value sits two orders below the range so any output carrying it is obviously not a result.",
+    "RUN.gate.interval_iterations": "The mode gate is switched OFF because this probe has no modes to judge: at four iterations every deviation it could compute is a transient the board may not read. The COST watcher stays armed in its place at 2.5 h - the pricing probe's 84 min plus the recorder's ~8 % and a margin - so the run is not left with no automatic stop of either kind, which src/run/run_matsim.py refuses before the JVM starts (9.163, #169)."
+  }
+}
