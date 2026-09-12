@@ -38,6 +38,15 @@ or when the user asks and says why; the index row names the reading the
 report followed. A second report on the same reading is a cost, not an
 instrument.
 
+**Pace: a thorough inspection, not a document produced quickly.** A pass may
+take hours; every phase reads what it says it reads, and a phase that cannot
+finish declares the blind spot rather than closing the gap with a guess.
+**When a pass needs the user's decision** - whether the cadence rule is met
+and a report is warranted, which optional phase to cut when a budget is gone,
+whether to lodge a report the gate has turned red under - ask with
+`AskUserQuestion` and clickable choices, the recommended option first; never
+a free-text question the user has to compose an answer to.
+
 ```
 Project report:
 - [ ] Phase 0  Ground: gate, tree, digest, the previous report
@@ -604,6 +613,33 @@ factors added, factors retired, literature halves newly filled).
 8. Close with the ranked recommendations in the reply, at most twelve lines,
    the report's path, and the one-line placing in the field. Then stop: the
    change lands at `/handoff`.
+
+## After the report - the follow-on the report feeds
+
+The report changes nothing; what follows it does, and it is scoped work the
+user authorises step by step (clickable choices at each). The order is fixed
+because each step is the input of the next:
+
+1. **The issue ledger becomes the tracker.** Every *upcoming* risk in Phase 5's
+   ledger is filed as an issue under its one-line title, in the
+   `P<phase>: <summary>` scheme; every *present* issue the record has
+   overtaken is closed on the evidence the report cites (a PR, a run, a
+   measurement), or moved to `awaiting-run` with its `AWAITING-RUN:` line or
+   `decision-needed` with its `AWAITING-DECISION:` line (GOAL.md requirement
+   10). A risk filed twice is one issue; check the open set first.
+2. **Everything fixable without a run is fixed before the next run.** Work the
+   ranked findings, the optimisation ledger's `touches a result = none` rows
+   and every open issue that needs no arm, in the ranking the report gave,
+   on the session branch; `check_hardcoding.py --strict` and the doc gates
+   stay green after each. A row that opens a family is worked only if the
+   next arm was going to open one anyway, and the record says so.
+3. **The run is handed off when nothing else stands in front of it.** When the
+   issue gate is green, every remaining issue names the measurement or
+   decision it waits on and the brief's lane is the arm, `/handoff` closes the
+   session; the next agent's first item is the stated-cost approval and the
+   launch, and the next report runs after that arm's gate - one per reading.
+   Ask before stopping short: whether anything is left that a run does not
+   need is a judgement the user confirms, not one the session takes alone.
 
 ## What this skill never does
 
