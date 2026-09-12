@@ -144,7 +144,12 @@ def block_scoreboard():
     arm of a family the ledger declares `"readings": "none"` - a family
     whose arm ran a model later found broken at the root (9.148: a global
     `wait` that stranded every non-chain mode), which the runs block still
-    lists with its cause but the scoreboard must never present."""
+    lists with its cause but the scoreboard must never present. And so is a
+    run whose status card says `failed`: a crash has no boundary and no
+    defensible reading (a stopped arm - gate, ceiling, operator - is citable
+    at its `reached_iteration`; a failed one is citable for nothing), and for
+    two days the board read F33's heap death at iteration 90 as the newest
+    reading while the brief said the opposite."""
     import measure_iteration_modes as mim
     import iteration_trips as itr
     floor = _horizon_floor()
@@ -156,6 +161,9 @@ def block_scoreboard():
             continue
         if _family_of(name) in no_readings:
             continue
+        meta = _json(os.path.join(run_dir, '_meta.json')) or {}
+        if meta.get('status') == 'failed':
+            continue
         try:
             have = sorted(set(mim.iterations_with_trips(run_dir))
                           | set(itr.iterations_with_plans(run_dir)))
@@ -165,7 +173,6 @@ def block_scoreboard():
             continue
         import report_mode_ridership as rmr
         # the newest iteration may still be being written on a running arm
-        meta = _json(os.path.join(run_dir, '_meta.json')) or {}
         candidates = have[:-1] if meta.get('status') == 'running' and len(have) > 1 else have
         for it in reversed(candidates):
             try:

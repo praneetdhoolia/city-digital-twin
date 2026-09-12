@@ -16,7 +16,7 @@ import time
 
 import pytest
 
-from src.run import results_store
+import results_store
 
 
 def _run_dir(root, name, *, metrics, age_s, completion='stopped_by_operator'):

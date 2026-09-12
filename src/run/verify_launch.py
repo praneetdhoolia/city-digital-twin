@@ -28,7 +28,7 @@ import re
 import time
 
 
-from src.run import results_store
+import results_store
 
 # MATSim announces an iteration with a banner; the startup that precedes it is
 # PersonPrepareForSim, which on this model runs for minutes (9.154: 7 min 00 s).

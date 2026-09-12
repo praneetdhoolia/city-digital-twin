@@ -31,7 +31,7 @@ import os
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
 
-from src.run import results_store                                # noqa: E402
+import results_store                                             # noqa: E402
 
 # The phases MATSim's stopwatch names, in the order it runs them. The trailing
 # summary columns of stopwatch.csv carry each as an HH:MM:SS duration.

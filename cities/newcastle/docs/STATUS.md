@@ -30,7 +30,7 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 
 | Requirement | Where it stands | Evidence |
 |---|---|---|
-| Twelve modes physically simulated | **PARTIAL — every mode represented, not every leg simulated.** **Pt access/egress walk legs are still TELEPORTED** - 1,401 on `20260910T204747_4it_1pct`, every one `walk via pt` - so requirement 1 is unmet until they are network legs (#167). Half that fix landed: every leg states its `routingMode`, taking the failure **40 agents -> 20** (§9.164) | [positions/public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md), §9.70, §9.164 |
+| Twelve modes physically simulated | **BUILT, UNMEASURED AT 25 %.** Every mode represented; pt access, egress and the raptor's transfer walks are NETWORK LEGS the qsim executes on the footpath network - `teleported=0` on the 1 % probes of both networks (§9.167, #167, #183); freight trains remain crossing closures, not mobsim vehicles (§9.70). The first 25 % reading of the access legs is arm 0's | [positions/walk-and-bike](positions/walk-and-bike.md), [positions/public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md), §9.70, §9.167 |
 | Monitored live, every mode individually | **Met** — every 10th iteration readable, all twelve on their own basis | [positions/monitoring-and-gates](positions/monitoring-and-gates.md), §9.120 |
 | Every mode inside 10 % | **0 of 12 at the first RESULT** (§9.162, iteration 300) - nearest are motorbike **+12.5 %** and car **+11.3 %**. Eight modes past the 20 % stop bar, and **one of them is out of reach of any constant**: ride's target exceeds its own choice-set coverage (§9.163) | below, §9.162, §9.163 |
 | Convergence in ≤ 250 iterations | **MEASURED, and met only in the weak sense** (§9.162): the run RELAXES - drift **0.261 pp** over it.250-300 against a 0.5 pp tolerance - but the cutoff snap of **+2.211 pp** on car says the search was still 2.2 pp from its own optimum at 240. The §9.160 derivation it supersedes (settling ~200-210) was right on the plateau and wrong on the level | [positions/seed-and-choice-set](positions/seed-and-choice-set.md), §9.162, §9.160 |
@@ -39,25 +39,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `aborted_20260910T222830_300it_25pct` at **iteration 90** (family `F33-the-passenger-is-put-on-ride`, status `failed`, 25% sample, launched 2026-09-10T22:28:30, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
-Reproduce: `python src/analyse/report_mode_ridership.py --run aborted_20260910T222830_300it_25pct --it 90` (`--trend` for the direction).
+Read from `20260909T015217_300it_25pct` at **iteration 300** (family `F32-crowding-reaches-scoring`, status `completed`, 25% sample, launched 2026-09-09T01:52:17, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 300, the only completion that means the run executed the horizon it declared.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260909T015217_300it_25pct --it 300` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 58.8585 | 58.3222 | +0.9% | ok | share of resident linked trips |
-| 2 | ride | 15.5705 | 20.6000 | -24.4% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 13.0363 | 13.4000 | -2.7% | ok | share of resident linked trips |
-| 4 | taxi | 2.6201 | 0.9916 | +164.2% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 4.3623 | 2.2084 | +97.5% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3614 | 0.3785 | -4.5% | ok | share of resident linked trips |
-| 7 | bus | 3.7408 | 2.3819 | +57.0% | **STOP** >=20% | share of resident linked trips |
+| 1 | car | 64.9110 | 58.3222 | +11.3% | over 10% | share of resident linked trips |
+| 2 | ride | 12.1553 | 20.6000 | -41.0% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 9.8490 | 13.4000 | -26.5% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 2.9971 | 0.9916 | +202.2% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 4.7045 | 2.2084 | +113.0% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.4259 | 0.3785 | +12.5% | over 10% | share of resident linked trips |
+| 7 | bus | 3.4480 | 2.3819 | +44.8% | **STOP** >=20% | share of resident linked trips |
 | 8 | heavy_rail | 0 | 6,529 | -100.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,340 | 2,954 | -54.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0263 | 0.1429 | -81.6% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 6.1748 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 9 | light_rail | 1,224 | 2,954 | -58.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0571 | 0.1429 | -60.1% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6321 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 313.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, walk, motorbike**. Past the 20% stop bar: **ride, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **none**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -68,7 +68,7 @@ Inside 10%: **car, walk, motorbike**. Past the 20% stop bar: **ride, taxi, bike,
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs are derived or swept with the reason stated ([positions/network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds re-mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164), the 30 run-input sets re-assembled on the footpath network 12 Sep, `check_package.py` passed (§9.167) |
-| P4 calibration | 🟡 | the newest run on disk is `20260912T065939_4it_1pct`, which **RAN TO ITS LAST ITERATION** - a 4-iteration 1 % probe of the footpath network, read for nothing (§9.167). The newest ARM, `aborted_20260910T222830_300it_25pct`, is dead and its record says why (§9.165); F34's arm 0 is not launched |
+| P4 calibration | 🟡 | the newest run on disk is `20260912T135825_4it_25pct`, which is **RUNNING** - a 4-iteration 25 % PRICING PROBE of the footpath network on the current build, citable for its clock and its heap and for nothing else (`f34_pricing_probe_25pct`, §9.160 idiom). The newest ARM, `aborted_20260910T222830_300it_25pct`, is dead and its record says why (§9.165); F34's arm 0 is not launched |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -89,7 +89,7 @@ demand and plans are those of `20260910T203622` (§9.164); the 30 run-input sets
 are re-assembled on the footpath network. The manifest holds **959** files,
 **721 CC-BY / 220 ODbL** plus 18 bespoke, every one hashed. The registry is
 **553** fields, undeclared MATSim defaults **0**, inline literals **0**, the
-unit suite **455** tests. The heap rule reads 37.4 GiB at 25 % and the 25 %
+unit suite **457** tests. The heap rule reads 37.4 GiB at 25 % and the 25 %
 slope is unmeasured on this network: arm 0 carries 48 g and its `gc.log` is
 the measurement.
 
@@ -98,14 +98,14 @@ the measurement.
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260912T135825_4it_25pct` | running | F34-walk-has-a-footpath-network | - | - |
 | `20260912T065939_4it_1pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
 | `aborted_20260912T065345_4it_1pct` | aborted | F34-walk-has-a-footpath-network | 0 | 1% probe of the footpath network: heap exhausted at iteration 1 replanning under -Xmx12g (registry rule 10.5 GiB measured on the previous... |
 | `aborted_20260912T065144_4it_1pct` | failed | F34-walk-has-a-footpath-network | - | IllegalArgumentException: Link 20166 is not timeVariant. Did you make the network factory time variant? The easiest way to achieve this i... |
 | `aborted_20260912T064707_4it_1pct` | failed | F34-walk-has-a-footpath-network | 1 | OutOfMemoryError: Java heap space |
 | `aborted_20260912T064211_4it_1pct` | failed | F34-walk-has-a-footpath-network | 1 | OutOfMemoryError: Java heap space |
-| `20260912T042953_4it_1pct` | completed | F33-the-passenger-is-put-on-ride | 4 | ran_to_last_iteration `_run.json` |
 
-185 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+186 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
