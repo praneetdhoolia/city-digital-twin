@@ -155,7 +155,18 @@ def describe(run):
 
 
 def _family_from_index(run):
-    """The run index already attributes every run to a family; ask it."""
+    """Attribute the run to a family from the ledger, the way the run index does.
+
+    Asked live rather than read from `results/INDEX.csv`: the index is rebuilt
+    by `build_run_index.py`, so a run launched after the last rebuild had no row
+    and this returned None - a probe of F34 compared against F33 with the family
+    refusal silent (12 September 2026)."""
+    try:
+        import build_run_index as bri
+        fams, overrides = bri.load_families()
+        return bri.family_of(run, fams, overrides)[0] or None
+    except Exception:                      # no ledger, no city: the index is the fallback
+        pass
     path = os.path.join(REPO, 'results', 'INDEX.csv')
     if not os.path.exists(path):
         return None
