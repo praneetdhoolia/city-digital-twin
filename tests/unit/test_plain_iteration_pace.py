@@ -17,7 +17,7 @@ import os
 
 import pytest
 
-from src.analyse import arm_cost
+import arm_cost
 
 
 HEAD = ('iteration;BEGIN iteration;BEGIN replanning;BEGIN dump all plans;'

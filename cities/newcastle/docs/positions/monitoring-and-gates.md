@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
+**Updated:** 12 September 2026 (forty-fifth session) · **Record read through:** §9.168 · **Written against family:** `F35`
 
 ## What is built
 
@@ -29,7 +29,7 @@
 - **The gate reader** is `src/analyse/report_mode_ridership.py`. It prints every one of the twelve simulated modes on its own row against its own target, never an umbrella `pt` row: the pt submodes are resolved from each boarded route's `transportMode` through the run's own schedule (§9.87). It reads the run directory and the city's target artefact and writes nothing.
 - **Any iteration the run has written is readable** (§9.120). MATSim writes `<n>.trips.csv.gz` and `<n>.legs.csv.gz` every `RUN.controler.write_trips_interval` = 10 iterations and the reader uses them, rail and tram boardings included (§9.147, §9.148); the full plans, the experienced plans and the events are written every `RUN.controler.write_plans_interval` / `write_events_interval` = 100 — the gate — and `src/analyse/iteration_trips.py` derives the same linked main-mode trips from `<n>.experienced_plans.xml.gz` wherever a table is absent. The derivation is validated exactly against the trips table wherever both exist (`--validate`), and the trips table wins any disagreement (§9.120).
 - **Three views**: `--it N` for one iteration, `--trend` for one row per mode across every readable iteration with a direction verdict (`toward`, `AWAY`, `flat`), and `--watch SECONDS` to keep printing each newly readable iteration until the run ends. `--truck-stations` scores truck on its target's basis (below).
-- **The board's scoreboard is the newest ARM's reading** (`src/analyse/build_status_board.py`): a run whose `_meta.json` declares fewer iterations than the lower bound of the sweep on `RUN.controler.last_iteration` (250) is a plumbing test and is skipped, so a smoke launched after an arm cannot displace that arm's last gate reading (§9.133); so is an arm of a family the ledger declares `"readings": "none"` — F27's, which ran a model broken at the root (§9.148) — which the runs block still lists with its cause.
+- **The board's scoreboard is the newest ARM's reading, and never a FAILED run's** (`src/analyse/build_status_board.py`, §9.168): a run declaring fewer iterations than the sweep floor on `RUN.controler.last_iteration` (250) is a plumbing test and is skipped (§9.133); so is an arm of a family the ledger declares `"readings": "none"` (F27's, §9.148); and so is a run whose card says `failed` - for two days the board had read F33's heap death (`aborted_20260910T222830_300it_25pct` at iteration 90) while the brief said a failed arm is citable for nothing. A stopped arm is still read at its `reached_iteration`; the runs block lists every one with its cause. Beside it (§9.168): the goal table's pt-access cell said TELEPORTED after §9.167 had made the legs network legs, rewritten; `compare_runs.py` attributes a family from the ledger live, not from a `results/INDEX.csv` that may predate the run (a probe of F34 had compared against F33 with the refusal silent); `verify_launch.py` and `compare_runs.py` imported through the repository root and failed standalone with `No module named 'src'` - five files the #181 sweep missed, guarded by `tests/unit/test_import_roots.py`.
 - **Targets** come from `data/processed/validation/mode_targets_by_mode.csv`, written by `cities/newcastle/build/build_mode_targets.py` (§9.87), and `pt_boardings_targets.json` for the two disclosed rail modes (§9.130). They are deliberately NOT rows of `validation_targets.csv`, so the pre-registered 67/143 split is untouched (§9.87, §12).
 - **The thresholds are registry fields**, source `definition`, not swept: `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 (§9.87). A mode at or beyond the stop bar is flagged `STOP`; between the two it is flagged `over 10%` and rounded to neither; inside the pass bar it is `ok`.
 - **The calibration fit** is `src/calibrate/fit.py`: it scores the survey's six categories from `_metrics.json` through `score_mode_share`, with `bike+taxi` folded to Other and `car+motorbike` to Vehicle driver — folds the HTS data document's own lists evidence (§9.87). It lists every target it cannot score as `unscorable` with the reason (§9.80). The per-iteration survey-basis reader `src/analyse/measure_iteration_modes.py` hands the trips table to that same function (§9.83).
@@ -113,6 +113,7 @@
 
 ## History
 
+- §9.168 — the scoreboard skips a failed run; the import roots guarded
 - §9.167 — the eighth report worked down; inline literals gated; import roots gated
 - §9.166 — one boardings source; three launch refusals; the eighth report
 - §9.164 — the ceiling watcher fires; the gate needed the monitor
@@ -127,4 +128,3 @@
 - §9.151 — the issue gate green for the first time
 - §9.149 — the F28 gate: 7 out, car inside for the first time
 - §9.148 — rail boardings from the legs table; a no-readings family off the board
-- §9.147 — the trips cadence declared; plans and events at the gate

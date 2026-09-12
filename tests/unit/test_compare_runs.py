@@ -7,7 +7,7 @@ the point of the tool, so they are pinned here.
 """
 import pytest
 
-from src.analyse import compare_runs as C
+import compare_runs as C
 
 
 def run(**kw):

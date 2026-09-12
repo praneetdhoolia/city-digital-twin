@@ -2,11 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
+**Updated:** 12 September 2026 (forty-fifth session) · **Record read through:** §9.168 · **Written against family:** `F35`
 
 ## What is built
 
-- **A refused request walks the WHOLE trip, and the engine finds its trips by routing mode** (§9.167, #167): under `accessEgressModeToLink` `TaxiFleetEngine.refuse` found no taxi trip at all (it matched the leg's mode, and the trip's identity is its routing mode) and re-moded one leg where it did; both go through `RemodeRestore.remodeTrip` now.
+- **A REFUSED REQUEST IS ROUTED AS A WALK BY THE ENGINE ITSELF, AND THE TAXI TRIP COMES BACK WHOLE** (§9.168, family F35). The refusal used to re-mode the trip to one walk leg with a NULL route and give taxi back as one taxi leg with a NULL route; MATSim's `PersonPrepareForSim` re-routes the WHOLE plan over any null route, for every plan the person holds, so every plan that had ever carried a refused request was re-routed end to end every iteration - **47,797 of 58,558 requests refused at fleet 200** in one iteration of `20260912T162831_4it_25pct`, 24 % of the run's CPU. `TaxiFleetEngine.remodeRefused` now routes the refused trips on `global.numberOfThreads` workers after the fleet pass (**45,573 in 61 s** at 25 %, `20260912T185005_4it_25pct`; 1,762 in 2.8 s at 1 %), inserts them in refusal order and keeps the taxi trip it took out; the restore puts that original back, routes and all. Under `accessEgressModeToLink` the trip is found by routing mode and replaced whole (§9.167, #167).
 - **One mode, `taxi`, standing for taxi and rideshare together.** It blends the two services at `B.taxi.rideshare_trip_share` 0.66 (IPART 2025 last-trip split, swept 0.4–0.8, §9.76). The two are never separate modes: no observation splits them (§9.21, §9.42).
 - **It is a physical vehicle on the road.** `taxi` is in `RUN.qsim.main_mode`, `RUN.mode_choice.modes` and `RUN.routing.network_modes`; its body restates `RUN.qsim.car_vehicle` exactly, PCE 1.0, because a hired car is a car (§9.86, family F11). Travel time is bound to the congested car network so a taxi cannot out-run the traffic it rides in (§9.77).
 - **It is served by a finite fleet.** `A.taxi.fleet_representation` = `finite_fleet` (members `absent`, `finite_fleet`; `absent` reproduces every arm before §9.99). `citysim.TaxiFleetEngine` (`src/java/citysim/TaxiFleetEngine.java`) collects every taxi leg at `BeforeMobsim`, sorts by departure, and serves greedily from the earliest-free vehicle, which is the fleet's best case (§9.99, family F13).
@@ -40,7 +40,7 @@
 - **The fare stress probe DID reach the run** (§9.166): `taxi_fare_stress_1pct` set both per-km fares in a run overlay, and the emission test of the new override refusal confirms `config_runtime`'s blend carries them into `monetaryDistanceRate` at launch — the calibrator's stage table, which classes every field `build_matsim_run_inputs.py` consumes as needing the run inputs rebuilt, is too coarse for the fields `config_runtime` derives. A study-area trip COUNT remains the observation taxi lacks: the P2P Commissioner's levy counts are unpublished and were refused as a request at §9.42; the IPART consultant report is acquirable into `data/raw/p2p/` (eighth report, factor lane).
 
 - **The remaining excess is a fleet-size question, and the loop can now reach it** (§9.99, §9.158): `B.taxi.max_wait_min` and `B.taxi.deadhead_min` are movable, and `B.taxi.vehicle_trips_per_day` remains the lever §9.99 named — a sweep, not a fit. **But the reading point cannot yet score a candidate on taxi** (15.72 points of within-run drift at the F31 gate, §9.158), so a search over them is refused until the reading changes. `B.taxi.vehicle_trips_per_day` is the lever, and it is a sweep, not a fit: it moves the fleet by a factor of 2.3 (§9.99). No arm since F13 has been run with `absent` to measure the fleet's own effect (§9.99).
-- **The refused-request fallback is still walk.** §9.105 replaced ride's unpaired fallback with `B.ride.unpaired_fallback` = `licensed_drive_else_walk` and named the same walk for a refused taxi; the taxi engine still walks a refusal (`src/java/citysim/TaxiFleetEngine.java`). Whether taxi should take the same member is undecided.
+- **The refused-request fallback is still walk, and at 81 % refusal it is ~60 s of every 25 % iteration** (§9.168, §9.105): the fleet of 200 refuses four requests in five, and each refusal is a network walk route on the 364k-link walk graph. That cost is the taxi over-choice (#49) made visible in the clock; whether taxi should take `B.ride.unpaired_fallback`'s member is undecided.
 - **Two stated simplifications:** empty running loads no link, and there is no spatial dispatch; `B.taxi.deadhead_min` stands in for both (§9.99). A full demand-responsive fleet would add the routed empty legs (§9.86, §9.99).
 - **The IPART user incidence is consumed outside the package** to build `B.taxi.daily_trips_band`; `data/raw/p2p/` holds the Fares Order and nothing else (§9.94). Acquiring the incidence is the honest route to any person-level availability.
 - **The target is derived and weak** — a band, not a count — and the mean-distance yardstick (5.2 km) is the folded HTS "Other" figure shared with bike, so a deviation against it is not independent evidence about taxi (`data/processed/validation/mode_targets_by_mode.csv`, §9.42).
@@ -60,6 +60,7 @@
 
 ## History
 
+- §9.168 — the refused walk is routed by the engine; 81 % refused at 25 %
 - §9.167 — the refusal re-modes the whole trip
 - §9.166 — the fare probe did reach the run (config_runtime); P2P counts refused by 9.42
 - §9.163 — taxi has 51.6 pp of headroom; the excess is a level
@@ -74,5 +75,3 @@
 - §9.120 — taxi is a fleet-size question
 - §9.105 — refused taxi walked into walk excess
 - §9.99 — finite fleet, refused request walks
-- §9.94 — supply is the cause; fleet blocked
-- §9.91 — IPART band replaces census target

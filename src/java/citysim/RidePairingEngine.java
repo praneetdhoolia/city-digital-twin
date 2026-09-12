@@ -36,6 +36,7 @@ import org.matsim.core.controler.listener.BeforeMobsimListener;
 import java.util.LinkedHashMap;
 import org.matsim.core.population.routes.NetworkRoute;
 import org.matsim.core.router.TripRouter;
+import org.matsim.core.utils.timing.TimeInterpretation;
 import org.matsim.facilities.FacilitiesUtils;
 import org.matsim.utils.objectattributes.attributable.AttributesImpl;
 import org.matsim.core.router.StageActivityTypeIdentifier;
@@ -219,6 +220,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     /** The mode each remoded leg was actually executed as, so the
      *  AfterMobsim restore looks for the trip it really created. */
     private final Map<RideLeg, String> remodedAs = new HashMap<>();
+    /** The routed re-mode of each forced leg (F35): what replaced the trip
+     *  and the ORIGINAL it took out, which the restore puts back whole. */
+    private final Map<RideLeg, RemodeRestore.Remode> remodeOf = new HashMap<>();
     private boolean indexed = false;
     /** Population membership does not change during a run, so the id-ordered
      *  traversal that makes the pairing deterministic is built once. */
@@ -504,6 +508,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
         bookings.clear();
         remodedThisMobsim.clear();
         remodedAs.clear();
+        remodeOf.clear();
         missNoCandidate = 0;
         missWindow = 0;
         missEndpoints = 0;
@@ -803,23 +808,27 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                     // mobsim on every unpaired passenger. Under `none` the
                     // trip is this one leg and the in-place re-mode below
                     // is what it always was.
+                    //
+                    // The trip is ROUTED in the fallback mode by this engine
+                    // after the pass, in parallel, and the trip it replaces
+                    // is kept for the restore (F35): a null route used to
+                    // make PersonPrepareForSim re-route the WHOLE plan, and
+                    // the taxi engine's ~48,000 refusals an iteration made
+                    // that 24 % of the run's CPU (RemodeRestore.Remode).
                     final org.matsim.core.router.TripStructureUtils.Trip whole =
                             RemodeRestore.tripOf(ride.plan, ride.leg);
-                    if (whole != null && whole.getLegsOnly().size() > 1) {
-                        RemodeRestore.remodeTrip(ride.plan, whole, fallback);
-                        remodedWholeTrips++;
-                        remoded++;
+                    if (whole == null) {
+                        // the leg is not in the plan it was collected from;
+                        // nothing to execute and nothing to restore
+                        remodedThisMobsim.remove(remodedThisMobsim.size() - 1);
+                        remodedAs.remove(ride);
                         continue;
                     }
-                    ride.leg.setMode(fallback);
-                    org.matsim.core.router.TripStructureUtils.setRoutingMode(
-                            ride.leg, fallback);
-                    // the car route may traverse walk-excluded links, and
-                    // PersonPrepareForSim refuses a route inconsistent with
-                    // link modes (measured). A null route makes it re-route
-                    // the leg as WALK on the walk network before the mobsim -
-                    // properly walked from its first iteration.
-                    ride.leg.setRoute(null);
+                    if (whole.getLegsOnly().size() > 1) {
+                        remodedWholeTrips++;
+                    }
+                    remodeOf.put(ride, new RemodeRestore.Remode(
+                            ride.plan, whole, fallback, ride.departure));
                     remoded++;
                     continue;
                 }
@@ -1029,6 +1038,8 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                       detourDrivers == 0 ? 0 : Math.round(detourExtraS / detourDrivers),
                       detourRefused);
 
+        routeRemodes();
+
         write(event.getIteration(), rides.size(), nPaired, paired, unpaired,
               carLegs, fromRealised, fromRouted,
               nPaired == 0 ? 0.0 : deltaSum / nPaired, capacityRefusals,
@@ -1143,6 +1154,40 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     }
 
     /**
+     * Every forced leg's trip routed in its fallback mode on
+     * {@code global.numberOfThreads} workers and put into its plan in
+     * the order the pass forced them (F35). What each replaces is kept on
+     * the job for {@link #notifyAfterMobsim} to put back whole.
+     */
+    private void routeRemodes() {
+        if (remodeOf.isEmpty()) {
+            return;
+        }
+        final List<RemodeRestore.Remode> jobs = new ArrayList<>(remodedThisMobsim.size());
+        for (final RideLeg ride : remodedThisMobsim) {
+            final RemodeRestore.Remode job = remodeOf.get(ride);
+            if (job != null) {
+                jobs.add(job);
+            }
+        }
+        final long started = System.currentTimeMillis();
+        RemodeRestore.route(jobs, tripRouter, scenario.getActivityFacilities(),
+                TimeInterpretation.create(scenario.getConfig()),
+                scenario.getConfig().global().getNumberOfThreads());
+        int unrouted = 0;
+        for (final RemodeRestore.Remode job : jobs) {
+            if (!RemodeRestore.apply(job)) {
+                unrouted++;
+            }
+        }
+        org.apache.logging.log4j.LogManager.getLogger(RidePairingEngine.class)
+                .info("ridePairing: {} forced leg(s) routed in their fallback mode "
+                      + "in {} ms; {} left to PersonPrepareForSim as unroutable",
+                      jobs.size() - unrouted, System.currentTimeMillis() - started,
+                      unrouted);
+    }
+
+    /**
      * 9.147: every driver's detour routed on {@code global.numberOfThreads}
      * workers, one {@link TripRouter} each, results returned in the order
      * given so the caller applies them deterministically. A worker's failure
@@ -1241,12 +1286,16 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             if (person == null || person.getSelectedPlan() == null) {
                 continue;
             }
-            if (RemodeRestore.restore(
-                    person.getSelectedPlan(), ride.from, ride.to,
-                    remodedAs.getOrDefault(ride, TransportMode.walk),
-                    TransportMode.ride, ride.route,
-                    consumed.computeIfAbsent(ride.person,
-                            k -> RemodeRestore.ledger()))) {
+            final RemodeRestore.Remode job = remodeOf.get(ride);
+            final Set<Activity> ledger = consumed.computeIfAbsent(
+                    ride.person, k -> RemodeRestore.ledger());
+            final String executed = remodedAs.getOrDefault(ride, TransportMode.walk);
+            final boolean back = job != null && job.original != null
+                    ? RemodeRestore.restoreOriginal(person.getSelectedPlan(),
+                            ride.from, ride.to, executed, job.original, ledger)
+                    : RemodeRestore.restore(person.getSelectedPlan(), ride.from,
+                            ride.to, executed, TransportMode.ride, ride.route, ledger);
+            if (back) {
                 restored++;
             }
         }

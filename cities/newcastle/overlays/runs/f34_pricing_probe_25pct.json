@@ -1,0 +1,20 @@
+{
+  "overlay": "f34_pricing_probe_25pct",
+  "description": "A PRICING PROBE, NOT A MODELLING RUN - it is citable for its CLOCK and for nothing else, and no share, count, boarding or fit from it may be quoted, compared or fitted. Family F34 has no arm and its bytecode has never been executed at 25 %: the network was rebuilt with 40,203 footway ways (181,892 -> 368,230 links, 9.167, #183), pt access, egress and transfer walks are network legs the qsim executes (#167), citysim.SharedModeNetworks seeds one routing network per distinct link set, and the 1 % pace rose 29.5 -> 40 s an iteration. The launcher's quote for f34_baseline_25pct (21.7 h) is priced on aborted_20260910T222830_300it_25pct, which executed controler 08df36e7 on the road graph and stalled for 13.1 h; the pricer itself says that is a price for a stack that no longer exists and asks for one short unprofiled probe at this fraction on the current build. This is that probe: f34_baseline_25pct with the horizon at four iterations and the cost tripwire at 2 h, and NOTHING ELSE CHANGED - the same 48g heap, the same GC log the arm carries (RUN.machine.gc_log is on in the registry), create_graphs off - so its clock is the arm's own. It is the established idiom (f33_pricing_probe_25pct, 9.160). WHAT IT MEASURES: the recurring iteration's wall clock at 25 % on the footpath network, so arm 0 is quoted on a number rather than an inherited one, and the heap after a full collection at 25 % in its gc.log, which is the first reading of the 25 % slope of RUN.machine.heap_per_fraction_gib on this network (9.167). Four iterations at 25 % reads nothing else: the choice set does not close until about iteration 27 (9.163).",
+  "answers_issues": [],
+  "set": {
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 4,
+    "RUN.gate.wall_ceiling_h": 2.0,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false
+  },
+  "allow_outside_sweep": [
+    "RUN.controler.last_iteration"
+  ],
+  "justification": {
+    "RUN.controler.last_iteration": "The declared sweep starts at 250 because that is the largest value MEASURED to be insufficient for convergence (DECISIONS.md 9.7), so the whole range describes candidate MODELLING runs. This is not one. Four iterations is this repository's established pricing horizon at 25 % (20260909T011135_4it_25pct, 9.160; f33_pricing_probe_25pct): it is the shortest depth at which the recurring iteration - replanning, a re-routed plan executed and scored, a router reading the previous iteration's travel times - has actually run, which is the only iteration whose clock predicts an arm's. The value sits two orders below the range so any output carrying it is obviously not a result.",
+    "RUN.gate.interval_iterations": "The mode gate is switched OFF because this probe has no modes to judge: at four iterations every deviation it could compute is a transient the board may not read, and stopping on one would report a pricing question as a modelling failure. The COST watcher stays armed in its place at 2 h - the F33 probe's 1.5 h tripwire widened by the +35 % the 1 % pace rose on this network, and a 48g heap's longer full collections - so the run is not left with no automatic stop of either kind, which src/run/run_matsim.py refuses before the JVM starts (9.163, #169). The ceiling is not a budget; it is the tripwire for a stack that has become dramatically slower, which is what this probe exists to find out."
+  }
+}

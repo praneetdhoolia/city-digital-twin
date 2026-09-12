@@ -1,6 +1,7 @@
 package citysim;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,8 +25,10 @@ import org.matsim.core.controler.events.AfterMobsimEvent;
 import org.matsim.core.controler.events.BeforeMobsimEvent;
 import org.matsim.core.controler.listener.AfterMobsimListener;
 import org.matsim.core.controler.listener.BeforeMobsimListener;
+import org.matsim.core.router.TripRouter;
 import org.matsim.core.router.TripStructureUtils;
 import org.matsim.core.utils.misc.OptionalTime;
+import org.matsim.core.utils.timing.TimeInterpretation;
 
 /**
  * Taxi as a FINITE fleet: a request no vehicle can serve is refused
@@ -123,9 +126,19 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
      */
     private final List<Refused> refusedThisMobsim = new ArrayList<>();
 
+    /** The run's own router, one per worker, for the walk a refused
+     *  request makes (F35): the trip is routed HERE, never left with a
+     *  null route for PersonPrepareForSim to re-route the whole plan over
+     *  (RemodeRestore.Remode). */
+    private final Provider<TripRouter> tripRouter;
+    private final TimeInterpretation timeInterpretation;
+
     @Inject
-    TaxiFleetEngine(final Scenario scenario) {
+    TaxiFleetEngine(final Scenario scenario,
+                    final Provider<TripRouter> tripRouter) {
         this.scenario = scenario;
+        this.tripRouter = tripRouter;
+        this.timeInterpretation = TimeInterpretation.create(scenario.getConfig());
         this.cfg = ConfigUtils.addOrGetModule(scenario.getConfig(),
                 TaxiFleetConfigGroup.NAME, TaxiFleetConfigGroup.class);
         this.sampleFraction = scenario.getConfig().qsim().getFlowCapFactor();
@@ -163,17 +176,21 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         }
     }
 
-    /** A refused trip, by the handles that survive the router. */
+    /** A refused trip, by the handles that survive the router, and the
+     *  re-mode that executes it as a walk this iteration - whose
+     *  {@code original} is the taxi trip put back after the mobsim. */
     private static final class Refused {
         final Id<Person> person;
         final Id<Link> from;
         final Id<Link> to;
+        final RemodeRestore.Remode remode;
 
         Refused(final Id<Person> person, final Id<Link> from,
-                final Id<Link> to) {
+                final Id<Link> to, final RemodeRestore.Remode remode) {
             this.person = person;
             this.from = from;
             this.to = to;
+            this.remode = remode;
         }
     }
 
@@ -233,6 +250,38 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
                  requests.size(), served, refused,
                  String.format("%.1f", 100.0 * refused / requests.size()),
                  String.format("%.0f", served == 0 ? 0.0 : waitSum / served));
+        remodeRefused();
+    }
+
+    /**
+     * Every refused trip walks this iteration - routed on the walk network
+     * by the run's own router in parallel and put into the plan in refusal
+     * order (F35). The taxi trip it replaces is kept on the record for the
+     * restore, so plan memory never carries a null route.
+     */
+    private void remodeRefused() {
+        if (this.refusedThisMobsim.isEmpty()) {
+            return;
+        }
+        final List<RemodeRestore.Remode> jobs =
+                new ArrayList<>(this.refusedThisMobsim.size());
+        for (final Refused r : this.refusedThisMobsim) {
+            jobs.add(r.remode);
+        }
+        final long started = System.currentTimeMillis();
+        RemodeRestore.route(jobs, this.tripRouter,
+                this.scenario.getActivityFacilities(), this.timeInterpretation,
+                this.scenario.getConfig().global().getNumberOfThreads());
+        int unrouted = 0;
+        for (final RemodeRestore.Remode job : jobs) {
+            if (!RemodeRestore.apply(job)) {
+                unrouted++;
+            }
+        }
+        LOG.info("taxiFleet: {} refused trip(s) routed as a network walk in "
+                 + "{} ms; {} left to PersonPrepareForSim as unroutable",
+                 jobs.size() - unrouted, System.currentTimeMillis() - started,
+                 unrouted);
     }
 
     /**
@@ -285,34 +334,29 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
         return out;
     }
 
-    /** A refused request walks this iteration; the plan keeps taxi (9.81). */
+    /**
+     * A refused request walks this iteration; the plan keeps taxi (9.81).
+     * The WHOLE trip is replaced (#167): under accessEgressModeToLink the
+     * taxi leg has walk access/egress siblings carrying routingMode taxi,
+     * and re-moding leg by leg left a mixed trip PersonPrepareForSim
+     * refuses. The walk is routed after the fleet pass
+     * ({@link #remodeRefused}), not left null (F35).
+     */
     private void refuse(final Request r) {
         if (!this.cfg.isRemodeRefused()) {
             return;
         }
-        this.refusedThisMobsim.add(new Refused(r.personId, r.from, r.to));
-        // the WHOLE trip where it has more than one leg (#167): under
-        // accessEgressModeToLink the taxi leg has walk access/egress siblings
-        // carrying routingMode taxi; re-moding leg by leg left a mixed trip
-        // PersonPrepareForSim refuses. Under `none` the trip is one leg and
-        // the in-place re-mode below is what it always was.
         final Person person = this.scenario.getPopulation().getPersons().get(r.personId);
         final Plan plan = person == null ? null : person.getSelectedPlan();
         final TripStructureUtils.Trip whole =
                 plan == null || r.legs.isEmpty() ? null
                 : RemodeRestore.tripOf(plan, r.legs.get(0));
-        if (whole != null && whole.getLegsOnly().size() > 1) {
-            RemodeRestore.remodeTrip(plan, whole, TransportMode.walk);
-            return;
+        if (whole == null) {
+            return;                      // not in the selected plan any more
         }
-        for (final Leg leg : r.legs) {
-            leg.setMode(TransportMode.walk);
-            TripStructureUtils.setRoutingMode(leg, TransportMode.walk);
-            // the taxi route may traverse links walk is not permitted on, and
-            // the router will rebuild it - the same handling RidePairingEngine
-            // gives a remoded ride leg
-            leg.setRoute(null);
-        }
+        this.refusedThisMobsim.add(new Refused(r.personId, r.from, r.to,
+                new RemodeRestore.Remode(plan, whole, TransportMode.walk,
+                                         r.departure)));
     }
 
     /**
@@ -333,10 +377,10 @@ public final class TaxiFleetEngine implements BeforeMobsimListener,
             if (person == null || person.getSelectedPlan() == null) {
                 continue;
             }
-            if (RemodeRestore.restore(person.getSelectedPlan(), r.from, r.to,
-                                      TransportMode.walk, TAXI, null,
-                                      consumed.computeIfAbsent(r.person,
-                                              k -> RemodeRestore.ledger()))) {
+            if (RemodeRestore.restoreOriginal(person.getSelectedPlan(), r.from, r.to,
+                                              TransportMode.walk, r.remode.original,
+                                              consumed.computeIfAbsent(r.person,
+                                                      k -> RemodeRestore.ledger()))) {
                 restored++;
             }
         }
