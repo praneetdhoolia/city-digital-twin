@@ -117,6 +117,13 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
         final double fallbackTravelTime;
         /** Set on timeout: the Tier-1 clock, counted from the timeout. */
         double arriveAt = Double.NaN;
+        /** The driver's car, resolved ONCE (F35): serveWaiting runs every
+         *  sim-second over every waiting passenger, and vehicleOf parses
+         *  the person's `vehicles` attribute each call - 3.2 % of every CPU
+         *  sample on 20260912T162831_4it_25pct. Every vehicle is in the
+         *  qsim before the first departure, so an absent one stays absent. */
+        MobsimVehicle vehicle;
+        boolean vehicleResolved;
 
         Waiting(final Id<Link> linkId,
                 final Id<org.matsim.api.core.v01.population.Person> driver,
@@ -292,7 +299,11 @@ public final class JointRideEngine implements MobsimEngine, DepartureHandler {
                 }
                 continue;
             }
-            final MobsimVehicle vehicle = vehicleOf(w.driver);
+            if (!w.vehicleResolved) {
+                w.vehicle = vehicleOf(w.driver);
+                w.vehicleResolved = true;
+            }
+            final MobsimVehicle vehicle = w.vehicle;
             if (vehicle != null && w.linkId.equals(vehicle.getCurrentLinkId())
                     && vehicle.addPassenger((PassengerAgent) e.getKey())) {
                 board(now, e.getKey(), vehicle, w.linkId);
