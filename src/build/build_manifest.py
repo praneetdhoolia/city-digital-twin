@@ -695,7 +695,8 @@ def scan_paths():
         base = os.path.join(ROOT, base)
         if not os.path.isdir(base):
             continue
-        for dirpath, _, names in os.walk(base):
+        for dirpath, dirs, names in os.walk(base):
+            dirs.sort()      # walk order is the manifest's row order (finding 16)
             for n in sorted(names):
                 p = os.path.join(dirpath, n)
                 if os.path.splitext(n)[1].lower() in SKIP_EXT \

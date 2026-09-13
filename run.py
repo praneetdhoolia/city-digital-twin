@@ -133,18 +133,24 @@ def listing():
                  (doc.get('description', '')[:60] + '...')
                  if len(doc.get('description', '')) > 60 else doc.get('description', '')))
 
-    print('\nrun records in %s (completion per _run.json):' % run_matsim.RESULTS)
-    if os.path.isdir(run_matsim.RESULTS):
-        for d in sorted(os.listdir(run_matsim.RESULTS)):
-            # since 9.143 a gate-, ceiling-, stall- or operator-stopped arm
-            # carries a `_run.json` too; its `completion` says which
-            try:
-                with open(os.path.join(run_matsim.RESULTS, d, '_run.json'),
-                          encoding='utf-8') as fh:
-                    state = json.load(fh).get('completion') or 'record without completion'
-            except (OSError, ValueError):
-                state = 'incomplete'
-            print('  %-40s %s' % (d, state))
+    # The results STORE (9.137): every run sits under results/raw or
+    # results/processed, so listing the legacy root printed the store's own
+    # subdirectories as `incomplete` and no run at all (ninth report,
+    # finding 7).
+    import results_store
+    print('\nrun records in the results store (completion per _run.json):')
+    for d in results_store.run_names():
+        run_dir = results_store.resolve_records(d) or os.path.join(
+            run_matsim.RESULTS, d)
+        # since 9.143 a gate-, ceiling-, stall- or operator-stopped arm
+        # carries a `_run.json` too; its `completion` says which
+        try:
+            with open(os.path.join(run_dir, '_run.json'),
+                      encoding='utf-8') as fh:
+                state = json.load(fh).get('completion') or 'record without completion'
+        except (OSError, ValueError):
+            state = 'incomplete'
+        print('  %-40s %s' % (d, state))
     return 0
 
 

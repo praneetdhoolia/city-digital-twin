@@ -44,32 +44,47 @@ on every pass.
 
 ## State
 
-Last pass **11 September 2026**, at `20ae4e9` (the PR #179 merge), lodged as
-[`20260911T210144_project_report.html`](../20260911T210144_project_report.html)
-— the **eighth** pass of the library, one day after the seventh, at the full
-40-call budget per lane by the user's choice.
+Last pass **14 September 2026**, at `780c4c2` (the PR #195 merge), lodged as
+[`20260914T014107_project_report.html`](../20260914T014107_project_report.html)
+— the **ninth** pass of the library, three days after the eighth and the first
+that follows a reading rule (the F34 footpath rebuild and the F35 opening)
+rather than a session; field lane 40 of 40 calls, factor lane 35 of 40.
 
 | | rows | this pass |
 |---|---:|---|
-| `field-survey.json` projects | **50** | all 50 carried, **6 updated with verified material** (MATSim-NYC, AToM, POLARIS, Munich, SoundCast, Lausitz), 0 added; every row gains `data_acquired_per_mode` and `physical_fidelity` cells (verified on 6, from stored cells on 7, `unknown` on 37) |
-| `field-survey.json` platforms | 12 | all reused unchanged |
-| excluded · not re-verified · gaps | 64 · 39 · **16** | 3 gaps closed (the four-step rung, POLARIS's method, MASS-GT — whose recorded DOI was a soil-mechanics paper), 2 narrowed, 4 opened (Barcelona actuated signals, Ziemke–Braun signals-vs-counts, a current 25 % MATSim wall/heap pair, smartcard-validated ABMs) |
-| `calibration_methods` | **20** | unchanged |
-| `factors.json` rows | **93** | **90 reused unchanged, 0 re-searched**, **3 added** (E25 rail bonus; J6 APC/AVL/occupancy feeds; J7 bespoke survey tables), 12 dated addenda; a new `per_mode_data` block, one row per mode, literature half only |
+| `field-survey.json` projects | **53** | 50 carried, **6 updated with verified material** (Barcelona from its full text, SoundCast's per-operator transit fit, MWCOG's April 2026 Ver. 1.1.0 release, Kelheim's README, Berlin's signals addendum, Lausitz's published downsampling study), **3 added** (Cape Town MyCiTi BRT on AFC boardings, Seoul from smart-card data, mobiTopp Stuttgart Region) — the first two the library's first smartcard-validated rows |
+| `field-survey.json` platforms | 12 | all 12 reused unchanged |
+| excluded · not re-verified · gaps | 68 · 40 · **21 (14 open)** | 4 gaps closed (Chen 2020's full text — a prototype city, not a real one; Barcelona's actuated signals and R² 0.81; Ziemke–Braun — one iteration, nothing compared with observation; smartcard-validated ABMs — two rows added), 8 narrowed, 5 opened (MWCOG's Ver. 1.1.0 validation memo, the TNO Rotterdam–The Hague candidate, four untitled VSP 2026 working papers, the Seoul fit figures, the Opal ferry dataset check); 4 excluded (eqasim-bs Braunschweig, MG-TuRBO, Ziemke & Braun 2021, Zwick et al. 2022) |
+| `calibration_methods` | **20** | 20 reused, 0 added, 3 dated addenda (Chen 2020 read in full: 28 parameters, 6 master iterations, objective −93 %, mode component stuck; MG-TuRBO; the manual family's two new cases) |
+| `factors.json` rows | **94** | **93 reused unchanged, 0 re-searched**, **1 added** (E26 car: per-km cost, congestion time, chain availability — the one mode the layer table demands a row for that the library lacked), 11 dated addenda; the gaps came first: **5 closed** (K4 stuck-time rule, I12 the reference implementation's undamped step, and J6 / E22 / E24 closed from the repository at no cost), 5 narrowed with a source, 2 dead routes recorded; `per_mode_data` reused |
 | `needs_research` | **0** | unchanged |
 
-Budgets: field lane **40 of 40** calls over 10 rounds; factor lane **37 of 40**
-over 4. Statuses in this model are stored nowhere here and all 93 were re-read
-at `20ae4e9`: **IN 44 · PARTIAL 34 · INERT 2 · ASC 1 · OUT 9** over the carried
-rows (the three new rows OUT), with four class changes and their commits — E12
-reliability/headway INERT → PARTIAL (`8d3d4cf`), H10 choice-set coverage
-PARTIAL → IN (`89d6c08`), J4 road counts PARTIAL → IN (`efca641`), H11
-distance availability OUT → INERT (`2f8c938`). Two findings this pass bear on
-the registry: TfNSW supplies bespoke HTS tables on request though not unit
-records, and press reports freight trains at the Adamstown and Clyde Street
-crossings against `A.crossings.freight_closures_per_day` = 0.
+Budgets: field lane **40 of 40** calls over 6 rounds; factor lane **35 of 40**
+over 5 (the 14 September 2026 pass at `780c4c2`). Statuses in this model are
+stored nowhere here and all 94 were re-read at `780c4c2`: **IN 45 · PARTIAL 34 ·
+INERT 3 · ASC 1 · OUT 10** over the 93 carried rows (the new row E26 IN), with
+three class changes and their commits — E24 freight train PARTIAL → IN
+(`1592f5b`: the crossings' freight movements derived from the Cobbora 2012
+survey, 44 and 48 a day), B6 mobility impairment OUT → INERT (`e30d92e`: four
+fields declared and drawn into the population, read by nothing in the run), J6
+APC/occupancy feeds OUT → PARTIAL (`3d2ccbb`: a BOAM week on disk, read by no
+fit module). Two findings this pass bear on a registry value: the literature's
+stuck-time rule is 30 s / sample share (120 s at 25 % against
+`RUN.qsim.stuck_time_s` = 10, inside its sweep), and the reference ASC calibrator
+applies no damping where `CAL.asc.damping` = 0.6.
 
-### The previous pass (10 September 2026, at `4d1d1bc`)
+### The previous pass (11 September 2026, at `20ae4e9`)
+
+Lodged as
+[`20260911T210144_project_report.html`](../20260911T210144_project_report.html)
+— the eighth pass: field 50 of 50 rows reused, 6 updated (MATSim-NYC, AToM,
+POLARIS, Munich, SoundCast, Lausitz), 0 added, every row given
+`data_acquired_per_mode` and `physical_fidelity` cells; factors 90 reused,
+3 added (E25, J6, J7), a `per_mode_data` block; field lane 40 of 40 calls,
+factor lane 37 of 40; statuses IN 44 · PARTIAL 34 · INERT 2 · ASC 1 · OUT 9
+over the carried rows.
+
+### The pass before (10 September 2026, at `4d1d1bc`)
 
 Lodged as
 [`20260910T134723_project_report.html`](../20260910T134723_project_report.html)

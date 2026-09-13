@@ -192,7 +192,10 @@ def install_maven():
                 licence=LICENCES['maven'])
 
 
-RUN_STACK_POM = os.path.join('src', 'java', 'run-stack-pom.xml')
+# Anchored on the repository like TOOLS: cwd-relative, `--verify` run from
+# another directory found no sources, compiled nothing, and printed
+# `toolchain OK` over a stale .tools/classes (ninth report, finding 5).
+RUN_STACK_POM = os.path.join(REPO, 'src', 'java', 'run-stack-pom.xml')
 RUN_STACK_LIB = os.path.join(TOOLS, 'run-stack', 'lib')
 
 
@@ -252,8 +255,8 @@ def build_run_stack():
                 licence=LICENCES['run-stack'])
 
 
-JAVA_SRC = os.path.join('src', 'java')
-JAVA_SIGNALS_SRC = os.path.join('src', 'java_signals')
+JAVA_SRC = os.path.join(REPO, 'src', 'java')
+JAVA_SIGNALS_SRC = os.path.join(REPO, 'src', 'java_signals')
 CLASSES = os.path.join(TOOLS, 'classes')
 CLASSES_SIGNALS = os.path.join(TOOLS, 'classes-signals')
 
@@ -476,6 +479,11 @@ def main():
     ap.add_argument('--run-stack', action='store_true',
                     help='also resolve the signals run stack (Maven, one-off '
                          '~300 MB; needed only for signal-enabled runs, #73)')
+    ap.add_argument('--force-compile', action='store_true',
+                    help='compile even while a JVM big enough to be an arm is '
+                         'running - the documented escape hatch (#66), which '
+                         'argparse rejected as an unknown argument until the '
+                         'ninth report (finding 6)')
     a = ap.parse_args()
     if a.verify:
         raise SystemExit(verify())

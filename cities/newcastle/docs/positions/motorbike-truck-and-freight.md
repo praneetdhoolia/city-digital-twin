@@ -1,8 +1,8 @@
 # Motorbike, truck and freight rail — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. The depth arm `20260909T015217_300it_25pct` IS a result - `completion` `ran_to_last_iteration` at iteration 300 (§9.162), the first since family F4; nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 12 September 2026 (forty-fourth session) · **Record read through:** §9.167 · **Written against family:** `F34`
+**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
 
 ## What is built
 
@@ -35,14 +35,15 @@
 
 - `A.crossings.representation` = `change_events`; `A.crossings.freight_road_names` = Saint James Road, Clyde Street (held fixed as the identity of the set, §9.70); the Stewart Avenue tram crossing is excluded by `A.crossings.corridor_exclusion_m` = 500 (§9.90 registry, rule of §9.75).
 - `A.crossings.closure_source` = `schedule_derived`: one closure per scheduled train whose mapped route traverses the crossing's rail links, timed from that service's stop time at the nearest rail stop, read from the scenario's already-mapped feed, never a re-mapping (§9.90). `assumed_uniform` with `A.crossings.closures_per_day` = 30 is kept as the comparison member (§9.90).
-- `A.crossings.freight_closures_per_day` = 0 (assumed, sweep 0–30): non-timetabled freight is declared on top and is zero on the recorded evidence, not for want of a number (§9.90).
-- Durations: `A.crossings.closure_duration_passenger_s` = 60 per scheduled passenger train (literature, sweep 30–120); `A.crossings.closure_duration_s` = 240 for a freight movement (assumed, sweep 60–600, §9.70's "up to ten minutes").
+- `A.crossings.freight_closures_per_day` = Saint James Road **44**, Clyde Street **48**, per site, derived from the Cobbora survey (§9.167, #184): non-timetabled freight is declared on top of the scheduled closures, and every run's `_config.json` snapshot carries the values it loaded - arm 0 `20260912T202242_300it_25pct` at {Clyde Street 48, Saint James Road 44} (§9.169). The earlier 0 (assumed, sweep 0–30, §9.90) is superseded.
+- Durations are the survey's: `A.crossings.closure_duration_passenger_s` = 160 s per scheduled passenger train and `A.crossings.closure_duration_s` = 277 s per freight movement (§9.167), superseding the 60 s literature and 240 s assumed values of §9.90 and §9.70.
 
 ## What is measured
 
+- **ALL THREE ON ARM 0, F35'S RESULT** (§9.169, `20260912T202242_300it_25pct` at iteration 300, `ran_to_last_iteration`): motorbike **0.3572 % against 0.3785 %, −5.6 %** - INSIDE the 10 % bar for the first time on a result, 566 trips, a locked carve at 0.23 % coverage; truck **5.6251 %** network-wide road-vehicle share, level only (23,891 truck departures, 0 stuck; the target's basis is the count stations, `--truck-stations`, §9.101); freight rail **405 against 405**. The reader now counts the scheduled 313 PLUS the 92 freight closures THE RUN carried (44 Saint James Road + 48 Clyde Street, from the run's own `_config.json`), where before it read 313 against 405 on every run - a 22.7 % bookkeeping shortfall (ninth report finding 4, fixed §9.169). The run loaded 266 merged closure spans (112 Saint James Road + 154 Clyde Street). Against the F32 result's motorbike +12.5 % (§9.163) it is a direction, not a comparison across families.
 - **MOTORBIKE'S BASIS DEFECT IS MEASURED FIXED AND #93 IS CLOSED** (§9.163). On `20260909T015217_300it_25pct` at iteration 300, motorbike reads **0.4259 %** of resident linked trips against the **0.3785 %** target-LGA identity the carve is conserved to — **+12.5 %**, a level difference on one shared basis rather than the basis mismatch the issue was opened for. Generation and scoring now describe the same quantity.
 - **It is the most stable mode on the board, and the choice-set table says why** (§9.163). Motorbike holds **0.24 %** coverage against a **0.4259 %** share: the share EXCEEDS the coverage, which is only possible because motorbike is a person-level locked carve whose riders hold no alternative for the mode-choice operator to switch them off. `report_choice_set_coverage.py` refuses to print a headroom for it and for truck for that reason. Its `snap_pp` at the innovation cutoff is exactly **0.000** where car moved +2.211, and it drifts 0.2406 % → 0.2391 % across iterations 100–300 on the all-resident denominator.
-- **All three at the first result** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): motorbike **0.4259 % against 0.3785 %, +12.5 %** - the closest mode on the board after car and the only one that never moved, holding 0.4259-0.4674 % across all 300 iterations; truck **5.6321 %** network-wide road-vehicle share, which is NOT its target basis (§9.101); freight rail **314 movements**, the timetable by construction. **Motorbike and truck are locked carves outside `RUN.mode_choice.modes`** and the depth arm confirms it - their `snap_pp` at the innovation cutoff is **0.000** for both, where every choosable mode moved (§9.162).
+- **All three at the F32 result** (`20260909T015217_300it_25pct` at iteration 300, `ran_to_last_iteration`, §9.162): motorbike **0.4259 % against 0.3785 %, +12.5 %** - the closest mode on the board after car and the only one that never moved, holding 0.4259-0.4674 % across all 300 iterations; truck **5.6321 %** network-wide road-vehicle share, which is NOT its target basis (§9.101); freight rail **314 movements**, the timetable by construction. **Motorbike and truck are locked carves outside `RUN.mode_choice.modes`** and the depth arm confirms it - their `snap_pp` at the innovation cutoff is **0.000** for both, where every choosable mode moved (§9.162).
 
 - F26 gate, `aborted_20260906T100429_300it_25pct` at iteration 100: **motorbike +11.1 %** (0.4207 against 0.3785), the second-closest mode after car; truck 5.76 % of road vehicles, level only (§9.146).
 
@@ -53,13 +54,13 @@
 - **Truck, network-wide:** 5.61% of modelled road vehicles at the F22 gate (iteration 100, §9.136), falling as resident car trips grew. That basis is NOT the target's and no deviation is printed for it (§9.101).
 - **Truck at the classifying stations, F22 gate** (§9.136): 6.14% modelled against the 3 calibration stations' own observed 11.31% (−45.7%) on the 25% sample — thicker n than F21's −51.0% at 10% (§9.135) and still far below the F13 like-for-like +5.4% (§9.101); the freight tier under the fare-priced demand is #82's open question.
 - The basis (`--truck-stations`): link entries against `road_aadt_targets.csv`'s own heavy shares, 3 calibration stations, 20 of 24 classifying stations holdout and never opened (§9.101); the station target row is 15.4698% (sweep 13.7256–17.4013) of weekday vehicles at classified stations (`mode_targets_by_mode.csv`). The F13 like-for-like read +5.4% at iteration 100 of `20260829T172145_1000it_10pct` (§9.101).
-- **Freight rail:** 314 closures per weekday — Clyde Street 204, Saint James Road 110 — 3,014 change events, peaked with the service (§9.90). The `freight_train` target row is 314 on that same denominator; it is a representation check, not a fit (§9.90).
+- **Freight rail:** 405 movements per weekday — Clyde Street 203 scheduled plus 48 freight, Saint James Road 110 plus 44 — peaked with the service (§9.90, §9.167; Clyde Street read 204 on the previous mapping, the mapper's own drift, §3.5). The `freight_train` target row is 405 on that same denominator and the reader now reads each run's own closures against it (405 against 405 on arm 0, §9.169); it is a representation check, not a fit (§9.90).
 
 ## What is open
 
 - **The truck yardstick is holdout-bound** (§9.101): scoring at the classifying stations spends holdout stations, and whether to open them for freight is the operator's decision. Counts themselves remain unfitted (#82).
-- **The crossings' closure effect has never been measured on a converged arm** (§9.77, §9.90). #68 is closed on its build scope; what is left is a reading, and no arm since F4 has reached a horizon to take it from.
-- The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 60 s — the registry is the newer statement and wins; the CSV text should be regenerated.
+- **The crossings' closure effect has never been measured** (§9.77, §9.90). #68 is closed on its build scope; both results carry the closures ON (arm 0 at 405 movements, §9.169) and no paired arm has carried them off, so what is left is a paired reading.
+- The target CSV's `freight_train` basis text says each closure is 240 s, while the registry closes a passenger train for `A.crossings.closure_duration_passenger_s` = 160 s and a freight movement for 277 s (§9.167) — the registry is the newer statement and wins; the CSV text should be regenerated.
 - Truck routing unconstrained; no port-gate constraint is enforced — the Mayfield precinct cap (1,268 movements/day) is recorded as an upper bound only, never a target (§9.70).
 
 ## Refused — do not re-raise
@@ -68,12 +69,13 @@
 - **A separate motorbike network layer** (filtering, lane-splitting): inside the PCE sweep (§9.52).
 - **Coal trains on the simulated rail network.** Grade-separated since 2006; adding them fabricates an interaction the real network does not have (§9.70).
 - **Scoring truck on the network-wide share.** The target's own basis says it is not comparable; a −49.6% quoted on it was two populations, not an error (§9.101).
-- **Pinning `freight_closures_per_day` above zero without a log.** ARTC publishes none; the remainder is swept, not asserted (§9.90).
+- **Pinning `freight_closures_per_day` on no evidence.** ARTC publishes no movement log; the 44 and 48 are derived from the published Cobbora survey with the Clyde Street share a stated assumption (§9.167, #184), never asserted.
 - **A freight tour or depot structure.** No local observation supports one; one agent is one one-way trip (§9.49).
 - **The core's G62 cell as the motorbike yardstick.** Every other target is the target LGA's; the split reads the LGA's own SA1s (§9.122).
 
 ## History
 
+- §9.169 — motorbike inside; freight like-for-like
 - §9.167 — freight movements derived from the Cobbora survey; BITRE registrations acquired
 - §9.166 — #93's closed bullet retired
 - §9.163 — motorbike on one basis at +12.5 %; #93 closed
@@ -88,5 +90,3 @@
 - §9.122 — escort denial before draw; LGA cell
 - §9.116 — carve fix committed without rebuild
 - §9.115 — carve and target one identity
-- §9.112 — carve told one share, scored another
-- §9.101 — truck scored at its own stations

@@ -288,6 +288,48 @@ def pt_boardings(run_dir, fraction):
 
 
 _SCHEDULE_CACHE = {}
+SCHEDULE_SOURCE = {}
+import sys  # noqa: E402
+
+
+def schedule_path(run_dir):
+    """The transit schedule THIS RUN drove, or None.
+
+    The run's own copy first - MATSim writes `output/output_transitSchedule`
+    at controler end - and only then the path its config.xml names. That path
+    is the CITY's assembled schedule under `scenarios/matsim/<S>/<day>/`, which
+    every network rebuild overwrites: read through it, the F32 result's 22,769
+    transit legs resolved 22,487 to no stop name after the F34 footpath
+    rebuild, the disclosed-station filter dropped every rail boarding, and the
+    board printed heavy rail 0 / -100 % on the only result while the run's own
+    `_fit.json` said +225 % (ninth report, 14 September 2026, finding 1). "One
+    build per comparison" was broken at the reader, not at the mapper. A run
+    stopped before its end has no output schedule; for it the config path is
+    the only copy, and `SCHEDULE_SOURCE` says so for the caller to print.
+    """
+    own = os.path.join(run_dir, 'output', 'output_transitSchedule.xml.gz')
+    if os.path.exists(own):
+        SCHEDULE_SOURCE[run_dir] = 'run'
+        return own
+    import re
+    try:
+        cfg_text = open(os.path.join(run_dir, 'config.xml'), encoding='utf-8').read()
+    except OSError:
+        return None
+    m = re.search(r'name="transitScheduleFile" value="([^"]+)"', cfg_text)
+    if not m:
+        return None
+    path = m.group(1)
+    if not os.path.isabs(path):
+        path = os.path.normpath(os.path.join(run_dir, path))
+    SCHEDULE_SOURCE[run_dir] = 'city'
+    sys.stderr.write(
+        'WARNING %s: no output/output_transitSchedule.xml.gz (the run did not '
+        'reach its end); stops and route modes are resolved through the CITY\'s '
+        'current schedule %s, which a later network rebuild may have '
+        'replaced - a stop name that fails to resolve is that, not a modelled '
+        'zero\n' % (os.path.basename(run_dir.rstrip('/\\')), path))
+    return path
 
 
 def _schedule_index(run_dir):
@@ -305,14 +347,10 @@ def _schedule_index(run_dir):
         return _SCHEDULE_CACHE[run_dir]
     import re
     import xml.etree.ElementTree as ET
-    cfg_text = open(os.path.join(run_dir, 'config.xml'), encoding='utf-8').read()
-    m = re.search(r'name="transitScheduleFile" value="([^"]+)"', cfg_text)
-    if not m:
+    path = schedule_path(run_dir)
+    if path is None:
         _SCHEDULE_CACHE[run_dir] = ({}, {})
         return _SCHEDULE_CACHE[run_dir]
-    path = m.group(1)
-    if not os.path.isabs(path):
-        path = os.path.normpath(os.path.join(run_dir, path))
     opener = gzip.open if path.endswith('.gz') else open
     stops, modes = {}, {}
     with opener(path, 'rt', encoding='utf-8') as f:

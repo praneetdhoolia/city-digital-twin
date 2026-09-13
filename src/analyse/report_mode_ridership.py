@@ -192,9 +192,10 @@ def pt_submode_trips(run_dir, iteration, person_lga, derived=None):
                 except ValueError:
                     metres = 0.0
                 ridden[(l['person'], l['trip_id'])][sm] += metres
-        stem = 'ITERS/it.%d/%d.trips' % (iteration, iteration)
-        with em.open_output(run_dir, stem) as fh:
-            rows = list(csv.DictReader(fh, delimiter=';'))
+        # the cached trips table, read once per (run, iteration) - this was
+        # a second full parse beside the cached read above (ninth report,
+        # 14 September 2026, finding 9)
+        rows = _reading.table(run_dir, 'trips', iteration)
     submodes = {}
     for key, per_mode in ridden.items():
         # greatest in-vehicle distance wins; ties break on the submode name so
@@ -240,20 +241,42 @@ def crossing_closures(run_dir):
     return len(re.findall(r'<flowCapacity[^>]*value="0(?:\.0*)?"', body))
 
 
-def crossing_movements():
+def crossing_movements(run_dir=None):
     """Train movements per weekday the crossing closures represent.
 
-    Read from the city's crossings report rather than recomputed: the closure
-    file is generated from the timetable, so this is the same number the
-    target is derived from - which is exactly why the comparison below is
-    labelled a representation rather than a fit.
+    The target (`mode_targets_by_mode.csv`, freight_train) is the scheduled
+    passenger trains that cross PLUS the derived freight movements
+    (`A.crossings.freight_closures_per_day`, 9.167), so the modelled side is
+    the same sum - the ninth report (14 September 2026, finding 4) found this
+    reading only the scheduled half (`closures_per_site`, 313) against a 405
+    target on every run, a 22.7 % shortfall that was bookkeeping. The
+    scheduled half comes from the city's crossings report (the timetable's
+    own count); the freight half is read from THE RUN'S OWN values snapshot
+    (`_config.json`) where one exists, so a run made before the freight
+    closures were emitted is not scored on today's artefact, and from the
+    report only when the run carries no snapshot.
     """
     path = _city.path('networks/matsim/crossings/_crossings_report.json')
     if not _os.path.exists(path):
         return None
     doc = json.load(open(path, encoding='utf-8'))
     per_site = doc.get('closures_per_site') or {}
-    return float(sum(per_site.values())) if per_site else None
+    if not per_site:
+        return None
+    scheduled = float(sum(per_site.values()))
+    freight = doc.get('freight_closures_per_day')
+    if run_dir:
+        snap = _os.path.join(run_dir, '_config.json')
+        if _os.path.exists(snap):
+            try:
+                values = json.load(open(snap, encoding='utf-8')).get('values') or {}
+            except (OSError, ValueError):
+                values = {}
+            if 'A.crossings.freight_closures_per_day' in values:
+                freight = values['A.crossings.freight_closures_per_day']
+    if isinstance(freight, dict):
+        freight = sum(float(v) for v in freight.values())
+    return scheduled + float(freight or 0)
 
 
 def road_vehicle_share(counts_all):
@@ -409,7 +432,7 @@ def report(run_dir, iteration, truck_stations=False):
             truck_target_stn = truck_stn[1]
             truck_note = None
     closures = crossing_closures(run_dir)
-    movements = crossing_movements()
+    movements = crossing_movements(run_dir)
 
     # 9.130: a target on a boardings denominator is scored on modelled
     # boardings - every traveller, every boarding, scaled to a full day by
@@ -421,6 +444,15 @@ def report(run_dir, iteration, truck_stations=False):
         import iteration_trips as itr
         counts = itr.boardings(run_dir, iteration)
         frac = sample_fraction(run_dir)
+        if not frac:
+            # a boardings target is a full-day count; raw sampled boardings
+            # against it would read a quarter of the level at 25 % with no
+            # sign that anything was wrong (ninth report, finding 8)
+            raise SystemExit(
+                'REFUSED: %s carries no RUN.sample.fraction in _meta.json or '
+                '_run.json, so its boardings cannot be scaled to a weekday; '
+                'a boardings-basis mode (heavy rail, light rail) cannot be '
+                'read from it' % _os.path.basename(run_dir.rstrip('/\\')))
         disclosed = set(disclosed_stations())
         for m in boarding_modes:
             sm = {'heavy_rail': 'rail', 'light_rail': 'tram', 'bus': 'bus',

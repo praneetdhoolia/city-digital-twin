@@ -92,7 +92,7 @@
       "description": "Minimum seats after scaling, so a vehicle never becomes unusable. Capacity floors at 1 seat below about a 1.5% sample, which makes capacity systematically too generous at small fractions. Acceptable while crowding scoring is off; revisit if it is enabled (issue 12)."
     },
     "RUN.controler.last_iteration": {
-      "value": 1000,
+      "value": 250,
       "units": "iterations",
       "source": "measured",
       "sweep": {
@@ -100,13 +100,13 @@
           250,
           2000
         ],
-        "basis": "the lower bound is the largest value MEASURED to be insufficient. The upper bound is NOT a budget limit any more: it is the open half of the question. 1000 is measured to leave the post-cutoff state settled, and is NOT measured to be enough SEARCH - the pre-cutoff creep was still decaying geometrically when innovation froze it (9.43), so the range above 1000 stays declared rather than closed"
+        "basis": "the lower bound is the value DECLARED on 14 September 2026 (9.169): two 1 % runs of 250 under the uniform seed had shown ride still moving 0.619 to 0.664 over the last 50 iterations, a measurement the full-choice-set seed (9.120) and arm 0 of F35 supersede - at 25 % the state drifts 0.128 pp at most over 50 post-settle iterations. Before that declaration the lower bound was the largest value MEASURED to be insufficient. The upper bound is NOT a budget limit any more: it is the open half of the question. 1000 is measured to leave the post-cutoff state settled, and is NOT measured to be enough SEARCH - the pre-cutoff creep was still decaying geometrically when innovation froze it (9.43), so the range above 1000 stays declared rather than closed"
       },
       "sweep_role": "uncertainty",
       "status": "active",
-      "decisions_ref": "9.7, 9.43, 15",
+      "decisions_ref": "9.7, 9.43, 15, 9.169",
       "matsim_param": "controler.lastIteration",
-      "description": "Iterations to relaxation. MEASURED at 1000 by two full post-rebuild arms - 10% x 1000 (11.0 h, 54,617 agents) and 25% x 1000 (30.8 h, 136,068 agents), one arm at a time, same network build, seed 20260810 - and declared on that evidence (9.43, issue 5). WHAT IS MEASURED IS NARROWER THAN THE FIELD NAME: at 1000 the post-snap state is settled at both fractions (worst-mode drift +0.22 pp / +0.17 pp over the snap-aware window, inside RUN.relaxation.drift_tolerance_pp), and that result is fraction-independent. WHAT IS NOT MEASURED is whether 1000 iterations of SEARCH suffice: car mode share was still creeping +0.76 pp per 100 iterations at the cutoff, decaying x0.73 per 100, which extrapolates to roughly 2 pp of movement left in the innovated state when innovation was disabled. The 1500-iteration arm that would have measured that directly was CANCELLED by instruction for compute economy; the residual is carried as declared uncertainty, not resolved. Read this value with 9.43 beside it. Prior state, kept because it is the floor: two 1% runs of 250 iterations showed the model had NOT converged - innovation switches off at iteration 200 and ride still moved 0.619 to 0.664 over the last 50 iterations with no new plans being created. Shipped scenario configs now carry this measured value rather than the sweep floor; run_matsim.py still gives --iterations no default so a run states its own horizon."
+      "description": "Iterations to relaxation. DECLARED 250 on 14 September 2026 (9.169, the operator's decision on a clickable choice) on arm 0 of family F35, `20260912T202242_300it_25pct` (300 iterations at 25 %, innovation off at 240, `ran_to_last_iteration`): after the settle point the worst mode drifts 0.128 pp (car) over it.250-300 against the 0.5 pp tolerance, the cutoff snap is +1.68 pp on car, and the INNOVATED state moved at most 0.42 pp (car, planned 64.71 -> 65.13 %) between it.200 and it.240 - so a cutoff at 200 with the same 50-iteration tail reads the same state inside the tolerance, meets GOAL.md requirement 8 as a number the twin carries, and saves 3.8-4.6 h of a ~30 h arm at 25 %. WHAT IS STILL NOT MEASURED is whether 200 iterations of SEARCH suffice: the innovated state was still creeping at the cutoff on arm 0 exactly as it was at 1000 (below), so the sweep's upper half stays open. The pair arms of #172 declare 250 and difference against arm 0's it.300 reading, whose post-cutoff drift is inside the tolerance either way. THE PRIOR MEASUREMENT, kept as history: MEASURED at 1000 by two full post-rebuild arms - 10% x 1000 (11.0 h, 54,617 agents) and 25% x 1000 (30.8 h, 136,068 agents), one arm at a time, same network build, seed 20260810 - and declared on that evidence (9.43, issue 5). WHAT IS MEASURED IS NARROWER THAN THE FIELD NAME: at 1000 the post-snap state is settled at both fractions (worst-mode drift +0.22 pp / +0.17 pp over the snap-aware window, inside RUN.relaxation.drift_tolerance_pp), and that result is fraction-independent. WHAT IS NOT MEASURED is whether 1000 iterations of SEARCH suffice: car mode share was still creeping +0.76 pp per 100 iterations at the cutoff, decaying x0.73 per 100, which extrapolates to roughly 2 pp of movement left in the innovated state when innovation was disabled. The 1500-iteration arm that would have measured that directly was CANCELLED by instruction for compute economy; the residual is carried as declared uncertainty, not resolved. Read this value with 9.43 beside it. Prior state, kept because it is the floor: two 1% runs of 250 iterations showed the model had NOT converged - innovation switches off at iteration 200 and ride still moved 0.619 to 0.664 over the last 50 iterations with no new plans being created. Shipped scenario configs now carry this measured value rather than the sweep floor; run_matsim.py still gives --iterations no default so a run states its own horizon."
     },
     "RUN.controler.first_iteration": {
       "value": 0,
@@ -793,11 +793,11 @@
         "departure_requires": "the same GC-log reading as RUN.machine.heap_floor_gib"
       },
       "status": "active",
-      "decisions_ref": "9.5, 9.165",
+      "decisions_ref": "9.5, 9.165, 9.169",
       "consumers": [
         "src/run/run_matsim.py"
       ],
-      "description": "The sample-dependent part of the heap rule. At 25 % it is 21.75 GiB on top of the floor - 31.4 GiB in all - which is why 14g died and 40g lived (9.165)."
+      "description": "The sample-dependent part of the heap rule. At 25 % it is 21.75 GiB on top of the floor - 37.4 GiB in all on the footpath network (floor 15.6) - which is why 14g died and 40g lived on the road graph (9.165). MEASURED ON A FULL ARM 14 September 2026 (9.169): arm 0 of F35 (`20260912T202242_300it_25pct`, 25 %, 300 iterations, 48g, the GC log on) held 26.2 GiB live at the peak after a full collection (26,863 MB at 22.9 h), 21-27 GB throughout, with NO upward slope over 300 iterations of plan memory and 391 full collections of ~2 s each (about 1 % of the wall); the rule's 37.4 GiB therefore carries 11 GiB over the measured live peak at 25 %. The value is NOT re-declared from that reading: the field is a survival boundary fitted on the arms that died and the arms that lived, and one arm that lived locates no boundary - the departure rule below asks for two fractions."
     },
     "RUN.machine.jfr_profile": {
       "value": false,
