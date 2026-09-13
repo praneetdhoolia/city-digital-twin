@@ -248,7 +248,10 @@ def stale_running(results_dir):
             continue
         if meta.get('status') != 'running':
             continue
-        if _pid_alive(meta.get('pid')):
+        # the harness OR the JVM alive is a live run (#128; ninth report,
+        # finding 18)
+        if any(_pid_alive(meta.get(k)) for k in ('pid', 'jvm_pid')
+               if meta.get(k)):
             continue
         out.append((os.path.basename(os.path.dirname(meta_path)),
                     meta.get('pid')))

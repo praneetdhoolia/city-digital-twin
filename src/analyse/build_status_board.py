@@ -271,10 +271,18 @@ def block_runs():
             reached = _iterations_reached(run_dir)
         record = ('%s `_run.json`'
                   % rec.get('completion', 'ran_to_last_iteration')) if rec else ''
+        # A RUNNING arm's iteration count is live, and a generated block that
+        # carries it is stale the moment it is written: the gate was red for
+        # the whole life of every arm and the PR hook refused a docs-only PR
+        # under one (ninth report, finding 'runs STALE'). The live count is
+        # the progress digest's to print, not the board's.
+        if meta.get('status') == 'running':
+            reached_cell = 'live'
+        else:
+            reached_cell = '-' if reached is None else reached
         lines.append('| `%s` | %s | %s | %s | %s |'
                      % (name, meta.get('status', '?'), _family_of(name) or '-',
-                        '-' if reached is None else reached,
-                        cause or record or '-'))
+                        reached_cell, cause or record or '-'))
     lines.append('')
     lines.append('%d run directories on disk; `results/INDEX.md` labels every one. '
                  'A dead run states its cause in its own `_meta.json`.' % len(names))

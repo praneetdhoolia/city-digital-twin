@@ -844,14 +844,15 @@ else:
               'and is not zero (DECISIONS.md 9.39, issue #29)'
               % (day, bike, min(free) if free else -1, _bar))
     check(False,
-          'lastIteration is NOT validated: two 250-iteration runs at 1% were '
-          'still drifting after innovation was switched off (DECISIONS.md 9.7). '
-          'A shipped config now carries the LOWER BOUND OF THE DECLARED SWEEP, '
-          'set through the resolver rather than supplied past it - the largest '
-          'value MEASURED to be insufficient, so a config run outside the '
-          'harness is short rather than plausible. It was 100, from an argparse '
-          'default that walked past the field being declared unobtained. Issue '
-          '#5 still owns the real number',
+          'lastIteration is DECLARED, not validated as enough search: a shipped '
+          'config carries RUN.controler.last_iteration = 250, declared 14 '
+          'September 2026 (DECISIONS.md 9.169) on arm 0 of F35 - the state '
+          'drifts 0.128 pp at most over 50 post-settle iterations at 25 %, and '
+          'the innovated state moved 0.42 pp between it.200 and it.240 - while '
+          'whether 200 iterations of SEARCH suffice stays unmeasured (9.43). '
+          'Before 14 September the shipped value was 1000 (9.43), and before '
+          'that the sweep floor; it was once 100 from an argparse default that '
+          'walked past the field being declared unobtained (9.7)',
           warn=True)
     check(prep.get('seed_mode') == 'uninformed',
           'plans were built from the uninformed seed (found %r); the informed '

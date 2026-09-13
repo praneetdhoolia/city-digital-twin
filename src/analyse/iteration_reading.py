@@ -31,12 +31,37 @@ import gzip
 import io
 import os
 
-_CACHE = {}
+import collections
+
+# Bounded: `--trend` over a 300-iteration arm reads thirty trips tables of
+# hundreds of MB each at 25 %, and the gate watcher imports this module for
+# the run's lifetime (ninth report, 14 September 2026, finding 23). The
+# newest CACHE_TABLES tables stay; a reader that wants two tables of one
+# iteration (trips and legs) is inside the bound.
+CACHE_TABLES = 6
+_CACHE = collections.OrderedDict()
 
 
 def clear():
     """Forget every cached table (a long-lived process reading many runs)."""
     _CACHE.clear()
+
+
+def innovation_off_after(first, last, fraction):
+    """The iteration after which MATSim creates no new plans.
+
+    MATSim's own arithmetic, `(last - first) * fraction + first`, truncated -
+    the formula `citysim.EscortCoherenceListener.innovationOffAfter` and the
+    pinned jar's `StrategyManager` both compute. Two Python readers computed
+    `fraction * last` and ignored `firstIteration`, which is 0 on a cold arm
+    and the resume point on a warm-started one, so a resumed arm (first 300,
+    last 600, fraction 0.8) was judged relaxed from 480 while innovation ran
+    to 540 (ninth report, 14 September 2026, finding 3).
+    """
+    if first is None or last is None or fraction is None:
+        return None
+    first, last, fraction = int(first), int(last), float(fraction)
+    return int((last - first) * fraction + first)
 
 
 def table_path(run_dir, stem, iteration=None):
@@ -88,4 +113,6 @@ def table(run_dir, stem, iteration=None):
     with open_table(path) as fh:
         rows = list(csv.DictReader(fh, delimiter=';'))
     _CACHE[key] = rows
+    while len(_CACHE) > CACHE_TABLES:
+        _CACHE.popitem(last=False)
     return rows

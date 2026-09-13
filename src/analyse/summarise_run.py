@@ -377,10 +377,16 @@ def build(run_dir):
     frac_off = _config_param(run_dir, 'fractionOfIterationsToDisableInnovation')
     if frac_off is None:
         frac_off = snap.get('RUN.replanning.fraction_to_disable_innovation')
+    # MATSim's formula counts from firstIteration - the resume point on a
+    # warm-started arm - so the cutoff is shared with the Java rather than
+    # computed here as fraction x last (ninth report, finding 3)
+    first_it = _config_param(run_dir, 'firstIteration') or 0
     innovation_off_at = None
     if iterations and frac_off is not None:
         try:
-            innovation_off_at = int(float(frac_off) * float(iterations))
+            import iteration_reading as _reading
+            innovation_off_at = _reading.innovation_off_after(
+                first_it, iterations, frac_off)
         except (TypeError, ValueError):
             innovation_off_at = None
 

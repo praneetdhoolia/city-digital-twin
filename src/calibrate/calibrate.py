@@ -686,6 +686,13 @@ def main():
             cand.get('RUN.controler.last_iteration'),
             cand.get('RUN.machine.seed'),
             {},                    # this loop sends no raw `--set` overrides
+            # the controler and the run inputs are part of the identity: on
+            # values alone a run from the previous family - before a Java
+            # recompile or a run-input rebuild - matched this candidate, and
+            # the objective would have compared across the boundary 3.5
+            # forbids (ninth report, 14 September 2026, finding 22)
+            controler=_run_matsim.controler_sha256(),
+            inputs=_run_matsim.inputs_sha256(a.day),
             values=_run_matsim.values_sha256(cand))
         if not rec:
             return None

@@ -315,7 +315,9 @@ def scan(run_dir):
     innovation_off = None
     if target is not None and frac_off:
         try:
-            innovation_off = int(float(frac_off) * target)
+            import iteration_reading as _reading
+            innovation_off = _reading.innovation_off_after(
+                params.get('firstIteration') or 0, target, frac_off)
         except ValueError:
             innovation_off = None
 

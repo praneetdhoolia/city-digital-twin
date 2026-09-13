@@ -627,6 +627,29 @@ def heap_floor_gib(cfg, fraction):
             + float(cfg.get('RUN.machine.heap_per_fraction_gib')) * float(fraction))
 
 
+def refuse_concurrent_arm():
+    """ONE ARM AT A TIME is the launcher's rule, not a person's memory.
+
+    Two 48 GB heaps on a 63 GB host is the #66 stall class with both arms
+    lost, and until the ninth report (14 September 2026) nothing in the
+    launch path asked whether a JVM big enough to be an arm was already
+    running. `procs.arm_running` answers; UNKNOWN COUNTS AS BUSY, the rule
+    the compile guard already applies (#66).
+    """
+    import procs
+    busy = procs.arm_running()
+    if busy is None:
+        raise SystemExit(
+            'REFUSED: the running processes could not be listed, and unknown '
+            'counts as busy - one arm at a time (#66). List them by hand '
+            '(`Get-Process java`) and relaunch when the machine is idle.')
+    if busy:
+        raise SystemExit(
+            'REFUSED: an arm is already running - one arm at a time (#66):\n'
+            '  %s\nStop it with `run.py --stop` or wait for it.'
+            % '\n  '.join(str(b) for b in busy))
+
+
 def refuse_small_heap(cfg, xmx, fraction):
     """Refuse a launch whose heap the registry's own rule says will die.
 
@@ -714,7 +737,12 @@ def refuse_unrealised_overrides(cfg, scoring, day, paths, emitted):
                 veh_text = open(veh, encoding='utf-8').read()
         except Exception as e:                                # noqa: BLE001
             # a derivation that cannot run at the base value is a change the
-            # run does read - it is the override making the derivation valid
+            # run does read - it is the override making the derivation valid.
+            # It is SAID, not swallowed: an unrelated failure here (a missing
+            # overlay file, a schema change) would otherwise pass an override
+            # that reaches nothing as realised (ninth report, finding 20)
+            print('override %s: the base-value emission raised %s: %s - '
+                  'treated as a change the run reads' % (key, type(e).__name__, e))
             continue
         if text != emitted['config'] or veh_text != emitted['vehicles']:
             continue
@@ -1170,7 +1198,12 @@ def reconcile_stale():
             continue
         if doc.get('status') != 'running':
             continue
-        if doc.get('pid') and _pid_alive(doc['pid']):
+        # EITHER process alive keeps the run: the harness (`pid`) or the JVM
+        # (`jvm_pid`, #128) - the store's `_is_running` already knew both;
+        # a harness killed by the OS while its JVM kept writing had its
+        # directory renamed aborted_ under the live JVM (ninth report,
+        # finding 18)
+        if any(doc.get(k) and _pid_alive(doc[k]) for k in ('pid', 'jvm_pid')):
             continue
         # 9.165: THE LOG IS ASKED FIRST. A run whose harness died can still
         # have died on its own account - `20260910T222830_300it_25pct` threw
@@ -1927,6 +1960,7 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     announce_cost(iterations, fraction, cfg)
     refuse_if_no_automatic_stop(cfg)
     refuse_small_heap(cfg, xmx, fraction)
+    refuse_concurrent_arm()
     announce_heap(cfg, xmx, fraction)
 
     warm_key = None

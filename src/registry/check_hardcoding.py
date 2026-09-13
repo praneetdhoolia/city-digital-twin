@@ -377,6 +377,13 @@ STRUCTURAL = {
     'src/run/procs.py:arm_running(timeout)':
         'how long the process list is waited for, in seconds. An operating-'
         'system call\'s patience; nothing here reaches the model',
+    # A MEMORY BOUND OF A READER, not a model value (ninth report, 14 Sep
+    # 2026, finding 23): how many iteration tables one process keeps parsed.
+    # It changes what the gate watcher's process holds in memory and nothing
+    # any reading computes - the same rows come back from disk either way.
+    'src/analyse/iteration_reading.py:CACHE_TABLES':
+        'the number of parsed iteration tables a reader process keeps; a '
+        'cache bound over process memory, not a parameter of the model',
     # Surfaced when the scanner was widened past module level (7 Sep 2026): a
     # constant assigned inside a function had never been visible to this check.
     # The Earth's mean radius is a physical constant, not a modelling choice -

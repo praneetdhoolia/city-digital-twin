@@ -66,6 +66,16 @@ def prune(run_dir, dry_run=False):
         return 'skipped: no %s' % ', '.join(missing), 0
     if os.path.exists(os.path.join(run_dir, '_pruned.json')):
         return 'already pruned', 0
+    # A run still being read by the gate reporter loses the trips table
+    # between two milestones and the gate reads an empty iteration as a zero
+    # share (ninth report, 14 September 2026, finding 19): a running run is
+    # declined, whatever its records say.
+    try:
+        with open(os.path.join(run_dir, '_meta.json'), encoding='utf-8') as fh:
+            if json.load(fh).get('status') == 'running':
+                return 'skipped: the run is still running', 0
+    except (OSError, ValueError):
+        pass
 
     freed, removed = 0, []
     for rel in PRUNABLE:
