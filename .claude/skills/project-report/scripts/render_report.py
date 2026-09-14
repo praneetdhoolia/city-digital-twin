@@ -554,7 +554,7 @@ def build(scratch: Path, out: Path) -> None:
 <title>{esc(syn.get("title", "Project report"))}</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>{CSS}</style></head>
-<body><nav class="toc">{toc}</nav><main>{"".join(parts)}</main>
+<body><nav class="toc">{toc}</nav><main>{"".join(parts)}<footer class="small" style="margin-top:3rem;opacity:.8">Licence: this report and the figures it draws are derived from synthetic plans that carry the OpenStreetMap-derived network's ancestry (© OpenStreetMap contributors) and are published under ODbL 1.0 (share-alike), not the package's CC-BY 4.0. Nothing in it is a result unless the run it cites carries a record saying <code>ran_to_last_iteration</code>.</footer></main>
 <script type="application/json" id="report-data">{embed}</script>
 </body></html>'''
     out.write_text(doc, encoding="utf-8", newline="\n")

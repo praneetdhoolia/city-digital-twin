@@ -89,6 +89,23 @@
       "sweep_basis": "the union of the observed interquartile ranges across the 13 classes with at least 30 tagged edges - an observed spread, not a chosen interval",
       "sweep_role": "measurement"
     },
+    "A.road.speed_default_other_kmh": {
+      "value": 50.0,
+      "units": "km_per_hour",
+      "source": "literature",
+      "sweep": [
+        40.0,
+        60.0
+      ],
+      "sweep_basis": "The NSW default speed limit in a built-up area is 50 km/h (Road Rules 2014 (NSW) r 25; Roads and Maritime \"default urban speed limit\"). It applies to a corridor way whose highway class is absent from A.road.speed_default and which carries neither a regulated speed zone nor an OSM maxspeed; today no such way exists, so the value reaches no artefact until the class vocabulary changes. Bracketed at the 40 km/h high-pedestrian and the 60 km/h arterial limits either side. Typed as a .get() default until 14 September 2026 (issue #198).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.170",
+      "description": "Fallback speed limit for a corridor way of a highway class absent from A.road.speed_default with no regulated zone and no OSM maxspeed.",
+      "consumers": [
+        "cities/newcastle/build/build_corridor_road_attributes.py"
+      ]
+    },
     "A.road.speed_unknown_class_kmh": {
       "value": 50,
       "units": "km_per_hour",
@@ -962,7 +979,8 @@
       "decisions_ref": "4.4",
       "description": "Boarding and alighting dwell, separate from charging dwell.",
       "consumers": [
-        "cities/newcastle/build/build_scenario_schedules.py"
+        "cities/newcastle/build/build_scenario_schedules.py",
+        "cities/newcastle/build/build_corridor_layers.py"
       ]
     },
     "A.lightrail.capacity_total": {
@@ -988,7 +1006,10 @@
       "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "4.1, 9.18",
-      "description": "Seats on a light rail vehicle. Only the split is assumed - the total it is taken from is observed."
+      "description": "Seats on a light rail vehicle. Only the split is assumed - the total it is taken from is observed.",
+      "consumers": [
+        "cities/newcastle/build/build_corridor_layers.py"
+      ]
     },
     "A.lightrail.capacity_standing": {
       "value": 210,
@@ -1003,7 +1024,10 @@
           "A.lightrail.capacity_seated"
         ],
         "identity": "capacity_standing = capacity_total - capacity_seated"
-      }
+      },
+      "consumers": [
+        "cities/newcastle/build/build_corridor_layers.py"
+      ]
     },
     "A.transit.bus_capacity_seated": {
       "value": 44,
@@ -1141,7 +1165,8 @@
       "decisions_ref": "9.76",
       "description": "Light rail running speed between stops, used in the run-time decomposition. The value is the regulated 40 km/h ceiling measured from the held Speed Zones join along the corridor trunk; achieved running speed sits at or below it, which the sweep expresses.",
       "consumers": [
-        "cities/newcastle/build/build_scenario_schedules.py"
+        "cities/newcastle/build/build_scenario_schedules.py",
+        "cities/newcastle/build/build_corridor_layers.py"
       ]
     },
     "A.lightrail.corridor_speed_kmh": {
@@ -1409,6 +1434,23 @@
       "status": "active",
       "decisions_ref": "6",
       "description": "Fallback capacity where a parking facility carries none. 4,861 of 7,710 facilities carry an observed capacity.",
+      "consumers": [
+        "cities/newcastle/build/build_landuse_parking.py"
+      ]
+    },
+    "A.parking.capacity_default_other": {
+      "value": 30,
+      "units": "spaces_per_facility",
+      "source": "assumed",
+      "sweep": [
+        5,
+        100
+      ],
+      "sweep_basis": "The capacity imputed to a facility whose type is absent from A.parking.capacity_default and which carries no observed capacity; the same 5-100 bracket as that table. Every facility on disk has one of the three declared types, so the value reaches no artefact until the type vocabulary changes. Typed as a .get() default until 14 September 2026 (issue #198).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.170",
+      "description": "Fallback capacity for a parking facility of a type absent from A.parking.capacity_default.",
       "consumers": [
         "cities/newcastle/build/build_landuse_parking.py"
       ]

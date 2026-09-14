@@ -243,16 +243,15 @@ jobs:
           for f in cities/*/scenarios/*.json cities/*/params/*.json cities/*/overlays/*/*.json config/schema/*.json; do
             python -c "import json,sys; json.load(open(sys.argv[1], encoding='utf-8')); print('PASS  ' + sys.argv[1])" "$f"
           done
-      # The path is per city since the restructure moved each study's records
-      # under cities/<city>/docs/. This step pointed at the old docs/DECISIONS.md
-      # and had been FAILING on every push since, which is the same class of
-      # defect the rest of this change is about: a check that cannot see what it
-      # claims to check.
-      - name: Every city's DECISIONS.md is present and non-trivial (proposal 8.1)
+      # The record lives at docs/DECISIONS.md (it sat under cities/<city>/docs/
+      # from 24 August to 14 September 2026, and this step once pointed at a
+      # path it could not see and failed on every push - a check that cannot
+      # see what it claims to check).
+      - name: DECISIONS.md is present and non-trivial (proposal 8.1)
         run: |
           shopt -s nullglob
           found=0
-          for f in cities/*/docs/DECISIONS.md; do
+          for f in docs/DECISIONS.md; do
             found=1
             # an explicit failure branch: a command inside an && list is exempt
             # from set -e, so the size assertion was decorative (#130)

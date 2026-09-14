@@ -1,15 +1,15 @@
 ---
 name: project-report
-description: Documents the entire city-digital-twin project in one call and places it in its field - every tracked file read by area with file:line findings and ratings, a code redundancy / quality / efficiency / simplification pass, a simulator performance pass over every run's own timing, the twelve modes one row each with what each is simulated by, what data it has and lacks and what would move it, the dated timeline of every stage and milestone from day 0, every PR, issue (past, present and the risks that are not yet issues), CI run and run on disk, an audit of whether the previous reports were followed and were worth their cost, plus two research passes that start from a standing reference library under cities/<city>/docs/reports/reference/ and search only what it cannot already answer - every comparable city twin and platform with what each does best, and every factor a real-world decision simulator must contain scored against this model - lodged as one dated, self-contained HTML report under cities/<city>/docs/reports/. Use when the user runs /project-report, asks for "a full project assessment", "a code-quality review of everything", "a milestone report across all PRs", "how do we compare to other city twins", "what are we missing", "could this be simpler", "is more data needed", or "where does the whole project stand". Not /onboard and not /handoff - it reads and changes nothing in the model, the data or the living documents.
+description: Documents the entire city-digital-twin project in one call and places it in its field - every tracked file read by area with file:line findings and ratings, a code redundancy / quality / efficiency / simplification pass, a simulator performance pass over every run's own timing, the twelve modes one row each with what each is simulated by, what data it has and lacks and what would move it, the dated timeline of every stage and milestone from day 0, every PR, issue (past, present and the risks that are not yet issues), CI run and run on disk, an audit of whether the previous reports were followed and were worth their cost, plus two research passes that start from a standing reference library under docs/reports/reference/ and search only what it cannot already answer - every comparable city twin and platform with what each does best, and every factor a real-world decision simulator must contain scored against this model - lodged as one dated, self-contained HTML report under docs/reports/. Use when the user runs /project-report, asks for "a full project assessment", "a code-quality review of everything", "a milestone report across all PRs", "how do we compare to other city twins", "what are we missing", "could this be simpler", "is more data needed", or "where does the whole project stand". Not /onboard and not /handoff - it reads and changes nothing in the model, the data or the living documents.
 ---
 
 # /project-report — the whole project, assessed, placed in its field, and lodged
 
 Produce **one dated HTML report** at `REPORT_DIR/<yyyymmddThhmmss>_project_report.html`,
-where `REPORT_DIR` is `cities/<city>/docs/reports/` (named here once; every
-other mention in this file means this directory - a report assesses ONE
-city's study, so it lives under that city's documents; the six reports before
-11 September 2026 sat under the framework's `docs/` and were moved). In it every number is drawn from an artefact,
+where `REPORT_DIR` is `docs/reports/` (named here once; every
+other mention in this file means this directory - the project's documents live
+at `docs/` since 14 September 2026, §9.170; between 11 and 14 September the
+reports sat under `cities/<city>/docs/reports/`). In it every number is drawn from an artefact,
 every code finding cites `file:line`, every milestone cites its pull request
 or record section, every research claim cites the source it was read from
 this time, and a reader who has never opened the repository can say what the
@@ -210,8 +210,8 @@ Reviewers **do not modify anything**.
 ## Phase 3 — Simulator: the performance pass
 
 One analyst, reading `performance.json`, the position page
-`cities/<city>/docs/positions/runs-and-economics.md`, the record section that
-profiled the iteration (find it with `grep -n "stopwatch" cities/<city>/docs/DECISIONS.md`),
+`docs/positions/runs-and-economics.md`, the record section that
+profiled the iteration (find it with `grep -n "stopwatch" docs/DECISIONS.md`),
 the Java under `src/java/` and `src/java_signals/`, the run overlays under
 `cities/<city>/overlays/runs/` and the `RUN.*` fields of the registry. It
 answers, each from the artefact that holds it:
@@ -321,8 +321,8 @@ that crosses it.
 
 **Documents: placed right, and current.** For every document the reviewer
 states whether it is in the layer its content belongs to (`GOAL.md` /
-the board / a position page / the record / the framework's `docs/` / a city's
-`docs/` / a skill) and names each one that is not, with where it belongs; and
+the board / a position page / the record / the reports / `docs/README.md` or
+the contract / a skill) and names each one that is not, with where it belongs; and
 for every living document, the newest artefact it describes and whether the
 description still holds. A document is *misplaced* when a reader looking for
 its content would open a different file first, and *stale* when an artefact it
@@ -500,7 +500,7 @@ factors added, factors retired, literature halves newly filled).
 3. **Ratings**: one row per area, the five dimensions, each cell carrying its
    evidence in a tooltip or footnote. Never average ratings across areas.
 4. **Milestones against the goal**: for each hard requirement in
-   `cities/<city>/docs/GOAL.md`, met / unmet / unmeasured, with the PR and the
+   `docs/GOAL.md`, met / unmet / unmeasured, with the PR and the
    record section that decided it, and the date from the timeline.
 4b. **The twelve modes, one row each.** Built from the board's reader
    (`report_mode_ridership.py` on the newest RESULT and, separately, on the

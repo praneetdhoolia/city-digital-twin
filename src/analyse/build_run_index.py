@@ -61,7 +61,7 @@ PROBE_ITERATIONS_CEILING = _registry.load().sweep(
 
 
 def load_families():
-    path = city.path('docs', 'run_families.json')
+    path = city.docs('run_families.json')
     with open(path, encoding='utf-8') as f:
         doc = json.load(f)
     fams = sorted(doc['families'].items(), key=lambda kv: kv[1]['from_launch'])

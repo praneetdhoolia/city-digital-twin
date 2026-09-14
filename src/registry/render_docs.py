@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Generate cities/<city>/docs/reference/CONFIG_REFERENCE.md from the registry.
+"""Generate docs/reference/CONFIG_REFERENCE.md from the registry.
 
 The reference is GENERATED, never hand-written, so it cannot drift from the
 values it documents. If a field changes, the documentation changes in the same
@@ -25,7 +25,7 @@ import registry  # noqa: E402
 import city as _city  # noqa: E402
 
 # The reference documents ONE CITY's registry, so it belongs to that city.
-OUT = _city.path('docs', 'reference', 'CONFIG_REFERENCE.md')
+OUT = _city.docs('reference', 'CONFIG_REFERENCE.md')
 
 SOURCE_ORDER = ['observed', 'measured', 'derived', 'literature', 'assumed', 'definition']
 SOURCE_GLOSS = {

@@ -1429,7 +1429,7 @@ if _registry is not None:
                   'scenario %s justifies setting %s outside its sweep' % (_sid, _k))
 
     # the generated reference cannot drift from the values it documents
-    _docs = _city.path('docs', 'reference', 'CONFIG_REFERENCE.md')
+    _docs = _city.docs('reference', 'CONFIG_REFERENCE.md')
     if check(os.path.exists(_docs), 'docs/reference/CONFIG_REFERENCE.md exists'):
         import subprocess as _sp
         _rc = _sp.call([sys.executable, os.path.join('src', 'registry', 'render_docs.py'),
@@ -1463,7 +1463,7 @@ if _registry is not None:
                  '' if not _problems else ': ' + _problems[0][:80]))
 
     # the front door's figures cannot drift from the run they claim to draw
-    _figures = _city.path('docs', 'reference', 'figures', 'FIGURES.json')
+    _figures = _city.docs('reference', 'figures', 'FIGURES.json')
     if os.path.exists(_figures):
         import subprocess as _sp
         _rc = _sp.call([sys.executable,
@@ -1533,7 +1533,7 @@ if _registry is not None:
         # the whole point of proposal 8.1 - and it happens by writing the field
         # first and the record after.
         import re as _re
-        _dec = open(_city.path('docs', 'DECISIONS.md'), encoding='utf-8').read()
+        _dec = open(_city.docs('DECISIONS.md'), encoding='utf-8').read()
         # Headings appear both bare ('## 12.') and with the section mark
         # ('## SS9.75 -', the style the 25 Aug entries introduced); the 9.73-
         # 9.75 records were invisible to the bare pattern and the first field

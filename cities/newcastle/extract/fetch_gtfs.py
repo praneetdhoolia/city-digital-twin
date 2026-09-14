@@ -31,12 +31,18 @@ ERAS={
    ("nswtrains","historical_gtfs/nswtrains/2026/2026-08/nswtrains_scheduled_data_20260801010800.zip"),
  ],
 }
-# 9.151 (#149): the retrieval date. These records carried none, so 15 raw
-# feeds and everything built from them showed a blank `retrieved` in the
-# manifest. It is stamped for a feed this run ACTUALLY downloads; a feed that
-# is skipped because it is already on disk keeps the date the earlier run
-# recorded, because today is not when it was retrieved. A file whose date
-# nobody recorded stays blank rather than acquiring one now.
+# 9.151 (#149): the retrieval date is stamped for a feed this run ACTUALLY
+# downloads; a feed skipped because it is already on disk keeps the date the
+# earlier run recorded, because today is not when it was retrieved.
+# #199: ONE rule for a file already on disk with no recorded retrieval date.
+# It is neither re-stamped with today (the eighth report's wall-clock drift)
+# nor left blank (the ninth report's fifteen undated feeds): the date the
+# file was WRITTEN is on the file itself - urlretrieve and the streamed
+# download both write it at retrieval - so the record takes that date and
+# says where it came from. A file whose record already carries a date keeps
+# it; a file fetched this run is stamped today.
+def _retrieved_from_disk(p):
+    return datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()
 _PREV={}
 _prev_path=os.path.join(OUT,"provenance.json")
 if os.path.exists(_prev_path):
@@ -77,8 +83,10 @@ for era,items in ERAS.items():
              "source":"TfNSW Open Data Hub historical GTFS archive",
              "licence":"CC-BY 4.0"}
         retrieved=TODAY if fetched else _PREV.get((era,label))
-        if retrieved:
-            rec["retrieved"]=retrieved
+        if not retrieved:
+            retrieved=_retrieved_from_disk(p)
+            rec["retrieved_basis"]="file modification time on disk (written at download); the earlier record carried no date"
+        rec["retrieved"]=retrieved
         prov.append(rec)
 json.dump(prov,open(os.path.join(OUT,"provenance.json"),"w",encoding="utf-8",newline="\n"),indent=2)
 print("\nwrote",os.path.join(OUT,"provenance.json"))

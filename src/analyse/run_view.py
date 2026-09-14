@@ -39,6 +39,8 @@ COMPLETED (`_metrics.json`) - DECISIONS.md 9.12. `extract_metrics.py` ->
 """
 import os
 import re
+import sys
+import collections
 import csv
 import json
 import time
@@ -76,6 +78,9 @@ STALL_S = _CFG.get('RUN.monitor.stall_s')
 POLL_S = _CFG.get('RUN.monitor.poll_s')
 FAST_POLL_S = _CFG.get('RUN.monitor.live_poll_s')
 PORT = _CFG.get('RUN.monitor.port')
+# the smallest iteration count the registry admits for a modelling run: below
+# it a completed run is a probe, not a result (the sweep's lower bound)
+HORIZON_FLOOR = int(_CFG.sweep('RUN.controler.last_iteration')['interval'][0])
 
 # The colour ramp is FIXED and saturating, never fitted to the data in view.
 # Measured on a 1% probe over 59,399 loaded links: median delay ratio 1.10,
@@ -351,9 +356,28 @@ def scan(run_dir):
     # existed has none, and the page must say so rather than showing zeroes.
     telemetry = live is not None or last_iter is not None
 
+    meta = _load_json(os.path.join(run_dir, '_meta.json'), {}) or {}
+
+    def declared(field):
+        v = snap.get(field)
+        try:
+            return None if v is None else float(v)
+        except (TypeError, ValueError):
+            return None
+
     return {
         'name': name,
         'state': state,
+        'status': meta.get('status'),
+        'completion': run_rec.get('completion') if done else None,
+        'cause': meta.get('cause'),
+        'started': meta.get('started'),
+        'ended': meta.get('ended'),
+        'persons_kept': (meta.get('sample') or {}).get('persons_kept'),
+        'gate_interval': declared('RUN.gate.interval_iterations'),
+        'wall_ceiling_h': declared('RUN.gate.wall_ceiling_h'),
+        'xmx': meta.get('xmx'),
+        'horizon_floor': HORIZON_FLOOR,
         'scenario': scenario,
         'day': day,
         'fraction': ident('fraction', 'RUN.sample.fraction'),
@@ -383,7 +407,253 @@ def scan(run_dir):
     }
 
 
-_NET_CACHE = {}
+# ---------------------------------------------------------------- the runs
+
+def list_runs():
+    """Every run the store holds, newest first, with what the index knows.
+
+    The page offers them in a picker, so one server observes any run on disk
+    rather than the one it was started for. Read from each run's own records
+    only - never from the board.
+    """
+    try:
+        import build_run_index as _index
+        fams, overrides = _index.load_families()
+    except Exception:                                        # noqa: BLE001
+        fams, overrides = [], {}
+    out = []
+    def stamp(name):
+        return name[len('aborted_'):] if name.startswith('aborted_') else name
+
+    for name in sorted(_results_store.run_names(), key=stamp, reverse=True):
+        run_dir = _results_store.resolve_records(name)
+        if not run_dir:
+            continue
+        meta = _load_json(os.path.join(run_dir, '_meta.json'), {}) or {}
+        record = _load_json(os.path.join(run_dir, '_run.json'))
+        family = None
+        try:
+            family, _ = _index.family_of(name, fams, overrides)
+        except Exception:                                    # noqa: BLE001
+            pass
+        completion = (record or {}).get('completion')
+        if record is not None and not completion:
+            completion = 'ran_to_last_iteration'
+        out.append({
+            'name': name,
+            'status': meta.get('status') or ('completed' if record else 'unknown'),
+            'completion': completion,
+            'reached': (record or {}).get('reached_iteration')
+                       or (record or {}).get('iterations'),
+            'iterations': meta.get('iterations'),
+            'fraction': meta.get('fraction'),
+            'scenario': meta.get('scenario'),
+            'day': meta.get('day'),
+            'family': family,
+            'raw_on_disk': bool(_results_store.raw_dir(name)
+                                and os.path.isdir(_results_store.raw_dir(name))),
+            # a result is a run that executed the horizon it declared; whether
+            # that horizon is a modelling one is the registry's sweep floor,
+            # not a number typed here
+            'is_result': completion == 'ran_to_last_iteration'
+                         and (meta.get('iterations') or 0) >= HORIZON_FLOOR,
+        })
+    return out
+
+
+def family_of_run(name):
+    try:
+        import build_run_index as _index
+        fams, overrides = _index.load_families()
+        return _index.family_of(name, fams, overrides)[0]
+    except Exception:                                        # noqa: BLE001
+        return None
+
+
+# ---------------------------------------------------------------- the twelve modes
+
+READINGS = '_readings.jsonl'        # appended by the runner's gate watcher
+GATE_VERDICT = '_gate_verdict.json'  # the reporter's last verdict, rows included
+
+_MODES_LOCK = threading.Lock()
+_MODES_CACHE = collections.OrderedDict()   # (run_dir, iteration) -> reading dict, bounded
+_MODES_BUSY = set()     # (run_dir, iteration) being computed on the one worker thread
+_MODES_QUEUE = []       # readings asked for while the worker is busy, in order
+MODES_CACHE_ENTRIES = 64
+REPORTER = os.path.join(_HERE, 'report_mode_ridership.py')
+
+
+def _reporter():
+    import report_mode_ridership as _rmr
+    return _rmr
+
+
+def mode_targets():
+    """Every mode's target on its own basis, from the city's artefact."""
+    rmr = _reporter()
+    out = []
+    for i, (mode, t) in enumerate(rmr.load_targets().items(), 1):
+        out.append(dict(n=i, mode=mode, target=t.get('target'), low=t.get('low'),
+                        high=t.get('high'), mean_km=t.get('mean_km'),
+                        denominator=t.get('denominator') or '',
+                        status=t.get('status'), basis=t.get('basis') or ''))
+    return out
+
+
+def readable_iterations(run_dir):
+    """Iterations with a trips table or experienced plans, ascending."""
+    try:
+        import measure_iteration_modes as _mim
+        import iteration_trips as _itr
+        return sorted(set(_mim.iterations_with_trips(run_dir))
+                      | set(_itr.iterations_with_plans(run_dir)))
+    except Exception:                                        # noqa: BLE001
+        return []
+
+
+def stored_readings(run_dir):
+    """{iteration: reading} the runner wrote for this run - the ledger the gate
+    watcher appends at every milestone, plus its last verdict when that
+    carries rows. Nothing is computed here."""
+    out = {}
+    for doc in read_jsonl(os.path.join(run_dir, READINGS)):
+        if isinstance(doc, dict) and doc.get('rows') and doc.get('iteration') is not None:
+            out[int(doc['iteration'])] = doc
+    v = _load_json(os.path.join(run_dir, GATE_VERDICT))
+    if isinstance(v, dict) and v.get('rows') and v.get('iteration') is not None:
+        out.setdefault(int(v['iteration']), v)
+    return out
+
+
+def _compute_reading(run_dir, iteration):
+    """The reporter run as a SUBPROCESS writing `--json` to a temporary file.
+
+    Never in-process: the reporter prints its table to stdout and keeps its
+    rows in a module global, and this server may be living inside the
+    runner's own process (`run_matsim.start_live_view`), where redirecting
+    sys.stdout would swallow the gate, ceiling and stall watchers' prints and
+    two overlapped readings would race on one dict (tenth report, defects 1
+    and 2). A subprocess owns its stdout and its globals. Writes nothing to
+    the run directory.
+    """
+    import subprocess
+    import tempfile
+    fd, tmp = tempfile.mkstemp(prefix='reading_', suffix='.json')
+    os.close(fd)
+    try:
+        out = subprocess.run([sys.executable, REPORTER, '--run', run_dir,
+                              '--it', str(iteration), '--json', tmp],
+                             capture_output=True, text=True, timeout=1800, cwd=ROOT)
+        if out.returncode != 0:
+            tail = (out.stderr or out.stdout or '').strip().splitlines()
+            return {'iteration': iteration, 'error': tail[-1] if tail else 'reporter rc=%d' % out.returncode}
+        doc = _load_json(tmp)
+        if not isinstance(doc, dict) or not doc.get('rows'):
+            return {'iteration': iteration, 'error': 'the reporter wrote no rows'}
+        text = out.stdout
+        breaches = []
+        if 'GATE:' in text and 'at or past' in text:
+            breaches = [r['mode'] for r in doc['rows']
+                        if r.get('flag', '').startswith('STOP')]
+        doc.update(passed=not breaches, breaches=breaches,
+                   read_at=time.strftime('%Y-%m-%dT%H:%M:%S'),
+                   computed_by='run_view (a reporter subprocess; not written to the run)')
+        return doc
+    except (OSError, subprocess.SubprocessError) as exc:
+        return {'iteration': iteration, 'error': '%s: %s' % (exc.__class__.__name__, exc)}
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+
+
+def _worker():
+    """One reading at a time: a 25 % trips table is a ~20 s read of a few
+    hundred MB, and two of them at once compete with the run for the disk."""
+    while True:
+        with _MODES_LOCK:
+            if not _MODES_QUEUE:
+                _MODES_BUSY.discard('worker')
+                return
+            key = _MODES_QUEUE.pop(0)
+        doc = _compute_reading(*key)
+        with _MODES_LOCK:
+            _MODES_CACHE[key] = doc
+            while len(_MODES_CACHE) > MODES_CACHE_ENTRIES:
+                _MODES_CACHE.popitem(last=False)
+            _MODES_BUSY.discard(key)
+
+
+def _start_reading(run_dir, iteration):
+    key = (run_dir, iteration)
+    with _MODES_LOCK:
+        if key in _MODES_CACHE or key in _MODES_BUSY:
+            return
+        _MODES_BUSY.add(key)
+        _MODES_QUEUE.append(key)
+        if 'worker' in _MODES_BUSY:
+            return
+        _MODES_BUSY.add('worker')
+    threading.Thread(target=_worker, daemon=True, name='mode-reading').start()
+
+
+def modes(run_dir, iteration=None, compute=True):
+    """The twelve modes against their targets: every stored reading, and the
+    requested (default newest readable) iteration computed on a thread when
+    the runner has not written it. `computing` says a reading is on its way."""
+    rmr = _reporter()
+    targets = mode_targets()
+    stored = stored_readings(run_dir)
+    readable = readable_iterations(run_dir)
+    run_dir = os.path.abspath(run_dir)
+    with _MODES_LOCK:
+        for (rd, it), doc in _MODES_CACHE.items():
+            if rd == run_dir:
+                stored.setdefault(it, doc)
+    want = iteration if iteration is not None else (readable[-1] if readable else None)
+    computing = False
+    if want is not None and want not in stored and compute and want in readable:
+        _start_reading(run_dir, want)
+        with _MODES_LOCK:
+            computing = (run_dir, want) in _MODES_BUSY
+    current = stored.get(want) if want is not None else None
+    if current is None and stored:
+        current = stored[max(stored)]
+    ordered = [stored[k] for k in sorted(stored)]
+    trend = {}
+    for doc in ordered:
+        for r in doc.get('rows') or []:
+            trend.setdefault(r['mode'], []).append([doc['iteration'], r.get('deviation_pct')])
+    return {
+        'targets': targets,
+        'stop_pct': rmr.GATE_STOP_PCT,
+        'pass_pct': rmr.GATE_PASS_PCT,
+        'readable': readable,
+        'stored': sorted(stored),
+        'requested': want,
+        'computing': computing,
+        'current': current,
+        'trend': trend,
+    }
+
+
+# ---------------------------------------------------------------- the map
+
+_NET_CACHE = collections.OrderedDict()   # run_dir -> network doc; a few runs at most
+_NET_LOCK = threading.Lock()
+NET_CACHE_ENTRIES = 2        # ~130 MB of Python objects per 368,000-link network
+_BASEMAP_CACHE = {}
+_TRANSFORMER = None
+
+
+def _to_wgs84():
+    """The city's projected CRS -> WGS84 lon/lat, built once."""
+    global _TRANSFORMER
+    if _TRANSFORMER is None:
+        from pyproj import Transformer
+        _TRANSFORMER = Transformer.from_crs(_city.crs(), 'EPSG:4326', always_xy=True)
+    return _TRANSFORMER
 
 
 def _input_network(run_dir):
@@ -405,37 +675,29 @@ def _input_network(run_dir):
 
 
 def load_network(run_dir):
-    """Link endpoints from the run's OWN network, keyed by link id.
+    """The run's OWN network as {link id: (lon0, lat0, lon1, lat1)}, plus a
+    stable index over the ids, cached by the file's stamp.
 
-    The hotspot map is drawn from this rather than from `build_basemap.py`,
-    and that is deliberate rather than a shortcut. The basemap reads
-    `networks/osm/`, which is empty until the issue #32 re-harvest, and it is
-    keyed by A1 road edges while telemetry is keyed by MATSim link ids - a
-    join across a one-to-many relation. The run's own `output_network.xml.gz`
-    needs neither: it carries the exact links the telemetry names, so the map
-    is guaranteed to agree with the run that produced it. The basemap remains
-    the right source for CONTEXT - water, coast, parkland - once it exists.
+    The traffic overlay is keyed by MATSim link id, so its geometry comes from
+    the network the run drove - the INPUT network, which exists before the
+    first iteration (MATSim writes output_network.xml.gz only at the end).
+    Reprojected here, once, so the page draws in the same frame as the tiles.
     """
     import gzip
-    # The INPUT network, not output_network.xml.gz. MATSim writes the output
-    # network only when the run ENDS, so sourcing geometry from it made the map
-    # appear only after the thing it was meant to watch was over. The input
-    # network exists before the first iteration and carries the same link ids -
-    # MATSim does not renumber - so the map is live from the first window.
     path = _input_network(run_dir)
     if not path:
-        return {}
+        return None
     try:
         stamp = os.path.getmtime(path)
     except OSError:
-        return {}
-    hit = _NET_CACHE.get(run_dir)
-    if hit and hit[0] == stamp:
-        return hit[1]
-
+        return None
+    with _NET_LOCK:
+        hit = _NET_CACHE.get(run_dir)
+        if hit and hit['stamp'] == stamp:
+            return hit
     node_re = re.compile(r'<node id="([^"]+)" x="([^"]+)" y="([^"]+)"')
     link_re = re.compile(r'<link id="([^"]+)" from="([^"]+)" to="([^"]+)"')
-    nodes, links = {}, {}
+    nodes, links = {}, []
     try:
         with gzip.open(path, 'rt', encoding='utf-8', errors='replace') as f:
             for line in f:
@@ -445,16 +707,48 @@ def load_network(run_dir):
                     continue
                 m = link_re.search(line)
                 if m:
-                    links[m.group(1)] = (m.group(2), m.group(3))
+                    links.append((m.group(1), m.group(2), m.group(3)))
     except (OSError, ValueError):
-        return {}
-    geom = {}
-    for lid, (a, b) in links.items():
+        return None
+    ids, xs, ys = [], [], []
+    for lid, a, b in links:
         pa, pb = nodes.get(a), nodes.get(b)
         if pa and pb:
-            geom[lid] = (pa[0], pa[1], pb[0], pb[1])
-    _NET_CACHE[run_dir] = (stamp, geom)
-    return geom
+            ids.append(lid)
+            xs += [pa[0], pb[0]]
+            ys += [pa[1], pb[1]]
+    lons, lats = _to_wgs84().transform(xs, ys)
+    geom = {}
+    index = {}
+    for i, lid in enumerate(ids):
+        geom[lid] = (lons[2 * i], lats[2 * i], lons[2 * i + 1], lats[2 * i + 1])
+        index[lid] = i
+    doc = {'stamp': stamp, 'path': path, 'ids': ids, 'geom': geom, 'index': index}
+    with _NET_LOCK:
+        _NET_CACHE[run_dir] = doc
+        while len(_NET_CACHE) > NET_CACHE_ENTRIES:
+            _NET_CACHE.popitem(last=False)
+    return doc
+
+
+def _b64(fmt, vals):
+    import base64
+    import struct
+    return base64.b64encode(struct.pack('<%d%s' % (len(vals), fmt), *vals)).decode('ascii')
+
+
+def network_payload(run_dir):
+    """Every link's endpoints, once per network: Float32 lon/lat in link-index
+    order. About 6 MB for a 368,000-link network, fetched once and cached by
+    the page against the network's stamp."""
+    net = load_network(run_dir)
+    if not net:
+        return {'available': False, 'reason': 'the run network could not be read'}
+    coords = []
+    for lid in net['ids']:
+        coords += net['geom'][lid]
+    return {'available': True, 'stamp': net['stamp'], 'n_links': len(net['ids']),
+            'coords': _b64('f', coords)}
 
 
 def _volume_bbox(rows, keep):
@@ -483,74 +777,44 @@ def _volume_bbox(rows, keep):
 
 
 def hotspot(run_dir):
-    """Join the iteration's per-link congestion to geometry, ready to draw.
-
-    The join happens here rather than in the page for the same reason the
-    parking price join happens at build time: the browser should receive
-    numbers to draw, not a relation to resolve. Coordinates are quantised to
-    uint16 over the bounding box of the LOADED links - the study area, not the
-    network's full 322 x 714 km extent, most of which is external boundary
-    links carrying nothing.
-    """
-    import base64
-    import struct
-    payload = _load_json(os.path.join(run_dir, 'output',
-                                      'telemetry_links.json'))
+    """The window's per-link congestion, keyed to the network payload's index:
+    link index (uint32), vehicle volume (uint16) and the delay ratio on the
+    fixed ramp (uint16), so a window costs six bytes a loaded link rather
+    than a re-sent geometry. The join to geometry stays here, not in the page."""
+    payload = _load_json(os.path.join(run_dir, 'output', 'telemetry_links.json'))
     if not payload:
         return {'available': False,
                 'reason': 'no telemetry_links.json - this run was assembled '
                           'before the telemetry module existed, or has not '
                           'finished an iteration'}
-    geom = load_network(run_dir)
-    if not geom:
+    net = load_network(run_dir)
+    if not net:
         return {'available': False,
                 'reason': 'the run network could not be read - neither '
                           'inputNetworkFile from config.xml nor '
                           'output/output_network.xml.gz'}
-
-    rows = [(geom[lid], vol, ratio) for lid, vol, ratio in payload['links']
-            if lid in geom]
+    index, geom = net['index'], net['geom']
+    rows = [(geom[lid], vol, ratio, index[lid])
+            for lid, vol, ratio in payload['links'] if lid in index]
     if not rows:
         return {'available': False, 'reason': 'no loaded link matched the network'}
-
-    xs = [c for g, _, _ in rows for c in (g[0], g[2])]
-    ys = [c for g, _, _ in rows for c in (g[1], g[3])]
-    x0, x1 = min(xs), max(xs)
-    y0, y1 = min(ys), max(ys)
-    sx = 65535.0 / (x1 - x0) if x1 > x0 else 0.0
-    sy = 65535.0 / (y1 - y0) if y1 > y0 else 0.0
-
-    coords, vols, ratios = [], [], []
-    vmax = max(v for _, v, _ in rows) or 1
-    for g, vol, ratio in rows:
-        coords += [int((g[0] - x0) * sx), int((g[1] - y0) * sy),
-                   int((g[2] - x0) * sx), int((g[3] - y0) * sy)]
+    idx, vols, ratios = [], [], []
+    vmax = max(v for _, v, _, _ in rows) or 1
+    for g, vol, ratio, i in rows:
+        idx.append(i)
         vols.append(min(65535, int(vol)))
-        # the ramp is fixed and saturating; 0..65535 maps RAMP_MIN..RAMP_MAX
         t = (min(max(ratio, RAMP_MIN), RAMP_MAX) - RAMP_MIN) / (RAMP_MAX - RAMP_MIN)
         ratios.append(int(t * 65535))
-
-    def b64(vals):
-        return base64.b64encode(
-            struct.pack('<%dH' % len(vals), *vals)).decode('ascii')
-
-    # The network reaches 322 x 714 km because the external tier runs to the
-    # study-area boundary, but almost none of the traffic is out there:
-    # measured on a 1% probe, 86% of traversals fall in a single 40 km band
-    # centred on Newcastle. The default view is the box holding the middle 98%
-    # of TRAVERSALS; the full extent stays available to zoom out to. The
-    # threshold was chosen by measurement, not taste: 99.5% gives a 187 x 565 km
-    # box and 98% still gives 169 x 355, because a fraction of a percent of very
-    # long external trips is enough to drag the frame off the city. 90% gives
-    # 52 x 49 km, which is the scale of the 4,086 km2 five-LGA study area.
-    core = _volume_bbox(rows, 0.90)
-
+    lons = [c for g, _, _, _ in rows for c in (g[0], g[2])]
+    lats = [c for g, _, _, _ in rows for c in (g[1], g[3])]
+    # the default view is the box holding the middle 90% of TRAVERSALS - the
+    # scale of the five-LGA study area - because a fraction of a percent of
+    # very long external trips is enough to drag the frame off the city
+    core = _volume_bbox([(g, v, r) for g, v, r, _ in rows], 0.90)
     return {
         'available': True,
+        'stamp': net['stamp'],
         'iteration': payload.get('iteration'),
-        # scope/window are what tell the page whether it is showing a live
-        # window or the finished day. Omitting them made a live window render
-        # under a "whole day" heading.
         'scope': payload.get('scope', 'iteration'),
         'window_from': payload.get('window_from'),
         'window_to': payload.get('window_to'),
@@ -559,15 +823,77 @@ def hotspot(run_dir):
         'metric': payload.get('metric'),
         'covers': payload.get('covers'),
         'n_links': len(rows),
-        'bbox': [x0, y0, x1, y1],
+        'bbox': [min(lons), min(lats), max(lons), max(lats)],
         'core_bbox': core,
         'volume_max': vmax,
         'ramp': [RAMP_MIN, RAMP_MAX],
-        'coords': b64(coords),
-        'volume': b64(vols),
-        'delay': b64(ratios),
+        'index': _b64('I', idx),
+        'volume': _b64('H', vols),
+        'delay': _b64('H', ratios),
     }
 
+
+def basemap_payload():
+    """The standing picture - coast, water, parkland, roads, rail, tram - from
+    the city's basemap.json, decoded from its projected packing and re-packed
+    as WGS84 Float32 polylines: one array of vertex counts and one of lon/lat
+    pairs per layer. Optional: the page draws the run without it."""
+    import base64
+    import struct
+    path = _city.path('data', 'processed', 'basemap.json')
+    try:
+        stamp = os.path.getmtime(path)
+    except OSError:
+        return {'available': False, 'reason': 'no basemap.json - build it with '
+                                              'src/analyse/build_basemap.py'}
+    hit = _BASEMAP_CACHE.get(path)
+    if hit and hit[0] == stamp:
+        return hit[1]
+    doc = _load_json(path)
+    if not doc:
+        return {'available': False, 'reason': 'basemap.json unreadable'}
+    ox, oy = doc['origin']
+    tf = _to_wgs84()
+    layers = {}
+    for name, b64 in doc['layers'].items():
+        raw = base64.b64decode(b64)
+        i = 0
+        counts, xs, ys = [], [], []
+        last = None
+        while i + 12 <= len(raw):
+            x0, y0, n = struct.unpack_from('<iiH', raw, i)
+            i += 12
+            if n < 2 or i + (n - 1) * 4 > len(raw):
+                break
+            cont = (last == (x0, y0))
+            px, py = x0, y0
+            if not cont:
+                counts.append(1)
+                xs.append(px / 100.0 + ox)
+                ys.append(py / 100.0 + oy)
+            for _ in range(n - 1):
+                dx, dy = struct.unpack_from('<hh', raw, i)
+                i += 4
+                px += dx
+                py += dy
+                counts[-1] += 1
+                xs.append(px / 100.0 + ox)
+                ys.append(py / 100.0 + oy)
+            last = (px, py)
+        if not xs:
+            continue
+        lons, lats = tf.transform(xs, ys)
+        pairs = []
+        for lo, la in zip(lons, lats):
+            pairs += [lo, la]
+        layers[name] = {'counts': _b64('I', counts), 'coords': _b64('f', pairs),
+                        'area': name in ('coast', 'water', 'green', 'sand')}
+    out = {'available': True, 'stamp': stamp, 'layers': layers}
+    _BASEMAP_CACHE[path] = (stamp, out)
+    return out
+
+
+# ---------------------------------------------------------------- the server
 
 def _page():
     with open(os.path.join(_HERE, 'run_view.html'), encoding='utf-8') as f:
@@ -576,7 +902,13 @@ def _page():
                 .replace('__FAST_MS__', str(int(FAST_POLL_S * 1000))))
 
 
-def make_handler(run_dir):
+def _query(path):
+    from urllib.parse import parse_qs, urlsplit
+    parts = urlsplit(path)
+    return parts.path, {k: v[-1] for k, v in parse_qs(parts.query).items()}
+
+
+def make_handler(default_run_dir):
     class Handler(http.server.BaseHTTPRequestHandler):
         def _send(self, body, ctype='application/json', code=200):
             if isinstance(body, str):
@@ -601,28 +933,46 @@ def make_handler(run_dir):
             except OSError:
                 self._send('{"error":"unreadable"}', code=503)
 
+        def _run_dir(self, q):
+            name = (q.get('run') or '').strip()
+            if not name:
+                return default_run_dir
+            # a name, never a path: the picker offers what the store holds
+            if os.sep in name or '/' in name or name.startswith('.'):
+                return None
+            return _results_store.resolve_records(name) or None
+
         def do_GET(self):
-            path = self.path.split('?', 1)[0]
+            path, q = _query(self.path)
             if path in ('/', '/index.html'):
                 self._send(_page(), 'text/html')
-            elif path == '/status.json':
-                self._send(json.dumps(scan(run_dir)))
+                return
+            if path == '/runs.json':
+                self._send(json.dumps({'default': os.path.basename(default_run_dir),
+                                       'runs': list_runs()}))
+                return
+            if path == '/basemap.json':
+                self._send(json.dumps(basemap_payload()))
+                return
+            run_dir = self._run_dir(q)
+            if run_dir is None:
+                self._send('{"error":"no such run"}', code=404)
+                return
+            if path == '/status.json':
+                doc = scan(run_dir)
+                doc['family'] = family_of_run(doc['name'])
+                self._send(json.dumps(doc))
+            elif path == '/modes.json':
+                it = q.get('it')
+                self._send(json.dumps(modes(run_dir, int(it) if it else None)))
             elif path == '/summary.json':
-                # Written by summarise_run.py when the run completes. Absent
-                # while it is still going, which is what the page keys on.
                 self._send_file(os.path.join(run_dir, '_summary.json'))
-            elif path == '/basemap.json':
-                # Context only - water, coast, parkland, the full road network in
-                # outline, heavy rail and the light rail alignment. Built by
-                # build_basemap.py and NOT required: the page draws traffic
-                # without it. See the note in hotspot() on why the traffic layer
-                # does not come from here.
-                self._send_file(_city.path('data', 'processed', 'basemap.json'))
+            elif path == '/network.json':
+                self._send(json.dumps(network_payload(run_dir)))
             elif path == '/hotspot.json':
                 self._send(json.dumps(hotspot(run_dir)))
             elif path == '/links.json':
-                self._send_file(os.path.join(run_dir, 'output',
-                                             'telemetry_links.json'))
+                self._send_file(os.path.join(run_dir, 'output', 'telemetry_links.json'))
             else:
                 self._send('{"error":"not found"}', code=404)
 
@@ -632,28 +982,26 @@ def make_handler(run_dir):
     return Handler
 
 
-class _Server(socketserver.TCPServer):
-    """Loopback server that REFUSES a port already in use.
+class _Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    """Loopback server that REFUSES a port already in use, one thread per
+    request so a 6 MB network payload never blocks the half-second poll.
 
     `allow_reuse_address` must stay false on Windows. SO_REUSEADDR there lets a
     second socket bind a port that is already bound instead of failing, so the
     port scan in `serve` below silently "succeeded" on the SAME port for every
     concurrent run: three live views each printed 8731, 8732 and 8733 were never
-    opened, and only the first server ever answered. The other two ran for as
-    long as their run did, reporting a url that served nothing. On POSIX the
-    flag only skips TIME_WAIT and is harmless, so it is kept there.
-
-    It was also being set on `socketserver.TCPServer` itself, which changed the
-    default for every other server in the process.
+    opened, and only the first server ever answered. On POSIX the flag only
+    skips TIME_WAIT and is harmless, so it is kept there.
     """
 
     allow_reuse_address = (os.name != 'nt')
+    daemon_threads = True
 
 
 def serve(run_dir, port=None, poll_s=None, background=True):
     """Bind on loopback and serve. Returns the url, or None if no port is free."""
     port = int(port or PORT)
-    handler = make_handler(run_dir)
+    handler = make_handler(os.path.abspath(run_dir))
     httpd = None
     for candidate in range(port, port + 20):
         try:
@@ -675,21 +1023,35 @@ def serve(run_dir, port=None, poll_s=None, background=True):
     return url
 
 
+def newest_run():
+    names = sorted(_results_store.run_names())
+    for name in reversed(names):
+        d = _results_store.resolve_records(name)
+        if d:
+            return d
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument('--run', required=True,
-                    help='a directory name under results/, or a path')
+    ap.add_argument('--run', default=None,
+                    help='a directory name under results/, or a path; default '
+                         'the newest run the store holds (the page can switch)')
     ap.add_argument('--port', type=int, default=None)
     ap.add_argument('--once', action='store_true',
                     help='print the status json and exit, serving nothing')
     args = ap.parse_args()
 
     run_dir = args.run
-    if not run_dir.strip():
+    if run_dir is not None and not run_dir.strip():
         # An empty --run resolved to results/ itself and served a directory that
         # is not a run, reporting "no telemetry" for a run that had plenty.
         raise SystemExit('--run is empty')
-    if not os.path.isdir(run_dir):
+    if run_dir is None:
+        run_dir = newest_run()
+        if run_dir is None:
+            raise SystemExit('the results store holds no run')
+    elif not os.path.isdir(run_dir):
         run_dir = _resolve_run(args.run)
     if not os.path.isdir(run_dir):
         raise SystemExit('no such run: %s' % args.run)
@@ -701,8 +1063,8 @@ def main():
     url = serve(run_dir, args.port, background=True)
     if url is None:
         raise SystemExit('no free loopback port')
-    print('live view: %s' % url, flush=True)
-    print('reading:   %s' % os.path.abspath(run_dir), flush=True)
+    print('run viewer: %s' % url, flush=True)
+    print('reading:    %s' % os.path.abspath(run_dir), flush=True)
     print('Ctrl-C to stop. The run is not affected either way.', flush=True)
     try:
         while True:

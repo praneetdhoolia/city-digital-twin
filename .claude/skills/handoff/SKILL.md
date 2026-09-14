@@ -41,7 +41,7 @@ Handoff:
 ## Phase 1 — Consolidate: the position pages
 
 For **every topic the session touched**, rewrite its page in
-`cities/<city>/docs/positions/` so it states the current truth:
+`docs/positions/` so it states the current truth:
 
 - Keep the template's headings (*What is built · What is measured · What is
   open · Refused — do not re-raise · History*), at most 130 lines.
@@ -84,7 +84,7 @@ already be in the registry with a sweep — if not, that is unfinished work.
 
 ## Phase 3 — Board
 
-Edit only the hand-written lines of `cities/<city>/docs/STATUS.md` that the
+Edit only the hand-written lines of `docs/STATUS.md` that the
 session made wrong: *Last updated*, the goal table's *where it stands* cells,
 the phase table, the package-consistency paragraph, *Next*, *Open work*.
 Then regenerate the blocks:
@@ -100,7 +100,7 @@ block already carries it; a hand-written count is a defect.
 
 ## Phase 4 — Brief, from the template
 
-Rewrite `cities/<city>/docs/NEXT_AGENT_BRIEF.md` **in place from this
+Rewrite `docs/NEXT_AGENT_BRIEF.md` **in place from this
 template** — never patch the old one — at most 180 lines:
 
 ```

@@ -119,10 +119,14 @@ VEHICLE = dict(
     model='CAF Urbos 100 (5-module, 100% low floor)',
     fleet_size=6, fleet_numbers='2151-2156',
     length_m=32.966, width_m=2.65, mass_tonnes=45,
-    capacity_seated=60, capacity_standing=210, capacity_crush=270,
+    # the seated/standing split is the registry's (A.lightrail.capacity_*),
+    # not a second copy typed here with its own sweep (tenth report)
+    capacity_seated=CFG.get('A.lightrail.capacity_seated'),
+    capacity_standing=CFG.get('A.lightrail.capacity_standing'),
+    capacity_crush=270,
     capacity_seated_source='assumed', capacity_crush_source='published',
     max_accel_ms2=1.2, max_decel_ms2=1.3, emergency_decel_ms2=2.8,
-    max_speed_kmh=70, line_speed_kmh=40,
+    max_speed_kmh=70, line_speed_kmh=CFG.get('A.lightrail.line_speed_kmh'),
     door_count_per_side=4, door_width_mm=1300,
     boarding_rate_pax_s=0.6, alighting_rate_pax_s=0.8,
     traction_voltage_v=750, energy_storage='supercapacitor (ACR)',
@@ -149,8 +153,10 @@ _DWELL_CHARGING_SWEEP = tuple(
     CFG.sweep('A.lightrail.dwell_charging_baseline_s'))
 
 DWELL_DEFAULTS = dict(
-    dwell_fixed_s=8.0,              # door open/close + driver reaction
-    dwell_fixed_sweep=(5.0, 12.0),
+    # the fixed dwell and ITS sweep are the registry's A.lightrail.dwell_fixed_s:
+    # this dict carried 8.0 with a (5, 12) sweep beside a declared (5, 15)
+    dwell_fixed_s=CFG.get('A.lightrail.dwell_fixed_s'),
+    dwell_fixed_sweep=tuple(CFG.sweep('A.lightrail.dwell_fixed_s')),
     dwell_charging_s=_DWELL_CHARGING_S,
     dwell_charging_sweep=_DWELL_CHARGING_SWEEP,
     dwell_sd_s=6.0,

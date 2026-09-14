@@ -42,9 +42,12 @@ import glob
 import math
 import argparse
 
-OUT_DIR = _city.path('docs', 'reference', 'figures')
+OUT_DIR = _city.docs('reference', 'figures')
+LICENCE_NOTICE = ('ODbL 1.0 (share-alike): drawn from synthetic plans that carry the '
+                  'OpenStreetMap-derived network\'s ancestry, (c) OpenStreetMap '
+                  'contributors; not the package\'s CC-BY 4.0')
 CALIBRATION_FILE = _city.path('params/C5_calibration.json')
-FAMILIES_FILE = _city.path('docs', 'run_families.json')
+FAMILIES_FILE = _city.docs('run_families.json')
 RESULTS_DIR = _os.path.join(_city.REPO, 'results')
 # The one completion value that means a run executed the horizon it declared
 # (src/run/run_matsim.py:RAN_TO_LAST). Named here rather than imported so this
@@ -286,7 +289,12 @@ class Canvas(object):
             'aria-label="%s">'
             % (_n(self.width), _n(self.height), _n(self.width),
                _n(self.height), FONT_STACK, _esc(title)))
-        return '\n'.join([head] + self.parts + ['</svg>', ''])
+        # the share-alike notice CLAUDE.md requires on anything published from
+        # OSM-derived data: the plans these figures are drawn from carry the
+        # network's ODbL ancestry (DECISIONS.md 9.158), and the Pages site
+        # serves the SVGs whole
+        notice = '<!-- %s -->' % _esc(LICENCE_NOTICE)
+        return '\n'.join([head, notice] + self.parts + ['</svg>', ''])
 
 
 def nice_ceiling(value):
@@ -608,6 +616,7 @@ def build(run_dir):
     context = unscored_context(fit)
     ledger = {
         'generated_by': 'src/analyse/build_fit_figures.py',
+        'licence': LICENCE_NOTICE,
         'note': 'Regenerate; do not edit. Carries no wall-clock stamp: the '
                 'provenance is the run, and the run does not move.',
         'run': {

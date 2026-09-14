@@ -149,7 +149,7 @@ def build_fields():
                      "suburbs, its agencies, its datasets - inside the portable half of "
                      "the contract. What a city must supply is a key, its units and its "
                      "value type; WHY a particular city chose a particular value belongs "
-                     "in that city's docs/reference/CONFIG_REFERENCE.md."),
+                     "in docs/reference/CONFIG_REFERENCE.md."),
         'caveat': ('`required` means the reference city declares it and the framework '
                    'will not run without it. A field carrying `required_if_mode` is '
                    'required ONLY of a city that runs that mode - the one narrowing '

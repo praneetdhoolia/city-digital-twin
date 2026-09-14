@@ -422,6 +422,10 @@ def _detach():
     with open(wrapper, 'w', encoding='ascii', newline='\r\n') as f:
         f.write('@echo off\r\n')
         f.write('cd /d "%s"\r\n' % HERE)
+        # the run is NAMED by this stamp too, so `--stop <run>` finds the task:
+        # the runner used to stamp the directory at JVM start, seconds after
+        # the task was named, and the stop's task lookup matched nothing
+        f.write('set CITYSIM_LAUNCH_STAMP=%s\r\n' % stamp)
         f.write('"%s" run.py %s > "%s" 2>&1\r\n' % (sys.executable, quoted, log))
         # the task deletes itself once the run ends, so a finished launch
         # leaves no scheduled-task residue behind

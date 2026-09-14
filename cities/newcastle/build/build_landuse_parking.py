@@ -337,6 +337,7 @@ CHARGED_HOURS = CFG.get('A.parking.charged_hours_by_day_type')
 OCC_PROFILE = CFG.get('A.parking.occupancy_profile')
 
 CAP_DEFAULT = CFG.get('A.parking.capacity_default')
+CAP_DEFAULT_OTHER = CFG.get('A.parking.capacity_default_other')
 
 ZONES_SA1 = _city.path('data/processed/zones/zones_SA1.gpkg')
 ATTRACTIONS = os.path.join(OUT, 'D1_zone_attractions_SA1.csv')
@@ -441,7 +442,7 @@ def build_parking():
         p_rate = by_sa1.get(code, 0.0)
         cap = r['capacity_spaces']
         if cap == '':
-            cap = CAP_DEFAULT.get(r['type'], 30)
+            cap = CAP_DEFAULT.get(r['type'], CAP_DEFAULT_OTHER)
             n_imputed_cap += 1
             cap_src = 'imputed_by_type'
         else:
