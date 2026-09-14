@@ -61,7 +61,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | the newest run on disk is `20260912T202242_300it_25pct`, which **RAN TO ITS LAST ITERATION**: arm 0 of F35 (`f35_baseline_25pct`, 300 it, 25 %, no control on), the second result and F35's reading (§9.169). It is the control half of the five pairs (#172); no pair is approved |
+| P4 calibration | 🟡 | the newest run on disk is `20260914T150700_2it_1pct`, which **RAN TO ITS LAST ITERATION** - a 1 % smoke probe of the recompiled controler (#197), read for nothing. The newest reading is arm 0 of F35 (`20260912T202242_300it_25pct`, `f35_baseline_25pct`, 300 it, 25 %, no control on), the second result and F35's reading (§9.169). It is the control half of the five pairs (#172); no pair is approved |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -87,14 +87,14 @@ those of `20260910T203622` (§9.164). The manifest holds
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260914T150700_2it_1pct` | completed | F35-the-engines-route-what-they-remode | 2 | ran_to_last_iteration `_run.json` |
 | `20260912T202242_300it_25pct` | completed | F35-the-engines-route-what-they-remode | 300 | ran_to_last_iteration `_run.json` |
 | `20260912T185005_4it_25pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
 | `20260912T184134_4it_1pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
 | `20260912T162831_4it_25pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
 | `20260912T135825_4it_25pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
-| `20260912T065939_4it_1pct` | completed | F34-walk-has-a-footpath-network | 4 | ran_to_last_iteration `_run.json` |
 
-190 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+191 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
