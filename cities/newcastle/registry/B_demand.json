@@ -480,6 +480,40 @@
         "src/build/build_activity_chains.py"
       ]
     },
+    "B.activity.p_intermediate_stop_default": {
+      "value": 0.15,
+      "units": "probability",
+      "source": "assumed",
+      "sweep": [
+        0.1,
+        0.35
+      ],
+      "sweep_basis": "The rate a purpose falls back to when B.activity.p_intermediate_stop names no entry for it; the same 0.10-0.35 bracket as the per-purpose table (DECISIONS.md 9.2). Every purpose the builder emits today has an entry, so the value reaches no output until a purpose vocabulary changes - declared so that an HTS vintage that drops a purpose row is a visible decision, not a silent 0.15 (issue #198).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.170",
+      "description": "Intermediate-stop probability for a purpose absent from B.activity.p_intermediate_stop. Typed as a .get() default until 14 September 2026 (#198).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
+    "B.activity.intermediate_stop_shop_share": {
+      "value": 0.5,
+      "units": "share",
+      "source": "assumed",
+      "sweep": [
+        0.3,
+        0.7
+      ],
+      "sweep_basis": "The purpose of an intermediate stop is drawn as shopping (HS) with this share and other (HO) otherwise; the published HTS carries no stop-purpose split, so the even split is assumed and bracketed at 0.3-0.7. Typed as a literal 0.5 until 14 September 2026 (issue #198).",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.170",
+      "description": "Share of intermediate stops that are shopping (HS) rather than other (HO).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
+    },
     "B.activity.p_second_stop": {
       "value": 0.25,
       "units": "probability",
@@ -649,6 +683,23 @@
       "status": "active",
       "decisions_ref": "9.2",
       "description": "Straight-line to network distance, routed over the observed A1 road graph, re-measured on the CURRENT network 4 Sep 2026 (9.142): 1.3376 over 551 routed pairs became 1.3276 over 595, the extra pairs being zone pairs the pre-16-August network could not route between. Replaces an assumed 1.30. The build script keeps a 1.30 fallback labelled 'assumed - C2 factors file not found'; that fallback is now this field. The build script no longer keeps its own copy: it READS THIS FIELD as the fallback when params/C2_network_factors.json is absent, so the two values that check_legacy_drift.py existed to compare are now one value."
+    },
+    "B.activity.distance_decay_target_default_km": {
+      "value": 8.0,
+      "units": "km_network",
+      "source": "assumed",
+      "sweep": [
+        4.0,
+        12.0
+      ],
+      "sweep_basis": "The mean network trip length a purpose's distance decay is solved to when the HTS carries no mean for that purpose. Every purpose the builder solves today has an HTS row, so the value reaches no output until a purpose vocabulary changes; declared so that a missing row is a visible decision rather than a silent 8 km target (issue #198). Bracketed at half to one and a half times the value.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.170",
+      "description": "Distance-decay target (mean network km) for a purpose with no HTS mean trip length. Typed as a .get() default until 14 September 2026 (#198).",
+      "consumers": [
+        "src/build/build_activity_chains.py"
+      ]
     },
     "B.activity.days_per_week": {
       "value": {

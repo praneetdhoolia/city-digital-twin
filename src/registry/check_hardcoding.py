@@ -685,6 +685,33 @@ _RETRY = ('an ACQUISITION retry/backoff/page size for an HTTP download; the byte
           'retrieved are the same at any value that succeeds')
 STRUCTURAL_INLINE = {
     # ---- solver and arithmetic structure
+    'src/build/build_activity_chains.py:solve:0.5':
+        'the MIDPOINT of a bisection over the gravity decay; solver structure',
+    'src/build/build_activity_chains.py:solve_short:0.5':
+        'the midpoint of the short-trip decay bisection - as above',
+    'src/build/build_activity_chains.py:through_agents:0.5':
+        'a through flow is split into its two directions; half each is the '
+        'definition of a symmetric flow, not a choice',
+    'src/build/build_population.py:main:0.5':
+        'the sex split of an age band the census leaves EMPTY (no persons); an '
+        'even split of nobody, never reached on this city',
+    '<city>/build/build_corridor_layers.py:build:0.5':
+        'half a cycle: the mean delay of an arrival uniform over the cycle, '
+        'the textbook identity, not a value',
+    '<city>/build/build_landuse_parking.py:build_frontages:0.5':
+        'the midpoint of a frontage segment (shapely interpolate at half length)',
+    '<city>/build/build_level_crossings.py:main:0.5':
+        'the centre of a window slot (i + 0.5): even spacing of the derived '
+        'closures inside their window, geometry rather than a value',
+    '<city>/build/build_mode_targets.py:main:0.5':
+        'the midpoint of the IPART trips-per-day band (lo + hi) / 2 - the band is '
+        'the declared value, B.taxi.daily_trips_band',
+    '<city>/extract/extract_bitre_registrations.py:study_area_postcodes:0.5':
+        'a postcode is inside the study area when more than half of it is - a '
+        'majority rule for a boundary clip',
+    '<city>/extract/extract_boam.py:main:0.5':
+        'a depot is kept when more than half of its sightings vote for it - a '
+        'majority rule',
     'src/build/build_activity_chains.py:solve:0.005':
         'the LOWER BRACKET of a bisection over the gravity decay; the solution is '
         'interior and identical for any bracket that contains it',
@@ -1123,12 +1150,12 @@ def config_reach():
 # reason it is not a modelling value. The category gates like every other.
 INLINE_LAYERS = ('src/build/', '<city>/build/', '<city>/extract/')
 INLINE_ALLOW = {0, 1, 2, 3, 4, 5, 10, 100, 1000, 60, 3600, 24, 7, 12, 365, 1024, 255,
-                0.5, 90, 180, 360, 1e3, 1e6, 1e9, 1e-3, 1e-6, 1e-9, 1e-12, 111320, 6371000,
+                90, 180, 360, 1e3, 1e6, 1e9, 1e-3, 1e-6, 1e-9, 1e-12, 111320, 6371000,
                 6371, 111000, 110540, 3.6}
 INLINE_STRUCTURAL_CALLS = {
     'round', 'range', 'enumerate', 'ljust', 'rjust', 'zfill', 'seek', 'read', 'print',
     'format', 'sample', 'head', 'tail', 'islice', 'getsizeof', 'sleep', 'timeout', 'zip',
-    'log', 'split', 'rsplit', 'join', 'index', 'get', 'setdefault', 'insert', 'pop',
+    'log', 'split', 'rsplit', 'join', 'index', 'setdefault', 'insert', 'pop',
     'sort', 'exit', 'SystemExit', 'ValueError', 'randint', 'reshape', 'zeros', 'ones',
     'full', 'linspace', 'arange', 'repeat', 'tile', 'percentile', 'quantile',
     'nanpercentile', 'digitize', 'histogram', 'cut', 'qcut', 'to_datetime', 'Period',

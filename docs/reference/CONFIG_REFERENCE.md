@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 553 fields are made of
+## What the 558 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
 | `observed` | 38 | read directly from a raw download |
 | `measured` | 42 | computed from observed data in this package |
 | `derived` | 46 | follows from another registry field by identity |
-| `literature` | 81 | a published value, not specific to this city |
-| `assumed` | 203 | chosen without direct empirical support |
+| `literature` | 82 | a published value, not specific to this city |
+| `assumed` | 207 | chosen without direct empirical support |
 | `definition` | 143 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 532 | usable point value |
+| `active` | 537 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 319 sweeps are for
+### What the 324 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 276 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 281 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -128,7 +128,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 200 fields*
+*`cities/newcastle/registry/A_supply.json` - 202 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -251,6 +251,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.osm.harvest_margin_m` | `5000.0` | metres | `assumed` | 2000 - 15000 |
 | `A.osm.harvest_tile_deg` | `0.4` | degrees | `definition` | **held fixed** |
 | `A.parking.capacity_default` | `{"onstreet": 12, "offstreet_public": 60, "offstreet_private": 40}` | spaces_per_facility | `assumed` | 5 - 100 |
+| `A.parking.capacity_default_other` | `30` | spaces_per_facility | `assumed` | 5 - 100 |
 | `A.parking.charged_end_hour` | *(null - unobtained)* | hour_of_day | `derived` | derived: chargedEndHour = A.parking.charged_hours_by_day_type[day][1], or 0.0 w |
 | `A.parking.charged_hours_by_day_type` | `{"WEEKDAY": [8.0, 18.0], "SAT": [8.0, 13.0], "SUN": null}` | hour_of_day | `assumed` | plus/minus 25% |
 | `A.parking.charged_modes` | `["car"]` | enum | `definition` | - |
@@ -269,6 +270,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.road.lanes_default` | `{"busway": 1, "living_street": 1.0, "motorway": 2.0, "motorway_link": 1.0, "primary": 2.0, "primary_link": ...` | lanes_per_direction | `measured` | 1 - 3 |
 | `A.road.lanes_unknown_class` | `1` | lanes_per_direction | `assumed` | 1 - 3 |
 | `A.road.speed_default` | `{"busway": 50, "living_street": 10.0, "motorway": 110.0, "motorway_link": 80.0, "primary": 60.0, "primary_l...` | km_per_hour | `measured` | 10 - 110 |
+| `A.road.speed_default_other_kmh` | `50.0` | km_per_hour | `literature` | 40 - 60 |
 | `A.road.speed_unknown_class_kmh` | `50` | km_per_hour | `assumed` | 10 - 110 |
 | `A.road.speed_zone_clip_margin_m` | `2000.0` | metres | `assumed` | 500 - 5000 |
 | `A.road.speed_zone_excluded_classes` | `["service"]` | enum | `definition` | - |
@@ -1163,6 +1165,14 @@ Fallback capacity where a parking facility carries none. 4,861 of 7,710 faciliti
 
 > **Sweep basis.** chosen interval bracketing the three per-type defaults (on-street 12, off-street public 60, off-street private 40; DECISIONS.md 6). Derivation from the 4,861 observed OSM capacities was attempted and rejected (9.33, 9.76): 4,623 of them are 1 because they are individual bays, so the observed median would say every car park holds one car. No observed spread.
 
+#### `A.parking.capacity_default_other`
+
+Fallback capacity for a parking facility of a type absent from A.parking.capacity_default.
+
+***assumed** · status **active** · DECISIONS.md §9.170 · sweep role **uncertainty***
+
+> **Sweep basis.** The capacity imputed to a facility whose type is absent from A.parking.capacity_default and which carries no observed capacity; the same 5-100 bracket as that table. Every facility on disk has one of the three declared types, so the value reaches no artefact until the type vocabulary changes. Typed as a .get() default until 14 September 2026 (issue #198).
+
 #### `A.parking.charged_end_hour`
 
 Hour at which parking stops being charged, for the day type this config is being emitted for. See A.parking.charged_start_hour: an end at or before the start means the day is free.
@@ -1304,6 +1314,14 @@ Fallback free-flow speed where OSM carries no maxspeed tag. MEASURED from the ob
 ***measured** · status **active** · DECISIONS.md §9.33 · sweep role **measurement***
 
 > **Sweep basis.** the union of the observed interquartile ranges across the 13 classes with at least 30 tagged edges - an observed spread, not a chosen interval
+
+#### `A.road.speed_default_other_kmh`
+
+Fallback speed limit for a corridor way of a highway class absent from A.road.speed_default with no regulated zone and no OSM maxspeed.
+
+***literature** · status **active** · DECISIONS.md §9.170 · sweep role **uncertainty***
+
+> **Sweep basis.** The NSW default speed limit in a built-up area is 50 km/h (Road Rules 2014 (NSW) r 25; Roads and Maritime "default urban speed limit"). It applies to a corridor way whose highway class is absent from A.road.speed_default and which carries neither a regulated speed zone nor an OSM maxspeed; today no such way exists, so the value reaches no artefact until the class vocabulary changes. Bracketed at the 40 km/h high-pedestrian and the 60 km/h arterial limits either side. Typed as a .get() default until 14 September 2026 (issue #198).
 
 #### `A.road.speed_unknown_class_kmh`
 
@@ -1795,7 +1813,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 127 fields*
+*`cities/newcastle/registry/B_demand.json` - 130 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1814,6 +1832,7 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.departure_profile` | `{"HE": [0.0, 0.0, 0.0, 0.0, 0.002, 0.01, 0.06, 0.23, 0.27, 0.09, 0.035, 0.03, 0.035, 0.04, 0.075, 0.06, 0.0...` | probability_by_hour | `assumed` | plus/minus 25% |
 | `B.activity.destination_balancing` | `doubly_constrained` | enum | `definition` | `doubly_constrained`, `singly_constrained` |
 | `B.activity.detour_factor` | `1.3276` | ratio | `measured` | 1.247 - 1.419 |
+| `B.activity.distance_decay_target_default_km` | `8.0` | km_network | `assumed` | 4 - 12 |
 | `B.activity.duration_cv` | `0.3` | coefficient_of_variation | `assumed` | 0.2 - 0.45 |
 | `B.activity.escort_binding_direct_tour` | `true` | boolean | `derived` | derived: under the declared `both_links` pairing rule the serving leg must repr |
 | `B.activity.escort_binding_directions` | `round_trip` | enum | `assumed` | `outbound_only`, `round_trip` |
@@ -1826,9 +1845,11 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.activity.escort_exclusion_scope` | `subtour` | enum | `assumed` | `subtour`, `day` |
 | `B.activity.escort_requires_licence` | `true` | boolean | `derived` | derived: an escort trip is a trip made in order to convey another person, so th |
 | `B.activity.hts_rate_per_person_day` | `3.473` | trips_per_person_per_day | `measured` | 3.3 - 3.65 |
+| `B.activity.intermediate_stop_shop_share` | `0.5` | share | `assumed` | 0.3 - 0.7 |
 | `B.activity.joint_tour_passenger_ratio` | `0.3503` | passenger_trips_per_driver_trip | `derived` | derived: the measured persons-per-vehicle minus one: HTS 2024/25 driver and pas |
 | `B.activity.joint_tour_purposes` | `["HS", "HO"]` | enum_list | `assumed` | `['HO']`, `['HS', 'HO']`, `['HS', 'HO', 'WB']` |
 | `B.activity.p_intermediate_stop` | `{"HW": 0.22, "HE": 0.12, "HS": 0.18, "HO": 0.2, "WB": 0.3, "HX": 0.15}` | probability | `assumed` | 0.1 - 0.35 |
+| `B.activity.p_intermediate_stop_default` | `0.15` | probability | `assumed` | 0.1 - 0.35 |
 | `B.activity.p_mandatory` | `{"WEEKDAY": {"work": 0.78, "education": 0.85}, "SAT": {"work": 0.16, "education": 0.03}, "SUN": {"work": 0....` | probability | `assumed` | 0.6 - 0.95 |
 | `B.activity.p_second_stop` | `0.25` | probability | `assumed` | 0.12 - 0.4 |
 | `B.activity.plan_access_s` | `240` | seconds | `assumed` | 120 - 480 |
@@ -2035,6 +2056,14 @@ Straight-line to network distance, routed over the observed A1 road graph, re-me
 
 > **Sweep basis.** the interquartile range of the per-pair ratios over 595 population-weighted zone pairs, re-measured on the current network 4 Sep 2026 (9.142); the 551-pair figure it replaces was routed over the network as it stood before the 16 August rebuild
 
+#### `B.activity.distance_decay_target_default_km`
+
+Distance-decay target (mean network km) for a purpose with no HTS mean trip length. Typed as a .get() default until 14 September 2026 (#198).
+
+***assumed** · status **active** · DECISIONS.md §9.170 · sweep role **uncertainty***
+
+> **Sweep basis.** The mean network trip length a purpose's distance decay is solved to when the HTS carries no mean for that purpose. Every purpose the builder solves today has an HTS row, so the value reaches no output until a purpose vocabulary changes; declared so that a missing row is a visible decision rather than a silent 8 km target (issue #198). Bracketed at half to one and a half times the value.
+
 #### `B.activity.duration_cv`
 
 Spread of activity duration around its mean.
@@ -2127,6 +2156,14 @@ Observed NSW HTS trip rate the synthesis is calibrated to reproduce. The realise
 
 ***measured** · status **active** · DECISIONS.md §9.2 · sweep role **uncertainty***
 
+#### `B.activity.intermediate_stop_shop_share`
+
+Share of intermediate stops that are shopping (HS) rather than other (HO).
+
+***assumed** · status **active** · DECISIONS.md §9.170 · sweep role **uncertainty***
+
+> **Sweep basis.** The purpose of an intermediate stop is drawn as shopping (HS) with this share and other (HO) otherwise; the published HTS carries no stop-purpose split, so the even split is assumed and bracketed at 0.3-0.7. Typed as a literal 0.5 until 14 September 2026 (issue #198).
+
 #### `B.activity.joint_tour_passenger_ratio`
 
 How many coordinated passenger trips per expected car-driver trip the demand generator may create joint-travel eligibility for, before mode choice. 9.83 measured the demand ceiling: every B2 trip carried party_size=1, escort-bound travel was 5.4% of trips against an observed 20.6% vehicle-passenger share, and occupancy sat at 1.0013 against the measured 1.3503 - the generator structurally could not supply the observed joint travel. This field sizes the joint-tour binder pass that closes that structural gap.
@@ -2150,6 +2187,14 @@ Probability a tour carries an intermediate stop, by purpose. WATCH THIS ONE: it 
 ***assumed** · status **active** · DECISIONS.md §9.2 · sweep role **uncertainty***
 
 > **Sweep basis.** DECISIONS.md 9.2: trip-chaining rates are not in the published HTS tables, so the per-purpose values (0.12-0.30) are assumed and the record declares the 0.10-0.35 interval that brackets all of them. Its leverage is named, not measured: the record calls this the parameter that decides how many sub-tours exist and therefore how freely mode choice can vary within a day. No observed spread.
+
+#### `B.activity.p_intermediate_stop_default`
+
+Intermediate-stop probability for a purpose absent from B.activity.p_intermediate_stop. Typed as a .get() default until 14 September 2026 (#198).
+
+***assumed** · status **active** · DECISIONS.md §9.170 · sweep role **uncertainty***
+
+> **Sweep basis.** The rate a purpose falls back to when B.activity.p_intermediate_stop names no entry for it; the same 0.10-0.35 bracket as the per-purpose table (DECISIONS.md 9.2). Every purpose the builder emits today has an entry, so the value reaches no output until a purpose vocabulary changes - declared so that an HTS vintage that drops a purpose row is a visible decision, not a silent 0.15 (issue #198).
 
 #### `B.activity.p_mandatory`
 

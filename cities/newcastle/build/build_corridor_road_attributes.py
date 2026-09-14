@@ -153,6 +153,7 @@ PARALLEL_M = CFG.get('A.corridor.parallel_buffer_m')
 # still said trunk 80 where the measurement says 60 over 1,702 tagged edges.
 # Two copies of a number is the drift this package cannot absorb.
 SPEED_DEFAULT = CFG.get('A.road.speed_default')
+SPEED_DEFAULT_OTHER = CFG.get('A.road.speed_default_other_kmh')
 LANES_DEFAULT = CFG.get('A.road.lanes_default')
 CAP_DEFAULT = CFG.get('A.road.capacity_default')
 LANE_WIDTH_DEFAULT = CFG.get('A.road.lane_width_default_m')
@@ -365,7 +366,7 @@ def grade(tags, wid):
         out['speed_limit_kmh'] = float(sl)
         out['speed_limit_source'] = 'osm'
     else:
-        out['speed_limit_kmh'] = float(SPEED_DEFAULT.get(hw, 50))
+        out['speed_limit_kmh'] = float(SPEED_DEFAULT.get(hw, SPEED_DEFAULT_OTHER))
         out['speed_limit_source'] = 'imputed_rule'
 
     # OSM `width` on a road is the whole CARRIAGEWAY, not one lane: measured over

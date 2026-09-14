@@ -191,6 +191,8 @@ P_MANDATORY_EDUCATION_SWEEP = tuple(CFG.sweep('B.activity.p_mandatory'))
 # what creates genuine sub-tours, and therefore what lets MATSim's mode choice
 # vary within a day rather than for the whole day at once. Assumed.
 P_INTERMEDIATE_STOP = CFG.get('B.activity.p_intermediate_stop')
+P_INTERMEDIATE_STOP_DEFAULT = CFG.get('B.activity.p_intermediate_stop_default')
+STOP_SHOP_SHARE = CFG.get('B.activity.intermediate_stop_shop_share')
 P_SECOND_STOP = CFG.get('B.activity.p_second_stop')
 P_SECOND_STOP_SWEEP = tuple(CFG.sweep('B.activity.p_second_stop'))
 
@@ -320,6 +322,7 @@ P_INTERMEDIATE_SWEEP = tuple(CFG.sweep('B.activity.p_intermediate_stop'))
 # still two copies. There is one now, and the sweep comes from the field's own
 # `sweep` key rather than from a tuple typed beside it.
 DETOUR_FACTOR = CFG.get('B.activity.detour_factor')
+DECAY_TARGET_DEFAULT_KM = CFG.get('B.activity.distance_decay_target_default_km')
 DETOUR_SWEEP = tuple(CFG.sweep('B.activity.detour_factor'))
 DETOUR_SOURCE = '%s - C2 factors file not found, using the declared value'     % CFG.source('B.activity.detour_factor')
 NETWORK_FACTORS = _city.path('params/C2_network_factors.json')
@@ -634,7 +637,7 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     def calibrate_one(p):
         """One purpose's decays and mixture on the CURRENT effective
         attraction, and the mixed draw matrix they imply."""
-        target = max(meandist.get(p, 8.0), 0.8) / DETOUR_FACTOR
+        target = max(meandist.get(p, DECAY_TARGET_DEFAULT_KM), 0.8) / DETOUR_FACTOR
         b_short, short_mean_got = solve_short(p)
         short_beta[p] = b_short
         w_short_mat = kernel(p, np.full(X.size, b_short))
@@ -833,7 +836,7 @@ def solve_day_rates(total_rate, shape):
 
 def legs_per_tour(purpose):
     """Expected legs in one tour: out, back, and any intermediate stop."""
-    return 2.0 + P_INTERMEDIATE_STOP.get(purpose, 0.15) * (1.0 + P_SECOND_STOP)
+    return 2.0 + P_INTERMEDIATE_STOP.get(purpose, P_INTERMEDIATE_STOP_DEFAULT) * (1.0 + P_SECOND_STOP)
 
 
 def solve_secondary_rates(day, share, day_rate, employed_frac, student_frac,
@@ -976,8 +979,8 @@ def draw_tour_spec(purpose, hz, CUM, store, zone_arr, u, fixed_dest=None,
         primary_k, dx, dy = fixed_dest
         how = 'escorted'
     chain = [(purpose, primary_k, dx, dy, how)]
-    if not direct and u() < P_INTERMEDIATE_STOP.get(purpose, 0.15):
-        stop_purpose = 'HS' if u() < 0.5 else 'HO'
+    if not direct and u() < P_INTERMEDIATE_STOP.get(purpose, P_INTERMEDIATE_STOP_DEFAULT):
+        stop_purpose = 'HS' if u() < STOP_SHOP_SHARE else 'HO'
         k = min(int(np.searchsorted(CUM[stop_purpose][primary_k], u())),
                 X.size - 1)
         sx, sy, show = place_in_zone(store, stop_purpose, k, float(ZX[k]),

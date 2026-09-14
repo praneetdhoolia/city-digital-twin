@@ -28,6 +28,16 @@ import sys as _sys
 import city as _city
 import argparse
 import datetime
+
+# #199: ONE rule for a file already on disk with no recorded retrieval date.
+# It is neither re-stamped with today (the eighth report's wall-clock drift)
+# nor left blank (the ninth report's fifteen undated feeds): the date the
+# file was WRITTEN is on the file itself - urlretrieve and the streamed
+# download both write it at retrieval - so the record takes that date and
+# says where it came from. A file whose record already carries a date keeps
+# it; a file fetched this run is stamped today.
+def _retrieved_from_disk(p):
+    return datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()
 import hashlib
 import json
 import os
@@ -91,7 +101,9 @@ def fetch(series, start, end):
             skipped += 1
             if rel not in prov:
                 prov[rel] = dict(path=rel, url=url, bytes=os.path.getsize(p),
-                                 sha256=_sha256(p), retrieved=None)
+                                 sha256=_sha256(p), retrieved=_retrieved_from_disk(p),
+                                 retrieved_basis='file modification time on disk '
+                                                 '(written at download); no earlier record')
             continue
         req = urllib.request.Request(url, headers=HEADERS)
         try:

@@ -1,17 +1,17 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-14T04:15:50",
+  "generated": "2026-09-14T15:01:06",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 959,
-  "total_bytes": 7126165520,
+  "total_bytes": 7126167710,
   "total_gib": 6.64,
   "by_stage": {
     "raw": 532,
     "processed": 427
   },
   "bytes_by_stage": {
-    "raw": 5283274340,
+    "raw": 5283276530,
     "processed": 1842891180
   },
   "by_lineage_scope": {
@@ -8268,7 +8268,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8282,7 +8282,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8296,7 +8296,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8310,7 +8310,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8674,7 +8674,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8688,7 +8688,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8702,7 +8702,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8716,7 +8716,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8730,7 +8730,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8744,7 +8744,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8758,7 +8758,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -8772,15 +8772,15 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
     {
       "path": "schedules/raw/provenance.json",
-      "bytes": 8202,
+      "bytes": 10392,
       "rows": null,
-      "sha256": "9e8d69d23852be3bc0b2e15230f8601cc5de917446ecc8df624319d30697ca7e",
+      "sha256": "54fc2c629d818c6e03f76b82faed98d0bd036df71932af9404959adb0e243470",
       "stage": "raw",
       "produced_by": "cities/newcastle/extract/fetch_gtfs.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
@@ -8800,7 +8800,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/lightrail-newcastle/2026/2026-08/lightrail-newcastle_scheduled_data_20260804010800.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8814,7 +8814,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/NISC001/2026/2026-08/NISC001_scheduled_data_20260805190800.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8828,7 +8828,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2026/2026-08/nswtrains_scheduled_data_20260801010800.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8842,7 +8842,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/regionbuses-newcastlehunter/2026/2026-08/regionbuses-newcastlehunter_scheduled_data_20260801200800.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8856,7 +8856,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2026/2026-08/sydneytrains_scheduled_data_20260808010800.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8870,7 +8870,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/complete_gtfs/2016/2016-08/full_greater_sydney_gtfs_static_20160829.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8884,7 +8884,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2016/2016-09/nswtrains_schedule_data_20160923000000.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8898,7 +8898,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2016/2016-09/sydneytrains_schedule_data_20160920000000.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8912,7 +8912,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/NISC001/2018/2018-10/NISC001_scheduled_data_20181019.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8926,7 +8926,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2018/2018-10/nswtrains_scheduled_data_20181007011000.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8940,7 +8940,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2018/2018-10/SydneyTrains_scheduled_data_20181030.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8954,7 +8954,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/lightrail-newcastle/2020/2020-02/lightrail-newcastle_scheduled_data_20200218010200.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8968,7 +8968,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/NISC001/2019/2019-03/NISC001_scheduled_data_20190325210300.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8982,7 +8982,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/nswtrains/2019/2019-03/nswtrains_scheduled_data_20190330010300.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -8996,7 +8996,7 @@
       "source": "TfNSW Open Data Hub historical GTFS archive",
       "source_url": "https://opendata-gtfs.transport.nsw.gov.au/historical_gtfs/sydneytrains/2019/2019-03/sydneytrains_scheduled_data_20190331010300.zip",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "raw",
       "share_alike_ancestor": "no"
     },
@@ -9010,7 +9010,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9024,7 +9024,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9038,7 +9038,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9052,7 +9052,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9066,7 +9066,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9080,7 +9080,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9094,7 +9094,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9108,7 +9108,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9122,7 +9122,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9136,7 +9136,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9150,7 +9150,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9612,7 +9612,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9626,7 +9626,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9640,7 +9640,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9654,7 +9654,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9668,7 +9668,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9682,7 +9682,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9696,7 +9696,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9710,7 +9710,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9724,7 +9724,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9738,7 +9738,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9752,7 +9752,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9766,7 +9766,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9780,7 +9780,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "script",
       "share_alike_ancestor": "no"
     },
@@ -9864,7 +9864,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -9920,7 +9920,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -9976,7 +9976,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10060,7 +10060,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10116,7 +10116,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10172,7 +10172,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10256,7 +10256,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10312,7 +10312,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10368,7 +10368,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10452,7 +10452,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10508,7 +10508,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10564,7 +10564,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10648,7 +10648,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10704,7 +10704,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10760,7 +10760,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10844,7 +10844,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10900,7 +10900,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -10956,7 +10956,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11040,7 +11040,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11096,7 +11096,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11152,7 +11152,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11236,7 +11236,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11292,7 +11292,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11348,7 +11348,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11432,7 +11432,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11488,7 +11488,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11544,7 +11544,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11628,7 +11628,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11684,7 +11684,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -11740,7 +11740,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12006,7 +12006,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12048,7 +12048,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12104,7 +12104,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12160,7 +12160,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12216,7 +12216,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12272,7 +12272,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12314,7 +12314,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12370,7 +12370,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12426,7 +12426,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12468,7 +12468,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12510,7 +12510,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12552,7 +12552,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12594,7 +12594,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12636,7 +12636,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },
@@ -12678,7 +12678,7 @@
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones",
       "source_url": "https://opendata.transport.nsw.gov.au/",
       "licence": "CC-BY 4.0",
-      "retrieved": "",
+      "retrieved": "2026-08-10",
       "lineage_scope": "output",
       "share_alike_ancestor": "no"
     },

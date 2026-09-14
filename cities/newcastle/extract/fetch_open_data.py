@@ -4,6 +4,16 @@
 import city as _city
 import os, json, hashlib, urllib.request, datetime
 
+# #199: ONE rule for a file already on disk with no recorded retrieval date.
+# It is neither re-stamped with today (the eighth report's wall-clock drift)
+# nor left blank (the ninth report's fifteen undated feeds): the date the
+# file was WRITTEN is on the file itself - urlretrieve and the streamed
+# download both write it at retrieval - so the record takes that date and
+# says where it came from. A file whose record already carries a date keeps
+# it; a file fetched this run is stamped today.
+def _retrieved_from_disk(p):
+    return datetime.date.fromtimestamp(os.path.getmtime(p)).isoformat()
+
 
 def _sha256(path):
     """Chunked, so peak memory is one buffer rather than one download.
@@ -96,9 +106,12 @@ for rel,url,desc,lic in M:
     print(f"  {sz:>13,} B")
     # a file already held keeps the day it was retrieved (the wall-clock drift
     # the eighth report named: a re-run restamped every record with today)
-    retrieved=(datetime.date.today().isoformat() if fetched
-               else (_prev.get(rel) or {}).get('retrieved') or datetime.date.today().isoformat())
-    prov.append({"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,
-                 "sha256":h,"retrieved":retrieved})
+    rec={"path":rel,"url":url,"description":desc,"licence":lic,"bytes":sz,"sha256":h}
+    retrieved=datetime.date.today().isoformat() if fetched else (_prev.get(rel) or {}).get('retrieved')
+    if not retrieved:
+        retrieved=_retrieved_from_disk(p)
+        rec["retrieved_basis"]="file modification time on disk (written at download); no earlier record"
+    rec["retrieved"]=retrieved
+    prov.append(rec)
 json.dump(prov,open(os.path.join(root,'provenance_open_data.json'),'w',encoding='utf-8',newline='\n'),indent=2)
 print("\nwrote data/raw/provenance_open_data.json  (%d files)"%len(prov))

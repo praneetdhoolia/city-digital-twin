@@ -4,10 +4,10 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 553,
+  "n_fields": 558,
   "n_by_layer": {
-    "A": 201,
-    "B": 126,
+    "A": 203,
+    "B": 129,
     "C": 58,
     "CAL": 28,
     "D": 9,
@@ -1068,6 +1068,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
     },
+    "A.parking.capacity_default_other": {
+      "layer": "A",
+      "units": "spaces_per_facility",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
     "A.parking.charged_end_hour": {
       "layer": "A",
       "units": "hour_of_day",
@@ -1226,6 +1235,15 @@
       "units": "km_per_hour",
       "type": "object",
       "source_in_reference_city": "measured",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.road.speed_default_other_kmh": {
+      "layer": "A",
+      "units": "km_per_hour",
+      "type": "number",
+      "source_in_reference_city": "literature",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "A_supply.json"
@@ -1932,6 +1950,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.activity.distance_decay_target_default_km": {
+      "layer": "B",
+      "units": "km_network",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.activity.duration_cv": {
       "layer": "B",
       "units": "coefficient_of_variation",
@@ -2040,6 +2067,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.activity.intermediate_stop_shop_share": {
+      "layer": "B",
+      "units": "share",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.activity.joint_tour_passenger_ratio": {
       "layer": "B",
       "units": "passenger_trips_per_driver_trip",
@@ -2062,6 +2098,15 @@
       "layer": "B",
       "units": "probability",
       "type": "object",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
+    "B.activity.p_intermediate_stop_default": {
+      "layer": "B",
+      "units": "probability",
+      "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
