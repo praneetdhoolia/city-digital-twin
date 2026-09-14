@@ -2,12 +2,12 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
 
 ## What is built
 
 - **The four binder passes share one skeleton** (§9.167, #191): the day-file read, the per-person index, the busy-interval test, the resequence (#65) and the bindings writer live once; all 15 B2 tables byte-identical. **The heavy-rail target keeps summing the station publication** (#189): the 26 station-direction means are holdout; `audit_no_holdout` refuses a holdout id.
-- **The TfNSW bespoke-table request is DRAFTED, not sent** (§9.167, #50): `docs/requests/tfnsw_hts_bespoke_tables.md` asks for the four cells the CKAN API lacks; HELD (§9.169).
+- **The TfNSW bespoke-table request is DRAFTED, not sent** (§9.167, #50): `docs/requests/tfnsw_hts_bespoke_tables.md` asks for the four cells the CKAN API lacks; HELD; the four cells searched everywhere public, found nowhere (§9.172).
 
 **B1 — persons and households (`src/build/build_population.py`, seed 20260810, the 1,500 core SA1s only).**
 
@@ -64,7 +64,7 @@
 - **#86 — the demand seeds ride below its target** (§9.169): coverage 19.11 % of agents on arm 0 against 20.60 % observed, so no run on this seed reaches it; the passes reach the identity on paper (§9.142) while at the F26 gate 29,827 declared passengers drove themselves (§9.146). The seed must carry more ride — a demand rebuild that opens a family; not done.
 - **#145 — measured on a full arm** (§9.169): 18,767 drivers waited on arm 0's last iteration; the wait distribution and where the self-driven bound trips settle remain unread.
 - **`B.population.household_size_top_band_mean` REACHES NO OUTPUT** (§9.169, filed): `build_population.py` takes the geometric branch for the top band, so the declared 6.6 (sweep 6.0–7.5) is never consumed; consuming it opens a family.
-- **The TfNSW acquisition is OBTAINABLE and re-aimed** (#50): the NSW HTS is AGGREGATE ONLY, but bespoke tables come on request; HELD (§9.169), aimed at mode × age, trip length by mode, occupancy by purpose and the unfolded "Other"; until answered no choice model can be estimated on this city's own behaviour.
+- **The four HTS cells exist nowhere public** (§9.172, #50): the hub's eleven HTS resources carry mode × area and purpose × area only, none is an API; the Sydney 2012/13 report has mode × age, distance band × mode and occupancy for the Sydney GCCSA at that vintage — shapes, not targets; commute-only cells are derivable from ABS TableBuilder. The request is the only route; sending it is the user's decision (D2).
 - Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION`, the activity durations (§9.2, §9.61); the 9,376 `driver_is_the_companion` refusals are emergent (§9.116).
 - **The sub-1 km SUPPLY is fixed at build time and its SHAPE is unobserved** (§9.164, #30): the destination model matches the HTS MEAN per (purpose × LGA) by construction (§9.40, §9.136); the share under 1 km is the kernel's SHAPE and the HTS gives no distribution — no short-end target exists that is not invented (§9.8, §9.13).
 
@@ -82,14 +82,11 @@
 
 ## History
 
+- §9.172 — the four HTS cells: absent from every channel
 - §9.170 — placement radius from registry
 - §9.169 — roster 18,767; top-band mean unconsumed
 - §9.167 — one binder skeleton; HTS request drafted
 - §9.166 — TfNSW bespoke tables obtainable
-- §9.164 — discard repaired; demand rebuilt
-- §9.163 — roster binds harder; passengers drive
-- §9.158 — plans carry OSM geometry
-- §9.153 — F30 it.0: 8,549 drivers waited
 - §9.151 — an escort priced as an escort
 - §9.149 — shared pass binds longest first
 - §9.146 — a household drives the cars it owns

@@ -52,9 +52,9 @@
    "what": "Require the nine test-workflow jobs as status checks in the main ruleset (ruleset 21121872) - the prepared JSON is in the session's scratch directory; the agent's API call was refused by the harness.",
    "repeat_of": "ninth #12, sixth",
    "opens_family": false,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.172",
+   "updated": "2026-09-14"
   },
   {
    "id": "20260914T152907:6",

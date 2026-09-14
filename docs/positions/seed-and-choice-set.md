@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
 
 ## What is built
 
@@ -44,10 +44,9 @@
 ## What is open
 
 - **Why convergence makes the fit worse is the open question of the project** (§9.162, §9.169, #172): the post-cutoff level is car-heavier than any gate read; whether the cause is the scoring, the choice set (pt reaches 25.78 % on F32, 17.53 % on arm 0) or the routers is what the pairs must separate.
-- **Five one-field controls, one control arm, and the order is the operator's** (§9.164, §9.169, #172): scoring (`RUN.replanning.score_msa_representation`), the choice set (`RUN.replanning.plan_selector_for_removal`), the routers (`C.raptor.mode_cost_representation`), the demand (`B.mode.bound_passenger_placement`, SPENT at `every_plan`), service quality (`C.time_weights.service_quality_representation`, #175). Arm 0 is the CONTROL HALF; no arm was chosen and no approval stands; the recommendation is the routers pair first.
+- **Five one-field controls, one control arm, and the order is the operator's** (§9.164, §9.169, #172): scoring (`RUN.replanning.score_msa_representation`), the choice set (`RUN.replanning.plan_selector_for_removal`), the routers (`C.raptor.mode_cost_representation`), the demand (`B.mode.bound_passenger_placement`, SPENT at `every_plan`), service quality (`C.time_weights.service_quality_representation`, #175). Arm 0 is the CONTROL HALF; the user chose the routers pair first (D1, §9.172), priced at 30.0 h on `20260914T195207_4it_25pct`; no approval stands.
 - **Superseded** (§9.163): the scoring branch `at_innovation_cutoff` is the one candidate predicting both the +2.211 pp snap and the score peak-then-fall; the router branch `C.raptor.mode_cost_representation` = `mode_constant` is built and never run (§9.162, #49).
 - **A crowding or raptor arm can move coverage as a side effect** (#174, #98, #49): read coverage on both arms of any pair, or the difference is not attributable.
-- **Superseded: the horizon is declared 250** (§9.169): §9.142's refusal rested on §9.7's pre-rebuild, 1 %, uniform-seed measurement; the field reads 250 on a result's evidence.
 - **Whether 200 iterations of SEARCH suffice stays unmeasured** (§9.169): the pairs cut at 200 where arm 0 cut at 240; the ≤ 0.42 pp movement between those points bounds the difference without testing it.
 - **The `full_choice_set` against `uniform_draw` sweep** has not been run on one family (`B.mode.seed_method`).
 - **Each seeded plan is scored once** under the traffic of its iteration; how fast selection refines that is what a gate reads (§9.121).
@@ -66,6 +65,7 @@
 
 ## History
 
+- §9.172 — the routers pair chosen first, priced 30.0 h
 - §9.170 — the tenth report: every control still unrun
 - §9.169 — second result; horizon declared 250
 - §9.167 — no change to the seed; the network under it is F34's
