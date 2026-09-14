@@ -1,19 +1,17 @@
 # Brief for the next agent
 
-**Written:** 14 September 2026, forty-ninth session · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** the merge of the branch `praneetdhoolia/viewer-map-app-layout-and-pair-priced` (`git log -1 origin/main`).
+**Written:** 14 September 2026, fiftieth session · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** the merge of the branch `praneetdhoolia/viewer-maplibre-3d` (`git log -1 origin/main`).
 *A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md), [the lane](lane.json) and
 the [position pages](positions) win wherever this disagrees with them.*
 
 **YOUR LANE IS THE ROUTERS PAIR, CHOSEN AND PRICED, WAITING ON AN APPROVAL.**
-Nothing ran this session but one 25 % pricing probe. Arm 0 of F35
-(`20260912T202242_300it_25pct`, 300 of 300, a RESULT) is the newest reading:
-**2 of 12 inside 10 %** (car +9.6 %, motorbike −5.6 %), six past the stop bar.
-The session took the three decisions the ledger held (D1 routers pair first, D2
-search first, D3 require the status checks), applied D3 to the ruleset, priced
-the pair on the committed controler, searched every public channel for the four
-HTS cells and found them on none, and rebuilt the run viewer in a map-app layout
-(§9.172). Asked for the pair's stated-cost approval, the user chose the
-handoff instead: **no approval stands.**
+Nothing ran this session. Arm 0 of F35 (`20260912T202242_300it_25pct`, 300 of
+300, a RESULT) is the newest reading: **2 of 12 inside 10 %** (car +9.6 %,
+motorbike −5.6 %), six past the stop bar. The session rebuilt the run viewer's
+map on MapLibre GL — worker-decoded tiles, GL layers, a 3D view on key-free
+terrain and buildings, a globe, map-app controls — verified in a browser
+(§9.173) and closed #220. The lane, the decisions and the report ledger are
+unchanged; **no approval stands.**
 
 ## §0 Verify first — facts that expire, each with its command
 
@@ -22,9 +20,9 @@ handoff instead: **no approval stands.**
 | **MACHINE IDLE, NO ARM RUNNING.** The newest run on disk is the 25 % pricing probe `20260914T195207_4it_25pct` (4 of 4, read for its clock and heap only); the newest reading is arm 0. | `python src/run/session_gate.py --digest` · `Get-Process java` |
 | **NO APPROVAL STANDS.** The pair is priced on the build it would run: 30.0 h at 250 iterations plus 32 min of setup, 422.0 s a recurring iteration, spread 18.2–39.2 h. An approval is a number set as `RUN.gate.wall_ceiling_h` on the pair's overlay, which is not yet written. | `python src/analyse/arm_cost.py --run-config f35_baseline_25pct --iterations 250` |
 | **NO DECISION IS OPEN.** D1, D2 and D3 are answered in the ledger; `/onboard` asks nothing. | `python src/analyse/lane.py --ask` |
-| **TWELVE REPORT RECOMMENDATIONS ARE OPEN** of the tenth report's twenty (recommendation 5, the ruleset, taken this session). | `python src/analyse/report_recs.py` |
+| **TWELVE REPORT RECOMMENDATIONS ARE OPEN** of the tenth report's twenty; none was taken this session. | `python src/analyse/report_recs.py` |
 | **THE MAIN RULESET REQUIRES THE NINE `test` JOBS** (21121872): a red CI run cannot merge. | `gh api repos/praneetdhoolia/city-digital-twin/rulesets/21121872 --jq '.rules[].type'` |
-| The issue ledger: 28 open before this session's actions — #202 CLOSES here, #220 (the viewer's typed initial centre) is FILED; 13 `awaiting-run` with a measurement, the rest `AWAITING-DECISION:`, 0 blocking. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| The issue ledger: 28 open before this session — #220 CLOSES here (§9.173); 13 `awaiting-run` with a measurement, the rest `AWAITING-DECISION:`, 0 blocking. | `python src/run/issue_gate.py` · `gh issue list --state open` |
 | This session's PR: open until merged; its branch is deleted when it is. | `gh pr list --state open` |
 | Registry **558** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **484**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
 
@@ -52,33 +50,40 @@ comes first unless the Java changes again.
 
 ## §2 Traps — newest first, each with what it cost
 
-1. **A TILE PROVIDER CAN TURN ITS FREE TILES INTO A WATERMARK** (§9.172): CARTO's
-   basemaps now print "API KEY REQUIRED" across every tile; the viewer's street
-   base is Esri's label-free canvas. Check a new provider in the browser, not by
-   its documentation.
-2. **A MENU INSIDE A MASKED SCROLL PANEL IS CLIPPED BY THE MASK** (§9.172): the
+1. **A HIDDEN BROWSER TAB NEVER FIRES `requestAnimationFrame`, AND A WEBGL MAP
+   NEVER FINISHES LOADING IN IT** (§9.173): three relaunches of the scratch Edge
+   before it was found. Launch it with occlusion backgrounding off
+   (`--disable-backgrounding-occluded-windows --disable-renderer-backgrounding
+   --disable-features=CalculateNativeWinOcclusion,msEdgeSleepingTabs`) straight
+   onto the viewer's URL; closing its last tab kills it.
+2. **A TILE PROVIDER CAN TURN ITS FREE TILES INTO A WATERMARK** (§9.172): CARTO's
+   basemaps print "API KEY REQUIRED" across every tile; the viewer's street base
+   is Esri's label-free canvas, its terrain Terrarium on AWS, its buildings
+   OpenFreeMap — each checked in the browser, not by its documentation.
+3. **A MENU INSIDE A MASKED SCROLL PANEL IS CLIPPED BY THE MASK** (§9.172): the
    viewer's pickers live at the document body, positioned from their button.
-3. **A DOCUMENT CAN CITE A RECORD SECTION BEFORE IT EXISTS** — a gate
+4. **A DOCUMENT CAN CITE A RECORD SECTION BEFORE IT EXISTS** — a gate
    (`check_doc_shape.py`, citations); write the section first.
-4. **A SWEPT VALUE WITH A TYPED TWIN IS A SWEEP THAT MOVES NOTHING** (§9.170,
+5. **A SWEPT VALUE WITH A TYPED TWIN IS A SWEEP THAT MOVES NOTHING** (§9.170,
    #212): the hardcoding ledger skips ALL-CAPS assignments and `dict(...)` keywords.
-5. **A READER THAT RESOLVES THROUGH THE CITY'S ARTEFACT READS TODAY'S BUILD,
+6. **A READER THAT RESOLVES THROUGH THE CITY'S ARTEFACT READS TODAY'S BUILD,
    NOT THE RUN'S** (§9.169, #213): `home_lga()` still does it for residents.
-6. **A PRICE FROM ANOTHER BUILD IS NOT A PRICE** (§9.168): the digest's PRICE
-   line says so. This session's price IS on the committed build.
-7. **A REPORT PER SESSION REPEATS ITSELF** (§9.166): one per reading.
-8. **A MOVE RETARGETED BY HAND LEAVES LINES BEHIND** (§9.171): `check_doc_links.py`
+7. **A PRICE FROM ANOTHER BUILD IS NOT A PRICE** (§9.168): the digest's PRICE
+   line says so. The standing price IS on the committed build.
+8. **A REPORT PER SESSION REPEATS ITSELF** (§9.166): one per reading.
+9. **A MOVE RETARGETED BY HAND LEAVES LINES BEHIND** (§9.171): `check_doc_links.py`
    is a gate.
 
 Retired because a gate or the launcher enforces them: a concurrent arm (the
 launcher, §9.170), a result living only in `raw/` (`session_gate.py --handoff`),
-a launch with no automatic stop (§9.163), a red CI run merging (the ruleset, §9.172).
+a launch with no automatic stop (§9.163), a red CI run merging (the ruleset, §9.172),
+a coordinate typed into a script (`check_hardcoding.py`, category 9; #220 closed §9.173).
 
 ## §3 Standing directives and approvals
 
 - **NO APPROVAL STANDS.** Arm 0's 44 h was SPENT on `20260912T202242_300it_25pct`.
   The pair arm needs its own, on the 30.0 h quote of `20260914T195207_4it_25pct`,
-  set as `RUN.gate.wall_ceiling_h`; the user declined to give one this session.
+  set as `RUN.gate.wall_ceiling_h`; none was asked for or given this session.
 - **Never compare across a family boundary.** F35 opened at `20260912T184108`
   (§9.168); arm 0 is its reading; the pair opens a family. A run is a result only
   if `_run.json` says `ran_to_last_iteration`; a stopped arm is citable at its
@@ -93,6 +98,9 @@ a launch with no automatic stop (§9.163), a red CI run merging (the ruleset, §
   `answers_issues` on a new overlay.
 - **The TfNSW request is the user's to send** (D2, §9.172): the search is done and
   recorded on the draft; do not re-search, do not send unasked.
+- **The viewer is checked in a browser before it is done** (§9.172, §9.173): the
+  server re-reads `run_view.html` on every request; `node --check` the script,
+  zero console errors, both themes, 420 px, and a frame-gap probe through a zoom.
 - **The simulator's documents live at `docs/`, the city's at `cities/<city>/docs/`**
   (§9.171); a position page is at most 130 lines and 14,000 bytes; the lane is
   edited in `lane.json`, never in the board; a decision is asked once (§9.171).
