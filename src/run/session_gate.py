@@ -66,7 +66,7 @@ def open_prs():
 
 
 def board_blocks():
-    path = _city.path('docs', 'STATUS.md')
+    path = _city.docs('STATUS.md')
     if not os.path.exists(path):
         return {}
     text = open(path, encoding='utf-8').read()
@@ -75,7 +75,7 @@ def board_blocks():
 
 
 def digest():
-    goal = _city.path('docs', 'GOAL.md')
+    goal = _city.docs('GOAL.md')
     print('=' * 78)
     print('SESSION DIGEST - city %s' % _city.CITY)
     print('=' * 78)
@@ -85,7 +85,7 @@ def digest():
         print('GOAL  %s' % (first[0][2:] if first else goal))
         print('      read it: %s' % os.path.relpath(goal, ROOT))
     else:
-        print('GOAL  no GOAL.md under the city docs - write one before anything else')
+        print('GOAL  no docs/GOAL.md - write one before anything else')
     blocks = board_blocks()
     for name in ('scoreboard', 'state', 'runs'):
         body = blocks.get(name)

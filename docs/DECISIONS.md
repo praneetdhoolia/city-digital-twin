@@ -5,7 +5,7 @@ counterfactual microsimulation of the Newcastle Light Rail
 **Stage:** P4 calibration, in progress. **No counterfactual has been run and
 nothing in this repository is a finding about the light rail.** The base model
 has run and been measured; that measurement is a calibration diagnostic (the
-figures in [`README.md`](../../../README.md), the full rows in
+figures in [`README.md`](../README.md), the full rows in
 [`audit/CALIBRATION_REPORT.md`](reference/CALIBRATION_REPORT.md)), not a result.
 **Started:** 10 August 2026 · **the newest entry is the last `## 9.x` section
 before `## 14.`, and the last row of §14** — stated as a place rather than a
@@ -375,7 +375,7 @@ Footways (35,653 edges, 6,325 km): `width_m` imputed 98.4%, `lighting` 98.9%.
 > assumption. The claim in the last line below was also wrong: corridor edges were
 > **not** flagged via `scenario_variant_ref` (every one of the 43,112 A1 rows
 > carries `base2026`); they are flagged in
-> [`A1_corridor_road_edges.csv`](../data/processed/network/A1_corridor_road_edges.csv)
+> [`A1_corridor_road_edges.csv`](../cities/newcastle/data/processed/network/A1_corridor_road_edges.csv)
 > as of P2.
 
 ### 3.2 Capacity
@@ -414,9 +414,9 @@ into edge-level deltas. Three artefacts:
 
 | File | What it holds |
 |---|---|
-| [`data/processed/network/A1_corridor_road_edges.csv`](../data/processed/network/A1_corridor_road_edges.csv) | 605 corridor / parallel edges, each attribute paired with a `*_source` of `osm`, `imputed_rule`, `assumed` or `absent` |
-| [`data/processed/network/A2_turn_restrictions_resolved.csv`](../data/processed/network/A2_turn_restrictions_resolved.csv) | all 1,385 OSM restriction relations resolved to coordinates and to a distance from the alignment |
-| [`data/processed/network/A1_road_variant_patches.csv`](../data/processed/network/A1_road_variant_patches.csv) | 195 rows: the only places any E1 variant departs from the observed network |
+| [`data/processed/network/A1_corridor_road_edges.csv`](../cities/newcastle/data/processed/network/A1_corridor_road_edges.csv) | 605 corridor / parallel edges, each attribute paired with a `*_source` of `osm`, `imputed_rule`, `assumed` or `absent` |
+| [`data/processed/network/A2_turn_restrictions_resolved.csv`](../cities/newcastle/data/processed/network/A2_turn_restrictions_resolved.csv) | all 1,385 OSM restriction relations resolved to coordinates and to a distance from the alignment |
+| [`data/processed/network/A1_road_variant_patches.csv`](../cities/newcastle/data/processed/network/A1_road_variant_patches.csv) | 195 rows: the only places any E1 variant departs from the observed network |
 
 **Corridor extent is geometric, not drawn.** The alignment comes from the tram
 route's own GTFS shapes. `corridor_trunk` = Hunter/Scott within 60 m of it (40
@@ -890,7 +890,7 @@ was −5%). The residual is tours dropped for not fitting inside the day.
 #### Assumed values introduced here
 
 **Measured from Newcastle data** (`src/build/measure_network_factors.py` →
-[`params/C2_network_factors.json`](../params/C2_network_factors.json)). Each of
+[`params/C2_network_factors.json`](../cities/newcastle/params/C2_network_factors.json)). Each of
 these was a typed-in constant until P3:
 
 | Value | Measured | Source | Was |
@@ -1283,7 +1283,7 @@ counts, is **1.3503** — and it is stable:
 | **2024/25** | 334,000 | 117,000 | **1.3503** |
 
 Both quantities are ratios of two published counts. `src/calibrate/measure_mode_constraints.py`
-derives them into [`params/C4_mode_constraints.json`](../params/C4_mode_constraints.json);
+derives them into [`params/C4_mode_constraints.json`](../cities/newcastle/params/C4_mode_constraints.json);
 the sweep is **1.2493–1.3940**, the observed spread across all seven survey years
 in the file, not an interval anyone chose.
 
@@ -1701,7 +1701,7 @@ for trips it would never serve in reality.
 ### The constraint, measured
 
 `src/calibrate/measure_mode_constraints.py` now derives it into
-[`params/C4_mode_constraints.json`](../params/C4_mode_constraints.json) on the
+[`params/C4_mode_constraints.json`](../cities/newcastle/params/C4_mode_constraints.json) on the
 same principle as occupancy: the value is the base-year figure and the sweep is
 **the observed spread across every survey year for that mode**, not an interval
 anyone chose.
@@ -4864,7 +4864,7 @@ machinery answering a different research question.
 What makes boarding a bus cheap in MATSim is that the timetable is **fixed
 before routing**, so the passenger does a lookup. A household car can work the
 same way. The pairing is made in a `BeforeMobsim` listener
-([`RidePairingEngine`](../../../src/java/citysim/RidePairingEngine.java)):
+([`RidePairingEngine`](../src/java/citysim/RidePairingEngine.java)):
 MATSim's loop is `replan → all plans final → mobsim`, so at that boundary every
 selected plan is stable and nothing will move until the mobsim runs. **That is
 the timetable.** A pairing made there is re-made every iteration, exactly as a
@@ -4986,7 +4986,7 @@ asymmetry, which `ride_pairing.csv` does every iteration, split by direction.
 
 ### The measurement, which overturns the lane
 
-[`measure_ride_pairability.py`](../../../src/analyse/measure_ride_pairability.py)
+[`measure_ride_pairability.py`](../src/analyse/measure_ride_pairability.py)
 reads a completed run's own `output_trips.csv.gz`, joins each traveller to their
 B1 household, and asks whether any household member made a car trip the passenger
 could have been inside. On the two relaxed arms:
@@ -7953,7 +7953,7 @@ not say what it is a count *of* is not a target.
 The model carries no freight and generates no escort trips, so a modelled link
 volume is not directly comparable to an observed all-classes count. The
 corrections apply **at comparison time**, to the comparison and not to the model,
-and are written to [`params/C3_count_comparison.json`](../params/C3_count_comparison.json)
+and are written to [`params/C3_count_comparison.json`](../cities/newcastle/params/C3_count_comparison.json)
 by `build_validation_targets.py` rather than left in prose, so the sweep-range
 rule can be tested rather than trusted.
 
@@ -13143,7 +13143,7 @@ class: a probe too small to see a defect will pass).
 The joint tours change the demand and the plans; the gradient changes the
 network attributes and the physics; the gates change the choice sets. All
 activate as ONE boundary — family **F9**, declared in
-[`run_families.json`](../run_families.json) — and nothing run on the
+[`run_families.json`](run_families.json) — and nothing run on the
 regenerated inputs compares to F6/F7/F8. Registry 357 → **370** (+13: the
 ratio, purposes, joint rate, two age gates, the gradient gate, four bike
 factors, two Tobler constants, the clamp), ledger 0, reach 102/102.

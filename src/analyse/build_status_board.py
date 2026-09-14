@@ -326,7 +326,7 @@ def block_state():
                     sets += 1
     lines.append('| Run inputs assembled | **%d** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |' % sets)
     # positions
-    pos_dir = _city.path('docs', 'positions')
+    pos_dir = _city.docs('positions')
     if os.path.isdir(pos_dir):
         items = []
         for fn in sorted(os.listdir(pos_dir)):
@@ -379,7 +379,7 @@ def main():
     ap.add_argument('--board', default=None,
                     help='the board file (default: the city\'s docs/STATUS.md)')
     a = ap.parse_args()
-    board = a.board or _city.path('docs', 'STATUS.md')
+    board = a.board or _city.docs('STATUS.md')
     text = _read(board)
     new, report = apply(text, check=a.check)
     for name, verdict in report:

@@ -45,6 +45,18 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
+
+def artefact(city_root: Path, rel: str) -> Path:
+    """A spec path resolved to disk.
+
+    `docs/...` is the project's documentation, kept at the repository root
+    (the goal, the board, the record and the generated reference); every
+    other path is the city's own, relative to `cities/<city>/`.
+    """
+    if rel == "docs" or rel.startswith("docs/"):
+        return REPO / rel
+    return city_root / rel
+
 NUMBER = re.compile(r"(?<![\w/.-])\d{1,3}(,\d{3})+(?![\w-])|\d+\.\d+|\d+(\.\d+)?\s?%")
 GENERATED = re.compile(r"<!-- generated:(\w+) start -->.*?<!-- generated:\1 end -->", re.S)
 
@@ -54,7 +66,7 @@ def _lines(path: Path) -> list[str]:
 
 
 def check_board(city: Path, spec: dict) -> list[str]:
-    path = city / spec["path"]
+    path = artefact(city, spec["path"])
     if not path.exists():
         return []
     text = path.read_text(encoding="utf-8")
@@ -103,7 +115,7 @@ def check_board(city: Path, spec: dict) -> list[str]:
 
 
 def check_brief(city: Path, spec: dict, latest_family: str | None) -> list[str]:
-    path = city / spec["path"]
+    path = artefact(city, spec["path"])
     if not path.exists():
         return []
     lines = _lines(path)
@@ -126,7 +138,7 @@ def check_brief(city: Path, spec: dict, latest_family: str | None) -> list[str]:
 
 
 def check_record(city: Path, spec: dict) -> list[str]:
-    path = city / spec["path"]
+    path = artefact(city, spec["path"])
     if not path.exists():
         return []
     lines = _lines(path)
@@ -163,13 +175,13 @@ def check_record(city: Path, spec: dict) -> list[str]:
 
 
 def check_positions(city: Path, spec: dict, family_keys: list[str]) -> list[str]:
-    d = city / spec["dir"]
+    d = artefact(city, spec["dir"])
     if not d.is_dir():
         return []
     problems = []
     ref = re.compile(spec.get("reference_pattern", "§"))
     for page in sorted(d.glob("*.md")):
-        rel = page.relative_to(city).as_posix()
+        rel = f"{spec['dir']}/{page.name}"
         lines = _lines(page)
         if len(lines) > spec["max_lines"]:
             problems.append(f"{rel}: {len(lines)} lines against a cap of {spec['max_lines']}")
@@ -213,13 +225,13 @@ def check_archives(city: Path, spec: dict) -> list[str]:
     live = set(spec.get("live", []))
     banner = re.compile(spec["banner_pattern"])
     for d in spec.get("dirs", []):
-        base = city / d
+        base = artefact(city, d)
         if not base.is_dir():
             continue
         for f in sorted(base.rglob("*")):
             if not f.is_file() or f.suffix.lower() not in (".md", ".html"):
                 continue
-            rel = f.relative_to(city).as_posix()
+            rel = f.relative_to(REPO if d.startswith("docs") else city).as_posix()
             if rel in live or rel.startswith("docs/positions/"):
                 continue
             head = "\n".join(_lines(f)[: spec.get("within_lines", 12)])
@@ -240,7 +252,7 @@ def run() -> tuple[list[str], int]:
 
     family_keys: list[str] = []
     latest = None
-    fam_path = city / spec.get("families", {}).get("path", "docs/run_families.json")
+    fam_path = artefact(city, spec.get("families", {}).get("path", "docs/run_families.json"))
     if fam_path.exists():
         doc = json.loads(fam_path.read_text(encoding="utf-8"))
         fams = sorted(doc["families"].items(), key=lambda kv: kv[1]["from_launch"])

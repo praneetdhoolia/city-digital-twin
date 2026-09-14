@@ -3,7 +3,7 @@
 **This directory documents the simulator, not any city that runs on it.** Every
 document about the Newcastle light rail study — its research design, its decision
 log, its board, its audits, its generated references and its handover notes — now
-lives in [`cities/newcastle/docs/`](../cities/newcastle/docs), because all of it
+lives in [`docs/`](../docs), because all of it
 describes one city's study rather than the framework.
 
 | | |
@@ -12,7 +12,7 @@ describes one city's study rather than the framework.
 | [`../.claude/CLAUDE.md`](../.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repository |
 | **this file** | What the framework is, and where the portable input contract lives |
 | [`HANDOVER_CONTRACT.md`](HANDOVER_CONTRACT.md) | **How a session opens and closes**: the reading budget, the trust order by question, the four state-of-the-project questions, the facts that expire between writing a handover and reading one, and the gate. One definition, read by both the `/onboard` and `/handoff` skills |
-| [`../cities/newcastle/docs/`](../cities/newcastle/docs/) | The Newcastle twin: `GOAL.md` (what it is for), `STATUS.md` (the one-page board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), the generated `reference/`, and `archived/` (everything frozen) |
+| [`../docs/`](../docs/) | The Newcastle twin: `GOAL.md` (what it is for), `STATUS.md` (the one-page board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), the generated `reference/`, and `archived/` (everything frozen) |
 
 ## What the framework is
 
@@ -96,9 +96,9 @@ python src/registry/render_schema.py --check  # the generated halves are not sta
 A run stopped at a gate carries a record too, and its reading is citable at that
 record's `reached_iteration` and nowhere past it. Where a city's
 twin stands against its goal is on that city's one-page board — for the
-reference city, [`cities/newcastle/docs/STATUS.md`](../cities/newcastle/docs/STATUS.md),
-with the goal in [`GOAL.md`](../cities/newcastle/docs/GOAL.md) and the current
-truth per topic under [`positions/`](../cities/newcastle/docs/positions).
+reference city, [`docs/STATUS.md`](../docs/STATUS.md),
+with the goal in [`GOAL.md`](../docs/GOAL.md) and the current
+truth per topic under [`positions/`](../docs/positions).
 
 **Editing the Java in VS Code.** The two source trees have no Maven or Gradle
 project of their own — `src/setup/bootstrap_toolchain.py` compiles them against

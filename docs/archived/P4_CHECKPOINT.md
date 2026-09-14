@@ -15,7 +15,7 @@
 > | Phase board, deliverables, the numbered plan, run costs | [`STATUS.md`](../STATUS.md) |
 > | Every value that is not observed, and every decision | [`DECISIONS.md`](../DECISIONS.md) |
 > | Where the session picks up | [`NEXT_AGENT_BRIEF.md`](../NEXT_AGENT_BRIEF.md) |
-> | The model's fit against observation | [`CALIBRATION_REPORT.md`](../reference/CALIBRATION_REPORT.md) and the figures in [`README.md`](../../../../README.md) |
+> | The model's fit against observation | [`CALIBRATION_REPORT.md`](../reference/CALIBRATION_REPORT.md) and the figures in [`README.md`](../../README.md) |
 >
 > **Known superseded below** — the list is illustrative, not exhaustive, which is
 > itself the reason this file is no longer a source:
@@ -25,7 +25,7 @@
 > | nine deliverables, **six met** | **eight of nine** met (§9.64) |
 > | **12 open issues**, none awaiting a decision | see `gh issue list --state open`; three decisions are open |
 > | manifest **364** files · registry **171** fields · `check_package` **~960** checks | the live counts are in [`STATUS.md`](../STATUS.md), pinned by `tests/check_doc_currency.py` |
-> | the 10% × 250-iteration mode-share table (car 32.54, ride 50.03) | the converged 25% × 1000 arms (§9.64) and the figures in [`README.md`](../../../../README.md) |
+> | the 10% × 250-iteration mode-share table (car 32.54, ride 50.03) | the converged 25% × 1000 arms (§9.64) and the figures in [`README.md`](../../README.md) |
 > | *"the model has not relaxed, and 250 is still too low"* | issue #5 settled: 1000 iterations, both arms relaxed (§9.43) |
 > | counts mean error **−69.9%**, one modelled zero | **−91.8%**, six modelled zero — now issue #82 |
 > | walk trips at **5.05×** their observed length | **7.94×** (§9.64) |
@@ -78,7 +78,7 @@ python tests/check_package.py                     ~960 checks, 1 standing warnin
 
 The standing warning is `lastIteration`, which is issue #5. It is *supposed* to
 be there. **Do not re-read the P1–P3 package**: 364 files are hashed in
-[`data/MANIFEST.csv`](../../data/MANIFEST.csv) and the build is verified.
+[`data/MANIFEST.csv`](../../cities/newcastle/data/MANIFEST.csv) and the build is verified.
 
 **Machine:** 24 logical cores, 63.5 GiB. One run averages **2.4 busy cores of
 24** — the mobsim synchronises every simulated second, so threads idle. Memory

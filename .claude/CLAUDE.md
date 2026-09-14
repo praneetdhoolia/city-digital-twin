@@ -11,18 +11,18 @@ reproduces how a real city moves — twelve modes, each physically simulated on 
 real roads and timetables and scored against its real-life ridership — so that
 questions nobody can answer by observation alone can be put to it. Newcastle (NSW)
 is the first city. The goal, its hard requirements and the loop that drives every
-session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it first.
+session are in **[`GOAL.md`](../docs/GOAL.md)** — read it first.
 
-- **[`STATUS.md`](../cities/newcastle/docs/STATUS.md) is the board — ONE page**: the
+- **[`STATUS.md`](../docs/STATUS.md) is the board — ONE page**: the
   twelve-mode scoreboard, where the build is, what runs, what is next. Its state
   blocks are generated (`python src/analyse/build_status_board.py`); the
   hand-written rest is capped by `tests/check_doc_shape.py`. **Keep it current in
   the same commit/PR as the work it describes**, and never append narrative to it.
-- **[`positions/`](../cities/newcastle/docs/positions) hold the current truth per
+- **[`positions/`](../docs/positions) hold the current truth per
   topic** (ride, signals, sampling, seed, taxi, walk/bike, PT yardsticks, …), one
   page each, every figure with its source. Read the position page for your lane
   instead of the record. `/handoff` rewrites the pages a session touched.
-- **[`DECISIONS.md`](../cities/newcastle/docs/DECISIONS.md) is the dated record** of
+- **[`DECISIONS.md`](../docs/DECISIONS.md) is the dated record** of
   every value that is not observed and every decision, with its rationale and
   sweep. It is append-only and frozen: never rewritten, only pointed past. **Consult
   it through its topical index or a position page, never by reading it whole** — it
@@ -30,7 +30,7 @@ session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it fir
 - [`README.md`](../README.md) is the **usage guide**: install, run a scenario with
   `run.py`, reproduce the data package. It is the only document at the repo root;
   every other one is under [`docs/`](../docs/README.md).
-- [`docs/archived/design/newcastle-lr-proposal.md`](../cities/newcastle/docs/archived/design/newcastle-lr-proposal.md)
+- [`docs/archived/design/newcastle-lr-proposal.md`](../docs/archived/design/newcastle-lr-proposal.md)
   is the **frozen origin design** — the light-rail counterfactual that started the
   study and is now its first application; read it for scenario vocabulary only.
 - Stage: the board's phase table says where the build is. Nothing is a result until
@@ -70,7 +70,7 @@ session are in **[`GOAL.md`](../cities/newcastle/docs/GOAL.md)** — read it fir
   script.** A value whose `source` is `assumed`, `literature`, `measured` or `derived`
   must carry a sweep, a `held_fixed` rule or a `derived_from` identity — the schema
   rejects anything else, and `check_package.py` tests it. Regenerate
-  [`docs/reference/CONFIG_REFERENCE.md`](../cities/newcastle/docs/reference/CONFIG_REFERENCE.md)
+  [`docs/reference/CONFIG_REFERENCE.md`](../docs/reference/CONFIG_REFERENCE.md)
   (`python src/registry/render_docs.py`) in the same change. The build layer is not yet
   migrated and is pinned to the registry by `src/registry/check_legacy_drift.py`: if you
   change a constant there, change the registry field with it.
@@ -297,16 +297,16 @@ those depend on ABS/TfNSW/Overpass availability and on compute, not on the diff.
 |------|---------------|
 | `README.md` | **The only document at the repo root.** Usage guide: install, run a scenario, reproduce the package. |
 | `.claude/CLAUDE.md` | This file — conventions and hard constraints. Loaded automatically each session. |
-| `cities/<city>/docs/GOAL.md` | **What the city's twin is for** — the hard requirements, the gate loop, the monitoring rule. Read first. |
-| `cities/<city>/docs/STATUS.md` | **That city's board, one page** — scoreboard, phase state, runs, next action; generated blocks + a capped hand-written rest. Read at session start; keep current. |
-| `cities/<city>/docs/positions/` | **The current truth per topic**, one page each, every figure sourced. Read the page for your lane; `/handoff` rewrites the pages a session touched. |
-| `cities/<city>/docs/DECISIONS.md` | The frozen, append-only record: every assumed/modelled value + rationale + sweep, every decision (don't re-litigate). **Enter through its topical index or a position page** — never read it whole. |
-| `docs/` | **The FRAMEWORK's documentation only**, indexed by [`docs/README.md`](../docs/README.md). A city's own study documents live under `cities/<city>/docs/`. |
+| `docs/GOAL.md` | **What the city's twin is for** — the hard requirements, the gate loop, the monitoring rule. Read first. |
+| `docs/STATUS.md` | **That city's board, one page** — scoreboard, phase state, runs, next action; generated blocks + a capped hand-written rest. Read at session start; keep current. |
+| `docs/positions/` | **The current truth per topic**, one page each, every figure sourced. Read the page for your lane; `/handoff` rewrites the pages a session touched. |
+| `docs/DECISIONS.md` | The frozen, append-only record: every assumed/modelled value + rationale + sweep, every decision (don't re-litigate). **Enter through its topical index or a position page** — never read it whole. |
+| `docs/` | **The FRAMEWORK's documentation only**, indexed by [`docs/README.md`](../docs/README.md). A city's own study documents live under `docs/`. |
 | `config/schema/` | **The portable half.** What any city must supply and in what shape: the field and registry schemas, the overlay schema and the output schemas. **No city's values live here.** |
 | `run.py` | The front door: run a scenario with defaults or custom arguments. |
 | `src/city.py` | Resolves which city's inputs a run reads. The only module that knows. |
 | `cities/<city>/` | **ONE CITY - everything specific to it.** Selected by `CITYSIM_CITY` (default `newcastle`). |
-| `cities/<city>/docs/` | That city's study: `GOAL.md`, `STATUS.md` (board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), `reports/` (the dated `/project-report` assessments and their reference library), the GENERATED `reference/`, and `archived/` — everything frozen, bannered as such. |
+| `docs/` | That city's study: `GOAL.md`, `STATUS.md` (board), `NEXT_AGENT_BRIEF.md`, `positions/` (current truth per topic), `DECISIONS.md` (the record), `run_families.json` (the ledger), `reports/` (the dated `/project-report` assessments and their reference library), the GENERATED `reference/`, and `archived/` — everything frozen, bannered as such. |
 | `cities/<city>/build/` | Builders that encode that city's intervention, corridor, history and statistical geography. |
 | `cities/<city>/geometry/` | Declared extents that were once typed into scripts. |
 | `cities/<city>/registry/` | That city's declared values, with units, provenance and a sweep or held-fixed rule. |

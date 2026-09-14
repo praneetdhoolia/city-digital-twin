@@ -4,7 +4,7 @@
 
 *Written 15 August 2026, after the zero-hardcoding change. This is a HANDOVER,
 not a source of truth: where it disagrees with [`STATUS.md`](../STATUS.md),
-[`DECISIONS.md`](../DECISIONS.md) or [`.claude/CLAUDE.md`](../../../../.claude/CLAUDE.md),
+[`DECISIONS.md`](../DECISIONS.md) or [`.claude/CLAUDE.md`](../../.claude/CLAUDE.md),
 those win. Paste it whole to start a session cold.*
 
 ---

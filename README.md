@@ -5,18 +5,18 @@ Twelve modes, each physically simulated on the real roads and timetables and
 scored against its real-life ridership, driven by a synthetic population drawn
 from the published census, survey and licence data. The first city is
 **Newcastle (NSW)**; the goal, its hard requirements and the loop every session
-runs are in [`GOAL.md`](cities/newcastle/docs/GOAL.md).
+runs are in [`GOAL.md`](docs/GOAL.md).
 
 Why: once the twin reproduces every mode at its real share, it can be pointed at
 questions observation cannot settle — Australia's low light rail usage (Newcastle's
 2019 line is the first application, the frozen origin design at
-[`design/newcastle-lr-proposal.md`](cities/newcastle/docs/archived/design/newcastle-lr-proposal.md)),
+[`design/newcastle-lr-proposal.md`](docs/archived/design/newcastle-lr-proposal.md)),
 the modes that could relieve a corridor's congestion, the demands of an event the
 size of Brisbane 2032. It holds itself to one standard throughout: **every value
 that was not observed is derived where it can be, and otherwise declared, given a
 sweep range and recorded with the reason it was chosen.**
 
-> **Where it stands:** the [board](cities/newcastle/docs/STATUS.md) carries the
+> **Where it stands:** the [board](docs/STATUS.md) carries the
 > twelve-mode scoreboard from the latest reading and what is next. Nothing is a
 > result until a run's `_run.json` says `ran_to_last_iteration`; the fit figures
 > [below](#does-it-reproduce-the-city-not-yet) are the last completed base arm.
@@ -85,7 +85,7 @@ something else. **Price the arm, never quote it**:
 `python src/analyse/arm_cost.py --run-config <overlay>` reads the newest runs'
 own stopwatches at the same sample fraction, prints the band and names what it
 could not see; `run_matsim.py` prints the same line before every launch, and
-[`positions/runs-and-economics.md`](cities/newcastle/docs/positions/runs-and-economics.md)
+[`positions/runs-and-economics.md`](docs/positions/runs-and-economics.md)
 carries the measured seconds-per-iteration for each stack. **Quote the band,
 never the point** — the last arm's own clock landed 0.5 % from the band's top
 anchor, while the short probe that set its bottom was 17 % optimistic. Four
@@ -177,12 +177,12 @@ no scenario against any other.
 targets, **36 are scored** and 31 could not be, each with a stated reason; mean
 absolute error over the five scored mode shares is **4.73 percentage points**.
 The objective the twin is actually held to is the twelve-mode one on the board
-([`STATUS.md`](cities/newcastle/docs/STATUS.md)): at this result **0 of 12** modes
+([`STATUS.md`](docs/STATUS.md)): at this result **0 of 12** modes
 are inside 10 % and the largest deviation is heavy rail at +225 %.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_mode_share.dark.svg">
-  <img alt="Modelled against observed mode share: vehicle driver +6.34 pp, vehicle passenger -8.44 pp, walk -3.55 pp, public transport +0.84 pp, other (bike and taxi) +4.50 pp" src="cities/newcastle/docs/reference/figures/fit_mode_share.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/reference/figures/fit_mode_share.dark.svg">
+  <img alt="Modelled against observed mode share: vehicle driver +6.34 pp, vehicle passenger -8.44 pp, walk -3.55 pp, public transport +0.84 pp, other (bike and taxi) +4.50 pp" src="docs/reference/figures/fit_mode_share.light.svg">
 </picture>
 
 The five folded shares hide what the twelve unfolded modes show: the passenger
@@ -196,8 +196,8 @@ modes falls inside its observed range; walk is modelled at 3.28 km against an
 observed 0.70, a supply ceiling set at build time ([issue #30](https://github.com/praneetdhoolia/city-digital-twin/issues/30)).
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_trip_length.dark.svg">
-  <img alt="Modelled mean trip length against the observed range, by mode: no mode falls inside its range" src="cities/newcastle/docs/reference/figures/fit_trip_length.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/reference/figures/fit_trip_length.dark.svg">
+  <img alt="Modelled mean trip length against the observed range, by mode: no mode falls inside its range" src="docs/reference/figures/fit_trip_length.light.svg">
 </picture>
 
 **Traffic counts** — scored and reported, deliberately **not** optimised against:
@@ -209,8 +209,8 @@ carried until 12 September 2026 was a stale station map scoring the wrong roads
 any other.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_counts.dark.svg">
-  <img alt="Modelled against observed weekday traffic counts on log axes" src="cities/newcastle/docs/reference/figures/fit_counts.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/reference/figures/fit_counts.dark.svg">
+  <img alt="Modelled against observed weekday traffic counts on log axes" src="docs/reference/figures/fit_counts.light.svg">
 </picture>
 
 **On light rail patronage.** The arm puts the light rail at **1,224** weekday
@@ -220,10 +220,10 @@ February 2020 market, and `fit.py` **refuses to score it**: PT mode share roughl
 halved between that vintage and the 2024/25 base the model calibrates to, so the
 difference between the two numbers is not an error statistic. It is recorded as
 unscored, with the reason, in
-[`FIGURES.json`](cities/newcastle/docs/reference/figures/FIGURES.json).
+[`FIGURES.json`](docs/reference/figures/FIGURES.json).
 
 Full rows, every unscorable target and the parameter provenance:
-[`CALIBRATION_REPORT.md`](cities/newcastle/docs/reference/CALIBRATION_REPORT.md).
+[`CALIBRATION_REPORT.md`](docs/reference/CALIBRATION_REPORT.md).
 **Licence:** the figures and the report are derived from the synthetic plans, which
 carry the OSM-derived network's share-alike ancestry (`share_alike_ancestor` yes in
 the manifest, `DECISIONS.md` §9.158), so they are published under **ODbL 1.0**, not
@@ -241,7 +241,7 @@ python src/calibrate/report.py --run <run dir>
 ## Five words
 
 - **Arm** — one scenario run, launched detached, gated every 100 iterations; not a result until its `_run.json` says `ran_to_last_iteration`.
-- **Family** — a comparability class: every run since a change to the plans or the network; nothing compares across families (`cities/newcastle/docs/run_families.json`).
+- **Family** — a comparability class: every run since a change to the plans or the network; nothing compares across families (`docs/run_families.json`).
 - **Gate** — the reading of all twelve modes against their targets every 100 iterations; a mode at or past 20 % stops the run.
 - **Holdout** — the 143 of 210 validation targets that stay unread until the end; the 67 others are the calibration half.
 - **`awaiting-run`** — the label an open issue must carry before any launch: the only thing left to do on it is a measurement that needs the run.
@@ -276,11 +276,11 @@ this page still equal the artefacts they describe.
 
 | | |
 |---|---|
-| [`cities/newcastle/docs/GOAL.md`](cities/newcastle/docs/GOAL.md) | **What the twin is for** — the hard requirements, the gate loop, the monitoring rule. Read first |
-| [`cities/newcastle/docs/STATUS.md`](cities/newcastle/docs/STATUS.md) | **The board, one page** — the twelve-mode scoreboard, phase state, runs, next action |
-| [`cities/newcastle/docs/positions/`](cities/newcastle/docs/positions) | **The current truth per topic** — ride, signals, sampling, seed, taxi, walk and bike, PT yardsticks, and more; one page each, every figure sourced |
-| [`cities/newcastle/docs/DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) | **The record**: every value that is not observed and every decision, with rationale and sweep. Enter through its index or a position page |
-| [`cities/newcastle/docs/archived/design/newcastle-lr-proposal.md`](cities/newcastle/docs/archived/design/newcastle-lr-proposal.md) | The frozen origin design: the light-rail counterfactual, now the twin's first application |
+| [`docs/GOAL.md`](docs/GOAL.md) | **What the twin is for** — the hard requirements, the gate loop, the monitoring rule. Read first |
+| [`docs/STATUS.md`](docs/STATUS.md) | **The board, one page** — the twelve-mode scoreboard, phase state, runs, next action |
+| [`docs/positions/`](docs/positions) | **The current truth per topic** — ride, signals, sampling, seed, taxi, walk and bike, PT yardsticks, and more; one page each, every figure sourced |
+| [`docs/DECISIONS.md`](docs/DECISIONS.md) | **The record**: every value that is not observed and every decision, with rationale and sweep. Enter through its index or a position page |
+| [`docs/archived/design/newcastle-lr-proposal.md`](docs/archived/design/newcastle-lr-proposal.md) | The frozen origin design: the light-rail counterfactual, now the twin's first application |
 | [`docs/README.md`](docs/README.md) | The **framework's** documentation index; the portable input contract itself is [`config/schema/`](config/schema) |
 | [`.claude/CLAUDE.md`](.claude/CLAUDE.md) | Conventions and hard constraints for anyone — human or agent — changing this repo |
 
@@ -344,7 +344,7 @@ downloads, seeded (`20260810`) and deterministic — with one measured exception
 **pt2matsim's schedule mapping is not reproducible run to run**. About 18% of transit
 route link sequences differ between identical builds while 100% of stop-to-link
 assignments hold, so **any scenario comparison must use a single build of the network**
-([`DECISIONS.md`](cities/newcastle/docs/DECISIONS.md) §3.5).
+([`DECISIONS.md`](docs/DECISIONS.md) §3.5).
 
 ```bash
 # --- acquisition (network-bound, ~2 GiB) ---
@@ -412,7 +412,7 @@ in anything published. Per-file provenance is in
 
 ## What is derived rather than observed
 
-The rule ([`GOAL.md`](cities/newcastle/docs/GOAL.md) requirement 6): a disclosed
+The rule ([`GOAL.md`](docs/GOAL.md) requirement 6): a disclosed
 value is used exactly; an undisclosed one is researched and derived; a sweep is the
 fallback only where derivation is genuinely impossible, and then the reason is
 stated and the value is never pinned.
@@ -421,7 +421,7 @@ stated and the value is never pinned.
   the offset library. The published SCATS algorithm is **implemented** instead
   (degree of saturation, cycle and split adaptation, priority); offsets are not
   adapted because no algorithm replaces the unreleased library. See
-  [`positions/signals-and-crossings.md`](cities/newcastle/docs/positions/signals-and-crossings.md).
+  [`positions/signals-and-crossings.md`](docs/positions/signals-and-crossings.md).
 - **Rail and tram patronage** — held to the **disclosed** weekday boardings
   (station entries; the line's own Opal series). **Ferry** patronage is not
   published anywhere, so its target is derived from the harbour's market.
@@ -433,4 +433,4 @@ stated and the value is never pinned.
 Also absent: pedestrian counts, frontage-level retail floorspace and vacancy,
 parking meter transactions, and a 2014 timetable to validate the era-1
 reconstruction. The current position on every input is
-[`positions/network-and-inputs.md`](cities/newcastle/docs/positions/network-and-inputs.md).
+[`positions/network-and-inputs.md`](docs/positions/network-and-inputs.md).

@@ -33,19 +33,19 @@ needs it.
 1. `python src/run/session_gate.py --digest` — the goal's title, the board's
    generated blocks (scoreboard, state, runs), whether the machine is busy, how
    far the branch is ahead of `origin/main`, the open PRs.
-2. `cities/<city>/docs/GOAL.md` — what the twin is for, the loop, the
+2. `docs/GOAL.md` — what the twin is for, the loop, the
    non-negotiables.
-3. `cities/<city>/docs/STATUS.md` — the one-page board. The generated blocks are
+3. `docs/STATUS.md` — the one-page board. The generated blocks are
    what the artefacts say; the hand-written rest is what the last session
    decided.
-4. `cities/<city>/docs/NEXT_AGENT_BRIEF.md` — **start at §0 and
+4. `docs/NEXT_AGENT_BRIEF.md` — **start at §0 and
    re-derive every fact in it before reading §1–§3.** The brief is a pointer,
    not a source; where it disagrees with the board or a position page, they win.
 5. The **one** position page the lane names
-   (`cities/<city>/docs/positions/<topic>.md`).
+   (`docs/positions/<topic>.md`).
 
 **Never read `DECISIONS.md` whole.** If a question needs a section, find it
-with `grep -n "^## 9\.NNN" cities/<city>/docs/DECISIONS.md` and read that range
+with `grep -n "^## 9\.NNN" docs/DECISIONS.md` and read that range
 with `sed -n`. `.claude/CLAUDE.md` is loaded automatically; re-read its
 hard-constraints list deliberately.
 

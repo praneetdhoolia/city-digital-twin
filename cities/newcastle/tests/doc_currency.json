@@ -136,7 +136,7 @@
     {
       "id": "status.data-package-files",
       "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "\\| Data package \\| \\*\\*([\\d,]+) files\\*\\*",
       "truth": {
         "kind": "manifest_files"
@@ -146,7 +146,7 @@
     {
       "id": "status.run-input-sets",
       "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "\\| Run inputs assembled \\| \\*\\*([\\d,]+)\\*\\*",
       "truth": {
         "kind": "path_count",
@@ -158,7 +158,7 @@
     {
       "id": "status.registry-fields",
       "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "\\| Input registry \\| \\*\\*([\\d,]+) fields\\*\\*",
       "truth": {
         "kind": "registry_fields"
@@ -167,7 +167,7 @@
     {
       "id": "status.newest-arm-name",
       "kind": "text",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "newest run on disk is `([^`]+)`, which (?:is )?\\*\\*",
       "truth": {
         "kind": "newest_run",
@@ -178,7 +178,7 @@
     {
       "id": "status.newest-arm-state",
       "kind": "text",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "newest run on disk is `[^`]+`, which (?:is )?\\*\\*([A-Z][A-Z ]*[A-Z])\\*\\*",
       "truth": {
         "kind": "newest_run",
@@ -201,7 +201,7 @@
     {
       "id": "status.osm-harvest-pending",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "layers pending the #32 re-harvest|cannot pass until the harvest|harvest above is\\s+re-run|networks/osm/`? is currently empty|re-harvest has not been re-run",
       "reason": "The issue #32 re-harvest RAN on 16 August 2026 and #32 is closed: networks/osm/ holds its 10 layers and check_package.py passes at 1,433 checks. Every phrasing of 'the package is not built yet' is banned together, because the first ban named ONE wording and the same false statement survived in the resume instructions under another - found by hand on 25 August, which is exactly the work this check exists to stop being hand work."
     },
@@ -370,21 +370,21 @@
     {
       "id": "status.scats-handled-by-sweep",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
       "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
     },
     {
       "id": "status.no-run-stage-sentence",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
       "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
     },
     {
       "id": "status.counterfactual-framing",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
       "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
     },
@@ -412,42 +412,42 @@
     {
       "id": "next_agent_brief.scats-handled-by-sweep",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "doc": "docs/NEXT_AGENT_BRIEF.md",
       "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
       "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
     },
     {
       "id": "next_agent_brief.no-run-stage-sentence",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "doc": "docs/NEXT_AGENT_BRIEF.md",
       "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
       "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
     },
     {
       "id": "next_agent_brief.counterfactual-framing",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "doc": "docs/NEXT_AGENT_BRIEF.md",
       "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
       "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
     },
     {
       "id": "goal.scats-handled-by-sweep",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/GOAL.md",
+      "doc": "docs/GOAL.md",
       "pattern": "SCATS (signal )?phasing[^.\\n]{0,120}(handled by (parameter )?sweep|swept, never pinned|stays? `?unobtained`?|remains? unobtained)|three (unobtained )?inputs[^.\\n]{0,60}stay unobtained|handled\\s+by sweep, not by\\s+assumption",
       "reason": "Since DECISIONS.md 9.88 (28 Aug 2026, family F12) the SCATS algorithm is IMPLEMENTED natively - citysim.ScatsSignalController adapts cycle and splits on measured degree of saturation, and the scats module is in every emitted config.xml. What remains unobtained is the operated phase plans and the offset library, and GOAL.md requirement 6 forbids describing a derivable input as 'handled by sweep'. Every phrasing of the old statement is banned together because it survived in four documents after the algorithm shipped."
     },
     {
       "id": "goal.no-run-stage-sentence",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/GOAL.md",
+      "doc": "docs/GOAL.md",
       "pattern": "No scenario has been run|P3 demand synthesis complete\\.|Nothing in the repo is a result|No counterfactual has been run, and nothing here is a finding",
       "reason": "Runs have executed since 16 Aug 2026 (results/INDEX.md lists over a hundred directories) and the base was measured on 21 Aug (9.64); the counterfactual framing is not the goal (GOAL.md). A stage sentence belongs on the board's phase table, not in a conventions file or the front door."
     },
     {
       "id": "goal.counterfactual-framing",
       "kind": "absent",
-      "doc": "cities/newcastle/docs/GOAL.md",
+      "doc": "docs/GOAL.md",
       "pattern": "applied first as a counterfactual\\s+microsimulation|counterfactual microsimulation of the \\*\\*?Newcastle Light Rail\\*\\*? as a transport\\s+intervention — MATSim end to end",
       "reason": "The project is the twin (GOAL.md, 30 Aug 2026); the light-rail counterfactual is the frozen origin design and its first application. Defining the project by the counterfactual in the front door or the conventions file re-frames every session on the superseded goal."
     },
@@ -468,7 +468,7 @@
     {
       "id": "positions.network-and-inputs.registry-fields",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/network-and-inputs.md",
+      "doc": "docs/positions/network-and-inputs.md",
       "pattern": "\\*\\*([\\d,]+) fields\\*\\* \\(`docs/reference/CONFIG_REFERENCE\\.md`",
       "truth": {
         "kind": "registry_fields"
@@ -478,7 +478,7 @@
     {
       "id": "positions.network-and-inputs.manifest-files",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/network-and-inputs.md",
+      "doc": "docs/positions/network-and-inputs.md",
       "pattern": "([\\d,]+) files in `data/MANIFEST\\.csv`",
       "truth": {
         "kind": "manifest_files"
@@ -488,7 +488,7 @@
     {
       "id": "status.licence-ccby",
       "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "\\*\\*([\\d,]+) CC-BY / [\\d,]+ ODbL\\*\\* plus",
       "truth": {
         "kind": "csv_value_count",
@@ -501,7 +501,7 @@
     {
       "id": "status.licence-odbl",
       "kind": "number",
-      "doc": "cities/newcastle/docs/STATUS.md",
+      "doc": "docs/STATUS.md",
       "pattern": "\\*\\*[\\d,]+ CC-BY / ([\\d,]+) ODbL\\*\\* plus",
       "truth": {
         "kind": "csv_value_count",
@@ -514,7 +514,7 @@
     {
       "id": "brief.licence-ccby",
       "kind": "number",
-      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "doc": "docs/NEXT_AGENT_BRIEF.md",
       "pattern": "\\(\\*\\*([\\d,]+) CC-BY / [\\d,]+ ODbL\\*\\* \\+",
       "truth": {
         "kind": "csv_value_count",
@@ -527,7 +527,7 @@
     {
       "id": "brief.licence-odbl",
       "kind": "number",
-      "doc": "cities/newcastle/docs/NEXT_AGENT_BRIEF.md",
+      "doc": "docs/NEXT_AGENT_BRIEF.md",
       "pattern": "\\(\\*\\*[\\d,]+ CC-BY / ([\\d,]+) ODbL\\*\\* \\+",
       "truth": {
         "kind": "csv_value_count",
@@ -540,7 +540,7 @@
     {
       "id": "positions.network-and-inputs.licence-ccby",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/network-and-inputs.md",
+      "doc": "docs/positions/network-and-inputs.md",
       "pattern": "\\*\\*([\\d,]+) CC-BY 4\\.0, [\\d,]+ ODbL 1\\.0 and \\d+ bespoke\\*\\*",
       "truth": {
         "kind": "csv_value_count",
@@ -553,7 +553,7 @@
     {
       "id": "positions.network-and-inputs.licence-odbl",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/network-and-inputs.md",
+      "doc": "docs/positions/network-and-inputs.md",
       "pattern": "\\*\\*[\\d,]+ CC-BY 4\\.0, ([\\d,]+) ODbL 1\\.0 and \\d+ bespoke\\*\\*",
       "truth": {
         "kind": "csv_value_count",
@@ -566,7 +566,7 @@
     {
       "id": "positions.population-and-demand.shared-lift-bucket",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/population-and-demand.md",
+      "doc": "docs/positions/population-and-demand.md",
       "pattern": "`B\\.ride\\.shared_lift_hash_bucket` of \\*\\*([\\d.]+)\\*\\*",
       "truth": {
         "kind": "registry_value",
@@ -578,7 +578,7 @@
     {
       "id": "positions.runs-and-economics.write-events-interval",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/runs-and-economics.md",
+      "doc": "docs/positions/runs-and-economics.md",
       "pattern": "`RUN\\.controler\\.write_events_interval` / `write_plans_interval` = \\*\\*([\\d,]+)\\*\\*",
       "truth": {
         "kind": "registry_value",
@@ -589,7 +589,7 @@
     {
       "id": "positions.ride-and-pairing.max-passengers",
       "kind": "number",
-      "doc": "cities/newcastle/docs/positions/ride-and-pairing.md",
+      "doc": "docs/positions/ride-and-pairing.md",
       "pattern": "`B\\.ride\\.max_passengers_per_vehicle` = ([\\d,]+)",
       "truth": {
         "kind": "registry_value",

@@ -6,7 +6,7 @@ so the page reads exactly as the repository view does. Relative links are
 resolved so they work on the site: a link to a Markdown file or a directory
 becomes its GitHub view; a link to a figure, a report or any other file that
 exists in the checkout is copied into the site and kept relative. The dated
-reports under cities/<city>/docs/reports/ are copied whole so each is served at its path.
+reports under docs/reports/ are copied whole so each is served at its path.
 
     python .github/scripts/build_pages.py OUT_DIR        # needs GITHUB_TOKEN
 """
@@ -26,8 +26,8 @@ REPO = os.environ.get("GITHUB_REPOSITORY", "praneetdhoolia/city-digital-twin")
 BRANCH = os.environ.get("PAGES_SOURCE_BRANCH", "main")
 BLOB = f"https://github.com/{REPO}/blob/{BRANCH}/"
 TREE = f"https://github.com/{REPO}/tree/{BRANCH}/"
-# every city's reports, found by shape - the framework names no city
-COPY_DIRS = tuple(sorted(str(d).replace(os.sep, "/") for d in Path("cities").glob("*/docs/reports")))
+# the dated project reports are served whole, each at its own path
+COPY_DIRS = ("docs/reports",)
 # Files a README link may point at that the site serves itself; anything else
 # (Markdown, code, data) links to its GitHub view instead of being copied.
 SERVED = {".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp", ".html", ".pdf", ".css", ".js"}
@@ -112,7 +112,7 @@ body{{margin:0;background:#ffffff;color:#1f2328}}
 <article class="markdown-body">
 {rendered}
 </article>
-<p class="foot">Rendered from <a href="{BLOB}README.md">README.md</a> at commit <code>{sha}</code> ({date}) by <code>.github/workflows/pages.yml</code>. Dated whole-repository assessments are indexed at <a href="{TREE}cities/">cities/&lt;city&gt;/docs/reports/</a>; each report is served here at its path.</p>
+<p class="foot">Rendered from <a href="{BLOB}README.md">README.md</a> at commit <code>{sha}</code> ({date}) by <code>.github/workflows/pages.yml</code>. Dated whole-repository assessments are indexed at <a href="{TREE}docs/reports/">docs/reports/</a>; each report is served here at its path.</p>
 </div>
 </body>
 </html>

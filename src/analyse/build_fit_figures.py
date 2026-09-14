@@ -42,9 +42,9 @@ import glob
 import math
 import argparse
 
-OUT_DIR = _city.path('docs', 'reference', 'figures')
+OUT_DIR = _city.docs('reference', 'figures')
 CALIBRATION_FILE = _city.path('params/C5_calibration.json')
-FAMILIES_FILE = _city.path('docs', 'run_families.json')
+FAMILIES_FILE = _city.docs('run_families.json')
 RESULTS_DIR = _os.path.join(_city.REPO, 'results')
 # The one completion value that means a run executed the horizon it declared
 # (src/run/run_matsim.py:RAN_TO_LAST). Named here rather than imported so this

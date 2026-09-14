@@ -265,7 +265,7 @@ def timeline(root: Path, m: dict) -> dict:
             events.append(dict(date=date, kind="root", title=subj, ref=sha, sha=sha))
         else:
             events.append(dict(date=date, kind="direct", title=subj, ref=sha, sha=sha))
-    dec = root / "cities" / city / "docs" / "DECISIONS.md"
+    dec = root / "docs" / "DECISIONS.md"
     if dec.exists():
         in_log = False
         for line in dec.read_text(encoding="utf-8", errors="ignore").split("\n"):
@@ -281,7 +281,7 @@ def timeline(root: Path, m: dict) -> dict:
             head = re.match(r"\*\*(.+?)\*\*", body)
             title = (head.group(1) if head else body.split(". ")[0]).rstrip(".")
             events.append(dict(date=row.group(1), kind="record", title=title[:220], ref=", ".join(sorted(set(re.findall(r"§9\.\d+|§\d+\.\d+", title)))) or None))
-    fam = root / "cities" / city / "docs" / "run_families.json"
+    fam = root / "docs" / "run_families.json"
     if fam.exists():
         try:
             for key, f in json.loads(fam.read_text(encoding="utf-8")).get("families", {}).items():
@@ -304,7 +304,7 @@ def timeline(root: Path, m: dict) -> dict:
                 events.append(dict(date=date, kind=kind, title=f"{r['name']} {r.get('status')} ({r.get('fraction')} sample, {its} it declared, family {r.get('family')})",
                                    ref=r["name"], cause=(r.get("cause") or "")[:140] or None))
     phases = []
-    board = root / "cities" / city / "docs" / "STATUS.md"
+    board = root / "docs" / "STATUS.md"
     if board.exists():
         for line in board.read_text(encoding="utf-8", errors="ignore").split("\n"):
             pm = re.match(r"^\| (P\d[^|]*) \| ([^|]*) \| (.*) \|\s*$", line)

@@ -55,6 +55,14 @@ CITY_DIR = os.path.join(CITIES_DIR, CITY)
 
 SCHEMA_DIR = os.path.join(REPO, 'config', 'schema')
 
+# The project's documents - the goal, the board, the brief, the position
+# pages, the record, the reports and the generated reference - live at the
+# repository's `docs/`, not under the city (user decision, 14 September 2026,
+# DECISIONS.md 9.170). The study IS the project; its documents are the
+# project's, and a reader looking for its state opens `docs/`. Only data,
+# parameters, adapters and overlays are a city's own.
+DOCS_DIR = os.path.join(REPO, 'docs')
+
 # The subdirectories of a city that the framework knows by name. A city that is
 # missing one of these is not runnable, and `check_city.py` says so before a run
 # starts rather than at the first read.
@@ -69,6 +77,11 @@ class CityError(Exception):
 def path(*parts):
     """Absolute path to a city-relative location. Does not require it to exist."""
     return os.path.join(CITY_DIR, *parts)
+
+
+def docs(*parts):
+    """Absolute path to a location under the project's `docs/`."""
+    return os.path.join(DOCS_DIR, *parts)
 
 
 def rel(absolute):

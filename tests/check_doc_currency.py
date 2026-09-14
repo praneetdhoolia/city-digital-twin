@@ -65,6 +65,18 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 
 
+def artefact(city_root: Path, rel: str) -> Path:
+    """A spec path resolved to disk.
+
+    `docs/...` is the project's documentation, kept at the repository root
+    (the goal, the board, the record and the generated reference); every
+    other path is the city's own, relative to `cities/<city>/`.
+    """
+    if rel == "docs" or rel.startswith("docs/"):
+        return REPO / rel
+    return city_root / rel
+
+
 # ---------------------------------------------------------------- truth resolvers
 #
 # Each resolver answers ONE question about the artefacts and returns an int, or
@@ -159,7 +171,7 @@ def truth_json_number(city_root: Path, spec: dict) -> float:
     Returned unrounded: how many places the DOCUMENT states is the claim's
     business (`decimals`), not the artefact's.
     """
-    path = city_root / spec["file"]
+    path = artefact(city_root, spec["file"])
     if not path.exists():
         raise Skip(f"{spec['file']} absent")
     node = json.loads(path.read_text(encoding="utf-8"))
@@ -178,7 +190,7 @@ def truth_csv_value_count(city_root: Path, spec: dict) -> int:
     The zone tiers are the motivating case: "1,500 core SA1" is a claim about
     `zone_tier == core`, and it should fail loudly if a boundary is ever redrawn.
     """
-    path = city_root / spec["file"]
+    path = artefact(city_root, spec["file"])
     if not path.exists():
         raise Skip(f"{spec['file']} absent")
     with path.open(newline="", encoding="utf-8") as fh:
@@ -190,7 +202,7 @@ def truth_csv_value_count(city_root: Path, spec: dict) -> int:
 
 def truth_json_text(city_root: Path, spec: dict) -> str:
     """A string under a dotted key path in a committed JSON report."""
-    path = city_root / spec["file"]
+    path = artefact(city_root, spec["file"])
     if not path.exists():
         raise Skip(f"{spec['file']} absent")
     node = json.loads(path.read_text(encoding="utf-8"))
