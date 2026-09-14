@@ -9,7 +9,7 @@
    "kind": "reading",
    "status": "open",
    "recommended": true,
-   "cost": "no run: `report_mode_ridership.py --run 20260915T000704_250it_25pct --it <reached>` and `report_choice_set_coverage.py`, then the fit pipeline; the arm itself is running on a spent 30.0 h approval (iterations 2-14 at 427-568 s against the 422 s price)",
+   "cost": "no run: `report_mode_ridership.py --run 20260915T000704_250it_25pct --it <reached>` and `report_choice_set_coverage.py`, then the fit pipeline; the arm itself is running on a spent 30.0 h approval (iterations 30-33 at 423-467 s against the 422 s price)",
    "blocked_on": "the arm's end - the 250 horizon, or the 30.0 h ceiling projected near iteration 215 (a stop there is citable at its reached_iteration, not a result; the pair's verdict may then need the horizon re-declared or a second approval)",
    "opens_family": false,
    "answers_issues": [
@@ -19,7 +19,7 @@
     172,
     174
    ],
-   "evidence": "§9.174: launched, pace measured; §9.169: the pairs difference against arm 0's it.300 reading"
+   "evidence": "§9.174: launched, pace measured; §9.169: the pairs difference against arm 0's it.300 reading; §9.175: D4 - read inside F35, no family flag"
   },
   {
    "id": "routers-pair",
@@ -29,7 +29,7 @@
    "recommended": false,
    "cost": "30.0 h at 250 iterations, 25 % plus 32 min of setup, priced on the committed controler (`20260914T195207_4it_25pct`, 422.0 s a recurring iteration; spread 18.2-39.2 h over the last five arms)",
    "blocked_on": "a stated-cost approval set as RUN.gate.wall_ceiling_h; the overlay `f35_routers_mode_constant_25pct` (C.raptor.mode_cost_representation = mode_constant, 250 it, answers_issues #98 #94 #49 #172 #174) is written at launch",
-   "opens_family": true,
+   "opens_family": false,
    "answers_issues": [
     98,
     94,
@@ -185,8 +185,8 @@
    ],
    "evidence": "§9.174: the lane's pair task carried opens_family: true while §9.169 reads the pairs within F35",
    "asked": "2026-09-15",
-   "answer": null,
-   "answered": null
+   "answer": "Inside F35, read against arm 0 (recommended)",
+   "answered": "2026-09-15"
   }
  ]
 }

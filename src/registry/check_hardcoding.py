@@ -412,6 +412,14 @@ STRUCTURAL = {
         'can reach a result',
     'src/analyse/run_view.py:RAMP_MAX':
         'the other end of the same display scale',
+    'src/analyse/run_view.py:STEP_TOLERANCE_S':
+        'the qsim one-second step, which the congestion display does not '
+        'count as delay: a property of the mobsim clock, read by the viewer '
+        'alone, reaching no run',
+    'src/analyse/run_view.py:MIN_STRETCH_M':
+        'the shortest stretch of road a congestion colour describes (a map '
+        'app segment, never a 10 m turn stub) - the same display scale as '
+        'RAMP_MIN, reaching no run',
     'src/analyse/run_view.py:MODES_CACHE_ENTRIES':
         'how many computed readings the viewer keeps in memory. An observer '
         'cache bound: it decides what the page remembers, never what a run '
