@@ -11,7 +11,7 @@ the one-page board, [`docs/STATUS.md`](docs/STATUS.md).
 Once the twin reproduces every mode at its real share it can be pointed at
 questions observation cannot settle — Australia's low light rail usage
 (Newcastle's 2019 line is the first application; the frozen origin design is
-[`docs/archived/design/newcastle-lr-proposal.md`](docs/archived/design/newcastle-lr-proposal.md)),
+[`newcastle-lr-proposal.md`](cities/newcastle/docs/archived/design/newcastle-lr-proposal.md)),
 the modes that could relieve a corridor, the demands of an event the size of
 Brisbane 2032. One standard holds throughout: **every value that was not observed
 is derived where it can be, and otherwise declared, given a sweep range and
@@ -151,8 +151,8 @@ result **0 of 12** modes are inside 10 % and the largest deviation is heavy rail
 at +225 %.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/reference/figures/fit_mode_share.dark.svg">
-  <img alt="Modelled against observed mode share: vehicle driver +6.34 pp, vehicle passenger -8.44 pp, walk -3.55 pp, public transport +0.84 pp, other (bike and taxi) +4.50 pp" src="docs/reference/figures/fit_mode_share.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_mode_share.dark.svg">
+  <img alt="Modelled against observed mode share: vehicle driver +6.34 pp, vehicle passenger -8.44 pp, walk -3.55 pp, public transport +0.84 pp, other (bike and taxi) +4.50 pp" src="cities/newcastle/docs/reference/figures/fit_mode_share.light.svg">
 </picture>
 
 The five folded shares hide what the twelve unfolded modes show: the passenger
@@ -164,8 +164,8 @@ modes falls inside its observed range; walk is modelled at 3.28 km against an
 observed 0.70, a supply ceiling set at build time ([issue #30](https://github.com/praneetdhoolia/city-digital-twin/issues/30)).
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/reference/figures/fit_trip_length.dark.svg">
-  <img alt="Modelled mean trip length against the observed range, by mode: no mode falls inside its range" src="docs/reference/figures/fit_trip_length.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_trip_length.dark.svg">
+  <img alt="Modelled mean trip length against the observed range, by mode: no mode falls inside its range" src="cities/newcastle/docs/reference/figures/fit_trip_length.light.svg">
 </picture>
 
 **Traffic counts** — scored and reported, deliberately not optimised against.
@@ -173,8 +173,8 @@ Across **31** count stations the mean error is
 **16.3%** (median −1.1 %), and **0** stations model to zero.
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/reference/figures/fit_counts.dark.svg">
-  <img alt="Modelled against observed weekday traffic counts on log axes" src="docs/reference/figures/fit_counts.light.svg">
+  <source media="(prefers-color-scheme: dark)" srcset="cities/newcastle/docs/reference/figures/fit_counts.dark.svg">
+  <img alt="Modelled against observed weekday traffic counts on log axes" src="cities/newcastle/docs/reference/figures/fit_counts.light.svg">
 </picture>
 
 **Light rail patronage.** The arm puts the light rail at **1,224** weekday
@@ -183,10 +183,10 @@ observation — 3,417 boardings/day — is the March 2019 to February 2020 marke
 and `fit.py` refuses to score it: PT mode share roughly halved between that
 vintage and the base year, so the difference is not an error statistic. It is
 recorded as unscored, with the reason, in
-[`FIGURES.json`](docs/reference/figures/FIGURES.json).
+[`FIGURES.json`](cities/newcastle/docs/reference/figures/FIGURES.json).
 
 Full rows, every unscorable target and the parameter provenance:
-[`CALIBRATION_REPORT.md`](docs/reference/CALIBRATION_REPORT.md). The figures
+[`CALIBRATION_REPORT.md`](cities/newcastle/docs/reference/CALIBRATION_REPORT.md). The figures
 and the report derive from the synthetic plans, which carry the OSM network's
 share-alike ancestry, so they are published under **ODbL 1.0**, not CC-BY 4.0.
 Regenerate them together after a new calibrated base:
@@ -206,38 +206,25 @@ python src/calibrate/report.py --run <run dir>
 - **Holdout** — the 143 of 210 validation targets that stay unread until the end; the 67 others are the calibration half.
 - **`awaiting-run`** — the label an open issue carries when the only thing left to do on it is a measurement that needs the run.
 
-## What is here
+## The first city: Newcastle (NSW)
 
-| | |
-|---|---|
-| Files in the manifest | **959** ([`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv): hash, rows, producing script, source, licence, retrieval date) |
-| Package on disk | 6.64 GiB across `data/`, `networks/`, `schedules/`, `demand/`, `scenarios/` — mostly gitignored and regenerable |
-| Study area | Newcastle, Lake Macquarie, Maitland, Cessnock, Port Stephens — 4,086 km² |
-| Zones | 1,500 core SA1 + 201 external SA1, 222 core DZN |
-| Population | 611,915 (2021 Census) → 612,634 synthetic agents |
-| Road network | 50,182 edges, 11,434 km, gradient-attached |
-| Active network | 40,195 edges, 7,920 km, directional walk-speed factors — and walk- and bike-capable links of the MATSim network itself (368,230 links with the roads and railways) |
-| PT | 5 GTFS eras + 10 scenario variants, 15 feeds mapped, 0 unmapped stops |
-| Input registry | 558 controllable fields, each with units, provenance and a sweep or a held-fixed rule |
-| Validation | 210 targets, pre-registered 67 calibration / 143 holdout |
-| Base year | 2026 · CRS EPSG:28356 (GDA94 / MGA Zone 56) |
-
-Every derived file is regenerable from the immutable raw downloads by a committed
-script and listed in the manifest. `tests/check_manifest.py` verifies the
-committed subset in CI, `tests/check_package.py` the full package locally, and
-`tests/check_doc_currency.py` that the numbers on this page still equal the
-artefacts they describe.
+The package counts, its sources and licences, what is derived rather than
+observed and the reproduction steps are on the city's page
+[`cities/newcastle/docs/README.md`](cities/newcastle/docs/README.md); its twelve
+targets and their bases on [`targets.md`](cities/newcastle/docs/targets.md).
+The licence boundary stays visible: OSM-derived layers are ODbL 1.0
+(share-alike), the rest of the package CC-BY 4.0, per file in `data/MANIFEST.csv`.
 
 ---
 
 ## Documentation
 
-All of it is under [`docs/`](docs/README.md): the goal, the board, the brief,
-the position pages, the record, the reports, the generated reference and the
-archive. Conventions and hard constraints for anyone changing this repository
-are in [`.claude/CLAUDE.md`](.claude/CLAUDE.md). A value in this model is
-observed, derived or declared-with-a-sweep, and the record says which; read the
-position page for a topic before changing anything in it.
+[`docs/`](docs/README.md) is the simulator and its results: the goal, the board,
+the brief, the position pages, the record, the family ledger and the reports.
+[`cities/<city>/docs/`](cities/newcastle/docs/README.md) is that city's documents:
+its front page, targets, generated reference, requests and archives. Conventions
+and hard constraints for anyone changing this repository are in
+[`.claude/CLAUDE.md`](.claude/CLAUDE.md).
 
 ---
 
@@ -249,7 +236,7 @@ city directory is one instance of it.
 
 ```
 README.md                    this page
-docs/                        the project's documents (GOAL, STATUS, positions, DECISIONS, reports, reference)
+docs/                        the simulator's documents: GOAL, STATUS, the brief, positions, DECISIONS, run_families.json, reports
 run.py                       run a scenario
 config/schema/               PORTABLE: what any city must supply, and in what shape
 src/city.py                  resolves which city's inputs a run reads, and where the documents are
@@ -269,7 +256,8 @@ cities/newcastle/            ONE CITY - every Newcastle/NSW/Australia-specific i
   extract/                   acquisition adapters: ABS, TfNSW Open Data, Overpass
   build/                     builders that encode THIS city's intervention, corridor and geography
   geometry/                  declared extents that were once typed into scripts
-  tests/                     the city-owned rules of the two document checks
+  docs/                      THIS city's documents: front page, targets, generated reference, requests, archives
+  tests/                     the city's live-state claims (doc_currency.json) and package expectations
   data/raw/                  immutable downloads + provenance_*.json
   data/processed/            zones, census, hts, observed, network, corridor, landuse
   data/MANIFEST.csv          every file: hash, rows, producing script, source, licence
@@ -284,100 +272,3 @@ Paths inside a city are recorded city-relative — `data/processed/network/...` 
 so the same manifest row means the same thing in every city. The city is
 selected by `CITYSIM_CITY` (default `newcastle`).
 
----
-
-## Reproducing the data package
-
-Every derived file is regenerable by a committed script from the immutable raw
-downloads, seeded (`20260810`) and deterministic — with one measured exception:
-pt2matsim's schedule mapping is not reproducible run to run (about 18% of route
-link sequences differ between identical builds while every stop-to-link
-assignment holds), so any scenario comparison must use a single build of the
-network ([`DECISIONS.md`](docs/DECISIONS.md) §3.5).
-
-```bash
-# --- acquisition (network-bound, ~2 GiB) ---
-python cities/newcastle/extract/overpass.py                  # OSM, 10 themed extracts over 8 tiles
-python cities/newcastle/extract/fetch_gtfs.py                # era GTFS from the TfNSW S3 archive
-python cities/newcastle/extract/fetch_open_data.py           # Opal, traffic counts, HTS
-python cities/newcastle/extract/fetch_abs_dem.py             # ABS boundaries, census, DEM
-
-# --- clipping ---
-python cities/newcastle/extract/extract_zones.py
-python cities/newcastle/extract/extract_census.py
-python cities/newcastle/extract/extract_hts.py
-python cities/newcastle/extract/slice_newcastle.py
-
-# --- layer construction ---
-python cities/newcastle/build/build_era_feeds.py             # A3 era variants
-python src/build/build_network_layers.py                     # A1, A2, A5, A6
-python src/build/attach_gradient.py                          # gradient onto A1 and A6
-python src/build/attach_speed_zones.py                       # TfNSW regulated speed zones
-python cities/newcastle/build/build_corridor_layers.py       # A4 + corridor A2
-python cities/newcastle/build/build_landuse_parking.py       # D1 + A5 completion
-python src/build/build_zone_attractions.py                   # jobs to SA1, attraction terms
-python src/build/build_params.py                             # C1
-python src/build/build_population.py                         # B1 persons + households (~30 s)
-python src/build/build_gtfs_extras.py                        # A3 extras
-python cities/newcastle/build/build_scenario_schedules.py    # S0..S6 feeds
-python cities/newcastle/build/build_era1_reconstruction.py   # pre-2014 reconstruction
-python cities/newcastle/build/build_scenario_configs.py      # E1
-python cities/newcastle/build/build_validation_targets.py
-
-# --- P2 network build (needs the toolchain) ---
-python cities/newcastle/build/build_corridor_road_attributes.py
-python src/build/build_matsim_network.py                     # MATSim network + 15 mapped schedules
-python cities/newcastle/build/build_charging_dwell_offsets.py  # the dwell-transformed schedules the signals read
-python cities/newcastle/build/build_matsim_signals.py        # explicit corridor signal data
-python cities/newcastle/build/build_level_crossings.py       # level-crossing closure events
-
-# --- P3 demand synthesis (needs the P2 build above) ---
-python src/build/measure_network_factors.py                  # C2: detour factor, day-type split
-python src/build/build_activity_chains.py                    # B2 tours, 3 day types (~90 s, 790 MB)
-python src/build/build_matsim_plans.py                       # MATSim population per day type
-python src/build/build_matsim_run_inputs.py                  # 30 runnable scenario x day-type sets
-
-python src/build/build_data_dictionary.py
-python src/build/build_manifest.py                           # regenerate the manifest LAST
-```
-
----
-
-## Sources and licensing
-
-| Source | Licence |
-|---|---|
-| TfNSW Open Data Hub — GTFS, Opal, traffic counts, HTS, speed zones | CC-BY 4.0 |
-| ABS — Census DataPacks, ASGS boundaries | CC-BY 4.0 |
-| OpenStreetMap (via Overpass) | **ODbL 1.0 (share-alike)** |
-| Copernicus GLO-30 DEM | ESA, free and open |
-
-OSM-derived layers are ODbL, which is share-alike; derived network files inherit
-that obligation and the rest of the package is CC-BY 4.0. Per-file provenance is
-in [`data/MANIFEST.csv`](cities/newcastle/data/MANIFEST.csv).
-
----
-
-## What is derived rather than observed
-
-The rule ([`GOAL.md`](docs/GOAL.md) requirement 6): a disclosed value is used
-exactly; an undisclosed one is researched and derived; a sweep is the fallback
-only where derivation is genuinely impossible, and then the reason is stated and
-the value is never pinned.
-
-- **SCATS signal operation** — TfNSW does not release the operated phase plans or
-  the offset library. The published SCATS algorithm is implemented instead
-  (degree of saturation, cycle and split adaptation, priority); offsets are not
-  adapted because no algorithm replaces the unreleased library
-  ([`positions/signals-and-crossings.md`](docs/positions/signals-and-crossings.md)).
-- **Rail and tram patronage** — held to the disclosed weekday boardings. **Ferry**
-  patronage is not published; its target is derived from the harbour's market.
-- **Licence holding** — the published TfNSW licence count over the ABS
-  population, per age band and LGA.
-- **Journey-linked Opal** — not published; the transfer penalty it would estimate
-  is swept 3–15 minutes. **Measured charging dwell** — no published figure; swept.
-
-Also absent: pedestrian counts, frontage-level retail floorspace and vacancy,
-parking meter transactions, and a 2014 timetable to validate the era-1
-reconstruction. The current position on every input is
-[`positions/network-and-inputs.md`](docs/positions/network-and-inputs.md).

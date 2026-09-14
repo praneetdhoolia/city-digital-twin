@@ -89,7 +89,11 @@ and 7 only) and **never recompile `.tools/classes`** (an arm may be running).
    it in the report's "in-flight work" section, and never commit, revert or
    build on it.
 3. Note `HEAD`, the branch and the date. The report is a reading of one commit.
-4. Open the **previous report** (newest row of `REPORT_DIR/README.md`) and pull
+4. Open the **recommendation ledger** `REPORT_DIR/recommendations.json`
+   (`python src/analyse/report_recs.py`): every recommendation since the tenth
+   report with its status and evidence, kept by `/handoff`. The audit of the
+   previous report's recommendations reads it first and re-derives only what
+   it does not hold. Then open the **previous report** (newest row of `REPORT_DIR/README.md`) and pull
    the JSON block it embeds at its end (`<script type="application/json" id="report-data">`).
    Its findings, its survey rows, its factor rows and its recommendations are
    what Phase 8's "since the last report" section is measured against. An older
@@ -592,7 +596,8 @@ factors added, factors retired, literature halves newly filled).
    from `date +%Y%m%dT%H%M%S` at the time of writing. Never overwrite an
    earlier report; the directory is a dated series.
 5. Add a row for the new report to `REPORT_DIR/README.md` (create it from the
-   previous report's row if absent) — newest first, with the HEAD it read and a
+   previous report's row if absent) — newest first, with its ORDINAL (the
+   previous row's plus one, #204), the reading it followed, the HEAD it read and a
    headline of **at most 80 words** that states the verdict, the count of
    findings, the top optimisation, where we sit on the validation ladder and
    the top missing factor. The headline is an index entry, not the report:
@@ -606,8 +611,10 @@ factors added, factors retired, literature halves newly filled).
    for that lane and why — it never silently keeps the old file and claims a
    fresh pass. The library is committed: the dated reports are prunable, it is
    not.
-7. `python src/run/session_gate.py` must still pass; the report, the index and
-   the reference library are the only files this skill changes. Publish the same file as an Artifact
+7. `python src/analyse/report_recs.py --sync` pulls the new report's
+   recommendations into the ledger as open rows, and
+   `python src/run/session_gate.py` must still pass; the report, the index, the
+   ledger and the reference library are the only files this skill changes. Publish the same file as an Artifact
    as well when the harness offers one, so the user has a link, but the file
    under `REPORT_DIR` is the deliverable.
 8. Close with the ranked recommendations in the reply, at most twelve lines,
@@ -661,7 +668,7 @@ because each step is the input of the next:
   deletes a stored row because this pass could not re-find it.
 - Never presents a literature value as observed, never fills an `unknown`
   from memory, never fetches with `curl`.
-- Never reads `DECISIONS.md`, `SESSION_LOG.md` or `CONFIG_REFERENCE.md` whole.
+- Never reads `DECISIONS.md` or `CONFIG_REFERENCE.md` whole.
 - Never proposes a simplification that drops a function the component has:
   that is a defect proposal, and is filed as one.
 - Never judges its own series kindly: the process audit counts this report's

@@ -40,8 +40,9 @@ fi
 out_currency="$(python tests/check_doc_currency.py --strict 2>&1)"; rc1=$?
 out_shape="$(python tests/check_doc_shape.py --strict 2>&1)"; rc2=$?
 out_board="$(python src/analyse/build_status_board.py --check 2>&1)"; rc3=$?
+out_links="$(python tests/check_doc_links.py --strict 2>&1)"; rc4=$?
 
-if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ] || [ "$rc3" -ne 0 ]; then
+if [ "$rc1" -ne 0 ] || [ "$rc2" -ne 0 ] || [ "$rc3" -ne 0 ] || [ "$rc4" -ne 0 ]; then
   {
     echo "Blocked: the living documents are not current, so this PR cannot open yet."
     [ "$rc1" -ne 0 ] && { echo "--- check_doc_currency.py --strict"; printf '%s\n' "$out_currency" | tail -12; }

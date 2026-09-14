@@ -15,7 +15,7 @@ on:
     paths:
       - "README.md"
       - "docs/reports/**"
-      - "docs/reference/figures/**"
+      - "cities/*/docs/reference/figures/**"
       - ".github/scripts/build_pages.py"
       - ".github/workflows/pages.yml"
   workflow_dispatch:

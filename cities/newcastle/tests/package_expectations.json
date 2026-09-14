@@ -33,7 +33,7 @@
     "Validation targets": "data/processed/validation/validation_targets.csv",
     "Manifest": "data/MANIFEST.json",
     "Decisions log": "docs/DECISIONS.md",
-    "Data dictionary": "docs/reference/DATA_DICTIONARY.md"
+    "Data dictionary": "cities/newcastle/docs/reference/DATA_DICTIONARY.md"
   },
 
   "min_gtfs_feeds": 14,

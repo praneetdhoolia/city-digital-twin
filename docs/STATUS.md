@@ -7,13 +7,8 @@ rest is capped by `tests/check_doc_shape.py`. The current truth per topic is in
 [`positions/`](positions); the history and every rationale in
 [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 14 September 2026 (forty-seventh session) — the documents
-moved to `docs/`, the run viewer rebuilt, #197-#200 fixed, the tenth report
-lodged and its no-run findings worked (§9.170). The newest reading is arm 0 of F35,
-`20260912T202242_300it_25pct`, the project's second RESULT: 300 of 300 in
-30.35 h, **2 of 12 inside 10 %** (car +9.6 %, motorbike −5.6 %), six past the
-stop bar, ride's target above its own 19.11 % coverage (§9.169). No arm was
-launched and no approval stands.
+**Last updated:** 14 September 2026 (forty-eighth session). Newest reading: arm 0 of F35, `20260912T202242_300it_25pct`, the second RESULT (300 of 300, 30.35 h) - **2 of 12 inside 10 %**, six past the stop bar, ride's target above its coverage (§9.169).
+No arm was launched and no approval stands; the documents were split between the simulator and the city, and the lane became a ledger (§9.171).
 
 ## The goal
 
@@ -73,7 +68,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy
 | Input registry | **558 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **959 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (14 September 2026 (forty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (14 September 2026 (forty-seventh session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (14 September 2026 (forty-seventh session)) · [network-and-inputs](positions/network-and-inputs.md) (14 September 2026 (forty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (14 September 2026 (forty-seventh session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (14 September 2026 (forty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (14 September 2026 (forty-seventh session)) · [runs-and-economics](positions/runs-and-economics.md) (14 September 2026 (forty-seventh session)) · [sampling-and-families](positions/sampling-and-families.md) (14 September 2026 (forty-seventh session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (14 September 2026 (forty-seventh session)) · [signals-and-crossings](positions/signals-and-crossings.md) (14 September 2026 (forty-seventh session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (14 September 2026 (forty-seventh session)) · [walk-and-bike](positions/walk-and-bike.md) (14 September 2026 (forty-seventh session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (14 September 2026 (forty-eighth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (14 September 2026 (forty-eighth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (14 September 2026 (forty-eighth session)) · [network-and-inputs](positions/network-and-inputs.md) (14 September 2026 (forty-eighth session)) · [population-and-demand](positions/population-and-demand.md) (14 September 2026 (forty-eighth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (14 September 2026 (forty-eighth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (14 September 2026 (forty-eighth session)) · [runs-and-economics](positions/runs-and-economics.md) (14 September 2026 (forty-eighth session)) · [sampling-and-families](positions/sampling-and-families.md) (14 September 2026 (forty-eighth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (14 September 2026 (forty-eighth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (14 September 2026 (forty-eighth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (14 September 2026 (forty-eighth session)) · [walk-and-bike](positions/walk-and-bike.md) (14 September 2026 (forty-eighth session)) |
 <!-- generated:state end -->
 
 F35 is open with arm 0 as its reading; nothing before `20260912T184108`
@@ -99,22 +94,17 @@ those of `20260910T203622` (§9.164). The manifest holds
 
 ## Next
 
-1. **The first pair arm, on its own approval** (#172, §9.169): one field
-   against arm 0, 250 iterations at 25 % (~25.5 h quoted on arm 0's clock,
-   band 21.7–46.9 h), coverage read on both sides (#174), the overlay
-   declaring `answers_issues`. The decided sequence is scoring → choice set →
-   service quality → routers → submodes; on arm 0's evidence the routers pair
-   (`C.raptor.mode_cost_representation` = `mode_constant`) answers three of the
-   six STOP modes and is recommended first.
-2. **Or the roots first** (§9.169): ride is seeded below its target's coverage
-   (#86), walk trips are five times too long at the demand's destination
-   placement (#30), bike carries no distance cost (#107). Each is a demand
-   rebuild that opens a family and re-baselines.
-3. **The eleventh report runs after the next reading**, not before (§9.166).
-4. **The ASC contraction test** stays held; bike is the mode it can answer.
+<!-- generated:lane start -->
+1. **The first pair arm: the routers control (`C.raptor.mode_cost_representation` = `mode_constant`) against arm 0** **(recommended)** - ~25.5 h at 250 iterations, 25 % (band 21.7-46.9 h on arm 0's clock); one 25 % probe first because the controler was recompiled (#197); opens a family; blocked on: decision D1, then a stated-cost approval set as RUN.gate.wall_ceiling_h (§9.169; the tenth report's factor ledger names router-scorer consistency the top mover: light rail -73.9 %, heavy rail +54.6 %, ferry -63.3 % are decided in the raptor and no control has run; #98 #94 #49 #172 #174)
+2. **The roots first: one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196)** - a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at the same price as above; opens a family; blocked on: decision D1 (§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost; #86 #30 #107 #196 #145)
+3. **The eleventh project report, after the next reading** - one /project-report pass; no family boundary; blocked on: the next reading - a pair arm's gate or horizon (§9.166: one report per reading) (docs/reports/README.md;)
+4. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: held by the user until the first pair has run (§9.159) (§9.163: 20.46 pp of headroom on bike; #107)
 
-**Decisions required:** which pair or root is next and its stated-cost
-approval; whether to send the drafted TfNSW bespoke-table request (#50).
+**Decisions required** (`python src/analyse/lane.py --ask`; recorded with `--answer`):
+- **D1.** Which road is next: the first pair arm on arm 0, or the demand rebuild for the roots? Options: Routers pair first (recommended) · Roots rebuild first · Scoring pair first (§9.164, §9.169, the tenth report's factor ledger; #172 #86 #30)
+- **D2.** Send the drafted TfNSW bespoke-table request (mode x age, trip length by mode, occupancy by purpose, the unfolded Other)? Options: Send it under the operator's name (recommended) · Hold it (§9.163, §9.167; #50)
+- **D3.** Require the nine test-workflow jobs as status checks in the main ruleset (21121872)? Options: Require them (recommended) · Leave the ruleset as it is (the tenth report, recommendation 5; #202)
+<!-- generated:lane end -->
 
 ## Open work
 
@@ -133,7 +123,7 @@ approval; whether to send the drafted TfNSW bespoke-table request (#50).
 | **The TfNSW bespoke-table request** (mode × age, trip length by mode, occupancy by purpose, the unfolded "Other") is drafted and held; the modelled mode × demographics table exists (§9.163) | #50 | [population-and-demand](positions/population-and-demand.md) | the lodgement, then TfNSW's answer |
 | Stalls and heap: arm 0 ran 30.35 h under 48 g with no stall, live heap peaking at 26.2 GiB (§9.169); the launcher refuses a concurrent arm | #66 | [runs-and-economics](positions/runs-and-economics.md) | a second full arm's `gc.log` at 25 % |
 | Surrogate calibration held in reserve: ~150 evaluations at 21.5 h each is ~134 days at 25 % | — | [runs-and-economics](positions/runs-and-economics.md) | only if the residual proves multi-parameter |
-| **The tenth report's open items** (§9.170): the household-size top-band mean's phantom consumer (#196, a decision); the main ruleset requires no status check (the user's setting); 8 of 13 position pages keep closed-family readings; the two document rule files sit under the city | #196 | [network-and-inputs](positions/network-and-inputs.md) | none - decisions and document passes |
+| **The tenth report's open items** (§9.170, §9.171): #196 folds into the roots rebuild (a decision, D1); the main ruleset's status checks are a decision (D3); the position pages are capped and trimmed, the rule files split, the report ordinals recorded (#203 #204 #205 #207 #208 closed) | #196 #202 #209-#217 | [monitoring-and-gates](positions/monitoring-and-gates.md) | none - decisions and no-run fixes |
 
 ## Do not re-raise
 

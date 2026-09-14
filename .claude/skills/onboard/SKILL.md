@@ -32,7 +32,9 @@ needs it.
 
 1. `python src/run/session_gate.py --digest` — the goal's title, the board's
    generated blocks (scoreboard, state, runs), whether the machine is busy, how
-   far the branch is ahead of `origin/main`, the open PRs.
+   far the branch is ahead of `origin/main`, the open PRs, the lane's top task,
+   the decisions unanswered, the report recommendations open, and whether the
+   newest arm's price still describes the committed build.
 2. `docs/GOAL.md` — what the twin is for, the loop, the
    non-negotiables.
 3. `docs/STATUS.md` — the one-page board. The generated blocks are
@@ -42,7 +44,9 @@ needs it.
    re-derive every fact in it before reading §1–§3.** The brief is a pointer,
    not a source; where it disagrees with the board or a position page, they win.
 5. The **one** position page the lane names
-   (`docs/positions/<topic>.md`).
+   (`docs/positions/<topic>.md`). The city's own facts — study area, sources,
+   package counts, targets — are `cities/<city>/docs/README.md` and
+   `targets.md`; open them only when the lane needs one.
 
 **Never read `DECISIONS.md` whole.** If a question needs a section, find it
 with `grep -n "^## 9\.NNN" docs/DECISIONS.md` and read that range
@@ -86,7 +90,8 @@ Then the classes no checker covers, each a one-line question:
 - A document that states the project's goal differently from `GOAL.md`.
 
 Each gap goes in the briefing. **Fixing them is scoped work the user decides
-on**, not something to do during onboarding.
+on**, not something to do during onboarding. Then `python src/analyse/report_recs.py`:
+the report recommendations still open are gaps too, listed by id.
 
 ## Phase 3 — The four questions
 
@@ -121,10 +126,19 @@ traps — each has already cost a day:
   session links; **never commit to `main`**; the session's ONE PR opens at
   `/handoff`.
 
-## Phase 5 — The briefing, then stop
+## Phase 5 — The briefing, then the decisions, then stop
 
 Report, in at most forty lines: the four answers (every mode individually in
 any table), the gate result and what it blocks, the gaps found (mechanical
-first), and **the lane** — the single next task, its cost, and whether it needs
-a decision or an approval. Then **stop**. Do not begin the lane until the user
-says to, or a standing directive in the brief already authorises it.
+first, then the open report recommendations by id), and **the lane** — the
+single next task, its cost, and whether it needs a decision or an approval.
+
+Then the decisions: `python src/analyse/lane.py --ask` prints every decision
+the user has not taken, with its options. Put them to the user in ONE
+`AskUserQuestion` (at most four questions, the recommended option first and
+labelled so), and record each answer at once with
+`python src/analyse/lane.py --answer <D> "<label>"` — the handoff carries it
+to §14 and the issue. Never ask a decision the ledger holds an answer for, and
+never ask one in prose. If the ledger has no unanswered decision, say so and
+**stop**. Do not begin the lane until the user says to, or a standing
+directive in the brief already authorises it.

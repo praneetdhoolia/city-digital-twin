@@ -15,7 +15,7 @@ Two halves, in one report:
    (`hts_mode.csv`, `hts_purpose.csv`) carry NO demographic column, so
    mode x age / mode x employment are not observable from held data - an
    acquisition item, not a modelling gap (issue #50, issue #63,
-   `docs/archived/design/mode-individualisation.md` section 3). The holdout split
+   `cities/<city>/docs/archived/design/mode-individualisation.md` section 3). The holdout split
    under `data/processed/validation/` is never opened here.
 
 2. MEASUREMENT - the run's realised trips (`output_trips.csv.gz`, the same
@@ -313,7 +313,7 @@ def main() -> int:
             'caveats': [
                 '2021 was a COVID census: car share is WFH-inflated and PT '
                 'collapsed; treat these shares as structure, not level '
-                'targets (docs/archived/design/mode-individualisation.md section 1)',
+                'targets (cities/<city>/docs/archived/design/mode-individualisation.md section 1)',
                 'commute-only: journeys to work, one method; multi-method '
                 'and worked-at-home journeys excluded (counts in '
                 'context_journeys)',
