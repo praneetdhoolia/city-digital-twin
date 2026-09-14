@@ -30,9 +30,9 @@
    "what": "Read arm 0 at its horizon and spend the routers pair first (C.raptor.mode_cost_representation = mode_constant against absent), 250 iterations at 25 %, coverage read on both sides, then scoring -> choice set -> service quality -> submodes.",
    "repeat_of": "ninth #2, eighth, seventh",
    "opens_family": true,
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.174",
+   "updated": "2026-09-15"
   },
   {
    "id": "20260914T152907:4",
