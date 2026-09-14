@@ -706,8 +706,9 @@ function groupLinks(h){
 
 /* the frame: k = pixels per merc unit, (ox, oy) = canvas origin in merc pixels (offline host) */
 function frame(){ return FB.frame(); }
-function mppAt(k){ // metres per pixel at the study latitude
-  const lat = (HS && HS.core_bbox) ? (HS.core_bbox[1] + HS.core_bbox[3]) / 2 : -32.9;
+function mppAt(k){ // metres per pixel at the study latitude: the run's box, else the basemap's, else the equator
+  const box = (HS && HS.core_bbox) || (BM && BM._bbox);
+  const lat = box ? (box[1] + box[3]) / 2 : 0;
   return 40075016.686 * Math.cos(lat * Math.PI / 180) / (TILE * k);
 }
 /* name, colour, width in metres, minimum width in px, and the coarsest metres-per-pixel at

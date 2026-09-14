@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (fiftieth session) · **Record read through:** §9.173 · **Written against family:** `F35`
 
 ## What is built
 
@@ -26,7 +26,7 @@
 - **The scoreboard is the newest ARM's, never a `failed` run's** (`build_status_board.py`, §9.168): it skips a run under the sweep floor on `RUN.controler.last_iteration` (§9.133), a family marked `"readings": "none"` (§9.148) and F33's `aborted_20260910T222830_300it_25pct`.
 - **Targets**: `mode_targets_by_mode.csv` (`build_mode_targets.py`, §9.87) and `pt_boardings_targets.json` (§9.130), never `validation_targets.csv` (§12). `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 are `definition`, not swept (§9.87).
 - **`src/calibrate/fit.py`**: `score_mode_share` folds `bike+taxi` to Other and `car+motorbike` to Vehicle driver (§9.87), unscorable targets listed with reasons (§9.80); `measure_iteration_modes.py` uses the same function (§9.83).
-- **The run viewer** `src/analyse/run_view.py` (§9.170): every run from one picker, the iteration bar with cutoff and gate milestones, each mode as modelled, target and deviation coloured by the 10 % goal and 20 % stop bar, a congestion map in a map-app layout (§9.172); readings from `_readings.jsonl`, appended by the gate watcher.
+- **The run viewer** `src/analyse/run_view.py` (§9.170, §9.172): every run from one picker, each mode as modelled, target and deviation against the 10 % goal and 20 % stop bar, readings from `_readings.jsonl`. Its map is MapLibre GL 5.24.0 (§9.173): worker-decoded tiles, GL layers, worst frame 37 ms over 221,919 links; 3D (Terrarium terrain, OpenFreeMap buildings, overlays draped) and a globe; no place typed (#220).
 - **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` declared `RUN.gate.wall_ceiling_h` 0.05 and stopped with `completion` `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169). A gate interval is not a gate: `start_gate_watch` refuses without `RUN.monitor` (#131).
 - **`CAL.objective.replication_band_pp` = 0.0** (`sweep_role: measurement`, bracket [0.0, 2.0]) is the objective's denominator, MEASURED before it is set by three arms differing only in `RUN.machine.seed` (§9.164, #163).
 
@@ -74,6 +74,7 @@
 
 ## History
 
+- §9.173 — viewer on MapLibre GL; 3D and globe
 - §9.172 — viewer in a map-app layout; checks required
 - §9.170 — the run viewer, live twelve modes
 - §9.169 — arm 0 a result; reader reads own schedule
@@ -82,6 +83,3 @@
 - §9.166 — one boardings source; eighth report
 - §9.164 — ceiling watcher fires; gate needs monitor
 - §9.163 — counts rung repaired; coverage bound reported
-- §9.160 — gate stops passing on prose
-- §9.158 — objective measures the goal; search blocked
-- §9.157 — a third of pt routing unserved
