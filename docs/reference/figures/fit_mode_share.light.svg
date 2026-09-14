@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="378" viewBox="0 0 760 378" font-family='-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' role="img" aria-label="Mode share, modelled against observed">
+<!-- ODbL 1.0 (share-alike): drawn from synthetic plans that carry the OpenStreetMap-derived network's ancestry, (c) OpenStreetMap contributors; not the package's CC-BY 4.0 -->
 <text x="20" y="38" font-size="15" fill="#1f2328" font-weight="600">Mode share - modelled against observed</text>
 <text x="20" y="52" font-size="11.5" fill="#59636e">Every mode against ITS OWN observed value. 5 scored targets, mean absolute error 4.73 percentage points.</text>
 <text x="20" y="67" font-size="11.5" fill="#59636e">A pre-calibration diagnostic of one base arm, not a finding about the intervention.</text>

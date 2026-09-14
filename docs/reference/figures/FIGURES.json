@@ -1,5 +1,6 @@
 {
   "generated_by": "src/analyse/build_fit_figures.py",
+  "licence": "ODbL 1.0 (share-alike): drawn from synthetic plans that carry the OpenStreetMap-derived network's ancestry, (c) OpenStreetMap contributors; not the package's CC-BY 4.0",
   "note": "Regenerate; do not edit. Carries no wall-clock stamp: the provenance is the run, and the run does not move.",
   "run": {
     "directory": "20260909T015217_300it_25pct",

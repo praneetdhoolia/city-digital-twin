@@ -1,4 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="760" height="466" viewBox="0 0 760 466" font-family='-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif' role="img" aria-label="Traffic counts, modelled against observed">
+<!-- ODbL 1.0 (share-alike): drawn from synthetic plans that carry the OpenStreetMap-derived network's ancestry, (c) OpenStreetMap contributors; not the package's CC-BY 4.0 -->
 <text x="20" y="38" font-size="15" fill="#1f2328" font-weight="600">Weekday traffic counts - modelled against observed</text>
 <text x="20" y="52" font-size="11.5" fill="#59636e">31 count stations. Mean error 16.3%; 0 stations model to zero.</text>
 <text x="20" y="67" font-size="11.5" fill="#59636e">Scored and REPORTED, never optimised against: tuning the network to these would hide what the model is missing.</text>
