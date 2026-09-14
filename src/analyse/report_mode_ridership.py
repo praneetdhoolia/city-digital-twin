@@ -1056,7 +1056,14 @@ def write_gate_verdict(path, iteration, breaches):
                passed=not breaches,
                breaches=[dict(mode=m, modelled=mv, target=t, deviation_pct=dev)
                          for m, mv, t, dev in
-                         sorted(breaches, key=lambda x: -abs(x[3]))])
+                         sorted(breaches, key=lambda x: -abs(x[3]))],
+               # the whole table, so the verdict is also a READING: the
+               # runner appends it to the run's _readings.jsonl and the run
+               # viewer shows every mode against its target without
+               # re-reading a 25 % trips table (9.170)
+               read_at=time.strftime('%Y-%m-%dT%H:%M:%S'),
+               fraction=LAST.get('fraction'), source=LAST.get('source'),
+               rows=list(LAST.get('rows') or []))
     with open(path, 'w', encoding='utf-8') as fh:
         json.dump(doc, fh, indent=1)
 

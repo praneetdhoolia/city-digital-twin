@@ -1262,6 +1262,9 @@ STALL_STOP = '_stall_stop.json'
 # the reporter's verdict file, written per milestone and read by the watcher;
 # module-level so a test can point the watcher at a canned reporter
 GATE_VERDICT = '_gate_verdict.json'
+# every milestone's reading, one JSON line each, appended by the gate watcher;
+# the run viewer reads it (9.170)
+READINGS = '_readings.jsonl'
 REPORTER = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
 EXTRACTOR = os.path.join(REPO, 'src', 'analyse', 'extract_metrics.py')
 
@@ -1575,6 +1578,14 @@ def start_gate_watch(run_dir, cfg, proc):
                 retry_at = time.time() + retry_s
                 continue
             claimed = milestone
+            # the reading is kept whatever the verdict: the ledger is what
+            # the viewer's scoreboard and its trend are drawn from
+            try:
+                with open(os.path.join(run_dir, READINGS), 'a',
+                          encoding='utf-8', newline='\n') as fh:
+                    fh.write(json.dumps(read) + '\n')
+            except OSError:
+                pass
             breaches = read.get('breaches') or []
             if read.get('passed') or not breaches:
                 print('gate watcher: iteration %d PASSED - no mode at or '
