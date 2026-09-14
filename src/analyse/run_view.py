@@ -194,8 +194,35 @@ def _read_markers(log_path):
         return list(out), dict(spans)
 
 
+_STAMPED = {}
+_STAMPED_LOCK = threading.Lock()
+
+
+def _stamped(path, reader, *args):
+    """`reader(path, *args)` memoised on the file's (size, mtime): a poll re-reads a file
+    only when the run has rewritten it. The status poll runs every half second while the
+    mobsim sweeps, and every one of these files changes at most once an iteration."""
+    try:
+        st = os.stat(path)
+        key = (st.st_size, st.st_mtime_ns)
+    except OSError:
+        key = None
+    with _STAMPED_LOCK:
+        hit = _STAMPED.get((path, args))
+        if hit and hit[0] == key:
+            return hit[1]
+    val = reader(path, *args)
+    with _STAMPED_LOCK:
+        _STAMPED[(path, args)] = (key, val)
+    return val
+
+
 def read_series(path, keep=None):
     """A MATSim per-iteration csv as {column: [values]}, semicolon-delimited."""
+    return _stamped(path, _read_series, None if keep is None else tuple(sorted(keep)))
+
+
+def _read_series(path, keep):
     try:
         with open(path, 'r', encoding='utf-8') as f:
             rows = list(csv.DictReader(f, delimiter=';'))
@@ -217,6 +244,14 @@ def read_series(path, keep=None):
     return out
 
 
+def _read_text(path):
+    try:
+        with open(path, encoding='utf-8') as f:
+            return f.read()
+    except OSError:
+        return ''
+
+
 def _load_json(path, default=None):
     try:
         with open(path, encoding='utf-8') as f:
@@ -226,7 +261,11 @@ def _load_json(path, default=None):
 
 
 def read_jsonl(path, tail=None):
-    """Per-iteration telemetry summaries. ~5 KB each, so the whole file is cheap."""
+    """Per-iteration telemetry summaries, ~5 KB each; parsed once per rewrite of the file."""
+    return _stamped(path, _read_jsonl, tail)
+
+
+def _read_jsonl(path, tail):
     out = []
     try:
         with open(path, encoding='utf-8') as f:
@@ -251,12 +290,7 @@ def scan(run_dir):
     out_dir = os.path.join(run_dir, 'output')
     record = os.path.join(run_dir, '_run.json')
 
-    cfg_text = ''
-    try:
-        with open(os.path.join(run_dir, 'config.xml'), encoding='utf-8') as f:
-            cfg_text = f.read()
-    except OSError:
-        pass
+    cfg_text = _stamped(os.path.join(run_dir, 'config.xml'), _read_text)
     m = LAST_ITER_RE.search(cfg_text)
     target = int(m.group(1)) if m else None
     params = dict(PARAM_RE.findall(cfg_text))
@@ -336,7 +370,12 @@ def scan(run_dir):
     # percentage points, and two implementations of one verdict is exactly the
     # drift this package cannot absorb. The tolerance is declared
     # (RUN.relaxation.drift_tolerance_pp), not decided here.
-    relaxation = _summarise.relaxation(modes, innovation_off)
+    # the two declared values are passed in: relaxation() would otherwise resolve and
+    # validate the whole registry twice on every poll (0.585 s of a 0.628 s scan)
+    relaxation = _summarise.relaxation(
+        modes, innovation_off,
+        tolerance_pp=_CFG.get('RUN.relaxation.drift_tolerance_pp'),
+        settle_margin=_CFG.get('RUN.relaxation.settle_margin_iterations'))
 
     live = _load_json(os.path.join(out_dir, 'telemetry_live.json'))
     history = read_jsonl(os.path.join(out_dir, 'telemetry.jsonl'))
@@ -409,18 +448,45 @@ def scan(run_dir):
 
 # ---------------------------------------------------------------- the runs
 
+def _families():
+    """The family ledger, parsed once per change of the file it lives in."""
+    try:
+        import build_run_index as _index
+        return _stamped(_city.docs('run_families.json'), lambda _p: _index.load_families())
+    except Exception:                                        # noqa: BLE001
+        return [], {}
+
+
+_RUNS_CACHE = {}
+
+
 def list_runs():
     """Every run the store holds, newest first, with what the index knows.
 
     The page offers them in a picker, so one server observes any run on disk
     rather than the one it was started for. Read from each run's own records
-    only - never from the board.
+    only - never from the board. Walking 192 run directories reads ~16,000
+    files, so the list is kept for a minute and rebuilt at once when a run
+    directory appears or goes.
     """
-    try:
-        import build_run_index as _index
-        fams, overrides = _index.load_families()
-    except Exception:                                        # noqa: BLE001
-        fams, overrides = [], {}
+    roots = []
+    for root in (_results_store.RAW, _results_store.PROCESSED):
+        try:
+            roots.append(os.stat(root).st_mtime_ns)
+        except OSError:
+            roots.append(None)
+    key = tuple(roots)
+    hit = _RUNS_CACHE.get('runs')
+    if hit and hit[0] == key and time.time() - hit[1] < 60:
+        return hit[2]
+    out = _list_runs()
+    _RUNS_CACHE['runs'] = (key, time.time(), out)
+    return out
+
+
+def _list_runs():
+    import build_run_index as _index
+    fams, overrides = _families()
     out = []
     def stamp(name):
         return name[len('aborted_'):] if name.startswith('aborted_') else name
@@ -464,7 +530,7 @@ def list_runs():
 def family_of_run(name):
     try:
         import build_run_index as _index
-        fams, overrides = _index.load_families()
+        fams, overrides = _families()
         return _index.family_of(name, fams, overrides)[0]
     except Exception:                                        # noqa: BLE001
         return None
@@ -731,24 +797,32 @@ def load_network(run_dir):
     return doc
 
 
+def _pack(fmt, vals):
+    import array
+    a = array.array(fmt, vals)
+    if sys.byteorder != 'little':
+        a.byteswap()
+    return a.tobytes()
+
+
 def _b64(fmt, vals):
     import base64
-    import struct
-    return base64.b64encode(struct.pack('<%d%s' % (len(vals), fmt), *vals)).decode('ascii')
+    return base64.b64encode(_pack(fmt, vals)).decode('ascii')
 
 
-def network_payload(run_dir):
+def network_bytes(run_dir):
     """Every link's endpoints, once per network: Float32 lon/lat in link-index
-    order. About 6 MB for a 368,000-link network, fetched once and cached by
-    the page against the network's stamp."""
+    order, about 6 MB for a 368,000-link network, packed once and kept on the
+    network document. The page reads the bytes straight into a Float32Array."""
     net = load_network(run_dir)
     if not net:
-        return {'available': False, 'reason': 'the run network could not be read'}
-    coords = []
-    for lid in net['ids']:
-        coords += net['geom'][lid]
-    return {'available': True, 'stamp': net['stamp'], 'n_links': len(net['ids']),
-            'coords': _b64('f', coords)}
+        return None
+    if 'bytes' not in net:
+        coords = []
+        for lid in net['ids']:
+            coords += net['geom'][lid]
+        net['bytes'] = _pack('f', coords)
+    return net
 
 
 def _volume_bbox(rows, keep):
@@ -776,12 +850,33 @@ def _volume_bbox(rows, keep):
     return [out[0][0], out[1][0], out[0][1], out[1][1]]
 
 
+_HOTSPOT_CACHE = {}
+
+
 def hotspot(run_dir):
     """The window's per-link congestion, keyed to the network payload's index:
     link index (uint32), vehicle volume (uint16) and the delay ratio on the
     fixed ramp (uint16), so a window costs six bytes a loaded link rather
-    than a re-sent geometry. The join to geometry stays here, not in the page."""
-    payload = _load_json(os.path.join(run_dir, 'output', 'telemetry_links.json'))
+    than a re-sent geometry. The join to geometry stays here, not in the page,
+    and is done once per published window: the file is replaced atomically, so
+    its stamp names the window."""
+    path = os.path.join(run_dir, 'output', 'telemetry_links.json')
+    try:
+        st = os.stat(path)
+        key = (st.st_size, st.st_mtime_ns)
+    except OSError:
+        key = None
+    hit = _HOTSPOT_CACHE.get(run_dir)
+    if hit and hit[0] == key:
+        return hit[1]
+    doc = _hotspot(run_dir, path)
+    if doc.get('available'):
+        _HOTSPOT_CACHE[run_dir] = (key, doc)
+    return doc
+
+
+def _hotspot(run_dir, path):
+    payload = _load_json(path)
     if not payload:
         return {'available': False,
                 'reason': 'no telemetry_links.json - this run was assembled '
@@ -811,9 +906,19 @@ def hotspot(run_dir):
     # scale of the five-LGA study area - because a fraction of a percent of
     # very long external trips is enough to drag the frame off the city
     core = _volume_bbox([(g, v, r) for g, v, r, _ in rows], 0.90)
+    # the same links as GeoJSON text for the GL page's worker: delay on the fixed ramp as
+    # `d` in [0, 1], volume as `v` = sqrt(volume / max) in [0, 1], six decimals of degree.
+    # Built here, once per window, so the page never assembles or stringifies a feature.
+    parts = []
+    for g, vol, ratio, _ in rows:
+        t = (min(max(ratio, RAMP_MIN), RAMP_MAX) - RAMP_MIN) / (RAMP_MAX - RAMP_MIN)
+        parts.append('{"type":"Feature","properties":{"d":%.2f,"v":%.2f},"geometry":{"type":"LineString","coordinates":[[%.6f,%.6f],[%.6f,%.6f]]}}'
+                     % (t, (vol / vmax) ** 0.5, g[0], g[1], g[2], g[3]))
+    geojson = ('{"type":"FeatureCollection","features":[' + ','.join(parts) + ']}').encode('utf-8')
     return {
         'available': True,
         'stamp': net['stamp'],
+        '_geojson': geojson,
         'iteration': payload.get('iteration'),
         'scope': payload.get('scope', 'iteration'),
         'window_from': payload.get('window_from'),
@@ -831,6 +936,27 @@ def hotspot(run_dir):
         'volume': _b64('H', vols),
         'delay': _b64('H', ratios),
     }
+
+
+def basemap_bytes():
+    """`basemap_payload` as one binary body: a little-endian uint32 header length, the
+    header JSON ({layer: {polylines, coords, area}} in order), then per layer its
+    uint32 vertex counts and Float32 lon/lat pairs. Built once per basemap file."""
+    doc = basemap_payload()
+    if not doc.get('available'):
+        return None
+    if '_bytes' not in doc:
+        import base64
+        header, body = {}, []
+        for name, L in doc['layers'].items():
+            counts = base64.b64decode(L['counts'])
+            coords = base64.b64decode(L['coords'])
+            header[name] = {'polylines': len(counts) // 4, 'coords': len(coords) // 4, 'area': L['area']}
+            body.append(counts)
+            body.append(coords)
+        h = json.dumps({'stamp': doc['stamp'], 'layers': header}).encode('utf-8')
+        doc['_bytes'] = _pack('I', [len(h)]) + h + b''.join(body)
+    return doc['_bytes']
 
 
 def basemap_payload():
@@ -951,8 +1077,12 @@ def make_handler(default_run_dir):
                 self._send(json.dumps({'default': os.path.basename(default_run_dir),
                                        'runs': list_runs()}))
                 return
-            if path == '/basemap.json':
-                self._send(json.dumps(basemap_payload()))
+            if path == '/basemap.bin':
+                body = basemap_bytes()
+                if body is None:
+                    self._send('{"error":"no basemap"}', code=404)
+                else:
+                    self._send(body, 'application/octet-stream')
                 return
             run_dir = self._run_dir(q)
             if run_dir is None:
@@ -961,16 +1091,45 @@ def make_handler(default_run_dir):
             if path == '/status.json':
                 doc = scan(run_dir)
                 doc['family'] = family_of_run(doc['name'])
+                # the per-iteration series stay in scan() for the digest; the page reads
+                # neither, and they were 50 KB of every half-second poll
+                doc.pop('modes', None)
+                doc.pop('scores', None)
                 self._send(json.dumps(doc))
             elif path == '/modes.json':
                 it = q.get('it')
                 self._send(json.dumps(modes(run_dir, int(it) if it else None)))
             elif path == '/summary.json':
                 self._send_file(os.path.join(run_dir, '_summary.json'))
-            elif path == '/network.json':
-                self._send(json.dumps(network_payload(run_dir)))
+            elif path == '/network.bin':
+                net = network_bytes(run_dir)
+                if not net:
+                    self._send('{"error":"the run network could not be read"}', code=404)
+                else:
+                    self.send_response(200)
+                    self.send_header('Content-Type', 'application/octet-stream')
+                    self.send_header('Content-Length', str(len(net['bytes'])))
+                    self.send_header('Cache-Control', 'no-store')
+                    self.send_header('X-Network-Stamp', repr(net['stamp']))
+                    self.send_header('X-Links', str(len(net['ids'])))
+                    self.end_headers()
+                    try:
+                        self.wfile.write(net['bytes'])
+                    except (BrokenPipeError, ConnectionAbortedError):
+                        pass
             elif path == '/hotspot.json':
-                self._send(json.dumps(hotspot(run_dir)))
+                doc = dict(hotspot(run_dir))
+                doc.pop('_geojson', None)
+                if q.get('meta'):        # the GL page: the window's facts without the offline host's arrays
+                    for k in ('index', 'volume', 'delay'):
+                        doc.pop(k, None)
+                self._send(json.dumps(doc))
+            elif path == '/traffic.geojson':
+                doc = hotspot(run_dir)
+                if not doc.get('available'):
+                    self._send('{"type":"FeatureCollection","features":[]}')
+                else:
+                    self._send(doc['_geojson'], 'application/geo+json')
             elif path == '/links.json':
                 self._send_file(os.path.join(run_dir, 'output', 'telemetry_links.json'))
             else:

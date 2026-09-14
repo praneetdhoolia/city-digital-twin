@@ -8,35 +8,65 @@
       onerror="this.remove()">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.js"
         onerror="window.__noMap=true"></script>
+<script src="https://cdn.jsdelivr.net/npm/pmtiles@3.2.1/dist/pmtiles.js"
+        onerror="this.remove()"></script>
 <style>
-/* ---- palette: dark first, light on request; the map tiles follow ---- */
+/* ---- palette: Apple's system colours (HIG, iOS/macOS 26), dark first, light on request; the
+   chrome is Liquid Glass - the 'regular' variant, which the WWDC25 session says is the one to
+   use over any content: a translucent, saturating blur with a specular rim, a soft shadow, and
+   no glass stacked on glass. --panel is the material's opaque fallback where a blur cannot be
+   drawn; --fill is Apple's system fill for hover and wells. The map's own colours follow the
+   theme, not the material. ---- */
 :root{
-  --bg:#202124; --panel:#2b2d31; --panel2:#35373b; --edge:#3c4043; --ink:#e8eaed;
-  --muted:#9aa0a6; --faint:#5f6368; --accent:#8ab4f8; --accent-ink:#202124;
-  --ok:#81c995; --over:#fdd663; --stop:#f28b82; --info:#8ab4f8;
-  --ok-bg:#1e3a2a; --over-bg:#3d3520; --stop-bg:#3e2422;
-  --t0:#43a047; --t1:#ffb300; --t2:#e53935; --t3:#8e1b1b;
+  --bg:#1c1c1e; --panel:#1c1c1e; --edge:rgba(84,84,88,.6); --ink:rgba(255,255,255,.92);
+  --muted:rgba(235,235,245,.68); --faint:rgba(235,235,245,.36); --accent:#0a84ff; --accent-ink:#ffffff;
+  --ok:#30d158; --over:#ff9f0a; --stop:#ff453a; --info:#0a84ff;
+  --ok-bg:rgba(48,209,88,.18); --over-bg:rgba(255,159,10,.18); --stop-bg:rgba(255,69,58,.18);
+  --fill:rgba(120,120,128,.28);
+  --glass:rgba(28,28,30,.8); --glass-blur:blur(28px) saturate(160%);
+  --rim:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 .5px rgba(255,255,255,.1);
+  --shadow:0 .5px 1px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
+  --t0:#30d158; --t1:#ffd60a; --t2:#ff453a; --t3:#8e1b1b;
   --water:#0f1e2a; --land:#1b1e21; --green:#17261a; --sand:#2b2718;
   --rd5:#3a3f44; --rd4:#464c52; --rd3:#535a61; --rd2:#636b73; --rd1:#7c868f;
-  --rail:#7e57c2; --tram:#ec407a;
-  --shadow:0 1px 3px #0009,0 4px 14px #0006;
-  --mono:ui-monospace,"Cascadia Mono","SF Mono",Menlo,Consolas,monospace;
-  --sans:"Google Sans",Roboto,ui-sans-serif,system-ui,"Segoe UI",sans-serif;
+  --rail:#bf5af2; --tram:#ff375f;
+  --mono:"SF Mono",ui-monospace,Menlo,"Cascadia Mono",Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue","Segoe UI Variable","Segoe UI",system-ui,sans-serif;
 }
 html[data-theme="light"]{
-  --bg:#e8eaed; --panel:#ffffff; --panel2:#f1f3f4; --edge:#dadce0; --ink:#202124;
-  --muted:#5f6368; --faint:#9aa0a6; --accent:#1a73e8; --accent-ink:#ffffff;
-  --ok:#188038; --over:#b06000; --stop:#c5221f; --info:#1a73e8;
-  --ok-bg:#e6f4ea; --over-bg:#fef7e0; --stop-bg:#fce8e6;
+  --bg:#f2f2f7; --panel:#ffffff; --edge:rgba(60,60,67,.29); --ink:rgba(0,0,0,.88);
+  --muted:rgba(60,60,67,.78); --faint:rgba(60,60,67,.45); --accent:#007aff; --accent-ink:#ffffff;
+  --ok:#34c759; --over:#ff9500; --stop:#ff3b30; --info:#007aff;
+  --ok-bg:rgba(52,199,89,.14); --over-bg:rgba(255,149,0,.14); --stop-bg:rgba(255,59,48,.14);
+  --fill:rgba(120,120,128,.14);
+  --glass:rgba(244,244,246,.9);
+  --rim:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 0 .5px rgba(255,255,255,.5);
+  --shadow:0 .5px 1px rgba(0,0,0,.1),0 2px 6px rgba(0,0,0,.08);
+  --t0:#34c759; --t1:#ffcc00; --t2:#ff3b30; --t3:#8e1b1b;
   --water:#aadaff; --land:#f2efe9; --green:#cdebc4; --sand:#f5ecc8;
   --rd5:#ffffff; --rd4:#f8f8f6; --rd3:#f5efdc; --rd2:#f9e7a1; --rd1:#f6d27a;
-  --rail:#7e57c2; --tram:#d81b60;
-  --shadow:0 1px 2px #0003,0 2px 8px #0002;
+  --rail:#af52de; --tram:#ff2d55;
 }
+/* the material, once: every surface that floats over the map is this and nothing else
+   is; the hairline rim is the glass's edge catching light, the shadow separates it from
+   what scrolls beneath (WWDC25 219: regular glass, never glass on glass) */
+#top .box,.ddm,.rb,#zoom,.card,#lyrbtn,#lyrpanel,#ramp,#window,#theme{
+  background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);
+  box-shadow:var(--rim),var(--shadow)}
+@media (prefers-reduced-transparency:reduce){:root{--glass:var(--panel)}}
+/* the feel (WWDC25 219): glass "flexes and energises with light" on a press, a menu "pops open"
+   from where it was pressed, elements "materialise" rather than fade. Two curves: a spring
+   with a little overshoot for anything that pops, a settle for anything that folds or slides. */
+:root{--spring:cubic-bezier(.34,1.56,.64,1);--settle:cubic-bezier(.2,.8,.2,1);interpolate-size:allow-keywords}
+#side,.card,.ddm,#lyrpanel{will-change:transform,opacity}
+button,.lb,.ddi,.card>h2{transition:transform .2s var(--spring),background-color .15s,color .15s,filter .15s,opacity .2s}
+button:not(:disabled):active,.lb:active,.ddi:active{transform:scale(.93);filter:brightness(1.18)}
+.card>h2:hover{color:var(--ink)}
+@media (prefers-reduced-motion:reduce){*{transition-duration:0s!important;animation-duration:0s!important}}
 *{box-sizing:border-box}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13px;
-  overflow:hidden}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:13px;line-height:16px;
+  overflow:hidden;-webkit-font-smoothing:antialiased}
 #map{position:absolute;inset:0;background:var(--water)}
 #map.fallback{cursor:grab}
 #map.fallback.drag{cursor:grabbing}
@@ -50,56 +80,85 @@ canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
 /* ---- the top bar, the way a map app carries its search box: the menu button inside
    the box, the theme switch a round button at the top right ---- */
 #top{position:absolute;left:12px;top:12px;z-index:1000;display:flex;gap:8px;align-items:center;
-  width:min(440px,calc(100vw - 76px))}
-#top .box{flex:1;display:flex;align-items:center;gap:8px;background:var(--panel);
-  border-radius:999px;box-shadow:var(--shadow);padding:4px 14px 4px 4px;min-width:0;height:40px}
+  width:min(430px,calc(100vw - 76px))}   /* the cards' width: the panel less its scrollbar gutter */
+#top .box{flex:1;display:flex;align-items:center;gap:8px;
+  border-radius:999px;padding:4px 14px 4px 4px;min-width:0;height:44px}
 /* every picker is a themed menu (the native select's popup cannot be styled): the
    select element keeps the state, hidden, and .dd is what the user sees */
 .dd{position:relative;flex:1;min-width:0}
 .ddb{width:100%;display:flex;align-items:center;gap:8px;border:none;background:transparent;color:var(--ink);
-  font:500 13px/1.2 var(--mono);cursor:pointer;padding:6px 4px;text-align:left;min-width:0;border-radius:6px}
-.ddb:hover{background:var(--panel2)}
+  font:500 13px/1.2 var(--mono);cursor:pointer;padding:6px 8px;text-align:left;min-width:0;border-radius:999px}
+.ddb:hover{background:var(--fill)}
 .ddb .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ddb .c{color:var(--muted);font-size:10px;flex:none}
 /* the menu lives at the body, positioned from its button, so no panel scroll box or fade clips it */
 .ddm{display:none;position:fixed;width:max-content;max-width:min(680px,calc(100vw - 24px));
+  transform-origin:top left;transform:scale(.85);opacity:0;
+  transition:transform .28s var(--spring),opacity .18s,display .28s allow-discrete;
   max-height:min(60vh,440px);overflow-y:auto;overflow-x:hidden;
-  background:var(--panel);border-radius:10px;box-shadow:var(--shadow);padding:6px;z-index:1200;
-  scrollbar-width:thin;scrollbar-color:var(--faint) transparent}
-.ddm.open{display:block}
-.ddi{padding:8px 10px;border-radius:6px;cursor:pointer;font:500 12px/1.3 var(--mono);color:var(--muted);
+  border-radius:14px;padding:6px;z-index:1200}
+.ddm.open{display:block;transform:none;opacity:1;@starting-style{transform:scale(.85);opacity:0}}
+.ddi{padding:8px 10px;border-radius:9px;cursor:pointer;font:500 12px/1.3 var(--mono);color:var(--muted);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ddi:hover{background:var(--panel2);color:var(--ink)}
+.ddi:hover{background:var(--fill);color:var(--ink)}
 .ddi.on{color:var(--accent)}
 .ib{width:32px;height:32px;border-radius:50%;border:none;background:transparent;
   color:var(--muted);cursor:pointer;font-size:16px;display:flex;
   align-items:center;justify-content:center;flex:none}
-.ib:hover{background:var(--panel2);color:var(--ink)}
-.rb{width:40px;height:40px;border-radius:50%;border:none;background:var(--panel);color:var(--ink);
-  box-shadow:var(--shadow);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none}
-.rb:hover{background:var(--panel2)}
-#theme{position:absolute;right:12px;top:12px;z-index:1000}
+.ib:hover{background:var(--fill);color:var(--ink)}
+.rb{width:44px;height:44px;border-radius:50%;border:none;color:var(--ink);
+  cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none}
+.rb:hover{color:var(--accent)}
+/* the appearance button is one piece of glass that grows leftward into the bar of choices
+   and shrinks back to a circle (the width runs 44px -> auto under interpolate-size) */
+#theme{position:absolute;right:12px;top:12px;z-index:1000;display:flex;align-items:center;justify-content:flex-end;
+  width:44px;height:44px;border-radius:22px;overflow:hidden;transition:width .38s var(--spring)}
+#theme.open{width:auto}
+#themebtn,#themeclose{width:44px;height:44px;flex:none;border:none;background:transparent;color:var(--ink);font-size:17px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
+#themeclose{font-size:13px;color:var(--muted)}   /* the same 44 px round as the button, so the cross sits at the centre of the capsule's end */
+#themebtn:hover,#themeclose:hover{color:var(--accent)}
+#theme.open #themebtn{display:none}
+#theme .choices{display:none;align-items:center;gap:2px;padding:0 0 0 4px;opacity:0;transition:opacity .25s .1s}
+#theme.open .choices{display:flex;opacity:1;@starting-style{opacity:0}}
+#theme .ddi{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;font:500 12px/1 var(--sans);white-space:nowrap}
+#theme .ddi .g{font-size:14px;line-height:1}
+/* the simulator's night: a shade over the map alone, deepening as the sun sinks. It steps, never
+   transitions: a full-screen colour animation repaints every frame and every glass card re-blurs
+   beneath it, and the steps are half a degree of sun apart */
+#map::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--shade,transparent)}
 
-/* ---- the side panel: a thin scrollbar that appears on hover, and the content fading
-   at whichever edge has more beyond it (--ft / --fb are set by the scroll handler) ---- */
-#side{position:absolute;left:12px;top:60px;bottom:28px;width:min(440px,calc(100vw - 24px));
-  z-index:900;display:flex;flex-direction:column;gap:8px;overflow-y:auto;overscroll-behavior:contain;
-  scrollbar-width:thin;scrollbar-color:transparent transparent;padding:2px 2px 2px 0;--ft:0px;--fb:0px;
-  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%);
-  mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%)}
-#side:hover{scrollbar-color:var(--faint) transparent}
-#side.hidden{display:none}
-.card{background:var(--panel);border-radius:8px;box-shadow:var(--shadow);flex:none}
-.card>h2{margin:0;padding:10px 14px;font:500 11px/1 var(--sans);letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px;
+/* ---- the side panel: a thin scrollbar that appears on hover, and the content fading at
+   whichever edge has more beyond it. The fade is a mask on EACH CARD, laid out in the panel's
+   coordinates (--sh the panel's height, --off the card's offset, --ft / --fb the fade depth at
+   each edge, all set by the scroll handler): a mask on the panel itself would make it the
+   backdrop root, and the cards' glass would blur the panel's empty box instead of the map ---- */
+#side{position:absolute;left:12px;top:64px;bottom:28px;width:min(440px,calc(100vw - 24px));
+  z-index:900;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overscroll-behavior:contain;
+  scrollbar-gutter:stable;padding:2px 2px 2px 0}   /* the gutter is always reserved, so a card opening never narrows the rest */
+#side::-webkit-scrollbar,.ddm::-webkit-scrollbar{width:8px;background:transparent}
+#side::-webkit-scrollbar-button,.ddm::-webkit-scrollbar-button{display:none}
+#side::-webkit-scrollbar-thumb,.ddm::-webkit-scrollbar-thumb{border-radius:4px;background:transparent;border:2px solid transparent;background-clip:padding-box}
+#side:hover::-webkit-scrollbar-thumb,.ddm::-webkit-scrollbar-thumb{background-color:var(--faint)}
+@supports not selector(::-webkit-scrollbar){#side,.ddm{scrollbar-width:thin;scrollbar-color:var(--faint) transparent}}
+#side{--stretch:0px;--ft:0px;--fb:0px;transform-origin:top left;transition:transform .4s var(--spring),opacity .25s,visibility .4s}
+#side .card{transform:translateY(var(--stretch));transition:transform .4s var(--spring)}   /* the cards take the pull, not the panel or its scrollbar */
+#side.stretch .card{transition:none}   /* while the wheel holds them past an end; the spring plays when it lets go */
+#side .card{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%);
+  -webkit-mask-size:100% var(--sh,100vh);mask-size:100% var(--sh,100vh);-webkit-mask-position:0 var(--off,0px);mask-position:0 var(--off,0px);
+  -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
+#side.hidden{visibility:hidden;pointer-events:none;opacity:0;transform:translate(-32px,-28px) scale(.96)}   /* hidden by visibility, not display: the cards' layers stay warm, so it comes back without a relayout */
+.card{border-radius:16px;flex:none}
+.card>h2{margin:0;padding:11px 16px;font:600 11px/13px var(--sans);
+  color:var(--muted);display:flex;align-items:center;gap:8px;
   cursor:pointer;user-select:none}
 .card>h2 .sp{flex:1}
-.card>h2 .chev{font-size:10px;opacity:.7;transition:transform .15s}
+.card>h2 .chev{font-size:10px;opacity:.7;transition:transform .3s var(--spring)}
 .card.closed>h2 .chev{transform:rotate(-90deg)}
-.card>.body{padding:0 14px 12px}
-.card.closed>.body{display:none}
-.pill{display:inline-block;font:600 10px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;
-  padding:4px 7px;border-radius:999px;border:1px solid var(--edge);color:var(--muted)}
+.card>.body{padding:0 16px 14px;height:auto;overflow:hidden;transition:height .3s var(--settle),padding .3s var(--settle)}
+.card.closed>.body{height:0;padding-bottom:0}
+.pill{display:inline-block;font:600 11px/1 var(--sans);text-transform:capitalize;
+  padding:5px 9px;border-radius:999px;border:1px solid var(--edge);color:var(--muted)}
 .pill.running{color:var(--ok);border-color:var(--ok);background:var(--ok-bg)}
 .pill.finished{color:var(--info);border-color:var(--info)}
 .pill.stalled,.pill.failed{color:var(--stop);border-color:var(--stop);background:var(--stop-bg)}
@@ -107,7 +166,7 @@ canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
 .pill.starting{color:var(--muted)}
 .pill.result{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
 
-#runhead{padding:12px 14px 10px}
+#runhead{padding:14px 16px 12px}
 #runhead .name{font:600 15px/1.2 var(--mono);word-break:break-all}
 #runhead .ident{margin-top:6px;color:var(--muted);font:400 12px/1.5 var(--sans)}
 #runhead .ident b{color:var(--ink);font-weight:500}
@@ -116,44 +175,44 @@ canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
 #cause:empty{display:none}
 
 /* progress */
-.prog{position:relative;height:22px;border-radius:6px;background:var(--panel2);overflow:hidden}
+.prog{position:relative;height:22px;border-radius:8px;background:var(--fill);overflow:hidden}
 .prog .fill{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--accent)aa,var(--accent));
-  transition:width .4s ease;border-radius:6px 0 0 6px}
+  transition:width .4s ease;border-radius:8px 0 0 8px}
 .prog .fill.done{background:var(--ok)}
 .prog .mark{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.55}
 .prog .mark.gate{width:1px;opacity:.25}
 .prog .txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font:600 12px/1 var(--mono);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #0008}
-html[data-theme="light"] .prog .txt{text-shadow:none;color:#202124}
+  font:600 12px/1 var(--sans);font-variant-numeric:tabular-nums;text-shadow:0 1px 2px #0008}
+html[data-theme="light"] .prog .txt{text-shadow:none;color:rgba(0,0,0,.88)}
 .legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;color:var(--muted);font:400 11px/1.4 var(--sans)}
 .legend i{display:inline-block;width:2px;height:10px;background:var(--ink);opacity:.55;vertical-align:-1px;margin-right:4px}
 .kv{display:grid;grid-template-columns:1fr auto;gap:2px 12px;margin-top:8px;font:400 12px/1.6 var(--sans)}
 .kv .k{color:var(--muted)}
-.kv .v{text-align:right;font:500 12px/1.6 var(--mono);font-variant-numeric:tabular-nums}
+.kv .v{text-align:right;font:500 12px/1.6 var(--sans);font-variant-numeric:tabular-nums}
 .kv .v.dim{color:var(--muted);font-weight:400}
 .day{margin-top:10px}
-.day .bar{position:relative;height:8px;border-radius:4px;background:var(--panel2);overflow:hidden}
+.day .bar{position:relative;height:8px;border-radius:4px;background:var(--fill);overflow:hidden}
 .day .bar .fill{position:absolute;inset:0 auto 0 0;background:var(--over);border-radius:4px}
 .day .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
-.day .clock{font:600 18px/1 var(--mono);font-variant-numeric:tabular-nums}
-.day .clock small{font:600 10px/1 var(--mono);color:var(--over);margin-left:4px;vertical-align:top}
+.day .clock{font:600 18px/1 var(--sans);font-variant-numeric:tabular-nums}
+.day .clock small{font:600 10px/1 var(--sans);color:var(--over);margin-left:4px;vertical-align:top}
 .day .note{color:var(--muted);font:400 11px/1.4 var(--sans)}
 
 /* the twelve modes */
 #mhead{display:flex;gap:8px;align-items:center;margin:2px 0 6px;font:400 12px/1.5 var(--sans);color:var(--muted)}
 #mhead b{color:var(--ink);font-weight:500}
 #mhead .dd{flex:none}
-#mhead .ddb{background:var(--panel2);border:1px solid var(--edge);font:500 11px/1 var(--mono);padding:5px 8px}
+#mhead .ddb{background:var(--fill);font:500 11px/1 var(--sans);padding:6px 10px}
 #mhead .ddm{min-width:160px}
 .modes{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 .modes td,.modes th{padding:5px 0;vertical-align:middle;border-top:1px solid var(--edge)}
-.modes th{font:500 10px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);
-  text-align:right;border-top:none;padding-bottom:6px;font-weight:500}
+.modes th{font:600 11px/1 var(--sans);text-transform:capitalize;color:var(--faint);
+  text-align:right;border-top:none;padding-bottom:6px}
 .modes th.m{text-align:left}
 .modes td.m{font:500 12px/1.2 var(--sans);white-space:nowrap}
-.modes td.v,.modes td.t{text-align:right;font:500 12px/1 var(--mono);white-space:nowrap;padding-left:10px}
+.modes td.v,.modes td.t{text-align:right;font:500 12px/1 var(--sans);white-space:nowrap;padding-left:10px}
 .modes td.t{color:var(--muted);font-weight:400}
-.modes td.d{text-align:right;font:600 12px/1 var(--mono);width:64px;white-space:nowrap;padding-left:10px}
+.modes td.d{text-align:right;font:600 12px/1 var(--sans);width:64px;white-space:nowrap;padding-left:10px}
 .modes td.d.ok{color:var(--ok)} .modes td.d.over{color:var(--over)} .modes td.d.stop{color:var(--stop)}
 .modes td.d.na{color:var(--faint);font-weight:400}
 .busy{color:var(--muted);font:400 12px/1.5 var(--sans);padding:6px 0}
@@ -165,7 +224,7 @@ html[data-theme="light"] .prog .txt{text-shadow:none;color:#202124}
 .note b{color:var(--over);font-weight:500}
 
 /* live tables */
-table.kv2{width:100%;border-collapse:collapse;font:400 12px/1.6 var(--mono);font-variant-numeric:tabular-nums}
+table.kv2{width:100%;border-collapse:collapse;font:400 12px/1.6 var(--sans);font-variant-numeric:tabular-nums}
 table.kv2 td{padding:1px 0}
 table.kv2 td.k{color:var(--muted);font-family:var(--sans)}
 table.kv2 td.v{text-align:right;font-weight:600}
@@ -186,33 +245,34 @@ table.kv2 tr.warn td{color:var(--stop)}
    Layers card bottom-left that opens into the map types and the map details, the traffic
    legend a strip at the bottom centre while traffic is shown ---- */
 #ctl{position:absolute;right:12px;bottom:28px;z-index:1000;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
-#zoom{display:flex;flex-direction:column;border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
-#zoom button{width:40px;height:40px;border:none;background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
+#zoom{display:flex;flex-direction:column;border-radius:22px;overflow:hidden}
+#zoom button{width:44px;height:44px;border:none;background:transparent;color:var(--ink);font-size:20px;cursor:pointer}
 #zoom button+button{border-top:1px solid var(--edge)}
-#zoom button:hover{background:var(--panel2)}
+#zoom button:hover{color:var(--accent)}
 /* the 3D switch a map app has: tilts the view and raises the terrain and the buildings */
-#tilt{font:600 12px/1 var(--sans);letter-spacing:.02em}
+#tilt{font:600 13px/1 var(--sans)}
 #tilt.on{background:var(--accent);color:var(--accent-ink)}
 #tilt:disabled{opacity:.35;cursor:default}
 #compass{padding:0;display:flex;align-items:center;justify-content:center}
 #compass svg{width:34px;height:34px}
 #compass.hidden{display:none}
-#lyr{position:absolute;left:12px;bottom:28px;z-index:1000}
+#lyr{position:absolute;left:12px;bottom:28px;z-index:1000;transition:left .4s var(--spring)}
 #lyr.open{z-index:1002}   /* the open card sits above the legend strip */
 /* beside the panel while the panel is shown; back to the corner when it is hidden */
 #side:not(.hidden) ~ #lyr{left:calc(min(440px,calc(100vw - 24px)) + 24px)}
-#lyrbtn{display:flex;align-items:center;gap:8px;padding:4px;border:none;border-radius:10px;background:var(--panel);
-  color:var(--ink);box-shadow:var(--shadow);cursor:pointer;font:500 12px/1 var(--sans)}
-#lyrbtn .th{width:48px;height:48px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;
-  color:#fff;background:var(--panel2) center/cover no-repeat}
+#lyrbtn{display:flex;align-items:center;gap:8px;padding:4px;border:none;border-radius:14px;
+  color:var(--ink);cursor:pointer;font:500 12px/1 var(--sans)}
+#lyrbtn .th{width:48px;height:48px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;
+  color:#fff;background:var(--fill) center/cover no-repeat}
 #lyrbtn .th svg{filter:drop-shadow(0 1px 2px #000c)}
 #lyrbtn .lbl{padding-right:8px}
 #lyrbtn:hover .lbl{color:var(--accent)}
 #lyr.open #lyrbtn{display:none}
-#lyrpanel{display:none;background:var(--panel);border-radius:10px;box-shadow:var(--shadow);padding:12px;
-  width:min(320px,calc(100vw - 24px))}
-#lyr.open #lyrpanel{display:block}
-#lyrpanel h3{margin:0 0 8px;font:500 11px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+#lyrpanel{display:none;border-radius:16px;padding:14px;
+  width:min(320px,calc(100vw - 24px));transform-origin:bottom left;transform:scale(.4);opacity:0;
+  transition:transform .32s var(--spring),opacity .18s,display .32s allow-discrete}
+#lyr.open #lyrpanel{display:block;transform:none;opacity:1;@starting-style{transform:scale(.4);opacity:0}}
+#lyrpanel h3{margin:0 0 8px;font:600 11px/13px var(--sans);color:var(--muted);
   display:flex;align-items:center}
 #lyrpanel h3 .sp{flex:1}
 #lyrpanel h3 button{border:none;background:transparent;color:var(--muted);font-size:15px;cursor:pointer;padding:0 2px;line-height:1}
@@ -220,8 +280,8 @@ table.kv2 tr.warn td{color:var(--stop)}
 .bases{display:flex;gap:8px;margin-bottom:14px}
 .bases button{flex:1;border:none;background:transparent;padding:0;cursor:pointer;color:var(--muted);
   font:500 11px/1.3 var(--sans);text-align:center}
-.bases button .th{height:56px;border-radius:8px;margin-bottom:5px;border:2px solid transparent;
-  background:var(--panel2) center/cover no-repeat}
+.bases button .th{height:56px;border-radius:10px;margin-bottom:5px;border:2px solid transparent;
+  background:var(--fill) center/cover no-repeat}
 .bases button:hover{color:var(--ink)}
 .bases button.on{color:var(--accent)}
 .bases button.on .th{border-color:var(--accent)}
@@ -229,19 +289,20 @@ table.kv2 tr.warn td{color:var(--stop)}
 .lbs{display:flex;flex-wrap:wrap;gap:6px}
 .lb{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;cursor:pointer;
   user-select:none;color:var(--muted);font:400 12px/1 var(--sans);border:1px solid var(--edge)}
-.lb:hover{background:var(--panel2)}
-.lb.on{color:var(--ink);background:var(--panel2);border-color:transparent}
+.lb:hover{background:var(--fill)}
+.lb.on{color:var(--ink);background:var(--fill);border-color:transparent}
+.lb[hidden]{display:none}
 .lb .sw{width:14px;height:4px;border-radius:2px;flex:none;opacity:.35}
 .lb .sq{width:11px;height:11px;border-radius:2px;flex:none;opacity:.35}
 .lb.on .sw,.lb.on .sq{opacity:1}
-#ramp{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:1000;background:var(--panel);
-  border-radius:999px;box-shadow:var(--shadow);padding:8px 14px;font:400 11px/1 var(--sans);color:var(--muted);
+#ramp{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:1000;
+  border-radius:999px;padding:8px 14px;font:400 11px/1 var(--sans);color:var(--muted);
   display:flex;align-items:center;gap:8px;white-space:nowrap}
 #ramp.hidden{display:none}
 #ramp .bar{width:96px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--t0),var(--t1),var(--t2),var(--t3))}
 #ramp b{color:var(--ink);font-weight:500}
-#window{position:absolute;left:50%;transform:translateX(-50%);top:12px;z-index:1000;background:var(--panel);
-  border-radius:999px;box-shadow:var(--shadow);padding:7px 14px;font:500 12px/1 var(--mono);
+#window{position:absolute;left:50%;transform:translateX(-50%);top:12px;z-index:1000;
+  border-radius:999px;padding:9px 14px;font:500 12px/1 var(--mono);
   color:var(--ink);white-space:nowrap;max-width:calc(100vw - 24px);overflow:hidden;text-overflow:ellipsis}
 #window.hidden{display:none}
 #window small{color:var(--muted);font-weight:400}
@@ -249,7 +310,7 @@ table.kv2 tr.warn td{color:var(--stop)}
   padding:2rem;text-align:center;color:var(--muted);font:400 13px/1.6 var(--sans);pointer-events:none;z-index:500}
 #empty.hidden{display:none}
 @media (max-width:640px){
-  #side{top:60px;bottom:auto;max-height:55vh}
+  #side{top:64px;bottom:auto;max-height:55vh}
   #side:not(.hidden) ~ #lyr{left:12px}   /* the panel is top-anchored here, so the corner is free */
   #ramp{display:none}
   #window{top:auto;bottom:96px;left:12px;transform:none}
@@ -265,7 +326,16 @@ table.kv2 tr.warn td{color:var(--stop)}
     <select id="runsel" hidden></select>
   </div>
 </div>
-<button class="rb" id="theme" title="light / dark">&#9788;</button>
+<div id="theme">
+  <div class="choices" id="thememenu">
+    <div class="ddi" data-mode="auto"><span class="g">&#9681;</span>Auto</div>
+    <div class="ddi" data-mode="light"><span class="g">&#9788;</span>Light</div>
+    <div class="ddi" data-mode="dark"><span class="g">&#9790;</span>Dark</div>
+    <div class="ddi" data-mode="sim"><span class="g">&#9728;</span>Simulator</div>
+    <button id="themeclose" title="close">&#10005;</button>
+  </div>
+  <button id="themebtn" title="appearance">&#9788;</button>
+</div>
 
 <div id="side">
   <div class="card">
@@ -338,16 +408,15 @@ table.kv2 tr.warn td{color:var(--stop)}
   <div id="lyrpanel">
     <h3>Map type<span class="sp"></span><button id="lyrclose" title="close">&#10005;</button></h3>
     <div class="bases">
-      <button data-base="map" class="on"><div class="th" id="th_map"></div>Default</button>
+      <button data-base="core" class="on"><div class="th" id="th_core"></div>Default</button>
       <button data-base="satellite"><div class="th" id="th_satellite"></div>Satellite</button>
-      <button data-base="core"><div class="th" id="th_core"></div>Core</button>
     </div>
     <h3>Map details</h3>
     <div class="lbs">
       <div class="lb on" data-layer="traffic"><span class="sw" style="background:var(--t2)"></span>live traffic</div>
       <div class="lb on" data-layer="tram"><span class="sw" style="background:var(--tram)"></span>light rail</div>
       <div class="lb on" data-layer="rail"><span class="sw" style="background:var(--rail)"></span>heavy rail</div>
-      <div class="lb" data-layer="roads"><span class="sw" style="background:var(--rd1)"></span>roads (core)</div>
+      <div class="lb" data-layer="roads"><span class="sw" style="background:var(--rd1)"></span>roads</div>
       <div class="lb" data-layer="ground"><span class="sq" style="background:var(--green)"></span>land &amp; water</div>
     </div>
   </div>
@@ -380,9 +449,28 @@ function recall(k){ try { return localStorage.getItem(k); } catch(e){ return nul
 
 /* ---- theme ---- */
 const root = document.documentElement;
-function applyTheme(t){ root.dataset.theme = t; store('rv.theme', t); refreshPalette(); if (MAP) MAP.setBase(BASE); thumbs(); draw(); }
-$('theme').onclick = () => applyTheme(root.dataset.theme === 'light' ? 'dark' : 'light');
-root.dataset.theme = recall('rv.theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+/* the appearance is a MODE: auto (the browser's own scheme), light, dark, or the simulator,
+   which is lit by the sun over the study area at the simulated clock; every mode resolves to
+   light or dark on the root, and only that resolution repaints */
+const SCHEME = matchMedia('(prefers-color-scheme: light)');
+let THEME_MODE = ({auto:'auto', light:'light', dark:'dark', sim:'sim'})[recall('rv.theme')] || 'auto';
+const themeFor = mode => mode === 'auto' ? (SCHEME.matches ? 'light' : 'dark') : mode === 'sim' ? (SUN.el > 0 ? 'light' : 'dark') : mode;
+function applyTheme(t){
+  if (root.dataset.theme === t) return;
+  root.dataset.theme = t; refreshPalette(); if (MAP) MAP.setBase(BASE); thumbs(); draw();
+}
+function setThemeMode(mode){
+  THEME_MODE = mode; store('rv.theme', mode);
+  for (const it of document.querySelectorAll('#thememenu .ddi')) it.classList.toggle('on', it.dataset.mode === mode);
+  $('themebtn').innerHTML = document.querySelector('#thememenu .ddi.on .g').innerHTML;
+  if (mode !== 'sim'){ $('map').style.removeProperty('--shade'); SKY = null; simStep = null; if (MAP) MAP.sky(); }
+  applyTheme(themeFor(mode)); simSky(true);
+}
+SCHEME.addEventListener('change', () => { if (THEME_MODE === 'auto') applyTheme(themeFor('auto')); });
+$('themebtn').onclick = e => { e.stopPropagation(); closeMenus(); $('theme').classList.add('open'); };
+$('themeclose').onclick = e => { e.stopPropagation(); $('theme').classList.remove('open'); };
+for (const it of document.querySelectorAll('#thememenu .ddi')) it.onclick = e => { e.stopPropagation(); setThemeMode(it.dataset.mode); };
+root.dataset.theme = themeFor(THEME_MODE === 'sim' ? 'dark' : THEME_MODE);   // the simulator's first light waits for the clock
 
 /* ---- panel cards ---- */
 for (const card of document.querySelectorAll('.card[data-k]')){
@@ -394,17 +482,31 @@ for (const card of document.querySelectorAll('.card[data-k]')){
     store(key, card.classList.contains('closed') ? 'closed' : 'open');
   });
 }
-$('panel').onclick = () => { $('side').classList.toggle('hidden'); store('rv.panel', $('side').classList.contains('hidden') ? 'hidden' : 'shown'); fadeEdges(); };
+$('panel').onclick = () => { $('side').classList.toggle('hidden'); store('rv.panel', $('side').classList.contains('hidden') ? 'hidden' : 'shown'); };
 if (recall('rv.panel') === 'hidden') $('side').classList.add('hidden');
-/* the panel's content fades at an edge only while there is more beyond it */
+/* the panel's content fades at an edge only while there is more beyond it; each card's mask is
+   placed in the panel's coordinates, so the fade sits at the panel's edge whatever the card */
 function fadeEdges(){
   const s = $('side');
+  s.style.setProperty('--sh', s.clientHeight + 'px');
   s.style.setProperty('--ft', s.scrollTop > 4 ? '22px' : '0px');
   s.style.setProperty('--fb', s.scrollTop + s.clientHeight < s.scrollHeight - 4 ? '22px' : '0px');
+  for (const c of s.children) c.style.setProperty('--off', (s.scrollTop - c.offsetTop) + 'px');
 }
 $('side').addEventListener('scroll', () => { fadeEdges(); closeMenus(); }, {passive:true});
 new ResizeObserver(fadeEdges).observe($('side'));
-new MutationObserver(fadeEdges).observe($('side'), {subtree:true, childList:true, attributes:true, attributeFilter:['class', 'hidden']});
+new MutationObserver(fadeEdges).observe($('side'), {subtree:true, childList:true, attributes:true, attributeFilter:['class', 'hidden', 'style']});
+/* past either end the wheel pulls the panel a little, and it springs back the moment the wheel lets go */
+(function(){
+  const s = $('side'); let pull = 0, release = null;
+  s.addEventListener('wheel', e => {
+    const atTop = s.scrollTop <= 0 && e.deltaY < 0, atEnd = s.scrollTop + s.clientHeight >= s.scrollHeight - 1 && e.deltaY > 0;
+    if (!atTop && !atEnd) return;
+    pull = Math.max(-56, Math.min(56, pull - e.deltaY * 0.14));
+    s.classList.add('stretch'); s.style.setProperty('--stretch', pull + 'px');
+    clearTimeout(release); release = setTimeout(() => { pull = 0; s.classList.remove('stretch'); s.style.setProperty('--stretch', '0px'); }, 50);
+  }, {passive:true});
+})();
 
 /* ---- pickers: a hidden select holds the state; a button and a themed menu show it ---- */
 function closeMenus(){ for (const m of document.querySelectorAll('.ddm.open')) m.classList.remove('open'); }
@@ -450,6 +552,9 @@ window.addEventListener('resize', () => closeMenus());
 /* ---- the run being observed ---- */
 let RUN = '';                     // '' = the server's default run
 const q = k => (RUN ? '?' + k + '=' + encodeURIComponent(RUN) : '');
+/* innerHTML only when the markup differs: an unchanged rewrite still re-parses, re-lays-out
+   and wakes the panel's observer, twice a second while the mobsim sweeps */
+const setHTML = (el, h) => { if (el._h !== h){ el._h = h; el.innerHTML = h; } };
 const url = (path, extra) => path + (RUN ? '?run=' + encodeURIComponent(RUN) + (extra ? '&' + extra : '') : (extra ? '?' + extra : ''));
 
 async function loadRuns(){
@@ -477,6 +582,66 @@ function switchRun(name){
   loadNetwork().then(() => { tick(); refreshModes(); });
 }
 
+/* ---- the simulator's light: the sun's height and bearing over the study area's centre at the
+   simulated clock, on the run's own launch date (NOAA's low-precision solar position: declination,
+   equation of time, hour angle). The clock is read as the city's standard time, its zone taken
+   from the longitude (round(lon / 15) h - the nearest whole-hour zone; daylight saving is not
+   known to the package). The sky is a set of colour stops on the sun's elevation - night,
+   astronomical, nautical and civil twilight, golden hour, day - interpolated between. ---- */
+const SUN = {el: -90, az: 0};
+let SIM_DATE = null, SKY = null;
+const studyBox = () => (HS && HS.core_bbox) || (BM && BM._bbox);   // the run's own box once it has a payload, the basemap's before
+function sunAt(simS){
+  const box = studyBox(); if (!box || !SIM_DATE) return null;
+  const lat = (box[1] + box[3]) / 2 * Math.PI / 180, lon = (box[0] + box[2]) / 2;
+  const jan1 = Date.UTC(SIM_DATE.getUTCFullYear(), 0, 1), N = Math.floor((SIM_DATE.getTime() - jan1) / 86400000) + Math.floor(simS / 86400) + 1;
+  const B = 2 * Math.PI / 365 * (N - 81);
+  const eot = 9.87 * Math.sin(2 * B) - 7.53 * Math.cos(B) - 1.5 * Math.sin(B);          // minutes
+  const decl = 23.44 * Math.PI / 180 * Math.sin(B);
+  const solarH = (simS % 86400) / 3600 + (lon / 15 - Math.round(lon / 15)) + eot / 60;    // clock -> local solar time
+  const H = (solarH - 12) * 15 * Math.PI / 180;
+  const sinEl = Math.sin(lat) * Math.sin(decl) + Math.cos(lat) * Math.cos(decl) * Math.cos(H);
+  const el = Math.asin(sinEl);
+  let az = Math.acos(Math.max(-1, Math.min(1, (Math.sin(decl) - sinEl * Math.sin(lat)) / (Math.cos(el) * Math.cos(lat)))));
+  if (H > 0) az = 2 * Math.PI - az;
+  return {el: el * 180 / Math.PI, az: az * 180 / Math.PI};
+}
+/* elevation -> [sky, horizon, fog, shade colour, shade alpha]; the stops are the twilights'
+   definitions, the shade the light the map is seen in - blue night, violet dusk, orange horizon, gold */
+const SKY_STOPS = [
+  [-18, [5, 9, 20],     [13, 20, 36],    [11, 18, 32],    [5, 9, 30],      0.58],   // night
+  [-12, [10, 18, 40],   [30, 38, 70],    [22, 30, 56],    [12, 18, 60],    0.48],   // astronomical twilight
+  [-6,  [24, 40, 84],   [110, 70, 110],  [70, 60, 100],   [70, 40, 110],   0.34],   // nautical
+  [0,   [78, 110, 170], [255, 150, 90],  [230, 170, 130], [255, 120, 50],  0.24],   // civil: the sun on the horizon
+  [6,   [128, 176, 232],[255, 210, 140], [246, 220, 190], [255, 196, 100], 0.14],   // golden hour
+  [25,  [143, 188, 245],[223, 233, 243], [232, 234, 237], [255, 240, 210], 0.0],    // day
+  [90,  [110, 168, 240],[216, 232, 248], [238, 242, 246], [255, 255, 255], 0.0],    // noon
+];
+const rgb = c => 'rgb(' + c.map(Math.round).join(',') + ')';
+function skyFor(el){
+  let i = 1; while (i < SKY_STOPS.length - 1 && SKY_STOPS[i][0] < el) i++;
+  const a = SKY_STOPS[i - 1], b = SKY_STOPS[i], f = Math.max(0, Math.min(1, (el - a[0]) / (b[0] - a[0])));
+  const mix = (x, y) => x.map((v, k) => v + (y[k] - v) * f);
+  return {sky: rgb(mix(a[1], b[1])), horizon: rgb(mix(a[2], b[2])), fog: rgb(mix(a[3], b[3])), tint: mix(a[4], b[4]).map(Math.round), shade: a[5] + (b[5] - a[5]) * f};
+}
+let simMinute = null, simStep = null;
+function simSky(force){
+  if (THEME_MODE !== 'sim') return;
+  const t = animatedSimTime(); if (t === null) return;
+  const minute = Math.floor(t / 60); if (!force && minute === simMinute) return; simMinute = minute;
+  const sun = sunAt(t); if (!sun) return;
+  SUN.el = sun.el; SUN.az = sun.az;
+  // the light changes in one-degree steps of the sun: the shade over the map is a cheap DOM
+  // repaint, but the sky, the scene light and the hillshade each redraw the whole map, so they
+  // are only set while the 3D view is on, where they can be seen
+  const step = Math.round(sun.el);
+  if (force || step !== simStep){
+    simStep = step; SKY = skyFor(sun.el);
+    $('map').style.setProperty('--shade', 'rgba(' + SKY.tint.join(',') + ',' + SKY.shade.toFixed(3) + ')');
+    applyTheme(themeFor('sim'));
+    if (MAP && (THREE_D || force)) MAP.sky();
+  }
+}
 /* ---- simulated clock: one sample per simulated hour, interpolated between ---- */
 let clockSamples = [], clockIter = null, clockFrozen = null;
 function noteClock(simT, iteration, done){
@@ -498,13 +663,18 @@ function animatedSimTime(){
   if (dSim <= 0 || dWall <= 0) return last.simT;
   return last.simT + Math.min((performance.now() - last.wallT) * (dSim / dWall), dSim);
 }
+let clockShown = null;
 function paintClock(){
   const t = animatedSimTime();
   if (t !== null){
     const s = Math.max(0, Math.floor(t));
-    $('simclock').textContent = pad(Math.floor((s % 86400) / 3600)) + ':' + pad(Math.floor((s % 3600) / 60)) + ':' + pad(s % 60);
-    $('simday').textContent = s >= 86400 ? '+1d' : '';
-    $('dayfill').style.width = Math.min(100, 100 * t / (30 * 3600)).toFixed(1) + '%';
+    if (s !== clockShown){   // a frame with the same second writes nothing: a text or width write is a layout
+      clockShown = s;
+      $('simclock').textContent = pad(Math.floor((s % 86400) / 3600)) + ':' + pad(Math.floor((s % 3600) / 60)) + ':' + pad(s % 60);
+      $('simday').textContent = s >= 86400 ? '+1d' : '';
+      $('dayfill').style.width = Math.min(100, 100 * t / (30 * 3600)).toFixed(1) + '%';
+    }
+    simSky();
   }
   requestAnimationFrame(paintClock);
 }
@@ -564,7 +734,7 @@ function renderModes(d){
        + '<td class="t">' + fmtVal(t.target, basis) + '</td>'
        + '<td class="d ' + (levelOnly ? 'na' : cls) + '">' + (levelOnly ? '—' : devTxt) + '</td></tr>';
   }
-  $('modes').innerHTML = h;
+  setHTML($('modes'), h);
 }
 async function refreshModes(){
   clearTimeout(modesTimer);
@@ -606,7 +776,6 @@ function refreshPalette(){
     COL[v] = cs.getPropertyValue(v).trim();
 }
 const css = v => COL[v] || '#333';
-function b64f32(s){ const bin = atob(s), n = bin.length, u = new Uint8Array(n); for (let i=0;i<n;i++) u[i] = bin.charCodeAt(i); return new Float32Array(u.buffer); }
 function b64u16(s){ const bin = atob(s), n = bin.length, u = new Uint8Array(n); for (let i=0;i<n;i++) u[i] = bin.charCodeAt(i); return new Uint16Array(u.buffer); }
 function b64u32(s){ const bin = atob(s), n = bin.length, u = new Uint8Array(n); for (let i=0;i<n;i++) u[i] = bin.charCodeAt(i); return new Uint32Array(u.buffer); }
 const TILE = 256;
@@ -619,26 +788,37 @@ function toMerc(coords){          // Float32 lon/lat pairs -> Float64 merc pairs
 }
 
 let NET = null, HS = null, BM = null, lastHotspotKey = null, fitted = false, prefit = false;
-let MAP = null, BASE = ({map:'map', satellite:'satellite', core:'core', hybrid:'satellite', twin:'core'})[recall('rv.base')] || 'map';
+let MAP = null, BASE = ({map:'core', satellite:'satellite', core:'core', hybrid:'satellite', twin:'core'})[recall('rv.base')] || 'core';
 let THREE_D = recall('rv.3d') === 'on';
 let dpr = window.devicePixelRatio || 1;
 
 async function loadNetwork(){
+  if (MAP){ NET = null; return; }   // the GL host reads the window's links by URL; only the offline host draws from the network
   try {
-    const d = await (await fetch(url('network.json'))).json();
-    if (!d.available){ NET = null; return; }
-    const ll = b64f32(d.coords);
-    NET = {stamp: d.stamp, n: d.n_links, ll, xy: toMerc(ll)};
+    // Float32 lon/lat pairs straight off the wire: 6 MB read into a typed array, against
+    // 8 MB of JSON to parse and base64 to decode; the offline host's Mercator projection
+    // is done on first use, since the GL host never needs it
+    const r = await fetch(url('network.bin'));
+    if (!r.ok){ NET = null; return; }
+    const ll = new Float32Array(await r.arrayBuffer());
+    NET = {stamp: parseFloat(r.headers.get('X-Network-Stamp')), n: parseInt(r.headers.get('X-Links'), 10), ll, get xy(){ return this._xy || (this._xy = toMerc(this.ll)); }};
   } catch(e){ NET = null; }
 }
 async function loadBasemap(){
   try {
-    const d = await (await fetch('basemap.json')).json();
-    if (!d.available) return;
+    // one binary body: a uint32 header length, the header JSON, then each layer's uint32
+    // vertex counts and Float32 lon/lat pairs - typed arrays over the buffer, nothing decoded
+    const r = await fetch('basemap.bin');
+    if (!r.ok) return;
+    const buf = await r.arrayBuffer(), hlen = new DataView(buf).getUint32(0, true);
+    const d = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, hlen)));
+    let off = 4 + hlen;
     BM = {};
     for (const k in d.layers){
       const L_ = d.layers[k];
-      const ll = b64f32(L_.coords), counts = b64u32(L_.counts), xy = toMerc(ll);
+      const counts = new Uint32Array(buf, off, L_.polylines); off += L_.polylines * 4;
+      const ll = new Float32Array(buf, off, L_.coords); off += L_.coords * 4;
+      const xy = toMerc(ll);
       // one bounding box per polyline, so a frame strokes only what it can show
       const bbox = new Float64Array(counts.length * 4);
       let v = 0;
@@ -666,14 +846,20 @@ async function refreshHotspot(key){
   if (key === lastHotspotKey) return;
   lastHotspotKey = key;
   try {
-    const h = await (await fetch(url('hotspot.json'))).json();
+    const h = await (await fetch(url('hotspot.json', MAP ? 'meta=1' : ''))).json();
     if (!h.available){
       HS = h; $('empty').classList.remove('hidden'); $('empty').textContent = h.reason || 'no congestion payload yet';
       $('window').classList.add('hidden'); draw(); return;
     }
-    if (!NET || NET.stamp !== h.stamp) await loadNetwork();
-    h._idx = b64u32(h.index); h._vol = b64u16(h.volume); h._del = b64u16(h.delay);
-    groupLinks(h);
+    if (MAP){
+      // the GL host's worker fetches and parses the window's links itself; the page never
+      // holds a feature. The links stamp busts the worker's cache, once per window.
+      h._url = new URL(url('traffic.geojson', 'stamp=' + encodeURIComponent(key)), location.href).href;
+    } else {
+      if (!NET || NET.stamp !== h.stamp) await loadNetwork();
+      h._idx = b64u32(h.index); h._vol = b64u16(h.volume); h._del = b64u16(h.delay);
+      groupLinks(h);
+    }
     HS = h;
     legend();
     $('empty').classList.add('hidden');
@@ -707,7 +893,7 @@ function groupLinks(h){
 /* the frame: k = pixels per merc unit, (ox, oy) = canvas origin in merc pixels (offline host) */
 function frame(){ return FB.frame(); }
 function mppAt(k){ // metres per pixel at the study latitude: the run's box, else the basemap's, else the equator
-  const box = (HS && HS.core_bbox) || (BM && BM._bbox);
+  const box = studyBox();
   const lat = box ? (box[1] + box[3]) / 2 : 0;
   return 40075016.686 * Math.cos(lat * Math.PI / 180) / (TILE * k);
 }
@@ -806,12 +992,11 @@ function fitTo(box){ if (!box) return; if (MAP) MAP.fit(box); else FB.fit(box); 
    building footprints extruded to their tagged heights; the core base stays flat. ---- */
 function glHost(){
   const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/';
-  const CANVAS_ATTR = 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ';
   const EMPTY = {type:'FeatureCollection', features:[]};
   const dark = () => root.dataset.theme !== 'light';
   const map = new maplibregl.Map({
     container:'map', style:{version:8, projection:{type:'globe'}, sources:{}, layers:[]},   // the earth when zoomed out, the flat map from about zoom 12
-    center:[0, 0], zoom:1, minZoom:0.6, maxZoom:20, maxPitch:75,
+    center:[0, 0], zoom:1, minZoom:0.6, maxZoom:20, maxPitch:85,
     dragRotate:false, pitchWithRotate:false, boxZoom:false,
     attributionControl:{compact:false}, fadeDuration:180, maplibreLogo:false,
   });
@@ -824,21 +1009,32 @@ function glHost(){
      ctrl+shift+U levels, ctrl+shift+F does both. */
   (function(){
     const el = map.getContainer();
-    let drag = null;
+    let drag = null, held = null;   // held: the pointer while the left button is down, so a modifier pressed or released mid-drag switches mode from there
+    const turning = e => e.ctrlKey || e.shiftKey || e.metaKey;
+    const startTurn = () => { drag = {x:held.x, y:held.y, b:map.getBearing(), p:map.getPitch()}; el.style.cursor = 'grabbing'; };
     el.addEventListener('contextmenu', e => e.preventDefault());
     el.addEventListener('mousedown', e => {
       if (e.button === 2){ e.stopPropagation(); e.preventDefault(); return; }
-      if (e.button === 0 && (e.ctrlKey || e.shiftKey || e.metaKey)){
-        e.stopPropagation(); e.preventDefault();
-        drag = {x:e.clientX, y:e.clientY, b:map.getBearing(), p:map.getPitch()};
-        el.style.cursor = 'grabbing';
-      }
+      if (e.button !== 0) return;
+      held = {x:e.clientX, y:e.clientY};
+      if (turning(e)){ e.stopPropagation(); e.preventDefault(); startTurn(); }
     }, true);
     window.addEventListener('mousemove', e => {
+      if (held){ held.x = e.clientX; held.y = e.clientY; }
       if (!drag) return;
       map.jumpTo({bearing: drag.b + (e.clientX - drag.x) * 0.4, pitch: Math.max(0, Math.min(map.getMaxPitch(), drag.p - (e.clientY - drag.y) * 0.4))});
     });
-    window.addEventListener('mouseup', () => { if (drag){ drag = null; el.style.cursor = ''; } });
+    window.addEventListener('mouseup', () => { held = null; if (drag){ drag = null; el.style.cursor = ''; } });
+    /* a modifier pressed while panning takes the drag over into turning from where the pointer
+       is (the library's pan is reset, not finished, so it leaves no glide); released again with
+       the button still down, the drag goes back to panning by a synthetic press at the pointer */
+    const modifier = e => /^(Control|Shift|Meta)$/.test(e.key);
+    document.addEventListener('keydown', e => { if (held && !drag && modifier(e)){ map.dragPan.disable(); map.dragPan.enable(); startTurn(); } });
+    document.addEventListener('keyup', e => {
+      if (!(held && drag && modifier(e) && !turning(e))) return;
+      drag = null; el.style.cursor = '';
+      map.getCanvas().dispatchEvent(new MouseEvent('mousedown', {bubbles:true, button:0, buttons:1, clientX:held.x, clientY:held.y}));
+    });
     document.addEventListener('keydown', e => {
       if (!(e.ctrlKey && e.shiftKey) || /input|select|textarea/i.test(e.target.tagName)) return;
       const k = e.key.toUpperCase();
@@ -875,13 +1071,6 @@ function glHost(){
 
   const raster = (svc, attribution, maxzoom) => ({type:'raster', tiles:[ESRI + svc + '/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom: maxzoom || 19, attribution});
   const rasterLayer = (id, before) => map.addLayer({id, type:'raster', source:id, layout:{visibility:'none'}, paint:{'raster-fade-duration':180}}, before);
-  function addStreets(before){
-    // Esri's Canvas set is drawn for data on top of it: a gray base with no labels, and the
-    // labels as their own "Reference" tiles; native to zoom 16, upsampled past it
-    const gray = 'Canvas/World_' + (dark() ? 'Dark' : 'Light') + '_Gray_';
-    map.addSource('streets', raster(gray + 'Base', CANVAS_ATTR, 16)); rasterLayer('streets', before);
-    map.addSource('street-labels', raster(gray + 'Reference', CANVAS_ATTR, 16)); rasterLayer('street-labels');
-  }
   const FILL = {coast:'--land', green:'--green', sand:'--sand', water:'--water'};
   const rampExpr = () => ['interpolate', ['linear'], ['get', 'd'], 0, 'rgb(67,160,71)', 1/3, 'rgb(255,179,0)', 2/3, 'rgb(229,57,53)', 1, 'rgb(142,27,27)'];
   function build(){
@@ -889,7 +1078,6 @@ function glHost(){
     // the stack a map app draws: a base without labels, the run's layers, then the labels
     // alone on top, so a place name is never buried under the traffic
     map.addSource('imagery', raster('World_Imagery', 'Imagery &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community')); rasterLayer('imagery');
-    addStreets();
     for (const k of ['coast', 'green', 'sand', 'water']){
       map.addSource('bm-' + k, {type:'geojson', data:EMPTY, maxzoom:13, tolerance:0.6});
       map.addLayer({id:'bm-' + k, type:'fill', source:'bm-' + k, paint:{'fill-color': css(FILL[k]), 'fill-antialias': false}});
@@ -909,16 +1097,26 @@ function glHost(){
                          'line-width': ['interpolate', ['linear'], ['zoom'], 9, ['+', 0.8, ['*', 2.5, ['get', 'v']]], 15, ['+', 1.6, ['*', 6, ['get', 'v']]]]}});
     map.addSource('dem', {type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding:'terrarium', tileSize:256, maxzoom:14,
                           attribution:'Terrain: Mapzen Terrain Tiles (AWS Open Data)'});
-    map.addLayer({id:'dem-warm', type:'hillshade', source:'dem', paint:{'hillshade-exaggeration':0}}, 'bm-coast');
-    map.addSource('buildings', {type:'vector', url:'https://tiles.openfreemap.org/planet', attribution:'Buildings: <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data &copy; OpenStreetMap contributors'});
-    map.addLayer({id:'buildings', type:'fill-extrusion', source:'buildings', 'source-layer':'building', minzoom:13, layout:{visibility:'none'},
-                  paint:{'fill-extrusion-color': dark() ? '#3c4148' : '#dcdcd8', 'fill-extrusion-opacity':0.9,
-                         'fill-extrusion-height':['coalesce', ['get', 'render_height'], 5], 'fill-extrusion-base':['coalesce', ['get', 'render_min_height'], 0]}});
+    // hidden until 3D: a visible hillshade, even at zero exaggeration, has every elevation
+    // tile in view fetched and decoded on every pan and zoom (85 at the first view alone)
+    map.addLayer({id:'dem-warm', type:'hillshade', source:'dem', layout:{visibility:'none'}, paint:{'hillshade-exaggeration':0}}, 'bm-coast');
+    // the buildings are Overture's (OSM, Microsoft and Google footprints merged; ODbL), read as
+    // PMTiles straight from its public bucket with no key: on 15 September 2026 a z15 suburb view
+    // of this city held 5,791 of them against 5 in OpenFreeMap's OSM-only set, the centre 5,764
+    // against 56. A height is Overture's where it has one, else three metres a storey, else 5 m.
+    // Without the pmtiles script (offline) there is no buildings layer, and every use of it is guarded.
+    if (window.pmtiles){
+      maplibregl.addProtocol('pmtiles', new pmtiles.Protocol().tile);
+      map.addSource('buildings', {type:'vector', url:'pmtiles://https://overturemaps-extras-us-west-2.s3.amazonaws.com/tiles/2026-08-19.0/buildings.pmtiles',
+                                  attribution:'Buildings: <a href="https://overturemaps.org">Overture Maps Foundation</a> (ODbL)'});
+      map.addLayer({id:'buildings', type:'fill-extrusion', source:'buildings', 'source-layer':'building', minzoom:13, layout:{visibility:'none'},
+                    paint:{'fill-extrusion-color': dark() ? '#3c4148' : '#dcdcd8', 'fill-extrusion-opacity':0.9,
+                           'fill-extrusion-height':['coalesce', ['get', 'height'], ['case', ['has', 'level'], ['*', ['get', 'level'], 3], 5]],
+                           'fill-extrusion-base':['coalesce', ['get', 'min_height'], 0]}});
+    }
     map.addSource('places', raster('Reference/World_Boundaries_and_Places', 'Labels &copy; Esri')); rasterLayer('places');
-    // street labels were added above imagery; move them to the top so they cap the stack too
-    map.moveLayer('street-labels');
     if (BM) setBasemap(BM);
-    if (HS && HS.available && NET) setTraffic(HS);
+    if (HS && HS.available && HS._url) setTraffic(HS);
     applyVisibility();
     setBase(BASE, true);
     if (THREE_D) set3D(true);
@@ -967,14 +1165,7 @@ function glHost(){
     if (h === trafficStamp) return;
     trafficStamp = h;
     if (h.core_bbox) setLat((h.core_bbox[1] + h.core_bbox[3]) / 2);
-    const ll = NET.ll, idx = h._idx, del = h._del, vol = h._vol, vmax = Math.max(1, h.volume_max), n = idx.length;
-    const feats = new Array(n);
-    for (let i = 0; i < n; i++){
-      const li = idx[i] * 4;
-      feats[i] = {type:'Feature', properties:{d: Math.round(del[i] / 65535 * 100) / 100, v: Math.round(Math.sqrt(vol[i] / vmax) * 100) / 100},
-                  geometry:{type:'LineString', coordinates:[[ll[li], ll[li+1]], [ll[li+2], ll[li+3]]]}};
-    }
-    map.getSource('traffic').setData({type:'FeatureCollection', features:feats});
+    map.getSource('traffic').setData(h._url);   // the worker fetches and parses it; nothing crosses the main thread
   }
   const vis = (id, on) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); };
   function applyVisibility(){
@@ -983,7 +1174,7 @@ function glHost(){
     for (const k of ['coast', 'green', 'sand', 'water']) vis('bm-' + k, ground);
     const chip = document.querySelector('#lyrpanel .lb[data-layer="ground"]');
     chip.classList.toggle('on', BASE === 'satellite' ? false : SHOW.ground);
-    chip.style.opacity = BASE === 'satellite' ? '.4' : '';
+    chip.hidden = BASE === 'satellite';
     for (const spec of ROAD_ORDER) vis('rd-' + spec[0], twin || SHOW.roads);
     vis('bm-rail', SHOW.rail); vis('bm-tram', SHOW.tram);
     vis('traffic', SHOW.traffic && !!(HS && HS.available));
@@ -994,23 +1185,19 @@ function glHost(){
     for (const spec of ROAD_ORDER) map.setPaintProperty('rd-' + spec[0], 'line-color', css(spec[1]));
     map.setPaintProperty('bm-rail', 'line-color', css('--rail'));
     map.setPaintProperty('bm-tram', 'line-color', css('--tram'));
-    map.setPaintProperty('buildings', 'fill-extrusion-color', BASE === 'satellite' ? '#b8bcc2' : (dark() ? '#3c4148' : '#dcdcd8'));
-    map.setPaintProperty('buildings', 'fill-extrusion-opacity', BASE === 'satellite' ? 0.8 : 0.9);
+    if (map.getLayer('buildings')){
+      map.setPaintProperty('buildings', 'fill-extrusion-color', BASE === 'satellite' ? '#b8bcc2' : (dark() ? '#3c4148' : '#dcdcd8'));
+      map.setPaintProperty('buildings', 'fill-extrusion-opacity', BASE === 'satellite' ? 0.8 : 0.9);
+    }
     sky();
   }
   /* the base: the new tiles are shown at once and the old ones stay underneath until the
      map is idle (every visible tile loaded), so a switch never shows bare ground */
-  const BASES = {map:['streets', 'street-labels'], satellite:['imagery', 'places'], core:[]};
-  let baseTheme = null, holdTimer = null;
+  const BASES = {satellite:['imagery', 'places'], core:[]};
+  let holdTimer = null;
   function setBase(name, first){
     if (!ready){ return; }
-    const theme = dark() ? 'dark' : 'light';
-    if (baseTheme !== null && baseTheme !== theme){       // the gray canvas has a tile set per theme
-      for (const id of ['streets', 'street-labels']){ if (map.getLayer(id)) map.removeLayer(id); if (map.getSource(id)) map.removeSource(id); }
-      addStreets('bm-coast'); map.moveLayer('street-labels');
-    }
-    baseTheme = theme;
-    const want = BASES[name] || BASES.map, old = [];
+    const want = BASES[name] || BASES.core, old = [];
     for (const k in BASES) for (const id of BASES[k]) if (want.indexOf(id) < 0 && map.getLayer(id) && map.getLayoutProperty(id, 'visibility') === 'visible') old.push(id);
     for (const id of want) vis(id, true);
     const retire = () => { clearTimeout(holdTimer); for (const id of old) vis(id, false); };
@@ -1023,8 +1210,21 @@ function glHost(){
   }
   /* 3D: the terrain under every draped layer, the buildings extruded, the view tilted */
   function sky(){
-    map.setSky(dark() ? {'sky-color':'#0b1220', 'horizon-color':'#1c2a3a', 'fog-color':'#202124', 'fog-ground-blend':0.6, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]}
-                        : {'sky-color':'#8fbcf5', 'horizon-color':'#dfe9f3', 'fog-color':'#e8eaed', 'fog-ground-blend':0.6, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]});
+    const c = SKY || (dark() ? {sky:'#0b1220', horizon:'#1c2a3a', fog:'#202124'} : {sky:'#8fbcf5', horizon:'#dfe9f3', fog:'#e8eaed'});
+    map.setSky({'sky-color':c.sky, 'horizon-color':c.horizon, 'fog-color':c.fog, 'fog-ground-blend':0.6, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]});
+    // the simulator's sun is the scene's light: its bearing and height (polar 0 = overhead, 90 = the
+    // horizon) light the buildings' faces and the terrain, in the horizon's colour, dimming as it sets;
+    // the library's own default light otherwise
+    if (SKY){
+      const polar = Math.max(0, Math.min(90, 90 - SUN.el)), up = Math.max(0, Math.min(1, (SUN.el + 6) / 12));
+      map.setLight({anchor:'map', position:[1.15, SUN.az, polar], color:c.horizon, intensity:0.2 + 0.5 * up});
+      map.setPaintProperty('dem-warm', 'hillshade-illumination-anchor', 'map');
+      map.setPaintProperty('dem-warm', 'hillshade-illumination-direction', Math.round(SUN.az));
+      map.setPaintProperty('dem-warm', 'hillshade-exaggeration', 0.35 * up);
+    } else {
+      map.setLight({anchor:'viewport', position:[1.15, 210, 30], color:'#ffffff', intensity:0.5});
+      map.setPaintProperty('dem-warm', 'hillshade-exaggeration', 0);
+    }
   }
   function set3D(on, keep){
     THREE_D = on;
@@ -1034,10 +1234,10 @@ function glHost(){
       if (on){
         if (map.getPitch() < 30) map.easeTo({pitch:60, duration:900});   // the tilt starts at once
         map.setTerrain({source:'dem', exaggeration:1.0});
-        vis('buildings', true); sky();
+        vis('buildings', true); vis('dem-warm', true); sky();
       } else {
         if (map.getTerrain()) map.setTerrain(null);
-        vis('buildings', false);
+        vis('buildings', false); vis('dem-warm', false);
         map.easeTo({pitch:0, bearing:0, duration:700});
       }
     });
@@ -1048,18 +1248,19 @@ function glHost(){
     $('compass').querySelector('svg').style.transform = 'rotate(' + (-b) + 'deg)';
   }
   map.on('rotate', compass); map.on('pitch', compass);
-  /* the tilt a map app allows depends on the zoom: the full 75 degrees over a city, easing to
-     face-on by the time a country fills the view, so a zoom out from a tilted street lands on
-     a globe that faces the viewer. Set on the transform, never through the camera, so a wheel
-     or an easing in flight is clamped rather than stopped. */
-  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 5) * 75 / 7));   // 0 at zoom 5, 75 from zoom 12
+  /* the tilt a map app allows depends on the zoom: the full 75 degrees over a city, flatter
+     still down at street level, easing to face-on by the time a country fills the view, so a
+     zoom out from a tilted street lands on a globe that faces the viewer. Set on the transform,
+     never through the camera, so a wheel or an easing in flight is clamped rather than stopped. */
+  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 5) * 75 / 7)) + Math.min(10, Math.max(0, (z - 12) * 2.5));   // 0 at zoom 5, 75 at zoom 12, 85 from zoom 16
   map.on('zoom', () => { map.transform.setMaxPitch(maxPitchAt(map.getZoom())); compass(); });
   const host = {
     map,
-    refresh(){ when(() => { if (BM) setBasemap(BM); if (HS && HS.available && NET) setTraffic(HS); applyVisibility(); }); },
+    refresh(){ when(() => { if (BM) setBasemap(BM); if (HS && HS.available && HS._url) setTraffic(HS); applyVisibility(); }); },
     fit(box){ when(() => map.fitBounds([[box[0], box[1]], [box[2], box[3]]], {padding:20, animate:false})); },
     setBase(name){ when(() => setBase(name)); },
     toggle3D(){ if (!$('tilt').disabled) set3D(!THREE_D); },
+    sky(){ when(sky); },
     north(){ map.easeTo({bearing:0, pitch:0, duration:500}); },
     zoomIn(){ map.zoomIn(); }, zoomOut(){ map.zoomOut(); },
   };
@@ -1115,27 +1316,26 @@ function setBase(name){
   thumbs();
 }
 for (const b of document.querySelectorAll('.bases button')) b.onclick = () => setBase(b.dataset.base);
-/* the map-type thumbnails are the map itself: the street and imagery tiles that cover the
-   study area's centre, and the core drawn from the package into a small canvas. They resolve
-   from the run's own core bbox, so nothing here names a place. */
+/* the map-type thumbnails are the map itself: the imagery tile that covers the study area's
+   centre, and the package drawn into a small canvas. They resolve from the run's own core
+   bbox, or the basemap's before a payload arrives, so nothing here names a place. */
 const THUMB = {};
 function tileFor(lon, lat, z){
   const n = Math.pow(2, z), r = lat * Math.PI / 180;
   return [z, Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)];
 }
 function thumbs(){
-  if (HS && HS.core_bbox){
-    const [z, x, y] = tileFor((HS.core_bbox[0] + HS.core_bbox[2]) / 2, (HS.core_bbox[1] + HS.core_bbox[3]) / 2, 11);
+  const box = studyBox();
+  if (box){
+    const [z, x, y] = tileFor((box[0] + box[2]) / 2, (box[1] + box[3]) / 2, 11);
     const E = 'https://server.arcgisonline.com/ArcGIS/rest/services/', T = '/MapServer/tile/' + z + '/' + y + '/' + x;
-    const gray = 'Canvas/World_' + (root.dataset.theme === 'light' ? 'Light' : 'Dark') + '_Gray_';
-    THUMB.map = 'url("' + E + gray + 'Reference' + T + '"), url("' + E + gray + 'Base' + T + '")';   // labels over base
     THUMB.satellite = 'url("' + E + 'World_Imagery' + T + '")';
   }
-  if (HS && HS.core_bbox && BM && THUMB.coreTheme !== root.dataset.theme){   // redrawn in the palette of the current theme
+  if (box && BM && THUMB.coreTheme !== root.dataset.theme){   // redrawn in the palette of the current theme
     THUMB.coreTheme = root.dataset.theme;
     const c = document.createElement('canvas'); c.width = 160; c.height = 112;
     const gx = c.getContext('2d');
-    const x0 = mercX(HS.core_bbox[0]), x1 = mercX(HS.core_bbox[2]), y0 = mercY(HS.core_bbox[3]), y1 = mercY(HS.core_bbox[1]);
+    const x0 = mercX(box[0]), x1 = mercX(box[2]), y0 = mercY(box[3]), y1 = mercY(box[1]);
     const k = Math.min(c.width / (x1 - x0), c.height / (y1 - y0));
     const f = {k, ox: (x0 + x1) / 2 * k - c.width / 2, oy: (y0 + y1) / 2 * k - c.height / 2};
     gx.fillStyle = css('--water'); gx.fillRect(0, 0, c.width, c.height);
@@ -1145,7 +1345,7 @@ function thumbs(){
     for (const spec of ROAD_ORDER.slice(3)){ if (!BM[spec[0]]) continue; gx.strokeStyle = css(spec[1]); strokeLayer(gx, BM[spec[0]], f, 1, c.width, c.height); gx.stroke(); }
     THUMB.core = 'url("' + c.toDataURL() + '")';
   }
-  for (const k of ['map', 'satellite', 'core']) if (THUMB[k]) $('th_' + k).style.backgroundImage = THUMB[k];
+  for (const k of ['satellite', 'core']) if (THUMB[k]) $('th_' + k).style.backgroundImage = THUMB[k];
   $('lyrbtn').querySelector('.th').style.backgroundImage = THUMB[BASE] || '';
 }
 $('zin').onclick = () => (MAP || FB).zoomIn();
@@ -1194,6 +1394,7 @@ async function tick(){
   catch(e){ $('state').textContent = 'no server'; $('state').className = 'pill failed'; schedule(POLL_MS); return; }
 
   $('name').textContent = d.name;
+  SIM_DATE = d.started ? new Date(d.started) : new Date();
   $('state').textContent = d.state.replace(/_/g, ' ');
   $('state').className = 'pill ' + d.state;
   $('resultpill').hidden = !(d.completion === 'ran_to_last_iteration' && d.target >= d.horizon_floor);
@@ -1201,12 +1402,12 @@ async function tick(){
   $('family').textContent = d.family ? d.family.split('-')[0] : '';
   $('family').title = d.family || '';
   const frac = d.fraction === null ? '—' : (d.fraction * 100).toFixed(0) + ' %';
-  $('ident').innerHTML = '<b>' + (d.scenario || '?') + '</b> × <b>' + (d.day || '?') + '</b> · <b>' + frac + '</b> sample'
+  setHTML($('ident'), '<b>' + (d.scenario || '?') + '</b> × <b>' + (d.day || '?') + '</b> · <b>' + frac + '</b> sample'
     + (d.persons_kept ? ' (' + num(d.persons_kept) + ' agents)' : '') + ' · seed <b>' + (d.seed || '?') + '</b> · <b>' + (d.threads || '?') + '</b> threads'
-    + (d.xmx ? ' · heap <b>' + d.xmx + '</b>' : '') + (d.started ? '<br>launched ' + d.started.replace('T', ' ') : '') + (d.ended ? ' · ended ' + d.ended.replace('T', ' ') : '');
+    + (d.xmx ? ' · heap <b>' + d.xmx + '</b>' : '') + (d.started ? '<br>launched ' + d.started.replace('T', ' ') : '') + (d.ended ? ' · ended ' + d.ended.replace('T', ' ') : ''));
   $('cause').textContent = (d.state === 'failed' || (d.state || '').startsWith('stopped')) && d.cause ? d.cause : '';
-  $('fracwarn').innerHTML = (d.fraction !== null && d.fraction <= 0.01)
-    ? ' <b>At 1 %</b> MATSim floors link storage at one vehicle, so this run produces spurious spillback. Never compare it against another sample fraction.' : '';
+  setHTML($('fracwarn'), (d.fraction !== null && d.fraction <= 0.01)
+    ? ' <b>At 1 %</b> MATSim floors link storage at one vehicle, so this run produces spurious spillback. Never compare it against another sample fraction.' : '');
 
   const cur = d.iteration, tgt = d.target;
   const fill = $('fill');
@@ -1225,7 +1426,7 @@ async function tick(){
       const next = Math.floor(cur / d.gate_interval + 1) * d.gate_interval;
       legend += '<span>gate every ' + d.gate_interval + (d.state === 'running' && next <= tgt ? ' · next at ' + next : '') + '</span>';
     } else legend += '<span>gate watcher off</span>';
-    $('marks').innerHTML = marks; $('proglegend').innerHTML = legend;
+    setHTML($('marks'), marks); setHTML($('proglegend'), legend);
   } else {
     $('bartxt').textContent = (cur === null ? '—' : cur) + ' / ' + (tgt || '—');
   }
@@ -1238,7 +1439,7 @@ async function tick(){
   if (!d.telemetry){
     $('simclock').textContent = 'n/a'; $('simday').textContent = '';
     $('simnote').textContent = 'no telemetry in this run';
-    $('modes_live').innerHTML = '<tr><td class="k">no telemetry in this run</td></tr>';
+    setHTML($('modes_live'), '<tr><td class="k">no telemetry in this run</td></tr>');
   } else if (live){
     noteClock(live.sim_time_s, d.iteration, live.mobsim_done);
     $('simnote').textContent = (d.state === 'running' || d.state === 'starting')
@@ -1259,8 +1460,8 @@ async function tick(){
   if (dr && Object.keys(dr).length){
     let h = '';
     for (const k of Object.keys(dr).sort()){ const v = dr[k]; h += '<tr' + (tol != null && Math.abs(v) > tol ? ' class="warn"' : '') + '><td class="k">' + k + '</td><td class="v">' + (v > 0 ? '+' : '') + v.toFixed(2) + ' pp</td></tr>'; }
-    $('drift').innerHTML = h;
-  } else $('drift').innerHTML = '<tr><td class="k">—</td></tr>';
+    setHTML($('drift'), h);
+  } else setHTML($('drift'), '<tr><td class="k">—</td></tr>');
 
   if (d.links_stamp) refreshHotspot(d.links_stamp);
   // a new iteration may have written a new trips table, or the watcher a new reading
@@ -1272,16 +1473,17 @@ async function tick(){
   schedule(sweeping ? FAST_MS : POLL_MS);
 }
 function rowsInto(el, obj, warn){
-  if (!obj){ el.innerHTML = '<tr><td class="k">—</td></tr>'; return; }
+  if (!obj){ setHTML(el, '<tr><td class="k">—</td></tr>'); return; }
   const keys = Object.keys(obj).filter(k => k !== 'total').sort();
   let h = '';
   for (const k of keys) h += '<tr' + (warn && obj[k] > 0 ? ' class="warn"' : '') + '><td class="k">' + k + '</td><td class="v">' + num(obj[k]) + '</td></tr>';
   if ('total' in obj) h += '<tr class="tot"><td class="k">total</td><td class="v">' + num(obj.total) + '</td></tr>';
-  el.innerHTML = h || '<tr><td class="k">—</td></tr>';
+  setHTML(el, h || '<tr><td class="k">—</td></tr>');
 }
 
 /* ---- start ---- */
 refreshPalette();
+setThemeMode(THEME_MODE);
 if (window.maplibregl && !window.__noMap){
   try { MAP = glHost(); } catch(e){ MAP = null; console.warn('no WebGL map: ' + e); }
 }

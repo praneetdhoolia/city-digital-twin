@@ -2,13 +2,13 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (fiftieth session) · **Record read through:** §9.173 · **Written against family:** `F35`
+**Updated:** 15 September 2026 (fifty-first session) · **Record read through:** §9.174 · **Written against family:** `F35`
 
 ## What is built
 
 - **The reader reads a run through its own schedule**: `extract_metrics.schedule_path` takes `output/output_transitSchedule.xml.gz` first, `SCHEDULE_SOURCE` recorded; the city copy the F34 rebuild overwrote had printed heavy rail **0 / −100.0 %** on F32 (§9.169).
-- **Reader fixes** (§9.169): freight_train = scheduled + the run's own `_config.json` freight closures; `iteration_reading.innovation_off_after` shared by `summarise_run` and `run_view`; a boardings reading with no sample fraction refused; `_CACHE` bounded to `CACHE_TABLES` = 6. Unit suite **469**.
-- **The eighth report's #180–#192 are fixed or await a run** (§9.167): `check_hardcoding` category 9 gates inline literals (124 → 0, #188); `session_gate` checks the import roots (#181); all 99 modules are imported by a test (#190); `build_fit_figures --check` refuses a drifted C5 objective.
+- **Reader fixes** (§9.169): freight_train = scheduled + the run's own freight closures; `innovation_off_after` shared by `summarise_run` and `run_view`; a boardings reading with no sample fraction refused; `_CACHE` bounded to 6.
+- **The eighth report's #180–#192 are fixed or await a run** (§9.167): `check_hardcoding` category 9 gates inline literals (124 → 0, #188); `session_gate` checks the import roots (#181); every module is imported by a test (#190).
 - **The main ruleset requires the nine test jobs as status checks** (§9.172, #202; ruleset 21121872, the user's decision D3): a red run is no longer mergeable.
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
 - **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169).
@@ -16,8 +16,8 @@
 - **The objective measures the goal**: `CAL.objective.components` = `{"goal_modes.max_abs_rel_pct": 1.0}` via `fit.score_goal_modes()` on the board's own reader; `CAL.objective.independent_targets` = 10 (§9.158).
 - **The reading point cannot score a candidate**: `CAL.search.reading_drift_pct` = 24.88 (`measured`, sweep [15.72, 24.88]), `CAL.search.convergence_delta` derived from it; `calibrate.py --execute` refuses while the drift exceeds `CAL.gate.pass_deviation_pct` (§9.158, `measure_reading_stability.py`).
 - **The search can run**: `calibrate.py` uses `--config-set`; any field with a `matsim_param` binding is movable (5 → 21: `B.ride.*`, `B.taxi.*`, `B.population.bike_min_age`, `A.gradient.bike_speed_*`); `evaluate()` re-assembles per candidate from the mapped schedule (§9.158).
-- **Profiling**: `RUN.machine.jfr_profile` writes `<run>/profile.jfr`, `RUN.machine.gc_log` a GC log, read by `profile_run.py --run <run> --iterations 2:3`; observation only, no family opens, `arm_cost.py` excludes it. `_progress.json` carries `iteration_seconds` (§9.154).
-- **`tests/unit/`** runs on synthetic inputs, a CI job and a `session_gate.py` line; six Java probes (`GatedSubtourProbe`, `PtFareProbe`) run on the signals stack (§9.142, #133).
+- **Profiling**: `RUN.machine.jfr_profile` and `RUN.machine.gc_log`, read by `profile_run.py`; observation only, `arm_cost.py` excludes it; `_progress.json` carries `iteration_seconds` (§9.154).
+- **`tests/unit/`** runs on synthetic inputs in CI and `session_gate.py`; six Java probes run on the signals stack (§9.142, #133).
 - **The gate watcher in `run_matsim.py`** reads all twelve modes every `RUN.gate.interval_iterations` = 100 and stops the JVM at `CAL.gate.stop_deviation_pct` (§9.137); its source is the progress digest, never a log tail (§9.139); its stop is keyed on `--gate-json`, never the printed `GATE:` line (§9.141, #112); retry every `RUN.gate.retry_interval_s` = 300 s (#131); `tests/check_gate_watcher.py` in CI.
 - **`RUN.monitor.stall_s` = 300** is five `MemoryObserver` heartbeats at 60 s, so it does not go stale with the pace (§9.156).
 - **The issue gate** (requirement 10, §9.140, §9.158, §9.160): `src/run/issue_gate.py` refuses a launch while an in-lane `awaiting-run` issue lacks a real `AWAITING-RUN: <measurement>` line; the lane is the overlay's `answers_issues`; `AWAITING-DECISION:` reports without blocking; `--allow-open-issues` needs `--override-reason`, ledgered. #49, #50 and #155 are the operator's decision.
@@ -26,8 +26,9 @@
 - **The scoreboard is the newest ARM's, never a `failed` run's** (`build_status_board.py`, §9.168): it skips a run under the sweep floor on `RUN.controler.last_iteration` (§9.133), a family marked `"readings": "none"` (§9.148) and F33's `aborted_20260910T222830_300it_25pct`.
 - **Targets**: `mode_targets_by_mode.csv` (`build_mode_targets.py`, §9.87) and `pt_boardings_targets.json` (§9.130), never `validation_targets.csv` (§12). `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 are `definition`, not swept (§9.87).
 - **`src/calibrate/fit.py`**: `score_mode_share` folds `bike+taxi` to Other and `car+motorbike` to Vehicle driver (§9.87), unscorable targets listed with reasons (§9.80); `measure_iteration_modes.py` uses the same function (§9.83).
-- **The run viewer** `src/analyse/run_view.py` (§9.170, §9.172): every run from one picker, each mode as modelled, target and deviation against the 10 % goal and 20 % stop bar, readings from `_readings.jsonl`. Its map is MapLibre GL 5.24.0 (§9.173): worker-decoded tiles, GL layers, worst frame 37 ms over 221,919 links; 3D (Terrarium terrain, OpenFreeMap buildings, overlays draped) and a globe; no place typed (#220).
-- **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` declared `RUN.gate.wall_ceiling_h` 0.05 and stopped with `completion` `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169). A gate interval is not a gate: `start_gate_watch` refuses without `RUN.monitor` (#131).
+- **The run viewer** `src/analyse/run_view.py` (§9.170–§9.174): every run from one picker, each mode against the 10 % goal and 20 % stop bar; MapLibre GL 5.24.0 (§9.173) with Overture buildings (PMTiles, ODbL: 5,791 footprints in a z15 suburb view against OpenFreeMap's 5), Terrarium terrain, a globe; Liquid Glass chrome, Auto / Light / Dark / Simulator, the Simulator lit from the sun's position at the simulated clock (§9.174).
+- **The viewer's server memoises every read by file stamp and builds a window's links once** (§9.174): status poll 630 → 3 ms, hotspot 1.4–4.8 s → cached, run list 3 s → 0.1 ms; the map's worker reads the links by URL; no elevation tile loads with 3D off.
+- **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` stopped `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169); `start_gate_watch` refuses without `RUN.monitor` (#131).
 - **`CAL.objective.replication_band_pp` = 0.0** (`sweep_role: measurement`, bracket [0.0, 2.0]) is the objective's denominator, MEASURED before it is set by three arms differing only in `RUN.machine.seed` (§9.164, #163).
 
 ## How a reading is taken
@@ -74,6 +75,7 @@
 
 ## History
 
+- §9.174 — viewer: glass, simulator light, Overture, 200× faster polls
 - §9.173 — viewer on MapLibre GL; 3D and globe
 - §9.172 — viewer in a map-app layout; checks required
 - §9.170 — the run viewer, live twelve modes

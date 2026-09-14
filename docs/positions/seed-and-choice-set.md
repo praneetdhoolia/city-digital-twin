@@ -2,14 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
+**Updated:** 15 September 2026 (fifty-first session) · **Record read through:** §9.174 · **Written against family:** `F35`
 
 ## What is built
 
 - **Both plan-removal paths honour `RUN.replanning.plan_selector_for_removal`** (§9.166, #174): `EscortCoherenceListener.trim()` injects the selector MATSim binds and re-selects at random if it took the selected plan (`tests/unit/test_plan_removal_one_selector.py`); `GatedSubtourModeChoice` treats a plan whose subtour decomposition throws as MIXED.
 - **A seeded plan carries PER-TRIP modes** (§9.143): a partially bound tour rides its covered leg while the rest takes `B.mode.partial_bind_base` = `pt`, so §9.119's chain/non-chain mix is unreachable. Plan memory peaks at 7 of `RUN.replanning.max_agent_plan_memory` = 8; `check_package.py` reads the cap from the registry.
 - **The seed is the choice set.** `B.mode.seed_method` = `full_choice_set` (§9.120): `src/build/build_matsim_plans.py` writes one plan per mode the person may use plus one riding the covered tours where a driver is named; each mode once. WEEKDAY carries 2–6 plans per person, 9,880,427 seeded legs against 2,343,321 selected (§9.126).
-- **`uniform_draw` is retained as the sweep alternative** (tour modes from `B.mode.seed_split`), and `B.mode.seed_split_informed` survives as a declared alternative, never the default (§9.120).
+- **`uniform_draw` is the sweep alternative** (`B.mode.seed_split`); `B.mode.seed_split_informed` is declared, never the default (§9.120).
 - **The first-executed plan is drawn uniformly** by sha256 of `seedorder|<pid>|20260810` (`src/build/build_matsim_plans.py`), carried as `selected="yes"`, so iteration 0 is a mixed traffic state (§9.121).
 - **Plan memory** `RUN.replanning.max_agent_plan_memory` = 8 (sweep 3–10, §9.120): MATSim executes an unscored plan first and `WorstPlanForRemovalSelector` drops an unscored plan first, so memory must exceed the seeded plan count.
 - **Mode choice** is `SubtourModeChoice` wrapped by `citysim.GatedSubtourModeChoice`: `RUN.mode_choice.modes` car, ride, pt, bike, walk, taxi; `chain_based_modes` car, bike; `consider_car_availability` true; `subtour_behavior` betweenAllAndFewerConstraints; `proba_random_single_trip_mode` 0.5 (§9.92); `coord_distance_m` 100 (§9.119).
@@ -26,7 +26,7 @@
 - **Score averaging is declared and shipped OFF** (§9.163): `RUN.replanning.score_msa_representation` = `absent` (`absent` | `at_innovation_cutoff`, `sweep_role: answer`), `RUN.replanning.score_msa_fraction` bound to `scoring.fractionOfIterationsToStartScoreMSA`; `at_innovation_cutoff` introduces no new number.
 - **The choice-set branch has a control** (§9.164, #174, #155): `RUN.replanning.plan_selector_for_removal` = `WorstPlanSelector`, sweep over MATSim's five (`SelectRandom` the control that breaks the scoring-to-membership feedback), `RUN.scoring.path_size_logit_beta` declared beside it.
 - **The declared passenger is put on `ride` at the seed** (§9.164, #86, #48): `B.mode.bound_passenger_placement` = `every_plan` (sweep `alternative`, `sweep_role: answer`); duplicate plans are FOLDED, and a person left with ONE plan keeps an alternative on their first base mode.
-- **A gate-stopped arm is readable by the fit pipeline** (§9.158): `extract_metrics` falls back to `ITERS/it.<reached>/`.
+- **A gate-stopped arm is readable** (§9.158): `extract_metrics` falls back to `ITERS/it.<reached>/`.
 
 ## What is measured
 
@@ -44,7 +44,8 @@
 ## What is open
 
 - **Why convergence makes the fit worse is the open question of the project** (§9.162, §9.169, #172): the post-cutoff level is car-heavier than any gate read; whether the cause is the scoring, the choice set (pt reaches 25.78 % on F32, 17.53 % on arm 0) or the routers is what the pairs must separate.
-- **Five one-field controls, one control arm, and the order is the operator's** (§9.164, §9.169, #172): scoring (`RUN.replanning.score_msa_representation`), the choice set (`RUN.replanning.plan_selector_for_removal`), the routers (`C.raptor.mode_cost_representation`), the demand (`B.mode.bound_passenger_placement`, SPENT at `every_plan`), service quality (`C.time_weights.service_quality_representation`, #175). Arm 0 is the CONTROL HALF; the user chose the routers pair first (D1, §9.172), priced at 30.0 h on `20260914T195207_4it_25pct`; no approval stands.
+- **Five one-field controls, one control arm, and the order is the operator's** (§9.164, §9.169, #172): scoring (`RUN.replanning.score_msa_representation`), the choice set (`RUN.replanning.plan_selector_for_removal`), the routers (`C.raptor.mode_cost_representation`), the demand (`B.mode.bound_passenger_placement`, SPENT at `every_plan`), service quality (`C.time_weights.service_quality_representation`, #175). Arm 0 is the CONTROL HALF.
+- **The routers pair is RUNNING** as `20260915T000704_250it_25pct` on a spent 30.0 h approval (D1, §9.172, §9.174), read against arm 0 in F35; whether a one-field control opens a family is D4, unanswered.
 - **Superseded** (§9.163): the scoring branch `at_innovation_cutoff` is the one candidate predicting both the +2.211 pp snap and the score peak-then-fall; the router branch `C.raptor.mode_cost_representation` = `mode_constant` is built and never run (§9.162, #49).
 - **A crowding or raptor arm can move coverage as a side effect** (#174, #98, #49): read coverage on both arms of any pair, or the difference is not attributable.
 - **Whether 200 iterations of SEARCH suffice stays unmeasured** (§9.169): the pairs cut at 200 where arm 0 cut at 240; the ≤ 0.42 pp movement between those points bounds the difference without testing it.
@@ -65,6 +66,7 @@
 
 ## History
 
+- §9.174 — the routers pair launched; ceiling near it.215
 - §9.172 — the routers pair chosen first, priced 30.0 h
 - §9.170 — the tenth report: every control still unrun
 - §9.169 — second result; horizon declared 250

@@ -1,0 +1,27 @@
+{
+  "overlay": "f35_routers_mode_constant_25pct",
+  "description": "THE ROUTERS PAIR: f35_baseline_25pct with ONE field flipped - C.raptor.mode_cost_representation = mode_constant - so that each PT submode's own constant (C.asc.bus, C.asc.rail, C.asc.light_rail, C.asc.ferry, all already declared and read by SCORING) also reaches the SwissRailRaptor that picks the submode, once per boarded leg (citysim.RaptorModeCostCalculator). It introduces NO NEW VALUE; it is the consistency between the router's objective and the scoring function the plan is judged by. Its control is arm 0 of F35, 20260912T202242_300it_25pct (9.169), the second result and the control half of the five paired arms the separation design orders (#172); the user chose the routers pair first (D1, 9.172) because the tenth report's factor ledger names router-scorer consistency the top mover: on arm 0 light rail sits at -73.9 %, heavy rail at +54.6 % and ferry at -63.3 %, a split decided in the raptor by a cost that reads no mode constant, and no control has ever run. Everything else is arm 0's: the F35 controler that routes its own re-modes (9.168), F34's footpath network, the demand and plans of 20260910T203622 (9.164), every other control at its off value (RUN.replanning.score_msa_representation absent, RUN.replanning.plan_selector_for_removal WorstPlanSelector, C.time_weights.service_quality_representation absent, C.crowding.representation in_vehicle_time). WHAT IT MUST READ, against arm 0 and on both arms: all twelve modes on their own bases with choice-set coverage beside each - a raptor arm can move pt coverage as a side effect, so the difference is attributable only if coverage is read on both sides (9.163, #174); the light rail / heavy rail split and the disclosed station boardings (#98); the near-wharf split and the ferry's road detour (#94); the pt submode individualisation (#49); the cutoff snap and the post-settle drift beside the level, on a 250-iteration horizon with innovation off at 200 where arm 0 cut at 240 (9.169, #172). Nothing between arm 0 and this arm is differenced as a number: MATSim runs are not bit-reproducible and the replication band is unmeasured (CAL.objective.replication_band_pp 0.0), so the reading is a direction and a band. HORIZON: RUN.controler.last_iteration = 250 is the value declared on 14 September 2026 (9.169) and the floor of its sweep, so it is no departure; arm 0's post-settle drift over it.250-300 was 0.128 pp against 0.5. HEAP: 48g on the 63 GB machine, the rule reading 37.4 GiB at 25 % against arm 0's measured live peak of 26.2 GiB (9.169); its GC log is a second full-arm measurement at this fraction (#66). COST: priced by f35_pricing_probe_25pct on the committed controler, 20260914T195207_4it_25pct - 422.0 s a recurring iteration, quoting 30.0 h for 250 iterations plus 32 min of setup, spread 18.2-39.2 h over the last five arms at this fraction; arm 0 itself held 347.3 s an iteration all-in over 300, which prices 250 at 24.6 h. RUN.gate.wall_ceiling_h = 30.0 is the operator's stated-cost approval of 15 September 2026 for THIS launch, given at the quote, and nothing carried over: the arm stops at 30.0 h whatever iteration it has reached, and a stop there is a citable reading at its reached_iteration, not a result.",
+  "answers_issues": [
+    98,
+    94,
+    49,
+    172,
+    174
+  ],
+  "set": {
+    "C.raptor.mode_cost_representation": "mode_constant",
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 30.0,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 25
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, the same 9.159 scoped departure arm 0 took, for the same reason: six modes are past the 20 % stop bar on the landed reading (9.169), so the watcher would stop this arm at iteration 100 - and an arm whose whole purpose is to be differenced against a control read at its horizon cannot be stopped at a point the control was not read at. The other half of what made the un-ceilinged arm indefensible (#169) is not repeated: this arm declares RUN.gate.wall_ceiling_h = 30.0, the operator's stated-cost approval of 15 September 2026 at the 30.0 h quote of 20260914T195207_4it_25pct (422.0 s a recurring iteration on the committed controler, spread 18.2-39.2 h), and the ceiling watcher is proven on a run (aborted_20260910T205517_20it_1pct, completion stopped_at_ceiling). Arm 0 held 347.3 s an iteration all-in over 300, pricing 250 at 24.6 h, so the ceiling leaves ~5 h for the milestone iterations a four-iteration probe never meets; a stall is guarded separately by RUN.gate.stall_kill_s = 1800."
+  }
+}
