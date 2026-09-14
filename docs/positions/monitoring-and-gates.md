@@ -2,13 +2,14 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
 
 ## What is built
 
 - **The reader reads a run through its own schedule**: `extract_metrics.schedule_path` takes `output/output_transitSchedule.xml.gz` first, `SCHEDULE_SOURCE` recorded; the city copy the F34 rebuild overwrote had printed heavy rail **0 / −100.0 %** on F32 (§9.169).
 - **Reader fixes** (§9.169): freight_train = scheduled + the run's own `_config.json` freight closures; `iteration_reading.innovation_off_after` shared by `summarise_run` and `run_view`; a boardings reading with no sample fraction refused; `_CACHE` bounded to `CACHE_TABLES` = 6. Unit suite **469**.
 - **The eighth report's #180–#192 are fixed or await a run** (§9.167): `check_hardcoding` category 9 gates inline literals (124 → 0, #188); `session_gate` checks the import roots (#181); all 99 modules are imported by a test (#190); `build_fit_figures --check` refuses a drifted C5 objective.
+- **The main ruleset requires the nine test jobs as status checks** (§9.172, #202; ruleset 21121872, the user's decision D3): a red run is no longer mergeable.
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
 - **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169).
 - **A gate-stopped arm is read** at `ITERS/it.<reached>/<reached>.<table>`, never past `reached_iteration`; `output_links` has no per-iteration twin, so the counts block reports `unavailable` (§9.158).
@@ -25,7 +26,7 @@
 - **The scoreboard is the newest ARM's, never a `failed` run's** (`build_status_board.py`, §9.168): it skips a run under the sweep floor on `RUN.controler.last_iteration` (§9.133), a family marked `"readings": "none"` (§9.148) and F33's `aborted_20260910T222830_300it_25pct`.
 - **Targets**: `mode_targets_by_mode.csv` (`build_mode_targets.py`, §9.87) and `pt_boardings_targets.json` (§9.130), never `validation_targets.csv` (§12). `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 are `definition`, not swept (§9.87).
 - **`src/calibrate/fit.py`**: `score_mode_share` folds `bike+taxi` to Other and `car+motorbike` to Vehicle driver (§9.87), unscorable targets listed with reasons (§9.80); `measure_iteration_modes.py` uses the same function (§9.83).
-- **The run viewer** `src/analyse/run_view.py` (§9.170): every run from one picker, the iteration bar with cutoff and gate milestones, each mode on a ±40 % bullet against the 10 % goal and 20 % stop bar, a congestion map; readings from `_readings.jsonl`, appended by the gate watcher.
+- **The run viewer** `src/analyse/run_view.py` (§9.170): every run from one picker, the iteration bar with cutoff and gate milestones, each mode as modelled, target and deviation coloured by the 10 % goal and 20 % stop bar, a congestion map in a map-app layout (§9.172); readings from `_readings.jsonl`, appended by the gate watcher.
 - **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` declared `RUN.gate.wall_ceiling_h` 0.05 and stopped with `completion` `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169). A gate interval is not a gate: `start_gate_watch` refuses without `RUN.monitor` (#131).
 - **`CAL.objective.replication_band_pp` = 0.0** (`sweep_role: measurement`, bracket [0.0, 2.0]) is the objective's denominator, MEASURED before it is set by three arms differing only in `RUN.machine.seed` (§9.164, #163).
 
@@ -73,6 +74,7 @@
 
 ## History
 
+- §9.172 — viewer in a map-app layout; checks required
 - §9.170 — the run viewer, live twelve modes
 - §9.169 — arm 0 a result; reader reads own schedule
 - §9.168 — scoreboard skips a failed run
@@ -83,8 +85,3 @@
 - §9.160 — gate stops passing on prose
 - §9.158 — objective measures the goal; search blocked
 - §9.157 — a third of pt routing unserved
-- §9.156 — log guard fixed; threshold re-anchored
-- §9.154 — JVM profiled per iteration
-- §9.153 — arm read every ten, stopped at 23
-- §9.152 — gate green on unlaunchable checkout
-- §9.151 — issue gate green first time

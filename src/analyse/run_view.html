@@ -42,30 +42,50 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 #map.fallback.drag{cursor:grabbing}
 canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
 .leaflet-container{background:var(--water);font-family:var(--sans)}
-/* the street map is one tile set; the dark theme inverts it the way a map app's night mode does */
-html:not([data-theme="light"]) .leaflet-tile-pane.night img{filter:invert(1) hue-rotate(180deg) saturate(.55) brightness(.82) contrast(.95)}
 .leaflet-control-attribution{background:var(--panel)cc!important;color:var(--muted)!important;font-size:10px}
 .leaflet-control-attribution a{color:var(--accent)!important}
 
-/* ---- the top bar, the way a map app carries its search box ---- */
+/* ---- the top bar, the way a map app carries its search box: the menu button inside
+   the box, the theme switch a round button at the top right ---- */
 #top{position:absolute;left:12px;top:12px;z-index:1000;display:flex;gap:8px;align-items:center;
-  width:min(440px,calc(100vw - 24px))}
-#top .box{flex:1;display:flex;align-items:center;gap:10px;background:var(--panel);
-  border-radius:8px;box-shadow:var(--shadow);padding:6px 8px 6px 12px;min-width:0}
-#top .logo{font:600 13px/1 var(--sans);color:var(--accent);letter-spacing:.02em;white-space:nowrap}
-#top select{flex:1;min-width:0;background:transparent;color:var(--ink);border:none;
-  font:500 13px/1.2 var(--mono);outline:none;cursor:pointer;text-overflow:ellipsis}
-#top select option{background:var(--panel);color:var(--ink)}
-.ib{width:36px;height:36px;border-radius:8px;border:none;background:var(--panel);
-  color:var(--ink);box-shadow:var(--shadow);cursor:pointer;font-size:16px;display:flex;
+  width:min(440px,calc(100vw - 76px))}
+#top .box{flex:1;display:flex;align-items:center;gap:8px;background:var(--panel);
+  border-radius:999px;box-shadow:var(--shadow);padding:4px 14px 4px 4px;min-width:0;height:40px}
+/* every picker is a themed menu (the native select's popup cannot be styled): the
+   select element keeps the state, hidden, and .dd is what the user sees */
+.dd{position:relative;flex:1;min-width:0}
+.ddb{width:100%;display:flex;align-items:center;gap:8px;border:none;background:transparent;color:var(--ink);
+  font:500 13px/1.2 var(--mono);cursor:pointer;padding:6px 4px;text-align:left;min-width:0;border-radius:6px}
+.ddb:hover{background:var(--panel2)}
+.ddb .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ddb .c{color:var(--muted);font-size:10px;flex:none}
+/* the menu lives at the body, positioned from its button, so no panel scroll box or fade clips it */
+.ddm{display:none;position:fixed;width:max-content;max-width:min(680px,calc(100vw - 24px));
+  max-height:min(60vh,440px);overflow-y:auto;overflow-x:hidden;
+  background:var(--panel);border-radius:10px;box-shadow:var(--shadow);padding:6px;z-index:1200;
+  scrollbar-width:thin;scrollbar-color:var(--faint) transparent}
+.ddm.open{display:block}
+.ddi{padding:8px 10px;border-radius:6px;cursor:pointer;font:500 12px/1.3 var(--mono);color:var(--muted);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ddi:hover{background:var(--panel2);color:var(--ink)}
+.ddi.on{color:var(--accent)}
+.ib{width:32px;height:32px;border-radius:50%;border:none;background:transparent;
+  color:var(--muted);cursor:pointer;font-size:16px;display:flex;
   align-items:center;justify-content:center;flex:none}
-.ib:hover{background:var(--panel2)}
-.ib.on{color:var(--accent)}
+.ib:hover{background:var(--panel2);color:var(--ink)}
+.rb{width:40px;height:40px;border-radius:50%;border:none;background:var(--panel);color:var(--ink);
+  box-shadow:var(--shadow);cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;flex:none}
+.rb:hover{background:var(--panel2)}
+#theme{position:absolute;right:12px;top:12px;z-index:1000}
 
-/* ---- the side panel ---- */
-#side{position:absolute;left:12px;top:60px;bottom:70px;width:min(440px,calc(100vw - 24px));
+/* ---- the side panel: a thin scrollbar that appears on hover, and the content fading
+   at whichever edge has more beyond it (--ft / --fb are set by the scroll handler) ---- */
+#side{position:absolute;left:12px;top:60px;bottom:28px;width:min(440px,calc(100vw - 24px));
   z-index:900;display:flex;flex-direction:column;gap:8px;overflow-y:auto;overscroll-behavior:contain;
-  scrollbar-width:thin;padding-right:2px}
+  scrollbar-width:thin;scrollbar-color:transparent transparent;padding:2px 2px 2px 0;--ft:0px;--fb:0px;
+  -webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%);
+  mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%)}
+#side:hover{scrollbar-color:var(--faint) transparent}
 #side.hidden{display:none}
 .card{background:var(--panel);border-radius:8px;box-shadow:var(--shadow);flex:none}
 .card>h2{margin:0;padding:10px 14px;font:500 11px/1 var(--sans);letter-spacing:.08em;
@@ -118,47 +138,22 @@ html[data-theme="light"] .prog .txt{text-shadow:none;color:#202124}
 .day .note{color:var(--muted);font:400 11px/1.4 var(--sans)}
 
 /* the twelve modes */
-#mhead{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;margin:2px 0 8px;
-  font:400 12px/1.5 var(--sans);color:var(--muted)}
+#mhead{display:flex;gap:8px;align-items:center;margin:2px 0 6px;font:400 12px/1.5 var(--sans);color:var(--muted)}
 #mhead b{color:var(--ink);font-weight:500}
-#mhead select{background:var(--panel2);color:var(--ink);border:1px solid var(--edge);border-radius:6px;
-  font:500 11px/1 var(--mono);padding:3px 6px}
-#msum{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
-#msum .chip{font:500 11px/1 var(--sans);padding:5px 8px;border-radius:999px;border:1px solid var(--edge)}
-#msum .chip.ok{color:var(--ok);background:var(--ok-bg);border-color:transparent}
-#msum .chip.over{color:var(--over);background:var(--over-bg);border-color:transparent}
-#msum .chip.stop{color:var(--stop);background:var(--stop-bg);border-color:transparent}
-.modes{width:100%;border-collapse:collapse}
-.modes td{padding:3px 0;vertical-align:middle;border-top:1px solid var(--edge)}
-.modes tr:first-child td{border-top:none}
-.modes td.n{color:var(--faint);font:400 10px/1 var(--mono);width:16px}
-.modes td.m{font:500 12px/1.2 var(--sans);width:104px;white-space:nowrap}
-.modes td.m small{display:block;color:var(--faint);font:400 9.5px/1.2 var(--sans);margin-top:2px;
-  white-space:normal;max-width:104px}
-.modes td.b{padding:3px 8px}
-.bullet{position:relative;height:14px;border-radius:3px;overflow:hidden;
-  background:linear-gradient(90deg,var(--stop-bg) 0 25%,var(--over-bg) 25% 37.5%,var(--ok-bg) 37.5% 62.5%,var(--over-bg) 62.5% 75%,var(--stop-bg) 75%)}
-.bullet .zero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ink);opacity:.6}
-.bullet .bar{position:absolute;top:3px;bottom:3px;border-radius:2px}
-.bullet .bar.ok{background:var(--ok)}
-.bullet .bar.over{background:var(--over)}
-.bullet .bar.stop{background:var(--stop)}
-.bullet .arrow{position:absolute;top:0;bottom:0;width:0;border-top:7px solid transparent;
-  border-bottom:7px solid transparent}
-.bullet .arrow.r{right:0;border-left:6px solid var(--stop)}
-.bullet .arrow.l{left:0;border-right:6px solid var(--stop)}
-.bullet.na{background:var(--panel2)}
-.bullet.na .zero{display:none}
-.modes td.d{text-align:right;font:600 12px/1 var(--mono);font-variant-numeric:tabular-nums;width:58px;white-space:nowrap}
-.modes td.d small{display:block;color:var(--muted);font:400 10px/1.3 var(--mono);margin-top:3px}
+#mhead .dd{flex:none}
+#mhead .ddb{background:var(--panel2);border:1px solid var(--edge);font:500 11px/1 var(--mono);padding:5px 8px}
+#mhead .ddm{min-width:160px}
+.modes{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.modes td,.modes th{padding:5px 0;vertical-align:middle;border-top:1px solid var(--edge)}
+.modes th{font:500 10px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);
+  text-align:right;border-top:none;padding-bottom:6px;font-weight:500}
+.modes th.m{text-align:left}
+.modes td.m{font:500 12px/1.2 var(--sans);white-space:nowrap}
+.modes td.v,.modes td.t{text-align:right;font:500 12px/1 var(--mono);white-space:nowrap;padding-left:10px}
+.modes td.t{color:var(--muted);font-weight:400}
+.modes td.d{text-align:right;font:600 12px/1 var(--mono);width:64px;white-space:nowrap;padding-left:10px}
 .modes td.d.ok{color:var(--ok)} .modes td.d.over{color:var(--over)} .modes td.d.stop{color:var(--stop)}
-.modes td.d.na{color:var(--muted);font-weight:400}
-.modes td.s{width:54px;padding-left:6px}
-.modes svg{display:block;width:54px;height:22px}
-.modes svg .band{fill:var(--ok);opacity:.15}
-.modes svg .zero{stroke:var(--muted);stroke-width:1;opacity:.6}
-.modes svg .line{fill:none;stroke:var(--accent);stroke-width:1.5;stroke-linejoin:round}
-.modes svg .dot{fill:var(--accent)}
+.modes td.d.na{color:var(--faint);font-weight:400}
 .busy{color:var(--muted);font:400 12px/1.5 var(--sans);padding:6px 0}
 .busy::before{content:"";display:inline-block;width:10px;height:10px;border:2px solid var(--muted);
   border-top-color:transparent;border-radius:50%;margin-right:8px;vertical-align:-1px;
@@ -182,34 +177,59 @@ table.kv2 tr.warn td{color:var(--stop)}
 .verdict .m{flex:none;font-weight:700}
 .verdict.good .m{color:var(--ok)} .verdict.bad{color:var(--stop)}
 .verdict small{display:block;color:var(--muted);font-size:11px}
-#foot{color:var(--muted);font:400 11px/1.5 var(--sans);padding:0 4px 8px}
-#foot b{color:var(--over);font-weight:500}
+#fracwarn{margin-top:8px;color:var(--over);font:400 12px/1.45 var(--sans)}
+#fracwarn:empty{display:none}
 
-/* ---- map controls, bottom-right like a map app ---- */
-#ctl{position:absolute;right:12px;bottom:28px;z-index:1000;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+/* ---- map controls where a map app puts them: zoom and "fit" stacked bottom-right, one
+   Layers card bottom-left that opens into the map types and the map details, the traffic
+   legend a strip at the bottom centre while traffic is shown ---- */
+#ctl{position:absolute;right:12px;bottom:28px;z-index:1000;display:flex;flex-direction:column;gap:10px;align-items:flex-end}
 #zoom{display:flex;flex-direction:column;border-radius:8px;overflow:hidden;box-shadow:var(--shadow)}
-#zoom button{width:36px;height:36px;border:none;background:var(--panel);color:var(--ink);font-size:18px;cursor:pointer}
+#zoom button{width:40px;height:40px;border:none;background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
 #zoom button+button{border-top:1px solid var(--edge)}
 #zoom button:hover{background:var(--panel2)}
-#bases{position:absolute;left:12px;bottom:28px;z-index:1000;display:flex;gap:6px}
-#bases button{height:34px;padding:0 12px;border:none;border-radius:8px;background:var(--panel);color:var(--ink);
-  font:500 12px/1 var(--sans);box-shadow:var(--shadow);cursor:pointer}
-#bases button.on{background:var(--accent);color:var(--accent-ink)}
-#bases button:disabled{opacity:.4;cursor:default}
-#layers{position:absolute;right:12px;top:12px;z-index:1000;background:var(--panel);border-radius:8px;
-  box-shadow:var(--shadow);padding:6px 8px;display:flex;flex-direction:column;gap:2px;min-width:132px}
-#layers .lb{display:flex;align-items:center;gap:8px;padding:4px 6px;border-radius:6px;cursor:pointer;
-  user-select:none;color:var(--muted);font:400 12px/1 var(--sans)}
-#layers .lb:hover{background:var(--panel2)}
-#layers .lb.on{color:var(--ink)}
-#layers .sw{width:14px;height:4px;border-radius:2px;flex:none;opacity:.35}
-#layers .sq{width:11px;height:11px;border-radius:2px;flex:none;opacity:.35}
-#layers .lb.on .sw,#layers .lb.on .sq{opacity:1}
-#ramp{background:var(--panel);border-radius:8px;box-shadow:var(--shadow);padding:8px 10px;
-  font:400 11px/1.4 var(--sans);color:var(--muted);min-width:200px}
-#ramp .bar{height:6px;border-radius:3px;margin:4px 0 2px;
-  background:linear-gradient(90deg,var(--t0),var(--t1),var(--t2),var(--t3))}
-#ramp .lbl{display:flex;justify-content:space-between}
+#lyr{position:absolute;left:12px;bottom:28px;z-index:1000}
+#lyr.open{z-index:1002}   /* the open card sits above the legend strip */
+/* beside the panel while the panel is shown; back to the corner when it is hidden */
+#side:not(.hidden) ~ #lyr{left:calc(min(440px,calc(100vw - 24px)) + 24px)}
+#lyrbtn{display:flex;align-items:center;gap:8px;padding:4px;border:none;border-radius:10px;background:var(--panel);
+  color:var(--ink);box-shadow:var(--shadow);cursor:pointer;font:500 12px/1 var(--sans)}
+#lyrbtn .th{width:48px;height:48px;border-radius:8px;flex:none;display:flex;align-items:center;justify-content:center;
+  color:#fff;background:var(--panel2) center/cover no-repeat}
+#lyrbtn .th svg{filter:drop-shadow(0 1px 2px #000c)}
+#lyrbtn .lbl{padding-right:8px}
+#lyrbtn:hover .lbl{color:var(--accent)}
+#lyr.open #lyrbtn{display:none}
+#lyrpanel{display:none;background:var(--panel);border-radius:10px;box-shadow:var(--shadow);padding:12px;
+  width:min(320px,calc(100vw - 24px))}
+#lyr.open #lyrpanel{display:block}
+#lyrpanel h3{margin:0 0 8px;font:500 11px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center}
+#lyrpanel h3 .sp{flex:1}
+#lyrpanel h3 button{border:none;background:transparent;color:var(--muted);font-size:15px;cursor:pointer;padding:0 2px;line-height:1}
+#lyrpanel h3 button:hover{color:var(--ink)}
+.bases{display:flex;gap:8px;margin-bottom:14px}
+.bases button{flex:1;border:none;background:transparent;padding:0;cursor:pointer;color:var(--muted);
+  font:500 11px/1.3 var(--sans);text-align:center}
+.bases button .th{height:56px;border-radius:8px;margin-bottom:5px;border:2px solid transparent;
+  background:var(--panel2) center/cover no-repeat}
+.bases button:hover{color:var(--ink)}
+.bases button.on{color:var(--accent)}
+.bases button.on .th{border-color:var(--accent)}
+.bases button:disabled{opacity:.35;cursor:default}
+.lbs{display:flex;flex-wrap:wrap;gap:6px}
+.lb{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;cursor:pointer;
+  user-select:none;color:var(--muted);font:400 12px/1 var(--sans);border:1px solid var(--edge)}
+.lb:hover{background:var(--panel2)}
+.lb.on{color:var(--ink);background:var(--panel2);border-color:transparent}
+.lb .sw{width:14px;height:4px;border-radius:2px;flex:none;opacity:.35}
+.lb .sq{width:11px;height:11px;border-radius:2px;flex:none;opacity:.35}
+.lb.on .sw,.lb.on .sq{opacity:1}
+#ramp{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:1000;background:var(--panel);
+  border-radius:999px;box-shadow:var(--shadow);padding:8px 14px;font:400 11px/1 var(--sans);color:var(--muted);
+  display:flex;align-items:center;gap:8px;white-space:nowrap}
+#ramp.hidden{display:none}
+#ramp .bar{width:96px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--t0),var(--t1),var(--t2),var(--t3))}
 #ramp b{color:var(--ink);font-weight:500}
 #window{position:absolute;left:50%;transform:translateX(-50%);top:12px;z-index:1000;background:var(--panel);
   border-radius:999px;box-shadow:var(--shadow);padding:7px 14px;font:500 12px/1 var(--mono);
@@ -221,8 +241,9 @@ table.kv2 tr.warn td{color:var(--stop)}
 #empty.hidden{display:none}
 @media (max-width:640px){
   #side{top:60px;bottom:auto;max-height:55vh}
-  #layers{top:auto;bottom:74px;right:12px}
-  #window{top:auto;bottom:74px;left:12px;transform:none}
+  #side:not(.hidden) ~ #lyr{left:12px}   /* the panel is top-anchored here, so the corner is free */
+  #ramp{display:none}
+  #window{top:auto;bottom:96px;left:12px;transform:none}
 }
 </style>
 
@@ -231,20 +252,20 @@ table.kv2 tr.warn td{color:var(--stop)}
 
 <div id="top">
   <div class="box">
-    <span class="logo">TWIN</span>
-    <select id="runsel" title="every run the results store holds, newest first"></select>
+    <button class="ib" id="panel" title="hide or show the panel">&#9776;</button>
+    <select id="runsel" hidden></select>
   </div>
-  <button class="ib" id="panel" title="hide or show the panel">&#9776;</button>
-  <button class="ib" id="theme" title="light / dark">&#9788;</button>
 </div>
+<button class="rb" id="theme" title="light / dark">&#9788;</button>
 
 <div id="side">
-  <div class="card" id="runcard">
+  <div class="card">
     <div id="runhead">
       <div class="name" id="name">—</div>
       <div class="ident" id="ident"></div>
       <div class="pills"><span class="pill" id="state">…</span><span class="pill" id="resultpill" hidden>result</span><span class="pill" id="family" hidden></span></div>
       <div id="cause"></div>
+      <div id="fracwarn"></div>
       <div id="verdicts"></div>
     </div>
   </div>
@@ -276,12 +297,8 @@ table.kv2 tr.warn td{color:var(--stop)}
     <h2><span>The twelve modes against their targets</span><span class="sp"></span><span class="chev">&#9660;</span></h2>
     <div class="body">
       <div id="mhead"></div>
-      <div id="msum"></div>
       <div id="mbusy" class="busy" hidden>reading the iteration's trips table…</div>
       <table class="modes" id="modes"></table>
-      <div class="note">Deviation from the target on the target's own basis; the bar spans ±40 %.
-        Inside <b style="color:var(--ok)">10 %</b> is the goal, <b>10–20 %</b> is over, and a mode at or past
-        <b style="color:var(--stop)">20 %</b> stops the run under the GOAL.md loop. Truck is a level, freight rail a representation: neither carries a deviation.</div>
     </div>
   </div>
 
@@ -289,7 +306,7 @@ table.kv2 tr.warn td{color:var(--stop)}
     <h2><span id="h_live">En route now</span><span class="sp"></span><span class="chev">&#9660;</span></h2>
     <div class="body">
       <table class="kv2" id="modes_live"><tr><td class="k">waiting…</td></tr></table>
-      <div class="note" id="h_fleet">transit fleet</div>
+      <div class="note">transit fleet</div>
       <table class="kv2" id="fleet"><tr><td class="k">—</td></tr></table>
       <div class="note">stuck agents</div>
       <table class="kv2" id="stuck"><tr><td class="k">—</td></tr></table>
@@ -304,33 +321,32 @@ table.kv2 tr.warn td{color:var(--stop)}
     </div>
   </div>
 
-  <div id="foot"><b>Nothing here is a result</b> until the run's <code>_run.json</code> says
-    <code>ran_to_last_iteration</code>. A reading at an earlier iteration is citable at that iteration and nowhere past it.
-    <span id="fracwarn"></span></div>
 </div>
 
 <div id="window" class="hidden"></div>
-<div id="layers">
-  <div class="lb on" data-layer="traffic"><span class="sw" style="background:var(--t2)"></span>live traffic</div>
-  <div class="lb on" data-layer="tram"><span class="sw" style="background:var(--tram)"></span>light rail</div>
-  <div class="lb on" data-layer="rail"><span class="sw" style="background:var(--rail)"></span>heavy rail</div>
-  <div class="lb" data-layer="roads"><span class="sw" style="background:var(--rd1)"></span>roads (twin)</div>
-  <div class="lb" data-layer="ground"><span class="sq" style="background:var(--green)"></span>land &amp; water (twin)</div>
-</div>
-<div id="bases">
-  <button data-base="map" class="on">Map</button>
-  <button data-base="satellite">Satellite</button>
-  <button data-base="hybrid">Hybrid</button>
-  <button data-base="twin">Twin</button>
-</div>
-<div id="ctl">
-  <div id="ramp">
-    <b>delay ratio</b> · observed ÷ free-flow
-    <div class="bar"></div>
-    <div class="lbl"><span>1.0 flowing</span><span>2.0</span><span>3.0+ stopped</span></div>
-    <div>width = vehicle volume</div>
+<div id="lyr">
+  <button id="lyrbtn" title="map type and layers"><span class="th"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 13 10 5 10-5"/><path d="m2 18 10 5 10-5"/></svg></span><span class="lbl">Layers</span></button>
+  <div id="lyrpanel">
+    <h3>Map type<span class="sp"></span><button id="lyrclose" title="close">&#10005;</button></h3>
+    <div class="bases">
+      <button data-base="map" class="on"><div class="th" id="th_map"></div>Default</button>
+      <button data-base="satellite"><div class="th" id="th_satellite"></div>Satellite</button>
+      <button data-base="core"><div class="th" id="th_core"></div>Core</button>
+    </div>
+    <h3>Map details</h3>
+    <div class="lbs">
+      <div class="lb on" data-layer="traffic"><span class="sw" style="background:var(--t2)"></span>live traffic</div>
+      <div class="lb on" data-layer="tram"><span class="sw" style="background:var(--tram)"></span>light rail</div>
+      <div class="lb on" data-layer="rail"><span class="sw" style="background:var(--rail)"></span>heavy rail</div>
+      <div class="lb" data-layer="roads"><span class="sw" style="background:var(--rd1)"></span>roads (core)</div>
+      <div class="lb" data-layer="ground"><span class="sq" style="background:var(--green)"></span>land &amp; water (core)</div>
+    </div>
   </div>
-  <div id="zoom"><button id="zin" title="zoom in">+</button><button id="zout" title="zoom out">−</button><button id="fit" title="study area">&#8982;</button></div>
+</div>
+<div id="ramp" class="hidden" title="delay ratio: observed ÷ free-flow travel time; line width = vehicle volume"><b>delay</b><span>1.0 flowing</span><span class="bar"></span><span>3.0+ stopped</span></div>
+<div id="ctl">
+  <button class="rb" id="fit" title="study area">&#8982;</button>
+  <div id="zoom"><button id="zin" title="zoom in">+</button><button id="zout" title="zoom out">−</button></div>
 </div>
 <div id="empty">waiting for the first window…</div>
 
@@ -353,7 +369,7 @@ function recall(k){ try { return localStorage.getItem(k); } catch(e){ return nul
 
 /* ---- theme ---- */
 const root = document.documentElement;
-function applyTheme(t){ root.dataset.theme = t; store('rv.theme', t); refreshPalette(); if (MAP) MAP.setBase(BASE); draw(); }
+function applyTheme(t){ root.dataset.theme = t; store('rv.theme', t); refreshPalette(); if (MAP) MAP.setBase(BASE); thumbs(); draw(); }
 $('theme').onclick = () => applyTheme(root.dataset.theme === 'light' ? 'dark' : 'light');
 root.dataset.theme = recall('rv.theme') || (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
 
@@ -367,8 +383,58 @@ for (const card of document.querySelectorAll('.card[data-k]')){
     store(key, card.classList.contains('closed') ? 'closed' : 'open');
   });
 }
-$('panel').onclick = () => { $('side').classList.toggle('hidden'); store('rv.panel', $('side').classList.contains('hidden') ? 'hidden' : 'shown'); };
+$('panel').onclick = () => { $('side').classList.toggle('hidden'); store('rv.panel', $('side').classList.contains('hidden') ? 'hidden' : 'shown'); fadeEdges(); };
 if (recall('rv.panel') === 'hidden') $('side').classList.add('hidden');
+/* the panel's content fades at an edge only while there is more beyond it */
+function fadeEdges(){
+  const s = $('side');
+  s.style.setProperty('--ft', s.scrollTop > 4 ? '22px' : '0px');
+  s.style.setProperty('--fb', s.scrollTop + s.clientHeight < s.scrollHeight - 4 ? '22px' : '0px');
+}
+$('side').addEventListener('scroll', () => { fadeEdges(); closeMenus(); }, {passive:true});
+new ResizeObserver(fadeEdges).observe($('side'));
+new MutationObserver(fadeEdges).observe($('side'), {subtree:true, childList:true, attributes:true, attributeFilter:['class', 'hidden']});
+
+/* ---- pickers: a hidden select holds the state; a button and a themed menu show it ---- */
+function closeMenus(){ for (const m of document.querySelectorAll('.ddm.open')) m.classList.remove('open'); }
+function dropdown(sel, title){
+  if (!sel) return null;
+  if (sel._dd) return sel._dd;
+  sel.hidden = true;
+  const wrap = document.createElement('div'); wrap.className = 'dd';
+  const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'ddb'; if (title) btn.title = title;
+  const menu = document.createElement('div'); menu.className = 'ddm';
+  wrap.append(btn); sel.after(wrap); document.body.appendChild(menu);
+  function render(){
+    const cur = sel.options[sel.selectedIndex];
+    btn.innerHTML = '<span class="t"></span><span class="c">&#9660;</span>';
+    btn.querySelector('.t').textContent = cur ? cur.text : '—';
+    menu.innerHTML = '';
+    for (const o of sel.options){
+      const it = document.createElement('div'); it.className = 'ddi' + (o.selected ? ' on' : ''); it.textContent = o.text;
+      it.onclick = e => { e.stopPropagation(); menu.classList.remove('open'); if (sel.value !== o.value){ sel.value = o.value; sel.dispatchEvent(new Event('change')); } render(); };
+      menu.appendChild(it);
+    }
+  }
+  btn.onclick = e => {
+    e.stopPropagation();
+    const wasOpen = menu.classList.contains('open');
+    closeMenus();
+    if (wasOpen) return;
+    const r = btn.getBoundingClientRect();
+    menu.style.minWidth = r.width + 'px';
+    menu.style.top = (r.bottom + 8) + 'px';
+    menu.style.maxHeight = Math.max(120, Math.min(440, window.innerHeight - r.bottom - 20)) + 'px';
+    menu.classList.add('open');
+    menu.style.left = Math.max(12, Math.min(r.left, window.innerWidth - menu.offsetWidth - 12)) + 'px';
+    const on = menu.querySelector('.on'); if (on) on.scrollIntoView({block:'nearest'});
+  };
+  sel._dd = {render, destroy(){ menu.remove(); wrap.remove(); }}; render();
+  return sel._dd;
+}
+document.addEventListener('click', () => closeMenus());
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenus(); });
+window.addEventListener('resize', () => closeMenus());
 
 /* ---- the run being observed ---- */
 let RUN = '';                     // '' = the server's default run
@@ -390,11 +456,12 @@ async function loadRuns(){
     }
     sel.value = RUN || d.default;
     sel.onchange = () => switchRun(sel.value);
+    dropdown(sel, 'every run the results store holds, newest first').render();
   } catch(e){ /* the picker is a convenience */ }
 }
 function switchRun(name){
   RUN = name; NET = null; HS = null; lastHotspotKey = null; fitted = false; readingsShown = null;
-  doneShown = false; $('verdicts').innerHTML = ''; $('modes').innerHTML = ''; $('msum').innerHTML = '';
+  doneShown = false; summaryMisses = 0; lastHead = null; $('verdicts').innerHTML = ''; $('modes').innerHTML = '';
   clockSamples = []; $('empty').classList.remove('hidden'); $('empty').textContent = 'loading ' + name + '…';
   loadNetwork().then(() => { tick(); refreshModes(); });
 }
@@ -436,7 +503,7 @@ requestAnimationFrame(paintClock);
 const MODE_LABEL = {car:'car', ride:'ride (passenger)', walk:'walk', taxi:'taxi / rideshare', bike:'bike',
   motorbike:'motorbike', bus:'bus', heavy_rail:'heavy rail', light_rail:'light rail', ferry:'ferry',
   truck:'truck', freight_train:'freight rail', metro:'metro'};
-let readingsShown = null, modesTimer = null, wantIt = null;
+let readingsShown = null, modesTimer = null, wantIt = null, lastHead = null;
 function gateClass(dev, stop, pass){
   if (dev === null || dev === undefined) return 'na';
   const a = Math.abs(dev);
@@ -447,46 +514,32 @@ function fmtVal(v, basis){
   if (/boardings|movements/.test(basis || '')) return Math.round(v).toLocaleString('en-AU');
   return v.toFixed(2) + ' %';
 }
-function spark(points, stop, pass){
-  if (!points || points.length < 2) return '';
-  const vals = points.map(p => p[1]).filter(v => v !== null && v !== undefined);
-  if (vals.length < 2) return '';
-  const W = 54, H = 22, lim = Math.max(stop * 2, ...vals.map(Math.abs)) * 1.05;
-  const y = v => H/2 - (v / lim) * (H/2 - 1);
-  const xs = points.map((p, i) => (i / (points.length - 1)) * (W - 2) + 1);
-  let d = '';
-  points.forEach((p, i) => { if (p[1] !== null && p[1] !== undefined) d += (d ? 'L' : 'M') + xs[i].toFixed(1) + ' ' + y(p[1]).toFixed(1); });
-  const last = points[points.length - 1];
-  return '<svg viewBox="0 0 ' + W + ' ' + H + '"><rect class="band" x="0" y="' + y(pass).toFixed(1) + '" width="' + W + '" height="' + (y(-pass) - y(pass)).toFixed(1) + '"/>'
-    + '<line class="zero" x1="0" x2="' + W + '" y1="' + (H/2) + '" y2="' + (H/2) + '"/><path class="line" d="' + d + '"/>'
-    + (last[1] != null ? '<circle class="dot" cx="' + xs[xs.length-1].toFixed(1) + '" cy="' + y(last[1]).toFixed(1) + '" r="1.8"/>' : '') + '</svg>';
-}
 function renderModes(d){
   const cur = d.current, stop = d.stop_pct, pass = d.pass_pct;
   const rowsByMode = {};
   if (cur && cur.rows) for (const r of cur.rows) rowsByMode[r.mode] = r;
   let head = '';
-  if (cur && !cur.error){
-    head += 'reading at <b>iteration ' + cur.iteration + '</b> from the ' + (cur.source || 'trips table');
-    if (cur.read_at) head += ' <span title="when the reading was taken">· ' + cur.read_at.replace('T', ' ') + '</span>';
-  } else if (d.readable && d.readable.length){
-    head += 'no reading yet' + (cur && cur.error ? ' · ' + cur.error : '');
-  } else {
-    head += 'no readable iteration yet — the first trips table lands when an iteration ends';
-  }
   if (d.readable && d.readable.length > 1){
     let opts = '';
-    for (const it of d.readable.slice().reverse()) opts += '<option value="' + it + '"' + (it === (cur && cur.iteration) ? ' selected' : '') + '>it.' + it + (d.stored.includes(it) ? '' : ' ·') + '</option>';
-    head += ' <select id="itsel" title="read another iteration (· = not read yet, computed on request)">' + opts + '</select>';
+    for (const it of d.readable.slice().reverse()) opts += '<option value="' + it + '"' + (it === (cur && cur.iteration) ? ' selected' : '') + '>iteration ' + it + (d.stored.includes(it) ? '' : ' ·') + '</option>';
+    head = '<select id="itsel">' + opts + '</select>';
+  } else if (cur && !cur.error){
+    head = 'iteration <b>' + cur.iteration + '</b>';
+  } else if (d.readable && d.readable.length){
+    head = 'no reading yet' + (cur && cur.error ? ' · ' + cur.error : '');
+  } else {
+    head = 'no readable iteration yet';
   }
-  $('mhead').innerHTML = head;
-  const itsel = $('itsel');
-  if (itsel) itsel.onchange = () => { wantIt = parseInt(itsel.value, 10); refreshModes(); };
+  if (head !== lastHead){        // an unchanged picker is left alone, so a poll never closes an open menu
+    lastHead = head;
+    const prev = $('itsel'); if (prev && prev._dd) prev._dd.destroy();
+    $('mhead').innerHTML = head;
+    const itsel = $('itsel');
+    if (itsel){ itsel.onchange = () => { wantIt = parseInt(itsel.value, 10); refreshModes(); }; dropdown(itsel, 'read another iteration (· = not read yet, computed on request)'); }
+  }
   $('mbusy').hidden = !d.computing;
 
-  const order = d.targets.map(t => t.mode);
-  let inside = 0, over = 0, past = 0, scored = 0;
-  let h = '';
+  let h = '<tr><th class="m">mode</th><th>modelled</th><th>target</th><th>deviation</th></tr>';
   for (const t of d.targets){
     const r = rowsByMode[t.mode];
     const basis = (r && r.basis) || t.denominator || '';
@@ -494,38 +547,13 @@ function renderModes(d){
     const cls = gateClass(dev, stop, pass);
     const flag = r && r.flag ? r.flag : (t.status === 'not_simulated' ? 'not simulated' : '');
     const levelOnly = /level only|representation|not simulated|no target/.test(flag);
-    if (!levelOnly && r && dev !== null && dev !== undefined){
-      scored++;
-      if (cls === 'ok') inside++; else if (cls === 'over') over++; else past++;
-    }
-    let bullet;
-    if (levelOnly || dev === null || dev === undefined){
-      bullet = '<div class="bullet na"></div>';
-    } else {
-      const lim = 40, c = Math.max(-lim, Math.min(lim, dev));
-      const pct = v => (50 + 50 * v / lim);
-      const left = Math.min(pct(0), pct(c)), width = Math.abs(pct(c) - pct(0));
-      bullet = '<div class="bullet"><span class="zero"></span><span class="bar ' + cls + '" style="left:' + left.toFixed(2) + '%;width:' + Math.max(0.6, width).toFixed(2) + '%"></span>'
-        + (dev > lim ? '<span class="arrow r"></span>' : '') + (dev < -lim ? '<span class="arrow l"></span>' : '') + '</div>';
-    }
-    const devTxt = (dev === null || dev === undefined) ? (levelOnly ? (flag === 'representation' ? 'repr.' : (flag.indexOf('level') === 0 ? 'level' : '—')) : '—')
-                 : (dev > 0 ? '+' : '') + dev.toFixed(1) + ' %';
-    const modelled = r ? fmtVal(r.modelled, basis) : '—';
-    const target = fmtVal(t.target, basis);
-    h += '<tr title="' + (basis || '').replace(/"/g, '&quot;') + (r && r.count != null ? ' · ' + num(r.count) + ' trips' : '') + '">'
-       + '<td class="n">' + t.n + '</td>'
-       + '<td class="m">' + (MODE_LABEL[t.mode] || t.mode) + '<small>' + modelled + ' · target ' + target + '</small></td>'
-       + '<td class="b">' + bullet + '</td>'
-       + '<td class="d ' + cls + '">' + devTxt + (flag && !levelOnly && cls === 'stop' ? '<small>STOP</small>' : '') + '</td>'
-       + '<td class="s">' + spark(d.trend[t.mode], stop, pass) + '</td></tr>';
+    const devTxt = (dev === null || dev === undefined) ? '—' : (dev > 0 ? '+' : '') + dev.toFixed(1) + ' %';
+    h += '<tr><td class="m">' + (MODE_LABEL[t.mode] || t.mode) + '</td>'
+       + '<td class="v">' + (r ? fmtVal(r.modelled, basis) : '—') + '</td>'
+       + '<td class="t">' + fmtVal(t.target, basis) + '</td>'
+       + '<td class="d ' + (levelOnly ? 'na' : cls) + '">' + (levelOnly ? '—' : devTxt) + '</td></tr>';
   }
   $('modes').innerHTML = h;
-  if (cur && !cur.error && scored){
-    $('msum').innerHTML = '<span class="chip ok">' + inside + ' of 12 inside ' + pass + ' %</span>'
-      + '<span class="chip over">' + over + ' over ' + pass + ' %</span>'
-      + '<span class="chip stop">' + past + ' past the ' + stop + ' % stop bar</span>'
-      + (d.stored.length > 1 ? '<span class="chip">' + d.stored.length + ' readings</span>' : '');
-  } else $('msum').innerHTML = '';
 }
 async function refreshModes(){
   clearTimeout(modesTimer);
@@ -541,12 +569,18 @@ async function refreshModes(){
    built-in pan/zoom when it did not (offline). Everything is projected to Web
    Mercator unit coordinates once; a frame is px = X*k - ox. ---- */
 const SHOW = {traffic:true, tram:true, rail:true, roads:false, ground:false};
-for (const el of document.querySelectorAll('#layers .lb')){
+for (const el of document.querySelectorAll('#lyrpanel .lb')){
   const n = el.dataset.layer, saved = recall('rv.layer.' + n);
   if (saved === 'off'){ SHOW[n] = false; el.classList.remove('on'); }
   if (saved === 'on'){ SHOW[n] = true; el.classList.add('on'); }
-  el.addEventListener('click', () => { SHOW[n] = !SHOW[n]; el.classList.toggle('on', SHOW[n]); store('rv.layer.' + n, SHOW[n] ? 'on' : 'off'); draw(); });
+  el.addEventListener('click', () => { SHOW[n] = !SHOW[n]; el.classList.toggle('on', SHOW[n]); store('rv.layer.' + n, SHOW[n] ? 'on' : 'off'); legend(); draw(); });
 }
+function legend(){ $('ramp').classList.toggle('hidden', !SHOW.traffic || !HS || !HS.available); }
+/* the Layers card opens on its button and closes on its cross, on Escape or on a click elsewhere */
+$('lyrbtn').onclick = () => $('lyr').classList.add('open');
+$('lyrclose').onclick = () => $('lyr').classList.remove('open');
+document.addEventListener('click', e => { if (!$('lyr').contains(e.target)) $('lyr').classList.remove('open'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') $('lyr').classList.remove('open'); });
 const RAMP = [[67,160,71],[255,179,0],[229,57,53],[142,27,27]];
 function rampColor(t){
   t = Math.max(0, Math.min(1, t));
@@ -574,7 +608,7 @@ function toMerc(coords){          // Float32 lon/lat pairs -> Float64 merc pairs
 }
 
 let NET = null, HS = null, BM = null, lastHotspotKey = null, fitted = false;
-let MAP = null, BASE = recall('rv.base') || 'map';
+let MAP = null, BASE = ({map:'map', satellite:'satellite', core:'core', hybrid:'satellite', twin:'core'})[recall('rv.base')] || 'map';
 let dpr = window.devicePixelRatio || 1;
 
 async function loadNetwork(){
@@ -591,9 +625,21 @@ async function loadBasemap(){
     BM = {};
     for (const k in d.layers){
       const L_ = d.layers[k];
-      BM[k] = {counts: b64u32(L_.counts), xy: toMerc(b64f32(L_.coords)), area: L_.area};
+      const counts = b64u32(L_.counts), xy = toMerc(b64f32(L_.coords));
+      // one bounding box per polyline, so a frame strokes only what it can show
+      const bbox = new Float64Array(counts.length * 4);
+      let v = 0;
+      for (let p = 0; p < counts.length; p++){
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for (let j = 0; j < counts[p]; j++, v += 2){
+          const x = xy[v], y = xy[v+1];
+          if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y;
+        }
+        bbox[p*4] = x0; bbox[p*4+1] = y0; bbox[p*4+2] = x1; bbox[p*4+3] = y1;
+      }
+      BM[k] = {counts, xy, bbox, area: L_.area};
     }
-    draw();
+    draw(); thumbs();
   } catch(e){ /* optional */ }
 }
 async function refreshHotspot(key){
@@ -607,15 +653,34 @@ async function refreshHotspot(key){
     }
     if (!NET || NET.stamp !== h.stamp) await loadNetwork();
     h._idx = b64u32(h.index); h._vol = b64u16(h.volume); h._del = b64u16(h.delay);
-    h._order = Array.from(h._del.keys()).sort((a, b) => h._del[a] - h._del[b]);
+    groupLinks(h);
     HS = h;
+    legend();
     $('empty').classList.add('hidden');
     const w = $('window');
     w.classList.remove('hidden');
     w.innerHTML = (h.scope === 'iteration' ? 'whole day' : ('window ' + (h.window_from || '') + '–' + (h.window_to || '')))
       + ' <small>· iteration ' + h.iteration + ' · ' + num(h.n_links) + ' loaded links</small>';
     if (!fitted){ fitTo(h.core_bbox); fitted = true; } else draw();
+    thumbs();
   } catch(e){ /* the file is being replaced; the next poll gets it */ }
+}
+/* the loaded links are binned once, by delay colour (25 steps) and by width (6 steps), so a
+   frame strokes ~150 paths instead of one path per link; bins are drawn from free-flowing to
+   stopped and thin to wide, so the worst and busiest links land on top */
+const NBUCKET = 24, NWIDTH = 5;
+function groupLinks(h){
+  const n = h._del.length, vmax = Math.max(1, h.volume_max);
+  const key = new Uint16Array(n), tally = new Uint32Array((NBUCKET + 1) * (NWIDTH + 1));
+  for (let i = 0; i < n; i++){
+    const b = Math.round(h._del[i] / 65535 * NBUCKET), w = Math.round(Math.sqrt(h._vol[i] / vmax) * NWIDTH);
+    key[i] = b * (NWIDTH + 1) + w; tally[key[i]]++;
+  }
+  const groups = [];
+  for (let k = 0; k < tally.length; k++) if (tally[k]) groups.push({key: k, bucket: Math.floor(k / (NWIDTH + 1)), w: k % (NWIDTH + 1), idx: new Uint32Array(tally[k]), fill: 0});
+  const byKey = {}; for (const g of groups) byKey[g.key] = g;
+  for (let i = 0; i < n; i++){ const g = byKey[key[i]]; g.idx[g.fill++] = i; }
+  h._groups = groups;
 }
 
 /* the frame: k = pixels per merc unit, (ox, oy) = canvas origin in merc pixels */
@@ -627,123 +692,172 @@ function mppAt(k){ // metres per pixel at the study latitude
   const lat = (HS && HS.core_bbox) ? (HS.core_bbox[1] + HS.core_bbox[3]) / 2 : -32.9;
   return 40075016.686 * Math.cos(lat * Math.PI / 180) / (TILE * k);
 }
-const ROAD_ORDER = [['residential','--rd5',7.0,0.9],['tertiary','--rd4',8.5,1.0],['secondary','--rd3',10.5,1.2],
-                    ['primary','--rd2',13.0,1.5],['trunk','--rd1',16.0,1.8],['motorway','--rd1',22.0,2.2]];
-function strokeLayer(gx, layer, f, dprk){
-  const xy = layer.xy, counts = layer.counts;
+/* name, colour, width in metres, minimum width in px, and the coarsest metres-per-pixel at
+   which the class is still drawn - minor roads vanish as the view zooms out, the way a map
+   app's do, which is most of what a frame used to cost */
+const ROAD_ORDER = [['residential','--rd5',7.0,0.9,14],['tertiary','--rd4',8.5,1.0,30],['secondary','--rd3',10.5,1.2,70],
+                    ['primary','--rd2',13.0,1.5,200],['trunk','--rd1',16.0,1.8,Infinity],['motorway','--rd1',22.0,2.2,Infinity]];
+function strokeLayer(gx, layer, f, dprk, W, H){
+  const xy = layer.xy, counts = layer.counts, bb = layer.bbox;
+  const k = f.k * dprk, ox = f.ox * dprk, oy = f.oy * dprk;
   let v = 0;
   gx.beginPath();
   for (let p = 0; p < counts.length; p++){
-    const n = counts[p];
+    const n = counts[p], b = p * 4;
+    if (bb[b+2] * k - ox < 0 || bb[b] * k - ox > W || bb[b+3] * k - oy < 0 || bb[b+1] * k - oy > H){ v += 2 * n; continue; }
     for (let j = 0; j < n; j++, v += 2){
-      const x = (xy[v] * f.k - f.ox) * dprk, y = (xy[v+1] * f.k - f.oy) * dprk;
+      const x = xy[v] * k - ox, y = xy[v+1] * k - oy;
       if (j === 0) gx.moveTo(x, y); else gx.lineTo(x, y);
     }
     if (layer.area) gx.closePath();
   }
 }
+/* every caller asks for a frame; at most one is painted per animation frame */
+let drawQueued = false;
 function draw(){
+  if (drawQueued) return;
+  drawQueued = true;
+  requestAnimationFrame(() => { drawQueued = false; drawNow(); });
+}
+function drawNow(){
   const cv = MAP ? MAP.canvas : FB.canvas;
   if (!cv || !cv.width) return;
   const gx = cv.getContext('2d');
   const f = frame(), W = cv.width, H = cv.height;
   gx.setTransform(1, 0, 0, 1, 0, 0);
   gx.clearRect(0, 0, W, H);
-  const twin = BASE === 'twin' || !MAP;
+  const twin = BASE === 'core' || !MAP;
   if (twin){ gx.fillStyle = css('--water'); gx.fillRect(0, 0, W, H); }
   gx.lineCap = 'round'; gx.lineJoin = 'round';
   const mpp = mppAt(f.k);
   if (BM){
     if (twin || SHOW.ground){
-      if (BM.coast){ strokeLayer(gx, BM.coast, f, dpr); gx.fillStyle = css('--land'); gx.fill('evenodd'); }
-      if (BM.green){ strokeLayer(gx, BM.green, f, dpr); gx.fillStyle = css('--green'); gx.fill('evenodd'); }
-      if (BM.sand){ strokeLayer(gx, BM.sand, f, dpr); gx.fillStyle = css('--sand'); gx.fill('evenodd'); }
-      if (BM.water){ strokeLayer(gx, BM.water, f, dpr); gx.fillStyle = css('--water'); gx.fill('evenodd'); }
+      if (BM.coast){ strokeLayer(gx, BM.coast, f, dpr, W, H); gx.fillStyle = css('--land'); gx.fill('evenodd'); }
+      if (BM.green){ strokeLayer(gx, BM.green, f, dpr, W, H); gx.fillStyle = css('--green'); gx.fill('evenodd'); }
+      if (BM.sand){ strokeLayer(gx, BM.sand, f, dpr, W, H); gx.fillStyle = css('--sand'); gx.fill('evenodd'); }
+      if (BM.water){ strokeLayer(gx, BM.water, f, dpr, W, H); gx.fillStyle = css('--water'); gx.fill('evenodd'); }
     }
     if (twin || SHOW.roads){
       for (const spec of ROAD_ORDER){
-        if (!BM[spec[0]]) continue;
+        if (!BM[spec[0]] || mpp > spec[4]) continue;
         gx.strokeStyle = css(spec[1]);
         gx.lineWidth = Math.max(spec[3] * dpr, spec[2] / mpp * dpr);
-        strokeLayer(gx, BM[spec[0]], f, dpr); gx.stroke();
+        strokeLayer(gx, BM[spec[0]], f, dpr, W, H); gx.stroke();
       }
     }
-    if (SHOW.rail && BM.rail){ gx.strokeStyle = css('--rail'); gx.lineWidth = Math.max(2 * dpr, 5 / mpp * dpr); strokeLayer(gx, BM.rail, f, dpr); gx.stroke(); }
-    if (SHOW.tram && BM.tram){ gx.strokeStyle = css('--tram'); gx.lineWidth = Math.max(2.4 * dpr, 4 / mpp * dpr); strokeLayer(gx, BM.tram, f, dpr); gx.stroke(); }
+    if (SHOW.rail && BM.rail){ gx.strokeStyle = css('--rail'); gx.lineWidth = Math.max(2 * dpr, 5 / mpp * dpr); strokeLayer(gx, BM.rail, f, dpr, W, H); gx.stroke(); }
+    if (SHOW.tram && BM.tram){ gx.strokeStyle = css('--tram'); gx.lineWidth = Math.max(2.4 * dpr, 4 / mpp * dpr); strokeLayer(gx, BM.tram, f, dpr, W, H); gx.stroke(); }
   }
-  if (!SHOW.traffic || !HS || !HS.available || !NET) return;
-  const xy = NET.xy, idx = HS._idx, vol = HS._vol, del = HS._del, order = HS._order;
-  const vmax = Math.max(1, HS.volume_max);
+  if (!SHOW.traffic || !HS || !HS.available || !NET || !HS._groups) return;
+  const xy = NET.xy, idx = HS._idx;
   const k = f.k * dpr, ox = f.ox * dpr, oy = f.oy * dpr;
-  let last = -1;
-  for (let oi = 0; oi < order.length; oi++){
-    const i = order[oi], li = idx[i] * 4;
-    const x1 = xy[li] * k - ox, y1 = xy[li+1] * k - oy, x2 = xy[li+2] * k - ox, y2 = xy[li+3] * k - oy;
-    if ((x1 < 0 && x2 < 0) || (x1 > W && x2 > W) || (y1 < 0 && y2 < 0) || (y1 > H && y2 > H)) continue;
-    const t = del[i] / 65535, rel = Math.sqrt(vol[i] / vmax);
-    const bucket = Math.round(t * 24);
-    if (bucket !== last){ gx.strokeStyle = rampColor(bucket / 24); last = bucket; }
+  const tiny = 0.6 * dpr;              // a link shorter than this on screen is invisible anyway
+  for (const g of HS._groups){
+    const rel = g.w / NWIDTH, list = g.idx;
+    let any = false;
+    gx.beginPath();
+    for (let oi = 0; oi < list.length; oi++){
+      const i = list[oi], li = idx[i] * 4;
+      const x1 = xy[li] * k - ox, y1 = xy[li+1] * k - oy, x2 = xy[li+2] * k - ox, y2 = xy[li+3] * k - oy;
+      if ((x1 < 0 && x2 < 0) || (x1 > W && x2 > W) || (y1 < 0 && y2 < 0) || (y1 > H && y2 > H)) continue;
+      if (Math.abs(x1 - x2) + Math.abs(y1 - y2) < tiny) continue;
+      gx.moveTo(x1, y1); gx.lineTo(x2, y2); any = true;
+    }
+    if (!any) continue;
+    gx.strokeStyle = rampColor(g.bucket / NBUCKET);
     gx.globalAlpha = 0.55 + 0.45 * rel;
     gx.lineWidth = Math.max(1.0 * dpr, rel * 5 * dpr);
-    gx.beginPath(); gx.moveTo(x1, y1); gx.lineTo(x2, y2); gx.stroke();
+    gx.stroke();
   }
   gx.globalAlpha = 1;
 }
 function fitTo(box){ if (!box) return; if (MAP) MAP.fit(box); else FB.fit(box); }
 
-/* ---- host A: Leaflet with tiles (map / satellite / hybrid) or none (twin) ---- */
+/* ---- host A: Leaflet with tiles (default / satellite) or none (core) ---- */
 function leafletHost(){
   const map = L.map('map', {zoomControl:false, attributionControl:true, worldCopyJump:false,
-                            center:[-32.93, 151.75], zoom:11, minZoom:3, maxZoom:19, zoomSnap:0.25, wheelPxPerZoomLevel:90});
+                            center:[-32.93, 151.75], zoom:11, minZoom:3, maxZoom:19,
+                            // continuous zoom the way a map app scrolls: no snapping to a level, the tiles of
+                            // the nearest level scaled meanwhile and replaced as their own loads land
+                            zoomSnap:0, zoomDelta:0.5, wheelPxPerZoomLevel:120, wheelDebounceTime:20});
   map.attributionControl.setPrefix('');
-  const osm = () => L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19,
-      attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
-  const esri = (svc, attr) => L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/' + svc + '/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, attribution:attr});
+  // tiles the way a map app loads them: a wide ring of tiles kept around the view so a pan
+  // lands on tiles already there, tiles requested while the zoom is still moving rather
+  // than after it settles, and the previous level's tiles left in place (scaled) until the
+  // new ones arrive - Leaflet's own parent/child retention, given room to work
+  const TILES = {maxZoom:19, keepBuffer:8, updateWhenZooming:true, updateWhenIdle:false, updateInterval:80};
+  // the stack a map app draws: a base WITHOUT labels under the run's overlay, and the labels
+  // alone in a pane above it, so a place name is never buried under the traffic
+  map.createPane('labels'); map.getPane('labels').style.zIndex = 450; map.getPane('labels').style.pointerEvents = 'none';
+  const dark = () => root.dataset.theme !== 'light';
+  const esri = (svc, attr, extra) => L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/' + svc + '/MapServer/tile/{z}/{y}/{x}', Object.assign({attribution:attr}, TILES, extra || {}));
+  // Esri's Canvas set is drawn for data on top of it: a gray base with no labels, and the
+  // labels as their own "Reference" tiles; native to zoom 16, upsampled past it
+  const CANVAS_ATTR = 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ';
+  const streets = () => esri('Canvas/World_' + (dark() ? 'Dark' : 'Light') + '_Gray_Base', CANVAS_ATTR, {maxNativeZoom:16});
+  const streetLabels = () => esri('Canvas/World_' + (dark() ? 'Dark' : 'Light') + '_Gray_Reference', CANVAS_ATTR, {maxNativeZoom:16, pane:'labels'});
   const imagery = () => esri('World_Imagery', 'Imagery &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community');
-  const places = () => esri('Reference/World_Boundaries_and_Places', 'Labels &copy; Esri');
+  const places = () => esri('Reference/World_Boundaries_and_Places', 'Labels &copy; Esri', {pane:'labels'});
   const bases = {
-    map: () => osm(),
-    satellite: () => imagery(),
-    hybrid: () => L.layerGroup([imagery(), places()]),
-    twin: () => null,
+    map: () => L.layerGroup([streets(), streetLabels()]),
+    satellite: () => L.layerGroup([imagery(), places()]),
+    core: () => null,
   };
   let current = null;
-  const canvas = L.DomUtil.create('canvas', 'overlay');
+  // the canvas is Leaflet's own renderer idiom: padded beyond the viewport so a zoom-out
+  // still has drawn margin to scale into, transform-origin at its top-left (the
+  // leaflet-zoom-animated class) so the scale pivots where Leaflet's offset assumes, and
+  // its transform animated with the tiles rather than snapped
+  const PAD = 0.35;
+  const canvas = L.DomUtil.create('canvas', 'overlay leaflet-zoom-animated');
   map.getPanes().overlayPane.appendChild(canvas);
-  let center = null, zoom = null;
+  let center = null, zoom = null, pad = L.point(0, 0);
   function reset(){
     const size = map.getSize();
+    pad = size.multiplyBy(PAD).round();
     dpr = window.devicePixelRatio || 1;
-    canvas.width = Math.round(size.x * dpr); canvas.height = Math.round(size.y * dpr);
-    canvas.style.width = size.x + 'px'; canvas.style.height = size.y + 'px';
-    L.DomUtil.setPosition(canvas, map.containerPointToLayerPoint([0, 0]));
-    L.DomUtil.setTransform(canvas, map.containerPointToLayerPoint([0, 0]), 1);
+    const w = size.x + 2 * pad.x, h = size.y + 2 * pad.y;
+    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+    const tl = map.containerPointToLayerPoint([-pad.x, -pad.y]);
+    L.DomUtil.setPosition(canvas, tl);
+    L.DomUtil.setTransform(canvas, tl, 1);
     center = map.getCenter(); zoom = map.getZoom();
-    draw();
+    drawNow();
   }
-  function anim(e){    // keep the canvas glued to the tiles while the zoom animates
-    const scale = map.getZoomScale(e.zoom, zoom);
-    const viewHalf = map.getSize().multiplyBy(0.5);
-    const currentCenterPoint = map.project(center, e.zoom);
-    const offset = viewHalf.multiplyBy(-scale).add(currentCenterPoint).subtract(map._getNewPixelOrigin(e.center, e.zoom));
+  function place(c, z){    // keep the canvas glued to the tiles while the zoom animates
+    if (center === null) return;
+    const scale = map.getZoomScale(z, zoom);
+    const viewHalf = map.getSize().multiplyBy(0.5 + PAD);
+    const currentCenterPoint = map.project(center, z);
+    const offset = viewHalf.multiplyBy(-scale).add(currentCenterPoint).subtract(map._getNewPixelOrigin(c, z));
     L.DomUtil.setTransform(canvas, offset, scale);
   }
   map.on('moveend zoomend resize viewreset', reset);
-  map.on('zoomanim', anim);
+  map.on('zoomanim', e => place(e.center, e.zoom));
+  map.on('zoom', () => place(map.getCenter(), map.getZoom()));
   const host = {
     canvas,
     frame(){
-      const z = map.getZoom(), o = map.getPixelOrigin(), tl = map.containerPointToLayerPoint([0, 0]);
+      const z = map.getZoom(), o = map.getPixelOrigin(), tl = map.containerPointToLayerPoint([-pad.x, -pad.y]);
       return {k: Math.pow(2, z), ox: o.x + tl.x, oy: o.y + tl.y};
     },
     fit(box){ map.fitBounds([[box[1], box[0]], [box[3], box[2]]], {padding:[20, 20], animate:false}); reset(); },
     setBase(name){
-      if (current){ map.removeLayer(current); current = null; }
+      // the old tiles stay up until the new set has loaded, so a switch never shows bare ground
+      const old = current;
       const mk = bases[name] || bases.map;
       current = mk();
-      if (current) current.addTo(map);
-      map.getPanes().tilePane.classList.toggle('night', name === 'map');
-      $('map').style.background = name === 'twin' ? css('--water') : (root.dataset.theme === 'light' ? '#e8eaed' : '#202124');
+      const retire = () => { if (old && map.hasLayer(old)) map.removeLayer(old); };
+      if (current){
+        current.addTo(map);
+        const first = current.getLayers ? current.getLayers()[0] : current;
+        let done = false;
+        const once = () => { if (!done){ done = true; retire(); } };
+        if (first && first.once) first.once('load', once);
+        setTimeout(once, 4000);
+      } else retire();
+      $('map').style.background = name === 'core' ? css('--water') : (root.dataset.theme === 'light' ? '#e8eaed' : '#202124');
       draw();
     },
     zoomIn(){ map.zoomIn(); }, zoomOut(){ map.zoomOut(); },
@@ -767,7 +881,7 @@ const FB = (() => {
     canvas,
     enable(){
       canvas.hidden = false; canvas.style.pointerEvents = 'auto'; $('map').classList.add('fallback');
-      for (const b of document.querySelectorAll('#bases button')) b.disabled = b.dataset.base !== 'twin';
+      for (const b of document.querySelectorAll('.bases button')) b.disabled = b.dataset.base !== 'core';
       window.addEventListener('resize', resize);
       canvas.addEventListener('mousedown', e => { if (!view) return; drag = {x:e.clientX, y:e.clientY, cx:view.cx, cy:view.cy}; $('map').classList.add('drag'); });
       window.addEventListener('mouseup', () => { drag = null; $('map').classList.remove('drag'); });
@@ -796,23 +910,58 @@ const FB = (() => {
 
 function setBase(name){
   BASE = name; store('rv.base', name);
-  for (const b of document.querySelectorAll('#bases button')) b.classList.toggle('on', b.dataset.base === name);
+  for (const b of document.querySelectorAll('.bases button')) b.classList.toggle('on', b.dataset.base === name);
   if (MAP) MAP.setBase(name); else FB.setBase(name);
+  thumbs();
 }
-for (const b of document.querySelectorAll('#bases button')) b.onclick = () => setBase(b.dataset.base);
+for (const b of document.querySelectorAll('.bases button')) b.onclick = () => setBase(b.dataset.base);
+/* the map-type thumbnails are the map itself: the street and imagery tiles that cover the
+   study area's centre, and the core drawn from the package into a small canvas. They resolve
+   from the run's own core bbox, so nothing here names a place. */
+const THUMB = {};
+function tileFor(lon, lat, z){
+  const n = Math.pow(2, z), r = lat * Math.PI / 180;
+  return [z, Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)];
+}
+function thumbs(){
+  if (HS && HS.core_bbox){
+    const [z, x, y] = tileFor((HS.core_bbox[0] + HS.core_bbox[2]) / 2, (HS.core_bbox[1] + HS.core_bbox[3]) / 2, 11);
+    const E = 'https://server.arcgisonline.com/ArcGIS/rest/services/', T = '/MapServer/tile/' + z + '/' + y + '/' + x;
+    const gray = 'Canvas/World_' + (root.dataset.theme === 'light' ? 'Light' : 'Dark') + '_Gray_';
+    THUMB.map = 'url("' + E + gray + 'Reference' + T + '"), url("' + E + gray + 'Base' + T + '")';   // labels over base
+    THUMB.satellite = 'url("' + E + 'World_Imagery' + T + '")';
+  }
+  if (HS && HS.core_bbox && BM && THUMB.coreTheme !== root.dataset.theme){   // redrawn in the palette of the current theme
+    THUMB.coreTheme = root.dataset.theme;
+    const c = document.createElement('canvas'); c.width = 160; c.height = 112;
+    const gx = c.getContext('2d');
+    const x0 = mercX(HS.core_bbox[0]), x1 = mercX(HS.core_bbox[2]), y0 = mercY(HS.core_bbox[3]), y1 = mercY(HS.core_bbox[1]);
+    const k = Math.min(c.width / (x1 - x0), c.height / (y1 - y0));
+    const f = {k, ox: (x0 + x1) / 2 * k - c.width / 2, oy: (y0 + y1) / 2 * k - c.height / 2};
+    gx.fillStyle = css('--water'); gx.fillRect(0, 0, c.width, c.height);
+    if (BM.coast){ strokeLayer(gx, BM.coast, f, 1, c.width, c.height); gx.fillStyle = css('--land'); gx.fill('evenodd'); }
+    if (BM.water){ strokeLayer(gx, BM.water, f, 1, c.width, c.height); gx.fillStyle = css('--water'); gx.fill('evenodd'); }
+    gx.lineWidth = 1; gx.lineCap = 'round';
+    for (const spec of ROAD_ORDER.slice(3)){ if (!BM[spec[0]]) continue; gx.strokeStyle = css(spec[1]); strokeLayer(gx, BM[spec[0]], f, 1, c.width, c.height); gx.stroke(); }
+    THUMB.core = 'url("' + c.toDataURL() + '")';
+  }
+  for (const k of ['map', 'satellite', 'core']) if (THUMB[k]) $('th_' + k).style.backgroundImage = THUMB[k];
+  $('lyrbtn').querySelector('.th').style.backgroundImage = THUMB[BASE] || '';
+}
 $('zin').onclick = () => (MAP || FB).zoomIn();
 $('zout').onclick = () => (MAP || FB).zoomOut();
 $('fit').onclick = () => { if (HS && HS.available) fitTo(HS.core_bbox); };
 
 /* ---- completion verdicts, shown in the run card once the summary exists ---- */
-let doneShown = false;
+let doneShown = false, summaryMisses = 0;
 function verdict(cls, mark, text, sub){
   return '<div class="verdict ' + cls + '"><span class="m">' + mark + '</span><div>' + text + (sub ? '<small>' + sub + '</small>' : '') + '</div></div>';
 }
 async function showCompletion(){
   if (doneShown) return;
   let sm;
-  try { const r = await fetch(url('summary.json')); if (!r.ok) return; sm = await r.json(); } catch(e){ return; }
+  if (summaryMisses >= 3) return;      // a closed run with no summary (a probe) is not going to write one
+  try { const r = await fetch(url('summary.json')); if (!r.ok){ summaryMisses++; return; } sm = await r.json(); } catch(e){ return; }
   doneShown = true;
   const rel = sm.relaxation || {}, integ = sm.integrity || {};
   if (rel.tolerance_pp == null && rel.threshold_pp != null) rel.tolerance_pp = rel.threshold_pp;
@@ -935,10 +1084,11 @@ if (window.L && !window.__noLeaflet){
   MAP = leafletHost();
   setBase(BASE);
 } else {
-  FB.enable(); BASE = 'twin'; setBase('twin');
+  FB.enable(); BASE = 'core'; setBase('core');
   $('map').title = 'the map library did not load (offline?) - the twin is drawn from the package alone';
 }
 window.addEventListener('resize', () => draw());
+legend(); fadeEdges();
 loadRuns();
 loadBasemap();
 loadNetwork().then(() => { tick(); refreshModes(); });

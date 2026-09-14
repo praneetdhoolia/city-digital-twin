@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
 
 ## What is built
 
@@ -29,7 +29,8 @@
 
 ## What is measured — what a run costs
 
-- **Arm 0 landed in 30.35 h against a 39.0 h quote and a 44 h ceiling** (§9.168, §9.169, `20260912T202242_300it_25pct`: wall 109,260.8 s, rc 0). Recurring iteration **346.0 s** over 287 plain iterations (`median_iteration_s` 347.34); the pace fell from ~400 s to ~255 s and the band [217, 253] was not met. The next 300-iteration arm is quoted **30.4 h** (`arm_cost.py --run-config f35_baseline_25pct`), ~25.5 h at 250; the 44 h approval is SPENT.
+- **Arm 0 landed in 30.35 h against a 39.0 h quote and a 44 h ceiling** (§9.168, §9.169, `20260912T202242_300it_25pct`: wall 109,260.8 s, rc 0). Recurring iteration **346.0 s** over 287 plain iterations (`median_iteration_s` 347.34); the pace fell from ~400 s to ~255 s and the band [217, 253] was not met. The 44 h approval is SPENT.
+- **The recompiled controler is priced** (§9.172, `20260914T195207_4it_25pct`, 4 of 4, wall 4,537 s): recurring iteration **422.0 s** on the committed build against 346.0 s on arm 0's (+22 %); live heap after a full collection ≤ 16.0 GiB; the first pair arm quotes **30.0 h** for 250 iterations plus 32 min of setup, spread 18.2–39.2 h; no approval given.
 - **The heap is measured on a full arm, and it does not slope** (§9.169, `gc.log`, #66): live heap after a full collection 21.2 GB at 8.9 h, peak 26,863 MB at 22.9 h, 21.4 GB at 30.2 h; GC under 1 % of wall. The rule (`RUN.machine.heap_floor_gib` 15.6 + `RUN.machine.heap_per_fraction_gib` 87 × 0.25 = 37.4 GiB) holds 11 GiB over the peak; the slope is not re-declared on one arm; no stall.
 - **The footpath network costs 555.5 s a recurring 25 % iteration on F34's controler and 460.0 s on F35's** (§9.168; `20260912T135825_4it_25pct` → `20260912T185005_4it_25pct`) against F33's 244.5 s: prepareForMobsim 92 → **2** s, mobsim 328 → **262** s; +88 % at 25 % against +35 % at 1 %.
 - **The longest window the stall will ever get, and it did not kill the arm** (§9.163, #66, `20260909T015217_300it_25pct`): 300 iterations in 21.5 h; one pace excursion (running median 301.5 s over it.120–190, closing at 244.05 s) was a false alarm. 37.4 % of all machine hours bought no citable reading; this arm had no automatic stop, now refused (#169).
@@ -67,6 +68,7 @@
 
 ## History
 
+- §9.172 — the recompiled controler priced: 422 s
 - §9.170 — concurrent arm refused at preflight
 - §9.169 — arm 0 lands at 30.35 h; the horizon declared 250
 - §9.168 — footpath iteration profiled; engines route re-modes
@@ -75,10 +77,4 @@
 - §9.165 — arm 0 dies at 98 on a 14g heap
 - §9.164 — four probes; the ceiling watcher's first stop
 - §9.163 — 21.5 h uninterrupted; stall unattributed
-- §9.161 — the runner enforces its approved ceiling
 - §9.160 — the new stack priced: +3.0 s
-- §9.159 — 336.4 GiB reclaimed; `reclaim()` is the verb
-- §9.157 — F31 gate: the band true, the point not
-- §9.153 — F30 arm 45 % slower; `--stop` tested live
-- §9.149 — F28 arm to its gate at 260 s
-- §9.147 — milestone iterations cost double; threads probed

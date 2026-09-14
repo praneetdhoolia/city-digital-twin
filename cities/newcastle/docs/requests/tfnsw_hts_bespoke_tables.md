@@ -6,7 +6,30 @@ workbooks by Region, LGA and SA3 (2020/21–2024/25 and the revised
 2009/10–2019/20 release) carry mode × region, purpose × region and the
 LGA/SA3 splits only — none of the four cells below on any geography — and
 TfNSW's stated policy is that unit records are not released but aggregate
-tables are supplied on request.*
+tables are supplied on request. HELD by the user's decision of 14 September
+2026 (D2) pending an exhaustive search, made that day (forty-ninth session):
+the hub's CKAN catalogue lists eleven HTS resources - the Region, LGA and SA3
+workbooks for 2020/21-2024/25 and 2009/10-2019/20 and their data documents -
+and their sheets carry mode x area (trips, distance, mean distance, mean
+time), purpose x area and, pre-2020, a demographics sheet (population,
+households, vehicles): none of the four cells. No dataset of format API on
+the hub is an HTS product, so `api.transport.nsw.gov.au` has nothing to ask.
+data.gov.au and Data.NSW mirror the same package. The three dashboards (by
+Region, LGA, SA3) and the LGA Profiler's four views (total travel, mode
+trips, mode distance, population and vehicles) are the workbooks drawn. The
+only published cells of the four kinds are in the Bureau of Transport
+Statistics' *Household Travel Survey Report: Sydney 2012/13* (November
+2014): Table 4.7.2 mode share by age (eight bands, six modes), Table 4.4.6
+trips by six distance bands x nine modes with bicycle, taxi and ferry
+separate, Table 4.8.3 vehicle occupancy for work and non-work trips and
+Table 4.8.4 the occupancy distribution - all for the Sydney GCCSA, not the
+Hunter, at the 2012/13 vintage: shapes, not Newcastle targets. Commute-only
+mode x age and distance-to-work band x mode for the five LGAs are derivable
+from ABS Census 2021 TableBuilder (MTWP x AGE5P, DTWP x MTWP), behind the
+operator's free ABS login. TfNSW's formal channel is the Transport
+Performance and Analytics request form
+(https://www.transport.nsw.gov.au/about-us/access-to-information/request-information-from-transport-performance-and-analytics),
+which refuses scripted clients; the hub's contact remains the address below.*
 
 **To:** opendataprogram@transport.nsw.gov.au
 **Subject:** Bespoke HTS aggregate tables for the Newcastle region (five LGAs), for an open agent-based transport model
