@@ -967,14 +967,13 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             e.getValue().sort(Comparator.<RideLeg>comparingDouble(r -> r.departure)
                                       .thenComparing(r -> r.person));
         }
-        final List<Map<RideLeg, Double>> routedDetours =
-                routeDetoursInParallel(order);
+        final List<Detour> routedDetours = routeDetoursInParallel(order);
         for (int di = 0; di < order.size(); di++) {
             final Map.Entry<DriverLeg, List<RideLeg>> e = order.get(di);
             final DriverLeg driver = e.getKey();
             final List<RideLeg> carried = e.getValue();
-            final Map<RideLeg, Double> passAt = routedDetours.get(di);
-            if (passAt == null) {
+            final Detour routed = routedDetours.get(di);
+            if (routed == null) {
                 detourRefused += carried.size();
                 missEndpoints += carried.size();
                 driver.carrying -= carried.size();
@@ -984,6 +983,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
                 continue;
             }
             detourDrivers++;
+            // the plan is written HERE, on the main thread, in driver order (#197)
+            routed.apply(driver);
+            final Map<RideLeg, Double> passAt = routed.passAt;
             for (final RideLeg ride : carried) {
                 detoured++;
                 nPaired++;
@@ -1062,10 +1064,48 @@ public final class RidePairingEngine implements BeforeMobsimListener,
     // ---- 9.128: the driver's detour through a declared passenger's links ---
 
     /**
-     * Route the driver's car leg through the carried passengers' links and
-     * write it to the driver's plan. Returns, per passenger, the clock at
-     * which the car reaches their origin link; null - with the plan
-     * untouched - when any segment cannot be routed.
+     * A routed detour, computed on a worker and applied by the main thread
+     * (#197): the path through the carried passengers' links, its length and
+     * duration, and per passenger the clock at which the car reaches their
+     * origin link. Nothing in the plan is touched until {@link #apply}.
+     */
+    private static final class Detour {
+        private final Map<RideLeg, Double> passAt;
+        private final List<Id<Link>> path;
+        private final double metres;
+        private final double seconds;
+
+        Detour(final Map<RideLeg, Double> passAt, final List<Id<Link>> path,
+               final double metres, final double seconds) {
+            this.passAt = passAt;
+            this.path = path;
+            this.metres = metres;
+            this.seconds = seconds;
+        }
+
+        /** Write the detour to the driver's plan. Main thread only. */
+        void apply(final DriverLeg driver) {
+            final NetworkRoute route = (NetworkRoute) driver.route;
+            final List<Id<Link>> inner = path.size() > 2
+                    ? new ArrayList<>(path.subList(1, path.size() - 1)) : new ArrayList<>();
+            route.setLinkIds(driver.from, inner, driver.to);
+            route.setDistance(metres);
+            route.setTravelTime(seconds);
+            driver.leg.setTravelTime(seconds);
+            driver.routedBefore = driver.routedTravelTime;
+            driver.routedTravelTime = seconds;
+            driver.path = path;
+        }
+    }
+
+    /**
+     * Route the driver's car leg through the carried passengers' links.
+     * Returns the detour to apply, or null when any segment cannot be
+     * routed. Runs on a worker: it reads the shared network and population
+     * and writes NOTHING - the plan is written by {@link Detour#apply} on the
+     * main thread, in driver order (#197). Before that, the route, the leg
+     * and the driver's fields were rewritten here, from the routing workers,
+     * outside the single-threaded BeforeMobsim boundary this class documents.
      *
      * @param router the iteration's ONE TripRouter, supplied by the caller. It
      *               used to be pulled from the unscoped provider inside the
@@ -1073,9 +1113,9 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      *               whole least-cost-path calculator over the network - for
      *               every one of ~51,600 segments an iteration.
      */
-    private Map<RideLeg, Double> routeDetour(final TripRouter router,
-                                             final DriverLeg driver,
-                                             final List<RideLeg> carried) {
+    private Detour routeDetour(final TripRouter router,
+                               final DriverLeg driver,
+                               final List<RideLeg> carried) {
         if (!(driver.route instanceof NetworkRoute)) {
             return null;
         }
@@ -1139,18 +1179,7 @@ public final class RidePairingEngine implements BeforeMobsimListener,
             }
             passAt.put(r, at);
         }
-        // write the detour to the driver's plan
-        final NetworkRoute route = (NetworkRoute) driver.route;
-        final List<Id<Link>> inner = path.size() > 2
-                ? new ArrayList<>(path.subList(1, path.size() - 1)) : new ArrayList<>();
-        route.setLinkIds(driver.from, inner, driver.to);
-        route.setDistance(metres);
-        route.setTravelTime(clock - driver.departure);
-        driver.leg.setTravelTime(clock - driver.departure);
-        driver.routedBefore = driver.routedTravelTime;
-        driver.routedTravelTime = clock - driver.departure;
-        driver.path = path;
-        return passAt;
+        return new Detour(passAt, path, metres, clock - driver.departure);
     }
 
     /**
@@ -1193,11 +1222,10 @@ public final class RidePairingEngine implements BeforeMobsimListener,
      * given so the caller applies them deterministically. A worker's failure
      * is the iteration's failure, never a silently unrouted driver.
      */
-    private List<Map<RideLeg, Double>> routeDetoursInParallel(
+    private List<Detour> routeDetoursInParallel(
             final List<Map.Entry<DriverLeg, List<RideLeg>>> order) {
         final int n = order.size();
-        final List<Map<RideLeg, Double>> out =
-                new ArrayList<>(Collections.nCopies(n, (Map<RideLeg, Double>) null));
+        final List<Detour> out = new ArrayList<>(Collections.nCopies(n, (Detour) null));
         if (n == 0) {
             return out;
         }
