@@ -16,6 +16,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 - Level crossings: `A.crossings.representation` = `change_events`; `cities/newcastle/networks/matsim/crossings/crossing_change_events.xml` enters every config as a time-variant network, with `RUN.travel_time.bin_size_s` 300 so a closure is visible to the router (§9.77). `A.crossings.closure_source` = `schedule_derived`: `build_level_crossings.py` locates the two boom-gated crossings from OSM `railway=level_crossing` nodes matched to `A.crossings.freight_road_names` (Saint James Road, Clyde Street), finds the mapped rail links within `A.crossings.rail_match_radius_m` 40, and closes the road for every scheduled service that traverses them, timed from that service's own stop time, for `A.crossings.closure_duration_passenger_s` 160 s (§9.167, superseding §9.90's 60 s), plus `A.crossings.freight_closures_per_day` derived freight movements per site at 277 s (§9.167). The builder refuses a crossing with no mapped rail link or no scheduled movement, and refuses any closure within `A.crossings.corridor_exclusion_m` 500 of a corridor intersection — Stewart Avenue is a T-aspect signal site, never a boom gate (§9.75, §9.76).
 - Charging dwell is native in the mapped schedule: every intermediate light-rail stop holds `departureOffset = arrivalOffset + max(existing gap, resolved dwell)`, concurrent with boarding, anchors unchanged (§9.76). `A.lightrail.dwell_charging_s` stays `unobtained` with a null value, swept 10–35 s; S2/S2b/S2c select 20 s and S2a 0 s as the disabled arm (§9.76).
 - Corridor signal identity: `scats_site_id` filled for all 14 from TfNSW's Traffic Lights Location inventory, mean match 8.0 m, maximum 26.4 m; `A.signals.scats_match_radius_m` 60 is a join tolerance, held fixed (§9.24). Eight of the 14 were installed in 2018 for the light rail; recorded as an attribute only (§9.24).
+- **The corridor's plans are two-stage with the tram first**, so the donor defect of §9.141 never fired there; it would on any three-stage plan, the S3 corridor group or a movement-level refinement.
 
 ## What is derived, and what is still unobtained
 
@@ -35,7 +36,6 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 | Offset between a train's nearest stop and the crossing | Not modelled; under a minute at both sites, stated (§9.90) |
 | Charging dwell | **Unobtained**, swept, selected per scenario (§9.76) |
 
-
 ## What is measured
 
 - Probe `20260828T230050_2it_1pct` (S2, 1%, rc=0): all 14 systems re-time; NLR_SIG_01 runs 110 → 104 → 98 → 92 s against critical DS 0.564 → 0.282 → 0.141 (§9.88). Probe `20260828T230739_2it_1pct` (S2b, rc=0) carries SCATS and green-extension priority together, 168 logged re-timings (§9.88).
@@ -54,8 +54,6 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 - **The base scenario's priority state is not settled by the record.** `A.lightrail.tsp_enabled` (false in S2) and `A.signals.scats_phasing` (`proxy_no_priority` in S2) are unbound fields under `scats_adaptive`; the emitted S2 and S2b signal files are byte-identical and both configs carry `tramPriority.mode=green_extension`. The S2 probe of §9.88 ran with `mode=off`, but `results/aborted_20260830T083019_1000it_25pct` (S2) logs priority on. Whether S2 grants tram priority must be decided and declared before any S2-versus-S2b comparison.
 - Offsets remain a stated limitation with no derivation path short of the library itself (§9.88).
 - Charging dwell field measurement stays the second data priority of §13; `A.signals.delay_per_intersection_s` 26 [15–40] now serves only the `implicit_delay` arm (§9.76).
-- Comparability: every signal or crossing change is a family boundary; F12 opened at §9.88 and nothing before it compares to anything after (`cities/newcastle/docs/run_families.json`).
-- **The corridor's plans are two-stage with the tram first, so the donor defect never fired there** (§9.141); it would have on any three-stage plan, on the S3 corridor group or on a movement-level refinement. The corridor pedestrian-phase flag now reaches the layer: 1 of 14 intersections carries it (`_corridor_report.json`, #120 closed). **The two signal probes could not run at HEAD** — the config modules' consistency checks refused a toy config that declared no reach bound, regime or taxi representation — and run again (§9.141).
 
 ## Refused — do not re-raise
 

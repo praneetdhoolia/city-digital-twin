@@ -1,8 +1,7 @@
 # The handover contract
 
 **One definition, two consumers.** `/handoff` writes a handover to this contract;
-`/onboard` reads one against it. It is **framework process**, not one city's
-study, which is why it lives here; `<city>` throughout is the active city
+`/onboard` reads one against it. `<city>` throughout is the active city
 (`CITYSIM_CITY`, default `newcastle`).
 
 ## Contents
@@ -19,8 +18,7 @@ study, which is why it lives here; `<city>` throughout is the active city
 
 The documents are layered so that a session reads **about 600 lines** before it
 can state where the project is, and opens the record only for a section it
-needs. The old shape — a 900 KB record, an 800-line board and a 400-line brief,
-each pointed at whole — cost forty minutes of reading before any work.
+needs.
 
 | Layer | File | Lines | What it answers |
 |---|---|---|---|

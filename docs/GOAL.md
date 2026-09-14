@@ -52,7 +52,9 @@ comes first; the questions are applications of it.
 8. **Convergence in at most 250 iterations.**
 9. **City-agnostic.** The framework (`src/`, `config/schema/`, `tests/`,
    `run.py`) may not be tuned to Newcastle; everything specific to a city —
-   data, parameters, adapters, documents — lives under `cities/<city>/`.
+   data, parameters, adapters, overlays — lives under `cities/<city>/`. The
+   project's documents live at `docs/` (14 September 2026, superseding the
+   earlier placement under the city).
 10. **No open issue behind a run.** Before the simulator is tuned or tested —
     before any arm is launched — every GitHub issue is closed, or declares what
     it is waiting for. An issue that can be fixed without a run is fixed first.
@@ -115,3 +117,6 @@ time; every controllable value declared in the registry.
   6 replaces it; the SCATS algorithm is implemented ([`positions/signals-and-crossings.md`](positions/signals-and-crossings.md)).
 - The per-session `/goal` restatement. The directive now lives here; a
   session reads it, it does not re-issue it.
+- The placement of the study's documents under `cities/<city>/docs/`
+  (24 August – 14 September 2026). They are the project's documents and live
+  at `docs/`.
