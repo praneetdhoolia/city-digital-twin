@@ -4,10 +4,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>run viewer</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%238ab4f8'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.css"
       onerror="this.remove()">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
-        onerror="window.__noLeaflet=true"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/5.24.0/maplibre-gl.min.js"
+        onerror="window.__noMap=true"></script>
 <style>
 /* ---- palette: dark first, light on request; the map tiles follow ---- */
 :root{
@@ -41,9 +41,11 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font
 #map.fallback{cursor:grab}
 #map.fallback.drag{cursor:grabbing}
 canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
-.leaflet-container{background:var(--water);font-family:var(--sans)}
-.leaflet-control-attribution{background:var(--panel)cc!important;color:var(--muted)!important;font-size:10px}
-.leaflet-control-attribution a{color:var(--accent)!important}
+.maplibregl-map{font-family:var(--sans)}
+.maplibregl-canvas:focus{outline:none}
+.maplibregl-ctrl-attrib{background:var(--panel)cc!important;color:var(--muted)!important;font-size:10px}
+.maplibregl-ctrl-attrib a{color:var(--accent)!important}
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl{margin:0}
 
 /* ---- the top bar, the way a map app carries its search box: the menu button inside
    the box, the theme switch a round button at the top right ---- */
@@ -188,6 +190,13 @@ table.kv2 tr.warn td{color:var(--stop)}
 #zoom button{width:40px;height:40px;border:none;background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
 #zoom button+button{border-top:1px solid var(--edge)}
 #zoom button:hover{background:var(--panel2)}
+/* the 3D switch a map app has: tilts the view and raises the terrain and the buildings */
+#tilt{font:600 12px/1 var(--sans);letter-spacing:.02em}
+#tilt.on{background:var(--accent);color:var(--accent-ink)}
+#tilt:disabled{opacity:.35;cursor:default}
+#compass{padding:0;display:flex;align-items:center;justify-content:center}
+#compass svg{width:34px;height:34px}
+#compass.hidden{display:none}
 #lyr{position:absolute;left:12px;bottom:28px;z-index:1000}
 #lyr.open{z-index:1002}   /* the open card sits above the legend strip */
 /* beside the panel while the panel is shown; back to the corner when it is hidden */
@@ -339,12 +348,14 @@ table.kv2 tr.warn td{color:var(--stop)}
       <div class="lb on" data-layer="tram"><span class="sw" style="background:var(--tram)"></span>light rail</div>
       <div class="lb on" data-layer="rail"><span class="sw" style="background:var(--rail)"></span>heavy rail</div>
       <div class="lb" data-layer="roads"><span class="sw" style="background:var(--rd1)"></span>roads (core)</div>
-      <div class="lb" data-layer="ground"><span class="sq" style="background:var(--green)"></span>land &amp; water (core)</div>
+      <div class="lb" data-layer="ground"><span class="sq" style="background:var(--green)"></span>land &amp; water</div>
     </div>
   </div>
 </div>
 <div id="ramp" class="hidden" title="delay ratio: observed ÷ free-flow travel time; line width = vehicle volume"><b>delay</b><span>1.0 flowing</span><span class="bar"></span><span>3.0+ stopped</span></div>
 <div id="ctl">
+  <button class="rb hidden" id="compass" title="face north, level the view"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/><path d="M20 4 24.5 20 20 24 15.5 20z" fill="#e53935"/><path d="M20 36 15.5 20 20 16 24.5 20z" fill="currentColor" fill-opacity=".55"/><circle cx="20" cy="20" r="2" fill="var(--panel)"/></svg></button>
+  <button class="rb" id="tilt" title="3D view: terrain and buildings (right-drag or ctrl-drag tilts and turns)">3D</button>
   <button class="rb" id="fit" title="study area">&#8982;</button>
   <div id="zoom"><button id="zin" title="zoom in">+</button><button id="zout" title="zoom out">−</button></div>
 </div>
@@ -565,15 +576,15 @@ async function refreshModes(){
   } catch(e){ modesTimer = setTimeout(refreshModes, 10000); }
 }
 
-/* ---- the map: one canvas renderer, hosted by Leaflet when it loaded, by a
-   built-in pan/zoom when it did not (offline). Everything is projected to Web
-   Mercator unit coordinates once; a frame is px = X*k - ox. ---- */
+/* ---- the map: MapLibre GL when it loaded (host A), a built-in canvas with pan and
+   wheel zoom when it did not (host B, offline). The canvas path projects everything to
+   Web Mercator unit coordinates once; a frame is px = X*k - ox. ---- */
 const SHOW = {traffic:true, tram:true, rail:true, roads:false, ground:false};
 for (const el of document.querySelectorAll('#lyrpanel .lb')){
   const n = el.dataset.layer, saved = recall('rv.layer.' + n);
   if (saved === 'off'){ SHOW[n] = false; el.classList.remove('on'); }
   if (saved === 'on'){ SHOW[n] = true; el.classList.add('on'); }
-  el.addEventListener('click', () => { SHOW[n] = !SHOW[n]; el.classList.toggle('on', SHOW[n]); store('rv.layer.' + n, SHOW[n] ? 'on' : 'off'); legend(); draw(); });
+  el.addEventListener('click', () => { if (n === 'ground' && BASE === 'satellite') return; SHOW[n] = !SHOW[n]; el.classList.toggle('on', SHOW[n]); store('rv.layer.' + n, SHOW[n] ? 'on' : 'off'); legend(); draw(); });
 }
 function legend(){ $('ramp').classList.toggle('hidden', !SHOW.traffic || !HS || !HS.available); }
 /* the Layers card opens on its button and closes on its cross, on Escape or on a click elsewhere */
@@ -607,15 +618,17 @@ function toMerc(coords){          // Float32 lon/lat pairs -> Float64 merc pairs
   return out;
 }
 
-let NET = null, HS = null, BM = null, lastHotspotKey = null, fitted = false;
+let NET = null, HS = null, BM = null, lastHotspotKey = null, fitted = false, prefit = false;
 let MAP = null, BASE = ({map:'map', satellite:'satellite', core:'core', hybrid:'satellite', twin:'core'})[recall('rv.base')] || 'map';
+let THREE_D = recall('rv.3d') === 'on';
 let dpr = window.devicePixelRatio || 1;
 
 async function loadNetwork(){
   try {
     const d = await (await fetch(url('network.json'))).json();
     if (!d.available){ NET = null; return; }
-    NET = {stamp: d.stamp, n: d.n_links, xy: toMerc(b64f32(d.coords))};
+    const ll = b64f32(d.coords);
+    NET = {stamp: d.stamp, n: d.n_links, ll, xy: toMerc(ll)};
   } catch(e){ NET = null; }
 }
 async function loadBasemap(){
@@ -625,7 +638,7 @@ async function loadBasemap(){
     BM = {};
     for (const k in d.layers){
       const L_ = d.layers[k];
-      const counts = b64u32(L_.counts), xy = toMerc(b64f32(L_.coords));
+      const ll = b64f32(L_.coords), counts = b64u32(L_.counts), xy = toMerc(ll);
       // one bounding box per polyline, so a frame strokes only what it can show
       const bbox = new Float64Array(counts.length * 4);
       let v = 0;
@@ -637,7 +650,14 @@ async function loadBasemap(){
         }
         bbox[p*4] = x0; bbox[p*4+1] = y0; bbox[p*4+2] = x1; bbox[p*4+3] = y1;
       }
-      BM[k] = {counts, xy, bbox, area: L_.area};
+      BM[k] = {counts, xy, ll, bbox, area: L_.area};
+    }
+    // the coast is the landmass: its extent is the first view until a run's own box arrives
+    if (BM.coast){
+      const c = BM.coast.ll; let w = Infinity, s = Infinity, e = -Infinity, n = -Infinity;
+      for (let i = 0; i < c.length; i += 2){ if (c[i] < w) w = c[i]; if (c[i] > e) e = c[i]; if (c[i+1] < s) s = c[i+1]; if (c[i+1] > n) n = c[i+1]; }
+      BM._bbox = [w, s, e, n];
+      if (!fitted && !prefit){ prefit = true; fitTo(BM._bbox); }
     }
     draw(); thumbs();
   } catch(e){ /* optional */ }
@@ -661,7 +681,8 @@ async function refreshHotspot(key){
     w.classList.remove('hidden');
     w.innerHTML = (h.scope === 'iteration' ? 'whole day' : ('window ' + (h.window_from || '') + '–' + (h.window_to || '')))
       + ' <small>· iteration ' + h.iteration + ' · ' + num(h.n_links) + ' loaded links</small>';
-    if (!fitted){ fitTo(h.core_bbox); fitted = true; } else draw();
+    if (!fitted){ fitTo(h.core_bbox); fitted = true; }
+    draw();
     thumbs();
   } catch(e){ /* the file is being replaced; the next poll gets it */ }
 }
@@ -683,11 +704,8 @@ function groupLinks(h){
   h._groups = groups;
 }
 
-/* the frame: k = pixels per merc unit, (ox, oy) = canvas origin in merc pixels */
-function frame(){
-  if (MAP) return MAP.frame();
-  return FB.frame();
-}
+/* the frame: k = pixels per merc unit, (ox, oy) = canvas origin in merc pixels (offline host) */
+function frame(){ return FB.frame(); }
 function mppAt(k){ // metres per pixel at the study latitude
   const lat = (HS && HS.core_bbox) ? (HS.core_bbox[1] + HS.core_bbox[3]) / 2 : -32.9;
   return 40075016.686 * Math.cos(lat * Math.PI / 180) / (TILE * k);
@@ -712,22 +730,25 @@ function strokeLayer(gx, layer, f, dprk, W, H){
     if (layer.area) gx.closePath();
   }
 }
-/* every caller asks for a frame; at most one is painted per animation frame */
+/* every caller asks for a frame. On the GL host that is a refresh of its sources and
+   visibilities - the GPU paints, nothing is redrawn by script when the view moves; offline,
+   at most one canvas paint per animation frame */
 let drawQueued = false;
 function draw(){
+  if (MAP){ MAP.refresh(); return; }
   if (drawQueued) return;
   drawQueued = true;
   requestAnimationFrame(() => { drawQueued = false; drawNow(); });
 }
 function drawNow(){
-  const cv = MAP ? MAP.canvas : FB.canvas;
+  const cv = FB.canvas;
   if (!cv || !cv.width) return;
   const gx = cv.getContext('2d');
   const f = frame(), W = cv.width, H = cv.height;
   gx.setTransform(1, 0, 0, 1, 0, 0);
   gx.clearRect(0, 0, W, H);
-  const twin = BASE === 'core' || !MAP;
-  if (twin){ gx.fillStyle = css('--water'); gx.fillRect(0, 0, W, H); }
+  const twin = true;
+  gx.fillStyle = css('--water'); gx.fillRect(0, 0, W, H);
   gx.lineCap = 'round'; gx.lineJoin = 'round';
   const mpp = mppAt(f.k);
   if (BM){
@@ -773,100 +794,278 @@ function drawNow(){
 }
 function fitTo(box){ if (!box) return; if (MAP) MAP.fit(box); else FB.fit(box); }
 
-/* ---- host A: Leaflet with tiles (default / satellite) or none (core) ---- */
-function leafletHost(){
-  const map = L.map('map', {zoomControl:false, attributionControl:true, worldCopyJump:false,
-                            center:[-32.93, 151.75], zoom:11, minZoom:3, maxZoom:19,
-                            // continuous zoom the way a map app scrolls: no snapping to a level, the tiles of
-                            // the nearest level scaled meanwhile and replaced as their own loads land
-                            zoomSnap:0, zoomDelta:0.5, wheelPxPerZoomLevel:120, wheelDebounceTime:20});
-  map.attributionControl.setPrefix('');
-  // tiles the way a map app loads them: a wide ring of tiles kept around the view so a pan
-  // lands on tiles already there, tiles requested while the zoom is still moving rather
-  // than after it settles, and the previous level's tiles left in place (scaled) until the
-  // new ones arrive - Leaflet's own parent/child retention, given room to work
-  const TILES = {maxZoom:19, keepBuffer:8, updateWhenZooming:true, updateWhenIdle:false, updateInterval:80};
-  // the stack a map app draws: a base WITHOUT labels under the run's overlay, and the labels
-  // alone in a pane above it, so a place name is never buried under the traffic
-  map.createPane('labels'); map.getPane('labels').style.zIndex = 450; map.getPane('labels').style.pointerEvents = 'none';
-  const dark = () => root.dataset.theme !== 'light';
-  const esri = (svc, attr, extra) => L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/' + svc + '/MapServer/tile/{z}/{y}/{x}', Object.assign({attribution:attr}, TILES, extra || {}));
-  // Esri's Canvas set is drawn for data on top of it: a gray base with no labels, and the
-  // labels as their own "Reference" tiles; native to zoom 16, upsampled past it
+/* ---- host A: MapLibre GL. A WebGL renderer whose tiles are fetched and decoded in web
+   workers, so a pan or a zoom never waits on a load: the view moves at once and the tiles
+   land around it at their own speed, the nearest level scaled meanwhile. The run's own
+   layers - the package basemap, the congested links - are GeoJSON sources tiled in the
+   same workers and painted by the GPU, so nothing is redrawn by page script when the view
+   moves (the previous host re-stroked every polyline on the main thread at the end of each
+   gesture, which is what froze it), and in 3D they drape onto the terrain with the tiles.
+   The 3D view is the key-free stack: a Terrarium elevation model and OpenStreetMap
+   building footprints extruded to their tagged heights; the core base stays flat. ---- */
+function glHost(){
+  const ESRI = 'https://server.arcgisonline.com/ArcGIS/rest/services/';
   const CANVAS_ATTR = 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ';
-  const streets = () => esri('Canvas/World_' + (dark() ? 'Dark' : 'Light') + '_Gray_Base', CANVAS_ATTR, {maxNativeZoom:16});
-  const streetLabels = () => esri('Canvas/World_' + (dark() ? 'Dark' : 'Light') + '_Gray_Reference', CANVAS_ATTR, {maxNativeZoom:16, pane:'labels'});
-  const imagery = () => esri('World_Imagery', 'Imagery &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community');
-  const places = () => esri('Reference/World_Boundaries_and_Places', 'Labels &copy; Esri', {pane:'labels'});
-  const bases = {
-    map: () => L.layerGroup([streets(), streetLabels()]),
-    satellite: () => L.layerGroup([imagery(), places()]),
-    core: () => null,
-  };
-  let current = null;
-  // the canvas is Leaflet's own renderer idiom: padded beyond the viewport so a zoom-out
-  // still has drawn margin to scale into, transform-origin at its top-left (the
-  // leaflet-zoom-animated class) so the scale pivots where Leaflet's offset assumes, and
-  // its transform animated with the tiles rather than snapped
-  const PAD = 0.35;
-  const canvas = L.DomUtil.create('canvas', 'overlay leaflet-zoom-animated');
-  map.getPanes().overlayPane.appendChild(canvas);
-  let center = null, zoom = null, pad = L.point(0, 0);
-  function reset(){
-    const size = map.getSize();
-    pad = size.multiplyBy(PAD).round();
-    dpr = window.devicePixelRatio || 1;
-    const w = size.x + 2 * pad.x, h = size.y + 2 * pad.y;
-    canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
-    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-    const tl = map.containerPointToLayerPoint([-pad.x, -pad.y]);
-    L.DomUtil.setPosition(canvas, tl);
-    L.DomUtil.setTransform(canvas, tl, 1);
-    center = map.getCenter(); zoom = map.getZoom();
-    drawNow();
+  const EMPTY = {type:'FeatureCollection', features:[]};
+  const dark = () => root.dataset.theme !== 'light';
+  const map = new maplibregl.Map({
+    container:'map', style:{version:8, projection:{type:'globe'}, sources:{}, layers:[]},   // the earth when zoomed out, the flat map from about zoom 12
+    center:[0, 0], zoom:1, minZoom:0.6, maxZoom:20, maxPitch:75,
+    dragRotate:false, pitchWithRotate:false, boxZoom:false,
+    attributionControl:{compact:false}, fadeDuration:180, maplibreLogo:false,
+  });
+  map.getContainer().style.background = '#05070c';
+  /* turning and tilting the way a map app does it: ctrl (or shift, or the Mac command key)
+     + drag, sideways turns and up-down tilts, each a straight function of the pointer's travel
+     (the library's own handler turns by the angle swept about the screen centre, which
+     reverses as the pointer crosses it); the right button does nothing. Touch keeps two-finger
+     turn and tilt; shift + arrows turn and tilt from the keyboard; ctrl+shift+N faces north,
+     ctrl+shift+U levels, ctrl+shift+F does both. */
+  (function(){
+    const el = map.getContainer();
+    let drag = null;
+    el.addEventListener('contextmenu', e => e.preventDefault());
+    el.addEventListener('mousedown', e => {
+      if (e.button === 2){ e.stopPropagation(); e.preventDefault(); return; }
+      if (e.button === 0 && (e.ctrlKey || e.shiftKey || e.metaKey)){
+        e.stopPropagation(); e.preventDefault();
+        drag = {x:e.clientX, y:e.clientY, b:map.getBearing(), p:map.getPitch()};
+        el.style.cursor = 'grabbing';
+      }
+    }, true);
+    window.addEventListener('mousemove', e => {
+      if (!drag) return;
+      map.jumpTo({bearing: drag.b + (e.clientX - drag.x) * 0.4, pitch: Math.max(0, Math.min(map.getMaxPitch(), drag.p - (e.clientY - drag.y) * 0.4))});
+    });
+    window.addEventListener('mouseup', () => { if (drag){ drag = null; el.style.cursor = ''; } });
+    document.addEventListener('keydown', e => {
+      if (!(e.ctrlKey && e.shiftKey) || /input|select|textarea/i.test(e.target.tagName)) return;
+      const k = e.key.toUpperCase();
+      if (k === 'N') map.easeTo({bearing:0, duration:500}); else if (k === 'U') map.easeTo({pitch:0, duration:500}); else if (k === 'F') map.easeTo({bearing:0, pitch:0, duration:500}); else return;
+      e.preventDefault();
+    });
+  })();
+  map.on('error', e => { const m = e && e.error && e.error.message || ''; if (!/tile|Failed to fetch|AJAX|status/i.test(m)) console.warn(m || e); });
+  let ready = false, pending = [];
+  const when = fn => ready ? fn() : pending.push(fn);
+  map.on('load', () => { build(); ready = true; for (const f of pending) f(); pending = []; });
+
+  /* the study latitude sets the metres-per-pixel scale of the metre-true road widths and
+     the zoom at which each road class appears; known once the basemap or a run arrives */
+  let LAT = null;
+  const C = 40075016.686;
+  const mpp0 = () => C * Math.cos((LAT === null ? 0 : LAT) * Math.PI / 180) / 512;   // metres per px at zoom 0
+  const zoomForMpp = thr => thr === Infinity ? 0 : Math.max(0, Math.log2(mpp0() / thr));
+  // px = metres / mpp(z) = metres * 2^z / mpp0, exact under base-2 exponential interpolation
+  // from the zoom where it passes the minimum width; the stop clamps to the minimum below it
+  const metreWidth = (m, minpx) => { const zm = Math.log2(minpx * mpp0() / m); return ['interpolate', ['exponential', 2], ['zoom'], zm, minpx, 24, minpx * Math.pow(2, 24 - zm)]; };
+  function setLat(lat){
+    if (LAT !== null && Math.abs(LAT - lat) < 0.05) return;
+    LAT = lat;
+    when(() => {
+      for (const spec of ROAD_ORDER){
+        map.setLayerZoomRange('rd-' + spec[0], zoomForMpp(spec[4]), 24);
+        map.setPaintProperty('rd-' + spec[0], 'line-width', metreWidth(spec[2], spec[3]));
+      }
+      map.setPaintProperty('bm-rail', 'line-width', metreWidth(5, 2));
+      map.setPaintProperty('bm-tram', 'line-width', metreWidth(4, 2.4));
+    });
   }
-  function place(c, z){    // keep the canvas glued to the tiles while the zoom animates
-    if (center === null) return;
-    const scale = map.getZoomScale(z, zoom);
-    const viewHalf = map.getSize().multiplyBy(0.5 + PAD);
-    const currentCenterPoint = map.project(center, z);
-    const offset = viewHalf.multiplyBy(-scale).add(currentCenterPoint).subtract(map._getNewPixelOrigin(c, z));
-    L.DomUtil.setTransform(canvas, offset, scale);
+
+  const raster = (svc, attribution, maxzoom) => ({type:'raster', tiles:[ESRI + svc + '/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom: maxzoom || 19, attribution});
+  const rasterLayer = (id, before) => map.addLayer({id, type:'raster', source:id, layout:{visibility:'none'}, paint:{'raster-fade-duration':180}}, before);
+  function addStreets(before){
+    // Esri's Canvas set is drawn for data on top of it: a gray base with no labels, and the
+    // labels as their own "Reference" tiles; native to zoom 16, upsampled past it
+    const gray = 'Canvas/World_' + (dark() ? 'Dark' : 'Light') + '_Gray_';
+    map.addSource('streets', raster(gray + 'Base', CANVAS_ATTR, 16)); rasterLayer('streets', before);
+    map.addSource('street-labels', raster(gray + 'Reference', CANVAS_ATTR, 16)); rasterLayer('street-labels');
   }
-  map.on('moveend zoomend resize viewreset', reset);
-  map.on('zoomanim', e => place(e.center, e.zoom));
-  map.on('zoom', () => place(map.getCenter(), map.getZoom()));
+  const FILL = {coast:'--land', green:'--green', sand:'--sand', water:'--water'};
+  const rampExpr = () => ['interpolate', ['linear'], ['get', 'd'], 0, 'rgb(67,160,71)', 1/3, 'rgb(255,179,0)', 2/3, 'rgb(229,57,53)', 1, 'rgb(142,27,27)'];
+  function build(){
+    map.addLayer({id:'bg', type:'background', paint:{'background-color': css('--water')}});
+    // the stack a map app draws: a base without labels, the run's layers, then the labels
+    // alone on top, so a place name is never buried under the traffic
+    map.addSource('imagery', raster('World_Imagery', 'Imagery &copy; Esri, Maxar, Earthstar Geographics, and the GIS User Community')); rasterLayer('imagery');
+    addStreets();
+    for (const k of ['coast', 'green', 'sand', 'water']){
+      map.addSource('bm-' + k, {type:'geojson', data:EMPTY, maxzoom:13, tolerance:0.6});
+      map.addLayer({id:'bm-' + k, type:'fill', source:'bm-' + k, paint:{'fill-color': css(FILL[k]), 'fill-antialias': false}});
+    }
+    map.addSource('bm-roads', {type:'geojson', data:EMPTY, maxzoom:14});
+    for (const spec of ROAD_ORDER)
+      map.addLayer({id:'rd-' + spec[0], type:'line', source:'bm-roads', filter:['==', ['get', 'c'], spec[0]], minzoom: zoomForMpp(spec[4]),
+                    layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css(spec[1]), 'line-width': metreWidth(spec[2], spec[3])}});
+    map.addSource('bm-rail', {type:'geojson', data:EMPTY, maxzoom:14});
+    map.addLayer({id:'bm-rail', type:'line', source:'bm-rail', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--rail'), 'line-width': metreWidth(5, 2)}});
+    map.addSource('bm-tram', {type:'geojson', data:EMPTY, maxzoom:14});
+    map.addLayer({id:'bm-tram', type:'line', source:'bm-tram', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--tram'), 'line-width': metreWidth(4, 2.4)}});
+    // the congested links: colour by delay, width and opacity by volume, the worst on top
+    map.addSource('traffic', {type:'geojson', data:EMPTY, maxzoom:14, buffer:8, tolerance:0});
+    map.addLayer({id:'traffic', type:'line', source:'traffic', layout:{'line-cap':'round', 'line-sort-key':['get', 'd']},
+                  paint:{'line-color': rampExpr(), 'line-opacity': ['+', 0.55, ['*', 0.45, ['get', 'v']]],
+                         'line-width': ['interpolate', ['linear'], ['zoom'], 9, ['+', 0.8, ['*', 2.5, ['get', 'v']]], 15, ['+', 1.6, ['*', 6, ['get', 'v']]]]}});
+    map.addSource('dem', {type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding:'terrarium', tileSize:256, maxzoom:14,
+                          attribution:'Terrain: Mapzen Terrain Tiles (AWS Open Data)'});
+    map.addLayer({id:'dem-warm', type:'hillshade', source:'dem', paint:{'hillshade-exaggeration':0}}, 'bm-coast');
+    map.addSource('buildings', {type:'vector', url:'https://tiles.openfreemap.org/planet', attribution:'Buildings: <a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a>, data &copy; OpenStreetMap contributors'});
+    map.addLayer({id:'buildings', type:'fill-extrusion', source:'buildings', 'source-layer':'building', minzoom:13, layout:{visibility:'none'},
+                  paint:{'fill-extrusion-color': dark() ? '#3c4148' : '#dcdcd8', 'fill-extrusion-opacity':0.9,
+                         'fill-extrusion-height':['coalesce', ['get', 'render_height'], 5], 'fill-extrusion-base':['coalesce', ['get', 'render_min_height'], 0]}});
+    map.addSource('places', raster('Reference/World_Boundaries_and_Places', 'Labels &copy; Esri')); rasterLayer('places');
+    // street labels were added above imagery; move them to the top so they cap the stack too
+    map.moveLayer('street-labels');
+    if (BM) setBasemap(BM);
+    if (HS && HS.available && NET) setTraffic(HS);
+    applyVisibility();
+    setBase(BASE, true);
+    if (THREE_D) set3D(true);
+  }
+
+  /* the package basemap as GL sources: every ring an outer polygon (the builder emits closed
+     ways and LGA exteriors, no holes), every road a line carrying its class */
+  let bmStamp = null;
+  function ring(ll, v, n){
+    const r = new Array(n + 1);
+    for (let j = 0; j < n; j++, v += 2) r[j] = [ll[v], ll[v+1]];
+    r[n] = r[0];
+    return r;
+  }
+  function lineFeatures(layer, props){
+    const out = [], ll = layer.ll, counts = layer.counts;
+    let v = 0;
+    for (let p = 0; p < counts.length; p++){
+      const n = counts[p], c = new Array(n);
+      for (let j = 0; j < n; j++, v += 2) c[j] = [ll[v], ll[v+1]];
+      out.push({type:'Feature', properties: props, geometry:{type:'LineString', coordinates:c}});
+    }
+    return out;
+  }
+  function setBasemap(bm){
+    if (bm === bmStamp) return;
+    bmStamp = bm;
+    if (bm._bbox) setLat((bm._bbox[1] + bm._bbox[3]) / 2);
+    for (const k of ['coast', 'green', 'sand', 'water']){
+      if (!bm[k]) continue;
+      const L_ = bm[k], feats = [];
+      let v = 0;
+      for (let p = 0; p < L_.counts.length; p++){ const n = L_.counts[p]; if (n >= 3) feats.push({type:'Feature', properties:{}, geometry:{type:'Polygon', coordinates:[ring(L_.ll, v, n)]}}); v += 2 * n; }
+      map.getSource('bm-' + k).setData({type:'FeatureCollection', features:feats});
+    }
+    let roads = [];
+    for (const spec of ROAD_ORDER) if (bm[spec[0]]) roads = roads.concat(lineFeatures(bm[spec[0]], {c: spec[0]}));
+    map.getSource('bm-roads').setData({type:'FeatureCollection', features:roads});
+    if (bm.rail) map.getSource('bm-rail').setData({type:'FeatureCollection', features:lineFeatures(bm.rail, {})});
+    if (bm.tram) map.getSource('bm-tram').setData({type:'FeatureCollection', features:lineFeatures(bm.tram, {})});
+  }
+  /* the loaded links of the window that just closed, as one GeoJSON the worker tiles; the
+     page hands over the coordinates and never strokes a line itself */
+  let trafficStamp = null;
+  function setTraffic(h){
+    if (h === trafficStamp) return;
+    trafficStamp = h;
+    if (h.core_bbox) setLat((h.core_bbox[1] + h.core_bbox[3]) / 2);
+    const ll = NET.ll, idx = h._idx, del = h._del, vol = h._vol, vmax = Math.max(1, h.volume_max), n = idx.length;
+    const feats = new Array(n);
+    for (let i = 0; i < n; i++){
+      const li = idx[i] * 4;
+      feats[i] = {type:'Feature', properties:{d: Math.round(del[i] / 65535 * 100) / 100, v: Math.round(Math.sqrt(vol[i] / vmax) * 100) / 100},
+                  geometry:{type:'LineString', coordinates:[[ll[li], ll[li+1]], [ll[li+2], ll[li+3]]]}};
+    }
+    map.getSource('traffic').setData({type:'FeatureCollection', features:feats});
+  }
+  const vis = (id, on) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); };
+  function applyVisibility(){
+    const twin = BASE === 'core';
+    const ground = twin || (SHOW.ground && BASE !== 'satellite');
+    for (const k of ['coast', 'green', 'sand', 'water']) vis('bm-' + k, ground);
+    const chip = document.querySelector('#lyrpanel .lb[data-layer="ground"]');
+    chip.classList.toggle('on', BASE === 'satellite' ? false : SHOW.ground);
+    chip.style.opacity = BASE === 'satellite' ? '.4' : '';
+    for (const spec of ROAD_ORDER) vis('rd-' + spec[0], twin || SHOW.roads);
+    vis('bm-rail', SHOW.rail); vis('bm-tram', SHOW.tram);
+    vis('traffic', SHOW.traffic && !!(HS && HS.available));
+  }
+  function retheme(){
+    map.setPaintProperty('bg', 'background-color', BASE === 'core' ? css('--water') : (dark() ? '#202124' : '#e8eaed'));
+    for (const k of ['coast', 'green', 'sand', 'water']) map.setPaintProperty('bm-' + k, 'fill-color', css(FILL[k]));
+    for (const spec of ROAD_ORDER) map.setPaintProperty('rd-' + spec[0], 'line-color', css(spec[1]));
+    map.setPaintProperty('bm-rail', 'line-color', css('--rail'));
+    map.setPaintProperty('bm-tram', 'line-color', css('--tram'));
+    map.setPaintProperty('buildings', 'fill-extrusion-color', BASE === 'satellite' ? '#b8bcc2' : (dark() ? '#3c4148' : '#dcdcd8'));
+    map.setPaintProperty('buildings', 'fill-extrusion-opacity', BASE === 'satellite' ? 0.8 : 0.9);
+    sky();
+  }
+  /* the base: the new tiles are shown at once and the old ones stay underneath until the
+     map is idle (every visible tile loaded), so a switch never shows bare ground */
+  const BASES = {map:['streets', 'street-labels'], satellite:['imagery', 'places'], core:[]};
+  let baseTheme = null, holdTimer = null;
+  function setBase(name, first){
+    if (!ready){ return; }
+    const theme = dark() ? 'dark' : 'light';
+    if (baseTheme !== null && baseTheme !== theme){       // the gray canvas has a tile set per theme
+      for (const id of ['streets', 'street-labels']){ if (map.getLayer(id)) map.removeLayer(id); if (map.getSource(id)) map.removeSource(id); }
+      addStreets('bm-coast'); map.moveLayer('street-labels');
+    }
+    baseTheme = theme;
+    const want = BASES[name] || BASES.map, old = [];
+    for (const k in BASES) for (const id of BASES[k]) if (want.indexOf(id) < 0 && map.getLayer(id) && map.getLayoutProperty(id, 'visibility') === 'visible') old.push(id);
+    for (const id of want) vis(id, true);
+    const retire = () => { clearTimeout(holdTimer); for (const id of old) vis(id, false); };
+    if (old.length && !first){ holdTimer = setTimeout(retire, 4000); map.once('idle', retire); } else retire();
+    retheme(); applyVisibility();
+    // the core base is the package drawn flat: 3D stands down there and returns with a tile base
+    $('tilt').disabled = name === 'core';
+    if (name === 'core' && THREE_D) set3D(false, true);
+    else if (name !== 'core' && !THREE_D && recall('rv.3d') === 'on') set3D(true);
+  }
+  /* 3D: the terrain under every draped layer, the buildings extruded, the view tilted */
+  function sky(){
+    map.setSky(dark() ? {'sky-color':'#0b1220', 'horizon-color':'#1c2a3a', 'fog-color':'#202124', 'fog-ground-blend':0.6, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]}
+                        : {'sky-color':'#8fbcf5', 'horizon-color':'#dfe9f3', 'fog-color':'#e8eaed', 'fog-ground-blend':0.6, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]});
+  }
+  function set3D(on, keep){
+    THREE_D = on;
+    if (!keep) store('rv.3d', on ? 'on' : 'off');
+    $('tilt').classList.toggle('on', on);
+    when(() => {
+      if (on){
+        if (map.getPitch() < 30) map.easeTo({pitch:60, duration:900});   // the tilt starts at once
+        map.setTerrain({source:'dem', exaggeration:1.0});
+        vis('buildings', true); sky();
+      } else {
+        if (map.getTerrain()) map.setTerrain(null);
+        vis('buildings', false);
+        map.easeTo({pitch:0, bearing:0, duration:700});
+      }
+    });
+  }
+  function compass(){
+    const b = map.getBearing(), p = map.getPitch();
+    $('compass').classList.toggle('hidden', Math.abs(b) < 0.5 && p < 0.5);
+    $('compass').querySelector('svg').style.transform = 'rotate(' + (-b) + 'deg)';
+  }
+  map.on('rotate', compass); map.on('pitch', compass);
+  /* the tilt a map app allows depends on the zoom: the full 75 degrees over a city, easing to
+     face-on by the time a country fills the view, so a zoom out from a tilted street lands on
+     a globe that faces the viewer. Set on the transform, never through the camera, so a wheel
+     or an easing in flight is clamped rather than stopped. */
+  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 5) * 75 / 7));   // 0 at zoom 5, 75 from zoom 12
+  map.on('zoom', () => { map.transform.setMaxPitch(maxPitchAt(map.getZoom())); compass(); });
   const host = {
-    canvas,
-    frame(){
-      const z = map.getZoom(), o = map.getPixelOrigin(), tl = map.containerPointToLayerPoint([-pad.x, -pad.y]);
-      return {k: Math.pow(2, z), ox: o.x + tl.x, oy: o.y + tl.y};
-    },
-    fit(box){ map.fitBounds([[box[1], box[0]], [box[3], box[2]]], {padding:[20, 20], animate:false}); reset(); },
-    setBase(name){
-      // the old tiles stay up until the new set has loaded, so a switch never shows bare ground
-      const old = current;
-      const mk = bases[name] || bases.map;
-      current = mk();
-      const retire = () => { if (old && map.hasLayer(old)) map.removeLayer(old); };
-      if (current){
-        current.addTo(map);
-        const first = current.getLayers ? current.getLayers()[0] : current;
-        let done = false;
-        const once = () => { if (!done){ done = true; retire(); } };
-        if (first && first.once) first.once('load', once);
-        setTimeout(once, 4000);
-      } else retire();
-      $('map').style.background = name === 'core' ? css('--water') : (root.dataset.theme === 'light' ? '#e8eaed' : '#202124');
-      draw();
-    },
+    map,
+    refresh(){ when(() => { if (BM) setBasemap(BM); if (HS && HS.available && NET) setTraffic(HS); applyVisibility(); }); },
+    fit(box){ when(() => map.fitBounds([[box[0], box[1]], [box[2], box[3]]], {padding:20, animate:false})); },
+    setBase(name){ when(() => setBase(name)); },
+    toggle3D(){ if (!$('tilt').disabled) set3D(!THREE_D); },
+    north(){ map.easeTo({bearing:0, pitch:0, duration:500}); },
     zoomIn(){ map.zoomIn(); }, zoomOut(){ map.zoomOut(); },
   };
-  setTimeout(reset, 0);
   return host;
 }
 
-/* ---- host B: no Leaflet (offline) - the twin drawn by hand, pan and wheel zoom ---- */
+/* ---- host B: no map library (offline) - the twin drawn by hand, pan and wheel zoom ---- */
 const FB = (() => {
   const canvas = $('fallback');
   let view = null, drag = null;
@@ -950,6 +1149,8 @@ function thumbs(){
 }
 $('zin').onclick = () => (MAP || FB).zoomIn();
 $('zout').onclick = () => (MAP || FB).zoomOut();
+$('tilt').onclick = () => { if (MAP) MAP.toggle3D(); };
+$('compass').onclick = () => { if (MAP) MAP.north(); };
 $('fit').onclick = () => { if (HS && HS.available) fitTo(HS.core_bbox); };
 
 /* ---- completion verdicts, shown in the run card once the summary exists ---- */
@@ -1080,12 +1281,15 @@ function rowsInto(el, obj, warn){
 
 /* ---- start ---- */
 refreshPalette();
-if (window.L && !window.__noLeaflet){
-  MAP = leafletHost();
+if (window.maplibregl && !window.__noMap){
+  try { MAP = glHost(); } catch(e){ MAP = null; console.warn('no WebGL map: ' + e); }
+}
+if (MAP){
   setBase(BASE);
 } else {
   FB.enable(); BASE = 'core'; setBase('core');
-  $('map').title = 'the map library did not load (offline?) - the twin is drawn from the package alone';
+  $('tilt').disabled = true;
+  $('map').title = 'the map library did not load (offline, or no WebGL) - the twin is drawn from the package alone';
 }
 window.addEventListener('resize', () => draw());
 legend(); fadeEdges();
