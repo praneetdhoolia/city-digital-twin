@@ -10,100 +10,75 @@
  "seeded_on": "2026-09-07",
  "last_pass": {
   "date": "2026-09-14",
-  "head": "780c4c2",
-  "report": "20260914T014107_project_report.html",
+  "head": "b8f89ff",
+  "report": "tenth report of 2026-09-14 (rendered by render_report.py after this phase)",
   "phase": "6 - the field",
-  "agent": "Phase 6 field researcher (Fable 5.1)",
+  "agent": "Phase 6 field researcher (Opus 5)",
   "budget": 40,
   "searches_spent": 40,
-  "rounds": 6,
-  "stopped_because": "the budget was spent exactly (40 of 40). Rounds 4, 5 and 6 each still added qualifying material (the Barcelona full text; the downsampling DOI and the MWCOG release; the mobiTopp row and the MWCOG user guide), so the two-barren-rounds rule never fired.",
-  "reuse": "All 50 stored project rows and all 12 platform rows were inside both horizons (verified 7-11 September) and were carried in; NONE was re-searched for its stored cells. SIX rows were UPDATED with material verified this pass (Barcelona from its full text; PSRC SoundCast's per-operator transit fit; MWCOG's April 2026 Ver. 1.1.0 release and calibration practice; Kelheim's README; Berlin's signals addendum from Ziemke & Braun; Lausitz's published downsampling study), THREE rows ADDED (Cape Town MyCiTi BRT on AFC boardings; Seoul from smart-card data; mobiTopp Stuttgart Region), FOUR candidates EXCLUDED (eqasim-bs Braunschweig, MG-TuRBO, Ziemke & Braun 2021, Zwick et al. 2022), ONE candidate recorded unpriced (TNO Rotterdam-The Hague, 503 twice). Of 20 stored calibration_methods, 20 reused, 0 added, 3 given dated addenda (Chen 2020 full text; MG-TuRBO; the manual family's two new cases).",
+  "rounds": 12,
+  "stopped_because": "the budget was spent exactly (40 of 40). The last three rounds each still added qualifying material (round 10: Rakow & Nagel located and two new candidates surfaced; round 11: Barcelona-MATSim and Okanagan surfaced; round 12: the Rakow and Bassolas PDFs landed locally and were read in full), so the two-barren-rounds rule never fired.",
+  "reuse": "All 53 stored project rows and all 12 platform rows were inside both horizons (verified 7-14 September) and were carried in; NONE was re-searched for its stored cells. SIX project rows were UPDATED with material verified this pass (Lausitz from Meinhardt, Lu & Nagel 2026 - the calibration method, the 10 % scale and teleported walk; Kelheim from the published v3.0 25 % stopwatch; Berlin from its calibrate.py; Seoul's citation; MWCOG's memo still unlocated and the subcommittee dates; Brussels from the VUB portal), TWO platform rows UPDATED (OpenPaths' calibration cell filled from the Utah MUG page; MATSim's calibration_tooling from Rakow & Nagel 2024 read in full), TWO rows ADDED (Rotterdam-The Hague, Li et al. 2025, ActivitySim + MATSim co-simulation; Barcelona-MATSim from mobile phone records, Bassolas et al. 2019), TWO candidates EXCLUDED (Meinhardt et al. 2026 as a DRT application on Lausitz; Rakow & Nagel 2024 as a method note), TWO candidates recorded unpriced (Okanagan ASIM + MATSim; the Berlin MATSim-to-SUMO hybrid). Of 20 stored calibration_methods, 20 reused, 0 added, 1 dated addendum (the fixed-point family: its published source note read in full).",
   "validation_ladder": {
    "none": 7,
-   "survey_shares": 11,
-   "road_link_counts": 25,
+   "survey_shares": 12,
+   "road_link_counts": 26,
    "transit_ridership_counts": 10,
    "per_mode_ridership_every_mode": 0,
-   "_total": 53
+   "_total": 55
   },
-  "validation_ladder_note": "7 / 11 / 25 / 10 / 0 over 53 rows: the 50 carried rows keep their 7 / 10 / 25 / 8 / 0; Cape Town and Seoul enter at transit ridership counts (the first rows in the library validated on SMARTCARD tap data), mobiTopp Stuttgart at survey shares. No carried row moved rung. The top rung is still empty across every agent-based project and this repository is still the only attempt; its own reading is 0 of 12.",
+  "validation_ladder_note": "7 / 12 / 26 / 10 / 0 over 55 rows: the 53 carried rows keep their 7 / 11 / 25 / 10 / 0 exactly as the ninth pass placed them; Rotterdam-The Hague enters at survey shares (mode and mode-distance shares, no observed column stated), Barcelona-MATSim at road link counts (held-out entrance counts, GEH < 10 on 9 of 11). No carried row moved rung. The top rung is still empty across every agent-based project and this repository is still the only attempt; its own reading moved from 0 of 12 to 2 of 12 inside 10 % at the newest result.",
   "headline_findings": [
-   "THE TAP-DATA RUNG IS OCCUPIED, FOR ONE OPERATOR AT A TIME. Cape Town MyCiTi (MATSim, 2022): R2 0.85 on AFC boardings after ~25 hand-tuned runs of capacities, arrival variance, walk penalties and speeds - and half the transactions lack a path. Seoul (MATSim, 2015): station boarding/alighting volumes validated from T-money data, figures paywalled. Nobody scores several transit modes on tap data at once; this project's Opal per-mode datasets would let it be the first.",
-   "THE CHEN 2020 'REAL-WORLD APPLICATION' IS A PROTOTYPE CITY, and the one component the non-myopic method could not move was MODE CHOICE. 351,518 people, 24 zones, SimMobility; 28 parameters; 6 master iterations over 5 mini-batches; objective -93 % (SPSA -64 %); 'for tm component's estimated objective function value, none of algorithm has it reduced significantly'; no wall time. The gap that was priority 1 for two passes closes with the method NOT transferable to MATSim's co-evolutionary scoring (its efficiency is an analytical logit gradient) and unpriced in hours.",
-   "NO AGENT-BASED PROJECT HAS MEASURED SIGNALS AGAINST A VALIDATION FIGURE - now confirmed twice over. Ziemke & Braun's Berlin 'verification' ran ONE iteration to check connectivity, with guideline fixed-time plans that 'do not necessarily model a realistic signal control'. Barcelona ran SUMO's generic actuated controller at all 2,035 core signals because the city's plans were unavailable, held it fixed, and moved its R2 to 0.81 by ASSIGNMENT (iSAR vs IIDUE, rerouting probability, priority weights). This project's SCATS-as-published-algorithm is above the whole field's fidelity floor with no comparator that says what that buys.",
-   "BARCELONA ON FULL DEMAND, 30 HOURS A RUN, R2 0.81 ON 488 STATIONS - the opposite regime from this project's counts. 2,063,177 private-vehicle trips, no downsampling, no capacity scaling, ~5 % teleports; the residual is attributed to insertion delay under congestion. Read beside MATSim-NYC (4 % sample, capacity factor 0.15 not 0.04) and the F32 result (7 modelled zeros before the map repair), the field's two count-fit routes are full demand or calibrated capacity; a 25 % sample with capacity scaled 0.25 is neither.",
-   "THE 25 % DIRECTIVE IS NOW BACKED BY A PUBLISHED PAPER. Mersini & Ziemke 2026 (Procedia CS 280, CC BY, on Lausitz): 1 % and 5 % 'consistently show higher travel times, lower speeds, and large variability across independent samples'; 10 % 'reproduces aggregate outcomes substantially more reliably'; 'sample-selection effects dominate over the global random seed'; stuckTime should scale with the share. Relayed by a secondary source - the article itself is on a dead host - and silent on link volumes.",
-   "TRIP-LENGTH DISTRIBUTIONS ARE CALIBRATED JOINTLY WITH MODAL SPLIT IN EXACTLY ONE READ CASE, AND BY EYE. mobiTopp Stuttgart scales the destination-choice utility by purpose x employment and shifts ASCs 'based on plots of trips length distributions and modal split ... visually judging the plots, adjusting the model parameter, and rerunning', in rounds of 1 % runs with a fresh assignment between rounds, and states that the estimated parameters alone gave 'only moderately good' agreement because the two choices interact. The matsim-scenarios READMEs name the same target and state no method.",
-   "THE FIELD'S NEWEST AGENCY MODEL WENT TO PRODUCTION THIS YEAR AND ITS VALIDATION IS UNREAD. MWCOG Gen3 Ver. 1.1.0 (April 2026) is 'COG/TPB's first production-use Gen3 Model'; its user's guide records the calibration practice - damping 0.75, sample rates by judgement ('like 5% of all households' for auto ownership, 100 % for mode choice), three seeds 'basically negligible' regionally, assignment capped at 32 cores to limit output variation - and the Ver. 1.1.0 validation memorandum of 6 April 2026 is the newest per-mode boardings table in the field, not yet located.",
-   "TWO ENGINES ON ONE DEMAND DISAGREE BY UP TO 2.4 pp. Zwick et al. 2022 ran mobiTopp/Fleetpy and mobiTopp/MATSim on the same Hamburg input and mode-choice model: car 23.5 vs 25.9 %, ride 4.3 vs 3.2 %, ride-pooling 0.068 vs 0.113 % - a cross-engine band that bounds how much of a 10 % gate is engine rather than behaviour, recorded under excluded because no calibration took place."
+   "THE FIRST PUBLISHED 25 % CLOCK ON A CURRENT MATSim: Kelheim v3.0's own stopwatch on the public SVN - 388 iterations in about 15.5 h, ~139 s a recurring iteration, 225-228 s on milestone iterations - for a district of about 120,000. This project's arm 0 ran 346.0 s an iteration and 30.35 h for 300 iterations on 155,233 persons kept. Per iteration that is 2.5x the time for roughly 5x the population; the heap is still unpublished anywhere in the field.",
+   "THE ECOSYSTEM'S ANSWER TO A TRIP-LENGTH RESIDUAL IS A MARGINAL UTILITY, NOT A DESTINATION RE-FIT. Berlin's calibrate.py optimises mode share only (ASCCalibrator, 4 trials of 10 % runs, lr 0.3 stepped every 15); the tooling's ASCDistCalibrator adds distance-group constants; Lausitz states in print that the distance distribution is matched by hand-setting the marginal utility of travelling per mode (bike -4.0, pt -12.0 util/h) against MiD 2017, judged on a figure; Rotterdam applies the ASC tool to mode-distance shares. Nobody states a tolerance. This project's walk at 3.74 km against 0.70 is set by the gravity kernel at demand build (#30) and the field offers only score-side levers for it.",
+   "THE ASC FIXED POINT'S SOURCE NOTE IS THREE PAGES AND SAYS WHAT THIS PROJECT'S asc_fixed_point.py SAYS: Rakow & Nagel 2024 (CC BY) - asc_i + ln z_i - ln m_i - (ln z_0 - ln m_0), one mode fixed, 'perform more simulation runs ... until sufficiently close', proof under fixed utilities, and 'adjust the update step by a fraction' where utilities move. No run count, no scenario, no fit. The damping this project declares on CAL.asc.damping is the fraction the note leaves to judgement.",
+   "A HOLDOUT COUNT VALIDATION WITH ITS MISSES NAMED: Barcelona-MATSim (Bassolas et al. 2019, 10 %, CDR-built diaries) calibrated the modal split within 1.5 % on car at two scales at once, then compared 11 entrance stations it had never used - 9 of 11 inside GEH 10 as an occupancy band, and the two above the band explained by port freight and through traffic the resident model excludes. That is gap 9's 'auxiliary demand' explanation with link names, and the direction matches this project's count deficit.",
+   "MODE CHOICE TAKEN OUT OF MATSim BY DESIGN: Rotterdam-The Hague (TU Delft/TNO 2025) lets ActivitySim decide mode and destination, switches MATSim's mode innovation OFF, calibrates constants once with the Rakow tool, and iterates the two through LOS matrices to a 5 % change tolerance. Its reported shares (car 30.8, bike 41.4, pt 3.9, walk 23.9 %) come with no observed column - an 'initial framework' at the survey-shares rung.",
+   "THE OPENPATHS CELL IS FILLED FROM A PAGE, THREE PASSES AFTER IT WAS OPENED: the Utah MUG meeting of 11 September 2025 describes Bentley's automated calibration fusing HTS, counts and transit ridership 'in one systematic process'; the same meeting's WFRC talk corrected station-level commuter-rail bias by hand through drive-access utility and ASCs.",
+   "THE MWCOG Ver. 1.1.0 VALIDATION MEMO IS CITED AND NOT PUBLISHED on any page read; the TPB Travel Forecasting Subcommittee meets 18 September 2026, four days after this pass. The newest per-mode boardings table in the field stays unread.",
+   "THIS PROJECT'S OWN ROW MOVED FOR THE FIRST TIME IN THREE PASSES: arm 0 of F35 is a RESULT with 2 of 12 modes inside 10 % (car +9.6 %, motorbike -5.6 %), six past the stop bar, and ride's target above its own choice-set coverage. The comparison's shape is unchanged - no agent-based row scores every simulated mode against a band - but the number beside 'only attempt' is no longer zero."
   ],
   "rounds_detail": [
-   {
-    "round": 1,
-    "calls": "1-14",
-    "tried": "every open gap once (Chen thesis, Barcelona mirror, Ziemke-Braun PDF, smartcard ABMs, Kelheim cost, TLFD calibration, SoundCast wiki, TM2.3, OpenPaths, Brussels, DC) plus three never-seen-candidate sweeps",
-    "added": "leads on 8 gaps; 0 rows"
-   },
-   {
-    "round": 2,
-    "calls": "15-27",
-    "tried": "the leads: OSTI record, DT4REGIONS mirror, VSP PDF, Seoul and Cape Town identification, KIT PDF, SoundCast transit page, Edmonton syndication, TNO PDF, Europe PMC, eqasim-bs issue and README, MG-TuRBO",
-    "added": "3 row updates (Berlin, SoundCast, Lausitz), 3 exclusions, gap 13 closed"
-   },
-   {
-    "round": 3,
-    "calls": "28-33",
-    "tried": "the OSTI manuscript, the ETH Research Collection search, the Seoul abstract, the Cape Town article, the VSP 2026 listing, a TNO retry",
-    "added": "2 rows (Cape Town, Seoul), gap 8 closed"
-   },
-   {
-    "round": 4,
-    "calls": "34-36",
-    "tried": "the Barcelona bitstream and two candidate sweeps (ActivitySim agency reports; 2026 arXiv city scenarios)",
-    "added": "Barcelona row filled, gap 12 closed; MWCOG Ver. 1.1.0 lead"
-   },
-   {
-    "round": 5,
-    "calls": "37-38",
-    "tried": "Crossref for the downsampling DOI; the MWCOG memo",
-    "added": "DOI recorded; MWCOG release confirmed; 1 gap opened"
-   },
-   {
-    "round": 6,
-    "calls": "39-40",
-    "tried": "the mobiTopp arXiv PDF; the MWCOG V1.1.0 user guide",
-    "added": "1 row (mobiTopp Stuttgart), MWCOG row updated"
-   }
+   "R1 (3): MWCOG memo search - not located; TNO PDF 503 (third failure); VSP 2026 directory - four folders.",
+   "R2 (5): the four VSP folders - titles; MWCOG subcommittee page - no 2026 documents.",
+   "R3 (3): MWCOG memo second phrasing - still not located; Seoul citation corrected (KSCE 20(4)); matsim-berlin calibrate.py read.",
+   "R4 (4): ASCDistCalibrator read; Kelheim SVN root; utahmug.org/meeting9 read (OpenPaths cell filled); gisagents publications - no DC paper.",
+   "R5 (4): Kelheim v3.1 (input only); ARC calibration reports found (2015, 2017); Brussels VUB portal read; SimMobility ST W-SPSA surfaced (DSpace 405).",
+   "R6 (4): ARC 2017 PDF >10 MB; Brussels VUB abstract; DSpace bitstream 405; Kelheim v3.0 has output/.",
+   "R7 (3): Kelheim output/ -> 25pct/ -> stopwatch.txt read (gap 14 wall time closed).",
+   "R8 (4): Semantic Scholar DOI for the downsampling paper (DOI-only PDF); TNO paper found at TU Delft; Meinhardt 26-05 PDF saved locally; Opal Ferry dataset page read.",
+   "R9 (1): TU Delft PDF saved locally and read (Rotterdam row).",
+   "R10 (3): Rakow & Nagel depositonce record; two new-candidate sweeps (Barcelona-MATSim, Okanagan, Berlin->SUMO hybrid surfaced).",
+   "R11 (3): arXiv 1803.06375 abstract; Okanagan search (SSRN found); Rakow PDF redirect.",
+   "R12 (3): Rakow PDF saved and read; SSRN 403; Bassolas PDF saved and read (Barcelona-MATSim row)."
   ],
   "dead_routes_recorded_this_pass": [
-   "dt4regions.eu/academy/<slug> - 302 to an unrelated regione.emilia-romagna.it page; never a paper.",
-   "www.ebi.ac.uk/europepmc/webservices/rest/search?query=DOI:<springer doi> - works as an endpoint, but Computational Urban Science is NOT in Europe PMC (empty result for 10.1007/s43762-025-00214-9) despite a PubMed id; do not retry for that journal.",
-   "windowsforum.com - 403.",
-   "publications.tno.nl/publication/<id>/<hash>/<file>.pdf - 503 twice in one hour; may be transient, retry once next pass and then stop.",
-   "publikationen.bibliothek.kit.edu/<id>/<n> - LIVE, but the handle a search offers may be a different paper than the snippet describes (it returned Zwick 2022, not the mobiTopp calibration source). Confirm the title before spending the read.",
-   "svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/<year>/ - the year listing renders but gives folder numbers only; a title costs one more fetch per folder."
+   "publications.tno.nl (503 three times over two passes) - use pure.tudelft.nl for TU Delft co-authored papers",
+   "dspace.mit.edu - 405 on /bitstream/handle/ as well as /handle/ (never retry either)",
+   "papers.ssrn.com (403)",
+   "cdn.atlantaregional.org/wp-content/uploads/abm-calibration-report-2017.pdf (over 10 MB, like the 2015 report's host)",
+   "gisagents.org/p/publications.html (live, but lists no DC MATSim paper)",
+   "koreascience.kr (no copy of the Seoul paper indexed)"
   ],
   "live_routes_confirmed_this_pass": [
-   "www.osti.gov/biblio/<id> then www.osti.gov/servlets/purl/<id> - the DOE accepted manuscript of an Elsevier paper, full PDF saved locally (the ONLY route that has ever beaten ScienceDirect for a TR-C paper)",
-   "www.research-collection.ethz.ch/server/api/core/bitstreams/<uuid>/content - ETH's open copy of an MDPI paper, full PDF; search 'research-collection.ethz.ch <author> <title>' to get the uuid",
-   "www.scielo.org.za/scielo.php?script=sci_arttext&pid=<pid> - open HTML, readable by the summariser",
-   "api.crossref.org/works?query=<title words>&rows=3 - the DOI and licence of a 2026 Procedia paper on the first call",
-   "api.github.com/repos/<org>/<repo>/issues/<n> - an issue BODY that quotes a paywalled paper's findings is a usable secondary source (eqasim-bs #117)",
-   "svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2020/20-40/<file>.pdf - VSP working-paper PDFs, saved locally",
-   "arxiv.org/pdf/<id> - saved locally and read free (mobiTopp 24 pp)",
-   "www.mwcog.org/assets/1/6/<file>.pdf - a 145-page agency user guide, saved locally and read with pypdf",
-   "api.semanticscholar.org/graph/v1/paper/DOI:<doi>?fields=... - abstract of a paywalled Springer paper (Seoul)",
-   "pypdf over every PDF in the session's tool-results directory - six PDFs this pass (Ziemke-Braun 8 pp, Zwick 6 pp, Chen 55 pp, Barcelona 29 pp, mobiTopp 24 pp, MWCOG 145 pp), ~270 pages at no budget cost. Write the extracted text to a UTF-8 file; printing to the console fails on ligatures."
+   "svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/<scenario>/<version>/output/<pct>/ - directory listings AND the stopwatch.txt fetch as text (the logfile.log will be over 10 MB)",
+   "svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/<year>/<nn>/ - listings give the PDF filename; the PDF fetch saves a binary locally, read with pypdf at no budget cost",
+   "pure.tudelft.nl/ws/portalfiles/portal/<id>/<file>.pdf - saves locally",
+   "api-depositonce.tu-berlin.de/server/api/core/bitstreams/<uuid>/content - the redirect target of depositonce 'download' links; saves locally",
+   "arxiv.org/pdf/<id> under 10 MB - saves locally (the 3.3 MB Bassolas PDF did)",
+   "github.com/<org>/<repo>/blob/<branch>/<path> - source files read as text (calibrate.py, calib_asc_dist.py)",
+   "utahmug.org/meeting9/ - a plain page",
+   "opendata.transport.nsw.gov.au/data/dataset/<slug> - dataset pages read (resources listed)",
+   "api.semanticscholar.org/graph/v1/paper/DOI:<doi>?fields=... - the DOI endpoint still answers (the SEARCH endpoint stays dead)"
   ]
  },
  "counts": {
-  "projects": 53,
+  "projects": 55,
   "platforms": 12,
-  "excluded": 68,
-  "not_reverified": 40,
-  "gaps": 21,
-  "gaps_open": 14,
+  "excluded": 70,
+  "not_reverified": 42,
+  "gaps": 24,
+  "gaps_open": 12,
   "calibration_methods": 20
  },
  "projects": [
@@ -131,22 +106,25 @@
     "https://svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2019/19-01/ZiemkeEtAl2019OpenBerlinScenarioVSPWP.pdf",
     "https://depositonce.tu-berlin.de/handle/11303/21877",
     "https://matsim.org/conferences/mum2025.html",
-    "https://svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2020/20-40/ZiemkeBraun2020OsmSignalsAndLanes.pdf"
+    "https://svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2020/20-40/ZiemkeBraun2020OsmSignalsAndLanes.pdf",
+    "https://github.com/matsim-scenarios/matsim-berlin/blob/main/src/main/python/calibrate.py"
    ],
    "lane": "1",
    "last_verified": "2026-09-14",
-   "verified_in": "20260914 pass",
+   "verified_in": "20260914 tenth report",
    "reused": false,
    "calibration_method": {
     "family": "unstated in the scenario's own README; the ecosystem's tooling is an ASC-adjustment fixed-point loop",
-    "what_the_source_says": "\"The scenario is calibrated taking into consideration the traffic counts, modal split and mode-specific trip distance distributions.\" (matsim-scenarios/matsim-berlin README, read 2026-09-08). The README names no algorithm. The MATSim ecosystem's two named routes for this scenario are matsim.calibration (Optuna + the log-ratio ASC update, see calibration_methods) and an opdyts example for calibrating mode-specific constants.",
-    "objective_evaluations": "unknown",
+    "what_the_source_says": "\"The scenario is calibrated taking into consideration the traffic counts, modal split and mode-specific trip distance distributions.\" (matsim-scenarios/matsim-berlin README, read 2026-09-08). The README names no algorithm. The MATSim ecosystem's two named routes for this scenario are matsim.calibration (Optuna + the log-ratio ASC update, see calibration_methods) and an opdyts example for calibrating mode-specific constants. | 2026-09-14, THE SCRIPT ITSELF READ (src/main/python/calibrate.py on main): it calls create_calibration() with an ASCCalibrator over five modes (walk, car, pt, bike, ride) with WALK as the fixed reference, targets from SrV 2018 (walk 29.7, bike 17.8, pt 26.5, car 20.1, ride 6.0 %), lr=utils.linear_scheduler(start=0.3, interval=15), each trial a '--10pct' run, persons filtered to Berlin residents, and study.optimize(obj, 4) - FOUR optimisation trials. There is NO distance term in the objective: the README's 'mode-specific trip distance distributions' target is not what this script optimises. The tooling's ASCDistCalibrator (calib_asc_dist.py, 'Calibrates the alternative specific constant and marginal utility of distance for desired modes', distance groups detected from binned targets, the same log-ratio update per distance group) EXISTS and is not the class this scenario calls.",
+    "objective_evaluations": "4 Optuna trials per calibrate.py invocation, each a 10 % MATSim run (study.optimize(obj, 4)); how many invocations the released constants took is unstated",
     "sources": [
      "https://github.com/matsim-scenarios/matsim-berlin",
-     "https://people.kth.se/~gunnarfl/opdyts.html"
+     "https://people.kth.se/~gunnarfl/opdyts.html",
+     "https://github.com/matsim-scenarios/matsim-berlin/blob/main/src/main/python/calibrate.py",
+     "https://github.com/matsim-vsp/matsim-python-tools/blob/master/matsim/calibration/calib_asc_dist.py"
     ],
-    "last_verified": "2026-09-08",
-    "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
+    "last_verified": "2026-09-14",
+    "verified_in": "20260914 tenth report"
    },
    "data_acquired_per_mode": {
     "status": "from stored cells only - no search spent on this row this pass",
@@ -167,7 +145,8 @@
     "did_fidelity_move_a_validation_figure": "YES, the one stored case in this library: v6 replaced typed free speeds with free speeds calibrated by a SUMO microsimulation plus routing-API travel times, and reports car speeds by hour inside the routing-API bounds - a physical-fidelity substitution reported as a validation figure. Counts stayed 'generally too low, particularly on motorways'.",
     "signals_addendum_2026_09_14": "Ziemke & Braun 2021 (Procedia CS 184:745-752, doi 10.1016/j.procs.2021.03.093; VSP WP 20-40 read in full): OSM-derived signals and lanes were added to the Open Berlin Scenario and 'one iteration of the co-evolutionary algorithm was run to verify that the automated generation of signal and lane data results in a connected and correct network' - the 'verification' is structural, not against counts or travel times. Default fixed-time plans from German guidelines (90 s cycle, 10 s minimum green, 5 s all-red; extra green by lane count): 'This signal plans do not necessarily model a realistic signal control.' 'As the simulation of traffic signals and lanes in MATSim significantly increases runtime, the automated generation tool provides a possibility to ...' restrict the signalised area; 'only MATSim's Dijkstra implementation works with lanes, which is comparably slow.' Whether signals move a count fit in Berlin remains UNMEASURED in the published record."
    },
-   "updated_this_pass": "gap 13 closed with a negative answer: the Berlin signals application ran one iteration to check connectivity and compared nothing with observation"
+   "updated_this_pass": "gap 10: calibrate.py read - ASCCalibrator only, 4 trials of 10 % runs, lr 0.3 stepped every 15, walk fixed; no distance term in the objective",
+   "carried_to": "2026-09-14"
   },
   {
    "name": "MATSim Open Leipzig Scenario",
@@ -203,7 +182,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Open Kelheim Scenario (KelRide)",
@@ -225,11 +205,13 @@
    "does_best": "Calibrating a simulated on-demand/autonomous shuttle against the operator's real daily ride counts, and testing service-speed sensitivity",
    "sources": [
     "https://github.com/matsim-scenarios/matsim-kelheim",
-    "https://api-depositonce.tu-berlin.de/server/api/core/bitstreams/a9e6ba69-4b78-45e9-a557-9c5804e9d9ff/content"
+    "https://api-depositonce.tu-berlin.de/server/api/core/bitstreams/a9e6ba69-4b78-45e9-a557-9c5804e9d9ff/content",
+    "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.0/output/25pct/kelheim-v3.0-25pct.stopwatch.txt",
+    "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.1/ (input only; a note says the base-case output 'remains the same as v3.0')"
    ],
    "lane": "1",
    "last_verified": "2026-09-14",
-   "verified_in": "20260914 pass",
+   "verified_in": "20260914 tenth report",
    "reused": false,
    "data_acquired_per_mode": {
     "status": "from stored cells only - no search spent on this row this pass",
@@ -246,18 +228,26 @@
     "did_fidelity_move_a_validation_figure": "no such claim"
    },
    "readme_checked_2026_09_14": "github.com/matsim-scenarios/matsim-kelheim README: 'This scenario contains a 25pct sample of Kelheim and its surrounding area; road capacities are accordingly reduced. The scenario is calibrated taking into consideration the traffic counts, modal split and mode-specific trip distance distributions.' and 'Be aware that the model is calibrated with 25 pct, and outputs for 1 pct might be a little off.' Latest DOI badge v3.1.1; JDK 17+. NO run time, heap, memory or iteration count is stated - the one stored 25 % scenario says nothing about its cost.",
-   "updated_this_pass": "README re-read for gap 14: v3.1.1, calibrated at 25 %, no cost figure"
+   "updated_this_pass": "gap 14 closed for wall time: the published v3.0 25 % stopwatch gives 388 iterations in ~15.5 h, ~2:19 a recurring iteration; heap still unpublished",
+   "carried_to": "2026-09-14",
+   "run_cost_published": {
+    "source": "https://svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.0/output/25pct/kelheim-v3.0-25pct.stopwatch.txt",
+    "what_it_says": "MATSim's own stopwatch for the published kelheim-v3.0-25pct output: iterations 0-387 (388 in all); iteration 0 took 00:02:57 (mobsim 00:02:26); the recurring plain iteration mid-run about 00:02:19 (mobsim about 00:02:00); milestone iterations with plan/event dumps and 'compare with counts' 00:03:45-00:03:48 (rows 100 and 200 verbatim: mobsim 00:02:41 / 00:02:39, iteration 00:03:48 / 00:03:45); last iteration 00:02:16. First BEGIN 15:51:40, last END 07:21:30 - about 15.5 h of wall clock for 388 iterations at 25 % (100 iterations per ~4 h: it.100 began 19:48:15, it.200 at 23:49:42). The stopwatch carries no heap figure; the log (kelheim-v3.0-25pct.logfile.log, present in the same folder) would, and was not fetched (a full MATSim log is expected to exceed the 10 MB fetch limit).",
+    "read_beside_this_project": "Kelheim v3.0 at 25 % is a district of about 120,000 inhabitants; this project's 25 % arm 0 (155,233 persons kept of 622,318) ran 346.0 s a recurring iteration and 30.35 h for 300 iterations on 16 threads under 48 g (positions/runs-and-economics.md, section 9.169). Per iteration the two are 139 s against 346 s for a population roughly five times larger - the first published like-for-like clock at 25 % this library holds.",
+    "last_verified": "2026-09-14",
+    "verified_in": "20260914 tenth report"
+   }
   },
   {
    "name": "MATSim Open Lausitz Scenario",
    "engine": "MATSim (TU Berlin VSP)",
    "city_population": "Lausitz region and surroundings; real population/agents not stated",
-   "sample_fraction": "10% - 'This scenario contains a 10pct sample of the Lausitz and its surrounding area; road capacities are accordingly reduced.'",
+   "sample_fraction": "10% - 'This scenario contains a 10pct sample of the Lausitz and its surrounding area; road capacities are accordingly reduced.' | 2026-09-14 (Meinhardt, Lu & Nagel 2026, section 3.3.7 'Hard facts'): 'simulated in a scale of 10% ... The resulting population contains 119055 agents, which travel on a network with 474764 links and 264369 nodes. The capacity of the network links is adapted according to the above mode scale.'",
    "modes": "unknown",
-   "active_modes": "unknown",
+   "active_modes": "unknown | 2026-09-14 (Meinhardt et al. 2026, section 3.3.3): 'bike and car are so-called network modes, which means that for these modes paths of agents are routed and simulated on the transport network. Walking agents are modeled by multiplying the Euclidean distance between a walk-leg's origin and destination with a beeline factor of 1.3' - walk is TELEPORTED, bike is physical.",
    "pt_physical": "unknown",
    "signals": "unknown",
-   "freight": "unknown",
+   "freight": "unknown | 2026-09-14: long-distance freight from a Germany-wide freight model 'calibrated against count data from the German Federal Highway and Transport Research Institute' (BASt), plus small-scale commercial traffic as a third subpopulation with its own replanning strategies (Meinhardt et al. 2026, sections 3.3.1-3.3.5).",
    "fares_pricing": "unknown",
    "validation_rung": "survey shares + road link counts - README verbatim (read 2026-09-11): 'The scenario is calibrated taking into consideration the traffic counts, modal split and mode-specific trip distance distributions.' No counts comparison, calibration notebook or error statistic is linked from the README; outputs are on svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/lausitz.",
    "best_fit": "unknown",
@@ -269,11 +259,12 @@
    "sources": [
     "https://github.com/matsim-scenarios/matsim-lausitz",
     "https://doi.org/10.1016/j.procs.2026.04.124",
-    "https://api.github.com/repos/TUBS-IVS/eqasim-bs/issues/117"
+    "https://api.github.com/repos/TUBS-IVS/eqasim-bs/issues/117",
+    "https://svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2026/26-05/MeinhardtEtAl2026ReconnectionRuralCommunities.pdf"
    ],
    "lane": "1",
    "last_verified": "2026-09-14",
-   "verified_in": "20260914 pass",
+   "verified_in": "20260914 tenth report",
    "reused": false,
    "related_methods_study": {
     "title": "Scaling traffic flow properties of MATSim to correctly cooperate for population downsampling",
@@ -301,8 +292,21 @@
     "level_crossings": "not stated",
     "did_fidelity_move_a_validation_figure": "no claim"
    },
-   "updated_this_pass": "gap 11 narrowed: the downsampling study is published (DOI recorded) and its numeric recommendations are recorded from a secondary source",
-   "downsampling_study_2026": "Mersini, T.-M. & Ziemke, T. (2026), 'Scaling MATSim traffic flow properties to properly account for population downsampling', Procedia Computer Science 280:977-984 (ABMTrans 2026), doi 10.1016/j.procs.2026.04.124, CC BY per Crossref - the completed version of the MUM 2025 preliminary study, run on this scenario. Findings as relayed by TUBS-IVS/eqasim-bs issue #117 (a SECONDARY source; the article itself is on ScienceDirect, dead to this agent): '1 % and 5 % samples consistently show higher travel times, lower speeds, and large variability across independent samples'; '10 % reproduces aggregate outcomes substantially more reliably'; 'sample-selection effects dominate over the global random seed'; stuckTime should scale with the share (proposed rule 30 s / share, which 'over-scaled in the (uncongested) Lausitz scenario'); the storage-capacity exponent 'barely matters for shares >= 5 %'; ~4.5x the normalised stuck events at 1 % versus 100 %. Whether LINK VOLUMES specifically survive downsampling is not in the relayed text."
+   "updated_this_pass": "gap 10 closed from this row: the 2026 DRT paper states the calibration method (auto ASC per mode + marginal utility of travelling per mode for the distance distribution, against MiD 2017, no tolerance), the 10 % scale (119,055 agents, 474,764 links) and that walk is teleported at beeline 1.3",
+   "downsampling_study_2026": "Mersini, T.-M. & Ziemke, T. (2026), 'Scaling MATSim traffic flow properties to properly account for population downsampling', Procedia Computer Science 280:977-984 (ABMTrans 2026), doi 10.1016/j.procs.2026.04.124, CC BY per Crossref - the completed version of the MUM 2025 preliminary study, run on this scenario. Findings as relayed by TUBS-IVS/eqasim-bs issue #117 (a SECONDARY source; the article itself is on ScienceDirect, dead to this agent): '1 % and 5 % samples consistently show higher travel times, lower speeds, and large variability across independent samples'; '10 % reproduces aggregate outcomes substantially more reliably'; 'sample-selection effects dominate over the global random seed'; stuckTime should scale with the share (proposed rule 30 s / share, which 'over-scaled in the (uncongested) Lausitz scenario'); the storage-capacity exponent 'barely matters for shares >= 5 %'; ~4.5x the normalised stuck events at 1 % versus 100 %. Whether LINK VOLUMES specifically survive downsampling is not in the relayed text.",
+   "carried_to": "2026-09-14",
+   "calibration_method": {
+    "family": "ASC log-ratio fixed point per mode (Rakow & Nagel 2024) PLUS a hand-set marginal utility of travelling per mode for the distance distribution - the first matsim-scenarios row whose distance-calibration LEVER is stated",
+    "what_the_source_says": "Meinhardt, Lu & Nagel 2026 (VSP WP 26-05, preprint, 27 pp, read in full 2026-09-14), section 3.3.6 verbatim: 'The model is recognized as calibrated when the modal split in the study area matches a reference modal split. For this model, the reference modal split is filtered out of the Germany-wide household survey on mobility Mobilitaet in Deutschland (MiD) 2017. The target modal split is reached by automatically adapting the ASC per mode based on [Rakow & Nagel 2024]. Moreover, the model's modal distance distribution has to match the reference modal distance distribution, which is also extracted from MiD 2017. Calibration of the modal distance distribution is achieved by adapting the marginal utility of traveling beta_trav,mode where applicable. E.g., cycling long distances might be more discomfortable than other modes because of the physical effort it takes, thus the marginal utility of traveling is adapted.' Table 1 (calibrated values): ASC bike -2.22, car 0, pt 0.29, ride -2.46, walk -0.39 util; marginal utility of traveling bike -4.0 and pt -12.0 util/h (the others zero); daily monetary constant car -13.22 EUR; monetary distance rate car -0.00025 and ride -0.00050 EUR/m. Fit shown as Figure 3 (modal split and distance distribution against MiD 2017), NO numeric tolerance and NO fit statistic stated.",
+    "objective_evaluations": "unknown - the paper states no run count; the ASC method is 'perform more simulation runs while updating asc_i ... until simulated mode shares are sufficiently close' (Rakow & Nagel 2024)",
+    "convergence_criterion": "visual match of modal split and modal distance distribution to MiD 2017",
+    "sources": [
+     "https://svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2026/26-05/MeinhardtEtAl2026ReconnectionRuralCommunities.pdf",
+     "https://depositonce.tu-berlin.de/handle/11303/21792"
+    ],
+    "last_verified": "2026-09-14",
+    "verified_in": "20260914 tenth report"
+   }
   },
   {
    "name": "MATSim Metropole Ruhr Scenario (incl. Gladbeck sub-scenario)",
@@ -339,7 +343,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Open Ruhrgebiet Scenario v1.1 (NEMO)",
@@ -375,7 +380,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Open Düsseldorf Scenario",
@@ -410,7 +416,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Dresden Scenario",
@@ -445,7 +452,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Oberlausitz/Dresden Scenario",
@@ -480,7 +488,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Open Hannover Scenario",
@@ -516,7 +525,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Velbert Scenario",
@@ -551,7 +561,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Open Kyoto Scenario",
@@ -588,7 +599,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Open Mexico City Scenario",
@@ -624,7 +636,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Santiago de Chile Scenario",
@@ -661,7 +674,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Gauteng (South Africa)",
@@ -697,7 +711,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MATSim-NYC (NYU C2SMART)",
@@ -757,7 +772,8 @@
     "did_fidelity_move_a_validation_figure": "the paper reports the opposite direction: the count fit was reached by CALIBRATING 12 capacity factors and free speeds (screenline within 5% after 6 SPSA iterations), not by adding physical detail; 'the queue-based model ignores the intra-link interactions'"
    },
    "compute": "Calibration: Intel Xeon E5-2637 v4, 128 GB RAM; each SPSA calibration iteration = 50 MATSim 'days' and 'took around 11 hours' (~13 min per MATSim iteration at 4%, ~320K agents); 6 calibration iterations. Scenarios: 100 MATSim iterations, 'approximately 15 hours per scenario', each 'initiated using the final plan set obtained from the base MATSim-NYC scenario' - a warm start of policy runs from the base equilibrium, not a crash-resume.",
-   "updated_this_pass_previous": "2026-09-11: full text read (the abs page had only been read before). data_acquired_per_mode, physical_fidelity and compute filled; signals/pt_physical/freight/fares cells moved from unknown to the paper's own statements; sample cell gains the capacity-factor and stability figures."
+   "updated_this_pass_previous": "2026-09-11: full text read (the abs page had only been read before). data_acquired_per_mode, physical_fidelity and compute filled; signals/pt_physical/freight/fares cells moved from unknown to the paper's own statements; sample cell gains the capacity-factor and stability figures.",
+   "updated_this_pass": null
   },
   {
    "name": "MATSim Model Vienna (AIT)",
@@ -798,7 +814,8 @@
     "parking": "unknown",
     "level_crossings": "unknown",
     "did_fidelity_move_a_validation_figure": "no such claim; freight represented by a ~10% capacity reduction"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "AToM - Activity-based and agent-based Transport model of Melbourne",
@@ -864,7 +881,8 @@
     "level_crossings": "not reported",
     "did_fidelity_move_a_validation_figure": "no such claim; the active-mode count errors are attributed to demand (off-peak), not to the network"
    },
-   "updated_this_pass_previous": "2026-09-11: best_fit moved from unknown to the full text's per-family figures; data_acquired_per_mode and physical_fidelity filled."
+   "updated_this_pass_previous": "2026-09-11: best_fit moved from unknown to the full text's per-family figures; data_acquired_per_mode and physical_fidelity filled.",
+   "updated_this_pass": null
   },
   {
    "name": "eqasim Île-de-France (Paris) synthetic population + MATSim scenario",
@@ -913,7 +931,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "eqasim/MATSim Montreal (Manout & Ciari 2021)",
@@ -948,7 +967,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "SimMobility Singapore (MIT / SMART FM)",
@@ -993,7 +1013,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "SANDAG ABM3 (ActivitySim)",
@@ -1040,7 +1061,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "CMAP ActivitySim ABM (Chicago)",
@@ -1094,7 +1116,8 @@
     "parking": "unknown",
     "level_crossings": "n/a",
     "did_fidelity_move_a_validation_figure": "no such claim"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "PSRC SoundCast (DaySim + Emme)",
@@ -1124,7 +1147,7 @@
    "lane": "1",
    "last_verified": "2026-09-14",
    "verified_in": "20260914 pass",
-   "reused": false,
+   "reused": true,
    "calibration_method": {
     "family": "unknown",
     "what_the_source_says": "not reached within this pass's budget; see the gap 'calibration-method cells still unknown'.",
@@ -1150,8 +1173,9 @@
     "level_crossings": "n/a",
     "did_fidelity_move_a_validation_figure": "unknown"
    },
-   "updated_this_pass": "gap 4 narrowed: the per-operator transit fit of calibration 2.1 read from the wiki; the procedure is still unstated",
-   "transit_calibration_2_1": "github.com/psrc/soundcast/wiki/Transit-Calibration-2.1 (read 2026-09-14) - boardings by OPERATOR, model vs observed. Peak: Metro 226,881 vs 212,621 (+7 %) is the closest; Kitsap 5,990 vs 4,002 (+50 %) the widest; the other operators between 7 % and 50 %. Off-peak: differences 9 % to 45 %, Sound Transit 58,359 vs 40,122 (+45 %). Special routes: Swift RapidRide 0 %, RapidRide E +57 %, ST Commuter Rail North -42 %. 'SoundCast 2.1 uses LODES employment data which resulted in slightly higher transit boardings.' The page states the FIT and not the procedure: which parameters were adjusted, the algorithm and the number of runs are not on it. The Current-Calibration index page says only 'The current calibration uses the SoundCast 2.1 code set and LODES employment'."
+   "updated_this_pass": null,
+   "transit_calibration_2_1": "github.com/psrc/soundcast/wiki/Transit-Calibration-2.1 (read 2026-09-14) - boardings by OPERATOR, model vs observed. Peak: Metro 226,881 vs 212,621 (+7 %) is the closest; Kitsap 5,990 vs 4,002 (+50 %) the widest; the other operators between 7 % and 50 %. Off-peak: differences 9 % to 45 %, Sound Transit 58,359 vs 40,122 (+45 %). Special routes: Swift RapidRide 0 %, RapidRide E +57 %, ST Commuter Rail North -42 %. 'SoundCast 2.1 uses LODES employment data which resulted in slightly higher transit boardings.' The page states the FIT and not the procedure: which parameters were adjusted, the algorithm and the number of runs are not on it. The Current-Calibration index page says only 'The current calibration uses the SoundCast 2.1 code set and LODES employment'.",
+   "carried_to": "2026-09-14"
   },
   {
    "name": "POLARIS - Chicago Metropolitan Region (Argonne)",
@@ -1217,7 +1241,8 @@
     "did_fidelity_move_a_validation_figure": "no - the physical detail is reported as policy sensitivity (boardings +1% with the signals lever), never as a change in a validation figure"
    },
    "compute": "'Built wholly on a C++ codebase... a 24-hour day simulation of a 25% Chicago metro model takes about 157 min' (MUM 2025). No memory figure, no warm-start or checkpoint mechanism described.",
-   "updated_this_pass_previous": "2026-09-11: calibration_method CLOSED from the MUM 2025 extended abstract; the 25% per-day wall time is the first published per-iteration figure at this project's own sample; signals cell filled from the transit paper."
+   "updated_this_pass_previous": "2026-09-11: calibration_method CLOSED from the MUM 2025 extended abstract; the 25% per-day wall time is the first published per-iteration figure at this project's own sample; signals cell filled from the transit paper.",
+   "updated_this_pass": null
   },
   {
    "name": "BEAM - San Francisco Bay Area (LBNL)",
@@ -1265,7 +1290,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "TRANSIMS Track-1 - Fort Meade / MD-175, Maryland (Jeihani & Ardeshiri 2014); Chittenden County VT (Lawe et al. 2009, cited)",
@@ -1301,7 +1327,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "LLMob - Large Language Models as Urban Residents (NeurIPS 2024)",
@@ -1338,7 +1365,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "CoPB - Chain-of-Planned-Behaviour mobility generation (Tsinghua)",
@@ -1375,7 +1403,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MobAgent - Be More Real: travel diary generation (Shenzhen University)",
@@ -1411,7 +1440,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "OpenCity - scalable urban activity simulation with massive LLM agents (Tsinghua / HKUST-GZ)",
@@ -1448,7 +1478,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "AgentSociety (Tsinghua FIB lab) - with third-party mobility validation by Santos, Viana & Silva (SIGSPATIAL 2026)",
@@ -1487,7 +1518,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "CitySim (2025) / CityReal (2026) - Woven by Toyota, Tokyo",
@@ -1525,7 +1557,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "CityBehavEx - scalable, empirically validated LLM-assisted urban simulation (UTFPR / Inria / U. Toronto)",
@@ -1562,7 +1595,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "GTA - Generative Traffic Agents (Leipzig University / UCL / ScaDS.AI; CHI 2026)",
@@ -1599,7 +1633,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "LLM-enhanced general transportation agent for synthetic travel-survey generation (Salvador, Furno, Derrible; TRR 2026)",
@@ -1635,7 +1670,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "DeepCAM / DeepAM generative household activity pipeline + MATSim, Los Angeles (UCLA Mobility Lab)",
@@ -1676,7 +1712,8 @@
     "parking": "unknown",
     "level_crossings": "unknown",
     "did_fidelity_move_a_validation_figure": "no such claim"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "AToM extension for Suburban Rail Loop East, Melbourne (Abdollahyar, Both, Jafari, Pemberton, Singh, Giles-Corti, Gunn; TRIP 2026)",
@@ -1712,7 +1749,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Greater Bendigo MATSim demand generation - multistep location assignment (Tiwari, Jafari, Both, Singh; RMIT + CSIRO Data61; MUM 2025)",
@@ -1748,7 +1786,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Tyne and Wear MATSim model (Newcastle University; DARe hub) - baseline, cycling scenarios, Tyne Bridge and 'Toon Monsoon' disruption",
@@ -1796,7 +1835,8 @@
     "parking": "unknown",
     "level_crossings": "unknown",
     "did_fidelity_move_a_validation_figure": "no such claim"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Dhaka BRT agent-based microsimulation (MATSim; Transport Policy 148, 2024, 92-106)",
@@ -1833,7 +1873,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Deep Activity Model - generative activity-chain synthesis + LASim, Los Angeles County (UCLA Mobility Lab; arXiv 2405.17468 v3, Aug 2026)",
@@ -1875,7 +1916,8 @@
     "parking": "unknown",
     "level_crossings": "unknown",
     "did_fidelity_move_a_validation_figure": "no such claim"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "MWCOG / TPB Gen3 ActivitySim model, Ver. 1.0.4 - metropolitan Washington DC (RSG + Baseline Mobility Group, calibration and validation report 25 Aug 2025)",
@@ -1893,17 +1935,18 @@
    "open_source": "ActivitySim BSD-3-Clause; the MWCOG implementation, reports and user guide are public on mwcog.org; inputs are agency data",
    "reproducible": "partial (agency networks and survey)",
    "city_agnostic": "framework yes; implementation no",
-   "status": "active - 'In April 2026, COG released Version 1.1.0, COG/TPB's first production-use Gen3 Model, marking the completion of the Phase 3 development' (User's Guide for the Gen3/Version 1.1.0 model, 16 April 2026, which supersedes the Ver. 1.0.4 report this row's fit figures come from). A 'Gen3/Ver. 1.1.0 Travel Model Validation' memorandum (Glenn Lang and Ray Ngo, 6 April 2026) exists per the search index but its PDF was not located - opened as a gap. The fit figures in best_fit remain those of Ver. 1.0.4 (August 2025).",
+   "status": "active - 'In April 2026, COG released Version 1.1.0, COG/TPB's first production-use Gen3 Model, marking the completion of the Phase 3 development' (User's Guide for the Gen3/Version 1.1.0 model, 16 April 2026, which supersedes the Ver. 1.0.4 report this row's fit figures come from). A 'Gen3/Ver. 1.1.0 Travel Model Validation' memorandum (Glenn Lang and Ray Ngo, 6 April 2026) exists per the search index but its PDF was not located - opened as a gap. The fit figures in best_fit remain those of Ver. 1.0.4 (August 2025). | 2026-09-14 (tenth pass, three calls): the memorandum is still not located - two differently phrased searches return only the User's Guide that cites it, and the TPB Travel Forecasting Subcommittee page (mwcog.org/committees/travel-forecasting-subcommittee, page updated 2026-04-24) lists no 2026 document; its next meetings are 18 September and 20 November 2026, where the Ver. 1.1.0 validation would be tabled.",
    "does_best": "Publishes every rung with numbers AND the acceptance standard each number is judged against (FDOT / FSUTMS-Cube: +/-5% VMT areawide, +/-9% transit by mode, +/-20% station groups) - the external yardstick this project's 10% and 20% gates have no published equivalent of",
    "sources": [
     "https://www.mwcog.org/assets/1/6/Gen3_Ver1.0.4_Model_Calibration_and_Validation_Final.pdf",
     "https://www.mwcog.org/assets/1/6/Gen3_Model_Calibration_and_Validation_Report.pdf",
     "https://www.mwcog.org/assets/1/6/Gen3_Model_Phase_2_Model_User_Guide_final.pdf",
-    "https://www.mwcog.org/assets/1/6/Gen3_Model_V1.1.0_Model_User_Guide_TPB_final1.pdf (145 pp, PDF saved locally and read with pypdf 2026-09-14)"
+    "https://www.mwcog.org/assets/1/6/Gen3_Model_V1.1.0_Model_User_Guide_TPB_final1.pdf (145 pp, PDF saved locally and read with pypdf 2026-09-14)",
+    "https://www.mwcog.org/committees/travel-forecasting-subcommittee/"
    ],
    "lane": "agency",
    "last_verified": "2026-09-14",
-   "verified_in": "20260914 pass",
+   "verified_in": "20260914 tenth report",
    "reused": false,
    "calibration_method": {
     "family": "unknown for this agency's own model; the ActivitySim ecosystem's documented approach is an iterative ASC-adjustment loop",
@@ -1934,7 +1977,8 @@
     "did_fidelity_move_a_validation_figure": "no such claim"
    },
    "calibration_practice_from_user_guide": "User's Guide (16 April 2026) section 5.4: ActivitySim calibration scripts carry SAMPLE_RATE = 1.0 and DAMPING = 0.75 as constants; sample-rate guidance is judgement-based - 'calibration of ASCs for each auto ownership alternative can be completed with a relatively small sample, like 5% of all households', while for mode choice 'sometimes we calibrate using 100% of the population', and 'one million households (which translates into a roughly 33% sample ...) would be adequate for the calibration of most models'. Stochasticity: three random-seed runs gave differences 'basically negligible' at regional and jurisdictional level; highway assignment is capped at 32 cores 'to minimize output variations'. The 2018 traffic counts and transit boarding counts used for validation 'were provided by COG/TPB staff'.",
-   "updated_this_pass": "liveness: Ver. 1.1.0 is the April 2026 production release; assignment tool named; calibration sample-rate and damping practice recorded from the user's guide"
+   "updated_this_pass": "gap 16 narrowed: the Ver. 1.1.0 validation memo is cited but not published on the pages read; subcommittee meets 18 Sep 2026",
+   "carried_to": "2026-09-14"
   },
   {
    "name": "Brussels agent-based traffic model from aggregated cellphone matrices (Li, Rombaut, Vanhaverbeke; Int. J. Digital Earth 17(1) 2407046, Sep 2024)",
@@ -1952,7 +1996,7 @@
    "open_source": "unknown (paper CC BY-NC; no code URL in the abstract)",
    "reproducible": "claimed - 'the algorithm demonstrates significant transferability to other regions' from ubiquitous inputs",
    "city_agnostic": "claimed by design",
-   "status": "published 25 September 2024; VUB research portal entry",
+   "status": "published 25 September 2024; VUB research portal entry | 2026-09-14: the VUB research portal page (read) confirms Li, Rombaut & Vanhaverbeke, 25 September 2024, IJDE 17(1) 2407046, and states the full text is CC BY-NC (2.39 MB) at the DOI - which resolves to tandfonline (403); the portal itself serves no file. An EIGHTH route eliminated; a search summary this pass ALSO stated 'calibrating the overall mode share and mode-distance share to ensure that the variances between simulation and real-world data are within 5%', which is NOT written into best_fit because it was not read on a page.",
    "does_best": "Builds a validated MATSim demand with no household travel survey at all, from aggregated cellphone matrices - the route to the external and visitor demand this project derives from the 2011 journey-to-work flow",
    "sources": [
     "https://researchportal.vub.be/en/publications/agent-based-digital-traffic-model-generation-for-regions-facing-d/",
@@ -1960,9 +2004,9 @@
     "https://ui.adsabs.harvard.edu/abs/2024IJDE...1707046L/abstract"
    ],
    "lane": "1",
-   "last_verified": "2026-09-07",
-   "verified_in": "20260907T173435_project_report",
-   "reused": true,
+   "last_verified": "2026-09-14",
+   "verified_in": "20260914 tenth report",
+   "reused": false,
    "carried_to": "2026-09-14",
    "data_acquired_per_mode": {
     "status": "unknown",
@@ -1971,7 +2015,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": "gap 1 narrowed: VUB portal read (abstract, CC BY-NC, 2.39 MB PDF only at the tandfonline DOI); the 'within 5 %' figure is a search snippet and stays out of the row"
   },
   {
    "name": "SEMCOG ActivitySim activity-based travel demand model - Southeast Michigan / Detroit region (SEMCOG + RSG, phases I-II from 2019)",
@@ -2018,7 +2063,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Washington DC metro MATSim model from open data - COVID case study (Ruan, Khan, Xin, Zufle, Pfoser; Computational Urban Science 5:57, 2025)",
@@ -2055,7 +2101,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "ARC ABM - Atlanta Regional Commission CT-RAMP activity-based model (promoted from not_reverified this pass)",
@@ -2101,7 +2148,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Barcelona traffic digital twin (SUMO; Getting Real, ISPRS IJGI 11(1) 24)",
@@ -2138,7 +2186,7 @@
    "lane": "never-seen candidate, found round 6",
    "last_verified": "2026-09-14",
    "verified_in": "20260914 pass",
-   "reused": false,
+   "reused": true,
    "added_this_pass": true,
    "data_acquired_per_mode": {
     "status": "verified 2026-09-14 from the full text",
@@ -2158,7 +2206,8 @@
     "level_crossings": "not stated",
     "did_fidelity_move_a_validation_figure": "What moved the count fit was ASSIGNMENT and routing weights, not physical detail: R2 rose to 0.81 with device.rerouting.probability = 1 and weights.priority-factor = 100, and iSAR beat IIDUE on every metric. Signals were never varied, so signals-versus-counts is not measured here either - the library's count of agent-based projects that measured it stays at zero."
    },
-   "updated_this_pass": "gap 12 closed: full text reached via the ETH Research Collection; signals, sample, best_fit, data and fidelity cells filled from the paper"
+   "updated_this_pass": null,
+   "carried_to": "2026-09-14"
   },
   {
    "name": "Munich public transport across models and scales (MATSim + MITO vs MCNF vs IRW; PNAS Nexus 3(11) pgae489, 2024)",
@@ -2208,7 +2257,8 @@
     "level_crossings": "not stated",
     "did_fidelity_move_a_validation_figure": "the paper's comparison is across MODEL FAMILIES (agent-based vs multicommodity flow vs inertial random walk) on one dataset, not across fidelity levels within one model"
    },
-   "updated_this_pass_previous": "2026-09-11: acquisition method and fidelity checked on the OUP article page; both unstated."
+   "updated_this_pass_previous": "2026-09-11: acquisition method and fidelity checked on the OUP article page; both unstated.",
+   "updated_this_pass": null
   },
   {
    "name": "Tallinn (Estonia) - SimMobility MT Preday activity-based model, with a dynamic-assignment equilibrium loop",
@@ -2247,7 +2297,8 @@
    "physical_fidelity": {
     "status": "unknown",
     "note": "from stored cells only - no search spent on this row this pass"
-   }
+   },
+   "updated_this_pass": null
   },
   {
    "name": "Cape Town MyCiTi BRT - MATSim from automated fare collection data (Willenberg, Zuidgeest & Beukes 2022, J. South African Institution of Civil Engineering 64(3))",
@@ -2297,7 +2348,9 @@
    "lane": "added 2026-09-14",
    "last_verified": "2026-09-14",
    "verified_in": "20260914 pass",
-   "reused": false
+   "reused": true,
+   "updated_this_pass": null,
+   "carried_to": "2026-09-14"
   },
   {
    "name": "Seoul - MATSim public-transport simulation from smart-card data (Ali, Kim & Lee 2015, KSCE Journal of Civil Engineering)",
@@ -2315,11 +2368,12 @@
    "open_source": "MATSim yes; the model not stated",
    "reproducible": "unknown",
    "city_agnostic": "no",
-   "status": "dormant - 2015 paper (58 citations per Semantic Scholar); no later release read",
+   "status": "dormant - the article is KSCE Journal of Civil Engineering 20(4):1532-1539 (2016; online 2015, doi 10.1007/s12205-015-1694-0), authors Ali, Kim & Lee; no later release read | 2026-09-14: one search - the only copies indexed are Springer (dead), a ScienceDirect PDF mirror (S1226798824038571, dead host) and ResearchGate (403); no koreascience.kr copy surfaced.",
    "does_best": "Uses the smart-card transactions as the DEMAND and validates station boarding and alighting volumes, then derives a quantity the card system cannot observe (within-subway transfers) - a derived-from-observation pattern like this project's own rule 6; and it extracts waiting-time components per station 'very important in managing the frequency and headway'.",
    "sources": [
     "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1007/s12205-015-1694-0 (title, authors, abstract, read 2026-09-14)",
-    "https://doi.org/10.1007/s12205-015-1694-0 (paywalled)"
+    "https://doi.org/10.1007/s12205-015-1694-0 (paywalled)",
+    "https://link.springer.com/article/10.1007/s12205-015-1694-0 (KSCE J. Civ. Eng. 20(4):1532-1539, paywalled - never fetch)"
    ],
    "data_acquired_per_mode": {
     "status": "abstract only",
@@ -2331,8 +2385,10 @@
    },
    "lane": "added 2026-09-14",
    "last_verified": "2026-09-14",
-   "verified_in": "20260914 pass",
-   "reused": false
+   "verified_in": "20260914 tenth report",
+   "reused": false,
+   "updated_this_pass": "gap 19 narrowed: citation corrected to KSCE 20(4):1532-1539 (2016); the fit figures remain unreached on every indexed host",
+   "carried_to": "2026-09-14"
   },
   {
    "name": "mobiTopp Stuttgart Region (KIT; Mallig & Vortisch 2017, arXiv 1707.05050) - one-week activity-based travel demand",
@@ -2384,7 +2440,94 @@
    "lane": "added 2026-09-14",
    "last_verified": "2026-09-14",
    "verified_in": "20260914 pass",
-   "reused": false
+   "reused": true,
+   "updated_this_pass": null,
+   "carried_to": "2026-09-14"
+  },
+  {
+   "name": "Rotterdam-The Hague (MRDH) activity- and agent-based co-simulation (Li, Zhou, Snelder, van Arem & Gao; TU Delft + TNO; Procedia CS 257:959-965, 2025)",
+   "engine": "ActivitySim (activity scheduling and location choice, tour and trip mode choice) coupled to MATSim (route choice and departure-time mutation within 30 min; MODE CHOICE INNOVATION SWITCHED OFF so that MATSim cannot overturn ActivitySim's decision), iterated through zonal level-of-service matrices (AM 7-9, PM 16-18, rest of day) until the mean relative change of generalised cost over all OD pairs is under 5 %",
+   "city_population": "Metropolitan Rotterdam-The Hague (MRDH), the Netherlands; mode shares reported for the Zuid-Holland region; agent count not stated in the paper",
+   "sample_fraction": "unknown - not stated",
+   "modes": "car, bike (+e-bike), public transport, walking (the four modes whose shares are reported)",
+   "active_modes": "unknown - not stated (MATSim network shown for car and public transit; walk and bike handling unstated)",
+   "pt_physical": "unknown - a 'Car and Public Transit Network of the Calibrated Model in Rotterdam' is drawn (Fig. 2a); whether pt runs on a schedule in the qsim is not stated",
+   "signals": "not stated (none mentioned)",
+   "freight": "none - resident demand from ActivitySim only",
+   "fares_pricing": "not stated beyond ActivitySim's level-of-service cost terms",
+   "validation_rung": "survey shares - calibrated on mode share AND mode-distance share with the Rakow & Nagel ASC tool; the observed reference is not tabulated in the paper",
+   "best_fit": "unknown as a deviation. Verbatim: 'We also deploy the alternative specific constant calibration tool in [19] to automate the model calibration process, ensuring the alignment of mode and mode-distance share between the simulation and reality.' and 'In the Zuid-Holland region of the calibrated model, between modes of car, bike (+ebike), public transport, and walking, the mode shares are 30.8%, 41.4%, 3.9% and 23.9%, and the mode distance shares are 40.3%, 45.7%, 6.2%, and 7.8% respectively.' and 'Although the generated model for the MRDH is calibrated and validated against real-world mobility patterns, it does not yet fully illustrate how the proposed co-simulation framework outperforms standalone activity-based and agent-based models.' No observed column, no counts, no ridership.",
+   "open_source": "engines yes (both open source, stated as the reason for choosing them); the MRDH model itself - no repository named",
+   "reproducible": "no - no code or data release named; the baseline ActivitySim model is 'generated and calibrated by [13]' (Zhou, Dorsman, Mandjes & Snelder 2023, a tour-based multimodal mode choice model)",
+   "city_agnostic": "the framework is generic by construction (two city-agnostic engines coupled through LOS matrices); the paper claims it is 'the first paper to integrate two open-source AcBM and AgBM simulation software in a co-simulation manner'",
+   "status": "published 2025 (ABMTrans 2025, Patras, 22-24 April 2025; Procedia CS 257:959-965, doi 10.1016/j.procs.2025.03.123, CC BY-NC-ND); an 'initial framework' - the authors state the full potential shows only on interventions such as ride-hailing 'in the future'",
+   "does_best": "Keeps mode choice OUT of MATSim on purpose: the activity-based model decides mode and destination once, MATSim decides routes and shifts departure minutes, and the two are iterated to a 5 % LOS-change tolerance - so the mode constants are calibrated in one place and cannot be silently re-decided by the co-evolutionary loop. The opposite architecture to this project's, where the qsim's scoring is the mode-choice model.",
+   "sources": [
+    "https://pure.tudelft.nl/ws/portalfiles/portal/244710842/1-s2.0-S1877050925008609-main.pdf (TU Delft repository copy, PDF saved locally, 8 pp read with pypdf 2026-09-14)",
+    "https://doi.org/10.1016/j.procs.2025.03.123 (ScienceDirect, dead host)",
+    "https://publications.tno.nl/publication/34644308/5tFkyRnO/li-2025-activity.pdf (HTTP 503 on three attempts over two passes - dead)"
+   ],
+   "lane": "added 2026-09-14",
+   "last_verified": "2026-09-14",
+   "verified_in": "20260914 tenth report",
+   "reused": false,
+   "calibration_method": {
+    "family": "ASC log-ratio fixed point (Rakow & Nagel 2024) on mode share and mode-distance share, inside an outer LOS-matrix fixed point between ActivitySim and MATSim",
+    "what_the_source_says": "'ensuring the alignment of mode and mode-distance share between the simulation and reality' via [19] Rakow & Nagel 2024; outer loop stops when (1/N) sum |C_i(a,b) - C_{i-1}(a,b)| / C_{i-1}(a,b) x 100 < 5 %, 'achieved relatively quickly for modelling the base-year reference scenario since the original level-of-service matrices inputted into ActivitySim are derived from real-world mobility data'",
+    "objective_evaluations": "unknown",
+    "convergence_criterion": "mean relative LOS change over all OD pairs under 5 %",
+    "sources": [
+     "https://pure.tudelft.nl/ws/portalfiles/portal/244710842/1-s2.0-S1877050925008609-main.pdf"
+    ],
+    "last_verified": "2026-09-14",
+    "verified_in": "20260914 tenth report"
+   },
+   "data_acquired_per_mode": "not stated per mode; ActivitySim utilities from the Zhou et al. 2023 tour-based mode-choice model; POI data for within-zone activity placement; no counts or ridership named",
+   "physical_fidelity": "MATSim network routing for car; pt network drawn; departure-time mutation confined to 30 minutes; no signals, parking or dwell stated",
+   "updated_this_pass": "ADDED this pass",
+   "carried_to": null
+  },
+  {
+   "name": "Barcelona metropolitan MATSim model from mobile phone records (Bassolas, Ramasco, Herranz & Cantu-Ros; IFISC + Nommon; Transportation Research Part A 121:56-74, 2019; arXiv 1803.06375)",
+   "engine": "MATSim (2014 base year); activity diaries reconstructed from Call Detail Records, scaled to census age/gender at census-tract level; activity locations fixed (no location replanning)",
+   "city_population": "Barcelona metropolitan area - 36 municipalities, 3,247,281 inhabitants (INE 2017), the municipality 1,620,809; residents over 15 only; through trips and freight excluded",
+   "sample_fraction": "10 % - verbatim: 'a subpopulation of agents formed by 10% of the total population is taken as a representative sample'",
+   "modes": "four: private car, public transport (train, underground, tramway and bus as one mode), bike, walking",
+   "active_modes": "unknown - walk and bike are scored (Cmode(walk) 0, Cmode(bike) -22) but whether they are network or teleported legs is not stated",
+   "pt_physical": "schedule built - bus (192 lines, 2,464 stops) and metro (22 lines, 139 stops) from Barcelona Open Data, rail (38 lines, 181 stops) and tram (12 lines, 56 stops) scraped from Renfe/Rodalies, with inter-stop durations and departure times per line; whether the qsim runs the vehicles or the router teleports on the timetable is not stated",
+   "signals": "none stated; road network 17,690 links / 9,217 nodes from Open Transport Maps + OSM with imputed speed/capacity by road type",
+   "freight": "excluded by construction - and named as the cause of the two count outliers (Ronda Litoral is 'one of the main access for freight traffic to the premisses of the port of Barcelona and to Mercabarna')",
+   "fares_pricing": "a cordon toll as the policy (10 EUR entry); no base fares stated; monetary distance rate for car -7.7e-5 (Table I)",
+   "validation_rung": "survey shares + road link counts - calibrated on the EMEF 2014 modal split at two scales simultaneously, VALIDATED on held-out traffic counts at 11 main entrances (>10,000 veh/day) from the Barcelona City Council statistics portal",
+   "best_fit": "Calibration: 'Observed and simulated car mode shows a difference of less than 1.5%' - first fare area EMEF 23.2 / 26.1 / 50.7 vs MATSim 24.5 / 23.9 / 51.6 % and Barcelones EMEF 19.9 / 28.8 / 51.3 vs MATSim 20.0 / 26.0 / 54.0 % (private / non-motorised / public). Validation, verbatim: 'traffic counts were not used during the calibration process, i.e., the resulting travel counts from the simulation have not been influenced by the observed ones in any way' ... 'For an occupation factor of 1.25, 9 out of the 11 roads compared in Table II present a GEH statistic below 10. The Ronda Litoral and Avenida Diagonal are the two outliers having more observed vehicles than the maximum estimated. A reason for this is that we are not considering freight and passing by traffic.' Counts compared as a band between person-trips/1.25 and person-trips/1.0 (occupancy factor), not a point.",
+   "open_source": "no - no code or data released; CDRs proprietary (Nommon)",
+   "reproducible": "no",
+   "city_agnostic": "the diary-reconstruction method is presented as transferable; the model is Barcelona's",
+   "status": "published 2019 (TR-A 121:56-74; arXiv v1 16 March 2018); dormant as a project",
+   "does_best": "The cleanest statement in this library of a HOLDOUT count validation for an agent-based model: the count stations were never touched by the calibration, the comparison is reported as an occupancy-factor BAND rather than a point, and the two misses are attributed by name to demand components the model excludes (port freight, through traffic) - exactly the 'auxiliary demand' explanation gap 9 has been looking for, with numbers.",
+   "sources": [
+    "https://arxiv.org/abs/1803.06375",
+    "https://arxiv.org/pdf/1803.06375 (PDF saved locally, 16 pp read with pypdf 2026-09-14)"
+   ],
+   "lane": "added 2026-09-14",
+   "last_verified": "2026-09-14",
+   "verified_in": "20260914 tenth report",
+   "reused": false,
+   "calibration_method": {
+    "family": "manual - mode constants and marginal utilities hand-set until the modal split matches the survey at two spatial scales at once",
+    "what_the_source_says": "'The calibration consists of adjusting the values of the parameters described in section II A such that certain outputs of the simulation (in our case, modal split) are consistent with baseline values' ... 'The parameters of MATSim were set in such a way that simulated modal split matched the observed ones in the two areas at the same time.' Table I: beta_dur 6, Cmode car -13, walk 0, bike -22, public transport -4, beta_trav -6 for all modes, beta_d,car -7.7e-5, beta_m 1.",
+    "objective_evaluations": "unknown",
+    "convergence_criterion": "car share within 1.5 % of EMEF at both scales",
+    "sources": [
+     "https://arxiv.org/pdf/1803.06375"
+    ],
+    "last_verified": "2026-09-14",
+    "verified_in": "20260914 tenth report"
+   },
+   "data_acquired_per_mode": "car: 11 entrance count stations (Barcelona City Council statistics portal); modal split: EMEF 2014 (Encuesta de Mobilitat en Dia Feiner); pt: GTFS-like schedules scraped from operators; no per-mode ridership",
+   "physical_fidelity": "road network with imputed capacities; pt schedule built per line; no signals; occupancy factor 1.25 from the city's sustainable urban mobility plan applied when converting person trips to vehicles",
+   "updated_this_pass": "ADDED this pass",
+   "carried_to": null
   }
  ],
  "platforms": [
@@ -2403,14 +2546,17 @@
     "https://raw.githubusercontent.com/matsim-org/matsim-libs/master/matsim/pom.xml",
     "https://api.github.com/repos/matsim-org/matsim-libs/license (404 - no SPDX-detectable LICENSE at the root)",
     "https://api.github.com/repos/matsim-org/matsim-code-examples/issues/834/comments",
-    "https://api.github.com/repos/matsim-org/matsim-code-examples/issues/189/comments"
+    "https://api.github.com/repos/matsim-org/matsim-code-examples/issues/189/comments",
+    "https://depositonce.tu-berlin.de/handle/11303/21792",
+    "https://api-depositonce.tu-berlin.de/server/api/core/bitstreams/41c97993-bd47-449c-beff-ffebf2f97e22/content (PDF saved locally, read with pypdf 2026-09-14)"
    ],
-   "last_verified": "2026-09-11",
-   "verified_in": "20260911_project_report (eighth pass, at 20ae4e9)",
-   "reused": true,
-   "calibration_tooling": "Three named routes, all read this pass: (1) matsim.calibration in matsim-vsp/matsim-python-tools - an ASCCalibrator driving an Optuna study, whose update is literally log(z_i) - log(m_i) - (log(z_0) - log(m_0)), i.e. the classic ASC fixed-point loop normalised on a fixed reference mode, with a pluggable learning-rate scheduler and a TerminationCondition dataclass whose check_termination carries \"# TODO: not used yet\"; (2) Cadyts, a Bayesian count calibration that adjusts NO parameter and instead adds a utility bonus so agents select the plans matching observed counts; (3) opdyts (Flotterod, TR-B 2017), which approximates point equilibria of the mobsim/scoring/replanning loop, with a Berlin mode-constant example. See calibration_methods.",
+   "last_verified": "2026-09-14",
+   "verified_in": "20260914 tenth report",
+   "reused": false,
+   "calibration_tooling": "Three named routes, all read this pass: (1) matsim.calibration in matsim-vsp/matsim-python-tools - an ASCCalibrator driving an Optuna study, whose update is literally log(z_i) - log(m_i) - (log(z_0) - log(m_0)), i.e. the classic ASC fixed-point loop normalised on a fixed reference mode, with a pluggable learning-rate scheduler and a TerminationCondition dataclass whose check_termination carries \"# TODO: not used yet\"; (2) Cadyts, a Bayesian count calibration that adjusts NO parameter and instead adds a utility bonus so agents select the plans matching observed counts; (3) opdyts (Flotterod, TR-B 2017), which approximates point equilibria of the mobsim/scoring/replanning loop, with a Berlin mode-constant example. See calibration_methods. | 2026-09-14: the METHOD NOTE behind route (1) is now read in full - Rakow & Nagel, 'Automated calibration of alternative specific constants in agent based transport models', TU Berlin, June 2024, doi 10.14279/depositonce-20593, CC BY 4.0, three pages. Verbatim: 'Perform a simulation run until convergence and collect all relevant trips. Let z_i be the reference mode share for mode i and m_i the simulated mode share. One ASC always has to be fixed (usually to 0); otherwise, the solution is not unique ... asc_i + ln z_i - ln m_i - (ln z_0 - ln m_0) ... Perform more simulation runs while updating asc_i by delta_i for all modes i, except i = 0 after each run. This is done until simulated mode shares are sufficiently close to the reference mode shares.' Proof given for two alternatives under fixed utilities; discussion: 'The proof assumes that utilities remain constant during simulation runs, which is often not the case ... it is recommended to adjust the update step delta_i by a fraction. This fraction can be modified based on the difference between simulated and reference mode shares.' No run count, no scenario, no fit figure, no distance term in the note; the tooling's ASCDistCalibrator adds distance-group constants with the same update. The idea is credited to Gunnar Floetteroed. This is the exact expression in this project's asc_fixed_point.py, and it is cited as the calibration tool by the Rotterdam-The Hague row (Li et al. 2025).",
    "carried_to": "2026-09-14",
-   "restart_mechanism": "NO checkpoint/resume exists in the platform. The developer answer (Marcel Rieser, matsim-code-examples issue #834, 12 Dec 2022, read via api.github.com this pass): 'The plans in \"it200/200.plans.xml.gz\" are the plans after replanning, but before mobsim, in iteration 200. So you can use those to resume at iteration 200 (it should generate the same events file like the first run), and then continue with iteration 201.' and 'If you use the plans file of iteration 200, start the new run also with iteration 200.' ... 'The first iteration of a run never does replanning.' So a resume is a plans-file restart AT the checkpoint iteration, and only where a plans dump exists (writePlansInterval); everything since the last dump is lost. Memory rule of thumb from the same repository's issue #189: 'typically... around 100KB per agent. That is 1 GB per 10k agents' (mrieser, 2019-08-20); a ~1M-agent, 250k-link scenario needed 60-90 GB actual (mrieser); JVM total is ~25% above the reported heap (josiekre)."
+   "restart_mechanism": "NO checkpoint/resume exists in the platform. The developer answer (Marcel Rieser, matsim-code-examples issue #834, 12 Dec 2022, read via api.github.com this pass): 'The plans in \"it200/200.plans.xml.gz\" are the plans after replanning, but before mobsim, in iteration 200. So you can use those to resume at iteration 200 (it should generate the same events file like the first run), and then continue with iteration 201.' and 'If you use the plans file of iteration 200, start the new run also with iteration 200.' ... 'The first iteration of a run never does replanning.' So a resume is a plans-file restart AT the checkpoint iteration, and only where a plans dump exists (writePlansInterval); everything since the last dump is lost. Memory rule of thumb from the same repository's issue #189: 'typically... around 100KB per agent. That is 1 GB per 10k agents' (mrieser, 2019-08-20); a ~1M-agent, 250k-link scenario needed 60-90 GB actual (mrieser); JVM total is ~25% above the reported heap (josiekre).",
+   "updated_this_pass": "Rakow & Nagel 2024 read in full: the ASC fixed-point note behind matsim.calibration, formula and damping advice verbatim"
   },
   {
    "name": "eqasim (MATSim extension + open pipelines)",
@@ -2616,12 +2762,15 @@
     "https://en.virtuosity.com/openpaths",
     "https://tfresource.org/topics/Software",
     "https://www.bentley.com/en/products/product-line/mobility-simulation-and-analytics/cube",
-    "https://bentleysystems.service-now.com/community?id=community_blog&sys_id=8b105fee1b21329074968730604bcba6"
+    "https://bentleysystems.service-now.com/community?id=community_blog&sys_id=8b105fee1b21329074968730604bcba6",
+    "https://utahmug.org/meeting9/"
    ],
-   "last_verified": "2026-09-07",
-   "verified_in": "20260907T231739_project_report (fourth pass of the day, at f40d332)",
-   "reused": true,
-   "carried_to": "2026-09-14"
+   "last_verified": "2026-09-14",
+   "verified_in": "20260914 tenth report",
+   "reused": false,
+   "carried_to": "2026-09-14",
+   "calibration_tooling": "FILLED 2026-09-14 from a page read, not a snippet: the Utah Model Users Group meeting 9 page (utahmug.org/meeting9, meeting of 11 September 2025) lists 'Leveraging Mobility Data for Automated Calibration of Travel Demand Models' by Gaurav Vyas, Bentley Systems, describing how 'different types of data including HTS and big data, can be used in one systematic process' for calibration on the OpenPaths harmonised demand-modelling approach, with traffic counts, transit ridership and household travel surveys as the fused targets; the slide deck is not provided on the page. The same meeting's WFRC talk (Bill Hereth, 'Enhancing CRT Modeling in WFRC TDM v9.2', deck linked) corrected station-level commuter-rail forecast biases through drive-access utility and alternative specific constants - an agency doing per-station transit calibration by hand.",
+   "updated_this_pass": "gap 3 closed: the automated-calibration cell filled from the Utah MUG page (deck unreached)"
   }
  ],
  "excluded": [
@@ -3110,6 +3259,18 @@
    "reason": "Not a validated city model - verbatim 'no calibration took place and only one day (Thursday) is simulated'. Recorded because it PRICES A CROSS-ENGINE BAND on identical input: mobiTopp/Fleetpy versus mobiTopp/MATSim differ by at most 2.4 pp (car 23.5 vs 25.9 %) and ride 4.3 vs 3.2 %, with ride-pooling 0.068 vs 0.113 % - the size of disagreement two agent-based engines produce from the SAME demand and mode-choice model. Fetched by mistake for the mobiTopp trip-length calibration (the KIT repository handle led here).",
    "source": "https://publikationen.bibliothek.kit.edu/1000145951/148746053",
    "excluded_on": "2026-09-14"
+  },
+  {
+   "name": "Meinhardt, Lu & Nagel 2026, 'Reconnecting Rural Communities: The Potential of Demand Responsive Transport in Lusatia, Germany' (VSP WP 26-05, preprint)",
+   "reason": "Not a separate city model - a DRT application ON the MATSim Open Lausitz Scenario (already a project row), with an estimation-based DRT surrogate replacing explicit DRT simulation in the iterations. Read in full because it is the first published statement of HOW that scenario's distance distribution is calibrated; that material is written into the Lausitz row, not a new one. Result of the study itself: DRT users gain 4-7 min, cost-benefit ratio below 1.0.",
+   "source": "https://svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2026/26-05/MeinhardtEtAl2026ReconnectionRuralCommunities.pdf",
+   "excluded_on": "2026-09-14"
+  },
+  {
+   "name": "Rakow & Nagel 2024, 'Automated calibration of alternative specific constants in agent based transport models' (TU Berlin, depositonce-20593, CC BY 4.0)",
+   "reason": "A three-page METHOD NOTE, not a city model: it states the ASC log-ratio update with a fixed reference mode, proves it for two alternatives under fixed utilities, and advises damping 'by a fraction'. Recorded in the MATSim platform row's calibration_tooling cell and cited by the Rotterdam-The Hague row; no scenario, run count or fit figure inside it.",
+   "source": "https://depositonce.tu-berlin.de/handle/11303/21792",
+   "excluded_on": "2026-09-14"
   }
  ],
  "not_reverified": [
@@ -3323,43 +3484,56 @@
   },
   {
    "name": "An Activity- and Agent-based Co-Simulation Framework for the Metropolitan Rotterdam The Hague Region (Li et al., TNO, Procedia CS 2025, S1877050925008609)",
-   "note": "Surfaced 2026-09-14 in the Brussels search; the TNO publications PDF returned HTTP 503 on two attempts and ScienceDirect is a recorded dead route, so it is UNPRICED - a real-region agent-based candidate whose validation claim is unread.",
+   "note": "Surfaced 2026-09-14 in the Brussels search; the TNO publications PDF returned HTTP 503 on two attempts and ScienceDirect is a recorded dead route, so it is UNPRICED - a real-region agent-based candidate whose validation claim is unread. | NOTE, 2026-09-14: NOW A PROJECT ROW - the TU Delft repository copy (pure.tudelft.nl) was read in full this pass after the TNO PDF 503'd a third time; see the Rotterdam-The Hague row.",
+   "not_reverified_on": "2026-09-14"
+  },
+  {
+   "name": "Okanagan (British Columbia) ASIM activity-based model + MATSim bike sub-module (Saha & Fatmi; Sustainable Cities and Society, S2210670726002118, March 2026; SSRN 5983374)",
+   "note": "Surfaced 2026-09-14 in the new-candidate sweep: a search summary says the ABM and network model are 'developed, calibrated, and validated for Okanagan, British Columbia ... for the year 2023' with a bike-specific destination-choice sub-module simulated in MATSim. UNPRICED: ScienceDirect is a dead host and SSRN returned HTTP 403; nothing beyond the title is read on a page, so no row.",
+   "not_reverified_on": "2026-09-14"
+  },
+  {
+   "name": "Berlin MATSim-to-SUMO hybrid, 'Creating and Validating Hybrid Large-Scale, Multi-Modal Traffic Simulations for Efficient Transport Planning' (MDPI Smart Cities 8(1):2)",
+   "note": "Surfaced 2026-09-14: a search summary says car demand from the calibrated Berlin MATSim scenario was transferred to SUMO and validated 'link-by-link hourly' against traffic counts. MDPI is dead on all three recorded paths, so it is UNPRICED and not a row.",
    "not_reverified_on": "2026-09-14"
   }
  ],
  "gaps": [
   {
    "gap": "agency programmes as programmes - the ones still not reached",
-   "detail": "CARRIED UNCHANGED, no budget spent this pass. STILL OPEN: (a) Monty / the NZ National Transport Model - five routes have failed including web.archive.org, which this repository's own network sandbox blocks, so it can never work from here; treat as closed unless a new lead appears; (b) ARC's CALIBRATION report, whose PDF exceeds the 10 MB WebFetch limit; (c) MTC Travel Model Two TM2.3, still unpublished. | 2026-09-11: CARRIED UNCHANGED, no budget spent. | 2026-09-14: MTC TM2.3 NARROWED - the BayAreaMetro repositories describe TM2.3 as 'Travel Model Two with Emme only and ActivitySim core ... currently in progress in ActivitySim / BayDAG' (repos updated August 2026): still unpublished, one search spent. ARC and Monty unchanged, no budget spent.",
-   "query": "ARC: abmfiles.atlantaregional.com for a SPLIT or per-chapter copy of the calibration report; Monty: ask the operator to add transport.govt.nz to sandbox.network; MTC: 'Travel Model Two' TM2.3 calibration site:github.com/BayAreaMetro",
+   "detail": "CARRIED UNCHANGED, no budget spent this pass. STILL OPEN: (a) Monty / the NZ National Transport Model - five routes have failed including web.archive.org, which this repository's own network sandbox blocks, so it can never work from here; treat as closed unless a new lead appears; (b) ARC's CALIBRATION report, whose PDF exceeds the 10 MB WebFetch limit; (c) MTC Travel Model Two TM2.3, still unpublished. | 2026-09-11: CARRIED UNCHANGED, no budget spent. | 2026-09-14: MTC TM2.3 NARROWED - the BayAreaMetro repositories describe TM2.3 as 'Travel Model Two with Emme only and ActivitySim core ... currently in progress in ActivitySim / BayDAG' (repos updated August 2026): still unpublished, one search spent. ARC and Monty unchanged, no budget spent. | 2026-09-14 (tenth pass): ARC NARROWED BY ELIMINATION, one call - the search found TWO ARC calibration reports (November 2015 at documents.atlantaregional.com/The-Atlanta-Region-s-Plan/RTP/abm-calibration-report.pdf; August 2017 at cdn.atlantaregional.org/wp-content/uploads/abm-calibration-report-2017.pdf) and the 2017 PDF ALSO exceeds the 10 MB fetch limit. Monty and MTC unchanged, no budget spent.",
+   "query": "ARC: the November 2015 report at documents.atlantaregional.com (untried; may be smaller than 10 MB) or a per-chapter copy; Monty: ask the operator to add transport.govt.nz to sandbox.network; MTC: 'Travel Model Two' TM2.3 calibration site:github.com/BayAreaMetro",
    "opened": "2026-09-07 (narrowed three passes running)",
    "carried_to": "2026-09-14"
   },
   {
    "gap": "paywalled or unreached fits",
-   "detail": "NARROWED BY ELIMINATION, not by success. (a) Brussels - the Semantic Scholar graph API was re-run this pass and returns title, venue and an abstract naming the four validation metrics ('mode share, distance share, travel time distribution, and traffic counts') but NO FIGURES; its openAccessPdf field is only the DOI redirect, so a SIXTH route has now been eliminated. (b) Washington DC full text - THE SPRINGER ROUTE IS NOW CONFIRMED DEAD THREE TIMES: link.springer.com/content/pdf/10.1007/s43762-025-00214-9.pdf returns 303 to idp.springer.com, and link.springer.com/article/... does the same. The abstract WAS recovered and its claim recorded verbatim ('we show that indeed our approach is capable to accurately capturing traffic flows'), with a population of 'four million people' - but no figure. DO NOT RETRY ANY link.springer.com URL. (c) MDPI - PARTLY REOPENED: MDPI 403s article HTML but the /pdf?version=... path returned by the Semantic Scholar graph API IS live (proven on futuretransp5030118 this pass), so the on-demand PT study should be retried by that path. | 2026-09-11: TWO ROUTES DIED THIS PASS. (c) the MDPI '/pdf?version=' path, recorded as live on 9 Sep, returned 403 on ijgi11010024 (Barcelona) with the exact version string the Semantic Scholar DOI endpoint supplied (1640875161) AND without it - so that route is NOT reliable; treat MDPI as dead on all three paths. (d) dspace.mit.edu/handle/... returns 405 to WebFetch. (a) Brussels and (b) DC: no budget spent. | 2026-09-14: NARROWED BY ELIMINATION AGAIN, two calls. Brussels: the only copies indexed are tandfonline (403), ResearchGate (403) and the VUB portal (abstract) - no core.ac.uk or biblio.vub.ac.be full text surfaced; a SEVENTH route eliminated. DC: Europe PMC's REST search returns an EMPTY result set for DOI 10.1007/s43762-025-00214-9, so the paper is not in PMC despite the PubMed id 42228755 - that route is dead too; ResearchGate holds a PDF (403). The Springer route stays dead.",
-   "query": "Brussels: biblio.vub.ac.be direct search for 'Agent-based digital traffic model generation' (not via Google); DC: the authors' pages at George Mason (Pfoser, Zufle - gisagents.org/p/publications.html lists it) for a preprint PDF; never link.springer.com, never europepmc",
+   "detail": "NARROWED BY ELIMINATION, not by success. (a) Brussels - the Semantic Scholar graph API was re-run this pass and returns title, venue and an abstract naming the four validation metrics ('mode share, distance share, travel time distribution, and traffic counts') but NO FIGURES; its openAccessPdf field is only the DOI redirect, so a SIXTH route has now been eliminated. (b) Washington DC full text - THE SPRINGER ROUTE IS NOW CONFIRMED DEAD THREE TIMES: link.springer.com/content/pdf/10.1007/s43762-025-00214-9.pdf returns 303 to idp.springer.com, and link.springer.com/article/... does the same. The abstract WAS recovered and its claim recorded verbatim ('we show that indeed our approach is capable to accurately capturing traffic flows'), with a population of 'four million people' - but no figure. DO NOT RETRY ANY link.springer.com URL. (c) MDPI - PARTLY REOPENED: MDPI 403s article HTML but the /pdf?version=... path returned by the Semantic Scholar graph API IS live (proven on futuretransp5030118 this pass), so the on-demand PT study should be retried by that path. | 2026-09-11: TWO ROUTES DIED THIS PASS. (c) the MDPI '/pdf?version=' path, recorded as live on 9 Sep, returned 403 on ijgi11010024 (Barcelona) with the exact version string the Semantic Scholar DOI endpoint supplied (1640875161) AND without it - so that route is NOT reliable; treat MDPI as dead on all three paths. (d) dspace.mit.edu/handle/... returns 405 to WebFetch. (a) Brussels and (b) DC: no budget spent. | 2026-09-14: NARROWED BY ELIMINATION AGAIN, two calls. Brussels: the only copies indexed are tandfonline (403), ResearchGate (403) and the VUB portal (abstract) - no core.ac.uk or biblio.vub.ac.be full text surfaced; a SEVENTH route eliminated. DC: Europe PMC's REST search returns an EMPTY result set for DOI 10.1007/s43762-025-00214-9, so the paper is not in PMC despite the PubMed id 42228755 - that route is dead too; ResearchGate holds a PDF (403). The Springer route stays dead. | 2026-09-14: TWO MORE ROUTES ELIMINATED, two calls. Brussels: the VUB research portal page reads (authors, date, abstract, CC BY-NC 2.39 MB) but its full-text link is the tandfonline DOI (403) - eighth route dead. DC: gisagents.org/p/publications.html lists NO paper matching the Washington DC MATSim/COVID study, so the authors'-page route is dead too. A search summary's 'within 5%' for Brussels is recorded in the row's status as a snippet, not a cell.",
+   "query": "Brussels: the authors' MOBI group page at VUB (mobi.research.vub.be) or Jingjun Li's TU Delft page (he moved to TU Delft - see the Rotterdam row) for a preprint; DC: George Mason's MARS repository (mars.gmu.edu) search for Pfoser/Zufle 2025 MATSim; never link.springer.com, never europepmc, never gisagents",
    "opened": "2026-09-07 (narrowed four passes running)",
    "carried_to": "2026-09-14"
   },
   {
    "gap": "MATSim User Meeting 2026 programme (Paris, 28 September 2026)",
-   "detail": "CARRIED FORWARD UNCHANGED for a THIRD pass - the meeting is still in the FUTURE and NO budget was spent on it. It is the one place a new calibrated city scenario, a Wellington/Monty validation, or a successor to the MUM 2024 CMA-ES plan-parameter extension would surface first. Re-check after 2026-09-28. | 2026-09-11: CARRIED UNCHANGED - still in the future. | 2026-09-14: CARRIED UNCHANGED - 14 days before the meeting; no budget spent.",
+   "detail": "CARRIED FORWARD UNCHANGED for a THIRD pass - the meeting is still in the FUTURE and NO budget was spent on it. It is the one place a new calibrated city scenario, a Wellington/Monty validation, or a successor to the MUM 2024 CMA-ES plan-parameter extension would surface first. Re-check after 2026-09-28. | 2026-09-11: CARRIED UNCHANGED - still in the future. | 2026-09-14: CARRIED UNCHANGED - 14 days before the meeting; no budget spent. | 2026-09-14 (tenth pass): CARRIED UNCHANGED - 14 days before the meeting; no budget spent.",
    "query": "matsim.org/conferences/mum2026/ programme abstracts (after 2026-09-28)",
    "opened": "2026-09-07",
    "carried_to": "2026-09-14"
   },
   {
    "gap": "platform cells - the OpenPaths date, now with its route eliminated too",
-   "detail": "STILL ONE ITEM, and this pass spent one call on it and failed usefully. blog.bentley.com 301s to www.bentley.com/blog/..., and that page returns only a 'Signing in' interstitial to this agent - so the Bentley BLOG is a dead route. The post itself is real and is the right source: it describes OpenPaths automated calibration against 'current traffic counts and transit ridership data along with household travel survey data' as simultaneous targets, which is a platform capability worth a cell once a readable copy is found. | 2026-09-11: CARRIED UNCHANGED, no budget spent. | 2026-09-14: NARROWED, two calls, cell NOT filled. A search returned Bentley's own description ('automated calibration allows modelers to fine-tune their travel demand models ... setting calibration targets ... O-D matrices, traffic counts, transit ridership, household travel surveys, and big data sources such as GPS traces and mobile phone data') and an Edmonton deployment ('automated calibration and data-fusion workflows were used in Edmonton to incorporate current traffic counts, transit ridership, and household survey data'), but the syndicated copy (windowsforum.com) returned 403 and the rule stands: a snippet does not fill a cell. Two untried readable routes: utahmug.org/meeting9 (Utah Model Users Group, September 2025) and the TRB session 'Utilizing big data for calibration of a microsimulation ABM'.",
+   "detail": "STILL ONE ITEM, and this pass spent one call on it and failed usefully. blog.bentley.com 301s to www.bentley.com/blog/..., and that page returns only a 'Signing in' interstitial to this agent - so the Bentley BLOG is a dead route. The post itself is real and is the right source: it describes OpenPaths automated calibration against 'current traffic counts and transit ridership data along with household travel survey data' as simultaneous targets, which is a platform capability worth a cell once a readable copy is found. | 2026-09-11: CARRIED UNCHANGED, no budget spent. | 2026-09-14: NARROWED, two calls, cell NOT filled. A search returned Bentley's own description ('automated calibration allows modelers to fine-tune their travel demand models ... setting calibration targets ... O-D matrices, traffic counts, transit ridership, household travel surveys, and big data sources such as GPS traces and mobile phone data') and an Edmonton deployment ('automated calibration and data-fusion workflows were used in Edmonton to incorporate current traffic counts, transit ridership, and household survey data'), but the syndicated copy (windowsforum.com) returned 403 and the rule stands: a snippet does not fill a cell. Two untried readable routes: utahmug.org/meeting9 (Utah Model Users Group, September 2025) and the TRB session 'Utilizing big data for calibration of a microsimulation ABM'. | 2026-09-14: CLOSED FROM A PAGE READ, one call. utahmug.org/meeting9 (Utah Model Users Group, 11 September 2025) describes Gaurav Vyas's Bentley talk 'Leveraging Mobility Data for Automated Calibration of Travel Demand Models' - 'different types of data including HTS and big data, can be used in one systematic process' on the OpenPaths harmonised demand approach, with counts, transit ridership and household surveys fused as targets. The deck itself is not provided on the page; the cell is filled from the page's own description and says so.",
    "query": "utahmug.org/meeting9/ (a slide deck may carry the OpenPaths calibration description); trb.secure-platform.com session 1741 application 11236; docs.bentley.com OpenPaths Help 'automated calibration' page",
    "opened": "2026-09-07",
-   "carried_to": "2026-09-14"
+   "carried_to": "2026-09-14",
+   "status": "CLOSED 2026-09-14 - CELL FILLED FROM THE UTAH MUG PAGE",
+   "closed_in": "20260914 tenth report",
+   "closed_note": "The OpenPaths platform row's calibration_tooling cell now carries the Utah MUG description with its URL; the slide deck and the docs.bentley.com Help page remain unread and would only add detail."
   },
   {
    "gap": "calibration_method cells still unknown",
-   "detail": "CARRIED. Still unknown, in priority order: SimMobility Singapore (W-SPSA is the family the SimMobility/DynaMIT lineage is known for, but NO source ties it to SimMobility - do not write it in without one; NOTE the related screenline two-step paper found this pass applies to SimMobility FREIGHT, which is a different model); POLARIS; AToM Melbourne; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. ONE PARTIAL ADVANCE ON ATOM, NOT WRITTEN IN: a search snippet describes AToM as running '200 iterations initially... followed by another simulation run for 100 iterations with adjusted parameters', but the two full-text routes both failed this pass (tandfonline 403; arxiv PDF 2112.12071 over the 10 MB limit), so the cell STAYS unknown rather than being filled from a snippet. | 2026-09-10: ATOM IS CLOSED. arxiv.org/html/2112.12071v1 (the v2 path 404s; v1 works - RECORD THAT ROUTE) gave the full procedure: 200 iterations initially, then repeated 100-iteration cycles on the already-optimised plans with ONLY the mode-specific constants adjusted, against a work-trip mode-share target of '+/-1% error threshold of the observation from Census MTW'. Written into the AToM row. STILL UNKNOWN, in priority order: SimMobility Singapore (NOTE: the Chen/Prakash/Lima De Azevedo/Ben-Akiva 2020 paper found this pass is the same MIT lineage and is a strong candidate for the family, but it does NOT name SimMobility Singapore, so the cell stays unknown - do not write it in); POLARIS; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. THE ACTIVITYSIM ROWS ARE NOW PARTLY ANSWERABLE BY THE GENERIC PROTOCOL - the WFRC framework's cyclic ASC method is the ActivitySim standard - but a per-agency cell still needs that agency's own calibration report. | 2026-09-11: POLARIS IS CLOSED - the MUM 2025 extended abstract 'Creating and Calibrating POLARIS Models' (matsim.org, PDF saved locally) gives the tiered convergence-run procedure verbatim; written into the POLARIS row. SoundCast PARTLY: the wiki's Transit-Boarding-Calibration page shows model-vs-observed boardings by operator, peak and off-peak, but no method and no data source. STILL UNKNOWN: SimMobility Singapore, PSRC SoundCast (method), mobiTopp, MATSim-NYC (its NETWORK calibration is SPSA over 12 capacity factors, read this pass, but its mode constants come from a nested logit converted analytically, so 'calibration_method' for demand is 'none - estimated, then converted'), and the four ActivitySim agency rows. | 2026-09-14: SoundCast NARROWED - the Transit-Calibration-2.1 wiki page gives the per-operator FIT (Metro +7 % to Kitsap +50 % peak) but not the procedure or run count; the Highway-Calibration-2.1 page is unread. SimMobility Singapore, POLARIS (procedure known, cost not), AToM, mobiTopp (now partly answered by the Stuttgart row: visual iterative), MATSim-NYC and the ActivitySim agencies unchanged.",
-   "query": "github.com/psrc/soundcast/wiki/Highway-Calibration-2.1; SimMobility: 'SimMobility' mid-term calibration W-SPSA Ben-Akiva Lu; ActivitySim agencies: each agency's own 'Model Calibration and Validation Report' (MWCOG's Ver. 1.1.0 memo is the newest, see the new gap)",
+   "detail": "CARRIED. Still unknown, in priority order: SimMobility Singapore (W-SPSA is the family the SimMobility/DynaMIT lineage is known for, but NO source ties it to SimMobility - do not write it in without one; NOTE the related screenline two-step paper found this pass applies to SimMobility FREIGHT, which is a different model); POLARIS; AToM Melbourne; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. ONE PARTIAL ADVANCE ON ATOM, NOT WRITTEN IN: a search snippet describes AToM as running '200 iterations initially... followed by another simulation run for 100 iterations with adjusted parameters', but the two full-text routes both failed this pass (tandfonline 403; arxiv PDF 2112.12071 over the 10 MB limit), so the cell STAYS unknown rather than being filled from a snippet. | 2026-09-10: ATOM IS CLOSED. arxiv.org/html/2112.12071v1 (the v2 path 404s; v1 works - RECORD THAT ROUTE) gave the full procedure: 200 iterations initially, then repeated 100-iteration cycles on the already-optimised plans with ONLY the mode-specific constants adjusted, against a work-trip mode-share target of '+/-1% error threshold of the observation from Census MTW'. Written into the AToM row. STILL UNKNOWN, in priority order: SimMobility Singapore (NOTE: the Chen/Prakash/Lima De Azevedo/Ben-Akiva 2020 paper found this pass is the same MIT lineage and is a strong candidate for the family, but it does NOT name SimMobility Singapore, so the cell stays unknown - do not write it in); POLARIS; PSRC SoundCast; mobiTopp; MATSim-NYC; and the four ActivitySim agency rows. THE ACTIVITYSIM ROWS ARE NOW PARTLY ANSWERABLE BY THE GENERIC PROTOCOL - the WFRC framework's cyclic ASC method is the ActivitySim standard - but a per-agency cell still needs that agency's own calibration report. | 2026-09-11: POLARIS IS CLOSED - the MUM 2025 extended abstract 'Creating and Calibrating POLARIS Models' (matsim.org, PDF saved locally) gives the tiered convergence-run procedure verbatim; written into the POLARIS row. SoundCast PARTLY: the wiki's Transit-Boarding-Calibration page shows model-vs-observed boardings by operator, peak and off-peak, but no method and no data source. STILL UNKNOWN: SimMobility Singapore, PSRC SoundCast (method), mobiTopp, MATSim-NYC (its NETWORK calibration is SPSA over 12 capacity factors, read this pass, but its mode constants come from a nested logit converted analytically, so 'calibration_method' for demand is 'none - estimated, then converted'), and the four ActivitySim agency rows. | 2026-09-14: SoundCast NARROWED - the Transit-Calibration-2.1 wiki page gives the per-operator FIT (Metro +7 % to Kitsap +50 % peak) but not the procedure or run count; the Highway-Calibration-2.1 page is unread. SimMobility Singapore, POLARIS (procedure known, cost not), AToM, mobiTopp (now partly answered by the Stuttgart row: visual iterative), MATSim-NYC and the ActivitySim agencies unchanged. | 2026-09-14: SimMobility Singapore NARROWED, two calls, cell NOT filled. A search found 'SimMobility Short-Term: An Integrated Microscopic Mobility Simulator' (TRB 2017; MIT DSpace handle 1721.1/117194) whose summary states 360 sensors calibrated with W-SPSA, the assignment matrix as the weight matrix, demand and supply parameters simultaneously - but that is SimMobility SHORT-TERM (microscopic), not the Mid-Term row, and the DSpace bitstream returned HTTP 405 (dspace.mit.edu is dead on BOTH handle and bitstream paths - never retry). STILL UNKNOWN: SimMobility Singapore MT, PSRC SoundCast (method), mobiTopp (the Stuttgart row states 'by eye'), MATSim-NYC (demand constants analytical), the four ActivitySim agency rows. TWO CELLS FILLED ELSEWHERE THIS PASS: the Lausitz row (auto ASC + marginal utility of travelling) and the new Rotterdam-The Hague row (Rakow ASC tool inside an LOS fixed point).",
+   "query": "SimMobility ST: the TRB 2017 paper via trid.trb.org or the authors' pages (Azevedo, Deng, Ben-Akiva) - NOT dspace.mit.edu; SoundCast: github.com/psrc/soundcast/wiki pages other than the four read; ActivitySim agencies: each agency's own calibration report",
    "opened": "2026-09-08",
    "carried_to": "2026-09-14"
   },
@@ -3406,7 +3580,7 @@
   },
   {
    "gap": "NEW - nobody has published an account of an agent-based model matching mode SHARES while missing absolute link VOLUMES by two orders of magnitude",
-   "detail": "This was the pass's second-priority lane and it produced a STRUCTURAL explanation but no matching case. What was found: (a) 'auxiliary demand' - trucks, visitors, internal-external, external-external and special-generator trips are outside a resident ABM by construction and must be supplied separately (TF Resource, verbatim, written into calibration_methods); (b) TF Resource states there are no numeric acceptance criteria for count validation, external models, truck models or special generators; (c) the MUM 2025 downsampling study (Mersini & Ziemke, TU Berlin) finds average statistics 'become unreliable when sampling below 10%', which places this project's 25% INSIDE the reliable band and therefore does NOT explain the deficit. WHAT IS MISSING is a published case with a number: an ABM whose mode shares were acceptable and whose counts were out by ~90-99%, with the cause diagnosed. Four differently phrased searches (cordon/through traffic; MATSim link volumes; missing demand components; capacity scaling) returned no such case. It may simply not be publishable - a model that far out on counts does not get written up. | 2026-09-11: ONE ROUTE TRIED: the matsim-lausitz README links no counts comparison or calibration notebook (outputs sit on svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/lausitz, not tried). THE STRONGEST EVIDENCE THIS PASS IS INDIRECT AND POINTS AT CAPACITY, NOT DEMAND: MATSim-NYC at a 4% sample needed a flow-capacity factor of 0.15 (not 0.04) 'to ensure total simulated volumes of selected count facilities were close to the real traffic count', and then SPSA-calibrated 12 time-of-day capacity factors (bounds 0.3-0.8, start 0.6) to bring the screenline within 5%. A sample-scaled capacity that is too LOW starves the count links; this project's 25% run reports a counts median of -98.75% with 7 modelled zeros, which is the signature of links that carry no flow, not of links that carry too little. | 2026-09-14: CARRIED, one call on the matsim-scenarios counts-notebook route which surfaced only the Berlin 2025 Procedia paper already in the Berlin row and the MATSim count-visualisation issue #678 (no numbers). NEW BEARING from the Barcelona full text: with the FULL 2.06 M-trip car demand (no sampling, no capacity scaling) and 488 stations, R2 reached 0.81 - the opposite regime from this project's sampled, capacity-scaled run with seven modelled zeros; and Barcelona attributes its own residual to insertion delay under congestion, not to missing demand.",
+   "detail": "This was the pass's second-priority lane and it produced a STRUCTURAL explanation but no matching case. What was found: (a) 'auxiliary demand' - trucks, visitors, internal-external, external-external and special-generator trips are outside a resident ABM by construction and must be supplied separately (TF Resource, verbatim, written into calibration_methods); (b) TF Resource states there are no numeric acceptance criteria for count validation, external models, truck models or special generators; (c) the MUM 2025 downsampling study (Mersini & Ziemke, TU Berlin) finds average statistics 'become unreliable when sampling below 10%', which places this project's 25% INSIDE the reliable band and therefore does NOT explain the deficit. WHAT IS MISSING is a published case with a number: an ABM whose mode shares were acceptable and whose counts were out by ~90-99%, with the cause diagnosed. Four differently phrased searches (cordon/through traffic; MATSim link volumes; missing demand components; capacity scaling) returned no such case. It may simply not be publishable - a model that far out on counts does not get written up. | 2026-09-11: ONE ROUTE TRIED: the matsim-lausitz README links no counts comparison or calibration notebook (outputs sit on svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/lausitz, not tried). THE STRONGEST EVIDENCE THIS PASS IS INDIRECT AND POINTS AT CAPACITY, NOT DEMAND: MATSim-NYC at a 4% sample needed a flow-capacity factor of 0.15 (not 0.04) 'to ensure total simulated volumes of selected count facilities were close to the real traffic count', and then SPSA-calibrated 12 time-of-day capacity factors (bounds 0.3-0.8, start 0.6) to bring the screenline within 5%. A sample-scaled capacity that is too LOW starves the count links; this project's 25% run reports a counts median of -98.75% with 7 modelled zeros, which is the signature of links that carry no flow, not of links that carry too little. | 2026-09-14: CARRIED, one call on the matsim-scenarios counts-notebook route which surfaced only the Berlin 2025 Procedia paper already in the Berlin row and the MATSim count-visualisation issue #678 (no numbers). NEW BEARING from the Barcelona full text: with the FULL 2.06 M-trip car demand (no sampling, no capacity scaling) and 488 stations, R2 reached 0.81 - the opposite regime from this project's sampled, capacity-scaled run with seven modelled zeros; and Barcelona attributes its own residual to insertion delay under congestion, not to missing demand. | 2026-09-14 (tenth pass): NEW BEARING WITH NUMBERS, from the Barcelona-MATSim row added this pass (Bassolas et al. 2019): at a 10 % sample with the modal split calibrated within 1.5 % on car, 9 of 11 held-out entrance stations sit inside the occupancy band (GEH < 10) and the two that do not - Ronda Litoral and Avenida Diagonal - have MORE observed vehicles than the model's maximum because 'we are not considering freight and passing by traffic' (port and Mercabarna access; the east-west through road). That is the auxiliary-demand explanation of gap 9 stated by name on specific links, and its direction is the same as this project's (modelled below observed on the links that carry demand the resident model excludes). Still no published case of a two-orders-of-magnitude miss.",
    "query": "try the diagnosis from the OTHER end: 'GEH' 'percent of links' failed validation MATSim scenario report; or a MATSim scenario's own calibration report (matsim-scenarios GitHub repos often carry a `calibration` notebook with a counts scatter) - specifically matsim-scenarios/matsim-lausitz and matsim-scenarios/matsim-berlin, whose counts comparisons are committed artefacts rather than papers. Also worth one call: whether this project's own station-to-link matching (189 of 203 by name AND proximity, 14 by proximity alone) is the deficit rather than the demand - that is an INTERNAL question and needs no search.",
    "opened": "2026-09-10",
    "priority": "2 - it bears directly on the largest single deviation in the project's own _fit.json",
@@ -3414,16 +3588,19 @@
   },
   {
    "gap": "NEW - joint calibration of a TRIP-LENGTH DISTRIBUTION alongside mode shares, in an agent-based model",
-   "detail": "Searched once this pass and it returned nothing that qualifies. The nearest findings are indirect: AToM validates travel distance and time for 1,000 sampled trips against the Google Distance Matrix API but does not calibrate on it; the WFRC framework lists 'Home to work average distance and trip length frequency distribution' and 'Home to primary destination average distance and trip length frequency distribution' as CALIBRATION summaries for the location and destination-choice components (not for mode choice); and TF Resource records no numeric tolerance for trip-length distributions. This matters here because the landed run is outside its observed distance range on ALL FIVE reported modes, most severely walk (3.283 km modelled against 0.7 observed, ratio 4.69) and pt (ratio 0.4685) - and the WFRC evidence says the lever for that residual is DESTINATION CHOICE, not a mode constant. | 2026-09-11: one indirect addition, no search spent: POLARIS calibrates destination choice 'by matching average trip distance by trip purpose' inside the same tiered convergence run as the mode constants (MUM 2025 paper 24) - the WFRC evidence (destination choice is the lever) now has a second agent-based instance. | 2026-09-14: NARROWED, two calls. FOUND ONE: mobiTopp Stuttgart (Mallig & Vortisch 2017, now a project row) calibrates destination-choice scaling parameters against trip-length distributions BY PURPOSE jointly with ASC shifts against the modal split, iteratively and visually, on 1 % samples between assignment runs - with no numeric tolerance and no fit statistic. The matsim-scenarios READMEs (Berlin, Lausitz, Kelheim) all state 'mode-specific trip distance distributions' as a calibration target, but none states how or to what tolerance. The KIT repository handle the search offered led to a different paper (Zwick et al. 2022, excluded).",
+   "detail": "Searched once this pass and it returned nothing that qualifies. The nearest findings are indirect: AToM validates travel distance and time for 1,000 sampled trips against the Google Distance Matrix API but does not calibrate on it; the WFRC framework lists 'Home to work average distance and trip length frequency distribution' and 'Home to primary destination average distance and trip length frequency distribution' as CALIBRATION summaries for the location and destination-choice components (not for mode choice); and TF Resource records no numeric tolerance for trip-length distributions. This matters here because the landed run is outside its observed distance range on ALL FIVE reported modes, most severely walk (3.283 km modelled against 0.7 observed, ratio 4.69) and pt (ratio 0.4685) - and the WFRC evidence says the lever for that residual is DESTINATION CHOICE, not a mode constant. | 2026-09-11: one indirect addition, no search spent: POLARIS calibrates destination choice 'by matching average trip distance by trip purpose' inside the same tiered convergence run as the mode constants (MUM 2025 paper 24) - the WFRC evidence (destination choice is the lever) now has a second agent-based instance. | 2026-09-14: NARROWED, two calls. FOUND ONE: mobiTopp Stuttgart (Mallig & Vortisch 2017, now a project row) calibrates destination-choice scaling parameters against trip-length distributions BY PURPOSE jointly with ASC shifts against the modal split, iteratively and visually, on 1 % samples between assignment runs - with no numeric tolerance and no fit statistic. The matsim-scenarios READMEs (Berlin, Lausitz, Kelheim) all state 'mode-specific trip distance distributions' as a calibration target, but none states how or to what tolerance. The KIT repository handle the search offered led to a different paper (Zwick et al. 2022, excluded). | 2026-09-14: CLOSED, three calls plus two local reads. (a) matsim-berlin's calibrate.py READ: ASCCalibrator only, walk fixed, SrV 2018 targets, lr linear_scheduler(0.3, interval 15), '--10pct' runs, study.optimize(obj, 4) - NO distance term enters the objective. (b) The tooling DOES hold one: matsim-python-tools calib_asc_dist.py, ASCDistCalibrator, 'Calibrates the alternative specific constant and marginal utility of distance for desired modes', distance groups detected from the binned target, the same log-ratio update per group. (c) The Lausitz scenario's method is now STATED in print (Meinhardt, Lu & Nagel 2026, VSP WP 26-05): ASCs adapted automatically per mode (Rakow & Nagel 2024) and the distance distribution matched by hand-adapting the marginal utility of travelling per mode (bike -4.0, pt -12.0 util/h), both against MiD 2017, judged on a figure with no tolerance. (d) Rotterdam-The Hague (Li et al. 2025) applies the Rakow tool to 'mode and mode-distance share'. So: the ecosystem's answer to a trip-length residual is a per-mode marginal utility of travelling or distance-group constants, never a destination-choice re-fit - and no matsim-scenarios row states a tolerance or a fit statistic for it.",
    "query": "matsim-scenarios calibration code: search github.com/matsim-scenarios/matsim-berlin for 'distance' in the calibration scripts (the CalibrationConfigGroup / matsim.calibration python) to see whether a distance-distribution term enters the objective; and Rakow et al. 2025 (Berlin Procedia) section on 'mode-specific trip distance distributions'",
    "opened": "2026-09-10",
    "priority": "3",
-   "carried_to": "2026-09-14"
+   "carried_to": "2026-09-14",
+   "status": "CLOSED 2026-09-14 - METHOD FOUND IN THREE SOURCES",
+   "closed_in": "20260914 tenth report",
+   "closed_note": "Berlin's script optimises mode share only; the tooling's ASCDistCalibrator adds distance-group constants; Lausitz adapts the marginal utility of travelling per mode by hand; Rotterdam applies the ASC tool to mode-distance shares. Nobody states a tolerance."
   },
   {
    "gap": "NEW - the MUM 2025 downsampling study's FULL results, and whether they reach the count comparison",
-   "detail": "Mersini & Ziemke (TU Berlin), 'Scaling traffic flow properties of MATSim to correctly cooperate for population downsampling', MUM 2025 paper 30, was read in full this pass but its own text says 'not all simulation runs have been completed' and 'Further analyses, including travel-time deviations and distances, and the influence of random numbers on the results, are planned for inclusion'. Its preliminary conclusion - average statistics 'become unreliable when sampling below 10%' - is already the most useful sampling evidence this library holds, and it validates this project's 25% directive. The completed study would say whether LINK VOLUMES specifically survive downsampling, which the preliminary version does not address. | 2026-09-11: CARRIED UNCHANGED. | 2026-09-14: NARROWED, three calls. The study IS published: Mersini & Ziemke 2026, Procedia Computer Science 280:977-984, doi 10.1016/j.procs.2026.04.124, CC BY (Crossref). Its recommendations reached this library through TUBS-IVS/eqasim-bs issue #117, a SECONDARY source: 1 % and 5 % 'consistently show higher travel times, lower speeds, and large variability across independent samples'; 10 % 'reproduces aggregate outcomes substantially more reliably'; sample selection dominates the seed; stuckTime should scale with the share. Whether LINK VOLUMES survive downsampling is still not answered. The VSP 2026 working-paper directory lists 26-04, 26-05, 26-06 and 26-14 without titles - one may be this paper.",
-   "query": "svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2026/26-04/ (then 26-05, 26-06, 26-14) - one fetch each for the PDF filename; the paper is CC BY so a VSP mirror is expected",
+   "detail": "Mersini & Ziemke (TU Berlin), 'Scaling traffic flow properties of MATSim to correctly cooperate for population downsampling', MUM 2025 paper 30, was read in full this pass but its own text says 'not all simulation runs have been completed' and 'Further analyses, including travel-time deviations and distances, and the influence of random numbers on the results, are planned for inclusion'. Its preliminary conclusion - average statistics 'become unreliable when sampling below 10%' - is already the most useful sampling evidence this library holds, and it validates this project's 25% directive. The completed study would say whether LINK VOLUMES specifically survive downsampling, which the preliminary version does not address. | 2026-09-11: CARRIED UNCHANGED. | 2026-09-14: NARROWED, three calls. The study IS published: Mersini & Ziemke 2026, Procedia Computer Science 280:977-984, doi 10.1016/j.procs.2026.04.124, CC BY (Crossref). Its recommendations reached this library through TUBS-IVS/eqasim-bs issue #117, a SECONDARY source: 1 % and 5 % 'consistently show higher travel times, lower speeds, and large variability across independent samples'; 10 % 'reproduces aggregate outcomes substantially more reliably'; sample selection dominates the seed; stuckTime should scale with the share. Whether LINK VOLUMES survive downsampling is still not answered. The VSP 2026 working-paper directory lists 26-04, 26-05, 26-06 and 26-14 without titles - one may be this paper. | 2026-09-14 (tenth pass): NARROWED BY ELIMINATION, five calls. The four VSP 2026 working papers are NOT it (26-04 an EWGT abstract; 26-05 Meinhardt et al. DRT in Lusatia; 26-06 Mortaga et al. rapid data collection; 26-14 Ewert & Nagel commercial vehicle costs). Semantic Scholar's record for 10.1016/j.procs.2026.04.124 (venue ANT/EDI40, DBLP conf/ant/MersiniZ26, CorpusId 288909578) has abstract null and its openAccessPdf is only the DOI redirect (GOLD) to ScienceDirect - dead. Whether LINK VOLUMES survive downsampling is still unanswered.",
+   "query": "the MUM 2026 programme after 28 Sep 2026 for a follow-up talk; or a depositonce.tu-berlin.de search for 'Mersini' (TU Berlin mirrors CC BY Procedia papers there, as it did Rakow & Nagel) - the one untried host",
    "opened": "2026-09-10",
    "priority": "4 - couple it to the MUM 2026 programme check, which is due after 28 September",
    "carried_to": "2026-09-14"
@@ -3452,11 +3629,14 @@
   },
   {
    "gap": "NEW - a PUBLISHED MATSim per-iteration wall time and heap at a 25% sample, on a current release",
-   "detail": "The directive asked for it and the pass found two figures, neither current: Singapore 25% (Erath et al. 2012, via Ordonez Medina 2016) at ~25 min per iteration and 12.2 GB for one plan per agent over >500,000 agents; MATSim-NYC (2020) at 4% (~320K agents) ~13 min per iteration on 128 GB. POLARIS publishes 157 min per 24-hour day at 25% Chicago (C++). No matsim-scenarios README states a run time or a heap; the developers' rule of thumb is '1 GB per 10k agents' plus ~25% JVM overhead (issues #189). This project's own record - 244 s median per iteration at 25% (154,347 persons, 16 threads), 36,243 MB peak on a 40 g heap, death at iteration 98 on 14 g - is, as far as eight passes can tell, the only per-iteration wall-and-heap pair at 25% published for a current MATSim. | 2026-09-14: NARROWED BY ELIMINATION, one call - the matsim-kelheim README (v3.1.1, the one stored 25 % scenario) states its calibration and its 1 % caveat and NO run time, memory or iteration count. Barcelona (SUMO, not MATSim) states ~30 h per run for 2.06 M trips. The project's own 25 % figure now has a second reading: 460.0 s a recurring iteration on the footpath network (555.5 s before the F35 controler fix) against 244.5 s on the road graph, live heap 19.9-20.3 GB under 48 g (positions/runs-and-economics.md).",
+   "detail": "The directive asked for it and the pass found two figures, neither current: Singapore 25% (Erath et al. 2012, via Ordonez Medina 2016) at ~25 min per iteration and 12.2 GB for one plan per agent over >500,000 agents; MATSim-NYC (2020) at 4% (~320K agents) ~13 min per iteration on 128 GB. POLARIS publishes 157 min per 24-hour day at 25% Chicago (C++). No matsim-scenarios README states a run time or a heap; the developers' rule of thumb is '1 GB per 10k agents' plus ~25% JVM overhead (issues #189). This project's own record - 244 s median per iteration at 25% (154,347 persons, 16 threads), 36,243 MB peak on a 40 g heap, death at iteration 98 on 14 g - is, as far as eight passes can tell, the only per-iteration wall-and-heap pair at 25% published for a current MATSim. | 2026-09-14: NARROWED BY ELIMINATION, one call - the matsim-kelheim README (v3.1.1, the one stored 25 % scenario) states its calibration and its 1 % caveat and NO run time, memory or iteration count. Barcelona (SUMO, not MATSim) states ~30 h per run for 2.06 M trips. The project's own 25 % figure now has a second reading: 460.0 s a recurring iteration on the footpath network (555.5 s before the F35 controler fix) against 244.5 s on the road graph, live heap 19.9-20.3 GB under 48 g (positions/runs-and-economics.md). | 2026-09-14: CLOSED FOR WALL TIME, four calls. The public SVN holds kelheim-v3.0/output/25pct/kelheim-v3.0-25pct.stopwatch.txt: 388 iterations (0-387), iteration 0 00:02:57, recurring plain iteration about 00:02:19 (mobsim about 00:02:00), milestone iterations 00:03:45-00:03:48, from 15:51:40 to 07:21:30 the next day - about 15.5 h at 25 % for a district of about 120,000. Written into the Kelheim row beside this project's 346.0 s / 30.35 h for 155,233 persons. HEAP is still unpublished: the stopwatch carries none, and the logfile.log in the same folder (which would carry MemoryObserver lines) was not fetched because a full MATSim log is expected to exceed the 10 MB limit. kelheim-v3.1 holds input only ('output for base case remains the same as v3.0').",
    "query": "matsim-scenarios/matsim-kelheim README or its Zenodo record (the one stored 25% scenario) for 'GB' or 'hours'; svn.vsp.tu-berlin.de run logs for kelheim-v3 (a MATSim log's MemoryObserver lines give used RAM per iteration); MUM 2026 talks on run cost after 28 Sep 2026",
    "opened": "2026-09-11",
    "priority": "4",
-   "carried_to": "2026-09-14"
+   "carried_to": "2026-09-14",
+   "status": "CLOSED 2026-09-14 FOR THE WALL-TIME HALF",
+   "closed_in": "20260914 tenth report",
+   "closed_note": "Kelheim v3.0 25 %: 388 iterations in ~15.5 h, ~139 s a recurring iteration. The heap half moves to its own gap."
   },
   {
    "gap": "agent-based models validated on SMARTCARD tap data per station or per route (Seoul; Singapore EZ-Link; Sydney Opal)",
@@ -3471,37 +3651,69 @@
   },
   {
    "gap": "NEW - MWCOG Gen3/Ver. 1.1.0 Travel Model Validation memorandum (Lang & Ngo, 6 April 2026)",
-   "detail": "The April 2026 production release is confirmed from the User's Guide (read in full), but the validation memo that goes with it - the newest agency per-mode boardings table in this library's field - was not located: the search index names it and no PDF URL surfaced in two calls. The row's fit figures are still Ver. 1.0.4's (August 2025).",
-   "query": "site:mwcog.org 'Ver. 1.1.0' 'Validation' memorandum Lang Ngo April 6 2026 pdf; or the TPB Travel Forecasting Subcommittee agenda for April/May 2026 (mwcog.org/committees/travel-forecasting-subcommittee) which links meeting materials",
+   "detail": "The April 2026 production release is confirmed from the User's Guide (read in full), but the validation memo that goes with it - the newest agency per-mode boardings table in this library's field - was not located: the search index names it and no PDF URL surfaced in two calls. The row's fit figures are still Ver. 1.0.4's (August 2025). | 2026-09-14 (tenth pass): NARROWED, three calls. Two differently phrased searches return only the User's Guide that cites the memo and the Ver. 1.0.4 report; the TPB Travel Forecasting Subcommittee page (updated 2026-04-24) lists no 2026 material and names its next meetings as 18 September and 20 November 2026.",
+   "query": "after 18 Sep 2026: mwcog.org/events/ Travel Forecasting Subcommittee 18 September 2026 meeting materials; or site:mwcog.org/assets/1/6/ 'Gen3' 'Validation' 2026 pdf",
    "priority": "2 - it would move the MWCOG row's fit to the current release",
-   "opened": "2026-09-14"
+   "opened": "2026-09-14",
+   "carried_to": "2026-09-14"
   },
   {
    "gap": "NEW - the Rotterdam-The Hague activity- and agent-based co-simulation (TNO, Li et al. 2025)",
-   "detail": "A real-region agent-based candidate surfaced in the Brussels search (Procedia CS 2025, S1877050925008609; TNO publication 34644308). The TNO PDF returned HTTP 503 twice this pass and ScienceDirect is dead, so nothing is known beyond the title. Recorded under not_reverified as unpriced.",
+   "detail": "A real-region agent-based candidate surfaced in the Brussels search (Procedia CS 2025, S1877050925008609; TNO publication 34644308). The TNO PDF returned HTTP 503 twice this pass and ScienceDirect is dead, so nothing is known beyond the title. Recorded under not_reverified as unpriced. | 2026-09-14: CLOSED, three calls. The TNO PDF 503'd a THIRD time (dead); a second search surfaced the TU Delft repository copy (pure.tudelft.nl/ws/portalfiles/portal/244710842/...), saved locally and read in full. Written in as a project row at the survey-shares rung: ActivitySim + MATSim co-simulation, mode choice switched off in MATSim, ASC tool (Rakow & Nagel 2024) on mode and mode-distance shares, modelled shares stated with no observed column.",
    "query": "publications.tno.nl/publication/34644308/5tFkyRnO/li-2025-activity.pdf (retry once - 503 may be transient); else api.semanticscholar.org/graph/v1/paper/DOI:10.1016/j.procs.2025.<n> via Crossref lookup of the title",
    "priority": "3",
-   "opened": "2026-09-14"
+   "opened": "2026-09-14",
+   "status": "CLOSED 2026-09-14 - ROW ADDED",
+   "closed_in": "20260914 tenth report",
+   "closed_note": "Rotterdam-The Hague (Li et al. 2025) is a project row. Its sample fraction, active-mode handling and pt mechanism stay unknown because the paper does not state them.",
+   "carried_to": "2026-09-14"
   },
   {
    "gap": "NEW - the VSP 2026 working papers 26-04, 26-05, 26-06, 26-14 - titles unknown",
-   "detail": "The svn.vsp.tu-berlin.de 2026 directory lists four working papers without titles. One may be the CC BY Mersini & Ziemke downsampling paper (the answer to whether link volumes survive downsampling) and any may be a new Berlin/Lausitz calibration note. Four fetches were more than the budget had left.",
+   "detail": "The svn.vsp.tu-berlin.de 2026 directory lists four working papers without titles. One may be the CC BY Mersini & Ziemke downsampling paper (the answer to whether link volumes survive downsampling) and any may be a new Berlin/Lausitz calibration note. Four fetches were more than the budget had left. | 2026-09-14: CLOSED, five calls (the directory plus its four folders). 26-04: 2026-03-20-ewgt_abstract.pdf; 26-05: MeinhardtEtAl2026ReconnectionRuralCommunities.pdf (read in full - a DRT study on the Open Lausitz Scenario, excluded as a row, its calibration statement written into the Lausitz row); 26-06: MortagaEtAl2026RapidDataCollection.pdf; 26-14: 2026_EwertNagel_CommercialVehicleCosts.pdf. None is the downsampling paper and none is a new city scenario.",
    "query": "svn.vsp.tu-berlin.de/repos/public-svn/publications/vspwp/2026/26-14/ then 26-06, 26-05, 26-04 - each folder listing gives the PDF filename; read locally",
+   "priority": "3",
+   "opened": "2026-09-14",
+   "status": "CLOSED 2026-09-14 - TITLES KNOWN",
+   "closed_in": "20260914 tenth report",
+   "closed_note": "Four titles recorded; only 26-05 bore on this survey and it was read.",
+   "carried_to": "2026-09-14"
+  },
+  {
+   "gap": "NEW - the Seoul smart-card row's fit figures (Ali, Kim & Lee 2015)",
+   "detail": "The abstract states the station boarding/alighting validation without a number; the article is on Springer (dead) and ScienceDirect (dead). KSCE J. Civ. Eng. articles are often mirrored on koreascience.kr. | 2026-09-14: NARROWED, one call. The citation is corrected (KSCE J. Civ. Eng. 20(4):1532-1539, 2016, online 2015); the indexed copies are Springer (dead), a ScienceDirect PDF mirror S1226798824038571 (dead) and ResearchGate (403); no koreascience.kr copy surfaced.",
+   "query": "the University of Seoul or KAIST repository for Ali/Kim/Lee 2015 'Travel behavior analysis using smart card data'; or the KSCE journal's own site (journal.ksce.or.kr) - never Springer, never ScienceDirect",
+   "priority": "4",
+   "opened": "2026-09-14",
+   "carried_to": "2026-09-14"
+  },
+  {
+   "gap": "NEW - this city's own tap data: does 'Opal Trips - Ferry' carry the Stockton (Newcastle) ferry?",
+   "detail": "Split off from the smartcard gap, which is now closed for the literature. positions/light-rail-and-ferry.md states 'no Newcastle ferry patronage is published' while the TfNSW Open Data Hub lists 'Opal Trips - Ferry' (monthly). This is a DATASET CHECK for the data lane, not a search: read that dataset's row list before the next ferry-target derivation. (The position page now also records weekday tap-ons of 234-1,347 at the Newcastle wharf as bounds, section 9.167, #185 - so part of this may already be answered on the data side.) | 2026-09-14: NARROWED FROM THE DATASET PAGE, one call (the CSV itself was not downloaded - the shell is sandboxed and this lane fetches pages only). opendata.transport.nsw.gov.au/data/dataset/opal-trips-ferry: 'Official Ferry Utilisation figures', Opal tap-on/tap-off entries and exits 'allocated to routes', monthly, CC-BY, last updated 17 August 2026; resources 'Opal Ferry Trip counts on NRT - by month, route and Card type' (current CSV) plus two 'NO LONGER UPDATED' CSVs, a Sydney Ferries Network Map and an Opal Card Types PDF. The page's route and wharf vocabulary is Sydney Ferries' (Manly, Circular Quay, Brooklyn, Little Wobby, Dangar Island); Newcastle, Stockton and Queens Wharf do NOT appear in the description. Whether the Stockton service is a row in the current CSV is still a data-lane check.",
+   "query": "data lane: download 'Opal Ferry Trip counts on NRT - by month, route and Card type' and grep the route column for Stockton / Newcastle / Queens Wharf; the page's vocabulary suggests it is a Sydney Ferries dataset and the Newcastle Transport ferry may be published elsewhere (Newcastle Transport / Keolis Downer patronage) or nowhere",
+   "priority": "1 for the data lane",
+   "opened": "2026-09-14",
+   "carried_to": "2026-09-14"
+  },
+  {
+   "gap": "NEW - Okanagan (British Columbia) ASIM + MATSim bike sub-module (Saha & Fatmi 2026): the validation claim, unread",
+   "detail": "A real-region activity-based model with a MATSim bike simulation, stated in a search summary as 'developed, calibrated, and validated for Okanagan, British Columbia ... for the year 2023' (Sustainable Cities and Society, S2210670726002118, March 2026). ScienceDirect is dead and SSRN (papers.ssrn.com abstract_id=5983374) returned HTTP 403 - record SSRN as a dead route. Recorded under not_reverified as unpriced; it would be the survey's first row with a bike-specific destination-choice sub-module, which bears on this project's bike +201.6 %.",
+   "query": "UBC cIRcle (circle.ubc.ca) for Bijoy Saha's thesis on the Okanagan ABM; the CLIMR lab page (climr.ok.ubc.ca) for a preprint; Mahmudur Fatmi's publications page",
    "priority": "3",
    "opened": "2026-09-14"
   },
   {
-   "gap": "NEW - the Seoul smart-card row's fit figures (Ali, Kim & Lee 2015)",
-   "detail": "The abstract states the station boarding/alighting validation without a number; the article is on Springer (dead) and ScienceDirect (dead). KSCE J. Civ. Eng. articles are often mirrored on koreascience.kr.",
-   "query": "koreascience.kr 'Travel behavior analysis using smart card data' Ali Kim Lee 2015 pdf; or the authors' university repository (University of Seoul)",
+   "gap": "NEW - a published MATSim HEAP at 25 % on a current release (the half of gap 14 the stopwatch could not answer)",
+   "detail": "The Kelheim v3.0 25 % stopwatch gave the wall clock (388 iterations, ~15.5 h) but no memory. The same folder holds kelheim-v3.0-25pct.logfile.log, whose MemoryObserver lines give used and total RAM per iteration, and kelheim-v3.0-25pct.logfileWarningsErrors.log (smaller, but memory lines are INFO and will not be in it). A full MATSim log for 388 iterations is expected to exceed the 10 MB fetch limit; the 1pct and 10pct folders hold the same files for smaller runs, and a 1 % log may be under the limit and still carry the JVM -Xmx in its first lines.",
+   "query": "svn.vsp.tu-berlin.de/repos/public-svn/matsim/scenarios/countries/de/kelheim/kelheim-v3.0/output/1pct/kelheim-v3.0-1pct.logfile.log (first lines carry the java command and -Xmx; MemoryObserver lines carry used RAM) - then the 10pct log if under 10 MB",
    "priority": "4",
    "opened": "2026-09-14"
   },
   {
-   "gap": "NEW - this city's own tap data: does 'Opal Trips - Ferry' carry the Stockton (Newcastle) ferry?",
-   "detail": "Split off from the smartcard gap, which is now closed for the literature. positions/light-rail-and-ferry.md states 'no Newcastle ferry patronage is published' while the TfNSW Open Data Hub lists 'Opal Trips - Ferry' (monthly). This is a DATASET CHECK for the data lane, not a search: read that dataset's row list before the next ferry-target derivation. (The position page now also records weekday tap-ons of 234-1,347 at the Newcastle wharf as bounds, section 9.167, #185 - so part of this may already be answered on the data side.)",
-   "query": "opendata.transport.nsw.gov.au/data/dataset/opal-trips-ferry - download the CSV and grep for 'Stockton' / 'Newcastle' / 'Queens Wharf'",
-   "priority": "1 for the data lane",
+   "gap": "NEW - the Berlin MATSim-to-SUMO hybrid validated link-by-link on hourly counts (MDPI Smart Cities 8(1):2)",
+   "detail": "A search summary this pass states that car demand from the calibrated Berlin MATSim scenario was transferred to SUMO for microsimulation and validated 'link-by-link hourly' against traffic counts - which would be the only row in this library measuring a MICROSCOPIC re-simulation of a MATSim demand against counts, and bears directly on the physical-fidelity question (does finer traffic physics move a count fit?). MDPI is dead on all three recorded paths, so nothing beyond the title is read; recorded under not_reverified as unpriced.",
+   "query": "a non-MDPI copy: the authors' institution (likely DLR, whose SUMO team publishes at elib.dlr.de) - search elib.dlr.de for 'Hybrid Large-Scale Multi-Modal Traffic Simulations' 2025; never mdpi.com",
+   "priority": "3",
    "opened": "2026-09-14"
   }
  ],
@@ -3509,33 +3721,31 @@
   "name": "city-digital-twin - Newcastle (NSW) study (this repository)",
   "engine": "MATSim end to end, with project-owned Java extensions (src/java/citysim, src/java_signals) for signals, ride pairing and mode-specific constraints",
   "city_population": "Newcastle (NSW) region - five LGAs, 1,500 core SA1s, base year 2026",
-  "sample_fraction": "25 % (standing directive since 1 Sep 2026). The RESULT run: 154,347 persons kept, 16 threads, xmx 40 g, median iteration 244.05 s, wall 77,309 s for 300 iterations; peak heap 36,243 MB (section 9.165). On the footpath network of 12 September the recurring iteration is 460.0 s under F35's controler (555.5 s under F34's) against 244.5 s on the road graph, live heap after a full collection 19.9-20.3 GB under 48 g (positions/runs-and-economics.md, section 9.168). Arm 0 of F35 (`20260912T202242_300it_25pct`, 48 g, plans every 25) was quoted 39.0 h + 33 min and approved at a 44 h ceiling; at this read its `_progress.json` says iteration 284 after 102,453 s - RUNNING, no reading.",
+  "sample_fraction": "25 % (standing directive since 1 Sep 2026). The NEWEST RESULT, arm 0 of F35 (`20260912T202242_300it_25pct`, `_run.json`): fraction 0.25, 155,233 persons kept of 622,318 (household unit), 16 threads, xmx 48 g, seed 20260810, 300 of 300 iterations, wall 109,260.8 s (30.35 h), median iteration 347.34 s (346.0 s recurring over the 287 plain iterations; milestone plan-dump iterations 522-898 s), rc 0, `completion` `ran_to_last_iteration`; live heap after a full collection peaked at 26.2 GiB under 48 g with no upward slope over 300 iterations (positions/runs-and-economics.md, section 9.169). Quoted 39.0 h, approved at a 44 h ceiling, landed under both. The next 250-iteration 25 % arm is quoted about 25.5 h (band 21.7-46.9 h).",
   "modes": "TWELVE, each scored individually: car, ride, walk, taxi, bike, motorbike, bus, heavy_rail, light_rail, ferry, truck, freight_train",
-  "active_modes": "physical, and since 12 September on a FOOTPATH NETWORK: 40,203 harvested footway/path/cycleway ways are walk- and bike-capable links of the one rebuilt network (walk permitted on 363,818 links, 35,381 km, 168,550 footpath-only; bike on 265,523); pedestrians pce 0.0 at 1.25 m/s, cyclists pce 0.2 at 4.2 m/s; pt access, egress and the raptor's transfer walks are network legs the qsim executes, `teleported=0` on the 1 % probes of both networks (positions/walk-and-bike.md, sections 9.54, 9.167). First 25 % reading of walk on footpaths is arm 0's.",
+  "active_modes": "physical, on the FOOTPATH NETWORK of 12 September (368,230 links; 40,203 harvested footway/path/cycleway ways as walk- and bike-capable links; pedestrians pce 0.0 at 1.25 m/s, cyclists pce 0.2 at 4.2 m/s); on arm 0, pt access, egress and transfer walks were 27,765 network legs the qsim executed with 0 teleported (STATUS.md goal table, section 9.169). Arm 0 is the first 25 % reading of walk on footpaths: walk -12.2 % (11.77 vs 13.40 % share) at a 3.74 km mean against 0.70 km observed; bike +201.6 % at 8.10 km against 5.2 with no distance or traffic cost in its score (positions/walk-and-bike.md).",
   "pt_physical": "yes - bus, heavy rail, light rail and ferry run the mapped GTFS schedule on the mapped network; 15 feeds re-mapped once on the 12 September rebuild, 0 unmapped stops; access/egress/transfer walks now routed on the footpath network (section 9.167)",
   "signals": "yes - SCATS implemented as its published algorithm (registry A.signals.scats.*: target degree of saturation, cycle bounds, ds smoothing/deadband, cycle step) plus transit signal priority (A.signals.tsp.*)",
   "freight": "yes - truck as a road vehicle scored on network-wide road-vehicle share; freight rail as timetable-derived level-crossing closures rather than a mobsim vehicle",
   "fares_pricing": "yes - Opal fare schedule in the registry (A.fare.*: peak/off-peak by mode, child/senior classes, daily and weekend caps, distance bands) plus priced parking (A.parking.*: charged hours, modes, price percentiles, search time) and a monetary distance rate (C.scoring.monetary_distance_rate)",
-  "validation_rung": "per-mode ridership, every simulated mode - the top rung, and still the only project in this survey of 50 attempting it for twelve modes. The pass of 9 September qualified the claim (a four-step model, WFTDM, does report six transit modes inside 10%); THIS pass qualifies it further and more precisely: the WFRC ActivitySim framework's own Table 29 lists 'Transit boardings by transit mode' as a standard validation summary, so per-transit-mode granularity is normal agency practice for an activity-based model. What no other row does is treat every one of twelve modes as a SCORED TARGET WITH A BAND that the calibration is obliged to satisfy simultaneously.",
-  "best_fit": "In calibration, no mode inside 10 % at the newest result - the board's scoreboard block at HEAD 780c4c2 reads `20260909T015217_300it_25pct` (family F32, 25 %, 300 of 300 iterations, `ran_to_last_iteration`, A RESULT) at iteration 300 from the trips table: car +11.3 %, ride -41.0 %, walk -26.5 %, taxi +202.2 %, bike +113.0 %, motorbike +12.5 %, bus +44.8 %, heavy_rail 0 vs 6,529 boardings (-100.0 %), light_rail 1,224 vs 2,954 (-58.6 %), ferry -60.1 %; truck level-only (5.6321 % network-wide road-vehicle share vs 15.4698 %, not the target basis), freight_train representation-only (313 vs 405 movements). Inside 10 %: NONE; past the 20 % stop bar: eight. NOTE FOR THE READER: the 11 September row cited `_fit.json` on the plans basis for the same run and read heavy_rail +225.0 % (21,220 vs 6,529) and light_rail -57.3 % (1,260) - the board's trips-table reading and the `_fit.json` reading of ONE run disagree on the rail rows, and the board is the citable one; the report should say so rather than pick. `_fit.json` on all four families at once: 5 scored mode-share targets mean absolute 4.734 pp; 30 count stations mean absolute 91.69 % with 7 modelled zeros (repaired map since reads +16.30 % mean, -1.1 % median, 0 zeros, section 9.163); occupancy 0.1860 vs 0.3503; trip geometry outside range on all five reported modes (walk 3.283 km vs 0.7 - the footpath rebuild is the answer under test). Family F35 is open and arm 0 is RUNNING with NO READING; nothing on it is citable.",
+  "validation_rung": "per-mode ridership, every simulated mode - the top rung, and still the only project in this survey of 55 attempting it for twelve modes. The pass of 9 September qualified the claim (a four-step model, WFTDM, does report six transit modes inside 10%); THIS pass qualifies it further and more precisely: the WFRC ActivitySim framework's own Table 29 lists 'Transit boardings by transit mode' as a standard validation summary, so per-transit-mode granularity is normal agency practice for an activity-based model. What no other row does is treat every one of twelve modes as a SCORED TARGET WITH A BAND that the calibration is obliged to satisfy simultaneously.",
+  "best_fit": "IN CALIBRATION, 2 OF 12 MODES INSIDE 10 % AT THE NEWEST RESULT. The board's scoreboard block at HEAD b8f89ff reads `20260912T202242_300it_25pct` (family F35-the-engines-route-what-they-remode, 25 %, 300 of 300 iterations, `ran_to_last_iteration` - A RESULT, the project's second) at iteration 300 from the trips table: car +9.6 % (63.91 vs 58.32 % share), ride -41.6 % (12.02 vs 20.60), walk -12.2 % (11.77 vs 13.40), taxi +131.4 % (2.29 vs 0.99), bike +201.6 % (6.66 vs 2.21), motorbike -5.6 % (0.357 vs 0.379), bus -15.8 % (2.00 vs 2.38), heavy_rail +54.6 % (10,092 vs 6,529 boardings per weekday, x1/fraction), light_rail -73.9 % (772 vs 2,954), ferry -63.3 % (0.052 vs 0.143 % share); truck level-only (5.6251 % network-wide road-vehicle share vs 15.4698 %, not the target basis), freight_train representation-only (405 vs 405 movements). Inside 10 %: car, motorbike. Over 10 %: walk, bus. Past the 20 % stop bar: ride, taxi, bike, heavy_rail, light_rail, ferry (six). Ride's 20.60 % target is ABOVE its 19.11 % choice-set coverage, fixed at the seed from it.27 - out of reach of any constant (section 9.169). Convergence: arm 0 drifts 0.128 pp over it.250-300 against a 0.5 pp tolerance; horizon declared 250 (`RUN.controler.last_iteration`), innovation cutoff 200. The previous result (`20260909T015217_300it_25pct`, F32, 0 of 12 inside 10 %) is superseded as the newest reading; nothing before `20260912T184108` compares with F35. No arm is running and no approval stands.",
   "open_source": "yes - the repository; OSM-derived layers ODbL 1.0, the rest CC-BY 4.0",
-  "reproducible": "yes and gated - every derived file regenerable by a committed script from immutable hashed raw downloads, 959 files in data/MANIFEST.csv (721 CC-BY 4.0 / 220 ODbL 1.0 / 18 bespoke) with hash, rows, producing script, source, licence and retrieval date; everything synthetic seeded (20260810); 190 run directories on disk, every one labelled in results/INDEX.md",
-  "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 553 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
-  "status": "active, in calibration - P4 at HEAD 780c4c2 (PR #195 merge, 12-14 Sep 2026). Registry 553 fields (undeclared MATSim defaults 0, inline literals 0), manifest 959 files, 30 assembled run-input sets on the footpath network, 190 run directories. Family F35-the-engines-route-what-they-remode is OPEN (opened `20260912T184108` at the controler fix that stops PersonPrepareForSim re-routing ~48,000 whole plans an iteration; probe -17 %, 460.0 s) and its arm 0 `20260912T202242_300it_25pct` is RUNNING at iteration 284 of 300 at this read - no reading, nothing citable. The newest RESULT is unchanged: `20260909T015217_300it_25pct` (F32). The five one-field control pairs (scoring, choice set, service quality, routers, submodes) wait on arm 0's gates; the ASC contraction test is built and HELD.",
-  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (553 fields), every living number pinned to its artefact by a check, twelve modes each monitored on its own basis every tenth iteration - and, unique in this survey, a REGISTRY-ENFORCED refusal to fit a constant over a named missing mechanism (`C.asc.rail`'s `departure_requires` clause). THIS PASS ADDS A SECOND UNIQUENESS, AND IT IS THE HONEST ONE: the project's `_fit.json` scores mode shares, absolute link counts, trip-length geometry and vehicle occupancy IN ONE ARTEFACT FROM ONE RUN, names its 32 unscorable targets with reasons, and refuses to call a stopped arm a result. Across 53 surveyed projects, the closest published analogues each hold part of that - AToM validates five observation families but calibrates against one; Tallinn optimises three target families at once but reports no per-mode transit rung; the WFRC framework enumerates every validation summary but states outright that not all of them can be met simultaneously. | 2026-09-14: against the three rows added this pass the position sharpens - Cape Town reaches the tap-data rung for ONE operator with ~25 hand-tuned runs; mobiTopp Stuttgart calibrates trip-length distributions and modal split jointly but by eye; Barcelona runs generic actuated signals at 2,035 intersections on full demand for R2 0.81 on counts and nothing else. None scores more than one observation family with a stated band.",
+  "reproducible": "yes and gated - every derived file regenerable by a committed script from immutable hashed raw downloads, 959 files in data/MANIFEST.csv (721 CC-BY 4.0 / 220 ODbL 1.0 / 18 bespoke) with hash, rows, producing script, source, licence and retrieval date; everything synthetic seeded (20260810); 191 run directories on disk, every one labelled in results/INDEX.md",
+  "city_agnostic": "yes by construction - src/, config/schema/, tests/ and run.py must read identically for an unseen city; all 558 registry fields, adapters and geometry live under cities/<city>/, enforced by check_city_agnostic.py and check_hardcoding.py --strict at 0",
+  "status": "active, in calibration - P4 at HEAD b8f89ff (14 September 2026, forty-seventh session; the documents moved to docs/, the run viewer rebuilt, the ninth report's no-run findings worked, the tenth report lodged). Registry 558 fields, manifest 959 files (721 CC-BY 4.0 / 220 ODbL 1.0 / 18 bespoke), 30 assembled run-input sets on the footpath network, 191 run directories per the board (`results/INDEX.md`). Family F35 is OPEN with arm 0 as its reading; the newest run on disk is `20260914T150700_2it_1pct`, a 1 % smoke probe of the recompiled controler (#197) read for nothing. The five one-field control pairs (scoring, choice set, service quality, routers, submodes) wait on their own approval; the routers pair (`C.raptor.mode_cost_representation` = `mode_constant`) is recommended first as it answers three of the six STOP modes; the ASC contraction test is built and held (bike is the mode it can answer). Decisions required: which pair or root is next and its stated-cost approval; whether to send the drafted TfNSW bespoke-table request (#50).",
+  "does_best": "Every controllable value declared with units, provenance and a sweep or held-fixed rule (558 fields), every living number pinned to its artefact by a check, twelve modes each monitored on its own basis every tenth iteration - and, unique in this survey, a REGISTRY-ENFORCED refusal to fit a constant over a named missing mechanism (`C.asc.rail`'s `departure_requires` clause). THIS PASS ADDS A SECOND UNIQUENESS, AND IT IS THE HONEST ONE: the project's `_fit.json` scores mode shares, absolute link counts, trip-length geometry and vehicle occupancy IN ONE ARTEFACT FROM ONE RUN, names its 32 unscorable targets with reasons, and refuses to call a stopped arm a result. Across 53 surveyed projects, the closest published analogues each hold part of that - AToM validates five observation families but calibrates against one; Tallinn optimises three target families at once but reports no per-mode transit rung; the WFRC framework enumerates every validation summary but states outright that not all of them can be met simultaneously. | 2026-09-14: against the three rows added this pass the position sharpens - Cape Town reaches the tap-data rung for ONE operator with ~25 hand-tuned runs; mobiTopp Stuttgart calibrates trip-length distributions and modal split jointly but by eye; Barcelona runs generic actuated signals at 2,035 intersections on full demand for R2 0.81 on counts and nothing else. None scores more than one observation family with a stated band. | 2026-09-14 (tenth pass): the claim is now made against a RESULT with 2 of 12 inside 10 % rather than 0 - and against 55 rows. The two rows added this pass sharpen it from opposite sides: Barcelona-MATSim (2019) validates on counts it never calibrated on and names the excluded demand behind its two misses, which this project's fit module does for its 32 unscorable targets but not yet for its count outliers; Rotterdam-The Hague (2025) removes mode choice from MATSim altogether so that one calibrator owns it, where this project's twelve constants are scored inside the co-evolutionary loop they must survive.",
   "sources": [
-   "cities/newcastle/docs/STATUS.md (scoreboard, state and runs blocks, read at HEAD 780c4c2: newest result 20260909T015217_300it_25pct at it.300; arm 0 of F35 running)",
-   "results/raw/20260909T015217_300it_25pct/_run.json (fraction 0.25, xmx 40g, threads 16, wall_s 77309, median_iteration_s 244.05, persons_kept 154347, completion ran_to_last_iteration)",
-   "results/raw/20260912T202242_300it_25pct/_meta.json (status running, xmx 48g) and _progress.json (iteration 284, elapsed_s 102453 at this read)",
-   "cities/newcastle/docs/positions/runs-and-economics.md (sections 9.165-9.168: heap, warm restart, the 460.0 s iteration, the 44 h ceiling)",
-   "cities/newcastle/docs/positions/walk-and-bike.md, signals-and-crossings.md, motorbike-truck-and-freight.md (physical modes, SCATS, crossings, target bases)",
+   "docs/STATUS.md (scoreboard, goal, state and runs blocks at HEAD b8f89ff: newest result 20260912T202242_300it_25pct at it.300, 2 of 12 inside 10 %; 558 registry fields; 959 manifest files; 191 run directories)",
+   "results/raw/20260912T202242_300it_25pct/_run.json and _meta.json (fraction 0.25, xmx 48g, threads 16, wall_s 109260.8, median_iteration_s 347.34, persons_kept 155233 of 622318, completion ran_to_last_iteration, reached_iteration 300, rc 0, started 2026-09-12T20:22:42, ended 2026-09-14T02:44:22)",
+   "docs/positions/runs-and-economics.md (section 9.169: 346.0 s recurring, 30.35 h against a 39.0 h quote and 44 h ceiling, live heap peak 26.2 GiB, no slope; 25.5 h quoted for 250 iterations)",
+   "docs/positions/walk-and-bike.md, signals-and-crossings.md, motorbike-truck-and-freight.md, light-rail-and-ferry.md, seed-and-choice-set.md (physical modes, SCATS, crossings, target bases, coverage ceiling)",
    "cities/newcastle/data/MANIFEST.csv (959 rows: 721 CC-BY 4.0, 220 ODbL 1.0, remainder bespoke licences)",
-   "cities/newcastle/registry/A_supply.json (A.fare.* 37 keys, A.parking.* 13 keys, A.signals.*), C_behaviour.json, B_demand.json, RUN_execution.json",
-   "git log 20ae4e9..780c4c2 -- src/calibrate/ (fc327c9, 8d575e5, 5a1153e, 78c3df3: import-root sweep, heavy-rail target statement, calibrated base onto the F32 result)",
-   "cities/newcastle/docs/GOAL.md"
+   "cities/newcastle/registry/A_supply.json (A.fare.* 37 keys, A.parking.* 14 keys, A.signals.* 22 keys, A.taxi.*, A.crossings.* 14 keys), B_demand.json (B.ride.* 17, B.taxi.* 11), C_behaviour.json (C.asc.* 9, C.crowding.*, C.raptor.*), CAL_calibration.json, RUN_execution.json - 558 fields in seven files",
+   "docs/GOAL.md"
   ],
   "last_verified": "2026-09-14",
-  "verified_in": "20260914 pass",
+  "verified_in": "20260914 tenth report",
   "calibration_method": {
    "family": "coordinate descent over registry-declared sweeps (unchanged, never run to completion) PLUS, NEW AT THIS HEAD AND NEVER RUN, an implemented ASC log-ratio fixed point - src/calibrate/asc_fixed_point.py. Read from the source at HEAD 781cf41, not searched.",
    "what_the_source_says": "src/calibrate/calibrate.py:508-533 runs coordinate descent: per round, per free parameter, per grid point across that parameter's registry sweep, a FULL MATSim run -> extract_metrics -> fit -> a weighted scalar objective over declared _fit.json components, keeping a point only if it is feasible against the C4 occupancy and trip-length constraints; the round stops when the improvement falls below delta. The search space is DERIVED FROM THE REGISTRY, not listed in the script: a field is free only if it is source=assumed, carries a scalar sweep and is not held_fixed. The six mode constants are held_fixed under DECISIONS.md 8.5 and are therefore unreachable from the loop by construction - so this project has NO log(target/modelled) ASC loop of any kind. The one constant that is solved, asc_car_passenger, is solved in a separate module (solve_asc_ride.py:101-121) by SECANT INTERPOLATION ON log(ride_per_car) against the observed passenger:driver ratio, and is reported as a CONSTRAINT, not an estimate. The loop refuses to fit more parameters than the objective identifies (four independent numbers) and cannot read a holdout row by construction.",
@@ -3551,14 +3761,14 @@
    "verified_in": "20260911_project_report (eighth pass, at 20ae4e9)",
    "asc_fixed_point_new_this_pass": "src/calibrate/asc_fixed_point.py EXISTS and PROPOSES ONLY; it has NEVER BEEN RUN. It applies delta_i = damping * [ ln(target_i/modelled_i) - ln(target_ref/modelled_ref) ] against car as reference - the same object as the Berry (1994) share inversion and the same expression matsim-vsp/matsim-python-tools computes verbatim, with the damping declared on CAL.asc.damping. THREE DESIGN CHOICES ARE UNUSUAL AND WORTH RECORDING: (1) THE TEST IS THE CONTRACTION, NOT THE SHARES - two damped rounds are compared mode by mode, and if |delta| shrinks the residual is a taste that constants will close, while if it does not shrink the deficit is STRUCTURAL and no constant will ever close it. That is a cheap, decisive, published-in-spirit answer to the 'constant or mechanism' question that the agency protocol answers only by ordering. (2) It CANNOT REACH A FROZEN CONSTANT: it reads held_fixed from the registry and refuses, structurally, the way the holdout guard refuses. (3) On heavy rail and light rail the step is marked basis_is_boardings and reported as a PROXY, because the logit inversion is exact only for shares of a common total. ROUND 1 IS PROPOSED OFF THE F31 GATE AND NOT APPLIED: bike -0.5121, bus -0.2301, ferry +0.6713, light rail +0.4143.",
    "read_against_the_field_this_pass": "Two published methods now bracket this project's loop and both were read this pass. (1) Chen, Prakash, Lima de Azevedo & Ben-Akiva (2020, TR-C 119:102650) names this project's coordinate descent for what it is: 'myopic heuristics in the sense that they do not consider the fundamental inter-dependencies among choice-models and do not have a systematic way to adjust model parameters' - and their non-myopic alternative calibrates precisely this project's target set at once (activity shares, mode shares, mode-specific OD flows, mode-specific sensor counts). (2) The WFRC/RSG ActivitySim framework publishes `New ASC = Old ASC + ln(Target Proportion / Model Proportion)` verbatim - the exact expression in asc_fixed_point.py - inside a CYCLIC protocol over model components, and states plainly that 'It is typically the case that not all calibration and validation targets can be achieved simultaneously.' | 2026-09-11 (third bracket): POLARIS's published procedure is the same cyclic ASC-by-purpose update, TIERED by iteration so that 'network state' can 'adapt to this change in demand' before the next tier is touched, with counts and speeds explicitly outside the calibrated set ('can only be minimally calibrated'). MATSim-NYC calibrated NO demand constants at all - its nested logit was estimated on RHTS + TLC/FHV/Citi Bike records and converted analytically - and spent its six SPSA iterations on twelve link-CAPACITY factors instead, which is the opposite allocation to this project's.",
-   "carried_note_2026_09_14": "Carried from the 11 September pass. `git log 20ae4e9..780c4c2 -- src/calibrate/` shows four commits (fc327c9 and 8d575e5 import-root plumbing, 5a1153e the heavy-rail target's sum/holdout statement, 78c3df3 the calibrated base moving onto the F32 result); the loop structure described here was NOT re-read line by line this pass. asc_fixed_point.py, calibrate.py, solve_asc_ride.py and fit.py are present."
+   "carried_note_2026_09_14": "Carried. At HEAD b8f89ff the loop structure was not re-read line by line; the board records the ASC contraction test as built and HELD and the coordinate-descent loop as never run to completion. The fields are unchanged from the ninth pass's reading."
   },
   "data_acquired_per_mode": {
-   "status": "from the manifest and the position pages at HEAD 780c4c2 (959 manifest rows)",
+   "status": "from the manifest and the position pages at HEAD b8f89ff (959 manifest rows) - unchanged this pass; the Opal Ferry dataset page read this pass describes Sydney Ferries routes only (gap 20)",
    "car_road_counts": "TfNSW/RMS permanent hourly counts (rms_hourly_permanent.zip, rms_station_reference.csv, rms_yearly_summary.csv - OPEN DATA), 30 calibration stations + holdout; classified heavy-vehicle shares at 24 classifying stations",
    "heavy_rail_light_rail": "Opal station entries/exits (typical day 2016-2023 and monthly), light rail trips by stop and by line/card type, all-modes Opal trips, bus trips by contract region - TfNSW Open Data Hub, CC-BY (data/raw/opal/); two 2016 tap-time/location weeks",
    "bus": "Opal bus trips by contract region (monthly aggregates); NOT the per-service BOAM occupancy the hub also publishes",
-   "ferry": "PARTLY OBSERVED NOW, AS BOUNDS: weekday tap-ons 234-1,347 at the Newcastle wharf under the publication's rounding to 100 (section 9.167, #185) - a constraint, never a target; the target itself stays derived (census G62 ferry share x the HTS PT level). Whether 'Opal Trips - Ferry' on the hub carries the Stockton service row-by-row is the open data-lane gap.",
+   "ferry": "PARTLY OBSERVED NOW, AS BOUNDS: weekday tap-ons 234-1,347 at the Newcastle wharf under the publication's rounding to 100 (section 9.167, #185) - a constraint, never a target; the target itself stays derived (census G62 ferry share x the HTS PT level). Whether 'Opal Trips - Ferry' on the hub carries the Stockton service row-by-row is the open data-lane gap. | 2026-09-14: the hub's 'Opal Trips - Ferry' page (read) is 'Official Ferry Utilisation figures ... allocated to routes', monthly, and its description names only Sydney Ferries wharves; the CSV's route column is still unchecked for Stockton.",
    "taxi_rideshare": "derived band, not trip records: IPART fare-band arithmetic against 2,017,000 weekday trips; the position page names 'a data request to the Point to Point Transport Commissioner for levy counts' as the unrequested route; P2P fares order held (data/raw/p2p/)",
    "bike_pedestrian_counters": "NONE in the manifest - bike and walk are scored on HTS shares and constrained on trip length; no automatic cycling or pedestrian counter layer (AToM holds 48 + 48 from Victoria's open data and the City of Melbourne)",
    "freight_truck": "classified heavy-vehicle shares from the RMS permanent stations (measured day factors and hourly profile); freight rail from the timetable",
@@ -3567,14 +3777,14 @@
    "motorbike": "BITRE Road Vehicles by postal area (data.gov.au, CC-BY 3.0 AU): motorcycles 5.93 % of the light fleet across the 44 postal areas inside the boundary - a constraint on the carve (section 9.167, #185)"
   },
   "physical_fidelity": {
-   "status": "from the registry and position pages at HEAD 780c4c2",
+   "status": "from the registry and position pages at HEAD b8f89ff",
    "signals": "SCATS implemented as its published algorithm (A.signals.scats.*: target degree of saturation, cycle bounds, DS smoothing/deadband, cycle step) + transit signal priority (A.signals.tsp.*); the offset library is swept because it is not published",
-   "pt_dwell_priority": "bus, heavy rail, light rail and ferry run the mapped GTFS on the mapped network; TSP declared; PT access, egress and transfer walk legs are NETWORK LEGS the qsim executes since 12 September (#167 closed on the 1 % probes, teleported=0); MATSim's coordinate-to-link stubs remain (median 54 m)",
+   "pt_dwell_priority": "bus, heavy rail, light rail and ferry run the mapped GTFS on the mapped network; TSP declared; PT access, egress and transfer walk legs are NETWORK LEGS the qsim executes since 12 September (#167; on arm 0 at 25 %: 27,765 such legs executed, 0 teleported); MATSim's coordinate-to-link stubs remain (median 54 m)",
    "parking": "priced parking with search time (A.parking.*: charged hours, modes, price percentiles, search time); no parking-supply occupancy layer (the hub's Park&Ride 'Car park API' is not held)",
    "level_crossings": "freight rail represented as timetable-derived level-crossing closures (314 movements)",
-   "did_fidelity_move_a_validation_figure": "not yet measurable - no paired arm with a fidelity control has closed; arm 0 of F35 (running) is the CONTROL half of all five pairs (#172), so the first such measurement is at least two arms away"
+   "did_fidelity_move_a_validation_figure": "not yet measurable - arm 0 of F35 (a RESULT now) is the CONTROL half of all five one-field pairs (#172), and no pair arm has run; the first such measurement is one approved arm away (~25.5 h at 250 iterations)"
   },
-  "warm_start": "`--warm-start <dead run dir>` exists in src/run/run_matsim.py: it resumes from a dead run's newest plans checkpoint, records `warm_started_from`, and RE-DERIVES `RUN.replanning.fraction_to_disable_innovation` so the innovation cutoff ITERATION is the parent's (the pinned jar's `first + f x (last - first)` had moved it 240 -> 260 at N = 100, #192). It is crash recovery, not a bit-identical continuation. Arm 0 of F35 dumps plans every 25 iterations for exactly this reason (the F33 arm that died at 98 had checkpoints at it.0 and it.1 only). This matches the platform's own answer (MATSim issue #834: restart AT the checkpoint iteration from its post-replanning plans); the platform has no finer mechanism, and the interval is the whole trade. No surveyed row states a warm start from a prior calibrated run except as the matsim-scenarios practice of shipping calibrated output plans as input plans."
+  "warm_start": "`--warm-start <dead run dir>` exists in src/run/run_matsim.py: it resumes from a dead run's newest plans checkpoint, records `warm_started_from`, and RE-DERIVES `RUN.replanning.fraction_to_disable_innovation` so the innovation cutoff ITERATION is the parent's (the pinned jar's `first + f x (last - first)` had moved it 240 -> 260 at N = 100, #192). It is crash recovery, not a bit-identical continuation. Arm 0 of F35 dumps plans every 25 iterations for exactly this reason (the F33 arm that died at 98 had checkpoints at it.0 and it.1 only). This matches the platform's own answer (MATSim issue #834: restart AT the checkpoint iteration from its post-replanning plans); the platform has no finer mechanism, and the interval is the whole trade. No surveyed row states a warm start from a prior calibrated run except as the matsim-scenarios practice of shipping calibrated output plans as input plans. | 2026-09-14: arm 0 ran with `warm_started_from: null` and dumped plans every 25 iterations (12 checkpoints, 522-898 s each, ~50 min of the arm); it did not need the mechanism. Across the field this pass, Kelheim v3.0's published output is a single 388-iteration run and Rotterdam-The Hague's outer loop restarts MATSim per LOS iteration; no surveyed row checkpoints or warm-starts a calibration arm."
  },
  "calibration_methods": [
   {
@@ -3589,10 +3799,12 @@
    "sources": [
     "https://github.com/matsim-vsp/matsim-python-tools",
     "https://raw.githubusercontent.com/matsim-vsp/matsim-python-tools/master/matsim/calibration/base.py",
-    "https://raw.githubusercontent.com/matsim-vsp/matsim-python-tools/master/matsim/calibration/calib_asc.py"
+    "https://raw.githubusercontent.com/matsim-vsp/matsim-python-tools/master/matsim/calibration/calib_asc.py",
+    "https://depositonce.tu-berlin.de/handle/11303/21792"
    ],
    "last_verified": "2026-09-08",
-   "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)"
+   "verified_in": "20260908_project_report (fifth pass, at 6cf0ffd)",
+   "addendum_2026_09_14": "The family's published source note is read in full: Rakow & Nagel 2024 (TU Berlin, depositonce-20593, CC BY, three pages) - the update asc_i + ln z_i - ln m_i - (ln z_0 - ln m_0) with one ASC fixed, a two-alternative proof under fixed utilities, the advice to damp 'by a fraction' where utilities move with the shares, the idea credited to Gunnar Floetteroed, and NO run count, scenario or fit. Two applications read this pass name it as their calibrator: the Open Lausitz Scenario (Meinhardt et al. 2026, auto ASC per mode against MiD 2017) and Rotterdam-The Hague (Li et al. 2025, mode and mode-distance shares inside an LOS fixed point)."
   },
   {
    "method": "Cadyts - Bayesian demand calibration",
