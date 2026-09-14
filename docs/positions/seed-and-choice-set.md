@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -82,6 +82,7 @@
 
 ## History
 
+- §9.170 — the tenth report: every control still unrun; the pairs stand
 - §9.169 — second result; horizon declared 250
 - §9.167 — no change to the seed or the choice set; the network under them is F34's
 - §9.166 — plan removal honours the selector on both paths (#174)

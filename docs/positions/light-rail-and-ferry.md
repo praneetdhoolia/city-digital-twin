@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -32,6 +32,7 @@
 
 - **The PT submodes can become plan-level alternatives** (§9.164, #49). `RUN.mode_choice.modes` offers `pt` as ONE alternative and the raptor picks the submode downstream, which is why only **974 of 154,347 persons (0.63 %)** ever held plans differing in submode (§9.160) - so a scoring constant reallocates between bus, rail, tram and ferry for under one per cent of the population, and light rail's −73.9 % against heavy rail's +54.6 % on arm 0 (§9.169) is decided in a layer with almost no control. `citysim.SubmodeRaptorProvider` builds one SwissRailRaptor per submode over a schedule FILTERED to that submode's own routes and binds each as a plan-level routing module, behind `RUN.mode_choice.pt_submode_alternatives` (`aggregate` shipped; `alternatives`). It filters the SCHEDULE and not the ANSWER on purpose: refusing an itinerary because it used the wrong submode would report a submode as infeasible exactly where it competes hardest.
 - **What turning it on COSTS is stated, not hidden** (§9.164): under `alternatives` the umbrella leaves the choice set, so no single plan-level trip can combine two submodes and a bus-then-train journey is no longer representable. **The arm that spends it must read multi-leg pt trips on both sides**, which is why the gate ships at `aggregate`. Seeded `pt` legs are rewritten to `RUN.mode_choice.pt_submode_seed` (`bus`) with a count in the log, because a seeded subtour on a mode outside the choice set is the absorbing state `RUN.mode_choice.modes` already records for `ride`.
+- **The corridor builder reads the tram's capacity split, line speed and fixed dwell from the registry** (§9.170): `A.lightrail.capacity_seated` 60 / `capacity_standing` 210, `line_speed_kmh` 40 and `dwell_fixed_s` 8.0 with its declared 5-15 sweep, where `build_corridor_layers.py` carried second copies with a 5-12 sweep; the A4 dwell model's sweep column moved 12 -> 15 and no value changed.
 
 ## What is measured
 
@@ -94,6 +95,7 @@
 
 ## History
 
+- §9.170 — the corridor builder reads the registry's tram values
 - §9.169 — arm 0: light rail −73.9 %, ferry −63.3 %; the reader read the wrong schedule
 - §9.167 — the ferry's first disclosed observation, as bounds
 - §9.166 — the tsp bullet re-aimed at the landed −57.3 %

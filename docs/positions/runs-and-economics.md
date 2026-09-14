@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -44,6 +44,7 @@
 - **The runner enforces an approved cost ceiling, a heap floor and a liveness bound** (§9.161, #169; 11 September 2026): `RUN.gate.wall_ceiling_h` (0 = none, and a launch with no automatic stop is refused), a heap below `RUN.machine.heap_per_fraction_gib`'s rule is refused, and a second concurrent arm is refused (§9.169).
 - **The Task Scheduler operational log is enabled** since 10 September 2026 (`wevtutil gl Microsoft-Windows-TaskScheduler/Operational`), after the F14 console stop and the 1 September crash went unattributed without it (§9.120, §9.136).
 - **`run_failure.py` reads only the log's last 64 MiB** (`TAIL_BYTES`, §9.136); the whole-file read once pushed the machine to exhaustion recording a 6.9 GB log's death.
+- **The launcher refuses a second arm at preflight, a detached run carries its task's stamp, and an unjudged milestone is written** (§9.170): `preflight()` calls `refuse_concurrent_arm()` so `--detach` refuses in the shell; `CITYSIM_LAUNCH_STAMP` (reserved) names the run directory after the scheduled task so `run.py --stop` finds it; the gate watcher writes `{iteration, unread: true}` to `_readings.jsonl` and prints the give-up when the reporter fails on every attempt. Arm 0's `_fit.json`, `_metrics.json`, `modes_final.json` and `modes_trend.txt` are in `results/processed`; `_readings.jsonl` and `_gate_verdict.json` are mirrored record files.
 
 ## What is measured — what a run costs
 
@@ -111,6 +112,7 @@
 
 ## History
 
+- §9.170 — concurrent arm refused at preflight; the launch stamp; arm 0 in processed/
 - §9.169 — arm 0 lands at 30.35 h; the horizon declared 250
 - §9.168 — the footpath iteration profiled; the engines route their re-modes; F35's arm 0 at 39.0 h
 - §9.167 — the heap floor re-measured on the footpath network; a stall is not setup

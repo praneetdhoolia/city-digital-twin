@@ -7,9 +7,9 @@ description: Documents the entire city-digital-twin project in one call and plac
 
 Produce **one dated HTML report** at `REPORT_DIR/<yyyymmddThhmmss>_project_report.html`,
 where `REPORT_DIR` is `docs/reports/` (named here once; every
-other mention in this file means this directory - a report assesses ONE
-city's study, so it lives under that city's documents; the six reports before
-11 September 2026 sat under the framework's `docs/` and were moved). In it every number is drawn from an artefact,
+other mention in this file means this directory - the project's documents live
+at `docs/` since 14 September 2026, §9.170; between 11 and 14 September the
+reports sat under `cities/<city>/docs/reports/`). In it every number is drawn from an artefact,
 every code finding cites `file:line`, every milestone cites its pull request
 or record section, every research claim cites the source it was read from
 this time, and a reader who has never opened the repository can say what the
@@ -321,8 +321,8 @@ that crosses it.
 
 **Documents: placed right, and current.** For every document the reviewer
 states whether it is in the layer its content belongs to (`GOAL.md` /
-the board / a position page / the record / the framework's `docs/` / a city's
-`docs/` / a skill) and names each one that is not, with where it belongs; and
+the board / a position page / the record / the reports / `docs/README.md` or
+the contract / a skill) and names each one that is not, with where it belongs; and
 for every living document, the newest artefact it describes and whether the
 description still holds. A document is *misplaced* when a reader looking for
 its content would open a different file first, and *stale* when an artefact it

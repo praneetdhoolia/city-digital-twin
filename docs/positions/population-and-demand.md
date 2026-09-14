@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -37,6 +37,7 @@
 - External: the 201 boundary SA1s' residents enter the core at `B.external.interaction_rate` 0.0900 (`derived`, sweep 0.06–0.12) = `B.external.commute_share_to_core` 0.1377 (TfNSW Journey to Work 2011, 4,636 of 33,666 employed residents working in the five core LGAs; measured, ±30% vintage sweep) × `B.external.employed_share` 0.4575 (32,230 of 70,448, 2021 G46 over G01; held fixed) / the HW purpose split 0.7, so the HW agents equal the observed commuters (§9.140, #63) — through derived cordon crossings, placed on the same attractors, ride withheld (`B.external.agent_ride_available`), scaled on the weekend by the measured light day factors SAT 0.8429 / SUN 0.7347 (§9.2, §9.15, §9.61).
 - Through: trips enter at one derived cordon gate and exit at another at the gate's own observed AADT times `B.external.through_share` 0.35 (`assumed`), with the gate's observed heavy share carried as trucks (§9.41, §9.49).
 - Freight: `truck` is a declared, swept physical background load (`freight_trip_ratio` 0.0697 in `_activity_chains_report.json`), not a freight demand model (§9.49); the coal chain is not simulated (§9.70). Two resident carves are drawn in `src/build/build_matsim_plans.py` on the pool that excludes escorters and named drivers: motorbike `B.motorbike.trip_share` 0.0037849 (`derived`, the target LGA's G62 cell — it supersedes §9.116's 0.0024064) and truck `B.truck.resident_trip_share` 0.002993 (`derived`) (§9.125, §9.129).
+- **The chains builder reads its placement radius from the registry** (§9.170): `B.population.home_jitter_radius_factor` 0.6 replaces three typed 0.6s (the sweep moved the homes and not the destinations); the intermediate-stop default rate, the shopping share of intermediate stops and the distance-decay target for a purpose with no HTS mean are declared fields at their typed values (#198), so a demand rebuild reproduces today's artefacts.
 
 ## The state on disk
 
@@ -100,6 +101,7 @@
 
 ## History
 
+- §9.170 — the placement radius and three stop defaults read from the registry
 - §9.169 — roster 18,767; top-band mean unconsumed
 - §9.167 — one binder skeleton; the holdout sum recorded; the HTS request drafted
 - §9.166 — TfNSW bespoke tables obtainable; mobility draw declared

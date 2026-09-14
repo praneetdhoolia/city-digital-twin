@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -36,6 +36,7 @@
 
 - **The demand now states that the passenger rides** (§9.164, #86, #48). `B.mode.bound_passenger_placement` = `every_plan` puts a round-trip-covered tour on `ride` in EVERY seeded plan, which is exactly what the demand already did for the driver of the same pair - a serving tour reads `car` in every plan. Under the previous `alternative` the passenger got ride in ONE variant among five or six and drew a mode in the rest, and of 20,902 declared escort pairs in sample **10,224 had the passenger driving their own car** against 7,821 co-assigned (§9.163). It is the only layer that can reach ride's target at all: 20.6000 % sits above the 20.05 % (F32) and the 19.11 % (arm 0, §9.169) of agents who have ever held a ride plan, so no value of any scoring constant closes it (§9.163, #174). The seed biases where the search starts and never what selection keeps - `SubtourModeChoice` may move the tour off ride from iteration 1.
 - **The partially bound tour is repaired** (§9.143, #86): 50,665 weekday bound trips across 49,514 persons become a `ride` alternative plan memory can hold; 33,832 bound trips across 18,403 persons stay unreachable because `B.activity.*` denies those persons `ride` outright — the escort class, measured on WEEKDAY.
+- **The engine's routing workers write no plan** (§9.170, #197): `routeDetour` returns a `Detour` - the path, its length and duration, the clock at each passenger's origin - and the main thread applies it in driver order after the parallel pass; the 1 % smoke `20260914T150700_2it_1pct` ran 2 of 2 on the recompiled controler (rc 0, accounting closes, 0 detours refused).
 
 ## What is measured
 
@@ -103,6 +104,7 @@ Every arm below was stopped at or before its gate; levels are readings, not resu
 
 ## History
 
+- §9.170 — the engine's workers return their detours (#197)
 - §9.169 — arm 0: pairing holds; the seed caps ride
 - §9.168 — the unpaired leg's walk is routed by the engine; the original restored
 - §9.167 — whole-trip re-mode; the clock override restored after the mobsim

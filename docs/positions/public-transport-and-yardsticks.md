@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -107,6 +107,7 @@ Latest twelve-mode reading, F35's result: `results/raw/20260912T202242_300it_25p
 
 ## History
 
+- §9.170 — router-scorer consistency stays the top mover, unrun
 - §9.169 — arm 0's reading; the reader fixed
 - §9.167 — the access leg walks the network; the ferry has an observation
 - §9.166 — light rail 1,224 on the legs-table basis; C.asc.* reach the run

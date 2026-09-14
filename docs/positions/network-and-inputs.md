@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -28,6 +28,7 @@
 - **Toolchain.** `.tools/toolchain.json` pins Temurin JDK 25.0.4+7, pt2matsim 26.6 (embedding MATSim 2027.0-2026w25, §9.73), Maven 3.9.9 and the signals run stack at 2027.0-2026w25 (201 jars, each hashed). SUMO left the toolchain with the descope (§9.74, §9.76, #72 closed); §3.6's SUMO row is history, and `networks/sumo/` is a leftover directory, not an input.
 - **The builder-versus-artefact gate** (§9.141): `tests/check_package.py` refuses a committed builder that no longer reproduces the committed demand, after §9.116 found one that did not and four artefacts with no producer (#115, #116, #119, #120).
 - **The Python dependencies are pinned** (§9.158): `requirements.txt` at `==` for 11 direct and 15 transitive packages; `tests/check_requirements.py` parses the repository's own imports.
+- **The documents live at `docs/`, and five typed defaults are fields** (§9.170, #198, #199): the goal, the board, the brief, the positions, the record, the reports and the generated reference moved from `cities/newcastle/docs/` (`city.docs()` resolves them; `layers.json` lists 102 artefacts, no documents); `B.activity.p_intermediate_stop_default`, `B.activity.intermediate_stop_shop_share`, `B.activity.distance_decay_target_default_km`, `A.road.speed_default_other_kmh` and `A.parking.capacity_default_other` are declared at their typed values; the three adapters date a file with no record from its modification time (`retrieved_basis`), so the fifteen GTFS feeds carry 2026-08-10 and no raw row is undated; an overlay's per-mode table is range-checked entry by entry (#200); a unit test holds every provenance host inside the sandbox allowlist.
 
 ## What is observed, derived, and still unobtained
 
@@ -90,6 +91,7 @@
 
 ## History
 
+- §9.170 — the documents at `docs/`; five typed defaults declared (558); the feeds dated
 - §9.169 — run inputs at 250; the reader reads its run
 - §9.167 — the network rebuilt with footpaths; 15 feeds re-mapped once; F34
 - §9.166 — 521 fields; superseded bullets retired; reports under the city

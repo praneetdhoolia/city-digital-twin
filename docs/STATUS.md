@@ -8,8 +8,8 @@ rest is capped by `tests/check_doc_shape.py`. The current truth per topic is in
 [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
 **Last updated:** 14 September 2026 (forty-seventh session) — the documents
-moved to `docs/`, the run viewer rebuilt, the ninth report's no-run findings
-worked, the tenth report lodged (§9.170). The newest reading is arm 0 of F35,
+moved to `docs/`, the run viewer rebuilt, #197-#200 fixed, the tenth report
+lodged and its no-run findings worked (§9.170). The newest reading is arm 0 of F35,
 `20260912T202242_300it_25pct`, the project's second RESULT: 300 of 300 in
 30.35 h, **2 of 12 inside 10 %** (car +9.6 %, motorbike −5.6 %), six past the
 stop bar, ride's target above its own 19.11 % coverage (§9.169). No arm was
@@ -73,7 +73,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy
 | Input registry | **558 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **959 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (14 September 2026 (forty-sixth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (14 September 2026 (forty-sixth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (14 September 2026 (forty-sixth session)) · [network-and-inputs](positions/network-and-inputs.md) (14 September 2026 (forty-sixth session)) · [population-and-demand](positions/population-and-demand.md) (14 September 2026 (forty-sixth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (14 September 2026 (forty-sixth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (14 September 2026 (forty-sixth session)) · [runs-and-economics](positions/runs-and-economics.md) (14 September 2026 (forty-sixth session)) · [sampling-and-families](positions/sampling-and-families.md) (14 September 2026 (forty-sixth session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (14 September 2026 (forty-sixth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (14 September 2026 (forty-sixth session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (14 September 2026 (forty-sixth session)) · [walk-and-bike](positions/walk-and-bike.md) (14 September 2026 (forty-sixth session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (14 September 2026 (forty-seventh session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (14 September 2026 (forty-seventh session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (14 September 2026 (forty-seventh session)) · [network-and-inputs](positions/network-and-inputs.md) (14 September 2026 (forty-seventh session)) · [population-and-demand](positions/population-and-demand.md) (14 September 2026 (forty-seventh session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (14 September 2026 (forty-seventh session)) · [ride-and-pairing](positions/ride-and-pairing.md) (14 September 2026 (forty-seventh session)) · [runs-and-economics](positions/runs-and-economics.md) (14 September 2026 (forty-seventh session)) · [sampling-and-families](positions/sampling-and-families.md) (14 September 2026 (forty-seventh session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (14 September 2026 (forty-seventh session)) · [signals-and-crossings](positions/signals-and-crossings.md) (14 September 2026 (forty-seventh session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (14 September 2026 (forty-seventh session)) · [walk-and-bike](positions/walk-and-bike.md) (14 September 2026 (forty-seventh session)) |
 <!-- generated:state end -->
 
 F35 is open with arm 0 as its reading; nothing before `20260912T184108`
@@ -133,7 +133,7 @@ approval; whether to send the drafted TfNSW bespoke-table request (#50).
 | **The TfNSW bespoke-table request** (mode × age, trip length by mode, occupancy by purpose, the unfolded "Other") is drafted and held; the modelled mode × demographics table exists (§9.163) | #50 | [population-and-demand](positions/population-and-demand.md) | the lodgement, then TfNSW's answer |
 | Stalls and heap: arm 0 ran 30.35 h under 48 g with no stall, live heap peaking at 26.2 GiB (§9.169); the launcher refuses a concurrent arm | #66 | [runs-and-economics](positions/runs-and-economics.md) | a second full arm's `gc.log` at 25 % |
 | Surrogate calibration held in reserve: ~150 evaluations at 21.5 h each is ~134 days at 25 % | — | [runs-and-economics](positions/runs-and-economics.md) | only if the residual proves multi-parameter |
-| Code findings of the ninth report still open: dict-valued registry leaves unchecked (#200), the ride engine's worker-thread plan writes (#197) | #197 #200 | [network-and-inputs](positions/network-and-inputs.md) | a 1 % probe band after the Java change |
+| **The tenth report's open items** (§9.170): the household-size top-band mean's phantom consumer (#196, a decision); the main ruleset requires no status check (the user's setting); 8 of 13 position pages keep closed-family readings; the two document rule files sit under the city | #196 | [network-and-inputs](positions/network-and-inputs.md) | none - decisions and document passes |
 
 ## Do not re-raise
 

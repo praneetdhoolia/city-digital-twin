@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 14 September 2026 (forty-sixth session) · **Record read through:** §9.169 · **Written against family:** `F35`
+**Updated:** 14 September 2026 (forty-seventh session) · **Record read through:** §9.170 · **Written against family:** `F35`
 
 ## What is built
 
@@ -37,7 +37,7 @@
 - **The calibration fit** is `src/calibrate/fit.py`: it scores the survey's six categories from `_metrics.json` through `score_mode_share`, with `bike+taxi` folded to Other and `car+motorbike` to Vehicle driver — folds the HTS data document's own lists evidence (§9.87). It lists every target it cannot score as `unscorable` with the reason (§9.80). The per-iteration survey-basis reader `src/analyse/measure_iteration_modes.py` hands the trips table to that same function (§9.83).
 - **Requirement 10 has a third state** (§9.160, user decision 9 September 2026): an issue may declare `AWAITING-DECISION:` — a decision, an acquisition or a mechanism no arm settles — and is reported at every gate without blocking; `awaiting-run` with an `AWAITING-RUN:` line blocks the launcher, and the line is checked, never the label alone.
 - **Facts that expire have one home and one command each** (§9.160): the board's state block, `python tests/check_package.py` and `python src/run/issue_gate.py`; the brief's §0 names the command, never the answer.
-- **The run viewer shows the twelve modes against their targets, live** (§9.170, `src/analyse/run_view.py`): every run in the store from one picker; the iteration bar with the innovation cutoff and the gate milestones marked, elapsed, remaining and the cost ceiling; each mode's deviation on a ±40 % bullet against the 10 % goal and the 20 % stop bar, with a sparkline over the readings; the congestion overlay on a street map, satellite imagery, a hybrid, or the package's own offline twin. Its readings come from `_readings.jsonl`, which the gate watcher appends at every milestone (the verdict now carries every row), and it computes a missing one in memory without writing to the run.
+- **The run viewer shows the twelve modes against their targets, live** (§9.170, `src/analyse/run_view.py`): every run in the store from one picker; the iteration bar with the innovation cutoff and the gate milestones marked, elapsed, remaining and the cost ceiling; each mode's deviation on a ±40 % bullet against the 10 % goal and the 20 % stop bar, with a sparkline over the readings; the congestion overlay on a street map, satellite imagery, a hybrid, or the package's own offline twin. Its readings come from `_readings.jsonl`, which the gate watcher appends at every milestone (the verdict now carries every row), and it computes a missing one through a reporter subprocess, one at a time, writing nothing to the run (§9.170).
 
 ## How a reading is taken
 
@@ -106,6 +106,7 @@
 
 ## History
 
+- §9.170 — the run viewer reads the twelve modes against their targets; the readings ledger
 - §9.169 — arm 0 a result; the reader reads its own schedule
 - §9.168 — the scoreboard skips a failed run; the import roots guarded
 - §9.167 — the eighth report worked down; inline literals gated; import roots gated
