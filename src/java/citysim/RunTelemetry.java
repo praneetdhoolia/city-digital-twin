@@ -144,6 +144,7 @@ public final class RunTelemetry implements
 
     /** Free-flow traversal time per link, precomputed once. */
     private final Map<Id<Link>, Double> freeflow = new HashMap<>();
+    private final Map<Id<Link>, Double> speed = new HashMap<>();
 
     /** Person legs in flight, by leg mode. Covers teleported modes too, which
      *  the link events cannot see. */
@@ -159,6 +160,27 @@ public final class RunTelemetry implements
      *  (DECISIONS.md 9.78), where the leg-mode maps above simply gain
      *  bus/tram/rail/ferry keys of their own. */
     private final Map<Id<Vehicle>, String> transitType = new HashMap<>();
+    /** Transit vehicles by vehicle index, for the two link handlers that see
+     *  ~65 M events an iteration and cannot afford a map lookup each: a bus's
+     *  dwell at its stop is not traffic delay, and its traversals are kept
+     *  out of the link accounting the congestion map colours. */
+    private boolean[] transitByIndex = new boolean[4096];
+
+    /** The simulator's own step is not delay: the qsim floors a link's
+     *  earliest exit to the second and hands the vehicle on at the next step,
+     *  so every traversal carries up to about one second no driver
+     *  experiences - on a 0.7 s turn stub that alone read as a ratio of 2. */
+    static final double STEP_TOLERANCE_S = 1.0;
+    /** Delay is judged over at least this stretch of road, the way a map app
+     *  colours a segment and never a 10 m stub: the delay on a shorter link
+     *  is spread over the free-flow time of this length at the link's speed. */
+    static final double MIN_STRETCH_M = 150.0;
+    /** Per-link delay histogram: bin 0 is under a second, then bins a factor
+     *  of root two apart from 1 s to 68 minutes, so the TYPICAL traversal's
+     *  delay (the median) can be read out per window and per day. The mean
+     *  is kept too, but one peak-hour jam dominates a day's mean on a street
+     *  that flows the rest of the day; a map app colours the typical. */
+    static final int NBIN = 24;
     private final Map<String, Integer> enRouteByVehicleType = new TreeMap<>();
 
     /**
@@ -227,14 +249,22 @@ public final class RunTelemetry implements
         /** Free-flow traversal seconds, cached off {@link #freeflow} at
          *  creation: the payload writer looked it up per link per frame. */
         private final double freeflowS;
+        /** The free-flow seconds of {@link #MIN_STRETCH_M} at this link's
+         *  speed, or the link's own if longer: the denominator of the ratio. */
+        private final double stretchS;
         private int volume;
         private double travelTimeSum;
         private int windowVolume;
         private double windowTravelTimeSum;
+        private final int[] dayHist = new int[NBIN];
+        private final int[] windowHist = new int[NBIN];
 
-        private LinkLoad(final Id<Link> id, final double freeflowS) {
+        private LinkLoad(final Id<Link> id, final double freeflowS,
+                         final double speedMps) {
             this.id = id;
             this.freeflowS = freeflowS;
+            this.stretchS = speedMps > 0
+                    ? Math.max(freeflowS, MIN_STRETCH_M / speedMps) : freeflowS;
         }
     }
 
@@ -267,6 +297,7 @@ public final class RunTelemetry implements
         for (final Link link : network.getLinks().values()) {
             final double v = link.getFreespeed();
             freeflow.put(link.getId(), v > 0 ? link.getLength() / v : 0.0);
+            speed.put(link.getId(), v);
         }
     }
 
@@ -354,6 +385,13 @@ public final class RunTelemetry implements
         if (v != null && v.getType() != null) {
             transitType.put(event.getVehicleId(), v.getType().getId().toString());
         }
+        final int i = event.getVehicleId().index();
+        if (i >= 0) {
+            if (i >= transitByIndex.length) {
+                transitByIndex = java.util.Arrays.copyOf(transitByIndex, i + 1024);
+            }
+            transitByIndex[i] = true;
+        }
     }
 
     @Override
@@ -376,6 +414,9 @@ public final class RunTelemetry implements
 
     @Override
     public void handleEvent(final LinkEnterEvent event) {
+        if (isTransit(event.getVehicleId())) {
+            return;   // road vehicles only: the fleet's stop dwell is not traffic delay
+        }
         final LinkEntry e = slotFor(event.getVehicleId());
         if (e != null) {
             e.link = event.getLinkId().index();
@@ -388,6 +429,9 @@ public final class RunTelemetry implements
     @Override
     public void handleEvent(final LinkLeaveEvent event) {
         lastTime = event.getTime();
+        if (isTransit(event.getVehicleId())) {
+            return;
+        }
         final int vi = event.getVehicleId().index();
         if (vi < 0 || vi >= openByVehicle.length) {
             return;
@@ -413,6 +457,9 @@ public final class RunTelemetry implements
         }
         l.windowVolume++;
         l.windowTravelTimeSum += tt;
+        final int bin = delayBin(tt - l.freeflowS);
+        l.dayHist[bin]++;
+        l.windowHist[bin]++;
     }
 
     /** This vehicle's reusable open-traversal slot, created on first sight. */
@@ -443,7 +490,7 @@ public final class RunTelemetry implements
             }
         }
         final LinkLoad made = load.computeIfAbsent(
-                link, k -> new LinkLoad(k, freeflowOf(k)));
+                link, k -> new LinkLoad(k, freeflowOf(k), speedOf(k)));
         if (index >= 0) {
             if (index >= loadByLink.length) {
                 loadByLink = java.util.Arrays.copyOf(loadByLink, index + 1024);
@@ -451,6 +498,47 @@ public final class RunTelemetry implements
             loadByLink[index] = made;
         }
         return made;
+    }
+
+    /** The histogram bin of a traversal's delay in seconds: 0 under one
+     *  second, then floor(2 log2 d) + 1, capped at the last bin. */
+    static int delayBin(final double delayS) {
+        if (!(delayS >= 1.0)) {
+            return 0;
+        }
+        final int b = 1 + (int) Math.floor(2.0 * Math.log(delayS) / Math.log(2.0));
+        return Math.min(NBIN - 1, b);
+    }
+
+    /** The delay of the median traversal, read out of a histogram: the bin
+     *  holding the middle count, taken at its geometric centre. */
+    static double medianDelay(final int[] hist, final int n) {
+        if (n <= 0) {
+            return 0.0;
+        }
+        final int half = (n + 1) / 2;
+        int cum = 0;
+        for (int b = 0; b < hist.length; b++) {
+            cum += hist[b];
+            if (cum >= half) {
+                if (b == 0) {
+                    return 0.5;
+                }
+                // bin b spans [2^((b-1)/2), 2^(b/2)); its geometric centre is 2^((b-0.5)/2)
+                return Math.pow(2.0, (b - 0.5) / 2.0);
+            }
+        }
+        return 0.0;
+    }
+
+    private boolean isTransit(final Id<Vehicle> vehicle) {
+        final int i = vehicle.index();
+        return i >= 0 && i < transitByIndex.length && transitByIndex[i];
+    }
+
+    private double speedOf(final Id<Link> link) {
+        final Double v = speed.get(link);
+        return v == null ? 0.0 : v;
     }
 
     private double freeflowOf(final Id<Link> link) {
@@ -520,6 +608,7 @@ public final class RunTelemetry implements
         for (final LinkLoad l : windowTouched) {
             l.windowVolume = 0;
             l.windowTravelTimeSum = 0.0;
+            java.util.Arrays.fill(l.windowHist, 0);
         }
         windowTouched.clear();
     }
@@ -638,11 +727,17 @@ public final class RunTelemetry implements
         b.append(",\"window_to_s\":").append(fmt(to));
         b.append(",\"window_from\":\"").append(clock(from)).append('"');
         b.append(",\"window_to\":\"").append(clock(to)).append('"');
-        b.append(",\"metric\":\"delay_ratio = mean observed traversal / free-flow"
-                 + " traversal; volume = vehicle traversals\"");
-        b.append(",\"covers\":\"car and the transit fleet only - walk and bike are"
-                 + " teleported and never enter a link, and ride adds no vehicle"
-                 + " to the mobsim (issue #31)\"");
+        b.append(",\"metric\":\"[id, volume, typical, mean]: typical = 1 + max(0,"
+                 + " median traversal delay - tolerance_s) / max(free-flow, free-flow"
+                 + " of min_stretch_m), the same on the mean traversal;"
+                 + " volume = road-vehicle traversals\"");
+        b.append(",\"statistic\":\"median\"");
+        b.append(",\"tolerance_s\":").append(fmt(STEP_TOLERANCE_S));
+        b.append(",\"min_stretch_m\":").append(fmt(MIN_STRETCH_M));
+        b.append(",\"covers\":\"road vehicles only - the transit fleet's traversals"
+                 + " are not counted (a bus's dwell at its stop is not traffic"
+                 + " delay); walk and bike never enter a link, and ride adds no"
+                 + " vehicle to the mobsim (issue #31)\"");
         b.append(",\"links\":[");
         boolean first = true;
         for (final LinkLoad l : src) {
@@ -655,15 +750,23 @@ public final class RunTelemetry implements
             }
             final double ff = l.freeflowS;
             final double mean = sum / volume;
-            // Below one free-flow traversal there is no delay to report; the
-            // ratio is clamped at 1.0 so the ramp starts at "flowing".
-            final double ratio = ff <= 0 ? 1.0 : Math.max(1.0, mean / ff);
+            // The delay is what exceeds the free-flow traversal and the
+            // simulator's step, judged over at least a map app's segment;
+            // below that there is nothing to report and the ratio is 1.0.
+            // The typical traversal's delay is the colour; the mean's is
+            // kept beside it.
+            final double typicalDelay = Math.max(0.0,
+                    medianDelay(whole ? l.dayHist : l.windowHist, volume) - STEP_TOLERANCE_S);
+            final double meanDelay = Math.max(0.0, mean - ff - STEP_TOLERANCE_S);
+            final double typical = l.stretchS <= 0 ? 1.0 : 1.0 + typicalDelay / l.stretchS;
+            final double ratio = l.stretchS <= 0 ? 1.0 : 1.0 + meanDelay / l.stretchS;
             if (!first) {
                 b.append(',');
             }
             first = false;
             b.append("[\"").append(l.id).append("\",")
-             .append(volume).append(',').append(fmt(ratio)).append(']');
+             .append(volume).append(',').append(fmt(typical)).append(',')
+             .append(fmt(ratio)).append(']');
         }
         b.append("]}");
         atomicWrite("telemetry_links.json", b.toString());

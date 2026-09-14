@@ -23,10 +23,10 @@
   --ok:#30d158; --over:#ff9f0a; --stop:#ff453a; --info:#0a84ff;
   --ok-bg:rgba(48,209,88,.18); --over-bg:rgba(255,159,10,.18); --stop-bg:rgba(255,69,58,.18);
   --fill:rgba(120,120,128,.28);
-  --glass:rgba(28,28,30,.8); --glass-blur:blur(28px) saturate(160%);
+  --glass:rgba(28,28,30,.6); --glass-blur:blur(8px) saturate(160%);
   --rim:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 .5px rgba(255,255,255,.1);
   --shadow:0 .5px 1px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.35);
-  --t0:#30d158; --t1:#ffd60a; --t2:#ff453a; --t3:#8e1b1b;
+  --t0:#3ddc6c; --t1:#ffa040; --t2:#ff4b3e; --t3:#a3241f;   /* traffic at night: a map app's four, lifted to carry on dark ground */
   --water:#0f1e2a; --land:#1b1e21; --green:#17261a; --sand:#2b2718;
   --rd5:#3a3f44; --rd4:#464c52; --rd3:#535a61; --rd2:#636b73; --rd1:#7c868f;
   --rail:#bf5af2; --tram:#ff375f;
@@ -39,12 +39,12 @@ html[data-theme="light"]{
   --ok:#34c759; --over:#ff9500; --stop:#ff3b30; --info:#007aff;
   --ok-bg:rgba(52,199,89,.14); --over-bg:rgba(255,149,0,.14); --stop-bg:rgba(255,59,48,.14);
   --fill:rgba(120,120,128,.14);
-  --glass:rgba(244,244,246,.9);
+  --glass:rgba(244,244,246,.7);
   --rim:inset 0 1px 0 rgba(255,255,255,.8),inset 0 0 0 .5px rgba(255,255,255,.5);
   --shadow:0 .5px 1px rgba(0,0,0,.1),0 2px 6px rgba(0,0,0,.08);
-  --t0:#34c759; --t1:#ffcc00; --t2:#ff3b30; --t3:#8e1b1b;
-  --water:#aadaff; --land:#f2efe9; --green:#cdebc4; --sand:#f5ecc8;
-  --rd5:#ffffff; --rd4:#f8f8f6; --rd3:#f5efdc; --rd2:#f9e7a1; --rd1:#f6d27a;
+  --t0:#63d668; --t1:#ff974d; --t2:#f23c32; --t3:#811f1f;   /* traffic by day: green, orange, red, stop-and-go */
+  --water:#a4c8e6; --land:#e9e6df; --green:#c4dbb5; --sand:#ebe0bd;
+  --rd5:#fbfbf9; --rd4:#f5f4f0; --rd3:#f2ead2; --rd2:#f3e094; --rd1:#eec96e;
   --rail:#af52de; --tram:#ff2d55;
 }
 /* the material, once: every surface that floats over the map is this and nothing else
@@ -58,10 +58,21 @@ html[data-theme="light"]{
    from where it was pressed, elements "materialise" rather than fade. Two curves: a spring
    with a little overshoot for anything that pops, a settle for anything that folds or slides. */
 :root{--spring:cubic-bezier(.34,1.56,.64,1);--settle:cubic-bezier(.2,.8,.2,1);interpolate-size:allow-keywords}
-#side,.card,.ddm,#lyrpanel{will-change:transform,opacity}
+/* transform only: a promised opacity change (will-change: opacity) makes the panel a backdrop
+   root in Chromium exactly as an applied one would, so every card's glass blurred the panel's
+   empty box and the map showed through it sharp and stronger than through any button - the
+   §9.174 trap in a second dress. A transform promise does not do this. */
+#side,.card,.ddm,#lyrpanel{will-change:transform}
 button,.lb,.ddi,.card>h2{transition:transform .2s var(--spring),background-color .15s,color .15s,filter .15s,opacity .2s}
 button:not(:disabled):active,.lb:active,.ddi:active{transform:scale(.93);filter:brightness(1.18)}
 .card>h2:hover{color:var(--ink)}
+/* an appearance change is a colour shift, never a cut: for half a second after the theme
+   changes (light, dark, the simulator's dawn and dusk, the system's own switch) everything
+   that reads the palette eases to its new colour - background, ink, borders, glass, shadows,
+   halos and the icons' fills. The map's own layers already ease over the library's 300 ms. */
+html.theming,html.theming *,html.theming *::before,html.theming *::after{
+  transition:background-color .5s ease,color .5s ease,border-color .5s ease,fill .5s ease,stroke .5s ease,
+             box-shadow .5s ease,text-shadow .5s ease,outline-color .5s ease!important}
 @media (prefers-reduced-motion:reduce){*{transition-duration:0s!important;animation-duration:0s!important}}
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -76,6 +87,14 @@ canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
 .maplibregl-ctrl-attrib{background:var(--panel)cc!important;color:var(--muted)!important;font-size:10px}
 .maplibregl-ctrl-attrib a{color:var(--accent)!important}
 .maplibregl-ctrl-bottom-right .maplibregl-ctrl{margin:0}
+/* the scale as a phone map app draws it: a bare line with end ticks and the distance above,
+   no container, at the bottom right beside the control column */
+.maplibregl-ctrl-bottom-right .maplibregl-ctrl-scale{margin:0 68px 10px 0}
+.maplibregl-ctrl-scale{position:relative;background:transparent!important;border:none!important;border-bottom:2px solid var(--ink)!important;border-radius:0;
+  color:var(--ink)!important;font:500 10px/12px var(--sans)!important;padding:0 0 3px!important;text-align:center;
+  text-shadow:0 0 3px var(--panel),0 0 2px var(--panel),0 0 1px var(--panel)}
+.maplibregl-ctrl-scale::before,.maplibregl-ctrl-scale::after{content:"";position:absolute;bottom:-2px;width:2px;height:7px;background:var(--ink)}
+.maplibregl-ctrl-scale::before{left:0} .maplibregl-ctrl-scale::after{right:0}
 
 /* ---- the top bar, the way a map app carries its search box: the menu button inside
    the box, the theme switch a round button at the top right ---- */
@@ -112,20 +131,27 @@ canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
 /* the appearance button is one piece of glass that grows leftward into the bar of choices
    and shrinks back to a circle (the width runs 44px -> auto under interpolate-size) */
 #theme{position:absolute;right:12px;top:12px;z-index:1000;display:flex;align-items:center;justify-content:flex-end;
-  width:44px;height:44px;border-radius:22px;overflow:hidden;transition:width .38s var(--spring)}
+  width:44px;min-width:44px;height:44px;border-radius:22px;overflow:hidden;transition:width .38s var(--spring)}   /* min-width: the spring's overshoot on the way back never cuts into the button */
 #theme.open{width:auto}
 #themebtn,#themeclose{width:44px;height:44px;flex:none;border:none;background:transparent;color:var(--ink);font-size:17px;line-height:1;padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center}
 #themeclose{font-size:13px;color:var(--muted)}   /* the same 44 px round as the button, so the cross sits at the centre of the capsule's end */
 #themebtn:hover,#themeclose:hover{color:var(--accent)}
-#theme.open #themebtn{display:none}
-#theme .choices{display:none;align-items:center;gap:2px;padding:0 0 0 4px;opacity:0;transition:opacity .25s .1s}
-#theme.open .choices{display:flex;opacity:1;@starting-style{opacity:0}}
+/* the button lies over the cross's slot at the capsule's end and fades between the two states,
+   never leaving the flow: put back into flow at the close it stood beside the cross for a frame
+   and the bar began the close 44 px wider than it was */
+#themebtn{position:absolute;right:0;top:0;transition:opacity .18s}
+#theme.open #themebtn{opacity:0;pointer-events:none;transition-delay:.05s}
+/* the choices stay in flow for the length of the close (display, discretely), so the capsule's
+   auto width still measures them when the shrink starts and it shrinks on the same spring it
+   grew on - dropped from flow at once, `auto` was already the bare button and the close snapped */
+#theme .choices{display:none;align-items:center;gap:2px;padding:0 0 0 4px;opacity:0;transition:opacity .2s,display .38s allow-discrete}
+#theme.open .choices{display:flex;opacity:1;transition:opacity .25s .1s;@starting-style{opacity:0}}
 #theme .ddi{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;font:500 12px/1 var(--sans);white-space:nowrap}
 #theme .ddi .g{font-size:14px;line-height:1}
-/* the simulator's night: a shade over the map alone, deepening as the sun sinks. It steps, never
-   transitions: a full-screen colour animation repaints every frame and every glass card re-blurs
-   beneath it, and the steps are half a degree of sun apart */
-#map::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--shade,transparent)}
+/* the simulator's night: a shade over the map alone, deepening as the sun sinks, easing over
+   half a second so an appearance change is one shift; the steps within the simulator are half
+   a degree of sun apart, so the easing runs briefly every few seconds of wall time, not per frame */
+#map::after{content:"";position:absolute;inset:0;pointer-events:none;background:var(--shade,transparent);transition:background-color .5s ease}
 
 /* ---- the side panel: a thin scrollbar that appears on hover, and the content fading at
    whichever edge has more beyond it. The fade is a mask on EACH CARD, laid out in the panel's
@@ -133,21 +159,52 @@ canvas.overlay{position:absolute;left:0;top:0;pointer-events:none}
    each edge, all set by the scroll handler): a mask on the panel itself would make it the
    backdrop root, and the cards' glass would blur the panel's empty box instead of the map ---- */
 #side{position:absolute;left:12px;top:64px;bottom:28px;width:min(440px,calc(100vw - 24px));
-  z-index:900;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overscroll-behavior:contain;
+  z-index:900;display:flex;flex-direction:column;gap:10px;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;   /* never a horizontal bar: a card mid-turn projects a few px sideways, and the bar it summoned took 15 px off the panel's height and put the last card under a fade */
   scrollbar-gutter:stable;padding:2px 2px 2px 0}   /* the gutter is always reserved, so a card opening never narrows the rest */
 #side::-webkit-scrollbar,.ddm::-webkit-scrollbar{width:8px;background:transparent}
 #side::-webkit-scrollbar-button,.ddm::-webkit-scrollbar-button{display:none}
+#side::-webkit-scrollbar-corner,.ddm::-webkit-scrollbar-corner{background:transparent}   /* the corner is white by default and showed as a white block whenever a second bar appeared */
 #side::-webkit-scrollbar-thumb,.ddm::-webkit-scrollbar-thumb{border-radius:4px;background:transparent;border:2px solid transparent;background-clip:padding-box}
 #side:hover::-webkit-scrollbar-thumb,.ddm::-webkit-scrollbar-thumb{background-color:var(--faint)}
 @supports not selector(::-webkit-scrollbar){#side,.ddm{scrollbar-width:thin;scrollbar-color:var(--faint) transparent}}
-#side{--stretch:0px;--ft:0px;--fb:0px;transform-origin:top left;transition:transform .4s var(--spring),opacity .25s,visibility .4s}
-#side .card{transform:translateY(var(--stretch));transition:transform .4s var(--spring)}   /* the cards take the pull, not the panel or its scrollbar */
-#side.stretch .card{transition:none}   /* while the wheel holds them past an end; the spring plays when it lets go */
+/* the panel leaves as it always has - up and toward the corner, fading - and as it goes each
+   card turns up around its top edge and fades, the bottom card first and the rest following at
+   45 ms; on the way back they turn down again from the top. The pull past an end rides on the
+   one registered --stretch, apart from the turn's transform, which springs back on release and
+   moves the cards and their edge fades together. --n is the card count, --i each card's place,
+   set once by the script. */
+@property --stretch{syntax:'<length>';inherits:true;initial-value:0px}
+#side{--stretch:0px;--ft:0px;--fb:0px;--n:6;transform-origin:top center;transition:transform .4s var(--spring),opacity .25s,visibility .4s,--stretch .4s var(--spring)}
+#side.stretch{transition:transform .4s var(--spring),opacity .25s,visibility .4s,--stretch 0s}   /* while the wheel holds the panel past an end the pull is immediate; the spring plays when it lets go */
+#side .card{--i:0;--d:calc(var(--i) * 45ms);translate:0 var(--stretch);transform-origin:50% 0;transform:translateY(0) perspective(900px) rotateX(0deg);
+  transition-property:transform,opacity;transition-duration:.42s,.28s;transition-timing-function:var(--spring),var(--settle);transition-delay:var(--d),var(--d)}
+/* up and AWAY (a positive turn): the card's projection stays inside its own box, so the panel's
+   scroll range - which counts transformed boxes - does not move while a card turns; turned
+   toward the reader it projected 15 px past the bottom, the range grew, and the last card sat
+   faded until the range was next recorded */
+#side.hidden .card{--d:calc((var(--n) - 1 - var(--i)) * 45ms);transform:translateY(calc(var(--off,0px) - 48px)) perspective(900px) rotateX(90deg);opacity:0;   /* --off is the card's distance above the panel's top: every card travels up into the bar */
+  transition-duration:.42s,.24s;transition-timing-function:var(--settle),ease-in;transition-delay:var(--d),calc(var(--d) + .16s)}   /* the fade starts once the turn is well under way, so the turn is seen */
+/* the edge fades and each card's mask offset follow the scroll itself, not the scroll event:
+   a scroll-driven animation hands every card its progress --p in step with the frame that
+   scrolled, so the bottom card is never drawn faded for the one frame before the handler
+   ran. The script only records the scroll range and each card's top when the layout changes;
+   where the browser has no scroll timelines the handler below does it as before. */
+@property --p{syntax:'<number>';inherits:false;initial-value:0}
+@supports (animation-timeline:scroll()){
+  @keyframes side-scroll{from{--p:0}to{--p:1}}
+  #side .card{animation:side-scroll linear both;animation-timeline:scroll(nearest);
+    --ft:clamp(0px,var(--p) * var(--range,0px),22px);--fb:clamp(0px,(1 - var(--p)) * var(--range,0px),22px);
+    --off:calc(var(--p) * var(--range,0px) - var(--top,0px))}
+}
 #side .card{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%);
   mask-image:linear-gradient(to bottom,transparent 0,#000 var(--ft),#000 calc(100% - var(--fb)),transparent 100%);
-  -webkit-mask-size:100% var(--sh,100vh);mask-size:100% var(--sh,100vh);-webkit-mask-position:0 var(--off,0px);mask-position:0 var(--off,0px);
+  -webkit-mask-size:100% var(--sh,100vh);mask-size:100% var(--sh,100vh);
+  -webkit-mask-position:0 calc(var(--off,0px) - var(--stretch));mask-position:0 calc(var(--off,0px) - var(--stretch));   /* less the pull: the fade stays at the panel's edge while the card is drawn past it */
   -webkit-mask-repeat:no-repeat;mask-repeat:no-repeat}
-#side.hidden{visibility:hidden;pointer-events:none;opacity:0;transform:translate(-32px,-28px) scale(.96)}   /* hidden by visibility, not display: the cards' layers stay warm, so it comes back without a relayout */
+/* the panel's own rise and fade start a beat after the first card turns, and it is hidden by
+   visibility, not display: the cards' layers stay warm, so it comes back without a relayout;
+   on the way back it is there at once and the cards turn down onto it */
+#side.hidden{visibility:hidden;pointer-events:none;opacity:0;transform:translateY(-28px) scale(.96);transition-delay:.15s,.32s,.8s,0s}   /* straight up, never sideways */
 .card{border-radius:16px;flex:none}
 .card>h2{margin:0;padding:11px 16px;font:600 11px/13px var(--sans);
   color:var(--muted);display:flex;align-items:center;gap:8px;
@@ -252,7 +309,7 @@ table.kv2 tr.warn td{color:var(--stop)}
 /* the 3D switch a map app has: tilts the view and raises the terrain and the buildings */
 #tilt{font:600 13px/1 var(--sans)}
 #tilt.on{background:var(--accent);color:var(--accent-ink)}
-#tilt:disabled{opacity:.35;cursor:default}
+#tilt:disabled{color:var(--faint);cursor:default}   /* the glyph dims, the glass stays whole: a disc at a third of the others' opacity read as a different material */
 #compass{padding:0;display:flex;align-items:center;justify-content:center}
 #compass svg{width:34px;height:34px}
 #compass.hidden{display:none}
@@ -260,15 +317,21 @@ table.kv2 tr.warn td{color:var(--stop)}
 #lyr.open{z-index:1002}   /* the open card sits above the legend strip */
 /* beside the panel while the panel is shown; back to the corner when it is hidden */
 #side:not(.hidden) ~ #lyr{left:calc(min(440px,calc(100vw - 24px)) + 24px)}
+#side:not(.hidden) ~ #ramp{left:calc(50% + (min(440px,calc(100vw - 24px)) + 12px) / 2)}   /* centred on the map beside the sidebar, not on the window: on the whole window it sat under the layers button */
 #lyrbtn{display:flex;align-items:center;gap:8px;padding:4px;border:none;border-radius:14px;
   color:var(--ink);cursor:pointer;font:500 12px/1 var(--sans)}
+.th{position:relative;overflow:hidden} .th .thm{position:absolute;inset:0;width:100%;height:100%;border-radius:inherit;object-fit:cover;object-position:center}
 #lyrbtn .th{width:48px;height:48px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;
   color:#fff;background:var(--fill) center/cover no-repeat}
-#lyrbtn .th svg{filter:drop-shadow(0 1px 2px #000c)}
+#lyrbtn .th svg:not(.thm){position:relative;filter:drop-shadow(0 1px 2px #000c)}
 #lyrbtn .lbl{padding-right:8px}
 #lyrbtn:hover .lbl{color:var(--accent)}
-#lyr.open #lyrbtn{display:none}
-#lyrpanel{display:none;border-radius:16px;padding:14px;
+/* the button keeps its place while the card pops and folds over it: hidden, not removed,
+   so the corner never reflows, and the card is out of flow, anchored to the same corner - a
+   card in flow above a re-appearing button stood the button on the card's shoulders for the
+   fold's 320 ms, then dropped it to the corner */
+#lyr.open #lyrbtn{visibility:hidden}
+#lyrpanel{display:none;position:absolute;left:0;bottom:0;border-radius:16px;padding:14px;
   width:min(320px,calc(100vw - 24px));transform-origin:bottom left;transform:scale(.4);opacity:0;
   transition:transform .32s var(--spring),opacity .18s,display .32s allow-discrete}
 #lyr.open #lyrpanel{display:block;transform:none;opacity:1;@starting-style{transform:scale(.4);opacity:0}}
@@ -280,12 +343,11 @@ table.kv2 tr.warn td{color:var(--stop)}
 .bases{display:flex;gap:8px;margin-bottom:14px}
 .bases button{flex:1;border:none;background:transparent;padding:0;cursor:pointer;color:var(--muted);
   font:500 11px/1.3 var(--sans);text-align:center}
-.bases button .th{height:56px;border-radius:10px;margin-bottom:5px;border:2px solid transparent;
-  background:var(--fill) center/cover no-repeat}
+.bases button .th{height:56px;border-radius:10px;margin-bottom:5px;border:2px solid transparent;background:var(--fill)}
 .bases button:hover{color:var(--ink)}
 .bases button.on{color:var(--accent)}
 .bases button.on .th{border-color:var(--accent)}
-.bases button:disabled{opacity:.35;cursor:default}
+.bases button:disabled{color:var(--faint);cursor:default} .bases button:disabled .th{filter:saturate(.3) opacity(.6)}
 .lbs{display:flex;flex-wrap:wrap;gap:6px}
 .lb{display:flex;align-items:center;gap:7px;padding:7px 11px;border-radius:999px;cursor:pointer;
   user-select:none;color:var(--muted);font:400 12px/1 var(--sans);border:1px solid var(--edge)}
@@ -295,11 +357,11 @@ table.kv2 tr.warn td{color:var(--stop)}
 .lb .sw{width:14px;height:4px;border-radius:2px;flex:none;opacity:.35}
 .lb .sq{width:11px;height:11px;border-radius:2px;flex:none;opacity:.35}
 .lb.on .sw,.lb.on .sq{opacity:1}
-#ramp{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:1000;
+#ramp{position:absolute;left:50%;transform:translateX(-50%);bottom:28px;z-index:1000;transition:left .4s var(--spring);
   border-radius:999px;padding:8px 14px;font:400 11px/1 var(--sans);color:var(--muted);
   display:flex;align-items:center;gap:8px;white-space:nowrap}
 #ramp.hidden{display:none}
-#ramp .bar{width:96px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--t0),var(--t1),var(--t2),var(--t3))}
+#ramp .bar{width:96px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--t0) 0 8%,var(--t1) 22%,var(--t2) 50%,var(--t3) 100%)}   /* the thresholds' places on 1..4: 1.25, 1.67, 2.5, 4 */
 #ramp b{color:var(--ink);font-weight:500}
 #window{position:absolute;left:50%;transform:translateX(-50%);top:12px;z-index:1000;
   border-radius:999px;padding:9px 14px;font:500 12px/1 var(--mono);
@@ -403,13 +465,49 @@ table.kv2 tr.warn td{color:var(--stop)}
 </div>
 
 <div id="window" class="hidden"></div>
+<!-- the map-type pictures are the city's own snapshots of its views (thumb/default.light.png,
+     thumb/default.dark.png, thumb/satellite.png, kept with the city's figures), taken once
+     overhead, never drawn at run time; the Default one follows the theme.
+     Under each sits a fixed illustration of no place in particular, shown where a city has
+     no snapshot yet: the Default one painted by the theme's palette, the Satellite one by
+     imagery's own colours. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="thm-core" viewBox="0 0 160 112" preserveAspectRatio="xMidYMid slice">
+    <rect width="160" height="112" fill="var(--land)"/>
+    <path d="M118 -4 C 96 26, 138 50, 112 78 C 98 94, 110 108, 126 116 L 170 116 L 170 -4 Z" fill="var(--water)"/>
+    <path d="M-4 96 C 30 88, 60 104, 96 116 L -4 116 Z" fill="var(--water)"/>
+    <rect x="14" y="14" width="34" height="26" rx="6" fill="var(--green)"/>
+    <rect x="62" y="58" width="30" height="22" rx="5" fill="var(--green)"/>
+    <path d="M136 92 C 144 82, 152 86, 160 96 L 160 106 C 150 100, 142 102, 132 108 Z" fill="var(--sand)"/>
+    <path d="M-4 66 C 40 60, 70 52, 106 46" stroke="var(--rd4)" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    <path d="M56 -4 C 60 30, 52 60, 64 92" stroke="var(--rd3)" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+    <path d="M-4 32 C 40 40, 80 24, 124 30" stroke="var(--rd1)" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M22 96 L 40 50" stroke="var(--rd5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M78 6 L 100 44" stroke="var(--rd5)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="thm-satellite" viewBox="0 0 160 112" preserveAspectRatio="xMidYMid slice">
+    <rect width="160" height="112" fill="#42582f"/>
+    <path d="M0 0 H70 V50 H0 Z" fill="#4c6335"/>
+    <path d="M80 60 H160 V112 H80 Z" fill="#3b4e2b"/>
+    <rect x="8" y="58" width="46" height="34" fill="#8d7c4b"/>
+    <rect x="96" y="10" width="40" height="30" fill="#77693e"/>
+    <path d="M118 -4 C 96 26, 138 50, 112 78 C 98 94, 110 108, 126 116 L 170 116 L 170 -4 Z" fill="#2a4658"/>
+    <path d="M-4 96 C 30 88, 60 104, 96 116 L -4 116 Z" fill="#2a4658"/>
+    <g fill="#9a9689" opacity=".85"><rect x="20" y="16" width="10" height="7"/><rect x="34" y="20" width="9" height="6"/><rect x="24" y="30" width="8" height="8"/><rect x="66" y="66" width="9" height="7"/><rect x="78" y="70" width="7" height="9"/><rect x="48" y="12" width="7" height="6"/></g>
+    <path d="M-4 66 C 40 60, 70 52, 106 46" stroke="#d9d5c5" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+    <path d="M56 -4 C 60 30, 52 60, 64 92" stroke="#d9d5c5" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M-4 32 C 40 40, 80 24, 124 30" stroke="#e8e4d4" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M22 96 L 40 50" stroke="#c9c5b5" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+    <path d="M78 6 L 100 44" stroke="#c9c5b5" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+  </symbol>
+</svg>
 <div id="lyr">
-  <button id="lyrbtn" title="map type and layers"><span class="th"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 13 10 5 10-5"/><path d="m2 18 10 5 10-5"/></svg></span><span class="lbl">Layers</span></button>
+  <button id="lyrbtn" title="map type and layers"><span class="th"><svg class="thm"><use href="#thm-core"/></svg><img class="thm" src="thumb/default.light.png" alt="" onerror="this.remove()"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 13 10 5 10-5"/><path d="m2 18 10 5 10-5"/></svg></span><span class="lbl">Layers</span></button>
   <div id="lyrpanel">
     <h3>Map type<span class="sp"></span><button id="lyrclose" title="close">&#10005;</button></h3>
     <div class="bases">
-      <button data-base="core" class="on"><div class="th" id="th_core"></div>Default</button>
-      <button data-base="satellite"><div class="th" id="th_satellite"></div>Satellite</button>
+      <button data-base="core" class="on"><div class="th"><svg class="thm"><use href="#thm-core"/></svg><img class="thm" src="thumb/default.light.png" alt="" onerror="this.remove()"></div>Default</button>
+      <button data-base="satellite"><div class="th"><svg class="thm"><use href="#thm-satellite"/></svg><img class="thm" src="thumb/satellite.png" alt="" onerror="this.remove()"></div>Satellite</button>
     </div>
     <h3>Map details</h3>
     <div class="lbs">
@@ -421,7 +519,7 @@ table.kv2 tr.warn td{color:var(--stop)}
     </div>
   </div>
 </div>
-<div id="ramp" class="hidden" title="delay ratio: observed ÷ free-flow travel time; line width = vehicle volume"><b>delay</b><span>1.0 flowing</span><span class="bar"></span><span>3.0+ stopped</span></div>
+<div id="ramp" class="hidden" title="delay ratio: 1 + (road-vehicle traversal time beyond free-flow and the simulator's one-second step) ÷ the free-flow time of at least 150 m; green to 1.25, orange to 1.67, red to 2.5, stop-and-go from 4; line width = vehicle volume"><b>delay</b><span>1.0 flowing</span><span class="bar"></span><span>4.0+ stopped</span></div>
 <div id="ctl">
   <button class="rb hidden" id="compass" title="face north, level the view"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="1.5"/><path d="M20 4 24.5 20 20 24 15.5 20z" fill="#e53935"/><path d="M20 36 15.5 20 20 16 24.5 20z" fill="currentColor" fill-opacity=".55"/><circle cx="20" cy="20" r="2" fill="var(--panel)"/></svg></button>
   <button class="rb" id="tilt" title="3D view: terrain and buildings (right-drag or ctrl-drag tilts and turns)">3D</button>
@@ -455,8 +553,10 @@ const root = document.documentElement;
 const SCHEME = matchMedia('(prefers-color-scheme: light)');
 let THEME_MODE = ({auto:'auto', light:'light', dark:'dark', sim:'sim'})[recall('rv.theme')] || 'auto';
 const themeFor = mode => mode === 'auto' ? (SCHEME.matches ? 'light' : 'dark') : mode === 'sim' ? (SUN.el > 0 ? 'light' : 'dark') : mode;
+let themingTimer = null;
 function applyTheme(t){
   if (root.dataset.theme === t) return;
+  root.classList.add('theming'); clearTimeout(themingTimer); themingTimer = setTimeout(() => root.classList.remove('theming'), 560);
   root.dataset.theme = t; refreshPalette(); if (MAP) MAP.setBase(BASE); thumbs(); draw();
 }
 function setThemeMode(mode){
@@ -483,18 +583,27 @@ for (const card of document.querySelectorAll('.card[data-k]')){
   });
 }
 $('panel').onclick = () => { $('side').classList.toggle('hidden'); store('rv.panel', $('side').classList.contains('hidden') ? 'hidden' : 'shown'); };
+(function(){ const cards = document.querySelectorAll('#side .card'); $('side').style.setProperty('--n', cards.length); cards.forEach((c, i) => c.style.setProperty('--i', i)); })();
 if (recall('rv.panel') === 'hidden') $('side').classList.add('hidden');
 /* the panel's content fades at an edge only while there is more beyond it; each card's mask is
    placed in the panel's coordinates, so the fade sits at the panel's edge whatever the card */
+const SCROLL_TIMELINE = CSS.supports('animation-timeline: scroll()');
 function fadeEdges(){
   const s = $('side');
   s.style.setProperty('--sh', s.clientHeight + 'px');
+  if (SCROLL_TIMELINE){   // the stylesheet derives the fades from the scroll; only the layout's facts are recorded
+    // the range from the layout, not scrollHeight: the latter counts a card mid-turn
+    const last = s.lastElementChild, pad = parseFloat(getComputedStyle(s).paddingBottom) || 0;
+    s.style.setProperty('--range', Math.max(0, last ? last.offsetTop + last.offsetHeight + pad - s.clientHeight : 0) + 'px');
+    for (const c of s.children) c.style.setProperty('--top', c.offsetTop + 'px');
+    return;
+  }
   s.style.setProperty('--ft', s.scrollTop > 4 ? '22px' : '0px');
   s.style.setProperty('--fb', s.scrollTop + s.clientHeight < s.scrollHeight - 4 ? '22px' : '0px');
   for (const c of s.children) c.style.setProperty('--off', (s.scrollTop - c.offsetTop) + 'px');
 }
-$('side').addEventListener('scroll', () => { fadeEdges(); closeMenus(); }, {passive:true});
-new ResizeObserver(fadeEdges).observe($('side'));
+$('side').addEventListener('scroll', () => { if (!SCROLL_TIMELINE) fadeEdges(); closeMenus(); }, {passive:true});
+(function(){ const ro = new ResizeObserver(fadeEdges); ro.observe($('side')); for (const c of $('side').children) ro.observe(c); })();   // the range changes when a card grows, not only the panel
 new MutationObserver(fadeEdges).observe($('side'), {subtree:true, childList:true, attributes:true, attributeFilter:['class', 'hidden', 'style']});
 /* past either end the wheel pulls the panel a little, and it springs back the moment the wheel lets go */
 (function(){
@@ -759,20 +868,26 @@ for (const el of document.querySelectorAll('#lyrpanel .lb')){
 function legend(){ $('ramp').classList.toggle('hidden', !SHOW.traffic || !HS || !HS.available); }
 /* the Layers card opens on its button and closes on its cross, on Escape or on a click elsewhere */
 $('lyrbtn').onclick = () => $('lyr').classList.add('open');
+// the card is a panel, not a menu: it closes on its cross (or Escape), never on a click on the
+// map - a reader switching layers while panning had it vanish under the first drag
 $('lyrclose').onclick = () => $('lyr').classList.remove('open');
-document.addEventListener('click', e => { if (!$('lyr').contains(e.target)) $('lyr').classList.remove('open'); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') $('lyr').classList.remove('open'); });
-const RAMP = [[67,160,71],[255,179,0],[229,57,53],[142,27,27]];
-function rampColor(t){
-  t = Math.max(0, Math.min(1, t));
-  const x = t * (RAMP.length - 1), i = Math.floor(x), f = x - i;
-  const a = RAMP[i], b = RAMP[Math.min(RAMP.length - 1, i + 1)];
+/* the traffic colours: a map app's four, at a map app's thresholds on the delay ratio - green
+   to 1.25 (four fifths of free-flow speed), orange to 1.67, red to 2.5, stop-and-go from 4 -
+   in the theme's own values, so night traffic is lifted to carry on dark ground */
+const RAMP_STOPS = [1.0, 1.25, 1.67, 2.5, 4.0];
+const rampVars = () => ['--t0', '--t0', '--t1', '--t2', '--t3'].map(css);
+const hex = c => { const m = /^#([0-9a-f]{6})$/i.exec(c.trim()); return m ? [1, 3, 5].map(i => parseInt(m[1].slice(i - 1, i + 1), 16)) : [128, 128, 128]; };
+function rampColor(t){   // t in [0, 1] over the ramp 1..4 (the offline host's bins)
+  const r = RAMP_STOPS[0] + Math.max(0, Math.min(1, t)) * (RAMP_STOPS[RAMP_STOPS.length - 1] - RAMP_STOPS[0]), cols = rampVars().map(hex);
+  let i = 0; while (i < RAMP_STOPS.length - 2 && r > RAMP_STOPS[i + 1]) i++;
+  const f = (r - RAMP_STOPS[i]) / (RAMP_STOPS[i + 1] - RAMP_STOPS[i]), a = cols[i], b = cols[i + 1];
   return 'rgb(' + Math.round(a[0]+(b[0]-a[0])*f) + ',' + Math.round(a[1]+(b[1]-a[1])*f) + ',' + Math.round(a[2]+(b[2]-a[2])*f) + ')';
 }
 let COL = {};
 function refreshPalette(){
   const cs = getComputedStyle(root);
-  for (const v of ['--water','--land','--green','--sand','--rd5','--rd4','--rd3','--rd2','--rd1','--rail','--tram','--bg'])
+  for (const v of ['--water','--land','--green','--sand','--rd5','--rd4','--rd3','--rd2','--rd1','--rail','--tram','--bg','--t0','--t1','--t2','--t3'])
     COL[v] = cs.getPropertyValue(v).trim();
 }
 const css = v => COL[v] || '#333';
@@ -810,9 +925,13 @@ async function loadBasemap(){
     // vertex counts and Float32 lon/lat pairs - typed arrays over the buffer, nothing decoded
     const r = await fetch('basemap.bin');
     if (!r.ok) return;
-    const buf = await r.arrayBuffer(), hlen = new DataView(buf).getUint32(0, true);
+    let buf = await r.arrayBuffer();
+    const hlen = new DataView(buf).getUint32(0, true);
     const d = JSON.parse(new TextDecoder().decode(new Uint8Array(buf, 4, hlen)));
     let off = 4 + hlen;
+    // the typed-array views below need a four-byte start; the server pads its header to
+    // one, and a body from an older server is copied onto an aligned buffer instead
+    if (off % 4){ const pad = 4 - off % 4, b2 = new ArrayBuffer(buf.byteLength + pad); new Uint8Array(b2, pad).set(new Uint8Array(buf)); buf = b2; off += pad; }
     BM = {};
     for (const k in d.layers){
       const L_ = d.layers[k];
@@ -840,7 +959,7 @@ async function loadBasemap(){
       if (!fitted && !prefit){ prefit = true; fitTo(BM._bbox); }
     }
     draw(); thumbs();
-  } catch(e){ /* optional */ }
+  } catch(e){ console.warn('basemap not drawn: ' + e); }
 }
 async function refreshHotspot(key){
   if (key === lastHotspotKey) return;
@@ -995,12 +1114,14 @@ function glHost(){
   const EMPTY = {type:'FeatureCollection', features:[]};
   const dark = () => root.dataset.theme !== 'light';
   const map = new maplibregl.Map({
-    container:'map', style:{version:8, projection:{type:'globe'}, sources:{}, layers:[]},   // the earth when zoomed out, the flat map from about zoom 12
-    center:[0, 0], zoom:1, minZoom:0.6, maxZoom:20, maxPitch:85,
+    container:'map', style:{version:8, projection:{type:'globe'}, sources:{}, layers:[],   // the earth when zoomed out, the flat map from about zoom 12
+                            glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf'},
+    center:[0, 0], zoom:1, minZoom:0.6, maxZoom:20, maxPitch:75,
     dragRotate:false, pitchWithRotate:false, boxZoom:false,
     attributionControl:{compact:false}, fadeDuration:180, maplibreLogo:false,
   });
   map.getContainer().style.background = '#05070c';
+  map.addControl(new maplibregl.ScaleControl({maxWidth:110, unit:'metric'}), 'bottom-right');
   /* turning and tilting the way a map app does it: ctrl (or shift, or the Mac command key)
      + drag, sideways turns and up-down tilts, each a straight function of the pointer's travel
      (the library's own handler turns by the angle swept about the screen centre, which
@@ -1045,7 +1166,11 @@ function glHost(){
   map.on('error', e => { const m = e && e.error && e.error.message || ''; if (!/tile|Failed to fetch|AJAX|status/i.test(m)) console.warn(m || e); });
   let ready = false, pending = [];
   const when = fn => ready ? fn() : pending.push(fn);
-  map.on('load', () => { build(); ready = true; for (const f of pending) f(); pending = []; });
+  // the base and 3D are set once the host is ready: setBase() returns before ready, so set
+  // from inside build() it did nothing, and the remembered 3D then put terrain under the
+  // flat default base (elevation tiles loading, every tile drawn through the terrain's
+  // render-to-texture cache, a retheme reaching only tiles drawn after it)
+  map.on('load', () => { build(); ready = true; setBase(BASE, true); if (THREE_D) set3D(true, true); for (const f of pending) f(); pending = []; });
 
   /* the study latitude sets the metres-per-pixel scale of the metre-true road widths and
      the zoom at which each road class appears; known once the basemap or a run arrives */
@@ -1072,7 +1197,9 @@ function glHost(){
   const raster = (svc, attribution, maxzoom) => ({type:'raster', tiles:[ESRI + svc + '/MapServer/tile/{z}/{y}/{x}'], tileSize:256, maxzoom: maxzoom || 19, attribution});
   const rasterLayer = (id, before) => map.addLayer({id, type:'raster', source:id, layout:{visibility:'none'}, paint:{'raster-fade-duration':180}}, before);
   const FILL = {coast:'--land', green:'--green', sand:'--sand', water:'--water'};
-  const rampExpr = () => ['interpolate', ['linear'], ['get', 'd'], 0, 'rgb(67,160,71)', 1/3, 'rgb(255,179,0)', 2/3, 'rgb(229,57,53)', 1, 'rgb(142,27,27)'];
+  /* close up, the overlays thin to let the road beneath show: full to zoom 15, three fifths from 17 */
+  const closeUp = base => ['interpolate', ['linear'], ['zoom'], 15, base, 17, ['*', 0.6, base]];
+  const rampExpr = () => { const c = rampVars(), e = ['interpolate', ['linear'], ['get', 'd']]; RAMP_STOPS.forEach((r, i) => e.push(r, c[i])); return e; };
   function build(){
     map.addLayer({id:'bg', type:'background', paint:{'background-color': css('--water')}});
     // the stack a map app draws: a base without labels, the run's layers, then the labels
@@ -1085,15 +1212,15 @@ function glHost(){
     map.addSource('bm-roads', {type:'geojson', data:EMPTY, maxzoom:14});
     for (const spec of ROAD_ORDER)
       map.addLayer({id:'rd-' + spec[0], type:'line', source:'bm-roads', filter:['==', ['get', 'c'], spec[0]], minzoom: zoomForMpp(spec[4]),
-                    layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css(spec[1]), 'line-width': metreWidth(spec[2], spec[3])}});
+                    layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css(spec[1]), 'line-width': metreWidth(spec[2], spec[3]), 'line-opacity': closeUp(1)}});
     map.addSource('bm-rail', {type:'geojson', data:EMPTY, maxzoom:14});
-    map.addLayer({id:'bm-rail', type:'line', source:'bm-rail', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--rail'), 'line-width': metreWidth(5, 2)}});
+    map.addLayer({id:'bm-rail', type:'line', source:'bm-rail', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--rail'), 'line-width': metreWidth(5, 2), 'line-opacity': closeUp(1)}});
     map.addSource('bm-tram', {type:'geojson', data:EMPTY, maxzoom:14});
-    map.addLayer({id:'bm-tram', type:'line', source:'bm-tram', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--tram'), 'line-width': metreWidth(4, 2.4)}});
+    map.addLayer({id:'bm-tram', type:'line', source:'bm-tram', layout:{'line-cap':'round', 'line-join':'round'}, paint:{'line-color': css('--tram'), 'line-width': metreWidth(4, 2.4), 'line-opacity': closeUp(1)}});
     // the congested links: colour by delay, width and opacity by volume, the worst on top
     map.addSource('traffic', {type:'geojson', data:EMPTY, maxzoom:14, buffer:8, tolerance:0});
     map.addLayer({id:'traffic', type:'line', source:'traffic', layout:{'line-cap':'round', 'line-sort-key':['get', 'd']},
-                  paint:{'line-color': rampExpr(), 'line-opacity': ['+', 0.55, ['*', 0.45, ['get', 'v']]],
+                  paint:{'line-color': rampExpr(), 'line-opacity': closeUp(['+', 0.82, ['*', 0.18, ['get', 'v']]]),
                          'line-width': ['interpolate', ['linear'], ['zoom'], 9, ['+', 0.8, ['*', 2.5, ['get', 'v']]], 15, ['+', 1.6, ['*', 6, ['get', 'v']]]]}});
     map.addSource('dem', {type:'raster-dem', tiles:['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding:'terrarium', tileSize:256, maxzoom:14,
                           attribution:'Terrain: Mapzen Terrain Tiles (AWS Open Data)'});
@@ -1114,14 +1241,61 @@ function glHost(){
                            'fill-extrusion-height':['coalesce', ['get', 'height'], ['case', ['has', 'level'], ['*', ['get', 'level'], 3], 5]],
                            'fill-extrusion-base':['coalesce', ['get', 'min_height'], 0]}});
     }
-    map.addSource('places', raster('Reference/World_Boundaries_and_Places', 'Labels &copy; Esri')); rasterLayer('places');
+    labels();
     if (BM) setBasemap(BM);
     if (HS && HS.available && HS._url) setTraffic(HS);
     applyVisibility();
-    setBase(BASE, true);
-    if (THREE_D) set3D(true);
   }
 
+  /* the names, the way a map app writes them: vector labels on top of everything, on both map
+     types, each standing in the viewport plane so it faces the reader however the map is
+     tilted or turned; a road's name runs along its road and stays upright. Esri's raster
+     reference tiles had the names baked into the ground - flat, west to east, foreshortened
+     in 3D, and on the satellite base only. The names are OpenStreetMap's through OpenFreeMap's
+     OpenMapTiles tiles; nothing they serve enters the package. */
+  const LBL = ['lbl-country', 'lbl-city', 'lbl-local', 'lbl-water', 'lbl-road-major', 'lbl-road-minor'];
+  const NAME = ['coalesce', ['get', 'name:en'], ['get', 'name']];
+  function labels(){
+    map.addSource('omt', {type:'vector', url:'https://tiles.openfreemap.org/planet',
+                          attribution:'Names &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'});
+    const face = {'text-pitch-alignment':'viewport', 'text-rotation-alignment':'viewport'};
+    const along = {'symbol-placement':'line', 'text-pitch-alignment':'viewport', 'text-rotation-alignment':'map', 'text-keep-upright':true, 'symbol-spacing':320, 'text-max-angle':30};
+    const place = (id, classes, minzoom, maxzoom, size, font, transform) => map.addLayer({
+      id, type:'symbol', source:'omt', 'source-layer':'place', minzoom, maxzoom,
+      filter:['in', ['get', 'class'], ['literal', classes]],
+      layout:Object.assign({'text-field':NAME, 'text-font':[font], 'text-size':size, 'text-max-width':8, 'text-padding':6,
+                            'text-transform':transform || 'none', 'text-letter-spacing':transform ? 0.08 : 0.01,
+                            'symbol-sort-key':['coalesce', ['get', 'rank'], 30]}, face),
+      paint:{}});
+    place('lbl-country', ['country', 'continent'], 1, 7, ['interpolate', ['linear'], ['zoom'], 1, 10, 5, 14], 'Noto Sans Bold', 'uppercase');
+    place('lbl-city', ['state', 'city', 'town'], 4, 24,
+          ['interpolate', ['linear'], ['zoom'], 4, ['match', ['get', 'class'], 'city', 11, 'state', 10, 9], 10, ['match', ['get', 'class'], 'city', 16, 'state', 11, 12], 15, ['match', ['get', 'class'], 'city', 20, 'state', 12, 15]],
+          'Noto Sans Bold');
+    place('lbl-local', ['village', 'suburb', 'quarter', 'neighbourhood', 'hamlet', 'island', 'islet'], 11, 24,
+          ['interpolate', ['linear'], ['zoom'], 11, 10.5, 14, 12.5, 17, 14], 'Noto Sans Regular');
+    map.addLayer({id:'lbl-water', type:'symbol', source:'omt', 'source-layer':'water_name', minzoom:8,
+      layout:Object.assign({'text-field':NAME, 'text-font':['Noto Sans Italic'], 'text-size':['interpolate', ['linear'], ['zoom'], 8, 10, 14, 13], 'text-max-width':7}, face), paint:{}});
+    const road = (id, classes, minzoom, size) => map.addLayer({id, type:'symbol', source:'omt', 'source-layer':'transportation_name', minzoom,
+      filter:['in', ['get', 'class'], ['literal', classes]],
+      layout:Object.assign({'text-field':NAME, 'text-font':['Noto Sans Regular'], 'text-size':size, 'text-padding':4}, along), paint:{}});
+    road('lbl-road-major', ['motorway', 'trunk', 'primary', 'secondary'], 11, ['interpolate', ['linear'], ['zoom'], 11, 9.5, 16, 12.5]);
+    road('lbl-road-minor', ['tertiary', 'minor', 'service', 'track', 'path'], 14, ['interpolate', ['linear'], ['zoom'], 14, 10, 17, 12]);
+    inkLabels();
+  }
+  /* the names in the theme's ink on the default base and in white on imagery, each with a
+     halo of the ground it stands on */
+  function inkLabels(){
+    const sat = BASE === 'satellite', d = dark();
+    const ink = sat ? '#ffffff' : (d ? '#e8eaed' : '#3c4043'), halo = sat ? 'rgba(0,0,0,.72)' : (d ? 'rgba(18,20,24,.85)' : 'rgba(255,255,255,.9)');
+    const water = sat ? '#d6eaff' : (d ? '#8fb8e8' : '#3d78b3');
+    for (const id of LBL){
+      if (!map.getLayer(id)) continue;
+      map.setPaintProperty(id, 'text-color', id === 'lbl-water' ? water : ink);
+      map.setPaintProperty(id, 'text-halo-color', halo);
+      map.setPaintProperty(id, 'text-halo-width', id.startsWith('lbl-road') ? 1.2 : 1.5);
+      map.setPaintProperty(id, 'text-halo-blur', 0.4);
+    }
+  }
   /* the package basemap as GL sources: every ring an outer polygon (the builder emits closed
      ways and LGA exteriors, no holes), every road a line carrying its class */
   let bmStamp = null;
@@ -1167,7 +1341,35 @@ function glHost(){
     if (h.core_bbox) setLat((h.core_bbox[1] + h.core_bbox[3]) / 2);
     map.getSource('traffic').setData(h._url);   // the worker fetches and parses it; nothing crosses the main thread
   }
-  const vis = (id, on) => { if (map.getLayer(id)) map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); };
+  /* a layer comes and goes by fading, never by a cut: on, it appears at nought and eases to its
+     opacity over half a second; off, it eases to nought and is then hidden outright, so no tile
+     keeps loading behind a layer nobody sees. A line layer's opacity may be a zoom expression
+     (the close-up thinning), so the fade multiplies it rather than replacing it. */
+  const OPACITY = {raster:'raster-opacity', fill:'fill-opacity', line:'line-opacity', 'fill-extrusion':'fill-extrusion-opacity', symbol:'text-opacity', hillshade:'hillshade-exaggeration'};
+  const FADE_MS = 500, baseOpacity = {}, hideTimer = {}, shown = {};
+  function vis(id, on){
+    const L = map.getLayer(id);
+    if (!L) return;
+    const prop = OPACITY[L.type];
+    if (!prop || L.type === 'hillshade'){ map.setLayoutProperty(id, 'visibility', on ? 'visible' : 'none'); return; }
+    if (!(id in baseOpacity)){ const cur = map.getPaintProperty(id, prop); baseOpacity[id] = cur === undefined ? 1 : cur; }
+    const at = f => f === 1 ? baseOpacity[id] : (typeof baseOpacity[id] === 'number' ? baseOpacity[id] * f : ['*', f, baseOpacity[id]]);
+    clearTimeout(hideTimer[id]);
+    if (on){
+      if (shown[id]) return;
+      shown[id] = true;
+      map.setPaintProperty(id, prop + '-transition', {duration:0});
+      map.setPaintProperty(id, prop, at(0));
+      map.setLayoutProperty(id, 'visibility', 'visible');
+      requestAnimationFrame(() => { if (!shown[id]) return; map.setPaintProperty(id, prop + '-transition', {duration:FADE_MS}); map.setPaintProperty(id, prop, at(1)); });
+    } else {
+      if (!shown[id] && map.getLayoutProperty(id, 'visibility') === 'none') return;
+      shown[id] = false;
+      map.setPaintProperty(id, prop + '-transition', {duration:FADE_MS});
+      map.setPaintProperty(id, prop, at(0));
+      hideTimer[id] = setTimeout(() => { if (!shown[id]) map.setLayoutProperty(id, 'visibility', 'none'); }, FADE_MS + 40);
+    }
+  }
   function applyVisibility(){
     const twin = BASE === 'core';
     const ground = twin || (SHOW.ground && BASE !== 'satellite');
@@ -1185,15 +1387,21 @@ function glHost(){
     for (const spec of ROAD_ORDER) map.setPaintProperty('rd-' + spec[0], 'line-color', css(spec[1]));
     map.setPaintProperty('bm-rail', 'line-color', css('--rail'));
     map.setPaintProperty('bm-tram', 'line-color', css('--tram'));
+    map.setPaintProperty('traffic', 'line-color', rampExpr());
     if (map.getLayer('buildings')){
       map.setPaintProperty('buildings', 'fill-extrusion-color', BASE === 'satellite' ? '#b8bcc2' : (dark() ? '#3c4148' : '#dcdcd8'));
       map.setPaintProperty('buildings', 'fill-extrusion-opacity', BASE === 'satellite' ? 0.8 : 0.9);
     }
+    inkLabels();
     sky();
+    // with terrain on, every layer under the first symbol is drawn through the terrain's
+    // render-to-texture cache, which a paint change does not invalidate: the tiles already
+    // drawn kept the old palette while tiles drawn after the change took the new one
+    if (map.terrain && map.terrain.tileManager && map.terrain.tileManager.freeRtt){ map.terrain.tileManager.freeRtt(); map.triggerRepaint(); }
   }
   /* the base: the new tiles are shown at once and the old ones stay underneath until the
      map is idle (every visible tile loaded), so a switch never shows bare ground */
-  const BASES = {satellite:['imagery', 'places'], core:[]};
+  const BASES = {satellite:['imagery'], core:[]};
   let holdTimer = null;
   function setBase(name, first){
     if (!ready){ return; }
@@ -1205,24 +1413,47 @@ function glHost(){
     retheme(); applyVisibility();
     // the core base is the package drawn flat: 3D stands down there and returns with a tile base
     $('tilt').disabled = name === 'core';
-    if (name === 'core' && THREE_D) set3D(false, true);
+    if (name === 'core' && THREE_D) set3D(false);   // and forgotten: the tile base comes back overhead, not tilted
     else if (name !== 'core' && !THREE_D && recall('rv.3d') === 'on') set3D(true);
   }
   /* 3D: the terrain under every draped layer, the buildings extruded, the view tilted */
+  let skyNow = null, skyRaf = null;
+  const toRgb = h => { const m = /^#([0-9a-f]{6})$/i.exec(String(h).trim()); return m ? [1, 3, 5].map(i => parseInt(m[1].slice(i - 1, i + 1), 16)) : (String(h).match(/\d+/g) || [0, 0, 0]).slice(0, 3).map(Number); };
+  const rgbStr = v => 'rgb(' + v.map(Math.round).join(',') + ')';
+  // the fog takes the far ground a little earlier (0.7): the distance where a loading terrain
+  // tile can show as a wall is the distance the haze already covers
+  const putSky = c => map.setSky({'sky-color':c.sky, 'horizon-color':c.horizon, 'fog-color':c.fog, 'fog-ground-blend':0.7, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]});
+  function tweenSky(target){
+    cancelAnimationFrame(skyRaf);
+    const from = skyNow, to = {sky:toRgb(target.sky), horizon:toRgb(target.horizon), fog:toRgb(target.fog)};
+    if (!from || matchMedia('(prefers-reduced-motion: reduce)').matches){ skyNow = to; putSky({sky:rgbStr(to.sky), horizon:rgbStr(to.horizon), fog:rgbStr(to.fog)}); return; }
+    const t0 = performance.now(), D = 500, mix = (a, b, f) => a.map((x, i) => x + (b[i] - x) * f);
+    const step = now => {
+      const f = Math.min(1, (now - t0) / D), e = 1 - Math.pow(1 - f, 3);
+      const cur = {sky:mix(from.sky, to.sky, e), horizon:mix(from.horizon, to.horizon, e), fog:mix(from.fog, to.fog, e)};
+      putSky({sky:rgbStr(cur.sky), horizon:rgbStr(cur.horizon), fog:rgbStr(cur.fog)});
+      if (f < 1) skyRaf = requestAnimationFrame(step); else skyNow = to;
+    };
+    skyRaf = requestAnimationFrame(step);
+  }
   function sky(){
     const c = SKY || (dark() ? {sky:'#0b1220', horizon:'#1c2a3a', fog:'#202124'} : {sky:'#8fbcf5', horizon:'#dfe9f3', fog:'#e8eaed'});
-    map.setSky({'sky-color':c.sky, 'horizon-color':c.horizon, 'fog-color':c.fog, 'fog-ground-blend':0.6, 'horizon-fog-blend':0.8, 'sky-horizon-blend':0.7, 'atmosphere-blend':['interpolate', ['linear'], ['zoom'], 0, 1, 10, 1, 12, 0]});
+    // the sky, the fog over the ground and the scene light ease with the appearance, like the
+    // layers: the light takes its transitions in the style, the sky takes none, so its three
+    // colours are tweened here over the same half second
+    const T = {duration:500};
+    tweenSky({sky:c.sky, horizon:c.horizon, fog:c.fog});
     // the simulator's sun is the scene's light: its bearing and height (polar 0 = overhead, 90 = the
     // horizon) light the buildings' faces and the terrain, in the horizon's colour, dimming as it sets;
     // the library's own default light otherwise
     if (SKY){
       const polar = Math.max(0, Math.min(90, 90 - SUN.el)), up = Math.max(0, Math.min(1, (SUN.el + 6) / 12));
-      map.setLight({anchor:'map', position:[1.15, SUN.az, polar], color:c.horizon, intensity:0.2 + 0.5 * up});
+      map.setLight({anchor:'map', position:[1.15, SUN.az, polar], color:c.horizon, intensity:0.2 + 0.5 * up, 'position-transition':T, 'color-transition':T, 'intensity-transition':T});
       map.setPaintProperty('dem-warm', 'hillshade-illumination-anchor', 'map');
       map.setPaintProperty('dem-warm', 'hillshade-illumination-direction', Math.round(SUN.az));
       map.setPaintProperty('dem-warm', 'hillshade-exaggeration', 0.35 * up);
     } else {
-      map.setLight({anchor:'viewport', position:[1.15, 210, 30], color:'#ffffff', intensity:0.5});
+      map.setLight({anchor:'viewport', position:[1.15, 210, 30], color:'#ffffff', intensity:0.5, 'position-transition':T, 'color-transition':T, 'intensity-transition':T});
       map.setPaintProperty('dem-warm', 'hillshade-exaggeration', 0);
     }
   }
@@ -1252,12 +1483,21 @@ function glHost(){
      still down at street level, easing to face-on by the time a country fills the view, so a
      zoom out from a tilted street lands on a globe that faces the viewer. Set on the transform,
      never through the camera, so a wheel or an easing in flight is clamped rather than stopped. */
-  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 5) * 75 / 7)) + Math.min(10, Math.max(0, (z - 12) * 2.5));   // 0 at zoom 5, 75 at zoom 12, 85 from zoom 16
+  // 0 at zoom 5, 75 from zoom 12 - and no flatter: the last ten degrees put the far horizon in
+  // frame, where a terrain tile still loading stands beside its neighbour as a wall of tall
+  // triangles until it lands; a map app stops about here, and it loads fewer tiles, not more
+  const maxPitchAt = z => Math.max(0, Math.min(75, (z - 5) * 75 / 7));
   map.on('zoom', () => { map.transform.setMaxPitch(maxPitchAt(map.getZoom())); compass(); });
   const host = {
     map,
     refresh(){ when(() => { if (BM) setBasemap(BM); if (HS && HS.available && HS._url) setTraffic(HS); applyVisibility(); }); },
-    fit(box){ when(() => map.fitBounds([[box[0], box[1]], [box[2], box[3]]], {padding:20, animate:false})); },
+    // the framed view is overhead: the study area from above, north up, whatever the tilt was,
+    // and inside the map the sidebar leaves visible, not centred on the window behind it
+    fit(box){ when(() => {
+      const side = $('side'), open = side && !side.classList.contains('hidden') && innerWidth > 640;
+      const left = open ? side.getBoundingClientRect().right + 20 : 20;
+      map.fitBounds([[box[0], box[1]], [box[2], box[3]]], {padding:{top:76, right:20, bottom:60, left}, pitch:0, bearing:0, animate:false});
+    }); },
     setBase(name){ when(() => setBase(name)); },
     toggle3D(){ if (!$('tilt').disabled) set3D(!THREE_D); },
     sky(){ when(sky); },
@@ -1316,37 +1556,13 @@ function setBase(name){
   thumbs();
 }
 for (const b of document.querySelectorAll('.bases button')) b.onclick = () => setBase(b.dataset.base);
-/* the map-type thumbnails are the map itself: the imagery tile that covers the study area's
-   centre, and the package drawn into a small canvas. They resolve from the run's own core
-   bbox, or the basemap's before a payload arrives, so nothing here names a place. */
-const THUMB = {};
-function tileFor(lon, lat, z){
-  const n = Math.pow(2, z), r = lat * Math.PI / 180;
-  return [z, Math.floor((lon + 180) / 360 * n), Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n)];
-}
+/* the layers button carries the picture of the map type in use */
 function thumbs(){
-  const box = studyBox();
-  if (box){
-    const [z, x, y] = tileFor((box[0] + box[2]) / 2, (box[1] + box[3]) / 2, 11);
-    const E = 'https://server.arcgisonline.com/ArcGIS/rest/services/', T = '/MapServer/tile/' + z + '/' + y + '/' + x;
-    THUMB.satellite = 'url("' + E + 'World_Imagery' + T + '")';
-  }
-  if (box && BM && THUMB.coreTheme !== root.dataset.theme){   // redrawn in the palette of the current theme
-    THUMB.coreTheme = root.dataset.theme;
-    const c = document.createElement('canvas'); c.width = 160; c.height = 112;
-    const gx = c.getContext('2d');
-    const x0 = mercX(box[0]), x1 = mercX(box[2]), y0 = mercY(box[3]), y1 = mercY(box[1]);
-    const k = Math.min(c.width / (x1 - x0), c.height / (y1 - y0));
-    const f = {k, ox: (x0 + x1) / 2 * k - c.width / 2, oy: (y0 + y1) / 2 * k - c.height / 2};
-    gx.fillStyle = css('--water'); gx.fillRect(0, 0, c.width, c.height);
-    if (BM.coast){ strokeLayer(gx, BM.coast, f, 1, c.width, c.height); gx.fillStyle = css('--land'); gx.fill('evenodd'); }
-    if (BM.water){ strokeLayer(gx, BM.water, f, 1, c.width, c.height); gx.fillStyle = css('--water'); gx.fill('evenodd'); }
-    gx.lineWidth = 1; gx.lineCap = 'round';
-    for (const spec of ROAD_ORDER.slice(3)){ if (!BM[spec[0]]) continue; gx.strokeStyle = css(spec[1]); strokeLayer(gx, BM[spec[0]], f, 1, c.width, c.height); gx.stroke(); }
-    THUMB.core = 'url("' + c.toDataURL() + '")';
-  }
-  for (const k of ['satellite', 'core']) if (THUMB[k]) $('th_' + k).style.backgroundImage = THUMB[k];
-  $('lyrbtn').querySelector('.th').style.backgroundImage = THUMB[BASE] || '';
+  const th = $('lyrbtn').querySelector('.th'), img = th.querySelector('img');
+  th.querySelector('use').setAttribute('href', '#thm-' + BASE);
+  if (img) img.src = 'thumb/' + (BASE === 'satellite' ? 'satellite' : 'default.' + root.dataset.theme) + '.png';
+  const dflt = document.querySelector('.bases button[data-base="core"] img');
+  if (dflt) dflt.src = 'thumb/default.' + root.dataset.theme + '.png';
 }
 $('zin').onclick = () => (MAP || FB).zoomIn();
 $('zout').onclick = () => (MAP || FB).zoomOut();

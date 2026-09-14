@@ -87,9 +87,20 @@ HORIZON_FLOOR = int(_CFG.sweep('RUN.controler.last_iteration')['interval'][0])
 # p90 2.58, p95 10.67, max 56,804. A data-driven maximum would let one
 # gridlocked hairline flatten the whole city to green. Anything at or above
 # RAMP_MAX is simply "stopped", and volume drives width so a link carrying one
-# vehicle stays a hairline whatever its ratio.
+# vehicle stays a hairline whatever its ratio. The ramp is a map app's: 1.25
+# still green (four fifths of free-flow speed), 1.67 orange, 2.5 red, 4.0
+# stop-and-go (a quarter of free-flow speed).
 RAMP_MIN = 1.0
-RAMP_MAX = 3.0
+RAMP_MAX = 4.0
+# The measure the telemetry writes since 15 September 2026 - and, for a payload
+# written before it (no `tolerance_s` field), the server applies the same
+# correction to the raw mean/free-flow ratio from the network's own lengths
+# and speeds. On the routers pair's iteration 28, 35% of loaded links read at
+# or past 3.0 on the raw ratio; the median excess over free-flow was 1.4 s and
+# the shortest links (free-flow under 2 s, 41,684 of them) had a median ratio
+# of 2.62 - the qsim's one-second step read as congestion on every turn stub.
+STEP_TOLERANCE_S = 1.0   # the qsim floors the exit to the second and hands over next step
+MIN_STRETCH_M = 150.0    # delay is judged over at least a map app's segment, never a stub
 
 
 def _ts(s):
@@ -763,7 +774,9 @@ def load_network(run_dir):
             return hit
     node_re = re.compile(r'<node id="([^"]+)" x="([^"]+)" y="([^"]+)"')
     link_re = re.compile(r'<link id="([^"]+)" from="([^"]+)" to="([^"]+)"')
-    nodes, links = {}, []
+    len_re = re.compile(r' length="([^"]+)"')
+    spd_re = re.compile(r' freespeed="([^"]+)"')
+    nodes, links, ff, speed = {}, [], {}, {}
     try:
         with gzip.open(path, 'rt', encoding='utf-8', errors='replace') as f:
             for line in f:
@@ -774,6 +787,15 @@ def load_network(run_dir):
                 m = link_re.search(line)
                 if m:
                     links.append((m.group(1), m.group(2), m.group(3)))
+                    # length and speed, for the delay measure on payloads written before it
+                    ml, ms = len_re.search(line), spd_re.search(line)
+                    if ml and ms:
+                        try:
+                            v = float(ms.group(1))
+                            speed[m.group(1)] = v
+                            ff[m.group(1)] = float(ml.group(1)) / v if v > 0 else 0.0
+                        except ValueError:
+                            pass
     except (OSError, ValueError):
         return None
     ids, xs, ys = [], [], []
@@ -789,7 +811,8 @@ def load_network(run_dir):
     for i, lid in enumerate(ids):
         geom[lid] = (lons[2 * i], lats[2 * i], lons[2 * i + 1], lats[2 * i + 1])
         index[lid] = i
-    doc = {'stamp': stamp, 'path': path, 'ids': ids, 'geom': geom, 'index': index}
+    doc = {'stamp': stamp, 'path': path, 'ids': ids, 'geom': geom, 'index': index,
+           'ff': ff, 'speed': speed}
     with _NET_LOCK:
         _NET_CACHE[run_dir] = doc
         while len(_NET_CACHE) > NET_CACHE_ENTRIES:
@@ -853,6 +876,17 @@ def _volume_bbox(rows, keep):
 _HOTSPOT_CACHE = {}
 
 
+def delay_ratio(raw_ratio, freeflow_s, speed_mps):
+    """The delay ratio the telemetry writes since 15 September 2026, computed here
+    from a raw mean/free-flow ratio: the delay past the free-flow traversal and the
+    qsim's one-second step, over at least the free-flow time of MIN_STRETCH_M at
+    the link's speed. A link with no length or speed reads 1.0 (flowing)."""
+    if freeflow_s <= 0 or speed_mps <= 0:
+        return 1.0
+    delay = max(0.0, raw_ratio * freeflow_s - freeflow_s - STEP_TOLERANCE_S)
+    return 1.0 + delay / max(freeflow_s, MIN_STRETCH_M / speed_mps)
+
+
 def hotspot(run_dir):
     """The window's per-link congestion, keyed to the network payload's index:
     link index (uint32), vehicle volume (uint16) and the delay ratio on the
@@ -889,8 +923,17 @@ def _hotspot(run_dir, path):
                           'inputNetworkFile from config.xml nor '
                           'output/output_network.xml.gz'}
     index, geom = net['index'], net['geom']
-    rows = [(geom[lid], vol, ratio, index[lid])
-            for lid, vol, ratio in payload['links'] if lid in index]
+    # a payload written before the telemetry measured delay this way carries the raw
+    # mean/free-flow ratio; the same correction is applied here from the network
+    measured = payload.get('tolerance_s') is not None
+    ff, speed = net.get('ff') or {}, net.get('speed') or {}
+
+    def corrected(lid, ratio):
+        return ratio if measured else delay_ratio(ratio, ff.get(lid, 0.0), speed.get(lid, 0.0))
+    # [id, volume, ratio] from the telemetry before 15 September 2026; since then
+    # [id, volume, typical, mean] - the typical (median) traversal's delay is the colour
+    rows = [(geom[r[0]], r[1], corrected(r[0], r[2]), index[r[0]])
+            for r in payload['links'] if r[0] in index]
     if not rows:
         return {'available': False, 'reason': 'no loaded link matched the network'}
     idx, vols, ratios = [], [], []
@@ -906,14 +949,14 @@ def _hotspot(run_dir, path):
     # scale of the five-LGA study area - because a fraction of a percent of
     # very long external trips is enough to drag the frame off the city
     core = _volume_bbox([(g, v, r) for g, v, r, _ in rows], 0.90)
-    # the same links as GeoJSON text for the GL page's worker: delay on the fixed ramp as
-    # `d` in [0, 1], volume as `v` = sqrt(volume / max) in [0, 1], six decimals of degree.
-    # Built here, once per window, so the page never assembles or stringifies a feature.
+    # the same links as GeoJSON text for the GL page's worker: the delay ratio itself as
+    # `d`, capped at the ramp's top, volume as `v` = sqrt(volume / max) in [0, 1], six
+    # decimals of degree. Built here, once per window, so the page never assembles or
+    # stringifies a feature.
     parts = []
     for g, vol, ratio, _ in rows:
-        t = (min(max(ratio, RAMP_MIN), RAMP_MAX) - RAMP_MIN) / (RAMP_MAX - RAMP_MIN)
         parts.append('{"type":"Feature","properties":{"d":%.2f,"v":%.2f},"geometry":{"type":"LineString","coordinates":[[%.6f,%.6f],[%.6f,%.6f]]}}'
-                     % (t, (vol / vmax) ** 0.5, g[0], g[1], g[2], g[3]))
+                     % (min(max(ratio, RAMP_MIN), RAMP_MAX), (vol / vmax) ** 0.5, g[0], g[1], g[2], g[3]))
     geojson = ('{"type":"FeatureCollection","features":[' + ','.join(parts) + ']}').encode('utf-8')
     return {
         'available': True,
@@ -926,6 +969,9 @@ def _hotspot(run_dir, path):
         'window_from_s': payload.get('window_from_s'),
         'window_to_s': payload.get('window_to_s'),
         'metric': payload.get('metric'),
+        'measure': ('the telemetry\'s, %s traversal' % payload.get('statistic', 'mean') if measured
+                    else 'corrected here from the network, mean traversal')
+                   + ': delay past free-flow and a %.0f s step, over at least %.0f m' % (STEP_TOLERANCE_S, MIN_STRETCH_M),
         'covers': payload.get('covers'),
         'n_links': len(rows),
         'bbox': [min(lons), min(lats), max(lons), max(lats)],
@@ -955,6 +1001,12 @@ def basemap_bytes():
             body.append(counts)
             body.append(coords)
         h = json.dumps({'stamp': doc['stamp'], 'layers': header}).encode('utf-8')
+        # padded to a four-byte boundary: the page views the counts and coordinates as
+        # typed arrays straight over the body, and a Uint32Array cannot start at an odd
+        # offset. The stamp is a float whose printed length varies with the file's mtime,
+        # so an unpadded header was aligned by luck - and a RangeError, swallowed, left
+        # the map with no land, no water and a blank thumbnail after one rebuild.
+        h += b' ' * (-len(h) % 4)
         doc['_bytes'] = _pack('I', [len(h)]) + h + b''.join(body)
     return doc['_bytes']
 
@@ -1022,6 +1074,14 @@ def basemap_payload():
 # ---------------------------------------------------------------- the server
 
 def _page():
+    """The page as it is on disk NOW. A server reads it ONCE, when it starts
+    (`make_handler`), so the page it serves and the routes it answers are one
+    revision: the launcher's embedded server imported the midnight routes
+    (`network.json`, `basemap.json`) and, reading this file per request, served
+    the 02:58 page that asks for `network.bin`, `basemap.bin` and
+    `traffic.geojson` - three 404s and a map with no layers, on a port that
+    cannot be restarted without killing the arm. `--reload` re-reads per request
+    for editing the page against a standalone server."""
     with open(os.path.join(_HERE, 'run_view.html'), encoding='utf-8') as f:
         html = f.read()
     return (html.replace('__POLL_MS__', str(int(POLL_S * 1000)))
@@ -1034,7 +1094,9 @@ def _query(path):
     return parts.path, {k: v[-1] for k, v in parse_qs(parts.query).items()}
 
 
-def make_handler(default_run_dir):
+def make_handler(default_run_dir, reload_page=False):
+    page_html = None if reload_page else _page()
+
     class Handler(http.server.BaseHTTPRequestHandler):
         def _send(self, body, ctype='application/json', code=200):
             if isinstance(body, str):
@@ -1071,11 +1133,18 @@ def make_handler(default_run_dir):
         def do_GET(self):
             path, q = _query(self.path)
             if path in ('/', '/index.html'):
-                self._send(_page(), 'text/html')
+                self._send(page_html if page_html is not None else _page(), 'text/html')
                 return
             if path == '/runs.json':
                 self._send(json.dumps({'default': os.path.basename(default_run_dir),
                                        'runs': list_runs()}))
+                return
+            if path in ('/thumb/default.light.png', '/thumb/default.dark.png', '/thumb/satellite.png'):
+                # the map-type pictures: the city's own snapshots of its two views, taken
+                # once and kept with its figures; a city without them shows the page's
+                # drawn illustration instead (the <img> falls back on a 404)
+                self._send_file(_city.city_docs('reference', 'figures', 'viewer_' + path[7:]),
+                                'image/png')
                 return
             if path == '/basemap.bin':
                 body = basemap_bytes()
@@ -1157,10 +1226,10 @@ class _Server(socketserver.ThreadingMixIn, socketserver.TCPServer):
     daemon_threads = True
 
 
-def serve(run_dir, port=None, poll_s=None, background=True):
+def serve(run_dir, port=None, poll_s=None, background=True, reload_page=False):
     """Bind on loopback and serve. Returns the url, or None if no port is free."""
     port = int(port or PORT)
-    handler = make_handler(os.path.abspath(run_dir))
+    handler = make_handler(os.path.abspath(run_dir), reload_page=reload_page)
     httpd = None
     for candidate in range(port, port + 20):
         try:
@@ -1199,6 +1268,9 @@ def main():
     ap.add_argument('--port', type=int, default=None)
     ap.add_argument('--once', action='store_true',
                     help='print the status json and exit, serving nothing')
+    ap.add_argument('--reload', action='store_true',
+                    help='re-read run_view.html on every request (editing the page); '
+                         'by default the page is read once, so it and the server are one revision')
     args = ap.parse_args()
 
     run_dir = args.run
@@ -1219,7 +1291,7 @@ def main():
         print(json.dumps(scan(run_dir), indent=1)[:4000])
         return
 
-    url = serve(run_dir, args.port, background=True)
+    url = serve(run_dir, args.port, background=True, reload_page=args.reload)
     if url is None:
         raise SystemExit('no free loopback port')
     print('run viewer: %s' % url, flush=True)
