@@ -845,7 +845,7 @@ async function tick(){
   $('name').textContent = d.name;
   $('state').textContent = d.state.replace(/_/g, ' ');
   $('state').className = 'pill ' + d.state;
-  $('resultpill').hidden = !(d.completion === 'ran_to_last_iteration' && d.target >= 250);
+  $('resultpill').hidden = !(d.completion === 'ran_to_last_iteration' && d.target >= d.horizon_floor);
   $('family').hidden = !d.family;
   $('family').textContent = d.family ? d.family.split('-')[0] : '';
   $('family').title = d.family || '';

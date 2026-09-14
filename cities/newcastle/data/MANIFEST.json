@@ -1,10 +1,10 @@
 {
   "project": "Five local government areas, 4,086 km2, 1,500 core SA1s. Wickham is ONE SUBURB of it, and the name is legitimate only for that suburb's own zones and stops, for Newcastle Interchange at Wickham, and for scenario S1 which starts there.",
-  "generated": "2026-09-14T15:01:06",
+  "generated": "2026-09-14T16:24:02",
   "base_year": 2026,
   "crs": "EPSG:28356 (GDA94 / MGA Zone 56)",
   "n_files": 959,
-  "total_bytes": 7126167710,
+  "total_bytes": 7126167732,
   "total_gib": 6.64,
   "by_stage": {
     "raw": 532,
@@ -12,7 +12,7 @@
   },
   "bytes_by_stage": {
     "raw": 5283276530,
-    "processed": 1842891180
+    "processed": 1842891202
   },
   "by_lineage_scope": {
     "raw": 524,
@@ -7532,9 +7532,9 @@
     },
     {
       "path": "data/processed/corridor/A4_segment_runtime_decomposition.csv",
-      "bytes": 988,
+      "bytes": 1008,
       "rows": 10,
-      "sha256": "f0f3d1ea4358592da30a875376c5c4ae0bb5647f300dea447807565434a7a7a0",
+      "sha256": "47fcdef18732b920c3c23ad3d300d2a3467d07ed63e81f44c00f5174e20f7b48",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_corridor_layers.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
@@ -7548,7 +7548,7 @@
       "path": "data/processed/corridor/A4_stop_dwell_model.csv",
       "bytes": 1220,
       "rows": 6,
-      "sha256": "efd0e43cf45a175b28530d898f0db43589e4134c43befee932e52ef5cf3f4fe5",
+      "sha256": "d7459d0c541c6f162a7400012d021a2da4ede72dfe96446c5065594a6d49e26f",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_corridor_layers.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",
@@ -7560,9 +7560,9 @@
     },
     {
       "path": "data/processed/corridor/A4_vehicle_spec.csv",
-      "bytes": 733,
+      "bytes": 735,
       "rows": 1,
-      "sha256": "66621aaacbccf4b2201687e54104e51f0b91069028d8d453c533ab8a827cfb0f",
+      "sha256": "d785458075486a72d1a968f117c06730701773b0432feb343c7ba1d82d58a32d",
       "stage": "processed",
       "produced_by": "cities/newcastle/build/build_corridor_layers.py",
       "source": "TfNSW Open Data Hub - GTFS, Opal, traffic counts, Household Travel Survey, speed zones + OpenStreetMap, via Overpass + Copernicus GLO-30 Digital Elevation Model",

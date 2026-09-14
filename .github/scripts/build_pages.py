@@ -112,7 +112,7 @@ body{{margin:0;background:#ffffff;color:#1f2328}}
 <article class="markdown-body">
 {rendered}
 </article>
-<p class="foot">Rendered from <a href="{BLOB}README.md">README.md</a> at commit <code>{sha}</code> ({date}) by <code>.github/workflows/pages.yml</code>. Dated whole-repository assessments are indexed at <a href="{TREE}docs/reports/">docs/reports/</a>; each report is served here at its path.</p>
+<p class="foot">Rendered from <a href="{BLOB}README.md">README.md</a> at commit <code>{sha}</code> ({date}) by <code>.github/workflows/pages.yml</code>. Dated whole-repository assessments are indexed at <a href="{TREE}docs/reports/">docs/reports/</a>; each report is served here at its path. The fit figures and the reports are derived from synthetic plans carrying the OpenStreetMap network's ancestry (&copy; OpenStreetMap contributors) and are published under ODbL 1.0 (share-alike); the rest of the data package is CC-BY 4.0.</p>
 </div>
 </body>
 </html>

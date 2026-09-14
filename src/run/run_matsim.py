@@ -901,6 +901,9 @@ def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False):
         announce_cost(iterations, fraction, cfg)
     refuse_if_no_automatic_stop(cfg)
     refuse_small_heap(cfg, xmx, fraction)
+    # here as well as in run(): a --detach launch returns before run() and
+    # would otherwise refuse only in a log nobody is watching (tenth report)
+    refuse_concurrent_arm()
     if not quiet:
         announce_heap(cfg, xmx, fraction)
     refuse_unsafe_telemetry(cfg)
@@ -1530,6 +1533,20 @@ def start_gate_watch(run_dir, cfg, proc):
     reporter = REPORTER
     verdict_path = os.path.join(run_dir, GATE_VERDICT)
 
+    def _note_unread(milestone, out):
+        tail = ((out.stderr or out.stdout or '').strip().splitlines() or ['no output'])[-1]
+        print('gate watcher: iteration %d was NOT JUDGED - the reporter failed '
+              'on every attempt (%s); the run continues unjudged past it'
+              % (milestone, tail[:200]), flush=True)
+        try:
+            with open(os.path.join(run_dir, READINGS), 'a',
+                      encoding='utf-8', newline='\n') as fh:
+                fh.write(json.dumps(dict(iteration=milestone, unread=True,
+                                         reason=tail[:400],
+                                         read_at=_now())) + '\n')
+        except OSError:
+            pass
+
     def loop():
         claimed = 0
         retry_at = 0.0
@@ -1555,9 +1572,13 @@ def start_gate_watch(run_dir, cfg, proc):
                 continue
             if out.returncode != 0:
                 # table not written yet - retry until the run moves a whole
-                # interval past the milestone, then let it go
+                # interval past the milestone, then let it go - SAYING SO:
+                # a milestone that was never judged is a promised stop the
+                # run did not have (tenth report), so the give-up is printed
+                # and written to the readings ledger as an unread milestone
                 if it >= milestone + interval:
                     claimed = milestone
+                    _note_unread(milestone, out)
                 retry_at = time.time() + retry_s
                 continue
             # THE STOP IS KEYED ON THE VERDICT FILE, NEVER ON THE PRINTED
@@ -1575,6 +1596,7 @@ def start_gate_watch(run_dir, cfg, proc):
                     or read.get('iteration') != milestone:
                 if it >= milestone + interval:
                     claimed = milestone
+                    _note_unread(milestone, out)
                 retry_at = time.time() + retry_s
                 continue
             claimed = milestone
@@ -2008,7 +2030,11 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     # The RUNNER names the directory: launch stamp + iterations + sample
     # percentage. The stamp is a label for humans sorting `results/`; run
     # identity is the parameter set matched above.
-    stamp = time.strftime('%Y%m%dT%H%M%S')
+    # a detached launch hands its scheduled task's stamp across, so the run
+    # directory and the task carry one name (run.py --stop matches on it)
+    stamp = (os.environ.get('CITYSIM_LAUNCH_STAMP') or '').strip()
+    if not re.fullmatch(r'\d{8}T\d{6}', stamp):
+        stamp = time.strftime('%Y%m%dT%H%M%S')
     name = '%s_%dit_%spct' % (stamp, iterations, '%g' % (fraction * 100))
     n = 2
     while os.path.exists(results_store.raw_dir(name)) \

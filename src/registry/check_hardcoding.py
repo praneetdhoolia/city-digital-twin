@@ -412,6 +412,13 @@ STRUCTURAL = {
         'can reach a result',
     'src/analyse/run_view.py:RAMP_MAX':
         'the other end of the same display scale',
+    'src/analyse/run_view.py:MODES_CACHE_ENTRIES':
+        'how many computed readings the viewer keeps in memory. An observer '
+        'cache bound: it decides what the page remembers, never what a run '
+        'produces',
+    'src/analyse/run_view.py:NET_CACHE_ENTRIES':
+        'how many run networks the viewer keeps decoded in memory (~130 MB '
+        'each). The same observer cache bound',
     'src/analyse/run_view.py:_send(code)':
         'an HTTP status code. The default 200 is the HTTP specification, not a '
         'transport parameter',

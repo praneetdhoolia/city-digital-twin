@@ -1093,7 +1093,8 @@
       "decisions_ref": "9.167",
       "description": "Home locations are jittered inside their SA1 within a radius of this factor times the circle-equivalent radius of the zone area, so homes are not stacked on the centroid. Was an inline literal in the script until 12 September 2026 (#188).",
       "consumers": [
-        "src/build/build_population.py"
+        "src/build/build_population.py",
+        "src/build/build_activity_chains.py"
       ]
     },
     "B.population.labour_force_min_age": {

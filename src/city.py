@@ -45,7 +45,10 @@ CITIES_DIR = os.path.join(REPO, 'cities')
 # time a second city was actually exercised.
 DEFAULT_CITY = 'newcastle'
 CITY_ENV = 'CITYSIM_CITY'
-RESERVED_ENV = (CITY_ENV, 'CITYSIM_REPO')
+# CITYSIM_LAUNCH_STAMP carries a detached launch's scheduled-task stamp into
+# the runner so the run directory and the task share one name and --stop
+# can find the task (tenth report); it is a launch fact, not a field.
+RESERVED_ENV = (CITY_ENV, 'CITYSIM_REPO', 'CITYSIM_LAUNCH_STAMP')
 
 # `or` rather than a get() default: an EMPTY variable is not a city, and it
 # resolved to `cities/` itself - which then failed several hundred lines

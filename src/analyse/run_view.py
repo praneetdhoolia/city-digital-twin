@@ -39,6 +39,8 @@ COMPLETED (`_metrics.json`) - DECISIONS.md 9.12. `extract_metrics.py` ->
 """
 import os
 import re
+import sys
+import collections
 import csv
 import json
 import time
@@ -76,6 +78,9 @@ STALL_S = _CFG.get('RUN.monitor.stall_s')
 POLL_S = _CFG.get('RUN.monitor.poll_s')
 FAST_POLL_S = _CFG.get('RUN.monitor.live_poll_s')
 PORT = _CFG.get('RUN.monitor.port')
+# the smallest iteration count the registry admits for a modelling run: below
+# it a completed run is a probe, not a result (the sweep's lower bound)
+HORIZON_FLOOR = int(_CFG.sweep('RUN.controler.last_iteration')['interval'][0])
 
 # The colour ramp is FIXED and saturating, never fitted to the data in view.
 # Measured on a 1% probe over 59,399 loaded links: median delay ratio 1.10,
@@ -372,6 +377,7 @@ def scan(run_dir):
         'gate_interval': declared('RUN.gate.interval_iterations'),
         'wall_ceiling_h': declared('RUN.gate.wall_ceiling_h'),
         'xmx': meta.get('xmx'),
+        'horizon_floor': HORIZON_FLOOR,
         'scenario': scenario,
         'day': day,
         'fraction': ident('fraction', 'RUN.sample.fraction'),
@@ -446,8 +452,11 @@ def list_runs():
             'family': family,
             'raw_on_disk': bool(_results_store.raw_dir(name)
                                 and os.path.isdir(_results_store.raw_dir(name))),
+            # a result is a run that executed the horizon it declared; whether
+            # that horizon is a modelling one is the registry's sweep floor,
+            # not a number typed here
             'is_result': completion == 'ran_to_last_iteration'
-                         and (meta.get('iterations') or 0) >= 250,
+                         and (meta.get('iterations') or 0) >= HORIZON_FLOOR,
         })
     return out
 
@@ -467,8 +476,11 @@ READINGS = '_readings.jsonl'        # appended by the runner's gate watcher
 GATE_VERDICT = '_gate_verdict.json'  # the reporter's last verdict, rows included
 
 _MODES_LOCK = threading.Lock()
-_MODES_CACHE = {}       # (run_dir, iteration) -> reading dict
-_MODES_BUSY = set()     # (run_dir, iteration) being computed on a thread
+_MODES_CACHE = collections.OrderedDict()   # (run_dir, iteration) -> reading dict, bounded
+_MODES_BUSY = set()     # (run_dir, iteration) being computed on the one worker thread
+_MODES_QUEUE = []       # readings asked for while the worker is busy, in order
+MODES_CACHE_ENTRIES = 64
+REPORTER = os.path.join(_HERE, 'report_mode_ridership.py')
 
 
 def _reporter():
@@ -514,26 +526,63 @@ def stored_readings(run_dir):
 
 
 def _compute_reading(run_dir, iteration):
-    """Run the reporter in-process for one iteration; the table it prints is
-    swallowed. Never writes to the run directory (the observer rule)."""
-    import io
-    import contextlib
-    rmr = _reporter()
-    buf = io.StringIO()
+    """The reporter run as a SUBPROCESS writing `--json` to a temporary file.
+
+    Never in-process: the reporter prints its table to stdout and keeps its
+    rows in a module global, and this server may be living inside the
+    runner's own process (`run_matsim.start_live_view`), where redirecting
+    sys.stdout would swallow the gate, ceiling and stall watchers' prints and
+    two overlapped readings would race on one dict (tenth report, defects 1
+    and 2). A subprocess owns its stdout and its globals. Writes nothing to
+    the run directory.
+    """
+    import subprocess
+    import tempfile
+    fd, tmp = tempfile.mkstemp(prefix='reading_', suffix='.json')
+    os.close(fd)
     try:
-        with contextlib.redirect_stdout(buf):
-            breaches = rmr.report(run_dir, iteration)
-    except SystemExit as exc:
-        return {'iteration': iteration, 'error': str(exc)}
-    except Exception as exc:                                 # noqa: BLE001
+        out = subprocess.run([sys.executable, REPORTER, '--run', run_dir,
+                              '--it', str(iteration), '--json', tmp],
+                             capture_output=True, text=True, timeout=1800, cwd=ROOT)
+        if out.returncode != 0:
+            tail = (out.stderr or out.stdout or '').strip().splitlines()
+            return {'iteration': iteration, 'error': tail[-1] if tail else 'reporter rc=%d' % out.returncode}
+        doc = _load_json(tmp)
+        if not isinstance(doc, dict) or not doc.get('rows'):
+            return {'iteration': iteration, 'error': 'the reporter wrote no rows'}
+        text = out.stdout
+        breaches = []
+        if 'GATE:' in text and 'at or past' in text:
+            breaches = [r['mode'] for r in doc['rows']
+                        if r.get('flag', '').startswith('STOP')]
+        doc.update(passed=not breaches, breaches=breaches,
+                   read_at=time.strftime('%Y-%m-%dT%H:%M:%S'),
+                   computed_by='run_view (a reporter subprocess; not written to the run)')
+        return doc
+    except (OSError, subprocess.SubprocessError) as exc:
         return {'iteration': iteration, 'error': '%s: %s' % (exc.__class__.__name__, exc)}
-    last = rmr.LAST
-    return dict(run=last.get('run'), iteration=iteration, fraction=last.get('fraction'),
-                source=last.get('source'), rows=list(last.get('rows') or []),
-                passed=not breaches,
-                breaches=[dict(mode=m, modelled=mv, target=t, deviation_pct=dev)
-                          for m, mv, t, dev in breaches],
-                computed_by='run_view (in memory, not written)')
+    finally:
+        try:
+            os.remove(tmp)
+        except OSError:
+            pass
+
+
+def _worker():
+    """One reading at a time: a 25 % trips table is a ~20 s read of a few
+    hundred MB, and two of them at once compete with the run for the disk."""
+    while True:
+        with _MODES_LOCK:
+            if not _MODES_QUEUE:
+                _MODES_BUSY.discard('worker')
+                return
+            key = _MODES_QUEUE.pop(0)
+        doc = _compute_reading(*key)
+        with _MODES_LOCK:
+            _MODES_CACHE[key] = doc
+            while len(_MODES_CACHE) > MODES_CACHE_ENTRIES:
+                _MODES_CACHE.popitem(last=False)
+            _MODES_BUSY.discard(key)
 
 
 def _start_reading(run_dir, iteration):
@@ -542,15 +591,11 @@ def _start_reading(run_dir, iteration):
         if key in _MODES_CACHE or key in _MODES_BUSY:
             return
         _MODES_BUSY.add(key)
-
-    def go():
-        try:
-            doc = _compute_reading(run_dir, iteration)
-        finally:
-            with _MODES_LOCK:
-                _MODES_CACHE[key] = doc
-                _MODES_BUSY.discard(key)
-    threading.Thread(target=go, daemon=True, name='mode-reading').start()
+        _MODES_QUEUE.append(key)
+        if 'worker' in _MODES_BUSY:
+            return
+        _MODES_BUSY.add('worker')
+    threading.Thread(target=_worker, daemon=True, name='mode-reading').start()
 
 
 def modes(run_dir, iteration=None, compute=True):
@@ -561,9 +606,10 @@ def modes(run_dir, iteration=None, compute=True):
     targets = mode_targets()
     stored = stored_readings(run_dir)
     readable = readable_iterations(run_dir)
+    run_dir = os.path.abspath(run_dir)
     with _MODES_LOCK:
         for (rd, it), doc in _MODES_CACHE.items():
-            if rd == os.path.abspath(run_dir) or rd == run_dir:
+            if rd == run_dir:
                 stored.setdefault(it, doc)
     want = iteration if iteration is not None else (readable[-1] if readable else None)
     computing = False
@@ -594,7 +640,9 @@ def modes(run_dir, iteration=None, compute=True):
 
 # ---------------------------------------------------------------- the map
 
-_NET_CACHE = {}
+_NET_CACHE = collections.OrderedDict()   # run_dir -> network doc; a few runs at most
+_NET_LOCK = threading.Lock()
+NET_CACHE_ENTRIES = 2        # ~130 MB of Python objects per 368,000-link network
 _BASEMAP_CACHE = {}
 _TRANSFORMER = None
 
@@ -643,9 +691,10 @@ def load_network(run_dir):
         stamp = os.path.getmtime(path)
     except OSError:
         return None
-    hit = _NET_CACHE.get(run_dir)
-    if hit and hit['stamp'] == stamp:
-        return hit
+    with _NET_LOCK:
+        hit = _NET_CACHE.get(run_dir)
+        if hit and hit['stamp'] == stamp:
+            return hit
     node_re = re.compile(r'<node id="([^"]+)" x="([^"]+)" y="([^"]+)"')
     link_re = re.compile(r'<link id="([^"]+)" from="([^"]+)" to="([^"]+)"')
     nodes, links = {}, []
@@ -675,7 +724,10 @@ def load_network(run_dir):
         geom[lid] = (lons[2 * i], lats[2 * i], lons[2 * i + 1], lats[2 * i + 1])
         index[lid] = i
     doc = {'stamp': stamp, 'path': path, 'ids': ids, 'geom': geom, 'index': index}
-    _NET_CACHE[run_dir] = doc
+    with _NET_LOCK:
+        _NET_CACHE[run_dir] = doc
+        while len(_NET_CACHE) > NET_CACHE_ENTRIES:
+            _NET_CACHE.popitem(last=False)
     return doc
 
 

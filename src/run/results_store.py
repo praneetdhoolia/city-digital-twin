@@ -37,7 +37,8 @@ PROCESSED = os.path.join(RESULTS, 'processed')
 # it; a reading someone will quote must live in a record or a snapshot below.
 RECORD_FILES = ('_meta.json', '_run.json', '_config.json', '_progress.json',
                 '_metrics.json', '_summary.json', '_fit.json',
-                '_gate_stop.json', 'SUMMARY.md', 'config.xml')
+                '_gate_stop.json', '_gate_verdict.json', '_readings.jsonl',
+                'SUMMARY.md', 'config.xml')
 # Reading snapshots extracted from the bulk before it can be trimmed: the
 # twelve-mode trend across every readable iteration, and the newest readable
 # iteration's table as JSON. Extraction failures are logged into the processed

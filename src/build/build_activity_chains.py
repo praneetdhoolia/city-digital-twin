@@ -322,6 +322,10 @@ P_INTERMEDIATE_SWEEP = tuple(CFG.sweep('B.activity.p_intermediate_stop'))
 # still two copies. There is one now, and the sweep comes from the field's own
 # `sweep` key rather than from a tuple typed beside it.
 DETOUR_FACTOR = CFG.get('B.activity.detour_factor')
+# the in-zone placement radius factor, ONE declared value: it was typed as
+# 0.6 at three sites here beside its registry twin in build_population.py,
+# so the sweep moved the homes and not the destinations (tenth report)
+HOME_JITTER_FACTOR = float(CFG.get('B.population.home_jitter_radius_factor'))
 DECAY_TARGET_DEFAULT_KM = CFG.get('B.activity.distance_decay_target_default_km')
 DETOUR_SWEEP = tuple(CFG.sweep('B.activity.detour_factor'))
 DETOUR_SOURCE = '%s - C2 factors file not found, using the declared value'     % CFG.source('B.activity.detour_factor')
@@ -2413,7 +2417,7 @@ def external_agents(zones, core, decay, u, day, seq_base, store, cordon):
     CY = core['y_mga56'].to_numpy(dtype=float)
     CSA = core['SA1_CODE21'].to_numpy()
     CRAD = np.sqrt(np.maximum(core['area_km2'].to_numpy(dtype=float), 1e-4)
-                   * 1e6 / math.pi) * 0.6
+                   * 1e6 / math.pi) * HOME_JITTER_FACTOR
     attr = {p: norm(core['attr_' + p].to_numpy()) for p in ('HW', 'HO')}
 
     legs = []
@@ -2786,7 +2790,7 @@ def freight_agents(core, u, day, seq_base, n_light_trips, car_share,
     Y = core['y_mga56'].to_numpy(dtype=float)
     SA1 = core['SA1_CODE21'].to_numpy()
     RAD = np.sqrt(np.maximum(core['area_km2'].to_numpy(dtype=float), 1e-4)
-                  * 1e6 / math.pi) * 0.6
+                  * 1e6 / math.pi) * HOME_JITTER_FACTOR
     cum_origin = np.cumsum(norm(w))
     dest_cum = {}   # per-origin-zone destination distribution, built lazily
 
@@ -2869,7 +2873,7 @@ def main(seed=SEED, max_persons=None, day_types=None):
     X = core['x_mga56'].to_numpy(dtype=float)
     Y = core['y_mga56'].to_numpy(dtype=float)
     RAD = np.sqrt(np.maximum(core['area_km2'].to_numpy(dtype=float), 1e-4)
-                  * 1e6 / math.pi) * 0.6
+                  * 1e6 / math.pi) * HOME_JITTER_FACTOR
     SA1 = core['SA1_CODE21'].to_numpy()
     # HX shares HE's zone attraction vector rather than adding a column to the
     # land-use layer: an escort destination is an education destination, and the

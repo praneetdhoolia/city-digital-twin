@@ -979,7 +979,8 @@
       "decisions_ref": "4.4",
       "description": "Boarding and alighting dwell, separate from charging dwell.",
       "consumers": [
-        "cities/newcastle/build/build_scenario_schedules.py"
+        "cities/newcastle/build/build_scenario_schedules.py",
+        "cities/newcastle/build/build_corridor_layers.py"
       ]
     },
     "A.lightrail.capacity_total": {
@@ -1005,7 +1006,10 @@
       "sweep_role": "uncertainty",
       "status": "active",
       "decisions_ref": "4.1, 9.18",
-      "description": "Seats on a light rail vehicle. Only the split is assumed - the total it is taken from is observed."
+      "description": "Seats on a light rail vehicle. Only the split is assumed - the total it is taken from is observed.",
+      "consumers": [
+        "cities/newcastle/build/build_corridor_layers.py"
+      ]
     },
     "A.lightrail.capacity_standing": {
       "value": 210,
@@ -1020,7 +1024,10 @@
           "A.lightrail.capacity_seated"
         ],
         "identity": "capacity_standing = capacity_total - capacity_seated"
-      }
+      },
+      "consumers": [
+        "cities/newcastle/build/build_corridor_layers.py"
+      ]
     },
     "A.transit.bus_capacity_seated": {
       "value": 44,
@@ -1158,7 +1165,8 @@
       "decisions_ref": "9.76",
       "description": "Light rail running speed between stops, used in the run-time decomposition. The value is the regulated 40 km/h ceiling measured from the held Speed Zones join along the corridor trunk; achieved running speed sits at or below it, which the sweep expresses.",
       "consumers": [
-        "cities/newcastle/build/build_scenario_schedules.py"
+        "cities/newcastle/build/build_scenario_schedules.py",
+        "cities/newcastle/build/build_corridor_layers.py"
       ]
     },
     "A.lightrail.corridor_speed_kmh": {
