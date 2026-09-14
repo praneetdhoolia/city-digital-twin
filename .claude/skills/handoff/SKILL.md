@@ -44,7 +44,10 @@ For **every topic the session touched**, rewrite its page in
 `docs/positions/` so it states the current truth:
 
 - Keep the template's headings (*What is built · What is measured · What is
-  open · Refused — do not re-raise · History*), at most 130 lines.
+  open · Refused — do not re-raise · History*), at most 130 lines and 14,000
+  bytes, no line over 600 characters. *What is measured* holds the open
+  family's readings and the newest result; a closed family's reading is one
+  History line naming its record section.
 - **Every line that carries a figure carries its source on the same line** —
   a `§9.x`, an issue `#NN`, or a backticked path or run name. The shape check
   enforces this.
@@ -94,9 +97,25 @@ python src/analyse/build_status_board.py
 ```
 
 **The board is one page.** `tests/check_doc_shape.py` caps its hand-written
-lines and allows only its own headings; narrative goes to the record or to
-`archived/SESSION_LOG.md`. If a count the board states moved, the generated
-block already carries it; a hand-written count is a defect.
+lines, its *Last updated* paragraph at two lines, and allows only its own
+headings; narrative goes to the record. If a count the board states moved, the
+generated block already carries it; a hand-written count is a defect. The
+*Next* section is the generated `lane` block: edit `docs/lane.json` with
+`python src/analyse/lane.py` (`--done <task> --ref 9.x`, `--answer <D> "<label>"`),
+never the block.
+
+## Phase 3b — The lane and the recommendation ledger
+
+`docs/lane.json` is the one home of what is next. Mark the task the session
+finished (`python src/analyse/lane.py --done <id> --ref 9.NNN`), add the task
+that follows it with its cost from `arm_cost.py`, its blocker and the issues it
+answers, and record every decision the user took this session
+(`--answer <D> "<label>"`) — then write the same answer in §14 and on the
+issue's `AWAITING-DECISION:` line. A decision the user has NOT taken stays
+unanswered; the next `/onboard` asks it. Then the recommendation ledger:
+`python src/analyse/report_recs.py --taken <id> --evidence "9.NNN"` for each
+report recommendation the session did, `--declined` for one the user refused.
+`build_status_board.py` renders the lane into the board and the brief.
 
 ## Phase 4 — Brief, from the template
 
@@ -119,9 +138,13 @@ template** — never patch the old one — at most 180 lines:
 Then: `python src/run/session_gate.py`
 
 ## §1 The lane
-The single next task, its cost, what blocks it; the decisions the user must take.
+<!-- generated:lane start -->
+<!-- generated:lane end -->
+At most five lines the block cannot say (a probe to take first, a sequence the user set).
 
 ## §2 Traps — newest first, at most ten, each with what it cost
+A trap that a gate or the launcher now enforces is RETIRED (name the check); what
+remains is what only prose can hold.
 
 ## §3 Standing directives and approvals
 Each approval marked SPENT or absent. No approval is ever standing.
@@ -141,7 +164,7 @@ with the measured numbers. No umbrella issues; no invented data.
 ## Phase 6 — Gate, then land ONE pull request
 
 ```bash
-python src/run/session_gate.py            # every gate; must PASS
+python src/run/session_gate.py --handoff  # every gate plus the close-out checks; must PASS
 python tests/check_package.py             # LOCAL, if a data artefact changed
 ```
 
@@ -175,6 +198,7 @@ unfinished business — and the brief's §0 says so with the command to check it
 - [ ] Did any fact acquire a second home this session?
 - [ ] Is every expiring fact in §0 with its command, and nowhere else as settled prose?
 - [ ] Is the brief stamped with the ledger's newest family, and under 180 lines?
-- [ ] Does `python src/run/session_gate.py` pass?
+- [ ] Is every decision the user took recorded in `docs/lane.json`, §14 and the issue, and every open one still asked?
+- [ ] Does `python src/run/session_gate.py --handoff` pass?
 - [ ] Is every issue action backed by evidence in the repository?
 - [ ] Is the PR green, mergeable, watched, and the branch deletion queued?

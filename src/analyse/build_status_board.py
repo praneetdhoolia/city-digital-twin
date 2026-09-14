@@ -339,10 +339,21 @@ def block_state():
     return '\n'.join(lines) + '\n'
 
 
+def block_lane():
+    """The single next task and the decisions it waits on, from docs/lane.json (9.171)."""
+    import lane as _lane
+    doc = _lane.load()
+    bad = _lane.problems(doc)
+    if bad:
+        raise SystemExit('docs/lane.json is malformed: ' + '; '.join(bad))
+    return _lane.render(doc)
+
+
 BLOCKS = {
     'scoreboard': block_scoreboard,
     'runs': block_runs,
     'state': block_state,
+    'lane': block_lane,
 }
 
 
@@ -377,27 +388,35 @@ def main():
     ap.add_argument('--check', action='store_true',
                     help='compare the blocks with what would be generated; exit 1 if stale')
     ap.add_argument('--board', default=None,
-                    help='the board file (default: the city\'s docs/STATUS.md)')
+                    help='one document to process (default: docs/STATUS.md and, for its '
+                         'lane block, docs/NEXT_AGENT_BRIEF.md)')
     a = ap.parse_args()
-    board = a.board or _city.docs('STATUS.md')
-    text = _read(board)
-    new, report = apply(text, check=a.check)
-    for name, verdict in report:
-        print('  %-11s %s' % (name, verdict))
-    if not report:
-        print('no generated blocks found in %s' % board)
-        return 1
-    stale = [n for n, v in report if v == 'STALE']
-    if a.check:
-        print('BOARD %s' % ('STALE: ' + ', '.join(stale) if stale else 'current'))
-        return 1 if stale else 0
-    if new != text:
-        with open(board, 'w', encoding='utf-8', newline='\n') as fh:
-            fh.write(new)
-        print('wrote %s' % os.path.relpath(board, ROOT))
-    else:
-        print('board unchanged')
-    return 0
+    targets = [a.board] if a.board else [_city.docs('STATUS.md'), _city.docs('NEXT_AGENT_BRIEF.md')]
+    rc = 0
+    for board in targets:
+        if not os.path.exists(board):
+            continue
+        print(os.path.relpath(board, ROOT))
+        text = _read(board)
+        new, report = apply(text, check=a.check)
+        for name, verdict in report:
+            print('  %-11s %s' % (name, verdict))
+        if not report:
+            print('  no generated blocks found')
+            rc = 1
+            continue
+        stale = [n for n, v in report if v == 'STALE']
+        if a.check:
+            print('  %s' % ('STALE: ' + ', '.join(stale) if stale else 'current'))
+            rc = rc or (1 if stale else 0)
+            continue
+        if new != text:
+            with open(board, 'w', encoding='utf-8', newline='\n') as fh:
+                fh.write(new)
+            print('  wrote')
+        else:
+            print('  unchanged')
+    return rc
 
 
 if __name__ == '__main__':

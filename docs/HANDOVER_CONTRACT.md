@@ -25,10 +25,12 @@ needs.
 | Goal | `docs/GOAL.md` | ~100 | what the twin is for; the loop; the non-negotiables |
 | Board | `docs/STATUS.md` | ≤ 170 hand + generated | the scoreboard, where the build is, what runs, what is next |
 | Brief | `docs/NEXT_AGENT_BRIEF.md` | ≤ 180 | what expires, the lane, the traps, the approvals |
-| Position | `docs/positions/<topic>.md` | ≤ 130 each | the current truth for the lane's topic, every figure sourced |
+| Position | `docs/positions/<topic>.md` | ≤ 130 lines and ≤ 14,000 bytes each | the current truth for the lane's topic, every figure sourced |
+| Lane | `docs/lane.json` | generated into the board and the brief | the single next task, its cost and blocker; the decisions the user has not yet taken, as options |
+| City | `cities/<city>/docs/README.md` | ≤ 160 | the study area, the sources, the package counts, the reproduction steps; `targets.md` the twelve targets and their bases |
 | Record | `docs/DECISIONS.md` | 16,000+ | why — one section at a time, never whole |
 
-**Never read `DECISIONS.md`, `SESSION_LOG.md` or `reference/CONFIG_REFERENCE.md`
+**Never read `DECISIONS.md` or `cities/<city>/docs/reference/CONFIG_REFERENCE.md`
 whole.** Find a section with `grep -n "^## 9\.NNN"` and read it with `sed -n`.
 The digest (`python src/run/session_gate.py --digest`) prints the goal, the
 board's generated blocks and the machine state in two seconds; start there.
@@ -43,7 +45,8 @@ overrides a dated one about its own date.
 | What is true **now** about a topic | the artefact → the position page → the board's generated block |
 | **Why** a value is what it is | the record, at the section the position page cites |
 | What the project is **for** | `GOAL.md`; `.claude/CLAUDE.md` for the constraints |
-| What to do **next** | the board's *Next*, then the brief's §1 |
+| What to do **next** | `docs/lane.json`, rendered as the board's *Next* and the brief's §1 |
+| What describes **this city** | `cities/<city>/docs/README.md` and `targets.md`; the generated reference under `cities/<city>/docs/reference/` |
 
 **Artefact > document > brief.** Anything load-bearing is verified against the
 artefact it cites, not accepted because a document says it.
@@ -80,6 +83,19 @@ it, and nowhere else. **`/onboard` re-derives every §0 fact before reading on**
 and reports a mismatch as a finding. Approvals are spent on use; none is ever
 standing.
 
+## The decisions, asked once
+
+A decision only the user can take — which control is next, whether to send a
+data request, whether to require a status check — lives in `docs/lane.json`
+with its options and the recommended one first. `/onboard` puts every
+unanswered decision to the user as clickable choices at the end of its
+briefing and nowhere else; `/handoff` records the answer with
+`python src/analyse/lane.py --answer`, in §14 and on the issue's
+`AWAITING-DECISION:` line. An answered decision is never asked again, and a
+report's recommendation that is a user decision is a row in
+`docs/reports/recommendations.json`, not a paragraph re-issued each pass.
+
+
 ## The brief's required shape
 
 Rewritten **in place** from the template in the `/handoff` skill — never
@@ -88,8 +104,8 @@ patched, never a second brief. At most 180 lines. Four sections:
 | § | Holds |
 |---|---|
 | §0 | **Verify first** — every expiring fact with its command; then the gate command |
-| §1 | **The lane** — the single next task, its cost, what blocks it, the decisions required |
-| §2 | **Traps** — newest first, at most ten, each with what it cost; older ones are pruned |
+| §1 | **The lane** — the generated `lane` block from `docs/lane.json`, then at most five lines of what the block cannot say |
+| §2 | **Traps** — newest first, at most ten, each with what it cost; a trap a gate now enforces is retired, and an older one is pruned |
 | §3 | **Standing directives and approvals** — each approval marked SPENT or absent |
 
 The header carries the date, the commit and the **open family**
@@ -115,13 +131,14 @@ edit; the board and the brief are regenerated or rewritten, not patched.
 One script, called by both skills, so they cannot disagree:
 
 ```bash
-python src/run/session_gate.py --digest   # the opener: goal, scoreboard, state, machine, branch, PRs
+python src/run/session_gate.py --digest   # the opener: goal, scoreboard, state, machine, branch, PRs, lane, decisions, price
 python src/run/session_gate.py            # every gate, one line each; exit 1 on any failure
+python src/run/session_gate.py --handoff  # the gates plus the close-out checks (findings under processed/, §0 commands, page stamps)
 ```
 
 It runs the manifest, compile, hardcoding, document-currency, document-shape,
-board-block, city-contract, city-agnostic, dead-run and fit-figure checks, and
-the toolchain verification — which it **skips while an arm is running**, because
+document-link, board-block, lane-ledger, recommendation-ledger, city-contract,
+city-agnostic, dead-run and fit-figure checks, and the toolchain verification — which it **skips while an arm is running**, because
 that step recompiles `.tools/classes` under the arm. `tests/check_package.py`
 is local and separate: run it on a workstation before declaring a data phase
 complete. A failing gate is the session's first work item, and a pull request

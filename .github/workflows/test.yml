@@ -135,9 +135,19 @@ jobs:
       # the family it was written for, new DECISIONS sections arrive in order and
       # under a cap, every figure on a position page carries its source, and a
       # frozen document says so at the top. Standard library only; committed
-      # files only; rules are city-owned (cities/<city>/tests/doc_shape.json).
+      # files only; the rules are the framework's (tests/doc_shape.json, 9.171).
       - name: The board is a board, the brief is stamped, the record is in order
         run: python tests/check_doc_shape.py --strict
+      # Every relative link in a living document resolves (9.171: two moves in
+      # one day left four position-page lines pointing at a tree that was gone).
+      - name: Every link in a living document resolves
+        run: python tests/check_doc_links.py --strict
+      # The lane ledger is well formed and the recommendation ledger holds every
+      # row of the newest report (9.171).
+      - name: The lane and recommendation ledgers are well formed
+        run: |
+          python src/analyse/lane.py --check
+          python src/analyse/report_recs.py --check
       # The board's state block is generated from committed artefacts (the family
       # ledger, the registry, the manifest, the run-input sets); the two
       # results-derived blocks are skipped here because CI holds no run outputs.

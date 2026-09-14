@@ -1,0 +1,100 @@
+{
+  "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
+  "updated": "2026-09-14",
+  "family": "F35-the-engines-route-what-they-remode",
+  "tasks": [
+    {
+      "id": "routers-pair",
+      "title": "The first pair arm: the routers control (`C.raptor.mode_cost_representation` = `mode_constant`) against arm 0",
+      "kind": "arm",
+      "status": "open",
+      "recommended": true,
+      "cost": "~25.5 h at 250 iterations, 25 % (band 21.7-46.9 h on arm 0's clock); one 25 % probe first because the controler was recompiled (#197)",
+      "blocked_on": "decision D1, then a stated-cost approval set as RUN.gate.wall_ceiling_h",
+      "opens_family": true,
+      "answers_issues": [98, 94, 49, 172, 174],
+      "evidence": "§9.169; the tenth report's factor ledger names router-scorer consistency the top mover: light rail -73.9 %, heavy rail +54.6 %, ferry -63.3 % are decided in the raptor and no control has run"
+    },
+    {
+      "id": "roots-rebuild",
+      "title": "The roots first: one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196)",
+      "kind": "rebuild",
+      "status": "open",
+      "recommended": false,
+      "cost": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at the same price as above",
+      "blocked_on": "decision D1",
+      "opens_family": true,
+      "answers_issues": [86, 30, 107, 196, 145],
+      "evidence": "§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost"
+    },
+    {
+      "id": "asc-contraction",
+      "title": "The ASC contraction test for bike alone",
+      "kind": "arm",
+      "status": "held",
+      "recommended": false,
+      "cost": "~15 h, no family",
+      "blocked_on": "held by the user until the first pair has run (§9.159)",
+      "opens_family": false,
+      "answers_issues": [107],
+      "evidence": "§9.163: 20.46 pp of headroom on bike"
+    },
+    {
+      "id": "eleventh-report",
+      "title": "The eleventh project report, after the next reading",
+      "kind": "report",
+      "status": "open",
+      "recommended": false,
+      "cost": "one /project-report pass",
+      "blocked_on": "the next reading - a pair arm's gate or horizon (§9.166: one report per reading)",
+      "opens_family": false,
+      "answers_issues": [],
+      "evidence": "docs/reports/README.md"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "D1",
+      "question": "Which road is next: the first pair arm on arm 0, or the demand rebuild for the roots?",
+      "options": [
+        {"label": "Routers pair first (recommended)", "detail": "C.raptor.mode_cost_representation = mode_constant against arm 0, 250 it at 25 %, coverage on both sides; answers three of the six STOP modes"},
+        {"label": "Roots rebuild first", "detail": "one demand rebuild (#86 #30 #107 #196), a new family, a new arm 0, then the pairs"},
+        {"label": "Scoring pair first", "detail": "the operator's decided sequence of 10 September (scoring -> choice set -> service quality -> routers -> submodes)"}
+      ],
+      "recommended": 0,
+      "issues": [172, 86, 30],
+      "evidence": "§9.164, §9.169, the tenth report's factor ledger",
+      "asked": "2026-09-14",
+      "answer": null,
+      "answered": null
+    },
+    {
+      "id": "D2",
+      "question": "Send the drafted TfNSW bespoke-table request (mode x age, trip length by mode, occupancy by purpose, the unfolded Other)?",
+      "options": [
+        {"label": "Send it under the operator's name (recommended)", "detail": "the draft is cities/newcastle/docs/requests/tfnsw_hts_bespoke_tables.md; it names a person and an affiliation, so the operator sends it"},
+        {"label": "Hold it", "detail": "the modelled mode x demographics table exists; the request has been re-recommended by six reports"}
+      ],
+      "recommended": 0,
+      "issues": [50],
+      "evidence": "§9.163, §9.167",
+      "asked": "2026-09-14",
+      "answer": null,
+      "answered": null
+    },
+    {
+      "id": "D3",
+      "question": "Require the nine test-workflow jobs as status checks in the main ruleset (21121872)?",
+      "options": [
+        {"label": "Require them (recommended)", "detail": "a red CI run is mergeable today (#202); the prepared JSON is one `gh api -X PUT` away and the agent's call was refused, so the operator runs it"},
+        {"label": "Leave the ruleset as it is", "detail": "the user's setting; CI stays advisory"}
+      ],
+      "recommended": 0,
+      "issues": [202],
+      "evidence": "the tenth report, recommendation 5",
+      "asked": "2026-09-14",
+      "answer": null,
+      "answered": null
+    }
+  ]
+}

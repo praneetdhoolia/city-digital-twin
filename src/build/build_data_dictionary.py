@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Emit docs/reference/DATA_DICTIONARY.md from the city's CSVs."""
+"""Emit cities/<city>/docs/reference/DATA_DICTIONARY.md from the city's CSVs."""
 
 import city as _city
 import os, csv, glob
@@ -60,5 +60,5 @@ for title,pat in GROUPS:
             out.append('| `%s` | %s | %s | %d/%d |'%(c,kind(vals),ex.replace(chr(124),'/'),nz,len(vals)))
         out.append('')
 os.makedirs(_city.docs('reference'),exist_ok=True)
-open(_city.docs('reference','DATA_DICTIONARY.md'),'w',encoding='utf-8',newline='\n').write('\n'.join(out))
+open(_city.city_docs('reference','DATA_DICTIONARY.md'),'w',encoding='utf-8',newline='\n').write('\n'.join(out))
 print('wrote DATA_DICTIONARY.md (%d lines)'%len(out))

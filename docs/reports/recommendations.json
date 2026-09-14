@@ -1,0 +1,225 @@
+{
+ "description": "THE RECOMMENDATION LEDGER - one row per recommendation a dated project report made, with what became of it: open, taken (the record section or PR) or declined (whose decision). Kept by src/analyse/report_recs.py: --sync pulls the newest report's rows in, /onboard lists the open ones, /handoff marks the taken ones, and the next report's audit reads this file instead of re-deriving it (DECISIONS.md 9.171). The first ten reports' rows live in the reports' own audits; the ledger starts at the tenth.",
+ "rows": [
+  {
+   "id": "20260914T152907:1",
+   "report": "20260914T152907",
+   "rank": 1,
+   "what": "Make the viewer's reading safe in the harness process: report_mode_ridership.report() returns its rows (no module-global LAST), the viewer computes at most one reading at a time and never redirects sys.stdout - or runs the reporter as a subprocess with --json.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.170: the viewer runs the reporter as a subprocess",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:2",
+   "report": "20260914T152907",
+   "rank": 2,
+   "what": "Land arm 0's findings in results/processed: re-run results_store.process('20260912T202242_300it_25pct', extract=True) under the bounded reader and log it; then make the close-out refuse to mark a run processed while _metrics.json / _fit.json are absent from processed/.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.170: arm 0's _fit.json and _metrics.json extracted to processed/; session_gate --handoff checks every completed run",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:3",
+   "report": "20260914T152907",
+   "rank": 3,
+   "what": "Read arm 0 at its horizon and spend the routers pair first (C.raptor.mode_cost_representation = mode_constant against absent), 250 iterations at 25 %, coverage read on both sides, then scoring -> choice set -> service quality -> submodes.",
+   "repeat_of": "ninth #2, eighth, seventh",
+   "opens_family": true,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:4",
+   "report": "20260914T152907",
+   "rank": 4,
+   "what": "Rebuild the demand so that ride is seeded at the HTS share (B.mode.bound_passenger_placement) and the short end of destination placement has an observed shape - one rebuild, one family, then re-baseline.",
+   "repeat_of": "ninth (roots)",
+   "opens_family": true,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:5",
+   "report": "20260914T152907",
+   "rank": 5,
+   "what": "Require the nine test-workflow jobs as status checks in the main ruleset (ruleset 21121872) - the prepared JSON is in the session's scratch directory; the agent's API call was refused by the harness.",
+   "repeat_of": "ninth #12, sixth",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:6",
+   "report": "20260914T152907",
+   "rank": 6,
+   "what": "Retype the six hidden copies of registry values the scanners cannot see: B.population.home_jitter_radius_factor (* 0.6 at build_activity_chains.py:2416, :2789, :2872) and the four corridor VEHICLE/DWELL_DEFAULTS values (build_corridor_layers.py:117-135, :151); make check_hardcoding visit the value of ALL-CAPS assignments and dict(...) keywords.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.170: six typed twins read from the registry",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:7",
+   "report": "20260914T152907",
+   "rank": 7,
+   "what": "Consume B.population.household_size_top_band_mean (size the 6+ band from its mean) at the next demand rebuild, or retire it now with a record entry.",
+   "repeat_of": "ninth #6",
+   "opens_family": true,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:8",
+   "report": "20260914T152907",
+   "rank": 8,
+   "what": "Add refuse_concurrent_arm() to preflight() so --detach refuses a second arm before scheduling, not only in the detached log; name the scheduled task by the run stamp so --stop finds it.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.170: refuse_concurrent_arm() at preflight; the detached run and its task share one stamp",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:9",
+   "report": "20260914T152907",
+   "rank": 9,
+   "what": "Price the pair arms on arm 0's innovating/tail split (199 x 351 s + 49 x 262 s + dumps) instead of one plain median, and write plans every 50 on the pair overlays.",
+   "repeat_of": "ninth #8",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:10",
+   "report": "20260914T152907",
+   "rank": 10,
+   "what": "Make the gate watcher's give-up visible: when a milestone's reporter fails twice, write a verdict file saying 'unread' and print it, and let session_gate report a run whose readings ledger has a gap.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.170: the gate watcher writes an unread verdict when the reporter fails",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:11",
+   "report": "20260914T152907",
+   "rank": 11,
+   "what": "Resolve a run's residents through the run's own population (output_persons.csv.gz), not the city's current B1 table.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:12",
+   "report": "20260914T152907",
+   "rank": 12,
+   "what": "Send the TfNSW bespoke-table request (mode x age, trip-length distribution by mode, occupancy by purpose, the unfolded Other).",
+   "repeat_of": "ninth #10, eighth, seventh, sixth, fifth",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:13",
+   "report": "20260914T152907",
+   "rank": 13,
+   "what": "Measure the replication band: three short arms at different seeds, then set CAL.objective.replication_band_pp.",
+   "repeat_of": "ninth #11 and five earlier",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:14",
+   "report": "20260914T152907",
+   "rank": 14,
+   "what": "Put a licence line on the published reports and the Pages site footer, and retire the reports' per-run detail that repeats the library.",
+   "repeat_of": "ninth #13 (half)",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:15",
+   "report": "20260914T152907",
+   "rank": 15,
+   "what": "Move the two document rule files to docs/tests/ (or config/) and pin the brief's and the position pages' live counts in doc_currency.",
+   "repeat_of": null,
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.171: doc_shape.json is the framework's at tests/; the brief's counts are pinned (#203 #207)",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:16",
+   "report": "20260914T152907",
+   "rank": 16,
+   "what": "Retire closed-family gate readings from the position pages' 'What is measured' (F17-F31 rows) into their History lines, and cap a page by bytes as well as lines.",
+   "repeat_of": "ninth #19",
+   "opens_family": false,
+   "status": "taken",
+   "evidence": "9.171: positions capped at 14,000 bytes and 600 chars a line; closed-family readings retired to History (#205)",
+   "updated": "2026-09-14"
+  },
+  {
+   "id": "20260914T152907:17",
+   "report": "20260914T152907",
+   "rank": 17,
+   "what": "Record the build's wall time everywhere: wrap build_matsim_run_inputs.py, build_manifest.py, the extract adapters and the pt2matsim mapping in build_timing, and have collect_performance.py read _build_timing.json.",
+   "repeat_of": "ninth (build timing)",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:18",
+   "report": "20260914T152907",
+   "rank": 18,
+   "what": "Hoist the three per-iteration thread pools (RemodeRestore.route x2, routeDetoursInParallel) to one pool per run, keeping one TripRouter per worker so the RNG sequence is unchanged.",
+   "repeat_of": "ninth #17 (half)",
+   "opens_family": true,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:19",
+   "report": "20260914T152907",
+   "rank": 19,
+   "what": "Give the taxi fleet its sample fraction from RUN.sample.fraction, not qsim.flowCapFactor.",
+   "repeat_of": null,
+   "opens_family": true,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  },
+  {
+   "id": "20260914T152907:20",
+   "report": "20260914T152907",
+   "rank": 20,
+   "what": "The eleventh report runs after the next reading - a pair arm's gate or horizon - and not before.",
+   "repeat_of": "ninth #(cadence)",
+   "opens_family": false,
+   "status": "open",
+   "evidence": null,
+   "updated": null
+  }
+ ]
+}

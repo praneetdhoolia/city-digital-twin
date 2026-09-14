@@ -10,13 +10,22 @@ timetables and scored against its real-life ridership. Newcastle (NSW) is the
 first city. The goal, its requirements and the loop every session runs are in
 [`docs/GOAL.md`](../docs/GOAL.md) — read it first.
 
-The documents, all under [`docs/`](../docs/README.md):
+The simulator's documents are under [`docs/`](../docs/README.md); what describes
+one city is under [`cities/<city>/docs/`](../cities/newcastle/docs/README.md) —
+its front page, its targets, the reference generated from its registry and its
+tables, its data requests and its frozen dossiers. The split rule (user decision,
+14 September 2026, §9.171): `docs/` holds nothing whose structure is one city's.
 
 - **[`STATUS.md`](../docs/STATUS.md)** — the board, one page: the twelve-mode
-  scoreboard, where the build is, what runs, what is next. Its state blocks are
+  scoreboard, where the build is, what runs, what is next. Its blocks are
   generated (`python src/analyse/build_status_board.py`); the hand-written rest
   is capped by `tests/check_doc_shape.py`. Keep it current in the same commit as
   the work it describes; never append narrative to it.
+- **[`lane.json`](../docs/lane.json)** — the single next task and the decisions
+  it waits on, rendered into the board's *Next* and the brief's §1
+  (`src/analyse/lane.py`). A decision the user has not taken is asked once, as
+  clickable options, at the end of `/onboard`; its answer is recorded, never
+  re-asked.
 - **[`positions/`](../docs/positions)** — the current truth per topic, one page
   each, every figure with its source. Read the page for your lane instead of the
   record; `/handoff` rewrites the pages a session touched.
@@ -28,7 +37,7 @@ The documents, all under [`docs/`](../docs/README.md):
 - **[`reports/`](../docs/reports/README.md)** — the dated `/project-report`
   assessments and their standing reference library.
 - [`README.md`](../README.md) at the repo root is the usage guide and the only
-  document there. [`archived/design/newcastle-lr-proposal.md`](../docs/archived/design/newcastle-lr-proposal.md)
+  document there. [`newcastle-lr-proposal.md`](../cities/newcastle/docs/archived/design/newcastle-lr-proposal.md)
   is the frozen origin design; read it for scenario vocabulary only.
 
 Nothing is a result until a run's `_run.json` says `ran_to_last_iteration`. A
@@ -56,14 +65,17 @@ reading is citable at that record's `reached_iteration` and nowhere past it; onl
   declare it under `cities/<city>/registry/` or `geometry/`. (A typed-in harvest
   box once clipped 87 of 1,500 core SA1s out of the road network unnoticed for
   three phases.) The city is selected by `CITYSIM_CITY` (default `newcastle`).
-- **The project's documents live at `docs/`** (user decision, 14 September
-  2026): the goal, the board, the brief, the positions, the record, the reports,
-  the generated reference and the archive. `city.docs()` resolves them.
+- **The simulator's documents live at `docs/`, a city's under
+  `cities/<city>/docs/`** (user decision, 14 September 2026, §9.171): the goal,
+  the board, the brief, the lane, the positions, the record, the family ledger
+  and the reports are the simulator's (`city.docs()`); the city's front page,
+  its targets, its generated reference, its requests and its archives are the
+  city's (`city.city_docs()`).
 - **Every controllable value is declared in `cities/<city>/registry/`, never
   typed into a script.** A value whose `source` is `assumed`, `literature`,
   `measured` or `derived` carries a sweep, a `held_fixed` rule or a
   `derived_from` identity — the schema rejects anything else. Regenerate
-  [`docs/reference/CONFIG_REFERENCE.md`](../docs/reference/CONFIG_REFERENCE.md)
+  [`cities/<city>/docs/reference/CONFIG_REFERENCE.md`](../cities/newcastle/docs/reference/CONFIG_REFERENCE.md)
   (`python src/registry/render_docs.py`) in the same change. The build layer is
   pinned to the registry by `src/registry/check_legacy_drift.py`.
 - **No invented data.** Never fabricate an observation, a count, a patronage
@@ -176,7 +188,8 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
 | JSON validity of provenance, scenario and params files | CI | nothing |
 | `python src/registry/check_hardcoding.py --strict` | CI + local | committed files |
 | `python tests/check_doc_currency.py --strict` | CI + local | committed files |
-| `python tests/check_doc_shape.py --strict` · `python src/analyse/build_status_board.py --check` | CI + local | committed files |
+| `python tests/check_doc_shape.py --strict` · `python tests/check_doc_links.py --strict` · `python src/analyse/build_status_board.py --check` | CI + local | committed files |
+| `python src/analyse/lane.py --check` · `python src/analyse/report_recs.py --check` | local | committed files |
 | `python src/registry/check_city.py --all` · `render_schema.py --check` | CI | nothing |
 | `python tests/check_city_agnostic.py` | CI | nothing |
 | `python -m pytest -q tests/unit` | CI + local | nothing |
@@ -189,10 +202,11 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
   layer, coordinates in code. It is at 0 and stays at 0; an item is worked down,
   never silenced. If your change adds an item, the change is not finished.
 - **`check_doc_shape.py`** keeps the living documents the shape they were
-  designed to be; the rules are city-owned
-  ([`cities/<city>/tests/doc_shape.json`](../cities/newcastle/tests/doc_shape.json)).
-  A PR cannot open while a document gate is red
-  ([`hooks/gate-pr-on-docs.sh`](hooks/gate-pr-on-docs.sh)).
+  designed to be; the rules are the framework's
+  ([`tests/doc_shape.json`](../tests/doc_shape.json)): a position page is capped
+  at 130 lines and 14,000 bytes, a record section a living document cites must
+  exist, the board's *Last updated* is two lines. A PR cannot open while a
+  document gate is red ([`hooks/gate-pr-on-docs.sh`](hooks/gate-pr-on-docs.sh)).
 - **`check_doc_currency.py`** pins each live-state figure in `README.md`,
   `STATUS.md` and the framing documents to the artefact that decides it
   ([`cities/<city>/tests/doc_currency.json`](../cities/newcastle/tests/doc_currency.json)).
@@ -212,12 +226,12 @@ CI runs nothing that downloads a source dataset or executes a scenario. Run
 | Path | What it holds |
 |---|---|
 | `README.md` | The usage guide: install, run a scenario, reproduce the package. The only document at the root. |
-| `docs/` | The project's documents: `GOAL.md`, `STATUS.md`, `NEXT_AGENT_BRIEF.md`, `positions/`, `DECISIONS.md`, `run_families.json` (the family ledger), `reports/`, the generated `reference/`, `archived/`, and `HANDOVER_CONTRACT.md` (how a session opens and closes). Indexed by `docs/README.md`. |
+| `docs/` | The simulator's documents: `GOAL.md`, `STATUS.md`, `NEXT_AGENT_BRIEF.md`, `lane.json`, `positions/`, `DECISIONS.md`, `run_families.json` (the family ledger), `reports/` (with `recommendations.json`), and `HANDOVER_CONTRACT.md` (how a session opens and closes). Indexed by `docs/README.md`. |
 | `config/schema/` | The portable half: what any city must supply and in what shape. No city's values live here. |
 | `run.py` | The front door: run a scenario. |
 | `src/city.py` | Resolves which city's inputs a run reads, and where the documents are. |
 | `src/build/` · `src/run/` · `src/calibrate/` · `src/analyse/` · `src/registry/` | Layer construction, the run harness, fit and calibration, metrics / readers / the board / the run viewer, the registry resolver and its validators. |
 | `src/java/citysim/` · `src/java_signals/citysim/` | The MATSim entry point (parking, fares, ride pairing, telemetry) and the signals entry point. |
-| `cities/<city>/` | One city: `registry/`, `overlays/`, `extract/`, `build/`, `geometry/`, `data/` (raw + processed + `MANIFEST.csv`), `networks/`, `schedules/`, `demand/`, `params/`, `scenarios/`, `tests/` (the city-owned rules of the two document checks). |
+| `cities/<city>/` | One city: `registry/`, `overlays/`, `extract/`, `build/`, `geometry/`, `data/` (raw + processed + `MANIFEST.csv`), `networks/`, `schedules/`, `demand/`, `params/`, `scenarios/`, `docs/` (its front page, `targets.md`, the generated `reference/`, `requests/`, `archived/`), `tests/` (its live-state claims `doc_currency.json` and package expectations). |
 | `tests/` | The CI checks and `tests/unit/`; `check_package.py` for the full package. |
 | `results/` | Run outputs, gitignored: `raw/` a budgeted cache, `processed/` the permanent findings. |

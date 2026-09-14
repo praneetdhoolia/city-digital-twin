@@ -13,7 +13,7 @@ breached at least once; the board reached 801 lines under a line-9 rule that
 said "not a diary", and one brief named F15, F16, F17, F18 and F20 as the
 running family in different sections.
 
-The rules are CITY-OWNED (`cities/<city>/tests/doc_shape.json`); this harness
+The rules are FRAMEWORK-OWNED (`tests/doc_shape.json`, since 9.171); this harness
 names no city, no document and no number. A document that is absent is
 skipped, so the check runs in CI over the committed subset.
 
@@ -49,13 +49,20 @@ REPO = Path(__file__).resolve().parent.parent
 def artefact(city_root: Path, rel: str) -> Path:
     """A spec path resolved to disk.
 
-    `docs/...` is the project's documentation, kept at the repository root
-    (the goal, the board, the record and the generated reference); every
-    other path is the city's own, relative to `cities/<city>/`.
+    `docs/...`, `tests/...`, `.claude/...` and `README.md` are the simulator's, at the
+    repository root; `{city}/...` is the active city's root; every other path
+    is the city's own, relative to `cities/<city>/`.
     """
-    if rel == "docs" or rel.startswith("docs/"):
+    if rel.startswith("{city}/"):
+        return city_root / rel[len("{city}/"):]
+    if rel in ("docs", "tests", "README.md") or rel.startswith(("docs/", "tests/", "cities/", ".claude/", ".github/")):
         return REPO / rel
     return city_root / rel
+
+
+def _display(city_root: Path, rel: str) -> str:
+    """The path as a report names it - repository-relative, never absolute."""
+    return artefact(city_root, rel).relative_to(REPO).as_posix()
 
 NUMBER = re.compile(r"(?<![\w/.-])\d{1,3}(,\d{3})+(?![\w-])|\d+\.\d+|\d+(\.\d+)?\s?%")
 GENERATED = re.compile(r"<!-- generated:(\w+) start -->.*?<!-- generated:\1 end -->", re.S)
@@ -72,6 +79,18 @@ def check_board(city: Path, spec: dict) -> list[str]:
     text = path.read_text(encoding="utf-8")
     problems = []
     present = set(GENERATED.findall(text))
+    cap = spec.get("max_last_updated_lines")
+    if cap:
+        lines = text.splitlines()
+        start = next((i for i, l in enumerate(lines) if l.startswith("**Last updated:**")), None)
+        if start is not None:
+            end = start
+            while end < len(lines) and lines[end].strip():
+                end += 1
+            if end - start > cap:
+                problems.append(f"{spec['path']}: the Last-updated paragraph is {end - start} "
+                                f"lines against a cap of {cap} - state the newest reading and "
+                                f"the session, nothing else (#208)")
     for name in spec.get("required_blocks", []):
         if name not in present:
             problems.append(f"{spec['path']}: generated block '{name}' is missing "
@@ -127,6 +146,11 @@ def check_brief(city: Path, spec: dict, latest_family: str | None) -> list[str]:
     for h in spec.get("required_headings", []):
         if not re.search(r"^#+\s*" + re.escape(h), text, re.M):
             problems.append(f"{spec['path']}: required heading '{h}' is missing")
+    present = set(GENERATED.findall(text))
+    for name in spec.get("required_blocks", []):
+        if name not in present:
+            problems.append(f"{spec['path']}: generated block '{name}' is missing - the lane "
+                            f"is generated from docs/lane.json, never typed")
     m = re.search(spec["family_stamp"], text)
     if not m:
         problems.append(f"{spec['path']}: no family stamp matching {spec['family_stamp']!r}")
@@ -166,7 +190,7 @@ def check_record(city: Path, spec: dict) -> list[str]:
             problems.append(f"{spec['path']}:{i + 1}: §9.{n} is {length} lines against a "
                             f"cap of {spec['max_new_section_lines']} - what changed, what "
                             f"was measured, what is deliberately not done, consequences; "
-                            f"narrative goes to SESSION_LOG.md")
+                            f"narrative stays out of the record")
         ref = re.compile(spec["index_reference"].replace("{n}", str(n)))
         index_end = heads[0][0]
         if not any(ref.search(l) for l in lines[:index_end]):
@@ -185,6 +209,15 @@ def check_positions(city: Path, spec: dict, family_keys: list[str]) -> list[str]
         lines = _lines(page)
         if len(lines) > spec["max_lines"]:
             problems.append(f"{rel}: {len(lines)} lines against a cap of {spec['max_lines']}")
+        size = page.stat().st_size
+        if spec.get("max_bytes") and size > spec["max_bytes"]:
+            problems.append(f"{rel}: {size:,} bytes against a cap of {spec['max_bytes']:,} - a "
+                            f"closed family's reading is a History line, not a paragraph (#205)")
+        if spec.get("max_line_chars"):
+            for i, l in enumerate(lines, 1):
+                if len(l) > spec["max_line_chars"]:
+                    problems.append(f"{rel}:{i}: {len(l)} characters on one line against a cap "
+                                    f"of {spec['max_line_chars']}")
         text = "\n".join(lines)
         for h in spec.get("required_headings", []):
             if h not in text:
@@ -231,7 +264,7 @@ def check_archives(city: Path, spec: dict) -> list[str]:
         for f in sorted(base.rglob("*")):
             if not f.is_file() or f.suffix.lower() not in (".md", ".html"):
                 continue
-            rel = f.relative_to(REPO if d.startswith("docs") else city).as_posix()
+            rel = f.relative_to(REPO).as_posix()
             if rel in live or rel.startswith("docs/positions/"):
                 continue
             head = "\n".join(_lines(f)[: spec.get("within_lines", 12)])
@@ -242,10 +275,32 @@ def check_archives(city: Path, spec: dict) -> list[str]:
     return problems
 
 
+def check_citations(city: Path, spec: dict) -> list[str]:
+    """Every record section a living document cites must exist."""
+    record = artefact(city, spec["record"])
+    if not record.exists():
+        return []
+    have = {int(m.group(1)) for m in re.finditer(r"^## 9\.(\d+)\b", record.read_text(encoding="utf-8"), re.M)}
+    pat = re.compile(spec["pattern"])
+    problems = []
+    for d in spec.get("docs", []):
+        base = artefact(city, d)
+        files = sorted(base.glob("*.md")) if base.is_dir() else ([base] if base.exists() else [])
+        for f in files:
+            for i, l in enumerate(_lines(f), 1):
+                for m in pat.finditer(l):
+                    n = int(m.group(1))
+                    if n not in have:
+                        problems.append(f"{f.relative_to(REPO).as_posix()}:{i}: cites §9.{n}, "
+                                        f"which the record does not hold - write the section "
+                                        f"before the citation")
+    return problems
+
+
 def run() -> tuple[list[str], int]:
     import city as city_module  # noqa: PLC0415
     city = Path(city_module.CITY_DIR)
-    spec_path = city / "tests" / "doc_shape.json"
+    spec_path = REPO / "tests" / "doc_shape.json"
     if not spec_path.exists():
         raise SystemExit(f"{spec_path.relative_to(REPO)} is missing.")
     spec = json.loads(spec_path.read_text(encoding="utf-8"))
@@ -267,6 +322,7 @@ def run() -> tuple[list[str], int]:
         ("record", check_record, (city, spec["record"])),
         ("positions", check_positions, (city, spec["positions"], family_keys)),
         ("archives", check_archives, (city, spec["archives"])),
+        ("citations", check_citations, (city, spec.get("citations", {}))),
     ):
         if name in spec:
             checks += 1

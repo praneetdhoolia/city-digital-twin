@@ -1429,13 +1429,13 @@ if _registry is not None:
                   'scenario %s justifies setting %s outside its sweep' % (_sid, _k))
 
     # the generated reference cannot drift from the values it documents
-    _docs = _city.docs('reference', 'CONFIG_REFERENCE.md')
-    if check(os.path.exists(_docs), 'docs/reference/CONFIG_REFERENCE.md exists'):
+    _docs = _city.city_docs('reference', 'CONFIG_REFERENCE.md')
+    if check(os.path.exists(_docs), 'cities/<city>/docs/reference/CONFIG_REFERENCE.md exists'):
         import subprocess as _sp
         _rc = _sp.call([sys.executable, os.path.join('src', 'registry', 'render_docs.py'),
                         '--check'], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
         check(_rc == 0,
-              'docs/reference/CONFIG_REFERENCE.md is current with the registry '
+              'cities/<city>/docs/reference/CONFIG_REFERENCE.md is current with the registry '
               '(regenerate: python src/registry/render_docs.py)')
 
     # the output contract exists for every artefact the pipeline writes
@@ -1463,17 +1463,17 @@ if _registry is not None:
                  '' if not _problems else ': ' + _problems[0][:80]))
 
     # the front door's figures cannot drift from the run they claim to draw
-    _figures = _city.docs('reference', 'figures', 'FIGURES.json')
+    _figures = _city.city_docs('reference', 'figures', 'FIGURES.json')
     if os.path.exists(_figures):
         import subprocess as _sp
         _rc = _sp.call([sys.executable,
                         os.path.join('src', 'analyse', 'build_fit_figures.py'),
                         '--check'], stdout=_sp.DEVNULL, stderr=_sp.DEVNULL)
         check(_rc == 0,
-              'docs/reference/figures/ is current with the calibrated base\'s run '
+              'cities/<city>/docs/reference/figures/ is current with the calibrated base\'s run '
               '(regenerate: python src/analyse/build_fit_figures.py)')
     else:
-        check(False, 'docs/reference/figures/ has not been generated - the front '
+        check(False, 'cities/<city>/docs/reference/figures/ has not been generated - the front '
                      'door shows no modelled-against-observed figures '
                      '(python src/analyse/build_fit_figures.py)', warn=True)
 

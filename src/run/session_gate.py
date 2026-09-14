@@ -112,7 +112,60 @@ def digest():
         print('PRS      OPEN: ' + ' | '.join(prs))
     else:
         print('PRS      none open')
+    for label, line in lane_lines():
+        print('%-8s %s' % (label, line))
     print('=' * 78)
+
+
+def lane_lines():
+    """The lane's top task, the open decisions, the open recommendations and
+    whether the newest arm's price still describes the committed build (9.171)."""
+    out = []
+    try:
+        import lane as _lane
+        doc = _lane.load()
+        top = [t for t in doc['tasks'] if t['status'] == 'open']
+        top.sort(key=lambda t: not t.get('recommended'))
+        if top:
+            t = top[0]
+            out.append(('LANE', '%s%s - %s; blocked on: %s'
+                        % (t['title'][:110], ' (recommended)' if t.get('recommended') else '',
+                           t['cost'][:80], t['blocked_on'][:80])))
+        pend = _lane.open_decisions(doc)
+        out.append(('DECIDE', '%d decision(s) unanswered%s - `python src/analyse/lane.py --ask`, then '
+                    'AskUserQuestion with its options' % (len(pend), ': ' + ', '.join(d['id'] for d in pend) if pend else '')))
+    except Exception as e:                                     # noqa: BLE001
+        out.append(('LANE', 'docs/lane.json unreadable (%s)' % e))
+    try:
+        import report_recs as _rr
+        rows = [r for r in _rr.load()['rows'] if r['status'] == 'open']
+        gap = _rr.missing(_rr.load())
+        out.append(('RECS', '%d report recommendation(s) open%s - `python src/analyse/report_recs.py`'
+                    % (len(rows), '; the newest report is UNSYNCED (--sync)' if gap else '')))
+    except Exception as e:                                     # noqa: BLE001
+        out.append(('RECS', 'recommendation ledger unreadable (%s)' % e))
+    try:
+        import arm_cost as _ac
+        import run_matsim as _rm
+        arms = _ac.observed_arms()
+        # the price that matters is the one at the ARM fraction - the largest
+        # fraction any observed arm ran at - not a 1 % smoke probe's clock
+        top = max((float(a.get('fraction') or 0) for a in arms), default=0)
+        arms = [a for a in arms if float(a.get('fraction') or 0) == top]
+        newest = arms[0] if arms else None
+        current = _rm.controler_sha256()
+        priced = (newest or {}).get('controler_sha256')
+        if newest and priced and current and priced != current:
+            out.append(('PRICE', 'the newest priced arm %s ran controler %s; the committed build is %s - '
+                        'a quote from it is NOT a price until a 25 %% probe runs on this build'
+                        % (newest.get('name'), priced[:12], current[:12])))
+        elif newest:
+            out.append(('PRICE', 'the newest priced arm %s ran the committed controler build; '
+                        '`python src/analyse/arm_cost.py --run-config <cfg> --iterations 250` quotes it'
+                        % newest.get('name')))
+    except Exception as e:                                     # noqa: BLE001
+        out.append(('PRICE', 'could not compare the priced build with the committed one (%s)' % e))
+    return out
 
 
 GATES = [
@@ -123,7 +176,12 @@ GATES = [
     ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),
     ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict'], False),
     ('doc shape', [PY, 'tests/check_doc_shape.py', '--strict'], False),
+    ('doc links', [PY, 'tests/check_doc_links.py', '--strict'], False),
     ('board blocks', [PY, 'src/analyse/build_status_board.py', '--check'], False),
+    # 9.171: the lane ledger is the one home of "what is next"; the board and
+    # the brief render it, and a malformed ledger renders nothing
+    ('lane ledger', [PY, 'src/analyse/lane.py', '--check'], False),
+    ('report recs', [PY, 'src/analyse/report_recs.py', '--check'], False),
     ('city contract', [PY, 'src/registry/check_city.py', '--all'], False),
     ('schema current', [PY, 'src/registry/render_schema.py', '--check'], False),
     ('city agnostic', [PY, 'tests/check_city_agnostic.py'], False),
@@ -290,13 +348,102 @@ def main():
                          'index, config reference, schema, fit figures, board '
                          'blocks) and re-check. Never edits prose and never '
                          'silences a defect.')
+    ap.add_argument('--handoff', action='store_true',
+                    help='the close-out checks on top of the gates: every '
+                         'completed run has its findings under processed/, '
+                         'every brief section-0 row carries its command, the '
+                         'position pages touched today carry today\'s stamp')
     a = ap.parse_args()
     if a.digest:
         digest()
         return 0
     if a.fix:
         return fix(quick=a.quick)
-    return 1 if gates(quick=a.quick) else 0
+    failed = gates(quick=a.quick)
+    if a.handoff:
+        failed += handoff_checks()
+    return 1 if failed else 0
+
+
+def handoff_checks():
+    """What only a close-out can get wrong (9.171). Each is one line, like a gate."""
+    import datetime as _dt
+    import json
+    import re
+    failed = []
+    print('-- handoff --')
+    # 1. a completed run's findings live in processed/, not only in the raw cache
+    #    (the tenth report: arm 0's _fit.json existed only in raw/ and one trim
+    #    would have deleted the second result)
+    #    An ARM, not a probe: the run index classes every directory, and a
+    #    probe is read for a clock or a yes/no, never for a fit.
+    missing = []
+    index = os.path.join(ROOT, 'results', 'INDEX.csv')
+    if os.path.exists(index):
+        import csv
+        with open(index, encoding='utf-8', newline='') as fh:
+            for row in csv.DictReader(fh):
+                if row.get('class') != 'arm' or row.get('status') != 'completed':
+                    continue
+                name = row.get('name', '')
+                rec = os.path.join(ROOT, 'results', 'raw', name, '_run.json')
+                try:
+                    done = json.load(open(rec, encoding='utf-8')).get('completion') == 'ran_to_last_iteration'
+                except Exception:                              # noqa: BLE001
+                    done = False
+                if done and not os.path.exists(os.path.join(ROOT, 'results', 'processed', name, '_fit.json')):
+                    missing.append(name)
+    _line('results processed', not missing, 'no _fit.json under processed/ for: ' + ', '.join(missing), failed)
+    # 2. every expiring fact in the brief's section 0 carries the command that re-derives it
+    brief = _city.docs('NEXT_AGENT_BRIEF.md')
+    rows_without = []
+    if os.path.exists(brief):
+        in_s0 = False
+        for l in open(brief, encoding='utf-8').read().splitlines():
+            if l.startswith('## '):
+                in_s0 = l.startswith('## §0')
+                continue
+            if in_s0 and l.startswith('|') and not l.startswith('|---') and 'Re-derive with' not in l:
+                cells = [c.strip() for c in l.strip('|').split('|')]
+                if len(cells) >= 2 and '`' not in cells[1]:
+                    rows_without.append(cells[0][:50])
+    _line('brief §0 commands', not rows_without, 'rows with no command: ' + ' / '.join(rows_without), failed)
+    # 3. a position page changed today is stamped today
+    today = _dt.date.today()
+    stale = []
+    try:
+        rc, out = _run(['git', 'diff', '--name-only', 'origin/main...HEAD', '--', 'docs/positions'], 60)
+        rc2, out2 = _run(['git', 'status', '--porcelain', '--', 'docs/positions'], 60)
+        changed = set(out.split()) | {l[3:].strip() for l in out2.splitlines() if l.strip()}
+    except Exception:                                          # noqa: BLE001
+        changed = set()
+    for rel in sorted(changed):
+        p = os.path.join(ROOT, rel)
+        if not os.path.exists(p):
+            continue
+        text = open(p, encoding='utf-8').read()
+        m = re.search(r'\*\*Updated:\*\*\s*(\d{1,2} \w+ \d{4})', text)
+        try:
+            stamped = _dt.datetime.strptime(m.group(1), '%d %B %Y').date() if m else None
+        except ValueError:
+            stamped = None
+        if stamped != today:
+            stale.append(os.path.basename(rel))
+    _line('positions stamped', not stale, 'changed but not stamped today: ' + ', '.join(stale), failed)
+    print()
+    if failed:
+        print('HANDOFF CHECKS FAILED: %s' % ', '.join(failed))
+    else:
+        print('HANDOFF CHECKS PASSED.')
+    return failed
+
+
+def _line(label, ok, why, failed):
+    if ok:
+        print('  %-18s PASS' % label)
+    else:
+        failed.append(label)
+        print('  %-18s FAIL  %s' % (label, why[:150]))
 
 
 if __name__ == '__main__':

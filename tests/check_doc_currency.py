@@ -68,11 +68,13 @@ REPO = Path(__file__).resolve().parent.parent
 def artefact(city_root: Path, rel: str) -> Path:
     """A spec path resolved to disk.
 
-    `docs/...` is the project's documentation, kept at the repository root
-    (the goal, the board, the record and the generated reference); every
-    other path is the city's own, relative to `cities/<city>/`.
+    `docs/...`, `tests/...`, `.claude/...` and `README.md` are the simulator's, at the
+    repository root; `{city}/...` is the active city's root; every other path
+    is the city's own, relative to `cities/<city>/`.
     """
-    if rel == "docs" or rel.startswith("docs/"):
+    if rel.startswith("{city}/"):
+        return city_root / rel[len("{city}/"):]
+    if rel in ("docs", "tests", "README.md") or rel.startswith(("docs/", "tests/", "cities/", ".claude/", ".github/")):
         return REPO / rel
     return city_root / rel
 
@@ -441,7 +443,7 @@ def run() -> tuple[list[dict], list[dict], int]:
     checked = 0
 
     for claim in spec["claims"]:
-        doc_path = REPO / claim["doc"]
+        doc_path = artefact(city_root, claim["doc"])
         if not doc_path.exists():
             skipped.append({"claim": claim["id"], "why": f"{claim['doc']} absent"})
             continue

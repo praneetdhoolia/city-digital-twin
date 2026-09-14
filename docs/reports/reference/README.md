@@ -93,17 +93,17 @@ over the carried rows.
 ### The pass before (10 September 2026, at `4d1d1bc`)
 
 Lodged as
-[`20260910T134723_project_report.html`](../20260910T134723_project_report.html)
+`20260910T134723_project_report.html` (pruned; git history)
 — the seventh pass: field 49 of 50 rows reused, 1 added (Tallinn/SimMobility),
 6 calibration methods added; factors 83 reused, 7 added; field lane 38 of 40
 calls, factor lane 18 of 40; statuses IN 46 · PARTIAL 32 · INERT 2 · ASC 1 · OUT 9.
 
 
 Lodged as
-[`20260909T003402_project_report.html`](../20260909T003402_project_report.html)
+`20260909T003402_project_report.html` (pruned; git history)
 — the sixth pass of the library. The previous refresh of both lanes was the pass
 at `6cf0ffd`, lodged as
-[`20260908T192638_project_report.html`](../20260908T192638_project_report.html),
+`20260908T192638_project_report.html` (pruned; git history),
 about five hours earlier.
 
 Two passes a day apart is the second demonstration of what the library is for,

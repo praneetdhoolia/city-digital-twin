@@ -18,7 +18,7 @@ corridor's congestion, the transport demands of an event the size of the
 Brisbane 2032 Olympics. Newcastle (NSW) is the first city because a light rail
 was built there in 2019 without an ex-post evaluation; the original research
 design for that question is kept as the frozen origin document at
-[`design/newcastle-lr-proposal.md`](archived/design/newcastle-lr-proposal.md). The twin
+[`newcastle-lr-proposal.md`](../cities/newcastle/docs/archived/design/newcastle-lr-proposal.md). The twin
 comes first; the questions are applications of it.
 
 ## Hard requirements
@@ -53,8 +53,10 @@ comes first; the questions are applications of it.
 9. **City-agnostic.** The framework (`src/`, `config/schema/`, `tests/`,
    `run.py`) may not be tuned to Newcastle; everything specific to a city —
    data, parameters, adapters, overlays — lives under `cities/<city>/`. The
-   project's documents live at `docs/` (14 September 2026, superseding the
-   earlier placement under the city).
+   simulator's documents live at `docs/`; what describes one city — its study
+   area, its targets, the reference generated from its inputs, its requests
+   and its frozen dossiers — lives at `cities/<city>/docs/` (14 September
+   2026, §9.171).
 10. **No open issue behind a run.** Before the simulator is tuned or tested —
     before any arm is launched — every GitHub issue is closed, or declares what
     it is waiting for. An issue that can be fixed without a run is fixed first.
@@ -117,6 +119,7 @@ time; every controllable value declared in the registry.
   6 replaces it; the SCATS algorithm is implemented ([`positions/signals-and-crossings.md`](positions/signals-and-crossings.md)).
 - The per-session `/goal` restatement. The directive now lives here; a
   session reads it, it does not re-issue it.
-- The placement of the study's documents under `cities/<city>/docs/`
-  (24 August – 14 September 2026). They are the project's documents and live
-  at `docs/`.
+- The placement of the simulator's documents under `cities/<city>/docs/`
+  (24 August – 14 September 2026), and the placement of the city's own
+  documents at `docs/` (14 September 2026, for half a day): the simulator's
+  live at `docs/`, the city's under the city (§9.171).
