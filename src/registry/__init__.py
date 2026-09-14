@@ -142,7 +142,39 @@ def _numeric_leaves(value, _prefix=''):
         for k, v in sorted(value.items(), key=lambda kv: str(kv[0])):
             out.extend(_numeric_leaves(v, '%s[%s]' % (_prefix, k)))
         return out
+    if isinstance(value, list):
+        out = []
+        for i, v in enumerate(value):
+            out.extend(_numeric_leaves(v, '%s[%d]' % (_prefix, i)))
+        return out
     return []
+
+
+def _leaves_outside_sweep(field, value):
+    """(suffix, leaf, lo, hi) for every numeric leaf of `value` outside the
+    field's interval sweep - a scalar, a dict, a list or a dict of dicts.
+
+    ONE walk for the declared value and for an overlay's (#200): an overlay
+    that set one mode's entry of a per-mode table outside the sweep was
+    accepted, because the overlay check tested scalars only while the
+    declaration check walked the leaves. `sweep_keys` scopes both the same
+    way: an entry matches if it names the leaf's full dotted path or any one
+    segment of it, so a nested field can be scoped by its branch and a flat
+    one by its own key.
+    """
+    interval = _sweep_interval(field.get('sweep'))
+    if not interval or value is None:
+        return []
+    lo, hi = interval
+    keys = field.get('sweep_keys')
+    out = []
+    for suffix, leaf in _numeric_leaves(value):
+        segs = re.findall(r'\[([^\]]*)\]', suffix)
+        if keys and not ('.'.join(segs) in keys or any(s in keys for s in segs)):
+            continue                          # the sweep is declared not to apply
+        if not (lo <= float(leaf) <= hi):
+            out.append((suffix, leaf, lo, hi))
+    return out
 
 
 def sweep_basis_of(field):
@@ -226,26 +258,12 @@ def _intrinsic_errors(fields):
                 elif dep not in fields:
                     errors.append('%s: derived_from names %r, which is not a registry '
                                   'field (#124)' % (key, dep))
-        interval = _sweep_interval(f.get('sweep'))
-        if interval and f.get('value') is not None:
-            lo, hi = interval
-            # sweep_keys names the entries the interval applies to; an entry a
-            # city does not carry (a mode it lacks) is simply not checked
-            keys = f.get('sweep_keys')
-            for suffix, leaf in _numeric_leaves(f['value']):
-                # A leaf's suffix is its bracket path: `[car]` when the value is
-                # a flat dict, `[WEEKDAY][work]` when it nests. An entry matches
-                # if sweep_keys names its full dotted path OR any one segment of
-                # it, so a nested field can be scoped by its branch (`WEEKDAY`)
-                # and a flat one still by its own key (`car`), as before.
-                segs = re.findall(r'\[([^\]]*)\]', suffix)
-                if keys and not ('.'.join(segs) in keys
-                                 or any(s in keys for s in segs)):
-                    continue                  # the sweep is declared not to apply
-                if not (lo <= float(leaf) <= hi):
-                    errors.append('%s%s: value %r lies outside its own sweep [%g, %g] - '
-                                  'either the value or the sweep basis is wrong (#124)'
-                                  % (key, suffix, leaf, lo, hi))
+        # sweep_keys names the entries the interval applies to; an entry a
+        # city does not carry (a mode it lacks) is simply not checked
+        for suffix, leaf, lo, hi in _leaves_outside_sweep(f, f.get('value')):
+            errors.append('%s%s: value %r lies outside its own sweep [%g, %g] - '
+                          'either the value or the sweep basis is wrong (#124)'
+                          % (key, suffix, leaf, lo, hi))
         if f['source'] in SWEPT_SOURCES:
             if not swept and not held and not implied:
                 errors.append('%s: source %r requires a sweep, a held_fixed rule or a '
@@ -459,17 +477,15 @@ def _check_values(items, fields, layer_name, allow=(), justification=None):
                 errors.append('%s: sets %s to %r, which is not one of its declared '
                               'categorical sweep %s.'
                               % (layer_name, key, value, sweep['categorical']))
-        interval = _sweep_interval(sweep)
-        if interval and isinstance(value, (int, float)) and not isinstance(value, bool):
-            lo, hi = interval
-            if not (lo <= float(value) <= hi):
-                if key not in allow:
-                    errors.append('%s: sets %s to %r, outside its declared sweep [%g, %g]. '
-                                  'List it in allow_outside_sweep with a justification if '
-                                  'that is deliberate.' % (layer_name, key, value, lo, hi))
-                elif key not in justification:
-                    errors.append('%s: %s is in allow_outside_sweep with no justification.'
-                                  % (layer_name, key))
+        # every numeric leaf - a scalar, or each entry of a per-mode table (#200)
+        for suffix, leaf, lo, hi in _leaves_outside_sweep(field, value):
+            if key not in allow:
+                errors.append('%s: sets %s%s to %r, outside its declared sweep [%g, %g]. '
+                              'List it in allow_outside_sweep with a justification if '
+                              'that is deliberate.' % (layer_name, key, suffix, leaf, lo, hi))
+            elif key not in justification:
+                errors.append('%s: %s is in allow_outside_sweep with no justification.'
+                              % (layer_name, key))
         if 'held_fixed' in field and key not in allow:
             errors.append('%s: sets %s, which is HELD FIXED. %s Departure requires: %s'
                           % (layer_name, key, field['held_fixed']['rule'],
