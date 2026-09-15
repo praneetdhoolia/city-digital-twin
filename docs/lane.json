@@ -1,16 +1,16 @@
 {
  "description": "THE LANE LEDGER - the single next task and the decisions it waits on, declared once so the board's Next section and the brief's section 1 are generated from it (src/analyse/build_status_board.py, block `lane`) and /onboard can put an open decision to the user as clickable choices instead of prose. A task is `open`, `done` (with the record section that closed it) or `dropped` (with why). A decision is unanswered until `answer` is set; /handoff records the answer here, in DECISIONS.md 14 and on the issue's AWAITING-DECISION line, and an answered decision is never asked again. Costs are quoted from src/analyse/arm_cost.py, never typed from memory. Edit with src/analyse/lane.py.",
- "updated": "2026-09-15",
+ "updated": "2026-09-16",
  "family": "F35-the-engines-route-what-they-remode",
  "tasks": [
   {
    "id": "routers-pair-reading",
    "title": "Read the routers pair: `20260915T000704_250it_25pct` against arm 0, all twelve modes with choice-set coverage on both sides",
    "kind": "reading",
-   "status": "open",
-   "recommended": true,
-   "cost": "no run: `report_mode_ridership.py --run 20260915T000704_250it_25pct --it <reached>` and `report_choice_set_coverage.py`, then the fit pipeline; the arm itself is running on a spent 30.0 h approval (iterations 30-33 at 423-467 s against the 422 s price)",
-   "blocked_on": "the arm's end - the 250 horizon, or the 30.0 h ceiling projected near iteration 215 (a stop there is citable at its reached_iteration, not a result; the pair's verdict may then need the horizon re-declared or a second approval)",
+   "status": "done",
+   "recommended": false,
+   "cost": "no run; done: `report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250`, `report_choice_set_coverage.py` on both arms, `_fit.json` (§9.176)",
+   "blocked_on": "nothing - read at its horizon, `ran_to_last_iteration` at 250 (§9.176)",
    "opens_family": false,
    "answers_issues": [
     98,
@@ -19,7 +19,8 @@
     172,
     174
    ],
-   "evidence": "§9.174: launched, pace measured; §9.169: the pairs difference against arm 0's it.300 reading; §9.175: D4 - read inside F35, no family flag"
+   "evidence": "§9.174: launched, pace measured; §9.169: the pairs difference against arm 0's it.300 reading; §9.175: D4 - read inside F35, no family flag",
+   "done_ref": "9.176"
   },
   {
    "id": "routers-pair",
@@ -45,9 +46,9 @@
    "title": "The roots first: one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196)",
    "kind": "rebuild",
    "status": "open",
-   "recommended": false,
+   "recommended": true,
    "cost": "a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at the same price as above",
-   "blocked_on": "D1 chose the routers pair first (§9.172); the rebuild follows the pair's reading, or a new decision to take the roots before it",
+   "blocked_on": "D7 (the pair's reading is in: the routers change moved nothing past the band, so the roots are next unless the user chooses the scoring pair or the bike test first); the build needs no approval, the new arm 0 a stated cost - ~28 h at 250 iterations from the pair's 362 s median (§9.176)",
    "opens_family": true,
    "answers_issues": [
     86,
@@ -56,7 +57,7 @@
     196,
     145
    ],
-   "evidence": "§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost"
+   "evidence": "§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost; §9.176: the routers pair read - pt coverage 15.78 % against 17.53 % on arm 0, light rail -71.0 %, ride -40.8 % at a 19.11 % ceiling on both arms"
   },
   {
    "id": "asc-contraction",
@@ -65,7 +66,7 @@
    "status": "held",
    "recommended": false,
    "cost": "~15 h, no family",
-   "blocked_on": "held by the user until the first pair has run (§9.159)",
+   "blocked_on": "D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session",
    "opens_family": false,
    "answers_issues": [
     107
@@ -79,7 +80,7 @@
    "status": "open",
    "recommended": false,
    "cost": "one /project-report pass",
-   "blocked_on": "the next reading - a pair arm's gate or horizon (§9.166: one report per reading)",
+   "blocked_on": "nothing - the pair is the reading (§9.176); one /project-report pass, no run",
    "opens_family": false,
    "answers_issues": [],
    "evidence": "docs/reports/README.md"
@@ -187,6 +188,91 @@
    "asked": "2026-09-15",
    "answer": "Inside F35, read against arm 0 (recommended)",
    "answered": "2026-09-15"
+  },
+  {
+   "id": "D5",
+   "question": "The routers pair ran all 250 iterations and shut down cleanly, but its harness died at iteration 34, so no `_run.json` exists and the gate is red. How is it closed out?",
+   "options": [
+    {
+     "label": "Add run.py --close-out; it is a RESULT (recommended)",
+     "detail": "a launcher path for an orphaned run whose own log records a clean shutdown at its declared last iteration: `ran_to_last_iteration` at 250 through the framework's close_out(); refuses a live, short or unclean run"
+    },
+    {
+     "label": "Let reconcile mark it aborted; cite at it.250",
+     "detail": "the existing path: status aborted (or failed, on the survivable Guice throwable); a reading at reached_iteration 250, never a result"
+    },
+    {
+     "label": "Leave it; the gate stays red",
+     "detail": "no close-out; the handoff PR is blocked by the red gate and the lane cannot start"
+    }
+   ],
+   "recommended": 0,
+   "issues": [
+    225
+   ],
+   "evidence": "§9.176: `_progress.json` last written 05:11:22 on 15 Sep at iteration 34; the JVM shut down cleanly at 03:30:18 on 16 Sep; `run_failure.py --check` red on the stale running record",
+   "asked": "2026-09-16",
+   "answer": "Add run.py --close-out; it is a RESULT (recommended)",
+   "answered": "2026-09-16"
+  },
+  {
+   "id": "D6",
+   "question": "The harness is a child of the shell that launches it, and the fifty-second session's end killed the routers pair's harness at iteration 34 while its JVM ran on. What should the launch default be?",
+   "options": [
+    {
+     "label": "Detach by default (recommended)",
+     "detail": "`run.py` registers the scheduled task unless `--foreground` is passed; the harness, its watchers and the record outlive any shell; `--detach` already runs every refusal first (§9.167)"
+    },
+    {
+     "label": "Refuse a foreground launch under a Claude session",
+     "detail": "`run.py` refuses when `CLAUDECODE` is in the environment and `--detach` is absent; a foreground launch from a terminal stays allowed"
+    },
+    {
+     "label": "Leave the default; the operator remembers --detach",
+     "detail": "the trap goes in the brief; a harness death recurs the next time it is forgotten"
+    }
+   ],
+   "recommended": 0,
+   "issues": [
+    225
+   ],
+   "evidence": "§9.176: the one launch since §9.72 not made `--detach` is the one whose harness died with the shell; no ceiling, stall or gate watcher ran from iteration ~35 to 250",
+   "asked": "2026-09-16",
+   "answer": null,
+   "answered": null
+  },
+  {
+   "id": "D7",
+   "question": "The routers pair moved nothing past the band (car -0.35 pp, ride +0.17 pp, light rail 772 → 856 boardings, heavy rail 10,092 → 10,476 against arm 0; 2 of 12 inside and 6 past the bar on both; pt coverage 17.53 → 15.78 %). What runs next?",
+   "options": [
+    {
+     "label": "The roots rebuild (recommended)",
+     "detail": "one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196); opens a family; ~2 h of builds then a new arm 0 at ~28 h"
+    },
+    {
+     "label": "The scoring pair next",
+     "detail": "`RUN.replanning.score_msa_representation` = `at_innovation_cutoff`, the one candidate predicting both the cutoff snap (car +1.774 pp on the pair, +1.683 on arm 0) and the score peak-then-fall (§9.163); read against arm 0 inside F35; ~28 h"
+    },
+    {
+     "label": "The ASC contraction test for bike alone",
+     "detail": "~15 h, no family; 20.46 pp of headroom on bike (§9.163); held by the user until the first pair had run (§9.159) - it has"
+    }
+   ],
+   "recommended": 0,
+   "issues": [
+    86,
+    30,
+    107,
+    196,
+    172,
+    174,
+    98,
+    49
+   ],
+   "evidence": "§9.176: the pair's reading against arm 0; §9.169: ride's 20.60 % target above its 19.11 % coverage, fixed at the seed, on both arms",
+   "asked": "2026-09-16",
+   "answer": null,
+   "answered": null
   }
  ]
 }

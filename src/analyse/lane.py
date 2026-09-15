@@ -129,6 +129,12 @@ def main(argv=None) -> int:
         print('lane.json is malformed: ' + '; '.join(bad))
         return 1
     if a.ask:
+        # The console is cp1252 on Windows and a decision's text carries en
+        # dashes, arrows and minus signs; /onboard reads this JSON, so it is
+        # written as UTF-8 whatever the console (session_gate.py does the same)
+        for stream in (sys.stdout, sys.stderr):
+            if hasattr(stream, 'reconfigure'):
+                stream.reconfigure(encoding='utf-8', errors='replace')
         print(json.dumps(open_decisions(doc), indent=1, ensure_ascii=False))
         return 0
     if a.answer:

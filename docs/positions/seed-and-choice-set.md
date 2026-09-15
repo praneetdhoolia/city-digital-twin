@@ -1,8 +1,8 @@
 # Seed and choice set — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Three runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct` at iteration 300, and F35's routers pair `20260915T000704_250it_25pct` at 250 (§9.162, §9.169, §9.176), each `completion` `ran_to_last_iteration`; nothing measured on any arm that did NOT reach its declared horizon is one.*
 
-**Updated:** 15 September 2026 (fifty-first session) · **Record read through:** §9.174 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -30,23 +30,20 @@
 
 ## What is measured
 
-- **Arm 0 relaxes, and car still moves away from target after it.100** (§9.169, `20260912T202242_300it_25pct`, `_summary.json`): drift over it.250–300 car **+0.128 pp** max, taxi −0.097, walk −0.040 → **relaxed** at 0.5 pp. Snap at 240→241: car **+1.683 pp**, walk −1.245, taxi −0.679, ride +0.449. Planned car (`modestats.csv`): 41.44 % at it.0, 62.26 at it.100, 64.71 at it.200, 66.94 at it.300 — convergence moves car AWAY from target, and #172 stands.
-- **Coverage at 300 on arm 0** (§9.169, `output/modeChoiceCoverage1x.txt`): car **75.86 %**, walk 63.54, taxi 53.72, bike 27.12, ride **19.11**, pt **17.53**; motorbike 0.23 and truck 4.09 never move. Ride's coverage is fixed at the seed from it.27, so its 20.60 % target sits above it and NO constant reaches it; pt was still opening at it.240.
-- **Two twelve-mode readings are RESULTS** (§9.162, §9.169). F32's `20260909T015217_300it_25pct`: 0 of 12 inside, 8 past the stop bar. F35's arm 0: **2 of 12 inside** (car +9.6 %, motorbike −5.6 %), 6 past the bar (ride −41.6 %, taxi +131.4 %, bike +201.6 %, heavy rail +54.6 %, light rail −73.9 %, ferry −63.3 %). Different families, not differenced (§3.5).
-- **Requirement 8 is measured on F32: the run relaxes, and relaxing is not converging** (§9.162): `relaxed: true` over it.250–300, max drift **0.261 pp** (car) at 0.5; the snap at 240 was car **+2.211 pp**, walk −0.941, taxi −0.583, ride −0.489, pt −0.153 — the distance the search had not travelled. Requirement 8's 250 is met in the weak sense only.
-- **The relaxed state is worth less than the state it relaxed from** (§9.162, `output/scorestats.csv`): average plan score 11.7500 at it.100, **19.2049** at 240, **14.5679** at 300; best 32.0315 → 26.4472; executed 12.5211 → 24.8780. The §9.160 extrapolation was right on direction, wrong on level.
-- **The choice set closes early and PT barely opens** (§9.160, §9.162): F32 coverage at 300 car **77.55 %**, walk 63.95, taxi 54.62, bike 29.03, **pt 25.78**, ride **20.05**; motorbike 0.00236 and truck 0.04158 are locked carves. First iteration within 1 pp of final / last move over 0.01 pp: ride 5 / 17, bike 7 / 16, walk 7 / 14, car 8 / 16, taxi 10 / 27, **pt 123 / 233** (§9.163).
-- **Ride's target is above its own coverage** (§9.163): 20.60 % target, 20.05 % coverage, share 12.1553 %; the only such mode, so ride's −41.0 % is a choice-set finding, not a taste (#48, #86).
+- **The routers pair is a RESULT and moves nothing outside noise** (§9.176, `20260915T000704_250it_25pct`, `ran_to_last_iteration` at 250, 27.39 h; `_fit.json` on both arms): against arm 0, car 63.56 vs 63.91 % (**−0.35 pp**), ride +0.17, walk +0.04, taxi +0.11, bike −0.08, bus +0.09 pp; heavy rail 10,476 vs 10,092 boardings, light rail 856 vs 772; **2 of 12 inside and 6 past the bar on both**. The F4 seed pair's noise floor was 0.11 pp per mode (§9.64) and the replication band is unmeasured (#163), so none of it is attributable; the pair cut innovation at 200, arm 0 at 240 (§9.169).
+- **Both results relax, and car moves away from target after it.100 on both** (§9.169, §9.176, `_summary.json`): arm 0 drift over it.250–300 car **+0.128 pp** max, snap at 240→241 car **+1.683 pp**, walk −1.245, taxi −0.679, ride +0.449; the pair drift over it.210–250 car **+0.14 pp** max, snap at 200→201 car **+1.774**, walk −1.344, taxi −0.640, ride +0.364. On the pair the it.100 gate read car +3.0 %, walk +9.9 %, bus −0.3 % inside, and convergence took car to +9.0 % and walk to −11.9 % — #172 stands on two arms.
+- **Coverage on both arms** (§9.169, §9.176, `output/modeChoiceCoverage1x.txt`): arm 0 at 300 car **75.86 %**, walk 63.54, taxi 53.72, bike 27.12, ride **19.11**, pt **17.53**; the pair at 250 car 75.46, walk 63.37, taxi 53.33, bike 26.59, ride **19.11**, pt **15.78** — pt's coverage fell 1.75 pp under the routers change or under 40 fewer innovating iterations, ride's is identical and fixed at the seed from it.27, so its 20.60 % target sits above it on both and NO constant reaches it; motorbike 0.23 and truck 4.09 never move.
+- **Three twelve-mode readings are RESULTS** (§9.162, §9.169, §9.176). F32's `20260909T015217_300it_25pct`: 0 of 12 inside, 8 past the stop bar. F35's arm 0: **2 of 12 inside** (car +9.6 %, motorbike −5.6 %), 6 past the bar (ride −41.6 %, taxi +131.4 %, bike +201.6 %, heavy rail +54.6 %, light rail −73.9 %, ferry −63.3 %). F35's routers pair: 2 of 12 inside (car +9.0 %, motorbike −5.5 %), 6 past (ride −40.8, taxi +142.6, bike +197.8, heavy rail +60.5, light rail −71.0, ferry −66.9 %). F32 is a different family, not differenced (§3.5).
+- **The choice set closes early and PT barely opens** (§9.160, §9.162, §9.163): on F32 every mode's coverage closed by iteration 27 and **pt** was still moving at **233** (F32 pt 25.78 %, ride 20.05); motorbike and truck are locked carves.
 - **The seed carries the binding on every plan** (§9.164, `_plans_report.json` `bound_placement`): WEEKDAY **194,131** fully and **59,705** partially bound tours over 199,329 persons, 268,306 duplicates folded, 90,134 persons kept an alternative; SAT 167,389 / 34,624; SUN 148,686 / 26,239. Seeded ride share 0.1114 of weekday legs = `seed_ride_covered_share`.
-- **The demand's own mixed subtours**: 0 leaf on every day type on the rebuilt plans - WEEKDAY 338, SAT 222, SUN 181, all spanning (`citysim.SubtourChainScan`, §9.140, #96). On arm 0 `STOOD ASIDE` reads **5**, all in the first two iterations, against 0 on the 1 % probes (§9.169, §9.164): #96's close condition is met at 5, not 0.
 - **The mechanism that would produce the coverage ranking is an undeclared default** (#174, #155): `WorstPlanSelector` against `RUN.replanning.max_agent_plan_memory` = 8 deletes the worst-scoring plan, a positive feedback between scoring and membership - consistent with, not evidence for; a paired arm on the selector separates it.
 
 ## What is open
 
 - **Why convergence makes the fit worse is the open question of the project** (§9.162, §9.169, #172): the post-cutoff level is car-heavier than any gate read; whether the cause is the scoring, the choice set (pt reaches 25.78 % on F32, 17.53 % on arm 0) or the routers is what the pairs must separate.
 - **Five one-field controls, one control arm, and the order is the operator's** (§9.164, §9.169, #172): scoring (`RUN.replanning.score_msa_representation`), the choice set (`RUN.replanning.plan_selector_for_removal`), the routers (`C.raptor.mode_cost_representation`), the demand (`B.mode.bound_passenger_placement`, SPENT at `every_plan`), service quality (`C.time_weights.service_quality_representation`, #175). Arm 0 is the CONTROL HALF.
-- **The routers pair is RUNNING** as `20260915T000704_250it_25pct` on a spent 30.0 h approval (D1, §9.172, §9.174), read against arm 0 in F35; whether a one-field control opens a family is D4, unanswered.
-- **Superseded** (§9.163): the scoring branch `at_innovation_cutoff` is the one candidate predicting both the +2.211 pp snap and the score peak-then-fall; the router branch `C.raptor.mode_cost_representation` = `mode_constant` is built and never run (§9.162, #49).
+- **The routers control is measured and moves nothing** (§9.176, D4 §9.175: inside F35, against arm 0): `C.raptor.mode_cost_representation` = `mode_constant` is not what decides the rail split or the car excess. Four one-field controls remain unrun; which runs next is D7 (the roots rebuild recommended, the scoring pair or the bike ASC test), asked at the next `/onboard`.
+- **The scoring branch `at_innovation_cutoff` is still the one candidate predicting both the cutoff snap (+1.683 and +1.774 pp on the two results) and the score peak-then-fall** (§9.163, §9.176).
 - **A crowding or raptor arm can move coverage as a side effect** (#174, #98, #49): read coverage on both arms of any pair, or the difference is not attributable.
 - **Whether 200 iterations of SEARCH suffice stays unmeasured** (§9.169): the pairs cut at 200 where arm 0 cut at 240; the ≤ 0.42 pp movement between those points bounds the difference without testing it.
 - **The `full_choice_set` against `uniform_draw` sweep** has not been run on one family (`B.mode.seed_method`).
@@ -66,6 +63,7 @@
 
 ## History
 
+- §9.176 — the routers pair a result; moves nothing
 - §9.174 — the routers pair launched; ceiling near it.215
 - §9.172 — the routers pair chosen first, priced 30.0 h
 - §9.170 — the tenth report: every control still unrun
@@ -80,6 +78,3 @@
 - §9.157 — the F31 gate, still stopped at 100
 - §9.143 — per-trip seeded modes
 - §9.142 — the 250-iteration horizon reviewed and not declared
-- §9.140 — leaf mix repaired; memory census
-- §9.126 — choice-set seed converges car, walk
-- §9.121 — first-executed plan drawn uniformly

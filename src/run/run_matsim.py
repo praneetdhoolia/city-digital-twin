@@ -514,10 +514,22 @@ def iteration_times(log):
     fallback is a FULL sequential read: the F23 arm's matsim.log was 54.9 GB
     (9.142), and close-out wanted a median out of it.
     """
-    import datetime as dt
     recorded = _recorded_iteration_times(log)
     if recorded:
         return recorded
+    return _iteration_times_from_log(log)
+
+
+def _iteration_times_from_log(log):
+    """Wall seconds per iteration from the log's own BEGINS/ENDS markers alone.
+
+    The digest is skipped on purpose: a harness that died mid-run leaves a
+    `_progress.json` that stops where the harness did while the JVM ran on,
+    so a record built from it would state a horizon the run passed at iteration
+    34 (`20260915T000704_250it_25pct`, 9.176). Only an iteration whose ENDS
+    marker was read is in the result.
+    """
+    import datetime as dt
     begins, out = {}, {}
     with open(log, encoding='utf-8', errors='replace') as f:
         for line in f:
@@ -1958,6 +1970,113 @@ def stop_run(name, cause):
         print('raw cache trim failed (the stop is recorded): %s' % e,
               flush=True)
     return dead
+
+
+SHUTDOWN_MARK = 'shutdown completed'
+
+
+def close_out_orphan(name):
+    """Close out a run whose harness died while its JVM ran to the horizon.
+
+    `20260915T000704_250it_25pct` ran every one of its 250 iterations and shut
+    down cleanly, but its harness had died at iteration 34, so nothing wrote
+    `_run.json`, `_meta.json` still said `running`, and the only path the
+    framework had for it - `reconcile_stale()` at the next launch - would have
+    marked a 27.3 h result `aborted` (9.176, D5). This is the sanctioned way
+    to close out that one state, and it refuses every other:
+
+    - the card must say `running` and every recorded pid must be dead;
+    - the run's own log must end in MATSim's clean shutdown, with no
+      unexpected-shutdown request;
+    - the last iteration whose ENDS marker the log holds must be the horizon
+      the card declares - read from the LOG, never the digest, which stops
+      where the harness did.
+
+    A run that fails any test is left to `reconcile_stale()`, which records it
+    as `failed` (its log says why) or `aborted` (it ended quietly short of its
+    horizon) - a short run is a reading at `reached_iteration`, never a result,
+    and this must not be a way of promoting one.
+    """
+    run_dir = results_store.resolve(name)
+    if run_dir is None:
+        raise SystemExit('no run named %s' % name)
+    meta = _load_meta(run_dir)
+    if not meta or meta.get('status') != 'running':
+        raise SystemExit('%s is not a stale running record (status %s); '
+                         'nothing to close out'
+                         % (name, (meta or {}).get('status')))
+    alive = [k for k in ('pid', 'jvm_pid')
+             if meta.get(k) and _pid_alive(meta[k])]
+    if alive:
+        raise SystemExit('%s is still running (%s alive); stop it with '
+                         '--stop, do not close it out' % (name, ', '.join(alive)))
+    log = os.path.join(run_dir, 'matsim.log')
+    # THE SHUTDOWN IS READ BEFORE ANY THROWABLE. `run_failure.from_log` names
+    # the last throwable in the log, and on a run that completed that is
+    # Guice's survivable `Unsupported class file major version` - the only one
+    # this run ever logged - so asking it first refused a 250-iteration result
+    # as "died of its own account". A run whose log ends in MATSim's clean
+    # shutdown, with no unexpected-shutdown request, did not die of anything.
+    with open(log, 'rb') as fh:
+        fh.seek(max(0, os.path.getsize(log) - 4096))
+        tail = fh.read().decode('utf-8', errors='replace')
+    if SHUTDOWN_MARK not in tail or 'unexpected' in tail.lower():
+        died = run_failure.from_log(log) or run_failure._last_error(log)
+        raise SystemExit("%s: the log does not end in MATSim's clean shutdown "
+                         '(%s); reconcile_stale() records it at the next '
+                         'launch' % (name, died or 'no exception recorded'))
+    per = _iteration_times_from_log(log)
+    horizon = meta.get('iterations')
+    reached = max(per) if per else -1
+    if reached != horizon:
+        raise SystemExit('%s ended at iteration %d, short of its declared %s; '
+                         'it is a reading, not a result - reconcile_stale() '
+                         'records it aborted at the next launch'
+                         % (name, reached, horizon))
+    ended_ts = os.path.getmtime(log)
+    wall_s = None
+    try:
+        t0 = time.mktime(time.strptime(meta.get('started') or '',
+                                       '%Y-%m-%dT%H:%M:%S'))
+        wall_s = round(max(0.0, ended_ts - t0), 1)
+    except (TypeError, ValueError):
+        pass
+    steady = sorted(v for k, v in per.items() if k > 0)
+    update_meta(run_dir, status='completed', rc=0, wall_s=wall_s,
+                ended=time.strftime('%Y-%m-%dT%H:%M:%S',
+                                    time.localtime(ended_ts)),
+                reached_iteration=horizon,
+                closed_out_by='run.py --close-out (the harness died at '
+                              'iteration %s; the JVM ran to its horizon)'
+                              % (_last_digest_iteration(run_dir)))
+    try:
+        cfg = registry.load()
+    except Exception as e:                                   # noqa: BLE001
+        print('registry unavailable, the raw cache is not trimmed: %s' % e,
+              flush=True)
+        cfg = None
+    doc = close_out(run_dir, RAN_TO_LAST, rc=0, wall_s=wall_s,
+                    reached_iteration=horizon, cfg=cfg,
+                    extra=dict(
+                        median_iteration_s=(steady[len(steady) // 2]
+                                            if steady else None),
+                        closed_out_by='run.py --close-out'))
+    if doc is not None:
+        extract_metrics(run_dir)
+        results_store.mirror(run_dir)
+        print('closed out as %s at iteration %s after %.0f s: %s'
+              % (RAN_TO_LAST, horizon, wall_s or 0.0,
+                 os.path.join(run_dir, '_run.json')), flush=True)
+    return doc
+
+
+def _last_digest_iteration(run_dir):
+    """The iteration `_progress.json` last recorded - where the harness died."""
+    try:
+        return json.load(open(os.path.join(run_dir, '_progress.json'),
+                              encoding='utf-8')).get('iteration')
+    except (OSError, ValueError):
+        return None
 
 
 def run(scenario, day, cfg, overrides, force=False, warm=None,
