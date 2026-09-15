@@ -158,7 +158,42 @@ def plain_iteration_pace(run_dir):
               else 0.5 * (vals[len(vals) // 2 - 1] + vals[len(vals) // 2]))
     return dict(plain_median_s=float(median), n_plain=len(plain),
                 plain_iterations=sorted(plain), one_off_s=dict(one_off),
-                last_iteration=last_it)
+                last_iteration=last_it,
+                # every iteration the run's OWN clock timed, one-off or plain:
+                # what the wall clock spent inside iterations
+                iteration_total_s=float(sum(t for t, _ in seen.values())))
+
+
+def setup_seconds(wall, reached, median, recorded, plain):
+    """What a run spent OUTSIDE its iterations, from the clock that covers them.
+
+    Three clocks can say it, in trust order:
+
+    1. the harness's memo `_progress.json` `iteration_seconds` - but ONLY when
+       it holds every iteration the run reached. The routers pair's harness
+       died at iteration 34 while its JVM ran to 250 (DECISIONS.md 9.176), so
+       its memo held 34 iterations and `wall - sum(memo)` booked the other
+       216 as "22.8 h of setup", quoting the next arm at 48.8 h against a
+       27.4 h run (16 September 2026);
+    2. MATSim's own `output/stopwatch.csv`, which the JVM writes whether or
+       not anything watches it, when it reaches the same last iteration;
+    3. the record's median times the iterations, the estimate the memo replaced.
+
+    `recorded` is {iteration: seconds} from the memo, `plain` is
+    `plain_iteration_pace()`'s reading or None. Returns None when no clock
+    can say.
+    """
+    if not wall:
+        return None
+    if reached is None:
+        return None
+    if recorded and max(recorded) >= int(reached):
+        return max(0.0, float(wall) - sum(recorded.values()))
+    if plain and plain.get('last_iteration', -1) >= int(reached)             and plain.get('iteration_total_s'):
+        return max(0.0, float(wall) - float(plain['iteration_total_s']))
+    if median:
+        return max(0.0, float(wall) - float(median) * (int(reached) + 1))
+    return None
 
 
 def observed_arms(min_iterations: int = 2) -> list:
@@ -205,21 +240,20 @@ def observed_arms(min_iterations: int = 2) -> list:
         # neither pace nor setup; it is named here and priced as neither.
         recorded = prog.get('iteration_seconds') or {}
         stalls = {}
-        if recorded:
-            secs = {int(k): float(v) for k, v in recorded.items()}
+        secs = {int(k): float(v) for k, v in recorded.items()}
+        if secs:
             limit = stall_kill_s()
             if limit:
                 stalls = {k: v for k, v in secs.items() if v > limit}
-            if wall:
-                setup = max(0.0, float(wall) - sum(secs.values()))
-        elif wall and reached:
-            spent = float(median) * (int(reached) + 1)
-            setup = max(0.0, float(wall) - spent)
+        # What an iteration costs when it pays only what every iteration
+        # pays - read from the run's own stopwatch, not from its median.
+        plain = plain_iteration_pace(d)
+        # The memo covers only the iterations the harness lived to see; an
+        # orphan's setup is read from the JVM's own stopwatch instead.
+        setup = setup_seconds(wall, reached, median, secs, plain)
         out.append(dict(
             name=name,
-            # What an iteration costs when it pays only what every iteration
-            # pays - read from the run's own stopwatch, not from its median.
-            plain=plain_iteration_pace(d),
+            plain=plain,
             # A run that carried a flight recorder paid for it: the first two
             # profiled probes ran ~8 % slower than the same stack unprofiled.
             # Its clock prices its own conditions and nothing else, so it is

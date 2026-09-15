@@ -527,6 +527,12 @@ STRUCTURAL = {
         'comes from RUN.machine.threads',
     'src/run/run_matsim.py:setp(count)':
         'how many regex matches to replace. A re.sub argument',
+    'src/run/run_matsim.py:_log_tail(nbytes)':
+        'how much of a finished run\'s matsim.log is read from its end to '
+        'find the newest ITERATION ENDS marker (2 MB against a log that can '
+        'reach 55 GB). A read window on text READ OUT of a run; it decides '
+        'nothing about the transport system and the whole log stays where '
+        'it is',
     'src/run/run_failure.py:MESSAGE_CHARS':
         'how much of a Java exception message is quoted into a dead run\'s '
         '`cause` before it is elided. A display length on text READ OUT of a '

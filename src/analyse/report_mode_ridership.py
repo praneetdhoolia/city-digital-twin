@@ -380,7 +380,7 @@ def truck_at_count_stations(run_dir, iteration):
 
 def report(run_dir, iteration, truck_stations=False):
     import iteration_trips as itr
-    person_lga = em.home_lga()
+    person_lga = em.home_lga(run_dir)
     # The trips table when the run wrote one; otherwise the same linked trips
     # derived from the iteration's experienced plans - the writer's own source,
     # validated to reproduce the table exactly wherever both exist.

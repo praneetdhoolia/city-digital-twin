@@ -44,40 +44,45 @@ on every pass.
 
 ## State
 
-Last pass **14 September 2026**, at `b8f89ff` (the forty-seventh session: the
-documents moved to `docs/`, the run viewer rebuilt, arm 0 of F35 landed as the
-second result) — the **tenth** pass of the library, the same day as the ninth
-(which ran at `780c4c2` and is lodged as
-[`20260914T014107_project_report.html`](../20260914T014107_project_report.html))
-and the first after a reading rule fired: arm 0 of F35 is a result with 2 of 12
-modes inside 10 %. Field lane 40 of 40 calls over 12 rounds; every stored row was
-inside its horizon and none was re-searched.
+Last pass **16 September 2026**, at `d6f9cdf` (the fifty-third session: the
+routers pair closed out and read as the third result, the handoff's by-hand
+steps made tools) — the **twelfth** pass of the library, two days after the
+tenth (which ran at `b8f89ff` and is lodged as
+[`20260914T152907_project_report.html`](../20260914T152907_project_report.html)).
+Field lane 37 of 40 calls over 12 rounds, stopped by the two-barren-rounds rule;
+every stored row was inside its horizon and none was re-searched. Nothing new
+qualified: five candidate sweeps produced six exclusions and no row.
 
 | | rows | this pass |
 |---|---:|---|
-| `field-survey.json` projects | **55** | 47 carried unchanged, **6 updated with verified material** (Lausitz from Meinhardt, Lu & Nagel 2026 — its calibration method, 10 % scale and teleported walk, in print for the first time; Kelheim from its published v3.0 25 % stopwatch — 388 iterations in ~15.5 h; Berlin from its own `calibrate.py`; Seoul's citation; MWCOG's memo still unlocated and the subcommittee dates; Brussels from the VUB portal), **2 added** (Rotterdam–The Hague, the ActivitySim + MATSim co-simulation read from TU Delft's copy; Barcelona-MATSim from mobile phone records, Bassolas et al. 2019, a holdout count validation with its misses named) |
-| `field-survey.json` platforms | 12 | 10 reused unchanged, **2 updated** (OpenPaths' automated-calibration cell filled from the Utah MUG page after three passes; MATSim's `calibration_tooling` from Rakow & Nagel 2024 read in full — the three-page CC BY note behind the ASC fixed point, formula and damping advice verbatim) |
-| excluded · not re-verified · gaps | 70 · 42 · **24 (12 open)** | **5 gaps closed** (the four VSP 2026 working papers titled — none is the downsampling study; the TNO candidate — now a row; joint trip-length calibration — the ecosystem hand-sets a marginal utility of travelling per mode and states no tolerance; the wall-time half of run cost — Kelheim's stopwatch; the OpenPaths cell), 8 narrowed, **3 opened** (Okanagan ASIM + MATSim, unpriced behind SSRN's 403; the Kelheim heap; the Berlin MATSim→SUMO hybrid behind MDPI); 2 excluded (Meinhardt et al. 2026 as a DRT application on Lausitz; Rakow & Nagel 2024 as a method note); 2 recorded unpriced |
-| `calibration_methods` | **20** | 20 reused, 0 added, 1 dated addendum (the fixed-point family's source note read in full; two applications name it — Lausitz and Rotterdam) |
-| `factors.json` rows | **96** | **94 reused unchanged, 0 re-searched** (all inside the 365-day horizon, `needs_research` 0), **2 added** (H12 habit, inertia and satisficing - three meta-analyses via Javaid et al. 2020, habit-mode r 0.42-0.50; F6 route-choice reliability and the indifference band - Carrion & Levinson), 11 dated addenda; gaps: I7 closed (the Berlin v6.3 EWGT paper read in full: undamped log-ratio ASC update, MAE < 0.5 pp), H6, I8, G5, A2 narrowed, BO4Mob ruled out; factor lane 35 of 40 calls over 9 rounds. Every status re-read at `b8f89ff`: IN 46 / PARTIAL 36 / INERT 3 / ASC 1 / OUT 10 over 96 (no class changed on the 94 carried rows) |
+| `field-survey.json` projects | **55** | 51 carried unchanged, **1 updated with verified material** (BEAM — two PDFs saved and read in full: 7.75 M residents, a 30 % validated baseline and a 10 % calibration sample, the validation data named verbatim (Google Maps speeds, HPMS VMT, MTC agency boardings), route-level ridership CHANGES as the only published fit, ~12 h on 50 cores / 512 GB, and the field's only sample-size sweep for an on-demand mode — ride-hail dynamics converge at 40 %), 3 narrowed without a cell change (SimMobility's calibration method behind a third dead DSpace path; MWCOG's status from the November 2025 subcommittee highlights; Kelheim's heap by elimination), **0 added** |
+| `field-survey.json` platforms | 12 | 12 reused unchanged |
+| excluded · not re-verified · gaps | 76 · 42 · **26 (11 open)** | **3 gaps closed by elimination** (the Brussels and DC fits — every route dead, `unknown (paywalled)` is permanent; the Seoul fit — no open copy exists; the Kelheim heap — the 1 % log exceeds 10 MB, so no MATSim log is readable from here), 8 narrowed (ARC's 2015 report also over 10 MB; the MUM 2026 page live but without a programme 12 days out; gap 9's literature side exhausted), **2 opened** (the BEAM CORE calibration and validation report, Spurlock et al. 2024 — the one document that would give BEAM a level fit; Greater Jakarta 2026 — a 10 % MATSim scenario with a motorcycle mode, unreadable on three hosts); **6 excluded** (Ústí nad Labem eqasim, no validation claim; COMPASS, an LLM guidance method; a SUMO motorway EV twin; a Sensors 2026 signal-control demo; the two BEAM application papers, written into the BEAM row); 3 unpriced candidates narrowed (Okanagan, Jakarta, the Berlin→SUMO hybrid) |
+| `calibration_methods` | **20** | 20 reused, 0 added |
+| `factors.json` rows | **101** | **96 reused unchanged, 0 re-searched** (all inside the 365-day horizon, `needs_research` 0), **5 added**, each from a source read this pass (B7 immobility — the 8-12 % one-day diary benchmark, Madre, Axhausen & Brög; E27 heavy-rail station access mode — Meng, Taylor & Scrafton ATRF 2017 read in full: walk 37-43 %, park-and-ride 11-36 %, kiss-and-ride 7-17 % at outer stations, Sydney walk access ~50 %; E28 walk-access distance to public transport — Daniels & Mulley JTLU 2013 read in full: Sydney HTS mean 573 m, train 805 m, bus 461 m, upper quartile 1,018 m; I16 travel-time and speed validation — the FHWA Toolbox III / Wisconsin table: times within 15 % in > 85 % of cases, GEH < 5; J8 mobile-phone records as a demand observation — Nommon, Bassolas 2019, Matet et al. 2024), 7 dated addenda; gaps: F6's indifference band closed (Zhu & Levinson 2015 read in full: 34 % on the shortest-time path, half within 30 s, 90 % within 5 min), A2 and H12 narrowed, three new residuals named; factor lane **20 of 40** calls over 6 rounds, two PDFs read locally at no cost. Every status re-read at `d6f9cdf`: IN 47 / PARTIAL 39 / INERT 3 / ASC 1 / OUT 11 over 101 — **no class changed on the 96 carried rows** (46 / 36 / 3 / 1 / 10); the routers pair moved router-scorer consistency (F5) and the router-expressed rail bonus (E25) from the top of the would-move ranking to measured-and-negative, and ride's choice-set ceiling (H10), walk's placement (E15) and the scoring pair (H9) now lead |
 | `needs_research` | **0** | unchanged |
 
-Budgets: field lane **40 of 40** calls over 12 rounds (the 14 September 2026
-pass at `b8f89ff`); the factor lane's budget for this pass is written back by
-that lane. The validation ladder over 55 rows is **7 / 12 / 26 / 10 / 0** (none
+Budgets: field lane **37 of 40** calls over 12 rounds (the 16 September 2026
+pass at `d6f9cdf`); factor lane **20 of 40** calls over 6 rounds (the same pass,
+the same `HEAD`). The validation ladder over 55 rows is **7 / 12 / 26 / 10 / 0** (none
 / survey shares / road link counts / transit ridership / per-mode every mode);
 no carried row moved rung, the top rung is still empty across every agent-based
 project, and this repository is still the only attempt — in calibration, **2 of
-12 modes inside 10 %** at the newest result (arm 0 of F35,
-`20260912T202242_300it_25pct`: car +9.6 %, motorbike −5.6 %; six past the 20 %
-bar). Three findings this pass bear on this project directly: Kelheim v3.0 at
-25 % publishes ~139 s a recurring iteration and ~15.5 h for 388 iterations
-against this project's 346 s and 30.35 h for 300 (five times the population);
-the Rakow & Nagel note's "adjust the update step by a fraction" is the value
-`CAL.asc.damping` declares and the ecosystem's only stated damping rule; and
-Barcelona-MATSim attributes its two count misses by link to the port freight and
-through traffic a resident model excludes — the first published bearing with
-numbers on why a mode-share-calibrated model under-counts specific links.
+12 modes inside 10 %** at the newest result (the routers pair,
+`20260915T000704_250it_25pct`, 250 of 250: car +9.0 %, motorbike −5.5 %; six past
+the 20 % bar; nothing moved against arm 0 outside one build's noise). Three
+findings this pass bear on this project directly: BEAM calibrates at 10 %,
+validates at 30 % and states that an on-demand mode's dynamics settle only at a
+40 % sample — this project's taxi and ride are read at 25 %, on the steep part
+of that curve; BEAM CORE's 7.75 M-resident weekday takes ~12 h on 50 cores and
+512 GB against this project's 27.39 h for 250 iterations of 622,318 residents on
+16 threads, and neither the field nor this pass could read a MATSim heap at any
+scale; and MWCOG's own record has its ABM and its four-step model agreeing
+"except for transit ridership and VHD", the family this project's six STOP
+modes belong to. Five dead routes were added to the ledger (climr.ok.ubc.ca,
+cris.unibo.it, its-archive.mit.edu, a third DSpace path, the ScienceDirect
+`/org/` mirror); two live ones (eta-publications.lbl.gov and escholarship.org
+serve PDFs that read locally at no budget cost).
 
 ### The previous pass (11 September 2026, at `20ae4e9`)
 

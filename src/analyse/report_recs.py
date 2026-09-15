@@ -33,6 +33,16 @@ STAMP = re.compile(r'^(\d{8}T\d{6})_project_report\.html$')
 DATA = re.compile(r'<script type="application/json" id="report-data">(.*?)</script>', re.S)
 
 
+def _opens_family(v):
+    """A recommendation's `opens_family` is a bool or a phrase; a phrase that
+    starts with no/none/inside is a no (the twelfth report wrote "no (inside
+    F35)" and the ledger tagged it as opening a family)."""
+    if isinstance(v, bool) or v is None:
+        return bool(v)
+    t = str(v).strip().lower()
+    return not (t == '' or t.startswith(('no', 'none', 'inside')))
+
+
 def load() -> dict:
     if not os.path.exists(PATH):
         return {'description': 'see src/analyse/report_recs.py', 'rows': []}
@@ -72,7 +82,7 @@ def missing(doc: dict) -> list[dict]:
         rid = '%s:%d' % (stamp, i)
         if rid not in have:
             out.append({'id': rid, 'report': stamp, 'rank': i, 'what': r.get('what', ''),
-                        'repeat_of': r.get('repeat_of'), 'opens_family': bool(r.get('opens_family')),
+                        'repeat_of': r.get('repeat_of'), 'opens_family': _opens_family(r.get('opens_family')),
                         # model | data | code | process - the report's own tag (9.176);
                         # a row synced from an older report carries none
                         'category': r.get('category'),

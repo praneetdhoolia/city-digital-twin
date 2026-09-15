@@ -71,7 +71,7 @@ it. A toolchain change is a model change.
 python run.py --list                            # what is runnable: scenarios, day types, run overlays
 python run.py --dry-run                         # resolve every input, print it, execute nothing
 python run.py --run-config smoke                # a plumbing test: 1% sample, 2 iterations
-python run.py --detach --run-config <overlay>   # an arm: S2, weekday, the overlay's sample and horizon
+python run.py --run-config <overlay>            # an arm: S2, weekday, the overlay's sample and horizon; detached by default
 python run.py --stop <name> --cause "..."       # stop a running arm through the harness
 ```
 
@@ -88,7 +88,7 @@ prints the same line before every launch. Four rules stand before any launch:
    `awaiting-run` carries a line `AWAITING-RUN: <the measurement>`; the run's
    lane is the set of issues its overlay declares it answers.
    `--allow-open-issues` needs `--override-reason` and is counted.
-4. **One arm at a time**, launched with `--detach`, stopped with `--stop`, never
+4. **One arm at a time**, detached by default (`--foreground` opts out), stopped with `--stop`, never
    by hand. The launcher refuses a concurrent arm, a launch with no automatic
    stop, a heap below the registry's rule, and an overlay that changes nothing
    the run reads.
@@ -100,7 +100,7 @@ prints the same line before every launch. Four rules stand before any launch:
 | `--run-config TAG` | a committed run overlay — the reproducible way to vary a run |
 | `--fraction` `--iterations` `--threads` `--xmx` `--seed` | registry overrides, checked against each field's declared sweep |
 | `--set KEY=VALUE` | a raw MATSim config override |
-| `--detach` | launch past `PersonPrepareForSim` and return; the run outlives the shell |
+| `--detach` / `--foreground` | detached is the default on Windows: the harness outlives the shell; `--foreground` keeps it in this shell, where it dies with it |
 | `--stop NAME --cause TEXT` | stop a running arm and record why — the one sanctioned way |
 | `--dry-run` `--list` `--no-metrics` `--force` | resolve-only, list, skip metric extraction, ignore an existing run record |
 

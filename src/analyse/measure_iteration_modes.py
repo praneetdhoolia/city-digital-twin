@@ -120,7 +120,7 @@ def mode_share_at(run_dir, iteration, person_lga, rows=None):
 def score(run_dir, iteration, person_lga=None):
     """Score one iteration exactly as `fit.py` would score a finished run."""
     if person_lga is None:
-        person_lga = em.home_lga()
+        person_lga = em.home_lga(run_dir)
     share = mode_share_at(run_dir, iteration, person_lga)
     out = {'unscorable': []}
     scored = fitmod.score_mode_share(fitmod.load_targets(),
@@ -205,7 +205,7 @@ def main():
     else:
         wanted = [have[-1]]
 
-    person_lga = em.home_lga()
+    person_lga = em.home_lga(run_dir)
     if a.json:
         blocks = []
         for it in wanted:

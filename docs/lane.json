@@ -38,7 +38,7 @@
         172,
         174
       ],
-      "evidence": "§9.169; the tenth report's factor ledger names router-scorer consistency the top mover: light rail -73.9 %, heavy rail +54.6 %, ferry -63.3 % are decided in the raptor and no control has run; §9.172: D1 taken, the pair priced",
+      "evidence": "§9.169; report #11's (20260914T152907) factor ledger names router-scorer consistency the top mover: light rail -73.9 %, heavy rail +54.6 %, ferry -63.3 % are decided in the raptor and no control has run; §9.172: D1 taken, the pair priced",
       "done_ref": "9.174"
     },
     {
@@ -75,15 +75,16 @@
     },
     {
       "id": "eleventh-report",
-      "title": "The eleventh project report, after the next reading",
+      "title": "Report #12, after the routers pair's reading (lodged 16 September 2026 as 20260916T062246)",
       "kind": "report",
-      "status": "open",
+      "status": "done",
       "recommended": false,
       "cost": "one /project-report pass",
       "blocked_on": "nothing - the pair is the reading (§9.176); one /project-report pass, no run",
       "opens_family": false,
       "answers_issues": [],
-      "evidence": "docs/reports/README.md"
+      "evidence": "docs/reports/README.md",
+      "done_ref": "9.177"
     }
   ],
   "decisions": [
@@ -110,7 +111,7 @@
         86,
         30
       ],
-      "evidence": "§9.164, §9.169, the tenth report's factor ledger",
+      "evidence": "§9.164, §9.169, report #11's factor ledger",
       "asked": "2026-09-14",
       "answer": "Routers pair first (recommended)",
       "answered": "2026-09-14",
@@ -160,7 +161,7 @@
       "issues": [
         202
       ],
-      "evidence": "the tenth report, recommendation 5",
+      "evidence": "report #11 (20260914T152907), recommendation 5",
       "asked": "2026-09-14",
       "answer": "Require them (recommended)",
       "answered": "2026-09-14",
@@ -238,8 +239,9 @@
       ],
       "evidence": "§9.176: the one launch since §9.72 not made `--detach` is the one whose harness died with the shell; no ceiling, stall or gate watcher ran from iteration ~35 to 250",
       "asked": "2026-09-16",
-      "answer": null,
-      "answered": null
+      "answer": "Detach by default (recommended)",
+      "answered": "2026-09-16",
+      "note": "Taken 16 Sep 2026: run.py registers the scheduled task unless --foreground is passed."
     },
     {
       "id": "D7",
@@ -271,8 +273,9 @@
       ],
       "evidence": "§9.176: the pair's reading against arm 0; §9.169: ride's 20.60 % target above its 19.11 % coverage, fixed at the seed, on both arms",
       "asked": "2026-09-16",
-      "answer": null,
-      "answered": null
+      "answer": "The scoring pair next",
+      "answered": "2026-09-16",
+      "note": "Taken 16 Sep 2026 with the machine idle: the scoring pair launches now against arm 0 inside F35, and the roots rebuild proceeds in parallel; the user's selection carries the stated-cost approval for one 25 % probe and one 25 % arm up to 35 h. The rebuilt family's arm 0 follows."
     }
   ]
 }

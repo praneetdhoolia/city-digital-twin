@@ -306,9 +306,16 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
         plans_dst, veh_dst = plans_src, veh_src
         scaled = []
     else:
+        kept = set()
         n_in, n_out, n_hhless = subsample_plans(
             plans_src, plans_dst, fraction, seed,
-            cfg.get('RUN.sample.unit'))
+            cfg.get('RUN.sample.unit'), kept_ids=kept)
+        # The run's OWN residents: person -> home LGA from the population
+        # the plans were built on, written beside the plans so that a
+        # later demand rebuild cannot change what this run's readings
+        # count as a resident (#213; before this, every reader resolved
+        # residents through the city's CURRENT B1 table).
+        write_residents(run_dir, kept)
         # The sampling UNIT is declared (DECISIONS.md 9.45). A person-wise
         # sample shreds households, and every household-coupled mechanism
         # then depends on the fraction rather than on the demand - which is
@@ -334,6 +341,20 @@ def build_config(src_dir, run_dir, scenario, day, fraction, seed, overrides, cfg
                              unit=cfg.get('RUN.sample.unit'),
                              persons_without_household=n_hhless,
                              transit_capacity_scaled=sorted(set(scaled)))
+
+
+def write_residents(run_dir, person_ids=None):
+    """Write `<run>/_residents.csv.gz`: person_id, home_sa1, home_lga (#213).
+
+    From the city's population table AS IT IS NOW - so this is written at
+    launch, when the table is the one the plans were built on, and never
+    later except by an operator who can say the table has not changed since
+    (`extract_metrics.py --write-residents`, which records that it did).
+    `person_ids` restricts the map to the sampled persons; None writes every
+    resident (a 100 % run).
+    """
+    import extract_metrics as _em                              # noqa: PLC0415
+    return _em.write_residents(run_dir, person_ids)
 
 
 def scenario_inputs(cfg, scenario, base, fraction):
@@ -515,9 +536,41 @@ def iteration_times(log):
     (9.142), and close-out wanted a median out of it.
     """
     recorded = _recorded_iteration_times(log)
-    if recorded:
+    if recorded and not _digest_is_short(log, recorded):
         return recorded
     return _iteration_times_from_log(log)
+
+
+def _log_tail(log, nbytes=2_000_000):
+    """The last `nbytes` of a log, decoded; '' when it cannot be read."""
+    try:
+        with open(log, 'rb') as fh:
+            fh.seek(max(0, os.path.getsize(log) - nbytes))
+            return fh.read().decode('utf-8', errors='replace')
+    except OSError:
+        return ''
+
+
+def _last_ended_in_tail(log):
+    """The newest `### ITERATION n ENDS` in the log's tail, or None."""
+    ended = [int(m.group(1)) for m in ITER_RE.finditer(_log_tail(log))
+             if m.group(2) == 'ENDS']
+    return max(ended) if ended else None
+
+
+def _digest_is_short(log, recorded):
+    """True when the log's own tail ended an iteration the digest never saw.
+
+    The digest stops where the harness died; the JVM may have run on. The
+    routers pair's harness died at iteration 34 and its JVM ran to 250
+    (DECISIONS.md 9.176): a record built from the digest said 34, the pricer
+    booked 216 iterations as setup, and `--stop` on such an orphan would have
+    thrown 216 executed iterations away. Reading the tail costs 2 MB, not the
+    54.9 GB a full walk of an arm's log can cost - the walk is taken only when
+    the tail proves the digest short.
+    """
+    newest = _last_ended_in_tail(log)
+    return newest is not None and newest > max(recorded)
 
 
 def _iteration_times_from_log(log):
@@ -886,7 +939,8 @@ def warm_start_overrides(warm, overrides, scenario, day, run_config):
     return out
 
 
-def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False):
+def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False,
+              dry_run=False):
     """Every refusal a launch can meet WITHOUT the subsample, in a few seconds.
 
     `run.py --detach` used to return before `resolve`, the telemetry refusal,
@@ -914,8 +968,11 @@ def preflight(scenario, day, cfg, overrides=None, warm=None, quiet=False):
     refuse_if_no_automatic_stop(cfg)
     refuse_small_heap(cfg, xmx, fraction)
     # here as well as in run(): a --detach launch returns before run() and
-    # would otherwise refuse only in a log nobody is watching (tenth report)
-    refuse_concurrent_arm()
+    # would otherwise refuse only in a log nobody is watching (tenth report).
+    # A dry run executes nothing, so the arm already running is no reason to
+    # refuse resolving the next one's overlay under it (16 September 2026).
+    if not dry_run:
+        refuse_concurrent_arm()
     if not quiet:
         announce_heap(cfg, xmx, fraction)
     refuse_unsafe_telemetry(cfg)
@@ -1228,8 +1285,26 @@ def reconcile_stale():
         # terminating exception, that is the cause and the status is `failed`;
         # the dead-harness reading is the fallback for a log that ends quietly.
         log_path = os.path.join(run_dir, 'matsim.log')
-        died_on_its_own = (run_failure.from_log(log_path)
-                           or run_failure._last_error(log_path))
+        # THE SHUTDOWN IS READ BEFORE ANY THROWABLE (9.176): a run whose log
+        # ends in MATSim's clean shutdown did not die of anything, whatever
+        # survivable throwable `from_log` finds earlier (Guice's class-file
+        # warning is in every log). A finished orphan is closed out as the
+        # result it is, through the same close_out_orphan() the operator
+        # would run; one that ended short stays on the aborted path below.
+        tail = _log_tail(log_path, 4096)
+        if SHUTDOWN_MARK in tail and 'unexpected' not in tail.lower():
+            try:
+                close_out_orphan(os.path.basename(run_dir))
+                print('reconciled: %s finished under a dead harness and was '
+                      'closed out' % os.path.basename(run_dir), flush=True)
+                continue
+            except SystemExit as e:
+                print('reconciled: %s ended cleanly under a dead harness but '
+                      'cannot be closed out (%s); recorded aborted'
+                      % (os.path.basename(run_dir), e), flush=True)
+        died_on_its_own = (None if SHUTDOWN_MARK in tail else
+                           (run_failure.from_log(log_path)
+                            or run_failure._last_error(log_path)))
         # The card is filled from the log, not left at None: the F33 arm 0
         # card said `launched: None, reached_iteration: None` while the board
         # printed both (eighth report, 11 September 2026).
@@ -1368,7 +1443,10 @@ def _last_completed_iteration(run_dir):
                   encoding='utf-8') as fh:
             spans = json.load(fh).get('iteration_seconds') or {}
         if spans:
-            return max(int(k) for k in spans)
+            newest = max(int(k) for k in spans)
+            # the JVM may have ended iterations after the harness died
+            in_log = _last_ended_in_tail(os.path.join(run_dir, 'matsim.log'))
+            return max(newest, in_log) if in_log is not None else newest
     except (OSError, ValueError):
         pass
     try:

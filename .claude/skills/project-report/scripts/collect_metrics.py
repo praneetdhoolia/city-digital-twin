@@ -44,6 +44,26 @@ def sh(args: list[str], **kw) -> str:
     return r.stdout
 
 
+def gh_json(args: list[str], attempts: int = 4):
+    """`gh ... --json` with a retry on GitHub's gateway errors.
+
+    One GraphQL call for 500 pull requests with their check rollups and reviews
+    answered 504 then 502 on 16 September 2026 (the eleventh report); the
+    heavy per-PR fields are fetched per PR instead, and a transient 5xx is
+    retried with a pause rather than aborting the whole collection."""
+    import time
+    last = None
+    for i in range(attempts):
+        try:
+            return json.loads(sh(args))
+        except RuntimeError as e:
+            last = e
+            if not any(code in str(e) for code in ("HTTP 5", "502", "503", "504", "timeout", "Timeout")):
+                raise
+            time.sleep(5 * (i + 1))
+    raise last
+
+
 def repo_root() -> Path:
     return Path(sh(["git", "rev-parse", "--show-toplevel"]).strip())
 
@@ -180,14 +200,16 @@ def growth_series(root: Path) -> list[dict]:
 
 
 def github(root: Path, out_dir: Path) -> dict:
-    prs = json.loads(sh(["gh", "pr", "list", "--state", "all", "--limit", "500", "--json",
-                         "number,title,state,createdAt,mergedAt,additions,deletions,changedFiles,reviews,statusCheckRollup"]))
+    # the cheap fields in one list; reviews and check rollups per PR (see gh_json)
+    prs = gh_json(["gh", "pr", "list", "--state", "all", "--limit", "500", "--json",
+                   "number,title,state,createdAt,mergedAt,additions,deletions,changedFiles"])
     full = []
     for p in sorted(prs, key=lambda x: x["number"]):
-        d = json.loads(sh(["gh", "pr", "view", str(p["number"]), "--json", "commits,files,body,title,mergedAt,state"]))
+        d = gh_json(["gh", "pr", "view", str(p["number"]), "--json",
+                     "commits,files,body,title,mergedAt,state,reviews,statusCheckRollup"])
         full.append(dict(number=p["number"], title=d["title"], state=d["state"], mergedAt=d["mergedAt"],
                          additions=p["additions"], deletions=p["deletions"], changedFiles=p["changedFiles"],
-                         reviews=len(p["reviews"]), checks=collections.Counter((c.get("conclusion") or c.get("state")) for c in (p["statusCheckRollup"] or [])),
+                         reviews=len(d.get("reviews") or []), checks=collections.Counter((c.get("conclusion") or c.get("state")) for c in (d.get("statusCheckRollup") or [])),
                          commits=[dict(oid=c["oid"][:8], date=c["committedDate"][:10], msg=c["messageHeadline"]) for c in d["commits"]],
                          files=[f["path"] for f in d["files"]], body=d["body"] or ""))
     with open(out_dir / "prs_full.md", "w", encoding="utf-8") as fh:
@@ -195,8 +217,8 @@ def github(root: Path, out_dir: Path) -> dict:
             fh.write(f"\n\n# PR #{p['number']} [{p['state']}] merged {p['mergedAt']} +{p['additions']}/-{p['deletions']} files={len(p['files'])}\n## {p['title']}\n")
             fh.write("### commits\n" + "\n".join(f"- {c['date']} {c['oid']} {c['msg']}" for c in p["commits"]) + "\n")
             fh.write("### files (first 40)\n" + "\n".join("- " + f for f in p["files"][:40]) + "\n### body\n" + p["body"] + "\n")
-    issues = json.loads(sh(["gh", "issue", "list", "--state", "all", "--limit", "1000", "--json",
-                            "number,title,state,createdAt,closedAt,labels,comments,body"]))
+    issues = gh_json(["gh", "issue", "list", "--state", "all", "--limit", "1000", "--json",
+                      "number,title,state,createdAt,closedAt,labels,comments,body"])
     with open(out_dir / "issues_full.md", "w", encoding="utf-8") as fh:
         for i in sorted(issues, key=lambda x: x["number"]):
             fh.write(f"\n\n# #{i['number']} [{i['state']}] {i['createdAt'][:10]} -> {(i['closedAt'] or '')[:10]} labels={','.join(l['name'] for l in i['labels'])}\n## {i['title']}\n{i['body'] or ''}\n")
@@ -207,7 +229,7 @@ def github(root: Path, out_dir: Path) -> dict:
     closed = [i for i in issues if i["state"] == "CLOSED"]
     opened = [i for i in issues if i["state"] == "OPEN"]
     ttc = [(P(i["closedAt"]) - P(i["createdAt"])).days for i in closed]
-    runs = json.loads(sh(["gh", "run", "list", "--limit", "200", "--json", "conclusion,createdAt,workflowName,headBranch,event"]))
+    runs = gh_json(["gh", "run", "list", "--limit", "200", "--json", "conclusion,createdAt,workflowName,headBranch,event"])
     return dict(
         prs=[{k: v for k, v in p.items() if k not in ("body", "files", "commits")} | dict(n_commits=len(p["commits"]), n_files=len(p["files"]), body_chars=len(p["body"]), checks=dict(p["checks"])) for p in full],
         pr_stats=dict(total=len(full), merged=sum(1 for p in full if p["state"] == "MERGED"), closed_unmerged=sum(1 for p in full if p["state"] == "CLOSED"),

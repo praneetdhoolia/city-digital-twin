@@ -19,10 +19,10 @@
   "K": "Computation"
  },
  "counts": {
-  "factors": 96,
+  "factors": 101,
   "needs_research": 0,
-  "researched": 96,
-  "literature_half_written": 96
+  "researched": 101,
+  "literature_half_written": 101
  },
  "factors": [
   {
@@ -69,6 +69,12 @@
      "pass": "tenth",
      "head": "b8f89ff",
      "text": "SEMCOG Phase II (RSG 2023) - 'validated the model against detailed observed survey and count data' with 'automated calibration tools'; no flow tolerance on the case page; the brochure PDF /wp-content/uploads/2023/05/RSG-SEMCOG-Activity-Based-Model.pdf is unread."
+    },
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): the RSG-SEMCOG brochure (rsginc.com, 2023, 2 pages) read locally - 'validated the model against detailed observed survey and count data' and no flow tolerance; the route is dead. Next: OCR of MWCOG Gen3 v1.0.4 Tables 64-66.",
+     "source_url": "https://rsginc.com/wp-content/uploads/2023/05/RSG-SEMCOG-Activity-Based-Model.pdf"
     }
    ]
   },
@@ -369,7 +375,15 @@
    "last_verified": "2026-09-07",
    "query": "E Access, egress, wait and transfer time weights: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "E2"
+   "id": "E2",
+   "addenda": [
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): the Sydney access-walk distribution is now in the library (E28: mean 573 m, train 805 m, bus 461 m; upper quartile 824 m / 1,018 m) - the check the network access legs can be read against.",
+     "source_url": "https://www.jtlu.org/index.php/jtlu/article/view/308/338"
+    }
+   ]
   },
   {
    "layer": "E",
@@ -709,6 +723,12 @@
      "date": "2026-09-11",
      "text": "Station-level direct ridership models read this pass: service quantity, population density and station location drive boardings; feeder-bus connections add boardings, and park-and-ride supply was the most significant variable across Chicago, Dallas and Atlanta (Duncan 2010; Shantz et al. 2022 on GO Transit).",
      "source_url": "https://doi.org/10.1177/0739456X10385935"
+    },
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): station access mode is its own row now (E27): walk about half of Sydney home-to-train trips, park-and-ride 11-36 % and kiss-and-ride 7-17 % at outer stations (ATRF 2017 Adelaide observations; Ku-ring-gai 35 % car-driver access).",
+     "source_url": "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/ATRF2017_114.pdf"
     }
    ]
   },
@@ -1126,7 +1146,15 @@
    "last_verified": "2026-09-07",
    "query": "I Targets and the validation ladder: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "I1"
+   "id": "I1",
+   "addenda": [
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): the FHWA/Wisconsin acceptance table (I16) adds the rung this ladder has no row for - route travel times within 15 % in > 85 % of cases - beside counts and shares.",
+     "source_url": "https://ops.fhwa.dot.gov/trafficanalysistools/tat_vol3/sect5.htm"
+    }
+   ]
   },
   {
    "layer": "I",
@@ -1371,7 +1399,15 @@
    "last_verified": "2026-09-07",
    "query": "J Travel survey (HTS) weighting and vintage: literature magnitude and how MATSim / ActivitySim / eqasim implement it",
    "reused": true,
-   "id": "J2"
+   "id": "J2",
+   "addenda": [
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): the immobile share as a survey-quality indicator (8-12 % on a one-day weekday diary, Madre/Axhausen/Brog) is now row B7; the NSW HTS data document 2020/21-2024/25 returned 403 again, so the survey's own immobility rate is unread.",
+     "source_url": "https://link.springer.com/article/10.1007/s11116-006-9105-5"
+    }
+   ]
   },
   {
    "layer": "J",
@@ -1707,7 +1743,7 @@
    "needs_research": false,
    "last_verified": "2026-09-11",
    "query": "A Newcastle-specific stated preference for the tram over the bus at equal service; none is published",
-   "reused": false,
+   "reused": true,
    "additional_sources": [
     "https://www.sciencedirect.com/science/article/pii/S0739885926000776",
     "https://digitalcommons.usf.edu/jpt/vol16/iss2/3/"
@@ -1726,7 +1762,7 @@
    "needs_research": false,
    "last_verified": "2026-09-11",
    "query": "Whether BOAM covers the Newcastle (OM Region 2 / NISC1) contract and at what granularity - the field document is behind login",
-   "reused": false,
+   "reused": true,
    "additional_sources": [
     "https://www.transport.nsw.gov.au/news-and-events/media-releases/real-time-tracking-now-available-on-all-hunter-and-lower-north-coast",
     "https://www.transport.nsw.gov.au/data-and-research/data-and-insights/buses-on-time-running"
@@ -1752,7 +1788,7 @@
    "needs_research": false,
    "last_verified": "2026-09-11",
    "query": "The written policy text on the HTS page (transport.nsw.gov.au returned 403 to this pass; the sentence was read through the search summary and should be quoted from the page itself next pass)",
-   "reused": false,
+   "reused": true,
    "additional_sources": [
     "https://www.transport.nsw.gov.au/data-and-research/data-and-insights/surveys/household-travel-survey-hts"
    ]
@@ -1776,7 +1812,7 @@
    "verified_in": "2026-09-14",
    "added_on": "2026-09-14",
    "query": "E Car-specific factors: per-km operating cost elasticity, perceived versus actual cost, travel-time elasticity, and how MATSim / ActivitySim price the car leg",
-   "reused": false
+   "reused": true
   },
   {
    "layer": "H",
@@ -1801,7 +1837,15 @@
    "verified_in": "b8f89ff",
    "added_on": "2026-09-14",
    "query": "A published estimate of the mode-choice inertia effect as a UTILITY term (utils or minutes-equivalent) from a panel or RP/SP model, and a published measurement of which MATSim replanning setting (ChangeExpBeta beta, plan memory, innovation cutoff) reproduces an observed day-to-day mode switching rate",
-   "reused": false
+   "reused": true,
+   "addenda": [
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): Cherchi & Manca (2011) via the Semantic Scholar API - abstract elided by the publisher, no numbers; the inertia-as-utility-term half of the gap stands.",
+     "source_url": "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1007/s11116-011-9338-9"
+    }
+   ]
   },
   {
    "layer": "F",
@@ -1823,10 +1867,148 @@
    "verified_in": "b8f89ff",
    "added_on": "2026-09-14",
    "query": "The pooled reliability-ratio range and its meta-regression coefficients from Carrion & Levinson (2012) full text (SSRN 1736052 or the UMN conservancy PDF, both 403 this pass); the indifference band width in minutes from Zhu & Levinson (2016)",
-   "reused": false
+   "reused": true,
+   "addenda": [
+    {
+     "date": "2026-09-16",
+     "pass": 12,
+     "note": "2026-09-16 (twelfth pass): the indifference-band half of the residual gap is CLOSED from Zhu & Levinson's open-access GPS study (PLOS ONE 10(8) e0134322, 2015; 143 subjects, 25,157 trips, Minneapolis-St Paul): only about 34 % of all trips follow the shortest-time path (13.5 % of commute trips coincide with it exactly; ~40 % under a 10 % tolerance); about half of chosen routes are less than 30 s longer than the shortest-time route and almost 90 % are less than 5 min longer; no one followed the shortest-distance path unless it was also fastest. That is the band a routing randomness of 3.0 has to reproduce. Carrion & Levinson (2012) full text: the S2 route to its DOI returned 404 - dead; the pooled reliability-ratio range remains a gap.",
+     "source_url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0134322"
+    }
+   ]
+  },
+  {
+   "id": "B7",
+   "layer": "B",
+   "factor": "Immobility: the share of persons who make no trip on the survey day",
+   "what_research_says": "Madre, Axhausen & Brog (Transportation 34, 2007) treat the immobile share - persons not leaving home on the reporting day - as both a central result and a prime quality indicator of a travel diary survey: for a standard one-day, weekday-only diary it should lie in the range 8-12 %, and a higher figure signals soft refusal (respondents claiming not to have left the house) rather than a behavioural fact. Later panel work (Transportation 2022, weekly routines of employees and retirees) shows immobile days cluster by person and weekday, so a one-day rate understates the share of people who are ever immobile and overstates the share of habitually immobile people.",
+   "magnitude": "literature: 8-12 % of persons immobile on a one-day weekday diary (the survey-quality benchmark); above that band the excess is read as under-reporting",
+   "source_url": "https://link.springer.com/article/10.1007/s11116-006-9105-5",
+   "additional_sources": [
+    "https://www.researchgate.net/publication/5159044_Immobility_in_travel_diary_surveys",
+    "https://link.springer.com/article/10.1007/s11116-022-10292-x"
+   ],
+   "how_leading_simulators_do_it": "ActivitySim and CT-RAMP carry an explicit daily activity pattern model whose first alternative is 'stay at home' (a coordinated DAP per household member); eqasim and the MATSim Berlin/Lausitz pipelines inherit immobility from the survey diaries they sample, so the immobile share is the survey's; synthetic generators that draw tours per person from rates (as this project does) produce it implicitly as the zero of the draw.",
+   "evidence_strength": "moderate",
+   "relevance": "medium",
+   "needs_research": false,
+   "last_verified": "2026-09-16",
+   "verified_in": "12",
+   "added_on": "2026-09-16",
+   "reused": false,
+   "query": "The NSW HTS 2020/21-2024/25 share of persons making no trip on the travel day (the data document at transport.nsw.gov.au returned 403; the 2022/23 and 2023/24 data documents on data.nsw.gov.au are the next route)."
+  },
+  {
+   "id": "E27",
+   "layer": "E",
+   "factor": "Heavy rail: station access mode - walk, feeder bus, park-and-ride, kiss-and-ride",
+   "what_research_says": "Station access is a mode choice of its own and its split moves with distance and supply. In Sydney, walking is the access mode for about half of home-to-train trips and almost 90 % of home-to-bus trips (Daniels & Mulley 2013, from the HTS); TfNSW's rail-user analysis puts walk access at 48 % and walk EGRESS at 84 %, because the car is not available at the far end. Meng, Taylor & Scrafton (ATRF 2017) observed three Adelaide Gawler-line interchanges in 2010: Mawson Lakes - feeder bus 46 %, park-and-ride 27 %, kiss-and-ride 17 %, walk+bike 10 %; Elizabeth - bus 44 %, walk 37 %, park-and-ride 11 %, kiss-and-ride 7 %; Gawler (one occasional bus) - walk 43 %, park-and-ride 36 %, kiss-and-ride 15 %, bus 3 %. Their stated-preference model finds walking distance, bus access, bus waiting time, car access and car-park availability all significant, with age, income and gender effects. Outer-suburban Sydney stations surveyed by Ku-ring-gai Council read car-driver access at 35 % (17-52 % by station). The rule is that park-and-ride grows with distance from the CBD and with free station parking, and that a walk-only access model under-states the catchment of an outer station by roughly the car-access share.",
+   "magnitude": "literature: walk access 37-48 % at outer/regional stations (about 50 % Sydney-wide), park-and-ride 11-36 %, kiss-and-ride 7-17 %, feeder bus 3-46 % depending on the feeder network; walk egress ~84 %",
+   "source_url": "https://australasiantransportresearchforum.org.au/wp-content/uploads/2022/03/ATRF2017_114.pdf",
+   "additional_sources": [
+    "https://www.jtlu.org/index.php/jtlu/article/view/308/338",
+    "https://www.transport.nsw.gov.au/system/files/media/documents/2017/Detailed%20Analysis%20of%20the%20Travel%20Patterns%20of%20Rail%20Users%20in%20Sydney.pdf",
+    "https://www.parliament.nsw.gov.au/ladocs/submissions/58583/Submission%2074%20-%20Ku-ring-gai%20Council.pdf"
+   ],
+   "how_leading_simulators_do_it": "ActivitySim/CT-RAMP model transit access mode explicitly (walk, park-and-ride, kiss-and-ride, bike) with station lot capacities and shadow prices; MATSim's default raptor allows only walk access unless intermodal access/egress is configured (the SBB extension or accessEgressModeToLink with a car/bike access leg and a park-and-ride facility layer); the Berlin, Lausitz and Kelheim scenarios use walk-only pt access; eqasim adds no park-and-ride.",
+   "evidence_strength": "strong",
+   "relevance": "medium",
+   "needs_research": false,
+   "last_verified": "2026-09-16",
+   "verified_in": "12",
+   "added_on": "2026-09-16",
+   "reused": false,
+   "query": "An access-mode split observed at a Newcastle-line station (Opal tap-on by access mode is not published; a TfNSW station-access survey or the commuter car park occupancy at Cardiff / Cockle Creek / Morisset would settle it)."
+  },
+  {
+   "id": "E28",
+   "layer": "E",
+   "factor": "Walk-access distance to public transport: the catchment distribution behind a search radius",
+   "what_research_says": "Daniels & Mulley (JTLU 6(2), 2013) measured 1,906 home-to-stop walks in the Sydney HTS: the mean walk to public transport is 573 m (median 518 m, upper quartile 824 m); to a train station 805 m (median 749, upper quartile 1,018 m, n = 667); to a bus stop 461 m (median 364, upper quartile 655, n = 1,084); school-bus walks 360 m. Mode of the public-transport trip is the dominant determinant - supply and stop spacing, not the walker - and the distributions are right-skewed with a tail past 1.5 km. Ewing & Cervero's meta-analysis gives a transit-demand elasticity of -0.29 to distance-to-stop (a 10 % longer walk costs about 3 % of ridership). Planning rules of thumb (400 m bus, 800 m rail; NSW's 90 %-of-households-within-400 m daytime standard) are straight-line and shorter than the observed walks.",
+   "magnitude": "literature: mean 573 m (train 805 m, bus 461 m), upper quartile 824 m (train 1,018 m); demand elasticity to stop distance -0.29",
+   "source_url": "https://www.jtlu.org/index.php/jtlu/article/view/308/338",
+   "additional_sources": [
+    "https://jtlu.org/index.php/jtlu/article/view/308"
+   ],
+   "how_leading_simulators_do_it": "MATSim's raptor bounds access by transitRouter.searchRadius (default 1,000 m, extended in steps by extensionRadius when nothing is found) and prices the walk at the walk marginal utility; eqasim uses the same; ActivitySim uses walk-access skims with a 3-mile cap and a distance-decay in the access utility; Kelheim and Lausitz keep the 1 km default.",
+   "evidence_strength": "strong",
+   "relevance": "medium",
+   "needs_research": false,
+   "last_verified": "2026-09-16",
+   "verified_in": "12",
+   "added_on": "2026-09-16",
+   "reused": false,
+   "query": "The distribution of executed pt access-walk lengths on a result run against the Daniels & Mulley quartiles (a reader over the experienced plans; no search)."
+  },
+  {
+   "id": "I16",
+   "layer": "I",
+   "factor": "Travel-time and speed validation: the acceptance bar for link speeds and route travel times",
+   "what_research_says": "The FHWA Traffic Analysis Toolbox Volume III (2004; Wisconsin DOT targets, Table 4) is the profession's acceptance table for a calibrated traffic model: hourly link flows within 15 % for 700-2,700 veh/h (within 100 veh/h below 700, within 400 above 2,700) in more than 85 % of cases; the sum of link flows within 5 %; GEH < 5 on individual links in more than 85 % of cases and GEH < 4 on the sum; ROUTE TRAVEL TIMES within 15 % (or one minute if higher) in more than 85 % of cases; link speeds and bottleneck queuing judged visually. The 2019 revision (TxDOT's summary) replaces the fixed bands with a two-sigma band (95 % of simulated points inside) plus two accuracy criteria applied to every metric used for calibration, and requires at least two metrics. Travel time is therefore a first-class validation target alongside counts, and a model that matches counts but not times is not accepted.",
+   "magnitude": "literature: route travel times within 15 % (or 1 min) in > 85 % of cases; GEH < 5 on > 85 % of links; sum of flows within 5 %",
+   "source_url": "https://ops.fhwa.dot.gov/trafficanalysistools/tat_vol3/sect5.htm",
+   "additional_sources": [
+    "https://www.txdot.gov/manuals/des/tsp/chapter-13-microsimulation-analysis/13-5-calibration/13-5-2-acceptability-criteria/13-5-2-4-fhwa-traffic-analysis-toolbox--volume-iii.html"
+   ],
+   "how_leading_simulators_do_it": "MATSim-NYC, POLARIS-Chicago and the Barcelona SUMO twin validate against probe speeds (INRIX/TomTom/HERE) or travel-time runs as well as counts; Berlin v6.3 has no speed observation and absorbs too-fast car speeds in the car constant; Kelheim and Lausitz validate counts only; the FHWA table is the reference in every US DOT microsimulation guideline.",
+   "evidence_strength": "strong",
+   "relevance": "high",
+   "needs_research": false,
+   "last_verified": "2026-09-16",
+   "verified_in": "12",
+   "added_on": "2026-09-16",
+   "reused": false,
+   "query": "An observed speed surface for the study area (TfNSW does not publish one; TomTom/HERE probe data is commercial; the Google Distance Matrix at a sample of OD pairs is the derivable fallback)."
+  },
+  {
+   "id": "J8",
+   "layer": "J",
+   "factor": "Mobile-phone records and location-based-service data as a demand observation (OD matrices, activity diaries)",
+   "what_research_says": "Mobile-phone records now substitute for or complement the household survey as the demand observation at scale: Bassolas, Ramasco, Herranz & Cantu-Ros (TR-A 121, 2019) reconstructed activity diaries for the Barcelona metropolitan area from call-detail records, scaled them to census age and gender at census-tract level, ran MATSim at 10 % and VALIDATED on held-out traffic counts (9 of 11 entrances GEH < 10, the two misses attributed to excluded freight and through traffic). Nommon's practice note describes the pipeline: a continuous, region-wide sample against a household survey's ~2 % taken once a decade; expansion by classical synthetic-population techniques with census; home, work and study inferred readily, other purposes and the mode only by fusion with smartcard and classified counts, and refined in calibration. Matet, Come, Furno, Horl, Oukhellou & El Faouzi (Transportation 2024) show OD matrices from phone data improving synthetic travel demand generation (the ANR MOBITIC/PROMENADE work with eqasim). The limits are stable across sources: short trips and walking are under-detected, purpose beyond the anchors is inferred, and a privacy-aggregated zonal product needs the OD-estimation methods developed for counts.",
+   "magnitude": "literature: a population-scale continuous sample against a ~2 % one-off survey; validation misses concentrated where freight and through traffic are excluded; short trips under-detected",
+   "source_url": "https://www.nommon.es/blog/transport-models-and-mobile-phone-data/",
+   "additional_sources": [
+    "https://arxiv.org/abs/1803.06375",
+    "https://link.springer.com/article/10.1007/s11116-024-10524-2"
+   ],
+   "how_leading_simulators_do_it": "Barcelona-MATSim (Bassolas 2019) and Brussels (aggregated cellphone data, 2024) build demand from phone records; MATSim-NYC and POLARIS validate OD against Replica/StreetLight-class LBS products; ActivitySim regions (SANDAG, MTC) use StreetLight OD as a validation layer, never as the estimation sample; eqasim's French pipeline (Matet et al.) uses phone-derived OD to improve the synthetic demand.",
+   "evidence_strength": "moderate",
+   "relevance": "medium",
+   "needs_research": false,
+   "last_verified": "2026-09-16",
+   "verified_in": "12",
+   "added_on": "2026-09-16",
+   "reused": false,
+   "query": "Whether an Australian LBS OD product (e.g. the ABS/DataSpark or Telstra-derived OD used by TfNSW) is obtainable for the five LGAs, and at what aggregation; the 2021 journey-to-work OD (ABS TableBuilder) is the disclosed fallback."
   }
  ],
  "last_pass": {
+  "date": "2026-09-16",
+  "head": "d6f9cdf",
+  "rounds": 6,
+  "searches_spent": 20,
+  "budget": 40,
+  "literature_halves_newly_filled": 5,
+  "literature_halves_completed": 0,
+  "factors_added": 5,
+  "addenda_written": 7,
+  "gaps_closed": [
+   "F6 indifference band (Zhu & Levinson 2015 PLOS ONE read in full: 34 % on the shortest-time path, half within 30 s, 90 % within 5 min)"
+  ],
+  "gaps_narrowed": [
+   "A2 (SEMCOG brochure read locally - no tolerance; MWCOG OCR is the last route)",
+   "H12 (Cherchi & Manca abstract elided on S2)"
+  ],
+  "gaps_dead_route": [
+   "api.semanticscholar.org DOI:10.1016/j.tra.2012.01.003 (404 - Carrion & Levinson)",
+   "rsginc.com SEMCOG brochure (no tolerance)",
+   "transport.nsw.gov.au HTS data document 2020/21-2024/25 (403)",
+   "link.springer.com (not retried; abstracts elided on S2 for 10.1007/s11116-006-9105-5, -011-9338-9, -024-10524-2)"
+  ],
+  "note": "Twelfth pass of the library, at d6f9cdf (the fifty-third session: the routers pair closed out as the third result, 9.176), two days after the tenth. needs_research was 0 and all 96 stored literature halves were inside the 365-day horizon, so ALL 96 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. FIVE ROWS ADDED for cells the layer table names and the library lacked, each from a source read this pass: B7 immobility (Madre, Axhausen & Brog 8-12 % benchmark), E27 station access mode (Meng, Taylor & Scrafton ATRF 2017 read in full from the saved PDF; Daniels & Mulley; TfNSW rail users), E28 walk-access distance to public transport (Daniels & Mulley JTLU 2013 read in full from the saved PDF: Sydney HTS mean 573 m, train 805 m, bus 461 m), I16 travel-time and speed validation (FHWA Traffic Analysis Toolbox III / Wisconsin DOT targets: times within 15 % in > 85 % of cases, GEH < 5), J8 mobile-phone records as a demand observation (Nommon practice note; Bassolas 2019 from the field survey; Matet et al. 2024 by title). One gap closed (F6 indifference band), two narrowed, three dead routes recorded. Seven dated addenda. 20 of 40 calls spent over 6 rounds; two PDFs the fetch tool returned as binary were read locally at no budget cost.",
+  "statuses_note": "0 statuses stored, by design. All 96 carried rows plus the five new ones were re-read at d6f9cdf by a dump of the registry (558 fields), python src/registry/check_hardcoding.py --strict (TOTAL 0; 4 declared-ahead; 3 shipped at the off value), the CitysimControler.java binding lines, targeted greps of src/build, cities/newcastle/build and both Java trees, git diff b8f89ff..d6f9cdf (17 commits: the documents split, the viewer rebuilt on MapLibre, the routers pair launched, run and closed out through run.py --close-out, RunTelemetry measuring per-link delay; the registry changed in consumer annotations only, no value moved), and the routers pair read against arm 0 (9.176). NO CLASS CHANGED on any carried row: IN 46, PARTIAL 36, INERT 3, ASC 1, OUT 10 over the 96; the proofs of F5, E25, E20, E21, E19, I13 and H9 carry the pair (the first paired mechanism arm, which moved nothing outside noise), and those of I3, K2, F1, C2, A1 the commits that moved them. The five new rows read B7 PARTIAL, E27 PARTIAL, E28 IN, I16 PARTIAL, J8 OUT, so the 101-row table is IN 47 / PARTIAL 39 / INERT 3 / ASC 1 / OUT 11. Every would_move reads against the routers pair at it.250 (car +9.0, ride -40.8, walk -11.9, taxi +142.6, bike +197.8, motorbike -5.5, bus -12.3, heavy rail +60.5, light rail -71.0, ferry -66.9)."
+ },
+ "previous_pass": {
   "date": "2026-09-14",
   "head": "b8f89ff",
   "rounds": 9,
@@ -1859,37 +2041,6 @@
   ],
   "note": "Tenth pass of the library, at b8f89ff, the same day as the ninth (780c4c2). needs_research was 0 and all 94 stored literature halves were inside the 365-day horizon, so ALL 94 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. TWO ROWS ADDED for cells the layer table names and the library lacked: H12 (habit, inertia and satisficing - three meta-analyses via the Javaid et al. 2020 review of reviews, Cherchi & Manca 2011, Cantillo et al. 2007, Zhu & Levinson 2016, Di & Liu 2016) and F6 (travel-time reliability and the indifference band in ROUTE choice - Carrion & Levinson 2012 and their 2019 Findings panel). The gaps came first: I7 CLOSED by reading the Berlin v6.3 EWGT paper in full (undamped log-ratio ASC update over whole runs, MAE < 0.5 pp; a 6.4 MB PDF the fetch tool returned as binary, read locally with pypdf at no budget cost); H6, I8, G5 and A2 NARROWED; BO4Mob ruled out for I7 (OD estimation). Ten dated addenda. Five of the 40 calls unspent.",
   "statuses_note": "0 statuses stored, by design. All 94 carried rows plus the two new ones were re-read at b8f89ff by a dump of the registry (558 fields), `python src/registry/check_hardcoding.py` (TOTAL 0; 4 declared-ahead; 3 shipped at the off value), the CitysimControler.java binding lines, targeted greps of src/build, cities/newcastle/build and both Java trees, and `git diff 780c4c2..b8f89ff` (12 commits: the documents moved to docs/, five typed defaults declared as fields, the ride engine's worker-thread plan writes removed, dict-valued registry leaves range-checked, the reader resolving through the run's own schedule, the horizon declared 250, the run viewer rebuilt). NO CLASS CHANGED on any carried row: IN 46, PARTIAL 34, INERT 3, ASC 1, OUT 10 over the 94, identical to the ninth pass; 14 proofs moved to the commit that moved them (B1, C2, G1, F2, E4 - ba64aa0; E16, F4 - 10bda11; I5 - c10d43a; K3, K2, I3, H9, J3, I1 - 95604ee and the ninth report's findings; J1 - #196, the phantom consumer of B.population.household_size_top_band_mean at build_population.py:358). The two new rows are PARTIAL (habit as selection machinery with no term and no validated switching rate; mean-time route choice with declared randomness and no reliability term), so the 96-row table reads IN 46 / PARTIAL 36 / INERT 3 / ASC 1 / OUT 10. Every would_move now reads against arm 0 of F35 at it.300 (car +9.6, ride -41.6, walk -12.2, taxi +131.4, bike +201.6, motorbike -5.6, bus -15.8, heavy rail +54.6, light rail -73.9, ferry -63.3)."
- },
- "previous_pass": {
-  "date": "2026-09-14",
-  "head": "780c4c2",
-  "rounds": 5,
-  "searches_spent": 35,
-  "budget": 40,
-  "literature_halves_newly_filled": 1,
-  "literature_halves_completed": 0,
-  "factors_added": 1,
-  "addenda_written": 11,
-  "gaps_closed": [
-   "K4",
-   "I12",
-   "J6",
-   "E22",
-   "E24"
-  ],
-  "gaps_narrowed": [
-   "H6",
-   "I7",
-   "A2",
-   "I8",
-   "I13"
-  ],
-  "gaps_dead_route": [
-   "G5 (404)",
-   "J7 (403)"
-  ],
-  "note": "Ninth pass of the library, at 780c4c2 (the PR #195 merge), three days after the eighth. needs_research was 0 and all 93 stored literature halves were inside the 365-day horizon, so ALL 93 WERE REUSED UNCHANGED AND NOT ONE WAS RE-SEARCHED. ONE ROW ADDED because the layer table demands a mode-specific row for every one of the twelve modes and the library had one for each mode except car: E26 (car per-km cost, congestion time, chain availability; de Jong and Gunn / Goodwin / Litman elasticities, perceived-cost finding). The gaps array came first: three CLOSED FROM THE REPOSITORY AT NO COST (J6 - BOAM covers nine study-area depots, 850,702 stop observations; E22 - the Opal daily series names Newcastle and gives ferry 234-1,347 weekday tap-ons as bounds; E24 - the Cobbora 2012 five-day survey behind A.crossings.freight_closures_per_day 44/48), two CLOSED BY SEARCH (K4 - Mersini and Ziemke 2026 Procedia CS 280:977-984, stuckTime = 30 s / share, alpha = 1 at >= 5 per cent, over-scaled in uncongested Lausitz; I12 - matsim-python-tools calc_asc_update is the raw log-ratio with NO damping and lr defaulting to None), five NARROWED with a source (H6, I7, A2, I8, I13) and two dead routes recorded (G5 404, J7 403). Eleven dated addenda. Six PDFs the fetch tool returned as binary were read locally with pypdf at no budget cost. Five calls of the 40 unspent.",
-  "statuses_note": "0 statuses stored, by design. All 93 carried rows plus the new one were re-read at 780c4c2 by grep of the registry (553 declared fields), src/, cities/newcastle/build/ and both Java trees, plus a read-only `python src/registry/check_hardcoding.py --json` run (553 fields over 243 source files, 150 of 150 bound fields proven to reach the config, TOTAL 0; 0 declared-but-unwired, 4 declared-ahead-of-consumer, 3 shipped at the consumer's off value, 0 inline literals). Over the 93 carried rows: IN 45, PARTIAL 34, INERT 3, ASC 1, OUT 10 (previous pass over the same 93: IN 44, PARTIAL 34, INERT 2, ASC 1, OUT 12); the new row E26 is IN. THREE CLASS CHANGES, each with its commit: (1) E24 freight train PARTIAL -> IN at 1592f5b - A.crossings.freight_closures_per_day is derived {Saint James Road 44, Clyde Street 48} from the Cobbora survey instead of an assumed 0, the closure durations are the survey's 160 s / 277 s, and build_level_crossings.py:84 emits them (405 closures a weekday); (2) B6 mobility impairment OUT -> INERT at e30d92e - four B.population.mobility_impairment_* fields are declared and read by build_population.py:97-100, the flag is stamped on the population and plans (build_matsim_plans.py:437), and nothing in either Java tree reads it, the same shape as H11; (3) J6 APC/AVL/occupancy feeds OUT -> PARTIAL at 3d2ccbb - a BOAM week is in data/raw/boam and reduced by extract_boam.py to boam_bus_occupancy_week.csv, read by no fit or target module. PROOFS MOVED WITH NO CLASS CHANGE: E2 (access, egress and transfer walks are network legs, RUN.transit_router.access_egress_basis = network, 5de5080/07f52db; the transfer geometry declared, f38a1fb; beta_walk_access still unapplied), E15/E9/E14 (the footpath network, a44eef7/8bdad71), E16/F4/E17 (the engines route what they re-mode, 4a375f4), H4 (the listener honours the removal selector, 2b38233), I6 (C.asc.* reach the run, 5e5cdff), I2 (the heavy-rail sum recorded as the calibration observation, 5a1153e), K2 (heap rule, stall kill, 44 h ceiling and 25-iteration checkpoints, 2b38233/80ba4a1/a50e9c7/dbcd43e), J3/E22/A3/E18 (the Opal daily series and BITRE registrations, 3d2ccbb), J7/J2 (the bespoke request drafted, b8f6577), E11 (a passenger aboard at the day's end is charged, dbd1e25), C1/J1/B2/B3/G2/A1/I5 (inline literals declared as fields, b1ee98c), J4/G1/G3 (rebuilt on the footpath network)."
  },
  "per_mode_data": {
   "written": "2026-09-11",
@@ -2051,7 +2202,8 @@
      "service quantity and station location",
      "station access: park-and-ride supply and feeder bus (the most significant variables in multi-city station models)",
      "fare and crowding",
-     "population density in the catchment"
+     "population density in the catchment",
+     "station access mode - walk about half, park-and-ride and kiss-and-ride the rest at outer stations (E27); walk-access distance mean 805 m to a station (E28)"
     ],
     "data_a_simulator_needs": [
      "station entries by station (held: 24 stations, monthly)",
@@ -2118,7 +2270,8 @@
     ],
     "note": "Newcastle Herald, 10 June 2026 (Matthew Kelly), quoted this pass: 'Freight trains take additional time to cross the level crossing because it takes them a while to get to line speed' and the Lower Hunter Freight Corridor 'will provide an alternate path for freight trains, eliminating the need for them to travel through Newcastle' - i.e. freight trains DO traverse the Adamstown (St James Road) and Clyde Street crossings today. Newspaper quotation, not a count."
    }
-  }
+  },
+  "note_2026_09_16": "twelfth pass: literature unchanged; heavy_rail gains E27 (station access mode) and E28 (walk-access distance) in decisive_factors_literature; the package half is in the writer copy."
  },
  "field_aliases": {
   "how_leading_simulators_do_it": "the field Phase 7 also calls how_leading_simulators_implement_it",
@@ -2134,8 +2287,8 @@
    "query": "A head-to-head of CMA-ES, Bayesian optimisation and coordinate descent on a MULTIMODAL MATSim scenario with evaluation counts to a stated per-mode tolerance. Berlin v6.3 uses the plain log-ratio ASC loop over 'a few' whole runs (read in full this pass); BO4Mob is OD estimation. Next route: the Procedia CS 2025 successor (S2352146525003382) full text via an author copy, or boptx's example logs."
   },
   {
-   "lane": "A2 workplace location (residual)",
-   "query": "A published flow tolerance for residence-to-work OD validation. MWCOG Gen3 v1.0.4 Tables 64-66 are images; SEMCOG's case page states no tolerance. Next route: the RSG-SEMCOG brochure PDF (/wp-content/uploads/2023/05/RSG-SEMCOG-Activity-Based-Model.pdf) or OCR of the MWCOG appendix."
+   "lane": "A2 workplace location (residual, narrowed 2026-09-16 twelfth)",
+   "query": "A published flow tolerance for residence-to-work OD validation. MWCOG Gen3 v1.0.4 Tables 64-66 are images; SEMCOG case page and the RSG brochure (read 2026-09-16) state no tolerance. Last route: OCR of the MWCOG appendix."
   },
   {
    "lane": "I8 surrogate (residual, narrowed 2026-09-14 tenth)",
@@ -2158,12 +2311,24 @@
    "query": "The request is DRAFTED at docs/requests/tfnsw_hts_bespoke_tables.md and HELD (#50). Sending it is the operator's act, not a search; not retried this pass."
   },
   {
-   "lane": "H12 habit (new row, residual)",
-   "query": "A mode-choice inertia effect expressed as a utility term or minutes-equivalent from a panel/RP-SP model (Cherchi & Manca 2011 full text is paywalled on Springer; the Promet 2018 car-stickiness paper hung up), and any published mapping from an observed day-to-day mode-switching rate to MATSim's ChangeExpBeta / plan-memory settings."
+   "lane": "H12 habit (residual, narrowed 2026-09-16 twelfth)",
+   "query": "A mode-choice inertia effect expressed as a utility term or minutes-equivalent from a panel/RP-SP model (Cherchi & Manca 2011: Springer paywalled and the S2 abstract elided, 2026-09-16), and any published mapping from an observed day-to-day mode-switching rate to MATSim ChangeExpBeta / plan-memory settings."
   },
   {
-   "lane": "F6 route reliability (new row, residual)",
-   "query": "Carrion & Levinson (2012) full-text meta-regression: the pooled reliability-ratio range and what explains it (SSRN 1736052 and the UMN conservancy copy both 403); the indifference-band width in minutes from Zhu & Levinson (2016)."
+   "lane": "F6 route reliability (residual, half closed 2026-09-16 twelfth)",
+   "query": "Carrion & Levinson (2012) pooled reliability-ratio range: SSRN, the UMN conservancy and the S2 DOI route all fail; an author copy at nexus.umn.edu or the TR-A accepted manuscript is the next route. The indifference band is CLOSED (Zhu & Levinson 2015)."
+  },
+  {
+   "lane": "B7 immobility (new row, residual)",
+   "query": "The NSW HTS share of persons with no travel on the travel day, 2020/21-2024/25 (the data document PDF 403s at transport.nsw.gov.au; the data.nsw.gov.au resource pages for the 2022/23 and 2023/24 data documents are the next route)."
+  },
+  {
+   "lane": "E27 station access (new row, residual)",
+   "query": "An observed access-mode split at a Newcastle & Central Coast line station (TfNSW commuter car park occupancy counts or a station-access survey); the Sydney figures are the proxy."
+  },
+  {
+   "lane": "J8 mobile-phone OD (new row, residual)",
+   "query": "Whether an LBS/mobile OD product covering the five LGAs is obtainable and at what aggregation (TfNSW has used DataSpark/Telstra-derived OD for Greater Sydney); the 2021 ABS journey-to-work OD via TableBuilder is the disclosed fallback the package does not yet hold (2011 vintage in use)."
   }
  ]
 }
