@@ -377,6 +377,22 @@ STRUCTURAL = {
     'src/run/procs.py:arm_running(timeout)':
         'how long the process list is waited for, in seconds. An operating-'
         'system call\'s patience; nothing here reaches the model',
+    # THE DOCUMENT TOOLS AND THE WATCHER (9.176) hold no model value: a cap
+    # on a page's history list, a liveness window over a log file, and how
+    # often a watcher polls. Nothing here reaches a run or a reading.
+    'src/analyse/positions.py:HISTORY_CAP':
+        'how many History entries a position page keeps, the same cap the '
+        'handoff skill states; a document convention, not a model value',
+    'src/run/run_failure.py:LOG_FRESH_S':
+        'how recently matsim.log must have been written for its JVM to count '
+        'as alive when its harness is dead, in seconds - five MemoryObserver '
+        'heartbeats; a process-liveness window, not a model value',
+    'src/run/watch_run.py:--poll':
+        'how often the watcher re-reads the run directory, in seconds; the '
+        'watcher reads, it decides nothing',
+    'src/run/watch_run.py:--heartbeat':
+        'how often the watcher prints its one-line state unprompted, in '
+        'seconds, 0 for never; a display cadence',
     # A MEMORY BOUND OF A READER, not a model value (ninth report, 14 Sep
     # 2026, finding 23): how many iteration tables one process keeps parsed.
     # It changes what the gate watcher's process holds in memory and nothing

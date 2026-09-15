@@ -197,6 +197,15 @@ arm runs). Run it at `/onboard` and `/handoff`, and before every commit.
 | `python src/analyse/build_fit_figures.py --check` | `check_package.py` + local | a run with a `_fit.json` |
 | `python src/run/run_failure.py --check` | local only | `results/` |
 
+- **The document checks take seconds; the gate takes minutes.** After each
+  document edit run `python tests/check_doc_shape.py --strict`,
+  `python tests/check_doc_currency.py --strict` and
+  `python src/analyse/build_status_board.py --check`; run `session_gate.py`
+  once, before the commit. The mechanical parts of a handoff are scripts
+  (`positions.py --stamp`, `record.py --append`, `lane.py --add-*`,
+  `compare_runs.py --modes`, `watch_run.py`; the table in
+  [`docs/HANDOVER_CONTRACT.md`](../docs/HANDOVER_CONTRACT.md)) — a fact has
+  one home, and a page never restates a number the board owns.
 - **`check_hardcoding.py` is the ledger for the registry rule**: declared-but-
   unwired fields, config template literals, numeric constants in the build
   layer, coordinates in code. It is at 0 and stays at 0; an item is worked down,

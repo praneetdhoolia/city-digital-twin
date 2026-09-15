@@ -66,7 +66,9 @@
         "family_stamp_note": "A position page is stamped with the family it was WRITTEN AGAINST, which is a frozen fact and cannot go stale. It used to say \"Open family\" - a LIVE fact whose home is the board and the ledger - and by 7 September 2026 seven of thirteen pages carried a family two or three boundaries old, because the brief was the only document whose stamp was checked. The stamp must name a family the ledger knows.",
         "max_bytes": 14000,
         "max_line_chars": 600,
-        "bytes_note": "#205: the 130-line cap bounded nothing because a line was a paragraph - eight of thirteen pages carried 20-40 lines of closed-family gate readings the record already held, and a current position averaged 25-45 KB. A page states the open family's position; a closed family's reading is a History line pointing at its record section."
+        "bytes_note": "#205: the 130-line cap bounded nothing because a line was a paragraph - eight of thirteen pages carried 20-40 lines of closed-family gate readings the record already held, and a current position averaged 25-45 KB. A page states the open family's position; a closed family's reading is a History line pointing at its record section.",
+        "intro_no_run_names": true,
+        "intro_note": "9.176: the intro paragraph named the results (\"Two runs are results - ...\") on all thirteen pages, a fact with thirteen homes; a session that read a new result updated five and left eight stale. Which runs are results is the board's runs block; the intro may not name a run."
     },
     "families": {
         "path": "docs/run_families.json"

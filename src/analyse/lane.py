@@ -115,7 +115,43 @@ def main(argv=None) -> int:
     ap.add_argument('--done', metavar='TASK', help='mark a task done')
     ap.add_argument('--ref', default=None, help='the record section that closed the task, e.g. 9.172')
     ap.add_argument('--check', action='store_true', help='validate the ledger; exit 1 on a problem')
+    ap.add_argument('--add-task', metavar='FILE', help='append a task from a JSON file with the task keys')
+    ap.add_argument('--add-decision', metavar='FILE',
+                    help='append a decision from a JSON file (id, question, options, recommended, '
+                         'issues, evidence; asked defaults to today, answer to none)')
     a = ap.parse_args(argv)
+    if a.add_task or a.add_decision:
+        # 9.176: the fifty-third session added D5-D7 and re-aimed a task by
+        # editing the JSON with an ad-hoc script; the ledger's shape is checked
+        # here on the way in, so a malformed entry never reaches the board
+        doc = load()
+        with open(a.add_task or a.add_decision, encoding='utf-8') as fh:
+            entry = json.load(fh)
+        if a.add_task:
+            entry.setdefault('status', 'open')
+            entry.setdefault('recommended', False)
+            entry.setdefault('opens_family', False)
+            entry.setdefault('answers_issues', [])
+            if any(t['id'] == entry.get('id') for t in doc['tasks']):
+                print('task %s already exists' % entry.get('id'))
+                return 1
+            doc['tasks'].append(entry)
+        else:
+            entry.setdefault('asked', _dt.date.today().isoformat())
+            entry.setdefault('answer', None)
+            entry.setdefault('answered', None)
+            entry.setdefault('issues', [])
+            if any(d['id'] == entry.get('id') for d in doc['decisions']):
+                print('decision %s already exists' % entry.get('id'))
+                return 1
+            doc['decisions'].append(entry)
+        bad = problems(doc)
+        if bad:
+            print('refused - the entry would leave the ledger malformed: ' + '; '.join(bad))
+            return 1
+        save(doc)
+        print('added %s %s' % ('task' if a.add_task else 'decision', entry['id']))
+        return 0
     doc = load()
     bad = problems(doc)
     if a.check:

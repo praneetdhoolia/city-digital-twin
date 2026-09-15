@@ -331,8 +331,11 @@ def recs_section(syn: dict) -> str:
     for r in R:
         rep = f' <span class="tag repeat">repeat ×{r["repeat_of"]}</span>' if r.get("repeat_of") else ""
         fam = f' <span class="tag fam">{esc(r.get("opens_family"))}</span>' if r.get("opens_family") else ""
+        # model | data | code | process - the session-process audit's rows carry
+        # the last, and the ledger keeps the tag (DECISIONS.md 9.176)
+        cat = f' <span class="tag">{esc(r.get("category"))}</span>' if r.get("category") else ""
         items.append(
-            f'<li><b>{md_inline(r.get("what", ""))}</b>{rep}{fam}<br>{md_inline(r.get("why", ""))}'
+            f'<li><b>{md_inline(r.get("what", ""))}</b>{cat}{rep}{fam}<br>{md_inline(r.get("why", ""))}'
             f'<div class=small>change: {md_inline(r.get("change", ""))} · guard: {md_inline(r.get("guard", ""))}</div></li>')
     return section("recommendations", "Recommendations, ranked", "<ol class=recs>" + "".join(items) + "</ol>",
                    "Ranked by what each would prevent or move × how cheap it is. A `repeat` tag marks one an earlier report already issued; the process audit counts them against this report too.")

@@ -31,10 +31,13 @@ Onboarding:
 needs it.
 
 1. `python src/run/session_gate.py --digest` — the goal's title, the board's
-   generated blocks (scoreboard, state, runs), whether the machine is busy, how
-   far the branch is ahead of `origin/main`, the open PRs, the lane's top task,
-   the decisions unanswered, the report recommendations open, and whether the
-   newest arm's price still describes the committed build.
+   generated blocks (scoreboard, state, runs), whether the machine is busy —
+   **and whether the arm's harness is dead under a live JVM** (`ORPHANED`, §9.176:
+   a run with no ceiling, stall or gate watcher; `run.py --stop` now or
+   `run.py --close-out` at its horizon) — how far the branch is ahead of
+   `origin/main`, the open PRs, the lane's top task, the decisions unanswered, the
+   report recommendations open, and whether the newest arm's price still describes
+   the committed build.
 2. `docs/GOAL.md` — what the twin is for, the loop, the
    non-negotiables.
 3. `docs/STATUS.md` — the one-page board. The generated blocks are
@@ -58,7 +61,11 @@ hard-constraints list deliberately.
 Re-derive, by command, every row of the brief's §0: is an arm running, is the
 package on disk consistent, is a PR open, how many commits are ahead of `main`,
 which issues are open. **A mismatch is a finding for the briefing**, never
-something to smooth over.
+something to smooth over. An arm's state is one line —
+`python src/run/watch_run.py --run <name>`: the last ended iteration and its
+seconds, the recent median, where the ceiling lands at that median and with the
+post-cutoff tail, the card's status, whether the harness and a JVM are alive, the
+log's age, and whether `_run.json` exists — never a scratch script.
 
 Then the gate — one script, one line per check:
 
@@ -106,7 +113,10 @@ Answer all four per the contract, with numbers, every mode individually, and
    blocker.
 3. **The fit, honestly** — the last completed arm's `_fit.json`: scored modes,
    the unscorable list and its reasons. Never quote an error against an
-   unscorable target.
+   unscorable target. A pair arm is read against its control with
+   `python src/analyse/compare_runs.py <control> <arm> --modes` (all twelve
+   modes from both `_fit.json`, the comparability rule enforced), never with an
+   inline script.
 4. **Unfinished business** — PRs, commits ahead, arms, red gates, overtaken
    issues, decisions awaiting the user, approvals (all spent unless stated).
 
@@ -132,6 +142,15 @@ Report, in at most forty lines: the four answers (every mode individually in
 any table), the gate result and what it blocks, the gaps found (mechanical
 first, then the open report recommendations by id), and **the lane** — the
 single next task, its cost, and whether it needs a decision or an approval.
+
+**If the user asks you to keep watching an arm**, arm ONE Monitor on
+`python src/run/watch_run.py --run <name> --events --read` (a line per readable
+iteration with its twelve-mode reading from the memo, a stall, a dead harness, a
+gate stop, the JVM's exit, the record; exit on `_run.json`) and re-arm it at its
+30-minute expiry; do not poll on a clock, and never run
+`report_mode_ridership.py --trend` in a foreground call under an arm — it reads
+every iteration not yet in the run's `_trend/` memo and competes with the arm for
+the CPU (§9.176). Report only what changed.
 
 Then the decisions: `python src/analyse/lane.py --ask` prints every decision
 the user has not taken, with its options. Put them to the user in ONE

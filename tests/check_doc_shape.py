@@ -219,6 +219,17 @@ def check_positions(city: Path, spec: dict, family_keys: list[str]) -> list[str]
                     problems.append(f"{rel}:{i}: {len(l)} characters on one line against a cap "
                                     f"of {spec['max_line_chars']}")
         text = "\n".join(lines)
+        if spec.get("intro_no_run_names"):
+            # 9.176: the intro paragraph (the italic sentence before the
+            # Updated line) named the results on every page - a fact with
+            # thirteen homes, eight of them stale after one session. Which runs
+            # are results is the board's runs block; the intro names no run.
+            for i, l in enumerate(lines, 1):
+                if l.startswith("**Updated:**"):
+                    break
+                if l.startswith("*A position page") and re.search(r"\d{8}T\d{6}_\d+it_", l):
+                    problems.append(f"{rel}:{i}: the intro paragraph names a run; which runs are "
+                                    f"results is the board's fact, not a sentence on thirteen pages (9.176)")
         for h in spec.get("required_headings", []):
             if h not in text:
                 problems.append(f"{rel}: required heading '{h}' is missing")

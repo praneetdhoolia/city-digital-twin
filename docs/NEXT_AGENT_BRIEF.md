@@ -21,8 +21,8 @@ the third RESULT, closed out through the new `run.py --close-out` after its harn
 | **ELEVEN REPORT RECOMMENDATIONS ARE OPEN** of the tenth report's twenty; none taken this session. | `python src/analyse/report_recs.py` |
 | The issue ledger: 28 open, 0 blocking; #225 filed this session (`decision-needed`, the harness and the orphan). | `python src/run/issue_gate.py` · `gh issue list --state open` |
 | This session's PR: open until merged; its branch is deleted when it is. | `gh pr list --state open` |
-| Registry **558** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **496**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
-| The pair's `_fit.json`, `_metrics.json`, `_summary.json` and `modes_final.json` are mirrored under `results/processed/20260915T000704_250it_25pct/`. | `ls results/processed/20260915T000704_250it_25pct` |
+| Registry **558** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **508**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
+| The pair's `_fit.json`, `_metrics.json`, `_summary.json` and `modes_final.json` are mirrored under `results/processed/20260915T000704_250it_25pct/`; its reading against arm 0 is one command. | `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260915T000704_250it_25pct --modes` |
 
 Then: `python src/run/session_gate.py`.
 
@@ -63,11 +63,13 @@ its own stated cost. The roots rebuild opens a family and re-baselines every pai
    dies with the harness.
 9. **A HIDDEN BROWSER TAB NEVER FIRES `requestAnimationFrame`** (§9.173): launch the scratch Edge with
    occlusion backgrounding off.
-10. **A `--trend` READ GROWS WITH THE RUN** (§9.176): `report_mode_ridership.py --trend` took ~10 min at 25
-    readable iterations; run it in the background, never in a foreground tool call with a short timeout.
+10. **A `--trend` READ GREW WITH THE RUN** (§9.176): ten minutes at 25 readable iterations, paid twenty
+    times under the arm; it is memoised per iteration now (`_trend/`), so a warm read is a second — but a
+    cold one on a rebuilt reader still re-derives everything: run it in the background under an arm.
 
-Retired because a gate or the launcher enforces them: a stale running record under dead pids
-(`run_failure.py --check` goes red, §9.176), a concurrent arm (the launcher, §9.170), a result living only in
+Retired because a gate or the launcher enforces them: a JVM alive under a dead harness and a stale
+running record under dead pids (`run_failure.py --check` goes red and the digest says `ORPHANED`, §9.176),
+a results list on a position page (`intro_no_run_names`, §9.176), a concurrent arm (the launcher, §9.170), a result living only in
 `raw/` (`session_gate.py --handoff`), a launch with no automatic stop (§9.163), a red CI run merging (the
 ruleset, §9.172), a coordinate typed into a script (`check_hardcoding.py`), a report per session (one per
 reading, `report_recs.py`, §9.166), a decision asked twice (`lane.json`, §9.171).

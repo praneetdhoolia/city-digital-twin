@@ -1,8 +1,8 @@
 # Population and demand — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 14 September 2026 (forty-ninth session) · **Record read through:** §9.172 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -82,6 +82,7 @@
 
 ## History
 
+- §9.176 — intro fixed: which runs are results is the board's
 - §9.172 — the four HTS cells: absent from every channel
 - §9.170 — placement radius from registry
 - §9.169 — roster 18,767; top-band mean unconsumed
@@ -93,4 +94,3 @@
 - §9.144 — binder driver must own a car
 - §9.143 — per-trip seeded modes
 - §9.142 — demand rebuilt on balanced destinations
-- §9.140 — interaction rate derived

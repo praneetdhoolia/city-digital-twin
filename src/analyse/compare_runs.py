@@ -327,6 +327,79 @@ def render(res):
           'timing evidence,\n  never a result (DECISIONS.md 9.7, 9.43).')
 
 
+def _fit(run):
+    """A run's `_fit.json` (processed first, then raw), or None."""
+    for base in (results_store.resolve_records(run), results_store.resolve(run)):
+        if not base:
+            continue
+        path = os.path.join(base, '_fit.json')
+        if os.path.exists(path):
+            with io.open(path, encoding='utf-8') as fh:
+                return json.load(fh)
+    return None
+
+
+def modes(base_name, cand_name):
+    """The two runs' goal-mode readings side by side, from their `_fit.json`.
+
+    A pair is read against its control on all twelve modes at the horizon each
+    reached; the session that read the routers pair did this with an inline
+    script (DECISIONS.md 9.176), and the table it produced is what the record,
+    the position pages and the issues all quoted. This is that table, under
+    the same comparability rule as the wall-clock comparison: a pair across a
+    family boundary or a sample fraction is refused unless --anyway says so.
+    """
+    a, b = describe(base_name), describe(cand_name)
+    fa, fb = _fit(base_name), _fit(cand_name)
+    missing = [n for n, f in ((base_name, fa), (cand_name, fb)) if f is None]
+    ga = (fa or {}).get('goal_modes') or {}
+    gb = (fb or {}).get('goal_modes') or {}
+    by_b = {m['mode']: m for m in gb.get('modes', [])}
+    return dict(baseline=a, candidate=b, blockers=blockers(a, b),
+                missing_fit=missing,
+                base_result=(fa or {}).get('is_a_result'),
+                cand_result=(fb or {}).get('is_a_result'),
+                base_iteration=ga.get('iteration'), cand_iteration=gb.get('iteration'),
+                rows=[(ma['mode'], ma, by_b[ma['mode']]) for ma in ga.get('modes', [])
+                      if ma['mode'] in by_b],
+                summary={k: (ga.get(k), gb.get(k))
+                         for k in ('n_inside_pass_band', 'n_past_stop_bar',
+                                   'max_abs_rel_pct', 'mean_abs_rel_pct')})
+
+
+def render_modes(res):
+    a, b = res['baseline'], res['candidate']
+    print('goal modes: %s (baseline%s, it.%s) -> %s (candidate%s, it.%s)'
+          % (a['name'], '' if res['base_result'] else ', NOT a result', res['base_iteration'],
+             b['name'], '' if res['cand_result'] else ', NOT a result', res['cand_iteration']))
+    for n in res['missing_fit']:
+        print('  no _fit.json for %s: run `python src/calibrate/fit.py --run %s`' % (n, n))
+    for bl in res['blockers']:
+        print('  BLOCKER: ' + bl)
+    if not res['rows']:
+        return
+    print('  %-12s %11s %11s %9s %9s | %10s' % ('mode', 'baseline', 'candidate', 'dev(b)', 'dev(c)', 'delta'))
+    for mode, ma, mb in res['rows']:
+        big = abs(ma['target'] or 0) >= 1000
+        f = (lambda v: '-' if v is None else ('%.0f' % v) if big else ('%.4f' % v))
+        dev = lambda m: ('%+8.1f%%' % m['deviation_pct']) if m.get('deviation_pct') is not None             else '%9s' % (m.get('flag') or '-')       # truck: level only; freight rail: representation
+        if ma.get('modelled') is None or mb.get('modelled') is None:
+            delta = '-'
+        else:
+            d = mb['modelled'] - ma['modelled']
+            delta = ('%+.0f bdg' % d) if big else ('%+.3f pp' % d)
+        print('  %-12s %11s %11s %s %s | %10s'
+              % (mode, f(ma.get('modelled')), f(mb.get('modelled')), dev(ma), dev(mb), delta))
+    sm = res['summary']
+    print('  inside 10 %%: %s -> %s; past the bar: %s -> %s; max |dev| %.1f -> %.1f %%; mean %.1f -> %.1f %%'
+          % (sm['n_inside_pass_band'][0], sm['n_inside_pass_band'][1],
+             sm['n_past_stop_bar'][0], sm['n_past_stop_bar'][1],
+             sm['max_abs_rel_pct'][0] or 0, sm['max_abs_rel_pct'][1] or 0,
+             sm['mean_abs_rel_pct'][0] or 0, sm['mean_abs_rel_pct'][1] or 0))
+    print('  a trip-share delta is attributable only against a measured replication '
+          'band (CAL.objective.replication_band_pp, #163); a boardings delta likewise')
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('baseline')
@@ -338,7 +411,19 @@ def main(argv=None):
                     help='compare across a blocker and stamp the reason into '
                          'the output')
     ap.add_argument('--json', dest='as_json', action='store_true')
+    ap.add_argument('--modes', action='store_true',
+                    help="the two runs' goal-mode readings side by side from "
+                         "their _fit.json, under the same comparability rule "
+                         "(DECISIONS.md 9.176)")
     args = ap.parse_args(argv)
+
+    if args.modes:
+        res = modes(args.baseline, args.candidate)
+        if args.as_json:
+            print(json.dumps(res, indent=1, default=str))
+        else:
+            render_modes(res)
+        return 1 if (res['blockers'] and not args.anyway) or res['missing_fit'] else 0
 
     res = compare(args.baseline, args.candidate, args.iterations)
     if args.as_json:

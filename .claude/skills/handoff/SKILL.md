@@ -54,8 +54,16 @@ For **every topic the session touched**, rewrite its page in
 - **Retire superseded sentences**; do not append "update:" paragraphs. The page
   is the current position, not a log. The history list at the bottom gains one
   entry (`§9.x — five-word summary`, newest first, at most fifteen).
-- Update the `**Updated:**` line and, if a family opened, the families table on
-  `sampling-and-families.md`.
+- **Stamp with the tool, not by hand**: `python src/analyse/positions.py --stamp <topic>
+  --session "<date> (<nth> session)" --ref 9.NNN --history "§9.NNN — five words"` rewrites
+  the `**Updated:**` line, puts the History entry at the top and caps the list at fifteen,
+  then prints the page's lines, bytes and longest line against the caps. Run
+  `python src/analyse/positions.py --check` (or `python tests/check_doc_shape.py --strict`,
+  seconds) after every page edit — not the full gate. If a family opened, update the
+  families table on `sampling-and-families.md` and the page's `**Written against family:**`.
+- **The intro paragraph is fixed text and names no run** (`intro_no_run_names`, §9.176):
+  which runs are results is the board's runs block. Do not restate results, counts or
+  deviations that the board or another page owns; cite them.
 - A new topic gets a new page only when no existing page owns it; propose it in
   the PR body.
 
@@ -65,8 +73,13 @@ new "CORRECTION" section and never by editing the dated text.
 
 ## Phase 2 — Record: one section, one index row, one §14 row
 
-Append **one** `## 9.x` section for the session — numbered next, **after the
-last `## 9.x` section** (before `## 14.`), at most 140 lines — on this template:
+Append **one** `## 9.x` section for the session — numbered next (`python
+src/analyse/record.py --next`), at most 140 lines — on this template, written to a
+scratch file and placed with `python src/analyse/record.py --append --file <section.md>
+--index "<topical-index row>" --change "<§14 row>"`, which puts the section before
+`## 14.`, the index row below the previous section's (the index runs oldest-first
+within its block) and the §14 row at the head of the change log, and refuses a wrong
+number or a duplicate:
 
 ```
 ## 9.NNN <plain title> (<date>, <session>; issues #..)
@@ -78,9 +91,8 @@ last `## 9.x` section** (before `## 14.`), at most 140 lines — on this templat
 **Consequences.** What no longer compares; what the next session must do.
 ```
 
-Then a row in the **topical index** (top of the file) and a row in **§14**
-(newest first) stating what changed in the model or the data, with the standing
-caveats where true: *no target value changed, the 67/143 split is untouched,
+The index row and the §14 row (newest first) state what changed in the model or
+the data, with the standing caveats where true: *no target value changed, the 67/143 split is untouched,
 nothing here is a finding*. Dated sections and §14 rows are **frozen**: never
 "corrected" to match today. Every assumed value introduced this session must
 already be in the registry with a sweep — if not, that is unfinished work.
@@ -89,8 +101,11 @@ already be in the registry with a sweep — if not, that is unfinished work.
 
 Edit only the hand-written lines of `docs/STATUS.md` that the
 session made wrong: *Last updated*, the goal table's *where it stands* cells,
-the phase table, the package-consistency paragraph, *Next*, *Open work*.
-Then regenerate the blocks:
+the phase table (its P4 cell keeps the shape "the newest run on disk is `<name>`, which
+is **<STATE>**" — a currency claim pins it), the package-consistency paragraph, *Open
+work*. **An *Open work* row carries the mechanism, the issue and the next measurement,
+never a deviation the scoreboard states** (§9.176): the scoreboard is regenerated, a
+re-typed number is a second home that goes stale. Then regenerate the blocks:
 
 ```bash
 python src/analyse/build_status_board.py
@@ -108,9 +123,11 @@ never the block.
 
 `docs/lane.json` is the one home of what is next. Mark the task the session
 finished (`python src/analyse/lane.py --done <id> --ref 9.NNN`), add the task
-that follows it with its cost from `arm_cost.py`, its blocker and the issues it
-answers, and record every decision the user took this session
-(`--answer <D> "<label>"`) — then write the same answer in §14 and on the
+that follows it (`--add-task <json>`: id, title, kind, cost from `arm_cost.py`,
+blocked_on, answers_issues, evidence), add any decision the session surfaced
+(`--add-decision <json>`: id, question, options with labels and details,
+recommended index, issues, evidence — asked today, unanswered), and record every
+decision the user took this session (`--answer <D> "<label>"`) — then write the same answer in §14 and on the
 issue's `AWAITING-DECISION:` line. A decision the user has NOT taken stays
 unanswered; the next `/onboard` asks it. Then the recommendation ledger:
 `python src/analyse/report_recs.py --taken <id> --evidence "9.NNN"` for each
@@ -164,15 +181,26 @@ with the measured numbers. No umbrella issues; no invented data.
 ## Phase 6 — Gate, then land ONE pull request
 
 ```bash
-python src/run/session_gate.py --handoff  # every gate plus the close-out checks; must PASS
+python tests/check_doc_shape.py --strict && python tests/check_doc_currency.py --strict   && python src/analyse/build_status_board.py --check   # seconds; run these after each document edit
+python src/run/session_gate.py --handoff  # every gate plus the close-out checks, ONCE at the end; must PASS
 python tests/check_package.py             # LOCAL, if a data artefact changed
 ```
+
+The full gate takes minutes (the unit suite, the toolchain compile on an idle
+machine); the document checks take seconds. A session that ran the gate four
+times to find one reworded currency claim (§9.176) paid three of them for nothing.
 
 If a data artefact changed: `normalise_eol` → `build_manifest.py` →
 `normalise_eol` (git stores LF; hashing CRLF on disk fails CI's manifest check).
 If the registry changed: `render_docs.py` and `render_schema.py`. If a run
-finished or died: `build_run_index.py`; if the calibrated base moved:
-`build_fit_figures.py` and `report.py`.
+finished or died: `build_run_index.py`, and its reading against its control is
+`python src/analyse/compare_runs.py <control> <run> --modes` (the twelve modes from
+both `_fit.json`, under the comparability rule) — the table the record, the pages
+and the issues quote. A run whose harness died while its JVM reached the horizon
+and shut down cleanly is closed out with `python run.py --close-out <run>` (§9.176);
+one that ended short of it is a reading, not a result, and `reconcile_stale()`
+records it at the next launch. If the calibrated base moved: `build_fit_figures.py`
+and `report.py`.
 
 **Landing:** branch `<git-handle>/<kebab>` (never `claude/*`); commits state
 what changed in the model or the data; **no attribution trailers, no session
@@ -202,3 +230,6 @@ unfinished business — and the brief's §0 says so with the command to check it
 - [ ] Does `python src/run/session_gate.py --handoff` pass?
 - [ ] Is every issue action backed by evidence in the repository?
 - [ ] Is the PR green, mergeable, watched, and the branch deletion queued?
+- [ ] Did the session place anything by hand that a tool in `docs/HANDOVER_CONTRACT.md`'s
+      table does — and if it did something by hand three sessions running, is that a
+      tool to add (say so in the PR body under *Process*)?

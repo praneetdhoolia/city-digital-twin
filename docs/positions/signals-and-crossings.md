@@ -1,9 +1,9 @@
 # Signals, SCATS and level crossings — current position
 
 Living documents that still say "SCATS phasing is unobtained and handled by sweep" (the S2b overlay description and the `A.signals.tsp.mode` description) describe the pre-§9.88 state; §9.88 wins: the operated plans and the offset library are unobtained; the control logic that produces cycle and splits is implemented and live.
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -66,6 +66,7 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 
 ## History
 
+- §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — the tenth report; no change to signals or crossings
 - §9.169 — arm 0 loaded 405; reader like-for-like
 - §9.167 — crossings and signals re-derived; freight closures from the survey
@@ -80,4 +81,3 @@ Living documents that still say "SCATS phasing is unobtained and handled by swee
 - §9.74 — SUMO descoped, MATSim only
 - §9.70 — coal chain excluded, crossings named
 - §9.24 — SCATS site ids and install dates
-- §9.21 — phasing refusal becomes citable
