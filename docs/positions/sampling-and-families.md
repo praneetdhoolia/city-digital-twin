@@ -1,8 +1,8 @@
 # Sampling and comparability families — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -87,6 +87,7 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 
 ## History
 
+- §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — no family opened; a 1 % smoke on the recompiled controler
 - §9.169 — F35's arm 0 is a result
 - §9.168 — F35 opens at the engines' routed re-mode; arm 0 launched
@@ -101,4 +102,3 @@ Overrides in the file: three dead 30 Aug launches are attributed by name (`abort
 - §9.153 — F30's first arm stopped at 23 on its own cost
 - §9.151 — F30 opens at a rebuild, on the escort listener's draw order alone
 - §9.149 — F29 opens at a rebuild: the bucket is the campaign fraction
-- §9.148 — F28 opens at a fix: the car waits only for a car

@@ -1,8 +1,8 @@
 # Public transport and its yardsticks — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -47,26 +47,26 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 ## What is measured
 
 - **Three in five PT routing requests come back as a walk, and depth does not change it** (§9.163, #162): the `ptDirectWalk` counters at the end of `20260909T015217_300it_25pct` — **4,800,000** requests, **31.09 %** with no transit route, **40.61 %** of the compared choosing the network walk, **59.07 %** a walk either way. The cause is pricing: one second walking costs 1.0400 seconds riding at `RUN.transit_router.direct_walk_factor` = 1.0 (§9.158, `src/analyse/diagnose_pt_routing.py`).
-- **The larger half is out of `direct_walk_factor`'s reach** (§9.163): a request finding NO transit route is a coverage or schedule question, 31.09 % of all.
-- **Arm 0's reading, F35's result** (§9.169, `20260912T202242_300it_25pct`, iteration 300): heavy rail **10,092** boardings against 6,529 (**+54.6 %**, STOP), light rail **772** against 2,954 (**−73.9 %**, STOP), bus **2.0045 %** against 2.3819 (**−15.8 %**), ferry **0.0524 %** against 0.1429 (**−63.3 %**, STOP). Against F32 (§9.162) the DIRECTION only: heavy rail +220.6 → +54.6 % and bus +44.8 → −15.8 % TOWARD target; light rail −58.6 → −73.9 % and ferry −60.1 → −63.3 % away.
+- **The routers pair's reading, F35's second result** (§9.176, `20260915T000704_250it_25pct`, iteration 250, `C.raptor.mode_cost_representation` = `mode_constant`): heavy rail **10,476** boardings against 6,529 (**+60.5 %**), light rail **856** against 2,954 (**−71.0 %**), bus **2.0895 %** against 2.3819 (**−12.3 %**), ferry **0.0473 %** against 0.1429 (**−66.9 %**); pt coverage **15.78 %**. Against arm 0 (+384 train boardings, +84 tram, +0.09 pp bus, −0.005 pp ferry) nothing moved outside the noise of one build (§9.142): the raptor's constant is not the pt layer's lever.
+- **Arm 0's reading, F35's first result** (§9.169, `20260912T202242_300it_25pct`, iteration 300): heavy rail **10,092** boardings (+54.6 %), light rail **772** (−73.9 %), bus **2.0045 %** (−15.8 %), ferry **0.0524 %** (−63.3 %); pt coverage 17.53 %.
 - **Pt is the only mode whose choice set is still opening at the cutoff** (§9.163, §9.169): coverage **25.78 %** at 300 on F32, still moving at **233** where every other mode closed by 27; **17.53 %** on arm 0. Boardings sampled on arm 0: bus 9,135, rail 3,036, tram 193, ferry 328. The submode targets sum to 2.52 %, inside either coverage.
 - **The four PT modes are decided in a layer with no control variable** (§9.160, §9.158): `pt` is ONE alternative in `RUN.mode_choice.modes`; only **974 of 154,347 persons (0.63 %)** ever held plans differing in submode. The ASC contraction test is undecidable for the three pt modes, HELD until the raptor has a control (§9.160).
 
-Latest twelve-mode reading: `results/raw/20260912T202242_300it_25pct` at iteration 300, `is_a_result: true` (§9.169); reproduce with `python src/analyse/report_mode_ridership.py --run 20260912T202242_300it_25pct --it 300`. Comparable with no earlier family (§3.5).
+Latest twelve-mode reading: `results/raw/20260915T000704_250it_25pct` at iteration 250, `is_a_result: true` (§9.176); reproduce with `python src/analyse/report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250`; arm 0's beside it (§9.169). Comparable with no earlier family (§3.5).
 
-| mode | it.300 | target | deviation | source |
-|---|---:|---:|---:|---|
-| bus | 2.0045% | 2.3819% | −15.8% | §9.169, #99 |
-| heavy_rail | 10,092 bdg | 6,529 bdg | +54.6% | §9.169, #98 |
-| light_rail | 772 bdg | 2,954 bdg | −73.9% | §9.169, §9.130 |
-| ferry | 0.0524% | 0.1429% | −63.3% | §9.169, #94 |
+| mode | pair it.250 | arm 0 it.300 | target | deviation (pair) | source |
+|---|---:|---:|---:|---:|---|
+| bus | 2.0895% | 2.0045% | 2.3819% | −12.3% | §9.176, §9.169, #99 |
+| heavy_rail | 10,476 bdg | 10,092 bdg | 6,529 bdg | +60.5% | §9.176, §9.169, #98 |
+| light_rail | 856 bdg | 772 bdg | 2,954 bdg | −71.0% | §9.176, §9.169, §9.130 |
+| ferry | 0.0473% | 0.0524% | 0.1429% | −66.9% | §9.176, §9.169, #94 |
 
 - **Bus is read against a target its own basis doubts**: the HTS level and the operator series differ by 3–10× (#99); two indications put bus nearer 75–78 % of PT boardings than 62.7 % (§9.100).
 
 ## What is open
 
-- **The split between heavy rail, light rail and ferry is decided by the RAPTOR with no submode constant, and the control is built and unrun** (§9.160, §9.162, §9.169): `citysim.RaptorModeCostCalculator` ships behind `C.raptor.mode_cost_representation` = `absent`. Two pairs would measure the pt layer — the ROUTERS pair and the SERVICE-QUALITY pair (#175, §9.164) — each needing a stated-cost approval, none standing; routers first.
-- **#98 — heavy rail +54.6 % on arm 0** (§9.169) after +225.0 % on F32; the crowding disutility is its first brake (§9.158): F32 ran WITH `C.crowding.representation` = `in_vehicle_time` and the `absent` control has never run (#174).
+- **The raptor's submode constant is measured and is not the lever** (§9.176): `C.raptor.mode_cost_representation` = `mode_constant` moved the split by +384 train and +84 tram boardings against arm 0, inside one build's noise (§9.142). The SERVICE-QUALITY pair (#175, §9.164) and the crowding control (#174) are the pt layer's unrun controls; what runs next is D7 (§9.176), and any arm needs a stated-cost approval, none standing.
+- **#98 — heavy rail +60.5 % on the pair and +54.6 % on arm 0** (§9.176, §9.169) after +225.0 % on F32; the crowding disutility is its first brake (§9.158): F32 ran WITH `C.crowding.representation` = `in_vehicle_time` and the `absent` control has never run (#174).
 - **#94** — the ferry captures a hundredth of its captive market; the reach bound and a competitive-but-losing plan remain (§9.112, §9.140, §9.158).
 - **#49** — a standing product directive, not a run question: `decision-needed` with an `AWAITING-DECISION:` line; reported at every gate, blocking nothing (§9.160).
 - **Bus stays on the composition basis as a recorded limitation** (§9.140, #99 closed): the Opal `NISC 1` series falls 88 % in April 2025 and no allowlisted source publishes Newcastle's bus boardings; REOPEN #99 if one appears. The operator series total 14,858 boardings a day against an HTS-implied 76,646 PT trips (§9.100).
@@ -83,6 +83,7 @@ Latest twelve-mode reading: `results/raw/20260912T202242_300it_25pct` at iterati
 
 ## History
 
+- §9.176 — the routers pair: raptor constant not the lever
 - §9.170 — router-scorer consistency unrun
 - §9.169 — arm 0's reading; reader fixed
 - §9.167 — access leg walks the network
@@ -97,4 +98,3 @@ Latest twelve-mode reading: `results/raw/20260912T202242_300it_25pct` at iterati
 - §9.142 — censoring rule named
 - §9.140 — bus count unobtainable
 - §9.139 — F23 gate: income blunts fare
-- §9.136 — F22 gate: fare lands

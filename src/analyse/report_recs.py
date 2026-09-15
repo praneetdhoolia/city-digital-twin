@@ -73,6 +73,9 @@ def missing(doc: dict) -> list[dict]:
         if rid not in have:
             out.append({'id': rid, 'report': stamp, 'rank': i, 'what': r.get('what', ''),
                         'repeat_of': r.get('repeat_of'), 'opens_family': bool(r.get('opens_family')),
+                        # model | data | code | process - the report's own tag (9.176);
+                        # a row synced from an older report carries none
+                        'category': r.get('category'),
                         'status': 'open', 'evidence': None, 'updated': None})
     return out
 
@@ -120,7 +123,8 @@ def main(argv=None) -> int:
     for r in rows:
         rep = (' [repeats %s]' % r['repeat_of']) if r.get('repeat_of') else ''
         fam = ' [opens a family]' if r.get('opens_family') else ''
-        print('  %-20s %s%s%s' % (r['id'], r['what'][:150], rep, fam))
+        cat = (' [%s]' % r['category']) if r.get('category') else ''
+        print('  %-20s %s%s%s%s' % (r['id'], r['what'][:150], rep, fam, cat))
     return 0
 
 

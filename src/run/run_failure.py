@@ -258,6 +258,49 @@ def stale_running(results_dir):
     return out
 
 
+# A JVM that is still writing its log within this many seconds is alive; the
+# MemoryObserver heartbeat is one line a minute, so five minutes of silence is
+# a stall question (RUN.monitor.stall_s), not a death.
+LOG_FRESH_S = 300
+
+
+def orphaned_running(results_dir):
+    """(name, harness pid, log age s) of every run whose harness is dead while
+    its JVM is still writing - a run with no ceiling, stall or gate watcher.
+
+    The routers pair ran 22 hours in this state before anyone noticed
+    (DECISIONS.md 9.176, #225): the digest said BUSY because a java process
+    was alive, `stale_running` said nothing because the JVM's pid counted as
+    the run being alive, and `_progress.json` - the harness's own heartbeat -
+    had stopped at iteration 34 with nobody comparing its age to its interval.
+    The test here is the direct one: the harness pid is dead and the log is
+    fresh. It is REPORTED as a gate failure so the session sees it first;
+    the settlement is `run.py --stop <run> --cause` while the JVM runs, or
+    `run.py --close-out <run>` once it has reached its horizon.
+    """
+    import time
+    out = []
+    for meta_path in _meta_paths(results_dir):
+        try:
+            with io.open(meta_path, encoding='utf-8') as fh:
+                meta = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        if meta.get('status') != 'running' or not meta.get('pid'):
+            continue
+        if _pid_alive(meta['pid']):
+            continue
+        log = os.path.join(os.path.dirname(meta_path), LOG)
+        try:
+            age = time.time() - os.path.getmtime(log)
+        except OSError:
+            continue
+        if age <= LOG_FRESH_S:
+            out.append((os.path.basename(os.path.dirname(meta_path)),
+                        meta['pid'], int(age)))
+    return out
+
+
 def missing(results_dir):
     """Terminal run records that still cannot say why they died."""
     out = []
@@ -303,9 +346,23 @@ def main():
         stale = stale_running(args.results)
         for name, pid in stale:
             print('STALE RUNNING %s: claims to be running, pid %s is dead - '
-                  'close it out with a cause' % (name, pid))
+                  'close it out with a cause (run.py --close-out if it '
+                  'reached its horizon and shut down cleanly)' % (name, pid))
         print('%d running record(s) whose process is gone' % len(stale))
-        return 1 if (gaps or stale) else 0
+        # 9.176, #225: a harness that died under a live JVM is a run nobody
+        # is watching - no ceiling, no stall kill, no gate, no record at the
+        # end - and it hid behind a green check for 22 hours
+        orphans = orphaned_running(args.results)
+        for name, pid, age in orphans:
+            print('ORPHANED JVM %s: the harness (pid %s) is dead and '
+                  'matsim.log was written %d s ago - no ceiling, stall or '
+                  'gate watcher runs and nothing will write its record: '
+                  'run.py --stop %s --cause "..." now, or run.py --close-out '
+                  '%s once it has reached its horizon' % (name, pid, age,
+                                                          name, name))
+        print('%d running record(s) whose harness is dead under a live JVM'
+              % len(orphans))
+        return 1 if (gaps or stale or orphans) else 0
 
     changed = backfill(args.results, dry_run=args.dry_run)
     for name, cause in changed:

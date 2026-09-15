@@ -204,6 +204,14 @@ def main():
                          'the abort with --cause. The ONE sanctioned way to '
                          'stop a run - nobody renames or edits results/ by '
                          'hand (DECISIONS.md 9.137)')
+    ap.add_argument('--close-out', metavar='RUN_NAME',
+                    help='close out a run whose harness died while its JVM '
+                         'ran to the declared horizon and shut down cleanly: '
+                         'writes its record as ran_to_last_iteration, its '
+                         'summary and its processed extraction through the '
+                         'same close_out() a finished run gets. Refuses a run '
+                         'that is alive, that died of an exception, or that '
+                         'ended short of its horizon (DECISIONS.md 9.176)')
     ap.add_argument('--cause', metavar='TEXT',
                     help='why --stop is stopping the run; recorded verbatim '
                          'as the abort cause')
@@ -256,6 +264,8 @@ def main():
                         subprocess.run(['schtasks', '/end', '/tn', tn],
                                        capture_output=True)
         return 0 if run_matsim.stop_run(a.stop, a.cause) else 1
+    if a.close_out:
+        return 0 if run_matsim.close_out_orphan(a.close_out) else 1
 
     # The one defaulting decision this script makes, and it is made loudly.
     run_config = a.run_config

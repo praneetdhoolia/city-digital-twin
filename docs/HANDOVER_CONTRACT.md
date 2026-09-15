@@ -12,6 +12,7 @@
 - [Facts that expire](#facts-that-expire)
 - [The brief's required shape](#the-briefs-required-shape)
 - [The record's required shape](#the-records-required-shape)
+- [One home, and the tools that keep it](#one-home-and-the-tools-that-keep-it)
 - [The gate](#the-gate)
 
 ## What a session reads, and how much
@@ -126,6 +127,28 @@ the position page plus a §14 row** — not a new section, and never a rewrite o
 the dated text. A family opens with one ledger row, one section and one position
 edit; the board and the brief are regenerated or rewritten, not patched.
 
+## One home, and the tools that keep it
+
+A fact lives in one document and is cited from the others. Which runs are
+results is the board's runs block: a position page's intro names no run
+(`tests/check_doc_shape.py`, `intro_no_run_names`), and the board's *Open
+work* rows carry the mechanism, the issue and the next measurement, never a
+deviation the scoreboard already states. The parts of a handoff that are the
+same every time are scripts, so a session spends its reading on the prose
+(all added 16 September 2026, §9.176, after one handoff placed them by hand):
+
+| Step | Command |
+|---|---|
+| stamp a position page, cap its history, check its caps | `python src/analyse/positions.py --stamp <topic> --session "..." --ref 9.NNN --history "§9.NNN — five words"` · `--check` |
+| the next record number; place the section, its index row, its §14 row | `python src/analyse/record.py --next` · `--append --file <section.md> --index "<row>" --change "<row>"` |
+| add a task or a decision to the lane | `python src/analyse/lane.py --add-task <json>` · `--add-decision <json>` · `--answer` · `--done` |
+| a pair's reading against its control, all twelve modes | `python src/analyse/compare_runs.py <control> <arm> --modes` |
+| an arm's pace, ceiling, watchers and record, one line | `python src/run/watch_run.py --run <name>` · `--events --read` for a Monitor |
+
+The cheap checks run after every edit (`tests/check_doc_shape.py --strict`,
+`tests/check_doc_currency.py --strict`, `src/analyse/build_status_board.py
+--check`, seconds each); the full gate runs once, at the end.
+
 ## The gate
 
 One script, called by both skills, so they cannot disagree:
@@ -138,7 +161,8 @@ python src/run/session_gate.py --handoff  # the gates plus the close-out checks 
 
 It runs the manifest, compile, hardcoding, document-currency, document-shape,
 document-link, board-block, lane-ledger, recommendation-ledger, city-contract,
-city-agnostic, dead-run and fit-figure checks, and the toolchain verification — which it **skips while an arm is running**, because
+city-agnostic, dead-run (including a JVM alive under a dead harness, §9.176)
+and fit-figure checks, and the toolchain verification — which it **skips while an arm is running**, because
 that step recompiles `.tools/classes` under the arm. `tests/check_package.py`
 is local and separate: run it on a workstation before declaring a data phase
 complete. A failing gate is the session's first work item, and a pull request

@@ -1,8 +1,8 @@
 # Monitoring, scoring and the gate — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `completion` `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 15 September 2026 (fifty-second session) · **Record read through:** §9.175 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -10,7 +10,8 @@
 - **Reader fixes** (§9.169): freight_train = scheduled + the run's own closures; a boardings reading with no sample fraction refused. **The eighth report's #180–#192** fixed or awaiting a run (§9.167): category 9 gates inline literals (#188).
 - **The main ruleset requires the nine test jobs as status checks** (§9.172, #202; ruleset 21121872, the user's decision D3): a red run is no longer mergeable.
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
-- **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169).
+- **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169). **Every watcher lives in the harness**: when the routers pair's harness died at iteration 34 the ceiling, stall and gate watchers, the record writer and the viewer on 8731 died with it and the JVM ran unwatched to 250 (§9.176, #225).
+- **An orphaned run that reached its horizon is closed out as a result** (§9.176, D5): `run.py --close-out <run>` accepts a stale `running` card with dead pids, a log ending in MATSim's clean shutdown and a last ENDED iteration (from the log, never the digest) equal to the horizon; refuses a live, short or unclean run. `run_failure.py --check` is the gate that turns red on the state.
 - **A gate-stopped arm is read** at `ITERS/it.<reached>/<reached>.<table>`, never past `reached_iteration`; `output_links` has no per-iteration twin, so the counts block reports `unavailable` (§9.158).
 - **The objective measures the goal**: `CAL.objective.components` = `{"goal_modes.max_abs_rel_pct": 1.0}` via `fit.score_goal_modes()` on the board's own reader; `CAL.objective.independent_targets` = 10 (§9.158).
 - **The reading point cannot score a candidate**: `CAL.search.reading_drift_pct` = 24.88 (`measured`, sweep [15.72, 24.88]), `CAL.search.convergence_delta` derived from it; `calibrate.py --execute` refuses while the drift exceeds `CAL.gate.pass_deviation_pct` (§9.158, `measure_reading_stability.py`).
@@ -28,7 +29,6 @@
 - **The run viewer** `src/analyse/run_view.py` (§9.170–§9.175): every run from one picker, each mode against the 10 % goal and 20 % stop bar; MapLibre GL 5.24.0, Overture buildings, Terrarium terrain, a globe (§9.173, §9.174); one glass on every floating surface (light .7 / dark .6, 8 px blur), viewport-aligned vector labels on both map types, the city's own overhead snapshots as the map-type pictures (`cities/newcastle/docs/reference/figures/viewer_*.png`), every appearance and base change a 500 ms shift, a scale bar accurate to 0.5 % (§9.175).
 - **The viewer's server memoises every read by file stamp** (§9.174: status poll 630 → 3 ms) and reads the page ONCE at start (`--reload` to edit): the launcher's embedded server keeps the `run_view.py` it imported at launch for the whole arm, and a newer page asked it for endpoints it lacked (§9.175). `basemap.bin`'s header is padded to four bytes (§9.175).
 - **Congestion is road-traffic delay as a map app states it** (§9.175): road vehicles only (a bus's dwell is not delay), the qsim's one-second step not counted, judged over at least 150 m, the MEDIAN traversal's delay as the colour with the mean beside it (`RunTelemetry` writes `[id, volume, typical, mean]`); green to 1.25, orange to 1.67, red to 2.5, stop-and-go from 4.
-- **The measure moved the picture, not the model** (§9.175): the raw ratio painted 35 % of the routers pair's iteration-28 links at 3+; corrected, 60 / 10 / 9 / 22 % green / orange / red / stop-and-go, and arm 0's finished day 67 / 10 / 7 / 16 % - what stays red is the model's own queues at 25 %. A payload from before it is corrected server-side from the network (`run_view.delay_ratio`, `tests/unit/test_delay_ratio.py`).
 - **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` stopped `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169); `start_gate_watch` refuses without `RUN.monitor` (#131).
 - **`CAL.objective.replication_band_pp` = 0.0** (`sweep_role: measurement`, bracket [0.0, 2.0]) is the objective's denominator, MEASURED before it is set by three arms differing only in `RUN.machine.seed` (§9.164, #163).
 
@@ -44,15 +44,11 @@
 
 ## What is measured
 
-- **Arm 0 of F35 is a result, the first with a mode inside the band** (§9.169, `20260912T202242_300it_25pct`, `ran_to_last_iteration` at 300, 30.35 h; 158,442 linked resident trips): **2 of 12 inside 10 %** — car **+9.6 %**, motorbike **−5.6 %**; **6 at or past the stop bar** — bike +201.6 %, taxi +131.4 %, light rail −73.9 % (772 vs 2,954), ferry −63.3 %, heavy rail +54.6 % (10,092 vs 6,529), ride −41.6 %; walk −12.2 % and bus −15.8 % over 10 %; truck 5.6251 % level only; freight rail 405 of 405.
-- **Ride's target is above its coverage** (§9.169): 20.60 % against **19.11 %** in the run's `modeChoiceCoverage1x.txt`, 19.11 % from it.27 on — fixed at the seed, unreachable by any constant (#86 superseded); pt coverage 17.53 %. A direction against the F32 result, not a comparison: walk −26.5 → −12.2, bus +44.8 → −15.8, heavy rail +220.6 → +54.6, car +11.3 → +9.6, motorbike +12.5 → −5.6 toward; bike +113.0 → +201.6 and light rail −58.6 → −73.9 away.
-- **The fit pipeline ran on arm 0** (§9.169, `_fit.json` `is_a_result: true`): counts at 31 stations mean **+14.2 %**; occupancy **0.1871** against 0.3503, outside [0.2493, 0.394]; trip-geometry ratios bike 1.56, car 1.16, pt 0.56, ride 1.03, walk **5.34**, none in range; 31 targets unscorable.
-- **The counts rung had measured the wrong roads for 25 days** (§9.163, #82 closed): `count_station_links.csv` regenerated, **197 rows, 0 unresolved**; the F32 result then reads counts at mean **+16.30 %**, median **−1.1 %**, no station at zero.
+- **The routers pair is a result and reads as arm 0 does** (§9.176, `20260915T000704_250it_25pct`, `ran_to_last_iteration` at 250, 27.39 h): **2 of 12 inside 10 %** — car **+9.0 %**, motorbike **−5.5 %**; **6 past the stop bar** — bike +197.8 %, taxi +142.6 %, light rail −71.0 % (856 vs 2,954), ferry −66.9 %, heavy rail +60.5 % (10,476 vs 6,529), ride −40.8 %; walk −11.9 % and bus −12.3 % over 10 %. Against arm 0 no trip share moved more than 0.35 pp (car); the replication band that would make that a finding is unmeasured (#163).
+- **Arm 0 of F35, the first result with a mode inside the band** (§9.169, `20260912T202242_300it_25pct`, `ran_to_last_iteration` at 300, 30.35 h): **2 of 12 inside** — car **+9.6 %**, motorbike **−5.6 %**; **6 past the bar** — bike +201.6 %, taxi +131.4 %, light rail −73.9 % (772), ferry −63.3 %, heavy rail +54.6 % (10,092), ride −41.6 %; walk −12.2 % and bus −15.8 % over 10 %; truck 5.6251 % level only; freight rail 405 of 405.
+- **The fit pipeline ran on both results** (§9.169, §9.176, `_fit.json` `is_a_result: true`): counts at 31 stations mean **+14.2 %** on arm 0 and +14.3 % on the pair; occupancy **0.1871** / 0.1907 against 0.3503, outside [0.2493, 0.394]; trip-geometry ratios bike 1.56, car 1.16, pt 0.56, ride 1.03, walk **5.34**, none in range on either; 31 targets unscorable on both, 36 scored.
 - **The gate reports what a constant could reach** (§9.163): beside every breaching mode its choice-set coverage, a target ABOVE it marked unreachable — on both results only ride (20.05 % on F32, 19.11 % on arm 0).
-- **The progress digest reads the bytes that arrived** (§9.163, #131): `run_view._read_markers` keeps a per-log offset (`tests/unit/test_incremental_log_read.py`). The board reads `_run.json` to call a run a result (§9.162); the `status.newest-arm-state` claim caught a stale RUNNING by a check.
 - **The reading point is a CONVERGENCE problem, not a measurement one** (§9.159, #163): the window (`CAL.gate.reading_window_iterations` = 40, sweep [20, 80]) measured worse than the point because the in-run movement is a monotone trend (`results/processed/_reading_window_measurement.json`); arm 0's drift it.250→300 is at most **0.128 pp** against a cutoff snap of **+1.683 pp** (§9.169).
-- **The calibrated base is F4, arm `20260821T175907_1000it_25pct`**: 35 of 67 targets scorable, MAE 10.65 pp, `feasible=False`, ASCs at their priors (§9.64, §9.50); `params/C5_calibration.json` names it `best_tag` (§9.80). Seed noise floor from the F4 pair: 0.11 pp per mode (§9.64).
-- **Every arm between F4 and the F32 result ended at a gate reading**; the board's runs table says where (`results/INDEX.md`).
 
 ## What is open
 
@@ -75,6 +71,7 @@
 
 ## History
 
+- §9.176 — the pair a result; orphan close-out; watchers die with the harness
 - §9.175 — congestion measured as a map app does; viewer fixes
 - §9.174 — viewer: glass, simulator light, Overture, 200× faster polls
 - §9.173 — viewer on MapLibre GL; 3D and globe

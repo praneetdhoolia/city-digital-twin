@@ -99,6 +99,19 @@ def digest():
     elif busy:
         print('MACHINE  BUSY - an arm is running: %s. Do not recompile .tools/classes; '
               'one arm at a time.' % ', '.join(busy))
+        # 9.176, #225: a JVM alive under a dead harness is a run nobody is
+        # watching, and BUSY alone said nothing about it for 22 hours
+        try:
+            import run_failure
+            for name, pid, age in run_failure.orphaned_running(
+                    os.path.join(ROOT, 'results')):
+                print('         ORPHANED: %s - its harness (pid %s) is DEAD; the '
+                      'JVM writes on (log %d s old) with no ceiling, stall or '
+                      'gate watcher. `run.py --stop %s --cause "..."` now, or '
+                      '`run.py --close-out %s` once it reaches its horizon.'
+                      % (name, pid, age, name, name))
+        except Exception as exc:                          # noqa: BLE001
+            print('         (orphan check unavailable: %s)' % exc)
     else:
         print('MACHINE  idle (no java process above 2 GB)')
     ahead, branch = git_ahead()

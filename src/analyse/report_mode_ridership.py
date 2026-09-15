@@ -869,6 +869,91 @@ def report_window(run_dir, iteration, window, truck_stations=False):
         ', '.join('it.%d' % i for i in its))
     return LAST
 
+# ---------------------------------------------------------------------------
+# The per-iteration memo behind --trend (9.176). A --trend read re-derived
+# every readable iteration on every call: at 25 readable iterations that was
+# ten minutes of the arm's own CPU per read, and a session monitoring the
+# routers pair paid it twenty times. An iteration's reading does not change
+# once its tables are written, so it is memoised on disk beside the run,
+# keyed by the tables' stamps and by this reader's own source: a rewritten
+# table or a changed reader re-derives, --no-cache re-derives everything.
+# ---------------------------------------------------------------------------
+TREND_DIR = '_trend'
+
+
+def _reader_stamp():
+    """A stamp of the code that produces a reading, so a reader change
+    invalidates every memo written by the old one."""
+    import hashlib
+    h = hashlib.sha256()
+    here = _os.path.dirname(_os.path.abspath(__file__))
+    for name in ('report_mode_ridership.py', 'iteration_trips.py',
+                 'iteration_reading.py', 'extract_metrics.py',
+                 'measure_iteration_modes.py'):
+        try:
+            with open(_os.path.join(here, name), 'rb') as fh:
+                h.update(fh.read())
+        except OSError:
+            h.update(name.encode())
+    return h.hexdigest()[:16]
+
+
+def _table_stamp(run_dir, iteration):
+    """(size, mtime) of every table an iteration's reading is built from."""
+    out = []
+    base = _os.path.join(run_dir, 'output', 'ITERS', 'it.%d' % iteration)
+    for stem in ('trips', 'legs', 'plans', 'experienced_plans'):
+        for ext in ('.csv.gz', '.csv', '.xml.gz', '.xml'):
+            path = _os.path.join(base, '%d.%s%s' % (iteration, stem, ext))
+            try:
+                st = _os.stat(path)
+            except OSError:
+                continue
+            out.append([stem + ext, st.st_size, int(st.st_mtime)])
+    return out
+
+
+def _memo_path(run_dir, iteration, truck_stations):
+    return _os.path.join(run_dir, TREND_DIR,
+                         'it.%d%s.json' % (iteration,
+                                           '.stations' if truck_stations else ''))
+
+
+def read_memo(run_dir, iteration, truck_stations, reader_stamp):
+    """The memoised reading for one iteration, or None if absent or stale."""
+    try:
+        with open(_memo_path(run_dir, iteration, truck_stations),
+                  encoding='utf-8') as fh:
+            doc = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    if doc.get('reader') != reader_stamp \
+            or doc.get('tables') != _table_stamp(run_dir, iteration):
+        return None
+    return doc
+
+
+def write_memo(run_dir, iteration, truck_stations, reader_stamp):
+    """Memoise what `report()` just left in LAST for this iteration."""
+    doc = dict(iteration=iteration, reader=reader_stamp,
+               tables=_table_stamp(run_dir, iteration),
+               modelled=dict(LAST['modelled']), targets=dict(LAST['targets']),
+               truck_target=LAST.get('truck_target'),
+               basis={r['mode']: r['basis'] for r in LAST['rows']},
+               run=LAST['run'], fraction=LAST['fraction'],
+               source=LAST['source'], written=time.strftime('%Y-%m-%dT%H:%M:%S'))
+    path = _memo_path(run_dir, iteration, truck_stations)
+    try:
+        _os.makedirs(_os.path.dirname(path), exist_ok=True)
+        tmp = path + '.tmp'
+        with open(tmp, 'w', encoding='utf-8') as fh:
+            json.dump(doc, fh)
+        _os.replace(tmp, path)
+    except OSError:
+        pass                                   # a memo is a convenience, never a gate
+    return doc
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -887,6 +972,10 @@ def main():
                          'until the run\'s _meta.json leaves `running` (the '
                          'goal directive\'s continuous per-mode print, with '
                          'a timestamp on every table)')
+    ap.add_argument('--no-cache', action='store_true',
+                    help='re-derive every iteration of a --trend read instead '
+                         'of taking finished iterations from the run\'s own '
+                         '_trend/ memo (9.176)')
     ap.add_argument('--trend', action='store_true',
                     help='one row per readable iteration, every mode '
                          'individually: modelled %% against target, then the '
@@ -924,21 +1013,38 @@ def main():
         if not have:
             raise SystemExit('%s holds no readable iteration yet' % a.run)
         rows = []
+        stamp_r = _reader_stamp()
+        memo = None                      # the newest memo, for targets and basis
+        derived = 0
         for it in have:
-            try:
-                with contextlib.redirect_stdout(_io.StringIO()):
-                    report(a.run, it, a.truck_stations)
-            except SystemExit:
-                continue        # the newest iteration may still be writing
-            rows.append((it, dict(LAST['modelled'])))
+            doc = None if a.no_cache else read_memo(a.run, it, a.truck_stations, stamp_r)
+            if doc is None:
+                try:
+                    with contextlib.redirect_stdout(_io.StringIO()):
+                        report(a.run, it, a.truck_stations)
+                except SystemExit:
+                    continue        # the newest iteration may still be writing
+                doc = write_memo(a.run, it, a.truck_stations, stamp_r)
+                derived += 1
+            rows.append((it, dict(doc['modelled'])))
+            memo = doc
         if not rows:
             raise SystemExit('no iteration of %s could be read' % a.run)
+        if not derived:
+            # every iteration came from the memo: LAST was never filled by
+            # report(), so the trend's frame is taken from the newest memo
+            LAST.update(run=memo['run'], iteration=memo['iteration'],
+                        fraction=memo['fraction'], source=memo['source'],
+                        targets=memo['targets'], truck_target=memo.get('truck_target'),
+                        modelled=memo['modelled'],
+                        rows=[dict(mode=m, basis=b) for m, b in memo['basis'].items()])
         targets = LAST['targets']
         modes = list(targets)            # all twelve, freight rail included
         basis = {r['mode']: r['basis'] for r in LAST['rows']}
         stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
-        print('PER-MODE TREND   %s   run %s   %d readable iteration(s)'
-              % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows)))
+        print('PER-MODE TREND   %s   run %s   %d readable iteration(s), %d derived now, %d from the memo'
+              % (stamp, _os.path.basename(_os.path.normpath(a.run)), len(rows),
+                 derived, len(rows) - derived))
         print('modelled %% of resident linked trips unless the basis column '
               'says otherwise (truck: %s)'
               % ('heavy share at the classifying stations'

@@ -54,7 +54,7 @@ Project report:
 - [ ] Phase 2  Code: every area read, plus the redundancy / quality / efficiency / simplification pass
 - [ ] Phase 3  Simulator: the performance pass
 - [ ] Phase 4  History: every PR, the commit log, the timeline from day 0, the report series
-- [ ] Phase 5  Documents (placement, currency), controls, the issue ledger
+- [ ] Phase 5  Documents (placement, currency), controls, the issue ledger, the session process
 - [ ] Phase 6  The field: the reference library refreshed, only its gaps searched
 - [ ] Phase 7  The factors: the library's literature half, this repository's status half
 - [ ] Phase 8  Synthesise: findings ranked, ratings evidenced, deltas since last time
@@ -332,6 +332,51 @@ description still holds. A document is *misplaced* when a reader looking for
 its content would open a different file first, and *stale* when an artefact it
 describes has moved since its stamp.
 
+**The session process: what every session pays, and what it pays for.** The
+same reviewer audits the procedures the sessions run — `/onboard`, `/handoff`,
+and this skill — as work, from evidence, not from memory. The evidence is the
+last five sessions' record sections (each §9.x's *What changed* and the §14
+row), their pull requests (`gh pr view <n> --json files,additions,deletions`)
+and the skills' own text. It reports:
+
+- **Document churn per session**: for each of the last five PRs, the lines
+  changed in `docs/positions/`, `docs/STATUS.md`, `docs/NEXT_AGENT_BRIEF.md`
+  and `docs/DECISIONS.md`, and how many position pages were rewritten. A page
+  rewritten on every handoff whose *What is built* did not change is a page
+  the handoff re-keys, not consolidates.
+- **Facts with more than one home**: every number or run name that appears
+  verbatim in two or more living documents (the board, the brief, the
+  position pages, the contract), each with both `file:line`s — whether or not
+  they still agree. The disagreeing ones are the defect; the agreeing ones are
+  the next session's re-keying cost.
+- **Steps the skills prescribe by hand**: each step in the three skills that is
+  prose ("edit", "find", "place", "rewrite") rather than a command, with the
+  record section where a session last did it by hand and what it cost there
+  (a mis-numbered section, a cap breached three times, a mis-ordered index row
+  — §9.176 holds one of each); and each command a session ran ad hoc (a scratch
+  script named in a record) that the repository does not hold.
+- **Steps that yield nothing**: each phase or step of the three skills — this
+  one included — whose output in the last three passes produced no finding,
+  no recommendation taken, and no change to a decision (this skill's Phases 6
+  and 7 are measured by rows changed in `REFERENCE_DIR`, not by rows
+  re-verified); and each check that has never gone red since it was added
+  (`git log -S` on its name) beside each check that went red at a handoff and
+  was fixed in the same PR. A step that costs and yields nothing is a
+  recommendation to drop or fold it; a check that never fires is not proof it
+  is useless — say which of the two it is, and why.
+- **What a session waited on**: from the records, every wait a session spent on
+  a computation it could have cached or run once — a reader re-deriving every
+  iteration, a gate run four times for one claim, a monitor polling on a clock —
+  and the seconds and the arm-CPU it cost where a record states them.
+
+Each finding here becomes a recommendation in Phase 8 with the category
+`process`, ranked like the others by what it prevents or saves × how cheap; a
+process recommendation names the skill section or the script it changes and the
+check that would catch the regression, exactly as a model one names a registry
+key. This skill's own steps are in scope: a recommendation to shorten or drop a
+phase of the report is made here, and the next report's audit records whether
+it was taken.
+
 **The issue ledger: past, present, upcoming.** From `issues_full.md` and the
 GitHub API output in `metrics.json`: (a) **past** — every closed issue with its
 open and close dates, days open, and whether it closed on evidence (a PR, a
@@ -541,7 +586,10 @@ factors added, factors retired, literature halves newly filled).
    softened, and a reused row that fails inspection is sent back to `gaps`.
 8. **Recommendations**, ranked by (what it would prevent or move) × (how
    cheap), each naming the file or registry key to change, whether it opens a
-   family, and the check that would then catch a regression. At most twenty.
+   family, and the check that would then catch a regression. At most twenty,
+   each tagged `model`, `data`, `code` or `process` (the session-process audit
+   of Phase 5 feeds the last); the ledger keeps the tag, so the next report can
+   say whether the process ones were taken at the same rate as the rest.
 
 ## Phase 9 — Write, lodge, index, verify
 

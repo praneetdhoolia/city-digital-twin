@@ -1,8 +1,8 @@
 # Network, inputs and the data package — current position
 
-*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Two runs are results - F32's `20260909T015217_300it_25pct` and F35's arm 0 `20260912T202242_300it_25pct`, each `ran_to_last_iteration` at iteration 300 (§9.162, §9.169); nothing measured on any arm that did NOT reach its declared horizon is one.*
+*A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 14 September 2026 (forty-eighth session) · **Record read through:** §9.171 · **Written against family:** `F35`
+**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
 
 ## What is built
 
@@ -77,6 +77,7 @@
 
 ## History
 
+- §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — documents at `docs/`; five defaults
 - §9.169 — run inputs at 250
 - §9.167 — footpath rebuild; F34
@@ -91,4 +92,3 @@
 - §9.141 — producers name artefacts
 - §9.140 — contract city-free
 - §9.131 — licence rate measured
-- §9.130 — rail boardings held to disclosed
