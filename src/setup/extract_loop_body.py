@@ -288,10 +288,14 @@ def main(argv=None):
     bl = body_text.split('\n')
     # keyword-argument detection: NAME followed by '=' and preceded by '(' or ','
     kw = set()
+    skip = (tokenize.NL, tokenize.NEWLINE, tokenize.COMMENT, tokenize.INDENT, tokenize.DEDENT)
     for i, t in enumerate(toks):
-        if t.type == tokenize.NAME and t.string in via_ctx and i + 1 < len(toks) and toks[i + 1].string == '=' \
-                and i > 0 and toks[i - 1].string in ('(', ','):
-            kw.add(t.start)
+        if t.type == tokenize.NAME and t.string in via_ctx and i + 1 < len(toks) and toks[i + 1].string == '=':
+            j = i - 1
+            while j >= 0 and toks[j].type in skip:
+                j -= 1
+            if j >= 0 and toks[j].string in ('(', ','):
+                kw.add(t.start)
     edits = [e for e in edits if e[0] not in kw]
     # the loop's own `continue`s -> `return` (positions are in the ORIGINAL
     # file's coordinates; translate to the body text's)
@@ -320,7 +324,9 @@ def main(argv=None):
         out[start_line - 1:end_line] = [pack, call] + ([unpack] if unpack else [])
     else:
         call = ind + '    ' + bind + '%s(%s)' % (a.new_name, ', '.join(targets + [a.ctx]))
-        out[loop.lineno - 1:end_line] = [pack, loop_line, call] + ([unpack] if unpack else [])
+        # a `for` header may span several lines; keep every line of it
+        header = lines[loop.lineno - 1:start_line - 1]
+        out[loop.lineno - 1:end_line] = [pack] + header + [call] + ([unpack] if unpack else [])
     # insert the new function before the enclosing function
     out[fn.lineno - 1:fn.lineno - 1] = new_func.split('\n')
     text = '\n'.join(out)

@@ -88,16 +88,11 @@ THIN_CELL_MIN = _registry.load().get('B.census.thin_cell_min_journeys')
 COMMUTE_END_ACTIVITY = 'work'
 
 
-def load_population():
-    """person_id -> (age_band, sex, employment_status, licence)."""
-    out = {}
-    with open(city_path('demand/population/B1_synthetic_population.csv'),
-              newline='', encoding='utf-8') as fh:
-        for r in csv.DictReader(fh):
-            out[r['person_id']] = (r['age_band'], r['sex'],
-                                   r['employment_status'],
-                                   r['licence_holder'])
-    return out
+def load_population(run_dir):
+    """person_id -> (age_band, sex, employment_status, licence): the one
+    reader in mode_by_demographics (the run's own persons table, #213)."""
+    from mode_by_demographics import person_attributes             # noqa: PLC0415
+    return person_attributes(run_dir)
 
 
 def load_g62():
@@ -195,7 +190,7 @@ def main() -> int:
     family, fam_note = family_of(run_dir.name, fams, overrides)
     fam_label = next((f['label'] for k, f in fams if k == family), '')
 
-    pop = load_population()
+    pop = load_population(run_dir)
     g62, g62_ctx, n_sa1 = load_g62()
     hts = hts_inventory()
     all_t, com_t, totals, com_totals, unmatched = tabulate_trips(run_dir, pop)

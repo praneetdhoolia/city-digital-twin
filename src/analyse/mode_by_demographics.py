@@ -80,6 +80,18 @@ def load_run_persons(run_dir):
     return out
 
 
+def person_attributes(run_dir):
+    """person -> (age_band, sex, employment, licence) for a run: age,
+    employment and licence from the run's OWN persons table (#213), sex from
+    the city's B1 (the one attribute the persons table lacks). The one
+    reader for every mode x demographics measurement; measure_demographic_modes
+    carried its own copy reading everything from B1 (twelfth report)."""
+    persons = load_run_persons(Path(run_dir))
+    sex, _ = load_sex()
+    return {pid: (a['age_band'], sex.get(pid, 'unknown'), a['employment'], a['licence'])
+            for pid, a in persons.items()}
+
+
 def main() -> int:
     if len(sys.argv) != 2:
         print(__doc__)
