@@ -67,7 +67,10 @@ except Exception:
 
 def _modules():
     out = []
-    for pattern in ('src/*.py', 'src/*/*.py', 'cities/%s/build/*.py' % _city.CITY):
+    # the city's extract adapters too: 0 of 18 were imported by any test
+    # until the twelfth report (16 September 2026)
+    for pattern in ('src/*.py', 'src/*/*.py', 'cities/%s/build/*.py' % _city.CITY,
+                    'cities/%s/extract/*.py' % _city.CITY):
         for p in sorted(glob.glob(os.path.join(REPO, pattern))):
             out.append(os.path.relpath(p, REPO).replace(os.sep, '/'))
     return out
