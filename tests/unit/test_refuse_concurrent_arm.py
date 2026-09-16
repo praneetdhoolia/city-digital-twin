@@ -28,6 +28,23 @@ def test_an_unlistable_process_table_counts_as_busy(monkeypatch):
     assert 'unknown counts as busy' in str(e.value)
 
 
-def test_an_idle_machine_launches(monkeypatch):
+def test_an_idle_machine_launches(monkeypatch, tmp_path):
     monkeypatch.setattr(procs, 'arm_running', lambda *a, **k: [])
+    monkeypatch.setattr(run_matsim, 'RAW', str(tmp_path))   # no store record either
     run_matsim.refuse_concurrent_arm()
+
+
+def test_a_store_record_with_a_live_jvm_refuses(monkeypatch, tmp_path):
+    """A JVM in its first minute is under the process-list threshold; the
+    store's own running record catches it (twelfth report)."""
+    import json
+    monkeypatch.setattr(procs, 'arm_running', lambda *a, **k: [])
+    monkeypatch.setattr(run_matsim, 'RAW', str(tmp_path))
+    d = tmp_path / '20260101T000000_4it_25pct'
+    d.mkdir()
+    (d / '_meta.json').write_text(json.dumps(dict(status='running', pid=1, jvm_pid=2)),
+                                  encoding='utf-8')
+    monkeypatch.setattr(run_matsim.results_store, '_pid_alive', lambda pid: pid == 2)
+    with pytest.raises(SystemExit) as e:
+        run_matsim.refuse_concurrent_arm()
+    assert '20260101T000000_4it_25pct' in str(e.value)
