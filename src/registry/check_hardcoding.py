@@ -403,20 +403,12 @@ STRUCTURAL = {
     # Surfaced when the scanner was widened past module level (7 Sep 2026): a
     # constant assigned inside a function had never been visible to this check.
     # The Earth's mean radius is a physical constant, not a modelling choice -
-    # it cannot be swept, and a city cannot declare a different one. The five
-    # copies are a REDUNDANCY finding (one haversine would do), not a
-    # hardcoding one.
-    'src/build/osm_parse.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine. A physical '
-        'constant of the planet, not a parameter of this model',
-    'src/build/build_gtfs_extras.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
-    '<city>/build/build_corridor_layers.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
-    '<city>/build/build_era1_reconstruction.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
-    '<city>/build/build_scenario_schedules.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
+    # it cannot be swept, and a city cannot declare a different one. Five
+    # copies became one on 16 September 2026 (src/build/geo.py, 9.177).
+    'src/build/geo.py:EARTH_RADIUS_M':
+        'the Earth\'s mean radius in metres, inside the one haversine every '
+        'builder imports. A physical constant of the planet, not a parameter '
+        'of this model',
     '<city>/build/build_corridor_road_attributes.py:CELL':
         'the cell size of a grid INDEX over alignment points, in metres. It '
         'decides how many candidates a nearest-point search examines, never '
