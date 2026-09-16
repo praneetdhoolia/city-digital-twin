@@ -708,6 +708,14 @@ def refuse_concurrent_arm():
             'REFUSED: the running processes could not be listed, and unknown '
             'counts as busy - one arm at a time (#66). List them by hand '
             '(`Get-Process java`) and relaunch when the machine is idle.')
+    # The store's own records too: a JVM in its first minute is under the
+    # process-list threshold (procs.ARM_RSS_KB) while it loads the plans, and
+    # a launch made then would pass the list alone (twelfth report).
+    for d in glob.glob(os.path.join(RAW, '*', META)):
+        run_dir = os.path.dirname(d)
+        if results_store._is_running(run_dir):
+            busy = list(busy) + ['%s (status running, its harness or JVM '
+                                 'alive)' % os.path.basename(run_dir)]
     if busy:
         raise SystemExit(
             'REFUSED: an arm is already running - one arm at a time (#66):\n'

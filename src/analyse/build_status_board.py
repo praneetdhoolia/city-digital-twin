@@ -174,6 +174,14 @@ def block_scoreboard():
         import report_mode_ridership as rmr
         # the newest iteration may still be being written on a running arm
         candidates = have[:-1] if meta.get('status') == 'running' and len(have) > 1 else have
+        # A STOPPED arm is citable at its record's reached_iteration and
+        # nowhere past it (GOAL.md, 9.143): MATSim writes <n>.trips.csv.gz
+        # inside the iterationEnds listeners, so a table can exist for an
+        # iteration the record says the run never completed (twelfth report)
+        record0 = _json(os.path.join(run_dir, '_run.json')) or {}
+        reached = record0.get('reached_iteration')
+        if isinstance(reached, int) and record0.get('completion') != 'ran_to_last_iteration':
+            candidates = [i for i in candidates if i <= reached] or candidates[:1]
         for it in reversed(candidates):
             try:
                 with contextlib.redirect_stdout(io.StringIO()):

@@ -265,9 +265,11 @@ def _seed_table(key):
 SEED_MODE_SPLIT = _seed_table('B.mode.seed_split')
 # The sweep is over WHICH SEED IS USED, not over the shares - the two entries
 # are the only two seeds this script can produce, and DECISIONS.md 9.7 reports
-# the measured difference between them.
+# the measured difference between them. B.mode.seed_table carries the choice
+# (its sweep) and its value is --seed-mode's default.
 SEED_MODE_SWEEP = {'seed_mode': tuple(
-    CFG.sweep('B.mode.seed_split_informed')['categorical'])}
+    CFG.sweep('B.mode.seed_table')['categorical'])}
+SEED_TABLE_DEFAULT = CFG.get('B.mode.seed_table')
 # The informed seed the uniform one replaced, retained so that "the result does
 # not depend on the seed" can be tested rather than asserted (DECISIONS.md 9.6);
 # selected with --seed-mode informed.
@@ -1651,8 +1653,8 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--seed', type=int, default=SEED)
     ap.add_argument('--day-types', default=','.join(DAY_TYPES))
-    ap.add_argument('--seed-mode', choices=['uninformed', 'informed'],
-                    default='uninformed',
+    ap.add_argument('--seed-mode', choices=list(SEED_MODE_SWEEP['seed_mode']),
+                    default=SEED_TABLE_DEFAULT,
                     help='uninformed (default): uniform over usable modes. '
                          'informed: the P3 seed positioned near the HTS '
                          'aggregate, retained so the seed dependence can be '

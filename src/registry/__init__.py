@@ -226,6 +226,29 @@ def sweep_role_errors(fields):
     return errors
 
 
+def _categorical_miss(sweep, value):
+    """The value (or the first per-mode entry) that is not a member of a
+    categorical sweep, else None. A per-mode table is checked entry by entry;
+    any other non-string is a miss by type."""
+    if not (isinstance(sweep, dict) and isinstance(sweep.get('categorical'), list)):
+        return None
+    members = sweep['categorical']
+    if value is None:
+        return None
+    if isinstance(value, dict):
+        for v in value.values():
+            if v not in members:
+                return v
+        return None
+    if isinstance(value, list):
+        # a sweep whose members are lists names whole values; otherwise a
+        # list value is a member-wise selection
+        if any(isinstance(m, list) for m in members):
+            return None if value in members else value
+        return None if all(v in members for v in value) else value
+    return None if value in members else value
+
+
 def _intrinsic_errors(fields):
     """The rules that matter, checked without a jsonschema dependency.
 
@@ -264,6 +287,13 @@ def _intrinsic_errors(fields):
             errors.append('%s%s: value %r lies outside its own sweep [%g, %g] - '
                           'either the value or the sweep basis is wrong (#124)'
                           % (key, suffix, leaf, lo, hi))
+        # the DECLARED value of a categorical field is a member of its own
+        # sweep, like a numeric value sits inside its own interval (twelfth
+        # report: only overlay strings were tested before)
+        bad = _categorical_miss(f.get('sweep'), f.get('value'))
+        if bad is not None:
+            errors.append('%s: value %r is not one of its own categorical sweep %s '
+                          '(#124)' % (key, bad, f['sweep']['categorical']))
         if f['source'] in SWEPT_SOURCES:
             if not swept and not held and not implied:
                 errors.append('%s: source %r requires a sweep, a held_fixed rule or a '
@@ -470,13 +500,14 @@ def _check_values(items, fields, layer_name, allow=(), justification=None):
         field = fields[key]
         sweep = field.get('sweep')
         # a categorical sweep is a membership test (#124): a typo such as
-        # `explicit_signal` for `explicit_signals` was accepted and emitted
-        if isinstance(sweep, dict) and isinstance(sweep.get('categorical'), list) \
-                and isinstance(value, str) and value not in sweep['categorical']:
-            if key not in allow:
-                errors.append('%s: sets %s to %r, which is not one of its declared '
-                              'categorical sweep %s.'
-                              % (layer_name, key, value, sweep['categorical']))
+        # `explicit_signal` for `explicit_signals` was accepted and emitted -
+        # and a value of the WRONG TYPE (a dict, a number) is no member either
+        # (twelfth report: a dict passed against ['uninformed', 'informed'])
+        bad = _categorical_miss(sweep, value)
+        if bad is not None and key not in allow:
+            errors.append('%s: sets %s to %r, which is not one of its declared '
+                          'categorical sweep %s.'
+                          % (layer_name, key, bad, sweep['categorical']))
         # every numeric leaf - a scalar, or each entry of a per-mode table (#200)
         for suffix, leaf, lo, hi in _leaves_outside_sweep(field, value):
             if key not in allow:

@@ -27,7 +27,7 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 558 fields are made of
+## What the 559 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
@@ -36,11 +36,11 @@ Three things are refused at every layer:
 | `derived` | 46 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
 | `assumed` | 207 | chosen without direct empirical support |
-| `definition` | 143 | fixed by the formulation, not an empirical quantity |
+| `definition` | 144 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 537 | usable point value |
+| `active` | 538 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -90,7 +90,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 | `RUN.routing.access_egress_type` | `accessEgressModeToLink` | `none`, `accessEgressModeToLink` |
 
-### The 31 fields held fixed
+### The 32 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -112,6 +112,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.external.employed_share` - a census count: 32,230 employed persons of 70,448 residents over the 201 external-tier SA1s (2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P); a count has no plausible range to swee
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
+- `B.mode.seed_split_informed` - A TABLE, NOT A SWEEP AXIS: these are the P3 seed's shares, retained verbatim so that the seed-dependence claim can be tested by running both seeds (DECISIONS.md 9.6, 9.7); no share
 - `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fare_per_km_taxi` - The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not mode
@@ -1813,7 +1814,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 130 fields*
+*`cities/newcastle/registry/B_demand.json` - 131 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1890,7 +1891,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.mode.partial_bind_base` | `pt` | enum | `assumed` | `pt`, `walk`, `taxi` |
 | `B.mode.seed_method` | `full_choice_set` | enum | `definition` | `full_choice_set`, `uniform_draw` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
-| `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
+| `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | **held fixed** |
+| `B.mode.seed_table` | `uninformed` | enum | `definition` | `uninformed`, `informed` |
 | `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.motorbike.carve_resolution` | `sa1_thinned` | enum | `definition` | `sa1_thinned`, `region` |
@@ -2514,9 +2516,21 @@ The mode split the co-evolution STARTS from, conditioned only on car availabilit
 
 The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative.
 
-***assumed** · status **active** · DECISIONS.md §9.6, 9.7 · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.6, 9.7*
 
 > **Sweep basis.** the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes "the result does not depend on the seed" a claim that can be tested rather than asserted (DECISIONS.md 9.6).
+
+> **Held fixed.** A TABLE, NOT A SWEEP AXIS: these are the P3 seed's shares, retained verbatim so that the seed-dependence claim can be tested by running both seeds (DECISIONS.md 9.6, 9.7); no share in it is moved. WHICH seed table the plan builder writes is the sweep, and it lives on B.mode.seed_table (uninformed | informed) - the twelfth report (16 September 2026) found this field carrying ['uninformed', 'informed'] as if the table itself were a member of it, which the registry's categorical check now refuses.
+>
+> *Departure requires: a logged decision*
+
+#### `B.mode.seed_table`
+
+Which seed table src/build/build_matsim_plans.py writes when B.mode.seed_method is uniform_draw (its --seed-mode default). Declared as its own field on 16 September 2026 because the choice had been carried as the categorical sweep of the informed TABLE (B.mode.seed_split_informed), a share table that is not a member of ['uninformed', 'informed']; the registry's membership check now tests a declared value against its own categorical sweep and refused it.
+
+***definition** · status **active** · DECISIONS.md §9.6, 9.7 · sweep role **uncertainty***
+
+> **Sweep basis.** The two seed tables the plan builder can write under B.mode.seed_method = uniform_draw: `uninformed` is B.mode.seed_split (uniform over the usable modes, deliberately far from the observed point) and `informed` is B.mode.seed_split_informed (the P3 seed near the HTS aggregate, retained so the seed dependence is testable). The sweep is over WHICH TABLE, never over a share.
 
 #### `B.mode.serve_tour_seed`
 

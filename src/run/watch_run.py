@@ -171,11 +171,19 @@ def snapshot(run_dir):
         log_age = None
     progress = _load(os.path.join(run_dir, '_progress.json')) or {}
     harness_pid = meta.get('pid')
-    jvm = arm_running()
+    # THIS run's JVM by its recorded pid; any JVM over 2 GB on the host was
+    # what this read before (twelfth report), which a second arm or a probe
+    # would have satisfied for a dead one
+    jvm_pid = meta.get('jvm_pid')
+    if jvm_pid:
+        jvm = pid_alive(jvm_pid)
+    else:
+        jvm = arm_running()
     rec = _load(os.path.join(run_dir, '_run.json'))
     return dict(name=os.path.basename(run_dir), status=meta.get('status'),
                 harness_pid=harness_pid,
                 harness_alive=bool(harness_pid and pid_alive(harness_pid)),
+                jvm_pid=jvm_pid,
                 jvm_alive=(None if jvm is None else bool(jvm)),
                 log_age_s=None if log_age is None else int(log_age),
                 progress_iteration=progress.get('iteration'),
