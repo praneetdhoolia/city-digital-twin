@@ -465,25 +465,7 @@ def disclosed_pt_boardings(cfg):
             excluded, n_censored)
 
 
-def main():
-    cfg = _registry.load(strict=True)
-    year, lga, lv = hts_levels(cfg)
-    g = g62_composition()
-    window, pt, pt_excluded, lr_share = opal_pt_boardings(cfg)
-
-    rows = []
-
-    def add(mode, target, denominator, status, basis, sweep=None):
-        rows.append(dict(
-            mode=mode,
-            target_pct=None if target is None else round(target, 4),
-            denominator=denominator,
-            status=status,
-            sweep_low=None if not sweep else round(sweep[0], 4),
-            sweep_high=None if not sweep else round(sweep[1], 4),
-            basis=basis))
-
-    # ---- the person-trip modes -------------------------------------
+def road_person_targets(add, cfg, g, lga, lv, year):
     # Vehicle driver splits across the three one-method driver categories the
     # census distinguishes. The truck slice is NOT a model mode: this city
     # represents road freight as its own subpopulation of vehicles, not as a
@@ -600,6 +582,8 @@ def main():
         % (year, vd, g['motorbike'], drv, 100.0 * g['motorbike'] / drv),
         (mbk * (1 - tol), mbk * (1 + tol)))
 
+
+def pt_person_targets(add, cfg, g, lr_share, lv, pt, pt_excluded, window, year):
     # Public transport splits on CURRENT boardings, not on the 2021 census:
     # the census was enumerated during a lockdown that suppressed PT commuting
     # specifically. The census composition is kept as the sweep's far end,
@@ -734,6 +718,15 @@ def main():
         % (g['ferry'], g_pt, 100.0 * g['ferry'] / g_pt),
         (0.0, 2.0 * ferry_cen))
 
+
+def person_trip_targets(add, cfg, g, lga, lr_share, lv, pt, pt_excluded, window, year):
+    # ---- the person-trip modes -------------------------------------
+    road_person_targets(add, cfg, g, lga, lv, year)
+
+    pt_person_targets(add, cfg, g, lr_share, lv, pt, pt_excluded, window, year)
+
+
+def own_denominator_targets(add, cfg, g, lga, lv, pt, rows, window, year):
     # ---- the modes on their own denominators -----------------------
     # Road freight is not a resident's person trip in this model, so it cannot
     # be scored on the person-trip denominator at all. Its observation is the
@@ -869,6 +862,29 @@ def main():
                  r['denominator'], r['status']))
     print('\nperson-trip targets sum to %.4f%% (HTS categories sum to %.1f%%)'
           % (rep['person_trip_target_sum'], sum(lv.values())))
+
+
+def main():
+    cfg = _registry.load(strict=True)
+    year, lga, lv = hts_levels(cfg)
+    g = g62_composition()
+    window, pt, pt_excluded, lr_share = opal_pt_boardings(cfg)
+
+    rows = []
+
+    def add(mode, target, denominator, status, basis, sweep=None):
+        rows.append(dict(
+            mode=mode,
+            target_pct=None if target is None else round(target, 4),
+            denominator=denominator,
+            status=status,
+            sweep_low=None if not sweep else round(sweep[0], 4),
+            sweep_high=None if not sweep else round(sweep[1], 4),
+            basis=basis))
+
+    person_trip_targets(add, cfg, g, lga, lr_share, lv, pt, pt_excluded, window, year)
+
+    own_denominator_targets(add, cfg, g, lga, lv, pt, rows, window, year)
 
 
 if __name__ == '__main__':
