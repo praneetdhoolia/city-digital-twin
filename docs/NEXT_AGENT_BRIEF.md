@@ -21,7 +21,7 @@ the third RESULT, closed out through the new `run.py --close-out` after its harn
 | **ELEVEN REPORT RECOMMENDATIONS ARE OPEN** of the tenth report's twenty; none taken this session. | `python src/analyse/report_recs.py` |
 | The issue ledger: 28 open, 0 blocking; #225 filed this session (`decision-needed`, the harness and the orphan). | `python src/run/issue_gate.py` · `gh issue list --state open` |
 | This session's PR: open until merged; its branch is deleted when it is. | `gh pr list --state open` |
-| Registry **560** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **508**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
+| Registry **567** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **508**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
 | The pair's `_fit.json`, `_metrics.json`, `_summary.json` and `modes_final.json` are mirrored under `results/processed/20260915T000704_250it_25pct/`; its reading against arm 0 is one command. | `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260915T000704_250it_25pct --modes` |
 
 Then: `python src/run/session_gate.py`.
