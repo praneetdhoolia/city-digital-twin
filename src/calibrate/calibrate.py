@@ -84,6 +84,7 @@ import argparse
 import datetime
 
 import registry as _registry                                    # noqa: E402
+import types as _types
 
 OUT = _city.path('params/C5_calibration.json')
 
@@ -522,6 +523,154 @@ def _best_run_dir(tag):
         return None
 
 
+def plan_search(pc):
+    """One iteration of the loop this replaced in main(); `pc` carries the
+    enclosing scope (8 names). Extracted mechanically, byte-identical outputs."""
+    excluded = []
+    free = free_parameters(pc.cfg, excluded)
+    if pc.a.only:
+        keep = set(pc.a.only)
+        free = [p for p in free if p['key'] in keep]
+        missing = keep - {p['key'] for p in free}
+        if missing:
+            raise SystemExit('not free parameters (measured, held fixed, or no '
+                             'scalar sweep): %s' % ', '.join(sorted(missing)))
+
+    # Does any candidate need the run inputs re-assembled? A `run_inputs`-stage
+    # field is not realised by an override alone - the runner runs a set that
+    # was assembled earlier - so the loop must rebuild that set per candidate.
+    needs_run_inputs = any(p['stage'] == 'run_inputs' for p in free)
+
+    print('%d registry fields are movable by this loop (assumed, scalar sweep, '
+          'not held fixed, not excluded).' % len(free))
+    print('%d were excluded with a reason:' % len(excluded))
+    for k, why in excluded:
+        print('   %-46s %s' % (k, why))
+    print('The objective contains %d independent numbers.' % pc.n_free_allowed)
+    if len(free) > pc.n_free_allowed:
+        print('\nA search over all of them would fit %d parameters to %d '
+              'numbers.' % (len(free), pc.n_free_allowed))
+        print('Name at most %d with --only. The movable set is:'
+              % pc.n_free_allowed)
+        for p in free:
+            print('   %-46s %10.5g  sweep %.5g - %.5g  [%s]'
+                  % (p['key'], p['value'], p['lo'], p['hi'], p['units']))
+        raise SystemExit(
+            '\nrefusing to fit %d parameters to %d independent numbers: that is '
+            'not a calibration. Choose a subset with --only, on a stated reason.'
+            % (len(free), pc.n_free_allowed))
+
+    evals = sum(len(grid(p, pc.ppp)) for p in free) * pc.max_rounds
+    print('\nsearch: coordinate descent, %d parameter(s), %d point(s) each, '
+          'up to %d round(s)' % (len(free), pc.ppp, pc.max_rounds))
+    print('objective: %s' % ', '.join('%s x%.3g' % (k, v)
+                                      for k, v in sorted(pc.comps.items())))
+    print('at most %d run(s); each is a full MATSim run at the overlay settings'
+          % evals)
+    for p in free:
+        print('   %-46s start %10.5g   points %s   [%s]'
+              % (p['key'], p['value'],
+                 ', '.join('%g' % x for x in grid(p, pc.ppp)), p['stage']))
+    if needs_run_inputs:
+        print('at least one parameter is run_inputs-staged, so each candidate '
+              're-assembles %s x %s from the ALREADY-MAPPED schedule before it '
+              'runs (3.5: the mapper is never re-run inside a comparison). The '
+              'shipped assembly is restored when the search ends.'
+              % (pc.a.scenario, pc.a.day))
+    # THE READING POINT HAS TO BE ABLE TO RESOLVE THE ANSWER.
+    #
+    # A gate reading is taken at one iteration, and iteration 100 was adopted
+    # as that point on COST - it was never once tested for stability. It has now
+    # been measured, within-run, on all six 25% arms that ever reached it: the
+    # objective moves CAL.search.reading_drift_pct between iteration 80 and 100
+    # OF THE SAME RUN, with nothing changed at all. If that drift is larger than
+    # the band the goal asks a mode to sit inside, then a reading there cannot
+    # decide whether a mode is inside the band - let alone which of two
+    # candidates is better - and a search scored on it would be ranking noise.
+    #
+    # This refuses rather than warns. A search that cannot resolve its own
+    # objective produces a `calibrated` block and a `best_tag` that look exactly
+    # like a result, which is the one failure this project cannot absorb.
+    print('\nreading point: the objective drifts %.4g%% between iteration 80 '
+          'and 100 WITHIN one run (%d arms measured), against a pass band of '
+          '%.4g%%' % (pc.reading_drift, 6, pc.pass_band))
+    if pc.reading_drift > pc.pass_band:
+        print('\nA reading at this point cannot decide whether a mode is inside '
+              'the %.4g%% band: the reading moves further than the band by '
+              'itself.' % pc.pass_band)
+        if pc.a.execute:
+            raise SystemExit(
+                'refusing to search on a reading that cannot resolve the goal '
+                'band. Lower CAL.search.reading_drift_pct by changing the '
+                'READING, not the rule - read deeper than iteration 100, or '
+                'average a window of iterations instead of taking a point - and '
+                're-measure with src/analyse/measure_reading_stability.py. '
+                'Until then a search would rank noise and hand back a '
+                'best_tag that looks like a result.')
+        print('--plan continues so the search can be costed, but --execute is '
+              'refused until the reading resolves the band.')
+    return free, needs_run_inputs
+
+
+
+def run_search_and_record(sc):
+    """One iteration of the loop this replaced in main(); `sc` carries the
+    enclosing scope (14 names). Extracted mechanically, byte-identical outputs."""
+    try:
+        for rnd in range(sc.max_rounds):
+            print('\nround %d' % (rnd + 1))
+            start = sc.best_obj
+            for p in sc.free:
+                for value in grid(p, sc.ppp):
+                    ov = dict(sc.current)
+                    ov[p['key']] = value
+                    rec = sc.evaluate(candidate_tag(sc.base, p['key'], value), ov)
+                    if rec['feasible'] and (sc.best_obj is None
+                                            or rec['objective'] < sc.best_obj):
+                        sc.best_obj, best_tag = rec['objective'], rec['tag']
+                        sc.current[p['key']] = value
+            if start is not None and sc.best_obj is not None and start - sc.best_obj < sc.delta:
+                print('round improved the objective by %.4f < %.4f: stopping'
+                      % (start - sc.best_obj, sc.delta))
+                break
+    finally:
+        # The assembled sets are COMMITTED and MANIFEST-HASHED. A search that
+        # rebuilt them per candidate leaves the tree holding the last
+        # candidate's values, which would show up as an unexplained manifest
+        # drift in whatever session came next. Restore the shipped assembly
+        # whatever happened - including on a failure or a Ctrl-C, which is why
+        # this is a finally and not a line at the end.
+        if sc.needs_run_inputs:
+            print('\nrestoring the shipped assembly for %s x %s'
+                  % (sc.a.scenario, sc.a.day))
+            sc.rebuild_run_inputs({})
+
+    result = dict(
+        generated=datetime.datetime.now(datetime.timezone.utc)
+        .strftime('%Y-%m-%dT%H:%M:%SZ'),
+        scenario=sc.a.scenario, day=sc.a.day, run_config=sc.a.run_config,
+        objective_components=sc.comps,
+        independent_targets=sc.n_free_allowed,
+        free_parameters=[p['key'] for p in sc.free],
+        best_tag=best_tag, best_objective=sc.best_obj,
+        # the runner's directory name for the best run, beside the tag the
+        # record carries (#137): the tag is what the run called itself, the
+        # directory is what the store calls it
+        best_run=_best_run_dir(best_tag),
+        calibrated=sc.current, history=sc.history,
+        note='Calibrated against the CALIBRATION half only. Counts were scored '
+             'and reported but not optimised against (DECISIONS.md 9.14). The '
+             'C4 constraints were feasibility conditions, never targets.')
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    # newline='\n': C5 is committed and manifest-hashed; a Windows default-mode
+    # write puts CRLF in the working tree, the manifest hashes those bytes, and
+    # CI (which checks out the gitattributes-normalised LF bytes) then fails
+    # manifest integrity - measured on PR #67.
+    json.dump(result, open(OUT, 'w', newline='\n'), indent=2)
+    print('\nbest %s at objective %.4f -> %s' % (best_tag, sc.best_obj, OUT))
+
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -564,89 +713,8 @@ def main():
     reading_drift = float(cfg.get('CAL.search.reading_drift_pct'))
     pass_band = float(cfg.get('CAL.gate.pass_deviation_pct'))
 
-    excluded = []
-    free = free_parameters(cfg, excluded)
-    if a.only:
-        keep = set(a.only)
-        free = [p for p in free if p['key'] in keep]
-        missing = keep - {p['key'] for p in free}
-        if missing:
-            raise SystemExit('not free parameters (measured, held fixed, or no '
-                             'scalar sweep): %s' % ', '.join(sorted(missing)))
-
-    # Does any candidate need the run inputs re-assembled? A `run_inputs`-stage
-    # field is not realised by an override alone - the runner runs a set that
-    # was assembled earlier - so the loop must rebuild that set per candidate.
-    needs_run_inputs = any(p['stage'] == 'run_inputs' for p in free)
-
-    print('%d registry fields are movable by this loop (assumed, scalar sweep, '
-          'not held fixed, not excluded).' % len(free))
-    print('%d were excluded with a reason:' % len(excluded))
-    for k, why in excluded:
-        print('   %-46s %s' % (k, why))
-    print('The objective contains %d independent numbers.' % n_free_allowed)
-    if len(free) > n_free_allowed:
-        print('\nA search over all of them would fit %d parameters to %d '
-              'numbers.' % (len(free), n_free_allowed))
-        print('Name at most %d with --only. The movable set is:'
-              % n_free_allowed)
-        for p in free:
-            print('   %-46s %10.5g  sweep %.5g - %.5g  [%s]'
-                  % (p['key'], p['value'], p['lo'], p['hi'], p['units']))
-        raise SystemExit(
-            '\nrefusing to fit %d parameters to %d independent numbers: that is '
-            'not a calibration. Choose a subset with --only, on a stated reason.'
-            % (len(free), n_free_allowed))
-
-    evals = sum(len(grid(p, ppp)) for p in free) * max_rounds
-    print('\nsearch: coordinate descent, %d parameter(s), %d point(s) each, '
-          'up to %d round(s)' % (len(free), ppp, max_rounds))
-    print('objective: %s' % ', '.join('%s x%.3g' % (k, v)
-                                      for k, v in sorted(comps.items())))
-    print('at most %d run(s); each is a full MATSim run at the overlay settings'
-          % evals)
-    for p in free:
-        print('   %-46s start %10.5g   points %s   [%s]'
-              % (p['key'], p['value'],
-                 ', '.join('%g' % x for x in grid(p, ppp)), p['stage']))
-    if needs_run_inputs:
-        print('at least one parameter is run_inputs-staged, so each candidate '
-              're-assembles %s x %s from the ALREADY-MAPPED schedule before it '
-              'runs (3.5: the mapper is never re-run inside a comparison). The '
-              'shipped assembly is restored when the search ends.'
-              % (a.scenario, a.day))
-    # THE READING POINT HAS TO BE ABLE TO RESOLVE THE ANSWER.
-    #
-    # A gate reading is taken at one iteration, and iteration 100 was adopted
-    # as that point on COST - it was never once tested for stability. It has now
-    # been measured, within-run, on all six 25% arms that ever reached it: the
-    # objective moves CAL.search.reading_drift_pct between iteration 80 and 100
-    # OF THE SAME RUN, with nothing changed at all. If that drift is larger than
-    # the band the goal asks a mode to sit inside, then a reading there cannot
-    # decide whether a mode is inside the band - let alone which of two
-    # candidates is better - and a search scored on it would be ranking noise.
-    #
-    # This refuses rather than warns. A search that cannot resolve its own
-    # objective produces a `calibrated` block and a `best_tag` that look exactly
-    # like a result, which is the one failure this project cannot absorb.
-    print('\nreading point: the objective drifts %.4g%% between iteration 80 '
-          'and 100 WITHIN one run (%d arms measured), against a pass band of '
-          '%.4g%%' % (reading_drift, 6, pass_band))
-    if reading_drift > pass_band:
-        print('\nA reading at this point cannot decide whether a mode is inside '
-              'the %.4g%% band: the reading moves further than the band by '
-              'itself.' % pass_band)
-        if a.execute:
-            raise SystemExit(
-                'refusing to search on a reading that cannot resolve the goal '
-                'band. Lower CAL.search.reading_drift_pct by changing the '
-                'READING, not the rule - read deeper than iteration 100, or '
-                'average a window of iterations instead of taking a point - and '
-                're-measure with src/analyse/measure_reading_stability.py. '
-                'Until then a search would rank noise and hand back a '
-                'best_tag that looks like a result.')
-        print('--plan continues so the search can be costed, but --execute is '
-              'refused until the reading resolves the band.')
+    pc = _types.SimpleNamespace(a=a, cfg=cfg, comps=comps, max_rounds=max_rounds, n_free_allowed=n_free_allowed, pass_band=pass_band, ppp=ppp, reading_drift=reading_drift)
+    free, needs_run_inputs = plan_search(pc)
 
     if a.plan:
         print('\n--plan: nothing was run.')
@@ -781,58 +849,9 @@ def main():
         print('   %-58s obj %8.4f %s' % (label, obj, '' if ok else '  INFEASIBLE'))
         return rec
 
-    try:
-        for rnd in range(max_rounds):
-            print('\nround %d' % (rnd + 1))
-            start = best_obj
-            for p in free:
-                for value in grid(p, ppp):
-                    ov = dict(current)
-                    ov[p['key']] = value
-                    rec = evaluate(candidate_tag(base, p['key'], value), ov)
-                    if rec['feasible'] and (best_obj is None
-                                            or rec['objective'] < best_obj):
-                        best_obj, best_tag = rec['objective'], rec['tag']
-                        current[p['key']] = value
-            if start is not None and best_obj is not None and start - best_obj < delta:
-                print('round improved the objective by %.4f < %.4f: stopping'
-                      % (start - best_obj, delta))
-                break
-    finally:
-        # The assembled sets are COMMITTED and MANIFEST-HASHED. A search that
-        # rebuilt them per candidate leaves the tree holding the last
-        # candidate's values, which would show up as an unexplained manifest
-        # drift in whatever session came next. Restore the shipped assembly
-        # whatever happened - including on a failure or a Ctrl-C, which is why
-        # this is a finally and not a line at the end.
-        if needs_run_inputs:
-            print('\nrestoring the shipped assembly for %s x %s'
-                  % (a.scenario, a.day))
-            rebuild_run_inputs({})
-
-    result = dict(
-        generated=datetime.datetime.now(datetime.timezone.utc)
-        .strftime('%Y-%m-%dT%H:%M:%SZ'),
-        scenario=a.scenario, day=a.day, run_config=a.run_config,
-        objective_components=comps,
-        independent_targets=n_free_allowed,
-        free_parameters=[p['key'] for p in free],
-        best_tag=best_tag, best_objective=best_obj,
-        # the runner's directory name for the best run, beside the tag the
-        # record carries (#137): the tag is what the run called itself, the
-        # directory is what the store calls it
-        best_run=_best_run_dir(best_tag),
-        calibrated=current, history=history,
-        note='Calibrated against the CALIBRATION half only. Counts were scored '
-             'and reported but not optimised against (DECISIONS.md 9.14). The '
-             'C4 constraints were feasibility conditions, never targets.')
-    os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    # newline='\n': C5 is committed and manifest-hashed; a Windows default-mode
-    # write puts CRLF in the working tree, the manifest hashes those bytes, and
-    # CI (which checks out the gitattributes-normalised LF bytes) then fails
-    # manifest integrity - measured on PR #67.
-    json.dump(result, open(OUT, 'w', newline='\n'), indent=2)
-    print('\nbest %s at objective %.4f -> %s' % (best_tag, best_obj, OUT))
+    sc = _types.SimpleNamespace(a=a, base=base, best_obj=best_obj, comps=comps, current=current, delta=delta, evaluate=evaluate, free=free, history=history, max_rounds=max_rounds, n_free_allowed=n_free_allowed, needs_run_inputs=needs_run_inputs, ppp=ppp, rebuild_run_inputs=rebuild_run_inputs)
+    run_search_and_record(sc)
+    best_obj = sc.best_obj
 
 
 if __name__ == '__main__':

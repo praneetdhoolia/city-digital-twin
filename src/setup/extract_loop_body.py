@@ -210,9 +210,12 @@ def main(argv=None):
                                                   and _first_use_is_load(after, n))))
     # a name read in the body that fn binds outside it and the body does not
     # bind first is reached through ctx; module-level names and builtins are not
+    # a name the enclosing function binds is the function's whatever the
+    # module also binds under that name (the chains builder's `d` is a
+    # module-level loop variable AND a day-loop parameter, 16 September 2026)
     reads = sorted(n for n in body_loads
                    if n in outer_binds and n not in set(targets) and n not in nested
-                   and n not in module_scope and n in bound_before
+                   and n in bound_before
                    and (n not in body_stores or _first_use_is_load(body, n)))
     via_ctx = sorted(set(shared) | set(reads))
     # a name the body binds for the FIRST time that the function reads after

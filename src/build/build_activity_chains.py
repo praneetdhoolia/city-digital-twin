@@ -270,6 +270,7 @@ PAIRING_WINDOW_MIN = float(CFG.get('B.ride.pairing_window_min'))
 # binder report so a run under another seed can be refused.
 SAMPLE_SEED = int(CFG.get('RUN.machine.seed'))
 import hashlib as _hashlib  # noqa: E402
+import types as _types
 
 
 def sample_unit_hash(household_id):
@@ -501,6 +502,56 @@ def load_poi_by_zone(zones):
             by[k] = (grp.x.to_numpy(), grp.y.to_numpy(), np.cumsum(w))
         store[purpose] = by
     return store, len(allp)
+
+
+def balance_destinations(cd):
+    """One iteration of the loop this replaced in calibrate_decay(); `cd` carries the
+    enclosing scope (7 names). Extracted mechanically, byte-identical outputs."""
+    doubly = DEST_BALANCING == 'doubly_constrained'
+    passes = max(1, BALANCE_PASSES) if doubly else 1
+    W = {}
+    gap_first, gap_last, inner_used = {}, {}, {}
+    passes_run = 0
+    for pss in range(passes):
+        passes_run = pss + 1
+        for p in PURPOSES:
+            W[p] = cd.calibrate_one(p)
+            g, _a, _h = cd.gap_of(p, W[p])
+            if pss == 0:
+                gap_first[p] = g
+            gap_last[p] = g
+        if not doubly:
+            break
+        for p in PURPOSES:
+            used = 0
+            for _ in range(max(1, BALANCE_ROUNDS)):
+                g, a, held = cd.gap_of(p, W[p])
+                gap_last[p] = g
+                if g <= BALANCE_TOL:
+                    break
+                used += 1
+                f = np.ones_like(a)
+                ok = held & (a > 0)
+                f[ok] = np.asarray(cd.ATTR[p])[ok] / a[ok]
+                cd.AEFF[p] = np.where(held, cd.AEFF[p] * f, 0.0)
+                W[p] = cd.mixed(p, cd.beta_of_zone[p])
+                gap_last[p] = cd.gap_of(p, W[p])[0]
+            inner_used[p] = inner_used.get(p, 0) + used
+    cd.diag['_destination_balancing'] = dict(
+        rule=DEST_BALANCING, passes_run=passes_run, passes_max=passes,
+        inner_rounds_max=BALANCE_ROUNDS, inner_rounds_used=inner_used,
+        tolerance=BALANCE_TOL,
+        worst_arrival_gap_before={p: round(gap_first[p], 4) for p in PURPOSES},
+        worst_arrival_gap_after={p: round(gap_last[p], 4) for p in PURPOSES},
+        note=('the largest relative gap between a zone\'s share of a purpose\'s '
+              'arrivals and its own attraction share, over the zones that hold '
+              'attraction, before any balancing and after the last pass. Under '
+              'singly_constrained nothing is balanced and the two are equal.'))
+    CUM = {}
+    for p in PURPOSES:
+        CUM[p] = np.cumsum(W[p], axis=1).astype(np.float32)
+    return CUM
+
 
 
 def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None):
@@ -741,49 +792,8 @@ def calibrate_decay(X, Y, ATTR, meandist, prod, zone_lga=None, meandist_lga=None
     # pass repeated B.activity.balancing_passes times. Pass 1 before any
     # balancing IS the origin-constrained solve exactly as it stood, which is
     # what `singly_constrained` returns.
-    doubly = DEST_BALANCING == 'doubly_constrained'
-    passes = max(1, BALANCE_PASSES) if doubly else 1
-    W = {}
-    gap_first, gap_last, inner_used = {}, {}, {}
-    passes_run = 0
-    for pss in range(passes):
-        passes_run = pss + 1
-        for p in PURPOSES:
-            W[p] = calibrate_one(p)
-            g, _a, _h = gap_of(p, W[p])
-            if pss == 0:
-                gap_first[p] = g
-            gap_last[p] = g
-        if not doubly:
-            break
-        for p in PURPOSES:
-            used = 0
-            for _ in range(max(1, BALANCE_ROUNDS)):
-                g, a, held = gap_of(p, W[p])
-                gap_last[p] = g
-                if g <= BALANCE_TOL:
-                    break
-                used += 1
-                f = np.ones_like(a)
-                ok = held & (a > 0)
-                f[ok] = np.asarray(ATTR[p])[ok] / a[ok]
-                AEFF[p] = np.where(held, AEFF[p] * f, 0.0)
-                W[p] = mixed(p, beta_of_zone[p])
-                gap_last[p] = gap_of(p, W[p])[0]
-            inner_used[p] = inner_used.get(p, 0) + used
-    diag['_destination_balancing'] = dict(
-        rule=DEST_BALANCING, passes_run=passes_run, passes_max=passes,
-        inner_rounds_max=BALANCE_ROUNDS, inner_rounds_used=inner_used,
-        tolerance=BALANCE_TOL,
-        worst_arrival_gap_before={p: round(gap_first[p], 4) for p in PURPOSES},
-        worst_arrival_gap_after={p: round(gap_last[p], 4) for p in PURPOSES},
-        note=('the largest relative gap between a zone\'s share of a purpose\'s '
-              'arrivals and its own attraction share, over the zones that hold '
-              'attraction, before any balancing and after the last pass. Under '
-              'singly_constrained nothing is balanced and the two are equal.'))
-    CUM = {}
-    for p in PURPOSES:
-        CUM[p] = np.cumsum(W[p], axis=1).astype(np.float32)
+    cd = _types.SimpleNamespace(AEFF=AEFF, ATTR=ATTR, beta_of_zone=beta_of_zone, calibrate_one=calibrate_one, diag=diag, gap_of=gap_of, mixed=mixed)
+    CUM = balance_destinations(cd)
     del DKM
     return CUM, diag
 
@@ -1044,6 +1054,52 @@ def time_tour(spec, t_start, person, hx, hy, hz, SA1):
     return pending, arr_home
 
 
+def place_free_tour(oi, bd):
+    """One iteration of the loop this replaced in build_day(); `bd` carries the
+    enclosing scope (16 names). Extracted mechanically, byte-identical outputs."""
+    purpose = bd.tours[oi]
+    t_start = bd.starts[oi]
+    if bd.t_now is not None and t_start < bd.t_now + COMPANION_BUFFER_S:
+        t_start = bd.t_now + COMPANION_BUFFER_S
+    spec = draw_tour_spec(purpose, bd.hz, bd.CUM, bd.store, bd.zone_arr, bd.u)
+    # flow around the immovable escort tours: a movable tour that would
+    # overlap one is pushed past its end and re-timed (never redrawn)
+    legs_m = None
+    while t_start <= DAY_HORIZON_S - 3600:
+        legs_m, arr_home = time_tour(spec, t_start, bd.person, bd.hx, bd.hy, bd.hz, bd.SA1)
+        hit = next(((fs, fe) for fs, fe in bd.fixed_intervals
+                    if t_start < fe + COMPANION_BUFFER_S and arr_home > fs), None)
+        if hit is None:
+            break
+        t_start = hit[1] + COMPANION_BUFFER_S
+        legs_m = None
+    if legs_m is None:
+        # 9.164 (#30): DROP THIS TOUR, NOT THE REST OF THE DAY. This
+        # branch used to `break`, discarding every tour still to be placed
+        # - `dropped[0] += len(order) - order.index(oi)` - on the reasoning
+        # that a tour which ran out of day makes its successors hopeless.
+        # Its own neighbour four lines below says otherwise: a tour whose
+        # timing overruns the horizon `continue`s and the next one is
+        # still tried. The two paths reach the same state by different
+        # routes, and only one of them abandoned the day. They differ in
+        # fact as well as in form: this branch fires when a tour is pushed
+        # past the horizon by a COLLISION with an immovable escort
+        # interval, and a later, shorter tour can still sit in a gap the
+        # pushed one could not. The whole-day discard is measured at a
+        # -4.35 % trip-rate shortfall and it falls hardest on the short
+        # trips that would have been walked, which is the supply half of
+        # walk's -26.5 % (#30).
+        bd.dropped[0] += 1
+        bd.dropped[2] += len(bd.order) - bd.order.index(oi) - 1
+        return
+    if arr_home > DAY_HORIZON_S:
+        bd.dropped[0] += 1
+        return
+    bd.placed.append((t_start, arr_home, spec, legs_m))
+    bd.t_now = arr_home if bd.t_now is None else max(bd.t_now, arr_home)
+
+
+
 def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
               fixed_tours=(), bound_log=None):
     """One person's tours for one day type.
@@ -1130,47 +1186,10 @@ def build_day(person, day, rates, CUM, store, zone_arr, u, pre, dropped,
     order = sorted(range(len(tours)), key=lambda i: (starts[i], tours[i], i))
 
     t_now = None
+    bd = _types.SimpleNamespace(CUM=CUM, SA1=SA1, dropped=dropped, fixed_intervals=fixed_intervals, hx=hx, hy=hy, hz=hz, order=order, person=person, placed=placed, starts=starts, store=store, t_now=t_now, tours=tours, u=u, zone_arr=zone_arr)
     for oi in order:
-        purpose = tours[oi]
-        t_start = starts[oi]
-        if t_now is not None and t_start < t_now + COMPANION_BUFFER_S:
-            t_start = t_now + COMPANION_BUFFER_S
-        spec = draw_tour_spec(purpose, hz, CUM, store, zone_arr, u)
-        # flow around the immovable escort tours: a movable tour that would
-        # overlap one is pushed past its end and re-timed (never redrawn)
-        legs_m = None
-        while t_start <= DAY_HORIZON_S - 3600:
-            legs_m, arr_home = time_tour(spec, t_start, person, hx, hy, hz, SA1)
-            hit = next(((fs, fe) for fs, fe in fixed_intervals
-                        if t_start < fe + COMPANION_BUFFER_S and arr_home > fs), None)
-            if hit is None:
-                break
-            t_start = hit[1] + COMPANION_BUFFER_S
-            legs_m = None
-        if legs_m is None:
-            # 9.164 (#30): DROP THIS TOUR, NOT THE REST OF THE DAY. This
-            # branch used to `break`, discarding every tour still to be placed
-            # - `dropped[0] += len(order) - order.index(oi)` - on the reasoning
-            # that a tour which ran out of day makes its successors hopeless.
-            # Its own neighbour four lines below says otherwise: a tour whose
-            # timing overruns the horizon `continue`s and the next one is
-            # still tried. The two paths reach the same state by different
-            # routes, and only one of them abandoned the day. They differ in
-            # fact as well as in form: this branch fires when a tour is pushed
-            # past the horizon by a COLLISION with an immovable escort
-            # interval, and a later, shorter tour can still sit in a gap the
-            # pushed one could not. The whole-day discard is measured at a
-            # -4.35 % trip-rate shortfall and it falls hardest on the short
-            # trips that would have been walked, which is the supply half of
-            # walk's -26.5 % (#30).
-            dropped[0] += 1
-            dropped[2] += len(order) - order.index(oi) - 1
-            continue
-        if arr_home > DAY_HORIZON_S:
-            dropped[0] += 1
-            continue
-        placed.append((t_start, arr_home, spec, legs_m))
-        t_now = arr_home if t_now is None else max(t_now, arr_home)
+        place_free_tour(oi, bd)
+    t_now = bd.t_now
 
     # ---- assemble the day in chronological order ----
     placed.sort(key=lambda pl: pl[0])
@@ -1374,6 +1393,141 @@ def bind_escort_tours(n_hx, candidates, claimed, pending):
     return fixed
 
 
+def lift_candidates_of_person(ixs, person_id, lp):
+    """One iteration of the loop this replaced in bind_nonhousehold_lifts(); `lp` carries the
+    enclosing scope (6 names). Extracted mechanically, byte-identical outputs."""
+    ctx = lp.pctx.get(person_id)
+    if ctx is None:
+        return
+    for ix in ixs:
+        r = lp.rows[ix]
+        if r['is_tour_anchor'] != '1':
+            continue
+        if (r['tour_purpose'] == 'HX'
+                and r['dest_placement'] in ('poi', 'jitter')
+                and ctx['licence'] and ctx['cav']):
+            # A lift is a car trip, so the driver's household must own a
+            # vehicle - the same identity the joint and shared passes
+            # test. Testing the licence alone bound 3,154 WEEKDAY lifts
+            # (2,697 drivers) whose household holds no car, and the
+            # passenger was in ANOTHER household 100% of the time, so
+            # nothing downstream could catch it (DECISIONS.md 9.144,
+            # issue #142).
+            lp.drivers.append((ctx['sa1'], person_id, r['tour_id']))
+        elif (r['tour_purpose'] == 'HX'
+                and r['dest_placement'] in ('poi', 'jitter')
+                and ctx['licence']):
+            lp.out['drivers_refused_no_vehicle'] += 1
+        elif (r['tour_purpose'] != 'HX' and not ctx['has_other_driver']):
+            pri = (0 if not ctx['licence'] and r['tour_purpose'] == 'HE'
+                   else 1 if not ctx['licence']
+                   else 2 if r['tour_purpose'] == 'HE' else 3)
+            ret_ix = None
+            if lp.round_trip:
+                # 9.68: only a direct out-and-back can be covered in both
+                # directions; a tour with an intermediate stop would keep
+                # an unpairable leg however many serve tours it consumed
+                tixs = [j for j in ixs
+                        if lp.rows[j]['tour_id'] == r['tour_id']]
+                if len(tixs) != 2:
+                    lp.out['passenger_tours_not_direct'] += 1
+                    continue
+                ret_ix = next(j for j in tixs if j != ix)
+            lp.passengers.append((pri, ctx['sa1'], person_id,
+                               int(r['tour_id']), ix, ret_ix))
+    return pri
+
+
+
+def bind_one_lift(ix, p_pid, p_tid, pri, ret_ix, sa1, lc):
+    """One iteration of the loop this replaced in bind_nonhousehold_lifts(); `lc` carries the
+    enclosing scope (9 names). Extracted mechanically, byte-identical outputs."""
+    anchor = lc.rows[ix]
+    dep_p = int(anchor['dep_time_s'])
+    k_o = lc.zi.get(anchor['origin_sa1'])
+    k_d = lc.zi.get(anchor['dest_sa1'])
+    if k_o is None or k_d is None:
+        return
+    drop_chain = [
+        ('HX', k_o, float(anchor['origin_x']),
+         float(anchor['origin_y']), 'lift_pickup'),
+        ('HX', k_d, float(anchor['dest_x']),
+         float(anchor['dest_y']), 'lift_serve')]
+    if lc.round_trip:
+        ret = lc.rows[ret_ix]
+        ret_dep = int(ret['dep_time_s'])
+        k_h = lc.zi.get(ret['dest_sa1'])
+        if k_h is None:
+            return
+        pick_chain = [
+            ('HX', k_d, float(ret['origin_x']),
+             float(ret['origin_y']), 'lift_pickup'),
+            ('HX', k_h, float(ret['dest_x']),
+             float(ret['dest_y']), 'lift_serve')]
+    zone_tours = lc.by_zone.get(sa1, ())
+    for d_pid, d_tid in zone_tours:
+        if (d_pid, d_tid) in lc.used:
+            continue
+        drop_legs = lc.fit_serve_tour(d_pid, d_tid, drop_chain, dep_p, {})
+        if drop_legs is None:
+            continue
+        if not lc.round_trip:
+            lc.commit(d_pid, d_tid, drop_legs, 'drop', anchor, dep_p,
+                   p_pid, p_tid, pri)
+            break
+        # 9.68 round trip: the pick-up must also place, or neither does -
+        # a one-way binding cannot change any choice and would spend a
+        # serve tour on it. The same driver's other unbound tour is
+        # preferred (one liftHousehold, and the person who drives you out
+        # is the person who fetches you back), then any same-zone driver.
+        tentative = {(d_pid, d_tid): lc.as_rows(drop_legs, d_pid, d_tid)}
+        cands = [t for t in zone_tours
+                 if t not in lc.used and t != (d_pid, d_tid)]
+        cands.sort(key=lambda t: (t[0] != d_pid, int(t[0]), int(t[1])))
+        second = None
+        for d2_pid, d2_tid in cands:
+            pick_legs = lc.fit_serve_tour(d2_pid, d2_tid, pick_chain,
+                                       ret_dep, tentative)
+            if pick_legs is not None:
+                second = (d2_pid, d2_tid, pick_legs)
+                break
+        if second is None:
+            continue
+        lc.commit(d_pid, d_tid, drop_legs, 'drop', anchor, dep_p,
+               p_pid, p_tid, pri)
+        lc.commit(second[0], second[1], second[2], 'pickup', ret, ret_dep,
+               p_pid, p_tid, pri)
+        lc.out['passenger_tours_round_trip'] += 1
+        break
+
+
+
+def lift_drivers_and_passengers(ld):
+    """One iteration of the loop this replaced in bind_nonhousehold_lifts(); `ld` carries the
+    enclosing scope (3 names). Extracted mechanically, byte-identical outputs."""
+    rows = read_day(ld.path)
+    rows_of = core_rows_of(rows)              # person_id -> row indexes
+
+    round_trip = ESCORT_DIRECTIONS == 'round_trip'
+    ld.out['directions'] = ESCORT_DIRECTIONS
+    ld.out['passenger_tours_not_direct'] = 0
+    ld.out['passenger_tours_round_trip'] = 0
+    drivers = []      # (home_sa1, person_id, tour_id)
+    passengers = []   # (pri, home_sa1, person_id, tour_id, anchor ix, ret ix)
+    lp = _types.SimpleNamespace(drivers=drivers, out=ld.out, passengers=passengers, pctx=ld.pctx, round_trip=round_trip, rows=rows)
+    for person_id, ixs in rows_of.items():
+        pri = lift_candidates_of_person(ixs, person_id, lp)
+    ld.out['drivers_unbound'] = len(drivers)
+    ld.out['passenger_candidates'] = len(passengers)
+
+    by_zone = collections.defaultdict(list)
+    for d_sa1, d_pid, d_tid in sorted(drivers,
+                                      key=lambda t: (t[0], int(t[1]), int(t[2]))):
+        by_zone[d_sa1].append((d_pid, d_tid))
+    return by_zone, d_pid, d_tid, passengers, pri, round_trip, rows, rows_of
+
+
+
 def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
     """Re-target unbound HX tours to passengers no household driver can serve.
 
@@ -1408,62 +1562,8 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
                drivers_refused_no_vehicle=0)
     if not out['enabled'] or not ESCORT_BINDING:
         return out
-    rows = read_day(path)
-    rows_of = core_rows_of(rows)              # person_id -> row indexes
-
-    round_trip = ESCORT_DIRECTIONS == 'round_trip'
-    out['directions'] = ESCORT_DIRECTIONS
-    out['passenger_tours_not_direct'] = 0
-    out['passenger_tours_round_trip'] = 0
-    drivers = []      # (home_sa1, person_id, tour_id)
-    passengers = []   # (pri, home_sa1, person_id, tour_id, anchor ix, ret ix)
-    for person_id, ixs in rows_of.items():
-        ctx = pctx.get(person_id)
-        if ctx is None:
-            continue
-        for ix in ixs:
-            r = rows[ix]
-            if r['is_tour_anchor'] != '1':
-                continue
-            if (r['tour_purpose'] == 'HX'
-                    and r['dest_placement'] in ('poi', 'jitter')
-                    and ctx['licence'] and ctx['cav']):
-                # A lift is a car trip, so the driver's household must own a
-                # vehicle - the same identity the joint and shared passes
-                # test. Testing the licence alone bound 3,154 WEEKDAY lifts
-                # (2,697 drivers) whose household holds no car, and the
-                # passenger was in ANOTHER household 100% of the time, so
-                # nothing downstream could catch it (DECISIONS.md 9.144,
-                # issue #142).
-                drivers.append((ctx['sa1'], person_id, r['tour_id']))
-            elif (r['tour_purpose'] == 'HX'
-                    and r['dest_placement'] in ('poi', 'jitter')
-                    and ctx['licence']):
-                out['drivers_refused_no_vehicle'] += 1
-            elif (r['tour_purpose'] != 'HX' and not ctx['has_other_driver']):
-                pri = (0 if not ctx['licence'] and r['tour_purpose'] == 'HE'
-                       else 1 if not ctx['licence']
-                       else 2 if r['tour_purpose'] == 'HE' else 3)
-                ret_ix = None
-                if round_trip:
-                    # 9.68: only a direct out-and-back can be covered in both
-                    # directions; a tour with an intermediate stop would keep
-                    # an unpairable leg however many serve tours it consumed
-                    tixs = [j for j in ixs
-                            if rows[j]['tour_id'] == r['tour_id']]
-                    if len(tixs) != 2:
-                        out['passenger_tours_not_direct'] += 1
-                        continue
-                    ret_ix = next(j for j in tixs if j != ix)
-                passengers.append((pri, ctx['sa1'], person_id,
-                                   int(r['tour_id']), ix, ret_ix))
-    out['drivers_unbound'] = len(drivers)
-    out['passenger_candidates'] = len(passengers)
-
-    by_zone = collections.defaultdict(list)
-    for d_sa1, d_pid, d_tid in sorted(drivers,
-                                      key=lambda t: (t[0], int(t[1]), int(t[2]))):
-        by_zone[d_sa1].append((d_pid, d_tid))
+    ld = _types.SimpleNamespace(out=out, path=path, pctx=pctx)
+    by_zone, d_pid, d_tid, passengers, pri, round_trip, rows, rows_of = lift_drivers_and_passengers(ld)
     used = set()
     bindings = []
     replaced = {}                 # (driver_pid, tour_id) -> new leg rows
@@ -1551,65 +1651,10 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
             driver_tour_id=d_tid))
         out['bound'] += 1
 
+    lc = _types.SimpleNamespace(as_rows=as_rows, by_zone=by_zone, commit=commit, fit_serve_tour=fit_serve_tour, out=out, round_trip=round_trip, rows=rows, used=used, zi=zi)
     for pri, sa1, p_pid, p_tid, ix, ret_ix in sorted(
             passengers, key=lambda t: (t[0], t[1], int(t[2]), t[3])):
-        anchor = rows[ix]
-        dep_p = int(anchor['dep_time_s'])
-        k_o = zi.get(anchor['origin_sa1'])
-        k_d = zi.get(anchor['dest_sa1'])
-        if k_o is None or k_d is None:
-            continue
-        drop_chain = [
-            ('HX', k_o, float(anchor['origin_x']),
-             float(anchor['origin_y']), 'lift_pickup'),
-            ('HX', k_d, float(anchor['dest_x']),
-             float(anchor['dest_y']), 'lift_serve')]
-        if round_trip:
-            ret = rows[ret_ix]
-            ret_dep = int(ret['dep_time_s'])
-            k_h = zi.get(ret['dest_sa1'])
-            if k_h is None:
-                continue
-            pick_chain = [
-                ('HX', k_d, float(ret['origin_x']),
-                 float(ret['origin_y']), 'lift_pickup'),
-                ('HX', k_h, float(ret['dest_x']),
-                 float(ret['dest_y']), 'lift_serve')]
-        zone_tours = by_zone.get(sa1, ())
-        for d_pid, d_tid in zone_tours:
-            if (d_pid, d_tid) in used:
-                continue
-            drop_legs = fit_serve_tour(d_pid, d_tid, drop_chain, dep_p, {})
-            if drop_legs is None:
-                continue
-            if not round_trip:
-                commit(d_pid, d_tid, drop_legs, 'drop', anchor, dep_p,
-                       p_pid, p_tid, pri)
-                break
-            # 9.68 round trip: the pick-up must also place, or neither does -
-            # a one-way binding cannot change any choice and would spend a
-            # serve tour on it. The same driver's other unbound tour is
-            # preferred (one liftHousehold, and the person who drives you out
-            # is the person who fetches you back), then any same-zone driver.
-            tentative = {(d_pid, d_tid): as_rows(drop_legs, d_pid, d_tid)}
-            cands = [t for t in zone_tours
-                     if t not in used and t != (d_pid, d_tid)]
-            cands.sort(key=lambda t: (t[0] != d_pid, int(t[0]), int(t[1])))
-            second = None
-            for d2_pid, d2_tid in cands:
-                pick_legs = fit_serve_tour(d2_pid, d2_tid, pick_chain,
-                                           ret_dep, tentative)
-                if pick_legs is not None:
-                    second = (d2_pid, d2_tid, pick_legs)
-                    break
-            if second is None:
-                continue
-            commit(d_pid, d_tid, drop_legs, 'drop', anchor, dep_p,
-                   p_pid, p_tid, pri)
-            commit(second[0], second[1], second[2], 'pickup', ret, ret_dep,
-                   p_pid, p_tid, pri)
-            out['passenger_tours_round_trip'] += 1
-            break
+        bind_one_lift(ix, p_pid, p_tid, pri, ret_ix, sa1, lc)
 
     if replaced:
         # splice: each affected driver's day is re-sequenced chronologically
@@ -1631,6 +1676,248 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
         'driver_tour_id'], bindings,
         key=lambda b: (int(b['passenger_person_id']), b['passenger_tour_id']))
     return out
+
+
+def bind_one_joint_candidate(c_dep, c_pid, c_tid, hid, k, jc):
+    """One iteration of the loop this replaced in bind_joint_tours(); `jc` carries the
+    enclosing scope (15 names). Extracted mechanically, byte-identical outputs."""
+    if jc.draws[k] >= jc.p_thin:
+        return
+    if (c_pid, c_tid) in jc.replaced or jc.driver_load[(c_pid, c_tid)] > 0:
+        jc.out['skipped_conflict'] += 1
+        return
+    busy = jc.intervals_of(c_pid, c_tid)
+    drivers = sorted(
+        jc.hh_drivers[hid],
+        key=lambda t: (abs(t[2] - c_dep), int(t[0]), int(t[1])))
+    chosen = None
+    why = collections.Counter()
+    if not drivers:
+        why['no_driver_tour_in_household'] += 1
+    # First pass: a driver tour that fits the companion's day AS TIMED.
+    for d_pid, d_tid, _d_dep in drivers:
+        if (d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid)
+                or (d_pid, d_tid) in jc.replaced
+                or jc.driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS):
+            # split, because "already committed" is four different facts
+            # and lumping them is how a cap gets blamed for a collision
+            if d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid):
+                why['driver_is_the_companion'] += 1
+            elif (d_pid, d_tid) in jc.replaced:
+                why['driver_tour_already_a_companion_tour'] += 1
+            elif jc.driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS:
+                why['driver_party_full'] += 1
+            continue
+        d_rows = jc.effective_rows(d_pid, d_tid)
+        t_start = min(int(r['dep_time_s']) for r in d_rows)
+        t_end = max(int(r['arr_time_s']) for r in d_rows)
+        if collides(t_start, t_end, busy):
+            why['as_timed_collides_with_companion'] += 1
+            continue
+        chosen = (d_pid, d_tid, d_rows, t_start, t_end, 0)
+        break
+    # Second pass: NEGOTIATED TIMING (the 9.60 precedent - M1 re-times a
+    # serve tour to its passenger's own departure exactly). An UNLOADED,
+    # un-shifted driver tour is rigidly shifted into the slot the
+    # companion's replaced tour is vacating: durations preserved, no
+    # speed or overhead constant restated, the driver's own day and the
+    # horizon both checked. Joint travel IS a negotiated departure; a
+    # binder that only matches accidental coincidences under-supplies it
+    # by construction (measured: 63,360 of 201,931 candidates).
+    if chosen is None:
+        for d_pid, d_tid, d_dep in drivers:
+            if (d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid)
+                    or (d_pid, d_tid) in jc.replaced
+                    or jc.driver_load[(d_pid, d_tid)] > 0
+                    or (d_pid, d_tid) in jc.shifted):
+                why['shift_driver_already_committed'] += 1
+                continue
+            d_rows = [dict(jc.rows[ix]) for ix in jc.tours_of(d_pid)[d_tid]]
+            t0 = min(int(r['dep_time_s']) for r in d_rows)
+            t1 = max(int(r['arr_time_s']) for r in d_rows)
+            delta = c_dep - t0
+            s_start, s_end = t0 + delta, t1 + delta
+            if s_start < 0 or s_end > DAY_HORIZON_S:
+                why['shift_leaves_day_horizon'] += 1
+                continue
+            if collides(s_start, s_end, busy):
+                why['shift_collides_with_companion'] += 1
+                continue
+            if collides(s_start, s_end, jc.intervals_of(d_pid, d_tid)):
+                why['shift_collides_with_driver'] += 1
+                continue
+            for r in d_rows:
+                r['dep_time_s'] = int(r['dep_time_s']) + delta
+                r['arr_time_s'] = int(r['arr_time_s']) + delta
+            jc.shifted[(d_pid, d_tid)] = delta
+            jc.new_intervals[(d_pid, d_tid)] = (s_start, s_end)
+            chosen = (d_pid, d_tid, d_rows, s_start, s_end, delta)
+            jc.out['bound_driver_shifted'] += 1
+            break
+    if chosen is None:
+        jc.out['skipped_infeasible'] += 1
+        # the clause that blocked the most drivers for THIS candidate; one
+        # vote per refused candidate, so the classes partition the total
+        jc.refusal[why.most_common(1)[0][0] if why else 'no_driver_examined'] += 1
+        return
+    d_pid, d_tid, d_rows, t_start, t_end, _delta = chosen
+    mirror = []
+    for j, dr in enumerate(d_rows):
+        leg = dict(dr)
+        leg['person_id'] = c_pid
+        leg['tour_id'] = c_tid
+        if j == 0:
+            leg['dest_placement'] = 'joint'
+        mirror.append(leg)
+    jc.replaced[(c_pid, c_tid)] = (mirror, (d_pid, d_tid))
+    jc.new_intervals[(c_pid, c_tid)] = (t_start, t_end)
+    jc.driver_load[(d_pid, d_tid)] += 1
+    jc.bindings.append(dict(
+        companion_person_id=c_pid, companion_tour_id=c_tid,
+        driver_person_id=d_pid, driver_tour_id=d_tid,
+        driver_household_id=jc.pctx[d_pid]['hid'],
+        dep_s=t_start))
+    jc.out['bound'] += 1
+
+
+
+def joint_household_candidates(hid, jc):
+    """One iteration of the loop this replaced in bind_joint_tours(); `jc` carries the
+    enclosing scope (10 names). Extracted mechanically, byte-identical outputs."""
+    members = sorted(jc.by_hh[hid], key=int)
+    if len(members) < 2:
+        return
+    jc.out['households_multi'] += 1
+    # persons whose day includes escort driving are skipped as
+    # companions: ESCORT_EXCLUDES_RIDE would deny the seeded ride
+    escorting = {p for p in members
+                 if any(jc.rows[ix]['dest_activity_type'] == 'escort'
+                        for ix in jc.rows_of[p])}
+    driver_tours = []   # (d_pid, d_tid, anchor ix)
+    comp_tours = []     # (c_pid, c_tid, anchor ix)
+    for p in members:
+        ctx = jc.pctx[p]
+        for tid, ixs in jc.tours_of(p).items():
+            if not jc.eligible_tour(p, tid, ixs):
+                continue
+            anchor = ixs[0]
+            # 9.143: a person already being CARRIED on this tour by an
+            # earlier pass cannot also drive it. `cov_dirs` above records
+            # what the escort and lift passes booked; this pass excluded
+            # those tours from its companion pool but not from its driver
+            # pool, which produced 726 of the 17,740 person-tours booked
+            # both ways.
+            if ctx['licence'] and ctx['cav'] and (p, tid) not in jc.cov_dirs:
+                driver_tours.append((p, tid, anchor))
+            if p not in escorting:
+                comp_tours.append((p, tid, anchor))
+    jc.out['driver_tours'] += len(driver_tours)
+    jc.out['companion_tours'] += len(comp_tours)
+    if not driver_tours:
+        return
+    # Every companion tour is a candidate; WHICH household driver tour
+    # carries it is decided at binding time, where the busy check can
+    # try every driver in departure-gap order rather than dying on the
+    # nearest one. One driver tour carries several companions - the
+    # family outing in one car - up to the declared vehicle capacity
+    # (B.ride.max_passengers_per_vehicle).
+    jc.hh_drivers[hid] = [(p, tid, int(jc.rows[ix]['dep_time_s']))
+                       for p, tid, ix in driver_tours]
+    # A companion whose household holds no driver tour belonging to
+    # SOMEBODY ELSE cannot be bound, ever: the first pass skips every
+    # driver where d_pid == c_pid, so the list it walks holds nothing
+    # usable. Measured before this filter existed (9.111): 51,215 of
+    # 73,258 refusals - 69.9% - were exactly that, because a licensed
+    # car-owner's tour sits in BOTH pools and 41.7% of multi-person
+    # households have at most one licensed travelling member. Leaving
+    # those candidacies in the pool does not merely waste them:
+    # `p_thin` divides the target across the pool it is given, so every
+    # certain refusal thins a SERVABLE candidate away with it.
+    driver_persons = {d_pid for d_pid, _tid, _ix in driver_tours}
+    for c_pid, c_tid, c_ix in comp_tours:
+        if not (driver_persons - {c_pid}):
+            jc.out['candidates_unservable'] += 1
+            continue
+        jc.candidates.append((c_pid, c_tid, hid,
+                           int(jc.rows[c_ix]['dep_time_s'])))
+
+
+
+def write_joint_bindings(jw):
+    """One iteration of the loop this replaced in bind_joint_tours(); `jw` carries the
+    enclosing scope (12 names). Extracted mechanically, byte-identical outputs."""
+    jw.out['driver_tours_used'] = len(jw.driver_load)
+    if jw.replaced:
+        # apply the negotiated shifts to the underlying driver rows FIRST,
+        # so the file and every mirror agree on the one set of times
+        for (d_pid, d_tid), delta in jw.shifted.items():
+            for ix in jw.tours_of(d_pid)[d_tid]:
+                jw.rows[ix]['dep_time_s'] = int(jw.rows[ix]['dep_time_s']) + delta
+                jw.rows[ix]['arr_time_s'] = int(jw.rows[ix]['arr_time_s']) + delta
+        # the party travels as one: driver rows and every companion mirror
+        # of that driver carry the same final party size
+        for (d_pid, d_tid), n in jw.driver_load.items():
+            for ix in jw.tours_of(d_pid)[d_tid]:
+                jw.rows[ix]['party_size'] = 1 + n
+        for (c_pid, c_tid), (mirror, dkey) in jw.replaced.items():
+            for leg in mirror:
+                leg['party_size'] = 1 + jw.driver_load[dkey]
+        by_person = collections.defaultdict(list)
+        for r in jw.rows:
+            by_person[r['person_id']].append(r)
+        for (c_pid, c_tid), (mirror, _dkey) in jw.replaced.items():
+            by_person[c_pid] = [r for r in by_person[c_pid]
+                                if r['tour_id'] != c_tid] + mirror
+        # every day this pass touched - a replaced companion's or a shifted
+        # driver's - is re-sequenced chronologically
+        resort = ({c for (c, _t) in jw.replaced}
+                  | {d for (d, _t) in jw.shifted})
+        for p in resort:
+            by_person[p] = resequence(by_person[p])
+        assert_contiguous(by_person, 'bind_joint_tours', jw.day)
+        rewrite_day(jw.path, jw.rows, by_person)
+
+    write_bindings(jw.bpath, jw.bind_cols, jw.bindings,
+                   key=lambda b: (int(b['companion_person_id']),
+                                  int(b['companion_tour_id'])))
+    jw.out['refusal_reasons'] = dict(jw.refusal.most_common())
+
+
+
+def joint_coverage_and_target(jt):
+    """One iteration of the loop this replaced in bind_joint_tours(); `jt` carries the
+    enclosing scope (3 names). Extracted mechanically, byte-identical outputs."""
+    rows = read_day(jt.path)
+    rows_of = core_rows_of(rows)              # person_id -> row indexes
+    n_core = sum(len(v) for v in rows_of.values())
+
+    # trips already coordinated by the earlier passes count toward the
+    # target first: a member tour covered round-trip by 9.46/9.68 escorts,
+    # or a passenger tour bound round-trip by the 9.60 lift pass, is 2
+    # ride-seeded trips (the same rule build_matsim_plans seeds by).
+    cov_dirs = collections.defaultdict(set)
+    for fname, pkey, tkey in (
+            ('B2_escort_bindings_%s.csv' % jt.day, 'member_person_id',
+             'member_tour_id'),
+            ('B2_lift_bindings_%s.csv' % jt.day, 'passenger_person_id',
+             'passenger_tour_id')):
+        fpath = os.path.join(OUT, fname)
+        if not os.path.exists(fpath):
+            continue
+        with open(fpath, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                cov_dirs[(r[pkey], r[tkey])].add(
+                    r.get('direction') or 'drop')
+    covered_tours = {k for k, dirs in cov_dirs.items()
+                     if {'drop', 'pickup'} <= dirs}
+    jt.out['existing_covered_trips'] = 2 * len(covered_tours)
+
+    driver_share, _yr = hts_car_driver_share()
+    target = JOINT_RATIO * driver_share * n_core
+    jt.out['target_trips'] = int(round(target))
+    need = max(0.0, target - jt.out['existing_covered_trips']) / 2.0
+    return cov_dirs, covered_tours, need, rows, rows_of
+
 
 
 def bind_joint_tours(path, day, pctx, seed):
@@ -1681,35 +1968,8 @@ def bind_joint_tours(path, day, pctx, seed):
                            lineterminator='\n').writeheader()
         return out
 
-    rows = read_day(path)
-    rows_of = core_rows_of(rows)              # person_id -> row indexes
-    n_core = sum(len(v) for v in rows_of.values())
-
-    # trips already coordinated by the earlier passes count toward the
-    # target first: a member tour covered round-trip by 9.46/9.68 escorts,
-    # or a passenger tour bound round-trip by the 9.60 lift pass, is 2
-    # ride-seeded trips (the same rule build_matsim_plans seeds by).
-    cov_dirs = collections.defaultdict(set)
-    for fname, pkey, tkey in (
-            ('B2_escort_bindings_%s.csv' % day, 'member_person_id',
-             'member_tour_id'),
-            ('B2_lift_bindings_%s.csv' % day, 'passenger_person_id',
-             'passenger_tour_id')):
-        fpath = os.path.join(OUT, fname)
-        if not os.path.exists(fpath):
-            continue
-        with open(fpath, encoding='utf-8') as fh:
-            for r in csv.DictReader(fh):
-                cov_dirs[(r[pkey], r[tkey])].add(
-                    r.get('direction') or 'drop')
-    covered_tours = {k for k, dirs in cov_dirs.items()
-                     if {'drop', 'pickup'} <= dirs}
-    out['existing_covered_trips'] = 2 * len(covered_tours)
-
-    driver_share, _yr = hts_car_driver_share()
-    target = JOINT_RATIO * driver_share * n_core
-    out['target_trips'] = int(round(target))
-    need = max(0.0, target - out['existing_covered_trips']) / 2.0
+    jt = _types.SimpleNamespace(day=day, out=out, path=path)
+    cov_dirs, covered_tours, need, rows, rows_of = joint_coverage_and_target(jt)
 
     # candidate enumeration, per household, in sorted order
     by_hh = collections.defaultdict(list)   # hid -> [person_id]
@@ -1743,63 +2003,9 @@ def bind_joint_tours(path, day, pctx, seed):
     out['households_multi'] = 0
     out['driver_tours'] = 0
     out['companion_tours'] = 0
+    jc = _types.SimpleNamespace(by_hh=by_hh, candidates=candidates, cov_dirs=cov_dirs, eligible_tour=eligible_tour, hh_drivers=hh_drivers, out=out, pctx=pctx, rows=rows, rows_of=rows_of, tours_of=tours_of)
     for hid in sorted(by_hh):
-        members = sorted(by_hh[hid], key=int)
-        if len(members) < 2:
-            continue
-        out['households_multi'] += 1
-        # persons whose day includes escort driving are skipped as
-        # companions: ESCORT_EXCLUDES_RIDE would deny the seeded ride
-        escorting = {p for p in members
-                     if any(rows[ix]['dest_activity_type'] == 'escort'
-                            for ix in rows_of[p])}
-        driver_tours = []   # (d_pid, d_tid, anchor ix)
-        comp_tours = []     # (c_pid, c_tid, anchor ix)
-        for p in members:
-            ctx = pctx[p]
-            for tid, ixs in tours_of(p).items():
-                if not eligible_tour(p, tid, ixs):
-                    continue
-                anchor = ixs[0]
-                # 9.143: a person already being CARRIED on this tour by an
-                # earlier pass cannot also drive it. `cov_dirs` above records
-                # what the escort and lift passes booked; this pass excluded
-                # those tours from its companion pool but not from its driver
-                # pool, which produced 726 of the 17,740 person-tours booked
-                # both ways.
-                if ctx['licence'] and ctx['cav'] and (p, tid) not in cov_dirs:
-                    driver_tours.append((p, tid, anchor))
-                if p not in escorting:
-                    comp_tours.append((p, tid, anchor))
-        out['driver_tours'] += len(driver_tours)
-        out['companion_tours'] += len(comp_tours)
-        if not driver_tours:
-            continue
-        # Every companion tour is a candidate; WHICH household driver tour
-        # carries it is decided at binding time, where the busy check can
-        # try every driver in departure-gap order rather than dying on the
-        # nearest one. One driver tour carries several companions - the
-        # family outing in one car - up to the declared vehicle capacity
-        # (B.ride.max_passengers_per_vehicle).
-        hh_drivers[hid] = [(p, tid, int(rows[ix]['dep_time_s']))
-                           for p, tid, ix in driver_tours]
-        # A companion whose household holds no driver tour belonging to
-        # SOMEBODY ELSE cannot be bound, ever: the first pass skips every
-        # driver where d_pid == c_pid, so the list it walks holds nothing
-        # usable. Measured before this filter existed (9.111): 51,215 of
-        # 73,258 refusals - 69.9% - were exactly that, because a licensed
-        # car-owner's tour sits in BOTH pools and 41.7% of multi-person
-        # households have at most one licensed travelling member. Leaving
-        # those candidacies in the pool does not merely waste them:
-        # `p_thin` divides the target across the pool it is given, so every
-        # certain refusal thins a SERVABLE candidate away with it.
-        driver_persons = {d_pid for d_pid, _tid, _ix in driver_tours}
-        for c_pid, c_tid, c_ix in comp_tours:
-            if not (driver_persons - {c_pid}):
-                out['candidates_unservable'] += 1
-                continue
-            candidates.append((c_pid, c_tid, hid,
-                               int(rows[c_ix]['dep_time_s'])))
+        joint_household_candidates(hid, jc)
     out['candidates'] = len(candidates)
 
     p_thin = min(1.0, need / len(candidates)) if candidates else 0.0
@@ -1854,140 +2060,12 @@ def bind_joint_tours(path, day, pctx, seed):
                 r['arr_time_s'] = int(r['arr_time_s']) + delta
         return d_rows
 
+    jc = _types.SimpleNamespace(bindings=bindings, draws=draws, driver_load=driver_load, effective_rows=effective_rows, hh_drivers=hh_drivers, intervals_of=intervals_of, new_intervals=new_intervals, out=out, p_thin=p_thin, pctx=pctx, refusal=refusal, replaced=replaced, rows=rows, shifted=shifted, tours_of=tours_of)
     for k, (c_pid, c_tid, hid, c_dep) in enumerate(candidates):
-        if draws[k] >= p_thin:
-            continue
-        if (c_pid, c_tid) in replaced or driver_load[(c_pid, c_tid)] > 0:
-            out['skipped_conflict'] += 1
-            continue
-        busy = intervals_of(c_pid, c_tid)
-        drivers = sorted(
-            hh_drivers[hid],
-            key=lambda t: (abs(t[2] - c_dep), int(t[0]), int(t[1])))
-        chosen = None
-        why = collections.Counter()
-        if not drivers:
-            why['no_driver_tour_in_household'] += 1
-        # First pass: a driver tour that fits the companion's day AS TIMED.
-        for d_pid, d_tid, _d_dep in drivers:
-            if (d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid)
-                    or (d_pid, d_tid) in replaced
-                    or driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS):
-                # split, because "already committed" is four different facts
-                # and lumping them is how a cap gets blamed for a collision
-                if d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid):
-                    why['driver_is_the_companion'] += 1
-                elif (d_pid, d_tid) in replaced:
-                    why['driver_tour_already_a_companion_tour'] += 1
-                elif driver_load[(d_pid, d_tid)] >= MAX_PARTY_PASSENGERS:
-                    why['driver_party_full'] += 1
-                continue
-            d_rows = effective_rows(d_pid, d_tid)
-            t_start = min(int(r['dep_time_s']) for r in d_rows)
-            t_end = max(int(r['arr_time_s']) for r in d_rows)
-            if collides(t_start, t_end, busy):
-                why['as_timed_collides_with_companion'] += 1
-                continue
-            chosen = (d_pid, d_tid, d_rows, t_start, t_end, 0)
-            break
-        # Second pass: NEGOTIATED TIMING (the 9.60 precedent - M1 re-times a
-        # serve tour to its passenger's own departure exactly). An UNLOADED,
-        # un-shifted driver tour is rigidly shifted into the slot the
-        # companion's replaced tour is vacating: durations preserved, no
-        # speed or overhead constant restated, the driver's own day and the
-        # horizon both checked. Joint travel IS a negotiated departure; a
-        # binder that only matches accidental coincidences under-supplies it
-        # by construction (measured: 63,360 of 201,931 candidates).
-        if chosen is None:
-            for d_pid, d_tid, d_dep in drivers:
-                if (d_pid == c_pid or (d_pid, d_tid) == (c_pid, c_tid)
-                        or (d_pid, d_tid) in replaced
-                        or driver_load[(d_pid, d_tid)] > 0
-                        or (d_pid, d_tid) in shifted):
-                    why['shift_driver_already_committed'] += 1
-                    continue
-                d_rows = [dict(rows[ix]) for ix in tours_of(d_pid)[d_tid]]
-                t0 = min(int(r['dep_time_s']) for r in d_rows)
-                t1 = max(int(r['arr_time_s']) for r in d_rows)
-                delta = c_dep - t0
-                s_start, s_end = t0 + delta, t1 + delta
-                if s_start < 0 or s_end > DAY_HORIZON_S:
-                    why['shift_leaves_day_horizon'] += 1
-                    continue
-                if collides(s_start, s_end, busy):
-                    why['shift_collides_with_companion'] += 1
-                    continue
-                if collides(s_start, s_end, intervals_of(d_pid, d_tid)):
-                    why['shift_collides_with_driver'] += 1
-                    continue
-                for r in d_rows:
-                    r['dep_time_s'] = int(r['dep_time_s']) + delta
-                    r['arr_time_s'] = int(r['arr_time_s']) + delta
-                shifted[(d_pid, d_tid)] = delta
-                new_intervals[(d_pid, d_tid)] = (s_start, s_end)
-                chosen = (d_pid, d_tid, d_rows, s_start, s_end, delta)
-                out['bound_driver_shifted'] += 1
-                break
-        if chosen is None:
-            out['skipped_infeasible'] += 1
-            # the clause that blocked the most drivers for THIS candidate; one
-            # vote per refused candidate, so the classes partition the total
-            refusal[why.most_common(1)[0][0] if why else 'no_driver_examined'] += 1
-            continue
-        d_pid, d_tid, d_rows, t_start, t_end, _delta = chosen
-        mirror = []
-        for j, dr in enumerate(d_rows):
-            leg = dict(dr)
-            leg['person_id'] = c_pid
-            leg['tour_id'] = c_tid
-            if j == 0:
-                leg['dest_placement'] = 'joint'
-            mirror.append(leg)
-        replaced[(c_pid, c_tid)] = (mirror, (d_pid, d_tid))
-        new_intervals[(c_pid, c_tid)] = (t_start, t_end)
-        driver_load[(d_pid, d_tid)] += 1
-        bindings.append(dict(
-            companion_person_id=c_pid, companion_tour_id=c_tid,
-            driver_person_id=d_pid, driver_tour_id=d_tid,
-            driver_household_id=pctx[d_pid]['hid'],
-            dep_s=t_start))
-        out['bound'] += 1
+        bind_one_joint_candidate(c_dep, c_pid, c_tid, hid, k, jc)
 
-    out['driver_tours_used'] = len(driver_load)
-    if replaced:
-        # apply the negotiated shifts to the underlying driver rows FIRST,
-        # so the file and every mirror agree on the one set of times
-        for (d_pid, d_tid), delta in shifted.items():
-            for ix in tours_of(d_pid)[d_tid]:
-                rows[ix]['dep_time_s'] = int(rows[ix]['dep_time_s']) + delta
-                rows[ix]['arr_time_s'] = int(rows[ix]['arr_time_s']) + delta
-        # the party travels as one: driver rows and every companion mirror
-        # of that driver carry the same final party size
-        for (d_pid, d_tid), n in driver_load.items():
-            for ix in tours_of(d_pid)[d_tid]:
-                rows[ix]['party_size'] = 1 + n
-        for (c_pid, c_tid), (mirror, dkey) in replaced.items():
-            for leg in mirror:
-                leg['party_size'] = 1 + driver_load[dkey]
-        by_person = collections.defaultdict(list)
-        for r in rows:
-            by_person[r['person_id']].append(r)
-        for (c_pid, c_tid), (mirror, _dkey) in replaced.items():
-            by_person[c_pid] = [r for r in by_person[c_pid]
-                                if r['tour_id'] != c_tid] + mirror
-        # every day this pass touched - a replaced companion's or a shifted
-        # driver's - is re-sequenced chronologically
-        resort = ({c for (c, _t) in replaced}
-                  | {d for (d, _t) in shifted})
-        for p in resort:
-            by_person[p] = resequence(by_person[p])
-        assert_contiguous(by_person, 'bind_joint_tours', day)
-        rewrite_day(path, rows, by_person)
-
-    write_bindings(bpath, bind_cols, bindings,
-                   key=lambda b: (int(b['companion_person_id']),
-                                  int(b['companion_tour_id'])))
-    out['refusal_reasons'] = dict(refusal.most_common())
+    jw = _types.SimpleNamespace(bind_cols=bind_cols, bindings=bindings, bpath=bpath, day=day, driver_load=driver_load, out=out, path=path, refusal=refusal, replaced=replaced, rows=rows, shifted=shifted, tours_of=tours_of)
+    write_joint_bindings(jw)
     return out
 
 
@@ -2085,6 +2163,186 @@ def _count_core(path):
     return legs, len(tours), len(people)
 
 
+def shared_pass(sp):
+    """One iteration of the loop this replaced in bind_shared_rides(); `sp` carries the
+    enclosing scope (9 names). Extracted mechanically, byte-identical outputs."""
+    for person_id in sorted(sp.tours, key=int):
+        ctx = sp.pctx.get(person_id)
+        if ctx is None or ctx['cav']:
+            continue
+        by_tid = collections.OrderedDict()
+        for r in sp.tours[person_id]:
+            by_tid.setdefault(r['tour_id'], []).append(r)
+        for tid, trs in by_tid.items():
+            if any(r['dest_activity_type'] == 'escort' for r in trs):
+                continue
+            if (person_id, tid, 'drop') in sp.covered or (person_id, tid, 'pickup') in sp.covered:
+                continue
+            sp.out['passenger_tours'] += 1
+            if len(trs) != 2:
+                sp.out['passenger_tours_not_direct'] += 1
+                continue
+            trs = sorted(trs, key=lambda r: int(r['trip_seq']))
+            sp.candidates.append((ctx['sa1'], person_id, tid, trs[0], trs[1]))
+    sp.candidates.sort(key=lambda c: (c[0], int(c[1]), int(c[2])))
+
+    # servability FIRST (seats ignored), so the thinning is a share of what
+    # can be bound and not of what was asked; then the draw; then seats
+    servable = []
+    for cand in sp.candidates:
+        sa1, pid, tid, o_row, r_row = cand
+        hid = sp.pctx[pid]['hid']
+        if (sp.find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, False)
+                and sp.find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, False)):
+            servable.append(cand)
+    sp.out['servable_tours'] = len(servable)
+    p = min(1.0, (sp.need_trips / 2.0) / len(servable)) if servable else 1.0
+    sp.out['thin_p'] = round(p, 4)
+    sp.out['priority'] = SHARED_LIFT_PRIORITY
+    keep = int(round(sp.need_trips / 2.0))
+    longest_first = SHARED_LIFT_PRIORITY == 'longest_first'
+    if longest_first:
+        # 9.149: the volume is filled from the LONGEST servable tours, not
+        # from a uniform draw. Measured: the uniform draw bound trips with a
+        # straight-line median of 2.46 km (45 % under 2 km) against an
+        # observed passenger trip of 9.3-9.8 km, and at the F28 gate the
+        # bound trips that were walked instead had a median of 1.08 km. A
+        # lift is the long trip a car-less person cannot walk; the short
+        # one they walk whatever the binder declares. The order is the two
+        # trips' straight-line length descending, ties by person and tour
+        # id, so the build is deterministic and draws nothing here.
+        sequence = sorted(
+            range(len(servable)),
+            key=lambda k: (-(float(servable[k][3]['straight_dist_km'] or 0.0)
+                             + float(servable[k][4]['straight_dist_km'] or 0.0)),
+                           int(servable[k][1]), int(servable[k][2])))
+        draws = None
+    else:
+        rng = np.random.default_rng([sp.seed, sum(ord(ch) for ch in sp.day), 4])
+        draws = rng.random(len(servable))
+        sequence = range(len(servable))
+
+    bindings = []
+    bound_km = 0.0
+    for k in sequence:
+        sa1, pid, tid, o_row, r_row = servable[k]
+        if longest_first:
+            if sp.out['bound'] >= keep:
+                break
+        elif draws[k] >= p:
+            continue
+        hid = sp.pctx[pid]['hid']
+        d_out = sp.find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, True)
+        d_ret = sp.find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, True) \
+            if d_out is not None else None
+        if d_out is None or d_ret is None:
+            sp.out['seats_exhausted'] = sp.out.get('seats_exhausted', 0) + 1
+            continue
+        d_out['seats'] -= 1
+        d_ret['seats'] -= 1
+        for direction, prow, drv in (('drop', o_row, d_out), ('pickup', r_row, d_ret)):
+            bindings.append(dict(
+                passenger_person_id=pid, passenger_tour_id=tid,
+                direction=direction, passenger_dep_s=int(prow['dep_time_s']),
+                driver_person_id=drv['pid'], driver_tour_id=drv['tid'],
+                driver_household_id=drv['hid'], driver_dep_s=drv['dep']))
+            bound_km += float(prow['straight_dist_km'] or 0.0)
+        sp.out['bound'] += 1
+    sp.out['shortfall_trips'] = int(round(max(0.0, sp.need_trips - 2 * sp.out['bound'])))
+    # 9.149: the bound trips' mean straight-line length, reported so it can be
+    # READ against the HTS vehicle-passenger mean, never fitted to it
+    sp.out['bound_mean_straight_km'] = round(bound_km / (2 * sp.out['bound']), 3) \
+        if sp.out['bound'] else None
+    return bindings
+
+
+
+def shared_supply_and_demand(ss):
+    """One iteration of the loop this replaced in bind_shared_rides(); `ss` carries the
+    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
+    rows = read_day(ss.path)
+    core = [r for r in rows if r['agent_tier'] == 'core']
+    n_core = len(core)
+
+    # what the earlier passes cover, per (person, tour, direction)
+    covered = set()
+    for fname, pkey, tkey, both in (
+            ('B2_escort_bindings_%s.csv' % ss.day, 'member_person_id',
+             'member_tour_id', False),
+            ('B2_lift_bindings_%s.csv' % ss.day, 'passenger_person_id',
+             'passenger_tour_id', False),
+            ('B2_joint_bindings_%s.csv' % ss.day, 'companion_person_id',
+             'companion_tour_id', True)):
+        fpath = os.path.join(OUT, fname)
+        if not os.path.exists(fpath):
+            continue
+        with open(fpath, encoding='utf-8') as fh:
+            for r in csv.DictReader(fh):
+                if both:
+                    covered.add((r[pkey], r[tkey], 'drop'))
+                    covered.add((r[pkey], r[tkey], 'pickup'))
+                else:
+                    covered.add((r[pkey], r[tkey], r.get('direction') or 'drop'))
+    ss.out['existing_covered_trips'] = len(covered)
+    driver_share, _yr = hts_car_driver_share()
+    target = JOINT_RATIO * driver_share * n_core
+    ss.out['target_trips'] = int(round(target))
+    need_trips = max(0.0, target - len(covered))
+
+    window = PAIRING_WINDOW_MIN * 60.0
+    bins = int(max(window, 1.0))
+    # the zone a trip end is matched on: its SA1, or its SA1's SA2 under the
+    # wider scope - both are the statistical geography, neither a radius
+    zone_of = {}
+    if SHARED_LIFT_SCOPE == 'same_sa2_od':
+        with open(os.path.join(ZON, 'zones_SA1.csv'), encoding='utf-8') as fh:
+            for z in csv.DictReader(fh):
+                zone_of[z['SA1_CODE21']] = z['SA2_CODE21']
+
+    def zone(sa1):
+        return zone_of.get(sa1, sa1)
+
+    drivers = collections.defaultdict(list)   # (o_zone, d_zone, bin) -> [driver]
+    tours = collections.defaultdict(list)     # person -> [row]
+    for r in core:
+        tours[r['person_id']].append(r)
+    # 9.143: A PERSON CANNOT DRIVE A TOUR THEY ARE ALREADY BEING CARRIED ON.
+    # The earlier passes' passenger bookings were excluded from this pass's
+    # PASSENGER pool (`covered`, above) but never from its DRIVER pool, so the
+    # same person-tour could be booked both ways. Measured before the fix:
+    # 17,740 person-tours were booked as both, 6.94% of all passenger
+    # bookings - 15,002 of them driving and being driven on the SAME trip, and
+    # the remaining 2,738 driven one way and driving back a car that was left
+    # at home. This pass is the driver in 96% of them, being the last to run
+    # and the only one whose driver index filtered nothing.
+    #
+    # It is not a scoring question: build_matsim_plans tests `serve_tours`
+    # BEFORE `ride_tours`, so every one of those bookings was counted toward
+    # the binder volume and none could ever become a ride leg, and the two
+    # runtime gates contradicted on the trip - GatedSubtourModeChoice allowing
+    # `ride` because it is in boundRideTrips while refusing non-car because it
+    # is also in boundDriveTrips.
+    carried_tours = {(p, t) for p, t, _d in covered}
+    ss.out['driver_trips_refused_already_carried'] = 0
+    for person_id, prs in tours.items():
+        ctx = ss.pctx.get(person_id)
+        if ctx is None or not (ctx['licence'] and ctx['cav']):
+            continue
+        for r in prs:
+            if r['dest_activity_type'] == 'escort':
+                continue
+            if (person_id, r['tour_id']) in carried_tours:
+                ss.out['driver_trips_refused_already_carried'] += 1
+                continue
+            dep = int(r['dep_time_s'])
+            drivers[(zone(r['origin_sa1']), zone(r['dest_sa1']), dep // bins)].append(
+                dict(pid=person_id, tid=r['tour_id'], hid=ctx['hid'], dep=dep,
+                     seats=MAX_PARTY_PASSENGERS))
+            ss.out['driver_trips_indexed'] += 1
+    return bins, covered, dep, drivers, need_trips, tours, window, zone
+
+
+
 def bind_shared_rides(path, day, pctx, seed):
     """Bind car-less residents' direct tours to non-household drivers making
     the same SA1-to-SA1 trip at the same time (DECISIONS.md 9.124, #86, #91).
@@ -2134,85 +2392,8 @@ def bind_shared_rides(path, day, pctx, seed):
         with open(bpath, 'w', newline='', encoding='utf-8') as fh:
             csv.DictWriter(fh, fieldnames=cols, lineterminator='\n').writeheader()
         return out
-    rows = read_day(path)
-    core = [r for r in rows if r['agent_tier'] == 'core']
-    n_core = len(core)
-
-    # what the earlier passes cover, per (person, tour, direction)
-    covered = set()
-    for fname, pkey, tkey, both in (
-            ('B2_escort_bindings_%s.csv' % day, 'member_person_id',
-             'member_tour_id', False),
-            ('B2_lift_bindings_%s.csv' % day, 'passenger_person_id',
-             'passenger_tour_id', False),
-            ('B2_joint_bindings_%s.csv' % day, 'companion_person_id',
-             'companion_tour_id', True)):
-        fpath = os.path.join(OUT, fname)
-        if not os.path.exists(fpath):
-            continue
-        with open(fpath, encoding='utf-8') as fh:
-            for r in csv.DictReader(fh):
-                if both:
-                    covered.add((r[pkey], r[tkey], 'drop'))
-                    covered.add((r[pkey], r[tkey], 'pickup'))
-                else:
-                    covered.add((r[pkey], r[tkey], r.get('direction') or 'drop'))
-    out['existing_covered_trips'] = len(covered)
-    driver_share, _yr = hts_car_driver_share()
-    target = JOINT_RATIO * driver_share * n_core
-    out['target_trips'] = int(round(target))
-    need_trips = max(0.0, target - len(covered))
-
-    window = PAIRING_WINDOW_MIN * 60.0
-    bins = int(max(window, 1.0))
-    # the zone a trip end is matched on: its SA1, or its SA1's SA2 under the
-    # wider scope - both are the statistical geography, neither a radius
-    zone_of = {}
-    if SHARED_LIFT_SCOPE == 'same_sa2_od':
-        with open(os.path.join(ZON, 'zones_SA1.csv'), encoding='utf-8') as fh:
-            for z in csv.DictReader(fh):
-                zone_of[z['SA1_CODE21']] = z['SA2_CODE21']
-
-    def zone(sa1):
-        return zone_of.get(sa1, sa1)
-
-    drivers = collections.defaultdict(list)   # (o_zone, d_zone, bin) -> [driver]
-    tours = collections.defaultdict(list)     # person -> [row]
-    for r in core:
-        tours[r['person_id']].append(r)
-    # 9.143: A PERSON CANNOT DRIVE A TOUR THEY ARE ALREADY BEING CARRIED ON.
-    # The earlier passes' passenger bookings were excluded from this pass's
-    # PASSENGER pool (`covered`, above) but never from its DRIVER pool, so the
-    # same person-tour could be booked both ways. Measured before the fix:
-    # 17,740 person-tours were booked as both, 6.94% of all passenger
-    # bookings - 15,002 of them driving and being driven on the SAME trip, and
-    # the remaining 2,738 driven one way and driving back a car that was left
-    # at home. This pass is the driver in 96% of them, being the last to run
-    # and the only one whose driver index filtered nothing.
-    #
-    # It is not a scoring question: build_matsim_plans tests `serve_tours`
-    # BEFORE `ride_tours`, so every one of those bookings was counted toward
-    # the binder volume and none could ever become a ride leg, and the two
-    # runtime gates contradicted on the trip - GatedSubtourModeChoice allowing
-    # `ride` because it is in boundRideTrips while refusing non-car because it
-    # is also in boundDriveTrips.
-    carried_tours = {(p, t) for p, t, _d in covered}
-    out['driver_trips_refused_already_carried'] = 0
-    for person_id, prs in tours.items():
-        ctx = pctx.get(person_id)
-        if ctx is None or not (ctx['licence'] and ctx['cav']):
-            continue
-        for r in prs:
-            if r['dest_activity_type'] == 'escort':
-                continue
-            if (person_id, r['tour_id']) in carried_tours:
-                out['driver_trips_refused_already_carried'] += 1
-                continue
-            dep = int(r['dep_time_s'])
-            drivers[(zone(r['origin_sa1']), zone(r['dest_sa1']), dep // bins)].append(
-                dict(pid=person_id, tid=r['tour_id'], hid=ctx['hid'], dep=dep,
-                     seats=MAX_PARTY_PASSENGERS))
-            out['driver_trips_indexed'] += 1
+    ss = _types.SimpleNamespace(day=day, out=out, path=path, pctx=pctx)
+    bins, covered, dep, drivers, need_trips, tours, window, zone = shared_supply_and_demand(ss)
 
     out['sample_seed'] = SAMPLE_SEED
     out['hash_bucket'] = SHARED_LIFT_HASH_BUCKET
@@ -2250,93 +2431,8 @@ def bind_shared_rides(path, day, pctx, seed):
         return best[1] if best else None
 
     candidates = []   # (sa1, pid, tid, out_row, ret_row)
-    for person_id in sorted(tours, key=int):
-        ctx = pctx.get(person_id)
-        if ctx is None or ctx['cav']:
-            continue
-        by_tid = collections.OrderedDict()
-        for r in tours[person_id]:
-            by_tid.setdefault(r['tour_id'], []).append(r)
-        for tid, trs in by_tid.items():
-            if any(r['dest_activity_type'] == 'escort' for r in trs):
-                continue
-            if (person_id, tid, 'drop') in covered or (person_id, tid, 'pickup') in covered:
-                continue
-            out['passenger_tours'] += 1
-            if len(trs) != 2:
-                out['passenger_tours_not_direct'] += 1
-                continue
-            trs = sorted(trs, key=lambda r: int(r['trip_seq']))
-            candidates.append((ctx['sa1'], person_id, tid, trs[0], trs[1]))
-    candidates.sort(key=lambda c: (c[0], int(c[1]), int(c[2])))
-
-    # servability FIRST (seats ignored), so the thinning is a share of what
-    # can be bound and not of what was asked; then the draw; then seats
-    servable = []
-    for cand in candidates:
-        sa1, pid, tid, o_row, r_row = cand
-        hid = pctx[pid]['hid']
-        if (find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, False)
-                and find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, False)):
-            servable.append(cand)
-    out['servable_tours'] = len(servable)
-    p = min(1.0, (need_trips / 2.0) / len(servable)) if servable else 1.0
-    out['thin_p'] = round(p, 4)
-    out['priority'] = SHARED_LIFT_PRIORITY
-    keep = int(round(need_trips / 2.0))
-    longest_first = SHARED_LIFT_PRIORITY == 'longest_first'
-    if longest_first:
-        # 9.149: the volume is filled from the LONGEST servable tours, not
-        # from a uniform draw. Measured: the uniform draw bound trips with a
-        # straight-line median of 2.46 km (45 % under 2 km) against an
-        # observed passenger trip of 9.3-9.8 km, and at the F28 gate the
-        # bound trips that were walked instead had a median of 1.08 km. A
-        # lift is the long trip a car-less person cannot walk; the short
-        # one they walk whatever the binder declares. The order is the two
-        # trips' straight-line length descending, ties by person and tour
-        # id, so the build is deterministic and draws nothing here.
-        sequence = sorted(
-            range(len(servable)),
-            key=lambda k: (-(float(servable[k][3]['straight_dist_km'] or 0.0)
-                             + float(servable[k][4]['straight_dist_km'] or 0.0)),
-                           int(servable[k][1]), int(servable[k][2])))
-        draws = None
-    else:
-        rng = np.random.default_rng([seed, sum(ord(ch) for ch in day), 4])
-        draws = rng.random(len(servable))
-        sequence = range(len(servable))
-
-    bindings = []
-    bound_km = 0.0
-    for k in sequence:
-        sa1, pid, tid, o_row, r_row = servable[k]
-        if longest_first:
-            if out['bound'] >= keep:
-                break
-        elif draws[k] >= p:
-            continue
-        hid = pctx[pid]['hid']
-        d_out = find(o_row['origin_sa1'], o_row['dest_sa1'], int(o_row['dep_time_s']), hid, True)
-        d_ret = find(r_row['origin_sa1'], r_row['dest_sa1'], int(r_row['dep_time_s']), hid, True) \
-            if d_out is not None else None
-        if d_out is None or d_ret is None:
-            out['seats_exhausted'] = out.get('seats_exhausted', 0) + 1
-            continue
-        d_out['seats'] -= 1
-        d_ret['seats'] -= 1
-        for direction, prow, drv in (('drop', o_row, d_out), ('pickup', r_row, d_ret)):
-            bindings.append(dict(
-                passenger_person_id=pid, passenger_tour_id=tid,
-                direction=direction, passenger_dep_s=int(prow['dep_time_s']),
-                driver_person_id=drv['pid'], driver_tour_id=drv['tid'],
-                driver_household_id=drv['hid'], driver_dep_s=drv['dep']))
-            bound_km += float(prow['straight_dist_km'] or 0.0)
-        out['bound'] += 1
-    out['shortfall_trips'] = int(round(max(0.0, need_trips - 2 * out['bound'])))
-    # 9.149: the bound trips' mean straight-line length, reported so it can be
-    # READ against the HTS vehicle-passenger mean, never fitted to it
-    out['bound_mean_straight_km'] = round(bound_km / (2 * out['bound']), 3) \
-        if out['bound'] else None
+    sp = _types.SimpleNamespace(candidates=candidates, covered=covered, day=day, find=find, need_trips=need_trips, out=out, pctx=pctx, seed=seed, tours=tours)
+    bindings = shared_pass(sp)
     write_bindings(bpath, cols, bindings)
     return out
 
@@ -2861,12 +2957,390 @@ COLUMNS = ['person_id', 'day_type', 'tour_id', 'trip_seq', 'purpose',
 HTS_RATE_PER_PERSON_DAY = CFG.get('B.activity.hts_rate_per_person_day')
 
 
-def main(seed=SEED, max_persons=None, day_types=None):
-    day_types = day_types or DAY_TYPES
-    os.makedirs(OUT, exist_ok=True)
-    rng = np.random.default_rng(seed)
-    u = Uniforms(rng)
+def generate_household_tours(h, hc):
+    """One iteration of the loop this replaced in build_and_bind_day(); `hc` carries the
+    enclosing scope (13 names). Extracted mechanically, byte-identical outputs."""
+    members = hc.mc.hh_members[h]
+    # Escort binding (DECISIONS.md 9.46): members without an HX draw
+    # build first, so an escorter binds to a trip that already exists.
+    # A second escorter in the same household sees the first one's
+    # tours too; nothing is ever bound to an HX tour itself.
+    if ESCORT_BINDING:
+        pass1 = [i for i in members if hc.counts['HX'][i] == 0]
+        pass2 = [i for i in members if hc.counts['HX'][i] > 0]
+    else:
+        pass1, pass2 = members, []
+    candidates = []
+    claimed = set()
+    pending = []   # 9.68: pick-ups owed, served by later escort slots
+    legs_of = {}
+    for i in pass1 + pass2:
+        hxy = hc.mc.home.get(hc.mc.hid[i])
+        if hxy is None:
+            continue
+        hz = hc.mc.zi.get(hc.mc.hsa[i])
+        if hz is None:
+            continue
+        person = dict(hx=float(hxy[0]), hy=float(hxy[1]), hzi=hz,
+                      age=int(hc.mc.age[i]), employed=bool(hc.mc.work_first[i]),
+                      student=bool(hc.mc.edu_first[i]), cav=bool(hc.mc.cav[i]),
+                      licence=bool(hc.mc.lic[i]))
+        pre = {p: int(hc.counts[p][i]) for p in ('HS', 'HO', 'WB', 'HX')}
+        fixed = ()
+        # An escort BINDING declares a car trip - the escorter drives
+        # the member, and the member is seeded as that car's
+        # passenger. A licence is not enough: the household must own a
+        # vehicle, the identity the joint, lift and shared passes
+        # already test. Measured on the F25 build (DECISIONS.md 9.144,
+        # issue #142): all 6,165 WEEKDAY bindings this refuses had the
+        # passenger in the SAME vehicle-less household, where the
+        # `ride_avail` identity denies `ride` anyway - so the binding
+        # could never be realised as a ride and served only to put a
+        # walker on a trip the seed declares them to drive.
+        # The HX TOUR is untouched (see build_day, where
+        # ESCORT_REQUIRES_LICENCE governs): a car-less escorter still
+        # escorts, on foot or by pt, at the observed rate, and
+        # generates no ride demand.
+        may_draw_hx = person['licence'] or not ESCORT_REQUIRES_LICENCE
+        may_escort = may_draw_hx and person['cav']
+        if pre['HX'] > 0 and ESCORT_BINDING and may_draw_hx \
+                and not may_escort:
+            # count only tours that would OTHERWISE HAVE BEEN MADE: an
+            # unlicensed person's Poisson HX draw is discarded in
+            # build_day, so counting it here would overstate the class
+            # 5x (51,436 against the true 9,555)
+            hc.esc['refused_no_vehicle'] += pre['HX']
+        if pre['HX'] > 0 and ESCORT_BINDING and may_escort:
+            hc.esc['requested'] += pre['HX']
+            fixed = bind_escort_tours(pre['HX'], candidates, claimed,
+                                      pending)
+            pre['HX'] -= len(fixed)
+            hc.esc['bound'] += len(fixed)
+            hc.esc['unbound'] += pre['HX']
+            for f in fixed:
+                hc.esc['by_priority'][f['priority']] += 1
+        placed_bindings = []
+        legs, tour_anchors = build_day(person, hc.d, hc.rates, hc.mc.CUM, hc.mc.store,
+                                       hc.mc.zone_arr, hc.mc.u, pre, hc.dropped,
+                                       fixed_tours=fixed,
+                                       bound_log=placed_bindings)
+        for b in placed_bindings:
+            # 9.68: which member tours the PLACED serve tours cover,
+            # by direction - consumed by build_matsim_plans.py to seed
+            # round-trip-covered passenger tours as ride
+            hc.hh_bindings.append(dict(
+                member_person_id=b['member'],
+                member_tour_id=b['member_tour'],
+                direction=b['direction'],
+                driver_person_id=int(hc.mc.pid[i])))
+        for a in tour_anchors:
+            if a['purpose'] == 'HX':
+                continue
+            tlegs = [l for l in legs if l['tour_id'] == a['tour_id']]
+            # a member tour is round-trip bindable only when it is a
+            # direct out-and-back: the return leg's departure is then
+            # the pick-up serve time (9.68)
+            ret = (tlegs[-1]['dep_time_s']
+                   if len(tlegs) == 2 else None)
+            candidates.append(dict(
+                member=int(hc.mc.pid[i]), tour_id=a['tour_id'],
+                purpose=a['purpose'], dep_s=a['dep_s'], k=a['k'],
+                dx=a['dx'], dy=a['dy'], licence=bool(hc.mc.lic[i]),
+                ret_dep_s=ret))
+        if legs:
+            legs_of[i] = legs
+    # 9.68: pick-ups no escort slot in this household could serve -
+    # their member tours stay one-way covered, counted not hidden
+    hc.esc['pickups_unserved'] += len(pending)
+    for i in sorted(legs_of):
+        legs = legs_of[i]
+        hc.n_travel += 1
+        for seq, leg in enumerate(legs, start=1):
+            leg['person_id'] = hc.mc.pid[i]
+            leg['day_type'] = hc.d
+            leg['trip_seq'] = seq
+            leg['party_size'] = 1
+            leg['agent_tier'] = 'core'
+            leg['time_flexibility_band'] = (
+                'fixed' if leg['tour_purpose'] in ('HW', 'HE') else 'flexible')
+            leg['origin_x'] = round(leg['origin_x'], 1)
+            leg['origin_y'] = round(leg['origin_y'], 1)
+            leg['dest_x'] = round(leg['dest_x'], 1)
+            leg['dest_y'] = round(leg['dest_y'], 1)
+            leg['straight_dist_km'] = round(leg['straight_dist_km'], 3)
+            hc.by_purpose[leg['purpose']] += 1
+            hc.mc.stats['placement'][leg['dest_placement']] += 1
+            if leg['tour_purpose'] == 'HX' and leg['is_tour_anchor'] == 1:
+                side = 'bound' if leg['dest_placement'] == 'escorted' \
+                    else 'unbound'
+                hc.esc[side + '_km'] += leg['straight_dist_km']
+                hc.esc[side + '_n'] += 1
+            hc.w.writerow(leg)
+        # the #37 cap can drop the highest-numbered tour, so count the
+        # tours that exist rather than reading the last id
+        ntp = len({l['tour_id'] for l in legs})
+        hc.tours_hist[ntp] += 1
+        hc.n_legs += len(legs)
+        hc.n_tours += ntp
 
+
+
+def record_day_stats(sc):
+    """One iteration of the loop this replaced in build_and_bind_day(); `sc` carries the
+    enclosing scope (21 names). Extracted mechanically, byte-identical outputs."""
+    sc.mc.stats['by_day'][sc.d] = dict(
+        legs_generated_before_binders=sc.n_legs_gen,
+        tours_generated_before_binders=sc.n_tours_gen,
+        travelling_persons_before_binders=sc.n_travel_gen,
+        shared_binding=sc.shared,
+        external_agents=sc.n_ext, external_legs=len(sc.ext_legs),
+        through_agents=sc.n_thr, through_legs=len(sc.thr_legs),
+        through_freight_agents=sc.n_thr_truck,
+        freight_internal_agents=sc.n_frt,
+        freight_agents_total=sc.n_thr_truck + sc.n_frt,
+        legs=sc.n_legs, tours=sc.n_tours, travelling_persons=sc.n_travel,
+        legs_per_person=round(sc.n_legs / max(sc.mc.n_persons, 1), 3),
+        tours_per_traveller=round(sc.n_tours / max(sc.n_travel, 1), 3),
+        tours_dropped_over_horizon=sc.dropped[0],
+        tours_dropped_midnight_collision=sc.dropped[1],
+        # 9.164 (#30): tours the pre-change whole-day `break` would
+        # have discarded WITHOUT trying them. The ones that still do
+        # not fit are counted in tours_dropped_over_horizon above, so
+        # this is the upper bound on what the fix recovered.
+        tours_reattempted_after_a_failed_tour=sc.dropped[2],
+        by_purpose=dict(sc.by_purpose),
+        # DECISIONS.md 9.46. The trip-length comparison is REPORTED, never
+        # tuned: an escort's length is now the escorted trip's own.
+        escort_binding=dict(
+            enabled=bool(ESCORT_BINDING),
+            scope=ESCORT_SCOPE,
+            hx_tours_requested=sc.esc['requested'],
+            hx_tours_bound=sc.esc['bound'],
+            hx_tours_unbound_no_candidate=sc.esc['unbound'],
+            # 9.144: HX tours whose escorter's household owns no vehicle.
+            # They stay UNBOUND and are drawn from the distribution - real
+            # escort travel that declares no car passenger.
+            hx_tours_refused_no_vehicle=sc.esc['refused_no_vehicle'],
+            bound_by_priority={str(k): v for k, v
+                               in sorted(sc.esc['by_priority'].items())},
+            anchors_placed_bound=sc.esc['bound_n'],
+            anchors_placed_unbound=sc.esc['unbound_n'],
+            mean_network_km_bound=(
+                round(sc.esc['bound_km'] / sc.esc['bound_n'] * DETOUR_FACTOR, 2)
+                if sc.esc['bound_n'] else None),
+            mean_network_km_unbound=(
+                round(sc.esc['unbound_km'] / sc.esc['unbound_n'] * DETOUR_FACTOR, 2)
+                if sc.esc['unbound_n'] else None),
+            hts_network_km=(round(sc.mc.meandist['HX'], 2)
+                            if 'HX' in sc.mc.meandist else None),
+            # 9.68: serve tours allocated per passenger tour, by direction.
+            directions=ESCORT_DIRECTIONS,
+            pickups_unserved=sc.esc['pickups_unserved'],
+            member_tours_covered_round_trip=sum(
+                1 for c in collections.Counter(
+                    (b['member_person_id'], b['member_tour_id'])
+                    for b in sc.hh_bindings).values() if c >= 2),
+            member_tours_covered_one_way=sum(
+                1 for c in collections.Counter(
+                    (b['member_person_id'], b['member_tour_id'])
+                    for b in sc.hh_bindings).values() if c == 1),
+            # DECISIONS.md 9.60: unbound HX tours re-targeted to serve
+            # non-household passengers. Reported, never tuned.
+            nonhousehold=sc.lift),
+        # DECISIONS.md 9.84: joint household tours - the demand-ceiling
+        # repair. Anchored on the derived passenger ratio and the
+        # observed driver share; reported, never tuned.
+        joint_binding=sc.joint)
+    print('%-8s %9d legs %8d tours %6.3f legs/person  dropped=%d '
+          'midnight-capped=%d  through=%d  freight=%d (%d through + %d '
+          'internal)  HX bound=%d/%d  lift-bound=%d/%d  joint=%d/%d '
+          '(%d driver-shifted; target %d trips, %d pre-covered)'
+          % (sc.d, sc.n_legs, sc.n_tours, sc.n_legs / max(sc.mc.n_persons, 1), sc.dropped[0],
+             sc.dropped[1], sc.n_thr, sc.n_thr_truck + sc.n_frt, sc.n_thr_truck, sc.n_frt,
+             sc.esc['bound'], sc.esc['bound'] + sc.esc['unbound'],
+             sc.lift['bound'], sc.lift['drivers_unbound'],
+             sc.joint['bound'], sc.joint['candidates'],
+             sc.joint.get('bound_driver_shifted', 0),
+             sc.joint['target_trips'], sc.joint['existing_covered_trips']),
+          flush=True)
+
+
+
+def build_and_bind_day(d, mc):
+    """One iteration of the loop this replaced in main(); `mc` carries the
+    enclosing scope (37 names). Extracted mechanically, byte-identical outputs."""
+    path = os.path.join(OUT, 'B2_activity_trips_%s.csv' % d)
+    fh = open(path, 'w', newline='', encoding='utf-8')
+    w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
+                       lineterminator='\n')
+    w.writeheader()
+
+    rates, rate_diag = solve_secondary_rates(
+        d, mc.share, mc.day_rate[d], mc.employed_frac, mc.student_frac, mc.child_frac,
+        mc.licence_frac)
+    mc.stats.setdefault('rate_solution', {})[d] = rate_diag
+    counts = {p: mc.rng.poisson(rates[p], size=mc.n_persons)
+              for p in ('HS', 'HO', 'WB', 'HX')}
+
+    n_legs = n_tours = n_travel = 0
+    # [over-horizon, midnight-collision (issue #37), tours the pre-9.164
+    #  whole-day `break` would have discarded unattempted (#30)]
+    dropped = [0, 0, 0]
+    by_purpose = collections.Counter()
+    tours_hist = collections.Counter()
+    esc = dict(requested=0, bound=0, unbound=0, refused_no_vehicle=0,
+               by_priority=collections.Counter(),
+               bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0,
+               pickups_unserved=0)
+    hh_bindings = []   # 9.68: placed household serve-tour coverage rows
+    hc = _types.SimpleNamespace(by_purpose=by_purpose, counts=counts, d=d, dropped=dropped, esc=esc, hh_bindings=hh_bindings, mc=mc, n_legs=n_legs, n_tours=n_tours, n_travel=n_travel, rates=rates, tours_hist=tours_hist, w=w)
+    for h in mc.hh_order:
+        generate_household_tours(h, hc)
+    n_legs, n_tours, n_travel = hc.n_legs, hc.n_tours, hc.n_travel
+    ext_legs, n_ext = external_agents(mc.zones, mc.core, mc.decay, mc.u, d,
+                                      EXTERNAL_PERSON_ID_BASE, mc.store, mc.cordon)
+    for leg in ext_legs:
+        w.writerow(leg)
+    thr_legs, n_thr, n_thr_truck = through_agents(
+        mc.gates, mc.u, d, EXTERNAL_PERSON_ID_BASE + n_ext,
+        mc.freight_profile, mc.freight_factor)
+    for leg in thr_legs:
+        w.writerow(leg)
+    frt_legs, n_frt = freight_agents(
+        mc.core, mc.u, d, EXTERNAL_PERSON_ID_BASE + n_ext + n_thr + n_thr_truck,
+        n_legs, mc.car_share, mc.freight_profile, mc.freight_factor, mc.day_shape)
+    for leg in frt_legs:
+        w.writerow(leg)
+    fh.close()
+    # 9.68: which member tours the placed household serve tours cover, by
+    # direction. build_matsim_plans.py seeds a member tour covered in BOTH
+    # directions as ride; a tour dropped at placement never appears here.
+    epath = os.path.join(OUT, 'B2_escort_bindings_%s.csv' % d)
+    with open(epath, 'w', newline='', encoding='utf-8') as efh:
+        ew = csv.DictWriter(efh, fieldnames=[
+            'member_person_id', 'member_tour_id', 'direction',
+            'driver_person_id'], lineterminator='\n')
+        ew.writeheader()
+        for b in hh_bindings:
+            ew.writerow(b)
+    # DECISIONS.md 9.60: the second-pass binder re-targets unbound HX
+    # tours to passengers no household driver can serve. Runs on the
+    # closed file, draws nothing, and preserves every non-core row.
+    lift = bind_nonhousehold_lifts(path, d, mc.pctx, mc.zi, mc.zone_arr[5])
+    # DECISIONS.md 9.84: the joint-tour pass runs THIRD, on the file the
+    # lift pass closed, so its accounting sees every earlier binding.
+    joint = bind_joint_tours(path, d, mc.pctx, mc.seed)
+    # DECISIONS.md 9.124: the shared-ride pass runs FOURTH, on the file
+    # the joint pass left, so its remainder accounts for every earlier
+    # binding. It re-times nothing and adds no trip.
+    shared = bind_shared_rides(path, d, mc.pctx, mc.seed)
+    # COUNT THE FILE THAT EXISTS, NOT THE ONE GENERATION BUILT. n_legs,
+    # n_tours and n_travel are accumulated in the generation loop above,
+    # and the four binder passes then rewrite the day file. The committed
+    # report therefore described a file that had been replaced three times:
+    # it stated 2,189,888 WEEKDAY core legs against 2,225,838 on disk, and
+    # published realised_week_trip_rate 3.348 against the HTS 3.473 as a
+    # shortfall the file does not actually show. The generated figures are
+    # kept beside the realised ones, because the difference between them is
+    # exactly what the binders did.
+    n_legs_gen, n_tours_gen, n_travel_gen = n_legs, n_tours, n_travel
+    n_legs, n_tours, n_travel = _count_core(path)
+    sc = _types.SimpleNamespace(by_purpose=by_purpose, d=d, dropped=dropped, esc=esc, ext_legs=ext_legs, hh_bindings=hh_bindings, joint=joint, lift=lift, mc=mc, n_ext=n_ext, n_frt=n_frt, n_legs=n_legs, n_legs_gen=n_legs_gen, n_thr=n_thr, n_thr_truck=n_thr_truck, n_tours=n_tours, n_tours_gen=n_tours_gen, n_travel=n_travel, n_travel_gen=n_travel_gen, shared=shared, thr_legs=thr_legs)
+    record_day_stats(sc)
+
+
+
+def load_persons(mc):
+    """One iteration of the loop this replaced in main(); `mc` carries the
+    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
+    hh = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
+                     usecols=['household_id', 'home_x_mga56', 'home_y_mga56'])
+    home = dict(zip(hh.household_id.to_numpy(),
+                    zip(hh.home_x_mga56.to_numpy(), hh.home_y_mga56.to_numpy())))
+    del hh
+    persons = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
+                          dtype={'home_sa1': str},
+                          usecols=['person_id', 'household_id', 'home_sa1', 'age',
+                                   'employment_status', 'student_status',
+                                   'car_available', 'licence_holder'])
+    persons = persons.sort_values('person_id', kind='stable')
+    if mc.max_persons and mc.max_persons < len(persons):
+        # B1 writes persons zone by zone, so head() would draw the whole sample
+        # from a handful of neighbouring SA1s and make every spatial statistic
+        # meaningless. Take an evenly spaced slice instead - still deterministic,
+        # but spread over the study area.
+        step = len(persons) // mc.max_persons
+        persons = persons.iloc[::step].head(mc.max_persons)
+    n_persons = len(persons)
+    print('%d persons x %d day types' % (n_persons, len(mc.day_types)), flush=True)
+
+    pid = persons.person_id.to_numpy()
+    hid = persons.household_id.to_numpy()
+    hsa = persons.home_sa1.to_numpy()
+    age = persons.age.to_numpy()
+    est = persons.employment_status.astype(str).to_numpy().astype('U24')
+    emp = np.char.startswith(est, 'employed')
+    emp_ft = (est == 'employed_full_time')
+    stu = (persons.student_status.astype(str).to_numpy() == 'full_time')
+    cav = (persons.car_available.to_numpy() == 1)
+    lic = (persons.licence_holder.to_numpy() == 1)
+    del persons
+
+    # The weekday priority between work and study (age-structure dossier 3.4):
+    # full-time work outranks study, full-time study outranks a part-time job -
+    # a 16-year-old with a weekend job goes to school on a weekday. The old
+    # rule sent every employed full-time student to work, which mattered
+    # little while the population had no age-conditional employment and every
+    # under-18 was a full-time student; with G46/G01 rates it would misdirect
+    # the 15-19 band, whose employment is 67% part-time alongside study.
+    work_first = emp_ft | (emp & ~stu)
+    edu_first = stu & ~work_first
+
+    # households whole, members in person order, for the escort binding
+    hh_members = {}
+    hh_order = []
+    for i in range(n_persons):
+        h = int(hid[i])
+        if h not in hh_members:
+            hh_members[h] = []
+            hh_order.append(h)
+        hh_members[h].append(i)
+
+    # person context for the 9.60 non-household lift binder, keyed by the
+    # STRING person id the trips CSV carries. `has_other_driver` marks the
+    # class household pairing can reach; its complement is the lift pass's
+    # passenger pool.
+    hh_licences = collections.Counter()
+    for i in range(n_persons):
+        if lic[i]:
+            hh_licences[int(hid[i])] += 1
+    pctx = {}
+    for i in range(n_persons):
+        hxy = home.get(hid[i])
+        hz_i = mc.zi.get(hsa[i])
+        if hxy is None or hz_i is None:
+            continue
+        others = hh_licences[int(hid[i])] - (1 if lic[i] else 0)
+        pctx[str(pid[i])] = dict(
+            licence=bool(lic[i]), cav=bool(cav[i]), hx=float(hxy[0]),
+            hy=float(hxy[1]), hz=hz_i, sa1=str(hsa[i]), hid=int(hid[i]),
+            has_other_driver=others > 0)
+
+    employed_frac = float(work_first.mean())
+    # a person only makes an education tour if they are not already making a
+    # work tour, so the student fraction used for the rate solve is the
+    # full-time students not directed to work
+    student_frac = float(edu_first.mean())
+    child_frac = float((age < 12).mean())
+    licence_frac = float(lic.mean())
+    day_rate = solve_day_rates(HTS_RATE_PER_PERSON_DAY, mc.day_shape)
+    return age, cav, child_frac, day_rate, edu_first, employed_frac, hh_members, hh_order, hid, home, hsa, lic, licence_frac, n_persons, pctx, pid, student_frac, work_first
+
+
+
+def load_supply_inputs(mc):
+    """One iteration of the loop this replaced in main(); `mc` carries the
+    enclosing scope (0 names). Extracted mechanically, byte-identical outputs."""
     zones = load_zones()
     core = zones[zones.zone_tier == 'core'].reset_index(drop=True)
     zi = {c: i for i, c in enumerate(core['SA1_CODE21'])}
@@ -2947,88 +3421,21 @@ def main(seed=SEED, max_persons=None, day_types=None):
                 print('        %-16s beta=%.4f  realised %5.2f km vs HTS %5.2f km'
                       % (lga, dl['beta'], dl['realised_network_km'],
                          dl['hts_network_km']), flush=True)
+    return CUM, car_share, car_share_yr, cordon, core, day_shape, day_shape_source, decay, freight_factor, freight_profile, g, gates, meandist, n_attractors, share, store, yr, zi, zone_arr, zones
 
-    hh = pd.read_csv(os.path.join(POP, 'B1_households.csv'),
-                     usecols=['household_id', 'home_x_mga56', 'home_y_mga56'])
-    home = dict(zip(hh.household_id.to_numpy(),
-                    zip(hh.home_x_mga56.to_numpy(), hh.home_y_mga56.to_numpy())))
-    del hh
-    persons = pd.read_csv(os.path.join(POP, 'B1_synthetic_population.csv'),
-                          dtype={'home_sa1': str},
-                          usecols=['person_id', 'household_id', 'home_sa1', 'age',
-                                   'employment_status', 'student_status',
-                                   'car_available', 'licence_holder'])
-    persons = persons.sort_values('person_id', kind='stable')
-    if max_persons and max_persons < len(persons):
-        # B1 writes persons zone by zone, so head() would draw the whole sample
-        # from a handful of neighbouring SA1s and make every spatial statistic
-        # meaningless. Take an evenly spaced slice instead - still deterministic,
-        # but spread over the study area.
-        step = len(persons) // max_persons
-        persons = persons.iloc[::step].head(max_persons)
-    n_persons = len(persons)
-    print('%d persons x %d day types' % (n_persons, len(day_types)), flush=True)
 
-    pid = persons.person_id.to_numpy()
-    hid = persons.household_id.to_numpy()
-    hsa = persons.home_sa1.to_numpy()
-    age = persons.age.to_numpy()
-    est = persons.employment_status.astype(str).to_numpy().astype('U24')
-    emp = np.char.startswith(est, 'employed')
-    emp_ft = (est == 'employed_full_time')
-    stu = (persons.student_status.astype(str).to_numpy() == 'full_time')
-    cav = (persons.car_available.to_numpy() == 1)
-    lic = (persons.licence_holder.to_numpy() == 1)
-    del persons
 
-    # The weekday priority between work and study (age-structure dossier 3.4):
-    # full-time work outranks study, full-time study outranks a part-time job -
-    # a 16-year-old with a weekend job goes to school on a weekday. The old
-    # rule sent every employed full-time student to work, which mattered
-    # little while the population had no age-conditional employment and every
-    # under-18 was a full-time student; with G46/G01 rates it would misdirect
-    # the 15-19 band, whose employment is 67% part-time alongside study.
-    work_first = emp_ft | (emp & ~stu)
-    edu_first = stu & ~work_first
+def main(seed=SEED, max_persons=None, day_types=None):
+    day_types = day_types or DAY_TYPES
+    os.makedirs(OUT, exist_ok=True)
+    rng = np.random.default_rng(seed)
+    u = Uniforms(rng)
 
-    # households whole, members in person order, for the escort binding
-    hh_members = {}
-    hh_order = []
-    for i in range(n_persons):
-        h = int(hid[i])
-        if h not in hh_members:
-            hh_members[h] = []
-            hh_order.append(h)
-        hh_members[h].append(i)
+    mc = _types.SimpleNamespace()
+    CUM, car_share, car_share_yr, cordon, core, day_shape, day_shape_source, decay, freight_factor, freight_profile, g, gates, meandist, n_attractors, share, store, yr, zi, zone_arr, zones = load_supply_inputs(mc)
 
-    # person context for the 9.60 non-household lift binder, keyed by the
-    # STRING person id the trips CSV carries. `has_other_driver` marks the
-    # class household pairing can reach; its complement is the lift pass's
-    # passenger pool.
-    hh_licences = collections.Counter()
-    for i in range(n_persons):
-        if lic[i]:
-            hh_licences[int(hid[i])] += 1
-    pctx = {}
-    for i in range(n_persons):
-        hxy = home.get(hid[i])
-        hz_i = zi.get(hsa[i])
-        if hxy is None or hz_i is None:
-            continue
-        others = hh_licences[int(hid[i])] - (1 if lic[i] else 0)
-        pctx[str(pid[i])] = dict(
-            licence=bool(lic[i]), cav=bool(cav[i]), hx=float(hxy[0]),
-            hy=float(hxy[1]), hz=hz_i, sa1=str(hsa[i]), hid=int(hid[i]),
-            has_other_driver=others > 0)
-
-    employed_frac = float(work_first.mean())
-    # a person only makes an education tour if they are not already making a
-    # work tour, so the student fraction used for the rate solve is the
-    # full-time students not directed to work
-    student_frac = float(edu_first.mean())
-    child_frac = float((age < 12).mean())
-    licence_frac = float(lic.mean())
-    day_rate = solve_day_rates(HTS_RATE_PER_PERSON_DAY, day_shape)
+    mc = _types.SimpleNamespace(day_shape=day_shape, day_types=day_types, max_persons=max_persons, zi=zi)
+    age, cav, child_frac, day_rate, edu_first, employed_frac, hh_members, hh_order, hid, home, hsa, lic, licence_frac, n_persons, pctx, pid, student_frac, work_first = load_persons(mc)
     stats = dict(seed=seed, hts_year=yr,
                  hts_rate_per_person_day=HTS_RATE_PER_PERSON_DAY,
                  day_rate={k: round(v, 4) for k, v in day_rate.items()},
@@ -3085,277 +3492,9 @@ def main(seed=SEED, max_persons=None, day_types=None):
                  placement=collections.Counter(),
                  tours_dropped_over_horizon=0)
 
+    mc = _types.SimpleNamespace(CUM=CUM, age=age, car_share=car_share, cav=cav, child_frac=child_frac, cordon=cordon, core=core, day_rate=day_rate, day_shape=day_shape, decay=decay, edu_first=edu_first, employed_frac=employed_frac, freight_factor=freight_factor, freight_profile=freight_profile, gates=gates, hh_members=hh_members, hh_order=hh_order, hid=hid, home=home, hsa=hsa, lic=lic, licence_frac=licence_frac, meandist=meandist, n_persons=n_persons, pctx=pctx, pid=pid, rng=rng, seed=seed, share=share, stats=stats, store=store, student_frac=student_frac, u=u, work_first=work_first, zi=zi, zone_arr=zone_arr, zones=zones)
     for d in day_types:
-        path = os.path.join(OUT, 'B2_activity_trips_%s.csv' % d)
-        fh = open(path, 'w', newline='', encoding='utf-8')
-        w = csv.DictWriter(fh, fieldnames=COLUMNS, extrasaction='ignore',
-                           lineterminator='\n')
-        w.writeheader()
-
-        rates, rate_diag = solve_secondary_rates(
-            d, share, day_rate[d], employed_frac, student_frac, child_frac,
-            licence_frac)
-        stats.setdefault('rate_solution', {})[d] = rate_diag
-        counts = {p: rng.poisson(rates[p], size=n_persons)
-                  for p in ('HS', 'HO', 'WB', 'HX')}
-
-        n_legs = n_tours = n_travel = 0
-        # [over-horizon, midnight-collision (issue #37), tours the pre-9.164
-        #  whole-day `break` would have discarded unattempted (#30)]
-        dropped = [0, 0, 0]
-        by_purpose = collections.Counter()
-        tours_hist = collections.Counter()
-        esc = dict(requested=0, bound=0, unbound=0, refused_no_vehicle=0,
-                   by_priority=collections.Counter(),
-                   bound_km=0.0, bound_n=0, unbound_km=0.0, unbound_n=0,
-                   pickups_unserved=0)
-        hh_bindings = []   # 9.68: placed household serve-tour coverage rows
-        for h in hh_order:
-            members = hh_members[h]
-            # Escort binding (DECISIONS.md 9.46): members without an HX draw
-            # build first, so an escorter binds to a trip that already exists.
-            # A second escorter in the same household sees the first one's
-            # tours too; nothing is ever bound to an HX tour itself.
-            if ESCORT_BINDING:
-                pass1 = [i for i in members if counts['HX'][i] == 0]
-                pass2 = [i for i in members if counts['HX'][i] > 0]
-            else:
-                pass1, pass2 = members, []
-            candidates = []
-            claimed = set()
-            pending = []   # 9.68: pick-ups owed, served by later escort slots
-            legs_of = {}
-            for i in pass1 + pass2:
-                hxy = home.get(hid[i])
-                if hxy is None:
-                    continue
-                hz = zi.get(hsa[i])
-                if hz is None:
-                    continue
-                person = dict(hx=float(hxy[0]), hy=float(hxy[1]), hzi=hz,
-                              age=int(age[i]), employed=bool(work_first[i]),
-                              student=bool(edu_first[i]), cav=bool(cav[i]),
-                              licence=bool(lic[i]))
-                pre = {p: int(counts[p][i]) for p in ('HS', 'HO', 'WB', 'HX')}
-                fixed = ()
-                # An escort BINDING declares a car trip - the escorter drives
-                # the member, and the member is seeded as that car's
-                # passenger. A licence is not enough: the household must own a
-                # vehicle, the identity the joint, lift and shared passes
-                # already test. Measured on the F25 build (DECISIONS.md 9.144,
-                # issue #142): all 6,165 WEEKDAY bindings this refuses had the
-                # passenger in the SAME vehicle-less household, where the
-                # `ride_avail` identity denies `ride` anyway - so the binding
-                # could never be realised as a ride and served only to put a
-                # walker on a trip the seed declares them to drive.
-                # The HX TOUR is untouched (see build_day, where
-                # ESCORT_REQUIRES_LICENCE governs): a car-less escorter still
-                # escorts, on foot or by pt, at the observed rate, and
-                # generates no ride demand.
-                may_draw_hx = person['licence'] or not ESCORT_REQUIRES_LICENCE
-                may_escort = may_draw_hx and person['cav']
-                if pre['HX'] > 0 and ESCORT_BINDING and may_draw_hx \
-                        and not may_escort:
-                    # count only tours that would OTHERWISE HAVE BEEN MADE: an
-                    # unlicensed person's Poisson HX draw is discarded in
-                    # build_day, so counting it here would overstate the class
-                    # 5x (51,436 against the true 9,555)
-                    esc['refused_no_vehicle'] += pre['HX']
-                if pre['HX'] > 0 and ESCORT_BINDING and may_escort:
-                    esc['requested'] += pre['HX']
-                    fixed = bind_escort_tours(pre['HX'], candidates, claimed,
-                                              pending)
-                    pre['HX'] -= len(fixed)
-                    esc['bound'] += len(fixed)
-                    esc['unbound'] += pre['HX']
-                    for f in fixed:
-                        esc['by_priority'][f['priority']] += 1
-                placed_bindings = []
-                legs, tour_anchors = build_day(person, d, rates, CUM, store,
-                                               zone_arr, u, pre, dropped,
-                                               fixed_tours=fixed,
-                                               bound_log=placed_bindings)
-                for b in placed_bindings:
-                    # 9.68: which member tours the PLACED serve tours cover,
-                    # by direction - consumed by build_matsim_plans.py to seed
-                    # round-trip-covered passenger tours as ride
-                    hh_bindings.append(dict(
-                        member_person_id=b['member'],
-                        member_tour_id=b['member_tour'],
-                        direction=b['direction'],
-                        driver_person_id=int(pid[i])))
-                for a in tour_anchors:
-                    if a['purpose'] == 'HX':
-                        continue
-                    tlegs = [l for l in legs if l['tour_id'] == a['tour_id']]
-                    # a member tour is round-trip bindable only when it is a
-                    # direct out-and-back: the return leg's departure is then
-                    # the pick-up serve time (9.68)
-                    ret = (tlegs[-1]['dep_time_s']
-                           if len(tlegs) == 2 else None)
-                    candidates.append(dict(
-                        member=int(pid[i]), tour_id=a['tour_id'],
-                        purpose=a['purpose'], dep_s=a['dep_s'], k=a['k'],
-                        dx=a['dx'], dy=a['dy'], licence=bool(lic[i]),
-                        ret_dep_s=ret))
-                if legs:
-                    legs_of[i] = legs
-            # 9.68: pick-ups no escort slot in this household could serve -
-            # their member tours stay one-way covered, counted not hidden
-            esc['pickups_unserved'] += len(pending)
-            for i in sorted(legs_of):
-                legs = legs_of[i]
-                n_travel += 1
-                for seq, leg in enumerate(legs, start=1):
-                    leg['person_id'] = pid[i]
-                    leg['day_type'] = d
-                    leg['trip_seq'] = seq
-                    leg['party_size'] = 1
-                    leg['agent_tier'] = 'core'
-                    leg['time_flexibility_band'] = (
-                        'fixed' if leg['tour_purpose'] in ('HW', 'HE') else 'flexible')
-                    leg['origin_x'] = round(leg['origin_x'], 1)
-                    leg['origin_y'] = round(leg['origin_y'], 1)
-                    leg['dest_x'] = round(leg['dest_x'], 1)
-                    leg['dest_y'] = round(leg['dest_y'], 1)
-                    leg['straight_dist_km'] = round(leg['straight_dist_km'], 3)
-                    by_purpose[leg['purpose']] += 1
-                    stats['placement'][leg['dest_placement']] += 1
-                    if leg['tour_purpose'] == 'HX' and leg['is_tour_anchor'] == 1:
-                        side = 'bound' if leg['dest_placement'] == 'escorted' \
-                            else 'unbound'
-                        esc[side + '_km'] += leg['straight_dist_km']
-                        esc[side + '_n'] += 1
-                    w.writerow(leg)
-                # the #37 cap can drop the highest-numbered tour, so count the
-                # tours that exist rather than reading the last id
-                ntp = len({l['tour_id'] for l in legs})
-                tours_hist[ntp] += 1
-                n_legs += len(legs)
-                n_tours += ntp
-        ext_legs, n_ext = external_agents(zones, core, decay, u, d,
-                                          EXTERNAL_PERSON_ID_BASE, store, cordon)
-        for leg in ext_legs:
-            w.writerow(leg)
-        thr_legs, n_thr, n_thr_truck = through_agents(
-            gates, u, d, EXTERNAL_PERSON_ID_BASE + n_ext,
-            freight_profile, freight_factor)
-        for leg in thr_legs:
-            w.writerow(leg)
-        frt_legs, n_frt = freight_agents(
-            core, u, d, EXTERNAL_PERSON_ID_BASE + n_ext + n_thr + n_thr_truck,
-            n_legs, car_share, freight_profile, freight_factor, day_shape)
-        for leg in frt_legs:
-            w.writerow(leg)
-        fh.close()
-        # 9.68: which member tours the placed household serve tours cover, by
-        # direction. build_matsim_plans.py seeds a member tour covered in BOTH
-        # directions as ride; a tour dropped at placement never appears here.
-        epath = os.path.join(OUT, 'B2_escort_bindings_%s.csv' % d)
-        with open(epath, 'w', newline='', encoding='utf-8') as efh:
-            ew = csv.DictWriter(efh, fieldnames=[
-                'member_person_id', 'member_tour_id', 'direction',
-                'driver_person_id'], lineterminator='\n')
-            ew.writeheader()
-            for b in hh_bindings:
-                ew.writerow(b)
-        # DECISIONS.md 9.60: the second-pass binder re-targets unbound HX
-        # tours to passengers no household driver can serve. Runs on the
-        # closed file, draws nothing, and preserves every non-core row.
-        lift = bind_nonhousehold_lifts(path, d, pctx, zi, zone_arr[5])
-        # DECISIONS.md 9.84: the joint-tour pass runs THIRD, on the file the
-        # lift pass closed, so its accounting sees every earlier binding.
-        joint = bind_joint_tours(path, d, pctx, seed)
-        # DECISIONS.md 9.124: the shared-ride pass runs FOURTH, on the file
-        # the joint pass left, so its remainder accounts for every earlier
-        # binding. It re-times nothing and adds no trip.
-        shared = bind_shared_rides(path, d, pctx, seed)
-        # COUNT THE FILE THAT EXISTS, NOT THE ONE GENERATION BUILT. n_legs,
-        # n_tours and n_travel are accumulated in the generation loop above,
-        # and the four binder passes then rewrite the day file. The committed
-        # report therefore described a file that had been replaced three times:
-        # it stated 2,189,888 WEEKDAY core legs against 2,225,838 on disk, and
-        # published realised_week_trip_rate 3.348 against the HTS 3.473 as a
-        # shortfall the file does not actually show. The generated figures are
-        # kept beside the realised ones, because the difference between them is
-        # exactly what the binders did.
-        n_legs_gen, n_tours_gen, n_travel_gen = n_legs, n_tours, n_travel
-        n_legs, n_tours, n_travel = _count_core(path)
-        stats['by_day'][d] = dict(
-            legs_generated_before_binders=n_legs_gen,
-            tours_generated_before_binders=n_tours_gen,
-            travelling_persons_before_binders=n_travel_gen,
-            shared_binding=shared,
-            external_agents=n_ext, external_legs=len(ext_legs),
-            through_agents=n_thr, through_legs=len(thr_legs),
-            through_freight_agents=n_thr_truck,
-            freight_internal_agents=n_frt,
-            freight_agents_total=n_thr_truck + n_frt,
-            legs=n_legs, tours=n_tours, travelling_persons=n_travel,
-            legs_per_person=round(n_legs / max(n_persons, 1), 3),
-            tours_per_traveller=round(n_tours / max(n_travel, 1), 3),
-            tours_dropped_over_horizon=dropped[0],
-            tours_dropped_midnight_collision=dropped[1],
-            # 9.164 (#30): tours the pre-change whole-day `break` would
-            # have discarded WITHOUT trying them. The ones that still do
-            # not fit are counted in tours_dropped_over_horizon above, so
-            # this is the upper bound on what the fix recovered.
-            tours_reattempted_after_a_failed_tour=dropped[2],
-            by_purpose=dict(by_purpose),
-            # DECISIONS.md 9.46. The trip-length comparison is REPORTED, never
-            # tuned: an escort's length is now the escorted trip's own.
-            escort_binding=dict(
-                enabled=bool(ESCORT_BINDING),
-                scope=ESCORT_SCOPE,
-                hx_tours_requested=esc['requested'],
-                hx_tours_bound=esc['bound'],
-                hx_tours_unbound_no_candidate=esc['unbound'],
-                # 9.144: HX tours whose escorter's household owns no vehicle.
-                # They stay UNBOUND and are drawn from the distribution - real
-                # escort travel that declares no car passenger.
-                hx_tours_refused_no_vehicle=esc['refused_no_vehicle'],
-                bound_by_priority={str(k): v for k, v
-                                   in sorted(esc['by_priority'].items())},
-                anchors_placed_bound=esc['bound_n'],
-                anchors_placed_unbound=esc['unbound_n'],
-                mean_network_km_bound=(
-                    round(esc['bound_km'] / esc['bound_n'] * DETOUR_FACTOR, 2)
-                    if esc['bound_n'] else None),
-                mean_network_km_unbound=(
-                    round(esc['unbound_km'] / esc['unbound_n'] * DETOUR_FACTOR, 2)
-                    if esc['unbound_n'] else None),
-                hts_network_km=(round(meandist['HX'], 2)
-                                if 'HX' in meandist else None),
-                # 9.68: serve tours allocated per passenger tour, by direction.
-                directions=ESCORT_DIRECTIONS,
-                pickups_unserved=esc['pickups_unserved'],
-                member_tours_covered_round_trip=sum(
-                    1 for c in collections.Counter(
-                        (b['member_person_id'], b['member_tour_id'])
-                        for b in hh_bindings).values() if c >= 2),
-                member_tours_covered_one_way=sum(
-                    1 for c in collections.Counter(
-                        (b['member_person_id'], b['member_tour_id'])
-                        for b in hh_bindings).values() if c == 1),
-                # DECISIONS.md 9.60: unbound HX tours re-targeted to serve
-                # non-household passengers. Reported, never tuned.
-                nonhousehold=lift),
-            # DECISIONS.md 9.84: joint household tours - the demand-ceiling
-            # repair. Anchored on the derived passenger ratio and the
-            # observed driver share; reported, never tuned.
-            joint_binding=joint)
-        print('%-8s %9d legs %8d tours %6.3f legs/person  dropped=%d '
-              'midnight-capped=%d  through=%d  freight=%d (%d through + %d '
-              'internal)  HX bound=%d/%d  lift-bound=%d/%d  joint=%d/%d '
-              '(%d driver-shifted; target %d trips, %d pre-covered)'
-              % (d, n_legs, n_tours, n_legs / max(n_persons, 1), dropped[0],
-                 dropped[1], n_thr, n_thr_truck + n_frt, n_thr_truck, n_frt,
-                 esc['bound'], esc['bound'] + esc['unbound'],
-                 lift['bound'], lift['drivers_unbound'],
-                 joint['bound'], joint['candidates'],
-                 joint.get('bound_driver_shifted', 0),
-                 joint['target_trips'], joint['existing_covered_trips']),
-              flush=True)
+        build_and_bind_day(d, mc)
 
     stats['placement'] = dict(stats['placement'])
     # the top-level counter is the SUM over day types; it was initialised to 0
