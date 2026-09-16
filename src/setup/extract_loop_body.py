@@ -111,6 +111,9 @@ def main(argv=None):
                                      'or A:B for a range of top-level statements')
     ap.add_argument('new_name')
     ap.add_argument('--ctx', default='ctx')
+    ap.add_argument('--in-body', type=int, default=None,
+                    help='with A:B - the statements are taken from the body of the '
+                         'compound statement (if/for/with/try) starting at this line')
     a = ap.parse_args(argv)
     src = open(a.file, encoding='utf-8').read()
     lines = src.split('\n')
@@ -122,7 +125,13 @@ def main(argv=None):
         # a range of the function's own top-level statements: modelled as a
         # loop with no targets whose body is those statements
         ra, rb = (int(x) for x in a.for_line.split(':'))
-        stmts = [n for n in fn.body if ra <= n.lineno and n.end_lineno <= rb]
+        host_body = fn.body
+        if a.in_body is not None:
+            host = [x for x in ast.walk(fn) if isinstance(x, (ast.If, ast.For, ast.With, ast.Try, ast.While))
+                    and x.lineno == a.in_body]
+            assert host, 'no compound statement starts at line %d' % a.in_body
+            host_body = host[0].body
+        stmts = [n for n in host_body if ra <= n.lineno and n.end_lineno <= rb]
         assert stmts, 'no top-level statements in %d:%d' % (ra, rb)
         def _own(nodes):
             for n in nodes:
@@ -182,6 +191,11 @@ def main(argv=None):
     # it AFTER the loop; a loop variable that merely reuses a name is local
     after = [n for n in fn.body if n.lineno > loop.end_lineno]
     before = [n for n in fn.body if n.end_lineno < body[0].lineno]
+    if range_mode and a.in_body is not None:
+        # inside a compound statement: what precedes the range in the host
+        # body counts as before, what follows it (in the host and in fn) after
+        after = [n for n in host_body if n.lineno > loop.end_lineno] +                 [n for n in fn.body if n.lineno > host[0].end_lineno]
+        before = [n for n in fn.body if n.end_lineno < host[0].lineno] +                  [n for n in host_body if n.end_lineno < body[0].lineno]
     bound_before = _defined_in(before) | {x.arg for x in fn.args.args + fn.args.kwonlyargs}
     # the `with` (or other compound statement) that encloses the loop binds
     # its targets before the loop runs
