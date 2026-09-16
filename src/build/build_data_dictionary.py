@@ -46,7 +46,10 @@ for title,pat in GROUPS:
         cols,rows=sniff(p)
         if not cols: continue
         total=sum(1 for _ in open(p,encoding='utf-8',errors='replace'))-1
-        out.append('### `' + p.replace(chr(92), '/') + '`')
+        # city-relative, never the workstation's absolute path (the
+        # committed dictionary carried 73 of them; twelfth report)
+        rel = os.path.relpath(p, _city.path('')).replace(chr(92), '/')
+        out.append('### `' + rel + '`')
         out.append('')
         out.append('%d rows, %d columns'%(total,len(cols)))
         out.append('')
