@@ -1478,187 +1478,9 @@ def scoring_from_c1(cfg, c1, purpose_share):
 # fields. Everything else is a leak, and `closure()` returns it.
 
 
-def runtime_submode_entries(rs):
-    """One iteration of the loop this replaced in runtime_mode_entries(); `rs` carries the
-    enclosing scope (2 names). Extracted mechanically, byte-identical outputs."""
-    if rs.submodes:
-        def fare_list(key):
-            return (','.join('%g' % v for v in rs.rc.cfg.get(key)), 'derived',
-                    key + ', comma-joined')
-        for param, key in (
-                ('ptFare.trainBandsKm', 'A.fare.train_band_upper_km'),
-                ('ptFare.trainAdultPeak', 'A.fare.train_adult_peak'),
-                ('ptFare.trainAdultOffpeak',
-                 'A.fare.train_adult_offpeak'),
-                ('ptFare.trainChildPeak', 'A.fare.train_child_peak'),
-                ('ptFare.trainChildOffpeak',
-                 'A.fare.train_child_offpeak'),
-                ('ptFare.busBandsKm', 'A.fare.bus_band_upper_km'),
-                ('ptFare.busAdultPeak', 'A.fare.bus_adult_peak'),
-                ('ptFare.busAdultOffpeak', 'A.fare.bus_adult_offpeak'),
-                ('ptFare.busChildPeak', 'A.fare.bus_child_peak'),
-                ('ptFare.busChildOffpeak', 'A.fare.bus_child_offpeak'),
-                ('ptFare.tramBandsKm', 'A.fare.lightrail_band_upper_km'),
-                ('ptFare.tramAdultPeak', 'A.fare.lightrail_adult_peak'),
-                ('ptFare.tramAdultOffpeak',
-                 'A.fare.lightrail_adult_offpeak'),
-                ('ptFare.tramChildPeak', 'A.fare.lightrail_child_peak'),
-                ('ptFare.tramChildOffpeak',
-                 'A.fare.lightrail_child_offpeak')):
-            rs.rc.runtime[param] = fare_list(key)
-        for param, key in (
-                ('ptFare.ferryAdultPeak', 'A.fare.ferry_adult_peak'),
-                ('ptFare.ferryAdultOffpeak',
-                 'A.fare.ferry_adult_offpeak'),
-                ('ptFare.ferryChildPeak', 'A.fare.ferry_child_peak'),
-                ('ptFare.ferryChildOffpeak',
-                 'A.fare.ferry_child_offpeak'),
-                ('ptFare.seniorPerFareCap', 'A.fare.senior_per_fare_cap'),
-                ('ptFare.dailyCapSenior', 'A.fare.daily_cap_senior'),
-                ('ptFare.transferDiscountAdult',
-                 'A.fare.transfer_discount_adult'),
-                ('ptFare.transferDiscountChild',
-                 'A.fare.transfer_discount_child'),
-                ('ptFare.transferWindowMin', 'A.fare.transfer_window_min'),
-                ('ptFare.peakMorningStartH', 'A.fare.peak_morning_start_h'),
-                ('ptFare.peakMorningEndH', 'A.fare.peak_morning_end_h'),
-                ('ptFare.peakEveningStartH', 'A.fare.peak_evening_start_h'),
-                ('ptFare.peakEveningEndH', 'A.fare.peak_evening_end_h'),
-                ('ptFare.railPeakMorningStartH',
-                 'A.fare.rail_peak_morning_start_h'),
-                ('ptFare.childMinAge', 'A.fare.child_min_age'),
-                ('ptFare.childMaxAge', 'A.fare.child_max_age'),
-                ('ptFare.seniorMinAge', 'A.fare.senior_min_age')):
-            rs.rc.runtime[param] = (rs.rc.cfg.get(key), 'derived', key + ', verbatim')
-        # The publication: Fridays, weekends and public holidays are off-peak
-        # all day, with their own caps. WEEKDAY is priced as Monday-Thursday
-        # (Friday's off-peak pricing inside the WEEKDAY day type is a stated
-        # simplification, DECISIONS.md 9.135).
-        # DECLARED, not typed. This read `day != 'WEEKDAY'`, which puts one
-        # city's day-type token into the framework - in the very file that
-        # derives DAY_TYPES and DAY_TOKEN_RE from the city's own descriptor.
-        # A city whose off-peak week is shaped differently could not be built
-        # without editing this line.
-        weekend = rs.rc.day in set(rs.rc.cfg.get('A.fare.off_peak_all_day_day_types'))
-        rs.rc.runtime['ptFare.offPeakAllDay'] = (
-            weekend, 'derived',
-            'the published rule: weekends are off-peak all day; WEEKDAY '
-            'prices as Monday-Thursday')
-        rs.rc.runtime['ptFare.dailyCapAdult'] = (
-            rs.rc.cfg.get('A.fare.daily_cap_adult_weekend') if weekend
-            else rs.rc.cfg.get('A.fare.daily_cap_adult'), 'derived',
-            'A.fare.daily_cap_adult%s by day type'
-            % ('_weekend' if weekend else ''))
-        rs.rc.runtime['ptFare.dailyCapChild'] = (
-            rs.rc.cfg.get('A.fare.daily_cap_child_weekend') if weekend
-            else rs.rc.cfg.get('A.fare.daily_cap_child'), 'derived',
-            'A.fare.daily_cap_child%s by day type'
-            % ('_weekend' if weekend else ''))
-
-
-
-def runtime_mode_entries(rc):
-    """One iteration of the loop this replaced in config_runtime(); `rc` carries the
-    enclosing scope (3 names). Extracted mechanically, byte-identical outputs."""
-    if 'taxi' in rc.cfg.get('RUN.mode_choice.modes'):
-        s_ride = rc.cfg.get('B.taxi.rideshare_trip_share')
-        blend_km = ((1 - s_ride) * rc.cfg.get('B.taxi.fare_per_km_taxi')
-                    + s_ride * rc.cfg.get('B.taxi.fare_per_km_rideshare'))
-        blend_flag = ((1 - s_ride) * rc.cfg.get('B.taxi.flagfall_taxi')
-                      + s_ride * rc.cfg.get('B.taxi.flagfall_rideshare'))
-        rc.runtime['scoring.modeParams[taxi].monetaryDistanceRate'] = (
-            round(-blend_km / 1000.0, 8), 'derived',
-            '-((1-B.taxi.rideshare_trip_share) x B.taxi.fare_per_km_taxi '
-            '+ share x B.taxi.fare_per_km_rideshare) / 1000, AUD per '
-            'metre')
-        rc.runtime['fare.flagfall'] = (
-            round(blend_flag, 4), 'derived',
-            '(1-B.taxi.rideshare_trip_share) x B.taxi.flagfall_taxi + '
-            'share x B.taxi.flagfall_rideshare')
-        rc.runtime['fare.mode'] = (
-            'taxi', 'derived', 'the mode FareChargeHandler charges')
-
-    # PT submodes score-distinct (issue #49 Tier C, DECISIONS.md 9.78):
-    # under the declared per_submode representation the swissRailRaptor
-    # module maps each scheduled route transportMode to a passenger mode of
-    # the same name. Module name, parameter and parameterset structure were
-    # verified against the PINNED jar's bytecode, not memory (the recorded
-    # trap): ch.sbb.matsim.config.SwissRailRaptorConfigGroup - module
-    # `swissRailRaptor`, boolean `useModeMappingForPassengers`, parameterset
-    # `modeMapping` carrying `routeMode`/`passengerMode`; RaptorUtils.
-    # createStaticConfig copies the mappings into the router, and
-    # createParameters prices each passenger mode from its own scoring
-    # modeParams entry - which is why scoring_from_c1 emits one per submode.
-    # Under `aggregate` no module is emitted and the config is byte-identical
-    # to the pre-9.78 emission.
-    submodes = pt_passenger_submodes(rc.cfg)
-    if submodes:
-        rc.runtime['swissRailRaptor.useModeMappingForPassengers'] = (
-            True, 'derived',
-            "RUN.routing.pt_submode_scoring == 'per_submode'")
-        rc.runtime['swissRailRaptor.modeMapping[*].passengerMode'] = (
-            {sm: sm for sm in submodes}, 'derived',
-            'each scheduled transportMode routes as a passenger mode of the '
-            'same name; vocabulary = RUN.transit.transit_modes minus the pt '
-            'umbrella')
-
-    # ACCESS AND EGRESS ROUTED, NOT DRAWN (DECISIONS.md 9.159, #167). At
-    # `beeline` nothing is emitted and the config is byte-identical to every
-    # config before this change: SwissRailRaptor draws its access and egress
-    # legs straight, and citysim.GenericRouteTeleporter teleports them under
-    # its STUB_MODE carve-out - the last teleportation left in the model, and a
-    # standing breach of GOAL.md requirement 1. At `network` the raptor's
-    # intermodal branch is switched on and given one parameter set for the
-    # access mode, so DefaultRaptorStopFinder resolves that mode's real
-    # RoutingModule - which is the network walk router, because walk is in
-    # RUN.routing.network_modes - instead of the beeline.
-    #
-    # The MEMBERSHIP is emitted here as a list, which creates the set and lets
-    # the writer supply its own `mode` key; the three radii ride in on their
-    # own declared fields' `[*]` bindings, each DERIVED from the beeline
-    # search's own reach so this change moves the route and not the market.
-    if rc.cfg.get('RUN.transit_router.access_egress_basis') == 'network':
-        access_mode = 'walk'
-        rc.runtime['swissRailRaptor.useIntermodalAccessEgress'] = (
-            True, 'derived',
-            "RUN.transit_router.access_egress_basis == 'network'")
-        rc.runtime['swissRailRaptor.intermodalAccessEgress[*].mode'] = (
-            [access_mode], 'derived',
-            'the one access/egress mode: walk, which is a network mode and a '
-            'qsim main mode, so its routing module returns a network route')
-        for param, key in (
-                ('initialSearchRadius',
-                 'RUN.transit_router.access_initial_search_radius_m'),
-                ('searchExtensionRadius',
-                 'RUN.transit_router.access_search_extension_radius_m'),
-                ('maxRadius', 'RUN.transit_router.access_max_radius_m')):
-            rc.runtime['swissRailRaptor.intermodalAccessEgress[*].%s' % param] = (
-                {access_mode: rc.cfg.get(key)}, 'derived',
-                key + ', which derives from the beeline search own reach, '
-                'so the routed search covers the same ground')
-
-    # The published Opal fare schedule (DECISIONS.md 9.135, #98): every pt
-    # journey is charged its published fare by citysim.PtFareChargeHandler.
-    # Each parameter below is a declared A.fare.* field - quoted from the
-    # archived pages at data/raw/fares/ - copied verbatim (arrays comma-
-    # joined, the module's list encoding). Emitted only when the fleet
-    # serves submodes, because the handler prices by boarded submode.
-    rs = _types.SimpleNamespace(rc=rc, submodes=submodes)
-    runtime_submode_entries(rs)
-
-
-
 def runtime_representation_entries(rc):
     """One iteration of the loop this replaced in config_runtime(); `rc` carries the
-    enclosing scope (5 names). Extracted mechanically, byte-identical outputs."""
-    rc = _types.SimpleNamespace(cfg=rc.cfg, day=rc.day, runtime=rc.runtime)
-    runtime_mode_entries(rc)
-
-    # Explicit corridor signals (#73): the signals contrib's module and its
-    # three data files enter ONLY when the declared representation says so -
-    # A.signals.representation is the one-representation-per-effect switch
-    # (dossier 04 7.5), and under implicit_delay the config carries no signal
-    # module at all, byte-identical to the pre-#73 emission.
+    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
     if rc.cfg.get('A.signals.representation') == 'explicit_signals':
         for target, key, note in (
                 ('signalsystems.signalsystems', 'signal_systems',
@@ -1788,7 +1610,9 @@ def runtime_representation_entries(rc):
 
 
 
-def config_runtime(cfg, scoring, day, paths):
+def runtime_mode_entries(rc):
+    """One iteration of the loop this replaced in config_runtime(); `rc` carries the
+    enclosing scope (4 names). Extracted mechanically, byte-identical outputs."""
     """What the registry cannot hold, each entry carrying the role that justifies it.
 
     `scoring` is the C1 translation: MATSim scores with a Charypar-Nagel utility
@@ -1798,27 +1622,27 @@ def config_runtime(cfg, scoring, day, paths):
     - so the value is derived in one place and its provenance is recorded in
     another that a reader can find without opening a builder.
     """
-    start_h, end_h = parking_window(cfg, day)
-    typical = cfg.get('C.scoring.activity_typical_duration_s')
-    minimal = cfg.get('C.scoring.activity_minimal_duration_s')
+    start_h, end_h = parking_window(rc.cfg, rc.day)
+    typical = rc.cfg.get('C.scoring.activity_typical_duration_s')
+    minimal = rc.cfg.get('C.scoring.activity_minimal_duration_s')
     runtime = {
         'global.coordinateSystem': (_city.crs(), 'identity', 'city.json crs.epsg'),
-        'controler.outputDirectory': (paths['output'], 'path', 'run output'),
-        'network.inputNetworkFile': (paths['network'], 'path', 'scenario run network'),
-        'plans.inputPlansFile': (paths['plans'], 'path', 'day-type plans'),
-        'transit.transitScheduleFile': (paths['schedule'], 'path', 'filtered schedule'),
-        'transit.vehiclesFile': (paths['vehicles'], 'path', 'transit vehicles'),
-        'vehicles.vehiclesFile': (paths['mode_vehicles'], 'path',
+        'controler.outputDirectory': (rc.paths['output'], 'path', 'run output'),
+        'network.inputNetworkFile': (rc.paths['network'], 'path', 'scenario run network'),
+        'plans.inputPlansFile': (rc.paths['plans'], 'path', 'day-type plans'),
+        'transit.transitScheduleFile': (rc.paths['schedule'], 'path', 'filtered schedule'),
+        'transit.vehiclesFile': (rc.paths['vehicles'], 'path', 'transit vehicles'),
+        'vehicles.vehiclesFile': (rc.paths['mode_vehicles'], 'path',
                                   'per-main-mode vehicle types (car restates the '
                                   'MATSim default; truck carries B.freight.pce)'),
-        'parking.priceFile': (paths['parking_prices'], 'path', 'per-link price table'),
+        'parking.priceFile': (rc.paths['parking_prices'], 'path', 'per-link price table'),
         # The two capacity factors are identities on the sample fraction, not
         # choices. Both registry fields are declared `computed`, so the emitter
         # REFUSES to write them from a declared value and requires them here.
         'qsim.flowCapacityFactor': (
-            paths['fraction'], 'derived', 'flowCapacityFactor = RUN.sample.fraction'),
+            rc.paths['fraction'], 'derived', 'flowCapacityFactor = RUN.sample.fraction'),
         'qsim.storageCapacityFactor': (
-            paths['fraction'] ** cfg.get('RUN.sample.storage_capacity_exponent'),
+            rc.paths['fraction'] ** rc.cfg.get('RUN.sample.storage_capacity_exponent'),
             'derived', 'storageCapacityFactor = fraction ** '
                        'RUN.sample.storage_capacity_exponent'),
         # Score averaging is a MODE the registry declares and a NUMBER MATSim
@@ -1826,28 +1650,28 @@ def config_runtime(cfg, scoring, day, paths):
         # this writes the literal MATSim writes for its own default, which is
         # what made the declaration behaviour-neutral; at `at_innovation_cutoff`
         # it writes the innovation cutoff itself, introducing no new value.
-        'scoring.fractionOfIterationsToStartScoreMSA': _score_msa(cfg),
+        'scoring.fractionOfIterationsToStartScoreMSA': _score_msa(rc.cfg),
         # The charged parking window is one field carrying a window per day type;
         # MATSim reads two parameters. Which day this set is for is not a
         # registry value, so the selection happens here.
         'parking.chargedStartHour': (
             start_h, 'derived',
-            'A.parking.charged_hours_by_day_type[%s][0]' % day),
+            'A.parking.charged_hours_by_day_type[%s][0]' % rc.day),
         'parking.chargedEndHour': (
             end_h, 'derived',
-            'A.parking.charged_hours_by_day_type[%s][1]' % day),
+            'A.parking.charged_hours_by_day_type[%s][1]' % rc.day),
         'scoring.waitingPt': (
-            scoring['waiting_pt'], 'derived',
+            rc.scoring['waiting_pt'], 'derived',
             'performing - trip-weighted VOT * beta_wait * marginalUtilityOfMoney'),
         'scoring.utilityOfLineSwitch': (
-            scoring['utility_of_line_switch'], 'derived',
+            rc.scoring['utility_of_line_switch'], 'derived',
             '-(C.transfer.beta_transfer_penalty_min / 60) * trip-weighted VOT * '
             'marginalUtilityOfMoney'),
         'scoring.modeParams[*].constant': (
-            {m: v['constant'] for m, v in scoring['modes'].items()},
+            {m: v['constant'] for m, v in rc.scoring['modes'].items()},
             'derived', 'the C1 alternative-specific constant for each mode'),
         'scoring.modeParams[*].marginalUtilityOfTraveling_util_hr': (
-            {m: v['marginalUtilityOfTraveling'] for m, v in scoring['modes'].items()},
+            {m: v['marginalUtilityOfTraveling'] for m, v in rc.scoring['modes'].items()},
             'derived',
             'performing - trip-weighted VOT * beta[mode] * marginalUtilityOfMoney'),
         # Applied as min(minimal, typical): a 15-minute floor over a 5-minute
@@ -1866,7 +1690,176 @@ def config_runtime(cfg, scoring, day, paths):
     # (the ParkingChargeHandler PersonMoneyEvent pattern). Both are BLENDS of
     # the measured taxi schedule and the literature rideshare rates at the
     # declared rideshare share - one mode honestly carrying two services.
-    rc = _types.SimpleNamespace(cfg=cfg, day=day, paths=paths, runtime=runtime, scoring=scoring)
+    if 'taxi' in rc.cfg.get('RUN.mode_choice.modes'):
+        s_ride = rc.cfg.get('B.taxi.rideshare_trip_share')
+        blend_km = ((1 - s_ride) * rc.cfg.get('B.taxi.fare_per_km_taxi')
+                    + s_ride * rc.cfg.get('B.taxi.fare_per_km_rideshare'))
+        blend_flag = ((1 - s_ride) * rc.cfg.get('B.taxi.flagfall_taxi')
+                      + s_ride * rc.cfg.get('B.taxi.flagfall_rideshare'))
+        runtime['scoring.modeParams[taxi].monetaryDistanceRate'] = (
+            round(-blend_km / 1000.0, 8), 'derived',
+            '-((1-B.taxi.rideshare_trip_share) x B.taxi.fare_per_km_taxi '
+            '+ share x B.taxi.fare_per_km_rideshare) / 1000, AUD per '
+            'metre')
+        runtime['fare.flagfall'] = (
+            round(blend_flag, 4), 'derived',
+            '(1-B.taxi.rideshare_trip_share) x B.taxi.flagfall_taxi + '
+            'share x B.taxi.flagfall_rideshare')
+        runtime['fare.mode'] = (
+            'taxi', 'derived', 'the mode FareChargeHandler charges')
+    return runtime
+
+
+
+def config_runtime(cfg, scoring, day, paths):
+    rc = _types.SimpleNamespace(cfg=cfg, day=day, paths=paths, scoring=scoring)
+    runtime = runtime_mode_entries(rc)
+
+    # PT submodes score-distinct (issue #49 Tier C, DECISIONS.md 9.78):
+    # under the declared per_submode representation the swissRailRaptor
+    # module maps each scheduled route transportMode to a passenger mode of
+    # the same name. Module name, parameter and parameterset structure were
+    # verified against the PINNED jar's bytecode, not memory (the recorded
+    # trap): ch.sbb.matsim.config.SwissRailRaptorConfigGroup - module
+    # `swissRailRaptor`, boolean `useModeMappingForPassengers`, parameterset
+    # `modeMapping` carrying `routeMode`/`passengerMode`; RaptorUtils.
+    # createStaticConfig copies the mappings into the router, and
+    # createParameters prices each passenger mode from its own scoring
+    # modeParams entry - which is why scoring_from_c1 emits one per submode.
+    # Under `aggregate` no module is emitted and the config is byte-identical
+    # to the pre-9.78 emission.
+    submodes = pt_passenger_submodes(cfg)
+    if submodes:
+        runtime['swissRailRaptor.useModeMappingForPassengers'] = (
+            True, 'derived',
+            "RUN.routing.pt_submode_scoring == 'per_submode'")
+        runtime['swissRailRaptor.modeMapping[*].passengerMode'] = (
+            {sm: sm for sm in submodes}, 'derived',
+            'each scheduled transportMode routes as a passenger mode of the '
+            'same name; vocabulary = RUN.transit.transit_modes minus the pt '
+            'umbrella')
+
+    # ACCESS AND EGRESS ROUTED, NOT DRAWN (DECISIONS.md 9.159, #167). At
+    # `beeline` nothing is emitted and the config is byte-identical to every
+    # config before this change: SwissRailRaptor draws its access and egress
+    # legs straight, and citysim.GenericRouteTeleporter teleports them under
+    # its STUB_MODE carve-out - the last teleportation left in the model, and a
+    # standing breach of GOAL.md requirement 1. At `network` the raptor's
+    # intermodal branch is switched on and given one parameter set for the
+    # access mode, so DefaultRaptorStopFinder resolves that mode's real
+    # RoutingModule - which is the network walk router, because walk is in
+    # RUN.routing.network_modes - instead of the beeline.
+    #
+    # The MEMBERSHIP is emitted here as a list, which creates the set and lets
+    # the writer supply its own `mode` key; the three radii ride in on their
+    # own declared fields' `[*]` bindings, each DERIVED from the beeline
+    # search's own reach so this change moves the route and not the market.
+    if cfg.get('RUN.transit_router.access_egress_basis') == 'network':
+        access_mode = 'walk'
+        runtime['swissRailRaptor.useIntermodalAccessEgress'] = (
+            True, 'derived',
+            "RUN.transit_router.access_egress_basis == 'network'")
+        runtime['swissRailRaptor.intermodalAccessEgress[*].mode'] = (
+            [access_mode], 'derived',
+            'the one access/egress mode: walk, which is a network mode and a '
+            'qsim main mode, so its routing module returns a network route')
+        for param, key in (
+                ('initialSearchRadius',
+                 'RUN.transit_router.access_initial_search_radius_m'),
+                ('searchExtensionRadius',
+                 'RUN.transit_router.access_search_extension_radius_m'),
+                ('maxRadius', 'RUN.transit_router.access_max_radius_m')):
+            runtime['swissRailRaptor.intermodalAccessEgress[*].%s' % param] = (
+                {access_mode: cfg.get(key)}, 'derived',
+                key + ', which derives from the beeline search own reach, '
+                'so the routed search covers the same ground')
+
+    # The published Opal fare schedule (DECISIONS.md 9.135, #98): every pt
+    # journey is charged its published fare by citysim.PtFareChargeHandler.
+    # Each parameter below is a declared A.fare.* field - quoted from the
+    # archived pages at data/raw/fares/ - copied verbatim (arrays comma-
+    # joined, the module's list encoding). Emitted only when the fleet
+    # serves submodes, because the handler prices by boarded submode.
+    if submodes:
+        def fare_list(key):
+            return (','.join('%g' % v for v in cfg.get(key)), 'derived',
+                    key + ', comma-joined')
+        for param, key in (
+                ('ptFare.trainBandsKm', 'A.fare.train_band_upper_km'),
+                ('ptFare.trainAdultPeak', 'A.fare.train_adult_peak'),
+                ('ptFare.trainAdultOffpeak',
+                 'A.fare.train_adult_offpeak'),
+                ('ptFare.trainChildPeak', 'A.fare.train_child_peak'),
+                ('ptFare.trainChildOffpeak',
+                 'A.fare.train_child_offpeak'),
+                ('ptFare.busBandsKm', 'A.fare.bus_band_upper_km'),
+                ('ptFare.busAdultPeak', 'A.fare.bus_adult_peak'),
+                ('ptFare.busAdultOffpeak', 'A.fare.bus_adult_offpeak'),
+                ('ptFare.busChildPeak', 'A.fare.bus_child_peak'),
+                ('ptFare.busChildOffpeak', 'A.fare.bus_child_offpeak'),
+                ('ptFare.tramBandsKm', 'A.fare.lightrail_band_upper_km'),
+                ('ptFare.tramAdultPeak', 'A.fare.lightrail_adult_peak'),
+                ('ptFare.tramAdultOffpeak',
+                 'A.fare.lightrail_adult_offpeak'),
+                ('ptFare.tramChildPeak', 'A.fare.lightrail_child_peak'),
+                ('ptFare.tramChildOffpeak',
+                 'A.fare.lightrail_child_offpeak')):
+            runtime[param] = fare_list(key)
+        for param, key in (
+                ('ptFare.ferryAdultPeak', 'A.fare.ferry_adult_peak'),
+                ('ptFare.ferryAdultOffpeak',
+                 'A.fare.ferry_adult_offpeak'),
+                ('ptFare.ferryChildPeak', 'A.fare.ferry_child_peak'),
+                ('ptFare.ferryChildOffpeak',
+                 'A.fare.ferry_child_offpeak'),
+                ('ptFare.seniorPerFareCap', 'A.fare.senior_per_fare_cap'),
+                ('ptFare.dailyCapSenior', 'A.fare.daily_cap_senior'),
+                ('ptFare.transferDiscountAdult',
+                 'A.fare.transfer_discount_adult'),
+                ('ptFare.transferDiscountChild',
+                 'A.fare.transfer_discount_child'),
+                ('ptFare.transferWindowMin', 'A.fare.transfer_window_min'),
+                ('ptFare.peakMorningStartH', 'A.fare.peak_morning_start_h'),
+                ('ptFare.peakMorningEndH', 'A.fare.peak_morning_end_h'),
+                ('ptFare.peakEveningStartH', 'A.fare.peak_evening_start_h'),
+                ('ptFare.peakEveningEndH', 'A.fare.peak_evening_end_h'),
+                ('ptFare.railPeakMorningStartH',
+                 'A.fare.rail_peak_morning_start_h'),
+                ('ptFare.childMinAge', 'A.fare.child_min_age'),
+                ('ptFare.childMaxAge', 'A.fare.child_max_age'),
+                ('ptFare.seniorMinAge', 'A.fare.senior_min_age')):
+            runtime[param] = (cfg.get(key), 'derived', key + ', verbatim')
+        # The publication: Fridays, weekends and public holidays are off-peak
+        # all day, with their own caps. WEEKDAY is priced as Monday-Thursday
+        # (Friday's off-peak pricing inside the WEEKDAY day type is a stated
+        # simplification, DECISIONS.md 9.135).
+        # DECLARED, not typed. This read `day != 'WEEKDAY'`, which puts one
+        # city's day-type token into the framework - in the very file that
+        # derives DAY_TYPES and DAY_TOKEN_RE from the city's own descriptor.
+        # A city whose off-peak week is shaped differently could not be built
+        # without editing this line.
+        weekend = day in set(cfg.get('A.fare.off_peak_all_day_day_types'))
+        runtime['ptFare.offPeakAllDay'] = (
+            weekend, 'derived',
+            'the published rule: weekends are off-peak all day; WEEKDAY '
+            'prices as Monday-Thursday')
+        runtime['ptFare.dailyCapAdult'] = (
+            cfg.get('A.fare.daily_cap_adult_weekend') if weekend
+            else cfg.get('A.fare.daily_cap_adult'), 'derived',
+            'A.fare.daily_cap_adult%s by day type'
+            % ('_weekend' if weekend else ''))
+        runtime['ptFare.dailyCapChild'] = (
+            cfg.get('A.fare.daily_cap_child_weekend') if weekend
+            else cfg.get('A.fare.daily_cap_child'), 'derived',
+            'A.fare.daily_cap_child%s by day type'
+            % ('_weekend' if weekend else ''))
+
+    # Explicit corridor signals (#73): the signals contrib's module and its
+    # three data files enter ONLY when the declared representation says so -
+    # A.signals.representation is the one-representation-per-effect switch
+    # (dossier 04 7.5), and under implicit_delay the config carries no signal
+    # module at all, byte-identical to the pre-#73 emission.
+    rc = _types.SimpleNamespace(cfg=cfg, paths=paths, runtime=runtime, scoring=scoring)
     runtime_representation_entries(rc)
 
     # Level crossings (#68): the closures reach the router only as a
