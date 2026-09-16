@@ -27,25 +27,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260916T063903_250it_25pct` at **iteration 40** (family `F35-the-engines-route-what-they-remode`, status `running`, 25% sample, launched 2026-09-16T06:39:07, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260916T063903_250it_25pct --it 40` (`--trend` for the direction).
+Read from `20260916T063903_250it_25pct` at **iteration 60** (family `F35-the-engines-route-what-they-remode`, status `running`, 25% sample, launched 2026-09-16T06:39:07, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260916T063903_250it_25pct --it 60` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 54.1459 | 58.3222 | -7.2% | ok | share of resident linked trips |
-| 2 | ride | 13.5574 | 20.6000 | -34.2% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 19.4914 | 13.4000 | +45.5% | **STOP** >=20% | share of resident linked trips |
-| 4 | taxi | 1.9193 | 0.9916 | +93.6% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.3949 | 2.2084 | +189.6% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3638 | 0.3785 | -3.9% | ok | share of resident linked trips |
-| 7 | bus | 3.0242 | 2.3819 | +27.0% | **STOP** >=20% | share of resident linked trips |
-| 8 | heavy_rail | 12,892 | 6,529 | +97.5% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 1,180 | 2,954 | -60.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0354 | 0.1429 | -75.3% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 6.7878 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 57.2903 | 58.3222 | -1.8% | ok | share of resident linked trips |
+| 2 | ride | 13.4194 | 20.6000 | -34.9% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 16.8272 | 13.4000 | +25.6% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 2.0703 | 0.9916 | +108.8% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.2683 | 2.2084 | +183.8% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3615 | 0.3785 | -4.5% | ok | share of resident linked trips |
+| 7 | bus | 2.6867 | 2.3819 | +12.8% | over 10% | share of resident linked trips |
+| 8 | heavy_rail | 12,116 | 6,529 | +85.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,088 | 2,954 | -63.2% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0485 | 0.1429 | -66.0% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 6.3687 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
+Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is

@@ -90,6 +90,11 @@ class FakeCfg(object):
     def get(self, key):
         return {'RUN.gate.interval_iterations': 100,
                 'RUN.gate.retry_interval_s': 0,
+                # the watcher polls at the digest's cadence and bounds one
+                # reading by the declared timeout (9.177); the harness runs
+                # fast, so it polls fast
+                'RUN.monitor.progress_interval_s': 1,
+                'RUN.gate.reader_timeout_s': 120,
                 'RUN.monitor.enabled': self.monitor}[key]
 
 

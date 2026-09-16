@@ -4,15 +4,15 @@
   "contract": "Every key below must be declared by any city, with the stated units and value type. A field whose source is measured, derived, literature or assumed MUST additionally carry a sweep, a held_fixed rule or a derived_from identity - field.schema.json enforces that, and check_city.py tests it. A field that carries a sweep MUST say what the sweep is for (sweep_role: answer, uncertainty or measurement), and an assumed field with a sweep MUST say how the interval was chosen (sweep_basis) - the resolver refuses either omission (#134). Unit strings carry {currency} and {base_year} tokens where the reference city's currency or base year appeared: each candidate city's own city.json values expand them, so a EUR/2030 registry passes its own contract (issue #62 B5).",
   "no_prose": "Field DESCRIPTIONS are deliberately absent. They are the reference city's own wording and would put one city's prose - its suburbs, its agencies, its datasets - inside the portable half of the contract. What a city must supply is a key, its units and its value type; WHY a particular city chose a particular value belongs in cities/<city>/docs/reference/CONFIG_REFERENCE.md.",
   "caveat": "`required` means the reference city declares it and the framework will not run without it. A field carrying `required_if_mode` is required ONLY of a city that runs that mode - the one narrowing that can be DERIVED, because the mode name is in the tool binding. The rest is not narrowed: an intervention-specific field is still listed for a city that has no such intervention, and omitting one must be justified rather than assumed.",
-  "n_fields": 558,
+  "n_fields": 567,
   "n_by_layer": {
-    "A": 203,
-    "B": 129,
+    "A": 204,
+    "B": 130,
     "C": 58,
-    "CAL": 28,
-    "D": 9,
+    "CAL": 30,
+    "D": 10,
     "E": 26,
-    "RUN": 105
+    "RUN": 109
   },
   "fields": {
     "A.active.footway_width_default": {
@@ -837,6 +837,15 @@
     "A.lightrail.dwell_fixed_s": {
       "layer": "A",
       "units": "seconds_per_stop",
+      "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "A_supply.json"
+    },
+    "A.lightrail.dwell_sd_s": {
+      "layer": "A",
+      "units": "seconds",
       "type": "number",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
@@ -2481,6 +2490,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "B_demand.json"
     },
+    "B.mode.seed_table": {
+      "layer": "B",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "B_demand.json"
+    },
     "B.mode.serve_tour_seed": {
       "layer": "B",
       "units": "enum",
@@ -3759,6 +3777,24 @@
       "unobtained_in_reference_city": false,
       "declared_in": "CAL_calibration.json"
     },
+    "CAL.targets.current_window_start": {
+      "layer": "CAL",
+      "units": "date",
+      "type": "string",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
+    "CAL.targets.prepandemic_window": {
+      "layer": "CAL",
+      "units": "date_half_open_interval",
+      "type": "array",
+      "source_in_reference_city": "observed",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "CAL_calibration.json"
+    },
     "CAL.taxi.lga_concentration": {
       "layer": "CAL",
       "units": "ratio",
@@ -3826,6 +3862,15 @@
       "layer": "D",
       "units": "metres",
       "type": "number",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "D_landuse.json"
+    },
+    "D.landuse.levels_by_building_type": {
+      "layer": "D",
+      "units": "storeys",
+      "type": "object",
       "source_in_reference_city": "assumed",
       "sweep_required": true,
       "unobtained_in_reference_city": false,
@@ -4182,6 +4227,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.gate.reader_timeout_s": {
+      "layer": "RUN",
+      "units": "seconds",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.gate.retry_interval_s": {
       "layer": "RUN",
       "units": "seconds",
@@ -4209,6 +4263,15 @@
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
+    "RUN.machine.build_xmx": {
+      "layer": "RUN",
+      "units": "jvm_heap",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
     "RUN.machine.event_handler_threads": {
       "layer": "RUN",
       "units": "threads",
@@ -4233,6 +4296,15 @@
       "type": "boolean",
       "source_in_reference_city": "definition",
       "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.machine.gc_collector": {
+      "layer": "RUN",
+      "units": "enum",
+      "type": "string",
+      "source_in_reference_city": "assumed",
+      "sweep_required": true,
       "unobtained_in_reference_city": false,
       "declared_in": "RUN_execution.json"
     },
@@ -4860,6 +4932,15 @@
     "RUN.storage.raw_cap_gb": {
       "layer": "RUN",
       "units": "gibibytes",
+      "type": "number",
+      "source_in_reference_city": "definition",
+      "sweep_required": false,
+      "unobtained_in_reference_city": false,
+      "declared_in": "RUN_execution.json"
+    },
+    "RUN.storage.reader_timeout_s": {
+      "layer": "RUN",
+      "units": "seconds",
       "type": "number",
       "source_in_reference_city": "definition",
       "sweep_required": false,
