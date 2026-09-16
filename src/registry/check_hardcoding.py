@@ -740,7 +740,7 @@ STRUCTURAL_INLINE = {
     '<city>/build/build_level_crossings.py:main:0.5':
         'the centre of a window slot (i + 0.5): even spacing of the derived '
         'closures inside their window, geometry rather than a value',
-    '<city>/build/build_mode_targets.py:main:0.5':
+    '<city>/build/build_mode_targets.py:road_person_targets:0.5':
         'the midpoint of the IPART trips-per-day band (lo + hi) / 2 - the band is '
         'the declared value, B.taxi.daily_trips_band',
     '<city>/extract/extract_bitre_registrations.py:study_area_postcodes:0.5':
@@ -859,9 +859,9 @@ STRUCTURAL_INLINE = {
         'single years; nobody in the ERP is older',
     '<city>/build/build_licence_rates.py:main:5e-05':
         _TOL,
-    '<city>/build/build_mode_targets.py:main:5e-05':
+    '<city>/build/build_mode_targets.py:road_person_targets:5e-05':
         _TOL,
-    '<city>/build/build_validation_targets.py:main:30.4':
+    '<city>/build/build_validation_targets.py:pt_targets:30.4':
         'the mean number of days in a month (365 / 12), converting a monthly '
         'publication to a daily one',
     '<city>/extract/extract_speed_zones.py:sha256:20':
