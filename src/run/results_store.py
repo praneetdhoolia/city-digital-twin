@@ -223,10 +223,13 @@ def extract_snapshots(name):
     os.makedirs(dest, exist_ok=True)
     reporter = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
     ok = True
+    import registry as _registry                                  # noqa: PLC0415
+    reader_timeout_s = float(_registry.load(strict=True).get(
+        'RUN.storage.reader_timeout_s'))
     try:
         out = subprocess.run(
             [sys.executable, reporter, '--run', bulk, '--trend'],
-            capture_output=True, text=True, timeout=3600, cwd=REPO)
+            capture_output=True, text=True, timeout=reader_timeout_s, cwd=REPO)
         if out.returncode == 0 and out.stdout.strip():
             with io.open(os.path.join(dest, TREND_TXT), 'w',
                          encoding='utf-8') as fh:
@@ -242,7 +245,7 @@ def extract_snapshots(name):
         out = subprocess.run(
             [sys.executable, reporter, '--run', bulk,
              '--json', os.path.join(dest, FINAL_JSON)],
-            capture_output=True, text=True, timeout=1800, cwd=REPO)
+            capture_output=True, text=True, timeout=reader_timeout_s, cwd=REPO)
         if out.returncode != 0:
             ok = False
             _log(name, 'final-json extract rc=%s: %s'

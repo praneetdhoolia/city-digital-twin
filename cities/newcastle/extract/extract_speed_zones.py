@@ -41,7 +41,7 @@ ZIP = os.path.join(RAW, 'speedzones.zip')
 LGA = _city.path('data/processed/zones/zones_LGA.gpkg')
 OUT = _city.path('data/processed/network/A1_speed_zones.gpkg')
 PROV = os.path.join(RAW, 'provenance_speed_zones.json')
-CRS_M = 'EPSG:28356'
+CRS_M = _city.crs()
 
 URL = ('https://opendata.transport.nsw.gov.au/data/dataset/'
        '4253a054-b377-4b5b-83d1-71385bb6ff33/resource/'

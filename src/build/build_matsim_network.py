@@ -91,7 +91,7 @@ WORK = os.path.join(OUT, '_work')
 CRS = _city.crs()
 PATCHES = _city.path('data/processed/network/A1_road_variant_patches.csv')
 E1_ROAD_VARIANTS = _city.path('scenarios/E1_road_variants.csv')
-JAVA_XMX = '-Xmx6g'
+JAVA_XMX = '-Xmx%s' % _registry.load().get('RUN.machine.build_xmx')   # throughput only
 
 # The signals extract is merged for its `type=restriction` relations - the road
 # extract carries none, so without it pt2matsim writes no `disallowedNextLinks`

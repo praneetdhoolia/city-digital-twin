@@ -33,6 +33,7 @@ config merely parses would pass even if every value were the first city's.
 """
 import argparse
 import io
+import glob
 import json
 import os
 import re
@@ -47,9 +48,42 @@ FIXTURE = 'contractfixture'
 FIXTURE_DIR = os.path.join(CITIES, FIXTURE)
 
 # Every mode name any city in this repository uses, so a `[selector]` can be
-# recognised as a mode rather than as some other parameterset key.
-ALL_MODE_NAMES = {'car', 'ride', 'pt', 'bike', 'walk', 'bus', 'rail',
-                  'light_rail', 'tram', 'ferry', 'car_passenger'}
+# recognised as a mode rather than as some other parameterset key: the union
+# of every committed city's declared modes and the registry's own submode
+# selectors, read from the cities, never typed here (twelfth report).
+
+
+def _all_mode_names():
+    names = set()
+    for city_json in glob.glob(os.path.join(CITIES, '*', 'city.json')):
+        try:
+            doc = json.load(open(city_json, encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        names.update(doc.get('modes') or [])
+        for k in ('mode_share_target', 'intervention'):
+            v = doc.get(k) or {}
+            if isinstance(v, dict) and isinstance(v.get('mode'), str):
+                names.add(v['mode'])
+        # the submodes a city scores (bus, heavy_rail, light_rail, ferry,
+        # truck, motorbike ...) are the rows of its mode-targets table
+        targets = os.path.join(os.path.dirname(city_json), 'data', 'processed',
+                               'validation', 'mode_targets_by_mode.csv')
+        if os.path.exists(targets):
+            with io.open(targets, encoding='utf-8') as fh:
+                head = fh.readline().strip().split(',')
+                if 'mode' in head:
+                    col = head.index('mode')
+                    for line in fh:
+                        cells = line.rstrip().split(',')
+                        if len(cells) > col and cells[col]:
+                            names.add(cells[col])
+    # MATSim's own routing modes (non_network_walk) are no city's vocabulary
+    names.discard('*')
+    return names
+
+
+ALL_MODE_NAMES = None   # filled on first use by _foreign_mode
 
 _state = {'pass': 0, 'fail': 0}
 
@@ -111,6 +145,9 @@ MODE_SELECTOR = re.compile(r'\[([a-z_]+)\]')
 
 def _foreign_mode(field, modes):
     """Does this field's binding name a mode this city does not run?"""
+    global ALL_MODE_NAMES
+    if ALL_MODE_NAMES is None:
+        ALL_MODE_NAMES = _all_mode_names()
     for bind in ('matsim_param', 'pt2matsim_osm_param',
                  'pt2matsim_mapper_param'):
         for sel in MODE_SELECTOR.findall(str(field.get(bind) or '')):

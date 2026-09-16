@@ -116,8 +116,9 @@ def main():
     ser = pd.DataFrame({'d': idx, 'trips': m.values}).dropna().sort_values('d')
     # pre-pandemic window: the Opal light rail series starts at opening, so a
     # clean post-opening pre-pandemic baseline does exist (Mar 2019 - Feb 2020)
-    pre = ser[(ser.d >= '2019-03-01') & (ser.d < '2020-03-01')]
-    cur = ser[ser.d >= '2025-07-01']
+    pre_lo, pre_hi = CFG.get('CAL.targets.prepandemic_window')
+    pre = ser[(ser.d >= pre_lo) & (ser.d < pre_hi)]
+    cur = ser[ser.d >= CFG.get('CAL.targets.current_window_start')]
     if len(pre):
         add('lr_boardings_monthly_mean', 'Newcastle Light Rail', '2019-03..2020-02',
             round(float(pre.trips.mean()), 0), 'boardings/month',
@@ -423,7 +424,7 @@ def main():
     hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
     hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
     for yr, split in [('2018/19', 'calibration'), ('2024/25', 'calibration')]:
-        sel = hm[(hm.geography == 'lga') & (hm.area_name.str.strip() == 'Newcastle') &
+        sel = hm[(hm.geography == 'lga') & (hm.area_name.str.strip() == _city.target_lga()) &
                  (hm.FINANCIAL_YEAR.astype(str) == yr)]
         for _, r in sel.iterrows():
             if pd.isna(r['MODE_SHARE']):

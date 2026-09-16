@@ -197,6 +197,32 @@
         "cities/newcastle/build/build_landuse_parking.py"
       ]
     },
+    "D.landuse.levels_by_building_type": {
+      "value": {
+        "retail": 1,
+        "commercial": 3,
+        "office": 4,
+        "apartments": 4,
+        "house": 1,
+        "residential": 2,
+        "industrial": 1,
+        "warehouse": 1,
+        "other": 2
+      },
+      "units": "storeys",
+      "source": "assumed",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "A FALLBACK, not a model of the building stock: it applies only where OSM carries no building:levels tag, and every level it assigns is labelled `assumed` in the parking-and-landuse table beside the tagged ones (`levels_source`). Floorspace enters attraction through D.landuse.retail_gfa_share and the ground-floor coefficient (DECISIONS.md 7), which carry the sweep; moving this table would move the untagged stock's floorspace uniformly, the same axis. Typed in cities/newcastle/build/build_landuse_parking.py until 16 September 2026.",
+        "decisions_ref": "7, 9.177"
+      },
+      "status": "active",
+      "decisions_ref": "7, 9.177",
+      "consumers": [
+        "cities/newcastle/build/build_landuse_parking.py"
+      ],
+      "description": "Storeys assumed for an OSM building whose building:levels tag is absent, by its building= value; `other` is every value not named. Reported with its source in the landuse table; a data-quality fallback."
+    },
     "D.landuse.frontage_unit_m": {
       "value": 25.0,
       "units": "metres",

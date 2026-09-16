@@ -1606,6 +1606,8 @@ def start_gate_watch(run_dir, cfg, proc):
         # seconds between reporter attempts on a milestone whose tables are
         # not written yet (#131); the milestone itself is never skipped
         retry_s = float(cfg.get('RUN.gate.retry_interval_s'))
+        poll_s = float(cfg.get('RUN.monitor.progress_interval_s'))
+        reader_timeout_s = float(cfg.get('RUN.gate.reader_timeout_s'))
     except Exception:                                        # noqa: BLE001
         return None
     if interval <= 0:
@@ -1649,7 +1651,7 @@ def start_gate_watch(run_dir, cfg, proc):
         claimed = 0
         retry_at = 0.0
         while proc.poll() is None:
-            time.sleep(30)
+            time.sleep(poll_s)          # the digest's own cadence
             it = _last_ended_iteration(run_dir)
             milestone = (it // interval) * interval if it >= 0 else 0
             if milestone <= claimed:
@@ -1664,7 +1666,8 @@ def start_gate_watch(run_dir, cfg, proc):
                 out = subprocess.run(
                     [sys.executable, reporter, '--run', run_dir,
                      '--it', str(milestone), '--gate-json', verdict_path],
-                    capture_output=True, text=True, timeout=1800, cwd=REPO)
+                    capture_output=True, text=True, timeout=reader_timeout_s,
+                    cwd=REPO)
             except (OSError, subprocess.SubprocessError):
                 retry_at = time.time() + retry_s
                 continue
@@ -2316,7 +2319,8 @@ def run(scenario, day, cfg, overrides, force=False, warm=None,
     # with full-GC stalls visible during the it-110 routing pathology; a
     # pre-sized heap removes the growth path. Wall-time only - the JVM heap
     # schedule cannot change a model output.
-    cmd = [JAVA, '-Xms%s' % xmx, '-Xmx%s' % xmx, '-XX:+UseParallelGC']
+    cmd = [JAVA, '-Xms%s' % xmx, '-Xmx%s' % xmx,
+           '-XX:+Use%s' % cfg.get('RUN.machine.gc_collector')]
     # OBSERVATION ONLY (RUN.machine.jfr_profile, RUN.machine.gc_log). Neither
     # flag reaches MATSim: JFR samples the stacks of threads that are running
     # anyway and GC logging prints what the collector already did, so a

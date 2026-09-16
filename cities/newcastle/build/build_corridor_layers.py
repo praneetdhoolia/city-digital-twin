@@ -125,7 +125,11 @@ VEHICLE = dict(
     capacity_standing=CFG.get('A.lightrail.capacity_standing'),
     capacity_crush=270,
     capacity_seated_source='assumed', capacity_crush_source='published',
-    max_accel_ms2=1.2, max_decel_ms2=1.3, emergency_decel_ms2=2.8,
+    # the same two values build_scenario_schedules.py reads; typed twins
+    # of the registry until the twelfth report (16 September 2026)
+    max_accel_ms2=CFG.get('E.vehicle.tram_accel_ms2'),
+    max_decel_ms2=CFG.get('E.vehicle.tram_decel_ms2'),
+    emergency_decel_ms2=2.8,
     max_speed_kmh=70, line_speed_kmh=CFG.get('A.lightrail.line_speed_kmh'),
     door_count_per_side=4, door_width_mm=1300,
     boarding_rate_pax_s=0.6, alighting_rate_pax_s=0.8,
@@ -159,7 +163,7 @@ DWELL_DEFAULTS = dict(
     dwell_fixed_sweep=tuple(CFG.sweep('A.lightrail.dwell_fixed_s')),
     dwell_charging_s=_DWELL_CHARGING_S,
     dwell_charging_sweep=_DWELL_CHARGING_SWEEP,
-    dwell_sd_s=6.0,
+    dwell_sd_s=CFG.get('A.lightrail.dwell_sd_s'),
     distribution_type='lognormal')
 
 # Terminus stops also charge, and hold for layover; intermediate stops are the
