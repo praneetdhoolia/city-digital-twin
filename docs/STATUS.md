@@ -27,25 +27,25 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260915T000704_250it_25pct` at **iteration 250** (family `F35-the-engines-route-what-they-remode`, status `completed`, 25% sample, launched 2026-09-15T00:07:08, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 250, the only completion that means the run executed the horizon it declared.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250` (`--trend` for the direction).
+Read from `20260916T063903_250it_25pct` at **iteration 40** (family `F35-the-engines-route-what-they-remode`, status `running`, 25% sample, launched 2026-09-16T06:39:07, trips table). **Not a result** - only a run whose `_run.json` says `ran_to_last_iteration` is one, and this reading is citable at its `reached_iteration` and nowhere past it.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260916T063903_250it_25pct --it 40` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 63.5564 | 58.3222 | +9.0% | ok | share of resident linked trips |
-| 2 | ride | 12.1902 | 20.6000 | -40.8% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 11.8059 | 13.4000 | -11.9% | over 10% | share of resident linked trips |
-| 4 | taxi | 2.4056 | 0.9916 | +142.6% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.5771 | 2.2084 | +197.8% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3577 | 0.3785 | -5.5% | ok | share of resident linked trips |
-| 7 | bus | 2.0895 | 2.3819 | -12.3% | over 10% | share of resident linked trips |
-| 8 | heavy_rail | 10,476 | 6,529 | +60.5% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 856 | 2,954 | -71.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0473 | 0.1429 | -66.9% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6474 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 54.1459 | 58.3222 | -7.2% | ok | share of resident linked trips |
+| 2 | ride | 13.5574 | 20.6000 | -34.2% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 19.4914 | 13.4000 | +45.5% | **STOP** >=20% | share of resident linked trips |
+| 4 | taxi | 1.9193 | 0.9916 | +93.6% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.3949 | 2.2084 | +189.6% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3638 | 0.3785 | -3.9% | ok | share of resident linked trips |
+| 7 | bus | 3.0242 | 2.3819 | +27.0% | **STOP** >=20% | share of resident linked trips |
+| 8 | heavy_rail | 12,892 | 6,529 | +97.5% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 1,180 | 2,954 | -60.1% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0354 | 0.1429 | -75.3% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 6.7878 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
-Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy_rail, light_rail, ferry**.
+Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, walk, taxi, bike, bus, heavy_rail, light_rail, ferry**.
 <!-- generated:scoreboard end -->
 
 ## Where the build is
@@ -98,7 +98,7 @@ those of `20260910T203622` (§9.164). The manifest holds
 1. **The roots first: one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196)** **(recommended)** - a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at the same price as above; opens a family; blocked on: D7 (the pair's reading is in: the routers change moved nothing past the band, so the roots are next unless the user chooses the scoring pair or the bike test first); the build needs no approval, the new arm 0 a stated cost - ~28 h at 250 iterations from the pair's 362 s median (§9.176) (§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost; §9.176: the routers pair read - pt coverage 15.78 % against 17.53 % on arm 0, light rail -71.0 %, ride -40.8 % at a 19.11 % ceiling on both arms; #86 #30 #107 #196 #145)
 2. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
 
-Decided: D3 = Require them (recommended) (2026-09-14) · D4 = Inside F35, read against arm 0 (recommended) (2026-09-15) · D5 = Add run.py --close-out; it is a RESULT (recommended) (2026-09-16) · D6 = Detach by default (recommended) (2026-09-16) · D7 = The scoring pair next (2026-09-16)
+Decided: D7 = The scoring pair next (2026-09-16) · D8 = Re-derive the ferry target from the disclosed TPA tap-on series (recommended) (2026-09-16) · D9 = A literature marginal utility of distance for bike, with its sweep (recommended) (2026-09-16) · D10 = Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended) (2026-09-16) · D11 = Yes - set the strict policy (recommended) (2026-09-16)
 <!-- generated:lane end -->
 
 ## Open work

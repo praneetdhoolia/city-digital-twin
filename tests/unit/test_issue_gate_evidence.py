@@ -23,6 +23,7 @@ ways for a sentence about the check to satisfy the check:
 Each is pinned below, because each was green and none was visible: the gate's
 own output said the opposite of what its inputs said.
 """
+import json
 import os
 
 import pytest
@@ -176,3 +177,33 @@ def test_the_third_state_needs_a_statement_like_the_first_does():
 def test_an_unlabelled_issue_still_blocks():
     """The third state widens the ways to declare, not the ways to be silent."""
     assert issue_gate._why_blocking(_issue(labels=())) is not None
+
+
+def _completed_run(tmp_path, name, overlay, values=None, origin=None):
+    d = tmp_path / name
+    d.mkdir()
+    (d / '_run.json').write_text('{"completion": "ran_to_last_iteration"}',
+                                 encoding='utf-8')
+    (d / '_config.json').write_text(json.dumps(dict(
+        layers=['scenario:S2', 'day:WEEKDAY', 'run:%s' % overlay],
+        values=values or {}, resolved_from=origin or {})), encoding='utf-8')
+    return d
+
+
+def test_measurement_due_names_the_run_the_line_waited_for(tmp_path, monkeypatch):
+    """Requirement 10 checks the line; this checks the taking (twelfth report)."""
+    import results_store
+    monkeypatch.setattr(results_store, 'RAW', str(tmp_path))
+    monkeypatch.setattr(results_store, 'resolve',
+                        lambda n: str(tmp_path / n) if (tmp_path / n).exists() else None)
+    _completed_run(tmp_path, '20260916T063903_250it_25pct', 'f35_scoring_msa_25pct',
+                   values={'RUN.replanning.score_msa_representation': 'at_innovation_cutoff'},
+                   origin={'RUN.replanning.score_msa_representation': 'run:f35_scoring_msa_25pct'})
+    by_name = _issue(body='AWAITING-RUN: the twelve modes on 20260916T063903_250it_25pct at its horizon')
+    by_overlay = _issue(body='AWAITING-RUN: coverage on both arms of f35_scoring_msa_25pct')
+    by_field = _issue(body='AWAITING-RUN: the pair `RUN.replanning.score_msa_representation` = `at_innovation_cutoff` against arm 0')
+    not_yet = _issue(body='AWAITING-RUN: the pair `RUN.replanning.plan_selector_for_removal` = `SelectRandom` against arm 0')
+    assert issue_gate.measurement_due(by_name) == '20260916T063903_250it_25pct'
+    assert issue_gate.measurement_due(by_overlay) == '20260916T063903_250it_25pct'
+    assert issue_gate.measurement_due(by_field) == '20260916T063903_250it_25pct'
+    assert issue_gate.measurement_due(not_yet) is None

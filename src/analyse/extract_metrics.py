@@ -289,10 +289,31 @@ def trip_geometry(run_dir, person_lga):
     Trips of zero network distance are excluded: they carry no length to compare.
     """
     by_mode = collections.defaultdict(list)
+    # The short-trip supply on BOTH bases (#30): the routed network distance
+    # the run executed, and the straight-line distance times the detour
+    # factor the demand builder solved its kernels on (B.activity.detour_factor)
+    # - the seed's 17.70 % and the run's 11.13 % were the same trips read on
+    # the two bases, by hand each time (DECISIONS.md 9.169, 9.177).
+    band_km = float(_registry.load().get('B.activity.short_trip_band_km'))
+    detour = float(_registry.load().get('B.activity.detour_factor'))
+    short = dict(resident_trips=0, routed_under_band=0,
+                 straight_x_detour_under_band=0, by_mode_routed=collections.Counter(),
+                 by_mode_straight=collections.Counter())
     for t in rows(run_dir, 'output_trips'):
         if person_lga.get(t['person']) != TARGET_LGA:
             continue
         km = float(t['traveled_distance'] or 0) / 1000.0
+        short['resident_trips'] += 1
+        try:
+            straight = float(t.get('euclidean_distance') or 0) / 1000.0 * detour
+        except ValueError:
+            straight = None
+        if 0 < km <= band_km:
+            short['routed_under_band'] += 1
+            short['by_mode_routed'][t['main_mode']] += 1
+        if straight is not None and 0 < straight <= band_km:
+            short['straight_x_detour_under_band'] += 1
+            short['by_mode_straight'][t['main_mode']] += 1
         if km <= 0:
             continue
         h, m, sec = t['trav_time'].split(':')
@@ -313,7 +334,22 @@ def trip_geometry(run_dir, person_lga):
             median_distance_km=round(med(km), 4),
             mean_time_min=round(sum(mn) / len(mn), 4),
             median_time_min=round(med(mn), 4))
+    n = short['resident_trips'] or 1
+
+    def split(counter, total):
+        return {m: round(100.0 * c / total, 2) for m, c in sorted(counter.items())} if total else {}
+    short_out = dict(
+        band_km=band_km, detour_factor=detour, resident_trips=short['resident_trips'],
+        routed_share_pct=round(100.0 * short['routed_under_band'] / n, 4),
+        straight_x_detour_share_pct=round(100.0 * short['straight_x_detour_under_band'] / n, 4),
+        mode_split_of_routed_short_trips_pct=split(short['by_mode_routed'], short['routed_under_band']),
+        mode_split_of_straight_short_trips_pct=split(short['by_mode_straight'], short['straight_x_detour_under_band']),
+        note='the share of resident linked trips under the band on two bases: '
+             'ROUTED network distance (what the run executed) and straight-line '
+             'x the detour factor the demand builder solved on; the seed is '
+             'read on the second, a run on the first (#30)')
     return dict(geography='%s LGA' % TARGET_LGA, by_mode=out,
+                short_trips=short_out,
                 note='Modelled only. The observed counterpart and its sweep live '
                      'in params/C4_mode_constraints.json; the comparison is a '
                      'CONSTRAINT reported by fit.py and never scored into it.')
@@ -354,6 +390,7 @@ def pt_boardings(run_dir, fraction):
 
 
 _SCHEDULE_CACHE = {}
+_SCHEDULE_EXTRA = {}
 SCHEDULE_SOURCE = {}
 import sys  # noqa: E402
 
@@ -416,9 +453,14 @@ def _schedule_index(run_dir):
     path = schedule_path(run_dir)
     if path is None:
         _SCHEDULE_CACHE[run_dir] = ({}, {})
+        _SCHEDULE_EXTRA[run_dir] = ({}, {})
         return _SCHEDULE_CACHE[run_dir]
     opener = gzip.open if path.endswith('.gz') else open
     stops, modes = {}, {}
+    # the same pass also keeps each stop's coordinates and each route's stop
+    # ids, for the readers that ask WHERE a submode's stops are (the
+    # near-wharf split of #94, measure_near_wharf.py)
+    coords, route_stops = {}, {}
     with opener(path, 'rt', encoding='utf-8') as f:
         line_id = None
         route_id = None
@@ -431,13 +473,37 @@ def _schedule_index(run_dir):
                 continue
             if el.tag == 'stopFacility':
                 stops[el.get('id')] = (el.get('name') or '').strip()
+                try:
+                    coords[el.get('id')] = (float(el.get('x')),
+                                            float(el.get('y')))
+                except (TypeError, ValueError):
+                    pass
                 el.clear()
             elif el.tag == 'transportMode' and line_id and route_id:
                 modes[(line_id, route_id)] = (el.text or '').strip()
+            elif el.tag == 'stop' and line_id and route_id:
+                route_stops.setdefault((line_id, route_id), []).append(
+                    el.get('refId'))
             elif el.tag == 'transitLine':
                 el.clear()
     _SCHEDULE_CACHE[run_dir] = (stops, modes)
+    _SCHEDULE_EXTRA[run_dir] = (coords, route_stops)
     return _SCHEDULE_CACHE[run_dir]
+
+
+def transit_stops_of_mode(run_dir, submode):
+    """{stop id: (x, y)} of every stop a route of `submode` serves, from the
+    run's OWN schedule - the wharves for `ferry`, the platforms for `rail`."""
+    _schedule_index(run_dir)
+    coords, route_stops = _SCHEDULE_EXTRA.get(run_dir, ({}, {}))
+    modes = _SCHEDULE_CACHE[run_dir][1]
+    out = {}
+    for key, ids in route_stops.items():
+        if modes.get(key) == submode:
+            for sid in ids:
+                if sid in coords:
+                    out[sid] = coords[sid]
+    return out
 
 
 def transit_stop_names(run_dir):

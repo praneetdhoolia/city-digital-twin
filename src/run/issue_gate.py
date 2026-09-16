@@ -59,6 +59,7 @@ Where ``gh`` is not installed or not authenticated the gate cannot see the
 tracker and says so rather than pretending the tracker is empty - a launch then
 needs the same explicit, reasoned override.
 """
+import glob
 import io
 import json
 import os
@@ -216,6 +217,58 @@ def evidence(issue):
             latest = match.group(1).strip().strip('*_`').strip()
     if latest is not None and _is_a_measurement(latest):
         return latest
+    return None
+
+
+RUN_NAME = re.compile(r'\b(\d{8}T\d{6}_\d+it_\d+pct)\b')
+OVERLAY_NAME = re.compile(r'\b(f\d+_[a-z0-9_]+_\d+pct)\b')
+FIELD_VALUE = re.compile(r'`([A-Z]+\.[\w.]+)`\s*=\s*`?([\w.]+)`?')
+
+
+def measurement_due(issue):
+    """The completed run an awaiting-run issue's own line names, or None.
+
+    Requirement 10 checks that the line EXISTS; nothing checked that the
+    measurement was TAKEN once the run it named had run. The twelfth report
+    (16 September 2026) found five issues whose line named "the first pair
+    arm" with the pair a result on disk and their measurements unread. A
+    line that names a run directory or a run overlay is checkable: when a
+    run of that name, or a completed run launched from that overlay, has a
+    `_run.json`, the measurement is due and the gate says so - reported,
+    never blocking (a due measurement is work, not a launch question).
+    """
+    line = evidence(issue)
+    if not line:
+        return None
+    try:
+        import results_store                                  # noqa: PLC0415
+    except ImportError:
+        return None
+    for m in RUN_NAME.finditer(line):
+        d = results_store.resolve(m.group(1))
+        if d and os.path.exists(os.path.join(d, '_run.json')):
+            return m.group(1)
+    names = [m.group(1) for m in OVERLAY_NAME.finditer(line)]
+    pairs = [(m.group(1), m.group(2)) for m in FIELD_VALUE.finditer(line)]
+    if not names and not pairs:
+        return None
+    for d in glob.glob(os.path.join(results_store.RAW, '*', '_run.json')):
+        snap = os.path.join(os.path.dirname(d), '_config.json')
+        try:
+            doc = json.load(open(snap, encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        # a run's overlay is the `run:<name>` layer of its config snapshot
+        layers = doc.get('layers') or []
+        if any('run:%s' % n in layers for n in names):
+            return os.path.basename(os.path.dirname(d))
+        # a one-field control names its field and value; the run that
+        # carried that value FROM ITS OVERLAY is the arm the line waits for
+        values, origin = doc.get('values') or {}, doc.get('resolved_from') or {}
+        for key, val in pairs:
+            if key in values and str(values[key]) == val \
+                    and str(origin.get(key, '')).startswith('run:'):
+                return os.path.basename(os.path.dirname(d))
     return None
 
 
@@ -404,6 +457,12 @@ def check(verbose=True, run_config=None):
         for i in later:
             print('  #%-4d %s   [deferred: outside this run\'s lane]'
                   % (i['number'], i['title'][:70]))
+        for i in issues:
+            if LABEL in i['labels']:
+                due = measurement_due(i)
+                if due:
+                    print('  #%-4d %s   [MEASUREMENT DUE: %s has run]'
+                          % (i['number'], i['title'][:60], due))
         # Always printed, in or out of lane, blocking or not: the point of the
         # third state is that it is visible, not that it is quiet.
         for i in awaiting_decision(issues):

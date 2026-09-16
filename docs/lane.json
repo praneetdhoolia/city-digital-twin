@@ -276,6 +276,111 @@
       "answer": "The scoring pair next",
       "answered": "2026-09-16",
       "note": "Taken 16 Sep 2026 with the machine idle: the scoring pair launches now against arm 0 inside F35, and the roots rebuild proceeds in parallel; the user's selection carries the stated-cost approval for one 25 % probe and one 25 % arm up to 35 h. The rebuilt family's arm 0 follows."
+    },
+    {
+      "id": "D8",
+      "question": "The ferry's 1 km cross-harbour market is 305 resident trips (0.19 %) on the pair and the ferry takes 15.7 % of it; scaled boardings 1,148/weekday sit inside the disclosed Newcastle-wharf tap-on bound (234-1,347); the derived target (0.143 % of resident trips, ~906 trips/day, a lockdown-month census cell) is three times the market. Close ferry from which side?",
+      "options": [
+        {
+          "label": "Re-derive the ferry target from the disclosed TPA tap-on series (recommended)",
+          "detail": "a supersession of the census-cell derivation (9.89) recorded in DECISIONS.md; the model already sits inside the newer observation; no run"
+        },
+        {
+          "label": "Model the reach beyond 1 km",
+          "detail": "intermodal access at the wharves (bike/car to the wharf, #167 access modes) or the sweep of RUN.transit_router.search_radius_m - a supply-side mechanism, opens a family"
+        },
+        {
+          "label": "Both: the tap-on target now, the reach later",
+          "detail": "re-derive now; keep #94 awaiting the access mechanism"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        94,
+        185
+      ],
+      "evidence": "measure_near_wharf.py on the pair and arm 0 (16 September 2026), #94's comment",
+      "asked": "2026-09-16",
+      "answer": "Re-derive the ferry target from the disclosed TPA tap-on series (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: a supersession of the census-cell derivation; the reach mechanism stays a later item on #94"
+    },
+    {
+      "id": "D9",
+      "question": "Bike's mechanism is length (2.9 % of the car-available at 10.6 km, 14.8 % of the car-less at 11.5 km; resident mean 8.13 km against 5.2). The roots rebuild gives bike a distance cost. From which source?",
+      "options": [
+        {
+          "label": "A literature marginal utility of distance for bike, with its sweep (recommended)",
+          "detail": "declared C.scoring.bike_distance_utility_per_km from a named estimate (the Melbourne AToM/VISTA model already cited for beta_bike_mode, 8.4/9.28), source literature, sweep; reaches scoring.modeParams[bike].marginalUtilityOfDistance; no new value invented"
+        },
+        {
+          "label": "A constrained solve on the observed 5.2 km mean",
+          "detail": "derived: the calibration loop solves the coefficient so bike's modelled mean trip length reproduces C.constraint.trip_length_km.bike, never its share - needs arms"
+        },
+        {
+          "label": "The feasibility bound only (B.mode.bike_feasible_km at its derived p99, 23.95 km)",
+          "detail": "no scoring change; the reach refusal measured worse for walk (9.106), untested for bike alone"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        107
+      ],
+      "evidence": "mode_by_demographics.py on the pair (16 September 2026), #107's comment",
+      "asked": "2026-09-16",
+      "answer": "A literature marginal utility of distance for bike, with its sweep (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: declared from a named estimate at the roots rebuild; reaches marginalUtilityOfDistance for bike"
+    },
+    {
+      "id": "D10",
+      "question": "Every 25 % arm since arm 0 runs with the mode gate off by overlay (six modes past the bar would stop it at 100), while GOAL.md's loop and the monitoring page describe a watcher that stops at 20 %. What is the rule?",
+      "options": [
+        {
+          "label": "Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended)",
+          "detail": "the loop's step 2 gains the clause; the position page states it; the overlays keep RUN.gate.interval_iterations 0 with their justification; nothing else changes"
+        },
+        {
+          "label": "Restore the gate as a trend read",
+          "detail": "the watcher stops at 100 only when a mode past the bar is still moving away; the overlays drop the departure; a listener change, no family"
+        },
+        {
+          "label": "Leave both as they are",
+          "detail": "the departure stays undocumented"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        227
+      ],
+      "evidence": "the twelfth report, upcoming risk 2; f35_*_25pct.json interval_iterations 0 under allow_outside_sweep",
+      "asked": "2026-09-16",
+      "answer": "Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: GOAL.md loop step 2 and monitoring-and-gates.md state it"
+    },
+    {
+      "id": "D11",
+      "question": "The main ruleset requires the nine status checks (D3) but strict_required_status_checks_policy is false: a PR green against an older main merges without re-running on the merged tree. Require branches up to date before merging?",
+      "options": [
+        {
+          "label": "Yes - set the strict policy (recommended)",
+          "detail": "one gh api call on the ruleset; a PR behind main must update (one more CI run per raced PR)"
+        },
+        {
+          "label": "No - keep it as it is",
+          "detail": "same-day PRs keep merging without a re-run on the merged tree"
+        }
+      ],
+      "recommended": 0,
+      "issues": [
+        230
+      ],
+      "evidence": "the twelfth report, upcoming risk 16; the ruleset read on 16 September 2026",
+      "asked": "2026-09-16",
+      "answer": "Yes - set the strict policy (recommended)",
+      "answered": "2026-09-16",
+      "note": "16 Sep 2026: strict_required_status_checks_policy true on the main ruleset"
     }
   ]
 }

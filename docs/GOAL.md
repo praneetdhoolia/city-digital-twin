@@ -84,7 +84,10 @@ comes first; the questions are applications of it.
    are the derived targets in
    `data/processed/validation/mode_targets_by_mode.csv`.
 2. If any mode is past 20 % deviation, or heading there on the trend, stop
-   the run and list the modes.
+   the run and list the modes — except while a one-field control is being
+   differenced against its arm 0, which is read at the horizon the control
+   was read at, with the bar as a trend (a scoped departure the overlay
+   declares and justifies; D10, 16 September 2026).
 3. Find the cause — missing data, a bias, an over-manipulated parameter — and
    fix it from the root. No workarounds, no compensating constants. A
    deviation in one mode is often another mode's deficit: consider them
