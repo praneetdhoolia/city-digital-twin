@@ -1,6 +1,6 @@
 # Signalling in Newcastle specifically
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 What is known — and provably not knowable from public sources — about how the
 signals on and around the Hunter/Scott Street corridor actually operate. Tags

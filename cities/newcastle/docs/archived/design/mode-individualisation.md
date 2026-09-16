@@ -1,6 +1,6 @@
 # Mode individualisation — every mode's own observed share, and the three tiers of "distinct"
 
-> **FROZEN DOSSIER — every tier it costed has since been built (DECISIONS.md §9.52, §9.77, §9.78, §9.86, §9.87).** Current positions: [`positions/public-transport-and-yardsticks.md`](../../positions/public-transport-and-yardsticks.md), [`positions/taxi-and-rideshare.md`](../../positions/taxi-and-rideshare.md), [`positions/motorbike-truck-and-freight.md`](../../positions/motorbike-truck-and-freight.md).
+> **FROZEN DOSSIER — every tier it costed has since been built (DECISIONS.md §9.52, §9.77, §9.78, §9.86, §9.87).** Current positions: [`positions/public-transport-and-yardsticks.md`](../../../../../docs/positions/public-transport-and-yardsticks.md), [`positions/taxi-and-rideshare.md`](../../../../../docs/positions/taxi-and-rideshare.md), [`positions/motorbike-truck-and-freight.md`](../../../../../docs/positions/motorbike-truck-and-freight.md).
 
 **Evidence dossier for issues #49 and #50 (standing directives, DECISIONS.md
 §9.51 priorities 2 and 4). Research record — measured anchors and costed

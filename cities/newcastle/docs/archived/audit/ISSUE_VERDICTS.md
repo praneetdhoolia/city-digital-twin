@@ -1,10 +1,10 @@
 # Issue verdicts — every open issue re-measured on today's model
 
-> **FROZEN RECORD — verdicts written on 15 August 2026 against a model that no longer exists.** Every issue it assesses has since been re-measured; the live state is on the board and in [`positions/`](../../positions). Never edited.
+> **FROZEN RECORD — verdicts written on 15 August 2026 against a model that no longer exists.** Every issue it assesses has since been re-measured; the live state is on the board and in [`positions/`](../../../../../docs/positions). Never edited.
 
 **Written 15 August 2026, after the zero-hardcoding change**, against the
 protocol in
-[`handover/ISSUE_ASSESSMENT_BRIEF.md`](../ISSUE_ASSESSMENT_BRIEF.md) §2:
+`handover/ISSUE_ASSESSMENT_BRIEF.md` (deleted in the 9.171 change; git history holds it) §2:
 *every open issue is a hypothesis until it is re-measured, because the model it
 was measured on no longer exists.*
 
@@ -262,7 +262,7 @@ nothing.
 
 ## What this changes about the next action
 
-The B0 ordering in [`STATUS.md`](../../STATUS.md) survives unchanged — #32 is still
+The B0 ordering in [`STATUS.md`](../../../../../docs/STATUS.md) survives unchanged — #32 is still
 first, and it is still the point of no return. What the verdicts change is the
 **contents of the batch** and the **acceptance tests**:
 

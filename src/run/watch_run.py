@@ -46,9 +46,6 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
-for _p in (HERE, os.path.join(REPO, 'src', 'analyse')):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
 
 import results_store                                              # noqa: E402
 from procs import pid_alive, arm_running                          # noqa: E402

@@ -1,6 +1,6 @@
 # Point-to-point (taxi + rideshare) mode — evidence dossier and task definition
 
-> **FROZEN DOSSIER — taxi is a physical mode with a finite fleet (DECISIONS.md §9.86, §9.99).** Current position: [`positions/taxi-and-rideshare.md`](../../positions/taxi-and-rideshare.md).
+> **FROZEN DOSSIER — taxi is a physical mode with a finite fleet (DECISIONS.md §9.86, §9.99).** Current position: [`positions/taxi-and-rideshare.md`](../../../../../docs/positions/taxi-and-rideshare.md).
 
 *18 August 2026. The "no separate taxi/rideshare mode" decision (STATUS declined
 table; DECISIONS.md) was **re-opened by recorded decision on 18 Aug 2026 on new

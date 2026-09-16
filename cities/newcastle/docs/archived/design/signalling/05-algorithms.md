@@ -1,6 +1,6 @@
 # The algorithms, in pseudo-code
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 Reference specifications for every control algorithm named in this dossier —
 what SCATS actually computes, what the MATSim contrib controllers compute, and

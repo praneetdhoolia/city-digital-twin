@@ -1,6 +1,6 @@
 # Operated SCATS data for Newcastle found in a public planning document
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 Discovery made 25 Aug 2026, extending [03-data-availability.md](03-data-availability.md)
 and partially reopening the "documentation hunt is closed" conclusion of

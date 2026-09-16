@@ -1,6 +1,6 @@
 # Signal data: what is open, refused, purchasable, and borrowable
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 The project's premise — SCATS phasing is unobtained and handled by sweep
 (`DECISIONS.md` §0, §9.21; `A.signals.scats_phasing` status `unobtained`) —

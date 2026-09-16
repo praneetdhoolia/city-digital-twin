@@ -29,8 +29,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(HERE))
-sys.path.insert(0, os.path.join(REPO, 'src'))
-import city  # noqa: E402
+import city  # noqa: E402  (the import roots come from the installed .pth, #181)
 
 HISTORY_CAP = 15
 

@@ -1,6 +1,6 @@
 # Convergence pilot evaluation — issue #5, first post-rebuild measurements
 
-> **FROZEN RECORD — an 18 August 2026 measurement on a model that no longer exists (family F1).** Kept as evidence, never edited. The current position is in [`positions/`](../../positions).
+> **FROZEN RECORD — an 18 August 2026 measurement on a model that no longer exists (family F1).** Kept as evidence, never edited. The current position is in [`positions/`](../../../../../docs/positions).
 
 *18 August 2026; the #5 verdict updated the same day when the declaration
 landed. Two arms complete on the 16 August rebuild; the third was cancelled.

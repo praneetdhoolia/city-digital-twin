@@ -1,6 +1,6 @@
 # Testing the Integration Claim
 
-> **FROZEN ORIGIN DESIGN.** This proposal framed the project as a light-rail counterfactual. Since 24 August 2026 the goal is the twin itself — [`GOAL.md`](../../GOAL.md) — and this study is its first application. Its stated premises are corrected in DECISIONS.md §2 and §9.74 (SUMO removed), and its §7.2 fallback "no SCATS → sweep" is superseded by GOAL.md requirement 6 (the algorithm is implemented, §9.88). Never edited.
+> **FROZEN ORIGIN DESIGN.** This proposal framed the project as a light-rail counterfactual. Since 24 August 2026 the goal is the twin itself — [`GOAL.md`](../../../../../docs/GOAL.md) — and this study is its first application. Its stated premises are corrected in DECISIONS.md §2 and §9.74 (SUMO removed), and its §7.2 fallback "no SCATS → sweep" is superseded by GOAL.md requirement 6 (the algorithm is implemented, §9.88). Never edited.
 
 ## A counterfactual microsimulation of the Newcastle Light Rail as a transport intervention
 

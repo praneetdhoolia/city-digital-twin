@@ -1,6 +1,6 @@
 # TIA harvest log — the systematic corridor pass (#78 route 2)
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 Standing opportunistic lane recorded in `DECISIONS.md` §9.76 and
 [08-operated-signal-data-discovery.md](08-operated-signal-data-discovery.md):

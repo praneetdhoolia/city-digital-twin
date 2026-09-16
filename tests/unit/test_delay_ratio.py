@@ -1,13 +1,7 @@
 """The viewer's congestion measure on a payload written before the telemetry
 measured delay this way: the qsim's one-second step is not delay, a stub is
 judged over a map app's segment, and a real queue stays red."""
-import os
-import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src', 'analyse'))
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'src'))
-
-import run_view  # noqa: E402
+import run_view
 
 
 def test_one_second_on_a_stub_is_flowing():
