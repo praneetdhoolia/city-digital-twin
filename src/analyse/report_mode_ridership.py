@@ -713,9 +713,9 @@ def _print_coverage_bound(run_dir, iteration, breaches):
     row = table[at]
 
     targets = load_targets()
-    print('\nCHOICE-SET BOUND at iteration %d%s - the share of agents holding '
-          'any plan for the mode, which is the MOST a constant for it can '
-          'reach:' % (at, '' if at == iteration else
+    print('\nCHOICE-SET BOUND at iteration %d%s - the share of TRIPS that have '
+          'executed the mode at least once, which is the MOST a constant for '
+          'it can reach:' % (at, '' if at == iteration else
                       ' (nearest written to %d)' % iteration))
     unreachable = []
     for mode, modelled, target, dev in sorted(breaches, key=lambda x: -abs(x[3])):
