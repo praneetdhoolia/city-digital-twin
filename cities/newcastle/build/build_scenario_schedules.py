@@ -142,22 +142,14 @@ S1_SHUTTLE = alignment('s1_bus_shuttle')
 S0_EXTENSION = alignment('s0_heavy_rail_extension')
 
 
-def hav(a, b):
-    R = 6371000.0
-    p1, p2 = math.radians(a[0]), math.radians(b[0])
-    dl = math.radians(b[1] - a[1])
-    dp = p2 - p1
-    return 2 * R * math.asin(math.sqrt(
-        math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+from geo import haversine as hav   # noqa: E402  (one copy, src/build/geo.py)
+
+
+from geo import kinematic_time as _kinematic_time   # noqa: E402
 
 
 def kin(d, v_kmh, a=ACCEL, b=DECEL):
-    v = v_kmh / 3.6
-    da, db = v * v / (2 * a), v * v / (2 * b)
-    if d >= da + db:
-        return v / a + v / b + (d - da - db) / v
-    vp = math.sqrt(2 * d * a * b / (a + b))
-    return vp / a + vp / b
+    return _kinematic_time(d, v_kmh, a, b)
 
 
 def sec(t):

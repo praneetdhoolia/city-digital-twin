@@ -172,23 +172,10 @@ LR_STOPS_ORDER = ['Newcastle Interchange', 'Honeysuckle', 'Civic',
                   'Crown Street', 'Queens Wharf', 'Newcastle Beach']
 
 
-def hav(a, b):
-    R = 6371000.0
-    p1, p2 = math.radians(a[0]), math.radians(b[0])
-    dl = math.radians(b[1] - a[1])
-    dp = p2 - p1
-    return 2 * R * math.asin(math.sqrt(
-        math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+from geo import haversine as hav   # noqa: E402  (one copy, src/build/geo.py)
 
 
-def kinematic_time(d, v_kmh, a, b):
-    """Seconds to cover d metres from rest to rest, trapezoidal or triangular."""
-    v = v_kmh / 3.6
-    da, db = v * v / (2 * a), v * v / (2 * b)
-    if d >= da + db:
-        return v / a + v / b + (d - da - db) / v
-    vp = math.sqrt(2 * d * a * b / (a + b))
-    return vp / a + vp / b
+from geo import kinematic_time   # noqa: E402  (one copy, src/build/geo.py)
 
 
 def read_lr():
