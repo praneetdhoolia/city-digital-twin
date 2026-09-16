@@ -780,7 +780,7 @@ STRUCTURAL_INLINE = {
         'a buffer size (1 << 20 draws) for the seeded random stream',
     'src/build/build_matsim_plans.py:u:20':
         'the same buffer size, refilled',
-    'src/build/build_matsim_plans.py:main:0.05':
+    'src/build/build_matsim_plans.py:thin_carve_cells:0.05':
         _TOL,
     'src/build/build_matsim_run_inputs.py:stamp:0.05':
         'a REPORTING bin: a grade within 0.05 % of flat is counted as flat in the '
