@@ -96,6 +96,7 @@ TRUCK_RESIDENT_SHARE = CFG.get('B.truck.resident_trip_share')
 _TRUCK_Q = {'q': 0.0}
 
 import hashlib as _hashlib  # noqa: E402
+import types as _types
 
 
 def truck_user(pid):
@@ -554,6 +555,629 @@ def leaf_mixed_tours(rows, plan_modes):
     return bad
 
 
+def write_person(pid, rows, ctx):
+    """One iteration of the loop this replaced in write_day(); `ctx` carries the
+    enclosing scope (29 names). Extracted mechanically, byte-identical outputs."""
+    rows.sort(key=lambda r: int(r['trip_seq']))
+    tier = rows[0]['agent_tier']
+    external = tier in ('external', 'through', 'freight')
+    if tier in ('through', 'freight'):
+        # A through agent is a boundary-tier vehicle crossing the study
+        # area (issue #20, DECISIONS.md 9.41); a freight agent is a
+        # heavy-vehicle background trip (issue #24, DECISIONS.md 9.49).
+        # Both volumes are anchored on observed road counts, so the
+        # mode is locked - car and truck respectively: the availability
+        # calculator returns exactly that singleton and the seed never
+        # draws. Demographics are the external placeholders.
+        car_av, age, lic, emp, stu, mob = (
+            1, EXTERNAL_PROFILE['age'], 1,
+            EXTERNAL_PROFILE['employment_status'],
+            EXTERNAL_PROFILE['student_status'],
+            EXTERNAL_PROFILE['mobility_impairment_flag'])
+        ride_av, bike_av, hh_id = 0, 0, None
+        inc = None               # a volume, not a budget (9.138)
+        moto = False
+        trk = False
+    elif external:
+        # An external boundary agent has no B1 household, so its
+        # attributes are definitional placeholders (B.external
+        # .agent_profile). Ride availability is NOT one of them and is
+        # not "unknown": a car passenger needs a household vehicle AND
+        # another licence holder to drive them, and a household-less
+        # agent has neither, so ride is unavailable by the same identity
+        # that governs everyone else. Resolving it the other way, which
+        # is what this branch used to do, made 432 of 962 external trips
+        # car-passenger trips with no possible driver (DECISIONS.md 9.15).
+        car_av, age, lic, emp, stu, mob = (
+            EXTERNAL_PROFILE['car_available'], EXTERNAL_PROFILE['age'],
+            EXTERNAL_PROFILE['licence_holder'],
+            EXTERNAL_PROFILE['employment_status'],
+            EXTERNAL_PROFILE['student_status'],
+            EXTERNAL_PROFILE['mobility_impairment_flag'])
+        ride_av = int(EXTERNAL_RIDE_AVAILABLE)
+        # a boundary agent is household-less, so no ownership identity
+        # exists to deny bike from; the choice is recorded in
+        # DECISIONS.md 9.39 rather than silently made
+        bike_av = 1
+        # A boundary agent has no B1 household by construction, so it
+        # carries no householdId and can never pair with a driver. That
+        # is the same identity that already denies it `ride`.
+        hh_id = None
+        inc = None               # household-less, no G17 band (9.138)
+        moto = False
+        trk = False
+    else:
+        a = ctx.attrs.get(pid)
+        if a is None:
+            return
+        car_av, age, lic, emp, stu, mob, ride_av, bike_av, hh_id, inc = a
+        if pid in ctx.lift_hh:
+            # 9.60: a bound lift passenger has, by construction, a
+            # driver who can carry them - the identity ride_avail
+            # derives from is satisfied across the household boundary.
+            ride_av = 1
+        escort_denied = False
+        if (ESCORT_EXCLUDES_RIDE and ESCORT_EXCLUSION_SCOPE == 'day'
+                and ride_av
+                and any(r['dest_activity_type'] == 'escort'
+                        for r in rows)):
+            # 9.143: the DAY-wide denial, kept only as the sweep's
+            # `day` member. Under `subtour` the person keeps ride
+            # availability and the escorting tour is still held at car
+            # - by the seed, which keeps a serve tour on car, and by
+            # GatedSubtourModeChoice, which refuses a non-car proposal
+            # on boundDriveTrips. The identity is enforced where it
+            # applies instead of across the whole day, which cost
+            # 33,832 WEEKDAY bound trips the demand had already bound
+            # to a named driver.
+            ride_av = 0
+            escort_denied = True
+            ctx.escort_ride_denied[0] += 1
+        # The motorbike carve (DECISIONS.md 9.52) - but never on an
+        # escort day: a pillion passenger is not how the escorted
+        # child travels in any data this project holds, and the ride
+        # pairing pairs passengers with CAR legs. Same day-plan-level
+        # denial pattern as ESCORT_EXCLUDES_RIDE above.
+        # 9.125: a person the binders named as someone's DRIVER is
+        # never carved - the pairing engine pairs ride legs with CAR
+        # legs only, so a carved driver would strand the passenger
+        # the demand bound to them. Escort days were already excluded.
+        names_driver = (pid in ctx.joint_driver or pid in ctx.shared_driver
+                        or any(r['dest_placement'] in
+                               ('escorted', 'lift_pickup', 'lift_serve')
+                               for r in rows))
+        # 9.146: nor a person the binders named as someone's
+        # PASSENGER - a rider locked to a motorbike or a truck cannot
+        # also be driven, and at the F26 gate 373 sampled locked
+        # persons held bound trips, 571 of which were selected as the
+        # lock's mode. Excluded BEFORE the draw, as 9.122 requires.
+        is_passenger = pid in ctx.bound_driver
+        moto = (bool(car_av) and bool(lic) and not names_driver
+                and not is_passenger
+                and motorbike_user(pid)
+                and not any(r['dest_activity_type'] == 'escort'
+                            for r in rows))
+        # 9.125: the resident truck carve, same pool, one lock per
+        # person (a motorcyclist is not also a truck driver)
+        trk = (not moto and bool(car_av) and bool(lic)
+               and not names_driver and not is_passenger
+               and truck_user(pid)
+               and not any(r['dest_activity_type'] == 'escort'
+                           for r in rows))
+
+    # one mode per tour keeps chain-based modes conserved from the start
+    serve_tours = set()
+    covered_tours = set()
+    covered_seed_tids = set()
+    if not external:
+        for r in rows:
+            # a BOUND serve tour carries a serving placement on one of
+            # its legs ('escorted' from the 9.46 household binder,
+            # 'lift_pickup'/'lift_serve' from the 9.60 pass)
+            if r['dest_placement'] in ('escorted', 'lift_pickup',
+                                       'lift_serve'):
+                serve_tours.add(int(r['tour_id']))
+        # 9.84: a joint driver's tour is a serving tour in the same
+        # sense - a companion is booked into that car
+        serve_tours |= ctx.joint_driver.get(pid, EMPTY_SET)
+        # 9.124: a driver carrying a shared-ride passenger serves too
+        serve_tours |= ctx.shared_driver.get(pid, EMPTY_SET)
+        covered_tours = ctx.covered_by_pid.get(pid, EMPTY_SET)
+        if serve_tours and not car_av:
+            ctx.serve_tours_carless[0] += len(serve_tours)
+    tour_mode = {}
+    for r in rows:
+        tid = int(r['tour_id'])
+        if tid not in tour_mode:
+            if tier == 'freight':
+                m = 'truck'
+            elif tier == 'through':
+                m = 'car'
+            elif moto:
+                m = 'motorbike'
+            elif trk:
+                m = 'truck'
+            elif tid in serve_tours and car_av:
+                # 9.68 B.mode.serve_tour_seed: the pairing engine
+                # pairs ride legs with CAR legs only - a bound serve
+                # tour seeded with any other mode cannot serve the
+                # passenger booked onto it. Seed only; SubtourModeChoice
+                # stays free to move it. A LICENSED-BUT-CARLESS escort
+                # (a parent walking a child to school) keeps the
+                # uninformed draw - seeding car would put an illegal
+                # plan in memory (the 9.15 class).
+                m = SERVE_TOUR_SEED
+            elif (tid in covered_tours and ride_av
+                    and BOUND_PASSENGER_SEED != 'uninformed'):
+                # 9.68 B.mode.bound_passenger_seed: a tour covered by
+                # serve tours in BOTH directions starts at the coherent
+                # two-sided state; selection keeps or abandons it.
+                m = BOUND_PASSENGER_SEED
+                covered_seed_tids.add(tid)
+            else:
+                m = pick_mode(car_av, ctx.u, ctx.seed_table,
+                              ride_available=bool(ride_av),
+                              bike_available=bool(bike_av) and (
+                                  BIKE_MIN_AGE <= 0
+                                  or age >= BIKE_MIN_AGE))
+            tour_mode[tid] = m
+    ctx.tours += len(tour_mode)
+
+    # 9.120: WHICH TRIPS the bindings actually cover, as 1-based trip
+    # indices in plan order - the same numbering MATSim's own
+    # TripStructureUtils.getTrips and the trips table use. The binding
+    # tables have always carried the tour AND the direction; the
+    # population carried only `boundDriver`, a person-level identity,
+    # so the run could offer `ride` on any trip of a bound person and
+    # on every trip of an unbound one. Measured on the F14 arm at
+    # iteration 30: 36% of residents' planned ride legs belonged to
+    # persons with no declared driver at all, and every one of them
+    # was executed as a drive or a walk while the plan kept `ride`.
+    #   boundRideTrips  - trips a declared driver serves (a drop-off
+    #                     is the tour's first trip, a pick-up its
+    #                     last, a joint companion tour every trip)
+    #   boundDriveTrips - trips on a tour that SERVES a booked
+    #                     passenger (the driver's commitment)
+    # Consumed by citysim.GatedSubtourModeChoice, which refuses a
+    # `ride` proposal off the first list and a non-car proposal on
+    # the second, and by the full-choice-set seed below.
+    bound_ride_trips = []
+    bound_drive_trips = []
+    if not external:
+        by_tour = {}
+        for i, r in enumerate(rows):
+            by_tour.setdefault(int(r['tour_id']), []).append(i + 1)
+        for tid, idx in by_tour.items():
+            dirs = set()
+            dirs |= ctx.escort_cover.get((pid, tid), EMPTY_SET)
+            dirs |= ctx.lift_cover.get((pid, tid), EMPTY_SET)
+            if tid in ctx.joint_companion.get(pid, EMPTY_SET):
+                dirs |= {'drop', 'pickup'}
+                bound_ride_trips.extend(idx)
+            else:
+                if 'drop' in dirs:
+                    bound_ride_trips.append(idx[0])
+                if 'pickup' in dirs and len(idx) > 1:
+                    bound_ride_trips.append(idx[-1])
+            if tid in serve_tours:
+                bound_drive_trips.extend(idx)
+        bound_ride_trips = sorted(set(bound_ride_trips))
+        bound_drive_trips = sorted(set(bound_drive_trips))
+        # 9.143 (#86): a bound trip on a person the availability
+        # identity denies `ride` to is unreachable no matter what the
+        # seed offers - no variant may carry a mode the person cannot
+        # use. MEASURED, NOT CHANGED: the escort-day denial is
+        # B.activity.escort_excludes_ride, whose own derivation calls
+        # this collateral "small" and has never counted it in trips;
+        # the vehicle-less denial is the ride_avail identity itself.
+        if bound_ride_trips and not ride_av:
+            if escort_denied:
+                ctx.unreachable['escort_day_trips'] += len(bound_ride_trips)
+                ctx.unreachable['escort_day_persons'].add(pid)
+            else:
+                ctx.unreachable['no_vehicle_trips'] += len(bound_ride_trips)
+                ctx.unreachable['no_vehicle_persons'].add(pid)
+
+    # The plans this person starts with. `uniform_draw`: the one
+    # plan the loop above drew. `full_choice_set` (9.120): one plan
+    # per usable mode, each mode on every tour it may take -
+    # serving tours stay car (the commitment) and the bound-ride
+    # variant puts ride on the covered tours only. Locked tiers and
+    # the carve keep their single plan: a lock is a definition.
+    # 9.143: a plan is (tour modes, per-trip overrides). The
+    # override is empty for every plan but the partial-bind variant,
+    # so `uniform_draw` and every base-mode plan behave exactly as
+    # before.
+    plan_set = [(dict(tour_mode), {})]
+    if (SEED_METHOD == 'full_choice_set' and not external
+            and not moto and not trk):
+        base_modes = []
+        if car_av:
+            base_modes.append('car')
+        base_modes.append('walk')
+        if bike_av and (BIKE_MIN_AGE <= 0 or age >= BIKE_MIN_AGE):
+            base_modes.append('bike')
+        base_modes.append('pt')
+        if TAXI_MIN_AGE <= 0 or age >= TAXI_MIN_AGE:
+            base_modes.append('taxi')
+        # 9.143 (#86): a tour is FULLY bound when every trip of it is
+        # served, and PARTLY bound when only some are - a drop-off
+        # binds the tour's first trip and a pick-up its last (9.120),
+        # so a one-directional escort or lift always lands here.
+        ride_tours, partial_tours = set(), {}
+        if ride_av and bound_ride_trips:
+            for tid, idx in by_tour.items():
+                covered = [i for i in idx if i in bound_ride_trips]
+                if not covered:
+                    continue
+                if len(covered) == len(idx):
+                    ride_tours.add(tid)
+                else:
+                    partial_tours[tid] = covered
+        # 9.164 (#86, #48): THE DECLARED PASSENGER IS PUT ON `ride`,
+        # exactly as the declared driver is put on `car`. A serving
+        # tour reads `p[tid] = 'car'` in EVERY seeded plan two lines
+        # below - the demand states that the driver drives - while the
+        # passenger they carry got a ride variant as ONE alternative
+        # among several and drew a mode in the rest. The asymmetry is
+        # measurable: of 20,902 declared escort pairs in sample, 10,224
+        # have the passenger driving THEIR OWN CAR against 7,821
+        # co-assigned (9.163). It also bounds the calibration - ride's
+        # target of 20.6000 % sits above the 20.05 % of agents who have
+        # ever held a ride plan, so no scoring constant reaches it and
+        # the only layer that can is this one.
+        bound_every = (BOUND_PASSENGER_PLACEMENT == 'every_plan'
+                       and (ride_tours or partial_tours))
+        plan_set = []
+        for base in base_modes:
+            p, over = {}, {}
+            for tid in by_tour:
+                if tid in serve_tours and car_av:
+                    p[tid] = 'car'
+                elif bound_every and tid in ride_tours:
+                    p[tid] = 'ride'
+                    covered_seed_tids.add(tid)
+                elif bound_every and tid in partial_tours:
+                    # the uncovered leg cannot be chain-based or the
+                    # subtour mixes (9.119); a base that already is
+                    # non-chain is kept, so the person's own plan for
+                    # that mode is not silently replaced
+                    p[tid] = (PARTIAL_BIND_BASE
+                              if base in CHAIN_BASED_MODES else base)
+                    covered_seed_tids.add(tid)
+                    for i in partial_tours[tid]:
+                        over[i] = 'ride'
+                else:
+                    p[tid] = base
+            plan_set.append((p, over))
+        if bound_every:
+            # with every plan carrying the same bound assignment, two
+            # bases can collapse onto one plan (a person whose whole
+            # day is bound has no free tour left to differ on). A
+            # duplicate in plan memory is a wasted slot of eight, so
+            # they are folded rather than seeded.
+            seen, uniq = set(), []
+            for p, over in plan_set:
+                key = (tuple(sorted(p.items())),
+                       tuple(sorted(over.items())))
+                if key in seen:
+                    continue
+                seen.add(key)
+                uniq.append((p, over))
+            ctx.bound_placement['plans_folded'] += len(plan_set) - len(uniq)
+            if len(uniq) < 2 and len(base_modes) > 1:
+                # A PERSON WHOSE WHOLE DAY IS BOUND WOULD BE LEFT WITH
+                # ONE PLAN, and that contradicts the seed's own reason
+                # for existing. B.mode.seed_method = full_choice_set
+                # holds one plan per usable mode precisely so that no
+                # mode is favoured and the whole set is SCORED inside
+                # the first few iterations - and 9.120 measured what
+                # happens without it: at the F14 gate 65% of the agents
+                # still cycling held no bike-free plan in memory,
+                # because random innovation had not yet offered the
+                # alternative. So the fold keeps ONE alternative in
+                # which the bound tours take the person's first base
+                # mode, which is exactly the plan the pre-change seed
+                # gave them. The binding still holds in every OTHER
+                # plan, which is what `every_plan` means.
+                alt = {}
+                for tid in by_tour:
+                    if tid in serve_tours and car_av:
+                        alt[tid] = 'car'
+                    else:
+                        alt[tid] = base_modes[0]
+                uniq.append((alt, {}))
+                ctx.bound_placement['alternatives_kept'] += 1
+            plan_set = uniq
+            ctx.bound_placement['ride_tours'] += len(ride_tours)
+            ctx.bound_placement['partial_tours'] += len(partial_tours)
+            ctx.bound_placement['persons'].add(pid)
+        if ride_tours and not bound_every:
+            # the bound-ride variant on the car base when a car is
+            # available (the uncovered tours are driven), else on walk
+            base = 'car' if car_av else 'walk'
+            p = {}
+            for tid in by_tour:
+                if tid in serve_tours and car_av:
+                    p[tid] = 'car'
+                elif tid in ride_tours:
+                    p[tid] = 'ride'
+                    covered_seed_tids.add(tid)
+                else:
+                    p[tid] = base
+            plan_set.append((p, {}))
+        # 9.143 (#86): THE PARTIALLY BOUND TOUR GETS A PLAN AT ALL.
+        # Until now such a tour was excluded from the ride variant
+        # outright, so its bound trips never became a `ride`
+        # alternative ANYWHERE in plan memory and co-evolution was
+        # never offered them - 2.09% of core trips (9.142), which no
+        # scoring or pairing repair downstream could reach.
+        #
+        # It could not be offered because a seeded plan carried ONE
+        # MODE PER TOUR: `ride` on the covered leg with the car base
+        # on the other is a subtour mixing a chain-based mode with a
+        # non-chain one, the exact state ChooseRandomLegModeForSubtour
+        # refuses and that crashed two arms (9.119). The plan now
+        # carries a PER-TRIP override, and the uncovered leg takes
+        # B.mode.partial_bind_base - a non-chain mode - so the whole
+        # subtour is non-chain and the refused state is structurally
+        # unreachable rather than repaired after the fact.
+        #
+        # A car-LESS person needs no new plan: their bound-ride
+        # variant above is already walk-based, so the override rides
+        # on it. Only a car-available person gets this extra plan,
+        # which is why the seed's plan count rises by at most one.
+        if partial_tours and not bound_every:
+            base = PARTIAL_BIND_BASE if car_av else 'walk'
+            p, over = {}, {}
+            for tid in by_tour:
+                if tid in serve_tours and car_av:
+                    p[tid] = 'car'
+                elif tid in ride_tours:
+                    p[tid] = 'ride'
+                    covered_seed_tids.add(tid)
+                elif tid in partial_tours:
+                    # the tour's nominal mode is the non-chain base;
+                    # the covered trips override to ride
+                    p[tid] = base
+                    covered_seed_tids.add(tid)
+                    for i in partial_tours[tid]:
+                        over[i] = 'ride'
+                else:
+                    p[tid] = base
+            if not car_av and ride_tours:
+                # the walk-based bound-ride variant was appended just
+                # above and this plan is that plan plus the overrides,
+                # so it REPLACES it rather than spending a second slot
+                plan_set[-1] = (p, over)
+            else:
+                # a car-available person needs the non-chain base this
+                # plan alone carries; a car-less person with no fully
+                # bound tour has no bound-ride variant to fold onto
+                plan_set.append((p, over))
+            ctx.partial_bind['tours'] += len(partial_tours)
+            ctx.partial_bind['trips'] += sum(len(v) for v
+                                         in partial_tours.values())
+            ctx.partial_bind['persons'].add(pid)
+            if car_av or not ride_tours:
+                ctx.partial_bind['plans_added'] += 1
+        # 9.140 (#96): a plan MATSim's own subtour decomposition
+        # cannot hold is not offered. A serving tour is held at car
+        # while the variant's other tours take the base mode, and
+        # where a serve stop sits within subtourModeChoice's
+        # coordDistance of an activity the person later reaches by
+        # the base mode, the decomposition closes a LEAF loop
+        # holding one car leg and one non-chain leg - the exact
+        # state ChooseRandomLegModeForSubtour refuses (9.119). The
+        # offending free tour is driven in that variant instead: the
+        # person keeps every other tour on the variant's mode.
+        if car_av:
+            for p, over in plan_set:
+                for _ in range(4):
+                    bad = leaf_mixed_tours(rows, p)
+                    if not bad:
+                        break
+                    for tid in bad:
+                        if p[tid] == 'ride':
+                            ctx.leaf_mix_repairs['ride_tours_driven'] += 1
+                        p[tid] = 'car'
+                        # 9.143: a tour driven to repair a mix must
+                        # lose its per-trip ride with it - leaving the
+                        # override would put ride on one leg of a car
+                        # tour, which is the very state being repaired
+                        for i in [i for i in over
+                                  if int(rows[i - 1]['tour_id']) == tid]:
+                            del over[i]
+                            ctx.leaf_mix_repairs['ride_tours_driven'] += 1
+                    ctx.leaf_mix_repairs['tours'] += len(bad)
+                    ctx.leaf_mix_repairs['persons'].add(pid)
+        ctx.seed_plans_hist[len(plan_set)] += 1
+        # 9.121: WHICH seeded plan is executed first is drawn
+        # uniformly over the person's plans, by a hash of the person
+        # id and the master seed (no rng stream consumed). With the
+        # car plan first for everyone, iteration 0 put 74.7% of
+        # residents in a car on a 10% network - 162,812 departures,
+        # 6,820 cars stuck at 30:00 - and every car plan in memory
+        # kept that gridlock score while the other modes were scored
+        # on near-empty roads in iterations 1-6: a 60-100 util
+        # handicap ChangeExpBeta never re-tests. Drawn uniformly,
+        # iteration 0 is a mixed traffic state like every later one
+        # and no mode's plans are scored under a state the others
+        # were not.
+        h = _hashlib.sha256(('seedorder|%s|%d' % (pid, SEED))
+                            .encode()).hexdigest()
+        first = int(h[:12], 16) % len(plan_set)
+        if first:
+            plan_set = [plan_set[first]] + plan_set[:first] + plan_set[first + 1:]
+
+    ctx.w.write('\t<person id="%d">\n' % pid)
+    ctx.w.write('\t\t<attributes>\n')
+    ctx.w.write('\t\t\t<attribute name="subpopulation" class="java.lang.String">'
+            '%s</attribute>\n' % subpopulations.label(tier, external))
+    ctx.w.write('\t\t\t<attribute name="carAvail" class="java.lang.String">'
+            '%s</attribute>\n' % ('always' if car_av else 'never'))
+    ctx.w.write('\t\t\t<attribute name="hasLicense" class="java.lang.String">'
+            '%s</attribute>\n' % ('yes' if lic else 'no'))
+    ctx.w.write('\t\t\t<attribute name="age" class="java.lang.Integer">'
+            '%d</attribute>\n' % age)
+    ctx.w.write('\t\t\t<attribute name="employment" class="java.lang.String">'
+            '%s</attribute>\n' % esc(emp))
+    ctx.w.write('\t\t\t<attribute name="mobilityImpaired" class="java.lang.String">'
+            '%s</attribute>\n' % ('yes' if mob else 'no'))
+    if inc is not None:
+        # The person's weekly income, the G17 band's midpoint (9.138,
+        # #108): DATA like householdId, stamped whenever the band is
+        # held; whether anything READS it is gated by
+        # C.income.representation, which binds MATSim core's
+        # IndividualPersonScoringParameters to scale this person's
+        # marginalUtilityOfMoney by (average/personal)^exponent.
+        # Absent (the Neg_Nil band, boundary tiers, freight) means the
+        # subpopulation value applies - the class's documented
+        # fallback, not a zero.
+        ctx.w.write('\t\t\t<attribute name="income" '
+                'class="java.lang.Double">%s</attribute>\n' % inc)
+    # consumed by citysim.AvailabilityModesCalculator; absent means
+    # available, so a population without them behaves as before
+    ctx.w.write('\t\t\t<attribute name="rideAvail" class="java.lang.String">'
+            '%s</attribute>\n' % ('always' if ride_av else 'never'))
+    ctx.w.write('\t\t\t<attribute name="bikeAvail" class="java.lang.String">'
+            '%s</attribute>\n' % ('always' if bike_av else 'never'))
+    if hh_id is not None:
+        # B1 household membership, consumed by
+        # src/java/citysim/RidePairingEngine and by
+        # src/run/sample_population.py. Absent on the boundary tiers,
+        # which have no household - so its absence is meaningful, and it
+        # is exactly what those two consumers test for.
+        ctx.w.write('\t\t\t<attribute name="householdId" '
+                'class="java.lang.String">%d</attribute>\n' % hh_id)
+        # 9.146: the vehicles the census gives this household (B1
+        # `household_vehicles`), consumed by citysim
+        # .HouseholdVehicleRoster under B.population.vehicle_roster =
+        # census - its drivers share exactly these cars in the
+        # mobsim. DATA, stamped on every household member; whether
+        # anything reads it is the roster's declared value.
+        ctx.w.write('\t\t\t<attribute name="householdVehicles" '
+                'class="java.lang.Integer">%d</attribute>\n'
+                % ctx.hh_vehicle_count.get(hh_id, 0))
+    if not external and pid in ctx.lift_hh:
+        # 9.60: consumed by citysim.RidePairingEngine - the DRIVER
+        # household(s) this passenger's pairing may also search.
+        # Comma-separated since 9.68: a round-trip pair may be served
+        # by drivers from two different households.
+        ctx.w.write('\t\t\t<attribute name="liftHousehold" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ','.join('%d' % h for h in ctx.lift_hh[pid]))
+    if not external and pid in ctx.shared_hh:
+        # 9.127: the subset of liftHousehold that came from the
+        # shared-ride pass. The sampler EXCLUDES these from its
+        # household clusters - the binder already guarantees a shared
+        # driver is kept whenever its passenger is (the unit-hash
+        # rule) - so the clusters stay the small lift couplings of
+        # 9.60 instead of the giant components shared rides make.
+        ctx.w.write('\t\t\t<attribute name="sharedDriverHousehold" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ','.join('%d' % h for h in ctx.shared_hh[pid]))
+    if bound_ride_trips:
+        # 9.120: consumed by citysim.GatedSubtourModeChoice and
+        # citysim.RidePairingEngine - the trips (1-based, plan order)
+        # a declared driver serves. `ride` is refused on any other.
+        ctx.w.write('\t\t\t<attribute name="boundRideTrips" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ','.join('%d' % i for i in bound_ride_trips))
+    if bound_drive_trips:
+        # 9.120: consumed by citysim.GatedSubtourModeChoice - the
+        # trips on which this person is the declared driver of a
+        # booked passenger; a proposal moving them off car is refused.
+        ctx.w.write('\t\t\t<attribute name="boundDriveTrips" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ','.join('%d' % i for i in bound_drive_trips))
+    if not external and pid in ctx.bound_driver:
+        # 9.85: the DECLARED driver(s) this passenger was generated
+        # to travel with - joint companion, escorted member or
+        # bound lift passenger alike, since the defect and its
+        # repair are identical in all three. Consumed by
+        # citysim.RidePairingEngine. The binding is an IDENTITY,
+        # not a proximity: the engine may recognise this pair after
+        # replanning has moved either member's clock, which the
+        # geometric+window search cannot do. It remains an
+        # ELIGIBILITY - endpoints, vehicle capacity and physical
+        # boarding still decide whether the pairing is made, and
+        # the gap is waiting time the passenger pays for in score.
+        ctx.w.write('\t\t\t<attribute name="boundDriver" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ','.join('%d' % d for d in ctx.bound_driver[pid]))
+    if tier in ('through', 'freight') or moto or trk:
+        # locks SubtourModeChoice to {car} / {truck} / {motorbike} for
+        # this agent - a volume anchored on an observation must stay
+        # on it, and a mode with no preference data cannot compete in
+        # choice without inventing a constant (DECISIONS.md 9.52;
+        # 9.125 for the resident truck driver)
+        ctx.w.write('\t\t\t<attribute name="lockedMode" '
+                'class="java.lang.String">%s</attribute>\n'
+                % ('truck' if (tier == 'freight' or trk) else
+                   'motorbike' if moto else 'car'))
+    ctx.w.write('\t\t</attributes>\n')
+    for k, (plan_modes, trip_modes) in enumerate(plan_set):
+        # the first plan is the selected one; under the full choice
+        # set MATSim executes every unscored plan once regardless
+        ctx.w.write('\t\t<plan selected="%s">\n' % ('yes' if k == 0 else 'no'))
+
+        # opening activity: home, at the first leg's origin
+        first = rows[0]
+        ctx.w.write('\t\t\t<activity type="home" x="%s" y="%s" end_time="%s" />\n'
+                % (first['origin_x'], first['origin_y'],
+                   hhmmss(int(first['dep_time_s']))))
+        ctx.n_acts += 1
+        ctx.act_counts['home'] += 1
+
+        for i, r in enumerate(rows):
+            # 9.143 (#86): a per-TRIP mode wins over the tour's,
+            # which is what lets one leg of a partially bound tour ride
+            # while the other takes a non-chain base
+            mode = trip_modes.get(i + 1) or plan_modes[int(r['tour_id'])]
+            # 9.164 (#167): every leg STATES its routing mode. A
+            # single-leg trip's inferred routing mode already equals
+            # its own mode, so this is a no-op while
+            # RUN.routing.access_egress_type is `none` - and it is the
+            # whole of what stopped it being anything else. Under
+            # accessEgressModeToLink the router turns a one-leg trip
+            # into three by inserting access and egress walk legs; with
+            # no routingMode declared MATSim infers each inserted leg's
+            # from its OWN mode, so the stubs read `walk` against a main
+            # leg reading `car`, and PersonPrepareForSim rejects the
+            # trip the router has just built ("Found a trip whose legs
+            # have different routingModes", measured on 40 agents,
+            # 9.161). Stating it makes the whole trip one routing mode
+            # whatever the router inserts around it.
+            ctx.w.write('\t\t\t<leg mode="%s">\n'
+                    '\t\t\t\t<attributes>\n'
+                    '\t\t\t\t\t<attribute name="routingMode" '
+                    'class="java.lang.String">%s</attribute>\n'
+                    '\t\t\t\t</attributes>\n'
+                    '\t\t\t</leg>\n' % (mode, mode))
+            ctx.modes[mode] += 1
+            if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
+                ctx.covered_ride_legs[0] += 1
+            ctx.n_legs += 1
+            act = r['dest_activity_type']
+            ctx.act_counts[act] += 1
+            ctx.n_acts += 1
+            if i == len(rows) - 1:
+                ctx.w.write('\t\t\t<activity type="%s" x="%s" y="%s" />\n'
+                        % (act, r['dest_x'], r['dest_y']))
+            else:
+                end = int(rows[i + 1]['dep_time_s'])
+                ctx.w.write('\t\t\t<activity type="%s" x="%s" y="%s" '
+                        'end_time="%s" />\n'
+                        % (act, r['dest_x'], r['dest_y'], hhmmss(end)))
+        ctx.w.write('\t\t</plan>\n')
+        if k == 0:
+            ctx.n_legs_selected += len(rows)
+    ctx.w.write('\t</person>\n')
+    ctx.n_persons += 1
+
+
+
 def write_day(day, attrs, rng, report, seed_table=None):
     src = os.path.join(PLANS, 'B2_activity_trips_%s.csv' % day)
     dst = os.path.join(OUT, 'population_%s.xml.gz' % day)
@@ -716,624 +1340,10 @@ def write_day(day, attrs, rng, report, seed_table=None):
         w.write('<!DOCTYPE population SYSTEM '
                 '"http://www.matsim.org/files/dtd/population_v6.dtd">\n')
         w.write('<population>\n')
+        ctx = _types.SimpleNamespace(act_counts=act_counts, attrs=attrs, bound_driver=bound_driver, bound_placement=bound_placement, covered_by_pid=covered_by_pid, covered_ride_legs=covered_ride_legs, escort_cover=escort_cover, escort_ride_denied=escort_ride_denied, hh_vehicle_count=hh_vehicle_count, joint_companion=joint_companion, joint_driver=joint_driver, leaf_mix_repairs=leaf_mix_repairs, lift_cover=lift_cover, lift_hh=lift_hh, modes=modes, n_acts=n_acts, n_legs=n_legs, n_legs_selected=n_legs_selected, n_persons=n_persons, partial_bind=partial_bind, seed_plans_hist=seed_plans_hist, seed_table=seed_table, serve_tours_carless=serve_tours_carless, shared_driver=shared_driver, shared_hh=shared_hh, tours=tours, u=u, unreachable=unreachable, w=w)
         for pid, rows in stream_persons(src):
-            rows.sort(key=lambda r: int(r['trip_seq']))
-            tier = rows[0]['agent_tier']
-            external = tier in ('external', 'through', 'freight')
-            if tier in ('through', 'freight'):
-                # A through agent is a boundary-tier vehicle crossing the study
-                # area (issue #20, DECISIONS.md 9.41); a freight agent is a
-                # heavy-vehicle background trip (issue #24, DECISIONS.md 9.49).
-                # Both volumes are anchored on observed road counts, so the
-                # mode is locked - car and truck respectively: the availability
-                # calculator returns exactly that singleton and the seed never
-                # draws. Demographics are the external placeholders.
-                car_av, age, lic, emp, stu, mob = (
-                    1, EXTERNAL_PROFILE['age'], 1,
-                    EXTERNAL_PROFILE['employment_status'],
-                    EXTERNAL_PROFILE['student_status'],
-                    EXTERNAL_PROFILE['mobility_impairment_flag'])
-                ride_av, bike_av, hh_id = 0, 0, None
-                inc = None               # a volume, not a budget (9.138)
-                moto = False
-                trk = False
-            elif external:
-                # An external boundary agent has no B1 household, so its
-                # attributes are definitional placeholders (B.external
-                # .agent_profile). Ride availability is NOT one of them and is
-                # not "unknown": a car passenger needs a household vehicle AND
-                # another licence holder to drive them, and a household-less
-                # agent has neither, so ride is unavailable by the same identity
-                # that governs everyone else. Resolving it the other way, which
-                # is what this branch used to do, made 432 of 962 external trips
-                # car-passenger trips with no possible driver (DECISIONS.md 9.15).
-                car_av, age, lic, emp, stu, mob = (
-                    EXTERNAL_PROFILE['car_available'], EXTERNAL_PROFILE['age'],
-                    EXTERNAL_PROFILE['licence_holder'],
-                    EXTERNAL_PROFILE['employment_status'],
-                    EXTERNAL_PROFILE['student_status'],
-                    EXTERNAL_PROFILE['mobility_impairment_flag'])
-                ride_av = int(EXTERNAL_RIDE_AVAILABLE)
-                # a boundary agent is household-less, so no ownership identity
-                # exists to deny bike from; the choice is recorded in
-                # DECISIONS.md 9.39 rather than silently made
-                bike_av = 1
-                # A boundary agent has no B1 household by construction, so it
-                # carries no householdId and can never pair with a driver. That
-                # is the same identity that already denies it `ride`.
-                hh_id = None
-                inc = None               # household-less, no G17 band (9.138)
-                moto = False
-                trk = False
-            else:
-                a = attrs.get(pid)
-                if a is None:
-                    continue
-                car_av, age, lic, emp, stu, mob, ride_av, bike_av, hh_id, inc = a
-                if pid in lift_hh:
-                    # 9.60: a bound lift passenger has, by construction, a
-                    # driver who can carry them - the identity ride_avail
-                    # derives from is satisfied across the household boundary.
-                    ride_av = 1
-                escort_denied = False
-                if (ESCORT_EXCLUDES_RIDE and ESCORT_EXCLUSION_SCOPE == 'day'
-                        and ride_av
-                        and any(r['dest_activity_type'] == 'escort'
-                                for r in rows)):
-                    # 9.143: the DAY-wide denial, kept only as the sweep's
-                    # `day` member. Under `subtour` the person keeps ride
-                    # availability and the escorting tour is still held at car
-                    # - by the seed, which keeps a serve tour on car, and by
-                    # GatedSubtourModeChoice, which refuses a non-car proposal
-                    # on boundDriveTrips. The identity is enforced where it
-                    # applies instead of across the whole day, which cost
-                    # 33,832 WEEKDAY bound trips the demand had already bound
-                    # to a named driver.
-                    ride_av = 0
-                    escort_denied = True
-                    escort_ride_denied[0] += 1
-                # The motorbike carve (DECISIONS.md 9.52) - but never on an
-                # escort day: a pillion passenger is not how the escorted
-                # child travels in any data this project holds, and the ride
-                # pairing pairs passengers with CAR legs. Same day-plan-level
-                # denial pattern as ESCORT_EXCLUDES_RIDE above.
-                # 9.125: a person the binders named as someone's DRIVER is
-                # never carved - the pairing engine pairs ride legs with CAR
-                # legs only, so a carved driver would strand the passenger
-                # the demand bound to them. Escort days were already excluded.
-                names_driver = (pid in joint_driver or pid in shared_driver
-                                or any(r['dest_placement'] in
-                                       ('escorted', 'lift_pickup', 'lift_serve')
-                                       for r in rows))
-                # 9.146: nor a person the binders named as someone's
-                # PASSENGER - a rider locked to a motorbike or a truck cannot
-                # also be driven, and at the F26 gate 373 sampled locked
-                # persons held bound trips, 571 of which were selected as the
-                # lock's mode. Excluded BEFORE the draw, as 9.122 requires.
-                is_passenger = pid in bound_driver
-                moto = (bool(car_av) and bool(lic) and not names_driver
-                        and not is_passenger
-                        and motorbike_user(pid)
-                        and not any(r['dest_activity_type'] == 'escort'
-                                    for r in rows))
-                # 9.125: the resident truck carve, same pool, one lock per
-                # person (a motorcyclist is not also a truck driver)
-                trk = (not moto and bool(car_av) and bool(lic)
-                       and not names_driver and not is_passenger
-                       and truck_user(pid)
-                       and not any(r['dest_activity_type'] == 'escort'
-                                   for r in rows))
-
-            # one mode per tour keeps chain-based modes conserved from the start
-            serve_tours = set()
-            covered_tours = set()
-            covered_seed_tids = set()
-            if not external:
-                for r in rows:
-                    # a BOUND serve tour carries a serving placement on one of
-                    # its legs ('escorted' from the 9.46 household binder,
-                    # 'lift_pickup'/'lift_serve' from the 9.60 pass)
-                    if r['dest_placement'] in ('escorted', 'lift_pickup',
-                                               'lift_serve'):
-                        serve_tours.add(int(r['tour_id']))
-                # 9.84: a joint driver's tour is a serving tour in the same
-                # sense - a companion is booked into that car
-                serve_tours |= joint_driver.get(pid, EMPTY_SET)
-                # 9.124: a driver carrying a shared-ride passenger serves too
-                serve_tours |= shared_driver.get(pid, EMPTY_SET)
-                covered_tours = covered_by_pid.get(pid, EMPTY_SET)
-                if serve_tours and not car_av:
-                    serve_tours_carless[0] += len(serve_tours)
-            tour_mode = {}
-            for r in rows:
-                tid = int(r['tour_id'])
-                if tid not in tour_mode:
-                    if tier == 'freight':
-                        m = 'truck'
-                    elif tier == 'through':
-                        m = 'car'
-                    elif moto:
-                        m = 'motorbike'
-                    elif trk:
-                        m = 'truck'
-                    elif tid in serve_tours and car_av:
-                        # 9.68 B.mode.serve_tour_seed: the pairing engine
-                        # pairs ride legs with CAR legs only - a bound serve
-                        # tour seeded with any other mode cannot serve the
-                        # passenger booked onto it. Seed only; SubtourModeChoice
-                        # stays free to move it. A LICENSED-BUT-CARLESS escort
-                        # (a parent walking a child to school) keeps the
-                        # uninformed draw - seeding car would put an illegal
-                        # plan in memory (the 9.15 class).
-                        m = SERVE_TOUR_SEED
-                    elif (tid in covered_tours and ride_av
-                            and BOUND_PASSENGER_SEED != 'uninformed'):
-                        # 9.68 B.mode.bound_passenger_seed: a tour covered by
-                        # serve tours in BOTH directions starts at the coherent
-                        # two-sided state; selection keeps or abandons it.
-                        m = BOUND_PASSENGER_SEED
-                        covered_seed_tids.add(tid)
-                    else:
-                        m = pick_mode(car_av, u, seed_table,
-                                      ride_available=bool(ride_av),
-                                      bike_available=bool(bike_av) and (
-                                          BIKE_MIN_AGE <= 0
-                                          or age >= BIKE_MIN_AGE))
-                    tour_mode[tid] = m
-            tours += len(tour_mode)
-
-            # 9.120: WHICH TRIPS the bindings actually cover, as 1-based trip
-            # indices in plan order - the same numbering MATSim's own
-            # TripStructureUtils.getTrips and the trips table use. The binding
-            # tables have always carried the tour AND the direction; the
-            # population carried only `boundDriver`, a person-level identity,
-            # so the run could offer `ride` on any trip of a bound person and
-            # on every trip of an unbound one. Measured on the F14 arm at
-            # iteration 30: 36% of residents' planned ride legs belonged to
-            # persons with no declared driver at all, and every one of them
-            # was executed as a drive or a walk while the plan kept `ride`.
-            #   boundRideTrips  - trips a declared driver serves (a drop-off
-            #                     is the tour's first trip, a pick-up its
-            #                     last, a joint companion tour every trip)
-            #   boundDriveTrips - trips on a tour that SERVES a booked
-            #                     passenger (the driver's commitment)
-            # Consumed by citysim.GatedSubtourModeChoice, which refuses a
-            # `ride` proposal off the first list and a non-car proposal on
-            # the second, and by the full-choice-set seed below.
-            bound_ride_trips = []
-            bound_drive_trips = []
-            if not external:
-                by_tour = {}
-                for i, r in enumerate(rows):
-                    by_tour.setdefault(int(r['tour_id']), []).append(i + 1)
-                for tid, idx in by_tour.items():
-                    dirs = set()
-                    dirs |= escort_cover.get((pid, tid), EMPTY_SET)
-                    dirs |= lift_cover.get((pid, tid), EMPTY_SET)
-                    if tid in joint_companion.get(pid, EMPTY_SET):
-                        dirs |= {'drop', 'pickup'}
-                        bound_ride_trips.extend(idx)
-                    else:
-                        if 'drop' in dirs:
-                            bound_ride_trips.append(idx[0])
-                        if 'pickup' in dirs and len(idx) > 1:
-                            bound_ride_trips.append(idx[-1])
-                    if tid in serve_tours:
-                        bound_drive_trips.extend(idx)
-                bound_ride_trips = sorted(set(bound_ride_trips))
-                bound_drive_trips = sorted(set(bound_drive_trips))
-                # 9.143 (#86): a bound trip on a person the availability
-                # identity denies `ride` to is unreachable no matter what the
-                # seed offers - no variant may carry a mode the person cannot
-                # use. MEASURED, NOT CHANGED: the escort-day denial is
-                # B.activity.escort_excludes_ride, whose own derivation calls
-                # this collateral "small" and has never counted it in trips;
-                # the vehicle-less denial is the ride_avail identity itself.
-                if bound_ride_trips and not ride_av:
-                    if escort_denied:
-                        unreachable['escort_day_trips'] += len(bound_ride_trips)
-                        unreachable['escort_day_persons'].add(pid)
-                    else:
-                        unreachable['no_vehicle_trips'] += len(bound_ride_trips)
-                        unreachable['no_vehicle_persons'].add(pid)
-
-            # The plans this person starts with. `uniform_draw`: the one
-            # plan the loop above drew. `full_choice_set` (9.120): one plan
-            # per usable mode, each mode on every tour it may take -
-            # serving tours stay car (the commitment) and the bound-ride
-            # variant puts ride on the covered tours only. Locked tiers and
-            # the carve keep their single plan: a lock is a definition.
-            # 9.143: a plan is (tour modes, per-trip overrides). The
-            # override is empty for every plan but the partial-bind variant,
-            # so `uniform_draw` and every base-mode plan behave exactly as
-            # before.
-            plan_set = [(dict(tour_mode), {})]
-            if (SEED_METHOD == 'full_choice_set' and not external
-                    and not moto and not trk):
-                base_modes = []
-                if car_av:
-                    base_modes.append('car')
-                base_modes.append('walk')
-                if bike_av and (BIKE_MIN_AGE <= 0 or age >= BIKE_MIN_AGE):
-                    base_modes.append('bike')
-                base_modes.append('pt')
-                if TAXI_MIN_AGE <= 0 or age >= TAXI_MIN_AGE:
-                    base_modes.append('taxi')
-                # 9.143 (#86): a tour is FULLY bound when every trip of it is
-                # served, and PARTLY bound when only some are - a drop-off
-                # binds the tour's first trip and a pick-up its last (9.120),
-                # so a one-directional escort or lift always lands here.
-                ride_tours, partial_tours = set(), {}
-                if ride_av and bound_ride_trips:
-                    for tid, idx in by_tour.items():
-                        covered = [i for i in idx if i in bound_ride_trips]
-                        if not covered:
-                            continue
-                        if len(covered) == len(idx):
-                            ride_tours.add(tid)
-                        else:
-                            partial_tours[tid] = covered
-                # 9.164 (#86, #48): THE DECLARED PASSENGER IS PUT ON `ride`,
-                # exactly as the declared driver is put on `car`. A serving
-                # tour reads `p[tid] = 'car'` in EVERY seeded plan two lines
-                # below - the demand states that the driver drives - while the
-                # passenger they carry got a ride variant as ONE alternative
-                # among several and drew a mode in the rest. The asymmetry is
-                # measurable: of 20,902 declared escort pairs in sample, 10,224
-                # have the passenger driving THEIR OWN CAR against 7,821
-                # co-assigned (9.163). It also bounds the calibration - ride's
-                # target of 20.6000 % sits above the 20.05 % of agents who have
-                # ever held a ride plan, so no scoring constant reaches it and
-                # the only layer that can is this one.
-                bound_every = (BOUND_PASSENGER_PLACEMENT == 'every_plan'
-                               and (ride_tours or partial_tours))
-                plan_set = []
-                for base in base_modes:
-                    p, over = {}, {}
-                    for tid in by_tour:
-                        if tid in serve_tours and car_av:
-                            p[tid] = 'car'
-                        elif bound_every and tid in ride_tours:
-                            p[tid] = 'ride'
-                            covered_seed_tids.add(tid)
-                        elif bound_every and tid in partial_tours:
-                            # the uncovered leg cannot be chain-based or the
-                            # subtour mixes (9.119); a base that already is
-                            # non-chain is kept, so the person's own plan for
-                            # that mode is not silently replaced
-                            p[tid] = (PARTIAL_BIND_BASE
-                                      if base in CHAIN_BASED_MODES else base)
-                            covered_seed_tids.add(tid)
-                            for i in partial_tours[tid]:
-                                over[i] = 'ride'
-                        else:
-                            p[tid] = base
-                    plan_set.append((p, over))
-                if bound_every:
-                    # with every plan carrying the same bound assignment, two
-                    # bases can collapse onto one plan (a person whose whole
-                    # day is bound has no free tour left to differ on). A
-                    # duplicate in plan memory is a wasted slot of eight, so
-                    # they are folded rather than seeded.
-                    seen, uniq = set(), []
-                    for p, over in plan_set:
-                        key = (tuple(sorted(p.items())),
-                               tuple(sorted(over.items())))
-                        if key in seen:
-                            continue
-                        seen.add(key)
-                        uniq.append((p, over))
-                    bound_placement['plans_folded'] += len(plan_set) - len(uniq)
-                    if len(uniq) < 2 and len(base_modes) > 1:
-                        # A PERSON WHOSE WHOLE DAY IS BOUND WOULD BE LEFT WITH
-                        # ONE PLAN, and that contradicts the seed's own reason
-                        # for existing. B.mode.seed_method = full_choice_set
-                        # holds one plan per usable mode precisely so that no
-                        # mode is favoured and the whole set is SCORED inside
-                        # the first few iterations - and 9.120 measured what
-                        # happens without it: at the F14 gate 65% of the agents
-                        # still cycling held no bike-free plan in memory,
-                        # because random innovation had not yet offered the
-                        # alternative. So the fold keeps ONE alternative in
-                        # which the bound tours take the person's first base
-                        # mode, which is exactly the plan the pre-change seed
-                        # gave them. The binding still holds in every OTHER
-                        # plan, which is what `every_plan` means.
-                        alt = {}
-                        for tid in by_tour:
-                            if tid in serve_tours and car_av:
-                                alt[tid] = 'car'
-                            else:
-                                alt[tid] = base_modes[0]
-                        uniq.append((alt, {}))
-                        bound_placement['alternatives_kept'] += 1
-                    plan_set = uniq
-                    bound_placement['ride_tours'] += len(ride_tours)
-                    bound_placement['partial_tours'] += len(partial_tours)
-                    bound_placement['persons'].add(pid)
-                if ride_tours and not bound_every:
-                    # the bound-ride variant on the car base when a car is
-                    # available (the uncovered tours are driven), else on walk
-                    base = 'car' if car_av else 'walk'
-                    p = {}
-                    for tid in by_tour:
-                        if tid in serve_tours and car_av:
-                            p[tid] = 'car'
-                        elif tid in ride_tours:
-                            p[tid] = 'ride'
-                            covered_seed_tids.add(tid)
-                        else:
-                            p[tid] = base
-                    plan_set.append((p, {}))
-                # 9.143 (#86): THE PARTIALLY BOUND TOUR GETS A PLAN AT ALL.
-                # Until now such a tour was excluded from the ride variant
-                # outright, so its bound trips never became a `ride`
-                # alternative ANYWHERE in plan memory and co-evolution was
-                # never offered them - 2.09% of core trips (9.142), which no
-                # scoring or pairing repair downstream could reach.
-                #
-                # It could not be offered because a seeded plan carried ONE
-                # MODE PER TOUR: `ride` on the covered leg with the car base
-                # on the other is a subtour mixing a chain-based mode with a
-                # non-chain one, the exact state ChooseRandomLegModeForSubtour
-                # refuses and that crashed two arms (9.119). The plan now
-                # carries a PER-TRIP override, and the uncovered leg takes
-                # B.mode.partial_bind_base - a non-chain mode - so the whole
-                # subtour is non-chain and the refused state is structurally
-                # unreachable rather than repaired after the fact.
-                #
-                # A car-LESS person needs no new plan: their bound-ride
-                # variant above is already walk-based, so the override rides
-                # on it. Only a car-available person gets this extra plan,
-                # which is why the seed's plan count rises by at most one.
-                if partial_tours and not bound_every:
-                    base = PARTIAL_BIND_BASE if car_av else 'walk'
-                    p, over = {}, {}
-                    for tid in by_tour:
-                        if tid in serve_tours and car_av:
-                            p[tid] = 'car'
-                        elif tid in ride_tours:
-                            p[tid] = 'ride'
-                            covered_seed_tids.add(tid)
-                        elif tid in partial_tours:
-                            # the tour's nominal mode is the non-chain base;
-                            # the covered trips override to ride
-                            p[tid] = base
-                            covered_seed_tids.add(tid)
-                            for i in partial_tours[tid]:
-                                over[i] = 'ride'
-                        else:
-                            p[tid] = base
-                    if not car_av and ride_tours:
-                        # the walk-based bound-ride variant was appended just
-                        # above and this plan is that plan plus the overrides,
-                        # so it REPLACES it rather than spending a second slot
-                        plan_set[-1] = (p, over)
-                    else:
-                        # a car-available person needs the non-chain base this
-                        # plan alone carries; a car-less person with no fully
-                        # bound tour has no bound-ride variant to fold onto
-                        plan_set.append((p, over))
-                    partial_bind['tours'] += len(partial_tours)
-                    partial_bind['trips'] += sum(len(v) for v
-                                                 in partial_tours.values())
-                    partial_bind['persons'].add(pid)
-                    if car_av or not ride_tours:
-                        partial_bind['plans_added'] += 1
-                # 9.140 (#96): a plan MATSim's own subtour decomposition
-                # cannot hold is not offered. A serving tour is held at car
-                # while the variant's other tours take the base mode, and
-                # where a serve stop sits within subtourModeChoice's
-                # coordDistance of an activity the person later reaches by
-                # the base mode, the decomposition closes a LEAF loop
-                # holding one car leg and one non-chain leg - the exact
-                # state ChooseRandomLegModeForSubtour refuses (9.119). The
-                # offending free tour is driven in that variant instead: the
-                # person keeps every other tour on the variant's mode.
-                if car_av:
-                    for p, over in plan_set:
-                        for _ in range(4):
-                            bad = leaf_mixed_tours(rows, p)
-                            if not bad:
-                                break
-                            for tid in bad:
-                                if p[tid] == 'ride':
-                                    leaf_mix_repairs['ride_tours_driven'] += 1
-                                p[tid] = 'car'
-                                # 9.143: a tour driven to repair a mix must
-                                # lose its per-trip ride with it - leaving the
-                                # override would put ride on one leg of a car
-                                # tour, which is the very state being repaired
-                                for i in [i for i in over
-                                          if int(rows[i - 1]['tour_id']) == tid]:
-                                    del over[i]
-                                    leaf_mix_repairs['ride_tours_driven'] += 1
-                            leaf_mix_repairs['tours'] += len(bad)
-                            leaf_mix_repairs['persons'].add(pid)
-                seed_plans_hist[len(plan_set)] += 1
-                # 9.121: WHICH seeded plan is executed first is drawn
-                # uniformly over the person's plans, by a hash of the person
-                # id and the master seed (no rng stream consumed). With the
-                # car plan first for everyone, iteration 0 put 74.7% of
-                # residents in a car on a 10% network - 162,812 departures,
-                # 6,820 cars stuck at 30:00 - and every car plan in memory
-                # kept that gridlock score while the other modes were scored
-                # on near-empty roads in iterations 1-6: a 60-100 util
-                # handicap ChangeExpBeta never re-tests. Drawn uniformly,
-                # iteration 0 is a mixed traffic state like every later one
-                # and no mode's plans are scored under a state the others
-                # were not.
-                h = _hashlib.sha256(('seedorder|%s|%d' % (pid, SEED))
-                                    .encode()).hexdigest()
-                first = int(h[:12], 16) % len(plan_set)
-                if first:
-                    plan_set = [plan_set[first]] + plan_set[:first] + plan_set[first + 1:]
-
-            w.write('\t<person id="%d">\n' % pid)
-            w.write('\t\t<attributes>\n')
-            w.write('\t\t\t<attribute name="subpopulation" class="java.lang.String">'
-                    '%s</attribute>\n' % subpopulations.label(tier, external))
-            w.write('\t\t\t<attribute name="carAvail" class="java.lang.String">'
-                    '%s</attribute>\n' % ('always' if car_av else 'never'))
-            w.write('\t\t\t<attribute name="hasLicense" class="java.lang.String">'
-                    '%s</attribute>\n' % ('yes' if lic else 'no'))
-            w.write('\t\t\t<attribute name="age" class="java.lang.Integer">'
-                    '%d</attribute>\n' % age)
-            w.write('\t\t\t<attribute name="employment" class="java.lang.String">'
-                    '%s</attribute>\n' % esc(emp))
-            w.write('\t\t\t<attribute name="mobilityImpaired" class="java.lang.String">'
-                    '%s</attribute>\n' % ('yes' if mob else 'no'))
-            if inc is not None:
-                # The person's weekly income, the G17 band's midpoint (9.138,
-                # #108): DATA like householdId, stamped whenever the band is
-                # held; whether anything READS it is gated by
-                # C.income.representation, which binds MATSim core's
-                # IndividualPersonScoringParameters to scale this person's
-                # marginalUtilityOfMoney by (average/personal)^exponent.
-                # Absent (the Neg_Nil band, boundary tiers, freight) means the
-                # subpopulation value applies - the class's documented
-                # fallback, not a zero.
-                w.write('\t\t\t<attribute name="income" '
-                        'class="java.lang.Double">%s</attribute>\n' % inc)
-            # consumed by citysim.AvailabilityModesCalculator; absent means
-            # available, so a population without them behaves as before
-            w.write('\t\t\t<attribute name="rideAvail" class="java.lang.String">'
-                    '%s</attribute>\n' % ('always' if ride_av else 'never'))
-            w.write('\t\t\t<attribute name="bikeAvail" class="java.lang.String">'
-                    '%s</attribute>\n' % ('always' if bike_av else 'never'))
-            if hh_id is not None:
-                # B1 household membership, consumed by
-                # src/java/citysim/RidePairingEngine and by
-                # src/run/sample_population.py. Absent on the boundary tiers,
-                # which have no household - so its absence is meaningful, and it
-                # is exactly what those two consumers test for.
-                w.write('\t\t\t<attribute name="householdId" '
-                        'class="java.lang.String">%d</attribute>\n' % hh_id)
-                # 9.146: the vehicles the census gives this household (B1
-                # `household_vehicles`), consumed by citysim
-                # .HouseholdVehicleRoster under B.population.vehicle_roster =
-                # census - its drivers share exactly these cars in the
-                # mobsim. DATA, stamped on every household member; whether
-                # anything reads it is the roster's declared value.
-                w.write('\t\t\t<attribute name="householdVehicles" '
-                        'class="java.lang.Integer">%d</attribute>\n'
-                        % hh_vehicle_count.get(hh_id, 0))
-            if not external and pid in lift_hh:
-                # 9.60: consumed by citysim.RidePairingEngine - the DRIVER
-                # household(s) this passenger's pairing may also search.
-                # Comma-separated since 9.68: a round-trip pair may be served
-                # by drivers from two different households.
-                w.write('\t\t\t<attribute name="liftHousehold" '
-                        'class="java.lang.String">%s</attribute>\n'
-                        % ','.join('%d' % h for h in lift_hh[pid]))
-            if not external and pid in shared_hh:
-                # 9.127: the subset of liftHousehold that came from the
-                # shared-ride pass. The sampler EXCLUDES these from its
-                # household clusters - the binder already guarantees a shared
-                # driver is kept whenever its passenger is (the unit-hash
-                # rule) - so the clusters stay the small lift couplings of
-                # 9.60 instead of the giant components shared rides make.
-                w.write('\t\t\t<attribute name="sharedDriverHousehold" '
-                        'class="java.lang.String">%s</attribute>\n'
-                        % ','.join('%d' % h for h in shared_hh[pid]))
-            if bound_ride_trips:
-                # 9.120: consumed by citysim.GatedSubtourModeChoice and
-                # citysim.RidePairingEngine - the trips (1-based, plan order)
-                # a declared driver serves. `ride` is refused on any other.
-                w.write('\t\t\t<attribute name="boundRideTrips" '
-                        'class="java.lang.String">%s</attribute>\n'
-                        % ','.join('%d' % i for i in bound_ride_trips))
-            if bound_drive_trips:
-                # 9.120: consumed by citysim.GatedSubtourModeChoice - the
-                # trips on which this person is the declared driver of a
-                # booked passenger; a proposal moving them off car is refused.
-                w.write('\t\t\t<attribute name="boundDriveTrips" '
-                        'class="java.lang.String">%s</attribute>\n'
-                        % ','.join('%d' % i for i in bound_drive_trips))
-            if not external and pid in bound_driver:
-                # 9.85: the DECLARED driver(s) this passenger was generated
-                # to travel with - joint companion, escorted member or
-                # bound lift passenger alike, since the defect and its
-                # repair are identical in all three. Consumed by
-                # citysim.RidePairingEngine. The binding is an IDENTITY,
-                # not a proximity: the engine may recognise this pair after
-                # replanning has moved either member's clock, which the
-                # geometric+window search cannot do. It remains an
-                # ELIGIBILITY - endpoints, vehicle capacity and physical
-                # boarding still decide whether the pairing is made, and
-                # the gap is waiting time the passenger pays for in score.
-                w.write('\t\t\t<attribute name="boundDriver" '
-                        'class="java.lang.String">%s</attribute>\n'
-                        % ','.join('%d' % d for d in bound_driver[pid]))
-            if tier in ('through', 'freight') or moto or trk:
-                # locks SubtourModeChoice to {car} / {truck} / {motorbike} for
-                # this agent - a volume anchored on an observation must stay
-                # on it, and a mode with no preference data cannot compete in
-                # choice without inventing a constant (DECISIONS.md 9.52;
-                # 9.125 for the resident truck driver)
-                w.write('\t\t\t<attribute name="lockedMode" '
-                        'class="java.lang.String">%s</attribute>\n'
-                        % ('truck' if (tier == 'freight' or trk) else
-                           'motorbike' if moto else 'car'))
-            w.write('\t\t</attributes>\n')
-            for k, (plan_modes, trip_modes) in enumerate(plan_set):
-                # the first plan is the selected one; under the full choice
-                # set MATSim executes every unscored plan once regardless
-                w.write('\t\t<plan selected="%s">\n' % ('yes' if k == 0 else 'no'))
-
-                # opening activity: home, at the first leg's origin
-                first = rows[0]
-                w.write('\t\t\t<activity type="home" x="%s" y="%s" end_time="%s" />\n'
-                        % (first['origin_x'], first['origin_y'],
-                           hhmmss(int(first['dep_time_s']))))
-                n_acts += 1
-                act_counts['home'] += 1
-
-                for i, r in enumerate(rows):
-                    # 9.143 (#86): a per-TRIP mode wins over the tour's,
-                    # which is what lets one leg of a partially bound tour ride
-                    # while the other takes a non-chain base
-                    mode = trip_modes.get(i + 1) or plan_modes[int(r['tour_id'])]
-                    # 9.164 (#167): every leg STATES its routing mode. A
-                    # single-leg trip's inferred routing mode already equals
-                    # its own mode, so this is a no-op while
-                    # RUN.routing.access_egress_type is `none` - and it is the
-                    # whole of what stopped it being anything else. Under
-                    # accessEgressModeToLink the router turns a one-leg trip
-                    # into three by inserting access and egress walk legs; with
-                    # no routingMode declared MATSim infers each inserted leg's
-                    # from its OWN mode, so the stubs read `walk` against a main
-                    # leg reading `car`, and PersonPrepareForSim rejects the
-                    # trip the router has just built ("Found a trip whose legs
-                    # have different routingModes", measured on 40 agents,
-                    # 9.161). Stating it makes the whole trip one routing mode
-                    # whatever the router inserts around it.
-                    w.write('\t\t\t<leg mode="%s">\n'
-                            '\t\t\t\t<attributes>\n'
-                            '\t\t\t\t\t<attribute name="routingMode" '
-                            'class="java.lang.String">%s</attribute>\n'
-                            '\t\t\t\t</attributes>\n'
-                            '\t\t\t</leg>\n' % (mode, mode))
-                    modes[mode] += 1
-                    if mode == 'ride' and int(r['tour_id']) in covered_seed_tids:
-                        covered_ride_legs[0] += 1
-                    n_legs += 1
-                    act = r['dest_activity_type']
-                    act_counts[act] += 1
-                    n_acts += 1
-                    if i == len(rows) - 1:
-                        w.write('\t\t\t<activity type="%s" x="%s" y="%s" />\n'
-                                % (act, r['dest_x'], r['dest_y']))
-                    else:
-                        end = int(rows[i + 1]['dep_time_s'])
-                        w.write('\t\t\t<activity type="%s" x="%s" y="%s" '
-                                'end_time="%s" />\n'
-                                % (act, r['dest_x'], r['dest_y'], hhmmss(end)))
-                w.write('\t\t</plan>\n')
-                if k == 0:
-                    n_legs_selected += len(rows)
-            w.write('\t</person>\n')
-            n_persons += 1
+            write_person(pid, rows, ctx)
+        n_acts, n_legs, n_legs_selected, n_persons, tours = ctx.n_acts, ctx.n_legs, ctx.n_legs_selected, ctx.n_persons, ctx.tours
         w.write('</population>\n')
 
     report[day] = dict(persons=n_persons, legs=n_legs, activities=n_acts,
