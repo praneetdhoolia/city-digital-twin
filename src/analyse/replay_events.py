@@ -67,68 +67,59 @@ def scan_events(path, links, step, keep_every, horizon_s):
     memory is the number of vehicles in the network at once, not the number of
     events.
     """
-    ev = re.compile(r'time="([0-9.]+)" type="([^"]+)"')
-    veh_re = re.compile(r'vehicle="([^"]+)"')
-    link_re = re.compile(r'link="([^"]+)"')
+    import iteration_reading as _reading                        # noqa: PLC0415
+    WANT = ('entered link', 'left link', 'vehicle enters traffic',
+            'vehicle leaves traffic')
     open_leg = {}                      # vehicle -> (link, t_enter)
     transit = set()
     vid = {}                           # vehicle -> small integer id
     frames = collections.defaultdict(list)
     n_frames = int(horizon_s // step) + 1
     kept = 0
-    with gzip.open(path, 'rt', encoding='utf-8') as f:
-        for line in f:
-            m = ev.search(line)
-            if not m:
-                continue
-            t = float(m.group(1))
-            typ = m.group(2)
-            if typ == 'TransitDriverStarts':
-                mv = veh_re.search(line)
-                if mv:
-                    transit.add(mv.group(1))
-                continue
-            if typ not in ('entered link', 'left link',
-                           'vehicle enters traffic', 'vehicle leaves traffic'):
-                continue
-            mv = veh_re.search(line)
-            ml = link_re.search(line)
-            if not mv or not ml:
-                continue
-            v, lid = mv.group(1), ml.group(1)
-            if typ in ('entered link', 'vehicle enters traffic'):
-                open_leg[v] = (lid, t)
-                continue
-            # a traversal closed: emit its frames
-            prev = open_leg.pop(v, None)
-            if prev is None or prev[0] != lid:
-                continue
-            geom = links.get(lid)
-            if geom is None:
-                continue
-            if v not in vid:
-                # deterministic thinning on the vehicle id, so the same
-                # vehicles are drawn every time the replay is regenerated.
-                # crc32, not hash(): Python salts string hashing per process,
-                # which would make the same run produce a different picture.
-                if keep_every > 1 and (zlib.crc32(v.encode()) % keep_every):
-                    vid[v] = -1
-                else:
-                    vid[v] = len(vid)
-                    kept += 1
-            i = vid[v]
-            if i < 0:
-                continue
-            t_in, t_out = prev[1], max(t, prev[1] + 1e-6)
-            x0, y0, x1, y1 = geom
-            f0 = int(math.ceil(t_in / step))
-            f1 = int(math.floor(t_out / step))
-            mode = 1 if v in transit else 0
-            for fr in range(max(f0, 0), min(f1, n_frames - 1) + 1):
-                a = (fr * step - t_in) / (t_out - t_in)
-                a = 0.0 if a < 0 else (1.0 if a > 1 else a)
-                frames[fr].append((x0 + (x1 - x0) * a,
-                                   y0 + (y1 - y0) * a, mode))
+    for typ, el in _reading.events(path):
+        if typ == 'TransitDriverStarts':
+            if el.get('vehicle'):
+                transit.add(el.get('vehicle'))
+            continue
+        if typ not in WANT:
+            continue
+        v, lid = el.get('vehicle'), el.get('link')
+        if not v or not lid:
+            continue
+        t = float(el.get('time'))
+        if typ in ('entered link', 'vehicle enters traffic'):
+            open_leg[v] = (lid, t)
+            continue
+        # a traversal closed: emit its frames
+        prev = open_leg.pop(v, None)
+        if prev is None or prev[0] != lid:
+            continue
+        geom = links.get(lid)
+        if geom is None:
+            continue
+        if v not in vid:
+            # deterministic thinning on the vehicle id, so the same
+            # vehicles are drawn every time the replay is regenerated.
+            # crc32, not hash(): Python salts string hashing per process,
+            # which would make the same run produce a different picture.
+            if keep_every > 1 and (zlib.crc32(v.encode()) % keep_every):
+                vid[v] = -1
+            else:
+                vid[v] = len(vid)
+                kept += 1
+        i = vid[v]
+        if i < 0:
+            continue
+        t_in, t_out = prev[1], max(t, prev[1] + 1e-6)
+        x0, y0, x1, y1 = geom
+        f0 = int(math.ceil(t_in / step))
+        f1 = int(math.floor(t_out / step))
+        mode = 1 if v in transit else 0
+        for fr in range(max(f0, 0), min(f1, n_frames - 1) + 1):
+            a = (fr * step - t_in) / (t_out - t_in)
+            a = 0.0 if a < 0 else (1.0 if a > 1 else a)
+            frames[fr].append((x0 + (x1 - x0) * a,
+                               y0 + (y1 - y0) * a, mode))
     return frames, kept, len(vid)
 
 

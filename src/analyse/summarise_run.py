@@ -256,41 +256,49 @@ def events_accounting(out_dir):
     path = os.path.join(out_dir, 'output_events.xml.gz')
     if not os.path.exists(path):
         return None
-    import gzip
-    import xml.etree.ElementTree as ET
+    import iteration_reading as _reading                        # noqa: PLC0415
+    acc = ModeAccounting()
+    try:
+        _reading.scan_events(path, acc)
+    except OSError:
+        return None
+    return acc.result()
 
-    def bump(d, k):
+
+class ModeAccounting:
+    """The per-mode departure / arrival / stuck handler for scan_events - the
+    accounting `events_accounting` used to do inside its own ElementTree loop,
+    now one handler among any others the close-out runs over the same pass."""
+    events = ('departure', 'arrival', 'stuckAndAbort')
+
+    def __init__(self):
+        self.dep, self.arr, self.stuck, self.dup = {}, {}, {}, {}
+        self.open_leg = {}  # person id -> mode of the leg currently in flight
+
+    @staticmethod
+    def _bump(d, k):
         d[k] = d.get(k, 0) + 1
 
-    dep, arr, stuck, dup, unresolved = {}, {}, {}, {}, {}
-    open_leg = {}  # person id -> mode of the leg currently in flight
-    try:
-        with gzip.open(path) as f:
-            stream = ET.iterparse(f, events=('start', 'end'))
-            _, root = next(stream)
-            for ev, el in stream:
-                if ev != 'end' or el.tag != 'event':
-                    continue
-                t = el.get('type')
-                if t == 'departure':
-                    open_leg[el.get('person')] = el.get('legMode')
-                    bump(dep, el.get('legMode'))
-                elif t == 'arrival':
-                    open_leg.pop(el.get('person'), None)
-                    bump(arr, el.get('legMode'))
-                elif t == 'stuckAndAbort':
-                    m = open_leg.pop(el.get('person'), None)
-                    if m is None:
-                        bump(dup, el.get('legMode') or 'unknown')
-                    else:
-                        bump(stuck, m)
-                root.clear()
-    except (OSError, ET.ParseError):
-        return None
-    for m in open_leg.values():
-        bump(unresolved, m)
-    return {'departures': dep, 'arrivals': arr, 'stuck': stuck,
-            'duplicate_aborts': dup, 'unresolved': unresolved}
+    def __call__(self, t, el):
+        if t == 'departure':
+            self.open_leg[el.get('person')] = el.get('legMode')
+            self._bump(self.dep, el.get('legMode'))
+        elif t == 'arrival':
+            self.open_leg.pop(el.get('person'), None)
+            self._bump(self.arr, el.get('legMode'))
+        elif t == 'stuckAndAbort':
+            m = self.open_leg.pop(el.get('person'), None)
+            if m is None:
+                self._bump(self.dup, el.get('legMode') or 'unknown')
+            else:
+                self._bump(self.stuck, m)
+
+    def result(self):
+        unresolved = {}
+        for m in self.open_leg.values():
+            self._bump(unresolved, m)
+        return {'departures': self.dep, 'arrivals': self.arr, 'stuck': self.stuck,
+                'duplicate_aborts': self.dup, 'unresolved': unresolved}
 
 
 def integrity(history, events=None):
