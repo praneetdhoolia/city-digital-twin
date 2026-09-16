@@ -1435,7 +1435,6 @@ def lift_candidates_of_person(ixs, person_id, lp):
                 ret_ix = next(j for j in tixs if j != ix)
             lp.passengers.append((pri, ctx['sa1'], person_id,
                                int(r['tour_id']), ix, ret_ix))
-    return pri
 
 
 
@@ -1516,7 +1515,7 @@ def lift_drivers_and_passengers(ld):
     passengers = []   # (pri, home_sa1, person_id, tour_id, anchor ix, ret ix)
     lp = _types.SimpleNamespace(drivers=drivers, out=ld.out, passengers=passengers, pctx=ld.pctx, round_trip=round_trip, rows=rows)
     for person_id, ixs in rows_of.items():
-        pri = lift_candidates_of_person(ixs, person_id, lp)
+        lift_candidates_of_person(ixs, person_id, lp)
     ld.out['drivers_unbound'] = len(drivers)
     ld.out['passenger_candidates'] = len(passengers)
 
@@ -1524,7 +1523,7 @@ def lift_drivers_and_passengers(ld):
     for d_sa1, d_pid, d_tid in sorted(drivers,
                                       key=lambda t: (t[0], int(t[1]), int(t[2]))):
         by_zone[d_sa1].append((d_pid, d_tid))
-    return by_zone, d_pid, d_tid, passengers, pri, round_trip, rows, rows_of
+    return by_zone, passengers, round_trip, rows, rows_of
 
 
 
@@ -1563,7 +1562,7 @@ def bind_nonhousehold_lifts(path, day, pctx, zi, SA1):
     if not out['enabled'] or not ESCORT_BINDING:
         return out
     ld = _types.SimpleNamespace(out=out, path=path, pctx=pctx)
-    by_zone, d_pid, d_tid, passengers, pri, round_trip, rows, rows_of = lift_drivers_and_passengers(ld)
+    by_zone, passengers, round_trip, rows, rows_of = lift_drivers_and_passengers(ld)
     used = set()
     bindings = []
     replaced = {}                 # (driver_pid, tour_id) -> new leg rows
@@ -2339,7 +2338,7 @@ def shared_supply_and_demand(ss):
                 dict(pid=person_id, tid=r['tour_id'], hid=ctx['hid'], dep=dep,
                      seats=MAX_PARTY_PASSENGERS))
             ss.out['driver_trips_indexed'] += 1
-    return bins, covered, dep, drivers, need_trips, tours, window, zone
+    return bins, covered, drivers, need_trips, tours, window, zone
 
 
 
@@ -2393,7 +2392,7 @@ def bind_shared_rides(path, day, pctx, seed):
             csv.DictWriter(fh, fieldnames=cols, lineterminator='\n').writeheader()
         return out
     ss = _types.SimpleNamespace(day=day, out=out, path=path, pctx=pctx)
-    bins, covered, dep, drivers, need_trips, tours, window, zone = shared_supply_and_demand(ss)
+    bins, covered, drivers, need_trips, tours, window, zone = shared_supply_and_demand(ss)
 
     out['sample_seed'] = SAMPLE_SEED
     out['hash_bucket'] = SHARED_LIFT_HASH_BUCKET

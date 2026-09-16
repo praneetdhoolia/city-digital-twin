@@ -81,14 +81,41 @@ def _top_level_defs(tree):
     return out
 
 
+def _walk_scope(node, name):
+    """Walk `node` like ast.walk but do not enter a nested function or lambda
+    that binds `name` itself (as a parameter or a local): its uses of the
+    name are its own, not the enclosing scope's."""
+    def binds_itself(x):
+        if not isinstance(x, (ast.FunctionDef, ast.AsyncFunctionDef, ast.Lambda)):
+            return False
+        own = {a.arg for a in x.args.args + x.args.kwonlyargs}
+        body = x.body if not isinstance(x, ast.Lambda) else [x.body]
+        return name in own or name in _names(body, ast.Store)
+    if binds_itself(node):
+        return
+    stack = [node]
+    while stack:
+        x = stack.pop()
+        yield x
+        for child in ast.iter_child_nodes(x):
+            if binds_itself(child):
+                continue
+            stack.append(child)
+
+
 def _first_use_is_load(nodes, name):
     events = []
     for n in nodes:
-        for x in ast.walk(n):
+        for x in _walk_scope(n, name):
             if isinstance(x, ast.Name) and x.id == name:
                 events.append((x.lineno, x.col_offset, isinstance(x.ctx, ast.Load)))
     events.sort()
     return bool(events) and events[0][2]
+
+
+def _loads_in_scope(nodes, name):
+    return any(isinstance(x, ast.Name) and x.id == name and isinstance(x.ctx, ast.Load)
+               for n in nodes for x in _walk_scope(n, name))
 
 
 def _nested_locals(nodes):
@@ -206,7 +233,7 @@ def main(argv=None):
                     bound_before |= _names([item.optional_vars], ast.Store)
     shared = sorted(n for n in (body_stores & outer_binds) - set(targets) - nested
                     if n in bound_before and (_first_use_is_load(body, n)
-                                              or (n in _names(after, ast.Load)
+                                              or (_loads_in_scope(after, n)
                                                   and _first_use_is_load(after, n))))
     # a name read in the body that fn binds outside it and the body does not
     # bind first is reached through ctx; module-level names and builtins are not
@@ -220,9 +247,8 @@ def main(argv=None):
     via_ctx = sorted(set(shared) | set(reads))
     # a name the body binds for the FIRST time that the function reads after
     # the loop is produced by the extracted function and returned to the caller
-    after_loads_ = _names(after, ast.Load)
     produced = sorted(n for n in (body_stores - set(targets) - nested)
-                      if n not in bound_before and n in after_loads_
+                      if n not in bound_before and _loads_in_scope(after, n)
                       and _first_use_is_load(after, n) and n not in module_scope)
     print('produced (returned to the caller):', produced)
     # names the body binds only for itself (locals) stay bare
