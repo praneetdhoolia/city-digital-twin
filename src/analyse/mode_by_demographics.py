@@ -27,10 +27,12 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
+import registry as _registry
 from city import path as city_path
 
-AGE_BANDS = ((0, 4), (5, 11), (12, 17), (18, 24), (25, 34), (35, 44),
-             (45, 54), (55, 64), (65, 74), (75, 84), (85, 200))
+# the model's own banding, declared once (B.population.age_bands) and
+# labelled as the population builder labels it (build_population.BAND_LABEL)
+AGE_BANDS = [tuple(b) for b in _registry.load().get('B.population.age_bands')]
 DIMS = ('age_band', 'sex', 'employment', 'licence', 'car_availability',
         'household_vehicles')
 
@@ -40,9 +42,10 @@ def age_band(age):
         a = int(float(age))
     except (TypeError, ValueError):
         return 'unknown'
+    last = AGE_BANDS[-1][0]
     for lo, hi in AGE_BANDS:
         if lo <= a <= hi:
-            return '%d-%d' % (lo, hi) if hi < 200 else '85+'
+            return '%d+' % lo if lo == last else '%d-%d' % (lo, hi)
     return 'unknown'
 
 
