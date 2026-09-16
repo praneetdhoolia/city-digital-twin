@@ -50,6 +50,7 @@ import city as _city
 import registry as _registry
 import extract_metrics as em
 import measure_iteration_modes as mim
+import types as _types
 
 # The city's own submode vocabulary maps onto the target file's mode names.
 # A schedule calls the heavy-rail mode `rail` and the light-rail mode `tram`;
@@ -378,6 +379,184 @@ def truck_at_count_stations(run_dir, iteration):
             len(cal_keys), len(held_keys))
 
 
+def print_footer(fctx):
+    """One iteration of the loop this replaced in print_readings(); `fctx` carries the
+    enclosing scope (2 names). Extracted mechanically, byte-identical outputs."""
+    print('-' * 100)
+    print('target-LGA linked trips %d   modelled road vehicle trips %d '
+          '(all subpopulations)' % (fctx.ctx.lga_tot, fctx.ctx.road_tot))
+    if fctx.ctx.truck_stn is not None and fctx.ctx.truck_stn[0] is not None:
+        print('truck scored AT THE CLASSIFYING COUNT STATIONS: %d heavy of %d '
+              'road vehicles over %d calibration station(s), against their own '
+              'observed %.4f%%; %d classifying station(s) are HOLDOUT and were '
+              'NOT opened'
+              % (fctx.ctx.truck_stn[2], fctx.ctx.truck_stn[3], fctx.ctx.truck_stn[4], fctx.ctx.truck_stn[1],
+                 fctx.ctx.truck_stn[5]))
+    print('mean km is the modelled mean TRIP LENGTH for %s residents against '
+          'the HTS\'s own' % em.TARGET_LGA)
+    print('   TRIP_AVG_DISTANCE for that mode\'s survey category; the four pt '
+          'submodes share one folded')
+    print('   observation, so their geometry deviations are not independent of '
+          'each other')
+    if fctx.ctx.sub.get('pt:no_boarding'):
+        print('pt trips that boarded nothing (raptor direct-walk fallback): %d'
+              % fctx.ctx.sub['pt:no_boarding'])
+    if fctx.ctx.multi:
+        print('pt trips boarding more than one submode, each allocated to '
+              'its longest-ridden submode: %d' % fctx.ctx.multi)
+    if fctx.ctx.unknown:
+        print('pt legs whose route did not resolve to a submode: %d' % fctx.ctx.unknown)
+
+    if fctx.breaches:
+        print('\nGATE: %d mode(s) at or past %.0f%% deviation - the standing '
+              'directive is to STOP the run and fix the cause from the root:'
+              % (len(fctx.breaches), GATE_STOP_PCT))
+        for mode, m, t, dev in sorted(fctx.breaches, key=lambda x: -abs(x[3])):
+            print('   %-14s modelled %8.4f  target %8.4f  %+.1f%%'
+                  % (mode, m, t, dev))
+    else:
+        print('\nGATE: no mode at or past %.0f%% deviation.' % GATE_STOP_PCT)
+
+
+
+def print_readings(ctx):
+    """One iteration of the loop this replaced in report(); `ctx` carries the
+    enclosing scope (20 names). Extracted mechanically, byte-identical outputs."""
+    stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
+    name = _os.path.basename(_os.path.normpath(ctx.run_dir))
+    print('=' * 100)
+    print('PER-MODE RIDERSHIP   %s   run %s   iteration %d' % (stamp, name, ctx.iteration))
+    print('basis  linked main-mode trips, %s residents, from the iteration\'s '
+          'own %s' % (em.TARGET_LGA, ctx.source))
+    print('       pt split from that iteration\'s %s by each boarded '
+          'route\'s transportMode'
+          % ('legs table' if ctx.derived is None else 'boarded routes'))
+    print('=' * 100)
+    print('%-15s %10s %10s %11s %12s %9s %8s  %s'
+          % ('mode', 'modelled%', 'target%', 'deviation', 'count',
+             'mean km', 'vs obs', 'gate'))
+    print('-' * 100)
+
+    def geometry(mode, t):
+        """Modelled mean trip km, and how it compares with the observed one.
+
+        A mode can sit on its share and still be carrying trips of entirely the
+        wrong length, which no share can show (9.107).
+        """
+        if mode in PT_TARGET_MODES:
+            n, s_ = ctx.pt_n, ctx.pt_km          # the survey folds all four into one
+        else:
+            n, s_ = ctx.km_n.get(mode, 0), ctx.km_sum.get(mode, 0.0)
+        if not n:
+            return '        -', '       -'
+        mean = s_ / n
+        obs = t.get('mean_km')
+        if not obs:
+            return '%9.2f' % mean, '       -'
+        return '%9.2f' % mean, '%+7.0f%%' % (100.0 * (mean - obs) / obs)
+
+    breaches = []
+
+    def _row(i, mode, t, m, dev, basis, flag):
+        LAST['rows'].append(dict(
+            n=i, mode=mode, modelled=m, target=t.get('target'),
+            deviation_pct=dev, count=ctx.trips.get(mode, 0), basis=basis,
+            flag=flag, denominator=t.get('denominator') or ''))
+
+    for i, (mode, t) in enumerate(ctx.tgt.items(), 1):
+        m = ctx.modelled[mode]
+        if mode == 'truck' and ctx.truck_target_stn is not None:
+            # scored on the target's own ground, so the comparator is those
+            # stations' own observed share rather than the pooled one
+            t = dict(t, target=ctx.truck_target_stn)
+        if t['status'] == 'not_simulated':
+            print('%-15s %10s %10s %11s %12d  %s'
+                  % ('%d %s' % (i, mode), '-', '-', '-', ctx.trips[mode],
+                     'NOT SIMULATED (decision)'))
+            _row(i, mode, t, None, None, 'not simulated', 'decision')
+            continue
+        if t['target'] is None:
+            # a mode with no percentage denominator prints no percentage:
+            # a 0.0000 in that column reads as "measured zero", which is the
+            # opposite of "this quantity is not a share of anything"
+            print('%-15s %10s %10s %11s %12d  %s'
+                  % ('%d %s' % (i, mode),
+                     '-' if m is None else '%.4f' % m,
+                     'unobtained', 'n/a', ctx.trips[mode],
+                     'NO TARGET - swept, never pinned'))
+            _row(i, mode, t, m, None, 'share of resident trips', 'no target')
+            continue
+        if m is None:
+            print('%-15s %10s %10.4f %11s %12d  %s'
+                  % ('%d %s' % (i, mode), '-', t['target'], 'n/a',
+                     ctx.trips[mode], 'NO MODELLED COUNTERPART'))
+            _row(i, mode, t, None, None, t.get('denominator') or '',
+                 'no modelled counterpart')
+            continue
+        dev = 100.0 * (m - t['target']) / t['target']
+        if mode == 'freight_train':
+            flag = 'representation, not a fit (closures ARE the timetable)'
+            print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], dev, ctx.trips[mode],
+                     flag))
+            # no deviation is STORED for a representation (#114): the closures
+            # ARE the timetable, so 0.0% is a tautology, not a fit, and the
+            # board must not print one
+            _row(i, mode, t, m, None,
+                 'train movements represented by crossing closures',
+                 'representation')
+            continue
+        if mode in ctx.boarding_modes:
+            if abs(dev) >= GATE_STOP_PCT:
+                flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
+                breaches.append((mode, m, t['target'], dev))
+            elif abs(dev) >= GATE_PASS_PCT:
+                flag = 'over %.0f%%' % GATE_PASS_PCT
+            else:
+                flag = 'ok'
+            print('%-15s %10.0f %10.0f %+10.1f%% %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], dev, ctx.trips[mode],
+                     'BOARDINGS/weekday, all travellers, x1/fraction; ' + flag))
+            _row(i, mode, t, m, dev,
+                 'boardings per weekday, all travellers, x1/fraction', flag)
+            continue
+        if mode == 'truck' and ctx.truck_note:
+            # A share of the WHOLE network set beside a share measured on
+            # freight routes is a level, not an error. Printing a deviation
+            # here is the mistake 9.80/#84 records for the light rail.
+            print('%-15s %10.4f %10.4f %11s %12d  %s'
+                  % ('%d %s' % (i, mode), m, t['target'], 'n/a', ctx.trips[mode],
+                     ctx.truck_note))
+            # ... and none is STORED either (#114): the board rendered the
+            # stored value, so the committed scoreboard carried the very
+            # percentage this branch refuses to print
+            _row(i, mode, t, m, None,
+                 'network-wide road-vehicle share (not the target basis; '
+                 '--truck-stations scores it)', 'level only')
+            continue
+        if abs(dev) >= GATE_STOP_PCT:
+            flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
+            breaches.append((mode, m, t['target'], dev))
+        elif abs(dev) >= GATE_PASS_PCT:
+            flag = 'over %.0f%%' % GATE_PASS_PCT
+        else:
+            flag = 'ok'
+        gk, gd = geometry(mode, t)
+        print('%-15s %10.4f %10.4f %+10.1f%% %12d %s %s  %s'
+              % ('%d %s' % (i, mode), m, t['target'], dev, ctx.trips[mode],
+                 gk, gd, flag))
+        _row(i, mode, t, m, dev,
+             'heavy share at the classifying stations' if mode == 'truck'
+             else 'share of resident linked trips', flag)
+
+    fctx = _types.SimpleNamespace(breaches=breaches, ctx=ctx)
+    print_footer(fctx)
+
+    _print_coverage_bound(ctx.run_dir, ctx.iteration, breaches)
+    return breaches
+
+
+
 def report(run_dir, iteration, truck_stations=False):
     import iteration_trips as itr
     person_lga = em.home_lga(run_dir)
@@ -508,169 +687,8 @@ def report(run_dir, iteration, truck_stations=False):
     LAST['source'] = source
     LAST['rows'] = []          # one dict per mode, filled as the table prints
 
-    stamp = time.strftime('%Y-%m-%dT%H:%M:%S')
-    name = _os.path.basename(_os.path.normpath(run_dir))
-    print('=' * 100)
-    print('PER-MODE RIDERSHIP   %s   run %s   iteration %d' % (stamp, name, iteration))
-    print('basis  linked main-mode trips, %s residents, from the iteration\'s '
-          'own %s' % (em.TARGET_LGA, source))
-    print('       pt split from that iteration\'s %s by each boarded '
-          'route\'s transportMode'
-          % ('legs table' if derived is None else 'boarded routes'))
-    print('=' * 100)
-    print('%-15s %10s %10s %11s %12s %9s %8s  %s'
-          % ('mode', 'modelled%', 'target%', 'deviation', 'count',
-             'mean km', 'vs obs', 'gate'))
-    print('-' * 100)
-
-    def geometry(mode, t):
-        """Modelled mean trip km, and how it compares with the observed one.
-
-        A mode can sit on its share and still be carrying trips of entirely the
-        wrong length, which no share can show (9.107).
-        """
-        if mode in PT_TARGET_MODES:
-            n, s_ = pt_n, pt_km          # the survey folds all four into one
-        else:
-            n, s_ = km_n.get(mode, 0), km_sum.get(mode, 0.0)
-        if not n:
-            return '        -', '       -'
-        mean = s_ / n
-        obs = t.get('mean_km')
-        if not obs:
-            return '%9.2f' % mean, '       -'
-        return '%9.2f' % mean, '%+7.0f%%' % (100.0 * (mean - obs) / obs)
-
-    breaches = []
-
-    def _row(i, mode, t, m, dev, basis, flag):
-        LAST['rows'].append(dict(
-            n=i, mode=mode, modelled=m, target=t.get('target'),
-            deviation_pct=dev, count=trips.get(mode, 0), basis=basis,
-            flag=flag, denominator=t.get('denominator') or ''))
-
-    for i, (mode, t) in enumerate(tgt.items(), 1):
-        m = modelled[mode]
-        if mode == 'truck' and truck_target_stn is not None:
-            # scored on the target's own ground, so the comparator is those
-            # stations' own observed share rather than the pooled one
-            t = dict(t, target=truck_target_stn)
-        if t['status'] == 'not_simulated':
-            print('%-15s %10s %10s %11s %12d  %s'
-                  % ('%d %s' % (i, mode), '-', '-', '-', trips[mode],
-                     'NOT SIMULATED (decision)'))
-            _row(i, mode, t, None, None, 'not simulated', 'decision')
-            continue
-        if t['target'] is None:
-            # a mode with no percentage denominator prints no percentage:
-            # a 0.0000 in that column reads as "measured zero", which is the
-            # opposite of "this quantity is not a share of anything"
-            print('%-15s %10s %10s %11s %12d  %s'
-                  % ('%d %s' % (i, mode),
-                     '-' if m is None else '%.4f' % m,
-                     'unobtained', 'n/a', trips[mode],
-                     'NO TARGET - swept, never pinned'))
-            _row(i, mode, t, m, None, 'share of resident trips', 'no target')
-            continue
-        if m is None:
-            print('%-15s %10s %10.4f %11s %12d  %s'
-                  % ('%d %s' % (i, mode), '-', t['target'], 'n/a',
-                     trips[mode], 'NO MODELLED COUNTERPART'))
-            _row(i, mode, t, None, None, t.get('denominator') or '',
-                 'no modelled counterpart')
-            continue
-        dev = 100.0 * (m - t['target']) / t['target']
-        if mode == 'freight_train':
-            flag = 'representation, not a fit (closures ARE the timetable)'
-            print('%-15s %10.4f %10.4f %+10.1f%% %12d  %s'
-                  % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
-                     flag))
-            # no deviation is STORED for a representation (#114): the closures
-            # ARE the timetable, so 0.0% is a tautology, not a fit, and the
-            # board must not print one
-            _row(i, mode, t, m, None,
-                 'train movements represented by crossing closures',
-                 'representation')
-            continue
-        if mode in boarding_modes:
-            if abs(dev) >= GATE_STOP_PCT:
-                flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
-                breaches.append((mode, m, t['target'], dev))
-            elif abs(dev) >= GATE_PASS_PCT:
-                flag = 'over %.0f%%' % GATE_PASS_PCT
-            else:
-                flag = 'ok'
-            print('%-15s %10.0f %10.0f %+10.1f%% %12d  %s'
-                  % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
-                     'BOARDINGS/weekday, all travellers, x1/fraction; ' + flag))
-            _row(i, mode, t, m, dev,
-                 'boardings per weekday, all travellers, x1/fraction', flag)
-            continue
-        if mode == 'truck' and truck_note:
-            # A share of the WHOLE network set beside a share measured on
-            # freight routes is a level, not an error. Printing a deviation
-            # here is the mistake 9.80/#84 records for the light rail.
-            print('%-15s %10.4f %10.4f %11s %12d  %s'
-                  % ('%d %s' % (i, mode), m, t['target'], 'n/a', trips[mode],
-                     truck_note))
-            # ... and none is STORED either (#114): the board rendered the
-            # stored value, so the committed scoreboard carried the very
-            # percentage this branch refuses to print
-            _row(i, mode, t, m, None,
-                 'network-wide road-vehicle share (not the target basis; '
-                 '--truck-stations scores it)', 'level only')
-            continue
-        if abs(dev) >= GATE_STOP_PCT:
-            flag = 'STOP  >=%.0f%%' % GATE_STOP_PCT
-            breaches.append((mode, m, t['target'], dev))
-        elif abs(dev) >= GATE_PASS_PCT:
-            flag = 'over %.0f%%' % GATE_PASS_PCT
-        else:
-            flag = 'ok'
-        gk, gd = geometry(mode, t)
-        print('%-15s %10.4f %10.4f %+10.1f%% %12d %s %s  %s'
-              % ('%d %s' % (i, mode), m, t['target'], dev, trips[mode],
-                 gk, gd, flag))
-        _row(i, mode, t, m, dev,
-             'heavy share at the classifying stations' if mode == 'truck'
-             else 'share of resident linked trips', flag)
-
-    print('-' * 100)
-    print('target-LGA linked trips %d   modelled road vehicle trips %d '
-          '(all subpopulations)' % (lga_tot, road_tot))
-    if truck_stn is not None and truck_stn[0] is not None:
-        print('truck scored AT THE CLASSIFYING COUNT STATIONS: %d heavy of %d '
-              'road vehicles over %d calibration station(s), against their own '
-              'observed %.4f%%; %d classifying station(s) are HOLDOUT and were '
-              'NOT opened'
-              % (truck_stn[2], truck_stn[3], truck_stn[4], truck_stn[1],
-                 truck_stn[5]))
-    print('mean km is the modelled mean TRIP LENGTH for %s residents against '
-          'the HTS\'s own' % em.TARGET_LGA)
-    print('   TRIP_AVG_DISTANCE for that mode\'s survey category; the four pt '
-          'submodes share one folded')
-    print('   observation, so their geometry deviations are not independent of '
-          'each other')
-    if sub.get('pt:no_boarding'):
-        print('pt trips that boarded nothing (raptor direct-walk fallback): %d'
-              % sub['pt:no_boarding'])
-    if multi:
-        print('pt trips boarding more than one submode, each allocated to '
-              'its longest-ridden submode: %d' % multi)
-    if unknown:
-        print('pt legs whose route did not resolve to a submode: %d' % unknown)
-
-    if breaches:
-        print('\nGATE: %d mode(s) at or past %.0f%% deviation - the standing '
-              'directive is to STOP the run and fix the cause from the root:'
-              % (len(breaches), GATE_STOP_PCT))
-        for mode, m, t, dev in sorted(breaches, key=lambda x: -abs(x[3])):
-            print('   %-14s modelled %8.4f  target %8.4f  %+.1f%%'
-                  % (mode, m, t, dev))
-    else:
-        print('\nGATE: no mode at or past %.0f%% deviation.' % GATE_STOP_PCT)
-
-    _print_coverage_bound(run_dir, iteration, breaches)
+    ctx = _types.SimpleNamespace(boarding_modes=boarding_modes, derived=derived, iteration=iteration, km_n=km_n, km_sum=km_sum, lga_tot=lga_tot, modelled=modelled, multi=multi, pt_km=pt_km, pt_n=pt_n, road_tot=road_tot, run_dir=run_dir, source=source, sub=sub, tgt=tgt, trips=trips, truck_note=truck_note, truck_stn=truck_stn, truck_target_stn=truck_target_stn, unknown=unknown)
+    breaches = print_readings(ctx)
     return breaches
 
 

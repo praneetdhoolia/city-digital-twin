@@ -25,6 +25,8 @@ import builtins
 import io
 import tokenize
 
+NL = chr(10)
+
 
 def _names(nodes, ctx_type):
     out = set()
@@ -199,6 +201,13 @@ def main(argv=None):
                    and n not in module_scope and n in bound_before
                    and (n not in body_stores or _first_use_is_load(body, n)))
     via_ctx = sorted(set(shared) | set(reads))
+    # a name the body binds for the FIRST time that the function reads after
+    # the loop is produced by the extracted function and returned to the caller
+    after_loads_ = _names(after, ast.Load)
+    produced = sorted(n for n in (body_stores - set(targets) - nested)
+                      if n not in bound_before and n in after_loads_
+                      and _first_use_is_load(after, n) and n not in module_scope)
+    print('produced (returned to the caller):', produced)
     # names the body binds only for itself (locals) stay bare
     print('loop targets', targets)
     print('via ctx (%d):' % len(via_ctx), via_ctx)
@@ -282,7 +291,8 @@ def main(argv=None):
     sig = 'def %s(%s):' % (a.new_name, ', '.join(targets + [a.ctx]))
     doc = '    """One iteration of the loop this replaced in %s(); `%s` carries the\n    enclosing scope (%d names). Extracted mechanically, byte-identical outputs."""\n' % (
         a.function, a.ctx, len(via_ctx))
-    new_func = sig + '\n' + doc + new_body + '\n\n\n'
+    ret = ('    return ' + ', '.join(produced) + NL) if produced else ''
+    new_func = sig + NL + doc + new_body + NL + ret + NL + NL
 
     # the call site and the ctx bundle
     loop_line = lines[loop.lineno - 1]
@@ -290,11 +300,12 @@ def main(argv=None):
     pack = ind + '%s = _types.SimpleNamespace(%s)' % (a.ctx, ', '.join('%s=%s' % (n, n) for n in via_ctx))
     unpack = (ind + '%s = %s' % (', '.join(shared), ', '.join('%s.%s' % (a.ctx, n) for n in shared))) if shared else None
     out = lines[:]
+    bind = (', '.join(produced) + ' = ') if produced else ''
     if range_mode:
-        call = ind + '%s(%s)' % (a.new_name, a.ctx)
+        call = ind + bind + '%s(%s)' % (a.new_name, a.ctx)
         out[start_line - 1:end_line] = [pack, call] + ([unpack] if unpack else [])
     else:
-        call = ind + '    %s(%s)' % (a.new_name, ', '.join(targets + [a.ctx]))
+        call = ind + '    ' + bind + '%s(%s)' % (a.new_name, ', '.join(targets + [a.ctx]))
         out[loop.lineno - 1:end_line] = [pack, loop_line, call] + ([unpack] if unpack else [])
     # insert the new function before the enclosing function
     out[fn.lineno - 1:fn.lineno - 1] = new_func.split('\n')
