@@ -516,7 +516,10 @@ def trim(cap_gb, log=print, grace_s=None):
                     'processed/, then trim.' % name)
                 continue
         else:
-            process(name, extract=True)
+            # the readings are extracted ONCE: a run whose findings already
+            # sit in processed/ is mirrored, not re-read (the two reporter
+            # subprocesses ran again for every trimmed candidate, twelfth report)
+            process(name, extract=not _findings_in_processed(name))
         freed = _dir_bytes(d)
         try:
             shutil.rmtree(d)
