@@ -1,6 +1,6 @@
 # Non-household lifts — closing the reported gap physically
 
-> **FROZEN DOSSIER — the mechanism it analysed was built (DECISIONS.md §9.60) and extended by the shared-ride pass (§9.124).** Current position: [`positions/ride-and-pairing.md`](../../positions/ride-and-pairing.md).
+> **FROZEN DOSSIER — the mechanism it analysed was built (DECISIONS.md §9.60) and extended by the shared-ride pass (§9.124).** Current position: [`positions/ride-and-pairing.md`](../../../../../docs/positions/ride-and-pairing.md).
 
 *21 August 2026. A standing directive ordered (superseding the §9.55 report-only
 stance): FIX the non-household-lift gap. This dossier records the option

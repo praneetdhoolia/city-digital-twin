@@ -189,7 +189,10 @@ def lift_cluster_map(src):
     return {h: find(h) for h in list(parent)}
 
 
-def subsample_plans(src, dst, fraction, seed=None, unit=None):
+def subsample_plans(src, dst, fraction, seed=None, unit=None, kept_ids=None):
+    """Write the sampled plans; `kept_ids`, when a set is passed, receives
+    every person id written, so the launcher can record the run's own
+    residents beside its inputs (#213)."""
     n_in = n_out = n_no_household = 0
     if seed is None:
         seed = default_seed()
@@ -220,6 +223,8 @@ def subsample_plans(src, dst, fraction, seed=None, unit=None):
                 if keep(pid, fraction, seed, cluster.get(hid, hid), unit):
                     w.write(''.join(buf))
                     n_out += 1
+                    if kept_ids is not None:
+                        kept_ids.add(pid)
                 buf = None
     return n_in, n_out, n_no_household
 

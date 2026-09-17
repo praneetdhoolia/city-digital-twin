@@ -1,6 +1,6 @@
 # Physical ride — the mechanism options, their recorded costs, and what must be measured before choosing
 
-> **FROZEN DOSSIER — the choice it left open was made: physical boarding (DECISIONS.md §9.53), identity pairing (§9.120) and the driver detour (§9.128).** Current position: [`positions/ride-and-pairing.md`](../../positions/ride-and-pairing.md).
+> **FROZEN DOSSIER — the choice it left open was made: physical boarding (DECISIONS.md §9.53), identity pairing (§9.120) and the driver detour (§9.128).** Current position: [`positions/ride-and-pairing.md`](../../../../../docs/positions/ride-and-pairing.md).
 
 **Evidence dossier for issue #48 (standing directive, DECISIONS.md §9.51 priority 1).
 Research record — no mechanism is chosen here; the choice is the project's, and

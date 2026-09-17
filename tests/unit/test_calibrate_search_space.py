@@ -19,6 +19,8 @@ Three defects lived here at once, and none was visible from the outside because
 These assert the contracts rather than the implementations, and they build
 their own synthetic fields: no registry, no run, no `results/`.
 """
+import re
+
 import calibrate
 
 
@@ -138,7 +140,7 @@ def test_the_loop_refuses_a_reading_that_cannot_resolve_the_goal_band():
     assert "refusing to search on a reading that cannot resolve" in src
     # and it refuses only --execute: --plan must still cost the search, because
     # knowing what it WOULD cost is how the reading gets fixed
-    assert "if a.execute:" in src
+    assert re.search(r"if (\w+\.)?a\.execute:", src), "the refusal is scoped to --execute"
 
 
 def test_the_stopping_rule_is_derived_from_the_reading_noise():

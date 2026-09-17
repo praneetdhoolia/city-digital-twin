@@ -6,7 +6,7 @@ Appendix A of the proposal.
 
 ## A1/A6 network
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A1_corridor_road_edges.csv`
+### `data/processed/network/A1_corridor_road_edges.csv`
 
 714 rows, 27 columns
 
@@ -40,7 +40,7 @@ Appendix A of the proposal.
 | `dist_to_base2026_m` | float | 0.6 | 401/401 |
 | `scenario_variant_ref` | str | base2026 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A1_road_edges.csv`
+### `data/processed/network/A1_road_edges.csv`
 
 50182 rows, 34 columns
 
@@ -81,7 +81,7 @@ Appendix A of the proposal.
 | `gradient_source` | str | copernicus_glo30 | 401/401 |
 | `speed_zone_match_m` | float | 0.0 | 55/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A1_road_variant_patches.csv`
+### `data/processed/network/A1_road_variant_patches.csv`
 
 414 rows, 18 columns
 
@@ -106,7 +106,7 @@ Appendix A of the proposal.
 | `sweep_high` | int | 2 | 401/401 |
 | `rationale` | str | pre-tram reconstruction: road s... | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A2_crossings_osm.csv`
+### `data/processed/network/A2_crossings_osm.csv`
 
 10677 rows, 8 columns
 
@@ -121,7 +121,7 @@ Appendix A of the proposal.
 | `island` | str | no | 12/401 |
 | `tactile_paving` | str | no | 4/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A2_signal_nodes_osm.csv`
+### `data/processed/network/A2_signal_nodes_osm.csv`
 
 1337 rows, 8 columns
 
@@ -136,7 +136,7 @@ Appendix A of the proposal.
 | `button_operated` | empty |  | 0/401 |
 | `name` | empty |  | 0/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A2_turn_restrictions_osm.csv`
+### `data/processed/network/A2_turn_restrictions_osm.csv`
 
 1546 rows, 3 columns
 
@@ -146,7 +146,7 @@ Appendix A of the proposal.
 | `restriction` | str | only_straight_on | 398/401 |
 | `members` | str | way:1326381885:from;node:122722... | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A2_turn_restrictions_resolved.csv`
+### `data/processed/network/A2_turn_restrictions_resolved.csv`
 
 1545 rows, 14 columns
 
@@ -167,7 +167,7 @@ Appendix A of the proposal.
 | `dist_to_S5_m` | float | 4.2 | 401/401 |
 | `corridor_flag` | int | 1 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A5_parking_osm.csv`
+### `data/processed/network/A5_parking_osm.csv`
 
 8479 rows, 16 columns
 
@@ -190,7 +190,7 @@ Appendix A of the proposal.
 | `name` | str | Carpark 2 | 16/401 |
 | `scenario_variant_ref` | str | base2026 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/network/A6_footway_edges.csv`
+### `data/processed/network/A6_footway_edges.csv`
 
 40195 rows, 33 columns
 
@@ -232,7 +232,7 @@ Appendix A of the proposal.
 
 ## A4/A2 corridor
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/corridor/A2_signal_control_corridor.csv`
+### `data/processed/corridor/A2_signal_control_corridor.csv`
 
 70 rows, 27 columns
 
@@ -266,7 +266,7 @@ Appendix A of the proposal.
 | `source` | str | assumed | 70/70 |
 | `scenario_variant_ref` | str | S2_base | 70/70 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/corridor/A4_segment_runtime_decomposition.csv`
+### `data/processed/corridor/A4_segment_runtime_decomposition.csv`
 
 10 rows, 11 columns
 
@@ -280,11 +280,11 @@ Appendix A of the proposal.
 | `kinematic_runtime_s` | float | 70.2 | 10/10 |
 | `residual_s` | float | 109.8 | 10/10 |
 | `implied_mean_speed_kmh` | float | 13.6 | 10/10 |
-| `line_speed_kmh` | int | 40 | 10/10 |
+| `line_speed_kmh` | int | 40.0 | 10/10 |
 | `distance_source` | str | gtfs_shape_scaled | 10/10 |
 | `kinematic_source` | str | computed | 10/10 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/corridor/A4_stop_dwell_model.csv`
+### `data/processed/corridor/A4_stop_dwell_model.csv`
 
 6 rows, 15 columns
 
@@ -295,7 +295,7 @@ Appendix A of the proposal.
 | `is_terminus` | int | 1 | 6/6 |
 | `dwell_fixed_s` | int | 8.0 | 6/6 |
 | `dwell_fixed_sweep_low` | int | 5.0 | 6/6 |
-| `dwell_fixed_sweep_high` | int | 12.0 | 6/6 |
+| `dwell_fixed_sweep_high` | int | 15.0 | 6/6 |
 | `dwell_boarding_fn` | str | max(pax_board/0.60, pax_alight/... | 6/6 |
 | `dwell_charging_s` | int | 20.0 | 6/6 |
 | `dwell_charging_sweep_low` | int | 10.0 | 6/6 |
@@ -306,7 +306,7 @@ Appendix A of the proposal.
 | `source` | str | assumed | 6/6 |
 | `acquisition_route` | str | field measurement, or GTFS-Real... | 6/6 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/corridor/A4_vehicle_spec.csv`
+### `data/processed/corridor/A4_vehicle_spec.csv`
 
 1 rows, 28 columns
 
@@ -328,7 +328,7 @@ Appendix A of the proposal.
 | `max_decel_ms2` | float | 1.3 | 1/1 |
 | `emergency_decel_ms2` | float | 2.8 | 1/1 |
 | `max_speed_kmh` | int | 70 | 1/1 |
-| `line_speed_kmh` | int | 40 | 1/1 |
+| `line_speed_kmh` | int | 40.0 | 1/1 |
 | `door_count_per_side` | int | 4 | 1/1 |
 | `door_width_mm` | int | 1300 | 1/1 |
 | `boarding_rate_pax_s` | float | 0.6 | 1/1 |
@@ -343,7 +343,7 @@ Appendix A of the proposal.
 
 ## A3 schedule extras
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/schedule_extras/A3_route_extras.csv`
+### `data/processed/schedule_extras/A3_route_extras.csv`
 
 290 rows, 10 columns
 
@@ -360,7 +360,7 @@ Appendix A of the proposal.
 | `valid_to` | empty |  | 0/290 |
 | `source_feed` | str | nisc001 | 290/290 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/schedule_extras/A3_stop_extras.csv`
+### `data/processed/schedule_extras/A3_stop_extras.csv`
 
 3873 rows, 16 columns
 
@@ -383,7 +383,7 @@ Appendix A of the proposal.
 | `interchange_group_id` | empty |  | 0/401 |
 | `attribute_source` | str | assumed | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/schedule_extras/A3_transfer_extras.csv`
+### `data/processed/schedule_extras/A3_transfer_extras.csv`
 
 3584 rows, 15 columns
 
@@ -407,7 +407,7 @@ Appendix A of the proposal.
 
 ## A5/D1 land use and parking
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/A5_parking_facilities.csv`
+### `data/processed/landuse/A5_parking_facilities.csv`
 
 8479 rows, 28 columns
 
@@ -442,7 +442,7 @@ Appendix A of the proposal.
 | `walk_time_to_frontages_s` | empty |  | 0/401 |
 | `year` | int | 2026 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/A5_parking_price_zones.csv`
+### `data/processed/landuse/A5_parking_price_zones.csv`
 
 1701 rows, 10 columns
 
@@ -459,7 +459,7 @@ Appendix A of the proposal.
 | `price_sweep_high` | float | 0.0 | 401/401 |
 | `price_source` | str | modelled_from_job_density | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/D1_buildings_cbd.csv`
+### `data/processed/landuse/D1_buildings_cbd.csv`
 
 13096 rows, 12 columns
 
@@ -478,7 +478,7 @@ Appendix A of the proposal.
 | `name` | str | Newcastle Healthcare | 20/401 |
 | `year` | int | 2026 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv`
+### `data/processed/landuse/D1_employment_by_anzsic_POW_SA2.csv`
 
 55 rows, 22 columns
 
@@ -507,7 +507,7 @@ Appendix A of the proposal.
 | `jobs_sa2` | int | 4941 | 55/55 |
 | `year` | int | 2021 | 55/55 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/D1_frontage_segments.csv`
+### `data/processed/landuse/D1_frontage_segments.csv`
 
 498 rows, 30 columns
 
@@ -544,7 +544,7 @@ Appendix A of the proposal.
 | `year` | int | 2026 | 401/401 |
 | `scenario_variant_ref` | str | base2026 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/D1_poi.csv`
+### `data/processed/landuse/D1_poi.csv`
 
 26864 rows, 13 columns
 
@@ -564,7 +564,7 @@ Appendix A of the proposal.
 | `year` | int | 2026 | 401/401 |
 | `weight_source` | str | assumed | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/landuse/D1_zone_attractions_SA1.csv`
+### `data/processed/landuse/D1_zone_attractions_SA1.csv`
 
 1701 rows, 30 columns
 
@@ -603,7 +603,7 @@ Appendix A of the proposal.
 
 ## Zones
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/sa1_to_lga.csv`
+### `data/processed/zones/sa1_to_lga.csv`
 
 1701 rows, 4 columns
 
@@ -614,7 +614,7 @@ Appendix A of the proposal.
 | `lga_name` | str | Cessnock | 401/401 |
 | `lga_code` | int | 11720 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/zone_lookup_SA1.csv`
+### `data/processed/zones/zone_lookup_SA1.csv`
 
 1701 rows, 13 columns
 
@@ -634,7 +634,7 @@ Appendix A of the proposal.
 | `lon` | float | 151.3850026 | 401/401 |
 | `lat` | float | -32.670974 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/zones_DZN.csv`
+### `data/processed/zones/zones_DZN.csv`
 
 265 rows, 18 columns
 
@@ -659,7 +659,7 @@ Appendix A of the proposal.
 | `zone_tier` | str | external | 265/265 |
 | `zone_id` | int | 110306044 | 265/265 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/zones_LGA.csv`
+### `data/processed/zones/zones_LGA.csv`
 
 5 rows, 17 columns
 
@@ -683,7 +683,7 @@ Appendix A of the proposal.
 | `zone_tier` | str | core | 5/5 |
 | `zone_id` | int | 11720 | 5/5 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/zones_SA1.csv`
+### `data/processed/zones/zones_SA1.csv`
 
 1701 rows, 24 columns
 
@@ -714,7 +714,7 @@ Appendix A of the proposal.
 | `zone_tier` | str | core | 401/401 |
 | `zone_id` | int | 10601110701 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/zones_SA2.csv`
+### `data/processed/zones/zones_SA2.csv`
 
 55 rows, 23 columns
 
@@ -744,7 +744,7 @@ Appendix A of the proposal.
 | `zone_tier` | str | core | 55/55 |
 | `zone_id` | int | 106011107 | 55/55 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/zones/zones_SA3.csv`
+### `data/processed/zones/zones_SA3.csv`
 
 7 rows, 21 columns
 
@@ -774,7 +774,7 @@ Appendix A of the proposal.
 
 ## HTS
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/hts/hts_mode.csv`
+### `data/processed/hts/hts_mode.csv`
 
 752 rows, 14 columns
 
@@ -795,7 +795,7 @@ Appendix A of the proposal.
 | `TRIP_AVG_TIME` | float | 8.2 | 401/401 |
 | `HH_SA3_ID` | int | 11101.0 | 190/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/hts/hts_purpose.csv`
+### `data/processed/hts/hts_purpose.csv`
 
 951 rows, 13 columns
 
@@ -817,7 +817,34 @@ Appendix A of the proposal.
 
 ## Observed
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/freight_day_factors.csv`
+### `data/processed/observed/bitre_registrations_study_area.csv`
+
+418 rows, 4 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `postcode` | int | 2264 | 401/401 |
+| `vehicle_type` | str | Articulated trucks | 401/401 |
+| `vehicles` | int | 45 | 401/401 |
+| `postal_area_share_inside` | float | 1.0 | 401/401 |
+
+### `data/processed/observed/boam_bus_occupancy_week.csv`
+
+60540 rows, 9 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `service_date` | str | 2026-08-10 | 401/401 |
+| `route` | str | 0011 | 401/401 |
+| `direction` | str | Inbound | 401/401 |
+| `hour_band` | str | 08:00 to 08:59 | 401/401 |
+| `trip_point` | str | Trip Destination | 294/401 |
+| `occupancy_range` | str | 0-20 | 401/401 |
+| `observations` | int | 12 | 401/401 |
+| `mean_seated_capacity` | float | 45.0 | 401/401 |
+| `mean_total_capacity` | float | 70.0 | 401/401 |
+
+### `data/processed/observed/freight_day_factors.csv`
 
 3 rows, 4 columns
 
@@ -828,7 +855,7 @@ Appendix A of the proposal.
 | `stations` | int | 12 | 3/3 |
 | `station_days` | int | 4845 | 3/3 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/freight_hourly_profile.csv`
+### `data/processed/observed/freight_hourly_profile.csv`
 
 72 rows, 3 columns
 
@@ -838,7 +865,7 @@ Appendix A of the proposal.
 | `hour` | int | 0 | 72/72 |
 | `share` | float | 0.015622 | 72/72 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/licence_rates_by_age_lga.csv`
+### `data/processed/observed/licence_rates_by_age_lga.csv`
 
 66 rows, 5 columns
 
@@ -850,7 +877,7 @@ Appendix A of the proposal.
 | `erp_2024` | float | 4764.0 | 66/66 |
 | `rate` | float | 0.0 | 66/66 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/light_day_factors.csv`
+### `data/processed/observed/light_day_factors.csv`
 
 3 rows, 5 columns
 
@@ -862,7 +889,7 @@ Appendix A of the proposal.
 | `stations` | int | 12 | 3/3 |
 | `station_days` | int | 4800 | 3/3 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/light_hourly_profile.csv`
+### `data/processed/observed/light_hourly_profile.csv`
 
 72 rows, 3 columns
 
@@ -872,7 +899,7 @@ Appendix A of the proposal.
 | `hour` | int | 0 | 72/72 |
 | `share` | float | 0.008266 | 72/72 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/opal_bus_newcastle_hunter.csv`
+### `data/processed/observed/opal_bus_newcastle_hunter.csv`
 
 1363 rows, 4 columns
 
@@ -883,7 +910,7 @@ Appendix A of the proposal.
 | `Contract_region` | str | NISC 1 | 401/401 |
 | `Trip` | int | 109623 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/opal_lr_newcastle_by_month_cardtype.csv`
+### `data/processed/observed/opal_lr_newcastle_by_month_cardtype.csv`
 
 16604 rows, 4 columns
 
@@ -894,7 +921,7 @@ Appendix A of the proposal.
 | `Line` | str | Newcastle Light Rail | 401/401 |
 | `Trip` | int | 115 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/opal_lr_newcastle_by_stop.csv`
+### `data/processed/observed/opal_lr_newcastle_by_stop.csv`
 
 4079 rows, 4 columns
 
@@ -905,7 +932,22 @@ Appendix A of the proposal.
 | `Card_type` | str | Adult | 401/401 |
 | `Trip` | int | 4379 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/station_entries_exits_newcastle.csv`
+### `data/processed/observed/opal_patronage_newcastle_daily.csv`
+
+1700 rows, 8 columns
+
+| column | type | example | non-empty in sample |
+|---|---|---|---|
+| `date` | str | 2025-07-01 | 401/401 |
+| `day_type` | str | WEEKDAY | 401/401 |
+| `mode` | str | Bus | 401/401 |
+| `hours` | int | 20 | 401/401 |
+| `tap_ons_lower` | int | 0 | 401/401 |
+| `tap_ons_upper` | int | 980 | 401/401 |
+| `tap_offs_lower` | int | 0 | 401/401 |
+| `tap_offs_upper` | int | 980 | 401/401 |
+
+### `data/processed/observed/station_entries_exits_newcastle.csv`
 
 1092 rows, 5 columns
 
@@ -917,7 +959,7 @@ Appendix A of the proposal.
 | `Entry_Exit` | str | Entry | 401/401 |
 | `Trip` | int | 2618 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/traffic_aadt.csv`
+### `data/processed/observed/traffic_aadt.csv`
 
 12231 rows, 27 columns
 
@@ -951,7 +993,7 @@ Appendix A of the proposal.
 | `md5` | str | 6c28805edf623dfbdc4ce7757d7f0ad0 | 401/401 |
 | `updated_on` | str | 2018-01-09 22:39:10.806238+00 | 397/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/observed/traffic_count_stations_newcastle.csv`
+### `data/processed/observed/traffic_count_stations_newcastle.csv`
 
 134 rows, 42 columns
 
@@ -1002,7 +1044,7 @@ Appendix A of the proposal.
 
 ## Validation
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/bus_monthly_series.csv`
+### `data/processed/validation/bus_monthly_series.csv`
 
 108 rows, 3 columns
 
@@ -1012,22 +1054,22 @@ Appendix A of the proposal.
 | `trips` | int | 380232 | 108/108 |
 | `Year_Month` | str | Jul-2017 | 108/108 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/count_station_links.csv`
+### `data/processed/validation/count_station_links.csv`
 
-197 rows, 8 columns
+202 rows, 8 columns
 
 | column | type | example | non-empty in sample |
 |---|---|---|---|
-| `station_key` | int | 55710 | 197/197 |
-| `split` | str | calibration | 197/197 |
-| `station_name` | str | Pacific Highway | 197/197 |
-| `road_name` | str | Pacific Highway | 197/197 |
-| `link` | int | 56286 | 197/197 |
-| `link_name` | str | Pacific Highway | 197/197 |
-| `distance_m` | float | 50.2 | 197/197 |
-| `matched_by` | str | name_and_proximity | 197/197 |
+| `station_key` | int | 55710 | 202/202 |
+| `split` | str | calibration | 202/202 |
+| `station_name` | str | Pacific Highway | 202/202 |
+| `road_name` | str | Pacific Highway | 202/202 |
+| `link` | int | 110247 | 202/202 |
+| `link_name` | str | Pacific Highway | 202/202 |
+| `distance_m` | float | 50.2 | 202/202 |
+| `matched_by` | str | name_and_proximity | 202/202 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/lr_monthly_series.csv`
+### `data/processed/validation/lr_monthly_series.csv`
 
 89 rows, 3 columns
 
@@ -1037,7 +1079,7 @@ Appendix A of the proposal.
 | `trips` | int | 47073 | 89/89 |
 | `Year_Month` | str | Feb-19 | 89/89 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/lr_taps_by_stop.csv`
+### `data/processed/validation/lr_taps_by_stop.csv`
 
 6 rows, 2 columns
 
@@ -1046,7 +1088,7 @@ Appendix A of the proposal.
 | `Location` | str | Newcastle Interchange Light Rail | 6/6 |
 | `taps` | int | 1600188 | 6/6 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/mode_targets_by_mode.csv`
+### `data/processed/validation/mode_targets_by_mode.csv`
 
 12 rows, 9 columns
 
@@ -1062,7 +1104,7 @@ Appendix A of the proposal.
 | `target_mean_km` | float | 10.2 | 10/12 |
 | `mean_km_basis` | str | HTS "2024/25" vehicle driver TR... | 10/12 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/road_aadt_targets.csv`
+### `data/processed/validation/road_aadt_targets.csv`
 
 119 rows, 16 columns
 
@@ -1085,7 +1127,7 @@ Appendix A of the proposal.
 | `survey_year` | int | 2021 | 119/119 |
 | `split` | str | calibration | 119/119 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/station_entries_exits_mean.csv`
+### `data/processed/validation/station_entries_exits_mean.csv`
 
 52 rows, 3 columns
 
@@ -1095,7 +1137,7 @@ Appendix A of the proposal.
 | `Entry_Exit` | str | Entry | 52/52 |
 | `Trip_num` | float | 2394.285714285714 | 52/52 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/data/processed/validation/validation_targets.csv`
+### `data/processed/validation/validation_targets.csv`
 
 210 rows, 9 columns
 
@@ -1113,7 +1155,7 @@ Appendix A of the proposal.
 
 ## C1 parameters
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/params/C1_behavioural_parameters.csv`
+### `params/C1_behavioural_parameters.csv`
 
 30 rows, 65 columns
 
@@ -1185,7 +1227,7 @@ Appendix A of the proposal.
 | `asc_ferry_source` | str | assumed | 30/30 |
 | `source` | str | mixed | 30/30 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/params/C1_sensitivity_sweep_grid.csv`
+### `params/C1_sensitivity_sweep_grid.csv`
 
 28 rows, 4 columns
 
@@ -1198,7 +1240,7 @@ Appendix A of the proposal.
 
 ## E1 scenarios
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/scenarios/E1_parking_variants.csv`
+### `scenarios/E1_parking_variants.csv`
 
 2 rows, 4 columns
 
@@ -1209,7 +1251,7 @@ Appendix A of the proposal.
 | `onstreet_spaces_removed_corridor` | int | 210 | 2/2 |
 | `source` | str | assumed | 2/2 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/scenarios/E1_road_variants.csv`
+### `scenarios/E1_road_variants.csv`
 
 4 rows, 8 columns
 
@@ -1224,7 +1266,7 @@ Appendix A of the proposal.
 | `tram_lane_present` | int | 1 | 4/4 |
 | `source` | str | osm + assumed | 4/4 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/scenarios/E1_scenarios.csv`
+### `scenarios/E1_scenarios.csv`
 
 10 rows, 23 columns
 
@@ -1256,7 +1298,7 @@ Appendix A of the proposal.
 
 ## B1/B2 demand
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_activity_trips_SAT.csv`
+### `demand/plans/B2_activity_trips_SAT.csv`
 
 1901712 rows, 22 columns
 
@@ -1285,7 +1327,7 @@ Appendix A of the proposal.
 | `dest_placement` | str | poi | 401/401 |
 | `agent_tier` | str | core | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_activity_trips_SUN.csv`
+### `demand/plans/B2_activity_trips_SUN.csv`
 
 1666589 rows, 22 columns
 
@@ -1314,7 +1356,7 @@ Appendix A of the proposal.
 | `dest_placement` | str | joint | 401/401 |
 | `agent_tier` | str | core | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_activity_trips_WEEKDAY.csv`
+### `demand/plans/B2_activity_trips_WEEKDAY.csv`
 
 2343400 rows, 22 columns
 
@@ -1343,7 +1385,7 @@ Appendix A of the proposal.
 | `dest_placement` | str | poi | 401/401 |
 | `agent_tier` | str | core | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_escort_bindings_SAT.csv`
+### `demand/plans/B2_escort_bindings_SAT.csv`
 
 65903 rows, 4 columns
 
@@ -1354,7 +1396,7 @@ Appendix A of the proposal.
 | `direction` | str | drop | 401/401 |
 | `driver_person_id` | int | 7 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_escort_bindings_SUN.csv`
+### `demand/plans/B2_escort_bindings_SUN.csv`
 
 46232 rows, 4 columns
 
@@ -1365,7 +1407,7 @@ Appendix A of the proposal.
 | `direction` | str | drop | 401/401 |
 | `driver_person_id` | int | 12 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_escort_bindings_WEEKDAY.csv`
+### `demand/plans/B2_escort_bindings_WEEKDAY.csv`
 
 121008 rows, 4 columns
 
@@ -1376,7 +1418,7 @@ Appendix A of the proposal.
 | `direction` | str | drop | 401/401 |
 | `driver_person_id` | int | 5 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_SAT.csv`
+### `demand/plans/B2_joint_bindings_SAT.csv`
 
 110361 rows, 6 columns
 
@@ -1389,7 +1431,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 5 | 401/401 |
 | `dep_s` | int | 56885 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_SUN.csv`
+### `demand/plans/B2_joint_bindings_SUN.csv`
 
 100790 rows, 6 columns
 
@@ -1402,7 +1444,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 1 | 401/401 |
 | `dep_s` | int | 55118 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_joint_bindings_WEEKDAY.csv`
+### `demand/plans/B2_joint_bindings_WEEKDAY.csv`
 
 83331 rows, 6 columns
 
@@ -1415,7 +1457,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 5 | 401/401 |
 | `dep_s` | int | 55822 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_lift_bindings_SAT.csv`
+### `demand/plans/B2_lift_bindings_SAT.csv`
 
 25236 rows, 12 columns
 
@@ -1434,7 +1476,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 16 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_lift_bindings_SUN.csv`
+### `demand/plans/B2_lift_bindings_SUN.csv`
 
 18416 rows, 12 columns
 
@@ -1453,7 +1495,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 9 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_lift_bindings_WEEKDAY.csv`
+### `demand/plans/B2_lift_bindings_WEEKDAY.csv`
 
 44258 rows, 12 columns
 
@@ -1472,7 +1514,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 10 | 401/401 |
 | `driver_tour_id` | int | 1 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_SAT.csv`
+### `demand/plans/B2_shared_bindings_SAT.csv`
 
 70598 rows, 8 columns
 
@@ -1487,7 +1529,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 15072 | 401/401 |
 | `driver_dep_s` | int | 53809 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_SUN.csv`
+### `demand/plans/B2_shared_bindings_SUN.csv`
 
 67442 rows, 8 columns
 
@@ -1502,7 +1544,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 14819 | 401/401 |
 | `driver_dep_s` | int | 35101 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/plans/B2_shared_bindings_WEEKDAY.csv`
+### `demand/plans/B2_shared_bindings_WEEKDAY.csv`
 
 126958 rows, 8 columns
 
@@ -1517,7 +1559,7 @@ Appendix A of the proposal.
 | `driver_household_id` | int | 13645 | 401/401 |
 | `driver_dep_s` | int | 49399 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/population/B1_households.csv`
+### `demand/population/B1_households.csv`
 
 246865 rows, 10 columns
 
@@ -1534,7 +1576,7 @@ Appendix A of the proposal.
 | `dwelling_type` | str | separate_house | 401/401 |
 | `weight` | int | 1.0 | 401/401 |
 
-### `C:/Users/Praneet Dhoolia/work/city-digital-twin/cities/newcastle/demand/population/B1_synthetic_population.csv`
+### `demand/population/B1_synthetic_population.csv`
 
 612634 rows, 17 columns
 

@@ -77,6 +77,21 @@ def state(run):
             status, (doc.get('cause') or 'no cause recorded').split('\n')[0][:200])
     if not os.path.exists(log):
         return 'starting', 'no matsim.log yet'
+    # The digest is asked first: at the 25 % log rate an ITERATION banner
+    # leaves a 400 KB tail within a minute of the mobsim starting, so a
+    # tail-only read said 'still in startup' for a run four iterations in
+    # (twelfth report, 16 September 2026). `_progress.json` records the
+    # iteration that has BEGUN, every RUN.monitor.progress_interval_s.
+    prog = os.path.join(d, '_progress.json')
+    if os.path.exists(prog):
+        try:
+            with io.open(prog, encoding='utf-8') as fh:
+                it = json.load(fh).get('iteration')
+        except (OSError, ValueError):
+            it = None
+        if isinstance(it, int):
+            return 'took', ('the progress digest records iteration %d; the '
+                            'launch is independent of the launching shell' % it)
     text = _tail(log)
     hits = [int(a or b) for a, b in ITERATION.findall(text)]
     age = time.time() - os.path.getmtime(log)
@@ -84,8 +99,10 @@ def state(run):
         return 'took', ('matsim.log has entered iteration %d; the launch is '
                         'independent of the launching shell' % max(hits))
     if MOBSIM.search(text):
-        return 'starting', ('iteration 0 is in the mobsim (log %ds old); the '
-                            'iteration banner has not been written yet' % age)
+        # the mobsim runs only inside an iteration: the banner was written
+        # before this tail began
+        return 'took', ('iteration 0 is in the mobsim (log %ds old); the '
+                        'launch is past PersonPrepareForSim' % age)
     if status == 'completed':
         return 'took', 'the run completed'
     return 'starting', 'still in startup, log %ds old' % age

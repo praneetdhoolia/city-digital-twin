@@ -67,13 +67,7 @@ INTERCHANGE_NAME = _city.geometry(
 INTERCHANGE_GROUP_ID = INTERCHANGE_NAME.upper().replace(' ', '_')
 
 
-def hav(a, b):
-    R = 6371000.0
-    p1, p2 = math.radians(a[0]), math.radians(b[0])
-    dl = math.radians(b[1] - a[1])
-    dp = p2 - p1
-    return 2 * R * math.asin(math.sqrt(
-        math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+from geo import haversine as hav   # noqa: E402  (one copy, src/build/geo.py)
 
 
 def _pairs_within(ll, ids, radius_m):

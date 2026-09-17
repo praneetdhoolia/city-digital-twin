@@ -156,6 +156,33 @@
       ],
       "description": "Weekday uplift applied to an all-days daily boardings count (light rail line boardings, heavy rail station entries) so the target is stated per WEEKDAY, the day type the gated arms run. Derived from the demand's own day-type trip ratio."
     },
+    "CAL.targets.prepandemic_window": {
+      "value": [
+        "2019-03-01",
+        "2020-03-01"
+      ],
+      "units": "date_half_open_interval",
+      "source": "observed",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "12, 12.1, 9.177",
+      "consumers": [
+        "cities/newcastle/build/build_validation_targets.py"
+      ],
+      "description": "The post-opening, pre-pandemic window of the light rail's disclosed Opal series: from the first full month after opening (March 2019) to the month before the March 2020 lockdown. Observed calendar facts, not a choice; the targets built on it are labelled a pre-pandemic market and left unscorable against the 2026 base year (DECISIONS.md 12.1). Typed into the target builder until 16 September 2026."
+    },
+    "CAL.targets.current_window_start": {
+      "value": "2025-07-01",
+      "units": "date",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "12, 9.177",
+      "consumers": [
+        "cities/newcastle/build/build_validation_targets.py"
+      ],
+      "description": "The first month of the current-market window the light rail's monthly boardings are averaged over (the financial year before the 2026 base year). A definition of the target's vintage, restated here so the builder types no date; the monthly mean needs the three day types composed over a month and is unscorable by a single day-type run (fit.py)."
+    },
     "CAL.pt_split.station_scope": {
       "value": "target_lga",
       "units": "enum",

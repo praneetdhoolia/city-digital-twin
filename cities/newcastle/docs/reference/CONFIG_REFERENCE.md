@@ -27,20 +27,20 @@ Three things are refused at every layer:
 2. **An overlay cannot invent a field.** A key that is not already declared is rejected.
 3. **A value cannot silently leave its sweep, and a held-fixed value cannot move at all.** Escaping a range requires `allow_outside_sweep` plus a written justification in a committed overlay - never a flag typed at a shell.
 
-## What the 558 fields are made of
+## What the 567 fields are made of
 
 | Provenance | Fields | Meaning |
 |---|---:|---|
-| `observed` | 38 | read directly from a raw download |
+| `observed` | 39 | read directly from a raw download |
 | `measured` | 42 | computed from observed data in this package |
 | `derived` | 46 | follows from another registry field by identity |
 | `literature` | 82 | a published value, not specific to this city |
-| `assumed` | 207 | chosen without direct empirical support |
-| `definition` | 143 | fixed by the formulation, not an empirical quantity |
+| `assumed` | 211 | chosen without direct empirical support |
+| `definition` | 147 | fixed by the formulation, not an empirical quantity |
 
 | Status | Fields | Meaning |
 |---|---:|---|
-| `active` | 537 | usable point value |
+| `active` | 546 | usable point value |
 | `computed` | 11 | written at run time from other fields; do not hand-edit |
 | `placeholder` | 6 | a structural stand-in; the model runs but the field is not defensible |
 | `unobtained` | 4 | the datum does not exist in the package; must be swept, never pinned |
@@ -56,14 +56,14 @@ These carry `value: null` and the resolver refuses to return a point value for t
 | `B.opal.journey_linked` | `tap_sequence_matching_model` | NOT OBTAINED - a formal TfNSW request is outstanding |
 | `D.retail.vacancy_rate` | 0 - 0.25 | NOT OBTAINED and not currently consumed by any metric |
 
-### What the 324 sweeps are for
+### What the 326 sweeps are for
 
 A sweep is one word for two things (#134): the sensitivity CURVE DECISIONS.md 8.1 says must be reported rather than a headline at a single value, and the honesty BRACKET DECISIONS.md 15 requires before an assumed value may validate. Every sweep carries a `sweep_role` saying which, and the resolver refuses one that does not. `python src/registry/sweep_ledger.py` prints the ledger with whether any overlay has ever set each field.
 
 | Role | Sweeps | Meaning |
 |---|---:|---|
 | `answer` | 19 | a P6 deliverable - the record says the curve across this sweep decides the answer, and an arm plan with a stated cost is owed once the twin passes its gate |
-| `uncertainty` | 281 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
+| `uncertainty` | 283 | a declared bracket the resolver enforces; no run is scheduled over it, and the basis says whether its leverage is measured or unknown |
 | `measurement` | 24 | an observed spread on a measured or derived value; it describes the data, not a run to make |
 
 The `answer` sweeps - the runs the study owes after the gate:
@@ -90,7 +90,7 @@ The `answer` sweeps - the runs the study owes after the gate:
 | `RUN.routing.access_egress_consistency_check` | `reroute` | `reroute`, `disable`, `abortOnInconsistency` |
 | `RUN.routing.access_egress_type` | `accessEgressModeToLink` | `none`, `accessEgressModeToLink` |
 
-### The 31 fields held fixed
+### The 34 fields held fixed
 
 Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating them would fit away the effect under test - proposal 9 names ASC absorption as the primary threat to validity.
 
@@ -112,6 +112,7 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `B.activity.short_trip_band_km` - the published band boundary of the source table (HTS Sydney 2012/13 Table 4.4.7, 'Up to 1km'). Changing it means citing a different row of the same table, not sweeping a belief - t
 - `B.external.employed_share` - a census count: 32,230 employed persons of 70,448 residents over the 201 external-tier SA1s (2021 Census G46 P_Tot_Emp_Tot over G01 Tot_P_P); a count has no plausible range to swee
 - `B.freight.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.freight.pce), not through vehicle length, so no output varies across this
+- `B.mode.seed_split_informed` - A TABLE, NOT A SWEEP AXIS: these are the P3 seed's shares, retained verbatim so that the seed-dependence claim can be tested by running both seeds (DECISIONS.md 9.6, 9.7); no share
 - `B.motorbike.length_m` - Cosmetic in the queue model: MATSim's qsim consumes road space and flow through passengerCarEquivalents (B.motorbike.pce), not through vehicle length, so no output varies across th
 - `B.taxi.daily_trips_band` - A CONSTRAINT, NEVER A TARGET (9.8/9.13): the pre-registered 67/143 target split cannot grow. The modelled taxi volume is REPORTED against this band; nothing is fitted to it.
 - `B.taxi.fare_per_km_taxi` - The Fares Order urban Distance Rate for the first 12 km. The corridor and CBD trips this mode competes for sit far under 12 km, so the $2.29 beyond-12 km tail is recorded, not mode
@@ -121,14 +122,16 @@ Not tunable. DECISIONS.md 8.5 holds the mode constants fixed because calibrating
 - `C.asc.walk` - DECISIONS.md 8.5: these are priors for the first calibration pass only and must not be freely calibrated. Either estimate them on the pre-intervention period (era 3, 2018) and hold
 - `CAL.asc.max_step_utils` - A REFUSAL THRESHOLD, not a model input, and so not swept - the A.signals.scats_match_radius_m precedent for a build guard's tolerance. It is the point past which a proposed step st
 - `CAL.pt.censored_share_max` - A BUILD GUARD's tolerance, not a model parameter (the A.signals.scats_match_radius_m precedent): it decides when a data-quality condition has stopped holding and the build must sto
+- `D.landuse.levels_by_building_type` - A FALLBACK, not a model of the building stock: it applies only where OSM carries no building:levels tag, and every level it assigns is labelled `assumed` in the parking-and-landuse
 - `E.s2b.lr_segment_count` - MEASURED from the mapped feed (task 4.7.9, 9.76): the mapped light-rail route profile carries 6 stops, so 5 inter-stop segments - the outstanding derive-from-the-feed work this fie
+- `RUN.machine.build_xmx` - THROUGHPUT ONLY: the heap the pt2matsim mapper and the network-build JVM run under. It decides whether a build completes, never what it produces (the mapping's own non-reproducibil
 - `RUN.machine.heap_floor_gib` - A LAUNCH REFUSAL'S INTERCEPT, not a model parameter: the fixed part of the heap a run needs whatever its sample (network, schedule, the loaded jars). 9.6 was measured at 9.5 from t
 - `RUN.machine.heap_per_fraction_gib` - A LAUNCH REFUSAL'S SLOPE: the heap a run needs per unit of sample fraction (plan memory grows with persons x plans x legs), measured at 9.5. Paired with RUN.machine.heap_floor_gib;
 - `RUN.monitor.pace_band_s` - A MONITORING REFERENCE, not a model parameter: the closed family's measured 25% x 1000 solo/two-arm pace band (DECISIONS.md 9.64/9.72). The digest flags pace against it and mechani
 
 ## Network supply (A1-A6)
 
-*`cities/newcastle/registry/A_supply.json` - 202 fields*
+*`cities/newcastle/registry/A_supply.json` - 203 fields*
 
 Road graph, signal control, transit supply, light rail vehicle and dwell, parking and the active network. Two of the three inputs the proposal named as critical and unobtained live here - A.signals.scats_phasing and A.lightrail.dwell_charging_s - and both carry status 'unobtained' with a null value, so the resolver refuses to hand back a point value and the caller must select a sweep member. That is DECISIONS.md 0 and 13 enforced structurally rather than by discipline.
 
@@ -226,6 +229,7 @@ Road graph, signal control, transit supply, light rail vehicle and dwell, parkin
 | `A.lightrail.dwell_charging_baseline_s` | `20.0` | seconds_per_intermediate_stop | `assumed` | 10 - 35 |
 | `A.lightrail.dwell_charging_s` | *(null - unobtained)* | seconds_per_intermediate_stop | `assumed` | 10 - 35 |
 | `A.lightrail.dwell_fixed_s` | `8.0` | seconds_per_stop | `assumed` | 5 - 15 |
+| `A.lightrail.dwell_sd_s` | `6.0` | seconds | `assumed` | 3 - 10 |
 | `A.lightrail.dwell_sweep_grid` | `[0.0, 10.0, 20.0, 35.0]` | seconds_per_intermediate_stop | `definition` | - |
 | `A.lightrail.line_speed_kmh` | `40.0` | km_per_hour | `measured` | 30 - 50 |
 | `A.lightrail.tsp_enabled` | `false` | boolean | `assumed` | `False`, `True` |
@@ -996,6 +1000,14 @@ Boarding and alighting dwell, separate from charging dwell.
 ***assumed** · status **active** · DECISIONS.md §4.4 · sweep role **uncertainty***
 
 > **Sweep basis.** DECISIONS.md 4.4: 8 s door open/close plus driver reaction, assumed, recorded there with a 5-12 s sweep; the declared top of 15 s is wider than the record's and the reason for the extension is not recorded. No observation of the operated boarding dwell is held.
+
+#### `A.lightrail.dwell_sd_s`
+
+The dwell-time spread (lognormal SD, seconds) written beside the fixed dwell into the stop dwell model table. A typed 6.0 in the corridor builder until 16 September 2026; declared so the table's value has a source and a sweep like its neighbours.
+
+***assumed** · status **active** · DECISIONS.md §4.4, 9.177 · sweep role **uncertainty***
+
+> **Sweep basis.** The standard deviation of the lognormal stop-dwell distribution the corridor dossier states for the light rail (DECISIONS.md 4.4); no operated dwell observation is held, so the spread is assumed with the same acquisition route as the fixed dwell - field measurement or GTFS-Realtime dwell inference. REPORTED in A4_stop_dwell_model.csv only: MATSim's dwell is deterministic, so no run reads it.
 
 #### `A.lightrail.dwell_sweep_grid`
 
@@ -1813,7 +1825,7 @@ Walk speed used to generate GTFS transfer times. Distinct from the MATSim telepo
 
 ## Demand (B1-B5)
 
-*`cities/newcastle/registry/B_demand.json` - 130 fields*
+*`cities/newcastle/registry/B_demand.json` - 131 fields*
 
 Synthetic population, activity and tour generation, external boundary demand, and the count-comparison corrections. The third unobtained input, B.opal.journey_linked, lives here. B.activity.p_intermediate_stop is the demand-side parameter with the most leverage over mode share and is assumed.
 
@@ -1890,7 +1902,8 @@ Synthetic population, activity and tour generation, external boundary demand, an
 | `B.mode.partial_bind_base` | `pt` | enum | `assumed` | `pt`, `walk`, `taxi` |
 | `B.mode.seed_method` | `full_choice_set` | enum | `definition` | `full_choice_set`, `uniform_draw` |
 | `B.mode.seed_split` | `{"car_available": {"bike": 0.2, "car": 0.2, "pt": 0.2, "ride": 0.2, "walk": 0.2}, "no_car": {"bike": 0.25, ...` | share_by_mode | `definition` | - |
-| `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | `uninformed`, `informed` |
+| `B.mode.seed_split_informed` | `{"car_available": {"bike": 0.01, "car": 0.78, "pt": 0.02, "ride": 0.1, "walk": 0.09}, "no_car": {"bike": 0....` | share_by_mode | `assumed` | **held fixed** |
+| `B.mode.seed_table` | `uninformed` | enum | `definition` | `uninformed`, `informed` |
 | `B.mode.serve_tour_seed` | `car` | enum | `derived` | derived: the pairing engine pairs ride legs with CAR legs only, so a bound serv |
 | `B.mode.walk_feasible_km` | `0.0` | km_straight_line | `derived` | derived: the 99th percentile of an exponential trip-length distribution with th |
 | `B.motorbike.carve_resolution` | `sa1_thinned` | enum | `definition` | `sa1_thinned`, `region` |
@@ -2514,9 +2527,21 @@ The mode split the co-evolution STARTS from, conditioned only on car availabilit
 
 The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative.
 
-***assumed** · status **active** · DECISIONS.md §9.6, 9.7 · sweep role **uncertainty***
+***assumed** · status **active** · DECISIONS.md §9.6, 9.7*
 
 > **Sweep basis.** the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes "the result does not depend on the seed" a claim that can be tested rather than asserted (DECISIONS.md 9.6).
+
+> **Held fixed.** A TABLE, NOT A SWEEP AXIS: these are the P3 seed's shares, retained verbatim so that the seed-dependence claim can be tested by running both seeds (DECISIONS.md 9.6, 9.7); no share in it is moved. WHICH seed table the plan builder writes is the sweep, and it lives on B.mode.seed_table (uninformed | informed) - the twelfth report (16 September 2026) found this field carrying ['uninformed', 'informed'] as if the table itself were a member of it, which the registry's categorical check now refuses.
+>
+> *Departure requires: a logged decision*
+
+#### `B.mode.seed_table`
+
+Which seed table src/build/build_matsim_plans.py writes when B.mode.seed_method is uniform_draw (its --seed-mode default). Declared as its own field on 16 September 2026 because the choice had been carried as the categorical sweep of the informed TABLE (B.mode.seed_split_informed), a share table that is not a member of ['uninformed', 'informed']; the registry's membership check now tests a declared value against its own categorical sweep and refused it.
+
+***definition** · status **active** · DECISIONS.md §9.6, 9.7 · sweep role **uncertainty***
+
+> **Sweep basis.** The two seed tables the plan builder can write under B.mode.seed_method = uniform_draw: `uninformed` is B.mode.seed_split (uniform over the usable modes, deliberately far from the observed point) and `informed` is B.mode.seed_split_informed (the P3 seed near the HTS aggregate, retained so the seed dependence is testable). The sweep is over WHICH TABLE, never over a share.
 
 #### `B.mode.serve_tour_seed`
 
@@ -2968,7 +2993,7 @@ Road capacity a network-simulated pedestrian consumes: zero, by definition - a w
 
 ## Calibration (P4 deliverables 4-6)
 
-*`cities/newcastle/registry/CAL_calibration.json` - 28 fields*
+*`cities/newcastle/registry/CAL_calibration.json` - 30 fields*
 
 What the calibration loop is allowed to move, what it scores itself against, and the guards that stop it fitting more parameters than the data can identify. The objective deliberately excludes traffic counts: DECISIONS.md 9.14 forbids count-based calibration while boundary through traffic is unrepresented, and the loop enforces that rather than remembering it.
 
@@ -3000,6 +3025,8 @@ What the calibration loop is allowed to move, what it scores itself against, and
 | `CAL.search.max_rounds` | `3` | count | `assumed` | 1 - 6 |
 | `CAL.search.points_per_parameter` | `3` | count | `assumed` | 3 - 7 |
 | `CAL.search.reading_drift_pct` | `24.88` | per cent | `measured` | 15.72 - 24.88 |
+| `CAL.targets.current_window_start` | `2025-07-01` | date | `definition` | - |
+| `CAL.targets.prepandemic_window` | `["2019-03-01", "2020-03-01"]` | date_half_open_interval | `observed` | - |
 | `CAL.taxi.lga_concentration` | `1.0` | ratio | `assumed` | 1 - 2 |
 | `CAL.truck.count_year_from` | `2023` | year | `assumed` | 2019 - 2025 |
 
@@ -3194,6 +3221,18 @@ Points evaluated along each parameter's declared sweep interval in one coordinat
 How much the objective moves between iteration 80 and iteration 100 OF THE SAME RUN, in the objective's own units - the noise floor of a gate-point reading. Measured by src/analyse/measure_reading_stability.py over all SIX 25% arms that have ever reached iteration 100, WITHIN each run: the worst scored mode's |relative deviation| moves 15.72 to 24.88 points (median 17.76), the worst mode being heavy_rail on four of the six arms, bike on one and taxi on one. THREE modes move further than the WHOLE 10% band inside that twenty-iteration window - heavy_rail on 6 of 6 (max 24.88), bike on 4 of 6 (17.76), taxi on 3 of 6 (15.72). The point value is the MAXIMUM over all ten scored modes, because the objective is itself a maximum over those modes and a stopping rule has to survive the noisiest reading it will meet. The old folded objective moves 0.272 to 0.418 pp over the same window - upward on every one of the six arms, so this is systematic movement toward relaxation, not seed scatter. THIS IS A PROPERTY OF THE READING POINT, NOT OF THE MODEL: iteration 100 was adopted as the reading unit on COST and never once tested for stability, and a candidate read there would be resolved by how far the run had got rather than by its parameters. Reading deeper, or averaging a window of iterations instead of taking a point, is what would lower it.
 
 ***measured** · status **active** · DECISIONS.md §9.7, 9.16 · sweep role **measurement***
+
+#### `CAL.targets.current_window_start`
+
+The first month of the current-market window the light rail's monthly boardings are averaged over (the financial year before the 2026 base year). A definition of the target's vintage, restated here so the builder types no date; the monthly mean needs the three day types composed over a month and is unscorable by a single day-type run (fit.py).
+
+***definition** · status **active** · DECISIONS.md §12, 9.177*
+
+#### `CAL.targets.prepandemic_window`
+
+The post-opening, pre-pandemic window of the light rail's disclosed Opal series: from the first full month after opening (March 2019) to the month before the March 2020 lockdown. Observed calendar facts, not a choice; the targets built on it are labelled a pre-pandemic market and left unscorable against the 2026 base year (DECISIONS.md 12.1). Typed into the target builder until 16 September 2026.
+
+***observed** · status **active** · DECISIONS.md §12, 12.1, 9.177*
 
 #### `CAL.taxi.lga_concentration`
 
@@ -3720,7 +3759,7 @@ The single VOT MATSim actually scores with, trip-weighted across purposes. This 
 
 ## Land use (D1)
 
-*`cities/newcastle/registry/D_landuse.json` - 9 fields*
+*`cities/newcastle/registry/D_landuse.json` - 10 fields*
 
 Frontage geometry, attraction weights and the unobtained retail vacancy. Land use is HELD FIXED BY DESIGN across all scenarios (proposal 4.2): endogenous land-use feedback would reintroduce the confounding the identification strategy exists to remove.
 
@@ -3732,6 +3771,7 @@ Frontage geometry, attraction weights and the unobtained retail vacancy. Land us
 | `D.frontage.buffer_m` | `30.0` | metres | `assumed` | 15 - 50 |
 | `D.frontage.segment_length_m` | `50.0` | metres | `definition` | - |
 | `D.landuse.frontage_unit_m` | `25.0` | metres | `assumed` | 15 - 40 |
+| `D.landuse.levels_by_building_type` | `{"retail": 1, "commercial": 3, "office": 4, "apartments": 4, "house": 1, "residential": 2, "industrial": 1,...` | storeys | `assumed` | **held fixed** |
 | `D.landuse.poi_attraction_weights` | `{"retail": 1.0, "food": 1.2, "civic": 1.5, "office": 0.8, "tourism": 1.1, "leisure": 0.9, "health": 1.0, "a...` | ratio | `assumed` | plus/minus 50% |
 | `D.landuse.retail_gfa_share` | `0.35` | ratio | `assumed` | 0.2 - 0.5 |
 | `D.retail.vacancy_rate` | *(null - unobtained)* | share_of_frontage | `assumed` | 0 - 0.25 |
@@ -3781,6 +3821,16 @@ The frontage length one business is taken to occupy when the active-frontage per
 ***assumed** · status **active** · DECISIONS.md §9.167 · sweep role **uncertainty***
 
 > **Sweep basis.** a narrow shop is ~15 m of frontage, a large tenancy ~40.
+
+#### `D.landuse.levels_by_building_type`
+
+Storeys assumed for an OSM building whose building:levels tag is absent, by its building= value; `other` is every value not named. Reported with its source in the landuse table; a data-quality fallback.
+
+***assumed** · status **active** · DECISIONS.md §7, 9.177*
+
+> **Held fixed.** A FALLBACK, not a model of the building stock: it applies only where OSM carries no building:levels tag, and every level it assigns is labelled `assumed` in the parking-and-landuse table beside the tagged ones (`levels_source`). Floorspace enters attraction through D.landuse.retail_gfa_share and the ground-floor coefficient (DECISIONS.md 7), which carry the sweep; moving this table would move the untagged stock's floorspace uniformly, the same axis. Typed in cities/newcastle/build/build_landuse_parking.py until 16 September 2026.
+>
+> *Departure requires: a logged decision*
 
 #### `D.landuse.poi_attraction_weights`
 
@@ -4041,7 +4091,7 @@ Tram service deceleration.
 
 ## Execution control
 
-*`cities/newcastle/registry/RUN_execution.json` - 105 fields*
+*`cities/newcastle/registry/RUN_execution.json` - 109 fields*
 
 Everything that governs a run rather than the model it runs. Two fields here were previously set in code with no rationale and no sweep - RUN.sample.flow_capacity_factor and RUN.sample.storage_capacity_exponent - which is the exact breach of proposal 8.1 that check_package.py exists to catch. RUN.controler.last_iteration once carried a null value because no justified value had been measured; it now carries 1000, measured to leave the post-cutoff state settled and NOT measured to be enough search (its own sweep basis, 9.43), while GOAL.md asks for convergence in 250 - the horizon question is open on the board.
 
@@ -4057,12 +4107,15 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.controler.write_trips_interval` | `10` | iterations | `definition` | - |
 | `RUN.gate.ceiling_poll_s` | `60` | seconds | `definition` | - |
 | `RUN.gate.interval_iterations` | `100` | iterations | `definition` | - |
+| `RUN.gate.reader_timeout_s` | `1800` | seconds | `definition` | - |
 | `RUN.gate.retry_interval_s` | `300` | seconds | `definition` | - |
 | `RUN.gate.stall_kill_s` | `1800` | seconds | `definition` | - |
 | `RUN.gate.wall_ceiling_h` | `0` | hours | `definition` | - |
+| `RUN.machine.build_xmx` | `6g` | jvm_heap | `assumed` | **held fixed** |
 | `RUN.machine.event_handler_threads` | `4` | threads | `definition` | - |
 | `RUN.machine.events_one_thread_per_handler` | `false` | boolean | `definition` | - |
 | `RUN.machine.events_synchronize_on_simsteps` | `true` | boolean | `definition` | - |
+| `RUN.machine.gc_collector` | `ParallelGC` | enum | `assumed` | `ParallelGC`, `G1GC` |
 | `RUN.machine.gc_log` | `true` | boolean | `definition` | - |
 | `RUN.machine.heap_floor_gib` | `15.6` | GiB | `measured` | **held fixed** |
 | `RUN.machine.heap_per_fraction_gib` | `87` | GiB_per_unit_fraction | `measured` | **held fixed** |
@@ -4133,6 +4186,7 @@ Everything that governs a run rather than the model it runs. Two fields here wer
 | `RUN.scoring.waiting_utils_per_h` | `0.0` | utils_per_hour | `assumed` | -6 - 0 |
 | `RUN.storage.extract_grace_s` | `3600` | seconds | `definition` | - |
 | `RUN.storage.raw_cap_gb` | `500` | gibibytes | `definition` | - |
+| `RUN.storage.reader_timeout_s` | `3600` | seconds | `definition` | - |
 | `RUN.telemetry.live_interval_s` | `3600` | seconds | `definition` | - |
 | `RUN.transit.transit_modes` | `["pt", "bus", "tram", "rail", "ferry"]` | mode_names | `definition` | - |
 | `RUN.transit.use_transit` | `true` | boolean | `definition` | - |
@@ -4215,6 +4269,12 @@ How often the runner's own gate watcher reads all twelve modes against their tar
 
 ***definition** · status **active** · DECISIONS.md §9.137*
 
+#### `RUN.gate.reader_timeout_s`
+
+How long the gate watcher gives one milestone reading (report_mode_ridership.py --gate-json) before it gives up and retries at RUN.gate.retry_interval_s. An OBSERVER bound like RUN.gate.retry_interval_s: it affects when a gate is read, never what it reads. A typed 1800 in the launcher until 16 September 2026.
+
+***definition** · status **active** · DECISIONS.md §9.137, 9.177*
+
 #### `RUN.gate.retry_interval_s`
 
 How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else.
@@ -4233,6 +4293,16 @@ The wall-clock ceiling the runner enforces on its own run, in hours. ZERO MEANS 
 
 ***definition** · status **active** · DECISIONS.md §9.161*
 
+#### `RUN.machine.build_xmx`
+
+The JVM heap for the build-time pt2matsim calls (the OSM network conversion and the schedule mapping). Distinct from RUN.machine.xmx, the run's heap, which the registry's own rule sizes by sample fraction.
+
+***assumed** · status **active** · DECISIONS.md §3.5, 9.177*
+
+> **Held fixed.** THROUGHPUT ONLY: the heap the pt2matsim mapper and the network-build JVM run under. It decides whether a build completes, never what it produces (the mapping's own non-reproducibility is DECISIONS.md 3.5's, not the heap's). Typed as -Xmx6g in src/build/build_matsim_network.py until 16 September 2026.
+>
+> *Departure requires: a logged decision*
+
 #### `RUN.machine.event_handler_threads`
 
 Threads for MATSim's parallel events manager. UNLIKE RUN.machine.threads this is a wall-time knob, NOT run identity: event handlers are observers - each still receives the complete stream in per-handler order, so scores, plans and every model output are unchanged (verified bit-identical against the single-thread default, DECISIONS.md 9.56). Declared because the framework default (null = one thread) was measured saturated on the all-physical model: 172-177 s CPU per ~265 s iteration at 25%, throttling ten qsim threads at every sim-step sync. 12 threads were probed on the 9.58 network and bought NOTHING over 4 (it2-4 median mobsim ~190 s either way, 9.59) - 4 stands.
@@ -4250,6 +4320,14 @@ Give each registered event handler its own thread instead of sharing RUN.machine
 Whether the qsim waits for the events pipeline at every sim-step. Declared for the 9.59 timing probes and MEASURED A REGRESSION on this model: false swaps the manager implementation and took the it2-4 median mobsim from ~190 s to 255 s at 25%. STAYS TRUE; the value exists so the measured rejection is recorded where the knob lives.
 
 ***definition** · status **active** · DECISIONS.md §9.59 · MATSim `eventsManager.synchronizeOnSimSteps`*
+
+#### `RUN.machine.gc_collector`
+
+The JVM garbage collector the launcher passes (-XX:+Use<collector>). Typed as ParallelGC in the launcher until 16 September 2026; declared so the one flag that decides an arm's GC share is visible and sweepable like RUN.machine.threads.
+
+***assumed** · status **active** · DECISIONS.md §9.153, 9.177 · sweep role **uncertainty***
+
+> **Sweep basis.** The two collectors the pinned JDK offers for a 48 GB heap. WALL TIME ONLY: the collector changes no model state (the twelfth report's performance pass: one full collection per iteration under ParallelGC, 2.5-4.0 % of an arm's wall). A change is a toolchain change priced by a 25 % probe before any arm carries it (DECISIONS.md 9.153).
 
 #### `RUN.machine.gc_log`
 
@@ -4752,6 +4830,12 @@ How long after a run's record was last written the store still treats it as insi
 GIBIBYTES, not gigabytes, despite the `_gb` in the key: src/run/results_store.py multiplies this by 2^30, so 500 here is 500 GiB = 536.9 GB. The units field said `gigabytes` until 7 September 2026 (9.155), a 7.4% discrepancy in a project whose convention requires units in every name. The UNITS were corrected to match the code rather than the code corrected to match the units, because shrinking the effective cap by 36.9 GB would delete run bulk to settle a naming question; the key itself is retained because dated record sections (9.137, 9.139, 9.141) cite it by name and the record is never rewritten. The byte budget of results/raw, the run-bulk cache. When raw exceeds it the store deletes the oldest run directories (never a live run) until back under budget, after extracting each victim's findings into results/processed, which is never trimmed. Set by user directive (1 September 2026): bulk is a budgeted cache, findings are kept forever. An operational bound, not a model value - it cannot change a result, only how much bulk survives to re-derive new diagnostics from.
 
 ***definition** · status **active** · DECISIONS.md §9.137*
+
+#### `RUN.storage.reader_timeout_s`
+
+How long the results store gives each close-out reader (the --trend extraction, the final --json reading) before it records the extraction as failed. An OBSERVER bound: a reader that overruns it is logged into the processed directory and re-run at the next trim, and nothing the model computes depends on it. Typed 3600 and 1800 in the store until 16 September 2026; the two readers share one bound.
+
+***definition** · status **active** · DECISIONS.md §9.137, 9.177*
 
 #### `RUN.telemetry.live_interval_s`
 

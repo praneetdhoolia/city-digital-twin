@@ -94,7 +94,7 @@ for rel,url,desc,lic in M:
         fetched=True
         print(f"GET  {rel}",flush=True)
         try:
-            req=urllib.request.Request(url,headers={'User-Agent':'newcastle-lr-sim/0.1 (research)'})
+            req=urllib.request.Request(url,headers={'User-Agent':'city-digital-twin/0.1 (research)'})
             with urllib.request.urlopen(req,timeout=600) as r, open(p,'wb') as f:
                 while True:
                     c=r.read(1<<20)

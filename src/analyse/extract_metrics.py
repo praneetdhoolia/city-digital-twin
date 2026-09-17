@@ -158,22 +158,11 @@ def _final_exists(run_dir, stem):
 
 
 _HOME_LGA_CACHE = {}
+RESIDENTS_FILE = '_residents.csv.gz'
+_RESIDENTS_WARNED = set()
 
 
-def home_lga():
-    """person id -> LGA, via B1's home SA1 and the ABS boundary join.
-
-    MEMOISED per process. The map is 622k population rows joined to the SA1
-    boundary table, and it was rebuilt on every call - `report_mode_ridership
-    --trend` calls it once per iteration read. Neither file changes while a
-    process runs; a process that wants a fresh read starts again.
-
-    Built by `map_sa1_to_lga.py`; `zones_SA1.csv` carries SA2/SA3/SA4 but no
-    LGA, and SA3 `Newcastle` is not Newcastle LGA. External-tier agents are not
-    in B1 and map to '' rather than being counted as residents of anywhere.
-    """
-    if _HOME_LGA_CACHE:
-        return _HOME_LGA_CACHE['map']
+def _sa1_to_lga():
     if not os.path.exists(SA1_LGA):
         raise SystemExit('%s missing - run cities/<city>/build/map_sa1_to_lga.py'
                          % SA1_LGA)
@@ -181,11 +170,88 @@ def home_lga():
     with open(SA1_LGA, encoding='utf-8') as f:
         for z in csv.DictReader(f):
             lga[z['SA1_CODE21']] = z['lga_name']
+    return lga
+
+
+def write_residents(run_dir, person_ids=None, note=None):
+    """Write the run's own `_residents.csv.gz` from the city's population table
+    as it is NOW (#213). The launcher calls this at subsample time; an
+    operator backfilling an older run must be able to say the table has not
+    changed since that run's plans were built, and the file records the note.
+    Returns the path and the row count."""
+    lga = _sa1_to_lga()
+    path = os.path.join(run_dir, RESIDENTS_FILE)
+    n = 0
+    with open(POP, encoding='utf-8') as f, \
+            gzip.open(path, 'wt', encoding='utf-8', newline='') as w:
+        if note:
+            w.write('# %s\n' % note.replace('\n', ' '))
+        w.write('person_id,home_sa1,home_lga\n')
+        for p in csv.DictReader(f):
+            if person_ids is not None and p['person_id'] not in person_ids:
+                continue
+            w.write('%s,%s,%s\n' % (p['person_id'], p['home_sa1'],
+                                   lga.get(p['home_sa1'], '')))
+            n += 1
+    return path, n
+
+
+def _person_ids_in_plans(path):
+    """The person ids a plans file holds, or None when it is not there."""
+    if not os.path.exists(path):
+        return None
+    ids = set()
+    pat = re.compile(r'<person id="([^"]+)"')
+    with gzip.open(path, 'rt', encoding='utf-8') as f:
+        for line in f:
+            m = pat.search(line)
+            if m:
+                ids.add(m.group(1))
+    return ids
+
+
+def home_lga(run_dir=None):
+    """person id -> LGA, from the RUN's own residents map when it carries one,
+    else via the city's current B1 and the ABS boundary join (with a warning:
+    that map is the run's only while the population has not been rebuilt
+    since the run's plans were, #213).
+
+    MEMOISED per process and per run. The city map is 622k population rows
+    joined to the SA1 boundary table, and it was rebuilt on every call -
+    `report_mode_ridership --trend` calls it once per iteration read.
+
+    Built by `map_sa1_to_lga.py`; `zones_SA1.csv` carries SA2/SA3/SA4 but no
+    LGA, and SA3 `Newcastle` is not Newcastle LGA. External-tier agents are not
+    in B1 and map to '' rather than being counted as residents of anywhere.
+    """
+    key = os.path.abspath(run_dir) if run_dir else ''
+    if key and os.path.exists(os.path.join(key, RESIDENTS_FILE)):
+        if key in _HOME_LGA_CACHE:
+            return _HOME_LGA_CACHE[key]
+        out = {}
+        with gzip.open(os.path.join(key, RESIDENTS_FILE), 'rt',
+                       encoding='utf-8') as f:
+            rows = (ln for ln in f if not ln.startswith('#'))
+            for p in csv.DictReader(rows):
+                out[p['person_id']] = p['home_lga']
+        _HOME_LGA_CACHE[key] = out
+        return out
+    if key and key not in _RESIDENTS_WARNED:
+        _RESIDENTS_WARNED.add(key)
+        print('WARNING: %s carries no %s - residents resolved through the '
+              "city's CURRENT population table, which is this run's only "
+              'while no demand rebuild has happened since its plans were '
+              'built (#213). Backfill with extract_metrics.py '
+              '--write-residents while that holds.'
+              % (os.path.basename(key), RESIDENTS_FILE), flush=True)
+    if '' in _HOME_LGA_CACHE:
+        return _HOME_LGA_CACHE['']
+    lga = _sa1_to_lga()
     out = {}
     with open(POP, encoding='utf-8') as f:
         for p in csv.DictReader(f):
             out[p['person_id']] = lga.get(p['home_sa1'], '')
-    _HOME_LGA_CACHE['map'] = out
+    _HOME_LGA_CACHE[''] = out
     return out
 
 
@@ -223,10 +289,31 @@ def trip_geometry(run_dir, person_lga):
     Trips of zero network distance are excluded: they carry no length to compare.
     """
     by_mode = collections.defaultdict(list)
+    # The short-trip supply on BOTH bases (#30): the routed network distance
+    # the run executed, and the straight-line distance times the detour
+    # factor the demand builder solved its kernels on (B.activity.detour_factor)
+    # - the seed's 17.70 % and the run's 11.13 % were the same trips read on
+    # the two bases, by hand each time (DECISIONS.md 9.169, 9.177).
+    band_km = float(_registry.load().get('B.activity.short_trip_band_km'))
+    detour = float(_registry.load().get('B.activity.detour_factor'))
+    short = dict(resident_trips=0, routed_under_band=0,
+                 straight_x_detour_under_band=0, by_mode_routed=collections.Counter(),
+                 by_mode_straight=collections.Counter())
     for t in rows(run_dir, 'output_trips'):
         if person_lga.get(t['person']) != TARGET_LGA:
             continue
         km = float(t['traveled_distance'] or 0) / 1000.0
+        short['resident_trips'] += 1
+        try:
+            straight = float(t.get('euclidean_distance') or 0) / 1000.0 * detour
+        except ValueError:
+            straight = None
+        if 0 < km <= band_km:
+            short['routed_under_band'] += 1
+            short['by_mode_routed'][t['main_mode']] += 1
+        if straight is not None and 0 < straight <= band_km:
+            short['straight_x_detour_under_band'] += 1
+            short['by_mode_straight'][t['main_mode']] += 1
         if km <= 0:
             continue
         h, m, sec = t['trav_time'].split(':')
@@ -247,7 +334,22 @@ def trip_geometry(run_dir, person_lga):
             median_distance_km=round(med(km), 4),
             mean_time_min=round(sum(mn) / len(mn), 4),
             median_time_min=round(med(mn), 4))
+    n = short['resident_trips'] or 1
+
+    def split(counter, total):
+        return {m: round(100.0 * c / total, 2) for m, c in sorted(counter.items())} if total else {}
+    short_out = dict(
+        band_km=band_km, detour_factor=detour, resident_trips=short['resident_trips'],
+        routed_share_pct=round(100.0 * short['routed_under_band'] / n, 4),
+        straight_x_detour_share_pct=round(100.0 * short['straight_x_detour_under_band'] / n, 4),
+        mode_split_of_routed_short_trips_pct=split(short['by_mode_routed'], short['routed_under_band']),
+        mode_split_of_straight_short_trips_pct=split(short['by_mode_straight'], short['straight_x_detour_under_band']),
+        note='the share of resident linked trips under the band on two bases: '
+             'ROUTED network distance (what the run executed) and straight-line '
+             'x the detour factor the demand builder solved on; the seed is '
+             'read on the second, a run on the first (#30)')
     return dict(geography='%s LGA' % TARGET_LGA, by_mode=out,
+                short_trips=short_out,
                 note='Modelled only. The observed counterpart and its sweep live '
                      'in params/C4_mode_constraints.json; the comparison is a '
                      'CONSTRAINT reported by fit.py and never scored into it.')
@@ -288,6 +390,7 @@ def pt_boardings(run_dir, fraction):
 
 
 _SCHEDULE_CACHE = {}
+_SCHEDULE_EXTRA = {}
 SCHEDULE_SOURCE = {}
 import sys  # noqa: E402
 
@@ -350,9 +453,14 @@ def _schedule_index(run_dir):
     path = schedule_path(run_dir)
     if path is None:
         _SCHEDULE_CACHE[run_dir] = ({}, {})
+        _SCHEDULE_EXTRA[run_dir] = ({}, {})
         return _SCHEDULE_CACHE[run_dir]
     opener = gzip.open if path.endswith('.gz') else open
     stops, modes = {}, {}
+    # the same pass also keeps each stop's coordinates and each route's stop
+    # ids, for the readers that ask WHERE a submode's stops are (the
+    # near-wharf split of #94, measure_near_wharf.py)
+    coords, route_stops = {}, {}
     with opener(path, 'rt', encoding='utf-8') as f:
         line_id = None
         route_id = None
@@ -365,13 +473,37 @@ def _schedule_index(run_dir):
                 continue
             if el.tag == 'stopFacility':
                 stops[el.get('id')] = (el.get('name') or '').strip()
+                try:
+                    coords[el.get('id')] = (float(el.get('x')),
+                                            float(el.get('y')))
+                except (TypeError, ValueError):
+                    pass
                 el.clear()
             elif el.tag == 'transportMode' and line_id and route_id:
                 modes[(line_id, route_id)] = (el.text or '').strip()
+            elif el.tag == 'stop' and line_id and route_id:
+                route_stops.setdefault((line_id, route_id), []).append(
+                    el.get('refId'))
             elif el.tag == 'transitLine':
                 el.clear()
     _SCHEDULE_CACHE[run_dir] = (stops, modes)
+    _SCHEDULE_EXTRA[run_dir] = (coords, route_stops)
     return _SCHEDULE_CACHE[run_dir]
+
+
+def transit_stops_of_mode(run_dir, submode):
+    """{stop id: (x, y)} of every stop a route of `submode` serves, from the
+    run's OWN schedule - the wharves for `ferry`, the platforms for `rail`."""
+    _schedule_index(run_dir)
+    coords, route_stops = _SCHEDULE_EXTRA.get(run_dir, ({}, {}))
+    modes = _SCHEDULE_CACHE[run_dir][1]
+    out = {}
+    for key, ids in route_stops.items():
+        if modes.get(key) == submode:
+            for sid in ids:
+                if sid in coords:
+                    out[sid] = coords[sid]
+    return out
 
 
 def transit_stop_names(run_dir):
@@ -614,8 +746,23 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--run', required=True, help='a results/<name> directory')
     ap.add_argument('--out', default=None)
+    ap.add_argument('--write-residents', metavar='NOTE', default=None,
+                    help='backfill the run\'s own _residents.csv.gz from the '
+                         "city's CURRENT population table, for a run whose "
+                         'plans were built on it; NOTE says why that holds '
+                         '(#213). Writes nothing else')
     a = ap.parse_args()
     run_dir = _resolve_run(a.run) if not os.path.isdir(a.run) else a.run
+    if a.write_residents:
+        # the sampled persons are the ones in the run's own plans; a person
+        # in B1 but not in the sample is harmless in the map, so the map is
+        # restricted only when the plans can be listed cheaply
+        ids = _person_ids_in_plans(os.path.join(run_dir, 'plans.xml.gz'))
+        note = 'backfilled %s: %s' % (
+            __import__('datetime').date.today().isoformat(), a.write_residents)
+        path, n = write_residents(run_dir, ids, note=note)
+        print('wrote %s (%d residents)' % (path, n))
+        return
     rec = json.load(open(os.path.join(run_dir, '_run.json'), encoding='utf-8'))
     fraction = rec['fraction']
 
@@ -628,7 +775,7 @@ def main():
             _READ_AT['iteration'] = reached
 
     c3 = json.load(open(C3, encoding='utf-8'))
-    person_lga = home_lga()
+    person_lga = home_lga(run_dir)
     ms = mode_share(run_dir, person_lga)
     doc = dict(run=rec['name'], scenario=rec['scenario'], day=rec['day'],
                fraction=fraction, iterations=rec['iterations'],

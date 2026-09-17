@@ -38,7 +38,14 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..'))
 import city as _city  # noqa: E402
 
-RUNS_AT_IMPORT = {'build_data_dictionary', 'build_era_feeds', 'shape_tools'}
+RUNS_AT_IMPORT = {'build_data_dictionary', 'build_era_feeds', 'shape_tools',
+                  # the city's adapters that fetch or extract at module level:
+                  # importing one downloads, rewrites a provenance record or
+                  # regenerates a layer (the zones GeoPackages, whose bytes carry
+                  # a last_change stamp) - compiled, never imported (9.177)
+                  'extract_census', 'extract_hts', 'extract_zones', 'fetch_abs_dem',
+                  'fetch_gtfs', 'fetch_licences', 'fetch_open_data', 'osm_tiles',
+                  'slice_newcastle'}
 THIRD_PARTY = {'geopandas', 'pyproj', 'rasterio', 'shapely', 'numpy', 'pandas',
                'scipy', 'jsonschema', 'matplotlib', 'PIL', 'openpyxl', 'psutil',
                'requests', 'fiona', 'networkx', 'sklearn', 'yaml', 'lxml'}
@@ -67,7 +74,10 @@ except Exception:
 
 def _modules():
     out = []
-    for pattern in ('src/*.py', 'src/*/*.py', 'cities/%s/build/*.py' % _city.CITY):
+    # the city's extract adapters too: 0 of 18 were imported by any test
+    # until the twelfth report (16 September 2026)
+    for pattern in ('src/*.py', 'src/*/*.py', 'cities/%s/build/*.py' % _city.CITY,
+                    'cities/%s/extract/*.py' % _city.CITY):
         for p in sorted(glob.glob(os.path.join(REPO, pattern))):
             out.append(os.path.relpath(p, REPO).replace(os.sep, '/'))
     return out

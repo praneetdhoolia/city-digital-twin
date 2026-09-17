@@ -38,6 +38,8 @@ PROCESSED = os.path.join(RESULTS, 'processed')
 RECORD_FILES = ('_meta.json', '_run.json', '_config.json', '_progress.json',
                 '_metrics.json', '_summary.json', '_fit.json',
                 '_gate_stop.json', '_gate_verdict.json', '_readings.jsonl',
+                '_residents.csv.gz',   # the run's own residents map (#213)
+                '_mode_by_demographics.json', '_near_wharf.json', '_bound_trips.json',  # measurements
                 'SUMMARY.md', 'config.xml')
 # Reading snapshots extracted from the bulk before it can be trimmed: the
 # twelve-mode trend across every readable iteration, and the newest readable
@@ -221,10 +223,13 @@ def extract_snapshots(name):
     os.makedirs(dest, exist_ok=True)
     reporter = os.path.join(REPO, 'src', 'analyse', 'report_mode_ridership.py')
     ok = True
+    import registry as _registry                                  # noqa: PLC0415
+    reader_timeout_s = float(_registry.load(strict=True).get(
+        'RUN.storage.reader_timeout_s'))
     try:
         out = subprocess.run(
             [sys.executable, reporter, '--run', bulk, '--trend'],
-            capture_output=True, text=True, timeout=3600, cwd=REPO)
+            capture_output=True, text=True, timeout=reader_timeout_s, cwd=REPO)
         if out.returncode == 0 and out.stdout.strip():
             with io.open(os.path.join(dest, TREND_TXT), 'w',
                          encoding='utf-8') as fh:
@@ -240,7 +245,7 @@ def extract_snapshots(name):
         out = subprocess.run(
             [sys.executable, reporter, '--run', bulk,
              '--json', os.path.join(dest, FINAL_JSON)],
-            capture_output=True, text=True, timeout=1800, cwd=REPO)
+            capture_output=True, text=True, timeout=reader_timeout_s, cwd=REPO)
         if out.returncode != 0:
             ok = False
             _log(name, 'final-json extract rc=%s: %s'
@@ -511,7 +516,10 @@ def trim(cap_gb, log=print, grace_s=None):
                     'processed/, then trim.' % name)
                 continue
         else:
-            process(name, extract=True)
+            # the readings are extracted ONCE: a run whose findings already
+            # sit in processed/ is mirrored, not re-read (the two reporter
+            # subprocesses ran again for every trimmed candidate, twelfth report)
+            process(name, extract=not _findings_in_processed(name))
         freed = _dir_bytes(d)
         try:
             shutil.rmtree(d)

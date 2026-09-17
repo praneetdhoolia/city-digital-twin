@@ -125,7 +125,11 @@ VEHICLE = dict(
     capacity_standing=CFG.get('A.lightrail.capacity_standing'),
     capacity_crush=270,
     capacity_seated_source='assumed', capacity_crush_source='published',
-    max_accel_ms2=1.2, max_decel_ms2=1.3, emergency_decel_ms2=2.8,
+    # the same two values build_scenario_schedules.py reads; typed twins
+    # of the registry until the twelfth report (16 September 2026)
+    max_accel_ms2=CFG.get('E.vehicle.tram_accel_ms2'),
+    max_decel_ms2=CFG.get('E.vehicle.tram_decel_ms2'),
+    emergency_decel_ms2=2.8,
     max_speed_kmh=70, line_speed_kmh=CFG.get('A.lightrail.line_speed_kmh'),
     door_count_per_side=4, door_width_mm=1300,
     boarding_rate_pax_s=0.6, alighting_rate_pax_s=0.8,
@@ -159,7 +163,7 @@ DWELL_DEFAULTS = dict(
     dwell_fixed_sweep=tuple(CFG.sweep('A.lightrail.dwell_fixed_s')),
     dwell_charging_s=_DWELL_CHARGING_S,
     dwell_charging_sweep=_DWELL_CHARGING_SWEEP,
-    dwell_sd_s=6.0,
+    dwell_sd_s=CFG.get('A.lightrail.dwell_sd_s'),
     distribution_type='lognormal')
 
 # Terminus stops also charge, and hold for layover; intermediate stops are the
@@ -168,23 +172,10 @@ LR_STOPS_ORDER = ['Newcastle Interchange', 'Honeysuckle', 'Civic',
                   'Crown Street', 'Queens Wharf', 'Newcastle Beach']
 
 
-def hav(a, b):
-    R = 6371000.0
-    p1, p2 = math.radians(a[0]), math.radians(b[0])
-    dl = math.radians(b[1] - a[1])
-    dp = p2 - p1
-    return 2 * R * math.asin(math.sqrt(
-        math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+from geo import haversine as hav   # noqa: E402  (one copy, src/build/geo.py)
 
 
-def kinematic_time(d, v_kmh, a, b):
-    """Seconds to cover d metres from rest to rest, trapezoidal or triangular."""
-    v = v_kmh / 3.6
-    da, db = v * v / (2 * a), v * v / (2 * b)
-    if d >= da + db:
-        return v / a + v / b + (d - da - db) / v
-    vp = math.sqrt(2 * d * a * b / (a + b))
-    return vp / a + vp / b
+from geo import kinematic_time   # noqa: E402  (one copy, src/build/geo.py)
 
 
 def read_lr():

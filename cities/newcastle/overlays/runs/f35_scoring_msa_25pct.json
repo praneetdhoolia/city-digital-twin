@@ -1,0 +1,25 @@
+{
+  "overlay": "f35_scoring_msa_25pct",
+  "description": "THE SCORING PAIR: f35_baseline_25pct with ONE field flipped - RUN.replanning.score_msa_representation = at_innovation_cutoff - so that from the innovation cutoff (RUN.replanning.fraction_to_disable_innovation = 0.8, iteration 200 of 250) a plan's score is the moving average over its executions instead of its single most recent one (scoring.fractionOfIterationsToStartScoreMSA = 0.8, DERIVED by RUN.replanning.score_msa_fraction from the cutoff already declared). It introduces NO NEW VALUE: it pairs the moment the search stops creating plans with the moment the score stops being one noisy execution, which is the pairing MATSim's own reference text describes. Its control is arm 0 of F35, 20260912T202242_300it_25pct (9.169), the control half of the five paired arms the separation design orders (#172); the routers pair 20260915T000704_250it_25pct ran first (D1) and moved nothing outside one build's noise (9.176), so the user chose the scoring pair next (D7, 16 September 2026) because it is the ONE candidate that predicts BOTH measured symptoms on both results: the car snap at the cutoff (+1.683 pp on arm 0 at 240 -> 241, +1.774 pp on the routers pair at 200 -> 201) and the average plan score peaking then falling (9.163, 9.176). Everything else is arm 0's: the F35 controler, F34's footpath network, the demand and plans of 20260910T203622 (9.164), every other control at its off value (C.raptor.mode_cost_representation absent, RUN.replanning.plan_selector_for_removal WorstPlanSelector, C.time_weights.service_quality_representation absent, C.crowding.representation in_vehicle_time). WHAT IT MUST READ, against arm 0 and on both arms: all twelve modes on their own bases with choice-set coverage beside each (9.163, #174); the cutoff snap and the post-settle drift beside the level - if the snap vanishes and car stops moving away from target after the cutoff, the scoring branch is the mechanism of #172 and the rebuilt family's arm 0 ships with it on; the average executed-plan score's trajectory (peak-then-fall on every result so far). Nothing between arm 0 and this arm is differenced as a number: MATSim runs are not bit-reproducible and the replication band is unmeasured (CAL.objective.replication_band_pp 0.0, #163), so the reading is a direction and a band. HORIZON: RUN.controler.last_iteration = 250, the value declared on 14 September 2026 (9.169) and the floor of its sweep. HEAP: 48g on the 63 GB machine, the rule reading 37.4 GiB at 25 % against measured live peaks of 26.2 GiB (arm 0, 9.169). COST: priced by f35_pricing_probe_25pct on the committed controler 3a547df08516 - 20260916T053153_4it_25pct, ran_to_last_iteration, 383.0 s a recurring iteration (iterations 2 and 3), iteration 0 760 s, 24 min of setup - quoting 27.2 h for 250 iterations, spread 24.5-33.4 h over the last five arms at this fraction; the routers pair itself held 360.0 s a recurring iteration over 250 and 27.39 h all-in against a 30.0 h ceiling. RUN.gate.wall_ceiling_h = 33.0 is the operator's stated-cost approval of 16 September 2026 for THIS launch (D7: one 25 % probe and one 25 % arm up to 35 h), set above the spread's high so that a result is not stopped an hour short of its horizon, and nothing carried over: the arm stops at 33.0 h whatever iteration it has reached, and a stop there is a citable reading at its reached_iteration, not a result. PLANS EVERY 50, not 25: on the routers pair the seven plans-only milestones cost +231 s each (its own stopwatch, the twelfth report's performance pass), ~20 min and ~6 GB an arm for a warm-start checkpoint granularity of 50 iterations instead of 25 (#192); the tenth report's recommendation 9, open since 14 September.",
+  "answers_issues": [
+    172,
+    174,
+    163
+  ],
+  "set": {
+    "RUN.replanning.score_msa_representation": "at_innovation_cutoff",
+    "RUN.sample.fraction": 0.25,
+    "RUN.controler.last_iteration": 250,
+    "RUN.gate.wall_ceiling_h": 33.0,
+    "RUN.gate.interval_iterations": 0,
+    "RUN.machine.xmx": "48g",
+    "RUN.controler.create_graphs": false,
+    "RUN.controler.write_plans_interval": 50
+  },
+  "allow_outside_sweep": [
+    "RUN.gate.interval_iterations"
+  ],
+  "justification": {
+    "RUN.gate.interval_iterations": "THE MODE GATE IS OFF, the same 9.159 scoped departure arm 0 and the routers pair took, for the same reason: six modes are past the 20 % stop bar on both landed readings (9.169, 9.176), so the watcher would stop this arm at iteration 100 - and an arm whose whole purpose is to be differenced against a control read at its horizon cannot be stopped at a point the control was not read at; its own question is what happens AT and AFTER the cutoff at iteration 200, which no gate before it can see. The other half of what made the un-ceilinged arm indefensible (#169) is not repeated: this arm declares RUN.gate.wall_ceiling_h, the operator's stated-cost approval of 16 September 2026 (D7), and the ceiling watcher is proven on a run (aborted_20260910T205517_20it_1pct, completion stopped_at_ceiling); a stall is guarded separately by RUN.gate.stall_kill_s = 1800."
+  }
+}

@@ -192,8 +192,17 @@ def main():
                     help='launch the run under the Windows Task Scheduler so its '
                          'lifetime is independent of this shell (issue #70: '
                          'session-spawned runs died with their launching '
-                         'context). Prints the run poll command and returns '
-                         'immediately')
+                         'context). THE DEFAULT on Windows since 16 September '
+                         '2026 (D6, #225): the one launch not made --detach '
+                         'was the one whose harness died with its shell at '
+                         'iteration 34 while the JVM ran 27 h unwatched. '
+                         'Prints the run poll command and returns immediately')
+    ap.add_argument('--foreground', action='store_true',
+                    help='run the harness in THIS shell instead of under the '
+                         'scheduler. The harness, its watchers, its record '
+                         'writer and its viewer then die with the shell that '
+                         'launched them; use it for a smoke probe you will '
+                         'sit and watch, never for an arm')
     ap.add_argument('--config-set', action='append', default=[], metavar='KEY=VALUE',
                     help='registry override, checked against the declared sweep')
     ap.add_argument('--set', action='append', default=[], metavar='KEY=VALUE',
@@ -320,10 +329,19 @@ def main():
     # every refusal the launch itself runs, except the subsample.
     raw_overrides = dict(run_matsim.parse_override(x) for x in a.set)
     run_matsim.preflight(a.scenario, a.day, cfg, raw_overrides, warm=warm,
-                         quiet=False)
+                         quiet=False, dry_run=a.dry_run)
 
-    if a.detach:
+    # D6 (16 September 2026, #225): a launch is detached unless the caller
+    # asks for the foreground. A dry run executes nothing and stays here; the
+    # scheduled child arrives with --issue-gate-passed and --foreground so it
+    # cannot detach itself again.
+    if a.detach and a.foreground:
+        raise SystemExit('--detach and --foreground contradict each other')
+    if not a.dry_run and not a.foreground and not a.issue_gate_passed             and (a.detach or os.name == 'nt'):
         return _detach()
+    if a.detach:
+        raise SystemExit('--detach uses the Windows Task Scheduler; on this '
+                         'platform use nohup/setsid instead.')
 
     if a.dry_run:
         print('scenario %s  day %s  overlay %s'
@@ -422,7 +440,8 @@ def _detach():
     log = os.path.join(launch_dir, '%s.log' % task)
     wrapper = os.path.join(launch_dir, '%s.cmd' % task)
 
-    args = [x for x in sys.argv[1:] if x != '--detach'] + ['--issue-gate-passed']
+    args = ([x for x in sys.argv[1:] if x != '--detach']
+            + ['--issue-gate-passed', '--foreground'])
     # Quoted the way CreateProcess parses it (embedded quotes and
     # backslashes escaped), then `%` doubled because the command lives in
     # a batch file: the old `"%s"`-if-space rule passed `--cause "he said

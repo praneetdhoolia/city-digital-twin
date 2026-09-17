@@ -983,6 +983,23 @@
         "cities/newcastle/build/build_corridor_layers.py"
       ]
     },
+    "A.lightrail.dwell_sd_s": {
+      "value": 6.0,
+      "units": "seconds",
+      "source": "assumed",
+      "sweep": [
+        3.0,
+        10.0
+      ],
+      "sweep_basis": "The standard deviation of the lognormal stop-dwell distribution the corridor dossier states for the light rail (DECISIONS.md 4.4); no operated dwell observation is held, so the spread is assumed with the same acquisition route as the fixed dwell - field measurement or GTFS-Realtime dwell inference. REPORTED in A4_stop_dwell_model.csv only: MATSim's dwell is deterministic, so no run reads it.",
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "4.4, 9.177",
+      "consumers": [
+        "cities/newcastle/build/build_corridor_layers.py"
+      ],
+      "description": "The dwell-time spread (lognormal SD, seconds) written beside the fixed dwell into the stop dwell model table. A typed 6.0 in the corridor builder until 16 September 2026; declared so the table's value has a source and a sweep like its neighbours."
+    },
     "A.lightrail.capacity_total": {
       "value": 270,
       "units": "persons_per_vehicle",

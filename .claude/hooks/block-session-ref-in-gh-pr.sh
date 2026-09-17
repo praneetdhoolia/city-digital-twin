@@ -15,7 +15,7 @@
 # Deny, don't strip: exit 2 to block the call and feed the reason back to the agent.
 payload="$(cat)"
 
-if printf '%s' "$payload" | grep -qiE 'gh[[:space:]]+pr[[:space:]]+(create|edit)\b' \
+if printf '%s' "$payload" | grep -qiE 'gh[[:space:]]+pr[[:space:]]+(create|edit)\b|gh[[:space:]]+api[^|;&]*/pulls' \
    && printf '%s' "$payload" | grep -qiE 'https?://claude\.ai/code'; then
   echo "Blocked: this 'gh pr' command's title/body references the claude.ai/code session, which this repo forbids (CLAUDE.md — no Claude session link in commits or PRs). Re-run gh pr create/edit without the session reference." >&2
   exit 2

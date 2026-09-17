@@ -99,7 +99,7 @@ def escort_legs():
     return '%s weekday legs' % format(n, ',d')
 
 
-def main():
+def pt_targets():
     # ---------------- light rail patronage ----------------
     lr = pd.read_csv(os.path.join(OBS, 'opal_lr_newcastle_by_month_cardtype.csv'))
     lr['Trip'] = pd.to_numeric(lr['Trip'], errors='coerce')
@@ -116,8 +116,9 @@ def main():
     ser = pd.DataFrame({'d': idx, 'trips': m.values}).dropna().sort_values('d')
     # pre-pandemic window: the Opal light rail series starts at opening, so a
     # clean post-opening pre-pandemic baseline does exist (Mar 2019 - Feb 2020)
-    pre = ser[(ser.d >= '2019-03-01') & (ser.d < '2020-03-01')]
-    cur = ser[ser.d >= '2025-07-01']
+    pre_lo, pre_hi = CFG.get('CAL.targets.prepandemic_window')
+    pre = ser[(ser.d >= pre_lo) & (ser.d < pre_hi)]
+    cur = ser[ser.d >= CFG.get('CAL.targets.current_window_start')]
     if len(pre):
         add('lr_boardings_monthly_mean', 'Newcastle Light Rail', '2019-03..2020-02',
             round(float(pre.trips.mean()), 0), 'boardings/month',
@@ -177,6 +178,8 @@ def main():
             'Hypothesis A1 falsifies below about 10 per cent. Boardings, not '
             'person-legs; the model must reproduce the person-leg version.')
 
+
+def station_targets():
     # ---------------- station entries/exits (HOLDOUT) ----------------
     # Censoring: a station-month the Opal series reports as the text
     # "Less than 50" is EXCLUDED from these means, and that exclusion is the
@@ -241,6 +244,8 @@ def main():
             'TfNSW station entries and exits (Opal batch)', 'holdout', note)
     g.to_csv(os.path.join(OUT, 'station_entries_exits_mean.csv'), index=False, lineterminator='\n')
 
+
+def road_targets():
     # ---------------- road traffic ----------------
     aadt = pd.read_csv(os.path.join(OBS, 'traffic_aadt.csv'), low_memory=False)
     stn = pd.read_csv(os.path.join(OBS, 'traffic_count_stations_newcastle.csv'), low_memory=False)
@@ -330,7 +335,10 @@ def main():
                         survey_year=yr, split=split))
     aadt_out = pd.DataFrame(out)
     aadt_out.to_csv(os.path.join(OUT, 'road_aadt_targets.csv'), index=False, lineterminator='\n')
+    return PERIOD, aadt_out
 
+
+def count_corrections(PERIOD, aadt_out):
     # ---------------- comparison corrections for the count targets -----------
     # A modelled link volume is not directly comparable to an observed
     # all-classes count, and the difference must be stated rather than absorbed
@@ -419,11 +427,13 @@ def main():
     json.dump(corr, open(_city.path('params', 'C3_count_comparison.json'), 'w', newline='\n'),
               indent=2)
 
+
+def share_and_corridor_targets():
     # ---------------- mode share ----------------
     hm = pd.read_csv(os.path.join(HTS, 'hts_mode.csv'))
     hm['MODE_SHARE'] = pd.to_numeric(hm['MODE_SHARE'], errors='coerce')
     for yr, split in [('2018/19', 'calibration'), ('2024/25', 'calibration')]:
-        sel = hm[(hm.geography == 'lga') & (hm.area_name.str.strip() == 'Newcastle') &
+        sel = hm[(hm.geography == 'lga') & (hm.area_name.str.strip() == _city.target_lga()) &
                  (hm.FINANCIAL_YEAR.astype(str) == yr)]
         for _, r in sel.iterrows():
             if pd.isna(r['MODE_SHARE']):
@@ -442,6 +452,18 @@ def main():
         add('lr_alignment_length', 'Newcastle Light Rail', '2026',
             round(list(cr['alignment_length_m'].values())[0], 0), 'metres',
             'TfNSW GTFS shapes', 'calibration', '')
+
+
+def main():
+    pt_targets()
+
+    station_targets()
+
+    PERIOD, aadt_out = road_targets()
+
+    count_corrections(PERIOD, aadt_out)
+
+    share_and_corridor_targets()
 
     d = pd.DataFrame(rows)
     d.to_csv(os.path.join(OUT, 'validation_targets.csv'), index=False, lineterminator='\n')

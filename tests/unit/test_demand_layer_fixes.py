@@ -104,8 +104,8 @@ def test_the_passenger_is_placed_the_way_the_driver_is():
 def test_the_old_variant_blocks_are_skipped_under_every_plan():
     """Otherwise plan memory fills with copies of the same assignment."""
     src = _src(PLANS)
-    assert 'if ride_tours and not bound_every:' in src
-    assert 'if partial_tours and not bound_every:' in src
+    assert re.search(r'if (\w+\.)?ride_tours and not (\w+\.)?bound_every:', src)
+    assert re.search(r'if (\w+\.)?partial_tours and not (\w+\.)?bound_every:', src)
     assert "bound_placement['plans_folded']" in src, (
         'duplicate seeded plans are not folded, so a person whose whole day '
         'is bound would spend several of their eight memory slots on copies')

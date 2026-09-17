@@ -31,11 +31,8 @@
         "day_type": {
           "type": "array",
           "items": {
-            "enum": [
-              "WEEKDAY",
-              "SAT",
-              "SUN"
-            ]
+            "type": "string",
+            "description": "a day type the city declares in its city.json day_types - the vocabulary is the city's, never this schema's (the fixture city uses MON/SUN)"
           }
         }
       }

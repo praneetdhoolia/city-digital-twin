@@ -116,3 +116,52 @@ def table(run_dir, stem, iteration=None):
     while len(_CACHE) > CACHE_TABLES:
         _CACHE.popitem(last=False)
     return rows
+
+
+# ------------------------------------------------------------------ events
+#
+# THE EVENTS FILE IS READ BY ONE PARSER. Four readers streamed it with three
+# parsers of their own - summarise_run's per-mode accounting and
+# frontage_volumes's traversals with ElementTree, report_mode_ridership's
+# count-station tally and replay_events's frames with line regexes (twelfth
+# report, 16 September 2026). One generator yields every event as
+# (type, attributes); `scan_events` runs any number of handlers over one pass,
+# so the readers that run together at a close-out pay for one decode.
+import re as _re
+from xml.sax.saxutils import unescape as _unescape
+
+_EVENT_LINE = _re.compile(r'<event\s')
+_ATTR = _re.compile(r'(\w+)="([^"]*)"')
+
+
+def events(path):
+    """Yield (type, attrs) for every <event .../> in a MATSim events file.
+
+    Reads the gzip line by line and parses the attributes with one regular
+    expression per event: MATSim writes one event per line with every value
+    quoted, and it entity-escapes a value that carries `&`, `<` or `"`, which
+    is unescaped here so the dict reads what ElementTree would have read.
+    """
+    with gzip.open(path, 'rt', encoding='utf-8') as f:
+        for line in f:
+            if not _EVENT_LINE.search(line):
+                continue
+            attrs = dict(_ATTR.findall(line))
+            if '&' in line:
+                attrs = {k: (_unescape(v) if '&' in v else v) for k, v in attrs.items()}
+            yield attrs.get('type'), attrs
+
+
+def scan_events(path, *handlers):
+    """One pass of the events file over every handler: each is called with
+    (type, attrs) per event, or, when it has an `events` attribute naming the
+    types it wants, only for those. Returns the handlers, for chaining."""
+    wants = []
+    for h in handlers:
+        w = getattr(h, 'events', None)
+        wants.append(set(w) if w else None)
+    for t, attrs in events(path):
+        for h, w in zip(handlers, wants):
+            if w is None or t in w:
+                h(t, attrs)
+    return handlers

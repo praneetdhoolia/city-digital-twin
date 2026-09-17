@@ -1,6 +1,6 @@
 # SCATS functional reference, head to toe
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 The complete inventory of SCATS functionality in one document, consolidated
 from the primary sources processed for this dossier — chiefly the RTA/Aldridge

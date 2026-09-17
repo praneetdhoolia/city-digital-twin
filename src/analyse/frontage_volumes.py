@@ -82,24 +82,20 @@ def count_walk_traversals(events_path, links):
     events, so nothing here double-counts a PT access stage - only the
     physically walked links count, which is what a footfall instrument
     means."""
+    import iteration_reading as _reading                        # noqa: PLC0415
     by_link_hour = collections.Counter()
     mode_of_vehicle = {}
-    with gzip.open(events_path, 'rb') as f:
-        for ev, el in ET.iterparse(f, events=('end',)):
-            if el.tag != 'event':
-                continue
-            t = el.get('type')
-            if t == 'vehicle enters traffic':
-                mode_of_vehicle[el.get('vehicle')] = el.get('networkMode')
-            elif t == 'vehicle leaves traffic':
-                mode_of_vehicle.pop(el.get('vehicle'), None)
-            elif t == 'entered link':
-                link = el.get('link')
-                if (link in links
-                        and mode_of_vehicle.get(el.get('vehicle')) == 'walk'):
-                    hour = int(float(el.get('time'))) // 3600
-                    by_link_hour[(link, hour)] += 1
-            el.clear()
+    for t, el in _reading.events(events_path):
+        if t == 'vehicle enters traffic':
+            mode_of_vehicle[el.get('vehicle')] = el.get('networkMode')
+        elif t == 'vehicle leaves traffic':
+            mode_of_vehicle.pop(el.get('vehicle'), None)
+        elif t == 'entered link':
+            link = el.get('link')
+            if (link in links
+                    and mode_of_vehicle.get(el.get('vehicle')) == 'walk'):
+                hour = int(float(el.get('time'))) // 3600
+                by_link_hour[(link, hour)] += 1
     return by_link_hour
 
 

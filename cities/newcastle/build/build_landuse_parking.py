@@ -35,6 +35,8 @@ import pyproj
 # or a derived-from identity there. See DECISIONS.md 15.
 import registry as _registry
 CFG = _registry.load()
+# storeys assumed where OSM carries no building:levels (D.landuse.levels_by_building_type)
+LEVELS_BY_TYPE = {k: int(v) for k, v in CFG.get('D.landuse.levels_by_building_type').items()}
 # declared (#188): the POI pull weights, the retail floor-space share, the
 # frontage unit and the base year were inline literals until 12 Sep 2026
 POI_WEIGHTS = {k: float(v) for k, v in CFG.get('D.landuse.poi_attraction_weights').items()}
@@ -186,8 +188,7 @@ def build_buildings():
         lv_src = 'osm'
         if lv is None:
             bt = t.get('building', 'yes')
-            lv = {'retail': 1, 'commercial': 3, 'office': 4, 'apartments': 4,
-                  'house': 1, 'residential': 2, 'industrial': 1, 'warehouse': 1}.get(bt, 2)
+            lv = LEVELS_BY_TYPE.get(bt, LEVELS_BY_TYPE['other'])
             lv_src = 'assumed'
         c = poly.centroid
         lon, lat = TO_LL(c.x, c.y)

@@ -1517,17 +1517,31 @@
       },
       "units": "share_by_mode",
       "source": "assumed",
+      "sweep_basis": "the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes \"the result does not depend on the seed\" a claim that can be tested rather than asserted (DECISIONS.md 9.6).",
+      "status": "active",
+      "decisions_ref": "9.6, 9.7",
+      "description": "The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative.",
+      "held_fixed": {
+        "rule": "A TABLE, NOT A SWEEP AXIS: these are the P3 seed's shares, retained verbatim so that the seed-dependence claim can be tested by running both seeds (DECISIONS.md 9.6, 9.7); no share in it is moved. WHICH seed table the plan builder writes is the sweep, and it lives on B.mode.seed_table (uninformed | informed) - the twelfth report (16 September 2026) found this field carrying ['uninformed', 'informed'] as if the table itself were a member of it, which the registry's categorical check now refuses.",
+        "decisions_ref": "9.6, 9.7, 9.177"
+      },
+      "sweep": null
+    },
+    "B.mode.seed_table": {
+      "value": "uninformed",
+      "units": "enum",
+      "source": "definition",
+      "status": "active",
+      "decisions_ref": "9.6, 9.7",
       "sweep": {
         "categorical": [
           "uninformed",
           "informed"
-        ]
+        ],
+        "basis": "The two seed tables the plan builder can write under B.mode.seed_method = uniform_draw: `uninformed` is B.mode.seed_split (uniform over the usable modes, deliberately far from the observed point) and `informed` is B.mode.seed_split_informed (the P3 seed near the HTS aggregate, retained so the seed dependence is testable). The sweep is over WHICH TABLE, never over a share."
       },
-      "sweep_basis": "the sweep is over WHICH SEED IS USED, not over the shares. These are the only two seeds the plan builder can produce, and DECISIONS.md 9.7 reports the measured difference between the runs they produce. That is what makes \"the result does not depend on the seed\" a claim that can be tested rather than asserted (DECISIONS.md 9.6).",
       "sweep_role": "uncertainty",
-      "status": "active",
-      "decisions_ref": "9.6, 9.7",
-      "description": "The informed seed the uniform one replaced, retained so the seed-independence claim is testable by running both. Selected with --seed-mode informed. Approximately the observed split, which is exactly why it is NOT the default: seeding at the answer makes reaching the answer uninformative."
+      "description": "Which seed table src/build/build_matsim_plans.py writes when B.mode.seed_method is uniform_draw (its --seed-mode default). Declared as its own field on 16 September 2026 because the choice had been carried as the categorical sweep of the informed TABLE (B.mode.seed_split_informed), a share table that is not a member of ['uninformed', 'informed']; the registry's membership check now tests a declared value against its own categorical sweep and refused it."
     },
     "B.mode.seed_method": {
       "value": "full_choice_set",

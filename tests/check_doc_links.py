@@ -33,6 +33,12 @@ def living(city_root: Path) -> list[Path]:
     out += sorted((docs / "positions").glob("*.md"))
     out += [docs / "reports" / "README.md", docs / "reports" / "reference" / "README.md"]
     out += sorted((city_root / "docs").glob("*.md"))
+    out += sorted((city_root / "docs" / "requests").glob("*.md"))
+    # A frozen dossier is frozen in its CONTENT; the one live line each
+    # carries - its banner's pointer to the current position page - is a
+    # link like any other, and all 23 banners pointed at nothing after the
+    # 9.171 move until the twelfth report (16 September 2026)
+    out += sorted((city_root / "docs" / "archived").rglob("*.md"))
     return [p for p in out if p.exists()]
 
 

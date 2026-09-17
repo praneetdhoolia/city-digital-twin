@@ -1,6 +1,6 @@
 # The SCATS documentation corpus: what is restricted, what is public, and where
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 Result of a targeted hunt (25 Aug 2026) for SCATS technical documentation.
 Bottom line: **the restricted set is small and precisely identifiable, and most

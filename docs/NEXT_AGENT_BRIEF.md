@@ -1,104 +1,106 @@
 # Brief for the next agent
 
-**Written:** 16 September 2026, fifty-third session · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** the merge of the branch `praneetdhoolia/routers-pair-closeout` (`git log -1 origin/main`).
-*A pointer, not a source: [`GOAL.md`](GOAL.md), [the board](STATUS.md), [the lane](lane.json) and
-the [position pages](positions) win wherever this disagrees with them.*
-
-**THE MACHINE IS IDLE.** The routers pair `20260915T000704_250it_25pct` ran all 250 iterations (27.39 h) and is
-the third RESULT, closed out through the new `run.py --close-out` after its harness died at iteration 34
-(§9.176, D5, #225). Read against arm 0 inside F35 it moved nothing outside one build's noise: 2 of 12 inside,
-6 past the bar on both. **Two decisions await the user** — D6 (the launch default) and D7 (what runs next);
-`/onboard` asks them. No approval stands. The eleventh report is due (one per reading, §9.166).
+**Written:** 17 September 2026 (fifty-fourth session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `fd0674c` plus this handoff's commits
+*A pointer, not a source: [`GOAL.md`](GOAL.md), the board ([`STATUS.md`](STATUS.md)) and the position pages win.*
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **NO ARM IS RUNNING.** The newest run `20260915T000704_250it_25pct` is `completed`, `_run.json` `ran_to_last_iteration` at 250, `closed_out_by` `run.py --close-out`. | `python src/run/session_gate.py --digest` · `Get-Process java` · `python src/analyse/report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250` |
-| **`.tools/classes` was rebuilt by this session's gate** on the idle machine (the toolchain step); the committed build is `3a547df08516` and NO priced arm has run on it — the newest priced controler is `64bf91ada0ef`. A quote needs a 25 % probe on this build first. | `python src/analyse/arm_cost.py --run-config f35_routers_mode_constant_25pct --iterations 250` (its own PRICE warning) |
-| **NO APPROVAL STANDS.** The pair's 30.0 h was spent on `20260915T000704_250it_25pct`. | `python src/analyse/arm_cost.py ...` |
-| **TWO DECISIONS ARE OPEN**: D6 — detach by default / refuse a foreground launch under a Claude session / leave it (#225); D7 — the roots rebuild / the scoring pair / the bike ASC test. D5 was taken (the orphan is a RESULT). | `python src/analyse/lane.py --ask` |
-| **ELEVEN REPORT RECOMMENDATIONS ARE OPEN** of the tenth report's twenty; none taken this session. | `python src/analyse/report_recs.py` |
-| The issue ledger: 28 open, 0 blocking; #225 filed this session (`decision-needed`, the harness and the orphan). | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| This session's PR: open until merged; its branch is deleted when it is. | `gh pr list --state open` |
-| Registry **558** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **508**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
-| The pair's `_fit.json`, `_metrics.json`, `_summary.json` and `modes_final.json` are mirrored under `results/processed/20260915T000704_250it_25pct/`; its reading against arm 0 is one command. | `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260915T000704_250it_25pct --modes` |
+| **NO ARM IS RUNNING; THE MACHINE IS IDLE.** The newest run `20260916T063903_250it_25pct` (the scoring pair, D7) is `completed`, `_run.json` `ran_to_last_iteration` at 250, 25.77 h. It is the fourth RESULT of F35 and moved nothing against arm 0 (§9.177). | `python src/run/session_gate.py --digest` · `python src/run/watch_run.py --run 20260916T063903_250it_25pct` · `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260916T063903_250it_25pct --modes` |
+| **The machine being idle, `.tools/classes` MAY be recompiled now** — the Java fold (lane task 2) is the first thing to do before any rebuild. The committed controler has NOT been rebuilt since the gate last compiled it under no arm; the next `session_gate.py` run compiles it. | `python src/setup/bootstrap_toolchain.py --verify` · `python src/run/session_gate.py` |
+| **NO APPROVAL STANDS.** The 16 September approval (one probe + one arm ≤ 35 h) was SPENT on `20260916T053153_4it_25pct` and `20260916T063903_250it_25pct`. The next arm quotes 25.1 h for 250 it at 25 % (spread 24.5–32.8 h) on the scoring pair's stopwatch — but the roots rebuild changes the plans, so its arm 0 needs its OWN 25 % probe first. | `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25` |
+| **NO DECISION IS OPEN.** D6–D12 were taken on 16 September (detach by default; the scoring pair; the TPA ferry target; bike's distance cost derived from the observed mean, swept on its spread; the gate's scoped departure documented; the strict status-check policy; escort members and joint companions held to ride). | `python src/analyse/lane.py --ask` |
+| **19 REPORT RECOMMENDATIONS ARE OPEN** (report #12's 2, 7, 8, 9, 12, 14, 15, 18, 19, 20 and report #11's carried rows); nine of #12's twenty were taken this session (§9.177). | `python src/analyse/report_recs.py` |
+| The issue ledger: **32 open, 0 blocking**; #172 reads `MEASUREMENT DUE` because the scoring pair has run — its comment carries the reading (§9.177). Filed this session: #227–#232. | `python src/run/issue_gate.py` · `gh issue list --state open` |
+| This session's PR: open until merged; its branch `praneetdhoolia/eleventh-report-scoring-pair` is deleted when it is. | `gh pr list --state open` |
+| Registry **567** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **547 passed, 1 skipped**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
+| The three F35 results' record files (`_fit.json`, `_summary.json`, `_bound_trips.json`, `_near_wharf.json`, `_mode_by_demographics.json`, `_residents.csv.gz`) are mirrored under `results/processed/<run>/`; each reader is one command on any run. | `python src/analyse/measure_bound_trips.py --run <run> --it 250` · `python src/analyse/measure_near_wharf.py --run <run> --it 250` · `python src/analyse/mode_by_demographics.py results/raw/<run>` |
 
 Then: `python src/run/session_gate.py`.
 
 ## §1 The lane
 
 <!-- generated:lane start -->
-1. **The roots first: one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196)** **(recommended)** - a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at the same price as above; opens a family; blocked on: D7 (the pair's reading is in: the routers change moved nothing past the band, so the roots are next unless the user chooses the scoring pair or the bike test first); the build needs no approval, the new arm 0 a stated cost - ~28 h at 250 iterations from the pair's 362 s median (§9.176) (§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost; §9.176: the routers pair read - pt coverage 15.78 % against 17.53 % on arm 0, light rail -71.0 %, ride -40.8 % at a 19.11 % ceiling on both arms; #86 #30 #107 #196 #145)
-2. **The eleventh project report, after the next reading** - one /project-report pass; no family boundary; blocked on: nothing - the pair is the reading (§9.176); one /project-report pass, no run (docs/reports/README.md;)
+1. **The roots rebuild, re-scoped by report #12: hold escort members and joint companions to ride on their bound tours (#86, D12), consume the household-size top-band mean (#196), give bike a distance cost derived from its observed mean trip length (#107, D9), re-derive the ferry target from the disclosed TPA tap-on series (#94, D8) and report the short-trip band on placed coordinates (#30)** **(recommended)** - a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at a probe-priced stated cost (25.1 h for 250 iterations on the scoring pair's stopwatch, spread 24.5-32.8 h; `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25`); opens a family; blocked on: the Java fold landing first (one recompile of .tools/classes on the idle machine: the held-ride gate is half of D12), then a 25 % probe on the rebuilt inputs for the price and a stated-cost approval (9.177: 20.62 % of core legs bound, 59.0-59.3 % of bound trips ride on both pairs, the seed at 14.9 %; the 17.70 % short-trip supply at the seed; the scoring pair moved nothing, so the new arm 0 ships with RUN.replanning.score_msa_representation = absent; D8-D12 taken 16 September 2026; #30 #86 #94 #107 #145 #196)
+2. **The Java fold on the idle machine: the held-ride refusal in `GatedSubtourModeChoice` (D12's gate half, #86), the taxi fleet's own sample fraction (#215), the ride engine's thread pools (#216), the zero-second timed-out ride (#217), #187's restore counters and the telemetry twins - one recompile of `.tools/classes`, verified on a 1 % smoke** - no arm; one recompile (`bootstrap_toolchain.py --verify`) and a 1 % smoke of a few minutes; no family until the roots rebuild ships it; no family boundary; blocked on: nothing - the machine is idle (the scoring pair landed 17 September 2026) (9.177: prepared and held under the arm because .tools/classes is never recompiled under one; report #12's ledger rows on the Java; #86 #187 #215 #216 #217)
 3. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
 
-**Decisions required** (`python src/analyse/lane.py --ask`; recorded with `--answer`):
-- **D6.** The harness is a child of the shell that launches it, and the fifty-second session's end killed the routers pair's harness at iteration 34 while its JVM ran on. What should the launch default be? Options: Detach by default (recommended) · Refuse a foreground launch under a Claude session · Leave the default; the operator remembers --detach (§9.176: the one launch since §9.72 not made `--detach` is the one whose harness died with the shell; no ceiling, stall or gate watcher ran from iteration ~35 to 250; #225)
-- **D7.** The routers pair moved nothing past the band (car -0.35 pp, ride +0.17 pp, light rail 772 → 856 boardings, heavy rail 10,092 → 10,476 against arm 0; 2 of 12 inside and 6 past the bar on both; pt coverage 17.53 → 15.78 %). What runs next? Options: The roots rebuild (recommended) · The scoring pair next · The ASC contraction test for bike alone (§9.176: the pair's reading against arm 0; §9.169: ride's 20.60 % target above its 19.11 % coverage, fixed at the seed, on both arms; #86 #30 #107 #196 #172 #174 #98 #49)
-
-Decided: D1 = Routers pair first (recommended) (2026-09-14) · D2 = Search first, online and via the TfNSW API (2026-09-14) · D3 = Require them (recommended) (2026-09-14) · D4 = Inside F35, read against arm 0 (recommended) (2026-09-15) · D5 = Add run.py --close-out; it is a RESULT (recommended) (2026-09-16)
+Decided: D8 = Re-derive the ferry target from the disclosed TPA tap-on series (recommended) (2026-09-16) · D9 = A literature marginal utility of distance for bike, with its sweep (recommended) (2026-09-16) · D10 = Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended) (2026-09-16) · D11 = Yes - set the strict policy (recommended) (2026-09-16) · D12 = Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended) (2026-09-16)
 <!-- generated:lane end -->
 
-The eleventh report is due now, not after another arm: the pair is the reading (§9.166). Take D7 before
-pricing anything; whichever arm it chooses needs a 25 % probe on the committed build for its quote and then
-its own stated cost. The roots rebuild opens a family and re-baselines every pair.
+Do the Java fold (task 2) FIRST — the machine is idle and it is one recompile — then the roots rebuild
+(task 1): D12's hold lives half in the plans builder and half in `GatedSubtourModeChoice`, so the rebuild
+is not whole without the Java. The rebuild opens a family: a 25 % probe on the rebuilt inputs prices its
+arm 0, which ships with `RUN.replanning.score_msa_representation` = `absent` (the scoring pair settled it,
+§9.177). The patch scripts this session prepared for F1–F5 and E1–E2 lived in a session scratchpad and are
+GONE; §9.177 and the lane state what each does, and the position pages carry the values to derive.
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
-1. **THE HARNESS DIES WITH THE SHELL THAT LAUNCHED IT** (§9.176, #225): a foreground `run.py` launch is a child
-   of the session; the fifty-second session's end killed the pair's harness at iteration 34 and the JVM ran
-   27 h with no ceiling, stall or gate watcher and no record writer. Launch with `--detach` until D6 lands.
-2. **`from_log` NAMES A THROWABLE THE RUN SURVIVED** (§9.176): Guice's `Unsupported class file major version 69`
-   is in every log; on a run with no other throwable `reconcile_stale()` would mark a finished result `failed`.
-   `run.py --close-out` reads the shutdown first; the reconcile does not yet.
-3. **A GAME ON THE ARM'S MACHINE IS PART OF THE ARM'S PRICE** (§9.176, §9.174): iterations ran 405–561 s
-   against ~350 while `RobloxPlayerBeta` shared the CPU, twice; the tail absorbed it this time.
-4. **THE LAUNCHER'S VIEWER IS FROZEN AT LAUNCH** (§9.175): 8731 is served from inside the harness with the
-   `run_view.py` it imported; edit on 8732 with `--reload`.
-5. **A PROMISED OPACITY IS AN APPLIED ONE** (§9.175): `will-change: opacity` made the sidebar a backdrop root.
-6. **THE TERRAIN'S TEXTURE CACHE OUTLIVES A PAINT CHANGE** (§9.175): `freeRtt()` then `triggerRepaint()`.
-7. **THE QSIM'S SECOND IS NOT DELAY** (§9.175): measure delay past the step over a map app's segment.
-8. **THE CEILING IS HELD IN THE LAUNCHER'S MEMORY** (§9.174): it cannot be raised on a running arm — and it
-   dies with the harness.
-9. **A HIDDEN BROWSER TAB NEVER FIRES `requestAnimationFrame`** (§9.173): launch the scratch Edge with
-   occlusion backgrounding off.
-10. **A `--trend` READ GREW WITH THE RUN** (§9.176): ten minutes at 25 readable iterations, paid twenty
-    times under the arm; it is memoised per iteration now (`_trend/`), so a warm read is a second — but a
-    cold one on a rebuilt reader still re-derives everything: run it in the background under an arm.
+1. **A BUILD OR A TEST SUITE UNDER AN ARM STRETCHES ITS ITERATIONS** (§9.177): the scoring pair ran 400–510 s
+   an iteration under this session's verification rebuilds against 383 s on the idle probe; batch them, run
+   them at below-normal priority, and never read a pace taken under them as the arm's price.
+2. **MATSim'S MODE-CHOICE COVERAGE IS A SHARE OF TRIPS, NOT AGENTS** (§9.177): §9.163 and §9.169 read it as
+   agents and concluded ride's target was above its ceiling; the ceiling IS the bound trips' share (20.62 %),
+   sitting at the target. Read `report_choice_set_coverage.py`'s wording, not the older record text.
+3. **THE CUTOFF SNAP IS SELECTION, NOT SCORING** (§9.177): score averaging from the cutoff left the 200→201
+   snap at car +1.76 pp (arm 0 +1.683, routers pair +1.774). Do not propose MSA, a longer tail or a scoring
+   tweak against it again.
+4. **A SESSION SCRATCHPAD DOES NOT SURVIVE THE SESSION**: seven prepared patch scripts (F1–F5, E1, E2) were
+   held there for the arm to end, and it ended after the handoff began. Prepared work goes on the branch as
+   a commit that changes nothing yet, or into the record — never into the scratchpad alone.
+5. **`extract_loop_body.py` REWRITES BY LINE NUMBER** (§9.177): extracting stages top-down shifted every
+   later range and broke `config_runtime` for explicit signals, caught only by the hardcoding probe; extract
+   bottom-up, and verify every stage by a byte-identical rebuild of the artefact.
+6. **AN IMPORT SWEEP EXECUTES MODULE-LEVEL WORK** (§9.177, #232): `test_import_sweep.py` once imported nine
+   extract adapters that fetch and write at import — provenance dates rewritten, a gpkg regenerated; the
+   sweep now compiles them, and the adapters are #232's to fix.
+7. **`&&`-CHAINED CHECKS WITH `| tail -1` RETURN THE TAIL'S EXIT CODE** (§9.177): three commits landed red
+   that way and needed follow-ups; run each check on its own line and read its last line.
+8. **THE PRICER BOOKS A DEAD HARNESS'S MISSING ITERATIONS AS SETUP** (§9.177, fixed): `wall − Σmemo` quoted
+   48.8 h with 22.8 h of setup on the orphaned pair; `setup_seconds()` now reads the JVM's stopwatch when the
+   memo is short. If a quote's setup exceeds an hour, read the stopwatch before believing it.
+9. **A GAME ON THE ARM'S MACHINE IS PART OF THE ARM'S PRICE** (§9.176, §9.174): iterations ran 405–561 s
+   against ~350 while another process shared the CPU; the tail absorbed it.
+10. **THE LAUNCHER'S VIEWER IS FROZEN AT LAUNCH** (§9.175): 8731 is served from inside the harness with the
+    `run_view.py` it imported; edit on 8732 with `--reload`.
 
-Retired because a gate or the launcher enforces them: a JVM alive under a dead harness and a stale
-running record under dead pids (`run_failure.py --check` goes red and the digest says `ORPHANED`, §9.176),
-a results list on a position page (`intro_no_run_names`, §9.176), a concurrent arm (the launcher, §9.170), a result living only in
-`raw/` (`session_gate.py --handoff`), a launch with no automatic stop (§9.163), a red CI run merging (the
-ruleset, §9.172), a coordinate typed into a script (`check_hardcoding.py`), a report per session (one per
-reading, `report_recs.py`, §9.166), a decision asked twice (`lane.json`, §9.171).
+Retired because a gate or the launcher enforces them: a harness that dies with its shell (`run.py` detaches
+by default, D6, §9.177); a finished orphan marked `failed` by the reconcile (`reconcile_stale` reads the clean
+shutdown first, §9.177); a run's residents resolved through today's population (`_residents.csv.gz`, #213);
+an `awaiting-run` issue whose run has run going unread (`issue_gate.py` prints `MEASUREMENT DUE`, §9.177); a
+JVM alive under a dead harness (`run_failure.py --check`, §9.176); a run name on a position page's intro
+(`intro_no_run_names`, §9.176); a concurrent arm (the launcher, §9.170); a launch with no automatic stop
+(§9.163); a red CI run merging (the ruleset, §9.172); a coordinate typed into a script (`check_hardcoding.py`);
+a report per session (one per reading, `report_recs.py`); a decision asked twice (`lane.json`).
 
 ## §3 Standing directives and approvals
 
-- **NO APPROVAL STANDS.** Arm 0's 44 h was SPENT on `20260912T202242_300it_25pct` (§9.169); the pair's
-  30.0 h was SPENT on `20260915T000704_250it_25pct` (§9.174, §9.176). A further arm needs its own stated
-  cost set as `RUN.gate.wall_ceiling_h` on its overlay, quoted from a probe on the committed build.
-- **Never compare across a family boundary.** F35 opened at `20260912T184108` (§9.168); arm 0 and the pair
-  are its readings, the pair read against arm 0 inside F35 (D4, §9.175). A run is a result only if
-  `_run.json` says `ran_to_last_iteration`; an orphaned run that reached its horizon is closed out by
-  `run.py --close-out` (D5, §9.176); a stopped arm is citable at its `reached_iteration`; a FAILED arm for nothing.
+- **NO APPROVAL STANDS.** Arm 0's 44 h was SPENT on `20260912T202242_300it_25pct` (§9.169); the routers
+  pair's 30.0 h on `20260915T000704_250it_25pct` (§9.176); the scoring pair's 33.0 h on
+  `20260916T063903_250it_25pct` (§9.177). A further arm needs its own stated cost set as
+  `RUN.gate.wall_ceiling_h` on its overlay, quoted from a 25 % probe on the build it will run.
+- **Never compare across a family boundary.** F35 opened at `20260912T184108` (§9.168); arm 0, the routers
+  pair and the scoring pair are its results, each pair read against arm 0 inside F35 (D4, §9.175). The roots
+  rebuild OPENS A FAMILY: nothing before it compares with anything after. A run is a result only if `_run.json`
+  says `ran_to_last_iteration`; a stopped arm is citable at its `reached_iteration`; a FAILED arm for nothing.
 - **25 % runs only** (user directive, 1 September 2026) for ARMS; a structural smoke probe may run at 1 %.
-- **One arm at a time**; never recompile `.tools/classes` under one. **Launch `--detach`** until D6 lands.
+- **One arm at a time**; never recompile `.tools/classes` under one. A launch detaches by default
+  (`--foreground` opts out).
 - **A launch with no automatic stop is refused**; so is one whose heap is below the registry's rule and one
   whose overlay changes nothing the run reads.
 - **No launch while an open issue in the RUN'S LANE lacks a stated measurement** (GOAL requirement 10);
   `AWAITING-DECISION:` reports, never blocks. Declare `answers_issues`.
+- **The user's decisions of 16 September are settled** (D6–D12, `lane.json`, §14): do not re-ask them; the
+  ferry target's re-derivation (D8) is a target change and gets its own record section when it lands.
 - **The TfNSW request is the user's to send** (D2, §9.172): do not re-search, do not send unasked.
-- **The viewer is checked in a browser by measurement before it is done** (§9.172–§9.175): one issue at a
-  time, a clickable choice after each fix, zero console errors, both themes, the numbers before the probe.
-- **The viewer's tile, terrain, building and name providers are the reader's browser's** (§9.173–§9.175);
-  nothing they serve enters the package but the three map-type snapshots under the city's figures.
+- **#30 is allocation, not the kernel** (user decision, §9.177): no new short-trip kernel is proposed.
 - **The simulator's documents live at `docs/`, the city's at `cities/<city>/docs/`** (§9.171); a position
   page is at most 130 lines and 14,000 bytes; the lane is edited in `lane.json`; a decision is asked once.
 - **§8.5 binds on `C.asc.rail`, `C.asc.walk` and `C.asc.car_passenger`** — FROZEN.
-- **Nothing may be tuned on arm 0** until the separation of #172 has run (§9.159); the routers pair separated
-  one of five and moved nothing (§9.176).
+- **Nothing may be tuned on arm 0** until the separation of #172 has run (§9.159); two of five controls
+  have run and moved nothing (§9.176, §9.177); the rebuild goes at the demand first.
 - **The 67/143 holdout stays shut until the end** (§12).
 - **Never commit to `main`**; the session's ONE PR opens at `/handoff`.
 - The record is never rewritten; superseded text is corrected on the position page with a §14 row.

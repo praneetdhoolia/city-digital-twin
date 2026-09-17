@@ -9,7 +9,7 @@ Zone tiers (resolves proposal open decisions 2 and 3):
              treatment for Hunter Line through-demand, modelled at SA2.
 
 Outputs zone geometries (GeoPackage), attributes (CSV) and centroids in
-EPSG:28356 (GDA2020 / MGA Zone 56), the project CRS from Appendix A1.
+the project CRS (`city.crs()`, EPSG:28356 - GDA94 / MGA Zone 56; GDA2020 is EPSG:7856), from Appendix A1.
 """
 
 import city as _city
@@ -24,7 +24,7 @@ os.makedirs(OUT, exist_ok=True)
 
 SA4S = ['Newcastle and Lake Macquarie', 'Hunter Valley exc Newcastle']
 CORE_LGAS = ['Newcastle', 'Lake Macquarie', 'Maitland', 'Cessnock', 'Port Stephens']
-CRS_M = 'EPSG:28356'
+CRS_M = _city.crs()
 
 SPECS = [
     ('SA1', 'SA1_2021_AUST_SHP_GDA2020.zip', 'SA1_2021_AUST_GDA2020.shp', 'SA1_CODE21'),

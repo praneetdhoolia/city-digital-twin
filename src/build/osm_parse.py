@@ -30,14 +30,7 @@ def parse(path):
             del el.getparent()[0]
 
 
-def haversine(a, b):
-    """Great-circle metres between (lat, lon) pairs."""
-    R = 6371000.0
-    p1, p2 = math.radians(a[0]), math.radians(b[0])
-    dl = math.radians(b[1] - a[1])
-    dp = p2 - p1
-    return 2 * R * math.asin(math.sqrt(
-        math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2))
+from geo import haversine   # noqa: E402  (one copy, src/build/geo.py)
 
 
 def way_len(refs, idx):

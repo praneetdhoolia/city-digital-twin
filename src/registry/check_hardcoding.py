@@ -403,20 +403,12 @@ STRUCTURAL = {
     # Surfaced when the scanner was widened past module level (7 Sep 2026): a
     # constant assigned inside a function had never been visible to this check.
     # The Earth's mean radius is a physical constant, not a modelling choice -
-    # it cannot be swept, and a city cannot declare a different one. The five
-    # copies are a REDUNDANCY finding (one haversine would do), not a
-    # hardcoding one.
-    'src/build/osm_parse.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine. A physical '
-        'constant of the planet, not a parameter of this model',
-    'src/build/build_gtfs_extras.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
-    '<city>/build/build_corridor_layers.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
-    '<city>/build/build_era1_reconstruction.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
-    '<city>/build/build_scenario_schedules.py:R':
-        'the Earth\'s mean radius in metres, inside a haversine',
+    # it cannot be swept, and a city cannot declare a different one. Five
+    # copies became one on 16 September 2026 (src/build/geo.py, 9.177).
+    'src/build/geo.py:EARTH_RADIUS_M':
+        'the Earth\'s mean radius in metres, inside the one haversine every '
+        'builder imports. A physical constant of the planet, not a parameter '
+        'of this model',
     '<city>/build/build_corridor_road_attributes.py:CELL':
         'the cell size of a grid INDEX over alignment points, in metres. It '
         'decides how many candidates a nearest-point search examines, never '
@@ -527,6 +519,12 @@ STRUCTURAL = {
         'comes from RUN.machine.threads',
     'src/run/run_matsim.py:setp(count)':
         'how many regex matches to replace. A re.sub argument',
+    'src/run/run_matsim.py:_log_tail(nbytes)':
+        'how much of a finished run\'s matsim.log is read from its end to '
+        'find the newest ITERATION ENDS marker (2 MB against a log that can '
+        'reach 55 GB). A read window on text READ OUT of a run; it decides '
+        'nothing about the transport system and the whole log stays where '
+        'it is',
     'src/run/run_failure.py:MESSAGE_CHARS':
         'how much of a Java exception message is quoted into a dead run\'s '
         '`cause` before it is elided. A display length on text READ OUT of a '
@@ -734,7 +732,7 @@ STRUCTURAL_INLINE = {
     '<city>/build/build_level_crossings.py:main:0.5':
         'the centre of a window slot (i + 0.5): even spacing of the derived '
         'closures inside their window, geometry rather than a value',
-    '<city>/build/build_mode_targets.py:main:0.5':
+    '<city>/build/build_mode_targets.py:road_person_targets:0.5':
         'the midpoint of the IPART trips-per-day band (lo + hi) / 2 - the band is '
         'the declared value, B.taxi.daily_trips_band',
     '<city>/extract/extract_bitre_registrations.py:study_area_postcodes:0.5':
@@ -774,7 +772,7 @@ STRUCTURAL_INLINE = {
         'a buffer size (1 << 20 draws) for the seeded random stream',
     'src/build/build_matsim_plans.py:u:20':
         'the same buffer size, refilled',
-    'src/build/build_matsim_plans.py:main:0.05':
+    'src/build/build_matsim_plans.py:thin_carve_cells:0.05':
         _TOL,
     'src/build/build_matsim_run_inputs.py:stamp:0.05':
         'a REPORTING bin: a grade within 0.05 % of flat is counted as flat in the '
@@ -853,9 +851,9 @@ STRUCTURAL_INLINE = {
         'single years; nobody in the ERP is older',
     '<city>/build/build_licence_rates.py:main:5e-05':
         _TOL,
-    '<city>/build/build_mode_targets.py:main:5e-05':
+    '<city>/build/build_mode_targets.py:road_person_targets:5e-05':
         _TOL,
-    '<city>/build/build_validation_targets.py:main:30.4':
+    '<city>/build/build_validation_targets.py:pt_targets:30.4':
         'the mean number of days in a month (365 / 12), converting a monthly '
         'publication to a daily one',
     '<city>/extract/extract_speed_zones.py:sha256:20':

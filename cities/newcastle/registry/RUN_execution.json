@@ -767,6 +767,41 @@
       ],
       "description": "JVM heap (-Xms = -Xmx). The rule it must satisfy - RUN.machine.heap_floor_gib + RUN.machine.heap_per_fraction_gib x RUN.sample.fraction - lived in this sentence alone until 11 September 2026 and nothing read it: F33's arm 0 launched on the then 14g default at 25 %, ran 20.9 h and threw OutOfMemoryError at iteration 98 (9.165, #66). The launcher now evaluates the rule from the two declared fields and refuses a launch below it, so the default is a 1 % probe's heap - 18g against the 16.5 GiB the rule reads at 1 % on the footpath network (9.167; it was 14g against 10.5 on the road graph) - and an arm's overlay states its own, beside the approval it encodes. A pricing probe cannot price heap: plan memory fills over the first ~100 iterations."
     },
+    "RUN.machine.build_xmx": {
+      "value": "6g",
+      "units": "jvm_heap",
+      "source": "assumed",
+      "sweep": null,
+      "held_fixed": {
+        "rule": "THROUGHPUT ONLY: the heap the pt2matsim mapper and the network-build JVM run under. It decides whether a build completes, never what it produces (the mapping's own non-reproducibility is DECISIONS.md 3.5's, not the heap's). Typed as -Xmx6g in src/build/build_matsim_network.py until 16 September 2026.",
+        "decisions_ref": "3.5, 9.177"
+      },
+      "status": "active",
+      "decisions_ref": "3.5, 9.177",
+      "consumers": [
+        "src/build/build_matsim_network.py"
+      ],
+      "description": "The JVM heap for the build-time pt2matsim calls (the OSM network conversion and the schedule mapping). Distinct from RUN.machine.xmx, the run's heap, which the registry's own rule sizes by sample fraction."
+    },
+    "RUN.machine.gc_collector": {
+      "value": "ParallelGC",
+      "units": "enum",
+      "source": "assumed",
+      "sweep": {
+        "categorical": [
+          "ParallelGC",
+          "G1GC"
+        ],
+        "basis": "The two collectors the pinned JDK offers for a 48 GB heap. WALL TIME ONLY: the collector changes no model state (the twelfth report's performance pass: one full collection per iteration under ParallelGC, 2.5-4.0 % of an arm's wall). A change is a toolchain change priced by a 25 % probe before any arm carries it (DECISIONS.md 9.153)."
+      },
+      "sweep_role": "uncertainty",
+      "status": "active",
+      "decisions_ref": "9.153, 9.177",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "The JVM garbage collector the launcher passes (-XX:+Use<collector>). Typed as ParallelGC in the launcher until 16 September 2026; declared so the one flag that decides an arm's GC share is visible and sweepable like RUN.machine.threads."
+    },
     "RUN.machine.heap_floor_gib": {
       "value": 15.6,
       "units": "GiB",
@@ -909,6 +944,18 @@
         "src/run/results_store.py"
       ]
     },
+    "RUN.storage.reader_timeout_s": {
+      "value": 3600,
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.137, 9.177",
+      "consumers": [
+        "src/run/results_store.py"
+      ],
+      "description": "How long the results store gives each close-out reader (the --trend extraction, the final --json reading) before it records the extraction as failed. An OBSERVER bound: a reader that overruns it is logged into the processed directory and re-run at the next trim, and nothing the model computes depends on it. Typed 3600 and 1800 in the store until 16 September 2026; the two readers share one bound."
+    },
     "RUN.gate.retry_interval_s": {
       "value": 300,
       "units": "seconds",
@@ -920,6 +967,18 @@
         "src/run/run_matsim.py"
       ],
       "description": "How long the runner's gate watcher waits before trying a milestone again whose per-iteration tables are not written yet (#131). An OBSERVER cadence like RUN.monitor.progress_interval_s: the reporter reads the whole trips table, and retrying it every 30 s against a 25% arm competed with the JVM for the disk. The milestone itself is never skipped - only the cadence of the attempts is bounded - so this affects how soon after the tables land the gate is read, and nothing else."
+    },
+    "RUN.gate.reader_timeout_s": {
+      "value": 1800,
+      "units": "seconds",
+      "source": "definition",
+      "sweep": null,
+      "status": "active",
+      "decisions_ref": "9.137, 9.177",
+      "consumers": [
+        "src/run/run_matsim.py"
+      ],
+      "description": "How long the gate watcher gives one milestone reading (report_mode_ridership.py --gate-json) before it gives up and retries at RUN.gate.retry_interval_s. An OBSERVER bound like RUN.gate.retry_interval_s: it affects when a gate is read, never what it reads. A typed 1800 in the launcher until 16 September 2026."
     },
     "RUN.gate.stall_kill_s": {
       "value": 1800,

@@ -1,6 +1,6 @@
 # How SCATS works, mechanically
 
-> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN DOSSIER — research notes compiled 25 August 2026 as evidence for the SCATS build; the algorithm they describe is implemented (DECISIONS.md §9.88).** Current position: [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 SCATS — the Sydney Coordinated Adaptive Traffic System, developed and owned by
 Transport for NSW (formerly RMS/RTA/DMR) — controls every traffic signal in

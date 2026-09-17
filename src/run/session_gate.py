@@ -185,7 +185,7 @@ GATES = [
     # (label, command, needs_toolchain)
     ('import roots', [PY, 'src/setup/install_paths.py', '--check'], False),
     ('manifest', [PY, 'tests/check_manifest.py'], False),
-    ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests'], False),
+    ('compile', [PY, '-m', 'compileall', '-q', 'src', 'tests', 'cities', 'run.py'], False),
     ('hardcoding', [PY, 'src/registry/check_hardcoding.py', '--strict'], False),
     ('doc currency', [PY, 'tests/check_doc_currency.py', '--strict'], False),
     ('doc shape', [PY, 'tests/check_doc_shape.py', '--strict'], False),

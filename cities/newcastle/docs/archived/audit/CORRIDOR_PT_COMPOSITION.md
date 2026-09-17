@@ -1,6 +1,6 @@
 # Corridor PT composition: why the demand rides buses past the tram
 
-> **FROZEN RECORD — a diagnostic of the F4 base arm (August 2026).** Kept as evidence, never edited. The current position is [`positions/light-rail-and-ferry.md`](../../positions/light-rail-and-ferry.md).
+> **FROZEN RECORD — a diagnostic of the F4 base arm (August 2026).** Kept as evidence, never edited. The current position is [`positions/light-rail-and-ferry.md`](../../../../../docs/positions/light-rail-and-ferry.md).
 
 **DIAGNOSTIC MEASUREMENT OF AN EXISTING RUN — NOT A RESULT ABOUT THE LIGHT
 RAIL.** On the closed pre-repair family the light rail carried 1,260

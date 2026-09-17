@@ -21,8 +21,10 @@ payload="$(cat)"
 
 # `gh pr create` / `gh pr edit` on the Bash path, or either PR tool on the MCP
 # path. Anything else is none of this hook's business.
+# `gh api .../pulls` is the same door by another name (twelfth report, 16
+# September 2026): a POST or PATCH on the pulls endpoint opens or edits a PR.
 if ! printf '%s' "$payload" | grep -qiE \
-     'gh[[:space:]]+pr[[:space:]]+(create|edit)\b|mcp__github__(create|update)_pull_request'; then
+     'gh[[:space:]]+pr[[:space:]]+(create|edit)\b|mcp__github__(create|update)_pull_request|gh[[:space:]]+api[^|;&]*/pulls'; then
   exit 0
 fi
 

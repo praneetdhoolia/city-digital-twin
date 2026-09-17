@@ -1,6 +1,6 @@
 # What SUMO's removal changes for signalling
 
-> **FROZEN — written on 25 August 2026 before the SCATS algorithm was implemented (DECISIONS.md §9.88).** Its "open decisions" are decided; the current position is [`positions/signals-and-crossings.md`](../../../positions/signals-and-crossings.md).
+> **FROZEN — written on 25 August 2026 before the SCATS algorithm was implemented (DECISIONS.md §9.88).** Its "open decisions" are decided; the current position is [`positions/signals-and-crossings.md`](../../../../../../docs/positions/signals-and-crossings.md).
 
 The proposal's twin-simulator split assigned "signal-accurate" to SUMO
 (proposal §" Supply and operations … **SUMO** — microscopic, signal-accurate,

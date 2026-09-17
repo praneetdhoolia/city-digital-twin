@@ -213,7 +213,7 @@ def _get(query, dest, label):
         try:
             req = urllib.request.Request(
                 ep, data=urllib.parse.urlencode({"data": query}).encode(),
-                headers={"User-Agent": "newcastle-lr-sim/0.1 (research)"})
+                headers={"User-Agent": "city-digital-twin/0.1 (research)"})
             with urllib.request.urlopen(req, timeout=1900) as r, open(dest, "wb") as f:
                 n = 0
                 while True:

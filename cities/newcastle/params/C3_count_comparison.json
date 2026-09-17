@@ -23,6 +23,6 @@
     "bike": 0.0,
     "walk": 0.0,
     "source": "derived - HTS vehicle occupancy 1.3503 persons per vehicle (params/C4_mode_constraints.json) means observed vehicle trips ARE driver trips; the remaining modes are one vehicle each where they are light motor vehicles, zero where the observed basis already excludes them",
-    "note": "A passenger rides in a vehicle that is already counted, so the modelled vehicle count is the car legs alone and a ride leg correctly contributes none. This holds only while the modelled ride:car ratio matches the observed passenger:driver ratio, which is what DECISIONS.md 9.8 constrains asc_car_passenger to reproduce. Escort tours ARE generated since the 9.15 repair - B2 carries HX as its own tour purpose (349,923 weekday legs), driven by the escorting licence holder. What stays genuinely unmodelled here is freight (issue 24)."
+    "note": "A passenger rides in a vehicle that is already counted, so the modelled vehicle count is the car legs alone and a ride leg correctly contributes none. This holds only while the modelled ride:car ratio matches the observed passenger:driver ratio, which is what DECISIONS.md 9.8 constrains asc_car_passenger to reproduce. Escort tours ARE generated since the 9.15 repair - B2 carries HX as its own tour purpose (350,053 weekday legs), driven by the escorting licence holder. What stays genuinely unmodelled here is freight (issue 24)."
   }
 }

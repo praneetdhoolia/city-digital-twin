@@ -1,6 +1,6 @@
 # Mode × demographics: the observed inventory, and one run measured against it
 
-> **FROZEN RECORD — a diagnostic of one completed run (August 2026).** Kept as evidence, never edited. The current position is [`positions/population-and-demand.md`](../../positions/population-and-demand.md).
+> **FROZEN RECORD — a diagnostic of one completed run (August 2026).** Kept as evidence, never edited. The current position is [`positions/population-and-demand.md`](../../../../../docs/positions/population-and-demand.md).
 
 **DIAGNOSTIC MEASUREMENT OF AN EXISTING RUN — NOT A RESULT ABOUT THE LIGHT
 RAIL.** This document records (a) which mode × demographic cells are actually

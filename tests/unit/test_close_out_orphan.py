@@ -148,3 +148,26 @@ def test_a_record_that_is_not_running_is_left_alone(orphan):
     (orphan / '_meta.json').write_text(json.dumps(card), encoding='utf-8')
     with pytest.raises(SystemExit, match='not a stale running record'):
         run_matsim.close_out_orphan(orphan.name)
+
+
+def test_a_short_digest_is_overruled_by_the_logs_own_tail(orphan):
+    """The digest stopped at iteration 1; the JVM ended 12. A record built
+    from the digest said the run reached 1 (the pricer then booked the other
+    eleven as setup, 16 September 2026)."""
+    per = run_matsim.iteration_times(str(orphan / 'matsim.log'))
+    assert max(per) == 12, per
+    assert run_matsim._last_completed_iteration(str(orphan)) == 12
+
+
+def test_reconcile_closes_out_a_finished_orphan(orphan, monkeypatch):
+    """A run whose log ends in the clean shutdown is a RESULT, not a failure,
+    whatever survivable throwable the log carries earlier (9.176)."""
+    monkeypatch.setattr(run_matsim, 'RAW', str(orphan.parent))
+    monkeypatch.setattr(run_matsim, 'RESULTS', str(orphan.parent / 'none'))
+    monkeypatch.setattr(run_matsim, 'mark_dead',
+                        lambda *a, **k: (_ for _ in ()).throw(
+                            AssertionError('a finished orphan was marked dead')))
+    run_matsim.reconcile_stale()
+    rec = json.loads((orphan / '_run.json').read_text(encoding='utf-8'))
+    assert rec['completion'] == 'ran_to_last_iteration'
+    assert rec['reached_iteration'] == 12

@@ -1,6 +1,6 @@
 # Specification audit — where the logic can be silently wrong
 
-> **FROZEN RECORD — the P4 deliverable 0a specification audit (August 2026).** Its findings were acted on across §9.26–§9.64; kept as evidence, never edited. Current positions: [`positions/`](../../positions).
+> **FROZEN RECORD — the P4 deliverable 0a specification audit (August 2026).** Its findings were acted on across §9.26–§9.64; kept as evidence, never edited. Current positions: [`positions/`](../../../../../docs/positions).
 
 **P4 deliverable 0a.** Output of walking population → activities → tours → mode
 choice → network → scoring → metrics → fit, asking at each joint: *what would be

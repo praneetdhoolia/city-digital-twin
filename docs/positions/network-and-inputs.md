@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
 
 ## What is built
 
@@ -20,7 +20,7 @@
 - **MATSim network and schedules**: one base network (368,230 links, §9.167), E1 patches per scenario by `osm:way:id`; 15 GTFS feeds mapped in ONE pt2matsim build, 0 unmapped stops; day-type and variant schedules filtered, never remapped (§3.5, §11, §9.76, §9.90).
 - **Parking and land use**: `A.parking.price_hr_max` 3.2 AUD/h at the p99 of the job-density ramp, `A.parking.max_stay_min` 120 (§9.31); 7,710 facilities, 4,861 observed capacities (§6); 498 frontage segments, jobs by POI index (§7).
 - **Scenarios**: S0–S6 from `schedules/base2026.zip` by explicit transformation (§3.4, §10); 30 run-input sets by `build_matsim_run_inputs.py`, the config emitted from the registry (§9.38, §15).
-- **Registry**: **558 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, #198); `check_hardcoding.py --strict` at 0; every non-observed field carries a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15); no key carries a currency (§9.140, #62).
+- **Registry**: **567 fields** (`cities/newcastle/docs/reference/CONFIG_REFERENCE.md`; §9.167, #198); `check_hardcoding.py --strict` at 0; every non-observed field carries a sweep, `held_fixed` or `derived_from`; three unobtained fields `value: null` (§15); no key carries a currency (§9.140, #62).
 - **Manifest**: 959 files in `data/MANIFEST.csv`, hashed and licensed — **721 CC-BY 4.0, 220 ODbL 1.0 and 18 bespoke** (§9.167) — from declared sources and `derived_licences` globs (§9.141, #117); the resolver refuses a bad `derived_from` or an out-of-sweep value (`tests/check_registry_rules.py`, #124); `check_manifest.py` in CI (§9.79).
 - **The input contract is city-free**: HTS, counts and census read through `cities/newcastle/extract/reader_shapes.py` against `config/schema/reader_shapes.json`, no ABS column named (§9.140, #62).
 - **Two assumptions measured** (§9.140, #63): `E.s0.heavy_rail_detour_factor` 1.037 (sweep 1.0–1.1); `B.external.interaction_rate` 0.0900 = `B.external.commute_share_to_core` 0.1377 × `B.external.employed_share` 0.4575 / the HW split.
@@ -77,6 +77,7 @@
 
 ## History
 
+- §9.177 — 567 fields; builders read the registry
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.170 — documents at `docs/`; five defaults
 - §9.169 — run inputs at 250
@@ -91,4 +92,3 @@
 - §9.142 — C2 measured on the running network
 - §9.141 — producers name artefacts
 - §9.140 — contract city-free
-- §9.131 — licence rate measured

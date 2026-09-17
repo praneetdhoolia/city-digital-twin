@@ -66,3 +66,28 @@ def test_the_hash_is_the_one_resume_already_trusts():
     h = run_matsim.controler_sha256()
     assert len(h) == 64 and int(h, 16) >= 0, 'a sha256 hexdigest'
     assert h == run_matsim.controler_sha256(), 'and a stable one'
+
+
+def test_an_orphans_setup_is_read_from_its_own_stopwatch():
+    """The routers pair's memo held 34 of 250 iterations (DECISIONS.md 9.176);
+    `wall - sum(memo)` booked the other 216 as 22.8 h of setup and quoted the
+    next arm at 48.8 h against a 27.4 h run. The JVM's stopwatch covers them."""
+    wall = 98590.8
+    memo = {i: 360.0 for i in range(34)}
+    plain = dict(plain_median_s=360.0, last_iteration=250,
+                 iteration_total_s=96700.0)
+    setup = arm_cost.setup_seconds(wall, 250, 362.3, memo, plain)
+    assert setup is not None and setup < 3600, (
+        'a 27.4 h run whose stopwatch timed 26.9 h of iterations has minutes '
+        'of setup, not 22.8 h: %r' % setup)
+    assert abs(setup - (wall - 96700.0)) < 1e-6
+
+
+def test_a_complete_memo_is_the_setup_clock():
+    memo = {i: 300.0 for i in range(5)}
+    assert arm_cost.setup_seconds(2000.0, 4, 300.0, memo, None) == 500.0
+
+
+def test_no_clock_falls_back_to_the_median():
+    assert arm_cost.setup_seconds(2000.0, 4, 300.0, {}, None) == 500.0
+    assert arm_cost.setup_seconds(None, 4, 300.0, {}, None) is None

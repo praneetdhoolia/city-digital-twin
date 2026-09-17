@@ -7,8 +7,8 @@ rest is capped by `tests/check_doc_shape.py`. The current truth per topic is in
 [`positions/`](positions); the history and every rationale in
 [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 16 September 2026 (fifty-third session). Newest reading: the routers pair `20260915T000704_250it_25pct`, the third RESULT (250 of 250, 27.39 h) - **2 of 12 inside 10 %**, six past the stop bar, nothing moved against arm 0 outside one build's noise (§9.176).
-Its harness died at iteration 34 and the JVM ran alone to the horizon; the run was closed out through the new `run.py --close-out` (D5, §9.176, #225). D6 (the launch default) and D7 (what runs next) await the user.
+**Last updated:** 17 September 2026 (fifty-fourth session). Newest reading: the scoring pair `20260916T063903_250it_25pct`, the fourth RESULT (250 of 250, 25.77 h) - **2 of 12 inside 10 %**, six past the stop bar, nothing moved against arm 0 (car +0.007 pp) and the cutoff snap stands under score averaging (§9.177); report #12 lodged on the routers pair (`docs/reports/20260916T062246_project_report.html`).
+The scoring and routers branches are both exonerated; the roots rebuild (D12, D9, D8, #196) is the lane; a launch detaches by default (D6) and a run carries its own residents (#213).
 
 ## The goal
 
@@ -27,22 +27,22 @@ iterations; nothing assumed that can be derived ([`GOAL.md`](GOAL.md)).
 ## Scoreboard
 
 <!-- generated:scoreboard start -->
-Read from `20260915T000704_250it_25pct` at **iteration 250** (family `F35-the-engines-route-what-they-remode`, status `completed`, 25% sample, launched 2026-09-15T00:07:08, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 250, the only completion that means the run executed the horizon it declared.
-Reproduce: `python src/analyse/report_mode_ridership.py --run 20260915T000704_250it_25pct --it 250` (`--trend` for the direction).
+Read from `20260916T063903_250it_25pct` at **iteration 250** (family `F35-the-engines-route-what-they-remode`, status `completed`, 25% sample, launched 2026-09-16T06:39:07, trips table). **A RESULT** - its `_run.json` says `ran_to_last_iteration` at iteration 250, the only completion that means the run executed the horizon it declared.
+Reproduce: `python src/analyse/report_mode_ridership.py --run 20260916T063903_250it_25pct --it 250` (`--trend` for the direction).
 
 | # | mode | modelled | target | deviation | gate | basis |
 |---|---|---:|---:|---:|---|---|
-| 1 | car | 63.5564 | 58.3222 | +9.0% | ok | share of resident linked trips |
-| 2 | ride | 12.1902 | 20.6000 | -40.8% | **STOP** >=20% | share of resident linked trips |
-| 3 | walk | 11.8059 | 13.4000 | -11.9% | over 10% | share of resident linked trips |
-| 4 | taxi | 2.4056 | 0.9916 | +142.6% | **STOP** >=20% | share of resident linked trips |
-| 5 | bike | 6.5771 | 2.2084 | +197.8% | **STOP** >=20% | share of resident linked trips |
-| 6 | motorbike | 0.3577 | 0.3785 | -5.5% | ok | share of resident linked trips |
-| 7 | bus | 2.0895 | 2.3819 | -12.3% | over 10% | share of resident linked trips |
-| 8 | heavy_rail | 10,476 | 6,529 | +60.5% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 9 | light_rail | 856 | 2,954 | -71.0% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
-| 10 | ferry | 0.0473 | 0.1429 | -66.9% | **STOP** >=20% | share of resident linked trips |
-| 11 | truck | 5.6474 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
+| 1 | car | 63.9166 | 58.3222 | +9.6% | ok | share of resident linked trips |
+| 2 | ride | 12.3163 | 20.6000 | -40.2% | **STOP** >=20% | share of resident linked trips |
+| 3 | walk | 11.7538 | 13.4000 | -12.3% | over 10% | share of resident linked trips |
+| 4 | taxi | 2.3136 | 0.9916 | +133.3% | **STOP** >=20% | share of resident linked trips |
+| 5 | bike | 6.3684 | 2.2084 | +188.4% | **STOP** >=20% | share of resident linked trips |
+| 6 | motorbike | 0.3579 | 0.3785 | -5.4% | ok | share of resident linked trips |
+| 7 | bus | 1.9494 | 2.3819 | -18.2% | over 10% | share of resident linked trips |
+| 8 | heavy_rail | 10,092 | 6,529 | +54.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 9 | light_rail | 928 | 2,954 | -68.6% | **STOP** >=20% | boardings per weekday, all travellers, x1/fraction |
+| 10 | ferry | 0.0556 | 0.1429 | -61.1% | **STOP** >=20% | share of resident linked trips |
+| 11 | truck | 5.6457 | 15.4698 | - | level only | network-wide road-vehicle share (not the target basis; --truck-stations scores it) |
 | 12 | freight_train | 405.0000 | 405.0000 | - | representation | train movements represented by crossing closures |
 
 Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy_rail, light_rail, ferry**.
@@ -56,7 +56,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy
 | P1 data | ✅ | every raw download hashed with provenance; the unobtained inputs derived or swept with the reason stated ([network-and-inputs](positions/network-and-inputs.md)) |
 | P2 network | ✅ | rebuilt 12 Sep with the footway harvest as walk/bike links (368,230 links); 15 feeds mapped once, 0 unmapped stops; one build per comparison (§3.5, §9.167) |
 | P3 demand | ✅ | population on measured licence rates (§9.131); chains and plans of 10 Sep (§9.164); the 30 run-input sets on the 250-iteration horizon (§9.169); `check_package.py` passed |
-| P4 calibration | 🟡 | the newest run on disk is `20260915T000704_250it_25pct`, which is **RAN TO ITS LAST ITERATION** - the routers pair (`f35_routers_mode_constant_25pct`, `C.raptor.mode_cost_representation` = `mode_constant`, 250 it, 25 %), a result at 27.39 h, closed out by `run.py --close-out` after its harness died at iteration 34 (§9.176, #225); read against arm 0 of F35 (`20260912T202242_300it_25pct`, the control half of the five pairs, §9.169, #172): nothing moved outside one build's noise. Machine idle; no approval stands |
+| P4 calibration | 🟡 | the newest run on disk is `20260916T063903_250it_25pct`, which **RAN TO ITS LAST ITERATION** - the scoring pair (`RUN.replanning.score_msa_representation` = `at_innovation_cutoff`, 250 it, 25 %, 25.77 h against a 33.0 h ceiling, D7), a RESULT read against arm 0 `20260912T202242_300it_25pct` inside F35 (§9.177): nothing moved and the cutoff snap stands, like the routers pair `20260915T000704_250it_25pct` (§9.176). Three results of one family agree within 0.35 pp; the next arm is the roots rebuild's, a new family. The 16 September approval is SPENT |
 | P5 scenario runs · P6 analysis · P7 write-up | ⬜ | blocked until the twin passes its gate; the 143 holdout targets open once, at the end (§12) |
 
 ## State
@@ -65,10 +65,10 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy
 | | |
 |---|---|
 | Open comparability family | `F35-the-engines-route-what-they-remode` (opened `20260912T184108`, §9.168) - nothing run before it compares with anything after it |
-| Input registry | **558 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
+| Input registry | **567 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **959 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (16 September 2026 (fifty-third session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (16 September 2026 (fifty-third session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (16 September 2026 (fifty-third session)) · [network-and-inputs](positions/network-and-inputs.md) (16 September 2026 (fifty-third session)) · [population-and-demand](positions/population-and-demand.md) (16 September 2026 (fifty-third session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (16 September 2026 (fifty-third session)) · [ride-and-pairing](positions/ride-and-pairing.md) (16 September 2026 (fifty-third session)) · [runs-and-economics](positions/runs-and-economics.md) (16 September 2026 (fifty-third session)) · [sampling-and-families](positions/sampling-and-families.md) (16 September 2026 (fifty-third session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (16 September 2026 (fifty-third session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (16 September 2026 (fifty-third session)) · [walk-and-bike](positions/walk-and-bike.md) (16 September 2026 (fifty-third session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (17 September 2026 (fifty-fourth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (17 September 2026 (fifty-fourth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (16 September 2026 (fifty-third session)) · [network-and-inputs](positions/network-and-inputs.md) (17 September 2026 (fifty-fourth session)) · [population-and-demand](positions/population-and-demand.md) (17 September 2026 (fifty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (17 September 2026 (fifty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (17 September 2026 (fifty-fourth session)) · [runs-and-economics](positions/runs-and-economics.md) (17 September 2026 (fifty-fourth session)) · [sampling-and-families](positions/sampling-and-families.md) (16 September 2026 (fifty-third session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (17 September 2026 (fifty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (16 September 2026 (fifty-third session)) · [walk-and-bike](positions/walk-and-bike.md) (17 September 2026 (fifty-fourth session)) |
 <!-- generated:state end -->
 
 F35 is open with arm 0 and the routers pair as its readings; nothing before
@@ -82,28 +82,24 @@ those of `20260910T203622` (§9.164). The manifest holds
 <!-- generated:runs start -->
 | run | status | family | reached | cause / note |
 |---|---|---|---:|---|
+| `20260916T063903_250it_25pct` | completed | F35-the-engines-route-what-they-remode | 250 | ran_to_last_iteration `_run.json` |
+| `20260916T053153_4it_25pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
 | `20260915T000704_250it_25pct` | completed | F35-the-engines-route-what-they-remode | 250 | ran_to_last_iteration `_run.json` |
 | `20260914T195207_4it_25pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
 | `20260914T150700_2it_1pct` | completed | F35-the-engines-route-what-they-remode | 2 | ran_to_last_iteration `_run.json` |
 | `20260912T202242_300it_25pct` | completed | F35-the-engines-route-what-they-remode | 300 | ran_to_last_iteration `_run.json` |
-| `20260912T185005_4it_25pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
-| `20260912T184134_4it_1pct` | completed | F35-the-engines-route-what-they-remode | 4 | ran_to_last_iteration `_run.json` |
 
-193 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
+195 run directories on disk; `results/INDEX.md` labels every one. A dead run states its cause in its own `_meta.json`.
 <!-- generated:runs end -->
 
 ## Next
 
 <!-- generated:lane start -->
-1. **The roots first: one demand rebuild that seeds ride at the HTS share (#86), gives destination placement an observed short-trip shape (#30), gives bike a distance cost (#107) and consumes the household-size top-band mean (#196)** **(recommended)** - a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at the same price as above; opens a family; blocked on: D7 (the pair's reading is in: the routers change moved nothing past the band, so the roots are next unless the user chooses the scoring pair or the bike test first); the build needs no approval, the new arm 0 a stated cost - ~28 h at 250 iterations from the pair's 362 s median (§9.176) (§9.169: ride's 20.60 % target sits above its 19.11 % coverage, fixed at the seed; walk trips average 3.74 km against 0.70; bike carries no distance cost; §9.176: the routers pair read - pt coverage 15.78 % against 17.53 % on arm 0, light rail -71.0 %, ride -40.8 % at a 19.11 % ceiling on both arms; #86 #30 #107 #196 #145)
-2. **The eleventh project report, after the next reading** - one /project-report pass; no family boundary; blocked on: nothing - the pair is the reading (§9.176); one /project-report pass, no run (docs/reports/README.md;)
+1. **The roots rebuild, re-scoped by report #12: hold escort members and joint companions to ride on their bound tours (#86, D12), consume the household-size top-band mean (#196), give bike a distance cost derived from its observed mean trip length (#107, D9), re-derive the ferry target from the disclosed TPA tap-on series (#94, D8) and report the short-trip band on placed coordinates (#30)** **(recommended)** - a demand rebuild (~2 h of builds) that opens a family and re-baselines every pair; then a new arm 0 at a probe-priced stated cost (25.1 h for 250 iterations on the scoring pair's stopwatch, spread 24.5-32.8 h; `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25`); opens a family; blocked on: the Java fold landing first (one recompile of .tools/classes on the idle machine: the held-ride gate is half of D12), then a 25 % probe on the rebuilt inputs for the price and a stated-cost approval (9.177: 20.62 % of core legs bound, 59.0-59.3 % of bound trips ride on both pairs, the seed at 14.9 %; the 17.70 % short-trip supply at the seed; the scoring pair moved nothing, so the new arm 0 ships with RUN.replanning.score_msa_representation = absent; D8-D12 taken 16 September 2026; #30 #86 #94 #107 #145 #196)
+2. **The Java fold on the idle machine: the held-ride refusal in `GatedSubtourModeChoice` (D12's gate half, #86), the taxi fleet's own sample fraction (#215), the ride engine's thread pools (#216), the zero-second timed-out ride (#217), #187's restore counters and the telemetry twins - one recompile of `.tools/classes`, verified on a 1 % smoke** - no arm; one recompile (`bootstrap_toolchain.py --verify`) and a 1 % smoke of a few minutes; no family until the roots rebuild ships it; no family boundary; blocked on: nothing - the machine is idle (the scoring pair landed 17 September 2026) (9.177: prepared and held under the arm because .tools/classes is never recompiled under one; report #12's ledger rows on the Java; #86 #187 #215 #216 #217)
 3. **The ASC contraction test for bike alone** - HELD - ~15 h, no family; no family boundary; blocked on: D7 - the first pair has run (§9.176); the user's hold (§9.159) is lifted by that event, not by this session (§9.163: 20.46 pp of headroom on bike; #107)
 
-**Decisions required** (`python src/analyse/lane.py --ask`; recorded with `--answer`):
-- **D6.** The harness is a child of the shell that launches it, and the fifty-second session's end killed the routers pair's harness at iteration 34 while its JVM ran on. What should the launch default be? Options: Detach by default (recommended) · Refuse a foreground launch under a Claude session · Leave the default; the operator remembers --detach (§9.176: the one launch since §9.72 not made `--detach` is the one whose harness died with the shell; no ceiling, stall or gate watcher ran from iteration ~35 to 250; #225)
-- **D7.** The routers pair moved nothing past the band (car -0.35 pp, ride +0.17 pp, light rail 772 → 856 boardings, heavy rail 10,092 → 10,476 against arm 0; 2 of 12 inside and 6 past the bar on both; pt coverage 17.53 → 15.78 %). What runs next? Options: The roots rebuild (recommended) · The scoring pair next · The ASC contraction test for bike alone (§9.176: the pair's reading against arm 0; §9.169: ride's 20.60 % target above its 19.11 % coverage, fixed at the seed, on both arms; #86 #30 #107 #196 #172 #174 #98 #49)
-
-Decided: D1 = Routers pair first (recommended) (2026-09-14) · D2 = Search first, online and via the TfNSW API (2026-09-14) · D3 = Require them (recommended) (2026-09-14) · D4 = Inside F35, read against arm 0 (recommended) (2026-09-15) · D5 = Add run.py --close-out; it is a RESULT (recommended) (2026-09-16)
+Decided: D8 = Re-derive the ferry target from the disclosed TPA tap-on series (recommended) (2026-09-16) · D9 = A literature marginal utility of distance for bike, with its sweep (recommended) (2026-09-16) · D10 = Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended) (2026-09-16) · D11 = Yes - set the strict policy (recommended) (2026-09-16) · D12 = Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended) (2026-09-16)
 <!-- generated:lane end -->
 
 ## Open work
@@ -112,20 +108,19 @@ Decided: D1 = Routers pair first (recommended) (2026-09-14) · D2 = Search first
 
 | Work | Issues | Position page | Next measurement |
 |---|---|---|---|
-| **Choice-set coverage is an arithmetic ceiling.** On arm 0: car 75.86 %, walk 63.54 %, taxi 53.72 %, bike 27.12 %, pt 17.53 %, ride 19.11 % — ride's 20.60 % target is above its coverage, fixed at the seed from it.27 (§9.169) | #86 #174 | [seed-and-choice-set](positions/seed-and-choice-set.md) | coverage on both arms of the first pair |
-| **Five one-field controls; the routers pair is read and moved nothing** (§9.164, §9.169, §9.176): scoring, choice set, service quality (#175) and pt submodes (#49) remain unrun; arm 0 is the control half. Against arm 0 the pair moved car −0.35 pp, light rail +84 and heavy rail +384 boardings; pt coverage 17.53 → 15.78 %. What runs next is D7 | #172 #174 #49 | [seed-and-choice-set](positions/seed-and-choice-set.md) | D7, then the next pair's or the rebuilt arm 0's reading |
+| **Choice-set coverage is an arithmetic ceiling, and it is a share of TRIPS.** Identical on three results (ride 19.11 %, pt 15.78–17.53 %); ride's coverage is the bound trips' share sitting AT its target, so its deficit is what bound trips execute as (§9.177) | #86 #174 | [seed-and-choice-set](positions/seed-and-choice-set.md) | coverage on the roots rebuild's arm 0 |
+| **Two one-field controls are run and both moved nothing** (§9.176, §9.177): the routers and the scoring branches are exonerated; the choice set (#174), service quality (#175) and pt submodes (#49) remain unrun; the cutoff snap (car +1.68 to +1.77 pp on three results) is selection, not scoring. The roots rebuild goes at the demand first | #172 #174 #49 | [seed-and-choice-set](positions/seed-and-choice-set.md) | the rebuilt arm 0's reading, then the choice-set pair |
 | **The reading point is a convergence problem**; the windowed remedy measured worse (§9.159). The objective's denominator `CAL.objective.replication_band_pp` is 0.0 until a band is measured (§9.164) | #163 | [monitoring-and-gates](positions/monitoring-and-gates.md) | three seeds at a short horizon, then the band |
-| **Ride, past the bar on both results**: the demand seeds ride below the target (`B.mode.bound_passenger_placement` = `every_plan`, seeded share 0.1114), and a household drives more cars than it owns (wait count 18,767 on arm 0, §9.169) | #86 #145 | [ride-and-pairing](positions/ride-and-pairing.md), [population-and-demand](positions/population-and-demand.md) | a demand that seeds ride at the HTS share |
+| **Ride, past the bar on three results**: the binders bind the observed share (20.62 % of core legs) and 59 % of bound trips ride — car-available escort members and joint companions drive themselves on half and a third of theirs (`measure_bound_trips.py`, §9.177). D12 holds them to ride at the roots rebuild | #86 #145 | [ride-and-pairing](positions/ride-and-pairing.md), [population-and-demand](positions/population-and-demand.md) | `measure_bound_trips.py` on the rebuilt arm 0 |
 | **Light rail under and heavy rail over, past the bar on both results**, are one split, and the router's mode constant is NOT what decides it (§9.176). Crowding has never had a control (`C.crowding.representation` `in_vehicle_time` on every arm, §9.158) | #98 #49 | [light-rail-and-ferry](positions/light-rail-and-ferry.md), [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | the crowding or service-quality control, or the rebuilt demand |
-| **Ferry, past the bar on both results**, with its market present (3.60 % of trip ends within 1 km of a wharf against 5.18 % of observed POI weight, §9.163); the router's constant exonerated (§9.176); weekday tap-ons 234–1,347 at the Newcastle wharf are bounds, never targets (#185) | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the near-wharf split on the next arm |
+| **Ferry, past the bar on three results against a derived target the disclosed bound contradicts**: the cross-harbour market is 305 trips and the ferry takes a sixth of it; modelled boardings (1,148–1,236) sit inside the 234–1,347 tap-on bound (`measure_near_wharf.py`, §9.177). D8 re-derives the target from the TPA series at the rebuild | #94 | [light-rail-and-ferry](positions/light-rail-and-ferry.md) | the re-derived target and the wharf split on the rebuilt arm 0 |
 | **Taxi, past the bar on both results** with 51 pp of headroom; the fleet's refusals fell to one in five (2,065 an iteration) and are no longer the mechanism (§9.169) | #49 | [taxi-and-rideshare](positions/taxi-and-rideshare.md) | the cause of the excess, on the next arm |
-| **Bike, the worst mode on both results** at 8.13 km against 5.2, no distance or traffic cost in its score; both feasibility bounds ship at 0.0 (§9.163). The ASC contraction test (~15 h, no family) is decisive for bike alone: 20.46 pp of headroom; its hold lapsed with the first pair (D7) | #107 #30 | [walk-and-bike](positions/walk-and-bike.md) | D7 |
-| **Walk, over 10 % on both results** on the footpath network, off the stop bar, at a 3.74 km mean against 0.70 observed; the sub-1 km share (11.13 %) is set by the gravity kernel at build time and the HTS publishes a mean, not a distribution | #30 | [walk-and-bike](positions/walk-and-bike.md) | the sub-1 km share on the next demand rebuild |
+| **Bike, the worst mode on three results** at 8.10–8.13 km against 5.2, ridden 2.9 % by the car-available and 14.6–14.8 % by the car-less at 10–11 km (`mode_by_demographics.py`, §9.177); no distance cost in its score. D9 derives one from the observed mean, swept on its spread, at the rebuild | #107 | [walk-and-bike](positions/walk-and-bike.md) | bike's mean trip on the rebuilt arm 0 |
+| **Walk, over 10 % on three results**, at a 3.74 km mean against 0.70 observed; the short trips are AT the seed (17.70 % against the 18.8 % band) and car takes half of them at execution (`extract_metrics.trip_geometry`, §9.177) — #30 is re-aimed at allocation, no new kernel | #30 | [walk-and-bike](positions/walk-and-bike.md) | the routed short-trip split on the rebuilt arm 0 |
 | **Headway and reliability reach MATSim** behind a gate shipped `absent` (`citysim.ServiceQualityScoring`, §9.164) | #175 | [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) | the paired arm at `headway` and `headway_and_reliability` |
 | **The TfNSW bespoke-table request** (mode × age, trip length by mode, occupancy by purpose, the unfolded "Other") is drafted and held; the four cells were searched on every public channel and API and found on none (§9.172); the modelled mode × demographics table exists (§9.163) | #50 | [population-and-demand](positions/population-and-demand.md) | the lodgement, then TfNSW's answer |
-| **The harness dies with the shell that launched it** (§9.176, #225): the pair's watchers, record writer and viewer died at iteration 34 while its JVM ran 27.39 h to the horizon with no stall; `run.py --close-out` recovers a finished orphan, nothing yet prevents one (D6) | #225 #66 | [runs-and-economics](positions/runs-and-economics.md) | D6 - a decision, no run |
 | Surrogate calibration held in reserve: ~150 evaluations at 21.5 h each is ~134 days at 25 % | — | [runs-and-economics](positions/runs-and-economics.md) | only if the residual proves multi-parameter |
-| **The tenth report's open items** (§9.170, §9.171): #196 folds into the roots rebuild (a decision, D1); the main ruleset requires the nine test jobs (D3, §9.172); the position pages are capped and trimmed, the rule files split, the report ordinals recorded (#203 #204 #205 #207 #208 closed) | #196 #202 #209-#217 | [monitoring-and-gates](positions/monitoring-and-gates.md) | none - decisions and no-run fixes |
+| **Report #12's open items** (20260916T062246; §9.177): the Java fold (#215 #216 #217, #187's counters, the held-ride gate) waits for an idle machine - it is idle now; nine extract adapters work at import (#232); the mobsim's parallel efficiency is unmeasured (#231); 25 %-only and the stated cost are enforced by nobody (#209) | #187 #209 #215 #216 #217 #231 #232 | [monitoring-and-gates](positions/monitoring-and-gates.md) | none - no-run fixes, then the rebuild |
 
 ## Do not re-raise
 

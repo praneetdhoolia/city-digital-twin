@@ -1,9 +1,9 @@
 # Age structure and the tasks each age group is simulated doing
 
-> **FROZEN DOSSIER — the fix it specified was built (DECISIONS.md §9.47) and superseded by the measured licence rates (§9.131).** Current position: [`positions/population-and-demand.md`](../../positions/population-and-demand.md).
+> **FROZEN DOSSIER — the fix it specified was built (DECISIONS.md §9.47) and superseded by the measured licence rates (§9.131).** Current position: [`positions/population-and-demand.md`](../../../../../docs/positions/population-and-demand.md).
 
 *Evidence dossier and fix specification, 18 August 2026. Written for tasks
-4.2.5/4.2.6 ([`STATUS.md`](../../STATUS.md) §"The plan") against the project goal:
+4.2.5/4.2.6 ([`STATUS.md`](../../../../../docs/STATUS.md) §"The plan") against the project goal:
 whether the twin predicts the correct ridership **per mode** — and ridership per
 mode is not answerable if the population making the trips has the wrong age
 structure, the wrong employment, or children who never co-locate with the
@@ -19,13 +19,13 @@ The model's activity vocabulary is six tour purposes (HW work, HE education,
 HS shopping, HO social/personal, WB work business, HX serve-passenger) plus
 being carried as a car passenger (`ride`). Which purposes a person can draw is
 decided by five person attributes, all set in B1
-([`build_population.py`](../../../src/build/build_population.py)):
+([`build_population.py`](../../../../../src/build/build_population.py)):
 `employment_status`, `student_status`, `licence_holder`, `car_available`, `age`
 itself. The table states, per age group, what the attributes should be — with
 the census table that grounds each column — and therefore which tasks the
 group is simulated doing.
 
-| age | employed (G46, stated basis) | FT share of employed (G46) | attending education (G01) | licence ([lit.](../../../cities/newcastle/registry/B_demand.json), `B.population.licence_rate_by_age_band`) | tasks simulated |
+| age | employed (G46, stated basis) | FT share of employed (G46) | attending education (G01) | licence ([lit.](../../../registry/B_demand.json), `B.population.licence_rate_by_age_band`) | tasks simulated |
 |---|---:|---:|---:|---:|---|
 | 0–4 | 0 (definition) | — | **32.0%** (childcare/preschool) | 0 | HE tour when attending (escorted in practice); otherwise home. Cannot escort, cannot drive |
 | 5–14 | 0 under 15 (definition) | — | **94.9%** (school) | 0 | HE on school days; secondary tours thinned to `child_tour_retention` under 12 |
@@ -124,9 +124,9 @@ impossible (observed: 5.5% attendance).
 
 ## 3. The fix, as implemented
 
-All in [`build_population.py`](../../../src/build/build_population.py); the
+All in [`build_population.py`](../../../../../src/build/build_population.py); the
 tour-selection priority in
-[`build_activity_chains.py`](../../../src/build/build_activity_chains.py).
+[`build_activity_chains.py`](../../../../../src/build/build_activity_chains.py).
 
 1. **Ages** (D1): `age_sex_dist()` also consumes the grouped 80–84 / 85–89 /
    90–94 / 95–99 columns, apportioning each to the model band containing it

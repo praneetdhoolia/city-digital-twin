@@ -3,10 +3,12 @@
 on every constant this project might tune.
 
 A scoring constant reallocates agents BETWEEN the plans they hold. It cannot
-give an agent a plan they have never held. So for any mode `m`, the plan-holding
-coverage `c(m)` - the share of agents whose plan memory contains at least one
-plan using `m` - is an arithmetic upper bound on the share `m` can reach, no
-matter what its constant is set to:
+give an agent a plan they have never held. So for any mode `m`, the coverage
+`c(m)` - the share of TRIPS that have executed `m` at least once over the run
+(MATSim's ModeChoiceCoverage counts per person-trip, not per agent: at
+iteration 0 the figure equals the planned leg share exactly, read on the
+routers pair, 9.177) - is an arithmetic upper bound on the trip share `m` can
+reach, no matter what its constant is set to:
 
     share(m) <= c(m)
 
@@ -30,10 +32,10 @@ print beside it.
 `--against-targets` joins the city's per-mode targets and prints, for every
 mode, whether its target is REACHABLE at the coverage the run actually has.
 
-MATSim writes coverage at three memory depths - `1x`, `5x` and `10x`, the share
-of agents holding the mode in their last 1, 5 or 10 plans. `1x` is the one that
-bounds a constant, because selection at any iteration is over the memory the
-agent holds then; the others are printed for context with `--depth`.
+MATSim writes coverage at three depths - `1x`, `5x` and `10x`, the share of
+trips on which the mode has been tried at least 1, 5 or 10 times. `1x` is the
+one that bounds a constant, because a trip that never tried the mode holds no
+scored plan for it; the others are printed for context with `--depth`.
 
 Reads a run directory and the city's target artefact. Writes nothing unless
 `--json` is given. **Nothing here is a result**: coverage is read from whatever
