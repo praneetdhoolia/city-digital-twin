@@ -955,6 +955,7 @@
     "demand/plans": {
       "kind": "directory",
       "read_by": [
+        "src/analyse/measure_bound_trips.py",
         "src/build/build_activity_chains.py",
         "src/build/build_matsim_plans.py",
         "src/calibrate/measure_departure_constraint.py"

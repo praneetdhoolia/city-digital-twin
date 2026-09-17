@@ -2,16 +2,18 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
 
 ## What is built
 
 - **The reader reads a run through its own schedule**: `extract_metrics.schedule_path` takes `output/output_transitSchedule.xml.gz` first, `SCHEDULE_SOURCE` recorded; the city copy the F34 rebuild overwrote had printed heavy rail **0 / −100.0 %** on F32 (§9.169).
-- **Reader fixes** (§9.169): freight_train = scheduled + the run's own closures; a boardings reading with no sample fraction refused. **The eighth report's #180–#192** fixed or awaiting a run (§9.167): category 9 gates inline literals (#188).
 - **The main ruleset requires the nine test jobs as status checks** (§9.172, #202; ruleset 21121872, the user's decision D3): a red run is no longer mergeable.
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
 - **A run with no automatic stop is refused before the JVM starts**: `run_matsim.py` refuses when the gate watcher AND `RUN.gate.wall_ceiling_h` are both off (§9.163, #169). **Every watcher lives in the harness**: when the routers pair's harness died at iteration 34 the ceiling, stall and gate watchers, the record writer and the viewer on 8731 died with it and the JVM ran unwatched to 250 (§9.176, #225).
 - **An orphaned run that reached its horizon is closed out as a result** (§9.176, D5): `run.py --close-out <run>` accepts a stale `running` card with dead pids, a log ending in MATSim's clean shutdown and a last ENDED iteration (from the log, never the digest) equal to the horizon; refuses a live, short or unclean run. `run_failure.py --check` is the gate that turns red on the state.
+- **The next launch closes out a finished orphan itself** (§9.177): `reconcile_stale()` reads the clean shutdown first and calls the same close-out instead of marking the run `failed`; `iteration_times` walks the log tail when the memo is short, so the pricer and the record see the JVM's iterations.
+- **The harness detaches by default on Windows** (§9.177, D6, #225): `run.py` re-invokes itself detached and returns; `--foreground` opts out; the scheduled child is launched `--foreground`, so the watchers outlive the shell that launched them.
+- **A run carries its own residents** (§9.177, #213): the launcher writes `_residents.csv.gz` at subsample, `extract_metrics.home_lga(run_dir)` prefers it (WARNING and the city's table when absent), the results store mirrors it; `python src/analyse/extract_metrics.py --write-residents <run> NOTE` backfills a run made before it.
 - **A gate-stopped arm is read** at `ITERS/it.<reached>/<reached>.<table>`, never past `reached_iteration`; `output_links` has no per-iteration twin, so the counts block reports `unavailable` (§9.158).
 - **The objective measures the goal**: `CAL.objective.components` = `{"goal_modes.max_abs_rel_pct": 1.0}` via `fit.score_goal_modes()` on the board's own reader; `CAL.objective.independent_targets` = 10 (§9.158).
 - **The reading point cannot score a candidate**: `CAL.search.reading_drift_pct` = 24.88 (`measured`, sweep [15.72, 24.88]), `CAL.search.convergence_delta` derived from it; `calibrate.py --execute` refuses while the drift exceeds `CAL.gate.pass_deviation_pct` (§9.158, `measure_reading_stability.py`).
@@ -20,16 +22,13 @@
 - **`tests/unit/`** runs on synthetic inputs in CI and `session_gate.py`; six Java probes run on the signals stack (§9.142, #133).
 - **The gate watcher in `run_matsim.py`** reads all twelve modes every `RUN.gate.interval_iterations` = 100 and stops the JVM at `CAL.gate.stop_deviation_pct` (§9.137) from the progress digest, never a log tail (§9.139), keyed on `--gate-json` (§9.141, #112); retry every `RUN.gate.retry_interval_s` = 300 s (#131); `tests/check_gate_watcher.py` in CI.
 - **Every F35 paired arm runs with the gate OFF by overlay** (`interval_iterations` 0 under `allow_outside_sweep`, justified): six modes past the bar would stop the arm at 100, and a control differenced against arm 0 is read at arm 0's horizon — a scoped departure GOAL.md's loop now states (D10, 16 September 2026, #227).
-- **`RUN.monitor.stall_s` = 300** is five `MemoryObserver` heartbeats at 60 s, so it does not go stale with the pace (§9.156).
-- **The issue gate** (requirement 10, §9.140, §9.158, §9.160): `src/run/issue_gate.py` refuses a launch while an in-lane `awaiting-run` issue lacks a real `AWAITING-RUN: <measurement>` line; `AWAITING-DECISION:` reports without blocking; `--allow-open-issues` needs `--override-reason`, ledgered.
+- **The issue gate** (requirement 10, §9.140, §9.158, §9.160, §9.177): `src/run/issue_gate.py` refuses a launch while an in-lane `awaiting-run` issue lacks a real `AWAITING-RUN: <measurement>` line; `AWAITING-DECISION:` reports without blocking; `--allow-open-issues` needs `--override-reason`, ledgered; it prints `[MEASUREMENT DUE: ...]` when the line names a run, an overlay or a one-field value that has since completed.
 - **The reader** `src/analyse/report_mode_ridership.py` prints twelve rows, never an umbrella `pt` row, submodes through the run's own schedule, and writes nothing (§9.87); `--it N`, `--trend` (`toward` / `AWAY` / `flat`), `--watch SECONDS`, `--truck-stations`.
 - **Any written iteration is readable** (§9.120): trips and legs every `RUN.controler.write_trips_interval` = 10, plans and events every 100; `iteration_trips.py` derives trips from the experienced plans where no table exists.
 - **The scoreboard is the newest ARM's, never a `failed` run's** (`build_status_board.py`, §9.168): it skips a run under the sweep floor on `RUN.controler.last_iteration` (§9.133), a family marked `"readings": "none"` (§9.148) and F33's `aborted_20260910T222830_300it_25pct`.
 - **Targets**: `mode_targets_by_mode.csv` (`build_mode_targets.py`, §9.87) and `pt_boardings_targets.json` (§9.130), never `validation_targets.csv` (§12). `CAL.gate.stop_deviation_pct` = 20.0 and `CAL.gate.pass_deviation_pct` = 10.0 are `definition`, not swept (§9.87).
 - **`src/calibrate/fit.py`**: `score_mode_share` folds `bike+taxi` to Other and `car+motorbike` to Vehicle driver (§9.87), unscorable targets listed with reasons (§9.80); `measure_iteration_modes.py` uses the same function (§9.83).
 - **The run viewer** `src/analyse/run_view.py` (§9.170–§9.175): every run from one picker, each mode against the 10 % goal and 20 % stop bar; MapLibre GL 5.24.0, Overture buildings, Terrarium terrain, a globe (§9.173, §9.174); one glass on every floating surface (light .7 / dark .6, 8 px blur), viewport-aligned vector labels on both map types, the city's own overhead snapshots as the map-type pictures (`cities/newcastle/docs/reference/figures/viewer_*.png`), every appearance and base change a 500 ms shift, a scale bar accurate to 0.5 % (§9.175).
-- **The viewer's server memoises every read by file stamp** (§9.174: status poll 630 → 3 ms) and reads the page ONCE at start (`--reload` to edit): the launcher's embedded server keeps the `run_view.py` it imported at launch for the whole arm, and a newer page asked it for endpoints it lacked (§9.175). `basemap.bin`'s header is padded to four bytes (§9.175).
-- **Congestion is road-traffic delay as a map app states it** (§9.175): road vehicles only (a bus's dwell is not delay), the qsim's one-second step not counted, judged over at least 150 m, the MEDIAN traversal's delay as the colour with the mean beside it (`RunTelemetry` writes `[id, volume, typical, mean]`); green to 1.25, orange to 1.67, red to 2.5, stop-and-go from 4.
 - **The ceiling watcher is proven**: `aborted_20260910T205517_20it_1pct` stopped `stopped_at_ceiling` at `reached_iteration` 3 (§9.164, #169); `start_gate_watch` refuses without `RUN.monitor` (#131).
 - **`CAL.objective.replication_band_pp` = 0.0** (`sweep_role: measurement`, bracket [0.0, 2.0]) is the objective's denominator, MEASURED before it is set by three arms differing only in `RUN.machine.seed` (§9.164, #163).
 
@@ -72,6 +71,7 @@
 
 ## History
 
+- §9.177 — detach by default; residents per run
 - §9.176 — the pair a result; orphan close-out; watchers die with the harness
 - §9.175 — congestion measured as a map app does; viewer fixes
 - §9.174 — viewer: glass, simulator light, Overture, 200× faster polls

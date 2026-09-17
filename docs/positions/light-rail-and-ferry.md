@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
 
 ## What is built
 
@@ -36,7 +36,7 @@
 ## What is measured
 
 - **The ferry's first disclosed observation is a pair of bounds** (§9.167, #185): TfNSW's daily Opal Patronage files (427 days, `extract_opal_patronage.py`) put ferry tap-ons at the Newcastle wharf at **234–1,347 a weekday**, every hourly cell rounded to 100 or printed `<100` (`CAL.pt.opal_patronage_rounding`). Light rail reads **2,090–3,751**, bracketing the 2,954 target. A constraint, never a target (§9.8): the 0.1429 % ferry share stands.
-- **The ferry's market is there and the mode is not chosen** (§9.163, #94). `corridor_market.py --mode ferry --radius-m 1000` on `20260909T015217_300it_25pct`: **84,293 of 2,343,637** weekday trip ends within 1 km of a wharf — **3.60 %** — against **5.18 %** of POI attraction weight and **5.12 %** of jobs: the order the attraction layer implies.
+- **The ferry's cross-harbour market is small and the ferry takes a sixth of it** (§9.177, #94, `_near_wharf.json` on `20260915T000704_250it_25pct`, `measure_near_wharf.py`): **305** resident trips (**0.19 %**) have both ends within `RUN.transit_router.search_radius_m` of two DIFFERENT wharves; ferry **15.7 %** of them, car 51.8 %; boardings scale to **1,148 a weekday**, inside the 234–1,347 tap-on bound; the scoring pair `20260916T063903_250it_25pct` reads 304 trips, ferry 16.1 %, 1,236 boardings (§9.177). §9.163's one-wharf market (3.60 %) counted trips that need no ferry.
 - **THE ROUTERS PAIR, F35's second result** (`20260915T000704_250it_25pct`, iteration 250, `ran_to_last_iteration`, §9.176; `C.raptor.mode_cost_representation` = `mode_constant`, against arm 0 inside F35): light rail **856 boardings against 2,954, −71.0 %, STOP** (arm 0 772); ferry **0.0473 %, −66.9 %, STOP** (arm 0 0.0524); heavy rail **10,476, +60.5 %** (arm 0 10,092); bus −12.3 %; pt coverage **15.78 %** (arm 0 17.53). The raptor's constants move 84 boardings onto the tram and 384 onto the train: the split is NOT the router's constants; the tram sits below its 2,090–3,751 bracket (#185).
 - **ARM 0, F35's first result** (`20260912T202242_300it_25pct`, iteration 300, `ran_to_last_iteration`, §9.169): light rail **772 boardings a weekday against 2,954, −73.9 %, STOP** (193 sampled); ferry **0.0524 % against 0.1429 %, −63.3 %, STOP** (83 trips); heavy rail **10,092 against 6,529 (+54.6 %)**, bus 2.0045 % (−15.8 %); pt choice-set coverage **17.53 %** (F32 25.78 %); **752** pt trips board more than one submode. Not a comparison with F32 (§3.5) but a direction: light rail moved AWAY (F32 −58.6 %) when the pt access leg became a network walk (§9.167).
 - **The F32 RESULT** (`20260909T015217_300it_25pct`, iteration 300, `ran_to_last_iteration`): light rail **1,224 boardings against 2,954, −58.6 %** through its own schedule (§9.169; §9.162 recorded 1,260 / −57.3 %); ferry **0.0571 % against 0.1429 %, −60.1 %**. Light rail moved AWAY across the run — 2,720 boardings at iteration 0, 1,436 at 200 (§9.162) — so the DIRECTION is the finding. Comparable with no earlier family (§3.5).
@@ -47,8 +47,7 @@
 - **The routers control is run and exonerated** (§9.176): giving the raptor the submode constants (`C.raptor.mode_cost_representation` = `mode_constant`) leaves light rail at −71.0 % against −73.9 %, heavy rail at +60.5 % against +54.6 % and ferry at −66.9 % against −63.3 % — inside the noise of two runs of one build (§9.142, #163). What decides the split is still open: the crowding control (`C.crowding.representation` `absent`, never run, #174), the service-quality pair (#175), the seed (pt coverage 15.78–17.53 %, §9.176), or the demand's placement of pt trips (#30).
 - Light rail: where the boardings between arm 0's 772 and the 2,954 target are — longer corridor trips, rail transferees, visitors — is the question at the next arm (§9.130, §9.169).
 - **A third of all PT routing finds no service** (§9.158): of **2,553,357** pt routing requests on the F31 arm, **33.4 %** got no transit route and **40.6 %** of the answered took the network walk — **60.5 %** came back as a walk, because `(marginalUtilityOfTraveling − performing)/3600` prices a second walking at 1.0400 seconds riding. A tram or ferry leg cannot be chosen inside a journey answered with a walk. Supply, radius and schedule integrity are exonerated (§9.113; 1,270 routes with 0 lacking departures, §9.158).
-- #94 (awaiting-run) — supply, hour of service, routing (§9.140) and now the router's mode constant (§9.176) are exonerated; the residual is the reach bound (three quarters of the market beyond the 1 km walk radius, no feeder) and a competitive-but-losing plan the memory drops; −63.3 % on arm 0, −66.9 % on the pair.
-- The ferry target's vintage: the census cell is a lockdown month, which is why the sweep runs from 0 to twice the point value (§9.89).
+- **#94 — the ferry's deficit is against a derived target the disclosed bound contradicts, and D8 re-derives it** (§9.177, user decision): the modelled boardings (1,148) sit inside the Opal tap-on bound (234–1,347, #185) while the share target 0.1429 % (a lockdown-month census cell, §9.89) reads −66 %; at the roots rebuild the target is re-derived from the disclosed TPA tap-on series (its midpoint, bounds as the sweep), a target change recorded in its own section. Supply, hour, routing and the router's constant are exonerated (§9.140, §9.176).
 - The seated/standing split of the Urbos stays assumed; the acquisition route is field observation at Civic or Crown Street, or GTFS-Realtime dwell distributions (§4.3, §9.18).
 
 ## Refused — do not re-raise
@@ -68,6 +67,7 @@
 
 ## History
 
+- §9.177 — cross-harbour market 305 trips; D8
 - §9.176 — the routers pair: tram 856, ferry −66.9 %
 - §9.170 — corridor builder reads registry tram values
 - §9.169 — arm 0: light rail −73.9 %, ferry −63.3 %
@@ -82,4 +82,3 @@
 - §9.142 — corridor gets its arrivals
 - §9.140 — ferry market and memory measured
 - §9.139 — F23 gate: both unmoved
-- §9.136 — corridor deficit structural by band

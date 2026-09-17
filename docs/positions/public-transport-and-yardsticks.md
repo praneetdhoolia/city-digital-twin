@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
 
 ## What is built
 
@@ -46,7 +46,7 @@ Bases from `data/processed/validation/mode_targets_by_mode.csv`; the PT rows are
 
 ## What is measured
 
-- **Three in five PT routing requests come back as a walk, and depth does not change it** (§9.163, #162): the `ptDirectWalk` counters at the end of `20260909T015217_300it_25pct` — **4,800,000** requests, **31.09 %** with no transit route, **40.61 %** of the compared choosing the network walk, **59.07 %** a walk either way. The cause is pricing: one second walking costs 1.0400 seconds riding at `RUN.transit_router.direct_walk_factor` = 1.0 (§9.158, `src/analyse/diagnose_pt_routing.py`).
+- **Two in three PT routing requests find no transit route on the footpath network, up from one in three** (§9.177, #162, `matsim.log` of `20260915T000704_250it_25pct`): **2,084,847 of 3,100,000** `ptDirectWalk` requests (**67.3 %**) had no transit route at all, against **31.09 %** of 4,800,000 on F32's `20260909T015217_300it_25pct` (§9.163) — doubled across the footpath rebuild and the engines' routing (pt coverage 17.53 → 15.78 %, §9.176). The pricing half stands: a second walking costs 1.0400 seconds riding at `RUN.transit_router.direct_walk_factor` = 1.0 (§9.158).
 - **The routers pair's reading, F35's second result** (§9.176, `20260915T000704_250it_25pct`, iteration 250, `C.raptor.mode_cost_representation` = `mode_constant`): heavy rail **10,476** boardings against 6,529 (**+60.5 %**), light rail **856** against 2,954 (**−71.0 %**), bus **2.0895 %** against 2.3819 (**−12.3 %**), ferry **0.0473 %** against 0.1429 (**−66.9 %**); pt coverage **15.78 %**. Against arm 0 (+384 train boardings, +84 tram, +0.09 pp bus, −0.005 pp ferry) nothing moved outside the noise of one build (§9.142): the raptor's constant is not the pt layer's lever.
 - **Arm 0's reading, F35's first result** (§9.169, `20260912T202242_300it_25pct`, iteration 300): heavy rail **10,092** boardings (+54.6 %), light rail **772** (−73.9 %), bus **2.0045 %** (−15.8 %), ferry **0.0524 %** (−63.3 %); pt coverage 17.53 %.
 - **Pt is the only mode whose choice set is still opening at the cutoff** (§9.163, §9.169): coverage **25.78 %** at 300 on F32, still moving at **233** where every other mode closed by 27; **17.53 %** on arm 0. Boardings sampled on arm 0: bus 9,135, rail 3,036, tram 193, ferry 328. The submode targets sum to 2.52 %, inside either coverage.
@@ -83,6 +83,7 @@ Latest twelve-mode reading: `results/raw/20260915T000704_250it_25pct` at iterati
 
 ## History
 
+- §9.177 — no transit route for 67 %
 - §9.176 — the routers pair: raptor constant not the lever
 - §9.170 — router-scorer consistency unrun
 - §9.169 — arm 0's reading; reader fixed
@@ -97,4 +98,3 @@ Latest twelve-mode reading: `results/raw/20260915T000704_250it_25pct` at iterati
 - §9.157 — F31 gate: heavy rail +247.2 %
 - §9.142 — censoring rule named
 - §9.140 — bus count unobtainable
-- §9.139 — F23 gate: income blunts fare

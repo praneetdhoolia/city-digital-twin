@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
 
 ## What is built
 
@@ -25,24 +25,21 @@
 ## What is measured
 
 - **The F35 result, the first read on the footpath network** (`20260912T202242_300it_25pct` at iteration 300, §9.169): walk **11.7677 % against 13.4000 % (−12.2 %)**, over 10 % and no longer past the stop bar, on **18,645** trips at a mean **3.74 km against 0.70 (+434 %)**, coverage **63.54 %**; walk stuck 1,661 of 1,115,677 departures. Bike **6.6605 % against 2.2084 % (+201.6 %, STOP)** on **10,553** trips at **8.10 km (+56 %)**, coverage **27.12 %**, geometry ratio 1.56 (`_fit.json`). A direction, not a comparison with F32 (§3.5): walk toward target, bike AWAY from +113.0 %.
-- **The short-trip supply is unchanged** (§9.169, #30): trips under 1 km are **11.13 %** of 576,893 on arm 0 (F32 11.17 %) — the demand did not change between F32 and F35. By longest mode: walk 27.67 %, bike 9.54 %, taxi 9.13 %, car 8.68 %, ride 4.23 %.
+- **The short-trip supply IS at the seed; the run reads it on another basis** (§9.177, #30): the seed's core legs are **17.70 %** at ≤ 0.748 km straight (1 km at detour 1.3376; `B2_activity_trips_WEEKDAY.csv`, 2,225,609 legs) against the Sydney 18.8 % band; the routers pair reads **20.02 %** of resident linked trips on the straight × detour basis and **13.82 %** ROUTED (arm 0 11.13 %, §9.169), and car carries **51.5 %** of the routed short trips, walk **29.5 %** (`extract_metrics.trip_geometry`). The loss is allocation, not the kernel.
+- **Bike by car availability on the routers pair** (§9.177, `_mode_by_demographics.json` on `20260915T000704_250it_25pct`, #107): **2.9 %** of the car-available's 448,807 trips at a **10.58 km** routed mean; **14.8 %** of the car-less's 98,880 at **11.48 km**; walk 4.25 % / 31.67 % at 4.94 / 5.99 km.
 - **PT access, egress and transfer walks executed on a result** (§9.169, #167, #183): 8,687 pt trips on arm 0 carry **27,765 network walk legs** (median 461 m, mean 576 m, 5,748 over 1 km) and 41,243 coordinate-to-link stubs (median 19 m, 18 over 1 km); no teleported leg mode appears. Both issues are measured, to be closed.
-- **The supply of short trips does not move, and car's grip on it tightens** (§9.163, #30, `20260909T015217_300it_25pct`): trips under 1 km are **11.06 %** at iteration 100 and **10.97 %** at 300, because destination placement fixes the short end at build time; car's share of them rises 60.67 % → 63.12 % while walk's moves 23.04 % → 23.48 %. Walk's deficit has a ceiling no behavioural parameter lifts.
 - **Walk is used as a long-distance mode** (§9.163): F32 mean walk trip **3.283 km** against 0.70 (4.69×), median 1.249 km, duration **49.0 min** against 12.3; the all-trips mean fell 6.94 → 5.17 km between iterations 100 and 300.
 - **Bike is ridden too far and concentrated in the car-less quarter** (§9.163, #107): F32 bike **+113.0 %** at 4.7045 %; mean **7.3217 km** against 5.2, **43.71 min** against 19.2; no licence 8.8 % of trips against licence 2.5 % (`mode_by_demographics.py`); age 12–17 **15.4 %**, everyone else 2.5–4.9 %.
-- **Bike's excess IS reachable by a constant; walk's deficit is a different problem** (§9.163): F32 bike coverage **29.03 %** against 4.70 % (24.32 pp headroom); walk **63.95 %** against 9.85 % (54.10 pp). Bike is the mode the ASC contraction test is decisive for; walk's deficit is bounded by the sub-1 km supply, not its choice set.
 - **The F32 result, and walk fell past the stop bar on the way to it** (`20260909T015217_300it_25pct`, §9.162): **bike 4.7045 % (+113.0 %)**, **walk 9.8490 % (−26.5 %)**; walk was inside the band at iteration 110 (−9.6 %), left it by 200 (−14.4 %) and the cutoff took **−0.941 pp** off it — it descends THROUGH its target.
 - **Walk is priced as a transit ride, and that is why its geometry is wrong** (§9.158): inside the pt router `(marginalUtilityOfTraveling − performing)/3600` makes one second walking cost 1.0400 seconds riding at `RUN.transit_router.direct_walk_factor` = 1.0; on the F31 arm 2,553,357 pt requests, 33.4 % with no transit route, **60.5 % answered as a walk** with a beeline mean of 7.81 km.
-- **`accessEgressType = none` was load-bearing** for §9.54's `TolerantAgentSource`/`GenericRouteTeleporter` and §9.58's activity-link repair (§9.136); the short-car-trip cost was a design decision.
-- **Gradient's motivation**: 30.5 % of 50,182 road edges exceed 4 % grade (§9.84). No paired arm has measured the channel's effect.
 - **The supply half of walk's deficit moved a little; the shape half cannot without an observation** (§9.164, #30): the placement loop no longer discards every tour still to be placed when one will not fit — **547** weekday, 241 Saturday and 77 Sunday tours attempted, the week trip rate **3.398 against the HTS 3.473**; **18,446** weekday tours are still dropped by a different mechanism. The sub-1 km share is the gravity kernel's SHAPE, and the HTS gives a mean and no distribution (§9.8, §9.13).
 
 ## What is open
 
-- **Walk's trips are five times too long, and the fix is at destination placement** (§9.169, #30): mean walk trip **3.74 km against 0.70** (ratio 5.34, `_fit.json`), from 3.28 km on the road graph (F32's `_fit.json`), while the sub-1 km supply is unchanged at 11.13 %; what moves it is a demand rebuild, not a run parameter. Not represented: the pedestrian crossing WAIT (`A.transit.transfer_crossing_delay_s` prices transfers only) and road links' own foot=/bicycle= tags (§9.167).
-- **Bike carries no distance or traffic cost that arm 0's reading shows** (§9.169, #107): **+201.6 % at 8.10 km**, coverage 27.12 %, the direction from F32's +113.0 % AWAY on the footpath network (§9.167); the next pair's question; `C.asc.cycle`'s interval stays a constrained solve against trip length (§9.158).
+- **Walk's trips are five times too long, and the fix is ALLOCATION, not the kernel** (§9.169, §9.177, #30 re-aimed): mean walk trip **3.74 km against 0.70** (ratio 5.34, `_fit.json`), from 3.28 km on the road graph (F32's `_fit.json`); the seed supplies the short trips and car takes half at execution, so what moves walk is the roots rebuild (D12's held passengers, D9's bike distance cost), read on its arm; no new kernel. Not represented: the pedestrian crossing WAIT (`A.transit.transfer_crossing_delay_s` prices transfers only) and road links' own foot=/bicycle= tags (§9.167).
+- **Bike's distance cost is D9, taken and not yet built** (§9.177, #107): a `C.scoring.marginal_utility_of_distance_per_m` for bike DERIVED from the observed mean trip length (`C.constraint.trip_length_km.bike` 5.2 km against 8.10 km on arm 0 and 10.58/11.48 km by car availability on the pair) and swept on its observed spread — at the roots rebuild, one family; `C.asc.cycle` stays a constrained solve against trip length (§9.158).
 - **Walk's geometry has a NAMED mechanism and an undecided remedy** (§9.158): `RUN.transit_router.direct_walk_factor` has a sweep to 2.0; moving it is a family boundary and a FIDELITY decision, never picked to land walk's share.
-- **#30** — the sub-1 km trips are generated (§9.107) and the short-trip band shares match their observed values to three decimals after the 4 Sep rebuild (§9.142); the walk/car allocation of those trips is the open question (§9.107).
+- **#30 is re-aimed at allocation** (§9.177, user decision): the band shares match at the zone matrix (§9.142) and on placed coordinates (17.70 % vs 18.8 %); the chains report will state the placed-coordinate band beside the matrix one at the rebuild.
 - **The gradient channel's effect is unmeasured**: no paired arm differing only in `A.gradient.representation` has read bike's mean trip and time against 5.2 km / 19.2 min (§9.84).
 - **#50** — the bike age gate is assumed; no mode × age cell is held (§9.84); it carries `decision-needed` and does not block the launcher (§9.160).
 - **Bike's residual after the stress channel** is the car-less quarter's missing alternatives (§9.123: 95.4 % of bike-choosers have no car); `C.asc.cycle`'s interval is a constrained solve against observed trip length (§9.28, §9.158), never a fit against share.
@@ -57,11 +54,10 @@
 - Bike as displaced ride, asserted without measurement (§9.114 corrected §9.109 and §9.112); §9.123 carries the measurement.
 - A gradient utility term in scoring, or an access-decay curve: link speed is the representation (§9.84, §9.140, #21).
 - Teleported walk or bike as main modes, re-added access/egress stubs, and the trunk-road pedestrian exclusion (§9.54, §9.58).
-- Walk as the fallback for a licensed, car-available passenger whose lift fails (§9.105).
 
 ## History
 
-- §9.176 — intro fixed: which runs are results is the board's
+- §9.177 — short trips at the seed; #30 is allocation
 - §9.170 — the tenth report re-reads arm 0 unchanged
 - §9.169 — arm 0 on footpaths: walk −12.2 %, bike +201.6 %
 - §9.167 — footpath network built, F34 opened

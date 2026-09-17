@@ -2,7 +2,7 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 16 September 2026 (fifty-third session) · **Record read through:** §9.176 · **Written against family:** `F35`
+**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
 
 ## What is built
 
@@ -40,7 +40,7 @@
 
 ## The state on disk
 
-- **The synthetic population** holds 612,634 persons in 246,865 households, 53.4% employed, 6.0% of households with no car (`cities/newcastle/demand/population/B1_synthetic_population.csv`, §9.131). **Which family's build is on disk and whether it is consistent are live facts with one home each** — the board's state block and `python tests/check_package.py`.
+- **The synthetic population** holds 612,634 persons in 246,865 households, 53.4% employed, 6.0% of households with no car (`cities/newcastle/demand/population/B1_synthetic_population.csv`, §9.131). **Which family's build is on disk and whether it is consistent are live facts with one home each** — the board's state block and `python tests/check_package.py`. **A run keeps the residents it sampled** (`_residents.csv.gz`, §9.177, #213): a rebuild of this table changes no reading of a run made before it.
 - **The demand is rebuilt and the 30 run-input sets with it** (§9.164): family `F33` opened on it, and F35's arm 0 `20260912T202242_300it_25pct` is the first result since (§9.169). No arm approval stands.
 
 ## What is measured
@@ -48,7 +48,6 @@
 - **Arm 0 — the roster and the occupancy** (§9.169, `20260912T202242_300it_25pct`): **18,767** drivers waited for a household car on the last iteration, from **15,580** on F32 (#145); occupancy **0.1871** against 0.3503, OUTSIDE [0.2493, 0.394]; `occupancy_from_pairings` 0.1645.
 - **The sub-1 km share reads 11.13 % of 576,893 trips, against 11.17 % on F32** (§9.169, #30): the short-trip SUPPLY is unchanged; resident walk trips average **3.74 km** against **0.70** observed — −12.2 % on the scoreboard, +434 % on geometry.
 - **The roster binds harder as the search converges** (§9.163, #145): on `20260909T015217_300it_25pct` **8,550** drivers waited on the first iteration and **15,580** on the last; car jumped +2.211 pp at the innovation cutoff alone.
-- **The second car is wanted because a declared passenger is driving it** (§9.163, #145, #86): of 20,902 declared escort pairs in sample, **10,224 (48.9 %)** have the passenger driving their **own car** against **7,821 (37.4 %)** co-assigned car + ride.
 - **The modelled mode × demographics table exists** (§9.163, #50; `_mode_by_demographics.json`): no licence — car 0.0 %, ride 50.9 %, walk 27.6 % (74,243 trips); licence — car 82.5 %, ride 6.1 % (467,836). The modelled half only; the observed counterpart is #50's acquisition.
 - **Income's own effect is not separable** (§9.163, #108): every mode the money charges touch is OVER target except light rail; nothing has been read with `C.income.representation` OFF at the same depth in the same family.
 - **The PLANS carry OSM geometry** (§9.158, #159): **3,000 of 3,000 sampled `dest_placement=poi` destinations within 5 m of an OSM POI or building** — `demand/plans/*` is **ODbL 1.0**; the POPULATION stays CC-BY. Manifest then **279 CC-BY / 218 ODbL / 15 bespoke** (§9.159).
@@ -57,20 +56,18 @@
 - **The demand was rebuilt on 4 Sep** (§9.142): WEEKDAY 2,185,896 legs / 989,347 tours, week average 3.343 trips per person-day against the HTS 3.473 (`_activity_chains_report.json`); every purpose × LGA realises its observed mean distance but two cells.
 - **What the discard fix recovered** (§9.164, `tours_reattempted_after_a_failed_tour`): **547** weekday tours; the week trip rate reads **3.398 against the HTS 3.473**; **18,446** weekday tours are still dropped over the horizon — a different mechanism.
 - On the measured licence rates the unlicensed share of the employed is 4.8–5.9% (§9.131). Joint binding is supply-limited on WEEKDAY (`thin_p` 1.0000, §9.116); lift at `same_zone` serves 97.7% of unbound HX tours (§9.84, §9.133); the shared pass reaches the occupancy identity with a shortfall of 0 (§9.124, §9.129).
-- The ride gap was a demand ceiling: escort-bound travel was 5.4% of trips against an observed 20.6% (§9.83); the joint binder lifted it to ~11.5% (§9.84). Short trips: 4.45% of generated legs under 1 km against an observed 18.8% (§9.69).
 
 ## What is open
 
-- **#86 — the demand seeds ride below its target** (§9.169): coverage 19.11 % of agents on arm 0 against 20.60 % observed, so no run on this seed reaches it; the passes reach the identity on paper (§9.142) while at the F26 gate 29,827 declared passengers drove themselves (§9.146). The seed must carry more ride — a demand rebuild that opens a family; not done.
+- **#86 — the binders bind the observed share and the held passenger's alternative plan loses it; D12 is the rebuild** (§9.177, user decision): 458,886 distinct bound trips are **20.62 %** of core legs (`measure_bound_trips.py`); on the routers pair car-available escort members drove 50.7 % of their bound trips, joint companions 36.3 % (`_bound_trips.json`). The rebuild holds escort members and joint companions to ride in every plan (`heldRideTrips`, the gate refusing car on them); car-less lift and shared passengers keep walk/bike/pt. Opens a family; not done.
 - **#145 — measured on a full arm** (§9.169): 18,767 drivers waited on arm 0's last iteration; the wait distribution and where the self-driven bound trips settle remain unread.
-- **`B.population.household_size_top_band_mean` REACHES NO OUTPUT** (§9.169, filed): `build_population.py` takes the geometric branch for the top band, so the declared 6.6 (sweep 6.0–7.5) is never consumed; consuming it opens a family.
+- **`B.population.household_size_top_band_mean` REACHES NO OUTPUT** (§9.169, #196): `build_population.py` takes the geometric branch for the top band, so the declared 6.6 (sweep 6.0–7.5) is never consumed; the roots rebuild consumes it (the tail parameter derived from the mean, §9.177's lane) and opens a family.
 - **The four HTS cells exist nowhere public** (§9.172, #50): the hub's eleven HTS resources carry mode × area and purpose × area only, none is an API; the Sydney 2012/13 report has mode × age, distance band × mode and occupancy for the Sydney GCCSA at that vintage — shapes, not targets; commute-only cells are derivable from ABS TableBuilder. The request is the only route; sending it is the user's decision (D2).
 - Still assumed and swept: `B.external.through_share`, `P_INTERMEDIATE_STOP`, `P_SECOND_STOP`, `CHILD_TOUR_RETENTION`, the activity durations (§9.2, §9.61); the 9,376 `driver_is_the_companion` refusals are emergent (§9.116).
-- **The sub-1 km SUPPLY is fixed at build time and its SHAPE is unobserved** (§9.164, #30): the destination model matches the HTS MEAN per (purpose × LGA) by construction (§9.40, §9.136); the share under 1 km is the kernel's SHAPE and the HTS gives no distribution — no short-end target exists that is not invented (§9.8, §9.13).
+- **The sub-1 km supply is AT the seed, and #30 is re-aimed at allocation** (§9.177, user decision): the placed core legs are 17.70 % at ≤ 0.748 km straight (1 km at detour 1.3376) against the Sydney 18.8 % band, the purpose bands realised at the zone matrix (§9.142); the run reads 13.82 % routed and car takes 51.5 % of them (the walk position). No new kernel; the chains report will state the band on placed coordinates at the rebuild.
 
 ## Refused — do not re-raise
 
-- Widening `B.activity.escort_binding_nonhh_scope` beyond `same_zone`: 97.7% of unbound HX tours already bind (§9.84, §9.133).
 - Assigning mode in B2 — it pre-empts the question the model exists to answer (§9.2).
 - A phantom driver, teleport or declared allowance for unserved lifts (§9.60).
 - Fitting the household/non-household split of lifts: no observation of who drives whom (§9.60).
@@ -82,6 +79,7 @@
 
 ## History
 
+- §9.177 — bound trips read; D12 the rebuild
 - §9.176 — intro fixed: which runs are results is the board's
 - §9.172 — the four HTS cells: absent from every channel
 - §9.170 — placement radius from registry

@@ -229,9 +229,9 @@
    "repeat_of": 3,
    "opens_family": false,
    "category": "model",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:2",
@@ -253,9 +253,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:4",
@@ -265,9 +265,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:5",
@@ -277,9 +277,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "process",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:6",
@@ -289,9 +289,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "docs",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:7",
@@ -337,9 +337,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:11",
@@ -373,9 +373,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:14",
@@ -409,9 +409,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:17",
@@ -421,9 +421,9 @@
    "repeat_of": null,
    "opens_family": false,
    "category": "code",
-   "status": "open",
-   "evidence": null,
-   "updated": null
+   "status": "taken",
+   "evidence": "9.177",
+   "updated": "2026-09-17"
   },
   {
    "id": "20260916T062246:18",
