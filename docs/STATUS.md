@@ -7,8 +7,8 @@ rest is capped by `tests/check_doc_shape.py`. The current truth per topic is in
 [`positions/`](positions); the history and every rationale in
 [`DECISIONS.md`](DECISIONS.md). Nothing here is a result.*
 
-**Last updated:** 17 September 2026 (fifty-fourth session). Newest reading: the scoring pair `20260916T063903_250it_25pct`, the fourth RESULT (250 of 250, 25.77 h) - **2 of 12 inside 10 %**, six past the stop bar, nothing moved against arm 0 (car +0.007 pp) and the cutoff snap stands under score averaging (§9.177); report #12 lodged on the routers pair (`docs/reports/20260916T062246_project_report.html`).
-The scoring and routers branches are both exonerated; the roots rebuild (D12, D9, D8, #196) is the lane; a launch detaches by default (D6) and a run carries its own residents (#213).
+**Last updated:** 18 September 2026 (fifty-fifth session). Native Codex skills, project instructions and global integration checks recorded (§9.178); [integration guide](../.agents/README.md).
+The model lane remains the Java work followed by the roots rebuild (§9.177); the scoreboard and run evidence are unchanged.
 
 ## The goal
 
@@ -68,7 +68,7 @@ Inside 10%: **car, motorbike**. Past the 20% stop bar: **ride, taxi, bike, heavy
 | Input registry | **567 fields**, each with units, provenance and a sweep or a held-fixed rule; `check_hardcoding.py --strict` is a CI gate at 0 |
 | Data package | **959 files** in `data/MANIFEST.csv` with hash, rows, producing script, source, licence and retrieval date |
 | Run inputs assembled | **30** scenario x day-type sets under `scenarios/matsim/` (per the manifest) |
-| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (17 September 2026 (fifty-fourth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (17 September 2026 (fifty-fourth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (16 September 2026 (fifty-third session)) · [network-and-inputs](positions/network-and-inputs.md) (17 September 2026 (fifty-fourth session)) · [population-and-demand](positions/population-and-demand.md) (17 September 2026 (fifty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (17 September 2026 (fifty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (17 September 2026 (fifty-fourth session)) · [runs-and-economics](positions/runs-and-economics.md) (17 September 2026 (fifty-fourth session)) · [sampling-and-families](positions/sampling-and-families.md) (16 September 2026 (fifty-third session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (17 September 2026 (fifty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (16 September 2026 (fifty-third session)) · [walk-and-bike](positions/walk-and-bike.md) (17 September 2026 (fifty-fourth session)) |
+| Position pages | [light-rail-and-ferry](positions/light-rail-and-ferry.md) (17 September 2026 (fifty-fourth session)) · [monitoring-and-gates](positions/monitoring-and-gates.md) (18 September 2026 (fifty-fifth session)) · [motorbike-truck-and-freight](positions/motorbike-truck-and-freight.md) (16 September 2026 (fifty-third session)) · [network-and-inputs](positions/network-and-inputs.md) (17 September 2026 (fifty-fourth session)) · [population-and-demand](positions/population-and-demand.md) (17 September 2026 (fifty-fourth session)) · [public-transport-and-yardsticks](positions/public-transport-and-yardsticks.md) (17 September 2026 (fifty-fourth session)) · [ride-and-pairing](positions/ride-and-pairing.md) (17 September 2026 (fifty-fourth session)) · [runs-and-economics](positions/runs-and-economics.md) (17 September 2026 (fifty-fourth session)) · [sampling-and-families](positions/sampling-and-families.md) (16 September 2026 (fifty-third session)) · [seed-and-choice-set](positions/seed-and-choice-set.md) (17 September 2026 (fifty-fourth session)) · [signals-and-crossings](positions/signals-and-crossings.md) (16 September 2026 (fifty-third session)) · [taxi-and-rideshare](positions/taxi-and-rideshare.md) (16 September 2026 (fifty-third session)) · [walk-and-bike](positions/walk-and-bike.md) (17 September 2026 (fifty-fourth session)) |
 <!-- generated:state end -->
 
 F35 is open with arm 0 and the routers pair as its readings; nothing before
@@ -76,6 +76,8 @@ F35 is open with arm 0 and the routers pair as its readings; nothing before
 those of `20260910T203622` (§9.164). The manifest holds
 **721 CC-BY / 220 ODbL** plus 18 bespoke files, every one hashed. The heap rule reads 37.4 GiB at
 25 % against a measured live peak of 26.2 GiB on arm 0 (§9.169).
+
+The separate package audit fails on stale document paths (#234) and incomplete run-input report coverage (#235); full package consistency is unverified (§9.178).
 
 ## Runs on disk
 

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Project Report"
+  short_description: "Assess the project and render an evidence-based report"
+policy:
+  allow_implicit_invocation: true

@@ -2,10 +2,11 @@
 
 *A position page states the CURRENT truth for one topic. It is rewritten at every `/handoff` that touches the topic; the dated history and every rationale live in [`DECISIONS.md`](../DECISIONS.md) at the sections cited. Which runs are results is the board's fact ([`STATUS.md`](../STATUS.md), the runs block): a run is one only if its `_run.json` says `ran_to_last_iteration`, and nothing measured on an arm that did NOT reach its declared horizon is.*
 
-**Updated:** 17 September 2026 (fifty-fourth session) · **Record read through:** §9.177 · **Written against family:** `F35`
+**Updated:** 18 September 2026 (fifty-fifth session) · **Record read through:** §9.178 · **Written against family:** `F35`
 
 ## What is built
 
+- **Native Codex integration** (§9.178): [`.agents/`](../../.agents/README.md). Shared gates run explicitly; Claude hooks do not. Commit-attribution enforcement remains #210.
 - **The reader reads a run through its own schedule**: `extract_metrics.schedule_path` takes `output/output_transitSchedule.xml.gz` first, `SCHEDULE_SOURCE` recorded; the city copy the F34 rebuild overwrote had printed heavy rail **0 / −100.0 %** on F32 (§9.169).
 - **The main ruleset requires the nine test jobs as status checks** (§9.172, #202; ruleset 21121872, the user's decision D3): a red run is no longer mergeable.
 - **PT boardings come from one source** — the legs table first, the experienced plans only where no table exists (`src/analyse/iteration_trips.py`, §9.166); `station_of` matches the station name whole.
@@ -52,6 +53,7 @@
 
 ## What is open
 
+- **Package audit fails** (§9.178): stale document roots (#234) and incomplete run-input report coverage (#235); see `.agents/validation.json`.
 - **The light rail's shortfall** is not supply and not the transfer; where its riders are is the open question at the next gate (§9.130, #30).
 - **`--truck-stations` is holdout-bound**: whether to spend holdout on freight is the operator's decision (§9.101, #82).
 - **`fit.py` folds for the SURVEY targets and not for the OBJECTIVE** (§9.87, §9.158): `score_mode_share` the five folded categories as a diagnostic, `score_goal_modes` the twelve modes; distinct by design.
@@ -71,6 +73,7 @@
 
 ## History
 
+- §9.178 — native Codex skills and workflow
 - §9.177 — detach by default; residents per run
 - §9.176 — the pair a result; orphan close-out; watchers die with the harness
 - §9.175 — congestion measured as a map app does; viewer fixes

@@ -1,21 +1,21 @@
 # Brief for the next agent
 
-**Written:** 17 September 2026 (fifty-fourth session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `fd0674c` plus this handoff's commits
-*A pointer, not a source: [`GOAL.md`](GOAL.md), the board ([`STATUS.md`](STATUS.md)) and the position pages win.*
+**Written:** 18 September 2026 (fifty-fifth session) · **Open family:** `F35-the-engines-route-what-they-remode` · **Commit:** `722bfe9` plus this handoff's commits
+*A pointer, not a source: [GOAL.md](GOAL.md), the [board](STATUS.md) and the [position pages](positions/) win.*
 
 ## §0 Verify first — facts that expire, each with its command
 
 | Fact at handoff | Re-derive with |
 |---|---|
-| **NO ARM IS RUNNING; THE MACHINE IS IDLE.** The newest run `20260916T063903_250it_25pct` (the scoring pair, D7) is `completed`, `_run.json` `ran_to_last_iteration` at 250, 25.77 h. It is the fourth RESULT of F35 and moved nothing against arm 0 (§9.177). | `python src/run/session_gate.py --digest` · `python src/run/watch_run.py --run 20260916T063903_250it_25pct` · `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260916T063903_250it_25pct --modes` |
-| **The machine being idle, `.tools/classes` MAY be recompiled now** — the Java fold (lane task 2) is the first thing to do before any rebuild. The committed controler has NOT been rebuilt since the gate last compiled it under no arm; the next `session_gate.py` run compiles it. | `python src/setup/bootstrap_toolchain.py --verify` · `python src/run/session_gate.py` |
-| **NO APPROVAL STANDS.** The 16 September approval (one probe + one arm ≤ 35 h) was SPENT on `20260916T053153_4it_25pct` and `20260916T063903_250it_25pct`. The next arm quotes 25.1 h for 250 it at 25 % (spread 24.5–32.8 h) on the scoring pair's stopwatch — but the roots rebuild changes the plans, so its arm 0 needs its OWN 25 % probe first. | `python src/analyse/arm_cost.py --iterations 250 --fraction 0.25` |
-| **NO DECISION IS OPEN.** D6–D12 were taken on 16 September (detach by default; the scoring pair; the TPA ferry target; bike's distance cost derived from the observed mean, swept on its spread; the gate's scoped departure documented; the strict status-check policy; escort members and joint companions held to ride). | `python src/analyse/lane.py --ask` |
-| **19 REPORT RECOMMENDATIONS ARE OPEN** (report #12's 2, 7, 8, 9, 12, 14, 15, 18, 19, 20 and report #11's carried rows); nine of #12's twenty were taken this session (§9.177). | `python src/analyse/report_recs.py` |
-| The issue ledger: **32 open, 0 blocking**; #172 reads `MEASUREMENT DUE` because the scoring pair has run — its comment carries the reading (§9.177). Filed this session: #227–#232. | `python src/run/issue_gate.py` · `gh issue list --state open` |
-| This session's PR: open until merged; its branch `praneetdhoolia/eleventh-report-scoring-pair` is deleted when it is. | `gh pr list --state open` |
-| Registry **567** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke), unit tests **547 passed, 1 skipped**. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` · `python -m pytest -q tests/unit` |
-| The three F35 results' record files (`_fit.json`, `_summary.json`, `_bound_trips.json`, `_near_wharf.json`, `_mode_by_demographics.json`, `_residents.csv.gz`) are mirrored under `results/processed/<run>/`; each reader is one command on any run. | `python src/analyse/measure_bound_trips.py --run <run> --it 250` · `python src/analyse/measure_near_wharf.py --run <run> --it 250` · `python src/analyse/mode_by_demographics.py results/raw/<run>` |
+| Machine idle; newest arm `20260916T063903_250it_25pct` completed its declared horizon at iteration 250. | `python src/run/session_gate.py --digest` · `python src/run/watch_run.py --run 20260916T063903_250it_25pct` |
+| The onboarding gate passed. The separate package audit has 1,198 passes, two warnings and six failures: obsolete document roots (#234), incomplete run-input report coverage (#235). Full package consistency is unverified. | `python src/run/session_gate.py` · `python tests/check_package.py` |
+| Previous PR #233 merged. This session lands `praneetdhoolia/codex-skills`; verify its PR and branch state before starting work. | `gh pr list --state all --head praneetdhoolia/codex-skills` · `git status --short --branch` · `git log origin/main..HEAD --oneline` |
+| GitHub has 31 open issues. #234 and #235 record the package-audit defects. #210 remains open; Codex startup checks do not complete its hook/CI requirements. | `gh issue list --state open --limit 100` · `python src/run/issue_gate.py` · `gh issue view 210` |
+| No unanswered lane decisions. D6–D12 remain recorded. | `python src/analyse/lane.py --ask` |
+| The recommendation ledger has 19 open rows; this tooling migration does not complete a model recommendation. | `python src/analyse/report_recs.py` |
+| Registry **567** fields, manifest **959** files (**721 CC-BY / 220 ODbL** + 18 bespoke). The input package is unchanged by this session. | `python src/registry/render_docs.py --check` · `python tests/check_manifest.py` |
+| Codex loads the project instructions and skills. The native browser connection passed after its dedicated Chrome profile started. Availability is session-specific. | `python .agents/scripts/configure_codex.py --check` · `codex debug prompt-input` · `codex mcp list` |
+| The latest result's fit and supporting readings are preserved under processed results. | `python src/analyse/compare_runs.py 20260912T202242_300it_25pct 20260916T063903_250it_25pct --modes` |
 
 Then: `python src/run/session_gate.py`.
 
@@ -29,78 +29,50 @@ Then: `python src/run/session_gate.py`.
 Decided: D8 = Re-derive the ferry target from the disclosed TPA tap-on series (recommended) (2026-09-16) · D9 = A literature marginal utility of distance for bike, with its sweep (recommended) (2026-09-16) · D10 = Document the scoped departure: gate off while a control is differenced against its arm 0 (recommended) (2026-09-16) · D11 = Yes - set the strict policy (recommended) (2026-09-16) · D12 = Hold escort members and joint companions to ride on their bound tours; car-less lift and shared passengers keep walk/bike/pt (recommended) (2026-09-16)
 <!-- generated:lane end -->
 
-Do the Java fold (task 2) FIRST — the machine is idle and it is one recompile — then the roots rebuild
-(task 1): D12's hold lives half in the plans builder and half in `GatedSubtourModeChoice`, so the rebuild
-is not whole without the Java. The rebuild opens a family: a 25 % probe on the rebuilt inputs prices its
-arm 0, which ships with `RUN.replanning.score_msa_representation` = `absent` (the scoring pair settled it,
-§9.177). The patch scripts this session prepared for F1–F5 and E1–E2 lived in a session scratchpad and are
-GONE; §9.177 and the lane state what each does, and the position pages carry the values to derive.
+Do the Java work first, then the roots rebuild: D12 needs both the plans builder and its Java gate.
+The rebuild opens a family. Its own probe prices the next arm, which requires stated-cost approval.
+The scoring representation ships as `absent` (§9.177). The earlier scratch patches are gone;
+the lane and position pages specify the work. The Codex migration is documented in [`.agents/README.md`](../.agents/README.md).
 
 ## §2 Traps — newest first, at most ten, each with what it cost
 
-1. **A BUILD OR A TEST SUITE UNDER AN ARM STRETCHES ITS ITERATIONS** (§9.177): the scoring pair ran 400–510 s
-   an iteration under this session's verification rebuilds against 383 s on the idle probe; batch them, run
-   them at below-normal priority, and never read a pace taken under them as the arm's price.
-2. **MATSim'S MODE-CHOICE COVERAGE IS A SHARE OF TRIPS, NOT AGENTS** (§9.177): §9.163 and §9.169 read it as
-   agents and concluded ride's target was above its ceiling; the ceiling IS the bound trips' share (20.62 %),
-   sitting at the target. Read `report_choice_set_coverage.py`'s wording, not the older record text.
-3. **THE CUTOFF SNAP IS SELECTION, NOT SCORING** (§9.177): score averaging from the cutoff left the 200→201
-   snap at car +1.76 pp (arm 0 +1.683, routers pair +1.774). Do not propose MSA, a longer tail or a scoring
-   tweak against it again.
-4. **A SESSION SCRATCHPAD DOES NOT SURVIVE THE SESSION**: seven prepared patch scripts (F1–F5, E1, E2) were
-   held there for the arm to end, and it ended after the handoff began. Prepared work goes on the branch as
-   a commit that changes nothing yet, or into the record — never into the scratchpad alone.
-5. **`extract_loop_body.py` REWRITES BY LINE NUMBER** (§9.177): extracting stages top-down shifted every
-   later range and broke `config_runtime` for explicit signals, caught only by the hardcoding probe; extract
-   bottom-up, and verify every stage by a byte-identical rebuild of the artefact.
-6. **AN IMPORT SWEEP EXECUTES MODULE-LEVEL WORK** (§9.177, #232): `test_import_sweep.py` once imported nine
-   extract adapters that fetch and write at import — provenance dates rewritten, a gpkg regenerated; the
-   sweep now compiles them, and the adapters are #232's to fix.
-7. **`&&`-CHAINED CHECKS WITH `| tail -1` RETURN THE TAIL'S EXIT CODE** (§9.177): three commits landed red
-   that way and needed follow-ups; run each check on its own line and read its last line.
-8. **THE PRICER BOOKS A DEAD HARNESS'S MISSING ITERATIONS AS SETUP** (§9.177, fixed): `wall − Σmemo` quoted
-   48.8 h with 22.8 h of setup on the orphaned pair; `setup_seconds()` now reads the JVM's stopwatch when the
-   memo is short. If a quote's setup exceeds an hour, read the stopwatch before believing it.
-9. **A GAME ON THE ARM'S MACHINE IS PART OF THE ARM'S PRICE** (§9.176, §9.174): iterations ran 405–561 s
-   against ~350 while another process shared the CPU; the tail absorbed it.
-10. **THE LAUNCHER'S VIEWER IS FROZEN AT LAUNCH** (§9.175): 8731 is served from inside the harness with the
-    `run_view.py` it imported; edit on 8732 with `--reload`.
+1. **Configured MCP does not mean a live browser** (§9.178): the first tab check failed because CDP was offline.
+   Use browser-harness to check the endpoint and start its dedicated profile. Claude hooks do not run in Codex.
+2. **Builds and tests compete with an arm** (§9.177): verification stretched iterations from the idle probe's
+   383 s to 400–510 s. Batch work and do not price an arm from a busy-machine reading.
+3. **Mode-choice coverage counts trips** (§9.177): older records called these agents and misread ride's ceiling.
+   Read the coverage reader's wording and the bound-trip evidence together.
+4. **The cutoff snap survived score averaging** (§9.177): another long arm did not remove it.
+   Do not repeat a scoring remedy without new evidence.
+5. **Scratch work is not durable** (§9.177): seven prepared patches were lost.
+   Preserve authorised work on the branch or in the record before handoff.
+6. **Extraction by line number shifts later ranges** (§9.177): a refactor broke explicit-signals configuration.
+   Extract bottom-up and verify the resulting artefact.
+7. **Imports can acquire and rewrite data** (§9.177, #232): an import sweep executed nine extract adapters.
+   Compile these adapters for syntax checks until their entry points are guarded.
+8. **Pipelines can hide failed checks** (§9.177): three commits needed repairs after tail masked failures.
+   Inspect each check's own exit status.
+9. **CPU contention changes an arm's price** (§9.176, §9.174): a game stretched iterations to 405–561 s.
+   Account for competing processes when reading pace.
+10. **The launched viewer retains imported code** (§9.175): edits were invisible on the harness's port.
+    Develop the viewer with `--reload` on a separate port.
 
-Retired because a gate or the launcher enforces them: a harness that dies with its shell (`run.py` detaches
-by default, D6, §9.177); a finished orphan marked `failed` by the reconcile (`reconcile_stale` reads the clean
-shutdown first, §9.177); a run's residents resolved through today's population (`_residents.csv.gz`, #213);
-an `awaiting-run` issue whose run has run going unread (`issue_gate.py` prints `MEASUREMENT DUE`, §9.177); a
-JVM alive under a dead harness (`run_failure.py --check`, §9.176); a run name on a position page's intro
-(`intro_no_run_names`, §9.176); a concurrent arm (the launcher, §9.170); a launch with no automatic stop
-(§9.163); a red CI run merging (the ruleset, §9.172); a coordinate typed into a script (`check_hardcoding.py`);
-a report per session (one per reading, `report_recs.py`); a decision asked twice (`lane.json`).
+Retired by checks: dead-harness detection (`run_failure.py`), concurrent arms and missing automatic stops
+(launcher), residents resolved through today's population (run snapshot), stale family stamps and oversized
+pages (document gates), and repeated lane questions (`lane.json`). See [monitoring-and-gates](positions/monitoring-and-gates.md).
 
 ## §3 Standing directives and approvals
 
-- **NO APPROVAL STANDS.** Arm 0's 44 h was SPENT on `20260912T202242_300it_25pct` (§9.169); the routers
-  pair's 30.0 h on `20260915T000704_250it_25pct` (§9.176); the scoring pair's 33.0 h on
-  `20260916T063903_250it_25pct` (§9.177). A further arm needs its own stated cost set as
-  `RUN.gate.wall_ceiling_h` on its overlay, quoted from a 25 % probe on the build it will run.
-- **Never compare across a family boundary.** F35 opened at `20260912T184108` (§9.168); arm 0, the routers
-  pair and the scoring pair are its results, each pair read against arm 0 inside F35 (D4, §9.175). The roots
-  rebuild OPENS A FAMILY: nothing before it compares with anything after. A run is a result only if `_run.json`
-  says `ran_to_last_iteration`; a stopped arm is citable at its `reached_iteration`; a FAILED arm for nothing.
-- **25 % runs only** (user directive, 1 September 2026) for ARMS; a structural smoke probe may run at 1 %.
-- **One arm at a time**; never recompile `.tools/classes` under one. A launch detaches by default
-  (`--foreground` opts out).
-- **A launch with no automatic stop is refused**; so is one whose heap is below the registry's rule and one
-  whose overlay changes nothing the run reads.
-- **No launch while an open issue in the RUN'S LANE lacks a stated measurement** (GOAL requirement 10);
-  `AWAITING-DECISION:` reports, never blocks. Declare `answers_issues`.
-- **The user's decisions of 16 September are settled** (D6–D12, `lane.json`, §14): do not re-ask them; the
-  ferry target's re-derivation (D8) is a target change and gets its own record section when it lands.
-- **The TfNSW request is the user's to send** (D2, §9.172): do not re-search, do not send unasked.
-- **#30 is allocation, not the kernel** (user decision, §9.177): no new short-trip kernel is proposed.
-- **The simulator's documents live at `docs/`, the city's at `cities/<city>/docs/`** (§9.171); a position
-  page is at most 130 lines and 14,000 bytes; the lane is edited in `lane.json`; a decision is asked once.
-- **§8.5 binds on `C.asc.rail`, `C.asc.walk` and `C.asc.car_passenger`** — FROZEN.
-- **Nothing may be tuned on arm 0** until the separation of #172 has run (§9.159); two of five controls
-  have run and moved nothing (§9.176, §9.177); the rebuild goes at the demand first.
-- **The 67/143 holdout stays shut until the end** (§12).
-- **Never commit to `main`**; the session's ONE PR opens at `/handoff`.
-- The record is never rewritten; superseded text is corrected on the position page with a §14 row.
+- **No run approval stands.** Previous approvals are SPENT (§9.169, §9.176, §9.177).
+  Quote the next arm from its own build's probe and set its approved wall ceiling.
+- **25 % arms only.** A structural smoke may use 1 %. One arm at a time; no recompilation under an arm.
+- Compare only within a family, sample fraction and network build. A result requires
+  `_run.json` to say `ran_to_last_iteration`; stopped readings are limited to `reached_iteration`.
+- The 67/143 holdout stays shut until the end. No invented data or unsupported coefficients.
+- D6–D12 remain settled in [lane.json](lane.json). The TfNSW request is the user's to send (D2).
+- #30 concerns allocation, not a new short-trip kernel (§9.177). The frozen constants remain governed by §8.5.
+- No run while an issue in its lane lacks its required declaration. Declare `answers_issues`.
+- Keep Codex support in `.agents/`; global skills and MCP credentials stay in user configuration.
+  Use the active git identity, verify the tracked hooks path, and inspect commits and PR bodies for attribution.
+- Never commit to `main`. Land the session through one PR targeting `main` and remove its branch after merge.
+- The model lane remains separate from this tooling close-out. Start it only under its own authorised scope.

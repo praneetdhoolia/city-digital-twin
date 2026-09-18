@@ -1,0 +1,72 @@
+{
+  "format": 1,
+  "sources": [
+    {
+      "scope": "project",
+      "source": ".claude/CLAUDE.md",
+      "sha256": "2a76c1784adf6abd2ea91b67912c4d7110110c49cd83a3db6249fd24dfb64ba8"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/handoff/SKILL.md",
+      "sha256": "ae4afe029bcbc7a61ab378ac87658008b43fa6e96ed35fce90d66688377b60a1"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/onboard/SKILL.md",
+      "sha256": "c0bf8e6e3250cccf1283fc5c1b431f6278272b2eeb0451be45a2bfca231d1393"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/project-report/scripts/collect_code_metrics.py",
+      "sha256": "31390eb61a8e4e06866cd4dbca55bb630345b07d5c075380325550fa418e7135"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/project-report/scripts/collect_metrics.py",
+      "sha256": "fa671e6b909e0cbbcc187761d98fabe08c93d2631dfc69380665bb2f88c42914"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/project-report/scripts/collect_performance.py",
+      "sha256": "80a88dee1dccf550037eb9c73f6ca8438ae30e2d5a6ae949025881bf30a3a490"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/project-report/scripts/render_report.py",
+      "sha256": "adc2ac89da58392a149545c8246ea8017af7aa5ebf9e005f32ad8f5b30908579"
+    },
+    {
+      "scope": "project",
+      "source": ".claude/skills/project-report/SKILL.md",
+      "sha256": "180048bf7055fc02d948e20a53cb6ff0db3004b0f6c9e9779db522786d0f7730"
+    },
+    {
+      "scope": "global",
+      "source": "~/.claude/skills/browser-harness/SKILL.md",
+      "sha256": "aa557332ea08397ff625016aabe24fa89c0003f66e909dbe000834d3dcd0b33c"
+    },
+    {
+      "scope": "global",
+      "source": "~/.claude/skills/ste-writing/ste-writing/references/word-substitutions.md",
+      "sha256": "2a750e4ce55a5e701adf2929b7701228063b713075a2247a86f55c2bc8b5ffa3"
+    },
+    {
+      "scope": "global",
+      "source": "~/.claude/skills/ste-writing/ste-writing/SKILL.md",
+      "sha256": "3d7cdffab8b1e4b771a3c023e65f8682807514a9b2a061fe9466b102d35bbafa"
+    },
+    {
+      "scope": "global-plugin",
+      "source": "frontend-design@claude-plugins-official/skills/frontend-design/SKILL.md",
+      "sha256": "d91970639e9f5c37682ac7ab60094d35f1c7c1f38d731bd56396563aee10c1d3"
+    }
+  ],
+  "mcp_servers": [
+    "my-browser",
+    "context7",
+    "hostinger-domains",
+    "hostinger-dns"
+  ],
+  "method": "Native repository skills, adapted user skills, TOML MCP configuration and project instruction fallback"
+}
