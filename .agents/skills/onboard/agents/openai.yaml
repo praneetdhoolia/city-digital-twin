@@ -1,0 +1,5 @@
+interface:
+  display_name: "Onboard"
+  short_description: "Rebuild project state and verify the session"
+policy:
+  allow_implicit_invocation: true

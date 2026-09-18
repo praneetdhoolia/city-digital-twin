@@ -1,0 +1,5 @@
+interface:
+  display_name: "Handoff"
+  short_description: "Close out and validate an authorised work session"
+policy:
+  allow_implicit_invocation: true

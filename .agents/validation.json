@@ -1,0 +1,73 @@
+{
+  "verified_at": "2026-09-18T06:00:45.225469+00:00",
+  "client": "codex-cli 0.154.0-alpha.6.2",
+  "native_prompt": {
+    "project_instructions": true,
+    "project_skills": [
+      "onboard",
+      "handoff",
+      "project-report"
+    ],
+    "global_claude_skills": [
+      "browser-harness",
+      "ste-writing",
+      "frontend-design"
+    ]
+  },
+  "skill_validation": "All six skills pass the bundled quick_validate.py",
+  "configuration": "Setup preserves unrelated TOML values and is idempotent, tested with new and existing fallback settings",
+  "global_mcp_parity": [
+    "my-browser",
+    "context7",
+    "hostinger-domains",
+    "hostinger-dns"
+  ],
+  "browser_live_test": {
+    "cdp": "http://localhost:9223",
+    "browser": "Chrome/152.0.7977.83",
+    "mcp_browser_tabs": "passed"
+  },
+  "project_checks": {
+    "document_shape": "passed",
+    "document_currency": "passed",
+    "status_board": "current",
+    "document_links": "passed",
+    "integration_links": "passed"
+  },
+  "report_helpers": {
+    "collect_metrics": "passed with --no-github --no-growth",
+    "collect_code_metrics": "passed",
+    "collect_performance": "passed with --no-sizes",
+    "render_report": "passed with collected metrics, valid embedded JSON and missing-phase gaps"
+  },
+  "limits": [
+    "The initial migration did not run the full gate; the handoff verification below records subsequent gate checks.",
+    "MCP parity is a configuration check; only my-browser received a live service test.",
+    "The report smoke output is temporary and is not a project assessment."
+  ],
+  "global_change": "Removed an unnecessary fixed GUI-approval requirement from the existing native browser-harness; launch now follows active client permissions and user authorisation.",
+  "handoff_verification": {
+    "verified_at": "2026-09-18T07:09:41.034426+00:00",
+    "native_prompt": "Project conventions, three project skills and three inherited global skills present",
+    "skills": "All six pass quick_validate.py after review edits",
+    "configuration": "New, existing and multiline settings preserve unrelated values, backup bytes and idempotence; unsupported syntax refuses without writing",
+    "mcp_parity": "All four source connections match; stdio executable names resolve to absolute Windows npx.cmd paths",
+    "browser": "CDP initially offline; dedicated profile started through browser-harness; live my-browser browser_tabs passed",
+    "source_hashes": "Project and global source hashes match migration.json; global-plugin hash inherited from migration verification",
+    "report_helpers": "Python compilation passes; inherited smoke output JSON parses",
+    "onboarding_gate": "22 checks passed",
+    "scope": "Tooling and handover only; no model, data, target or family changes",
+    "package_audit": {
+      "passed": 1198,
+      "warnings": 2,
+      "failed": 6,
+      "issues": {
+        "234": "Two obsolete document-root failures",
+        "235": "Four incomplete run-input report coverage failures"
+      },
+      "conclusion": "Full package consistency unverified; no input files changed"
+    },
+    "handoff_gate": "22 checks plus all three handoff checks passed",
+    "integration_links": "All relative Markdown links under .agents resolve"
+  }
+}
