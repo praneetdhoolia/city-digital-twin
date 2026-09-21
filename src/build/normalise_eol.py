@@ -38,7 +38,10 @@ REPO_SINGLE = ['README.md', 'run.py', '.gitignore', '.gitattributes']
 # (the list used to name provenance_open_data.json and its siblings, and
 # missed provenance_licences.json when it arrived). A raw DOWNLOAD is never
 # touched - only the metadata this repository writes about one.
-CITY_GLOBS = ['data/raw/provenance*.json', 'data/raw/_*.txt', 'data/raw/_*.log',
+# `**` because a city may keep its records in category folders under data/raw/
+# (Mumbai's 514 sat in transit/, roads/, freight/ ... and every one was CRLF).
+CITY_GLOBS = ['data/raw/**/provenance*.json', 'data/raw/**/_*.txt', 'data/raw/**/_*.log',
+              'data/raw/**/_*.json',
               'schedules/*.json', 'schedules/raw/provenance*.json',
               'schedules/scenarios/_*.json',
               'data/MANIFEST.csv', 'data/MANIFEST.json']
@@ -47,7 +50,7 @@ import city as _city  # noqa: E402
 
 ROOTS = [os.path.join(REPO, r) for r in REPO_ROOTS] +         [_city.path(r) for r in CITY_ROOTS]
 SINGLE = [os.path.join(REPO, s) for s in REPO_SINGLE] + \
-         sorted(p for g in CITY_GLOBS for p in glob.glob(_city.path(g)))
+         sorted(p for g in CITY_GLOBS for p in glob.glob(_city.path(g), recursive=True))
 
 
 def candidates():
