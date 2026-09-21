@@ -4,7 +4,6 @@ import math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-import jsonschema
 import city
 
 
@@ -30,6 +29,7 @@ def explicit_vehicle_xml(cfg, profiles):
     routing-time binding or demand is inferred from the presence of a type.
     """
     schema = json.loads(Path(city.REPO, 'config/schema/mode_vehicles.schema.json').read_text(encoding='utf-8'))
+    import jsonschema   # the explicit path's dependency, not the assembler's
     jsonschema.Draft202012Validator(schema).validate(profiles)
     if not profiles:
         raise ValueError('Explicit vehicle types require a nonempty profile mapping')

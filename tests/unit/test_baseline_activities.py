@@ -5,6 +5,10 @@ from pathlib import Path
 import numpy as np
 import pytest
 
+# the builder reads its evidence layers with the geospatial stack, which the
+# minimal CI environment does not install; the test is for a workstation
+pytest.importorskip('geopandas')
+
 PATH = Path(__file__).resolve().parents[2] / 'cities/mumbai/build/build_baseline_activities.py'
 SPEC = importlib.util.spec_from_file_location('baseline_activities', PATH)
 adapter = importlib.util.module_from_spec(SPEC)

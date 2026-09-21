@@ -810,7 +810,9 @@ def scan_paths():
             for n in sorted(names):
                 p = os.path.join(dirpath, n)
                 if os.path.splitext(n)[1].lower() in SKIP_EXT \
-                        or '__pycache__' in dirpath:
+                        or '__pycache__' in dirpath or n == 'README.md':
+                    # a README under a data root is documentation, not a data
+                    # artefact (a landed readme download is named by its hash)
                     continue
                 rel = os.path.relpath(p, ROOT).replace('\\', '/')
                 if rel.startswith(SKIP_DIRS):

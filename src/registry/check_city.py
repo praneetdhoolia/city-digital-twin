@@ -122,6 +122,16 @@ def _expand_units(units, doc):
     return units
 
 
+def manifest_paths(city_dir):
+    """The city-relative paths the city's manifest carries (empty without one)."""
+    path = os.path.join(city_dir, 'data', 'MANIFEST.csv')
+    if not os.path.exists(path):
+        return []
+    from manifest_io import manifest_reader
+    with io.open(path, newline='', encoding='utf-8') as fh:
+        return [row['path'] for row in manifest_reader(fh)]
+
+
 def manifest_producers(city_dir):
     """The framework builders the city's manifest names as producers - the
     evidence that this city's package went through them. A producer may carry
@@ -487,8 +497,12 @@ def check_city(name):
     print('\n=== %s (%s) ===' % (name, city_dir))
     if not check(os.path.isdir(city_dir), '%s: directory present' % name):
         return
+    # A layer whose every file is gitignored bulk (a city's GTFS feeds) has no
+    # directory in a fresh checkout; the manifest naming files under it is the
+    # evidence the layer exists, the same evidence check_manifest.py accepts.
+    carried = {row.split('/', 1)[0] for row in manifest_paths(city_dir)}
     missing = [d for d in citymod.LAYERS
-               if not os.path.isdir(os.path.join(city_dir, d))]
+               if not os.path.isdir(os.path.join(city_dir, d)) and d not in carried]
     for d in missing:
         check(False, '%s: missing directory %s/' % (name, d))
     check(not missing, '%s: every expected subdirectory present' % name)

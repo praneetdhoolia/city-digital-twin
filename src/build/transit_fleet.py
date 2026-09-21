@@ -7,7 +7,6 @@ import math
 from pathlib import Path
 import xml.etree.ElementTree as ET
 
-import jsonschema
 import city
 
 
@@ -17,6 +16,7 @@ def local_tag(element):
 
 def load_assignment(path, mapped_vehicles, mapped_schedule):
     """An assignment belongs to exactly one mapped input pair, before day filtering."""
+    import jsonschema   # the validator is the explicit path's dependency, not the assembler's
     schema = json.loads(Path(city.REPO, 'config/schema/transit_fleet.schema.json').read_text(encoding='utf-8'))
     def unique_object(pairs):
         result = {}

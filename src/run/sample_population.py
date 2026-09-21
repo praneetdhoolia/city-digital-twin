@@ -38,7 +38,13 @@ import os
 from pathlib import Path
 import tempfile
 import xml.etree.ElementTree as ET
-from lxml import etree as XML
+
+
+def _lxml():
+    """lxml is the sampler's dependency, not the harness's: a launch needs it,
+    importing run_matsim (and every unit test that does) must not."""
+    from lxml import etree
+    return etree
 
 from det_io import gzip_writer
 import registry
@@ -103,6 +109,7 @@ def population_elements(src):
     fetched. Internal entity declarations are refused rather than losing their
     definitions when the population is serialised.
     """
+    XML = _lxml()
     with gzip.open(src, 'rb') as stream:
         context = XML.iterparse(stream, events=('start', 'end'), load_dtd=False,
                                 no_network=True, resolve_entities=False)
@@ -232,6 +239,7 @@ def subsample_plans(src, dst, fraction, seed=None, unit=None, kept_ids=None):
     with tempfile.TemporaryDirectory(prefix='sample-population-', dir=Path(dst).parent) as temporary:
         staged = Path(temporary, 'plans.xml.gz')
         elements = population_elements(src)
+        XML = _lxml()
         try:
             _, (tag, attributes, namespaces, doctype) = next(elements)
             with gzip_writer(staged, text=False) as stream, XML.xmlfile(stream, encoding='utf-8') as writer:
